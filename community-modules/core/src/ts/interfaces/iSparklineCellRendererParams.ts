@@ -82,23 +82,39 @@ export interface HighlightStyle {
 }
 export type SparklineColumnFormatter = (params: ColumnFormatterParams) => ColumnFormat;
 export interface ColumnFormatterParams {
+    /** The raw data associated with the specific marker. */
     datum: any;
+    /** The x value of the marker. */
     xValue: any;
+    /** The y value of the marker. */
     yValue: any;
+    /** The width of the column in pixels. */
     width: number;
+    /** The width of the column in pixels. */
     height: number;
+    /** Whether or not the marker is a minimum point. */
     min? : boolean;
+    /** Whether or not the marker is a maximum point. */
     max?: boolean;
+    /** Whether or not the marker represents the first data point. */
     first?: boolean;
+    /** Whether or not the marker represents the last data point. */
     last?: boolean;
+    /** The CSS colour value for the fill of the individual marker. */
     fill?: string;
+    /** The CSS colour value for the outline of the individual marker. */
     stroke?: string;
+    /** The thickness in pixels for the stroke of the individual marker. */
     strokeWidth: number;
+    /** Whether or not the marker is highlighted. */
     highlighted: boolean;
 }
 export interface ColumnFormat {
+    /** The CSS colour value for the fill of the individual column. */
     fill?: string;
+    /** The CSS colour value for the outline of the individual column. */
     stroke?: string;
+    /** The thickness in pixels for the stroke of the individual column.*/
     strokeWidth?: number;
 }
 export interface SparklineMarker {
@@ -112,23 +128,40 @@ export interface SparklineMarker {
 }
 export type SparklineMarkerFormatter = (params: MarkerFormatterParams) => MarkerFormat;
 export interface MarkerFormatterParams {
+    /** The raw data associated with the specific marker. */
     datum: any;
+    /** The x value of the marker. */
     xValue: any;
+    /** The y value of the marker. */
     yValue: any;
+    /** Whether or not the marker is a minimum point. */
     min? : boolean;
+    /** Whether or not the marker is a maximum point. */
     max?: boolean;
+    /** Whether or not the marker represents the first data point. */
     first?: boolean;
+    /** Whether or not the marker represents the last data point. */
     last?: boolean;
+    /** The CSS colour value for the fill of the individual marker. */
     fill?: string;
+    /** The CSS colour value for the outline of the individual marker. */
     stroke?: string;
+    /** The thickness in pixels for the stroke of the individual marker. */
     strokeWidth: number;
+    /** The width in pixels of the individual marker. */
     size: number;
+    /** Whether or not the marker is highlighted. */
     highlighted: boolean;
 }
 export interface MarkerFormat {
+    /** Set to false to make marker invisible. */
     enabled?: boolean;
+    /** The width in pixels of the individual marker. */
     size?: number;
+    /** The CSS colour value for the fill of the individual column. */
     fill?: string;
+    /** The CSS colour value for the outline of the individual column. */
     stroke?: string;
+    /** The thickness in pixels for the stroke of the individual column.*/
     strokeWidth?: number;
 }

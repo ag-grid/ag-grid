@@ -13914,24 +13914,72 @@
   },
   "SparklineColumnFormatter": {},
   "ColumnFormatterParams": {
-    "datum": { "type": { "returnType": "any", "optional": false } },
-    "xValue": { "type": { "returnType": "any", "optional": false } },
-    "yValue": { "type": { "returnType": "any", "optional": false } },
-    "width": { "type": { "returnType": "number", "optional": false } },
-    "height": { "type": { "returnType": "number", "optional": false } },
-    "min": { "type": { "returnType": "boolean", "optional": true } },
-    "max": { "type": { "returnType": "boolean", "optional": true } },
-    "first": { "type": { "returnType": "boolean", "optional": true } },
-    "last": { "type": { "returnType": "boolean", "optional": true } },
-    "fill": { "type": { "returnType": "string", "optional": true } },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": false } },
-    "highlighted": { "type": { "returnType": "boolean", "optional": false } }
+    "datum": {
+      "description": "/** The raw data associated with the specific marker. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "xValue": {
+      "description": "/** The x value of the marker. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "yValue": {
+      "description": "/** The y value of the marker. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "width": {
+      "description": "/** The width of the column in pixels. */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "height": {
+      "description": "/** The width of the column in pixels. */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "min": {
+      "description": "/** Whether or not the marker is a minimum point. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "max": {
+      "description": "/** Whether or not the marker is a maximum point. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "first": {
+      "description": "/** Whether or not the marker represents the first data point. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "last": {
+      "description": "/** Whether or not the marker represents the last data point. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "fill": {
+      "description": "/** The CSS colour value for the fill of the individual marker. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "stroke": {
+      "description": "/** The CSS colour value for the outline of the individual marker. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "strokeWidth": {
+      "description": "/** The thickness in pixels for the stroke of the individual marker. */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "highlighted": {
+      "description": "/** Whether or not the marker is highlighted. */",
+      "type": { "returnType": "boolean", "optional": false }
+    }
   },
   "ColumnFormat": {
-    "fill": { "type": { "returnType": "string", "optional": true } },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": true } }
+    "fill": {
+      "description": "/** The CSS colour value for the fill of the individual column. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "stroke": {
+      "description": "/** The CSS colour value for the outline of the individual column. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "strokeWidth": {
+      "description": "/** The thickness in pixels for the stroke of the individual column. */",
+      "type": { "returnType": "number", "optional": true }
+    }
   },
   "SparklineMarker": {
     "enabled": { "type": { "returnType": "boolean", "optional": true } },
@@ -13946,25 +13994,76 @@
   },
   "SparklineMarkerFormatter": {},
   "MarkerFormatterParams": {
-    "datum": { "type": { "returnType": "any", "optional": false } },
-    "xValue": { "type": { "returnType": "any", "optional": false } },
-    "yValue": { "type": { "returnType": "any", "optional": false } },
-    "min": { "type": { "returnType": "boolean", "optional": true } },
-    "max": { "type": { "returnType": "boolean", "optional": true } },
-    "first": { "type": { "returnType": "boolean", "optional": true } },
-    "last": { "type": { "returnType": "boolean", "optional": true } },
-    "fill": { "type": { "returnType": "string", "optional": true } },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": false } },
-    "size": { "type": { "returnType": "number", "optional": false } },
-    "highlighted": { "type": { "returnType": "boolean", "optional": false } }
+    "datum": {
+      "description": "/** The raw data associated with the specific marker. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "xValue": {
+      "description": "/** The x value of the marker. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "yValue": {
+      "description": "/** The y value of the marker. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "min": {
+      "description": "/** Whether or not the marker is a minimum point. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "max": {
+      "description": "/** Whether or not the marker is a maximum point. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "first": {
+      "description": "/** Whether or not the marker represents the first data point. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "last": {
+      "description": "/** Whether or not the marker represents the last data point. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "fill": {
+      "description": "/** The CSS colour value for the fill of the individual marker. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "stroke": {
+      "description": "/** The CSS colour value for the outline of the individual marker. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "strokeWidth": {
+      "description": "/** The thickness in pixels for the stroke of the individual marker. */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "size": {
+      "description": "/** The width in pixels of the individual marker. */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "highlighted": {
+      "description": "/** Whether or not the marker is highlighted. */",
+      "type": { "returnType": "boolean", "optional": false }
+    }
   },
   "MarkerFormat": {
-    "enabled": { "type": { "returnType": "boolean", "optional": true } },
-    "size": { "type": { "returnType": "number", "optional": true } },
-    "fill": { "type": { "returnType": "string", "optional": true } },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": true } }
+    "enabled": {
+      "description": "/** Set to false to make marker invisible. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "size": {
+      "description": "/** The width in pixels of the individual marker. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "fill": {
+      "description": "/** The CSS colour value for the fill of the individual column. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "stroke": {
+      "description": "/** The CSS colour value for the outline of the individual column. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "strokeWidth": {
+      "description": "/** The thickness in pixels for the stroke of the individual column. */",
+      "type": { "returnType": "number", "optional": true }
+    }
   },
   "IStatusBarService": {
     "registerStatusPanel": {

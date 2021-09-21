@@ -7947,11 +7947,35 @@
       "stroke?": "string",
       "strokeWidth": "number",
       "highlighted": "boolean"
+    },
+    "docs": {
+      "datum": "/** The raw data associated with the specific marker. */",
+      "xValue": "/** The x value of the marker. */",
+      "yValue": "/** The y value of the marker. */",
+      "width": "/** The width of the column in pixels. */",
+      "height": "/** The width of the column in pixels. */",
+      "min?": "/** Whether or not the marker is a minimum point. */",
+      "max?": "/** Whether or not the marker is a maximum point. */",
+      "first?": "/** Whether or not the marker represents the first data point. */",
+      "last?": "/** Whether or not the marker represents the last data point. */",
+      "fill?": "/** The CSS colour value for the fill of the individual marker. */",
+      "stroke?": "/** The CSS colour value for the outline of the individual marker. */",
+      "strokeWidth": "/** The thickness in pixels for the stroke of the individual marker. */",
+      "highlighted": "/** Whether or not the marker is highlighted. */"
     }
   },
   "ColumnFormat": {
     "meta": {},
-    "type": { "fill?": "string", "stroke?": "string", "strokeWidth?": "number" }
+    "type": {
+      "fill?": "string",
+      "stroke?": "string",
+      "strokeWidth?": "number"
+    },
+    "docs": {
+      "fill?": "/** The CSS colour value for the fill of the individual column. */",
+      "stroke?": "/** The CSS colour value for the outline of the individual column. */",
+      "strokeWidth?": "/** The thickness in pixels for the stroke of the individual column. */"
+    }
   },
   "SparklineMarker": {
     "meta": {},
@@ -7984,6 +8008,20 @@
       "strokeWidth": "number",
       "size": "number",
       "highlighted": "boolean"
+    },
+    "docs": {
+      "datum": "/** The raw data associated with the specific marker. */",
+      "xValue": "/** The x value of the marker. */",
+      "yValue": "/** The y value of the marker. */",
+      "min?": "/** Whether or not the marker is a minimum point. */",
+      "max?": "/** Whether or not the marker is a maximum point. */",
+      "first?": "/** Whether or not the marker represents the first data point. */",
+      "last?": "/** Whether or not the marker represents the last data point. */",
+      "fill?": "/** The CSS colour value for the fill of the individual marker. */",
+      "stroke?": "/** The CSS colour value for the outline of the individual marker. */",
+      "strokeWidth": "/** The thickness in pixels for the stroke of the individual marker. */",
+      "size": "/** The width in pixels of the individual marker. */",
+      "highlighted": "/** Whether or not the marker is highlighted. */"
     }
   },
   "MarkerFormat": {
@@ -7994,6 +8032,13 @@
       "fill?": "string",
       "stroke?": "string",
       "strokeWidth?": "number"
+    },
+    "docs": {
+      "enabled?": "/** Set to false to make marker invisible. */",
+      "size?": "/** The width in pixels of the individual marker. */",
+      "fill?": "/** The CSS colour value for the fill of the individual column. */",
+      "stroke?": "/** The CSS colour value for the outline of the individual column. */",
+      "strokeWidth?": "/** The thickness in pixels for the stroke of the individual column. */"
     }
   },
   "IStatusBarService": {

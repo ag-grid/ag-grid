@@ -230,19 +230,19 @@ It should be noted that
 ## Interfaces
 ### MarkerFormatterParams
 
-<api-documentation source='sparklines-special-points/resources/sparkline-special-points-api.json' section='MarkerFormatterParams'></api-documentation>
+<interface-documentation interfaceName='MarkerFormatterParams' ></interface-documentation>
 
 ### MarkerFormat
 
-<api-documentation source='sparklines-special-points/resources/sparkline-special-points-api.json' section='MarkerFormat'></api-documentation>
+<interface-documentation interfaceName='MarkerFormat' ></interface-documentation>
 
 ### ColumnFormatterParams
 
-<api-documentation source='sparklines-special-points/resources/sparkline-special-points-api.json' section='ColumnFormatterParams'></api-documentation>
+<interface-documentation interfaceName='ColumnFormatterParams' ></interface-documentation>
 
 ### ColumnFormat
 
-<api-documentation source='sparklines-special-points/resources/sparkline-special-points-api.json' section='ColumnFormat'></api-documentation>
+<interface-documentation interfaceName='ColumnFormat' ></interface-documentation>
 
 ## Next Up
 
