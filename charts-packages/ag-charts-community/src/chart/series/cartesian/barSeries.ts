@@ -20,6 +20,7 @@ import { reactive, TypedEvent } from "../../../util/observable";
 import { Scale } from "../../../scale/scale";
 import { sanitizeHtml } from "../../../util/sanitize";
 import { isNumber } from "../../../util/value";
+import { NumberAxis } from "../../axis/numberAxis";
 
 export interface BarSeriesNodeClickEvent extends TypedEvent {
     readonly type: 'nodeClick';
@@ -532,8 +533,9 @@ export class BarSeries extends CartesianSeries {
             for (let stackIndex = 0; stackIndex < groupYs.length; stackIndex++) {
                 const stackYs = groupYs[stackIndex]; // y-data for a stack withing a group
 
-                let prevMinY = 0;
-                let prevMaxY = 0;
+                const zero = Math.max(0, (yAxis as NumberAxis).min, yScale.domain[0]);
+                let prevMinY = zero;
+                let prevMaxY = zero;
 
                 for (let levelIndex = 0; levelIndex < stackYs.length; levelIndex++) {
                     const currY = stackYs[levelIndex];
