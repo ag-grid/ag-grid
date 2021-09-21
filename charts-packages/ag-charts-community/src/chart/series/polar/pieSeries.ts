@@ -374,12 +374,9 @@ export class PieSeries extends PolarSeries {
     }
 
     update(): void {
-        const { chart } = this;
-        const visible = this.group.visible = this.visible && this.seriesItemEnabled.indexOf(true) >= 0;
+        this.updatePending = false;
 
-        if (!visible || !chart || chart.dataPending || chart.layoutPending) {
-            return;
-        }
+        this.group.visible = this.visible && this.seriesItemEnabled.indexOf(true) >= 0;
 
         const { radius, innerRadiusOffset, outerRadiusOffset, title } = this;
 
@@ -396,8 +393,17 @@ export class PieSeries extends PolarSeries {
             title.node.visible = title.enabled;
         }
 
-        this.updateGroupSelection();
+        this.updateSelections();
         this.updateNodes();
+    }
+
+    private updateSelections() {
+        if (!this.nodeDataPending) {
+            return;
+        }
+        this.nodeDataPending = false;
+
+        this.updateGroupSelection();
     }
 
     private updateGroupSelection() {
@@ -426,52 +432,48 @@ export class PieSeries extends PolarSeries {
         const {
             fills, strokes, fillOpacity, strokeOpacity,
             radiusScale, callout, shadow,
+            chart: { highlightedDatum },
             highlightStyle: {
-                fill,
-                stroke,
-                centerOffset,
-                strokeWidth: highlightedDatumStrokeWidth,
-                series: {
-                    enabled: seriesHighlightingEnabled,
-                    strokeWidth: highlightedSeriesStrokeWidth
+                fill: deprecatedFill,
+                stroke: deprecatedStroke,
+                strokeWidth: deprecatedStrokeWidth,
+                item: {
+                    fill: highlightedFill = deprecatedFill,
+                    stroke: highlightedStroke = deprecatedStroke,
+                    strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
                 }
             },
             angleKey, radiusKey, formatter
         } = this;
-        const { highlightedDatum } = this.chart;
 
         const centerOffsets: number[] = [];
         const innerRadius = radiusScale.convert(0);
 
         this.groupSelection.selectByTag<Sector>(PieNodeTag.Sector).each((sector, datum, index) => {
             const radius = radiusScale.convert(datum.radius);
-            const isDatumHighlighted = true; // datum === highlightedDatum || datum.itemId === this.highlightedItemId;
-            const isSeriesHighlighted = true; // = this.highlightedItemId !== undefined;
-            const highlighted = true; // = datum === highlightedDatum || datum.itemId === this.highlightedItemId;
+            const isDatumHighlighted = !!highlightedDatum && highlightedDatum.series === this && datum.itemId === highlightedDatum.itemId;
+            const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : fills[index % fills.length];
+            const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : strokes[index % strokes.length];
             const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
                 ? highlightedDatumStrokeWidth
-                : isSeriesHighlighted && highlightedSeriesStrokeWidth !== undefined
-                    ? highlightedSeriesStrokeWidth
-                    : this.strokeWidth;
-            const sectorFill = highlighted && fill !== undefined ? fill : fills[index % fills.length];
-            const sectorStroke = highlighted && stroke !== undefined ? stroke : strokes[index % strokes.length];
-            let format: PieSeriesFormat | undefined = undefined;
+                : this.getStrokeWidth(this.strokeWidth);
 
+            let format: PieSeriesFormat | undefined = undefined;
             if (formatter) {
                 format = formatter({
                     datum: datum.seriesDatum,
-                    fill: sectorFill,
-                    stroke: sectorStroke,
-                    strokeWidth,
-                    highlighted,
                     angleKey,
-                    radiusKey
+                    radiusKey,
+                    fill,
+                    stroke,
+                    strokeWidth,
+                    highlighted: isDatumHighlighted
                 });
             }
 
             // Bring highlighted slice's parent group to front.
             const parent = sector.parent && sector.parent.parent;
-            if (highlighted && parent) {
+            if (isDatumHighlighted && parent) {
                 parent.removeChild(sector.parent!);
                 parent.appendChild(sector.parent!);
             }
@@ -482,16 +484,16 @@ export class PieSeries extends PolarSeries {
             sector.startAngle = datum.startAngle;
             sector.endAngle = datum.endAngle;
 
-            sector.fill = format && format.fill || sectorFill;
-            sector.stroke = format && format.stroke || sectorStroke;
+            sector.fill = format && format.fill || fill;
+            sector.stroke = format && format.stroke || stroke;
             sector.strokeWidth = format && format.strokeWidth !== undefined ? format.strokeWidth : strokeWidth;
             sector.fillOpacity = fillOpacity;
             sector.strokeOpacity = strokeOpacity;
             sector.lineDash = this.lineDash;
             sector.lineDashOffset = this.lineDashOffset;
-            sector.centerOffset = highlighted && centerOffset !== undefined ? centerOffset : 0;
             sector.fillShadow = shadow;
             sector.lineJoin = 'round';
+            sector.opacity = this.getOpacity();
 
             centerOffsets.push(sector.centerOffset);
         });

@@ -19,7 +19,6 @@ describe('line sparkline', () => {
     const options: SparklineOptions = {
         type: 'line',
         container: containerDiv,
-        data,
         width: 100,
         height: 200,
         title: 'line test',
@@ -60,7 +59,7 @@ describe('line sparkline', () => {
     }
 
     beforeAll(() => {
-        sparkline = AgSparkline.create(options, new SparklineTooltip());
+        sparkline = AgSparkline.create(options, new SparklineTooltip(), data);
 
         options.height = 135;
         options.width = 265;
@@ -136,7 +135,6 @@ describe('area sparkline', () => {
     const options: SparklineOptions = {
         type: 'area',
         container: containerDiv,
-        data,
         width: 200,
         height: 100,
         padding: {
@@ -176,7 +174,7 @@ describe('area sparkline', () => {
     }
 
     beforeAll(() => {
-        sparkline = AgSparkline.create(options, new SparklineTooltip());
+        sparkline = AgSparkline.create(options, new SparklineTooltip(), data);
 
         options.height = 67;
         options.width = 109;
@@ -253,7 +251,6 @@ describe('column sparkline', () => {
     const options: SparklineOptions = {
         type: 'column',
         container: containerDiv,
-        data,
         width: 150,
         height: 50,
         padding: {
@@ -286,7 +283,7 @@ describe('column sparkline', () => {
     }
 
     beforeAll(() => {
-        sparkline = AgSparkline.create(options, new SparklineTooltip());
+        sparkline = AgSparkline.create(options, new SparklineTooltip(), data);
 
         options.height = 84;
         options.width = 203;

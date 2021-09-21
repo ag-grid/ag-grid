@@ -6,77 +6,22 @@ There are several events which are raised at different points in the lifecycle o
 
 ## ChartCreated
 
-This event is raised whenever a chart is first created.
+The `ChartCreated` event is raised whenever a chart is first created.
 
-```ts
-interface ChartCreated {
-    type: string; // 'chartCreated'
-    chartId: string;
-    chartModel: ChartModel;
-    api: GridApi;
-    columnApi: ColumnApi;
-}
-```
+<interface-documentation interfaceName='ChartCreated' ></interface-documentation>
 
 ## ChartRangeSelectionChanged
 
 This is raised any time that the data range used to render the chart from is changed, e.g. by using the range selection handle or by making changes in the Data tab of the configuration sidebar. This event contains a `cellRange` object that gives you information about the range, allowing you to recreate the chart.
 
-```ts
-interface ChartRangeSelectionChanged {
-    type: string; // 'chartRangeSelectionChanged'
-    id: string;
-    chartId: string;
-    cellRange: CellRangeParams;
-    api: GridApi;
-    columnApi: ColumnApi;
-}
-
-interface CellRangeParams {
-    // start row
-    rowStartIndex: number | null;
-    rowStartPinned?: string;
-
-    // end row
-    rowEndIndex: number | null;
-    rowEndPinned?: string;
-
-    // columns
-    columns: (string | Column)[];
-}
-```
+<interface-documentation interfaceName='ChartRangeSelectionChanged' ></interface-documentation>
 
 ## ChartOptionsChanged
 
 Formatting changes made by users through the Format Panel will raise the `ChartOptionsChanged` event:
 
-```ts
-interface ChartOptionsChanged {
-    type: string; // 'chartOptionsChanged'
-    chartId: string;
-    chartType: ChartType;
-    chartThemeName: string;
-    chartOptions: ChartOptions;
-    api: GridApi;
-    columnApi: ColumnApi;
-}
+<interface-documentation interfaceName='ChartOptionsChanged' ></interface-documentation>
 
-type ChartType =
-    'groupedColumn' |
-    'stackedColumn' |
-    'normalizedColumn' |
-    'groupedBar' |
-    'stackedBar' |
-    'normalizedBar' |
-    'line' |
-    'scatter' |
-    'bubble' |
-    'pie' |
-    'doughnut' |
-    'area' |
-    'stackedArea' |
-    'normalizedArea';
-```
 
 Here the `chartThemeName` will be set to the name of the currently selected theme, which will be either
 one of the [Provided Themes](/integrated-charts-customisation/#provided-themes) or
@@ -86,14 +31,7 @@ a [Custom Theme](/integrated-charts-customisation/#custom-chart-themes) if used.
 
 This is raised when a chart is destroyed.
 
-```ts
-interface ChartDestroyed {
-    type: string; // 'chartDestroyed'
-    chartId: string;
-    api: GridApi;
-    columnApi: ColumnApi;
-}
-```
+<interface-documentation interfaceName='ChartDestroyed' ></interface-documentation>
 
 ## Example: Chart Events
 
@@ -115,11 +53,10 @@ Charts in the grid are produced by the [AG Charts](/charts-overview/) library, w
 directly into the grid for your convenience. In some advanced use cases, you may wish to access the chart
 instance that is produced by AG Charts, in order to interact with the chart directly.
 
-The chart instance can be obtained from the `chartRef` using the `getChartRef()` API.
+The chart instance can be obtained from the `chartRef` using the `getChartRef(chartId)` API.
 
-```ts
-function getChartRef(chartId: string): ChartRef | undefined;
-```
+<api-documentation source='grid-api/api.json' section='charts' names='["getChartRef"]'></api-documentation>
+
 Here is the implementation:
 
 ```js

@@ -249,6 +249,13 @@
                 "name": "Configuring Toolbar Items",
                 "url": "/integrated-charts-toolbar/#configuring-toolbar-items-and-menu-panels"
             }
+        },
+        "createChartContainer": {
+            "description": "Callback to enable displaying the chart in an alternative chart container.",
+            "more": {
+                "name": "Configuring Toolbar Items",
+                "url": "/integrated-charts-container/"
+            }
         }
     },
     "misc": {

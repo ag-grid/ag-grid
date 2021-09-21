@@ -212,23 +212,40 @@ export interface RangeSelectionChangedEvent extends AgGridEvent {
 }
 
 export interface ChartCreated extends AgGridEvent {
+    /** Will always be `chartCreated`. */
+    type: string;
+    /** Id of the created chart. This can later be used to reference the chart via api methods. */
     chartId: string;
 }
 
 export interface ChartRangeSelectionChanged extends AgGridEvent {
-    id: string;
+    /** Will always be `chartRangeSelectionChanged`. */
+    type: string;
+    /** Id of the effected chart. */
     chartId: string;
+    /** Same as `chartId`. */
+    id: string;
+    /** New cellRange selected. */
     cellRange: CellRangeParams;
 }
 
 export interface ChartOptionsChanged extends AgGridEvent {
+    /** Will always be `chartOptionsChanged`. */
+    type: string;
+    /** Id of the effected chart. */
     chartId: string;
+    /** ChartType */
     chartType: ChartType;
+    /** Chart theme name of currently selected theme. */
     chartThemeName: string;
+    /** Chart options.  */
     chartOptions: ChartOptions<any>;
 }
 
 export interface ChartDestroyed extends AgGridEvent {
+    /** Will always be `chartDestroyed`. */
+    type: string;
+    /** Id of the effected chart. */
     chartId: string;
 }
 

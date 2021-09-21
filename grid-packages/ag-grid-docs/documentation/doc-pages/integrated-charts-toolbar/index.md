@@ -73,14 +73,14 @@ The 'Download Chart' toolbar item will download the chart as a PNG file. Note th
 
 ## Configuring Toolbar Items and Menu Panels
 
-By default all available toolbar items and menu panels can be accessed. However, items can be removed and reordered via the `gridOptions.getChartToolbarItems()` callback function.
+By default all available toolbar items and menu panels can be accessed. However, items can be removed and reordered via the `gridOptions.getChartToolbarItems(params)` callback function.
 
 <api-documentation source='grid-callbacks/callbacks.json' section='charts' names='["getChartToolbarItems"]'  ></api-documentation>
 
 This function receives the `GetChartToolbarItemsParams` object which contains the list of elements that are included by default in `defaultItems`, along with the grid APIs.
 
 
-The list returned by the `gridOptions.getChartToolbarItems()` callback can be modified to reorder and omit items from the toolbar. For instance, returning an empty array will hide all toolbar items.
+The list returned by the `gridOptions.getChartToolbarItems(params)` callback can be modified to reorder and omit items from the toolbar. For instance, returning an empty array will hide all toolbar items.
 
 ### Example: Custom Toolbar Layout
 

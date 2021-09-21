@@ -12,7 +12,9 @@ This built-in feature of integrated charts is particularly useful for creating i
 
 ## Creating cross-filter charts
 
-Cross-Filter charts are created programmatically using `createCrossFilterChart()` on the grid's API.
+Cross-Filter charts are created programmatically using `createCrossFilterChart(params)` on the grid's API.
+
+<api-documentation source='grid-api/api.json' section='charts' names='["createCrossFilterChart"]'></api-documentation>
 
 The following snippet shows how a cross-filtering pie chart can be created:
 
@@ -55,11 +57,9 @@ The following example shows how to create a simple cross-filtering pie chart. No
 The cross-filter api shares a similar api to [Range Chart](/integrated-charts-api/#range-charts), however there are
 different defaults which make sense for cross-filtering.
 
-```ts
-function createCrossFilterChart(params: CreateCrossFilterChartParams): ChartRef | undefined;
-```
+<api-documentation source='grid-api/api.json' section='charts' names='["createCrossFilterChart"]'></api-documentation>
 
-<api-documentation source='resources/cross-filter-api.json' section='params' config='{ "showSnippets": true }'></api-documentation>
+<interface-documentation interfaceName='CreateCrossFilterChartParams' overrideSrc='integrated-charts-cross-filtering/resources/cross-filter-api.json' ></interface-documentation>
 
 ## Cross-filter Chart Types
 

@@ -4392,12 +4392,20 @@
     }
   },
   "ChartRef": {
-    "chartId": { "type": { "returnType": "string", "optional": false } },
-    "chart": { "type": { "returnType": "any", "optional": false } },
+    "chartId": {
+      "description": "/** The id of the created chart. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "chart": {
+      "description": "/** The chart instance that is produced by AG Charts which can be used to interact with the chart directly. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "chartElement": {
+      "description": "/** The chart DOM element, which the application is responsible for placing into the DOM. */",
       "type": { "returnType": "HTMLElement", "optional": false }
     },
     "destroyChart": {
+      "description": "/** The application is responsible for calling this when the chart is no longer needed. */",
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     }
   },
@@ -5300,49 +5308,72 @@
     }
   },
   "ChartCreated": {
-    "chartId": { "type": { "returnType": "string", "optional": false } },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
     "type": {
-      "description": "/** Event identifier */",
+      "description": "/** Will always be `chartCreated`. */",
       "type": { "returnType": "string", "optional": false }
-    }
+    },
+    "chartId": {
+      "description": "/** Id of the created chart. This can later be used to reference the chart via api methods. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
   },
   "ChartRangeSelectionChanged": {
-    "id": { "type": { "returnType": "string", "optional": false } },
-    "chartId": { "type": { "returnType": "string", "optional": false } },
+    "type": {
+      "description": "/** Will always be `chartRangeSelectionChanged`. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "chartId": {
+      "description": "/** Id of the effected chart. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "id": {
+      "description": "/** Same as `chartId`. */",
+      "type": { "returnType": "string", "optional": false }
+    },
     "cellRange": {
+      "description": "/** New cellRange selected. */",
       "type": { "returnType": "CellRangeParams", "optional": false }
     },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
-    "type": {
-      "description": "/** Event identifier */",
-      "type": { "returnType": "string", "optional": false }
-    }
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
   },
   "ChartOptionsChanged": {
-    "chartId": { "type": { "returnType": "string", "optional": false } },
-    "chartType": { "type": { "returnType": "ChartType", "optional": false } },
-    "chartThemeName": { "type": { "returnType": "string", "optional": false } },
+    "type": {
+      "description": "/** Will always be `chartOptionsChanged`. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "chartId": {
+      "description": "/** Id of the effected chart. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "chartType": {
+      "description": "/** ChartType */",
+      "type": { "returnType": "ChartType", "optional": false }
+    },
+    "chartThemeName": {
+      "description": "/** Chart theme name of currently selected theme. */",
+      "type": { "returnType": "string", "optional": false }
+    },
     "chartOptions": {
+      "description": "/** Chart options. */",
       "type": { "returnType": "ChartOptions<any>", "optional": false }
     },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
-    "type": {
-      "description": "/** Event identifier */",
-      "type": { "returnType": "string", "optional": false }
-    }
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
   },
   "ChartDestroyed": {
-    "chartId": { "type": { "returnType": "string", "optional": false } },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
     "type": {
-      "description": "/** Event identifier */",
+      "description": "/** Will always be `chartDestroyed`. */",
       "type": { "returnType": "string", "optional": false }
-    }
+    },
+    "chartId": {
+      "description": "/** Id of the effected chart. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
   },
   "ColumnGroupOpenedEvent": {
     "columnGroup": {
@@ -7443,25 +7474,41 @@
       "type": { "returnType": "RowNode[]", "optional": true }
     }
   },
-  "CreateRangeChartParams": {
-    "cellRange": {
-      "type": { "returnType": "CellRangeParams", "optional": false }
+  "CreateChartParams": {
+    "chartType": {
+      "description": "/** The type of chart to create. */",
+      "type": { "returnType": "ChartType", "optional": false }
     },
-    "chartType": { "type": { "returnType": "ChartType", "optional": false } },
-    "chartThemeName": { "type": { "returnType": "string", "optional": true } },
+    "chartThemeName": {
+      "description": "/** The default theme to use, either a default option or your own custom theme. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "chartContainer": {
+      "description": "/** Provide to display the chart outside of the grid in your own container. */",
       "type": { "returnType": "HTMLElement", "optional": true }
     },
+    "chartThemeOverrides": {
+      "description": "/** Allows specific chart options in the current theme to be overridden. */",
+      "type": { "returnType": "AgChartThemeOverrides", "optional": true }
+    },
+    "unlinkChart": {
+      "description": "/** When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart. */",
+      "type": { "returnType": "boolean", "optional": true }
+    }
+  },
+  "CreateRangeChartParams": {
+    "cellRange": {
+      "description": "/** The range of cells to be charted. */",
+      "type": { "returnType": "CellRangeParams", "optional": false }
+    },
     "suppressChartRanges": {
+      "description": "/** Suppress highlighting the selected range in the grid. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "aggFunc": {
+      "description": "/** The aggregation function that should be applied to all series data. */",
       "type": { "returnType": "string | IAggFunc", "optional": true }
     },
-    "chartThemeOverrides": {
-      "type": { "returnType": "AgChartThemeOverrides", "optional": true }
-    },
-    "unlinkChart": { "type": { "returnType": "boolean", "optional": true } },
     "processChartOptions": {
       "description": "/** @deprecated since v24.0.0, use `chartThemeOverrides` instead\n */",
       "type": {
@@ -7469,46 +7516,91 @@
         "returnType": "ChartOptions<any>",
         "optional": true
       }
-    }
-  },
-  "CreatePivotChartParams": {
-    "chartType": { "type": { "returnType": "ChartType", "optional": false } },
-    "chartThemeName": { "type": { "returnType": "string", "optional": true } },
+    },
+    "chartType": {
+      "description": "/** The type of chart to create. */",
+      "type": { "returnType": "ChartType", "optional": false }
+    },
+    "chartThemeName": {
+      "description": "/** The default theme to use, either a default option or your own custom theme. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "chartContainer": {
+      "description": "/** Provide to display the chart outside of the grid in your own container. */",
       "type": { "returnType": "HTMLElement", "optional": true }
     },
     "chartThemeOverrides": {
+      "description": "/** Allows specific chart options in the current theme to be overridden. */",
       "type": { "returnType": "AgChartThemeOverrides", "optional": true }
     },
-    "unlinkChart": { "type": { "returnType": "boolean", "optional": true } },
-    "processChartOptions": {
-      "description": "/** @deprecated since v24.0.0, use `chartThemeOverrides` instead\n */",
-      "type": {
-        "arguments": { "params": "ProcessChartOptionsParams" },
-        "returnType": "ChartOptions<any>",
-        "optional": true
-      }
+    "unlinkChart": {
+      "description": "/** When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart. */",
+      "type": { "returnType": "boolean", "optional": true }
     }
   },
   "CreateCrossFilterChartParams": {
     "cellRange": {
+      "description": "/** The range of cells to be charted. */",
       "type": { "returnType": "CellRangeParams", "optional": false }
     },
-    "chartType": { "type": { "returnType": "ChartType", "optional": false } },
-    "chartThemeName": { "type": { "returnType": "string", "optional": true } },
-    "chartContainer": {
-      "type": { "returnType": "HTMLElement", "optional": true }
-    },
     "suppressChartRanges": {
+      "description": "/** Suppress highlighting the selected range in the grid. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "aggFunc": {
+      "description": "/** The aggregation function that should be applied to all series data. */",
       "type": { "returnType": "string | IAggFunc", "optional": true }
     },
+    "chartType": {
+      "description": "/** The type of chart to create. */",
+      "type": { "returnType": "ChartType", "optional": false }
+    },
+    "chartThemeName": {
+      "description": "/** The default theme to use, either a default option or your own custom theme. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "chartContainer": {
+      "description": "/** Provide to display the chart outside of the grid in your own container. */",
+      "type": { "returnType": "HTMLElement", "optional": true }
+    },
     "chartThemeOverrides": {
+      "description": "/** Allows specific chart options in the current theme to be overridden. */",
       "type": { "returnType": "AgChartThemeOverrides", "optional": true }
     },
-    "unlinkChart": { "type": { "returnType": "boolean", "optional": true } }
+    "unlinkChart": {
+      "description": "/** When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart. */",
+      "type": { "returnType": "boolean", "optional": true }
+    }
+  },
+  "CreatePivotChartParams": {
+    "processChartOptions": {
+      "description": "/** @deprecated since v24.0.0, use `chartThemeOverrides` instead\n */",
+      "type": {
+        "arguments": { "params": "ProcessChartOptionsParams" },
+        "returnType": "ChartOptions<any>",
+        "optional": true
+      }
+    },
+    "chartType": {
+      "description": "/** The type of chart to create. */",
+      "type": { "returnType": "ChartType", "optional": false }
+    },
+    "chartThemeName": {
+      "description": "/** The default theme to use, either a default option or your own custom theme. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "chartContainer": {
+      "description": "/** Provide to display the chart outside of the grid in your own container. */",
+      "type": { "returnType": "HTMLElement", "optional": true }
+    },
+    "chartThemeOverrides": {
+      "description": "/** Allows specific chart options in the current theme to be overridden. */",
+      "type": { "returnType": "AgChartThemeOverrides", "optional": true }
+    },
+    "unlinkChart": {
+      "description": "/** When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart. */",
+      "type": { "returnType": "boolean", "optional": true }
+    }
   },
   "DetailGridInfo": {
     "id": {
@@ -10723,8 +10815,14 @@
     "yValue": { "type": { "returnType": "any", "optional": false } }
   },
   "GetChartImageDataUrlParams": {
-    "chartId": { "type": { "returnType": "string", "optional": false } },
-    "fileFormat": { "type": { "returnType": "string", "optional": true } }
+    "chartId": {
+      "description": "/** The id of the created chart. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "fileFormat": {
+      "description": "/** A string indicating the image format.\n * The default format type is `image/png`.\n * Options: `image/png`, `image/jpeg` */",
+      "type": { "returnType": "string", "optional": true }
+    }
   },
   "ChartModelType": {},
   "ChartModel": {
@@ -13707,7 +13805,6 @@
   "SparklineOptions": {},
   "BaseSparklineOptions": {
     "container": { "type": { "returnType": "HTMLElement", "optional": true } },
-    "data": { "type": { "returnType": "number[]", "optional": true } },
     "width": { "type": { "returnType": "number", "optional": true } },
     "height": { "type": { "returnType": "number", "optional": true } },
     "title": { "type": { "returnType": "string", "optional": true } },
@@ -13727,7 +13824,6 @@
     "line": { "type": { "returnType": "SparklineLine", "optional": true } },
     "marker": { "type": { "returnType": "SparklineMarker", "optional": true } },
     "container": { "type": { "returnType": "HTMLElement", "optional": true } },
-    "data": { "type": { "returnType": "number[]", "optional": true } },
     "width": { "type": { "returnType": "number", "optional": true } },
     "height": { "type": { "returnType": "number", "optional": true } },
     "title": { "type": { "returnType": "string", "optional": true } },
@@ -13748,7 +13844,6 @@
     "line": { "type": { "returnType": "SparklineLine", "optional": true } },
     "marker": { "type": { "returnType": "SparklineMarker", "optional": true } },
     "container": { "type": { "returnType": "HTMLElement", "optional": true } },
-    "data": { "type": { "returnType": "number[]", "optional": true } },
     "width": { "type": { "returnType": "number", "optional": true } },
     "height": { "type": { "returnType": "number", "optional": true } },
     "title": { "type": { "returnType": "string", "optional": true } },
@@ -13774,7 +13869,6 @@
       "type": { "returnType": "SparklineColumnFormatter", "optional": true }
     },
     "container": { "type": { "returnType": "HTMLElement", "optional": true } },
-    "data": { "type": { "returnType": "number[]", "optional": true } },
     "width": { "type": { "returnType": "number", "optional": true } },
     "height": { "type": { "returnType": "number", "optional": true } },
     "title": { "type": { "returnType": "string", "optional": true } },

@@ -227,9 +227,9 @@ export class LineSeries extends CartesianSeries {
     }
 
     private updateLinePath() {
-        const { chart, data, xAxis, yAxis } = this;
+        const { data, xAxis, yAxis } = this;
 
-        if (!chart || !data || !xAxis || !yAxis || chart.layoutPending || chart.dataPending) {
+        if (!data || !xAxis || !yAxis) {
             return;
         }
 

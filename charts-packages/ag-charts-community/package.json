@@ -6,7 +6,7 @@
   "module": "./dist/es6/main.js",
   "types": "./dist/cjs/main.d.ts",
   "scripts": {
-    "test": "npm run validate-es5 && jest",
+    "test": "npm run validate-es5",
     "jest": "jest",
     "build-cjs": "npx tsc -p tsconfig.json",
     "build-es6": "npx tsc -p tsconfig.es6.json",

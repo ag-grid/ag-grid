@@ -1473,10 +1473,6 @@
             "title": "Chart Events",
             "url": "/integrated-charts-events/",
             "enterprise": true
-          },
-          {
-            "title": "Third-Party Charting",
-            "url": "/third-party-charting/"
           }
         ]
       },
