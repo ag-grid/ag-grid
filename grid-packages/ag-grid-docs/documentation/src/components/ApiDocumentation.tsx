@@ -275,12 +275,13 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
         isObject = true;
     }
 
+    let displayName = name;
     if (!!definition.isRequired) {
-        name += `&nbsp;<span class="${styles['reference__required']}" title="Required">&ast;</span>`;
+        displayName += `&nbsp;<span class="${styles['reference__required']}" title="Required">&ast;</span>`;
     }
 
     if (!!definition.strikeThrough) {
-        name = `<span style='text-decoration: line-through'>${name}</span>`
+        displayName = `<span style='text-decoration: line-through'>${displayName}</span>`
     }
 
     // Use the type definition if manually specified in config
@@ -330,7 +331,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
         </td>
         <td role="presentation">
             <h6 id={`reference-${id}-${name}`} style={{ display: 'inline-flex' }} className="side-menu-exclude" >
-                <code onClick={() => setExpanded(!isExpanded)} dangerouslySetInnerHTML={{ __html: name }} className={styles['reference__name']}></code>
+                <code onClick={() => setExpanded(!isExpanded)} dangerouslySetInnerHTML={{ __html: displayName }} className={styles['reference__name']}></code>
                 <a href={`#reference-${id}-${name}`} className="anchor after" style={{ fontSize: 'small' }}>{anchorIcon}</a>
             </h6>
 

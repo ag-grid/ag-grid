@@ -7,16 +7,14 @@ In addition to users creating their own charts from the grid, charts can also be
 
 ## Range Charts
 
-Charts can be created programmatically from a range via the grid's `createRangeChart()` API. The interface is as follows:
+Charts can be created programmatically from a range via the grid's `createRangeChart(params)` API.
 
-```ts
-function createRangeChart(params: CreateRangeChartParams): ChartRef | undefined;
-```
+<api-documentation source='grid-api/api.json' section='charts' names='["createRangeChart"]'></api-documentation>
 
-<api-documentation source='resources/chart-api.json' section='params' config='{ "showSnippets": true }'></api-documentation>
+<interface-documentation interfaceName='CreateRangeChartParams' overrideSrc='integrated-charts-api/resources/chart-api.json' ></interface-documentation>
 
 The API returns a `ChartRef` object when a `chartContainer` is provided. This is the same structure
-that is provided to the `createChartContainer()` callback. The `ChartRef` provides the application
+that is provided to the `createChartContainer(chartRef)` callback. The `ChartRef` provides the application
 with the `destroyChart()` method that is required when the application wants to dispose the chart.
 
 ### Example: Charts in Grid Popup Window
@@ -49,19 +47,9 @@ This example passes a `chartContainer` to the API to place the chart in a locati
 
 You can also use the API to create a pivot chart. There are fewer parameters available as the pivot chart is always generated from all data in the grid:
 
-```ts
-function createPivotChart(params: CreatePivotChartParams): ChartRef | undefined;
+<api-documentation source='grid-api/api.json' section='charts' names='["createPivotChart"]'></api-documentation>
 
-interface CreatePivotChartParams {
-    chartType: ChartType;
-    chartThemeName?: string;
-    chartContainer?: HTMLElement;
-    chartThemeOverrides?: AgChartTheme;
-    unlinkChart?: boolean;
-}
-```
-
-The pivot chart params share the same behaviour as the [Range Chart Params](/integrated-charts-api/#reference-params) above.
+The pivot chart params share the same behaviour as the [Range Chart Params](/integrated-charts-api/#range-charts) above.
 
 This is an example showing the pivot chart API in action, using a specified chart container.
 
@@ -71,27 +59,11 @@ This is an example showing the pivot chart API in action, using a specified char
 
 A chart model that represent all the state information about the rendered charts can be obtained using `getChartModels()`. These models are returned in a format that can be easily used with the other API methods to later restore the chart.
 
-```ts
-function getChartModels(): ChartModel[];
-
-interface ChartModel {
-    modelType: ChartModelType; // 'range' | 'pivot';
-    chartId: string;
-    chartType: ChartType;
-    cellRange: CellRangeParams;
-    chartThemeName?: string;
-    chartOptions: ChartOptions<any>;
-    suppressChartRanges?: boolean;
-    aggFunc?: string | IAggFunc;
-    unlinkChart?: boolean;
-}
-```
+<api-documentation source='grid-api/api.json' section='charts' names='["getChartModels"]'></api-documentation>
 
 These models can then be supplied to the following grid api method to restore the charts:
 
-```ts
-function restoreChart(model: ChartModel, chartContainer?: HTMLElement): ChartRef
-```
+<api-documentation source='grid-api/api.json' section='charts' names='["restoreChart"]'></api-documentation>
 
 Note that an optional `chartContainer` can be specified when restoring a chart.
 
@@ -107,13 +79,9 @@ The example below demonstrates how you can save and then later restore a chart. 
 
 ## Downloading Chart Image
 
-It is possible to retrieve a base64 encoded image rendered from the chart using the `getChartImageDataURL()` API. This API returns a string containing the requested data URL which is ideal for saving to a database and downloading the chart image.
+It is possible to retrieve a base64 encoded image rendered from the chart using the `getChartImageDataURL(params)` API. This API returns a string containing the requested data URL which is ideal for saving to a database and downloading the chart image.
 
-``` ts
-function getChartImageDataURL(params: GetChartImageDataUrlParams): string | undefined;
-```
-
-<api-documentation source='resources/chart-api.json' section='GetChartImageDataUrlParams' config='{ "showSnippets": true }'></api-documentation>
+<api-documentation source='grid-api/api.json' section='charts' names='["getChartImageDataURL"]'></api-documentation>
 
 The example below demonstrates how you can retrieve images rendered from the chart in multiple formats.
 

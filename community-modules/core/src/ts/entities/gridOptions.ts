@@ -916,9 +916,13 @@ export interface ProcessDataFromClipboardParams {
 }
 
 export interface ChartRef {
+    /** The id of the created chart. */
     chartId: string;
+    /** The chart instance that is produced by AG Charts which can be used to interact with the chart directly. */
     chart: any;
+    /** The chart DOM element, which the application is responsible for placing into the DOM. */
     chartElement: HTMLElement;
+    /** The application is responsible for calling this when the chart is no longer needed. */
     destroyChart: () => void;
 }
 

@@ -2010,6 +2010,12 @@
       "chart": "any",
       "chartElement": "HTMLElement",
       "destroyChart": "() => void"
+    },
+    "docs": {
+      "chartId": "/** The id of the created chart. */",
+      "chart": "/** The chart instance that is produced by AG Charts which can be used to interact with the chart directly. */",
+      "chartElement": "/** The chart DOM element, which the application is responsible for placing into the DOM. */",
+      "destroyChart": "/** The application is responsible for calling this when the chart is no longer needed. */"
     }
   },
   "ServerSideStoreType": {
@@ -2668,47 +2674,64 @@
   "ChartCreated": {
     "meta": {},
     "type": {
+      "type": "string",
       "chartId": "string",
       "api": "GridApi",
-      "columnApi": "ColumnApi",
-      "type": "string"
+      "columnApi": "ColumnApi"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "type": "/** Will always be `chartCreated`. */",
+      "chartId": "/** Id of the created chart. This can later be used to reference the chart via api methods. */"
+    }
   },
   "ChartRangeSelectionChanged": {
     "meta": {},
     "type": {
-      "id": "string",
+      "type": "string",
       "chartId": "string",
+      "id": "string",
       "cellRange": "CellRangeParams",
       "api": "GridApi",
-      "columnApi": "ColumnApi",
-      "type": "string"
+      "columnApi": "ColumnApi"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "type": "/** Will always be `chartRangeSelectionChanged`. */",
+      "chartId": "/** Id of the effected chart. */",
+      "id": "/** Same as `chartId`. */",
+      "cellRange": "/** New cellRange selected. */"
+    }
   },
   "ChartOptionsChanged": {
     "meta": {},
     "type": {
+      "type": "string",
       "chartId": "string",
       "chartType": "ChartType",
       "chartThemeName": "string",
       "chartOptions": "ChartOptions<any>",
       "api": "GridApi",
-      "columnApi": "ColumnApi",
-      "type": "string"
+      "columnApi": "ColumnApi"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "type": "/** Will always be `chartOptionsChanged`. */",
+      "chartId": "/** Id of the effected chart. */",
+      "chartType": "/** ChartType */",
+      "chartThemeName": "/** Chart theme name of currently selected theme. */",
+      "chartOptions": "/** Chart options. */"
+    }
   },
   "ChartDestroyed": {
     "meta": {},
     "type": {
+      "type": "string",
       "chartId": "string",
       "api": "GridApi",
-      "columnApi": "ColumnApi",
-      "type": "string"
+      "columnApi": "ColumnApi"
     },
-    "docs": { "type": "/** Event identifier */" }
+    "docs": {
+      "type": "/** Will always be `chartDestroyed`. */",
+      "chartId": "/** Id of the effected chart. */"
+    }
   },
   "ColumnGroupOpenedEvent": {
     "meta": {},
@@ -4214,48 +4237,88 @@
     "type": { "rowNodes?": "RowNode[]" },
     "docs": { "rowNodes?": "/** Row nodes to redraw */" }
   },
+  "CreateChartParams": {
+    "meta": {},
+    "type": {
+      "chartType": "ChartType",
+      "chartThemeName?": "string",
+      "chartContainer?": "HTMLElement",
+      "chartThemeOverrides?": "AgChartThemeOverrides",
+      "unlinkChart?": "boolean"
+    },
+    "docs": {
+      "chartType": "/** The type of chart to create. */",
+      "chartThemeName?": "/** The default theme to use, either a default option or your own custom theme. */",
+      "chartContainer?": "/** Provide to display the chart outside of the grid in your own container. */",
+      "chartThemeOverrides?": "/** Allows specific chart options in the current theme to be overridden. */",
+      "unlinkChart?": "/** When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart. */"
+    }
+  },
   "CreateRangeChartParams": {
     "meta": {},
     "type": {
       "cellRange": "CellRangeParams",
-      "chartType": "ChartType",
-      "chartThemeName?": "string",
-      "chartContainer?": "HTMLElement",
       "suppressChartRanges?": "boolean",
       "aggFunc?": "string | IAggFunc",
-      "chartThemeOverrides?": "AgChartThemeOverrides",
-      "unlinkChart?": "boolean",
-      "processChartOptions?": "(params: ProcessChartOptionsParams) => ChartOptions<any>"
-    },
-    "docs": {
-      "processChartOptions?": "/** @deprecated since v24.0.0, use `chartThemeOverrides` instead\n */"
-    }
-  },
-  "CreatePivotChartParams": {
-    "meta": {},
-    "type": {
+      "processChartOptions?": "(params: ProcessChartOptionsParams) => ChartOptions<any>",
       "chartType": "ChartType",
       "chartThemeName?": "string",
       "chartContainer?": "HTMLElement",
       "chartThemeOverrides?": "AgChartThemeOverrides",
-      "unlinkChart?": "boolean",
-      "processChartOptions?": "(params: ProcessChartOptionsParams) => ChartOptions<any>"
+      "unlinkChart?": "boolean"
     },
     "docs": {
-      "processChartOptions?": "/** @deprecated since v24.0.0, use `chartThemeOverrides` instead\n */"
+      "cellRange": "/** The range of cells to be charted. */",
+      "suppressChartRanges?": "/** Suppress highlighting the selected range in the grid. */",
+      "aggFunc?": "/** The aggregation function that should be applied to all series data. */",
+      "processChartOptions?": "/** @deprecated since v24.0.0, use `chartThemeOverrides` instead\n */",
+      "chartType": "/** The type of chart to create. */",
+      "chartThemeName?": "/** The default theme to use, either a default option or your own custom theme. */",
+      "chartContainer?": "/** Provide to display the chart outside of the grid in your own container. */",
+      "chartThemeOverrides?": "/** Allows specific chart options in the current theme to be overridden. */",
+      "unlinkChart?": "/** When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart. */"
     }
   },
   "CreateCrossFilterChartParams": {
     "meta": {},
     "type": {
       "cellRange": "CellRangeParams",
+      "suppressChartRanges?": "boolean",
+      "aggFunc?": "string | IAggFunc",
       "chartType": "ChartType",
       "chartThemeName?": "string",
       "chartContainer?": "HTMLElement",
-      "suppressChartRanges?": "boolean",
-      "aggFunc?": "string | IAggFunc",
       "chartThemeOverrides?": "AgChartThemeOverrides",
       "unlinkChart?": "boolean"
+    },
+    "docs": {
+      "cellRange": "/** The range of cells to be charted. */",
+      "suppressChartRanges?": "/** Suppress highlighting the selected range in the grid. */",
+      "aggFunc?": "/** The aggregation function that should be applied to all series data. */",
+      "chartType": "/** The type of chart to create. */",
+      "chartThemeName?": "/** The default theme to use, either a default option or your own custom theme. */",
+      "chartContainer?": "/** Provide to display the chart outside of the grid in your own container. */",
+      "chartThemeOverrides?": "/** Allows specific chart options in the current theme to be overridden. */",
+      "unlinkChart?": "/** When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart. */"
+    }
+  },
+  "CreatePivotChartParams": {
+    "meta": {},
+    "type": {
+      "processChartOptions?": "(params: ProcessChartOptionsParams) => ChartOptions<any>",
+      "chartType": "ChartType",
+      "chartThemeName?": "string",
+      "chartContainer?": "HTMLElement",
+      "chartThemeOverrides?": "AgChartThemeOverrides",
+      "unlinkChart?": "boolean"
+    },
+    "docs": {
+      "processChartOptions?": "/** @deprecated since v24.0.0, use `chartThemeOverrides` instead\n */",
+      "chartType": "/** The type of chart to create. */",
+      "chartThemeName?": "/** The default theme to use, either a default option or your own custom theme. */",
+      "chartContainer?": "/** Provide to display the chart outside of the grid in your own container. */",
+      "chartThemeOverrides?": "/** Allows specific chart options in the current theme to be overridden. */",
+      "unlinkChart?": "/** When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart. */"
     }
   },
   "DetailGridInfo": {
@@ -6411,7 +6474,11 @@
   },
   "GetChartImageDataUrlParams": {
     "meta": {},
-    "type": { "chartId": "string", "fileFormat?": "string" }
+    "type": { "chartId": "string", "fileFormat?": "string" },
+    "docs": {
+      "chartId": "/** The id of the created chart. */",
+      "fileFormat?": "/** A string indicating the image format.\n * The default format type is `image/png`.\n * Options: `image/png`, `image/jpeg` */"
+    }
   },
   "ChartModelType": {
     "meta": { "isTypeAlias": true },

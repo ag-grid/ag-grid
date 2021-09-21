@@ -143,38 +143,42 @@ export interface RedrawRowsParams {
     rowNodes?: RowNode[];
 }
 
-export interface CreateRangeChartParams {
-    cellRange: CellRangeParams;
+interface CreateChartParams {
+    /** The type of chart to create. */
     chartType: ChartType;
+    /** The default theme to use, either a default option or your own custom theme. */
     chartThemeName?: string;
+    /** Provide to display the chart outside of the grid in your own container. */
     chartContainer?: HTMLElement;
-    suppressChartRanges?: boolean;
-    aggFunc?: string | IAggFunc;
+    /** Allows specific chart options in the current theme to be overridden. */
     chartThemeOverrides?: AgChartThemeOverrides;
+    /** When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart. */
     unlinkChart?: boolean;
+}
+
+export interface CreateRangeChartParams extends CreateChartParams {
+    /** The range of cells to be charted. */
+    cellRange: CellRangeParams;
+    /** Suppress highlighting the selected range in the grid. */
+    suppressChartRanges?: boolean;
+    /** The aggregation function that should be applied to all series data. */
+    aggFunc?: string | IAggFunc;
+
     /** @deprecated since v24.0.0, use `chartThemeOverrides` instead */
     processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
 }
-
-export interface CreatePivotChartParams {
-    chartType: ChartType;
-    chartThemeName?: string;
-    chartContainer?: HTMLElement;
-    chartThemeOverrides?: AgChartThemeOverrides;
-    unlinkChart?: boolean;
-    /** @deprecated since v24.0.0, use `chartThemeOverrides` instead */
-    processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
+export interface CreateCrossFilterChartParams extends CreateChartParams {
+    /** The range of cells to be charted. */
+    cellRange: CellRangeParams;
+    /** Suppress highlighting the selected range in the grid. */
+    suppressChartRanges?: boolean;
+    /** The aggregation function that should be applied to all series data. */
+    aggFunc?: string | IAggFunc;
 }
 
-export interface CreateCrossFilterChartParams {
-    cellRange: CellRangeParams;
-    chartType: ChartType;
-    chartThemeName?: string;
-    chartContainer?: HTMLElement;
-    suppressChartRanges?: boolean;
-    aggFunc?: string | IAggFunc;
-    chartThemeOverrides?: AgChartThemeOverrides;
-    unlinkChart?: boolean;
+export interface CreatePivotChartParams extends CreateChartParams {
+    /** @deprecated since v24.0.0, use `chartThemeOverrides` instead */
+    processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
 }
 
 export interface DetailGridInfo {
@@ -1396,7 +1400,7 @@ export class GridApi {
         }
     }
 
-    public createCrossFilterChart(params: CreateRangeChartParams): ChartRef | undefined {
+    public createCrossFilterChart(params: CreateCrossFilterChartParams): ChartRef | undefined {
         if (ModuleRegistry.assertRegistered(ModuleNames.RangeSelectionModule, 'api.createCrossFilterChart') &&
             ModuleRegistry.assertRegistered(ModuleNames.GridChartsModule, 'api.createCrossFilterChart')) {
             return this.chartService.createCrossFilterChart(params);
