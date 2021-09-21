@@ -22,6 +22,7 @@ type DocEntry = {
     [key: string]: DocEntryMap | ChildDocEntry;
 };
 export interface PropertyType {
+    /** @deprecated This should be removed when all the old json files have been updated to use code types instead of hard coded. */
     parameters?: {
         [key in string]: string;
     };
@@ -32,7 +33,7 @@ export interface PropertyType {
     /** True if property is defined with ? i.e pinned?: boolean Currently only applied to doc-interfaces.AUTO */
     optional?: boolean;
 }
-interface ChildDocEntry {
+export interface ChildDocEntry {
     meta?: never;
     more?: {
         name: string;

@@ -3,7 +3,7 @@ import { convertMarkdown, convertUrl, escapeGenericCode, getLinkedType, getLonge
 import anchorIcon from 'images/anchor';
 import React, { useState } from 'react';
 import styles from './ApiDocumentation.module.scss';
-import { ApiProps, Config, DocEntryMap, FunctionCode, ICallSignature, IEvent, ObjectCode, PropertyCall, PropertyType, SectionProps, InterfaceEntry } from './ApiDocumentation.types';
+import { ApiProps, Config, DocEntryMap, FunctionCode, ICallSignature, IEvent, ObjectCode, PropertyCall, PropertyType, SectionProps, InterfaceEntry, ChildDocEntry } from './ApiDocumentation.types';
 import Code from './Code';
 import { extractInterfaces, writeAllInterfaces, removeJsDocStars, sortAndFilterProperties, applyUndefinedUnionType } from './documentation-helpers';
 import { useJsonFileNodes } from './use-json-file-nodes';
@@ -62,9 +62,20 @@ export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework
         }
     })
 
+    let orderedProps = {};
+    const ordered = Object.entries(props).sort(([, v1], [, v2]) => {
+        // Put required props at the top as likely to be the most important
+        if ((v1 as ChildDocEntry).isRequired == (v2 as ChildDocEntry).isRequired) {
+            return 0;
+        }
+        return (v1 as ChildDocEntry).isRequired ? -1 : 1;
+    });
+
+    ordered.map(([k, v]) => orderedProps[k] = v);
+
     let properties: DocEntryMap = {
         [interfacename]: {
-            ...props,
+            ...orderedProps,
             "meta": {
                 "displayName": interfacename,
                 "description": config.description || `Properties available on the \`${interfacename}\` interface.`,
