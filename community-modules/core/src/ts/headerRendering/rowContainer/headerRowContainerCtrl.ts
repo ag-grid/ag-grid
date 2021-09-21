@@ -13,6 +13,8 @@ import { NumberSequence } from "../../utils";
 import { BodyDropTarget } from "../columnDrag/bodyDropTarget";
 import { HeaderRowType } from "../row/headerRowComp";
 import { HeaderRowCtrl } from "../row/headerRowCtrl";
+import { FocusService } from "../../focusService";
+import { HeaderPosition } from "../../main";
 
 export interface IHeaderRowContainerComp {
     setCenterWidth(width: string): void;
@@ -28,6 +30,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
     @Autowired('scrollVisibleService') private scrollVisibleService: ScrollVisibleService;
     @Autowired('pinnedWidthService') private pinnedWidthService: PinnedWidthService;
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('focusService') public focusService: FocusService;
 
     private pinned: string | null;
     private comp: IHeaderRowContainerComp;
@@ -65,6 +68,8 @@ export class HeaderRowContainerCtrl extends BeanStub {
 
     public refresh(keepColumns = false): void {
         const sequence = new NumberSequence();
+
+        const focusedHeaderPosition = this.focusService.getFocusHeaderToUseAfterRefresh();
 
         const refreshColumnGroups = () => {
             const groupRowCount = this.columnModel.getHeaderRowCount() - 1;
@@ -120,6 +125,14 @@ export class HeaderRowContainerCtrl extends BeanStub {
 
         const allCtrls = this.getAllCtrls();
         this.comp.setCtrls(allCtrls);
+
+        this.restoreFocusOnHeader(focusedHeaderPosition);
+    }
+
+    private restoreFocusOnHeader(position: HeaderPosition | null): void {
+        if (position==null || position.column.getPinned()!=this.pinned) { return; }
+
+        this.focusService.focusHeaderPosition(position);
     }
 
     private getAllCtrls(): HeaderRowCtrl[] {

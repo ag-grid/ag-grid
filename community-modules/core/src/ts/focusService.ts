@@ -24,6 +24,7 @@ import { CellCtrl } from "./rendering/cell/cellCtrl";
 import { CtrlsService } from "./ctrlsService";
 import { HeaderCellCtrl } from "./headerRendering/cells/column/headerCellCtrl";
 import { TabToNextHeaderParams, NavigateToNextHeaderParams } from "./entities/gridOptions";
+import { AbstractHeaderCellCtrl } from "./headerRendering/cells/abstractCell/abstractHeaderCellCtrl";
 
 @Bean('focusService')
 export class FocusService extends BeanStub {
@@ -179,27 +180,41 @@ export class FocusService extends BeanStub {
 
         // we check that the browser is actually focusing on the grid, if it is not, then
         // we have nothing to worry about
-        if (!this.getGridCellForDomElement(document.activeElement)) {
+        if (this.isDomDataMissingInHierarchy(document.activeElement, CellCtrl.DOM_DATA_KEY_CELL_CTRL)) {
             return null;
         }
 
         return this.focusedCellPosition;
     }
 
-    private getGridCellForDomElement(eBrowserCell: Node | null): CellPosition | null {
+    public getFocusHeaderToUseAfterRefresh(): HeaderPosition | null {
+        if (this.gridOptionsWrapper.isSuppressFocusAfterRefresh() || !this.focusedHeaderPosition) {
+            return null;
+        }
+
+        // we check that the browser is actually focusing on the grid, if it is not, then
+        // we have nothing to worry about
+        if (this.isDomDataMissingInHierarchy(document.activeElement, AbstractHeaderCellCtrl.DOM_DATA_KEY_HEADER_CTRL)) {
+            return null;
+        }
+
+        return this.focusedHeaderPosition;
+    }
+
+    private isDomDataMissingInHierarchy(eBrowserCell: Node | null, key: string):boolean {
         let ePointer = eBrowserCell;
 
         while (ePointer) {
-            const cellCtrl = this.gridOptionsWrapper.getDomData(ePointer, CellCtrl.DOM_DATA_KEY_CELL_CTRL) as CellCtrl;
+            const data = this.gridOptionsWrapper.getDomData(ePointer, key);
 
-            if (cellCtrl) {
-                return cellCtrl.getCellPosition();
+            if (data) {
+                return false;
             }
 
             ePointer = ePointer.parentNode;
         }
 
-        return null;
+        return true;
     }
 
     public clearFocusedCell(): void {

@@ -72,7 +72,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     public setComp(comp: IHeaderCellComp, eGui: HTMLElement, eResize: HTMLElement): void {
-        super.setAbstractComp(comp, eGui);
+        super.setGui(eGui);
         this.comp = comp;
 
         this.colDefVersion = this.columnModel.getColDefVersion();

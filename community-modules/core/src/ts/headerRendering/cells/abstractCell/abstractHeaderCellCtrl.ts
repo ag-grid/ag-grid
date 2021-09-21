@@ -13,6 +13,8 @@ export interface IAbstractHeaderCellComp {
 
 export class AbstractHeaderCellCtrl extends BeanStub {
 
+    public static DOM_DATA_KEY_HEADER_CTRL = 'headerCtrl';
+
     @Autowired('focusService') protected focusService: FocusService;
 
     private instanceId: string;
@@ -20,8 +22,6 @@ export class AbstractHeaderCellCtrl extends BeanStub {
     private columnGroupChild: IHeaderColumn;
 
     private parentRowCtrl: HeaderRowCtrl;
-
-    private abstractComp: IAbstractHeaderCellComp;
 
     protected eGui: HTMLElement;
 
@@ -46,9 +46,15 @@ export class AbstractHeaderCellCtrl extends BeanStub {
         );
     }
 
-    protected setAbstractComp(abstractComp: IAbstractHeaderCellComp, eGui: HTMLElement): void {
-        this.abstractComp = abstractComp;
+    protected setGui(eGui: HTMLElement): void {
         this.eGui = eGui;
+        this.addDomData();
+    }
+
+    private addDomData(): void {
+        const key = AbstractHeaderCellCtrl.DOM_DATA_KEY_HEADER_CTRL;
+        this.gridOptionsWrapper.setDomData(this.eGui, key, this);
+        this.addDestroyFunc(() => this.gridOptionsWrapper.setDomData(this.eGui, key, null));
     }
 
     public focus(): boolean {

@@ -56,7 +56,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     public setComp(comp: IHeaderGroupCellComp, eGui: HTMLElement, eResize: HTMLElement): void {
-        super.setAbstractComp(comp, eGui);
+        super.setGui(eGui);
         this.comp = comp;
 
         this.displayName = this.columnModel.getDisplayNameForColumnGroup(this.columnGroup, 'header');
