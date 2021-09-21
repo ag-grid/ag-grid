@@ -5,8 +5,10 @@ enterprise: true
 
 This section compares the different horizontal axes types that are available to all sparklines. 
 
-When choosing an appropriate axes, it is important to consider the data the sparkline is based on, to ensure X values 
-are scaled correctly along the x-axis. The following axes types are available to all sparklines:
+When choosing an appropriate axes it is important to consider the data the sparkline is based on, this ensures X values 
+are scaled correctly along the x-axis. 
+
+The following axes types are available to all sparklines:
 
 - ***[Category Axis](/sparklines-axes-types/#category-axis)*** - data points are evenly spread along the x-axis.
 - ***[Number Axis](/sparklines-axes-types/#number-axis)*** - data is spaced based on the magnitude of the x values.
