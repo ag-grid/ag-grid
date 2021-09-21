@@ -1046,7 +1046,7 @@ export class CellCtrl extends BeanStub {
         this.setWrapText();
 
         if (!this.editing) {
-            this.refreshCell({forceRefresh: true});
+            this.refreshCell({forceRefresh: true, suppressFlash: true});
         }
     }
 
