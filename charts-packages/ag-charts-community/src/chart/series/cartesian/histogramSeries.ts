@@ -590,7 +590,7 @@ export class HistogramSeries extends CartesianSeries {
     getTooltipHtml(nodeDatum: HistogramNodeDatum): string {
         const { xKey, yKey, xAxis, yAxis } = this;
 
-        if (!xKey || !yKey || !xAxis || !yAxis) {
+        if (!xKey || !xAxis || !yAxis) {
             return '';
         }
 
