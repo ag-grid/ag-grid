@@ -762,7 +762,7 @@ export default function formatLocale(timeLocale: TimeLocaleDefinition): TimeLoca
         return n ? (d.y = +n[0], i + n[0].length) : -1;
     }
     function parseZone(d: ParsedDate, string: string, i: number): number {
-        const n = /^(Z)|([+-]\d\d)(?::?(\d\d))?/.exec(string.slice(i, i + 6));
+        const n = /^(Z)|^([+-]\d\d)(?::?(\d\d))?/.exec(string.slice(i, i + 6));
         return n ? (d.Z = n[1] ? 0 : -(n[2] + (n[3] || '00')), i + n[0].length) : -1;
     }
     function parseLiteralPercent(d: ParsedDate, string: string, i: number): number {

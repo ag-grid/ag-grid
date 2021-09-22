@@ -666,6 +666,27 @@ export class ChartTheme {
         return firstColorIndex;
     }
 
+    private getYKeyCount(yKeys?: string[] | string[][]): number {
+        if (!Array.isArray(yKeys)) {
+            return 0;
+        }
+        // @ts-ignore
+        if (yKeys.flatMap) {
+            // @ts-ignore
+            return yKeys.flatMap((key: string | string[]) => key).length;
+        }
+        // IE11
+        let count = 0;
+        yKeys.forEach((key: string | string[]) => {
+            if (Array.isArray(key)) {
+                count += key.length;
+            } else {
+                count += 1;
+            }
+        });
+        return count;
+    }
+
     /**
      * This would typically correspond to the number of dependent variables the series plots.
      * If the color count is not fixed, for example it's data-dependent with one color per data point,
@@ -677,7 +698,7 @@ export class ChartTheme {
             case 'bar':
             case 'column':
             case 'area':
-                return seriesOptions.yKeys ? seriesOptions.yKeys.length : 0;
+                return this.getYKeyCount(seriesOptions.yKeys);
             case 'pie':
                 return Infinity;
             default:
