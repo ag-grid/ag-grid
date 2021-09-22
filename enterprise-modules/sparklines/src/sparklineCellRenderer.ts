@@ -4,7 +4,7 @@ import {
     ICellRenderer,
     ISparklineCellRendererParams,
     RefSelector,
-    ResizeObserverService, SparklineOptions
+    ResizeObserverService
 } from "@ag-grid-community/core";
 import { AgSparkline } from "./sparkline/agSparkline";
 import { SparklineTooltipSingleton } from "./tooltip/sparklineTooltipSingleton";

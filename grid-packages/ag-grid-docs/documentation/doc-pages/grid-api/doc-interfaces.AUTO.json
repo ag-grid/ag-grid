@@ -10474,8 +10474,6 @@
   "TooltipRendererParams": {
     "context": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
-    "title": { "type": { "returnType": "string", "optional": true } },
-    "backgroundColor": { "type": { "returnType": "string", "optional": true } },
     "xValue": { "type": { "returnType": "any", "optional": false } },
     "yValue": { "type": { "returnType": "any", "optional": false } }
   },
@@ -10487,9 +10485,7 @@
     "yValue": { "type": { "returnType": "any", "optional": false } },
     "yName": { "type": { "returnType": "string", "optional": false } },
     "context": { "type": { "returnType": "any", "optional": true } },
-    "datum": { "type": { "returnType": "any", "optional": false } },
-    "title": { "type": { "returnType": "string", "optional": true } },
-    "backgroundColor": { "type": { "returnType": "string", "optional": true } }
+    "datum": { "type": { "returnType": "any", "optional": false } }
   },
   "BarSeriesOptions": {
     "shadow": {
@@ -10569,9 +10565,7 @@
     "yValue": { "type": { "returnType": "any", "optional": false } },
     "yName": { "type": { "returnType": "string", "optional": false } },
     "context": { "type": { "returnType": "any", "optional": true } },
-    "datum": { "type": { "returnType": "any", "optional": false } },
-    "title": { "type": { "returnType": "string", "optional": true } },
-    "backgroundColor": { "type": { "returnType": "string", "optional": true } }
+    "datum": { "type": { "returnType": "any", "optional": false } }
   },
   "LineSeriesOptions": {
     "marker": { "type": { "returnType": "MarkerOptions", "optional": false } },
@@ -10628,9 +10622,7 @@
     "yValue": { "type": { "returnType": "any", "optional": false } },
     "yName": { "type": { "returnType": "string", "optional": false } },
     "context": { "type": { "returnType": "any", "optional": true } },
-    "datum": { "type": { "returnType": "any", "optional": false } },
-    "title": { "type": { "returnType": "string", "optional": true } },
-    "backgroundColor": { "type": { "returnType": "string", "optional": true } }
+    "datum": { "type": { "returnType": "any", "optional": false } }
   },
   "ScatterSeriesLabelOptions": {
     "enabled": { "type": { "returnType": "boolean", "optional": false } },
@@ -10686,9 +10678,7 @@
     "yValue": { "type": { "returnType": "any", "optional": false } },
     "yName": { "type": { "returnType": "string", "optional": false } },
     "context": { "type": { "returnType": "any", "optional": true } },
-    "datum": { "type": { "returnType": "any", "optional": false } },
-    "title": { "type": { "returnType": "string", "optional": true } },
-    "backgroundColor": { "type": { "returnType": "string", "optional": true } }
+    "datum": { "type": { "returnType": "any", "optional": false } }
   },
   "AreaSeriesLabelOptions": {
     "formatter": {
@@ -10741,9 +10731,7 @@
     "yValue": { "type": { "returnType": "any", "optional": false } },
     "yName": { "type": { "returnType": "string", "optional": false } },
     "context": { "type": { "returnType": "any", "optional": true } },
-    "datum": { "type": { "returnType": "any", "optional": false } },
-    "title": { "type": { "returnType": "string", "optional": true } },
-    "backgroundColor": { "type": { "returnType": "string", "optional": true } }
+    "datum": { "type": { "returnType": "any", "optional": false } }
   },
   "PieTitleOptions": {
     "showInLegend": { "type": { "returnType": "boolean", "optional": true } },
@@ -10809,8 +10797,6 @@
     "labelName": { "type": { "returnType": "string", "optional": true } },
     "context": { "type": { "returnType": "any", "optional": true } },
     "datum": { "type": { "returnType": "any", "optional": false } },
-    "title": { "type": { "returnType": "string", "optional": true } },
-    "backgroundColor": { "type": { "returnType": "string", "optional": true } },
     "xValue": { "type": { "returnType": "any", "optional": false } },
     "yValue": { "type": { "returnType": "any", "optional": false } }
   },
@@ -13807,7 +13793,6 @@
     "container": { "type": { "returnType": "HTMLElement", "optional": true } },
     "width": { "type": { "returnType": "number", "optional": true } },
     "height": { "type": { "returnType": "number", "optional": true } },
-    "title": { "type": { "returnType": "string", "optional": true } },
     "padding": { "type": { "returnType": "Padding", "optional": true } },
     "axis": {
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
@@ -13826,7 +13811,6 @@
     "container": { "type": { "returnType": "HTMLElement", "optional": true } },
     "width": { "type": { "returnType": "number", "optional": true } },
     "height": { "type": { "returnType": "number", "optional": true } },
-    "title": { "type": { "returnType": "string", "optional": true } },
     "padding": { "type": { "returnType": "Padding", "optional": true } },
     "axis": {
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
@@ -13846,7 +13830,6 @@
     "container": { "type": { "returnType": "HTMLElement", "optional": true } },
     "width": { "type": { "returnType": "number", "optional": true } },
     "height": { "type": { "returnType": "number", "optional": true } },
-    "title": { "type": { "returnType": "string", "optional": true } },
     "padding": { "type": { "returnType": "Padding", "optional": true } },
     "axis": {
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
@@ -13871,7 +13854,6 @@
     "container": { "type": { "returnType": "HTMLElement", "optional": true } },
     "width": { "type": { "returnType": "number", "optional": true } },
     "height": { "type": { "returnType": "number", "optional": true } },
-    "title": { "type": { "returnType": "string", "optional": true } },
     "padding": { "type": { "returnType": "Padding", "optional": true } },
     "axis": {
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
