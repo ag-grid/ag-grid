@@ -125,10 +125,11 @@ export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, sour
         }
         if (c.codeSrc) {
             codeSrcProvided = [...codeSrcProvided, c.codeSrc];
+            codeLookup = { ...codeLookup, ...getJsonFromFile(nodes, undefined, c.codeSrc) };
         }
 
-        if (c.codeSrc) {
-            codeLookup = { ...codeLookup, ...getJsonFromFile(nodes, undefined, c.codeSrc) };
+        if (c.suppressMissingPropCheck) {
+            config = { ...config, suppressMissingPropCheck: true }
         }
     })
     const interfaceLookup = getJsonFromFile(nodes, undefined, 'grid-api/interfaces.AUTO.json');
@@ -173,6 +174,9 @@ const Section: React.FC<SectionProps> = ({ framework, title, properties, config 
     if (meta && meta.isEvent) {
         // Support event display for a section
         config = { ...config, isEvent: true }
+    }
+    if (meta && meta.suppressMissingPropCheck) {
+        config = { ...config, suppressMissingPropCheck: true }
     }
 
     breadcrumbs[title] = displayName;
@@ -224,7 +228,7 @@ const Section: React.FC<SectionProps> = ({ framework, title, properties, config 
 
         rows.push(<Property key={name} framework={framework} id={id} name={name} definition={definition} config={{ ...config, gridOpProp: gridOptionProperty, interfaceHierarchyOverrides: definition.interfaceHierarchyOverrides }} />);
 
-        if (typeof definition !== 'string' && !definition.description) {
+        if (typeof definition !== 'string' && definition.meta) {
             // store object property to process later
             objectProperties[name] = definition;
         }
@@ -267,10 +271,18 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
 
     let description = '';
     let isObject = false;
+    let gridParams = config.gridOpProp;
 
-    if (definition.description) {
+    if (!gridParams && config.codeSrcProvided.length > 0 && !(config.suppressMissingPropCheck || definition.overrideMissingPropCheck)) {
+        throw new Error(`We could not find a type for "${id}" -> "${name}" from the code sources ${config.codeSrcProvided.join()}. Has this property been removed from the source code / or is there a typo?`);
+    }
+
+
+    let propDescription = definition.description || (gridParams && gridParams.description) || undefined;
+    if (propDescription) {
+        propDescription = removeJsDocStars(propDescription);
         // process property object
-        description = convertMarkdown(definition.description, framework);
+        description = convertMarkdown(propDescription, framework);
 
         const { more } = definition;
 
@@ -299,8 +311,7 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
     let type: any = definition.type;
     let showAdditionalDetails = typeof (type) == 'object';
     if (!type) {
-        // No type specified in the doc config file so check the GridOptions property
-        let gridParams = config.gridOpProp;
+        // No type specified in the doc config file so check the GridOptions property        
         if (gridParams && gridParams.type) {
             type = gridParams.type;
 
@@ -312,12 +323,13 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
             const anyInterfaces = extractInterfaces(gridParams.type, config.lookups.interfaces, applyInterfaceInclusions(config));
             showAdditionalDetails = isCallSig(gridParams) || type.arguments || anyInterfaces.length > 0;
         } else {
-            // As a last resort try and infer the type
-            type = inferType(definition.default);
 
             if (type == null && config.codeSrcProvided.length > 0) {
-                throw new Error(`We could not find a type for "${name}" from the code sources ${config.codeSrcProvided.join()}.`);
+                throw new Error(`We could not find a type for "${name}" from the code sources ${config.codeSrcProvided.join()}. Has this property been removed from the source code / or is there a typo?`);
             }
+
+            // If a codeSrc is not provided as a last resort try and infer the type
+            type = inferType(definition.default);
         }
     }
 

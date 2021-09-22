@@ -56,7 +56,8 @@
         "meta": {
             "displayName": "Events on Column",
             "description": "Columns emit the following events:",
-            "isEvent": true
+            "isEvent": true,
+            "suppressMissingPropCheck": true
         },
         "filterActiveChanged": {
             "description": "The filter active value has changed.",

@@ -1,6 +1,7 @@
 {
     "_config_": {
-        "codeSrc": "filter-set-api/resources/setFilter.AUTO.json"
+        "codeSrc": "filter-set-api/resources/setFilter.AUTO.json",
+        "suppressMissingPropCheck": true
     },
     "api": {
         "isFilterActive": {

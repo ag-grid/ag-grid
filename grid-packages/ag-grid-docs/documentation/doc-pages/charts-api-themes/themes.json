@@ -634,6 +634,7 @@
       }
     },
     "axes": {
+      "meta": {},
       "number": {
         "meta": {
           "type": "INumberAxis",

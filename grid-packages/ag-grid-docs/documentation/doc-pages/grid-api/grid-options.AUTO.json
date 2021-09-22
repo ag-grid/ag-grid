@@ -1,20 +1,31 @@
 {
-  "suppressBrowserResizeObserver": {
-    "description": "/** Set once in init, can never change */",
-    "type": { "returnType": "boolean" }
+  "statusBar": {
+    "description": "/** Specifies the status bar components to use in the status bar. */",
+    "type": { "returnType": "{ statusPanels: StatusPanelDef[]; }" }
   },
-  "rowDragEntireRow": { "type": { "returnType": "boolean" } },
-  "suppressRowDrag": { "type": { "returnType": "boolean" } },
-  "rowDragManaged": { "type": { "returnType": "boolean" } },
-  "suppressMoveWhenRowDragging": { "type": { "returnType": "boolean" } },
-  "rowDragMultiRow": { "type": { "returnType": "boolean" } },
-  "ensureDomOrder": { "type": { "returnType": "boolean" } },
-  "suppressAggFilteredOnly": { "type": { "returnType": "boolean" } },
-  "showOpenedGroup": { "type": { "returnType": "boolean" } },
-  "deltaRowDataMode": {
-    "description": "/** @deprecated\n */",
-    "type": { "returnType": "boolean" }
+  "sideBar": {
+    "type": { "returnType": "SideBarDef | string | boolean | null" }
   },
+  "suppressContextMenu": { "type": { "returnType": "boolean" } },
+  "preventDefaultOnContextMenu": { "type": { "returnType": "boolean" } },
+  "allowContextMenuWithControlKey": { "type": { "returnType": "boolean" } },
+  "suppressMenuHide": { "type": { "returnType": "boolean" } },
+  "enableBrowserTooltips": { "type": { "returnType": "boolean" } },
+  "tooltipShowDelay": { "type": { "returnType": "number" } },
+  "tooltipMouseTrack": { "type": { "returnType": "boolean" } },
+  "popupParent": { "type": { "returnType": "HTMLElement" } },
+  "copyHeadersToClipboard": { "type": { "returnType": "boolean" } },
+  "clipboardDeliminator": { "type": { "returnType": "string" } },
+  "suppressCopyRowsToClipboard": { "type": { "returnType": "boolean" } },
+  "suppressLastEmptyLineOnPaste": { "type": { "returnType": "boolean" } },
+  "suppressClipboardPaste": { "type": { "returnType": "boolean" } },
+  "suppressClipboardApi": { "type": { "returnType": "boolean" } },
+  "columnDefs": { "type": { "returnType": "(ColDef | ColGroupDef)[] | null" } },
+  "defaultColGroupDef": { "type": { "returnType": "Partial<ColGroupDef>" } },
+  "defaultColDef": { "type": { "returnType": "ColDef" } },
+  "columnTypes": { "type": { "returnType": "{ [key: string]: ColDef; }" } },
+  "maintainColumnOrder": { "type": { "returnType": "boolean" } },
+  "suppressFieldDotNotation": { "type": { "returnType": "boolean" } },
   "deltaColumnMode": {
     "description": "/** @deprecated\n */",
     "type": { "returnType": "boolean" }
@@ -23,136 +34,10 @@
     "description": "/** @deprecated\n */",
     "type": { "returnType": "boolean" }
   },
-  "maintainColumnOrder": { "type": { "returnType": "boolean" } },
-  "immutableData": { "type": { "returnType": "boolean" } },
   "immutableColumns": {
     "description": "/** @deprecated\n */",
     "type": { "returnType": "boolean" }
   },
-  "scrollbarWidth": { "type": { "returnType": "number" } },
-  "suppressRowClickSelection": { "type": { "returnType": "boolean" } },
-  "suppressRowHoverHighlight": { "type": { "returnType": "boolean" } },
-  "columnHoverHighlight": { "type": { "returnType": "boolean" } },
-  "suppressCellSelection": { "type": { "returnType": "boolean" } },
-  "suppressClearOnFillReduction": { "type": { "returnType": "boolean" } },
-  "suppressMaintainUnsortedOrder": { "type": { "returnType": "boolean" } },
-  "sortingOrder": { "type": { "returnType": "(string | null)[]" } },
-  "suppressMultiSort": { "type": { "returnType": "boolean" } },
-  "multiSortKey": { "type": { "returnType": "string" } },
-  "accentedSort": { "type": { "returnType": "boolean" } },
-  "deltaSort": { "type": { "returnType": "boolean" } },
-  "suppressHorizontalScroll": { "type": { "returnType": "boolean" } },
-  "alwaysShowHorizontalScroll": { "type": { "returnType": "boolean" } },
-  "alwaysShowVerticalScroll": { "type": { "returnType": "boolean" } },
-  "debounceVerticalScrollbar": { "type": { "returnType": "boolean" } },
-  "unSortIcon": { "type": { "returnType": "boolean" } },
-  "rowBuffer": { "type": { "returnType": "number" } },
-  "tooltipShowDelay": { "type": { "returnType": "number" } },
-  "tooltipMouseTrack": { "type": { "returnType": "boolean" } },
-  "enableRtl": { "type": { "returnType": "boolean" } },
-  "enableBrowserTooltips": { "type": { "returnType": "boolean" } },
-  "colResizeDefault": { "type": { "returnType": "string" } },
-  "enableCellExpressions": { "type": { "returnType": "boolean" } },
-  "enableCellTextSelection": { "type": { "returnType": "boolean" } },
-  "enableGroupEdit": { "type": { "returnType": "boolean" } },
-  "enterMovesDownAfterEdit": { "type": { "returnType": "boolean" } },
-  "enterMovesDown": { "type": { "returnType": "boolean" } },
-  "suppressMiddleClickScrolls": { "type": { "returnType": "boolean" } },
-  "preventDefaultOnContextMenu": { "type": { "returnType": "boolean" } },
-  "suppressPreventDefaultOnMouseWheel": { "type": { "returnType": "boolean" } },
-  "suppressScrollOnNewData": { "type": { "returnType": "boolean" } },
-  "suppressMenuHide": { "type": { "returnType": "boolean" } },
-  "singleClickEdit": { "type": { "returnType": "boolean" } },
-  "suppressClickEdit": { "type": { "returnType": "boolean" } },
-  "tabIndex": { "type": { "returnType": "number" } },
-  "suppressKeyboardEvent": {
-    "description": "/** Allows user to suppress certain keyboard events */",
-    "type": {
-      "arguments": { "params": "SuppressKeyboardEventParams" },
-      "returnType": "boolean"
-    }
-  },
-  "stopEditingWhenGridLosesFocus": {
-    "description": "/** @deprecated Use stopEditingWhenCellsLoseFocus instead\n */",
-    "type": { "returnType": "boolean" }
-  },
-  "stopEditingWhenCellsLoseFocus": { "type": { "returnType": "boolean" } },
-  "debug": { "type": { "returnType": "boolean" } },
-  "icons": {
-    "type": { "returnType": "{ [key: string]: Function | string; }" }
-  },
-  "angularCompileRows": { "type": { "returnType": "boolean" } },
-  "angularCompileFilters": { "type": { "returnType": "boolean" } },
-  "suppressLoadingOverlay": { "type": { "returnType": "boolean" } },
-  "suppressNoRowsOverlay": { "type": { "returnType": "boolean" } },
-  "suppressAutoSize": { "type": { "returnType": "boolean" } },
-  "autoSizePadding": { "type": { "returnType": "number" } },
-  "skipHeaderOnAutoSize": { "type": { "returnType": "boolean" } },
-  "animateRows": { "type": { "returnType": "boolean" } },
-  "suppressColumnMoveAnimation": { "type": { "returnType": "boolean" } },
-  "suppressMovableColumns": { "type": { "returnType": "boolean" } },
-  "suppressDragLeaveHidesColumns": { "type": { "returnType": "boolean" } },
-  "suppressMakeColumnVisibleAfterUnGroup": {
-    "type": { "returnType": "boolean" }
-  },
-  "suppressParentsInRowNodes": { "type": { "returnType": "boolean" } },
-  "suppressFieldDotNotation": { "type": { "returnType": "boolean" } },
-  "suppressCopyRowsToClipboard": { "type": { "returnType": "boolean" } },
-  "copyHeadersToClipboard": { "type": { "returnType": "boolean" } },
-  "clipboardDeliminator": { "type": { "returnType": "string" } },
-  "suppressClipboardPaste": { "type": { "returnType": "boolean" } },
-  "suppressClipboardApi": { "type": { "returnType": "boolean" } },
-  "suppressLastEmptyLineOnPaste": { "type": { "returnType": "boolean" } },
-  "suppressAggFuncInHeader": { "type": { "returnType": "boolean" } },
-  "suppressAggAtRootLevel": { "type": { "returnType": "boolean" } },
-  "suppressFocusAfterRefresh": { "type": { "returnType": "boolean" } },
-  "rowModelType": { "type": { "returnType": "string" } },
-  "pivotMode": { "type": { "returnType": "boolean" } },
-  "pivotColumnGroupTotals": { "type": { "returnType": "string" } },
-  "pivotRowTotals": { "type": { "returnType": "string" } },
-  "suppressExpandablePivotGroups": { "type": { "returnType": "boolean" } },
-  "suppressEnterpriseResetOnNewColumns": {
-    "type": { "returnType": "boolean" }
-  },
-  "enableRangeSelection": { "type": { "returnType": "boolean" } },
-  "enableRangeHandle": { "type": { "returnType": "boolean" } },
-  "enableFillHandle": { "type": { "returnType": "boolean" } },
-  "fillHandleDirection": { "type": { "returnType": "string" } },
-  "suppressMultiRangeSelection": { "type": { "returnType": "boolean" } },
-  "rowGroupPanelShow": { "type": { "returnType": "string" } },
-  "pivotPanelShow": { "type": { "returnType": "string" } },
-  "suppressContextMenu": { "type": { "returnType": "boolean" } },
-  "allowContextMenuWithControlKey": { "type": { "returnType": "boolean" } },
-  "rememberGroupStateWhenNewData": {
-    "description": "/** @deprecated - no longer needed, transaction updates keep group state\n */",
-    "type": { "returnType": "boolean" }
-  },
-  "suppressModelUpdateAfterUpdateTransaction": {
-    "type": { "returnType": "boolean" }
-  },
-  "viewportRowModelPageSize": { "type": { "returnType": "number" } },
-  "viewportRowModelBufferSize": { "type": { "returnType": "number" } },
-  "enableCellChangeFlash": { "type": { "returnType": "boolean" } },
-  "cellFlashDelay": { "type": { "returnType": "number" } },
-  "cellFadeDelay": { "type": { "returnType": "number" } },
-  "allowShowChangeAfterFilter": { "type": { "returnType": "boolean" } },
-  "quickFilterText": { "type": { "returnType": "string" } },
-  "cacheQuickFilter": { "type": { "returnType": "boolean" } },
-  "aggFuncs": { "type": { "returnType": "{ [key: string]: IAggFunc; }" } },
-  "suppressColumnVirtualisation": { "type": { "returnType": "boolean" } },
-  "functionsReadOnly": { "type": { "returnType": "boolean" } },
-  "functionsPassive": { "type": { "returnType": "boolean" } },
-  "maxConcurrentDatasourceRequests": { "type": { "returnType": "number" } },
-  "maxBlocksInCache": { "type": { "returnType": "number" } },
-  "purgeClosedRowNodes": { "type": { "returnType": "boolean" } },
-  "domLayout": { "type": { "returnType": "string" } },
-  "suppressChangeDetection": { "type": { "returnType": "boolean" } },
-  "aggregateOnlyChangedColumns": { "type": { "returnType": "boolean" } },
-  "valueCache": { "type": { "returnType": "boolean" } },
-  "valueCacheNeverExpires": { "type": { "returnType": "boolean" } },
-  "batchUpdateWaitMillis": { "type": { "returnType": "number" } },
-  "asyncTransactionWaitMillis": { "type": { "returnType": "number" } },
-  "suppressRowTransform": { "type": { "returnType": "boolean" } },
   "suppressSetColumnStateEvents": {
     "description": "/** @deprecated\n */",
     "type": { "returnType": "boolean" }
@@ -161,64 +46,87 @@
     "description": "/** @deprecated\n */",
     "type": { "returnType": "boolean" }
   },
+  "colWidth": { "type": { "returnType": "number" } },
+  "minColWidth": { "type": { "returnType": "number" } },
+  "maxColWidth": { "type": { "returnType": "number" } },
+  "headerHeight": { "type": { "returnType": "number" } },
+  "groupHeaderHeight": { "type": { "returnType": "number" } },
+  "floatingFiltersHeight": { "type": { "returnType": "number" } },
+  "pivotHeaderHeight": { "type": { "returnType": "number" } },
+  "pivotGroupHeaderHeight": { "type": { "returnType": "number" } },
   "allowDragFromColumnsToolPanel": { "type": { "returnType": "boolean" } },
-  "suppressMaxRenderedRowRestriction": { "type": { "returnType": "boolean" } },
+  "suppressMovableColumns": { "type": { "returnType": "boolean" } },
+  "suppressColumnMoveAnimation": { "type": { "returnType": "boolean" } },
+  "suppressDragLeaveHidesColumns": { "type": { "returnType": "boolean" } },
+  "colResizeDefault": { "type": { "returnType": "string" } },
+  "suppressAutoSize": { "type": { "returnType": "boolean" } },
+  "autoSizePadding": { "type": { "returnType": "number" } },
+  "skipHeaderOnAutoSize": { "type": { "returnType": "boolean" } },
+  "components": { "type": { "returnType": "{ [p: string]: any; }" } },
+  "frameworkComponents": {
+    "type": { "returnType": "{ [p: string]: { new(): any; }; } | any" }
+  },
+  "editType": { "type": { "returnType": "string" } },
+  "singleClickEdit": { "type": { "returnType": "boolean" } },
+  "suppressClickEdit": { "type": { "returnType": "boolean" } },
+  "enterMovesDownAfterEdit": { "type": { "returnType": "boolean" } },
+  "enterMovesDown": { "type": { "returnType": "boolean" } },
+  "stopEditingWhenCellsLoseFocus": { "type": { "returnType": "boolean" } },
+  "undoRedoCellEditing": { "type": { "returnType": "boolean" } },
+  "undoRedoCellEditingLimit": { "type": { "returnType": "number" } },
+  "stopEditingWhenGridLosesFocus": {
+    "description": "/** @deprecated Use stopEditingWhenCellsLoseFocus instead\n */",
+    "type": { "returnType": "boolean" }
+  },
+  "defaultCsvExportParams": { "type": { "returnType": "CsvExportParams" } },
+  "suppressCsvExport": { "type": { "returnType": "boolean" } },
+  "defaultExcelExportParams": { "type": { "returnType": "ExcelExportParams" } },
+  "suppressExcelExport": { "type": { "returnType": "boolean" } },
+  "excelStyles": { "type": { "returnType": "ExcelStyle[]" } },
+  "defaultExportParams": {
+    "description": "/** @deprecated Use defaultCsvExportParams or defaultExcelExportParams\n */",
+    "type": { "returnType": "CsvExportParams | ExcelExportParams" }
+  },
+  "quickFilterText": { "type": { "returnType": "string" } },
+  "cacheQuickFilter": { "type": { "returnType": "boolean" } },
   "excludeChildrenWhenTreeDataFiltering": {
     "type": { "returnType": "boolean" }
   },
-  "undoRedoCellEditing": { "type": { "returnType": "boolean" } },
-  "undoRedoCellEditingLimit": { "type": { "returnType": "number" } },
-  "cacheOverflowSize": { "type": { "returnType": "number" } },
-  "infiniteInitialRowCount": { "type": { "returnType": "number" } },
-  "paginationPageSize": { "type": { "returnType": "number" } },
-  "cacheBlockSize": { "type": { "returnType": "number" } },
-  "blockLoadDebounceMillis": { "type": { "returnType": "number" } },
-  "paginationAutoPageSize": { "type": { "returnType": "boolean" } },
-  "suppressPaginationPanel": { "type": { "returnType": "boolean" } },
-  "pagination": { "type": { "returnType": "boolean" } },
-  "paginateChildRows": { "type": { "returnType": "boolean" } },
-  "editType": { "type": { "returnType": "string" } },
-  "suppressTouch": { "type": { "returnType": "boolean" } },
-  "suppressAsyncEvents": { "type": { "returnType": "boolean" } },
-  "embedFullWidthRows": { "type": { "returnType": "boolean" } },
-  "deprecatedEmbedFullWidthRows": {
-    "description": "/** @deprecated\n */",
-    "type": { "returnType": "boolean" }
-  },
-  "excelStyles": { "type": { "returnType": "ExcelStyle[]" } },
   "floatingFilter": {
     "description": "/** @deprecated Use floatingFilter on the colDef instead\n */",
     "type": { "returnType": "boolean" }
   },
-  "suppressExcelExport": { "type": { "returnType": "boolean" } },
-  "suppressCsvExport": { "type": { "returnType": "boolean" } },
-  "colWidth": { "type": { "returnType": "number" } },
-  "minColWidth": { "type": { "returnType": "number" } },
-  "maxColWidth": { "type": { "returnType": "number" } },
-  "suppressPropertyNamesCheck": { "type": { "returnType": "boolean" } },
-  "serverSideSortingAlwaysResets": { "type": { "returnType": "boolean" } },
-  "serverSideFilteringAlwaysResets": { "type": { "returnType": "boolean" } },
-  "serverSideStoreType": { "type": { "returnType": "ServerSideStoreType" } },
-  "getServerSideStoreParams": {
+  "enableOldSetFilterModel": {
+    "description": "/** @deprecated\n */",
+    "type": { "returnType": "boolean" }
+  },
+  "enableCharts": { "type": { "returnType": "boolean" } },
+  "chartThemes": { "type": { "returnType": "string[]" } },
+  "customChartThemes": {
+    "type": { "returnType": "{ [name: string]: AgChartTheme }" }
+  },
+  "chartThemeOverrides": { "type": { "returnType": "AgChartThemeOverrides" } },
+  "processChartOptions": {
+    "description": "/** @deprecated\n */",
     "type": {
-      "arguments": { "params": "GetServerSideStoreParamsParams" },
-      "returnType": "ServerSideStoreParams"
+      "arguments": { "params": "ProcessChartOptionsParams" },
+      "returnType": "ChartOptions<any>"
     }
   },
-  "isServerSideGroupOpenByDefault": {
-    "type": {
-      "arguments": { "params": "IsServerSideGroupOpenByDefaultParams" },
-      "returnType": "boolean"
-    }
+  "allowProcessChartOptions": {
+    "description": "/** @deprecated\n */",
+    "type": { "returnType": "boolean" }
   },
-  "isGroupOpenByDefault": {
-    "type": {
-      "arguments": { "params": "IsGroupOpenByDefaultParams" },
-      "returnType": "boolean"
-    }
+  "loadingCellRenderer": {
+    "type": { "returnType": "{ new(): ICellRenderer; } | string" }
   },
-  "statusBar": {
-    "type": { "returnType": "{ statusPanels: StatusPanelDef[]; }" }
+  "loadingCellRendererFramework": { "type": { "returnType": "any" } },
+  "loadingCellRendererParams": { "type": { "returnType": "any" } },
+  "loadingCellRendererSelector": {
+    "type": {
+      "arguments": { "params": "ILoadingCellRendererParams" },
+      "returnType": "{ component?: { new (): ICellRenderer; } | string; frameworkComponent?: any; params?: any; } | undefined"
+    }
   },
   "localeText": { "type": { "returnType": "{ [key: string]: string }" } },
   "localeTextFunc": {
@@ -227,27 +135,129 @@
       "returnType": "string"
     }
   },
-  "suppressAnimationFrame": { "type": { "returnType": "boolean" } },
-  "defaultColGroupDef": { "type": { "returnType": "Partial<ColGroupDef>" } },
-  "defaultColDef": { "type": { "returnType": "ColDef" } },
-  "defaultExportParams": {
-    "description": "/** @deprecated Use defaultCsvExportParams or defaultExcelExportParams\n */",
-    "type": { "returnType": "CsvExportParams | ExcelExportParams" }
+  "masterDetail": { "type": { "returnType": "boolean" } },
+  "detailRowHeight": { "type": { "returnType": "number" } },
+  "keepDetailRows": { "type": { "returnType": "boolean" } },
+  "keepDetailRowsCount": { "type": { "returnType": "number" } },
+  "detailCellRendererParams": { "type": { "returnType": "any" } },
+  "detailCellRenderer": {
+    "type": {
+      "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string"
+    }
   },
-  "defaultCsvExportParams": { "type": { "returnType": "CsvExportParams" } },
-  "defaultExcelExportParams": { "type": { "returnType": "ExcelExportParams" } },
+  "detailCellRendererFramework": { "type": { "returnType": "any" } },
+  "detailRowAutoHeight": { "type": { "returnType": "boolean" } },
+  "context": { "type": { "returnType": "any" } },
+  "alignedGrids": { "type": { "returnType": "GridOptions[]" } },
+  "tabIndex": { "type": { "returnType": "number" } },
+  "rowBuffer": { "type": { "returnType": "number" } },
+  "valueCache": { "type": { "returnType": "boolean" } },
+  "valueCacheNeverExpires": { "type": { "returnType": "boolean" } },
+  "enableCellExpressions": { "type": { "returnType": "boolean" } },
+  "suppressParentsInRowNodes": { "type": { "returnType": "boolean" } },
+  "suppressTouch": { "type": { "returnType": "boolean" } },
+  "suppressFocusAfterRefresh": { "type": { "returnType": "boolean" } },
+  "suppressAsyncEvents": { "type": { "returnType": "boolean" } },
+  "suppressBrowserResizeObserver": {
+    "description": "/** Set once in init, can never change */",
+    "type": { "returnType": "boolean" }
+  },
+  "suppressPropertyNamesCheck": { "type": { "returnType": "boolean" } },
+  "suppressChangeDetection": { "type": { "returnType": "boolean" } },
+  "debug": { "type": { "returnType": "boolean" } },
+  "overlayLoadingTemplate": { "type": { "returnType": "string" } },
+  "loadingOverlayComponent": {
+    "type": { "returnType": "{ new(): ILoadingOverlayComp; } | string" }
+  },
+  "loadingOverlayComponentFramework": { "type": { "returnType": "any" } },
+  "loadingOverlayComponentParams": { "type": { "returnType": "any" } },
+  "suppressLoadingOverlay": { "type": { "returnType": "boolean" } },
+  "overlayNoRowsTemplate": { "type": { "returnType": "string" } },
+  "noRowsOverlayComponent": {
+    "type": { "returnType": "{ new(): INoRowsOverlayComp; } | string" }
+  },
+  "noRowsOverlayComponentFramework": { "type": { "returnType": "any" } },
+  "noRowsOverlayComponentParams": { "type": { "returnType": "any" } },
+  "suppressNoRowsOverlay": { "type": { "returnType": "boolean" } },
+  "pagination": { "type": { "returnType": "boolean" } },
+  "paginationPageSize": { "type": { "returnType": "number" } },
+  "paginationAutoPageSize": { "type": { "returnType": "boolean" } },
+  "paginateChildRows": { "type": { "returnType": "boolean" } },
+  "suppressPaginationPanel": { "type": { "returnType": "boolean" } },
+  "pivotMode": { "type": { "returnType": "boolean" } },
+  "pivotPanelShow": { "type": { "returnType": "string" } },
+  "pivotColumnGroupTotals": { "type": { "returnType": "string" } },
+  "pivotRowTotals": { "type": { "returnType": "string" } },
   "pivotSuppressAutoColumn": { "type": { "returnType": "boolean" } },
+  "suppressExpandablePivotGroups": { "type": { "returnType": "boolean" } },
+  "functionsReadOnly": { "type": { "returnType": "boolean" } },
+  "aggFuncs": { "type": { "returnType": "{ [key: string]: IAggFunc; }" } },
+  "suppressAggFuncInHeader": { "type": { "returnType": "boolean" } },
+  "suppressAggAtRootLevel": { "type": { "returnType": "boolean" } },
+  "aggregateOnlyChangedColumns": { "type": { "returnType": "boolean" } },
+  "suppressAggFilteredOnly": { "type": { "returnType": "boolean" } },
+  "animateRows": { "type": { "returnType": "boolean" } },
+  "enableCellChangeFlash": { "type": { "returnType": "boolean" } },
+  "cellFlashDelay": { "type": { "returnType": "number" } },
+  "cellFadeDelay": { "type": { "returnType": "number" } },
+  "allowShowChangeAfterFilter": { "type": { "returnType": "boolean" } },
+  "domLayout": { "type": { "returnType": "string" } },
+  "ensureDomOrder": { "type": { "returnType": "boolean" } },
+  "enableRtl": { "type": { "returnType": "boolean" } },
+  "suppressColumnVirtualisation": { "type": { "returnType": "boolean" } },
+  "suppressMaxRenderedRowRestriction": { "type": { "returnType": "boolean" } },
+  "rowDragManaged": { "type": { "returnType": "boolean" } },
+  "suppressRowDrag": { "type": { "returnType": "boolean" } },
+  "suppressMoveWhenRowDragging": { "type": { "returnType": "boolean" } },
+  "rowDragEntireRow": { "type": { "returnType": "boolean" } },
+  "rowDragMultiRow": { "type": { "returnType": "boolean" } },
+  "fullWidthCellRenderer": {
+    "type": {
+      "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string"
+    }
+  },
+  "fullWidthCellRendererFramework": { "type": { "returnType": "any" } },
+  "fullWidthCellRendererParams": { "type": { "returnType": "any" } },
+  "embedFullWidthRows": { "type": { "returnType": "boolean" } },
+  "deprecatedEmbedFullWidthRows": {
+    "description": "/** @deprecated\n */",
+    "type": { "returnType": "boolean" }
+  },
+  "groupDisplayType": { "type": { "returnType": "RowGroupingDisplayType" } },
+  "groupDefaultExpanded": { "type": { "returnType": "number" } },
   "autoGroupColumnDef": { "type": { "returnType": "ColDef" } },
+  "groupMaintainOrder": { "type": { "returnType": "boolean" } },
   "groupSelectsChildren": { "type": { "returnType": "boolean" } },
-  "groupSelectsFiltered": { "type": { "returnType": "boolean" } },
   "groupIncludeFooter": { "type": { "returnType": "boolean" } },
   "groupIncludeTotalFooter": { "type": { "returnType": "boolean" } },
+  "groupSuppressBlankHeader": { "type": { "returnType": "boolean" } },
+  "groupSelectsFiltered": { "type": { "returnType": "boolean" } },
+  "showOpenedGroup": { "type": { "returnType": "boolean" } },
   "groupRemoveSingleChildren": { "type": { "returnType": "boolean" } },
   "groupRemoveLowestSingleChildren": { "type": { "returnType": "boolean" } },
   "groupHideOpenParents": { "type": { "returnType": "boolean" } },
-  "groupSuppressBlankHeader": { "type": { "returnType": "boolean" } },
-  "groupMaintainOrder": { "type": { "returnType": "boolean" } },
-  "groupDisplayType": { "type": { "returnType": "RowGroupingDisplayType" } },
+  "rowGroupPanelShow": { "type": { "returnType": "string" } },
+  "groupRowRenderer": {
+    "type": {
+      "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string"
+    }
+  },
+  "groupRowRendererFramework": { "type": { "returnType": "any" } },
+  "groupRowRendererParams": { "type": { "returnType": "any" } },
+  "suppressMakeColumnVisibleAfterUnGroup": {
+    "type": { "returnType": "boolean" }
+  },
+  "treeData": { "type": { "returnType": "boolean" } },
+  "groupRowInnerRenderer": {
+    "description": "/** @deprecated - this is now groupRowRendererParams.innerRenderer\n */",
+    "type": {
+      "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string"
+    }
+  },
+  "groupRowInnerRendererFramework": {
+    "description": "/** @deprecated - this is now groupRowRendererParams.innerRendererFramework\n */",
+    "type": { "returnType": "any" }
+  },
   "groupMultiAutoColumn": {
     "description": "/** @deprecated - Use groupDisplayType = 'multipleColumns' instead\n */",
     "type": { "returnType": "boolean" }
@@ -260,54 +270,100 @@
     "description": "/** @deprecated - Use groupDisplayType = 'custom' instead\n */",
     "type": { "returnType": "boolean" }
   },
-  "enableOldSetFilterModel": { "type": { "returnType": "boolean" } },
-  "enableCharts": { "type": { "returnType": "boolean" } },
-  "context": { "type": { "returnType": "any" } },
-  "rowStyle": { "type": { "returnType": "{ [cssProperty: string]: string }" } },
-  "rowClass": { "type": { "returnType": "string | string[]" } },
-  "groupDefaultExpanded": { "type": { "returnType": "number" } },
-  "alignedGrids": { "type": { "returnType": "GridOptions[]" } },
+  "rememberGroupStateWhenNewData": {
+    "description": "/** @deprecated - no longer needed, transaction updates keep group state\n */",
+    "type": { "returnType": "boolean" }
+  },
+  "defaultGroupSortComparator": {
+    "description": "/** @deprecated - Use defaultGroupOrderComparator instead\n */",
+    "type": {
+      "arguments": { "nodeA": "RowNode", "nodeB": "RowNode" },
+      "returnType": "number"
+    }
+  },
+  "pinnedTopRowData": { "type": { "returnType": "any[]" } },
+  "pinnedBottomRowData": { "type": { "returnType": "any[]" } },
+  "rowModelType": { "type": { "returnType": "string" } },
+  "rowData": { "type": { "returnType": "any[] | null" } },
+  "immutableData": { "type": { "returnType": "boolean" } },
+  "asyncTransactionWaitMillis": { "type": { "returnType": "number" } },
+  "suppressModelUpdateAfterUpdateTransaction": {
+    "type": { "returnType": "boolean" }
+  },
+  "deltaRowDataMode": {
+    "description": "/** @deprecated\n */",
+    "type": { "returnType": "boolean" }
+  },
+  "batchUpdateWaitMillis": {
+    "description": "/** @deprecated use asyncTransactionWaitMillis instead\n */",
+    "type": { "returnType": "number" }
+  },
+  "datasource": { "type": { "returnType": "IDatasource" } },
+  "cacheOverflowSize": { "type": { "returnType": "number" } },
+  "infiniteInitialRowCount": { "type": { "returnType": "number" } },
+  "serverSideStoreType": { "type": { "returnType": "ServerSideStoreType" } },
+  "cacheBlockSize": { "type": { "returnType": "number" } },
+  "maxBlocksInCache": { "type": { "returnType": "number" } },
+  "maxConcurrentDatasourceRequests": { "type": { "returnType": "number" } },
+  "blockLoadDebounceMillis": { "type": { "returnType": "number" } },
+  "purgeClosedRowNodes": { "type": { "returnType": "boolean" } },
+  "serverSideDatasource": { "type": { "returnType": "IServerSideDatasource" } },
+  "serverSideSortingAlwaysResets": { "type": { "returnType": "boolean" } },
+  "serverSideFilteringAlwaysResets": { "type": { "returnType": "boolean" } },
+  "suppressEnterpriseResetOnNewColumns": {
+    "description": "/** @deprecated\n */",
+    "type": { "returnType": "boolean" }
+  },
+  "viewportDatasource": { "type": { "returnType": "IViewportDatasource" } },
+  "viewportRowModelPageSize": { "type": { "returnType": "number" } },
+  "viewportRowModelBufferSize": { "type": { "returnType": "number" } },
+  "alwaysShowHorizontalScroll": { "type": { "returnType": "boolean" } },
+  "alwaysShowVerticalScroll": { "type": { "returnType": "boolean" } },
+  "debounceVerticalScrollbar": { "type": { "returnType": "boolean" } },
+  "suppressHorizontalScroll": { "type": { "returnType": "boolean" } },
+  "suppressScrollOnNewData": { "type": { "returnType": "boolean" } },
+  "suppressAnimationFrame": { "type": { "returnType": "boolean" } },
+  "suppressMiddleClickScrolls": { "type": { "returnType": "boolean" } },
+  "suppressPreventDefaultOnMouseWheel": { "type": { "returnType": "boolean" } },
+  "scrollbarWidth": { "type": { "returnType": "number" } },
   "rowSelection": { "type": { "returnType": "string" } },
+  "rowMultiSelectWithClick": { "type": { "returnType": "boolean" } },
   "suppressRowDeselection": { "type": { "returnType": "boolean" } },
+  "suppressRowClickSelection": { "type": { "returnType": "boolean" } },
+  "suppressCellSelection": { "type": { "returnType": "boolean" } },
+  "suppressMultiRangeSelection": { "type": { "returnType": "boolean" } },
+  "enableCellTextSelection": { "type": { "returnType": "boolean" } },
+  "enableRangeSelection": { "type": { "returnType": "boolean" } },
+  "enableRangeHandle": { "type": { "returnType": "boolean" } },
+  "enableFillHandle": { "type": { "returnType": "boolean" } },
+  "fillHandleDirection": { "type": { "returnType": "string" } },
+  "suppressClearOnFillReduction": { "type": { "returnType": "boolean" } },
   "rowDeselection": {
     "description": "/** @deprecated - rowDeselection is now true by default and should be suppressed by using suppressRowDeselection\n */",
     "type": { "returnType": "boolean" }
   },
-  "rowMultiSelectWithClick": { "type": { "returnType": "boolean" } },
-  "isRowSelectable": { "type": { "returnType": "IsRowSelectable" } },
-  "overlayLoadingTemplate": { "type": { "returnType": "string" } },
-  "overlayNoRowsTemplate": { "type": { "returnType": "string" } },
+  "sortingOrder": { "type": { "returnType": "(string | null)[]" } },
+  "accentedSort": { "type": { "returnType": "boolean" } },
+  "unSortIcon": { "type": { "returnType": "boolean" } },
+  "suppressMultiSort": { "type": { "returnType": "boolean" } },
+  "multiSortKey": { "type": { "returnType": "string" } },
+  "suppressMaintainUnsortedOrder": { "type": { "returnType": "boolean" } },
+  "icons": {
+    "type": { "returnType": "{ [key: string]: Function | string; }" }
+  },
   "rowHeight": { "type": { "returnType": "number" } },
-  "detailRowHeight": { "type": { "returnType": "number" } },
-  "popupParent": { "type": { "returnType": "HTMLElement" } },
-  "masterDetail": { "type": { "returnType": "boolean" } },
-  "keepDetailRows": { "type": { "returnType": "boolean" } },
-  "keepDetailRowsCount": { "type": { "returnType": "number" } },
-  "isRowMaster": { "type": { "returnType": "IsRowMaster" } },
-  "detailCellRenderer": {
-    "type": {
-      "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string"
-    }
-  },
-  "detailCellRendererFramework": { "type": { "returnType": "any" } },
-  "detailCellRendererParams": { "type": { "returnType": "any" } },
-  "detailRowAutoHeight": { "type": { "returnType": "boolean" } },
-  "rowData": { "type": { "returnType": "any[] | null" } },
-  "pinnedTopRowData": { "type": { "returnType": "any[]" } },
-  "pinnedBottomRowData": { "type": { "returnType": "any[]" } },
-  "sideBar": {
-    "type": { "returnType": "SideBarDef | string | boolean | null" }
-  },
-  "columnDefs": { "type": { "returnType": "(ColDef | ColGroupDef)[] | null" } },
-  "columnTypes": { "type": { "returnType": "{ [key: string]: ColDef; }" } },
-  "datasource": { "type": { "returnType": "IDatasource" } },
-  "viewportDatasource": { "type": { "returnType": "IViewportDatasource" } },
-  "serverSideDatasource": { "type": { "returnType": "IServerSideDatasource" } },
-  "headerHeight": { "type": { "returnType": "number" } },
-  "pivotHeaderHeight": { "type": { "returnType": "number" } },
-  "groupHeaderHeight": { "type": { "returnType": "number" } },
-  "pivotGroupHeaderHeight": { "type": { "returnType": "number" } },
-  "floatingFiltersHeight": { "type": { "returnType": "number" } },
+  "rowStyle": { "type": { "returnType": "{ [cssProperty: string]: string }" } },
+  "rowClass": { "type": { "returnType": "string | string[]" } },
+  "rowClassRules": { "type": { "returnType": "RowClassRules" } },
+  "suppressRowHoverHighlight": { "type": { "returnType": "boolean" } },
+  "suppressRowTransform": { "type": { "returnType": "boolean" } },
+  "columnHoverHighlight": { "type": { "returnType": "boolean" } },
+  "deltaSort": { "type": { "returnType": "boolean" } },
+  "treeDataDisplayType": { "type": { "returnType": "TreeDataDisplayType" } },
+  "angularCompileRows": { "type": { "returnType": "boolean" } },
+  "angularCompileFilters": { "type": { "returnType": "boolean" } },
+  "functionsPassive": { "type": { "returnType": "boolean" } },
+  "enableGroupEdit": { "type": { "returnType": "boolean" } },
   "paginationNumberFormatter": {
     "type": {
       "arguments": { "params": "PaginationNumberFormatterParams" },
@@ -319,27 +375,6 @@
       "arguments": { "params": "PostProcessPopupParams" },
       "returnType": "void"
     }
-  },
-  "frameworkComponents": {
-    "type": { "returnType": "{ [p: string]: { new(): any; }; } | any" }
-  },
-  "components": { "type": { "returnType": "{ [p: string]: any; }" } },
-  "groupRowRenderer": {
-    "type": {
-      "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string"
-    }
-  },
-  "groupRowRendererFramework": { "type": { "returnType": "any" } },
-  "groupRowRendererParams": { "type": { "returnType": "any" } },
-  "groupRowInnerRenderer": {
-    "description": "/** @deprecated - this is now groupRowRendererParams.innerRenderer\n */",
-    "type": {
-      "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string"
-    }
-  },
-  "groupRowInnerRendererFramework": {
-    "description": "/** @deprecated - this is now groupRowRendererParams.innerRendererFramework\n */",
-    "type": { "returnType": "any" }
   },
   "createChartContainer": {
     "type": { "arguments": { "params": "ChartRef" }, "returnType": "void" }
@@ -368,7 +403,6 @@
       "returnType": "string | string[] | undefined"
     }
   },
-  "rowClassRules": { "type": { "returnType": "RowClassRules" } },
   "getRowHeight": {
     "type": {
       "arguments": { "params": "RowHeightParams" },
@@ -411,12 +445,30 @@
       "returnType": "CellPosition"
     }
   },
-  "getDocument": { "type": { "arguments": {}, "returnType": "Document" } },
-  "defaultGroupSortComparator": {
-    "description": "/** @deprecated - Use defaultGroupOrderComparator instead\n */",
+  "suppressKeyboardEvent": {
+    "description": "/** Allows user to suppress certain keyboard events */",
     "type": {
-      "arguments": { "nodeA": "RowNode", "nodeB": "RowNode" },
-      "returnType": "number"
+      "arguments": { "params": "SuppressKeyboardEventParams" },
+      "returnType": "boolean"
+    }
+  },
+  "getDocument": { "type": { "arguments": {}, "returnType": "Document" } },
+  "getServerSideStoreParams": {
+    "type": {
+      "arguments": { "params": "GetServerSideStoreParamsParams" },
+      "returnType": "ServerSideStoreParams"
+    }
+  },
+  "isServerSideGroupOpenByDefault": {
+    "type": {
+      "arguments": { "params": "IsServerSideGroupOpenByDefaultParams" },
+      "returnType": "boolean"
+    }
+  },
+  "isGroupOpenByDefault": {
+    "type": {
+      "arguments": { "params": "IsGroupOpenByDefaultParams" },
+      "returnType": "boolean"
     }
   },
   "defaultGroupOrderComparator": {
@@ -425,37 +477,7 @@
       "returnType": "number"
     }
   },
-  "loadingCellRenderer": {
-    "type": { "returnType": "{ new(): ICellRenderer; } | string" }
-  },
-  "loadingCellRendererFramework": { "type": { "returnType": "any" } },
-  "loadingCellRendererParams": { "type": { "returnType": "any" } },
-  "loadingCellRendererSelector": {
-    "type": {
-      "arguments": { "params": "ILoadingCellRendererParams" },
-      "returnType": "{ component?: { new (): ICellRenderer; } | string; frameworkComponent?: any; params?: any; } | undefined"
-    }
-  },
-  "loadingOverlayComponent": {
-    "type": { "returnType": "{ new(): ILoadingOverlayComp; } | string" }
-  },
-  "loadingOverlayComponentFramework": { "type": { "returnType": "any" } },
-  "loadingOverlayComponentParams": { "type": { "returnType": "any" } },
-  "noRowsOverlayComponent": {
-    "type": { "returnType": "{ new(): INoRowsOverlayComp; } | string" }
-  },
-  "noRowsOverlayComponentFramework": { "type": { "returnType": "any" } },
-  "noRowsOverlayComponentParams": { "type": { "returnType": "any" } },
-  "fullWidthCellRenderer": {
-    "type": {
-      "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string"
-    }
-  },
-  "fullWidthCellRendererFramework": { "type": { "returnType": "any" } },
-  "fullWidthCellRendererParams": { "type": { "returnType": "any" } },
-  "isFullWidthCell": {
-    "type": { "arguments": { "rowNode": "RowNode" }, "returnType": "boolean" }
-  },
+  "isRowSelectable": { "type": { "returnType": "IsRowSelectable" } },
   "groupRowAggNodes": {
     "type": { "arguments": { "nodes": "RowNode[]" }, "returnType": "any" }
   },
@@ -463,8 +485,6 @@
     "type": { "arguments": { "node": "RowNode" }, "returnType": "string" }
   },
   "getDataPath": { "type": { "returnType": "GetDataPath" } },
-  "treeData": { "type": { "returnType": "boolean" } },
-  "treeDataDisplayType": { "type": { "returnType": "TreeDataDisplayType" } },
   "isServerSideGroup": { "type": { "returnType": "IsServerSideGroup" } },
   "isApplyServerSideTransaction": {
     "type": { "returnType": "IsApplyServerSideTransaction" }
@@ -476,9 +496,13 @@
   "getMainMenuItems": { "type": { "returnType": "GetMainMenuItems" } },
   "getChartToolbarItems": { "type": { "returnType": "GetChartToolbarItems" } },
   "getRowNodeId": { "type": { "returnType": "GetRowNodeIdFunc" } },
+  "isFullWidthCell": {
+    "type": { "arguments": { "rowNode": "RowNode" }, "returnType": "boolean" }
+  },
   "getChildCount": {
     "type": { "arguments": { "dataItem": "any" }, "returnType": "number" }
   },
+  "isRowMaster": { "type": { "returnType": "IsRowMaster" } },
   "processRowPostCreate": {
     "type": {
       "arguments": { "params": "ProcessRowParams" },
@@ -514,22 +538,6 @@
   },
   "postSort": {
     "type": { "arguments": { "nodes": "RowNode[]" }, "returnType": "void" }
-  },
-  "chartThemes": { "type": { "returnType": "string[]" } },
-  "customChartThemes": {
-    "type": { "returnType": "{ [name: string]: AgChartTheme }" }
-  },
-  "chartThemeOverrides": { "type": { "returnType": "AgChartThemeOverrides" } },
-  "processChartOptions": {
-    "description": "/** @deprecated\n */",
-    "type": {
-      "arguments": { "params": "ProcessChartOptionsParams" },
-      "returnType": "ChartOptions<any>"
-    }
-  },
-  "allowProcessChartOptions": {
-    "description": "/** @deprecated\n */",
-    "type": { "returnType": "boolean" }
   },
   "onColumnEverythingChanged": {
     "type": {

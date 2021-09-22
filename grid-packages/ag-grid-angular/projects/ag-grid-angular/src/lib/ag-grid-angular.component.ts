@@ -325,6 +325,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public noRowsOverlayComponentParams: any = undefined;
     @Input() public popupParent: HTMLElement | undefined = undefined;
     @Input() public colResizeDefault: string | undefined = undefined;
+    /** Specifies the status bar components to use in the status bar.     */
     @Input() public statusBar: { statusPanels: StatusPanelDef[]; } | undefined = undefined;
     @Input() public sideBar: SideBarDef | string | boolean | null | undefined = undefined;
     @Input() public chartThemeOverrides: AgChartThemeOverrides | undefined = undefined;
@@ -371,6 +372,8 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public cacheBlockSize: number | undefined = undefined;
     @Input() public infiniteInitialRowCount: number | undefined = undefined;
     @Input() public scrollbarWidth: number | undefined = undefined;
+    /** @deprecated use asyncTransactionWaitMillis instead
+     */
     @Input() public batchUpdateWaitMillis: number | undefined = undefined;
     @Input() public asyncTransactionWaitMillis: number | undefined = undefined;
     @Input() public blockLoadDebounceMillis: number | undefined = undefined;
@@ -567,7 +570,11 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public enterMovesDown: boolean | undefined = undefined;
     @Input() public suppressPropertyNamesCheck: boolean | undefined = undefined;
     @Input() public rowMultiSelectWithClick: boolean | undefined = undefined;
+    /** @deprecated
+     */
     @Input() public suppressEnterpriseResetOnNewColumns: boolean | undefined = undefined;
+    /** @deprecated
+     */
     @Input() public enableOldSetFilterModel: boolean | undefined = undefined;
     @Input() public suppressRowHoverHighlight: boolean | undefined = undefined;
     @Input() public suppressRowTransform: boolean | undefined = undefined;

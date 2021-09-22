@@ -7,6 +7,8 @@ interface MetaTag {
     };
     type?: string;
     isEvent?: boolean;
+    /** Suppress the missing property check. Needed for events as they are dynamic and so do not appear in src code */
+    suppressMissingPropCheck?: true;
 }
 export type DocEntryMap = {
     meta?: MetaTag;
@@ -48,7 +50,11 @@ export interface ChildDocEntry {
     interfaceHierarchyOverrides: {
         exclude?: string[],
         include?: string[]
-    }
+    },
+    /** We check for properties that are not present in the source code. Set this to true to allow this property to be include
+     * even though there is no matching code property for it. i.e suppressRowVirtualisation
+     */
+    overrideMissingPropCheck?: true;
 
 }
 export interface ObjectCode {
@@ -160,6 +166,8 @@ export interface Config {
     headerLevel?: number;
     /** Set the margin-bottom value to override the default of 3em */
     overrideBottomMargin?: string;
+    /** Suppress the missing property check. Needed for events as they are dynamic and so do not appear in src code */
+    suppressMissingPropCheck?: true;
 }
 export type SectionProps = {
     framework: string;

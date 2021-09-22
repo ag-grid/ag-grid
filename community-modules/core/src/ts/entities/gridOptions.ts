@@ -103,318 +103,117 @@ export interface GridOptions {
     // If you change the properties on this interface, you must also update PropertyKeys to be consistent. *
     // ******************************************************************************************************
 
-    /** Set once in init, can never change*/
-    suppressBrowserResizeObserver?: boolean;
-    rowDragEntireRow?: boolean;
-    suppressRowDrag?: boolean;
-    rowDragManaged?: boolean;
-    suppressMoveWhenRowDragging?: boolean;
-    rowDragMultiRow?: boolean;
-    ensureDomOrder?: boolean;
-    suppressAggFilteredOnly?: boolean;
-    showOpenedGroup?: boolean;
-    /** @deprecated */
-    deltaRowDataMode?: boolean;
+    // *** Accessories *** //
+    /** Specifies the status bar components to use in the status bar. */
+    statusBar?: { statusPanels: StatusPanelDef[]; };
+    sideBar?: SideBarDef | string | boolean | null;
+    suppressContextMenu?: boolean;
+    preventDefaultOnContextMenu?: boolean;
+    allowContextMenuWithControlKey?: boolean;
+    suppressMenuHide?: boolean;
+    enableBrowserTooltips?: boolean;
+    tooltipShowDelay?: number;
+    tooltipMouseTrack?: boolean;
+    popupParent?: HTMLElement;
+
+    // *** Clipboard *** //
+    copyHeadersToClipboard?: boolean;
+    clipboardDeliminator?: string;
+    suppressCopyRowsToClipboard?: boolean;
+    suppressLastEmptyLineOnPaste?: boolean;
+    suppressClipboardPaste?: boolean;
+    suppressClipboardApi?: boolean;
+
+    // *** Columns *** //
+    columnDefs?: (ColDef | ColGroupDef)[] | null;
+    defaultColGroupDef?: Partial<ColGroupDef>;
+    defaultColDef?: ColDef;
+    columnTypes?: { [key: string]: ColDef; };
+    maintainColumnOrder?: boolean;
+    suppressFieldDotNotation?: boolean;
 
     /** @deprecated */
     deltaColumnMode?: boolean;
     /** @deprecated */
     applyColumnDefOrder?: boolean; // is now the default, to turn off, set maintainColumnOrder
-    maintainColumnOrder?: boolean;
-    immutableData?: boolean;
     /** @deprecated */
     immutableColumns?: boolean;
-    scrollbarWidth?: number;
-    suppressRowClickSelection?: boolean;
-    suppressRowHoverHighlight?: boolean;
-    columnHoverHighlight?: boolean;
-    suppressCellSelection?: boolean;
-    suppressClearOnFillReduction?: boolean;
-    suppressMaintainUnsortedOrder?: boolean;
-    sortingOrder?: (string | null)[];
-    suppressMultiSort?: boolean;
-    multiSortKey?: string;
-    accentedSort?: boolean;
-    deltaSort?: boolean;
-    suppressHorizontalScroll?: boolean;
-    alwaysShowHorizontalScroll?: boolean;
-    alwaysShowVerticalScroll?: boolean;
-    debounceVerticalScrollbar?: boolean;
-    unSortIcon?: boolean;
-    rowBuffer?: number;
-    tooltipShowDelay?: number;
-    tooltipMouseTrack?: boolean;
-    enableRtl?: boolean;
-    enableBrowserTooltips?: boolean;
-    colResizeDefault?: string;
-    enableCellExpressions?: boolean;
-    enableCellTextSelection?: boolean;
-    enableGroupEdit?: boolean;
-    enterMovesDownAfterEdit?: boolean;
-    enterMovesDown?: boolean;
-    suppressMiddleClickScrolls?: boolean;
-    preventDefaultOnContextMenu?: boolean;
-    suppressPreventDefaultOnMouseWheel?: boolean;
-    suppressScrollOnNewData?: boolean;
-    suppressMenuHide?: boolean;
-    singleClickEdit?: boolean;
-    suppressClickEdit?: boolean;
-    tabIndex?: number;
-
-    /** Allows user to suppress certain keyboard events */
-    suppressKeyboardEvent?: (params: SuppressKeyboardEventParams) => boolean;
-
-    /** @deprecated Use stopEditingWhenCellsLoseFocus instead */
-    stopEditingWhenGridLosesFocus?: boolean;
-    stopEditingWhenCellsLoseFocus?: boolean;
-
-    debug?: boolean;
-    icons?: { [key: string]: Function | string; };
-    angularCompileRows?: boolean;
-    angularCompileFilters?: boolean;
-
-    suppressLoadingOverlay?: boolean;
-    suppressNoRowsOverlay?: boolean;
-    suppressAutoSize?: boolean;
-    autoSizePadding?: number;
-    skipHeaderOnAutoSize?: boolean;
-    animateRows?: boolean;
-    suppressColumnMoveAnimation?: boolean;
-    suppressMovableColumns?: boolean;
-    suppressDragLeaveHidesColumns?: boolean;
-    suppressMakeColumnVisibleAfterUnGroup?: boolean;
-    suppressParentsInRowNodes?: boolean;
-    suppressFieldDotNotation?: boolean;
-    suppressCopyRowsToClipboard?: boolean;
-    copyHeadersToClipboard?: boolean;
-    clipboardDeliminator?: string;
-    suppressClipboardPaste?: boolean;
-    suppressClipboardApi?: boolean;
-    suppressLastEmptyLineOnPaste?: boolean;
-    suppressAggFuncInHeader?: boolean;
-    suppressAggAtRootLevel?: boolean;
-    suppressFocusAfterRefresh?: boolean;
-    rowModelType?: string;
-    pivotMode?: boolean;
-    pivotColumnGroupTotals?: string;
-    pivotRowTotals?: string;
-    suppressExpandablePivotGroups?: boolean;
-
-    suppressEnterpriseResetOnNewColumns?: boolean;
-    // enterprise only
-    enableRangeSelection?: boolean;
-    enableRangeHandle?: boolean;
-    enableFillHandle?: boolean;
-    fillHandleDirection?: string;
-    suppressMultiRangeSelection?: boolean;
-    rowGroupPanelShow?: string;
-    pivotPanelShow?: string;
-    suppressContextMenu?: boolean;
-    allowContextMenuWithControlKey?: boolean;
-
-    /** @deprecated - no longer needed, transaction updates keep group state */
-    rememberGroupStateWhenNewData?: boolean;
-    suppressModelUpdateAfterUpdateTransaction?: boolean;
-    viewportRowModelPageSize?: number;
-    viewportRowModelBufferSize?: number;
-    enableCellChangeFlash?: boolean;
-    cellFlashDelay?: number;
-    cellFadeDelay?: number;
-    allowShowChangeAfterFilter?: boolean;
-    quickFilterText?: string;
-    cacheQuickFilter?: boolean;
-    aggFuncs?: { [key: string]: IAggFunc; };
-    suppressColumnVirtualisation?: boolean;
-    functionsReadOnly?: boolean;
-    functionsPassive?: boolean;
-    maxConcurrentDatasourceRequests?: number;
-    maxBlocksInCache?: number;
-    purgeClosedRowNodes?: boolean;
-    domLayout?: string;
-    suppressChangeDetection?: boolean;
-    aggregateOnlyChangedColumns?: boolean;
-    valueCache?: boolean;
-    valueCacheNeverExpires?: boolean;
-    batchUpdateWaitMillis?: number;
-    asyncTransactionWaitMillis?: number;
-    suppressRowTransform?: boolean;
     /** @deprecated */
     suppressSetColumnStateEvents?: boolean;
     /** @deprecated */
     suppressColumnStateEvents?: boolean;
-    allowDragFromColumnsToolPanel?: boolean;
-    suppressMaxRenderedRowRestriction?: boolean;
-    excludeChildrenWhenTreeDataFiltering?: boolean;
-    undoRedoCellEditing?: boolean;
-    undoRedoCellEditingLimit?: number;
 
-    cacheOverflowSize?: number;
-    infiniteInitialRowCount?: number;
-    paginationPageSize?: number;
-    cacheBlockSize?: number;
-    blockLoadDebounceMillis?: number;
-    paginationAutoPageSize?: boolean;
-    suppressPaginationPanel?: boolean;
-
-    pagination?: boolean;
-    paginateChildRows?: boolean;
-    editType?: string;
-    suppressTouch?: boolean;
-    suppressAsyncEvents?: boolean;
-
-    embedFullWidthRows?: boolean;
-    /** @deprecated */
-    deprecatedEmbedFullWidthRows?: boolean;
-
-    excelStyles?: ExcelStyle[];
-    /** @deprecated Use floatingFilter on the colDef instead */
-    floatingFilter?: boolean;
-    suppressExcelExport?: boolean;
-    suppressCsvExport?: boolean;
-
-    // these should really be deprecated, as the user should be using the default
-    // column definitions for specifying column defaults.
     colWidth?: number;
     minColWidth?: number;
     maxColWidth?: number;
 
-    suppressPropertyNamesCheck?: boolean;
-    serverSideSortingAlwaysResets?: boolean;
-    serverSideFilteringAlwaysResets?: boolean;
-    serverSideStoreType?: ServerSideStoreType;
+    // *** Column Headers *** //
+    headerHeight?: number;
+    groupHeaderHeight?: number;
+    floatingFiltersHeight?: number;
+    pivotHeaderHeight?: number;
+    pivotGroupHeaderHeight?: number;
 
-    getServerSideStoreParams?: (params: GetServerSideStoreParamsParams) => ServerSideStoreParams;
-    isServerSideGroupOpenByDefault?: (params: IsServerSideGroupOpenByDefaultParams) => boolean;
-    isGroupOpenByDefault?: (params: IsGroupOpenByDefaultParams) => boolean;
+    // *** Column Moving *** //
+    allowDragFromColumnsToolPanel?: boolean;
+    suppressMovableColumns?: boolean;
+    suppressColumnMoveAnimation?: boolean;
+    suppressDragLeaveHidesColumns?: boolean;
 
-    statusBar?: { statusPanels: StatusPanelDef[]; };
+    // *** Column Sizing *** //
+    colResizeDefault?: string;
+    suppressAutoSize?: boolean;
+    autoSizePadding?: number;
+    skipHeaderOnAutoSize?: boolean;
 
-    // just set once
-    localeText?: { [key: string]: string };
-    localeTextFunc?: (key: string, defaultValue: string) => string;
-    suppressAnimationFrame?: boolean;
-    defaultColGroupDef?: Partial<ColGroupDef>;
-    defaultColDef?: ColDef;
+    // *** Components *** //
+    components?: { [p: string]: any; };
+    frameworkComponents?: { [p: string]: { new(): any; }; } | any;
 
+    // *** Editing *** //
+    editType?: string;
+    singleClickEdit?: boolean;
+    suppressClickEdit?: boolean;
+    enterMovesDownAfterEdit?: boolean;
+    enterMovesDown?: boolean;
+    stopEditingWhenCellsLoseFocus?: boolean;
+    undoRedoCellEditing?: boolean;
+    undoRedoCellEditingLimit?: number;
+
+    /** @deprecated Use stopEditingWhenCellsLoseFocus instead */
+    stopEditingWhenGridLosesFocus?: boolean;
+
+    // *** Export *** //
+    defaultCsvExportParams?: CsvExportParams;
+    suppressCsvExport?: boolean;
+    defaultExcelExportParams?: ExcelExportParams;
+    suppressExcelExport?: boolean;
+    excelStyles?: ExcelStyle[];
     /** @deprecated Use defaultCsvExportParams or defaultExcelExportParams */
     defaultExportParams?: CsvExportParams | ExcelExportParams;
-    defaultCsvExportParams?: CsvExportParams;
-    defaultExcelExportParams?: ExcelExportParams;
 
-    pivotSuppressAutoColumn?: boolean;
-
-    autoGroupColumnDef?: ColDef;
-
-    groupSelectsChildren?: boolean;
-    groupSelectsFiltered?: boolean;
-    groupIncludeFooter?: boolean;
-    groupIncludeTotalFooter?: boolean;
-    groupRemoveSingleChildren?: boolean;
-    groupRemoveLowestSingleChildren?: boolean;
-    groupHideOpenParents?: boolean;
-    groupSuppressBlankHeader?: boolean;
-    groupMaintainOrder?: boolean;
-
-    groupDisplayType?: RowGroupingDisplayType;
-
-    /** @deprecated - Use groupDisplayType = 'multipleColumns' instead */
-    groupMultiAutoColumn?: boolean;
-    /** @deprecated - Use groupDisplayType = 'groupRows' instead */
-    groupUseEntireRow?: boolean;
-    /** @deprecated - Use groupDisplayType = 'custom' instead */
-    groupSuppressAutoColumn?: boolean;
-
+    // *** Filter *** //
+    quickFilterText?: string;
+    cacheQuickFilter?: boolean;
+    excludeChildrenWhenTreeDataFiltering?: boolean;
+    /** @deprecated Use floatingFilter on the colDef instead */
+    floatingFilter?: boolean;
+    /** @deprecated */
     enableOldSetFilterModel?: boolean;
+
+    // *** Integrated Charts *** //
     enableCharts?: boolean;
+    chartThemes?: string[];
+    customChartThemes?: { [name: string]: AgChartTheme };
+    chartThemeOverrides?: AgChartThemeOverrides;
 
-    // changeable, but no immediate impact
-    context?: any;
-    rowStyle?: { [cssProperty: string]: string };
-    rowClass?: string | string[];
-    groupDefaultExpanded?: number;
-    alignedGrids?: GridOptions[];
+    /** @deprecated */
+    processChartOptions?(params: ProcessChartOptionsParams): ChartOptions<any>;
+    // Note: processChartOptions() no longer works, however this temporary option has been added as a failsafe
+    /** @deprecated */
+    allowProcessChartOptions?: boolean;
 
-    rowSelection?: string;
-    suppressRowDeselection?: boolean;
-
-    /** @deprecated - rowDeselection is now true by default and should be suppressed by using suppressRowDeselection */
-    rowDeselection?: boolean;
-
-    rowMultiSelectWithClick?: boolean;
-    isRowSelectable?: IsRowSelectable;
-    overlayLoadingTemplate?: string;
-    overlayNoRowsTemplate?: string;
-    rowHeight?: number;
-    detailRowHeight?: number;
-    popupParent?: HTMLElement;
-
-    masterDetail?: boolean;
-    keepDetailRows?: boolean;
-    keepDetailRowsCount?: number;
-    isRowMaster?: IsRowMaster;
-    detailCellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
-    detailCellRendererFramework?: any;
-    detailCellRendererParams?: any;
-    detailRowAutoHeight?: boolean;
-
-    // changeable with impact
-    rowData?: any[] | null;
-    pinnedTopRowData?: any[];
-    pinnedBottomRowData?: any[];
-    sideBar?: SideBarDef | string | boolean | null;
-    columnDefs?: (ColDef | ColGroupDef)[] | null;
-    columnTypes?: { [key: string]: ColDef; };
-    datasource?: IDatasource;
-    viewportDatasource?: IViewportDatasource;
-    serverSideDatasource?: IServerSideDatasource;
-
-    // in properties
-    headerHeight?: number;
-    pivotHeaderHeight?: number;
-    groupHeaderHeight?: number;
-    pivotGroupHeaderHeight?: number;
-    floatingFiltersHeight?: number;
-
-    // *****************************************************************************************************
-    // If you change the callbacks on this interface, you must also update PropertyKeys to be consistent. *
-    // *****************************************************************************************************
-
-    paginationNumberFormatter?: (params: PaginationNumberFormatterParams) => string;
-    postProcessPopup?: (params: PostProcessPopupParams) => void;
-    frameworkComponents?: { [p: string]: { new(): any; }; } | any;
-    components?: { [p: string]: any; };
-    groupRowRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
-    groupRowRendererFramework?: any;
-    groupRowRendererParams?: any;
-    /** @deprecated - this is now groupRowRendererParams.innerRenderer */
-    groupRowInnerRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
-    /** @deprecated - this is now groupRowRendererParams.innerRendererFramework */
-    groupRowInnerRendererFramework?: any;
-    createChartContainer?: (params: ChartRef) => void;
-    fillOperation?: (params: FillOperationParams) => any;
-
-    isExternalFilterPresent?(): boolean;
-    doesExternalFilterPass?(node: RowNode): boolean;
-
-    getRowStyle?: (params: RowClassParams) => { [cssProperty: string]: string };
-    getRowClass?: (params: RowClassParams) => string | string[] | undefined;
-    rowClassRules?: RowClassRules;
-    getRowHeight?: (params: RowHeightParams) => number | undefined | null;
-    sendToClipboard?: (params: SendToClipboardParams) => void;
-    processDataFromClipboard?: (params: ProcessDataFromClipboardParams) => string[][] | null;
-
-    navigateToNextHeader?: (params: NavigateToNextHeaderParams) => HeaderPosition;
-    tabToNextHeader?: (params: TabToNextHeaderParams) => HeaderPosition;
-
-    navigateToNextCell?: (params: NavigateToNextCellParams) => CellPosition;
-    tabToNextCell?: (params: TabToNextCellParams) => CellPosition;
-
-    getDocument?: () => Document;
-
-    /** @deprecated - Use defaultGroupOrderComparator instead */
-    defaultGroupSortComparator?: (nodeA: RowNode, nodeB: RowNode) => number;
-    defaultGroupOrderComparator?: (nodeA: RowNode, nodeB: RowNode) => number;
-
+    // *** Loading Cell Renderers *** //
     loadingCellRenderer?: { new(): ICellRenderer; } | string;
     loadingCellRendererFramework?: any;
     loadingCellRendererParams?: any;
@@ -427,27 +226,272 @@ export interface GridOptions {
             params?: any;
         } | undefined
 
+    // *** Localisation *** //
+    // just set once
+    localeText?: { [key: string]: string };
+    localeTextFunc?: (key: string, defaultValue: string) => string;
+
+    // *** Master Detail *** //
+    masterDetail?: boolean;
+    detailRowHeight?: number;
+    keepDetailRows?: boolean;
+    keepDetailRowsCount?: number;
+    detailCellRendererParams?: any;
+    detailCellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
+    detailCellRendererFramework?: any;
+    detailRowAutoHeight?: boolean;
+
+    // *** Miscellaneous *** //
+    // changeable, but no immediate impact
+    context?: any;
+    alignedGrids?: GridOptions[];
+    tabIndex?: number;
+    rowBuffer?: number;
+    valueCache?: boolean;
+    valueCacheNeverExpires?: boolean;
+    enableCellExpressions?: boolean;
+    suppressParentsInRowNodes?: boolean;
+    suppressTouch?: boolean;
+    suppressFocusAfterRefresh?: boolean;
+    suppressAsyncEvents?: boolean;
+    /** Set once in init, can never change*/
+    suppressBrowserResizeObserver?: boolean;
+    suppressPropertyNamesCheck?: boolean;
+    suppressChangeDetection?: boolean;
+    debug?: boolean;
+
+    // *** Overlays *** //
+    overlayLoadingTemplate?: string;
     loadingOverlayComponent?: { new(): ILoadingOverlayComp; } | string;
     loadingOverlayComponentFramework?: any;
     loadingOverlayComponentParams?: any;
+    suppressLoadingOverlay?: boolean;
 
+    overlayNoRowsTemplate?: string;
     noRowsOverlayComponent?: { new(): INoRowsOverlayComp; } | string;
     noRowsOverlayComponentFramework?: any;
     noRowsOverlayComponentParams?: any;
+    suppressNoRowsOverlay?: boolean;
 
+    // *** Pagination *** //
+    pagination?: boolean;
+    paginationPageSize?: number;
+    paginationAutoPageSize?: boolean;
+    paginateChildRows?: boolean;
+    suppressPaginationPanel?: boolean;
+
+    // *** Pivot and Aggregation *** //
+    pivotMode?: boolean;
+    pivotPanelShow?: string;
+    pivotColumnGroupTotals?: string;
+    pivotRowTotals?: string;
+    pivotSuppressAutoColumn?: boolean;
+    suppressExpandablePivotGroups?: boolean;
+    functionsReadOnly?: boolean;
+    aggFuncs?: { [key: string]: IAggFunc; };
+    suppressAggFuncInHeader?: boolean;
+    suppressAggAtRootLevel?: boolean;
+    aggregateOnlyChangedColumns?: boolean;
+    suppressAggFilteredOnly?: boolean;
+
+    // *** Rendering *** //
+    animateRows?: boolean;
+    enableCellChangeFlash?: boolean;
+    cellFlashDelay?: number;
+    cellFadeDelay?: number;
+    allowShowChangeAfterFilter?: boolean;
+    domLayout?: string;
+    ensureDomOrder?: boolean;
+    enableRtl?: boolean;
+    suppressColumnVirtualisation?: boolean;
+    suppressMaxRenderedRowRestriction?: boolean;
+
+    // *** Row Drag and Drop *** //
+    rowDragManaged?: boolean;
+    suppressRowDrag?: boolean;
+    suppressMoveWhenRowDragging?: boolean;
+    rowDragEntireRow?: boolean;
+    rowDragMultiRow?: boolean;
+
+    // *** Row Full Width *** //
     fullWidthCellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
     fullWidthCellRendererFramework?: any;
     fullWidthCellRendererParams?: any;
+    embedFullWidthRows?: boolean;
+    /** @deprecated */
+    deprecatedEmbedFullWidthRows?: boolean;
 
-    isFullWidthCell?(rowNode: RowNode): boolean;
+    // *** Row Grouping *** //
+    groupDisplayType?: RowGroupingDisplayType;
+    groupDefaultExpanded?: number;
+    autoGroupColumnDef?: ColDef;
+    groupMaintainOrder?: boolean;
+    groupSelectsChildren?: boolean;
+    groupIncludeFooter?: boolean;
+    groupIncludeTotalFooter?: boolean;
+    groupSuppressBlankHeader?: boolean;
+    groupSelectsFiltered?: boolean;
+    showOpenedGroup?: boolean;
+    groupRemoveSingleChildren?: boolean;
+    groupRemoveLowestSingleChildren?: boolean;
+    groupHideOpenParents?: boolean;
+    rowGroupPanelShow?: string;
+    groupRowRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
+    groupRowRendererFramework?: any;
+    groupRowRendererParams?: any;
+    suppressMakeColumnVisibleAfterUnGroup?: boolean;
+
+    treeData?: boolean;
+
+    /** @deprecated - this is now groupRowRendererParams.innerRenderer */
+    groupRowInnerRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
+    /** @deprecated - this is now groupRowRendererParams.innerRendererFramework */
+    groupRowInnerRendererFramework?: any;
+    /** @deprecated - Use groupDisplayType = 'multipleColumns' instead */
+    groupMultiAutoColumn?: boolean;
+    /** @deprecated - Use groupDisplayType = 'groupRows' instead */
+    groupUseEntireRow?: boolean;
+    /** @deprecated - Use groupDisplayType = 'custom' instead */
+    groupSuppressAutoColumn?: boolean;
+    /** @deprecated - no longer needed, transaction updates keep group state */
+    rememberGroupStateWhenNewData?: boolean;
+    /** @deprecated - Use defaultGroupOrderComparator instead */
+    defaultGroupSortComparator?: (nodeA: RowNode, nodeB: RowNode) => number;
+
+    // *** Row Pinning *** //
+    pinnedTopRowData?: any[];
+    pinnedBottomRowData?: any[];
+
+    // *** Row Model *** //
+    rowModelType?: string;
+
+    // *** Row Model: Client-side *** //
+    // changeable with impact
+    rowData?: any[] | null;
+    immutableData?: boolean;
+    asyncTransactionWaitMillis?: number;
+    suppressModelUpdateAfterUpdateTransaction?: boolean;
+    /** @deprecated */
+    deltaRowDataMode?: boolean;
+    /** @deprecated use asyncTransactionWaitMillis instead */
+    batchUpdateWaitMillis?: number;
+
+    // *** Row Model: Infinite / Server-side *** //
+    datasource?: IDatasource;
+    cacheOverflowSize?: number;
+    infiniteInitialRowCount?: number;
+    serverSideStoreType?: ServerSideStoreType;
+    cacheBlockSize?: number;
+    maxBlocksInCache?: number;
+    maxConcurrentDatasourceRequests?: number;
+    blockLoadDebounceMillis?: number;
+    purgeClosedRowNodes?: boolean;
+    serverSideDatasource?: IServerSideDatasource;
+    serverSideSortingAlwaysResets?: boolean;
+    serverSideFilteringAlwaysResets?: boolean;
+
+    /** @deprecated */
+    suppressEnterpriseResetOnNewColumns?: boolean;
+
+    // *** Row Model: Viewport *** //
+    viewportDatasource?: IViewportDatasource;
+    viewportRowModelPageSize?: number;
+    viewportRowModelBufferSize?: number;
+
+    // *** Scrolling *** //
+    alwaysShowHorizontalScroll?: boolean;
+    alwaysShowVerticalScroll?: boolean;
+    debounceVerticalScrollbar?: boolean;
+    suppressHorizontalScroll?: boolean;
+    suppressScrollOnNewData?: boolean;
+    suppressAnimationFrame?: boolean;
+    suppressMiddleClickScrolls?: boolean;
+    suppressPreventDefaultOnMouseWheel?: boolean;
+    scrollbarWidth?: number;
+
+    // *** Selection *** //
+    rowSelection?: string;
+    rowMultiSelectWithClick?: boolean;
+    suppressRowDeselection?: boolean;
+    suppressRowClickSelection?: boolean;
+    suppressCellSelection?: boolean;
+    suppressMultiRangeSelection?: boolean;
+    enableCellTextSelection?: boolean;
+    // enterprise only
+    enableRangeSelection?: boolean;
+    enableRangeHandle?: boolean;
+    enableFillHandle?: boolean;
+    fillHandleDirection?: string;
+    suppressClearOnFillReduction?: boolean;
+
+    /** @deprecated - rowDeselection is now true by default and should be suppressed by using suppressRowDeselection */
+    rowDeselection?: boolean;
+
+    // *** Sorting *** //
+    sortingOrder?: (string | null)[];
+    accentedSort?: boolean;
+    unSortIcon?: boolean;
+    suppressMultiSort?: boolean;
+    multiSortKey?: string;
+    suppressMaintainUnsortedOrder?: boolean;
+
+    // *** Styling *** //
+    icons?: { [key: string]: Function | string; };
+    rowHeight?: number;
+    rowStyle?: { [cssProperty: string]: string };
+    rowClass?: string | string[];
+    rowClassRules?: RowClassRules;
+    suppressRowHoverHighlight?: boolean;
+    suppressRowTransform?: boolean;
+    columnHoverHighlight?: boolean;
+
+    deltaSort?: boolean;
+    treeDataDisplayType?: TreeDataDisplayType;
+    angularCompileRows?: boolean;
+    angularCompileFilters?: boolean;
+    functionsPassive?: boolean;
+    enableGroupEdit?: boolean;
+
+    // *****************************************************************************************************
+    // If you change the callbacks on this interface, you must also update PropertyKeys to be consistent. *
+    // *****************************************************************************************************
+
+    paginationNumberFormatter?: (params: PaginationNumberFormatterParams) => string;
+    postProcessPopup?: (params: PostProcessPopupParams) => void;
+
+    createChartContainer?: (params: ChartRef) => void;
+    fillOperation?: (params: FillOperationParams) => any;
+
+    isExternalFilterPresent?(): boolean;
+    doesExternalFilterPass?(node: RowNode): boolean;
+
+    getRowStyle?: (params: RowClassParams) => { [cssProperty: string]: string };
+    getRowClass?: (params: RowClassParams) => string | string[] | undefined;
+    getRowHeight?: (params: RowHeightParams) => number | undefined | null;
+    sendToClipboard?: (params: SendToClipboardParams) => void;
+    processDataFromClipboard?: (params: ProcessDataFromClipboardParams) => string[][] | null;
+
+    navigateToNextHeader?: (params: NavigateToNextHeaderParams) => HeaderPosition;
+    tabToNextHeader?: (params: TabToNextHeaderParams) => HeaderPosition;
+
+    navigateToNextCell?: (params: NavigateToNextCellParams) => CellPosition;
+    tabToNextCell?: (params: TabToNextCellParams) => CellPosition;
+    /** Allows user to suppress certain keyboard events */
+    suppressKeyboardEvent?: (params: SuppressKeyboardEventParams) => boolean;
+
+    getDocument?: () => Document;
+    getServerSideStoreParams?: (params: GetServerSideStoreParamsParams) => ServerSideStoreParams;
+    isServerSideGroupOpenByDefault?: (params: IsServerSideGroupOpenByDefaultParams) => boolean;
+    isGroupOpenByDefault?: (params: IsGroupOpenByDefaultParams) => boolean;
+    defaultGroupOrderComparator?: (nodeA: RowNode, nodeB: RowNode) => number;
+
+    isRowSelectable?: IsRowSelectable;
 
     groupRowAggNodes?(nodes: RowNode[]): any;
 
     getBusinessKeyForNode?(node: RowNode): string;
 
     getDataPath?: GetDataPath;
-    treeData?: boolean;
-    treeDataDisplayType?: TreeDataDisplayType;
 
     isServerSideGroup?: IsServerSideGroup;
     isApplyServerSideTransaction?: IsApplyServerSideTransaction;
@@ -456,9 +500,10 @@ export interface GridOptions {
     getMainMenuItems?: GetMainMenuItems;
     getChartToolbarItems?: GetChartToolbarItems;
     getRowNodeId?: GetRowNodeIdFunc;
+    isFullWidthCell?(rowNode: RowNode): boolean;
 
     getChildCount?(dataItem: any): number;
-
+    isRowMaster?: IsRowMaster;
     processRowPostCreate?(params: ProcessRowParams): void;
 
     processCellForClipboard?(params: ProcessCellForExportParams): any;
@@ -472,19 +517,6 @@ export interface GridOptions {
     processSecondaryColGroupDef?(colGroupDef: ColGroupDef): void;
 
     postSort?(nodes: RowNode[]): void;
-
-    chartThemes?: string[];
-
-    customChartThemes?: { [name: string]: AgChartTheme };
-
-    chartThemeOverrides?: AgChartThemeOverrides;
-
-    /** @deprecated */
-    processChartOptions?(params: ProcessChartOptionsParams): ChartOptions<any>;
-
-    // Note: processChartOptions() no longer works, however this temporary option has been added as a failsafe
-    /** @deprecated */
-    allowProcessChartOptions?: boolean;
 
     // **********************************************************************************************************
     // * If you change the events on this interface, you do *not* need to update PropertyKeys to be consistent, *
