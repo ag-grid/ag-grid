@@ -352,6 +352,8 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public rowHeight: number | undefined = undefined;
     @Input() public detailRowHeight: number | undefined = undefined;
     @Input() public rowBuffer: number | undefined = undefined;
+    /** @deprecated Set via `defaultColDef.width`
+     */
     @Input() public colWidth: number | undefined = undefined;
     @Input() public headerHeight: number | undefined = undefined;
     @Input() public groupHeaderHeight: number | undefined = undefined;
@@ -359,7 +361,11 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public pivotHeaderHeight: number | undefined = undefined;
     @Input() public pivotGroupHeaderHeight: number | undefined = undefined;
     @Input() public groupDefaultExpanded: number | undefined = undefined;
+    /** @deprecated Set via `defaultColDef.minWidth`
+     */
     @Input() public minColWidth: number | undefined = undefined;
+    /** @deprecated Set via `defaultColDef.maxWidth`
+     */
     @Input() public maxColWidth: number | undefined = undefined;
     @Input() public viewportRowModelPageSize: number | undefined = undefined;
     @Input() public viewportRowModelBufferSize: number | undefined = undefined;

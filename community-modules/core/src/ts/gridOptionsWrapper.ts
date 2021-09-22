@@ -1705,6 +1705,16 @@ export class GridOptionsWrapper {
             console.warn("AG Grid: since v26.0, the grid property `defaultGroupSortComparator` has been replaced by `defaultGroupOrderComparator`");
             options.defaultGroupOrderComparator = options.defaultGroupSortComparator;
         }
+
+        if (options.colWidth) {
+            console.warn('AG Grid: since v26.1, the grid property `colWidth` is deprecated and should be set via `defaultColDef.width`.');
+        }
+        if (options.minColWidth) {
+            console.warn('AG Grid: since v26.1, the grid property `minColWidth` is deprecated and should be set via `defaultColDef.minWidth`.');
+        }
+        if (options.maxColWidth) {
+            console.warn('AG Grid: since v26.1, the grid property `maxColWidth` is deprecated and should be set via `defaultColDef.maxWidth`.');
+        }
     }
 
     private checkForViolations() {

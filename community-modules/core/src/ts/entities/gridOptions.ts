@@ -143,8 +143,11 @@ export interface GridOptions {
     /** @deprecated */
     suppressColumnStateEvents?: boolean;
 
+    /** @deprecated Set via `defaultColDef.width`*/
     colWidth?: number;
+    /** @deprecated Set via `defaultColDef.minWidth`*/
     minColWidth?: number;
+    /** @deprecated Set via `defaultColDef.maxWidth` */
     maxColWidth?: number;
 
     // *** Column Headers *** //

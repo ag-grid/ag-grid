@@ -13804,11 +13804,11 @@
       "type": { "returnType": "string", "optional": true }
     },
     "width": {
-      "description": "/** */",
+      "description": "/** The width in pixels of the sparkline. */",
       "type": { "returnType": "number", "optional": true }
     },
     "height": {
-      "description": "/** */",
+      "description": "/** The height in pixels of the sparkline. */",
       "type": { "returnType": "number", "optional": true }
     },
     "padding": {
@@ -13829,8 +13829,14 @@
     }
   },
   "LineSparklineOptions": {
-    "type": { "type": { "returnType": "'line'", "optional": true } },
-    "line": { "type": { "returnType": "SparklineLine", "optional": true } },
+    "type": {
+      "description": "/** The type of sparklines to create, in this case it would be `'line'`. */",
+      "type": { "returnType": "'line'", "optional": true }
+    },
+    "line": {
+      "description": "/** The configuration for the line. */",
+      "type": { "returnType": "SparklineLine", "optional": true }
+    },
     "marker": { "type": { "returnType": "SparklineMarker", "optional": true } },
     "container": { "type": { "returnType": "HTMLElement", "optional": true } },
     "xKey": {
@@ -13842,11 +13848,11 @@
       "type": { "returnType": "string", "optional": true }
     },
     "width": {
-      "description": "/** */",
+      "description": "/** The width in pixels of the sparkline. */",
       "type": { "returnType": "number", "optional": true }
     },
     "height": {
-      "description": "/** */",
+      "description": "/** The height in pixels of the sparkline. */",
       "type": { "returnType": "number", "optional": true }
     },
     "padding": {
@@ -13867,7 +13873,10 @@
     }
   },
   "AreaSparklineOptions": {
-    "type": { "type": { "returnType": "'area'", "optional": true } },
+    "type": {
+      "description": "/** The type of sparklines to create, in this case it would be `'area'`. */",
+      "type": { "returnType": "'area'", "optional": true }
+    },
     "fill": { "type": { "returnType": "string", "optional": true } },
     "line": { "type": { "returnType": "SparklineLine", "optional": true } },
     "marker": { "type": { "returnType": "SparklineMarker", "optional": true } },
@@ -13881,11 +13890,11 @@
       "type": { "returnType": "string", "optional": true }
     },
     "width": {
-      "description": "/** */",
+      "description": "/** The width in pixels of the sparkline. */",
       "type": { "returnType": "number", "optional": true }
     },
     "height": {
-      "description": "/** */",
+      "description": "/** The height in pixels of the sparkline. */",
       "type": { "returnType": "number", "optional": true }
     },
     "padding": {
@@ -13906,7 +13915,10 @@
     }
   },
   "ColumnSparklineOptions": {
-    "type": { "type": { "returnType": "'column'", "optional": true } },
+    "type": {
+      "description": "/** The type of sparklines to create, in this case it would be `'column'`. */",
+      "type": { "returnType": "'column'", "optional": true }
+    },
     "fill": { "type": { "returnType": "string", "optional": true } },
     "stroke": { "type": { "returnType": "string", "optional": true } },
     "strokeWidth": { "type": { "returnType": "number", "optional": true } },
@@ -13925,11 +13937,11 @@
       "type": { "returnType": "string", "optional": true }
     },
     "width": {
-      "description": "/** */",
+      "description": "/** The width in pixels of the sparkline. */",
       "type": { "returnType": "number", "optional": true }
     },
     "height": {
-      "description": "/** */",
+      "description": "/** The height in pixels of the sparkline. */",
       "type": { "returnType": "number", "optional": true }
     },
     "padding": {

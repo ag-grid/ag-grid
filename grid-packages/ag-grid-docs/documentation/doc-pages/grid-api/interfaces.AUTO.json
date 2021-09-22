@@ -7825,8 +7825,8 @@
     "docs": {
       "xKey?": "/** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
       "yKey?": "/** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
-      "width?": "/** */",
-      "height?": "/** */",
+      "width?": "/** The width in pixels of the sparkline. */",
+      "height?": "/** The height in pixels of the sparkline. */",
       "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
       "axis?": "/** The options for the horizontal axis line in the sparklines. */",
       "highlightStyle?": "/** The configuration for the highlighting used when the markers are hovered over. */",
@@ -7850,10 +7850,12 @@
       "tooltip?": "SparklineTooltip"
     },
     "docs": {
+      "type?": "/** The type of sparklines to create, in this case it would be `'line'`. */",
+      "line?": "/** The configuration for the line. */",
       "xKey?": "/** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
       "yKey?": "/** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
-      "width?": "/** */",
-      "height?": "/** */",
+      "width?": "/** The width in pixels of the sparkline. */",
+      "height?": "/** The height in pixels of the sparkline. */",
       "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
       "axis?": "/** The options for the horizontal axis line in the sparklines. */",
       "highlightStyle?": "/** The configuration for the highlighting used when the markers are hovered over. */",
@@ -7878,10 +7880,11 @@
       "tooltip?": "SparklineTooltip"
     },
     "docs": {
+      "type?": "/** The type of sparklines to create, in this case it would be `'area'`. */",
       "xKey?": "/** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
       "yKey?": "/** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
-      "width?": "/** */",
-      "height?": "/** */",
+      "width?": "/** The width in pixels of the sparkline. */",
+      "height?": "/** The height in pixels of the sparkline. */",
       "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
       "axis?": "/** The options for the horizontal axis line in the sparklines. */",
       "highlightStyle?": "/** The configuration for the highlighting used when the markers are hovered over. */",
@@ -7909,10 +7912,11 @@
       "tooltip?": "SparklineTooltip"
     },
     "docs": {
+      "type?": "/** The type of sparklines to create, in this case it would be `'column'`. */",
       "xKey?": "/** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
       "yKey?": "/** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
-      "width?": "/** */",
-      "height?": "/** */",
+      "width?": "/** The width in pixels of the sparkline. */",
+      "height?": "/** The height in pixels of the sparkline. */",
       "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
       "axis?": "/** The options for the horizontal axis line in the sparklines. */",
       "highlightStyle?": "/** The configuration for the highlighting used when the markers are hovered over. */",
