@@ -307,8 +307,6 @@ export class ScatterSeries extends CartesianSeries {
     update(): void {
         this.updatePending = false;
 
-        this.group.visible = this.visible;
-
         this.updateSelections();
         this.updateNodes();
     }
@@ -325,6 +323,7 @@ export class ScatterSeries extends CartesianSeries {
     }
 
     private updateNodes() {
+        this.group.visible = this.visible;
         this.updateMarkerNodes();
         this.updateLabelNodes();
     }

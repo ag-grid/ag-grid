@@ -417,20 +417,27 @@ export class HistogramSeries extends CartesianSeries {
     }
 
     update(): void {
-        const { visible, chart, xAxis, yAxis } = this;
+        this.updatePending = false;
 
-        this.group.visible = visible;
+        this.updateSelections();
+        this.updateNodes();
+    }
 
-        if (!xAxis || !yAxis || !visible || !chart || chart.layoutPending || chart.dataPending) {
+    updateSelections() {
+        if (!this.nodeDataPending) {
             return;
         }
+        this.nodeDataPending = false;
 
         const nodeData = this.createNodeData();
 
         this.updateRectSelection(nodeData);
-        this.updateRectNodes();
-
         this.updateTextSelection(nodeData);
+    }
+
+    updateNodes() {
+        this.group.visible = this.visible;
+        this.updateRectNodes();
         this.updateTextNodes();
     }
 

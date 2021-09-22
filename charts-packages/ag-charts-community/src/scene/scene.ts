@@ -64,21 +64,18 @@ export class Scene {
     private _dirty = false;
     private animationFrameId = 0;
     set dirty(dirty: boolean) {
-        if (dirty && !this._dirty) {
-            this.animationFrameId = requestAnimationFrame(this.render);
+        if (dirty) {
+            if (!this._dirty) {
+                this.animationFrameId = requestAnimationFrame(this.render);
+            }
+        } else if (this.animationFrameId) {
+            cancelAnimationFrame(this.animationFrameId);
+            this.animationFrameId = 0;
         }
         this._dirty = dirty;
     }
     get dirty(): boolean {
         return this._dirty;
-    }
-
-    cancelRender() {
-        if (this.animationFrameId) {
-            cancelAnimationFrame(this.animationFrameId);
-            this.animationFrameId = 0;
-            this._dirty = false;
-        }
     }
 
     _root: Node | null = null;
