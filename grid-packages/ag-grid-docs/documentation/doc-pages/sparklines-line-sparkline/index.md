@@ -7,7 +7,7 @@ This section introduces the Line Sparkline
 
 ## Line Sparklines
 
-To create line sparklines in the grid, `agSparklineCellRenderer` component can be provided along with `LineSparklineOptions` as shown below.
+To create line sparklines in the grid, add `agSparklineCellRenderer` and `LineSparklineOptions` as shown below.
 
 <snippet>
 const gridOptions = {
@@ -41,8 +41,6 @@ const gridOptions = {
     ],
 };
 </snippet>
-
-In the snippet above, `LineSparklineOptions` is provided in the `cellRendererParams`.
 
 This is an example to further demonstrate how line sparklines can be configured.
 
