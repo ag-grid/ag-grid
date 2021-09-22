@@ -1389,8 +1389,8 @@
             "showInCollapsed": true
           },
           {
-            "title": "Axes Types",
-            "url": "/sparklines-axes-types/",
+            "title": "Axis Types",
+            "url": "/sparklines-axis-types/",
             "enterprise": true,
             "showInCollapsed": true
           },

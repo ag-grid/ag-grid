@@ -1,11 +1,11 @@
 ---
-title: "Sparklines - Axes Types"
+title: "Sparklines - Axis Types"
 enterprise: true
 ---
 
-This section compares the different horizontal axes types that are available to all sparklines. 
+This section compares the different horizontal axis types that are available to all sparklines. 
 
-When choosing an appropriate axes it is important to consider the data the sparkline is based on, this ensures X values 
+When choosing an appropriate axis it is important to consider the data the sparkline is based on, this ensures X values 
 are scaled correctly along the x-axis. 
 
 The following axes types are available to all sparklines:
