@@ -539,7 +539,7 @@ export abstract class Sparkline extends Observable {
     }
 
     protected formatNumericDatum(datum: any): string {
-        return parseInt(datum).toFixed(1);
+        return parseFloat(datum).toFixed(1);
     }
 
     private _onMouseMove = this.onMouseMove.bind(this);
