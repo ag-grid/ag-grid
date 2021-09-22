@@ -247,6 +247,18 @@ export class TreemapSeries extends HierarchySeries {
     }
 
     update(): void {
+        this.updatePending = false;
+
+        this.updateSelections();
+        this.updateNodes();
+    }
+
+    updateSelections() {
+        if (!this.nodeDataPending) {
+            return;
+        }
+        this.nodeDataPending = false;
+
         const { chart, dataRoot } = this;
 
         if (!chart || !dataRoot) {
@@ -273,29 +285,30 @@ export class TreemapSeries extends HierarchySeries {
         enterGroups.append(Text).each((node: any) => node.tag = TextNodeTag.Value);
 
         this.groupSelection = updateGroups.merge(enterGroups) as any;
-
-        this.updateNodes();
     }
 
     updateNodes() {
-        const { chart } = this;
-
-        if (!chart) {
+        if (!this.chart) {
             return;
         }
 
-        const { highlightedDatum } = chart;
-        const { fill: highlightFill, stroke: highlightStroke } = this.highlightStyle;
-        const { colorKey, labelMap, nodePadding, title, subtitle, labels, shadow, gradient } = this;
+        const {
+            colorKey, labelMap, nodePadding, title, subtitle, labels, shadow, gradient,
+            chart: { highlightedDatum },
+            highlightStyle: {
+                fill: deprecatedFill,
+                stroke: deprecatedStroke,
+                item: {
+                    fill: highlightedFill = deprecatedFill,
+                    stroke: highlightedStroke = deprecatedStroke
+                }
+            }
+        } = this;
 
         this.groupSelection.selectByClass(Rect).each((rect, datum) => {
-            const highlighted = datum === highlightedDatum;
-            const fill = highlighted && highlightFill !== undefined
-                ? highlightFill
-                : datum.fill;
-            const stroke = highlighted && highlightStroke !== undefined
-                ? highlightStroke
-                : datum.depth < 2 ? undefined : 'black';
+            const isDatumHighlighted = datum === highlightedDatum;
+            const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : datum.fill;
+            const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : datum.depth < 2 ? undefined : 'black';
 
             rect.fill = fill;
             rect.stroke = stroke;
