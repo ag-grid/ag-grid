@@ -21,7 +21,6 @@ describe('line sparkline', () => {
         container: containerDiv,
         width: 100,
         height: 200,
-        title: 'line test',
         padding: {
             top: 2,
             right: 5,
@@ -63,7 +62,6 @@ describe('line sparkline', () => {
 
         options.height = 135;
         options.width = 265;
-        options.title = 'updated line test'
 
         options.padding!.left = 11;
         options.marker!.fill = 'beige';
@@ -81,7 +79,6 @@ describe('line sparkline', () => {
         expect(sparkline.container).toBe(containerDiv);
         expect(sparkline.width).toBe(100);
         expect(sparkline.height).toBe(200);
-        expect(sparkline.title).toBe('line test');
     });
     test('padding', () => {
         const { padding } = sparkline;
@@ -141,7 +138,6 @@ describe('area sparkline', () => {
             top: 1,
             right: 7,
         },
-        title: 'area test',
         fill: 'lavender',
         line: {
             stroke: 'purple',
@@ -178,7 +174,6 @@ describe('area sparkline', () => {
 
         options.height = 67;
         options.width = 109;
-        options.title = 'updated area test'
 
         options.padding!.right = 5;
         options.marker!.fill = 'salmon';
@@ -196,7 +191,6 @@ describe('area sparkline', () => {
         expect(sparkline.container).toBe(containerDiv);
         expect(sparkline.width).toBe(200);
         expect(sparkline.height).toBe(100);
-        expect(sparkline.title).toBe('area test');
         expect(sparkline.fill).toBe('lavender');
     });
     test('padding', () => {
@@ -258,7 +252,6 @@ describe('column sparkline', () => {
             bottom: 9,
             left: 15,
         },
-        title: 'column test',
         fill: 'silver',
         stroke: 'blue',
         strokeWidth: 2,
@@ -287,7 +280,6 @@ describe('column sparkline', () => {
 
         options.height = 84;
         options.width = 203;
-        options.title = 'updated column test'
 
         options.padding!.bottom = 13;
         options.fill = 'firebrick';
@@ -305,7 +297,6 @@ describe('column sparkline', () => {
         expect(sparkline.container).toBe(containerDiv);
         expect(sparkline.width).toBe(150);
         expect(sparkline.height).toBe(50);
-        expect(sparkline.title).toBe('column test');
     });
     test('padding', () => {
         const { padding } = sparkline;

@@ -6186,8 +6186,6 @@
     "type": {
       "context?": "any",
       "datum": "any",
-      "title?": "string",
-      "backgroundColor?": "string",
       "xValue": "any",
       "yValue": "any"
     }
@@ -6202,9 +6200,7 @@
       "yValue": "any",
       "yName": "string",
       "context?": "any",
-      "datum": "any",
-      "title?": "string",
-      "backgroundColor?": "string"
+      "datum": "any"
     }
   },
   "BarSeriesOptions": {
@@ -6258,9 +6254,7 @@
       "yValue": "any",
       "yName": "string",
       "context?": "any",
-      "datum": "any",
-      "title?": "string",
-      "backgroundColor?": "string"
+      "datum": "any"
     }
   },
   "LineSeriesOptions": {
@@ -6309,9 +6303,7 @@
       "yValue": "any",
       "yName": "string",
       "context?": "any",
-      "datum": "any",
-      "title?": "string",
-      "backgroundColor?": "string"
+      "datum": "any"
     }
   },
   "ScatterSeriesLabelOptions": {
@@ -6363,9 +6355,7 @@
       "yValue": "any",
       "yName": "string",
       "context?": "any",
-      "datum": "any",
-      "title?": "string",
-      "backgroundColor?": "string"
+      "datum": "any"
     }
   },
   "AreaSeriesLabelOptions": {
@@ -6405,9 +6395,7 @@
       "yValue": "any",
       "yName": "string",
       "context?": "any",
-      "datum": "any",
-      "title?": "string",
-      "backgroundColor?": "string"
+      "datum": "any"
     }
   },
   "PieTitleOptions": {
@@ -6470,8 +6458,6 @@
       "labelName?": "string",
       "context?": "any",
       "datum": "any",
-      "title?": "string",
-      "backgroundColor?": "string",
       "xValue": "any",
       "yValue": "any"
     }
@@ -7827,13 +7813,24 @@
     "meta": {},
     "type": {
       "container?": "HTMLElement",
+      "xKey?": "string",
+      "yKey?": "string",
       "width?": "number",
       "height?": "number",
-      "title?": "string",
       "padding?": "Padding",
       "axis?": "SparklineAxisOptions",
       "highlightStyle?": "HighlightStyle",
       "tooltip?": "SparklineTooltip"
+    },
+    "docs": {
+      "xKey?": "/** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
+      "yKey?": "/** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
+      "width?": "/** */",
+      "height?": "/** */",
+      "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
+      "axis?": "/** The options for the horizontal axis line in the sparklines. */",
+      "highlightStyle?": "/** The configuration for the highlighting used when the markers are hovered over. */",
+      "tooltip?": "/** Configuration for the tooltips. */"
     }
   },
   "LineSparklineOptions": {
@@ -7843,13 +7840,24 @@
       "line?": "SparklineLine",
       "marker?": "SparklineMarker",
       "container?": "HTMLElement",
+      "xKey?": "string",
+      "yKey?": "string",
       "width?": "number",
       "height?": "number",
-      "title?": "string",
       "padding?": "Padding",
       "axis?": "SparklineAxisOptions",
       "highlightStyle?": "HighlightStyle",
       "tooltip?": "SparklineTooltip"
+    },
+    "docs": {
+      "xKey?": "/** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
+      "yKey?": "/** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
+      "width?": "/** */",
+      "height?": "/** */",
+      "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
+      "axis?": "/** The options for the horizontal axis line in the sparklines. */",
+      "highlightStyle?": "/** The configuration for the highlighting used when the markers are hovered over. */",
+      "tooltip?": "/** Configuration for the tooltips. */"
     }
   },
   "AreaSparklineOptions": {
@@ -7860,13 +7868,24 @@
       "line?": "SparklineLine",
       "marker?": "SparklineMarker",
       "container?": "HTMLElement",
+      "xKey?": "string",
+      "yKey?": "string",
       "width?": "number",
       "height?": "number",
-      "title?": "string",
       "padding?": "Padding",
       "axis?": "SparklineAxisOptions",
       "highlightStyle?": "HighlightStyle",
       "tooltip?": "SparklineTooltip"
+    },
+    "docs": {
+      "xKey?": "/** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
+      "yKey?": "/** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
+      "width?": "/** */",
+      "height?": "/** */",
+      "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
+      "axis?": "/** The options for the horizontal axis line in the sparklines. */",
+      "highlightStyle?": "/** The configuration for the highlighting used when the markers are hovered over. */",
+      "tooltip?": "/** Configuration for the tooltips. */"
     }
   },
   "ColumnSparklineOptions": {
@@ -7880,13 +7899,24 @@
       "paddingOuter?": "number",
       "formatter?": "SparklineColumnFormatter",
       "container?": "HTMLElement",
+      "xKey?": "string",
+      "yKey?": "string",
       "width?": "number",
       "height?": "number",
-      "title?": "string",
       "padding?": "Padding",
       "axis?": "SparklineAxisOptions",
       "highlightStyle?": "HighlightStyle",
       "tooltip?": "SparklineTooltip"
+    },
+    "docs": {
+      "xKey?": "/** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
+      "yKey?": "/** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
+      "width?": "/** */",
+      "height?": "/** */",
+      "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
+      "axis?": "/** The options for the horizontal axis line in the sparklines. */",
+      "highlightStyle?": "/** The configuration for the highlighting used when the markers are hovered over. */",
+      "tooltip?": "/** Configuration for the tooltips. */"
     }
   },
   "Padding": {
@@ -7951,11 +7981,35 @@
       "stroke?": "string",
       "strokeWidth": "number",
       "highlighted": "boolean"
+    },
+    "docs": {
+      "datum": "/** The raw data associated with the specific marker. */",
+      "xValue": "/** The x value of the marker. */",
+      "yValue": "/** The y value of the marker. */",
+      "width": "/** The width of the column in pixels. */",
+      "height": "/** The width of the column in pixels. */",
+      "min?": "/** Whether or not the marker is a minimum point. */",
+      "max?": "/** Whether or not the marker is a maximum point. */",
+      "first?": "/** Whether or not the marker represents the first data point. */",
+      "last?": "/** Whether or not the marker represents the last data point. */",
+      "fill?": "/** The CSS colour value for the fill of the individual marker. */",
+      "stroke?": "/** The CSS colour value for the outline of the individual marker. */",
+      "strokeWidth": "/** The thickness in pixels for the stroke of the individual marker. */",
+      "highlighted": "/** Whether or not the marker is highlighted. */"
     }
   },
   "ColumnFormat": {
     "meta": {},
-    "type": { "fill?": "string", "stroke?": "string", "strokeWidth?": "number" }
+    "type": {
+      "fill?": "string",
+      "stroke?": "string",
+      "strokeWidth?": "number"
+    },
+    "docs": {
+      "fill?": "/** The CSS colour value for the fill of the individual column. */",
+      "stroke?": "/** The CSS colour value for the outline of the individual column. */",
+      "strokeWidth?": "/** The thickness in pixels for the stroke of the individual column. */"
+    }
   },
   "SparklineMarker": {
     "meta": {},
@@ -7988,6 +8042,20 @@
       "strokeWidth": "number",
       "size": "number",
       "highlighted": "boolean"
+    },
+    "docs": {
+      "datum": "/** The raw data associated with the specific marker. */",
+      "xValue": "/** The x value of the marker. */",
+      "yValue": "/** The y value of the marker. */",
+      "min?": "/** Whether or not the marker is a minimum point. */",
+      "max?": "/** Whether or not the marker is a maximum point. */",
+      "first?": "/** Whether or not the marker represents the first data point. */",
+      "last?": "/** Whether or not the marker represents the last data point. */",
+      "fill?": "/** The CSS colour value for the fill of the individual marker. */",
+      "stroke?": "/** The CSS colour value for the outline of the individual marker. */",
+      "strokeWidth": "/** The thickness in pixels for the stroke of the individual marker. */",
+      "size": "/** The width in pixels of the individual marker. */",
+      "highlighted": "/** Whether or not the marker is highlighted. */"
     }
   },
   "MarkerFormat": {
@@ -7998,6 +8066,13 @@
       "fill?": "string",
       "stroke?": "string",
       "strokeWidth?": "number"
+    },
+    "docs": {
+      "enabled?": "/** Set to false to make marker invisible. */",
+      "size?": "/** The width in pixels of the individual marker. */",
+      "fill?": "/** The CSS colour value for the fill of the individual column. */",
+      "stroke?": "/** The CSS colour value for the outline of the individual column. */",
+      "strokeWidth?": "/** The thickness in pixels for the stroke of the individual column. */"
     }
   },
   "IStatusBarService": {

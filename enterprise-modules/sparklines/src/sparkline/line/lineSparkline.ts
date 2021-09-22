@@ -230,7 +230,7 @@ export class LineSparkline extends Sparkline {
     }
 
     getTooltipHtml(datum: SeriesNodeDatum): string | undefined {
-        const { title, marker } = this;
+        const {  marker } = this;
         const { seriesDatum } = datum;
         const yValue = seriesDatum.y;
         const xValue = seriesDatum.x;
@@ -239,7 +239,6 @@ export class LineSparkline extends Sparkline {
 
         const defaults = {
             backgroundColor,
-            title,
             content
         }
 
@@ -247,8 +246,6 @@ export class LineSparkline extends Sparkline {
             return toTooltipHtml(this.tooltip.renderer({
                 context: this.context,
                 datum: seriesDatum,
-                title,
-                backgroundColor,
                 yValue,
                 xValue,
             }), defaults);

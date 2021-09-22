@@ -19,9 +19,6 @@ var gridOptions = {
                     highlightStyle: {
                         fill: 'rgb(143,185,77)',
                     },
-                    marker: {
-                        formatter: formatter,
-                    },
                     axis: {
                         stroke: 'rgb(204, 204, 235)'
                     }
@@ -36,14 +33,6 @@ var gridOptions = {
     },
     rowData: getStockData(),
 };
-
-function formatter(params) {
-    const { highlighted, yValue } = params;
-
-    return {
-        size: highlighted ? yValue < 0 ? 4 : 6 : 0,
-    }
-}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
