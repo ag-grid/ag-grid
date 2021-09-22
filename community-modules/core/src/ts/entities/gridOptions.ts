@@ -526,149 +526,110 @@ export interface GridOptions {
     // * as event callbacks are automatically generated.                                                        *
     // **********************************************************************************************************
 
-    onColumnEverythingChanged?(event: ColumnEverythingChangedEvent): void;
-
+    // *** Accessories *** //
     onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent): void;
 
-    onNewColumnsLoaded?(event: NewColumnsLoadedEvent): void;
-
-    onColumnPivotModeChanged?(event: ColumnPivotModeChangedEvent): void;
-
-    onColumnRowGroupChanged?(event: ColumnRowGroupChangedEvent): void;
-
-    onColumnPivotChanged?(event: ColumnPivotChangedEvent): void;
-
-    onGridColumnsChanged?(event: GridColumnsChangedEvent): void;
-
-    onColumnValueChanged?(event: ColumnValueChangedEvent): void;
-
-    onColumnMoved?(event: ColumnMovedEvent): void;
-
-    onColumnVisible?(event: ColumnVisibleEvent): void;
-
-    onColumnPinned?(event: ColumnPinnedEvent): void;
-
-    onColumnGroupOpened?(event: ColumnGroupOpenedEvent): void;
-
-    onColumnResized?(event: ColumnResizedEvent): void;
-
-    onDisplayedColumnsChanged?(event: DisplayedColumnsChangedEvent): void;
-
-    onVirtualColumnsChanged?(event: VirtualColumnsChangedEvent): void;
-
-    onRowGroupOpened?(event: RowGroupOpenedEvent): void;
-
-    onRowDataChanged?(event: RowDataChangedEvent): void;
-
-    onRowDataUpdated?(event: RowDataUpdatedEvent): void;
-
-    onPinnedRowDataChanged?(event: PinnedRowDataChangedEvent): void;
-
-    onRangeSelectionChanged?(event: RangeSelectionChangedEvent): void;
-
-    onColumnRowGroupChangeRequest?(event: ColumnRowGroupChangeRequestEvent): void;
-
-    onColumnPivotChangeRequest?(event: ColumnPivotChangeRequestEvent): void;
-
-    onColumnValueChangeRequest?(event: ColumnValueChangeRequestEvent): void;
-
-    onColumnAggFuncChangeRequest?(event: ColumnAggFuncChangeRequestEvent): void;
-
-    onModelUpdated?(event: ModelUpdatedEvent): void;
-
-    onCellKeyDown?(event: CellKeyDownEvent | FullWidthCellKeyDownEvent): void;
-
-    onCellKeyPress?(event: CellKeyPressEvent | FullWidthCellKeyPressEvent): void;
-
-    onCellClicked?(event: CellClickedEvent): void;
-
-    onCellMouseDown?(event: CellMouseDownEvent): void;
-
-    onCellDoubleClicked?(event: CellDoubleClickedEvent): void;
-
-    onCellContextMenu?(event: CellContextMenuEvent): void;
-
-    onCellValueChanged?(event: CellValueChangedEvent): void;
-
-    onCellMouseOver?(event: CellMouseOverEvent): void;
-
-    onCellMouseOut?(event: CellMouseOutEvent): void;
-
-    onRowValueChanged?(event: RowValueChangedEvent): void;
-
-    onRowEditingStarted?(event: RowEditingStartedEvent): void;
-
-    onRowEditingStopped?(event: RowEditingStoppedEvent): void;
-
-    onCellEditingStarted?(event: CellEditingStartedEvent): void;
-
-    onCellEditingStopped?(event: CellEditingStoppedEvent): void;
-
-    onCellFocused?(event: CellFocusedEvent): void;
-
-    onRowSelected?(event: RowSelectedEvent): void;
-
-    onSelectionChanged?(event: SelectionChangedEvent): void;
-
-    onFilterOpened?(event: FilterOpenedEvent): void;
-
-    onFilterChanged?(event: FilterChangedEvent): void;
-
-    onFilterModified?(event: FilterModifiedEvent): void;
-
-    onSortChanged?(event: SortChangedEvent): void;
-
-    onVirtualRowRemoved?(event: VirtualRowRemovedEvent): void;
-
-    onRowClicked?(event: RowClickedEvent): void;
-
-    onRowDoubleClicked?(event: RowDoubleClickedEvent): void;
-
-    onGridReady?(event: GridReadyEvent): void;
-
-    onViewportChanged?(event: ViewportChangedEvent): void;
-
-    onDragStarted?(event: DragStartedEvent): void;
-
-    onDragStopped?(event: DragStoppedEvent): void;
-
-    onPaginationChanged?(event: PaginationChangedEvent): void;
-
-    onRowDragEnter?(event: RowDragEvent): void;
-
-    onRowDragMove?(event: RowDragEvent): void;
-
-    onRowDragLeave?(event: RowDragEvent): void;
-
-    onRowDragEnd?(event: RowDragEvent): void;
-
+    // *** Clipboard *** //
     onPasteStart?(event: PasteStartEvent): void;
-
     onPasteEnd?(event: PasteEndEvent): void;
 
-    onFillStart?(event: FillStartEvent): void;
+    // *** Columns *** //
+    onColumnVisible?(event: ColumnVisibleEvent): void;
+    onColumnPinned?(event: ColumnPinnedEvent): void;
+    onColumnResized?(event: ColumnResizedEvent): void;
+    onColumnMoved?(event: ColumnMovedEvent): void;
+    onColumnValueChanged?(event: ColumnValueChangedEvent): void;
+    onColumnPivotModeChanged?(event: ColumnPivotModeChangedEvent): void;
+    onColumnPivotChanged?(event: ColumnPivotChangedEvent): void;
+    onColumnGroupOpened?(event: ColumnGroupOpenedEvent): void;
+    onNewColumnsLoaded?(event: NewColumnsLoadedEvent): void;
+    onGridColumnsChanged?(event: GridColumnsChangedEvent): void;
+    onDisplayedColumnsChanged?(event: DisplayedColumnsChangedEvent): void;
+    onVirtualColumnsChanged?(event: VirtualColumnsChangedEvent): void;
+    onColumnEverythingChanged?(event: ColumnEverythingChangedEvent): void;
 
-    onFillEnd?(event: FillEndEvent): void;
-
-    onBodyScroll?(event: BodyScrollEvent): void;
-
-    onFirstDataRendered?(event: FirstDataRenderedEvent): void;
-
-    onExpandOrCollapseAll?(event: ExpandCollapseAllEvent): void;
-
-    onChartCreated?(event: ChartCreated): void;
-
-    onChartRangeSelectionChanged?(event: ChartRangeSelectionChanged): void;
-
-    onChartOptionsChanged?(event: ChartOptionsChanged): void;
-
-    onChartDestroyed?(event: ChartDestroyed): void;
-
+    // *** Components *** //
     onComponentStateChanged?(event: ComponentStateChangedEvent): void;
 
+    // *** Editing *** //
+    onCellValueChanged?(event: CellValueChangedEvent): void;
+    onRowValueChanged?(event: RowValueChangedEvent): void;
+    onCellEditingStarted?(event: CellEditingStartedEvent): void;
+    onCellEditingStopped?(event: CellEditingStoppedEvent): void;
+    onRowEditingStarted?(event: RowEditingStartedEvent): void;
+    onRowEditingStopped?(event: RowEditingStoppedEvent): void;
+
+    // *** Filtering *** //
+    onFilterOpened?(event: FilterOpenedEvent): void;
+    onFilterChanged?(event: FilterChangedEvent): void;
+    onFilterModified?(event: FilterModifiedEvent): void;
+
+    // *** Integrated Charts *** //
+    onChartCreated?(event: ChartCreated): void;
+    onChartRangeSelectionChanged?(event: ChartRangeSelectionChanged): void;
+    onChartOptionsChanged?(event: ChartOptionsChanged): void;
+    onChartDestroyed?(event: ChartDestroyed): void;
+
+    // *** Keyboard Navigation *** //
+    onCellKeyDown?(event: CellKeyDownEvent | FullWidthCellKeyDownEvent): void;
+    onCellKeyPress?(event: CellKeyPressEvent | FullWidthCellKeyPressEvent): void;
+
+    // *** Miscellaneous *** //
+    onGridReady?(event: GridReadyEvent): void;
+    onFirstDataRendered?(event: FirstDataRenderedEvent): void;
+    onGridSizeChanged?(event: GridSizeChangedEvent): void;
+    onModelUpdated?(event: ModelUpdatedEvent): void;
+    onVirtualRowRemoved?(event: VirtualRowRemovedEvent): void;
+    onViewportChanged?(event: ViewportChangedEvent): void;
+    onBodyScroll?(event: BodyScrollEvent): void;
+    onDragStarted?(event: DragStartedEvent): void;
+    onDragStopped?(event: DragStoppedEvent): void;
+
+    // *** Pagination *** //
+    onPaginationChanged?(event: PaginationChangedEvent): void;
+
+    // *** Row Drag and Drop *** //
+    onRowDragEnter?(event: RowDragEvent): void;
+    onRowDragMove?(event: RowDragEvent): void;
+    onRowDragLeave?(event: RowDragEvent): void;
+    onRowDragEnd?(event: RowDragEvent): void;
+
+    // *** Row Grouping *** //
+    onColumnRowGroupChanged?(event: ColumnRowGroupChangedEvent): void;
+    onRowGroupOpened?(event: RowGroupOpenedEvent): void;
+    onExpandOrCollapseAll?(event: ExpandCollapseAllEvent): void;
+
+    // *** Row Pinning *** //
+    onPinnedRowDataChanged?(event: PinnedRowDataChangedEvent): void;
+
+    // *** Row Model: Client Side *** //
+    onRowDataChanged?(event: RowDataChangedEvent): void;
+    onRowDataUpdated?(event: RowDataUpdatedEvent): void;
     onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushed): void;
 
-    onGridSizeChanged?(event: GridSizeChangedEvent): void;
+    // *** Selection *** //
+    onCellClicked?(event: CellClickedEvent): void;
+    onCellDoubleClicked?(event: CellDoubleClickedEvent): void;
+    onCellFocused?(event: CellFocusedEvent): void;
+    onCellMouseOver?(event: CellMouseOverEvent): void;
+    onCellMouseOut?(event: CellMouseOutEvent): void;
+    onCellMouseDown?(event: CellMouseDownEvent): void;
+    onRowClicked?(event: RowClickedEvent): void;
+    onRowDoubleClicked?(event: RowDoubleClickedEvent): void;
+    onRowSelected?(event: RowSelectedEvent): void;
+    onSelectionChanged?(event: SelectionChangedEvent): void;
+    onCellContextMenu?(event: CellContextMenuEvent): void;
+    onRangeSelectionChanged?(event: RangeSelectionChangedEvent): void;
+    onFillStart?(event: FillStartEvent): void;
+    onFillEnd?(event: FillEndEvent): void;
+
+    // *** Sorting *** //
+    onSortChanged?(event: SortChangedEvent): void;
+
+    onColumnRowGroupChangeRequest?(event: ColumnRowGroupChangeRequestEvent): void;
+    onColumnPivotChangeRequest?(event: ColumnPivotChangeRequestEvent): void;
+    onColumnValueChangeRequest?(event: ColumnValueChangeRequestEvent): void;
+    onColumnAggFuncChangeRequest?(event: ColumnAggFuncChangeRequestEvent): void;
 
     // apis, set by the grid on init, set to null on destroy
     api?: GridApi | null;

@@ -90,6 +90,33 @@
             "description": "A change to range selection has occurred."
         }
     },
+    "charts": {
+        "meta": {
+            "displayName": "Integrated Charts",
+            "page": {
+                "name": "Integrated Charts Events",
+                "url": "/integrated-charts-events/"
+            }
+        },
+        "chartCreated": {
+            "description": "A chart is created."
+        },
+        "chartRangeSelectionChanged": {
+            "description": "The data range for the chart has been changed."
+        },
+        "chartOptionsChanged": {
+            "description": "Formatting changes have been made by users through the Format Panel.",
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "ChartOptions"
+                ],
+                "include": []
+            }
+        },
+        "chartDestroyed": {
+            "description": "A chart has been destroyed."
+        }
+    },
     "editing": {
         "meta": {
             "displayName": "Editing",
