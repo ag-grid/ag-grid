@@ -13791,16 +13791,36 @@
   "SparklineOptions": {},
   "BaseSparklineOptions": {
     "container": { "type": { "returnType": "HTMLElement", "optional": true } },
-    "width": { "type": { "returnType": "number", "optional": true } },
-    "height": { "type": { "returnType": "number", "optional": true } },
-    "padding": { "type": { "returnType": "Padding", "optional": true } },
+    "xKey": {
+      "description": "/** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "yKey": {
+      "description": "/** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "width": {
+      "description": "/** */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "height": {
+      "description": "/** */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "padding": {
+      "description": "/** Configuration for the padding in pixels shown around the sparklines. */",
+      "type": { "returnType": "Padding", "optional": true }
+    },
     "axis": {
+      "description": "/** The options for the horizontal axis line in the sparklines. */",
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
     },
     "highlightStyle": {
+      "description": "/** The configuration for the highlighting used when the markers are hovered over. */",
       "type": { "returnType": "HighlightStyle", "optional": true }
     },
     "tooltip": {
+      "description": "/** Configuration for the tooltips. */",
       "type": { "returnType": "SparklineTooltip", "optional": true }
     }
   },
@@ -13809,16 +13829,36 @@
     "line": { "type": { "returnType": "SparklineLine", "optional": true } },
     "marker": { "type": { "returnType": "SparklineMarker", "optional": true } },
     "container": { "type": { "returnType": "HTMLElement", "optional": true } },
-    "width": { "type": { "returnType": "number", "optional": true } },
-    "height": { "type": { "returnType": "number", "optional": true } },
-    "padding": { "type": { "returnType": "Padding", "optional": true } },
+    "xKey": {
+      "description": "/** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "yKey": {
+      "description": "/** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "width": {
+      "description": "/** */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "height": {
+      "description": "/** */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "padding": {
+      "description": "/** Configuration for the padding in pixels shown around the sparklines. */",
+      "type": { "returnType": "Padding", "optional": true }
+    },
     "axis": {
+      "description": "/** The options for the horizontal axis line in the sparklines. */",
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
     },
     "highlightStyle": {
+      "description": "/** The configuration for the highlighting used when the markers are hovered over. */",
       "type": { "returnType": "HighlightStyle", "optional": true }
     },
     "tooltip": {
+      "description": "/** Configuration for the tooltips. */",
       "type": { "returnType": "SparklineTooltip", "optional": true }
     }
   },
@@ -13828,16 +13868,36 @@
     "line": { "type": { "returnType": "SparklineLine", "optional": true } },
     "marker": { "type": { "returnType": "SparklineMarker", "optional": true } },
     "container": { "type": { "returnType": "HTMLElement", "optional": true } },
-    "width": { "type": { "returnType": "number", "optional": true } },
-    "height": { "type": { "returnType": "number", "optional": true } },
-    "padding": { "type": { "returnType": "Padding", "optional": true } },
+    "xKey": {
+      "description": "/** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "yKey": {
+      "description": "/** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "width": {
+      "description": "/** */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "height": {
+      "description": "/** */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "padding": {
+      "description": "/** Configuration for the padding in pixels shown around the sparklines. */",
+      "type": { "returnType": "Padding", "optional": true }
+    },
     "axis": {
+      "description": "/** The options for the horizontal axis line in the sparklines. */",
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
     },
     "highlightStyle": {
+      "description": "/** The configuration for the highlighting used when the markers are hovered over. */",
       "type": { "returnType": "HighlightStyle", "optional": true }
     },
     "tooltip": {
+      "description": "/** Configuration for the tooltips. */",
       "type": { "returnType": "SparklineTooltip", "optional": true }
     }
   },
@@ -13852,16 +13912,36 @@
       "type": { "returnType": "SparklineColumnFormatter", "optional": true }
     },
     "container": { "type": { "returnType": "HTMLElement", "optional": true } },
-    "width": { "type": { "returnType": "number", "optional": true } },
-    "height": { "type": { "returnType": "number", "optional": true } },
-    "padding": { "type": { "returnType": "Padding", "optional": true } },
+    "xKey": {
+      "description": "/** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "yKey": {
+      "description": "/** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "width": {
+      "description": "/** */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "height": {
+      "description": "/** */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "padding": {
+      "description": "/** Configuration for the padding in pixels shown around the sparklines. */",
+      "type": { "returnType": "Padding", "optional": true }
+    },
     "axis": {
+      "description": "/** The options for the horizontal axis line in the sparklines. */",
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
     },
     "highlightStyle": {
+      "description": "/** The configuration for the highlighting used when the markers are hovered over. */",
       "type": { "returnType": "HighlightStyle", "optional": true }
     },
     "tooltip": {
+      "description": "/** Configuration for the tooltips. */",
       "type": { "returnType": "SparklineTooltip", "optional": true }
     }
   },

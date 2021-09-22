@@ -6,26 +6,39 @@ export interface ISparklineCellRendererParams extends ICellRendererParams {
 export type SparklineOptions = LineSparklineOptions | AreaSparklineOptions | ColumnSparklineOptions;
 export interface BaseSparklineOptions {
     container?: HTMLElement;
+    /** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs. */
+    xKey?: string;
+    /** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs. */
+    yKey?: string;
+    /** The width in pixels of the sparkline. */
     width?: number;
+    /** The height in pixels of the sparkline. */
     height?: number;
-    title?: string;
+    /** Configuration for the padding in pixels shown around the sparklines. */
     padding?: Padding;
+    /** The options for the horizontal axis line in the sparklines. */
     axis?: SparklineAxisOptions;
+    /** The configuration for the highlighting used when the markers are hovered over. */
     highlightStyle?: HighlightStyle;
+    /** Configuration for the tooltips. */
     tooltip?: SparklineTooltip;
 }
 export interface LineSparklineOptions extends BaseSparklineOptions {
+    /** The type of sparklines to create, in this case it would be `'line'`. */
     type?: 'line';
+    /** The configuration for the line. */
     line?: SparklineLine;
     marker?: SparklineMarker;
 }
 export interface AreaSparklineOptions extends BaseSparklineOptions {
+    /** The type of sparklines to create, in this case it would be `'area'`. */
     type?: 'area';
     fill?: string;
     line?: SparklineLine;
     marker?: SparklineMarker;
 }
 export interface ColumnSparklineOptions extends BaseSparklineOptions {
+    /** The type of sparklines to create, in this case it would be `'column'`. */
     type?: 'column';
     fill?: string;
     stroke?: string;
