@@ -2018,9 +2018,18 @@
       "description": "/** @deprecated\n */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "colWidth": { "type": { "returnType": "number", "optional": true } },
-    "minColWidth": { "type": { "returnType": "number", "optional": true } },
-    "maxColWidth": { "type": { "returnType": "number", "optional": true } },
+    "colWidth": {
+      "description": "/** @deprecated Set via `defaultColDef.width`\n */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "minColWidth": {
+      "description": "/** @deprecated Set via `defaultColDef.minWidth`\n */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "maxColWidth": {
+      "description": "/** @deprecated Set via `defaultColDef.maxWidth`\n */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "headerHeight": { "type": { "returnType": "number", "optional": true } },
     "groupHeaderHeight": {
       "type": { "returnType": "number", "optional": true }
@@ -2163,20 +2172,12 @@
     },
     "loadingCellRendererSelector": {
       "type": {
-        "arguments": { "params": "ILoadingCellRendererParams" },
-        "returnType": "{ component?: { new (): ICellRenderer; } | string; frameworkComponent?: any; params?: any; } | undefined",
+        "returnType": "LoadingCellRendererSelectorFunc",
         "optional": true
       }
     },
     "localeText": {
       "type": { "returnType": "{ [key: string]: string }", "optional": true }
-    },
-    "localeTextFunc": {
-      "type": {
-        "arguments": { "key": "string", "defaultValue": "string" },
-        "returnType": "string",
-        "optional": true
-      }
     },
     "masterDetail": { "type": { "returnType": "boolean", "optional": true } },
     "detailRowHeight": { "type": { "returnType": "number", "optional": true } },
@@ -2446,14 +2447,6 @@
     "rememberGroupStateWhenNewData": {
       "description": "/** @deprecated - no longer needed, transaction updates keep group state\n */",
       "type": { "returnType": "boolean", "optional": true }
-    },
-    "defaultGroupSortComparator": {
-      "description": "/** @deprecated - Use defaultGroupOrderComparator instead\n */",
-      "type": {
-        "arguments": { "nodeA": "RowNode", "nodeB": "RowNode" },
-        "returnType": "number",
-        "optional": true
-      }
     },
     "pinnedTopRowData": { "type": { "returnType": "any[]", "optional": true } },
     "pinnedBottomRowData": {
@@ -2749,6 +2742,13 @@
         "optional": true
       }
     },
+    "localeTextFunc": {
+      "type": {
+        "arguments": { "key": "string", "defaultValue": "string" },
+        "returnType": "string",
+        "optional": true
+      }
+    },
     "getDocument": {
       "type": { "arguments": {}, "returnType": "Document", "optional": true }
     },
@@ -2774,6 +2774,14 @@
       }
     },
     "defaultGroupOrderComparator": {
+      "type": {
+        "arguments": { "nodeA": "RowNode", "nodeB": "RowNode" },
+        "returnType": "number",
+        "optional": true
+      }
+    },
+    "defaultGroupSortComparator": {
+      "description": "/** @deprecated - Use defaultGroupOrderComparator instead\n */",
       "type": {
         "arguments": { "nodeA": "RowNode", "nodeB": "RowNode" },
         "returnType": "number",
@@ -4474,6 +4482,24 @@
     "key": {
       "description": "/** Same as `rowNode.key`, the value of this group, e.g. 'Ireland' */",
       "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "LoadingCellRendererSelectorFunc": {},
+  "LoadingCellRendererSelectorResult": {
+    "component": {
+      "description": "/** Equivalent of setting `loadingCellRenderer` */",
+      "type": {
+        "returnType": "{ new(): ICellRenderer; } | string",
+        "optional": true
+      }
+    },
+    "frameworkComponent": {
+      "description": "/** Equivalent of setting `loadingCellRendererFramework` */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "params": {
+      "description": "/** Equivalent of setting `loadingCellRendererParams` */",
+      "type": { "returnType": "any", "optional": true }
     }
   },
   "IHeaderColumn": {

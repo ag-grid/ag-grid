@@ -46,9 +46,18 @@
     "description": "/** @deprecated\n */",
     "type": { "returnType": "boolean" }
   },
-  "colWidth": { "type": { "returnType": "number" } },
-  "minColWidth": { "type": { "returnType": "number" } },
-  "maxColWidth": { "type": { "returnType": "number" } },
+  "colWidth": {
+    "description": "/** @deprecated Set via `defaultColDef.width`\n */",
+    "type": { "returnType": "number" }
+  },
+  "minColWidth": {
+    "description": "/** @deprecated Set via `defaultColDef.minWidth`\n */",
+    "type": { "returnType": "number" }
+  },
+  "maxColWidth": {
+    "description": "/** @deprecated Set via `defaultColDef.maxWidth`\n */",
+    "type": { "returnType": "number" }
+  },
   "headerHeight": { "type": { "returnType": "number" } },
   "groupHeaderHeight": { "type": { "returnType": "number" } },
   "floatingFiltersHeight": { "type": { "returnType": "number" } },
@@ -123,18 +132,9 @@
   "loadingCellRendererFramework": { "type": { "returnType": "any" } },
   "loadingCellRendererParams": { "type": { "returnType": "any" } },
   "loadingCellRendererSelector": {
-    "type": {
-      "arguments": { "params": "ILoadingCellRendererParams" },
-      "returnType": "{ component?: { new (): ICellRenderer; } | string; frameworkComponent?: any; params?: any; } | undefined"
-    }
+    "type": { "returnType": "LoadingCellRendererSelectorFunc" }
   },
   "localeText": { "type": { "returnType": "{ [key: string]: string }" } },
-  "localeTextFunc": {
-    "type": {
-      "arguments": { "key": "string", "defaultValue": "string" },
-      "returnType": "string"
-    }
-  },
   "masterDetail": { "type": { "returnType": "boolean" } },
   "detailRowHeight": { "type": { "returnType": "number" } },
   "keepDetailRows": { "type": { "returnType": "boolean" } },
@@ -273,13 +273,6 @@
   "rememberGroupStateWhenNewData": {
     "description": "/** @deprecated - no longer needed, transaction updates keep group state\n */",
     "type": { "returnType": "boolean" }
-  },
-  "defaultGroupSortComparator": {
-    "description": "/** @deprecated - Use defaultGroupOrderComparator instead\n */",
-    "type": {
-      "arguments": { "nodeA": "RowNode", "nodeB": "RowNode" },
-      "returnType": "number"
-    }
   },
   "pinnedTopRowData": { "type": { "returnType": "any[]" } },
   "pinnedBottomRowData": { "type": { "returnType": "any[]" } },
@@ -452,6 +445,12 @@
       "returnType": "boolean"
     }
   },
+  "localeTextFunc": {
+    "type": {
+      "arguments": { "key": "string", "defaultValue": "string" },
+      "returnType": "string"
+    }
+  },
   "getDocument": { "type": { "arguments": {}, "returnType": "Document" } },
   "getServerSideStoreParams": {
     "type": {
@@ -472,6 +471,13 @@
     }
   },
   "defaultGroupOrderComparator": {
+    "type": {
+      "arguments": { "nodeA": "RowNode", "nodeB": "RowNode" },
+      "returnType": "number"
+    }
+  },
+  "defaultGroupSortComparator": {
+    "description": "/** @deprecated - Use defaultGroupOrderComparator instead\n */",
     "type": {
       "arguments": { "nodeA": "RowNode", "nodeB": "RowNode" },
       "returnType": "number"

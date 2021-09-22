@@ -220,19 +220,11 @@ export interface GridOptions {
     loadingCellRenderer?: { new(): ICellRenderer; } | string;
     loadingCellRendererFramework?: any;
     loadingCellRendererParams?: any;
-    loadingCellRendererSelector?: (params: ILoadingCellRendererParams) =>
-        {
-            component?: { new(): ICellRenderer; } | string;
-            /** Equivalent of setting `loadingCellRendererFramework` */
-            frameworkComponent?: any;
-            /** Equivalent of setting `loadingCellRendererParams` */
-            params?: any;
-        } | undefined
+    loadingCellRendererSelector?: LoadingCellRendererSelectorFunc;
 
     // *** Localisation *** //
     // just set once
     localeText?: { [key: string]: string };
-    localeTextFunc?: (key: string, defaultValue: string) => string;
 
     // *** Master Detail *** //
     masterDetail?: boolean;
@@ -358,8 +350,6 @@ export interface GridOptions {
     groupSuppressAutoColumn?: boolean;
     /** @deprecated - no longer needed, transaction updates keep group state */
     rememberGroupStateWhenNewData?: boolean;
-    /** @deprecated - Use defaultGroupOrderComparator instead */
-    defaultGroupSortComparator?: (nodeA: RowNode, nodeB: RowNode) => number;
 
     // *** Row Pinning *** //
     pinnedTopRowData?: any[];
@@ -459,67 +449,77 @@ export interface GridOptions {
     // If you change the callbacks on this interface, you must also update PropertyKeys to be consistent. *
     // *****************************************************************************************************
 
-    paginationNumberFormatter?: (params: PaginationNumberFormatterParams) => string;
+    // *** Accessories *** //
+    getContextMenuItems?: GetContextMenuItems;
+    getMainMenuItems?: GetMainMenuItems;
     postProcessPopup?: (params: PostProcessPopupParams) => void;
 
-    createChartContainer?: (params: ChartRef) => void;
-    fillOperation?: (params: FillOperationParams) => any;
-
-    isExternalFilterPresent?(): boolean;
-    doesExternalFilterPass?(node: RowNode): boolean;
-
-    getRowStyle?: (params: RowClassParams) => { [cssProperty: string]: string };
-    getRowClass?: (params: RowClassParams) => string | string[] | undefined;
-    getRowHeight?: (params: RowHeightParams) => number | undefined | null;
+    // *** Clipboard *** //
+    processCellForClipboard?(params: ProcessCellForExportParams): any;
+    processHeaderForClipboard?(params: ProcessHeaderForExportParams): any;
+    processCellFromClipboard?(params: ProcessCellForExportParams): any;
     sendToClipboard?: (params: SendToClipboardParams) => void;
     processDataFromClipboard?: (params: ProcessDataFromClipboardParams) => string[][] | null;
 
+    // *** Filtering *** //
+    isExternalFilterPresent?(): boolean;
+    doesExternalFilterPass?(node: RowNode): boolean;
+
+    // *** Integrated Charts *** //
+    getChartToolbarItems?: GetChartToolbarItems;
+    createChartContainer?: (params: ChartRef) => void;
+
+    // *** Keyboard Navigation *** //
     navigateToNextHeader?: (params: NavigateToNextHeaderParams) => HeaderPosition;
     tabToNextHeader?: (params: TabToNextHeaderParams) => HeaderPosition;
-
     navigateToNextCell?: (params: NavigateToNextCellParams) => CellPosition;
     tabToNextCell?: (params: TabToNextCellParams) => CellPosition;
     /** Allows user to suppress certain keyboard events */
     suppressKeyboardEvent?: (params: SuppressKeyboardEventParams) => boolean;
 
+    // *** Localisation *** //
+    localeTextFunc?: (key: string, defaultValue: string) => string;
+
+    // *** Miscellaneous *** //
     getDocument?: () => Document;
-    getServerSideStoreParams?: (params: GetServerSideStoreParamsParams) => ServerSideStoreParams;
-    isServerSideGroupOpenByDefault?: (params: IsServerSideGroupOpenByDefaultParams) => boolean;
+
+    // *** Pagination *** //
+    paginationNumberFormatter?: (params: PaginationNumberFormatterParams) => string;
+
+    // *** Row Grouping and Pivoting *** //
+    groupRowAggNodes?(nodes: RowNode[]): any;
     isGroupOpenByDefault?: (params: IsGroupOpenByDefaultParams) => boolean;
     defaultGroupOrderComparator?: (nodeA: RowNode, nodeB: RowNode) => number;
-
-    isRowSelectable?: IsRowSelectable;
-
-    groupRowAggNodes?(nodes: RowNode[]): any;
-
-    getBusinessKeyForNode?(node: RowNode): string;
-
-    getDataPath?: GetDataPath;
-
-    isServerSideGroup?: IsServerSideGroup;
-    isApplyServerSideTransaction?: IsApplyServerSideTransaction;
-    getServerSideGroupKey?: GetServerSideGroupKey;
-    getContextMenuItems?: GetContextMenuItems;
-    getMainMenuItems?: GetMainMenuItems;
-    getChartToolbarItems?: GetChartToolbarItems;
-    getRowNodeId?: GetRowNodeIdFunc;
-    isFullWidthCell?(rowNode: RowNode): boolean;
-
-    getChildCount?(dataItem: any): number;
-    isRowMaster?: IsRowMaster;
-    processRowPostCreate?(params: ProcessRowParams): void;
-
-    processCellForClipboard?(params: ProcessCellForExportParams): any;
-
-    processHeaderForClipboard?(params: ProcessHeaderForExportParams): any;
-
-    processCellFromClipboard?(params: ProcessCellForExportParams): any;
-
     processSecondaryColDef?(colDef: ColDef): void;
-
     processSecondaryColGroupDef?(colGroupDef: ColGroupDef): void;
+    getDataPath?: GetDataPath;
+    /** @deprecated - Use defaultGroupOrderComparator instead */
+    defaultGroupSortComparator?: (nodeA: RowNode, nodeB: RowNode) => number;
 
+    // *** Row Model: Server Side *** //
+    getChildCount?(dataItem: any): number;
+    getServerSideStoreParams?: (params: GetServerSideStoreParamsParams) => ServerSideStoreParams;
+    isServerSideGroupOpenByDefault?: (params: IsServerSideGroupOpenByDefaultParams) => boolean;
+    isApplyServerSideTransaction?: IsApplyServerSideTransaction;
+    isServerSideGroup?: IsServerSideGroup;
+    getServerSideGroupKey?: GetServerSideGroupKey;
+
+    // *** Rows *** //
+    getBusinessKeyForNode?(node: RowNode): string;
+    getRowNodeId?: GetRowNodeIdFunc;
+    processRowPostCreate?(params: ProcessRowParams): void;
+    isRowSelectable?: IsRowSelectable;
+    isRowMaster?: IsRowMaster;
+    fillOperation?: (params: FillOperationParams) => any;
+
+    // *** Sorting *** //
     postSort?(nodes: RowNode[]): void;
+
+    // *** Styling *** //
+    getRowStyle?: (params: RowClassParams) => { [cssProperty: string]: string };
+    getRowClass?: (params: RowClassParams) => string | string[] | undefined;
+    getRowHeight?: (params: RowHeightParams) => number | undefined | null;
+    isFullWidthCell?(rowNode: RowNode): boolean;
 
     // **********************************************************************************************************
     // * If you change the events on this interface, you do *not* need to update PropertyKeys to be consistent, *
@@ -1015,4 +1015,16 @@ export interface IsGroupOpenByDefaultParams {
     field: string;
     /** Same as `rowNode.key`, the value of this group, e.g. 'Ireland' */
     key: string;
+}
+
+export interface LoadingCellRendererSelectorFunc {
+    (params: ILoadingCellRendererParams): LoadingCellRendererSelectorResult | undefined;
+}
+export interface LoadingCellRendererSelectorResult {
+    /** Equivalent of setting `loadingCellRenderer` */
+    component?: { new(): ICellRenderer; } | string;
+    /** Equivalent of setting `loadingCellRendererFramework` */
+    frameworkComponent?: any;
+    /** Equivalent of setting `loadingCellRendererParams` */
+    params?: any;
 }

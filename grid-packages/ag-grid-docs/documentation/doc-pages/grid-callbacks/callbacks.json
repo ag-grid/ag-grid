@@ -121,6 +121,18 @@
             }
         }
     },
+    "localisation": {
+        "meta": {
+            "displayName": "Localisation",
+            "page": {
+                "name": "Localisation",
+                "url": "/localisation/"
+            }
+        },
+        "localeTextFunc": {
+            "description": "A callback for localising text within the grid."
+        }
+    },
     "menus": {
         "meta": {
             "displayName": "Accessories"
@@ -186,6 +198,14 @@
         },
         "tabToNextCell": {
             "description": "Allows overriding the default behaviour for when user hits <kbd>Tab</kbd> key when a cell is focused."
+        },
+        "suppressKeyboardEvent": {
+            "default": false,
+            "description": "Suppress the grid taking action for the relevant keyboard event when a cell is focused.",
+            "more": {
+                "name": "Suppress Keyboard Events",
+                "url": "/keyboard-navigation/#suppresskeyboardevent"
+            }
         }
     },
     "pagination": {

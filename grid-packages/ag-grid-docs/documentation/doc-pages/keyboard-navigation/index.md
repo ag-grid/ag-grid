@@ -201,7 +201,7 @@ It is possible to stop the grid acting on particular events. To do this implemen
 
 <api-documentation source='column-properties/properties.json' section='columns' names='["suppressKeyboardEvent"]'></api-documentation>
 
-The callback is available as a [column callback](/column-properties/) (set on the column definition). If you provide the callback on both the grid and column definition, then if either return `true` the event will be suppressed.
+The callback is available as a [column callback](/column-properties/#reference-columns-suppressKeyboardEvent) (set on the column definition) and as a [grid callback](/grid-callbacks/#reference-nav-suppressKeyboardEvent). If you provide the callback on both the grid and column definition, then if either return `true` the event will be suppressed.
 
 ### Example: Suppress Keyboard Navigation
 

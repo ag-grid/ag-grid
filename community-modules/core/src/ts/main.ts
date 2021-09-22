@@ -400,7 +400,9 @@ export {
     GetChartToolbarItems,
     FillOperationParams,
     RowGroupingDisplayType,
-    TreeDataDisplayType
+    TreeDataDisplayType,
+    LoadingCellRendererSelectorFunc,
+    LoadingCellRendererSelectorResult
 } from "./entities/gridOptions";
 
 export * from "./propertyKeys";

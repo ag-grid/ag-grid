@@ -1363,9 +1363,8 @@
       "loadingCellRenderer?": "{ new (): ICellRenderer; } | string",
       "loadingCellRendererFramework?": "any",
       "loadingCellRendererParams?": "any",
-      "loadingCellRendererSelector?": "(params: ILoadingCellRendererParams) => { component?: { new (): ICellRenderer; } | string; frameworkComponent?: any; params?: any; } | undefined",
+      "loadingCellRendererSelector?": "LoadingCellRendererSelectorFunc",
       "localeText?": "{ [key: string]: string; }",
-      "localeTextFunc?": "(key: string, defaultValue: string) => string",
       "masterDetail?": "boolean",
       "detailRowHeight?": "number",
       "keepDetailRows?": "boolean",
@@ -1461,7 +1460,6 @@
       "groupUseEntireRow?": "boolean",
       "groupSuppressAutoColumn?": "boolean",
       "rememberGroupStateWhenNewData?": "boolean",
-      "defaultGroupSortComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
       "pinnedTopRowData?": "any[]",
       "pinnedBottomRowData?": "any[]",
       "rowModelType?": "string",
@@ -1545,11 +1543,13 @@
       "navigateToNextCell?": "(params: NavigateToNextCellParams) => CellPosition",
       "tabToNextCell?": "(params: TabToNextCellParams) => CellPosition",
       "suppressKeyboardEvent?": "(params: SuppressKeyboardEventParams) => boolean",
+      "localeTextFunc?": "(key: string, defaultValue: string) => string",
       "getDocument?": "() => Document",
       "getServerSideStoreParams?": "(params: GetServerSideStoreParamsParams) => ServerSideStoreParams",
       "isServerSideGroupOpenByDefault?": "(params: IsServerSideGroupOpenByDefaultParams) => boolean",
       "isGroupOpenByDefault?": "(params: IsGroupOpenByDefaultParams) => boolean",
       "defaultGroupOrderComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
+      "defaultGroupSortComparator?": "(nodeA: RowNode, nodeB: RowNode) => number",
       "isRowSelectable?": "IsRowSelectable",
       "groupRowAggNodes?(nodes: RowNode[])": "any",
       "getBusinessKeyForNode?(node: RowNode)": "string",
@@ -1653,6 +1653,9 @@
       "immutableColumns?": "/** @deprecated\n */",
       "suppressSetColumnStateEvents?": "/** @deprecated\n */",
       "suppressColumnStateEvents?": "/** @deprecated\n */",
+      "colWidth?": "/** @deprecated Set via `defaultColDef.width`\n */",
+      "minColWidth?": "/** @deprecated Set via `defaultColDef.minWidth`\n */",
+      "maxColWidth?": "/** @deprecated Set via `defaultColDef.maxWidth`\n */",
       "stopEditingWhenGridLosesFocus?": "/** @deprecated Use stopEditingWhenCellsLoseFocus instead\n */",
       "defaultExportParams?": "/** @deprecated Use defaultCsvExportParams or defaultExcelExportParams\n */",
       "floatingFilter?": "/** @deprecated Use floatingFilter on the colDef instead\n */",
@@ -1667,12 +1670,12 @@
       "groupUseEntireRow?": "/** @deprecated - Use groupDisplayType = 'groupRows' instead\n */",
       "groupSuppressAutoColumn?": "/** @deprecated - Use groupDisplayType = 'custom' instead\n */",
       "rememberGroupStateWhenNewData?": "/** @deprecated - no longer needed, transaction updates keep group state\n */",
-      "defaultGroupSortComparator?": "/** @deprecated - Use defaultGroupOrderComparator instead\n */",
       "deltaRowDataMode?": "/** @deprecated\n */",
       "batchUpdateWaitMillis?": "/** @deprecated use asyncTransactionWaitMillis instead\n */",
       "suppressEnterpriseResetOnNewColumns?": "/** @deprecated\n */",
       "rowDeselection?": "/** @deprecated - rowDeselection is now true by default and should be suppressed by using suppressRowDeselection\n */",
-      "suppressKeyboardEvent?": "/** Allows user to suppress certain keyboard events */"
+      "suppressKeyboardEvent?": "/** Allows user to suppress certain keyboard events */",
+      "defaultGroupSortComparator?": "/** @deprecated - Use defaultGroupOrderComparator instead\n */"
     }
   },
   "RowGroupingDisplayType": {
@@ -2076,6 +2079,26 @@
       "level": "/** Same as `rowNode.level` - what level the group is at, e.g. 0 for top level, 1 for second etc */",
       "field": "/** Same as `rowNode.field` - the field we are grouping on, e.g. 'country' */",
       "key": "/** Same as `rowNode.key`, the value of this group, e.g. 'Ireland' */"
+    }
+  },
+  "LoadingCellRendererSelectorFunc": {
+    "meta": { "isCallSignature": true },
+    "type": {
+      "arguments": { "params": "ILoadingCellRendererParams" },
+      "returnType": "LoadingCellRendererSelectorResult | undefined"
+    }
+  },
+  "LoadingCellRendererSelectorResult": {
+    "meta": {},
+    "type": {
+      "component?": "{ new (): ICellRenderer; } | string",
+      "frameworkComponent?": "any",
+      "params?": "any"
+    },
+    "docs": {
+      "component?": "/** Equivalent of setting `loadingCellRenderer` */",
+      "frameworkComponent?": "/** Equivalent of setting `loadingCellRendererFramework` */",
+      "params?": "/** Equivalent of setting `loadingCellRendererParams` */"
     }
   },
   "IHeaderColumn": {

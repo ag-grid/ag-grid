@@ -149,12 +149,12 @@ import {
     TreeDataDisplayType,
     FullWidthCellKeyDownEvent,
     FullWidthCellKeyPressEvent,
-    ILoadingCellRendererParams
+    LoadingCellRendererSelectorFunc
 } from "@ag-grid-community/core";
 
-import {AngularFrameworkOverrides} from "./angularFrameworkOverrides";
-import {AngularFrameworkComponentWrapper} from "./angularFrameworkComponentWrapper";
-import {AgGridColumn} from "./ag-grid-column.component";
+import { AngularFrameworkOverrides } from "./angularFrameworkOverrides";
+import { AngularFrameworkComponentWrapper } from "./angularFrameworkComponentWrapper";
+import { AgGridColumn } from "./ag-grid-column.component";
 
 @Component({
     selector: 'ag-grid-angular',
@@ -185,10 +185,10 @@ export class AgGridAngular implements AfterViewInit {
     @ContentChildren(AgGridColumn) public columns: QueryList<AgGridColumn>;
 
     constructor(elementDef: ElementRef,
-                private viewContainerRef: ViewContainerRef,
-                private angularFrameworkOverrides: AngularFrameworkOverrides,
-                private frameworkComponentWrapper: AngularFrameworkComponentWrapper,
-                private componentFactoryResolver: ComponentFactoryResolver) {
+        private viewContainerRef: ViewContainerRef,
+        private angularFrameworkOverrides: AngularFrameworkOverrides,
+        private frameworkComponentWrapper: AngularFrameworkComponentWrapper,
+        private componentFactoryResolver: ComponentFactoryResolver) {
         this._nativeElement = elementDef.nativeElement;
 
     }
@@ -458,14 +458,7 @@ export class AgGridAngular implements AfterViewInit {
      */
     @Input() public defaultGroupSortComparator: ((nodeA: RowNode, nodeB: RowNode) => number) | undefined = undefined;
     @Input() public defaultGroupOrderComparator: ((nodeA: RowNode, nodeB: RowNode) => number) | undefined = undefined;
-    @Input() public loadingCellRendererSelector: ((params: ILoadingCellRendererParams) =>
-        {
-            component?: { new(): ICellRenderer; } | string;
-            /** Equivalent of setting `loadingCellRendererFramework` */
-            frameworkComponent?: any;
-            /** Equivalent of setting `loadingCellRendererParams` */
-            params?: any;
-        } | undefined) | undefined = undefined;
+    @Input() public loadingCellRendererSelector: LoadingCellRendererSelectorFunc | undefined = undefined;
     @Input() public suppressMakeColumnVisibleAfterUnGroup: boolean | undefined = undefined;
     @Input() public suppressRowClickSelection: boolean | undefined = undefined;
     @Input() public suppressCellSelection: boolean | undefined = undefined;
