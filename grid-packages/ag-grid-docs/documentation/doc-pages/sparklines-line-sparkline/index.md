@@ -60,28 +60,7 @@ The interfaces for the available options are as follows:
 
 ### LineSparklineOptions
 
-<api-documentation source='sparklines-line-sparkline/resources/line-sparkline-api.json' section='LineSparklineOptions'></api-documentation>
-
-### Padding
-
-<api-documentation source='sparklines-line-sparkline/resources/line-sparkline-api.json' section='Padding'></api-documentation>
-
-### SparklineLine
-
-<api-documentation source='sparklines-line-sparkline/resources/line-sparkline-api.json' section='SparklineLine'></api-documentation>
-
-### SparklineMarker
-
-<api-documentation source='sparklines-line-sparkline/resources/line-sparkline-api.json' section='SparklineMarker'></api-documentation>
-
-### HighlightStyle
-
-<api-documentation source='sparklines-line-sparkline/resources/line-sparkline-api.json' section='HighlightStyle'></api-documentation>
-
-### MarkerFormat
-
-<api-documentation source='sparklines-line-sparkline/resources/line-sparkline-api.json' section='MarkerFormat'></api-documentation>
-
+<interface-documentation interfaceName='LineSparklineOptions' ></interface-documentation>
 
 ## Next Up
 

@@ -73,13 +73,9 @@ This is an example to further demonstrate how line sparklines can be configured 
 
 <grid-example title='Sparkline Tooltips' name='sparkline-tooltip' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
-### Tooltip
+## SparklineTooltip
 
-<api-documentation source='sparklines-tooltips/resources/sparkline-tooltip-api.json' section='Tooltip'></api-documentation>
-
-### TooltipRendererResult
-
-<api-documentation source='sparklines-tooltips/resources/sparkline-tooltip-api.json' section='TooltipRendererResult'></api-documentation>
+<interface-documentation interfaceName='SparklineTooltip' ></interface-documentation>
 
 ## Next Up
 

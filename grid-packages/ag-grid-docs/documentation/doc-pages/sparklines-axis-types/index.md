@@ -3,10 +3,10 @@ title: "Sparklines - Axis Types"
 enterprise: true
 ---
 
-This section compares the different horizontal axis types that are available to all sparklines. 
+This section compares the different horizontal axis types that are available to all sparklines.
 
-When choosing an appropriate axis it is important to consider the data the sparkline is based on, this ensures X values 
-are scaled correctly along the x-axis. 
+When choosing an appropriate axis it is important to consider the data the sparkline is based on, this ensures X values
+are scaled correctly along the x-axis.
 
 The following axes types are available to all sparklines:
 
@@ -20,7 +20,7 @@ The following axes types are available to all sparklines:
 ## Category Axis
 
 The category axis is used as the x-axis by default. X values will be plotted on a band scale which means the data points
-will be evenly spaced out along the horizontal axis. 
+will be evenly spaced out along the horizontal axis.
 
 The category axis is ideal for small datasets with discrete values or categories.
 
@@ -92,7 +92,7 @@ The example below shows the area sparklines rendered using a number axis.
 
 ## Time Axis
 
-The time axis is similar to the number axis in the sense that it is also used to plot continuous values. It can be used 
+The time axis is similar to the number axis in the sense that it is also used to plot continuous values. It can be used
 for `number` values, which will be interpreted as timestamps derived from Unix time, or `Date` objects.
 
 The following example demonstrates the time axis type.
@@ -124,7 +124,7 @@ const gridOptions = {
 
 ## SparklineAxisOptions
 
-<api-documentation source='sparklines-axis-types/resources/sparkline-axis-api.json' section='SparklineAxisOptions'></api-documentation>
+<interface-documentation interfaceName='SparklineAxisOptions' ></interface-documentation>
 
 ## Next Up
 

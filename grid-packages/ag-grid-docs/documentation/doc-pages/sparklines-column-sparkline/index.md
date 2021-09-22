@@ -54,24 +54,7 @@ The interfaces for the available options are as follows:
 
 ### ColumnSparklineOptions
 
-<api-documentation source='sparklines-column-sparkline/resources/column-sparkline-api.json' section='ColumnSparklineOptions'></api-documentation>
-
-### Padding
-
-<api-documentation source='sparklines-column-sparkline/resources/column-sparkline-api.json' section='Padding'></api-documentation>
-
-### SparklineAxisOptions
-
-<api-documentation source='sparklines-column-sparkline/resources/column-sparkline-api.json' section='SparklineAxisOptions'></api-documentation>
-
-### HighlightStyle
-
-<api-documentation source='sparklines-column-sparkline/resources/column-sparkline-api.json' section='HighlightStyle'></api-documentation>
-
-### ColumnFormat
-
-<api-documentation source='sparklines-column-sparkline/resources/column-sparkline-api.json' section='ColumnFormat'></api-documentation>
-
+<interface-documentation interfaceName='AreaSparklineOptions' ></interface-documentation>
 
 ## Next Up
 

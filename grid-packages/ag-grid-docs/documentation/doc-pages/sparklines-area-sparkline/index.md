@@ -52,32 +52,7 @@ Also See the [Special Points](/sparklines-special-points) for customisation of i
 The interfaces for the available options are as follows:
 ### AreaSparklineOptions
 
-<api-documentation source='sparklines-area-sparkline/resources/area-sparkline-api.json' section='AreaSparklineOptions'></api-documentation>
-
-### Padding
-
-<api-documentation source='sparklines-area-sparkline/resources/area-sparkline-api.json' section='Padding'></api-documentation>
-
-### SparklineAxisOptions
-
-<api-documentation source='sparklines-area-sparkline/resources/area-sparkline-api.json' section='SparklineAxisOptions'></api-documentation>
-
-### SparklineLine
-
-<api-documentation source='sparklines-area-sparkline/resources/area-sparkline-api.json' section='SparklineLine'></api-documentation>
-
-### SparklineMarker
-
-<api-documentation source='sparklines-area-sparkline/resources/area-sparkline-api.json' section='SparklineMarker'></api-documentation>
-
-### HighlightStyle
-
-<api-documentation source='sparklines-area-sparkline/resources/area-sparkline-api.json' section='HighlightStyle'></api-documentation>
-
-### MarkerFormat
-
-<api-documentation source='sparklines-area-sparkline/resources/area-sparkline-api.json' section='MarkerFormat'></api-documentation>
-
+<interface-documentation interfaceName='AreaSparklineOptions' ></interface-documentation>
 
 ## Next Up
 
