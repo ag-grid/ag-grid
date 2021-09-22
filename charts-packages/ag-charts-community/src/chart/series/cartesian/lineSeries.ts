@@ -210,8 +210,6 @@ export class LineSeries extends CartesianSeries {
     update(): void {
         this.updatePending = false;
 
-        this.group.visible = this.visible;
-
         this.updateSelections();
         this.updateNodes();
     }
@@ -332,6 +330,7 @@ export class LineSeries extends CartesianSeries {
     }
 
     private updateNodes() {
+        this.group.visible = this.visible;
         this.updateLineNode();
         this.updateMarkerNodes();
         this.updateTextNodes();

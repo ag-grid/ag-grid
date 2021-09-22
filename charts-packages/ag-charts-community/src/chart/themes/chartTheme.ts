@@ -670,12 +670,6 @@ export class ChartTheme {
         if (!Array.isArray(yKeys)) {
             return 0;
         }
-        // @ts-ignore
-        if (yKeys.flatMap) {
-            // @ts-ignore
-            return yKeys.flatMap((key: string | string[]) => key).length;
-        }
-        // IE11
         let count = 0;
         yKeys.forEach((key: string | string[]) => {
             if (Array.isArray(key)) {

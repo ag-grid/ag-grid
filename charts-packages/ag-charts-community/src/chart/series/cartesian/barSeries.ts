@@ -534,8 +534,8 @@ export class BarSeries extends CartesianSeries {
                 const stackYs = groupYs[stackIndex]; // y-data for a stack withing a group
 
                 const zero = Math.max(0, (yAxis as NumberAxis).min, yScale.domain[0]);
-                let prevMinY = zero;
-                let prevMaxY = zero;
+                let prevMinY = 0;
+                let prevMaxY = 0;
 
                 for (let levelIndex = 0; levelIndex < stackYs.length; levelIndex++) {
                     const currY = stackYs[levelIndex];
@@ -634,8 +634,6 @@ export class BarSeries extends CartesianSeries {
     update(): void {
         this.updatePending = false;
 
-        this.group.visible = this.visible;
-
         this.updateSelections();
         this.updateNodes();
     }
@@ -652,6 +650,7 @@ export class BarSeries extends CartesianSeries {
     }
 
     private updateNodes() {
+        this.group.visible = this.visible;
         this.updateRectNodes();
         this.updateLabelNodes();
     }

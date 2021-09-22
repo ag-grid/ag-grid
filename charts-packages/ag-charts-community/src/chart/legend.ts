@@ -170,7 +170,7 @@ export class Legend extends Observable {
         this.itemSelection = this.itemSelection.setData([]);
         this.itemSelection.exit.remove();
         if (this.group.scene) {
-            this.group.scene.cancelRender();
+            this.group.scene.dirty = false;
         }
     }
 

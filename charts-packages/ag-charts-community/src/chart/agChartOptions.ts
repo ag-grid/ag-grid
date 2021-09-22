@@ -248,6 +248,8 @@ interface AgAxisGridStyle {
     lineDash?: number[];
 }
 
+export type AgCartesianAxisType = 'category' | 'groupedCategory' | 'number' | 'log' | 'time';
+
 interface AgBaseCartesianAxisOptions extends AgBaseAxisOptions {
     position?: AgCartesianAxisPosition;
     title?: AgChartCaptionOptions;

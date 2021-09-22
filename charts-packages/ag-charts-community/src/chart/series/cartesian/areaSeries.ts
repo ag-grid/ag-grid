@@ -331,8 +331,6 @@ export class AreaSeries extends CartesianSeries {
     update(): void {
         this.updatePending = false;
 
-        this.group.visible = this.visible && this.xData.length > 0 && this.yData.length > 0;
-
         this.updateSelections();
         this.updateNodes();
     }
@@ -352,6 +350,7 @@ export class AreaSeries extends CartesianSeries {
     }
 
     updateNodes() {
+        this.group.visible = this.visible && this.xData.length > 0 && this.yData.length > 0;
         this.updateFillNodes();
         this.updateStrokeNodes();
         this.updateMarkerNodes();

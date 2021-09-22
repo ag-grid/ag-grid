@@ -376,8 +376,6 @@ export class PieSeries extends PolarSeries {
     update(): void {
         this.updatePending = false;
 
-        this.group.visible = this.visible && this.seriesItemEnabled.indexOf(true) >= 0;
-
         const { radius, innerRadiusOffset, outerRadiusOffset, title } = this;
 
         this.radiusScale.range = [
@@ -428,6 +426,8 @@ export class PieSeries extends PolarSeries {
         if (!this.chart) {
             return;
         }
+
+        this.group.visible = this.visible && this.seriesItemEnabled.indexOf(true) >= 0;
 
         const {
             fills, strokes, fillOpacity, strokeOpacity,
