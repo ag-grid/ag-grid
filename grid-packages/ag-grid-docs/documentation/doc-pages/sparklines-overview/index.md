@@ -46,7 +46,7 @@ on how to specify and customise the built-in sparklines:
 The following sections are relevant to all sparkline types:
 
 - ***[Supplying Data](/sparklines-data/)*** - compares the different data formats that can be supplied to sparklines.  
-- ***[Axes Types](/sparklines-axes-types/)*** - compares the different axes types available to sparklines.
+- ***[Axes Types](/sparklines-axis-types/)*** - compares the different axes types available to sparklines.
 - ***[Sparkline Tooltips](/sparklines-tooltips/)*** - covers the various ways sparkline tooltips can be customised.
 - ***[Special Points](sparklines-special-points/)*** - shows how points of interest can be highlighted on sparklines. 
 

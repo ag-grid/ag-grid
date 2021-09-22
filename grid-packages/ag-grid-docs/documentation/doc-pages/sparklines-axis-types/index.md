@@ -10,12 +10,12 @@ are scaled correctly along the x-axis.
 
 The following axes types are available to all sparklines:
 
-- ***[Category Axis](/sparklines-axes-types/#category-axis)*** - data points are evenly spread along the x-axis.
-- ***[Number Axis](/sparklines-axes-types/#number-axis)*** - data is spaced based on the magnitude of the x values.
-- ***[Time Axis](/sparklines-axes-types/#time-axis)*** - data is spaced according to the time between data points.
+- ***[Category Axis](/sparklines-axis-types/#category-axis)*** - data points are evenly spread along the x-axis.
+- ***[Number Axis](/sparklines-axis-types/#number-axis)*** - data is spaced based on the magnitude of the x values.
+- ***[Time Axis](/sparklines-axis-types/#time-axis)*** - data is spaced according to the time between data points.
 
 [[note]]
-| The Y values supplied in the sparkline data will always be plotted using the [Number Axis](/sparklines-axes-types/#number-axis) on a continuous scale.
+| The Y values supplied in the sparkline data will always be plotted using the [Number Axis](/sparklines-axis-types/#number-axis) on a continuous scale.
 
 ## Category Axis
 
@@ -124,7 +124,7 @@ const gridOptions = {
 
 ## SparklineAxisOptions
 
-<api-documentation source='sparklines-axes-types/resources/sparkline-axis-api.json' section='SparklineAxisOptions'></api-documentation>
+<api-documentation source='sparklines-axis-types/resources/sparkline-axis-api.json' section='SparklineAxisOptions'></api-documentation>
 
 ## Next Up
 
