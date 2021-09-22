@@ -99,7 +99,6 @@ export abstract class Sparkline extends Observable {
         return this._data;
     }
 
-    title?: string = undefined;
     padding: Padding = new Padding(3);
 
     xKey: string = 'x';
@@ -513,7 +512,6 @@ export abstract class Sparkline extends Observable {
             pageY: (point.y + canvasRect.top + pageYOffset)
         }
 
-        const { title } = this;
         const yValue = seriesDatum.y;
         const xValue = seriesDatum.x;
 
@@ -524,7 +522,6 @@ export abstract class Sparkline extends Observable {
             let tooltipRendererResult = this.tooltip.renderer({
                 context: this.context,
                 datum: seriesDatum,
-                title,
                 yValue,
                 xValue,
             });
@@ -539,7 +536,7 @@ export abstract class Sparkline extends Observable {
     }
 
     protected formatNumericDatum(datum: any): string {
-        return parseInt(datum).toFixed(1);
+        return parseFloat(datum).toFixed(1);
     }
 
     private _onMouseMove = this.onMouseMove.bind(this);

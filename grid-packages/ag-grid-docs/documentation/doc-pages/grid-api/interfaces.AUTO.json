@@ -6182,8 +6182,6 @@
     "type": {
       "context?": "any",
       "datum": "any",
-      "title?": "string",
-      "backgroundColor?": "string",
       "xValue": "any",
       "yValue": "any"
     }
@@ -6198,9 +6196,7 @@
       "yValue": "any",
       "yName": "string",
       "context?": "any",
-      "datum": "any",
-      "title?": "string",
-      "backgroundColor?": "string"
+      "datum": "any"
     }
   },
   "BarSeriesOptions": {
@@ -6254,9 +6250,7 @@
       "yValue": "any",
       "yName": "string",
       "context?": "any",
-      "datum": "any",
-      "title?": "string",
-      "backgroundColor?": "string"
+      "datum": "any"
     }
   },
   "LineSeriesOptions": {
@@ -6305,9 +6299,7 @@
       "yValue": "any",
       "yName": "string",
       "context?": "any",
-      "datum": "any",
-      "title?": "string",
-      "backgroundColor?": "string"
+      "datum": "any"
     }
   },
   "ScatterSeriesLabelOptions": {
@@ -6359,9 +6351,7 @@
       "yValue": "any",
       "yName": "string",
       "context?": "any",
-      "datum": "any",
-      "title?": "string",
-      "backgroundColor?": "string"
+      "datum": "any"
     }
   },
   "AreaSeriesLabelOptions": {
@@ -6401,9 +6391,7 @@
       "yValue": "any",
       "yName": "string",
       "context?": "any",
-      "datum": "any",
-      "title?": "string",
-      "backgroundColor?": "string"
+      "datum": "any"
     }
   },
   "PieTitleOptions": {
@@ -6466,8 +6454,6 @@
       "labelName?": "string",
       "context?": "any",
       "datum": "any",
-      "title?": "string",
-      "backgroundColor?": "string",
       "xValue": "any",
       "yValue": "any"
     }
@@ -7825,7 +7811,6 @@
       "container?": "HTMLElement",
       "width?": "number",
       "height?": "number",
-      "title?": "string",
       "padding?": "Padding",
       "axis?": "SparklineAxisOptions",
       "highlightStyle?": "HighlightStyle",
@@ -7841,7 +7826,6 @@
       "container?": "HTMLElement",
       "width?": "number",
       "height?": "number",
-      "title?": "string",
       "padding?": "Padding",
       "axis?": "SparklineAxisOptions",
       "highlightStyle?": "HighlightStyle",
@@ -7858,7 +7842,6 @@
       "container?": "HTMLElement",
       "width?": "number",
       "height?": "number",
-      "title?": "string",
       "padding?": "Padding",
       "axis?": "SparklineAxisOptions",
       "highlightStyle?": "HighlightStyle",
@@ -7878,7 +7861,6 @@
       "container?": "HTMLElement",
       "width?": "number",
       "height?": "number",
-      "title?": "string",
       "padding?": "Padding",
       "axis?": "SparklineAxisOptions",
       "highlightStyle?": "HighlightStyle",

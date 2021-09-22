@@ -65,8 +65,6 @@ export interface TooltipRendererResult {
 export interface TooltipRendererParams {
     context?: any;
     datum: any;
-    title?: string;
-    backgroundColor?: string;
     xValue: any;
     yValue: any;
 }
