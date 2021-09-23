@@ -1932,90 +1932,113 @@
       }
     },
     "sideBar": {
+      "description": "/** Specifies the side bar components. */",
       "type": {
         "returnType": "SideBarDef | string | boolean | null",
         "optional": true
       }
     },
     "suppressContextMenu": {
+      "description": "/** Set to `true` to not show the context menu. Use if you don't want to use the default 'right click' context menu. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "preventDefaultOnContextMenu": {
+      "description": "/** When using `suppressContextMenu`, you can use the `onCellContextMenu` function to provide your own code to handle cell `contextmenu` events.\n * This flag is useful to prevent the browser from showing its default context menu. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "allowContextMenuWithControlKey": {
+      "description": "/** Allows context menu to show, even when `Ctrl` key is held down. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressMenuHide": {
+      "description": "/** Set to `true` to always show the column menu button, rather than only showing when the mouse is over the column header. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "enableBrowserTooltips": {
+      "description": "/** Set to `true` to use the browser's default tooltip instead of using the grid's Tooltip Component */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "tooltipShowDelay": {
+      "description": "/** The delay in milliseconds that it takes for tooltips to show up once an element is hovered over.\n * **Note:** This property does not work if `enableBrowserTooltips` is `true`. */",
       "type": { "returnType": "number", "optional": true }
     },
     "tooltipMouseTrack": {
+      "description": "/** Set to `true` to have tooltips follow the cursor once they are displayed. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "popupParent": {
+      "description": "/** DOM element to use as the popup parent for grid popups (context menu, column menu etc). */",
       "type": { "returnType": "HTMLElement", "optional": true }
     },
     "copyHeadersToClipboard": {
+      "description": "/** Set to `true` to also include headers when copying to clipboard using `Ctrl + C` clipboard. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "clipboardDeliminator": {
+      "description": "/** Specify the deliminator to use when copying to clipboard. */",
       "type": { "returnType": "string", "optional": true }
     },
     "suppressCopyRowsToClipboard": {
+      "description": "/** Set to `true` to only have the range selection, and not row selection, copied to clipboard. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressLastEmptyLineOnPaste": {
+      "description": "/** Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressClipboardPaste": {
+      "description": "/** Set to `true` to turn off paste operations within the grid. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressClipboardApi": {
+      "description": "/** Set to `true` to stop the grid trying to use the Clipboard API, if it is blocked, and immediately fallback to the workaround. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "columnDefs": {
+      "description": "/** Array of Column / Column Group definitions. */",
       "type": {
         "returnType": "(ColDef | ColGroupDef)[] | null",
         "optional": true
       }
     },
+    "defaultColDef": {
+      "description": "/** A default column definition. Items defined in the actual column definitions get precedence. */",
+      "type": { "returnType": "ColDef", "optional": true }
+    },
     "defaultColGroupDef": {
+      "description": "/** A default column group definition. All column group definitions will use these properties. Items defined in the actual column group definition get precedence. */",
       "type": { "returnType": "Partial<ColGroupDef>", "optional": true }
     },
-    "defaultColDef": { "type": { "returnType": "ColDef", "optional": true } },
     "columnTypes": {
+      "description": "/** An object map of custom column types which contain groups of properties that column definitions can inherit by referencing in their `type` property. */",
       "type": { "returnType": "{ [key: string]: ColDef; }", "optional": true }
     },
     "maintainColumnOrder": {
+      "description": "/** Keeps the order of Columns maintained after new Column Definitions are updated. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressFieldDotNotation": {
+      "description": "/** If `true`, then dots in field names (e.g. `address.firstline`) are not treated as deep references. Allows you to use dots in your field name if you prefer. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "deltaColumnMode": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "applyColumnDefOrder": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "immutableColumns": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressSetColumnStateEvents": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressColumnStateEvents": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "colWidth": {
@@ -2030,68 +2053,99 @@
       "description": "/** @deprecated Set via `defaultColDef.maxWidth`\n */",
       "type": { "returnType": "number", "optional": true }
     },
-    "headerHeight": { "type": { "returnType": "number", "optional": true } },
+    "headerHeight": {
+      "description": "/** The height in pixels for the row containing the column label header. Default: `25` */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "groupHeaderHeight": {
+      "description": "/** The height in pixels for the rows containing header column groups. If not specified, it uses `headerHeight`. */",
       "type": { "returnType": "number", "optional": true }
     },
     "floatingFiltersHeight": {
+      "description": "/** The height in pixels for the row containing the floating filters. Default: `20` */",
       "type": { "returnType": "number", "optional": true }
     },
     "pivotHeaderHeight": {
+      "description": "/** The height in pixels for the row containing the columns when in pivot mode. If not specified, it uses `headerHeight`. */",
       "type": { "returnType": "number", "optional": true }
     },
     "pivotGroupHeaderHeight": {
+      "description": "/** The height in pixels for the row containing header column groups when in pivot mode. If not specified, it uses `groupHeaderHeight`. */",
       "type": { "returnType": "number", "optional": true }
     },
     "allowDragFromColumnsToolPanel": {
+      "description": "/** Allow reordering and pinning columns by dragging columns from the Columns Tool Panel to the grid. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressMovableColumns": {
+      "description": "/** Set to `true` to suppress column moving, i.e. to make the columns fixed position. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressColumnMoveAnimation": {
+      "description": "/** If `true`, the `ag-column-moving` class is not added to the grid while columns are moving. In the default themes, this results in no animation when moving columns. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressDragLeaveHidesColumns": {
+      "description": "/** If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "colResizeDefault": {
+      "description": "/** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing). */",
       "type": { "returnType": "string", "optional": true }
     },
     "suppressAutoSize": {
+      "description": "/** Suppresses auto-sizing columns for columns. In other words, double clicking a column's header's edge will not auto-size. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "autoSizePadding": { "type": { "returnType": "number", "optional": true } },
+    "autoSizePadding": {
+      "description": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "skipHeaderOnAutoSize": {
+      "description": "/** Set this to `true` to skip the `headerName` when `autoSize` is called by default. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "components": {
+      "description": "/** A map of component names to plain JavaScript components. */",
       "type": { "returnType": "{ [p: string]: any; }", "optional": true }
     },
     "frameworkComponents": {
+      "description": "/** A map of component names to framework (Angular, React, Vue etc.) components. */",
       "type": {
         "returnType": "{ [p: string]: { new(): any; }; } | any",
         "optional": true
       }
     },
-    "editType": { "type": { "returnType": "string", "optional": true } },
+    "editType": {
+      "description": "/** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "singleClickEdit": {
+      "description": "/** Set to `true` to enable Single Click Editing for cells, to start editing with a single click. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressClickEdit": {
+      "description": "/** Set to `true` so that neither single nor double click starts editing. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "stopEditingWhenCellsLoseFocus": {
+      "description": "/** Set this to `true` to stop cell editing when grid loses focus.\n * The default is that the grid stays editing until focus goes onto another cell. For inline (non-popup) editors only. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "enterMovesDown": {
+      "description": "/** Set to `true` along with `enterMovesDownAfterEdit` to have Excel-style behaviour for the `Enter` key.\n * i.e. pressing the `Enter` key will move down to the cell beneath. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "enterMovesDownAfterEdit": {
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "enterMovesDown": { "type": { "returnType": "boolean", "optional": true } },
-    "stopEditingWhenCellsLoseFocus": {
+      "description": "/** Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the 'Enter' key.\n * i.e. pressing the Enter key will move down to the cell beneath. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "undoRedoCellEditing": {
+      "description": "/** Set to `true` to enable Undo / Redo while editing. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "undoRedoCellEditingLimit": {
+      "description": "/** Set the size of the undo / redo stack. */",
       "type": { "returnType": "number", "optional": true }
     },
     "stopEditingWhenGridLosesFocus": {
@@ -2099,18 +2153,23 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "defaultCsvExportParams": {
+      "description": "/** A default configuration object used to export to CSV. */",
       "type": { "returnType": "CsvExportParams", "optional": true }
     },
     "suppressCsvExport": {
+      "description": "/** Prevents the user from exporting the grid to CSV. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "defaultExcelExportParams": {
+      "description": "/** A default configuration object used to export to Excel. */",
       "type": { "returnType": "ExcelExportParams", "optional": true }
     },
     "suppressExcelExport": {
+      "description": "/** Prevents the user from exporting the grid to Excel. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "excelStyles": {
+      "description": "/** A list (array) of Excel styles to be used when exporting to Excel with styles. */",
       "type": { "returnType": "ExcelStyle[]", "optional": true }
     },
     "defaultExportParams": {
@@ -2120,11 +2179,16 @@
         "optional": true
       }
     },
-    "quickFilterText": { "type": { "returnType": "string", "optional": true } },
+    "quickFilterText": {
+      "description": "/** Rows are filtered using this text as a quick filter. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "cacheQuickFilter": {
+      "description": "/** Set to `true` to turn on the quick filter cache, used to improve performance when using the quick filter. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "excludeChildrenWhenTreeDataFiltering": {
+      "description": "/** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "floatingFilter": {
@@ -2132,22 +2196,30 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "enableOldSetFilterModel": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "enableCharts": { "type": { "returnType": "boolean", "optional": true } },
-    "chartThemes": { "type": { "returnType": "string[]", "optional": true } },
+    "enableCharts": {
+      "description": "/** Set to `true` to Enable Charts. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "chartThemes": {
+      "description": "/** The list of chart themes to be used. */",
+      "type": { "returnType": "string[]", "optional": true }
+    },
     "customChartThemes": {
+      "description": "/** A map containing custom chart themes. */",
       "type": {
         "returnType": "{ [name: string]: AgChartTheme }",
         "optional": true
       }
     },
     "chartThemeOverrides": {
+      "description": "/** Chart theme overrides applied to all themes. */",
       "type": { "returnType": "AgChartThemeOverrides", "optional": true }
     },
     "processChartOptions": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": {
         "arguments": { "params": "ProcessChartOptionsParams" },
         "returnType": "ChartOptions<any>",
@@ -2155,272 +2227,406 @@
       }
     },
     "allowProcessChartOptions": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "loadingCellRenderer": {
+      "description": "/** `cellRenderer` to use when data is loading via a DataSource. */",
       "type": {
         "returnType": "{ new(): ICellRenderer; } | string",
         "optional": true
       }
     },
     "loadingCellRendererFramework": {
+      "description": "/** Framework `cellRenderer` to use when data is loading via a DataSource. */",
       "type": { "returnType": "any", "optional": true }
     },
     "loadingCellRendererParams": {
+      "description": "/** Params to be passed to loading cell renderer component. */",
       "type": { "returnType": "any", "optional": true }
     },
     "loadingCellRendererSelector": {
+      "description": "/** Callback to select which loading cell renderer to be used when data is loading via a DataSource. */",
       "type": {
         "returnType": "LoadingCellRendererSelectorFunc",
         "optional": true
       }
     },
     "localeText": {
+      "description": "/** A map of key->value pairs for localising text within the grid. */",
       "type": { "returnType": "{ [key: string]: string }", "optional": true }
     },
-    "masterDetail": { "type": { "returnType": "boolean", "optional": true } },
-    "detailRowHeight": { "type": { "returnType": "number", "optional": true } },
-    "keepDetailRows": { "type": { "returnType": "boolean", "optional": true } },
+    "masterDetail": {
+      "description": "/** Set to `true` to enable Master Detail. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "keepDetailRows": {
+      "description": "/** Set to `true` to keep detail rows for when they are displayed again. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "keepDetailRowsCount": {
+      "description": "/** Sets the number of details rows to keep. */",
       "type": { "returnType": "number", "optional": true }
     },
-    "detailCellRendererParams": {
-      "type": { "returnType": "any", "optional": true }
-    },
     "detailCellRenderer": {
+      "description": "/** Provide a custom `detailCellRenderer` to use when a master row is expanded. */",
       "type": {
         "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string",
         "optional": true
       }
     },
     "detailCellRendererFramework": {
+      "description": "/** Framework `detailCellRenderer` to use when a master row is expanded. */",
       "type": { "returnType": "any", "optional": true }
     },
+    "detailCellRendererParams": {
+      "description": "/** Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "detailRowHeight": {
+      "description": "/** Set fixed height in pixels for each detail row. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "detailRowAutoHeight": {
+      "description": "/** Set to `true` to have the detail grid dynamically change it's height to fit it's rows. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "context": { "type": { "returnType": "any", "optional": true } },
+    "context": {
+      "description": "/** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application. */",
+      "type": { "returnType": "any", "optional": true }
+    },
     "alignedGrids": {
+      "description": "/** A list of grids to treat as Aligned Grids. If grids are aligned then the columns and horizontal scrolling will be kept in sync. */",
       "type": { "returnType": "GridOptions[]", "optional": true }
     },
-    "tabIndex": { "type": { "returnType": "number", "optional": true } },
-    "rowBuffer": { "type": { "returnType": "number", "optional": true } },
-    "valueCache": { "type": { "returnType": "boolean", "optional": true } },
+    "tabIndex": {
+      "description": "/** Change this value to set the tabIndex order of the Grid within your application. Default: `0` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "rowBuffer": {
+      "description": "/** The number of rows rendered outside the viewable area the grid renders.\n * Having a buffer means the grid will have rows ready to show as the user slowly scrolls vertically.\n * Default: `10` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "valueCache": {
+      "description": "/** Set to `true` to turn on the value cache. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "valueCacheNeverExpires": {
+      "description": "/** Set to `true` to configure the value cache to not expire after data updates. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "enableCellExpressions": {
+      "description": "/** Set to `true` to allow cell expressions. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressParentsInRowNodes": {
+      "description": "/** If `true`, row nodes do not have their parents set.\n * The grid doesn't use the parent reference, but it is included to help the client code navigate the node tree if it wants by providing bi-direction navigation up and down the tree.\n * If this is a problem (e.g. if you need to convert the tree to JSON, which does not allow cyclic dependencies) then set this to `true`. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "suppressTouch": { "type": { "returnType": "boolean", "optional": true } },
+    "suppressTouch": {
+      "description": "/** Disables touch support (but does not remove the browser's efforts to simulate mouse events on touch). */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "suppressFocusAfterRefresh": {
+      "description": "/** Set to `true` to not set focus back on the grid after a refresh. This can avoid issues where you want to keep the focus on another part of the browser. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressAsyncEvents": {
+      "description": "/** Disables the asynchronous nature of the events introduced in v10, and makes them synchronous. This property only exists for the purpose of supporting legacy code which has a dependency on synchronous events from earlier versions (v9 or earlier) of AG Grid. **It is strongly recommended that you do not change this property unless you have legacy issues.** */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressBrowserResizeObserver": {
-      "description": "/** Set once in init, can never change */",
+      "description": "/** The grid will check for `ResizeObserver` and use it if it exists in the browser, otherwise it will use the grid's alternative implementation. Some users reported issues with Chrome's `ResizeObserver`. Use this property to always use the grid's alternative implementation should such problems exist. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressPropertyNamesCheck": {
+      "description": "/** Disables showing a warning message in the console if using a `gridOptions` or `colDef` property that doesn't exist. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressChangeDetection": {
+      "description": "/** Disables change detection. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "debug": { "type": { "returnType": "boolean", "optional": true } },
+    "debug": {
+      "description": "/** Set this to `true` to enable debug information from the grid and related components. Will result in additional logging being output, but very useful when investigating problems. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "overlayLoadingTemplate": {
+      "description": "/** Provide a template for 'loading' overlay. */",
       "type": { "returnType": "string", "optional": true }
     },
     "loadingOverlayComponent": {
+      "description": "/** Provide a custom loading overlay component. */",
       "type": {
         "returnType": "{ new(): ILoadingOverlayComp; } | string",
         "optional": true
       }
     },
     "loadingOverlayComponentFramework": {
+      "description": "/** Same as `loadingOverlayComponent` but for a framework component. */",
       "type": { "returnType": "any", "optional": true }
     },
     "loadingOverlayComponentParams": {
+      "description": "/** Customise the parameters provided to the loading overlay component. */",
       "type": { "returnType": "any", "optional": true }
     },
     "suppressLoadingOverlay": {
+      "description": "/** Disables the 'loading' overlay. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "overlayNoRowsTemplate": {
+      "description": "/** Provide a template for 'no rows' overlay. */",
       "type": { "returnType": "string", "optional": true }
     },
     "noRowsOverlayComponent": {
+      "description": "/** Provide a custom no rows overlay component */",
       "type": {
         "returnType": "{ new(): INoRowsOverlayComp; } | string",
         "optional": true
       }
     },
     "noRowsOverlayComponentFramework": {
+      "description": "/** Same as `noRowsOverlayComponent` but for a framework component. */",
       "type": { "returnType": "any", "optional": true }
     },
     "noRowsOverlayComponentParams": {
+      "description": "/** Customise the parameters provided to the no rows overlay component. */",
       "type": { "returnType": "any", "optional": true }
     },
     "suppressNoRowsOverlay": {
+      "description": "/** Disables the 'no rows' overlay. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "pagination": { "type": { "returnType": "boolean", "optional": true } },
+    "pagination": {
+      "description": "/** Set whether pagination is enabled. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "paginationPageSize": {
+      "description": "/** How many rows to load per page. If `paginationAutoPageSize` is specified, this property is ignored. Default: `100` */",
       "type": { "returnType": "number", "optional": true }
     },
     "paginationAutoPageSize": {
+      "description": "/** Set to `true` so that the number of rows to load per page is automatically adjusted by the grid so each page shows enough rows to just fill the area designated for the grid. If `false`, `paginationPageSize` is used. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "paginateChildRows": {
+      "description": "/** Set to `true` to have pages split children of groups when using Row Grouping or detail rows with Master Detail. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressPaginationPanel": {
+      "description": "/** If `true`, the default grid controls for navigation are hidden.\n * This is useful if `pagination=true` and you want to provide your own pagination controls.\n * Otherwise, when `pagination=true` the grid automatically shows the necessary controls at the bottom so that the user can navigate through the different pages. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "pivotMode": { "type": { "returnType": "boolean", "optional": true } },
-    "pivotPanelShow": { "type": { "returnType": "string", "optional": true } },
-    "pivotColumnGroupTotals": {
+    "pivotMode": {
+      "description": "/** Set to `true` to enable pivot mode. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "pivotPanelShow": {
+      "description": "/** When to show the 'pivot panel' (where you drag rows to pivot) at the top. Note that the pivot panel will never show if `pivotMode` is off. */",
       "type": { "returnType": "string", "optional": true }
     },
-    "pivotRowTotals": { "type": { "returnType": "string", "optional": true } },
+    "pivotColumnGroupTotals": {
+      "description": "/** When set and the grid is in pivot mode, automatically calculated totals will appear within the Pivot Column Groups, in the position specified. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "pivotRowTotals": {
+      "description": "/** When set and the grid is in pivot mode, automatically calculated totals will appear for each value column in the position specified. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "pivotSuppressAutoColumn": {
+      "description": "/** If `true`, the grid will not swap in the grouping column when pivoting. Useful if pivoting using Server Side Row Model or Viewport Row Model and you want full control of all columns including the group column. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressExpandablePivotGroups": {
+      "description": "/** When enabled, pivot column groups will appear 'fixed', without the ability to expand and collapse the column groups. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "functionsReadOnly": {
+      "description": "/** If `true`, then row group, pivot and value aggregation will be read-only from the GUI. The grid will display what values are used for each, but will not allow the user to change the selection. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "aggFuncs": {
+      "description": "/** A map of 'function name' to 'function' for custom aggregation functions. */",
       "type": { "returnType": "{ [key: string]: IAggFunc; }", "optional": true }
     },
     "suppressAggFuncInHeader": {
+      "description": "/** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressAggAtRootLevel": {
+      "description": "/** When `true`, the aggregations won't be computed for the root node of the grid. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "aggregateOnlyChangedColumns": {
+      "description": "/** When using change detection, only the updated column will be re-aggregated. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressAggFilteredOnly": {
+      "description": "/** Set to `true` so that aggregations are not impacted by filtering. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "animateRows": { "type": { "returnType": "boolean", "optional": true } },
+    "animateRows": {
+      "description": "/** Set to `true` to enable Row Animation. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "enableCellChangeFlash": {
+      "description": "/** Set to `true` to have cells flash after data changes. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "cellFlashDelay": { "type": { "returnType": "number", "optional": true } },
-    "cellFadeDelay": { "type": { "returnType": "number", "optional": true } },
+    "cellFlashDelay": {
+      "description": "/** To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long a cell should remain in its \\\"flashed\\\" state.\n * Default: `500` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "cellFadeDelay": {
+      "description": "/** To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long the \\\"flashed\\\" state animation takes to fade away after the timer set by `cellFlashDelay` has completed.\n * Default: `1000` */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "allowShowChangeAfterFilter": {
+      "description": "/** Set to `true` to have cells flash after data changes even when the change is due to filtering. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "domLayout": { "type": { "returnType": "string", "optional": true } },
-    "ensureDomOrder": { "type": { "returnType": "boolean", "optional": true } },
-    "enableRtl": { "type": { "returnType": "boolean", "optional": true } },
+    "domLayout": {
+      "description": "/** Switch between layout options: `normal`, `autoHeight`, `print`.\n * Default: `normal` */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "ensureDomOrder": {
+      "description": "/** When `true`, the order of rows and columns in the DOM are consistent with what is on screen. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "enableRtl": {
+      "description": "/** Set to `true` to operate the grid in RTL (Right to Left) mode. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "suppressColumnVirtualisation": {
+      "description": "/** Set to `true` so that the grid doesn't virtualise the columns. For example, if you have 100 columns, but only 10 visible due to scrolling, all 100 will always be rendered. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressMaxRenderedRowRestriction": {
+      "description": "/** By default the grid has a limit of rendering a maximum of 500 rows at once (remember the grid only renders rows you can see, so unless your display shows more than 500 rows without vertically scrolling this will never be an issue).\n * <br />**This is only relevant if you are manually setting `rowBuffer` to a high value (rendering more rows than can be seen) or if your grid height is able to display more than 500 rows at once.** */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "rowDragManaged": { "type": { "returnType": "boolean", "optional": true } },
+    "rowDragManaged": {
+      "description": "/** Set to `true` to enable Managed Row Dragging. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "suppressRowDrag": {
+      "description": "/** Set to `true` to suppress row dragging. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressMoveWhenRowDragging": {
+      "description": "/** Set to `true` to suppress moving rows while dragging the `rowDrag` waffle. This option highlights the position where the row will be placed and it will only move the row on mouse up. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "rowDragEntireRow": {
+      "description": "/** Set to `true` to enable clicking and dragging anywhere on the row without the need for a drag handle. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "rowDragMultiRow": {
+      "description": "/** Set to `true` to enable dragging multiple rows at the same time. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "fullWidthCellRenderer": {
+      "description": "/** Sets the Cell Renderer to use for full width rows. */",
       "type": {
         "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string",
         "optional": true
       }
     },
     "fullWidthCellRendererFramework": {
+      "description": "/** Same as `fullWidthCellRenderer` but for a framework component. */",
       "type": { "returnType": "any", "optional": true }
     },
     "fullWidthCellRendererParams": {
+      "description": "/** Customise the parameters provided to the `fullWidthCellRenderer` component. */",
       "type": { "returnType": "any", "optional": true }
     },
     "embedFullWidthRows": {
+      "description": "/** Set to `true` to have the detail grid embedded in the master grid's container and so link their horizontal scrolling. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "deprecatedEmbedFullWidthRows": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupDisplayType": {
+      "description": "/** Specifies how the results of row grouping should be displayed.\n * \n *   The options are:\n * \n *       `'singleColumn'`: single group column automatically added by the grid.\n *       `'multipleColumns'`: a group column per row group is added automatically.\n *       `'groupRows'`: group rows are automatically added instead of group columns.\n *       `'custom'`: informs the grid that group columns will be provided. */",
       "type": { "returnType": "RowGroupingDisplayType", "optional": true }
     },
     "groupDefaultExpanded": {
+      "description": "/** If grouping, set to the number of levels to expand by default, e.g. `0` for none, `1` for first level only, etc. Set to `-1` to expand everything. */",
       "type": { "returnType": "number", "optional": true }
     },
     "autoGroupColumnDef": {
+      "description": "/** Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included. */",
       "type": { "returnType": "ColDef", "optional": true }
     },
     "groupMaintainOrder": {
+      "description": "/** When `true`, preserves the current group order when sorting on non-group columns. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupSelectsChildren": {
+      "description": "/** When `true`, if you select a group, the children of the group will also be selected. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupIncludeFooter": {
+      "description": "/** If grouping, this controls whether to show a group footer when the group is expanded.\n * If `true`, then by default, the footer will contain aggregate data (if any) when shown and the header will be blank.\n * When closed, the header will contain the aggregate data regardless of this setting (as the footer is hidden anyway).\n * This is handy for 'total' rows, that are displayed below the data when the group is open, and alongside the group when it is closed. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupIncludeTotalFooter": {
+      "description": "/** Set to `true` to show a 'grand total' group footer across all groups. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupSuppressBlankHeader": {
+      "description": "/** If `true`, and showing footer, aggregate data will always be displayed at both the header and footer levels. This stops the possibly undesirable behaviour of the header details 'jumping' to the footer on expand. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupSelectsFiltered": {
+      "description": "/** If using `groupSelectsChildren`, then only the children that pass the current filter will get selected. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "showOpenedGroup": {
+      "description": "/** Shows the open group in the group column for non-group rows. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupRemoveSingleChildren": {
+      "description": "/** Set to `true` to collapse groups that only have one child. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupRemoveLowestSingleChildren": {
+      "description": "/** Set to `true` to collapse lowest level groups that only have one child. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupHideOpenParents": {
+      "description": "/** Set to `true` to hide parents that are open. When used with multiple columns for showing groups, it can give a more pleasing user experience. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "rowGroupPanelShow": {
+      "description": "/** When to show the 'row group panel' (where you drag rows to group) at the top. */",
       "type": { "returnType": "string", "optional": true }
     },
     "groupRowRenderer": {
+      "description": "/** Sets the Cell Renderer to use when `groupDisplayType = 'groupRows'`. */",
       "type": {
         "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string",
         "optional": true
       }
     },
     "groupRowRendererFramework": {
+      "description": "/** Same as `groupRowRenderer` but for a framework component. */",
       "type": { "returnType": "any", "optional": true }
     },
     "groupRowRendererParams": {
+      "description": "/** Customise the parameters provided to the `groupRowRenderer` component. */",
       "type": { "returnType": "any", "optional": true }
     },
     "suppressMakeColumnVisibleAfterUnGroup": {
+      "description": "/** By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "treeData": { "type": { "returnType": "boolean", "optional": true } },
+    "treeData": {
+      "description": "/** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "groupRowInnerRenderer": {
       "description": "/** @deprecated - this is now groupRowRendererParams.innerRenderer\n */",
       "type": {
@@ -2448,129 +2654,188 @@
       "description": "/** @deprecated - no longer needed, transaction updates keep group state\n */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "pinnedTopRowData": { "type": { "returnType": "any[]", "optional": true } },
-    "pinnedBottomRowData": {
+    "pinnedTopRowData": {
+      "description": "/** Data to be displayed as pinned top rows in the grid. */",
       "type": { "returnType": "any[]", "optional": true }
     },
-    "rowModelType": { "type": { "returnType": "string", "optional": true } },
-    "rowData": { "type": { "returnType": "any[] | null", "optional": true } },
-    "immutableData": { "type": { "returnType": "boolean", "optional": true } },
+    "pinnedBottomRowData": {
+      "description": "/** Data to be displayed as pinned bottom rows in the grid. */",
+      "type": { "returnType": "any[]", "optional": true }
+    },
+    "rowModelType": {
+      "description": "/** Sets the row model type. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "rowData": {
+      "description": "/** Set the data to be displayed as rows in the grid. */",
+      "type": { "returnType": "any[] | null", "optional": true }
+    },
+    "immutableData": {
+      "description": "/** Enables Immutable Data mode, for compatibility with immutable stores. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "asyncTransactionWaitMillis": {
+      "description": "/** How many milliseconds to wait before executing a batch of async transactions. */",
       "type": { "returnType": "number", "optional": true }
     },
     "suppressModelUpdateAfterUpdateTransaction": {
+      "description": "/** Prevents Transactions changing sort, filter, group or pivot state when transaction only contains updates. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "deltaRowDataMode": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "batchUpdateWaitMillis": {
       "description": "/** @deprecated use asyncTransactionWaitMillis instead\n */",
       "type": { "returnType": "number", "optional": true }
     },
-    "datasource": { "type": { "returnType": "IDatasource", "optional": true } },
+    "datasource": {
+      "description": "/** Provide the datasource for infinite scrolling. */",
+      "type": { "returnType": "IDatasource", "optional": true }
+    },
     "cacheOverflowSize": {
+      "description": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n * Default: `1` */",
       "type": { "returnType": "number", "optional": true }
     },
     "infiniteInitialRowCount": {
+      "description": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n * Default: `1` */",
       "type": { "returnType": "number", "optional": true }
     },
     "serverSideStoreType": {
+      "description": "/** Whether to use Full Store or Partial Store for storing rows. */",
       "type": { "returnType": "ServerSideStoreType", "optional": true }
     },
-    "cacheBlockSize": { "type": { "returnType": "number", "optional": true } },
+    "cacheBlockSize": {
+      "description": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n * Default: `100` */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "maxBlocksInCache": {
+      "description": "/** How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value. */",
       "type": { "returnType": "number", "optional": true }
     },
     "maxConcurrentDatasourceRequests": {
+      "description": "/** How many requests to hit the server with concurrently. If the max is reached, requests are queued. */",
       "type": { "returnType": "number", "optional": true }
     },
     "blockLoadDebounceMillis": {
+      "description": "/** How many milliseconds to wait before loading a block. Useful when scrolling over many rows, spanning many Partial Store blocks, as it prevents blocks loading until scrolling has settled. */",
       "type": { "returnType": "number", "optional": true }
     },
     "purgeClosedRowNodes": {
+      "description": "/** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideDatasource": {
+      "description": "/** Provide the `serverSideDatasource` for server side row model. */",
       "type": { "returnType": "IServerSideDatasource", "optional": true }
     },
     "serverSideSortingAlwaysResets": {
+      "description": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilteringAlwaysResets": {
+      "description": "/** When enabled, always refreshes stores after filter has changed. Used by Full Store only, to allow Server-Side Filtering. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressEnterpriseResetOnNewColumns": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "viewportDatasource": {
+      "description": "/** To use the viewport row model you need to provide the grid with a `viewportDatasource`. */",
       "type": { "returnType": "IViewportDatasource", "optional": true }
     },
     "viewportRowModelPageSize": {
+      "description": "/** When using viewport row model, sets the page size for the viewport. */",
       "type": { "returnType": "number", "optional": true }
     },
     "viewportRowModelBufferSize": {
+      "description": "/** When using viewport row model, sets the buffer size for the viewport. */",
       "type": { "returnType": "number", "optional": true }
     },
     "alwaysShowHorizontalScroll": {
+      "description": "/** Set to `true` to always show the horizontal scrollbar. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "alwaysShowVerticalScroll": {
+      "description": "/** Set to `true` to always show the vertical scrollbar. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "debounceVerticalScrollbar": {
+      "description": "/** Set to `true` to debounce the vertical scrollbar. Can provide smoother scrolling on older browsers, e.g. Internet Explorer. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressHorizontalScroll": {
+      "description": "/** Set to `true` to never show the horizontal scroll. This is useful if the grid is aligned with another grid and will scroll when the other grid scrolls. (Should not be used in combination with `alwaysShowHorizontalScroll`.) */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressScrollOnNewData": {
+      "description": "/** When `true`, the grid will not scroll to the top when new row data is provided. Use this if you don't want the default behaviour of scrolling to the top every time you load new data. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressAnimationFrame": {
+      "description": "/** When `true`, the grid will not use animation frames when drawing rows while scrolling. Use this if the grid is working fast enough that you don't need animation frames and you don't want the grid to flicker. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressMiddleClickScrolls": {
+      "description": "/** If `true`, middle clicks will result in `click` events for cells and rows. Otherwise the browser will use middle click to scroll the grid.<br />**Note:** Not all browsers fire `click` events with the middle button. Most will fire only `mousedown` and `mouseup` events, which can be used to focus a cell, but will not work to call the `onCellClicked` function. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressPreventDefaultOnMouseWheel": {
+      "description": "/** If `true`, mouse wheel events will be passed to the browser. Useful if your grid has no vertical scrolls and you want the mouse to scroll the browser page. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "scrollbarWidth": { "type": { "returnType": "number", "optional": true } },
-    "rowSelection": { "type": { "returnType": "string", "optional": true } },
+    "scrollbarWidth": {
+      "description": "/** Tell the grid how wide in pixels the scrollbar is, which is used in grid width calculations. Set only if using non-standard browser-provided scrollbars, so the grid can use the non-standard size in its calculations.f */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "rowSelection": {
+      "description": "/** Type of Row Selection: `single`, `multiple`. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "rowMultiSelectWithClick": {
+      "description": "/** Set to `true` to allow multiple rows to be selected using single click. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressRowDeselection": {
+      "description": "/** If `true`, rows will not be deselected if you hold down `Ctrl` and click the row or press `Space`. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressRowClickSelection": {
+      "description": "/** If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressCellSelection": {
+      "description": "/** If `true`, cells won't be selectable. This means cells will not get keyboard focus when you click on them. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressMultiRangeSelection": {
+      "description": "/** If `true`, only a single range can be selected. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "enableCellTextSelection": {
+      "description": "/** Set to `true` to be able to select the text within cells.\n * \n * **Note:** When this is set to `true`, the clipboard service is disabled. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "enableRangeSelection": {
+      "description": "/** Set to `true` to enable Range Selection. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "enableRangeHandle": {
+      "description": "/** Set to `true` to enable the Range Handle. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "enableFillHandle": {
+      "description": "/** Set to `true` to enable the Fill Handle. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "fillHandleDirection": {
+      "description": "/** Set to `'x'` to force the fill handle direction to horizontal, or set to `'y'` to force the fill handle direction to vertical. */",
       "type": { "returnType": "string", "optional": true }
     },
     "suppressClearOnFillReduction": {
+      "description": "/** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "rowDeselection": {
@@ -2578,43 +2843,65 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "sortingOrder": {
+      "description": "/** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`. */",
       "type": { "returnType": "(string | null)[]", "optional": true }
     },
-    "accentedSort": { "type": { "returnType": "boolean", "optional": true } },
-    "unSortIcon": { "type": { "returnType": "boolean", "optional": true } },
-    "suppressMultiSort": {
+    "accentedSort": {
+      "description": "/** Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "multiSortKey": { "type": { "returnType": "string", "optional": true } },
+    "unSortIcon": {
+      "description": "/** Set to `true` to show the 'no sort' icon. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "suppressMultiSort": {
+      "description": "/** Set to `true` to suppress multi-sort when the user shift-clicks a column header. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "multiSortKey": {
+      "description": "/** Set to `'ctrl'` to have multi sorting work using the `Ctrl` (or `Command ⌘` for Mac) key. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "suppressMaintainUnsortedOrder": {
+      "description": "/** Set to `true` to suppress sorting of un-sorted data to match original row data. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "icons": {
+      "description": "/** Icons to use inside the grid instead of the grid's default icons. */",
       "type": {
         "returnType": "{ [key: string]: Function | string; }",
         "optional": true
       }
     },
-    "rowHeight": { "type": { "returnType": "number", "optional": true } },
+    "rowHeight": {
+      "description": "/** Default row height in pixels. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "rowStyle": {
+      "description": "/** The style properties to apply to all rows. Set to an object of key (style names) and values (style values) */",
       "type": {
         "returnType": "{ [cssProperty: string]: string }",
         "optional": true
       }
     },
     "rowClass": {
+      "description": "/** CSS class(es) for all rows. Provide either a string (class name) or array of strings (array of class names). */",
       "type": { "returnType": "string | string[]", "optional": true }
     },
     "rowClassRules": {
+      "description": "/** Rules which can be applied to include certain CSS classes. */",
       "type": { "returnType": "RowClassRules", "optional": true }
     },
     "suppressRowHoverHighlight": {
+      "description": "/** Set to `true` to not highlight rows by adding the `ag-row-hover` CSS class. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressRowTransform": {
+      "description": "/** Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in row spanning. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "columnHoverHighlight": {
+      "description": "/** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "deltaSort": { "type": { "returnType": "boolean", "optional": true } },
@@ -2738,6 +3025,7 @@
       }
     },
     "localeTextFunc": {
+      "description": "/** A callback for localising text within the grid. */",
       "type": {
         "arguments": { "key": "string", "defaultValue": "string" },
         "returnType": "string",
@@ -6728,15 +7016,15 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "clearButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "resetButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "applyButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
@@ -6744,7 +7032,7 @@
     },
     "closeOnApply": { "type": { "returnType": "boolean", "optional": true } },
     "newRowsAction": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "string", "optional": true }
     },
     "debounceMs": { "type": { "returnType": "number", "optional": true } },
@@ -6875,15 +7163,15 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "clearButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "resetButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "applyButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
@@ -6891,7 +7179,7 @@
     },
     "closeOnApply": { "type": { "returnType": "boolean", "optional": true } },
     "newRowsAction": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "string", "optional": true }
     },
     "debounceMs": { "type": { "returnType": "number", "optional": true } },
@@ -6945,15 +7233,15 @@
   "FilterButtonType": {},
   "IProvidedFilterParams": {
     "clearButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "resetButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "applyButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
@@ -6961,7 +7249,7 @@
     },
     "closeOnApply": { "type": { "returnType": "boolean", "optional": true } },
     "newRowsAction": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "string", "optional": true }
     },
     "debounceMs": { "type": { "returnType": "number", "optional": true } },
@@ -7066,15 +7354,15 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "clearButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "resetButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "applyButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
@@ -7082,7 +7370,7 @@
     },
     "closeOnApply": { "type": { "returnType": "boolean", "optional": true } },
     "newRowsAction": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "string", "optional": true }
     },
     "debounceMs": { "type": { "returnType": "number", "optional": true } },
@@ -7160,15 +7448,15 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "clearButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "resetButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "applyButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
@@ -7176,7 +7464,7 @@
     },
     "closeOnApply": { "type": { "returnType": "boolean", "optional": true } },
     "newRowsAction": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "string", "optional": true }
     },
     "debounceMs": { "type": { "returnType": "number", "optional": true } },
@@ -7303,15 +7591,15 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "clearButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "resetButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "applyButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
@@ -7319,7 +7607,7 @@
     },
     "closeOnApply": { "type": { "returnType": "boolean", "optional": true } },
     "newRowsAction": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "string", "optional": true }
     },
     "debounceMs": { "type": { "returnType": "number", "optional": true } },
@@ -8490,15 +8778,15 @@
       }
     },
     "columnGroups": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "skipGroups": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "skipHeader": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     }
   },
@@ -8577,15 +8865,15 @@
       }
     },
     "columnGroups": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "skipGroups": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "skipHeader": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     }
   },
@@ -8678,15 +8966,15 @@
       }
     },
     "columnGroups": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "skipGroups": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "skipHeader": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     }
   },
@@ -8980,47 +9268,47 @@
       "type": { "returnType": "AgChartLegendItemOptions", "optional": true }
     },
     "layoutHorizontalSpacing": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "number", "optional": true }
     },
     "layoutVerticalSpacing": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "number", "optional": true }
     },
     "itemSpacing": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "number", "optional": true }
     },
     "markerShape": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "string | (new () => any)", "optional": true }
     },
     "markerSize": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "number", "optional": true }
     },
     "strokeWidth": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "number", "optional": true }
     },
     "color": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "string", "optional": true }
     },
     "fontStyle": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "FontStyle", "optional": true }
     },
     "fontWeight": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "FontWeight", "optional": true }
     },
     "fontSize": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "number", "optional": true }
     },
     "fontFamily": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "string", "optional": true }
     }
   },
@@ -11816,15 +12104,15 @@
       }
     },
     "columnGroups": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "skipGroups": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "skipHeader": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     }
   },
@@ -13630,31 +13918,31 @@
       "type": { "returnType": "'mac' | 'windows'", "optional": true }
     },
     "suppressRemoveEntries": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressSyncValuesAfterDataChange": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "selectAllOnMiniFilter": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "syncValuesLikeExcel": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "clearButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "resetButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "applyButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
@@ -13662,7 +13950,7 @@
     },
     "closeOnApply": { "type": { "returnType": "boolean", "optional": true } },
     "newRowsAction": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "string", "optional": true }
     },
     "debounceMs": { "type": { "returnType": "number", "optional": true } },
@@ -14608,11 +14896,11 @@
     "$compile": { "type": { "returnType": "any", "optional": false } },
     "pinned": { "type": { "returnType": "string", "optional": false } },
     "autoHeight": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": false }
     },
     "suppressRefresh": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": false }
     },
     "value": {
@@ -15413,7 +15701,7 @@
     },
     "scope": { "type": { "returnType": "any", "optional": false } },
     "padding": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "number", "optional": false }
     },
     "value": {

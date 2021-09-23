@@ -77,7 +77,7 @@
     }
   },
   "setEnterpriseDatasource": {
-    "description": "/** @deprecated\n */",
+    "description": "/** @deprecated */",
     "type": { "arguments": { "datasource": "IServerSideDatasource" } }
   },
   "setGridAriaProperty": {
@@ -95,30 +95,30 @@
   },
   "setRowData": { "type": { "arguments": { "rowData": "any[]" } } },
   "setFloatingTopRowData": {
-    "description": "/** @deprecated\n */",
+    "description": "/** @deprecated */",
     "type": { "arguments": { "rows": "any[]" }, "returnType": "void" }
   },
   "setFloatingBottomRowData": {
-    "description": "/** @deprecated\n */",
+    "description": "/** @deprecated */",
     "type": { "arguments": { "rows": "any[]" }, "returnType": "void" }
   },
   "getFloatingTopRowCount": {
-    "description": "/** @deprecated\n */",
+    "description": "/** @deprecated */",
     "type": { "arguments": {}, "returnType": "number" }
   },
   "getFloatingBottomRowCount": {
-    "description": "/** @deprecated\n */",
+    "description": "/** @deprecated */",
     "type": { "arguments": {}, "returnType": "number" }
   },
   "getFloatingTopRow": {
-    "description": "/** @deprecated\n */",
+    "description": "/** @deprecated */",
     "type": {
       "arguments": { "index": "number" },
       "returnType": "RowNode | undefined"
     }
   },
   "getFloatingBottomRow": {
-    "description": "/** @deprecated\n */",
+    "description": "/** @deprecated */",
     "type": {
       "arguments": { "index": "number" },
       "returnType": "RowNode | undefined"
@@ -200,23 +200,23 @@
     }
   },
   "refreshView": {
-    "description": "/** @deprecated\n */",
+    "description": "/** @deprecated */",
     "type": { "arguments": {} }
   },
   "refreshRows": {
-    "description": "/** @deprecated\n */",
+    "description": "/** @deprecated */",
     "type": { "arguments": { "rowNodes": "RowNode[]" }, "returnType": "void" }
   },
   "rowDataChanged": {
-    "description": "/** @deprecated\n */",
+    "description": "/** @deprecated */",
     "type": { "arguments": { "rows": "any" } }
   },
   "softRefreshView": {
-    "description": "/** @deprecated\n */",
+    "description": "/** @deprecated */",
     "type": { "arguments": {} }
   },
   "refreshGroupRows": {
-    "description": "/** @deprecated\n */",
+    "description": "/** @deprecated */",
     "type": { "arguments": {} }
   },
   "setFunctionsReadOnly": {
@@ -227,7 +227,7 @@
     "type": { "arguments": {}, "returnType": "boolean" }
   },
   "isAdvancedFilterPresent": {
-    "description": "/** @deprecated\n */",
+    "description": "/** @deprecated */",
     "type": { "arguments": {}, "returnType": "boolean" }
   },
   "isColumnFilterPresent": {
@@ -966,7 +966,7 @@
     }
   },
   "updateRowData": {
-    "description": "/** @deprecated\n */",
+    "description": "/** @deprecated */",
     "type": {
       "arguments": { "rowDataTransaction": "RowDataTransaction" },
       "returnType": "RowNodeTransaction | null | undefined"
@@ -985,7 +985,7 @@
     "type": { "arguments": {}, "returnType": "void" }
   },
   "batchUpdateRowData": {
-    "description": "/** @deprecated\n */",
+    "description": "/** @deprecated */",
     "type": {
       "arguments": {
         "rowDataTransaction": "RowDataTransaction",
@@ -1034,11 +1034,11 @@
   },
   "purgeInfiniteCache": { "type": { "arguments": {}, "returnType": "void" } },
   "purgeEnterpriseCache": {
-    "description": "/** @deprecated\n */",
+    "description": "/** @deprecated */",
     "type": { "arguments": { "route?": "string[]" }, "returnType": "void" }
   },
   "purgeServerSideCache": {
-    "description": "/** @deprecated\n */",
+    "description": "/** @deprecated */",
     "type": { "arguments": { "route": "string[] = []" }, "returnType": "void" }
   },
   "refreshServerSideStore": {

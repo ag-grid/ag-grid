@@ -36,9 +36,9 @@ function getJsDoc(node) {
     if (node.jsDoc) {
         const result = node.jsDoc.map(j => {
             const doc = printer.printNode(ts.EmitHint.Unspecified, j);
-            return doc.replace('/**\n *', '/**');
-        }).join('\n');
-        return result;
+            return doc.replace('/**\n *', '/**').replace('@deprecated\n', '@deprecated');
+        });
+        return result.join('\n');
     }
 };
 
@@ -51,7 +51,7 @@ function getJsDoc(node) {
  * ******* Written for Typescript Version 3.6.5 ********
  */
 function formatNode(node, file, paramNameOnly = false) {
-    if(!node){
+    if (!node) {
         return undefined;
     }
     if (!file) {
@@ -76,7 +76,7 @@ function formatNode(node, file, paramNameOnly = false) {
                         return printer.printNode(ts.EmitHint.Unspecified, node, file);
                     }
                 }
-                return formatNode(node.name,file);
+                return formatNode(node.name, file);
             }
         default:
             return printer.printNode(ts.EmitHint.Unspecified, node, file).replace(/(\n\s*)/g, ' ');
