@@ -36,7 +36,7 @@ The following example shows the minimum configuration required to display data i
 
 ## Sparkline Customisation
 
-The previous examples showed the default line sparkline without any customisations. The following sections provide details
+The previous example showed the default line sparkline without any customisations. The following sections provide details
 on how to specify and customise the built-in sparklines:  
 
 - ***[Line Sparkline](/sparklines-line-sparkline/)***
