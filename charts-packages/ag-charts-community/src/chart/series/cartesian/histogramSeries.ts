@@ -524,29 +524,42 @@ export class HistogramSeries extends CartesianSeries {
         if (!this.chart) {
             return;
         }
-        const { highlightedDatum } = this.chart;
+
         const {
-            fillOpacity,
-            strokeOpacity,
-            shadow,
-            highlightStyle: { fill, stroke }
+            fillOpacity, strokeOpacity, shadow,
+            chart: { highlightedDatum },
+            highlightStyle: {
+                fill: deprecatedFill,
+                stroke: deprecatedStroke,
+                strokeWidth: deprecatedStrokeWidth,
+                item: {
+                    fill: highlightedFill = deprecatedFill,
+                    stroke: highlightedStroke = deprecatedStroke,
+                    strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth,
+                }
+            }
         } = this;
 
         this.rectSelection.each((rect, datum) => {
-            const highlighted = datum === highlightedDatum;
+            const isDatumHighlighted = datum === highlightedDatum;
+            const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
+                ? highlightedDatumStrokeWidth
+                : this.getStrokeWidth(datum.strokeWidth, datum);
+
             rect.x = datum.x;
             rect.y = datum.y;
             rect.width = datum.width;
             rect.height = datum.height;
-            rect.fill = highlighted && fill !== undefined ? fill : datum.fill;
-            rect.stroke = highlighted && stroke !== undefined ? stroke : datum.stroke;
+            rect.fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : datum.fill;
+            rect.stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : datum.stroke;
             rect.fillOpacity = fillOpacity;
             rect.strokeOpacity = strokeOpacity;
-            rect.strokeWidth = datum.strokeWidth;
+            rect.strokeWidth = strokeWidth;
             rect.lineDash = this.lineDash;
             rect.lineDashOffset = this.lineDashOffset;
             rect.fillShadow = shadow;
             rect.visible = datum.height > 0; // prevent stroke from rendering for zero height columns
+            rect.opacity = this.getOpacity(datum);
         });
     }
 
