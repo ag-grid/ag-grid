@@ -720,31 +720,47 @@ export interface GridOptions {
     // *****************************************************************************************************
 
     // *** Accessories *** //
+    /** For customising the context menu. */
     getContextMenuItems?: GetContextMenuItems;
+    /** For customising the main 'column header' menu. */
     getMainMenuItems?: GetMainMenuItems;
+    /** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup. */
     postProcessPopup?: (params: PostProcessPopupParams) => void;
 
     // *** Clipboard *** //
+    /** Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel. */
     processCellForClipboard?(params: ProcessCellForExportParams): any;
+    /** Allows you to process header values for the clipboard.  */
     processHeaderForClipboard?(params: ProcessHeaderForExportParams): any;
+    /** Allows you to process cells from the clipboard. Handy if for example you have number fields, and want to block non-numbers from getting into the grid. */
     processCellFromClipboard?(params: ProcessCellForExportParams): any;
+    /** Allows you to get the data that would otherwise go to the clipboard. To be used when you want to control the 'copy to clipboard' operation yourself. */
     sendToClipboard?: (params: SendToClipboardParams) => void;
+    /** Allows complete control of the paste operation, including cancelling the operation (so nothing happens) or replacing the data with other data. */
     processDataFromClipboard?: (params: ProcessDataFromClipboardParams) => string[][] | null;
 
     // *** Filtering *** //
+    /** Grid calls this method to know if an external filter is present. */
     isExternalFilterPresent?(): boolean;
+    /** Should return `true` if external filter passes, otherwise `false`. */
     doesExternalFilterPass?(node: RowNode): boolean;
 
     // *** Integrated Charts *** //
+    /** Callback to be used to customise the chart toolbar items. */
     getChartToolbarItems?: GetChartToolbarItems;
+    /** Callback to enable displaying the chart in an alternative chart container. */
     createChartContainer?: (params: ChartRef) => void;
 
     // *** Keyboard Navigation *** //
+    /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. */
     navigateToNextHeader?: (params: NavigateToNextHeaderParams) => HeaderPosition;
+    /** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused. */
     tabToNextHeader?: (params: TabToNextHeaderParams) => HeaderPosition;
+    /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. */
     navigateToNextCell?: (params: NavigateToNextCellParams) => CellPosition;
+    /** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. */
     tabToNextCell?: (params: TabToNextCellParams) => CellPosition;
-    /** Allows user to suppress certain keyboard events */
+    /** Suppress the grid taking action for the relevant keyboard event when a cell is focused. */
     suppressKeyboardEvent?: (params: SuppressKeyboardEventParams) => boolean;
 
     // *** Localisation *** //
@@ -752,44 +768,72 @@ export interface GridOptions {
     localeTextFunc?: (key: string, defaultValue: string) => string;
 
     // *** Miscellaneous *** //
+    /** Allows overriding what `document` is used. Currently used by Drag and Drop (may extend to other places in the future). Use this when you want the grid to use a different `document` than the one available on the global scope. This can happen if docking out components (something which Electron supports) */
     getDocument?: () => Document;
 
     // *** Pagination *** //
+    /** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions. */
     paginationNumberFormatter?: (params: PaginationNumberFormatterParams) => string;
 
     // *** Row Grouping and Pivoting *** //
+    /** Callback for grouping. */
     groupRowAggNodes?(nodes: RowNode[]): any;
+    /** (Client-side Row Model only) Allows groups to be open by default. */
     isGroupOpenByDefault?: (params: IsGroupOpenByDefaultParams) => boolean;
+    /** Allows default sorting of groups. */
     defaultGroupOrderComparator?: (nodeA: RowNode, nodeB: RowNode) => number;
+    /** Callback to be used with pivoting, to allow changing the second column definition. */
     processSecondaryColDef?(colDef: ColDef): void;
+    /** Callback to be used with pivoting, to allow changing the second column group definition. */
     processSecondaryColGroupDef?(colGroupDef: ColGroupDef): void;
+    /** Callback to be used when working with Tree Data when `treeData = true`. */
     getDataPath?: GetDataPath;
     /** @deprecated - Use defaultGroupOrderComparator instead */
     defaultGroupSortComparator?: (nodeA: RowNode, nodeB: RowNode) => number;
 
     // *** Row Model: Server Side *** //
+    /** Allows setting the child count for a group row. */
     getChildCount?(dataItem: any): number;
+    /** Allows providing different params for different levels of grouping. */
     getServerSideStoreParams?: (params: GetServerSideStoreParamsParams) => ServerSideStoreParams;
+    /** Allows groups to be open by default. */
     isServerSideGroupOpenByDefault?: (params: IsServerSideGroupOpenByDefaultParams) => boolean;
+    /** Allows cancelling transactions. */
     isApplyServerSideTransaction?: IsApplyServerSideTransaction;
+    /** SSRM Tree Data: Allows specifying which rows are expandable. */
     isServerSideGroup?: IsServerSideGroup;
+    /** SSRM Tree Data: Allows specifying group keys. */
     getServerSideGroupKey?: GetServerSideGroupKey;
 
     // *** Rows *** //
+    /**
+     * Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.
+     * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.
+     */
     getBusinessKeyForNode?(node: RowNode): string;
+    /** Allows you to set the ID for a particular row node based on the data. Useful for selection and server side sorting and filtering for paging and virtual pagination. */
     getRowNodeId?: GetRowNodeIdFunc;
+    /** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */
     processRowPostCreate?(params: ProcessRowParams): void;
+    /** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable. */
     isRowSelectable?: IsRowSelectable;
+    /** Callback to be used with Master Detail to determine if a row should be a master row. If `false` is returned no detail row will exist for this row. */
     isRowMaster?: IsRowMaster;
+    /** Callback to fill values instead of simply copying values or increasing number values using linear progression. */
     fillOperation?: (params: FillOperationParams) => any;
 
     // *** Sorting *** //
+    /** Callback to perform additional sorting after the grid has sorted the rows. */
     postSort?(nodes: RowNode[]): void;
 
     // *** Styling *** //
+    /** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values. */
     getRowStyle?: (params: RowClassParams) => { [cssProperty: string]: string };
+    /** Callback version of property `rowClass` to set class(es) for each row individually. Function should return either a string (class name), array of strings (array of class names) or undefined for no class. */
     getRowClass?: (params: RowClassParams) => string | string[] | undefined;
+    /** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height. */
     getRowHeight?: (params: RowHeightParams) => number | undefined | null;
+    /** Tells the grid if this row should be rendered as full width. */
     isFullWidthCell?(rowNode: RowNode): boolean;
 
     // **********************************************************************************************************

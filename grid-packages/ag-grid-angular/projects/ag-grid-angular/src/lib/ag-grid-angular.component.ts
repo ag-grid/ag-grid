@@ -800,53 +800,95 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public angularCompileFilters: boolean | undefined = undefined;
     @Input() public functionsPassive: boolean | undefined = undefined;
     @Input() public enableGroupEdit: boolean | undefined = undefined;
+    /** For customising the context menu.     */
     @Input() public getContextMenuItems: GetContextMenuItems | undefined = undefined;
+    /** For customising the main 'column header' menu.     */
     @Input() public getMainMenuItems: GetMainMenuItems | undefined = undefined;
+    /** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup.     */
     @Input() public postProcessPopup: ((params: PostProcessPopupParams) => void) | undefined = undefined;
+    /** Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel.     */
     @Input() public processCellForClipboard: ((params: ProcessCellForExportParams) =>  any) | undefined = undefined;
+    /** Allows you to process header values for the clipboard.     */
     @Input() public processHeaderForClipboard: ((params: ProcessHeaderForExportParams) =>  any) | undefined = undefined;
+    /** Allows you to process cells from the clipboard. Handy if for example you have number fields, and want to block non-numbers from getting into the grid.     */
     @Input() public processCellFromClipboard: ((params: ProcessCellForExportParams) =>  any) | undefined = undefined;
+    /** Allows you to get the data that would otherwise go to the clipboard. To be used when you want to control the 'copy to clipboard' operation yourself.     */
     @Input() public sendToClipboard: ((params: SendToClipboardParams) => void) | undefined = undefined;
+    /** Allows complete control of the paste operation, including cancelling the operation (so nothing happens) or replacing the data with other data.     */
     @Input() public processDataFromClipboard: ((params: ProcessDataFromClipboardParams) => string[][] | null) | undefined = undefined;
+    /** Grid calls this method to know if an external filter is present.     */
     @Input() public isExternalFilterPresent: (() =>  boolean) | undefined = undefined;
+    /** Should return `true` if external filter passes, otherwise `false`.     */
     @Input() public doesExternalFilterPass: ((node: RowNode) =>  boolean) | undefined = undefined;
+    /** Callback to be used to customise the chart toolbar items.     */
     @Input() public getChartToolbarItems: GetChartToolbarItems | undefined = undefined;
+    /** Callback to enable displaying the chart in an alternative chart container.     */
     @Input() public createChartContainer: ((params: ChartRef) => void) | undefined = undefined;
+    /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused.     */
     @Input() public navigateToNextHeader: ((params: NavigateToNextHeaderParams) => HeaderPosition) | undefined = undefined;
+    /** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused.     */
     @Input() public tabToNextHeader: ((params: TabToNextHeaderParams) => HeaderPosition) | undefined = undefined;
+    /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused.     */
     @Input() public navigateToNextCell: ((params: NavigateToNextCellParams) => CellPosition) | undefined = undefined;
+    /** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused.     */
     @Input() public tabToNextCell: ((params: TabToNextCellParams) => CellPosition) | undefined = undefined;
-    /** Allows user to suppress certain keyboard events     */
+    /** Suppress the grid taking action for the relevant keyboard event when a cell is focused.     */
     @Input() public suppressKeyboardEvent: ((params: SuppressKeyboardEventParams) => boolean) | undefined = undefined;
     /** A callback for localising text within the grid.     */
     @Input() public localeTextFunc: ((key: string, defaultValue: string) => string) | undefined = undefined;
+    /** Allows overriding what `document` is used. Currently used by Drag and Drop (may extend to other places in the future). Use this when you want the grid to use a different `document` than the one available on the global scope. This can happen if docking out components (something which Electron supports)     */
     @Input() public getDocument: (() => Document) | undefined = undefined;
+    /** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions.     */
     @Input() public paginationNumberFormatter: ((params: PaginationNumberFormatterParams) => string) | undefined = undefined;
+    /** Callback for grouping.     */
     @Input() public groupRowAggNodes: ((nodes: RowNode[]) =>  any) | undefined = undefined;
+    /** (Client-side Row Model only) Allows groups to be open by default.     */
     @Input() public isGroupOpenByDefault: ((params: IsGroupOpenByDefaultParams) => boolean) | undefined = undefined;
+    /** Allows default sorting of groups.     */
     @Input() public defaultGroupOrderComparator: ((nodeA: RowNode, nodeB: RowNode) => number) | undefined = undefined;
+    /** Callback to be used with pivoting, to allow changing the second column definition.     */
     @Input() public processSecondaryColDef: ((colDef: ColDef) =>  void) | undefined = undefined;
+    /** Callback to be used with pivoting, to allow changing the second column group definition.     */
     @Input() public processSecondaryColGroupDef: ((colGroupDef: ColGroupDef) =>  void) | undefined = undefined;
+    /** Callback to be used when working with Tree Data when `treeData = true`.     */
     @Input() public getDataPath: GetDataPath | undefined = undefined;
     /** @deprecated - Use defaultGroupOrderComparator instead
      */
     @Input() public defaultGroupSortComparator: ((nodeA: RowNode, nodeB: RowNode) => number) | undefined = undefined;
+    /** Allows setting the child count for a group row.     */
     @Input() public getChildCount: ((dataItem: any) =>  number) | undefined = undefined;
+    /** Allows providing different params for different levels of grouping.     */
     @Input() public getServerSideStoreParams: ((params: GetServerSideStoreParamsParams) => ServerSideStoreParams) | undefined = undefined;
+    /** Allows groups to be open by default.     */
     @Input() public isServerSideGroupOpenByDefault: ((params: IsServerSideGroupOpenByDefaultParams) => boolean) | undefined = undefined;
+    /** Allows cancelling transactions.     */
     @Input() public isApplyServerSideTransaction: IsApplyServerSideTransaction | undefined = undefined;
+    /** SSRM Tree Data: Allows specifying which rows are expandable.     */
     @Input() public isServerSideGroup: IsServerSideGroup | undefined = undefined;
+    /** SSRM Tree Data: Allows specifying group keys.     */
     @Input() public getServerSideGroupKey: GetServerSideGroupKey | undefined = undefined;
+    /** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.
+     * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.     */
     @Input() public getBusinessKeyForNode: ((node: RowNode) =>  string) | undefined = undefined;
+    /** Allows you to set the ID for a particular row node based on the data. Useful for selection and server side sorting and filtering for paging and virtual pagination.     */
     @Input() public getRowNodeId: GetRowNodeIdFunc | undefined = undefined;
+    /** Allows you to process rows after they are created, so you can do final adding of custom attributes etc.     */
     @Input() public processRowPostCreate: ((params: ProcessRowParams) =>  void) | undefined = undefined;
+    /** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.     */
     @Input() public isRowSelectable: IsRowSelectable | undefined = undefined;
+    /** Callback to be used with Master Detail to determine if a row should be a master row. If `false` is returned no detail row will exist for this row.     */
     @Input() public isRowMaster: IsRowMaster | undefined = undefined;
+    /** Callback to fill values instead of simply copying values or increasing number values using linear progression.     */
     @Input() public fillOperation: ((params: FillOperationParams) => any) | undefined = undefined;
+    /** Callback to perform additional sorting after the grid has sorted the rows.     */
     @Input() public postSort: ((nodes: RowNode[]) =>  void) | undefined = undefined;
+    /** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values.     */
     @Input() public getRowStyle: ((params: RowClassParams) => { [cssProperty: string]: string }) | undefined = undefined;
+    /** Callback version of property `rowClass` to set class(es) for each row individually. Function should return either a string (class name), array of strings (array of class names) or undefined for no class.     */
     @Input() public getRowClass: ((params: RowClassParams) => string | string[] | undefined) | undefined = undefined;
+    /** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height.     */
     @Input() public getRowHeight: ((params: RowHeightParams) => number | undefined | null) | undefined = undefined;
+    /** Tells the grid if this row should be rendered as full width.     */
     @Input() public isFullWidthCell: ((rowNode: RowNode) =>  boolean) | undefined = undefined;
 
     @Output() public columnEverythingChanged: EventEmitter<ColumnEverythingChangedEvent> = new EventEmitter<ColumnEverythingChangedEvent>();

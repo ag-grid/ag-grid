@@ -2787,7 +2787,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "scrollbarWidth": {
-      "description": "/** Tell the grid how wide in pixels the scrollbar is, which is used in grid width calculations. Set only if using non-standard browser-provided scrollbars, so the grid can use the non-standard size in its calculations.f */",
+      "description": "/** Tell the grid how wide in pixels the scrollbar is, which is used in grid width calculations. Set only if using non-standard browser-provided scrollbars, so the grid can use the non-standard size in its calculations. */",
       "type": { "returnType": "number", "optional": true }
     },
     "rowSelection": {
@@ -2921,12 +2921,15 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "getContextMenuItems": {
+      "description": "/** For customising the context menu. */",
       "type": { "returnType": "GetContextMenuItems", "optional": true }
     },
     "getMainMenuItems": {
+      "description": "/** For customising the main 'column header' menu. */",
       "type": { "returnType": "GetMainMenuItems", "optional": true }
     },
     "postProcessPopup": {
+      "description": "/** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup. */",
       "type": {
         "arguments": { "params": "PostProcessPopupParams" },
         "returnType": "void",
@@ -2934,6 +2937,7 @@
       }
     },
     "processCellForClipboard": {
+      "description": "/** Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel. */",
       "type": {
         "arguments": { "params": "ProcessCellForExportParams" },
         "returnType": "any",
@@ -2941,6 +2945,7 @@
       }
     },
     "processHeaderForClipboard": {
+      "description": "/** Allows you to process header values for the clipboard. */",
       "type": {
         "arguments": { "params": "ProcessHeaderForExportParams" },
         "returnType": "any",
@@ -2948,6 +2953,7 @@
       }
     },
     "processCellFromClipboard": {
+      "description": "/** Allows you to process cells from the clipboard. Handy if for example you have number fields, and want to block non-numbers from getting into the grid. */",
       "type": {
         "arguments": { "params": "ProcessCellForExportParams" },
         "returnType": "any",
@@ -2955,6 +2961,7 @@
       }
     },
     "sendToClipboard": {
+      "description": "/** Allows you to get the data that would otherwise go to the clipboard. To be used when you want to control the 'copy to clipboard' operation yourself. */",
       "type": {
         "arguments": { "params": "SendToClipboardParams" },
         "returnType": "void",
@@ -2962,6 +2969,7 @@
       }
     },
     "processDataFromClipboard": {
+      "description": "/** Allows complete control of the paste operation, including cancelling the operation (so nothing happens) or replacing the data with other data. */",
       "type": {
         "arguments": { "params": "ProcessDataFromClipboardParams" },
         "returnType": "string[][] | null",
@@ -2969,9 +2977,11 @@
       }
     },
     "isExternalFilterPresent": {
+      "description": "/** Grid calls this method to know if an external filter is present. */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": true }
     },
     "doesExternalFilterPass": {
+      "description": "/** Should return `true` if external filter passes, otherwise `false`. */",
       "type": {
         "arguments": { "node": "RowNode" },
         "returnType": "boolean",
@@ -2979,9 +2989,11 @@
       }
     },
     "getChartToolbarItems": {
+      "description": "/** Callback to be used to customise the chart toolbar items. */",
       "type": { "returnType": "GetChartToolbarItems", "optional": true }
     },
     "createChartContainer": {
+      "description": "/** Callback to enable displaying the chart in an alternative chart container. */",
       "type": {
         "arguments": { "params": "ChartRef" },
         "returnType": "void",
@@ -2989,6 +3001,7 @@
       }
     },
     "navigateToNextHeader": {
+      "description": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. */",
       "type": {
         "arguments": { "params": "NavigateToNextHeaderParams" },
         "returnType": "HeaderPosition",
@@ -2996,6 +3009,7 @@
       }
     },
     "tabToNextHeader": {
+      "description": "/** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused. */",
       "type": {
         "arguments": { "params": "TabToNextHeaderParams" },
         "returnType": "HeaderPosition",
@@ -3003,6 +3017,7 @@
       }
     },
     "navigateToNextCell": {
+      "description": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. */",
       "type": {
         "arguments": { "params": "NavigateToNextCellParams" },
         "returnType": "CellPosition",
@@ -3010,6 +3025,7 @@
       }
     },
     "tabToNextCell": {
+      "description": "/** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. */",
       "type": {
         "arguments": { "params": "TabToNextCellParams" },
         "returnType": "CellPosition",
@@ -3017,7 +3033,7 @@
       }
     },
     "suppressKeyboardEvent": {
-      "description": "/** Allows user to suppress certain keyboard events */",
+      "description": "/** Suppress the grid taking action for the relevant keyboard event when a cell is focused. */",
       "type": {
         "arguments": { "params": "SuppressKeyboardEventParams" },
         "returnType": "boolean",
@@ -3033,9 +3049,11 @@
       }
     },
     "getDocument": {
+      "description": "/** Allows overriding what `document` is used. Currently used by Drag and Drop (may extend to other places in the future). Use this when you want the grid to use a different `document` than the one available on the global scope. This can happen if docking out components (something which Electron supports) */",
       "type": { "arguments": {}, "returnType": "Document", "optional": true }
     },
     "paginationNumberFormatter": {
+      "description": "/** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions. */",
       "type": {
         "arguments": { "params": "PaginationNumberFormatterParams" },
         "returnType": "string",
@@ -3043,6 +3061,7 @@
       }
     },
     "groupRowAggNodes": {
+      "description": "/** Callback for grouping. */",
       "type": {
         "arguments": { "nodes": "RowNode[]" },
         "returnType": "any",
@@ -3050,6 +3069,7 @@
       }
     },
     "isGroupOpenByDefault": {
+      "description": "/** (Client-side Row Model only) Allows groups to be open by default. */",
       "type": {
         "arguments": { "params": "IsGroupOpenByDefaultParams" },
         "returnType": "boolean",
@@ -3057,6 +3077,7 @@
       }
     },
     "defaultGroupOrderComparator": {
+      "description": "/** Allows default sorting of groups. */",
       "type": {
         "arguments": { "nodeA": "RowNode", "nodeB": "RowNode" },
         "returnType": "number",
@@ -3064,6 +3085,7 @@
       }
     },
     "processSecondaryColDef": {
+      "description": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
       "type": {
         "arguments": { "colDef": "ColDef" },
         "returnType": "void",
@@ -3071,6 +3093,7 @@
       }
     },
     "processSecondaryColGroupDef": {
+      "description": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
       "type": {
         "arguments": { "colGroupDef": "ColGroupDef" },
         "returnType": "void",
@@ -3078,6 +3101,7 @@
       }
     },
     "getDataPath": {
+      "description": "/** Callback to be used when working with Tree Data when `treeData = true`. */",
       "type": { "returnType": "GetDataPath", "optional": true }
     },
     "defaultGroupSortComparator": {
@@ -3089,6 +3113,7 @@
       }
     },
     "getChildCount": {
+      "description": "/** Allows setting the child count for a group row. */",
       "type": {
         "arguments": { "dataItem": "any" },
         "returnType": "number",
@@ -3096,6 +3121,7 @@
       }
     },
     "getServerSideStoreParams": {
+      "description": "/** Allows providing different params for different levels of grouping. */",
       "type": {
         "arguments": { "params": "GetServerSideStoreParamsParams" },
         "returnType": "ServerSideStoreParams",
@@ -3103,6 +3129,7 @@
       }
     },
     "isServerSideGroupOpenByDefault": {
+      "description": "/** Allows groups to be open by default. */",
       "type": {
         "arguments": { "params": "IsServerSideGroupOpenByDefaultParams" },
         "returnType": "boolean",
@@ -3110,15 +3137,19 @@
       }
     },
     "isApplyServerSideTransaction": {
+      "description": "/** Allows cancelling transactions. */",
       "type": { "returnType": "IsApplyServerSideTransaction", "optional": true }
     },
     "isServerSideGroup": {
+      "description": "/** SSRM Tree Data: Allows specifying which rows are expandable. */",
       "type": { "returnType": "IsServerSideGroup", "optional": true }
     },
     "getServerSideGroupKey": {
+      "description": "/** SSRM Tree Data: Allows specifying group keys. */",
       "type": { "returnType": "GetServerSideGroupKey", "optional": true }
     },
     "getBusinessKeyForNode": {
+      "description": "/** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.\n * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys. */",
       "type": {
         "arguments": { "node": "RowNode" },
         "returnType": "string",
@@ -3126,9 +3157,11 @@
       }
     },
     "getRowNodeId": {
+      "description": "/** Allows you to set the ID for a particular row node based on the data. Useful for selection and server side sorting and filtering for paging and virtual pagination. */",
       "type": { "returnType": "GetRowNodeIdFunc", "optional": true }
     },
     "processRowPostCreate": {
+      "description": "/** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */",
       "type": {
         "arguments": { "params": "ProcessRowParams" },
         "returnType": "void",
@@ -3136,12 +3169,15 @@
       }
     },
     "isRowSelectable": {
+      "description": "/** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable. */",
       "type": { "returnType": "IsRowSelectable", "optional": true }
     },
     "isRowMaster": {
+      "description": "/** Callback to be used with Master Detail to determine if a row should be a master row. If `false` is returned no detail row will exist for this row. */",
       "type": { "returnType": "IsRowMaster", "optional": true }
     },
     "fillOperation": {
+      "description": "/** Callback to fill values instead of simply copying values or increasing number values using linear progression. */",
       "type": {
         "arguments": { "params": "FillOperationParams" },
         "returnType": "any",
@@ -3149,6 +3185,7 @@
       }
     },
     "postSort": {
+      "description": "/** Callback to perform additional sorting after the grid has sorted the rows. */",
       "type": {
         "arguments": { "nodes": "RowNode[]" },
         "returnType": "void",
@@ -3156,6 +3193,7 @@
       }
     },
     "getRowStyle": {
+      "description": "/** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values. */",
       "type": {
         "arguments": { "params": "RowClassParams" },
         "returnType": "{ [cssProperty: string]: string; }",
@@ -3163,6 +3201,7 @@
       }
     },
     "getRowClass": {
+      "description": "/** Callback version of property `rowClass` to set class(es) for each row individually. Function should return either a string (class name), array of strings (array of class names) or undefined for no class. */",
       "type": {
         "arguments": { "params": "RowClassParams" },
         "returnType": "string | string[] | undefined",
@@ -3170,6 +3209,7 @@
       }
     },
     "getRowHeight": {
+      "description": "/** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height. */",
       "type": {
         "arguments": { "params": "RowHeightParams" },
         "returnType": "number | undefined | null",
@@ -3177,6 +3217,7 @@
       }
     },
     "isFullWidthCell": {
+      "description": "/** Tells the grid if this row should be rendered as full width. */",
       "type": {
         "arguments": { "rowNode": "RowNode" },
         "returnType": "boolean",
