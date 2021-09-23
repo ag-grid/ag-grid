@@ -62,16 +62,6 @@ export class DragService extends BeanStub {
         removeFromArray(this.dragSources, dragSourceAndListener);
     }
 
-    private setNoSelectToBody(noSelect: boolean): void {
-        const eDocument = this.gridOptionsWrapper.getDocument();
-        const eBody = eDocument.querySelector('body') as HTMLElement;
-        if (exists(eBody)) {
-            // when we drag the mouse in AG Grid, this class gets added / removed from the body, so that
-            // the mouse isn't selecting text when dragging.
-            addOrRemoveCssClass(eBody, 'ag-force-unselectable', noSelect);
-        }
-    }
-
     public isDragging(): boolean {
         return this.dragging;
     }
@@ -85,8 +75,11 @@ export class DragService extends BeanStub {
         const suppressTouch = this.gridOptionsWrapper.isSuppressTouch();
 
         if (includeTouch && !suppressTouch) {
-            touchListener = this.onTouchStart.bind(this, params);
-            params.eElement.addEventListener('touchstart', touchListener!, { passive: true });
+            touchListener = (touchEvent: TouchEvent) => { 
+                touchEvent.preventDefault();
+                this.onTouchStart(params, touchEvent);
+            };
+            params.eElement.addEventListener('touchstart', touchListener, { passive: true });
         }
 
         this.dragSources.push({
@@ -153,9 +146,11 @@ export class DragService extends BeanStub {
 
         this.mouseStartEvent = mouseEvent;
 
+        // we need to preventDefault here to avoid text selection while dragging items.
+        mouseEvent.preventDefault();
+
         const eDocument = this.gridOptionsWrapper.getDocument();
 
-        this.setNoSelectToBody(true);
         const mouseMoveEvent = (event: MouseEvent) => this.onMouseMove(event, params.eElement);
         const mouseUpEvent = (event: MouseEvent) => this.onMouseUp(event, params.eElement);
         const contextEvent = (event: MouseEvent) => event.preventDefault();
@@ -297,8 +292,6 @@ export class DragService extends BeanStub {
             };
             this.eventService.dispatchEvent(event);
         }
-
-        this.setNoSelectToBody(false);
 
         this.mouseStartEvent = null;
         this.touchStart = null;
