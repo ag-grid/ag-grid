@@ -42,7 +42,6 @@ var options = {
                 strokeWidth: 4
             },
             series: {
-                enabled: true,
                 dimOpacity: 0.2,
                 strokeWidth: 2
             }
