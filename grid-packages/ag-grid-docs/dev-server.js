@@ -74,28 +74,28 @@ function addWebpackMiddlewareForConfig(app, configFile, prefix, bundleDescriptor
 }
 
 function launchPhpCP(app) {
-    // const php = cp.spawn('php', ['-S', `${HOST}:${PHP_PORT}`, '-t', 'src'], {
-    //     stdio: ['ignore', 'ignore', 'ignore'],
-    //     env: { AG_DEV: 'true' }
-    // });
+    const php = cp.spawn('php', ['-S', `${HOST}:${PHP_PORT}`, '-t', 'src'], {
+        stdio: ['ignore', 'ignore', 'ignore'],
+        env: { AG_DEV: 'true' }
+    });
 
-    // app.use(
-    //     '/',
-    //     proxy(`${HOST}:${PHP_PORT}`, {
-    //         proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
-    //             proxyReqOpts.headers['X-PROXY-HTTP-HOST'] = srcReq.headers.host;
-    //             return proxyReqOpts;
-    //         }
-    //     })
-    // );
+    app.use(
+        '/',
+        proxy(`${HOST}:${PHP_PORT}`, {
+            proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
+                proxyReqOpts.headers['X-PROXY-HTTP-HOST'] = srcReq.headers.host;
+                return proxyReqOpts;
+            }
+        })
+    );
 
-    // process.on('exit', () => {
-    //     php.kill();
-    // });
+    process.on('exit', () => {
+        php.kill();
+    });
 
-    // process.on('SIGINT', () => {
-    //     php.kill();
-    // });
+    process.on('SIGINT', () => {
+        php.kill();
+    });
 }
 
 function launchGatsby() {
