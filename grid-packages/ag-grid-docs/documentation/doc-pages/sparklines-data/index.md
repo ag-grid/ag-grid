@@ -1,19 +1,23 @@
 ---
-title: "Sparklines - Data"
+title: "Sparklines - Supplying Data"
 enterprise: true
 ---
 
-This section covers the formats of data supported by the sparklines
+This section covers the different data formats supported by sparklines.
 
-## Sparklines Data
+Sparklines are configured on a per-column basis and are supplied data based on the column configuration just like any 
+other grid cell, i.e. columns are configured with a `field` attribute or [Value Getter](/value-getters/).
 
-By default, the data used to render the sparklines will be the row data for the specific column. The data array can consist of numbers, tuples or complex objects.
+The data supplied to sparklines can be in the following formats:
 
-- In all formats, the y values should be `number` values as they are plotted using the number axis on a continuous scale.
-- If supplied, the x values can be of types `number`, `string`, `Date` or objects with a `toString` method.
+- ***[Array of Numbers](/sparklines-data/#array-of-numbers)***
+- ***[Array of Tuples](/sparklines-data/#array-of-tuples)***
+- ***[Array of Objects](/sparklines-data/#array-of-objects)***
 
-### Data Formats
-## Array of numbers
+In each of the formats above, Y values must be of type `number`, whereas X values can be a `number`, `string`, `Date` or 
+objects with a `toString` method, if they are provided.
+
+## Array of Numbers
 
 The simplest data format supported by the sparkline is the `number[]` format. This does not require any further configuration, simply provide the array of numbers to the grid for that specific field.
 
@@ -27,7 +31,7 @@ This is demonstated in the simple example below, where the 'Rate of Change' colu
 
 <grid-example title='Sparkline Data' name='sparkline-data-number-array' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
-## Array of tuples
+## Array of Tuples
 
 Another supported format is the tuples array. In this format, each tuple in the array can contain two values, x and y.
 
@@ -37,7 +41,7 @@ Another supported format is the tuples array. In this format, each tuple in the 
 
 <grid-example title='Sparkline Data' name='sparkline-data-tuple-array' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
-## Array of objects
+## Array of Objects
 
 Providing data as an array of objects requires `xKey` and `yKey` to be configured in the options.
 
