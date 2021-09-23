@@ -53,7 +53,29 @@ export interface PolarTooltipRendererParams extends TooltipRendererParams {
     readonly radiusName?: string;
 }
 
+interface HighlightStyleItemDefaults {
+    fill: string | undefined;
+    stroke: string | undefined;
+    strokeWidth: number;
+}
+
+interface HighlightStyleSeriesDefaults {
+    strokeWidth: number;
+}
+
+interface HighlightStyleResult {
+    item: {
+        fill: string | undefined;
+        stroke: string | undefined;
+        strokeWidth: number;
+    }
+    series: {
+        opacity: number;
+        strokeWidth: number;
+    }
+}
 export class SeriesItemHighlightStyle {
+    enabled = true;
     fill?: string = 'yellow';
     stroke?: string;
     strokeWidth?: number;
@@ -204,6 +226,63 @@ export abstract class Series extends Observable {
 
     // Produce data joins and update selection's nodes using node data.
     abstract update(): void;
+
+    // Experimental (not used anywhere yet).
+    protected getHighlightStyle(
+        itemDefaults: HighlightStyleItemDefaults,
+        seriesDefaults: HighlightStyleSeriesDefaults,
+        datum?: { itemId?: any }
+    ): HighlightStyleResult {
+        const { chart, highlightStyle } = this;
+        const style: HighlightStyleResult = {
+            item: {
+                fill: undefined,
+                stroke: undefined,
+                strokeWidth: 0
+            },
+            series: {
+                opacity: 0,
+                strokeWidth: 0
+            }
+        };
+
+        const {
+            fill: deprecatedFill,
+            stroke: deprecatedStroke,
+            strokeWidth: deprecatedStrokeWidth,
+            item: {
+                enabled: itemHighlightingEnabled,
+                fill: itemFill = deprecatedFill,
+                stroke: itemStroke = deprecatedStroke,
+                strokeWidth: itemStrokeWidth = deprecatedStrokeWidth
+            },
+            series: {
+                enabled: seriesHighlightingEnabled,
+                strokeWidth: seriesStrokeWidth,
+                dimOpacity: seriesOpacity
+            }
+        } = highlightStyle;
+
+        const seriesHighlighted = !!(chart && chart.highlightedDatum && chart.highlightedDatum.series === this);
+        const itemHighlighted = seriesHighlighted && (!datum || chart!.highlightedDatum!.itemId === datum.itemId);
+
+        const seriesOn = seriesHighlightingEnabled && seriesHighlighted;
+        const itemOn = itemHighlightingEnabled && itemHighlighted;
+
+        style.item.fill = itemOn && itemFill !== undefined ? itemFill : itemDefaults.fill;
+        style.item.stroke = itemOn && itemStroke !== undefined ? itemStroke : itemDefaults.stroke;
+        style.item.strokeWidth = itemOn && itemStrokeWidth !== undefined
+            ? itemStrokeWidth
+            : seriesOn && seriesStrokeWidth !== undefined
+                ? seriesStrokeWidth
+                : itemDefaults.strokeWidth;
+        style.series.strokeWidth = seriesOn && seriesStrokeWidth !== undefined ? seriesStrokeWidth : seriesDefaults.strokeWidth;
+        style.series.opacity = !chart || !seriesHighlightingEnabled || !chart.highlightedDatum ||
+            chart.highlightedDatum.series === this &&
+            (!datum || chart.highlightedDatum.itemId === datum.itemId) ? 1 : seriesOpacity;
+
+        return style;
+    }
 
     protected getOpacity(datum?: { itemId?: any }): number {
         const { chart, highlightStyle: { series: { enabled, dimOpacity } } } = this;
