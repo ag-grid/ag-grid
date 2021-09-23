@@ -5,7 +5,7 @@ enterprise: true
 
 This section covers the different data formats supported by sparklines.
 
-Sparklines are configured on a per-column basis and are supplied data based on the column configuration just like any 
+Sparklines are configured on a per-column basis and are supplied data based on their column configuration, just like any 
 other grid cell, i.e. columns are configured with a `field` attribute or [Value Getter](/value-getters/).
 
 The data supplied to sparklines can be in the following formats:
