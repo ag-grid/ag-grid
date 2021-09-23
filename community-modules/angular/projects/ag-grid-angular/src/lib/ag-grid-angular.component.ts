@@ -290,341 +290,341 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public modules: Module[];
 
     // @START@
-    @Input() public alignedGrids: GridOptions[] | undefined = undefined;
-    @Input() public rowData: any[] | null | undefined = undefined;
-    @Input() public columnDefs: (ColDef | ColGroupDef)[] | null | undefined = undefined;
-    @Input() public excelStyles: ExcelStyle[] | undefined = undefined;
-    @Input() public pinnedTopRowData: any[] | undefined = undefined;
-    @Input() public pinnedBottomRowData: any[] | undefined = undefined;
-    @Input() public chartThemes: string[] | undefined = undefined;
-    @Input() public components: { [p: string]: any; } | undefined = undefined;
-    @Input() public frameworkComponents: { [p: string]: { new(): any; }; } | any | undefined = undefined;
-    @Input() public rowStyle: { [cssProperty: string]: string } | undefined = undefined;
-    @Input() public context: any = undefined;
-    @Input() public autoGroupColumnDef: ColDef | undefined = undefined;
-    @Input() public localeText: { [key: string]: string } | undefined = undefined;
-    @Input() public icons: { [key: string]: Function | string; } | undefined = undefined;
-    @Input() public datasource: IDatasource | undefined = undefined;
-    @Input() public serverSideDatasource: IServerSideDatasource | undefined = undefined;
-    @Input() public viewportDatasource: IViewportDatasource | undefined = undefined;
-    @Input() public groupRowRendererParams: any = undefined;
-    @Input() public aggFuncs: { [key: string]: IAggFunc; } | undefined = undefined;
-    @Input() public fullWidthCellRendererParams: any = undefined;
-    @Input() public defaultColGroupDef: Partial<ColGroupDef> | undefined = undefined;
-    @Input() public defaultColDef: ColDef | undefined = undefined;
-    /** @deprecated Use defaultCsvExportParams or defaultExcelExportParams
-     */
-    @Input() public defaultExportParams: CsvExportParams | ExcelExportParams | undefined = undefined;
-    @Input() public defaultCsvExportParams: CsvExportParams | undefined = undefined;
-    @Input() public defaultExcelExportParams: ExcelExportParams | undefined = undefined;
-    @Input() public columnTypes: { [key: string]: ColDef; } | undefined = undefined;
-    @Input() public rowClassRules: RowClassRules | undefined = undefined;
-    @Input() public detailCellRendererParams: any = undefined;
-    @Input() public loadingCellRendererParams: any = undefined;
-    @Input() public loadingOverlayComponentParams: any = undefined;
-    @Input() public noRowsOverlayComponentParams: any = undefined;
-    @Input() public popupParent: HTMLElement | undefined = undefined;
-    @Input() public colResizeDefault: string | undefined = undefined;
+    @Input() public dateComponent: any = undefined;
+    @Input() public dateComponentFramework: any = undefined;
     /** Specifies the status bar components to use in the status bar.     */
     @Input() public statusBar: { statusPanels: StatusPanelDef[]; } | undefined = undefined;
     @Input() public sideBar: SideBarDef | string | boolean | null | undefined = undefined;
-    @Input() public chartThemeOverrides: AgChartThemeOverrides | undefined = undefined;
-    @Input() public customChartThemes: { [name: string]: AgChartTheme } | undefined = undefined;
-    @Input() public sortingOrder: (string | null)[] | undefined = undefined;
-    @Input() public rowClass: string | string[] | undefined = undefined;
-    @Input() public rowSelection: string | undefined = undefined;
-    @Input() public overlayLoadingTemplate: string | undefined = undefined;
-    @Input() public overlayNoRowsTemplate: string | undefined = undefined;
-    @Input() public quickFilterText: string | undefined = undefined;
-    @Input() public rowModelType: string | undefined = undefined;
-    @Input() public editType: string | undefined = undefined;
-    @Input() public domLayout: string | undefined = undefined;
-    @Input() public clipboardDeliminator: string | undefined = undefined;
-    @Input() public rowGroupPanelShow: string | undefined = undefined;
-    @Input() public multiSortKey: string | undefined = undefined;
-    @Input() public pivotColumnGroupTotals: string | undefined = undefined;
-    @Input() public pivotRowTotals: string | undefined = undefined;
-    @Input() public pivotPanelShow: string | undefined = undefined;
-    @Input() public fillHandleDirection: string | undefined = undefined;
-    @Input() public serverSideStoreType: ServerSideStoreType | undefined = undefined;
-    @Input() public groupDisplayType: RowGroupingDisplayType | undefined = undefined;
-    @Input() public treeDataDisplayType: TreeDataDisplayType | undefined = undefined;
-    @Input() public rowHeight: number | undefined = undefined;
-    @Input() public detailRowHeight: number | undefined = undefined;
-    @Input() public rowBuffer: number | undefined = undefined;
-    /** @deprecated Set via `defaultColDef.width`
-     */
-    @Input() public colWidth: number | undefined = undefined;
-    @Input() public headerHeight: number | undefined = undefined;
-    @Input() public groupHeaderHeight: number | undefined = undefined;
-    @Input() public floatingFiltersHeight: number | undefined = undefined;
-    @Input() public pivotHeaderHeight: number | undefined = undefined;
-    @Input() public pivotGroupHeaderHeight: number | undefined = undefined;
-    @Input() public groupDefaultExpanded: number | undefined = undefined;
-    /** @deprecated Set via `defaultColDef.minWidth`
-     */
-    @Input() public minColWidth: number | undefined = undefined;
-    /** @deprecated Set via `defaultColDef.maxWidth`
-     */
-    @Input() public maxColWidth: number | undefined = undefined;
-    @Input() public viewportRowModelPageSize: number | undefined = undefined;
-    @Input() public viewportRowModelBufferSize: number | undefined = undefined;
-    @Input() public autoSizePadding: number | undefined = undefined;
-    @Input() public maxBlocksInCache: number | undefined = undefined;
-    @Input() public maxConcurrentDatasourceRequests: number | undefined = undefined;
-    @Input() public tooltipShowDelay: number | undefined = undefined;
-    @Input() public cacheOverflowSize: number | undefined = undefined;
-    @Input() public paginationPageSize: number | undefined = undefined;
-    @Input() public cacheBlockSize: number | undefined = undefined;
-    @Input() public infiniteInitialRowCount: number | undefined = undefined;
-    @Input() public scrollbarWidth: number | undefined = undefined;
-    /** @deprecated use asyncTransactionWaitMillis instead
-     */
-    @Input() public batchUpdateWaitMillis: number | undefined = undefined;
-    @Input() public asyncTransactionWaitMillis: number | undefined = undefined;
-    @Input() public blockLoadDebounceMillis: number | undefined = undefined;
-    @Input() public keepDetailRowsCount: number | undefined = undefined;
-    @Input() public undoRedoCellEditingLimit: number | undefined = undefined;
-    @Input() public cellFlashDelay: number | undefined = undefined;
-    @Input() public cellFadeDelay: number | undefined = undefined;
-    @Input() public tabIndex: number | undefined = undefined;
-    @Input() public localeTextFunc: ((key: string, defaultValue: string) => string) | undefined = undefined;
-    /** @deprecated - this is now groupRowRendererParams.innerRenderer
-     */
-    @Input() public groupRowInnerRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;
-    /** @deprecated - this is now groupRowRendererParams.innerRendererFramework
-     */
-    @Input() public groupRowInnerRendererFramework: any = undefined;
-    @Input() public dateComponent: any = undefined;
-    @Input() public dateComponentFramework: any = undefined;
-    @Input() public groupRowRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;
-    @Input() public groupRowRendererFramework: any = undefined;
-    @Input() public isExternalFilterPresent: (() =>  boolean) | undefined = undefined;
-    @Input() public getRowHeight: ((params: RowHeightParams) => number | undefined | null) | undefined = undefined;
-    @Input() public doesExternalFilterPass: ((node: RowNode) =>  boolean) | undefined = undefined;
-    @Input() public getRowClass: ((params: RowClassParams) => string | string[] | undefined) | undefined = undefined;
-    @Input() public getRowStyle: ((params: RowClassParams) => { [cssProperty: string]: string }) | undefined = undefined;
-    @Input() public getContextMenuItems: GetContextMenuItems | undefined = undefined;
-    @Input() public getMainMenuItems: GetMainMenuItems | undefined = undefined;
-    @Input() public processRowPostCreate: ((params: ProcessRowParams) =>  void) | undefined = undefined;
-    @Input() public processCellForClipboard: ((params: ProcessCellForExportParams) =>  any) | undefined = undefined;
-    @Input() public groupRowAggNodes: ((nodes: RowNode[]) =>  any) | undefined = undefined;
-    @Input() public getRowNodeId: GetRowNodeIdFunc | undefined = undefined;
-    @Input() public isFullWidthCell: ((rowNode: RowNode) =>  boolean) | undefined = undefined;
-    @Input() public fullWidthCellRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;
-    @Input() public fullWidthCellRendererFramework: any = undefined;
-    @Input() public processSecondaryColDef: ((colDef: ColDef) =>  void) | undefined = undefined;
-    @Input() public processSecondaryColGroupDef: ((colGroupDef: ColGroupDef) =>  void) | undefined = undefined;
-    @Input() public getBusinessKeyForNode: ((node: RowNode) =>  string) | undefined = undefined;
-    @Input() public sendToClipboard: ((params: SendToClipboardParams) => void) | undefined = undefined;
-    @Input() public navigateToNextHeader: ((params: NavigateToNextHeaderParams) => HeaderPosition) | undefined = undefined;
-    @Input() public tabToNextHeader: ((params: TabToNextHeaderParams) => HeaderPosition) | undefined = undefined;
-    @Input() public navigateToNextCell: ((params: NavigateToNextCellParams) => CellPosition) | undefined = undefined;
-    @Input() public tabToNextCell: ((params: TabToNextCellParams) => CellPosition) | undefined = undefined;
-    @Input() public processCellFromClipboard: ((params: ProcessCellForExportParams) =>  any) | undefined = undefined;
-    @Input() public getDocument: (() => Document) | undefined = undefined;
-    @Input() public postProcessPopup: ((params: PostProcessPopupParams) => void) | undefined = undefined;
-    @Input() public getChildCount: ((dataItem: any) =>  number) | undefined = undefined;
-    @Input() public getDataPath: GetDataPath | undefined = undefined;
-    @Input() public loadingCellRenderer: { new(): ICellRenderer; } | string | undefined = undefined;
-    @Input() public loadingCellRendererFramework: any = undefined;
-    @Input() public loadingOverlayComponent: { new(): ILoadingOverlayComp; } | string | undefined = undefined;
-    @Input() public loadingOverlayComponentFramework: any = undefined;
-    @Input() public noRowsOverlayComponent: { new(): INoRowsOverlayComp; } | string | undefined = undefined;
-    @Input() public noRowsOverlayComponentFramework: any = undefined;
-    @Input() public detailCellRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;
-    @Input() public detailCellRendererFramework: any = undefined;
-    @Input() public isRowMaster: IsRowMaster | undefined = undefined;
-    @Input() public isRowSelectable: IsRowSelectable | undefined = undefined;
-    @Input() public postSort: ((nodes: RowNode[]) =>  void) | undefined = undefined;
-    @Input() public processHeaderForClipboard: ((params: ProcessHeaderForExportParams) =>  any) | undefined = undefined;
-    @Input() public paginationNumberFormatter: ((params: PaginationNumberFormatterParams) => string) | undefined = undefined;
-    @Input() public processDataFromClipboard: ((params: ProcessDataFromClipboardParams) => string[][] | null) | undefined = undefined;
-    @Input() public getServerSideGroupKey: GetServerSideGroupKey | undefined = undefined;
-    @Input() public isServerSideGroup: IsServerSideGroup | undefined = undefined;
-    /** Allows user to suppress certain keyboard events     */
-    @Input() public suppressKeyboardEvent: ((params: SuppressKeyboardEventParams) => boolean) | undefined = undefined;
-    @Input() public createChartContainer: ((params: ChartRef) => void) | undefined = undefined;
-    /** @deprecated
-     */
-    @Input() public processChartOptions: ((params: ProcessChartOptionsParams) =>  ChartOptions<any>) | undefined = undefined;
-    @Input() public getChartToolbarItems: GetChartToolbarItems | undefined = undefined;
-    @Input() public fillOperation: ((params: FillOperationParams) => any) | undefined = undefined;
-    @Input() public isApplyServerSideTransaction: IsApplyServerSideTransaction | undefined = undefined;
-    @Input() public getServerSideStoreParams: ((params: GetServerSideStoreParamsParams) => ServerSideStoreParams) | undefined = undefined;
-    @Input() public isServerSideGroupOpenByDefault: ((params: IsServerSideGroupOpenByDefaultParams) => boolean) | undefined = undefined;
-    @Input() public isGroupOpenByDefault: ((params: IsGroupOpenByDefaultParams) => boolean) | undefined = undefined;
-    /** @deprecated - Use defaultGroupOrderComparator instead
-     */
-    @Input() public defaultGroupSortComparator: ((nodeA: RowNode, nodeB: RowNode) => number) | undefined = undefined;
-    @Input() public defaultGroupOrderComparator: ((nodeA: RowNode, nodeB: RowNode) => number) | undefined = undefined;
-    @Input() public loadingCellRendererSelector: LoadingCellRendererSelectorFunc | undefined = undefined;
-    @Input() public suppressMakeColumnVisibleAfterUnGroup: boolean | undefined = undefined;
-    @Input() public suppressRowClickSelection: boolean | undefined = undefined;
-    @Input() public suppressCellSelection: boolean | undefined = undefined;
-    @Input() public suppressHorizontalScroll: boolean | undefined = undefined;
-    @Input() public alwaysShowHorizontalScroll: boolean | undefined = undefined;
-    @Input() public alwaysShowVerticalScroll: boolean | undefined = undefined;
-    @Input() public debug: boolean | undefined = undefined;
-    @Input() public enableBrowserTooltips: boolean | undefined = undefined;
-    @Input() public enableCellExpressions: boolean | undefined = undefined;
-    @Input() public angularCompileRows: boolean | undefined = undefined;
-    @Input() public angularCompileFilters: boolean | undefined = undefined;
-    /** @deprecated - Use groupDisplayType = 'custom' instead
-     */
-    @Input() public groupSuppressAutoColumn: boolean | undefined = undefined;
-    @Input() public groupSelectsChildren: boolean | undefined = undefined;
-    @Input() public groupIncludeFooter: boolean | undefined = undefined;
-    @Input() public groupIncludeTotalFooter: boolean | undefined = undefined;
-    /** @deprecated - Use groupDisplayType = 'groupRows' instead
-     */
-    @Input() public groupUseEntireRow: boolean | undefined = undefined;
-    @Input() public groupSuppressBlankHeader: boolean | undefined = undefined;
-    @Input() public suppressMenuHide: boolean | undefined = undefined;
-    @Input() public suppressRowDeselection: boolean | undefined = undefined;
-    @Input() public unSortIcon: boolean | undefined = undefined;
-    @Input() public suppressMultiSort: boolean | undefined = undefined;
-    @Input() public singleClickEdit: boolean | undefined = undefined;
-    @Input() public suppressLoadingOverlay: boolean | undefined = undefined;
-    @Input() public suppressNoRowsOverlay: boolean | undefined = undefined;
-    @Input() public suppressAutoSize: boolean | undefined = undefined;
-    @Input() public skipHeaderOnAutoSize: boolean | undefined = undefined;
-    @Input() public suppressParentsInRowNodes: boolean | undefined = undefined;
-    @Input() public suppressColumnMoveAnimation: boolean | undefined = undefined;
-    @Input() public suppressMovableColumns: boolean | undefined = undefined;
-    @Input() public suppressFieldDotNotation: boolean | undefined = undefined;
-    @Input() public enableRangeSelection: boolean | undefined = undefined;
-    @Input() public enableRangeHandle: boolean | undefined = undefined;
-    @Input() public enableFillHandle: boolean | undefined = undefined;
-    @Input() public suppressClearOnFillReduction: boolean | undefined = undefined;
-    @Input() public deltaSort: boolean | undefined = undefined;
-    @Input() public suppressTouch: boolean | undefined = undefined;
-    @Input() public suppressAsyncEvents: boolean | undefined = undefined;
-    @Input() public allowContextMenuWithControlKey: boolean | undefined = undefined;
     @Input() public suppressContextMenu: boolean | undefined = undefined;
-    /** @deprecated - no longer needed, transaction updates keep group state
-     */
-    @Input() public rememberGroupStateWhenNewData: boolean | undefined = undefined;
-    @Input() public enableCellChangeFlash: boolean | undefined = undefined;
-    @Input() public suppressDragLeaveHidesColumns: boolean | undefined = undefined;
-    @Input() public suppressMiddleClickScrolls: boolean | undefined = undefined;
-    @Input() public suppressPreventDefaultOnMouseWheel: boolean | undefined = undefined;
-    @Input() public suppressCopyRowsToClipboard: boolean | undefined = undefined;
+    @Input() public preventDefaultOnContextMenu: boolean | undefined = undefined;
+    @Input() public allowContextMenuWithControlKey: boolean | undefined = undefined;
+    @Input() public suppressMenuHide: boolean | undefined = undefined;
+    @Input() public enableBrowserTooltips: boolean | undefined = undefined;
+    @Input() public tooltipShowDelay: number | undefined = undefined;
+    @Input() public tooltipMouseTrack: boolean | undefined = undefined;
+    @Input() public popupParent: HTMLElement | undefined = undefined;
     @Input() public copyHeadersToClipboard: boolean | undefined = undefined;
-    @Input() public pivotMode: boolean | undefined = undefined;
-    @Input() public suppressAggFuncInHeader: boolean | undefined = undefined;
-    @Input() public suppressColumnVirtualisation: boolean | undefined = undefined;
-    @Input() public suppressAggAtRootLevel: boolean | undefined = undefined;
-    @Input() public suppressFocusAfterRefresh: boolean | undefined = undefined;
-    @Input() public functionsPassive: boolean | undefined = undefined;
-    @Input() public functionsReadOnly: boolean | undefined = undefined;
-    @Input() public animateRows: boolean | undefined = undefined;
-    @Input() public groupSelectsFiltered: boolean | undefined = undefined;
-    @Input() public groupRemoveSingleChildren: boolean | undefined = undefined;
-    @Input() public groupRemoveLowestSingleChildren: boolean | undefined = undefined;
-    @Input() public enableRtl: boolean | undefined = undefined;
-    @Input() public suppressClickEdit: boolean | undefined = undefined;
-    @Input() public rowDragEntireRow: boolean | undefined = undefined;
-    @Input() public rowDragManaged: boolean | undefined = undefined;
-    @Input() public suppressRowDrag: boolean | undefined = undefined;
-    @Input() public suppressMoveWhenRowDragging: boolean | undefined = undefined;
-    @Input() public rowDragMultiRow: boolean | undefined = undefined;
-    @Input() public enableGroupEdit: boolean | undefined = undefined;
-    @Input() public embedFullWidthRows: boolean | undefined = undefined;
-    /** @deprecated
-     */
-    @Input() public deprecatedEmbedFullWidthRows: boolean | undefined = undefined;
-    @Input() public suppressPaginationPanel: boolean | undefined = undefined;
-    /** @deprecated Use floatingFilter on the colDef instead
-     */
-    @Input() public floatingFilter: boolean | undefined = undefined;
-    @Input() public groupHideOpenParents: boolean | undefined = undefined;
-    /** @deprecated - Use groupDisplayType = 'multipleColumns' instead
-     */
-    @Input() public groupMultiAutoColumn: boolean | undefined = undefined;
-    @Input() public pagination: boolean | undefined = undefined;
-    /** @deprecated Use stopEditingWhenCellsLoseFocus instead
-     */
-    @Input() public stopEditingWhenGridLosesFocus: boolean | undefined = undefined;
-    @Input() public paginationAutoPageSize: boolean | undefined = undefined;
-    @Input() public suppressScrollOnNewData: boolean | undefined = undefined;
-    @Input() public purgeClosedRowNodes: boolean | undefined = undefined;
-    @Input() public cacheQuickFilter: boolean | undefined = undefined;
-    /** @deprecated
-     */
-    @Input() public deltaRowDataMode: boolean | undefined = undefined;
-    @Input() public ensureDomOrder: boolean | undefined = undefined;
-    @Input() public accentedSort: boolean | undefined = undefined;
-    @Input() public suppressChangeDetection: boolean | undefined = undefined;
-    @Input() public valueCache: boolean | undefined = undefined;
-    @Input() public valueCacheNeverExpires: boolean | undefined = undefined;
-    @Input() public aggregateOnlyChangedColumns: boolean | undefined = undefined;
-    @Input() public suppressAnimationFrame: boolean | undefined = undefined;
-    @Input() public suppressExcelExport: boolean | undefined = undefined;
-    @Input() public suppressCsvExport: boolean | undefined = undefined;
-    @Input() public treeData: boolean | undefined = undefined;
-    @Input() public masterDetail: boolean | undefined = undefined;
-    @Input() public suppressMultiRangeSelection: boolean | undefined = undefined;
-    @Input() public enterMovesDownAfterEdit: boolean | undefined = undefined;
-    @Input() public enterMovesDown: boolean | undefined = undefined;
-    @Input() public suppressPropertyNamesCheck: boolean | undefined = undefined;
-    @Input() public rowMultiSelectWithClick: boolean | undefined = undefined;
-    /** @deprecated
-     */
-    @Input() public suppressEnterpriseResetOnNewColumns: boolean | undefined = undefined;
-    /** @deprecated
-     */
-    @Input() public enableOldSetFilterModel: boolean | undefined = undefined;
-    @Input() public suppressRowHoverHighlight: boolean | undefined = undefined;
-    @Input() public suppressRowTransform: boolean | undefined = undefined;
-    @Input() public suppressClipboardPaste: boolean | undefined = undefined;
+    @Input() public clipboardDeliminator: string | undefined = undefined;
+    @Input() public suppressCopyRowsToClipboard: boolean | undefined = undefined;
     @Input() public suppressLastEmptyLineOnPaste: boolean | undefined = undefined;
-    @Input() public serverSideSortingAlwaysResets: boolean | undefined = undefined;
+    @Input() public suppressClipboardPaste: boolean | undefined = undefined;
+    @Input() public suppressClipboardApi: boolean | undefined = undefined;
+    @Input() public columnDefs: (ColDef | ColGroupDef)[] | null | undefined = undefined;
+    @Input() public defaultColGroupDef: Partial<ColGroupDef> | undefined = undefined;
+    @Input() public defaultColDef: ColDef | undefined = undefined;
+    @Input() public columnTypes: { [key: string]: ColDef; } | undefined = undefined;
+    @Input() public maintainColumnOrder: boolean | undefined = undefined;
+    @Input() public suppressFieldDotNotation: boolean | undefined = undefined;
+    /** @deprecated
+     */
+    @Input() public deltaColumnMode: boolean | undefined = undefined;
+    /** @deprecated
+     */
+    @Input() public applyColumnDefOrder: boolean | undefined = undefined;
+    /** @deprecated
+     */
+    @Input() public immutableColumns: boolean | undefined = undefined;
     /** @deprecated
      */
     @Input() public suppressSetColumnStateEvents: boolean | undefined = undefined;
     /** @deprecated
      */
     @Input() public suppressColumnStateEvents: boolean | undefined = undefined;
-    @Input() public enableCharts: boolean | undefined = undefined;
-    /** @deprecated
+    /** @deprecated Set via `defaultColDef.width`
      */
-    @Input() public deltaColumnMode: boolean | undefined = undefined;
-    @Input() public suppressMaintainUnsortedOrder: boolean | undefined = undefined;
-    @Input() public enableCellTextSelection: boolean | undefined = undefined;
-    /** Set once in init, can never change     */
-    @Input() public suppressBrowserResizeObserver: boolean | undefined = undefined;
-    @Input() public suppressMaxRenderedRowRestriction: boolean | undefined = undefined;
-    @Input() public excludeChildrenWhenTreeDataFiltering: boolean | undefined = undefined;
-    @Input() public tooltipMouseTrack: boolean | undefined = undefined;
-    @Input() public keepDetailRows: boolean | undefined = undefined;
-    @Input() public paginateChildRows: boolean | undefined = undefined;
-    @Input() public preventDefaultOnContextMenu: boolean | undefined = undefined;
-    @Input() public undoRedoCellEditing: boolean | undefined = undefined;
+    @Input() public colWidth: number | undefined = undefined;
+    /** @deprecated Set via `defaultColDef.minWidth`
+     */
+    @Input() public minColWidth: number | undefined = undefined;
+    /** @deprecated Set via `defaultColDef.maxWidth`
+     */
+    @Input() public maxColWidth: number | undefined = undefined;
+    @Input() public headerHeight: number | undefined = undefined;
+    @Input() public groupHeaderHeight: number | undefined = undefined;
+    @Input() public floatingFiltersHeight: number | undefined = undefined;
+    @Input() public pivotHeaderHeight: number | undefined = undefined;
+    @Input() public pivotGroupHeaderHeight: number | undefined = undefined;
     @Input() public allowDragFromColumnsToolPanel: boolean | undefined = undefined;
-    @Input() public immutableData: boolean | undefined = undefined;
-    /** @deprecated
-     */
-    @Input() public immutableColumns: boolean | undefined = undefined;
-    @Input() public pivotSuppressAutoColumn: boolean | undefined = undefined;
-    @Input() public suppressExpandablePivotGroups: boolean | undefined = undefined;
-    /** @deprecated
-     */
-    @Input() public applyColumnDefOrder: boolean | undefined = undefined;
-    @Input() public debounceVerticalScrollbar: boolean | undefined = undefined;
-    @Input() public detailRowAutoHeight: boolean | undefined = undefined;
-    @Input() public serverSideFilteringAlwaysResets: boolean | undefined = undefined;
-    @Input() public suppressAggFilteredOnly: boolean | undefined = undefined;
-    @Input() public showOpenedGroup: boolean | undefined = undefined;
-    @Input() public suppressClipboardApi: boolean | undefined = undefined;
-    @Input() public suppressModelUpdateAfterUpdateTransaction: boolean | undefined = undefined;
+    @Input() public suppressMovableColumns: boolean | undefined = undefined;
+    @Input() public suppressColumnMoveAnimation: boolean | undefined = undefined;
+    @Input() public suppressDragLeaveHidesColumns: boolean | undefined = undefined;
+    @Input() public colResizeDefault: string | undefined = undefined;
+    @Input() public suppressAutoSize: boolean | undefined = undefined;
+    @Input() public autoSizePadding: number | undefined = undefined;
+    @Input() public skipHeaderOnAutoSize: boolean | undefined = undefined;
+    @Input() public components: { [p: string]: any; } | undefined = undefined;
+    @Input() public frameworkComponents: { [p: string]: { new(): any; }; } | any | undefined = undefined;
+    @Input() public editType: string | undefined = undefined;
+    @Input() public singleClickEdit: boolean | undefined = undefined;
+    @Input() public suppressClickEdit: boolean | undefined = undefined;
+    @Input() public enterMovesDownAfterEdit: boolean | undefined = undefined;
+    @Input() public enterMovesDown: boolean | undefined = undefined;
     @Input() public stopEditingWhenCellsLoseFocus: boolean | undefined = undefined;
-    @Input() public maintainColumnOrder: boolean | undefined = undefined;
-    @Input() public groupMaintainOrder: boolean | undefined = undefined;
-    @Input() public columnHoverHighlight: boolean | undefined = undefined;
+    @Input() public undoRedoCellEditing: boolean | undefined = undefined;
+    @Input() public undoRedoCellEditingLimit: number | undefined = undefined;
+    /** @deprecated Use stopEditingWhenCellsLoseFocus instead
+     */
+    @Input() public stopEditingWhenGridLosesFocus: boolean | undefined = undefined;
+    @Input() public defaultCsvExportParams: CsvExportParams | undefined = undefined;
+    @Input() public suppressCsvExport: boolean | undefined = undefined;
+    @Input() public defaultExcelExportParams: ExcelExportParams | undefined = undefined;
+    @Input() public suppressExcelExport: boolean | undefined = undefined;
+    @Input() public excelStyles: ExcelStyle[] | undefined = undefined;
+    /** @deprecated Use defaultCsvExportParams or defaultExcelExportParams
+     */
+    @Input() public defaultExportParams: CsvExportParams | ExcelExportParams | undefined = undefined;
+    @Input() public quickFilterText: string | undefined = undefined;
+    @Input() public cacheQuickFilter: boolean | undefined = undefined;
+    @Input() public excludeChildrenWhenTreeDataFiltering: boolean | undefined = undefined;
+    /** @deprecated Use floatingFilter on the colDef instead
+     */
+    @Input() public floatingFilter: boolean | undefined = undefined;
+    /** @deprecated
+     */
+    @Input() public enableOldSetFilterModel: boolean | undefined = undefined;
+    @Input() public enableCharts: boolean | undefined = undefined;
+    @Input() public chartThemes: string[] | undefined = undefined;
+    @Input() public customChartThemes: { [name: string]: AgChartTheme } | undefined = undefined;
+    @Input() public chartThemeOverrides: AgChartThemeOverrides | undefined = undefined;
+    /** @deprecated
+     */
+    @Input() public processChartOptions: ((params: ProcessChartOptionsParams) =>  ChartOptions<any>) | undefined = undefined;
     /** @deprecated
      */
     @Input() public allowProcessChartOptions: boolean | undefined = undefined;
+    @Input() public loadingCellRenderer: { new(): ICellRenderer; } | string | undefined = undefined;
+    @Input() public loadingCellRendererFramework: any = undefined;
+    @Input() public loadingCellRendererParams: any = undefined;
+    @Input() public loadingCellRendererSelector: LoadingCellRendererSelectorFunc | undefined = undefined;
+    @Input() public localeText: { [key: string]: string } | undefined = undefined;
+    @Input() public masterDetail: boolean | undefined = undefined;
+    @Input() public detailRowHeight: number | undefined = undefined;
+    @Input() public keepDetailRows: boolean | undefined = undefined;
+    @Input() public keepDetailRowsCount: number | undefined = undefined;
+    @Input() public detailCellRendererParams: any = undefined;
+    @Input() public detailCellRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;
+    @Input() public detailCellRendererFramework: any = undefined;
+    @Input() public detailRowAutoHeight: boolean | undefined = undefined;
+    @Input() public context: any = undefined;
+    @Input() public alignedGrids: GridOptions[] | undefined = undefined;
+    @Input() public tabIndex: number | undefined = undefined;
+    @Input() public rowBuffer: number | undefined = undefined;
+    @Input() public valueCache: boolean | undefined = undefined;
+    @Input() public valueCacheNeverExpires: boolean | undefined = undefined;
+    @Input() public enableCellExpressions: boolean | undefined = undefined;
+    @Input() public suppressParentsInRowNodes: boolean | undefined = undefined;
+    @Input() public suppressTouch: boolean | undefined = undefined;
+    @Input() public suppressFocusAfterRefresh: boolean | undefined = undefined;
+    @Input() public suppressAsyncEvents: boolean | undefined = undefined;
+    /** Set once in init, can never change     */
+    @Input() public suppressBrowserResizeObserver: boolean | undefined = undefined;
+    @Input() public suppressPropertyNamesCheck: boolean | undefined = undefined;
+    @Input() public suppressChangeDetection: boolean | undefined = undefined;
+    @Input() public debug: boolean | undefined = undefined;
+    @Input() public overlayLoadingTemplate: string | undefined = undefined;
+    @Input() public loadingOverlayComponent: { new(): ILoadingOverlayComp; } | string | undefined = undefined;
+    @Input() public loadingOverlayComponentFramework: any = undefined;
+    @Input() public loadingOverlayComponentParams: any = undefined;
+    @Input() public suppressLoadingOverlay: boolean | undefined = undefined;
+    @Input() public overlayNoRowsTemplate: string | undefined = undefined;
+    @Input() public noRowsOverlayComponent: { new(): INoRowsOverlayComp; } | string | undefined = undefined;
+    @Input() public noRowsOverlayComponentFramework: any = undefined;
+    @Input() public noRowsOverlayComponentParams: any = undefined;
+    @Input() public suppressNoRowsOverlay: boolean | undefined = undefined;
+    @Input() public pagination: boolean | undefined = undefined;
+    @Input() public paginationPageSize: number | undefined = undefined;
+    @Input() public paginationAutoPageSize: boolean | undefined = undefined;
+    @Input() public paginateChildRows: boolean | undefined = undefined;
+    @Input() public suppressPaginationPanel: boolean | undefined = undefined;
+    @Input() public pivotMode: boolean | undefined = undefined;
+    @Input() public pivotPanelShow: string | undefined = undefined;
+    @Input() public pivotColumnGroupTotals: string | undefined = undefined;
+    @Input() public pivotRowTotals: string | undefined = undefined;
+    @Input() public pivotSuppressAutoColumn: boolean | undefined = undefined;
+    @Input() public suppressExpandablePivotGroups: boolean | undefined = undefined;
+    @Input() public functionsReadOnly: boolean | undefined = undefined;
+    @Input() public aggFuncs: { [key: string]: IAggFunc; } | undefined = undefined;
+    @Input() public suppressAggFuncInHeader: boolean | undefined = undefined;
+    @Input() public suppressAggAtRootLevel: boolean | undefined = undefined;
+    @Input() public aggregateOnlyChangedColumns: boolean | undefined = undefined;
+    @Input() public suppressAggFilteredOnly: boolean | undefined = undefined;
+    @Input() public animateRows: boolean | undefined = undefined;
+    @Input() public enableCellChangeFlash: boolean | undefined = undefined;
+    @Input() public cellFlashDelay: number | undefined = undefined;
+    @Input() public cellFadeDelay: number | undefined = undefined;
+    @Input() public domLayout: string | undefined = undefined;
+    @Input() public ensureDomOrder: boolean | undefined = undefined;
+    @Input() public enableRtl: boolean | undefined = undefined;
+    @Input() public suppressColumnVirtualisation: boolean | undefined = undefined;
+    @Input() public suppressMaxRenderedRowRestriction: boolean | undefined = undefined;
+    @Input() public rowDragManaged: boolean | undefined = undefined;
+    @Input() public suppressRowDrag: boolean | undefined = undefined;
+    @Input() public suppressMoveWhenRowDragging: boolean | undefined = undefined;
+    @Input() public rowDragEntireRow: boolean | undefined = undefined;
+    @Input() public rowDragMultiRow: boolean | undefined = undefined;
+    @Input() public fullWidthCellRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;
+    @Input() public fullWidthCellRendererFramework: any = undefined;
+    @Input() public fullWidthCellRendererParams: any = undefined;
+    @Input() public embedFullWidthRows: boolean | undefined = undefined;
+    /** @deprecated
+     */
+    @Input() public deprecatedEmbedFullWidthRows: boolean | undefined = undefined;
+    @Input() public groupDisplayType: RowGroupingDisplayType | undefined = undefined;
+    @Input() public groupDefaultExpanded: number | undefined = undefined;
+    @Input() public autoGroupColumnDef: ColDef | undefined = undefined;
+    @Input() public groupMaintainOrder: boolean | undefined = undefined;
+    @Input() public groupSelectsChildren: boolean | undefined = undefined;
+    @Input() public groupIncludeFooter: boolean | undefined = undefined;
+    @Input() public groupIncludeTotalFooter: boolean | undefined = undefined;
+    @Input() public groupSuppressBlankHeader: boolean | undefined = undefined;
+    @Input() public groupSelectsFiltered: boolean | undefined = undefined;
+    @Input() public showOpenedGroup: boolean | undefined = undefined;
+    @Input() public groupRemoveSingleChildren: boolean | undefined = undefined;
+    @Input() public groupRemoveLowestSingleChildren: boolean | undefined = undefined;
+    @Input() public groupHideOpenParents: boolean | undefined = undefined;
+    @Input() public rowGroupPanelShow: string | undefined = undefined;
+    @Input() public groupRowRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;
+    @Input() public groupRowRendererFramework: any = undefined;
+    @Input() public groupRowRendererParams: any = undefined;
+    @Input() public suppressMakeColumnVisibleAfterUnGroup: boolean | undefined = undefined;
+    @Input() public treeData: boolean | undefined = undefined;
+    /** @deprecated - this is now groupRowRendererParams.innerRenderer
+     */
+    @Input() public groupRowInnerRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;
+    /** @deprecated - this is now groupRowRendererParams.innerRendererFramework
+     */
+    @Input() public groupRowInnerRendererFramework: any = undefined;
+    /** @deprecated - Use groupDisplayType = 'multipleColumns' instead
+     */
+    @Input() public groupMultiAutoColumn: boolean | undefined = undefined;
+    /** @deprecated - Use groupDisplayType = 'groupRows' instead
+     */
+    @Input() public groupUseEntireRow: boolean | undefined = undefined;
+    /** @deprecated - Use groupDisplayType = 'custom' instead
+     */
+    @Input() public groupSuppressAutoColumn: boolean | undefined = undefined;
+    /** @deprecated - no longer needed, transaction updates keep group state
+     */
+    @Input() public rememberGroupStateWhenNewData: boolean | undefined = undefined;
+    @Input() public pinnedTopRowData: any[] | undefined = undefined;
+    @Input() public pinnedBottomRowData: any[] | undefined = undefined;
+    @Input() public rowModelType: string | undefined = undefined;
+    @Input() public rowData: any[] | null | undefined = undefined;
+    @Input() public immutableData: boolean | undefined = undefined;
+    @Input() public asyncTransactionWaitMillis: number | undefined = undefined;
+    @Input() public suppressModelUpdateAfterUpdateTransaction: boolean | undefined = undefined;
+    /** @deprecated
+     */
+    @Input() public deltaRowDataMode: boolean | undefined = undefined;
+    /** @deprecated use asyncTransactionWaitMillis instead
+     */
+    @Input() public batchUpdateWaitMillis: number | undefined = undefined;
+    @Input() public datasource: IDatasource | undefined = undefined;
+    @Input() public cacheOverflowSize: number | undefined = undefined;
+    @Input() public infiniteInitialRowCount: number | undefined = undefined;
+    @Input() public serverSideStoreType: ServerSideStoreType | undefined = undefined;
+    @Input() public cacheBlockSize: number | undefined = undefined;
+    @Input() public maxBlocksInCache: number | undefined = undefined;
+    @Input() public maxConcurrentDatasourceRequests: number | undefined = undefined;
+    @Input() public blockLoadDebounceMillis: number | undefined = undefined;
+    @Input() public purgeClosedRowNodes: boolean | undefined = undefined;
+    @Input() public serverSideDatasource: IServerSideDatasource | undefined = undefined;
+    @Input() public serverSideSortingAlwaysResets: boolean | undefined = undefined;
+    @Input() public serverSideFilteringAlwaysResets: boolean | undefined = undefined;
+    /** @deprecated
+     */
+    @Input() public suppressEnterpriseResetOnNewColumns: boolean | undefined = undefined;
+    @Input() public viewportDatasource: IViewportDatasource | undefined = undefined;
+    @Input() public viewportRowModelPageSize: number | undefined = undefined;
+    @Input() public viewportRowModelBufferSize: number | undefined = undefined;
+    @Input() public alwaysShowHorizontalScroll: boolean | undefined = undefined;
+    @Input() public alwaysShowVerticalScroll: boolean | undefined = undefined;
+    @Input() public debounceVerticalScrollbar: boolean | undefined = undefined;
+    @Input() public suppressHorizontalScroll: boolean | undefined = undefined;
+    @Input() public suppressScrollOnNewData: boolean | undefined = undefined;
+    @Input() public suppressAnimationFrame: boolean | undefined = undefined;
+    @Input() public suppressMiddleClickScrolls: boolean | undefined = undefined;
+    @Input() public suppressPreventDefaultOnMouseWheel: boolean | undefined = undefined;
+    @Input() public scrollbarWidth: number | undefined = undefined;
+    @Input() public rowSelection: string | undefined = undefined;
+    @Input() public rowMultiSelectWithClick: boolean | undefined = undefined;
+    @Input() public suppressRowDeselection: boolean | undefined = undefined;
+    @Input() public suppressRowClickSelection: boolean | undefined = undefined;
+    @Input() public suppressCellSelection: boolean | undefined = undefined;
+    @Input() public suppressMultiRangeSelection: boolean | undefined = undefined;
+    @Input() public enableCellTextSelection: boolean | undefined = undefined;
+    @Input() public enableRangeSelection: boolean | undefined = undefined;
+    @Input() public enableRangeHandle: boolean | undefined = undefined;
+    @Input() public enableFillHandle: boolean | undefined = undefined;
+    @Input() public fillHandleDirection: string | undefined = undefined;
+    @Input() public suppressClearOnFillReduction: boolean | undefined = undefined;
+    @Input() public sortingOrder: (string | null)[] | undefined = undefined;
+    @Input() public accentedSort: boolean | undefined = undefined;
+    @Input() public unSortIcon: boolean | undefined = undefined;
+    @Input() public suppressMultiSort: boolean | undefined = undefined;
+    @Input() public multiSortKey: string | undefined = undefined;
+    @Input() public suppressMaintainUnsortedOrder: boolean | undefined = undefined;
+    @Input() public icons: { [key: string]: Function | string; } | undefined = undefined;
+    @Input() public rowHeight: number | undefined = undefined;
+    @Input() public rowStyle: { [cssProperty: string]: string } | undefined = undefined;
+    @Input() public rowClass: string | string[] | undefined = undefined;
+    @Input() public rowClassRules: RowClassRules | undefined = undefined;
+    @Input() public suppressRowHoverHighlight: boolean | undefined = undefined;
+    @Input() public suppressRowTransform: boolean | undefined = undefined;
+    @Input() public columnHoverHighlight: boolean | undefined = undefined;
+    @Input() public deltaSort: boolean | undefined = undefined;
+    @Input() public treeDataDisplayType: TreeDataDisplayType | undefined = undefined;
+    @Input() public angularCompileRows: boolean | undefined = undefined;
+    @Input() public angularCompileFilters: boolean | undefined = undefined;
+    @Input() public functionsPassive: boolean | undefined = undefined;
+    @Input() public enableGroupEdit: boolean | undefined = undefined;
+    @Input() public getContextMenuItems: GetContextMenuItems | undefined = undefined;
+    @Input() public getMainMenuItems: GetMainMenuItems | undefined = undefined;
+    @Input() public postProcessPopup: ((params: PostProcessPopupParams) => void) | undefined = undefined;
+    @Input() public processCellForClipboard: ((params: ProcessCellForExportParams) =>  any) | undefined = undefined;
+    @Input() public processHeaderForClipboard: ((params: ProcessHeaderForExportParams) =>  any) | undefined = undefined;
+    @Input() public processCellFromClipboard: ((params: ProcessCellForExportParams) =>  any) | undefined = undefined;
+    @Input() public sendToClipboard: ((params: SendToClipboardParams) => void) | undefined = undefined;
+    @Input() public processDataFromClipboard: ((params: ProcessDataFromClipboardParams) => string[][] | null) | undefined = undefined;
+    @Input() public isExternalFilterPresent: (() =>  boolean) | undefined = undefined;
+    @Input() public doesExternalFilterPass: ((node: RowNode) =>  boolean) | undefined = undefined;
+    @Input() public getChartToolbarItems: GetChartToolbarItems | undefined = undefined;
+    @Input() public createChartContainer: ((params: ChartRef) => void) | undefined = undefined;
+    @Input() public navigateToNextHeader: ((params: NavigateToNextHeaderParams) => HeaderPosition) | undefined = undefined;
+    @Input() public tabToNextHeader: ((params: TabToNextHeaderParams) => HeaderPosition) | undefined = undefined;
+    @Input() public navigateToNextCell: ((params: NavigateToNextCellParams) => CellPosition) | undefined = undefined;
+    @Input() public tabToNextCell: ((params: TabToNextCellParams) => CellPosition) | undefined = undefined;
+    /** Allows user to suppress certain keyboard events     */
+    @Input() public suppressKeyboardEvent: ((params: SuppressKeyboardEventParams) => boolean) | undefined = undefined;
+    @Input() public localeTextFunc: ((key: string, defaultValue: string) => string) | undefined = undefined;
+    @Input() public getDocument: (() => Document) | undefined = undefined;
+    @Input() public paginationNumberFormatter: ((params: PaginationNumberFormatterParams) => string) | undefined = undefined;
+    @Input() public groupRowAggNodes: ((nodes: RowNode[]) =>  any) | undefined = undefined;
+    @Input() public isGroupOpenByDefault: ((params: IsGroupOpenByDefaultParams) => boolean) | undefined = undefined;
+    @Input() public defaultGroupOrderComparator: ((nodeA: RowNode, nodeB: RowNode) => number) | undefined = undefined;
+    @Input() public processSecondaryColDef: ((colDef: ColDef) =>  void) | undefined = undefined;
+    @Input() public processSecondaryColGroupDef: ((colGroupDef: ColGroupDef) =>  void) | undefined = undefined;
+    @Input() public getDataPath: GetDataPath | undefined = undefined;
+    /** @deprecated - Use defaultGroupOrderComparator instead
+     */
+    @Input() public defaultGroupSortComparator: ((nodeA: RowNode, nodeB: RowNode) => number) | undefined = undefined;
+    @Input() public getChildCount: ((dataItem: any) =>  number) | undefined = undefined;
+    @Input() public getServerSideStoreParams: ((params: GetServerSideStoreParamsParams) => ServerSideStoreParams) | undefined = undefined;
+    @Input() public isServerSideGroupOpenByDefault: ((params: IsServerSideGroupOpenByDefaultParams) => boolean) | undefined = undefined;
+    @Input() public isApplyServerSideTransaction: IsApplyServerSideTransaction | undefined = undefined;
+    @Input() public isServerSideGroup: IsServerSideGroup | undefined = undefined;
+    @Input() public getServerSideGroupKey: GetServerSideGroupKey | undefined = undefined;
+    @Input() public getBusinessKeyForNode: ((node: RowNode) =>  string) | undefined = undefined;
+    @Input() public getRowNodeId: GetRowNodeIdFunc | undefined = undefined;
+    @Input() public processRowPostCreate: ((params: ProcessRowParams) =>  void) | undefined = undefined;
+    @Input() public isRowSelectable: IsRowSelectable | undefined = undefined;
+    @Input() public isRowMaster: IsRowMaster | undefined = undefined;
+    @Input() public fillOperation: ((params: FillOperationParams) => any) | undefined = undefined;
+    @Input() public postSort: ((nodes: RowNode[]) =>  void) | undefined = undefined;
+    @Input() public getRowStyle: ((params: RowClassParams) => { [cssProperty: string]: string }) | undefined = undefined;
+    @Input() public getRowClass: ((params: RowClassParams) => string | string[] | undefined) | undefined = undefined;
+    @Input() public getRowHeight: ((params: RowHeightParams) => number | undefined | null) | undefined = undefined;
+    @Input() public isFullWidthCell: ((rowNode: RowNode) =>  boolean) | undefined = undefined;
 
     @Output() public columnEverythingChanged: EventEmitter<ColumnEverythingChangedEvent> = new EventEmitter<ColumnEverythingChangedEvent>();
     @Output() public newColumnsLoaded: EventEmitter<NewColumnsLoadedEvent> = new EventEmitter<NewColumnsLoadedEvent>();

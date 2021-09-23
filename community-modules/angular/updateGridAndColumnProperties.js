@@ -39,14 +39,27 @@ function generateAngularInputOutputs(compUtils, { typeLookup, eventTypeLookup, d
     let result = '';
     const skippableProperties = ['gridOptions'];
 
+    let propsToWrite = [];
+    const typeKeysOrder = Object.keys(typeLookup);
+
     compUtils.ALL_PROPERTIES.forEach((property) => {
         if (skippableProperties.indexOf(property) === -1) {
             const typeName = typeLookup[property];
             const inputType = getSafeType(typeName);
-            result = addDocLine(docLookup, property, result);
-            result += `    @Input() public ${property}: ${inputType} = undefined;${EOL}`;
+            let line = addDocLine(docLookup, property, '');
+            line += `    @Input() public ${property}: ${inputType} = undefined;${EOL}`;
+            propsToWrite.push({ order: typeKeysOrder.findIndex(p => p === property), line });
         }
     });
+
+    propsToWrite = propsToWrite.sort((a, b) => {
+        if (a.order < b.order) return -1;
+        if (a.order > b.order) return 1;
+        return 0
+    });
+    propsToWrite.map(p => {
+        result += p.line;
+    })
 
     // for readability
     result += EOL;
