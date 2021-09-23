@@ -48,8 +48,8 @@ function generateAngularInputOutputs(compUtils, { typeLookup, eventTypeLookup, d
             const inputType = getSafeType(typeName);
             let line = addDocLine(docLookup, property, '');
             line += `    @Input() public ${property}: ${inputType} = undefined;${EOL}`;
-            const gridOpsPosition = typeKeysOrder.findIndex(p => p === property);
-            propsToWrite.push({ order: gridOpsPosition == -1 ? 1000 : gridOpsPosition, line });
+            const order = typeKeysOrder.findIndex(p => p === property);
+            propsToWrite.push({ order, line });
         }
     });
 

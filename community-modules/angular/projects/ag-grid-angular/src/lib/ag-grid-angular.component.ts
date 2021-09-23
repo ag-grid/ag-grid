@@ -623,8 +623,6 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public getRowClass: ((params: RowClassParams) => string | string[] | undefined) | undefined = undefined;
     @Input() public getRowHeight: ((params: RowHeightParams) => number | undefined | null) | undefined = undefined;
     @Input() public isFullWidthCell: ((rowNode: RowNode) =>  boolean) | undefined = undefined;
-    @Input() public dateComponent: any = undefined;
-    @Input() public dateComponentFramework: any = undefined;
 
     @Output() public columnEverythingChanged: EventEmitter<ColumnEverythingChangedEvent> = new EventEmitter<ColumnEverythingChangedEvent>();
     @Output() public newColumnsLoaded: EventEmitter<NewColumnsLoadedEvent> = new EventEmitter<NewColumnsLoadedEvent>();
