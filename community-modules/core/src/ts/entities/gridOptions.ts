@@ -50,8 +50,6 @@ import {
     DragStartedEvent,
     DragStoppedEvent,
     ExpandCollapseAllEvent,
-    FillEndEvent,
-    FillStartEvent,
     FilterOpenedEvent,
     FilterChangedEvent,
     FilterModifiedEvent,
@@ -620,8 +618,6 @@ export interface GridOptions {
     onSelectionChanged?(event: SelectionChangedEvent): void;
     onCellContextMenu?(event: CellContextMenuEvent): void;
     onRangeSelectionChanged?(event: RangeSelectionChangedEvent): void;
-    onFillStart?(event: FillStartEvent): void;
-    onFillEnd?(event: FillEndEvent): void;
 
     // *** Sorting *** //
     onSortChanged?(event: SortChangedEvent): void;

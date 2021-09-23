@@ -653,8 +653,6 @@ export class AgGridAngular implements AfterViewInit {
     @Output() public modelUpdated: EventEmitter<ModelUpdatedEvent> = new EventEmitter<ModelUpdatedEvent>();
     @Output() public pasteStart: EventEmitter<PasteStartEvent> = new EventEmitter<PasteStartEvent>();
     @Output() public pasteEnd: EventEmitter<PasteEndEvent> = new EventEmitter<PasteEndEvent>();
-    @Output() public fillStart: EventEmitter<FillStartEvent> = new EventEmitter<FillStartEvent>();
-    @Output() public fillEnd: EventEmitter<FillEndEvent> = new EventEmitter<FillEndEvent>();
     @Output() public cellClicked: EventEmitter<CellClickedEvent> = new EventEmitter<CellClickedEvent>();
     @Output() public cellDoubleClicked: EventEmitter<CellDoubleClickedEvent> = new EventEmitter<CellDoubleClickedEvent>();
     @Output() public cellMouseDown: EventEmitter<CellMouseDownEvent> = new EventEmitter<CellMouseDownEvent>();
@@ -697,8 +695,8 @@ export class AgGridAngular implements AfterViewInit {
     @Output() public columnValueChangeRequest: EventEmitter<ColumnValueChangeRequestEvent> = new EventEmitter<ColumnValueChangeRequestEvent>();
     @Output() public columnAggFuncChangeRequest: EventEmitter<ColumnAggFuncChangeRequestEvent> = new EventEmitter<ColumnAggFuncChangeRequestEvent>();
 
-    // Enable type coercion for boolean Inputs to support use like 'enableCharts' instead of forcing '[enableCharts]="true"' 
-    // https://angular.io/guide/template-typecheck#input-setter-coercion 
+    // Enable type coercion for boolean Inputs to support use like 'enableCharts' instead of forcing '[enableCharts]="true"'
+    // https://angular.io/guide/template-typecheck#input-setter-coercion
     static ngAcceptInputType_suppressMakeColumnVisibleAfterUnGroup: boolean | null | '';
     static ngAcceptInputType_suppressRowClickSelection: boolean | null | '';
     static ngAcceptInputType_suppressCellSelection: boolean | null | '';

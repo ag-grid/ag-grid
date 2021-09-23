@@ -3943,38 +3943,6 @@
       },
       "meta": { "isEvent": true, "name": "onRangeSelectionChanged" }
     },
-    "onFillStart": {
-      "type": {
-        "arguments": { "event": "FillStartEvent" },
-        "returnType": "void",
-        "optional": true
-      },
-      "meta": { "isEvent": true, "name": "onFillStart" }
-    },
-    "fillStart": {
-      "type": {
-        "arguments": { "event": "FillStartEvent" },
-        "returnType": "void",
-        "optional": true
-      },
-      "meta": { "isEvent": true, "name": "onFillStart" }
-    },
-    "onFillEnd": {
-      "type": {
-        "arguments": { "event": "FillEndEvent" },
-        "returnType": "void",
-        "optional": true
-      },
-      "meta": { "isEvent": true, "name": "onFillEnd" }
-    },
-    "fillEnd": {
-      "type": {
-        "arguments": { "event": "FillEndEvent" },
-        "returnType": "void",
-        "optional": true
-      },
-      "meta": { "isEvent": true, "name": "onFillEnd" }
-    },
     "onSortChanged": {
       "type": {
         "arguments": { "event": "SortChangedEvent" },

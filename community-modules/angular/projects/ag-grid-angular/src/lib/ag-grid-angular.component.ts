@@ -653,8 +653,6 @@ export class AgGridAngular implements AfterViewInit {
     @Output() public modelUpdated: EventEmitter<ModelUpdatedEvent> = new EventEmitter<ModelUpdatedEvent>();
     @Output() public pasteStart: EventEmitter<PasteStartEvent> = new EventEmitter<PasteStartEvent>();
     @Output() public pasteEnd: EventEmitter<PasteEndEvent> = new EventEmitter<PasteEndEvent>();
-    @Output() public fillStart: EventEmitter<FillStartEvent> = new EventEmitter<FillStartEvent>();
-    @Output() public fillEnd: EventEmitter<FillEndEvent> = new EventEmitter<FillEndEvent>();
     @Output() public cellClicked: EventEmitter<CellClickedEvent> = new EventEmitter<CellClickedEvent>();
     @Output() public cellDoubleClicked: EventEmitter<CellDoubleClickedEvent> = new EventEmitter<CellDoubleClickedEvent>();
     @Output() public cellMouseDown: EventEmitter<CellMouseDownEvent> = new EventEmitter<CellMouseDownEvent>();

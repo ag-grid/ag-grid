@@ -1636,8 +1636,6 @@
       "onSelectionChanged?(event: SelectionChangedEvent)": "void",
       "onCellContextMenu?(event: CellContextMenuEvent)": "void",
       "onRangeSelectionChanged?(event: RangeSelectionChangedEvent)": "void",
-      "onFillStart?(event: FillStartEvent)": "void",
-      "onFillEnd?(event: FillEndEvent)": "void",
       "onSortChanged?(event: SortChangedEvent)": "void",
       "onColumnRowGroupChangeRequest?(event: ColumnRowGroupChangeRequestEvent)": "void",
       "onColumnPivotChangeRequest?(event: ColumnPivotChangeRequestEvent)": "void",
