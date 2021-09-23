@@ -298,9 +298,11 @@ export class TreemapSeries extends HierarchySeries {
             highlightStyle: {
                 fill: deprecatedFill,
                 stroke: deprecatedStroke,
+                strokeWidth: deprecatedStrokeWidth,
                 item: {
                     fill: highlightedFill = deprecatedFill,
-                    stroke: highlightedStroke = deprecatedStroke
+                    stroke: highlightedStroke = deprecatedStroke,
+                    strokeWidth: highlightedDatumStrokeWidth = deprecatedStrokeWidth
                 }
             }
         } = this;
@@ -309,10 +311,13 @@ export class TreemapSeries extends HierarchySeries {
             const isDatumHighlighted = datum === highlightedDatum;
             const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : datum.fill;
             const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : datum.depth < 2 ? undefined : 'black';
+            const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
+                ? highlightedDatumStrokeWidth
+                : this.getStrokeWidth(1, datum);
 
             rect.fill = fill;
             rect.stroke = stroke;
-            rect.strokeWidth = 1;
+            rect.strokeWidth = strokeWidth;
             rect.crisp = true;
             rect.gradient = gradient;
 
