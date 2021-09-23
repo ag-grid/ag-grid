@@ -1193,7 +1193,7 @@ export abstract class Chart extends Observable {
             if (enabled) {
                 const series = find(this.series, series => series.id === id);
 
-                if (series && series.highlightStyle.series.enabled) {
+                if (series) {
                     this.highlightedDatum = {
                         series,
                         itemId,

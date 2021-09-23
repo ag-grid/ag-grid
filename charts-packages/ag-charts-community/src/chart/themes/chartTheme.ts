@@ -114,8 +114,7 @@ export class ChartTheme {
                     fill: 'yellow'
                 },
                 series: {
-                    enabled: false,
-                    dimOpacity: 0.3
+                    dimOpacity: 1
                 }
             }
         };
