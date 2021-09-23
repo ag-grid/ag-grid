@@ -41,9 +41,11 @@ const options = {
                             showInLegend: true
                         },
                         highlightStyle: {
-                            fill: 'cyan',
-                            stroke: 'blue',
-                            strokeWidth: 4,
+                            item: {
+                                fill: 'cyan',
+                                stroke: 'blue',
+                                strokeWidth: 4,
+                            },
                             series: {
                                 enabled: true,
                                 dimOpacity: 0.2,

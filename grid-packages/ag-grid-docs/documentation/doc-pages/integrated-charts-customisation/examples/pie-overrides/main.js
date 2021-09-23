@@ -38,8 +38,10 @@ var gridOptions = {
                     color: 'maroon',
                 },
                 highlightStyle: {
-                    fill: 'red',
-                    stroke: 'yellow',
+                    item: {
+                        fill: 'red',
+                        stroke: 'yellow'
+                    }
                 },
                 shadow: {
                     color: 'rgba(96, 96, 175, 0.5)',
