@@ -18,6 +18,7 @@
         "tran",
         "trans"
     ],
+    "git.detectSubmodulesLimit": 20,
     "files.exclude": {
         "**/.git": true,
         "**/.DS_Store": true,
