@@ -5,16 +5,12 @@ import { LineSparkline } from "./line/lineSparkline";
 
 import {
     SparklineOptions,
-    LineSparklineOptions,
-    AreaSparklineOptions,
-    ColumnSparklineOptions,
     HighlightStyle,
     SparklineMarker,
     SparklineLine,
     Padding
 } from "@ag-grid-community/core";
 import { SparklineTooltip } from "./tooltip/sparklineTooltip";
-
 
 export type SparklineFactoryOptions = SparklineOptions & {
     data: any[];

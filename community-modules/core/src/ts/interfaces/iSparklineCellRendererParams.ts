@@ -24,6 +24,7 @@ export interface BaseSparklineOptions {
     /** Configuration for the tooltips. */
     tooltip?: SparklineTooltip;
 }
+
 export interface LineSparklineOptions extends BaseSparklineOptions {
     /** The type of sparklines to create, in this case it would be `'line'`. */
     type?: 'line';
@@ -32,6 +33,7 @@ export interface LineSparklineOptions extends BaseSparklineOptions {
     /** The configuration for the marker styles. */
     marker?: SparklineMarker;
 }
+
 export interface AreaSparklineOptions extends BaseSparklineOptions {
     /** The type of sparklines to create, in this case it would be `'area'`. */
     type?: 'area';
@@ -44,6 +46,7 @@ export interface AreaSparklineOptions extends BaseSparklineOptions {
     /** The configuration for the marker styles. */
     marker?: SparklineMarker;
 }
+
 export interface ColumnSparklineOptions extends BaseSparklineOptions {
     /** The type of sparklines to create, in this case it would be `'column'`. */
     type?: 'column';
@@ -70,6 +73,7 @@ export interface ColumnSparklineOptions extends BaseSparklineOptions {
     /** A callback function to return format styles of type ColumnFormat, based on the data represented by individual columns. */
     formatter?: SparklineColumnFormatter;
 }
+
 export interface Padding {
     /** The number of pixels of padding at the top of the sparkline area.
      * Default: `3`
@@ -88,6 +92,7 @@ export interface Padding {
      */
     left?: number;
 }
+
 export interface SparklineAxisOptions {
     /** The type of x-axis used to plot the data.
      * Default: `'category'`
@@ -139,6 +144,7 @@ export interface TooltipRendererParams {
     /** The Y value of the data point. */
     yValue: any;
 }
+
 export interface SparklineLine {
     /** The CSS colour value for the line.
      *  Default: `'rgb(124, 181, 236)'`
@@ -149,6 +155,7 @@ export interface SparklineLine {
      */
     strokeWidth?: number;
 }
+
 export interface HighlightStyle {
     /** The width in pixels of the markers when hovered over. This is only for the Line and Area sparklines as Column sparklines do not have markers.
      * Default: `6`
@@ -167,6 +174,7 @@ export interface HighlightStyle {
      */
     strokeWidth?: number;
 }
+
 export type SparklineColumnFormatter = (params: ColumnFormatterParams) => ColumnFormat;
 export interface ColumnFormatterParams {
     /** The raw data associated with the specific marker. */
@@ -196,6 +204,7 @@ export interface ColumnFormatterParams {
     /** Whether or not the marker is highlighted. */
     highlighted: boolean;
 }
+
 export interface ColumnFormat {
     /** The CSS colour value for the fill of the individual column. */
     fill?: string;
@@ -204,6 +213,7 @@ export interface ColumnFormat {
     /** The thickness in pixels for the stroke of the individual column.*/
     strokeWidth?: number;
 }
+
 export interface SparklineMarker {
     /** By default this is set to `true` whilst marker size is set to `0`, which means the markers are present but not visible.
      * Default: `true`
@@ -232,6 +242,7 @@ export interface SparklineMarker {
     /** A callback function to return format styles for individual markers. */
     formatter?: SparklineMarkerFormatter;
 }
+
 export type SparklineMarkerFormatter = (params: MarkerFormatterParams) => MarkerFormat;
 export interface MarkerFormatterParams {
     /** The raw data associated with the specific marker. */
@@ -259,6 +270,7 @@ export interface MarkerFormatterParams {
     /** Whether or not the marker is highlighted. */
     highlighted: boolean;
 }
+
 export interface MarkerFormat {
     /** Set to false to make marker invisible. */
     enabled?: boolean;
