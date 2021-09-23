@@ -26,8 +26,10 @@ var gridOptions = {
                 strokeOpacity: 0.6,
                 strokeWidth: 2,
                 highlightStyle: {
-                    fill: 'red',
-                    stroke: 'yellow',
+                    item: {
+                        fill: 'red',
+                        stroke: 'yellow'
+                    }
                 },
                 marker: {
                     enabled: true,

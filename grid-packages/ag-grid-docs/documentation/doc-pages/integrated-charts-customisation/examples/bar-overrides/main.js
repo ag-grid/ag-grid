@@ -47,8 +47,10 @@ var gridOptions = {
                     },
                 },
                 highlightStyle: {
-                    fill: 'red',
-                    stroke: 'yellow',
+                    item: {
+                        fill: 'red',
+                        stroke: 'yellow'
+                    }
                 },
                 tooltip: {
                     renderer: function (params) {

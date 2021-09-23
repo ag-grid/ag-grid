@@ -36,12 +36,14 @@ var options = {
         xKey: 'beverage',
         yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
         highlightStyle: {
-            fill: 'cyan',    // series item fill
-            stroke: 'blue',  // series item stroke
-            strokeWidth: 4,
+            item: {
+                fill: 'cyan',
+                stroke: 'blue',
+                strokeWidth: 4
+            },
             series: {
                 enabled: true,
-                dimOpacity: 0.2,  // whole series opacity when dimmed (other series is hovered)
+                dimOpacity: 0.2,
                 strokeWidth: 2
             }
         }
