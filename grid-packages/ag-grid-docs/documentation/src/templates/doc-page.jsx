@@ -16,6 +16,7 @@ import VideoLink from 'components/VideoLink';
 import ChartGallery from 'components/chart-gallery/ChartGallery';
 import ChartsApiExplorer from 'components/charts-api-explorer/ChartsApiExplorer';
 import Changelog from 'components/changelog/Changelog';
+import Pipeline from 'components/pipeline/Pipeline';
 import { ListItem } from 'components/ListItem';
 import DocumentationLink from '../components/DocumentationLink';
 import Gif from 'components/Gif';
@@ -75,6 +76,7 @@ const DocPageTemplate = ({ data, pageContext: { framework, pageName } }) => {
       'chart-gallery': ChartGallery,
       'charts-api-explorer': props => ChartsApiExplorer({ ...props, framework }),
       'changelog': Changelog,
+      'pipeline': Pipeline,
     },
   }).Compiler;
 
