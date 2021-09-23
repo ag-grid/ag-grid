@@ -10483,12 +10483,30 @@
     "color": { "type": { "returnType": "string", "optional": false } }
   },
   "TooltipRendererResult": {
-    "enabled": { "type": { "returnType": "boolean", "optional": true } },
-    "content": { "type": { "returnType": "string", "optional": true } },
-    "title": { "type": { "returnType": "string", "optional": true } },
-    "color": { "type": { "returnType": "string", "optional": true } },
-    "backgroundColor": { "type": { "returnType": "string", "optional": true } },
-    "opacity": { "type": { "returnType": "number", "optional": true } }
+    "enabled": {
+      "description": "/** Set to false to disable individual tooltip. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "content": {
+      "description": "/** The content to display in each tooltip. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "title": {
+      "description": "/** The title of the tooltip. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "color": {
+      "description": "/** The CSS color for the title text. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "backgroundColor": {
+      "description": "/** The CSS color for the background of the tooltip title. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "opacity": {
+      "description": "/** The opacity of the background for the tooltip title. */",
+      "type": { "returnType": "number", "optional": true }
+    }
   },
   "TooltipOptions": {
     "enabled": { "type": { "returnType": "boolean", "optional": false } },
@@ -10502,10 +10520,22 @@
     "meta": { "typeParams": ["TParams"] }
   },
   "TooltipRendererParams": {
-    "context": { "type": { "returnType": "any", "optional": true } },
-    "datum": { "type": { "returnType": "any", "optional": false } },
-    "xValue": { "type": { "returnType": "any", "optional": false } },
-    "yValue": { "type": { "returnType": "any", "optional": false } }
+    "context": {
+      "description": "/** The grid context, includes row data, giving access to data from other columns in the same row. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "datum": {
+      "description": "/** The raw datum associated with the point. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "xValue": {
+      "description": "/** The X value of the data point. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "yValue": {
+      "description": "/** The Y value of the data point. */",
+      "type": { "returnType": "any", "optional": false }
+    }
   },
   "CartesianTooltipRendererParams": {
     "xKey": { "type": { "returnType": "string", "optional": false } },
@@ -10514,8 +10544,14 @@
     "yKey": { "type": { "returnType": "string", "optional": false } },
     "yValue": { "type": { "returnType": "any", "optional": false } },
     "yName": { "type": { "returnType": "string", "optional": false } },
-    "context": { "type": { "returnType": "any", "optional": true } },
-    "datum": { "type": { "returnType": "any", "optional": false } }
+    "context": {
+      "description": "/** The grid context, includes row data, giving access to data from other columns in the same row. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "datum": {
+      "description": "/** The raw datum associated with the point. */",
+      "type": { "returnType": "any", "optional": false }
+    }
   },
   "BarSeriesOptions": {
     "shadow": {
@@ -10594,8 +10630,14 @@
     "yKey": { "type": { "returnType": "string", "optional": false } },
     "yValue": { "type": { "returnType": "any", "optional": false } },
     "yName": { "type": { "returnType": "string", "optional": false } },
-    "context": { "type": { "returnType": "any", "optional": true } },
-    "datum": { "type": { "returnType": "any", "optional": false } }
+    "context": {
+      "description": "/** The grid context, includes row data, giving access to data from other columns in the same row. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "datum": {
+      "description": "/** The raw datum associated with the point. */",
+      "type": { "returnType": "any", "optional": false }
+    }
   },
   "LineSeriesOptions": {
     "marker": { "type": { "returnType": "MarkerOptions", "optional": false } },
@@ -10651,8 +10693,14 @@
     "yKey": { "type": { "returnType": "string", "optional": false } },
     "yValue": { "type": { "returnType": "any", "optional": false } },
     "yName": { "type": { "returnType": "string", "optional": false } },
-    "context": { "type": { "returnType": "any", "optional": true } },
-    "datum": { "type": { "returnType": "any", "optional": false } }
+    "context": {
+      "description": "/** The grid context, includes row data, giving access to data from other columns in the same row. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "datum": {
+      "description": "/** The raw datum associated with the point. */",
+      "type": { "returnType": "any", "optional": false }
+    }
   },
   "ScatterSeriesLabelOptions": {
     "enabled": { "type": { "returnType": "boolean", "optional": false } },
@@ -10707,8 +10755,14 @@
     "yKey": { "type": { "returnType": "string", "optional": false } },
     "yValue": { "type": { "returnType": "any", "optional": false } },
     "yName": { "type": { "returnType": "string", "optional": false } },
-    "context": { "type": { "returnType": "any", "optional": true } },
-    "datum": { "type": { "returnType": "any", "optional": false } }
+    "context": {
+      "description": "/** The grid context, includes row data, giving access to data from other columns in the same row. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "datum": {
+      "description": "/** The raw datum associated with the point. */",
+      "type": { "returnType": "any", "optional": false }
+    }
   },
   "AreaSeriesLabelOptions": {
     "formatter": {
@@ -10760,8 +10814,14 @@
     "yKey": { "type": { "returnType": "string", "optional": false } },
     "yValue": { "type": { "returnType": "any", "optional": false } },
     "yName": { "type": { "returnType": "string", "optional": false } },
-    "context": { "type": { "returnType": "any", "optional": true } },
-    "datum": { "type": { "returnType": "any", "optional": false } }
+    "context": {
+      "description": "/** The grid context, includes row data, giving access to data from other columns in the same row. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "datum": {
+      "description": "/** The raw datum associated with the point. */",
+      "type": { "returnType": "any", "optional": false }
+    }
   },
   "PieTitleOptions": {
     "showInLegend": { "type": { "returnType": "boolean", "optional": true } },
@@ -10825,10 +10885,22 @@
     "angleName": { "type": { "returnType": "string", "optional": true } },
     "labelKey": { "type": { "returnType": "string", "optional": true } },
     "labelName": { "type": { "returnType": "string", "optional": true } },
-    "context": { "type": { "returnType": "any", "optional": true } },
-    "datum": { "type": { "returnType": "any", "optional": false } },
-    "xValue": { "type": { "returnType": "any", "optional": false } },
-    "yValue": { "type": { "returnType": "any", "optional": false } }
+    "context": {
+      "description": "/** The grid context, includes row data, giving access to data from other columns in the same row. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "datum": {
+      "description": "/** The raw datum associated with the point. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "xValue": {
+      "description": "/** The X value of the data point. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "yValue": {
+      "description": "/** The Y value of the data point. */",
+      "type": { "returnType": "any", "optional": false }
+    }
   },
   "GetChartImageDataUrlParams": {
     "chartId": {
@@ -13820,22 +13892,13 @@
   },
   "SparklineOptions": {},
   "BaseSparklineOptions": {
-    "container": { "type": { "returnType": "HTMLElement", "optional": true } },
     "xKey": {
-      "description": "/** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
+      "description": "/** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
       "type": { "returnType": "string", "optional": true }
     },
     "yKey": {
-      "description": "/** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
+      "description": "/** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "type": { "returnType": "string", "optional": true }
-    },
-    "width": {
-      "description": "/** The width in pixels of the sparkline. */",
-      "type": { "returnType": "number", "optional": true }
-    },
-    "height": {
-      "description": "/** The height in pixels of the sparkline. */",
-      "type": { "returnType": "number", "optional": true }
     },
     "padding": {
       "description": "/** Configuration for the padding in pixels shown around the sparklines. */",
@@ -13863,23 +13926,17 @@
       "description": "/** The configuration for the line. */",
       "type": { "returnType": "SparklineLine", "optional": true }
     },
-    "marker": { "type": { "returnType": "SparklineMarker", "optional": true } },
-    "container": { "type": { "returnType": "HTMLElement", "optional": true } },
+    "marker": {
+      "description": "/** The configuration for the marker styles. */",
+      "type": { "returnType": "SparklineMarker", "optional": true }
+    },
     "xKey": {
-      "description": "/** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
+      "description": "/** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
       "type": { "returnType": "string", "optional": true }
     },
     "yKey": {
-      "description": "/** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
+      "description": "/** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "type": { "returnType": "string", "optional": true }
-    },
-    "width": {
-      "description": "/** The width in pixels of the sparkline. */",
-      "type": { "returnType": "number", "optional": true }
-    },
-    "height": {
-      "description": "/** The height in pixels of the sparkline. */",
-      "type": { "returnType": "number", "optional": true }
     },
     "padding": {
       "description": "/** Configuration for the padding in pixels shown around the sparklines. */",
@@ -13903,25 +13960,25 @@
       "description": "/** The type of sparklines to create, in this case it would be `'area'`. */",
       "type": { "returnType": "'area'", "optional": true }
     },
-    "fill": { "type": { "returnType": "string", "optional": true } },
-    "line": { "type": { "returnType": "SparklineLine", "optional": true } },
-    "marker": { "type": { "returnType": "SparklineMarker", "optional": true } },
-    "container": { "type": { "returnType": "HTMLElement", "optional": true } },
+    "fill": {
+      "description": "/** The CSS colour value for the fill of the area.\n * Default: `'rgba(124, 181, 236, 0.25)'` */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "line": {
+      "description": "/** The configuration for the line. */",
+      "type": { "returnType": "SparklineLine", "optional": true }
+    },
+    "marker": {
+      "description": "/** The configuration for the marker styles. */",
+      "type": { "returnType": "SparklineMarker", "optional": true }
+    },
     "xKey": {
-      "description": "/** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
+      "description": "/** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
       "type": { "returnType": "string", "optional": true }
     },
     "yKey": {
-      "description": "/** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
+      "description": "/** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "type": { "returnType": "string", "optional": true }
-    },
-    "width": {
-      "description": "/** The width in pixels of the sparkline. */",
-      "type": { "returnType": "number", "optional": true }
-    },
-    "height": {
-      "description": "/** The height in pixels of the sparkline. */",
-      "type": { "returnType": "number", "optional": true }
     },
     "padding": {
       "description": "/** Configuration for the padding in pixels shown around the sparklines. */",
@@ -13945,30 +14002,37 @@
       "description": "/** The type of sparklines to create, in this case it would be `'column'`. */",
       "type": { "returnType": "'column'", "optional": true }
     },
-    "fill": { "type": { "returnType": "string", "optional": true } },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": true } },
-    "paddingInner": { "type": { "returnType": "number", "optional": true } },
-    "paddingOuter": { "type": { "returnType": "number", "optional": true } },
+    "fill": {
+      "description": "/** The CSS colour value for the fill of the columns.\n * Default: `'rgb(124, 181, 236)'` */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "stroke": {
+      "description": "/** The CSS colour value for the outline of the columns.\n * Default `'silver'` */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "strokeWidth": {
+      "description": "/** The thickness in pixels for the stroke of the columns.\n * Default: `0` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "paddingInner": {
+      "description": "/** The size of the gap between the columns as a proportion, between 0 and 1. This value is a fraction of the “step”, which is the interval between the start of a band and the start of the next band.\n * Default: `0.5` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "paddingOuter": {
+      "description": "/** The padding on the outside i.e. left and right of the first and last columns, to leave some room for the axis. In association with `paddingInner`, this value can be between 0 and 1.\n * Default: `0.2` */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "formatter": {
+      "description": "/** A callback function to return format styles of type ColumnFormat, based on the data represented by individual columns. */",
       "type": { "returnType": "SparklineColumnFormatter", "optional": true }
     },
-    "container": { "type": { "returnType": "HTMLElement", "optional": true } },
     "xKey": {
-      "description": "/** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
+      "description": "/** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
       "type": { "returnType": "string", "optional": true }
     },
     "yKey": {
-      "description": "/** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
+      "description": "/** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "type": { "returnType": "string", "optional": true }
-    },
-    "width": {
-      "description": "/** The width in pixels of the sparkline. */",
-      "type": { "returnType": "number", "optional": true }
-    },
-    "height": {
-      "description": "/** The height in pixels of the sparkline. */",
-      "type": { "returnType": "number", "optional": true }
     },
     "padding": {
       "description": "/** Configuration for the padding in pixels shown around the sparklines. */",
@@ -13988,33 +14052,79 @@
     }
   },
   "Padding": {
-    "top": { "type": { "returnType": "number", "optional": true } },
-    "right": { "type": { "returnType": "number", "optional": true } },
-    "bottom": { "type": { "returnType": "number", "optional": true } },
-    "left": { "type": { "returnType": "number", "optional": true } }
+    "top": {
+      "description": "/** The number of pixels of padding at the top of the sparkline area.\n * Default: `3` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "right": {
+      "description": "/** The number of pixels of padding at the right of the sparkline area.\n * Default: `3` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "bottom": {
+      "description": "/** The number of pixels of padding at the bottom of the sparkline area.\n * Default: `3` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "left": {
+      "description": "/** The number of pixels of padding at the left of the sparkline area.\n * Default\" `3` */",
+      "type": { "returnType": "number", "optional": true }
+    }
   },
   "SparklineAxisOptions": {
-    "type": { "type": { "returnType": "AxisType", "optional": true } },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": true } }
+    "type": {
+      "description": "/** The type of x-axis used to plot the data.\n * Default: `'category'` */",
+      "type": { "returnType": "AxisType", "optional": true }
+    },
+    "stroke": {
+      "description": "/** The CSS colour value for the outline of the horizontal axis line.\n * Default: `'rgb(204, 214, 235)'` */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "strokeWidth": {
+      "description": "/** The thickness in pixels for the stroke of the horizontal axis line.\n * Default: `1` */",
+      "type": { "returnType": "number", "optional": true }
+    }
   },
   "SparklineTooltip": {
-    "enabled": { "type": { "returnType": "boolean", "optional": true } },
-    "container": { "type": { "returnType": "HTMLElement", "optional": true } },
+    "enabled": {
+      "description": "/** Set to false to disable tooltips. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "container": {
+      "description": "/** The element to place the tooltip into. This can be used to confine the tooltip to a specific area which may be outside of the sparkline grid cell. */",
+      "type": { "returnType": "HTMLElement", "optional": true }
+    },
     "renderer": {
+      "description": "/** A callback function used to create the content for the tooltips. This function should return an object or a HTML string used to render the tooltip. */",
       "type": { "returnType": "SparklineTooltipRenderer", "optional": true }
     }
   },
   "SparklineTooltipRenderer": {},
   "SparklineLine": {
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": true } }
+    "stroke": {
+      "description": "/** The CSS colour value for the line.\n * Default: `'rgb(124, 181, 236)'` */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "strokeWidth": {
+      "description": "/** The thickness in pixels for the stroke of the line.\n * Default: `1` */",
+      "type": { "returnType": "number", "optional": true }
+    }
   },
   "HighlightStyle": {
-    "size": { "type": { "returnType": "number", "optional": true } },
-    "fill": { "type": { "returnType": "string", "optional": true } },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": true } }
+    "size": {
+      "description": "/** The width in pixels of the markers when hovered over. This is only for the Line and Area sparklines as Column sparklines do not have markers.\n * Default: `6` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "fill": {
+      "description": "/** The fill colour of the markers or columns when hovered over. Use `undefined` for no highlight fill.\n * Default: `'yellow'` */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "stroke": {
+      "description": "/** The CSS colour value for the outline of the markers or columns when hovered over. Use `undefined` for no highlight stroke.\n * Default: `'yellow'` */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "strokeWidth": {
+      "description": "/** The thickness in pixels for the stroke of the markers or columns when hovered over.\n * Default: `1` */",
+      "type": { "returnType": "number", "optional": true }
+    }
   },
   "SparklineColumnFormatter": {},
   "ColumnFormatterParams": {
@@ -14086,13 +14196,32 @@
     }
   },
   "SparklineMarker": {
-    "enabled": { "type": { "returnType": "boolean", "optional": true } },
-    "shape": { "type": { "returnType": "string", "optional": true } },
-    "size": { "type": { "returnType": "number", "optional": true } },
-    "fill": { "type": { "returnType": "string", "optional": true } },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": true } },
+    "enabled": {
+      "description": "/** By default this is set to `true` whilst marker size is set to `0`, which means the markers are present but not visible.\n * Default: `true` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "shape": {
+      "description": "/** The shape of the markers.\n * Default: `'circle'` */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "size": {
+      "description": "/** The width in pixels of markers. By default this is `0`, increase the size to make markers visible.\n * Default: `0` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "fill": {
+      "description": "/** The CSS colour value for the fill of the markers.\n * Default: `'rgb(124, 181, 236)'` */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "stroke": {
+      "description": "/** The CSS colour value for the outline of the markers.\n * Default: `'rgb(124, 181, 236)'` */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "strokeWidth": {
+      "description": "/** The thickness in pixels for the stroke of the markers.\n * Default: `1` */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "formatter": {
+      "description": "/** A callback function to return format styles for individual markers. */",
       "type": { "returnType": "SparklineMarkerFormatter", "optional": true }
     }
   },

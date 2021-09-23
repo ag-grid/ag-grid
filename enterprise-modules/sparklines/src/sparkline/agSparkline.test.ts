@@ -1,5 +1,5 @@
 import { describe, beforeAll, afterAll, test, expect } from '@jest/globals'
-import { AgSparkline } from './agSparkline';
+import { AgSparkline, SparklineFactoryOptions, SparklineType } from './agSparkline';
 import { LineSparkline } from './line/lineSparkline';
 import "jest-canvas-mock";
 import { AreaSparkline } from './area/areaSparkline';
@@ -10,17 +10,18 @@ import { SparklineTooltip } from "./tooltip/sparklineTooltip";
 const data = [7, 8.3, undefined, -9, '9.2', null, 5.5, Infinity, 6.75, -11.9, NaN, -Infinity, 5, 4, null, {}, 6, []] as any;
 
 describe('line sparkline', () => {
-    let sparkline: LineSparkline;
+    let sparkline: any;
     let containerDiv: HTMLElement = document.createElement('div');
     let tooltipContainer: HTMLElement = document.createElement('div');
     let markerFormatter = (params: MarkerFormatterParams): MarkerFormat => { return {} }
     let tooltipRenderer = (params: TooltipRendererParams): TooltipRendererResult => { return {} }
 
-    const options: SparklineOptions = {
+    const options: SparklineFactoryOptions = {
+        data,
+        width: 135,
+        height: 265,
         type: 'line',
         container: containerDiv,
-        width: 100,
-        height: 200,
         padding: {
             top: 2,
             right: 5,
@@ -58,17 +59,7 @@ describe('line sparkline', () => {
     }
 
     beforeAll(() => {
-        sparkline = AgSparkline.create(options, new SparklineTooltip(), data);
-
-        options.height = 135;
-        options.width = 265;
-
-        options.padding!.left = 11;
-        options.marker!.fill = 'beige';
-        options.axis!.stroke = 'chocolate';
-        options.highlightStyle!.fill = 'aliceblue';
-
-        // AgSparkline.update(sparkline, options);
+        sparkline = AgSparkline.create(options, new SparklineTooltip());
     });
 
     afterAll(() => {
@@ -76,9 +67,9 @@ describe('line sparkline', () => {
     });
 
     test('base properties', () => {
+        expect(sparkline.width).toBe(135);
+        expect(sparkline.height).toBe(265);
         expect(sparkline.container).toBe(containerDiv);
-        expect(sparkline.width).toBe(100);
-        expect(sparkline.height).toBe(200);
     });
     test('padding', () => {
         const { padding } = sparkline;
@@ -123,17 +114,18 @@ describe('line sparkline', () => {
 })
 
 describe('area sparkline', () => {
-    let sparkline: AreaSparkline;
+    let sparkline: any;
     let containerDiv: HTMLElement = document.createElement('div');
     let tooltipContainer: HTMLElement = document.createElement('div');
     let markerFormatter = (params: MarkerFormatterParams): MarkerFormat => { return {} }
     let tooltipRenderer = (params: TooltipRendererParams): TooltipRendererResult => { return {} }
 
-    const options: SparklineOptions = {
-        type: 'area',
+    const options: SparklineFactoryOptions = {
+        data,
+        width: 67,
+        height: 109,
         container: containerDiv,
-        width: 200,
-        height: 100,
+        type: 'area',
         padding: {
             top: 1,
             right: 7,
@@ -170,17 +162,7 @@ describe('area sparkline', () => {
     }
 
     beforeAll(() => {
-        sparkline = AgSparkline.create(options, new SparklineTooltip(), data);
-
-        options.height = 67;
-        options.width = 109;
-
-        options.padding!.right = 5;
-        options.marker!.fill = 'salmon';
-        options.axis!.stroke = 'khaki';
-        options.highlightStyle!.fill = 'cornsilk';
-
-        // AgSparkline.update(sparkline, options);
+        sparkline = AgSparkline.create(options, new SparklineTooltip());
     })
 
     afterAll(() => {
@@ -188,9 +170,9 @@ describe('area sparkline', () => {
     });
 
     test('base properties', () => {
+        expect(sparkline.width).toBe(67);
+        expect(sparkline.height).toBe(109);
         expect(sparkline.container).toBe(containerDiv);
-        expect(sparkline.width).toBe(200);
-        expect(sparkline.height).toBe(100);
         expect(sparkline.fill).toBe('lavender');
     });
     test('padding', () => {
@@ -236,17 +218,18 @@ describe('area sparkline', () => {
 })
 
 describe('column sparkline', () => {
-    let sparkline: ColumnSparkline;
+    let sparkline: any;
     let containerDiv: HTMLElement = document.createElement('div');
     let tooltipContainer: HTMLElement = document.createElement('div');
     let columnFormatter = (params: ColumnFormatterParams): ColumnFormat => { return {} }
     let tooltipRenderer = (params: TooltipRendererParams): TooltipRendererResult => { return {} }
 
-    const options: SparklineOptions = {
-        type: 'column',
-        container: containerDiv,
+    const options: SparklineFactoryOptions = {
+        data,
         width: 150,
         height: 50,
+        container: containerDiv,
+        type: 'column',
         padding: {
             top: 4,
             bottom: 9,
@@ -276,17 +259,7 @@ describe('column sparkline', () => {
     }
 
     beforeAll(() => {
-        sparkline = AgSparkline.create(options, new SparklineTooltip(), data);
-
-        options.height = 84;
-        options.width = 203;
-
-        options.padding!.bottom = 13;
-        options.fill = 'firebrick';
-        options.axis!.stroke = 'fuchsia';
-        options.highlightStyle!.fill = 'gold';
-
-        // AgSparkline.update(sparkline, options);
+        sparkline = AgSparkline.create(options, new SparklineTooltip());
     });
 
     afterAll(() => {
@@ -294,9 +267,9 @@ describe('column sparkline', () => {
     });
 
     test('base properties', () => {
-        expect(sparkline.container).toBe(containerDiv);
         expect(sparkline.width).toBe(150);
         expect(sparkline.height).toBe(50);
+        expect(sparkline.container).toBe(containerDiv);
     });
     test('padding', () => {
         const { padding } = sparkline;

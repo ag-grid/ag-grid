@@ -6195,6 +6195,14 @@
       "color?": "string",
       "backgroundColor?": "string",
       "opacity?": "number"
+    },
+    "docs": {
+      "enabled?": "/** Set to false to disable individual tooltip. */",
+      "content?": "/** The content to display in each tooltip. */",
+      "title?": "/** The title of the tooltip. */",
+      "color?": "/** The CSS color for the title text. */",
+      "backgroundColor?": "/** The CSS color for the background of the tooltip title. */",
+      "opacity?": "/** The opacity of the background for the tooltip title. */"
     }
   },
   "TooltipOptions": {
@@ -6211,6 +6219,12 @@
       "datum": "any",
       "xValue": "any",
       "yValue": "any"
+    },
+    "docs": {
+      "context?": "/** The grid context, includes row data, giving access to data from other columns in the same row. */",
+      "datum": "/** The raw datum associated with the point. */",
+      "xValue": "/** The X value of the data point. */",
+      "yValue": "/** The Y value of the data point. */"
     }
   },
   "CartesianTooltipRendererParams": {
@@ -6224,6 +6238,12 @@
       "yName": "string",
       "context?": "any",
       "datum": "any"
+    },
+    "docs": {
+      "context?": "/** The grid context, includes row data, giving access to data from other columns in the same row. */",
+      "datum": "/** The raw datum associated with the point. */",
+      "xValue": "/** The X value of the data point. */",
+      "yValue": "/** The Y value of the data point. */"
     }
   },
   "BarSeriesOptions": {
@@ -6278,6 +6298,12 @@
       "yName": "string",
       "context?": "any",
       "datum": "any"
+    },
+    "docs": {
+      "context?": "/** The grid context, includes row data, giving access to data from other columns in the same row. */",
+      "datum": "/** The raw datum associated with the point. */",
+      "xValue": "/** The X value of the data point. */",
+      "yValue": "/** The Y value of the data point. */"
     }
   },
   "LineSeriesOptions": {
@@ -6327,6 +6353,12 @@
       "yName": "string",
       "context?": "any",
       "datum": "any"
+    },
+    "docs": {
+      "context?": "/** The grid context, includes row data, giving access to data from other columns in the same row. */",
+      "datum": "/** The raw datum associated with the point. */",
+      "xValue": "/** The X value of the data point. */",
+      "yValue": "/** The Y value of the data point. */"
     }
   },
   "ScatterSeriesLabelOptions": {
@@ -6379,6 +6411,12 @@
       "yName": "string",
       "context?": "any",
       "datum": "any"
+    },
+    "docs": {
+      "context?": "/** The grid context, includes row data, giving access to data from other columns in the same row. */",
+      "datum": "/** The raw datum associated with the point. */",
+      "xValue": "/** The X value of the data point. */",
+      "yValue": "/** The Y value of the data point. */"
     }
   },
   "AreaSeriesLabelOptions": {
@@ -6419,6 +6457,12 @@
       "yName": "string",
       "context?": "any",
       "datum": "any"
+    },
+    "docs": {
+      "context?": "/** The grid context, includes row data, giving access to data from other columns in the same row. */",
+      "datum": "/** The raw datum associated with the point. */",
+      "xValue": "/** The X value of the data point. */",
+      "yValue": "/** The Y value of the data point. */"
     }
   },
   "PieTitleOptions": {
@@ -6483,6 +6527,12 @@
       "datum": "any",
       "xValue": "any",
       "yValue": "any"
+    },
+    "docs": {
+      "context?": "/** The grid context, includes row data, giving access to data from other columns in the same row. */",
+      "datum": "/** The raw datum associated with the point. */",
+      "xValue": "/** The X value of the data point. */",
+      "yValue": "/** The Y value of the data point. */"
     }
   },
   "GetChartImageDataUrlParams": {
@@ -7835,21 +7885,16 @@
   "BaseSparklineOptions": {
     "meta": {},
     "type": {
-      "container?": "HTMLElement",
       "xKey?": "string",
       "yKey?": "string",
-      "width?": "number",
-      "height?": "number",
       "padding?": "Padding",
       "axis?": "SparklineAxisOptions",
       "highlightStyle?": "HighlightStyle",
       "tooltip?": "SparklineTooltip"
     },
     "docs": {
-      "xKey?": "/** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
-      "yKey?": "/** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
-      "width?": "/** The width in pixels of the sparkline. */",
-      "height?": "/** The height in pixels of the sparkline. */",
+      "xKey?": "/** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
+      "yKey?": "/** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
       "axis?": "/** The options for the horizontal axis line in the sparklines. */",
       "highlightStyle?": "/** The configuration for the highlighting used when the markers are hovered over. */",
@@ -7862,11 +7907,8 @@
       "type?": "'line'",
       "line?": "SparklineLine",
       "marker?": "SparklineMarker",
-      "container?": "HTMLElement",
       "xKey?": "string",
       "yKey?": "string",
-      "width?": "number",
-      "height?": "number",
       "padding?": "Padding",
       "axis?": "SparklineAxisOptions",
       "highlightStyle?": "HighlightStyle",
@@ -7875,10 +7917,9 @@
     "docs": {
       "type?": "/** The type of sparklines to create, in this case it would be `'line'`. */",
       "line?": "/** The configuration for the line. */",
-      "xKey?": "/** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
-      "yKey?": "/** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
-      "width?": "/** The width in pixels of the sparkline. */",
-      "height?": "/** The height in pixels of the sparkline. */",
+      "marker?": "/** The configuration for the marker styles. */",
+      "xKey?": "/** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
+      "yKey?": "/** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
       "axis?": "/** The options for the horizontal axis line in the sparklines. */",
       "highlightStyle?": "/** The configuration for the highlighting used when the markers are hovered over. */",
@@ -7892,11 +7933,8 @@
       "fill?": "string",
       "line?": "SparklineLine",
       "marker?": "SparklineMarker",
-      "container?": "HTMLElement",
       "xKey?": "string",
       "yKey?": "string",
-      "width?": "number",
-      "height?": "number",
       "padding?": "Padding",
       "axis?": "SparklineAxisOptions",
       "highlightStyle?": "HighlightStyle",
@@ -7904,10 +7942,11 @@
     },
     "docs": {
       "type?": "/** The type of sparklines to create, in this case it would be `'area'`. */",
-      "xKey?": "/** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
-      "yKey?": "/** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
-      "width?": "/** The width in pixels of the sparkline. */",
-      "height?": "/** The height in pixels of the sparkline. */",
+      "fill?": "/** The CSS colour value for the fill of the area.\n * Default: `'rgba(124, 181, 236, 0.25)'` */",
+      "line?": "/** The configuration for the line. */",
+      "marker?": "/** The configuration for the marker styles. */",
+      "xKey?": "/** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
+      "yKey?": "/** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
       "axis?": "/** The options for the horizontal axis line in the sparklines. */",
       "highlightStyle?": "/** The configuration for the highlighting used when the markers are hovered over. */",
@@ -7924,11 +7963,8 @@
       "paddingInner?": "number",
       "paddingOuter?": "number",
       "formatter?": "SparklineColumnFormatter",
-      "container?": "HTMLElement",
       "xKey?": "string",
       "yKey?": "string",
-      "width?": "number",
-      "height?": "number",
       "padding?": "Padding",
       "axis?": "SparklineAxisOptions",
       "highlightStyle?": "HighlightStyle",
@@ -7936,10 +7972,14 @@
     },
     "docs": {
       "type?": "/** The type of sparklines to create, in this case it would be `'column'`. */",
-      "xKey?": "/** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
-      "yKey?": "/** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs. */",
-      "width?": "/** The width in pixels of the sparkline. */",
-      "height?": "/** The height in pixels of the sparkline. */",
+      "fill?": "/** The CSS colour value for the fill of the columns.\n * Default: `'rgb(124, 181, 236)'` */",
+      "stroke?": "/** The CSS colour value for the outline of the columns.\n * Default `'silver'` */",
+      "strokeWidth?": "/** The thickness in pixels for the stroke of the columns.\n * Default: `0` */",
+      "paddingInner?": "/** The size of the gap between the columns as a proportion, between 0 and 1. This value is a fraction of the “step”, which is the interval between the start of a band and the start of the next band.\n * Default: `0.5` */",
+      "paddingOuter?": "/** The padding on the outside i.e. left and right of the first and last columns, to leave some room for the axis. In association with `paddingInner`, this value can be between 0 and 1.\n * Default: `0.2` */",
+      "formatter?": "/** A callback function to return format styles of type ColumnFormat, based on the data represented by individual columns. */",
+      "xKey?": "/** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
+      "yKey?": "/** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
       "axis?": "/** The options for the horizontal axis line in the sparklines. */",
       "highlightStyle?": "/** The configuration for the highlighting used when the markers are hovered over. */",
@@ -7953,6 +7993,12 @@
       "right?": "number",
       "bottom?": "number",
       "left?": "number"
+    },
+    "docs": {
+      "top?": "/** The number of pixels of padding at the top of the sparkline area.\n * Default: `3` */",
+      "right?": "/** The number of pixels of padding at the right of the sparkline area.\n * Default: `3` */",
+      "bottom?": "/** The number of pixels of padding at the bottom of the sparkline area.\n * Default: `3` */",
+      "left?": "/** The number of pixels of padding at the left of the sparkline area.\n * Default\" `3` */"
     }
   },
   "SparklineAxisOptions": {
@@ -7961,6 +8007,11 @@
       "type?": "AxisType",
       "stroke?": "string",
       "strokeWidth?": "number"
+    },
+    "docs": {
+      "type?": "/** The type of x-axis used to plot the data.\n * Default: `'category'` */",
+      "stroke?": "/** The CSS colour value for the outline of the horizontal axis line.\n * Default: `'rgb(204, 214, 235)'` */",
+      "strokeWidth?": "/** The thickness in pixels for the stroke of the horizontal axis line.\n * Default: `1` */"
     }
   },
   "SparklineTooltip": {
@@ -7969,6 +8020,11 @@
       "enabled?": "boolean",
       "container?": "HTMLElement",
       "renderer?": "SparklineTooltipRenderer"
+    },
+    "docs": {
+      "enabled?": "/** Set to false to disable tooltips. */",
+      "container?": "/** The element to place the tooltip into. This can be used to confine the tooltip to a specific area which may be outside of the sparkline grid cell. */",
+      "renderer?": "/** A callback function used to create the content for the tooltips. This function should return an object or a HTML string used to render the tooltip. */"
     }
   },
   "SparklineTooltipRenderer": {
@@ -7977,7 +8033,11 @@
   },
   "SparklineLine": {
     "meta": {},
-    "type": { "stroke?": "string", "strokeWidth?": "number" }
+    "type": { "stroke?": "string", "strokeWidth?": "number" },
+    "docs": {
+      "stroke?": "/** The CSS colour value for the line.\n * Default: `'rgb(124, 181, 236)'` */",
+      "strokeWidth?": "/** The thickness in pixels for the stroke of the line.\n * Default: `1` */"
+    }
   },
   "HighlightStyle": {
     "meta": {},
@@ -7986,6 +8046,12 @@
       "fill?": "string",
       "stroke?": "string",
       "strokeWidth?": "number"
+    },
+    "docs": {
+      "size?": "/** The width in pixels of the markers when hovered over. This is only for the Line and Area sparklines as Column sparklines do not have markers.\n * Default: `6` */",
+      "fill?": "/** The fill colour of the markers or columns when hovered over. Use `undefined` for no highlight fill.\n * Default: `'yellow'` */",
+      "stroke?": "/** The CSS colour value for the outline of the markers or columns when hovered over. Use `undefined` for no highlight stroke.\n * Default: `'yellow'` */",
+      "strokeWidth?": "/** The thickness in pixels for the stroke of the markers or columns when hovered over.\n * Default: `1` */"
     }
   },
   "SparklineColumnFormatter": {
@@ -8048,6 +8114,15 @@
       "stroke?": "string",
       "strokeWidth?": "number",
       "formatter?": "SparklineMarkerFormatter"
+    },
+    "docs": {
+      "enabled?": "/** By default this is set to `true` whilst marker size is set to `0`, which means the markers are present but not visible.\n * Default: `true` */",
+      "shape?": "/** The shape of the markers.\n * Default: `'circle'` */",
+      "size?": "/** The width in pixels of markers. By default this is `0`, increase the size to make markers visible.\n * Default: `0` */",
+      "fill?": "/** The CSS colour value for the fill of the markers.\n * Default: `'rgb(124, 181, 236)'` */",
+      "stroke?": "/** The CSS colour value for the outline of the markers.\n * Default: `'rgb(124, 181, 236)'` */",
+      "strokeWidth?": "/** The thickness in pixels for the stroke of the markers.\n * Default: `1` */",
+      "formatter?": "/** A callback function to return format styles for individual markers. */"
     }
   },
   "SparklineMarkerFormatter": {

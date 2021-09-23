@@ -3,21 +3,18 @@ import { ICellRendererParams } from "../rendering/cellRenderers/iCellRenderer";
 export interface ISparklineCellRendererParams extends ICellRendererParams {
     sparklineOptions?: SparklineOptions;
 }
+
 export type SparklineOptions = LineSparklineOptions | AreaSparklineOptions | ColumnSparklineOptions;
+
 export interface BaseSparklineOptions {
-    container?: HTMLElement;
-    /** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs. */
-    xKey?: string;
-    /** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs.
+    /** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs.
      * Default: `'x'`
      */
-    yKey?: string;
-    /** The width in pixels of the sparkline.
+    xKey?: string;
+    /** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs.
      * Default: `'y'`
      */
-    width?: number;
-    /** The height in pixels of the sparkline. */
-    height?: number;
+    yKey?: string;
     /** Configuration for the padding in pixels shown around the sparklines. */
     padding?: Padding;
     /** The options for the horizontal axis line in the sparklines. */

@@ -15,21 +15,20 @@ import {
 } from "@ag-grid-community/core";
 import { SparklineTooltip } from "./tooltip/sparklineTooltip";
 
-export type AgSparklineType<T> =
-    T extends LineSparklineOptions ? LineSparkline :
-    T extends AreaSparklineOptions ? AreaSparkline :
-    T extends ColumnSparklineOptions ? ColumnSparkline :
-    never;
+
+export type SparklineFactoryOptions = SparklineOptions & {
+    data: any[];
+    width: number;
+    height: number;
+    context?: any;
+    container?: HTMLElement;
+}
 
 export type SparklineType = LineSparkline | AreaSparkline | ColumnSparkline;
 export abstract class AgSparkline {
-    static create<T extends SparklineOptions>(options: T, tooltip: SparklineTooltip, data: any[], container?: HTMLElement): AgSparklineType<T> {
+    static create(options: SparklineFactoryOptions, tooltip: SparklineTooltip) {
         // avoid mutating user provided options
         options = Object.create(options);
-
-        if (container) {
-            options.container = container;
-        }
 
         const sparkline = getSparklineInstance(options.type);
 
@@ -40,8 +39,8 @@ export abstract class AgSparkline {
         initSparkline(sparkline, options);
         initSparklineByType(sparkline, options);
 
-        if (data) {
-            sparkline.data = data;
+        if (options.data) {
+            sparkline.data = options.data;
         }
 
         return sparkline;
@@ -76,12 +75,10 @@ function initSparklineByType(sparkline: SparklineType, options: any): void {
 }
 
 function initSparkline(sparkline: SparklineType, options: any) {
-    // FIXME: it may not be necessary to set context
     setValueIfPropertyExists(sparkline, 'context', options.context, options);
-    setValueIfPropertyExists(sparkline, 'container', options.container, options);
     setValueIfPropertyExists(sparkline, 'width', options.width, options);
     setValueIfPropertyExists(sparkline, 'height', options.height, options);
-    setValueIfPropertyExists(sparkline, 'title', options.title, options);
+    setValueIfPropertyExists(sparkline, 'container', options.container, options);
     setValueIfPropertyExists(sparkline, 'xKey', options.xKey, options);
     setValueIfPropertyExists(sparkline, 'yKey', options.yKey, options);
 

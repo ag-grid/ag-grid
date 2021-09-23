@@ -36,16 +36,17 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
 
             if (firstTimeIn) {
                 const options = {
+                    data: params.value,
                     width: clientWidth,
                     height: clientHeight,
                     context: {
                         data: params.data
                     },
-                    ...params.sparklineOptions,
+                    ...params.sparklineOptions
                 }
 
                 // create new instance of sparkline
-                this.sparkline = AgSparkline.create(options, this.sparklineTooltipSingleton.getSparklineTooltip(), params.value);
+                this.sparkline = AgSparkline.create(options, this.sparklineTooltipSingleton.getSparklineTooltip());
 
                 // append sparkline canvas element to this.eSparkline;
                 this.sparkline.container = this.eSparkline;
