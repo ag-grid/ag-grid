@@ -8,7 +8,7 @@ This section compares the different horizontal axis types that are available to 
 When choosing an appropriate axis it is important to consider the data the sparkline is based on, this ensures X values
 are scaled correctly along the x-axis.
 
-The following axes types are available to all sparklines:
+The following axis types are available to all sparklines:
 
 - ***[Category Axis](/sparklines-axis-types/#category-axis)*** - data points are evenly spread along the x-axis.
 - ***[Number Axis](/sparklines-axis-types/#number-axis)*** - data is spaced based on the magnitude of the x values.
@@ -35,7 +35,7 @@ const gridOptions = {
             cellRendererParams: {
                 sparklineOptions: {
                     axis: {
-                        // Optional - 'category' is the default axes
+                        // Optional - 'category' is the default axis
                         type: 'category'
                     }
                 }
