@@ -12,10 +12,13 @@ The data supplied to sparklines can be in the following formats:
 
 - ***[Array of Numbers](/sparklines-data/#array-of-numbers)***
 - ***[Array of Tuples](/sparklines-data/#array-of-tuples)***
-- ***[Array of Objects](/sparklines-data/#array-of-objects)***
+- ***[Array of Objects](/sparklines-data/#array-of-objects)*** 
 
 In each of the formats above, Y values must be of type `number`, whereas X values can be a `number`, `string`, `Date` or 
 objects with a `toString` method, if they are provided.
+
+It may be necessary to [Format Sparkline Data](/sparklines-data/#formatting-sparkline-data) using Value Getter's if the data
+supplied to the grid is not in the correct format.
 
 ## Array of Numbers
 
@@ -29,7 +32,7 @@ Alternatively, `valueGetter` can be added to return an array of numbers for each
 This is demonstated in the simple example below, where the 'Rate of Change' column contains the sparkline cell renderer.
 - Note that the data for the `rateOfChange` field in the data.js file is a `number[]`.
 
-<grid-example title='Sparkline Data' name='sparkline-data-number-array' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
+<grid-example title='Sparkline Data - Array of Numbers' name='sparkline-data-number-array' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 ## Array of Tuples
 
@@ -39,7 +42,7 @@ Another supported format is the tuples array. In this format, each tuple in the 
 - The y value should be a `number` whereas the x can be a `number`, `string`, `Date` or an object with a `toString` method.
 - Note in the data.js file, the data for the `rateOfChange` field is of type `[Date, number][]`, where x values are `Date` objects.
 
-<grid-example title='Sparkline Data' name='sparkline-data-tuple-array' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
+<grid-example title='Sparkline Data - Array of Tuples' name='sparkline-data-tuple-array' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 ## Array of Objects
 
@@ -71,9 +74,9 @@ const gridOptions = {
 };
 </snippet>
 
-<grid-example title='Sparkline Data' name='sparkline-data-object-array' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
+<grid-example title='Sparkline Data - Array of Objects' name='sparkline-data-object-array' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
-## Value Getter
+## Formatting Sparkline Data
 
 If the data is not already in the required format, it is possible to provide `valueGetter` in the column definitions to format and supply data to the sparkline column.
 
@@ -84,7 +87,7 @@ The following example demonstrates how data can be formatted using `valueGetter`
 - In this example, the data for the `rateOfChange` field is an object with `x` and `y` keys, both containing an array of numbers.
 - valueGetter is used to format this data into `[number, number][]`, with x at index 0 and y at index 1 in each array.
 
-<grid-example title='Sparkline Data' name='sparkline-data-value-getter' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
+<grid-example title='Formatting Sparkline Data' name='formatting-sparkline-data' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 ## Next Up
 
