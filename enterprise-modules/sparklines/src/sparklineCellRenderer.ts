@@ -6,7 +6,7 @@ import {
     RefSelector,
     ResizeObserverService
 } from "@ag-grid-community/core";
-import { AgSparkline } from "./sparkline/agSparkline";
+import { AgSparkline, SparklineFactoryOptions } from "./sparkline/agSparkline";
 import { SparklineTooltipSingleton } from "./tooltip/sparklineTooltipSingleton";
 
 export class SparklineCellRenderer extends Component implements ICellRenderer {
@@ -16,7 +16,8 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
             <span ref="eSparkline"></span>
         </div>`;
 
-    @RefSelector('eSparkline') private eSparkline?: HTMLElement;
+    @RefSelector('eSparkline') private eSparkline!: HTMLElement;
+
     @Autowired('resizeObserverService') private resizeObserverService!: ResizeObserverService;
     @Autowired('sparklineTooltipSingleton') private sparklineTooltipSingleton!: SparklineTooltipSingleton;
 
@@ -35,7 +36,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
             }
 
             if (firstTimeIn) {
-                const options = {
+                const options: SparklineFactoryOptions = {
                     data: params.value,
                     width: clientWidth,
                     height: clientHeight,
@@ -48,8 +49,8 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
                 // create new instance of sparkline
                 this.sparkline = AgSparkline.create(options, this.sparklineTooltipSingleton.getSparklineTooltip());
 
-                // append sparkline canvas element to this.eSparkline;
-                this.sparkline.container = this.eSparkline;
+                // append sparkline canvas to cell renderer element
+                this.eSparkline!.appendChild(this.sparkline.canvasElement);
 
                 firstTimeIn = false;
             } else {
