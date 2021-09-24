@@ -19,7 +19,7 @@ const gridOptions = {
             cellRenderer: 'agSparklineCellRenderer',
             cellRendererParams: {
                 sparklineOptions: {
-                    // Sparkline customisaion goes here.
+                    // Sparkline customisation goes here.
                 }
             },
         },
@@ -42,27 +42,16 @@ More advanced customisation options are discussed in isolation on the following 
 
 To apply custom `stroke` and `strokeWidth` attributes to the line, set these properties under `line` options as shown:
 
-<snippet>
-const gridOptions = {
-    columnDefs: [
-        {
-            field: 'history',
-            cellRenderer: 'agSparklineCellRenderer',
-            cellRendererParams: {
-                sparklineOptions: {
-                    // Customise the line path in the sparkline.
-                    line: {
-                        stroke: 'orange',
-                        strokeWidth: 2
-                    }
-                    // other sparkline options ...
-                }
-            },
-        },
-        // other column definitions ...
-    ],
-};
-</snippet>
+```js
+sparklineOptions: {
+    type: 'line',
+    // Customise the line path in the sparkline.
+    line: {
+        stroke: 'orange',
+        strokeWidth: 2,
+    },
+}
+```
 
 The result of the above configuration is dipslayed here.
 
@@ -79,34 +68,23 @@ The `size` property in the `highlightStyle` options is `6` pixels by default, al
 
 These formats can all be modified to your liking by setting the `marker` and `highlightStyle` options as demonstated here.
 
-<snippet>
-const gridOptions = {
-    columnDefs: [
-        {
-            field: 'history',
-            cellRenderer: 'agSparklineCellRenderer',
-            cellRendererParams: {
-                sparklineOptions: {
-                    marker: {
-                        size: 3,
-                        shape: 'diamond',
-                        fill: 'green',
-                        stroke: 'green',
-                        strokeWidth: '2'
-                    },
-                    highlightStyle: {
-                        size: 10,
-                        fill: 'cyan',
-                        stroke: 'cyan',
-                    },
-                    // other sparkline options ...
-                }
-            },
-        },
-        // other column definitions ...
-    ],
-};
-</snippet>
+```js
+sparklineOptions: {
+    type: 'line',
+    marker: {
+        size: 3,
+        shape: 'diamond',
+        fill: 'green',
+        stroke: 'green',
+        strokeWidth: '2'
+    },
+    highlightStyle: {
+        size: 10,
+        fill: 'cyan',
+        stroke: 'cyan',
+    },
+}
+```           
 
 - In the snippet above, we have configured the marker size to be `3`px in the un-highlighted normal state, and `10`px in the highlighted state.
 - Note that the fill and stroke are also different depending on the highlighted state of the marker.
@@ -123,29 +101,18 @@ Here is the result of the configuration shown in the above snippet.
 
 To add extra space around the sparklines, custom `padding` options can be applied in the following way.
 
-<snippet>
-const gridOptions = {
-    columnDefs: [
-        {
-            field: 'history',
-            cellRenderer: 'agSparklineCellRenderer',
-            cellRendererParams: {
-                sparklineOptions: {
-                    // Adjust the padding around the sparklines
-                    padding: {
-                        top: 10,
-                        right: 5,
-                        bottom: 10,
-                        left: 5
-                    },
-                    // other sparkline options ...
-                }
-            },
-        },
-        // other column definitions ...
-    ],
-};
-</snippet>
+```js
+sparklineOptions: {
+    type: 'line',
+    // Adjust the padding around the sparklines
+    padding: {
+        top: 10,
+        right: 5,
+        bottom: 10,
+        left: 5
+    },
+}      
+```
 
 - The `top`, `right`, `bottom` and `left` properties are all optional and can be modified independently.
 
