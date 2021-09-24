@@ -19,50 +19,50 @@ import { IHeaderGroupComp } from "../headerRendering/cells/columnGroup/headerGro
 
 /** AbstractColDef can be a group or a column definition */
 export interface AbstractColDef {
-    /** The name to render in the column header */
+    /** The name to render in the column header. If not specified and field is specified, the field name will be used as the header name. */
     headerName?: string;
-    /** Whether to show the column when the group is open / closed. */
-    columnGroupShow?: string;
-    /** CSS class for the header */
-    headerClass?: HeaderClass;
-    /** CSS class for the toolPanel */
-    toolPanelClass?: ToolPanelClass;
-    /** Expression or function to get the value for display in the header. */
+    /** Function or expression. Gets the value for display in the header. */
     headerValueGetter?: string | HeaderValueGetterFunc;
-    /** Never set this, it is used internally by grid when doing in-grid pivoting */
-    pivotKeys?: string[];
-
-    /** Set to true to not include this column in the Columns Tool Panel */
-    suppressColumnsToolPanel?: boolean;
-
-    /** Set to true to not include this column / filter in the Filters Tool Panel */
-    suppressFiltersToolPanel?: boolean;
-
+    /** Whether to show the column when the group is open / closed. */
     /** Tooltip for the column header */
     headerTooltip?: string;
+    /** CSS class to use for the header cell. Can be a string, array of strings, or function. */
+    headerClass?: HeaderClass;
+    /** Suppress the grid taking action for the relevant keyboard event when a header is focused. */
+    suppressHeaderKeyboardEvent?: (params: SuppressHeaderKeyboardEventParams) => boolean;
+
+    /** Whether to show the column when the group is open / closed. */
+    columnGroupShow?: string;
+    /** CSS class to use for the tool panel cell. Can be a string, array of strings, or function. */
+    toolPanelClass?: ToolPanelClass;
+    /** Set to `true` if you do not want this column or group to appear in the Columns Tool Panel. */
+    suppressColumnsToolPanel?: boolean;
+
+    /** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. */
+    suppressFiltersToolPanel?: boolean;
 
     tooltipComponent?: { new(): ITooltipComp; } | string;
     tooltipComponentFramework?: any;
     tooltipComponentParams?: any;
 
-    /** Allows the user to suppress certain keyboard events in the grid header */
-    suppressHeaderKeyboardEvent?: (params: SuppressHeaderKeyboardEventParams) => boolean;
+    /** Never set this, it is used internally by grid when doing in-grid pivoting */
+    pivotKeys?: string[];
 }
 
 export interface ColGroupDef extends AbstractColDef {
-    /** Columns in this group */
+    /** A list containing a mix of columns and column groups. */
     children: (ColDef | ColGroupDef)[];
-    /** Group ID */
+    /** The unique ID to give the column. This is optional. If missing, a unique ID will be generated. This ID is used to identify the column group in the column API. */
     groupId?: string;
-    /** Open by Default */
+    /** Set to `true` if this group should be opened by default. */
     openByDefault?: boolean;
-    /** If true, group cannot be broken up by column moving, child columns will always appear side by side, however you can rearrange child columns within the group */
+    /** Set to `true` to keep columns in this group beside each other in the grid. Moving the columns outside of the group (and hence breaking the group) is not allowed. */
     marryChildren?: boolean;
     /** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used**/
     headerGroupComponent?: string | { new(): IHeaderGroupComp; };
-    /** The custom header group component to be used for rendering the component header in the hosting framework (ie: React/Angular). If none specified the default AG Grid is used**/
+    /** The custom header group component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid is used**/
     headerGroupComponentFramework?: any;
-    /** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used**/
+    /** The params used to configure the header group component. **/
     headerGroupComponentParams?: any;
 }
 
@@ -88,11 +88,11 @@ export interface IAggFuncParams {
 }
 
 export interface HeaderClassParams {
-    api: GridApi
-    colDef: AbstractColDef,
-    column?: Column | null,
-    columnGroup?: ColumnGroup | ProvidedColumnGroup | null,
-    context?: any,
+    api: GridApi;
+    colDef: AbstractColDef;
+    column?: Column | null;
+    columnGroup?: ColumnGroup | ProvidedColumnGroup | null;
+    context?: any;
 }
 export type HeaderClass = string | string[] | ((params: HeaderClassParams) => string | string[]);
 export interface ToolPanelClassParams extends HeaderClassParams { };
@@ -103,105 +103,150 @@ export type ToolPanelClass = string | string[] | ((params: ToolPanelClassParams)
  ***********************************************************************/
 export interface ColDef extends AbstractColDef, IFilterDef {
 
+    // *** Columns *** //
+
     /** The unique ID to give the column. This is optional. If missing, the ID will default to the field.
      *  If both field and colId are missing, a unique ID will be generated.
      *  This ID is used to identify the column in the API for sorting, filtering etc. */
     colId?: string;
-
-    /** If sorting by default, set it here. Set to 'asc' or 'desc' */
-    sort?: string | null;
-    initialSort?: string;
-
-    /** If sorting more than one column by default, specifies order in which the sorting should be applied. */
-    sortIndex?: number | null;
-    initialSortIndex?: number;
-
-    /** @deprecated since v24 - use sortIndex instead*/
-    sortedAt?: number;
-
-    /** The sort order, provide an array with any of the following in any order ['asc','desc',null] */
-    sortingOrder?: (string | null)[];
-
     /** The field of the row to get the cells data from */
     field?: string;
-
     /**
-     * A comma separated string or array of strings containing ColumnType keys which can be used as a template for a column.
+     * A comma separated string or array of strings containing `ColumnType` keys which can be used as a template for a column.
      * This helps to reduce duplication of properties when you have a lot of common column properties.
      */
     type?: string | string[];
-
-    /** Set to true for this column to be hidden. Naturally you might think, it would make more sense to call this field 'visible' and mark it false to hide,
-     *  however we want all default values to be false and we want columns to be visible by default. */
-    hide?: boolean;
-    initialHide?: boolean;
-
-    /** Whether this column is pinned or not. */
-    pinned?: boolean | string | null;
-    initialPinned?: boolean | string;
-
-    /** The field where we get the tooltip on the object */
-    tooltipField?: string;
-
-    /** The function used to calculate the tooltip of the object, tooltipField takes precedence */
-    tooltipValueGetter?: (params: ITooltipParams) => string;
-
-    /** Expression or function to get the cells value. */
+    /** Function or expression. Gets the value from your data for display. */
     valueGetter?: string | ValueGetterFunc;
-
-    /** Expression or function to get the cells value for filtering. */
-    filterValueGetter?: string | ValueGetterFunc;
-
-    /** If not using a field, then this puts the value into the cell */
-    valueSetter?: string | ValueSetterFunc;
-
-    /** Function to return the key for a value - use this if the value is an object (not a primitive type) and you
-     * want to a) group by this field or b) use set filter on this field. */
+    /** A function or expression to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
+    valueFormatter?: string | ValueFormatterFunc;
+    /** Provided a reference data map to be used to map column values to their respective value from the map. */
+    refData?: { [key: string]: string; };
+    /**
+     * Function to return a string key for a value.
+     * This string is used for grouping, Set filtering, and searching within cell editor dropdowns.
+     * When filtering and searching the string is exposed to the user, so make sure to return a human-readable value. */
     keyCreator?: (params: KeyCreatorParams) => string;
-
-    /** Actual width, in pixels, of the cell */
-    width?: number;
-
-    /** Default width, in pixels, of the cell */
-    initialWidth?: number;
-
-    /** Min width, in pixels, of the cell */
-    minWidth?: number;
-
-    /** Max width, in pixels, of the cell */
-    maxWidth?: number;
-
-    /** Sets the grow factor of a column. It specifies how much of the remaining
-     * space should be assigned to the column.
+    /** 
+     * Custom comparator for values, used by renderer to know if values have changed. Cells who's values have not changed don't get refreshed.
+     * By default the grid uses `===` is used which should work for most use cases.
      */
-    flex?: number;
-    initialFlex?: number;
+    equals?: (valueA: any, valueB: any) => boolean;
+    /** The field of the tooltip to apply to the cell. */
+    tooltipField?: string;
+    /** Callback that should return the string used for a tooltip, `tooltipField` takes precedence if set. */
+    tooltipValueGetter?: (params: ITooltipParams) => string;
+    /** `boolean` or `Function`. Set to `true` (or return `true` from function) to render a selection checkbox in the column. */
+    checkboxSelection?: boolean | CheckboxSelectionCallback;
+    /** Icons to use inside the column instead of the grid's default icons. Leave undefined to use defaults. */
+    icons?: { [key: string]: Function | string; };
+    /**
+     * Set to `true` if this column is not navigable (i.e. cannot be tabbed into), otherwise `false`.
+     * Can also be a callback function to have different rows navigable.
+     */
+    suppressNavigable?: boolean | SuppressNavigableCallback;
+    /** Allows the user to suppress certain keyboard events in the grid cell */
+    suppressKeyboardEvent?: (params: SuppressKeyboardEventParams) => boolean;
+    /**
+     * Pasting is on by default as long as cells are editable (non-editable cells cannot be modified, even with a paste operation).
+     * Set to `true` turn paste operations off.
+     */
+    suppressPaste?: boolean | SuppressPasteCallback;
+    /** Set to true to prevent the fillHandle from being rendered in any cell that belongs to this column */
+    suppressFillHandle?: boolean;
 
-    /** True if this column should stretch rows height to fit contents */
-    autoHeight?: boolean;
+    // *** Columns: Display *** //
 
-    /** True if this column should wrap cell contents - typically used with autoHeight */
-    wrapText?: boolean;
+    /** Set to `true` for this column to be hidden. */
+    hide?: boolean;
+    /** Same as 'hide', except only applied when creating a new column. Not applied when updating column definitions. */
+    initialHide?: boolean;
+    /** Set to `true` to block making column visible / hidden via the UI (API will still work). */
+    lockVisible?: boolean;
+    /** Set to `true` to always have this column displayed first. */
+    lockPosition?: boolean;
+    /** Set to `true` if you do not want this column to be movable via dragging. */
+    suppressMovable?: boolean;
 
-    /** Class to use for the cell. Can be string, array of strings, or function. */
-    cellClass?: string | string[] | CellClassFunc;
+    // *** Columns: Editing *** //
 
-    /** An object of css values. Or a function returning an object of css values. */
-    cellStyle?: { [cssProperty: string]: string } | CellStyleFunc;
-
-    /** A function for rendering a cell. */
-    cellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
-    cellRendererFramework?: any;
-    cellRendererParams?: any;
-    cellRendererSelector?: CellRendererSelectorFunc;
-
-    /** Cell editor */
+    /** Set to `true` if this column is editable, otherwise `false`. Can also be a function to have different rows editable. */
+    editable?: boolean | EditableCallback;
+    /** Function or expression. Sets the value into your data for saving. Return `true` if the data changed. */
+    valueSetter?: string | ValueSetterFunc;
+    /** Function or expression. Parses the value for saving. */
+    valueParser?: string | ValueParserFunc;
+    /** A `cellEditor` to use for this column. */
     cellEditor?: string | { new(): ICellEditorComp; };
+    /** Framework `cellEditor` to use for this column. */
     cellEditorFramework?: any;
+    /** Params to be passed to the cell editor component. */
     cellEditorParams?: any;
+    /** Callback to select which cell editor to be used for a given row within the same column. */
     cellEditorSelector?: CellEditorSelectorFunc;
+    /** Set to `true` to have cells under this column enter edit mode after single click. */
+    singleClickEdit?: boolean;
+    /** @deprecated use `valueSetter` instead */
+    newValueHandler?: (params: NewValueParams) => boolean;
+
     cellEditorPopup?: boolean;
     cellEditorPopupPosition?: string;
+
+    // *** Columns: Events *** //
+
+    /** Callback for after the value of a cell has changed, either due to editing or the application calling `api.setValue()`. */
+    onCellValueChanged?: (event: NewValueParams) => void;
+    /** Callback called when a cell is clicked. */
+    onCellClicked?: (event: CellClickedEvent) => void;
+    /** Callback called when a cell is double clicked. */
+    onCellDoubleClicked?: (event: CellDoubleClickedEvent) => void;
+    /** Callback called when a cell is right clicked. */
+    onCellContextMenu?: (event: CellContextMenuEvent) => void;
+
+    // *** Columns: Filtering *** //
+
+    /** A function to tell the grid what quick filter text to use for this column if you don't want to use the default (which is calling `toString` on the value). */
+    getQuickFilterText?: (params: GetQuickFilterTextParams) => string;
+    /** Function or expression. Gets the value for filtering purposes. */
+    filterValueGetter?: string | ValueGetterFunc;
+    /** Whether to display a floating filter for this column. */
+    floatingFilter?: boolean;
+
+    // *** Column Headers *** //
+
+    /** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used. **/
+    headerComponent?: string | { new(): any; };
+    /** The custom header component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid header component is used**/
+    headerComponentFramework?: any;
+    /** The parameters to be passed to the header component. **/
+    headerComponentParams?: any;
+    /** 
+     * Set to an array containing zero, one or many of the following options: `'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab'`.
+     * This is used to figure out which menu tabs are present and in which order the tabs are shown.
+     **/
+    menuTabs?: string[];
+    /** Params used to change the behaviour and appearance of the Columns Menu tab. */
+    columnsMenuParams?: ColumnsMenuParams;
+    /** Set to `true` if no menu should be shown for this column header. */
+    suppressMenu?: boolean;
+    /** If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header. */
+    headerCheckboxSelection?: boolean | HeaderCheckboxSelectionCallback;
+    /** If `true`, the header checkbox selection will only select filtered items. */
+    headerCheckboxSelectionFilteredOnly?: boolean;
+
+    // *** Columns: Integrated Charts *** //
+
+    /** Defines the chart data type that should be used for a column. */
+    chartDataType?: 'category' | 'series' | 'time' | 'excluded';
+
+    // *** Columns: Pinned *** //
+
+    /** Pin a column to one side: `right` or `left`. A value of `true` is converted to `'left'`. */
+    pinned?: boolean | string | null;
+    /** Same as 'pinned', except only applied when creating a new column. Not applied when updating column definitions. */
+    initialPinned?: boolean | string;
+    /** Set to true to block the user pinning the column, the column can only be pinned via definitions or API */
+    lockPinned?: boolean;
 
     /** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. */
     pinnedRowCellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
@@ -209,147 +254,160 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     pinnedRowCellRendererFramework?: any;
     /** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. */
     pinnedRowCellRendererParams?: any;
-
-    /** A function to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */
-    valueFormatter?: string | ValueFormatterFunc;
     /** @deprecated Use valueFormatter for pinned rows, and check params.node.rowPinned. */
     pinnedRowValueFormatter?: string | ValueFormatterFunc;
 
-    /** Gets called after editing, converts the value in the cell. */
-    valueParser?: string | ValueParserFunc;
+    // *** Columns: Pivoting *** //
 
-    /** Name of function to use for aggregation. One of [sum,min,max,first,last] or a function. */
-    aggFunc?: string | IAggFunc | null;
-    initialAggFunc?: string | IAggFunc;
+    /** Set to true to pivot by this column. */
+    pivot?: boolean;
+    /** Same as 'pivot', except only applied when creating a new column. Not applied when updating column definitions. */
+    initialPivot?: boolean;
+    /**
+     * Set this in columns you want to pivot by.
+     * If only pivoting by one column, set this to any number (e.g. `0`).
+     * If pivoting by multiple columns, set this to where you want this column to be in the order of pivots (e.g. `0` for first, `1` for second, and so on).
+     */
+    pivotIndex?: number | null;
+    /** Same as 'pivotIndex', except only applied when creating a new column. Not applied when updating column definitions. */
+    initialPivotIndex?: number;
+    /**
+     * Comparator to use when ordering the pivot columns, when this column is used to pivot on.
+     * The values will always be strings, as the pivot service uses strings as keys for the pivot groups.
+     */
+    pivotComparator?: (valueA: string, valueB: string) => number;
+    /** Set to `true` if you want to be able to pivot by this column via the GUI. This will not block the API or properties being used to achieve pivot. */
+    enablePivot?: boolean;
 
-    /** Agg funcs allowed on this column. If missing, all installed agg funcs are allowed.
-     * Can be eg ['sum','avg']. This will restrict what the GUI allows to select only.*/
-    allowedAggFuncs?: string[];
+    // *** Columns: Rendering and Styling *** //
 
-    /** To group by this column by default, either provide an index (eg rowGroupIndex=1), or set rowGroup=true. */
-    rowGroupIndex?: number | null;
+    /** An object of css values / or function returning an object of css values for a particular cell. */
+    cellStyle?: { [cssProperty: string]: string } | CellStyleFunc;
+    /** Class to use for the cell. Can be string, array of strings, or function that returns a string or array of strings. */
+    cellClass?: string | string[] | CellClassFunc;
+    /** Rules which can be applied to include certain CSS classes. */
+    cellClassRules?: CellClassRules;
+    /** A `cellRenderer` to use for this column. */
+    cellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
+    /** Framework `cellRenderer` to use for this column. */
+    cellRendererFramework?: any;
+    /** Params to be passed to the cell renderer component. */
+    cellRendererParams?: any;
+    /** Callback to select which cell renderer to be used for a given row within the same column. */
+    cellRendererSelector?: CellRendererSelectorFunc;
+
+    /** Set to `true` to have the grid calculate the height of a row based on contents of this column. */
+    autoHeight?: boolean;
+    /** Set to `true` to have the text wrap inside the cell - typically used with `autoHeight`. */
+    wrapText?: boolean;
+    /** Set to `true` to flash a cell when it's refreshed. */
+    enableCellChangeFlash?: boolean;
+    /** Set to `true` to prevent this column from flashing on changes. Only applicable if cell flashing is turned on for the grid. */
+    suppressCellFlash?: boolean;
+
+    // *** Columns: Row Dragging *** //
+
+    /** `boolean` or `Function`. Set to `true` (or return `true` from function) to allow row dragging. */
+    rowDrag?: boolean | RowDragCallback;
+    /**
+     * A callback that should return a string to be displayed by the `rowDragComp` while dragging a row.
+     * If this callback is not set, the current cell value will be used.
+     */
+    rowDragText?: (params: IRowDragItem, dragItemCount: number) => string;
+    /** `boolean` or `Function`. Set to `true` (or return `true` from function) to allow dragging for native drag and drop. */
+    dndSource?: boolean | DndSourceCallback;
+    /** Function to allow custom drag functionality for native drag and drop. */
+    dndSourceOnRowDrag?: (params: { rowNode: RowNode, dragEvent: DragEvent; }) => void;
+
+    // *** Columns: Row Grouping *** //
+
+    /** Set to `true` to row group by this column. */
     rowGroup?: boolean;
-
-    initialRowGroupIndex?: number;
+    /** Same as 'rowGroup', except only applied when creating a new column. Not applied when updating column definitions. */
     initialRowGroup?: boolean;
+    /**
+     * Set this in columns you want to group by.
+     * If only grouping by one column, set this to any number (e.g. `0`).
+     * If grouping by multiple columns, set this to where you want this column to be in the group (e.g. `0` for first, `1` for second, and so on).
+     */
+    rowGroupIndex?: number | null;
+    /** Same as 'rowGroupIndex', except only applied when creating a new column. Not applied when updating column definitions. */
+    initialRowGroupIndex?: number;
+    /**
+     * Set to `true` if you want to be able to row group by this column via the GUI.
+     * This will not block the API or properties being used to achieve row grouping.
+     */
+    enableRowGroup?: boolean;
+    /**
+     * Set to `true` if you want to be able to aggregate by this column via the GUI.
+     * This will not block the API or properties being used to achieve aggregation.
+     */
+    enableValue?: boolean;
+    /** Name of function to use for aggregation. You can also provide your own agg function. */
+    aggFunc?: string | IAggFunc | null;
+    /** Same as 'aggFunc', except only applied when creating a new column. Not applied when updating column definitions. */
+    initialAggFunc?: string | IAggFunc;
+    /**
+     * Aggregation functions allowed on this column e.g. `['sum', 'avg']`.
+     * If missing, all installed functions are allowed.
+     * This will only restrict what the GUI allows a user to select, it does not impact when you set a function via the API. */
+    allowedAggFuncs?: string[];
 
     /** Set to true to have the grid place the values for the group into the cell, or put the name of a grouped column to just show that group. */
     showRowGroup?: string | boolean;
 
-    /** To pivot by this column by default, either provide an index (eg pivotIndex=1), or set pivot=true. */
-    pivotIndex?: number | null;
-    pivot?: boolean;
+    // *** Columns: Sort *** //
 
-    initialPivotIndex?: number;
-    initialPivot?: boolean;
-
+    /** Set to `true` to allow sorting on this column. */
+    sortable?: boolean;
+    /** If sorting by default, set it here. Set to 'asc' or 'desc'. */
+    sort?: string | null;
+    /** Same as `sort`, except only applied when creating a new column. Not applied when updating column definitions. */
+    initialSort?: string;
+    /** If sorting more than one column by default, specifies order in which the sorting should be applied. */
+    sortIndex?: number | null;
+    /** Same as 'sortIndex', except only applied when creating a new column. Not applied when updating column definitions. */
+    initialSortIndex?: number;
+    /**  Array defining the order in which sorting occurs (if sorting is enabled). An array with any of the following in any order ['asc','desc',null] */
+    sortingOrder?: (string | null)[];
     /** Comparator function for custom sorting. */
     comparator?: (valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, isInverted: boolean) => number;
-
-    /** Comparator for values, used by renderer to know if values have changed. Cells who's values have not changed don't get refreshed. */
-    equals?: (valueA: any, valueB: any) => boolean;
-
-    /** Comparator for ordering the pivot columns */
-    pivotComparator?: (valueA: string, valueB: string) => number;
-
-    /** Set to true to render a selection checkbox in the column. */
-    checkboxSelection?: boolean | CheckboxSelectionCallback;
-
-    /** If true, a 'select all' checkbox will be put into the header */
-    headerCheckboxSelection?: boolean | HeaderCheckboxSelectionCallback;
-
-    /** If true, the header checkbox selection will work on filtered items*/
-    headerCheckboxSelectionFilteredOnly?: boolean;
-
-    /** For grid row dragging, set to true to enable row dragging within the grid */
-    rowDrag?: boolean | RowDragCallback;
-
-    /** To configure the text to be displayed in the floating div while dragging a row when rowDrag is true */
-    rowDragText?: (params: IRowDragItem, dragItemCount: number) => string;
-
-    /** For native drag and drop, set to true to enable drag source */
-    dndSource?: boolean | DndSourceCallback;
-
-    /** For native drag and drop, set to true to allow custom onRowDrag processing */
-    dndSourceOnRowDrag?: (params: { rowNode: RowNode, dragEvent: DragEvent; }) => void;
-
-    /** Set to true if no menu should be shown for this column header. */
-    suppressMenu?: boolean;
-
-    /** The menu tabs to show, and in which order, the valid values for this property are:
-     * filterMenuTab, generalMenuTab, columnsMenuTab **/
-    menuTabs?: string[];
-
-    /** Set to true if sorting allowed for this column. */
-    sortable?: boolean;
-
-    /** Set to true to not allow moving this column via dragging it's header */
-    suppressMovable?: boolean;
-
-    /** Set to true to not flash this column for value changes */
-    suppressCellFlash?: boolean;
-
-    /** Set to true to make sure this column is always first. Other columns, if movable, cannot move before this column. */
-    lockPosition?: boolean;
-
-    /** Set to true to block the user showing / hiding the column, the column can only be shown / hidden via definitions or API */
-    lockVisible?: boolean;
-
-    /** Set to true to block the user pinning the column, the column can only be pinned via definitions or API */
-    lockPinned?: boolean;
-
-    /** Set to true if you want the unsorted icon to be shown when no sort is applied to this column. */
+    /** Set to `true` if you want the unsorted icon to be shown when no sort is applied to this column. */
     unSortIcon?: boolean;
 
-    /** Set to true if you want this columns width to be fixed during 'size to fit' operation. */
-    suppressSizeToFit?: boolean;
+    /** @deprecated since v24 - use sortIndex instead*/
+    sortedAt?: number;
 
-    /** Set to true if this column should be resizable */
-    resizable?: boolean;
+    // *** Columns: Spanning *** //
 
-    /** Set to true if you do not want this column to be auto-resizable by double clicking it's edge. */
-    suppressAutoSize?: boolean;
-
-    /** Allows the user to suppress certain keyboard events in the grid cell */
-    suppressKeyboardEvent?: (params: SuppressKeyboardEventParams) => boolean;
-
-    /** If true, GUI will allow adding this columns as a row group */
-    enableRowGroup?: boolean;
-
-    /** If true, GUI will allow adding this columns as a pivot */
-    enablePivot?: boolean;
-
-    /** If true, GUI will allow adding this columns as a value */
-    enableValue?: boolean;
-
-    /** Set to true if this col is editable, otherwise false. Can also be a function to have different rows editable. */
-    editable?: boolean | EditableCallback;
-
+    /** By default, each cell will take up the width of one column. You can change this behaviour to allow cells to span multiple columns. */
     colSpan?: (params: ColSpanParams) => number;
-
+    /** By default, each cell will take up the height of one row. You can change this behaviour to allow cells to span multiple rows. */
     rowSpan?: (params: RowSpanParams) => number;
 
-    /** Set to true if this col should not be allowed take new values from the clipboard . */
-    suppressPaste?: boolean | SuppressPasteCallback;
+    // *** Columns: Widths *** //
 
-    /** Set to true if this col should not be navigable with the tab key. Can also be a function to have different rows editable. */
-    suppressNavigable?: boolean | SuppressNavigableCallback;
-
-    /** To create the quick filter text for this column, if toString is not good enough on the value. */
-    getQuickFilterText?: (params: GetQuickFilterTextParams) => string;
-
-    /** Callbacks for editing. See editing section for further details.
-     * Return true if the update was successful, or false if not.
-     * If false, then skips the UI refresh and no events are emitted.
-     * Return false if the values are the same (ie no update). */
-    newValueHandler?: (params: NewValueParams) => boolean;
-
-    /** If true, this cell will be in editing mode after first click. */
-    singleClickEdit?: boolean;
+    /** Initial width in pixels for the cell. */
+    width?: number;
+    /** Same as 'width', except only applied when creating a new column. Not applied when updating column definitions. */
+    initialWidth?: number;
+    /** Minimum width in pixels for the cell. */
+    minWidth?: number;
+    /** Maximum width in pixels for the cell. */
+    maxWidth?: number;
+    /** Used instead of `width` when the goal is to fill the remaining empty space of the grid. */
+    flex?: number;
+    /** Same as 'flex', except only applied when creating a new column. Not applied when updating column definitions. */
+    initialFlex?: number;
+    /** Set to `true` to allow this column should be resized. */
+    resizable?: boolean;
+    /** Set to `true` if you want this column's width to be fixed during 'size to fit' operations. */
+    suppressSizeToFit?: boolean;
+    /** Set to `true` if you do not want this column to be auto-resizable by double clicking it's edge. */
+    suppressAutoSize?: boolean;
 
     /** Cell template to use for cell. Useful for AngularJS cells. */
     template?: string;
-
     // This property can be reported as Critical Issues by some security scans.
     // We are aware of this, however As 'templateUrl' is a legacy property used by angular 1.x users
     // we don't want to santise it at this late stage due to the potential impact to existing users.
@@ -358,53 +416,10 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     /** Cell template URL to load template from to use for cell. Useful for AngularJS cells. */
     templateUrl?: string;
 
-    /** Rules for applying css classes */
-    cellClassRules?: CellClassRules;
-
-    /** Callbacks for editing.See editing section for further details. */
-    onCellValueChanged?: (event: NewValueParams) => void;
-
-    /** Function callback, gets called when a cell is clicked. */
-    onCellClicked?: (event: CellClickedEvent) => void;
-
-    /** Function callback, gets called when a cell is double clicked. */
-    onCellDoubleClicked?: (event: CellDoubleClickedEvent) => void;
-
-    /** Function callback, gets called when a cell is right clicked. */
-    onCellContextMenu?: (event: CellContextMenuEvent) => void;
-
-    /** Icons for this column. Leave blank to use default. */
-    icons?: { [key: string]: Function | string; };
-
-    /** If true, grid will flash cell after cell is refreshed */
-    enableCellChangeFlash?: boolean;
-
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
     pivotValueColumn?: Column | null;
-
     /** Never set this, it is used internally by grid when doing in-grid pivoting */
     pivotTotalColumnIds?: string[];
-
-    /** The custom header component to be used for rendering the component header. If none specified the default AG Grid is used**/
-    headerComponent?: string | { new(): any; };
-    /** The custom header component to be used for rendering the component header in the hosting framework (ie: React/Angular). If none specified the default AG Grid is used**/
-    headerComponentFramework?: any;
-    /** The custom header component parameters**/
-    headerComponentParams?: any;
-
-    /** Set to true to prevent the fillHandle from being rendered in any cell that belongs to this column */
-    suppressFillHandle?: boolean;
-
-    /** Whether to display a floating filter for this column. */
-    floatingFilter?: boolean;
-
-    refData?: { [key: string]: string; };
-
-    /** Defines the column data type used when charting */
-    chartDataType?: 'category' | 'series' | 'time' | 'excluded';
-
-    /** Params to customise the columns menu behaviour and appearance */
-    columnsMenuParams?: ColumnsMenuParams;
 }
 
 export interface ColumnFunctionCallbackParams {
