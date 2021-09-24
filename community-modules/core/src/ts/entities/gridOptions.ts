@@ -842,101 +842,176 @@ export interface GridOptions {
     // **********************************************************************************************************
 
     // *** Accessories *** //
+    /** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */
     onToolPanelVisibleChanged?(event: ToolPanelVisibleChangedEvent): void;
 
     // *** Clipboard *** //
+    /** Paste operation has started. */
     onPasteStart?(event: PasteStartEvent): void;
+    /** Paste operation has ended. */
     onPasteEnd?(event: PasteEndEvent): void;
 
     // *** Columns *** //
+    /** A column, or group of columns, was hidden / shown. */
     onColumnVisible?(event: ColumnVisibleEvent): void;
+    /** A column, or group of columns, was pinned / unpinned. */
     onColumnPinned?(event: ColumnPinnedEvent): void;
+    /** A column was resized. */
     onColumnResized?(event: ColumnResizedEvent): void;
+    /** A column was moved. To find out when the column move is finished you can use the `dragStopped` event below. */
     onColumnMoved?(event: ColumnMovedEvent): void;
+    /** A value column was added or removed. */
     onColumnValueChanged?(event: ColumnValueChangedEvent): void;
+    /** The pivot mode flag was changed. */
     onColumnPivotModeChanged?(event: ColumnPivotModeChangedEvent): void;
+    /** A pivot column was added, removed or order changed. */
     onColumnPivotChanged?(event: ColumnPivotChangedEvent): void;
+    /** A column group was opened / closed. */
     onColumnGroupOpened?(event: ColumnGroupOpenedEvent): void;
+    /** User set new columns. */
     onNewColumnsLoaded?(event: NewColumnsLoadedEvent): void;
+    /** The list of grid columns changed. */
     onGridColumnsChanged?(event: GridColumnsChangedEvent): void;
+    /** The list of displayed columns changed. This can result from columns open / close, column move, pivot, group, etc. */
     onDisplayedColumnsChanged?(event: DisplayedColumnsChangedEvent): void;
+    /** The list of rendered columns changed (only columns in the visible scrolled viewport are rendered by default). */
     onVirtualColumnsChanged?(event: VirtualColumnsChangedEvent): void;
+    /** Shotgun - gets called when either a) new columns are set or b) `columnApi.setState()` is used, so everything has changed. */
     onColumnEverythingChanged?(event: ColumnEverythingChangedEvent): void;
 
     // *** Components *** //
+    /**
+     * Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript or Angular 1.x).
+     * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change.
+     */
     onComponentStateChanged?(event: ComponentStateChangedEvent): void;
 
     // *** Editing *** //
+    /** Value has changed after editing. */
     onCellValueChanged?(event: CellValueChangedEvent): void;
+    /** A cell's value within a row has changed. This event corresponds to Full Row Editing only. */
     onRowValueChanged?(event: RowValueChangedEvent): void;
+    /** Editing a cell has started. */
     onCellEditingStarted?(event: CellEditingStartedEvent): void;
+    /** Editing a cell has stopped. */
     onCellEditingStopped?(event: CellEditingStoppedEvent): void;
+    /** Editing a row has started (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStarted` will be fired for each individual cell. This event corresponds to Full Row Editing only. */
     onRowEditingStarted?(event: RowEditingStartedEvent): void;
+    /** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. This event corresponds to Full Row Editing only. */
     onRowEditingStopped?(event: RowEditingStoppedEvent): void;
 
     // *** Filtering *** //
+    /** Filter has been opened. */
     onFilterOpened?(event: FilterOpenedEvent): void;
+    /** Filter has been modified and applied. */
     onFilterChanged?(event: FilterChangedEvent): void;
+    /** Filter was modified but not applied. Used when filters have 'Apply' buttons. */
     onFilterModified?(event: FilterModifiedEvent): void;
 
     // *** Integrated Charts *** //
+    /** A chart has been created. */
     onChartCreated?(event: ChartCreated): void;
+    /** The data range for the chart has been changed. */
     onChartRangeSelectionChanged?(event: ChartRangeSelectionChanged): void;
+    /** Formatting changes have been made by users through the Format Panel. */
     onChartOptionsChanged?(event: ChartOptionsChanged): void;
+    /** A chart has been destroyed. */
     onChartDestroyed?(event: ChartDestroyed): void;
 
     // *** Keyboard Navigation *** //
+    /** DOM event `keyDown` happened on a cell. */
     onCellKeyDown?(event: CellKeyDownEvent | FullWidthCellKeyDownEvent): void;
+    /** DOM event `keyPress` happened on a cell. */
     onCellKeyPress?(event: CellKeyPressEvent | FullWidthCellKeyPressEvent): void;
 
     // *** Miscellaneous *** //
+    /** The grid has initialised. Use this event if, for example, you need to use the grid's API to fix the columns to size. */
     onGridReady?(event: GridReadyEvent): void;
+    /** Fired the first time data is rendered into the grid. */
     onFirstDataRendered?(event: FirstDataRenderedEvent): void;
+    /** The size of the grid `div` has changed. In other words, the grid was resized. */
     onGridSizeChanged?(event: GridSizeChangedEvent): void;
+    /** Displayed rows have changed. Triggered after sort, filter or tree expand / collapse events. */
     onModelUpdated?(event: ModelUpdatedEvent): void;
+    /** A row was removed from the DOM, for any reason. Use to clean up resources (if any) used by the row. */
     onVirtualRowRemoved?(event: VirtualRowRemovedEvent): void;
+    /** Which rows are rendered in the DOM has changed. */
     onViewportChanged?(event: ViewportChangedEvent): void;
+    /** The body was scrolled horizontally or vertically. */
     onBodyScroll?(event: BodyScrollEvent): void;
+    /** When dragging starts. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */
     onDragStarted?(event: DragStartedEvent): void;
+    /** When dragging stops. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */
     onDragStopped?(event: DragStoppedEvent): void;
 
     // *** Pagination *** //
+    /**
+     * Triggered every time the paging state changes. Some of the most common scenarios for this event to be triggered are:
+     * 
+     *  - The page size changes.
+     *  - The current shown page is changed.
+     *  - New data is loaded onto the grid.
+     */
     onPaginationChanged?(event: PaginationChangedEvent): void;
 
     // *** Row Drag and Drop *** //
+    /** A drag has started, or dragging was already started and the mouse has re-entered the grid having previously left the grid. */
     onRowDragEnter?(event: RowDragEvent): void;
+    /** The mouse has moved while dragging. */
     onRowDragMove?(event: RowDragEvent): void;
+    /** The mouse has left the grid while dragging. */
     onRowDragLeave?(event: RowDragEvent): void;
+    /** The drag has finished over the grid. */
     onRowDragEnd?(event: RowDragEvent): void;
 
     // *** Row Grouping *** //
+    /** A row group column was added or removed. */
     onColumnRowGroupChanged?(event: ColumnRowGroupChangedEvent): void;
+    /** A row group was opened or closed. */
     onRowGroupOpened?(event: RowGroupOpenedEvent): void;
+    /** Fired when calling either of the API methods `expandAll()` or `collapseAll()`. */
     onExpandOrCollapseAll?(event: ExpandCollapseAllEvent): void;
 
     // *** Row Pinning *** //
+    /** The client has set new pinned row data into the grid. */
     onPinnedRowDataChanged?(event: PinnedRowDataChangedEvent): void;
 
     // *** Row Model: Client Side *** //
+    /** The client has set new data into the grid using `api.setRowData()` or by changing the `rowData` bound property. */
     onRowDataChanged?(event: RowDataChangedEvent): void;
+    /** The client has updated data for the grid using `api.applyTransaction(transaction)` or by changing the `rowData` bound property with `immutableData=true`. */
     onRowDataUpdated?(event: RowDataUpdatedEvent): void;
+    /** Async transactions have been applied. Contains a list of all transaction results. */
     onAsyncTransactionsFlushed?(event: AsyncTransactionsFlushed): void;
 
     // *** Selection *** //
+    /** Cell is clicked. */
     onCellClicked?(event: CellClickedEvent): void;
+    /** Cell is double clicked. */
     onCellDoubleClicked?(event: CellDoubleClickedEvent): void;
+    /** Cell is focused. */
     onCellFocused?(event: CellFocusedEvent): void;
+    /** Mouse entered cell. */
     onCellMouseOver?(event: CellMouseOverEvent): void;
+    /** Mouse left cell. */
     onCellMouseOut?(event: CellMouseOutEvent): void;
+    /** Mouse down on cell. */
     onCellMouseDown?(event: CellMouseDownEvent): void;
+    /** Row is clicked. */
     onRowClicked?(event: RowClickedEvent): void;
+    /** Row is double clicked. */
     onRowDoubleClicked?(event: RowDoubleClickedEvent): void;
+    /** Row is selected or deselected. The event contains the node in question, so call the node's `isSelected()` method to see if it was just selected or deselected. */
     onRowSelected?(event: RowSelectedEvent): void;
+    /** Row selection is changed. Use the grid API `getSelectedNodes()` to get the new list of selected nodes. */
     onSelectionChanged?(event: SelectionChangedEvent): void;
+    /** Cell is right clicked. */
     onCellContextMenu?(event: CellContextMenuEvent): void;
+    /** A change to range selection has occurred. */
     onRangeSelectionChanged?(event: RangeSelectionChangedEvent): void;
 
     // *** Sorting *** //
+    /** Sort has changed. The grid also listens for this and updates the model. */
     onSortChanged?(event: SortChangedEvent): void;
 
     onColumnRowGroupChangeRequest?(event: ColumnRowGroupChangeRequestEvent): void;

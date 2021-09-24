@@ -6,9 +6,7 @@
         "meta": {
             "displayName": "Accessories"
         },
-        "toolPanelVisibleChanged": {
-            "description": "The tool panel was hidden or shown. Use <code>api.isToolPanelShowing()</code> to get status."
-        }
+        "toolPanelVisibleChanged": {}
     },
     "clipboard": {
         "meta": {
@@ -19,14 +17,12 @@
             }
         },
         "pasteStart": {
-            "description": "Paste operation has started.",
             "more": {
                 "name": "Clipboard Events",
                 "url": "/clipboard/#clipboard-events"
             }
         },
         "pasteEnd": {
-            "description": "Paste operation has ended.",
             "more": {
                 "name": "Clipboard Events",
                 "url": "/clipboard/#clipboard-events"
@@ -41,9 +37,7 @@
                 "url": "/components/"
             }
         },
-        "componentStateChanged": {
-            "description": "Only used by React, Angular and VueJS AG Grid components (not used if doing plain JavaScript or Angular 1.x). If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change."
-        }
+        "componentStateChanged": {}
     },
     "selection": {
         "meta": {
@@ -53,42 +47,18 @@
                 "url": "/selection-overview/"
             }
         },
-        "cellClicked": {
-            "description": "Cell is clicked."
-        },
-        "cellDoubleClicked": {
-            "description": "Cell is double clicked."
-        },
-        "cellFocused": {
-            "description": "Cell is focused."
-        },
-        "cellMouseOver": {
-            "description": "Mouse entered cell."
-        },
-        "cellMouseOut": {
-            "description": "Mouse left cell."
-        },
-        "cellMouseDown": {
-            "description": "Mouse down on cell."
-        },
-        "rowClicked": {
-            "description": "Row is clicked."
-        },
-        "rowDoubleClicked": {
-            "description": "Row is double clicked."
-        },
-        "rowSelected": {
-            "description": "Row is selected or deselected. The event contains the node in question, so call the node's `isSelected()` method to see if it was just selected or deselected."
-        },
-        "selectionChanged": {
-            "description": "Row selection is changed. Use the grid API to get the new list of selected nodes."
-        },
-        "cellContextMenu": {
-            "description": "Cell is right clicked."
-        },
-        "rangeSelectionChanged": {
-            "description": "A change to range selection has occurred."
-        }
+        "cellClicked": {},
+        "cellDoubleClicked": {},
+        "cellFocused": {},
+        "cellMouseOver": {},
+        "cellMouseOut": {},
+        "cellMouseDown": {},
+        "rowClicked": {},
+        "rowDoubleClicked": {},
+        "rowSelected": {},
+        "selectionChanged": {},
+        "cellContextMenu": {},
+        "rangeSelectionChanged": {}
     },
     "charts": {
         "meta": {
@@ -98,14 +68,9 @@
                 "url": "/integrated-charts-events/"
             }
         },
-        "chartCreated": {
-            "description": "A chart is created."
-        },
-        "chartRangeSelectionChanged": {
-            "description": "The data range for the chart has been changed."
-        },
+        "chartCreated": {},
+        "chartRangeSelectionChanged": {},
         "chartOptionsChanged": {
-            "description": "Formatting changes have been made by users through the Format Panel.",
             "interfaceHierarchyOverrides": {
                 "exclude": [
                     "ChartOptions"
@@ -113,9 +78,7 @@
                 "include": []
             }
         },
-        "chartDestroyed": {
-            "description": "A chart has been destroyed."
-        }
+        "chartDestroyed": {}
     },
     "editing": {
         "meta": {
@@ -125,23 +88,26 @@
                 "url": "/cell-editing/"
             }
         },
-        "cellValueChanged": {
-            "description": "Value has changed after editing."
-        },
+        "cellValueChanged": {},
         "rowValueChanged": {
-            "description": "A cell's value within a row has changed. This event corresponds to [Full Row Editing](/cell-editing/#full-row-editing) only."
+            "more": {
+                "name": "Full Row Editing",
+                "url": "/cell-editing/#full-row-editing"
+            }
         },
-        "cellEditingStarted": {
-            "description": "Editing a cell has started."
-        },
-        "cellEditingStopped": {
-            "description": "Editing a cell has stopped."
-        },
+        "cellEditingStarted": {},
+        "cellEditingStopped": {},
         "rowEditingStarted": {
-            "description": "Editing a row has started (when row editing is enabled). When row editing, this event will be fired once and <code>cellEditingStarted</code> will be fired for each individual cell. This event corresponds to [Full Row Editing](/cell-editing/#full-row-editing) only."
+            "more": {
+                "name": "Full Row Editing",
+                "url": "/cell-editing/#full-row-editing"
+            }
         },
         "rowEditingStopped": {
-            "description": "Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and <code>cellEditingStopped</code> will be fired for each individual cell. This event corresponds to [Full Row Editing](/cell-editing/#full-row-editing) only."
+            "more": {
+                "name": "Full Row Editing",
+                "url": "/cell-editing/#full-row-editing"
+            }
         }
     },
     "filter": {
@@ -152,15 +118,9 @@
                 "url": "/filtering-overview/"
             }
         },
-        "filterOpened": {
-            "description": "Filter has been opened."
-        },
-        "filterChanged": {
-            "description": "Filter has been modified and applied."
-        },
-        "filterModified": {
-            "description": "Filter was modified but not applied. Used when filters have 'Apply' buttons."
-        }
+        "filterOpened": {},
+        "filterChanged": {},
+        "filterModified": {}
     },
     "sort": {
         "meta": {
@@ -170,9 +130,7 @@
                 "url": "/row-sorting/"
             }
         },
-        "sortChanged": {
-            "description": "Sort has changed. The grid also listens for this and updates the model."
-        }
+        "sortChanged": {}
     },
     "rowDragDrop": {
         "meta": {
@@ -182,62 +140,28 @@
                 "url": "/row-dragging/"
             }
         },
-        "rowDragEnter": {
-            "description": "A drag has started, or dragging was already started and the mouse has re-entered the grid having previously left the grid."
-        },
-        "rowDragMove": {
-            "description": "The mouse has moved while dragging."
-        },
-        "rowDragLeave": {
-            "description": "The mouse has left the grid while dragging."
-        },
-        "rowDragEnd": {
-            "description": "The drag has finished over the grid."
-        }
+        "rowDragEnter": {},
+        "rowDragMove": {},
+        "rowDragLeave": {},
+        "rowDragEnd": {}
     },
     "columns": {
         "meta": {
             "displayName": "Columns"
         },
-        "columnVisible": {
-            "description": "A column, or group of columns, was hidden / shown."
-        },
-        "columnPinned": {
-            "description": "A column, or group of columns, was pinned / unpinned."
-        },
-        "columnResized": {
-            "description": "A column was resized."
-        },
-        "columnMoved": {
-            "description": "A column was moved. To find out when the column move is finished you can use the <code>dragStopped</code> event below."
-        },
-        "columnValueChanged": {
-            "description": "A value column was added or removed."
-        },
-        "columnPivotModeChanged": {
-            "description": "The pivot mode flag was changed."
-        },
-        "columnPivotChanged": {
-            "description": "A pivot column was added, removed or order changed."
-        },
-        "columnGroupOpened": {
-            "description": "A column group was opened / closed."
-        },
-        "newColumnsLoaded": {
-            "description": "User set new columns."
-        },
-        "gridColumnsChanged": {
-            "description": "The list of grid columns changed."
-        },
-        "displayedColumnsChanged": {
-            "description": "The list of displayed columns changed. This can result from columns open / close, column move, pivot, group, etc."
-        },
-        "virtualColumnsChanged": {
-            "description": "The list of rendered columns changed (only columns in the visible scrolled viewport are rendered by default)."
-        },
-        "columnEverythingChanged": {
-            "description": "Shotgun - gets called when either a) new columns are set or b) <code>columnApi.setState()</code> is used, so everything has changed."
-        }
+        "columnVisible": {},
+        "columnPinned": {},
+        "columnResized": {},
+        "columnMoved": {},
+        "columnValueChanged": {},
+        "columnPivotModeChanged": {},
+        "columnPivotChanged": {},
+        "columnGroupOpened": {},
+        "newColumnsLoaded": {},
+        "gridColumnsChanged": {},
+        "displayedColumnsChanged": {},
+        "virtualColumnsChanged": {},
+        "columnEverythingChanged": {}
     },
     "rowGrouping": {
         "meta": {
@@ -247,47 +171,23 @@
                 "url": "/grouping/"
             }
         },
-        "columnRowGroupChanged": {
-            "description": "A row group column was added or removed."
-        },
-        "rowGroupOpened": {
-            "description": "A row group was opened or closed."
-        },
-        "expandOrCollapseAll": {
-            "description": "Fired when calling either of the API methods <code>expandAll()</code> or <code>collapseAll()</code>."
-        }
+        "columnRowGroupChanged": {},
+        "rowGroupOpened": {},
+        "expandOrCollapseAll": {}
     },
     "miscellaneous": {
         "meta": {
             "displayName": "Miscellaneous"
         },
-        "gridReady": {
-            "description": "The grid has initialised. Use this event if, for example, you need to use the grid's API to fix the columns to size."
-        },
-        "firstDataRendered": {
-            "description": "Fired the first time data is rendered into the grid."
-        },
-        "gridSizeChanged": {
-            "description": "The size of the grid <code>div</code> has changed. In other words, the grid was resized."
-        },
-        "modelUpdated": {
-            "description": "Displayed rows have changed. Triggered after sort, filter or tree expand / collapse events."
-        },
-        "virtualRowRemoved": {
-            "description": "A row was removed from the DOM, for any reason. Use to clean up resources (if any) used by the row."
-        },
-        "viewportChanged": {
-            "description": "Which rows are rendered in the DOM has changed."
-        },
-        "bodyScroll": {
-            "description": "The body was scrolled horizontally or vertically."
-        },
-        "dragStarted": {
-            "description": "When dragging starts. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc."
-        },
-        "dragStopped": {
-            "description": "When dragging stops. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc."
-        }
+        "gridReady": {},
+        "firstDataRendered": {},
+        "gridSizeChanged": {},
+        "modelUpdated": {},
+        "virtualRowRemoved": {},
+        "viewportChanged": {},
+        "bodyScroll": {},
+        "dragStarted": {},
+        "dragStopped": {}
     },
     "clientRowModel": {
         "meta": {
@@ -297,15 +197,9 @@
                 "url": "/client-side-model/"
             }
         },
-        "rowDataChanged": {
-            "description": "The client has set new data into the grid using <code>api.setRowData()</code> or by changing the <code>rowData</code> bound property."
-        },
-        "rowDataUpdated": {
-            "description": "The client has updated data for the grid using <code>api.applyTransaction(transaction)</code> or by changing the <code>rowData</code> bound property with <code>immutableData=true</code>."
-        },
-        "asyncTransactionsFlushed": {
-            "description": "Async transactions have been applied. Contains a list of all transaction results."
-        }
+        "rowDataChanged": {},
+        "rowDataUpdated": {},
+        "asyncTransactionsFlushed": {}
     },
     "navigation": {
         "meta": {
@@ -316,14 +210,12 @@
             }
         },
         "cellKeyDown": {
-            "description": "DOM event <code>keyDown</code> happened on a cell.",
             "more": {
                 "name": "Keyboard Events",
                 "url": "/keyboard-navigation/#keyboard-events"
             }
         },
         "cellKeyPress": {
-            "description": "DOM event <code>keyPress</code> happened on a cell.",
             "more": {
                 "name": "Keyboard Events",
                 "url": "/keyboard-navigation/#keyboard-events"
@@ -338,9 +230,7 @@
                 "url": "/row-pagination"
             }
         },
-        "paginationChanged": {
-            "description": "<p>Triggered every time the paging state changes. Some of the most common scenarios for this event to be triggered are:</p><ul class='content'><li>The page size changes</li><li>The current shown page is changed</li><li>New data is loaded onto the grid</li></ul>"
-        }
+        "paginationChanged": {}
     },
     "rowPinning": {
         "meta": {
@@ -350,8 +240,6 @@
                 "url": "/row-pinning/"
             }
         },
-        "pinnedRowDataChanged": {
-            "description": "The client has set new pinned row data into the grid."
-        }
+        "pinnedRowDataChanged": {}
     }
 }
