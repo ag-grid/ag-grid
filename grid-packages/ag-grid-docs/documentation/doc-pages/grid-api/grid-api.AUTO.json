@@ -13,21 +13,25 @@
     "type": { "arguments": {}, "returnType": "AlignedGridsService" }
   },
   "addDetailGridInfo": {
+    "description": "/** Register a detail grid with the master grid when it is created. */",
     "type": {
       "arguments": { "id": "string", "gridInfo": "DetailGridInfo" },
       "returnType": "void"
     }
   },
   "removeDetailGridInfo": {
+    "description": "/** Unregister a detail grid from the master grid when it is destroyed. */",
     "type": { "arguments": { "id": "string" }, "returnType": "void" }
   },
   "getDetailGridInfo": {
+    "description": "/** Returns the `DetailGridInfo` corresponding to the supplied `detailGridId`. */",
     "type": {
       "arguments": { "id": "string" },
       "returnType": "DetailGridInfo | undefined"
     }
   },
   "forEachDetailGridInfo": {
+    "description": "/** Iterates through each `DetailGridInfo` in the grid and calls the supplied callback on each. */",
     "type": {
       "arguments": {
         "callback": "(gridInfo: DetailGridInfo, index: number) => void"
@@ -35,42 +39,49 @@
     }
   },
   "getDataAsCsv": {
+    "description": "/** Similar to `exportDataAsCsv`, except returns the result as a string rather than download it. */",
     "type": {
       "arguments": { "params?": "CsvExportParams" },
       "returnType": "string | undefined"
     }
   },
   "exportDataAsCsv": {
+    "description": "/** Downloads a CSV export of the grid's data. */",
     "type": {
       "arguments": { "params?": "CsvExportParams" },
       "returnType": "void"
     }
   },
   "getDataAsExcel": {
+    "description": "/** Similar to `exportDataAsExcel`, except instead of downloading a file, it will return a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) to be processed by the user. */",
     "type": {
       "arguments": { "params?": "ExcelExportParams" },
       "returnType": "string | Blob | undefined"
     }
   },
   "exportDataAsExcel": {
+    "description": "/** Downloads an Excel export of the grid's data. */",
     "type": {
       "arguments": { "params?": "ExcelExportParams" },
       "returnType": "void"
     }
   },
   "getSheetDataForExcel": {
+    "description": "/** This is method to be used to get the grid's data as a sheet, that will later be exported either by `getMultipleSheetsAsExcel()` or `exportMultipleSheetsAsExcel()`. */",
     "type": {
       "arguments": { "params?": "ExcelExportParams" },
       "returnType": "string | undefined"
     }
   },
   "getMultipleSheetsAsExcel": {
+    "description": "/** Similar to `exportMultipleSheetsAsExcel`, except instead of downloading a file, it will return a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) to be processed by the user. */",
     "type": {
       "arguments": { "params": "ExcelExportMultipleSheetParams" },
       "returnType": "Blob | undefined"
     }
   },
   "exportMultipleSheetsAsExcel": {
+    "description": "/** Downloads an Excel export of multiple sheets in one file. */",
     "type": {
       "arguments": { "params": "ExcelExportMultipleSheetParams" },
       "returnType": "void"
@@ -81,19 +92,28 @@
     "type": { "arguments": { "datasource": "IServerSideDatasource" } }
   },
   "setGridAriaProperty": {
+    "description": "/** Sets an ARIA property in the grid panel (element with `role=\\\"grid\\\"`), and removes an ARIA property when the value is null.\n * \n * Example: `api.setGridAriaProperty('label', 'my grid')` will set `aria-label=\\\"my grid\\\"`.\n * \n * `api.setGridAriaProperty('label', null)` will remove the `aria-label` attribute from the grid element. */",
     "type": {
       "arguments": { "property": "string", "value": "string | null" },
       "returnType": "void"
     }
   },
   "setServerSideDatasource": {
+    "description": "/** Set new datasource for Server-Side Row Model. */",
     "type": { "arguments": { "datasource": "IServerSideDatasource" } }
   },
-  "setDatasource": { "type": { "arguments": { "datasource": "IDatasource" } } },
+  "setDatasource": {
+    "description": "/** Set new datasource for Infinite Row Model. */",
+    "type": { "arguments": { "datasource": "IDatasource" } }
+  },
   "setViewportDatasource": {
+    "description": "/** Set new datasource for Viewport Row Model. */",
     "type": { "arguments": { "viewportDatasource": "IViewportDatasource" } }
   },
-  "setRowData": { "type": { "arguments": { "rowData": "any[]" } } },
+  "setRowData": {
+    "description": "/** Set the row data. */",
+    "type": { "arguments": { "rowData": "any[]" } }
+  },
   "setFloatingTopRowData": {
     "description": "/** @deprecated */",
     "type": { "arguments": { "rows": "any[]" }, "returnType": "void" }
@@ -125,30 +145,37 @@
     }
   },
   "setPinnedTopRowData": {
+    "description": "/** Set the top pinned rows. */",
     "type": { "arguments": { "rows": "any[]" }, "returnType": "void" }
   },
   "setPinnedBottomRowData": {
+    "description": "/** Set the bottom pinned rows. */",
     "type": { "arguments": { "rows": "any[]" }, "returnType": "void" }
   },
   "getPinnedTopRowCount": {
+    "description": "/** Gets the number of top pinned rows. */",
     "type": { "arguments": {}, "returnType": "number" }
   },
   "getPinnedBottomRowCount": {
+    "description": "/** Gets the number of bottom pinned rows. */",
     "type": { "arguments": {}, "returnType": "number" }
   },
   "getPinnedTopRow": {
+    "description": "/** Gets the top pinned row with the specified index. */",
     "type": {
       "arguments": { "index": "number" },
       "returnType": "RowNode | undefined"
     }
   },
   "getPinnedBottomRow": {
+    "description": "/** Gets the top pinned row with the specified index. */",
     "type": {
       "arguments": { "index": "number" },
       "returnType": "RowNode | undefined"
     }
   },
   "setColumnDefs": {
+    "description": "/** Call to set new column definitions. The grid will redraw all the column headers, and then redraw all of the rows. */",
     "type": {
       "arguments": {
         "colDefs": "(ColDef | ColGroupDef)[]",
@@ -157,43 +184,54 @@
     }
   },
   "setAutoGroupColumnDef": {
+    "description": "/** Call to set new auto group column definition. The grid will recreate any auto-group columns if present. */",
     "type": {
       "arguments": { "colDef": "ColDef", "source": "ColumnEventType = \"api\"" }
     }
   },
   "expireValueCache": { "type": { "arguments": {}, "returnType": "void" } },
   "getVerticalPixelRange": {
+    "description": "/** Returns an object with two properties:\n *   - `top`: The top pixel position of the current scroll in the grid\n *   - `bottom`: The bottom pixel position of the current scroll in the grid */",
     "type": {
       "arguments": {},
       "returnType": "{ top: number, bottom: number; }"
     }
   },
   "getHorizontalPixelRange": {
+    "description": "/** Returns an object with two properties:\n * - `left`: The left pixel position of the current scroll in the grid\n * - `right`: The right pixel position of the current scroll in the grid */",
     "type": {
       "arguments": {},
       "returnType": "{ left: number, right: number; }"
     }
   },
   "setAlwaysShowHorizontalScroll": {
+    "description": "/** If `true`, the horizontal scrollbar will always be present, even if not required. Otherwise, it will only be displayed when necessary. */",
     "type": { "arguments": { "show": "boolean" } }
   },
   "setAlwaysShowVerticalScroll": {
+    "description": "/** If `true`, the vertical scrollbar will always be present, even if not required. Otherwise it will only be displayed when necessary. */",
     "type": { "arguments": { "show": "boolean" } }
   },
-  "refreshToolPanel": { "type": { "arguments": {}, "returnType": "void" } },
+  "refreshToolPanel": {
+    "description": "/** Force refresh all tool panels by calling their `refresh` method. */",
+    "type": { "arguments": {}, "returnType": "void" }
+  },
   "refreshCells": {
+    "description": "/** Performs change detection on all cells, refreshing cells where required. */",
     "type": {
       "arguments": { "params": "RefreshCellsParams = {}" },
       "returnType": "void"
     }
   },
   "flashCells": {
+    "description": "/** Flash rows, columns or individual cells. */",
     "type": {
       "arguments": { "params": "FlashCellsParams = {}" },
       "returnType": "void"
     }
   },
   "redrawRows": {
+    "description": "/** Remove row(s) from the DOM and recreate them again from scratch. */",
     "type": {
       "arguments": { "params": "RedrawRowsParams = {}" },
       "returnType": "void"
@@ -222,8 +260,12 @@
   "setFunctionsReadOnly": {
     "type": { "arguments": { "readOnly": "boolean" } }
   },
-  "refreshHeader": { "type": { "arguments": {} } },
+  "refreshHeader": {
+    "description": "/** Redraws the header. Useful if a column name changes, or something else that changes how the column header is displayed. */",
+    "type": { "arguments": {} }
+  },
   "isAnyFilterPresent": {
+    "description": "/** Returns `true` if any filter is set. This includes quick filter, advanced filter or external filter. */",
     "type": { "arguments": {}, "returnType": "boolean" }
   },
   "isAdvancedFilterPresent": {
@@ -231,43 +273,63 @@
     "type": { "arguments": {}, "returnType": "boolean" }
   },
   "isColumnFilterPresent": {
+    "description": "/** Returns `true` if any column filter is set, otherwise `false`. */",
     "type": { "arguments": {}, "returnType": "boolean" }
   },
   "isQuickFilterPresent": {
+    "description": "/** Returns `true` if the quick filter is set, otherwise `false`. */",
     "type": { "arguments": {}, "returnType": "boolean" }
   },
-  "getModel": { "type": { "arguments": {}, "returnType": "IRowModel" } },
+  "getModel": {
+    "description": "/** Returns the row model inside the table.\n * From here you can see the original rows, rows after filter has been applied,\n * rows after aggregation has been applied, and the final set of 'to be displayed' rows. */",
+    "type": { "arguments": {}, "returnType": "IRowModel" }
+  },
   "setRowNodeExpanded": {
+    "description": "/** Expand or collapse a specific row node. */",
     "type": {
       "arguments": { "rowNode": "RowNode", "expanded": "boolean" },
       "returnType": "void"
     }
   },
   "onGroupExpandedOrCollapsed": {
+    "description": "/** If after getting the model, you expand or collapse a group, call this method to inform the grid.\n * It will work out the final set of 'to be displayed' rows again (i.e. expand or collapse the group visually). */",
     "type": { "arguments": { "deprecated_refreshFromIndex?": "any" } }
   },
   "refreshInMemoryRowModel": {
     "type": { "arguments": { "step?": "string" }, "returnType": "any" }
   },
   "refreshClientSideRowModel": {
+    "description": "/** Gets the Client-Side Row Model to refresh, executing the grouping, filtering and sorting again. */",
     "type": { "arguments": { "step?": "string" }, "returnType": "any" }
   },
   "isAnimationFrameQueueEmpty": {
+    "description": "/** Returns `true` when there are no more animation frames left to process. */",
     "type": { "arguments": {}, "returnType": "boolean" }
   },
   "flushAllAnimationFrames": {
     "type": { "arguments": {}, "returnType": "void" }
   },
   "getRowNode": {
+    "description": "/** Returns the row node with the given ID.\n * The row node ID is the one you provide from the callback `getRowNodeId(data)`,\n * otherwise the ID is a number auto-generated by the grid when the row data is set. */",
     "type": {
       "arguments": { "id": "string" },
       "returnType": "RowNode | undefined"
     }
   },
-  "getSizesForCurrentTheme": { "type": { "arguments": {} } },
-  "expandAll": { "type": { "arguments": {} } },
-  "collapseAll": { "type": { "arguments": {} } },
+  "getSizesForCurrentTheme": {
+    "description": "/** Gets the sizes that various UI elements will be rendered at with the current theme.\n * If you override the row or header height using `gridOptions`, the override value you provided will be returned. */",
+    "type": { "arguments": {} }
+  },
+  "expandAll": {
+    "description": "/** Expand all groups. */",
+    "type": { "arguments": {} }
+  },
+  "collapseAll": {
+    "description": "/** Collapse all groups. */",
+    "type": { "arguments": {} }
+  },
   "getToolPanelInstance": {
+    "description": "/** Gets the tool panel instance corresponding to the supplied `id`. */",
     "type": {
       "arguments": { "id": "string" },
       "returnType": "IToolPanel | undefined"
@@ -283,6 +345,7 @@
     }
   },
   "addRenderedRowListener": {
+    "description": "/** Registers a callback to a virtual row.\n * A virtual row is a row that is visually rendered on the screen (rows that are not visible because of the scroll position are not rendered).\n * Unlike normal events, you do not need to unregister rendered row listeners.\n * When the rendered row is removed from the grid, all associated rendered row listeners will also be removed.\n * Currently supports only one event, `virtualRowRemoved`;\n * listen for this event if your `cellRenderer` needs to do cleanup when the row no longer exists. */",
     "type": {
       "arguments": {
         "eventName": "string",
@@ -292,6 +355,7 @@
     }
   },
   "setQuickFilter": {
+    "description": "/** Pass a quick filter text into the grid for filtering. */",
     "type": { "arguments": { "newFilter": "any" }, "returnType": "void" }
   },
   "selectIndex": {
@@ -322,15 +386,39 @@
       "arguments": { "node": "RowNode", "suppressEvents": "boolean = false" }
     }
   },
-  "selectAll": { "type": { "arguments": {} } },
-  "deselectAll": { "type": { "arguments": {} } },
-  "selectAllFiltered": { "type": { "arguments": {} } },
-  "deselectAllFiltered": { "type": { "arguments": {} } },
+  "selectAll": {
+    "description": "/** Select all rows, regardless of filtering and rows that are not visible due to grouping being enabled and their groups not expanded. */",
+    "type": { "arguments": {} }
+  },
+  "deselectAll": {
+    "description": "/** Clear all row selections, regardless of filtering. */",
+    "type": { "arguments": {} }
+  },
+  "selectAllFiltered": {
+    "description": "/** Select all filtered rows. */",
+    "type": { "arguments": {} }
+  },
+  "deselectAllFiltered": {
+    "description": "/** Clear all filtered selections. */",
+    "type": { "arguments": {} }
+  },
   "recomputeAggregates": { "type": { "arguments": {}, "returnType": "void" } },
-  "sizeColumnsToFit": { "type": { "arguments": {} } },
-  "showLoadingOverlay": { "type": { "arguments": {}, "returnType": "void" } },
-  "showNoRowsOverlay": { "type": { "arguments": {}, "returnType": "void" } },
-  "hideOverlay": { "type": { "arguments": {}, "returnType": "void" } },
+  "sizeColumnsToFit": {
+    "description": "/** Sets columns to adjust in size to fit the grid horizontally. */",
+    "type": { "arguments": {} }
+  },
+  "showLoadingOverlay": {
+    "description": "/** Show the 'loading' overlay. */",
+    "type": { "arguments": {}, "returnType": "void" }
+  },
+  "showNoRowsOverlay": {
+    "description": "/** Show the 'no rows' overlay. */",
+    "type": { "arguments": {}, "returnType": "void" }
+  },
+  "hideOverlay": {
+    "description": "/** Hides the overlay if showing. */",
+    "type": { "arguments": {}, "returnType": "void" }
+  },
   "isNodeSelected": { "type": { "arguments": { "node": "any" } } },
   "getSelectedNodesById": {
     "type": {
@@ -339,41 +427,54 @@
     }
   },
   "getSelectedNodes": {
+    "description": "/** Returns a list of selected nodes.\n * Getting the underlying node (rather than the data) is useful when working with tree / aggregated data,\n * as the node can be traversed. */",
     "type": { "arguments": {}, "returnType": "RowNode[]" }
   },
-  "getSelectedRows": { "type": { "arguments": {}, "returnType": "any[]" } },
+  "getSelectedRows": {
+    "description": "/** Returns a list of selected rows (i.e. row data that you provided). */",
+    "type": { "arguments": {}, "returnType": "any[]" }
+  },
   "getBestCostNodeSelection": {
+    "description": "/** Returns a list of all selected nodes at 'best cost', a feature to be used with groups / trees.\n * If a group has all its children selected, then the group appears in the result, but not the children.\n * Designed for use with `'children'` as the group selection type, where groups don't actually appear in the selection normally. */",
     "type": { "arguments": {}, "returnType": "RowNode[] | undefined" }
   },
   "getRenderedNodes": {
+    "description": "/** Retrieve rendered nodes. Due to virtualisation this will contain only the current visible rows and those in the buffer. */",
     "type": { "arguments": {}, "returnType": "RowNode[]" }
   },
   "ensureColIndexVisible": { "type": { "arguments": { "index": "any" } } },
   "ensureColumnVisible": {
+    "description": "/** Ensures the column is visible, scrolling the table if needed. */",
     "type": { "arguments": { "key": "string | Column" } }
   },
   "ensureIndexVisible": {
+    "description": "/** Ensures the row index is visible by vertically scrolling the grid.\n * If a position of `'top'`, `'middle'` or `'bottom'` is supplied, the grid will scroll the grid to place the row at the top, middle or bottom respectively.\n * Otherwise, the grid will do the minimum scrolling possible to show the row.\n * i.e.\n * - if the grid needs to scroll up then it will scroll so that the row is at the top,\n * - if the grid needs to scroll down then it will scroll so that the row is at the bottom,\n * - if the row is already in view then the grid will do nothing. */",
     "type": { "arguments": { "index": "any", "position?": "string | null" } }
   },
   "ensureNodeVisible": {
+    "description": "/** Ensures a row node is visible, scrolling the grid if needed.\n * Provide either:\n * - the node,\n * - the data object\n * - a comparator function (that takes the node as a parameter, and returns `true` for match or `false` for no match). */",
     "type": {
       "arguments": { "comparator": "any", "position": "string | null = null" }
     }
   },
   "forEachLeafNode": {
+    "description": "/** Similar to `forEachNode`, except lists all the leaf nodes.\n * This effectively goes through all the data that you provided to the grid before the grid performed any grouping.\n * If using tree data, goes through all the nodes for the data you provided, including nodes that have children,\n * but excluding groups the grid created where gaps were missing in the hierarchy. */",
     "type": { "arguments": { "callback": "(rowNode: RowNode) => void" } }
   },
   "forEachNode": {
+    "description": "/** Iterates through each node (row) in the grid and calls the callback for each node.\n * This works similar to the `forEach` method on a JavaScript array.\n * This is called for every node, ignoring any filtering or sorting applied within the grid.\n * If using the Infinite Row Model, then this gets called for each page loaded in the page cache. */",
     "type": {
       "arguments": { "callback": "(rowNode: RowNode, index: number) => void" }
     }
   },
   "forEachNodeAfterFilter": {
+    "description": "/** Similar to `forEachNode`, except skips any filtered out data. */",
     "type": {
       "arguments": { "callback": "(rowNode: RowNode, index: number) => void" }
     }
   },
   "forEachNodeAfterFilterAndSort": {
+    "description": "/** Similar to `forEachNodeAfterFilter`, except the callbacks are called in the order the rows are displayed in the grid. */",
     "type": {
       "arguments": { "callback": "(rowNode: RowNode, index: number) => void" }
     }
@@ -382,6 +483,7 @@
     "type": { "arguments": { "colDef": "any" }, "returnType": "any" }
   },
   "getFilterInstance": {
+    "description": "/** Returns the filter component instance for a column.\n * `key` can be a string field name or a ColDef object (matches on object reference, useful if field names are not unique). */",
     "type": {
       "arguments": {
         "key": "string | Column",
@@ -391,8 +493,12 @@
     }
   },
   "getFilterApi": { "type": { "arguments": { "key": "string | Column" } } },
-  "destroyFilter": { "type": { "arguments": { "key": "string | Column" } } },
+  "destroyFilter": {
+    "description": "/** Destroys a filter. Useful to force a particular filter to be created from scratch again. */",
+    "type": { "arguments": { "key": "string | Column" } }
+  },
   "getStatusPanel": {
+    "description": "/** Gets the status panel instance corresponding to the supplied `id`. */",
     "type": {
       "arguments": { "key": "string" },
       "returnType": "IStatusPanelComp | undefined"
@@ -400,25 +506,41 @@
   },
   "getColumnDef": { "type": { "arguments": { "key": "string | Column" } } },
   "getColumnDefs": {
+    "description": "/** Returns the current column definitions. */",
     "type": { "arguments": {}, "returnType": "(ColDef | ColGroupDef)[]" }
   },
-  "onFilterChanged": { "type": { "arguments": {} } },
-  "onSortChanged": { "type": { "arguments": {} } },
+  "onFilterChanged": {
+    "description": "/** Informs the grid that a filter has changed. This is typically called after a filter change through one of the filter APIs. */",
+    "type": { "arguments": {} }
+  },
+  "onSortChanged": {
+    "description": "/** Gets the grid to act as if the sort was changed.\n * Useful if you update some values and want to get the grid to reorder them according to the new values. */",
+    "type": { "arguments": {} }
+  },
   "setSortModel": {
     "type": {
       "arguments": { "sortModel": "any", "source": "ColumnEventType = \"api\"" }
     }
   },
   "getSortModel": { "type": { "arguments": {} } },
-  "setFilterModel": { "type": { "arguments": { "model": "any" } } },
+  "setFilterModel": {
+    "description": "/** Sets the state of all the advanced filters. Provide it with what you get from `getFilterModel()` to restore filter state. */",
+    "type": { "arguments": { "model": "any" } }
+  },
   "getFilterModel": {
+    "description": "/** Gets the current state of all the advanced filters. Used for saving filter state. */",
     "type": { "arguments": {}, "returnType": "{ [key: string]: any; }" }
   },
   "getFocusedCell": {
+    "description": "/** Returns the focused cell (or the last focused cell if the grid lost focus). */",
     "type": { "arguments": {}, "returnType": "CellPosition | null" }
   },
-  "clearFocusedCell": { "type": { "arguments": {}, "returnType": "void" } },
+  "clearFocusedCell": {
+    "description": "/** Clears the focused cell. */",
+    "type": { "arguments": {}, "returnType": "void" }
+  },
   "setFocusedCell": {
+    "description": "/** Sets the focus to the specified cell. */",
     "type": {
       "arguments": {
         "rowIndex": "number",
@@ -428,47 +550,61 @@
     }
   },
   "setSuppressRowDrag": {
+    "description": "/** Sets the `suppressRowDrag` property. */",
     "type": { "arguments": { "value": "boolean" }, "returnType": "void" }
   },
   "setSuppressMoveWhenRowDragging": {
+    "description": "/** Sets the `suppressMoveWhenRowDragging` property. */",
     "type": { "arguments": { "value": "boolean" }, "returnType": "void" }
   },
   "setSuppressRowClickSelection": {
+    "description": "/** Sets the `suppressRowClickSelection` property. */",
     "type": { "arguments": { "value": "boolean" }, "returnType": "void" }
   },
   "addRowDropZone": {
+    "description": "/** Adds a drop zone outside of the grid where rows can be dropped. */",
     "type": {
       "arguments": { "params": "RowDropZoneParams" },
       "returnType": "void"
     }
   },
   "removeRowDropZone": {
+    "description": "/** Removes an external drop zone added by `addRowDropZone`. */",
     "type": {
       "arguments": { "params": "RowDropZoneParams" },
       "returnType": "void"
     }
   },
   "getRowDropZoneParams": {
+    "description": "/** Returns the `RowDropZoneParams` to be used by another grid's `addRowDropZone` method. */",
     "type": {
       "arguments": { "events": "RowDropZoneEvents" },
       "returnType": "RowDropZoneParams"
     }
   },
-  "setHeaderHeight": { "type": { "arguments": { "headerHeight?": "number" } } },
+  "setHeaderHeight": {
+    "description": "/** Sets the height in pixels for the row containing the column label header. */",
+    "type": { "arguments": { "headerHeight?": "number" } }
+  },
   "setDomLayout": { "type": { "arguments": { "domLayout": "string" } } },
   "setEnableCellTextSelection": {
+    "description": "/** Sets the `enableCellTextSelection` property. */",
     "type": { "arguments": { "selectable": "boolean" } }
   },
   "setFillHandleDirection": {
+    "description": "/** Sets the preferred direction for the selection fill handle. */",
     "type": { "arguments": { "direction": "'x' | 'y' | 'xy'" } }
   },
   "setGroupHeaderHeight": {
+    "description": "/** Sets the height in pixels for the rows containing header column groups. */",
     "type": { "arguments": { "headerHeight": "number" } }
   },
   "setFloatingFiltersHeight": {
+    "description": "/** Sets the height in pixels for the row containing the floating filters. */",
     "type": { "arguments": { "headerHeight": "number" } }
   },
   "setPivotGroupHeaderHeight": {
+    "description": "/** Sets the height in pixels for the row containing header column groups when in pivot mode. */",
     "type": { "arguments": { "headerHeight": "number" } }
   },
   "setIsExternalFilterPresent": {
@@ -726,68 +862,106 @@
     }
   },
   "setPivotHeaderHeight": {
+    "description": "/** Sets the height in pixels for the row containing the columns when in pivot mode. */",
     "type": { "arguments": { "headerHeight": "number" } }
   },
-  "isSideBarVisible": { "type": { "arguments": {}, "returnType": "boolean" } },
-  "setSideBarVisible": { "type": { "arguments": { "show": "boolean" } } },
+  "isSideBarVisible": {
+    "description": "/** Returns `true` if the side bar is visible. */",
+    "type": { "arguments": {}, "returnType": "boolean" }
+  },
+  "setSideBarVisible": {
+    "description": "/** Show/hide the entire side bar, including any visible panel and the tab buttons. */",
+    "type": { "arguments": { "show": "boolean" } }
+  },
   "setSideBarPosition": {
+    "description": "/** Sets the side bar position relative to the grid. Possible values are `'left'` or `'right'`. */",
     "type": { "arguments": { "position": "'left' | 'right'" } }
   },
-  "openToolPanel": { "type": { "arguments": { "key": "string" } } },
-  "closeToolPanel": { "type": { "arguments": {} } },
+  "openToolPanel": {
+    "description": "/** Opens a particular tool panel. Provide the ID of the tool panel to open. */",
+    "type": { "arguments": { "key": "string" } }
+  },
+  "closeToolPanel": {
+    "description": "/** Closes the currently open tool panel (if any). */",
+    "type": { "arguments": {} }
+  },
   "getOpenedToolPanel": {
+    "description": "/** Returns the ID of the currently shown tool panel if any, otherwise `null`. */",
     "type": { "arguments": {}, "returnType": "string | null" }
   },
-  "getSideBar": { "type": { "arguments": {}, "returnType": "SideBarDef" } },
+  "getSideBar": {
+    "description": "/** Returns the current side bar configuration. If a shortcut was used, returns the detailed long form. */",
+    "type": { "arguments": {}, "returnType": "SideBarDef" }
+  },
   "setSideBar": {
+    "description": "/** Resets the side bar to the provided configuration. The parameter is the same as the sideBar grid property. The side bar is re-created from scratch with the new config. */",
     "type": { "arguments": { "def": "SideBarDef" }, "returnType": "void" }
   },
   "setSuppressClipboardPaste": {
     "type": { "arguments": { "value": "boolean" }, "returnType": "void" }
   },
   "isToolPanelShowing": {
+    "description": "/** Returns `true` if the tool panel is showing, otherwise `false`. */",
     "type": { "arguments": {}, "returnType": "boolean" }
   },
   "doLayout": { "type": { "arguments": {} } },
-  "resetRowHeights": { "type": { "arguments": {} } },
+  "resetRowHeights": {
+    "description": "/** Tells the grid to recalculate the row heights. */",
+    "type": { "arguments": {} }
+  },
   "setGroupRemoveSingleChildren": {
     "type": { "arguments": { "value": "boolean" } }
   },
   "setGroupRemoveLowestSingleChildren": {
     "type": { "arguments": { "value": "boolean" } }
   },
-  "onRowHeightChanged": { "type": { "arguments": {} } },
+  "onRowHeightChanged": {
+    "description": "/** Tells the grid a row height has changed. To be used after calling `rowNode.setRowHeight(newHeight)`. */",
+    "type": { "arguments": {} }
+  },
   "getValue": {
+    "description": "/** Gets the value for a column for a particular `rowNode` (row).\n * This is useful if you want the raw value of a cell e.g. if implementing your own CSV export. */",
     "type": {
       "arguments": { "colKey": "string | Column", "rowNode": "RowNode" },
       "returnType": "any"
     }
   },
   "addEventListener": {
+    "description": "/** Add an event listener for the specified `eventType`. Works similar to `addEventListener` for a browser DOM element. */",
     "type": {
       "arguments": { "eventType": "string", "listener": "Function" },
       "returnType": "void"
     }
   },
   "addGlobalListener": {
+    "description": "/** Add an event listener for all event types coming from the grid. */",
     "type": { "arguments": { "listener": "Function" }, "returnType": "void" }
   },
   "removeEventListener": {
+    "description": "/** Remove an event listener. */",
     "type": {
       "arguments": { "eventType": "string", "listener": "Function" },
       "returnType": "void"
     }
   },
   "removeGlobalListener": {
+    "description": "/** Remove a global event listener. */",
     "type": { "arguments": { "listener": "Function" }, "returnType": "void" }
   },
   "dispatchEvent": {
     "type": { "arguments": { "event": "AgEvent" }, "returnType": "void" }
   },
-  "destroy": { "type": { "arguments": {}, "returnType": "void" } },
-  "resetQuickFilter": { "type": { "arguments": {}, "returnType": "void" } },
+  "destroy": {
+    "description": "/** Will destroy the grid and release resources. If you are using a framework you do not need to call this, as the grid links in with the framework lifecycle. However if you are using Web Components or native JavaScript, you do need to call this, to avoid a memory leak in your application. */",
+    "type": { "arguments": {}, "returnType": "void" }
+  },
+  "resetQuickFilter": {
+    "description": "/** Reset the quick filter cache text on every rowNode. */",
+    "type": { "arguments": {}, "returnType": "void" }
+  },
   "getRangeSelections": { "type": { "arguments": {}, "returnType": "any" } },
   "getCellRanges": {
+    "description": "/** Returns the list of selected cell ranges. */",
     "type": { "arguments": {}, "returnType": "CellRange[] | null" }
   },
   "camelCaseToHumanReadable": {
@@ -803,44 +977,66 @@
     }
   },
   "addCellRange": {
+    "description": "/** Adds the provided cell range to the selected ranges. */",
     "type": {
       "arguments": { "params": "CellRangeParams" },
       "returnType": "void"
     }
   },
-  "clearRangeSelection": { "type": { "arguments": {}, "returnType": "void" } },
-  "undoCellEditing": { "type": { "arguments": {}, "returnType": "void" } },
-  "redoCellEditing": { "type": { "arguments": {}, "returnType": "void" } },
-  "getCurrentUndoSize": { "type": { "arguments": {}, "returnType": "number" } },
-  "getCurrentRedoSize": { "type": { "arguments": {}, "returnType": "number" } },
+  "clearRangeSelection": {
+    "description": "/** Clears the selected ranges. */",
+    "type": { "arguments": {}, "returnType": "void" }
+  },
+  "undoCellEditing": {
+    "description": "/** Reverts the last cell edit. */",
+    "type": { "arguments": {}, "returnType": "void" }
+  },
+  "redoCellEditing": {
+    "description": "/** Re-applies the most recently undone cell edit. */",
+    "type": { "arguments": {}, "returnType": "void" }
+  },
+  "getCurrentUndoSize": {
+    "description": "/** Returns current number of available cell edit undo operations. */",
+    "type": { "arguments": {}, "returnType": "number" }
+  },
+  "getCurrentRedoSize": {
+    "description": "/** Returns current number of available cell edit redo operations. */",
+    "type": { "arguments": {}, "returnType": "number" }
+  },
   "getChartModels": {
+    "description": "/** Returns a list of models with information about the charts that are currently rendered from the grid. */",
     "type": { "arguments": {}, "returnType": "ChartModel[] | undefined" }
   },
   "getChartRef": {
+    "description": "/** Returns the `ChartRef` using the supplied `chartId`. */",
     "type": {
       "arguments": { "chartId": "string" },
       "returnType": "ChartRef | undefined"
     }
   },
   "getChartImageDataURL": {
+    "description": "/** Returns a string containing the requested data URL which contains a representation of the chart image. */",
     "type": {
       "arguments": { "params": "GetChartImageDataUrlParams" },
       "returnType": "string | undefined"
     }
   },
   "createRangeChart": {
+    "description": "/** Used to programmatically create charts from a range. */",
     "type": {
       "arguments": { "params": "CreateRangeChartParams" },
       "returnType": "ChartRef | undefined"
     }
   },
   "createCrossFilterChart": {
+    "description": "/** Used to programmatically create cross filter charts from a range. */",
     "type": {
       "arguments": { "params": "CreateCrossFilterChartParams" },
       "returnType": "ChartRef | undefined"
     }
   },
   "restoreChart": {
+    "description": "/** Restores a chart using the `ChartModel` that was previously obtained from `getChartModels()`. */",
     "type": {
       "arguments": {
         "chartModel": "ChartModel",
@@ -850,12 +1046,14 @@
     }
   },
   "createPivotChart": {
+    "description": "/** Used to programmatically create pivot charts from a grid. */",
     "type": {
       "arguments": { "params": "CreatePivotChartParams" },
       "returnType": "ChartRef | undefined"
     }
   },
   "copySelectedRowsToClipboard": {
+    "description": "/** Copies the selected rows to the clipboard.\n * Set `includeHeaders = true` to include the headers (default is `false`).\n * Set `columnKeys` to the list of columns if you want just specific columns. */",
     "type": {
       "arguments": {
         "includeHeader": "boolean",
@@ -865,15 +1063,18 @@
     }
   },
   "copySelectedRangeToClipboard": {
+    "description": "/** Copies the selected ranges to the clipboard. */",
     "type": {
       "arguments": { "includeHeader": "boolean" },
       "returnType": "void"
     }
   },
   "copySelectedRangeDown": {
+    "description": "/** Copies the selected range down, similar to `Ctrl + D` in Excel. */",
     "type": { "arguments": {}, "returnType": "void" }
   },
   "showColumnMenuAfterButtonClick": {
+    "description": "/** Shows the column menu after and positions it relative to the provided button element. Use in conjunction with your own header template. */",
     "type": {
       "arguments": {
         "colKey": "string | Column",
@@ -883,6 +1084,7 @@
     }
   },
   "showColumnMenuAfterMouseClick": {
+    "description": "/** Shows the column menu after and positions it relative to the mouse event. Use in conjunction with your own header template. */",
     "type": {
       "arguments": {
         "colKey": "string | Column",
@@ -891,56 +1093,77 @@
       "returnType": "void"
     }
   },
-  "hidePopupMenu": { "type": { "arguments": {}, "returnType": "void" } },
+  "hidePopupMenu": {
+    "description": "/** Hides any visible context menu or column menu. */",
+    "type": { "arguments": {}, "returnType": "void" }
+  },
   "setPopupParent": {
+    "description": "/** DOM element to use as the popup parent for grid popups (context menu, column menu etc). */",
     "type": {
       "arguments": { "ePopupParent": "HTMLElement" },
       "returnType": "void"
     }
   },
-  "tabToNextCell": { "type": { "arguments": {}, "returnType": "boolean" } },
-  "tabToPreviousCell": { "type": { "arguments": {}, "returnType": "boolean" } },
+  "tabToNextCell": {
+    "description": "/** Navigates the grid focus to the next cell, as if tabbing. */",
+    "type": { "arguments": {}, "returnType": "boolean" }
+  },
+  "tabToPreviousCell": {
+    "description": "/** Navigates the grid focus to the previous cell, as if shift-tabbing. */",
+    "type": { "arguments": {}, "returnType": "boolean" }
+  },
   "getCellRendererInstances": {
+    "description": "/** Returns the list of active cell renderer instances. */",
     "type": {
       "arguments": { "params": "GetCellRendererInstancesParams = {}" },
       "returnType": "ICellRenderer[]"
     }
   },
   "getCellEditorInstances": {
+    "description": "/** Returns the list of active cell editor instances. Optionally provide parameters to restrict to certain columns / row nodes. */",
     "type": {
       "arguments": { "params": "GetCellEditorInstancesParams = {}" },
       "returnType": "ICellEditor[]"
     }
   },
   "getEditingCells": {
+    "description": "/** If the grid is editing, returns back details of the editing cell(s). */",
     "type": { "arguments": {}, "returnType": "CellPosition[]" }
   },
   "stopEditing": {
+    "description": "/** If a cell is editing, it stops the editing. Pass `true` if you want to cancel the editing (i.e. don't accept changes). */",
     "type": {
       "arguments": { "cancel": "boolean = false" },
       "returnType": "void"
     }
   },
   "startEditingCell": {
+    "description": "/** Start editing the provided cell. If another cell is editing, the editing will be stopped in that other cell. */",
     "type": {
       "arguments": { "params": "StartEditingCellParams" },
       "returnType": "void"
     }
   },
   "addAggFunc": {
+    "description": "/** Add an aggregation function with the specified key. */",
     "type": {
       "arguments": { "key": "string", "aggFunc": "IAggFunc" },
       "returnType": "void"
     }
   },
   "addAggFuncs": {
+    "description": "/** Add aggregations function with the specified keys. */",
     "type": {
       "arguments": { "aggFuncs": "{ [key: string]: IAggFunc; }" },
       "returnType": "void"
     }
   },
-  "clearAggFuncs": { "type": { "arguments": {}, "returnType": "void" } },
+  "clearAggFuncs": {
+    "description": "/** Clears all aggregation functions (including those provided by the grid). */",
+    "type": { "arguments": {}, "returnType": "void" }
+  },
   "applyServerSideTransaction": {
+    "description": "/** Apply transactions to the server side row model. */",
     "type": {
       "arguments": { "transaction": "ServerSideTransaction" },
       "returnType": "ServerSideTransactionResult | undefined"
@@ -955,11 +1178,15 @@
       "returnType": "void"
     }
   },
-  "retryServerSideLoads": { "type": { "arguments": {}, "returnType": "void" } },
+  "retryServerSideLoads": {
+    "description": "/** Gets all failed server side loads to retry. */",
+    "type": { "arguments": {}, "returnType": "void" }
+  },
   "flushServerSideAsyncTransactions": {
     "type": { "arguments": {}, "returnType": "void" }
   },
   "applyTransaction": {
+    "description": "/** Update row data. Pass a transaction object with lists for `add`, `remove` and `update`. */",
     "type": {
       "arguments": { "rowDataTransaction": "RowDataTransaction" },
       "returnType": "RowNodeTransaction | null | undefined"
@@ -973,6 +1200,7 @@
     }
   },
   "applyTransactionAsync": {
+    "description": "/** Same as `applyTransaction` except executes asynchronously for efficiency. */",
     "type": {
       "arguments": {
         "rowDataTransaction": "RowDataTransaction",
@@ -982,6 +1210,7 @@
     }
   },
   "flushAsyncTransactions": {
+    "description": "/** Executes any remaining asynchronous grid transactions, if any are waiting to be executed. */",
     "type": { "arguments": {}, "returnType": "void" }
   },
   "batchUpdateRowData": {
@@ -1025,14 +1254,20 @@
   "refreshInfinitePageCache": {
     "type": { "arguments": {}, "returnType": "void" }
   },
-  "refreshInfiniteCache": { "type": { "arguments": {}, "returnType": "void" } },
+  "refreshInfiniteCache": {
+    "description": "/** Marks all the currently loaded blocks in the cache for reload.\n * If you have 10 blocks in the cache, all 10 will be marked for reload.\n * The old data will continue to be displayed until the new data is loaded. */",
+    "type": { "arguments": {}, "returnType": "void" }
+  },
   "purgeVirtualPageCache": {
     "type": { "arguments": {}, "returnType": "void" }
   },
   "purgeInfinitePageCache": {
     "type": { "arguments": {}, "returnType": "void" }
   },
-  "purgeInfiniteCache": { "type": { "arguments": {}, "returnType": "void" } },
+  "purgeInfiniteCache": {
+    "description": "/** Purges the cache.\n * The grid is then told to refresh. Only the blocks required to display the current data on screen are fetched (typically no more than 2).\n * The grid will display nothing while the new blocks are loaded.\n * Use this to immediately remove the old data from the user. */",
+    "type": { "arguments": {}, "returnType": "void" }
+  },
   "purgeEnterpriseCache": {
     "description": "/** @deprecated */",
     "type": { "arguments": { "route?": "string[]" }, "returnType": "void" }
@@ -1042,24 +1277,28 @@
     "type": { "arguments": { "route": "string[] = []" }, "returnType": "void" }
   },
   "refreshServerSideStore": {
+    "description": "/** Refresh a server-side store.\n * If you pass no parameters, then the top level cache is purged.\n * To purge a child cache, pass in the string of keys to get to the child cache. */",
     "type": {
       "arguments": { "params": "RefreshStoreParams" },
       "returnType": "void"
     }
   },
   "getServerSideStoreState": {
+    "description": "/** Returns info on all server side stores. */",
     "type": { "arguments": {}, "returnType": "ServerSideStoreState[]" }
   },
   "getVirtualRowCount": {
     "type": { "arguments": {}, "returnType": "number | null | undefined" }
   },
   "getInfiniteRowCount": {
+    "description": "/** The row count defines how many rows the grid allows scrolling to. */",
     "type": { "arguments": {}, "returnType": "number | undefined" }
   },
   "isMaxRowFound": {
     "type": { "arguments": {}, "returnType": "boolean | undefined" }
   },
   "isLastRowIndexKnown": {
+    "description": "/** Returns `true` if grid allows for scrolling past the last row to load more rows, thus providing infinite scroll. */",
     "type": { "arguments": {}, "returnType": "boolean | undefined" }
   },
   "setVirtualRowCount": {
@@ -1075,6 +1314,7 @@
     }
   },
   "setRowCount": {
+    "description": "/** Sets the `rowCount` and `lastRowIndexKnown` properties.\n * The second parameter, `lastRowIndexKnown`, is optional and if left out, only `rowCount` is set.\n * Set `rowCount` to adjust the height of the vertical scroll.\n * Set `lastRowIndexKnown` to enable / disable searching for more rows.\n * Use this method if you add or remove rows into the dataset and need to reset the number of rows or put the data back into 'look for data' mode. */",
     "type": {
       "arguments": { "rowCount": "number", "maxRowFound?": "boolean" },
       "returnType": "void"
@@ -1082,58 +1322,76 @@
   },
   "getVirtualPageState": { "type": { "arguments": {}, "returnType": "any" } },
   "getInfinitePageState": { "type": { "arguments": {}, "returnType": "any" } },
-  "getCacheBlockState": { "type": { "arguments": {}, "returnType": "any" } },
+  "getCacheBlockState": {
+    "description": "/** Returns an object representing the state of the cache. This is useful for debugging and understanding how the cache is working. */",
+    "type": { "arguments": {}, "returnType": "any" }
+  },
   "checkGridSize": { "type": { "arguments": {}, "returnType": "void" } },
   "getFirstRenderedRow": {
     "type": { "arguments": {}, "returnType": "number" }
   },
   "getFirstDisplayedRow": {
+    "description": "/** Get the index of the first displayed row due to scrolling (includes invisible rendered rows in the buffer). */",
     "type": { "arguments": {}, "returnType": "number" }
   },
   "getLastRenderedRow": { "type": { "arguments": {}, "returnType": "number" } },
   "getLastDisplayedRow": {
+    "description": "/** Get the index of the last displayed row due to scrolling (includes invisible rendered rows in the buffer). */",
     "type": { "arguments": {}, "returnType": "number" }
   },
   "getDisplayedRowAtIndex": {
+    "description": "/** Returns the displayed `RowNode` at the given `index`. */",
     "type": {
       "arguments": { "index": "number" },
       "returnType": "RowNode | undefined"
     }
   },
   "getDisplayedRowCount": {
+    "description": "/** Returns the total number of displayed rows. */",
     "type": { "arguments": {}, "returnType": "number" }
   },
   "paginationIsLastPageFound": {
+    "description": "/** Returns `true` when the last page is known.\n * This will always be `true` if you are using the Client-Side Row Model for pagination.\n * Returns `false` when the last page is not known; this only happens when using Infinite Row Model. */",
     "type": { "arguments": {}, "returnType": "boolean" }
   },
   "paginationGetPageSize": {
+    "description": "/** Returns how many rows are being shown per page. */",
     "type": { "arguments": {}, "returnType": "number" }
   },
   "paginationSetPageSize": {
+    "description": "/** Sets the `paginationPageSize`, then re-paginates the grid so the changes are applied immediately. */",
     "type": { "arguments": { "size?": "number" }, "returnType": "void" }
   },
   "paginationGetCurrentPage": {
+    "description": "/** Returns the 0-based index of the page which is showing. */",
     "type": { "arguments": {}, "returnType": "number" }
   },
   "paginationGetTotalPages": {
+    "description": "/** Returns the total number of pages. Returns `null` if `paginationIsLastPageFound() === false`. */",
     "type": { "arguments": {}, "returnType": "number" }
   },
   "paginationGetRowCount": {
+    "description": "/** The total number of rows. Returns `null` if `paginationIsLastPageFound() === false`. */",
     "type": { "arguments": {}, "returnType": "number" }
   },
   "paginationGoToNextPage": {
+    "description": "/** Navigates to the next page. */",
     "type": { "arguments": {}, "returnType": "void" }
   },
   "paginationGoToPreviousPage": {
+    "description": "/** Navigates to the previous page. */",
     "type": { "arguments": {}, "returnType": "void" }
   },
   "paginationGoToFirstPage": {
+    "description": "/** Navigates to the first page. */",
     "type": { "arguments": {}, "returnType": "void" }
   },
   "paginationGoToLastPage": {
+    "description": "/** Navigates to the last page. */",
     "type": { "arguments": {}, "returnType": "void" }
   },
   "paginationGoToPage": {
+    "description": "/** Goes to the specified page. If the page requested doesn't exist, it will go to the last page. */",
     "type": { "arguments": { "page": "number" }, "returnType": "void" }
   }
 }

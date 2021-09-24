@@ -50,8 +50,9 @@ When the cache is enabled, a 'quick filter text' is generated for each node by c
 
 When in use, the quick filter cache text can be reset in any of the following ways:
 
-- Each rowNode has a `resetQuickFilterAggregateText` method on it, which can be called to reset the cache text
+- Each rowNode has a `resetQuickFilterAggregateText()` method on it, which can be called to reset the cache text
 - `rowNode.setDataValue(colKey, newValue)` will also reset the cache text
+- `api.resetQuickFilter()` will reset the cache text on every rowNode.
 - Lastly, if using the grid editing features, when you update a cell, the cache text will be reset
 
 ## Example: Quick Filter
