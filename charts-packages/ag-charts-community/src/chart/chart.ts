@@ -145,7 +145,7 @@ export function toTooltipHtml(input: string | TooltipRendererResult, defaults?: 
 export class ChartTooltip extends Observable {
     chart: Chart;
 
-    element = document.createElement('div');
+    element: HTMLDivElement;
 
     private observer?: IntersectionObserver;
 
@@ -160,6 +160,42 @@ export class ChartTooltip extends Observable {
      * Only has effect on series with markers.
      */
     @reactive() tracking: boolean = true;
+
+    constructor(chart: Chart, document: Document) {
+        super();
+
+        this.chart = chart;
+        this.class = '';
+
+        const tooltipRoot = document.body;
+        const element = document.createElement('div');
+        this.element = tooltipRoot.appendChild(element);
+
+        // Detect when the chart becomes invisible and hide the tooltip as well.
+        if (window.IntersectionObserver) {
+            const target = this.chart.scene.canvas.element;
+            const observer = new IntersectionObserver(entries => {
+                for (const entry of entries) {
+                    if (entry.target === target && entry.intersectionRatio === 0) {
+                        this.toggle(false);
+                    }
+                }
+            }, { root: tooltipRoot });
+            observer.observe(target);
+            this.observer = observer;
+        }
+    }
+
+    destroy() {
+        const { parentNode } = this.element;
+        if (parentNode) {
+            parentNode.removeChild(this.element);
+        }
+
+        if (this.observer) {
+            this.observer.unobserve(this.chart.scene.canvas.element);
+        }
+    }
 
     isVisible(): boolean {
         const { element } = this;
@@ -248,41 +284,6 @@ export class ChartTooltip extends Observable {
             }
         }
         this.updateClass(visible, this.constrained);
-    }
-
-    constructor(chart: Chart) {
-        super();
-
-        this.chart = chart;
-        this.class = '';
-
-        const tooltipRoot = document.body;
-        tooltipRoot.appendChild(this.element);
-
-        // Detect when the chart becomes invisible and hide the tooltip as well.
-        if (window.IntersectionObserver) {
-            const target = this.chart.scene.canvas.element;
-            const observer = new IntersectionObserver(entries => {
-                for (const entry of entries) {
-                    if (entry.target === target && entry.intersectionRatio === 0) {
-                        this.toggle(false);
-                    }
-                }
-            }, { root: tooltipRoot });
-            observer.observe(target);
-            this.observer = observer;
-        }
-    }
-
-    destroy() {
-        const { parentNode } = this.element;
-        if (parentNode) {
-            parentNode.removeChild(this.element);
-        }
-
-        if (this.observer) {
-            this.observer.unobserve(this.chart.scene.canvas.element);
-        }
     }
 }
 
@@ -412,7 +413,7 @@ export abstract class Chart extends Observable {
         legend.item.label.addPropertyListener('formatter', this.updateLegend, this);
         legend.addPropertyListener('position', this.onLegendPositionChange, this);
 
-        this.tooltip = new ChartTooltip(this);
+        this.tooltip = new ChartTooltip(this, document);
         this.tooltip.addPropertyListener('class', () => this.tooltip.toggle());
 
         if (Chart.tooltipDocuments.indexOf(document) < 0) {
