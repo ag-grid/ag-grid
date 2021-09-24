@@ -12,7 +12,8 @@ import {
     RowNode,
     RowNodeTransaction,
     SelectionChangedEvent,
-    SelectionService
+    SelectionService,
+    Beans
 } from "@ag-grid-community/core";
 
 export class ClientSideNodeManager {
@@ -24,10 +25,10 @@ export class ClientSideNodeManager {
     private readonly rootNode: RowNode;
 
     private gridOptionsWrapper: GridOptionsWrapper;
-    private context: Context;
     private eventService: EventService;
     private columnModel: ColumnModel;
     private selectionService: SelectionService;
+    private beans: Beans;
 
     private nextId = 0;
 
@@ -42,16 +43,16 @@ export class ClientSideNodeManager {
     // when user is provide the id's, we also keep a map of ids to row nodes for convenience
     private allNodesMap: {[id:string]: RowNode} = {};
 
-    constructor(rootNode: RowNode, gridOptionsWrapper: GridOptionsWrapper, context: Context, eventService: EventService,
+    constructor(rootNode: RowNode, gridOptionsWrapper: GridOptionsWrapper, eventService: EventService,
                 columnModel: ColumnModel, gridApi: GridApi, columnApi: ColumnApi,
-                selectionService: SelectionService) {
+                selectionService: SelectionService, beans: Beans) {
         this.rootNode = rootNode;
         this.gridOptionsWrapper = gridOptionsWrapper;
-        this.context = context;
         this.eventService = eventService;
         this.columnModel = columnModel;
         this.gridApi = gridApi;
         this.columnApi = columnApi;
+        this.beans = beans;
         this.selectionService = selectionService;
 
         this.rootNode.group = true;
@@ -270,8 +271,8 @@ export class ClientSideNodeManager {
     }
 
     private createNode(dataItem: any, parent: RowNode, level: number): RowNode {
-        const node = new RowNode();
-        this.context.createBean(node);
+        const node = new RowNode(this.beans);
+
         node.group = false;
         this.setMasterForRow(node, dataItem, level, true);
 

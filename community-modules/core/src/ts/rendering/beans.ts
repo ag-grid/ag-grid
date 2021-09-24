@@ -38,6 +38,8 @@ import { NavigationService } from "../gridBodyComp/navigationService";
 import { AgStackComponentsRegistry } from "../components/agStackComponentsRegistry";
 import { CtrlsFactory } from "../ctrlsFactory";
 import { UserComponentRegistry } from "../components/framework/userComponentRegistry";
+import { ValueCache } from "../valueService/valueCache";
+import { RowNodeEventThrottle } from "../entities/rowNodeEventThrottle";
 
 /** Using the IoC has a slight performance consideration, which is no problem most of the
  * time, unless we are trashing objects - which is the case when scrolling and rowComp
@@ -87,6 +89,8 @@ export class Beans {
     @Autowired('ctrlsService') public ctrlsService: CtrlsService;
     @Autowired('ctrlsFactory') public ctrlsFactory: CtrlsFactory;
     @Autowired('agStackComponentsRegistry') public agStackComponentsRegistry: AgStackComponentsRegistry;
+    @Autowired('valueCache') public valueCache: ValueCache;
+    @Autowired('rowNodeEventThrottle') public rowNodeEventThrottle: RowNodeEventThrottle;
 
     public doingMasterDetail: boolean;
 

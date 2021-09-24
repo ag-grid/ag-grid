@@ -6,13 +6,15 @@ import {
     ColumnModel,
     IRowNodeStage,
     RowNode,
-    StageExecuteParams
+    StageExecuteParams,
+    Beans
 } from "@ag-grid-community/core";
 
 @Bean('flattenStage')
 export class FlattenStage extends BeanStub implements IRowNodeStage {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('beans') private beans: Beans;
 
     public execute(params: StageExecuteParams): RowNode[] {
         const rootNode = params.rowNode;
@@ -129,8 +131,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
         // the animate screws up with the daemons hanging around
         if (_.exists(groupNode.sibling)) { return; }
 
-        const footerNode = new RowNode();
-        this.context.createBean(footerNode);
+        const footerNode = new RowNode(this.beans);
 
         Object.keys(groupNode).forEach(function(key) {
             (footerNode as any)[key] = (groupNode as any)[key];
@@ -157,8 +158,7 @@ export class FlattenStage extends BeanStub implements IRowNodeStage {
     private createDetailNode(masterNode: RowNode): RowNode {
         if (_.exists(masterNode.detailNode)) { return masterNode.detailNode; }
 
-        const detailNode = new RowNode();
-        this.context.createBean(detailNode);
+        const detailNode = new RowNode(this.beans);
 
         detailNode.detail = true;
         detailNode.selectable = false;

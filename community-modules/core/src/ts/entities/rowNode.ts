@@ -21,6 +21,7 @@ import { RowNodeEventThrottle } from "./rowNodeEventThrottle";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
 import { debounce } from "../utils/function";
+import { Beans } from "../rendering/beans";
 
 export interface SetSelectedParams {
     // true or false, whatever you want to set selection to
@@ -81,19 +82,6 @@ export class RowNode implements IEventEmitter {
     public static EVENT_UI_LEVEL_CHANGED = 'uiLevelChanged';
     public static EVENT_HIGHLIGHT_CHANGED = 'rowHighlightChanged';
     public static EVENT_DRAGGING_CHANGED = 'draggingChanged';
-
-    @Autowired('eventService') private mainEventService: EventService;
-    @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    @Autowired('selectionService') private selectionService: SelectionService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('valueService') private valueService: ValueService;
-    @Autowired('rowModel') private rowModel: IRowModel;
-    @Autowired('context') private context: Context;
-    @Autowired('valueCache') private valueCache: ValueCache;
-    @Autowired('columnApi') private columnApi: ColumnApi;
-    @Autowired('gridApi') private gridApi: GridApi;
-    @Autowired('rowNodeEventThrottle') private rowNodeEventThrottle: RowNodeEventThrottle;
 
     /** Unique ID for the node. Either provided by the grid, or user can set to match the primary
      * key in the database (or whatever data source is used). */
@@ -260,6 +248,12 @@ export class RowNode implements IEventEmitter {
     private selected: boolean | undefined = false;
     private eventService: EventService | null;
 
+    private beans: Beans;
+
+    constructor(beans: Beans) {
+        this.beans = beans;
+    }
+
     public setData(data: any): void {
         this.setDataCommon(data, false);
     }
@@ -277,7 +271,7 @@ export class RowNode implements IEventEmitter {
         const oldData = this.data;
 
         this.data = data;
-        this.valueCache.onDataChanged();
+        this.beans.valueCache.onDataChanged();
         this.updateDataOnDetailNode();
         this.checkRowSelectable();
 
@@ -325,9 +319,8 @@ export class RowNode implements IEventEmitter {
     }
 
     private createDaemonNode(): RowNode {
-        const oldNode = new RowNode();
+        const oldNode = new RowNode(this.beans);
 
-        this.context.createBean(oldNode);
         // just copy the id and data, this is enough for the node to be used
         // in the selection controller (the selection controller is the only
         // place where daemon nodes can live).
@@ -347,7 +340,7 @@ export class RowNode implements IEventEmitter {
         this.data = data;
         this.updateDataOnDetailNode();
         this.setId(id);
-        this.selectionService.syncInRowNode(this, oldNode);
+        this.beans.selectionService.syncInRowNode(this, oldNode);
         this.checkRowSelectable();
 
         const event: DataChangedEvent = this.createDataChangedEvent(data, oldData, false);
@@ -356,7 +349,7 @@ export class RowNode implements IEventEmitter {
     }
 
     private checkRowSelectable() {
-        const isRowSelectableFunc = this.gridOptionsWrapper.getIsRowSelectableFunc();
+        const isRowSelectableFunc = this.beans.gridOptionsWrapper.getIsRowSelectableFunc();
         this.setRowSelectable(isRowSelectableFunc ? isRowSelectableFunc!(this) : true);
     }
 
@@ -371,7 +364,7 @@ export class RowNode implements IEventEmitter {
 
     public setId(id?: string): void {
         // see if user is providing the id's
-        const getRowNodeId = this.gridOptionsWrapper.getRowNodeIdFunc();
+        const getRowNodeId = this.beans.gridOptionsWrapper.getRowNodeIdFunc();
 
         if (getRowNodeId) {
             // if user is providing the id's, then we set the id only after the data has been set.
@@ -382,6 +375,10 @@ export class RowNode implements IEventEmitter {
                 // it has 'startsWith' in case the user provided a number.
                 if (this.id && typeof this.id === 'string' && startsWith(this.id, RowNode.ID_PREFIX_ROW_GROUP)) {
                     console.error(`AG Grid: Row ID's cannot start with ${RowNode.ID_PREFIX_ROW_GROUP}, this is a reserved prefix for AG Grid's row grouping feature.`);
+                }
+                // force id to be a string
+                if (this.id && typeof this.id !== 'string') {
+                    this.id = '' + this.id;
                 }
             } else {
                 // this can happen if user has set blank into the rowNode after the row previously
@@ -541,7 +538,7 @@ export class RowNode implements IEventEmitter {
         const autoHeights = this.__autoHeights!;
         if (autoHeights==null) { return; }
 
-        const displayedAutoHeightCols = this.columnModel.getAllDisplayedAutoHeightCols();
+        const displayedAutoHeightCols = this.beans.columnModel.getAllDisplayedAutoHeightCols();
         displayedAutoHeightCols.forEach( col => {
             const cellHeight = autoHeights[col.getId()];
             if (cellHeight==null) {
@@ -562,11 +559,11 @@ export class RowNode implements IEventEmitter {
         // means more rows fit in) which looks crap. so best ignore small values and assume 
         // we are still waiting for values to render.
         if (nonePresent || newRowHeight < 10) { 
-            newRowHeight = this.gridOptionsWrapper.getRowHeightForNode(this).height;
+            newRowHeight = this.beans.gridOptionsWrapper.getRowHeightForNode(this).height;
         }
 
         const setTheHeight = (height: number) => {
-            const rowModel = this.rowModel as (IClientSideRowModel | IServerSideRowModel);
+            const rowModel = this.beans.rowModel as (IClientSideRowModel | IServerSideRowModel);
             this.setRowHeight(height);
             rowModel.onRowHeightChanged && rowModel.onRowHeightChanged();
         };
@@ -609,12 +606,12 @@ export class RowNode implements IEventEmitter {
             expanded
         });
 
-        this.rowNodeEventThrottle.dispatchExpanded(event);
+        this.beans.rowNodeEventThrottle.dispatchExpanded(event);
 
         // when using footers we need to refresh the group row, as the aggregation
         // values jump between group and footer
-        if (this.gridOptionsWrapper.isGroupIncludeFooter()) {
-            this.rowRenderer.refreshCells({ rowNodes: [this] });
+        if (this.beans.gridOptionsWrapper.isGroupIncludeFooter()) {
+            this.beans.rowRenderer.refreshCells({ rowNodes: [this] });
         }
     }
 
@@ -625,9 +622,9 @@ export class RowNode implements IEventEmitter {
             data: this.data,
             rowIndex: this.rowIndex,
             rowPinned: this.rowPinned,
-            context: this.gridOptionsWrapper.getContext(),
-            api: this.gridOptionsWrapper.getApi()!,
-            columnApi: this.gridOptionsWrapper.getColumnApi()!
+            context: this.beans.gridOptionsWrapper.getContext(),
+            api: this.beans.gridOptionsWrapper.getApi()!,
+            columnApi: this.beans.gridOptionsWrapper.getColumnApi()!
         };
     }
 
@@ -643,15 +640,15 @@ export class RowNode implements IEventEmitter {
     // this method is for the client to call, so the cell listens for the change
     // event, and also flashes the cell when the change occurs.
     public setDataValue(colKey: string | Column, newValue: any, eventSource?: string): void {
-        const column = this.columnModel.getPrimaryColumn(colKey)!;
-        const oldValue = this.valueService.getValue(column, this);
+        const column = this.beans.columnModel.getPrimaryColumn(colKey)!;
+        const oldValue = this.beans.valueService.getValue(column, this);
 
-        this.valueService.setValue(this, column, newValue, eventSource);
+        this.beans.valueService.setValue(this, column, newValue, eventSource);
         this.dispatchCellChangedEvent(column, newValue, oldValue);
     }
 
     public setGroupValue(colKey: string | Column, newValue: any): void {
-        const column = this.columnModel.getGridColumn(colKey)!;
+        const column = this.beans.columnModel.getGridColumn(colKey)!;
 
         if (missing(this.groupData)) { this.groupData = {}; }
 
@@ -675,7 +672,7 @@ export class RowNode implements IEventEmitter {
         // if no event service, nobody has registered for events, so no need fire event
         if (this.eventService) {
             colIds.forEach(colId => {
-                const column = this.columnModel.getGridColumn(colId)!;
+                const column = this.beans.columnModel.getGridColumn(colId)!;
                 const value = this.aggData ? this.aggData[colId] : undefined;
                 const oldValue = oldAggData ? oldAggData[colId] : undefined;
                 this.dispatchCellChangedEvent(column, value, oldValue);
@@ -804,7 +801,7 @@ export class RowNode implements IEventEmitter {
 
     // to make calling code more readable, this is the same method as setSelected except it takes names parameters
     public setSelectedParams(params: SetSelectedParams): number {
-        const groupSelectsChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
+        const groupSelectsChildren = this.beans.gridOptionsWrapper.isGroupSelectsChildren();
         const newValue = params.newValue === true;
         const clearSelection = params.clearSelection === true;
         const suppressFinishActions = params.suppressFinishActions === true;
@@ -828,12 +825,12 @@ export class RowNode implements IEventEmitter {
             return this.sibling.setSelectedParams(params);
         }
 
-        if (rangeSelect && this.selectionService.getLastSelectedNode()) {
-            const newRowClicked = this.selectionService.getLastSelectedNode() !== this;
-            const allowMultiSelect = this.gridOptionsWrapper.isRowSelectionMulti();
+        if (rangeSelect && this.beans.selectionService.getLastSelectedNode()) {
+            const newRowClicked = this.beans.selectionService.getLastSelectedNode() !== this;
+            const allowMultiSelect = this.beans.gridOptionsWrapper.isRowSelectionMulti();
             if (newRowClicked && allowMultiSelect) {
                 const nodesChanged = this.doRowRangeSelection(params.newValue);
-                this.selectionService.setLastSelectedNode(this);
+                this.beans.selectionService.setLastSelectedNode(this);
                 return nodesChanged;
             }
         }
@@ -859,28 +856,28 @@ export class RowNode implements IEventEmitter {
 
         // clear other nodes if not doing multi select
         if (!suppressFinishActions) {
-            const clearOtherNodes = newValue && (clearSelection || !this.gridOptionsWrapper.isRowSelectionMulti());
+            const clearOtherNodes = newValue && (clearSelection || !this.beans.gridOptionsWrapper.isRowSelectionMulti());
             if (clearOtherNodes) {
-                updatedCount += this.selectionService.clearOtherNodes(this);
+                updatedCount += this.beans.selectionService.clearOtherNodes(this);
             }
 
             // only if we selected something, then update groups and fire events
             if (updatedCount > 0) {
-                this.selectionService.updateGroupsFromChildrenSelections();
+                this.beans.selectionService.updateGroupsFromChildrenSelections();
 
                 // this is the very end of the 'action node', so we are finished all the updates,
                 // include any parent / child changes that this method caused
                 const event: SelectionChangedEvent = {
                     type: Events.EVENT_SELECTION_CHANGED,
-                    api: this.gridApi,
-                    columnApi: this.columnApi
+                    api: this.beans.gridApi,
+                    columnApi: this.beans.columnApi
                 };
-                this.mainEventService.dispatchEvent(event);
+                this.beans.eventService.dispatchEvent(event);
             }
 
             // so if user next does shift-select, we know where to start the selection from
             if (newValue) {
-                this.selectionService.setLastSelectedNode(this);
+                this.beans.selectionService.setLastSelectedNode(this);
             }
         }
 
@@ -891,9 +888,9 @@ export class RowNode implements IEventEmitter {
     // not to be mixed up with 'cell range selection' where you drag the mouse, this is row range selection, by
     // holding down 'shift'.
     private doRowRangeSelection(value: boolean = true): number {
-        const groupsSelectChildren = this.gridOptionsWrapper.isGroupSelectsChildren();
-        const lastSelectedNode = this.selectionService.getLastSelectedNode();
-        const nodesToSelect = this.rowModel.getNodesInRangeForSelection(this, lastSelectedNode);
+        const groupsSelectChildren = this.beans.gridOptionsWrapper.isGroupSelectsChildren();
+        const lastSelectedNode = this.beans.selectionService.getLastSelectedNode();
+        const nodesToSelect = this.beans.rowModel.getNodesInRangeForSelection(this, lastSelectedNode);
 
         let updatedCount = 0;
 
@@ -906,15 +903,15 @@ export class RowNode implements IEventEmitter {
             }
         });
 
-        this.selectionService.updateGroupsFromChildrenSelections();
+        this.beans.selectionService.updateGroupsFromChildrenSelections();
 
         const event: SelectionChangedEvent = {
             type: Events.EVENT_SELECTION_CHANGED,
-            api: this.gridApi,
-            columnApi: this.columnApi
+            api: this.beans.gridApi,
+            columnApi: this.beans.columnApi
         };
 
-        this.mainEventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
 
         return updatedCount;
     }
@@ -949,7 +946,7 @@ export class RowNode implements IEventEmitter {
 
         const event: RowSelectedEvent = this.createGlobalRowEvent(Events.EVENT_ROW_SELECTED);
 
-        this.mainEventService.dispatchEvent(event);
+        this.beans.eventService.dispatchEvent(event);
 
         return true;
     }
@@ -1025,7 +1022,7 @@ export class RowNode implements IEventEmitter {
     }
 
     public isFullWidthCell(): boolean {
-        const isFullWidthCellFunc = this.gridOptionsWrapper.getIsFullWidthCellFunc();
+        const isFullWidthCellFunc = this.beans.gridOptionsWrapper.getIsFullWidthCellFunc();
         return isFullWidthCellFunc ? isFullWidthCellFunc(this) : false;
     }
 

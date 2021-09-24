@@ -6,11 +6,15 @@ import {
     PreDestroy,
     RowNode,
     RowNodeBlock,
-    LoadSuccessParams
+    LoadSuccessParams,
+    Beans,
+    Autowired
 } from "@ag-grid-community/core";
 import { InfiniteCache, InfiniteCacheParams } from "./infiniteCache";
 
 export class InfiniteBlock extends RowNodeBlock {
+
+    @Autowired('beans') private beans: Beans;
 
     private readonly startRow: number;
     private readonly endRow: number;
@@ -134,7 +138,7 @@ export class InfiniteBlock extends RowNodeBlock {
         for (let i = 0; i < this.params.blockSize!; i++) {
             const rowIndex = this.startRow + i;
 
-            const rowNode = this.getContext().createBean(new RowNode());
+            const rowNode = new RowNode(this.beans);
 
             rowNode.setRowHeight(this.params.rowHeight);
             rowNode.uiLevel = 0;

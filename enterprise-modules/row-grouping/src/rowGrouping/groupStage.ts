@@ -15,7 +15,8 @@ import {
     RowNodeTransaction,
     SelectableService,
     StageExecuteParams,
-    ValueService
+    ValueService,
+    Beans
 } from "@ag-grid-community/core";
 import { BatchRemover } from "./batchRemover";
 
@@ -43,6 +44,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('selectableService') private selectableService: SelectableService;
     @Autowired('valueService') private valueService: ValueService;
+    @Autowired('beans') private beans: Beans;
 
     // if doing tree data, this is true. we set this at create time - as our code does not
     // cater for the scenario where this is switched on / off dynamically
@@ -375,8 +377,9 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     private addToParent(child: RowNode, parent: RowNode | null) {
         const mapKey = this.getChildrenMappedKey(child.key!, child.rowGroupColumn);
         if (parent) {
-            if (parent.childrenMapped) {
-                parent.childrenMapped[mapKey] = child;
+            const children = parent.childrenMapped!=null;
+            if (children) {
+                parent.childrenMapped![mapKey] = child;
             }
             parent.childrenAfterGroup!.push(child);
             parent.updateHasChildren();
@@ -529,12 +532,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         details: GroupingDetails): RowNode {
 
         const key = this.getChildrenMappedKey(groupInfo.key, groupInfo.rowGroupColumn);
-
-        const map = parentGroup.childrenMapped;
-        // we use hasOwnProperty as otherwise things like 'constructor' would fail as a key,
-        // as javascript map already has an inherited property 'constructor
-        const nodeExists = map && map.hasOwnProperty(key);
-        let nextNode = nodeExists ? map![key] as RowNode : undefined;
+        let nextNode = parentGroup.childrenMapped ? parentGroup.childrenMapped[key] : undefined;
 
         if (!nextNode) {
             nextNode = this.createGroup(groupInfo, parentGroup, level, details);
@@ -546,8 +544,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     }
 
     private createGroup(groupInfo: GroupInfo, parent: RowNode, level: number, details: GroupingDetails): RowNode {
-        const groupNode = new RowNode();
-        this.context.createBean(groupNode);
+        const groupNode = new RowNode(this.beans);
 
         groupNode.group = true;
         groupNode.field = groupInfo.field;

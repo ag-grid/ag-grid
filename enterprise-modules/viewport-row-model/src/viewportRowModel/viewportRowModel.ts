@@ -14,7 +14,8 @@ import {
     PreDestroy,
     RowBounds,
     RowNode,
-    RowRenderer
+    RowRenderer,
+    Beans
 } from "@ag-grid-community/core";
 
 @Bean('rowModel')
@@ -23,6 +24,7 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
+    @Autowired('beans') private beans: Beans;
 
     // rowRenderer tells us these
     private firstRow = -1;
@@ -242,9 +244,8 @@ export class ViewportRowModel extends BeanStub implements IRowModel {
     }
 
     private createBlankRowNode(rowIndex: number): RowNode {
-        const rowNode = new RowNode();
+        const rowNode = new RowNode(this.beans);
 
-        this.createBean(rowNode);
         rowNode.setRowHeight(this.rowHeight);
         rowNode.setRowTop(this.rowHeight * rowIndex);
         rowNode.setRowIndex(rowIndex);

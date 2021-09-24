@@ -7,12 +7,14 @@ import { GridApi } from "../gridApi";
 import { BeanStub } from "../context/beanStub";
 import { missingOrEmpty } from "../utils/generic";
 import { last } from "../utils/array";
+import { Beans } from "../rendering/beans";
 
 @Bean('pinnedRowModel')
 export class PinnedRowModel extends BeanStub {
 
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('beans') private beans: Beans;
 
     private pinnedTopRows: RowNode[];
     private pinnedBottomRows: RowNode[];
@@ -74,8 +76,7 @@ export class PinnedRowModel extends BeanStub {
         if (allData) {
             let nextRowTop = 0;
             allData.forEach((dataItem: any, index: number) => {
-                const rowNode = new RowNode();
-                this.context.createBean(rowNode);
+                const rowNode = new RowNode(this.beans);
                 rowNode.data = dataItem;
 
                 const idPrefix = isTop ? RowNode.ID_PREFIX_TOP_PINNED : RowNode.ID_PREFIX_BOTTOM_PINNED;
