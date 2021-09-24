@@ -650,7 +650,7 @@ function getPropertyType(type: string | PropertyType, config: Config) {
                     // If an event show the event type instead of Function
                     propertyType = Object.values(type.arguments)[0];
                 } else {
-                    propertyType = `Function${type.optional ? ' | undefined' : ''}`;
+                    propertyType = `Function`;
                 }
             }
             else if (type.returnType) {
@@ -660,10 +660,10 @@ function getPropertyType(type: string | PropertyType, config: Config) {
                 else if (typeof (type.returnType) == 'string') {
                     const inter = config.lookups.interfaces[type.returnType];
                     if (inter && inter.meta && inter.meta.isCallSignature) {
-                        propertyType = `Function${type.optional ? ' | undefined' : ''}`;
+                        propertyType = `Function`;
                     }
                     else {
-                        propertyType = type.optional ? applyUndefinedUnionType(type.returnType) : type.returnType;;
+                        propertyType = type.returnType;
                     }
                 }
             }
