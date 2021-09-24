@@ -814,9 +814,11 @@
       }
     },
     "cellEditorPopup": {
+      "description": "/** Set to `true`, to have the cell editor appear in a popup. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "cellEditorPopupPosition": {
+      "description": "/** Set the position for the popup cell editor. Possible values are\n *   - `over` Popup will be positioned over the cell\n *   - `under` Popup will be positioned below the cell leaving the cell value visible.\n * \n * The default is `over`. */",
       "type": { "returnType": "string", "optional": true }
     },
     "onCellValueChanged": {

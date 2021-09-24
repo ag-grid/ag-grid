@@ -189,7 +189,16 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     /** @deprecated use `valueSetter` instead */
     newValueHandler?: (params: NewValueParams) => boolean;
 
+    /**
+     * Set to `true`, to have the cell editor appear in a popup.
+     */
     cellEditorPopup?: boolean;
+    /**
+     * Set the position for the popup cell editor. Possible values are
+     *  - `over` Popup will be positioned over the cell
+     *  - `under` Popup will be positioned below the cell leaving the cell value visible.
+     *
+     * The default is `over`. */
     cellEditorPopupPosition?: string;
 
     // *** Columns: Events *** //

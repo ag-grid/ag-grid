@@ -574,6 +574,8 @@
       "cellEditorSelector?": "/** Callback to select which cell editor to be used for a given row within the same column. */",
       "singleClickEdit?": "/** Set to `true` to have cells under this column enter edit mode after single click. */",
       "newValueHandler?": "/** @deprecated use `valueSetter` instead\n */",
+      "cellEditorPopup?": "/** Set to `true`, to have the cell editor appear in a popup. */",
+      "cellEditorPopupPosition?": "/** Set the position for the popup cell editor. Possible values are\n *   - `over` Popup will be positioned over the cell\n *   - `under` Popup will be positioned below the cell leaving the cell value visible.\n * \n * The default is `over`. */",
       "onCellValueChanged?": "/** Callback for after the value of a cell has changed, either due to editing or the application calling `api.setValue()`. */",
       "onCellClicked?": "/** Callback called when a cell is clicked. */",
       "onCellDoubleClicked?": "/** Callback called when a cell is double clicked. */",

@@ -143,6 +143,11 @@ export class AgGridColumn {
     @Input() public initialPinned: boolean | string | undefined = undefined;
     /** Defines the chart data type that should be used for a column.     */
     @Input() public chartDataType: 'category' | 'series' | 'time' | 'excluded' | undefined = undefined;
+    /** Set the position for the popup cell editor. Possible values are
+     *   - `over` Popup will be positioned over the cell
+     *   - `under` Popup will be positioned below the cell leaving the cell value visible.
+     * 
+     * The default is `over`.     */
     @Input() public cellEditorPopupPosition: string | undefined = undefined;
     /** @deprecated since v24 - use sortIndex instead
      */
@@ -315,6 +320,7 @@ export class AgGridColumn {
     @Input() public singleClickEdit: boolean | undefined = undefined;
     /** Whether to display a floating filter for this column.     */
     @Input() public floatingFilter: boolean | undefined = undefined;
+    /** Set to `true`, to have the cell editor appear in a popup.     */
     @Input() public cellEditorPopup: boolean | undefined = undefined;
     /** Set to true to prevent the fillHandle from being rendered in any cell that belongs to this column     */
     @Input() public suppressFillHandle: boolean | undefined = undefined;

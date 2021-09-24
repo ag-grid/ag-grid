@@ -414,6 +414,8 @@
                 "include": []
             }
         },
+        "cellEditorPopup": {},
+        "cellEditorPopupPosition": {},
         "singleClickEdit": {
             "default": false
         }
