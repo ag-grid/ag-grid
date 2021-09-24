@@ -176,7 +176,8 @@ export class SelectionService extends BeanStub {
     private syncInOldRowNode(rowNode: RowNode, oldNode: RowNode | null): void {
         const oldNodeHasDifferentId = exists(oldNode) && (rowNode.id !== oldNode.id);
         if (oldNodeHasDifferentId && oldNode) {
-            const oldNodeSelected = exists(this.selectedNodes[oldNode.id!]);
+            const id = oldNode.id!;
+            const oldNodeSelected = this.selectedNodes[id]==rowNode;
             if (oldNodeSelected) {
                 this.selectedNodes[oldNode.id!] = oldNode;
             }
