@@ -4,7 +4,7 @@
     },
     "columns": {
         "meta": {
-            "displayName": "Columns",
+            "displayName": "Columns"
         },
         "getColumn": {},
         "getAllColumns": {},
