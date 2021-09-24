@@ -161,13 +161,12 @@ export class ChartTooltip extends Observable {
      */
     @reactive() tracking: boolean = true;
 
-    constructor(chart: Chart) {
+    constructor(chart: Chart, document: Document) {
         super();
 
         this.chart = chart;
         this.class = '';
 
-        const document = chart.scene.canvas.element.ownerDocument;
         const tooltipRoot = document.body;
         const element = document.createElement('div');
         this.element = tooltipRoot.appendChild(element);
@@ -414,7 +413,7 @@ export abstract class Chart extends Observable {
         legend.item.label.addPropertyListener('formatter', this.updateLegend, this);
         legend.addPropertyListener('position', this.onLegendPositionChange, this);
 
-        this.tooltip = new ChartTooltip(this);
+        this.tooltip = new ChartTooltip(this, document);
         this.tooltip.addPropertyListener('class', () => this.tooltip.toggle());
 
         if (Chart.tooltipDocuments.indexOf(document) < 0) {
