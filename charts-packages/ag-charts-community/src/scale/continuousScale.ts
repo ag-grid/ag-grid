@@ -7,7 +7,7 @@ import { ascending } from "../util/compare";
 const constant = (x: any) => () => x;
 const identity = (x: any) => x;
 
-function clamper(domain: number[]): (x: number) => number {
+export function clamper(domain: number[]): (x: number) => number {
     let a = domain[0];
     let b = domain[domain.length - 1];
 
@@ -167,7 +167,9 @@ export abstract class ContinuousScale implements Scale<any, any> {
         if (!this.output) {
             this.output = this.piecewise!(this.domain.map(this.transform), this.range, this.interpolate);
         }
-        return this.output(this.transform(this._clamp(x)));
+        const clamper: (domain: number[]) => (x: number) => number = arguments[1];
+        const clamp = clamper ? clamper(this.domain) : this._clamp;
+        return this.output(this.transform(clamp(x)));
     }
 
     invert(y: any): any {
