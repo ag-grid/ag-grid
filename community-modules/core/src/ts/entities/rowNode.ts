@@ -83,19 +83,6 @@ export class RowNode implements IEventEmitter {
     public static EVENT_HIGHLIGHT_CHANGED = 'rowHighlightChanged';
     public static EVENT_DRAGGING_CHANGED = 'draggingChanged';
 
-    // @Autowired('eventService') private mainEventService: EventService;
-    // @Autowired('rowRenderer') private rowRenderer: RowRenderer;
-    // @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;
-    // @Autowired('selectionService') private selectionService: SelectionService;
-    // @Autowired('columnModel') private columnModel: ColumnModel;
-    // @Autowired('valueService') private valueService: ValueService;
-    // @Autowired('rowModel') private rowModel: IRowModel;
-    // @Autowired('context') private context: Context;
-    // @Autowired('valueCache') private valueCache: ValueCache;
-    // @Autowired('columnApi') private columnApi: ColumnApi;
-    // @Autowired('gridApi') private gridApi: GridApi;
-    // @Autowired('rowNodeEventThrottle') private rowNodeEventThrottle: RowNodeEventThrottle;
-
     /** Unique ID for the node. Either provided by the grid, or user can set to match the primary
      * key in the database (or whatever data source is used). */
     public id: string | undefined;
