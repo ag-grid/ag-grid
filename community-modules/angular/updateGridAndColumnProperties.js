@@ -191,15 +191,32 @@ function getGridColumnPropertiesJs() {
         return self.indexOf(value) === index;
     }
 
+    let propsToWrite = [];
+    const typeKeysOrder = Object.keys(context.typeLookup);
+
     ColDefUtil.ALL_PROPERTIES.filter(unique).forEach((property) => {
         if (skippableProperties.indexOf(property) === -1) {
             const typeName = context.typeLookup[property];
-
             const inputType = getSafeType(typeName)
-            result = addDocLine(context.docLookup, property, result);
-            result += `    @Input() public ${property}: ${inputType} = undefined;${EOL}`;
+
+            let line = addDocLine(context.docLookup, property, '');
+            line += `    @Input() public ${property}: ${inputType} = undefined;${EOL}`;
+            const order = typeKeysOrder.findIndex(p => p === property);
+            propsToWrite.push({ order, line });
         }
     });
+
+    propsToWrite = propsToWrite.sort((a, b) => {
+        if (a.order < b.order) return -1;
+        if (a.order > b.order) return 1;
+        return 0
+    });
+    propsToWrite.map(p => {
+        result += p.line;
+    })
+
+    // for readability
+    result += EOL;
 
     result = addTypeCoercionHints(result, ColDefUtil.BOOLEAN_PROPERTIES);
 
