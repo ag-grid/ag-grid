@@ -696,7 +696,7 @@ export interface GridOptions {
     /** Default row height in pixels. */
     rowHeight?: number;
     /** The style properties to apply to all rows. Set to an object of key (style names) and values (style values) */
-    rowStyle?: { [cssProperty: string]: string };
+    rowStyle?: RowStyle;
     /** CSS class(es) for all rows. Provide either a string (class name) or array of strings (array of class names). */
     rowClass?: string | string[];
     /** Rules which can be applied to include certain CSS classes. */
@@ -828,7 +828,7 @@ export interface GridOptions {
 
     // *** Styling *** //
     /** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values. */
-    getRowStyle?: (params: RowClassParams) => { [cssProperty: string]: string };
+    getRowStyle?: (params: RowClassParams) => RowStyle;
     /** Callback version of property `rowClass` to set class(es) for each row individually. Function should return either a string (class name), array of strings (array of class names) or undefined for no class. */
     getRowClass?: (params: RowClassParams) => string | string[] | undefined;
     /** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height. */
@@ -1095,6 +1095,8 @@ export interface IsRowSelectable {
 export interface RowClassRules {
     [cssClassName: string]: (((params: RowClassParams) => boolean) | string);
 }
+
+export interface RowStyle { [cssProperty: string]: string | number; }
 
 export interface RowClassParams {
     /** The data associated with this row from rowData */

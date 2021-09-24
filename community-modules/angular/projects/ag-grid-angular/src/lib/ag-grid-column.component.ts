@@ -1,4 +1,4 @@
-import { CellClassFunc, CellClassRules, CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditorSelectorFunc, CellRendererSelectorFunc, CellStyleFunc, CheckboxSelectionCallback, ColDef, ColGroupDef, ColSpanParams, ColumnsMenuParams, DndSourceCallback, EditableCallback, GetQuickFilterTextParams, HeaderCheckboxSelectionCallback, HeaderClass, HeaderValueGetterFunc, IAggFunc, ICellEditorComp, ICellRendererComp, ICellRendererFunc, IHeaderGroupComp, IRowDragItem, ITooltipComp, ITooltipParams, KeyCreatorParams, NewValueParams, RowDragCallback, RowNode, RowSpanParams, SuppressHeaderKeyboardEventParams, SuppressKeyboardEventParams, SuppressNavigableCallback, SuppressPasteCallback, ToolPanelClass, ValueFormatterFunc, ValueGetterFunc, ValueParserFunc, ValueSetterFunc } from "@ag-grid-community/core";
+import { CellClassFunc, CellClassRules, CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditorSelectorFunc, CellRendererSelectorFunc, CellStyle, CellStyleFunc, CheckboxSelectionCallback, ColDef, ColGroupDef, ColSpanParams, ColumnsMenuParams, DndSourceCallback, EditableCallback, GetQuickFilterTextParams, HeaderCheckboxSelectionCallback, HeaderClass, HeaderValueGetterFunc, IAggFunc, ICellEditorComp, ICellRendererComp, ICellRendererFunc, IHeaderGroupComp, IRowDragItem, ITooltipComp, ITooltipParams, KeyCreatorParams, NewValueParams, RowDragCallback, RowNode, RowSpanParams, SuppressHeaderKeyboardEventParams, SuppressKeyboardEventParams, SuppressNavigableCallback, SuppressPasteCallback, ToolPanelClass, ValueFormatterFunc, ValueGetterFunc, ValueParserFunc, ValueSetterFunc } from "@ag-grid-community/core";
 import { Component, ContentChildren, Input, QueryList } from "@angular/core";
 
 @Component({
@@ -227,7 +227,7 @@ export class AgGridColumn {
     /** Set to `true` if you want to be able to pivot by this column via the GUI. This will not block the API or properties being used to achieve pivot.     */
     @Input() public enablePivot: boolean | undefined = undefined;
     /** An object of css values / or function returning an object of css values for a particular cell.     */
-    @Input() public cellStyle: { [cssProperty: string]: string } | CellStyleFunc | undefined = undefined;
+    @Input() public cellStyle: CellStyle | CellStyleFunc | undefined = undefined;
     /** Class to use for the cell. Can be string, array of strings, or function that returns a string or array of strings.     */
     @Input() public cellClass: string | string[] | CellClassFunc | undefined = undefined;
     /** Rules which can be applied to include certain CSS classes.     */

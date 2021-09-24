@@ -98,8 +98,6 @@ import {
     ModelUpdatedEvent,
     PasteStartEvent,
     PasteEndEvent,
-    FillStartEvent,
-    FillEndEvent,
     CellClickedEvent,
     CellDoubleClickedEvent,
     CellMouseDownEvent,
@@ -142,6 +140,7 @@ import {
     ProcessCellForExportParams,
     ProcessHeaderForExportParams,
     ProcessChartOptionsParams,
+    RowStyle,
     RowClassRules,
     RowClassParams,
     RowHeightParams,
@@ -783,7 +782,7 @@ export class AgGridAngular implements AfterViewInit {
     /** Default row height in pixels.     */
     @Input() public rowHeight: number | undefined = undefined;
     /** The style properties to apply to all rows. Set to an object of key (style names) and values (style values)     */
-    @Input() public rowStyle: { [cssProperty: string]: string } | undefined = undefined;
+    @Input() public rowStyle: RowStyle | undefined = undefined;
     /** CSS class(es) for all rows. Provide either a string (class name) or array of strings (array of class names).     */
     @Input() public rowClass: string | string[] | undefined = undefined;
     /** Rules which can be applied to include certain CSS classes.     */
@@ -883,7 +882,7 @@ export class AgGridAngular implements AfterViewInit {
     /** Callback to perform additional sorting after the grid has sorted the rows.     */
     @Input() public postSort: ((nodes: RowNode[]) =>  void) | undefined = undefined;
     /** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values.     */
-    @Input() public getRowStyle: ((params: RowClassParams) => { [cssProperty: string]: string }) | undefined = undefined;
+    @Input() public getRowStyle: ((params: RowClassParams) => RowStyle) | undefined = undefined;
     /** Callback version of property `rowClass` to set class(es) for each row individually. Function should return either a string (class name), array of strings (array of class names) or undefined for no class.     */
     @Input() public getRowClass: ((params: RowClassParams) => string | string[] | undefined) | undefined = undefined;
     /** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height.     */

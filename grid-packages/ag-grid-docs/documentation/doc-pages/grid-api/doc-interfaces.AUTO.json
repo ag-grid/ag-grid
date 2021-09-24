@@ -972,10 +972,7 @@
     },
     "cellStyle": {
       "description": "/** An object of css values / or function returning an object of css values for a particular cell. */",
-      "type": {
-        "returnType": "{ [cssProperty: string]: string } | CellStyleFunc",
-        "optional": true
-      }
+      "type": { "returnType": "CellStyle | CellStyleFunc", "optional": true }
     },
     "cellClass": {
       "description": "/** Class to use for the cell. Can be string, array of strings, or function that returns a string or array of strings. */",
@@ -1930,6 +1927,7 @@
   },
   "CellClassFunc": {},
   "CellStyleFunc": {},
+  "CellStyle": {},
   "CellClassRules": {},
   "CellRendererSelectorFunc": {},
   "CellEditorSelectorFunc": {},
@@ -2923,10 +2921,7 @@
     },
     "rowStyle": {
       "description": "/** The style properties to apply to all rows. Set to an object of key (style names) and values (style values) */",
-      "type": {
-        "returnType": "{ [cssProperty: string]: string }",
-        "optional": true
-      }
+      "type": { "returnType": "RowStyle", "optional": true }
     },
     "rowClass": {
       "description": "/** CSS class(es) for all rows. Provide either a string (class name) or array of strings (array of class names). */",
@@ -3240,7 +3235,7 @@
       "description": "/** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values. */",
       "type": {
         "arguments": { "params": "RowClassParams" },
-        "returnType": "{ [cssProperty: string]: string; }",
+        "returnType": "RowStyle",
         "optional": true
       }
     },
@@ -4596,6 +4591,7 @@
   "IsRowMaster": {},
   "IsRowSelectable": {},
   "RowClassRules": {},
+  "RowStyle": {},
   "RowClassParams": {
     "data": {
       "description": "/** The data associated with this row from rowData */",

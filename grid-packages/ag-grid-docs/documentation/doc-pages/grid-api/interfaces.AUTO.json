@@ -474,7 +474,7 @@
       "initialPivotIndex?": "number",
       "pivotComparator?": "(valueA: string, valueB: string) => number",
       "enablePivot?": "boolean",
-      "cellStyle?": "{ [cssProperty: string]: string; } | CellStyleFunc",
+      "cellStyle?": "CellStyle | CellStyleFunc",
       "cellClass?": "string | string[] | CellClassFunc",
       "cellClassRules?": "CellClassRules",
       "cellRenderer?": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
@@ -1266,6 +1266,10 @@
       "returnType": "{}"
     }
   },
+  "CellStyle": {
+    "meta": {},
+    "type": { "[cssProperty: string]": "string | number" }
+  },
   "CellClassRules": {
     "meta": {},
     "type": {
@@ -1541,7 +1545,7 @@
       "suppressMaintainUnsortedOrder?": "boolean",
       "icons?": "{ [key: string]: Function | string; }",
       "rowHeight?": "number",
-      "rowStyle?": "{ [cssProperty: string]: string; }",
+      "rowStyle?": "RowStyle",
       "rowClass?": "string | string[]",
       "rowClassRules?": "RowClassRules",
       "suppressRowHoverHighlight?": "boolean",
@@ -1593,7 +1597,7 @@
       "isRowMaster?": "IsRowMaster",
       "fillOperation?": "(params: FillOperationParams) => any",
       "postSort?(nodes: RowNode[])": "void",
-      "getRowStyle?": "(params: RowClassParams) => { [cssProperty: string]: string; }",
+      "getRowStyle?": "(params: RowClassParams) => RowStyle",
       "getRowClass?": "(params: RowClassParams) => string | string[] | undefined",
       "getRowHeight?": "(params: RowHeightParams) => number | undefined | null",
       "isFullWidthCell?(rowNode: RowNode)": "boolean",
@@ -2101,6 +2105,10 @@
     "type": {
       "[cssClassName: string]": "(((params: RowClassParams) => boolean) | string)"
     }
+  },
+  "RowStyle": {
+    "meta": {},
+    "type": { "[cssProperty: string]": "string | number" }
   },
   "RowClassParams": {
     "meta": {},

@@ -916,7 +916,7 @@
   },
   "rowStyle": {
     "description": "/** The style properties to apply to all rows. Set to an object of key (style names) and values (style values) */",
-    "type": { "returnType": "{ [cssProperty: string]: string }" }
+    "type": { "returnType": "RowStyle" }
   },
   "rowClass": {
     "description": "/** CSS class(es) for all rows. Provide either a string (class name) or array of strings (array of class names). */",
@@ -1171,7 +1171,7 @@
     "description": "/** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values. */",
     "type": {
       "arguments": { "params": "RowClassParams" },
-      "returnType": "{ [cssProperty: string]: string; }"
+      "returnType": "RowStyle"
     }
   },
   "getRowClass": {
