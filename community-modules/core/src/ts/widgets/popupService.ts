@@ -395,14 +395,14 @@ export class PopupService extends BeanStub {
 
                 const currentDiffTop = pRect.top - sRect.top;
                 if (currentDiffTop != lastDiffTop) {
-                    const newTop = top + initialDiffTop - currentDiffTop;
+                    const newTop = this.keepXYWithinBounds(params.ePopup, top + initialDiffTop - currentDiffTop, DIRECTION.vertical);
                     params.ePopup.style.top = `${newTop}px`;
                 }
                 lastDiffTop = currentDiffTop;
 
                 const currentDiffLeft = pRect.left - sRect.left;
                 if (currentDiffLeft != lastDiffLeft) {
-                    const newLeft = left + initialDiffLeft - currentDiffLeft;
+                    const newLeft = this.keepXYWithinBounds(params.ePopup, left + initialDiffLeft - currentDiffLeft, DIRECTION.horizontal);
                     params.ePopup.style.left = `${newLeft}px`;
                 }
                 lastDiffLeft = currentDiffLeft;
