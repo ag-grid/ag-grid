@@ -14592,7 +14592,7 @@
       "type": { "returnType": "string", "optional": true }
     },
     "stroke": {
-      "description": "/** The CSS colour value for the outline of the markers or columns when hovered over. Use `undefined` for no highlight stroke.\n * Default: `'yellow'` */",
+      "description": "/** The CSS colour value for the outline of the markers or columns when hovered over. Use `undefined` for no highlight stroke.\n * Default: `'silver'` */",
       "type": { "returnType": "string", "optional": true }
     },
     "strokeWidth": {

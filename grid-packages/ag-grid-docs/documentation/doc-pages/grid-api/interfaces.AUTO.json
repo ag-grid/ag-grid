@@ -8398,7 +8398,7 @@
     "docs": {
       "size?": "/** The width in pixels of the markers when hovered over. This is only for the Line and Area sparklines as Column sparklines do not have markers.\n * Default: `6` */",
       "fill?": "/** The fill colour of the markers or columns when hovered over. Use `undefined` for no highlight fill.\n * Default: `'yellow'` */",
-      "stroke?": "/** The CSS colour value for the outline of the markers or columns when hovered over. Use `undefined` for no highlight stroke.\n * Default: `'yellow'` */",
+      "stroke?": "/** The CSS colour value for the outline of the markers or columns when hovered over. Use `undefined` for no highlight stroke.\n * Default: `'silver'` */",
       "strokeWidth?": "/** The thickness in pixels for the stroke of the markers or columns when hovered over.\n * Default: `1` */"
     }
   },

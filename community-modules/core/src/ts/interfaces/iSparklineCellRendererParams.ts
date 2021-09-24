@@ -166,7 +166,7 @@ export interface HighlightStyle {
      */
     fill?: string;
     /** The CSS colour value for the outline of the markers or columns when hovered over. Use `undefined` for no highlight stroke.
-     * Default: `'yellow'`
+     * Default: `'silver'`
      */
     stroke?: string;
     /** The thickness in pixels for the stroke of the markers or columns when hovered over.
