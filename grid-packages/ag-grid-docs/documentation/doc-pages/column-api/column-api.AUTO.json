@@ -1,8 +1,10 @@
 {
   "sizeColumnsToFit": {
+    "description": "/** Gets the grid to size the columns to the specified width in pixels, e.g. `sizeColumnsToFit(900)`. To have the grid fit the columns to the grid's width, use the Grid API `gridApi.sizeColumnsToFit()` instead. */",
     "type": { "arguments": { "gridWidth": "number" }, "returnType": "void" }
   },
   "setColumnGroupOpened": {
+    "description": "/** Call this if you want to open or close a column group. */",
     "type": {
       "arguments": {
         "group": "ProvidedColumnGroup | string",
@@ -12,6 +14,7 @@
     }
   },
   "getColumnGroup": {
+    "description": "/** Returns the column group with the given name. */",
     "type": {
       "arguments": { "name": "string", "instanceId?": "number" },
       "returnType": "ColumnGroup | null"
@@ -24,112 +27,148 @@
     }
   },
   "getDisplayNameForColumn": {
+    "description": "/** Returns the display name for a column. Useful if you are doing your own header rendering and want the grid to work out if `headerValueGetter` is used, or if you are doing your own column management GUI, to know what to show as the column name. */",
     "type": {
       "arguments": { "column": "Column", "location": "string | null" },
       "returnType": "string"
     }
   },
   "getDisplayNameForColumnGroup": {
+    "description": "/** Returns the display name for a column group (when grouping columns). */",
     "type": {
       "arguments": { "columnGroup": "ColumnGroup", "location": "string" },
       "returnType": "string"
     }
   },
   "getColumn": {
+    "description": "/** Returns the column with the given `colKey`, which can either be the `colId` (a string) or the `colDef` (an object). */",
     "type": { "arguments": { "key": "any" }, "returnType": "Column | null" }
   },
   "applyColumnState": {
+    "description": "/** Applies the state of the columns from a previous state. Returns `false` if one or more columns could not be found. */",
     "type": {
       "arguments": { "params": "ApplyColumnStateParams" },
       "returnType": "boolean"
     }
   },
   "getColumnState": {
+    "description": "/** Gets the state of the columns. Typically used when saving column state. */",
     "type": { "arguments": {}, "returnType": "ColumnState[]" }
   },
-  "resetColumnState": { "type": { "arguments": {}, "returnType": "void" } },
+  "resetColumnState": {
+    "description": "/** Sets the state back to match the originally provided column definitions. */",
+    "type": { "arguments": {}, "returnType": "void" }
+  },
   "getColumnGroupState": {
+    "description": "/** Gets the state of the column groups. Typically used when saving column group state. */",
     "type": {
       "arguments": {},
       "returnType": "{ groupId: string, open: boolean }[]"
     }
   },
   "setColumnGroupState": {
+    "description": "/** Sets the state of the column group state from a previous state. */",
     "type": {
       "arguments": { "stateItems": "({ groupId: string; open: boolean; })[]" },
       "returnType": "void"
     }
   },
   "resetColumnGroupState": {
+    "description": "/** Sets the state back to match the originally provided column definitions. */",
     "type": { "arguments": {}, "returnType": "void" }
   },
-  "isPinning": { "type": { "arguments": {}, "returnType": "boolean" } },
-  "isPinningLeft": { "type": { "arguments": {}, "returnType": "boolean" } },
-  "isPinningRight": { "type": { "arguments": {}, "returnType": "boolean" } },
+  "isPinning": {
+    "description": "/** Returns `true` if pinning left or right, otherwise `false`. */",
+    "type": { "arguments": {}, "returnType": "boolean" }
+  },
+  "isPinningLeft": {
+    "description": "/** Returns `true` if pinning left, otherwise `false`. */",
+    "type": { "arguments": {}, "returnType": "boolean" }
+  },
+  "isPinningRight": {
+    "description": "/** Returns `true` if pinning right, otherwise `false`. */",
+    "type": { "arguments": {}, "returnType": "boolean" }
+  },
   "getDisplayedColAfter": {
+    "description": "/** Returns the column to the right of the provided column, taking into consideration open / closed column groups and visible columns. This is useful if you need to know what column is beside yours e.g. if implementing your own cell navigation. */",
     "type": { "arguments": { "col": "Column" }, "returnType": "Column | null" }
   },
   "getDisplayedColBefore": {
+    "description": "/** Same as `getVisibleColAfter` except gives column to the left. */",
     "type": { "arguments": { "col": "Column" }, "returnType": "Column | null" }
   },
   "setColumnVisible": {
+    "description": "/** Sets the visibility of a column. Key can be the column ID or `Column` object. */",
     "type": {
       "arguments": { "key": "string | Column", "visible": "boolean" },
       "returnType": "void"
     }
   },
   "setColumnsVisible": {
+    "description": "/** Same as `setColumnVisible`, but provide a list of column keys. */",
     "type": {
       "arguments": { "keys": "(string | Column)[]", "visible": "boolean" },
       "returnType": "void"
     }
   },
   "setColumnPinned": {
+    "description": "/** Sets the column pinned / unpinned. Key can be the column ID, field, `ColDef` object or `Column` object. */",
     "type": {
       "arguments": { "key": "string | Column", "pinned": "string" },
       "returnType": "void"
     }
   },
   "setColumnsPinned": {
+    "description": "/** Same as `setColumnPinned`, but provide a list of column keys. */",
     "type": {
       "arguments": { "keys": "(string | Column)[]", "pinned": "string" },
       "returnType": "void"
     }
   },
   "getAllColumns": {
+    "description": "/** Returns all the columns, regardless of visible or not. */",
     "type": { "arguments": {}, "returnType": "Column[] | null" }
   },
   "getAllGridColumns": {
+    "description": "/** Returns all the grid columns, same as `getAllColumns()`, except\n * \n *   a) it has the order of the columns that are presented in the grid\n * \n *   b) it's after the 'pivot' step, so if pivoting, has the value columns for the pivot. */",
     "type": { "arguments": {}, "returnType": "Column[]" }
   },
   "getDisplayedLeftColumns": {
+    "description": "/** Same as `getAllDisplayedColumns` but just for the pinned left portion of the grid. */",
     "type": { "arguments": {}, "returnType": "Column[]" }
   },
   "getDisplayedCenterColumns": {
+    "description": "/** Same as `getAllDisplayedColumns` but just for the center portion of the grid. */",
     "type": { "arguments": {}, "returnType": "Column[]" }
   },
   "getDisplayedRightColumns": {
+    "description": "/** Same as `getAllDisplayedColumns` but just for the pinned right portion of the grid. */",
     "type": { "arguments": {}, "returnType": "Column[]" }
   },
   "getAllDisplayedColumns": {
+    "description": "/** Returns all columns currently displayed (e.g. are visible and if in a group, the group is showing the columns) for the pinned left, centre and pinned right portions of the grid. */",
     "type": { "arguments": {}, "returnType": "Column[]" }
   },
   "getAllDisplayedVirtualColumns": {
+    "description": "/** Same as `getAllGridColumns()`, except only returns rendered columns, i.e. columns that are not within the viewport and therefore not rendered, due to column virtualisation, are not displayed. */",
     "type": { "arguments": {}, "returnType": "Column[]" }
   },
   "moveColumn": {
+    "description": "/** Moves a column to `toIndex`. The column is first removed, then added at the `toIndex` location, thus index locations will change to the right of the column after the removal. */",
     "type": {
       "arguments": { "key": "string | Column", "toIndex": "number" },
       "returnType": "void"
     }
   },
   "moveColumnByIndex": {
+    "description": "/** Same as `moveColumn` but works on index locations. */",
     "type": {
       "arguments": { "fromIndex": "number", "toIndex": "number" },
       "returnType": "void"
     }
   },
   "moveColumns": {
+    "description": "/** Same as `moveColumn` but works on list. */",
     "type": {
       "arguments": {
         "columnsToMoveKeys": "(string | Column)[]",
@@ -138,18 +177,21 @@
     }
   },
   "moveRowGroupColumn": {
+    "description": "/** Move the column to a new position in the row grouping order. */",
     "type": {
       "arguments": { "fromIndex": "number", "toIndex": "number" },
       "returnType": "void"
     }
   },
   "setColumnAggFunc": {
+    "description": "/** Sets the agg function for a column. `aggFunc` can be one of `'min' | 'max' | 'sum'`. */",
     "type": {
       "arguments": { "key": "string | Column", "aggFunc": "string" },
       "returnType": "void"
     }
   },
   "setColumnWidth": {
+    "description": "/** Sets the column width on a single column. The finished flag gets included in the resulting event and not used internally by the grid. The finished flag is intended for dragging, where a dragging action will produce many `columnWidth` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`. */",
     "type": {
       "arguments": {
         "key": "string | Column",
@@ -161,6 +203,7 @@
     }
   },
   "setColumnWidths": {
+    "description": "/** Sets the column widths on multiple columns. This method offers better performance than calling `setColumnWidth` multiple times. The finished flag gets included in the resulting event and not used internally by the grid. The finished flag is intended for dragging, where a dragging action will produce many `columnWidth` events, so the consumer of events knows when it receives the last event in a stream. The finished parameter is optional, and defaults to `true`. */",
     "type": {
       "arguments": {
         "columnWidths": "{ key: string | Column; newWidth: number; }[]",
@@ -171,10 +214,15 @@
     }
   },
   "setPivotMode": {
+    "description": "/** Set the pivot mode. */",
     "type": { "arguments": { "pivotMode": "boolean" }, "returnType": "void" }
   },
-  "isPivotMode": { "type": { "arguments": {}, "returnType": "boolean" } },
+  "isPivotMode": {
+    "description": "/** Get the pivot mode. */",
+    "type": { "arguments": {}, "returnType": "boolean" }
+  },
   "getSecondaryPivotColumn": {
+    "description": "/** Returns the pivot column for the given `pivotKeys` and `valueColId`. Useful to then call operations on the pivot column. */",
     "type": {
       "arguments": {
         "pivotKeys": "string[]",
@@ -189,132 +237,163 @@
       "returnType": "void"
     }
   },
-  "getValueColumns": { "type": { "arguments": {}, "returnType": "Column[]" } },
+  "getValueColumns": {
+    "description": "/** Get value columns. */",
+    "type": { "arguments": {}, "returnType": "Column[]" }
+  },
   "removeValueColumn": {
+    "description": "/** Remove a value column. */",
     "type": {
       "arguments": { "colKey": "(string | Column)" },
       "returnType": "void"
     }
   },
   "removeValueColumns": {
+    "description": "/** Same as `removeValueColumns` but provide a list. */",
     "type": {
       "arguments": { "colKeys": "(string | Column)[]" },
       "returnType": "void"
     }
   },
   "addValueColumn": {
+    "description": "/** Add a value column. */",
     "type": {
       "arguments": { "colKey": "(string | Column)" },
       "returnType": "void"
     }
   },
   "addValueColumns": {
+    "description": "/** Same as `addValueColumn` but provide a list. */",
     "type": {
       "arguments": { "colKeys": "(string | Column)[]" },
       "returnType": "void"
     }
   },
   "setRowGroupColumns": {
+    "description": "/** Set the row group columns. */",
     "type": {
       "arguments": { "colKeys": "(string | Column)[]" },
       "returnType": "void"
     }
   },
   "removeRowGroupColumn": {
+    "description": "/** Remove a column from the row groups. */",
     "type": {
       "arguments": { "colKey": "string | Column" },
       "returnType": "void"
     }
   },
   "removeRowGroupColumns": {
+    "description": "/** Same as `removeRowGroupColumn` but provide a list of columns. */",
     "type": {
       "arguments": { "colKeys": "(string | Column)[]" },
       "returnType": "void"
     }
   },
   "addRowGroupColumn": {
+    "description": "/** Add a column to the row groups. */",
     "type": {
       "arguments": { "colKey": "string | Column" },
       "returnType": "void"
     }
   },
   "addRowGroupColumns": {
+    "description": "/** Same as `addRowGroupColumn` but provide a list of columns. */",
     "type": {
       "arguments": { "colKeys": "(string | Column)[]" },
       "returnType": "void"
     }
   },
   "getRowGroupColumns": {
+    "description": "/** Get row group columns. */",
     "type": { "arguments": {}, "returnType": "Column[]" }
   },
   "setPivotColumns": {
+    "description": "/** Set the pivot columns. */",
     "type": {
       "arguments": { "colKeys": "(string | Column)[]" },
       "returnType": "void"
     }
   },
   "removePivotColumn": {
+    "description": "/** Remove a pivot column. */",
     "type": {
       "arguments": { "colKey": "string | Column" },
       "returnType": "void"
     }
   },
   "removePivotColumns": {
+    "description": "/** Same as `removePivotColumn` but provide a list of columns. */",
     "type": {
       "arguments": { "colKeys": "(string | Column)[]" },
       "returnType": "void"
     }
   },
   "addPivotColumn": {
+    "description": "/** Add a pivot column. */",
     "type": {
       "arguments": { "colKey": "string | Column" },
       "returnType": "void"
     }
   },
   "addPivotColumns": {
+    "description": "/** Same as `addPivotColumn` but provide a list of columns. */",
     "type": {
       "arguments": { "colKeys": "(string | Column)[]" },
       "returnType": "void"
     }
   },
-  "getPivotColumns": { "type": { "arguments": {}, "returnType": "Column[]" } },
+  "getPivotColumns": {
+    "description": "/** Get the pivot columns. */",
+    "type": { "arguments": {}, "returnType": "Column[]" }
+  },
   "getLeftDisplayedColumnGroups": {
+    "description": "/** Same as `getAllDisplayedColumnGroups` but just for the pinned left portion of the grid. */",
     "type": { "arguments": {}, "returnType": "IHeaderColumn[]" }
   },
   "getCenterDisplayedColumnGroups": {
+    "description": "/** Same as `getAllDisplayedColumnGroups` but just for the center portion of the grid. */",
     "type": { "arguments": {}, "returnType": "IHeaderColumn[]" }
   },
   "getRightDisplayedColumnGroups": {
+    "description": "/** Same as `getAllDisplayedColumnGroups` but just for the pinned right portion of the grid. */",
     "type": { "arguments": {}, "returnType": "IHeaderColumn[]" }
   },
   "getAllDisplayedColumnGroups": {
+    "description": "/** Returns all 'root' column headers. If you are not grouping columns, these return the columns. If you are grouping, these return the top level groups - you can navigate down through each one to get the other lower level headers and finally the columns at the bottom. */",
     "type": { "arguments": {}, "returnType": "IHeaderColumn[] | null" }
   },
   "autoSizeColumn": {
+    "description": "/** Auto-sizes a column based on its contents. */",
     "type": {
       "arguments": { "key": "string | Column", "skipHeader?": "boolean" },
       "returnType": "void"
     }
   },
   "autoSizeColumns": {
+    "description": "/** Same as `autoSizeColumn`, but provide a list of column keys. */",
     "type": {
       "arguments": { "keys": "(string | Column)[]", "skipHeader?": "boolean" },
       "returnType": "void"
     }
   },
   "autoSizeAllColumns": {
+    "description": "/** Calls `autoSizeColumns` on all displayed columns. */",
     "type": { "arguments": { "skipHeader?": "boolean" }, "returnType": "void" }
   },
   "setSecondaryColumns": {
+    "description": "/** Set the secondary pivot columns. */",
     "type": {
       "arguments": { "colDefs": "(ColDef | ColGroupDef)[]" },
       "returnType": "void"
     }
   },
   "getSecondaryColumns": {
+    "description": "/** Returns the grid's secondary columns. */",
     "type": { "arguments": {}, "returnType": "Column[] | null" }
   },
   "getPrimaryColumns": {
+    "description": "/** Returns the grid's primary columns. */",
     "type": { "arguments": {}, "returnType": "Column[] | null" }
   },
   "columnGroupOpened": {
