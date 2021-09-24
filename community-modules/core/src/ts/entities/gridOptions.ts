@@ -634,6 +634,8 @@ export interface GridOptions {
     suppressHorizontalScroll?: boolean;
     /** When `true`, the grid will not scroll to the top when new row data is provided. Use this if you don't want the default behaviour of scrolling to the top every time you load new data. */
     suppressScrollOnNewData?: boolean;
+    /** When `true`, the grid will not allow mousewheel / touchpad scroll when popup elements are present. */
+    suppressScrollWhenPopupsAreOpen?: boolean;
     /** When `true`, the grid will not use animation frames when drawing rows while scrolling. Use this if the grid is working fast enough that you don't need animation frames and you don't want the grid to flicker. */
     suppressAnimationFrame?: boolean;
     /** If `true`, middle clicks will result in `click` events for cells and rows. Otherwise the browser will use middle click to scroll the grid.<br />**Note:** Not all browsers fire `click` events with the middle button. Most will fire only `mousedown` and `mouseup` events, which can be used to focus a cell, but will not work to call the `onCellClicked` function. */

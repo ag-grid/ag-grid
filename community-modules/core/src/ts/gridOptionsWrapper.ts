@@ -582,6 +582,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressScrollOnNewData);
     }
 
+    public isSuppressScrollWhenPopupsAreOpen() {
+        return isTrue(this.gridOptions.suppressScrollWhenPopupsAreOpen);
+    }
+
     public isRowDragEntireRow() {
         return isTrue(this.gridOptions.rowDragEntireRow);
     }

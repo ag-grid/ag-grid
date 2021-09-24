@@ -6,7 +6,7 @@ import { Environment } from "../environment";
 import { Events } from '../events';
 import { BeanStub } from "../context/beanStub";
 import { addCssClass, addOrRemoveCssClass, containsClass, getAbsoluteHeight, getAbsoluteWidth, removeCssClass } from '../utils/dom';
-import { findIndex, forEach, last } from '../utils/array';
+import { findIndex, forEach, last, some } from '../utils/array';
 import { isElementInEventPath } from '../utils/event';
 import { KeyCode } from '../constants/keyCode';
 import { FocusService } from "../focusService";
@@ -27,6 +27,7 @@ export interface AgPopup {
     element: HTMLElement;
     wrapper: HTMLElement;
     hideFunc: () => void;
+    isAnchored: boolean;
     stopAnchoringPromise: AgPromise<Function>;
     instanceId: number;
 }
@@ -576,13 +577,18 @@ export class PopupService extends BeanStub {
             wrapper: eWrapper,
             hideFunc: hidePopup,
             stopAnchoringPromise: destroyPositionTracker,
-            instanceId: instanceIdSeq++
+            instanceId: instanceIdSeq++,
+            isAnchored: !!anchorToElement
         });
 
         return {
             hideFunc: hidePopup,
             stopAnchoringPromise: destroyPositionTracker
         };
+    }
+
+    public hasAnchoredPopup(): boolean {
+        return some(this.popupList, popup => popup.isAnchored);
     }
 
     private isEventFromCurrentPopup(params: PopupEventParams, target: HTMLElement): boolean {
