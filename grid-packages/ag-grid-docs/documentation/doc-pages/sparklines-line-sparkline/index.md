@@ -57,7 +57,7 @@ The result of the above configuration is dipslayed here.
 
 <div style="display: flex; justify-content: center;">
     <image-caption src="resources/default.png" alt="Line customisation" width="250px" constrained="true">Default</image-caption>
-    <image-caption src="resources/custom-line.png" alt="Line customisation for highlighted state" width="250px" constrained="true">Custom Line</image-caption>
+    <image-caption src="resources/custom-line.png" alt="Line customisation for highlighted state" width="250px" constrained="true">Custom line</image-caption>
 </div>
 
 ## Customising The Markers
@@ -93,8 +93,8 @@ Here is the result of the configuration shown in the above snippet.
 
 <div style="display: flex; justify-content: center;">
     <image-caption src="resources/default.png" alt="Marker customisation" width="250px" constrained="true">Default</image-caption>
-    <image-caption src="resources/custom-marker.png" alt="Marker customisation" width="250px" constrained="true">Custom Marker</image-caption>
-    <image-caption src="resources/custom-highlighted-marker.png" alt="Marker customisation for highlighted state" width="250px" constrained="true">Custom Highlighted Marker</image-caption>
+    <image-caption src="resources/custom-marker.png" alt="Marker customisation" width="250px" constrained="true">Custom marker</image-caption>
+    <image-caption src="resources/custom-highlighted-marker.png" alt="Marker customisation for highlighted state" width="250px" constrained="true">Custom highlighted marker</image-caption>
 </div>
 
 ## Customising the Padding
@@ -117,8 +117,8 @@ sparklineOptions: {
 - The `top`, `right`, `bottom` and `left` properties are all optional and can be modified independently.
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/default-padding.png" alt="Padding customisation" width="250px" constrained="true">Default Padding</image-caption>
-    <image-caption src="resources/custom-padding.png" alt="Padding customisation for highlighted state" width="250px" constrained="true">Custom Padding</image-caption>
+    <image-caption src="resources/default-padding.png" alt="Padding customisation" width="250px" constrained="true">Default padding</image-caption>
+    <image-caption src="resources/custom-padding.png" alt="Padding customisation for highlighted state" width="250px" constrained="true">Custom padding</image-caption>
 </div>
 
 ### Example: Customising the Line Sparklines
