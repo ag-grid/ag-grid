@@ -1163,6 +1163,9 @@
         "suppressScrollOnNewData": {
             "default": false
         },
+        "suppressScrollWhenPopupsAreOpen": {
+            "default": false
+        },
         "suppressAnimationFrame": {
             "default": false
         },

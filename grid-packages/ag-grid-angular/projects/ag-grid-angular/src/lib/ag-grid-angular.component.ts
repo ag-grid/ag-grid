@@ -731,6 +731,8 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public suppressHorizontalScroll: boolean | undefined = undefined;
     /** When `true`, the grid will not scroll to the top when new row data is provided. Use this if you don't want the default behaviour of scrolling to the top every time you load new data.     */
     @Input() public suppressScrollOnNewData: boolean | undefined = undefined;
+    /** When `true`, the grid will not allow mousewheel / touchpad scroll when popup elements are present.     */
+    @Input() public suppressScrollWhenPopupsAreOpen: boolean | undefined = undefined;
     /** When `true`, the grid will not use animation frames when drawing rows while scrolling. Use this if the grid is working fast enough that you don't need animation frames and you don't want the grid to flicker.     */
     @Input() public suppressAnimationFrame: boolean | undefined = undefined;
     /** If `true`, middle clicks will result in `click` events for cells and rows. Otherwise the browser will use middle click to scroll the grid.<br />**Note:** Not all browsers fire `click` events with the middle button. Most will fire only `mousedown` and `mouseup` events, which can be used to focus a cell, but will not work to call the `onCellClicked` function.     */
@@ -1038,6 +1040,7 @@ export class AgGridAngular implements AfterViewInit {
     static ngAcceptInputType_stopEditingWhenGridLosesFocus: boolean | null | '';
     static ngAcceptInputType_paginationAutoPageSize: boolean | null | '';
     static ngAcceptInputType_suppressScrollOnNewData: boolean | null | '';
+    static ngAcceptInputType_suppressScrollWhenPopupsAreOpen: boolean | null | '';
     static ngAcceptInputType_purgeClosedRowNodes: boolean | null | '';
     static ngAcceptInputType_cacheQuickFilter: boolean | null | '';
     static ngAcceptInputType_deltaRowDataMode: boolean | null | '';
