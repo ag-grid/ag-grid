@@ -548,7 +548,8 @@ export abstract class Sparkline extends Observable {
     }
 
     protected formatDatum(datum: any): string {
-        const { type } = this.axis || 'category';
+        const type  = this.axis.type || 'category';
+
         if (type === 'number' && typeof datum === 'number') {
             return this.formatNumericDatum(datum);
         } else if (type === 'time' && datum instanceof Date) {
