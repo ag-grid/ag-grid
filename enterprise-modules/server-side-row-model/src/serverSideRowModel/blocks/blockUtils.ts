@@ -10,7 +10,8 @@ import {
     PostConstruct,
     RowNode,
     ValueService,
-    NumberSequence
+    NumberSequence,
+    Beans
 } from "@ag-grid-community/core";
 import { NodeManager } from "../nodeManager";
 
@@ -20,6 +21,7 @@ export class BlockUtils extends BeanStub {
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
+    @Autowired('beans') private beans: Beans;
 
     private rowHeight: number;
     private usingTreeData: boolean;
@@ -35,7 +37,7 @@ export class BlockUtils extends BeanStub {
     public createRowNode(params: {group: boolean, leafGroup: boolean, level: number,
         parent: RowNode, field: string, rowGroupColumn: Column}): RowNode {
 
-        const rowNode = this.getContext().createBean(new RowNode());
+        const rowNode = new RowNode(this.beans);
 
         rowNode.setRowHeight(this.rowHeight);
 

@@ -1785,7 +1785,11 @@ export class GridOptionsWrapper {
         return this.getDefaultRowHeight();
     }
 
-    public getRowHeightForNode(rowNode: RowNode, allowEstimate = false): { height: number; estimated: boolean; } {
+    public getRowHeightForNode(rowNode: RowNode, allowEstimate = false, defaultRowHeight?: number): { height: number; estimated: boolean; } {
+        if (defaultRowHeight==null) {
+            defaultRowHeight = this.getDefaultRowHeight();
+        }
+
         // check the function first, in case use set both function and
         // number, when using virtual pagination then function can be
         // used for pinned rows and the number for the body rows.
@@ -1818,7 +1822,6 @@ export class GridOptionsWrapper {
             return { height: DEFAULT_DETAIL_ROW_HEIGHT, estimated: false };
         }
 
-        const defaultRowHeight = this.getDefaultRowHeight();
         const rowHeight = this.gridOptions.rowHeight && this.isNumeric(this.gridOptions.rowHeight) ? this.gridOptions.rowHeight : defaultRowHeight;
 
         return { height: rowHeight, estimated: false };
@@ -1853,7 +1856,7 @@ export class GridOptionsWrapper {
         return defaultValue;
     }
 
-    private getDefaultRowHeight(): number {
+    public getDefaultRowHeight(): number {
         return this.getFromTheme(DEFAULT_ROW_HEIGHT, 'rowHeight');
     }
 

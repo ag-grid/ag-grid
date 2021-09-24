@@ -28,7 +28,8 @@ import {
     SortController,
     StoreRefreshAfterParams,
     RefreshStoreParams,
-    ServerSideStoreState
+    ServerSideStoreState,
+    Beans
 } from "@ag-grid-community/core";
 
 import { NodeManager } from "./nodeManager";
@@ -59,6 +60,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     @Autowired('ssrmSortService') private sortListener: SortListener;
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
     @Autowired('ssrmStoreFactory') private storeFactory: StoreFactory;
+    @Autowired('beans') private beans: Beans;
 
     private rootNode: RowNode;
     private datasource: IServerSideDatasource | undefined;
@@ -186,10 +188,9 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     public resetRootStore(): void {
         this.destroyRootStore();
 
-        this.rootNode = new RowNode();
+        this.rootNode = new RowNode(this.beans);
         this.rootNode.group = true;
         this.rootNode.level = -1;
-        this.createBean(this.rootNode);
 
         if (this.datasource) {
             this.storeParams = this.createStoreParams();

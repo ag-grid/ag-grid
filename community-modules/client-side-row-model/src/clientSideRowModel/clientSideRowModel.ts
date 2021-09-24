@@ -29,7 +29,8 @@ import {
     SelectionService,
     ValueCache,
     AsyncTransactionsFlushed,
-    AnimationFrameService
+    AnimationFrameService,
+    Beans
 } from "@ag-grid-community/core";
 import { ClientSideNodeManager } from "./clientSideNodeManager";
 
@@ -54,6 +55,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('animationFrameService') private animationFrameService: AnimationFrameService;
+    @Autowired('beans') private beans: Beans;
 
     // standard stages
     @Autowired('filterStage') private filterStage: IRowNodeStage;
@@ -102,12 +104,10 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_GROUP_REMOVE_SINGLE_CHILDREN, refreshMapListener);
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_GROUP_REMOVE_LOWEST_SINGLE_CHILDREN, refreshMapListener);
 
-        this.rootNode = new RowNode();
+        this.rootNode = new RowNode(this.beans);
         this.nodeManager = new ClientSideNodeManager(this.rootNode, this.gridOptionsWrapper,
-            this.getContext(), this.eventService, this.columnModel, this.gridApi, this.columnApi,
-            this.selectionService);
-
-        this.createBean(this.rootNode);
+            this.eventService, this.columnModel, this.gridApi, this.columnApi,
+            this.selectionService, this.beans);
     }
 
     public start(): void {
@@ -153,17 +153,30 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         return res;
     }
 
-    private setRowTopAndRowIndex(): void {
+    private setRowTopAndRowIndex(): Set<string> {
+        const defaultRowHeight = this.gridOptionsWrapper.getDefaultRowHeight();
         let nextRowTop = 0;
+
+        // mapping displayed rows is not needed for this method, however it's used in
+        // clearRowTopAndRowIndex(), and given we are looping through this.rowsToDisplay here,
+        // we create the map here for performance reasons, so we don't loop a second time
+        // in clearRowTopAndRowIndex()
+        const displayedRowsMapped = new Set<string>();
+
+        // we don't estimate if doing fullHeight or autoHeight, as all rows get rendered all the time
+        // with these two layouts.
+        const allowEstimate = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_NORMAL;
+
         for (let i = 0; i < this.rowsToDisplay.length; i++) {
 
-            // we don't estimate if doing fullHeight or autoHeight, as all rows get rendered all the time
-            // with these two layouts.
-            const allowEstimate = this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_NORMAL;
-
             const rowNode = this.rowsToDisplay[i];
-            if (_.missing(rowNode.rowHeight)) {
-                const rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode, allowEstimate);
+
+            if (rowNode.id!=null) { 
+                displayedRowsMapped.add(rowNode.id);
+            }
+
+            if (rowNode.rowHeight==null) {
+                const rowHeight = this.gridOptionsWrapper.getRowHeightForNode(rowNode, allowEstimate, defaultRowHeight);
                 rowNode.setRowHeight(rowHeight.height, rowHeight.estimated);
             }
 
@@ -171,17 +184,16 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             rowNode.setRowIndex(i);
             nextRowTop += rowNode.rowHeight!;
         }
+
+        return displayedRowsMapped;
     }
 
-    private clearRowTopAndRowIndex(changedPath: ChangedPath): void {
+    private clearRowTopAndRowIndex(changedPath: ChangedPath, displayedRowsMapped: Set<string>): void {
 
-        const displayedRowsMapped: RowNodeMap = {};
-        this.rowsToDisplay.forEach(rowNode => {
-            if (rowNode.id != null) { displayedRowsMapped[rowNode.id] = rowNode }
-        });
+        const changedPathActive = changedPath.isActive();
 
         const clearIfNotDisplayed = (rowNode: RowNode) => {
-            if (rowNode && rowNode.id != null && displayedRowsMapped[rowNode.id] == null) {
+            if (rowNode && rowNode.id != null && !displayedRowsMapped.has(rowNode.id)) {
                 rowNode.clearRowTopAndRowIndex();
             }
         };
@@ -202,7 +214,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
                     // when changedPath is active and the rowNode is not expanded.
                     const isRootNode = rowNode.level == -1; // we need to give special consideration for root node,
                                                             // as expanded=undefined for root node
-                    const skipChildren = changedPath.isActive() && !isRootNode && !rowNode.expanded;
+                    const skipChildren = changedPathActive && !isRootNode && !rowNode.expanded;
                     if (!skipChildren) {
                         rowNode.childrenAfterGroup.forEach(recurse);
                     }
@@ -439,8 +451,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         // set all row tops to null, then set row tops on all visible rows. if we don't
         // do this, then the algorithm below only sets row tops, old row tops from old rows
         // will still lie around
-        this.setRowTopAndRowIndex();
-        this.clearRowTopAndRowIndex(changedPath);
+        const displayedNodesMapped = this.setRowTopAndRowIndex();
+        this.clearRowTopAndRowIndex(changedPath, displayedNodesMapped);
 
         const event: ModelUpdatedEvent = {
             type: Events.EVENT_MODEL_UPDATED,

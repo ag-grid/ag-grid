@@ -7,7 +7,8 @@ import {
     PostConstruct,
     RowGroupOpenedEvent,
     RowNode,
-    Bean
+    Bean,
+    Beans
 } from "@ag-grid-community/core";
 import { ServerSideRowModel } from "../serverSideRowModel";
 import { StoreFactory } from "../stores/storeFactory";
@@ -17,6 +18,7 @@ export class ExpandListener extends BeanStub {
 
     @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
     @Autowired('ssrmStoreFactory') private storeFactory: StoreFactory;
+    @Autowired('beans') private beans: Beans;
 
     @PostConstruct
     private postConstruct(): void {
@@ -47,9 +49,7 @@ export class ExpandListener extends BeanStub {
     private createDetailNode(masterNode: RowNode): RowNode {
         if (_.exists(masterNode.detailNode)) { return masterNode.detailNode; }
 
-        const detailNode = new RowNode();
-
-        this.getContext().createBean(detailNode);
+        const detailNode = new RowNode(this.beans);
 
         detailNode.detail = true;
         detailNode.selectable = false;
