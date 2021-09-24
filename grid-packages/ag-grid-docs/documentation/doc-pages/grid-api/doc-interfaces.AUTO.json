@@ -451,43 +451,47 @@
   },
   "AbstractColDef": {
     "headerName": {
-      "description": "/** The name to render in the column header */",
+      "description": "/** The name to render in the column header. If not specified and field is specified, the field name will be used as the header name. */",
       "type": { "returnType": "string", "optional": true }
-    },
-    "columnGroupShow": {
-      "description": "/** Whether to show the column when the group is open / closed. */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "headerClass": {
-      "description": "/** CSS class for the header */",
-      "type": { "returnType": "HeaderClass", "optional": true }
-    },
-    "toolPanelClass": {
-      "description": "/** CSS class for the toolPanel */",
-      "type": { "returnType": "ToolPanelClass", "optional": true }
     },
     "headerValueGetter": {
-      "description": "/** Expression or function to get the value for display in the header. */",
+      "description": "/** Function or expression. Gets the value for display in the header. */",
       "type": {
         "returnType": "string | HeaderValueGetterFunc",
         "optional": true
       }
     },
-    "pivotKeys": {
-      "description": "/** Never set this, it is used internally by grid when doing in-grid pivoting */",
-      "type": { "returnType": "string[]", "optional": true }
+    "headerTooltip": {
+      "description": "/** Whether to show the column when the group is open / closed. */\n/** Tooltip for the column header */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "headerClass": {
+      "description": "/** CSS class to use for the header cell. Can be a string, array of strings, or function. */",
+      "type": { "returnType": "HeaderClass", "optional": true }
+    },
+    "suppressHeaderKeyboardEvent": {
+      "description": "/** Suppress the grid taking action for the relevant keyboard event when a header is focused. */",
+      "type": {
+        "arguments": { "params": "SuppressHeaderKeyboardEventParams" },
+        "returnType": "boolean",
+        "optional": true
+      }
+    },
+    "columnGroupShow": {
+      "description": "/** Whether to show the column when the group is open / closed. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "toolPanelClass": {
+      "description": "/** CSS class to use for the tool panel cell. Can be a string, array of strings, or function. */",
+      "type": { "returnType": "ToolPanelClass", "optional": true }
     },
     "suppressColumnsToolPanel": {
-      "description": "/** Set to true to not include this column in the Columns Tool Panel */",
+      "description": "/** Set to `true` if you do not want this column or group to appear in the Columns Tool Panel. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressFiltersToolPanel": {
-      "description": "/** Set to true to not include this column / filter in the Filters Tool Panel */",
+      "description": "/** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. */",
       "type": { "returnType": "boolean", "optional": true }
-    },
-    "headerTooltip": {
-      "description": "/** Tooltip for the column header */",
-      "type": { "returnType": "string", "optional": true }
     },
     "tooltipComponent": {
       "type": {
@@ -501,30 +505,26 @@
     "tooltipComponentParams": {
       "type": { "returnType": "any", "optional": true }
     },
-    "suppressHeaderKeyboardEvent": {
-      "description": "/** Allows the user to suppress certain keyboard events in the grid header */",
-      "type": {
-        "arguments": { "params": "SuppressHeaderKeyboardEventParams" },
-        "returnType": "boolean",
-        "optional": true
-      }
+    "pivotKeys": {
+      "description": "/** Never set this, it is used internally by grid when doing in-grid pivoting */",
+      "type": { "returnType": "string[]", "optional": true }
     }
   },
   "ColGroupDef": {
     "children": {
-      "description": "/** Columns in this group */",
+      "description": "/** A list containing a mix of columns and column groups. */",
       "type": { "returnType": "(ColDef | ColGroupDef)[]", "optional": false }
     },
     "groupId": {
-      "description": "/** Group ID */",
+      "description": "/** The unique ID to give the column. This is optional. If missing, a unique ID will be generated. This ID is used to identify the column group in the column API. */",
       "type": { "returnType": "string", "optional": true }
     },
     "openByDefault": {
-      "description": "/** Open by Default */",
+      "description": "/** Set to `true` if this group should be opened by default. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "marryChildren": {
-      "description": "/** If true, group cannot be broken up by column moving, child columns will always appear side by side, however you can rearrange child columns within the group */",
+      "description": "/** Set to `true` to keep columns in this group beside each other in the grid. Moving the columns outside of the group (and hence breaking the group) is not allowed. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "headerGroupComponent": {
@@ -535,51 +535,55 @@
       }
     },
     "headerGroupComponentFramework": {
-      "description": "/** The custom header group component to be used for rendering the component header in the hosting framework (ie: React/Angular). If none specified the default AG Grid is used* */",
+      "description": "/** The custom header group component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid is used* */",
       "type": { "returnType": "any", "optional": true }
     },
     "headerGroupComponentParams": {
-      "description": "/** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used* */",
+      "description": "/** The params used to configure the header group component. * */",
       "type": { "returnType": "any", "optional": true }
     },
     "headerName": {
-      "description": "/** The name to render in the column header */",
+      "description": "/** The name to render in the column header. If not specified and field is specified, the field name will be used as the header name. */",
       "type": { "returnType": "string", "optional": true }
-    },
-    "columnGroupShow": {
-      "description": "/** Whether to show the column when the group is open / closed. */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "headerClass": {
-      "description": "/** CSS class for the header */",
-      "type": { "returnType": "HeaderClass", "optional": true }
-    },
-    "toolPanelClass": {
-      "description": "/** CSS class for the toolPanel */",
-      "type": { "returnType": "ToolPanelClass", "optional": true }
     },
     "headerValueGetter": {
-      "description": "/** Expression or function to get the value for display in the header. */",
+      "description": "/** Function or expression. Gets the value for display in the header. */",
       "type": {
         "returnType": "string | HeaderValueGetterFunc",
         "optional": true
       }
     },
-    "pivotKeys": {
-      "description": "/** Never set this, it is used internally by grid when doing in-grid pivoting */",
-      "type": { "returnType": "string[]", "optional": true }
+    "headerTooltip": {
+      "description": "/** Whether to show the column when the group is open / closed. */\n/** Tooltip for the column header */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "headerClass": {
+      "description": "/** CSS class to use for the header cell. Can be a string, array of strings, or function. */",
+      "type": { "returnType": "HeaderClass", "optional": true }
+    },
+    "suppressHeaderKeyboardEvent": {
+      "description": "/** Suppress the grid taking action for the relevant keyboard event when a header is focused. */",
+      "type": {
+        "arguments": { "params": "SuppressHeaderKeyboardEventParams" },
+        "returnType": "boolean",
+        "optional": true
+      }
+    },
+    "columnGroupShow": {
+      "description": "/** Whether to show the column when the group is open / closed. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "toolPanelClass": {
+      "description": "/** CSS class to use for the tool panel cell. Can be a string, array of strings, or function. */",
+      "type": { "returnType": "ToolPanelClass", "optional": true }
     },
     "suppressColumnsToolPanel": {
-      "description": "/** Set to true to not include this column in the Columns Tool Panel */",
+      "description": "/** Set to `true` if you do not want this column or group to appear in the Columns Tool Panel. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressFiltersToolPanel": {
-      "description": "/** Set to true to not include this column / filter in the Filters Tool Panel */",
+      "description": "/** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. */",
       "type": { "returnType": "boolean", "optional": true }
-    },
-    "headerTooltip": {
-      "description": "/** Tooltip for the column header */",
-      "type": { "returnType": "string", "optional": true }
     },
     "tooltipComponent": {
       "type": {
@@ -593,13 +597,9 @@
     "tooltipComponentParams": {
       "type": { "returnType": "any", "optional": true }
     },
-    "suppressHeaderKeyboardEvent": {
-      "description": "/** Allows the user to suppress certain keyboard events in the grid header */",
-      "type": {
-        "arguments": { "params": "SuppressHeaderKeyboardEventParams" },
-        "returnType": "boolean",
-        "optional": true
-      }
+    "pivotKeys": {
+      "description": "/** Never set this, it is used internally by grid when doing in-grid pivoting */",
+      "type": { "returnType": "string[]", "optional": true }
     }
   },
   "IAggFunc": {},
@@ -662,154 +662,264 @@
       "description": "/** The unique ID to give the column. This is optional. If missing, the ID will default to the field.\n * If both field and colId are missing, a unique ID will be generated.\n * This ID is used to identify the column in the API for sorting, filtering etc. */",
       "type": { "returnType": "string", "optional": true }
     },
-    "sort": {
-      "description": "/** If sorting by default, set it here. Set to 'asc' or 'desc' */",
-      "type": { "returnType": "string | null", "optional": true }
-    },
-    "initialSort": { "type": { "returnType": "string", "optional": true } },
-    "sortIndex": {
-      "description": "/** If sorting more than one column by default, specifies order in which the sorting should be applied. */",
-      "type": { "returnType": "number | null", "optional": true }
-    },
-    "initialSortIndex": {
-      "type": { "returnType": "number", "optional": true }
-    },
-    "sortedAt": {
-      "description": "/** @deprecated since v24 - use sortIndex instead\n */",
-      "type": { "returnType": "number", "optional": true }
-    },
-    "sortingOrder": {
-      "description": "/** The sort order, provide an array with any of the following in any order ['asc','desc',null] */",
-      "type": { "returnType": "(string | null)[]", "optional": true }
-    },
     "field": {
       "description": "/** The field of the row to get the cells data from */",
       "type": { "returnType": "string", "optional": true }
     },
     "type": {
-      "description": "/** A comma separated string or array of strings containing ColumnType keys which can be used as a template for a column.\n * This helps to reduce duplication of properties when you have a lot of common column properties. */",
+      "description": "/** A comma separated string or array of strings containing `ColumnType` keys which can be used as a template for a column.\n * This helps to reduce duplication of properties when you have a lot of common column properties. */",
       "type": { "returnType": "string | string[]", "optional": true }
     },
-    "hide": {
-      "description": "/** Set to true for this column to be hidden. Naturally you might think, it would make more sense to call this field 'visible' and mark it false to hide,\n * however we want all default values to be false and we want columns to be visible by default. */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "initialHide": { "type": { "returnType": "boolean", "optional": true } },
-    "pinned": {
-      "description": "/** Whether this column is pinned or not. */",
-      "type": { "returnType": "boolean | string | null", "optional": true }
-    },
-    "initialPinned": {
-      "type": { "returnType": "boolean | string", "optional": true }
-    },
-    "tooltipField": {
-      "description": "/** The field where we get the tooltip on the object */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "tooltipValueGetter": {
-      "description": "/** The function used to calculate the tooltip of the object, tooltipField takes precedence */",
-      "type": {
-        "arguments": { "params": "ITooltipParams" },
-        "returnType": "string",
-        "optional": true
-      }
-    },
     "valueGetter": {
-      "description": "/** Expression or function to get the cells value. */",
+      "description": "/** Function or expression. Gets the value from your data for display. */",
       "type": { "returnType": "string | ValueGetterFunc", "optional": true }
     },
-    "filterValueGetter": {
-      "description": "/** Expression or function to get the cells value for filtering. */",
-      "type": { "returnType": "string | ValueGetterFunc", "optional": true }
+    "valueFormatter": {
+      "description": "/** A function or expression to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */",
+      "type": { "returnType": "string | ValueFormatterFunc", "optional": true }
     },
-    "valueSetter": {
-      "description": "/** If not using a field, then this puts the value into the cell */",
-      "type": { "returnType": "string | ValueSetterFunc", "optional": true }
+    "refData": {
+      "description": "/** Provided a reference data map to be used to map column values to their respective value from the map. */",
+      "type": { "returnType": "{ [key: string]: string; }", "optional": true }
     },
     "keyCreator": {
-      "description": "/** Function to return the key for a value - use this if the value is an object (not a primitive type) and you\n * want to a) group by this field or b) use set filter on this field. */",
+      "description": "/** Function to return a string key for a value.\n * This string is used for grouping, Set filtering, and searching within cell editor dropdowns.\n * When filtering and searching the string is exposed to the user, so make sure to return a human-readable value. */",
       "type": {
         "arguments": { "params": "KeyCreatorParams" },
         "returnType": "string",
         "optional": true
       }
     },
-    "width": {
-      "description": "/** Actual width, in pixels, of the cell */",
-      "type": { "returnType": "number", "optional": true }
+    "equals": {
+      "description": "/** Custom comparator for values, used by renderer to know if values have changed. Cells who's values have not changed don't get refreshed.\n * By default the grid uses `===` is used which should work for most use cases. */",
+      "type": {
+        "arguments": { "valueA": "any", "valueB": "any" },
+        "returnType": "boolean",
+        "optional": true
+      }
     },
-    "initialWidth": {
-      "description": "/** Default width, in pixels, of the cell */",
-      "type": { "returnType": "number", "optional": true }
+    "tooltipField": {
+      "description": "/** The field of the tooltip to apply to the cell. */",
+      "type": { "returnType": "string", "optional": true }
     },
-    "minWidth": {
-      "description": "/** Min width, in pixels, of the cell */",
-      "type": { "returnType": "number", "optional": true }
+    "tooltipValueGetter": {
+      "description": "/** Callback that should return the string used for a tooltip, `tooltipField` takes precedence if set. */",
+      "type": {
+        "arguments": { "params": "ITooltipParams" },
+        "returnType": "string",
+        "optional": true
+      }
     },
-    "maxWidth": {
-      "description": "/** Max width, in pixels, of the cell */",
-      "type": { "returnType": "number", "optional": true }
+    "checkboxSelection": {
+      "description": "/** `boolean` or `Function`. Set to `true` (or return `true` from function) to render a selection checkbox in the column. */",
+      "type": {
+        "returnType": "boolean | CheckboxSelectionCallback",
+        "optional": true
+      }
     },
-    "flex": {
-      "description": "/** Sets the grow factor of a column. It specifies how much of the remaining\n * space should be assigned to the column. */",
-      "type": { "returnType": "number", "optional": true }
+    "icons": {
+      "description": "/** Icons to use inside the column instead of the grid's default icons. Leave undefined to use defaults. */",
+      "type": {
+        "returnType": "{ [key: string]: Function | string; }",
+        "optional": true
+      }
     },
-    "initialFlex": { "type": { "returnType": "number", "optional": true } },
-    "autoHeight": {
-      "description": "/** True if this column should stretch rows height to fit contents */",
+    "suppressNavigable": {
+      "description": "/** Set to `true` if this column is not navigable (i.e. cannot be tabbed into), otherwise `false`.\n * Can also be a callback function to have different rows navigable. */",
+      "type": {
+        "returnType": "boolean | SuppressNavigableCallback",
+        "optional": true
+      }
+    },
+    "suppressKeyboardEvent": {
+      "description": "/** Allows the user to suppress certain keyboard events in the grid cell */",
+      "type": {
+        "arguments": { "params": "SuppressKeyboardEventParams" },
+        "returnType": "boolean",
+        "optional": true
+      }
+    },
+    "suppressPaste": {
+      "description": "/** Pasting is on by default as long as cells are editable (non-editable cells cannot be modified, even with a paste operation).\n * Set to `true` turn paste operations off. */",
+      "type": {
+        "returnType": "boolean | SuppressPasteCallback",
+        "optional": true
+      }
+    },
+    "suppressFillHandle": {
+      "description": "/** Set to true to prevent the fillHandle from being rendered in any cell that belongs to this column */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "wrapText": {
-      "description": "/** True if this column should wrap cell contents - typically used with autoHeight */",
+    "hide": {
+      "description": "/** Set to `true` for this column to be hidden. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "cellClass": {
-      "description": "/** Class to use for the cell. Can be string, array of strings, or function. */",
-      "type": {
-        "returnType": "string | string[] | CellClassFunc",
-        "optional": true
-      }
+    "initialHide": {
+      "description": "/** Same as 'hide', except only applied when creating a new column. Not applied when updating column definitions. */",
+      "type": { "returnType": "boolean", "optional": true }
     },
-    "cellStyle": {
-      "description": "/** An object of css values. Or a function returning an object of css values. */",
-      "type": {
-        "returnType": "{ [cssProperty: string]: string } | CellStyleFunc",
-        "optional": true
-      }
+    "lockVisible": {
+      "description": "/** Set to `true` to block making column visible / hidden via the UI (API will still work). */",
+      "type": { "returnType": "boolean", "optional": true }
     },
-    "cellRenderer": {
-      "description": "/** A function for rendering a cell. */",
-      "type": {
-        "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string",
-        "optional": true
-      }
+    "lockPosition": {
+      "description": "/** Set to `true` to always have this column displayed first. */",
+      "type": { "returnType": "boolean", "optional": true }
     },
-    "cellRendererFramework": {
-      "type": { "returnType": "any", "optional": true }
+    "suppressMovable": {
+      "description": "/** Set to `true` if you do not want this column to be movable via dragging. */",
+      "type": { "returnType": "boolean", "optional": true }
     },
-    "cellRendererParams": { "type": { "returnType": "any", "optional": true } },
-    "cellRendererSelector": {
-      "type": { "returnType": "CellRendererSelectorFunc", "optional": true }
+    "editable": {
+      "description": "/** Set to `true` if this column is editable, otherwise `false`. Can also be a function to have different rows editable. */",
+      "type": { "returnType": "boolean | EditableCallback", "optional": true }
+    },
+    "valueSetter": {
+      "description": "/** Function or expression. Sets the value into your data for saving. Return `true` if the data changed. */",
+      "type": { "returnType": "string | ValueSetterFunc", "optional": true }
+    },
+    "valueParser": {
+      "description": "/** Function or expression. Parses the value for saving. */",
+      "type": { "returnType": "string | ValueParserFunc", "optional": true }
     },
     "cellEditor": {
-      "description": "/** Cell editor */",
+      "description": "/** A `cellEditor` to use for this column. */",
       "type": {
         "returnType": "string | { new(): ICellEditorComp; }",
         "optional": true
       }
     },
     "cellEditorFramework": {
+      "description": "/** Framework `cellEditor` to use for this column. */",
       "type": { "returnType": "any", "optional": true }
     },
-    "cellEditorParams": { "type": { "returnType": "any", "optional": true } },
+    "cellEditorParams": {
+      "description": "/** Params to be passed to the cell editor component. */",
+      "type": { "returnType": "any", "optional": true }
+    },
     "cellEditorSelector": {
+      "description": "/** Callback to select which cell editor to be used for a given row within the same column. */",
       "type": { "returnType": "CellEditorSelectorFunc", "optional": true }
+    },
+    "singleClickEdit": {
+      "description": "/** Set to `true` to have cells under this column enter edit mode after single click. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "newValueHandler": {
+      "description": "/** @deprecated use `valueSetter` instead\n */",
+      "type": {
+        "arguments": { "params": "NewValueParams" },
+        "returnType": "boolean",
+        "optional": true
+      }
     },
     "cellEditorPopup": {
       "type": { "returnType": "boolean", "optional": true }
     },
     "cellEditorPopupPosition": {
       "type": { "returnType": "string", "optional": true }
+    },
+    "onCellValueChanged": {
+      "description": "/** Callback for after the value of a cell has changed, either due to editing or the application calling `api.setValue()`. */",
+      "type": {
+        "arguments": { "event": "NewValueParams" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
+    "onCellClicked": {
+      "description": "/** Callback called when a cell is clicked. */",
+      "type": {
+        "arguments": { "event": "CellClickedEvent" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
+    "onCellDoubleClicked": {
+      "description": "/** Callback called when a cell is double clicked. */",
+      "type": {
+        "arguments": { "event": "CellDoubleClickedEvent" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
+    "onCellContextMenu": {
+      "description": "/** Callback called when a cell is right clicked. */",
+      "type": {
+        "arguments": { "event": "CellContextMenuEvent" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
+    "getQuickFilterText": {
+      "description": "/** A function to tell the grid what quick filter text to use for this column if you don't want to use the default (which is calling `toString` on the value). */",
+      "type": {
+        "arguments": { "params": "GetQuickFilterTextParams" },
+        "returnType": "string",
+        "optional": true
+      }
+    },
+    "filterValueGetter": {
+      "description": "/** Function or expression. Gets the value for filtering purposes. */",
+      "type": { "returnType": "string | ValueGetterFunc", "optional": true }
+    },
+    "floatingFilter": {
+      "description": "/** Whether to display a floating filter for this column. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "headerComponent": {
+      "description": "/** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used. * */",
+      "type": { "returnType": "string | { new(): any; }", "optional": true }
+    },
+    "headerComponentFramework": {
+      "description": "/** The custom header component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid header component is used* */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "headerComponentParams": {
+      "description": "/** The parameters to be passed to the header component. * */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "menuTabs": {
+      "description": "/** Set to an array containing zero, one or many of the following options: `'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab'`.\n * This is used to figure out which menu tabs are present and in which order the tabs are shown. */",
+      "type": { "returnType": "string[]", "optional": true }
+    },
+    "columnsMenuParams": {
+      "description": "/** Params used to change the behaviour and appearance of the Columns Menu tab. */",
+      "type": { "returnType": "ColumnsMenuParams", "optional": true }
+    },
+    "suppressMenu": {
+      "description": "/** Set to `true` if no menu should be shown for this column header. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "headerCheckboxSelection": {
+      "description": "/** If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header. */",
+      "type": {
+        "returnType": "boolean | HeaderCheckboxSelectionCallback",
+        "optional": true
+      }
+    },
+    "headerCheckboxSelectionFilteredOnly": {
+      "description": "/** If `true`, the header checkbox selection will only select filtered items. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "chartDataType": {
+      "description": "/** Defines the chart data type that should be used for a column. */",
+      "type": {
+        "returnType": "'category' | 'series' | 'time' | 'excluded'",
+        "optional": true
+      }
+    },
+    "pinned": {
+      "description": "/** Pin a column to one side: `right` or `left`. A value of `true` is converted to `'left'`. */",
+      "type": { "returnType": "boolean | string | null", "optional": true }
+    },
+    "initialPinned": {
+      "description": "/** Same as 'pinned', except only applied when creating a new column. Not applied when updating column definitions. */",
+      "type": { "returnType": "boolean | string", "optional": true }
+    },
+    "lockPinned": {
+      "description": "/** Set to true to block the user pinning the column, the column can only be pinned via definitions or API */",
+      "type": { "returnType": "boolean", "optional": true }
     },
     "pinnedRowCellRenderer": {
       "description": "/** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.\n */",
@@ -826,53 +936,181 @@
       "description": "/** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.\n */",
       "type": { "returnType": "any", "optional": true }
     },
-    "valueFormatter": {
-      "description": "/** A function to format a value, should return a string. Not used for CSV export or copy to clipboard, only for UI cell rendering. */",
-      "type": { "returnType": "string | ValueFormatterFunc", "optional": true }
-    },
     "pinnedRowValueFormatter": {
       "description": "/** @deprecated Use valueFormatter for pinned rows, and check params.node.rowPinned.\n */",
       "type": { "returnType": "string | ValueFormatterFunc", "optional": true }
     },
-    "valueParser": {
-      "description": "/** Gets called after editing, converts the value in the cell. */",
-      "type": { "returnType": "string | ValueParserFunc", "optional": true }
+    "pivot": {
+      "description": "/** Set to true to pivot by this column. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "initialPivot": {
+      "description": "/** Same as 'pivot', except only applied when creating a new column. Not applied when updating column definitions. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "pivotIndex": {
+      "description": "/** Set this in columns you want to pivot by.\n * If only pivoting by one column, set this to any number (e.g. `0`).\n * If pivoting by multiple columns, set this to where you want this column to be in the order of pivots (e.g. `0` for first, `1` for second, and so on). */",
+      "type": { "returnType": "number | null", "optional": true }
+    },
+    "initialPivotIndex": {
+      "description": "/** Same as 'pivotIndex', except only applied when creating a new column. Not applied when updating column definitions. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "pivotComparator": {
+      "description": "/** Comparator to use when ordering the pivot columns, when this column is used to pivot on.\n * The values will always be strings, as the pivot service uses strings as keys for the pivot groups. */",
+      "type": {
+        "arguments": { "valueA": "string", "valueB": "string" },
+        "returnType": "number",
+        "optional": true
+      }
+    },
+    "enablePivot": {
+      "description": "/** Set to `true` if you want to be able to pivot by this column via the GUI. This will not block the API or properties being used to achieve pivot. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "cellStyle": {
+      "description": "/** An object of css values / or function returning an object of css values for a particular cell. */",
+      "type": {
+        "returnType": "{ [cssProperty: string]: string } | CellStyleFunc",
+        "optional": true
+      }
+    },
+    "cellClass": {
+      "description": "/** Class to use for the cell. Can be string, array of strings, or function that returns a string or array of strings. */",
+      "type": {
+        "returnType": "string | string[] | CellClassFunc",
+        "optional": true
+      }
+    },
+    "cellClassRules": {
+      "description": "/** Rules which can be applied to include certain CSS classes. */",
+      "type": { "returnType": "CellClassRules", "optional": true }
+    },
+    "cellRenderer": {
+      "description": "/** A `cellRenderer` to use for this column. */",
+      "type": {
+        "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string",
+        "optional": true
+      }
+    },
+    "cellRendererFramework": {
+      "description": "/** Framework `cellRenderer` to use for this column. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "cellRendererParams": {
+      "description": "/** Params to be passed to the cell renderer component. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "cellRendererSelector": {
+      "description": "/** Callback to select which cell renderer to be used for a given row within the same column. */",
+      "type": { "returnType": "CellRendererSelectorFunc", "optional": true }
+    },
+    "autoHeight": {
+      "description": "/** Set to `true` to have the grid calculate the height of a row based on contents of this column. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "wrapText": {
+      "description": "/** Set to `true` to have the text wrap inside the cell - typically used with `autoHeight`. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "enableCellChangeFlash": {
+      "description": "/** Set to `true` to flash a cell when it's refreshed. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "suppressCellFlash": {
+      "description": "/** Set to `true` to prevent this column from flashing on changes. Only applicable if cell flashing is turned on for the grid. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "rowDrag": {
+      "description": "/** `boolean` or `Function`. Set to `true` (or return `true` from function) to allow row dragging. */",
+      "type": { "returnType": "boolean | RowDragCallback", "optional": true }
+    },
+    "rowDragText": {
+      "description": "/** A callback that should return a string to be displayed by the `rowDragComp` while dragging a row.\n * If this callback is not set, the current cell value will be used. */",
+      "type": {
+        "arguments": { "params": "IRowDragItem", "dragItemCount": "number" },
+        "returnType": "string",
+        "optional": true
+      }
+    },
+    "dndSource": {
+      "description": "/** `boolean` or `Function`. Set to `true` (or return `true` from function) to allow dragging for native drag and drop. */",
+      "type": { "returnType": "boolean | DndSourceCallback", "optional": true }
+    },
+    "dndSourceOnRowDrag": {
+      "description": "/** Function to allow custom drag functionality for native drag and drop. */",
+      "type": {
+        "arguments": {
+          "params": "{ rowNode: RowNode; dragEvent: DragEvent; }"
+        },
+        "returnType": "void",
+        "optional": true
+      }
+    },
+    "rowGroup": {
+      "description": "/** Set to `true` to row group by this column. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "initialRowGroup": {
+      "description": "/** Same as 'rowGroup', except only applied when creating a new column. Not applied when updating column definitions. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "rowGroupIndex": {
+      "description": "/** Set this in columns you want to group by.\n * If only grouping by one column, set this to any number (e.g. `0`).\n * If grouping by multiple columns, set this to where you want this column to be in the group (e.g. `0` for first, `1` for second, and so on). */",
+      "type": { "returnType": "number | null", "optional": true }
+    },
+    "initialRowGroupIndex": {
+      "description": "/** Same as 'rowGroupIndex', except only applied when creating a new column. Not applied when updating column definitions. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "enableRowGroup": {
+      "description": "/** Set to `true` if you want to be able to row group by this column via the GUI.\n * This will not block the API or properties being used to achieve row grouping. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "enableValue": {
+      "description": "/** Set to `true` if you want to be able to aggregate by this column via the GUI.\n * This will not block the API or properties being used to achieve aggregation. */",
+      "type": { "returnType": "boolean", "optional": true }
     },
     "aggFunc": {
-      "description": "/** Name of function to use for aggregation. One of [sum,min,max,first,last] or a function. */",
+      "description": "/** Name of function to use for aggregation. You can also provide your own agg function. */",
       "type": { "returnType": "string | IAggFunc | null", "optional": true }
     },
     "initialAggFunc": {
+      "description": "/** Same as 'aggFunc', except only applied when creating a new column. Not applied when updating column definitions. */",
       "type": { "returnType": "string | IAggFunc", "optional": true }
     },
     "allowedAggFuncs": {
-      "description": "/** Agg funcs allowed on this column. If missing, all installed agg funcs are allowed.\n * Can be eg ['sum','avg']. This will restrict what the GUI allows to select only. */",
+      "description": "/** Aggregation functions allowed on this column e.g. `['sum', 'avg']`.\n * If missing, all installed functions are allowed.\n * This will only restrict what the GUI allows a user to select, it does not impact when you set a function via the API. */",
       "type": { "returnType": "string[]", "optional": true }
-    },
-    "rowGroupIndex": {
-      "description": "/** To group by this column by default, either provide an index (eg rowGroupIndex=1), or set rowGroup=true. */",
-      "type": { "returnType": "number | null", "optional": true }
-    },
-    "rowGroup": { "type": { "returnType": "boolean", "optional": true } },
-    "initialRowGroupIndex": {
-      "type": { "returnType": "number", "optional": true }
-    },
-    "initialRowGroup": {
-      "type": { "returnType": "boolean", "optional": true }
     },
     "showRowGroup": {
       "description": "/** Set to true to have the grid place the values for the group into the cell, or put the name of a grouped column to just show that group. */",
       "type": { "returnType": "string | boolean", "optional": true }
     },
-    "pivotIndex": {
-      "description": "/** To pivot by this column by default, either provide an index (eg pivotIndex=1), or set pivot=true. */",
+    "sortable": {
+      "description": "/** Set to `true` to allow sorting on this column. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "sort": {
+      "description": "/** If sorting by default, set it here. Set to 'asc' or 'desc'. */",
+      "type": { "returnType": "string | null", "optional": true }
+    },
+    "initialSort": {
+      "description": "/** Same as `sort`, except only applied when creating a new column. Not applied when updating column definitions. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "sortIndex": {
+      "description": "/** If sorting more than one column by default, specifies order in which the sorting should be applied. */",
       "type": { "returnType": "number | null", "optional": true }
     },
-    "pivot": { "type": { "returnType": "boolean", "optional": true } },
-    "initialPivotIndex": {
+    "initialSortIndex": {
+      "description": "/** Same as 'sortIndex', except only applied when creating a new column. Not applied when updating column definitions. */",
       "type": { "returnType": "number", "optional": true }
     },
-    "initialPivot": { "type": { "returnType": "boolean", "optional": true } },
+    "sortingOrder": {
+      "description": "/** Array defining the order in which sorting occurs (if sorting is enabled). An array with any of the following in any order ['asc','desc',null] */",
+      "type": { "returnType": "(string | null)[]", "optional": true }
+    },
     "comparator": {
       "description": "/** Comparator function for custom sorting. */",
       "type": {
@@ -887,139 +1125,16 @@
         "optional": true
       }
     },
-    "equals": {
-      "description": "/** Comparator for values, used by renderer to know if values have changed. Cells who's values have not changed don't get refreshed. */",
-      "type": {
-        "arguments": { "valueA": "any", "valueB": "any" },
-        "returnType": "boolean",
-        "optional": true
-      }
-    },
-    "pivotComparator": {
-      "description": "/** Comparator for ordering the pivot columns */",
-      "type": {
-        "arguments": { "valueA": "string", "valueB": "string" },
-        "returnType": "number",
-        "optional": true
-      }
-    },
-    "checkboxSelection": {
-      "description": "/** Set to true to render a selection checkbox in the column. */",
-      "type": {
-        "returnType": "boolean | CheckboxSelectionCallback",
-        "optional": true
-      }
-    },
-    "headerCheckboxSelection": {
-      "description": "/** If true, a 'select all' checkbox will be put into the header */",
-      "type": {
-        "returnType": "boolean | HeaderCheckboxSelectionCallback",
-        "optional": true
-      }
-    },
-    "headerCheckboxSelectionFilteredOnly": {
-      "description": "/** If true, the header checkbox selection will work on filtered items */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "rowDrag": {
-      "description": "/** For grid row dragging, set to true to enable row dragging within the grid */",
-      "type": { "returnType": "boolean | RowDragCallback", "optional": true }
-    },
-    "rowDragText": {
-      "description": "/** To configure the text to be displayed in the floating div while dragging a row when rowDrag is true */",
-      "type": {
-        "arguments": { "params": "IRowDragItem", "dragItemCount": "number" },
-        "returnType": "string",
-        "optional": true
-      }
-    },
-    "dndSource": {
-      "description": "/** For native drag and drop, set to true to enable drag source */",
-      "type": { "returnType": "boolean | DndSourceCallback", "optional": true }
-    },
-    "dndSourceOnRowDrag": {
-      "description": "/** For native drag and drop, set to true to allow custom onRowDrag processing */",
-      "type": {
-        "arguments": {
-          "params": "{ rowNode: RowNode; dragEvent: DragEvent; }"
-        },
-        "returnType": "void",
-        "optional": true
-      }
-    },
-    "suppressMenu": {
-      "description": "/** Set to true if no menu should be shown for this column header. */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "menuTabs": {
-      "description": "/** The menu tabs to show, and in which order, the valid values for this property are:\n * filterMenuTab, generalMenuTab, columnsMenuTab * */",
-      "type": { "returnType": "string[]", "optional": true }
-    },
-    "sortable": {
-      "description": "/** Set to true if sorting allowed for this column. */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "suppressMovable": {
-      "description": "/** Set to true to not allow moving this column via dragging it's header */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "suppressCellFlash": {
-      "description": "/** Set to true to not flash this column for value changes */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "lockPosition": {
-      "description": "/** Set to true to make sure this column is always first. Other columns, if movable, cannot move before this column. */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "lockVisible": {
-      "description": "/** Set to true to block the user showing / hiding the column, the column can only be shown / hidden via definitions or API */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "lockPinned": {
-      "description": "/** Set to true to block the user pinning the column, the column can only be pinned via definitions or API */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "unSortIcon": {
-      "description": "/** Set to true if you want the unsorted icon to be shown when no sort is applied to this column. */",
+      "description": "/** Set to `true` if you want the unsorted icon to be shown when no sort is applied to this column. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "suppressSizeToFit": {
-      "description": "/** Set to true if you want this columns width to be fixed during 'size to fit' operation. */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "resizable": {
-      "description": "/** Set to true if this column should be resizable */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "suppressAutoSize": {
-      "description": "/** Set to true if you do not want this column to be auto-resizable by double clicking it's edge. */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "suppressKeyboardEvent": {
-      "description": "/** Allows the user to suppress certain keyboard events in the grid cell */",
-      "type": {
-        "arguments": { "params": "SuppressKeyboardEventParams" },
-        "returnType": "boolean",
-        "optional": true
-      }
-    },
-    "enableRowGroup": {
-      "description": "/** If true, GUI will allow adding this columns as a row group */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "enablePivot": {
-      "description": "/** If true, GUI will allow adding this columns as a pivot */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "enableValue": {
-      "description": "/** If true, GUI will allow adding this columns as a value */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "editable": {
-      "description": "/** Set to true if this col is editable, otherwise false. Can also be a function to have different rows editable. */",
-      "type": { "returnType": "boolean | EditableCallback", "optional": true }
+    "sortedAt": {
+      "description": "/** @deprecated since v24 - use sortIndex instead\n */",
+      "type": { "returnType": "number", "optional": true }
     },
     "colSpan": {
+      "description": "/** By default, each cell will take up the width of one column. You can change this behaviour to allow cells to span multiple columns. */",
       "type": {
         "arguments": { "params": "ColSpanParams" },
         "returnType": "number",
@@ -1027,44 +1142,47 @@
       }
     },
     "rowSpan": {
+      "description": "/** By default, each cell will take up the height of one row. You can change this behaviour to allow cells to span multiple rows. */",
       "type": {
         "arguments": { "params": "RowSpanParams" },
         "returnType": "number",
         "optional": true
       }
     },
-    "suppressPaste": {
-      "description": "/** Set to true if this col should not be allowed take new values from the clipboard . */",
-      "type": {
-        "returnType": "boolean | SuppressPasteCallback",
-        "optional": true
-      }
+    "width": {
+      "description": "/** Initial width in pixels for the cell. */",
+      "type": { "returnType": "number", "optional": true }
     },
-    "suppressNavigable": {
-      "description": "/** Set to true if this col should not be navigable with the tab key. Can also be a function to have different rows editable. */",
-      "type": {
-        "returnType": "boolean | SuppressNavigableCallback",
-        "optional": true
-      }
+    "initialWidth": {
+      "description": "/** Same as 'width', except only applied when creating a new column. Not applied when updating column definitions. */",
+      "type": { "returnType": "number", "optional": true }
     },
-    "getQuickFilterText": {
-      "description": "/** To create the quick filter text for this column, if toString is not good enough on the value. */",
-      "type": {
-        "arguments": { "params": "GetQuickFilterTextParams" },
-        "returnType": "string",
-        "optional": true
-      }
+    "minWidth": {
+      "description": "/** Minimum width in pixels for the cell. */",
+      "type": { "returnType": "number", "optional": true }
     },
-    "newValueHandler": {
-      "description": "/** Callbacks for editing. See editing section for further details.\n * Return true if the update was successful, or false if not.\n * If false, then skips the UI refresh and no events are emitted.\n * Return false if the values are the same (ie no update). */",
-      "type": {
-        "arguments": { "params": "NewValueParams" },
-        "returnType": "boolean",
-        "optional": true
-      }
+    "maxWidth": {
+      "description": "/** Maximum width in pixels for the cell. */",
+      "type": { "returnType": "number", "optional": true }
     },
-    "singleClickEdit": {
-      "description": "/** If true, this cell will be in editing mode after first click. */",
+    "flex": {
+      "description": "/** Used instead of `width` when the goal is to fill the remaining empty space of the grid. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "initialFlex": {
+      "description": "/** Same as 'flex', except only applied when creating a new column. Not applied when updating column definitions. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "resizable": {
+      "description": "/** Set to `true` to allow this column should be resized. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "suppressSizeToFit": {
+      "description": "/** Set to `true` if you want this column's width to be fixed during 'size to fit' operations. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "suppressAutoSize": {
+      "description": "/** Set to `true` if you do not want this column to be auto-resizable by double clicking it's edge. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "template": {
@@ -1075,53 +1193,6 @@
       "description": "/** Cell template URL to load template from to use for cell. Useful for AngularJS cells. */",
       "type": { "returnType": "string", "optional": true }
     },
-    "cellClassRules": {
-      "description": "/** Rules for applying css classes */",
-      "type": { "returnType": "CellClassRules", "optional": true }
-    },
-    "onCellValueChanged": {
-      "description": "/** Callbacks for editing.See editing section for further details. */",
-      "type": {
-        "arguments": { "event": "NewValueParams" },
-        "returnType": "void",
-        "optional": true
-      }
-    },
-    "onCellClicked": {
-      "description": "/** Function callback, gets called when a cell is clicked. */",
-      "type": {
-        "arguments": { "event": "CellClickedEvent" },
-        "returnType": "void",
-        "optional": true
-      }
-    },
-    "onCellDoubleClicked": {
-      "description": "/** Function callback, gets called when a cell is double clicked. */",
-      "type": {
-        "arguments": { "event": "CellDoubleClickedEvent" },
-        "returnType": "void",
-        "optional": true
-      }
-    },
-    "onCellContextMenu": {
-      "description": "/** Function callback, gets called when a cell is right clicked. */",
-      "type": {
-        "arguments": { "event": "CellContextMenuEvent" },
-        "returnType": "void",
-        "optional": true
-      }
-    },
-    "icons": {
-      "description": "/** Icons for this column. Leave blank to use default. */",
-      "type": {
-        "returnType": "{ [key: string]: Function | string; }",
-        "optional": true
-      }
-    },
-    "enableCellChangeFlash": {
-      "description": "/** If true, grid will flash cell after cell is refreshed */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "pivotValueColumn": {
       "description": "/** Never set this, it is used internally by grid when doing in-grid pivoting */",
       "type": { "returnType": "Column | null", "optional": true }
@@ -1130,78 +1201,48 @@
       "description": "/** Never set this, it is used internally by grid when doing in-grid pivoting */",
       "type": { "returnType": "string[]", "optional": true }
     },
-    "headerComponent": {
-      "description": "/** The custom header component to be used for rendering the component header. If none specified the default AG Grid is used* */",
-      "type": { "returnType": "string | { new(): any; }", "optional": true }
-    },
-    "headerComponentFramework": {
-      "description": "/** The custom header component to be used for rendering the component header in the hosting framework (ie: React/Angular). If none specified the default AG Grid is used* */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "headerComponentParams": {
-      "description": "/** The custom header component parameters* */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "suppressFillHandle": {
-      "description": "/** Set to true to prevent the fillHandle from being rendered in any cell that belongs to this column */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "floatingFilter": {
-      "description": "/** Whether to display a floating filter for this column. */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "refData": {
-      "type": { "returnType": "{ [key: string]: string; }", "optional": true }
-    },
-    "chartDataType": {
-      "description": "/** Defines the column data type used when charting */",
-      "type": {
-        "returnType": "'category' | 'series' | 'time' | 'excluded'",
-        "optional": true
-      }
-    },
-    "columnsMenuParams": {
-      "description": "/** Params to customise the columns menu behaviour and appearance */",
-      "type": { "returnType": "ColumnsMenuParams", "optional": true }
-    },
     "headerName": {
-      "description": "/** The name to render in the column header */",
+      "description": "/** The name to render in the column header. If not specified and field is specified, the field name will be used as the header name. */",
       "type": { "returnType": "string", "optional": true }
-    },
-    "columnGroupShow": {
-      "description": "/** Whether to show the column when the group is open / closed. */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "headerClass": {
-      "description": "/** CSS class for the header */",
-      "type": { "returnType": "HeaderClass", "optional": true }
-    },
-    "toolPanelClass": {
-      "description": "/** CSS class for the toolPanel */",
-      "type": { "returnType": "ToolPanelClass", "optional": true }
     },
     "headerValueGetter": {
-      "description": "/** Expression or function to get the value for display in the header. */",
+      "description": "/** Function or expression. Gets the value for display in the header. */",
       "type": {
         "returnType": "string | HeaderValueGetterFunc",
         "optional": true
       }
     },
-    "pivotKeys": {
-      "description": "/** Never set this, it is used internally by grid when doing in-grid pivoting */",
-      "type": { "returnType": "string[]", "optional": true }
+    "headerTooltip": {
+      "description": "/** Whether to show the column when the group is open / closed. */\n/** Tooltip for the column header */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "headerClass": {
+      "description": "/** CSS class to use for the header cell. Can be a string, array of strings, or function. */",
+      "type": { "returnType": "HeaderClass", "optional": true }
+    },
+    "suppressHeaderKeyboardEvent": {
+      "description": "/** Suppress the grid taking action for the relevant keyboard event when a header is focused. */",
+      "type": {
+        "arguments": { "params": "SuppressHeaderKeyboardEventParams" },
+        "returnType": "boolean",
+        "optional": true
+      }
+    },
+    "columnGroupShow": {
+      "description": "/** Whether to show the column when the group is open / closed. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "toolPanelClass": {
+      "description": "/** CSS class to use for the tool panel cell. Can be a string, array of strings, or function. */",
+      "type": { "returnType": "ToolPanelClass", "optional": true }
     },
     "suppressColumnsToolPanel": {
-      "description": "/** Set to true to not include this column in the Columns Tool Panel */",
+      "description": "/** Set to `true` if you do not want this column or group to appear in the Columns Tool Panel. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressFiltersToolPanel": {
-      "description": "/** Set to true to not include this column / filter in the Filters Tool Panel */",
+      "description": "/** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. */",
       "type": { "returnType": "boolean", "optional": true }
-    },
-    "headerTooltip": {
-      "description": "/** Tooltip for the column header */",
-      "type": { "returnType": "string", "optional": true }
     },
     "tooltipComponent": {
       "type": {
@@ -1215,31 +1256,32 @@
     "tooltipComponentParams": {
       "type": { "returnType": "any", "optional": true }
     },
-    "suppressHeaderKeyboardEvent": {
-      "description": "/** Allows the user to suppress certain keyboard events in the grid header */",
-      "type": {
-        "arguments": { "params": "SuppressHeaderKeyboardEventParams" },
-        "returnType": "boolean",
-        "optional": true
-      }
+    "pivotKeys": {
+      "description": "/** Never set this, it is used internally by grid when doing in-grid pivoting */",
+      "type": { "returnType": "string[]", "optional": true }
     },
     "filter": {
-      "description": "/** One of the built in filter names: [set, number, text, date], or a filter function */",
+      "description": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Set to the name of a provided filter: `set`, `number`, `text`, `date`. \n * - Set to a `IFilterComp`. */",
       "type": { "returnType": "IFilterType", "optional": true }
     },
-    "filterFramework": { "type": { "returnType": "any", "optional": true } },
+    "filterFramework": {
+      "description": "/** Provided a custom framework filter to use for this column. */",
+      "type": { "returnType": "any", "optional": true }
+    },
     "filterParams": {
-      "description": "/** The filter params are specific to each filter! */",
+      "description": "/** Params to be passed to the filter component specified in `filter` or `filterFramework`. */",
       "type": { "returnType": "any", "optional": true }
     },
     "floatingFilterComponent": {
       "description": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
       "type": { "returnType": "IFloatingFilterType", "optional": true }
     },
-    "floatingFilterComponentParams": {
+    "floatingFilterComponentFramework": {
+      "description": "/** Floating filter framework component to use for this column. */",
       "type": { "returnType": "any", "optional": true }
     },
-    "floatingFilterComponentFramework": {
+    "floatingFilterComponentParams": {
+      "description": "/** Params to be passed to `floatingFilterComponent` or `floatingFilterComponentFramework`. */",
       "type": { "returnType": "any", "optional": true }
     }
   },
@@ -1932,90 +1974,113 @@
       }
     },
     "sideBar": {
+      "description": "/** Specifies the side bar components. */",
       "type": {
         "returnType": "SideBarDef | string | boolean | null",
         "optional": true
       }
     },
     "suppressContextMenu": {
+      "description": "/** Set to `true` to not show the context menu. Use if you don't want to use the default 'right click' context menu. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "preventDefaultOnContextMenu": {
+      "description": "/** When using `suppressContextMenu`, you can use the `onCellContextMenu` function to provide your own code to handle cell `contextmenu` events.\n * This flag is useful to prevent the browser from showing its default context menu. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "allowContextMenuWithControlKey": {
+      "description": "/** Allows context menu to show, even when `Ctrl` key is held down. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressMenuHide": {
+      "description": "/** Set to `true` to always show the column menu button, rather than only showing when the mouse is over the column header. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "enableBrowserTooltips": {
+      "description": "/** Set to `true` to use the browser's default tooltip instead of using the grid's Tooltip Component */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "tooltipShowDelay": {
+      "description": "/** The delay in milliseconds that it takes for tooltips to show up once an element is hovered over.\n * **Note:** This property does not work if `enableBrowserTooltips` is `true`. */",
       "type": { "returnType": "number", "optional": true }
     },
     "tooltipMouseTrack": {
+      "description": "/** Set to `true` to have tooltips follow the cursor once they are displayed. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "popupParent": {
+      "description": "/** DOM element to use as the popup parent for grid popups (context menu, column menu etc). */",
       "type": { "returnType": "HTMLElement", "optional": true }
     },
     "copyHeadersToClipboard": {
+      "description": "/** Set to `true` to also include headers when copying to clipboard using `Ctrl + C` clipboard. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "clipboardDeliminator": {
+      "description": "/** Specify the deliminator to use when copying to clipboard. */",
       "type": { "returnType": "string", "optional": true }
     },
     "suppressCopyRowsToClipboard": {
+      "description": "/** Set to `true` to only have the range selection, and not row selection, copied to clipboard. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressLastEmptyLineOnPaste": {
+      "description": "/** Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressClipboardPaste": {
+      "description": "/** Set to `true` to turn off paste operations within the grid. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressClipboardApi": {
+      "description": "/** Set to `true` to stop the grid trying to use the Clipboard API, if it is blocked, and immediately fallback to the workaround. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "columnDefs": {
+      "description": "/** Array of Column / Column Group definitions. */",
       "type": {
         "returnType": "(ColDef | ColGroupDef)[] | null",
         "optional": true
       }
     },
+    "defaultColDef": {
+      "description": "/** A default column definition. Items defined in the actual column definitions get precedence. */",
+      "type": { "returnType": "ColDef", "optional": true }
+    },
     "defaultColGroupDef": {
+      "description": "/** A default column group definition. All column group definitions will use these properties. Items defined in the actual column group definition get precedence. */",
       "type": { "returnType": "Partial<ColGroupDef>", "optional": true }
     },
-    "defaultColDef": { "type": { "returnType": "ColDef", "optional": true } },
     "columnTypes": {
+      "description": "/** An object map of custom column types which contain groups of properties that column definitions can inherit by referencing in their `type` property. */",
       "type": { "returnType": "{ [key: string]: ColDef; }", "optional": true }
     },
     "maintainColumnOrder": {
+      "description": "/** Keeps the order of Columns maintained after new Column Definitions are updated. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressFieldDotNotation": {
+      "description": "/** If `true`, then dots in field names (e.g. `address.firstline`) are not treated as deep references. Allows you to use dots in your field name if you prefer. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "deltaColumnMode": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "applyColumnDefOrder": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "immutableColumns": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressSetColumnStateEvents": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressColumnStateEvents": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "colWidth": {
@@ -2030,68 +2095,99 @@
       "description": "/** @deprecated Set via `defaultColDef.maxWidth`\n */",
       "type": { "returnType": "number", "optional": true }
     },
-    "headerHeight": { "type": { "returnType": "number", "optional": true } },
+    "headerHeight": {
+      "description": "/** The height in pixels for the row containing the column label header. Default: `25` */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "groupHeaderHeight": {
+      "description": "/** The height in pixels for the rows containing header column groups. If not specified, it uses `headerHeight`. */",
       "type": { "returnType": "number", "optional": true }
     },
     "floatingFiltersHeight": {
+      "description": "/** The height in pixels for the row containing the floating filters. Default: `20` */",
       "type": { "returnType": "number", "optional": true }
     },
     "pivotHeaderHeight": {
+      "description": "/** The height in pixels for the row containing the columns when in pivot mode. If not specified, it uses `headerHeight`. */",
       "type": { "returnType": "number", "optional": true }
     },
     "pivotGroupHeaderHeight": {
+      "description": "/** The height in pixels for the row containing header column groups when in pivot mode. If not specified, it uses `groupHeaderHeight`. */",
       "type": { "returnType": "number", "optional": true }
     },
     "allowDragFromColumnsToolPanel": {
+      "description": "/** Allow reordering and pinning columns by dragging columns from the Columns Tool Panel to the grid. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressMovableColumns": {
+      "description": "/** Set to `true` to suppress column moving, i.e. to make the columns fixed position. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressColumnMoveAnimation": {
+      "description": "/** If `true`, the `ag-column-moving` class is not added to the grid while columns are moving. In the default themes, this results in no animation when moving columns. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressDragLeaveHidesColumns": {
+      "description": "/** If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "colResizeDefault": {
+      "description": "/** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing). */",
       "type": { "returnType": "string", "optional": true }
     },
     "suppressAutoSize": {
+      "description": "/** Suppresses auto-sizing columns for columns. In other words, double clicking a column's header's edge will not auto-size. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "autoSizePadding": { "type": { "returnType": "number", "optional": true } },
+    "autoSizePadding": {
+      "description": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "skipHeaderOnAutoSize": {
+      "description": "/** Set this to `true` to skip the `headerName` when `autoSize` is called by default. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "components": {
+      "description": "/** A map of component names to plain JavaScript components. */",
       "type": { "returnType": "{ [p: string]: any; }", "optional": true }
     },
     "frameworkComponents": {
+      "description": "/** A map of component names to framework (Angular, React, Vue etc.) components. */",
       "type": {
         "returnType": "{ [p: string]: { new(): any; }; } | any",
         "optional": true
       }
     },
-    "editType": { "type": { "returnType": "string", "optional": true } },
+    "editType": {
+      "description": "/** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "singleClickEdit": {
+      "description": "/** Set to `true` to enable Single Click Editing for cells, to start editing with a single click. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressClickEdit": {
+      "description": "/** Set to `true` so that neither single nor double click starts editing. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "stopEditingWhenCellsLoseFocus": {
+      "description": "/** Set this to `true` to stop cell editing when grid loses focus.\n * The default is that the grid stays editing until focus goes onto another cell. For inline (non-popup) editors only. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "enterMovesDown": {
+      "description": "/** Set to `true` along with `enterMovesDownAfterEdit` to have Excel-style behaviour for the `Enter` key.\n * i.e. pressing the `Enter` key will move down to the cell beneath. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "enterMovesDownAfterEdit": {
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "enterMovesDown": { "type": { "returnType": "boolean", "optional": true } },
-    "stopEditingWhenCellsLoseFocus": {
+      "description": "/** Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the 'Enter' key.\n * i.e. pressing the Enter key will move down to the cell beneath. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "undoRedoCellEditing": {
+      "description": "/** Set to `true` to enable Undo / Redo while editing. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "undoRedoCellEditingLimit": {
+      "description": "/** Set the size of the undo / redo stack. */",
       "type": { "returnType": "number", "optional": true }
     },
     "stopEditingWhenGridLosesFocus": {
@@ -2099,18 +2195,23 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "defaultCsvExportParams": {
+      "description": "/** A default configuration object used to export to CSV. */",
       "type": { "returnType": "CsvExportParams", "optional": true }
     },
     "suppressCsvExport": {
+      "description": "/** Prevents the user from exporting the grid to CSV. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "defaultExcelExportParams": {
+      "description": "/** A default configuration object used to export to Excel. */",
       "type": { "returnType": "ExcelExportParams", "optional": true }
     },
     "suppressExcelExport": {
+      "description": "/** Prevents the user from exporting the grid to Excel. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "excelStyles": {
+      "description": "/** A list (array) of Excel styles to be used when exporting to Excel with styles. */",
       "type": { "returnType": "ExcelStyle[]", "optional": true }
     },
     "defaultExportParams": {
@@ -2120,11 +2221,16 @@
         "optional": true
       }
     },
-    "quickFilterText": { "type": { "returnType": "string", "optional": true } },
+    "quickFilterText": {
+      "description": "/** Rows are filtered using this text as a quick filter. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "cacheQuickFilter": {
+      "description": "/** Set to `true` to turn on the quick filter cache, used to improve performance when using the quick filter. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "excludeChildrenWhenTreeDataFiltering": {
+      "description": "/** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "floatingFilter": {
@@ -2132,22 +2238,30 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "enableOldSetFilterModel": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "enableCharts": { "type": { "returnType": "boolean", "optional": true } },
-    "chartThemes": { "type": { "returnType": "string[]", "optional": true } },
+    "enableCharts": {
+      "description": "/** Set to `true` to Enable Charts. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "chartThemes": {
+      "description": "/** The list of chart themes to be used. */",
+      "type": { "returnType": "string[]", "optional": true }
+    },
     "customChartThemes": {
+      "description": "/** A map containing custom chart themes. */",
       "type": {
         "returnType": "{ [name: string]: AgChartTheme }",
         "optional": true
       }
     },
     "chartThemeOverrides": {
+      "description": "/** Chart theme overrides applied to all themes. */",
       "type": { "returnType": "AgChartThemeOverrides", "optional": true }
     },
     "processChartOptions": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": {
         "arguments": { "params": "ProcessChartOptionsParams" },
         "returnType": "ChartOptions<any>",
@@ -2155,272 +2269,406 @@
       }
     },
     "allowProcessChartOptions": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "loadingCellRenderer": {
+      "description": "/** `cellRenderer` to use when data is loading via a DataSource. */",
       "type": {
         "returnType": "{ new(): ICellRenderer; } | string",
         "optional": true
       }
     },
     "loadingCellRendererFramework": {
+      "description": "/** Framework `cellRenderer` to use when data is loading via a DataSource. */",
       "type": { "returnType": "any", "optional": true }
     },
     "loadingCellRendererParams": {
+      "description": "/** Params to be passed to loading cell renderer component. */",
       "type": { "returnType": "any", "optional": true }
     },
     "loadingCellRendererSelector": {
+      "description": "/** Callback to select which loading cell renderer to be used when data is loading via a DataSource. */",
       "type": {
         "returnType": "LoadingCellRendererSelectorFunc",
         "optional": true
       }
     },
     "localeText": {
+      "description": "/** A map of key->value pairs for localising text within the grid. */",
       "type": { "returnType": "{ [key: string]: string }", "optional": true }
     },
-    "masterDetail": { "type": { "returnType": "boolean", "optional": true } },
-    "detailRowHeight": { "type": { "returnType": "number", "optional": true } },
-    "keepDetailRows": { "type": { "returnType": "boolean", "optional": true } },
+    "masterDetail": {
+      "description": "/** Set to `true` to enable Master Detail. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "keepDetailRows": {
+      "description": "/** Set to `true` to keep detail rows for when they are displayed again. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "keepDetailRowsCount": {
+      "description": "/** Sets the number of details rows to keep. */",
       "type": { "returnType": "number", "optional": true }
     },
-    "detailCellRendererParams": {
-      "type": { "returnType": "any", "optional": true }
-    },
     "detailCellRenderer": {
+      "description": "/** Provide a custom `detailCellRenderer` to use when a master row is expanded. */",
       "type": {
         "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string",
         "optional": true
       }
     },
     "detailCellRendererFramework": {
+      "description": "/** Framework `detailCellRenderer` to use when a master row is expanded. */",
       "type": { "returnType": "any", "optional": true }
     },
+    "detailCellRendererParams": {
+      "description": "/** Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "detailRowHeight": {
+      "description": "/** Set fixed height in pixels for each detail row. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "detailRowAutoHeight": {
+      "description": "/** Set to `true` to have the detail grid dynamically change it's height to fit it's rows. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "context": { "type": { "returnType": "any", "optional": true } },
+    "context": {
+      "description": "/** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application. */",
+      "type": { "returnType": "any", "optional": true }
+    },
     "alignedGrids": {
+      "description": "/** A list of grids to treat as Aligned Grids. If grids are aligned then the columns and horizontal scrolling will be kept in sync. */",
       "type": { "returnType": "GridOptions[]", "optional": true }
     },
-    "tabIndex": { "type": { "returnType": "number", "optional": true } },
-    "rowBuffer": { "type": { "returnType": "number", "optional": true } },
-    "valueCache": { "type": { "returnType": "boolean", "optional": true } },
+    "tabIndex": {
+      "description": "/** Change this value to set the tabIndex order of the Grid within your application. Default: `0` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "rowBuffer": {
+      "description": "/** The number of rows rendered outside the viewable area the grid renders.\n * Having a buffer means the grid will have rows ready to show as the user slowly scrolls vertically.\n * Default: `10` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "valueCache": {
+      "description": "/** Set to `true` to turn on the value cache. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "valueCacheNeverExpires": {
+      "description": "/** Set to `true` to configure the value cache to not expire after data updates. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "enableCellExpressions": {
+      "description": "/** Set to `true` to allow cell expressions. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressParentsInRowNodes": {
+      "description": "/** If `true`, row nodes do not have their parents set.\n * The grid doesn't use the parent reference, but it is included to help the client code navigate the node tree if it wants by providing bi-direction navigation up and down the tree.\n * If this is a problem (e.g. if you need to convert the tree to JSON, which does not allow cyclic dependencies) then set this to `true`. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "suppressTouch": { "type": { "returnType": "boolean", "optional": true } },
+    "suppressTouch": {
+      "description": "/** Disables touch support (but does not remove the browser's efforts to simulate mouse events on touch). */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "suppressFocusAfterRefresh": {
+      "description": "/** Set to `true` to not set focus back on the grid after a refresh. This can avoid issues where you want to keep the focus on another part of the browser. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressAsyncEvents": {
+      "description": "/** Disables the asynchronous nature of the events introduced in v10, and makes them synchronous. This property only exists for the purpose of supporting legacy code which has a dependency on synchronous events from earlier versions (v9 or earlier) of AG Grid. **It is strongly recommended that you do not change this property unless you have legacy issues.** */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressBrowserResizeObserver": {
-      "description": "/** Set once in init, can never change */",
+      "description": "/** The grid will check for `ResizeObserver` and use it if it exists in the browser, otherwise it will use the grid's alternative implementation. Some users reported issues with Chrome's `ResizeObserver`. Use this property to always use the grid's alternative implementation should such problems exist. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressPropertyNamesCheck": {
+      "description": "/** Disables showing a warning message in the console if using a `gridOptions` or `colDef` property that doesn't exist. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressChangeDetection": {
+      "description": "/** Disables change detection. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "debug": { "type": { "returnType": "boolean", "optional": true } },
+    "debug": {
+      "description": "/** Set this to `true` to enable debug information from the grid and related components. Will result in additional logging being output, but very useful when investigating problems. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "overlayLoadingTemplate": {
+      "description": "/** Provide a template for 'loading' overlay. */",
       "type": { "returnType": "string", "optional": true }
     },
     "loadingOverlayComponent": {
+      "description": "/** Provide a custom loading overlay component. */",
       "type": {
         "returnType": "{ new(): ILoadingOverlayComp; } | string",
         "optional": true
       }
     },
     "loadingOverlayComponentFramework": {
+      "description": "/** Same as `loadingOverlayComponent` but for a framework component. */",
       "type": { "returnType": "any", "optional": true }
     },
     "loadingOverlayComponentParams": {
+      "description": "/** Customise the parameters provided to the loading overlay component. */",
       "type": { "returnType": "any", "optional": true }
     },
     "suppressLoadingOverlay": {
+      "description": "/** Disables the 'loading' overlay. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "overlayNoRowsTemplate": {
+      "description": "/** Provide a template for 'no rows' overlay. */",
       "type": { "returnType": "string", "optional": true }
     },
     "noRowsOverlayComponent": {
+      "description": "/** Provide a custom no rows overlay component */",
       "type": {
         "returnType": "{ new(): INoRowsOverlayComp; } | string",
         "optional": true
       }
     },
     "noRowsOverlayComponentFramework": {
+      "description": "/** Same as `noRowsOverlayComponent` but for a framework component. */",
       "type": { "returnType": "any", "optional": true }
     },
     "noRowsOverlayComponentParams": {
+      "description": "/** Customise the parameters provided to the no rows overlay component. */",
       "type": { "returnType": "any", "optional": true }
     },
     "suppressNoRowsOverlay": {
+      "description": "/** Disables the 'no rows' overlay. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "pagination": { "type": { "returnType": "boolean", "optional": true } },
+    "pagination": {
+      "description": "/** Set whether pagination is enabled. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "paginationPageSize": {
+      "description": "/** How many rows to load per page. If `paginationAutoPageSize` is specified, this property is ignored. Default: `100` */",
       "type": { "returnType": "number", "optional": true }
     },
     "paginationAutoPageSize": {
+      "description": "/** Set to `true` so that the number of rows to load per page is automatically adjusted by the grid so each page shows enough rows to just fill the area designated for the grid. If `false`, `paginationPageSize` is used. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "paginateChildRows": {
+      "description": "/** Set to `true` to have pages split children of groups when using Row Grouping or detail rows with Master Detail. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressPaginationPanel": {
+      "description": "/** If `true`, the default grid controls for navigation are hidden.\n * This is useful if `pagination=true` and you want to provide your own pagination controls.\n * Otherwise, when `pagination=true` the grid automatically shows the necessary controls at the bottom so that the user can navigate through the different pages. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "pivotMode": { "type": { "returnType": "boolean", "optional": true } },
-    "pivotPanelShow": { "type": { "returnType": "string", "optional": true } },
-    "pivotColumnGroupTotals": {
+    "pivotMode": {
+      "description": "/** Set to `true` to enable pivot mode. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "pivotPanelShow": {
+      "description": "/** When to show the 'pivot panel' (where you drag rows to pivot) at the top. Note that the pivot panel will never show if `pivotMode` is off. */",
       "type": { "returnType": "string", "optional": true }
     },
-    "pivotRowTotals": { "type": { "returnType": "string", "optional": true } },
+    "pivotColumnGroupTotals": {
+      "description": "/** When set and the grid is in pivot mode, automatically calculated totals will appear within the Pivot Column Groups, in the position specified. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "pivotRowTotals": {
+      "description": "/** When set and the grid is in pivot mode, automatically calculated totals will appear for each value column in the position specified. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "pivotSuppressAutoColumn": {
+      "description": "/** If `true`, the grid will not swap in the grouping column when pivoting. Useful if pivoting using Server Side Row Model or Viewport Row Model and you want full control of all columns including the group column. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressExpandablePivotGroups": {
+      "description": "/** When enabled, pivot column groups will appear 'fixed', without the ability to expand and collapse the column groups. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "functionsReadOnly": {
+      "description": "/** If `true`, then row group, pivot and value aggregation will be read-only from the GUI. The grid will display what values are used for each, but will not allow the user to change the selection. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "aggFuncs": {
+      "description": "/** A map of 'function name' to 'function' for custom aggregation functions. */",
       "type": { "returnType": "{ [key: string]: IAggFunc; }", "optional": true }
     },
     "suppressAggFuncInHeader": {
+      "description": "/** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressAggAtRootLevel": {
+      "description": "/** When `true`, the aggregations won't be computed for the root node of the grid. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "aggregateOnlyChangedColumns": {
+      "description": "/** When using change detection, only the updated column will be re-aggregated. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressAggFilteredOnly": {
+      "description": "/** Set to `true` so that aggregations are not impacted by filtering. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "animateRows": { "type": { "returnType": "boolean", "optional": true } },
+    "animateRows": {
+      "description": "/** Set to `true` to enable Row Animation. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "enableCellChangeFlash": {
+      "description": "/** Set to `true` to have cells flash after data changes. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "cellFlashDelay": { "type": { "returnType": "number", "optional": true } },
-    "cellFadeDelay": { "type": { "returnType": "number", "optional": true } },
+    "cellFlashDelay": {
+      "description": "/** To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long a cell should remain in its \\\"flashed\\\" state.\n * Default: `500` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "cellFadeDelay": {
+      "description": "/** To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long the \\\"flashed\\\" state animation takes to fade away after the timer set by `cellFlashDelay` has completed.\n * Default: `1000` */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "allowShowChangeAfterFilter": {
+      "description": "/** Set to `true` to have cells flash after data changes even when the change is due to filtering. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "domLayout": { "type": { "returnType": "string", "optional": true } },
-    "ensureDomOrder": { "type": { "returnType": "boolean", "optional": true } },
-    "enableRtl": { "type": { "returnType": "boolean", "optional": true } },
+    "domLayout": {
+      "description": "/** Switch between layout options: `normal`, `autoHeight`, `print`.\n * Default: `normal` */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "ensureDomOrder": {
+      "description": "/** When `true`, the order of rows and columns in the DOM are consistent with what is on screen. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "enableRtl": {
+      "description": "/** Set to `true` to operate the grid in RTL (Right to Left) mode. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "suppressColumnVirtualisation": {
+      "description": "/** Set to `true` so that the grid doesn't virtualise the columns. For example, if you have 100 columns, but only 10 visible due to scrolling, all 100 will always be rendered. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressMaxRenderedRowRestriction": {
+      "description": "/** By default the grid has a limit of rendering a maximum of 500 rows at once (remember the grid only renders rows you can see, so unless your display shows more than 500 rows without vertically scrolling this will never be an issue).\n * <br />**This is only relevant if you are manually setting `rowBuffer` to a high value (rendering more rows than can be seen) or if your grid height is able to display more than 500 rows at once.** */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "rowDragManaged": { "type": { "returnType": "boolean", "optional": true } },
+    "rowDragManaged": {
+      "description": "/** Set to `true` to enable Managed Row Dragging. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "suppressRowDrag": {
+      "description": "/** Set to `true` to suppress row dragging. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressMoveWhenRowDragging": {
+      "description": "/** Set to `true` to suppress moving rows while dragging the `rowDrag` waffle. This option highlights the position where the row will be placed and it will only move the row on mouse up. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "rowDragEntireRow": {
+      "description": "/** Set to `true` to enable clicking and dragging anywhere on the row without the need for a drag handle. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "rowDragMultiRow": {
+      "description": "/** Set to `true` to enable dragging multiple rows at the same time. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "fullWidthCellRenderer": {
+      "description": "/** Sets the Cell Renderer to use for full width rows. */",
       "type": {
         "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string",
         "optional": true
       }
     },
     "fullWidthCellRendererFramework": {
+      "description": "/** Same as `fullWidthCellRenderer` but for a framework component. */",
       "type": { "returnType": "any", "optional": true }
     },
     "fullWidthCellRendererParams": {
+      "description": "/** Customise the parameters provided to the `fullWidthCellRenderer` component. */",
       "type": { "returnType": "any", "optional": true }
     },
     "embedFullWidthRows": {
+      "description": "/** Set to `true` to have the detail grid embedded in the master grid's container and so link their horizontal scrolling. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "deprecatedEmbedFullWidthRows": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupDisplayType": {
+      "description": "/** Specifies how the results of row grouping should be displayed.\n * \n *   The options are:\n * \n *       `'singleColumn'`: single group column automatically added by the grid.\n *       `'multipleColumns'`: a group column per row group is added automatically.\n *       `'groupRows'`: group rows are automatically added instead of group columns.\n *       `'custom'`: informs the grid that group columns will be provided. */",
       "type": { "returnType": "RowGroupingDisplayType", "optional": true }
     },
     "groupDefaultExpanded": {
+      "description": "/** If grouping, set to the number of levels to expand by default, e.g. `0` for none, `1` for first level only, etc. Set to `-1` to expand everything. */",
       "type": { "returnType": "number", "optional": true }
     },
     "autoGroupColumnDef": {
+      "description": "/** Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included. */",
       "type": { "returnType": "ColDef", "optional": true }
     },
     "groupMaintainOrder": {
+      "description": "/** When `true`, preserves the current group order when sorting on non-group columns. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupSelectsChildren": {
+      "description": "/** When `true`, if you select a group, the children of the group will also be selected. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupIncludeFooter": {
+      "description": "/** If grouping, this controls whether to show a group footer when the group is expanded.\n * If `true`, then by default, the footer will contain aggregate data (if any) when shown and the header will be blank.\n * When closed, the header will contain the aggregate data regardless of this setting (as the footer is hidden anyway).\n * This is handy for 'total' rows, that are displayed below the data when the group is open, and alongside the group when it is closed. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupIncludeTotalFooter": {
+      "description": "/** Set to `true` to show a 'grand total' group footer across all groups. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupSuppressBlankHeader": {
+      "description": "/** If `true`, and showing footer, aggregate data will always be displayed at both the header and footer levels. This stops the possibly undesirable behaviour of the header details 'jumping' to the footer on expand. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupSelectsFiltered": {
+      "description": "/** If using `groupSelectsChildren`, then only the children that pass the current filter will get selected. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "showOpenedGroup": {
+      "description": "/** Shows the open group in the group column for non-group rows. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupRemoveSingleChildren": {
+      "description": "/** Set to `true` to collapse groups that only have one child. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupRemoveLowestSingleChildren": {
+      "description": "/** Set to `true` to collapse lowest level groups that only have one child. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "groupHideOpenParents": {
+      "description": "/** Set to `true` to hide parents that are open. When used with multiple columns for showing groups, it can give a more pleasing user experience. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "rowGroupPanelShow": {
+      "description": "/** When to show the 'row group panel' (where you drag rows to group) at the top. */",
       "type": { "returnType": "string", "optional": true }
     },
     "groupRowRenderer": {
+      "description": "/** Sets the Cell Renderer to use when `groupDisplayType = 'groupRows'`. */",
       "type": {
         "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string",
         "optional": true
       }
     },
     "groupRowRendererFramework": {
+      "description": "/** Same as `groupRowRenderer` but for a framework component. */",
       "type": { "returnType": "any", "optional": true }
     },
     "groupRowRendererParams": {
+      "description": "/** Customise the parameters provided to the `groupRowRenderer` component. */",
       "type": { "returnType": "any", "optional": true }
     },
     "suppressMakeColumnVisibleAfterUnGroup": {
+      "description": "/** By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "treeData": { "type": { "returnType": "boolean", "optional": true } },
+    "treeData": {
+      "description": "/** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "groupRowInnerRenderer": {
       "description": "/** @deprecated - this is now groupRowRendererParams.innerRenderer\n */",
       "type": {
@@ -2448,129 +2696,188 @@
       "description": "/** @deprecated - no longer needed, transaction updates keep group state\n */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "pinnedTopRowData": { "type": { "returnType": "any[]", "optional": true } },
-    "pinnedBottomRowData": {
+    "pinnedTopRowData": {
+      "description": "/** Data to be displayed as pinned top rows in the grid. */",
       "type": { "returnType": "any[]", "optional": true }
     },
-    "rowModelType": { "type": { "returnType": "string", "optional": true } },
-    "rowData": { "type": { "returnType": "any[] | null", "optional": true } },
-    "immutableData": { "type": { "returnType": "boolean", "optional": true } },
+    "pinnedBottomRowData": {
+      "description": "/** Data to be displayed as pinned bottom rows in the grid. */",
+      "type": { "returnType": "any[]", "optional": true }
+    },
+    "rowModelType": {
+      "description": "/** Sets the row model type. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "rowData": {
+      "description": "/** Set the data to be displayed as rows in the grid. */",
+      "type": { "returnType": "any[] | null", "optional": true }
+    },
+    "immutableData": {
+      "description": "/** Enables Immutable Data mode, for compatibility with immutable stores. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "asyncTransactionWaitMillis": {
+      "description": "/** How many milliseconds to wait before executing a batch of async transactions. */",
       "type": { "returnType": "number", "optional": true }
     },
     "suppressModelUpdateAfterUpdateTransaction": {
+      "description": "/** Prevents Transactions changing sort, filter, group or pivot state when transaction only contains updates. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "deltaRowDataMode": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "batchUpdateWaitMillis": {
       "description": "/** @deprecated use asyncTransactionWaitMillis instead\n */",
       "type": { "returnType": "number", "optional": true }
     },
-    "datasource": { "type": { "returnType": "IDatasource", "optional": true } },
+    "datasource": {
+      "description": "/** Provide the datasource for infinite scrolling. */",
+      "type": { "returnType": "IDatasource", "optional": true }
+    },
     "cacheOverflowSize": {
+      "description": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n * Default: `1` */",
       "type": { "returnType": "number", "optional": true }
     },
     "infiniteInitialRowCount": {
+      "description": "/** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.\n * Default: `1` */",
       "type": { "returnType": "number", "optional": true }
     },
     "serverSideStoreType": {
+      "description": "/** Whether to use Full Store or Partial Store for storing rows. */",
       "type": { "returnType": "ServerSideStoreType", "optional": true }
     },
-    "cacheBlockSize": { "type": { "returnType": "number", "optional": true } },
+    "cacheBlockSize": {
+      "description": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n * Default: `100` */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "maxBlocksInCache": {
+      "description": "/** How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value. */",
       "type": { "returnType": "number", "optional": true }
     },
     "maxConcurrentDatasourceRequests": {
+      "description": "/** How many requests to hit the server with concurrently. If the max is reached, requests are queued. */",
       "type": { "returnType": "number", "optional": true }
     },
     "blockLoadDebounceMillis": {
+      "description": "/** How many milliseconds to wait before loading a block. Useful when scrolling over many rows, spanning many Partial Store blocks, as it prevents blocks loading until scrolling has settled. */",
       "type": { "returnType": "number", "optional": true }
     },
     "purgeClosedRowNodes": {
+      "description": "/** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideDatasource": {
+      "description": "/** Provide the `serverSideDatasource` for server side row model. */",
       "type": { "returnType": "IServerSideDatasource", "optional": true }
     },
     "serverSideSortingAlwaysResets": {
+      "description": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "serverSideFilteringAlwaysResets": {
+      "description": "/** When enabled, always refreshes stores after filter has changed. Used by Full Store only, to allow Server-Side Filtering. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressEnterpriseResetOnNewColumns": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "viewportDatasource": {
+      "description": "/** To use the viewport row model you need to provide the grid with a `viewportDatasource`. */",
       "type": { "returnType": "IViewportDatasource", "optional": true }
     },
     "viewportRowModelPageSize": {
+      "description": "/** When using viewport row model, sets the page size for the viewport. */",
       "type": { "returnType": "number", "optional": true }
     },
     "viewportRowModelBufferSize": {
+      "description": "/** When using viewport row model, sets the buffer size for the viewport. */",
       "type": { "returnType": "number", "optional": true }
     },
     "alwaysShowHorizontalScroll": {
+      "description": "/** Set to `true` to always show the horizontal scrollbar. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "alwaysShowVerticalScroll": {
+      "description": "/** Set to `true` to always show the vertical scrollbar. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "debounceVerticalScrollbar": {
+      "description": "/** Set to `true` to debounce the vertical scrollbar. Can provide smoother scrolling on older browsers, e.g. Internet Explorer. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressHorizontalScroll": {
+      "description": "/** Set to `true` to never show the horizontal scroll. This is useful if the grid is aligned with another grid and will scroll when the other grid scrolls. (Should not be used in combination with `alwaysShowHorizontalScroll`.) */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressScrollOnNewData": {
+      "description": "/** When `true`, the grid will not scroll to the top when new row data is provided. Use this if you don't want the default behaviour of scrolling to the top every time you load new data. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressAnimationFrame": {
+      "description": "/** When `true`, the grid will not use animation frames when drawing rows while scrolling. Use this if the grid is working fast enough that you don't need animation frames and you don't want the grid to flicker. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressMiddleClickScrolls": {
+      "description": "/** If `true`, middle clicks will result in `click` events for cells and rows. Otherwise the browser will use middle click to scroll the grid.<br />**Note:** Not all browsers fire `click` events with the middle button. Most will fire only `mousedown` and `mouseup` events, which can be used to focus a cell, but will not work to call the `onCellClicked` function. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressPreventDefaultOnMouseWheel": {
+      "description": "/** If `true`, mouse wheel events will be passed to the browser. Useful if your grid has no vertical scrolls and you want the mouse to scroll the browser page. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "scrollbarWidth": { "type": { "returnType": "number", "optional": true } },
-    "rowSelection": { "type": { "returnType": "string", "optional": true } },
+    "scrollbarWidth": {
+      "description": "/** Tell the grid how wide in pixels the scrollbar is, which is used in grid width calculations. Set only if using non-standard browser-provided scrollbars, so the grid can use the non-standard size in its calculations. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "rowSelection": {
+      "description": "/** Type of Row Selection: `single`, `multiple`. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "rowMultiSelectWithClick": {
+      "description": "/** Set to `true` to allow multiple rows to be selected using single click. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressRowDeselection": {
+      "description": "/** If `true`, rows will not be deselected if you hold down `Ctrl` and click the row or press `Space`. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressRowClickSelection": {
+      "description": "/** If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressCellSelection": {
+      "description": "/** If `true`, cells won't be selectable. This means cells will not get keyboard focus when you click on them. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressMultiRangeSelection": {
+      "description": "/** If `true`, only a single range can be selected. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "enableCellTextSelection": {
+      "description": "/** Set to `true` to be able to select the text within cells.\n * \n * **Note:** When this is set to `true`, the clipboard service is disabled. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "enableRangeSelection": {
+      "description": "/** Set to `true` to enable Range Selection. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "enableRangeHandle": {
+      "description": "/** Set to `true` to enable the Range Handle. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "enableFillHandle": {
+      "description": "/** Set to `true` to enable the Fill Handle. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "fillHandleDirection": {
+      "description": "/** Set to `'x'` to force the fill handle direction to horizontal, or set to `'y'` to force the fill handle direction to vertical. */",
       "type": { "returnType": "string", "optional": true }
     },
     "suppressClearOnFillReduction": {
+      "description": "/** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "rowDeselection": {
@@ -2578,43 +2885,65 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "sortingOrder": {
+      "description": "/** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`. */",
       "type": { "returnType": "(string | null)[]", "optional": true }
     },
-    "accentedSort": { "type": { "returnType": "boolean", "optional": true } },
-    "unSortIcon": { "type": { "returnType": "boolean", "optional": true } },
-    "suppressMultiSort": {
+    "accentedSort": {
+      "description": "/** Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower. */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "multiSortKey": { "type": { "returnType": "string", "optional": true } },
+    "unSortIcon": {
+      "description": "/** Set to `true` to show the 'no sort' icon. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "suppressMultiSort": {
+      "description": "/** Set to `true` to suppress multi-sort when the user shift-clicks a column header. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "multiSortKey": {
+      "description": "/** Set to `'ctrl'` to have multi sorting work using the `Ctrl` (or `Command ⌘` for Mac) key. */",
+      "type": { "returnType": "string", "optional": true }
+    },
     "suppressMaintainUnsortedOrder": {
+      "description": "/** Set to `true` to suppress sorting of un-sorted data to match original row data. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "icons": {
+      "description": "/** Icons to use inside the grid instead of the grid's default icons. */",
       "type": {
         "returnType": "{ [key: string]: Function | string; }",
         "optional": true
       }
     },
-    "rowHeight": { "type": { "returnType": "number", "optional": true } },
+    "rowHeight": {
+      "description": "/** Default row height in pixels. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "rowStyle": {
+      "description": "/** The style properties to apply to all rows. Set to an object of key (style names) and values (style values) */",
       "type": {
         "returnType": "{ [cssProperty: string]: string }",
         "optional": true
       }
     },
     "rowClass": {
+      "description": "/** CSS class(es) for all rows. Provide either a string (class name) or array of strings (array of class names). */",
       "type": { "returnType": "string | string[]", "optional": true }
     },
     "rowClassRules": {
+      "description": "/** Rules which can be applied to include certain CSS classes. */",
       "type": { "returnType": "RowClassRules", "optional": true }
     },
     "suppressRowHoverHighlight": {
+      "description": "/** Set to `true` to not highlight rows by adding the `ag-row-hover` CSS class. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressRowTransform": {
+      "description": "/** Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in row spanning. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "columnHoverHighlight": {
+      "description": "/** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "deltaSort": { "type": { "returnType": "boolean", "optional": true } },
@@ -2634,12 +2963,15 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "getContextMenuItems": {
+      "description": "/** For customising the context menu. */",
       "type": { "returnType": "GetContextMenuItems", "optional": true }
     },
     "getMainMenuItems": {
+      "description": "/** For customising the main 'column header' menu. */",
       "type": { "returnType": "GetMainMenuItems", "optional": true }
     },
     "postProcessPopup": {
+      "description": "/** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup. */",
       "type": {
         "arguments": { "params": "PostProcessPopupParams" },
         "returnType": "void",
@@ -2647,6 +2979,7 @@
       }
     },
     "processCellForClipboard": {
+      "description": "/** Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel. */",
       "type": {
         "arguments": { "params": "ProcessCellForExportParams" },
         "returnType": "any",
@@ -2654,6 +2987,7 @@
       }
     },
     "processHeaderForClipboard": {
+      "description": "/** Allows you to process header values for the clipboard. */",
       "type": {
         "arguments": { "params": "ProcessHeaderForExportParams" },
         "returnType": "any",
@@ -2661,6 +2995,7 @@
       }
     },
     "processCellFromClipboard": {
+      "description": "/** Allows you to process cells from the clipboard. Handy if for example you have number fields, and want to block non-numbers from getting into the grid. */",
       "type": {
         "arguments": { "params": "ProcessCellForExportParams" },
         "returnType": "any",
@@ -2668,6 +3003,7 @@
       }
     },
     "sendToClipboard": {
+      "description": "/** Allows you to get the data that would otherwise go to the clipboard. To be used when you want to control the 'copy to clipboard' operation yourself. */",
       "type": {
         "arguments": { "params": "SendToClipboardParams" },
         "returnType": "void",
@@ -2675,6 +3011,7 @@
       }
     },
     "processDataFromClipboard": {
+      "description": "/** Allows complete control of the paste operation, including cancelling the operation (so nothing happens) or replacing the data with other data. */",
       "type": {
         "arguments": { "params": "ProcessDataFromClipboardParams" },
         "returnType": "string[][] | null",
@@ -2682,9 +3019,11 @@
       }
     },
     "isExternalFilterPresent": {
+      "description": "/** Grid calls this method to know if an external filter is present. */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": true }
     },
     "doesExternalFilterPass": {
+      "description": "/** Should return `true` if external filter passes, otherwise `false`. */",
       "type": {
         "arguments": { "node": "RowNode" },
         "returnType": "boolean",
@@ -2692,9 +3031,11 @@
       }
     },
     "getChartToolbarItems": {
+      "description": "/** Callback to be used to customise the chart toolbar items. */",
       "type": { "returnType": "GetChartToolbarItems", "optional": true }
     },
     "createChartContainer": {
+      "description": "/** Callback to enable displaying the chart in an alternative chart container. */",
       "type": {
         "arguments": { "params": "ChartRef" },
         "returnType": "void",
@@ -2702,6 +3043,7 @@
       }
     },
     "navigateToNextHeader": {
+      "description": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. */",
       "type": {
         "arguments": { "params": "NavigateToNextHeaderParams" },
         "returnType": "HeaderPosition",
@@ -2709,6 +3051,7 @@
       }
     },
     "tabToNextHeader": {
+      "description": "/** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused. */",
       "type": {
         "arguments": { "params": "TabToNextHeaderParams" },
         "returnType": "HeaderPosition",
@@ -2716,6 +3059,7 @@
       }
     },
     "navigateToNextCell": {
+      "description": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. */",
       "type": {
         "arguments": { "params": "NavigateToNextCellParams" },
         "returnType": "CellPosition",
@@ -2723,6 +3067,7 @@
       }
     },
     "tabToNextCell": {
+      "description": "/** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. */",
       "type": {
         "arguments": { "params": "TabToNextCellParams" },
         "returnType": "CellPosition",
@@ -2730,7 +3075,7 @@
       }
     },
     "suppressKeyboardEvent": {
-      "description": "/** Allows user to suppress certain keyboard events */",
+      "description": "/** Suppress the grid taking action for the relevant keyboard event when a cell is focused. */",
       "type": {
         "arguments": { "params": "SuppressKeyboardEventParams" },
         "returnType": "boolean",
@@ -2738,6 +3083,7 @@
       }
     },
     "localeTextFunc": {
+      "description": "/** A callback for localising text within the grid. */",
       "type": {
         "arguments": { "key": "string", "defaultValue": "string" },
         "returnType": "string",
@@ -2745,9 +3091,11 @@
       }
     },
     "getDocument": {
+      "description": "/** Allows overriding what `document` is used. Currently used by Drag and Drop (may extend to other places in the future). Use this when you want the grid to use a different `document` than the one available on the global scope. This can happen if docking out components (something which Electron supports) */",
       "type": { "arguments": {}, "returnType": "Document", "optional": true }
     },
     "paginationNumberFormatter": {
+      "description": "/** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions. */",
       "type": {
         "arguments": { "params": "PaginationNumberFormatterParams" },
         "returnType": "string",
@@ -2755,6 +3103,7 @@
       }
     },
     "groupRowAggNodes": {
+      "description": "/** Callback for grouping. */",
       "type": {
         "arguments": { "nodes": "RowNode[]" },
         "returnType": "any",
@@ -2762,6 +3111,7 @@
       }
     },
     "isGroupOpenByDefault": {
+      "description": "/** (Client-side Row Model only) Allows groups to be open by default. */",
       "type": {
         "arguments": { "params": "IsGroupOpenByDefaultParams" },
         "returnType": "boolean",
@@ -2769,6 +3119,7 @@
       }
     },
     "defaultGroupOrderComparator": {
+      "description": "/** Allows default sorting of groups. */",
       "type": {
         "arguments": { "nodeA": "RowNode", "nodeB": "RowNode" },
         "returnType": "number",
@@ -2776,6 +3127,7 @@
       }
     },
     "processSecondaryColDef": {
+      "description": "/** Callback to be used with pivoting, to allow changing the second column definition. */",
       "type": {
         "arguments": { "colDef": "ColDef" },
         "returnType": "void",
@@ -2783,6 +3135,7 @@
       }
     },
     "processSecondaryColGroupDef": {
+      "description": "/** Callback to be used with pivoting, to allow changing the second column group definition. */",
       "type": {
         "arguments": { "colGroupDef": "ColGroupDef" },
         "returnType": "void",
@@ -2790,6 +3143,7 @@
       }
     },
     "getDataPath": {
+      "description": "/** Callback to be used when working with Tree Data when `treeData = true`. */",
       "type": { "returnType": "GetDataPath", "optional": true }
     },
     "defaultGroupSortComparator": {
@@ -2801,6 +3155,7 @@
       }
     },
     "getChildCount": {
+      "description": "/** Allows setting the child count for a group row. */",
       "type": {
         "arguments": { "dataItem": "any" },
         "returnType": "number",
@@ -2808,6 +3163,7 @@
       }
     },
     "getServerSideStoreParams": {
+      "description": "/** Allows providing different params for different levels of grouping. */",
       "type": {
         "arguments": { "params": "GetServerSideStoreParamsParams" },
         "returnType": "ServerSideStoreParams",
@@ -2815,6 +3171,7 @@
       }
     },
     "isServerSideGroupOpenByDefault": {
+      "description": "/** Allows groups to be open by default. */",
       "type": {
         "arguments": { "params": "IsServerSideGroupOpenByDefaultParams" },
         "returnType": "boolean",
@@ -2822,15 +3179,19 @@
       }
     },
     "isApplyServerSideTransaction": {
+      "description": "/** Allows cancelling transactions. */",
       "type": { "returnType": "IsApplyServerSideTransaction", "optional": true }
     },
     "isServerSideGroup": {
+      "description": "/** SSRM Tree Data: Allows specifying which rows are expandable. */",
       "type": { "returnType": "IsServerSideGroup", "optional": true }
     },
     "getServerSideGroupKey": {
+      "description": "/** SSRM Tree Data: Allows specifying group keys. */",
       "type": { "returnType": "GetServerSideGroupKey", "optional": true }
     },
     "getBusinessKeyForNode": {
+      "description": "/** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.\n * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys. */",
       "type": {
         "arguments": { "node": "RowNode" },
         "returnType": "string",
@@ -2838,9 +3199,11 @@
       }
     },
     "getRowNodeId": {
+      "description": "/** Allows you to set the ID for a particular row node based on the data. Useful for selection and server side sorting and filtering for paging and virtual pagination. */",
       "type": { "returnType": "GetRowNodeIdFunc", "optional": true }
     },
     "processRowPostCreate": {
+      "description": "/** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */",
       "type": {
         "arguments": { "params": "ProcessRowParams" },
         "returnType": "void",
@@ -2848,12 +3211,15 @@
       }
     },
     "isRowSelectable": {
+      "description": "/** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable. */",
       "type": { "returnType": "IsRowSelectable", "optional": true }
     },
     "isRowMaster": {
+      "description": "/** Callback to be used with Master Detail to determine if a row should be a master row. If `false` is returned no detail row will exist for this row. */",
       "type": { "returnType": "IsRowMaster", "optional": true }
     },
     "fillOperation": {
+      "description": "/** Callback to fill values instead of simply copying values or increasing number values using linear progression. */",
       "type": {
         "arguments": { "params": "FillOperationParams" },
         "returnType": "any",
@@ -2861,6 +3227,7 @@
       }
     },
     "postSort": {
+      "description": "/** Callback to perform additional sorting after the grid has sorted the rows. */",
       "type": {
         "arguments": { "nodes": "RowNode[]" },
         "returnType": "void",
@@ -2868,6 +3235,7 @@
       }
     },
     "getRowStyle": {
+      "description": "/** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values. */",
       "type": {
         "arguments": { "params": "RowClassParams" },
         "returnType": "{ [cssProperty: string]: string; }",
@@ -2875,6 +3243,7 @@
       }
     },
     "getRowClass": {
+      "description": "/** Callback version of property `rowClass` to set class(es) for each row individually. Function should return either a string (class name), array of strings (array of class names) or undefined for no class. */",
       "type": {
         "arguments": { "params": "RowClassParams" },
         "returnType": "string | string[] | undefined",
@@ -2882,6 +3251,7 @@
       }
     },
     "getRowHeight": {
+      "description": "/** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height. */",
       "type": {
         "arguments": { "params": "RowHeightParams" },
         "returnType": "number | undefined | null",
@@ -2889,6 +3259,7 @@
       }
     },
     "isFullWidthCell": {
+      "description": "/** Tells the grid if this row should be rendered as full width. */",
       "type": {
         "arguments": { "rowNode": "RowNode" },
         "returnType": "boolean",
@@ -2896,6 +3267,7 @@
       }
     },
     "onToolPanelVisibleChanged": {
+      "description": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
       "type": {
         "arguments": { "event": "ToolPanelVisibleChangedEvent" },
         "returnType": "void",
@@ -2904,6 +3276,7 @@
       "meta": { "isEvent": true, "name": "onToolPanelVisibleChanged" }
     },
     "toolPanelVisibleChanged": {
+      "description": "/** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status. */",
       "type": {
         "arguments": { "event": "ToolPanelVisibleChangedEvent" },
         "returnType": "void",
@@ -2912,6 +3285,7 @@
       "meta": { "isEvent": true, "name": "onToolPanelVisibleChanged" }
     },
     "onPasteStart": {
+      "description": "/** Paste operation has started. */",
       "type": {
         "arguments": { "event": "PasteStartEvent" },
         "returnType": "void",
@@ -2920,6 +3294,7 @@
       "meta": { "isEvent": true, "name": "onPasteStart" }
     },
     "pasteStart": {
+      "description": "/** Paste operation has started. */",
       "type": {
         "arguments": { "event": "PasteStartEvent" },
         "returnType": "void",
@@ -2928,6 +3303,7 @@
       "meta": { "isEvent": true, "name": "onPasteStart" }
     },
     "onPasteEnd": {
+      "description": "/** Paste operation has ended. */",
       "type": {
         "arguments": { "event": "PasteEndEvent" },
         "returnType": "void",
@@ -2936,6 +3312,7 @@
       "meta": { "isEvent": true, "name": "onPasteEnd" }
     },
     "pasteEnd": {
+      "description": "/** Paste operation has ended. */",
       "type": {
         "arguments": { "event": "PasteEndEvent" },
         "returnType": "void",
@@ -2944,6 +3321,7 @@
       "meta": { "isEvent": true, "name": "onPasteEnd" }
     },
     "onColumnVisible": {
+      "description": "/** A column, or group of columns, was hidden / shown. */",
       "type": {
         "arguments": { "event": "ColumnVisibleEvent" },
         "returnType": "void",
@@ -2952,6 +3330,7 @@
       "meta": { "isEvent": true, "name": "onColumnVisible" }
     },
     "columnVisible": {
+      "description": "/** A column, or group of columns, was hidden / shown. */",
       "type": {
         "arguments": { "event": "ColumnVisibleEvent" },
         "returnType": "void",
@@ -2960,6 +3339,7 @@
       "meta": { "isEvent": true, "name": "onColumnVisible" }
     },
     "onColumnPinned": {
+      "description": "/** A column, or group of columns, was pinned / unpinned. */",
       "type": {
         "arguments": { "event": "ColumnPinnedEvent" },
         "returnType": "void",
@@ -2968,6 +3348,7 @@
       "meta": { "isEvent": true, "name": "onColumnPinned" }
     },
     "columnPinned": {
+      "description": "/** A column, or group of columns, was pinned / unpinned. */",
       "type": {
         "arguments": { "event": "ColumnPinnedEvent" },
         "returnType": "void",
@@ -2976,6 +3357,7 @@
       "meta": { "isEvent": true, "name": "onColumnPinned" }
     },
     "onColumnResized": {
+      "description": "/** A column was resized. */",
       "type": {
         "arguments": { "event": "ColumnResizedEvent" },
         "returnType": "void",
@@ -2984,6 +3366,7 @@
       "meta": { "isEvent": true, "name": "onColumnResized" }
     },
     "columnResized": {
+      "description": "/** A column was resized. */",
       "type": {
         "arguments": { "event": "ColumnResizedEvent" },
         "returnType": "void",
@@ -2992,6 +3375,7 @@
       "meta": { "isEvent": true, "name": "onColumnResized" }
     },
     "onColumnMoved": {
+      "description": "/** A column was moved. To find out when the column move is finished you can use the `dragStopped` event below. */",
       "type": {
         "arguments": { "event": "ColumnMovedEvent" },
         "returnType": "void",
@@ -3000,6 +3384,7 @@
       "meta": { "isEvent": true, "name": "onColumnMoved" }
     },
     "columnMoved": {
+      "description": "/** A column was moved. To find out when the column move is finished you can use the `dragStopped` event below. */",
       "type": {
         "arguments": { "event": "ColumnMovedEvent" },
         "returnType": "void",
@@ -3008,6 +3393,7 @@
       "meta": { "isEvent": true, "name": "onColumnMoved" }
     },
     "onColumnValueChanged": {
+      "description": "/** A value column was added or removed. */",
       "type": {
         "arguments": { "event": "ColumnValueChangedEvent" },
         "returnType": "void",
@@ -3016,6 +3402,7 @@
       "meta": { "isEvent": true, "name": "onColumnValueChanged" }
     },
     "columnValueChanged": {
+      "description": "/** A value column was added or removed. */",
       "type": {
         "arguments": { "event": "ColumnValueChangedEvent" },
         "returnType": "void",
@@ -3024,6 +3411,7 @@
       "meta": { "isEvent": true, "name": "onColumnValueChanged" }
     },
     "onColumnPivotModeChanged": {
+      "description": "/** The pivot mode flag was changed. */",
       "type": {
         "arguments": { "event": "ColumnPivotModeChangedEvent" },
         "returnType": "void",
@@ -3032,6 +3420,7 @@
       "meta": { "isEvent": true, "name": "onColumnPivotModeChanged" }
     },
     "columnPivotModeChanged": {
+      "description": "/** The pivot mode flag was changed. */",
       "type": {
         "arguments": { "event": "ColumnPivotModeChangedEvent" },
         "returnType": "void",
@@ -3040,6 +3429,7 @@
       "meta": { "isEvent": true, "name": "onColumnPivotModeChanged" }
     },
     "onColumnPivotChanged": {
+      "description": "/** A pivot column was added, removed or order changed. */",
       "type": {
         "arguments": { "event": "ColumnPivotChangedEvent" },
         "returnType": "void",
@@ -3048,6 +3438,7 @@
       "meta": { "isEvent": true, "name": "onColumnPivotChanged" }
     },
     "columnPivotChanged": {
+      "description": "/** A pivot column was added, removed or order changed. */",
       "type": {
         "arguments": { "event": "ColumnPivotChangedEvent" },
         "returnType": "void",
@@ -3056,6 +3447,7 @@
       "meta": { "isEvent": true, "name": "onColumnPivotChanged" }
     },
     "onColumnGroupOpened": {
+      "description": "/** A column group was opened / closed. */",
       "type": {
         "arguments": { "event": "ColumnGroupOpenedEvent" },
         "returnType": "void",
@@ -3064,6 +3456,7 @@
       "meta": { "isEvent": true, "name": "onColumnGroupOpened" }
     },
     "columnGroupOpened": {
+      "description": "/** A column group was opened / closed. */",
       "type": {
         "arguments": { "event": "ColumnGroupOpenedEvent" },
         "returnType": "void",
@@ -3072,6 +3465,7 @@
       "meta": { "isEvent": true, "name": "onColumnGroupOpened" }
     },
     "onNewColumnsLoaded": {
+      "description": "/** User set new columns. */",
       "type": {
         "arguments": { "event": "NewColumnsLoadedEvent" },
         "returnType": "void",
@@ -3080,6 +3474,7 @@
       "meta": { "isEvent": true, "name": "onNewColumnsLoaded" }
     },
     "newColumnsLoaded": {
+      "description": "/** User set new columns. */",
       "type": {
         "arguments": { "event": "NewColumnsLoadedEvent" },
         "returnType": "void",
@@ -3088,6 +3483,7 @@
       "meta": { "isEvent": true, "name": "onNewColumnsLoaded" }
     },
     "onGridColumnsChanged": {
+      "description": "/** The list of grid columns changed. */",
       "type": {
         "arguments": { "event": "GridColumnsChangedEvent" },
         "returnType": "void",
@@ -3096,6 +3492,7 @@
       "meta": { "isEvent": true, "name": "onGridColumnsChanged" }
     },
     "gridColumnsChanged": {
+      "description": "/** The list of grid columns changed. */",
       "type": {
         "arguments": { "event": "GridColumnsChangedEvent" },
         "returnType": "void",
@@ -3104,6 +3501,7 @@
       "meta": { "isEvent": true, "name": "onGridColumnsChanged" }
     },
     "onDisplayedColumnsChanged": {
+      "description": "/** The list of displayed columns changed. This can result from columns open / close, column move, pivot, group, etc. */",
       "type": {
         "arguments": { "event": "DisplayedColumnsChangedEvent" },
         "returnType": "void",
@@ -3112,6 +3510,7 @@
       "meta": { "isEvent": true, "name": "onDisplayedColumnsChanged" }
     },
     "displayedColumnsChanged": {
+      "description": "/** The list of displayed columns changed. This can result from columns open / close, column move, pivot, group, etc. */",
       "type": {
         "arguments": { "event": "DisplayedColumnsChangedEvent" },
         "returnType": "void",
@@ -3120,6 +3519,7 @@
       "meta": { "isEvent": true, "name": "onDisplayedColumnsChanged" }
     },
     "onVirtualColumnsChanged": {
+      "description": "/** The list of rendered columns changed (only columns in the visible scrolled viewport are rendered by default). */",
       "type": {
         "arguments": { "event": "VirtualColumnsChangedEvent" },
         "returnType": "void",
@@ -3128,6 +3528,7 @@
       "meta": { "isEvent": true, "name": "onVirtualColumnsChanged" }
     },
     "virtualColumnsChanged": {
+      "description": "/** The list of rendered columns changed (only columns in the visible scrolled viewport are rendered by default). */",
       "type": {
         "arguments": { "event": "VirtualColumnsChangedEvent" },
         "returnType": "void",
@@ -3136,6 +3537,7 @@
       "meta": { "isEvent": true, "name": "onVirtualColumnsChanged" }
     },
     "onColumnEverythingChanged": {
+      "description": "/** Shotgun - gets called when either a) new columns are set or b) `columnApi.setState()` is used, so everything has changed. */",
       "type": {
         "arguments": { "event": "ColumnEverythingChangedEvent" },
         "returnType": "void",
@@ -3144,6 +3546,7 @@
       "meta": { "isEvent": true, "name": "onColumnEverythingChanged" }
     },
     "columnEverythingChanged": {
+      "description": "/** Shotgun - gets called when either a) new columns are set or b) `columnApi.setState()` is used, so everything has changed. */",
       "type": {
         "arguments": { "event": "ColumnEverythingChangedEvent" },
         "returnType": "void",
@@ -3152,6 +3555,7 @@
       "meta": { "isEvent": true, "name": "onColumnEverythingChanged" }
     },
     "onComponentStateChanged": {
+      "description": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript or Angular 1.x).\n * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change. */",
       "type": {
         "arguments": { "event": "ComponentStateChangedEvent" },
         "returnType": "void",
@@ -3160,6 +3564,7 @@
       "meta": { "isEvent": true, "name": "onComponentStateChanged" }
     },
     "componentStateChanged": {
+      "description": "/** Only used by Angular, React and VueJS AG Grid components (not used if doing plain JavaScript or Angular 1.x).\n * If the grid receives changes due to bound properties, this event fires after the grid has finished processing the change. */",
       "type": {
         "arguments": { "event": "ComponentStateChangedEvent" },
         "returnType": "void",
@@ -3168,6 +3573,7 @@
       "meta": { "isEvent": true, "name": "onComponentStateChanged" }
     },
     "onCellValueChanged": {
+      "description": "/** Value has changed after editing. */",
       "type": {
         "arguments": { "event": "CellValueChangedEvent" },
         "returnType": "void",
@@ -3176,6 +3582,7 @@
       "meta": { "isEvent": true, "name": "onCellValueChanged" }
     },
     "cellValueChanged": {
+      "description": "/** Value has changed after editing. */",
       "type": {
         "arguments": { "event": "CellValueChangedEvent" },
         "returnType": "void",
@@ -3184,6 +3591,7 @@
       "meta": { "isEvent": true, "name": "onCellValueChanged" }
     },
     "onRowValueChanged": {
+      "description": "/** A cell's value within a row has changed. This event corresponds to Full Row Editing only. */",
       "type": {
         "arguments": { "event": "RowValueChangedEvent" },
         "returnType": "void",
@@ -3192,6 +3600,7 @@
       "meta": { "isEvent": true, "name": "onRowValueChanged" }
     },
     "rowValueChanged": {
+      "description": "/** A cell's value within a row has changed. This event corresponds to Full Row Editing only. */",
       "type": {
         "arguments": { "event": "RowValueChangedEvent" },
         "returnType": "void",
@@ -3200,6 +3609,7 @@
       "meta": { "isEvent": true, "name": "onRowValueChanged" }
     },
     "onCellEditingStarted": {
+      "description": "/** Editing a cell has started. */",
       "type": {
         "arguments": { "event": "CellEditingStartedEvent" },
         "returnType": "void",
@@ -3208,6 +3618,7 @@
       "meta": { "isEvent": true, "name": "onCellEditingStarted" }
     },
     "cellEditingStarted": {
+      "description": "/** Editing a cell has started. */",
       "type": {
         "arguments": { "event": "CellEditingStartedEvent" },
         "returnType": "void",
@@ -3216,6 +3627,7 @@
       "meta": { "isEvent": true, "name": "onCellEditingStarted" }
     },
     "onCellEditingStopped": {
+      "description": "/** Editing a cell has stopped. */",
       "type": {
         "arguments": { "event": "CellEditingStoppedEvent" },
         "returnType": "void",
@@ -3224,6 +3636,7 @@
       "meta": { "isEvent": true, "name": "onCellEditingStopped" }
     },
     "cellEditingStopped": {
+      "description": "/** Editing a cell has stopped. */",
       "type": {
         "arguments": { "event": "CellEditingStoppedEvent" },
         "returnType": "void",
@@ -3232,6 +3645,7 @@
       "meta": { "isEvent": true, "name": "onCellEditingStopped" }
     },
     "onRowEditingStarted": {
+      "description": "/** Editing a row has started (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStarted` will be fired for each individual cell. This event corresponds to Full Row Editing only. */",
       "type": {
         "arguments": { "event": "RowEditingStartedEvent" },
         "returnType": "void",
@@ -3240,6 +3654,7 @@
       "meta": { "isEvent": true, "name": "onRowEditingStarted" }
     },
     "rowEditingStarted": {
+      "description": "/** Editing a row has started (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStarted` will be fired for each individual cell. This event corresponds to Full Row Editing only. */",
       "type": {
         "arguments": { "event": "RowEditingStartedEvent" },
         "returnType": "void",
@@ -3248,6 +3663,7 @@
       "meta": { "isEvent": true, "name": "onRowEditingStarted" }
     },
     "onRowEditingStopped": {
+      "description": "/** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. This event corresponds to Full Row Editing only. */",
       "type": {
         "arguments": { "event": "RowEditingStoppedEvent" },
         "returnType": "void",
@@ -3256,6 +3672,7 @@
       "meta": { "isEvent": true, "name": "onRowEditingStopped" }
     },
     "rowEditingStopped": {
+      "description": "/** Editing a row has stopped (when row editing is enabled). When row editing, this event will be fired once and `cellEditingStopped` will be fired for each individual cell. This event corresponds to Full Row Editing only. */",
       "type": {
         "arguments": { "event": "RowEditingStoppedEvent" },
         "returnType": "void",
@@ -3264,6 +3681,7 @@
       "meta": { "isEvent": true, "name": "onRowEditingStopped" }
     },
     "onFilterOpened": {
+      "description": "/** Filter has been opened. */",
       "type": {
         "arguments": { "event": "FilterOpenedEvent" },
         "returnType": "void",
@@ -3272,6 +3690,7 @@
       "meta": { "isEvent": true, "name": "onFilterOpened" }
     },
     "filterOpened": {
+      "description": "/** Filter has been opened. */",
       "type": {
         "arguments": { "event": "FilterOpenedEvent" },
         "returnType": "void",
@@ -3280,6 +3699,7 @@
       "meta": { "isEvent": true, "name": "onFilterOpened" }
     },
     "onFilterChanged": {
+      "description": "/** Filter has been modified and applied. */",
       "type": {
         "arguments": { "event": "FilterChangedEvent" },
         "returnType": "void",
@@ -3288,6 +3708,7 @@
       "meta": { "isEvent": true, "name": "onFilterChanged" }
     },
     "filterChanged": {
+      "description": "/** Filter has been modified and applied. */",
       "type": {
         "arguments": { "event": "FilterChangedEvent" },
         "returnType": "void",
@@ -3296,6 +3717,7 @@
       "meta": { "isEvent": true, "name": "onFilterChanged" }
     },
     "onFilterModified": {
+      "description": "/** Filter was modified but not applied. Used when filters have 'Apply' buttons. */",
       "type": {
         "arguments": { "event": "FilterModifiedEvent" },
         "returnType": "void",
@@ -3304,6 +3726,7 @@
       "meta": { "isEvent": true, "name": "onFilterModified" }
     },
     "filterModified": {
+      "description": "/** Filter was modified but not applied. Used when filters have 'Apply' buttons. */",
       "type": {
         "arguments": { "event": "FilterModifiedEvent" },
         "returnType": "void",
@@ -3312,6 +3735,7 @@
       "meta": { "isEvent": true, "name": "onFilterModified" }
     },
     "onChartCreated": {
+      "description": "/** A chart has been created. */",
       "type": {
         "arguments": { "event": "ChartCreated" },
         "returnType": "void",
@@ -3320,6 +3744,7 @@
       "meta": { "isEvent": true, "name": "onChartCreated" }
     },
     "chartCreated": {
+      "description": "/** A chart has been created. */",
       "type": {
         "arguments": { "event": "ChartCreated" },
         "returnType": "void",
@@ -3328,6 +3753,7 @@
       "meta": { "isEvent": true, "name": "onChartCreated" }
     },
     "onChartRangeSelectionChanged": {
+      "description": "/** The data range for the chart has been changed. */",
       "type": {
         "arguments": { "event": "ChartRangeSelectionChanged" },
         "returnType": "void",
@@ -3336,6 +3762,7 @@
       "meta": { "isEvent": true, "name": "onChartRangeSelectionChanged" }
     },
     "chartRangeSelectionChanged": {
+      "description": "/** The data range for the chart has been changed. */",
       "type": {
         "arguments": { "event": "ChartRangeSelectionChanged" },
         "returnType": "void",
@@ -3344,6 +3771,7 @@
       "meta": { "isEvent": true, "name": "onChartRangeSelectionChanged" }
     },
     "onChartOptionsChanged": {
+      "description": "/** Formatting changes have been made by users through the Format Panel. */",
       "type": {
         "arguments": { "event": "ChartOptionsChanged" },
         "returnType": "void",
@@ -3352,6 +3780,7 @@
       "meta": { "isEvent": true, "name": "onChartOptionsChanged" }
     },
     "chartOptionsChanged": {
+      "description": "/** Formatting changes have been made by users through the Format Panel. */",
       "type": {
         "arguments": { "event": "ChartOptionsChanged" },
         "returnType": "void",
@@ -3360,6 +3789,7 @@
       "meta": { "isEvent": true, "name": "onChartOptionsChanged" }
     },
     "onChartDestroyed": {
+      "description": "/** A chart has been destroyed. */",
       "type": {
         "arguments": { "event": "ChartDestroyed" },
         "returnType": "void",
@@ -3368,6 +3798,7 @@
       "meta": { "isEvent": true, "name": "onChartDestroyed" }
     },
     "chartDestroyed": {
+      "description": "/** A chart has been destroyed. */",
       "type": {
         "arguments": { "event": "ChartDestroyed" },
         "returnType": "void",
@@ -3376,6 +3807,7 @@
       "meta": { "isEvent": true, "name": "onChartDestroyed" }
     },
     "onCellKeyDown": {
+      "description": "/** DOM event `keyDown` happened on a cell. */",
       "type": {
         "arguments": {
           "event": "CellKeyDownEvent | FullWidthCellKeyDownEvent"
@@ -3386,6 +3818,7 @@
       "meta": { "isEvent": true, "name": "onCellKeyDown" }
     },
     "cellKeyDown": {
+      "description": "/** DOM event `keyDown` happened on a cell. */",
       "type": {
         "arguments": {
           "event": "CellKeyDownEvent | FullWidthCellKeyDownEvent"
@@ -3396,6 +3829,7 @@
       "meta": { "isEvent": true, "name": "onCellKeyDown" }
     },
     "onCellKeyPress": {
+      "description": "/** DOM event `keyPress` happened on a cell. */",
       "type": {
         "arguments": {
           "event": "CellKeyPressEvent | FullWidthCellKeyPressEvent"
@@ -3406,6 +3840,7 @@
       "meta": { "isEvent": true, "name": "onCellKeyPress" }
     },
     "cellKeyPress": {
+      "description": "/** DOM event `keyPress` happened on a cell. */",
       "type": {
         "arguments": {
           "event": "CellKeyPressEvent | FullWidthCellKeyPressEvent"
@@ -3416,6 +3851,7 @@
       "meta": { "isEvent": true, "name": "onCellKeyPress" }
     },
     "onGridReady": {
+      "description": "/** The grid has initialised. Use this event if, for example, you need to use the grid's API to fix the columns to size. */",
       "type": {
         "arguments": { "event": "GridReadyEvent" },
         "returnType": "void",
@@ -3424,6 +3860,7 @@
       "meta": { "isEvent": true, "name": "onGridReady" }
     },
     "gridReady": {
+      "description": "/** The grid has initialised. Use this event if, for example, you need to use the grid's API to fix the columns to size. */",
       "type": {
         "arguments": { "event": "GridReadyEvent" },
         "returnType": "void",
@@ -3432,6 +3869,7 @@
       "meta": { "isEvent": true, "name": "onGridReady" }
     },
     "onFirstDataRendered": {
+      "description": "/** Fired the first time data is rendered into the grid. */",
       "type": {
         "arguments": { "event": "FirstDataRenderedEvent" },
         "returnType": "void",
@@ -3440,6 +3878,7 @@
       "meta": { "isEvent": true, "name": "onFirstDataRendered" }
     },
     "firstDataRendered": {
+      "description": "/** Fired the first time data is rendered into the grid. */",
       "type": {
         "arguments": { "event": "FirstDataRenderedEvent" },
         "returnType": "void",
@@ -3448,6 +3887,7 @@
       "meta": { "isEvent": true, "name": "onFirstDataRendered" }
     },
     "onGridSizeChanged": {
+      "description": "/** The size of the grid `div` has changed. In other words, the grid was resized. */",
       "type": {
         "arguments": { "event": "GridSizeChangedEvent" },
         "returnType": "void",
@@ -3456,6 +3896,7 @@
       "meta": { "isEvent": true, "name": "onGridSizeChanged" }
     },
     "gridSizeChanged": {
+      "description": "/** The size of the grid `div` has changed. In other words, the grid was resized. */",
       "type": {
         "arguments": { "event": "GridSizeChangedEvent" },
         "returnType": "void",
@@ -3464,6 +3905,7 @@
       "meta": { "isEvent": true, "name": "onGridSizeChanged" }
     },
     "onModelUpdated": {
+      "description": "/** Displayed rows have changed. Triggered after sort, filter or tree expand / collapse events. */",
       "type": {
         "arguments": { "event": "ModelUpdatedEvent" },
         "returnType": "void",
@@ -3472,6 +3914,7 @@
       "meta": { "isEvent": true, "name": "onModelUpdated" }
     },
     "modelUpdated": {
+      "description": "/** Displayed rows have changed. Triggered after sort, filter or tree expand / collapse events. */",
       "type": {
         "arguments": { "event": "ModelUpdatedEvent" },
         "returnType": "void",
@@ -3480,6 +3923,7 @@
       "meta": { "isEvent": true, "name": "onModelUpdated" }
     },
     "onVirtualRowRemoved": {
+      "description": "/** A row was removed from the DOM, for any reason. Use to clean up resources (if any) used by the row. */",
       "type": {
         "arguments": { "event": "VirtualRowRemovedEvent" },
         "returnType": "void",
@@ -3488,6 +3932,7 @@
       "meta": { "isEvent": true, "name": "onVirtualRowRemoved" }
     },
     "virtualRowRemoved": {
+      "description": "/** A row was removed from the DOM, for any reason. Use to clean up resources (if any) used by the row. */",
       "type": {
         "arguments": { "event": "VirtualRowRemovedEvent" },
         "returnType": "void",
@@ -3496,6 +3941,7 @@
       "meta": { "isEvent": true, "name": "onVirtualRowRemoved" }
     },
     "onViewportChanged": {
+      "description": "/** Which rows are rendered in the DOM has changed. */",
       "type": {
         "arguments": { "event": "ViewportChangedEvent" },
         "returnType": "void",
@@ -3504,6 +3950,7 @@
       "meta": { "isEvent": true, "name": "onViewportChanged" }
     },
     "viewportChanged": {
+      "description": "/** Which rows are rendered in the DOM has changed. */",
       "type": {
         "arguments": { "event": "ViewportChangedEvent" },
         "returnType": "void",
@@ -3512,6 +3959,7 @@
       "meta": { "isEvent": true, "name": "onViewportChanged" }
     },
     "onBodyScroll": {
+      "description": "/** The body was scrolled horizontally or vertically. */",
       "type": {
         "arguments": { "event": "BodyScrollEvent" },
         "returnType": "void",
@@ -3520,6 +3968,7 @@
       "meta": { "isEvent": true, "name": "onBodyScroll" }
     },
     "bodyScroll": {
+      "description": "/** The body was scrolled horizontally or vertically. */",
       "type": {
         "arguments": { "event": "BodyScrollEvent" },
         "returnType": "void",
@@ -3528,6 +3977,7 @@
       "meta": { "isEvent": true, "name": "onBodyScroll" }
     },
     "onDragStarted": {
+      "description": "/** When dragging starts. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */",
       "type": {
         "arguments": { "event": "DragStartedEvent" },
         "returnType": "void",
@@ -3536,6 +3986,7 @@
       "meta": { "isEvent": true, "name": "onDragStarted" }
     },
     "dragStarted": {
+      "description": "/** When dragging starts. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */",
       "type": {
         "arguments": { "event": "DragStartedEvent" },
         "returnType": "void",
@@ -3544,6 +3995,7 @@
       "meta": { "isEvent": true, "name": "onDragStarted" }
     },
     "onDragStopped": {
+      "description": "/** When dragging stops. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */",
       "type": {
         "arguments": { "event": "DragStoppedEvent" },
         "returnType": "void",
@@ -3552,6 +4004,7 @@
       "meta": { "isEvent": true, "name": "onDragStopped" }
     },
     "dragStopped": {
+      "description": "/** When dragging stops. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */",
       "type": {
         "arguments": { "event": "DragStoppedEvent" },
         "returnType": "void",
@@ -3560,6 +4013,7 @@
       "meta": { "isEvent": true, "name": "onDragStopped" }
     },
     "onPaginationChanged": {
+      "description": "/** Triggered every time the paging state changes. Some of the most common scenarios for this event to be triggered are:\n * \n *   - The page size changes.\n *   - The current shown page is changed.\n *   - New data is loaded onto the grid. */",
       "type": {
         "arguments": { "event": "PaginationChangedEvent" },
         "returnType": "void",
@@ -3568,6 +4022,7 @@
       "meta": { "isEvent": true, "name": "onPaginationChanged" }
     },
     "paginationChanged": {
+      "description": "/** Triggered every time the paging state changes. Some of the most common scenarios for this event to be triggered are:\n * \n *   - The page size changes.\n *   - The current shown page is changed.\n *   - New data is loaded onto the grid. */",
       "type": {
         "arguments": { "event": "PaginationChangedEvent" },
         "returnType": "void",
@@ -3576,6 +4031,7 @@
       "meta": { "isEvent": true, "name": "onPaginationChanged" }
     },
     "onRowDragEnter": {
+      "description": "/** A drag has started, or dragging was already started and the mouse has re-entered the grid having previously left the grid. */",
       "type": {
         "arguments": { "event": "RowDragEvent" },
         "returnType": "void",
@@ -3584,6 +4040,7 @@
       "meta": { "isEvent": true, "name": "onRowDragEnter" }
     },
     "rowDragEnter": {
+      "description": "/** A drag has started, or dragging was already started and the mouse has re-entered the grid having previously left the grid. */",
       "type": {
         "arguments": { "event": "RowDragEvent" },
         "returnType": "void",
@@ -3592,6 +4049,7 @@
       "meta": { "isEvent": true, "name": "onRowDragEnter" }
     },
     "onRowDragMove": {
+      "description": "/** The mouse has moved while dragging. */",
       "type": {
         "arguments": { "event": "RowDragEvent" },
         "returnType": "void",
@@ -3600,6 +4058,7 @@
       "meta": { "isEvent": true, "name": "onRowDragMove" }
     },
     "rowDragMove": {
+      "description": "/** The mouse has moved while dragging. */",
       "type": {
         "arguments": { "event": "RowDragEvent" },
         "returnType": "void",
@@ -3608,6 +4067,7 @@
       "meta": { "isEvent": true, "name": "onRowDragMove" }
     },
     "onRowDragLeave": {
+      "description": "/** The mouse has left the grid while dragging. */",
       "type": {
         "arguments": { "event": "RowDragEvent" },
         "returnType": "void",
@@ -3616,6 +4076,7 @@
       "meta": { "isEvent": true, "name": "onRowDragLeave" }
     },
     "rowDragLeave": {
+      "description": "/** The mouse has left the grid while dragging. */",
       "type": {
         "arguments": { "event": "RowDragEvent" },
         "returnType": "void",
@@ -3624,6 +4085,7 @@
       "meta": { "isEvent": true, "name": "onRowDragLeave" }
     },
     "onRowDragEnd": {
+      "description": "/** The drag has finished over the grid. */",
       "type": {
         "arguments": { "event": "RowDragEvent" },
         "returnType": "void",
@@ -3632,6 +4094,7 @@
       "meta": { "isEvent": true, "name": "onRowDragEnd" }
     },
     "rowDragEnd": {
+      "description": "/** The drag has finished over the grid. */",
       "type": {
         "arguments": { "event": "RowDragEvent" },
         "returnType": "void",
@@ -3640,6 +4103,7 @@
       "meta": { "isEvent": true, "name": "onRowDragEnd" }
     },
     "onColumnRowGroupChanged": {
+      "description": "/** A row group column was added or removed. */",
       "type": {
         "arguments": { "event": "ColumnRowGroupChangedEvent" },
         "returnType": "void",
@@ -3648,6 +4112,7 @@
       "meta": { "isEvent": true, "name": "onColumnRowGroupChanged" }
     },
     "columnRowGroupChanged": {
+      "description": "/** A row group column was added or removed. */",
       "type": {
         "arguments": { "event": "ColumnRowGroupChangedEvent" },
         "returnType": "void",
@@ -3656,6 +4121,7 @@
       "meta": { "isEvent": true, "name": "onColumnRowGroupChanged" }
     },
     "onRowGroupOpened": {
+      "description": "/** A row group was opened or closed. */",
       "type": {
         "arguments": { "event": "RowGroupOpenedEvent" },
         "returnType": "void",
@@ -3664,6 +4130,7 @@
       "meta": { "isEvent": true, "name": "onRowGroupOpened" }
     },
     "rowGroupOpened": {
+      "description": "/** A row group was opened or closed. */",
       "type": {
         "arguments": { "event": "RowGroupOpenedEvent" },
         "returnType": "void",
@@ -3672,6 +4139,7 @@
       "meta": { "isEvent": true, "name": "onRowGroupOpened" }
     },
     "onExpandOrCollapseAll": {
+      "description": "/** Fired when calling either of the API methods `expandAll()` or `collapseAll()`. */",
       "type": {
         "arguments": { "event": "ExpandCollapseAllEvent" },
         "returnType": "void",
@@ -3680,6 +4148,7 @@
       "meta": { "isEvent": true, "name": "onExpandOrCollapseAll" }
     },
     "expandOrCollapseAll": {
+      "description": "/** Fired when calling either of the API methods `expandAll()` or `collapseAll()`. */",
       "type": {
         "arguments": { "event": "ExpandCollapseAllEvent" },
         "returnType": "void",
@@ -3688,6 +4157,7 @@
       "meta": { "isEvent": true, "name": "onExpandOrCollapseAll" }
     },
     "onPinnedRowDataChanged": {
+      "description": "/** The client has set new pinned row data into the grid. */",
       "type": {
         "arguments": { "event": "PinnedRowDataChangedEvent" },
         "returnType": "void",
@@ -3696,6 +4166,7 @@
       "meta": { "isEvent": true, "name": "onPinnedRowDataChanged" }
     },
     "pinnedRowDataChanged": {
+      "description": "/** The client has set new pinned row data into the grid. */",
       "type": {
         "arguments": { "event": "PinnedRowDataChangedEvent" },
         "returnType": "void",
@@ -3704,6 +4175,7 @@
       "meta": { "isEvent": true, "name": "onPinnedRowDataChanged" }
     },
     "onRowDataChanged": {
+      "description": "/** The client has set new data into the grid using `api.setRowData()` or by changing the `rowData` bound property. */",
       "type": {
         "arguments": { "event": "RowDataChangedEvent" },
         "returnType": "void",
@@ -3712,6 +4184,7 @@
       "meta": { "isEvent": true, "name": "onRowDataChanged" }
     },
     "rowDataChanged": {
+      "description": "/** The client has set new data into the grid using `api.setRowData()` or by changing the `rowData` bound property. */",
       "type": {
         "arguments": { "event": "RowDataChangedEvent" },
         "returnType": "void",
@@ -3720,6 +4193,7 @@
       "meta": { "isEvent": true, "name": "onRowDataChanged" }
     },
     "onRowDataUpdated": {
+      "description": "/** The client has updated data for the grid using `api.applyTransaction(transaction)` or by changing the `rowData` bound property with `immutableData=true`. */",
       "type": {
         "arguments": { "event": "RowDataUpdatedEvent" },
         "returnType": "void",
@@ -3728,6 +4202,7 @@
       "meta": { "isEvent": true, "name": "onRowDataUpdated" }
     },
     "rowDataUpdated": {
+      "description": "/** The client has updated data for the grid using `api.applyTransaction(transaction)` or by changing the `rowData` bound property with `immutableData=true`. */",
       "type": {
         "arguments": { "event": "RowDataUpdatedEvent" },
         "returnType": "void",
@@ -3736,6 +4211,7 @@
       "meta": { "isEvent": true, "name": "onRowDataUpdated" }
     },
     "onAsyncTransactionsFlushed": {
+      "description": "/** Async transactions have been applied. Contains a list of all transaction results. */",
       "type": {
         "arguments": { "event": "AsyncTransactionsFlushed" },
         "returnType": "void",
@@ -3744,6 +4220,7 @@
       "meta": { "isEvent": true, "name": "onAsyncTransactionsFlushed" }
     },
     "asyncTransactionsFlushed": {
+      "description": "/** Async transactions have been applied. Contains a list of all transaction results. */",
       "type": {
         "arguments": { "event": "AsyncTransactionsFlushed" },
         "returnType": "void",
@@ -3752,6 +4229,7 @@
       "meta": { "isEvent": true, "name": "onAsyncTransactionsFlushed" }
     },
     "onCellClicked": {
+      "description": "/** Cell is clicked. */",
       "type": {
         "arguments": { "event": "CellClickedEvent" },
         "returnType": "void",
@@ -3760,6 +4238,7 @@
       "meta": { "isEvent": true, "name": "onCellClicked" }
     },
     "cellClicked": {
+      "description": "/** Cell is clicked. */",
       "type": {
         "arguments": { "event": "CellClickedEvent" },
         "returnType": "void",
@@ -3768,6 +4247,7 @@
       "meta": { "isEvent": true, "name": "onCellClicked" }
     },
     "onCellDoubleClicked": {
+      "description": "/** Cell is double clicked. */",
       "type": {
         "arguments": { "event": "CellDoubleClickedEvent" },
         "returnType": "void",
@@ -3776,6 +4256,7 @@
       "meta": { "isEvent": true, "name": "onCellDoubleClicked" }
     },
     "cellDoubleClicked": {
+      "description": "/** Cell is double clicked. */",
       "type": {
         "arguments": { "event": "CellDoubleClickedEvent" },
         "returnType": "void",
@@ -3784,6 +4265,7 @@
       "meta": { "isEvent": true, "name": "onCellDoubleClicked" }
     },
     "onCellFocused": {
+      "description": "/** Cell is focused. */",
       "type": {
         "arguments": { "event": "CellFocusedEvent" },
         "returnType": "void",
@@ -3792,6 +4274,7 @@
       "meta": { "isEvent": true, "name": "onCellFocused" }
     },
     "cellFocused": {
+      "description": "/** Cell is focused. */",
       "type": {
         "arguments": { "event": "CellFocusedEvent" },
         "returnType": "void",
@@ -3800,6 +4283,7 @@
       "meta": { "isEvent": true, "name": "onCellFocused" }
     },
     "onCellMouseOver": {
+      "description": "/** Mouse entered cell. */",
       "type": {
         "arguments": { "event": "CellMouseOverEvent" },
         "returnType": "void",
@@ -3808,6 +4292,7 @@
       "meta": { "isEvent": true, "name": "onCellMouseOver" }
     },
     "cellMouseOver": {
+      "description": "/** Mouse entered cell. */",
       "type": {
         "arguments": { "event": "CellMouseOverEvent" },
         "returnType": "void",
@@ -3816,6 +4301,7 @@
       "meta": { "isEvent": true, "name": "onCellMouseOver" }
     },
     "onCellMouseOut": {
+      "description": "/** Mouse left cell. */",
       "type": {
         "arguments": { "event": "CellMouseOutEvent" },
         "returnType": "void",
@@ -3824,6 +4310,7 @@
       "meta": { "isEvent": true, "name": "onCellMouseOut" }
     },
     "cellMouseOut": {
+      "description": "/** Mouse left cell. */",
       "type": {
         "arguments": { "event": "CellMouseOutEvent" },
         "returnType": "void",
@@ -3832,6 +4319,7 @@
       "meta": { "isEvent": true, "name": "onCellMouseOut" }
     },
     "onCellMouseDown": {
+      "description": "/** Mouse down on cell. */",
       "type": {
         "arguments": { "event": "CellMouseDownEvent" },
         "returnType": "void",
@@ -3840,6 +4328,7 @@
       "meta": { "isEvent": true, "name": "onCellMouseDown" }
     },
     "cellMouseDown": {
+      "description": "/** Mouse down on cell. */",
       "type": {
         "arguments": { "event": "CellMouseDownEvent" },
         "returnType": "void",
@@ -3848,6 +4337,7 @@
       "meta": { "isEvent": true, "name": "onCellMouseDown" }
     },
     "onRowClicked": {
+      "description": "/** Row is clicked. */",
       "type": {
         "arguments": { "event": "RowClickedEvent" },
         "returnType": "void",
@@ -3856,6 +4346,7 @@
       "meta": { "isEvent": true, "name": "onRowClicked" }
     },
     "rowClicked": {
+      "description": "/** Row is clicked. */",
       "type": {
         "arguments": { "event": "RowClickedEvent" },
         "returnType": "void",
@@ -3864,6 +4355,7 @@
       "meta": { "isEvent": true, "name": "onRowClicked" }
     },
     "onRowDoubleClicked": {
+      "description": "/** Row is double clicked. */",
       "type": {
         "arguments": { "event": "RowDoubleClickedEvent" },
         "returnType": "void",
@@ -3872,6 +4364,7 @@
       "meta": { "isEvent": true, "name": "onRowDoubleClicked" }
     },
     "rowDoubleClicked": {
+      "description": "/** Row is double clicked. */",
       "type": {
         "arguments": { "event": "RowDoubleClickedEvent" },
         "returnType": "void",
@@ -3880,6 +4373,7 @@
       "meta": { "isEvent": true, "name": "onRowDoubleClicked" }
     },
     "onRowSelected": {
+      "description": "/** Row is selected or deselected. The event contains the node in question, so call the node's `isSelected()` method to see if it was just selected or deselected. */",
       "type": {
         "arguments": { "event": "RowSelectedEvent" },
         "returnType": "void",
@@ -3888,6 +4382,7 @@
       "meta": { "isEvent": true, "name": "onRowSelected" }
     },
     "rowSelected": {
+      "description": "/** Row is selected or deselected. The event contains the node in question, so call the node's `isSelected()` method to see if it was just selected or deselected. */",
       "type": {
         "arguments": { "event": "RowSelectedEvent" },
         "returnType": "void",
@@ -3896,6 +4391,7 @@
       "meta": { "isEvent": true, "name": "onRowSelected" }
     },
     "onSelectionChanged": {
+      "description": "/** Row selection is changed. Use the grid API `getSelectedNodes()` to get the new list of selected nodes. */",
       "type": {
         "arguments": { "event": "SelectionChangedEvent" },
         "returnType": "void",
@@ -3904,6 +4400,7 @@
       "meta": { "isEvent": true, "name": "onSelectionChanged" }
     },
     "selectionChanged": {
+      "description": "/** Row selection is changed. Use the grid API `getSelectedNodes()` to get the new list of selected nodes. */",
       "type": {
         "arguments": { "event": "SelectionChangedEvent" },
         "returnType": "void",
@@ -3912,6 +4409,7 @@
       "meta": { "isEvent": true, "name": "onSelectionChanged" }
     },
     "onCellContextMenu": {
+      "description": "/** Cell is right clicked. */",
       "type": {
         "arguments": { "event": "CellContextMenuEvent" },
         "returnType": "void",
@@ -3920,6 +4418,7 @@
       "meta": { "isEvent": true, "name": "onCellContextMenu" }
     },
     "cellContextMenu": {
+      "description": "/** Cell is right clicked. */",
       "type": {
         "arguments": { "event": "CellContextMenuEvent" },
         "returnType": "void",
@@ -3928,6 +4427,7 @@
       "meta": { "isEvent": true, "name": "onCellContextMenu" }
     },
     "onRangeSelectionChanged": {
+      "description": "/** A change to range selection has occurred. */",
       "type": {
         "arguments": { "event": "RangeSelectionChangedEvent" },
         "returnType": "void",
@@ -3936,6 +4436,7 @@
       "meta": { "isEvent": true, "name": "onRangeSelectionChanged" }
     },
     "rangeSelectionChanged": {
+      "description": "/** A change to range selection has occurred. */",
       "type": {
         "arguments": { "event": "RangeSelectionChangedEvent" },
         "returnType": "void",
@@ -3944,6 +4445,7 @@
       "meta": { "isEvent": true, "name": "onRangeSelectionChanged" }
     },
     "onSortChanged": {
+      "description": "/** Sort has changed. The grid also listens for this and updates the model. */",
       "type": {
         "arguments": { "event": "SortChangedEvent" },
         "returnType": "void",
@@ -3952,6 +4454,7 @@
       "meta": { "isEvent": true, "name": "onSortChanged" }
     },
     "sortChanged": {
+      "description": "/** Sort has changed. The grid also listens for this and updates the model. */",
       "type": {
         "arguments": { "event": "SortChangedEvent" },
         "returnType": "void",
@@ -6728,15 +7231,15 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "clearButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "resetButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "applyButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
@@ -6744,7 +7247,7 @@
     },
     "closeOnApply": { "type": { "returnType": "boolean", "optional": true } },
     "newRowsAction": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "string", "optional": true }
     },
     "debounceMs": { "type": { "returnType": "number", "optional": true } },
@@ -6875,15 +7378,15 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "clearButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "resetButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "applyButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
@@ -6891,7 +7394,7 @@
     },
     "closeOnApply": { "type": { "returnType": "boolean", "optional": true } },
     "newRowsAction": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "string", "optional": true }
     },
     "debounceMs": { "type": { "returnType": "number", "optional": true } },
@@ -6945,15 +7448,15 @@
   "FilterButtonType": {},
   "IProvidedFilterParams": {
     "clearButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "resetButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "applyButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
@@ -6961,7 +7464,7 @@
     },
     "closeOnApply": { "type": { "returnType": "boolean", "optional": true } },
     "newRowsAction": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "string", "optional": true }
     },
     "debounceMs": { "type": { "returnType": "number", "optional": true } },
@@ -7066,15 +7569,15 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "clearButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "resetButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "applyButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
@@ -7082,7 +7585,7 @@
     },
     "closeOnApply": { "type": { "returnType": "boolean", "optional": true } },
     "newRowsAction": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "string", "optional": true }
     },
     "debounceMs": { "type": { "returnType": "number", "optional": true } },
@@ -7160,15 +7663,15 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "clearButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "resetButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "applyButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
@@ -7176,7 +7679,7 @@
     },
     "closeOnApply": { "type": { "returnType": "boolean", "optional": true } },
     "newRowsAction": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "string", "optional": true }
     },
     "debounceMs": { "type": { "returnType": "number", "optional": true } },
@@ -7303,15 +7806,15 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "clearButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "resetButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "applyButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
@@ -7319,7 +7822,7 @@
     },
     "closeOnApply": { "type": { "returnType": "boolean", "optional": true } },
     "newRowsAction": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "string", "optional": true }
     },
     "debounceMs": { "type": { "returnType": "number", "optional": true } },
@@ -8490,15 +8993,15 @@
       }
     },
     "columnGroups": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "skipGroups": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "skipHeader": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     }
   },
@@ -8577,15 +9080,15 @@
       }
     },
     "columnGroups": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "skipGroups": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "skipHeader": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     }
   },
@@ -8678,15 +9181,15 @@
       }
     },
     "columnGroups": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "skipGroups": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "skipHeader": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     }
   },
@@ -8980,47 +9483,47 @@
       "type": { "returnType": "AgChartLegendItemOptions", "optional": true }
     },
     "layoutHorizontalSpacing": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "number", "optional": true }
     },
     "layoutVerticalSpacing": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "number", "optional": true }
     },
     "itemSpacing": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "number", "optional": true }
     },
     "markerShape": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "string | (new () => any)", "optional": true }
     },
     "markerSize": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "number", "optional": true }
     },
     "strokeWidth": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "number", "optional": true }
     },
     "color": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "string", "optional": true }
     },
     "fontStyle": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "FontStyle", "optional": true }
     },
     "fontWeight": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "FontWeight", "optional": true }
     },
     "fontSize": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "number", "optional": true }
     },
     "fontFamily": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "string", "optional": true }
     }
   },
@@ -11816,15 +12319,15 @@
       }
     },
     "columnGroups": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "skipGroups": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "skipHeader": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     }
   },
@@ -11934,22 +12437,27 @@
   "IFloatingFilterType": {},
   "IFilterDef": {
     "filter": {
-      "description": "/** One of the built in filter names: [set, number, text, date], or a filter function */",
+      "description": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Set to the name of a provided filter: `set`, `number`, `text`, `date`. \n * - Set to a `IFilterComp`. */",
       "type": { "returnType": "IFilterType", "optional": true }
     },
-    "filterFramework": { "type": { "returnType": "any", "optional": true } },
+    "filterFramework": {
+      "description": "/** Provided a custom framework filter to use for this column. */",
+      "type": { "returnType": "any", "optional": true }
+    },
     "filterParams": {
-      "description": "/** The filter params are specific to each filter! */",
+      "description": "/** Params to be passed to the filter component specified in `filter` or `filterFramework`. */",
       "type": { "returnType": "any", "optional": true }
     },
     "floatingFilterComponent": {
       "description": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
       "type": { "returnType": "IFloatingFilterType", "optional": true }
     },
-    "floatingFilterComponentParams": {
+    "floatingFilterComponentFramework": {
+      "description": "/** Floating filter framework component to use for this column. */",
       "type": { "returnType": "any", "optional": true }
     },
-    "floatingFilterComponentFramework": {
+    "floatingFilterComponentParams": {
+      "description": "/** Params to be passed to `floatingFilterComponent` or `floatingFilterComponentFramework`. */",
       "type": { "returnType": "any", "optional": true }
     }
   },
@@ -13630,31 +14138,31 @@
       "type": { "returnType": "'mac' | 'windows'", "optional": true }
     },
     "suppressRemoveEntries": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressSyncValuesAfterDataChange": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "selectAllOnMiniFilter": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "syncValuesLikeExcel": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "clearButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "resetButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "applyButton": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
@@ -13662,7 +14170,7 @@
     },
     "closeOnApply": { "type": { "returnType": "boolean", "optional": true } },
     "newRowsAction": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "string", "optional": true }
     },
     "debounceMs": { "type": { "returnType": "number", "optional": true } },
@@ -14608,11 +15116,11 @@
     "$compile": { "type": { "returnType": "any", "optional": false } },
     "pinned": { "type": { "returnType": "string", "optional": false } },
     "autoHeight": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": false }
     },
     "suppressRefresh": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "boolean", "optional": false }
     },
     "value": {
@@ -15413,7 +15921,7 @@
     },
     "scope": { "type": { "returnType": "any", "optional": false } },
     "padding": {
-      "description": "/** @deprecated\n */",
+      "description": "/** @deprecated */",
       "type": { "returnType": "number", "optional": false }
     },
     "value": {
@@ -16766,22 +17274,27 @@
       "type": { "returnType": "string", "optional": true }
     },
     "filter": {
-      "description": "/** One of the built in filter names: [set, number, text, date], or a filter function */",
+      "description": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Set to the name of a provided filter: `set`, `number`, `text`, `date`. \n * - Set to a `IFilterComp`. */",
       "type": { "returnType": "IFilterType", "optional": true }
     },
-    "filterFramework": { "type": { "returnType": "any", "optional": true } },
+    "filterFramework": {
+      "description": "/** Provided a custom framework filter to use for this column. */",
+      "type": { "returnType": "any", "optional": true }
+    },
     "filterParams": {
-      "description": "/** The filter params are specific to each filter! */",
+      "description": "/** Params to be passed to the filter component specified in `filter` or `filterFramework`. */",
       "type": { "returnType": "any", "optional": true }
     },
     "floatingFilterComponent": {
       "description": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
       "type": { "returnType": "IFloatingFilterType", "optional": true }
     },
-    "floatingFilterComponentParams": {
+    "floatingFilterComponentFramework": {
+      "description": "/** Floating filter framework component to use for this column. */",
       "type": { "returnType": "any", "optional": true }
     },
-    "floatingFilterComponentFramework": {
+    "floatingFilterComponentParams": {
+      "description": "/** Params to be passed to `floatingFilterComponent` or `floatingFilterComponentFramework`. */",
       "type": { "returnType": "any", "optional": true }
     }
   },

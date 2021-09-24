@@ -9,7 +9,6 @@ var options = {
                     line: {
                         highlightStyle: {
                             series: {
-                                enabled: true,
                                 dimOpacity: 0.2,
                                 strokeWidth: 4
                             }

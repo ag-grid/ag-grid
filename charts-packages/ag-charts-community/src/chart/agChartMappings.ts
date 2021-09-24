@@ -226,8 +226,7 @@ const highlightStyleMapping = {
         series: {
             meta: {
                 defaults: {
-                    enabled: false,
-                    dimOpacity: 0.3
+                    dimOpacity: 1
                 }
             }
         }

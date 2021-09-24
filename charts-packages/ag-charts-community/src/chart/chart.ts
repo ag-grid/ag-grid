@@ -210,7 +210,7 @@ export class ChartTooltip extends Observable {
         if (this.chart.container) {
             const tooltipRect = el.getBoundingClientRect();
             const minLeft = 0;
-            const maxLeft = window.innerWidth - tooltipRect.width;
+            const maxLeft = window.innerWidth - tooltipRect.width - 1;
             if (left < minLeft) {
                 left = minLeft;
                 this.updateClass(true, this.constrained = true);
@@ -1193,7 +1193,7 @@ export abstract class Chart extends Observable {
             if (enabled) {
                 const series = find(this.series, series => series.id === id);
 
-                if (series && series.highlightStyle.series.enabled) {
+                if (series) {
                     this.highlightedDatum = {
                         series,
                         itemId,

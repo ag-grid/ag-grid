@@ -60,20 +60,8 @@ export class SeriesItemHighlightStyle {
 }
 
 export class SeriesHighlightStyle {
-    private static defaultDimOpacity = 0.3;
-
-    enabled = true;
-
     strokeWidth?: number;
-
-    protected _dimOpacity = 1;
-    set dimOpacity(value: number) {
-        const { defaultDimOpacity } = SeriesHighlightStyle;
-        this._dimOpacity = value >= 0 && value <= 1 ? value : defaultDimOpacity;
-    }
-    get dimOpacity(): number {
-        return this._dimOpacity;
-    }
+    dimOpacity?: number;
 }
 
 export class HighlightStyle {
@@ -206,15 +194,15 @@ export abstract class Series extends Observable {
     abstract update(): void;
 
     protected getOpacity(datum?: { itemId?: any }): number {
-        const { chart, highlightStyle: { series: { enabled, dimOpacity } } } = this;
-        return !chart || !enabled || !chart.highlightedDatum ||
+        const { chart, highlightStyle: { series: { dimOpacity = 1 } } } = this;
+        return !chart || !chart.highlightedDatum ||
             chart.highlightedDatum.series === this &&
             (!datum || chart.highlightedDatum.itemId === datum.itemId) ? 1 : dimOpacity;
     }
 
     protected getStrokeWidth(defaultStrokeWidth: number, datum?: { itemId?: any }): number {
-        const { chart, highlightStyle: { series: { enabled, strokeWidth } } } = this;
-        return chart && enabled && chart.highlightedDatum &&
+        const { chart, highlightStyle: { series: { strokeWidth } } } = this;
+        return chart && chart.highlightedDatum &&
             chart.highlightedDatum.series === this &&
             (!datum || chart.highlightedDatum.itemId === datum.itemId) &&
             strokeWidth !== undefined ? strokeWidth : defaultStrokeWidth;

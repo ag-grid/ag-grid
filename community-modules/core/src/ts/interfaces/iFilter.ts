@@ -12,20 +12,27 @@ export type IFilterType = string | { new(): IFilterComp; } | boolean;
 export type IFloatingFilterType = string | { new(): IFloatingFilterComp; };
 
 export interface IFilterDef {
-    /** One of the built in filter names: [set, number, text, date], or a filter function */
+    /**
+     * Filter component to use for this column.
+     * - Set to `true` to use the default filter.
+     * - Set to the name of a provided filter: `set`, `number`, `text`, `date`. 
+     * - Set to a `IFilterComp`.
+     */
     filter?: IFilterType;
+    /** Provided a custom framework filter to use for this column. */
     filterFramework?: any;
-
-    /** The filter params are specific to each filter! */
+    /** Params to be passed to the filter component specified in `filter` or `filterFramework`. */
     filterParams?: any;
 
-    /** 
+    /**
      * The custom component to be used for rendering the floating filter.
      * If none is specified the default AG Grid is used. 
      */
     floatingFilterComponent?: IFloatingFilterType;
-    floatingFilterComponentParams?: any;
+    /** Floating filter framework component to use for this column. */
     floatingFilterComponentFramework?: any;
+    /** Params to be passed to `floatingFilterComponent` or `floatingFilterComponentFramework`. */
+    floatingFilterComponentParams?: any;
 }
 
 export interface IFilter {
