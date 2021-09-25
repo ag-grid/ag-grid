@@ -6,7 +6,6 @@ import { GridApi } from "../gridApi";
 import { BeanStub } from "../context/beanStub";
 import { find, exists } from "../utils/generic";
 import { removeFromArray } from "../utils/array";
-import { addOrRemoveCssClass } from "../utils/dom";
 import { areEventsNear } from "../utils/mouse";
 
 /** Adds drag listening onto an element. In AG Grid this is used twice, first is resizing columns,
@@ -145,9 +144,6 @@ export class DragService extends BeanStub {
         this.dragging = false;
 
         this.mouseStartEvent = mouseEvent;
-
-        // we need to preventDefault here to avoid text selection while dragging items.
-        mouseEvent.preventDefault();
 
         const eDocument = this.gridOptionsWrapper.getDocument();
 
