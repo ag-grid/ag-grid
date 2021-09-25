@@ -5,7 +5,6 @@ declare var jQuery;
 $(function () {
     $('.pipeline-page .info-page').each(function () {
         function debounce(func, wait, immediate = false) {
-            debugger
             var timeout;
             return function (_) {
                 var context = this,

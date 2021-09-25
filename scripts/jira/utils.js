@@ -2,7 +2,7 @@ const fs = require('fs');
 const {execSync} = require('child_process');
 
 // get these from the wiki
-const JIRA_CREDENTIALS=process.env.JIRA_CREDENTIALS;
+const JIRA_CREDENTIALS = process.env.JIRA_CREDENTIALS;
 const baseCurlCommand = `curl -X GET --user ${JIRA_CREDENTIALS}`;
 
 const curlRequest = url => {
@@ -34,9 +34,9 @@ const executeJiraRequest = (url) => {
                     summary,
                     fixVersions,
                     customfield_10536: features,
-                    customfield_10522: moreInformation,
-                    customfield_10520: deprecationNotes,
-                    customfield_10521: breakingChangesNotes,
+                    customfield_10522: moreInformation = "",
+                    customfield_10520: deprecationNotes = "",
+                    customfield_10521: breakingChangesNotes = "",
                     issuetype: {name: issueType},
                     status: {name: status}
                 }
@@ -70,7 +70,23 @@ const saveDataToFile = (data, filename) => {
     });
 }
 
+const logger = (message, file) => {
+    const date = new Date();
+
+    const day = ("0" + date.getDate()).slice(-2);
+    const month = ("0" + (date.getMonth() + 1)).slice(-2);
+    const year = date.getFullYear();
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const seconds = date.getSeconds();
+    const dateTime = `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`
+
+    fs.appendFileSync(file, `${dateTime}: ${message}`);
+    console.log(`${dateTime}: ${message}`); // console.log too for email results of cron job
+}
+
 module.exports = {
     executeJiraRequest,
-    saveDataToFile
+    saveDataToFile,
+    logger
 }
