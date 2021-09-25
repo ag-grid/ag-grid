@@ -1,6 +1,7 @@
 import {AfterViewInit, Component, ViewChild, ViewContainerRef} from "@angular/core";
 
 import {AgEditorComponent} from "@ag-grid-community/angular";
+import { element } from "@angular/core/src/render3";
 
 const KEY_BACKSPACE = 8;
 const KEY_DELETE = 46;
@@ -15,7 +16,6 @@ const KEY_TAB = 9;
 export class NumericCellEditor implements AgEditorComponent, AfterViewInit {
     private params: any;
     public value: number;
-    public highlightAllOnFocus: boolean = true;
     private cancelBeforeStart: boolean = false;
 
     @ViewChild('input', {read: ViewContainerRef}) public input: any;
@@ -31,7 +31,6 @@ export class NumericCellEditor implements AgEditorComponent, AfterViewInit {
 
     setInitialState(params: any) {
         let startValue;
-        let highlightAllOnFocus = true;
 
         if (params.keyPress === KEY_BACKSPACE || params.keyPress === KEY_DELETE) {
             // if backspace or delete pressed, we clear the cell
@@ -39,17 +38,12 @@ export class NumericCellEditor implements AgEditorComponent, AfterViewInit {
         } else if (params.charPress) {
             // if a letter was pressed, we start with the letter
             startValue = params.charPress;
-            highlightAllOnFocus = false;
         } else {
             // otherwise we start with the current value
             startValue = params.value;
-            if (params.keyPress === KEY_F2) {
-                highlightAllOnFocus = false;
-            }
         }
 
         this.value = startValue;
-        this.highlightAllOnFocus = highlightAllOnFocus;
     }
 
     getValue(): any {
@@ -67,6 +61,7 @@ export class NumericCellEditor implements AgEditorComponent, AfterViewInit {
     };
 
     onKeyDown(event: any): void {
+        if (event.key === 'Escape') { return; }
         if (this.isLeftOrRight(event) || this.deleteOrBackspace(event)) {
             event.stopPropagation();
             return;
@@ -81,23 +76,7 @@ export class NumericCellEditor implements AgEditorComponent, AfterViewInit {
     ngAfterViewInit() {
         window.setTimeout(() => {
             this.input.element.nativeElement.focus();
-            if (this.highlightAllOnFocus) {
-                this.input.element.nativeElement.select();
-
-                this.highlightAllOnFocus = false;
-            } else {
-                // when we started editing, we want the carot at the end, not the start.
-                // this comes into play in two scenarios: a) when user hits F2 and b)
-                // when user hits a printable character, then on IE (and only IE) the carot
-                // was placed after the first character, thus 'apply' would end up as 'pplea'
-                const length = this.input.element.nativeElement.value ? this.input.element.nativeElement.value.length : 0;
-                if (length > 0) {
-                    this.input.element.nativeElement.setSelectionRange(length, length);
-                }
-            }
-
-            this.input.element.nativeElement.focus();
-        })
+        });
     }
 
     private getCharCodeFromEvent(event: any): any {

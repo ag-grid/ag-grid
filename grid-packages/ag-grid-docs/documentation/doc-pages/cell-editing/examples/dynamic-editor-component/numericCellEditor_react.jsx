@@ -30,7 +30,6 @@ export default class NumericEditor extends Component {
                 value={this.state.value}
                 onKeyDown={this.onKeyDown}
                 onChange={this.handleChange}
-                style={{ width: "100%" }}
             />
         );
     }
@@ -58,7 +57,6 @@ export default class NumericEditor extends Component {
     /* Utility methods */
     createInitialState(props) {
         let startValue;
-        let highlightAllOnFocus = true;
 
         if (props.keyPress === KEY_BACKSPACE || props.keyPress === KEY_DELETE) {
             // if backspace or delete pressed, we clear the cell
@@ -66,18 +64,13 @@ export default class NumericEditor extends Component {
         } else if (props.charPress) {
             // if a letter was pressed, we start with the letter
             startValue = props.charPress;
-            highlightAllOnFocus = false;
         } else {
             // otherwise we start with the current value
             startValue = props.value;
-            if (props.keyPress === KEY_F2) {
-                highlightAllOnFocus = false;
-            }
         }
 
         return {
-            value: startValue,
-            highlightAllOnFocus
+            value: startValue
         };
     }
 
@@ -129,22 +122,6 @@ export default class NumericEditor extends Component {
         setTimeout(() => {
             const currentInput = this.inputRef.current;
             currentInput.focus();
-            if (this.state.highlightAllOnFocus) {
-                currentInput.select();
-
-                this.setState({
-                    highlightAllOnFocus: false
-                });
-            } else {
-                // when we started editing, we want the carot at the end, not the start.
-                // this comes into play in two scenarios: a) when user hits F2 and b)
-                // when user hits a printable character, then on IE (and only IE) the carot
-                // was placed after the first character, thus 'apply' would end up as 'pplea'
-                const length = currentInput.value ? currentInput.value.length : 0;
-                if (length > 0) {
-                    currentInput.setSelectionRange(length, length);
-                }
-            }
         });
     }
 }

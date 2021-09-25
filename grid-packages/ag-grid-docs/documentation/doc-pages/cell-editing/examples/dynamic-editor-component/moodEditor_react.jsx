@@ -81,39 +81,16 @@ export default class MoodEditor extends Component {
     }
 
     render() {
-        let mood = {
-            borderRadius: 15,
-            border: '1px solid grey',
-            background: '#e6e6e6',
-            padding: 15,
-            textAlign: 'center',
-            display: 'inline-block'
-        };
-
-        let unselected = {
-            paddingLeft: 10,
-            paddingRight: 10,
-            border: '1px solid transparent',
-            padding: 4
-        };
-
-        let selected = {
-            paddingLeft: 10,
-            paddingRight: 10,
-            border: '1px solid lightgreen',
-            padding: 4
-        };
-
-        let happyStyle = this.state.happy ? selected : unselected;
-        let sadStyle = !this.state.happy ? selected : unselected;
+        let happyStyle = this.state.happy ? 'selected' : 'default';
+        let sadStyle = !this.state.happy ? 'selected' : 'default';
 
         return (
             <div ref="container"
-                style={mood}
+                className="mood"
                 tabIndex={1} // important - without this the keypresses wont be caught
             >
-                <img src="https://www.ag-grid.com/example-assets/smileys/happy.png" onClick={this.onHappyClick} style={happyStyle} />
-                <img src="https://www.ag-grid.com/example-assets/smileys/sad.png" onClick={this.onSadClick} style={sadStyle} />
+                <img src="https://www.ag-grid.com/example-assets/smileys/happy.png" onClick={this.onHappyClick} className={happyStyle} />
+                <img src="https://www.ag-grid.com/example-assets/smileys/sad.png" onClick={this.onSadClick} className={sadStyle} />
             </div>
         );
     }

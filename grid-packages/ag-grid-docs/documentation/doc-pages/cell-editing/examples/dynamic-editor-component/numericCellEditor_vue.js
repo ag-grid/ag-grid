@@ -11,8 +11,7 @@ export default {
     data() {
         return {
             value: '',
-            cancelBeforeStart: true,
-            highlightAllOnFocus: true
+            cancelBeforeStart: true
         };
     },
     methods: {
@@ -26,7 +25,6 @@ export default {
 
         setInitialState(params) {
             let startValue;
-            let highlightAllOnFocus = true;
 
             if (params.keyPress === KEY_BACKSPACE || params.keyPress === KEY_DELETE) {
                 // if backspace or delete pressed, we clear the cell
@@ -34,17 +32,12 @@ export default {
             } else if (params.charPress) {
                 // if a letter was pressed, we start with the letter
                 startValue = params.charPress;
-                highlightAllOnFocus = false;
             } else {
                 // otherwise we start with the current value
                 startValue = params.value;
-                if (params.keyPress === KEY_F2) {
-                    highlightAllOnFocus = false;
-                }
             }
 
             this.value = startValue;
-            this.highlightAllOnFocus = highlightAllOnFocus;
         },
 
         // will reject the number if it greater than 1,000,000
@@ -54,6 +47,7 @@ export default {
         },
 
         onKeyDown(event) {
+            if (event.key === 'Escape') { return; }
             if (this.isLeftOrRight(event) || this.deleteOrBackspace(event)) {
                 event.stopPropagation();
                 return;
@@ -101,27 +95,10 @@ export default {
             this.params.charPress && '1234567890'.indexOf(this.params.charPress) < 0;
     },
     mounted() {
-
         nextTick(() => {
             // need to check if the input reference is still valid - if the edit was cancelled before it started there
             // wont be an editor component anymore
             if (this.$refs.input) {
-                this.$refs.input.focus();
-                if (this.highlightAllOnFocus) {
-                    this.$refs.input.select();
-
-                    this.highlightAllOnFocus = false;
-                } else {
-                    // when we started editing, we want the carot at the end, not the start.
-                    // this comes into play in two scenarios: a) when user hits F2 and b)
-                    // when user hits a printable character, then on IE (and only IE) the carot
-                    // was placed after the first character, thus 'apply' would end up as 'pplea'
-                    const length = this.$refs.input.value ? this.$refs.input.value.length : 0;
-                    if (length > 0) {
-                        this.$refs.input.setSelectionRange(length, length);
-                    }
-                }
-
                 this.$refs.input.focus();
             }
         });
