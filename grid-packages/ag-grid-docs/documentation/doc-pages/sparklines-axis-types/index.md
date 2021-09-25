@@ -10,9 +10,9 @@ are scaled correctly along the x-axis.
 
 The following axis types are available to all sparklines:
 
-- ***[Category Axis](/sparklines-axis-types/#category-axis)*** - data points are evenly spread along the x-axis.
-- ***[Number Axis](/sparklines-axis-types/#number-axis)*** - data is spaced based on the magnitude of the x values.
-- ***[Time Axis](/sparklines-axis-types/#time-axis)*** - data is spaced according to the time between data points.
+- [Category Axis](/sparklines-axis-types/#category-axis) - data points are evenly spread along the x-axis.
+- [Number Axis](/sparklines-axis-types/#number-axis) - data is spaced based on the magnitude of the x values.
+- [Time Axis](/sparklines-axis-types/#time-axis) - data is spaced according to the time between data points.
 
 [[note]]
 | The Y values supplied in the sparkline data will always be plotted using the [Number Axis](/sparklines-axis-types/#number-axis) on a continuous scale.
@@ -136,4 +136,4 @@ The example below demonstrates the Time Axis used in an Area Sparkline. Note the
 
 ## Next Up
 
-Continue to the next section to learn about the: [Tooltips](/sparklines-tooltips/).
+Continue to the next section to learn about: [Sparkling Tooltips](/sparklines-tooltips/).

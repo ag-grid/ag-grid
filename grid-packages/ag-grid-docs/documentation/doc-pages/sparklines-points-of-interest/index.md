@@ -1,9 +1,9 @@
 ---
-title: "Sparklines Special Points"
+title: "Sparklines - Points of Interest"
 enterprise: true
 ---
 
-## Points of interest
+This section covers Sparkline Points of Interest.
 
 In the line and area sparklines, each data point is represented by a marker. In the column sparkline, each data point is represented by a rectangle.
 Some of these data points in the sparklines are special and can be emphasised to make comparisons easier across multiple sparklines of the same type.
@@ -19,11 +19,11 @@ Special points include:
 These points can be customised via the formatter callback function to make them stand out from the rest of the normal data points which have global styles.
 
 - The formatter is a callback function used to return formatting for individual data points based on the given parameters.
-- It will receieve an input according to the sparkline type.
+- It will receive an input according to the sparkline type.
 - All formatters will receive the highlighted property in the input.
 - If the current data point is highlighted, the highlighted property will be set to true; make sure to check this if you want to differentiate between the highlighted and un-highlighted states when customising the special points.
 
-## Line and Area Sparklines Special Points
+## Line and Area Sparklines Points of Interest
 
 For the line and area sparklines, the formatter callback function will receieve an input of type `markerFormatterParams`.
 
@@ -136,11 +136,11 @@ const gridOptions = {
 };
 </snippet>
 
-## Column Sparkline Special Points
+## Column Sparkline Points of Interest
 
 The formatter callback function for column sparkline applies to the individual columns.
 
-The formatter will receieve the following input:
+The formatter will receive the following input:
 
 ```ts
 export interface ColumnFormatterParams {
@@ -228,6 +228,7 @@ It should be noted that
 <grid-example title='Sparkline Special Points' name='sparkline-special-points' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 ## Interfaces
+
 ### MarkerFormatterParams
 
 <interface-documentation interfaceName='MarkerFormatterParams' ></interface-documentation>
@@ -243,7 +244,3 @@ It should be noted that
 ### ColumnFormat
 
 <interface-documentation interfaceName='ColumnFormat' ></interface-documentation>
-
-## Next Up
-
-Continue to the next section to learn about the: [Line Sparkline](/sparklines-line-sparkline/).

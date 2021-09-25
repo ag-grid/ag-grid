@@ -1,37 +1,38 @@
 var gridOptions = {
     columnDefs: [
-        { field: 'symbol', maxWidth: 110 },
-        { field: 'name', minWidth: 250 },
-        { field: 'lastPrice', type: 'numericColumn' },
-        { field: 'volume', type: 'numericColumn' },
+        {field: 'symbol', maxWidth: 120},
+        {field: 'name',  minWidth: 250 },
         {
-            field: 'history',
-            headerName: 'Close History',
-            minWidth: 250,
+            field: 'closeHistory',
             cellRenderer: 'agSparklineCellRenderer',
             cellRendererParams: {
                 sparklineOptions: {
                     type: 'area',
                     fill: 'rgba(216, 204, 235, 0.3)',
                     line: {
-                        stroke: 'rgb(119,77,185)'
+                        stroke: 'rgb(119,77,185)',
                     },
                     highlightStyle: {
                         fill: 'rgb(143,185,77)',
                     },
                     axis: {
-                        stroke: 'rgb(204, 204, 235)'
+                        stroke: 'rgb(204, 204, 235)',
                     }
                 },
-            },
-        }
+            }
+        },
+        {
+            field: 'volume',
+            type: 'numericColumn',
+            maxWidth: 140,
+        },
     ],
     defaultColDef: {
         flex: 1,
         minWidth: 100,
         resizable: true,
     },
-    rowData: getStockData(),
+    rowData: getData(),
 };
 
 // setup the grid after the page has finished loading

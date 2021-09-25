@@ -1,44 +1,47 @@
 ---
-title: "Sparklines - Line Sparkline"
+title: "Sparklines - Line Customisation"
 enterprise: true
 ---
 
-This section discusses how the Line Sparklines can be customised by adding `sparklineOptions` to `cellRendererParams` in the column configuration.
+This sections shows how Line Sparklines can be customised by overriding the default line options.
 
-Although the sparklines are designed to look great by default, in some cases, you may wish to change the visual display through the available formatting options. Here's how.
+The following [Line Sparkline Options](/sparklines-line-customisation/#linesparklineoptions) can be used to customise Line Sparklines:
 
-## How to customise Line Sparklines
+- [Line Options](/sparklines-line-customisation/#line-options)
+- [Marker Options](/sparklines-line-customisation/#marker-options)
+- [Sparkline Padding Options](/sparklines-line-customisation/#sparkline-padding-options)
 
-In order to customise the line sparklines, it is necessary to add `sparklineOptions` in the column definitions.
+Also see [Additional Customisations](/sparklines-line-customisation/#additional-customisations) for more advanced 
+customisations that are common across all sparklines.
 
-<snippet>
-const gridOptions = {
-    columnDefs: [
-        {
-            field: 'history',
-            cellRenderer: 'agSparklineCellRenderer',
-            cellRendererParams: {
-                sparklineOptions: {
-                    // Sparkline customisation goes here.
-                }
-            },
-        },
-        // other column definitions ...
-    ],
-}
-</snippet>
+The snippet below shows option overrides for the Line Sparkline:
 
-In a Line Sparkline, it is possible to format the following:
-- [Line](/sparklines-line-sparkline/#customising-the-line) - customised using `line` options.
-- [Markers](/sparklines-line-sparkline/#customising-the-markers) - customised using `marker` and `highlightStyle` options.
-- [Padding](/sparklines-line-sparkline/#customising-the-padding) - customised using `padding` options.
+```js
+sparklineOptions: {
+    type: 'line',
+    line: {
+        stroke: 'rgb(124, 255, 178)',
+        strokeWidth: 2
+    },
+    padding: {
+        top: 5,
+        bottom: 5
+    },
+    marker: {
+        size: 3,
+        shape: 'diamond',
+    },
+    highlightStyle: {
+        size: 10,
+    },
+} 
+```
 
-More advanced customisation options are discussed in isolation on the following pages:
-- [Tooltips](/sparklines-tooltips/) - configuration of tooltips using `tooltip` options.
-- [Special Points](/sparklines-special-points/) - customisation of individual points of interest using a `formatter`.
-- [Axis](/sparklines-axis-types/) - supported x-axis types and configuration via `axis` options.
+The following example demonstrates the results of the Line Sparkline options above:
 
-## Customising The Line
+<grid-example title='Line Sparkline Customisation' name='line-sparkline-customisation' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
+
+## Line Options
 
 To apply custom `stroke` and `strokeWidth` attributes to the line, set these properties under `line` options as shown:
 
@@ -53,14 +56,14 @@ sparklineOptions: {
 }
 ```
 
-The result of the above configuration is dipslayed here.
+The result of the above configuration is displayed here.
 
 <div style="display: flex; justify-content: center;">
     <image-caption src="resources/default.png" alt="Line customisation" width="250px" constrained="true">Default</image-caption>
     <image-caption src="resources/custom-line.png" alt="Line customisation for highlighted state" width="250px" constrained="true">Custom line</image-caption>
 </div>
 
-## Customising The Markers
+## Marker Options
 
 The markers are enabled by default but the size has been set to `0`, making them invisible.
 
@@ -97,7 +100,7 @@ Here is the result of the configuration shown in the above snippet.
     <image-caption src="resources/custom-highlighted-marker.png" alt="Marker customisation for highlighted state" width="250px" constrained="true">Custom highlighted marker</image-caption>
 </div>
 
-## Customising the Padding
+## Sparkline Padding Options
 
 To add extra space around the sparklines, custom `padding` options can be applied in the following way.
 
@@ -121,10 +124,13 @@ sparklineOptions: {
     <image-caption src="resources/custom-padding.png" alt="Padding customisation for highlighted state" width="250px" constrained="true">Custom padding</image-caption>
 </div>
 
-### Example: Customising the Line Sparklines
-Here is an example to further demonstrate how line sparklines can be configured.
+## Additional Customisations
 
-<grid-example title='Line Sparkline' name='line-sparkline' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
+More advanced customisations are discussed separately in the following sections:
+
+- [Axis](/sparklines-axis-types/) - configure the x-axis type and appearance via `axis` options.
+- [Tooltips](/sparklines-tooltips/) - configure tooltips using `tooltip` options.
+- [Special Points](/sparklines-special-points/) - configure individual points of interest using a `formatter`.
 
 ## Interfaces
 The interfaces for the attributes which can be customised in a line sparkline.
@@ -135,4 +141,5 @@ The interfaces for the attributes which can be customised in a line sparkline.
 
 ## Next Up
 
-Continue to the next section to learn about the: [Area Sparklines](/sparklines-area-sparkline/).
+
+Continue to the next section to learn about: [Column Sparkline Customisation](/sparklines-column-customisation/).
