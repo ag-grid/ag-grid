@@ -58,9 +58,10 @@ function generateAngularInputOutputs(compUtils, { typeLookup, eventTypeLookup, d
         if (a.order > b.order) return 1;
         return 0
     });
-    propsToWrite.map(p => {
+
+    propsToWrite.forEach(p => {
         result += p.line;
-    })
+    });
 
     // for readability
     result += EOL;
@@ -211,9 +212,10 @@ function getGridColumnPropertiesJs() {
         if (a.order > b.order) return 1;
         return 0
     });
-    propsToWrite.map(p => {
+
+    propsToWrite.forEach(p => {
         result += p.line;
-    })
+    });
 
     // for readability
     result += EOL;
