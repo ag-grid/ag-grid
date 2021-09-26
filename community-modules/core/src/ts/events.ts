@@ -265,6 +265,8 @@ export interface BodyScrollEvent extends AgGridEvent {
     top: number;
 }
 
+export interface BodyScrollEndEvent extends BodyScrollEvent {}
+
 // not documented
 export interface FlashCellsEvent extends AgGridEvent {
     cells: any;

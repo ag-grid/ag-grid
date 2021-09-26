@@ -107,7 +107,7 @@
     }
 
     // NOTE: these don't need an RTL version because the "left spacer" is always the one visually on the left
-    .ag-body-horizontal-scroll:not(.ag-invisible-scrollbar) {
+    .ag-body-horizontal-scroll:not(.ag-scrollbar-invisible) {
         .ag-horizontal-left-spacer:not(.ag-scroller-corner) {
             @include ag-border(critical, right);
         }

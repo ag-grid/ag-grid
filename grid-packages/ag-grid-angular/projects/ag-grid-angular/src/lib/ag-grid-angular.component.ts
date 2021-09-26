@@ -129,6 +129,7 @@ import {
     CellEditingStartedEvent,
     CellEditingStoppedEvent,
     BodyScrollEvent,
+    BodyScrollEndEvent,
     PaginationChangedEvent,
     ComponentStateChangedEvent,
     RowDragEvent,
@@ -952,6 +953,7 @@ export class AgGridAngular implements AfterViewInit {
     @Output() public cellEditingStarted: EventEmitter<CellEditingStartedEvent> = new EventEmitter<CellEditingStartedEvent>();
     @Output() public cellEditingStopped: EventEmitter<CellEditingStoppedEvent> = new EventEmitter<CellEditingStoppedEvent>();
     @Output() public bodyScroll: EventEmitter<BodyScrollEvent> = new EventEmitter<BodyScrollEvent>();
+    @Output() public bodyScrollEnd: EventEmitter<BodyScrollEndEvent> = new EventEmitter<BodyScrollEndEvent>();
     @Output() public paginationChanged: EventEmitter<PaginationChangedEvent> = new EventEmitter<PaginationChangedEvent>();
     @Output() public componentStateChanged: EventEmitter<ComponentStateChangedEvent> = new EventEmitter<ComponentStateChangedEvent>();
     @Output() public rowDragEnter: EventEmitter<RowDragEvent> = new EventEmitter<RowDragEvent>();

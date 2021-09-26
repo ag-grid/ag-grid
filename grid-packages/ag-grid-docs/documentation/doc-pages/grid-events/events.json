@@ -186,6 +186,7 @@
         "virtualRowRemoved": {},
         "viewportChanged": {},
         "bodyScroll": {},
+        "bodyScrollEnd": {},
         "dragStarted": {},
         "dragStopped": {}
     },

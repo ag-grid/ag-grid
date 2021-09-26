@@ -3977,6 +3977,14 @@
       },
       "meta": { "isEvent": true, "name": "onBodyScroll" }
     },
+    "onBodyScrollEnd": {
+      "description": "/** Main body of the grid has stopped scrolling, either horizontally or vertically */",
+      "type": {
+        "arguments": { "event": "BodyScrollEndEvent" },
+        "returnType": "void",
+        "optional": true
+      }
+    },
     "onDragStarted": {
       "description": "/** When dragging starts. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */",
       "type": {
@@ -5900,6 +5908,19 @@
   },
   "ScrollDirection": {},
   "BodyScrollEvent": {
+    "direction": {
+      "type": { "returnType": "ScrollDirection", "optional": false }
+    },
+    "left": { "type": { "returnType": "number", "optional": false } },
+    "top": { "type": { "returnType": "number", "optional": false } },
+    "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "BodyScrollEndEvent": {
     "direction": {
       "type": { "returnType": "ScrollDirection", "optional": false }
     },
@@ -8162,6 +8183,13 @@
         "optional": false
       }
     },
+    "setScrollingStyle": {
+      "type": {
+        "arguments": { "isScrolling": "boolean" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
     "includeLeftSpacerScrollerCss": {
       "type": {
         "arguments": { "cssClass": "string", "include": "boolean" },
@@ -8175,6 +8203,9 @@
         "returnType": "void",
         "optional": false
       }
+    },
+    "addActiveListenerToggles": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
     }
   },
   "RowAnimationCssClasses": {},

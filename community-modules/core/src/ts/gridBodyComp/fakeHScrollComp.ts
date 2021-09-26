@@ -36,7 +36,9 @@ export class FakeHScrollComp extends Component {
             setViewportHeight: height => setFixedHeight(this.eViewport, height),
             setRightSpacerFixedWidth: width => setFixedWidth(this.eRightSpacer, width),
             setLeftSpacerFixedWidth: width => setFixedWidth(this.eLeftSpacer, width),
-            setInvisibleStyles: (isInvisible) => addOrRemoveCssClass(this.getGui(), 'ag-invisible-scrollbar', isInvisible),
+            setInvisibleStyles: (isInvisible) => addOrRemoveCssClass(this.getGui(), 'ag-scrollbar-invisible', isInvisible),
+            setScrollingStyle: (isScrolling) => addOrRemoveCssClass(this.getGui(), 'ag-scrollbar-scrolling', isScrolling),
+            addActiveListenerToggles: () => this.addActiveListenerToggles(),
             includeLeftSpacerScrollerCss: (cssClass: string, include: boolean) =>
                 addOrRemoveCssClass(this.eLeftSpacer, cssClass, include),
             includeRightSpacerScrollerCss: (cssClass: string, include: boolean) =>
@@ -46,5 +48,14 @@ export class FakeHScrollComp extends Component {
         this.controller.setComp(compProxy, this.eViewport, this.eContainer);
 
         this.createManagedBean(new CenterWidthFeature(width => this.eContainer.style.width = `${width}px`));
+    }
+
+    addActiveListenerToggles(): void {
+        const eGui = this.getGui();
+        const activateEvents = ['mouseenter', 'mousedown', 'touchstart'];
+        const deactivateEvents = ['mouseleave', 'mouseup', 'touchend'];
+
+        activateEvents.forEach(event => this.addManagedListener(eGui, event, () => addOrRemoveCssClass(eGui, 'ag-scrollbar-active', true)));
+        deactivateEvents.forEach(event => this.addManagedListener(eGui, event, () => addOrRemoveCssClass(eGui, 'ag-scrollbar-active', false)));
     }
 }

@@ -15,6 +15,7 @@ import { CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportPara
 import {
     AsyncTransactionsFlushed,
     BodyScrollEvent,
+    BodyScrollEndEvent,
     CellClickedEvent,
     CellContextMenuEvent,
     CellDoubleClickedEvent,
@@ -941,6 +942,8 @@ export interface GridOptions {
     onViewportChanged?(event: ViewportChangedEvent): void;
     /** The body was scrolled horizontally or vertically. */
     onBodyScroll?(event: BodyScrollEvent): void;
+    /** Main body of the grid has stopped scrolling, either horizontally or vertically */
+    onBodyScrollEnd?(event: BodyScrollEndEvent): void;
     /** When dragging starts. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */
     onDragStarted?(event: DragStartedEvent): void;
     /** When dragging stops. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */
