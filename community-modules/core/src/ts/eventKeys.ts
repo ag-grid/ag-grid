@@ -163,6 +163,8 @@ export class Events {
      * to bound properties, this event fires after the grid has finished processing the change. */
     public static EVENT_COMPONENT_STATE_CHANGED = 'componentStateChanged';
 
+    /*****************************  INTERNAL EVENTS: START ******************************************* */
+
     /** All items from here down are used internally by the grid, not intended for external use. */
     // not documented, either experimental, or we just don't want users using an depending on them
     public static EVENT_BODY_HEIGHT_CHANGED = 'bodyHeightChanged';
@@ -198,4 +200,6 @@ export class Events {
     public static EVENT_MOUSE_FOCUS = 'mouseFocus';
 
     public static EVENT_STORE_UPDATED = 'storeUpdated';
+
+    /*****************************  INTERNAL EVENTS: END ******************************************* */
 }
