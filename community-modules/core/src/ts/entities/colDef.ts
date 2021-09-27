@@ -291,7 +291,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     // *** Columns: Rendering and Styling *** //
 
     /** An object of css values / or function returning an object of css values for a particular cell. */
-    cellStyle?: { [cssProperty: string]: string } | CellStyleFunc;
+    cellStyle?: CellStyle | CellStyleFunc;
     /** Class to use for the cell. Can be string, array of strings, or function that returns a string or array of strings. */
     cellClass?: string | string[] | CellClassFunc;
     /** Rules which can be applied to include certain CSS classes. */
@@ -419,7 +419,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     template?: string;
     // This property can be reported as Critical Issues by some security scans.
     // We are aware of this, however As 'templateUrl' is a legacy property used by angular 1.x users
-    // we don't want to santise it at this late stage due to the potential impact to existing users.
+    // we don't want to sanitise it at this late stage due to the potential impact to existing users.
     // Note that if this property is not used by application developers it won't pose a security risk
     // in an application.
     /** Cell template URL to load template from to use for cell. Useful for AngularJS cells. */
@@ -629,6 +629,7 @@ export interface CellStyleFunc {
     (cellClassParams: CellClassParams): {}
 }
 
+export interface CellStyle { [cssProperty: string]: string | number; }
 export interface CellClassRules {
     [cssClassName: string]: (((params: CellClassParams) => boolean) | string);
 }

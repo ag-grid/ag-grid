@@ -14,7 +14,7 @@ import { BodyDropTarget } from "../columnDrag/bodyDropTarget";
 import { HeaderRowType } from "../row/headerRowComp";
 import { HeaderRowCtrl } from "../row/headerRowCtrl";
 import { FocusService } from "../../focusService";
-import { HeaderPosition } from "../../main";
+import { HeaderPosition } from "../../headerRendering/common/headerPosition";
 
 export interface IHeaderRowContainerComp {
     setCenterWidth(width: string): void;

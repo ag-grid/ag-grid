@@ -11,7 +11,6 @@ function checkFileExists {
 
 checkFileExists ~/Documents/aggrid/aggrid/aggrid.txt
 checkFileExists ~/.ssh/ag_grid_site
-checkFileExists ~/Documents/aggrid/aggrid/.creds
 
 while true; do
     echo    ""
@@ -26,5 +25,5 @@ while true; do
     esac
 done
 
-# delete the cache
-ssh -i ~/.ag_deploy/.ssh/ag_grid_site ceolter@ag-grid.com "rm public_html/jira_reports/cache/changelog.json"
+# download the new changelog information
+ssh -i ~/.ag_deploy/.ssh/ag_grid_site ceolter@ag-grid.com "/opt/cpanel/ea-nodejs10/bin/node /home/ceolter/jira_reports/getChangelog.js"

@@ -79,4 +79,4 @@ This is an example to further demonstrate how line sparklines can be configured 
 
 ## Next Up
 
-Continue to the next section to learn about the: [Data Updates](/sparklines-data-updates/).
+Continue to the next section to learn about: [Sparkline Points of Interest](/sparklines-points-of-interest/).

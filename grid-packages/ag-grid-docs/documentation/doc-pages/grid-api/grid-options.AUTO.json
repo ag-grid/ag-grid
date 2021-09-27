@@ -814,6 +814,10 @@
     "description": "/** When `true`, the grid will not scroll to the top when new row data is provided. Use this if you don't want the default behaviour of scrolling to the top every time you load new data. */",
     "type": { "returnType": "boolean" }
   },
+  "suppressScrollWhenPopupsAreOpen": {
+    "description": "/** When `true`, the grid will not allow mousewheel / touchpad scroll when popup elements are present. */",
+    "type": { "returnType": "boolean" }
+  },
   "suppressAnimationFrame": {
     "description": "/** When `true`, the grid will not use animation frames when drawing rows while scrolling. Use this if the grid is working fast enough that you don't need animation frames and you don't want the grid to flicker. */",
     "type": { "returnType": "boolean" }
@@ -916,7 +920,7 @@
   },
   "rowStyle": {
     "description": "/** The style properties to apply to all rows. Set to an object of key (style names) and values (style values) */",
-    "type": { "returnType": "{ [cssProperty: string]: string }" }
+    "type": { "returnType": "RowStyle" }
   },
   "rowClass": {
     "description": "/** CSS class(es) for all rows. Provide either a string (class name) or array of strings (array of class names). */",
@@ -1171,7 +1175,7 @@
     "description": "/** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values. */",
     "type": {
       "arguments": { "params": "RowClassParams" },
-      "returnType": "{ [cssProperty: string]: string; }"
+      "returnType": "RowStyle"
     }
   },
   "getRowClass": {
@@ -1807,6 +1811,22 @@
       "returnType": "void"
     },
     "meta": { "isEvent": true, "name": "onBodyScroll" }
+  },
+  "onBodyScrollEnd": {
+    "description": "/** Main body of the grid has stopped scrolling, either horizontally or vertically. */",
+    "type": {
+      "arguments": { "event": "BodyScrollEndEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onBodyScrollEnd" }
+  },
+  "bodyScrollEnd": {
+    "description": "/** Main body of the grid has stopped scrolling, either horizontally or vertically. */",
+    "type": {
+      "arguments": { "event": "BodyScrollEndEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onBodyScrollEnd" }
   },
   "onDragStarted": {
     "description": "/** When dragging starts. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */",

@@ -426,7 +426,9 @@ export class Axis<S extends Scale<D, number>, D = any> {
                 return Math.round(scale.convert(datum) + halfBandwidth);
             })
             .attrFn('visible', function (node) {
-                return node.translationY >= requestedRangeMin && node.translationY <= requestedRangeMax;
+                const min = Math.floor(requestedRangeMin);
+                const max = Math.ceil(requestedRangeMax);
+                return node.translationY >= min && node.translationY <= max;
             });
 
         groupSelection.selectByTag<Line>(Tags.Tick)

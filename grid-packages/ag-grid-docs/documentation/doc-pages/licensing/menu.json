@@ -1363,27 +1363,27 @@
             "showInCollapsed": true,
             "items": [
               {
-                "title": "Line Sparkline",
-                "url": "/sparklines-line-sparkline/",
+                "title": "Line",
+                "url": "/sparklines-line-customisation/",
                 "enterprise": true,
                 "showInCollapsed": true
               },
               {
-                "title": "Area Sparkline",
-                "url": "/sparklines-area-sparkline/",
+                "title": "Column",
+                "url": "/sparklines-column-customisation/",
                 "enterprise": true,
                 "showInCollapsed": true
               },
               {
-                "title": "Column Sparkline",
-                "url": "/sparklines-column-sparkline/",
+                "title": "Area",
+                "url": "/sparklines-area-customisation/",
                 "enterprise": true,
                 "showInCollapsed": true
               }
             ]
           },
           {
-            "title": "Supplying Data",
+            "title": "Sparkline Data",
             "url": "/sparklines-data/",
             "enterprise": true,
             "showInCollapsed": true
@@ -1401,14 +1401,8 @@
             "showInCollapsed": true
           },
           {
-            "title": "Special Points",
-            "url": "/sparklines-special-points/",
-            "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "Data Updates",
-            "url": "/sparklines-data-updates/",
+            "title": "Points of Interest",
+            "url": "/sparklines-points-of-interest/",
             "enterprise": true,
             "showInCollapsed": true
           }

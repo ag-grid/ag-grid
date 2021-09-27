@@ -149,6 +149,9 @@ export class Events {
     /** Main body of grid has scrolled, either horizontally or vertically */
     public static EVENT_BODY_SCROLL = 'bodyScroll';
 
+    /** Main body of the grid has stopped scrolling, either horizontally or vertically */
+    public static EVENT_BODY_SCROLL_END = 'bodyScrollEnd';
+
     public static EVENT_HEIGHT_SCALE_CHANGED = 'heightScaleChanged';
 
     /** The displayed page for pagination has changed. For example the data was filtered or sorted,
@@ -159,6 +162,10 @@ export class Events {
      * (not used if doing plain JavaScript or Angular 1.x). If the grid receives changes due
      * to bound properties, this event fires after the grid has finished processing the change. */
     public static EVENT_COMPONENT_STATE_CHANGED = 'componentStateChanged';
+
+    /*****************************  INTERNAL EVENTS: START ******************************************* */
+
+    /** Please remember to add to ComponentUtil.EXCLUDED_INTERNAL_EVENTS to not have these events exposed to framework components. */
 
     /** All items from here down are used internally by the grid, not intended for external use. */
     // not documented, either experimental, or we just don't want users using an depending on them
@@ -195,4 +202,6 @@ export class Events {
     public static EVENT_MOUSE_FOCUS = 'mouseFocus';
 
     public static EVENT_STORE_UPDATED = 'storeUpdated';
+
+    /*****************************  INTERNAL EVENTS: END ******************************************* */
 }

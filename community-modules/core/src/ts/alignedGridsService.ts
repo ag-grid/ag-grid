@@ -2,8 +2,14 @@ import { ColumnModel } from "./columns/columnModel";
 import { Logger } from "./logger";
 import { LoggerFactory } from "./logger";
 import {
-    AgEvent, BodyScrollEvent,
-    ColumnEvent, ColumnGroupOpenedEvent, ColumnMovedEvent, ColumnPinnedEvent, ColumnResizedEvent, ColumnVisibleEvent,
+    AgEvent,
+    BodyScrollEvent,
+    ColumnEvent,
+    ColumnGroupOpenedEvent,
+    ColumnMovedEvent,
+    ColumnPinnedEvent,
+    ColumnResizedEvent,
+    ColumnVisibleEvent,
     Events
 } from "./events";
 import { GridOptions } from "./entities/gridOptions";

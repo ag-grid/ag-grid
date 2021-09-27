@@ -11,6 +11,7 @@ import { LinearScale } from '../scale/linearScale';
 import { TimeScale } from '../scale/timeScale';
 import { BandScale } from '../scale/bandScale';
 import { extent } from '../util/array';
+import { locale } from "../util/time/format/defaultLocale";
 
 export interface SeriesNodeDatum {
     readonly seriesDatum: any;
@@ -31,6 +32,7 @@ interface SeriesRect {
 type Container = HTMLElement | undefined | null;
 // type Data = number[] | [number | string | Date | { toString: () => string }, number][] | { [key: string]: any }[] | undefined | null;
 type Data = any[] | undefined | null;
+type DataType = 'number' | 'array' | 'object' | undefined;
 type AxisType = 'number' | 'category' | 'time';
 type ScaleType = LinearScale | TimeScale | BandScale<string>;
 
@@ -104,6 +106,7 @@ export abstract class Sparkline extends Observable {
     xKey: string = 'x';
     yKey: string = 'y';
 
+    protected dataType: DataType = undefined;
     protected xData: any[] = [];
     protected yData: (number | undefined)[] = [];
 
@@ -119,8 +122,8 @@ export abstract class Sparkline extends Observable {
     readonly highlightStyle: HighlightStyle = {
         size: 6,
         fill: 'yellow',
-        stroke: 'yellow',
-        strokeWidth: 0
+        stroke: 'silver',
+        strokeWidth: 1
     }
 
     protected constructor() {
@@ -326,6 +329,7 @@ export abstract class Sparkline extends Observable {
         const n = data.length;
 
         const dataType = this.getDataType(data);
+        this.dataType = dataType;
 
         const { type: xValueType } = this.axis;
         const xType = xValueType !== 'number' && xValueType !== 'time' ? 'category' : xValueType;
@@ -387,7 +391,7 @@ export abstract class Sparkline extends Observable {
     * If the value is not a number, array or object, return `undefined`.
     * @param data
     */
-    private getDataType(data: any): 'number' | 'array' | 'object' | undefined {
+    private getDataType(data: any): DataType {
         for (let datum of data) {
             if (datum) {
                 if (isNumber(datum)) {
@@ -535,8 +539,20 @@ export abstract class Sparkline extends Observable {
         }
     }
 
-    protected formatNumericDatum(datum: any): string {
-        return parseFloat(datum).toFixed(1);
+    protected formatNumericDatum(datum: number): string {
+        return String(Math.round(datum * 10) / 10);
+    }
+
+    private defaultDateFormatter = locale.format('%m/%d/%y, %H:%M:%S');
+
+    protected formatDatum(datum: any): string {
+        const type  = this.axis.type || 'category';
+
+        if (type === 'number' && typeof datum === 'number') {
+            return this.formatNumericDatum(datum);
+        } else if (type === 'time' && datum instanceof Date) {
+            return this.defaultDateFormatter(datum);
+        } else return String(datum);
     }
 
     private _onMouseMove = this.onMouseMove.bind(this);

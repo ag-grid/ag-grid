@@ -15,6 +15,7 @@ import { CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportPara
 import {
     AsyncTransactionsFlushed,
     BodyScrollEvent,
+    BodyScrollEndEvent,
     CellClickedEvent,
     CellContextMenuEvent,
     CellDoubleClickedEvent,
@@ -634,6 +635,8 @@ export interface GridOptions {
     suppressHorizontalScroll?: boolean;
     /** When `true`, the grid will not scroll to the top when new row data is provided. Use this if you don't want the default behaviour of scrolling to the top every time you load new data. */
     suppressScrollOnNewData?: boolean;
+    /** When `true`, the grid will not allow mousewheel / touchpad scroll when popup elements are present. */
+    suppressScrollWhenPopupsAreOpen?: boolean;
     /** When `true`, the grid will not use animation frames when drawing rows while scrolling. Use this if the grid is working fast enough that you don't need animation frames and you don't want the grid to flicker. */
     suppressAnimationFrame?: boolean;
     /** If `true`, middle clicks will result in `click` events for cells and rows. Otherwise the browser will use middle click to scroll the grid.<br />**Note:** Not all browsers fire `click` events with the middle button. Most will fire only `mousedown` and `mouseup` events, which can be used to focus a cell, but will not work to call the `onCellClicked` function. */
@@ -696,7 +699,7 @@ export interface GridOptions {
     /** Default row height in pixels. */
     rowHeight?: number;
     /** The style properties to apply to all rows. Set to an object of key (style names) and values (style values) */
-    rowStyle?: { [cssProperty: string]: string };
+    rowStyle?: RowStyle;
     /** CSS class(es) for all rows. Provide either a string (class name) or array of strings (array of class names). */
     rowClass?: string | string[];
     /** Rules which can be applied to include certain CSS classes. */
@@ -828,7 +831,7 @@ export interface GridOptions {
 
     // *** Styling *** //
     /** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values. */
-    getRowStyle?: (params: RowClassParams) => { [cssProperty: string]: string };
+    getRowStyle?: (params: RowClassParams) => RowStyle;
     /** Callback version of property `rowClass` to set class(es) for each row individually. Function should return either a string (class name), array of strings (array of class names) or undefined for no class. */
     getRowClass?: (params: RowClassParams) => string | string[] | undefined;
     /** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height. */
@@ -939,6 +942,8 @@ export interface GridOptions {
     onViewportChanged?(event: ViewportChangedEvent): void;
     /** The body was scrolled horizontally or vertically. */
     onBodyScroll?(event: BodyScrollEvent): void;
+    /** Main body of the grid has stopped scrolling, either horizontally or vertically. */
+    onBodyScrollEnd?(event: BodyScrollEndEvent): void;
     /** When dragging starts. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */
     onDragStarted?(event: DragStartedEvent): void;
     /** When dragging stops. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */
@@ -1095,6 +1100,8 @@ export interface IsRowSelectable {
 export interface RowClassRules {
     [cssClassName: string]: (((params: RowClassParams) => boolean) | string);
 }
+
+export interface RowStyle { [cssProperty: string]: string | number; }
 
 export interface RowClassParams {
     /** The data associated with this row from rowData */

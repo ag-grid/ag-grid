@@ -6,7 +6,13 @@ This section coveres notable series properties available in all series types.
 
 ## Series Highlighting
 
-Each chart series has a `highlightStyle` config with default values like this:
+In data-rich charts with multiple overlapping series it might be difficul to tell one series from another
+when hovering a series data point or a legend item. To make the hovered series stand out, we
+can highlight it, while dimming other chart series at the same time, as illustrated by the example below.
+
+<chart-example title='Overlapping Series' name='lines' type='generated'></chart-example>
+
+To achieve such functionality each chart series has a `highlightStyle` config with default values like this:
 
 ```js
 highlightStyle: {

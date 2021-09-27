@@ -4,7 +4,7 @@ import { getInnerHeight, getScrollLeft, isRtlNegativeScroll, setScrollLeft } fro
 import { CtrlsService } from "../ctrlsService";
 import { Events } from "../eventKeys";
 import { debounce } from "../utils/function";
-import { BodyScrollEvent } from "../events";
+import { BodyScrollEvent, BodyScrollEndEvent } from "../events";
 import { isIOSUserAgent } from "../utils/browser";
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { ColumnApi } from "../columns/columnApi";
@@ -16,6 +16,7 @@ import { RowContainerHeightService } from "../rendering/rowContainerHeightServic
 import { RowRenderer } from "../rendering/rowRenderer";
 import { ColumnModel } from "../columns/columnModel";
 import { RowContainerCtrl } from "./rowContainer/rowContainerCtrl";
+import { assign } from "../utils/object";
 
 type ScrollDirection = 'horizontal' | 'vertical';
 
@@ -40,6 +41,8 @@ export class GridBodyScrollFeature extends BeanStub {
     private scrollLeft = -1;
     private nextScrollTop = -1;
     private scrollTop = -1;
+
+    private scrollTimer: number | undefined;
 
     private readonly resetLastHorizontalScrollElementDebounced: () => void;
 
@@ -171,18 +174,32 @@ export class GridBodyScrollFeature extends BeanStub {
 
         this.scrollLeft = scrollLeft;
 
-        const event: BodyScrollEvent = {
+        this.fireScrollEvent('horizontal');
+        this.horizontallyScrollHeaderCenterAndFloatingCenter(scrollLeft);
+        this.onHorizontalViewportChanged();
+    }
+
+    private fireScrollEvent(direction: 'horizontal' | 'vertical'): void {
+        const bodyScrollEvent: BodyScrollEvent = {
             type: Events.EVENT_BODY_SCROLL,
             api: this.gridApi,
             columnApi: this.columnApi,
-            direction: 'horizontal',
+            direction,
             left: this.scrollLeft,
             top: this.scrollTop
         };
 
-        this.eventService.dispatchEvent(event);
-        this.horizontallyScrollHeaderCenterAndFloatingCenter(scrollLeft);
-        this.onHorizontalViewportChanged();
+        this.eventService.dispatchEvent(bodyScrollEvent);
+
+        window.clearTimeout(this.scrollTimer);
+        this.scrollTimer = undefined;
+
+        this.scrollTimer = window.setTimeout(() => {
+            const bodyScrollEndEvent: BodyScrollEndEvent = assign({}, bodyScrollEvent, {
+                type: Events.EVENT_BODY_SCROLL_END
+            });
+            this.eventService.dispatchEvent(bodyScrollEndEvent);
+        }, 100);
     }
 
     private shouldBlockScrollUpdate(direction: ScrollDirection, scrollTo: number, touchOnly: boolean = false): boolean {
@@ -224,15 +241,7 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private redrawRowsAfterScroll(): void {
-        const event: BodyScrollEvent = {
-            type: Events.EVENT_BODY_SCROLL,
-            direction: 'vertical',
-            api: this.gridApi,
-            columnApi: this.columnApi,
-            left: this.scrollLeft,
-            top: this.scrollTop
-        };
-        this.eventService.dispatchEvent(event);
+        this.fireScrollEvent('vertical');
     }
 
     private onHorizontalViewportChanged(): void {

@@ -2,6 +2,97 @@
     "_config_": {
         "codeSrc": "grid-api/grid-options.AUTO.json"
     },
+    "accessories": {
+        "meta": {
+            "displayName": "Accessories"
+        },
+        "statusBar": {
+            "more": {
+                "name": "Status Bar",
+                "url": "/status-bar/"
+            },
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "IStatusPanelComp"
+                ],
+                "include": []
+            }
+        },
+        "sideBar": {
+            "more": {
+                "name": "Side Bar",
+                "url": "/side-bar/"
+            },
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "IToolPanelComp"
+                ],
+                "include": []
+            }
+        },
+        "suppressContextMenu": {
+            "default": false,
+            "more": {
+                "name": "Context Menu",
+                "url": "/context-menu/"
+            }
+        },
+        "preventDefaultOnContextMenu": {
+            "default": false
+        },
+        "allowContextMenuWithControlKey": {
+            "default": false,
+            "description": "Allows context menu to show, even when <kbd>Ctrl</kbd> key is held down."
+        },
+        "suppressMenuHide": {
+            "default": false,
+            "more": {
+                "name": "Column Menu",
+                "url": "/column-menu/"
+            }
+        },
+        "enableBrowserTooltips": {
+            "default": false,
+            "more": {
+                "name": "Tooltip Component",
+                "url": "/component-tooltip/"
+            }
+        },
+        "tooltipShowDelay": {
+            "default": 2000
+        },
+        "tooltipMouseTrack": {
+            "default": false
+        },
+        "popupParent": {
+            "more": {
+                "name": "Popup Parent",
+                "url": "/context-menu/#popup-parent"
+            }
+        }
+    },
+    "clipboard": {
+        "meta": {
+            "displayName": "Clipboard",
+            "page": {
+                "name": "Clipboard",
+                "url": "/clipboard/"
+            }
+        },
+        "copyHeadersToClipboard": {
+            "default": false,
+            "description": "Set to `true` to also include headers when copying to clipboard using <kbd>Ctrl</kbd>+<kbd>C</kbd> clipboard."
+        },
+        "clipboardDeliminator": {},
+        "suppressCopyRowsToClipboard": {
+            "default": false
+        },
+        "suppressLastEmptyLineOnPaste": {
+            "default": false
+        },
+        "suppressClipboardPaste": {},
+        "suppressClipboardApi": {}
+    },
     "columns": {
         "meta": {
             "displayName": "Column Definitions",
@@ -36,6 +127,20 @@
         "suppressFieldDotNotation": {
             "default": false
         }
+    },
+    "headers": {
+        "meta": {
+            "displayName": "Column Headers",
+            "page": {
+                "name": "Column Headers",
+                "url": "/column-headers/"
+            }
+        },
+        "headerHeight": {},
+        "groupHeaderHeight": {},
+        "floatingFiltersHeight": {},
+        "pivotHeaderHeight": {},
+        "pivotGroupHeaderHeight": {}
     },
     "columnMoving": {
         "meta": {
@@ -99,204 +204,16 @@
             }
         }
     },
-    "sort": {
+    "components": {
         "meta": {
-            "displayName": "Sorting",
+            "displayName": "Components",
             "page": {
-                "name": "Row Sorting",
-                "url": "/row-sorting/"
+                "name": "Components",
+                "url": "/components/"
             }
         },
-        "sortingOrder": {
-            "default": [
-                null,
-                "asc",
-                "desc"
-            ],
-            "more": {
-                "name": "Example Sorting Order and Animation",
-                "url": "/row-sorting/#example-sorting-order-and-animation"
-            }
-        },
-        "accentedSort": {
-            "default": false,
-            "more": {
-                "name": "Accented Sort",
-                "url": "/row-sorting/#accented-sort"
-            }
-        },
-        "unSortIcon": {
-            "default": false,
-            "more": {
-                "name": "Example Custom Sorting",
-                "url": "/row-sorting/#example-custom-sorting"
-            }
-        },
-        "suppressMultiSort": {
-            "default": false
-        },
-        "multiSortKey": {
-            "description": "Set to `'ctrl'` to have multi sorting work using the <kbd>Ctrl</kbd> (or <kbd>Command ⌘</kbd> for Mac) key.",
-            "options": [
-                "ctrl"
-            ],
-            "more": {
-                "name": "Multi Column Sorting",
-                "url": "/row-sorting/#multi-column-sorting"
-            }
-        },
-        "suppressMaintainUnsortedOrder": {
-            "default": false,
-            "more": {
-                "name": "Big Data Small Transactions",
-                "url": "/immutable-data/"
-            }
-        }
-    },
-    "filter": {
-        "meta": {
-            "displayName": "Filtering",
-            "page": {
-                "name": "Filtering",
-                "url": "/filtering-overview/"
-            }
-        },
-        "quickFilterText": {
-            "more": {
-                "name": "Quick Filter",
-                "url": "/filter-quick/"
-            }
-        },
-        "cacheQuickFilter": {
-            "default": false,
-            "more": {
-                "name": "Quick Filter Cache",
-                "url": "/filter-quick/#quick-filter-cache"
-            }
-        },
-        "excludeChildrenWhenTreeDataFiltering": {
-            "default": false,
-            "more": {
-                "name": "Tree Data Filtering",
-                "url": "/tree-data/#tree-data-filtering"
-            }
-        }
-    },
-    "selection": {
-        "meta": {
-            "displayName": "Selection",
-            "page": {
-                "name": "Selection Overview",
-                "url": "/selection-overview/"
-            }
-        },
-        "rowSelection": {
-            "options": [
-                "single",
-                "multiple"
-            ],
-            "more": {
-                "name": "Row Selection",
-                "url": "/row-selection"
-            },
-            "description": "Type of Row Selection."
-        },
-        "rowMultiSelectWithClick": {
-            "default": false,
-            "more": {
-                "name": "Multi Select Single Click",
-                "url": "/row-selection/#example-multi-select-with-click"
-            }
-        },
-        "suppressRowDeselection": {
-            "default": false,
-            "description": "If `true`, rows will not be deselected if you hold down <kbd>Ctrl</kbd> and click the row or press <kbd>Space</kbd>."
-        },
-        "suppressRowClickSelection": {
-            "default": false
-        },
-        "suppressCellSelection": {
-            "default": false
-        },
-        "suppressMultiRangeSelection": {
-            "default": false,
-            "more": {
-                "name": "Suppress Multi Range Selection",
-                "url": "/range-selection/#suppress-multi-range-selection"
-            }
-        },
-        "enableCellTextSelection": {
-            "default": false,
-            "description": ""
-        },
-        "enableRangeSelection": {
-            "default": false,
-            "more": {
-                "name": "Range Selection",
-                "url": "/range-selection"
-            }
-        },
-        "enableRangeHandle": {
-            "default": false,
-            "more": {
-                "name": "Range Handle",
-                "url": "/range-selection-handle"
-            }
-        },
-        "enableFillHandle": {
-            "default": false,
-            "more": {
-                "name": "Fill Handle",
-                "url": "/range-selection-fill-handle/"
-            }
-        },
-        "fillHandleDirection": {
-            "default": "xy",
-            "options": [
-                "x",
-                "y",
-                "xy"
-            ]
-        },
-        "suppressClearOnFillReduction": {
-            "default": false
-        }
-    },
-    "rowDragging": {
-        "meta": {
-            "displayName": "Row Drag and Drop",
-            "page": {
-                "name": "Row Dragging",
-                "url": "/row-dragging/"
-            }
-        },
-        "rowDragManaged": {
-            "default": false,
-            "more": {
-                "name": "Managed Row Dragging",
-                "url": "/row-dragging/#managed-dragging"
-            }
-        },
-        "rowDragEntireRow": {
-            "default": false,
-            "more": {
-                "name": "Entire Row Dragging",
-                "url": "/row-dragging/#entire-row-dragging"
-            }
-        },
-        "rowDragMultiRow": {
-            "default": false,
-            "more": {
-                "name": "Mulit-Row Dragging",
-                "url": "/row-dragging/#multi-row-dragging"
-            }
-        },
-        "suppressRowDrag": {
-            "default": false
-        },
-        "suppressMoveWhenRowDragging": {
-            "default": false
-        }
+        "components": {},
+        "frameworkComponents": {}
     },
     "editing": {
         "meta": {
@@ -355,19 +272,572 @@
             "default": 10
         }
     },
-    "headers": {
+    "export": {
         "meta": {
-            "displayName": "Column Headers",
+            "displayName": "Export",
             "page": {
-                "name": "Column Headers",
-                "url": "/column-headers/"
+                "name": "Export",
+                "url": "/excel-export/"
             }
         },
-        "headerHeight": {},
-        "groupHeaderHeight": {},
-        "floatingFiltersHeight": {},
-        "pivotHeaderHeight": {},
-        "pivotGroupHeaderHeight": {}
+        "defaultCsvExportParams": {
+            "more": {
+                "name": "CSV Export",
+                "url": "/csv-export"
+            }
+        },
+        "suppressCsvExport": {
+            "default": false
+        },
+        "defaultExcelExportParams": {
+            "more": {
+                "name": "Excel Export",
+                "url": "/excel-export"
+            }
+        },
+        "suppressExcelExport": {
+            "default": false
+        },
+        "excelStyles": {
+            "more": {
+                "name": "Excel Export Styles",
+                "url": "/excel-export-styles/"
+            }
+        }
+    },
+    "filter": {
+        "meta": {
+            "displayName": "Filtering",
+            "page": {
+                "name": "Filtering",
+                "url": "/filtering-overview/"
+            }
+        },
+        "quickFilterText": {
+            "more": {
+                "name": "Quick Filter",
+                "url": "/filter-quick/"
+            }
+        },
+        "cacheQuickFilter": {
+            "default": false,
+            "more": {
+                "name": "Quick Filter Cache",
+                "url": "/filter-quick/#quick-filter-cache"
+            }
+        },
+        "excludeChildrenWhenTreeDataFiltering": {
+            "default": false,
+            "more": {
+                "name": "Tree Data Filtering",
+                "url": "/tree-data/#tree-data-filtering"
+            }
+        }
+    },
+    "charts": {
+        "meta": {
+            "displayName": "Integrated Charts",
+            "page": {
+                "name": "Integrated Charts",
+                "url": "/integrated-charts/"
+            }
+        },
+        "enableCharts": {
+            "default": false,
+            "more": {
+                "name": "Enable Charts",
+                "url": "/integrated-charts-customisation/#enabling-charts"
+            }
+        },
+        "chartThemes": {
+            "default": [
+                "ag-default",
+                "ag-material",
+                "ag-pastel",
+                "ag-vivid",
+                "ag-solar"
+            ],
+            "more": {
+                "name": "Chart Themes",
+                "url": "/integrated-charts-customisation/#provided-themes"
+            }
+        },
+        "customChartThemes": {
+            "more": {
+                "name": "Custom Chart Themes",
+                "url": "/integrated-charts-customisation/#custom-chart-themes"
+            }
+        },
+        "chartThemeOverrides": {
+            "more": {
+                "name": "Overriding Existing Themes",
+                "url": "/integrated-charts-customisation/#overriding-existing-themes"
+            }
+        }
+    },
+    "loading": {
+        "meta": {
+            "displayName": "Loading Cell Renderers",
+            "page": {
+                "name": "loadingCellRenderer",
+                "url": "/component-loading-cell-renderer/"
+            }
+        },
+        "loadingCellRenderer": {
+            "more": {
+                "name": "Loading Cell Renderer",
+                "url": "/component-loading-cell-renderer/"
+            }
+        },
+        "loadingCellRendererFramework": {
+            "more": {
+                "name": "Loading Cell Renderer",
+                "url": "/component-loading-cell-renderer/"
+            }
+        },
+        "loadingCellRendererParams": {
+            "more": {
+                "name": "Cell Renderer Params",
+                "url": "/component-loading-cell-renderer/"
+            }
+        },
+        "loadingCellRendererSelector": {
+            "more": {
+                "name": "Loading Cell Renderer Selector",
+                "url": "/component-loading-cell-renderer/"
+            }
+        }
+    },
+    "localisation": {
+        "meta": {
+            "displayName": "Localisation",
+            "page": {
+                "name": "Localisation",
+                "url": "/localisation/"
+            }
+        },
+        "localeText": {},
+        "localeTextFunc": {}
+    },
+    "masterDetail": {
+        "meta": {
+            "displayName": "Master Detail",
+            "page": {
+                "name": "Master Detail",
+                "url": "/mater-detail/"
+            }
+        },
+        "masterDetail": {
+            "default": false
+        },
+        "detailCellRenderer": {
+            "more": {
+                "name": "Custom Detail",
+                "url": "/master-detail-custom-detail/"
+            },
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "ICellRendererComp"
+                ],
+                "include": []
+            }
+        },
+        "detailCellRendererFramework": {
+            "more": {
+                "name": "Custom Detail",
+                "url": "/master-detail-custom-detail/"
+            }
+        },
+        "detailCellRendererParams": {
+            "description": "Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable [dynamic definitions](/master-detail-grids/#dynamic-definitions) of the params.",
+            "more": {
+                "name": "Detail Grids",
+                "url": "/master-detail-grids/"
+            }
+        },
+        "detailRowHeight": {
+            "more": {
+                "name": "Fixed Height",
+                "url": "/master-detail-height/#fixed-height"
+            }
+        },
+        "detailRowAutoHeight": {
+            "more": {
+                "name": "Auto Height",
+                "url": "/master-detail-height/#auto-height"
+            }
+        },
+        "embedFullWidthRows": {
+            "more": {
+                "name": "Syncing Detail Scrolling with Master",
+                "url": "/master-detail-other/#syncing-detail-scrolling-with-master"
+            }
+        },
+        "keepDetailRows": {
+            "default": false
+        },
+        "keepDetailRowsCount": {
+            "default": 10
+        }
+    },
+    "miscellaneous": {
+        "meta": {
+            "displayName": "Miscellaneous"
+        },
+        "alignedGrids": {
+            "more": {
+                "name": "Aligned Grids",
+                "url": "/aligned-grids/"
+            }
+        },
+        "context": {
+            "more": {
+                "name": "Context",
+                "url": "/context/"
+            }
+        },
+        "tabIndex": {},
+        "rowBuffer": {},
+        "valueCache": {
+            "default": false,
+            "more": {
+                "name": "Value Cache",
+                "url": "/value-getters/#value-cache-properties"
+            }
+        },
+        "valueCacheNeverExpires": {
+            "default": false,
+            "more": {
+                "name": "Value Cache",
+                "url": "/value-getters/#value-cache-properties"
+            }
+        },
+        "enableCellExpressions": {
+            "default": false,
+            "more": {
+                "name": "Cell Expressions",
+                "url": "/cell-expressions/#cell-expressions"
+            }
+        },
+        "suppressParentsInRowNodes": {
+            "default": false
+        },
+        "suppressTouch": {
+            "default": false,
+            "more": {
+                "name": "Touch Support",
+                "url": "/touch/"
+            }
+        },
+        "suppressFocusAfterRefresh": {
+            "default": false
+        },
+        "suppressAsyncEvents": {
+            "default": false
+        },
+        "suppressBrowserResizeObserver": {
+            "default": false
+        },
+        "suppressPropertyNamesCheck": {
+            "default": false
+        },
+        "suppressChangeDetection": {
+            "default": false
+        },
+        "debug": {
+            "default": false
+        }
+    },
+    "overlays": {
+        "meta": {
+            "displayName": "Overlays",
+            "page": {
+                "name": "Overlays",
+                "url": "/overlays/"
+            }
+        },
+        "overlayLoadingTemplate": {},
+        "loadingOverlayComponent": {
+            "more": {
+                "name": "Loading Overlay Component",
+                "url": "/component-overlay/#loading-rows-overlay-interface"
+            },
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "ILoadingOverlayComp"
+                ],
+                "include": []
+            }
+        },
+        "loadingOverlayComponentFramework": {},
+        "loadingOverlayComponentParams": {},
+        "suppressLoadingOverlay": {
+            "default": false
+        },
+        "overlayNoRowsTemplate": {},
+        "noRowsOverlayComponent": {
+            "more": {
+                "name": "No Rows Overlay Component",
+                "url": "/component-overlay/##no-rows-overlay-interface"
+            },
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "INoRowsOverlayComp"
+                ],
+                "include": []
+            }
+        },
+        "noRowsOverlayComponentFramework": {},
+        "noRowsOverlayComponentParams": {},
+        "suppressNoRowsOverlay": {
+            "default": false
+        }
+    },
+    "pagination": {
+        "meta": {
+            "displayName": "Pagination",
+            "page": {
+                "name": "Row Pagination",
+                "url": "/row-pagination"
+            }
+        },
+        "pagination": {
+            "default": false
+        },
+        "paginationPageSize": {
+            "more": {
+                "name": "Customising Pagination",
+                "url": "/row-pagination/#example-customising-pagination"
+            }
+        },
+        "paginationAutoPageSize": {
+            "default": false,
+            "more": {
+                "name": "Auto Page Size",
+                "url": "/row-pagination/#example-auto-page-size"
+            }
+        },
+        "paginateChildRows": {
+            "default": false,
+            "more": {
+                "name": "Pagination & Child Rows",
+                "url": "/row-pagination/#pagination--child-rows"
+            }
+        },
+        "suppressPaginationPanel": {
+            "default": false,
+            "more": {
+                "name": "Custom Pagination Controls",
+                "url": "/row-pagination/#example-customising-pagination"
+            }
+        }
+    },
+    "rowPivoting": {
+        "meta": {
+            "displayName": "Pivot and Aggregation",
+            "description": "See [Pivot](/pivoting/) and [Aggregation](/aggregation/) for more information"
+        },
+        "pivotMode": {
+            "default": false
+        },
+        "pivotPanelShow": {
+            "default": "never",
+            "options": [
+                "never",
+                "always",
+                "onlyWhenPivoting"
+            ]
+        },
+        "pivotColumnGroupTotals": {
+            "options": [
+                "before",
+                "after"
+            ],
+            "more": {
+                "name": "Pivot Column Group Totals",
+                "url": "/pivoting/#pivot-column-group-totals"
+            }
+        },
+        "pivotRowTotals": {
+            "options": [
+                "before",
+                "after"
+            ],
+            "more": {
+                "name": "Pivot Row Totals",
+                "url": "/pivoting/#pivot-row-totals"
+            }
+        },
+        "pivotSuppressAutoColumn": {
+            "default": false,
+            "description": "If `true`, the grid will not swap in the grouping column when pivoting. Useful if pivoting using [Server Side Row Model](/server-side-model/) or [Viewport Row Model](/viewport/) and you want full control of all columns including the group column."
+        },
+        "suppressExpandablePivotGroups": {
+            "default": false,
+            "more": {
+                "name": "Fixed Pivot Column Groups",
+                "url": "/pivoting/#fixed-pivot-column-groups"
+            }
+        },
+        "functionsReadOnly": {
+            "default": false,
+            "more": {
+                "name": "Read Only Functions",
+                "url": "/tool-panel-columns/#read-only-functions"
+            }
+        },
+        "aggFuncs": {
+            "more": {
+                "name": "Custom Aggregation Functions",
+                "url": "/aggregation/#custom-aggregation-functions"
+            }
+        },
+        "suppressAggFuncInHeader": {
+            "default": false
+        },
+        "suppressAggAtRootLevel": {
+            "default": false,
+            "more": {
+                "name": "Big Data Small Transactions",
+                "url": "/data-update-transactions/#example-small-changes-big-data"
+            }
+        },
+        "aggregateOnlyChangedColumns": {
+            "default": false,
+            "more": {
+                "name": "Change Detection",
+                "url": "/change-detection/#tree-path-selection"
+            }
+        },
+        "suppressAggFilteredOnly": {
+            "default": false,
+            "more": {
+                "name": "Custom Aggregation Functions",
+                "url": "/aggregation/#filtering"
+            }
+        }
+    },
+    "rendering": {
+        "meta": {
+            "displayName": "Rendering"
+        },
+        "animateRows": {
+            "default": false,
+            "more": {
+                "name": "Row Animation",
+                "url": "/row-animation/"
+            }
+        },
+        "enableCellChangeFlash": {
+            "default": false,
+            "more": {
+                "name": "Flashing Data Changes",
+                "url": "/flashing-cells/"
+            }
+        },
+        "cellFlashDelay": {},
+        "cellFadeDelay": {},
+        "allowShowChangeAfterFilter": {
+            "default": false,
+            "more": {
+                "name": "Flashing Data Changes",
+                "url": "/flashing-cells/"
+            }
+        },
+        "domLayout": {
+            "default": "normal",
+            "options": [
+                "normal",
+                "autoHeight",
+                "print"
+            ],
+            "description": "Switch between layout options. See [Printing](/printing/) and [Auto Height](/grid-size/#grid-auto-height)."
+        },
+        "ensureDomOrder": {
+            "default": false,
+            "more": {
+                "name": "Accessibility - Row and Column Order",
+                "url": "/accessibility/#ensure-dom-element-order"
+            }
+        },
+        "enableRtl": {
+            "default": false,
+            "more": {
+                "name": "RTL (Right to Left)",
+                "url": "/rtl/"
+            }
+        },
+        "suppressColumnVirtualisation": {
+            "default": false
+        },
+        "suppressRowVirtualisation": {
+            "overrideMissingPropCheck": true,
+            "strikeThrough": true,
+            "type": "never",
+            "description": "There is no such property as `suppressRowVirtualisation` - if you want to do this, then set the `rowBuffer` property to be very large, e.g. `9999`. **Warning: rendering lots of rows will mean a very large amount of rendering in the DOM which will slow things down.**"
+        },
+        "suppressMaxRenderedRowRestriction": {
+            "default": false
+        }
+    },
+    "rowDragging": {
+        "meta": {
+            "displayName": "Row Drag and Drop",
+            "page": {
+                "name": "Row Dragging",
+                "url": "/row-dragging/"
+            }
+        },
+        "rowDragManaged": {
+            "default": false,
+            "more": {
+                "name": "Managed Row Dragging",
+                "url": "/row-dragging/#managed-dragging"
+            }
+        },
+        "rowDragEntireRow": {
+            "default": false,
+            "more": {
+                "name": "Entire Row Dragging",
+                "url": "/row-dragging/#entire-row-dragging"
+            }
+        },
+        "rowDragMultiRow": {
+            "default": false,
+            "more": {
+                "name": "Mulit-Row Dragging",
+                "url": "/row-dragging/#multi-row-dragging"
+            }
+        },
+        "suppressRowDrag": {
+            "default": false
+        },
+        "suppressMoveWhenRowDragging": {
+            "default": false
+        }
+    },
+    "fullWidth": {
+        "meta": {
+            "displayName": "Row Full Width",
+            "page": {
+                "name": "Full Width Rows",
+                "url": "/full-width-rows/"
+            }
+        },
+        "fullWidthCellRenderer": {
+            "more": {
+                "name": "Cell Renderer",
+                "url": "/component-cell-renderer/"
+            },
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "ICellRendererComp"
+                ],
+                "include": []
+            }
+        },
+        "fullWidthCellRendererFramework": {},
+        "fullWidthCellRendererParams": {}
     },
     "rowGrouping": {
         "meta": {
@@ -511,91 +981,6 @@
             "more": {
                 "name": "Tree Data",
                 "url": "/tree-data/"
-            }
-        }
-    },
-    "rowPivoting": {
-        "meta": {
-            "displayName": "Pivot and Aggregation",
-            "description": "See [Pivot](/pivoting/) and [Aggregation](/aggregation/) for more information"
-        },
-        "pivotMode": {
-            "default": false
-        },
-        "pivotPanelShow": {
-            "default": "never",
-            "options": [
-                "never",
-                "always",
-                "onlyWhenPivoting"
-            ]
-        },
-        "pivotColumnGroupTotals": {
-            "options": [
-                "before",
-                "after"
-            ],
-            "more": {
-                "name": "Pivot Column Group Totals",
-                "url": "/pivoting/#pivot-column-group-totals"
-            }
-        },
-        "pivotRowTotals": {
-            "options": [
-                "before",
-                "after"
-            ],
-            "more": {
-                "name": "Pivot Row Totals",
-                "url": "/pivoting/#pivot-row-totals"
-            }
-        },
-        "pivotSuppressAutoColumn": {
-            "default": false,
-            "description": "If `true`, the grid will not swap in the grouping column when pivoting. Useful if pivoting using [Server Side Row Model](/server-side-model/) or [Viewport Row Model](/viewport/) and you want full control of all columns including the group column."
-        },
-        "suppressExpandablePivotGroups": {
-            "default": false,
-            "more": {
-                "name": "Fixed Pivot Column Groups",
-                "url": "/pivoting/#fixed-pivot-column-groups"
-            }
-        },
-        "functionsReadOnly": {
-            "default": false,
-            "more": {
-                "name": "Read Only Functions",
-                "url": "/tool-panel-columns/#read-only-functions"
-            }
-        },
-        "aggFuncs": {
-            "more": {
-                "name": "Custom Aggregation Functions",
-                "url": "/aggregation/#custom-aggregation-functions"
-            }
-        },
-        "suppressAggFuncInHeader": {
-            "default": false
-        },
-        "suppressAggAtRootLevel": {
-            "default": false,
-            "more": {
-                "name": "Big Data Small Transactions",
-                "url": "/data-update-transactions/#example-small-changes-big-data"
-            }
-        },
-        "aggregateOnlyChangedColumns": {
-            "default": false,
-            "more": {
-                "name": "Change Detection",
-                "url": "/change-detection/#tree-path-selection"
-            }
-        },
-        "suppressAggFilteredOnly": {
-            "default": false,
-            "more": {
-                "name": "Custom Aggregation Functions",
-                "url": "/aggregation/#filtering"
             }
         }
     },
@@ -778,6 +1163,9 @@
         "suppressScrollOnNewData": {
             "default": false
         },
+        "suppressScrollWhenPopupsAreOpen": {
+            "default": false
+        },
         "suppressAnimationFrame": {
             "default": false
         },
@@ -789,190 +1177,138 @@
         },
         "scrollbarWidth": {}
     },
-    "pagination": {
+    "selection": {
         "meta": {
-            "displayName": "Pagination",
+            "displayName": "Selection",
             "page": {
-                "name": "Row Pagination",
-                "url": "/row-pagination"
+                "name": "Selection Overview",
+                "url": "/selection-overview/"
             }
         },
-        "pagination": {
-            "default": false
-        },
-        "paginationPageSize": {
-            "more": {
-                "name": "Customising Pagination",
-                "url": "/row-pagination/#example-customising-pagination"
-            }
-        },
-        "paginationAutoPageSize": {
-            "default": false,
-            "more": {
-                "name": "Auto Page Size",
-                "url": "/row-pagination/#example-auto-page-size"
-            }
-        },
-        "paginateChildRows": {
-            "default": false,
-            "more": {
-                "name": "Pagination & Child Rows",
-                "url": "/row-pagination/#pagination--child-rows"
-            }
-        },
-        "suppressPaginationPanel": {
-            "default": false,
-            "more": {
-                "name": "Custom Pagination Controls",
-                "url": "/row-pagination/#example-customising-pagination"
-            }
-        }
-    },
-    "fullWidth": {
-        "meta": {
-            "displayName": "Row Full Width",
-            "page": {
-                "name": "Full Width Rows",
-                "url": "/full-width-rows/"
-            }
-        },
-        "fullWidthCellRenderer": {
-            "more": {
-                "name": "Cell Renderer",
-                "url": "/component-cell-renderer/"
-            },
-            "interfaceHierarchyOverrides": {
-                "exclude": [
-                    "ICellRendererComp"
-                ],
-                "include": []
-            }
-        },
-        "fullWidthCellRendererFramework": {},
-        "fullWidthCellRendererParams": {}
-    },
-    "masterDetail": {
-        "meta": {
-            "displayName": "Master Detail",
-            "page": {
-                "name": "Master Detail",
-                "url": "/mater-detail/"
-            }
-        },
-        "masterDetail": {
-            "default": false
-        },
-        "detailCellRenderer": {
-            "more": {
-                "name": "Custom Detail",
-                "url": "/master-detail-custom-detail/"
-            },
-            "interfaceHierarchyOverrides": {
-                "exclude": [
-                    "ICellRendererComp"
-                ],
-                "include": []
-            }
-        },
-        "detailCellRendererFramework": {
-            "more": {
-                "name": "Custom Detail",
-                "url": "/master-detail-custom-detail/"
-            }
-        },
-        "detailCellRendererParams": {
-            "description": "Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable [dynamic definitions](/master-detail-grids/#dynamic-definitions) of the params.",
-            "more": {
-                "name": "Detail Grids",
-                "url": "/master-detail-grids/"
-            }
-        },
-        "detailRowHeight": {
-            "more": {
-                "name": "Fixed Height",
-                "url": "/master-detail-height/#fixed-height"
-            }
-        },
-        "detailRowAutoHeight": {
-            "more": {
-                "name": "Auto Height",
-                "url": "/master-detail-height/#auto-height"
-            }
-        },
-        "embedFullWidthRows": {
-            "more": {
-                "name": "Syncing Detail Scrolling with Master",
-                "url": "/master-detail-other/#syncing-detail-scrolling-with-master"
-            }
-        },
-        "keepDetailRows": {
-            "default": false
-        },
-        "keepDetailRowsCount": {
-            "default": 10
-        }
-    },
-    "rendering": {
-        "meta": {
-            "displayName": "Rendering"
-        },
-        "animateRows": {
-            "default": false,
-            "more": {
-                "name": "Row Animation",
-                "url": "/row-animation/"
-            }
-        },
-        "enableCellChangeFlash": {
-            "default": false,
-            "more": {
-                "name": "Flashing Data Changes",
-                "url": "/flashing-cells/"
-            }
-        },
-        "cellFlashDelay": {},
-        "cellFadeDelay": {},
-        "allowShowChangeAfterFilter": {
-            "default": false,
-            "more": {
-                "name": "Flashing Data Changes",
-                "url": "/flashing-cells/"
-            }
-        },
-        "domLayout": {
-            "default": "normal",
+        "rowSelection": {
             "options": [
-                "normal",
-                "autoHeight",
-                "print"
+                "single",
+                "multiple"
             ],
-            "description": "Switch between layout options. See [Printing](/printing/) and [Auto Height](/grid-size/#grid-auto-height)."
+            "more": {
+                "name": "Row Selection",
+                "url": "/row-selection"
+            },
+            "description": "Type of Row Selection."
         },
-        "ensureDomOrder": {
+        "rowMultiSelectWithClick": {
             "default": false,
             "more": {
-                "name": "Accessibility - Row and Column Order",
-                "url": "/accessibility/#ensure-dom-element-order"
+                "name": "Multi Select Single Click",
+                "url": "/row-selection/#example-multi-select-with-click"
             }
         },
-        "enableRtl": {
+        "suppressRowDeselection": {
+            "default": false,
+            "description": "If `true`, rows will not be deselected if you hold down <kbd>Ctrl</kbd> and click the row or press <kbd>Space</kbd>."
+        },
+        "suppressRowClickSelection": {
+            "default": false
+        },
+        "suppressCellSelection": {
+            "default": false
+        },
+        "suppressMultiRangeSelection": {
             "default": false,
             "more": {
-                "name": "RTL (Right to Left)",
-                "url": "/rtl/"
+                "name": "Suppress Multi Range Selection",
+                "url": "/range-selection/#suppress-multi-range-selection"
             }
         },
-        "suppressColumnVirtualisation": {
+        "enableCellTextSelection": {
+            "default": false,
+            "description": ""
+        },
+        "enableRangeSelection": {
+            "default": false,
+            "more": {
+                "name": "Range Selection",
+                "url": "/range-selection"
+            }
+        },
+        "enableRangeHandle": {
+            "default": false,
+            "more": {
+                "name": "Range Handle",
+                "url": "/range-selection-handle"
+            }
+        },
+        "enableFillHandle": {
+            "default": false,
+            "more": {
+                "name": "Fill Handle",
+                "url": "/range-selection-fill-handle/"
+            }
+        },
+        "fillHandleDirection": {
+            "default": "xy",
+            "options": [
+                "x",
+                "y",
+                "xy"
+            ]
+        },
+        "suppressClearOnFillReduction": {
+            "default": false
+        }
+    },
+    "sort": {
+        "meta": {
+            "displayName": "Sorting",
+            "page": {
+                "name": "Row Sorting",
+                "url": "/row-sorting/"
+            }
+        },
+        "sortingOrder": {
+            "default": [
+                null,
+                "asc",
+                "desc"
+            ],
+            "more": {
+                "name": "Example Sorting Order and Animation",
+                "url": "/row-sorting/#example-sorting-order-and-animation"
+            }
+        },
+        "accentedSort": {
+            "default": false,
+            "more": {
+                "name": "Accented Sort",
+                "url": "/row-sorting/#accented-sort"
+            }
+        },
+        "unSortIcon": {
+            "default": false,
+            "more": {
+                "name": "Example Custom Sorting",
+                "url": "/row-sorting/#example-custom-sorting"
+            }
+        },
+        "suppressMultiSort": {
             "default": false
         },
-        "suppressRowVirtualisation": {
-            "overrideMissingPropCheck": true,
-            "strikeThrough": true,
-            "type": "never",
-            "description": "There is no such property as `suppressRowVirtualisation` - if you want to do this, then set the `rowBuffer` property to be very large, e.g. `9999`. **Warning: rendering lots of rows will mean a very large amount of rendering in the DOM which will slow things down.**"
+        "multiSortKey": {
+            "description": "Set to `'ctrl'` to have multi sorting work using the <kbd>Ctrl</kbd> (or <kbd>Command ⌘</kbd> for Mac) key.",
+            "options": [
+                "ctrl"
+            ],
+            "more": {
+                "name": "Multi Column Sorting",
+                "url": "/row-sorting/#multi-column-sorting"
+            }
         },
-        "suppressMaxRenderedRowRestriction": {
-            "default": false
+        "suppressMaintainUnsortedOrder": {
+            "default": false,
+            "more": {
+                "name": "Big Data Small Transactions",
+                "url": "/immutable-data/"
+            }
         }
     },
     "styling": {
@@ -1018,339 +1354,6 @@
             "description": "Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in [row spanning](/row-spanning/)."
         },
         "columnHoverHighlight": {
-            "default": false
-        }
-    },
-    "clipboard": {
-        "meta": {
-            "displayName": "Clipboard",
-            "page": {
-                "name": "Clipboard",
-                "url": "/clipboard/"
-            }
-        },
-        "copyHeadersToClipboard": {
-            "default": false,
-            "description": "Set to `true` to also include headers when copying to clipboard using <kbd>Ctrl</kbd>+<kbd>C</kbd> clipboard."
-        },
-        "clipboardDeliminator": {},
-        "suppressCopyRowsToClipboard": {
-            "default": false
-        },
-        "suppressLastEmptyLineOnPaste": {
-            "default": false
-        },
-        "suppressClipboardPaste": {},
-        "suppressClipboardApi": {}
-    },
-    "localisation": {
-        "meta": {
-            "displayName": "Localisation",
-            "page": {
-                "name": "Localisation",
-                "url": "/localisation/"
-            }
-        },
-        "localeText": {},
-        "localeTextFunc": {}
-    },
-    "loading": {
-        "meta": {
-            "displayName": "Loading Cell Renderers",
-            "page": {
-                "name": "loadingCellRenderer",
-                "url": "/component-loading-cell-renderer/"
-            }
-        },
-        "loadingCellRenderer": {
-            "more": {
-                "name": "Loading Cell Renderer",
-                "url": "/component-loading-cell-renderer/"
-            }
-        },
-        "loadingCellRendererFramework": {
-            "more": {
-                "name": "Loading Cell Renderer",
-                "url": "/component-loading-cell-renderer/"
-            }
-        },
-        "loadingCellRendererParams": {
-            "more": {
-                "name": "Cell Renderer Params",
-                "url": "/component-loading-cell-renderer/"
-            }
-        },
-        "loadingCellRendererSelector": {
-            "more": {
-                "name": "Loading Cell Renderer Selector",
-                "url": "/component-loading-cell-renderer/"
-            }
-        }
-    },
-    "overlays": {
-        "meta": {
-            "displayName": "Overlays",
-            "page": {
-                "name": "Overlays",
-                "url": "/overlays/"
-            }
-        },
-        "overlayLoadingTemplate": {},
-        "loadingOverlayComponent": {
-            "more": {
-                "name": "Loading Overlay Component",
-                "url": "/component-overlay/#loading-rows-overlay-interface"
-            },
-            "interfaceHierarchyOverrides": {
-                "exclude": [
-                    "ILoadingOverlayComp"
-                ],
-                "include": []
-            }
-        },
-        "loadingOverlayComponentFramework": {},
-        "loadingOverlayComponentParams": {},
-        "suppressLoadingOverlay": {
-            "default": false
-        },
-        "overlayNoRowsTemplate": {},
-        "noRowsOverlayComponent": {
-            "more": {
-                "name": "No Rows Overlay Component",
-                "url": "/component-overlay/##no-rows-overlay-interface"
-            },
-            "interfaceHierarchyOverrides": {
-                "exclude": [
-                    "INoRowsOverlayComp"
-                ],
-                "include": []
-            }
-        },
-        "noRowsOverlayComponentFramework": {},
-        "noRowsOverlayComponentParams": {},
-        "suppressNoRowsOverlay": {
-            "default": false
-        }
-    },
-    "charts": {
-        "meta": {
-            "displayName": "Integrated Charts",
-            "page": {
-                "name": "Integrated Charts",
-                "url": "/integrated-charts/"
-            }
-        },
-        "enableCharts": {
-            "default": false,
-            "more": {
-                "name": "Enable Charts",
-                "url": "/integrated-charts-customisation/#enabling-charts"
-            }
-        },
-        "chartThemes": {
-            "default": [
-                "ag-default",
-                "ag-material",
-                "ag-pastel",
-                "ag-vivid",
-                "ag-solar"
-            ],
-            "more": {
-                "name": "Chart Themes",
-                "url": "/integrated-charts-customisation/#provided-themes"
-            }
-        },
-        "customChartThemes": {
-            "more": {
-                "name": "Custom Chart Themes",
-                "url": "/integrated-charts-customisation/#custom-chart-themes"
-            }
-        },
-        "chartThemeOverrides": {
-            "more": {
-                "name": "Overriding Existing Themes",
-                "url": "/integrated-charts-customisation/#overriding-existing-themes"
-            }
-        }
-    },
-    "components": {
-        "meta": {
-            "displayName": "Components",
-            "page": {
-                "name": "Components",
-                "url": "/components/"
-            }
-        },
-        "components": {},
-        "frameworkComponents": {}
-    },
-    "accessories": {
-        "meta": {
-            "displayName": "Accessories"
-        },
-        "statusBar": {
-            "more": {
-                "name": "Status Bar",
-                "url": "/status-bar/"
-            },
-            "interfaceHierarchyOverrides": {
-                "exclude": [
-                    "IStatusPanelComp"
-                ],
-                "include": []
-            }
-        },
-        "sideBar": {
-            "more": {
-                "name": "Side Bar",
-                "url": "/side-bar/"
-            },
-            "interfaceHierarchyOverrides": {
-                "exclude": [
-                    "IToolPanelComp"
-                ],
-                "include": []
-            }
-        },
-        "suppressContextMenu": {
-            "default": false,
-            "more": {
-                "name": "Context Menu",
-                "url": "/context-menu/"
-            }
-        },
-        "preventDefaultOnContextMenu": {
-            "default": false
-        },
-        "allowContextMenuWithControlKey": {
-            "default": false,
-            "description": "Allows context menu to show, even when <kbd>Ctrl</kbd> key is held down."
-        },
-        "suppressMenuHide": {
-            "default": false,
-            "more": {
-                "name": "Column Menu",
-                "url": "/column-menu/"
-            }
-        },
-        "enableBrowserTooltips": {
-            "default": false,
-            "more": {
-                "name": "Tooltip Component",
-                "url": "/component-tooltip/"
-            }
-        },
-        "tooltipShowDelay": {
-            "default": 2000
-        },
-        "tooltipMouseTrack": {
-            "default": false
-        },
-        "popupParent": {
-            "more": {
-                "name": "Popup Parent",
-                "url": "/context-menu/#popup-parent"
-            }
-        }
-    },
-    "export": {
-        "meta": {
-            "displayName": "Export",
-            "page": {
-                "name": "Export",
-                "url": "/excel-export/"
-            }
-        },
-        "defaultCsvExportParams": {
-            "more": {
-                "name": "CSV Export",
-                "url": "/csv-export"
-            }
-        },
-        "suppressCsvExport": {
-            "default": false
-        },
-        "defaultExcelExportParams": {
-            "more": {
-                "name": "Excel Export",
-                "url": "/excel-export"
-            }
-        },
-        "suppressExcelExport": {
-            "default": false
-        },
-        "excelStyles": {
-            "more": {
-                "name": "Excel Export Styles",
-                "url": "/excel-export-styles/"
-            }
-        }
-    },
-    "miscellaneous": {
-        "meta": {
-            "displayName": "Miscellaneous"
-        },
-        "alignedGrids": {
-            "more": {
-                "name": "Aligned Grids",
-                "url": "/aligned-grids/"
-            }
-        },
-        "context": {
-            "more": {
-                "name": "Context",
-                "url": "/context/"
-            }
-        },
-        "tabIndex": {},
-        "rowBuffer": {},
-        "valueCache": {
-            "default": false,
-            "more": {
-                "name": "Value Cache",
-                "url": "/value-getters/#value-cache-properties"
-            }
-        },
-        "valueCacheNeverExpires": {
-            "default": false,
-            "more": {
-                "name": "Value Cache",
-                "url": "/value-getters/#value-cache-properties"
-            }
-        },
-        "enableCellExpressions": {
-            "default": false,
-            "more": {
-                "name": "Cell Expressions",
-                "url": "/cell-expressions/#cell-expressions"
-            }
-        },
-        "suppressParentsInRowNodes": {
-            "default": false
-        },
-        "suppressTouch": {
-            "default": false,
-            "more": {
-                "name": "Touch Support",
-                "url": "/touch/"
-            }
-        },
-        "suppressFocusAfterRefresh": {
-            "default": false
-        },
-        "suppressAsyncEvents": {
-            "default": false
-        },
-        "suppressBrowserResizeObserver": {
-            "default": false
-        },
-        "suppressPropertyNamesCheck": {
-            "default": false
-        },
-        "suppressChangeDetection": {
-            "default": false
-        },
-        "debug": {
             "default": false
         }
     }

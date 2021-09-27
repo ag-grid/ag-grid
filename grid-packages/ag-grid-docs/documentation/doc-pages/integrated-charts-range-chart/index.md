@@ -56,7 +56,7 @@ The different approaches will be presented in the order of precedence used by th
 
 When defining column definitions the `ColDef.chartDataType` property can be used to define how the column should be considered within the context of charting.
 
-<api-documentation source='column-properties/properties.json' section='columns' names='["chartDataType"]'></api-documentation>
+<api-documentation source='column-properties/properties.json' section='charts' names='["chartDataType"]'></api-documentation>
 
 Columns defined as `excluded` will not be included in charts or charting ranges.
 

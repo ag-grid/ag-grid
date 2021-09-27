@@ -36,20 +36,42 @@ The following example shows the minimum configuration required to display data i
 
 ## Sparkline Customisation
 
-The previous example showed the default line sparkline without any customisations. The following sections provide details
-on how to specify and customise the built-in sparklines:  
+The default Sparkline options act as a good starting point for most applications, however sparklines can be fully 
+customised by overriding the default sparkline options.
 
-- ***[Line Sparkline](/sparklines-line-sparkline/)***
-- ***[Area Sparkline](/sparklines-area-sparkline/)***
-- ***[Column Sparkline](/sparklines-column-sparkline/)***
+Sparklines are customised by supplying `sparklineOptions` to the `cellRendererParams` on the Sparkline Cell Renderer
+as shown below:
+
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'history',
+            cellRenderer: 'agSparklineCellRenderer',
+            cellRendererParams: {
+                sparklineOptions: {
+                    // Sparkline customisation goes here.
+                }
+            },
+        },
+        // other column definitions ...
+    ],
+}
+</snippet>
+
+Each Sparkline type contains specific `sparklineOptions` that can be overridden and are covered in the following sections:
+
+- [Line Customisation](/sparklines-line-customisation/)
+- [Column Customisation](/sparklines-column-customisation)
+- [Area Customisation](/sparklines-area-customisation)
 
 The following sections are relevant to all sparkline types:
 
-- ***[Supplying Data](/sparklines-data/)*** - compares the different data formats that can be supplied to sparklines.  
-- ***[Axes Types](/sparklines-axis-types/)*** - compares the different axes types available to sparklines.
-- ***[Sparkline Tooltips](/sparklines-tooltips/)*** - covers the various ways sparkline tooltips can be customised.
-- ***[Special Points](sparklines-special-points/)*** - shows how points of interest can be highlighted on sparklines. 
+- [Sparkline Data](/sparklines-data/) - compares the different data formats that can be supplied to sparklines.
+- [Axes Types](/sparklines-axis-types/) - compares the different axes types available to sparklines.
+- [Sparkline Tooltips](/sparklines-tooltips/) - covers the various ways sparkline tooltips can be customised.
+- [Special Points](sparklines-special-points/) - shows how points of interest can be highlighted on sparklines.
 
 ## Next Up
 
-Continue to the next section to learn about the: [Line Sparkline](/sparklines-line-sparkline/).
+Continue to the next section to learn about: [Line Customisation](/sparklines-line-customisation/).

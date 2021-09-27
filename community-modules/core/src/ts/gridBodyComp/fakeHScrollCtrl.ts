@@ -6,6 +6,7 @@ import { Events } from "../eventKeys";
 import { ColumnModel } from "../columns/columnModel";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { CtrlsService } from "../ctrlsService";
+import { BodyScrollEvent } from "../events";
 
 export interface IFakeHScrollComp {
     setHeight(height: number): void;
@@ -14,8 +15,10 @@ export interface IFakeHScrollComp {
     setRightSpacerFixedWidth(width: number): void;
     setLeftSpacerFixedWidth(width: number): void;
     setInvisibleStyles(isInvisible: boolean): void;
+    setScrollingStyle(isScrolling: boolean): void;
     includeLeftSpacerScrollerCss(cssClass: string, include: boolean): void;
     includeRightSpacerScrollerCss(cssClass: string, include: boolean): void;
+    addActiveListenerToggles(): void;
 }
 
 export class FakeHScrollCtrl extends BeanStub {
@@ -27,6 +30,7 @@ export class FakeHScrollCtrl extends BeanStub {
     private view: IFakeHScrollComp;
 
     private enableRtl: boolean;
+    private invisibleScrollbar: boolean;
     private eViewport: HTMLElement;
     private eContainer: HTMLElement;
 
@@ -49,17 +53,32 @@ export class FakeHScrollCtrl extends BeanStub {
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, spacerWidthsListener);
         this.setFakeHScrollSpacerWidths();
 
+        if (this.invisibleScrollbar) {
+            this.hideAndShowInvisibleScrollAsNeeded();
+            this.view.addActiveListenerToggles();
+        }
+
         this.ctrlsService.registerFakeHScrollCtrl(this);
     }
 
     @PostConstruct
     private postConstruct(): void {
         this.enableRtl = this.gridOptionsWrapper.isEnableRtl();
+        this.invisibleScrollbar = isInvisibleScrollbar();
     }
 
     private onScrollVisibilityChanged(): void {
         this.setScrollVisible();
         this.setFakeHScrollSpacerWidths();
+    }
+
+    private hideAndShowInvisibleScrollAsNeeded(): void {
+        this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL, (params: BodyScrollEvent) => {
+            if (params.direction === 'horizontal') {
+                this.view.setScrollingStyle(true);
+            }
+        });
+        this.addManagedListener(this.eventService, Events.EVENT_BODY_SCROLL_END, () => this.view.setScrollingStyle(false));
     }
 
     private setFakeHScrollSpacerWidths(): void {
@@ -92,15 +111,14 @@ export class FakeHScrollCtrl extends BeanStub {
 
     private setScrollVisible(): void {
         const hScrollShowing = this.scrollVisibleService.isHorizontalScrollShowing();
-
-        const scrollbarInvisible = isInvisibleScrollbar();
+        const invisibleScrollbar = this.invisibleScrollbar;
         const isSuppressHorizontalScroll = this.gridOptionsWrapper.isSuppressHorizontalScroll();
         const scrollbarWidth = hScrollShowing ? (this.gridOptionsWrapper.getScrollbarWidth() || 0) : 0;
-        const adjustedScrollbarWidth = (scrollbarWidth === 0 && scrollbarInvisible) ? 15 : scrollbarWidth;
+        const adjustedScrollbarWidth = (scrollbarWidth === 0 && invisibleScrollbar) ? 15 : scrollbarWidth;
         const scrollContainerSize = !isSuppressHorizontalScroll ? adjustedScrollbarWidth : 0;
         const addIEPadding = isBrowserIE() && hScrollShowing;
 
-        this.view.setInvisibleStyles(scrollbarInvisible);
+        this.view.setInvisibleStyles(invisibleScrollbar);
         this.view.setHeight(scrollContainerSize);
         // we have to add an extra pixel to the scroller viewport on IE because
         // if the container has the same size as the scrollbar, the scroll button won't work

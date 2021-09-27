@@ -353,9 +353,7 @@
   },
   "cellStyle": {
     "description": "/** An object of css values / or function returning an object of css values for a particular cell. */",
-    "type": {
-      "returnType": "{ [cssProperty: string]: string } | CellStyleFunc"
-    }
+    "type": { "returnType": "CellStyle | CellStyleFunc" }
   },
   "cellClass": {
     "description": "/** Class to use for the cell. Can be string, array of strings, or function that returns a string or array of strings. */",

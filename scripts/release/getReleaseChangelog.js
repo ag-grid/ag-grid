@@ -6,9 +6,12 @@ if (process.argv.length < 3) {
 }
 const [exec, script, releaseVersion] = process.argv;
 
+// get these from the wiki
+const JIRA_CREDENTIALS=process.env.JIRA_CREDENTIALS;
+
 const
     URL = "https://ag-grid.atlassian.net/rest/api/2/search?jql=filter=11743+order+by+fixversion+desc",
-    baseCurlCommand = `curl -X GET --user jira@ag-grid.com:iLve9Gny2uGFWZ29cIe93217`,
+    baseCurlCommand = `curl -X GET --user ${JIRA_CREDENTIALS}`,
     {
         execSync
     } = require('child_process');

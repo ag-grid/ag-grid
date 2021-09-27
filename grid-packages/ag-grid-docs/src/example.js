@@ -333,6 +333,7 @@ var gridOptions = {
     // },
     // suppressAsyncEvents: true,
     // suppressAggAtRootLevel: true,
+    // suppressScrollWhenPopupsAreOpen: true,
     debug: true,
     // editType: 'fullRow',
     // debug: true,

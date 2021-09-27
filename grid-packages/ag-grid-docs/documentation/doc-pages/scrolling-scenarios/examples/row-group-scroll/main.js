@@ -11,13 +11,7 @@ var gridOptions = {
     rowData: null,
     animateRows: false,
     groupUseEntireRow: true,
-    onRowGroupOpened: function(event) {
-        var rowNodeIndex = event.node.rowIndex;
-        // factor in child nodes so we can scroll to correct position
-        var childCount = event.node.childrenAfterSort ? event.node.childrenAfterSort.length : 0;
-        var newIndex = rowNodeIndex + childCount;
-        gridOptions.api.ensureIndexVisible(newIndex);
-    },
+    onRowGroupOpened: onRowGroupOpened,
     defaultColDef: {
         editable: true,
         sortable: true,
@@ -27,6 +21,14 @@ var gridOptions = {
         minWidth: 100
     }
 };
+
+function onRowGroupOpened(event) {
+    var rowNodeIndex = event.node.rowIndex;
+    // factor in child nodes so we can scroll to correct position
+    var childCount = event.node.childrenAfterSort ? event.node.childrenAfterSort.length : 0;
+    var newIndex = rowNodeIndex + childCount;
+    gridOptions.api.ensureIndexVisible(newIndex);
+}
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {

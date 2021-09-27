@@ -972,10 +972,7 @@
     },
     "cellStyle": {
       "description": "/** An object of css values / or function returning an object of css values for a particular cell. */",
-      "type": {
-        "returnType": "{ [cssProperty: string]: string } | CellStyleFunc",
-        "optional": true
-      }
+      "type": { "returnType": "CellStyle | CellStyleFunc", "optional": true }
     },
     "cellClass": {
       "description": "/** Class to use for the cell. Can be string, array of strings, or function that returns a string or array of strings. */",
@@ -1930,6 +1927,7 @@
   },
   "CellClassFunc": {},
   "CellStyleFunc": {},
+  "CellStyle": {},
   "CellClassRules": {},
   "CellRendererSelectorFunc": {},
   "CellEditorSelectorFunc": {},
@@ -2818,6 +2816,10 @@
       "description": "/** When `true`, the grid will not scroll to the top when new row data is provided. Use this if you don't want the default behaviour of scrolling to the top every time you load new data. */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "suppressScrollWhenPopupsAreOpen": {
+      "description": "/** When `true`, the grid will not allow mousewheel / touchpad scroll when popup elements are present. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "suppressAnimationFrame": {
       "description": "/** When `true`, the grid will not use animation frames when drawing rows while scrolling. Use this if the grid is working fast enough that you don't need animation frames and you don't want the grid to flicker. */",
       "type": { "returnType": "boolean", "optional": true }
@@ -2923,10 +2925,7 @@
     },
     "rowStyle": {
       "description": "/** The style properties to apply to all rows. Set to an object of key (style names) and values (style values) */",
-      "type": {
-        "returnType": "{ [cssProperty: string]: string }",
-        "optional": true
-      }
+      "type": { "returnType": "RowStyle", "optional": true }
     },
     "rowClass": {
       "description": "/** CSS class(es) for all rows. Provide either a string (class name) or array of strings (array of class names). */",
@@ -3240,7 +3239,7 @@
       "description": "/** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values. */",
       "type": {
         "arguments": { "params": "RowClassParams" },
-        "returnType": "{ [cssProperty: string]: string; }",
+        "returnType": "RowStyle",
         "optional": true
       }
     },
@@ -3978,6 +3977,24 @@
       },
       "meta": { "isEvent": true, "name": "onBodyScroll" }
     },
+    "onBodyScrollEnd": {
+      "description": "/** Main body of the grid has stopped scrolling, either horizontally or vertically. */",
+      "type": {
+        "arguments": { "event": "BodyScrollEndEvent" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onBodyScrollEnd" }
+    },
+    "bodyScrollEnd": {
+      "description": "/** Main body of the grid has stopped scrolling, either horizontally or vertically. */",
+      "type": {
+        "arguments": { "event": "BodyScrollEndEvent" },
+        "returnType": "void",
+        "optional": true
+      },
+      "meta": { "isEvent": true, "name": "onBodyScrollEnd" }
+    },
     "onDragStarted": {
       "description": "/** When dragging starts. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */",
       "type": {
@@ -4596,6 +4613,7 @@
   "IsRowMaster": {},
   "IsRowSelectable": {},
   "RowClassRules": {},
+  "RowStyle": {},
   "RowClassParams": {
     "data": {
       "description": "/** The data associated with this row from rowData */",
@@ -5900,6 +5918,19 @@
   },
   "ScrollDirection": {},
   "BodyScrollEvent": {
+    "direction": {
+      "type": { "returnType": "ScrollDirection", "optional": false }
+    },
+    "left": { "type": { "returnType": "number", "optional": false } },
+    "top": { "type": { "returnType": "number", "optional": false } },
+    "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "type": {
+      "description": "/** Event identifier */",
+      "type": { "returnType": "string", "optional": false }
+    }
+  },
+  "BodyScrollEndEvent": {
     "direction": {
       "type": { "returnType": "ScrollDirection", "optional": false }
     },
@@ -8162,6 +8193,13 @@
         "optional": false
       }
     },
+    "setScrollingStyle": {
+      "type": {
+        "arguments": { "isScrolling": "boolean" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
     "includeLeftSpacerScrollerCss": {
       "type": {
         "arguments": { "cssClass": "string", "include": "boolean" },
@@ -8175,6 +8213,9 @@
         "returnType": "void",
         "optional": false
       }
+    },
+    "addActiveListenerToggles": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
     }
   },
   "RowAnimationCssClasses": {},
@@ -14596,7 +14637,7 @@
       "type": { "returnType": "string", "optional": true }
     },
     "stroke": {
-      "description": "/** The CSS colour value for the outline of the markers or columns when hovered over. Use `undefined` for no highlight stroke.\n * Default: `'yellow'` */",
+      "description": "/** The CSS colour value for the outline of the markers or columns when hovered over. Use `undefined` for no highlight stroke.\n * Default: `'silver'` */",
       "type": { "returnType": "string", "optional": true }
     },
     "strokeWidth": {
@@ -17080,6 +17121,7 @@
     "hideFunc": {
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
+    "isAnchored": { "type": { "returnType": "boolean", "optional": false } },
     "stopAnchoringPromise": {
       "type": { "returnType": "AgPromise<Function>", "optional": false }
     },

@@ -21,6 +21,7 @@ import { Scale } from "../../../scale/scale";
 import { sanitizeHtml } from "../../../util/sanitize";
 import { isNumber } from "../../../util/value";
 import { NumberAxis } from "../../axis/numberAxis";
+import { clamper, ContinuousScale } from "../../../scale/continuousScale";
 
 export interface BarSeriesNodeClickEvent extends TypedEvent {
     readonly type: 'nodeClick';
@@ -549,8 +550,11 @@ export class BarSeries extends CartesianSeries {
                     }
 
                     const prevY = currY < 0 ? prevMinY : prevMaxY;
-                    const y = yScale.convert(prevY + currY);
-                    const bottomY = yScale.convert(prevY);
+                    const continuousY = yScale instanceof ContinuousScale;
+                    // @ts-ignore
+                    const y = yScale.convert(prevY + currY, continuousY ? clamper : undefined);
+                    // @ts-ignore
+                    const bottomY = yScale.convert(prevY, continuousY ? clamper : undefined);
                     const yValue = seriesDatum[yKey]; // unprocessed y-value
 
                     let labelText: string;

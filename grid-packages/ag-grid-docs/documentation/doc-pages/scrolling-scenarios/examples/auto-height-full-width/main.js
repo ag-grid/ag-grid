@@ -36,31 +36,10 @@ var gridOptions = {
         flex: 1,
         minWidth: 100
     },
-    isFullWidthCell: function (rowNode) {
-        return rowNode.data.fullWidth;
-    },
-    fullWidthCellRenderer: function (params) {
-        // pinned rows will have node.floating set to either 'top' or 'bottom' - see docs for floating
-        var cssClass;
-        var message;
-
-        if (params.node.rowPinned) {
-            cssClass = 'example-full-width-floating-row';
-            message = 'Floating full width row at index ' + params.rowIndex;
-        } else {
-            cssClass = 'example-full-width-row';
-            message = 'Normal full width row at index' + params.rowIndex;
-        }
-
-        var eDiv = document.createElement('div');
-        eDiv.innerHTML = '<div class="' + cssClass + '"><button>Click</button> ' + message + '</div>';
-
-        var eButton = eDiv.querySelector('button');
-        eButton.addEventListener('click', function () {
-            alert('button clicked');
-        });
-
-        return eDiv;
+    isFullWidthCell: isFullWidthCell,
+    fullWidthCellRenderer: fullWidthCellRenderer,
+    onGridReady: function(params) {
+        setRowData(params.api, 15);
     },
     pagination: true,
     paginationPageSize: 10,
@@ -73,6 +52,34 @@ var gridOptions = {
     enableRangeSelection: true,
     domLayout: 'autoHeight'
 };
+
+function isFullWidthCell(rowNode) {
+    return rowNode.data.fullWidth;
+}
+
+function fullWidthCellRenderer(params) {
+    // pinned rows will have node.floating set to either 'top' or 'bottom' - see docs for floating
+    var cssClass;
+    var message;
+
+    if (params.node.rowPinned) {
+        cssClass = 'example-full-width-floating-row';
+        message = 'Floating full width row at index ' + params.rowIndex;
+    } else {
+        cssClass = 'example-full-width-row';
+        message = 'Normal full width row at index' + params.rowIndex;
+    }
+
+    var eDiv = document.createElement('div');
+    eDiv.innerHTML = '<div class="' + cssClass + '"><button>Click</button> ' + message + '</div>';
+
+    var eButton = eDiv.querySelector('button');
+    eButton.addEventListener('click', function () {
+        alert('button clicked');
+    });
+
+    return eDiv;
+}
 
 function createRow(index) {
     return {
@@ -94,17 +101,17 @@ function createRow(index) {
     };
 }
 
-function setRowData(rowCount) {
+function setRowData(api, rowCount) {
     var rowData = [];
     for (var i = 0; i < rowCount; i++) {
         rowData.push(createRow(i));
     }
-    gridOptions.api.setRowData(rowData);
+    api.setRowData(rowData);
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
-    setRowData(15);
+
 });

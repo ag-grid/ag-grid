@@ -63,6 +63,7 @@ export function isIOSUserAgent(): boolean {
         isIOS = (/iPad|iPhone|iPod/.test(navigator.platform) ||
             // eslint-disable-next-line
             (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)) &&
+            // @ts-ignore
             !window.MSStream;
     }
 

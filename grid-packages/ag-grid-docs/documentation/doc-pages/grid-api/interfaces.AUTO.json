@@ -474,7 +474,7 @@
       "initialPivotIndex?": "number",
       "pivotComparator?": "(valueA: string, valueB: string) => number",
       "enablePivot?": "boolean",
-      "cellStyle?": "{ [cssProperty: string]: string; } | CellStyleFunc",
+      "cellStyle?": "CellStyle | CellStyleFunc",
       "cellClass?": "string | string[] | CellClassFunc",
       "cellClassRules?": "CellClassRules",
       "cellRenderer?": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
@@ -1266,6 +1266,10 @@
       "returnType": "{}"
     }
   },
+  "CellStyle": {
+    "meta": {},
+    "type": { "[cssProperty: string]": "string | number" }
+  },
   "CellClassRules": {
     "meta": {},
     "type": {
@@ -1516,6 +1520,7 @@
       "debounceVerticalScrollbar?": "boolean",
       "suppressHorizontalScroll?": "boolean",
       "suppressScrollOnNewData?": "boolean",
+      "suppressScrollWhenPopupsAreOpen?": "boolean",
       "suppressAnimationFrame?": "boolean",
       "suppressMiddleClickScrolls?": "boolean",
       "suppressPreventDefaultOnMouseWheel?": "boolean",
@@ -1541,7 +1546,7 @@
       "suppressMaintainUnsortedOrder?": "boolean",
       "icons?": "{ [key: string]: Function | string; }",
       "rowHeight?": "number",
-      "rowStyle?": "{ [cssProperty: string]: string; }",
+      "rowStyle?": "RowStyle",
       "rowClass?": "string | string[]",
       "rowClassRules?": "RowClassRules",
       "suppressRowHoverHighlight?": "boolean",
@@ -1593,7 +1598,7 @@
       "isRowMaster?": "IsRowMaster",
       "fillOperation?": "(params: FillOperationParams) => any",
       "postSort?(nodes: RowNode[])": "void",
-      "getRowStyle?": "(params: RowClassParams) => { [cssProperty: string]: string; }",
+      "getRowStyle?": "(params: RowClassParams) => RowStyle",
       "getRowClass?": "(params: RowClassParams) => string | string[] | undefined",
       "getRowHeight?": "(params: RowHeightParams) => number | undefined | null",
       "isFullWidthCell?(rowNode: RowNode)": "boolean",
@@ -1636,6 +1641,7 @@
       "onVirtualRowRemoved?(event: VirtualRowRemovedEvent)": "void",
       "onViewportChanged?(event: ViewportChangedEvent)": "void",
       "onBodyScroll?(event: BodyScrollEvent)": "void",
+      "onBodyScrollEnd?(event: BodyScrollEndEvent)": "void",
       "onDragStarted?(event: DragStartedEvent)": "void",
       "onDragStopped?(event: DragStoppedEvent)": "void",
       "onPaginationChanged?(event: PaginationChangedEvent)": "void",
@@ -1872,6 +1878,7 @@
       "debounceVerticalScrollbar?": "/** Set to `true` to debounce the vertical scrollbar. Can provide smoother scrolling on older browsers, e.g. Internet Explorer. */",
       "suppressHorizontalScroll?": "/** Set to `true` to never show the horizontal scroll. This is useful if the grid is aligned with another grid and will scroll when the other grid scrolls. (Should not be used in combination with `alwaysShowHorizontalScroll`.) */",
       "suppressScrollOnNewData?": "/** When `true`, the grid will not scroll to the top when new row data is provided. Use this if you don't want the default behaviour of scrolling to the top every time you load new data. */",
+      "suppressScrollWhenPopupsAreOpen?": "/** When `true`, the grid will not allow mousewheel / touchpad scroll when popup elements are present. */",
       "suppressAnimationFrame?": "/** When `true`, the grid will not use animation frames when drawing rows while scrolling. Use this if the grid is working fast enough that you don't need animation frames and you don't want the grid to flicker. */",
       "suppressMiddleClickScrolls?": "/** If `true`, middle clicks will result in `click` events for cells and rows. Otherwise the browser will use middle click to scroll the grid.<br />**Note:** Not all browsers fire `click` events with the middle button. Most will fire only `mousedown` and `mouseup` events, which can be used to focus a cell, but will not work to call the `onCellClicked` function. */",
       "suppressPreventDefaultOnMouseWheel?": "/** If `true`, mouse wheel events will be passed to the browser. Useful if your grid has no vertical scrolls and you want the mouse to scroll the browser page. */",
@@ -1986,6 +1993,7 @@
       "onVirtualRowRemoved?(event: VirtualRowRemovedEvent)": "/** A row was removed from the DOM, for any reason. Use to clean up resources (if any) used by the row. */",
       "onViewportChanged?(event: ViewportChangedEvent)": "/** Which rows are rendered in the DOM has changed. */",
       "onBodyScroll?(event: BodyScrollEvent)": "/** The body was scrolled horizontally or vertically. */",
+      "onBodyScrollEnd?(event: BodyScrollEndEvent)": "/** Main body of the grid has stopped scrolling, either horizontally or vertically. */",
       "onDragStarted?(event: DragStartedEvent)": "/** When dragging starts. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */",
       "onDragStopped?(event: DragStoppedEvent)": "/** When dragging stops. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */",
       "onPaginationChanged?(event: PaginationChangedEvent)": "/** Triggered every time the paging state changes. Some of the most common scenarios for this event to be triggered are:\n * \n *   - The page size changes.\n *   - The current shown page is changed.\n *   - New data is loaded onto the grid. */",
@@ -2101,6 +2109,10 @@
     "type": {
       "[cssClassName: string]": "(((params: RowClassParams) => boolean) | string)"
     }
+  },
+  "RowStyle": {
+    "meta": {},
+    "type": { "[cssProperty: string]": "string | number" }
   },
   "RowClassParams": {
     "meta": {},
@@ -3122,6 +3134,18 @@
     "type": "'horizontal' | 'vertical'"
   },
   "BodyScrollEvent": {
+    "meta": {},
+    "type": {
+      "direction": "ScrollDirection",
+      "left": "number",
+      "top": "number",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "type": "string"
+    },
+    "docs": { "type": "/** Event identifier */" }
+  },
+  "BodyScrollEndEvent": {
     "meta": {},
     "type": {
       "direction": "ScrollDirection",
@@ -4703,8 +4727,10 @@
       "setRightSpacerFixedWidth(width: number)": "void",
       "setLeftSpacerFixedWidth(width: number)": "void",
       "setInvisibleStyles(isInvisible: boolean)": "void",
+      "setScrollingStyle(isScrolling: boolean)": "void",
       "includeLeftSpacerScrollerCss(cssClass: string, include: boolean)": "void",
-      "includeRightSpacerScrollerCss(cssClass: string, include: boolean)": "void"
+      "includeRightSpacerScrollerCss(cssClass: string, include: boolean)": "void",
+      "addActiveListenerToggles()": "void"
     }
   },
   "RowAnimationCssClasses": {
@@ -8390,7 +8416,7 @@
     "docs": {
       "size?": "/** The width in pixels of the markers when hovered over. This is only for the Line and Area sparklines as Column sparklines do not have markers.\n * Default: `6` */",
       "fill?": "/** The fill colour of the markers or columns when hovered over. Use `undefined` for no highlight fill.\n * Default: `'yellow'` */",
-      "stroke?": "/** The CSS colour value for the outline of the markers or columns when hovered over. Use `undefined` for no highlight stroke.\n * Default: `'yellow'` */",
+      "stroke?": "/** The CSS colour value for the outline of the markers or columns when hovered over. Use `undefined` for no highlight stroke.\n * Default: `'silver'` */",
       "strokeWidth?": "/** The thickness in pixels for the stroke of the markers or columns when hovered over.\n * Default: `1` */"
     }
   },
@@ -9907,6 +9933,7 @@
       "element": "HTMLElement",
       "wrapper": "HTMLElement",
       "hideFunc": "() => void",
+      "isAnchored": "boolean",
       "stopAnchoringPromise": "AgPromise<Function>",
       "instanceId": "number"
     }

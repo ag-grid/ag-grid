@@ -280,11 +280,15 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     width: 100%;
     display: flex;
     position: relative;
-    &.ag-invisible-scrollbar {
+    &.ag-scrollbar-invisible {
         position: absolute;
         bottom: 0;
         left: 0;
         right: 0;
+        pointer-events: none;
+        &.ag-scrollbar-scrolling, &.ag-scrollbar-active {
+            pointer-events: all;
+        }
     }
 }
 
