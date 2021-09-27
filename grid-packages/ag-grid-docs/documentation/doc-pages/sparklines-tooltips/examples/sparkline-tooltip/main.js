@@ -39,6 +39,21 @@ var gridOptions = {
     rowData: getData(),
 };
 
+function tooltipRenderer(params) {
+    return {
+        content: params.yValue,
+        title: params.context.data.symbol,
+        opacity: 0.5
+    }
+}
+
+function formatter(params) {
+    return {
+        fill: !params.highlighted ? params.yValue < 0 ? 'green' : 'skyblue' : undefined,
+        stroke: !params.highlighted ? params.yValue < 0 ? 'green' : 'skyblue' : undefined
+    }
+}
+
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
