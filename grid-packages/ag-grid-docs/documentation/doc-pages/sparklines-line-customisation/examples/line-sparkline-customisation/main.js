@@ -3,7 +3,7 @@ var gridOptions = {
         {field: 'symbol', maxWidth: 120},
         {field: 'name',  minWidth: 250 },
         {
-            field: 'closeHistory',
+            field: 'change',
             cellRenderer: 'agSparklineCellRenderer',
             cellRendererParams: {
                 sparklineOptions: {
