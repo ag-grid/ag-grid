@@ -636,7 +636,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
 
     public addStoreStates(result: ServerSideStoreState[]): void {
         result.push({
-            type: ServerSideStoreType.Partial,
+            type: 'partial',
             route: this.storeUtils.createGroupKeys(this.parentRowNode),
             rowCount: this.rowCount,
             lastRowIndexKnown: this.lastRowIndexKnown,

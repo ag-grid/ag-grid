@@ -630,7 +630,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
     public addStoreStates(result: ServerSideStoreState[]): void {
         result.push({
-            type: ServerSideStoreType.Full,
+            type: 'full',
             route: this.storeUtils.createGroupKeys(this.parentRowNode),
             rowCount: this.allRowNodes.length,
             info: this.info

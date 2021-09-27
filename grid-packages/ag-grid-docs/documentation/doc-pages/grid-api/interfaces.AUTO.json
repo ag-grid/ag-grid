@@ -2024,19 +2024,12 @@
     }
   },
   "RowGroupingDisplayType": {
-    "meta": { "isEnum": true },
-    "type": [
-      "SINGLE_COLUMN = 'singleColumn'",
-      "MULTIPLE_COLUMNS = 'multipleColumns'",
-      "GROUP_ROWS = 'groupRows'",
-      "CUSTOM = 'custom'"
-    ],
-    "docs": [null, null, null, null]
+    "meta": { "isTypeAlias": true },
+    "type": "'singleColumn' | 'multipleColumns' | 'groupRows' | 'custom'"
   },
   "TreeDataDisplayType": {
-    "meta": { "isEnum": true },
-    "type": ["AUTO = 'auto'", "CUSTOM = 'custom'"],
-    "docs": [null, null]
+    "meta": { "isTypeAlias": true },
+    "type": "'auto' | 'custom'"
   },
   "FillOperationParams": {
     "meta": {},
@@ -2375,9 +2368,8 @@
     }
   },
   "ServerSideStoreType": {
-    "meta": { "isEnum": true },
-    "type": ["Full = 'full'", "Partial = 'partial'"],
-    "docs": [null, null]
+    "meta": { "isTypeAlias": true },
+    "type": "'full' | 'partial'"
   },
   "ServerSideStoreParams": {
     "meta": {},

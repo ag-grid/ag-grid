@@ -23,7 +23,7 @@ export class StoreFactory {
     public createStore(ssrmParams: SSRMParams, parentNode: RowNode): IServerSideStore {
         const storeParams = this.getStoreParams(ssrmParams, parentNode);
 
-        const CacheClass = storeParams.storeType === ServerSideStoreType.Partial ? PartialStore : FullStore;
+        const CacheClass = storeParams.storeType === 'partial' ? PartialStore : FullStore;
 
         return new CacheClass(ssrmParams, storeParams, parentNode);
     }
@@ -49,7 +49,7 @@ export class StoreFactory {
     private getMaxBlocksInCache(storeType: ServerSideStoreType, ssrmParams: SSRMParams, userStoreParams?: ServerSideStoreParams)
         : number | undefined {
 
-        if (storeType == ServerSideStoreType.Full) { return undefined; }
+        if (storeType == 'full') { return undefined; }
 
         const maxBlocksInCache = (userStoreParams && userStoreParams.maxBlocksInCache != null)
             ? userStoreParams.maxBlocksInCache
@@ -79,7 +79,7 @@ export class StoreFactory {
     }
 
     private getBlockSize(storeType: ServerSideStoreType, userStoreParams?: ServerSideStoreParams): number | undefined {
-        if (storeType == ServerSideStoreType.Full) { return undefined; }
+        if (storeType == 'full') { return undefined; }
 
         const blockSize = (userStoreParams && userStoreParams.cacheBlockSize != null)
             ? userStoreParams.cacheBlockSize
@@ -115,16 +115,17 @@ export class StoreFactory {
             : this.gridOptionsWrapper.getServerSideStoreType();
 
         switch (storeType) {
-            case ServerSideStoreType.Partial :
-            case ServerSideStoreType.Full :
+            case 'partial':
+            case 'full':
                 return storeType;
-            case null :
-            case undefined :
-                return ServerSideStoreType.Full;
-            default :
-                const types = Object.keys(ServerSideStoreType).join(', ');
+            case null:
+            case undefined:
+                return 'full';
+            default:
+                const serverTypes: ServerSideStoreType[] = ['full', 'partial'];
+                const types = serverTypes.join(', ');
                 console.warn(`AG Grid: invalid Server Side Store Type ${storeType}, valid types are [${types}]`);
-                return ServerSideStoreType.Partial;
+                return 'partial';
         }
     }
 }
