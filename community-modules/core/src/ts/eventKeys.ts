@@ -165,6 +165,8 @@ export class Events {
 
     /*****************************  INTERNAL EVENTS: START ******************************************* */
 
+    /** Please remember to add to ComponentUtil.EXCLUDED_INTERNAL_EVENTS to not have these events exposed to framework components. */
+
     /** All items from here down are used internally by the grid, not intended for external use. */
     // not documented, either experimental, or we just don't want users using an depending on them
     public static EVENT_BODY_HEIGHT_CHANGED = 'bodyHeightChanged';

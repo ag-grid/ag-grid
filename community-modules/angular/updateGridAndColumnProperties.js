@@ -7,6 +7,21 @@ const { getFormatterForTS, findNode, getJsDoc } = require('./../../scripts/forma
 
 const formatNode = getFormatterForTS(ts);
 
+function writeSortedLines(toWrite, result) {
+    toWrite.sort((a, b) => {
+        if (a.order < b.order) return -1;
+        if (a.order > b.order) return 1;
+        return 0
+    });
+
+    toWrite.forEach(p => {
+        result += p.line;
+    });
+    // for readability
+    result += EOL;
+    return result;
+}
+
 function extractTypesFromNode(srcFile, node, { typeLookup, eventTypeLookup, publicEventLookup, docLookup }) {
     const kind = ts.SyntaxKind[node.kind];
     const name = node && node.name && node.name.escapedText;
@@ -36,7 +51,6 @@ function extractTypesFromNode(srcFile, node, { typeLookup, eventTypeLookup, publ
 
 
 function generateAngularInputOutputs(compUtils, { typeLookup, eventTypeLookup, docLookup }) {
-    let result = '';
     const skippableProperties = ['gridOptions'];
 
     let propsToWrite = [];
@@ -53,25 +67,19 @@ function generateAngularInputOutputs(compUtils, { typeLookup, eventTypeLookup, d
         }
     });
 
-    propsToWrite = propsToWrite.sort((a, b) => {
-        if (a.order < b.order) return -1;
-        if (a.order > b.order) return 1;
-        return 0
-    });
+    let result = writeSortedLines(propsToWrite, '');
 
-    propsToWrite.forEach(p => {
-        result += p.line;
-    });
-
-    // for readability
-    result += EOL;
-
+    let eventsToWrite = [];
     const missingEventTypes = [];
     compUtils.PUBLIC_EVENTS.forEach((event) => {
         const onEvent = compUtils.getCallbackForEvent(event);
         const eventType = eventTypeLookup[onEvent];
         if (eventType) {
-            result += `    @Output() public ${event}: EventEmitter<${eventType}> = new EventEmitter<${eventType}>();${EOL}`;
+            const callbackName = ComponentUtil.getCallbackForEvent(event)
+            let line = addDocLine(docLookup, callbackName, '');
+            line += `    @Output() public ${event}: EventEmitter<${eventType}> = new EventEmitter<${eventType}>();${EOL}`;
+            const order = typeKeysOrder.findIndex(p => p === callbackName);
+            eventsToWrite.push({ order, line });
         } else {
             missingEventTypes.push(event);
         }
@@ -81,6 +89,7 @@ function generateAngularInputOutputs(compUtils, { typeLookup, eventTypeLookup, d
         throw new Error(`The following events are missing type information: [${missingEventTypes.join()}]\n If this is a public event add it to the GridOptions interface. \n If a private event add it to ComponentUtil.EXCLUDED_INTERNAL_EVENTS.\n`)
     }
 
+    result = writeSortedLines(eventsToWrite, result);
     result = addTypeCoercionHints(result, compUtils.BOOLEAN_PROPERTIES);
 
     return result;
@@ -186,8 +195,6 @@ function getGridColumnPropertiesJs() {
     extractTypesFromNode(srcFile, colGroupDefNode, context);
     extractTypesFromNode(srcFile, colDefNode, context);
 
-    let result = '';
-
     function unique(value, index, self) {
         return self.indexOf(value) === index;
     }
@@ -207,19 +214,7 @@ function getGridColumnPropertiesJs() {
         }
     });
 
-    propsToWrite = propsToWrite.sort((a, b) => {
-        if (a.order < b.order) return -1;
-        if (a.order > b.order) return 1;
-        return 0
-    });
-
-    propsToWrite.forEach(p => {
-        result += p.line;
-    });
-
-    // for readability
-    result += EOL;
-
+    let result = writeSortedLines(propsToWrite, '');
     result = addTypeCoercionHints(result, ColDefUtil.BOOLEAN_PROPERTIES);
 
     return result;
