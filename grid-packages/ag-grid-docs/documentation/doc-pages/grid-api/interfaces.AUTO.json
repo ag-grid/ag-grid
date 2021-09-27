@@ -1263,7 +1263,7 @@
     "meta": { "isCallSignature": true },
     "type": {
       "arguments": { "cellClassParams": "CellClassParams" },
-      "returnType": "{}"
+      "returnType": "CellStyle"
     }
   },
   "CellStyle": {
@@ -4718,11 +4718,9 @@
       "setContainerHeight(height: number)": "void",
       "setRightSpacerFixedWidth(width: number)": "void",
       "setLeftSpacerFixedWidth(width: number)": "void",
-      "setInvisibleStyles(isInvisible: boolean)": "void",
-      "setScrollingStyle(isScrolling: boolean)": "void",
+      "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
       "includeLeftSpacerScrollerCss(cssClass: string, include: boolean)": "void",
-      "includeRightSpacerScrollerCss(cssClass: string, include: boolean)": "void",
-      "addActiveListenerToggles()": "void"
+      "includeRightSpacerScrollerCss(cssClass: string, include: boolean)": "void"
     }
   },
   "RowAnimationCssClasses": {
