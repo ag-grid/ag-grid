@@ -13,7 +13,6 @@ const curlRequest = url => {
 const jiraRequest = (url) => {
     // JIRA limits the data returned via the rest api so we need to access the whole data set in chunks - each "page" will be maxResults long
     // we keep executing the request with a new startAt until we reach the total number of issues in the set
-
     const startAt = 0, maxResults = 50;
     const issueData = curlRequest(`${url}&startAt=${startAt}&maxResults=${maxResults}`)
 
@@ -77,11 +76,11 @@ const logger = (message, file) => {
     const month = ("0" + (date.getMonth() + 1)).slice(-2);
     const year = date.getFullYear();
     const hours = date.getHours();
-    const minutes = date.getMinutes();
-    const seconds = date.getSeconds();
+    const minutes = date.getMinutes() < 10 ? `0${date.getMinutes()}` : date.getMinutes();
+    const seconds = date.getSeconds() < 10 ? `0${date.getSeconds()}` : date.getSeconds();
     const dateTime = `${day}-${month}-${year} ${hours}:${minutes}:${seconds}`
 
-    fs.appendFileSync(file, `${dateTime}: ${message}`);
+    fs.appendFileSync(file, `${dateTime}: ${message}\n`);
     console.log(`${dateTime}: ${message}`); // console.log too for email results of cron job
 }
 

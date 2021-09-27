@@ -16,7 +16,8 @@ import {
     SelectableService,
     StageExecuteParams,
     ValueService,
-    Beans
+    Beans,
+    SelectionService
 } from "@ag-grid-community/core";
 import { BatchRemover } from "./batchRemover";
 
@@ -45,6 +46,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     @Autowired('selectableService') private selectableService: SelectableService;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('beans') private beans: Beans;
+    @Autowired('selectionService') private selectionService: SelectionService;
 
     // if doing tree data, this is true. we set this at create time - as our code does not
     // cater for the scenario where this is switched on / off dynamically
@@ -414,9 +416,12 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
     private shotgunResetEverything(details: GroupingDetails, afterColumnsChanged: boolean): void {
 
-        if (this.processAfterColumnsChanged(details, afterColumnsChanged)) {
+        if (this.noChangeInGroupingColumns(details, afterColumnsChanged)) {
             return;
         }
+
+        // groups are about to get disposed, so need to deselect any that are selected
+        this.selectionService.removeGroupsFromSelection();
 
         // because we are not creating the root node each time, we have the logic
         // here to change leafGroup once.
@@ -432,7 +437,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         this.insertNodes(details.rootNode.allLeafChildren, details, false);
     }
 
-    private processAfterColumnsChanged(details: GroupingDetails, afterColumnsChanged: boolean): boolean {
+    private noChangeInGroupingColumns(details: GroupingDetails, afterColumnsChanged: boolean): boolean {
         let noFurtherProcessingNeeded = false;
 
         const groupDisplayColumns = this.columnModel.getGroupDisplayColumns();

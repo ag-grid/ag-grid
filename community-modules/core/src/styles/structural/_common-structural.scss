@@ -575,7 +575,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 }
 // for rows older than one second, we also animate the height. we don't include the height
 // initially so we are not animating auto-height rows on initial render.
-.ag-row-animation .ag-row.ag-one-second-old {
+.ag-row-animation .ag-row.ag-after-created {
     transition: transform 0.4s, top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s;
 }
 

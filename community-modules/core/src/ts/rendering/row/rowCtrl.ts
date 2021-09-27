@@ -293,7 +293,7 @@ export class RowCtrl extends BeanStub {
             // are resized immediately without animation.
             this.beans.animationFrameService.addDestroyTask( ()=> {
                 if (this.isAlive()) {                    
-                    gui.rowComp.addOrRemoveCssClass('ag-one-second-old', true);
+                    gui.rowComp.addOrRemoveCssClass('ag-after-created', true);
                 }
             });
         });
