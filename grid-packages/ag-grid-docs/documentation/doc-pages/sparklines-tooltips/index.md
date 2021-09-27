@@ -94,7 +94,7 @@ const tooltipRenderer = (params) => {
 - The title of the tooltips is set to X values provided in the params formatted using the `toLocaleString()` method. This is optional, if X values are provided in the data, they will be formatted and displayed in the tooltip title by default.
 
 
-<grid-example title='Sparkline Tooltips Content and Title' name='sparkline-tooltip-content' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
+<grid-example title='Sparkline Tooltips Custom Content and Title' name='sparkline-tooltip-content' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 
 ### Styling Tooltips
@@ -117,7 +117,7 @@ const tooltipRenderer = (params) => {
 
 The applied styles can be seen in the example below.
 
-<grid-example title='Sparkline Custom Tooltips' name='sparkline-tooltip-styles' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
+<grid-example title='Sparkline Tooltips Custom Styling' name='sparkline-tooltip-styles' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 
 ## Accessing Grid Data
