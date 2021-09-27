@@ -1360,12 +1360,6 @@
             "title": "Overview",
             "url": "/sparklines-overview/",
             "enterprise": true,
-            "showInCollapsed": true
-          },
-          {
-            "title": "Customisation",
-            "url": "/sparklines-customisation/",
-            "enterprise": true,
             "showInCollapsed": true,
             "items": [
               {
