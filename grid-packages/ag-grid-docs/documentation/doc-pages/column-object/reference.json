@@ -6,51 +6,21 @@
         "meta": {
             "displayName": "Column Methods"
         },
-        "getColId": {
-            "description": "Returns the unique ID for the column. </br> Equivalent: `getId`, `getUniqueId`"
-        },
-        "getColDef": {
-            "description": "Returns the column definition for this column. The column definition will be the result of merging the application provided column definition with any provided defaults (e.g. <code>defaultColDef</code> grid option, or column types. <br/> Equivalent: `getDefinition`"
-        },
-        "getUserProvidedColDef": {
-            "description": "Returns the column definition provided by the application. This may not be correct, as items can be superseded by default column options. However it's useful for comparison, eg to know which application column definition matches that column."
-        },
-        "getParent": {
-            "description": "Returns the parent column group, if column grouping is active."
-        },
-        "isFilterAllowed": {
-            "description": "Returns <code>true</code> if column filtering is allowed."
-        },
-        "isFilterActive": {
-            "description": "Returns <code>true</code> if filter is active on the column."
-        },
-        "getSort": {
-            "description": "If sorting is active, returns the sort direction e.g. <code>'asc'</code> or <code>'desc'</code>."
-        },
-        "getAggFunc": {
-            "description": "If aggregation is set for the column, returns the aggregation function."
-        },
-        "getActualWidth": {
-            "description": "Returns the current width of the column. If the column is resized, the actual width is the new size."
-        },
-        "isRowGroupActive": {
-            "description": "Returns <code>true</code> if row group is currently active for this column."
-        },
-        "isPivotActive": {
-            "description": "Returns <code>true</code> if pivot is currently active for this column."
-        },
-        "isValueActive": {
-            "description": "Returns <code>true</code> if value (aggregation) is currently active for this column."
-        },
-        "isPrimary": {
-            "description": "Returns <code>true</code> if column is a primary column, <code>false</code> if secondary. Secondary columns are used for pivoting."
-        },
-        "addEventListener": {
-            "description": "Add event listener to the column."
-        },
-        "removeEventListener": {
-            "description": "Remove event listener from the column."
-        }
+        "getColId": {},
+        "getColDef": {},
+        "getUserProvidedColDef": {},
+        "getParent": {},
+        "isFilterAllowed": {},
+        "isFilterActive": {},
+        "getSort": {},
+        "getAggFunc": {},
+        "getActualWidth": {},
+        "isRowGroupActive": {},
+        "isPivotActive": {},
+        "isValueActive": {},
+        "isPrimary": {},
+        "addEventListener": {},
+        "removeEventListener": {}
     },
     "events": {
         "meta": {

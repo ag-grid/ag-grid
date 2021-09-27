@@ -190,6 +190,11 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         this.initDotNotation();
     }
 
+    /**
+     * Returns the column definition provided by the application.
+     * This may not be correct, as items can be superseded by default column options.
+     * However it's useful for comparison, eg to know which application column definition matches that column.
+     */
     public getUserProvidedColDef(): ColDef | null {
         return this.userProvidedColDef;
     }
@@ -198,6 +203,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         this.parent = parent;
     }
 
+    /** Returns the parent column group, if column grouping is active. */
     public getParent(): ColumnGroup {
         return this.parent;
     }
@@ -266,14 +272,12 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         return showingAllGroups || showingThisGroup;
     }
 
-    public getUniqueId(): string {
-        return this.getId();
-    }
-
+    /** Returns `true` if column is a primary column, `false` if secondary. Secondary columns are used for pivoting. */
     public isPrimary(): boolean {
         return this.primary;
     }
 
+    /** Returns `true` if column filtering is allowed. */
     public isFilterAllowed(): boolean {
         // filter defined means it's a string, class or true.
         // if its false, null or undefined then it's false.
@@ -355,10 +359,12 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         }
     }
 
+    /** Add an event listener to the column. */
     public addEventListener(eventType: string, listener: Function): void {
         this.eventService.addEventListener(eventType, listener);
     }
 
+    /** Remove event listener from the column. */
     public removeEventListener(eventType: string, listener: Function): void {
         this.eventService.removeEventListener(eventType, listener);
     }
@@ -461,6 +467,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         return this.moving;
     }
 
+    /** If sorting is active, returns the sort direction e.g. `'asc'` or `'desc'`. */
     public getSort(): string | null | undefined {
         return this.sort;
     }
@@ -511,6 +518,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         this.aggFunc = aggFunc;
     }
 
+    /** If aggregation is set for the column, returns the aggregation function. */
     public getAggFunc(): string | IAggFunc | null | undefined {
         return this.aggFunc;
     }
@@ -535,6 +543,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         }
     }
 
+    /** Returns `true` if filter is active on the column. */
     public isFilterActive(): boolean {
         return this.filterActive;
     }
@@ -612,6 +621,11 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         return this.visible;
     }
 
+    /** Returns the column definition for this column.
+     * The column definition will be the result of merging the application provided column definition with any provided defaults
+     * (e.g. `defaultColDef` grid option, or column types.
+     *
+     * Equivalent: `getDefinition` */
     public getColDef(): ColDef {
         return this.colDef;
     }
@@ -619,19 +633,33 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     public getColumnGroupShow(): string | undefined {
         return this.colDef.columnGroupShow;
     }
-
+    /**
+     * Returns the unique ID for the column.
+     *
+     * Equivalent: `getId`, `getUniqueId` */
     public getColId(): string {
         return this.colId;
     }
-
+    /**
+     * Returns the unique ID for the column.
+     *
+     * Equivalent: `getColId`, `getUniqueId` */
     public getId(): string {
         return this.getColId();
+    }
+    /**
+     * Returns the unique ID for the column.
+     *
+     * Equivalent: `getColId`, `getId` */
+    public getUniqueId(): string {
+        return this.getId();
     }
 
     public getDefinition(): AbstractColDef {
         return this.colDef;
     }
 
+    /** Returns the current width of the column. If the column is resized, the actual width is the new size. */
     public getActualWidth(): number {
         return this.actualWidth;
     }
@@ -729,6 +757,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         }
     }
 
+    /** Returns `true` if row group is currently active for this column. */
     public isRowGroupActive(): boolean {
         return this.rowGroupActive;
     }
@@ -740,6 +769,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         }
     }
 
+    /** Returns `true` if pivot is currently active for this column. */
     public isPivotActive(): boolean {
         return this.pivotActive;
     }
@@ -759,6 +789,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
         }
     }
 
+    /** Returns `true` if value (aggregation) is currently active for this column. */
     public isValueActive(): boolean {
         return this.aggregationActive;
     }
