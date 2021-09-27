@@ -68,6 +68,26 @@ const tooltipRenderer = (params) => {
 
 <grid-example title='Sparkline Tooltip Renderer' name='sparkline-tooltip-renderer' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
+## Accessing Row Data
+
+The params supplied to the [Tooltip Renderer](/sparklines-tooltips/#tooltip-renderer) includes a `context` object 
+with a `data` property containing row data. This is useful when data from other columns needs to be shown in tooltips.
+
+The following snippet shows how values from the 'Symbol' column can be shown in the tooltip title:   
+
+```js
+const tooltipRenderer = (params) => {
+    const { context } = params;
+    return {
+        title: context.data.symbol, // sets title of tooltips to the value for the 'symbol' field
+    }
+}
+```
+
+The following example demonstrates how data from the 'Symbol' column can be shown in the tooltip title:
+
+<grid-example title='Accessing Row Data' name='sparkline-accessing-row-data' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
+
 ## Styling Tooltip Titles
 
 The [Tooltip Renderer](/sparklines-tooltips/#tooltip-renderer) can also be used to style tooltip titles. The `renderer`
@@ -88,26 +108,6 @@ const tooltipRenderer = (params) => {
 The following example demonstrates the results of the tooltip title styles above:
 
 <grid-example title='Styling Sparkline Tooltips' name='sparkline-tooltip-styles' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
-
-## Accessing Row Data
-
-The params supplied to the [Tooltip Renderer](/sparklines-tooltips/#tooltip-renderer) includes a `context` object 
-with a `data` property containing row data. This is useful when data from other columns needs to be shown in tooltips.
-
-The following snippet shows how values from the 'Symbol' column can be shown in the tooltip title:   
-
-```js
-const tooltipRenderer = (params) => {
-    const { context } = params;
-    return {
-        title: context.data.symbol, // sets title of tooltips to the value for the 'symbol' field
-    }
-}
-```
-
-The following example demonstrates how data from the 'Symbol' column can be shown in the tooltip title:
-
-<grid-example title='Accessing Row Data' name='sparkline-accessing-row-data' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 ## Interfaces
 
