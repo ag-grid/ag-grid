@@ -3,11 +3,11 @@ title: "Sparklines - Tooltips"
 enterprise: true
 ---
 
-This section introduces the Sparkline Tooltips
+This section shows how sparkline tooltip styles and contents can be customised using the tooltip options.
 
 ## Default Sparkline Tooltips
 
-Tooltips are enabled for sparklines by default. The content contained in each tooltip is the y value of the provided data. If the title property is specified in the `sparklineOptions`, a tooltip title will also be visible.
+Tooltips are enabled for sparklines by default.
 
 The default sparkline tooltip has the following template:
 
@@ -18,15 +18,20 @@ The default sparkline tooltip has the following template:
 </div>
 ```
 
-The title element may or may not exist but the content element is always present and by default it contains the y value of the provided data. In the screenshots below the content element of both tooltips contains `200.68`:
+The title element may or may not exist but the content element is always present and by default it contains the y value of the supplied data.
+
+If both x and y values are supplied, the x value will be shown in the title div and the y value will be displayed in the content div.
+
+In the screenshots below the content element of both tooltips contains `-35`:
 
 <div style="display: flex; justify-content: center;">
     <image-caption src="resources/tooltip-no-title.png" alt="Tooltip without the title element" width="250px" constrained="true">No Title</image-caption>
-    <image-caption src="resources/tooltip-with-title.png" alt="Tooltip with a title element" width="250px" constrained="true">With Title</image-caption>
+    <image-caption src="resources/tooltip-title.png" alt="Tooltip with a title element" width="250px" constrained="true">With Title</image-caption>
 </div>
 
-To make the tooltip title visible you need to specify the title.
+## Tooltip Options
 
+Tooltips can be removed by setting `enabled` to `false` in `tooltip` options as shown below.
 
 <snippet>
 const gridOptions = {
@@ -36,20 +41,8 @@ const gridOptions = {
             cellRenderer: 'agSparklineCellRenderer',
             cellRendererParams: {
                 sparklineOptions: {
-                    type: 'line',
-                    line: {
-                        stroke: 'skyblue',
-                    },
-                    marker: {
-                        shape: 'diamond',
-                        size: '3'
-                    },
-                    highlightStyle: {
-                        size: 5,
-                    },
                     tooltip: {
-                        enabled: true,
-                        renderer: tooltipRenderer
+                        enabled: false, // removes tooltips from the sparklines
                     }
                 }
             },
@@ -59,19 +52,104 @@ const gridOptions = {
 };
 </snippet>
 
-In the snippet above, the `sparklineOptions` provided in the `cellRendererParams` property is of type `LineSparklineOptions`.
+## Tooltip Renderer
 
-This is an example to further demonstrate how line sparklines can be configured and customised to your liking or branding by using the available options to add styles.
+### Modifying Tooltip Content/Title
 
-- The `sparklineOptions` object contains the properties that get applied to the line and every marker. In this example, the shape of every marker is set to `diamond`.
-- Refer to the [LineSparklineOptions](/sparklines-line-sparkline/#linesparklineoptions) interface for the attributes which can be customised in a line sparkline.
-- The formatter callback function is used to override the default property values for individual markers based on the data they represent.
-- The formatter callback function is passed `MarkerFormatterParams` which provides information about the data associated with each Marker. This function should return an object of type `MarkerFormat`.
-- Here, when the marker is not highlighted, if the y value of the data point is less than 0, the fill and stroke are set to `green`, otherwise they are set to `skyblue`.
-- See the [MarkerFormat](/sparklines-line-sparkline/#markerformat) interface for the attributes which can be customised using this formatter.
+To modify the tooltips, provide a tooltip `renderer` function.
+
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'history',
+            cellRenderer: 'agSparklineCellRenderer',
+            cellRendererParams: {
+                sparklineOptions: {
+                    tooltip: {
+                        renderer: tooltipRenderer // Add tooltip renderer callback function to customise tooltip styles and content
+                    }
+                }
+            },
+        },
+        // other column definitions ...
+    ],
+};
+</snippet>
+
+- The `renderer` is a callback function which receives data values associated with the highlighted data point.
+- It returns an object with the `content` and `title` properties containing plain text or inner HTML that goes into the corresponding divs.
+
+Here's an example renderer function.
+
+```js
+const tooltipRenderer = (params) => {
+    const { yValue, xValue } = params;
+    return {
+        content: yValue.toFixed(1),
+    }
+}
+```
+
+- In this example, the renderer function will format the values in the tooltips to have only 1 digit after the decimal point.
+
+<grid-example title='Sparkline Tooltips Content and Title' name='sparkline-tooltip-content' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
+
+### Context
+
+A context object is present in the `renderer` params and can be used to access other row data for display in the tooltips.
+
+Let's say we want to display the value for another column in the same row in the tooltip title, this can be achieved using the following renderer function.
+
+```js
+const tooltipRenderer = (params) => {
+    const { context } = params;
+    return {
+        title: context.data.symbol, // sets title of tooltips to the value for the 'symbol' field
+    }
+}
+```
+
+The example below demonstrates this.
+
+<grid-example title='Sparkline Tooltips Context' name='sparkline-tooltip-context' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 
-<grid-example title='Sparkline Tooltips' name='sparkline-tooltip' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
+### Styling default Tooltips
+
+The `renderer` function can also return style attributes such as `color`, `backgroundColor` and `opacity` for the title.
+
+For example, to make the tooltip title `olive` with opacity `0.8` add the following
+
+```js
+const tooltipRenderer = (params) => {
+    const { context } = params;
+    return {
+        title: context.data.symbol,
+        // sets styles for tooptip title
+        color: 'white',
+        backgroundColor: 'olive',
+        opacity: 0.8
+    }
+}
+```
+### Custom Tooltips
+
+Rather than returning an object with the content and title properties, tooltip `renderer` can also return a string with completely custom markup.
+
+```js
+const tooltipRenderer = (params) => {
+    const { yValue } = params;
+    return '<div class="ag-chart-tooltip-content">' + yValue.toFixed(1) + '</div>';
+}
+```
+- The above snippet shows a renderer function which returns a html string containing the `yValue` from the params object.
+- The effect of this tooltip renderer can be seen in the below example.
+
+<grid-example title='Sparkline Custom Tooltips' name='sparkline-tooltip-custom-html' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
+
+## Interfaces
+The interface for the available options is as follows:
 
 ## SparklineTooltip
 

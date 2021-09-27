@@ -7,17 +7,6 @@ var gridOptions = {
             cellRenderer: 'agSparklineCellRenderer',
             cellRendererParams: {
                 sparklineOptions: {
-                    type: 'line',
-                    line: {
-                        stroke: 'skyblue',
-                    },
-                    marker: {
-                        shape: 'diamond',
-                        formatter: formatter,
-                    },
-                    highlightStyle: {
-                        size: 5,
-                    },
                     tooltip: {
                         enabled: true,
                         renderer: tooltipRenderer,
@@ -41,16 +30,7 @@ var gridOptions = {
 
 function tooltipRenderer(params) {
     return {
-        content: params.yValue,
         title: params.context.data.symbol,
-        opacity: 0.5
-    }
-}
-
-function formatter(params) {
-    return {
-        fill: !params.highlighted ? params.yValue < 0 ? 'green' : 'skyblue' : undefined,
-        stroke: !params.highlighted ? params.yValue < 0 ? 'green' : 'skyblue' : undefined
     }
 }
 
