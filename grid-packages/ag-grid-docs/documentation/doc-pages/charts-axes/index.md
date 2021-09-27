@@ -190,7 +190,7 @@ Where:
   - `(` - Nothing for zero or positive and parentheses for negative.
   - ` ` - A space for zero or positive and a minus sign for negative.
 - `symbol`:
-  - `$` - Apply currency symbols per the locale definition.
+  - `$` - Apply currency symbols per the locale definition (only US locale is supported ATM).
   - `#` - For binary, octal, or hexadecimal notation, prefix by `0b`, `0o`, or `0x`, respectively.
 - `zero` - The `0` option enables zero-padding. Implicitly sets fill to `0` and align to `=`.
 - `width` - The width defines the minimum field width. If not specified, then the width will be determined by the content.
