@@ -95,7 +95,7 @@ export interface HeaderClassParams {
     context?: any;
 }
 export type HeaderClass = string | string[] | ((params: HeaderClassParams) => string | string[]);
-export interface ToolPanelClassParams extends HeaderClassParams { };
+export interface ToolPanelClassParams extends HeaderClassParams { }
 export type ToolPanelClass = string | string[] | ((params: ToolPanelClassParams) => string | string[]);
 
 /***********************************************************************
@@ -127,7 +127,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
      * This string is used for grouping, Set filtering, and searching within cell editor dropdowns.
      * When filtering and searching the string is exposed to the user, so make sure to return a human-readable value. */
     keyCreator?: (params: KeyCreatorParams) => string;
-    /** 
+    /**
      * Custom comparator for values, used by renderer to know if values have changed. Cells who's values have not changed don't get refreshed.
      * By default the grid uses `===` is used which should work for most use cases.
      */
@@ -229,7 +229,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     headerComponentFramework?: any;
     /** The parameters to be passed to the header component. **/
     headerComponentParams?: any;
-    /** 
+    /**
      * Set to an array containing zero, one or many of the following options: `'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab'`.
      * This is used to figure out which menu tabs are present and in which order the tabs are shown.
      **/
@@ -448,27 +448,27 @@ export interface ColumnFunctionCallbackParams {
 
 export interface CheckboxSelectionCallbackParams extends ColumnFunctionCallbackParams { }
 export interface CheckboxSelectionCallback {
-    (params: CheckboxSelectionCallbackParams): boolean
+    (params: CheckboxSelectionCallbackParams): boolean;
 }
 export interface RowDragCallbackParams extends ColumnFunctionCallbackParams { }
 export interface RowDragCallback {
-    (params: RowDragCallbackParams): boolean
+    (params: RowDragCallbackParams): boolean;
 }
 export interface DndSourceCallbackParams extends ColumnFunctionCallbackParams { }
 export interface DndSourceCallback {
-    (params: DndSourceCallbackParams): boolean
+    (params: DndSourceCallbackParams): boolean;
 }
 export interface EditableCallbackParams extends ColumnFunctionCallbackParams { }
 export interface EditableCallback {
-    (params: EditableCallbackParams): boolean
+    (params: EditableCallbackParams): boolean;
 }
 export interface SuppressPasteCallbackParams extends ColumnFunctionCallbackParams { }
 export interface SuppressPasteCallback {
-    (params: SuppressPasteCallbackParams): boolean
+    (params: SuppressPasteCallbackParams): boolean;
 }
 export interface SuppressNavigableCallbackParams extends ColumnFunctionCallbackParams { }
 export interface SuppressNavigableCallback {
-    (params: SuppressNavigableCallbackParams): boolean
+    (params: SuppressNavigableCallbackParams): boolean;
 }
 export interface HeaderCheckboxSelectionCallbackParams {
     column: Column;
@@ -477,7 +477,7 @@ export interface HeaderCheckboxSelectionCallbackParams {
     columnApi: ColumnApi;
 }
 export interface HeaderCheckboxSelectionCallback {
-    (params: HeaderCheckboxSelectionCallbackParams): boolean
+    (params: HeaderCheckboxSelectionCallbackParams): boolean;
 }
 
 /**
@@ -543,24 +543,24 @@ export interface ValueGetterParams extends BaseColDefParams {
     getValue: (field: string) => any;
 }
 export interface ValueGetterFunc {
-    (params: ValueGetterParams): any
+    (params: ValueGetterParams): any;
 }
 export interface HeaderValueGetterParams {
-    colDef: AbstractColDef,
+    colDef: AbstractColDef;
     /** Column for this callback if applicable*/
-    column?: Column | null,
+    column?: Column | null;
     /** ColumnGroup for this callback if applicable */
-    columnGroup?: ColumnGroup | ProvidedColumnGroup | null,
+    columnGroup?: ColumnGroup | ProvidedColumnGroup | null;
     /** Original column group if applicable */
-    originalColumnGroup: ProvidedColumnGroup | null,
+    originalColumnGroup: ProvidedColumnGroup | null;
     /** Where the column is going to appear */
-    location: string | null,
-    api: GridApi
+    location: string | null;
+    api: GridApi;
     /** The context as provided on `gridOptions.context` */
-    context?: any,
+    context?: any;
 }
 export interface HeaderValueGetterFunc {
-    (params: HeaderValueGetterParams): any
+    (params: HeaderValueGetterParams): any;
 }
 
 export interface NewValueParams extends BaseColDefParams {
@@ -573,22 +573,22 @@ export interface NewValueParams extends BaseColDefParams {
 export interface ValueSetterParams extends NewValueParams {
 }
 export interface ValueSetterFunc {
-    (params: ValueSetterParams): boolean
+    (params: ValueSetterParams): boolean;
 }
 export interface ValueParserParams extends NewValueParams {
 }
 export interface ValueParserFunc {
-    (params: ValueParserParams): any
+    (params: ValueParserParams): any;
 }
 
 export interface ValueFormatterParams extends BaseWithValueColDefParams {
 }
 
 export interface ValueFormatterFunc {
-    (params: ValueFormatterParams): string
+    (params: ValueFormatterParams): string;
 }
 
-export interface KeyCreatorParams extends BaseWithValueColDefParams { };
+export interface KeyCreatorParams extends BaseWithValueColDefParams { }
 
 export interface ColSpanParams extends BaseColDefParams {
 }
@@ -623,10 +623,10 @@ export interface CellClassParams extends RowClassParams {
     value: any;
 }
 export interface CellClassFunc {
-    (cellClassParams: CellClassParams): string | string[]
+    (cellClassParams: CellClassParams): string | string[];
 }
 export interface CellStyleFunc {
-    (cellClassParams: CellClassParams): {}
+    (cellClassParams: CellClassParams): {};
 }
 
 export interface CellStyle { [cssProperty: string]: string | number; }
@@ -635,11 +635,11 @@ export interface CellClassRules {
 }
 
 export interface CellRendererSelectorFunc {
-    (params: ICellRendererParams): CellRendererSelectorResult | undefined
+    (params: ICellRendererParams): CellRendererSelectorResult | undefined;
 }
 
 export interface CellEditorSelectorFunc {
-    (params: ICellEditorParams): CellEditorSelectorResult | undefined
+    (params: ICellEditorParams): CellEditorSelectorResult | undefined;
 }
 
 export interface CellRendererSelectorResult {
