@@ -291,11 +291,11 @@ export class RowCtrl extends BeanStub {
             // very bad UX (eg 10 rows get inserted, then all 10 expand, look particularly bad
             // when scrolling). so this makes sure when rows are shown for the first time, they
             // are resized immediately without animation.
-            this.beans.frameworkOverrides.setInterval( ()=> {
+            this.beans.animationFrameService.addDestroyTask( ()=> {
                 if (this.isAlive()) {                    
                     gui.rowComp.addOrRemoveCssClass('ag-one-second-old', true);
                 }
-            }, 1000);
+            });
         });
 
         this.executeProcessRowPostCreateFunc();
