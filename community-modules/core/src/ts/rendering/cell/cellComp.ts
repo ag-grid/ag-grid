@@ -377,7 +377,7 @@ export class CellComp extends Component implements TooltipParentComp {
         // if we changed this (always use task service) would make sense, however it would break tests, possibly
         // test of users.
         if (useTaskService && this.firstRender) {
-            this.beans.taskQueue.createTask(createCellRendererFunc, this.rowNode.rowIndex!, 'createTasksP2');
+            this.beans.animationFrameService.createTask(createCellRendererFunc, this.rowNode.rowIndex!, 'createTasksP2');
         } else {
             createCellRendererFunc();
         }

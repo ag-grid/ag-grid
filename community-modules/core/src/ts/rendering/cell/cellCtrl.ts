@@ -274,18 +274,34 @@ export class CellCtrl extends BeanStub {
 
         if (!eParentOfValue) { return; }
 
-        const listener = ()=> {
+        const measureHeight = (timesCalled: number)=> {
+            // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
+            // maybe it will be ready next VM turn
+            const doc = this.beans.gridOptionsWrapper.getDocument();
+            if (!doc || !doc.contains(eParentOfValue)) { 
+                if (timesCalled<5) {
+                    this.beans.frameworkOverrides.setTimeout( ()=> measureHeight(timesCalled++), 0 );
+                    return;  
+                }
+            }
+
             const newHeight = eParentOfValue.offsetHeight;
             this.rowNode.setRowAutoHeight(newHeight, this.column);
+        };
+
+        const listener = ()=> {
+            measureHeight(0);
         };
 
         // do once to set size in case size doesn't change, common when cell is blank
         listener();
 
         const destroyResizeObserver = this.beans.resizeObserverService.observeResize(eParentOfValue, listener);
+        // const destroyMutationObserver = this.beans.mutationObserverService.observeMutation(eParentOfValue, listener);
 
         this.destroyAutoHeight = () => {
             destroyResizeObserver();
+            // destroyMutationObserver();
             this.rowNode.setRowAutoHeight(undefined, this.column);
         };
     }

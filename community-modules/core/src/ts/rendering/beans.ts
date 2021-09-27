@@ -74,7 +74,7 @@ export class Beans {
     @Autowired('columnHoverService') public columnHoverService: ColumnHoverService;
     @Autowired('userComponentFactory') public userComponentFactory: UserComponentFactory;
     @Autowired('userComponentRegistry') public userComponentRegistry: UserComponentRegistry;
-    @Autowired('animationFrameService') public taskQueue: AnimationFrameService;
+    @Autowired('animationFrameService') public animationFrameService: AnimationFrameService;
     @Autowired('dragAndDropService') public dragAndDropService: DragAndDropService;
     @Autowired('sortController') public sortController: SortController;
     @Autowired('filterManager') public filterManager: FilterManager;

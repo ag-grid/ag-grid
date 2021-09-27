@@ -268,7 +268,7 @@ export class RowCtrl extends BeanStub {
             // adding hover functionality adds listener to this row, so we
             // do it lazily in an animation frame
             if (this.useAnimationFrameForCreate) {
-                this.beans.taskQueue.createTask(
+                this.beans.animationFrameService.createTask(
                     this.addHoverFunctionality.bind(this, gui.element),
                     this.rowNode.rowIndex!,
                     'createTasksP2'
@@ -284,6 +284,18 @@ export class RowCtrl extends BeanStub {
             if (gow.isRowDragEntireRow()) {
                 this.addRowDraggerToRow(gui);
             }
+
+            // the height animation we only want active after the row is alive for 1 second.
+            // this stops the row animation working when rows are initially crated. otherwise
+            // auto-height rows get inserted into the dom and resized immediately, which gives
+            // very bad UX (eg 10 rows get inserted, then all 10 expand, look particularly bad
+            // when scrolling). so this makes sure when rows are shown for the first time, they
+            // are resized immediately without animation.
+            this.beans.frameworkOverrides.setInterval( ()=> {
+                if (this.isAlive()) {                    
+                    gui.rowComp.addOrRemoveCssClass('ag-one-second-old', true);
+                }
+            }, 1000);
         });
 
         this.executeProcessRowPostCreateFunc();
@@ -409,7 +421,7 @@ export class RowCtrl extends BeanStub {
         }
 
         if (this.updateColumnListsPending) { return; }
-        this.beans.taskQueue.createTask(
+        this.beans.animationFrameService.createTask(
             () => {
                 if (!this.active) { return; }
                 this.updateColumnListsImpl();

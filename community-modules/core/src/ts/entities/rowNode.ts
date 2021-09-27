@@ -250,6 +250,8 @@ export class RowNode implements IEventEmitter {
 
     private beans: Beans;
 
+    private checkAutoHeightsDebounced: ()=> void;
+
     constructor(beans: Beans) {
         this.beans = beans;
     }
@@ -528,9 +530,8 @@ export class RowNode implements IEventEmitter {
         }
     }
 
-    private checkAutoHeightsDebounced: ()=> void;
-
     public checkAutoHeights(): void {
+
         let notAllPresent = false;
         let nonePresent = true;
         let newRowHeight = 0;
@@ -562,15 +563,12 @@ export class RowNode implements IEventEmitter {
             newRowHeight = this.beans.gridOptionsWrapper.getRowHeightForNode(this).height;
         }
 
-        const setTheHeight = (height: number) => {
-            const rowModel = this.beans.rowModel as (IClientSideRowModel | IServerSideRowModel);
-            this.setRowHeight(height);
-            rowModel.onRowHeightChanged && rowModel.onRowHeightChanged();
-        };
-
         if (newRowHeight == this.rowHeight) { return; }
 
-        setTheHeight(newRowHeight);
+        this.setRowHeight(newRowHeight);
+        
+        const rowModel = this.beans.rowModel as (IClientSideRowModel | IServerSideRowModel);
+        rowModel.onRowHeightChanged && rowModel.onRowHeightChanged();
     }
 
     public setRowIndex(rowIndex: number | null): void {

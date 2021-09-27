@@ -820,7 +820,7 @@ export class RowRenderer extends BeanStub {
         if (rowsToRecycle) {
             const useAnimationFrame = afterScroll && !this.gridOptionsWrapper.isSuppressAnimationFrame() && !this.printLayout;
             if (useAnimationFrame) {
-                this.beans.taskQueue.addDestroyTask(() => {
+                this.beans.animationFrameService.addDestroyTask(() => {
                     this.destroyRowCtrls(rowsToRecycle, animate);
                     this.updateAllRowCtrls();
                     this.dispatchDisplayedRowsChanged();

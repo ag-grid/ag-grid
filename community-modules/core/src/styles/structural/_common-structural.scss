@@ -565,8 +565,13 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
  * Rows
  ****************************
 */
-// for animations, allows rows to slide up and down,
+// for row animations. 
 .ag-row-animation .ag-row {
+    transition: transform 0.4s, top 0.4s, background-color 0.1s, opacity 0.2s;
+}
+// for rows older than one second, we also animate the height. we don't include the height
+// initially so we are not animating auto-height rows on initial render.
+.ag-row-animation .ag-row.ag-one-second-old {
     transition: transform 0.4s, top 0.4s, height 0.4s, background-color 0.1s, opacity 0.2s;
 }
 
