@@ -179,8 +179,8 @@ If you mix the methods above (eg if you are using CommonJS in your application, 
 | ```jsx
 | import Vue from "vue";
 |
-| import "../node_modules/@ag-grid-enterprise/all-modules/dist/styles/ag-grid.css";
-| import "../node_modules/@ag-grid-enterprise/all-modules/dist/styles/ag-theme-alpine.css";
+| import "@ag-grid-enterprise/all-modules/dist/styles/ag-grid.css";
+| import "@ag-grid-enterprise/all-modules/dist/styles/ag-theme-alpine.css";
 |
 | import { AllModules } from "@ag-grid-enterprise/all-modules";
 | import { LicenseManager } from "@ag-grid-enterprise/core";

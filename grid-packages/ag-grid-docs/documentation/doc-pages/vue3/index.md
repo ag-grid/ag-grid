@@ -246,8 +246,8 @@ As a first step, let's add the AG Grid styles - replace the `style` block in `sr
 
 ```scss
 <style lang="scss">
-  @import "../node_modules/ag-grid-community/dist/styles/ag-grid.css";
-  @import "../node_modules/ag-grid-community/dist/styles/ag-theme-alpine.css";
+  @import "ag-grid-community/dist/styles/ag-grid.css";
+  @import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 </style>
 ```
 
@@ -445,8 +445,8 @@ export default {
 </script>
 
 <style lang="scss">
-@import "../node_modules/ag-grid-community/dist/styles/ag-grid.css";
-@import "../node_modules/ag-grid-community/dist/styles/ag-theme-alpine.css";
+@import "ag-grid-community/dist/styles/ag-grid.css";
+@import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 </style>
 ```
 
@@ -523,8 +523,8 @@ Let's go ahead and make these changes:
 </script>
 
 <style lang="scss">
-@import "../node_modules/ag-grid-community/dist/styles/ag-grid.css";
-@import "../node_modules/ag-grid-community/dist/styles/ag-theme-alpine.css";
+@import "ag-grid-community/dist/styles/ag-grid.css";
+@import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 </style>
 ```
 
@@ -676,8 +676,8 @@ the provided AG Grid SCSS files - replace the `style` block in `src/App.vue` wit
 
 ```scss
 <style lang="scss">
-  @import "../node_modules/ag-grid-community/src/styles/ag-grid.scss";
-  @import "../node_modules/ag-grid-community/src/styles/ag-theme-alpine/sass/ag-theme-alpine-mixin.scss";
+  @import "ag-grid-community/src/styles/ag-grid.scss";
+  @import "ag-grid-community/src/styles/ag-theme-alpine/sass/ag-theme-alpine-mixin.scss";
 
   .ag-theme-alpine {
       @include ag-theme-alpine((
