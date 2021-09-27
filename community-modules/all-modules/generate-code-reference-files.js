@@ -4,17 +4,17 @@ const glob = require('glob');
 const gulp = require('gulp');
 const prettier = require('gulp-prettier');
 const { ComponentUtil } = require("@ag-grid-community/core");
-const { getFormatterForTS, findNode, getJsDoc } = require('../../../scripts/formatAST');
+const { getFormatterForTS, findNode, getJsDoc } = require('../../scripts/formatAST');
 
 const formatNode = getFormatterForTS(ts);
 
-const EVENT_LOOKUP = new Set(ComponentUtil.getEventCallbacks());
+const EVENT_LOOKUP = ComponentUtil.getEventCallbacks();
 
 const INTERFACE_GLOBS = [
-    ...glob.sync('../../../community-modules/core/src/ts/**/*.ts'),
-    ...glob.sync('../../../enterprise-modules/set-filter/src/**/*.ts'),
-    ...glob.sync('../../../enterprise-modules/filter-tool-panel/src/**/*.ts'),
-    ...glob.sync('../../../enterprise-modules/multi-filter/src/**/*.ts')
+    ...glob.sync('../core/src/ts/**/*.ts'),
+    ...glob.sync('../../enterprise-modules/set-filter/src/**/*.ts'),
+    ...glob.sync('../../enterprise-modules/filter-tool-panel/src/**/*.ts'),
+    ...glob.sync('../../enterprise-modules/multi-filter/src/**/*.ts')
 ];
 
 function findAllInNodesTree(node) {
@@ -80,7 +80,7 @@ function extractTypesFromNode(node, srcFile, includeQuestionMark) {
             type: { arguments: methodArgs, returnType, optional }
         };
 
-        if (EVENT_LOOKUP.has(name)) {
+        if (EVENT_LOOKUP.includes(name)) {
             // Duplicate events without their prefix
             let shortName = name.substr(2);
             shortName = toCamelCase(shortName);
@@ -401,7 +401,7 @@ function writeFormattedFile(dir, filename, data) {
 }
 
 function getGridOptions() {
-    const gridOpsFile = "../../../community-modules/core/src/ts/entities/gridOptions.ts";
+    const gridOpsFile = "../core/src/ts/entities/gridOptions.ts";
     const srcFile = parseFile(gridOpsFile);
     const gridOptionsNode = findNode('GridOptions', srcFile);
 
@@ -414,12 +414,12 @@ function getGridOptions() {
 }
 
 function getColumnOptions() {
-    const file = "../../../community-modules/core/src/ts/entities/colDef.ts";
+    const file = "../core/src/ts/entities/colDef.ts";
     const srcFile = parseFile(file);
     const abstractColDefNode = findNode('AbstractColDef', srcFile);
     const colGroupDefNode = findNode('ColGroupDef', srcFile);
     const colDefNode = findNode('ColDef', srcFile);
-    const filterFile = "../../../community-modules/core/src/ts/interfaces/iFilter.ts";
+    const filterFile = "../core/src/ts/interfaces/iFilter.ts";
     const srcFilterFile = parseFile(filterFile);
     const filterNode = findNode('IFilterDef', srcFilterFile);
 
@@ -438,36 +438,36 @@ function getColumnOptions() {
 }
 
 function getGridApi() {
-    const gridApiFile = "../../../community-modules/core/src/ts/gridApi.ts";
+    const gridApiFile = "../core/src/ts/gridApi.ts";
     return getClassProperties(gridApiFile, 'GridApi');
 }
 function getColumnApi() {
-    const colApiFile = "../../../community-modules/core/src/ts/columns/columnApi.ts";
+    const colApiFile = "../core/src/ts/columns/columnApi.ts";
     return getClassProperties(colApiFile, 'ColumnApi');
 }
 function getRowNode() {
-    const file = "../../../community-modules/core/src/ts/entities/rowNode.ts";
+    const file = "../core/src/ts/entities/rowNode.ts";
     return getClassProperties(file, 'RowNode');
 }
 function getColumn() {
-    const file = "../../../community-modules/core/src/ts/entities/column.ts";
+    const file = "../core/src/ts/entities/column.ts";
     return getClassProperties(file, 'Column');
 }
 function getSetFilter() {
-    const file = "../../../enterprise-modules/set-filter/src/setFilter/setFilter.ts";
+    const file = "../../enterprise-modules/set-filter/src/setFilter/setFilter.ts";
     return getClassProperties(file, 'SetFilter');
 }
 
 const generateMetaFiles = () => {
-    writeFormattedFile('./doc-pages/grid-api/', 'grid-options.AUTO.json', getGridOptions());
-    writeFormattedFile('./doc-pages/grid-api/', 'interfaces.AUTO.json', getInterfaces());
-    writeFormattedFile('./doc-pages/grid-api/', 'grid-api.AUTO.json', getGridApi());
-    writeFormattedFile('./doc-pages/row-object/', 'row-node.AUTO.json', getRowNode());
-    writeFormattedFile('./doc-pages/column-properties/', 'column-options.AUTO.json', getColumnOptions());
-    writeFormattedFile('./doc-pages/column-api/', 'column-api.AUTO.json', getColumnApi());
-    writeFormattedFile('./doc-pages/column-object/', 'column.AUTO.json', getColumn());
-    writeFormattedFile('./doc-pages/filter-set-api/resources/', 'setFilter.AUTO.json', getSetFilter());
-    writeFormattedFile('./doc-pages/grid-api/', 'doc-interfaces.AUTO.json', buildInterfaceProps());
+    writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/grid-api/', 'grid-options.AUTO.json', getGridOptions());
+    writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/grid-api/', 'interfaces.AUTO.json', getInterfaces());
+    writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/grid-api/', 'grid-api.AUTO.json', getGridApi());
+    writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/row-object/', 'row-node.AUTO.json', getRowNode());
+    writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/column-properties/', 'column-options.AUTO.json', getColumnOptions());
+    writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/column-api/', 'column-api.AUTO.json', getColumnApi());
+    writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/column-object/', 'column.AUTO.json', getColumn());
+    writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/filter-set-api/resources/', 'setFilter.AUTO.json', getSetFilter());
+    writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/grid-api/', 'doc-interfaces.AUTO.json', buildInterfaceProps());
 };
 
 console.log(`--------------------------------------------------------------------------------`);

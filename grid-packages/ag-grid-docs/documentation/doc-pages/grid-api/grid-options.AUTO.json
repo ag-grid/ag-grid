@@ -1817,7 +1817,16 @@
     "type": {
       "arguments": { "event": "BodyScrollEndEvent" },
       "returnType": "void"
-    }
+    },
+    "meta": { "isEvent": true, "name": "onBodyScrollEnd" }
+  },
+  "bodyScrollEnd": {
+    "description": "/** Main body of the grid has stopped scrolling, either horizontally or vertically. */",
+    "type": {
+      "arguments": { "event": "BodyScrollEndEvent" },
+      "returnType": "void"
+    },
+    "meta": { "isEvent": true, "name": "onBodyScrollEnd" }
   },
   "onDragStarted": {
     "description": "/** When dragging starts. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */",
