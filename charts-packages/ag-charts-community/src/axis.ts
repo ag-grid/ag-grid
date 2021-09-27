@@ -277,9 +277,12 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
     protected labelFormatter?: (datum: any) => string;
     protected onLabelFormatChange(format?: string) {
-        if (format) {
-            if (this.scale && this.scale.tickFormat) {
+        if (format && this.scale && this.scale.tickFormat) {
+            try {
                 this.labelFormatter = this.scale.tickFormat(this.tick.count, format);
+            } catch (e) {
+                this.labelFormatter = undefined;
+                console.error(e);
             }
         } else {
             this.labelFormatter = undefined;
