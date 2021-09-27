@@ -27,7 +27,13 @@ var gridOptions = {
 };
 
 function tooltipRenderer(params) {
-    return '<div class="ag-chart-tooltip-content">' + params.yValue.toFixed(1) + '</div>';
+    return {
+        title: params.context.data.symbol,
+        // sets styles for tooptip title
+        color: 'white',
+        backgroundColor: 'olive',
+        opacity: 0.8
+    }
 }
 
 // setup the grid after the page has finished loading

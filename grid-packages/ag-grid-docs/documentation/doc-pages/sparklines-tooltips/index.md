@@ -54,7 +54,7 @@ const gridOptions = {
 
 ### Modifying Tooltip Content/Title
 
-To modify the tooltips, provide a tooltip `renderer` function.
+To modify the tooltips, provide a tooltip `renderer` function in `tooltip` options.
 
 <snippet>
 const gridOptions = {
@@ -84,20 +84,47 @@ Here's an example renderer function.
 const tooltipRenderer = (params) => {
     const { yValue, xValue } = params;
     return {
-        content: yValue.toFixed(1),
+        content: yValue.toFixed(1), // format number values to have one digit after the decimal point
+        title: xValue.toLocaleDateString('en-GB') // format date values to British English date strings
     }
 }
 ```
 
-- In this example, the renderer function will format the values in the tooltips to have only 1 digit after the decimal point.
+- In the snippet above, the renderer function sets `content` to formatted Y values that have only 1 digit after the decimal point.
+- The title of the tooltips is set to X values provided in the params formatted using the `toLocaleString()` method. This is optional, if X values are provided in the data, they will be formatted and displayed in the tooltip title by default.
+
 
 <grid-example title='Sparkline Tooltips Content and Title' name='sparkline-tooltip-content' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
-### Context
 
-A context object is present in the `renderer` params and can be used to access other row data for display in the tooltips.
+### Styling Tooltips
 
-Let's say we want to display the value for another column in the same row in the tooltip title, this can be achieved using the following renderer function.
+The `renderer` function can return style attributes such as `color`, `backgroundColor` and `opacity` for the title.
+
+For example, to make the background of the tooltip title `olive` with opacity `0.8` add the following
+
+```js
+const tooltipRenderer = (params) => {
+    const { context } = params;
+    return {
+        // sets styles for tooptip title
+        color: 'white',
+        backgroundColor: 'olive',
+        opacity: 0.8
+    }
+}
+```
+
+The applied styles can be seen in the example below.
+
+<grid-example title='Sparkline Custom Tooltips' name='sparkline-tooltip-styles' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
+
+
+## Accessing Grid Data
+
+The tooltip `renderer` function discussed above also receives a `context` object in its input. This is really useful as it can be used to access other row data for display in the tooltips.
+
+Let's say we want to display the value of another column in the same row in the tooltip title, this can be achieved using the following renderer function.
 
 ```js
 const tooltipRenderer = (params) => {
@@ -112,41 +139,8 @@ The example below demonstrates this.
 
 <grid-example title='Sparkline Tooltips Context' name='sparkline-tooltip-context' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
-
-### Styling default Tooltips
-
-The `renderer` function can also return style attributes such as `color`, `backgroundColor` and `opacity` for the title.
-
-For example, to make the tooltip title `olive` with opacity `0.8` add the following
-
-```js
-const tooltipRenderer = (params) => {
-    const { context } = params;
-    return {
-        title: context.data.symbol,
-        // sets styles for tooptip title
-        color: 'white',
-        backgroundColor: 'olive',
-        opacity: 0.8
-    }
-}
-```
-### Custom Tooltips
-
-Rather than returning an object with the content and title properties, tooltip `renderer` can also return a string with completely custom markup.
-
-```js
-const tooltipRenderer = (params) => {
-    const { yValue } = params;
-    return '<div class="ag-chart-tooltip-content">' + yValue.toFixed(1) + '</div>';
-}
-```
-- The above snippet shows a renderer function which returns a html string containing the `yValue` from the params object.
-- The effect of this tooltip renderer can be seen in the below example.
-
-<grid-example title='Sparkline Custom Tooltips' name='sparkline-tooltip-custom-html' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
-
 ## Interfaces
+The interfaces for the available options are as follows:
 
 ## SparklineTooltip
 
