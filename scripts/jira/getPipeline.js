@@ -8,10 +8,11 @@ const PIPELINE_FILE = "/home/ceolter/jira_reports/pipeline.json";
 const PIPELINE_BAK_FILE = "/home/ceolter/jira_reports/pipeline.bak.json";
 
 try {
-    logger("Pipeline Data Download Started", PIPELINE_LOG);
     const pipelineData = executeJiraRequest(PIPELINE_URL);
-    saveDataToFile(pipelineData, PIPELINE_TMP_FILE);
     logger("Pipeline Data Downloaded", PIPELINE_LOG);
+
+    saveDataToFile(pipelineData, PIPELINE_TMP_FILE);
+    logger("Pipeline Data Saved", PIPELINE_LOG);
 
     // check we've not downloaded an empty data set (it's very unlikely the pipeline will ever be empty)
     if(pipelineData.length > 1) {
