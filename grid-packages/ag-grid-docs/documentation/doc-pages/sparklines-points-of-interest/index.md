@@ -25,7 +25,7 @@ These points can be customised via the formatter callback function to make them 
 
 ## Line and Area Sparklines Points of Interest
 
-For the line and area sparklines, the formatter callback function will receieve an input of type `markerFormatterParams`.
+For the line and area sparklines, the formatter callback function will receive an input of type `markerFormatterParams`.
 
 ``` ts
 interface MarkerFormatterParams {
@@ -221,7 +221,7 @@ The example below shows formatting of special points for line, area and column s
 
 It should be noted that
 
-- The highlighted property on the params is used to distinguish betweeen highlighted and un-hilighted states.
+- The highlighted property on the params is used to distinguish between highlighted and un-highlighted states.
 - The formatter for line and area sparklines is added to the marker options
 - The size property is returned from the area and line formatters to make certain special markers visible and the rest invisible.
 

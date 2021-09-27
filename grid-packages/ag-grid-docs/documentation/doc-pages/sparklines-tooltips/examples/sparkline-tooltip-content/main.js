@@ -5,7 +5,7 @@ var gridOptions = {
         { field: 'lastPrice', type: 'numericColumn' },
         { field: 'volume', type: 'numericColumn' },
         {
-            field: 'history',
+            field: 'rateOfChange',
             headerName: 'Close History',
             minWidth: 250,
             cellRenderer: 'agSparklineCellRenderer',
@@ -14,6 +14,9 @@ var gridOptions = {
                     tooltip: {
                         enabled: true,
                         renderer: tooltipRenderer,
+                    },
+                    axis: {
+                        type: 'time'
                     }
                 }
             },
@@ -29,7 +32,8 @@ var gridOptions = {
 
 function tooltipRenderer(params) {
     return {
-        content: params.yValue.toFixed(1),
+        content: params.yValue.toFixed(1), // format number values to one digit after the decimal point
+        title: params.xValue.toLocaleDateString('en-GB') // format date values
     }
 }
 
