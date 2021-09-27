@@ -9,40 +9,25 @@
         "setSelected": {
             "description": "Select (or deselect) the node. `newValue=true` for selection, `newValue=false` for deselection. If selecting, then passing `true` for `clearSelection` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact."
         },
-        "isSelected": {
-            "description": "Returns `true` if node is selected, `false` if the not isn't selected or `undefined` if it's partially selected (group where not all children are selected)."
-        },
-        "addEventListener": {
-            "description": "Add an event listener. Currently only `rowSelected` event supported."
-        },
-        "removeEventListener": {
-            "description": "Remove event listener."
-        },
-        "resetQuickFilterAggregateText": {
-            "description": "The first time `quickFilter` runs, the grid creates a one-off string representation of the row. This string is then used for the quick filter instead of hitting each column separately. When you edit, using grid editing, this string gets cleared down. However if you edit without using grid editing, you will need to clear this string down for the row to be updated with the new values. Otherwise new values will not work with the `quickFilter`."
-        },
-        "depthFirstSearch": {
-            "description": "Perform a depth-first search of this node and its children."
-        },
-        "setRowHeight": {
-            "description": "Sets the row height. Call if you want to change the height initially assigned to the row. After calling, you must call `api.onRowHeightChanged()` so the grid knows it needs to work out the placement of the rows."
-        },
+        "isSelected": {},
+        "addEventListener": {},
+        "removeEventListener": {},
+        "resetQuickFilterAggregateText": {},
+        "depthFirstSearch": {},
+        "setRowHeight": {},
         "setData": {
-            "description": "Replaces the data on the `rowNode`. When complete, the grid will refresh the the entire rendered row if it is showing.",
             "more": {
                 "name": "Client-Side Single Row Update",
                 "url": "/data-update-single-row-cell/"
             }
         },
         "setDataValue": {
-            "description": "Replaces the value on the `rowNode` for the specified column. When complete, the grid will refresh the rendered cell on the required row only.",
             "more": {
                 "name": "Client-Side Single Cell Update",
                 "url": "/data-update-single-row-cell/"
             }
         },
         "getRoute": {
-            "description": "Returns the route of the row node. If the Row Node is a group, it returns the route to that Row Node. If the Row Node is not a group, it returns `undefined`.",
             "more": {
                 "name": "Server-Side Model: Open by Default",
                 "url": "/server-side-model-grouping/#open-by-default"
