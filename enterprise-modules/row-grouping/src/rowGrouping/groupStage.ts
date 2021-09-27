@@ -416,7 +416,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
 
     private shotgunResetEverything(details: GroupingDetails, afterColumnsChanged: boolean): void {
 
-        if (this.processAfterColumnsChanged(details, afterColumnsChanged)) {
+        if (this.noChangeInGroupingColumns(details, afterColumnsChanged)) {
             return;
         }
 
@@ -437,7 +437,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         this.insertNodes(details.rootNode.allLeafChildren, details, false);
     }
 
-    private processAfterColumnsChanged(details: GroupingDetails, afterColumnsChanged: boolean): boolean {
+    private noChangeInGroupingColumns(details: GroupingDetails, afterColumnsChanged: boolean): boolean {
         let noFurtherProcessingNeeded = false;
 
         const groupDisplayColumns = this.columnModel.getGroupDisplayColumns();
