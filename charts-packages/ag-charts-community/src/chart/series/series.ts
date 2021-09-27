@@ -68,7 +68,7 @@ export class HighlightStyle {
     /**
      * @deprecated Use item.fill instead.
      */
-    fill?: string = 'yellow';
+    fill?: string;
     /**
      * @deprecated Use item.stroke instead.
      */
