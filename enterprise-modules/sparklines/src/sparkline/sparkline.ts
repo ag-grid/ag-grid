@@ -11,6 +11,7 @@ import { LinearScale } from '../scale/linearScale';
 import { TimeScale } from '../scale/timeScale';
 import { BandScale } from '../scale/bandScale';
 import { extent } from '../util/array';
+import { locale } from "../util/time/format/defaultLocale";
 
 export interface SeriesNodeDatum {
     readonly seriesDatum: any;
@@ -542,10 +543,7 @@ export abstract class Sparkline extends Observable {
         return String(Math.round(datum * 10) / 10);
     }
 
-    protected formatDateDatum(datum: Date): string {
-        // FIX ME
-        return String(datum);
-    }
+    private defaultDateFormatter = locale.format('%m/%d/%y, %H:%M:%S');
 
     protected formatDatum(datum: any): string {
         const type  = this.axis.type || 'category';
@@ -553,7 +551,7 @@ export abstract class Sparkline extends Observable {
         if (type === 'number' && typeof datum === 'number') {
             return this.formatNumericDatum(datum);
         } else if (type === 'time' && datum instanceof Date) {
-            return this.formatDateDatum(datum);
+            return this.defaultDateFormatter(datum);
         } else return String(datum);
     }
 
