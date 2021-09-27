@@ -1029,17 +1029,8 @@ export interface GridOptions {
     columnApi?: ColumnApi | null;
 }
 
-export enum RowGroupingDisplayType {
-    SINGLE_COLUMN = 'singleColumn',
-    MULTIPLE_COLUMNS = 'multipleColumns',
-    GROUP_ROWS = 'groupRows',
-    CUSTOM = 'custom',
-}
-
-export enum TreeDataDisplayType {
-    AUTO = 'auto',
-    CUSTOM = 'custom',
-}
+export type RowGroupingDisplayType = 'singleColumn' | 'multipleColumns' | 'groupRows' | 'custom';
+export type TreeDataDisplayType = 'auto' | 'custom';
 
 export interface FillOperationParams {
     /** The mouse event for the fill operation. */
@@ -1317,10 +1308,7 @@ export interface ChartRef {
     destroyChart: () => void;
 }
 
-export enum ServerSideStoreType {
-    Full = 'full',
-    Partial = 'partial'
-}
+export type ServerSideStoreType = 'full' | 'partial';
 
 export interface ServerSideStoreParams {
     /**
