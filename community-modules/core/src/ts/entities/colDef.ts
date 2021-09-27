@@ -626,7 +626,7 @@ export interface CellClassFunc {
     (cellClassParams: CellClassParams): string | string[];
 }
 export interface CellStyleFunc {
-    (cellClassParams: CellClassParams): {};
+    (cellClassParams: CellClassParams): CellStyle;
 }
 
 export interface CellStyle { [cssProperty: string]: string | number; }

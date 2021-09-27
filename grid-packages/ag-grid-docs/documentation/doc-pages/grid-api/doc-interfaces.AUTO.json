@@ -8186,16 +8186,9 @@
         "optional": false
       }
     },
-    "setInvisibleStyles": {
+    "addOrRemoveCssClass": {
       "type": {
-        "arguments": { "isInvisible": "boolean" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "setScrollingStyle": {
-      "type": {
-        "arguments": { "isScrolling": "boolean" },
+        "arguments": { "cssClassName": "string", "on": "boolean" },
         "returnType": "void",
         "optional": false
       }
@@ -8213,9 +8206,6 @@
         "returnType": "void",
         "optional": false
       }
-    },
-    "addActiveListenerToggles": {
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
     }
   },
   "RowAnimationCssClasses": {},
