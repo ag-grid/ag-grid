@@ -133,7 +133,6 @@ More advanced customisations are discussed separately in the following sections:
 - [Special Points](/sparklines-special-points/) - configure individual points of interest using a `formatter`.
 
 ## Interfaces
-The interfaces for the attributes which can be customised in a line sparkline.
 
 ### LineSparklineOptions
 

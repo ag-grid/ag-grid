@@ -29,8 +29,6 @@ In the screenshots below the content element of both tooltips contains `-35`:
     <image-caption src="resources/tooltip-title.png" alt="Tooltip with a title element" width="250px" constrained="true">With Title</image-caption>
 </div>
 
-## Tooltip Options
-
 Tooltips can be removed by setting `enabled` to `false` in `tooltip` options as shown below.
 
 <snippet>
@@ -149,7 +147,6 @@ const tooltipRenderer = (params) => {
 <grid-example title='Sparkline Custom Tooltips' name='sparkline-tooltip-custom-html' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 ## Interfaces
-The interface for the available options is as follows:
 
 ## SparklineTooltip
 
