@@ -4,7 +4,7 @@ import { getInnerHeight, getScrollLeft, isRtlNegativeScroll, setScrollLeft } fro
 import { CtrlsService } from "../ctrlsService";
 import { Events } from "../eventKeys";
 import { debounce } from "../utils/function";
-import { BodyScrollEvent } from "../events";
+import { BodyScrollEvent, BodyScrollEndEvent } from "../events";
 import { isIOSUserAgent } from "../utils/browser";
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { ColumnApi } from "../columns/columnApi";
@@ -17,7 +17,6 @@ import { RowRenderer } from "../rendering/rowRenderer";
 import { ColumnModel } from "../columns/columnModel";
 import { RowContainerCtrl } from "./rowContainer/rowContainerCtrl";
 import { assign } from "../utils/object";
-import { BodyScrollEndEvent } from "../main";
 
 type ScrollDirection = 'horizontal' | 'vertical';
 

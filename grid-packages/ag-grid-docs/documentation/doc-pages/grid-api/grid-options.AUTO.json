@@ -1813,7 +1813,7 @@
     "meta": { "isEvent": true, "name": "onBodyScroll" }
   },
   "onBodyScrollEnd": {
-    "description": "/** Main body of the grid has stopped scrolling, either horizontally or vertically */",
+    "description": "/** Main body of the grid has stopped scrolling, either horizontally or vertically. */",
     "type": {
       "arguments": { "event": "BodyScrollEndEvent" },
       "returnType": "void"

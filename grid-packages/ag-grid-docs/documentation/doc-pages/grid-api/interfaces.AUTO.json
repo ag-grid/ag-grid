@@ -1993,7 +1993,7 @@
       "onVirtualRowRemoved?(event: VirtualRowRemovedEvent)": "/** A row was removed from the DOM, for any reason. Use to clean up resources (if any) used by the row. */",
       "onViewportChanged?(event: ViewportChangedEvent)": "/** Which rows are rendered in the DOM has changed. */",
       "onBodyScroll?(event: BodyScrollEvent)": "/** The body was scrolled horizontally or vertically. */",
-      "onBodyScrollEnd?(event: BodyScrollEndEvent)": "/** Main body of the grid has stopped scrolling, either horizontally or vertically */",
+      "onBodyScrollEnd?(event: BodyScrollEndEvent)": "/** Main body of the grid has stopped scrolling, either horizontally or vertically. */",
       "onDragStarted?(event: DragStartedEvent)": "/** When dragging starts. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */",
       "onDragStopped?(event: DragStoppedEvent)": "/** When dragging stops. This could be any action that uses the grid's Drag and Drop service, e.g. Column Moving, Column Resizing, Range Selection, Fill Handle, etc. */",
       "onPaginationChanged?(event: PaginationChangedEvent)": "/** Triggered every time the paging state changes. Some of the most common scenarios for this event to be triggered are:\n * \n *   - The page size changes.\n *   - The current shown page is changed.\n *   - New data is loaded onto the grid. */",

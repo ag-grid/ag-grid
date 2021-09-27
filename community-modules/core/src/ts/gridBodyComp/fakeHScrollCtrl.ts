@@ -6,7 +6,7 @@ import { Events } from "../eventKeys";
 import { ColumnModel } from "../columns/columnModel";
 import { GridOptionsWrapper } from "../gridOptionsWrapper";
 import { CtrlsService } from "../ctrlsService";
-import { BodyScrollEvent } from "../main";
+import { BodyScrollEvent } from "../events";
 
 export interface IFakeHScrollComp {
     setHeight(height: number): void;

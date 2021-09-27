@@ -3,6 +3,7 @@ import { Constants } from "../../constants/constants";
 import { BeanStub } from "../../context/beanStub";
 import { Autowired } from "../../context/context";
 import { Column } from "../../entities/column";
+import { ColumnGroup } from "../../entities/columnGroup";
 import { IHeaderColumn } from "../../entities/iHeaderColumn";
 import { Events } from "../../eventKeys";
 import { FocusService } from "../../focusService";
@@ -12,11 +13,10 @@ import { find } from "../../utils/generic";
 import { getAllValuesInObject, iterateObject } from "../../utils/object";
 import { AbstractHeaderCellCtrl } from "../cells/abstractCell/abstractHeaderCellCtrl";
 import { HeaderFilterCellCtrl } from "../cells/floatingFilter/headerFilterCellCtrl";
-import { HeaderCellCtrl, IHeaderCellComp } from "../cells/column/headerCellCtrl";
+import { HeaderCellCtrl } from "../cells/column/headerCellCtrl";
 import { HeaderGroupCellCtrl } from "../cells/columnGroup/headerGroupCellCtrl";
 import { HeaderRowType } from "./headerRowComp";
 import { _ } from "../../utils";
-import { ColumnGroup } from "../../main";
 
 export interface IHeaderRowComp {
     setTransform(transform: string): void;
