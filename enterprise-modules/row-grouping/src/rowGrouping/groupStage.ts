@@ -16,7 +16,8 @@ import {
     SelectableService,
     StageExecuteParams,
     ValueService,
-    Beans
+    Beans,
+    SelectionService
 } from "@ag-grid-community/core";
 import { BatchRemover } from "./batchRemover";
 
@@ -45,6 +46,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     @Autowired('selectableService') private selectableService: SelectableService;
     @Autowired('valueService') private valueService: ValueService;
     @Autowired('beans') private beans: Beans;
+    @Autowired('selectionService') private selectionService: SelectionService;
 
     // if doing tree data, this is true. we set this at create time - as our code does not
     // cater for the scenario where this is switched on / off dynamically
@@ -417,6 +419,8 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         if (this.processAfterColumnsChanged(details, afterColumnsChanged)) {
             return;
         }
+
+        this.selectionService.removeGroupsFromSelection();
 
         // because we are not creating the root node each time, we have the logic
         // here to change leafGroup once.
