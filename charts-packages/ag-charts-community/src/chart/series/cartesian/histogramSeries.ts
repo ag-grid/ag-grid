@@ -558,6 +558,7 @@ export class HistogramSeries extends CartesianSeries {
             rect.lineDash = this.lineDash;
             rect.lineDashOffset = this.lineDashOffset;
             rect.fillShadow = shadow;
+            rect.zIndex = isDatumHighlighted ? 1 : 0;
             rect.visible = datum.height > 0; // prevent stroke from rendering for zero height columns
             rect.opacity = this.getOpacity(datum);
         });

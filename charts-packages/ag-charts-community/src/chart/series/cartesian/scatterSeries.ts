@@ -360,6 +360,8 @@ export class ScatterSeries extends CartesianSeries {
         });
     }
 
+    private static highlightedZIndex = 1000000000000;
+
     private updateMarkerNodes(): void {
         if (!this.chart) {
             return;
@@ -382,7 +384,7 @@ export class ScatterSeries extends CartesianSeries {
         const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : strokeWidth;
         const { formatter } = marker;
 
-        this.markerSelection.each((node, datum) => {
+        this.markerSelection.each((node, datum, index) => {
             const isDatumHighlighted = datum === highlightedDatum;
             const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : marker.fill || seriesFill;
             const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : marker.stroke || seriesStroke;
@@ -417,6 +419,7 @@ export class ScatterSeries extends CartesianSeries {
             node.translationX = datum.point.x;
             node.translationY = datum.point.y;
             node.opacity = this.getOpacity(datum);
+            node.zIndex = isDatumHighlighted ? ScatterSeries.highlightedZIndex : index;
             node.visible = marker.enabled && node.size > 0;
         });
     }

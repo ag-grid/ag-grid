@@ -723,6 +723,7 @@ export class BarSeries extends CartesianSeries {
             rect.fillShadow = shadow;
             // Prevent stroke from rendering for zero height columns and zero width bars.
             rect.visible = flipXY ? datum.width > 0 : datum.height > 0;
+            rect.zIndex = isDatumHighlighted ? 1 : 0;
             rect.opacity = this.getOpacity(datum);
         });
     }
@@ -741,7 +742,14 @@ export class BarSeries extends CartesianSeries {
     }
 
     private updateLabelNodes(): void {
-        const labelEnabled = this.label.enabled;
+        if (!this.chart) {
+            return;
+        }
+
+        const {
+            chart: { highlightedDatum },
+            label: { enabled: labelEnabled }
+        } = this;
 
         this.labelSelection.each((text, datum) => {
             const label = datum.label;
@@ -759,6 +767,7 @@ export class BarSeries extends CartesianSeries {
                 text.fill = label.fill;
                 text.visible = true;
                 text.opacity = this.getOpacity(datum);
+                text.zIndex = datum === highlightedDatum ? 2 : 1;
             } else {
                 text.visible = false;
             }
