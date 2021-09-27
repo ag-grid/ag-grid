@@ -792,6 +792,7 @@ export const mappings: any = {
                     }
                 },
                 ...tooltipMapping,
+                ...highlightStyleMapping,
                 title: {
                     meta: {
                         defaults: {
