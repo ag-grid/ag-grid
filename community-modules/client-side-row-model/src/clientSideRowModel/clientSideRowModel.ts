@@ -713,7 +713,6 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
                     changedPath: changedPath
                 });
             } else {
-                // groups are about to get disposed, so need to deselect any that are selected
                 this.groupStage.execute({
                     rowNode: this.rootNode,
                     changedPath: changedPath,

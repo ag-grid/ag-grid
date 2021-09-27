@@ -420,6 +420,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
             return;
         }
 
+        // groups are about to get disposed, so need to deselect any that are selected
         this.selectionService.removeGroupsFromSelection();
 
         // because we are not creating the root node each time, we have the logic
