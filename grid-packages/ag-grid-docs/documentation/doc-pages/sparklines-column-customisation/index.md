@@ -57,7 +57,7 @@ It is possible to set the fill for the highlighted state of the column by adding
 sparklineOptions: {
     type: 'column',
     highlightStyle: {
-        fill: `orange`, // sets the highlighted column fill
+        fill: 'orange', // sets the highlighted column fill
     }
 }
 ```
