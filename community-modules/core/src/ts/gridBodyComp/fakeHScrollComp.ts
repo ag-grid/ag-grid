@@ -22,8 +22,6 @@ export class FakeHScrollComp extends Component {
     @RefSelector('eViewport') private eViewport: HTMLElement;
     @RefSelector('eContainer') private eContainer: HTMLElement;
 
-    private controller: FakeHScrollCtrl;
-
     constructor() {
         super(FakeHScrollComp.TEMPLATE);
     }
@@ -31,31 +29,21 @@ export class FakeHScrollComp extends Component {
     @PostConstruct
     private postConstruct(): void {
         const compProxy: IFakeHScrollComp = {
+            addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setHeight: height => setFixedHeight(this.getGui(), height),
             setContainerHeight: height => setFixedHeight(this.eContainer, height),
             setViewportHeight: height => setFixedHeight(this.eViewport, height),
             setRightSpacerFixedWidth: width => setFixedWidth(this.eRightSpacer, width),
             setLeftSpacerFixedWidth: width => setFixedWidth(this.eLeftSpacer, width),
-            setInvisibleStyles: (isInvisible) => addOrRemoveCssClass(this.getGui(), 'ag-scrollbar-invisible', isInvisible),
-            setScrollingStyle: (isScrolling) => addOrRemoveCssClass(this.getGui(), 'ag-scrollbar-scrolling', isScrolling),
-            addActiveListenerToggles: () => this.addActiveListenerToggles(),
             includeLeftSpacerScrollerCss: (cssClass: string, include: boolean) =>
                 addOrRemoveCssClass(this.eLeftSpacer, cssClass, include),
             includeRightSpacerScrollerCss: (cssClass: string, include: boolean) =>
                 addOrRemoveCssClass(this.eRightSpacer, cssClass, include),
         };
-        this.controller = this.createManagedBean(new FakeHScrollCtrl());
-        this.controller.setComp(compProxy, this.eViewport, this.eContainer);
+        const ctrl = this.createManagedBean(new FakeHScrollCtrl());
+        ctrl.setComp(compProxy, this.getGui(), this.eViewport, this.eContainer);
 
         this.createManagedBean(new CenterWidthFeature(width => this.eContainer.style.width = `${width}px`));
     }
 
-    addActiveListenerToggles(): void {
-        const eGui = this.getGui();
-        const activateEvents = ['mouseenter', 'mousedown', 'touchstart'];
-        const deactivateEvents = ['mouseleave', 'mouseup', 'touchend'];
-
-        activateEvents.forEach(event => this.addManagedListener(eGui, event, () => addOrRemoveCssClass(eGui, 'ag-scrollbar-active', true)));
-        deactivateEvents.forEach(event => this.addManagedListener(eGui, event, () => addOrRemoveCssClass(eGui, 'ag-scrollbar-active', false)));
-    }
 }
