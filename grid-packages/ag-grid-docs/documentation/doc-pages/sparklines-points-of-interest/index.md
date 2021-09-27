@@ -9,13 +9,17 @@ In the line and area sparklines, each data point is represented by a marker. In 
 Some of these data points in the sparklines are special and can be emphasised to make comparisons easier across multiple sparklines of the same type.
 
 Special points include:
-- [First and Last](/sparklines-points-of-interest/#first-and-last)
-- [Minimum and Maximum](/sparklines-points-of-interest/#min-and-max)
-- [Positive and Negative](/sparklines-points-of-interest/#positive-and-negative)
+- First and Last
+- Minimum and Maximum
+- Positive and Negative
 
 These points can be customised via the `formatter` callback function to make them stand out from the rest of the normal data points which have global styles.
+- The formatter is a callback function used to return formatting for individual data points based on the given parameters.
+- It will receive an input according to the sparkline type.
 
-For line and area sparklines, the `formatter` function is added to the `marker` options:
+## Line and Area Sparklines Points of Interest
+
+To customise the points of interest in line and area sparklines, the `formatter` function is added to the `marker` options:
 
 <snippet>
 const gridOptions = {
@@ -36,33 +40,7 @@ const gridOptions = {
 };
 </snippet>
 
-For column sparklines, the formatter is added to `sparklineOptions`:
-
-<snippet>
-const gridOptions = {
-    columnDefs: [
-        {
-            field: 'sparkline',
-            headerName: 'Column Sparkline',
-            minWidth: 100,
-            cellRenderer: 'agSparklineCellRenderer',
-            cellRendererParams: {
-                sparklineOptions: {
-                    type: 'column',
-                    formatter: columnFormatter, // add columnFormatter to sparklineOptions
-                },
-            },
-        },
-        // other column definitions ...
-    ],
-};
-</snippet>
-
-- The formatter is a callback function used to return formatting for individual data points based on the given parameters.
-- It will receive an input according to the sparkline type.
-## Line and Area Sparklines Points of Interest
-
-For the line and area sparklines, the formatter callback function will receive an input of type [`markerFormatterParams](/sparklines-points-of-interest/#markerformatterparams).
+The formatter callback function will receive an input of type [`markerFormatterParams](/sparklines-points-of-interest/#markerformatterparams).
 
 The function return type should be [`MarkerFormat`](/sparklines-points-of-interest/#markerformat), allowing the following attributes to be customised:
 
@@ -71,6 +49,7 @@ The function return type should be [`MarkerFormat`](/sparklines-points-of-intere
  - fill
  - stroke
  - strokeWidth
+
  ### First and Last
 
 Let's say we have a line sparkline where the markers are all `skyblue` but we want to make the first and last markers stand out with a purple fill and stroke style.
@@ -163,11 +142,31 @@ The following screenshots demonstrate show this
 </div>
 
 
-## Column Sparkline Points of Interest
+## Column Sparklines Points of Interest
 
-The `formatter` callback function for column sparklines applies to the individual columns.
+The `formatter` callback function for column sparklines applies to the individual columns and is added to `sparklineOptions`:
 
-The formatter will receive the following input with values associated with the data point it represents. The input type is [`columnFormatterParams](/sparklines-points-of-interest/#columnformatterparams).
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'sparkline',
+            headerName: 'Column Sparkline',
+            minWidth: 100,
+            cellRenderer: 'agSparklineCellRenderer',
+            cellRendererParams: {
+                sparklineOptions: {
+                    type: 'column',
+                    formatter: columnFormatter, // add columnFormatter to sparklineOptions
+                },
+            },
+        },
+        // other column definitions ...
+    ],
+};
+</snippet>
+
+The formatter will receive an input with values associated with the data point it represents. The input type is [`columnFormatterParams](/sparklines-points-of-interest/#columnformatterparams).
 
 The function return type should be [`ColumnFormat`](/sparklines-points-of-interest/#columnformat), allowing these attributes to be customised:
 
@@ -262,8 +261,8 @@ It should be noted that
 <grid-example title='Sparkline Special Points' name='sparkline-special-points' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 
-- All formatters will receive the highlighted property in the input.
-- If the current data point is highlighted, the highlighted property will be set to true; make sure to check this if you want to differentiate between the highlighted and un-highlighted states when customising the special points.
+[[note]]
+| All formatters will receive the highlighted property in the input. If the current data point is highlighted, the highlighted property will be set to true; make sure to check this if you want to differentiate between the highlighted and un-highlighted states when customising the special points.
 
 
 ## Interfaces
