@@ -179,8 +179,6 @@ More advanced customisations are discussed separately in the following sections:
 
 ## Interfaces
 
-The interfaces for the available options are as follows:
-
 ### AreaSparklineOptions
 
 <interface-documentation interfaceName='AreaSparklineOptions' ></interface-documentation>

@@ -89,7 +89,7 @@ The formatted data from `valueGetter` will be supplied to the sparkline automati
 The following example demonstrates how data can be formatted using `valueGetter`.
 
 - In this example, the data for the `rateOfChange` field is an object with `x` and `y` keys, both containing an array of numbers.
-- valueGetter is used to format this data into `[number, number][]`, with x at index 0 and y at index 1 in each array.
+- A `valueGetter` is used to format this data into `[number, number][]`, with x at index 0 and y at index 1 in each array.
 
 <grid-example title='Formatting Sparkline Data' name='formatting-sparkline-data' type='generated' options='{ "enterprise": true, "exampleHeight": 510, "modules": ["clientside", "sparklines"] }'></grid-example>
 
