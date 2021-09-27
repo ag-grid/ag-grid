@@ -30,8 +30,8 @@ var gridOptions = {
 
 function tooltipRenderer(params) {
     return {
-        content: params.yValue.toFixed(1), // format number values to one digit after the decimal point
-        title: new Date(params.xValue).toLocaleDateString()
+        title: new Date(params.xValue).toLocaleDateString(),
+        content: params.yValue.toFixed(1),
     }
 }
 

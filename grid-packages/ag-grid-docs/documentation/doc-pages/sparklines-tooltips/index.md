@@ -57,8 +57,8 @@ Here's an example renderer function.
 const tooltipRenderer = (params) => {
     const { yValue, xValue } = params;
     return {
-        content: yValue.toFixed(1), // format number values to have one digit after the decimal point
-        title: xValue.toLocaleDateString('en-GB') // format date values to British English date strings
+        title: new Date(params.xValue).toLocaleDateString(), // formats date X values
+        content: yValue.toFixed(1), // format Y number values
     }
 }
 ```
@@ -66,14 +66,12 @@ const tooltipRenderer = (params) => {
 - In the snippet above, the renderer function sets `content` to formatted Y values that have only 1 digit after the decimal point.
 - The title of the tooltips is set to X values provided in the params formatted using the `toLocaleString()` method. This is optional, if X values are provided in the data, they will be formatted and displayed in the tooltip title by default.
 
-
 <grid-example title='Sparkline Tooltip Renderer' name='sparkline-tooltip-renderer' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
-## Styling Tooltips
+## Styling Tooltip Titles
 
-The [Tooltip Renderer](/sparklines-tooltips/#tooltip-renderer) can also be used to style tooltips. The `renderer` function
-can return style attributes such as `color`, `backgroundColor` and `opacity` for the title. For example, to make the 
-background of the tooltip title `olive` with opacity `0.8` add the following:
+The [Tooltip Renderer](/sparklines-tooltips/#tooltip-renderer) can also be used to style tooltip titles. The `renderer`
+function can return style attributes such as `color`, `backgroundColor` and `opacity` for the title as shown below:
 
 ```js
 const tooltipRenderer = (params) => {
@@ -81,13 +79,13 @@ const tooltipRenderer = (params) => {
     return {
         // sets styles for tooptip title
         color: 'white',
-        backgroundColor: 'olive',
-        opacity: 0.8
+        backgroundColor: 'red',
+        opacity: 0.3
     }
 }
 ```
 
-The following example demonstrates these tooltip styles:
+The following example demonstrates the results of the tooltip title styles above:
 
 <grid-example title='Styling Sparkline Tooltips' name='sparkline-tooltip-styles' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 

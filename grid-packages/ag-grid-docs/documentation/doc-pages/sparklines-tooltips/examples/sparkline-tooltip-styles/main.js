@@ -1,21 +1,23 @@
 var gridOptions = {
     columnDefs: [
-        { field: 'symbol', maxWidth: 110 },
-        { field: 'name', minWidth: 250 },
-        { field: 'lastPrice', type: 'numericColumn' },
-        { field: 'volume', type: 'numericColumn' },
+        {field: 'symbol', maxWidth: 120},
+        {field: 'name',  minWidth: 250 },
         {
-            field: 'history',
-            headerName: 'Close History',
-            minWidth: 250,
+            field: 'change',
             cellRenderer: 'agSparklineCellRenderer',
             cellRendererParams: {
                 sparklineOptions: {
                     tooltip: {
+                        enabled: true,
                         renderer: tooltipRenderer,
                     }
                 }
-            },
+            }
+        },
+        {
+            field: 'volume',
+            type: 'numericColumn',
+            maxWidth: 140,
         },
     ],
     defaultColDef: {
@@ -23,16 +25,16 @@ var gridOptions = {
         minWidth: 100,
         resizable: true,
     },
-    rowData: getStockData(),
+    rowData: getData(),
 };
 
 function tooltipRenderer(params) {
     return {
         title: params.context.data.symbol,
-        // sets styles for tooptip title
+        // sets styles for tooltip title
         color: 'white',
-        backgroundColor: 'olive',
-        opacity: 0.8
+        backgroundColor: 'red',
+        opacity: 0.3
     }
 }
 
@@ -41,3 +43,4 @@ document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 });
+
