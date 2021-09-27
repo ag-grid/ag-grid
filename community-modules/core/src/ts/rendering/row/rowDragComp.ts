@@ -173,6 +173,7 @@ class VisibilityStrategy extends BeanStub {
                 this.parent.setVisible(shown);
             } else {
                 this.parent.setDisplayed(shown);
+                this.parent.setVisible(true);
             }
         }
     }
@@ -194,6 +195,8 @@ class NonManagedVisibilityStrategy extends VisibilityStrategy {
         // in case data changes, then we need to update visibility of drag item
         this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.workOutVisibility.bind(this));
         this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.workOutVisibility.bind(this));
+        this.addManagedListener(this.rowNode, RowNode.EVENT_CELL_CHANGED, this.workOutVisibility.bind(this));
+        this.addManagedListener(this.beans.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.workOutVisibility.bind(this));
 
         this.workOutVisibility();
     }
@@ -226,6 +229,7 @@ class ManagedVisibilityStrategy extends VisibilityStrategy {
         this.addManagedListener(this.beans.eventService, Events.EVENT_SORT_CHANGED, this.workOutVisibility.bind(this));
         this.addManagedListener(this.beans.eventService, Events.EVENT_FILTER_CHANGED, this.workOutVisibility.bind(this));
         this.addManagedListener(this.beans.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.workOutVisibility.bind(this));
+        this.addManagedListener(this.beans.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.workOutVisibility.bind(this));
 
         // in case data changes, then we need to update visibility of drag item
         this.addManagedListener(this.rowNode, RowNode.EVENT_DATA_CHANGED, this.workOutVisibility.bind(this));
