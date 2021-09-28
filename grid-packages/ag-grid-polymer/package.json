@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-polymer",
-  "version": "26.0.0",
+  "version": "26.1.0",
   "description": "AG Grid Polymer 3 Web Component",
   "main": "index.js",
   "scripts": {
@@ -23,7 +23,7 @@
   },
   "homepage": "https://github.com/ag-grid/ag-grid-polymer#readme",
   "peerDependencies": {
-    "ag-grid-community": "~26.0.0",
+    "ag-grid-community": "~26.1.0",
     "@polymer/polymer": "^3.0.0"
   },
   "publishConfig": {
@@ -32,6 +32,6 @@
   "devDependencies": {
     "gulp": "^4.0.2",
     "gulp-replace": "^1.0.0",
-    "@ag-grid-community/polymer": "~26.0.0"
+    "@ag-grid-community/polymer": "~26.1.0"
   }
 }
