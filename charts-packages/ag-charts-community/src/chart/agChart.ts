@@ -2,7 +2,7 @@ import { Chart } from "./chart";
 import { Series } from "./series/series";
 import { ChartAxis } from "./chartAxis";
 import { LegendMarker } from "./legend";
-import { ChartTheme } from "./themes/chartTheme";
+import { ChartTheme, mergeOptions } from "./themes/chartTheme";
 import { DarkTheme } from './themes/darkTheme';
 import { MaterialLight } from "./themes/materialLight";
 import { MaterialDark } from "./themes/materialDark";
@@ -224,7 +224,7 @@ function create(options: any, path?: string, component?: any, theme?: ChartTheme
                                             const modifiedConfig = theme.getConfig(modifiedPath);
                                             isObject(theme.getConfig(modifiedPath));
                                             if (isObject(config) && isObject(modifiedConfig)) {
-                                                return deepMerge(config, modifiedConfig);
+                                                return deepMerge(config, modifiedConfig, mergeOptions);
                                             }
                                             return modifiedConfig;
                                         }
