@@ -46,7 +46,7 @@ sparklineOptions: {
         renderer: tooltipRenderer // Add tooltip renderer callback function to customise tooltip styles and content
     }
 }
-```           
+```
 
 - The `renderer` is a callback function which receives data values associated with the highlighted data point.
 - It returns an object with the `content` and `title` properties containing plain text or inner HTML that goes into the corresponding divs.
@@ -70,10 +70,10 @@ const tooltipRenderer = (params) => {
 
 ## Accessing Row Data
 
-The params supplied to the [Tooltip Renderer](/sparklines-tooltips/#tooltip-renderer) includes a `context` object 
+The params supplied to the [Tooltip Renderer](/sparklines-tooltips/#tooltip-renderer) includes a `context` object
 with a `data` property containing row data. This is useful when data from other columns needs to be shown in tooltips.
 
-The following snippet shows how values from the 'Symbol' column can be shown in the tooltip title:   
+The following snippet shows how values from the 'Symbol' column can be shown in the tooltip title:
 
 ```js
 const tooltipRenderer = (params) => {
@@ -84,7 +84,7 @@ const tooltipRenderer = (params) => {
 }
 ```
 
-The following example demonstrates how data from the 'Symbol' column can be shown in the tooltip title:
+The following example demonstrates the above tooltip renderer:
 
 <grid-example title='Accessing Row Data' name='sparkline-accessing-row-data' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 

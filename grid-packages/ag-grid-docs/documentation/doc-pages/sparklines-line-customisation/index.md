@@ -11,7 +11,7 @@ The following [Line Sparkline Options](/sparklines-line-customisation/#linespark
 - [Marker Options](/sparklines-line-customisation/#marker-options)
 - [Sparkline Padding Options](/sparklines-line-customisation/#sparkline-padding-options)
 
-Also see [Additional Customisations](/sparklines-line-customisation/#additional-customisations) for more advanced 
+Also see [Additional Customisations](/sparklines-line-customisation/#additional-customisations) for more advanced
 customisations that are common across all sparklines.
 
 The snippet below shows option overrides for the Line Sparkline:
@@ -34,7 +34,7 @@ sparklineOptions: {
     highlightStyle: {
         size: 10,
     },
-} 
+}
 ```
 
 The following example demonstrates the results of the Line Sparkline options above:
@@ -67,7 +67,7 @@ The result of the above configuration is displayed here.
 
 The markers are enabled by default but the size has been set to `0`, making them invisible.
 
-The `size` property in the `highlightStyle` options is `6` pixels by default, allowing the markers to become visible when in the highlighted state.
+The `size` property in the `highlightStyle` options is `6`px by default, allowing the markers to become visible when in the highlighted state.
 
 These formats can all be modified to your liking by setting the `marker` and `highlightStyle` options as demonstated here.
 
@@ -128,7 +128,7 @@ sparklineOptions: {
 
 More advanced customisations are discussed separately in the following sections:
 
-- [Axis](/sparklines-axis-types/) - configure the x-axis type and appearance via `axis` options.
+- [Axis](/sparklines-axis-types/) - configure the x-axis type via `axis` options.
 - [Tooltips](/sparklines-tooltips/) - configure tooltips using `tooltip` options.
 - [Special Points](/sparklines-special-points/) - configure individual points of interest using a `formatter`.
 
@@ -136,7 +136,7 @@ More advanced customisations are discussed separately in the following sections:
 
 ### LineSparklineOptions
 
-<interface-documentation interfaceName='LineSparklineOptions' ></interface-documentation>
+<interface-documentation interfaceName='LineSparklineOptions'></interface-documentation>
 
 ## Next Up
 

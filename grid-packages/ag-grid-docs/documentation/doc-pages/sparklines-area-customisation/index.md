@@ -64,7 +64,7 @@ The result of the above configuration is displayed here.
 
 The markers are enabled by default but the size has been set to `0`, making them invisible.
 
-The `size` property in the `highlightStyle` options is `6` pixels by default, allowing the markers to become visible when in the highlighted state.
+The `size` property in the `highlightStyle` options is `6`px by default, allowing the markers to become visible when in the highlighted state.
 
 These formats can all be modified to your liking by setting the `marker` and `highlightStyle` options as demonstrated here.
 
@@ -143,7 +143,7 @@ sparklineOptions: {
 </div>
 
 [[note]]
-| It is possible to remove the x-axis entirely by setting the axis `strokeWidth` to `0`.
+| It is possible to remove the x-axis line entirely by setting the axis `strokeWidth` to `0`.
 
 ## Sparkline Padding Options
 
@@ -173,7 +173,7 @@ sparklineOptions: {
 
 More advanced customisations are discussed separately in the following sections:
 
-- [Axis](/sparklines-axis-types/) - configure the x-axis type and appearance via `axis` options.
+- [Axis](/sparklines-axis-types/) - configure the x-axis type via `axis` options.
 - [Tooltips](/sparklines-tooltips/) - configure tooltips using `tooltip` options.
 - [Special Points](/sparklines-special-points/) - configure individual points of interest using a `formatter`.
 
