@@ -1,13 +1,9 @@
 var gridOptions = {
     columnDefs: [
-        { field: 'symbol', maxWidth: 110 },
-        { field: 'name', minWidth: 250 },
-        { field: 'lastPrice', type: 'numericColumn' },
-        { field: 'volume', type: 'numericColumn' },
+        {field: 'symbol', maxWidth: 120},
+        {field: 'name',  minWidth: 250 },
         {
-            field: 'history',
-            headerName: 'Close History',
-            minWidth: 250,
+            field: 'change',
             cellRenderer: 'agSparklineCellRenderer',
             cellRendererParams: {
                 sparklineOptions: {
@@ -16,7 +12,12 @@ var gridOptions = {
                         renderer: tooltipRenderer,
                     }
                 }
-            },
+            }
+        },
+        {
+            field: 'volume',
+            type: 'numericColumn',
+            maxWidth: 140,
         },
     ],
     defaultColDef: {
@@ -24,11 +25,12 @@ var gridOptions = {
         minWidth: 100,
         resizable: true,
     },
-    rowData: getStockData(),
+    rowData: getData(),
 };
 
 function tooltipRenderer(params) {
     return {
+        title: new Date(params.xValue).toLocaleDateString(),
         content: params.yValue.toFixed(1),
     }
 }

@@ -73,7 +73,7 @@ export abstract class Node { // Don't confuse with `window.Node`.
     }
 
     private _children: Node[] = [];
-    get children(): ReadonlyArray<Node> {
+    get children(): Node[] {
         return this._children;
     }
 
@@ -560,6 +560,22 @@ export abstract class Node { // Don't confuse with `window.Node`.
     }
     get visible(): boolean {
         return this._visible;
+    }
+
+    protected dirtyZIndex: boolean = false;
+
+    private _zIndex: number = 0;
+    set zIndex(value: number) {
+        if (this._zIndex !== value) {
+            this._zIndex = value;
+            if (this.parent) {
+                this.parent.dirtyZIndex = true;
+            }
+            this.dirty = true;
+        }
+    }
+    get zIndex(): number {
+        return this._zIndex;
     }
 
     pointerEvents: PointerEvents = PointerEvents.All;

@@ -107,6 +107,8 @@ export abstract class Series extends Observable {
     directions: ChartAxisDirection[] = [ChartAxisDirection.X, ChartAxisDirection.Y];
     directionKeys: { [key in ChartAxisDirection]?: string[] } = {};
 
+    protected static highlightedZIndex = 1000000000000;
+
     readonly label = new Label();
 
     abstract tooltip: SeriesTooltip;

@@ -5,7 +5,7 @@ import { Text, FontStyle, FontWeight } from "../../../scene/shape/text";
 import { DropShadow } from "../../../scene/dropShadow";
 import {
     SeriesNodeDatum,
-    CartesianTooltipRendererParams as HistogramTooltipRendererParams, SeriesTooltip
+    CartesianTooltipRendererParams as HistogramTooltipRendererParams, SeriesTooltip, Series
 } from "../series";
 import { Label } from "../../label";
 import { PointerEvents } from "../../../scene/node";
@@ -540,7 +540,7 @@ export class HistogramSeries extends CartesianSeries {
             }
         } = this;
 
-        this.rectSelection.each((rect, datum) => {
+        this.rectSelection.each((rect, datum, index) => {
             const isDatumHighlighted = datum === highlightedDatum;
             const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
                 ? highlightedDatumStrokeWidth
@@ -558,6 +558,7 @@ export class HistogramSeries extends CartesianSeries {
             rect.lineDash = this.lineDash;
             rect.lineDashOffset = this.lineDashOffset;
             rect.fillShadow = shadow;
+            rect.zIndex = isDatumHighlighted ? Series.highlightedZIndex : index;
             rect.visible = datum.height > 0; // prevent stroke from rendering for zero height columns
             rect.opacity = this.getOpacity(datum);
         });

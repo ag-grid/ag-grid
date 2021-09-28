@@ -9,9 +9,9 @@ The following example shows a simple grid with 3 columns defined:
 const gridOptions = {
     // define 3 columns
     columnDefs: [
-        { headerName: 'Athlete', field: 'athlete' },
-        { headerName: 'Sport', field: 'sport' },
-        { headerName: 'Age', field: 'age' },
+        { field: 'athlete' },
+        { field: 'sport' },
+        { field: 'age' },
     ]
 }
 </snippet>
@@ -27,9 +27,9 @@ const gridOptions = {
         {
             headerName: 'Group A',
             children: [
-                { headerName: 'Athlete', field: 'athlete' },
-                { headerName: 'Sport', field: 'sport' },
-                { headerName: 'Age', field: 'age' },
+                { field: 'athlete' },
+                { field: 'sport' },
+                { field: 'age' }
             ]
         }
     ]

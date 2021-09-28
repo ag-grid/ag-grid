@@ -1,6 +1,6 @@
 import { Selection } from "../../../scene/selection";
 import { Group } from "../../../scene/group";
-import { SeriesNodeDatum, CartesianTooltipRendererParams, SeriesTooltip } from "../series";
+import { SeriesNodeDatum, CartesianTooltipRendererParams, SeriesTooltip, Series } from "../series";
 import { extent } from "../../../util/array";
 import { LegendDatum } from "../../legend";
 import { LinearScale } from "../../../scale/linearScale";
@@ -382,7 +382,7 @@ export class ScatterSeries extends CartesianSeries {
         const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : strokeWidth;
         const { formatter } = marker;
 
-        this.markerSelection.each((node, datum) => {
+        this.markerSelection.each((node, datum, index) => {
             const isDatumHighlighted = datum === highlightedDatum;
             const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : marker.fill || seriesFill;
             const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : marker.stroke || seriesStroke;
@@ -417,6 +417,7 @@ export class ScatterSeries extends CartesianSeries {
             node.translationX = datum.point.x;
             node.translationY = datum.point.y;
             node.opacity = this.getOpacity(datum);
+            node.zIndex = isDatumHighlighted ? Series.highlightedZIndex : index;
             node.visible = marker.enabled && node.size > 0;
         });
     }

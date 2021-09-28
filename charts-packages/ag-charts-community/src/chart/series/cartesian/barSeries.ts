@@ -6,7 +6,7 @@ import { BandScale } from "../../../scale/bandScale";
 import { DropShadow } from "../../../scene/dropShadow";
 import {
     SeriesNodeDatum,
-    CartesianTooltipRendererParams, SeriesTooltip
+    CartesianTooltipRendererParams, SeriesTooltip, Series
 } from "../series";
 import { Label } from "../../label";
 import { PointerEvents } from "../../../scene/node";
@@ -689,7 +689,7 @@ export class BarSeries extends CartesianSeries {
             }
         } = this;
 
-        this.rectSelection.each((rect, datum) => {
+        this.rectSelection.each((rect, datum, index) => {
             const isDatumHighlighted = datum === highlightedDatum;
             const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : datum.fill;
             const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : datum.stroke;
@@ -723,6 +723,7 @@ export class BarSeries extends CartesianSeries {
             rect.fillShadow = shadow;
             // Prevent stroke from rendering for zero height columns and zero width bars.
             rect.visible = flipXY ? datum.width > 0 : datum.height > 0;
+            rect.zIndex = datum === highlightedDatum ? Series.highlightedZIndex : index;
             rect.opacity = this.getOpacity(datum);
         });
     }
@@ -741,9 +742,16 @@ export class BarSeries extends CartesianSeries {
     }
 
     private updateLabelNodes(): void {
-        const labelEnabled = this.label.enabled;
+        if (!this.chart) {
+            return;
+        }
 
-        this.labelSelection.each((text, datum) => {
+        const {
+            chart: { highlightedDatum },
+            label: { enabled: labelEnabled }
+        } = this;
+
+        this.labelSelection.each((text, datum, index) => {
             const label = datum.label;
 
             if (label && labelEnabled) {
@@ -759,6 +767,7 @@ export class BarSeries extends CartesianSeries {
                 text.fill = label.fill;
                 text.visible = true;
                 text.opacity = this.getOpacity(datum);
+                text.zIndex = (datum === highlightedDatum ? Series.highlightedZIndex : index) + 1;
             } else {
                 text.visible = false;
             }

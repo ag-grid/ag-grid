@@ -23,12 +23,16 @@
     }
   },
   "getUserProvidedColDef": {
+    "description": "/** Returns the column definition provided by the application.\n * This may not be correct, as items can be superseded by default column options.\n * However it's useful for comparison, eg to know which application column definition matches that column. */",
     "type": { "arguments": {}, "returnType": "ColDef | null" }
   },
   "setParent": {
     "type": { "arguments": { "parent": "ColumnGroup" }, "returnType": "void" }
   },
-  "getParent": { "type": { "arguments": {}, "returnType": "ColumnGroup" } },
+  "getParent": {
+    "description": "/** Returns the parent column group, if column grouping is active. */",
+    "type": { "arguments": {}, "returnType": "ColumnGroup" }
+  },
   "setOriginalParent": {
     "type": {
       "arguments": { "originalParent": "ProvidedColumnGroup | null" },
@@ -48,9 +52,14 @@
   "isRowGroupDisplayed": {
     "type": { "arguments": { "colId": "string" }, "returnType": "boolean" }
   },
-  "getUniqueId": { "type": { "arguments": {}, "returnType": "string" } },
-  "isPrimary": { "type": { "arguments": {}, "returnType": "boolean" } },
-  "isFilterAllowed": { "type": { "arguments": {}, "returnType": "boolean" } },
+  "isPrimary": {
+    "description": "/** Returns `true` if column is a primary column, `false` if secondary. Secondary columns are used for pivoting. */",
+    "type": { "arguments": {}, "returnType": "boolean" }
+  },
+  "isFilterAllowed": {
+    "description": "/** Returns `true` if column filtering is allowed. */",
+    "type": { "arguments": {}, "returnType": "boolean" }
+  },
   "isFieldContainsDots": {
     "type": { "arguments": {}, "returnType": "boolean" }
   },
@@ -58,12 +67,14 @@
     "type": { "arguments": {}, "returnType": "boolean" }
   },
   "addEventListener": {
+    "description": "/** Add an event listener to the column. */",
     "type": {
       "arguments": { "eventType": "string", "listener": "Function" },
       "returnType": "void"
     }
   },
   "removeEventListener": {
+    "description": "/** Remove event listener from the column. */",
     "type": {
       "arguments": { "eventType": "string", "listener": "Function" },
       "returnType": "void"
@@ -102,6 +113,7 @@
   },
   "isMoving": { "type": { "arguments": {}, "returnType": "boolean" } },
   "getSort": {
+    "description": "/** If sorting is active, returns the sort direction e.g. `'asc'` or `'desc'`. */",
     "type": { "arguments": {}, "returnType": "string | null | undefined" }
   },
   "setSort": {
@@ -143,6 +155,7 @@
     }
   },
   "getAggFunc": {
+    "description": "/** If aggregation is set for the column, returns the aggregation function. */",
     "type": {
       "arguments": {},
       "returnType": "string | IAggFunc | null | undefined"
@@ -159,7 +172,10 @@
       }
     }
   },
-  "isFilterActive": { "type": { "arguments": {}, "returnType": "boolean" } },
+  "isFilterActive": {
+    "description": "/** Returns `true` if filter is active on the column. */",
+    "type": { "arguments": {}, "returnType": "boolean" }
+  },
   "setFilterActive": {
     "type": {
       "arguments": {
@@ -217,16 +233,32 @@
     }
   },
   "isVisible": { "type": { "arguments": {}, "returnType": "boolean" } },
-  "getColDef": { "type": { "arguments": {}, "returnType": "ColDef" } },
+  "getColDef": {
+    "description": "/** Returns the column definition for this column.\n * The column definition will be the result of merging the application provided column definition with any provided defaults\n * (e.g. `defaultColDef` grid option, or column types.\n * \n * Equivalent: `getDefinition` */",
+    "type": { "arguments": {}, "returnType": "ColDef" }
+  },
   "getColumnGroupShow": {
     "type": { "arguments": {}, "returnType": "string | undefined" }
   },
-  "getColId": { "type": { "arguments": {}, "returnType": "string" } },
-  "getId": { "type": { "arguments": {}, "returnType": "string" } },
+  "getColId": {
+    "description": "/** Returns the unique ID for the column.\n * \n * Equivalent: `getId`, `getUniqueId` */",
+    "type": { "arguments": {}, "returnType": "string" }
+  },
+  "getId": {
+    "description": "/** Returns the unique ID for the column.\n * \n * Equivalent: `getColId`, `getUniqueId` */",
+    "type": { "arguments": {}, "returnType": "string" }
+  },
+  "getUniqueId": {
+    "description": "/** Returns the unique ID for the column.\n * \n * Equivalent: `getColId`, `getId` */",
+    "type": { "arguments": {}, "returnType": "string" }
+  },
   "getDefinition": {
     "type": { "arguments": {}, "returnType": "AbstractColDef" }
   },
-  "getActualWidth": { "type": { "arguments": {}, "returnType": "number" } },
+  "getActualWidth": {
+    "description": "/** Returns the current width of the column. If the column is resized, the actual width is the new size. */",
+    "type": { "arguments": {}, "returnType": "number" }
+  },
   "getColSpan": {
     "type": { "arguments": { "rowNode": "RowNode" }, "returnType": "number" }
   },
@@ -275,7 +307,10 @@
       "returnType": "void"
     }
   },
-  "isRowGroupActive": { "type": { "arguments": {}, "returnType": "boolean" } },
+  "isRowGroupActive": {
+    "description": "/** Returns `true` if row group is currently active for this column. */",
+    "type": { "arguments": {}, "returnType": "boolean" }
+  },
   "setPivotActive": {
     "type": {
       "arguments": {
@@ -285,7 +320,10 @@
       "returnType": "void"
     }
   },
-  "isPivotActive": { "type": { "arguments": {}, "returnType": "boolean" } },
+  "isPivotActive": {
+    "description": "/** Returns `true` if pivot is currently active for this column. */",
+    "type": { "arguments": {}, "returnType": "boolean" }
+  },
   "isAnyFunctionActive": {
     "type": { "arguments": {}, "returnType": "boolean" }
   },
@@ -301,7 +339,10 @@
       "returnType": "void"
     }
   },
-  "isValueActive": { "type": { "arguments": {}, "returnType": "boolean" } },
+  "isValueActive": {
+    "description": "/** Returns `true` if value (aggregation) is currently active for this column. */",
+    "type": { "arguments": {}, "returnType": "boolean" }
+  },
   "isAllowPivot": { "type": { "arguments": {}, "returnType": "boolean" } },
   "isAllowValue": { "type": { "arguments": {}, "returnType": "boolean" } },
   "isAllowRowGroup": { "type": { "arguments": {}, "returnType": "boolean" } },

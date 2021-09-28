@@ -115,11 +115,11 @@ sparklineOptions: {
 </div>
 
 The given `fill` string can be in one of the following formats:
-- \#rgb - Short Hex Code
-- \#rrggbb - Hex Code
-- rgb(r, g, b) - RGB Absolute
-- rgba(r, g, b, a) - RGB with an alpha channel
-- CSS color keyword - such as 'aqua', 'orange', etc.
+- `#rgb` - Short Hex Code
+- `#rrggbb` - Hex Code
+- `rgb(r, g, b)` - RGB Absolute
+- `rgba(r, g, b, a)` - RGB with an alpha channel
+- CSS color keyword - such as `aqua`, `orange`, etc.
 
 ## Axis Line Options
 
@@ -178,8 +178,6 @@ More advanced customisations are discussed separately in the following sections:
 - [Special Points](/sparklines-special-points/) - configure individual points of interest using a `formatter`.
 
 ## Interfaces
-
-The interfaces for the available options are as follows:
 
 ### AreaSparklineOptions
 

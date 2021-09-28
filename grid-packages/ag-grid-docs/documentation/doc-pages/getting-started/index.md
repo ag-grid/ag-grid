@@ -798,8 +798,8 @@ title: "Get Started with AG Grid"
 | `src/styles.scss` with the following code:
 |
 | ```scss
-| @import "../node_modules/ag-grid-community/dist/styles/ag-grid.css";
-| @import "../node_modules/ag-grid-community/dist/styles/ag-theme-alpine.css";
+| @import "ag-grid-community/dist/styles/ag-grid.css";
+| @import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 | ```
 |
 | The code above imports the grid "structure" stylesheet (`ag-grid.css`), and one of the
@@ -1199,8 +1199,8 @@ title: "Get Started with AG Grid"
 | Open `src/styles.scss` and replace the `css` with `scss` files - we'll also add some parameters to change the odd row background color:
 |
 | ```scss
-| @import "../node_modules/ag-grid-community/src/styles/ag-grid.scss";
-| @import "../node_modules/ag-grid-community/src/styles/ag-theme-alpine/sass/ag-theme-alpine-mixin.scss";
+| @import "ag-grid-community/src/styles/ag-grid.scss";
+| @import "ag-grid-community/src/styles/ag-theme-alpine/sass/ag-theme-alpine-mixin.scss";
 |
 | .ag-theme-alpine {
 |     @include ag-theme-alpine((
@@ -1618,8 +1618,8 @@ title: "Get Started with AG Grid"
 | replace its contents with this:
 |
 | ```scss
-| @import "../node_modules/ag-grid-community/src/styles/ag-grid.scss";
-| @import "../node_modules/ag-grid-community/src/styles/ag-theme-alpine/sass/ag-theme-alpine-mixin.scss";
+| @import "ag-grid-community/src/styles/ag-grid.scss";
+| @import "ag-grid-community/src/styles/ag-theme-alpine/sass/ag-theme-alpine-mixin.scss";
 |
 | .ag-theme-alpine {
 |   @include ag-theme-alpine((
@@ -1804,8 +1804,8 @@ title: "Get Started with AG Grid"
 |
 | ```scss
 | <style lang="scss">
-|   @import "../node_modules/ag-grid-community/dist/styles/ag-grid.css";
-|   @import "../node_modules/ag-grid-community/dist/styles/ag-theme-alpine.css";
+|   @import "ag-grid-community/dist/styles/ag-grid.css";
+|   @import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 | </style>
 | ```
 |
@@ -1871,8 +1871,8 @@ title: "Get Started with AG Grid"
 | </script>
 |
 |<style lang="scss">
-|    @import "../node_modules/ag-grid-community/dist/styles/ag-grid.css";
-|    @import "../node_modules/ag-grid-community/dist/styles/ag-theme-alpine.css";
+|    @import "ag-grid-community/dist/styles/ag-grid.css";
+|    @import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 |</style>
 | ```
 |
@@ -2008,8 +2008,8 @@ title: "Get Started with AG Grid"
 |</script>
 |
 |<style lang="scss">
-|@import "../node_modules/ag-grid-community/dist/styles/ag-grid.css";
-|@import "../node_modules/ag-grid-community/dist/styles/ag-theme-alpine.css";
+|@import "ag-grid-community/dist/styles/ag-grid.css";
+|@import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 |</style>
 | ```
 |
@@ -2086,8 +2086,8 @@ title: "Get Started with AG Grid"
 | </script>
 |
 |<style lang="scss">
-|@import "../node_modules/ag-grid-community/dist/styles/ag-grid.css";
-|@import "../node_modules/ag-grid-community/dist/styles/ag-theme-alpine.css";
+|@import "ag-grid-community/dist/styles/ag-grid.css";
+|@import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 |</style>
 | ```
 |
@@ -2209,8 +2209,8 @@ title: "Get Started with AG Grid"
 | </script>
 |
 | <style lang="scss">
-|   @import "../node_modules/ag-grid-community/dist/styles/ag-grid.css";
-|   @import "../node_modules/ag-grid-community/dist/styles/ag-theme-alpine.css";
+|   @import "ag-grid-community/dist/styles/ag-grid.css";
+|   @import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 | </style>
 | ```
 |
@@ -2242,8 +2242,8 @@ title: "Get Started with AG Grid"
 |
 | ```scss
 | <style lang="scss">
-|   @import "../node_modules/ag-grid-community/src/styles/ag-grid.scss";
-|   @import "../node_modules/ag-grid-community/src/styles/ag-theme-alpine/sass/ag-theme-alpine-mixin.scss";
+|   @import "ag-grid-community/src/styles/ag-grid.scss";
+|   @import "ag-grid-community/src/styles/ag-theme-alpine/sass/ag-theme-alpine-mixin.scss";
 |
 |   .ag-theme-alpine {
 |       @include ag-theme-alpine((

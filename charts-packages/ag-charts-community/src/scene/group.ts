@@ -96,6 +96,11 @@ export class Group extends Node {
 
         ctx.globalAlpha *= this.opacity;
 
+        if (this.dirtyZIndex) {
+            this.dirtyZIndex = false;
+            children.sort((a, b) => a.zIndex - b.zIndex);
+        }
+
         for (let i = 0; i < n; i++) {
             const child = children[i];
             if (child.visible) {
