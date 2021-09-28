@@ -95,7 +95,7 @@ function extractTypesFromNode(node, srcFile, includeQuestionMark) {
 
 function parseFile(sourceFile) {
     const src = fs.readFileSync(sourceFile, 'utf8');
-    return ts.createSourceFile('tempFile.ts', src, ts.ScriptTarget.Latest);
+    return ts.createSourceFile('tempFile.ts', src, ts.ScriptTarget.Latest, true);
 }
 
 function getInterfaces() {
