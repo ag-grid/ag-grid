@@ -117,7 +117,7 @@ sparklineOptions: {
 The given `fill` string can be in one of the following formats:
 - `#rgb` - Short Hex Code
 - `#rrggbb` - Hex Code
-- `rgb(r, g, b)` - RGB Absolute
+- `rgb(r, g, b)` - RGB
 - `rgba(r, g, b, a)` - RGB with an alpha channel
 - CSS color keyword - such as `aqua`, `orange`, etc.
 
