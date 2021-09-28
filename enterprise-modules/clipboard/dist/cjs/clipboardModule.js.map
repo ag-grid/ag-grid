@@ -1,0 +1,1 @@
+{"version":3,"file":"clipboardModule.js","sourceRoot":"","sources":["../../src/clipboardModule.ts"],"names":[],"mappings":";;AAAA,gDAA8D;AAC9D,iDAAgE;AAChE,4DAAgE;AAChE,iEAAgE;AAEnD,QAAA,eAAe,GAAW;IACnC,UAAU,EAAE,kBAAW,CAAC,eAAe;IACvC,KAAK,EAAE,CAAC,mCAAgB,CAAC;IACzB,gBAAgB,EAAE;QACd,2BAAoB;QACpB,4BAAe;KAClB;CACJ,CAAC"}

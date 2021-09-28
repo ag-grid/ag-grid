@@ -1,0 +1,30 @@
+import { BeanStub } from "../../../context/beanStub";
+import { Column } from "../../../entities/column";
+import { IHeaderCellComp } from "./headerCellCtrl";
+export declare class SelectAllFeature extends BeanStub {
+    private gridApi;
+    private columnApi;
+    private rowModel;
+    private selectionService;
+    private cbSelectAllVisible;
+    private processingEventFromCheckbox;
+    private column;
+    private comp;
+    private filteredOnly;
+    private cbSelectAll;
+    constructor(column: Column);
+    onSpaceKeyPressed(e: KeyboardEvent): void;
+    getCheckboxGui(): HTMLElement;
+    setComp(comp: IHeaderCellComp): void;
+    private showOrHideSelectAll;
+    private refreshHeaderAriaDescribedBy;
+    private onModelChanged;
+    private onSelectionChanged;
+    private getNextCheckboxState;
+    private updateStateOfCheckbox;
+    private refreshSelectAllLabel;
+    private getSelectionCount;
+    private checkRightRowModelType;
+    private onCbSelectAll;
+    private isCheckboxSelection;
+}
