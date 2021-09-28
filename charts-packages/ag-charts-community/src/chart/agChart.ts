@@ -22,10 +22,16 @@ import {
     AgChartThemeName,
     AgHierarchyChartOptions
 } from "./agChartOptions";
-import { mappings } from './agChartMappings';
 import { CartesianChart } from "./cartesianChart";
 import { PolarChart } from "./polarChart";
 import { HierarchyChart } from "./hierarchyChart";
+// In the config object consumed by the factory we don't specify the types of objects we want to create,
+// and in the rare cases when we do, the string type is not the same as corresponding constructor's name.
+// Also, the user provided config might miss certain mandatory properties.
+// For that reason, we must be able to tell what to instantiate and with what defaults using only
+// property's name and position in the config's hierarchy. To be able to do that we need the extra
+// information missing from the user provided config. Such information is provided by chart mappings.
+import { mappings } from './agChartMappings';
 
 type ThemeMap = { [key in AgChartThemeName | 'undefined' | 'null']?: ChartTheme };
 
