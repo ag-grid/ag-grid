@@ -66,6 +66,8 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
     private userCompDetails: UserCompDetails;
 
+    private userHeaderClasses: Set<string> = new Set();
+
     constructor(column: Column, parentRowCtrl: HeaderRowCtrl) {
         super(column, parentRowCtrl);
         this.column = column;
@@ -230,10 +232,30 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     private setupClassesFromColDef(): void {
-        const colDef = this.column.getColDef();
-        const goa = this.gridOptionsWrapper;
-        const classes = CssClassApplier.getHeaderClassesFromColDef(colDef, goa, this.column, null);
-        classes.forEach( c => this.comp.addOrRemoveCssClass(c, true) );
+        const refreshHeaderClasses = () => {
+            const colDef = this.column.getColDef();
+            const goa = this.gridOptionsWrapper;
+            const classes = CssClassApplier.getHeaderClassesFromColDef(colDef, goa, this.column, null);
+
+            const oldClasses = this.userHeaderClasses;
+            this.userHeaderClasses = new Set(classes);
+
+            classes.forEach( c => {                
+                if (oldClasses.has(c)) {
+                    // class already added, no need to apply it, but remove from old set
+                    oldClasses.delete(c);
+                } else {
+                    // class new since last time, so apply it
+                    this.comp.addOrRemoveCssClass(c, true);
+                }
+            });
+
+            // now old set only has classes that were applied last time, but not this time, so remove them
+            oldClasses.forEach(c => this.comp.addOrRemoveCssClass(c, false))
+        };
+
+        this.refreshFunctions.push(refreshHeaderClasses);
+        refreshHeaderClasses();
     }
 
     public getGui(): HTMLElement {
