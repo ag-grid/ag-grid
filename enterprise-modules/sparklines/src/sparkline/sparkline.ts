@@ -227,7 +227,7 @@ export abstract class Sparkline extends Observable {
         if (xScale instanceof LinearScale) {
             xMinMax = extent(xData, isNumber);
         } else if (xScale instanceof TimeScale) {
-            xMinMax = extent(xData, isDate);
+            xMinMax = extent(xData, isContinuous);
         }
 
         this.xScale.domain = xMinMax ? xMinMax.slice() : xData;
@@ -411,7 +411,7 @@ export abstract class Sparkline extends Observable {
     * @param value
     */
     private getDatum(value: any, type: AxisType): any {
-        if (type === 'number' && isNumber(value) || type === 'time' && isContinuous(value)) {
+        if (type === 'number' && isNumber(value) || type === 'time' && (isNumber(value) || isDate(value))) {
             return value;
         } else if (type === 'category') {
             if (isNumber(value)) {

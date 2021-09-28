@@ -24,6 +24,19 @@ var intervalId;
 
 function start() {
     if (intervalId) { return; }
+
+    function updateData() {
+        const itemsToUpdate = [];
+        gridOptions.api.forEachNodeAfterFilterAndSort(function(rowNode) {
+            let data = rowNode.data;
+            const n = data.change.length;
+            const v = Math.random() > 0.5 ? Number(Math.random()) : -Number(Math.random());
+            data.change = [...data.change.slice(1, n), v];
+            itemsToUpdate.push(data);
+        });
+        gridOptions.api.applyTransaction({ update: itemsToUpdate });
+    }
+
     this.intervalId = setInterval(updateData, 300);
 }
 
@@ -31,19 +44,6 @@ function stop() {
     if (intervalId === undefined) { return; }
     clearInterval(intervalId);
     intervalId = undefined;
-}
-
-function updateData() {
-    const itemsToUpdate = [];
-    gridOptions.api.forEachNodeAfterFilterAndSort(function(rowNode) {
-        let data = rowNode.data;
-        const n = data.change.length;
-        const v = Math.random() > 0.5 ? Number(Math.random()) : -Number(Math.random());
-        data.change = [...data.change.slice(1, n), v];
-        itemsToUpdate.push(data);
-    });
-
-    gridOptions.api.applyTransaction({ update: itemsToUpdate });
 }
 
 // setup the grid after the page has finished loading
