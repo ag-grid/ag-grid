@@ -528,7 +528,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
         const title = this.title;
 
         let titleVisible = false;
-        if (title && title.enabled) {
+        if (title && title.enabled && lineNode.visible) {
             titleVisible = true;
             const padding = title.padding.bottom;
             const titleNode = title.node;
@@ -624,7 +624,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
             }
         });
 
-        if (title && title.enabled && (!options || !options.excludeTitle)) {
+        if (title && title.enabled && lineNode.visible && (!options || !options.excludeTitle)) {
             const label = title.node;
             label.computeTransformMatrix();
             const matrix = Matrix.flyweight(label.matrix);
