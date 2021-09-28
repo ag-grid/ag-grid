@@ -144,8 +144,22 @@ test('fromRgbaString', () => {
         expect(color.a).toBe(1);
         expect(color.toRgbaString()).toBe('rgb(120, 255, 255)');
     }
-
-    expect(() => { Color.fromRgbaString('rgb(-120, 240, 100)'); }).toThrow();
+    {
+        const color = Color.fromRgbaString('  rgb(50%, 25%,75%) ');
+        expect(color.r).toBe(0.5);
+        expect(color.g).toBe(0.25);
+        expect(color.b).toBe(0.75);
+        expect(color.a).toBe(1);
+        expect(color.toRgbaString()).toBe('rgb(128, 64, 191)');
+    }
+    {
+        const color = Color.fromRgbaString('  rgb(-23, 255, 300) ');
+        expect(color.r).toBe(0);
+        expect(color.g).toBe(1);
+        expect(color.b).toBe(1);
+        expect(color.a).toBe(1);
+        expect(color.toRgbaString()).toBe('rgb(0, 255, 255)');
+    }
 });
 
 test('fromString', () => {

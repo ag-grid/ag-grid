@@ -93,25 +93,55 @@ export class Color {
         throw new Error(`Malformed hexadecimal color string: '${str}'`);
     }
 
+    private static parseRgbaComponents(parts: string[]): number[] {
+        const result: number[] = [];
+        let isPercentage = false;
+        for (let i = 0; i < parts.length; i++) {
+            const part = parts[i];
+            let value = parseFloat(part);
+            // if the first component is a percentage, assume the rest are
+            if (i === 0 && part.indexOf('%') >= 0) {
+                isPercentage = true;
+            }
+            if (isNaN(value)) {
+                result.push(value);
+                continue;
+            }
+            if (isPercentage) { // percentage r, g, or b value
+                value = Math.max(0, Math.min(100, value));
+                value /= 100;
+            } else {
+                if (i === 3) { // alpha component
+                    value = Math.max(0, Math.min(1, value));
+                } else { // absolute r, g, or b value
+                    value = Math.max(0, Math.min(255, value));
+                    value /= 255;
+                }
+            }
+            result.push(value);
+        }
+        return result;
+    }
+
     static parseRgb(input: string): [number, number, number] | undefined {
-        const parts = input.replace(/ /g, '').slice(4, -1).split(',').map(Number);
-        return parts.length === 3 && parts.every(p => p >= 0) ? parts as [number, number, number] : undefined;
+        const parts = Color.parseRgbaComponents(input.replace(/ /g, '').slice(4, -1).split(','));
+        return parts.length === 3 ? parts as [number, number, number] : undefined;
     }
 
     static parseRgba(input: string): [number, number, number, number] | undefined {
-        const parts = input.replace(/ /g, '').slice(5, -1).split(',').map(Number);
-        return parts.length === 4 && parts.every(p => p >= 0) ? parts as [number, number, number, number] : undefined;
+        const parts = Color.parseRgbaComponents(input.replace(/ /g, '').slice(5, -1).split(','));
+        return parts.length === 4 ? parts as [number, number, number, number] : undefined;
     }
 
     static fromRgbaString(str: string): Color {
         const rgb = Color.parseRgb(str);
         if (rgb) {
-            return new Color(rgb[0] / 255, rgb[1] / 255, rgb[2] / 255);
+            return new Color(rgb[0], rgb[1], rgb[2]);
         }
 
         const rgba = Color.parseRgba(str);
         if (rgba) {
-            return new Color(rgba[0] / 255, rgba[1] / 255, rgba[2] / 255, rgba[3]);
+            return new Color(rgba[0], rgba[1], rgba[2], rgba[3]);
         }
 
         throw new Error(`Malformed rgb/rgba color string: '${str}'`);
