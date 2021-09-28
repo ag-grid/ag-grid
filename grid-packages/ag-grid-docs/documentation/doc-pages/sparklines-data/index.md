@@ -36,7 +36,7 @@ Alternatively, a `valueGetter` can be added to return an array of numbers for ea
 This is demonstrated in the simple example below, where the 'Rate of Change' column contains the sparkline cell renderer.
 - Note that the data for the `rateOfChange` field in the data.js file is a `number[]`.
 
-<grid-example title='Sparkline Data - Array of Numbers' name='sparkline-data-number-array' type='generated' options='{ "enterprise": true, "exampleHeight": 510, "modules": ["clientside", "sparklines"] }'></grid-example>
+<grid-example title='Sparkline Data - Array of Numbers' name='sparkline-data-number-array' type='generated' options='{ "enterprise": true, "exampleHeight": 503, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 ### Array of Tuples
 
@@ -46,7 +46,7 @@ Another supported format is the tuples array. In this format, each tuple in the 
 - The y value should be a `number` whereas the x can be a `number`, `string`, `Date` or an object with a `toString` method.
 - The `rateOfChange` field is of type `[Date, number][]`, where x values are `Date` objects. 
 
-<grid-example title='Sparkline Data - Array of Tuples' name='sparkline-data-tuple-array' type='generated' options='{ "enterprise": true, "exampleHeight": 510, "modules": ["clientside", "sparklines"] }'></grid-example>
+<grid-example title='Sparkline Data - Array of Tuples' name='sparkline-data-tuple-array' type='generated' options='{ "enterprise": true, "exampleHeight": 503, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 ### Array of Objects
 
@@ -78,7 +78,7 @@ Note in the example below:
 - `xKey` and `yKey` can be any `string` value as long as they are specified in the options.
 - By default, the `xKey` and `yKey` are `'x'` and `'y'` respectively, so data objects with `'x'` and `'y'` keys would work fine without further configuration.
 
-<grid-example title='Sparkline Data - Array of Objects' name='sparkline-data-object-array' type='generated' options='{ "enterprise": true, "exampleHeight": 510, "modules": ["clientside", "sparklines"] }'></grid-example>
+<grid-example title='Sparkline Data - Array of Objects' name='sparkline-data-object-array' type='generated' options='{ "enterprise": true, "exampleHeight": 503, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 ## Formatting Sparkline Data
 
@@ -91,9 +91,14 @@ The following example demonstrates how data can be formatted using `valueGetter`
 - In this example, the data for the `rateOfChange` field is an object with `x` and `y` keys, both containing an array of numbers.
 - A `valueGetter` is used to format this data into `[number, number][]`, with x at index 0 and y at index 1 in each array.
 
-<grid-example title='Formatting Sparkline Data' name='formatting-sparkline-data' type='generated' options='{ "enterprise": true, "exampleHeight": 510, "modules": ["clientside", "sparklines"] }'></grid-example>
+<grid-example title='Formatting Sparkline Data' name='formatting-sparkline-data' type='generated' options='{ "enterprise": true, "exampleHeight": 503, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 ## Updating Sparkline Data
+
+Updating Sparkline data is no different from updating any other cell data, for more details see 
+[Updating Data](/data-update/).
+
+The following example demonstrates Sparkline data updates using the [Transaction Update API](/data-update-transactions/#transaction-update-api).
 
 <grid-example title='Sparkline Data Updates' name='sparkline-data-updates' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "modules": ["clientside", "sparklines"] }'></grid-example>
 
