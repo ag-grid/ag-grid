@@ -190,7 +190,7 @@ Where:
   - `(` - Nothing for zero or positive and parentheses for negative.
   - ` ` - A space for zero or positive and a minus sign for negative.
 - `symbol`:
-  - `$` - Apply currency symbols per the locale definition (only US locale is supported ATM).
+  - `$` - Apply the `$` currency symbol
   - `#` - For binary, octal, or hexadecimal notation, prefix by `0b`, `0o`, or `0x`, respectively.
 - `zero` - The `0` option enables zero-padding. Implicitly sets fill to `0` and align to `=`.
 - `width` - The width defines the minimum field width. If not specified, then the width will be determined by the content.
@@ -230,7 +230,7 @@ Let's take a look at another example that illustrates a common requirement of fo
   so that `3500000` becomes `3.5M` for example
 - the `~` trim option to trim all insignificant trailing zeros from the formatted value,
   so that `3.0M` becomes `3M` for example
-- the `$` currency option so that the formatted value is prefixed by a currency symbol of the current locale
+- the `$` option so that the formatted value is prefixed by the `$` symbol
 - the `formatter` function in addition to the `format` config to convert certain SI units to currency units
 
 The last point deserves a more in-depth explanation. Because the currency units don't match the SI
