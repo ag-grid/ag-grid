@@ -75,7 +75,3 @@ it dynamically as you change the range selection.
 ## Other Resources
 
 To learn about series events refer to the standalone charting library [documentation](/integrated-charts-events/).
-
-## Next Up
-
-Continue to the next section to learn about: [Third-Party Charting](/third-party-charting/).
