@@ -13,7 +13,7 @@ Some data points in the sparklines are special and can be emphasised to allow fo
 
 <div style="display: flex; justify-content: center;">
     <image-caption src="resources/line-sparkline.png" alt="Line sparkline" width="250px" constrained="true">First and last</image-caption>
-    <image-caption src="resources/area-sparkline.png" alt="Area sparkline" width="250px" constrained="true">Mininum and Maximum</image-caption>
+    <image-caption src="resources/area-sparkline.png" alt="Area sparkline" width="250px" constrained="true">Minimum and Maximum</image-caption>
     <image-caption src="resources/column-sparkline.png" alt="Column sparkline" width="250px" constrained="true">Negative and positive</image-caption>
 </div>
 
