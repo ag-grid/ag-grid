@@ -70,15 +70,20 @@ Note the following:
 
 Let's take a look at the pie chart configuration now, which is going to be slightly
 different. Notice the following:
-- we are using the same data set for the pie chart example as for the column chart example, but because the pie series are not stacked, we need 4 different pie series - one for each quarter - to render the whole data set
-- if the series are missing the `title` config, we are going to end up with legend items that are indistinguishable from those of other series, because each series legend items will be: `Coffee`, `Tea`, `Milk`, so we have to specify the name of the quarter in the series `title` to see make legend items unique
-- since we have multiple pie series, we have to modify the `highlightStyle` of every single series; in this example we are using the same `highlightStyle` for all 4 of them, but they could also be unique
+- We are using the same data set for the pie chart example as for the column chart example, but because the pie series are not stacked,
+  we need 4 different pie series - one for each quarter - to render the whole data set.
+- If the series are missing the `title` config, we will have legend items that are indistinguishable from those of other series,
+  because each series legend items will be: `Coffee`, `Tea`, `Milk`. This is why in order to make legend items unique we use the name of the quarter
+  in the series `title` config.
+- Since we have multiple pie series, we have to modify the `highlightStyle` of every single series;
+  in this example we are using the same `highlightStyle` for all 4 of them, but they could also be unique.
 
 <chart-example title='Pie Series with Custom Highlight Style' name='basic-pie' type='generated'></chart-example>
 
 ## Series Highlighting via Chart Themes
 
-An alternative to providing `highlightStyle` inside of each `pie` series config would be specifying the highlight style to be used by all pie series inside of a chart theme, as illustrated by the example below:
+The example above provides a separate `highlightStyle` for each pie series config.
+The highlight style can be provided in a chart theme just once to be used by all pie series, as illustrated by the example below:
 
 <chart-example title='Pie Series with Custom Highlight Style Theme' name='basic-pie-theme' type='generated'></chart-example>
 
