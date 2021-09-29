@@ -93,15 +93,25 @@ export class Color {
         throw new Error(`Malformed hexadecimal color string: '${str}'`);
     }
 
-    private static parenthesisContentsRe = /\(([^\)]+)\)/;
-
     private static stringToRgba(str: string): number[] | undefined {
-        const match = str.match(Color.parenthesisContentsRe);
-        if (!match) {
+        // Find positions of opening and closing parentheses.
+        let [po, pc] = [NaN, NaN];
+        for (let i = 0; i < str.length; i++) {
+            const c = str[i];
+            if (!po && c === '(') {
+                po = i;
+            } else if (c === ')') {
+                pc = i;
+                break;
+            }
+        }
+
+        const contents = po && pc && str.substring(po + 1, pc);
+        if (!contents) {
             return;
         }
 
-        const parts = match[1].split(',');
+        const parts = contents[1].split(',');
         const rgba: number[] = [];
 
         for (let i = 0; i < parts.length; i++) {
