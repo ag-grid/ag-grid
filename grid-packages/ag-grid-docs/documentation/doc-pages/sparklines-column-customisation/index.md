@@ -21,10 +21,10 @@ The snippet below shows option overrides for the Column Sparkline:
 ```js
 sparklineOptions: {
     type: 'column',
-    fill: 'rgba(0, 128, 0, 0.3)',
-    stroke: 'rgba(0, 128, 0, 0.3)',
+    fill: '#91cc75',
+    stroke: '#91cc75',
     highlightStyle: {
-        fill: 'rgb(250, 200, 88)'
+        fill: 'orange'
     },
     paddingInner: 0.6,
     paddingOuter: 0.1,
@@ -84,7 +84,7 @@ To add a stroke, modify the `strokeWidth` and `stroke` properties as shown below
 sparklineOptions: {
     type: 'column',
     stroke: '#ec7c7d', // sets the column stroke
-    strokeWidth: '1', // sets the column stroke width
+    strokeWidth: 2, // sets the column stroke width
     highlightStyle: {
         stroke: '#b5ec7c', // sets the highlighted column stroke
         strokeWidth: 2, // sets the highlighted column stroke width
@@ -92,7 +92,7 @@ sparklineOptions: {
 }
 ```
 
-- In the snippet above, we have configured the column stroke to be `1`px in the un-highlighted state, and `2`px in the highlighted state.
+- In the snippet above, we have configured the column stroke to be `2`px in the un-highlighted state, and `2`px in the highlighted state.
 - Note that the `stroke` property is also different depending on the highlighted state of the column.
 
 Here is the result of the configuration shown in the above snippet.

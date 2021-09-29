@@ -42,7 +42,7 @@
     },
     "SparklineMarker": {
         "enabled": {
-            "description": "By default this is set to `true` whilst marker size is set to `0`, which means the markers are present but not visible.",
+            "description": "By default this is set to `true` whilst marker `size` is set to `0`, which means the markers are present but not visible.",
             "type": "boolean",
             "default": true
         },
