@@ -181,7 +181,15 @@ More advanced customisations are discussed separately in the following sections:
 
 ### AreaSparklineOptions
 
-<interface-documentation interfaceName='AreaSparklineOptions' ></interface-documentation>
+<interface-documentation interfaceName='AreaSparklineOptions'  overrideSrc='sparklines-area-customisation/resources/area-sparkline-api.json'></interface-documentation>
+
+### SparklineMarker
+
+<api-documentation source='sparklines-area-customisation/resources/area-sparkline-api.json' section='SparklineMarker'></api-documentation>
+
+### SparklineAxisOptions
+
+<api-documentation source='sparklines-area-customisation/resources/area-sparkline-api.json' section='SparklineAxisOptions'></api-documentation>
 
 ## Next Up
 

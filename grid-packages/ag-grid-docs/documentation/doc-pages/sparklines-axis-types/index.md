@@ -144,7 +144,7 @@ The example below demonstrates the Time Axis used in an Area Sparkline. Note the
 
 ### SparklineAxisOptions
 
-<interface-documentation interfaceName='SparklineAxisOptions' ></interface-documentation>
+<api-documentation source='sparklines-axis-types/resources/sparkline-axis-api.json' section='SparklineAxisOptions'></api-documentation>
 
 ## Next Up
 

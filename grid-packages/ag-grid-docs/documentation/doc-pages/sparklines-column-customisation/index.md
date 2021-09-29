@@ -208,7 +208,11 @@ More advanced customisations are discussed separately in the following sections:
 
 ### ColumnSparklineOptions
 
-<interface-documentation interfaceName='ColumnSparklineOptions' ></interface-documentation>
+<interface-documentation interfaceName='ColumnSparklineOptions' overrideSrc='sparklines-column-customisation/resources/column-sparkline-api.json'></interface-documentation>
+
+### SparklineAxisOptions
+
+<api-documentation source='sparklines-column-customisation/resources/column-sparkline-api.json' section='SparklineAxisOptions'></api-documentation>
 
 ## Next Up
 
