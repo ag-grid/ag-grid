@@ -272,7 +272,8 @@ export class NavigationService extends BeanStub {
     private onCtrlLeftOrRight(key: number, gridCell: CellPosition): void {
         const leftKey = key === KeyCode.LEFT;
         const allColumns: Column[] = this.columnModel.getAllDisplayedColumns();
-        const columnToSelect: Column = leftKey ? allColumns[0] : last(allColumns);
+        const isRtl = this.gridOptionsWrapper.isEnableRtl();
+        const columnToSelect: Column = leftKey !== isRtl ? allColumns[0] : last(allColumns);
 
         this.navigateTo({
             scrollIndex: gridCell.rowIndex,

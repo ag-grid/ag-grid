@@ -111,7 +111,7 @@ export class Color {
             return;
         }
 
-        const parts = contents[1].split(',');
+        const parts = contents.split(',');
         const rgba: number[] = [];
 
         for (let i = 0; i < parts.length; i++) {

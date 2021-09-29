@@ -8,10 +8,10 @@ var gridOptions = {
             cellRendererParams: {
                 sparklineOptions: {
                     type: 'column',
-                    fill: 'rgba(0, 128, 0, 0.3)',
-                    stroke: 'rgba(0, 128, 0, 0.3)',
+                    fill: '#91cc75',
+                    stroke: '#91cc75',
                     highlightStyle: {
-                        fill: 'rgb(250, 200, 88)'
+                        fill: 'orange'
                     },
                     paddingInner: 0.6,
                     paddingOuter: 0.1,

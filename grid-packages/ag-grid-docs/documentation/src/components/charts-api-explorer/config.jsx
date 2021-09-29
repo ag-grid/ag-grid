@@ -819,23 +819,53 @@ const shadowConfig = {
     },
 };
 
-const getHighlightConfig = (name = 'markers') => ({
+const getHighlightConfig = () => ({
     highlightStyle: {
         meta: {
             requiresWholeObject: true,
-            description: `Configuration for the highlighting used when the ${name} are hovered over.`,
+            description: `Configuration for series item and whole series highlighting when individual series items or legend items are hovered over.`
         },
-        fill: {
-            default: 'yellow',
-            description: `The fill colour of the ${name} when hovered over.`,
-            editor: ColourEditor,
+        item: {
+            meta: {
+                requiresWholeObject: true,
+                description: `Highlight style used for an individual series item when tapped or hovered over.`
+            },
+            fill: {
+                default: 'yellow',
+                description: `The fill colour of a series item when hovered over.`,
+                editor: ColourEditor,
+            },
+            stroke: {
+                type: 'string',
+                description: `The stroke colour of a series item when hovered over.`,
+                editor: ColourEditor,
+            },
+            strokeWidth: {
+                type: 'number',
+                description: `The stroke width of a series item when hovered over.`,
+                editor: NumberEditor,
+            }
         },
-        stroke: {
-            type: 'string',
-            description: `The colour of the stroke around the ${name} when hovered over.`,
-            editor: ColourEditor,
-        },
-    },
+        series: {
+            meta: {
+                requiresWholeObject: true,
+                description: `Highlight style used for all series items (except the highlighted one) when an individual series item is tapped or hovered over (highlighted).`
+            },
+            strokeWidth: {
+                type: 'number',
+                description: `The stroke width of the rest of the series items (or the series line) when an individual series item is tapped or hovered over, or when a legend item is hovered over.`,
+                editor: NumberEditor,
+            },
+            dimOpacity: {
+                type: 'number',
+                description: `The opacity (a value between 0 and 1) of this series when another chart series is highlighted by hovering a series item or a legend item.`,
+                editor: NumberEditor,
+                min: 0,
+                max: 1,
+                step: 0.1
+            }
+        }
+    }
 });
 
 export const bar = Object.freeze({
