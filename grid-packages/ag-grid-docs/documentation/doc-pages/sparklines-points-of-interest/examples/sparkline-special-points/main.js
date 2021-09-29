@@ -10,7 +10,7 @@ var gridOptions = {
                 sparklineOptions: {
                     line: {
                         stroke: 'rgb(124, 255, 178)',
-                        strokeWidth: 2
+                        strokeWidth: 3
                     },
                     padding: {
                         top: 10,
