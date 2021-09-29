@@ -13,7 +13,7 @@
             top: 64px;
             height: calc(100vh - 64px);
             overflow: hidden;
-            overflow-y: scroll;
+            overflow-y: auto;
         }
 
         border-left: solid 1px $ag-light-grey;
