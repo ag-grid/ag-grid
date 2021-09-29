@@ -352,3 +352,7 @@ Note, that we are:
 ## Axis API Reference
 
 <api-documentation source='charts-api/api.json' section='axis' config='{ "showSnippets": true }'></api-documentation>
+
+## Next Up
+
+Continue to the next section to learn about [events](/events/).
