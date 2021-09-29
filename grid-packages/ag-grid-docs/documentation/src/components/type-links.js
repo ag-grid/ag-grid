@@ -72,7 +72,4 @@ export const TYPE_LINKS = {
     RowNode: '/row-object/',
     ServerSideTransaction: '/server-side-model-transactions/#transaction-api',
     Touch: 'https://developer.mozilla.org/en-US/docs/Web/API/Touch',
-    SparklineAxisOptions: '/sparklines-column-sparkline/#sparklineaxisoptions',
-    HighlightStyle: '/sparklines-column-sparkline/#highlightstyle',
-    ColumnFormat: '/sparklines-column-sparkline/#columnformat',
 };

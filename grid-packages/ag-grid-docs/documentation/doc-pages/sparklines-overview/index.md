@@ -4,7 +4,7 @@ enterprise: true
 ---
 
 This section introduces the grid's built-in Sparklines - mini charts that are optimised for grid cells that can be used
-to provide insights into data trends at a glance. These sparklines can be fully customised for application requirements.
+to provide insights into data trends at a glance. These sparklines can be fully customised to application's requirements.
 
 <image-caption src="sparklines-overview/resources/sparklines-overview.png" alt="Sparkline Overview" maxWidth="80%" constrained="true" centered="true"></image-caption>
 
@@ -15,7 +15,7 @@ To enable sparklines on a particular column, add the `agSparklineCellRenderer` a
 <snippet>
 const gridOptions = {
     columnDefs: [
-        { 
+        {
             field: 'change',
             cellRenderer: 'agSparklineCellRenderer',
         },
@@ -36,7 +36,7 @@ The following example shows the minimum configuration required to display data i
 
 ## Sparkline Customisation
 
-The default Sparkline options act as a good starting point for most applications, however sparklines can be fully 
+The default Sparkline options act as a good starting point for most applications, however sparklines can be fully
 customised by overriding the default sparkline options.
 
 Sparklines are customised by supplying `sparklineOptions` to the `cellRendererParams` on the Sparkline Cell Renderer
@@ -45,7 +45,7 @@ as shown below:
 <snippet>
 const gridOptions = {
     columnDefs: [
-        { 
+        {
             cellRenderer: 'agSparklineCellRenderer',
             cellRendererParams: {
                 sparklineOptions: {

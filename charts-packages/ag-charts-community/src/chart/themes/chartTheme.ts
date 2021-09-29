@@ -37,7 +37,7 @@ function isMergeableObject(value: any): boolean {
     return defaultIsMergeableObject(value) && !(value instanceof TimeInterval);
 }
 
-const mergeOptions = { arrayMerge, isMergeableObject };
+export const mergeOptions = { arrayMerge, isMergeableObject };
 
 export class ChartTheme {
 
@@ -606,7 +606,7 @@ export class ChartTheme {
         for (const type in typeToAliases) {
             typeToAliases[type].forEach(alias => {
                 if (!config[alias]) {
-                    config[alias] = deepMerge({}, config[type], { arrayMerge });
+                    config[alias] = deepMerge({}, config[type], mergeOptions);
                 }
             });
         }
@@ -616,10 +616,10 @@ export class ChartTheme {
     getConfig<T = any>(path: string, defaultValue?: T): T {
         const value = getValue(this.config, path, defaultValue);
         if (Array.isArray(value)) {
-            return deepMerge([], value, { arrayMerge });
+            return deepMerge([], value, mergeOptions);
         }
         if (isObject(value)) {
-            return deepMerge({}, value, { arrayMerge });
+            return deepMerge({}, value, mergeOptions);
         }
         return value;
     }
@@ -634,7 +634,7 @@ export class ChartTheme {
      * ```
      */
     protected getDefaults(): any {
-        return deepMerge({}, ChartTheme.defaults, { arrayMerge });
+        return deepMerge({}, ChartTheme.defaults, mergeOptions);
     }
 
     protected mergeWithParentDefaults(defaults: any): any {

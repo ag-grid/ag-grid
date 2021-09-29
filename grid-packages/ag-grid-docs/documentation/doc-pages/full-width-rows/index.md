@@ -66,7 +66,7 @@ The following points should be noted:
 
 - Full width can be applied to any row, including pinned rows. The example demonstrates full width in pinned top, pinned bottom and body rows.
 
-- Full width rows can be of any height, which is specified in the usual way using the `getRowHeight()` callback. The example sets body `fullWidth` rows to 55px.
+- Full width rows can be of any height, which is specified in the usual way using the `getRowHeight(params)` callback. The example sets body `fullWidth` rows to 55px.
 
 - The pinned full width rows are not impacted by either the vertical or horizontal scrolling.
 

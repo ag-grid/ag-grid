@@ -6,7 +6,7 @@ This section explains what chart axes are, how to configure and style them, and 
 
 A chart uses axes to plot data such as categories and values by converting them to screen coordinates. Since any point on the screen is an `(x, y)` pair of coordinates, a chart needs two orthogonal axes to plot the data &mdash; a horizontal axis to determine the `x` position of a point and a vertical axis to determine the `y` position. Axes also show ticks, labels and grid lines to help the user navigate a chart.
 
-The charting library supports three axis types:
+The charting library supports four axis types:
 
 - [Category](#category-axis)
 - [Number](#number-axis)
@@ -190,7 +190,7 @@ Where:
   - `(` - Nothing for zero or positive and parentheses for negative.
   - ` ` - A space for zero or positive and a minus sign for negative.
 - `symbol`:
-  - `$` - Apply currency symbols per the locale definition (only US locale is supported ATM).
+  - `$` - Apply the `$` currency symbol
   - `#` - For binary, octal, or hexadecimal notation, prefix by `0b`, `0o`, or `0x`, respectively.
 - `zero` - The `0` option enables zero-padding. Implicitly sets fill to `0` and align to `=`.
 - `width` - The width defines the minimum field width. If not specified, then the width will be determined by the content.
@@ -225,12 +225,14 @@ and to append the units used at the end.
 
 <chart-example title='Number Axis Label Format' name='number-axis-label-format' type='generated'></chart-example>
 
+### Example: Number Currency Format
+
 Let's take a look at another example that illustrates a common requirement of formatting numbers as currency. Note that we are using:
 - the `s` SI prefix directive to shorten big numbers by using smaller numbers in combination with units,
   so that `3500000` becomes `3.5M` for example
 - the `~` trim option to trim all insignificant trailing zeros from the formatted value,
   so that `3.0M` becomes `3M` for example
-- the `$` currency option so that the formatted value is prefixed by a currency symbol of the current locale
+- the `$` option so that the formatted value is prefixed by the `$` symbol
 - the `formatter` function in addition to the `format` config to convert certain SI units to currency units
 
 The last point deserves a more in-depth explanation. Because the currency units don't match the SI
@@ -350,3 +352,7 @@ Note, that we are:
 ## Axis API Reference
 
 <api-documentation source='charts-api/api.json' section='axis' config='{ "showSnippets": true }'></api-documentation>
+
+## Next Up
+
+Continue to the next section to learn about [events](/events/).

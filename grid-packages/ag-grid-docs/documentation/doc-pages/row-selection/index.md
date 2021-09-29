@@ -6,7 +6,7 @@ Select a row by clicking on it. Selecting a row will remove any previous selecti
 hold down <kbd>Ctrl</kbd> while clicking. Selecting a row and holding down <kbd>Shift</kbd>
 while clicking a second row will select the range.
 
-Remember Row Selection works with all frameworks (e.g. Angular and React) as well as plain JavaScript.
+Remember Row Selection works with all frameworks as well as plain JavaScript.
 
 Configure row selection with the following properties:
 

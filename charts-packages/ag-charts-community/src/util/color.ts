@@ -93,25 +93,49 @@ export class Color {
         throw new Error(`Malformed hexadecimal color string: '${str}'`);
     }
 
-    static parseRgb(input: string): [number, number, number] | undefined {
-        const parts = input.replace(/ /g, '').slice(4, -1).split(',').map(Number);
-        return parts.length === 3 && parts.every(p => p >= 0) ? parts as [number, number, number] : undefined;
-    }
+    private static parenthesisContentsRe = /\(([^\)]+)\)/;
 
-    static parseRgba(input: string): [number, number, number, number] | undefined {
-        const parts = input.replace(/ /g, '').slice(5, -1).split(',').map(Number);
-        return parts.length === 4 && parts.every(p => p >= 0) ? parts as [number, number, number, number] : undefined;
+    private static stringToRgba(str: string): number[] | undefined {
+        const match = str.match(Color.parenthesisContentsRe);
+        if (!match) {
+            return;
+        }
+
+        const parts = match[1].split(',');
+        const rgba: number[] = [];
+
+        for (let i = 0; i < parts.length; i++) {
+            const part = parts[i];
+            let value = parseFloat(part);
+            if (isNaN(value)) {
+                return;
+            }
+            if (part.indexOf('%') >= 0) { // percentage r, g, or b value
+                value = Math.max(0, Math.min(100, value));
+                value /= 100;
+            } else {
+                if (i === 3) { // alpha component
+                    value = Math.max(0, Math.min(1, value));
+                } else { // absolute r, g, or b value
+                    value = Math.max(0, Math.min(255, value));
+                    value /= 255;
+                }
+            }
+            rgba.push(value);
+        }
+
+        return rgba;
     }
 
     static fromRgbaString(str: string): Color {
-        const rgb = Color.parseRgb(str);
-        if (rgb) {
-            return new Color(rgb[0] / 255, rgb[1] / 255, rgb[2] / 255);
-        }
+        const rgba = Color.stringToRgba(str);
 
-        const rgba = Color.parseRgba(str);
         if (rgba) {
-            return new Color(rgba[0] / 255, rgba[1] / 255, rgba[2] / 255, rgba[3]);
+            if (rgba.length === 3) {
+                return new Color(rgba[0], rgba[1], rgba[2]);
+            } else if (rgba.length === 4) {
+                return new Color(rgba[0], rgba[1], rgba[2], rgba[3]);
+            }
         }
 
         throw new Error(`Malformed rgb/rgba color string: '${str}'`);

@@ -21,7 +21,7 @@ The example below demonstrates all three Simple Filters working. Note the follow
 - The **Date** column has a Date Filter.
 - `filter=false` is set on the **Total** column to disable the filter.
 
-Remember Filtering works with all frameworks (e.g. Angular and React) as well as plain JavaScript.
+Remember Filtering works with all frameworks as well as plain JavaScript.
 
 <grid-example title='Provided Simple' name='provided-simple' type='generated' options='{ "exampleHeight": 560 }'></grid-example>
 

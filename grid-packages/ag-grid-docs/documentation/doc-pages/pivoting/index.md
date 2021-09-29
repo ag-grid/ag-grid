@@ -7,7 +7,7 @@ Pivoting allows you to take a columns values and turn them into columns. For exa
 
 Pivoting only makes sense when mixed with aggregation. If you turn a column into a pivot column, you must have at least one aggregation (value) active for the configuration to make sense. For example, if pivoting by country, you must provide something you are measuring such as 'gold medals per country'.
 
-As with all features, pivoting works with all frameworks the grid supports including Angular and React.
+As with all features, pivoting works with all frameworks the grid supports.
 
 ## Pivot Mode
 

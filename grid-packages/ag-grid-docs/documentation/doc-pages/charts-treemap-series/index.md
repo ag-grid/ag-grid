@@ -11,7 +11,7 @@ are represented by rectangles with areas that are the totals of their children.
 If the nodes have no value, then their area is divided equally among siblings within their parent node.
 
 The Ag-Charts treemap series uses a popular "squarified" tiling algorithm which tries to keep
-eash node's rectangle as square as possible.
+each node's rectangle as square as possible.
 
 Treemap series would be a great fit for visualizing a directory structure (the original purpose of
 the algorithm), components of a stock market index, shares of products within product categories,
@@ -102,4 +102,4 @@ series: [{
 
 ## Next Up
 
-Continue to the next section to learn about [bar and column series](/charts-bar-series/).
+Continue to the next section to learn about [layout](/layout/).

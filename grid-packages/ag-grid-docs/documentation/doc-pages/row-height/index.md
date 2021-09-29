@@ -27,7 +27,7 @@ Changing the property will set a new row height for all rows, including pinned r
 <api-documentation source='grid-callbacks/callbacks.json' section='styling' names='["getRowHeight"]' ></api-documentation>
 
 To change the row height so that each row can have a different height,
-implement the `getRowHeight()` callback. For example, to set the height
+implement the `getRowHeight(params)` callback. For example, to set the height
 to 50px for all group rows and 25px for all other rows, do the following:
 
 <snippet>
@@ -51,7 +51,7 @@ using a combination of `api.resetRowHeights()`, `rowNode.setRowHeight(height)` a
 ### api.resetRowHeights()
 
 Call this API to have the grid clear all the row
-heights and work them all out again from scratch - if you provide a `getRowHeight()`
+heights and work them all out again from scratch - if you provide a `getRowHeight(params)`
 callback, it will be called again for each row. The grid will then resize and
 reposition all rows again. This is the shotgun approach.
 
@@ -71,7 +71,7 @@ once at the end.
 When calling `rowNode.setRowHeight(height)`, you can either pass in a new height
 or `null` or `undefined`. If you pass a height, that height will be used for the row.
 If you pass in `null` or `undefined`, the grid will then calculate the row height in the
-usual way, either using the provided `rowHeight` property or `getRowHeight()`
+usual way, either using the provided `rowHeight` property or `getRowHeight(params)`
 callback.
 
 <api-documentation source='row-object/resources/methods.json' section='rowNodeMethods' names='["setRowHeight"]' config='{"overrideBottomMargin":"0rem"}' ></api-documentation>
@@ -82,7 +82,7 @@ callback.
 
 The example below changes the row height in the different ways described above.
 
-- **Top Level Groups:** The row height for the groups is changed by calling `api.resetRowHeights()`. This gets the grid to call `gridOptions.getRowHeight()` again for each row.
+- **Top Level Groups:** The row height for the groups is changed by calling `api.resetRowHeights()`. This gets the grid to call `gridOptions.getRowHeight(params)` again for each row.
 - **Swimming Leaf Rows:** Same technique is used here as above. You will need to expand a group with swimming (e.g. United States) and the grid works out all row heights again.
 - **Russia Leaf Rows:** The row height is set directly on the `rowNode`, and then the grid is told to reposition all rows again by calling `api.onRowHeightChanged()`.
 

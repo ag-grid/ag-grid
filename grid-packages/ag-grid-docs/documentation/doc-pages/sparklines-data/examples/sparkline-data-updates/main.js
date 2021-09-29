@@ -1,40 +1,49 @@
 var gridOptions = {
     columnDefs: [
-        { field: 'symbol', maxWidth: 110 },
-        { field: 'name', minWidth: 250 },
-        { field: 'lastPrice', type: 'numericColumn' },
-        { field: 'volume', type: 'numericColumn' },
+        {field: 'symbol', maxWidth: 120},
+        {field: 'name',  minWidth: 250 },
         {
-            field: 'history',
-            headerName: 'Close History',
-            minWidth: 100,
-            cellRenderer: 'agSparklineCellRenderer',
-            cellRendererParams: {
-                sparklineOptions: { type: 'area' },
-            },
-        }
+            field: 'change',
+            cellRenderer: 'agSparklineCellRenderer'
+        },
+        {
+            field: 'volume',
+            type: 'numericColumn',
+            maxWidth: 140,
+        },
     ],
     defaultColDef: {
         flex: 1,
         minWidth: 100,
         resizable: true,
     },
-    rowData: getStockData(),
+    rowData: getData(),
 };
 
-function updateData() {
-    const itemsToUpdate = [];
-    gridOptions.api.forEachNodeAfterFilterAndSort(function (rowNode, index) {
-        let data = rowNode.data;
-        const n = data.history.length;
-        data.history = [...data.history.slice(1, n), randomNumber(0, 10)];
-        itemsToUpdate.push(data);
-    });
-    gridOptions.api.applyTransaction({ update: itemsToUpdate });
+var intervalId;
+
+function start() {
+    if (intervalId) { return; }
+
+    function updateData() {
+        const itemsToUpdate = [];
+        gridOptions.api.forEachNodeAfterFilterAndSort(function(rowNode) {
+            let data = rowNode.data;
+            const n = data.change.length;
+            const v = Math.random() > 0.5 ? Number(Math.random()) : -Number(Math.random());
+            data.change = [...data.change.slice(1, n), v];
+            itemsToUpdate.push(data);
+        });
+        gridOptions.api.applyTransaction({ update: itemsToUpdate });
+    }
+
+    this.intervalId = setInterval(updateData, 300);
 }
 
-function randomNumber(min, max) {
-    return Math.floor(Math.random() * (max - min) + min);
+function stop() {
+    if (intervalId === undefined) { return; }
+    clearInterval(intervalId);
+    intervalId = undefined;
 }
 
 // setup the grid after the page has finished loading

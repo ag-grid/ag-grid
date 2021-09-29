@@ -28,7 +28,7 @@ export class WatermarkComp extends Component {
 
     private shouldDisplayWatermark(): boolean {
         const isDisplayWatermark = this.licenseManager.isDisplayWatermark();
-        const isWhiteListURL = location.hostname.match('^(?:127\.0\.0\.1|localhost|www\.ag-grid\.com)$') != null;
+        const isWhiteListURL = location.hostname.match('^(?:127\.0\.0\.1|localhost|(?:\w+\.)?ag-grid\.com)$') != null;
         const isForceWatermark = location.pathname ? location.pathname.indexOf('forceWatermark') !== -1 : false;
 
         return isForceWatermark || (isDisplayWatermark && !isWhiteListURL);
