@@ -80,22 +80,57 @@ var Color = /** @class */ (function () {
         }
         throw new Error("Malformed hexadecimal color string: '" + str + "'");
     };
-    Color.parseRgb = function (input) {
-        var parts = input.replace(/ /g, '').slice(4, -1).split(',').map(Number);
-        return parts.length === 3 && parts.every(function (p) { return p >= 0; }) ? parts : undefined;
-    };
-    Color.parseRgba = function (input) {
-        var parts = input.replace(/ /g, '').slice(5, -1).split(',').map(Number);
-        return parts.length === 4 && parts.every(function (p) { return p >= 0; }) ? parts : undefined;
+    Color.stringToRgba = function (str) {
+        // Find positions of opening and closing parentheses.
+        var _a = [NaN, NaN], po = _a[0], pc = _a[1];
+        for (var i = 0; i < str.length; i++) {
+            var c = str[i];
+            if (!po && c === '(') {
+                po = i;
+            }
+            else if (c === ')') {
+                pc = i;
+                break;
+            }
+        }
+        var contents = po && pc && str.substring(po + 1, pc);
+        if (!contents) {
+            return;
+        }
+        var parts = contents[1].split(',');
+        var rgba = [];
+        for (var i = 0; i < parts.length; i++) {
+            var part = parts[i];
+            var value = parseFloat(part);
+            if (isNaN(value)) {
+                return;
+            }
+            if (part.indexOf('%') >= 0) { // percentage r, g, or b value
+                value = Math.max(0, Math.min(100, value));
+                value /= 100;
+            }
+            else {
+                if (i === 3) { // alpha component
+                    value = Math.max(0, Math.min(1, value));
+                }
+                else { // absolute r, g, or b value
+                    value = Math.max(0, Math.min(255, value));
+                    value /= 255;
+                }
+            }
+            rgba.push(value);
+        }
+        return rgba;
     };
     Color.fromRgbaString = function (str) {
-        var rgb = Color.parseRgb(str);
-        if (rgb) {
-            return new Color(rgb[0] / 255, rgb[1] / 255, rgb[2] / 255);
-        }
-        var rgba = Color.parseRgba(str);
+        var rgba = Color.stringToRgba(str);
         if (rgba) {
-            return new Color(rgba[0] / 255, rgba[1] / 255, rgba[2] / 255, rgba[3]);
+            if (rgba.length === 3) {
+                return new Color(rgba[0], rgba[1], rgba[2]);
+            }
+            else if (rgba.length === 4) {
+                return new Color(rgba[0], rgba[1], rgba[2], rgba[3]);
+            }
         }
         throw new Error("Malformed rgb/rgba color string: '" + str + "'");
     };

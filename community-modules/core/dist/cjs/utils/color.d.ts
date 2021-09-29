@@ -31,8 +31,7 @@ export declare class Color {
     static fromString(str: string): Color;
     static parseHex(input: string): [number, number, number, number] | undefined;
     static fromHexString(str: string): Color;
-    static parseRgb(input: string): [number, number, number] | undefined;
-    static parseRgba(input: string): [number, number, number, number] | undefined;
+    private static stringToRgba;
     static fromRgbaString(str: string): Color;
     static fromArray(arr: [number, number, number] | [number, number, number, number]): Color;
     static fromHSB(h: number, s: number, b: number, alpha?: number): Color;

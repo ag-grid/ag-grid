@@ -207,7 +207,7 @@ var Sparkline = /** @class */ (function (_super) {
             xMinMax = array_1.extent(xData, value_1.isNumber);
         }
         else if (xScale instanceof timeScale_1.TimeScale) {
-            xMinMax = array_1.extent(xData, value_1.isDate);
+            xMinMax = array_1.extent(xData, value_1.isContinuous);
         }
         this.xScale.domain = xMinMax ? xMinMax.slice() : xData;
     };
@@ -359,14 +359,11 @@ var Sparkline = /** @class */ (function (_super) {
     * @param value
     */
     Sparkline.prototype.getDatum = function (value, type) {
-        if (type === 'number' && value_1.isNumber(value) || type === 'time' && value_1.isContinuous(value)) {
+        if (type === 'number' && value_1.isNumber(value) || type === 'time' && (value_1.isNumber(value) || value_1.isDate(value))) {
             return value;
         }
         else if (type === 'category') {
-            if (value_1.isNumber(value)) {
-                return String(value);
-            }
-            else if (value_1.isString(value) || value_1.isDate(value)) {
+            if (value_1.isString(value) || value_1.isDate(value) || value_1.isNumber(value)) {
                 return { toString: function () { return String(value); } };
             }
             else if (value_1.isStringObject(value)) {
