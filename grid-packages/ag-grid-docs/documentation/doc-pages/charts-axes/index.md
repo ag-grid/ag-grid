@@ -6,7 +6,7 @@ This section explains what chart axes are, how to configure and style them, and 
 
 A chart uses axes to plot data such as categories and values by converting them to screen coordinates. Since any point on the screen is an `(x, y)` pair of coordinates, a chart needs two orthogonal axes to plot the data &mdash; a horizontal axis to determine the `x` position of a point and a vertical axis to determine the `y` position. Axes also show ticks, labels and grid lines to help the user navigate a chart.
 
-The charting library supports three axis types:
+The charting library supports four axis types:
 
 - [Category](#category-axis)
 - [Number](#number-axis)
