@@ -22,17 +22,6 @@ const data = [
     },
 ];
 
-const highlightStyle = {
-    fill: 'cyan',
-    stroke: 'blue',
-    strokeWidth: 4,
-    series: {
-        enabled: true,
-        dimOpacity: 0.2,
-        strokeWidth: 2
-    }
-};
-
 const options = {
     data: data,
     container: document.body,
@@ -42,11 +31,35 @@ const options = {
     subtitle: {
         text: 'per quarter'
     },
+    theme: {
+        baseTheme: 'ag-pastel',
+        overrides: {
+            polar: {
+                series: {
+                    pie: {
+                        title: {
+                            showInLegend: true
+                        },
+                        highlightStyle: {
+                            item: {
+                                fill: 'red',
+                                stroke: 'maroon',
+                                strokeWidth: 4,
+                            },
+                            series: {
+                                dimOpacity: 0.2,
+                                strokeWidth: 2
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
     series: [{
         type: 'pie',
         title: {
-            text: 'Q1',
-            showInLegend: true
+            text: 'Q1'
         },
         label: {
             enabled: false,
@@ -55,13 +68,11 @@ const options = {
         labelKey: 'beverage',
         showInLegend: true,
         outerRadiusOffset: 0,
-        innerRadiusOffset: -20,
-        highlightStyle
+        innerRadiusOffset: -20
     }, {
         type: 'pie',
         title: {
-            text: 'Q2',
-            showInLegend: true
+            text: 'Q2'
         },
         label: {
             enabled: false,
@@ -69,13 +80,11 @@ const options = {
         angleKey: 'Q2',
         labelKey: 'beverage',
         outerRadiusOffset: -40,
-        innerRadiusOffset: -60,
-        highlightStyle
+        innerRadiusOffset: -60
     }, {
         type: 'pie',
         title: {
-            text: 'Q3',
-            showInLegend: true
+            text: 'Q3'
         },
         label: {
             enabled: false,
@@ -83,13 +92,11 @@ const options = {
         angleKey: 'Q3',
         labelKey: 'beverage',
         outerRadiusOffset: -80,
-        innerRadiusOffset: -100,
-        highlightStyle
+        innerRadiusOffset: -100
     }, {
         type: 'pie',
         title: {
-            text: 'Q4',
-            showInLegend: true
+            text: 'Q4'
         },
         label: {
             enabled: false,
@@ -97,8 +104,7 @@ const options = {
         angleKey: 'Q4',
         labelKey: 'beverage',
         outerRadiusOffset: -120,
-        innerRadiusOffset: -140,
-        highlightStyle
+        innerRadiusOffset: -140
     }]
 };
 
