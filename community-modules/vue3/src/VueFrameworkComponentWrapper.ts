@@ -113,8 +113,11 @@ abstract class VueComponent<P, T> {
         const {componentInstance, element, destroy: unmount} = this.createComponent(params);
 
         this.componentInstance = componentInstance;
-        this.element = element;
         this.unmount = unmount;
+
+        // the element is the parent div we're forced to created when dynamically creating vnodes
+        // the first child is the user supplied component
+        this.element = element.firstElementChild;
     }
 
     protected abstract createComponent(params: P): any;

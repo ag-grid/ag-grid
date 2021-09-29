@@ -12,9 +12,9 @@ Some data points in the sparklines are special and can be emphasised to allow fo
 - Positive and Negative
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/line-sparkline.png" alt="Line sparkline" width="250px" constrained="true"></image-caption>
-    <image-caption src="resources/column-sparkline.png" alt="Column sparkline" width="250px" constrained="true"></image-caption>
-    <image-caption src="resources/area-sparkline.png" alt="Area sparkline" width="250px" constrained="true"></image-caption>
+    <image-caption src="resources/line-sparkline.png" alt="Line sparkline" width="250px" constrained="true">First and last</image-caption>
+    <image-caption src="resources/area-sparkline.png" alt="Area sparkline" width="250px" constrained="true">Minimum and Maximum</image-caption>
+    <image-caption src="resources/column-sparkline.png" alt="Column sparkline" width="250px" constrained="true">Negative and positive</image-caption>
 </div>
 
 These special points can be customised via the `formatter` callback function to make them stand out from the rest of the data points which are using the global styles.
@@ -31,24 +31,13 @@ Below are some examples demonstrating the different formatters for the three spa
 
 In the line and area sparklines, each data point is represented by a marker. To customise the points of interest, the `formatter` function is added to the `marker` options:
 
-<snippet>
-const gridOptions = {
-    columnDefs: [
-        {
-            field: 'history',
-            cellRenderer: 'agSparklineCellRenderer',
-            cellRendererParams: {
-                sparklineOptions: {
-                    marker: {
-                        formatter: markerFormatter, // add formatter to marker options
-                    },
-                },
-            },
-        },
-        // other column definitions ...
-    ],
-};
-</snippet>
+```js
+sparklineOptions: {
+    marker: {
+        formatter: markerFormatter, // add formatter to marker options
+    },
+}
+```
 
 The `formatter` callback function will receive an input parameter of type [`markerFormatterParams`](/sparklines-points-of-interest/#markerformatterparams).
 
@@ -168,25 +157,12 @@ See the result of adding this formatter in the sparklines on the right below, co
 
 In the column sparklines, each data point is represented by a rectangle/ column. The `formatter` callback function applies to the individual columns and is added to `sparklineOptions`:
 
-<snippet>
-const gridOptions = {
-    columnDefs: [
-        {
-            field: 'sparkline',
-            headerName: 'Column Sparkline',
-            minWidth: 100,
-            cellRenderer: 'agSparklineCellRenderer',
-            cellRendererParams: {
-                sparklineOptions: {
-                    type: 'column',
-                    formatter: columnFormatter, // add formatter to sparklineOptions
-                },
-            },
-        },
-        // other column definitions ...
-    ],
-};
-</snippet>
+```js
+sparklineOptions: {
+    type: 'column',
+    formatter: columnFormatter, // add formatter to sparklineOptions
+}
+```
 
 The `formatter` will receive an input parameter with values associated with the data point it represents. The input parameter type is [`columnFormatterParams`](/sparklines-points-of-interest/#columnformatterparams).
 

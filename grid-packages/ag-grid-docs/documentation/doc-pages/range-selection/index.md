@@ -21,7 +21,7 @@ Range Selection is enabled using the following grid option property `enableRange
 
 The example below demonstrates simple range selection. Ranges can be selected in all the ways described above.
 
-<grid-example title='Range Selection' name='range-selection' type='generated' options='{ "enterprise": true, "modules": ["clientside", "range"] }'></grid-example>
+<grid-example title='Range Selection' name='range-selection' type='generated' options='{ "enterprise": true, "modules": ["clientside", "range", "menu", "clipboard"] }'></grid-example>
 
 ## Suppress Multi Range Selection
 
@@ -29,7 +29,7 @@ By default multiple ranges can be selected. To restrict range selection to a sin
 
 The following example demonstrates single range selection:
 
-<grid-example title='Range Selection Suppress Multi' name='range-selection-suppress-multi' type='generated' options='{ "enterprise": true, "modules": ["clientside", "range"] }'></grid-example>
+<grid-example title='Range Selection Suppress Multi' name='range-selection-suppress-multi' type='generated' options='{ "enterprise": true, "modules": ["clientside", "range", "menu", "clipboard"] }'></grid-example>
 
 ## Ranges with Pinning and Floating
 
@@ -83,4 +83,4 @@ The example below demonstrates a more complex range selection scenario. The exam
 
 The example also shows use of the `processCellForClipboard` and `processCellFromClipboard` [callbacks](/clipboard/#processing-clipboard-data) by making all the athlete names uppercase when copying into the clipboard and lowercase when copying from the clipboard.
 
-<grid-example title='Advanced Range Selection' name='range-selection-advanced' type='generated' options='{ "enterprise": true, "exampleHeight": 700, "modules": ["clientside", "range", "clipboard"] }'></grid-example>
+<grid-example title='Advanced Range Selection' name='range-selection-advanced' type='generated' options='{ "enterprise": true, "exampleHeight": 700, "modules": ["clientside", "range", "menu", "clipboard"] }'></grid-example>

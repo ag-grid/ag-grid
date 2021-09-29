@@ -8249,11 +8249,11 @@
       "tooltip?": "SparklineTooltip"
     },
     "docs": {
-      "xKey?": "/** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
-      "yKey?": "/** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
+      "xKey?": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
+      "yKey?": "/** The key to use to retrieve Y values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
-      "axis?": "/** The options for the horizontal axis line in the sparklines. */",
-      "highlightStyle?": "/** The configuration for the highlighting used when the markers are hovered over. */",
+      "axis?": "/** The options for the x-axis in the sparklines. */",
+      "highlightStyle?": "/** The configuration for the highlighting used when the items are hovered over. */",
       "tooltip?": "/** Configuration for the tooltips. */"
     }
   },
@@ -8274,11 +8274,11 @@
       "type?": "/** The type of sparklines to create, in this case it would be `'line'`. */",
       "line?": "/** The configuration for the line. */",
       "marker?": "/** The configuration for the marker styles. */",
-      "xKey?": "/** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
-      "yKey?": "/** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
+      "xKey?": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
+      "yKey?": "/** The key to use to retrieve Y values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
-      "axis?": "/** The options for the horizontal axis line in the sparklines. */",
-      "highlightStyle?": "/** The configuration for the highlighting used when the markers are hovered over. */",
+      "axis?": "/** The options for the x-axis in the sparklines. */",
+      "highlightStyle?": "/** The configuration for the highlighting used when the items are hovered over. */",
       "tooltip?": "/** Configuration for the tooltips. */"
     }
   },
@@ -8301,11 +8301,11 @@
       "fill?": "/** The CSS colour value for the fill of the area.\n * Default: `'rgba(124, 181, 236, 0.25)'` */",
       "line?": "/** The configuration for the line. */",
       "marker?": "/** The configuration for the marker styles. */",
-      "xKey?": "/** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
-      "yKey?": "/** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
+      "xKey?": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
+      "yKey?": "/** The key to use to retrieve Y values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
-      "axis?": "/** The options for the horizontal axis line in the sparklines. */",
-      "highlightStyle?": "/** The configuration for the highlighting used when the markers are hovered over. */",
+      "axis?": "/** The options for the x-axis in the sparklines. */",
+      "highlightStyle?": "/** The configuration for the highlighting used when the items are hovered over. */",
       "tooltip?": "/** Configuration for the tooltips. */"
     }
   },
@@ -8334,11 +8334,11 @@
       "paddingInner?": "/** The size of the gap between the columns as a proportion, between 0 and 1. This value is a fraction of the “step”, which is the interval between the start of a band and the start of the next band.\n * Default: `0.5` */",
       "paddingOuter?": "/** The padding on the outside i.e. left and right of the first and last columns, to leave some room for the axis. In association with `paddingInner`, this value can be between 0 and 1.\n * Default: `0.2` */",
       "formatter?": "/** A callback function to return format styles of type ColumnFormat, based on the data represented by individual columns. */",
-      "xKey?": "/** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
-      "yKey?": "/** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
+      "xKey?": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
+      "yKey?": "/** The key to use to retrieve Y values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
-      "axis?": "/** The options for the horizontal axis line in the sparklines. */",
-      "highlightStyle?": "/** The configuration for the highlighting used when the markers are hovered over. */",
+      "axis?": "/** The options for the x-axis in the sparklines. */",
+      "highlightStyle?": "/** The configuration for the highlighting used when the items are hovered over. */",
       "tooltip?": "/** Configuration for the tooltips. */"
     }
   },
@@ -8432,19 +8432,19 @@
       "highlighted": "boolean"
     },
     "docs": {
-      "datum": "/** The raw data associated with the specific marker. */",
-      "xValue": "/** The x value of the marker. */",
-      "yValue": "/** The y value of the marker. */",
+      "datum": "/** The raw data associated with the specific column. */",
+      "xValue": "/** The X value of the data point. */",
+      "yValue": "/** The Y value of the data point. */",
       "width": "/** The width of the column in pixels. */",
-      "height": "/** The width of the column in pixels. */",
-      "min?": "/** Whether or not the marker is a minimum point. */",
-      "max?": "/** Whether or not the marker is a maximum point. */",
-      "first?": "/** Whether or not the marker represents the first data point. */",
-      "last?": "/** Whether or not the marker represents the last data point. */",
-      "fill?": "/** The CSS colour value for the fill of the individual marker. */",
-      "stroke?": "/** The CSS colour value for the outline of the individual marker. */",
-      "strokeWidth": "/** The thickness in pixels for the stroke of the individual marker. */",
-      "highlighted": "/** Whether or not the marker is highlighted. */"
+      "height": "/** The height of the column in pixels. */",
+      "min?": "/** Whether or not the column is a minimum point. */",
+      "max?": "/** Whether or not the column is a maximum point. */",
+      "first?": "/** Whether or not the column represents the first data point. */",
+      "last?": "/** Whether or not the column represents the last data point. */",
+      "fill?": "/** The CSS colour value for the fill of the individual column. */",
+      "stroke?": "/** The CSS colour value for the outline of the individual column. */",
+      "strokeWidth": "/** The thickness in pixels for the stroke of the individual column. */",
+      "highlighted": "/** Whether or not the column is highlighted. */"
     }
   },
   "ColumnFormat": {
@@ -8503,8 +8503,8 @@
     },
     "docs": {
       "datum": "/** The raw data associated with the specific marker. */",
-      "xValue": "/** The x value of the marker. */",
-      "yValue": "/** The y value of the marker. */",
+      "xValue": "/** The X value of the data point. */",
+      "yValue": "/** The Y value of the data point. */",
       "min?": "/** Whether or not the marker is a minimum point. */",
       "max?": "/** Whether or not the marker is a maximum point. */",
       "first?": "/** Whether or not the marker represents the first data point. */",
@@ -8528,9 +8528,9 @@
     "docs": {
       "enabled?": "/** Set to false to make marker invisible. */",
       "size?": "/** The width in pixels of the individual marker. */",
-      "fill?": "/** The CSS colour value for the fill of the individual column. */",
-      "stroke?": "/** The CSS colour value for the outline of the individual column. */",
-      "strokeWidth?": "/** The thickness in pixels for the stroke of the individual column. */"
+      "fill?": "/** The CSS colour value for the fill of the individual marker. */",
+      "stroke?": "/** The CSS colour value for the outline of the individual marker. */",
+      "strokeWidth?": "/** The thickness in pixels for the stroke of the individual marker. */"
     }
   },
   "IStatusBarService": {

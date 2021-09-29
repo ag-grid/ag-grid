@@ -7,19 +7,19 @@ export interface ISparklineCellRendererParams extends ICellRendererParams {
 export type SparklineOptions = LineSparklineOptions | AreaSparklineOptions | ColumnSparklineOptions;
 
 export interface BaseSparklineOptions {
-    /** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs.
+    /** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.
      * Default: `'x'`
      */
     xKey?: string;
-    /** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs.
+    /** The key to use to retrieve Y values from the data. This will only be used if the data array contains objects with key-value pairs.
      * Default: `'y'`
      */
     yKey?: string;
     /** Configuration for the padding in pixels shown around the sparklines. */
     padding?: Padding;
-    /** The options for the horizontal axis line in the sparklines. */
+    /** The options for the x-axis in the sparklines. */
     axis?: SparklineAxisOptions;
-    /** The configuration for the highlighting used when the markers are hovered over. */
+    /** The configuration for the highlighting used when the items are hovered over. */
     highlightStyle?: HighlightStyle;
     /** Configuration for the tooltips. */
     tooltip?: SparklineTooltip;
@@ -177,31 +177,31 @@ export interface HighlightStyle {
 
 export type SparklineColumnFormatter = (params: ColumnFormatterParams) => ColumnFormat;
 export interface ColumnFormatterParams {
-    /** The raw data associated with the specific marker. */
+    /** The raw data associated with the specific column. */
     datum: any;
-    /** The x value of the marker. */
+    /** The X value of the data point. */
     xValue: any;
-    /** The y value of the marker. */
+    /** The Y value of the data point. */
     yValue: any;
     /** The width of the column in pixels. */
     width: number;
-    /** The width of the column in pixels. */
+    /** The height of the column in pixels. */
     height: number;
-    /** Whether or not the marker is a minimum point. */
+    /** Whether or not the column is a minimum point. */
     min?: boolean;
-    /** Whether or not the marker is a maximum point. */
+    /** Whether or not the column is a maximum point. */
     max?: boolean;
-    /** Whether or not the marker represents the first data point. */
+    /** Whether or not the column represents the first data point. */
     first?: boolean;
-    /** Whether or not the marker represents the last data point. */
+    /** Whether or not the column represents the last data point. */
     last?: boolean;
-    /** The CSS colour value for the fill of the individual marker. */
+    /** The CSS colour value for the fill of the individual column. */
     fill?: string;
-    /** The CSS colour value for the outline of the individual marker. */
+    /** The CSS colour value for the outline of the individual column. */
     stroke?: string;
-    /** The thickness in pixels for the stroke of the individual marker. */
+    /** The thickness in pixels for the stroke of the individual column. */
     strokeWidth: number;
-    /** Whether or not the marker is highlighted. */
+    /** Whether or not the column is highlighted. */
     highlighted: boolean;
 }
 
@@ -247,9 +247,9 @@ export type SparklineMarkerFormatter = (params: MarkerFormatterParams) => Marker
 export interface MarkerFormatterParams {
     /** The raw data associated with the specific marker. */
     datum: any;
-    /** The x value of the marker. */
+    /** The X value of the data point. */
     xValue: any;
-    /** The y value of the marker. */
+    /** The Y value of the data point. */
     yValue: any;
     /** Whether or not the marker is a minimum point. */
     min?: boolean;
@@ -276,10 +276,10 @@ export interface MarkerFormat {
     enabled?: boolean;
     /** The width in pixels of the individual marker. */
     size?: number;
-    /** The CSS colour value for the fill of the individual column. */
+    /** The CSS colour value for the fill of the individual marker. */
     fill?: string;
-    /** The CSS colour value for the outline of the individual column. */
+    /** The CSS colour value for the outline of the individual marker. */
     stroke?: string;
-    /** The thickness in pixels for the stroke of the individual column.*/
+    /** The thickness in pixels for the stroke of the individual marker.*/
     strokeWidth?: number;
 }

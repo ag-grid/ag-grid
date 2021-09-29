@@ -56,7 +56,7 @@ sparklineOptions: {
 }
 ```
 
-The result of the above configuration is displayed here.
+The result of the above configuration is displayed below on the right, compared with default `line` options on the left.
 
 <div style="display: flex; justify-content: center;">
     <image-caption src="resources/default.png" alt="Line customisation" width="250px" constrained="true">Default</image-caption>
@@ -65,11 +65,11 @@ The result of the above configuration is displayed here.
 
 ## Marker Options
 
-The markers are enabled by default but the size has been set to `0`, making them invisible.
+The markers are enabled by default but the size has been set to `0`px, making them invisible.
 
 The `size` property in the `highlightStyle` options is `6`px by default, allowing the markers to become visible when in the highlighted state.
 
-These formats can all be modified to your liking by setting the `marker` and `highlightStyle` options as demonstated here.
+These formats can be modified to your liking by setting the `marker` and `highlightStyle` options as demonstated below.
 
 ```js
 sparklineOptions: {
@@ -79,7 +79,7 @@ sparklineOptions: {
         shape: 'diamond',
         fill: 'green',
         stroke: 'green',
-        strokeWidth: '2'
+        strokeWidth: 2
     },
     highlightStyle: {
         size: 10,
@@ -92,7 +92,7 @@ sparklineOptions: {
 - In the snippet above, we have configured the marker size to be `3`px in the un-highlighted normal state, and `10`px in the highlighted state.
 - Note that the fill and stroke are also different depending on the highlighted state of the marker.
 
-Here is the result of the configuration shown in the above snippet.
+The result of the above configuration is displayed below, compared with default `marker` options in the first sparkline.
 
 <div style="display: flex; justify-content: center;">
     <image-caption src="resources/default.png" alt="Marker customisation" width="250px" constrained="true">Default</image-caption>

@@ -62,11 +62,11 @@ The result of the above configuration is displayed here.
 
 ## Marker Options
 
-The markers are enabled by default but the size has been set to `0`, making them invisible.
+The markers are enabled by default but the size has been set to `0`px, making them invisible.
 
 The `size` property in the `highlightStyle` options is `6`px by default, allowing the markers to become visible when in the highlighted state.
 
-These formats can all be modified to your liking by setting the `marker` and `highlightStyle` options as demonstrated here.
+These formats can be modified to your liking by setting the `marker` and `highlightStyle` options as demonstrated below.
 
 ```js
 sparklineOptions: {
@@ -77,7 +77,7 @@ sparklineOptions: {
         shape: 'circle',
         fill: 'green',
         stroke: 'green',
-        strokeWidth: '2'
+        strokeWidth: 2
     },
     highlightStyle: {
         size: 10,
