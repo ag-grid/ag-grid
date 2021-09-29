@@ -1,6 +1,6 @@
-var columnDefs = [
-    { field: 'code', maxWidth: 90 },
-    { field: 'name', minWidth: 200 },
+const columnDefs = [
+    {field: 'code', maxWidth: 90},
+    {field: 'name', minWidth: 200},
     {
         field: 'bid',
         cellClass: 'cell-number',
@@ -34,7 +34,7 @@ function numberFormatter(params) {
     return params.value;
 }
 
-var gridOptions = {
+const gridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
         flex: 1,
@@ -44,12 +44,14 @@ var gridOptions = {
     enableRangeSelection: true,
     immutableData: true,
     // implement this so that we can do selection
-    getRowNodeId: function (data) { return data.code; },
+    getRowNodeId: function (data) {
+        return data.code;
+    },
 
     onGridReady: function (params) {
-        var mockServer = createMockServer();
-        initialLoad$ = mockServer.initialLoad();
-        updates$ = mockServer.allDataUpdates();
+        const mockServer = createMockServer(),
+            initialLoad$ = mockServer.initialLoad(),
+            updates$ = mockServer.allDataUpdates();
 
         initialLoad$.subscribe(function (rowData) {
             // the initial full set of data
@@ -59,13 +61,15 @@ var gridOptions = {
             // now listen for updates
             // we're using immutableData this time, so although we're setting the entire
             // data set here, the grid will only re-render changed rows, improving performance
-            updates$.subscribe(function (newRowData) { return params.api.setRowData(newRowData); });
+            updates$.subscribe(function (newRowData) {
+                return params.api.setRowData(newRowData);
+            });
         });
     }
 };
 
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector('#myGrid');
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 });
 
@@ -101,11 +105,11 @@ function createMockServer() {
     // provides randomised data updates to some of the rows
     // only returns the changed data rows
     MockServer.prototype.byRowupdates = function () {
-        var that = Object(this);
+        const that = Object(this);
 
         return Rx.Observable.create(function (observer) {
-            var interval = window.setInterval(function () {
-                var changes = [];
+            const interval = window.setInterval(function () {
+                const changes = [];
 
                 // make some mock changes to the data
                 that.makeSomePriceChanges(changes);
@@ -113,18 +117,20 @@ function createMockServer() {
                 observer.next(changes);
             }, 1000);
 
-            return function () { window.clearInterval(interval); };
+            return function () {
+                window.clearInterval(interval);
+            };
         });
     };
 
     // provides randomised data updates to some of the rows
     // only all the row data (with some rows changed)
     MockServer.prototype.allDataUpdates = function () {
-        var that = Object(this);
+        const that = Object(this);
 
         return Rx.Observable.create(function (observer) {
-            var interval = setInterval(function () {
-                var changes = [];
+            const interval = setInterval(function () {
+                const changes = [];
 
                 // make some mock changes to the data
                 that.makeSomePriceChanges(changes);
@@ -135,7 +141,9 @@ function createMockServer() {
                 observer.next(_.cloneDeep(that.rowData));
             }, 1000);
 
-            return function () { window.clearInterval(interval); };
+            return function () {
+                window.clearInterval(interval);
+            };
         });
     };
 
@@ -145,7 +153,7 @@ function createMockServer() {
      * it is not important to understand the rest of the example (i.e. the rxjs part of it)
      */
     MockServer.prototype.backfillData = function (rowData) {
-        var that = Object(this);
+        const that = Object(this);
         // the sample data has just name and code, we need to add in dummy figures
         rowData.forEach(function (dataItem) {
             // have volume a random between 100 and 10,000
@@ -160,9 +168,9 @@ function createMockServer() {
     };
 
     MockServer.prototype.makeSomeVolumeChanges = function (changes) {
-        for (var i = 0; i < 10; i++) {
+        for (let i = 0; i < 10; i++) {
             // pick a data item at random
-            var index = Math.floor(this.rowData.length * Math.random()),
+            const index = Math.floor(this.rowData.length * Math.random()),
                 currentRowData = this.rowData[index],
                 // change by a value between -5 and 5
                 move = (Math.floor(10 * Math.random())) - 5,
@@ -175,8 +183,8 @@ function createMockServer() {
 
     MockServer.prototype.makeSomePriceChanges = function (changes) {
         // randomly update data for some rows
-        for (var i = 0; i < 10; i++) {
-            var index = Math.floor(this.rowData.length * Math.random()),
+        for (let i = 0; i < 10; i++) {
+            const index = Math.floor(this.rowData.length * Math.random()),
                 currentRowData = this.rowData[index],
                 // change by a value between -1 and 2 with one decimal place
                 move = (Math.floor(30 * Math.random())) / 10 - 1,
