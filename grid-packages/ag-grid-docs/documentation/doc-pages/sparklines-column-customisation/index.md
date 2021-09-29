@@ -70,7 +70,7 @@ sparklineOptions: {
 The given `fill` string can be in one of the following formats:
 - `#rgb` - Short Hex Code
 - `#rrggbb` - Hex Code
-- `rgb(r, g, b)` - RGB Absolute
+- `rgb(r, g, b)` - RGB
 - `rgba(r, g, b, a)` - RGB with an alpha channel
 - CSS color keyword - such as `aqua`, `orange`, etc.
 
@@ -116,7 +116,7 @@ Here's an example.
 
 ```js
 sparklineOptions: {
-    type: 'area',
+    type: 'column',
     paddingInner: 0.1, // sets the padding between columns.
 }
 ```
@@ -134,7 +134,7 @@ Here's a snippet where the `paddingOuter` is set to `0`.
 
 ```js
 sparklineOptions: {
-    type: 'area',
+    type: 'column',
     paddingOuter: 0, // sets the padding on the outer edge of the first and last columns.
 }
 ```
@@ -159,7 +159,7 @@ sparklineOptions: {
     type: 'column',
     axis: {
         stroke: '#7cecb3', // sets the x-axis line stroke
-        strokeWidth: 3, // sets the x-axis line stroke width
+        strokeWidth: 3, // sets the x-axis line strokeWidth
     },
 }
 ```
@@ -170,7 +170,7 @@ sparklineOptions: {
 </div>
 
 [[note]]
-| It's possible to remove the x-axis entirely by setting the axis `strokeWidth` to `0`.
+| It's possible to remove the x-axis line entirely by setting the axis `strokeWidth` to `0`.
 
 ## Sparkline Padding Options
 
@@ -200,7 +200,7 @@ sparklineOptions: {
 
 More advanced customisations are discussed separately in the following sections:
 
-- [Axis](/sparklines-axis-types/) - configure the x-axis type and appearance via `axis` options.
+- [Axis](/sparklines-axis-types/) - configure the x-axis type via `axis` options.
 - [Tooltips](/sparklines-tooltips/) - configure tooltips using `tooltip` options.
 - [Special Points](/sparklines-special-points/) - configure individual points of interest using a `formatter`.
 
@@ -208,7 +208,11 @@ More advanced customisations are discussed separately in the following sections:
 
 ### ColumnSparklineOptions
 
-<interface-documentation interfaceName='ColumnSparklineOptions' ></interface-documentation>
+<interface-documentation interfaceName='ColumnSparklineOptions' overrideSrc='sparklines-column-customisation/resources/column-sparkline-api.json'></interface-documentation>
+
+### SparklineAxisOptions
+
+<api-documentation source='sparklines-column-customisation/resources/column-sparkline-api.json' section='SparklineAxisOptions'></api-documentation>
 
 ## Next Up
 

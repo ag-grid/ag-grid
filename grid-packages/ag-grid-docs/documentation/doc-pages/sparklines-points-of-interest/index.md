@@ -5,10 +5,8 @@ enterprise: true
 
 This section covers customisation of Sparkline Points of Interest.
 
-In the line and area sparklines, each data point is represented by a marker. In the column sparkline, each data point is represented by a rectangle.
-Some of these data points in the sparklines are special and can be emphasised to make comparisons easier across multiple sparklines of the same type.
+Some data points in the sparklines are special and can be emphasised to make comparisons easier across multiple sparklines of the same type. These include:
 
-Special points include:
 - First and Last
 - Minimum and Maximum
 - Positive and Negative
@@ -25,7 +23,7 @@ Below are some examples demonstrating the different formatters for the three spa
 
 ## Line and Area Sparklines Points of Interest
 
-To customise the points of interest in line and area sparklines, the `formatter` function is added to the `marker` options:
+In the line and area sparklines, each data point is represented by a marker. To customise the points of interest, the `formatter` function is added to the `marker` options:
 
 <snippet>
 const gridOptions = {
@@ -68,7 +66,7 @@ Let's say we have a line sparkline where the markers are all `'skyblue'` but we 
 We can do this by adding the following formatter to the marker options.
 
 <snippet>
-|const lineMarkerFormatter = (params) => {
+|const markerFormatter = (params) => {
 |    const { first, last } = params;
 |
 |    return {
@@ -100,7 +98,7 @@ Here is the result of adding this formatter compared with setting global styles 
 Similar to first and last, to emphasise the min and max data points, the `min` and `max` booleans from the formatter params can be used to conditionally style the markers.
 
 <snippet>
-|const lineMarkerFormatter = (params) => {
+|const markerFormatter = (params) => {
 |    const { min, max } = params;
 |
 |    return {
@@ -135,7 +133,7 @@ The positive and negative values can be distinguished by adding a `formatter` wh
 This is demonstrated in the snippet below.
 
 <snippet>
-|const lineMarkerFormatter = (params) => {
+|const markerFormatter = (params) => {
 |    const { yValue } = params;
 |
 |    return {
@@ -161,7 +159,7 @@ The following screenshots show the area and line sparklines when this formatter 
 
 ## Column Sparklines Points of Interest
 
-The `formatter` callback function for column sparklines applies to the individual columns and is added to `sparklineOptions`:
+In the column sparklines, each data point is represented by a rectangle/ column. The `formatter` callback function applies to the individual columns and is added to `sparklineOptions`:
 
 <snippet>
 const gridOptions = {
@@ -174,7 +172,7 @@ const gridOptions = {
             cellRendererParams: {
                 sparklineOptions: {
                     type: 'column',
-                    formatter: columnFormatter, // add columnFormatter to sparklineOptions
+                    formatter: columnFormatter, // add formatter to sparklineOptions
                 },
             },
         },
@@ -237,7 +235,7 @@ Similar to first and last, to emphasise the min and max data points, the `min` a
 |}
 </snippet>
 
-Here's how this looks in the area and line sparklines
+Here's how this looks in the column sparklines
 
 <div style="display: flex; justify-content: center;">
     <image-caption src="resources/global-column.png" alt="Global styles" width="250px" constrained="true">Global column styles</image-caption>
@@ -256,9 +254,9 @@ This is demonstrated in the snippet below.
 |    const { yValue } = params;
 |
 |    return {
-|        // if yValue is negative, the column should be 'red', otherwise it should be 'green'
-|        fill: yValue < 0 ? 'red' : 'green',
-|        stroke: yValue < 0 ? 'red' : 'green'
+|        // if yValue is negative, the column should be dark red, otherwise it should be purple
+|        fill: yValue < 0 ? '#a90000' : '#5470c6',
+|        stroke: yValue < 0 ? '#a90000' : '#5470c6'
 |    }
 |}
 </snippet>
