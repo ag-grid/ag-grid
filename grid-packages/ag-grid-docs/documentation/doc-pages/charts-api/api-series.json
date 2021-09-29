@@ -129,7 +129,7 @@
     "highlightStyle": {
       "meta": {
         "requiresWholeObject": true,
-        "description": "Configuration for series item and whole series highlighting when the bar/column segments or legend items are hovered over."
+        "description": "Configuration for series item and whole series highlighting when bar/column segments or legend items are hovered over."
       },
       "item": {
         "meta": {
@@ -138,15 +138,15 @@
         },
         "fill": {
           "default": "yellow",
-          "description": "The fill colour of the bar / bar segment when hovered over. Use `undefined` for no highlight."
+          "description": "The fill colour of a bar / bar segment when hovered over. Use `undefined` for no highlight."
         },
         "stroke": {
           "type": "string",
-          "description": "The stroke colour of the bar / bar segment when hovered over. Use `undefined` for no highlight."
+          "description": "The stroke colour of a bar / bar segment when hovered over. Use `undefined` for no highlight."
         },
         "strokeWidth": {
           "type": "number",
-          "description": "The stroke width of the bar / bar segment when hovered over. Use `undefined` for no highlight."
+          "description": "The stroke width of a bar / bar segment when hovered over. Use `undefined` for no highlight."
         }
       },
       "series": {
@@ -160,7 +160,7 @@
         },
         "dimOpacity": {
           "type": "number",
-          "description": "The opacity of the bars (or bar segments belonging to the same stack level, in case of stacked bars) when other series or other stack level is highlighted by hovering a bar segment or a legend item. Use `undefined` or `1` for no dimming."
+          "description": "The opacity of the bars (or bar segments belonging to the same stack level, in case of stacked bars) when another chart series or other stack level in the same bar series is highlighted by hovering a series item or a legend item. Use `undefined` or `1` for no dimming."
         }
       }
     },
@@ -555,15 +555,39 @@
     "highlightStyle": {
       "meta": {
         "requiresWholeObject": true,
-        "description": "Configuration for the highlighting used when the markers are hovered over."
+        "description": "Configuration for line series markers and series line highlighting when a line marker / data point or a legend item is hovered over."
       },
-      "fill": {
-        "default": "yellow",
-        "description": "The fill colour of the markers when hovered over. Use `undefined` for no highlight."
+      "item": {
+        "meta": {
+          "requiresWholeObject": true,
+          "description": "Highlight style used for an individual markers when tapped or hovered over."
+        },
+        "fill": {
+          "default": "yellow",
+          "description": "The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight."
+        },
+        "stroke": {
+          "type": "string",
+          "description": "The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight."
+        },
+        "strokeWidth": {
+          "type": "number",
+          "description": "The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight."
+        }
       },
-      "stroke": {
-        "type": "string",
-        "description": "The colour of the stroke around the markers when hovered over. Use `undefined` for no highlight."
+      "series": {
+        "meta": {
+          "requiresWholeObject": true,
+          "description": "Highlight style used for whole series when one of its markers is tapped or hovered over."
+        },
+        "strokeWidth": {
+          "type": "number",
+          "description": "The stroke width of the trend line when one of the markers is tapped or hovered over, or when a tooltip is shown for a data point, even when series markers are disabled. Use `undefined` for no highlight."
+        },
+        "dimOpacity": {
+          "type": "number",
+          "description": "The opacity of the whole series (trend line, labels and markers, if any) when another chart series is highlighted by hovering a data point or a legend item. Use `undefined` or `1` for no dimming."
+        }
       }
     },
     "lineDash": {
@@ -862,15 +886,39 @@
     "highlightStyle": {
       "meta": {
         "requiresWholeObject": true,
-        "description": "Configuration for the highlighting used when the markers are hovered over."
+        "description": "Configuration for area series markers and series line highlighting when an area marker / data point or a legend item is hovered over."
       },
-      "fill": {
-        "default": "yellow",
-        "description": "The fill colour of the markers when hovered over. Use `undefined` for no highlight."
+      "item": {
+        "meta": {
+          "requiresWholeObject": true,
+          "description": "Highlight style used for an individual markers when tapped or hovered over."
+        },
+        "fill": {
+          "default": "yellow",
+          "description": "The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight."
+        },
+        "stroke": {
+          "type": "string",
+          "description": "The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight."
+        },
+        "strokeWidth": {
+          "type": "number",
+          "description": "The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight."
+        }
       },
-      "stroke": {
-        "type": "string",
-        "description": "The colour of the stroke around the markers when hovered over. Use `undefined` for no highlight."
+      "series": {
+        "meta": {
+          "requiresWholeObject": true,
+          "description": "Highlight style used for whole series when one of its markers is tapped or hovered over."
+        },
+        "strokeWidth": {
+          "type": "number",
+          "description": "The stroke width of the area line when one of the markers is tapped or hovered over, or when a tooltip is shown for a data point, even when series markers are disabled. Use `undefined` for no highlight."
+        },
+        "dimOpacity": {
+          "type": "number",
+          "description": "The opacity of the whole series (area line, area fill, labels and markers, if any) when another chart series or another stack level in the same area series is highlighted by hovering a data point or a legend item. Use `undefined` or `1` for no dimming."
+        }
       }
     },
     "lineDash": {
@@ -1174,15 +1222,39 @@
     "highlightStyle": {
       "meta": {
         "requiresWholeObject": true,
-        "description": "Configuration for the highlighting used when the markers are hovered over."
+        "description": "Configuration for scatter series marker highlighting when a marker or a legend item is hovered over."
       },
-      "fill": {
-        "default": "yellow",
-        "description": "The fill colour of the markers when hovered over. Use `undefined` for no highlight."
+      "item": {
+        "meta": {
+          "requiresWholeObject": true,
+          "description": "Highlight style used for an individual markers when tapped or hovered over."
+        },
+        "fill": {
+          "default": "yellow",
+          "description": "The fill colour of a marker when tapped or hovered over. Use `undefined` for no highlight."
+        },
+        "stroke": {
+          "type": "string",
+          "description": "The stroke colour of a marker when tapped or hovered over. Use `undefined` for no highlight."
+        },
+        "strokeWidth": {
+          "type": "number",
+          "description": "The stroke width of a marker when tapped or hovered over. Use `undefined` for no highlight."
+        }
       },
-      "stroke": {
-        "type": "string",
-        "description": "The colour of the stroke around the markers when hovered over. Use `undefined` for no highlight."
+      "series": {
+        "meta": {
+          "requiresWholeObject": true,
+          "description": "Highlight style used for whole series when one of its markers is tapped or hovered over."
+        },
+        "strokeWidth": {
+          "type": "number",
+          "description": "The stroke width of the rest of the markers when one of the markers in this series is tapped or hovered over. Use `undefined` for no highlight."
+        },
+        "dimOpacity": {
+          "type": "number",
+          "description": "The opacity of the whole series (including labels, if any) when another chart series is highlighted by hovering a series item or a legend item. Use `undefined` or `1` for no dimming."
+        }
       }
     },
     "listeners": {
@@ -1430,15 +1502,39 @@
     "highlightStyle": {
       "meta": {
         "requiresWholeObject": true,
-        "description": "Configuration for the highlighting used when the segments are hovered over."
+        "description": "Configuration for pie series sector highlighting when a pie sector or a corresponding legend item is hovered over."
       },
-      "fill": {
-        "default": "yellow",
-        "description": "The fill colour of the segments when hovered over. Use `undefined` for no highlight."
+      "item": {
+        "meta": {
+          "requiresWholeObject": true,
+          "description": "Highlight style used for an individual sectors when tapped or hovered over."
+        },
+        "fill": {
+          "default": "yellow",
+          "description": "The fill colour of a sector when tapped or hovered over. Use `undefined` for no highlight."
+        },
+        "stroke": {
+          "type": "string",
+          "description": "The stroke colour of a sector when tapped or hovered over. Use `undefined` for no highlight."
+        },
+        "strokeWidth": {
+          "type": "number",
+          "description": "The stroke width of a sector when tapped or hovered over. Use `undefined` for no highlight."
+        }
       },
-      "stroke": {
-        "type": "string",
-        "description": "The colour of the stroke around the segments when hovered over. Use `undefined` for no highlight."
+      "series": {
+        "meta": {
+          "requiresWholeObject": true,
+          "description": "Highlight style used for whole series when one of its sectors is tapped or hovered over."
+        },
+        "strokeWidth": {
+          "type": "number",
+          "description": "The stroke width of the rest of the sectors when one of the sectors in this series is tapped or hovered over. Use `undefined` for no highlight."
+        },
+        "dimOpacity": {
+          "type": "number",
+          "description": "The opacity of the whole series (including labels, if any) when another chart series is highlighted by hovering a series item or a legend item. Use `undefined` or `1` for no dimming."
+        }
       }
     },
     "label": {
@@ -2135,15 +2231,39 @@
     "highlightStyle": {
       "meta": {
         "requiresWholeObject": true,
-        "description": "Configuration for the highlighting used when the bars are hovered over."
+        "description": "Configuration for series item and whole series highlighting when columns or legend items are hovered over."
       },
-      "fill": {
-        "default": "yellow",
-        "description": "The fill colour of the bars when hovered over. Use `undefined` for no highlight."
+      "item": {
+        "meta": {
+          "requiresWholeObject": true,
+          "description": "Highlight style used for an individual column when tapped or hovered over."
+        },
+        "fill": {
+          "default": "yellow",
+          "description": "The fill colour of a column when hovered over. Use `undefined` for no highlight."
+        },
+        "stroke": {
+          "type": "string",
+          "description": "The stroke colour of a column when hovered over. Use `undefined` for no highlight."
+        },
+        "strokeWidth": {
+          "type": "number",
+          "description": "The stroke width of a column when hovered over. Use `undefined` for no highlight."
+        }
       },
-      "stroke": {
-        "type": "string",
-        "description": "The colour of the stroke around the bars when hovered over. Use `undefined` for no highlight."
+      "series": {
+        "meta": {
+          "requiresWholeObject": true,
+          "description": "Highlight style used for the whole series when a single column is tapped or hovered over."
+        },
+        "strokeWidth": {
+          "type": "number",
+          "description": "The stroke width of the rest of the columns when an individual column is tapped or hovered over, or when a legend item is hovered over. Use `undefined` for no highlight."
+        },
+        "dimOpacity": {
+          "type": "number",
+          "description": "The opacity of the series when another chart series is highlighted by hovering a series item or a legend item. Use `undefined` or `1` for no dimming."
+        }
       }
     },
     "fill": {
