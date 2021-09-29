@@ -6,6 +6,3 @@ This page documents the AG Charts API. You can find more details about getting s
 
 
 <api-documentation source='api.json' config='{ "showSnippets": true, "suppressSort": true }'></api-documentation>
-
-
-<api-documentation source='api-series.json' config='{ "showSnippets": true}'></api-documentation>

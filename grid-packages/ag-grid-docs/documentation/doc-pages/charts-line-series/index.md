@@ -184,7 +184,7 @@ This example uses the `'time'` axis which is configured to show a tick every 5 s
 
 ## API Reference
 
-<api-documentation source='charts-api/api-series.json' section='line' options='{ "showSnippets": true }'></api-documentation>
+<api-documentation source='charts-api/api.json' section='line' options='{ "showSnippets": true }'></api-documentation>
 
 ## Next Up
 

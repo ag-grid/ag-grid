@@ -126,7 +126,7 @@ With these simple changes we go from [stacked columns](#stacked-columns) to stac
 
 ## API Reference
 
-<api-documentation source='charts-api/api-series.json' section='bar' config='{ "showSnippets": true }'></api-documentation>
+<api-documentation source='charts-api/api.json' section='bar' config='{ "showSnippets": true }'></api-documentation>
 
 ## Next Up
 

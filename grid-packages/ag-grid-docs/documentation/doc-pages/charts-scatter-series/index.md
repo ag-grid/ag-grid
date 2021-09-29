@@ -78,7 +78,7 @@ label placement.
 
 ## API Reference
 
-<api-documentation source='charts-api/api-series.json' section='scatter' config='{ "showSnippets": true }'></api-documentation>
+<api-documentation source='charts-api/api.json' section='scatter' config='{ "showSnippets": true }'></api-documentation>
 
 ## Next Up
 
