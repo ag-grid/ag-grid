@@ -225,6 +225,8 @@ and to append the units used at the end.
 
 <chart-example title='Number Axis Label Format' name='number-axis-label-format' type='generated'></chart-example>
 
+### Example: Number Currency Format
+
 Let's take a look at another example that illustrates a common requirement of formatting numbers as currency. Note that we are using:
 - the `s` SI prefix directive to shorten big numbers by using smaller numbers in combination with units,
   so that `3500000` becomes `3.5M` for example
