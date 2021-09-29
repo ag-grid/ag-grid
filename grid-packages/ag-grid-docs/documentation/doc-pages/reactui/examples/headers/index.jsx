@@ -4,8 +4,6 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
 import { AgGridReact } from '@ag-grid-community/react';
-import { RichSelectModule } from '@ag-grid-enterprise/rich-select';
-import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { render } from 'react-dom';
 
@@ -77,7 +75,7 @@ const MyGroupHeader = memo((props) => {
 function GridExample() {
 
     // never changes, so we can use useMemo
-    const modules = useMemo( ()=> [ClientSideRowModelModule, RowGroupingModule, RichSelectModule], []);
+    const modules = useMemo( ()=> [ClientSideRowModelModule], []);
 
     // never changes, so we can use useMemo
     const columnDefs = useMemo( ()=> [
