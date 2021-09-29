@@ -49,7 +49,7 @@ The example below uses both `'circle'` and `'square'` markers to represent the a
 Scatter series can be configured to use labels. Unlike with other series types where a label is placed
 for every data point, scatter series label placement is constrained so that:
 
-- labels don't everlap any markers
+- labels don't overlap any markers
 - labels don't overlap other labels
 
 If these constraints are not satisfied, a label is not placed.
