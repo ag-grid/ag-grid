@@ -44,29 +44,29 @@ Note that the `datum` object is untyped and can contain keys that are not plotte
 
 #### Bar/Column series
 
-<api-documentation source='charts-api/api.json' section='bar.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation>
+<api-documentation source='charts-api/api-series.json' section='bar.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation>
 
 #### Line series
 
-<api-documentation source='charts-api/api.json' section='line.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation>
+<api-documentation source='charts-api/api-series.json' section='line.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation>
 
 #### Area series
 
 No events yet.
 
-<!-- <api-documentation source='charts-api/api.json' section='area.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation> -->
+<!-- <api-documentation source='charts-api/api-series.json' section='area.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation> -->
 
 #### Scatter series
 
-<api-documentation source='charts-api/api.json' section='scatter.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation>
+<api-documentation source='charts-api/api-series.json' section='scatter.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation>
 
 #### Pie series
 
-<api-documentation source='charts-api/api.json' section='pie.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation>
+<api-documentation source='charts-api/api-series.json' section='pie.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation>
 
 #### Histogram series
 
-<api-documentation source='charts-api/api.json' section='histogram.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation>
+<api-documentation source='charts-api/api-series.json' section='histogram.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation>
 
 Note that the `datum` in this case is not an element from the `chart.data` or `series.data` array provided by the user. It's a histogram bin, which represents an aggregated value of one or more `datum`s, where the datums themselves can be accessed via the `datum.data` property.
 
@@ -97,4 +97,4 @@ Fired when a node of any series in the chart is clicked. In case a chart has mul
 
 In this case the contents of the event object passed to the listener will depend on the type of series the clicked node belongs to.
 
-<!-- <api-documentation source='charts-api/api.json' section='chart.legend.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation> -->
+<!-- <api-documentation source='charts-api/api-series.json' section='chart.legend.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation> -->

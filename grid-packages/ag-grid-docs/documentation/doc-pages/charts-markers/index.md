@@ -76,7 +76,7 @@ The final result is shown in the example below.
 
 ## API Reference
 
-<api-documentation source='charts-api/api.json' section='line.marker'></api-documentation>
+<api-documentation source='charts-api/api-series.json' section='line.marker'></api-documentation>
 
 ## Next Up
 

@@ -351,7 +351,7 @@ Note, that we are:
 
 ## Axis API Reference
 
-<api-documentation source='charts-api/api.json' section='axis' config='{ "showSnippets": true }'></api-documentation>
+<api-documentation source='charts-api/api-series.json' section='axis' config='{ "showSnippets": true }'></api-documentation>
 
 ## Next Up
 

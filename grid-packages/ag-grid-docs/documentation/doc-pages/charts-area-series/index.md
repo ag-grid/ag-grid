@@ -127,7 +127,7 @@ normalizedTo: 100
 
 ## API Reference
 
-<api-documentation source='charts-api/api.json' section='area' config='{ "showSnippets": true }'></api-documentation>
+<api-documentation source='charts-api/api-series.json' section='area' config='{ "showSnippets": true }'></api-documentation>
 
 ## Next Up
 

@@ -124,7 +124,7 @@ The example below uses one pie series to plot the market share of each operating
 
 ## API Reference
 
-<api-documentation source='charts-api/api.json' section='pie' config='{ "showSnippets": true }'></api-documentation>
+<api-documentation source='charts-api/api-series.json' section='pie' config='{ "showSnippets": true }'></api-documentation>
 
 ## Next Up
 
