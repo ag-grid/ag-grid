@@ -51,7 +51,7 @@ The example is built up as follows:
 
 - The column **'All Groups - no Renderer'** builds on before, but adds all groups by setting `showRowGroup=true`. This gets the column to display all groups, but again no cell renderer so not expand / collapse functionality.
 
-- The column **Group Renderer A** builds on before, but adds the group cell renderer with `cellRenderer='group'`. The values are exactly as per the previous column, except now we have expand and collapse functionality.
+- The column **Group Renderer A** builds on before, but adds the group cell renderer with `cellRenderer='agGroupCellRenderer'`. The values are exactly as per the previous column, except now we have expand and collapse functionality.
 
 - The column **Group Renderer B** builds on before, but adds `field=city` so that the city is displayed in the leave nodes in the group column.
 
