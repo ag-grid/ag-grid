@@ -14414,11 +14414,11 @@
       "type": { "returnType": "Padding", "optional": true }
     },
     "axis": {
-      "description": "/** The options for the horizontal axis line in the sparklines. */",
+      "description": "/** The options for the x-axis in the sparklines. */",
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
     },
     "highlightStyle": {
-      "description": "/** The configuration for the highlighting used when the markers are hovered over. */",
+      "description": "/** The configuration for the highlighting used when the items are hovered over. */",
       "type": { "returnType": "HighlightStyle", "optional": true }
     },
     "tooltip": {
@@ -14452,11 +14452,11 @@
       "type": { "returnType": "Padding", "optional": true }
     },
     "axis": {
-      "description": "/** The options for the horizontal axis line in the sparklines. */",
+      "description": "/** The options for the x-axis in the sparklines. */",
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
     },
     "highlightStyle": {
-      "description": "/** The configuration for the highlighting used when the markers are hovered over. */",
+      "description": "/** The configuration for the highlighting used when the items are hovered over. */",
       "type": { "returnType": "HighlightStyle", "optional": true }
     },
     "tooltip": {
@@ -14494,11 +14494,11 @@
       "type": { "returnType": "Padding", "optional": true }
     },
     "axis": {
-      "description": "/** The options for the horizontal axis line in the sparklines. */",
+      "description": "/** The options for the x-axis in the sparklines. */",
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
     },
     "highlightStyle": {
-      "description": "/** The configuration for the highlighting used when the markers are hovered over. */",
+      "description": "/** The configuration for the highlighting used when the items are hovered over. */",
       "type": { "returnType": "HighlightStyle", "optional": true }
     },
     "tooltip": {
@@ -14548,11 +14548,11 @@
       "type": { "returnType": "Padding", "optional": true }
     },
     "axis": {
-      "description": "/** The options for the horizontal axis line in the sparklines. */",
+      "description": "/** The options for the x-axis in the sparklines. */",
       "type": { "returnType": "SparklineAxisOptions", "optional": true }
     },
     "highlightStyle": {
-      "description": "/** The configuration for the highlighting used when the markers are hovered over. */",
+      "description": "/** The configuration for the highlighting used when the items are hovered over. */",
       "type": { "returnType": "HighlightStyle", "optional": true }
     },
     "tooltip": {
