@@ -95,14 +95,14 @@ export class Color {
 
     private static parenthesisContentsRe = /\(([^\)]+)\)/;
 
-    private static stringToRgba(input: string): number[] | undefined {
-        const match = input.match(Color.parenthesisContentsRe);
+    private static stringToRgba(str: string): number[] | undefined {
+        const match = str.match(Color.parenthesisContentsRe);
         if (!match) {
             return;
         }
 
         const parts = match[1].split(',');
-        const result: number[] = [];
+        const rgba: number[] = [];
 
         for (let i = 0; i < parts.length; i++) {
             const part = parts[i];
@@ -121,10 +121,10 @@ export class Color {
                     value /= 255;
                 }
             }
-            result.push(value);
+            rgba.push(value);
         }
 
-        return result;
+        return rgba;
     }
 
     static fromRgbaString(str: string): Color {
