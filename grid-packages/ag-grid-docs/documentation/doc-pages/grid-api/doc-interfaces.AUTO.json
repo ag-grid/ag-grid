@@ -14402,11 +14402,11 @@
   "SparklineOptions": {},
   "BaseSparklineOptions": {
     "xKey": {
-      "description": "/** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
+      "description": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
       "type": { "returnType": "string", "optional": true }
     },
     "yKey": {
-      "description": "/** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
+      "description": "/** The key to use to retrieve Y values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "type": { "returnType": "string", "optional": true }
     },
     "padding": {
@@ -14440,11 +14440,11 @@
       "type": { "returnType": "SparklineMarker", "optional": true }
     },
     "xKey": {
-      "description": "/** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
+      "description": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
       "type": { "returnType": "string", "optional": true }
     },
     "yKey": {
-      "description": "/** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
+      "description": "/** The key to use to retrieve Y values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "type": { "returnType": "string", "optional": true }
     },
     "padding": {
@@ -14482,11 +14482,11 @@
       "type": { "returnType": "SparklineMarker", "optional": true }
     },
     "xKey": {
-      "description": "/** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
+      "description": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
       "type": { "returnType": "string", "optional": true }
     },
     "yKey": {
-      "description": "/** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
+      "description": "/** The key to use to retrieve Y values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "type": { "returnType": "string", "optional": true }
     },
     "padding": {
@@ -14536,11 +14536,11 @@
       "type": { "returnType": "SparklineColumnFormatter", "optional": true }
     },
     "xKey": {
-      "description": "/** The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
+      "description": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
       "type": { "returnType": "string", "optional": true }
     },
     "yKey": {
-      "description": "/** The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
+      "description": "/** The key to use to retrieve Y values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "type": { "returnType": "string", "optional": true }
     },
     "padding": {
@@ -14638,15 +14638,15 @@
   "SparklineColumnFormatter": {},
   "ColumnFormatterParams": {
     "datum": {
-      "description": "/** The raw data associated with the specific marker. */",
+      "description": "/** The raw data associated with the specific column. */",
       "type": { "returnType": "any", "optional": false }
     },
     "xValue": {
-      "description": "/** The x value of the marker. */",
+      "description": "/** The X value of the data point. */",
       "type": { "returnType": "any", "optional": false }
     },
     "yValue": {
-      "description": "/** The y value of the marker. */",
+      "description": "/** The Y value of the data point. */",
       "type": { "returnType": "any", "optional": false }
     },
     "width": {
@@ -14654,39 +14654,39 @@
       "type": { "returnType": "number", "optional": false }
     },
     "height": {
-      "description": "/** The width of the column in pixels. */",
+      "description": "/** The height of the column in pixels. */",
       "type": { "returnType": "number", "optional": false }
     },
     "min": {
-      "description": "/** Whether or not the marker is a minimum point. */",
+      "description": "/** Whether or not the column is a minimum point. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "max": {
-      "description": "/** Whether or not the marker is a maximum point. */",
+      "description": "/** Whether or not the column is a maximum point. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "first": {
-      "description": "/** Whether or not the marker represents the first data point. */",
+      "description": "/** Whether or not the column represents the first data point. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "last": {
-      "description": "/** Whether or not the marker represents the last data point. */",
+      "description": "/** Whether or not the column represents the last data point. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "fill": {
-      "description": "/** The CSS colour value for the fill of the individual marker. */",
+      "description": "/** The CSS colour value for the fill of the individual column. */",
       "type": { "returnType": "string", "optional": true }
     },
     "stroke": {
-      "description": "/** The CSS colour value for the outline of the individual marker. */",
+      "description": "/** The CSS colour value for the outline of the individual column. */",
       "type": { "returnType": "string", "optional": true }
     },
     "strokeWidth": {
-      "description": "/** The thickness in pixels for the stroke of the individual marker. */",
+      "description": "/** The thickness in pixels for the stroke of the individual column. */",
       "type": { "returnType": "number", "optional": false }
     },
     "highlighted": {
-      "description": "/** Whether or not the marker is highlighted. */",
+      "description": "/** Whether or not the column is highlighted. */",
       "type": { "returnType": "boolean", "optional": false }
     }
   },
@@ -14741,11 +14741,11 @@
       "type": { "returnType": "any", "optional": false }
     },
     "xValue": {
-      "description": "/** The x value of the marker. */",
+      "description": "/** The X value of the data point. */",
       "type": { "returnType": "any", "optional": false }
     },
     "yValue": {
-      "description": "/** The y value of the marker. */",
+      "description": "/** The Y value of the data point. */",
       "type": { "returnType": "any", "optional": false }
     },
     "min": {
@@ -14795,15 +14795,15 @@
       "type": { "returnType": "number", "optional": true }
     },
     "fill": {
-      "description": "/** The CSS colour value for the fill of the individual column. */",
+      "description": "/** The CSS colour value for the fill of the individual marker. */",
       "type": { "returnType": "string", "optional": true }
     },
     "stroke": {
-      "description": "/** The CSS colour value for the outline of the individual column. */",
+      "description": "/** The CSS colour value for the outline of the individual marker. */",
       "type": { "returnType": "string", "optional": true }
     },
     "strokeWidth": {
-      "description": "/** The thickness in pixels for the stroke of the individual column. */",
+      "description": "/** The thickness in pixels for the stroke of the individual marker. */",
       "type": { "returnType": "number", "optional": true }
     }
   },

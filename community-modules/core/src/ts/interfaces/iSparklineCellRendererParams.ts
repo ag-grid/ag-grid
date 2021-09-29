@@ -17,9 +17,9 @@ export interface BaseSparklineOptions {
     yKey?: string;
     /** Configuration for the padding in pixels shown around the sparklines. */
     padding?: Padding;
-    /** The options for the horizontal axis line in the sparklines. */
+    /** The options for the x-axis in the sparklines. */
     axis?: SparklineAxisOptions;
-    /** The configuration for the highlighting used when the markers are hovered over. */
+    /** The configuration for the highlighting used when the items are hovered over. */
     highlightStyle?: HighlightStyle;
     /** Configuration for the tooltips. */
     tooltip?: SparklineTooltip;
