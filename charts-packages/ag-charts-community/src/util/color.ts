@@ -127,25 +127,15 @@ export class Color {
         return result;
     }
 
-    static parseRgb(input: string): [number, number, number] | undefined {
-        const parts = Color.stringToRgba(input);
-        return parts && parts.length === 3 ? parts as [number, number, number] : undefined;
-    }
-
-    static parseRgba(input: string): [number, number, number, number] | undefined {
-        const parts = Color.stringToRgba(input);
-        return parts && parts.length === 4 ? parts as [number, number, number, number] : undefined;
-    }
-
     static fromRgbaString(str: string): Color {
-        const rgb = Color.parseRgb(str);
-        if (rgb) {
-            return new Color(rgb[0], rgb[1], rgb[2]);
-        }
+        const rgba = Color.stringToRgba(str);
 
-        const rgba = Color.parseRgba(str);
         if (rgba) {
-            return new Color(rgba[0], rgba[1], rgba[2], rgba[3]);
+            if (rgba.length === 3) {
+                return new Color(rgba[0], rgba[1], rgba[2]);
+            } else if (rgba.length === 4) {
+                return new Color(rgba[0], rgba[1], rgba[2], rgba[3]);
+            }
         }
 
         throw new Error(`Malformed rgb/rgba color string: '${str}'`);
