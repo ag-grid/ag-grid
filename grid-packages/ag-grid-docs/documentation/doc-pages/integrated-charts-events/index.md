@@ -74,4 +74,4 @@ it dynamically as you change the range selection.
 
 ## Other Resources
 
-To learn about series events refer to the standalone charting library [documentation](/events/).
+To learn about series events refer to the standalone charting library [documentation](/charts-events/).
