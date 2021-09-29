@@ -80,7 +80,7 @@ for (var element of event.datum.data) {
 
 ## Chart Events
 
-### Example: `seriesNodeClick` Event
+### Example: seriesNodeClick Event
 
 This example shows how to listen to `nodeClick` events of all series at once by subscribing to the chart's `seriesNodeClick` event.
 
@@ -91,7 +91,7 @@ In this case, instead of adding the `nodeClick` event to both line and column se
 
 <chart-example title='Node Click Event' name='series-node-click-event' type='generated'></chart-example>
 
-### `seriesNodeClick` Event
+### seriesNodeClick Event
 
 Fired when a node of any series in the chart is clicked. In case a chart has multiple series, it can be handy to be able to provide a single listener that will be called when a node is clicked in any of them.
 

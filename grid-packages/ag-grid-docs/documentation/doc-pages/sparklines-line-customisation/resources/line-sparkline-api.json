@@ -1,85 +1,21 @@
 {
     "_config_": {},
     "LineSparklineOptions": {
-        "type": {
-            "description": "The type of sparklines to create, in this case it would be `'line'`.",
-            "type": "string"
-        },
-        "xKey": {
-            "description": "The key to use to retrieve x-values from the data. This will only be used if the data array contains objects with key-value pairs.",
-            "type": "string",
-            "default": "x"
-        },
-        "yKey": {
-            "description": "The key to use to retrieve y-values from the data. This will only be used if the data array contains objects with key-value pairs.",
-            "type": "string",
-            "default": "y"
-        },
-        "title": {
-            "description": "The title of the sparklines.",
-            "type": "string"
-        },
-        "padding": {
-            "description": "Configuration for the padding in pixels shown around the sparklines.",
-            "type": "Padding",
-            "more": {
-                "name": "Padding",
-                "url": "/sparklines-line-sparkline/#padding"
-            }
-        },
-        "line": {
-            "description": "The configuration for the line.",
-            "type": "SparklineLine",
-            "more": {
-                "name": "SparklineLine",
-                "url": "/sparklines-line-sparkline/#sparklineline"
-            }
-        },
         "marker": {
             "description": "The configuration for the marker styles.",
             "type": "SparklineMarker",
             "more": {
                 "name": "SparklineMarker",
-                "url": "/sparklines-line-sparkline/#sparklinemarker"
+                "url": "/sparklines-line-customisation/#sparklinemarker"
             }
         },
-        "highlightStyle": {
-            "description": "The configuration for the highlighting used when the markers are hovered over.",
-            "type": "HighlightStyle",
+        "axis": {
+            "description": "Configuration for the x-axis.",
+            "type": "SparklineAxisOptions",
             "more": {
-                "name": "HighlightStyle",
-                "url": "/sparklines-line-sparkline/#highlightstyle"
+                "name": "SparklineAxisOptions",
+                "url": "/sparklines-line-customisation/#sparklineaxisoptions"
             }
-        }
-    },
-    "Padding": {
-        "top": {
-            "default": 3,
-            "description": "The number of pixels of padding at the top of the sparkline area."
-        },
-        "right": {
-            "default": 3,
-            "description": "The number of pixels of padding at the right of the sparkline area."
-        },
-        "bottom": {
-            "default": 3,
-            "description": "The number of pixels of padding at the bottom of the sparkline area."
-        },
-        "left": {
-            "default": 3,
-            "description": "The number of pixels of padding at the left of the sparkline area."
-        }
-    },
-    "SparklineLine": {
-        "stroke": {
-            "description": "The CSS colour value for the line.",
-            "type": "string",
-            "default": "rgb(124, 181, 236)"
-        },
-        "strokeWidth": {
-            "description": "The thickness in pixels for the stroke of the line.",
-            "type": "number",
-            "default": 1
         }
     },
     "SparklineMarker": {
@@ -122,7 +58,7 @@
             "description": "A callback function to return format styles for individual markers.",
             "more": {
                 "name": "MarkerFormat",
-                "url": "/sparklines-line-sparkline/#markerformat"
+                "url": "/sparklines-line-customisation/#markerformat"
             },
             "type": {
                 "meta": {
@@ -146,48 +82,16 @@
             }
         }
     },
-    "HighlightStyle": {
-        "size": {
-            "description": "The width in pixels of the markers when hovered over.",
-            "type": "number",
-            "default": 6
-        },
-        "fill": {
-            "description": "The fill colour of the markers when hovered over. Use `undefined` for no highlight fill.",
+    "SparklineAxisOptions": {
+        "type": {
+            "description": "The type of the x-axis.",
             "type": "string",
-            "default": "yellow"
-        },
-        "stroke": {
-            "description": "The CSS colour value for the outline of the markers when hovered over. Use `undefined` for no highlight stroke.",
-            "type": "string",
-            "default": "yellow"
-        },
-        "strokeWidth": {
-            "description": "The thickness in pixels for the stroke of the markers when hovered over.",
-            "type": "number",
-            "default": 0
-        }
-    },
-    "MarkerFormat": {
-        "enabled": {
-            "description": "Set to false to make marker invisible.",
-            "type": "boolean"
-        },
-        "size": {
-            "description": "The width in pixels of the individual marker.",
-            "type": "number"
-        },
-        "fill": {
-            "description": "The CSS colour value for the fill of the individual marker.",
-            "type": "string"
-        },
-        "stroke": {
-            "description": "The CSS colour value for the outline of the individual marker.",
-            "type": "string"
-        },
-        "strokeWidth": {
-            "description": "The thickness in pixels for the stroke of the individual marker.",
-            "type": "number"
+            "default": "category",
+            "options": [
+                "category",
+                "number",
+                "time"
+            ]
         }
     }
 }

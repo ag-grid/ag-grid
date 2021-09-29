@@ -37,8 +37,8 @@ var options = {
         yKeys: ['Q1', 'Q2', 'Q3', 'Q4'],
         highlightStyle: {
             item: {
-                fill: 'cyan',
-                stroke: 'blue',
+                fill: 'red',
+                stroke: 'maroon',
                 strokeWidth: 4
             },
             series: {

@@ -4,7 +4,7 @@ title: "Row Pagination"
 
 To enable pagination in, set the grid property `pagination=true`. The following simple example shows this, the only difference to this and previous examples is the `pagination=true` property.
 
-Remember Pagination works with all frameworks eg Angular and React as well as plain JavaScript.
+Remember Pagination works with all frameworks as well as plain JavaScript.
 
 <grid-example title='Client Paging' name='client-paging' type='generated' options='{ "enterprise": true }'></grid-example>
 

@@ -5,17 +5,21 @@ enterprise: true
 
 This section covers customisation of Sparkline Points of Interest.
 
-In the line and area sparklines, each data point is represented by a marker. In the column sparkline, each data point is represented by a rectangle.
-Some of these data points in the sparklines are special and can be emphasised to make comparisons easier across multiple sparklines of the same type.
+Some data points in the sparklines are special and can be emphasised to allow for quick identification and comparisons across the values of a single sparkline or across multiple sparklines of the same type. These include:
 
-Special points include:
 - First and Last
 - Minimum and Maximum
 - Positive and Negative
 
-These points can be customised via the `formatter` callback function to make them stand out from the rest of the normal data points which have global styles.
+<div style="display: flex; justify-content: center;">
+    <image-caption src="resources/line-sparkline.png" alt="Line sparkline" width="250px" constrained="true"></image-caption>
+    <image-caption src="resources/column-sparkline.png" alt="Column sparkline" width="250px" constrained="true"></image-caption>
+    <image-caption src="resources/area-sparkline.png" alt="Area sparkline" width="250px" constrained="true"></image-caption>
+</div>
+
+These special points can be customised via the `formatter` callback function to make them stand out from the rest of the data points which are using the global styles.
 - The formatter is a callback function used to return formatting for individual data points based on the given parameters.
-- It will receive an input according to the sparkline type.
+- The formatter receives an input parameter according to the sparkline type.
 
 Below are some examples demonstrating the different formatters for the three sparkline types:
 
@@ -25,7 +29,7 @@ Below are some examples demonstrating the different formatters for the three spa
 
 ## Line and Area Sparklines Points of Interest
 
-To customise the points of interest in line and area sparklines, the `formatter` function is added to the `marker` options:
+In the line and area sparklines, each data point is represented by a marker. To customise the points of interest, the `formatter` function is added to the `marker` options:
 
 <snippet>
 const gridOptions = {
@@ -46,7 +50,7 @@ const gridOptions = {
 };
 </snippet>
 
-The formatter callback function will receive an input of type [`markerFormatterParams`](/sparklines-points-of-interest/#markerformatterparams).
+The `formatter` callback function will receive an input parameter of type [`markerFormatterParams`](/sparklines-points-of-interest/#markerformatterparams).
 
 The function return type should be [`MarkerFormat`](/sparklines-points-of-interest/#markerformat), allowing the following attributes to be customised:
 
@@ -65,10 +69,10 @@ The following sections outline how the attributes mentioned above can be customi
 
 Let's say we have a line sparkline where the markers are all `'skyblue'` but we want to make the first and last markers stand out with a purple `fill` and `stroke` style.
 
-We can do this by adding the following formatter to the marker options.
+We can do this by adding the following formatter to the `marker` options.
 
 <snippet>
-|const lineMarkerFormatter = (params) => {
+|const markerFormatter = (params) => {
 |    const { first, last } = params;
 |
 |    return {
@@ -83,7 +87,7 @@ We can do this by adding the following formatter to the marker options.
 - If the given data point is the first or last point i.e. if `first` or `last` is `true`, the `size` of the marker is set to `5`px. All other markers will be `3`px.
 - Similar conditional logic is applied to colorise the markers to distinguish the first and last points from the rest.
 
-Here is the result of adding this formatter compared with setting global styles in `marker` options:
+See the result of adding this formatter in the sparklines on the right below, compared with the ones on the left which are using global styles in `marker` options:
 
 <div style="display: flex; justify-content: center;">
     <image-caption src="resources/global-area-marker.png" alt="Global styles" width="250px" constrained="true">Global marker styles</image-caption>
@@ -100,7 +104,7 @@ Here is the result of adding this formatter compared with setting global styles 
 Similar to first and last, to emphasise the min and max data points, the `min` and `max` booleans from the formatter params can be used to conditionally style the markers.
 
 <snippet>
-|const lineMarkerFormatter = (params) => {
+|const markerFormatter = (params) => {
 |    const { min, max } = params;
 |
 |    return {
@@ -112,9 +116,9 @@ Similar to first and last, to emphasise the min and max data points, the `min` a
 </snippet>
 
 - If the data point is a minimum or a maximum point – if `min` or `max` is `true` – the size is set to `5`px, otherwise it is set to`3`px.
-- If marker represents a minimum point, the `fill` and `stroke` are set to red, if the marker represents a maximum point, the `fill` and `stroke` are set to green. Otherwise the fill and stroke are set to sky blue.
+- If the marker represents a minimum point, the `fill` and `stroke` are set to red, if the marker represents a maximum point, the `fill` and `stroke` are set to green. Otherwise the fill and stroke are set to sky blue.
 
-Here's how this looks in the area and line sparklines:
+See the result of adding this formatter in the sparklines on the right below, compared with the ones on the left which are using global styles in `marker` options:
 
 <div style="display: flex; justify-content: center;">
     <image-caption src="resources/global-area-marker.png" alt="Global styles" width="250px" constrained="true">Global marker styles</image-caption>
@@ -135,7 +139,7 @@ The positive and negative values can be distinguished by adding a `formatter` wh
 This is demonstrated in the snippet below.
 
 <snippet>
-|const lineMarkerFormatter = (params) => {
+|const markerFormatter = (params) => {
 |    const { yValue } = params;
 |
 |    return {
@@ -146,7 +150,8 @@ This is demonstrated in the snippet below.
 |}
 </snippet>
 
-The following screenshots show the area and line sparklines when this formatter is added.
+See the result of adding this formatter in the sparklines on the right below, compared with the ones on the left which are using global styles in `marker` options:
+
 <div style="display: flex; justify-content: center;">
     <image-caption src="resources/global-area-marker.png" alt="Global styles" width="250px" constrained="true">Global marker styles</image-caption>
     <image-caption src="resources/custom-area-marker-positive-negative.png" alt="Area positive and negative marker customisation" width="250px" constrained="true">Formatted positive and negative points</image-caption>
@@ -161,7 +166,7 @@ The following screenshots show the area and line sparklines when this formatter 
 
 ## Column Sparklines Points of Interest
 
-The `formatter` callback function for column sparklines applies to the individual columns and is added to `sparklineOptions`:
+In the column sparklines, each data point is represented by a rectangle/ column. The `formatter` callback function applies to the individual columns and is added to `sparklineOptions`:
 
 <snippet>
 const gridOptions = {
@@ -174,7 +179,7 @@ const gridOptions = {
             cellRendererParams: {
                 sparklineOptions: {
                     type: 'column',
-                    formatter: columnFormatter, // add columnFormatter to sparklineOptions
+                    formatter: columnFormatter, // add formatter to sparklineOptions
                 },
             },
         },
@@ -183,7 +188,7 @@ const gridOptions = {
 };
 </snippet>
 
-The formatter will receive an input with values associated with the data point it represents. The input type is [`columnFormatterParams`](/sparklines-points-of-interest/#columnformatterparams).
+The `formatter` will receive an input parameter with values associated with the data point it represents. The input parameter type is [`columnFormatterParams`](/sparklines-points-of-interest/#columnformatterparams).
 
 The function return type should be [`ColumnFormat`](/sparklines-points-of-interest/#columnformat), allowing these attributes to be customised:
 
@@ -201,7 +206,7 @@ The following sections outline how the attributes mentioned above can be customi
 
 Let's say we want to make the first and last columns in our column sparklines stand out by styling them differently to the rest of the columns.
 
-We can do this by adding the following formatter to the marker options.
+We can do this by adding the following formatter to the `sparklineOptions`.
 
 <snippet>
 |const columnFormatter = (params) => {
@@ -237,13 +242,12 @@ Similar to first and last, to emphasise the min and max data points, the `min` a
 |}
 </snippet>
 
-Here's how this looks in the area and line sparklines
+Here is the result of adding this formatter compared with setting global styles in `sparklineOptions`:
 
 <div style="display: flex; justify-content: center;">
     <image-caption src="resources/global-column.png" alt="Global styles" width="250px" constrained="true">Global column styles</image-caption>
     <image-caption src="resources/custom-column-min-max.png" alt="Column minimum and maximum customisation" width="250px" constrained="true">Formatted minimum and maximum points</image-caption>
 </div>
-
 
 ### Positive and Negative
 
@@ -256,14 +260,14 @@ This is demonstrated in the snippet below.
 |    const { yValue } = params;
 |
 |    return {
-|        // if yValue is negative, the column should be 'red', otherwise it should be 'green'
-|        fill: yValue < 0 ? 'red' : 'green',
-|        stroke: yValue < 0 ? 'red' : 'green'
+|        // if yValue is negative, the column should be dark red, otherwise it should be purple
+|        fill: yValue < 0 ? '#a90000' : '#5470c6',
+|        stroke: yValue < 0 ? '#a90000' : '#5470c6'
 |    }
 |}
 </snippet>
 
-The images below show the result of the above formatter.
+Here is the result of adding this formatter compared with setting global styles in `sparklineOptions`:
 
 <div style="display: flex; justify-content: center;">
     <image-caption src="resources/global-column.png" alt="Global styles" width="250px" constrained="true">Global column styles</image-caption>

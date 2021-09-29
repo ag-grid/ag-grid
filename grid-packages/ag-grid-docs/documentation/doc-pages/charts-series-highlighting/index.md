@@ -1,18 +1,20 @@
 ---
-title: "Series"
+title: "Series Highlighting"
 ---
 
-This section coveres notable series properties available in all series types.
+## Introduction
 
-## Series Highlighting
-
-In data-rich charts with multiple overlapping series it might be difficul to tell one series from another
+In data-rich charts with multiple overlapping series it might be difficult to tell one series from another
 when hovering a series data point or a legend item. To make the hovered series stand out, we
 can highlight it, while dimming other chart series at the same time, as illustrated by the example below.
 
 <chart-example title='Overlapping Series' name='lines' type='generated'></chart-example>
 
-To achieve such functionality each chart series has a `highlightStyle` config with default values like this:
+## Series Highlighting Basics
+
+By default only item highlighting is activated. Series highlighting, as shown in the sample above, can be activated by modifying the default `highlightStyle`.
+
+Each chart series has a `highlightStyle` config with the following default values:
 
 ```js
 highlightStyle: {
@@ -32,16 +34,16 @@ highlightStyle: {
 }
 ```
 
-Where a series item can be a bar, a column, a pie sector, or a marker of any shape
-for series with markers such as line, area, or scatter series.
+The highlighted series item can be a bar or column segment, a pie or doughnut sector,
+or a marker in series with markers such as line, area, or scatter and bubble series.
 
-Let's try to replace the default highlight style with our custom one:
+In order to activate series highlighting, replace the default highlight style shown above with the custom one shown below:
 
 ```js
 highlightStyle: {
     item: {
-      fill: 'cyan',
-      stroke: 'blue',
+      fill: 'red',
+      stroke: 'maroon',
       strokeWidth: 4
     },
     series: {
@@ -51,19 +53,20 @@ highlightStyle: {
 }
 ```
 
-And let's take a look at what happens when we apply it to the column series in the example below.
+This custom highlightStyle is applied to the column series in the example below.
 
 Note the following:
-- when a series item (column segment) is highlighted, the segments belonging to all
-  other stack levels dim, and only segments from the stack level that the highligted
-  segment belongs to remain unaffected
-- at the same time the segments from the highlighted stack level (subseries) get the `strokeWidth` of `2`,
-  while the currently hovered segment gets a `strokeWidth` of `4`
-- when a legend item (representing a stack level) is hovered, the rest of the
-  stack levels in the series dim, but this time with no item highlighted because none
-  is being hovered
+- When a series item (column segment) is hovered, it gets highlighted using the style in the `highlightStyle.item` configuration.
+  Also, the segments belonging to all other stack levels are dimmed, and only segments
+  from the stack level that the highlighted segment belongs to remain unaffected.
+- At the same time the segments from the highlighted stack level (subseries) get the `strokeWidth` of `2`,
+  while the currently hovered segment gets a `strokeWidth` of `4`.
+- When a legend item (representing a stack level) is hovered, the rest of the stack levels in the series are dimmed,
+  but this time with no column segment item highlighted because none is hovered.
 
 <chart-example title='Column Series with Custom Highlight Style' name='basic-column' type='generated'></chart-example>
+
+## Series Highlighting with Multiple Series
 
 Let's take a look at the pie chart configuration now, which is going to be slightly
 different. Notice the following:
@@ -72,6 +75,8 @@ different. Notice the following:
 - since we have multiple pie series, we have to modify the `highlightStyle` of every single series; in this example we are using the same `highlightStyle` for all 4 of them, but they could also be unique
 
 <chart-example title='Pie Series with Custom Highlight Style' name='basic-pie' type='generated'></chart-example>
+
+## Series Highlighting via Chart Themes
 
 An alternative to providing `highlightStyle` inside of each `pie` series config would be specifying the highlight style to be used by all pie series inside of a chart theme, as illustrated by the example below:
 

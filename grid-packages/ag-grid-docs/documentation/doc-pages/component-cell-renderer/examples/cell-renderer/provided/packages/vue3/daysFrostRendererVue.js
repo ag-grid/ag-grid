@@ -7,16 +7,15 @@ export default {
         };
     },
     beforeMount() {
-        this.updateImage();
+        this.updateImage(this.params);
     },
     methods: {
-        updateImage() {
-            this.rendererImage = `https://www.ag-grid.com/example-assets/weather/${this.params.rendererImage}`;
-            this.value = this.params.value;
+        updateImage(params) {
+            this.rendererImage = `https://www.ag-grid.com/example-assets/weather/${params.rendererImage}`;
+            this.value = params.value;
         },
         refresh(params) {
-            this.params = params;
-            this.updateImage();
+            this.updateImage(params);
         }
     }
 };

@@ -32,7 +32,7 @@ The example below demonstrates `valueGetter`. The following can be noted from th
 - Columns A and B are simple columns using `field`
 
 - Value Getters are used in all subsequent columns as follows:
-    - Column 'Row Num' prints the row number, taken from the [Row Node](/row-object/).
+    - Column '#' prints the row number, taken from the [Row Node](/row-object/).
     - Column 'A+B' adds A and B.
     - Column 'A * 1000' multiplies A by 1000.
     - Column 'B * 137' multiplies B by 137.
