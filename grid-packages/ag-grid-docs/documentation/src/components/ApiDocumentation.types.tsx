@@ -151,6 +151,8 @@ export interface Config {
      * Can be used to have the doc entries expanded by default.
      */
     defaultExpand?: boolean;
+    /** Do not sort the sections, list as provided in JSON */
+    suppressSort?: boolean;
     /**
      * By default we do not include the "See More" links when api-documentation is used with specific names selected.
      * This is because it is likely the link will be pointing to the same place it is currently being used.

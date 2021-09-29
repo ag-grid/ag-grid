@@ -140,10 +140,12 @@ export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, sour
         const properties: DocEntryMap = mergeObjects(propertiesFromFiles);
 
         const entries = Object.entries(properties);
-        entries.sort(([k1, v1], [k2, v2]) => {
-            const getName = (k, v) => v.meta && v.meta.displayName || k;
-            return getName(k1, v1) < getName(k2, v2) ? -1 : 1;
-        })
+        if (!config.suppressSort) {
+            entries.sort(([k1, v1], [k2, v2]) => {
+                const getName = (k, v) => v.meta && v.meta.displayName || k;
+                return getName(k1, v1) < getName(k2, v2) ? -1 : 1;
+            })
+        }
         return entries
             .map(([key, value]) => <Section key={key} framework={framework} title={key} properties={value} config={config} />);
     }
