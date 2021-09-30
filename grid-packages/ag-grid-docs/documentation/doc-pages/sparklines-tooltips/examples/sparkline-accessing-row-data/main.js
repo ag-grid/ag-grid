@@ -26,6 +26,7 @@ var gridOptions = {
         resizable: true,
     },
     rowData: getData(),
+    rowHeight: 50,
 };
 
 function tooltipRenderer(params) {

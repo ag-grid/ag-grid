@@ -26,6 +26,7 @@ var gridOptions = {
         resizable: true,
     },
     rowData: getStockData(),
+    rowHeight: 50,
 };
 
 // setup the grid after the page has finished loading
