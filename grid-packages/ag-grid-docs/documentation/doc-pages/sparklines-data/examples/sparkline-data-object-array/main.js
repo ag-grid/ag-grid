@@ -7,7 +7,7 @@ var gridOptions = {
             cellRenderer: 'agSparklineCellRenderer',
             cellRendererParams: {
                 sparklineOptions: {
-                    type: 'line',
+                    type: 'column',
                     xKey: 'xVal',
                     yKey: 'yVal',
                     axis : {
