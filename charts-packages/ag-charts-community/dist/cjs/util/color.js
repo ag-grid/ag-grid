@@ -97,7 +97,7 @@ var Color = /** @class */ (function () {
         if (!contents) {
             return;
         }
-        var parts = contents[1].split(',');
+        var parts = contents.split(',');
         var rgba = [];
         for (var i = 0; i < parts.length; i++) {
             var part = parts[i];

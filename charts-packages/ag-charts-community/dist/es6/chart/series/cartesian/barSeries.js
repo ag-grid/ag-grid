@@ -620,7 +620,7 @@ var BarSeries = /** @class */ (function (_super) {
             rect.fillShadow = shadow;
             // Prevent stroke from rendering for zero height columns and zero width bars.
             rect.visible = flipXY ? datum.width > 0 : datum.height > 0;
-            rect.zIndex = datum === highlightedDatum ? Series.highlightedZIndex : index;
+            rect.zIndex = datum === highlightedDatum || (highlightedDatum && datum.itemId === highlightedDatum.itemId) ? Series.highlightedZIndex : index;
             rect.opacity = _this.getOpacity(datum);
         });
     };
@@ -654,7 +654,6 @@ var BarSeries = /** @class */ (function (_super) {
                 text.fill = label.fill;
                 text.visible = true;
                 text.opacity = _this.getOpacity(datum);
-                text.zIndex = (datum === highlightedDatum ? Series.highlightedZIndex : index) + 1;
             }
             else {
                 text.visible = false;

@@ -111,7 +111,7 @@ var LineSparkline = /** @class */ (function (_super) {
         for (var i = 0; i < yData.length; i++) {
             var yDatum = yData[i];
             var xDatum = xData[i];
-            if (yDatum == undefined || xDatum == undefined) {
+            if (yDatum == undefined) {
                 continue;
             }
             var x = xScale.convert(xDatum) + offsetX;

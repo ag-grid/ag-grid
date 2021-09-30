@@ -22,6 +22,7 @@ declare class SparklineLine extends Observable {
 export declare class AreaSparkline extends Sparkline {
     static className: string;
     fill: string;
+    protected skipInvalidYs: boolean;
     private areaSparklineGroup;
     protected strokePath: Path;
     protected fillPath: Path;

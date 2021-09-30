@@ -55,6 +55,7 @@ var Sparkline = /** @class */ (function (_super) {
         _this.dataType = undefined;
         _this.xData = [];
         _this.yData = [];
+        _this.skipInvalidYs = false;
         // Minimum y value in provided data.
         _this.min = undefined;
         // Maximum y value in provided data.
@@ -294,6 +295,9 @@ var Sparkline = /** @class */ (function (_super) {
                 var yDatum = data[i];
                 var x = this.getDatum(xDatum, xType);
                 var y = this.getDatum(yDatum, 'number');
+                if (y == undefined && this.skipInvalidYs) {
+                    continue;
+                }
                 xData.push(x);
                 yData.push(y);
             }
@@ -306,6 +310,9 @@ var Sparkline = /** @class */ (function (_super) {
                     var yDatum = datum[1];
                     var x = this.getDatum(xDatum, xType);
                     var y = this.getDatum(yDatum, 'number');
+                    if (y == undefined && this.skipInvalidYs || x == undefined) {
+                        continue;
+                    }
                     xData.push(x);
                     yData.push(y);
                 }
@@ -320,6 +327,9 @@ var Sparkline = /** @class */ (function (_super) {
                     var yDatum = datum[yKey];
                     var x = this.getDatum(xDatum, xType);
                     var y = this.getDatum(yDatum, 'number');
+                    if (y == undefined && this.skipInvalidYs || x == undefined) {
+                        continue;
+                    }
                     xData.push(x);
                     yData.push(y);
                 }
@@ -475,7 +485,7 @@ var Sparkline = /** @class */ (function (_super) {
         if (type === 'number' && typeof datum === 'number') {
             return this.formatNumericDatum(datum);
         }
-        else if (type === 'time' && datum instanceof Date) {
+        else if (type === 'time' && (datum instanceof Date || isNumber(datum))) {
             return this.defaultDateFormatter(datum);
         }
         else

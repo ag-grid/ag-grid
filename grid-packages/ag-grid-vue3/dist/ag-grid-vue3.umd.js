@@ -1696,8 +1696,10 @@ var VueComponent = /** @class */ (function () {
     VueComponent.prototype.init = function (params) {
         var _a = this.createComponent(params), componentInstance = _a.componentInstance, element = _a.element, unmount = _a.destroy;
         this.componentInstance = componentInstance;
-        this.element = element;
         this.unmount = unmount;
+        // the element is the parent div we're forced to created when dynamically creating vnodes
+        // the first child is the user supplied component
+        this.element = element.firstElementChild;
     };
     return VueComponent;
 }());

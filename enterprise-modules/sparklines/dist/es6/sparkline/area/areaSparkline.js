@@ -52,6 +52,7 @@ var AreaSparkline = /** @class */ (function (_super) {
     function AreaSparkline() {
         var _this = _super.call(this) || this;
         _this.fill = 'rgba(124, 181, 236, 0.25)';
+        _this.skipInvalidYs = true;
         _this.areaSparklineGroup = new Group();
         _this.strokePath = new Path();
         _this.fillPath = new Path();
@@ -125,22 +126,14 @@ var AreaSparkline = /** @class */ (function (_super) {
         for (var i = 0; i < n; i++) {
             var yDatum = yData[i];
             var xDatum = xData[i];
-            var invalidYDatum = yDatum === undefined;
-            var invalidXDatum = xDatum === undefined;
-            if (invalidYDatum) {
-                yDatum = 0;
-            }
-            if (invalidXDatum) {
-                xDatum = 0;
-            }
             var x = xScale.convert(xDatum) + offsetX;
             var y = yScale.convert(yDatum);
             nodeData.push({
-                seriesDatum: { x: invalidXDatum ? undefined : xDatum, y: invalidYDatum ? undefined : yDatum },
+                seriesDatum: { x: xDatum, y: yDatum },
                 point: { x: x, y: y }
             });
             areaData.push({
-                seriesDatum: { x: invalidXDatum ? undefined : xDatum, y: invalidYDatum ? undefined : yDatum },
+                seriesDatum: { x: xDatum, y: yDatum },
                 point: { x: x, y: y }
             });
         }

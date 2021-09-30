@@ -53,6 +53,7 @@ export declare abstract class Sparkline extends Observable {
     protected dataType: DataType;
     protected xData: any[];
     protected yData: (number | undefined)[];
+    protected skipInvalidYs: boolean;
     protected min: number | undefined;
     protected max: number | undefined;
     protected xScale: ScaleType;

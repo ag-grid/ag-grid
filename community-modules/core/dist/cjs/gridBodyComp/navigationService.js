@@ -241,7 +241,8 @@ var NavigationService = /** @class */ (function (_super) {
     NavigationService.prototype.onCtrlLeftOrRight = function (key, gridCell) {
         var leftKey = key === keyCode_1.KeyCode.LEFT;
         var allColumns = this.columnModel.getAllDisplayedColumns();
-        var columnToSelect = leftKey ? allColumns[0] : array_1.last(allColumns);
+        var isRtl = this.gridOptionsWrapper.isEnableRtl();
+        var columnToSelect = leftKey !== isRtl ? allColumns[0] : array_1.last(allColumns);
         this.navigateTo({
             scrollIndex: gridCell.rowIndex,
             scrollType: null,

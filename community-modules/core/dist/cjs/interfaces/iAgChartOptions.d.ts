@@ -171,6 +171,12 @@ export interface AgChartLegendOptions {
      */
     fontFamily?: string;
 }
+interface AgChartTooltipOptions {
+    enabled?: boolean;
+    class?: string;
+    tracking?: boolean;
+    delay?: number;
+}
 interface AgBaseChartOptions {
     container?: HTMLElement;
     data?: any[];
@@ -184,8 +190,7 @@ interface AgBaseChartOptions {
     };
     title?: AgChartCaptionOptions;
     subtitle?: AgChartCaptionOptions;
-    tooltipClass?: string;
-    tooltipTracking?: boolean;
+    tooltip?: AgChartTooltipOptions;
     navigator?: AgNavigatorOptions;
     legend?: AgChartLegendOptions;
     listeners?: {

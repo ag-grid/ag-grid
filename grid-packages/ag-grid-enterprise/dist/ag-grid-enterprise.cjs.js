@@ -15143,7 +15143,7 @@ var Color = /** @class */ (function () {
         if (!contents) {
             return;
         }
-        var parts = contents[1].split(',');
+        var parts = contents.split(',');
         var rgba = [];
         for (var i = 0; i < parts.length; i++) {
             var part = parts[i];
@@ -17557,6 +17557,7 @@ var Sparkline = /** @class */ (function (_super) {
         _this.dataType = undefined;
         _this.xData = [];
         _this.yData = [];
+        _this.skipInvalidYs = false;
         // Minimum y value in provided data.
         _this.min = undefined;
         // Maximum y value in provided data.
@@ -17796,6 +17797,9 @@ var Sparkline = /** @class */ (function (_super) {
                 var yDatum = data[i];
                 var x = this.getDatum(xDatum, xType);
                 var y = this.getDatum(yDatum, 'number');
+                if (y == undefined && this.skipInvalidYs) {
+                    continue;
+                }
                 xData.push(x);
                 yData.push(y);
             }
@@ -17808,6 +17812,9 @@ var Sparkline = /** @class */ (function (_super) {
                     var yDatum = datum[1];
                     var x = this.getDatum(xDatum, xType);
                     var y = this.getDatum(yDatum, 'number');
+                    if (y == undefined && this.skipInvalidYs || x == undefined) {
+                        continue;
+                    }
                     xData.push(x);
                     yData.push(y);
                 }
@@ -17822,6 +17829,9 @@ var Sparkline = /** @class */ (function (_super) {
                     var yDatum = datum[yKey];
                     var x = this.getDatum(xDatum, xType);
                     var y = this.getDatum(yDatum, 'number');
+                    if (y == undefined && this.skipInvalidYs || x == undefined) {
+                        continue;
+                    }
                     xData.push(x);
                     yData.push(y);
                 }
@@ -17977,7 +17987,7 @@ var Sparkline = /** @class */ (function (_super) {
         if (type === 'number' && typeof datum === 'number') {
             return this.formatNumericDatum(datum);
         }
-        else if (type === 'time' && datum instanceof Date) {
+        else if (type === 'time' && (datum instanceof Date || isNumber(datum))) {
             return this.defaultDateFormatter(datum);
         }
         else
@@ -18375,6 +18385,7 @@ var AreaSparkline = /** @class */ (function (_super) {
     function AreaSparkline() {
         var _this = _super.call(this) || this;
         _this.fill = 'rgba(124, 181, 236, 0.25)';
+        _this.skipInvalidYs = true;
         _this.areaSparklineGroup = new Group();
         _this.strokePath = new Path();
         _this.fillPath = new Path();
@@ -18448,22 +18459,14 @@ var AreaSparkline = /** @class */ (function (_super) {
         for (var i = 0; i < n; i++) {
             var yDatum = yData[i];
             var xDatum = xData[i];
-            var invalidYDatum = yDatum === undefined;
-            var invalidXDatum = xDatum === undefined;
-            if (invalidYDatum) {
-                yDatum = 0;
-            }
-            if (invalidXDatum) {
-                xDatum = 0;
-            }
             var x = xScale.convert(xDatum) + offsetX;
             var y = yScale.convert(yDatum);
             nodeData.push({
-                seriesDatum: { x: invalidXDatum ? undefined : xDatum, y: invalidYDatum ? undefined : yDatum },
+                seriesDatum: { x: xDatum, y: yDatum },
                 point: { x: x, y: y }
             });
             areaData.push({
-                seriesDatum: { x: invalidXDatum ? undefined : xDatum, y: invalidYDatum ? undefined : yDatum },
+                seriesDatum: { x: xDatum, y: yDatum },
                 point: { x: x, y: y }
             });
         }
@@ -18763,7 +18766,7 @@ var ColumnSparkline = /** @class */ (function (_super) {
         _this.fill = 'rgb(124, 181, 236)';
         _this.stroke = 'silver';
         _this.strokeWidth = 0;
-        _this.paddingInner = 0.5;
+        _this.paddingInner = 0.1;
         _this.paddingOuter = 0.2;
         _this.yScaleDomain = undefined;
         _this.formatter = undefined;
@@ -18814,7 +18817,7 @@ var ColumnSparkline = /** @class */ (function (_super) {
         yScale.domain = yScaleDomain ? yScaleDomain : [yMin, yMax];
     };
     ColumnSparkline.prototype.updateXScaleRange = function () {
-        var _a = this, xScale = _a.xScale, seriesRect = _a.seriesRect, paddingOuter = _a.paddingOuter, paddingInner = _a.paddingInner, xData = _a.xData;
+        var _a = this, xScale = _a.xScale, seriesRect = _a.seriesRect, paddingOuter = _a.paddingOuter, paddingInner = _a.paddingInner, data = _a.data;
         if (xScale instanceof BandScale) {
             xScale.range = [0, seriesRect.width];
             xScale.paddingInner = paddingInner;
@@ -18823,14 +18826,14 @@ var ColumnSparkline = /** @class */ (function (_super) {
         else {
             // last column will be clipped if the scale is not a band scale
             // subtract maximum possible column width from the range so that the last column is not clipped
-            xScale.range = [0, seriesRect.width - (seriesRect.width / xData.length)];
+            xScale.range = [0, seriesRect.width - (seriesRect.width / data.length)];
         }
     };
     ColumnSparkline.prototype.updateXAxisLine = function () {
-        var _a = this, xScale = _a.xScale, yScale = _a.yScale, axis = _a.axis, xAxisLine = _a.xAxisLine;
+        var _a = this, yScale = _a.yScale, axis = _a.axis, xAxisLine = _a.xAxisLine, seriesRect = _a.seriesRect;
         var strokeWidth = axis.strokeWidth;
-        xAxisLine.x1 = xScale.range[0];
-        xAxisLine.x2 = xScale.range[1];
+        xAxisLine.x1 = 0;
+        xAxisLine.x2 = seriesRect.width;
         xAxisLine.y1 = xAxisLine.y2 = 0;
         xAxisLine.stroke = axis.stroke;
         xAxisLine.strokeWidth = strokeWidth + (strokeWidth % 2 === 1 ? 1 : 0);
@@ -18845,7 +18848,7 @@ var ColumnSparkline = /** @class */ (function (_super) {
         var nodeData = [];
         var yZero = yScale.convert(0);
         // if the scale is a band scale, the width of the columns will be the bandwidth, otherwise the width of the columns will be the range / number of items in the data
-        var width = xScale instanceof BandScale ? xScale.bandwidth : (Math.abs(xScale.range[1] - xScale.range[0]) / xData.length);
+        var width = xScale instanceof BandScale ? xScale.bandwidth : (Math.abs(xScale.range[1] - xScale.range[0]) / data.length);
         for (var i = 0, n = yData.length; i < n; i++) {
             var yDatum = yData[i];
             var xDatum = xData[i];
@@ -18883,7 +18886,7 @@ var ColumnSparkline = /** @class */ (function (_super) {
     };
     ColumnSparkline.prototype.updateNodes = function () {
         var _this = this;
-        var _a = this, highlightedDatum = _a.highlightedDatum, columnFormatter = _a.formatter, fill = _a.fill, stroke = _a.stroke, strokeWidth = _a.strokeWidth, min = _a.min, max = _a.max;
+        var _a = this, highlightedDatum = _a.highlightedDatum, columnFormatter = _a.formatter, fill = _a.fill, stroke = _a.stroke, strokeWidth = _a.strokeWidth;
         var _b = this.highlightStyle, highlightFill = _b.fill, highlightStroke = _b.stroke, highlightStrokeWidth = _b.strokeWidth;
         this.columnSelection.each(function (column, datum, index) {
             var highlighted = datum === highlightedDatum;
@@ -18895,16 +18898,16 @@ var ColumnSparkline = /** @class */ (function (_super) {
             if (columnFormatter) {
                 var first = index === 0;
                 var last = index === _this.columnSelectionData.length - 1;
-                var min_1 = seriesDatum.y === _this.min;
-                var max_1 = seriesDatum.y === _this.max;
+                var min = seriesDatum.y === _this.min;
+                var max = seriesDatum.y === _this.max;
                 columnFormat = columnFormatter({
                     datum: datum,
                     xValue: seriesDatum.x,
                     yValue: seriesDatum.y,
                     width: width,
                     height: height,
-                    min: min_1,
-                    max: max_1,
+                    min: min,
+                    max: max,
                     first: first,
                     last: last,
                     fill: columnFill,
@@ -19054,7 +19057,7 @@ var LineSparkline = /** @class */ (function (_super) {
         for (var i = 0; i < yData.length; i++) {
             var yDatum = yData[i];
             var xDatum = xData[i];
-            if (yDatum == undefined || xDatum == undefined) {
+            if (yDatum == undefined) {
                 continue;
             }
             var x = xScale.convert(xDatum) + offsetX;
@@ -22738,7 +22741,7 @@ var Color$1 = /** @class */ (function () {
         if (!contents) {
             return;
         }
-        var parts = contents[1].split(',');
+        var parts = contents.split(',');
         var rgba = [];
         for (var i = 0; i < parts.length; i++) {
             var part = parts[i];
@@ -34735,7 +34738,7 @@ var BarSeries = /** @class */ (function (_super) {
             rect.fillShadow = shadow;
             // Prevent stroke from rendering for zero height columns and zero width bars.
             rect.visible = flipXY ? datum.width > 0 : datum.height > 0;
-            rect.zIndex = datum === highlightedDatum ? Series.highlightedZIndex : index;
+            rect.zIndex = datum === highlightedDatum || (highlightedDatum && datum.itemId === highlightedDatum.itemId) ? Series.highlightedZIndex : index;
             rect.opacity = _this.getOpacity(datum);
         });
     };
@@ -34769,7 +34772,6 @@ var BarSeries = /** @class */ (function (_super) {
                 text.fill = label.fill;
                 text.visible = true;
                 text.opacity = _this.getOpacity(datum);
-                text.zIndex = (datum === highlightedDatum ? Series.highlightedZIndex : index) + 1;
             }
             else {
                 text.visible = false;

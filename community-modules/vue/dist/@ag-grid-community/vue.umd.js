@@ -20941,12 +20941,12 @@ var gridBodyScrollFeature_GridBodyScrollFeature = /** @class */ (function (_supe
         if (!column) {
             return;
         }
+        // calling ensureColumnVisible on a pinned column doesn't make sense
         if (column.isPinned()) {
-            console.warn('calling ensureColumnVisible on a ' + column.getPinned() + ' pinned column doesn\'t make sense for column ' + column.getColId());
             return;
         }
+        // defensive
         if (!this.columnModel.isColumnDisplayed(column)) {
-            console.warn('column is not currently visible');
             return;
         }
         var colLeftPixel = column.getLeft();
@@ -45591,7 +45591,7 @@ var Color = /** @class */ (function () {
         if (!contents) {
             return;
         }
-        var parts = contents[1].split(',');
+        var parts = contents.split(',');
         var rgba = [];
         for (var i = 0; i < parts.length; i++) {
             var part = parts[i];
@@ -47831,7 +47831,8 @@ var NavigationService = /** @class */ (function (_super) {
     NavigationService.prototype.onCtrlLeftOrRight = function (key, gridCell) {
         var leftKey = key === _constants_keyCode__WEBPACK_IMPORTED_MODULE_4__[/* KeyCode */ "a"].LEFT;
         var allColumns = this.columnModel.getAllDisplayedColumns();
-        var columnToSelect = leftKey ? allColumns[0] : Object(_utils_array__WEBPACK_IMPORTED_MODULE_3__["last"])(allColumns);
+        var isRtl = this.gridOptionsWrapper.isEnableRtl();
+        var columnToSelect = leftKey !== isRtl ? allColumns[0] : Object(_utils_array__WEBPACK_IMPORTED_MODULE_3__["last"])(allColumns);
         this.navigateTo({
             scrollIndex: gridCell.rowIndex,
             scrollType: null,

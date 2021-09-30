@@ -34,7 +34,7 @@ var ColumnSparkline = /** @class */ (function (_super) {
         _this.fill = 'rgb(124, 181, 236)';
         _this.stroke = 'silver';
         _this.strokeWidth = 0;
-        _this.paddingInner = 0.5;
+        _this.paddingInner = 0.1;
         _this.paddingOuter = 0.2;
         _this.yScaleDomain = undefined;
         _this.formatter = undefined;
@@ -85,7 +85,7 @@ var ColumnSparkline = /** @class */ (function (_super) {
         yScale.domain = yScaleDomain ? yScaleDomain : [yMin, yMax];
     };
     ColumnSparkline.prototype.updateXScaleRange = function () {
-        var _a = this, xScale = _a.xScale, seriesRect = _a.seriesRect, paddingOuter = _a.paddingOuter, paddingInner = _a.paddingInner, xData = _a.xData;
+        var _a = this, xScale = _a.xScale, seriesRect = _a.seriesRect, paddingOuter = _a.paddingOuter, paddingInner = _a.paddingInner, data = _a.data;
         if (xScale instanceof bandScale_1.BandScale) {
             xScale.range = [0, seriesRect.width];
             xScale.paddingInner = paddingInner;
@@ -94,14 +94,14 @@ var ColumnSparkline = /** @class */ (function (_super) {
         else {
             // last column will be clipped if the scale is not a band scale
             // subtract maximum possible column width from the range so that the last column is not clipped
-            xScale.range = [0, seriesRect.width - (seriesRect.width / xData.length)];
+            xScale.range = [0, seriesRect.width - (seriesRect.width / data.length)];
         }
     };
     ColumnSparkline.prototype.updateXAxisLine = function () {
-        var _a = this, xScale = _a.xScale, yScale = _a.yScale, axis = _a.axis, xAxisLine = _a.xAxisLine;
+        var _a = this, yScale = _a.yScale, axis = _a.axis, xAxisLine = _a.xAxisLine, seriesRect = _a.seriesRect;
         var strokeWidth = axis.strokeWidth;
-        xAxisLine.x1 = xScale.range[0];
-        xAxisLine.x2 = xScale.range[1];
+        xAxisLine.x1 = 0;
+        xAxisLine.x2 = seriesRect.width;
         xAxisLine.y1 = xAxisLine.y2 = 0;
         xAxisLine.stroke = axis.stroke;
         xAxisLine.strokeWidth = strokeWidth + (strokeWidth % 2 === 1 ? 1 : 0);
@@ -116,7 +116,7 @@ var ColumnSparkline = /** @class */ (function (_super) {
         var nodeData = [];
         var yZero = yScale.convert(0);
         // if the scale is a band scale, the width of the columns will be the bandwidth, otherwise the width of the columns will be the range / number of items in the data
-        var width = xScale instanceof bandScale_1.BandScale ? xScale.bandwidth : (Math.abs(xScale.range[1] - xScale.range[0]) / xData.length);
+        var width = xScale instanceof bandScale_1.BandScale ? xScale.bandwidth : (Math.abs(xScale.range[1] - xScale.range[0]) / data.length);
         for (var i = 0, n = yData.length; i < n; i++) {
             var yDatum = yData[i];
             var xDatum = xData[i];
@@ -154,7 +154,7 @@ var ColumnSparkline = /** @class */ (function (_super) {
     };
     ColumnSparkline.prototype.updateNodes = function () {
         var _this = this;
-        var _a = this, highlightedDatum = _a.highlightedDatum, columnFormatter = _a.formatter, fill = _a.fill, stroke = _a.stroke, strokeWidth = _a.strokeWidth, min = _a.min, max = _a.max;
+        var _a = this, highlightedDatum = _a.highlightedDatum, columnFormatter = _a.formatter, fill = _a.fill, stroke = _a.stroke, strokeWidth = _a.strokeWidth;
         var _b = this.highlightStyle, highlightFill = _b.fill, highlightStroke = _b.stroke, highlightStrokeWidth = _b.strokeWidth;
         this.columnSelection.each(function (column, datum, index) {
             var highlighted = datum === highlightedDatum;
@@ -166,16 +166,16 @@ var ColumnSparkline = /** @class */ (function (_super) {
             if (columnFormatter) {
                 var first = index === 0;
                 var last = index === _this.columnSelectionData.length - 1;
-                var min_1 = seriesDatum.y === _this.min;
-                var max_1 = seriesDatum.y === _this.max;
+                var min = seriesDatum.y === _this.min;
+                var max = seriesDatum.y === _this.max;
                 columnFormat = columnFormatter({
                     datum: datum,
                     xValue: seriesDatum.x,
                     yValue: seriesDatum.y,
                     width: width,
                     height: height,
-                    min: min_1,
-                    max: max_1,
+                    min: min,
+                    max: max,
                     first: first,
                     last: last,
                     fill: columnFill,

@@ -385,12 +385,12 @@ var GridBodyScrollFeature = /** @class */ (function (_super) {
         if (!column) {
             return;
         }
+        // calling ensureColumnVisible on a pinned column doesn't make sense
         if (column.isPinned()) {
-            console.warn('calling ensureColumnVisible on a ' + column.getPinned() + ' pinned column doesn\'t make sense for column ' + column.getColId());
             return;
         }
+        // defensive
         if (!this.columnModel.isColumnDisplayed(column)) {
-            console.warn('column is not currently visible');
             return;
         }
         var colLeftPixel = column.getLeft();
