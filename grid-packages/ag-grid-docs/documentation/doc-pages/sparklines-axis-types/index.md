@@ -5,8 +5,8 @@ enterprise: true
 
 This section compares the different horizontal axis types that are available to all sparklines.
 
-When choosing an appropriate axis it is important to consider the data the sparkline is based on, this ensures X values
-are scaled correctly along the x-axis.
+In order to select an appropriate sparkline axis type, it is important to consider the data the sparkline is displaying.
+This ensures that X values are scaled correctly along the x-axis.
 
 The following axis types are available to all sparklines:
 
