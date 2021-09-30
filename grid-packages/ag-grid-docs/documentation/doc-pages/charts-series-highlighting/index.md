@@ -2,11 +2,9 @@
 title: "Series Highlighting"
 ---
 
-## Introduction
-
 In data-rich charts with multiple overlapping series it might be difficult to tell one series from another
 when hovering a series data point or a legend item. To make the hovered series stand out, we
-can highlight it, while dimming other chart series at the same time, as illustrated by the example below.
+can highlight it, while dimming other chart series at the same time.
 
 <chart-example title='Overlapping Series' name='lines' type='generated'></chart-example>
 
