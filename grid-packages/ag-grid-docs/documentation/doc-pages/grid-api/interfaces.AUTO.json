@@ -5450,6 +5450,15 @@
       "fontFamily?": "/** @deprecated */"
     }
   },
+  "AgChartTooltipOptions": {
+    "meta": {},
+    "type": {
+      "enabled?": "boolean",
+      "class?": "string",
+      "tracking?": "boolean",
+      "delay?": "number"
+    }
+  },
   "AgBaseChartOptions": {
     "meta": {},
     "type": {
@@ -5462,8 +5471,7 @@
       "background?": "{ visible?: boolean; fill?: string; }",
       "title?": "AgChartCaptionOptions",
       "subtitle?": "AgChartCaptionOptions",
-      "tooltipClass?": "string",
-      "tooltipTracking?": "boolean",
+      "tooltip?": "AgChartTooltipOptions",
       "navigator?": "AgNavigatorOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "{[key in string]: Function}",
@@ -6070,8 +6078,7 @@
       "background?": "{ visible?: boolean; fill?: string; }",
       "title?": "AgChartCaptionOptions",
       "subtitle?": "AgChartCaptionOptions",
-      "tooltipClass?": "string",
-      "tooltipTracking?": "boolean",
+      "tooltip?": "AgChartTooltipOptions",
       "navigator?": "AgNavigatorOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "{[key in string]: Function}",
@@ -6093,8 +6100,7 @@
       "background?": "{ visible?: boolean; fill?: string; }",
       "title?": "AgChartCaptionOptions",
       "subtitle?": "AgChartCaptionOptions",
-      "tooltipClass?": "string",
-      "tooltipTracking?": "boolean",
+      "tooltip?": "AgChartTooltipOptions",
       "navigator?": "AgNavigatorOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "{[key in string]: Function}",

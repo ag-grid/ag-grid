@@ -9560,6 +9560,12 @@
       "type": { "returnType": "string", "optional": true }
     }
   },
+  "AgChartTooltipOptions": {
+    "enabled": { "type": { "returnType": "boolean", "optional": true } },
+    "class": { "type": { "returnType": "string", "optional": true } },
+    "tracking": { "type": { "returnType": "boolean", "optional": true } },
+    "delay": { "type": { "returnType": "number", "optional": true } }
+  },
   "AgBaseChartOptions": {
     "container": { "type": { "returnType": "HTMLElement", "optional": true } },
     "data": { "type": { "returnType": "any[]", "optional": true } },
@@ -9581,9 +9587,8 @@
     "subtitle": {
       "type": { "returnType": "AgChartCaptionOptions", "optional": true }
     },
-    "tooltipClass": { "type": { "returnType": "string", "optional": true } },
-    "tooltipTracking": {
-      "type": { "returnType": "boolean", "optional": true }
+    "tooltip": {
+      "type": { "returnType": "AgChartTooltipOptions", "optional": true }
     },
     "navigator": {
       "type": { "returnType": "AgNavigatorOptions", "optional": true }
@@ -10403,9 +10408,8 @@
     "subtitle": {
       "type": { "returnType": "AgChartCaptionOptions", "optional": true }
     },
-    "tooltipClass": { "type": { "returnType": "string", "optional": true } },
-    "tooltipTracking": {
-      "type": { "returnType": "boolean", "optional": true }
+    "tooltip": {
+      "type": { "returnType": "AgChartTooltipOptions", "optional": true }
     },
     "navigator": {
       "type": { "returnType": "AgNavigatorOptions", "optional": true }
@@ -10448,9 +10452,8 @@
     "subtitle": {
       "type": { "returnType": "AgChartCaptionOptions", "optional": true }
     },
-    "tooltipClass": { "type": { "returnType": "string", "optional": true } },
-    "tooltipTracking": {
-      "type": { "returnType": "boolean", "optional": true }
+    "tooltip": {
+      "type": { "returnType": "AgChartTooltipOptions", "optional": true }
     },
     "navigator": {
       "type": { "returnType": "AgNavigatorOptions", "optional": true }
