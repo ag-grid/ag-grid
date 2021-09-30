@@ -14527,7 +14527,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "paddingInner": {
-      "description": "/** The size of the gap between the columns as a proportion, between 0 and 1. This value is a fraction of the “step”, which is the interval between the start of a band and the start of the next band.\n * Default: `0.5` */",
+      "description": "/** The size of the gap between the columns as a proportion, between 0 and 1. This value is a fraction of the “step”, which is the interval between the start of a band and the start of the next band.\n * Default: `0.1` */",
       "type": { "returnType": "number", "optional": true }
     },
     "paddingOuter": {

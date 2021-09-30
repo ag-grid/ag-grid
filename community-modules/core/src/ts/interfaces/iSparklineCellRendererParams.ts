@@ -63,7 +63,7 @@ export interface ColumnSparklineOptions extends BaseSparklineOptions {
      */
     strokeWidth?: number;
     /** The size of the gap between the columns as a proportion, between 0 and 1. This value is a fraction of the “step”, which is the interval between the start of a band and the start of the next band.
-     * Default: `0.5`
+     * Default: `0.1`
      */
     paddingInner?: number;
     /** The padding on the outside i.e. left and right of the first and last columns, to leave some room for the axis. In association with `paddingInner`, this value can be between 0 and 1.

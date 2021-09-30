@@ -30,7 +30,7 @@ export class ColumnSparkline extends Sparkline {
     fill: string = 'rgb(124, 181, 236)';
     stroke: string = 'silver';
     strokeWidth: number = 0;
-    paddingInner: number = 0.5;
+    paddingInner: number = 0.1;
     paddingOuter: number = 0.2;
     yScaleDomain: [number, number] | undefined = undefined;
     formatter?: (params: ColumnFormatterParams) => ColumnFormat = undefined;
