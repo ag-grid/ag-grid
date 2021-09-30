@@ -57,14 +57,14 @@ Also note that for numeric values the tooltips show two digits after the decimal
 
 ## Styling the Default Tooltip
 
-The default tooltip already uses `ag-chart-tooltip`, `ag-chart-tooltip-title` and `ag-chart-tooltip-content` CSS classes, but these classes are not meant to be used directly to add custom CSS rules to, unless you want to change the styling of all the tooltips in your app. Instead, users of the charting library should provide their own tooltip class name via the `chart.tooltipClass` config. This class name will be added to the class list of the tooltip element for only that particular chart instance.
+The default tooltip already uses `ag-chart-tooltip`, `ag-chart-tooltip-title` and `ag-chart-tooltip-content` CSS classes, but these classes are not meant to be used directly to add custom CSS rules to, unless you want to change the styling of all the tooltips in your app. Instead, users of the charting library should provide their own tooltip class name via the `chart.tooltip.class` config. This class name will be added to the class list of the tooltip element for only that particular chart instance.
 
 
 For example, if we wanted to set the tooltip's content `background-color` to `gold`, we'd add a custom class name to our chart in the code:
 
 
 ```js
-chart.tooltipClass = 'my-tooltip';
+chart.tooltip.class = 'my-tooltip';
 ```
 
 And then in the CSS:
@@ -75,7 +75,7 @@ And then in the CSS:
 }
 ```
 
-This limits the styling changes to this chart instance alone (or instances that use the same `tooltipClass`). We could style the title element and the container element in the same manner.
+This limits the styling changes to this chart instance alone (or instances that use the same tooltip class). We could style the title element and the container element in the same manner.
 
 Note that your styles don't override the default tooltip styles but complement them.
 

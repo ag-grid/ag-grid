@@ -90,7 +90,9 @@ var gridOptions = {
                     paddingY: 20,
                 }
             },
-            tooltipClass: 'my-tooltip-class',
+            tooltip: {
+                class: 'my-tooltip-class'
+            }
         }
     }
 };
