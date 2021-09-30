@@ -102,4 +102,4 @@ series: [{
 
 ## Next Up
 
-Continue to the next section to learn about [layout](/layout/).
+Continue to the next section to learn about [layout](../layout/).
