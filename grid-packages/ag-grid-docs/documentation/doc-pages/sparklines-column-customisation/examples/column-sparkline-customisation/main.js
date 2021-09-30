@@ -13,7 +13,7 @@ var gridOptions = {
                     highlightStyle: {
                         fill: 'orange'
                     },
-                    paddingInner: 0.6,
+                    paddingInner: 0.3,
                     paddingOuter: 0.1,
                 },
             }

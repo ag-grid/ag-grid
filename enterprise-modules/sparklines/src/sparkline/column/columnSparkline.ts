@@ -30,7 +30,7 @@ export class ColumnSparkline extends Sparkline {
     fill: string = 'rgb(124, 181, 236)';
     stroke: string = 'silver';
     strokeWidth: number = 0;
-    paddingInner: number = 0.5;
+    paddingInner: number = 0.1;
     paddingOuter: number = 0.2;
     yScaleDomain: [number, number] | undefined = undefined;
     formatter?: (params: ColumnFormatterParams) => ColumnFormat = undefined;
@@ -99,7 +99,7 @@ export class ColumnSparkline extends Sparkline {
     }
 
     protected updateXScaleRange() {
-        const { xScale, seriesRect, paddingOuter, paddingInner, xData } = this;
+        const { xScale, seriesRect, paddingOuter, paddingInner, data } = this;
         if (xScale instanceof BandScale) {
             xScale.range = [0, seriesRect.width];
             xScale.paddingInner = paddingInner;
@@ -107,16 +107,16 @@ export class ColumnSparkline extends Sparkline {
         } else {
             // last column will be clipped if the scale is not a band scale
             // subtract maximum possible column width from the range so that the last column is not clipped
-            xScale.range = [0, seriesRect.width - (seriesRect.width / xData.length)];
+            xScale.range = [0, seriesRect.width - (seriesRect.width / data!.length)];
         }
     }
 
     protected updateXAxisLine() {
-        const { xScale, yScale, axis, xAxisLine } = this;
+        const { yScale, axis, xAxisLine, seriesRect } = this;
         const { strokeWidth } = axis;
 
-        xAxisLine.x1 = xScale.range[0];
-        xAxisLine.x2 = xScale.range[1];
+        xAxisLine.x1 = 0;
+        xAxisLine.x2 = seriesRect.width;
         xAxisLine.y1 = xAxisLine.y2 = 0;
         xAxisLine.stroke = axis.stroke;
         xAxisLine.strokeWidth = strokeWidth + (strokeWidth % 2 === 1 ? 1 : 0);

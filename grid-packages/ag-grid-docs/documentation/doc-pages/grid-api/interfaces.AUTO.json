@@ -5450,6 +5450,15 @@
       "fontFamily?": "/** @deprecated */"
     }
   },
+  "AgChartTooltipOptions": {
+    "meta": {},
+    "type": {
+      "enabled?": "boolean",
+      "class?": "string",
+      "tracking?": "boolean",
+      "delay?": "number"
+    }
+  },
   "AgBaseChartOptions": {
     "meta": {},
     "type": {
@@ -5462,8 +5471,7 @@
       "background?": "{ visible?: boolean; fill?: string; }",
       "title?": "AgChartCaptionOptions",
       "subtitle?": "AgChartCaptionOptions",
-      "tooltipClass?": "string",
-      "tooltipTracking?": "boolean",
+      "tooltip?": "AgChartTooltipOptions",
       "navigator?": "AgNavigatorOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "{[key in string]: Function}",
@@ -6070,8 +6078,7 @@
       "background?": "{ visible?: boolean; fill?: string; }",
       "title?": "AgChartCaptionOptions",
       "subtitle?": "AgChartCaptionOptions",
-      "tooltipClass?": "string",
-      "tooltipTracking?": "boolean",
+      "tooltip?": "AgChartTooltipOptions",
       "navigator?": "AgNavigatorOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "{[key in string]: Function}",
@@ -6093,8 +6100,7 @@
       "background?": "{ visible?: boolean; fill?: string; }",
       "title?": "AgChartCaptionOptions",
       "subtitle?": "AgChartCaptionOptions",
-      "tooltipClass?": "string",
-      "tooltipTracking?": "boolean",
+      "tooltip?": "AgChartTooltipOptions",
       "navigator?": "AgNavigatorOptions",
       "legend?": "AgChartLegendOptions",
       "listeners?": "{[key in string]: Function}",
@@ -8331,7 +8337,7 @@
       "fill?": "/** The CSS colour value for the fill of the columns.\n * Default: `'rgb(124, 181, 236)'` */",
       "stroke?": "/** The CSS colour value for the outline of the columns.\n * Default `'silver'` */",
       "strokeWidth?": "/** The thickness in pixels for the stroke of the columns.\n * Default: `0` */",
-      "paddingInner?": "/** The size of the gap between the columns as a proportion, between 0 and 1. This value is a fraction of the “step”, which is the interval between the start of a band and the start of the next band.\n * Default: `0.5` */",
+      "paddingInner?": "/** The size of the gap between the columns as a proportion, between 0 and 1. This value is a fraction of the “step”, which is the interval between the start of a band and the start of the next band.\n * Default: `0.1` */",
       "paddingOuter?": "/** The padding on the outside i.e. left and right of the first and last columns, to leave some room for the axis. In association with `paddingInner`, this value can be between 0 and 1.\n * Default: `0.2` */",
       "formatter?": "/** A callback function to return format styles of type ColumnFormat, based on the data represented by individual columns. */",
       "xKey?": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",

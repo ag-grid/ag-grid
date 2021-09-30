@@ -2,17 +2,15 @@
 title: "Series Highlighting"
 ---
 
-## Introduction
-
 In data-rich charts with multiple overlapping series it might be difficult to tell one series from another
 when hovering a series data point or a legend item. To make the hovered series stand out, we
-can highlight it, while dimming other chart series at the same time, as illustrated by the example below.
+can highlight it, while dimming other chart series at the same time.
 
 <chart-example title='Overlapping Series' name='lines' type='generated'></chart-example>
 
 ## Customising Series Highlighting
 
-By default only item highlighting is activated. Series highlighting, as shown in the sample above, can be activated by modifying the default `highlightStyle`.
+By default, only item highlighting is activated. Series highlighting, as shown in the sample above, can be activated by modifying the default `highlightStyle`.
 
 Each chart series has a `highlightStyle` config with the following default values:
 
@@ -53,9 +51,8 @@ highlightStyle: {
 }
 ```
 
-This custom highlightStyle is applied to the column series in the example below.
+This custom highlightStyle is applied to the column series in the example below. Note the following:
 
-Note the following:
 - When a series item (column segment) is hovered, it gets highlighted using the style in the `highlightStyle.item` configuration.
   Also, the segments belonging to all other stack levels are dimmed, and only segments
   from the stack level that the highlighted segment belongs to remain unaffected.
@@ -68,8 +65,8 @@ Note the following:
 
 ## Series Highlighting with Multiple Series
 
-Let's take a look at the pie chart configuration now, which is going to be slightly
-different. Notice the following:
+Let's take a look at the pie chart configuration now, which is going to be slightly different. Note the following:
+
 - We are using the same data set for the pie chart example as for the column chart example, but because the pie series are not stacked,
   we need 4 different pie series - one for each quarter - to render the whole data set.
 - If the series are missing the `title` config, we will have legend items that are indistinguishable from those of other series,

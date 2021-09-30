@@ -132,4 +132,4 @@ legend: {
 
 ## Next Up
 
-Continue to the next section to learn about the [series](/charts-series/).
+Continue to the next section to learn about the [series](../series-highlighting/).

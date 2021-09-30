@@ -560,7 +560,7 @@ export abstract class Sparkline extends Observable {
 
         if (type === 'number' && typeof datum === 'number') {
             return this.formatNumericDatum(datum);
-        } else if (type === 'time' && datum instanceof Date) {
+        } else if (type === 'time' && (datum instanceof Date || isNumber(datum))) {
             return this.defaultDateFormatter(datum);
         } else return String(datum);
     }

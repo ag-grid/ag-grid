@@ -9560,6 +9560,12 @@
       "type": { "returnType": "string", "optional": true }
     }
   },
+  "AgChartTooltipOptions": {
+    "enabled": { "type": { "returnType": "boolean", "optional": true } },
+    "class": { "type": { "returnType": "string", "optional": true } },
+    "tracking": { "type": { "returnType": "boolean", "optional": true } },
+    "delay": { "type": { "returnType": "number", "optional": true } }
+  },
   "AgBaseChartOptions": {
     "container": { "type": { "returnType": "HTMLElement", "optional": true } },
     "data": { "type": { "returnType": "any[]", "optional": true } },
@@ -9581,9 +9587,8 @@
     "subtitle": {
       "type": { "returnType": "AgChartCaptionOptions", "optional": true }
     },
-    "tooltipClass": { "type": { "returnType": "string", "optional": true } },
-    "tooltipTracking": {
-      "type": { "returnType": "boolean", "optional": true }
+    "tooltip": {
+      "type": { "returnType": "AgChartTooltipOptions", "optional": true }
     },
     "navigator": {
       "type": { "returnType": "AgNavigatorOptions", "optional": true }
@@ -10403,9 +10408,8 @@
     "subtitle": {
       "type": { "returnType": "AgChartCaptionOptions", "optional": true }
     },
-    "tooltipClass": { "type": { "returnType": "string", "optional": true } },
-    "tooltipTracking": {
-      "type": { "returnType": "boolean", "optional": true }
+    "tooltip": {
+      "type": { "returnType": "AgChartTooltipOptions", "optional": true }
     },
     "navigator": {
       "type": { "returnType": "AgNavigatorOptions", "optional": true }
@@ -10448,9 +10452,8 @@
     "subtitle": {
       "type": { "returnType": "AgChartCaptionOptions", "optional": true }
     },
-    "tooltipClass": { "type": { "returnType": "string", "optional": true } },
-    "tooltipTracking": {
-      "type": { "returnType": "boolean", "optional": true }
+    "tooltip": {
+      "type": { "returnType": "AgChartTooltipOptions", "optional": true }
     },
     "navigator": {
       "type": { "returnType": "AgNavigatorOptions", "optional": true }
@@ -14524,7 +14527,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "paddingInner": {
-      "description": "/** The size of the gap between the columns as a proportion, between 0 and 1. This value is a fraction of the “step”, which is the interval between the start of a band and the start of the next band.\n * Default: `0.5` */",
+      "description": "/** The size of the gap between the columns as a proportion, between 0 and 1. This value is a fraction of the “step”, which is the interval between the start of a band and the start of the next band.\n * Default: `0.1` */",
       "type": { "returnType": "number", "optional": true }
     },
     "paddingOuter": {

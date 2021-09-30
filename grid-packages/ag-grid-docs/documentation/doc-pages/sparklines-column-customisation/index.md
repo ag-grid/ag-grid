@@ -26,7 +26,7 @@ sparklineOptions: {
     highlightStyle: {
         fill: 'orange'
     },
-    paddingInner: 0.6,
+    paddingInner: 0.3,
     paddingOuter: 0.1,
 },
 ```
@@ -117,7 +117,7 @@ Here's an example.
 ```js
 sparklineOptions: {
     type: 'column',
-    paddingInner: 0.1, // sets the padding between columns.
+    paddingInner: 0.5, // sets the padding between columns.
 }
 ```
 

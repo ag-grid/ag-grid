@@ -128,4 +128,4 @@ The example below uses one pie series to plot the market share of each operating
 
 ## Next Up
 
-Continue to the next section to learn about [treemap](/treemap-series/).
+Continue to the next section to learn about [treemap](../treemap-series/).

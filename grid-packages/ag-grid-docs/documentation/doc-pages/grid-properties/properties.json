@@ -424,7 +424,7 @@
             "displayName": "Master Detail",
             "page": {
                 "name": "Master Detail",
-                "url": "/mater-detail/"
+                "url": "/master-detail/"
             }
         },
         "masterDetail": {
@@ -1118,7 +1118,7 @@
             "displayName": "RowModel: Viewport",
             "page": {
                 "name": "Viewport Row Model",
-                "url": "/viewport-scrolling/"
+                "url": "/viewport/"
             }
         },
         "viewportDatasource": {

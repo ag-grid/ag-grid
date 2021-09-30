@@ -355,4 +355,4 @@ Note, that we are:
 
 ## Next Up
 
-Continue to the next section to learn about [events](/events/).
+Continue to the next section to learn about [events](../events/).
