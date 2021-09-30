@@ -16,7 +16,9 @@ var options = {
         yKeys: ['sweaters'],
         yNames: ['Sweaters Made']
     }],
-    tooltipClass: 'my-tooltip'
+    tooltip: {
+        class: 'my-tooltip'
+    }
 };
 
 var chart = agCharts.AgChart.create(options);

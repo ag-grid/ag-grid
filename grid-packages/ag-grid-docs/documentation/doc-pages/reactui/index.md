@@ -99,9 +99,9 @@ See [Cell Editors](/component-cell-editor/) for full details on creating Cell Ed
 
 ## Customising Headers
 
-When React UI also works with React Headers.
+When React UI is enabled, the grid will work natively with custom React Column Header components.
 
-Below is an example showing a grid configure with a custom React Header component.
+Below is an example showing a grid configured with a custom React Column Header component.
 
 * Columns Athlete and Age use a Header Comp that displays the Header name and allows sorting (by clicking on the header).
 * All other columns do not have their Headers customised and work as normal.

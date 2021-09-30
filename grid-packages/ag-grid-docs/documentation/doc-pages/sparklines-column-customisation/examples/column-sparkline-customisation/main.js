@@ -30,6 +30,7 @@ var gridOptions = {
         resizable: true,
     },
     rowData: getData(),
+    rowHeight: 50,
 };
 
 // setup the grid after the page has finished loading

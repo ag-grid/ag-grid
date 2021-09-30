@@ -3,11 +3,8 @@ function getData() {
         {
             symbol: 'A',
             name: 'Agilent Technologies Inc. Common Stock',
-            lastPrice: '179.28',
-            marketCap: 54272119919,
-            volume: 971760,
-            sector: 'Capital Goods',
-            rateOfChange: [
+            volume: '$971,760',
+            change: [
                 ["H", 19.76],
                 ["N", 82.41],
                 ["N", 29.97],
@@ -33,11 +30,8 @@ function getData() {
         {
             symbol: 'AAL',
             name: 'American Airlines Group Inc. Common Stock',
-            lastPrice: '19.37',
-            marketCap: 12541258186,
-            volume: 20309670,
-            sector: 'Transportation',
-            rateOfChange: [
+            volume: '$20,309,670',
+            change: [
                 ["X", 33.93],
                 ["Q", -80.1],
                 ["Z", -42.4],
@@ -63,11 +57,8 @@ function getData() {
         {
             symbol: 'AAP',
             name: 'Advance Auto Parts Inc Advance Auto Parts Inc W/I',
-            lastPrice: '199.44',
-            marketCap: 12564867785,
-            volume: 699427,
-            sector: 'Consumer Services',
-            rateOfChange: [
+            volume: '$699,427',
+            change: [
                 ["Q", -86.2],
                 ["K", -14.9],
                 ["Y", -67.8],
@@ -93,11 +84,8 @@ function getData() {
         {
             symbol: 'AAPL',
             name: 'Apple Inc. Common Stock',
-            lastPrice: '154.30',
-            marketCap: 2675150000000,
-            volume: 57807909,
-            sector: 'Technology',
-            rateOfChange: [
+            volume: '$57,807,909',
+            change: [
                 ["E", -40.6],
                 ["C", -48.07],
                 ["G", -35.32],
@@ -123,11 +111,8 @@ function getData() {
         {
             symbol: 'ABB',
             name: 'ABB Ltd Common Stock',
-            lastPrice: '37.67',
-            marketCap: 75566020000,
-            volume: 901811,
-            sector: 'Consumer Durables',
-            rateOfChange: [
+            volume: '$901,811',
+            change: [
                 ["R", 27.92],
                 ["K", 78.59],
                 ["C", -85.38],
@@ -153,11 +138,8 @@ function getData() {
         {
             symbol: 'ABBV',
             name: 'AbbVie Inc. Common Stock',
-            lastPrice: '111.62',
-            marketCap: 197252000000,
-            volume: 5364090,
-            sector: 'Health Care',
-            rateOfChange: [
+            volume: '$5,364,090',
+            change: [
                 ["K", 84.02],
                 ["A", 74.34],
                 ["X", 65.46],
@@ -183,11 +165,8 @@ function getData() {
         {
             symbol: 'ABC',
             name: 'AmerisourceBergen Corporation Common Stock',
-            lastPrice: '125.14',
-            marketCap: 26002479696,
-            volume: 549618,
-            sector: 'Health Care',
-            rateOfChange: [
+            volume: '$549,618',
+            change: [
                 ["Y", 50.73],
                 ["U", 24.81],
                 ["E", -84],
@@ -212,13 +191,9 @@ function getData() {
         },
         {
             symbol: 'ABEV',
-            name:
-                'Ambev S.A. American Depositary Shares (Each representing 1 Common Share)',
-            lastPrice: '3.14',
-            marketCap: 49414685958,
-            volume: 27226664,
-            sector: 'Consumer Non-Durables',
-            rateOfChange: [
+            name: 'Ambev S.A. American Depositary Shares',
+            volume: '$27,226,664',
+            change: [
                 ["X", -22.48],
                 ["D", -54.87],
                 ["W", -76.5],
@@ -244,11 +219,8 @@ function getData() {
         {
             symbol: 'ABMD',
             name: 'ABIOMED Inc. Common Stock',
-            lastPrice: '372.69',
-            marketCap: 16912759037,
-            volume: 137763,
-            sector: 'Health Care',
-            rateOfChange: [
+            volume: '$137,763',
+            change: [
                 ["Z", -83.29],
                 ["A", 52.28],
                 ["K", 61.05],
@@ -274,11 +246,8 @@ function getData() {
         {
             symbol: 'ABNB',
             name: 'Airbnb Inc. Class A Common Stock',
-            lastPrice: '158.00',
-            marketCap: 94231043106,
-            volume: 4456806,
-            sector: 'Capital Goods',
-            rateOfChange: [
+            volume: '$4,456,806',
+            change: [
                 ["T", -37.3],
                 ["H", 16.92],
                 ["X", -19.8],

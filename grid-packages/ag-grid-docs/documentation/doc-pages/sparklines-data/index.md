@@ -6,7 +6,7 @@ enterprise: true
 This section starts off by comparing the different supported data formats before discussing how data can be formatted
 using a [Value Getter](/value-getters/) for sparklines and then shows how data updates are handled.
 
-##Supported Data Formats
+## Supported Data Formats
 
 Sparklines are configured on a per-column basis and are supplied data based on their column configuration, just like any
 other grid cell, i.e. columns are configured with a `field` attribute or [Value Getter](/value-getters/).
@@ -36,7 +36,7 @@ Alternatively, a `valueGetter` can be added to return an array of numbers for ea
 This is demonstrated in the simple example below, where the 'Rate of Change' column contains the sparkline cell renderer.
 - Note that the data for the `rateOfChange` field in the data.js file is a `number[]`.
 
-<grid-example title='Sparkline Data - Array of Numbers' name='sparkline-data-number-array' type='generated' options='{ "enterprise": true, "exampleHeight": 503, "modules": ["clientside", "sparklines"] }'></grid-example>
+<grid-example title='Sparkline Data - Array of Numbers' name='sparkline-data-number-array' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 ### Array of Tuples
 
@@ -46,7 +46,7 @@ Another supported format is the tuples array. In this format, each tuple in the 
 - The Y value should be a `number` whereas the X can be a `number`, `string`, `Date` or an object with a `toString` method.
 - The `rateOfChange` field is of type `[Date, number][]`, where X values are `Date` objects.
 
-<grid-example title='Sparkline Data - Array of Tuples' name='sparkline-data-tuple-array' type='generated' options='{ "enterprise": true, "exampleHeight": 503, "modules": ["clientside", "sparklines"] }'></grid-example>
+<grid-example title='Sparkline Data - Array of Tuples' name='sparkline-data-tuple-array' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 ### Array of Objects
 
@@ -78,7 +78,7 @@ Note in the example below:
 - `xKey` and `yKey` can be any `string` value as long as they are specified in the options.
 - By default, the `xKey` and `yKey` are `'x'` and `'y'` respectively, so data objects with `'x'` and `'y'` keys would work fine without further configuration.
 
-<grid-example title='Sparkline Data - Array of Objects' name='sparkline-data-object-array' type='generated' options='{ "enterprise": true, "exampleHeight": 503, "modules": ["clientside", "sparklines"] }'></grid-example>
+<grid-example title='Sparkline Data - Array of Objects' name='sparkline-data-object-array' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 ## Formatting Sparkline Data
 
@@ -89,18 +89,74 @@ The formatted data from `valueGetter` will be supplied to the sparkline automati
 The following example demonstrates how data can be formatted using `valueGetter`.
 
 - In this example, the data for the `rateOfChange` field is an object with `x` and `y` keys, both containing an array of numbers.
-- A `valueGetter` is used to format this data into `[number, number][]`, with X at index 0 and Y at index 1 in each array.
+- A `valueGetter` is used to format this data into `[number, number][]`, entering the values for X and Y at each index in two arrays for the `rateOfChange` object.
 
-<grid-example title='Formatting Sparkline Data' name='formatting-sparkline-data' type='generated' options='{ "enterprise": true, "exampleHeight": 503, "modules": ["clientside", "sparklines"] }'></grid-example>
+<grid-example title='Formatting Sparkline Data' name='formatting-sparkline-data' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
+
+## Missing Data Points
+
+Data for certain items or time periods might be missing or corrupted, or in some cases, we might want to intentionally show the absence of a value.
+In these cases, sparklines support correct rendering of incomplete data.
+
+### Missing Y values
+
+If the Y value of the data point is `Infinity`, `null`, `undefined`, `NaN`, a `string` or an `object` – basically if it's not a `number` – it will be classified as invalid.
+
+In the line and column sparklines, when a data point has an invalid Y value, it will be rendered as a gap, this is illustrated in the images below:
+
+Line Sparkline
+<div style="display: flex; justify-content: center;">
+    <image-caption src="resources/line-sparkline.png" alt="Line sparkline." width="250px" constrained="true">No invalid Y values</image-caption>
+    <image-caption src="resources/line-sparkline-invalid-y-values.png" alt="Line sparkline with gaps for invalid Y values." width="250px" constrained="true">Invalid Y values</image-caption>
+</div>
+
+Column Sparkline
+<div style="display: flex; justify-content: center;">
+    <image-caption src="resources/column-sparkline.png" alt="Column Sparkline" width="250px" constrained="true">No invalid Y values</image-caption>
+    <image-caption src="resources/column-sparkline-invalid-y-values.png" alt="Column sparkline with gaps for invalid Y values" width="250px" constrained="true">Invalid Y values</image-caption>
+</div>
+
+In the area sparklines, when a data point has an invalid Y value, it will be skipped in the sparklines. There won't be any gaps, only the valid data points will appear in the sparklines.
+
+This can be seen in the images below where the area sparkline on the left has 10 valid data points, and the area sparkline on the right has only 8 valid data points.
+
+Area Sparkline
+<div style="display: flex; justify-content: center;">
+    <image-caption src="resources/area-sparkline.png" alt="Area Sparkline" width="250px" constrained="true">No invalid Y values</image-caption>
+    <image-caption src="resources/area-sparkline-invalid-y-values.png" alt="Area sparkline with gaps for invalid Y values" width="250px" constrained="true">Invalid Y values</image-caption>
+</div>
+
+
+### Missing X values
+
+If X values are supplied in the sparkline data but are inconsistent with the configured [x-axis type](/sparklines-axis-types/), they are considered invalid and will be skipped in the sparkline.
+
+Let's say we have configured the x-axis to be a [Number Axis](/sparklines-axis-types/#number-axis), but some of the data points have X values which are not of type `number`.
+In this case, those X values are invalid and so those data points will be ignored when the sparkline is rendered.
+
+See the images below which show the line, column and area sparklines with 10 complete data points on the left, and on the right, with 8 valid X values and 2 invalid X values:
+
+<div style="display: flex; justify-content: center;">
+    <image-caption src="resources/line-sparkline-2.png" alt="Line sparkline." width="250px" constrained="true">No invalid X values</image-caption>
+    <image-caption src="resources/line-sparkline-invalid-x-values.png" alt="Line sparkline with gaps for invalid Y values." width="250px" constrained="true">Invalid X values</image-caption>
+</div>
+<div style="display: flex; justify-content: center;">
+    <image-caption src="resources/column-sparkline-2.png" alt="Column Sparkline" width="250px" constrained="true">No invalid X values</image-caption>
+    <image-caption src="resources/column-sparkline-invalid-x-values.png" alt="Column sparkline with gaps for invalid Y values" width="250px" constrained="true">Invalid X values</image-caption>
+</div>
+<div style="display: flex; justify-content: center;">
+    <image-caption src="resources/area-sparkline-2.png" alt="Area Sparkline" width="250px" constrained="true">No invalid X values</image-caption>
+    <image-caption src="resources/area-sparkline-invalid-x-values.png" alt="Area sparkline with gaps for invalid Y values" width="250px" constrained="true">Invalid X values</image-caption>
+</div>
 
 ## Updating Sparkline Data
 
-Updating Sparkline data is no different from updating any other cell data, for more details see 
+Updating Sparkline data is no different from updating any other cell data, for more details see
 [Updating Data](/data-update/).
 
 The following example demonstrates Sparkline data updates using the [Transaction Update API](/data-update-transactions/#transaction-update-api).
 
-<grid-example title='Sparkline Data Updates' name='sparkline-data-updates' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "modules": ["clientside", "sparklines"] }'></grid-example>
+<grid-example title='Sparkline Data Updates' name='sparkline-data-updates' type='generated' options='{ "enterprise": true, "exampleHeight": 610, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 ## Next Up
 

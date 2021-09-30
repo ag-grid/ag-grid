@@ -3,7 +3,7 @@ title: "Sparklines - Column Customisation"
 enterprise: true
 ---
 
-This sections shows how Column Sparklines can be customised by overriding the default column options.
+This section shows how Column Sparklines can be customised by overriding the default column options.
 
 The following [Column Sparkline Options](/sparklines-column-customisation/#columnsparklineoptions) can be used to customise Column Sparklines:
 
@@ -11,7 +11,7 @@ The following [Column Sparkline Options](/sparklines-column-customisation/#colum
 - [Column Stroke Options](/sparklines-column-customisation/#column-stroke-options)
 - [Column Padding Options](/sparklines-column-customisation/#column-padding-options)
 - [Axis Line Options](/sparklines-column-customisation/#axis-line-options)
-- [Sparkline Padding Options](/sparklines-column-customisation/#customising-the-sparkline-padding)
+- [Sparkline Padding Options](/sparklines-column-customisation/#sparkline-padding-options)
 
 Also see [Additional Customisations](/sparklines-column-customisation/#additional-customisations) for more advanced
 customisations that are common across all sparklines.
@@ -165,8 +165,8 @@ sparklineOptions: {
 ```
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/default.png" alt="Axis line default" width="250px" constrained="true">Default axis</image-caption>
-    <image-caption src="resources/custom-axis.png" alt="Axis line customisation" width="250px" constrained="true">Custom axis</image-caption>
+    <image-caption src="resources/default.png" alt="Axis line default" width="250px" constrained="true">Default axis line</image-caption>
+    <image-caption src="resources/custom-axis.png" alt="Axis line customisation" width="250px" constrained="true">Custom axis line</image-caption>
 </div>
 
 [[note]]
@@ -202,7 +202,7 @@ More advanced customisations are discussed separately in the following sections:
 
 - [Axis](/sparklines-axis-types/) - configure the x-axis type via `axis` options.
 - [Tooltips](/sparklines-tooltips/) - configure tooltips using `tooltip` options.
-- [Special Points](/sparklines-special-points/) - configure individual points of interest using a `formatter`.
+- [Points of Interest](/sparklines-points-of-interest/) - configure individual points of interest using a `formatter`.
 
 ## Interfaces
 

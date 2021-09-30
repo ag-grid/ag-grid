@@ -9,8 +9,10 @@ var options = {
     subtitle: {
         text: 'Source: Environmental Agency',
     },
-    tooltipOffset: [30, 0],
-    tooltipClass: 'my-tooltip',
+    tooltip: {
+        offset: [30, 0],
+        class: 'my-tooltip'
+    },
     series: [{
         type: 'column',
         xKey: 'quarter',

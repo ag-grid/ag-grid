@@ -114,7 +114,7 @@ export class LineSparkline extends Sparkline {
             let yDatum = yData[i];
             let xDatum = xData[i];
 
-            if (yDatum == undefined || xDatum == undefined) {
+            if (yDatum == undefined) {
                 continue;
             }
 

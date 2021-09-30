@@ -109,6 +109,7 @@ export abstract class Sparkline extends Observable {
     protected dataType: DataType = undefined;
     protected xData: any[] = [];
     protected yData: (number | undefined)[] = [];
+    protected skipInvalidYs: boolean = false;
 
     // Minimum y value in provided data.
     protected min: number | undefined = undefined;
@@ -342,6 +343,10 @@ export abstract class Sparkline extends Observable {
                 const x = this.getDatum(xDatum, xType);
                 const y = this.getDatum(yDatum, 'number');
 
+                if (y == undefined && this.skipInvalidYs) {
+                    continue;
+                }
+
                 xData.push(x);
                 yData.push(y);
             }
@@ -354,6 +359,10 @@ export abstract class Sparkline extends Observable {
 
                     const x = this.getDatum(xDatum, xType);
                     const y = this.getDatum(yDatum, 'number');
+
+                    if (y == undefined && this.skipInvalidYs || x == undefined) {
+                        continue;
+                    }
 
                     xData.push(x);
                     yData.push(y);
@@ -369,9 +378,12 @@ export abstract class Sparkline extends Observable {
                     const xDatum = datum[xKey];
                     const yDatum = datum[yKey];
 
-
                     const x = this.getDatum(xDatum, xType);
                     const y = this.getDatum(yDatum, 'number');
+
+                    if (y == undefined && this.skipInvalidYs || x == undefined) {
+                        continue;
+                    }
 
                     xData.push(x);
                     yData.push(y);
