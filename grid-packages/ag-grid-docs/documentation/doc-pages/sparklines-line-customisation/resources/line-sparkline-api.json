@@ -56,10 +56,6 @@
         },
         "formatter": {
             "description": "A callback function to return format styles for individual markers.",
-            "more": {
-                "name": "MarkerFormat",
-                "url": "/sparklines-line-customisation/#markerformat"
-            },
             "type": {
                 "meta": {
                     "name": "MarkerFormatterParams"
