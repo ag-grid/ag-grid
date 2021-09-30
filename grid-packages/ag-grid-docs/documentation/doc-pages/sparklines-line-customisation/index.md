@@ -3,7 +3,7 @@ title: "Sparklines - Line Customisation"
 enterprise: true
 ---
 
-This sections shows how Line Sparklines can be customised by overriding the default line options.
+This section shows how Line Sparklines can be customised by overriding the default line options.
 
 The following [Line Sparkline Options](/sparklines-line-customisation/#linesparklineoptions) can be used to customise Line Sparklines:
 
@@ -130,7 +130,7 @@ More advanced customisations are discussed separately in the following sections:
 
 - [Axis](/sparklines-axis-types/) - configure the x-axis type via `axis` options.
 - [Tooltips](/sparklines-tooltips/) - configure tooltips using `tooltip` options.
-- [Special Points](/sparklines-special-points/) - configure individual points of interest using a `formatter`.
+- [Points of Interest](/sparklines-points-of-interest/) - configure individual points of interest using a `formatter`.
 
 ## Interfaces
 
