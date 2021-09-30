@@ -135,26 +135,21 @@ export class AreaSparkline extends Sparkline {
             let xDatum = xData[i];
 
             const invalidYDatum = yDatum === undefined;
-            const invalidXDatum = xDatum === undefined;
 
             if (invalidYDatum) {
                 yDatum = 0;
-            }
-
-            if (invalidXDatum) {
-                xDatum = 0;
             }
 
             const x = xScale.convert(xDatum) + offsetX;
             const y = yScale.convert(yDatum);
 
             nodeData.push({
-                seriesDatum: { x: invalidXDatum ? undefined : xDatum, y: invalidYDatum ? undefined : yDatum },
+                seriesDatum: { x: xDatum, y: invalidYDatum ? undefined : yDatum },
                 point: { x, y }
             });
 
             areaData.push({
-                seriesDatum: { x: invalidXDatum ? undefined : xDatum, y: invalidYDatum ? undefined : yDatum },
+                seriesDatum: { x: xDatum, y: invalidYDatum ? undefined : yDatum },
                 point: { x, y }
             });
         }

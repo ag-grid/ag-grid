@@ -355,6 +355,10 @@ export abstract class Sparkline extends Observable {
                     const x = this.getDatum(xDatum, xType);
                     const y = this.getDatum(yDatum, 'number');
 
+                    if (x == undefined) {
+                        continue;
+                    }
+
                     xData.push(x);
                     yData.push(y);
                 }
@@ -369,9 +373,12 @@ export abstract class Sparkline extends Observable {
                     const xDatum = datum[xKey];
                     const yDatum = datum[yKey];
 
-
                     const x = this.getDatum(xDatum, xType);
                     const y = this.getDatum(yDatum, 'number');
+
+                    if (x == undefined) {
+                        continue;
+                    }
 
                     xData.push(x);
                     yData.push(y);
