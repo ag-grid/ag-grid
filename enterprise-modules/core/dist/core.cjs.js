@@ -517,7 +517,7 @@ var WatermarkComp = /** @class */ (function (_super) {
     };
     WatermarkComp.prototype.shouldDisplayWatermark = function () {
         var isDisplayWatermark = this.licenseManager.isDisplayWatermark();
-        var isWhiteListURL = location.hostname.match('^(?:127\.0\.0\.1|localhost|www\.ag-grid\.com)$') != null;
+        var isWhiteListURL = location.hostname.match('^(?:127\.0\.0\.1|localhost|(?:\w+\.)?ag-grid\.com)$') != null;
         var isForceWatermark = location.pathname ? location.pathname.indexOf('forceWatermark') !== -1 : false;
         return isForceWatermark || (isDisplayWatermark && !isWhiteListURL);
     };
