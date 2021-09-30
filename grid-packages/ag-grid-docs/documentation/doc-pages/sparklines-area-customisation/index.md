@@ -3,7 +3,7 @@ title: "Sparklines - Area Customisation"
 enterprise: true
 ---
 
-This sections shows how Area Sparklines can be customised by overriding the default area options.
+This section shows how Area Sparklines can be customised by overriding the default area options.
 
 The following [Area Sparkline Options](/sparklines-area-customisation/#areasparklineoptions) can be used to customise Area Sparklines:
 
@@ -22,7 +22,7 @@ The snippet below shows option overrides for the Area Sparkline:
 sparklineOptions: {
     type: 'area',
         fill: 'rgba(216, 204, 235, 0.3)',
-        line: {
+    line: {
         stroke: 'rgb(119,77,185)',
     },
     highlightStyle: {
@@ -100,7 +100,7 @@ Here is the result of the configuration shown in the above snippet.
 
 ## Area Fill Options
 
-To change the color of the area between the data points to the horizontal axis line, add the `fill` property to `sparklineOptions` as shown here.
+To change the color of the area between the data points to the horizontal axis line, add the `fill` property to `sparklineOptions` as shown in the code snippet below.
 
 ```js
 sparklineOptions: {
@@ -108,6 +108,7 @@ sparklineOptions: {
     fill: 'lavender', // sets the colour between the area line and axis
 }
 ```
+Here is the result of the configuration shown in the above snippet:
 
 <div style="display: flex; justify-content: center;">
     <image-caption src="resources/default.png" alt="Area fill default" width="250px" constrained="true">Default</image-caption>
@@ -123,23 +124,25 @@ The given `fill` string can be in one of the following formats:
 
 ## Axis Line Options
 
-By default, an x-axis line is displayed, this can be modified using the `axis` options.
+By default, an x-axis line is displayed. This setting can be modified using the `axis` options.
 
-Here is a snippet to demonstrate axis formatting.
+See the code snippet below showing how to customise the axis line color and thickness.
 
 ```js
 sparklineOptions: {
     type: 'area',
     axis: {
         stroke: 'coral', // sets the x-axis line stroke
-        strokeWidth: 3, // sets the x-axis line stroke width
+        strokeWidth: 3, // sets the x-axis line strokeWidth
     }
 }
 ```
 
+Here is the result of the configuration shown in the above snippet:
+
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/default.png" alt="Axis line default" width="250px" constrained="true">Default axis</image-caption>
-    <image-caption src="resources/custom-axis.png" alt="Axis line customisation" width="250px" constrained="true">Custom axis</image-caption>
+    <image-caption src="resources/default.png" alt="Axis line default" width="250px" constrained="true">Default axis line</image-caption>
+    <image-caption src="resources/custom-axis.png" alt="Axis line customisation" width="250px" constrained="true">Custom axis line</image-caption>
 </div>
 
 [[note]]
@@ -147,7 +150,7 @@ sparklineOptions: {
 
 ## Sparkline Padding Options
 
-To add extra space around the sparklines, custom `padding` options can be applied in the following way.
+To add extra space around the sparklines, custom `padding` options can be applied as shown in the code snippet below.
 
 ```js
 sparklineOptions: {
@@ -162,7 +165,9 @@ sparklineOptions: {
 }
 ```
 
-- The `top`, `right`, `bottom` and `left` properties are all optional and can be modified independently.
+Note that the `top`, `right`, `bottom` and `left` properties are all optional and can be modified independently.
+
+Here is the result of the configuration shown in the above snippet:
 
 <div style="display: flex; justify-content: center;">
     <image-caption src="resources/default-padding.png" alt="Padding default" width="250px" constrained="true">Default padding</image-caption>
@@ -175,7 +180,7 @@ More advanced customisations are discussed separately in the following sections:
 
 - [Axis](/sparklines-axis-types/) - configure the x-axis type via `axis` options.
 - [Tooltips](/sparklines-tooltips/) - configure tooltips using `tooltip` options.
-- [Special Points](/sparklines-special-points/) - configure individual points of interest using a `formatter`.
+- [Points of Interest](/sparklines-points-of-interest/) - configure individual points of interest using a `formatter`.
 
 ## Interfaces
 
