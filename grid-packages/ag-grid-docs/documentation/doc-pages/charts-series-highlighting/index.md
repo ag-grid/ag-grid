@@ -10,7 +10,7 @@ can highlight it, while dimming other chart series at the same time, as illustra
 
 <chart-example title='Overlapping Series' name='lines' type='generated'></chart-example>
 
-## Series Highlighting Basics
+## Customising Series Highlighting
 
 By default only item highlighting is activated. Series highlighting, as shown in the sample above, can be activated by modifying the default `highlightStyle`.
 
