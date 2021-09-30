@@ -61,8 +61,9 @@ The example below demonstrates the Category Axis used in an Area Sparkline. Note
 
 - The `rateOfChange` column is mapped to data containing an [Array of Tuples](/sparklines-data/#array-of-tuples) of type `[string, number][]`.
 - The `string` X values are evenly spaced across the x-axis using a fixed width between each data point.
+- The `string` X values are included in the tooltip title.
 
-<grid-example title='Sparkline Category Axis' name='sparkline-category-axis' type='generated' options='{ "enterprise": true, "exampleHeight": 510, "modules": ["clientside", "sparklines"] }'></grid-example>
+<grid-example title='Sparkline Category Axis' name='sparkline-category-axis' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 ## Number Axis
 
@@ -99,8 +100,9 @@ The example below demonstrates the Number Axis used in an Area Sparkline. Note t
 
 - The `rateOfChange` column is mapped to data containing an [Array of Tuples](/sparklines-data/#array-of-tuples) of type `[number, number][]`.
 - The numeric X values are placed and spread along the x-axis based on the magnitude of the value.
+- The numeric X values are included in the tooltip title.
 
-<grid-example title='Sparkline Number Axis' name='sparkline-number-axis' type='generated' options='{ "enterprise": true, "exampleHeight": 510, "modules": ["clientside", "sparklines"] }'></grid-example>
+<grid-example title='Sparkline Number Axis' name='sparkline-number-axis' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 ## Time Axis
 
@@ -137,8 +139,9 @@ The example below demonstrates the Time Axis used in an Area Sparkline. Note the
 
 - The `rateOfChange` column is mapped to data containing an [Array of Tuples](/sparklines-data/#array-of-tuples) of type `[Date, number][]`.
 - The `Date` X values are placed in chronological order and spread along the x-axis based on the time between data points.
+- The `Date` X values are included in the tooltip title.
 
-<grid-example title='Sparkline Time Axis' name='sparkline-time-axis' type='generated' options='{ "enterprise": true, "exampleHeight": 510, "modules": ["clientside", "sparklines"] }'></grid-example>
+<grid-example title='Sparkline Time Axis' name='sparkline-time-axis' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 ## Interfaces
 

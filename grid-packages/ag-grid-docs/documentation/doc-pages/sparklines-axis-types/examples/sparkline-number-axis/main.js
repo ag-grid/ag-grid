@@ -2,12 +2,8 @@ var gridOptions = {
     columnDefs: [
         { field: 'symbol', maxWidth: 110 },
         { field: 'name', minWidth: 250 },
-        { field: 'lastPrice', type: 'numericColumn' },
-        { field: 'volume', type: 'numericColumn' },
         {
-            field: 'rateOfChange',
-            headerName: 'Rate of Change',
-            minWidth: 250,
+            field: 'change',
             cellRenderer: 'agSparklineCellRenderer',
             cellRendererParams: {
                 sparklineOptions: {
@@ -20,7 +16,8 @@ var gridOptions = {
                     }
                 },
             },
-        }
+        },
+        { field: 'volume', type: 'numericColumn', maxWidth: 140 },
     ],
     defaultColDef: {
         flex: 1,
@@ -28,6 +25,7 @@ var gridOptions = {
         resizable: true,
     },
     rowData: getData(),
+    rowHeight: 50,
 };
 
 // setup the grid after the page has finished loading
