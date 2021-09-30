@@ -37,7 +37,7 @@ include '../jira_reports/jira_utilities.php';
 
             // to be released versions
             // order is important - add the versions desc
-            array_push($fixVersions, '26.0.0');
+            array_push($fixVersions, '26.1.0');
 
             for ($i = 0; $i < count($data->{'issues'}); $i++) {
                 $fixVersion = filter_var($data->{'issues'}[$i]->{'fields'}->{'fixVersions'}[0]->{'name'});
