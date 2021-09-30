@@ -36,6 +36,7 @@ export class AreaSparkline extends Sparkline {
 
     fill: string = 'rgba(124, 181, 236, 0.25)';
 
+    protected skipInvalidYs: boolean = true;
     private areaSparklineGroup: Group = new Group();
     protected strokePath: Path = new Path();
     protected fillPath: Path = new Path();
@@ -134,22 +135,16 @@ export class AreaSparkline extends Sparkline {
             let yDatum = yData[i];
             let xDatum = xData[i];
 
-            const invalidYDatum = yDatum === undefined;
-
-            if (invalidYDatum) {
-                yDatum = 0;
-            }
-
             const x = xScale.convert(xDatum) + offsetX;
             const y = yScale.convert(yDatum);
 
             nodeData.push({
-                seriesDatum: { x: xDatum, y: invalidYDatum ? undefined : yDatum },
+                seriesDatum: { x: xDatum, y: yDatum },
                 point: { x, y }
             });
 
             areaData.push({
-                seriesDatum: { x: xDatum, y: invalidYDatum ? undefined : yDatum },
+                seriesDatum: { x: xDatum, y: yDatum },
                 point: { x, y }
             });
         }
