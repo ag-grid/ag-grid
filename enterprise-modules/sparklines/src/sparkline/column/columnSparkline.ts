@@ -137,8 +137,7 @@ export class ColumnSparkline extends Sparkline {
         const yZero = yScale.convert(0);
 
         // if the scale is a band scale, the width of the columns will be the bandwidth, otherwise the width of the columns will be the range / number of items in the data
-        const width = xScale instanceof BandScale ? xScale.bandwidth : (Math.abs(xScale.range[1] - xScale.range[0]) / xData.length);
-
+        const width = xScale instanceof BandScale ? xScale.bandwidth : (Math.abs(xScale.range[1] - xScale.range[0]) / data.length);
 
         for (let i = 0, n = yData.length; i < n; i++) {
             let yDatum = yData[i];
@@ -186,7 +185,7 @@ export class ColumnSparkline extends Sparkline {
     }
 
     protected updateNodes() {
-        const { highlightedDatum, formatter: columnFormatter, fill, stroke, strokeWidth, min, max } = this;
+        const { highlightedDatum, formatter: columnFormatter, fill, stroke, strokeWidth } = this;
         const { fill: highlightFill, stroke: highlightStroke, strokeWidth: highlightStrokeWidth } = this.highlightStyle;
 
         this.columnSelection.each((column, datum, index) => {
