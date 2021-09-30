@@ -50,7 +50,8 @@ Another supported format is the tuples array. In this format, each tuple in the 
 
 ### Array of Objects
 
-Providing data as an array of objects requires `xKey` and `yKey` to be configured in the options.
+The sparkline also supports an array of objects as a data format. This requires setting the `xKey` and `yKey` properties in
+the `sparklineOptions` to the corresponding property names in the objects you’re providing, as shown in the code snippet below:
 
 <snippet>
 const gridOptions = {
