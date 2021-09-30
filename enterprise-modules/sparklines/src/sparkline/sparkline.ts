@@ -360,11 +360,7 @@ export abstract class Sparkline extends Observable {
                     const x = this.getDatum(xDatum, xType);
                     const y = this.getDatum(yDatum, 'number');
 
-                    if (x == undefined) {
-                        continue;
-                    }
-
-                    if (y == undefined && this.skipInvalidYs) {
+                    if (y == undefined && this.skipInvalidYs || x == undefined) {
                         continue;
                     }
 
@@ -385,11 +381,7 @@ export abstract class Sparkline extends Observable {
                     const x = this.getDatum(xDatum, xType);
                     const y = this.getDatum(yDatum, 'number');
 
-                    if (x == undefined) {
-                        continue;
-                    }
-
-                    if (y == undefined && this.skipInvalidYs) {
+                    if (y == undefined && this.skipInvalidYs || x == undefined) {
                         continue;
                     }
 
