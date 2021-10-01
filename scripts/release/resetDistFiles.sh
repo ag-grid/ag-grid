@@ -37,6 +37,7 @@ git reset enterprise-modules/server-side-row-model/dist
 git reset enterprise-modules/multi-filter/dist
 git reset enterprise-modules/set-filter/dist
 git reset enterprise-modules/set-filter/typings
+git reset enterprise-modules/sparklines/dist
 git reset enterprise-modules/side-bar/dist
 git reset enterprise-modules/status-bar/dist
 git reset enterprise-modules/viewport-row-model/dist

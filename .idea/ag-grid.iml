@@ -147,6 +147,7 @@
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/documentation/.cache" />
       <excludeFolder url="file://$MODULE_DIR$/t" />
     </content>
+    <content url="file://$MODULE_DIR$/community-modules/react/dev" />
     <content url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/node_modules" />
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

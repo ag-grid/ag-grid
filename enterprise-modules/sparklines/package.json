@@ -1,67 +1,67 @@
 {
-    "name": "@ag-grid-enterprise/sparklines",
-    "version": "26.0.0",
-    "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
-    "main": "./dist/cjs/main.js",
-    "module": "./dist/es6/main.js",
-    "types": "./dist/cjs/main.d.ts",
-    "scripts": {
-        "jest": "jest",
-        "build-cjs": "npx tsc -p tsconfig.json",
-        "build-es6": "npx tsc -p tsconfig.es6.json",
-        "package": "node ../../module-build/rollup/build.js",
-        "build": "npm run build-cjs && npm run build-es6 && npm run hash",
-        "test": "npx jest --passWithNoTests",
-        "hash": "sh ../../scripts/hashDirectory.sh > .hash"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/ag-grid/ag-grid.git"
-    },
-    "keywords": [
-        "web-components",
-        "grid",
-        "data",
-        "table",
-        "angular",
-        "angular-component",
-        "react",
-        "react-component",
-        "angularjs",
-        "reactjs"
+  "name": "@ag-grid-enterprise/sparklines",
+  "version": "26.1.0",
+  "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
+  "main": "./dist/cjs/main.js",
+  "module": "./dist/es6/main.js",
+  "types": "./dist/cjs/main.d.ts",
+  "scripts": {
+    "jest": "jest",
+    "build-cjs": "npx tsc -p tsconfig.json",
+    "build-es6": "npx tsc -p tsconfig.es6.json",
+    "package": "node ../../module-build/rollup/build.js",
+    "build": "npm run build-cjs && npm run build-es6 && npm run hash",
+    "test": "npx jest --passWithNoTests",
+    "hash": "sh ../../scripts/hashDirectory.sh > .hash"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ag-grid/ag-grid.git"
+  },
+  "keywords": [
+    "web-components",
+    "grid",
+    "data",
+    "table",
+    "angular",
+    "angular-component",
+    "react",
+    "react-component",
+    "angularjs",
+    "reactjs"
+  ],
+  "author": "Sean Landsman <sean@thelandsmans.com>",
+  "license": "Commercial",
+  "bugs": {
+    "url": "https://github.com/ag-grid/ag-grid/issues"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 10",
+    "not ie_mob <= 11",
+    "not blackberry > 0"
+  ],
+  "homepage": "http://www.ag-grid.com/",
+  "jest": {
+    "setupFiles": [
+      "jest-canvas-mock"
     ],
-    "author": "Sean Landsman <sean@thelandsmans.com>",
-    "license": "Commercial",
-    "bugs": {
-        "url": "https://github.com/ag-grid/ag-grid/issues"
-    },
-    "browserslist": [
-        "> 1%",
-        "last 2 versions",
-        "not ie <= 10",
-        "not ie_mob <= 11",
-        "not blackberry > 0"
-    ],
-    "homepage": "http://www.ag-grid.com/",
-    "jest": {
-        "setupFiles": [
-          "jest-canvas-mock"
-        ],
-        "testEnvironment": "node"
-    },
-    "dependencies": {
-        "@ag-grid-community/core": "~26.0.0",
-        "@ag-grid-enterprise/core": "~26.0.0"
-    },
-    "devDependencies": {
-        "@types/jest": "^25.2.1",
-        "@types/node": "12.20.20",
-        "jest-canvas-mock": "2.3.1",
-        "jest": "^25.4.0",
-        "ts-jest": "^25.4.0",
-        "typescript": "~3.6.5"
-    },
-    "publishConfig": {
-        "access": "public"
-    }
+    "testEnvironment": "node"
+  },
+  "dependencies": {
+    "@ag-grid-community/core": "~26.1.0",
+    "@ag-grid-enterprise/core": "~26.1.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^25.2.1",
+    "@types/node": "12.20.20",
+    "jest-canvas-mock": "2.3.1",
+    "jest": "^25.4.0",
+    "ts-jest": "^25.4.0",
+    "typescript": "~3.6.5"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
 }

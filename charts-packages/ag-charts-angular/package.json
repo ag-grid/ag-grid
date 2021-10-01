@@ -1,6 +1,6 @@
 {
   "name": "ag-charts-angular",
-  "version": "4.0.0",
+  "version": "4.1.0",
   "scripts": {
     "ng": "npx @angular/cli",
     "build": "npx @angular/cli build --prod && npm run hash",
@@ -41,7 +41,7 @@
     "rxjs": "~6.6.7",
     "tslib": "^1.10.0",
     "zone.js": "~0.10.3",
-    "ag-charts-community": "~4.0.0"
+    "ag-charts-community": "~4.1.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~0.901.15",

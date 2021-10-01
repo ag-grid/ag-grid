@@ -10,7 +10,7 @@ function checkFileExists {
 }
 
 checkFileExists ~/Documents/aggrid/aggrid/aggrid.txt
-checkFileExists ~/.ssh/ag_grid_site
+checkFileExists ~/.ag_deploy/.ssh/ag_grid_site
 
 while true; do
     echo    ""
