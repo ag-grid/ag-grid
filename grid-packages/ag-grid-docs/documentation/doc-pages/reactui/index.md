@@ -15,7 +15,7 @@ The disadvantage of this for the React community was sometimes it didn't feel ve
 React UI is an evolution of how AG Grid uses the React framework. AG Grid React UI will not be a React wrapper around
 our in house rendering engine. AG Grid React UI will have the **AG Grid UI ported to React**.
 
-The latest AG Grid v26.0 has a large portion of the grid UI written in React, ready for you to get stuck into and tell us what you think.
+The latest AG Grid v26.1 has a large portion of the grid UI written in React, ready for you to get stuck into and tell us what you think.
 
 <div style="margin-top: 30px; margin-bottom: 30px;">
     <image-caption src="reactui/resources/before-vs-after.svg" alt="AG Grid React UI Explained" centered="true"></image-caption>
