@@ -386,8 +386,6 @@ export {
     PostProcessPopupParams,
     ProcessDataFromClipboardParams,
     ChartRef,
-    ProcessChartOptionsParams,
-    ProcessChartParams,
     RowClassRules,
     RowStyle,
     RowClassParams,

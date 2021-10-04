@@ -18,7 +18,6 @@ import {
     LegendOptions,
     NavigatorOptions,
     PaddingOptions,
-    ProcessChartOptionsParams,
     SeriesOptions
 } from "@ag-grid-community/core";
 import {
@@ -49,8 +48,6 @@ export interface ChartProxyParams {
     parentElement: HTMLElement;
     grouping: boolean;
     document: Document;
-    allowProcessChartOptions: boolean | undefined;
-    processChartOptions: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>;
     getChartThemeName: () => string;
     getChartThemes: () => string[];
     getGridOptionsChartThemeOverrides: () => AgChartThemeOverrides | undefined;
@@ -143,7 +140,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     private isDarkTheme = () => this.chartProxyParams.isDarkTheme();
     protected getFontColor = (): string => this.isDarkTheme() ? 'rgb(221, 221, 221)' : 'rgb(87, 87, 87)';
     protected getAxisGridColor = (): string => this.isDarkTheme() ? 'rgb(100, 100, 100)' : 'rgb(219, 219, 219)';
-    protected getBackgroundColor = (): string => this.isDarkTheme() ? '#2d3436' : 'white';
 
     protected abstract getDefaultOptions(): TOptions;
 
@@ -156,26 +152,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
         // extract the iChartOptions from the theme instance - this is the backing model for integrated charts
         this.iChartOptions = this.extractIChartOptionsFromTheme(this.chartTheme);
-
-        // allow users to override options before they are applied
-        const { processChartOptions, allowProcessChartOptions } = this.chartProxyParams;
-
-        if (processChartOptions) {
-            if (!allowProcessChartOptions && !this.chartProxyParams.restoringChart) {
-                console.warn(`AG Grid: since v26.0, 'processChartOptions()' has been removed (deprecated in v24.0), see https://www.ag-grid.com/javascript-grid/integrated-charts-customisation/`);
-                return;
-            }
-
-            const originalOptions = deepMerge({}, this.iChartOptions);
-            const params: ProcessChartOptionsParams = { type: this.chartType, options: this.iChartOptions };
-            const overriddenOptions = processChartOptions(params) as TOptions;
-
-            // ensure we have everything we need, in case the processing removed necessary options
-            const safeOptions = this.getDefaultOptions();
-            _.mergeDeep(safeOptions, overriddenOptions, false);
-            this.overridePalette(originalOptions, safeOptions);
-            this.iChartOptions = safeOptions;
-        }
     }
 
     private paletteOverridden(originalOptions: any, overriddenOptions: TOptions) {

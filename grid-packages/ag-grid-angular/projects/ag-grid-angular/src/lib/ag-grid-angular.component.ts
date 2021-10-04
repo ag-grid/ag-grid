@@ -140,7 +140,6 @@ import {
     ProcessRowParams,
     ProcessCellForExportParams,
     ProcessHeaderForExportParams,
-    ProcessChartOptionsParams,
     RowStyle,
     RowClassRules,
     RowClassParams,
@@ -440,10 +439,6 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public customChartThemes: { [name: string]: AgChartTheme } | undefined = undefined;
     /** Chart theme overrides applied to all themes.     */
     @Input() public chartThemeOverrides: AgChartThemeOverrides | undefined = undefined;
-    /** @deprecated     */
-    @Input() public processChartOptions: ((params: ProcessChartOptionsParams) =>  ChartOptions<any>) | undefined = undefined;
-    /** @deprecated     */
-    @Input() public allowProcessChartOptions: boolean | undefined = undefined;
     /** `cellRenderer` to use when data is loading via a DataSource.     */
     @Input() public loadingCellRenderer: { new(): ICellRenderer; } | string | undefined = undefined;
     /** Framework `cellRenderer` to use when data is loading via a DataSource.     */
@@ -1173,7 +1168,6 @@ export class AgGridAngular implements AfterViewInit {
     static ngAcceptInputType_maintainColumnOrder: boolean | null | '';
     static ngAcceptInputType_groupMaintainOrder: boolean | null | '';
     static ngAcceptInputType_columnHoverHighlight: boolean | null | '';
-    static ngAcceptInputType_allowProcessChartOptions: boolean | null | '';
     // @END@
 }
 

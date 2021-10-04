@@ -17,7 +17,6 @@ import {
     NavigateToNextHeaderParams,
     PaginationNumberFormatterParams,
     PostProcessPopupParams,
-    ProcessChartOptionsParams,
     ProcessDataFromClipboardParams,
     ServerSideStoreParams,
     TabToNextCellParams,
@@ -45,9 +44,8 @@ import { ColDefUtil } from './components/colDefUtil';
 import { Events } from './eventKeys';
 import { SideBarDef, SideBarDefParser } from './entities/sideBar';
 import { ModuleNames } from './modules/moduleNames';
-import { ChartOptions } from './interfaces/iChartOptions';
 import { AgChartTheme, AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
-import { iterateObject, getAllValuesInObject } from './utils/object';
+import { iterateObject } from './utils/object';
 import { ModuleRegistry } from './modules/moduleRegistry';
 import { isNumeric } from './utils/number';
 import { exists, missing, values } from './utils/generic';
@@ -162,7 +160,6 @@ export class GridOptionsWrapper {
     public static PROP_PROCESS_TO_SECONDARY_COLDEF = 'processSecondaryColDef';
     public static PROP_PROCESS_SECONDARY_COL_GROUP_DEF = 'processSecondaryColGroupDef';
 
-    public static PROP_PROCESS_CHART_OPTIONS = 'processChartOptions';
     public static PROP_GET_CHART_TOOLBAR_ITEMS = 'getChartToolbarItems';
 
     public static PROP_GET_SERVER_SIDE_STORE_PARAMS = 'getServerSideStoreParams';
@@ -1354,14 +1351,6 @@ export class GridOptionsWrapper {
     public getChartThemes(): string[] {
         // return default themes if user hasn't supplied any
         return this.gridOptions.chartThemes || ['ag-default', 'ag-material', 'ag-pastel', 'ag-vivid', 'ag-solar'];
-    }
-
-    public getAllowProcessChartOptions(): boolean | undefined  {
-        return this.gridOptions.allowProcessChartOptions;
-    }
-
-    public getProcessChartOptionsFunc(): ((params: ProcessChartOptionsParams) => ChartOptions<any>) | undefined  {
-        return this.gridOptions.processChartOptions;
     }
 
     public getClipboardDeliminator() {

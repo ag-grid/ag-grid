@@ -7,7 +7,6 @@ import {
     ChartCreated,
     ChartDestroyed,
     ChartModel,
-    ChartOptions,
     ChartType,
     ColumnApi,
     ColumnModel,
@@ -18,7 +17,6 @@ import {
     IAggFunc,
     PopupService,
     PostConstruct,
-    ProcessChartOptionsParams,
     RefSelector
 } from "@ag-grid-community/core";
 import { ChartMenu } from "./menu/chartMenu";
@@ -47,7 +45,6 @@ export interface GridChartParams {
     aggFunc?: string | IAggFunc;
     chartThemeOverrides?: AgChartThemeOverrides;
     unlinkChart?: boolean;
-    processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
     crossFiltering: boolean;
     crossFilteringContext: CrossFilteringContext;
     restoringChart: boolean;
@@ -134,9 +131,6 @@ export class GridChartComp extends Component {
         // create chart before dialog to ensure dialog is correct size
         this.createChart();
 
-        // TODO should be removed along with processChartOptions()
-        this.params.processChartOptions = undefined;
-
         if (this.params.insideDialog) {
             this.addDialog();
         }
@@ -185,8 +179,6 @@ export class GridChartComp extends Component {
             this.chartProxy.destroy();
         }
 
-        const allowProcessChartOptions = this.gridOptionsWrapper.getAllowProcessChartOptions();
-        const processChartOptionsFunc = this.params.processChartOptions || this.gridOptionsWrapper.getProcessChartOptionsFunc();
         const customChartThemes = this.gridOptionsWrapper.getCustomChartThemes();
 
         const chartType = this.model.getChartType();
@@ -202,8 +194,6 @@ export class GridChartComp extends Component {
             chartId: this.getChartId(),
             chartType,
             chartThemeName: this.model.getChartThemeName(),
-            allowProcessChartOptions: allowProcessChartOptions,
-            processChartOptions: processChartOptionsFunc!,
             getChartThemeName: this.getChartThemeName.bind(this),
             getChartThemes: this.getChartThemes.bind(this),
             customChartThemes: customChartThemes,

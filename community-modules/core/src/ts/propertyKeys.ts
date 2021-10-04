@@ -61,7 +61,7 @@ export class PropertyKeys {
         'suppressExpandablePivotGroups', 'applyColumnDefOrder', 'debounceVerticalScrollbar', 'detailRowAutoHeight',
         'serverSideFilteringAlwaysResets', 'suppressAggFilteredOnly', 'showOpenedGroup', 'suppressClipboardApi',
         'suppressModelUpdateAfterUpdateTransaction', 'stopEditingWhenCellsLoseFocus', 'maintainColumnOrder', 'groupMaintainOrder',
-        'columnHoverHighlight', 'allowProcessChartOptions'
+        'columnHoverHighlight'
     ];
 
     /** You do not need to include event callbacks in this list, as they are generated automatically. */
@@ -74,10 +74,11 @@ export class PropertyKeys {
         'tabToNextHeader', 'navigateToNextCell', 'tabToNextCell', 'processCellFromClipboard', 'getDocument', 'postProcessPopup',
         'getChildCount', 'getDataPath', 'loadingCellRenderer', 'loadingCellRendererFramework', 'loadingOverlayComponent',
         'loadingOverlayComponentFramework', 'noRowsOverlayComponent', 'noRowsOverlayComponentFramework', 'detailCellRenderer',
-        'detailCellRendererFramework', 'isRowMaster', 'isRowSelectable', 'postSort', 'processHeaderForClipboard', 'paginationNumberFormatter',
-        'processDataFromClipboard', 'getServerSideGroupKey', 'isServerSideGroup', 'suppressKeyboardEvent', 'createChartContainer',
-        'processChartOptions', 'getChartToolbarItems', 'fillOperation', 'isApplyServerSideTransaction', 'getServerSideStoreParams',
-        'isServerSideGroupOpenByDefault', 'isGroupOpenByDefault', 'defaultGroupSortComparator', 'defaultGroupOrderComparator', 'loadingCellRendererSelector'
+        'detailCellRendererFramework', 'isRowMaster', 'isRowSelectable', 'postSort', 'processHeaderForClipboard',
+        'paginationNumberFormatter', 'processDataFromClipboard', 'getServerSideGroupKey', 'isServerSideGroup',
+        'suppressKeyboardEvent', 'createChartContainer', 'getChartToolbarItems', 'fillOperation', 'isApplyServerSideTransaction',
+        'getServerSideStoreParams', 'isServerSideGroupOpenByDefault', 'isGroupOpenByDefault', 'defaultGroupSortComparator',
+        'defaultGroupOrderComparator', 'loadingCellRendererSelector'
     ];
 
     public static ALL_PROPERTIES = [

@@ -275,17 +275,6 @@
     "description": "/** Chart theme overrides applied to all themes. */",
     "type": { "returnType": "AgChartThemeOverrides" }
   },
-  "processChartOptions": {
-    "description": "/** @deprecated */",
-    "type": {
-      "arguments": { "params": "ProcessChartOptionsParams" },
-      "returnType": "ChartOptions<any>"
-    }
-  },
-  "allowProcessChartOptions": {
-    "description": "/** @deprecated */",
-    "type": { "returnType": "boolean" }
-  },
   "loadingCellRenderer": {
     "description": "/** `cellRenderer` to use when data is loading via a DataSource. */",
     "type": { "returnType": "{ new(): ICellRenderer; } | string" }

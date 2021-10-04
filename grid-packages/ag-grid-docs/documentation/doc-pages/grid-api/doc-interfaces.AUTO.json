@@ -2260,18 +2260,6 @@
       "description": "/** Chart theme overrides applied to all themes. */",
       "type": { "returnType": "AgChartThemeOverrides", "optional": true }
     },
-    "processChartOptions": {
-      "description": "/** @deprecated */",
-      "type": {
-        "arguments": { "params": "ProcessChartOptionsParams" },
-        "returnType": "ChartOptions<any>",
-        "optional": true
-      }
-    },
-    "allowProcessChartOptions": {
-      "description": "/** @deprecated */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
     "loadingCellRenderer": {
       "description": "/** `cellRenderer` to use when data is loading via a DataSource. */",
       "type": {
@@ -4649,19 +4637,6 @@
   },
   "SendToClipboardParams": {
     "data": { "type": { "returnType": "string", "optional": false } }
-  },
-  "ProcessChartOptionsParams": {
-    "type": { "type": { "returnType": "ChartType", "optional": false } },
-    "options": {
-      "type": { "returnType": "ChartOptions<any>", "optional": false }
-    }
-  },
-  "ProcessChartParams": {
-    "type": { "type": { "returnType": "ChartType", "optional": false } },
-    "options": {
-      "type": { "returnType": "AgChartOptions", "optional": false }
-    },
-    "chart": { "type": { "returnType": "any", "optional": false } }
   },
   "GetContextMenuItemsParams": {
     "defaultItems": {
@@ -8043,14 +8018,6 @@
       "description": "/** The aggregation function that should be applied to all series data. */",
       "type": { "returnType": "string | IAggFunc", "optional": true }
     },
-    "processChartOptions": {
-      "description": "/** @deprecated since v24.0.0, use `chartThemeOverrides` instead\n */",
-      "type": {
-        "arguments": { "params": "ProcessChartOptionsParams" },
-        "returnType": "ChartOptions<any>",
-        "optional": true
-      }
-    },
     "chartType": {
       "description": "/** The type of chart to create. */",
       "type": { "returnType": "ChartType", "optional": false }
@@ -8107,14 +8074,6 @@
     }
   },
   "CreatePivotChartParams": {
-    "processChartOptions": {
-      "description": "/** @deprecated since v24.0.0, use `chartThemeOverrides` instead\n */",
-      "type": {
-        "arguments": { "params": "ProcessChartOptionsParams" },
-        "returnType": "ChartOptions<any>",
-        "optional": true
-      }
-    },
     "chartType": {
       "description": "/** The type of chart to create. */",
       "type": { "returnType": "ChartType", "optional": false }

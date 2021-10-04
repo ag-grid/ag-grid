@@ -6,7 +6,6 @@ import {
     BeanStub,
     CellRange,
     ChartModel,
-    ChartOptions,
     ChartRef,
     ChartType,
     ColumnModel,
@@ -19,8 +18,6 @@ import {
     IRangeService,
     Optional,
     PreDestroy,
-    ProcessChartOptionsParams,
-    SeriesOptions,
     CellRangeParams,
     GetChartImageDataUrlParams
 } from "@ag-grid-community/core";
@@ -125,7 +122,6 @@ export class ChartService extends BeanStub implements IChartService {
                 undefined,
                 params.chartThemeOverrides,
                 params.unlinkChart,
-                params.processChartOptions,
                 false,
                 true);
 
@@ -147,7 +143,6 @@ export class ChartService extends BeanStub implements IChartService {
             params.aggFunc,
             params.chartThemeOverrides,
             params.unlinkChart,
-            params.processChartOptions,
             false,
             true);
     }
@@ -171,8 +166,7 @@ export class ChartService extends BeanStub implements IChartService {
             params.chartContainer,
             params.aggFunc,
             params.chartThemeOverrides,
-            params.unlinkChart,
-            params.processChartOptions);
+            params.unlinkChart);
     }
 
     public createPivotChart(params: CreatePivotChartParams): ChartRef | undefined {
@@ -206,8 +200,7 @@ export class ChartService extends BeanStub implements IChartService {
             params.chartContainer,
             undefined,
             params.chartThemeOverrides,
-            params.unlinkChart,
-            params.processChartOptions);
+            params.unlinkChart);
     }
 
     public createCrossFilterChart(params: CreateCrossFilterChartParams): ChartRef | undefined {
@@ -248,7 +241,6 @@ export class ChartService extends BeanStub implements IChartService {
         aggFunc?: string | IAggFunc,
         chartThemeOverrides?: AgChartThemeOverrides,
         unlinkChart = false,
-        processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<SeriesOptions>,
         crossFiltering  = false,
         restoringChart  = false): ChartRef | undefined {
 
@@ -263,7 +255,6 @@ export class ChartService extends BeanStub implements IChartService {
             suppressChartRanges,
             aggFunc,
             chartThemeOverrides,
-            processChartOptions,
             unlinkChart,
             crossFiltering,
             crossFilteringContext: this.crossFilteringContext,
@@ -337,18 +328,7 @@ export class ChartService extends BeanStub implements IChartService {
             chartContainer: chartContainer,
             suppressChartRanges: model.suppressChartRanges,
             aggFunc: model.aggFunc,
-            unlinkChart: model.unlinkChart,
-            processChartOptions: () => model.chartOptions
-        };
-    }
-
-    private mapToPivotParams(model: ChartModel, chartContainer?: HTMLElement): CreatePivotChartParams {
-        return {
-            chartType: model.chartType,
-            chartThemeName: model.chartThemeName,
-            chartContainer: chartContainer,
-            unlinkChart: model.unlinkChart,
-            processChartOptions: () => model.chartOptions
+            unlinkChart: model.unlinkChart
         };
     }
 

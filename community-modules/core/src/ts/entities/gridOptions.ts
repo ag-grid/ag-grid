@@ -89,8 +89,8 @@ import { ILoadingOverlayComp } from "../rendering/overlays/loadingOverlayCompone
 import { INoRowsOverlayComp } from "../rendering/overlays/noRowsOverlayComponent";
 import { StatusPanelDef } from "../interfaces/iStatusPanel";
 import { SideBarDef } from "./sideBar";
-import { ChartMenuOptions, ChartOptions, ChartType } from "../interfaces/iChartOptions";
-import { AgChartOptions, AgChartTheme, AgChartThemeOverrides } from "../interfaces/iAgChartOptions";
+import { ChartMenuOptions } from "../interfaces/iChartOptions";
+import { AgChartTheme, AgChartThemeOverrides } from "../interfaces/iAgChartOptions";
 import { ServerSideTransaction } from "../interfaces/serverSideTransaction";
 import { HeaderPosition } from "../headerRendering/common/headerPosition";
 import { ExcelExportParams, ExcelStyle } from "../interfaces/iExcelCreator";
@@ -282,12 +282,6 @@ export interface GridOptions {
     customChartThemes?: { [name: string]: AgChartTheme };
     /** Chart theme overrides applied to all themes. */
     chartThemeOverrides?: AgChartThemeOverrides;
-
-    /** @deprecated */
-    processChartOptions?(params: ProcessChartOptionsParams): ChartOptions<any>;
-    // Note: processChartOptions() no longer works, however this temporary option has been added as a failsafe
-    /** @deprecated */
-    allowProcessChartOptions?: boolean;
 
     // *** Loading Cell Renderers *** //
     /** `cellRenderer` to use when data is loading via a DataSource. */
@@ -1119,17 +1113,6 @@ export interface RowHeightParams {
 
 export interface SendToClipboardParams {
     data: string;
-}
-
-export interface ProcessChartOptionsParams {
-    type: ChartType;
-    options: ChartOptions<any>;
-}
-
-export interface ProcessChartParams {
-    type: ChartType;
-    options: AgChartOptions;
-    chart: any;
 }
 
 export interface GetContextMenuItemsParams {

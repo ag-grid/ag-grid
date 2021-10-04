@@ -38,7 +38,6 @@ import { IContextMenuFactory } from "./interfaces/iContextMenuFactory";
 import { ICellRenderer } from "./rendering/cellRenderers/iCellRenderer";
 import { ICellEditor } from "./interfaces/iCellEditor";
 import { DragAndDropService } from "./dragAndDrop/dragAndDropService";
-import { GridHeaderComp } from "./headerRendering/gridHeaderComp";
 import { AnimationFrameService } from "./misc/animationFrameService";
 import {
     IServerSideRowModel,
@@ -67,7 +66,6 @@ import {
     NavigateToNextHeaderParams,
     PaginationNumberFormatterParams,
     PostProcessPopupParams,
-    ProcessChartOptionsParams,
     ProcessRowParams,
     ServerSideStoreParams,
     TabToNextCellParams,
@@ -75,7 +73,7 @@ import {
     RowClassParams,
     RowHeightParams
 } from "./entities/gridOptions";
-import { ChartOptions, ChartType } from "./interfaces/iChartOptions";
+import { ChartType } from "./interfaces/iChartOptions";
 import { IToolPanel } from "./interfaces/iToolPanel";
 import { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
 import { ClientSideRowModelSteps, IClientSideRowModel, RefreshModelParams } from "./interfaces/iClientSideRowModel";
@@ -163,9 +161,6 @@ export interface CreateRangeChartParams extends CreateChartParams {
     suppressChartRanges?: boolean;
     /** The aggregation function that should be applied to all series data. */
     aggFunc?: string | IAggFunc;
-
-    /** @deprecated since v24.0.0, use `chartThemeOverrides` instead */
-    processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
 }
 export interface CreateCrossFilterChartParams extends CreateChartParams {
     /** The range of cells to be charted. */
@@ -176,10 +171,7 @@ export interface CreateCrossFilterChartParams extends CreateChartParams {
     aggFunc?: string | IAggFunc;
 }
 
-export interface CreatePivotChartParams extends CreateChartParams {
-    /** @deprecated since v24.0.0, use `chartThemeOverrides` instead */
-    processChartOptions?: (params: ProcessChartOptionsParams) => ChartOptions<any>;
-}
+export interface CreatePivotChartParams extends CreateChartParams {}
 
 export interface DetailGridInfo {
     /**
@@ -1283,10 +1275,6 @@ export class GridApi {
 
     public setDefaultGroupOrderComparator(defaultGroupOrderComparatorFunc: (nodeA: RowNode, nodeB: RowNode) => number): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_DEFAULT_GROUP_ORDER_COMPARATOR, defaultGroupOrderComparatorFunc);
-    }
-
-    public setProcessChartOptions(processChartOptionsFunc: (params: ProcessChartOptionsParams) => ChartOptions<any>): void {
-        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PROCESS_CHART_OPTIONS, processChartOptionsFunc);
     }
 
     public setGetChartToolbarItems(getChartToolbarItemsFunc: GetChartToolbarItems): void {

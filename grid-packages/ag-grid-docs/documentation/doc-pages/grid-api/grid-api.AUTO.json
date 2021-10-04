@@ -791,14 +791,6 @@
       "returnType": "void"
     }
   },
-  "setProcessChartOptions": {
-    "type": {
-      "arguments": {
-        "processChartOptionsFunc": "(params: ProcessChartOptionsParams) => ChartOptions<any>"
-      },
-      "returnType": "void"
-    }
-  },
   "setGetChartToolbarItems": {
     "type": {
       "arguments": { "getChartToolbarItemsFunc": "GetChartToolbarItems" },

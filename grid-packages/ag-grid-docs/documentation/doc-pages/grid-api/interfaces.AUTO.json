@@ -1388,8 +1388,6 @@
       "chartThemes?": "string[]",
       "customChartThemes?": "{ [name: string]: AgChartTheme; }",
       "chartThemeOverrides?": "AgChartThemeOverrides",
-      "processChartOptions?(params: ProcessChartOptionsParams)": "ChartOptions<any>",
-      "allowProcessChartOptions?": "boolean",
       "loadingCellRenderer?": "{ new (): ICellRenderer; } | string",
       "loadingCellRendererFramework?": "any",
       "loadingCellRendererParams?": "any",
@@ -1746,8 +1744,6 @@
       "chartThemes?": "/** The list of chart themes to be used. */",
       "customChartThemes?": "/** A map containing custom chart themes. */",
       "chartThemeOverrides?": "/** Chart theme overrides applied to all themes. */",
-      "processChartOptions?(params: ProcessChartOptionsParams)": "/** @deprecated */",
-      "allowProcessChartOptions?": "/** @deprecated */",
       "loadingCellRenderer?": "/** `cellRenderer` to use when data is loading via a DataSource. */",
       "loadingCellRendererFramework?": "/** Framework `cellRenderer` to use when data is loading via a DataSource. */",
       "loadingCellRendererParams?": "/** Params to be passed to loading cell renderer component. */",
@@ -2139,14 +2135,6 @@
     }
   },
   "SendToClipboardParams": { "meta": {}, "type": { "data": "string" } },
-  "ProcessChartOptionsParams": {
-    "meta": {},
-    "type": { "type": "ChartType", "options": "ChartOptions<any>" }
-  },
-  "ProcessChartParams": {
-    "meta": {},
-    "type": { "type": "ChartType", "options": "AgChartOptions", "chart": "any" }
-  },
   "GetContextMenuItemsParams": {
     "meta": {},
     "type": {
@@ -4640,7 +4628,6 @@
       "cellRange": "CellRangeParams",
       "suppressChartRanges?": "boolean",
       "aggFunc?": "string | IAggFunc",
-      "processChartOptions?": "(params: ProcessChartOptionsParams) => ChartOptions<any>",
       "chartType": "ChartType",
       "chartThemeName?": "string",
       "chartContainer?": "HTMLElement",
@@ -4651,7 +4638,6 @@
       "cellRange": "/** The range of cells to be charted. */",
       "suppressChartRanges?": "/** Suppress highlighting the selected range in the grid. */",
       "aggFunc?": "/** The aggregation function that should be applied to all series data. */",
-      "processChartOptions?": "/** @deprecated since v24.0.0, use `chartThemeOverrides` instead\n */",
       "chartType": "/** The type of chart to create. */",
       "chartThemeName?": "/** The default theme to use, either a default option or your own custom theme. */",
       "chartContainer?": "/** Provide to display the chart outside of the grid in your own container. */",
@@ -4685,7 +4671,6 @@
   "CreatePivotChartParams": {
     "meta": {},
     "type": {
-      "processChartOptions?": "(params: ProcessChartOptionsParams) => ChartOptions<any>",
       "chartType": "ChartType",
       "chartThemeName?": "string",
       "chartContainer?": "HTMLElement",
@@ -4693,7 +4678,6 @@
       "unlinkChart?": "boolean"
     },
     "docs": {
-      "processChartOptions?": "/** @deprecated since v24.0.0, use `chartThemeOverrides` instead\n */",
       "chartType": "/** The type of chart to create. */",
       "chartThemeName?": "/** The default theme to use, either a default option or your own custom theme. */",
       "chartContainer?": "/** Provide to display the chart outside of the grid in your own container. */",
