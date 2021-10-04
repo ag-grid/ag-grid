@@ -1,13 +1,13 @@
 export class HierarchyNode {
-    data: any;
+    datum: any;
     value: number = 0;
     depth: number = 0;
     height: number = 0;
     parent?: HierarchyNode = undefined;
     children?: HierarchyNode[] = undefined;
 
-    constructor(data: any) {
-        this.data = data;
+    constructor(datum: any) {
+        this.datum = datum;
     }
 
     private countFn(node: HierarchyNode) {
@@ -102,9 +102,9 @@ export class HierarchyNode {
         return result;
     }
 
-    sum(value: (data: any) => number): this {
+    sum(value: (datum: any) => number): this {
         return this.eachAfter(node => {
-            let sum = +value(node.data) || 0;
+            let sum = +value(node.datum) || 0;
 
             const { children } = node;
             if (children) {
@@ -228,7 +228,7 @@ export function hierarchy(data: any[], children?: (d: any) => any[]) {
     let child, childs, i, n;
 
     while (node = nodes.pop()) {
-        if ((childs = children(node.data)) && (n = (childs = Array.from(childs)).length)) {
+        if ((childs = children(node.datum)) && (n = (childs = Array.from(childs)).length)) {
             node.children = childs;
             for (i = n - 1; i >= 0; --i) {
                 nodes.push(child = childs[i] = new HierarchyNode(childs[i]));

@@ -411,7 +411,7 @@ export class HistogramSeries extends CartesianSeries {
             type: 'nodeClick',
             event,
             series: this,
-            datum: datum.seriesDatum,
+            datum: datum.datum,
             xKey: this.xKey
         });
     }
@@ -492,8 +492,8 @@ export class HistogramSeries extends CartesianSeries {
 
             nodeData.push({
                 series: this,
-                seriesDatum: binOfData,  // required by SeriesNodeDatum, but might not make sense here
-                                         // since each selection is an aggregation of multiple data.
+                datum: binOfData,  // required by SeriesNodeDatum, but might not make sense here
+                                   // since each selection is an aggregation of multiple data.
                 x: xMinPx,
                 y: yMaxPx,
                 width: w,
@@ -610,7 +610,7 @@ export class HistogramSeries extends CartesianSeries {
 
         const { xName, yName, fill: color, tooltip, aggregation } = this;
         const { renderer: tooltipRenderer } = tooltip;
-        const bin: HistogramBin = nodeDatum.seriesDatum;
+        const bin: HistogramBin = nodeDatum.datum;
         const { aggregatedValue, frequency, domain: [rangeMin, rangeMax] } = bin;
         const title = `${sanitizeHtml(xName || xKey)}: ${xAxis.formatDatum(rangeMin)} - ${xAxis.formatDatum(rangeMax)}`;
         let content = yKey ?

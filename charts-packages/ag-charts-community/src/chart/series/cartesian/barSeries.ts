@@ -470,7 +470,7 @@ export class BarSeries extends CartesianSeries {
             type: 'nodeClick',
             event,
             series: this,
-            datum: datum.seriesDatum,
+            datum: datum.datum,
             xKey: this.xKey,
             yKey: datum.yKey
         });
@@ -599,7 +599,7 @@ export class BarSeries extends CartesianSeries {
                         index: groupIndex,
                         series: this,
                         itemId: yKey,
-                        seriesDatum,
+                        datum: seriesDatum,
                         yValue,
                         yKey,
                         x: flipXY ? Math.min(y, bottomY) : barX,
@@ -700,7 +700,7 @@ export class BarSeries extends CartesianSeries {
             let format: BarSeriesFormat | undefined = undefined;
             if (formatter) {
                 format = formatter({
-                    datum: datum.seriesDatum,
+                    datum: datum.datum,
                     fill,
                     stroke,
                     strokeWidth,
@@ -799,7 +799,7 @@ export class BarSeries extends CartesianSeries {
 
         const { xName, yNames, fills, tooltip } = this;
         const { renderer: tooltipRenderer } = tooltip;
-        const datum = nodeDatum.seriesDatum;
+        const datum = nodeDatum.datum;
         const yName = yNames[yKey];
         const color = fills[fillIndex % fills.length];
         const xValue = datum[xKey];

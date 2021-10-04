@@ -294,7 +294,7 @@ export class LineSeries extends CartesianSeries {
 
                 nodeData.push({
                     series: this,
-                    seriesDatum: data[i],
+                    datum: data[i],
                     point: { x, y },
                     label: labelText ? {
                         text: labelText,
@@ -386,7 +386,7 @@ export class LineSeries extends CartesianSeries {
                 let format: CartesianSeriesMarkerFormat | undefined = undefined;
                 if (formatter) {
                     format = formatter({
-                        datum: datum.seriesDatum,
+                        datum: datum.datum,
                         xKey,
                         yKey,
                         fill,
@@ -447,7 +447,7 @@ export class LineSeries extends CartesianSeries {
             type: 'nodeClick',
             event,
             series: this,
-            datum: datum.seriesDatum,
+            datum: datum.datum,
             xKey: this.xKey,
             yKey: this.yKey
         });
@@ -465,7 +465,7 @@ export class LineSeries extends CartesianSeries {
             renderer: tooltipRenderer,
             format: tooltipFormat
         } = tooltip;
-        const datum = nodeDatum.seriesDatum;
+        const datum = nodeDatum.datum;
         const xValue = datum[xKey];
         const yValue = datum[yKey];
         const xString = xAxis.formatDatum(xValue);

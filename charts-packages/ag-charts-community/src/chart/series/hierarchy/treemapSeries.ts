@@ -1,6 +1,6 @@
 import { Selection } from "../../../scene/selection";
 import { HdpiCanvas } from "../../../canvas/hdpiCanvas";
-import { reactive } from "../../../util/observable";
+import { reactive, TypedEvent } from "../../../util/observable";
 import { Label } from "../../label";
 import { SeriesNodeDatum, SeriesTooltip, TooltipRendererParams } from "../series";
 import { HierarchySeries } from "./hierarchySeries";
@@ -17,7 +17,6 @@ import { hierarchy } from "../../../layout/hierarchy";
 import { toFixed } from "../../../util/number";
 
 interface TreemapNodeDatum extends SeriesNodeDatum {
-    data: any;
     parent?: TreemapNodeDatum;
     children?: TreemapNodeDatum[];
     value: number;
@@ -43,6 +42,16 @@ export interface TreemapTooltipRendererParams extends TooltipRendererParams {
 
 export class TreemapSeriesTooltip extends SeriesTooltip {
     @reactive('change') renderer?: (params: TreemapTooltipRendererParams) => string | TooltipRendererResult;
+}
+
+export interface TreemapSeriesNodeClickEvent extends TypedEvent {
+    readonly type: 'nodeClick';
+    readonly event: MouseEvent;
+    readonly series: TreemapSeries;
+    readonly datum: any;
+    readonly labelKey: string;
+    readonly sizeKey?: string;
+    readonly colorKey?: string;
 }
 
 export class TreemapSeriesLabel extends Label {
@@ -177,8 +186,8 @@ export class TreemapSeries extends HierarchySeries {
         this.layout.paddingRight = _ => nodePadding;
         this.layout.paddingBottom = _ => nodePadding;
         this.layout.paddingLeft = _ => nodePadding;
-        this.layout.paddingTop = (node: any) => {
-            let name = (node.data as any)[labelKey] || '';
+        this.layout.paddingTop = (node: TreemapNodeDatum) => {
+            let name = node.datum[labelKey] || '';
             if (node.children) {
                 name = name.toUpperCase();
             }
@@ -215,9 +224,9 @@ export class TreemapSeries extends HierarchySeries {
 
         const series = this;
         function traverse(root: TreemapNodeDatum, depth = 0) {
-            const { children, data } = root;
-            const label = data[labelKey];
-            const colorValue = colorKey ? data[colorKey] : depth;
+            const { children, datum } = root;
+            const label = datum[labelKey];
+            const colorValue = colorKey ? datum[colorKey] : depth;
 
             root.series = series;
             root.fill = !children || colorParents ? colorScale.convert(colorValue) : '#272931';
@@ -421,19 +430,31 @@ export class TreemapSeries extends HierarchySeries {
         return [0, 1];
     }
 
-    getTooltipHtml(datum: TreemapNodeDatum): string {
+    fireNodeClickEvent(event: MouseEvent, datum: TreemapNodeDatum): void {
+        this.fireEvent<TreemapSeriesNodeClickEvent>({
+            type: 'nodeClick',
+            event,
+            series: this,
+            datum: datum.datum,
+            labelKey: this.labelKey,
+            sizeKey: this.sizeKey,
+            colorKey: this.colorKey
+        });
+    }
+
+    getTooltipHtml(nodeDatum: TreemapNodeDatum): string {
         const { tooltip, sizeKey, labelKey, colorKey, colorName, rootName } = this;
-        const { data } = datum;
+        const { datum } = nodeDatum;
         const { renderer: tooltipRenderer } = tooltip;
 
-        const title: string | undefined = datum.depth ? data[labelKey] : (rootName || data[labelKey]);
+        const title: string | undefined = nodeDatum.depth ? datum[labelKey] : (rootName || datum[labelKey]);
         let content: string | undefined = undefined;
-        const color = datum.fill || 'gray';
+        const color = nodeDatum.fill || 'gray';
 
         if (colorKey && colorName) {
-            const colorValue = data[colorKey];
+            const colorValue = datum[colorKey];
             if (typeof colorValue === 'number' && isFinite(colorValue)) {
-                content = `<b>${colorName}</b>: ${toFixed(data[colorKey])}`;
+                content = `<b>${colorName}</b>: ${toFixed(datum[colorKey])}`;
             }
         }
 
@@ -445,7 +466,7 @@ export class TreemapSeries extends HierarchySeries {
 
         if (tooltipRenderer) {
             return toTooltipHtml(tooltipRenderer({
-                datum,
+                datum: nodeDatum,
                 sizeKey,
                 labelKey,
                 colorKey,

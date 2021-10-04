@@ -398,7 +398,7 @@ export class AreaSeries extends CartesianSeries {
                         index: i,
                         series: this,
                         itemId: yKey,
-                        seriesDatum,
+                        datum: seriesDatum,
                         yValue,
                         yKey,
                         point: { x, y },
@@ -590,7 +590,7 @@ export class AreaSeries extends CartesianSeries {
             let format: CartesianSeriesMarkerFormat | undefined = undefined;
             if (formatter) {
                 format = formatter({
-                    datum: datum.seriesDatum,
+                    datum: datum.datum,
                     xKey,
                     yKey: datum.yKey,
                     fill,
@@ -664,7 +664,7 @@ export class AreaSeries extends CartesianSeries {
             type: 'nodeClick',
             event,
             series: this,
-            datum: datum.seriesDatum,
+            datum: datum.datum,
             xKey: this.xKey,
             yKey: datum.yKey
         });
@@ -678,7 +678,7 @@ export class AreaSeries extends CartesianSeries {
             return '';
         }
 
-        const datum = nodeDatum.seriesDatum;
+        const datum = nodeDatum.datum;
         const xValue = datum[xKey];
         const yValue = datum[yKey];
         const { xAxis, yAxis } = this;

@@ -253,7 +253,7 @@ export class ScatterSeries extends CartesianSeries {
             type: 'nodeClick',
             event,
             series: this,
-            datum: datum.seriesDatum,
+            datum: datum.datum,
             xKey: this.xKey,
             yKey: this.yKey,
             sizeKey: this.sizeKey
@@ -294,7 +294,7 @@ export class ScatterSeries extends CartesianSeries {
 
             nodeData.push({
                 series: this,
-                seriesDatum: data[i],
+                datum: data[i],
                 point: { x, y },
                 size: sizeData.length ? sizeScale.convert(sizeData[i]) : marker.size,
                 label: this.labelData[i]
@@ -393,7 +393,7 @@ export class ScatterSeries extends CartesianSeries {
             let format: CartesianSeriesMarkerFormat | undefined = undefined;
             if (formatter) {
                 format = formatter({
-                    datum: datum.seriesDatum,
+                    datum: datum.datum,
                     xKey,
                     yKey,
                     fill,
@@ -442,7 +442,7 @@ export class ScatterSeries extends CartesianSeries {
         const { renderer: tooltipRenderer } = tooltip;
         const color = this.marker.fill || this.fill || 'gray';
         const title = this.title || yName;
-        const datum = nodeDatum.seriesDatum;
+        const datum = nodeDatum.datum;
         const xValue = datum[xKey];
         const yValue = datum[yKey];
         const xString = sanitizeHtml(xAxis.formatDatum(xValue));

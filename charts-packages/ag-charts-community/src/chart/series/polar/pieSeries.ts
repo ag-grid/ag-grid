@@ -349,7 +349,7 @@ export class PieSeries extends PolarSeries {
 
             groupSelectionData.push({
                 series: this,
-                seriesDatum: data[datumIndex],
+                datum: data[datumIndex],
                 itemId: datumIndex,
                 index: datumIndex,
                 radius,
@@ -461,7 +461,7 @@ export class PieSeries extends PolarSeries {
             let format: PieSeriesFormat | undefined = undefined;
             if (formatter) {
                 format = formatter({
-                    datum: datum.seriesDatum,
+                    datum: datum.datum,
                     angleKey,
                     radiusKey,
                     fill,
@@ -547,7 +547,7 @@ export class PieSeries extends PolarSeries {
             type: 'nodeClick',
             event,
             series: this,
-            datum: datum.seriesDatum,
+            datum: datum.datum,
             angleKey: this.angleKey,
             labelKey: this.labelKey,
             radiusKey: this.radiusKey
@@ -573,7 +573,7 @@ export class PieSeries extends PolarSeries {
 
         const { renderer: tooltipRenderer } = tooltip;
         const color = fills[nodeDatum.index % fills.length];
-        const datum = nodeDatum.seriesDatum;
+        const datum = nodeDatum.datum;
         const label = labelKey ? `${datum[labelKey]}: ` : '';
         const angleValue = datum[angleKey];
         const formattedAngleValue = typeof angleValue === 'number' ? toFixed(angleValue) : angleValue.toString();

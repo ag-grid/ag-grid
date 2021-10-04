@@ -17,10 +17,10 @@ export interface SeriesNodeDatum {
     // `sectorNode` - represents a pie slice
     // `datum` - contains metadata derived from the immutable series datum and used
     //           to set the properties of the node, such as start/end angles
-    // `seriesDatum` - raw series datum, an element from the `series.data` array
+    // `datum` - raw series datum, an element from the `series.data` array
     readonly series: Series;
     readonly itemId?: any;
-    readonly seriesDatum: any;
+    readonly datum: any;
     readonly point?: { // in local (series) coordinates
         readonly x: number;
         readonly y: number;

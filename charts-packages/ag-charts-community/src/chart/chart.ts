@@ -1198,7 +1198,7 @@ export abstract class Chart extends Observable {
                     this.highlightedDatum = {
                         series,
                         itemId,
-                        seriesDatum: undefined
+                        datum: undefined
                     };
                 }
             }
