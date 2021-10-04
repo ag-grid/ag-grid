@@ -197,7 +197,7 @@ export class TreemapSeries extends HierarchySeries {
             );
             const innerNodeWidth = node.x1 - node.x0 - nodePadding * 2;
             const hasTitle = node.depth > 0 && node.children && textSize.width <= innerNodeWidth;
-            (node as any).hasTitle = hasTitle;
+            node.hasTitle = !!hasTitle;
 
             return hasTitle ? textSize.height + nodePadding * 2 : nodePadding;
         };

@@ -23,7 +23,7 @@ function tooltipRenderer(params) {
     const { datum } = params;
     const customRootText = 'Custom Root Text';
     const title = datum.parent ?
-        datum.parent.depth ? datum.parent.data[params.labelKey] : customRootText
+        datum.parent.depth ? datum.parent.datum[params.labelKey] : customRootText
         : customRootText;
     let content = '<div>';
     let ellipsis = false;
@@ -32,7 +32,7 @@ function tooltipRenderer(params) {
         const maxCount = 5;
         ellipsis = datum.parent.children.length > maxCount;
         datum.parent.children.slice(0, maxCount).forEach(child => {
-            content += `<div style="font-weight: bold; color: white; background-color: ${child.fill}; padding: 5px;"><strong>${child.data.name || child.label}</strong>: ${String(isFinite(child.colorValue) ? child.colorValue.toFixed(2) : '')}%</div>`;
+            content += `<div style="font-weight: bold; color: white; background-color: ${child.fill}; padding: 5px;"><strong>${child.datum.name || child.label}</strong>: ${String(isFinite(child.colorValue) ? child.colorValue.toFixed(2) : '')}%</div>`;
         });
     }
     if (ellipsis) {

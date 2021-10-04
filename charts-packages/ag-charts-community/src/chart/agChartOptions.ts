@@ -672,7 +672,7 @@ interface AgTreemapSeriesLabelOptions extends AgChartLabelOptions {
 }
 
 interface AgTreemapNodeDatum {
-    data: any;
+    datum: any;
     parent?: AgTreemapNodeDatum;
     children?: AgTreemapNodeDatum[];
     depth: number;
