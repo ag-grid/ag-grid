@@ -32,9 +32,13 @@ export class VueComponentFactory {
     }
 
     private static addParamsToProps(props: any) {
-        if ((props && props.indexOf('params') === -1) ||
-            !props) {
+        if (!props || (Array.isArray(props) && props.indexOf('params') === -1)) {
             props = ['params', ...(props ? props : [])];
+        } else if (typeof props === 'object' && !props.params) {
+            /* tslint:disable:no-string-literal */
+            props['params'] = {
+                type: Object
+            };
         }
 
         return props;
