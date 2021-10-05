@@ -127,10 +127,10 @@ const Pipeline = () => {
   const [gridApi, setGridApi] = useState(null)
 
   useEffect(() => {
-    fetch("http://localhost:8080/jira_reports/cache/pipeline.json")
+    fetch("/pipeline/pipeline.json")
       .then(response => response.json())
       .then(data => {
-        return setRowData(data)
+        setRowData(data)
       })
   }, [])
 

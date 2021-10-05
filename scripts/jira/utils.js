@@ -36,6 +36,7 @@ const executeJiraRequest = (url) => {
                     customfield_10522: moreInformation = "",
                     customfield_10520: deprecationNotes = "",
                     customfield_10521: breakingChangesNotes = "",
+                    customfield_10523: documentationUrl = "",
                     issuetype: {name: issueType},
                     status: {name: status}
                 }
@@ -56,7 +57,8 @@ const executeJiraRequest = (url) => {
                 features,
                 moreInformation,
                 deprecationNotes,
-                breakingChangesNotes
+                breakingChangesNotes,
+                documentationUrl
             }
         });
 

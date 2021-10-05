@@ -163,7 +163,7 @@ const Changelog = () => {
   const dropdownRef = useRef()
 
   useEffect(() => {
-    fetch("http://localhost:8080/jira_reports/cache/changelog.json")
+    fetch("/changelog/changelog.json")
       .then(response => response.json())
       .then(data => {
         let gridVersions = data.map(row => row.versions[0])
@@ -171,12 +171,12 @@ const Changelog = () => {
         gridVersions.unshift("All Versions")
         gridVersions = new Set(gridVersions)
         setVersions(gridVersions)
-        return setRowData(data)
+        setRowData(data)
       })
-    fetch("http://localhost:8080/jira_reports/cache/releaseVersionNotes.json")
+    fetch("/changelog/releaseVersionNotes.json")
       .then(response => response.json())
       .then(data => {
-        return setAllReleaseNotes(data)
+        setAllReleaseNotes(data)
       })
   }, [])
 

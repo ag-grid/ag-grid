@@ -8,6 +8,7 @@ const PIPELINE_FILE = "/home/ceolter/jira_reports/pipeline.json";
 const PIPELINE_BAK_FILE = "/home/ceolter/jira_reports/pipeline.bak.json";
 
 try {
+    logger("Pipeline Data Download Started", CHANGELOG_LOG);
     const pipelineData = executeJiraRequest(PIPELINE_URL);
     logger("Pipeline Data Downloaded", PIPELINE_LOG);
 
