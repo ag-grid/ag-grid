@@ -1,7 +1,5 @@
 const path = require('path');
 // as we're watch the ts files separately (or the FW examples, no need to report TS errors here too)
-// const ForkTsCheckerNotifierWebpackPlugin = require('fork-ts-checker-notifier-webpack-plugin');
-// const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 module.exports = {
     mode: 'development',
