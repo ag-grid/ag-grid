@@ -74,6 +74,7 @@
     "react-gif-player": "0.4.2",
     "react-helmet": "6.1.0",
     "react-instantsearch-dom": "6.10.3",
+    "react-loading-overlay": "^1.0.1",
     "react-visibility-sensor": "5.1.1",
     "rehype-react": "6.2.0",
     "sass": "1.32.8",
