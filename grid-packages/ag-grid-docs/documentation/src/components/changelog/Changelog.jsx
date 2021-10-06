@@ -1,5 +1,4 @@
 import React, {useEffect, useRef, useState} from "react"
-import LoadingOverlay from 'react-loading-overlay';
 
 import VersionDropdownMenu from "../grid/versionDropdownMenu"
 import styles from "./Changelog.module.scss"
@@ -272,7 +271,6 @@ const Changelog = () => {
         <>
             {!IS_SSR && (
                 <div style={{height: "100%", width: "100%"}}>
-                    <LoadingOverlay
                         active={!rowData}
                         spinner
                         text='Loading...'
@@ -385,7 +383,6 @@ const Changelog = () => {
                                 ></Grid>
                             </div>
                         </React.Suspense>
-                    </LoadingOverlay>
                 </div>
             )}
         </>

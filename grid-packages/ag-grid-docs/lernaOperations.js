@@ -238,7 +238,6 @@ const buildPackages = async (packageNames, command = 'build', arguments) => {
     return await buildDependencies(packageNames, command, arguments);
 };
 
-/* To be extracted/refactored */
 const getAgBuildChain = async () => {
     const lernaBuildChainInfo = await getFlattenedBuildChainInfo();
 
@@ -350,9 +349,28 @@ const rebuildPackagesBasedOnChangeState = async (runTests = true) => {
         console.log("No changed packages to process!");
     }
 };
-/* To be extracted/refactored */
+
+const printState = async () => {
+    const buildChain = await getAgBuildChain();
+    const modulesState = readModulesState();
+
+    const changedPackages = flattenArray(Object.keys(modulesState)
+        .filter(key => modulesState[key].moduleChanged)
+        .map(changedPackage => buildChain[changedPackage] ? buildChain[changedPackage] : changedPackage));
+
+    const lernaPackagesToRebuild = new Set();
+    changedPackages.forEach(lernaPackagesToRebuild.add, lernaPackagesToRebuild);
+
+    if (lernaPackagesToRebuild.size > 0) {
+        console.log("Rebuilding changed packages...");
+        console.log(lernaPackagesToRebuild);
+    } else {
+        console.log("No changed packages to process!");
+    }
+};
 
 exports.rebuildPackagesBasedOnChangeState = rebuildPackagesBasedOnChangeState;
+exports.printState = printState;
 exports.rebuildPackagesBasedOnChangeStateNoTest = rebuildPackagesBasedOnChangeState.bind(null, false);
 exports.buildPackages = buildPackages;
 exports.getFlattenedBuildChainInfo = getFlattenedBuildChainInfo;

@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react"
-import LoadingOverlay from 'react-loading-overlay';
 import styles from "./Pipeline.module.scss"
 import DetailCellRenderer from "../grid/detailCellRendererComponent";
 import ButtonCellRenderer from "../grid/buttonCellRendererComponent";
@@ -182,91 +181,85 @@ const Pipeline = () => {
         <>
             {!IS_SSR && (
                 <div style={{height: "100%", width: "100%"}}>
-                    <LoadingOverlay
-                        active={!rowData}
-                        spinner
-                        text='Loading...'
-                    >
-                        <React.Suspense fallback={<div/>}>
-                            <div className={styles["note"]}>
-                                <p>
-                                    The AG Grid pipeline visualises the features and bug fixes we have
-                                    in our internal issue tracker (JIRA). The issues commonly have an
-                                    ID, which looks like <code>AG-XXX</code>.
-                                </p>
-                            </div>
-                            <div
-                                className={"global-search-pane"}
-                                style={{display: "inline-block", width: "100%"}}
-                            >
+                    <React.Suspense fallback={<div/>}>
+                        <div className={styles["note"]}>
+                            <p>
+                                The AG Grid pipeline visualises the features and bug fixes we have
+                                in our internal issue tracker (JIRA). The issues commonly have an
+                                ID, which looks like <code>AG-XXX</code>.
+                            </p>
+                        </div>
+                        <div
+                            className={"global-search-pane"}
+                            style={{display: "inline-block", width: "100%"}}
+                        >
+                            <input
+                                type="text"
+                                className={"clearable global-report-search"}
+                                placeholder={"Issue Search (eg. AG-1111/popup/feature)..."}
+                                style={{height: "50px", width: "75%"}}
+                                onChange={onQuickFilterChange}
+                            ></input>
+                            <div id="checkbox-container">
                                 <input
-                                    type="text"
-                                    className={"clearable global-report-search"}
-                                    placeholder={"Issue Search (eg. AG-1111/popup/feature)..."}
-                                    style={{height: "50px", width: "75%"}}
-                                    onChange={onQuickFilterChange}
+                                    id="featureRequest-checkbox"
+                                    type="checkbox"
+                                    defaultChecked={true}
+                                    onChange={event => checkboxUnchecked(event, "featureRequest")}
                                 ></input>
-                                <div id="checkbox-container">
-                                    <input
-                                        id="featureRequest-checkbox"
-                                        type="checkbox"
-                                        defaultChecked={true}
-                                        onChange={event => checkboxUnchecked(event, "featureRequest")}
-                                    ></input>
-                                    <label
-                                        htmlFor="featureRequest-checkbox"
-                                        style={{paddingLeft: "10px", paddingRight: "10px"}}
-                                    >
-                                        Feature Requests
-                                    </label>
-                                    <input
-                                        id="bug-checkbox"
-                                        onChange={event => checkboxUnchecked(event, "bug")}
-                                        type="checkbox"
-                                        defaultChecked
-                                    ></input>
-                                    <label
-                                        htmlFor="bug-checkbox"
-                                        style={{paddingLeft: "10px", paddingRight: "10px"}}
-                                    >
-                                        Defects
-                                    </label>
-                                    <input
-                                        id="nextRelease-checkbox"
-                                        onChange={event => checkboxUnchecked(event, "nextRelease")}
-                                        type="checkbox"
-                                    ></input>
-                                    <label
-                                        htmlFor="nextRelease-checkbox"
-                                        style={{paddingLeft: "10px", paddingRight: "10px"}}
-                                    >
-                                        Next Release
-                                    </label>
-                                </div>
+                                <label
+                                    htmlFor="featureRequest-checkbox"
+                                    style={{paddingLeft: "10px", paddingRight: "10px"}}
+                                >
+                                    Feature Requests
+                                </label>
+                                <input
+                                    id="bug-checkbox"
+                                    onChange={event => checkboxUnchecked(event, "bug")}
+                                    type="checkbox"
+                                    defaultChecked
+                                ></input>
+                                <label
+                                    htmlFor="bug-checkbox"
+                                    style={{paddingLeft: "10px", paddingRight: "10px"}}
+                                >
+                                    Defects
+                                </label>
+                                <input
+                                    id="nextRelease-checkbox"
+                                    onChange={event => checkboxUnchecked(event, "nextRelease")}
+                                    type="checkbox"
+                                ></input>
+                                <label
+                                    htmlFor="nextRelease-checkbox"
+                                    style={{paddingLeft: "10px", paddingRight: "10px"}}
+                                >
+                                    Next Release
+                                </label>
                             </div>
-                            <div
-                                className="ag-theme-alpine"
-                                style={{height: "100%", width: "100%"}}
-                            >
-                                <Grid
-                                    columnDefs={COLUMN_DEFS}
-                                    isRowMaster={isRowMaster}
-                                    detailRowAutoHeight={true}
-                                    frameworkComponents={{
-                                        myDetailCellRenderer: DetailCellRenderer,
-                                        buttonCellRenderer: ButtonCellRenderer,
-                                    }}
-                                    defaultColDef={defaultColDef}
-                                    enableCellTextSelection={true}
-                                    detailCellRendererParams={detailCellRendererParams}
-                                    detailCellRenderer={"myDetailCellRenderer"}
-                                    masterDetail={true}
-                                    rowData={rowData}
-                                    onGridReady={gridReady}
-                                ></Grid>
-                            </div>
-                        </React.Suspense>
-                    </LoadingOverlay>
+                        </div>
+                        <div
+                            className="ag-theme-alpine"
+                            style={{height: "100%", width: "100%"}}
+                        >
+                            <Grid
+                                columnDefs={COLUMN_DEFS}
+                                isRowMaster={isRowMaster}
+                                detailRowAutoHeight={true}
+                                frameworkComponents={{
+                                    myDetailCellRenderer: DetailCellRenderer,
+                                    buttonCellRenderer: ButtonCellRenderer,
+                                }}
+                                defaultColDef={defaultColDef}
+                                enableCellTextSelection={true}
+                                detailCellRendererParams={detailCellRendererParams}
+                                detailCellRenderer={"myDetailCellRenderer"}
+                                masterDetail={true}
+                                rowData={rowData}
+                                onGridReady={gridReady}
+                            ></Grid>
+                        </div>
+                    </React.Suspense>
                 </div>
             )}
         </>
