@@ -66,13 +66,13 @@ const COLUMN_DEFS = [
     {
         field: "deprecated",
         valueGetter: params => {
-          return params.node.data.deprecationNotes ? "Y" : "N"
+            return params.node.data.deprecationNotes ? "Y" : "N"
         },
     },
     {
         field: "breakingChange",
         valueGetter: params => {
-          return params.node.data.breakingChangesNotes ? "Y" : "N"
+            return params.node.data.breakingChangesNotes ? "Y" : "N"
         },
     },
 ]
@@ -271,118 +271,114 @@ const Changelog = () => {
         <>
             {!IS_SSR && (
                 <div style={{height: "100%", width: "100%"}}>
-                        active={!rowData}
-                        spinner
-                        text='Loading...'
-                    >
-                        <React.Suspense fallback={<div/>}>
-                            <div className={styles["note"]}>
-                                This page covers the full Changelog for all items for 8.x and above.
-                                For the Summary Changelog, or the legacy changelog covering versions
-                                7.x and above, please go{" "}
-                                <a href="../change-log/changeLogIndex.php">here</a>. For a list of
-                                up and coming Bug Fixes and Features please refer to our{" "}
-                                <a href="../ag-grid-pipeline">Pipeline</a>. Documentation for
-                                previous versions can be found{" "}
-                                <a href="https://www.ag-grid.com/archive/">here.</a>
+                    <React.Suspense fallback={<div/>}>
+                        <div className={styles["note"]}>
+                            This page covers the full Changelog for all items for 8.x and above.
+                            For the Summary Changelog, or the legacy changelog covering versions
+                            7.x and above, please go{" "}
+                            <a href="../change-log/changeLogIndex.php">here</a>. For a list of
+                            up and coming Bug Fixes and Features please refer to our{" "}
+                            <a href="../ag-grid-pipeline">Pipeline</a>. Documentation for
+                            previous versions can be found{" "}
+                            <a href="https://www.ag-grid.com/archive/">here.</a>
+                        </div>
+
+                        <div
+                            className={"global-search-pane"}
+                            style={{display: "inline-block", width: "100%"}}
+                        >
+                            <div style={{display: "flex", flexDirection: "row"}}>
+                                <input
+                                    type="text"
+                                    className={"clearable global-report-search"}
+                                    placeholder={"Issue Search (eg. AG-1111/popup/feature)..."}
+                                    style={{height: "50px", width: "75%"}}
+                                    onChange={onQuickFilterChange}
+                                ></input>
+                                <VersionDropdownMenu
+                                    versions={versions}
+                                    onChange={changeVersion}
+                                    ref={dropdownRef}
+                                />
                             </div>
 
-                            <div
-                                className={"global-search-pane"}
-                                style={{display: "inline-block", width: "100%"}}
-                            >
-                                <div style={{display: "flex", flexDirection: "row"}}>
-                                    <input
-                                        type="text"
-                                        className={"clearable global-report-search"}
-                                        placeholder={"Issue Search (eg. AG-1111/popup/feature)..."}
-                                        style={{height: "50px", width: "75%"}}
-                                        onChange={onQuickFilterChange}
-                                    ></input>
-                                    <VersionDropdownMenu
-                                        versions={versions}
-                                        onChange={changeVersion}
-                                        ref={dropdownRef}
-                                    />
-                                </div>
-
-                                <div id="checkbox-container">
-                                    <input
-                                        id="featureRequest-checkbox"
-                                        type="checkbox"
-                                        defaultChecked={true}
-                                        onChange={event => checkboxUnchecked(event, "featureRequest")}
-                                    ></input>
-                                    <label
-                                        htmlFor="featureRequest-checkbox"
-                                        style={{paddingLeft: "10px", paddingRight: "10px"}}
-                                    >
-                                        Feature Requests
-                                    </label>
-                                    <input
-                                        id="defect-checkbox"
-                                        onChange={event => checkboxUnchecked(event, "defect")}
-                                        type="checkbox"
-                                        defaultChecked
-                                    ></input>
-                                    <label
-                                        htmlFor="defect-checkbox"
-                                        style={{paddingLeft: "10px", paddingRight: "10px"}}
-                                    >
-                                        Defects
-                                    </label>
-                                    <input
-                                        id="deprecated-checkbox"
-                                        onChange={event => checkboxUnchecked(event, "deprecated")}
-                                        type="checkbox"
-                                        defaultChecked
-                                    ></input>
-                                    <label
-                                        htmlFor="deprecated-checkbox"
-                                        style={{paddingLeft: "10px", paddingRight: "10px"}}
-                                    >
-                                        Deprecations
-                                    </label>
-                                    <input
-                                        id="breakingChange-checkbox"
-                                        onChange={event => checkboxUnchecked(event, "breakingChange")}
-                                        type="checkbox"
-                                        defaultChecked
-                                    ></input>
-                                    <label
-                                        htmlFor="breakingChange-checkbox"
-                                        style={{paddingLeft: "10px", paddingRight: "10px"}}
-                                    >
-                                        Breaking Changes
-                                    </label>
-                                </div>
+                            <div id="checkbox-container">
+                                <input
+                                    id="featureRequest-checkbox"
+                                    type="checkbox"
+                                    defaultChecked={true}
+                                    onChange={event => checkboxUnchecked(event, "featureRequest")}
+                                ></input>
+                                <label
+                                    htmlFor="featureRequest-checkbox"
+                                    style={{paddingLeft: "10px", paddingRight: "10px"}}
+                                >
+                                    Feature Requests
+                                </label>
+                                <input
+                                    id="defect-checkbox"
+                                    onChange={event => checkboxUnchecked(event, "defect")}
+                                    type="checkbox"
+                                    defaultChecked
+                                ></input>
+                                <label
+                                    htmlFor="defect-checkbox"
+                                    style={{paddingLeft: "10px", paddingRight: "10px"}}
+                                >
+                                    Defects
+                                </label>
+                                <input
+                                    id="deprecated-checkbox"
+                                    onChange={event => checkboxUnchecked(event, "deprecated")}
+                                    type="checkbox"
+                                    defaultChecked
+                                ></input>
+                                <label
+                                    htmlFor="deprecated-checkbox"
+                                    style={{paddingLeft: "10px", paddingRight: "10px"}}
+                                >
+                                    Deprecations
+                                </label>
+                                <input
+                                    id="breakingChange-checkbox"
+                                    onChange={event => checkboxUnchecked(event, "breakingChange")}
+                                    type="checkbox"
+                                    defaultChecked
+                                ></input>
+                                <label
+                                    htmlFor="breakingChange-checkbox"
+                                    style={{paddingLeft: "10px", paddingRight: "10px"}}
+                                >
+                                    Breaking Changes
+                                </label>
                             </div>
+                        </div>
 
-                            <ReleaseVersionNotes releaseNotes={currentReleaseNotes}/>
+                        <ReleaseVersionNotes releaseNotes={currentReleaseNotes}/>
 
-                            <div
-                                className="ag-theme-alpine"
-                                style={{height: "100vh", width: "100%"}}
-                            >
-                                <Grid
-                                    columnDefs={COLUMN_DEFS}
-                                    rowData={rowData}
-                                    frameworkComponents={{
-                                        myDetailCellRenderer: DetailCellRenderer,
-                                        buttonCellRenderer: ButtonCellRenderer,
-                                    }}
-                                    defaultColDef={defaultColDef}
-                                    detailRowAutoHeight={true}
-                                    doesExternalFilterPass={doesExternalFilterPass}
-                                    isExternalFilterPresent={isExternalFilterPresent}
-                                    enableCellTextSelection={true}
-                                    detailCellRendererParams={detailCellRendererParams}
-                                    detailCellRenderer={"myDetailCellRenderer"}
-                                    masterDetail
-                                    onGridReady={gridReady}
-                                ></Grid>
-                            </div>
-                        </React.Suspense>
+                        <div
+                            className="ag-theme-alpine"
+                            style={{height: "100vh", width: "100%"}}
+                        >
+                            <Grid
+                                columnDefs={COLUMN_DEFS}
+                                rowData={rowData}
+                                frameworkComponents={{
+                                    myDetailCellRenderer: DetailCellRenderer,
+                                    buttonCellRenderer: ButtonCellRenderer,
+                                }}
+                                defaultColDef={defaultColDef}
+                                detailRowAutoHeight={true}
+                                doesExternalFilterPass={doesExternalFilterPass}
+                                isExternalFilterPresent={isExternalFilterPresent}
+                                enableCellTextSelection={true}
+                                detailCellRendererParams={detailCellRendererParams}
+                                detailCellRenderer={"myDetailCellRenderer"}
+                                masterDetail
+                                onGridReady={gridReady}
+                            ></Grid>
+                        </div>
+                    </React.Suspense>
                 </div>
             )}
         </>
