@@ -6,7 +6,7 @@ import { graphql, useStaticQuery } from 'gatsby';
 export const useImageFileNodes = () => {
     const { fluidImages: { nodes: fluidImages }, images: { nodes: images } } = useStaticQuery(graphql`
     {
-        fluidImages: allFile(filter: { sourceInstanceName: { eq: "doc-pages" }, ext: { in: [".jpg", ".png"] } }) {
+        fluidImages: allFile(filter: { sourceInstanceName: { eq: "doc-pages" }, ext: { in: [".jpg", ".png"] } }, limit: 100) {
             nodes {
                 relativePath
                 childImageSharp {

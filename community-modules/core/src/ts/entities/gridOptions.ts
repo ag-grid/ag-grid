@@ -527,6 +527,8 @@ export interface GridOptions {
     groupRowRendererFramework?: any;
     /** Customise the parameters provided to the `groupRowRenderer` component. */
     groupRowRendererParams?: any;
+    /** If `true` group nodes will remain at the top of the grid while scrolling until the last child is out of view. */
+    groupStickyGroups?: boolean;
     /** By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping. */
     suppressMakeColumnVisibleAfterUnGroup?: boolean;
     /** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback. */

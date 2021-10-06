@@ -2649,6 +2649,10 @@
       "description": "/** Customise the parameters provided to the `groupRowRenderer` component. */",
       "type": { "returnType": "any", "optional": true }
     },
+    "groupStickyGroups": {
+      "description": "/** If `true` group nodes will remain at the top of the grid while scrolling until the last child is out of view. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "suppressMakeColumnVisibleAfterUnGroup": {
       "description": "/** By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping. */",
       "type": { "returnType": "boolean", "optional": true }

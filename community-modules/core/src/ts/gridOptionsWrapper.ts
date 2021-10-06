@@ -551,6 +551,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.groupSuppressBlankHeader);
     }
 
+    public isGroupStickyGroups() {
+        return isTrue(this.gridOptions.groupStickyGroups);
+    }
+
     public isSuppressRowClickSelection() {
         return isTrue(this.gridOptions.suppressRowClickSelection);
     }

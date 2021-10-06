@@ -641,6 +641,8 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public groupRowRendererFramework: any = undefined;
     /** Customise the parameters provided to the `groupRowRenderer` component.     */
     @Input() public groupRowRendererParams: any = undefined;
+    /** If `true` group nodes will remain at the top of the grid while scrolling until the last child is out of view.     */
+    @Input() public groupStickyGroups: boolean | undefined = undefined;
     /** By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping.     */
     @Input() public suppressMakeColumnVisibleAfterUnGroup: boolean | undefined = undefined;
     /** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback.     */
@@ -1091,6 +1093,7 @@ export class AgGridAngular implements AfterViewInit {
     static ngAcceptInputType_animateRows: boolean | null | '';
     static ngAcceptInputType_groupSelectsFiltered: boolean | null | '';
     static ngAcceptInputType_groupRemoveSingleChildren: boolean | null | '';
+    static ngAcceptInputType_groupStickyGroups: boolean | null | '';
     static ngAcceptInputType_groupRemoveLowestSingleChildren: boolean | null | '';
     static ngAcceptInputType_enableRtl: boolean | null | '';
     static ngAcceptInputType_suppressClickEdit: boolean | null | '';
