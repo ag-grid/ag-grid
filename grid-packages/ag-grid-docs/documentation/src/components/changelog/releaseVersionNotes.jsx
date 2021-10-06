@@ -1,4 +1,4 @@
-import React, { forwardRef } from "react"
+import React, { forwardRef, useEffect } from "react"
 import styles from "./Changelog.module.scss"
 
 const ReleaseVersionNotes = forwardRef((props, ref) => {

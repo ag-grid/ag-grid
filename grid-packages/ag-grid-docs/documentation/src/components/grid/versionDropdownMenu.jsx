@@ -12,14 +12,13 @@ const VersionDropdownMenu = forwardRef((props, ref) => {
   }
 
   return (
-    <div style={{ paddingLeft: "10px", paddingTop: "10px" }}>
-      <select
-        aria-label={"Select Release Version"}
-        ref={ref}
-        onBlur={event => props.onChange(event)}
-        dangerouslySetInnerHTML={{ __html: createVersionOptions(versions) }}
-      ></select>
-    </div>
+    // eslint-disable-next-line
+    <select
+      aria-label={"Select Release Version"}
+      ref={ref}
+      onChange={event => props.onChange(event)}
+      dangerouslySetInnerHTML={{ __html: createVersionOptions(versions) }}
+    ></select>
   )
 })
 

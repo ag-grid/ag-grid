@@ -11,7 +11,7 @@ import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css"
 
 const Grid = forwardRef((props, ref) => {
   return (
-    <div className="ag-theme-alpine" style={{ height: "50vh", width: "100%" }}>
+    <div className="ag-theme-alpine" style={{ height: "68vh", width: "100%" }}>
       <AgGridReact
         ref={ref}
         {...props}
