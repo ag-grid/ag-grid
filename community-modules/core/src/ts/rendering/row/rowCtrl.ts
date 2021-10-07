@@ -324,7 +324,6 @@ export class RowCtrl extends BeanStub {
     }
 
     private setupFullWidth(gui: RowGui): void {
-
         const params = this.createFullWidthParams(gui.element, gui.pinned);
         const cellRendererType = this.getFullWidthCellRendererType();
         const cellRendererName = this.getFullWidthCellRendererName();

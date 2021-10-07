@@ -108,7 +108,7 @@ export class RowContainerComp extends Component {
         });
     }
 
-    public appendRow(element: HTMLElement) {
+    private appendRow(element: HTMLElement) {
         if (this.domOrder) {
             insertWithDomOrder(this.eContainer, element, this.lastPlacedElement);
         } else {
