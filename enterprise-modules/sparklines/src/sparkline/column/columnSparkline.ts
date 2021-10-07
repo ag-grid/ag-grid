@@ -79,13 +79,6 @@ export class ColumnSparkline extends Sparkline {
         // if yMax is negative, set yMax to 0
         yMax = yMax < 0 ? 0 : yMax;
 
-        // if yMin and yMax are equal, yMax should be set to 0
-        if (yMin === yMax) {
-            const padding = Math.abs(yMin * 0.01);
-            yMax = 0 + padding;
-            yMin -= padding;
-        }
-
         if (yScaleDomain) {
             if (yScaleDomain[1] < yMax) {
                 yScaleDomain[1] = yMax;
