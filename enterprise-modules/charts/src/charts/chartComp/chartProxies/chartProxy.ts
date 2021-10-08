@@ -141,8 +141,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
     protected getFontColor = (): string => this.isDarkTheme() ? 'rgb(221, 221, 221)' : 'rgb(87, 87, 87)';
     protected getAxisGridColor = (): string => this.isDarkTheme() ? 'rgb(100, 100, 100)' : 'rgb(219, 219, 219)';
 
-    protected abstract getDefaultOptions(): TOptions;
-
     protected initChartOptions(): void {
         // the theme object is used later to determine cartesian label rotation
         this.mergedThemeOverrides = this.getMergedThemeOverrides();

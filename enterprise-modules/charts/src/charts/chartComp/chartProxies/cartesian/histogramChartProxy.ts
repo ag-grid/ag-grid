@@ -105,29 +105,4 @@ export class HistogramChartProxy extends CartesianChartProxy<HistogramSeriesOpti
             ...this.iChartOptions.seriesDefaults
         };
     }
-
-    // TODO: should be removed along with processChartOptions()
-    protected getDefaultOptions(): CartesianChartOptions<HistogramSeriesOptions> {
-
-        const fontOptions = this.getDefaultFontOptions();
-        const options = this.getDefaultCartesianChartOptions() as CartesianChartOptions<HistogramSeriesOptions>;
-
-        options.xAxis.label.rotation = 0;
-        options.yAxis.label.rotation = 0;
-
-        options.seriesDefaults = {
-            ...options.seriesDefaults,
-            tooltip: {
-                enabled: true,
-            },
-            label: {
-                ...fontOptions,
-                enabled: false,
-            },
-            shadow: this.getDefaultDropShadowOptions(),
-            binCount: 10
-        };
-
-        return options;
-    }
 }

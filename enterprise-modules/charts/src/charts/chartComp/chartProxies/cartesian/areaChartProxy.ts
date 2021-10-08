@@ -230,36 +230,6 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
         return options;
     }
 
-    protected getDefaultOptions(): CartesianChartOptions<AreaSeriesOptions> {
-        const options = this.getDefaultCartesianChartOptions() as CartesianChartOptions<AreaSeriesOptions>;
-
-        options.xAxis.label.rotation = 335;
-
-        options.seriesDefaults = {
-            ...options.seriesDefaults,
-            fill: {
-                ...options.seriesDefaults.fill,
-                opacity: this.chartType === ChartType.Area ? 0.7 : 1,
-            },
-            stroke: {
-                ...options.seriesDefaults.stroke,
-                width: 3,
-            },
-            marker: {
-                shape: 'circle',
-                enabled: true,
-                size: 6,
-                strokeWidth: 1,
-            },
-            tooltip: {
-                enabled: true,
-            },
-            shadow: this.getDefaultDropShadowOptions(),
-        };
-
-        return options;
-    }
-
     private getSeriesDefaults(): any /*InternalAreaSeriesOptions*/ {
         return {
             ...this.iChartOptions.seriesDefaults,

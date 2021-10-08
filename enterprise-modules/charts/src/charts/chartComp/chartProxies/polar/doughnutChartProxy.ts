@@ -273,37 +273,4 @@ export class DoughnutChartProxy extends PolarChartProxy {
 
         return options;
     }
-
-    protected getDefaultOptions(): PolarChartOptions<PieSeriesOptions> {
-        const { strokes } = this.getPredefinedPalette();
-        const options = this.getDefaultChartOptions() as PolarChartOptions<PieSeriesOptions>;
-        const fontOptions = this.getDefaultFontOptions();
-
-        options.seriesDefaults = {
-            ...options.seriesDefaults,
-            title: {
-                ...fontOptions,
-                enabled: true,
-                fontSize: 12,
-                fontWeight: 'bold',
-            },
-            callout: {
-                colors: strokes,
-                length: 10,
-                strokeWidth: 2,
-            },
-            label: {
-                ...fontOptions,
-                enabled: false,
-                offset: 3,
-                minAngle: 0,
-            },
-            tooltip: {
-                enabled: true,
-            },
-            shadow: this.getDefaultDropShadowOptions(),
-        };
-
-        return options;
-    }
 }
