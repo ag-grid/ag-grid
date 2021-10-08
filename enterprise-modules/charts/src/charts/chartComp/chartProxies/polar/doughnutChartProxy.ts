@@ -2,7 +2,8 @@ import {
     AgChart,
     AgPieSeriesOptions,
     AgPolarChartOptions,
-    ChartTheme, LegendClickEvent,
+    ChartTheme,
+    LegendClickEvent,
     PieSeries,
     PolarChart
 } from "ag-charts-community";

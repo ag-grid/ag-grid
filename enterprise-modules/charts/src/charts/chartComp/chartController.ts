@@ -9,7 +9,6 @@ import {
     ChartType,
     ColumnApi,
     Events,
-    GetChartImageDataUrlParams,
     GridApi,
     IRangeService,
     PostConstruct,

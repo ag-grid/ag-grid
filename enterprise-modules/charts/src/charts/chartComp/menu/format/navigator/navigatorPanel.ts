@@ -1,12 +1,12 @@
 import {
+    _,
     AgGroupComponent,
     AgGroupComponentParams,
     AgSlider,
     Autowired,
     Component,
     PostConstruct,
-    RefSelector,
-    _
+    RefSelector
 } from "@ag-grid-community/core";
 import { ChartController } from "../../../chartController";
 import { ChartTranslator } from "../../../chartTranslator";

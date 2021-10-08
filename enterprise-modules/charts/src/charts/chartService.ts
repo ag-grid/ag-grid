@@ -5,6 +5,7 @@ import {
     Bean,
     BeanStub,
     CellRange,
+    CellRangeParams,
     ChartModel,
     ChartRef,
     ChartType,
@@ -13,13 +14,12 @@ import {
     CreatePivotChartParams,
     CreateRangeChartParams,
     Environment,
+    GetChartImageDataUrlParams,
     IAggFunc,
     IChartService,
     IRangeService,
     Optional,
-    PreDestroy,
-    CellRangeParams,
-    GetChartImageDataUrlParams
+    PreDestroy
 } from "@ag-grid-community/core";
 import { GridChartComp, GridChartParams } from "./chartComp/gridChartComp";
 

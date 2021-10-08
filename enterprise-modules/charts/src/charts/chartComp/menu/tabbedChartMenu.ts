@@ -1,11 +1,11 @@
 import {
     _,
+    AgPromise,
     Autowired,
     ChartMenuOptions,
     ChartType,
     Component,
     PostConstruct,
-    AgPromise,
     TabbedItem,
     TabbedLayout
 } from "@ag-grid-community/core";

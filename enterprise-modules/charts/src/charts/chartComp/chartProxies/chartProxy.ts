@@ -18,7 +18,6 @@ import {
     LegendOptions,
     NavigatorOptions,
     PaddingOptions,
-    SeriesOptions
 } from "@ag-grid-community/core";
 import {
     AgChartTheme,
@@ -196,33 +195,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         if (!gridOptionsThemeOverrides) { return apiThemeOverrides; }
         if (!apiThemeOverrides) { return gridOptionsThemeOverrides; }
         return deepMerge(gridOptionsThemeOverrides, apiThemeOverrides);
-    }
-
-    private overridePalette(originalOptions: TOptions, chartOptions: TOptions): void {
-        if (!this.chartProxyParams.allowPaletteOverride) {
-            return;
-        }
-
-        if (!this.paletteOverridden(originalOptions, chartOptions)) {
-            return;
-        }
-
-        const { seriesDefaults } = chartOptions;
-        const fillsOverridden = seriesDefaults.fill.colors;
-        const strokesOverridden = seriesDefaults.stroke.colors;
-
-        if (fillsOverridden || strokesOverridden) {
-            // due to series default refactoring it's possible for fills and strokes to have undefined values
-            const invalidFills = _.includes(fillsOverridden, undefined);
-            const invalidStrokes = _.includes(strokesOverridden, undefined);
-            if (invalidFills || invalidStrokes) { return; }
-
-            // both fills and strokes will need to be overridden
-            this.customPalette = {
-                fills: fillsOverridden,
-                strokes: strokesOverridden
-            };
-        }
     }
 
     protected getStandaloneChartType(): string {
@@ -486,20 +458,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
     protected getPalette(): AgChartThemePalette {
         return this.customPalette || this.chartTheme.palette;
-    }
-
-    //TODO remove all 'integrated' default chart options
-    protected getDefaultChartOptions(): ChartOptions<SeriesOptions> {
-        return {
-            background: {},
-            padding: {},
-            title: {},
-            subtitle: {},
-            legend: {},
-            navigator: {},
-            seriesDefaults: {},
-            listeners: {}
-        } as any;
     }
 
     protected transformData(data: any[], categoryKey: string): any[] {

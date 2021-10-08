@@ -4,8 +4,8 @@ import {
     BeanStub,
     CellRange,
     Column,
-    ColumnModel,
     ColumnGroup,
+    ColumnModel,
     IAggFunc,
     IAggregationStage,
     IClientSideRowModel,
@@ -14,9 +14,9 @@ import {
     ModuleRegistry,
     Optional,
     RowNode,
-    ValueService,
     RowNodeSorter,
     SortController,
+    ValueService,
 } from "@ag-grid-community/core";
 import { ChartDataModel, ColState } from "./chartDataModel";
 

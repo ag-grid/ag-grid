@@ -1,8 +1,8 @@
 import {
     AgLineSeriesOptions,
-    LineSeriesLabelOptions,
     CartesianChartOptions,
     HighlightOptions,
+    LineSeriesLabelOptions,
     LineSeriesOptions
 } from "@ag-grid-community/core";
 import { AgCartesianChartOptions, AgChart, CartesianChart, ChartTheme, LineSeries, } from "ag-charts-community";
