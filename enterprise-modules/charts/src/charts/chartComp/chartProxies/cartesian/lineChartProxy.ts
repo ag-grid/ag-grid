@@ -1,8 +1,8 @@
 import {
     AgLineSeriesOptions,
-    LineSeriesLabelOptions,
     CartesianChartOptions,
     HighlightOptions,
+    LineSeriesLabelOptions,
     LineSeriesOptions
 } from "@ag-grid-community/core";
 import { AgCartesianChartOptions, AgChart, CartesianChart, ChartTheme, LineSeries, } from "ag-charts-community";
@@ -167,31 +167,6 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
             highlightStyle: seriesDefaults.highlightStyle as HighlightOptions,
             listeners: seriesDefaults.listeners
         } as LineSeriesOptions;
-
-        return options;
-    }
-
-    protected getDefaultOptions(): CartesianChartOptions<LineSeriesOptions> {
-        const options = this.getDefaultCartesianChartOptions() as CartesianChartOptions<LineSeriesOptions>;
-
-        options.xAxis.label.rotation = 335;
-
-        options.seriesDefaults = {
-            ...options.seriesDefaults,
-            stroke: {
-                ...options.seriesDefaults.stroke,
-                width: 3,
-            },
-            marker: {
-                enabled: true,
-                shape: 'circle',
-                size: 6,
-                strokeWidth: 1,
-            },
-            tooltip: {
-                enabled: true,
-            }
-        };
 
         return options;
     }

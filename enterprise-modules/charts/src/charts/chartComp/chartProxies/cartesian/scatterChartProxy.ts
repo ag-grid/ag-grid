@@ -4,8 +4,8 @@ import {
     CartesianChartOptions,
     ChartType,
     HighlightOptions,
-    ScatterSeriesOptions,
-    ScatterSeriesLabelOptions
+    ScatterSeriesLabelOptions,
+    ScatterSeriesOptions
 } from "@ag-grid-community/core";
 import {
     AgCartesianChartOptions,
@@ -243,7 +243,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
 
     protected getDefaultOptions(): CartesianChartOptions<ScatterSeriesOptions> {
         const isBubble = this.chartType === ChartType.Bubble;
-        const options = this.getDefaultCartesianChartOptions() as CartesianChartOptions<ScatterSeriesOptions>;
+        const options = {} as CartesianChartOptions<ScatterSeriesOptions>;
 
         options.seriesDefaults = {
             ...options.seriesDefaults,
@@ -278,14 +278,14 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
 
         if (paired) {
             if (isBubbleChart) {
-                return fields.map((currentxField, i) => i % 3 === 0 ? ({
-                    xField: currentxField,
+                return fields.map((currentXField, i) => i % 3 === 0 ? ({
+                    xField: currentXField,
                     yField: fields[i + 1],
                     sizeField: fields[i + 2],
                 }) : null).filter(x => x && x.yField && x.sizeField);
             }
-            return fields.map((currentxField, i) => i % 2 === 0 ? ({
-                xField: currentxField,
+            return fields.map((currentXField, i) => i % 2 === 0 ? ({
+                xField: currentXField,
                 yField: fields[i + 1],
             }) : null).filter(x => x && x.yField);
         }
@@ -324,5 +324,4 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
         }
         return domain;
     }
-
 }

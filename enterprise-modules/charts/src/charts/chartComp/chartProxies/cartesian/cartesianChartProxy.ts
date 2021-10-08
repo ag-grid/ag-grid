@@ -2,7 +2,6 @@ import { ChartProxy, ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { _, AxisOptions, AxisType, CartesianChartOptions, SeriesOptions } from "@ag-grid-community/core";
 import {
     AreaSeries,
-    LineSeries,
     CartesianChart,
     CategoryAxis,
     ChartAxis,
@@ -11,6 +10,7 @@ import {
     find,
     GroupedCategoryAxis,
     GroupedCategoryChart,
+    LineSeries,
     NumberAxis,
     TimeAxis
 } from "ag-charts-community";
@@ -172,15 +172,6 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
                 lineDash: [4, 2]
             }]
         };
-    }
-
-    protected getDefaultCartesianChartOptions(): CartesianChartOptions<SeriesOptions> {
-        const options = this.getDefaultChartOptions() as CartesianChartOptions<SeriesOptions>;
-
-        options.xAxis = this.getDefaultAxisOptions();
-        options.yAxis = this.getDefaultAxisOptions();
-
-        return options;
     }
 
     protected axisTypeToClassMap: { [key in string]: any } = {

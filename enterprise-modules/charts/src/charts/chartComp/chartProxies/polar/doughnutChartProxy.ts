@@ -2,7 +2,8 @@ import {
     AgChart,
     AgPieSeriesOptions,
     AgPolarChartOptions,
-    ChartTheme, LegendClickEvent,
+    ChartTheme,
+    LegendClickEvent,
     PieSeries,
     PolarChart
 } from "ag-charts-community";
@@ -270,39 +271,6 @@ export class DoughnutChartProxy extends PolarChartProxy {
             highlightStyle: seriesDefaults.highlightStyle as HighlightOptions,
             listeners: seriesDefaults.listeners
         } as PieSeriesOptions;
-
-        return options;
-    }
-
-    protected getDefaultOptions(): PolarChartOptions<PieSeriesOptions> {
-        const { strokes } = this.getPredefinedPalette();
-        const options = this.getDefaultChartOptions() as PolarChartOptions<PieSeriesOptions>;
-        const fontOptions = this.getDefaultFontOptions();
-
-        options.seriesDefaults = {
-            ...options.seriesDefaults,
-            title: {
-                ...fontOptions,
-                enabled: true,
-                fontSize: 12,
-                fontWeight: 'bold',
-            },
-            callout: {
-                colors: strokes,
-                length: 10,
-                strokeWidth: 2,
-            },
-            label: {
-                ...fontOptions,
-                enabled: false,
-                offset: 3,
-                minAngle: 0,
-            },
-            tooltip: {
-                enabled: true,
-            },
-            shadow: this.getDefaultDropShadowOptions(),
-        };
 
         return options;
     }

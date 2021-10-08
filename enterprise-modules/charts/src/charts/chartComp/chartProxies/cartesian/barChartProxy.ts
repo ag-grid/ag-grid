@@ -189,24 +189,4 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
     private isColumnChart(): boolean {
         return _.includes([ChartType.Column, ChartType.GroupedColumn, ChartType.StackedColumn, ChartType.NormalizedColumn], this.chartType);
     }
-
-    // TODO: should be removed along with processChartOptions()
-    protected getDefaultOptions(): CartesianChartOptions<BarSeriesOptions> {
-        const fontOptions = this.getDefaultFontOptions();
-        const options = this.getDefaultCartesianChartOptions() as CartesianChartOptions<BarSeriesOptions>;
-
-        options.seriesDefaults = {
-            ...options.seriesDefaults,
-            tooltip: {
-                enabled: true,
-            },
-            label: {
-                ...fontOptions,
-                enabled: false,
-            },
-            shadow: this.getDefaultDropShadowOptions(),
-        };
-
-        return options;
-    }
 }

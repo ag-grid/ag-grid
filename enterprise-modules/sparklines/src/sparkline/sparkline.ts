@@ -109,7 +109,6 @@ export abstract class Sparkline extends Observable {
     protected dataType: DataType = undefined;
     protected xData: any[] = [];
     protected yData: (number | undefined)[] = [];
-    protected skipInvalidYs: boolean = false;
 
     // Minimum y value in provided data.
     protected min: number | undefined = undefined;
@@ -261,7 +260,7 @@ export abstract class Sparkline extends Observable {
     }
 
     // Using processed data, generate data that backs visible nodes.
-    protected generateNodeData(): { nodeData: SeriesNodeDatum[], areaData: SeriesNodeDatum[] } | SeriesNodeDatum[] | undefined { return []; }
+    protected generateNodeData(): { nodeData: SeriesNodeDatum[], fillData: SeriesNodeDatum[], strokeData: SeriesNodeDatum[] } | SeriesNodeDatum[] | undefined { return []; }
 
     // Returns persisted node data associated with the sparkline's data.
     protected getNodeData(): readonly SeriesNodeDatum[] { return []; }
@@ -343,10 +342,6 @@ export abstract class Sparkline extends Observable {
                 const x = this.getDatum(xDatum, xType);
                 const y = this.getDatum(yDatum, 'number');
 
-                if (y == undefined && this.skipInvalidYs) {
-                    continue;
-                }
-
                 xData.push(x);
                 yData.push(y);
             }
@@ -360,7 +355,7 @@ export abstract class Sparkline extends Observable {
                     const x = this.getDatum(xDatum, xType);
                     const y = this.getDatum(yDatum, 'number');
 
-                    if (y == undefined && this.skipInvalidYs || x == undefined) {
+                    if (x == undefined) {
                         continue;
                     }
 
@@ -381,7 +376,7 @@ export abstract class Sparkline extends Observable {
                     const x = this.getDatum(xDatum, xType);
                     const y = this.getDatum(yDatum, 'number');
 
-                    if (y == undefined && this.skipInvalidYs || x == undefined) {
+                    if (x == undefined) {
                         continue;
                     }
 
@@ -556,7 +551,7 @@ export abstract class Sparkline extends Observable {
     private defaultDateFormatter = locale.format('%m/%d/%y, %H:%M:%S');
 
     protected formatDatum(datum: any): string {
-        const type  = this.axis.type || 'category';
+        const type = this.axis.type || 'category';
 
         if (type === 'number' && typeof datum === 'number') {
             return this.formatNumericDatum(datum);
