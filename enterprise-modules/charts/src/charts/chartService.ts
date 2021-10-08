@@ -228,7 +228,6 @@ export class ChartService extends BeanStub implements IChartService {
             params.aggFunc,
             params.chartThemeOverrides,
             params.unlinkChart,
-            undefined,
             crossFiltering);
     }
 
