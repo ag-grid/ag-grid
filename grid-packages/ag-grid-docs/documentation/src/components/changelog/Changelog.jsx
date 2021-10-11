@@ -290,12 +290,11 @@ const Changelog = () => {
     <>
       {!IS_SSR && (
         <div style={{ height: "100%", width: "100%" }}>
-          <React.Suspense fallback={<div />}>
             <div className={styles["note"]}>
               The AG Grid Changelog lists the feature request and defects
               implemented across AG Grid releases. If you can’t find the item
               you’re looking for, check the{" "}
-              <a href="../ag-grid-pipeline">Pipeline</a> for items in our
+              <a href="/pipeline">Pipeline</a> for items in our
               backlog.
             </div>
 
@@ -406,7 +405,6 @@ const Changelog = () => {
               masterDetail
               onGridReady={gridReady}
             ></Grid>
-          </React.Suspense>
         </div>
       )}
     </>

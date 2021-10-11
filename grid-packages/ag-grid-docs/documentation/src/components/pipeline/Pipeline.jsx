@@ -199,7 +199,6 @@ const Pipeline = () => {
     <>
       {!IS_SSR && (
         <div style={{ height: "100%", width: "100%" }}>
-          <React.Suspense fallback={<div />}>
             <div className={styles["note"]}>
               <p>
                 The AG Grid pipeline lists the features and bug fixes we have in
@@ -295,7 +294,6 @@ const Pipeline = () => {
                 onGridReady={gridReady}
               ></Grid>
             </div>
-          </React.Suspense>
         </div>
       )}
     </>
