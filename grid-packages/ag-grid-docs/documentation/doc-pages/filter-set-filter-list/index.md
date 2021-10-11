@@ -88,6 +88,8 @@ The following example shows how Set Filter values are formatted using a Value Fo
 
 <grid-example title='Filter List Value Formatters' name='filter-list-value-formatter' type='generated' options='{ "enterprise": true, "exampleHeight": 745, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example> 
 
+### Cell Renderer
+
 A [Cell Renderer](/cell-rendering/) is a good choice when the value displayed requires markup. For instance if a
 country flag image is to be shown alongside country names.
 
