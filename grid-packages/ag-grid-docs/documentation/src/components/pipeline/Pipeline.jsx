@@ -193,6 +193,7 @@ const Pipeline = () => {
 
   const gridReady = params => {
     setGridApi(params.api)
+    params.api.sizeColumnsToFit()
   }
 
   return (
@@ -273,28 +274,23 @@ const Pipeline = () => {
                 </div>
               </div>
             </div>
-            <div
-              className="ag-theme-alpine"
-              style={{ height: "100%", width: "100%" }}
-            >
-              <Grid
-                gridHeight={"63vh"}
-                columnDefs={COLUMN_DEFS}
-                isRowMaster={isRowMaster}
-                detailRowAutoHeight={true}
-                frameworkComponents={{
-                  myDetailCellRenderer: DetailCellRenderer,
-                  paddingCellRenderer: PaddingCellRenderer,
-                }}
-                defaultColDef={defaultColDef}
-                enableCellTextSelection={true}
-                detailCellRendererParams={detailCellRendererParams}
-                detailCellRenderer={"myDetailCellRenderer"}
-                masterDetail={true}
-                rowData={rowData}
-                onGridReady={gridReady}
-              ></Grid>
-            </div>
+            <Grid
+              gridHeight={"63vh"}
+              columnDefs={COLUMN_DEFS}
+              isRowMaster={isRowMaster}
+              detailRowAutoHeight={true}
+              frameworkComponents={{
+                myDetailCellRenderer: DetailCellRenderer,
+                paddingCellRenderer: PaddingCellRenderer,
+              }}
+              defaultColDef={defaultColDef}
+              enableCellTextSelection={true}
+              detailCellRendererParams={detailCellRendererParams}
+              detailCellRenderer={"myDetailCellRenderer"}
+              masterDetail={true}
+              rowData={rowData}
+              onGridReady={gridReady}
+            ></Grid>
           </React.Suspense>
         </div>
       )}

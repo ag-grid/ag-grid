@@ -197,7 +197,7 @@ const Changelog = () => {
   }, [])
 
   const gridReady = params => {
-    // params.api.sizeColumnsToFit()
+    params.api.sizeColumnsToFit()
     setGridApi(params.api)
   }
 
