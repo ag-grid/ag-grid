@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from "react"
 
-import VersionDropdownMenu from "../grid/versionDropdownMenu"
+import VersionDropdownMenu from "../grid/VersionDropdownMenu"
 import styles from "./Changelog.module.scss"
 import ReleaseVersionNotes from "./releaseVersionNotes.jsx"
-import DetailCellRenderer from "../grid/detailCellRendererComponent"
-import ButtonCellRenderer from "../grid/buttonCellRendererComponent"
+import DetailCellRenderer from "../grid/DetailCellRendererComponent"
+import PaddingCellRenderer from "../grid/PaddingCellRenderer"
 import Grid from "../grid/Grid"
 
 const removeNFormatter = params => {
@@ -12,39 +12,41 @@ const removeNFormatter = params => {
 }
 
 const COLUMN_DEFS = [
-  { field: "key", minWidth: 100, width: 100, filter: false },
+  {
+    field: "key",
+    headerName: "Issue",
+    width: 97,
+    filter: false,
+  },
   {
     field: "versions",
     headerName: "Version",
-    minWidth: 105,
-    width: 105,
+    width: 101,
   },
 
   {
     field: "summary",
+    headerClass: styles["summary-class"],
     tooltipField: "summary",
     filter: false,
     width: 500,
-    minWidth: 500,
-  },
-  {
-    field: "features",
-    headerName: "Feature",
-    minWidth: 225,
-    width: 225,
-    valueFormatter: params => {
-      let isValue = !!params.value
-      return isValue ? params.value.toString().replaceAll("_", " ") : undefined
-    },
-    filterParams: {
-      valueFormatter: params => {
-        return params.colDef.valueFormatter(params)
-      },
+    cellRendererSelector: params => {
+      if (
+        params.node.data.moreInformation ||
+        params.node.data.deprecationNotes ||
+        params.node.data.breakingChangesNotes
+      ) {
+        return {
+          component: "agGroupCellRenderer",
+        }
+      }
+      return {
+        component: "paddingCellRenderer",
+      }
     },
   },
   {
     field: "issueType",
-    minWidth: 142,
     width: 142,
     valueFormatter: params =>
       params.value === "Bug" ? "Defect" : "Feature Request",
@@ -55,29 +57,27 @@ const COLUMN_DEFS = [
     },
   },
   {
-    colId: "moreInfo",
-    headerName: "More Info",
-    width: 132,
-    filter: false,
-    valueGetter: () => "",
-    cellRendererSelector: params => {
-      if (
-        params.node.data.moreInformation ||
-        params.node.data.deprecationNotes ||
-        params.node.data.breakingChangesNotes
-      ) {
-        return {
-          component: "buttonCellRenderer",
-        }
-      }
-      return null
+    field: "status",
+    width: 95,
+    valueGetter: params => {
+      return params.data.status
     },
   },
   {
-    field: "status",
-    width: 122,
-    valueGetter: params => {
-      return params.data.status
+    field: "features",
+    headerName: "Feature",
+    width: 131,
+    valueFormatter: params => {
+      let isValue = !!params.value
+      return isValue ? params.value.toString().replaceAll("_", " ") : undefined
+    },
+    tooltipValueGetter: params => {
+      return params.colDef.valueFormatter(params)
+    },
+    filterParams: {
+      valueFormatter: params => {
+        return params.colDef.valueFormatter(params)
+      },
     },
   },
   {
@@ -90,7 +90,7 @@ const COLUMN_DEFS = [
   },
   {
     field: "breakingChange",
-    width: 166,
+    width: 163,
     valueGetter: params => {
       return params.node.data.breakingChangesNotes ? "Y" : "N"
     },
@@ -292,14 +292,11 @@ const Changelog = () => {
         <div style={{ height: "100%", width: "100%" }}>
           <React.Suspense fallback={<div />}>
             <div className={styles["note"]}>
-              This page covers the full Changelog for all items for 8.x and
-              above. For the Summary Changelog, or the legacy changelog covering
-              versions 7.x and above, please go{" "}
-              <a href="../change-log/changeLogIndex.php">here</a>. For a list of
-              up and coming Bug Fixes and Features please refer to our{" "}
-              <a href="../ag-grid-pipeline">Pipeline</a>. Documentation for
-              previous versions can be found{" "}
-              <a href="https://www.ag-grid.com/archive/">here.</a>
+              The AG Grid Changelog lists the feature request and defects
+              implemented across AG Grid releases. If you can’t find the item
+              you’re looking for, check the{" "}
+              <a href="../ag-grid-pipeline">Pipeline</a> for items in our
+              backlog.
             </div>
 
             <div className={"global-search-pane"}>
@@ -391,29 +388,24 @@ const Changelog = () => {
             </div>
 
             <ReleaseVersionNotes releaseNotes={currentReleaseNotes} />
-
-            <div
-              className="ag-theme-alpine"
-              style={{ height: "100vh", width: "100%" }}
-            >
-              <Grid
-                columnDefs={COLUMN_DEFS}
-                rowData={rowData}
-                frameworkComponents={{
-                  myDetailCellRenderer: DetailCellRenderer,
-                  buttonCellRenderer: ButtonCellRenderer,
-                }}
-                defaultColDef={defaultColDef}
-                detailRowAutoHeight={true}
-                doesExternalFilterPass={doesExternalFilterPass}
-                isExternalFilterPresent={isExternalFilterPresent}
-                enableCellTextSelection={true}
-                detailCellRendererParams={detailCellRendererParams}
-                detailCellRenderer={"myDetailCellRenderer"}
-                masterDetail
-                onGridReady={gridReady}
-              ></Grid>
-            </div>
+            <Grid
+              gridHeight={"67vh"}
+              columnDefs={COLUMN_DEFS}
+              rowData={rowData}
+              frameworkComponents={{
+                myDetailCellRenderer: DetailCellRenderer,
+                paddingCellRenderer: PaddingCellRenderer,
+              }}
+              defaultColDef={defaultColDef}
+              detailRowAutoHeight={true}
+              doesExternalFilterPass={doesExternalFilterPass}
+              isExternalFilterPresent={isExternalFilterPresent}
+              enableCellTextSelection={true}
+              detailCellRendererParams={detailCellRendererParams}
+              detailCellRenderer={"myDetailCellRenderer"}
+              masterDetail
+              onGridReady={gridReady}
+            ></Grid>
           </React.Suspense>
         </div>
       )}
