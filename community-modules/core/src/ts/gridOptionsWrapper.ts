@@ -116,7 +116,7 @@ export class GridOptionsWrapper {
     public static PROP_NAVIGATE_TO_NEXT_HEADER = 'navigateToNextHeader';
     public static PROP_TAB_TO_NEXT_HEADER = 'tabToNextHeader';
 
-    public static PROP_IS_EXTERNAL_FILTER_PRESENT = 'isExternalFilterPresentFunc';
+    public static PROP_IS_EXTERNAL_FILTER_PRESENT = 'isExternalFilterPresent';
     public static PROP_DOES_EXTERNAL_FILTER_PASS = 'doesExternalFilterPass';
 
     public static PROP_FLOATING_FILTERS_HEIGHT = 'floatingFiltersHeight';
