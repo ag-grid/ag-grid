@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import styles from "./Pipeline.module.scss"
-import DetailCellRenderer from "../grid/detailCellRendererComponent"
+import DetailCellRenderer from "../grid/DetailCellRendererComponent"
 import PaddingCellRenderer from "../grid/PaddingCellRenderer"
 import Grid from "../grid/Grid"
 
