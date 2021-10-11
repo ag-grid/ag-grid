@@ -107,7 +107,9 @@ export class LegendPanel extends Component {
                 .setValue(this.chartController.getChartProxy().getChartOption(`legend.${expression}`))
                 .setMaxValue(maxValue)
                 .setTextFieldWidth(45)
-                .onValueChange(newValue => this.chartController.getChartProxy().setChartOption(`legend.${expression}`, newValue));
+                .onValueChange(newValue => {
+                        this.chartController.getChartProxy().setChartOption(`legend.${expression}`, newValue)
+                });
         };
 
         initSlider("item.marker.size", "markerSize", this.markerSizeSlider, 40);
