@@ -279,21 +279,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         }
 
         _.set(this.iChartOptions, expression, value);
-
-        const mappings: any = {
-            'legend.item.marker.strokeWidth': 'legend.strokeWidth',
-            'legend.item.marker.size': 'legend.markerSize',
-            'legend.item.marker.padding': 'legend.itemSpacing',
-            'legend.item.label.fontFamily': 'legend.fontFamily',
-            'legend.item.label.fontStyle': 'legend.fontStyle',
-            'legend.item.label.fontWeight': 'legend.fontWeight',
-            'legend.item.label.fontSize': 'legend.fontSize',
-            'legend.item.label.color': 'legend.color',
-            'legend.item.paddingX': 'legend.layoutHorizontalSpacing',
-            'legend.item.paddingY': 'legend.layoutVerticalSpacing',
-        };
-
-        _.set(this.chart, mappings[expression] || expression, value);
+        _.set(this.chart, expression, value);
 
         this.raiseChartOptionsChangedEvent();
     }
@@ -367,7 +353,9 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
         (this.chart.padding as any)[property] = value;
 
-        this.chart.performLayout();
+        //TODO: need a more robust approach
+        this.chart.layoutPending = true;
+
         this.raiseChartOptionsChangedEvent();
     }
 

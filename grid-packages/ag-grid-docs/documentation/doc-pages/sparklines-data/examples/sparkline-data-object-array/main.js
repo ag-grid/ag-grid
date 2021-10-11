@@ -10,7 +10,7 @@ var gridOptions = {
                     type: 'column',
                     xKey: 'xVal',
                     yKey: 'yVal',
-                    axis : {
+                    axis: {
                         type: 'number'
                     }
                 },

@@ -1,20 +1,35 @@
 import React, { useEffect, useState } from "react"
 import styles from "./Pipeline.module.scss"
 import DetailCellRenderer from "../grid/detailCellRendererComponent"
-import ButtonCellRenderer from "../grid/buttonCellRendererComponent"
+import PaddingCellRenderer from "../grid/PaddingCellRenderer"
 import Grid from "../grid/Grid"
 
 const COLUMN_DEFS = [
-  { field: "key", headerName: "Issue ID", width: 120, filter: false },
+  { field: "key", headerName: "Issue", width: 97, filter: false },
   {
     field: "summary",
-    headerName: "Summary",
+    headerClass: styles["summary-class"],
     tooltipField: "summary",
-    minWidth: 700,
+    width: 500,
     filter: false,
+    cellRendererSelector: params => {
+      if (
+        params.node.data.moreInformation ||
+        params.node.data.deprecationNotes ||
+        params.node.data.breakingChangesNotes
+      ) {
+        return {
+          component: "agGroupCellRenderer",
+        }
+      }
+      return {
+        component: "paddingCellRenderer",
+      }
+    },
   },
   {
     field: "issueType",
+    width: 142,
     valueFormatter: params =>
       params.value === "Bug" ? "Defect" : "Feature Request",
     filterParams: {
@@ -24,21 +39,8 @@ const COLUMN_DEFS = [
     },
   },
   {
-    field: "features",
-    headerName: "Feature",
-    valueFormatter: params => {
-      let isValue = !!params.value
-      return isValue ? params.value.toString().replaceAll("_", " ") : undefined
-    },
-    filterParams: {
-      valueFormatter: params => {
-        return params.colDef.valueFormatter(params)
-      },
-    },
-  },
-
-  {
     field: "status",
+    width: 107,
     valueGetter: params => {
       let fixVersionsArr = params.data.versions
       let hasFixVersion = fixVersionsArr.length > 0
@@ -57,17 +59,20 @@ const COLUMN_DEFS = [
     },
   },
   {
-    colId: "moreInfo",
-    headerName: "More Info",
-    valueGetter: () => "",
-    filter: false,
-    cellRendererSelector: params => {
-      if (params.node.data.moreInformation) {
-        return {
-          component: "buttonCellRenderer",
-        }
-      }
-      return null
+    field: "features",
+    headerName: "Feature",
+    width: 130,
+    valueFormatter: params => {
+      let isValue = !!params.value
+      return isValue ? params.value.toString().replaceAll("_", " ") : undefined
+    },
+    tooltipValueGetter: params => {
+      return params.colDef.valueFormatter(params)
+    },
+    filterParams: {
+      valueFormatter: params => {
+        return params.colDef.valueFormatter(params)
+      },
     },
   },
 ]
@@ -197,9 +202,11 @@ const Pipeline = () => {
           <React.Suspense fallback={<div />}>
             <div className={styles["note"]}>
               <p>
-                The AG Grid pipeline visualises the features and bug fixes we
-                have in our internal issue tracker (JIRA). The issues commonly
-                have an ID, which looks like <code>AG-XXX</code>.
+                The AG Grid pipeline lists the features and bug fixes we have in
+                our product backlog. You can use it to see the items we’ve
+                scheduled for our next release or look up the status of a
+                specific item. If you can’t find the item you’re looking for,
+                check the changelog for a list of completed items.
               </p>
             </div>
             <div
@@ -271,12 +278,13 @@ const Pipeline = () => {
               style={{ height: "100%", width: "100%" }}
             >
               <Grid
+                gridHeight={"63vh"}
                 columnDefs={COLUMN_DEFS}
                 isRowMaster={isRowMaster}
                 detailRowAutoHeight={true}
                 frameworkComponents={{
                   myDetailCellRenderer: DetailCellRenderer,
-                  buttonCellRenderer: ButtonCellRenderer,
+                  paddingCellRenderer: PaddingCellRenderer,
                 }}
                 defaultColDef={defaultColDef}
                 enableCellTextSelection={true}
