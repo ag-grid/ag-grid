@@ -33,7 +33,6 @@ Alternatively, a `valueGetter` can be added to return an array of numbers for ea
 - The numbers in the data array correspond to Y values.
 - The X value for each data point will be the index of the value in the data array. For this reason, the data points will be evenly spaced out along the width of the sparkline.
 
-This is demonstrated in the simple example below, where the 'Rate of Change' column contains the sparkline cell renderer.
 - Note that the data for the `rateOfChange` field in the data.js file is a `number[]`.
 
 <grid-example title='Sparkline Data - Array of Numbers' name='sparkline-data-number-array' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
@@ -103,28 +102,29 @@ In these cases, sparklines support correct rendering of incomplete data.
 
 If the Y value of the data point is `Infinity`, `null`, `undefined`, `NaN`, a `string` or an `object` – basically if it's not a `number` – it will be classified as invalid.
 
-In the line and column sparklines, when a data point has an invalid Y value, it will be rendered as a gap, this is illustrated in the images below:
+``` js
+// No missing Y Values
+const data = [0.17, 0.20, 0.28, 0.39, 0.26, 0.41, 0.68, 0.28];
 
-Line Sparkline
+// Missing Y Values
+const data = [0.17, 0.20, undefined, 0.39, 0.26, undefined, 0.68, 0.28];
+```
+
+When a data point has an invalid Y value, it will be rendered as a gap, this is illustrated in the images below:
+
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/line-sparkline.png" alt="Line sparkline." width="250px" constrained="true">No invalid Y values</image-caption>
-    <image-caption src="resources/line-sparkline-invalid-y-values.png" alt="Line sparkline with gaps for invalid Y values." width="250px" constrained="true">Invalid Y values</image-caption>
+    <image-caption src="resources/line-sparkline.png" alt="Line sparkline." width="250px" constrained="true">No missing Y values</image-caption>
+    <image-caption src="resources/line-sparkline-invalid-y-values.png" alt="Line sparkline with gaps for invalid Y values." width="250px" constrained="true">Missing Y values</image-caption>
 </div>
 
-Column Sparkline
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/column-sparkline.png" alt="Column Sparkline" width="250px" constrained="true">No invalid Y values</image-caption>
-    <image-caption src="resources/column-sparkline-invalid-y-values.png" alt="Column sparkline with gaps for invalid Y values" width="250px" constrained="true">Invalid Y values</image-caption>
+    <image-caption src="resources/column-sparkline.png" alt="Column Sparkline" width="250px" constrained="true">No missing Y values</image-caption>
+    <image-caption src="resources/column-sparkline-invalid-y-values.png" alt="Column sparkline with gaps for invalid Y values" width="250px" constrained="true">Missing Y values</image-caption>
 </div>
 
-In the area sparklines, when a data point has an invalid Y value, it will be skipped in the sparklines. There won't be any gaps, only the valid data points will appear in the sparklines.
-
-This can be seen in the images below where the area sparkline on the left has 10 valid data points, and the area sparkline on the right has only 8 valid data points.
-
-Area Sparkline
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/area-sparkline.png" alt="Area Sparkline" width="250px" constrained="true">No invalid Y values</image-caption>
-    <image-caption src="resources/area-sparkline-invalid-y-values.png" alt="Area sparkline with gaps for invalid Y values" width="250px" constrained="true">Invalid Y values</image-caption>
+    <image-caption src="resources/area-sparkline.png" alt="Area Sparkline" width="250px" constrained="true">No missing Y values</image-caption>
+    <image-caption src="resources/area-sparkline-invalid-y-values.png" alt="Area sparkline with gaps for invalid Y values" width="250px" constrained="true">Missing Y values</image-caption>
 </div>
 
 
@@ -132,22 +132,50 @@ Area Sparkline
 
 If X values are supplied in the sparkline data but are inconsistent with the configured [x-axis type](/sparklines-axis-types/), they are considered invalid and will be skipped in the sparkline.
 
+There won't be any gaps, only the data points with valid x values will appear in the sparklines.
+
 Let's say we have configured the x-axis to be a [Number Axis](/sparklines-axis-types/#number-axis), but some of the data points have X values which are not of type `number`.
 In this case, those X values are invalid and so those data points will be ignored when the sparkline is rendered.
 
-See the images below which show the line, column and area sparklines with 10 complete data points on the left, and on the right, with 8 valid X values and 2 invalid X values:
+``` js
+// No missing X Values
+const data = [
+    [2.1, 0.17],
+    [2.3, 0.202],
+    [2.7, 0.28],
+    [2.9, 0.39],
+    [3.3, 0.26],
+    [3.6, 0.41],
+    [3.9, 0.68],
+    [4.3, 0.28],
+];
+
+// Missing X Values
+const data = [
+    [2.1, 0.17],
+    [2.3, 0.202],
+    [undefined, 0.28],
+    [2.9, 0.39],
+    [3.3, 0.26],
+    [undefined, 0.41],
+    [3.9, 0.68],
+    [4.3, 0.28],
+];
+```
+
+See the images below which show the line, column and area sparklines with 8 complete data points on the left, and on the right, with 6 valid X values and 2 invalid X values:
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/line-sparkline-2.png" alt="Line sparkline." width="250px" constrained="true">No invalid X values</image-caption>
-    <image-caption src="resources/line-sparkline-invalid-x-values.png" alt="Line sparkline with gaps for invalid Y values." width="250px" constrained="true">Invalid X values</image-caption>
+    <image-caption src="resources/line-sparkline.png" alt="Line sparkline." width="250px" constrained="true">No missing X values</image-caption>
+    <image-caption src="resources/line-sparkline-invalid-x-values.png" alt="Line sparkline with gaps for invalid Y values." width="250px" constrained="true">Missing X values</image-caption>
 </div>
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/column-sparkline-2.png" alt="Column Sparkline" width="250px" constrained="true">No invalid X values</image-caption>
-    <image-caption src="resources/column-sparkline-invalid-x-values.png" alt="Column sparkline with gaps for invalid Y values" width="250px" constrained="true">Invalid X values</image-caption>
+    <image-caption src="resources/column-sparkline.png" alt="Column Sparkline" width="250px" constrained="true">No missing X values</image-caption>
+    <image-caption src="resources/column-sparkline-invalid-x-values.png" alt="Column sparkline with gaps for invalid Y values" width="250px" constrained="true">Missing X values</image-caption>
 </div>
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/area-sparkline-2.png" alt="Area Sparkline" width="250px" constrained="true">No invalid X values</image-caption>
-    <image-caption src="resources/area-sparkline-invalid-x-values.png" alt="Area sparkline with gaps for invalid Y values" width="250px" constrained="true">Invalid X values</image-caption>
+    <image-caption src="resources/area-sparkline.png" alt="Area Sparkline" width="250px" constrained="true">No missing X values</image-caption>
+    <image-caption src="resources/area-sparkline-invalid-x-values.png" alt="Area sparkline with gaps for invalid Y values" width="250px" constrained="true">Missing X values</image-caption>
 </div>
 
 ## Updating Sparkline Data
