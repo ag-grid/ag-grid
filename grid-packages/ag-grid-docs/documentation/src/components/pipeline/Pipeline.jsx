@@ -205,7 +205,7 @@ const Pipeline = () => {
                 our product backlog. You can use it to see the items we’ve
                 scheduled for our next release or look up the status of a
                 specific item. If you can’t find the item you’re looking for,
-                check the changelog for a list of completed items.
+                check the <a href="/changelog">Changelog</a> for a list of completed items.
               </p>
             </div>
             <div
