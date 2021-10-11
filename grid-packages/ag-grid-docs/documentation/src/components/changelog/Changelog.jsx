@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react"
 
 import VersionDropdownMenu from "../grid/VersionDropdownMenu"
 import styles from "./Changelog.module.scss"
-import ReleaseVersionNotes from "./releaseVersionNotes.jsx"
+import ReleaseVersionNotes from "./ReleaseVersionNotes.jsx"
 import DetailCellRenderer from "../grid/DetailCellRendererComponent"
 import PaddingCellRenderer from "../grid/PaddingCellRenderer"
 import Grid from "../grid/Grid"
@@ -197,7 +197,7 @@ const Changelog = () => {
   }, [])
 
   const gridReady = params => {
-    // params.api.sizeColumnsToFit()
+    params.api.sizeColumnsToFit()
     setGridApi(params.api)
   }
 
@@ -290,12 +290,11 @@ const Changelog = () => {
     <>
       {!IS_SSR && (
         <div style={{ height: "100%", width: "100%" }}>
-          <React.Suspense fallback={<div />}>
             <div className={styles["note"]}>
               The AG Grid Changelog lists the feature request and defects
               implemented across AG Grid releases. If you can’t find the item
               you’re looking for, check the{" "}
-              <a href="../ag-grid-pipeline">Pipeline</a> for items in our
+              <a href="/pipeline">Pipeline</a> for items in our
               backlog.
             </div>
 
@@ -406,7 +405,6 @@ const Changelog = () => {
               masterDetail
               onGridReady={gridReady}
             ></Grid>
-          </React.Suspense>
         </div>
       )}
     </>
