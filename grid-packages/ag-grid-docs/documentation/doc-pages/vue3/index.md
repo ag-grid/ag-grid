@@ -33,14 +33,14 @@ are building applications that would not be possible if AG Grid did not exist.
 <li class="nav-item">
 <a  class="nav-link active" id="component-tab" data-toggle="tab" href="#component" role="tab" aria-controls="component" aria-selected="true">
 
-app.js
+App.vue
 
 </a>
 </li>
 <li class="nav-item">
 <a class="nav-link" id="template-tab" data-toggle="tab" href="#template" role="tab" aria-controls="template" aria-selected="false">
 
-index.js
+main.js
 
 </a>
 </li>
@@ -49,69 +49,61 @@ index.js
 <div class="tab-pane show active" id="component" role="tabpanel" aria-labelledby="component-tab">
 
 ```jsx
+<template>
+  <ag-grid-vue
+    style="width: 500px; height: 200px"
+    class="ag-theme-alpine"
+    :columnDefs="columnDefs"
+    :rowData="rowData"
+  >
+  </ag-grid-vue>
+</template>
+
+<script>
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
-import { AgGridVue } from 'ag-grid-vue3';
+import { AgGridVue } from "ag-grid-vue3";
 
-export const App = {
-    name: 'App',
-    data() {
-        return {
-            columnDefs: null,
-            rowData: null
-        }
-    },
-    components: {
-        AgGridVue
-    },
-    beforeMount() {
-        this.columnDefs = [
-            { field: 'make' },
-            { field: 'model' },
-            { field: 'price' }
-        ];
-
-        this.rowData = [
-            { make: 'Toyota', model: 'Celica', price: 35000 },
-            { make: 'Ford', model: 'Mondeo', price: 32000 },
-            { make: 'Porsche', model: 'Boxter', price: 72000 }
-        ];
-    },
-    template: `
-        <ag-grid-vue
-            style="width: 500px; height: 300px;"
-            class="ag-theme-alpine"
-            :columnDefs="columnDefs"
-            :rowData="rowData">
-        </ag-grid-vue>
-    `
-}
+export default {
+  name: "App",
+  components: {
+    AgGridVue,
+  },
+  setup() {
+    return {
+      columnDefs: [
+        { headerName: "Make", field: "make" },
+        { headerName: "Model", field: "model" },
+        { headerName: "Price", field: "price" },
+      ],
+      rowData: [
+        { make: "Toyota", model: "Celica", price: 35000 },
+        { make: "Ford", model: "Mondeo", price: 32000 },
+        { make: "Porsche", model: "Boxter", price: 72000 },
+      ],
+    };
+  },
+};
+</script>
 ```
 
 </div>
 <div class="tab-pane" id="template" role="tabpanel" aria-labelledby="template-tab">
-
+ 
 [[only-vue]]
 ```jsx
-import Vue from 'vue';
-import { App } from './app';
+import { createApp } from "vue";
+import App from "./App.vue";
 
-new Vue({
-  el: '#root',
-  render: h => h(App)
-});
+createApp(App).mount("#app");
 ```
 
 </div>
 </div>
 </div>
-<div class="text-right" style="margin-top: -1.5rem;">
-
-<a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/ag-grid-vue-hello-world" target="_blank">
-    Open in <img src="resources/stackBlitz_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> StackBlitz
-</a>
-
-</div>
+    <div class="text-right" style="margin-top: -1.5rem;">
+        <a class="btn btn-dark mb-2 mr-3" href="https://codesandbox.io/s/long-sunset-01hl9?file=/src/App.vue" target="_blank">Open in CodeSandbox</a>
+    </div>
 </div>
 </section>
 
@@ -191,7 +183,7 @@ Next select `Sass/SCSS (with node-sass)` as the CSS Pre-processor:
 Vue CLI v4.5.12
 ? Please pick a preset: Manually select features
 ? Check the features needed for your project: Choose Vue version, Babel, CSS Pre-processors
-? Choose a version of Vue.js that you want to start the project with 2.x
+? Choose a version of Vue.js that you want to start the project with 3.x
 ? Pick a CSS pre-processor (PostCSS, Autoprefixer and CSS Modules are supported by default):
   Sass/SCSS (with dart-sass)
 ❯ Sass/SCSS (with node-sass)
@@ -205,7 +197,7 @@ Now choose where to store the configuration data - we've opted for `dedicated co
 Vue CLI v4.5.12
 ? Please pick a preset: Manually select features
 ? Check the features needed for your project: Choose Vue version, Babel, CSS Pre-processors
-? Choose a version of Vue.js that you want to start the project with 2.x
+? Choose a version of Vue.js that you want to start the project with 3.x
 ? Pick a CSS pre-processor (PostCSS, Autoprefixer and CSS Modules are supported by default): Sass/SCSS (with node-sass)
 ? Where do you prefer placing config for Babel, ESLint, etc.? (Use arrow keys)
 ❯ In dedicated config files
@@ -218,7 +210,7 @@ for the purposes of this tutorial we'll select `No`:
 Vue CLI v4.5.12
 ? Please pick a preset: Manually select features
 ? Check the features needed for your project: Choose Vue version, Babel, CSS Pre-processors
-? Choose a version of Vue.js that you want to start the project with 2.x
+? Choose a version of Vue.js that you want to start the project with 3.x
 ? Pick a CSS pre-processor (PostCSS, Autoprefixer and CSS Modules are supported by default): Sass/SCSS (with node-sass)
 ? Where do you prefer placing config for Babel, ESLint, etc.? In dedicated config files
 ? Save this as a preset for future projects? (y/N) N
@@ -282,37 +274,32 @@ we imported earlier.
 Now let's replace the `script` section of`src/App.vue`:
 
 ```js
-<script>
-    import { AgGridVue } from "ag-grid-vue3";
+import "ag-grid-community/dist/styles/ag-grid.css";
+import "ag-grid-community/dist/styles/ag-theme-alpine.css";
+import { AgGridVue } from "ag-grid-vue3";
 
-    export default {
-        name: 'App',
-        data() {
-            return {
-                columnDefs: null,
-                rowData: null
-            }
-        },
-        components: {
-            AgGridVue
-        },
-        beforeMount() {
-            this.columnDefs = [
-                { field: 'make' },
-                { field: 'model' },
-                { field: 'price' }
-            ];
-
-            this.rowData = [
-                { make: 'Toyota', model: 'Celica', price: 35000 },
-                { make: 'Ford', model: 'Mondeo', price: 32000 },
-                { make: 'Porsche', model: 'Boxter', price: 72000 }
-            ];
-        }
-    }
-</script>
+export default {
+  name: "App",
+  components: {
+    AgGridVue,
+  },
+  setup() {
+    return {
+      columnDefs: [
+        { headerName: "Make", field: "make" },
+        { headerName: "Model", field: "model" },
+        { headerName: "Price", field: "price" },
+      ],
+      rowData: [
+        { make: "Toyota", model: "Celica", price: 35000 },
+        { make: "Ford", model: "Mondeo", price: 32000 },
+        { make: "Porsche", model: "Boxter", price: 72000 },
+      ],
+    };
+  },
+};
 ```
-
+  
 The code above presents two essential configuration properties of the grid -
 [the column definitions](/column-definitions/) (`columnDefs`) and the data (`rowData`).
 In our case, the column definitions contain three columns; column entry specifies the header

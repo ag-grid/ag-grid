@@ -9,8 +9,10 @@ import styles from './Announcements.module.scss';
  * This are the announcement cards shown underneath the left-hand navigation menu.
  */
 const Announcements = ({ framework }) => <div className={styles['announcements']}>
+
     <Announcement date="Oct 1" version="26.1.0">
         <p className="card-text">
+            <a href="https://blog.ag-grid.com/whats-new-in-ag-grid-26-1/">What's new in AG Grid 26.1.0</a><br/><br/>
             Minor release with new features and bug fixes.
         </p>
         <ul>
