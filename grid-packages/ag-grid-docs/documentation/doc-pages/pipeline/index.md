@@ -1,7 +1,6 @@
 ---
-title: "AG Grid Pipine"
+title: "AG Grid Pipeline"
 rootPage: true
 ---
 
 <pipeline><pipeline>
-

@@ -20,9 +20,13 @@
     "test": "npx jest"
   },
   "dependencies": {
-    "@ag-grid-community/core": "^26.0.0",
-    "@ag-grid-community/client-side-row-model": "^26.0.0",
-    "@ag-grid-community/react": "^26.0.0",
+    "@ag-grid-community/core": "^26.1.0",
+    "@ag-grid-community/client-side-row-model": "^26.1.0",
+    "@ag-grid-community/react": "^26.1.0",
+    "@ag-grid-enterprise/master-detail": "^26.1.0",
+    "@ag-grid-enterprise/set-filter": "^26.1.0",
+    "@ag-grid-enterprise/column-tool-panel": "^26.1.0",
+    "@ag-grid-enterprise/status-bar": "^26.1.0",
     "@fortawesome/fontawesome-svg-core": "1.2.34",
     "@fortawesome/free-solid-svg-icons": "5.15.2",
     "@fortawesome/react-fontawesome": "0.1.14",
