@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react"
 
 import VersionDropdownMenu from "../grid/VersionDropdownMenu"
 import styles from "./Changelog.module.scss"
-import ReleaseVersionNotes from "./releaseVersionNotes.jsx"
+import ReleaseVersionNotes from "./ReleaseVersionNotes.jsx"
 import DetailCellRenderer from "../grid/DetailCellRendererComponent"
 import PaddingCellRenderer from "../grid/PaddingCellRenderer"
 import Grid from "../grid/Grid"
