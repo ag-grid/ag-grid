@@ -45,9 +45,14 @@ var VueComponentFactory = /** @class */ (function () {
         return componentDefinition;
     };
     VueComponentFactory.addParamsToProps = function (props) {
-        if ((props && props.indexOf('params') === -1) ||
-            !props) {
+        if (!props || (Array.isArray(props) && props.indexOf('params') === -1)) {
             props = __spreadArrays(['params'], (props ? props : []));
+        }
+        else if (typeof props === 'object' && !props.params) {
+            /* tslint:disable:no-string-literal */
+            props['params'] = {
+                type: Object
+            };
         }
         return props;
     };
