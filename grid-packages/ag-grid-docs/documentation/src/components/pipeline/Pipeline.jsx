@@ -1,38 +1,46 @@
 import React, { useEffect, useState } from "react"
 import styles from "./Pipeline.module.scss"
-
-const Grid = React.lazy(() => import("../grid/Grid"))
-const DetailCellRenderer = React.lazy(() =>
-  import("../grid/detailCellRendererComponent")
-)
-const ButtonCellRenderer = React.lazy(() =>
-  import("../grid/buttonCellRendererComponent")
-)
+import DetailCellRenderer from "../grid/detailCellRendererComponent"
+import PaddingCellRenderer from "../grid/PaddingCellRenderer"
+import Grid from "../grid/Grid"
 
 const COLUMN_DEFS = [
-  { field: "key", headerName: "Issue ID", width: 120 },
+  { field: "key", headerName: "Issue", width: 97, filter: false },
   {
     field: "summary",
-    headerName: "Summary",
+    headerClass: styles["summary-class"],
     tooltipField: "summary",
-    minWidth: 700,
+    width: 500,
+    filter: false,
+    cellRendererSelector: params => {
+      if (
+        params.node.data.moreInformation ||
+        params.node.data.deprecationNotes ||
+        params.node.data.breakingChangesNotes
+      ) {
+        return {
+          component: "agGroupCellRenderer",
+        }
+      }
+      return {
+        component: "paddingCellRenderer",
+      }
+    },
   },
   {
     field: "issueType",
+    width: 142,
     valueFormatter: params =>
       params.value === "Bug" ? "Defect" : "Feature Request",
-  },
-  {
-    field: "features",
-    headerName: "Feature",
-    valueFormatter: params => {
-      let isValue = !!params.value
-      return isValue ? params.value.toString().replaceAll("_", " ") : undefined
+    filterParams: {
+      valueFormatter: params => {
+        return params.colDef.valueFormatter(params)
+      },
     },
   },
-
   {
     field: "status",
+    width: 107,
     valueGetter: params => {
       let fixVersionsArr = params.data.versions
       let hasFixVersion = fixVersionsArr.length > 0
@@ -51,16 +59,20 @@ const COLUMN_DEFS = [
     },
   },
   {
-    colId: "moreInfo",
-    headerName: "More Info",
-    valueGetter: () => "",
-    cellRendererSelector: params => {
-      if (params.node.data.moreInformation) {
-        return {
-          component: "buttonCellRenderer",
-        }
-      }
-      return null
+    field: "features",
+    headerName: "Feature",
+    width: 130,
+    valueFormatter: params => {
+      let isValue = !!params.value
+      return isValue ? params.value.toString().replaceAll("_", " ") : undefined
+    },
+    tooltipValueGetter: params => {
+      return params.colDef.valueFormatter(params)
+    },
+    filterParams: {
+      valueFormatter: params => {
+        return params.colDef.valueFormatter(params)
+      },
     },
   },
 ]
@@ -68,6 +80,7 @@ const COLUMN_DEFS = [
 const defaultColDef = {
   resizable: true,
   filter: true,
+  sortable: true,
 }
 
 const IS_SSR = typeof window === "undefined"
@@ -127,10 +140,10 @@ const Pipeline = () => {
   const [gridApi, setGridApi] = useState(null)
 
   useEffect(() => {
-    fetch("http://localhost:8080/jira_reports/cache/pipeline.json")
+    fetch("/pipeline/pipeline.json")
       .then(response => response.json())
       .then(data => {
-        return setRowData(data)
+        setRowData(data)
       })
   }, [])
 
@@ -186,74 +199,92 @@ const Pipeline = () => {
     <>
       {!IS_SSR && (
         <div style={{ height: "100%", width: "100%" }}>
-          <div className={styles["note"]}>
-            <p>
-              The AG Grid pipeline visualises the features and bug fixes we have
-              in our internal issue tracker (JIRA). The issues commonly have an
-              ID, which looks like <code>AG-XXX</code>.
-            </p>
-          </div>
-          <div
-            className={"global-search-pane"}
-            style={{ display: "inline-block", width: "100%" }}
-          >
-            <input
-              type="text"
-              className={"clearable global-report-search"}
-              placeholder={"Issue Search (eg. AG-1111/popup/feature)..."}
-              style={{ height: "50px", width: "75%" }}
-              onChange={onQuickFilterChange}
-            ></input>
-            <div id="checkbox-container">
-              <input
-                id="featureRequest-checkbox"
-                type="checkbox"
-                defaultChecked={true}
-                onChange={event => checkboxUnchecked(event, "featureRequest")}
-              ></input>
-              <label
-                htmlFor="featureRequest-checkbox"
-                style={{ paddingLeft: "10px", paddingRight: "10px" }}
-              >
-                Feature Requests
-              </label>
-              <input
-                id="bug-checkbox"
-                onChange={event => checkboxUnchecked(event, "bug")}
-                type="checkbox"
-                defaultChecked
-              ></input>
-              <label
-                htmlFor="bug-checkbox"
-                style={{ paddingLeft: "10px", paddingRight: "10px" }}
-              >
-                Defects
-              </label>
-              <input
-                id="nextRelease-checkbox"
-                onChange={event => checkboxUnchecked(event, "nextRelease")}
-                type="checkbox"
-              ></input>
-              <label
-                htmlFor="nextRelease-checkbox"
-                style={{ paddingLeft: "10px", paddingRight: "10px" }}
-              >
-                Next Release
-              </label>
+          <React.Suspense fallback={<div />}>
+            <div className={styles["note"]}>
+              <p>
+                The AG Grid pipeline lists the features and bug fixes we have in
+                our product backlog. You can use it to see the items we’ve
+                scheduled for our next release or look up the status of a
+                specific item. If you can’t find the item you’re looking for,
+                check the changelog for a list of completed items.
+              </p>
             </div>
-          </div>
-          <div
-            className="ag-theme-alpine"
-            style={{ height: "100%", width: "100%" }}
-          >
-            <React.Suspense fallback={<div />}>
+            <div
+              className={"global-search-pane"}
+              style={{ display: "inline-block", width: "100%" }}
+            >
+              <input
+                type="text"
+                className={"clearable global-report-search"}
+                placeholder={"Issue Search (eg. AG-1111/popup/feature)..."}
+                style={{ height: "50px", width: "100%" }}
+                onChange={onQuickFilterChange}
+              ></input>
+              <div
+                id="checkbox-container"
+                style={{
+                  display: "flex",
+                  paddingTop: "10px",
+                  paddingBottom: "10px",
+                }}
+              >
+                <div style={{ marginLeft: "auto" }}>
+                  <input
+                    id="featureRequest-checkbox"
+                    type="checkbox"
+                    defaultChecked={true}
+                    onChange={event =>
+                      checkboxUnchecked(event, "featureRequest")
+                    }
+                  ></input>
+                  <label
+                    htmlFor="featureRequest-checkbox"
+                    style={{ paddingLeft: "10px", paddingRight: "10px" }}
+                  >
+                    Feature Requests
+                  </label>
+                </div>
+                <div className={styles["checkbox-label-div"]}>
+                  <input
+                    id="bug-checkbox"
+                    onChange={event => checkboxUnchecked(event, "bug")}
+                    type="checkbox"
+                    defaultChecked
+                  ></input>
+                  <label
+                    htmlFor="bug-checkbox"
+                    style={{ paddingLeft: "10px", paddingRight: "10px" }}
+                  >
+                    Defects
+                  </label>
+                </div>
+                <div className={styles["checkbox-label-div"]}>
+                  <input
+                    id="nextRelease-checkbox"
+                    onChange={event => checkboxUnchecked(event, "nextRelease")}
+                    type="checkbox"
+                  ></input>
+                  <label
+                    htmlFor="nextRelease-checkbox"
+                    style={{ paddingLeft: "10px", paddingRight: "10px" }}
+                  >
+                    Next Release
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div
+              className="ag-theme-alpine"
+              style={{ height: "100%", width: "100%" }}
+            >
               <Grid
+                gridHeight={"63vh"}
                 columnDefs={COLUMN_DEFS}
                 isRowMaster={isRowMaster}
                 detailRowAutoHeight={true}
                 frameworkComponents={{
                   myDetailCellRenderer: DetailCellRenderer,
-                  buttonCellRenderer: ButtonCellRenderer,
+                  paddingCellRenderer: PaddingCellRenderer,
                 }}
                 defaultColDef={defaultColDef}
                 enableCellTextSelection={true}
@@ -263,8 +294,8 @@ const Pipeline = () => {
                 rowData={rowData}
                 onGridReady={gridReady}
               ></Grid>
-            </React.Suspense>
-          </div>
+            </div>
+          </React.Suspense>
         </div>
       )}
     </>

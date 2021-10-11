@@ -1,52 +1,35 @@
-import React, { useEffect, useState, useRef } from "react"
-import VersionDropdownMenu from "../grid/versionDropdownMenu"
+import React, { useEffect, useRef, useState } from "react"
+
+import VersionDropdownMenu from "../grid/VersionDropdownMenu"
 import styles from "./Changelog.module.scss"
 import ReleaseVersionNotes from "./releaseVersionNotes.jsx"
+import DetailCellRenderer from "../grid/DetailCellRendererComponent"
+import PaddingCellRenderer from "../grid/PaddingCellRenderer"
+import Grid from "../grid/Grid"
 
-const Grid = React.lazy(() => import("../grid/Grid"))
-const DetailCellRenderer = React.lazy(() =>
-  import("../grid/detailCellRendererComponent")
-)
-const ButtonCellRenderer = React.lazy(() =>
-  import("../grid/buttonCellRendererComponent")
-)
+const removeNFormatter = params => {
+  return params.value === "Y" ? "Y" : ""
+}
 
 const COLUMN_DEFS = [
-  { field: "key", minWidth: 100, width: 100 },
+  {
+    field: "key",
+    headerName: "Issue",
+    width: 97,
+    filter: false,
+  },
   {
     field: "versions",
     headerName: "Version",
-    minWidth: 105,
-    width: 105,
+    width: 101,
   },
 
   {
     field: "summary",
+    headerClass: styles["summary-class"],
     tooltipField: "summary",
+    filter: false,
     width: 500,
-    minWidth: 500,
-  },
-  {
-    field: "features",
-    headerName: "Feature",
-    minWidth: 225,
-    width: 225,
-    valueFormatter: params => {
-      let isValue = !!params.value
-      return isValue ? params.value.toString().replaceAll("_", " ") : undefined
-    },
-  },
-  {
-    field: "issueType",
-    minWidth: 142,
-    width: 142,
-    valueFormatter: params =>
-      params.value === "Bug" ? "Defect" : "Feature Request",
-  },
-  {
-    colId: "moreInfo",
-    headerName: "More Info",
-    valueGetter: () => "",
     cellRendererSelector: params => {
       if (
         params.node.data.moreInformation ||
@@ -54,32 +37,64 @@ const COLUMN_DEFS = [
         params.node.data.breakingChangesNotes
       ) {
         return {
-          component: "buttonCellRenderer",
+          component: "agGroupCellRenderer",
         }
       }
-      return null
+      return {
+        component: "paddingCellRenderer",
+      }
+    },
+  },
+  {
+    field: "issueType",
+    width: 142,
+    valueFormatter: params =>
+      params.value === "Bug" ? "Defect" : "Feature Request",
+    filterParams: {
+      valueFormatter: params => {
+        return params.colDef.valueFormatter(params)
+      },
     },
   },
   {
     field: "status",
+    width: 95,
     valueGetter: params => {
-      // if (params.data.key === "AG-3723") debugger
       return params.data.status
     },
   },
   {
-    field: "deprecated",
-    valueGetter: params => {
-      let deprecated = params.node.data.deprecationNotes ? "Y" : "N"
-      return deprecated
+    field: "features",
+    headerName: "Feature",
+    width: 131,
+    valueFormatter: params => {
+      let isValue = !!params.value
+      return isValue ? params.value.toString().replaceAll("_", " ") : undefined
+    },
+    tooltipValueGetter: params => {
+      return params.colDef.valueFormatter(params)
+    },
+    filterParams: {
+      valueFormatter: params => {
+        return params.colDef.valueFormatter(params)
+      },
     },
   },
   {
-    field: "breakingChange",
+    field: "deprecated",
+    width: 128,
     valueGetter: params => {
-      let breakingChange = params.node.data.breakingChangesNotes ? "Y" : "N"
-      return breakingChange
+      return params.node.data.deprecationNotes ? "Y" : "N"
     },
+    valueFormatter: removeNFormatter,
+  },
+  {
+    field: "breakingChange",
+    width: 163,
+    valueGetter: params => {
+      return params.node.data.breakingChangesNotes ? "Y" : "N"
+    },
+    valueFormatter: removeNFormatter,
   },
 ]
 
@@ -93,6 +108,7 @@ const detailCellRendererParams = params => {
   function produceHTML(fieldName, fieldInfo) {
     return `<br><strong>${fieldName}:</strong><br> ${fieldInfo}`
   }
+
   let moreInfo = params.data.moreInformation
     ? produceHTML("More Information", params.data.moreInformation)
     : ""
@@ -145,6 +161,7 @@ const detailCellRendererParams = params => {
     }
     return message
   }
+
   message = makeLinksFunctional(message)
   return {
     message: message,
@@ -163,20 +180,19 @@ const Changelog = () => {
   const dropdownRef = useRef()
 
   useEffect(() => {
-    fetch("http://localhost:8080/jira_reports/cache/changelog.json")
+    fetch("/changelog/changelog.json")
       .then(response => response.json())
       .then(data => {
         let gridVersions = data.map(row => row.versions[0])
-        gridVersions.unshift("26.1.0")
         gridVersions.unshift("All Versions")
         gridVersions = new Set(gridVersions)
         setVersions(gridVersions)
-        return setRowData(data)
+        setRowData(data)
       })
-    fetch("http://localhost:8080/jira_reports/cache/releaseVersionNotes.json")
+    fetch("/changelog/releaseVersionNotes.json")
       .then(response => response.json())
       .then(data => {
-        return setAllReleaseNotes(data)
+        setAllReleaseNotes(data)
       })
   }, [])
 
@@ -206,7 +222,7 @@ const Changelog = () => {
 
   const changeDisplayedVersionNotes = version => {
     /*release version divs have have Ids containing "_" rather than "."
-       eg. 25_0_0 instead of 25.0.0 */
+           eg. 25_0_0 instead of 25.0.0 */
     let formattedVersion = version.replaceAll(".", "_")
     let currentDisplayedDiv = document.querySelector(
       `[style*="display: block"]`
@@ -260,10 +276,10 @@ const Changelog = () => {
         setTheFilter("issueType", "Task", event.target.checked)
         break
       case "breakingChange":
-        setTheFilter("breakingChange", "Y", event.target.checked)
+        setTheFilter("breakingChange", "N", !event.target.checked)
         break
       case "deprecated":
-        setTheFilter("deprecated", "Y", event.target.checked)
+        setTheFilter("deprecated", "N", !event.target.checked)
         break
       default:
         break
@@ -274,114 +290,123 @@ const Changelog = () => {
     <>
       {!IS_SSR && (
         <div style={{ height: "100%", width: "100%" }}>
-          <div className={styles["note"]}>
-            This page covers the full Changelog for all items for 8.x and above.
-            For the Summary Changelog, or the legacy changelog covering versions
-            7.x and above, please go{" "}
-            <a href="../change-log/changeLogIndex.php">here</a>. For a list of
-            up and coming Bug Fixes and Features please refer to our{" "}
-            <a href="../ag-grid-pipeline">Pipeline</a>. Documentation for
-            previous versions can be found{" "}
-            <a href="https://www.ag-grid.com/archive/">here.</a>
-          </div>
-
-          <div
-            className={"global-search-pane"}
-            style={{ display: "inline-block", width: "100%" }}
-          >
-            <div style={{ display: "flex", flexDirection: "row" }}>
-              <input
-                type="text"
-                className={"clearable global-report-search"}
-                placeholder={"Issue Search (eg. AG-1111/popup/feature)..."}
-                style={{ height: "50px", width: "75%" }}
-                onChange={onQuickFilterChange}
-              ></input>
-              <VersionDropdownMenu
-                versions={versions}
-                onChange={changeVersion}
-                ref={dropdownRef}
-              />
+          <React.Suspense fallback={<div />}>
+            <div className={styles["note"]}>
+              The AG Grid Changelog lists the feature request and defects
+              implemented across AG Grid releases. If you can’t find the item
+              you’re looking for, check the{" "}
+              <a href="../ag-grid-pipeline">Pipeline</a> for items in our
+              backlog.
             </div>
 
-            <div id="checkbox-container">
-              <input
-                id="featureRequest-checkbox"
-                type="checkbox"
-                defaultChecked={true}
-                onChange={event => checkboxUnchecked(event, "featureRequest")}
-              ></input>
-              <label
-                htmlFor="featureRequest-checkbox"
-                style={{ paddingLeft: "10px", paddingRight: "10px" }}
-              >
-                Feature Requests
-              </label>
-              <input
-                id="defect-checkbox"
-                onChange={event => checkboxUnchecked(event, "defect")}
-                type="checkbox"
-                defaultChecked
-              ></input>
-              <label
-                htmlFor="defect-checkbox"
-                style={{ paddingLeft: "10px", paddingRight: "10px" }}
-              >
-                Defects
-              </label>
-              <input
-                id="deprecated-checkbox"
-                onChange={event => checkboxUnchecked(event, "deprecated")}
-                type="checkbox"
-                defaultChecked
-              ></input>
-              <label
-                htmlFor="deprecated-checkbox"
-                style={{ paddingLeft: "10px", paddingRight: "10px" }}
-              >
-                Deprecations
-              </label>
-              <input
-                id="breakingChange-checkbox"
-                onChange={event => checkboxUnchecked(event, "breakingChange")}
-                type="checkbox"
-                defaultChecked
-              ></input>
-              <label
-                htmlFor="breakingChange-checkbox"
-                style={{ paddingLeft: "10px", paddingRight: "10px" }}
-              >
-                Breaking Changes
-              </label>
-            </div>
-          </div>
+            <div className={"global-search-pane"}>
+              <div style={{ display: "flex", flexDirection: "row" }}>
+                <input
+                  type="text"
+                  className={"clearable global-report-search"}
+                  placeholder={"Issue Search (eg. AG-1111/popup/feature)..."}
+                  style={{ height: "50px", width: "100%" }}
+                  onChange={onQuickFilterChange}
+                ></input>
+              </div>
 
-          <ReleaseVersionNotes releaseNotes={currentReleaseNotes} />
-
-          <div
-            className="ag-theme-alpine"
-            style={{ height: "100vh", width: "100%" }}
-          >
-            <React.Suspense fallback={<div />}>
-              <Grid
-                columnDefs={COLUMN_DEFS}
-                rowData={rowData}
-                frameworkComponents={{
-                  myDetailCellRenderer: DetailCellRenderer,
-                  buttonCellRenderer: ButtonCellRenderer,
+              <div
+                id="checkbox-container"
+                style={{
+                  display: "flex",
+                  paddingTop: "10px",
+                  paddingBottom: "10px",
                 }}
-                defaultColDef={defaultColDef}
-                detailRowAutoHeight={true}
-                doesExternalFilterPass={doesExternalFilterPass}
-                isExternalFilterPresent={isExternalFilterPresent}
-                enableCellTextSelection={true}
-                detailCellRendererParams={detailCellRendererParams}
-                detailCellRenderer={"myDetailCellRenderer"}
-                masterDetail
-                onGridReady={gridReady}
-              ></Grid>
-            </React.Suspense>
-          </div>
+              >
+                <div style={{ marginLeft: "auto" }}>
+                  <input
+                    id="featureRequest-checkbox"
+                    type="checkbox"
+                    defaultChecked={true}
+                    onChange={event =>
+                      checkboxUnchecked(event, "featureRequest")
+                    }
+                  ></input>
+                  <label
+                    htmlFor="featureRequest-checkbox"
+                    className={styles["label-for-checkboxes"]}
+                  >
+                    Feature Requests
+                  </label>
+                </div>
+                <div className={styles["checkbox-label-div"]}>
+                  <input
+                    id="defect-checkbox"
+                    onChange={event => checkboxUnchecked(event, "defect")}
+                    type="checkbox"
+                    defaultChecked
+                  ></input>
+                  <label
+                    htmlFor="defect-checkbox"
+                    className={styles["label-for-checkboxes"]}
+                  >
+                    Defects
+                  </label>
+                </div>
+                <div className={styles["checkbox-label-div"]}>
+                  <input
+                    id="deprecated-checkbox"
+                    onChange={event => checkboxUnchecked(event, "deprecated")}
+                    type="checkbox"
+                  ></input>
+                  <label
+                    htmlFor="deprecated-checkbox"
+                    className={styles["label-for-checkboxes"]}
+                  >
+                    Deprecations
+                  </label>
+                </div>
+                <div
+                  className={styles["checkbox-label-div"]}
+                  style={{ paddingRight: "10px" }}
+                >
+                  <input
+                    id="breakingChange-checkbox"
+                    onChange={event =>
+                      checkboxUnchecked(event, "breakingChange")
+                    }
+                    type="checkbox"
+                  ></input>
+                  <label
+                    htmlFor="breakingChange-checkbox"
+                    className={styles["label-for-checkboxes"]}
+                  >
+                    Breaking Changes
+                  </label>
+                </div>
+                <VersionDropdownMenu
+                  versions={versions}
+                  onChange={changeVersion}
+                  ref={dropdownRef}
+                />
+              </div>
+            </div>
+
+            <ReleaseVersionNotes releaseNotes={currentReleaseNotes} />
+            <Grid
+              gridHeight={"67vh"}
+              columnDefs={COLUMN_DEFS}
+              rowData={rowData}
+              frameworkComponents={{
+                myDetailCellRenderer: DetailCellRenderer,
+                paddingCellRenderer: PaddingCellRenderer,
+              }}
+              defaultColDef={defaultColDef}
+              detailRowAutoHeight={true}
+              doesExternalFilterPass={doesExternalFilterPass}
+              isExternalFilterPresent={isExternalFilterPresent}
+              enableCellTextSelection={true}
+              detailCellRendererParams={detailCellRendererParams}
+              detailCellRenderer={"myDetailCellRenderer"}
+              masterDetail
+              onGridReady={gridReady}
+            ></Grid>
+          </React.Suspense>
         </div>
       )}
     </>
