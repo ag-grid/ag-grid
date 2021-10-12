@@ -60,7 +60,7 @@ const COLUMN_DEFS = [
     field: "status",
     width: 95,
     valueGetter: params => {
-      return params.data.status
+      return params.data.resolution
     },
   },
   {
@@ -119,12 +119,9 @@ const detailCellRendererParams = params => {
     ? produceHTML("Breaking Changes", params.data.breakingChangesNotes)
     : ""
 
-  let linkToDocumentation = params.data.linkToDocumentation
-    ? produceHTML("Link to Documentation", params.data.linkToDocumentation)
-    : produceHTML(
-        "Link to Documentation",
-        "<a href='ag-grid.com'>Test Link</a>"
-      )
+  let linkToDocumentation = params.data.documentationUrl
+    ? produceHTML("Link to Documentation", params.data.documentationUrl)
+    : ""
 
   let message =
     moreInfo + deprecationNotes + breakingChangesNotes + linkToDocumentation
