@@ -85,7 +85,15 @@ export class ChartService extends BeanStub implements IChartService {
             return;
         }
 
-        const params = this.mapToRangeParam(model, chartContainer);
+        const params = {
+            cellRange: model.cellRange,
+            chartType: model.chartType,
+            chartThemeName: model.chartThemeName,
+            chartContainer: chartContainer,
+            suppressChartRanges: model.suppressChartRanges,
+            aggFunc: model.aggFunc,
+            unlinkChart: model.unlinkChart
+        };
 
         const getCellRange = (cellRangeParams: CellRangeParams) => {
             return this.rangeService
@@ -93,18 +101,15 @@ export class ChartService extends BeanStub implements IChartService {
                 : undefined;
         }
 
-        if (model.modelType && model.modelType === 'pivot') {
+        if (model.modelType === 'pivot') {
             // if required enter pivot mode
             if (!this.columnModel.isPivotMode()) {
                 this.columnModel.setPivotMode(true, "pivotChart");
             }
 
             // pivot chart range contains all visible column without a row range to include all rows
-            const chartAllRangeParams: CellRangeParams = {
-                rowStartIndex: null,
-                rowEndIndex: null,
-                columns: this.columnModel.getAllDisplayedColumns().map(col => col.getColId())
-            };
+            const columns = this.columnModel.getAllDisplayedColumns().map(col => col.getColId());
+            const chartAllRangeParams: CellRangeParams = { rowStartIndex: null, rowEndIndex: null, columns };
 
             const cellRange = getCellRange(chartAllRangeParams);
             if (!cellRange) {
@@ -120,11 +125,10 @@ export class ChartService extends BeanStub implements IChartService {
                 true,
                 params.chartContainer,
                 undefined,
-                params.chartThemeOverrides,
+                undefined,
                 params.unlinkChart,
                 false,
                 true);
-
         }
 
         const cellRange = getCellRange(params.cellRange);
@@ -141,7 +145,7 @@ export class ChartService extends BeanStub implements IChartService {
             params.suppressChartRanges,
             params.chartContainer,
             params.aggFunc,
-            params.chartThemeOverrides,
+            undefined,
             params.unlinkChart,
             false,
             true);
