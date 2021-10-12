@@ -110,7 +110,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
         // need to do this regardless of context menu showing or not, so doing
         // before the isSuppressContextMenu() check
         if (mouseEvent) {
-            this.preventDefaultOnContextMenu(mouseEvent);
+            this.blockMiddleClickScrollsIfNeeded(mouseEvent);
         }
 
         if (this.gridOptionsWrapper.isSuppressContextMenu()) { return; }
@@ -122,7 +122,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
         }
     }
 
-    private preventDefaultOnContextMenu(mouseEvent: MouseEvent): void {
+    private blockMiddleClickScrollsIfNeeded(mouseEvent: MouseEvent): void {
         // if we don't do this, then middle click will never result in a 'click' event, as 'mousedown'
         // will be consumed by the browser to mean 'scroll' (as you can scroll with the middle mouse
         // button in the browser). so this property allows the user to receive middle button clicks if
@@ -130,10 +130,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
         const { gridOptionsWrapper } = this;
         const { which } = mouseEvent;
 
-        if (
-            gridOptionsWrapper.isPreventDefaultOnContextMenu() ||
-            (gridOptionsWrapper.isSuppressMiddleClickScrolls() && which === 2)
-        ) {
+        if (gridOptionsWrapper.isSuppressMiddleClickScrolls() && which === 2) {
             mouseEvent.preventDefault();
         }
     }

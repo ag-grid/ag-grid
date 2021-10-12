@@ -257,6 +257,9 @@ export class GridBodyCtrl extends BeanStub {
         // we want to listen for clicks directly on the eBodyViewport, so the user has a way of showing
         // the context menu if no rows or columns are displayed, or user simply clicks outside of a cell
         const listener = (mouseEvent: MouseEvent) => {
+            if (this.gridOptionsWrapper.isPreventDefaultOnContextMenu()) {
+                mouseEvent.preventDefault();
+            }
             const target = getTarget(mouseEvent);
             if (target === this.eBodyViewport || target === this.ctrlsService.getCenterRowContainerCtrl().getViewportElement()) {
                 // show it
