@@ -615,8 +615,6 @@ export class PopupService extends BeanStub {
     }
 
     public isElementWithinCustomPopup(el: HTMLElement): boolean {
-        if (!this.popupList.length) { return false; }
-
         while (el && el !== document.body) {
             if (el.classList.contains('ag-custom-component-popup') || el.parentElement === null) {
                 return true;
