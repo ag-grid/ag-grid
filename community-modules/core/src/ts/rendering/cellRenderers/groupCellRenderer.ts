@@ -1,5 +1,6 @@
 import { UserCompDetails, UserComponentFactory } from "../../components/framework/userComponentFactory";
 import { Autowired } from "../../context/context";
+import { setAriaRole } from "../../utils/aria";
 import { addOrRemoveCssClass, setDisplayed } from "../../utils/dom";
 import { Component } from "../../widgets/component";
 import { RefSelector } from "../../widgets/componentAnnotations";
@@ -44,7 +45,13 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         };
 
         const ctrl = this.createManagedBean(new GroupCellRendererCtrl());
-        ctrl.init(compProxy, this.getGui(), this.eCheckbox, this.eExpanded, this.eContracted, this.constructor, params);
+        const fullWidth = !params.colDef;
+        const eGui = this.getGui();
+        ctrl.init(compProxy, eGui, this.eCheckbox, this.eExpanded, this.eContracted, this.constructor, params);
+        
+        if (fullWidth) {
+            setAriaRole(eGui, 'gridcell');
+        }
     }
 
     private setRenderDetails(compDetails: UserCompDetails | undefined, valueToDisplay: any): void {
