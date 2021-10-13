@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react"
 
 import VersionDropdownMenu from "../grid/VersionDropdownMenu"
 import styles from "./Changelog.module.scss"
-import ReleaseVersionNotes from "./releaseVersionNotes.jsx"
+import ReleaseVersionNotes from "./ReleaseVersionNotes.jsx"
 import DetailCellRenderer from "../grid/DetailCellRendererComponent"
 import PaddingCellRenderer from "../grid/PaddingCellRenderer"
 import Grid from "../grid/Grid"
@@ -32,9 +32,9 @@ const COLUMN_DEFS = [
     width: 500,
     cellRendererSelector: params => {
       if (
-        params.node.data.moreInformation ||
-        params.node.data.deprecationNotes ||
-        params.node.data.breakingChangesNotes
+          params.node.data.moreInformation ||
+          params.node.data.deprecationNotes ||
+          params.node.data.breakingChangesNotes
       ) {
         return {
           component: "agGroupCellRenderer",
@@ -49,7 +49,7 @@ const COLUMN_DEFS = [
     field: "issueType",
     width: 142,
     valueFormatter: params =>
-      params.value === "Bug" ? "Defect" : "Feature Request",
+        params.value === "Bug" ? "Defect" : "Feature Request",
     filterParams: {
       valueFormatter: params => {
         return params.colDef.valueFormatter(params)
@@ -60,7 +60,7 @@ const COLUMN_DEFS = [
     field: "status",
     width: 95,
     valueGetter: params => {
-      return params.data.status
+      return params.data.resolution
     },
   },
   {
@@ -110,28 +110,25 @@ const detailCellRendererParams = params => {
   }
 
   let moreInfo = params.data.moreInformation
-    ? produceHTML("More Information", params.data.moreInformation)
-    : ""
+      ? produceHTML("More Information", params.data.moreInformation)
+      : ""
   let deprecationNotes = params.data.deprecationNotes
-    ? produceHTML("Deprecation Notes", params.data.deprecationNotes)
-    : ""
+      ? produceHTML("Deprecation Notes", params.data.deprecationNotes)
+      : ""
   let breakingChangesNotes = params.data.breakingChangesNotes
-    ? produceHTML("Breaking Changes", params.data.breakingChangesNotes)
-    : ""
+      ? produceHTML("Breaking Changes", params.data.breakingChangesNotes)
+      : ""
 
-  let linkToDocumentation = params.data.linkToDocumentation
-    ? produceHTML("Link to Documentation", params.data.linkToDocumentation)
-    : produceHTML(
-        "Link to Documentation",
-        "<a href='ag-grid.com'>Test Link</a>"
-      )
+  let linkToDocumentation = params.data.documentationUrl
+      ? produceHTML("Link to Documentation", params.data.documentationUrl)
+      : ""
 
   let message =
-    moreInfo + deprecationNotes + breakingChangesNotes + linkToDocumentation
+      moreInfo + deprecationNotes + breakingChangesNotes + linkToDocumentation
   message = message
-    .replaceAll("\n\r", "<br>")
-    .replaceAll("\n", "<br>")
-    .replaceAll("\r", "<br>")
+      .replaceAll("\n\r", "<br>")
+      .replaceAll("\n", "<br>")
+      .replaceAll("\r", "<br>")
 
   function makeLinksFunctional(message) {
     let msgArr = message.split(" ")
@@ -148,11 +145,11 @@ const detailCellRendererParams = params => {
           }
 
           let link = length
-            ? element.substr(element.indexOf("http"), length)
-            : element.substr(element.indexOf("http"))
+              ? element.substr(element.indexOf("http"), length)
+              : element.substr(element.indexOf("http"))
           let htmlLink = isEndIndex
-            ? `<a href="${link}">${link}</a>${element.substr(endIndex)}`
-            : `<a href="${link}">${link}</a>`
+              ? `<a href="${link}">${link}</a>${element.substr(endIndex)}`
+              : `<a href="${link}">${link}</a>`
           return htmlLink
         }
         return element
@@ -181,23 +178,23 @@ const Changelog = () => {
 
   useEffect(() => {
     fetch("/changelog/changelog.json")
-      .then(response => response.json())
-      .then(data => {
-        let gridVersions = data.map(row => row.versions[0])
-        gridVersions.unshift("All Versions")
-        gridVersions = new Set(gridVersions)
-        setVersions(gridVersions)
-        setRowData(data)
-      })
+        .then(response => response.json())
+        .then(data => {
+          let gridVersions = data.map(row => row.versions[0])
+          gridVersions.unshift("All Versions")
+          gridVersions = new Set(gridVersions)
+          setVersions(gridVersions)
+          setRowData(data)
+        })
     fetch("/changelog/releaseVersionNotes.json")
-      .then(response => response.json())
-      .then(data => {
-        setAllReleaseNotes(data)
-      })
+        .then(response => response.json())
+        .then(data => {
+          setAllReleaseNotes(data)
+        })
   }, [])
 
   const gridReady = params => {
-    // params.api.sizeColumnsToFit()
+    params.api.sizeColumnsToFit()
     setGridApi(params.api)
   }
 
@@ -225,21 +222,21 @@ const Changelog = () => {
            eg. 25_0_0 instead of 25.0.0 */
     let formattedVersion = version.replaceAll(".", "_")
     let currentDisplayedDiv = document.querySelector(
-      `[style*="display: block"]`
+        `[style*="display: block"]`
     )
     let divToBeDisplayed = document.querySelector(`[id*="${formattedVersion}"]`)
     if (currentDisplayedDiv) currentDisplayedDiv.style.display = "none"
     if (divToBeDisplayed) divToBeDisplayed.style.display = "block"
 
     let currentReleaseObj = allReleaseNotes.find(element =>
-      element["release version"].includes(version)
+        element["release version"].includes(version)
     )
 
     let currentReleaseNotesHtml = ""
     if (currentReleaseObj) {
       currentReleaseNotesHtml = Object.keys(currentReleaseObj)
-        .map(element => currentReleaseObj[element])
-        .join(" ")
+          .map(element => currentReleaseObj[element])
+          .join(" ")
     }
     setCurrentReleaseNotes(currentReleaseNotesHtml)
   }
@@ -287,129 +284,127 @@ const Changelog = () => {
   }
 
   return (
-    <>
-      {!IS_SSR && (
-        <div style={{ height: "100%", width: "100%" }}>
-          <React.Suspense fallback={<div />}>
-            <div className={styles["note"]}>
-              The AG Grid Changelog lists the feature request and defects
-              implemented across AG Grid releases. If you can’t find the item
-              you’re looking for, check the{" "}
-              <a href="../ag-grid-pipeline">Pipeline</a> for items in our
-              backlog.
-            </div>
-
-            <div className={"global-search-pane"}>
-              <div style={{ display: "flex", flexDirection: "row" }}>
-                <input
-                  type="text"
-                  className={"clearable global-report-search"}
-                  placeholder={"Issue Search (eg. AG-1111/popup/feature)..."}
-                  style={{ height: "50px", width: "100%" }}
-                  onChange={onQuickFilterChange}
-                ></input>
+      <>
+        {!IS_SSR && (
+            <div style={{ height: "100%", width: "100%" }}>
+              <div className={styles["note"]}>
+                The AG Grid Changelog lists the feature request and defects
+                implemented across AG Grid releases. If you can’t find the item
+                you’re looking for, check the{" "}
+                <a href="/pipeline">Pipeline</a> for items in our
+                backlog.
               </div>
 
-              <div
-                id="checkbox-container"
-                style={{
-                  display: "flex",
-                  paddingTop: "10px",
-                  paddingBottom: "10px",
-                }}
-              >
-                <div style={{ marginLeft: "auto" }}>
+              <div className={"global-search-pane"}>
+                <div style={{ display: "flex", flexDirection: "row" }}>
                   <input
-                    id="featureRequest-checkbox"
-                    type="checkbox"
-                    defaultChecked={true}
-                    onChange={event =>
-                      checkboxUnchecked(event, "featureRequest")
-                    }
+                      type="text"
+                      className={"clearable global-report-search"}
+                      placeholder={"Issue Search (eg. AG-1111/popup/feature)..."}
+                      style={{ height: "50px", width: "100%" }}
+                      onChange={onQuickFilterChange}
                   ></input>
-                  <label
-                    htmlFor="featureRequest-checkbox"
-                    className={styles["label-for-checkboxes"]}
-                  >
-                    Feature Requests
-                  </label>
                 </div>
-                <div className={styles["checkbox-label-div"]}>
-                  <input
-                    id="defect-checkbox"
-                    onChange={event => checkboxUnchecked(event, "defect")}
-                    type="checkbox"
-                    defaultChecked
-                  ></input>
-                  <label
-                    htmlFor="defect-checkbox"
-                    className={styles["label-for-checkboxes"]}
-                  >
-                    Defects
-                  </label>
-                </div>
-                <div className={styles["checkbox-label-div"]}>
-                  <input
-                    id="deprecated-checkbox"
-                    onChange={event => checkboxUnchecked(event, "deprecated")}
-                    type="checkbox"
-                  ></input>
-                  <label
-                    htmlFor="deprecated-checkbox"
-                    className={styles["label-for-checkboxes"]}
-                  >
-                    Deprecations
-                  </label>
-                </div>
+
                 <div
-                  className={styles["checkbox-label-div"]}
-                  style={{ paddingRight: "10px" }}
+                    id="checkbox-container"
+                    style={{
+                      display: "flex",
+                      paddingTop: "10px",
+                      paddingBottom: "10px",
+                    }}
                 >
-                  <input
-                    id="breakingChange-checkbox"
-                    onChange={event =>
-                      checkboxUnchecked(event, "breakingChange")
-                    }
-                    type="checkbox"
-                  ></input>
-                  <label
-                    htmlFor="breakingChange-checkbox"
-                    className={styles["label-for-checkboxes"]}
+                  <div style={{ marginLeft: "auto" }}>
+                    <input
+                        id="featureRequest-checkbox"
+                        type="checkbox"
+                        defaultChecked={true}
+                        onChange={event =>
+                            checkboxUnchecked(event, "featureRequest")
+                        }
+                    ></input>
+                    <label
+                        htmlFor="featureRequest-checkbox"
+                        className={styles["label-for-checkboxes"]}
+                    >
+                      Feature Requests
+                    </label>
+                  </div>
+                  <div className={styles["checkbox-label-div"]}>
+                    <input
+                        id="defect-checkbox"
+                        onChange={event => checkboxUnchecked(event, "defect")}
+                        type="checkbox"
+                        defaultChecked
+                    ></input>
+                    <label
+                        htmlFor="defect-checkbox"
+                        className={styles["label-for-checkboxes"]}
+                    >
+                      Defects
+                    </label>
+                  </div>
+                  <div className={styles["checkbox-label-div"]}>
+                    <input
+                        id="deprecated-checkbox"
+                        onChange={event => checkboxUnchecked(event, "deprecated")}
+                        type="checkbox"
+                    ></input>
+                    <label
+                        htmlFor="deprecated-checkbox"
+                        className={styles["label-for-checkboxes"]}
+                    >
+                      Deprecations
+                    </label>
+                  </div>
+                  <div
+                      className={styles["checkbox-label-div"]}
+                      style={{ paddingRight: "10px" }}
                   >
-                    Breaking Changes
-                  </label>
+                    <input
+                        id="breakingChange-checkbox"
+                        onChange={event =>
+                            checkboxUnchecked(event, "breakingChange")
+                        }
+                        type="checkbox"
+                    ></input>
+                    <label
+                        htmlFor="breakingChange-checkbox"
+                        className={styles["label-for-checkboxes"]}
+                    >
+                      Breaking Changes
+                    </label>
+                  </div>
+                  <VersionDropdownMenu
+                      versions={versions}
+                      onChange={changeVersion}
+                      ref={dropdownRef}
+                  />
                 </div>
-                <VersionDropdownMenu
-                  versions={versions}
-                  onChange={changeVersion}
-                  ref={dropdownRef}
-                />
               </div>
-            </div>
 
-            <ReleaseVersionNotes releaseNotes={currentReleaseNotes} />
-            <Grid
-              gridHeight={"67vh"}
-              columnDefs={COLUMN_DEFS}
-              rowData={rowData}
-              frameworkComponents={{
-                myDetailCellRenderer: DetailCellRenderer,
-                paddingCellRenderer: PaddingCellRenderer,
-              }}
-              defaultColDef={defaultColDef}
-              detailRowAutoHeight={true}
-              doesExternalFilterPass={doesExternalFilterPass}
-              isExternalFilterPresent={isExternalFilterPresent}
-              enableCellTextSelection={true}
-              detailCellRendererParams={detailCellRendererParams}
-              detailCellRenderer={"myDetailCellRenderer"}
-              masterDetail
-              onGridReady={gridReady}
-            ></Grid>
-          </React.Suspense>
-        </div>
-      )}
-    </>
+              <ReleaseVersionNotes releaseNotes={currentReleaseNotes} />
+              <Grid
+                  gridHeight={"67vh"}
+                  columnDefs={COLUMN_DEFS}
+                  rowData={rowData}
+                  frameworkComponents={{
+                    myDetailCellRenderer: DetailCellRenderer,
+                    paddingCellRenderer: PaddingCellRenderer,
+                  }}
+                  defaultColDef={defaultColDef}
+                  detailRowAutoHeight={true}
+                  doesExternalFilterPass={doesExternalFilterPass}
+                  isExternalFilterPresent={isExternalFilterPresent}
+                  enableCellTextSelection={true}
+                  detailCellRendererParams={detailCellRendererParams}
+                  detailCellRenderer={"myDetailCellRenderer"}
+                  masterDetail
+                  onGridReady={gridReady}
+              ></Grid>
+            </div>
+        )}
+      </>
   )
 }
 
