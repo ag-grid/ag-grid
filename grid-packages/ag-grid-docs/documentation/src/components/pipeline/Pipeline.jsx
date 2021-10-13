@@ -3,15 +3,15 @@ import styles from "./Pipeline.module.scss"
 import DetailCellRenderer from "../grid/DetailCellRendererComponent"
 import PaddingCellRenderer from "../grid/PaddingCellRenderer"
 import Grid from "../grid/Grid"
+import ChevronButtonCellRenderer from "../grid/ChevronButtonRenderer"
 
 const COLUMN_DEFS = [
-  { field: "key", headerName: "Issue", width: 97, filter: false },
   {
-    field: "summary",
-    headerClass: styles["summary-class"],
-    tooltipField: "summary",
-    width: 500,
+    field: "key",
+    headerName: "Issue",
+    width: 131,
     filter: false,
+    headerClass: styles["header-padding-class"],
     cellRendererSelector: params => {
       if (
         params.node.data.moreInformation ||
@@ -19,7 +19,7 @@ const COLUMN_DEFS = [
         params.node.data.breakingChangesNotes
       ) {
         return {
-          component: "agGroupCellRenderer",
+          component: "chevronButtonRenderer",
         }
       }
       return {
@@ -28,8 +28,14 @@ const COLUMN_DEFS = [
     },
   },
   {
+    field: "summary",
+    tooltipField: "summary",
+    width: 775,
+    filter: false,
+  },
+  {
     field: "issueType",
-    width: 142,
+    width: 155,
     valueFormatter: params =>
       params.value === "Bug" ? "Defect" : "Feature Request",
     filterParams: {
@@ -40,7 +46,7 @@ const COLUMN_DEFS = [
   },
   {
     field: "status",
-    width: 107,
+    width: 131,
     valueGetter: params => {
       let fixVersionsArr = params.data.versions
       let hasFixVersion = fixVersionsArr.length > 0
@@ -48,11 +54,11 @@ const COLUMN_DEFS = [
         let latestFixVersion = fixVersionsArr.length - 1
         let fixVersion = fixVersionsArr[latestFixVersion]
         if (fixVersion === "Next" && params.data.status === "Backlog") {
-          return "Scheduled"
+          return "Next Release"
         }
       }
       if (params.data.status !== "Backlog") {
-        return "Scheduled"
+        return "Next Release"
       } else {
         return "Backlog"
       }
@@ -61,7 +67,7 @@ const COLUMN_DEFS = [
   {
     field: "features",
     headerName: "Feature",
-    width: 130,
+    flex: 1,
     valueFormatter: params => {
       let isValue = !!params.value
       return isValue ? params.value.toString().replaceAll("_", " ") : undefined
@@ -81,6 +87,8 @@ const defaultColDef = {
   resizable: true,
   filter: true,
   sortable: true,
+  cellClass: styles["font-class"],
+  headerClass: styles["font-class"],
 }
 
 const IS_SSR = typeof window === "undefined"
@@ -119,7 +127,7 @@ const detailCellRendererParams = params => {
           let htmlLink = isEndIndex
             ? `<a href="${link}">${link}</a>${element.substr(endIndex)}`
             : `<a href="${link}">${link}</a>`
-          return htmlLink
+          return element.substr(0, beginningIndex) + htmlLink
         }
         return element
       })
@@ -193,7 +201,6 @@ const Pipeline = () => {
 
   const gridReady = params => {
     setGridApi(params.api)
-    params.api.sizeColumnsToFit()
   }
 
   return (
@@ -271,6 +278,7 @@ const Pipeline = () => {
               </div>
             </div>
           </div>
+
           <Grid
             gridHeight={"63vh"}
             columnDefs={COLUMN_DEFS}
@@ -279,6 +287,7 @@ const Pipeline = () => {
             frameworkComponents={{
               myDetailCellRenderer: DetailCellRenderer,
               paddingCellRenderer: PaddingCellRenderer,
+              chevronButtonRenderer: ChevronButtonCellRenderer,
             }}
             defaultColDef={defaultColDef}
             enableCellTextSelection={true}
