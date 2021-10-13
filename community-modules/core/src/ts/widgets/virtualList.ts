@@ -2,7 +2,7 @@ import { Component } from './component';
 import { Autowired, PostConstruct } from '../context/context';
 import { RefSelector } from './componentAnnotations';
 import { addCssClass, containsClass } from '../utils/dom';
-import { getAriaPosInSet, setAriaSetSize, setAriaPosInSet, setAriaSelected, setAriaChecked, setAriaRole } from '../utils/aria';
+import { getAriaPosInSet, setAriaSetSize, setAriaPosInSet, setAriaSelected, setAriaChecked, setAriaRole, setAriaLabel } from '../utils/aria';
 import { KeyCode } from '../constants/keyCode';
 import { ResizeObserverService } from "../misc/resizeObserverService";
 import { waitUntil } from '../utils/function';
@@ -27,8 +27,12 @@ export class VirtualList extends TabGuardComp {
     @Autowired('focusService') private readonly focusService: FocusService;
     @RefSelector('eContainer') private readonly eContainer: HTMLElement;
 
-    constructor(private readonly cssIdentifier = 'default', private readonly ariaRole = 'listbox') {
-        super(VirtualList.getTemplate(cssIdentifier, ariaRole));
+    constructor(
+        private readonly cssIdentifier = 'default',
+        private readonly ariaRole = 'listbox',
+        private listName?: string
+    ) {
+        super(VirtualList.getTemplate(cssIdentifier));
     }
 
     @PostConstruct
@@ -43,7 +47,18 @@ export class VirtualList extends TabGuardComp {
             focusInnerElement: (fromBottom: boolean) => this.focusInnerElement(fromBottom),
             onTabKeyDown: e => this.onTabKeyDown(e),
             handleKeyDown: e => this.handleKeyDown(e)
-        })
+        });
+
+        this.setAriaProperties();
+    }
+
+    private setAriaProperties(): void {
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const listName = translate('ariaDefaultListName', this.listName || 'List');
+        const ariaEl = this.eContainer;
+
+        setAriaRole(ariaEl, this.ariaRole);
+        setAriaLabel(ariaEl, listName);
     }
 
     private addResizeObserver(): void {
@@ -129,10 +144,10 @@ export class VirtualList extends TabGuardComp {
         return comp && comp.rowComponent;
     }
 
-    private static getTemplate(cssIdentifier: string, ariaRole: string) {
+    private static getTemplate(cssIdentifier: string) {
         return /* html */`
             <div class="ag-virtual-list-viewport ag-${cssIdentifier}-virtual-list-viewport" role="presentation">
-                <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container" ref="eContainer" role="${ariaRole}"></div>
+                <div class="ag-virtual-list-container ag-${cssIdentifier}-virtual-list-container" ref="eContainer"></div>
             </div>`;
     }
 
