@@ -520,7 +520,6 @@ export class RowNode implements IEventEmitter {
     }
 
     public setRowAutoHeight(cellHeight: number | undefined, column: Column): void {
-
         if (!this.__autoHeights) {
             this.__autoHeights = {};
         }
@@ -537,7 +536,6 @@ export class RowNode implements IEventEmitter {
     }
 
     public checkAutoHeights(): void {
-
         let notAllPresent = false;
         let nonePresent = true;
         let newRowHeight = 0;
