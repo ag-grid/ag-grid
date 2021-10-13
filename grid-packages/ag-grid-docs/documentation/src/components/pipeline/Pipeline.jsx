@@ -125,8 +125,9 @@ const detailCellRendererParams = params => {
             ? element.substr(element.indexOf("http"), length)
             : element.substr(element.indexOf("http"))
           let htmlLink = isEndIndex
-            ? `<a href="${link}">${link}</a>${element.substr(endIndex)}`
-            : `<a href="${link}">${link}</a>`
+            ? `<a class=${styles["anchor-tag-class"]} href="${link}"
+          target="_blank">${link}</a>${element.substr(endIndex)}`
+            : `<a class=${styles["anchor-tag-class"]} target="_blank" href="${link}">${link}</a>`
           return element.substr(0, beginningIndex) + htmlLink
         }
         return element
@@ -209,11 +210,12 @@ const Pipeline = () => {
         <div style={{ height: "100%", width: "100%" }}>
           <div className={styles["note"]}>
             <p>
-              The AG Grid pipeline lists the features and bug fixes we have in
-              our product backlog. You can use it to see the items we’ve
-              scheduled for our next release or look up the status of a specific
-              item. If you can’t find the item you’re looking for, check the{" "}
-              <a href="/changelog">Changelog</a> for a list of completed items.
+              The AG Grid pipeline lists the features and bug fixes in our
+              product backlog. Use it to see the items scheduled for our next
+              release or to look up the status of a specific item. If you can’t
+              find the item you’re looking for, check the{" "}
+              <a href="/changelog">changelog</a> containing the list of
+              completed items.
             </p>
           </div>
           <div

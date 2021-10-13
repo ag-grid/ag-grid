@@ -108,7 +108,9 @@ const defaultColDef = {
 
 const detailCellRendererParams = params => {
   function produceHTML(fieldName, fieldInfo) {
-    return `<br><strong>${fieldName}:</strong><br> ${fieldInfo}`
+    return fieldName !== "Link to Documentation"
+      ? `<strong>${fieldName}:</strong><br> ${fieldInfo}<br><br>`
+      : `<strong>${fieldName}:</strong><br> ${fieldInfo}`
   }
 
   let moreInfo = params.data.moreInformation
@@ -150,8 +152,9 @@ const detailCellRendererParams = params => {
             ? element.substr(element.indexOf("http"), length)
             : element.substr(element.indexOf("http"))
           let htmlLink = isEndIndex
-            ? `<a href="${link}">${link}</a>${element.substr(endIndex)}`
-            : `<a href="${link}">${link}</a>`
+            ? `<a class=${styles["anchor-tag-class"]} href="${link}"
+             target="_blank">${link}</a>${element.substr(endIndex)}`
+            : `<a class=${styles["anchor-tag-class"]} target="_blank" href="${link}">${link}</a>`
           return element.substr(0, beginningIndex) + htmlLink
         }
         return element
@@ -290,7 +293,7 @@ const Changelog = () => {
       {!IS_SSR && (
         <div style={{ height: "100%", width: "100%" }}>
           <div className={styles["note"]}>
-            The AG Grid Changelog lists the feature request and defects
+            The AG Grid Changelog lists the feature requests and defects
             implemented across AG Grid releases. If you can’t find the item
             you’re looking for, check the <a href="/pipeline">Pipeline</a> for
             items in our backlog.
