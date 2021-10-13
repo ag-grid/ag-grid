@@ -125,8 +125,8 @@ const detailCellRendererParams = params => {
     ? produceHTML("Link to Documentation", params.data.documentationUrl)
     : ""
 
-  let message = moreInfo + deprecationNotes + breakingChangesNotes
-  // + linkToDocumentation
+  let message =
+    moreInfo + deprecationNotes + breakingChangesNotes + linkToDocumentation
   message = message
     .replaceAll("\n\r", "<br>")
     .replaceAll("\n", "<br>")
