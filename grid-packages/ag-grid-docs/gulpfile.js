@@ -48,6 +48,7 @@ const populateDevFolder = () => {
     const chartReact = createCopyTask('../../charts-packages/ag-charts-react/**/*.*', '../../charts-packages/ag-charts-react/', 'ag-charts-react');
     const chartAngular = createCopyTask('../../charts-packages/ag-charts-angular/dist/ag-charts-angular/**/*.*', '../../charts-packages/ag-charts-angular/', 'ag-charts-angular');
     const chartVue = createCopyTask('../../charts-packages/ag-charts-vue/**/*.*', '../../charts-packages/ag-charts-vue/', 'ag-charts-vue');
+    const chartVue3 = createCopyTask('../../charts-packages/ag-charts-vue3/**/*.*', '../../charts-packages/ag-charts-vue3/', 'ag-charts-vue3');
 
     const packageCommunity = createCopyTask('../../grid-packages/ag-grid-community/**/*.*', '../../grid-packages/ag-grid-community/', 'ag-grid-community');
     const packageEnterprise = createCopyTask('../../grid-packages/ag-grid-enterprise/**/*.*', '../../grid-packages/ag-grid-enterprise/', 'ag-grid-enterprise');
@@ -59,7 +60,7 @@ const populateDevFolder = () => {
     return merge(
         ...moduleCopyTasks,
         react, angular, vue, vue3,
-        chartReact, chartAngular, chartVue,
+        chartReact, chartAngular, chartVue, chartVue3,
         packageCommunity, packageEnterprise, packageAngular, packageReact, packageVue, packageVue3
     );
 };

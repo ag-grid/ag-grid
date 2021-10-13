@@ -128,7 +128,7 @@ const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, l
                     useFunctionalReact={useFunctionalReact}
                     onChange={event => set({ useFunctionalReact: JSON.parse(event.target.value) })} />
             }
-            {library === 'grid' && enableVue3 && exampleInfo.framework === 'vue' &&
+            { enableVue3 && exampleInfo.framework === 'vue' &&
                 <VueStyleSelector
                     useVue3={useVue3}
                     onChange={event => set({ useVue3: JSON.parse(event.target.value) })} />

@@ -303,7 +303,7 @@ function createExampleGenerator(prefix, importTypes) {
         if (type === 'mixed' && providedExamples['vue3']) {
             importTypes.forEach(importType => copyProvidedExample(importType, 'vue3', providedExamples['vue3']));
         } else {
-            if(vanillaToVue3) { // not defined for charts yet
+            if(vanillaToVue3) {
                 const vueScripts = getMatchingPaths('*_vue*');
                 const vueConfigs = new Map();
                 try {
@@ -340,14 +340,12 @@ function getGeneratorCode(prefix) {
     const { parser } = require(`${prefix}vanilla-src-parser.ts`);
     const { vanillaToVue } = require(`${prefix}vanilla-to-vue.ts`);
     const { vanillaToReact } = require(`${prefix}vanilla-to-react${gridExamples && generateReactFire ? '-fire' : ''}.ts`);
+    const { vanillaToVue3 } = require(`${prefix}vanilla-to-vue3.ts`);
 
     // spl todo - add charts & vue 3 support in time
     let vanillaToReactFunctional = null;
-    let vanillaToVue3 = null;
-
     if (gridExamples) {
         vanillaToReactFunctional = require(`${prefix}vanilla-to-react${generateReactFire ? '-fire' : ''}-functional.ts`).vanillaToReactFunctional;
-        vanillaToVue3 = require(`${prefix}vanilla-to-vue3.ts`).vanillaToVue3;
     }
 
     const { vanillaToAngular } = require(`${prefix}vanilla-to-angular.ts`);

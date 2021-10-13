@@ -45,12 +45,13 @@ export const getExampleInfo = (
         // no support for modules or React Hooks or Vue 3 in charts yet
         importType = 'packages';
         useFunctionalReact = false;
-        useVue3 = false;
     }
 
     const internalFramework = getInternalFramework(framework, useFunctionalReact, useVue3);
     const boilerPlateFramework = framework === 'vue' ? useVue3 ? 'vue3' : 'vue' : framework;
     const boilerplatePath = `/example-runner/${library}-${boilerPlateFramework}-boilerplate/`;
+
+    console.log("boilerplatePath", boilerplatePath);
 
     let sourcePath = `${pageName}/examples/${name}/`;
     let appLocation = `/examples/${pageName}/${name}/`;
