@@ -4,12 +4,7 @@ import {AgChart, AgChartOptions, Chart} from 'ag-charts-community';
 
 @Options({
     props: {
-        options: {
-            handler(currentValue: any, previousValue: any) {
-                (this as any).processChanges(currentValue, previousValue);
-            },
-            deep: true,
-        },
+        options: {},
     },
 })
 export class AgChartsVue extends Vue {
@@ -30,7 +25,7 @@ export class AgChartsVue extends Vue {
 
         this.chart = AgChart.create(options);
 
-        this.$watch('options', (newValue:any, oldValue:any) => {
+        this.$watch('options', (newValue: any, oldValue: any) => {
             this.processChanges(newValue, oldValue);
         });
 
