@@ -5,7 +5,7 @@ export const agGridEnterpriseVersion = require('../../../../../enterprise-module
 export const agGridReactVersion = require('../../../../../community-modules/react/package.json').version;
 export const agGridAngularVersion = require('../../../../../community-modules/angular/package.json').version;
 export const agGridVueVersion = require('../../../../../community-modules/vue/package.json').version;
-export const agGridVue3Version = require('../../../../../community-modules/vue3/package.json').version;
+export const agGridVue3Version = "26.1.0";
 
 export const agChartsVersion = require('../../../../../charts-packages/ag-charts-community/package.json').version;
 export const agChartsReactVersion = require('../../../../../charts-packages/ag-charts-react/package.json').version;
