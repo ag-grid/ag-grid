@@ -19,6 +19,7 @@ var filterParams = {
     },
     browserDatePicker: true,
     minValidYear: 2000,
+    maxValidYear: 2021,
 };
 
 var columnDefs = [

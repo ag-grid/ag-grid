@@ -38,8 +38,10 @@ export interface IDateFilterParams extends IScalarFilterParams {
      * If set to `false`, a plain text box will be used for all browsers.
      */
     browserDatePicker?: boolean;
-    /** This is the minimum year that must be entered in a date field for the value to be considered valid. Default: `1000` */
+    /** This is the minimum year that may be entered in a date field for the value to be considered valid. Default: `1000` */
     minValidYear?: number;
+    /** This is the maximum year that may be entered in a date field for the value to be considered valid. Default is no restriction. */
+    maxValidYear?: number;
 }
 
 export interface IDateComparatorFunc {
@@ -140,6 +142,14 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
 
         this.dateFilterParams = params;
 
+        if (
+            params.minValidYear != null
+            && params.maxValidYear != null
+            && params.minValidYear > params.maxValidYear
+        ) {
+            console.warn(`AG Grid: DateFilter minValidYear should be <= maxValidYear`);
+        }
+
         this.createDateComponents();
     }
 
@@ -193,7 +203,10 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
 
         const [compFrom, compTo] = this.getFromToComponents(position);
         const minValidYear = this.dateFilterParams.minValidYear == null ? 1000 : this.dateFilterParams.minValidYear;
-        const isValidDate = (value: Date | null) => value != null && value.getUTCFullYear() > minValidYear;
+        const maxValidYear = this.dateFilterParams.maxValidYear == null ? Infinity : this.dateFilterParams.maxValidYear;
+        const isValidDate = (value: Date | null) => value != null
+            && value.getUTCFullYear() >= minValidYear
+            && value.getUTCFullYear() <= maxValidYear;
 
         return isValidDate(compFrom.getDate()) && (!this.showValueTo(option) || isValidDate(compTo.getDate()));
     }
