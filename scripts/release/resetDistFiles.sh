@@ -62,4 +62,6 @@ git reset charts-packages/ag-charts-react/lib
 git reset charts-packages/ag-charts-react/umd
 git reset charts-packages/ag-charts-vue/lib
 git reset charts-packages/ag-charts-vue/dist
+git reset charts-packages/ag-charts-vue3/lib
+git reset charts-packages/ag-charts-vue3/dist
 git reset community-modules/vue/lib
