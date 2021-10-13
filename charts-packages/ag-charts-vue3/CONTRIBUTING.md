@@ -1,6 +1,6 @@
-# Contributing to ag-charts-vue
+# Contributing to ag-charts-vue3
 
-We would love for you to contribute to ag-charts-vue and help make it even better than it is
+We would love for you to contribute to ag-charts-vue3 and help make it even better than it is
 today! As a contributor, here are the guidelines we would like you to follow:
 
  - [Question or Problem?](#question)

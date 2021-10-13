@@ -256,7 +256,7 @@ function moduleChanged(moduleRoot) {
     // Windows... convert c:\\xxx to /c/xxx - can only work in git bash
     const resolvedPath = path.resolve(moduleRoot).replace(/\\/g, '/').replace("C:", "/c");
 
-    const checkResult = cp.spawnSync('sh', ['../../scripts/hashChanged.sh', resolvedPath], {
+    const checkResult = cp.spawnSync('../../scripts/hashChanged.sh', [resolvedPath], {
         stdio: 'pipe',
         encoding: 'utf-8'
     });

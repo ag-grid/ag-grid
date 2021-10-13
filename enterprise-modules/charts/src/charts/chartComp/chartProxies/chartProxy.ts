@@ -300,11 +300,13 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
             'stroke.width': 'strokeWidth',
             'stroke.opacity': 'strokeOpacity',
             'fill.opacity': 'fillOpacity',
-            'callout.colors': 'calloutColors'
         };
 
         const series = this.chart.series;
         series.forEach(s => _.set(s, mappings[expression] || expression, value));
+
+        //TODO: need a more robust approach
+        this.chart.layoutPending = true;
 
         this.raiseChartOptionsChangedEvent();
     }
@@ -465,7 +467,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         });
     }
 
-    // TODO move to standalone
     protected hexToRGBA(hex: string, alpha: string) {
         const r = parseInt(hex.slice(1, 3), 16);
         const g = parseInt(hex.slice(3, 5), 16);
@@ -473,7 +474,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         return alpha ? `rgba(${r}, ${g}, ${b}, ${alpha})` : `rgba(${r}, ${g}, ${b})`;
     }
 
-    // TODO move to standalone
     protected changeOpacity(fills: string[], alpha: number) {
         return fills.map(fill => {
             const c = Color.fromString(fill);

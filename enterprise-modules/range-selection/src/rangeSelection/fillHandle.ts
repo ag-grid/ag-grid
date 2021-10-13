@@ -225,10 +225,12 @@ export class FillHandle extends AbstractSelectionHandle {
                 initialValues.push(currentValue);
                 withinInitialRange = updateInitialSet();
             } else {
-                currentValue = this.processValues(e, currentValues, initialValues, col, rowNode, idx++);
+                const { value, fromUserFunction } = this.processValues(e, currentValues, initialValues, col, rowNode, idx++);
+                currentValue = value;
                 if (col.isCellEditable(rowNode)) {
                     const cellValue = this.valueService.getValue(col, rowNode);
-                    if (cellValue !== currentValue) {
+
+                    if (!fromUserFunction || cellValue !== currentValue) {
                         rowNode.setDataValue(col, currentValue);
                     } else {
                         skipValue = true;
@@ -280,7 +282,7 @@ export class FillHandle extends AbstractSelectionHandle {
         col: Column,
         rowNode: RowNode,
         idx: number
-    ): any {
+    ): { value: any, fromUserFunction: boolean } {
         const userFillOperation = this.gridOptionsWrapper.getFillOperation();
         const isVertical = this.dragAxis === 'y';
         let direction: 'up' | 'down' | 'left' | 'right';
@@ -307,7 +309,7 @@ export class FillHandle extends AbstractSelectionHandle {
             } as FillOperationParams);
 
             if (userResult !== false) {
-                return userResult;
+                return { value: userResult, fromUserFunction: true };
             }
         }
 
@@ -324,12 +326,12 @@ export class FillHandle extends AbstractSelectionHandle {
         if (event.altKey || !allNumbers) {
             if (allNumbers && initialValues.length === 1) {
                 const multiplier = (this.isUp || this.isLeft) ? -1 : 1;
-                return parseFloat(_.last(values)) + 1 * multiplier;
+                return { value: parseFloat(_.last(values)) + 1 * multiplier, fromUserFunction: false };
             }
-            return values[idx % values.length];
+            return { value: values[idx % values.length], fromUserFunction: false };
         }
 
-        return _.last(_.findLineByLeastSquares(values.map(Number)));
+        return { value: _.last(_.findLineByLeastSquares(values.map(Number))), fromUserFunction: false };
 
     }
 
