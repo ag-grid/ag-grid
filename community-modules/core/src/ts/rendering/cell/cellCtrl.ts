@@ -32,7 +32,6 @@ import { DndSourceComp } from "../dndSourceComp";
 import { doOnce } from "../../utils/function";
 import { RowDragComp } from "../row/rowDragComp";
 import { getValueUsingField } from "../../utils/object";
-import { ITooltipParams } from "../tooltipComponent";
 
 const CSS_CELL = 'ag-cell';
 const CSS_NORMAL_HEIGHT = 'ag-cell-normal-height';

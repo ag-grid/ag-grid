@@ -11,6 +11,7 @@ export class CellCustomStyleFeature extends BeanStub {
     private readonly column: Column;
     private readonly rowNode: RowNode;
     private readonly beans: Beans;
+    private staticClasses: string[] = [];
 
     private cellComp: ICellComp;
 
@@ -100,11 +101,15 @@ export class CellCustomStyleFeature extends BeanStub {
             context: this.beans.gridOptionsWrapper.getContext()
         };
 
-        this.beans.stylingService.processStaticCellClasses(
-            colDef,
-            cellClassParams,
-            className => this.cellComp.addOrRemoveCssClass(className, true)
-        );
+        if (this.staticClasses.length) {
+            this.staticClasses.forEach(className => this.cellComp.addOrRemoveCssClass(className, false));
+        }
+
+        this.staticClasses = this.beans.stylingService.getStaticCellClasses(colDef, cellClassParams);
+
+        if (this.staticClasses.length) {
+            this.staticClasses.forEach(className => this.cellComp.addOrRemoveCssClass(className, true));
+        }
     }
 
     // overriding to make public, as we don't dispose this bean via context

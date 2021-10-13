@@ -16,7 +16,7 @@ export class StylingService extends BeanStub {
     }
 
     public processClassRules(classRules: { [cssClassName: string]: (Function | string) } | undefined, params: RowClassParams | CellClassParams, onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void) {
-        if (classRules==null)  { return; }
+        if (classRules == null)  { return; }
 
         const classNames = Object.keys(classRules!);
         const classesToApply: {[name: string]: boolean} = {};
@@ -48,26 +48,33 @@ export class StylingService extends BeanStub {
         }
     }
 
-    public processStaticCellClasses(colDef: ColDef, params: CellClassParams, onApplicableClass: (className: string) => void) {
+    public getStaticCellClasses(colDef: ColDef, params: CellClassParams): string[] {
         const cellClass = colDef.cellClass;
-        if (cellClass) {
-            let classOrClasses: any;
 
-            if (typeof colDef.cellClass === 'function') {
-                const cellClassFunc = colDef.cellClass as (cellClassParams: any) => string | string[];
-                classOrClasses = cellClassFunc(params);
-            } else {
-                classOrClasses = colDef.cellClass;
-            }
+        if (!cellClass) { return []; }
 
-            if (typeof classOrClasses === 'string') {
-                onApplicableClass(classOrClasses);
-            } else if (Array.isArray(classOrClasses)) {
-                classOrClasses.forEach((cssClassItem: string) => {
-                    onApplicableClass(cssClassItem);
-                });
-            }
+        let classOrClasses: string | string[];
+
+        if (typeof cellClass === 'function') {
+            const cellClassFunc = colDef.cellClass as (cellClassParams: CellClassParams) => string | string[];
+            classOrClasses = cellClassFunc(params);
+        } else {
+            classOrClasses = cellClass;
         }
+
+        if (typeof classOrClasses === 'string') {
+            classOrClasses = [classOrClasses];
+        }
+
+        return classOrClasses;
+    }
+
+    private processStaticCellClasses(colDef: ColDef, params: CellClassParams, onApplicableClass: (className: string) => void) {
+        const classOrClasses = this.getStaticCellClasses(colDef, params);
+
+        classOrClasses.forEach((cssClassItem: string) => {
+            onApplicableClass(cssClassItem);
+        });
     }
 
 }
