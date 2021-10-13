@@ -48,3 +48,6 @@
 [submodule "examples-grid/ag-grid-vue3-example"]
 	path = examples-grid/ag-grid-vue3-example
 	url = https://github.com/ag-grid/ag-grid-vue3-example.git
+[submodule "examples-charts/ag-charts-vue3-example"]
+	path = examples-charts/ag-charts-vue3-example
+	url = https://github.com/ag-grid/ag-charts-vue3-example.git
