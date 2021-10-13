@@ -1654,7 +1654,7 @@ title: "Get Started with AG Grid"
 | | React Version | AG Grid Versions |
 | | ------------- | ---------------- |
 | | 15.x          | 18 - 21.2.0      |
-| | 16.3+         | 22+              |
+| | 16.3+ / 17+   | 22+              |
 |
 | ## Summary
 |
