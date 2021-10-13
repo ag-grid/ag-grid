@@ -1214,7 +1214,9 @@ export abstract class Chart extends Observable {
     }
 
     private onSeriesDatumPick(meta: TooltipMeta, datum: SeriesNodeDatum, node?: Shape, event?: MouseEvent) {
-        if (this.lastPick) {
+        const { lastPick } = this;
+        if (lastPick) {
+            if (lastPick.datum === datum) { return; }
             this.dehighlightDatum();
         }
 
