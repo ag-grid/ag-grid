@@ -157,8 +157,8 @@ export class BarSeries extends CartesianSeries {
         '#5d8692'
     ];
 
-    @reactive('layoutChange') fillOpacity = 1;
-    @reactive('layoutChange') strokeOpacity = 1;
+    @reactive('update') fillOpacity = 1;
+    @reactive('update') strokeOpacity = 1;
 
     @reactive('update') lineDash?: number[] = undefined;
     @reactive('update') lineDashOffset: number = 0;
@@ -748,23 +748,23 @@ export class BarSeries extends CartesianSeries {
 
         const {
             chart: { highlightedDatum },
-            label: { enabled: labelEnabled }
+            label: { enabled: labelEnabled, fontStyle, fontWeight, fontSize, fontFamily, color }
         } = this;
 
         this.labelSelection.each((text, datum, index) => {
             const label = datum.label;
 
             if (label && labelEnabled) {
-                text.fontStyle = label.fontStyle;
-                text.fontWeight = label.fontWeight;
-                text.fontSize = label.fontSize;
-                text.fontFamily = label.fontFamily;
+                text.fontStyle = fontStyle;
+                text.fontWeight = fontWeight;
+                text.fontSize = fontSize;
+                text.fontFamily = fontFamily;
                 text.textAlign = label.textAlign;
                 text.textBaseline = label.textBaseline;
                 text.text = label.text;
                 text.x = label.x;
                 text.y = label.y;
-                text.fill = label.fill;
+                text.fill = color;
                 text.visible = true;
                 text.opacity = this.getOpacity(datum);
             } else {

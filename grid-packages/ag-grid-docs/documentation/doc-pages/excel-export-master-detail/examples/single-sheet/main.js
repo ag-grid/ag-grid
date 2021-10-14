@@ -56,7 +56,7 @@ var gridOptions = {
         }
     },
     defaultCsvExportParams: defaultExportParams,
-    defaultExportParams: defaultExportParams,
+    defaultExcelExportParams: defaultExportParams,
     excelStyles: [
         {
             id: 'header',

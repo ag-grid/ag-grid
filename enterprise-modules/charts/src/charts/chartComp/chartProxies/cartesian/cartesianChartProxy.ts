@@ -70,7 +70,8 @@ export abstract class CartesianChartProxy<T extends SeriesOptions> extends Chart
 
         this.chart.axes.forEach(axis => _.set(axis, expression, value));
 
-        chart.performLayout();
+        // chart axis properties are not reactive, need to schedule a layout
+        chart.layoutPending = true;
 
         this.raiseChartOptionsChangedEvent();
     }

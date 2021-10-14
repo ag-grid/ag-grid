@@ -384,7 +384,7 @@ export abstract class Chart extends Observable {
         this.scene.download(fileName);
     }
 
-    @reactive('layoutChange') padding = new Padding(20);
+    padding = new Padding(20);
     @reactive('layoutChange') title?: Caption;
     @reactive('layoutChange') subtitle?: Caption;
 
@@ -408,8 +408,10 @@ export abstract class Chart extends Observable {
         scene.container = element;
         this.autoSize = true;
 
+        this.padding.addEventListener('layoutChange', this.scheduleLayout, this);
+
         const { legend } = this;
-        legend.addEventListener('layoutChange', this.onLayoutChange, this);
+        legend.addEventListener('layoutChange', this.scheduleLayout, this);
         legend.item.label.addPropertyListener('formatter', this.updateLegend, this);
         legend.addPropertyListener('position', this.onLegendPositionChange, this);
 
@@ -428,7 +430,7 @@ export abstract class Chart extends Observable {
 
         this.addPropertyListener('title', this.onCaptionChange);
         this.addPropertyListener('subtitle', this.onCaptionChange);
-        this.addEventListener('layoutChange', () => this.layoutPending = true);
+        this.addEventListener('layoutChange', this.scheduleLayout);
     }
 
     destroy() {
@@ -440,10 +442,6 @@ export abstract class Chart extends Observable {
         this.scene.container = undefined;
     }
 
-    private onLayoutChange() {
-        this.layoutPending = true;
-    }
-
     private onLegendPositionChange() {
         this.legendAutoPadding.clear();
         this.layoutPending = true;
@@ -453,11 +451,11 @@ export abstract class Chart extends Observable {
         const { value, oldValue } = event;
 
         if (oldValue) {
-            oldValue.removeEventListener('change', this.onLayoutChange, this);
+            oldValue.removeEventListener('change', this.scheduleLayout, this);
             this.scene.root!.removeChild(oldValue.node);
         }
         if (value) {
-            value.addEventListener('change', this.onLayoutChange, this);
+            value.addEventListener('change', this.scheduleLayout, this);
             this.scene.root!.appendChild(value.node);
         }
     }
