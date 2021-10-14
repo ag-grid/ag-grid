@@ -21,7 +21,7 @@ export class ColumnUtils extends BeanStub {
         return colDef.maxWidth != null ? colDef.maxWidth : (this.gridOptionsWrapper.getMaxColWidth() || getMaxSafeInteger());
     }
 
-    public calculateColInitialWidth(colDef: any): number {
+    public calculateColInitialWidth(colDef: ColDef): number {
         const minColWidth = this.calculateColMinWidth(colDef);
         const maxColWidth = this.calculateColMaxWidth(colDef);
 
