@@ -47,6 +47,7 @@ const localConfiguration = {
         "ag-charts-react": `${localPrefix}/ag-charts-react`,
         "ag-charts-angular": `${localPrefix}/ag-charts-angular`,
         "ag-charts-vue": `${localPrefix}/ag-charts-vue`,
+        "ag-charts-vue3": `${localPrefix}/ag-charts-vue3`,
         "ag-grid-community": `${localPrefix}/ag-grid-community`,
         "ag-grid-enterprise": `${localPrefix}/ag-grid-enterprise`,
         "ag-grid-angular": `${localPrefix}/ag-grid-angular`,
@@ -96,7 +97,8 @@ const localConfiguration = {
     chartMap: {
         "ag-charts-react": `${localPrefix}/ag-charts-react`,
         "ag-charts-angular": `${localPrefix}/ag-charts-angular`,
-        "ag-charts-vue": `${localPrefix}/ag-charts-vue`
+        "ag-charts-vue": `${localPrefix}/ag-charts-vue`,
+        "ag-charts-vue3": `${localPrefix}/ag-charts-vue3`
     },
     chartPaths: {
         "ag-charts-community": `${localPrefix}/ag-charts-community/dist/ag-charts-community.cjs.js`,
@@ -179,6 +181,7 @@ const publishedConfiguration = {
         "ag-charts-react": `https://unpkg.com/ag-charts-react@${agChartsReactVersion}/`,
         "ag-charts-angular": `https://unpkg.com/ag-charts-angular@${agChartsAngularVersion}/`,
         "ag-charts-vue": `https://unpkg.com/ag-charts-vue@${agChartsVueVersion}/`,
+        "ag-charts-vue3": `https://unpkg.com/ag-charts-vue3@${agChartsVueVersion}/`,
         "ag-charts-community": `https://unpkg.com/ag-charts-community@${agChartsVersion}/dist/ag-charts-community.cjs.js`,
     },
     chartPaths: {}

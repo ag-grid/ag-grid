@@ -19,12 +19,12 @@ var options = {
             sizeKey: 'age',
             sizeName: 'Age',
             labelKey: 'name',
-            fill: 'rgba(227,111,106,0.71)',
-            stroke: '#9f4e4a',
             marker: {
                 shape: 'square',
                 size: 6,
-                maxSize: 30
+                maxSize: 30,
+                fill: 'rgba(227,111,106,0.71)',
+                stroke: '#9f4e4a',
             },
             label: {
                 enabled: true
@@ -41,11 +41,11 @@ var options = {
             sizeKey: 'age',
             sizeName: 'Age',
             labelKey: 'name',
-            fill: 'rgba(123,145,222,0.71)',
-            stroke: '#56659b',
             marker: {
                 size: 6,
-                maxSize: 30
+                maxSize: 30,
+                fill: 'rgba(123,145,222,0.71)',
+                stroke: '#56659b',
             },
             label: {
                 enabled: true

@@ -50,17 +50,17 @@ const GroupCellRenderer = (props: GroupCellRendererParams) => {
         };
     }, []);
 
-    const className = useMemo( ()=> `ag-cell-wrapper ${cssClasses.toString()}`, [cssClasses] );
-    const expandedClassName = useMemo( ()=> `ag-group-expanded ${expandedCssClasses.toString()}`, [expandedCssClasses] );
-    const contractedClassName = useMemo( ()=> `ag-group-contracted ${contractedCssClasses.toString()}`, [contractedCssClasses] );
-    const checkboxClassName = useMemo( ()=> `ag-group-checkbox ${checkboxCssClasses.toString()}`, [checkboxCssClasses] );
+    const className = useMemo(() => `ag-cell-wrapper ${cssClasses.toString()}`, [cssClasses]);
+    const expandedClassName = useMemo(() => `ag-group-expanded ${expandedCssClasses.toString()}`, [expandedCssClasses]);
+    const contractedClassName = useMemo(() => `ag-group-contracted ${contractedCssClasses.toString()}`, [contractedCssClasses]);
+    const checkboxClassName = useMemo(() => `ag-group-checkbox ${checkboxCssClasses.toString()}`, [checkboxCssClasses]);
 
     const useFwRenderer = innerCompDetails && innerCompDetails.componentFromFramework;
     const FwRenderer = useFwRenderer ? innerCompDetails!.componentClass : undefined;
     const useValue = innerCompDetails==null && value!=null;
 
     return (
-        <span className={className} ref={eGui}>
+        <span className={className} ref={eGui} {...(!props.colDef ? { role: 'gridcell' } : {})}>
             <span className={expandedClassName} ref={eExpandedRef}></span>
             <span className={contractedClassName} ref={eContractedRef}></span>
             <span className={checkboxClassName} ref={eCheckboxRef}></span>

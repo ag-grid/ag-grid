@@ -64,8 +64,11 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
     }
 
     public refresh(params: ISparklineCellRendererParams): boolean {
-        this.sparkline.data = params.value;
-        return true;
+        if (this.sparkline) {
+            this.sparkline.data = params.value;
+            return true;
+        }
+        return false;
     }
 
     public destroy() {

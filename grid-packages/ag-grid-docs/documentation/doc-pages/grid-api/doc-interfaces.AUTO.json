@@ -7192,7 +7192,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "minValidYear": {
-      "description": "/** This is the minimum year that must be entered in a date field for the value to be considered valid. Default: `1000` */",
+      "description": "/** This is the minimum year that may be entered in a date field for the value to be considered valid. Default: `1000` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "maxValidYear": {
+      "description": "/** This is the maximum year that may be entered in a date field for the value to be considered valid. Default is no restriction. */",
       "type": { "returnType": "number", "optional": true }
     },
     "inRangeInclusive": {

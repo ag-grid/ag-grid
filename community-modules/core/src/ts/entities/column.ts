@@ -235,21 +235,10 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     }
 
     private initMinAndMaxWidths(): void {
-        const minColWidth = this.gridOptionsWrapper.getMinColWidth();
-        const maxColWidth = this.gridOptionsWrapper.getMaxColWidth();
+        const colDef = this.colDef;
 
-        if (this.colDef.minWidth != null) {
-            // we force min width to be at least one pixel, otherwise column will disappear
-            this.minWidth = Math.max(this.colDef.minWidth, 1);
-        } else {
-            this.minWidth = minColWidth;
-        }
-
-        if (this.colDef.maxWidth != null) {
-            this.maxWidth = this.colDef.maxWidth;
-        } else {
-            this.maxWidth = maxColWidth;
-        }
+        this.minWidth = this.columnUtils.calculateColMinWidth(colDef);
+        this.maxWidth = this.columnUtils.calculateColMaxWidth(colDef);
     }
 
     public resetActualWidth(source: ColumnEventType = 'api'): void {

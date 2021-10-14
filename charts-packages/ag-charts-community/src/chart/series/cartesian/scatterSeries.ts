@@ -430,6 +430,9 @@ export class ScatterSeries extends CartesianSeries {
         }
 
         const {
+            fill: seriesFill,
+            stroke: seriesStroke,
+            marker,
             tooltip,
             xName,
             yName,
@@ -439,8 +442,27 @@ export class ScatterSeries extends CartesianSeries {
             labelName
         } = this;
 
-        const { renderer: tooltipRenderer } = tooltip;
-        const color = this.marker.fill || this.fill || 'gray';
+        const fill = marker.fill || seriesFill;
+        const stroke = marker.stroke || seriesStroke;
+        const strokeWidth = this.getStrokeWidth(marker.strokeWidth || this.strokeWidth, nodeDatum);
+
+        const { formatter } = this.marker;
+        let format: CartesianSeriesMarkerFormat | undefined = undefined;
+
+        if (formatter) {
+            format = formatter({
+                datum: nodeDatum,
+                xKey,
+                yKey,
+                fill,
+                stroke,
+                strokeWidth,
+                size: nodeDatum.size,
+                highlighted: false
+            });
+        }
+
+        const color = format && format.fill || fill || 'gray';
         const title = this.title || yName;
         const datum = nodeDatum.datum;
         const xValue = datum[xKey];
@@ -465,6 +487,8 @@ export class ScatterSeries extends CartesianSeries {
             backgroundColor: color,
             content
         };
+
+        const { renderer: tooltipRenderer } = tooltip;
 
         if (tooltipRenderer) {
             return toTooltipHtml(tooltipRenderer({

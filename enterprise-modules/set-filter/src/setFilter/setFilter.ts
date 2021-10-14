@@ -307,7 +307,10 @@ export class SetFilter extends ProvidedFilter<SetFilterModel> {
         if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
         if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
-        const virtualList = this.virtualList = this.createBean(new VirtualList('filter'));
+        const translate = this.gridOptionsWrapper.getLocaleTextFunc();
+        const filterListName = translate('ariaFilterList', 'Filter List');
+
+        const virtualList = this.virtualList = this.createBean(new VirtualList('filter', 'listbox', filterListName));
         const eSetFilterList = this.getRefElement('eSetFilterList');
 
         if (eSetFilterList) {

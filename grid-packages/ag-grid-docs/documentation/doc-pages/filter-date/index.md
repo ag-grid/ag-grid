@@ -12,7 +12,7 @@ Date Filters are configured though the `filterParams` attribute of the column de
 
 In addition, the following parameters are also available for Date filters:
 
-<interface-documentation interfaceName='IDateFilterParams' names='["alwaysShowBothConditions","filterOptions","defaultOption","defaultJoinOperator","suppressAndOrCondition","textCustomComparator","caseSensitive","textFormatter","trimInput","inRangeInclusive","includeBlanksInEquals","includeBlanksInLessThan","includeBlanksInGreaterThan","includeBlanksInRange","allowedCharPattern","numberParser","comparator","browserDatePicker","minValidYear"]' config='{"description":" "}' ></interface-documentation>
+<interface-documentation interfaceName='IDateFilterParams' names='["alwaysShowBothConditions","filterOptions","defaultOption","defaultJoinOperator","suppressAndOrCondition","textCustomComparator","caseSensitive","textFormatter","trimInput","inRangeInclusive","includeBlanksInEquals","includeBlanksInLessThan","includeBlanksInGreaterThan","includeBlanksInRange","allowedCharPattern","numberParser","comparator","browserDatePicker","minValidYear", "maxValidYear"]' config='{"description":" "}' ></interface-documentation>
 
 ## Date Selection Component
 
@@ -89,6 +89,6 @@ The example below shows the date filter in action, using some of the configurati
 - The **Date** column is using a Date Filter.
 - A custom `comparator` is provided to parse the data and allow date comparisons to be made.
 - The native date picker is forced to be used in every browser.
-- The minimum valid year is set to `2000`, so dates entered into the filter with a year less than 2000 will not be recognised. This avoids the filter getting applied as the user is typing a year - for example suppose the user is typing the year "2008", the filter doesn't execute for values "2", "20" or "200" (as the text "2008" is partially typed).
+- The minimum valid year is set to `2000`, and maximum valid year is `2021`; dates entered into the filter with a year outside the range `2000` to `2021` will not be recognised. This avoids the filter getting applied as the user is typing a year - for example suppose the user is typing the year "2008", the filter doesn't execute for values "2", "20" or "200" (as the text "2008" is partially typed).
 
 <grid-example title='Date Picker' name='date-filter' type='generated' options='{ "exampleHeight": 520 }'></grid-example>

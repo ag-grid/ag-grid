@@ -32,9 +32,9 @@ import { DndSourceComp } from "../dndSourceComp";
 import { doOnce } from "../../utils/function";
 import { RowDragComp } from "../row/rowDragComp";
 import { getValueUsingField } from "../../utils/object";
-import { ITooltipParams } from "../tooltipComponent";
 
 const CSS_CELL = 'ag-cell';
+const CSS_AUTO_HEIGHT = 'ag-cell-auto-height';
 const CSS_NORMAL_HEIGHT = 'ag-cell-normal-height';
 const CSS_CELL_FOCUS = 'ag-cell-focus';
 const CSS_CELL_FIRST_RIGHT_PINNED = 'ag-cell-first-right-pinned';
@@ -1042,10 +1042,10 @@ export class CellCtrl extends BeanStub {
 
         // normal cells fill the height of the row. autoHeight cells have no height to let them
         // fit the height of content.
-        // const autoHeight = this.column.getColDef().autoHeight == true;
-        // this.cellComp.addOrRemoveCssClass(CSS_AUTO_HEIGHT, autoHeight);
-        // this.cellComp.addOrRemoveCssClass(CSS_NORMAL_HEIGHT, !autoHeight);
-        this.cellComp.addOrRemoveCssClass(CSS_NORMAL_HEIGHT, true);
+
+        const autoHeight = this.column.getColDef().autoHeight == true;
+        this.cellComp.addOrRemoveCssClass(CSS_AUTO_HEIGHT, autoHeight);
+        this.cellComp.addOrRemoveCssClass(CSS_NORMAL_HEIGHT, !autoHeight);
     }
     
     public onColumnHover(): void {

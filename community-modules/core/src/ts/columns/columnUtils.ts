@@ -7,15 +7,23 @@ import { Bean } from "../context/context";
 import { BeanStub } from "../context/beanStub";
 import { getMaxSafeInteger } from "../utils/number";
 import { attrToNumber } from "../utils/generic";
+import { ColDef } from "../entities/colDef";
 
 // takes in a list of columns, as specified by the column definitions, and returns column groups
 @Bean('columnUtils')
 export class ColumnUtils extends BeanStub {
 
-    public calculateColInitialWidth(colDef: any): number {
-        const optionsWrapper = this.gridOptionsWrapper;
-        const minColWidth = colDef.minWidth != null ? colDef.minWidth : optionsWrapper.getMinColWidth();
-        const maxColWidth = colDef.maxWidth != null ? colDef.maxWidth : (optionsWrapper.getMaxColWidth() || getMaxSafeInteger());
+    public calculateColMinWidth(colDef: ColDef): number {
+        return colDef.minWidth != null ? colDef.minWidth : this.gridOptionsWrapper.getMinColWidth();
+    }
+
+    public calculateColMaxWidth(colDef: ColDef): number {
+        return colDef.maxWidth != null ? colDef.maxWidth : (this.gridOptionsWrapper.getMaxColWidth() || getMaxSafeInteger());
+    }
+
+    public calculateColInitialWidth(colDef: ColDef): number {
+        const minColWidth = this.calculateColMinWidth(colDef);
+        const maxColWidth = this.calculateColMaxWidth(colDef);
 
         let width : number;
         const colDefWidth = attrToNumber(colDef.width);
@@ -26,7 +34,7 @@ export class ColumnUtils extends BeanStub {
         } else if (colDefInitialWidth != null) {
             width = colDefInitialWidth;
         } else {
-            width = optionsWrapper.getColWidth();
+            width = this.gridOptionsWrapper.getColWidth();
         }
 
         return Math.max(Math.min(width, maxColWidth), minColWidth);

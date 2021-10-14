@@ -2470,35 +2470,6 @@
       "type": "string",
       "description": "The title to use for the series. Defaults to <code>yName</code> if it exists, or <code>yKey</code> if not."
     },
-    "fill": {
-      "default": "#f3622d",
-      "description": "The colour of the fill for the markers."
-    },
-    "fillOpacity": {
-      "default": 1,
-      "description": "The opacity of the fill for the markers.",
-      "min": 0,
-      "max": 1,
-      "step": 0.05
-    },
-    "stroke": {
-      "default": "#aa4520",
-      "description": "The colour of the stroke for the markers."
-    },
-    "strokeOpacity": {
-      "default": 1,
-      "description": "The opacity of the stroke for the markers.",
-      "min": 0,
-      "max": 1,
-      "step": 0.05
-    },
-    "strokeWidth": {
-      "default": 1,
-      "description": "The width in pixels of the stroke for the markers.",
-      "min": 0,
-      "max": 20,
-      "unit": "px"
-    },
     "marker": {
       "meta": {
         "description": "Configuration for the markers used in the series."
@@ -2535,19 +2506,33 @@
         "unit": "px"
       },
       "fill": {
-        "type": "string",
-        "description": "The colour to use for marker fills. If this is not specified, the markers will take their fill from the series."
+        "default": "#f3622d",
+        "description": "The colour of the fill for the markers."
+      },
+      "fillOpacity": {
+        "default": 1,
+        "description": "The opacity of the fill for the markers.",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
       },
       "stroke": {
-        "type": "string",
-        "description": "The colour to use for marker strokes. If this is not specified, the markers will take their stroke from the series."
+        "default": "#aa4520",
+        "description": "The colour of the stroke for the markers."
       },
       "strokeWidth": {
-        "type": "number",
-        "description": "The width in pixels of the marker stroke. If this is not specified, the markers will take their stroke width from the series.",
+        "default": 1,
+        "description": "The width in pixels of the stroke for the markers.",
         "min": 0,
-        "max": 10,
+        "max": 20,
         "unit": "px"
+      },
+      "strokeOpacity": {
+        "default": 1,
+        "description": "The opacity of the stroke for the markers.",
+        "min": 0,
+        "max": 1,
+        "step": 0.05
       },
       "formatter": {
         "type": {

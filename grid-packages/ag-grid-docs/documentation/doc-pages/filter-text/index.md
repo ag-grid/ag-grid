@@ -14,7 +14,7 @@ Text Filters are configured though the `filterParams` attribute of the column de
 
 In addition, the following parameters are also available for Text filters:
 
-<interface-documentation interfaceName='ITextFilterParams' names='["alwaysShowBothConditions","filterOptions","defaultOption","defaultJoinOperator","suppressAndOrCondition","textCustomComparator","caseSensitive","textFormatter","trimInput","inRangeInclusive","includeBlanksInEquals","includeBlanksInLessThan","includeBlanksInGreaterThan","includeBlanksInRange","allowedCharPattern","numberParser","comparator","browserDatePicker","minValidYear"]' config='{"description":" "}' ></interface-documentation>
+<interface-documentation interfaceName='ITextFilterParams' names='["alwaysShowBothConditions","filterOptions","defaultOption","defaultJoinOperator","suppressAndOrCondition","textCustomComparator","caseSensitive","textFormatter","trimInput","inRangeInclusive","includeBlanksInEquals","includeBlanksInLessThan","includeBlanksInGreaterThan","includeBlanksInRange","allowedCharPattern","numberParser","comparator","browserDatePicker"]' config='{"description":" "}' ></interface-documentation>
 
 ## Text Custom Comparator
 

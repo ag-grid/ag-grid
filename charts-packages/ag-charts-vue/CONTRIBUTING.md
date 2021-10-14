@@ -35,7 +35,7 @@ A minimal reproduce scenario using http://plnkr.co/ allows us to quickly confirm
 
 We will be insisting on a minimal reproduce scenario in order to save maintainers time and ultimately be able to fix more bugs. Interestingly, from our experience users often find coding problems themselves while preparing a minimal plunk. We understand that sometimes it might be hard to extract essentials bits of code from a larger code-base but we really need to isolate the problem before we can fix it.
 
-You can file new issues by filling out our [new issue form](https://github.com/ag-grid/ag-charts-vue/issues/new).
+You can file new issues by filling out our [new issue form](https://github.com/ag-grid/issues/new).
 
 [github]: https://github.com/ag-grid/ag-grid
 [jsfiddle]: http://jsfiddle.net

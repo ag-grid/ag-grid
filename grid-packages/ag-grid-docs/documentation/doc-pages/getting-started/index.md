@@ -55,7 +55,7 @@ title: "Get Started with AG Grid"
 | index.js
 
 [[only-vue]]
-| app.js
+| App.vue
 
 </a>
 </li>
@@ -168,43 +168,47 @@ title: "Get Started with AG Grid"
 
 [[only-vue]]
 | ```jsx
+| <template>
+|   <ag-grid-vue
+|     style="width: 500px; height: 200px"
+|     class="ag-theme-alpine"
+|     :columnDefs="columnDefs"
+|     :rowData="rowData"
+|   >
+|   </ag-grid-vue>
+| </template>
+| 
+| <script>
 | import "ag-grid-community/dist/styles/ag-grid.css";
 | import "ag-grid-community/dist/styles/ag-theme-alpine.css";
-| import { AgGridVue } from 'ag-grid-vue';
-|
-| export const App = {
-|     name: 'App',
-|     data() {
-|         return {
-|             columnDefs: null,
-|             rowData: null
-|         }
-|     },
-|     components: {
-|         AgGridVue
-|     },
-|     beforeMount() {
-|         this.columnDefs = [
-|             { field: 'make' },
-|             { field: 'model' },
-|             { field: 'price' }
-|         ];
-|
-|         this.rowData = [
-|             { make: 'Toyota', model: 'Celica', price: 35000 },
-|             { make: 'Ford', model: 'Mondeo', price: 32000 },
-|             { make: 'Porsche', model: 'Boxter', price: 72000 }
-|         ];
-|     },
-|     template: `
-|         <ag-grid-vue
-|             style="width: 500px; height: 300px;"
-|             class="ag-theme-alpine"
-|             :columnDefs="columnDefs"
-|             :rowData="rowData">
-|         </ag-grid-vue>
-|     `
-| }
+| import { AgGridVue } from "ag-grid-vue";
+| 
+| export default {
+|   name: "App",
+|   data() {
+|     return {
+|       columnDefs: null,
+|       rowData: null,
+|     };
+|   },
+|   components: {
+|     AgGridVue,
+|   },
+|   beforeMount() {
+|     this.columnDefs = [
+|       { field: "make" },
+|       { field: "model" },
+|       { field: "price" },
+|     ];
+| 
+|     this.rowData = [
+|       { make: "Toyota", model: "Celica", price: 35000 },
+|       { make: "Ford", model: "Mondeo", price: 32000 },
+|       { make: "Porsche", model: "Boxter", price: 72000 },
+|     ];
+|   },
+| };
+| </script>
 | ```
 
 </div>
@@ -273,8 +277,8 @@ title: "Get Started with AG Grid"
 
 
 [[only-vue]]
-| <a class="btn btn-dark mb-2 mr-3" href="https://stackblitz.com/edit/ag-grid-vue-hello-world" target="_blank">
-|     Open in <img src="resources/stackBlitz_icon.svg" alt="Open in StackBlitz" style="height: 2.5rem"/> StackBlitz
+| <a class="btn btn-dark mb-2 mr-3" href="https://codesandbox.io/s/ag-grid-vue-example-xu6c4?file=/src/App.vue" target="_blank">
+|     Open in CodeSandbox
 | </a>
 
 </div>
@@ -1650,7 +1654,7 @@ title: "Get Started with AG Grid"
 | | React Version | AG Grid Versions |
 | | ------------- | ---------------- |
 | | 15.x          | 18 - 21.2.0      |
-| | 16.3+         | 22+              |
+| | 16.3+ / 17+   | 22+              |
 |
 | ## Summary
 |
@@ -1658,7 +1662,6 @@ title: "Get Started with AG Grid"
 | three row / column setup, we now have a grid that supports sorting, filtering, binding to
 | remote data, selection and even grouping! While doing so, we learned how to configure the
 | grid, how to access its API object, and how to change the styling of the component.
-
 
 [[only-vue]]
 | <video-section id="eW3qCti1lsA" title="Getting Started Video Tutorial">
@@ -1709,7 +1712,7 @@ title: "Get Started with AG Grid"
 |Vue CLI v4.5.12
 |? Please pick a preset:
 |   Default ([Vue 2] babel, eslint)
-|   Default (Vue 3 Preview) ([Vue 3] babel, eslint)
+|   Default (Vue 3) ([Vue 3] babel, eslint)
 |❯ Manually select features
 |```
 |
@@ -1740,10 +1743,10 @@ title: "Get Started with AG Grid"
 |? Check the features needed for your project: Choose Vue version, Babel, CSS Pre-processors
 |? Choose a version of Vue.js that you want to start the project with (Use arrow keys)
 |❯ 2.x
-|   3.x (Preview)
+|   3.x
 |```
 |
-| Next select `Sass/SCSS (with node-sass)` as the CSS Pre-processor:
+| Next select `Sass/SCSS (with dart-sass)` as the CSS Pre-processor:
 |
 |```shell
 |Vue CLI v4.5.12
@@ -1751,8 +1754,8 @@ title: "Get Started with AG Grid"
 |? Check the features needed for your project: Choose Vue version, Babel, CSS Pre-processors
 |? Choose a version of Vue.js that you want to start the project with 2.x
 |? Pick a CSS pre-processor (PostCSS, Autoprefixer and CSS Modules are supported by default):
-|   Sass/SCSS (with dart-sass)
-|❯ Sass/SCSS (with node-sass)
+|❯ Sass/SCSS (with dart-sass)
+|   Sass/SCSS (with node-sass)
 |   Less
 |   Stylus
 |```
@@ -1764,7 +1767,7 @@ title: "Get Started with AG Grid"
 |? Please pick a preset: Manually select features
 |? Check the features needed for your project: Choose Vue version, Babel, CSS Pre-processors
 |? Choose a version of Vue.js that you want to start the project with 2.x
-|? Pick a CSS pre-processor (PostCSS, Autoprefixer and CSS Modules are supported by default): Sass/SCSS (with node-sass)
+|? Pick a CSS pre-processor (PostCSS, Autoprefixer and CSS Modules are supported by default): Sass/SCSS (with dart-sass)
 |? Where do you prefer placing config for Babel, ESLint, etc.? (Use arrow keys)
 |❯ In dedicated config files
 |   In package.json
@@ -1777,7 +1780,7 @@ title: "Get Started with AG Grid"
 |? Please pick a preset: Manually select features
 |? Check the features needed for your project: Choose Vue version, Babel, CSS Pre-processors
 |? Choose a version of Vue.js that you want to start the project with 2.x
-|? Pick a CSS pre-processor (PostCSS, Autoprefixer and CSS Modules are supported by default): Sass/SCSS (with node-sass)
+|? Pick a CSS pre-processor (PostCSS, Autoprefixer and CSS Modules are supported by default): Sass/SCSS (with dart-sass)
 |? Where do you prefer placing config for Babel, ESLint, etc.? In dedicated config files
 |? Save this as a preset for future projects? (y/N) N
 |```
@@ -1804,8 +1807,8 @@ title: "Get Started with AG Grid"
 |
 | ```scss
 | <style lang="scss">
-|   @import "ag-grid-community/dist/styles/ag-grid.css";
-|   @import "ag-grid-community/dist/styles/ag-theme-alpine.css";
+|   @import "~ag-grid-community/dist/styles/ag-grid.css";
+|   @import "~ag-grid-community/dist/styles/ag-theme-alpine.css";
 | </style>
 | ```
 |
@@ -1841,38 +1844,37 @@ title: "Get Started with AG Grid"
 |
 | ```js
 | <script>
-|     import { AgGridVue } from "ag-grid-vue";
-|
-|     export default {
-|         name: 'App',
-|         data() {
-|             return {
-|                 columnDefs: null,
-|                 rowData: null
-|             }
-|         },
-|         components: {
-|             AgGridVue
-|         },
-|         beforeMount() {
-|             this.columnDefs = [
-|                 { field: 'make' },
-|                 { field: 'model' },
-|                 { field: 'price' }
-|             ];
-|
-|             this.rowData = [
-|                 { make: 'Toyota', model: 'Celica', price: 35000 },
-|                 { make: 'Ford', model: 'Mondeo', price: 32000 },
-|                 { make: 'Porsche', model: 'Boxter', price: 72000 }
-|             ];
-|         }
-|     }
-| </script>
-|
+| import { AgGridVue } from "ag-grid-vue";
+| 
+| export default {
+|   name: "App",
+|   data() {
+|     return {
+|       columnDefs: null,
+|       rowData: null,
+|     };
+|   },
+|   components: {
+|     AgGridVue,
+|   },
+|   beforeMount() {
+|     this.columnDefs = [
+|       { field: "make" },
+|       { field: "model" },
+|       { field: "price" },
+|     ];
+| 
+|     this.rowData = [
+|       { make: "Toyota", model: "Celica", price: 35000 },
+|       { make: "Ford", model: "Mondeo", price: 32000 },
+|       { make: "Porsche", model: "Boxter", price: 72000 },
+|     ];
+|   },
+| };
+|</script>
 |<style lang="scss">
-|    @import "ag-grid-community/dist/styles/ag-grid.css";
-|    @import "ag-grid-community/dist/styles/ag-theme-alpine.css";
+|    @import "~ag-grid-community/dist/styles/ag-grid.css";
+|    @import "~ag-grid-community/dist/styles/ag-theme-alpine.css";
 |</style>
 | ```
 |
@@ -1938,15 +1940,16 @@ title: "Get Started with AG Grid"
 |
 | ```js
 | beforeMount() {
-|     this.columnDefs = [
-|         { field: 'make' },
-|         { field: 'model' },
-|         { field: 'price' }
-|     ];
+|      this.columnDefs = [
+|        { field: 'make', sortable: true, filter: true },
+|        { field: 'model', sortable: true, filter: true },
+|        { field: 'price', sortable: true, filter: true }
+|      ];
 |
-|     fetch('https://www.ag-grid.com/example-assets/small-row-data.json')
-|         .then(result => result.json())
-|         .then(rowData => this.rowData = rowData);
+|      fetch('https://www.ag-grid.com/example-assets/small-row-data.json')
+|              .then(result => result.json())
+|              .then(rowData => this.rowData = rowData);
+|    },
 | }
 | ```
 |
@@ -1965,51 +1968,47 @@ title: "Get Started with AG Grid"
 | Fortunately the above task is quite simple with AG Grid. As you may have already guessed, it is
 | just a matter of adding and changing couple of properties.
 |
-| ```jsx
-| <template>
-|     <ag-grid-vue style="width: 500px; height: 500px;"
-|         class="ag-theme-alpine"
-|         :columnDefs="columnDefs"
-|         :rowData="rowData"
-|         rowSelection="multiple">
-|     </ag-grid-vue>
-| </template>
-| ```
+| ```diff
+|<template>
+|  <ag-grid-vue
+|    style="width: 500px; height: 200px"
+|    class="ag-theme-alpine"
+|    :columnDefs="columnDefs"
+|    :rowData="rowData"
+|  >
+|  </ag-grid-vue>
+|</template>
 |
-| ```html
 |<script>
-|import {AgGridVue} from "ag-grid-vue";
+|import { AgGridVue } from "ag-grid-vue";
 |
 |export default {
-|    name: 'App',
-|    data() {
-|        return {
-|            columnDefs: null,
-|            rowData: null,
-|            gridApi: null,
-|            columnApi: null
-|        }
-|    },
-|    components: {
-|        AgGridVue
-|    },
-|    beforeMount() {
-|        this.columnDefs = [
-|            {field: 'make', sortable: true, filter: true, checkboxSelection: true},
-|            {field: 'model', sortable: true, filter: true},
-|            {field: 'price', sortable: true, filter: true}
-|        ];
+|  name: "App",
+|  data() {
+|    return {
+|      columnDefs: null,
+|      rowData: null,
+|    };
+|  },
+|  components: {
+|    AgGridVue,
+|  },
+|  beforeMount() {
+|    this.columnDefs = [
+|+      { field: 'make', sortable: true, filter: true, checkboxSelection: true },
+|        { field: 'model', sortable: true, filter: true },
+|        { field: 'price', sortable: true, filter: true }
+|      ];
 |
-|        fetch('https://www.ag-grid.com/example-assets/small-row-data.json')
-|                .then(result => result.json())
-|                .then(rowData => this.rowData = rowData);
-|    }
-|}
+|      fetch('https://www.ag-grid.com/example-assets/small-row-data.json')
+|              .then(result => result.json())
+|              .then(rowData => this.rowData = rowData);
+|  },
+|};
 |</script>
-|
 |<style lang="scss">
-|@import "ag-grid-community/dist/styles/ag-grid.css";
-|@import "ag-grid-community/dist/styles/ag-theme-alpine.css";
+|  @import "~ag-grid-community/dist/styles/ag-grid.css";
+|  @import "~ag-grid-community/dist/styles/ag-theme-alpine.css";
 |</style>
 | ```
 |
@@ -2026,68 +2025,65 @@ title: "Get Started with AG Grid"
 | To test this we'll add a button that gets the selected data and sends it to the server.
 | Let's go ahead and make these changes:
 |
-| ```jsx
-| <template>
-|     <div>
-|         <button @click="getSelectedRows()">Get Selected Rows</button>
+| ```diff
+|<template>
+|  <div>
+|+      <button @click="getSelectedRows()">Get Selected Rows</button>
 |
-|         <ag-grid-vue style="width: 500px; height: 500px;"
-|             class="ag-theme-alpine"
-|             :columnDefs="columnDefs"
-|             :rowData="rowData"
-|             rowSelection="multiple"
-|             @grid-ready="onGridReady">
-|         </ag-grid-vue>
-|     </div>
-| </template>
-| ```
+|       <ag-grid-vue
+|           style="width: 500px; height: 200px"
+|           class="ag-theme-alpine"
+|           :columnDefs="columnDefs"
+|           :rowData="rowData"
+|       >
+|       </ag-grid-vue>
+|  </div>
+|</template>
 |
-| ```html
-| <script>
-|     import { AgGridVue } from "ag-grid-vue";
+|<script>
+|import { AgGridVue } from "ag-grid-vue";
 |
-|     export default {
-|         name: 'App',
-|         data() {
-|             return {
-|                 columnDefs: null,
-|                 rowData: null
-|                 gridApi: null,
-|                 columnApi: null
-|             }
-|         },
-|         components: {
-|             AgGridVue
-|         },
-|         methods: {
-|             onGridReady(params) {
-|                 this.gridApi = params.api;
-|                 this.columnApi = params.columnApi;
-|             },
-|             getSelectedRows() {
-|                 const selectedNodes = this.gridApi.getSelectedNodes();
-|                 const selectedData = selectedNodes.map( node => node.data );
-|                 const selectedDataStringPresentation = selectedData.map( node => `${node.make} ${node.model}`).join(', ');
-|                 alert(`Selected nodes: ${selectedDataStringPresentation}`);
-|             }
-|         },
-|         beforeMount() {
-|             this.columnDefs = [
-|                 { field: 'make', checkboxSelection: true },
-|                 { field: 'model' },
-|                 { field: 'price' }
-|             ];
+|export default {
+|  name: "App",
+|  data() {
+|    return {
+|      columnDefs: null,
+|      rowData: null,
+|+    gridApi: null,
+|+    columnApi: null
+|    };
+|  },
+|  components: {
+|    AgGridVue,
+|  },
+|  beforeMount() {
+|    this.columnDefs = [
+|        { field: 'make', sortable: true, filter: true, checkboxSelection: true },
+|        { field: 'model', sortable: true, filter: true },
+|        { field: 'price', sortable: true, filter: true }
+|      ];
 |
-|             fetch('https://www.ag-grid.com/example-assets/small-row-data.json')
-|                 .then(result => result.json())
-|                 .then(rowData => this.rowData = rowData);
-|         }
-|     }
-| </script>
-|
+|      fetch('https://www.ag-grid.com/example-assets/small-row-data.json')
+|              .then(result => result.json())
+|              .then(rowData => this.rowData = rowData);
+|  },
+|+ methods: {
+|+    onGridReady(params) {
+|+        this.gridApi = params.api;
+|+        this.columnApi = params.columnApi;
+|+    },
+|+    getSelectedRows() {
+|+        const selectedNodes = this.gridApi.getSelectedNodes();
+|+        const selectedData = selectedNodes.map( node => node.data );
+|+        const selectedDataStringPresentation = selectedData.map( node => `${node.make} ${node.model}`).join(', ');
+|+        alert(`Selected nodes: ${selectedDataStringPresentation}`);
+|+    }
+|+ },
+|};
+|</script>
 |<style lang="scss">
-|@import "ag-grid-community/dist/styles/ag-grid.css";
-|@import "ag-grid-community/dist/styles/ag-theme-alpine.css";
+|  @import "~ag-grid-community/dist/styles/ag-grid.css";
+|  @import "~ag-grid-community/dist/styles/ag-theme-alpine.css";
 |</style>
 | ```
 |
@@ -2139,79 +2135,73 @@ title: "Get Started with AG Grid"
 | Now, let's enable grouping! Add an `autoGroupColumnDef` property, bind to it, and update
 | the `columnDefs` with a `rowGroup`:
 |
-| ```jsx
-| <template>
-|     <div>
-|         <button @click="getSelectedRows()">Get Selected Rows</button>
-|         <ag-grid-vue style="width: 500px; height: 500px;"
-|             class="ag-theme-alpine"
-|             :columnDefs="columnDefs"
-|             :rowData="rowData"
-|             :autoGroupColumnDef="autoGroupColumnDef"
-|             rowSelection="multiple"
-|             @grid-ready="onGridReady">
-|         </ag-grid-vue>
-|     </div>
-| </template>
-| ```
+| ```diff
+|<template>
+|    <div>
+|        <button @click="getSelectedRows()">Get Selected Rows</button>
+|        <ag-grid-vue style="width: 500px; height: 500px;"
+|                     class="ag-theme-alpine"
+|                     :columnDefs="columnDefs"
+|                     :rowData="rowData"
+|+                   :autoGroupColumnDef="autoGroupColumnDef"
+|                     @grid-ready="onGridReady">
+|        </ag-grid-vue>
+|    </div>
+|</template>
 |
-| ```html
-| <script>
-|     import { AgGridVue } from "ag-grid-vue";
+|<script>
+|    import {AgGridVue} from "ag-grid-vue";
 |
-|     export default {
-|         name: 'App',
-|         data() {
-|             return {
-|                 columnDefs: null,
-|                 rowData: null,
-|                 gridApi: null,
-|                 columnApi: null,
-|                 autoGroupColumnDef: null
-|             }
-|         },
-|         components: {
-|             AgGridVue
-|         },
-|         methods: {
-|             onGridReady(params) {
-|                 this.gridApi = params.api;
-|                 this.columnApi = params.columnApi;
-|             },
-|             getSelectedRows() {
-|                 const selectedNodes = this.gridApi.getSelectedNodes();
-|                 const selectedData = selectedNodes.map(node => node.data);
-|                 const selectedDataStringPresentation = selectedData.map(node => `${node.make} ${node.model}`).join(', ');
-|                 alert(`Selected nodes: ${selectedDataStringPresentation}`);
-|             }
-|         },
-|         beforeMount() {
-|             this.columnDefs = [
-|                 { field: 'make', rowGroup: true },
-|                 { field: 'model' },
-|                 { field: 'price' }
-|             ];
+|    export default {
+|        name: "App",
+|        data() {
+|            return {
+|                columnDefs: null,
+|                rowData: null,
+|                gridApi: null,
+|                columnApi: null,
+|+               autoGroupColumnDef: {
+|+                   headerName: 'Model',
+|+                   field: 'model',
+|+                   cellRenderer: 'agGroupCellRenderer',
+|+                   cellRendererParams: {
+|+                       checkbox: true
+|+                   }
+|+               }
+|            };
+|        },
+|        components: {
+|            AgGridVue,
+|        },
+|        beforeMount() {
+|            this.columnDefs = [
+|+              {field: 'make', sortable: true, filter: true, checkboxSelection: true, rowGroup: true },
+|                {field: 'model', sortable: true, filter: true},
+|                {field: 'price', sortable: true, filter: true}
+|            ];
 |
-|             this.autoGroupColumnDef = {
-|                 headerName: 'Model',
-|                 field: 'model',
-|                 cellRenderer: 'agGroupCellRenderer',
-|                 cellRendererParams: {
-|                     checkbox: true
-|                 }
-|             };
-|
-|             fetch('https://www.ag-grid.com/example-assets/small-row-data.json')
-|                 .then(result => result.json())
-|                 .then(rowData => this.rowData = rowData);
-|         }
-|     }
-| </script>
-|
-| <style lang="scss">
-|   @import "ag-grid-community/dist/styles/ag-grid.css";
-|   @import "ag-grid-community/dist/styles/ag-theme-alpine.css";
-| </style>
+|            fetch('https://www.ag-grid.com/example-assets/small-row-data.json')
+|                .then(result => result.json())
+|                .then(rowData => this.rowData = rowData);
+|        },
+|        methods: {
+|            onGridReady(params) {
+|                this.gridApi = params.api;
+|                this.columnApi = params.columnApi;
+|            },
+|            getSelectedRows() {
+|                const selectedNodes = this.gridApi.getSelectedNodes();
+|                const selectedData = selectedNodes.map(node => node.data);
+|                const selectedDataStringPresentation = selectedData.map(node => `${node.make} ${node.model}`).join(', ');
+|                alert(`Selected nodes: ${selectedDataStringPresentation}`);
+|            }
+|        },
+|    };
+|</script>
+|<style lang="scss">
+|    @import "~ag-grid-community/dist/styles/ag-grid.css";
+|    @import "~ag-grid-community/dist/styles/ag-theme-alpine.css";
+|</style>
 | ```
 |
 | There we go! The grid now groups the data by `make`, while listing the `model` field value when expanded.
@@ -2242,8 +2232,8 @@ title: "Get Started with AG Grid"
 |
 | ```scss
 | <style lang="scss">
-|   @import "ag-grid-community/src/styles/ag-grid.scss";
-|   @import "ag-grid-community/src/styles/ag-theme-alpine/sass/ag-theme-alpine-mixin.scss";
+|   @import "~ag-grid-community/src/styles/ag-grid.scss";
+|   @import "~ag-grid-community/src/styles/ag-theme-alpine/sass/ag-theme-alpine-mixin.scss";
 |
 |   .ag-theme-alpine {
 |       @include ag-theme-alpine((

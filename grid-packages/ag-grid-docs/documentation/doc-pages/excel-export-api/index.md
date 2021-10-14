@@ -6,7 +6,7 @@ This page documents the Excel Export API and Interfaces.
 
 ### Grid Properties
 
-<api-documentation source='grid-properties/properties.json' section='export' names='["suppressExcelExport", "excelStyles"]'></api-documentation>
+<api-documentation source='grid-properties/properties.json' section='export' names='["defaultExcelExportParams", "suppressExcelExport", "excelStyles"]'></api-documentation>
 
 ### API Methods
 

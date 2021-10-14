@@ -2303,7 +2303,7 @@ export class ColumnModel extends BeanStub {
         }
 
         // if width provided and valid, use it, otherwise stick with the old width
-        const minColWidth = this.gridOptionsWrapper.getMinColWidth();
+        const minColWidth = this.columnUtils.calculateColMinWidth(column.getColDef());
 
         // flex
         const flex = getValue('flex').value1;
@@ -2317,8 +2317,7 @@ export class ColumnModel extends BeanStub {
             // both null and undefined means we skip, as it's not possible to 'clear' width (a column must have a width)
             const width = getValue('width').value1;
             if (width != null) {
-                if (minColWidth &&
-                    (width >= minColWidth)) {
+                if (minColWidth != null && width >= minColWidth) {
                     column.setActualWidth(width, source);
                 }
             }
