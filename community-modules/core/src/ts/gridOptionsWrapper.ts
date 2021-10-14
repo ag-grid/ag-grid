@@ -1482,11 +1482,11 @@ export class GridOptionsWrapper {
         return document;
     }
 
-    public getMinColWidth() {
+    public getMinColWidth(): number {
         const minColWidth = this.gridOptions.minColWidth;
 
         if (exists(minColWidth) && minColWidth > GridOptionsWrapper.MIN_COL_WIDTH) {
-            return this.gridOptions.minColWidth;
+            return this.gridOptions.minColWidth!;
         }
 
         const measuredMin = this.getFromTheme(null, 'headerCellMinWidth');
