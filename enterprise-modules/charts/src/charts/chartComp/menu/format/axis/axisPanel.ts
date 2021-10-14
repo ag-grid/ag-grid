@@ -138,7 +138,9 @@ export class AxisPanel extends Component {
             if (font.size) { proxy.setAxisProperty("label.fontSize", font.size); }
             if (font.color) { proxy.setAxisProperty("label.color", font.color); }
 
-            proxy.getChart().performLayout();
+            const chart = proxy.getChart();
+
+            chart.layoutPending = true;
         };
 
         const params: FontPanelParams = {
@@ -187,7 +189,7 @@ export class AxisPanel extends Component {
                 } else if (axis.position === ChartAxisPosition.Left) {
                     _.set(chartProxy.getChartOptions().yAxis, "label.rotation", newValue);
                 }
-                chart.performLayout();
+                chart.layoutPending = true;
             }
         };
 
