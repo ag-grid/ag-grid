@@ -355,9 +355,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
 
         (this.chart.padding as any)[property] = value;
 
-        //TODO: need a more robust approach
-        this.chart.layoutPending = true;
-
         this.raiseChartOptionsChangedEvent();
     }
 

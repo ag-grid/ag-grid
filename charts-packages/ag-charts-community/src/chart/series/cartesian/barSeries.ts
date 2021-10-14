@@ -157,8 +157,8 @@ export class BarSeries extends CartesianSeries {
         '#5d8692'
     ];
 
-    @reactive('layoutChange') fillOpacity = 1;
-    @reactive('layoutChange') strokeOpacity = 1;
+    @reactive('update') fillOpacity = 1;
+    @reactive('update') strokeOpacity = 1;
 
     @reactive('update') lineDash?: number[] = undefined;
     @reactive('update') lineDashOffset: number = 0;
