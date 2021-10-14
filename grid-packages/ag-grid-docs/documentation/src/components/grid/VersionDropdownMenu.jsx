@@ -14,6 +14,7 @@ const VersionDropdownMenu = forwardRef((props, ref) => {
   return (
     // eslint-disable-next-line
     <select
+      style={{ paddingRight: "10px" }}
       aria-label={"Select Release Version"}
       ref={ref}
       onChange={event => props.onChange(event)}
