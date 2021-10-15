@@ -6,6 +6,6 @@ export default {
         };
     },
     beforeMount() {
-        this.displayValue = new Array(this.params.value).fill('#').join('');
+        this.displayValue = new Array(parseInt(this.params.value, 10)).fill('#').join('');
     },
 };
