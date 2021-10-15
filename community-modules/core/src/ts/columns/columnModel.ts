@@ -113,7 +113,7 @@ export class ColumnModel extends BeanStub {
     private primaryHeaderRowCount = 0;
     // all columns provided by the user. basically it's the leaf level nodes of the
     // tree above (originalBalancedTree)
-    private primaryColumns: Column[]; // every column available
+    private primaryColumns: Column[] | undefined; // every column available
     private primaryColumnsMap: {[id: string]: Column};
 
     // if pivoting, these are the generated columns as a result of the pivot
@@ -314,9 +314,13 @@ export class ColumnModel extends BeanStub {
     }
 
     private orderGridColumnsLikePrimary(): void {
+        const primaryColumns = this.primaryColumns;
+
+        if (!primaryColumns) { return; }
+
         this.gridColumns.sort((colA: Column, colB: Column) => {
-            const primaryIndexA = this.primaryColumns.indexOf(colA);
-            const primaryIndexB = this.primaryColumns.indexOf(colB);
+            const primaryIndexA = primaryColumns.indexOf(colA);
+            const primaryIndexB = primaryColumns.indexOf(colB);
             // if both cols are present in primary, then we just return the position,
             // so position is maintained.
             const indexAPresent = primaryIndexA >= 0;
@@ -909,7 +913,7 @@ export class ColumnModel extends BeanStub {
             });
         }
 
-        this.primaryColumns.forEach(column => {
+        (this.primaryColumns || []).forEach(column => {
             const added = masterList.indexOf(column) >= 0;
             columnCallback(added, column);
         });
@@ -1374,9 +1378,11 @@ export class ColumnModel extends BeanStub {
         this.moveColumn(column, toIndex, source);
     }
 
-    public getColumnDefs(): (ColDef | ColGroupDef)[] {
+    public getColumnDefs(): (ColDef | ColGroupDef)[] | undefined {
+        if (!this.primaryColumns) { return; }
 
         const cols = this.primaryColumns.slice();
+
         if (this.gridColsArePrimary) {
             cols.sort((a: Column, b: Column) => this.gridColumns.indexOf(a) - this.gridColumns.indexOf(b));
         } else if (this.lastPrimaryOrder) {
@@ -1752,12 +1758,12 @@ export class ColumnModel extends BeanStub {
         return res;
     }
 
-    private getPrimaryAndAutoGroupCols(): Column[] {
-        if (!this.groupAutoColumns) {
+    private getPrimaryAndAutoGroupCols(): Column[] | undefined {
+        if (!this.groupAutoColumns) { 
             return this.primaryColumns;
-        } else {
-            return [...this.primaryColumns, ...this.groupAutoColumns];
         }
+
+        return [...(this.primaryColumns || []), ...this.groupAutoColumns];
     }
 
     private orderColumnStateList(columnStateList: any[]): void {
@@ -1872,7 +1878,7 @@ export class ColumnModel extends BeanStub {
         this.autoGroupsNeedBuilding = true;
 
         // at the end below, this list will have all columns we got no state for
-        const columnsWithNoState = this.primaryColumns.slice();
+        const columnsWithNoState = this.primaryColumns!.slice();
 
         let success = true;
 
@@ -2079,7 +2085,7 @@ export class ColumnModel extends BeanStub {
             const getChangedColumns = (changedPredicate: (cs: ColumnState, c: Column) => boolean): Column[] => {
                 const changedColumns: Column[] = [];
 
-                colsForState.forEach(column => {
+                (colsForState || []).forEach(column => {
                     const colStateBefore = columnStateBeforeMap[column.getColId()];
                     if (colStateBefore && changedPredicate(colStateBefore, column)) {
                         changedColumns.push(column);
@@ -2437,6 +2443,8 @@ export class ColumnModel extends BeanStub {
     }
 
     public getPrimaryColumn(key: string | Column): Column | null {
+        if (!this.primaryColumns) { return null; }
+
         return this.getColumn(key, this.primaryColumns, this.primaryColumnsMap);
     }
 
@@ -2618,7 +2626,7 @@ export class ColumnModel extends BeanStub {
         return this.ready;
     }
 
-    private extractValueColumns(source: ColumnEventType, oldPrimaryColumns: Column[]): void {
+    private extractValueColumns(source: ColumnEventType, oldPrimaryColumns: Column[] | undefined): void {
         this.valueColumns = this.extractColumns(
             oldPrimaryColumns,
             this.valueColumns,
@@ -2660,7 +2668,7 @@ export class ColumnModel extends BeanStub {
         });
     }
 
-    private extractRowGroupColumns(source: ColumnEventType, oldPrimaryColumns: Column[]): void {
+    private extractRowGroupColumns(source: ColumnEventType, oldPrimaryColumns: Column[] | undefined): void {
         this.rowGroupColumns = this.extractColumns(oldPrimaryColumns, this.rowGroupColumns,
             (col: Column, flag: boolean) => col.setRowGroupActive(flag, source),
             (colDef: ColDef) => colDef.rowGroupIndex,
@@ -2686,7 +2694,7 @@ export class ColumnModel extends BeanStub {
         // go though all cols.
         // if value, change
         // if default only, change only if new
-        this.primaryColumns.forEach(col => {
+        (this.primaryColumns || []).forEach(col => {
             const colIsNew = oldPrimaryColumns.indexOf(col) < 0;
             const colDef = col.getColDef();
 
@@ -2788,7 +2796,7 @@ export class ColumnModel extends BeanStub {
         return res;
     }
 
-    private extractPivotColumns(source: ColumnEventType, oldPrimaryColumns: Column[]): void {
+    private extractPivotColumns(source: ColumnEventType, oldPrimaryColumns: Column[] | undefined): void {
         this.pivotColumns = this.extractColumns(
             oldPrimaryColumns,
             this.pivotColumns,
@@ -3042,7 +3050,7 @@ export class ColumnModel extends BeanStub {
             this.gridHeaderRowCount = this.secondaryHeaderRowCount;
             this.gridColumns = this.secondaryColumns.slice();
             this.gridColsArePrimary = false;
-        } else {
+        } else if (this.primaryColumns) {
             this.gridBalancedTree = this.primaryColumnTree.slice();
             this.gridHeaderRowCount = this.primaryHeaderRowCount;
             this.gridColumns = this.primaryColumns.slice();
@@ -3168,8 +3176,8 @@ export class ColumnModel extends BeanStub {
     //    (tree data is a bit different, as parent rows can be filtered on, unlike row grouping)
     private setupQuickFilterColumns(): void {
         if (this.groupAutoColumns) {
-            this.columnsForQuickFilter = this.primaryColumns.concat(this.groupAutoColumns);
-        } else {
+            this.columnsForQuickFilter = (this.primaryColumns || []).concat(this.groupAutoColumns);
+        } else if (this.primaryColumns) {
             this.columnsForQuickFilter = this.primaryColumns;
         }
     }
@@ -3266,6 +3274,8 @@ export class ColumnModel extends BeanStub {
     }
 
     private setLeftValuesOfColumns(source: ColumnEventType): void {
+        if (!this.primaryColumns) { return; }
+
         // go through each list of displayed columns
         const allColumns = this.primaryColumns.slice(0);
 

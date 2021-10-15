@@ -1029,7 +1029,7 @@ export class GridApi {
     /**
      * Returns the current column definitions.
     */
-    public getColumnDefs(): (ColDef | ColGroupDef)[] { return this.columnModel.getColumnDefs(); }
+    public getColumnDefs(): (ColDef | ColGroupDef)[] | undefined { return this.columnModel.getColumnDefs(); }
 
     /** Informs the grid that a filter has changed. This is typically called after a filter change through one of the filter APIs. */
     public onFilterChanged() {
