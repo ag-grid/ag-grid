@@ -305,9 +305,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         const series = this.chart.series;
         series.forEach(s => _.set(s, mappings[expression] || expression, value));
 
-        //TODO: need a more robust approach
-        this.chart.layoutPending = true;
-
         this.raiseChartOptionsChangedEvent();
     }
 
