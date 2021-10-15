@@ -5364,6 +5364,10 @@
       "description": "/** True if filter was changed via floating filter */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "column": {
+      "description": "/** Source column for the filter change, if a single Column can be attributed */",
+      "type": { "returnType": "Column", "optional": true }
+    },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
     "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
     "type": {

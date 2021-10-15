@@ -217,9 +217,12 @@ export class FilterManager extends BeanStub {
         this.updateActiveFilters();
         this.updateFilterFlagInColumns('filterChanged', additionalEventAttributes);
 
+        let column: Column | undefined;
         this.allAdvancedFilters.forEach(filterWrapper => {
             filterWrapper.filterPromise!.then(filter => {
-                if (filter !== filterInstance && filter!.onAnyFilterChanged) {
+                if (filter === filterInstance) {
+                    column = filterWrapper.column;
+                } else if (filter!.onAnyFilterChanged) {
                     filter!.onAnyFilterChanged();
                 }
             });
@@ -228,7 +231,8 @@ export class FilterManager extends BeanStub {
         const filterChangedEvent: FilterChangedEvent = {
             type: Events.EVENT_FILTER_CHANGED,
             api: this.gridApi,
-            columnApi: this.columnApi
+            columnApi: this.columnApi,
+            column: column,
         };
 
         if (additionalEventAttributes) {
