@@ -78,8 +78,8 @@ export interface FilterChangedEvent extends AgGridEvent {
     afterDataChange?: boolean;
     /** True if filter was changed via floating filter */
     afterFloatingFilter?: boolean;
-    /** Source column for the filter change, if a single Column can be attributed */
-    column?: Column;
+    /** Source column(s) for the filter change, if the change can be attributed */
+    columns: Column[];
 }
 
 export interface FilterModifiedEvent extends AgGridEvent {

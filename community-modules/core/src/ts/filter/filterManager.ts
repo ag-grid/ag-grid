@@ -66,6 +66,7 @@ export class FilterManager extends BeanStub {
 
     public setFilterModel(model: { [key: string]: any; }): void {
         const allPromises: AgPromise<void>[] = [];
+        const columns: Column[] = [];
 
         if (model) {
             // mark the filters as we set them, so any active filters left over we stop
@@ -74,6 +75,7 @@ export class FilterManager extends BeanStub {
             this.allAdvancedFilters.forEach((filterWrapper, colId) => {
                 const newModel = model[colId];
 
+                columns.push(filterWrapper.column);
                 allPromises.push(this.setModelOnFilterWrapper(filterWrapper.filterPromise!, newModel));
                 modelKeys.delete(colId);
             });
@@ -88,16 +90,18 @@ export class FilterManager extends BeanStub {
                 }
 
                 const filterWrapper = this.getOrCreateFilterWrapper(column, 'NO_UI');
+                columns.push(filterWrapper.column);
 
                 allPromises.push(this.setModelOnFilterWrapper(filterWrapper.filterPromise!, model[colId]));
             });
         } else {
             this.allAdvancedFilters.forEach(filterWrapper => {
+                columns.push(filterWrapper.column);
                 allPromises.push(this.setModelOnFilterWrapper(filterWrapper.filterPromise!, null));
             });
         }
 
-        AgPromise.all(allPromises).then(() => this.onFilterChanged());
+        AgPromise.all(allPromises).then(() => this.onFilterChanged({ columns }));
     }
 
     private setModelOnFilterWrapper(filterPromise: AgPromise<IFilterComp>, newModel: any): AgPromise<void> {
@@ -213,16 +217,16 @@ export class FilterManager extends BeanStub {
         }
     }
 
-    public onFilterChanged(filterInstance?: IFilterComp, additionalEventAttributes?: any): void {
+    public onFilterChanged(params: { filterInstance?: IFilterComp, additionalEventAttributes?: any, columns?: Column[]} = {}): void {
+        const { filterInstance, additionalEventAttributes, columns } = params;
+
         this.updateActiveFilters();
         this.updateFilterFlagInColumns('filterChanged', additionalEventAttributes);
 
-        let column: Column | undefined;
         this.allAdvancedFilters.forEach(filterWrapper => {
-            filterWrapper.filterPromise!.then(filter => {
-                if (filter === filterInstance) {
-                    column = filterWrapper.column;
-                } else if (filter!.onAnyFilterChanged) {
+            if (!filterWrapper.filterPromise) { return; }
+            filterWrapper.filterPromise.then(filter => {
+                if (filter && filter !== filterInstance && filter.onAnyFilterChanged) {
                     filter!.onAnyFilterChanged();
                 }
             });
@@ -232,7 +236,7 @@ export class FilterManager extends BeanStub {
             type: Events.EVENT_FILTER_CHANGED,
             api: this.gridApi,
             columnApi: this.columnApi,
-            column: column,
+            columns: columns || [],
         };
 
         if (additionalEventAttributes) {
@@ -423,7 +427,7 @@ export class FilterManager extends BeanStub {
                 this.eventService.dispatchEvent(event);
             },
             filterChangedCallback: (additionalEventAttributes?: any) =>
-                this.onFilterChanged(filterInstance, additionalEventAttributes),
+                this.onFilterChanged({filterInstance, additionalEventAttributes, columns: [column]}),
             doesRowPassOtherFilter: node => this.doesRowPassOtherFilters(filterInstance, node),
         };
 
@@ -522,18 +526,20 @@ export class FilterManager extends BeanStub {
 
     private onNewColumnsLoaded(): void {
         let atLeastOneFilterGone = false;
+        const columns: Column[] = [];
 
         this.allAdvancedFilters.forEach(filterWrapper => {
             const oldColumn = !this.columnModel.getPrimaryColumn(filterWrapper.column);
 
             if (oldColumn) {
                 atLeastOneFilterGone = true;
+                columns.push(filterWrapper.column);
                 this.disposeFilterWrapper(filterWrapper, 'filterDestroyed');
             }
         });
 
         if (atLeastOneFilterGone) {
-            this.onFilterChanged();
+            this.onFilterChanged({ columns });
         }
     }
 
@@ -543,7 +549,7 @@ export class FilterManager extends BeanStub {
 
         if (filterWrapper) {
             this.disposeFilterWrapper(filterWrapper, source);
-            this.onFilterChanged();
+            this.onFilterChanged({columns: [column]});
         }
     }
 
