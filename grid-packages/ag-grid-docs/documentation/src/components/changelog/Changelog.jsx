@@ -319,7 +319,7 @@ const Changelog = () => {
           <div className={styles["note"]}>
             The AG Grid Changelog lists the feature requests implemented and
             defects resolved across AG Grid releases. If you can’t find the item
-            you’re looking for, check the
+            you’re looking for, check the{" "}
             <a href="https://www.ag-grid.com/ag-grid-pipeline/">Pipeline</a> for
             items in our backlog.
           </div>
@@ -333,12 +333,22 @@ const Changelog = () => {
               paddingTop: "10px",
             }}
           >
-            <div style={{ width: "35%" }}>
+            <div
+              style={{
+                width: "35%",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
               <input
                 type="text"
                 className={"clearable global-report-search"}
                 placeholder={"Search changelog... (e.g. AG-1280 or filtering)"}
-                style={{ height: "50px", width: "100%", fontSize: "20px" }}
+                style={{
+                  height: "50px",
+                  width: "100%",
+                  fontSize: "20px",
+                }}
                 onChange={onQuickFilterChange}
               ></input>
             </div>

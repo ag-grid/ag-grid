@@ -229,7 +229,7 @@ const Pipeline = () => {
               our product backlog. Use it to see the items scheduled for our
               next release or to look up the status of a specific item. If you
               can’t find the item you’re looking for, check the{" "}
-              <a href="https://www.ag-grid.com/ag-grid-changelog/">Pipeline</a>{" "}
+              <a href="https://www.ag-grid.com/ag-grid-changelog/">Changelog</a>{" "}
               for items in our backlog.
             </p>
           </div>
