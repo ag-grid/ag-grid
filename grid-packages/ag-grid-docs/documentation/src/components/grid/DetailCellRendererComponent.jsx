@@ -7,6 +7,7 @@ const DetailCellRenderer = forwardRef((props, ref) => {
       style={{
         whiteSpace: "normal",
         padding: "25px",
+        fontSize: "16px",
       }}
       dangerouslySetInnerHTML={{ __html: props.message }}
     ></div>

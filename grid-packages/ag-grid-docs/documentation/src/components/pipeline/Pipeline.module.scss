@@ -40,11 +40,14 @@
 }
 .checkbox-label-div {
   padding-left: 15px;
+  display: flex;
+  align-items: center;
 }
 
 .label-for-checkboxes {
   padding-left: 10px;
   padding-right: 10px;
+  font-size: 20px;
 }
 
 .header-padding-class {
@@ -54,4 +57,14 @@
 
 .font-class {
   font-size: 16px !important;
+}
+
+.anchor-tag-class::after {
+  content: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAQElEQVR42qXKwQkAIAxDUUdxtO6/RBQkQZvSi8I/pL4BoGw/XPkh4XigPmsUgh0626AjRsgxHTkUThsG2T/sIlzdTsp52kSS1wAAAABJRU5ErkJggg==);
+  margin: 0 3px 0 5px;
+}
+
+.checkbox-class {
+  width: 20px;
+  height: 20px;
 }

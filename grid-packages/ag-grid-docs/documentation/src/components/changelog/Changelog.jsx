@@ -6,10 +6,7 @@ import DetailCellRenderer from "../grid/DetailCellRendererComponent"
 import PaddingCellRenderer from "../grid/PaddingCellRenderer"
 import ChevronButtonCellRenderer from "../grid/ChevronButtonRenderer"
 import Grid from "../grid/Grid"
-
-const removeNFormatter = params => {
-  return params.value === "Y" ? "Y" : ""
-}
+import DepOrBreakFilterComponent from "../grid/DepOrBreakFilterComponent"
 
 const COLUMN_DEFS = [
   {
@@ -43,7 +40,7 @@ const COLUMN_DEFS = [
     field: "summary",
     tooltipField: "summary",
     filter: false,
-    width: 500,
+    width: 635,
   },
   {
     field: "issueType",
@@ -82,19 +79,18 @@ const COLUMN_DEFS = [
   },
   {
     field: "deprecated",
-    width: 147,
+    hide: true,
+    filter: "depOrBreakFilterComponent",
     valueGetter: params => {
       return params.node.data.deprecationNotes ? "Y" : "N"
     },
-    valueFormatter: removeNFormatter,
   },
   {
     field: "breakingChange",
-    width: 185,
+    hide: true,
     valueGetter: params => {
       return params.node.data.breakingChangesNotes ? "Y" : "N"
     },
-    valueFormatter: removeNFormatter,
   },
 ]
 
@@ -102,13 +98,16 @@ const defaultColDef = {
   filter: true,
   sortable: true,
   resizable: true,
+  suppressMenu: true,
   cellClass: styles["font-class"],
   headerClass: styles["font-class"],
 }
 
 const detailCellRendererParams = params => {
   function produceHTML(fieldName, fieldInfo) {
-    return `<br><strong>${fieldName}:</strong><br> ${fieldInfo}`
+    return fieldName !== "Link to Documentation"
+      ? `<strong>${fieldName}:</strong><br> ${fieldInfo}<br><br>`
+      : `<strong>${fieldName}:</strong><br> ${fieldInfo}`
   }
 
   let moreInfo = params.data.moreInformation
@@ -150,8 +149,9 @@ const detailCellRendererParams = params => {
             ? element.substr(element.indexOf("http"), length)
             : element.substr(element.indexOf("http"))
           let htmlLink = isEndIndex
-            ? `<a href="${link}">${link}</a>${element.substr(endIndex)}`
-            : `<a href="${link}">${link}</a>`
+            ? `<a class=${styles["anchor-tag-class"]} href="${link}"
+             target="_blank">${link}</a>${element.substr(endIndex)}`
+            : `<a class=${styles["anchor-tag-class"]} target="_blank" href="${link}">${link}</a>`
           return element.substr(0, beginningIndex) + htmlLink
         }
         return element
@@ -177,6 +177,8 @@ const Changelog = () => {
   const [currentReleaseNotes, setCurrentReleaseNotes] = useState(null)
 
   const dropdownRef = useRef()
+  const deprecatedCheckboxRef = useRef()
+  const breakingChangeCheckboxRef = useRef()
 
   useEffect(() => {
     fetch("/changelog/changelog.json")
@@ -196,7 +198,6 @@ const Changelog = () => {
   }, [])
 
   const gridReady = params => {
-    // params.api.sizeColumnsToFit()
     setGridApi(params.api)
   }
 
@@ -210,6 +211,12 @@ const Changelog = () => {
 
   const isExternalFilterPresent = () => {
     return dropdownRef.current.value !== "All"
+  }
+
+  const filterOnDepsAndBreaking = (field, changed) => {
+    gridApi.getFilterInstance("deprecated", instance => {
+      instance.getFrameworkComponentInstance().checkboxChanged(field, changed)
+    })
   }
 
   const changeVersion = () => {
@@ -275,10 +282,10 @@ const Changelog = () => {
         setTheFilter("issueType", "Task", event.target.checked)
         break
       case "breakingChange":
-        setTheFilter("breakingChange", "N", !event.target.checked)
+        filterOnDepsAndBreaking("breakingChange", event.target.checked)
         break
       case "deprecated":
-        setTheFilter("deprecated", "N", !event.target.checked)
+        filterOnDepsAndBreaking("deprecated", event.target.checked)
         break
       default:
         break
@@ -290,19 +297,27 @@ const Changelog = () => {
       {!IS_SSR && (
         <div style={{ height: "100%", width: "100%" }}>
           <div className={styles["note"]}>
-            The AG Grid Changelog lists the feature request and defects
+            The AG Grid Changelog lists the feature requests and defects
             implemented across AG Grid releases. If you can’t find the item
             you’re looking for, check the <a href="/pipeline">Pipeline</a> for
             items in our backlog.
           </div>
 
-          <div className={"global-search-pane"}>
-            <div style={{ display: "flex", flexDirection: "row" }}>
+          <div
+            className={"global-search-pane"}
+            style={{
+              display: "flex",
+              width: "100%",
+              paddingBottom: "20px",
+              paddingTop: "10px",
+            }}
+          >
+            <div style={{ width: "35%" }}>
               <input
                 type="text"
                 className={"clearable global-report-search"}
-                placeholder={"Issue Search (eg. AG-1111/popup/feature)..."}
-                style={{ height: "50px", width: "100%" }}
+                placeholder={"Search changelog... (e.g. AG-1280 or filtering)"}
+                style={{ height: "50px", width: "100%", fontSize: "20px" }}
                 onChange={onQuickFilterChange}
               ></input>
             </div>
@@ -313,64 +328,91 @@ const Changelog = () => {
                 display: "flex",
                 paddingTop: "10px",
                 paddingBottom: "10px",
+                paddingLeft: "20px",
               }}
             >
-              <div style={{ marginLeft: "auto" }}>
-                <input
-                  id="featureRequest-checkbox"
-                  type="checkbox"
-                  defaultChecked={true}
-                  onChange={event => checkboxUnchecked(event, "featureRequest")}
-                ></input>
-                <label
-                  htmlFor="featureRequest-checkbox"
-                  className={styles["label-for-checkboxes"]}
-                >
-                  Feature Requests
-                </label>
+              <div className={styles["checkbox-label-div"]}>
+                <div>
+                  <input
+                    id="featureRequest-checkbox"
+                    type="checkbox"
+                    className={styles["checkbox-class"]}
+                    defaultChecked
+                    onChange={event =>
+                      checkboxUnchecked(event, "featureRequest")
+                    }
+                  ></input>
+                </div>
+                <div>
+                  <label
+                    htmlFor="featureRequest-checkbox"
+                    className={styles["label-for-checkboxes"]}
+                  >
+                    Feature Requests
+                  </label>
+                </div>
               </div>
               <div className={styles["checkbox-label-div"]}>
-                <input
-                  id="defect-checkbox"
-                  onChange={event => checkboxUnchecked(event, "defect")}
-                  type="checkbox"
-                  defaultChecked
-                ></input>
-                <label
-                  htmlFor="defect-checkbox"
-                  className={styles["label-for-checkboxes"]}
-                >
-                  Defects
-                </label>
+                <div>
+                  <input
+                    id="defect-checkbox"
+                    onChange={event => checkboxUnchecked(event, "defect")}
+                    type="checkbox"
+                    className={styles["checkbox-class"]}
+                    defaultChecked
+                  ></input>
+                </div>
+                <div>
+                  <label
+                    htmlFor="defect-checkbox"
+                    className={styles["label-for-checkboxes"]}
+                  >
+                    Defects
+                  </label>
+                </div>
               </div>
               <div className={styles["checkbox-label-div"]}>
-                <input
-                  id="deprecated-checkbox"
-                  onChange={event => checkboxUnchecked(event, "deprecated")}
-                  type="checkbox"
-                ></input>
-                <label
-                  htmlFor="deprecated-checkbox"
-                  className={styles["label-for-checkboxes"]}
-                >
-                  Deprecations
-                </label>
+                <div>
+                  <input
+                    id="deprecated-checkbox"
+                    className={styles["checkbox-class"]}
+                    ref={deprecatedCheckboxRef}
+                    onChange={event => checkboxUnchecked(event, "deprecated")}
+                    type="checkbox"
+                  ></input>
+                </div>
+                <div>
+                  <label
+                    htmlFor="deprecated-checkbox"
+                    className={styles["label-for-checkboxes"]}
+                  >
+                    Deprecations
+                  </label>
+                </div>
               </div>
               <div
                 className={styles["checkbox-label-div"]}
                 style={{ paddingRight: "10px" }}
               >
-                <input
-                  id="breakingChange-checkbox"
-                  onChange={event => checkboxUnchecked(event, "breakingChange")}
-                  type="checkbox"
-                ></input>
-                <label
-                  htmlFor="breakingChange-checkbox"
-                  className={styles["label-for-checkboxes"]}
-                >
-                  Breaking Changes
-                </label>
+                <div>
+                  <input
+                    id="breakingChange-checkbox"
+                    className={styles["checkbox-class"]}
+                    ref={breakingChangeCheckboxRef}
+                    onChange={event =>
+                      checkboxUnchecked(event, "breakingChange")
+                    }
+                    type="checkbox"
+                  ></input>
+                </div>
+                <div>
+                  <label
+                    htmlFor="breakingChange-checkbox"
+                    className={styles["label-for-checkboxes"]}
+                  >
+                    Breaking Changes
+                  </label>
+                </div>
               </div>
               <VersionDropdownMenu
                 versions={versions}
@@ -389,6 +431,7 @@ const Changelog = () => {
               myDetailCellRenderer: DetailCellRenderer,
               paddingCellRenderer: PaddingCellRenderer,
               chevronButtonCellRenderer: ChevronButtonCellRenderer,
+              depOrBreakFilterComponent: DepOrBreakFilterComponent,
             }}
             defaultColDef={defaultColDef}
             detailRowAutoHeight={true}

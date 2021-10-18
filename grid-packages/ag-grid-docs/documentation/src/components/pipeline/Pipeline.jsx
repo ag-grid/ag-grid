@@ -89,6 +89,7 @@ const defaultColDef = {
   sortable: true,
   cellClass: styles["font-class"],
   headerClass: styles["font-class"],
+  suppressMenu: true,
 }
 
 const IS_SSR = typeof window === "undefined"
@@ -125,8 +126,9 @@ const detailCellRendererParams = params => {
             ? element.substr(element.indexOf("http"), length)
             : element.substr(element.indexOf("http"))
           let htmlLink = isEndIndex
-            ? `<a href="${link}">${link}</a>${element.substr(endIndex)}`
-            : `<a href="${link}">${link}</a>`
+            ? `<a class=${styles["anchor-tag-class"]} href="${link}"
+          target="_blank">${link}</a>${element.substr(endIndex)}`
+            : `<a class=${styles["anchor-tag-class"]} target="_blank" href="${link}">${link}</a>`
           return element.substr(0, beginningIndex) + htmlLink
         }
         return element
@@ -209,72 +211,103 @@ const Pipeline = () => {
         <div style={{ height: "100%", width: "100%" }}>
           <div className={styles["note"]}>
             <p>
-              The AG Grid pipeline lists the features and bug fixes we have in
-              our product backlog. You can use it to see the items we’ve
-              scheduled for our next release or look up the status of a specific
-              item. If you can’t find the item you’re looking for, check the{" "}
-              <a href="/changelog">Changelog</a> for a list of completed items.
+              The AG Grid pipeline lists the features and bug fixes in our
+              product backlog. Use it to see the items scheduled for our next
+              release or to look up the status of a specific item. If you can’t
+              find the item you’re looking for, check the{" "}
+              <a href="/changelog">changelog</a> containing the list of
+              completed items.
             </p>
           </div>
           <div
             className={"global-search-pane"}
-            style={{ display: "inline-block", width: "100%" }}
+            style={{
+              display: "flex",
+              width: "100%",
+              paddingBottom: "20px",
+              paddingTop: "10px",
+            }}
           >
-            <input
-              type="text"
-              className={"clearable global-report-search"}
-              placeholder={"Issue Search (eg. AG-1111/popup/feature)..."}
-              style={{ height: "50px", width: "100%" }}
-              onChange={onQuickFilterChange}
-            ></input>
+            <div
+              style={{
+                width: "40%",
+              }}
+            >
+              <input
+                type="text"
+                className={"clearable global-report-search"}
+                placeholder={"Search pipeline… (e.g. AG-1280 or filtering)"}
+                style={{ height: "50px", width: "100%", fontSize: "20px" }}
+                onChange={onQuickFilterChange}
+              ></input>
+            </div>
             <div
               id="checkbox-container"
               style={{
                 display: "flex",
                 paddingTop: "10px",
                 paddingBottom: "10px",
+                paddingLeft: "20px",
+                width: "75%",
               }}
             >
-              <div style={{ marginLeft: "auto" }}>
-                <input
-                  id="featureRequest-checkbox"
-                  type="checkbox"
-                  defaultChecked={true}
-                  onChange={event => checkboxUnchecked(event, "featureRequest")}
-                ></input>
-                <label
-                  htmlFor="featureRequest-checkbox"
-                  style={{ paddingLeft: "10px", paddingRight: "10px" }}
-                >
-                  Feature Requests
-                </label>
+              <div className={styles["checkbox-label-div"]}>
+                <div>
+                  <input
+                    id="featureRequest-checkbox"
+                    type="checkbox"
+                    className={styles["checkbox-class"]}
+                    defaultChecked={true}
+                    onChange={event =>
+                      checkboxUnchecked(event, "featureRequest")
+                    }
+                  ></input>
+                </div>
+                <div>
+                  <label
+                    htmlFor="featureRequest-checkbox"
+                    className={styles["label-for-checkboxes"]}
+                  >
+                    Feature Requests
+                  </label>
+                </div>
               </div>
               <div className={styles["checkbox-label-div"]}>
-                <input
-                  id="bug-checkbox"
-                  onChange={event => checkboxUnchecked(event, "bug")}
-                  type="checkbox"
-                  defaultChecked
-                ></input>
-                <label
-                  htmlFor="bug-checkbox"
-                  style={{ paddingLeft: "10px", paddingRight: "10px" }}
-                >
-                  Defects
-                </label>
+                <div>
+                  <input
+                    id="bug-checkbox"
+                    onChange={event => checkboxUnchecked(event, "bug")}
+                    className={styles["checkbox-class"]}
+                    type="checkbox"
+                    defaultChecked
+                  ></input>
+                </div>
+                <div>
+                  <label
+                    htmlFor="bug-checkbox"
+                    className={styles["label-for-checkboxes"]}
+                  >
+                    Defects
+                  </label>
+                </div>
               </div>
               <div className={styles["checkbox-label-div"]}>
-                <input
-                  id="nextRelease-checkbox"
-                  onChange={event => checkboxUnchecked(event, "nextRelease")}
-                  type="checkbox"
-                ></input>
-                <label
-                  htmlFor="nextRelease-checkbox"
-                  style={{ paddingLeft: "10px", paddingRight: "10px" }}
-                >
-                  Next Release
-                </label>
+                <div>
+                  <input
+                    className={styles["checkbox-class"]}
+                    id="nextRelease-checkbox"
+                    onChange={event => checkboxUnchecked(event, "nextRelease")}
+                    type="checkbox"
+                  ></input>
+                </div>
+                <div>
+                  <label
+                    htmlFor="nextRelease-checkbox"
+                    className={styles["label-for-checkboxes"]}
+                  >
+                    Next Release
+                  </label>
+                </div>
               </div>
             </div>
           </div>
