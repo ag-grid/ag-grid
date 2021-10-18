@@ -30,7 +30,7 @@ const COLUMN_DEFS = [
   {
     field: "summary",
     tooltipField: "summary",
-    width: 740,
+    width: 737,
     filter: false,
   },
   {
@@ -67,7 +67,7 @@ const COLUMN_DEFS = [
   {
     field: "features",
     headerName: "Feature",
-    flex: 1,
+    width: 127,
     valueFormatter: params => {
       let isValue = !!params.value
       return isValue ? params.value.toString().replaceAll("_", " ") : undefined
