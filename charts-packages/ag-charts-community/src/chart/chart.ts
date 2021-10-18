@@ -496,7 +496,7 @@ export abstract class Chart extends Observable {
         return this._series;
     }
 
-    private scheduleLayout() {
+    protected scheduleLayout() {
         this.layoutPending = true;
     }
 

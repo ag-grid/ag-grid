@@ -9,12 +9,13 @@ export class PolarChart extends Chart {
     static className = 'PolarChart';
     static type = 'polar';
 
-    @reactive('layoutChange') padding = new Padding(40);
+    padding = new Padding(40);
 
     constructor(document = window.document) {
         super(document);
 
         this.scene.root!.append(this.legend.group);
+        this.padding.addEventListener('layoutChange', this.scheduleLayout, this);
     }
 
     get seriesRoot(): Node {
