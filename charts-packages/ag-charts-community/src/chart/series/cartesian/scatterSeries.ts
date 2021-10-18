@@ -78,7 +78,7 @@ export class ScatterSeries extends CartesianSeries {
     set fill(value: string | undefined) {
         if (this._fill !== value) {
             this._fill = value;
-            this.scheduleData();
+            this.scheduleUpdate();
         }
     }
     get fill(): string | undefined {
@@ -92,7 +92,7 @@ export class ScatterSeries extends CartesianSeries {
     set stroke(value: string | undefined) {
         if (this._stroke !== value) {
             this._stroke = value;
-            this.scheduleData();
+            this.scheduleUpdate();
         }
     }
 
@@ -107,7 +107,7 @@ export class ScatterSeries extends CartesianSeries {
     set strokeWidth(value: number) {
         if (this._strokeWidth !== value) {
             this._strokeWidth = value;
-            this.update();
+            this.scheduleUpdate();
         }
     }
     get strokeWidth(): number {
@@ -121,7 +121,7 @@ export class ScatterSeries extends CartesianSeries {
     set fillOpacity(value: number) {
         if (this._fillOpacity !== value) {
             this._fillOpacity = value;
-            this.scheduleLayout();
+            this.scheduleUpdate();
         }
     }
     get fillOpacity(): number {
@@ -135,7 +135,7 @@ export class ScatterSeries extends CartesianSeries {
     set strokeOpacity(value: number) {
         if (this._strokeOpacity !== value) {
             this._strokeOpacity = value;
-            this.scheduleLayout();
+            this.scheduleUpdate();
         }
     }
     get strokeOpacity(): number {
@@ -166,7 +166,6 @@ export class ScatterSeries extends CartesianSeries {
 
         marker.addPropertyListener('shape', this.onMarkerShapeChange, this);
         marker.addEventListener('change', this.scheduleUpdate, this);
-        marker.addPropertyListener('maxSize', this.scheduleData, this);
 
         this.addPropertyListener('xKey', () => this.xData = []);
         this.addPropertyListener('yKey', () => this.yData = []);
@@ -175,13 +174,11 @@ export class ScatterSeries extends CartesianSeries {
         label.enabled = false;
         label.addEventListener('change', this.scheduleUpdate, this);
         label.addEventListener('dataChange', this.scheduleData, this);
-        label.addPropertyListener('fontSize', this.scheduleData, this);
     }
 
     onMarkerShapeChange() {
         this.markerSelection = this.markerSelection.setData([]);
         this.markerSelection.exit.remove();
-        this.update();
 
         this.fireEvent({ type: 'legendChange' });
     }
