@@ -675,7 +675,8 @@ export class BarSeries extends CartesianSeries {
         }
 
         const {
-            fillOpacity, strokeOpacity, shadow, formatter, xKey, flipXY,
+            fills, strokes, fillOpacity, strokeOpacity, shadow, formatter,
+            xKey, flipXY, yKeys,
             chart: { highlightedDatum },
             highlightStyle: {
                 fill: deprecatedFill,
@@ -690,12 +691,24 @@ export class BarSeries extends CartesianSeries {
         } = this;
 
         this.rectSelection.each((rect, datum, index) => {
+            let colorIndex = 0;
+            let i = 0;
+            for (let j = 0; j < yKeys.length; j++) {
+                const stack = yKeys[j];
+                i = stack.indexOf(datum.yKey);
+                if (i >= 0) {
+                    colorIndex += i;
+                    break;
+                }
+                colorIndex += stack.length;
+            }
+
             const isDatumHighlighted = datum === highlightedDatum;
-            const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : datum.fill;
-            const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : datum.stroke;
+            const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : fills[colorIndex % fills.length];
+            const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : strokes[colorIndex % fills.length];
             const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
                 ? highlightedDatumStrokeWidth
-                : this.getStrokeWidth(datum.strokeWidth, datum);
+                : this.getStrokeWidth(this.strokeWidth, datum);
 
             let format: BarSeriesFormat | undefined = undefined;
             if (formatter) {

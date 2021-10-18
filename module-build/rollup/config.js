@@ -2,12 +2,12 @@ const path = require('path');
 const node = require('rollup-plugin-node-resolve');
 
 const builds = {
-    'es-dev': {
+    'esm-dev': {
         format: 'es',
         env: 'development',
         extension: '.esm.js'
     },
-    'prod': {
+    'esm-prod': {
         format: 'es',
         env: 'production',
         extension: '.esm.min.js'
@@ -56,7 +56,6 @@ function genConfig(buildsToUse, buildName, sourceDirectory, moduleName) {
         plugins: [
             node()      // for utils package - defaulting to use index.js
         ].concat(build.plugins || []),
-        external: id => /@ag-grid-/.test(id), // all other @ag-grid deps should be treated as externals so as to prevent duplicate modules when using more than one cjs file
         output: {
             file: path.resolve(sourceDirectory, `./dist/${moduleName}${build.extension}`),
             format: build.format,
@@ -70,6 +69,12 @@ function genConfig(buildsToUse, buildName, sourceDirectory, moduleName) {
             }
         }
     };
+
+    // cjs files are like modules - you need to import them individually
+    // esm files are like umd files - they include everything
+    if(!buildName.startsWith('esm')) {
+        config['external'] = id => /@ag-grid-/.test(id); // all other @ag-grid deps should be treated as externals so as to prevent duplicate modules when using more than one cjs file
+    }
 
     Object.defineProperty(config, '_name', {
         enumerable: false,

@@ -507,7 +507,10 @@
   "getColumnDef": { "type": { "arguments": { "key": "string | Column" } } },
   "getColumnDefs": {
     "description": "/** Returns the current column definitions. */",
-    "type": { "arguments": {}, "returnType": "(ColDef | ColGroupDef)[]" }
+    "type": {
+      "arguments": {},
+      "returnType": "(ColDef | ColGroupDef)[] | undefined"
+    }
   },
   "onFilterChanged": {
     "description": "/** Informs the grid that a filter has changed. This is typically called after a filter change through one of the filter APIs. */",

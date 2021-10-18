@@ -51,6 +51,7 @@ const VueExample = {
                 }
             ],
             defaultColDef: {
+                editable: true,
                 sortable: true,
                 flex: 1,
                 minWidth: 100,

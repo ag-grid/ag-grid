@@ -11,6 +11,6 @@ export class MedalCellRenderer implements AgRendererComponent {
     private displayValue: string;
 
     agInit(params: ICellRendererParams): void {
-        this.displayValue = new Array(params.value).fill('#').join('');
+        this.displayValue = new Array(parseInt(params.value, 10)).fill('#').join('');
     }
 }

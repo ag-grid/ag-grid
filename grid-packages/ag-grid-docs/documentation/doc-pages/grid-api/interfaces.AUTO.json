@@ -2677,6 +2677,7 @@
     "type": {
       "afterDataChange?": "boolean",
       "afterFloatingFilter?": "boolean",
+      "columns": "Column[]",
       "api": "GridApi",
       "columnApi": "ColumnApi",
       "type": "string"
@@ -2684,6 +2685,7 @@
     "docs": {
       "afterDataChange?": "/** True if the filter was changed as a result of data changing */",
       "afterFloatingFilter?": "/** True if filter was changed via floating filter */",
+      "columns": "/** Source column(s) for the filter change, if the change can be attributed */",
       "type": "/** Event identifier */"
     }
   },

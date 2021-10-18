@@ -1,5 +1,6 @@
 const gulp = require('gulp');
 const {series} = gulp;
+const { EOL } = require('os');
 
 const fs = require('fs');
 const clean = require('gulp-clean');
@@ -25,9 +26,38 @@ const exportedEnterpriseModules = fs.readFileSync('./src/main.ts').toString().sp
     .filter(line => line.includes('export ') && line.includes('@ag-grid-enterprise'))
     .map(line => line.substring(line.indexOf("@ag-grid-enterprise"), line.lastIndexOf('"') === -1 ? line.lastIndexOf('\'') : line.lastIndexOf('"')))
 
+
+function updateBetweenStrings(
+    fileContents,
+    startString,
+    endString,
+    contentToInsert) {
+
+    const startIndex = fileContents.indexOf(startString) + startString.length;
+    const endIndex = fileContents.indexOf(endString);
+
+    return `${fileContents.substring(0, startIndex)}${EOL}${contentToInsert}${EOL}${fileContents.substring(endIndex)}`;
+}
+
 // Start of Typescript related tasks
 const tscMainTask = () => {
     const tsProject = gulpTypescript.createProject('./tsconfig-main.json', {typescript: typescript});
+
+
+    const communityMainFilename = './node_modules/ag-grid-community/dist/lib/main.d.ts';
+    const communityMainFileContents = fs.readFileSync(communityMainFilename, 'UTF-8');
+
+    const newContents = communityMainFileContents.replace(/from .*/g, 'from "ag-grid-community";')
+
+    const mainTsFilename = './src/main.ts';
+    const mainTsFileContents = fs.readFileSync(mainTsFilename, 'UTF-8');
+
+    const updatedUtilFileContents = updateBetweenStrings(mainTsFileContents,
+        '/* COMMUNITY_EXPORTS_START_DO_NOT_DELETE */',
+        '/* COMMUNITY_EXPORTS_END_DO_NOT_DELETE */',
+        newContents);
+
+    fs.writeFileSync(mainTsFilename, updatedUtilFileContents, 'UTF-8');
 
     const tsResult = gulp
         .src('./src/main.ts')

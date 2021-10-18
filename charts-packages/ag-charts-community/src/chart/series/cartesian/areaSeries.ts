@@ -549,7 +549,7 @@ export class AreaSeries extends CartesianSeries {
 
     private updateMarkerSelection(): void {
         const MarkerShape = getMarker(this.marker.shape);
-        const data = this.marker.enabled && MarkerShape ? this.markerSelectionData : [];
+        const data = MarkerShape ? this.markerSelectionData : [];
         const updateMarkers = this.markerSelection.setData(data);
         updateMarkers.exit.remove();
         const enterMarkers = updateMarkers.enter.append(MarkerShape);
@@ -557,12 +557,15 @@ export class AreaSeries extends CartesianSeries {
     }
 
     private updateMarkerNodes(): void {
-        if (!this.chart) {
+        if (!this.chart || !this.marker.enabled) {
             return;
         }
 
         const {
             xKey, marker, seriesItemEnabled,
+            yKeys,
+            fills,
+            strokes,
             chart: { highlightedDatum },
             highlightStyle: {
                 fill: deprecatedFill,
@@ -580,9 +583,10 @@ export class AreaSeries extends CartesianSeries {
         const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : this.strokeWidth;
 
         this.markerSelection.each((node, datum) => {
+            const yKeyIndex = yKeys.indexOf(datum.yKey);
             const isDatumHighlighted = datum === highlightedDatum;
-            const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : marker.fill || datum.fill;
-            const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : marker.stroke || datum.stroke;
+            const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : marker.fill || fills[yKeyIndex % fills.length];
+            const stroke = isDatumHighlighted && highlightedStroke !== undefined ? highlightedStroke : marker.stroke || strokes[yKeyIndex % fills.length];
             const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
                 ? highlightedDatumStrokeWidth
                 : markerStrokeWidth;
@@ -618,9 +622,7 @@ export class AreaSeries extends CartesianSeries {
     }
 
     private updateLabelSelection(): void {
-        const { label } = this;
-        const data = label.enabled ? this.labelSelectionData : [];
-        const updateLabels = this.labelSelection.setData(data);
+        const updateLabels = this.labelSelection.setData(this.labelSelectionData);
         updateLabels.exit.remove();
         const enterLabels = updateLabels.enter.append(Text);
         this.labelSelection = updateLabels.merge(enterLabels);
@@ -631,22 +633,21 @@ export class AreaSeries extends CartesianSeries {
             return;
         }
 
-        const labelEnabled = this.label.enabled;
-
+        const { enabled: labelEnabled, fontStyle, fontWeight, fontSize, fontFamily, color } = this.label;
         this.labelSelection.each((text, datum) => {
             const { point, label } = datum;
 
             if (label && labelEnabled) {
-                text.fontStyle = label.fontStyle;
-                text.fontWeight = label.fontWeight;
-                text.fontSize = label.fontSize;
-                text.fontFamily = label.fontFamily;
+                text.fontStyle = fontStyle;
+                text.fontWeight = fontWeight;
+                text.fontSize = fontSize;
+                text.fontFamily = fontFamily;
                 text.textAlign = label.textAlign;
                 text.textBaseline = label.textBaseline;
                 text.text = label.text;
                 text.x = point.x;
                 text.y = point.y - 10;
-                text.fill = label.fill;
+                text.fill = color;
                 text.visible = true;
                 text.opacity = this.getOpacity(datum);
             } else {

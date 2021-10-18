@@ -1347,6 +1347,14 @@
                   "angular",
                   "vue"
                 ]
+              },
+              {
+                "title": "Provide/Inject",
+                "url": "/component-provide-inject/",
+                "showInCollapsed": true,
+                "frameworks": [
+                  "vue"
+                ]
               }
             ]
           }

@@ -108,7 +108,6 @@ export class LineSeries extends CartesianSeries {
         marker.fill = '#c16068';
         marker.stroke = '#874349';
         marker.addPropertyListener('shape', this.onMarkerShapeChange, this);
-        marker.addPropertyListener('enabled', this.onMarkerEnabledChange, this);
         marker.addEventListener('change', this.scheduleUpdate, this);
 
         label.enabled = false;
@@ -121,13 +120,6 @@ export class LineSeries extends CartesianSeries {
         this.scheduleUpdate();
 
         this.fireEvent({ type: 'legendChange' });
-    }
-
-    protected onMarkerEnabledChange(event: PropertyChangeEvent<CartesianSeriesMarker, boolean>) {
-        if (!event.value) {
-            this.nodeSelection = this.nodeSelection.setData([]);
-            this.nodeSelection.exit.remove();
-        }
     }
 
     setColors(fills: string[], strokes: string[]) {
@@ -414,23 +406,23 @@ export class LineSeries extends CartesianSeries {
     }
 
     private updateTextNodes() {
-        const labelEnabled = this.label.enabled;
-
         this.nodeSelection.selectByClass(Text)
             .each((text, datum) => {
                 const { point, label } = datum;
 
+                const { enabled: labelEnabled, fontStyle, fontWeight, fontSize, fontFamily, color } = this.label;
+
                 if (label && labelEnabled) {
-                    text.fontStyle = label.fontStyle;
-                    text.fontWeight = label.fontWeight;
-                    text.fontSize = label.fontSize;
-                    text.fontFamily = label.fontFamily;
+                    text.fontStyle = fontStyle;
+                    text.fontWeight = fontWeight;
+                    text.fontSize = fontSize;
+                    text.fontFamily = fontFamily;
                     text.textAlign = label.textAlign;
                     text.textBaseline = label.textBaseline;
                     text.text = label.text;
                     text.x = point.x;
                     text.y = point.y - 10;
-                    text.fill = label.fill;
+                    text.fill = color;
                     text.visible = true;
                 } else {
                     text.visible = false;

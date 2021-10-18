@@ -368,6 +368,7 @@ export class ScatterSeries extends CartesianSeries {
         const {
             marker, xKey, yKey, strokeWidth, fillOpacity, strokeOpacity, fill: seriesFill, stroke: seriesStroke,
             chart: { highlightedDatum },
+            sizeScale, sizeData,
             highlightStyle: {
                 fill: deprecatedFill,
                 stroke: deprecatedStroke,
@@ -382,6 +383,8 @@ export class ScatterSeries extends CartesianSeries {
         const markerStrokeWidth = marker.strokeWidth !== undefined ? marker.strokeWidth : strokeWidth;
         const { formatter } = marker;
 
+        sizeScale.range = [marker.size, marker.maxSize];
+
         this.markerSelection.each((node, datum, index) => {
             const isDatumHighlighted = datum === highlightedDatum;
             const fill = isDatumHighlighted && highlightedFill !== undefined ? highlightedFill : marker.fill || seriesFill;
@@ -389,6 +392,7 @@ export class ScatterSeries extends CartesianSeries {
             const strokeWidth = isDatumHighlighted && highlightedDatumStrokeWidth !== undefined
                 ? highlightedDatumStrokeWidth
                 : this.getStrokeWidth(markerStrokeWidth, datum);
+            const size = sizeData.length ? sizeScale.convert(sizeData[index]) : marker.size
 
             let format: CartesianSeriesMarkerFormat | undefined = undefined;
             if (formatter) {
@@ -399,7 +403,7 @@ export class ScatterSeries extends CartesianSeries {
                     fill,
                     stroke,
                     strokeWidth,
-                    size: datum.size,
+                    size,
                     highlighted: isDatumHighlighted
                 });
             }
@@ -411,7 +415,7 @@ export class ScatterSeries extends CartesianSeries {
                 : strokeWidth;
             node.size = format && format.size !== undefined
                 ? format.size
-                : datum.size;
+                : size;
             node.fillOpacity = marker.fillOpacity !== undefined ? marker.fillOpacity : fillOpacity;
             node.strokeOpacity = marker.strokeOpacity !== undefined ? marker.strokeOpacity : strokeOpacity;
             node.translationX = datum.point.x;
