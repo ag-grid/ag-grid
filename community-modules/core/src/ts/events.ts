@@ -78,7 +78,14 @@ export interface FilterChangedEvent extends AgGridEvent {
     afterDataChange?: boolean;
     /** True if filter was changed via floating filter */
     afterFloatingFilter?: boolean;
-    /** Source column(s) for the filter change, if the change can be attributed */
+    /**
+     * Columns affected by the filter change. Array contents depend on the source of the event.
+     * 
+     * - Expect 1 element for UI-driven column filter changes.
+     * - Expect N elements (all columns) for calls to gridOptions.api.setFilterModel().
+     * - Expect M elements (removed columns) for calls to gridOptions.api.setColumnDefs().
+     * - Expect 0 elements for quick-filters and calls to gridOptions.api.onFilterChanged().
+     */
     columns: Column[];
 }
 

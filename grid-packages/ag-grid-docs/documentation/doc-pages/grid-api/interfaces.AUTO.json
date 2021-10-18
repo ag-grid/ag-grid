@@ -2685,7 +2685,7 @@
     "docs": {
       "afterDataChange?": "/** True if the filter was changed as a result of data changing */",
       "afterFloatingFilter?": "/** True if filter was changed via floating filter */",
-      "columns": "/** Source column(s) for the filter change, if the change can be attributed */",
+      "columns": "/** Columns affected by the filter change. Array contents depend on the source of the event.\n * \n * - Expect 1 element for UI-driven column filter changes.\n * - Expect N elements (all columns) for calls to gridOptions.api.setFilterModel().\n * - Expect M elements (removed columns) for calls to gridOptions.api.setColumnDefs().\n * - Expect 0 elements for quick-filters and calls to gridOptions.api.onFilterChanged(). */",
       "type": "/** Event identifier */"
     }
   },
