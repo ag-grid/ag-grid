@@ -12,13 +12,15 @@ if (process.argv.length < 5) {
     process.exit(1);
 }
 
-const [exec, scriptPath, gridNewVersion, dependencyVersion, packageDirsRaw, chartsDependencyVersion] = process.argv;
+const [exec, scriptPath, gridNewVersion, dependencyVersion, packageDirsRaw, modulesToVersion, chartsDependencyVersion ] = process.argv;
+
+const resolvedModulesToVersion = modulesToVersion === "all" ? modulesToVersion : modulesToVersion.split(',')
 
 const packageDirs = JSON.parse(packageDirsRaw);
 
 function main() {
     updatePackageBowserJsonFiles();
-    updateLernaJson();
+    // updateLernaJson();
 }
 
 function updateAngularProject(CWD, packageDirectory, directory) {
@@ -31,8 +33,18 @@ function updateAngularProject(CWD, packageDirectory, directory) {
 function updatePackageBowserJsonFiles() {
     const CWD = process.cwd();
 
+    const packageMatchesResolvedModuleToVersion = packageName => {
+        if (resolvedModulesToVersion === "all") {
+            return true;
+        }
+
+        // so vue will match ag-grid-vue but not ag-grid-vue3, for example
+        return resolvedModulesToVersion.some(resolvedModuleToVersion => packageName.match(new RegExp(`${resolvedModuleToVersion}$`)) !== null);
+    }
+
     packageDirs.forEach(packageDirectory => {
         fs.readdirSync(packageDirectory)
+            .filter(packageMatchesResolvedModuleToVersion)
             .forEach(directory => {
                     // update all package.json files
                     let currentPackageJsonFile = `${CWD}/${packageDirectory}/${directory}/package.json`;
@@ -128,7 +140,7 @@ function updateDependency(fileContents, property, dependencyVersion, chartsDepen
             return key !== 'ag-grid-testing'
         })
         .forEach(([key, value]) => {
-            if(chartsDependencyVersion) {
+            if (chartsDependencyVersion) {
                 dependencyContents[key] = chartDependency(key) ? chartsDependencyVersion : dependencyVersion;
             } else {
                 dependencyContents[key] = dependencyVersion;
