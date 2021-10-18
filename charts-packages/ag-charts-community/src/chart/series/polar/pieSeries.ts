@@ -165,7 +165,7 @@ export class PieSeries extends PolarSeries {
         super();
 
         this.addEventListener('update', this.scheduleUpdate, this);
-        this.label.addEventListener('change', this.scheduleLayout, this);
+        this.label.addEventListener('change', this.scheduleUpdate, this);
         this.label.addEventListener('dataChange', this.scheduleData, this);
         this.callout.addEventListener('change', this.scheduleLayout, this);
 
@@ -206,7 +206,7 @@ export class PieSeries extends PolarSeries {
     ];
     set fills(values: string[]) {
         this._fills = values;
-        this.scheduleData();
+        this.scheduleUpdate();
     }
     get fills(): string[] {
         return this._fills;
@@ -222,7 +222,7 @@ export class PieSeries extends PolarSeries {
     ];
     set strokes(values: string[]) {
         this._strokes = values;
-        this.scheduleData();
+        this.scheduleUpdate();
     }
     get strokes(): string[] {
         return this._strokes;

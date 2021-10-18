@@ -139,7 +139,7 @@ export class TreemapSeries extends HierarchySeries {
         if (this._nodePadding !== value) {
             this._nodePadding = value;
             this.updateLayoutPadding();
-            this.update();
+            this.scheduleUpdate();
         }
     }
     get nodePadding(): number {
@@ -167,7 +167,7 @@ export class TreemapSeries extends HierarchySeries {
     set shadow(value: DropShadow) {
         if (this._shadow !== value) {
             this._shadow = value;
-            this.update();
+            this.scheduleUpdate();
         }
     }
     get shadow(): DropShadow {

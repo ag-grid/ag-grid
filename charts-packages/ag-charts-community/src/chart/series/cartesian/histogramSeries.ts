@@ -151,7 +151,7 @@ export class HistogramSeries extends CartesianSeries {
         super();
 
         this.label.enabled = false;
-        this.label.addEventListener('change', this.update, this);
+        this.label.addEventListener('change', this.scheduleUpdate, this);
     }
 
     directionKeys = {

@@ -161,7 +161,6 @@ export class AreaSeries extends CartesianSeries {
     onMarkerShapeChange() {
         this.markerSelection = this.markerSelection.setData([]);
         this.markerSelection.exit.remove();
-        this.scheduleUpdate();
 
         this.fireEvent({ type: 'legendChange' });
     }
@@ -557,7 +556,7 @@ export class AreaSeries extends CartesianSeries {
     }
 
     private updateMarkerNodes(): void {
-        if (!this.chart || !this.marker.enabled) {
+        if (!this.chart) {
             return;
         }
 

@@ -117,7 +117,6 @@ export class LineSeries extends CartesianSeries {
     onMarkerShapeChange() {
         this.nodeSelection = this.nodeSelection.setData([]);
         this.nodeSelection.exit.remove();
-        this.scheduleUpdate();
 
         this.fireEvent({ type: 'legendChange' });
     }

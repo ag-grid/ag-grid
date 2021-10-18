@@ -1,9 +1,11 @@
 #!/bin/bash
 
-if [ "$#" -ne 6 ]
+if [ "$#" -ne 8 ]
   then
-    echo "You must supply a source branch, new branch name, release version and dependency version"
-    echo "For example: ./scripts/release/checkoutAndBuildNewBranchFromLatest.sh latest b19.1.2 19.1.2 ~19.1.0 2.0.0 ~2.0.0"
+    echo "You must supply a source branch, new branch name, release version, dependency version, projects and modules to update"
+    echo "For example: ./scripts/release/checkoutAndBuildNewBranchFromLatest.sh latest b19.1.2 19.1.2 ~19.1.0 2.0.0 ~2.0.0 all all"
+    echo "For example: ./scripts/release/checkoutAndBuildNewBranchFromLatest.sh latest b19.1.2 19.1.2 ~19.1.0 2.0.0 ~2.0.0 charts react"
+    echo "For example: ./scripts/release/checkoutAndBuildNewBranchFromLatest.sh latest b19.1.2 19.1.2 ~19.1.0 2.0.0 ~2.0.0 grid react,vue"
     exit 1
 fi
 
@@ -15,6 +17,14 @@ PEER_GRID_VERSION=$4
 
 NEW_CHARTS_VERSION=$5
 PEER_CHARTS_VERSION=$6
+
+PROJECTS_TO_VERSION=$7
+MODULES_TO_VERSION=$8
+
+if [ $PROJECTS_TO_VERSION != "all" ] && [ $PROJECTS_TO_VERSION != "grid" ] && [ $PROJECTS_TO_VERSION != "charts" ]; then
+  echo "Projects to version must be one of [all,grid,charts]"
+  exit 1;
+fi
 
 GEN_KEY_DEFAULT_LOCATION=~/Documents/aggrid/aggrid/genkey/genKey.js
 
@@ -32,8 +42,14 @@ fi
 
 echo "########################################################################"
 echo "####### Updating lerna.json, package.json and bower.json files #########"
-node scripts/release/versionModules.js $NEW_CHARTS_VERSION $PEER_CHARTS_VERSION '["charts-packages", "examples-charts"]'
-node scripts/release/versionModules.js $NEW_GRID_VERSION $PEER_GRID_VERSION '["grid-packages", "community-modules", "enterprise-modules", "examples-grid"]' $PEER_CHARTS_VERSION
+if [ $PROJECTS_TO_VERSION == "all" ] || [ $PROJECTS_TO_VERSION == "charts" ]; then
+  echo "Versioning Charts Packages"
+  node scripts/release/versionModules.js $NEW_CHARTS_VERSION $PEER_CHARTS_VERSION '["charts-packages", "examples-charts"]' $MODULES_TO_VERSION
+fi
+if [ $PROJECTS_TO_VERSION == "all" ] || [ $PROJECTS_TO_VERSION == "grid" ]; then
+  echo "Versioning Grid Packages"
+  node scripts/release/versionModules.js $NEW_GRID_VERSION $PEER_GRID_VERSION '["grid-packages", "community-modules", "enterprise-modules", "examples-grid"]' $MODULES_TO_VERSION $PEER_CHARTS_VERSION
+fi
 
 echo "########################################################################"
 echo "################# Installing Dependencies & Building #########################"
