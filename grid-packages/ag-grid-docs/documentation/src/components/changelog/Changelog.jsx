@@ -55,7 +55,7 @@ const COLUMN_DEFS = [
   },
   {
     field: "status",
-    width: 143,
+    width: 100,
     valueGetter: params => {
       return params.data.resolution
     },
@@ -63,7 +63,7 @@ const COLUMN_DEFS = [
   {
     field: "features",
     headerName: "Feature",
-    width: 143,
+    width: 142,
     valueFormatter: params => {
       let isValue = !!params.value
       return isValue ? params.value.toString().replaceAll("_", " ") : undefined
@@ -101,6 +101,20 @@ const defaultColDef = {
   suppressMenu: true,
   cellClass: styles["font-class"],
   headerClass: styles["font-class"],
+  suppressKeyboardEvent: params => {
+    if (
+      params.event.key === "Enter" &&
+      params.node.master &&
+      params.event.type === "keydown"
+    ) {
+      params.api
+        .getCellRendererInstances({ rowNodes: [params.node] })[0]
+        .getFrameworkComponentInstance()
+        .clickHandlerFunc()
+      return true
+    }
+    return false
+  },
 }
 
 const detailCellRendererParams = params => {
@@ -177,8 +191,6 @@ const Changelog = () => {
   const [currentReleaseNotes, setCurrentReleaseNotes] = useState(null)
 
   const dropdownRef = useRef()
-  const deprecatedCheckboxRef = useRef()
-  const breakingChangeCheckboxRef = useRef()
 
   useEffect(() => {
     fetch("/changelog/changelog.json")
@@ -211,6 +223,14 @@ const Changelog = () => {
 
   const isExternalFilterPresent = () => {
     return dropdownRef.current.value !== "All"
+  }
+
+  const isRowMaster = params => {
+    return (
+      params.moreInformation ||
+      params.deprecationNotes ||
+      params.breakingChangesNotes
+    )
   }
 
   const filterOnDepsAndBreaking = (field, changed) => {
@@ -297,9 +317,10 @@ const Changelog = () => {
       {!IS_SSR && (
         <div style={{ height: "100%", width: "100%" }}>
           <div className={styles["note"]}>
-            The AG Grid Changelog lists the feature requests and defects
-            implemented across AG Grid releases. If you can’t find the item
-            you’re looking for, check the <a href="/pipeline">Pipeline</a> for
+            The AG Grid Changelog lists the feature requests implemented and
+            defects resolved across AG Grid releases. If you can’t find the item
+            you’re looking for, check the
+            <a href="https://www.ag-grid.com/ag-grid-pipeline/">Pipeline</a> for
             items in our backlog.
           </div>
 
@@ -376,7 +397,6 @@ const Changelog = () => {
                   <input
                     id="deprecated-checkbox"
                     className={styles["checkbox-class"]}
-                    ref={deprecatedCheckboxRef}
                     onChange={event => checkboxUnchecked(event, "deprecated")}
                     type="checkbox"
                   ></input>
@@ -398,7 +418,6 @@ const Changelog = () => {
                   <input
                     id="breakingChange-checkbox"
                     className={styles["checkbox-class"]}
-                    ref={breakingChangeCheckboxRef}
                     onChange={event =>
                       checkboxUnchecked(event, "breakingChange")
                     }
@@ -440,6 +459,7 @@ const Changelog = () => {
             enableCellTextSelection={true}
             detailCellRendererParams={detailCellRendererParams}
             detailCellRenderer={"myDetailCellRenderer"}
+            isRowMaster={isRowMaster}
             masterDetail
             onGridReady={gridReady}
           ></Grid>

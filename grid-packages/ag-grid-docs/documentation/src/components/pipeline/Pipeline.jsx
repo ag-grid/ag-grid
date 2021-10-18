@@ -30,7 +30,7 @@ const COLUMN_DEFS = [
   {
     field: "summary",
     tooltipField: "summary",
-    width: 775,
+    width: 740,
     filter: false,
   },
   {
@@ -90,6 +90,20 @@ const defaultColDef = {
   cellClass: styles["font-class"],
   headerClass: styles["font-class"],
   suppressMenu: true,
+  suppressKeyboardEvent: params => {
+    if (
+      params.event.key === "Enter" &&
+      params.node.master &&
+      params.event.type === "keydown"
+    ) {
+      params.api
+        .getCellRendererInstances({ rowNodes: [params.node] })[0]
+        .getFrameworkComponentInstance()
+        .clickHandlerFunc()
+      return true
+    }
+    return false
+  },
 }
 
 const IS_SSR = typeof window === "undefined"
@@ -211,12 +225,12 @@ const Pipeline = () => {
         <div style={{ height: "100%", width: "100%" }}>
           <div className={styles["note"]}>
             <p>
-              The AG Grid pipeline lists the features and bug fixes in our
-              product backlog. Use it to see the items scheduled for our next
-              release or to look up the status of a specific item. If you can’t
-              find the item you’re looking for, check the{" "}
-              <a href="/changelog">changelog</a> containing the list of
-              completed items.
+              The AG Grid pipeline lists the feature requests and active bugs in
+              our product backlog. Use it to see the items scheduled for our
+              next release or to look up the status of a specific item. If you
+              can’t find the item you’re looking for, check the{" "}
+              <a href="https://www.ag-grid.com/ag-grid-changelog/">Pipeline</a>{" "}
+              for items in our backlog.
             </p>
           </div>
           <div
