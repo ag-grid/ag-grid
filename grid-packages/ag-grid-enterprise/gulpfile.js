@@ -48,6 +48,8 @@ const tscMainTask = () => {
     const communityMainFileContents = fs.readFileSync(communityMainFilename, 'UTF-8');
 
     const newContents = communityMainFileContents.replace(/from .*/g, 'from "ag-grid-community";')
+        .replace(/export \* from "ag-grid-community";/g, "")
+        .replace(/^\s*\n/gm, ""); // delete empty lines
 
     const mainTsFilename = './src/main.ts';
     const mainTsFileContents = fs.readFileSync(mainTsFilename, 'UTF-8');
