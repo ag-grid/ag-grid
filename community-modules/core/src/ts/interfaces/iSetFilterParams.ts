@@ -62,6 +62,7 @@ export interface ISetFilterParams extends IProvidedFilterParams {
      */
     textFormatter?: (from: string) => string;
     valueFormatter?: (params: ValueFormatterParams) => string;
+    miniFilterMatcher?: (valuesToCheck: (string | null)[], formattedFilterText: string) => boolean;
     /** 
      * If `true`, hovering over a value in the Set Filter will show a tooltip containing the full, untruncated value.
      * Default: `false`

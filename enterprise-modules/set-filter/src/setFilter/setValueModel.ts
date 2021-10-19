@@ -23,6 +23,16 @@ export enum SetFilterModelValuesType {
     PROVIDED_LIST, PROVIDED_CALLBACK, TAKEN_FROM_GRID_VALUES
 }
 
+const DEFAULT_MINI_FILTER_MATCHER = (valuesToCheck: (string | null)[], formattedFilterText: string): boolean => {
+    for (const valueToCheck of valuesToCheck) {
+        if (valueToCheck != null && valueToCheck.toUpperCase().indexOf(formattedFilterText) >= 0) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 export class SetValueModel implements IEventEmitter {
     public static EVENT_AVAILABLE_VALUES_CHANGED = 'availableValuesChanged';
 
@@ -34,6 +44,7 @@ export class SetValueModel implements IEventEmitter {
     private readonly doesRowPassOtherFilters: (node: RowNode) => boolean;
     private readonly suppressSorting: boolean;
     private readonly comparator: (a: any, b: any) => number;
+    private readonly miniFilterMatcher: (valuesToCheck: (string | null)[], miniFilterValue: string) => boolean;
 
     private valuesType: SetFilterModelValuesType;
     private miniFilterText: string | null = null;
@@ -75,7 +86,8 @@ export class SetValueModel implements IEventEmitter {
             suppressSorting,
             comparator,
             rowModel,
-            values
+            values,
+            miniFilterMatcher,
         } = filterParams;
 
         this.column = column;
@@ -84,6 +96,8 @@ export class SetValueModel implements IEventEmitter {
         this.doesRowPassOtherFilters = doesRowPassOtherFilter;
         this.suppressSorting = suppressSorting || false;
         this.comparator = comparator || colDef.comparator as (a: any, b: any) => number || _.defaultComparator;
+        this.miniFilterMatcher = miniFilterMatcher || DEFAULT_MINI_FILTER_MATCHER;
+            
 
         if (rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             this.clientSideValuesExtractor = new ClientSideValuesExtractor(
@@ -284,12 +298,9 @@ export class SetValueModel implements IEventEmitter {
         // to allow for case insensitive searches, upper-case both filter text and value
         const formattedFilterText = (this.formatter(this.miniFilterText) || '').toUpperCase();
 
-        const matchesFilter = (valueToCheck: string | null): boolean =>
-            valueToCheck != null && valueToCheck.toUpperCase().indexOf(formattedFilterText) >= 0;
-
         this.availableValues.forEach(value => {
             if (value == null) {
-                if (this.filterParams.excelMode && matchesFilter(this.translate('blanks'))) {
+                if (this.filterParams.excelMode && this.miniFilterMatcher([this.translate('blanks')], formattedFilterText)) {
                     this.displayedValues.push(value);
                 }
             } else {
@@ -299,7 +310,7 @@ export class SetValueModel implements IEventEmitter {
                 const valueFormatterValue = this.valueFormatterService.formatValue(
                     this.column, null, null, textFormatterValue, this.filterParams.valueFormatter, false);
 
-                if (matchesFilter(textFormatterValue) || matchesFilter(valueFormatterValue)) {
+                if (this.miniFilterMatcher([textFormatterValue, valueFormatterValue], formattedFilterText)) {
                     this.displayedValues.push(value);
                 }
             }
