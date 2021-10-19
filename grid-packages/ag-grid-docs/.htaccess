@@ -92,6 +92,10 @@ AddType text/javascript ts jsx
     # arguments will be carried over (ie index.php?abc=true will stay as is)
     RewriteRule ^(.*)\.php(\/.+)$ /$1.php [R=301,L]
 
+    # Redirect pipeline and changelog to new gatsby components (instead of old php ones)
+    Redirect 301 /ag-grid-changelog/ /changelog/
+    Redirect 301 /ag-grid-pipeline/ /pipeline/
+
     # Redirect old pages to new documentation structure
     Redirect 301 /javascript-grid/ /javascript-data-grid/
     Redirect 301 /react-grid/ /react-data-grid/
