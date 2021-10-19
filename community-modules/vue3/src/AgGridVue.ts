@@ -61,7 +61,9 @@ export class AgGridVue extends Vue {
 
             const changes: Properties = {};
             changes[propertyName] = {
-                currentValue,
+                // decouple the rowdata - if we don't when the grid changes rowdata directly that'll trigger this component to react to rowData changes,
+                // which can reset grid state (ie row selection)
+                currentValue: propertyName === 'rowData' ? markRaw(toRaw(currentValue)) : currentValue,
                 previousValue,
             };
             ComponentUtil.processOnChange(changes,
