@@ -419,11 +419,6 @@ export function vanillaToVue(bindings: any, componentFileNames: string[]): (impo
         const [propertyAssignments, propertyVars, propertyAttributes, vueComponents] = getPropertyBindings(bindings, componentFileNames, importType);
         const template = getTemplate(bindings, propertyAttributes.concat(eventAttributes));
 
-        console.log("------------------------------------------------------------------------------------------------------------");
-        console.log(propertyAssignments);
-        console.log("------------------------------------------------------------------------------------------------------------");
-
-
         return `
 ${imports.join('\n')}
 
