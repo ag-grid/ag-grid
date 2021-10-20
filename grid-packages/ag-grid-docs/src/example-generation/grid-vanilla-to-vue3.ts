@@ -443,7 +443,7 @@ const VueExample = {
             ${propertyVars.join(',\n')}
         }
     },
-    beforeMount() {
+    created() {
         ${propertyAssignments.join(';\n')}
     },
     methods: {

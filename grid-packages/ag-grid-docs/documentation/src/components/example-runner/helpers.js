@@ -51,8 +51,6 @@ export const getExampleInfo = (
     const boilerPlateFramework = framework === 'vue' ? useVue3 ? 'vue3' : 'vue' : framework;
     const boilerplatePath = `/example-runner/${library}-${boilerPlateFramework}-boilerplate/`;
 
-    console.log("boilerplatePath", boilerplatePath);
-
     let sourcePath = `${pageName}/examples/${name}/`;
     let appLocation = `/examples/${pageName}/${name}/`;
 

@@ -101,7 +101,7 @@ const ChartExample = {
             ${propertyVars.join(',\n            ')}
         }
     },
-    beforeMount() {
+    created() {
         ${propertyAssignments.join(';\n        ')}
     },
     mounted() {
