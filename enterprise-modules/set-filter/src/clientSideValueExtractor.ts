@@ -5,9 +5,9 @@ export class ClientSideValuesExtractor {
 
     constructor(
         private readonly rowModel: IClientSideRowModel,
-        private readonly filterParams: ISetFilterParams
+        private readonly filterParams: ISetFilterParams,
+        private readonly caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat,
     ) {
-        this.caseSensitive = this.filterParams.caseSensitive || false;
     }
 
     public extractUniqueValues(predicate: (node: RowNode) => boolean): (string | null)[] {
@@ -15,7 +15,8 @@ export class ClientSideValuesExtractor {
         const { keyCreator } = this.filterParams.colDef;
 
         const addValue = (value: string | null) => {
-            const valueKey = !this.caseSensitive && value ? value.toUpperCase() : value;
+            const valueKey = value != null ? this.caseFormat(value) : '__<null>__';
+
             if (valueKey && values[valueKey] == null) {
                 values[valueKey] = value;
             }

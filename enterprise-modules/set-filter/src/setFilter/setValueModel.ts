@@ -67,6 +67,7 @@ export class SetValueModel implements IEventEmitter {
         private readonly setIsLoading: (loading: boolean) => void,
         private readonly valueFormatterService: ValueFormatterService,
         private readonly translate: (key: keyof ISetFilterLocaleText) => string,
+        private readonly caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat,
     ) {
         const {
             column,
@@ -91,7 +92,8 @@ export class SetValueModel implements IEventEmitter {
         if (rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             this.clientSideValuesExtractor = new ClientSideValuesExtractor(
                 rowModel as IClientSideRowModel,
-                this.filterParams
+                this.filterParams,
+                this.caseFormat
             );
         }
 
@@ -411,12 +413,5 @@ export class SetValueModel implements IEventEmitter {
         } else {
             this.selectedValues = _.convertToSet(values || []);
         }
-    }
-
-    private caseFormat<T extends string | null>(valueToFormat: T): typeof valueToFormat {
-        if (valueToFormat == null) {
-            return valueToFormat;
-        }
-        return this.caseSensitive ? valueToFormat : <T>valueToFormat.toUpperCase();
     }
 }

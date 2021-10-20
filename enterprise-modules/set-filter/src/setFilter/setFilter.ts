@@ -193,6 +193,7 @@ export class SetFilter extends ProvidedFilter<SetFilterModel> {
             loading => this.showOrHideLoadingScreen(loading),
             this.valueFormatterService,
             key => this.translateForSetFilter(key),
+            v => this.caseFormat(v)
         );
 
         this.initialiseFilterBodyUi();
