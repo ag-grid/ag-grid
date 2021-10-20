@@ -38,6 +38,7 @@ export class SetFilter extends ProvidedFilter<SetFilterModel> {
     private setFilterParams: ISetFilterParams | null = null;
     private virtualList: VirtualList | null = null;
     private positionableFeature: PositionableFeature;
+    private caseSensitive: boolean = false;
 
     // To make the filtering super fast, we store the values in an object, and check for the boolean value.
     // Although Set would be a more natural choice of data structure, its performance across browsers is
@@ -185,6 +186,7 @@ export class SetFilter extends ProvidedFilter<SetFilterModel> {
 
         this.checkSetFilterDeprecatedParams(params);
         this.setFilterParams = params;
+        this.caseSensitive = params.caseSensitive || false;
 
         this.valueModel = new SetValueModel(
             params,
@@ -452,7 +454,7 @@ export class SetFilter extends ProvidedFilter<SetFilterModel> {
             this.appliedModelValues = _.reduce(
                 appliedModel.values,
                 (values, value) => {
-                    values[String(value)] = true;
+                    values[this.caseFormat(String(value))] = true;
                     return values;
                 },
                 {} as { [key: string]: boolean; });
@@ -491,12 +493,12 @@ export class SetFilter extends ProvidedFilter<SetFilterModel> {
         value = _.makeNull(value);
 
         if (Array.isArray(value)) {
-            return _.some(value, v => this.appliedModelValues![_.makeNull(v)] === true);
+            return _.some(value, v => this.appliedModelValues![this.caseFormat(_.makeNull(v))] === true);
         }
 
         // Comparing against a value performs better than just checking for undefined
         // https://jsbench.me/hdk91jbw1h/
-        return this.appliedModelValues[value] === true;
+        return this.appliedModelValues[this.caseFormat(value)] === true;
     }
 
     public onNewRowsLoaded(): void {
@@ -827,6 +829,13 @@ export class SetFilter extends ProvidedFilter<SetFilterModel> {
         }
 
         super.destroy();
+    }
+
+    private caseFormat<T extends string | null>(valueToFormat: T): typeof valueToFormat {
+        if (valueToFormat == null) {
+            return valueToFormat;
+        }
+        return this.caseSensitive ? valueToFormat : <T>valueToFormat.toUpperCase();
     }
 }
 
