@@ -1,14 +1,26 @@
-import { IClientSideRowModel, IFilterParams, KeyCreatorParams, RowNode, _ } from '@ag-grid-community/core';
+import { IClientSideRowModel, ISetFilterParams, KeyCreatorParams, RowNode, _ } from '@ag-grid-community/core';
 
 export class ClientSideValuesExtractor {
+    private readonly caseSensitive: boolean;
+
     constructor(
         private readonly rowModel: IClientSideRowModel,
-        private readonly filterParams: IFilterParams) {
+        private readonly filterParams: ISetFilterParams,
+        private readonly caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat,
+    ) {
     }
 
     public extractUniqueValues(predicate: (node: RowNode) => boolean): (string | null)[] {
-        const values = new Set<string | null>();
+        const values: {[key: string]: string | null} = {};
         const { keyCreator } = this.filterParams.colDef;
+
+        const addValue = (value: string | null) => {
+            const valueKey = value != null ? this.caseFormat(value) : '__<null>__';
+
+            if (valueKey && values[valueKey] == null) {
+                values[valueKey] = value;
+            }
+        };
 
         this.rowModel.forEachLeafNode(node => {
             // only pull values from rows that have data. this means we skip filler group nodes.
@@ -35,10 +47,10 @@ export class ClientSideValuesExtractor {
             if (value != null && Array.isArray(value)) {
                 _.forEach(value, x => {
                     const formatted = _.toStringOrNull(_.makeNull(x));
-                    values.add(formatted);
+                    addValue(formatted);
                 });
             } else {
-                values.add(_.toStringOrNull(value));
+                addValue(_.toStringOrNull(value));
             }
         });
 

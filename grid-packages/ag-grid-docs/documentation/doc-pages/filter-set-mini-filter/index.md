@@ -77,6 +77,31 @@ The following example demonstrates searching when there are accented characters.
 
 <grid-example title='Mini Filter Text Formatter' name='mini-filter-text-formatter' type='generated' options='{ "enterprise": true, "exampleHeight": 565, "modules": ["clientside", "setfilter", "menu", "columnpanel"] }'></grid-example>
 
+## Enabling Case-Sensitive Searches
+
+By default the Mini Filter is case-insensitive. Practically this means that searching for `bl` would match Filter List values of `Black`, `blue` and `BLONDE`.
+
+Case-sensitive searches can be enabled by using the `caseSensitivity` filter parameter:
+
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'colour',
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                caseSensitivity: true
+            }
+        }
+    ]
+}
+</snippet>
+
+[[note]]
+| The `caseSensitivity` option also affects the values presented in the [Filter List](/filter-set-filter-list/#enabling-value-case-sensitivity).
+
+See [Example: Filter List Case-Sensitivity](/filter-set-filter-list/#example-case-sensitivity-set-filter-list) for a demonstration of the change in behaviour.
+
 ## Text Customisation
 
 Text used in the Mini Filter can be customised using [Localisation](/localisation/).

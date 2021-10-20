@@ -34,6 +34,7 @@ export class SetValueModel implements IEventEmitter {
     private readonly doesRowPassOtherFilters: (node: RowNode) => boolean;
     private readonly suppressSorting: boolean;
     private readonly comparator: (a: any, b: any) => number;
+    private readonly caseSensitive: boolean;
 
     private valuesType: SetFilterModelValuesType;
     private miniFilterText: string | null = null;
@@ -66,6 +67,7 @@ export class SetValueModel implements IEventEmitter {
         private readonly setIsLoading: (loading: boolean) => void,
         private readonly valueFormatterService: ValueFormatterService,
         private readonly translate: (key: keyof ISetFilterLocaleText) => string,
+        private readonly caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat,
     ) {
         const {
             column,
@@ -75,7 +77,8 @@ export class SetValueModel implements IEventEmitter {
             suppressSorting,
             comparator,
             rowModel,
-            values
+            values,
+            caseSensitive
         } = filterParams;
 
         this.column = column;
@@ -84,11 +87,13 @@ export class SetValueModel implements IEventEmitter {
         this.doesRowPassOtherFilters = doesRowPassOtherFilter;
         this.suppressSorting = suppressSorting || false;
         this.comparator = comparator || colDef.comparator as (a: any, b: any) => number || _.defaultComparator;
+        this.caseSensitive = caseSensitive || false;
 
         if (rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             this.clientSideValuesExtractor = new ClientSideValuesExtractor(
                 rowModel as IClientSideRowModel,
-                this.filterParams
+                this.filterParams,
+                this.caseFormat
             );
         }
 
@@ -282,10 +287,10 @@ export class SetValueModel implements IEventEmitter {
         this.displayedValues = [];
 
         // to allow for case insensitive searches, upper-case both filter text and value
-        const formattedFilterText = (this.formatter(this.miniFilterText) || '').toUpperCase();
+        const formattedFilterText = this.caseFormat(this.formatter(this.miniFilterText) || '');
 
         const matchesFilter = (valueToCheck: string | null): boolean =>
-            valueToCheck != null && valueToCheck.toUpperCase().indexOf(formattedFilterText) >= 0;
+            valueToCheck != null && this.caseFormat(valueToCheck).indexOf(formattedFilterText) >= 0;
 
         this.availableValues.forEach(value => {
             if (value == null) {
