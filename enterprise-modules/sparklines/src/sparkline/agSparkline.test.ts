@@ -1,10 +1,7 @@
 import { describe, beforeAll, afterAll, test, expect } from '@jest/globals'
-import { AgSparkline, SparklineFactoryOptions, SparklineType } from './agSparkline';
-import { LineSparkline } from './line/lineSparkline';
+import { AgSparkline, SparklineFactoryOptions } from './agSparkline';
 import "jest-canvas-mock";
-import { AreaSparkline } from './area/areaSparkline';
-import { ColumnSparkline } from './column/columnSparkline';
-import { ColumnFormat, ColumnFormatterParams, MarkerFormat, MarkerFormatterParams, SparklineOptions, TooltipRendererResult, TooltipRendererParams } from '@ag-grid-community/core';
+import { ColumnFormat, ColumnFormatterParams, MarkerFormat, MarkerFormatterParams, TooltipRendererResult, TooltipRendererParams } from '@ag-grid-community/core';
 import { SparklineTooltip } from "./tooltip/sparklineTooltip";
 
 const data = [7, 8.3, undefined, -9, '9.2', null, 5.5, Infinity, 6.75, -11.9, NaN, -Infinity, 5, 4, null, {}, 6, []] as any;
