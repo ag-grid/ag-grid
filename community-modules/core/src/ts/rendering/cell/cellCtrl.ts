@@ -33,6 +33,7 @@ import { doOnce } from "../../utils/function";
 import { RowDragComp } from "../row/rowDragComp";
 import { getValueUsingField } from "../../utils/object";
 
+
 const CSS_CELL = 'ag-cell';
 const CSS_AUTO_HEIGHT = 'ag-cell-auto-height';
 const CSS_NORMAL_HEIGHT = 'ag-cell-normal-height';
@@ -266,42 +267,36 @@ export class CellCtrl extends BeanStub {
     }
 
     public setupAutoHeight(eParentOfValue: HTMLElement | undefined): void {
-        if (!this.column.getColDef().autoHeight) {return;}
-        if (this.autoHeightElement == eParentOfValue) { return; }
+        if (!this.column.getColDef().autoHeight || this.autoHeightElement == eParentOfValue) { return; }
 
         if (this.destroyAutoHeight) { this.destroyAutoHeight(); }
         this.autoHeightElement = eParentOfValue;
 
         if (!eParentOfValue) { return; }
 
-        const measureHeight = (timesCalled: number)=> {
+        const measureHeight = (timesCalled: number) => {
             // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
             // maybe it will be ready next VM turn
             const doc = this.beans.gridOptionsWrapper.getDocument();
-            if (!doc || !doc.contains(eParentOfValue)) { 
-                if (timesCalled<5) {
-                    this.beans.frameworkOverrides.setTimeout( ()=> measureHeight(timesCalled++), 0 );
-                    return;  
-                }
+
+            if ((!doc || !doc.contains(eParentOfValue)) && timesCalled < 5) { 
+                this.beans.frameworkOverrides.setTimeout(() => measureHeight(timesCalled++), 0);
+                return;
             }
 
             const newHeight = eParentOfValue.offsetHeight;
             this.rowNode.setRowAutoHeight(newHeight, this.column);
         };
 
-        const listener = ()=> {
-            measureHeight(0);
-        };
+        const listener = () => measureHeight(0);
 
         // do once to set size in case size doesn't change, common when cell is blank
         listener();
 
         const destroyResizeObserver = this.beans.resizeObserverService.observeResize(eParentOfValue, listener);
-        // const destroyMutationObserver = this.beans.mutationObserverService.observeMutation(eParentOfValue, listener);
 
         this.destroyAutoHeight = () => {
             destroyResizeObserver();
-            // destroyMutationObserver();
             this.rowNode.setRowAutoHeight(undefined, this.column);
         };
     }
