@@ -14136,6 +14136,10 @@
       "description": "/** If `true`, hovering over a value in the Set Filter will show a tooltip containing the full, untruncated value.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "caseSensitive": {
+      "description": "/** If `true`, enables case-sensitivity in the SetFilter Mini-Filter and Filter List.\n * Default: `false`. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "excelMode": {
       "description": "/** Changes the behaviour of the Set Filter to match that of Excel's AutoFilter. */",
       "type": { "returnType": "'mac' | 'windows'", "optional": true }

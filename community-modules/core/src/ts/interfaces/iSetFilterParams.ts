@@ -67,6 +67,11 @@ export interface ISetFilterParams extends IProvidedFilterParams {
      * Default: `false`
      */
     showTooltips?: boolean;
+    /**
+     * If `true`, enables case-sensitivity in the SetFilter Mini-Filter and Filter List.
+     * Default: `false`.
+     */
+    caseSensitive?: boolean;
     /** Changes the behaviour of the Set Filter to match that of Excel's AutoFilter. */
     excelMode?: 'mac' | 'windows';
     /** @deprecated */ suppressRemoveEntries?: boolean;
