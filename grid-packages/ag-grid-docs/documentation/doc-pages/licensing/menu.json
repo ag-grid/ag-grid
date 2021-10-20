@@ -1383,6 +1383,12 @@
                 "showInCollapsed": true
               },
               {
+                "title": "Bar",
+                "url": "/sparklines-bar-customisation/",
+                "enterprise": true,
+                "showInCollapsed": true
+              },
+              {
                 "title": "Area",
                 "url": "/sparklines-area-customisation/",
                 "enterprise": true,

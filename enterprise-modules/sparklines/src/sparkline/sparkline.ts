@@ -250,13 +250,13 @@ export abstract class Sparkline extends Observable {
         }
     }
 
-    // Update x axis line.
-    protected updateXAxisLine() { }
+    // Update axis line.
+    protected updateAxisLine() { }
 
     protected updateAxes() {
         this.updateYScale();
         this.updateXScale();
-        this.updateXAxisLine();
+        this.updateAxisLine();
     }
 
     // Using processed data, generate data that backs visible nodes.
@@ -466,8 +466,8 @@ export abstract class Sparkline extends Observable {
             this.updateXScaleRange();
             this.updateYScaleRange();
 
-            // update x-axis line
-            this.updateXAxisLine();
+            // update axis line
+            this.updateAxisLine();
 
             // produce data joins and update selection's nodes
             this.update();

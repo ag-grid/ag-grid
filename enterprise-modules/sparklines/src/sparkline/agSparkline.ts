@@ -1,14 +1,15 @@
 import { AreaSparkline } from "./area/areaSparkline";
 import { SparklineAxis } from "./sparkline";
-import { ColumnSparkline } from "./column/columnSparkline";
 import { LineSparkline } from "./line/lineSparkline";
+import { BarSparkline } from "./bar-column/barSparkline";
+import { ColumnSparkline } from "./bar-column/columnSparkline";
 
 import {
     SparklineOptions,
     HighlightStyle,
     SparklineMarker,
     SparklineLine,
-    Padding
+    Padding,
 } from "@ag-grid-community/core";
 import { SparklineTooltip } from "./tooltip/sparklineTooltip";
 
@@ -20,7 +21,7 @@ export type SparklineFactoryOptions = SparklineOptions & {
     container?: HTMLElement;
 }
 
-export type SparklineType = LineSparkline | AreaSparkline | ColumnSparkline;
+export type SparklineType = LineSparkline | AreaSparkline | ColumnSparkline | BarSparkline;
 export abstract class AgSparkline {
     static create(options: SparklineFactoryOptions, tooltip: SparklineTooltip) {
         // avoid mutating user provided options
@@ -47,6 +48,8 @@ function getSparklineInstance(type: string = 'line'): any {
     switch (type) {
         case 'column':
             return new ColumnSparkline();
+        case 'bar':
+            return new BarSparkline();
         case 'area':
             return new AreaSparkline();
         case 'line':
@@ -57,8 +60,11 @@ function getSparklineInstance(type: string = 'line'): any {
 
 function initSparklineByType(sparkline: SparklineType, options: any): void {
     switch (options.type) {
+        case 'bar':
+            initBarColumnSparkline(sparkline as BarSparkline, options);
+            break;
         case 'column':
-            initColumnSparkline(sparkline as ColumnSparkline, options);
+            initBarColumnSparkline(sparkline as ColumnSparkline, options);
             break;
         case 'area':
             initAreaSparkline(sparkline as AreaSparkline, options);
@@ -117,7 +123,8 @@ function initAreaSparkline(sparkline: AreaSparkline, options: any) {
     }
 }
 
-function initColumnSparkline(sparkline: ColumnSparkline, options: any) {
+function initBarColumnSparkline(sparkline: ColumnSparkline | BarSparkline, options: any) {
+    setValueIfPropertyExists(sparkline, 'valueAxisDomain', options.valueAxisDomain, options);
     setValueIfPropertyExists(sparkline, 'fill', options.fill, options);
     setValueIfPropertyExists(sparkline, 'stroke', options.stroke, options);
     setValueIfPropertyExists(sparkline, 'strokeWidth', options.strokeWidth, options);

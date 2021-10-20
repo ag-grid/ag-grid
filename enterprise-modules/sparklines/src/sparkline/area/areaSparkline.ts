@@ -194,7 +194,7 @@ export class AreaSparkline extends Sparkline {
         return { nodeData, fillData, strokeData };
     }
 
-    protected updateXAxisLine() {
+    protected updateAxisLine() {
         const { xScale, yScale, axis, xAxisLine } = this;
 
         xAxisLine.x1 = xScale.range[0];
