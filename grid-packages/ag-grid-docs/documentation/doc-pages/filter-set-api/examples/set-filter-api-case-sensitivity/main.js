@@ -90,7 +90,6 @@ function reset(type) {
     gridOptions.api.onFilterChanged();
 }
 
-var COLOURS = ['Black', 'Red', 'Orange', 'White', 'Yellow', 'Green', 'Purple'];
 var MANGLED_COLOURS = ['ReD', 'OrAnGe', 'WhItE', 'YeLlOw'];
 
 function onFirstDataRendered(params) {
@@ -102,12 +101,24 @@ document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector('#myGrid');
   new agGrid.Grid(gridDiv, gridOptions);
 
-  const data = [];
-  COLOURS.forEach((colour) => {
-    data.push({ colour });
-    data.push({ colour: colour.toUpperCase() });
-    data.push({ colour: colour.toLowerCase() });
-  });
+  // TODO: Remove once colours.json is published!
+  // We appear to need to fit this fetch and update pattern for non-JS examples to render properly.
+  agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
+    .then(function(data) {
+        var COLOURS = ['Black', 'Red', 'Orange', 'White', 'Yellow', 'Green', 'Purple'];
 
-  gridOptions.api.setRowData(data);
+        data = [];
+        COLOURS.forEach((colour) => {
+          data.push({ colour });
+          data.push({ colour: colour.toUpperCase() });
+          data.push({ colour: colour.toLowerCase() });
+        });
+      
+        gridOptions.api.setRowData(data);
+    });
+
+//   agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/colours.json' })
+//     .then(function(data) {
+//         gridOptions.api.setRowData(data);
+//     });
 });
