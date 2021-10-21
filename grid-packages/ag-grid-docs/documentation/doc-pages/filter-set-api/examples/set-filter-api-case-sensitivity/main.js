@@ -6,6 +6,7 @@ var gridOptions = {
         filter: 'agSetColumnFilter',
         filterParams: {
           caseSensitive: false,
+          newRowsAction: 'keep', // Added to make example follow the v27 expected default.
           cellRenderer: colourCellRenderer,
         },
       },
@@ -15,6 +16,7 @@ var gridOptions = {
         filter: 'agSetColumnFilter',
         filterParams: {
           caseSensitive: true,
+          newRowsAction: 'keep', // Added to make example follow the v27 expected default.
           cellRenderer: colourCellRenderer,
         },
       },
@@ -83,6 +85,7 @@ function getValues(type) {
 function reset(type) {
     const instance = getFilterInstance(type);
 
+    instance.resetFilterValues();
     instance.setModel(null);
     gridOptions.api.onFilterChanged();
 }
@@ -97,7 +100,7 @@ function onFirstDataRendered(params) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector('#myGrid');
-  var grid = new agGrid.Grid(gridDiv, gridOptions);
+  new agGrid.Grid(gridDiv, gridOptions);
 
   const data = [];
   COLOURS.forEach((colour) => {

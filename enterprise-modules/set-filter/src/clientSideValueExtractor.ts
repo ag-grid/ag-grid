@@ -1,5 +1,6 @@
 import { IClientSideRowModel, ISetFilterParams, KeyCreatorParams, RowNode, _ } from '@ag-grid-community/core';
 
+const NULL_SUBSTITUTE = '__<ag-grid-pseudo-null>__';
 export class ClientSideValuesExtractor {
     private readonly caseSensitive: boolean;
 
@@ -15,7 +16,10 @@ export class ClientSideValuesExtractor {
         const { keyCreator } = this.filterParams.colDef;
 
         const addValue = (value: string | null) => {
-            const valueKey = value != null ? this.caseFormat(value) : '__<null>__';
+            // NOTE: We don't care about the keys later on (only values in the dictionary are
+            // returned), so as long as we use a non-conflicting key for the `null` value this
+            // will behave correctly.
+            const valueKey = value != null ? this.caseFormat(value) : NULL_SUBSTITUTE;
 
             if (valueKey && values[valueKey] == null) {
                 values[valueKey] = value;

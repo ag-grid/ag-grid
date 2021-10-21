@@ -23,6 +23,8 @@ export enum SetFilterModelValuesType {
     PROVIDED_LIST, PROVIDED_CALLBACK, TAKEN_FROM_GRID_VALUES
 }
 
+const NULL_SUBSTITUTE = '__<ag-grid-pseudo-null>__';
+
 export class SetValueModel implements IEventEmitter {
     public static EVENT_AVAILABLE_VALUES_CHANGED = 'availableValuesChanged';
 
@@ -396,11 +398,19 @@ export class SetValueModel implements IEventEmitter {
                 // select all values from the model that exist in the filter
                 this.selectedValues.clear();
 
-                const allValues = _.convertToSet(values || []);
+                // Honour case-sensitivity setting for matching purposes here, preserving original casing
+                // in the selectedValues output.
+                const valueKeyFn = (v: string | null) => v == null ? NULL_SUBSTITUTE : this.caseFormat(v);
+
+                const allValues: {[key: string]: string | null} = {};
+                _.forEach(values || [], value => {
+                    allValues[valueKeyFn(value)] = value;
+                });
 
                 _.forEach(model, value => {
-                    if (allValues.has(value)) {
-                        this.selectedValues.add(value);
+                    const allValue = allValues[valueKeyFn(value)];
+                    if (allValue !== undefined) {
+                        this.selectedValues.add(allValue);
                     }
                 });
             }

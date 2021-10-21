@@ -45,6 +45,35 @@ In the example below, you can see how the filter for the Athlete column is modif
 
 ### Enabling Case-Sensitivity
 
-By default the API is case-insensitive. You can enable case sensitivity by using the `caseSensitive: true` filter parameter.
+By default the API is case-insensitive. You can enable case sensitivity by using the `caseSensitive: true` filter parameter:
+
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'colour',
+            filter: 'agSetColumnFilter',
+            filterParams: {
+                caseSensitivity: true
+            }
+        }
+    ]
+}
+</snippet>
+
+[[note]]
+| The `caseSensitivity` option also affects [Mini-Filter](/filter-set-mini-filter/#enabling-case-sensitive-searches) searches and the values presented in the [Filter List](/filter-set-filter-list/#enabling-value-case-sensitivity).
+
+
+The following example demonstrates the difference in behaviour between `caseSensitivity: false` (the default) and `caseSensitivity: true`:
+- With `caseSensitivity: false` (the default):
+  - `setModel()` will perform **case-insensitive** matching against available values to decide what is enabled in the Filter List.
+  - `setFilterValues()` will override the available values and force the case of the presented values in the Filter List to those provided.
+    - Selected values will be maintained based upon **case-insensitive** matching, if [`newRowsAction='keep'` is set](/filter-set-data-updates/#setting-new-data).
+- With `caseSensitivity: true`:
+  - `setModel()` will perform **case-sensitive** matching against available values to decide what is enabled in the Filter List.
+  - `setFilterValues()` will override the available values and force the case of the presented values in the Filter List to those provided.
+    - Selected values will be maintained based upon **case-sensitive** matching, if [`newRowsAction='keep'` is set](/filter-set-data-updates/#setting-new-data).
+- In both cases `getModel()` and `getFilterValues()` will return the values with casing that matches those displayed in the Filter List.
 
 <grid-example title='Set Filter API - Case Sensitivity' name='set-filter-api-case-sensitivity' type='mixed' options='{ "enterprise": true, "exampleHeight": 570, "modules": ["clientside", "setfilter", "menu", "filterpanel"] }'></grid-example>
