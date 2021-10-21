@@ -264,7 +264,7 @@ The following example demonstrates refreshing values. Note the following:
 
 ## Enabling Value Case-Sensitivity
 
-By default the Set Filter treats values as case-insensitive. Practically this means that cell values of `Black`, `black` and `BLACK` are all treated as identically for matching purposes, and the first encountered value is used as the value displayed in the Filter List.
+By default the Set Filter treats values as case-insensitive. Practically this means that cell values of `Black`, `black` and `BLACK` are all treated as identical for matching purposes, and the first encountered value is used as the value displayed in the Filter List.
 
 Case-sensitivity can be enabled by using the `caseSensitivity` filter parameter:
 
@@ -283,13 +283,18 @@ const gridOptions = {
 </snippet>
 
 [[note]]
-| The `caseSensitivity` option also affects the [Mini-Filter](/filter-set-mini-filter/#enabling-case-sensitive-searches) searches.
+| The `caseSensitivity` option also affects [Mini-Filter](/filter-set-mini-filter/#enabling-case-sensitive-searches) searches and [API](/filter-set-api/#enabling-case-sensitivity) behaviours.
 
-The following example demonstrates the difference in behaviour between `caseSensitivity: false` (the default) and `caseSensitivity: true`.
+The following example demonstrates the difference in behaviour between `caseSensitivity: false` (the default) and `caseSensitivity: true`:
+- The case insensitive column's Filter List has seven distinct values with unique colours.
+  - Typing `black` into the Mini Filter will match `Black`.
+- The case sensitive column's Filter List has 21 distinct values, although there are only seven distinct colours ignoring case.
+  - Typing `black` into the Mini Filter will match only `black`, but not `Black` or `BLACK`.
 
-<grid-example title='Filter List Case-Sensitivity' name='case-sensitivity-set-filter-list' type='generated' options='{ "enterprise": true, "exampleHeight": 720, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example>
+<grid-example title='Enabling SetFilter Case-Sensitivity' name='case-sensitivity-set-filter-list' type='generated' options='{ "enterprise": true, "exampleHeight": 720, "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"] }'></grid-example>
 
 If case differences need to be normalised to remove redundant values from the data-source for filtering, a [Value Formatter](#value-formatter) should be used.
+
 ## Missing Values
 
 If there are missing / empty values in the row data of the grid, or missing values in the list of [Supplied Values](#supplying-filter-values), the Filter List will contain an entry called `(Blanks)` which can be used to select / deselect all of these values. If this not the desired behaviour, provide a [Formatter](#value-formatter) to present blank values in a different way.

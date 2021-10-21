@@ -98,7 +98,7 @@ const gridOptions = {
 </snippet>
 
 [[note]]
-| The `caseSensitivity` option also affects the values presented in the [Filter List](/filter-set-filter-list/#enabling-value-case-sensitivity).
+| The `caseSensitivity` option also affects the values presented in the [Filter List](/filter-set-filter-list/#enabling-value-case-sensitivity) and [API](/filter-set-api/#enabling-case-sensitivity) behaviours.
 
 See [Example: Filter List Case-Sensitivity](/filter-set-filter-list/#example-case-sensitivity-set-filter-list) for a demonstration of the change in behaviour.
 
