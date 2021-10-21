@@ -95,7 +95,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
 
     private onFilterChanged(): void {
         this.reset();
-    }
+    } 
 
     private onSortChanged(): void {
         this.reset();
@@ -274,12 +274,10 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
             const lastRowIndex = this.getRowCount() - 1;
             if (rowIndexForPixel > lastRowIndex) {
                 return lastRowIndex;
-            } else {
-                return rowIndexForPixel;
             }
-        } else {
-            return 0;
+            return rowIndexForPixel;
         }
+        return 0;
     }
 
     public getRowCount(): number {
@@ -307,9 +305,8 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     public isLastRowIndexKnown(): boolean {
         if (this.infiniteCache) {
             return this.infiniteCache.isLastRowIndexKnown();
-        } else {
-            return false;
         }
+        return false;
     }
 
     public setRowCount(rowCount: number, lastRowIndexKnown?: boolean): void {
