@@ -64,6 +64,11 @@ No events yet.
 
 <api-documentation source='charts-api/api.json' section='pie.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation>
 
+#### Treemap series
+
+<api-documentation source='charts-api/api.json' section='treemap.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation>
+
+
 #### Histogram series
 
 <api-documentation source='charts-api/api.json' section='histogram.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation>

@@ -3085,6 +3085,23 @@
       "type": "string",
       "default": "default",
       "description": "The cursor to use for hovered treemap tiles. This config is identical to the CSS `cursor` property."
+    },
+    "listeners": {
+      "meta": {
+        "description": "A map of event names to event listeners."
+      },
+      "nodeClick": {
+        "type": {
+          "parameters": {
+            "type": "'nodeClick'",
+            "series": "TreemapSeries",
+            "datum": "any",
+            "xKey": "string"
+          },
+          "returnType": "any"
+        },
+        "description": "The listener to call when a treemap tile is clicked."
+      }
     }
   }
 }
