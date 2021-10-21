@@ -810,11 +810,13 @@ export class BarSeries extends CartesianSeries {
             fillIndex += stack.length;
         }
 
-        const { xName, yNames, fills, tooltip } = this;
+        const { xName, yNames, fills, strokes, tooltip, formatter } = this;
         const { renderer: tooltipRenderer } = tooltip;
         const datum = nodeDatum.datum;
         const yName = yNames[yKey];
-        const color = fills[fillIndex % fills.length];
+        const fill = fills[fillIndex % fills.length];
+        const stroke = strokes[fillIndex % fills.length];
+        const strokeWidth = this.getStrokeWidth(this.strokeWidth, datum);
         const xValue = datum[xKey];
         const yValue = datum[yKey];
         const processedYValue = yGroup[j][i];
@@ -822,6 +824,23 @@ export class BarSeries extends CartesianSeries {
         const yString = sanitizeHtml(yAxis.formatDatum(yValue));
         const title = sanitizeHtml(yName);
         const content = xString + ': ' + yString;
+
+        let format: BarSeriesFormat | undefined = undefined;
+
+        if (formatter) {
+            format = formatter({
+                datum,
+                fill,
+                stroke,
+                strokeWidth,
+                highlighted: false,
+                xKey,
+                yKey
+            });
+        }
+
+        const color = format && format.fill || fill;
+
         const defaults: TooltipRendererResult = {
             title,
             backgroundColor: color,

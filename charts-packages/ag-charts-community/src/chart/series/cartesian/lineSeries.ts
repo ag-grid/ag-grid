@@ -451,7 +451,7 @@ export class LineSeries extends CartesianSeries {
             return '';
         }
 
-        const { xName, yName, stroke: color, tooltip } = this;
+        const { xName, yName, tooltip, marker } = this;
         const {
             renderer: tooltipRenderer,
             format: tooltipFormat
@@ -463,6 +463,26 @@ export class LineSeries extends CartesianSeries {
         const yString = yAxis.formatDatum(yValue);
         const title = sanitizeHtml(this.title || yName);
         const content = sanitizeHtml(xString + ': ' + yString);
+
+        const { formatter: markerFormatter, fill, stroke, strokeWidth: markerStrokeWidth, size } = marker;
+        const strokeWidth = markerStrokeWidth !== undefined ? markerStrokeWidth : this.strokeWidth;
+
+        let format: CartesianSeriesMarkerFormat | undefined = undefined;
+        if (markerFormatter) {
+            format = markerFormatter({
+                datum,
+                xKey,
+                yKey,
+                fill,
+                stroke,
+                strokeWidth,
+                size,
+                highlighted: false
+            });
+        }
+
+        const color = format && format.fill || fill;
+
         const defaults: TooltipRendererResult = {
             title,
             backgroundColor: color,

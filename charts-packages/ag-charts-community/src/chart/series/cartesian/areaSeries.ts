@@ -697,16 +697,40 @@ export class AreaSeries extends CartesianSeries {
             return '';
         }
 
-        const { xName, yKeys, yNames, yData, fills, tooltip } = this;
+        const { xName, yKeys, yNames, yData, fills, strokes, tooltip, marker } = this;
+
+        const { size, formatter: markerFormatter, strokeWidth: markerStrokeWidth, fill: markerFill, stroke: markerStroke } = marker;
+
         const xString = xAxis.formatDatum(xValue);
         const yString = yAxis.formatDatum(yValue);
         const yKeyIndex = yKeys.indexOf(yKey);
         const yGroup = yData[nodeDatum.index];
         const processedYValue = yGroup[yKeyIndex];
         const yName = yNames[yKeyIndex];
-        const color = fills[yKeyIndex % fills.length];
         const title = sanitizeHtml(yName);
         const content = sanitizeHtml(xString + ': ' + yString);
+
+        const strokeWidth = markerStrokeWidth !== undefined ? markerStrokeWidth : this.strokeWidth;
+        const fill = markerFill || fills[yKeyIndex % fills.length];
+        const stroke = markerStroke || strokes[yKeyIndex % fills.length];
+
+        let format: CartesianSeriesMarkerFormat | undefined = undefined;
+
+        if (markerFormatter) {
+            format = markerFormatter({
+                datum,
+                xKey,
+                yKey,
+                fill,
+                stroke,
+                strokeWidth,
+                size,
+                highlighted: false
+            });
+        }
+
+        const color = format && format.fill || markerFill;
+
         const defaults: TooltipRendererResult = {
             title,
             backgroundColor: color,
