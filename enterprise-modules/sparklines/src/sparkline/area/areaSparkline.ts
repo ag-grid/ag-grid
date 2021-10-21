@@ -154,19 +154,14 @@ export class AreaSparkline extends Sparkline {
                 point: { x, y }
             });
 
-            if (yDatum === undefined) {
-                if (!previousX) {
-                    // if yDatum is undefined and there is no previous x value, continue to next iteration
-                    continue;
-                } else {
-                    // if yDatum is undefined and there is a valid previous data point, add a phantom point at yZero
-                    // if a next data point exists, add a phantom point at yZero at the next X
-                    fillData.push({ seriesDatum: undefined, point: { x: previousX, y: yZero } });
-                    if (nextX) {
-                        fillData.push({ seriesDatum: undefined, point: { x: nextX, y: yZero } });
-                    }
+            if (yDatum === undefined && previousX !== undefined) {
+                // if yDatum is undefined and there is a valid previous data point, add a phantom point at yZero
+                // if a next data point exists, add a phantom point at yZero at the next X
+                fillData.push({ seriesDatum: undefined, point: { x: previousX, y: yZero } });
+                if (nextX !== undefined) {
+                    fillData.push({ seriesDatum: undefined, point: { x: nextX, y: yZero } });
                 }
-            } else {
+            } else if (yDatum !== undefined) {
                 fillData.push({
                     seriesDatum: { x: xDatum, y: yDatum },
                     point: { x, y }
@@ -178,10 +173,9 @@ export class AreaSparkline extends Sparkline {
                     point: { x, y }
                 });
 
-                firstValidX = firstValidX || x;
+                firstValidX = firstValidX !== undefined ? firstValidX : x;
                 lastValidX = x;
             }
-
             previousX = x;
         }
 
