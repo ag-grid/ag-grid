@@ -207,12 +207,12 @@ More advanced customisations are discussed separately in the following sections:
 ## Interfaces
 
 ### BarSparklineOptions
-<!--
+
 <interface-documentation interfaceName='BarSparklineOptions' overrideSrc='sparklines-bar-customisation/resources/bar-sparkline-api.json'></interface-documentation>
 
 ### SparklineAxisOptions
 
-<api-documentation source='sparklines-bar-customisation/resources/bar-sparkline-api.json' section='SparklineAxisOptions'></api-documentation> -->
+<api-documentation source='sparklines-bar-customisation/resources/bar-sparkline-api.json' section='SparklineAxisOptions'></api-documentation>
 
 ## Next Up
 

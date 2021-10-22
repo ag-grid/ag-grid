@@ -8232,7 +8232,7 @@
   },
   "SparklineOptions": {
     "meta": { "isTypeAlias": true },
-    "type": "LineSparklineOptions | AreaSparklineOptions | ColumnSparklineOptions"
+    "type": "LineSparklineOptions | AreaSparklineOptions | ColumnSparklineOptions | BarSparklineOptions"
   },
   "BaseSparklineOptions": {
     "meta": {},
@@ -8338,6 +8338,27 @@
       "tooltip?": "/** Configuration for the tooltips. */"
     }
   },
+  "BarSparklineOptions": {
+    "meta": {},
+    "type": {
+      "type?": "'bar'",
+      "fill?": "string",
+      "stroke?": "string",
+      "strokeWidth?": "number",
+      "paddingInner?": "number",
+      "paddingOuter?": "number",
+      "formatter?": "SparklineBarFormatter"
+    },
+    "docs": {
+      "type?": "/** The type of sparklines to create, in this case it would be `'bar'`. */",
+      "fill?": "/** The CSS colour value for the fill of the bars.\n * Default: `'rgb(124, 181, 236)'` */",
+      "stroke?": "/** The CSS colour value for the outline of the bars.\n * Default `'silver'` */",
+      "strokeWidth?": "/** The thickness in pixels for the stroke of the bars.\n * Default: `0` */",
+      "paddingInner?": "/** The size of the gap between the bars as a proportion, between 0 and 1. This value is a fraction of the “step”, which is the interval between the start of a band and the start of the next band.\n * Default: `0.1` */",
+      "paddingOuter?": "/** The padding on the outside i.e. left and right of the first and last bars, to leave some room for the axis. In association with `paddingInner`, this value can be between 0 and 1.\n * Default: `0.2` */",
+      "formatter?": "/** A callback function to return format styles of type ColumnFormat, based on the data represented by individual bars. */"
+    }
+  },
   "Padding": {
     "meta": {},
     "type": {
@@ -8400,15 +8421,19 @@
       "strokeWidth?": "number"
     },
     "docs": {
-      "size?": "/** The width in pixels of the markers when hovered over. This is only for the Line and Area sparklines as Column sparklines do not have markers.\n * Default: `6` */",
-      "fill?": "/** The fill colour of the markers or columns when hovered over. Use `undefined` for no highlight fill.\n * Default: `'yellow'` */",
-      "stroke?": "/** The CSS colour value for the outline of the markers or columns when hovered over. Use `undefined` for no highlight stroke.\n * Default: `'silver'` */",
-      "strokeWidth?": "/** The thickness in pixels for the stroke of the markers or columns when hovered over.\n * Default: `1` */"
+      "size?": "/** The width in pixels of the markers when hovered over. This is only for the Line and Area sparklines as Column and Bar sparklines do not have markers.\n * Default: `6` */",
+      "fill?": "/** The fill colour of the markers, columns or bars when hovered over. Use `undefined` for no highlight fill.\n * Default: `'yellow'` */",
+      "stroke?": "/** The CSS colour value for the outline of the markers, columns or bars when hovered over. Use `undefined` for no highlight stroke.\n * Default: `'silver'` */",
+      "strokeWidth?": "/** The thickness in pixels for the stroke of the markers, columns or bars when hovered over.\n * Default: `1` */"
     }
   },
   "SparklineColumnFormatter": {
     "meta": { "isTypeAlias": true },
     "type": "(params: ColumnFormatterParams) => ColumnFormat"
+  },
+  "SparklineBarFormatter": {
+    "meta": { "isTypeAlias": true },
+    "type": "(params: BarFormatterParams) => BarFormat"
   },
   "ColumnFormatterParams": {
     "meta": {},
@@ -8454,6 +8479,52 @@
       "fill?": "/** The CSS colour value for the fill of the individual column. */",
       "stroke?": "/** The CSS colour value for the outline of the individual column. */",
       "strokeWidth?": "/** The thickness in pixels for the stroke of the individual column. */"
+    }
+  },
+  "BarFormatterParams": {
+    "meta": {},
+    "type": {
+      "datum": "any",
+      "xValue": "any",
+      "yValue": "any",
+      "width": "number",
+      "height": "number",
+      "min?": "boolean",
+      "max?": "boolean",
+      "first?": "boolean",
+      "last?": "boolean",
+      "fill?": "string",
+      "stroke?": "string",
+      "strokeWidth": "number",
+      "highlighted": "boolean"
+    },
+    "docs": {
+      "datum": "/** The raw data associated with the specific bar. */",
+      "xValue": "/** The X value of the data point. */",
+      "yValue": "/** The Y value of the data point. */",
+      "width": "/** The width of the bar in pixels. */",
+      "height": "/** The height of the bar in pixels. */",
+      "min?": "/** Whether or not the bar is a minimum point. */",
+      "max?": "/** Whether or not the bar is a maximum point. */",
+      "first?": "/** Whether or not the bar represents the first data point. */",
+      "last?": "/** Whether or not the bar represents the last data point. */",
+      "fill?": "/** The CSS colour value for the fill of the individual bar. */",
+      "stroke?": "/** The CSS colour value for the outline of the individual bar. */",
+      "strokeWidth": "/** The thickness in pixels for the stroke of the individual bar. */",
+      "highlighted": "/** Whether or not the bar is highlighted. */"
+    }
+  },
+  "BarFormat": {
+    "meta": {},
+    "type": {
+      "fill?": "string",
+      "stroke?": "string",
+      "strokeWidth?": "number"
+    },
+    "docs": {
+      "fill?": "/** The CSS colour value for the fill of the individual bar. */",
+      "stroke?": "/** The CSS colour value for the outline of the individual bar. */",
+      "strokeWidth?": "/** The thickness in pixels for the stroke of the individual bar. */"
     }
   },
   "SparklineMarker": {

@@ -14534,6 +14534,36 @@
       "type": { "returnType": "SparklineTooltip", "optional": true }
     }
   },
+  "BarSparklineOptions": {
+    "type": {
+      "description": "/** The type of sparklines to create, in this case it would be `'bar'`. */",
+      "type": { "returnType": "'bar'", "optional": true }
+    },
+    "fill": {
+      "description": "/** The CSS colour value for the fill of the bars.\n * Default: `'rgb(124, 181, 236)'` */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "stroke": {
+      "description": "/** The CSS colour value for the outline of the bars.\n * Default `'silver'` */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "strokeWidth": {
+      "description": "/** The thickness in pixels for the stroke of the bars.\n * Default: `0` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "paddingInner": {
+      "description": "/** The size of the gap between the bars as a proportion, between 0 and 1. This value is a fraction of the “step”, which is the interval between the start of a band and the start of the next band.\n * Default: `0.1` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "paddingOuter": {
+      "description": "/** The padding on the outside i.e. left and right of the first and last bars, to leave some room for the axis. In association with `paddingInner`, this value can be between 0 and 1.\n * Default: `0.2` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "formatter": {
+      "description": "/** A callback function to return format styles of type ColumnFormat, based on the data represented by individual bars. */",
+      "type": { "returnType": "SparklineBarFormatter", "optional": true }
+    }
+  },
   "Padding": {
     "top": {
       "description": "/** The number of pixels of padding at the top of the sparkline area.\n * Default: `3` */",
@@ -14593,23 +14623,24 @@
   },
   "HighlightStyle": {
     "size": {
-      "description": "/** The width in pixels of the markers when hovered over. This is only for the Line and Area sparklines as Column sparklines do not have markers.\n * Default: `6` */",
+      "description": "/** The width in pixels of the markers when hovered over. This is only for the Line and Area sparklines as Column and Bar sparklines do not have markers.\n * Default: `6` */",
       "type": { "returnType": "number", "optional": true }
     },
     "fill": {
-      "description": "/** The fill colour of the markers or columns when hovered over. Use `undefined` for no highlight fill.\n * Default: `'yellow'` */",
+      "description": "/** The fill colour of the markers, columns or bars when hovered over. Use `undefined` for no highlight fill.\n * Default: `'yellow'` */",
       "type": { "returnType": "string", "optional": true }
     },
     "stroke": {
-      "description": "/** The CSS colour value for the outline of the markers or columns when hovered over. Use `undefined` for no highlight stroke.\n * Default: `'silver'` */",
+      "description": "/** The CSS colour value for the outline of the markers, columns or bars when hovered over. Use `undefined` for no highlight stroke.\n * Default: `'silver'` */",
       "type": { "returnType": "string", "optional": true }
     },
     "strokeWidth": {
-      "description": "/** The thickness in pixels for the stroke of the markers or columns when hovered over.\n * Default: `1` */",
+      "description": "/** The thickness in pixels for the stroke of the markers, columns or bars when hovered over.\n * Default: `1` */",
       "type": { "returnType": "number", "optional": true }
     }
   },
   "SparklineColumnFormatter": {},
+  "SparklineBarFormatter": {},
   "ColumnFormatterParams": {
     "datum": {
       "description": "/** The raw data associated with the specific column. */",
@@ -14675,6 +14706,74 @@
     },
     "strokeWidth": {
       "description": "/** The thickness in pixels for the stroke of the individual column. */",
+      "type": { "returnType": "number", "optional": true }
+    }
+  },
+  "BarFormatterParams": {
+    "datum": {
+      "description": "/** The raw data associated with the specific bar. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "xValue": {
+      "description": "/** The X value of the data point. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "yValue": {
+      "description": "/** The Y value of the data point. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "width": {
+      "description": "/** The width of the bar in pixels. */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "height": {
+      "description": "/** The height of the bar in pixels. */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "min": {
+      "description": "/** Whether or not the bar is a minimum point. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "max": {
+      "description": "/** Whether or not the bar is a maximum point. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "first": {
+      "description": "/** Whether or not the bar represents the first data point. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "last": {
+      "description": "/** Whether or not the bar represents the last data point. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "fill": {
+      "description": "/** The CSS colour value for the fill of the individual bar. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "stroke": {
+      "description": "/** The CSS colour value for the outline of the individual bar. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "strokeWidth": {
+      "description": "/** The thickness in pixels for the stroke of the individual bar. */",
+      "type": { "returnType": "number", "optional": false }
+    },
+    "highlighted": {
+      "description": "/** Whether or not the bar is highlighted. */",
+      "type": { "returnType": "boolean", "optional": false }
+    }
+  },
+  "BarFormat": {
+    "fill": {
+      "description": "/** The CSS colour value for the fill of the individual bar. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "stroke": {
+      "description": "/** The CSS colour value for the outline of the individual bar. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "strokeWidth": {
+      "description": "/** The thickness in pixels for the stroke of the individual bar. */",
       "type": { "returnType": "number", "optional": true }
     }
   },

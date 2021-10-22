@@ -4,7 +4,7 @@ export interface ISparklineCellRendererParams extends ICellRendererParams {
     sparklineOptions?: SparklineOptions;
 }
 
-export type SparklineOptions = LineSparklineOptions | AreaSparklineOptions | ColumnSparklineOptions;
+export type SparklineOptions = LineSparklineOptions | AreaSparklineOptions | ColumnSparklineOptions | BarSparklineOptions;
 
 export interface BaseSparklineOptions {
     /** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.
@@ -72,6 +72,33 @@ export interface ColumnSparklineOptions extends BaseSparklineOptions {
     paddingOuter?: number;
     /** A callback function to return format styles of type ColumnFormat, based on the data represented by individual columns. */
     formatter?: SparklineColumnFormatter;
+}
+
+export interface BarSparklineOptions  {
+        /** The type of sparklines to create, in this case it would be `'bar'`. */
+        type?: 'bar';
+        /** The CSS colour value for the fill of the bars.
+         * Default: `'rgb(124, 181, 236)'`
+         */
+        fill?: string;
+        /** The CSS colour value for the outline of the bars.
+         * Default `'silver'`
+         */
+        stroke?: string;
+        /** The thickness in pixels for the stroke of the bars.
+         * Default: `0`
+         */
+        strokeWidth?: number;
+        /** The size of the gap between the bars as a proportion, between 0 and 1. This value is a fraction of the “step”, which is the interval between the start of a band and the start of the next band.
+         * Default: `0.1`
+         */
+        paddingInner?: number;
+        /** The padding on the outside i.e. left and right of the first and last bars, to leave some room for the axis. In association with `paddingInner`, this value can be between 0 and 1.
+         * Default: `0.2`
+         */
+        paddingOuter?: number;
+        /** A callback function to return format styles of type ColumnFormat, based on the data represented by individual bars. */
+        formatter?: SparklineBarFormatter;
 }
 
 export interface Padding {
@@ -157,25 +184,26 @@ export interface SparklineLine {
 }
 
 export interface HighlightStyle {
-    /** The width in pixels of the markers when hovered over. This is only for the Line and Area sparklines as Column sparklines do not have markers.
+    /** The width in pixels of the markers when hovered over. This is only for the Line and Area sparklines as Column and Bar sparklines do not have markers.
      * Default: `6`
      */
     size?: number;
-    /** The fill colour of the markers or columns when hovered over. Use `undefined` for no highlight fill.
+    /** The fill colour of the markers, columns or bars when hovered over. Use `undefined` for no highlight fill.
      * Default: `'yellow'`
      */
     fill?: string;
-    /** The CSS colour value for the outline of the markers or columns when hovered over. Use `undefined` for no highlight stroke.
+    /** The CSS colour value for the outline of the markers, columns or bars when hovered over. Use `undefined` for no highlight stroke.
      * Default: `'silver'`
      */
     stroke?: string;
-    /** The thickness in pixels for the stroke of the markers or columns when hovered over.
+    /** The thickness in pixels for the stroke of the markers, columns or bars when hovered over.
      * Default: `1`
      */
     strokeWidth?: number;
 }
 
 export type SparklineColumnFormatter = (params: ColumnFormatterParams) => ColumnFormat;
+export type SparklineBarFormatter = (params: BarFormatterParams) => BarFormat
 export interface ColumnFormatterParams {
     /** The raw data associated with the specific column. */
     datum: any;
@@ -212,6 +240,43 @@ export interface ColumnFormat {
     stroke?: string;
     /** The thickness in pixels for the stroke of the individual column.*/
     strokeWidth?: number;
+}
+
+export interface BarFormatterParams {
+        /** The raw data associated with the specific bar. */
+        datum: any;
+        /** The X value of the data point. */
+        xValue: any;
+        /** The Y value of the data point. */
+        yValue: any;
+        /** The width of the bar in pixels. */
+        width: number;
+        /** The height of the bar in pixels. */
+        height: number;
+        /** Whether or not the bar is a minimum point. */
+        min?: boolean;
+        /** Whether or not the bar is a maximum point. */
+        max?: boolean;
+        /** Whether or not the bar represents the first data point. */
+        first?: boolean;
+        /** Whether or not the bar represents the last data point. */
+        last?: boolean;
+        /** The CSS colour value for the fill of the individual bar. */
+        fill?: string;
+        /** The CSS colour value for the outline of the individual bar. */
+        stroke?: string;
+        /** The thickness in pixels for the stroke of the individual bar. */
+        strokeWidth: number;
+        /** Whether or not the bar is highlighted. */
+        highlighted: boolean;
+}
+export interface BarFormat {
+        /** The CSS colour value for the fill of the individual bar. */
+        fill?: string;
+        /** The CSS colour value for the outline of the individual bar. */
+        stroke?: string;
+        /** The thickness in pixels for the stroke of the individual bar.*/
+        strokeWidth?: number;
 }
 
 export interface SparklineMarker {
