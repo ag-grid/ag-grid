@@ -171,6 +171,15 @@ const Changelog = ({location}) => {
     const [currentReleaseNotes, setCurrentReleaseNotes] = useState(null)
     const [fixVersion, setFixVersion] = useState(extractFixVersionParameter(location));
 
+    const applyFixVersionFilter = () => {
+        if (gridApi && fixVersion) {
+            const versionsFilterComponent = gridApi.getFilterInstance('versions');
+            const newModel = {values: fixVersion === ALL_FIX_VERSIONS ? versions : [fixVersion], filterType: "set"};
+            versionsFilterComponent.setModel(newModel)
+            gridApi.onFilterChanged();
+        }
+    }
+
     useEffect(() => {
         fetch("/changelog/changelog.json")
             .then(response => response.json())
@@ -187,12 +196,7 @@ const Changelog = ({location}) => {
     }, [])
 
     useEffect(() => {
-        if (gridApi && fixVersion) {
-            const versionsFilterComponent = gridApi.getFilterInstance('versions');
-            const newModel = {values: fixVersion === ALL_FIX_VERSIONS ? versions : [fixVersion], filterType: "set"};
-            versionsFilterComponent.setModel(newModel)
-            gridApi.onFilterChanged();
-        }
+        applyFixVersionFilter();
     }, [gridApi, fixVersion, versions]);
 
     useEffect(() => {
@@ -277,7 +281,8 @@ const Changelog = ({location}) => {
     return (
         <>
             {!IS_SSR && (
-                <div style={{height: "100%", width: "99%%", marginLeft: "5px", marginRight: "5px"}}>
+                <div style={{height: "100%", width: "99%%", marginLeft: "1rem", marginRight: "5rem"}}>
+                    <div style={{fontWeight: 400, fontSize: "2.5rem", lineHeight: 1.2, marginTop: "20px", marginBottom: "20px"}}>AG Grid Changelog</div>
                     <div className={styles["note"]}>
                         The AG Grid Changelog lists the feature requests implemented and
                         defects resolved across AG Grid releases. If you can’t find the item
@@ -432,7 +437,10 @@ const Changelog = ({location}) => {
                         isRowMaster={isRowMaster}
                         masterDetail
                         onGridReady={gridReady}
-                        onFirstDataRendered={() => gridApi.sizeColumnsToFit()}
+                        onFirstDataRendered={() => {
+                            applyFixVersionFilter();
+                            gridApi.sizeColumnsToFit()
+                        }}
                     ></Grid>
                 </div>
             )}

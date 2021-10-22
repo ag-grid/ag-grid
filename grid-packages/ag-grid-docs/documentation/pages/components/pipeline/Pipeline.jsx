@@ -222,7 +222,8 @@ const Pipeline = () => {
     return (
         <>
             {!IS_SSR && (
-                <div style={{height: "100%", width: "99%%", marginLeft: "5px", marginRight: "5px"}}>
+                <div style={{height: "100%", width: "99%%", marginLeft: "1rem", marginRight: "5rem"}}>
+                    <div style={{fontWeight: 400, fontSize: "2.5rem", lineHeight: 1.2, marginTop: "20px", marginBottom: "20px"}}>AG Grid Pipeline</div>
                     <div className={styles["note"]}>
                         <p>
                             The AG Grid pipeline lists the feature requests and active bugs in
