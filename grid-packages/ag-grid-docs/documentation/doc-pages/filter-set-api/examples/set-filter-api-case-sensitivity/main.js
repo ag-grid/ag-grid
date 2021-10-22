@@ -6,8 +6,8 @@ var gridOptions = {
         filter: 'agSetColumnFilter',
         filterParams: {
           caseSensitive: false,
-          newRowsAction: 'keep', // Added to make example follow the v27 expected default.
           cellRenderer: colourCellRenderer,
+          newRowsAction: 'keep', // Added to make example follow the v27 expected default.
         },
       },
       {
@@ -16,8 +16,8 @@ var gridOptions = {
         filter: 'agSetColumnFilter',
         filterParams: {
           caseSensitive: true,
-          newRowsAction: 'keep', // Added to make example follow the v27 expected default.
           cellRenderer: colourCellRenderer,
+          newRowsAction: 'keep', // Added to make example follow the v27 expected default.
         },
       },
     ],
@@ -34,6 +34,13 @@ var gridOptions = {
   
 var FIXED_STYLES = 'vertical-align: middle; border: 1px solid black; margin: 3px; display: inline-block; width: 10px; height: 10px';
 
+var FILTER_TYPES = {
+    insensitive: 'colour',
+    sensitive: 'colour_1',
+}
+
+var gridApi;
+
 function colourCellRenderer(params) {
   if (!params.value || params.value === '(Select All)') {
     return params.value;
@@ -44,32 +51,21 @@ function colourCellRenderer(params) {
   }`;
 }
 
-function getFilterInstance(type) {
-    switch (type) {
-        case 'insensitive':
-            return gridOptions.api.getFilterInstance('colour');
-        case 'sensitive':
-            return gridOptions.api.getFilterInstance('colour_1');
-        default:
-            throw new Error('Example not configured correctly.')
-    }
-}
-
 function setModel(type) {
-    const instance = getFilterInstance(type);
+    const instance = gridApi.getFilterInstance(FILTER_TYPES[type]);
 
     instance.setModel({ values: MANGLED_COLOURS });
     gridOptions.api.onFilterChanged();
 }
 
 function getModel(type) {
-    const instance = getFilterInstance(type);
+    const instance = gridApi.getFilterInstance(FILTER_TYPES[type]);
 
     alert(JSON.stringify(instance.getModel(), null, 2));
 }
 
 function setFilterValues(type) {
-    const instance = getFilterInstance(type);
+    const instance = gridApi.getFilterInstance(FILTER_TYPES[type]);
 
     instance.setFilterValues(MANGLED_COLOURS);
     instance.applyModel();
@@ -77,13 +73,13 @@ function setFilterValues(type) {
 }
 
 function getValues(type) {
-    const instance = getFilterInstance(type);
+    const instance = gridApi.getFilterInstance(FILTER_TYPES[type]);
 
     alert(JSON.stringify(instance.getValues(), null, 2));
 }
 
 function reset(type) {
-    const instance = getFilterInstance(type);
+    const instance = gridApi.getFilterInstance(FILTER_TYPES[type]);
 
     instance.resetFilterValues();
     instance.setModel(null);
@@ -93,7 +89,8 @@ function reset(type) {
 var MANGLED_COLOURS = ['ReD', 'OrAnGe', 'WhItE', 'YeLlOw'];
 
 function onFirstDataRendered(params) {
-  params.api.getToolPanelInstance('filters').expandFilters();
+    gridApi = params.api;
+    gridApi.getToolPanelInstance('filters').expandFilters();
 }
 
 // setup the grid after the page has finished loading
