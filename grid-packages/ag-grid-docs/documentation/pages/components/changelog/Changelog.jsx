@@ -189,7 +189,7 @@ const Changelog = ({location}) => {
     useEffect(() => {
         if (gridApi && fixVersion) {
             const versionsFilterComponent = gridApi.getFilterInstance('versions');
-            const newModel = {values: fixVersion === ALL_FIX_VERSIONS ? [versions] : [fixVersion], filterType: "set"};
+            const newModel = {values: fixVersion === ALL_FIX_VERSIONS ? versions : [fixVersion], filterType: "set"};
             versionsFilterComponent.setModel(newModel)
             gridApi.onFilterChanged();
         }

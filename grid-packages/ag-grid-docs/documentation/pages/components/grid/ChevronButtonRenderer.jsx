@@ -23,6 +23,7 @@ const ChevronButtonCellRenderer = forwardRef((props, ref) => {
             clickHandlerFunc: clickHanlder,
         }
     })
+
     return (
         <div className={styles["cell-renderer-container"]}>
             <div className={styles["chevron-container"]}>
