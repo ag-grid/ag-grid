@@ -48,6 +48,9 @@ export interface IDateComparatorFunc {
     (filterLocalDateAtMidnight: Date, cellValue: any): number;
 }
 
+const DEFAULT_MIN_YEAR = 1000;
+const DEFAULT_MAX_YEAR = Infinity;
+
 export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
     public static DEFAULT_FILTER_OPTIONS = [
         ScalarFilter.EQUALS,
@@ -70,6 +73,8 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
 
     private dateFilterParams: IDateFilterParams;
+    private minValidYear: number = DEFAULT_MIN_YEAR;
+    private maxValidYear: number = DEFAULT_MAX_YEAR;
 
     constructor() {
         super('dateFilter');
@@ -142,11 +147,21 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
 
         this.dateFilterParams = params;
 
-        if (
-            params.minValidYear != null
-            && params.maxValidYear != null
-            && params.minValidYear > params.maxValidYear
-        ) {
+        const yearParser = (param: keyof IDateFilterParams, fallback: number) => {
+            if (params[param] != null) {
+                if (!isNaN(params[param])) {
+                    return params[param] == null ? fallback : Number(params[param]);
+                } else {
+                    console.warn(`AG Grid: DateFilter ${param} is not a number`);
+                }
+            }
+
+            return fallback;
+        };
+        this.minValidYear = yearParser('minValidYear', DEFAULT_MIN_YEAR);
+        this.maxValidYear = yearParser('maxValidYear', DEFAULT_MAX_YEAR);
+
+        if (this.minValidYear > this.maxValidYear) {
             console.warn(`AG Grid: DateFilter minValidYear should be <= maxValidYear`);
         }
 
@@ -202,11 +217,9 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
         }
 
         const [compFrom, compTo] = this.getFromToComponents(position);
-        const minValidYear = this.dateFilterParams.minValidYear == null ? 1000 : this.dateFilterParams.minValidYear;
-        const maxValidYear = this.dateFilterParams.maxValidYear == null ? Infinity : this.dateFilterParams.maxValidYear;
         const isValidDate = (value: Date | null) => value != null
-            && value.getUTCFullYear() >= minValidYear
-            && value.getUTCFullYear() <= maxValidYear;
+            && value.getUTCFullYear() >= this.minValidYear
+            && value.getUTCFullYear() <= this.maxValidYear;
 
         return isValidDate(compFrom.getDate()) && (!this.showValueTo(option) || isValidDate(compTo.getDate()));
     }
