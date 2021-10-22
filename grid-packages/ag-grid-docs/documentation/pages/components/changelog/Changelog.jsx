@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react"
+import React, {useCallback, useEffect, useState} from "react"
 import VersionDropdownMenu from "../grid/VersionDropdownMenu"
 import styles from "./Changelog.module.scss"
 import ReleaseVersionNotes from "./ReleaseVersionNotes.jsx"
@@ -171,14 +171,14 @@ const Changelog = ({location}) => {
     const [currentReleaseNotes, setCurrentReleaseNotes] = useState(null)
     const [fixVersion, setFixVersion] = useState(extractFixVersionParameter(location));
 
-    const applyFixVersionFilter = () => {
+    const applyFixVersionFilter = useCallback(() => {
         if (gridApi && fixVersion) {
             const versionsFilterComponent = gridApi.getFilterInstance('versions');
             const newModel = {values: fixVersion === ALL_FIX_VERSIONS ? versions : [fixVersion], filterType: "set"};
             versionsFilterComponent.setModel(newModel)
             gridApi.onFilterChanged();
         }
-    }
+    }, [gridApi, fixVersion, versions]);
 
     useEffect(() => {
         fetch("/changelog/changelog.json")
@@ -197,7 +197,7 @@ const Changelog = ({location}) => {
 
     useEffect(() => {
         applyFixVersionFilter();
-    }, [gridApi, fixVersion, versions]);
+    }, [gridApi, fixVersion, versions, applyFixVersionFilter]);
 
     useEffect(() => {
         if (fixVersion && allReleaseNotes) {
