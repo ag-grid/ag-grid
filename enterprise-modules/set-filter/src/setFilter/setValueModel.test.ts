@@ -2,25 +2,30 @@ import { SetValueModel, SetFilterModelValuesType } from './setValueModel';
 import { Constants, RowNode, IClientSideRowModel, ValueFormatterService, ISetFilterParams } from '@ag-grid-community/core';
 import { mock } from '../test-utils/mock';
 
-function createSetValueModel(
-    gridValues: any[] = ['A', 'B', 'C'],
-    filterParams: any = {},
-    doesRowPassOtherFilters: (row: RowNode) => boolean = _ => true,
-    suppressSorting = false,
-    simluateCaseSensitivity = false
-) {
+const DEFAULT_OPTS = {
+    values: ['A', 'B', 'C'] as string[] | string[][],
+    filterParams: {} as any,
+    doesRowPassOtherFilters: _ => true,
+    suppressSorting: false,
+    simulateCaseSensitivity: false,
+};
+
+function createSetValueModel(opts: Partial<typeof DEFAULT_OPTS> = DEFAULT_OPTS) {
+    const { values, filterParams, doesRowPassOtherFilters, suppressSorting, simulateCaseSensitivity} = { ...DEFAULT_OPTS, ...opts };
+
     const rowModel = {
         getType: () => Constants.ROW_MODEL_TYPE_CLIENT_SIDE,
         forEachLeafNode: (callback: (node: RowNode) => void) => {
-            const nodes = gridValues.map(v => ({ data: { value: v } }));
-            nodes.forEach(callback);
+            for (const value of values) {
+                callback(({ data: { value } } as any));
+            }
         }
     } as IClientSideRowModel;
 
     const valueFormatterService = mock<ValueFormatterService>('formatValue');
     valueFormatterService.formatValue.mockImplementation((_1, _2, _3, value) => value);
 
-    const params: ISetFilterParams = {
+    const svmParams: ISetFilterParams = {
         rowModel,
         valueGetter: (node: RowNode) => node.data.value,
         colDef: {},
@@ -29,11 +34,11 @@ function createSetValueModel(
         ...filterParams,
     };
 
-    const caseFormatFn = simluateCaseSensitivity ?
+    const caseFormatFn = simulateCaseSensitivity ?
         v => v : (v) => v ? v.toUpperCase() : v;
 
     return new SetValueModel(
-        params,
+        svmParams,
         _ => { },
         valueFormatterService,
         key => key === 'blanks' ? '(Blanks)' : '',
@@ -101,7 +106,7 @@ describe('SetValueModel', () => {
 
         describe('nothing selected is the default', () => {
             beforeEach(() => {
-                model = model = createSetValueModel(['A', 'B', 'C'], { defaultToNothingSelected: true });
+                model = model = createSetValueModel({filterParams: { defaultToNothingSelected: true }});
             })
 
             it('returns false by default', () => {
@@ -181,7 +186,7 @@ describe('SetValueModel', () => {
         it.each(['windows', 'mac'])('only uses visible values in set when first value is deselected in %s Excel mode', excelMode => {
             const values = ['A', 'B', 'C'];
             const doesRowPassOtherFilters = (row: RowNode) => row.data.value != 'B';
-            model = createSetValueModel(values, { excelMode }, doesRowPassOtherFilters);
+            model = createSetValueModel({ values, filterParams: { excelMode }, doesRowPassOtherFilters });
 
             model.deselectValue('C');
 
@@ -191,7 +196,7 @@ describe('SetValueModel', () => {
         it('uses all values in set when first value is deselected when not in Excel mode', () => {
             const values = ['A', 'B', 'C'];
             const doesRowPassOtherFilters = (row: RowNode) => row.data.value != 'B';
-            model = createSetValueModel(values, undefined, doesRowPassOtherFilters);
+            model = createSetValueModel({ values, doesRowPassOtherFilters });
 
             model.deselectValue('C');
 
@@ -203,7 +208,7 @@ describe('SetValueModel', () => {
         const value = 'B1';
 
         beforeEach(() => {
-            model = createSetValueModel(['A1', value, 'C1']);
+            model = createSetValueModel({ values: ['A1', value, 'C1'] });
         });
 
         it('sets new values', done => {
@@ -222,12 +227,37 @@ describe('SetValueModel', () => {
             });
         });
 
-        it('keeps existing selection', done => {
+        it('keeps existing deselection', done => {
             const values = ['A2', value, 'C2'];
 
             model.deselectValue(value);
             model.overrideValues(values).then(() => {
                 asyncAssert(done, () => expect(model.isValueSelected(value)).toBe(false));
+            });
+        });
+
+        it('keeps existing selection (case-insensitive)', done => {
+            const lowerCaseValue = 'b1';
+            const values = ['A2', lowerCaseValue, 'C2'];
+
+            model.overrideValues(values).then(() => {
+                asyncAssert(done, () => {
+                    expect(model.isValueSelected(lowerCaseValue)).toBe(true)
+                    expect(model.isValueSelected(value)).toBe(false)
+                });
+            });
+        });
+
+        it('keeps existing deselection (case-insensitive)', done => {
+            const lowerCaseValue = 'b1';
+            const values = ['A2', lowerCaseValue, 'C2'];
+
+            model.deselectValue(value);
+            model.overrideValues(values).then(() => {
+                asyncAssert(done, () => {
+                    expect(model.isValueSelected(lowerCaseValue)).toBe(false)
+                    expect(model.isValueSelected(value)).toBe(false)
+                });
             });
         });
 
@@ -244,34 +274,48 @@ describe('SetValueModel', () => {
     describe('values from grid', () => {
         it('shows all values by default', () => {
             const values = ['A', 'B', 'C'];
-            model = createSetValueModel(values);
+            model = createSetValueModel({values});
 
             expect(getDisplayedValues(model)).toStrictEqual(values);
         });
 
         it('only shows distinct values', () => {
             const values = ['A', 'B', 'A', 'B', 'C', 'A'];
-            model = createSetValueModel(values);
+            model = createSetValueModel({values});
 
             expect(getDisplayedValues(model)).toStrictEqual(['A', 'B', 'C']);
         });
 
+        it('only shows distinct values (case-insensitive)', () => {
+            const values = ['A', 'B', 'a', 'b', 'C', 'A'];
+            model = createSetValueModel({values, simulateCaseSensitivity: false});
+
+            expect(getDisplayedValues(model)).toStrictEqual(['A', 'B', 'C']);
+        });
+
+        it('only shows distinct values (case-sensitive)', () => {
+            const values = ['A', 'B', 'a', 'b', 'C', 'A'];
+            model = createSetValueModel({values, simulateCaseSensitivity: true});
+
+            expect(getDisplayedValues(model)).toStrictEqual(['A', 'B', 'C', 'a', 'b']);
+        });
+
         it('sorts values alphabetically by default', () => {
-            model = createSetValueModel(['1', '5', '10', '50']);
+            model = createSetValueModel({ values: ['1', '5', '10', '50']});
 
             expect(getDisplayedValues(model)).toStrictEqual(['1', '10', '5', '50']);
         });
 
         it('can sort values using provided comparator', () => {
             const comparator = (a: string, b: string) => parseInt(a, 10) - parseInt(b, 10);
-            model = createSetValueModel(['1', '10', '5', '50'], { comparator });
+            model = createSetValueModel({ values: ['1', '10', '5', '50'], filterParams: { comparator }});
 
             expect(getDisplayedValues(model)).toStrictEqual(['1', '5', '10', '50']);
         });
 
         it('will preserve original order if sorting is suppressed', () => {
             const values = ['A', 'C', 'B', 'F', 'D'];
-            model = createSetValueModel(values, undefined, undefined, true);
+            model = createSetValueModel({values, suppressSorting: true});
 
             expect(getDisplayedValues(model)).toStrictEqual(values);
         });
@@ -280,7 +324,7 @@ describe('SetValueModel', () => {
             const value = 'B';
             const values = ['A', value, 'C'];
             const doesRowPassOtherFilters = (row: RowNode) => row.data.value != value;
-            model = createSetValueModel(values, undefined, doesRowPassOtherFilters);
+            model = createSetValueModel({values, doesRowPassOtherFilters});
 
             expect(getDisplayedValues(model)).toStrictEqual(['A', 'C']);
         });
@@ -290,7 +334,7 @@ describe('SetValueModel', () => {
             const values = ['A', value, 'C'];
             const filteredValues = new Set<string>(values);
             const doesRowPassOtherFilters = (row: RowNode) => filteredValues.has(row.data.value);
-            model = createSetValueModel(values, undefined, doesRowPassOtherFilters);
+            model = createSetValueModel({values, doesRowPassOtherFilters});
 
             expect(getDisplayedValues(model)).toStrictEqual(values);
 
@@ -305,61 +349,91 @@ describe('SetValueModel', () => {
             const value = 'B';
             const values = ['A', value, 'C'];
             const doesRowPassOtherFilters = (row: RowNode) => row.data.value != value;
-            model = createSetValueModel(values, { suppressRemoveEntries: true }, doesRowPassOtherFilters);
+            model = createSetValueModel({values, filterParams: { suppressRemoveEntries: true }, doesRowPassOtherFilters});
 
             expect(getDisplayedValues(model)).toStrictEqual(['A', 'B', 'C']);
         });
 
         it.each([undefined, null, ''])('turns "%s" into null entry', value => {
-            model = createSetValueModel([value]);
+            model = createSetValueModel({values: [value]});
 
             expect(getDisplayedValues(model)).toStrictEqual([null]);
         });
 
         it('orders null first by default', () => {
             const values = ['A', 'B', null, 'C'];
-            model = createSetValueModel(values);
+            model = createSetValueModel({values});
 
             expect(getDisplayedValues(model)).toStrictEqual([null, 'A', 'B', 'C']);
         });
 
         it.each(['windows', 'mac'])('orders null last in %s Excel Model', excelMode => {
             const values = ['A', 'B', null, 'C'];
-            model = createSetValueModel(values, { excelMode });
+            model = createSetValueModel({values, filterParams: { excelMode }});
 
             expect(getDisplayedValues(model)).toStrictEqual(['A', 'B', 'C', null]);
         });
 
         it('extracts multiple values into separate entries', () => {
-            model = createSetValueModel([['A', 'B'], ['A', undefined, 'C'], ['D', 'B', null], ['']]);
+            model = createSetValueModel({ values: [['A', 'B'], ['A', undefined, 'C'], ['D', 'B', null], ['']]});
 
             expect(getDisplayedValues(model)).toStrictEqual([null, 'A', 'B', 'C', 'D']);
+        });
+
+        it('extracts multiple values into separate entries (case-insensitive)', () => {
+            model = createSetValueModel({
+                values: [['A', 'B'], ['a', undefined, 'c'], ['D', 'b', null], ['']],
+                simulateCaseSensitivity: false,
+            });
+
+            expect(getDisplayedValues(model)).toStrictEqual([null, 'A', 'B', 'D', 'c']);
+        });
+
+        it('extracts multiple values into separate entries (case-sensitive)', () => {
+            model = createSetValueModel({
+                values: [['A', 'B'], ['a', undefined, 'c'], ['D', 'b', null], ['']],
+                simulateCaseSensitivity: true,
+            });
+
+            expect(getDisplayedValues(model)).toStrictEqual([null, 'A', 'B', 'D', 'a', 'b', 'c']);
         });
     });
 
     describe('provided values list', () => {
         it('only shows distinct provided values', () => {
-            model = createSetValueModel(undefined, { values: ['A2', 'B2', 'C2', 'B2', 'C2'] });
+            model = createSetValueModel({filterParams: { values: ['A2', 'B2', 'C2', 'B2', 'C2'] }});
 
             expect(getDisplayedValues(model)).toStrictEqual(['A2', 'B2', 'C2']);
         });
 
+        it('only shows distinct provided values (case-insensitive)', () => {
+            model = createSetValueModel({filterParams: { values: ['A2', 'B2', 'C2', 'b2', 'c2'] }, simulateCaseSensitivity: false});
+
+            expect(getDisplayedValues(model)).toStrictEqual(['A2', 'B2', 'C2']);
+        });
+
+        it('only shows distinct provided values (case-sensitive)', () => {
+            model = createSetValueModel({filterParams: { values: ['A2', 'B2', 'C2', 'b2', 'c2'] }, simulateCaseSensitivity: true});
+
+            expect(getDisplayedValues(model)).toStrictEqual(['A2', 'B2', 'C2', 'b2', 'c2']);
+        });
+
         it('sorts provided values alphabetically by default', () => {
-            model = createSetValueModel(undefined, { values: ['1', '5', '10', '50'] });
+            model = createSetValueModel({filterParams: { values: ['1', '5', '10', '50'] }});
 
             expect(getDisplayedValues(model)).toStrictEqual(['1', '10', '5', '50']);
         });
 
         it('can sort provided values using provided comparator', () => {
             const comparator = (a: string, b: string) => parseInt(a, 10) - parseInt(b, 10);
-            model = createSetValueModel(undefined, { values: ['1', '10', '5', '50'], comparator });
+            model = createSetValueModel({filterParams: { values: ['1', '10', '5', '50'], comparator }});
 
             expect(getDisplayedValues(model)).toStrictEqual(['1', '5', '10', '50']);
         });
 
         it('will preserve original provided order if sorting is suppressed', () => {
             const values = ['A', 'C', 'B', 'F', 'D'];
-            model = createSetValueModel(undefined, { values }, undefined, true);
+            model = createSetValueModel({filterParams: { values }, suppressSorting: true});
 
             expect(getDisplayedValues(model)).toStrictEqual(values);
         });
@@ -368,7 +442,7 @@ describe('SetValueModel', () => {
             const value = 'B';
             const values = ['A', value, 'C'];
             const doesRowPassOtherFilters = (row: RowNode) => row.data.value != value;
-            model = createSetValueModel(undefined, { values }, doesRowPassOtherFilters);
+            model = createSetValueModel({filterParams: { values }, doesRowPassOtherFilters});
 
             expect(getDisplayedValues(model)).toStrictEqual(['A', 'B', 'C']);
         });
@@ -376,27 +450,45 @@ describe('SetValueModel', () => {
 
     describe('provided callback values', () => {
         it('only shows distinct provided callback values', done => {
-            model = createSetValueModel(undefined, { values: (params: any) => params.success(['A2', 'B2', 'C2', 'B2', 'C2']) });
+            model = createSetValueModel({filterParams: { values: (params: any) => params.success(['A2', 'B2', 'C2', 'B2', 'C2']) }});
 
             delayAssert(done, () => expect(getDisplayedValues(model)).toStrictEqual(['A2', 'B2', 'C2']));
         });
 
+        it('only shows distinct provided callback values (case-insensitive)', done => {
+            model = createSetValueModel({
+                filterParams: { values: (params: any) => params.success(['A2', 'B2', 'C2', 'b2', 'c2']) },
+                simulateCaseSensitivity: false,
+            });
+
+            delayAssert(done, () => expect(getDisplayedValues(model)).toStrictEqual(['A2', 'B2', 'C2']));
+        });
+
+        it('only shows distinct provided callback values (case-sensitive)', done => {
+            model = createSetValueModel({
+                filterParams: { values: (params: any) => params.success(['A2', 'B2', 'C2', 'b2', 'c2']) },
+                simulateCaseSensitivity: true,
+            });
+
+            delayAssert(done, () => expect(getDisplayedValues(model)).toStrictEqual(['A2', 'B2', 'C2', 'b2', 'c2']));
+        });
+
         it('sorts provided callback values alphabetically by default', done => {
-            model = createSetValueModel(undefined, { values: (params: any) => params.success(['1', '5', '10', '50']) });
+            model = createSetValueModel({filterParams: { values: (params: any) => params.success(['1', '5', '10', '50']) }});
 
             delayAssert(done, () => expect(getDisplayedValues(model)).toStrictEqual(['1', '10', '5', '50']));
         });
 
         it('can sort provided callback values using provided comparator', done => {
             const comparator = (a: string, b: string) => parseInt(a, 10) - parseInt(b, 10);
-            model = createSetValueModel(undefined, { values: (params: any) => params.success(['1', '10', '5', '50']), comparator });
+            model = createSetValueModel({filterParams: { values: (params: any) => params.success(['1', '10', '5', '50']), comparator }});
 
             delayAssert(done, () => expect(getDisplayedValues(model)).toStrictEqual(['1', '5', '10', '50']));
         });
 
         it('will preserve original provided order from callback if sorting is suppressed', done => {
             const values = ['A', 'C', 'B', 'F', 'D'];
-            model = createSetValueModel(undefined, { values: (params: any) => params.success(values) }, undefined, true);
+            model = createSetValueModel({filterParams: { values: (params: any) => params.success(values) }, suppressSorting: true});
 
             delayAssert(done, () => expect(getDisplayedValues(model)).toStrictEqual(values));
         });
@@ -405,7 +497,7 @@ describe('SetValueModel', () => {
             const value = 'B';
             const values = ['A', value, 'C'];
             const doesRowPassOtherFilters = (row: RowNode) => row.data.value != value;
-            model = createSetValueModel(undefined, { values: (params: any) => params.success(values) }, doesRowPassOtherFilters);
+            model = createSetValueModel({ filterParams: { values: (params: any) => params.success(values) }, doesRowPassOtherFilters});
 
             delayAssert(done, () => expect(getDisplayedValues(model)).toStrictEqual(['A', 'B', 'C']));
         });
@@ -442,10 +534,10 @@ describe('SetValueModel', () => {
             expect(model.getMiniFilter()).toBeNull();
         });
 
-        it('updates displayed values to only show those that match, ignoring case', () => {
+        it('updates displayed values to only show those that match (case-insensitive)', () => {
             const expectedValues = ['foo', 'fooA', 'Bfoo', 'DfooD', 'FoOE'];
             const values = ['A', 'B', 'foCo', ...expectedValues, 'F', 'G'];
-            model = createSetValueModel(values, undefined, undefined, true);
+            model = createSetValueModel({values, suppressSorting: true, simulateCaseSensitivity: false});
 
             model.setMiniFilter('foo');
 
@@ -456,10 +548,25 @@ describe('SetValueModel', () => {
             expect(getDisplayedValues(model)).toStrictEqual(expectedValues);
         });
 
+        it('updates displayed values to only show those that match (case-sensitive)', () => {
+            const expectedValues1 = ['foo', 'fooA', 'Bfoo', 'DfooD'];
+            const expectedValues2 = ['FOO', 'FOOA', 'BFOO', 'DFOOD'];
+            const values = ['A', 'B', 'foCo', ...expectedValues1, ...expectedValues2, 'FoOE', 'F', 'G'];
+            model = createSetValueModel({values, suppressSorting: true, simulateCaseSensitivity: true});
+
+            model.setMiniFilter('foo');
+
+            expect(getDisplayedValues(model)).toStrictEqual(expectedValues1);
+
+            model.setMiniFilter('FOO');
+
+            expect(getDisplayedValues(model)).toStrictEqual(expectedValues2);
+        });
+
         it('resets to show all values if mini filter is removed', () => {
             const value = 'foo';
             const values = ['A', 'B', value, 'C', 'D'];
-            model = createSetValueModel(values, undefined, undefined, true);
+            model = createSetValueModel({values, suppressSorting: true});
 
             model.setMiniFilter(value);
             model.setMiniFilter(null);
@@ -469,7 +576,7 @@ describe('SetValueModel', () => {
 
         it('shows nothing if no values match', () => {
             const values = ['A', 'B', 'C', 'D'];
-            model = createSetValueModel(values);
+            model = createSetValueModel({values});
 
             model.setMiniFilter('foo');
 
@@ -478,7 +585,7 @@ describe('SetValueModel', () => {
 
         it('does not show Blanks entry if mini filter matches', () => {
             const values = ['A', null, 'B'];
-            model = createSetValueModel(values);
+            model = createSetValueModel({values});
 
             model.setMiniFilter('bla');
 
@@ -487,7 +594,7 @@ describe('SetValueModel', () => {
 
         it.each(['windows', 'mac'])('shows Blanks entry if mini filter matches in %s Excel mode', excelMode => {
             const values = ['A', null, 'B'];
-            model = createSetValueModel(values, { excelMode });
+            model = createSetValueModel({values, filterParams: { excelMode }});
 
             model.setMiniFilter('bla');
 
@@ -499,7 +606,7 @@ describe('SetValueModel', () => {
         const values = ['A', 'B', 'C'];
 
         beforeEach(() => {
-            model = createSetValueModel(values);
+            model = createSetValueModel({values});
         });
 
         it('selects all values if no mini filter', () => {
@@ -522,7 +629,7 @@ describe('SetValueModel', () => {
         });
 
         it.each([undefined, 'windows', 'mac'])('selects all values that match mini filter, replacing existing selection if requested, for excelMode = %s', excelMode => {
-            model = createSetValueModel(values, { excelMode });
+            model = createSetValueModel({values, filterParams: { excelMode }});
 
             model.deselectValue('B');
             model.deselectValue('C');
@@ -539,7 +646,7 @@ describe('SetValueModel', () => {
         const values = ['A', 'B', 'C'];
 
         beforeEach(() => {
-            model = createSetValueModel(values);
+            model = createSetValueModel({values});
         });
 
         it('deselects all values if no mini filter', () => {
@@ -549,7 +656,7 @@ describe('SetValueModel', () => {
         });
 
         it.each([undefined, 'windows', 'mac'])('deselects all values that match mini filter, for excelMode = %s', excelMode => {
-            model = createSetValueModel(values, { excelMode });
+            model = createSetValueModel({values, filterParams: { excelMode }});
 
             model.deselectValue('C');
             model.setMiniFilter('B');
@@ -565,7 +672,7 @@ describe('SetValueModel', () => {
         const values = ['A', 'B', 'C'];
 
         beforeEach(() => {
-            model = createSetValueModel(values);
+            model = createSetValueModel({values});
         });
 
         it('returns true if all values are selected', () => {
@@ -591,7 +698,7 @@ describe('SetValueModel', () => {
 
         it('returns true if any values that match mini filter are not selected', () => {
             const values = ['A', 'fooB', 'Cfoo'];
-            model = createSetValueModel(values);
+            model = createSetValueModel({values});
 
             values.forEach(v => model.deselectValue(v));
             model.selectValue('fooB');
@@ -605,7 +712,7 @@ describe('SetValueModel', () => {
         const values = ['A', 'B', 'C'];
 
         beforeEach(() => {
-            model = createSetValueModel(values);
+            model = createSetValueModel({values});
         });
 
         it('returns true if no values are selected', () => {
@@ -632,7 +739,7 @@ describe('SetValueModel', () => {
 
         it('returns false if any values that match mini filter are selected', () => {
             const values = ['A', 'fooB', 'Cfoo'];
-            model = createSetValueModel(values);
+            model = createSetValueModel({values});
 
             values.forEach(v => model.deselectValue(v));
             model.selectValue('fooB');
@@ -652,7 +759,7 @@ describe('SetValueModel', () => {
         it('returns selected values if filter is active', () => {
             const expectedValues = ['B', 'C'];
             const values = ['A', ...expectedValues, 'D', 'E'];
-            model = createSetValueModel(values);
+            model = createSetValueModel({values});
 
             values.forEach(v => model.deselectValue(v));
             expectedValues.forEach(v => model.selectValue(v));
@@ -665,7 +772,33 @@ describe('SetValueModel', () => {
         it('exclusively selects provided values', done => {
             const expectedValues = ['A', 'B'];
             const otherValues = ['C', 'D', 'E'];
-            model = createSetValueModel([...expectedValues, ...otherValues]);
+            model = createSetValueModel({ values: [...expectedValues, ...otherValues]});
+
+            model.setModel(expectedValues).then(() => {
+                asyncAssert(
+                    done,
+                    () => expectedValues.forEach(v => expect(model.isValueSelected(v)).toBe(true)),
+                    () => otherValues.forEach(v => expect(model.isValueSelected(v)).toBe(false)));
+            });
+        });
+
+        it('exclusively selects provided values (case-insensitive)', done => {
+            const expectedValues = ['A', 'B'];
+            const otherValues = ['C', 'D', 'E'];
+            model = createSetValueModel({ values: [...expectedValues, ...otherValues], simulateCaseSensitivity: false });
+
+            model.setModel(expectedValues.map(v => v.toLowerCase())).then(() => {
+                asyncAssert(
+                    done,
+                    () => expectedValues.forEach(v => expect(model.isValueSelected(v)).toBe(true)),
+                    () => otherValues.forEach(v => expect(model.isValueSelected(v)).toBe(false)));
+            });
+        });
+
+        it('exclusively selects provided values (case-sensitive)', done => {
+            const expectedValues = ['A', 'B'];
+            const otherValues = [...expectedValues.map(v => v.toLowerCase()), 'C', 'D', 'E'];
+            model = createSetValueModel({ values: [...expectedValues, ...otherValues], simulateCaseSensitivity: true });
 
             model.setModel(expectedValues).then(() => {
                 asyncAssert(
@@ -677,7 +810,7 @@ describe('SetValueModel', () => {
 
         it('selects all values if provided model is null', done => {
             const values = ['A', 'B', 'C', 'D', 'E'];
-            model = createSetValueModel(values);
+            model = createSetValueModel({values});
 
             values.forEach(v => model.deselectValue(v));
 

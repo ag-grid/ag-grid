@@ -166,7 +166,8 @@ export class SetValueModel implements IEventEmitter {
                 case SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES:
                 case SetFilterModelValuesType.PROVIDED_LIST: {
                     const values = this.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES ?
-                        this.getValuesFromRows(false) : _.toStrings(this.providedValues as any[]);
+                        this.getValuesFromRows(false) :
+                        _.values(this.uniqueValues(_.toStrings(this.providedValues as any[]) || []));
 
                     const sortedValues = this.sortValues(values || []);
 
@@ -183,7 +184,7 @@ export class SetValueModel implements IEventEmitter {
                     const callback = this.providedValues as SetFilterValuesFunc;
                     const params: SetFilterValuesFuncParams = {
                         success: values => {
-                            const processedValues = _.toStrings(values);
+                            const processedValues = _.values(this.uniqueValues(_.toStrings(values) || []));
 
                             this.setIsLoading(false);
 
@@ -398,23 +399,34 @@ export class SetValueModel implements IEventEmitter {
                 // select all values from the model that exist in the filter
                 this.selectedValues.clear();
 
-                // Honour case-sensitivity setting for matching purposes here, preserving original casing
-                // in the selectedValues output.
-                const valueKeyFn = (v: string | null) => v == null ? NULL_SUBSTITUTE : this.caseFormat(v);
-
-                const allValues: {[key: string]: string | null} = {};
-                _.forEach(values || [], value => {
-                    allValues[valueKeyFn(value)] = value;
-                });
+                const allValues = this.uniqueValues(values || []);
 
                 _.forEach(model, value => {
-                    const allValue = allValues[valueKeyFn(value)];
+                    const allValue = allValues[this.uniqueKey(value)];
                     if (allValue !== undefined) {
                         this.selectedValues.add(allValue);
                     }
                 });
             }
         });
+    }
+
+    private uniqueValues(values: (string | null)[]): { [key: string]: string | null } {
+        // Honour case-sensitivity setting for matching purposes here, preserving original casing
+        // in the selectedValues output.
+        const uniqueValues: {[key: string]: string | null} = {};
+        _.forEach(values || [], value => {
+            const key = this.uniqueKey(value);
+            if (uniqueValues[key] === undefined) {
+                uniqueValues[key] = value;
+            }
+        });
+
+        return  uniqueValues;
+    }
+
+    private uniqueKey(v: string | null): string {
+        return v == null ? NULL_SUBSTITUTE : this.caseFormat(v);
     }
 
     private resetSelectionState(values: (string | null)[]): void {
