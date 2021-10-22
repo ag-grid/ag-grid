@@ -89,7 +89,7 @@ META;
 function globalAgGridScript($enterprise = false)
 {
     $archiveMatch = '/archive\/\d+.\d+.\d+/';
-    $host = isset($_SERVER['HTTP_X_PROXY_HTTP_HOST']) ? $_SERVER['HTTP_X_PROXY_HTTP_HOST'] : $_SERVER['HTTP_HOST'];
+    $host = isset($_SERVER['HTTP_X_PROXY_HTTP_HOST']) ? $_SERVER['HTTP_X_PROXY_HTTP_HOST'] : $_SERVER['HTTP_HOST'] ? $_SERVER['HTTP_HOST'] : 'localhost:8080';
 
     if (preg_match($archiveMatch, $_SERVER['PHP_SELF'], $matches)) {
         $archiveSegment = $matches[0];

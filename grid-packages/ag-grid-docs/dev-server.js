@@ -3,28 +3,40 @@ const fs = require('fs-extra');
 const cp = require('child_process');
 const glob = require('glob');
 const resolve = require('path').resolve;
+const http = require('http');
+const https = require('https');
 const express = require('express');
+const phpExpress = require('php-express')({
+    binPath: 'php'
+});
 const realWebpack = require('webpack');
 const proxy = require('express-http-proxy');
 const webpackMiddleware = require('webpack-dev-middleware');
 const chokidar = require('chokidar');
 const tcpPortUsed = require('tcp-port-used');
-const { generateDocumentationExamples } = require('./example-generator-documentation');
-const { updateBetweenStrings, getAllModules } = require('./utils');
-const { getFlattenedBuildChainInfo, buildPackages, buildCss, watchCss } = require('./lernaOperations');
-const { EOL } = os;
+const {generateDocumentationExamples} = require('./example-generator-documentation');
+const {updateBetweenStrings, getAllModules} = require('./utils');
+const {getFlattenedBuildChainInfo, buildPackages, buildCss, watchCss} = require('./lernaOperations');
+const {EOL} = os;
+
+const key = fs.readFileSync('./selfsigned.key', 'utf8');
+const cert = fs.readFileSync('./selfsigned.crt', 'utf8');
+const credentials = {
+    key: key,
+    cert: cert
+};
 
 const flattenArray = array => [].concat.apply([], array);
 
 const lnk = require('lnk').sync;
 
-const EXPRESS_PORT = 8080;
-const PHP_PORT = 8888;
+const EXPRESS_HTTP_PORT = 8090;
+const EXPRESS_HTTPS_PORT = 8080;
 const HOST = '127.0.0.1';
 const WINDOWS = /^win/.test(os.platform());
 
 function reporter(middlewareOptions, options) {
-    const { log, state, stats } = options;
+    const {log, state, stats} = options;
 
     if (state) {
         const displayStats = middlewareOptions.stats !== false;
@@ -73,31 +85,6 @@ function addWebpackMiddlewareForConfig(app, configFile, prefix, bundleDescriptor
     );
 }
 
-function launchPhpCP(app) {
-    const php = cp.spawn('php', ['-S', `${HOST}:${PHP_PORT}`, '-t', 'src'], {
-        stdio: ['ignore', 'ignore', 'ignore'],
-        env: { AG_DEV: 'true' }
-    });
-
-    app.use(
-        '/',
-        proxy(`${HOST}:${PHP_PORT}`, {
-            proxyReqOptDecorator: function(proxyReqOpts, srcReq) {
-                proxyReqOpts.headers['X-PROXY-HTTP-HOST'] = srcReq.headers.host;
-                return proxyReqOpts;
-            }
-        })
-    );
-
-    process.on('exit', () => {
-        php.kill();
-    });
-
-    process.on('SIGINT', () => {
-        php.kill();
-    });
-}
-
 function launchGatsby() {
     console.log("Launching Gatsby");
     const npm = WINDOWS ? 'npm.cmd' : 'npm';
@@ -129,7 +116,6 @@ function serveCoreModules(app, gridCommunityModules, gridEnterpriseModules, char
 }
 
 
-
 function getTscPath() {
     return WINDOWS ? 'node_modules\\.bin\\tsc.cmd' : 'node_modules/.bin/tsc';
 }
@@ -152,8 +138,8 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
         linkType = 'junction';
     }
 
-    lnk('../../community-modules/vue/', '_dev/@ag-grid-community', { force: true, type: linkType, rename: 'vue' });
-    lnk('../../community-modules/vue3/', '_dev/@ag-grid-community', { force: true, type: linkType, rename: 'vue3' });
+    lnk('../../community-modules/vue/', '_dev/@ag-grid-community', {force: true, type: linkType, rename: 'vue'});
+    lnk('../../community-modules/vue3/', '_dev/@ag-grid-community', {force: true, type: linkType, rename: 'vue3'});
     lnk('../../community-modules/angular/', '_dev/@ag-grid-community', {
         force: true,
         type: linkType,
@@ -273,11 +259,11 @@ async function watchAndGenerateExamples() {
     }
 
     chokidar
-        .watch([`./documentation/doc-pages/**/examples/**/*.{html,css,js,jsx,ts}`], { ignored: ['**/_gen/**/*'] })
+        .watch([`./documentation/doc-pages/**/examples/**/*.{html,css,js,jsx,ts}`], {ignored: ['**/_gen/**/*']})
         .on('change', regenerateDocumentationExamplesForFileChange);
 
     chokidar
-        .watch([`./documentation/doc-pages/**/*.md`], { ignoreInitial: true })
+        .watch([`./documentation/doc-pages/**/*.md`], {ignoreInitial: true})
         .on('add', regenerateDocumentationExamplesForFileChange);
 }
 
@@ -409,7 +395,8 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
         gridCommunityModules,
         [],
         module => `        "${module.publishedName}": \`\${localPrefix}/${module.cjsFilename}\`,`,
-        () => { });
+        () => {
+        });
 
     updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
         '        /* START OF GRID ENTERPRISE MODULES PATHS DEV - DO NOT DELETE */',
@@ -428,7 +415,8 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
             `        "@ag-grid-community/all-modules/dist/styles/${cssFile}": \`\${localPrefix}/@ag-grid-community/all-modules/dist/styles/${cssFile}\`,`,
             `        "@ag-grid-community/core/dist/styles/${cssFile}": \`\${localPrefix}/@ag-grid-community/core/dist/styles/${cssFile}\`,`
         ].join(EOL),
-        () => { });
+        () => {
+        });
 
     updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
         '        /* START OF GRID COMMUNITY MODULES PATHS PROD - DO NOT DELETE */',
@@ -436,7 +424,8 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
         gridCommunityModules,
         [],
         module => `        "${module.publishedName}": \`https://unpkg.com/${module.cjsFilename}\`,`,
-        () => { });
+        () => {
+        });
 
     updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
         '        /* START OF GRID ENTERPRISE MODULES PATHS PROD - DO NOT DELETE */',
@@ -455,7 +444,8 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
             `        "@ag-grid-community/all-modules/dist/styles/${cssFile}": \`https://unpkg.com/@ag-grid-community/all-modules@\${agGridVersion}/dist/styles/${cssFile}\`,`,
             `        "@ag-grid-community/core/dist/styles/${cssFile}": \`https://unpkg.com/@ag-grid-community/core@\${agGridVersion}/dist/styles/${cssFile}\`,`
         ].join(EOL),
-        () => { });
+        () => {
+        });
 
     fs.writeFileSync(utilityFilename, updatedUtilFileContents, 'UTF-8');
 }
@@ -606,7 +596,7 @@ function updateModuleChangedHash(moduleRoot) {
     const npm = WINDOWS ? 'npm.cmd' : 'npm';
     const resolvedPath = resolve(moduleRoot).replace(/\\/g, '/').replace("C:", "/c");
 
-    cp.spawnSync(npm, ['run', 'hash'], { cwd: resolvedPath });
+    cp.spawnSync(npm, ['run', 'hash'], {cwd: resolvedPath});
 }
 
 function updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartsCommunityModules) {
@@ -726,13 +716,13 @@ const readModulesState = () => {
     moduleRootNames.forEach(moduleRootName => {
         const moduleRootDirectory = WINDOWS ? `..\\..\\${moduleRootName}\\` : `../../${moduleRootName}/`;
 
-        fs.readdirSync(moduleRootDirectory, { withFileTypes: true })
+        fs.readdirSync(moduleRootDirectory, {withFileTypes: true})
             .filter(d => d.isDirectory())
             .filter(d => !exclusions.includes(d.name))
             .map(d => WINDOWS ? `..\\..\\${moduleRootName}\\${d.name}` : `../../${moduleRootName}/${d.name}`)
             .map(d => {
                 const packageName = require(WINDOWS ? `${d}\\package.json` : `${d}/package.json`).name;
-                modulesState[packageName] = { moduleChanged: moduleChanged(d) };
+                modulesState[packageName] = {moduleChanged: moduleChanged(d)};
             });
     });
 
@@ -740,10 +730,10 @@ const readModulesState = () => {
 };
 
 module.exports = async (skipFrameworks, skipExampleFormatting, done) => {
-    tcpPortUsed.check(EXPRESS_PORT)
+    tcpPortUsed.check(EXPRESS_HTTP_PORT)
         .then(async (inUse) => {
             if (inUse) {
-                console.log(`Port ${EXPRESS_PORT} is already in use - please ensure previous instances of docs has shutdown/completed.`);
+                console.log(`Port ${EXPRESS_HTTP_PORT} is already in use - please ensure previous instances of docs has shutdown/completed.`);
                 console.log(`If you run using npm run docs-xxx and kill it the gulp process will continue until it's finished.`);
                 console.log(`Wait a few seconds for a message that will let you know you can retry.`);
                 console.log(`Alternatively you can try kill all node & gulp processes (ensure you're happy with what will be killed!:`);
@@ -769,7 +759,7 @@ module.exports = async (skipFrameworks, skipExampleFormatting, done) => {
             const app = express();
 
             // necessary for plunkers
-            app.use(function(req, res, next) {
+            app.use(function (req, res, next) {
                 res.setHeader('Access-Control-Allow-Origin', '*');
                 return next();
             });
@@ -797,15 +787,26 @@ module.exports = async (skipFrameworks, skipExampleFormatting, done) => {
 
             // regenerate examples and then watch them
             console.log("Watch and Generate Examples");
-            await watchAndGenerateExamples();
+            // await watchAndGenerateExamples();
             console.log("Examples Generated");
 
-            // websites
-            launchPhpCP(app);
+            // php stuff
+            app.set('views', './src');
+            app.engine('php', phpExpress.engine);
+            app.set('view engine', 'php');
+            app.all(/.+\.php$/, phpExpress.router);
 
-            app.listen(EXPRESS_PORT, function() {
-                console.log(`AG Grid dev server now available on http://${HOST}:${EXPRESS_PORT}`);
-            });
+            // todo - iterate everything under src and serve it
+            // ...or use app.get('/' and handle it that way
+            app.use(`/_assets`, express.static(`./src/_assets`));
+            app.use(`/example-rich-grid`, express.static(`./src/example-rich-grid`));
+            app.use(`/live-stream-updates`, express.static(`./src/live-stream-updates`));
+            app.use(`/integrated-charting`, express.static(`./src/integrated-charting`));
+
+            const httpServer = http.createServer(app).listen(EXPRESS_HTTP_PORT);
+            const httpsServer = https.createServer(credentials, app).listen(EXPRESS_HTTPS_PORT);
+
+            // todo handle cleanup (ie when process killed by user)
 
             launchGatsby();
 

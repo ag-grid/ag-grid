@@ -12,7 +12,7 @@
     "build": "npm run clean && npm run customise && npm run generate-examples",
     "package": "npm run build && npm run publish",
     "publish": "npx gatsby build --prefix-paths",
-    "develop": "npx gatsby develop -H 0.0.0.0",
+    "develop": "npx gatsby develop --https --key-file ../selfsigned.key --cert-file ../selfsigned.crt --ca-file ../selfsigned.crt -H 0.0.0.0",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
     "start": "npm run customise && npm run develop",
     "serve": "npx gatsby serve --prefix-paths -H 0.0.0.0",
