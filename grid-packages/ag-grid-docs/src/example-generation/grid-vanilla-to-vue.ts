@@ -340,7 +340,7 @@ function convertColumnDefs(rawColumnDefs, userComponentNames): string[] {
             } else {
                 let value = rawColumnDef[columnProperty];
 
-                if (isParamsProperty(columnProperty) && value.cellRenderer) {
+                if (isParamsProperty(columnProperty) && value.cellRenderer && !value.cellRenderer.includes("AG_LITERAL_")) {
                     Object.defineProperty(value, 'cellRendererFramework', Object.getOwnPropertyDescriptor(value, 'cellRenderer'));
                     delete value['cellRenderer'];
                 }

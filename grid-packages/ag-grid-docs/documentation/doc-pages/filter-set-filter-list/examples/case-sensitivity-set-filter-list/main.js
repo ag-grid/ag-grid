@@ -1,4 +1,4 @@
-var gridOptions = {
+const gridOptions = {
     columnDefs: [
         {
             headerName: 'Case Insensitive (default)',
@@ -30,7 +30,7 @@ var gridOptions = {
     onFirstDataRendered: onFirstDataRendered
 };
 
-var FIXED_STYLES = 'vertical-align: middle; border: 1px solid black; margin: 3px; display: inline-block; width: 10px; height: 10px';
+const FIXED_STYLES = 'vertical-align: middle; border: 1px solid black; margin: 3px; display: inline-block; width: 10px; height: 10px';
 
 function colourCellRenderer(params) {
     if (!params.value || params.value === '(Select All)') { return params.value; }
@@ -38,7 +38,7 @@ function colourCellRenderer(params) {
     return `<div style="background-color: ${params.value.toLowerCase()}; ${FIXED_STYLES}"></div>${params.value}`;
 }
 
-var COLOURS = ['Black', 'Red', 'Orange', 'White', 'Yellow', 'Green', 'Purple'];
+const COLOURS = ['Black', 'Red', 'Orange', 'White', 'Yellow', 'Green', 'Purple'];
 
 function onFirstDataRendered(params) {
     params.api.getToolPanelInstance('filters').expandFilters();
@@ -46,14 +46,14 @@ function onFirstDataRendered(params) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv = document.querySelector('#myGrid');
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
   // TODO: Remove once colours.json is published!
   // We appear to need to fit this fetch and update pattern for non-JS examples to render properly.
   agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
     .then(function(data) {
-        var COLOURS = ['Black', 'Red', 'Orange', 'White', 'Yellow', 'Green', 'Purple'];
+        const COLOURS = ['Black', 'Red', 'Orange', 'White', 'Yellow', 'Green', 'Purple'];
 
         data = [];
         COLOURS.forEach((colour) => {

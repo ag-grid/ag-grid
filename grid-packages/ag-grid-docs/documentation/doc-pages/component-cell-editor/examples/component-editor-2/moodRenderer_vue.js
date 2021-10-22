@@ -8,7 +8,6 @@ export default {
     },
     methods: {
         refresh(params) {
-            this.params = params;
             this.setMood(params);
         },
 
