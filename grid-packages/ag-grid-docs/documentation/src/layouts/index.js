@@ -11,7 +11,7 @@ import logo from '../images/ag-grid.svg';
 import styles from './index.module.scss';
 import './mailchimp.css';
 
-const TopBar = ({ frameworks, framework, path, rootPage }) => (
+const TopBar = ({ frameworks, framework, path }) => (
     <div className={styles['top-bar']}>
         <div className={styles['top-bar__wrapper']}>
             <div className={styles['top-bar__search']}>
@@ -27,7 +27,7 @@ const TopBar = ({ frameworks, framework, path, rootPage }) => (
                 <Search currentFramework={framework} />
             </div>
             <div className={styles['top-bar__framework-selector']}>
-                {!rootPage && <FrameworkSelector frameworks={frameworks} path={path} currentFramework={framework} />}
+                <FrameworkSelector frameworks={frameworks} path={path} currentFramework={framework} />
             </div>
         </div>
     </div>
@@ -37,7 +37,6 @@ const TopBar = ({ frameworks, framework, path, rootPage }) => (
  * This controls the layout template for all pages.
  */
 export const Layout = ({ children, pageContext: { frameworks, framework = 'javascript', layout, pageName }, location: { pathname: path }, data }) => {
-    const rootPage = (data && data.markdownRemark) ? data.markdownRemark.frontmatter.rootPage : false;
 
     if (layout === 'bare') { // only for on the fly example runner
         return children;
@@ -56,7 +55,7 @@ export const Layout = ({ children, pageContext: { frameworks, framework = 'javas
                     <HeaderNav />
                 </div>
             </header>
-            <TopBar frameworks={frameworks} framework={framework} path={path} rootPage={rootPage} />
+            <TopBar frameworks={frameworks} framework={framework} path={path} />
             <div className={styles['content-viewport']}>
                 <aside className={`${styles['main-menu']}`}>
                     <Menu currentFramework={framework} currentPage={pageName} />

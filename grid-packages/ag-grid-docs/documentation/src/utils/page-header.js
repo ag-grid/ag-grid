@@ -1,7 +1,6 @@
 import { agGridVersion, agChartsVersion } from 'utils/consts';
 
-export const getHeaderTitle = (title, framework = 'javascript', isCharts = false, isRootPage = false, version = '') =>
-    isRootPage ? title : `${getProductType(framework, isCharts, version)}: ${title}`;
+export const getHeaderTitle = (title, framework = 'javascript', isCharts = false, version = '') => `${getProductType(framework, isCharts, version)}`;
 
 const getProductType = (framework, isCharts = false, version = '') =>
     `${getFrameworkName(framework)}${version} ${isCharts ? 'Charts' : 'Data Grid'}`;
@@ -14,7 +13,7 @@ export const getFrameworkName = framework => {
         vue: 'Vue',
     };
 
-    return mappings[framework];
+    return mappings[framework] || '';
 };
 
 export const getGridVersionMessage = framework => `Download v${agGridVersion.split('.')[0]} of the best ${getProductType(framework, false)} in the world now.`;
