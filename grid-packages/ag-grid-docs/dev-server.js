@@ -19,8 +19,8 @@ const {updateBetweenStrings, getAllModules} = require('./utils');
 const {getFlattenedBuildChainInfo, buildPackages, buildCss, watchCss} = require('./lernaOperations');
 const {EOL} = os;
 
-const key = fs.readFileSync('./selfsigned.key', 'utf8');
-const cert = fs.readFileSync('./selfsigned.crt', 'utf8');
+const key = fs.readFileSync(process.env.AG_DOCS_KEY || './selfsigned.key', 'utf8');
+const cert = fs.readFileSync(process.env.AG_DOCS_CRT || './selfsigned.crt', 'utf8');
 const credentials = {
     key: key,
     cert: cert
@@ -787,7 +787,7 @@ module.exports = async (skipFrameworks, skipExampleFormatting, done) => {
 
             // regenerate examples and then watch them
             console.log("Watch and Generate Examples");
-            // await watchAndGenerateExamples();
+            await watchAndGenerateExamples();
             console.log("Examples Generated");
 
             // php stuff
