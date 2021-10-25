@@ -56,7 +56,7 @@ export class InfiniteBlock extends RowNodeBlock {
     }
 
     protected setDataAndId(rowNode: RowNode, data: any, index: number): void {
-        // if there's not id and the rowNode was rendered before, it means this
+        // if there's no id and the rowNode was rendered before, it means this
         // was a placeholder rowNode and should not be recycled. Setting
         // `alreadyRendered`  to `false` forces the rowRenderer to flush it.
         if (!rowNode.id && rowNode.alreadyRendered) {
