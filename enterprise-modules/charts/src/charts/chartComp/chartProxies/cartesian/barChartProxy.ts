@@ -12,7 +12,7 @@ import {
     LegendClickEvent,
     AgChartTheme
 } from "ag-charts-community";
-import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
+import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { deepMerge } from "../../object";
 
@@ -72,9 +72,52 @@ export class BarChartProxy extends CartesianChartProxy<any> {
 
         this.updateAxes('category', !this.isColumnChart());
 
-        const barSeries = this.chart.series[0] as BarSeries;
+        const chart = this.chart;
+        const barSeries = chart.series[0] as BarSeries;
+        const palette = this.getPalette();
+
+        let fields = params.fields;
         if (this.crossFiltering) {
-            this.updateCrossFilteringSeries(barSeries, params);
+            // add additional filtered out field
+            fields.forEach(field => {
+                const crossFilteringField = {...field};
+                crossFilteringField.colId = field.colId + '-filtered-out';
+                fields.push(crossFilteringField);
+            });
+
+            // introduce cross filtering transparent fills
+            const fills: string[] = [];
+            palette.fills.forEach(fill => {
+                fills.push(fill);
+                fills.push(this.hexToRGBA(fill, '0.3'));
+            });
+            barSeries.fills = fills;
+
+            // introduce cross filtering transparent strokes
+            const strokes: string[] = [];
+            palette.strokes.forEach(stroke => {
+                fills.push(stroke);
+                fills.push(this.hexToRGBA(stroke, '0.3'));
+            });
+            barSeries.strokes = strokes;
+
+            // disable series highlighting by default
+            barSeries.highlightStyle.fill = undefined;
+
+            // hide 'filtered out' legend items
+            const colIds = params.fields.map(f => f.colId);
+            barSeries.hideInLegend = colIds.filter(colId => colId.indexOf('-filtered-out') !== -1);
+
+            // sync toggling of legend item with hidden 'filtered out' item
+            chart.legend.addEventListener('click', (event: LegendClickEvent) => {
+                barSeries.toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
+            });
+
+            chart.tooltip.delay = 500;
+
+            // add node click cross filtering callback to series
+            barSeries.addEventListener('nodeClick', this.crossFilterCallback);
+
         } else {
             barSeries.fills = this.chartTheme.palette.fills;
             barSeries.strokes = this.chartTheme.palette.strokes;
@@ -89,58 +132,21 @@ export class BarChartProxy extends CartesianChartProxy<any> {
         this.updateLabelRotation(params.category.id, !this.isColumnChart());
     }
 
-    private updateCrossFilteringSeries(barSeries: BarSeries, params: UpdateChartParams) {
-        const chart = this.chart;
-        const palette = this.getPalette();
-        let fields: FieldDefinition[] = params.fields;
-
-        // add additional filtered out field
-        fields.forEach(field => {
-            const crossFilteringField = {...field};
-            crossFilteringField.colId = field.colId + '-filtered-out';
-            fields.push(crossFilteringField);
-        });
-
-        // introduce cross filtering transparent fills
-        const fills: string[] = [];
-        palette.fills.forEach(fill => {
-            fills.push(fill);
-            fills.push(this.hexToRGBA(fill, '0.3'));
-        });
-        barSeries.fills = fills;
-
-        // introduce cross filtering transparent strokes
-        const strokes: string[] = [];
-        palette.strokes.forEach(stroke => {
-            fills.push(stroke);
-            fills.push(this.hexToRGBA(stroke, '0.3'));
-        });
-        barSeries.strokes = strokes;
-
-        // disable series highlighting by default
-        barSeries.highlightStyle.fill = undefined;
-
-        // hide 'filtered out' legend items
-        const colIds = params.fields.map(f => f.colId);
-        barSeries.hideInLegend = colIds.filter(colId => colId.indexOf('-filtered-out') !== -1);
-
-        // sync toggling of legend item with hidden 'filtered out' item
-        chart.legend.addEventListener('click', (event: LegendClickEvent) => {
-            barSeries.toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
-        });
-
-        chart.tooltip.delay = 500;
-
-        // add node click cross filtering callback to series
-        barSeries.addEventListener('nodeClick', this.crossFilterCallback);
-    }
-
     private extractSeriesOverrides(agChartOptions: AgCartesianChartOptions) {
         const overrides = (agChartOptions.theme! as AgChartTheme).overrides;
-        const cartesianSeriesOverrides = (overrides && overrides!.cartesian) ? overrides!.cartesian.series : {};
-        const seriesOverrides = this.isColumnChart() ?
-            (overrides && overrides.column && overrides.column.series) ? overrides.column.series : {} :
-            (overrides && overrides.bar && overrides.bar.series) ? overrides.bar.series : {};
+
+        const cartesianSeriesOverrides = overrides && overrides!.cartesian ? overrides!.cartesian.series : {};
+
+        let seriesOverrides = {};
+        if (this.isColumnChart()) {
+            if (overrides && overrides.column && overrides.column.series) {
+                seriesOverrides = overrides.column.series;
+            }
+        } else {
+            if (overrides && overrides.bar && overrides.bar.series) {
+                seriesOverrides = overrides.bar.series;
+            }
+        }
 
         return deepMerge(cartesianSeriesOverrides, seriesOverrides);
     }
