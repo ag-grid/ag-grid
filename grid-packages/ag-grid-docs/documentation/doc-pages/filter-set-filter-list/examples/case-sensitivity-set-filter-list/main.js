@@ -27,7 +27,8 @@ const gridOptions = {
         floatingFilter: true,
     },
     sideBar: 'filters',
-    onFirstDataRendered: onFirstDataRendered
+    onFirstDataRendered: onFirstDataRendered,
+    rowData: getData()
 };
 
 const FIXED_STYLES = 'vertical-align: middle; border: 1px solid black; margin: 3px; display: inline-block; width: 10px; height: 10px';
@@ -48,25 +49,4 @@ function onFirstDataRendered(params) {
 document.addEventListener('DOMContentLoaded', function() {
     const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
-
-  // TODO: Remove once colours.json is published!
-  // We appear to need to fit this fetch and update pattern for non-JS examples to render properly.
-  agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-    .then(function(data) {
-        const COLOURS = ['Black', 'Red', 'Orange', 'White', 'Yellow', 'Green', 'Purple'];
-
-        data = [];
-        COLOURS.forEach((colour) => {
-          data.push({ colour });
-          data.push({ colour: colour.toUpperCase() });
-          data.push({ colour: colour.toLowerCase() });
-        });
-      
-        gridOptions.api.setRowData(data);
-    });
-
-//   agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/colours.json' })
-//     .then(function(data) {
-//         gridOptions.api.setRowData(data);
-//     });
 });
