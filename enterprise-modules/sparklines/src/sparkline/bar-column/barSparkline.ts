@@ -1,5 +1,6 @@
 import { BandScale } from '../../scale/bandScale';
-import { BarColumnSparkline, RectNodeDatum } from './barColumnSparkline';
+import { isNumber } from '../../util/value';
+import { BarColumnLabelPlacement, BarColumnSparkline, RectNodeDatum } from './barColumnSparkline';
 
 
 export interface BarNodeDatum extends RectNodeDatum {}
@@ -41,11 +42,21 @@ export class BarSparkline extends BarColumnSparkline {
     }
 
     protected generateNodeData(): BarNodeDatum[] | undefined {
-        const { data, yData, xData, xScale, yScale, fill, stroke, strokeWidth } = this;
+        const { data, yData, xData, xScale, yScale, fill, stroke, strokeWidth, label } = this;
 
         if (!data) {
             return;
         }
+
+        const {
+            fontStyle: labelFontStyle,
+            fontWeight: labelFontWeight,
+            fontSize: labelFontSize,
+            fontFamily: labelFontFamily,
+            color: labelColor,
+            formatter: labelFormatter,
+            placement: labelPlacement
+         } = label;
 
         const nodeData: BarNodeDatum[] = [];
 
@@ -76,6 +87,29 @@ export class BarSparkline extends BarColumnSparkline {
                 y: y
             }
 
+            let labelText: string;
+            if (labelFormatter) {
+                labelText = labelFormatter({ value: yDatum });
+            } else {
+                labelText = yDatum !== undefined && isNumber(yDatum) ? yDatum.toFixed(1) : '';
+            }
+
+            const labelY: number = y + (height / 2);
+            let labelX: number;
+
+            const labelTextBaseline: CanvasTextBaseline = 'middle';
+            let labelTextAlign: CanvasTextAlign;
+
+            if (labelPlacement === BarColumnLabelPlacement.Inside) {
+                labelX = x + width / 2;
+
+                labelTextAlign = 'center';
+            } else {
+                labelX = x + (yDatum !== undefined && yDatum >= 0 ? width : 0);
+
+                labelTextAlign = yDatum !== undefined && yDatum >= 0 ? 'start' : 'end'
+            }
+
             nodeData.push({
                 x,
                 y,
@@ -85,7 +119,19 @@ export class BarSparkline extends BarColumnSparkline {
                 stroke,
                 strokeWidth,
                 seriesDatum: { x: xDatum, y: invalidDatum ? undefined : yDatum },
-                point: midPoint
+                point: midPoint,
+                label: {
+                    x: labelX,
+                    y: labelY,
+                    text: labelText,
+                    fontStyle: labelFontStyle,
+                    fontWeight: labelFontWeight,
+                    fontSize: labelFontSize,
+                    fontFamily: labelFontFamily,
+                    textAlign: labelTextAlign,
+                    textBaseline: labelTextBaseline,
+                    fill: labelColor
+                }
             });
         }
         return nodeData;
