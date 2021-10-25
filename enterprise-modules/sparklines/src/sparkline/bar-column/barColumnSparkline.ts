@@ -43,8 +43,8 @@ export enum BarColumnLabelPlacement {
     Inside = 'inside',
     Outside = 'outside'
 }
-class BarColumnLabel extends Label {
-    formatter?: (params: { value: number | undefined }) => string;
+export class BarColumnLabel extends Label {
+    formatter?: (params: { value: number | undefined }) => string = undefined;
     placement = BarColumnLabelPlacement.Inside;
 }
 
