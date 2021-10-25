@@ -347,8 +347,6 @@ export class RowNode implements IEventEmitter {
         this.beans.selectionService.syncInRowNode(this, oldNode);
         this.checkRowSelectable();
 
-        if (!oldNode) { this.alreadyRendered = false; }
-
         const event: DataChangedEvent = this.createDataChangedEvent(data, oldData, false);
 
         this.dispatchLocalEvent(event);
