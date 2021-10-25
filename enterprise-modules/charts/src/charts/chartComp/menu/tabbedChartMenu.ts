@@ -14,7 +14,7 @@ import { ChartDataPanel } from "./data/chartDataPanel";
 import { FormatPanel } from "./format/formatPanel";
 import { ChartSettingsPanel } from "./settings/chartSettingsPanel";
 import { ChartTranslator } from "../chartTranslator";
-import { ChartOptionsService } from "./chartOptionsService";
+import { ChartOptionsService } from "../chartOptionsService";
 
 export class TabbedChartMenu extends Component {
     public static TAB_DATA = 'data';

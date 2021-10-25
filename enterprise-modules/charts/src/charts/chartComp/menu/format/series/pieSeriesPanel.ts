@@ -13,7 +13,7 @@ import { ShadowPanel } from "./shadowPanel";
 import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { CalloutPanel } from "./calloutPanel";
 import { ChartTranslator } from "../../../chartTranslator";
-import { ChartOptionsService } from "../../chartOptionsService";
+import { ChartOptionsService } from "../../../chartOptionsService";
 
 export class PieSeriesPanel extends Component {
 

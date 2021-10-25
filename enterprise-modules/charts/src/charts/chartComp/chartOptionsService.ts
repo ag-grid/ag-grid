@@ -8,7 +8,7 @@ import {
     GridApi,
     PostConstruct
 } from "@ag-grid-community/core";
-import { ChartController } from "../chartController";
+import { ChartController } from "./chartController";
 
 export class ChartOptionsService extends BeanStub {
 

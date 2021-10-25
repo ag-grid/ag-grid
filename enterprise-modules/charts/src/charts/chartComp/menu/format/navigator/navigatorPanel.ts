@@ -9,7 +9,7 @@ import {
     RefSelector
 } from "@ag-grid-community/core";
 import { ChartTranslator } from "../../../chartTranslator";
-import { ChartOptionsService } from "../../chartOptionsService";
+import { ChartOptionsService } from "../../../chartOptionsService";
 
 export class NavigatorPanel extends Component {
 

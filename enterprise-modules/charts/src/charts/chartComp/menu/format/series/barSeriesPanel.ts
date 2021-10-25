@@ -13,7 +13,7 @@ import { ShadowPanel } from "./shadowPanel";
 import { FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslator } from "../../../chartTranslator";
 import { initFillOpacitySlider, initFontPanelParams, initLineOpacitySlider } from "../widgetInitialiser";
-import { ChartOptionsService } from "../../chartOptionsService";
+import { ChartOptionsService } from "../../../chartOptionsService";
 
 export class BarSeriesPanel extends Component {
 

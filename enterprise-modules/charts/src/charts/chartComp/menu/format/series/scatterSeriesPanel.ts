@@ -12,7 +12,7 @@ import { MarkersPanel } from "./markersPanel";
 import { ChartTranslator } from "../../../chartTranslator";
 import { initFontPanelParams } from "../widgetInitialiser";
 import { FontPanel, FontPanelParams } from "../fontPanel";
-import { ChartOptionsService } from "../../chartOptionsService";
+import { ChartOptionsService } from "../../../chartOptionsService";
 
 export class ScatterSeriesPanel extends Component {
 

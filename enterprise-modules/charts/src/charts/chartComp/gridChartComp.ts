@@ -34,7 +34,7 @@ import { HistogramChartProxy } from "./chartProxies/cartesian/histogramChartProx
 import { ChartTranslator } from "./chartTranslator";
 import { ChartCrossFilter } from "./chartCrossFilter";
 import { CrossFilteringContext } from "../chartService";
-import { ChartOptionsService } from "./menu/chartOptionsService";
+import { ChartOptionsService } from "./chartOptionsService";
 
 export interface GridChartParams {
     pivotChart: boolean;

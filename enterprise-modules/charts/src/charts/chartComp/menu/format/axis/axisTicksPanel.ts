@@ -11,7 +11,7 @@ import {
 import { ChartController } from "../../../chartController";
 import { ChartTranslator } from "../../../chartTranslator";
 import { CartesianChartProxy } from "../../../chartProxies/cartesian/cartesianChartProxy";
-import { ChartOptionsService } from "../../chartOptionsService";
+import { ChartOptionsService } from "../../../chartOptionsService";
 
 export class AxisTicksPanel extends Component {
 

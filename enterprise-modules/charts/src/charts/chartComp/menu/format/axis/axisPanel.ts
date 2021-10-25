@@ -17,7 +17,7 @@ import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslator } from "../../../chartTranslator";
 import { AgCartesianAxisOptions, ChartAxisPosition, find } from "ag-charts-community";
 import { CartesianChartProxy } from "../../../chartProxies/cartesian/cartesianChartProxy";
-import { ChartOptionsService } from "../../chartOptionsService";
+import { ChartOptionsService } from "../../../chartOptionsService";
 
 export class AxisPanel extends Component {
 

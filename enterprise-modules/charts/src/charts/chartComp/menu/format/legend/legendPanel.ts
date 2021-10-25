@@ -11,7 +11,7 @@ import {
 } from "@ag-grid-community/core";
 import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslator } from "../../../chartTranslator";
-import { ChartOptionsService } from "../../chartOptionsService";
+import { ChartOptionsService } from "../../../chartOptionsService";
 import { LegendPosition } from "ag-charts-community";
 
 export class LegendPanel extends Component {
