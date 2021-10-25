@@ -14,7 +14,6 @@ import { Constants } from "../constants/constants";
 import { Autowired, Bean, Optional, PostConstruct, Qualifier } from "../context/context";
 import { ColumnApi } from "../columns/columnApi";
 import { ColumnModel } from "../columns/columnModel";
-import { Logger, LoggerFactory } from "../logger";
 import { FocusService } from "../focusService";
 import { CellPosition } from "../entities/cellPosition";
 import { BeanStub } from "../context/beanStub";
