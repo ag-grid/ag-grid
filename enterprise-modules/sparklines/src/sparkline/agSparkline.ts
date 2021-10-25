@@ -12,6 +12,7 @@ import {
     Padding,
 } from "@ag-grid-community/core";
 import { SparklineTooltip } from "./tooltip/sparklineTooltip";
+import { BarColumnLabel } from "./bar-column/barColumnSparkline";
 
 export type SparklineFactoryOptions = SparklineOptions & {
     data: any[];
@@ -131,6 +132,10 @@ function initBarColumnSparkline(sparkline: ColumnSparkline | BarSparkline, optio
     setValueIfPropertyExists(sparkline, 'paddingInner', options.paddingInner, options);
     setValueIfPropertyExists(sparkline, 'paddingOuter', options.paddingOuter, options);
     setValueIfPropertyExists(sparkline, 'formatter', options.formatter, options);
+
+    if (options.label) {
+        initLabelOptions(sparkline.label, options.label);
+    }
 }
 
 function setValueIfPropertyExists(target: any, property: string, value: any, options: any): void {
@@ -160,6 +165,19 @@ function initMarkerOptions(target: SparklineMarker, options: any) {
     setValueIfPropertyExists(target, 'stroke', options.stroke, options);
     setValueIfPropertyExists(target, 'strokeWidth', options.strokeWidth, options);
     setValueIfPropertyExists(target, 'formatter', options.formatter, options);
+}
+
+function initLabelOptions(target: BarColumnLabel, options: any) {
+    setValueIfPropertyExists(target, 'enabled', options.enabled, options);
+    setValueIfPropertyExists(target, 'fontStyle', options.fontStyle, options);
+    setValueIfPropertyExists(target, 'fontWeight', options.fontWeight, options);
+    setValueIfPropertyExists(target, 'fontSize', options.fontSize, options);
+    setValueIfPropertyExists(target, 'fontFamily', options.fontFamily, options);
+    setValueIfPropertyExists(target, 'textAlign', options.textAlign, options);
+    setValueIfPropertyExists(target, 'textBaseline', options.textBaseline, options);
+    setValueIfPropertyExists(target, 'color', options.color, options);
+    setValueIfPropertyExists(target, 'formatter', options.formatter, options);
+    setValueIfPropertyExists(target, 'placement', options.placement, options);
 }
 
 function initLineOptions(target: SparklineLine, options: any) {
