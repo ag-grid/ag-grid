@@ -1,4 +1,5 @@
 import {
+    _,
     AgGroupComponent,
     AgGroupComponentParams,
     AgSelect,
@@ -10,8 +11,7 @@ import {
     RefSelector
 } from "@ag-grid-community/core";
 import { ChartTranslator } from "../../../chartTranslator";
-import { ScatterChartProxy } from "../../../chartProxies/cartesian/scatterChartProxy";
-import { ChartController } from "../../../chartController";
+import { ChartOptionsService } from "../../chartOptionsService";
 
 export class MarkersPanel extends Component {
 
@@ -33,11 +33,8 @@ export class MarkersPanel extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
-    private readonly chartController: ChartController;
-
-    constructor(chartController: ChartController) {
+    constructor(private readonly chartOptionsService: ChartOptionsService) {
         super();
-        this.chartController = chartController;
     }
 
     @PostConstruct
@@ -51,9 +48,6 @@ export class MarkersPanel extends Component {
     }
 
     private initMarkers() {
-        // scatter charts should always show markers
-        const shouldHideEnabledCheckbox = this.chartController.getChartProxy() instanceof ScatterChartProxy;
-
         const seriesMarkerShapeOptions = [
             {
                 value: 'square',
@@ -87,25 +81,29 @@ export class MarkersPanel extends Component {
         this.seriesMarkerShapeSelect
             .addOptions(seriesMarkerShapeOptions)
             .setLabel(this.chartTranslator.translate('shape'))
-            .setValue(this.chartController.getChartProxy().getSeriesOption("marker.shape"))
-            .onValueChange(value => this.chartController.getChartProxy().setSeriesOption("marker.shape", value));
+            .setValue(this.chartOptionsService.getSeriesOption("marker.shape"))
+            .onValueChange(value => this.chartOptionsService.setSeriesOption("marker.shape", value));
+
+        // scatter charts should always show markers
+        const chartType = this.chartOptionsService.getChartType();
+        const shouldHideEnabledCheckbox = _.includes([ChartType.Scatter, ChartType.Bubble], chartType);
 
         this.seriesMarkersGroup
             .setTitle(this.chartTranslator.translate("markers"))
             .hideEnabledCheckbox(shouldHideEnabledCheckbox)
-            .setEnabled(this.chartController.getChartProxy().getSeriesOption("marker.enabled") || false)
+            .setEnabled(this.chartOptionsService.getSeriesOption("marker.enabled") || false)
             .hideOpenCloseIcons(true)
-            .onEnableChange(newValue => this.chartController.getChartProxy().setSeriesOption("marker.enabled", newValue));
+            .onEnableChange(newValue => this.chartOptionsService.setSeriesOption("marker.enabled", newValue));
 
         const initInput = (expression: string, input: AgSlider, labelKey: string, maxValue: number) => {
             input.setLabel(this.chartTranslator.translate(labelKey))
-                .setValue(this.chartController.getChartProxy().getSeriesOption(expression))
+                .setValue(this.chartOptionsService.getSeriesOption(expression))
                 .setMaxValue(maxValue)
                 .setTextFieldWidth(45)
-                .onValueChange(newValue => this.chartController.getChartProxy().setSeriesOption(expression, newValue));
+                .onValueChange(newValue => this.chartOptionsService.setSeriesOption(expression, newValue));
         };
 
-        if (this.chartController.getChartType() === ChartType.Bubble) {
+        if (chartType === ChartType.Bubble) {
             initInput("marker.maxSize", this.seriesMarkerMinSizeSlider, "maxSize", 60);
             initInput("marker.size", this.seriesMarkerSizeSlider, "minSize", 60);
         } else {

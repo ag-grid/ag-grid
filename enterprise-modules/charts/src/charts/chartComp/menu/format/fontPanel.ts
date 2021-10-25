@@ -6,8 +6,6 @@ import {
     AgSelect,
     Autowired,
     Component,
-    FontStyle,
-    FontWeight,
     PostConstruct,
     RefSelector
 } from "@ag-grid-community/core";
@@ -15,8 +13,8 @@ import { ChartTranslator } from "../../chartTranslator";
 
 export interface Font {
     family?: string;
-    style?: FontStyle;
-    weight?: FontWeight;
+    style?: string;
+    weight?: string;
     size?: number;
     color?: string;
 }
@@ -171,7 +169,7 @@ export class FontPanel extends Component {
     private initFontWeightStyleSelect() {
         const { weight = 'normal', style = 'normal' } = this.params.initialFont;
 
-        const weightStyles: { name: string, weight: FontWeight, style: FontStyle }[] = [
+        const weightStyles: { name: string, weight: string, style: string }[] = [
             { name: 'normal', weight: 'normal', style: 'normal' },
             { name: 'bold', weight: 'bold', style: 'normal' },
             { name: 'italic', weight: 'normal', style: 'italic' },

@@ -1,15 +1,11 @@
 import {
     AgLineSeriesOptions,
-    CartesianChartOptions,
-    HighlightOptions,
-    LineSeriesLabelOptions,
-    LineSeriesOptions
 } from "@ag-grid-community/core";
-import { AgCartesianChartOptions, AgChart, CartesianChart, ChartTheme, LineSeries, } from "ag-charts-community";
+import { AgCartesianChartOptions, AgChart, CartesianChart, ChartTheme, LineSeries, AgChartTheme } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 
-export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
+export class LineChartProxy extends CartesianChartProxy<any> {
 
     public constructor(params: ChartProxyParams) {
         super(params);
@@ -19,13 +15,11 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
     }
 
     protected createChart(): CartesianChart {
+        const agChartOptions = { theme: this.chartOptions } as AgCartesianChartOptions;
         const { grouping, parentElement } = this.chartProxyParams;
 
-        const options = this.iChartOptions;
-        const agChartOptions = options as AgCartesianChartOptions;
-        agChartOptions.autoSize = true;
-
-        const xAxisType = options.xAxis.type ? options.xAxis.type : 'category';
+        const [xAxis, yAxis] = this.getAxes();
+        const xAxisType = xAxis.type ? xAxis.type : 'category';
 
         if (grouping) {
             agChartOptions.type = 'groupedCategory';
@@ -33,11 +27,11 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
         agChartOptions.axes = [{
             type: grouping ? 'groupedCategory' : xAxisType,
             position: 'bottom',
-            ...this.getXAxisDefaults(xAxisType, options)
+            ...this.getXAxisDefaults(xAxisType, agChartOptions)
         }, {
             type: 'number',
             position: 'left',
-            ...options.yAxis
+            ...yAxis
         }];
 
         return AgChart.create(agChartOptions, parentElement);
@@ -55,20 +49,13 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
         this.updateAxes(axisType);
 
         const { chart } = this;
-
         const { fields } = params;
         const fieldIds = fields.map(f => f.colId);
         const data = this.transformData(params.data, params.category.id);
 
         const existingSeriesById = (chart.series as LineSeries[]).reduceRight((map, series, i) => {
             const id = series.yKey;
-
-            if (fieldIds.indexOf(id) === i) {
-                map.set(id, series);
-            } else {
-                chart.removeSeries(series);
-            }
-
+            (fieldIds.indexOf(id) === i) ?  map.set(id, series) : chart.removeSeries(series);
             return map;
         }, new Map<string, LineSeries>());
 
@@ -93,18 +80,12 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                 lineSeries.marker.stroke = stroke;
                 lineSeries.stroke = fill; // this is deliberate, so that the line colours match the fills of other series
             } else {
-                const { seriesDefaults } = this.iChartOptions;
-                const marker = {
-                    ...seriesDefaults.marker,
-                    fill,
-                    stroke
-                } as any;
-                if (marker.type) { // deprecated
-                    marker.shape = marker.type;
-                    delete marker.type;
-                }
-                const options: any /*InternalLineSeriesOptions*/ = {
-                    ...seriesDefaults,
+                const agChartOptions = { theme: this.chartOptions } as AgCartesianChartOptions;
+                const overrides = (agChartOptions.theme! as AgChartTheme).overrides;
+                const seriesOverrides = overrides && overrides!.line ? overrides!.line.series : {};
+
+                const seriesOptions = {
+                    ...seriesOverrides,
                     type: 'line',
                     title: f.displayName,
                     data,
@@ -114,17 +95,14 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
                     yName: f.displayName,
                     fill,
                     stroke: fill, // this is deliberate, so that the line colours match the fills of other series
-                    fillOpacity: seriesDefaults.fill.opacity,
-                    strokeOpacity: seriesDefaults.stroke.opacity,
-                    strokeWidth: seriesDefaults.stroke.width,
-                    tooltip: {
-                        enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
-                        renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
-                    },
-                    marker
-                };
+                    marker: {
+                        ...seriesOverrides!.marker,
+                        fill,
+                        stroke
+                    }
+                }
 
-                lineSeries = AgChart.createComponent(options, 'line.series');
+                lineSeries = AgChart.createComponent(seriesOptions, 'line.series');
                 chart.addSeriesAfter(lineSeries!, previousSeries);
             }
 
@@ -134,40 +112,5 @@ export class LineChartProxy extends CartesianChartProxy<LineSeriesOptions> {
         });
 
         this.updateLabelRotation(params.category.id, false, axisType);
-    }
-
-    protected extractIChartOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<LineSeriesOptions> {
-        const options = super.extractIChartOptionsFromTheme(theme);
-
-        const seriesDefaults = theme.getConfig<AgLineSeriesOptions>('line.series.line');
-        options.seriesDefaults = {
-            tooltip: {
-                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
-                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
-            },
-            fill: {
-                colors: [],
-                opacity: 1
-            },
-            stroke: {
-                colors: (seriesDefaults.stroke && [seriesDefaults.stroke]) || theme.palette.strokes,
-                opacity: seriesDefaults.strokeOpacity,
-                width: seriesDefaults.strokeWidth
-            },
-            label: seriesDefaults.label as LineSeriesLabelOptions,
-            marker: {
-                enabled: seriesDefaults.marker!.enabled,
-                shape: seriesDefaults.marker!.shape,
-                size: seriesDefaults.marker!.size,
-                strokeWidth: seriesDefaults.marker!.strokeWidth,
-                formatter: seriesDefaults.marker!.formatter
-            },
-            lineDash: seriesDefaults.lineDash ? seriesDefaults.lineDash : [0],
-            lineDashOffset: seriesDefaults.lineDashOffset,
-            highlightStyle: seriesDefaults.highlightStyle as HighlightOptions,
-            listeners: seriesDefaults.listeners
-        } as LineSeriesOptions;
-
-        return options;
     }
 }

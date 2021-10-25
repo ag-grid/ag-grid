@@ -9,13 +9,12 @@ import {
     PostConstruct,
     RefSelector
 } from "@ag-grid-community/core";
-import { ChartController } from "../../../chartController";
 import { MarkersPanel } from "./markersPanel";
 import { ChartTranslator } from "../../../chartTranslator";
 import { ShadowPanel } from "./shadowPanel";
-import { AreaChartProxy } from "../../../chartProxies/cartesian/areaChartProxy";
 import { initFillOpacitySlider, initFontPanelParams, initLineOpacitySlider } from "../widgetInitialiser";
 import { FontPanel, FontPanelParams } from "../fontPanel";
+import { ChartOptionsService } from "../../chartOptionsService";
 
 export class AreaSeriesPanel extends Component {
 
@@ -39,12 +38,10 @@ export class AreaSeriesPanel extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
-    private readonly chartController: ChartController;
     private activePanels: Component[] = [];
 
-    constructor(chartController: ChartController) {
+    constructor(private readonly chartOptionsService: ChartOptionsService) {
         super();
-        this.chartController = chartController;
     }
 
     @PostConstruct
@@ -78,8 +75,8 @@ export class AreaSeriesPanel extends Component {
             .setLabelAlignment("left")
             .setLabelWidth("flex")
             .setInputWidth(45)
-            .setValue(this.getChartProxy().getSeriesOption("tooltip.enabled") || false)
-            .onValueChange(newValue => this.getChartProxy().setSeriesOption("tooltip.enabled", newValue));
+            .setValue(this.chartOptionsService.getSeriesOption("tooltip.enabled") || false)
+            .onValueChange(newValue => this.chartOptionsService.setSeriesOption("tooltip.enabled", newValue));
     }
 
     private initSeriesLineWidth() {
@@ -87,8 +84,8 @@ export class AreaSeriesPanel extends Component {
             .setLabel(this.chartTranslator.translate("lineWidth"))
             .setMaxValue(10)
             .setTextFieldWidth(45)
-            .setValue(this.getChartProxy().getSeriesOption("stroke.width"))
-            .onValueChange(newValue => this.getChartProxy().setSeriesOption("stroke.width", newValue));
+            .setValue(this.chartOptionsService.getSeriesOption("stroke.width"))
+            .onValueChange(newValue => this.chartOptionsService.setSeriesOption("stroke.width", newValue));
     }
 
     private initSeriesLineDash() {
@@ -96,30 +93,30 @@ export class AreaSeriesPanel extends Component {
             .setLabel(this.chartTranslator.translate('lineDash'))
             .setMaxValue(30)
             .setTextFieldWidth(45)
-            .setValue(this.getChartProxy().getSeriesOption("lineDash"))
-            .onValueChange(newValue => this.getChartProxy().setSeriesOption("lineDash", [newValue]));
+            .setValue(this.chartOptionsService.getSeriesOption("lineDash"))
+            .onValueChange(newValue => this.chartOptionsService.setSeriesOption("lineDash", [newValue]));
     }
 
     private initOpacity() {
-        initLineOpacitySlider(this.seriesLineOpacitySlider, this.chartTranslator, this.getChartProxy());
-        initFillOpacitySlider(this.seriesFillOpacitySlider, this.chartTranslator, this.getChartProxy());
+        initLineOpacitySlider(this.seriesLineOpacitySlider, this.chartTranslator, this.chartOptionsService);
+        initFillOpacitySlider(this.seriesFillOpacitySlider, this.chartTranslator, this.chartOptionsService);
     }
 
     private initLabelPanel() {
-        const params: FontPanelParams = initFontPanelParams(this.chartTranslator, this.getChartProxy());
+        const params: FontPanelParams = initFontPanelParams(this.chartTranslator, this.chartOptionsService);
         const labelPanelComp = this.createBean(new FontPanel(params));
         this.activePanels.push(labelPanelComp);
         this.seriesGroup.addItem(labelPanelComp);
     }
 
     private initMarkersPanel() {
-        const markersPanelComp = this.createBean(new MarkersPanel(this.chartController));
+        const markersPanelComp = this.createBean(new MarkersPanel(this.chartOptionsService));
         this.seriesGroup.addItem(markersPanelComp);
         this.activePanels.push(markersPanelComp);
     }
 
     private initShadowPanel() {
-        const shadowPanelComp = this.createBean(new ShadowPanel(this.chartController));
+        const shadowPanelComp = this.createBean(new ShadowPanel(this.chartOptionsService));
         this.seriesGroup.addItem(shadowPanelComp);
         this.activePanels.push(shadowPanelComp);
     }
@@ -129,10 +126,6 @@ export class AreaSeriesPanel extends Component {
             _.removeFromParent(panel.getGui());
             this.destroyBean(panel);
         });
-    }
-
-    private getChartProxy(): AreaChartProxy {
-        return this.chartController.getChartProxy() as AreaChartProxy;
     }
 
     protected destroy(): void {

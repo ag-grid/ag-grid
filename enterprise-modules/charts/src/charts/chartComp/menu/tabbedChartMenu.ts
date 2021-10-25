@@ -11,14 +11,12 @@ import {
 } from "@ag-grid-community/core";
 import { ChartController } from "../chartController";
 import { ChartDataPanel } from "./data/chartDataPanel";
-import { ChartFormattingPanel } from "./format/chartFormattingPanel";
+import { FormatPanel } from "./format/formatPanel";
 import { ChartSettingsPanel } from "./settings/chartSettingsPanel";
 import { ChartTranslator } from "../chartTranslator";
+import { ChartOptionsService } from "./chartOptionsService";
 
 export class TabbedChartMenu extends Component {
-
-    public static EVENT_TAB_SELECTED = 'tabSelected';
-    public static TAB_MAIN = 'settings';
     public static TAB_DATA = 'data';
     public static TAB_FORMAT = 'format';
 
@@ -28,8 +26,7 @@ export class TabbedChartMenu extends Component {
     private panels: ChartMenuOptions[];
     private tabs: TabbedItem[] = [];
     private readonly chartController: ChartController;
-
-    private chartIcons: { [key in string]: HTMLElement } = {};
+    private readonly chartOptionsService: ChartOptionsService;
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
@@ -37,12 +34,14 @@ export class TabbedChartMenu extends Component {
         controller: ChartController,
         type: ChartType,
         panels: ChartMenuOptions[];
+        chartOptionsService: ChartOptionsService;
     }) {
         super();
 
-        const { controller, type, panels } = params;
+        const { controller, type, panels, chartOptionsService } = params;
 
         this.chartController = controller;
+        this.chartOptionsService = chartOptionsService;
         this.currentChartType = type;
         this.panels = panels;
     }
@@ -67,13 +66,13 @@ export class TabbedChartMenu extends Component {
     private createTab(
         name: ChartMenuOptions,
         title: string,
-        ChildClass: new (controller: ChartController) => Component
+        ChildClass: new (controller: ChartController, chartOptionsService: ChartOptionsService) => Component
     ): { comp: Component, tab: TabbedItem; } {
         const eWrapperDiv = document.createElement('div');
         _.addCssClass(eWrapperDiv, 'ag-chart-tab');
         _.addCssClass(eWrapperDiv, `ag-chart-${title}`);
 
-        const comp = new ChildClass(this.chartController);
+        const comp = new ChildClass(this.chartController, this.chartOptionsService);
         this.getContext().createBean(comp);
 
         eWrapperDiv.appendChild(comp.getGui());
@@ -91,12 +90,6 @@ export class TabbedChartMenu extends Component {
                 name
             }
         };
-    }
-
-    public updateCurrentChartType(chartType: ChartType) {
-        _.removeCssClass(this.chartIcons[this.currentChartType], 'ag-selected');
-        this.currentChartType = chartType;
-        _.addCssClass(this.chartIcons[chartType], 'ag-selected');
     }
 
     public showTab(tab: number) {
@@ -120,7 +113,7 @@ export class TabbedChartMenu extends Component {
             case TabbedChartMenu.TAB_DATA:
                 return ChartDataPanel;
             case TabbedChartMenu.TAB_FORMAT:
-                return ChartFormattingPanel;
+                return FormatPanel;
             default:
                 return ChartSettingsPanel;
         }

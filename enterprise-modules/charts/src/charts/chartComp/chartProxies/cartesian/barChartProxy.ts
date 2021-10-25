@@ -1,12 +1,7 @@
 import {
     _,
     AgBarSeriesOptions,
-    BarSeriesLabelOptions,
-    BarSeriesOptions,
-    CartesianChartOptions,
     ChartType,
-    DropShadowOptions,
-    HighlightOptions
 } from "@ag-grid-community/core";
 import {
     AgCartesianChartOptions,
@@ -14,12 +9,13 @@ import {
     BarSeries,
     CartesianChart,
     ChartTheme,
-    LegendClickEvent
+    LegendClickEvent,
+    AgChartTheme
 } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 
-export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
+export class BarChartProxy extends CartesianChartProxy<any> {
 
     public constructor(params: ChartProxyParams) {
         super(params);
@@ -29,54 +25,47 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
     }
 
     protected createChart(): CartesianChart {
-        const {grouping} = this.chartProxyParams;
+        const agChartOptions = { theme: this.chartOptions } as AgCartesianChartOptions;
+
+        const { grouping } = this.chartProxyParams;
+        agChartOptions.type = grouping ? 'groupedCategory' : agChartOptions.type;
+
         const isColumn = this.isColumnChart();
-
-        const options = this.iChartOptions;
-        const agChartOptions = options as AgCartesianChartOptions;
-
-        if (grouping) {
-            agChartOptions.type = 'groupedCategory';
-        }
-        agChartOptions.autoSize = true;
+        const [xAxis, yAxis] = this.getAxes();
         agChartOptions.axes = [
             {
-                ...(isColumn ? options.xAxis : options.yAxis),
+                ...(isColumn ? xAxis : yAxis),
                 position: isColumn ? 'bottom' : 'left',
                 type: grouping ? 'groupedCategory' : 'category'
             },
             {
-                ...(isColumn ? options.yAxis : options.xAxis),
+                ...(isColumn ? yAxis : xAxis),
                 position: isColumn ? 'left' : 'bottom',
                 type: 'number'
             }
         ];
 
         // special handling to add a default label formatter to show '%' for normalized charts if none is provided
-        const normalised = _.includes([ChartType.NormalizedColumn, ChartType.NormalizedBar], this.chartType);
+        const normalised = !this.crossFiltering && _.includes([ChartType.NormalizedColumn, ChartType.NormalizedBar], this.chartType);
         if (normalised) {
             const numberAxis = agChartOptions.axes[1];
-            if (numberAxis.label && !numberAxis.label.formatter) {
-                numberAxis.label = {...numberAxis.label, formatter: params => Math.round(params.value) + '%'};
-            }
+            // FIXME: only update labels when no formatter is supplied
+            numberAxis.label = {...numberAxis.label, formatter: params => Math.round(params.value) + '%'};
         }
 
-        const {chartType} = this;
-        const isGrouped = !this.crossFiltering && (chartType === ChartType.GroupedColumn || chartType === ChartType.GroupedBar);
-        const isNormalized = !this.crossFiltering && (chartType === ChartType.NormalizedColumn || chartType === ChartType.NormalizedBar);
+        // ...(agChartOptions.theme! as AgChartTheme).overrides!.cartesian!.series!,
+        // ...(agChartOptions.theme! as AgChartTheme).overrides!.column!.series!,
+        //TODO interrogate different options
+        const overrides = (agChartOptions.theme! as AgChartTheme).overrides;
+        const seriesOverrides = overrides && overrides!.column ? overrides!.column.series : {};
 
-        const {seriesDefaults} = this.iChartOptions;
+        const isGrouped = !this.crossFiltering && _.includes([ChartType.GroupedColumn, ChartType.GroupedBar], this.chartType);
         agChartOptions.series = [{
+            fills: this.chartTheme.palette.fills, //TODO: ???
+            ...seriesOverrides,
             type: isColumn ? 'column' : 'bar',
             grouped: isGrouped,
-            normalizedTo: isNormalized ? 100 : undefined,
-            ...seriesDefaults,
-            // mapping for ag chart options
-            fills: seriesDefaults.fill.colors,
-            fillOpacity: seriesDefaults.fill.opacity,
-            strokes: seriesDefaults.stroke.colors,
-            strokeOpacity: seriesDefaults.stroke.opacity,
-            strokeWidth: seriesDefaults.stroke.width,
+            normalizedTo: normalised ? 100 : undefined,
         }];
 
         agChartOptions.container = this.chartProxyParams.parentElement;
@@ -135,8 +124,8 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
             barSeries.addEventListener('nodeClick', this.crossFilterCallback);
 
         } else {
-            barSeries.fills = palette.fills;
-            barSeries.strokes = palette.strokes;
+            barSeries.fills = this.chartTheme.palette.fills;
+            barSeries.strokes = this.chartTheme.palette.strokes;
         }
 
         barSeries.data = this.transformData(params.data, params.category.id);
@@ -146,44 +135,6 @@ export class BarChartProxy extends CartesianChartProxy<BarSeriesOptions> {
         barSeries.yNames = params.fields.map(f => f.displayName!) as any;
 
         this.updateLabelRotation(params.category.id, !this.isColumnChart());
-    }
-
-    protected extractIChartOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<BarSeriesOptions> {
-        const iChartOptions = super.extractIChartOptionsFromTheme(theme);
-
-        const {chartType: integratedChartType} = this;
-        const standaloneChartType = this.getStandaloneChartType();
-
-        const seriesType = integratedChartType === ChartType.GroupedBar
-            || integratedChartType === ChartType.StackedBar
-            || integratedChartType === ChartType.NormalizedBar ? 'bar' : 'column';
-
-        const themeSeriesDefaults = theme.getConfig<AgBarSeriesOptions>(standaloneChartType + '.series.' + seriesType);
-
-        iChartOptions.seriesDefaults = {
-            shadow: themeSeriesDefaults.shadow as DropShadowOptions,
-            label: themeSeriesDefaults.label as BarSeriesLabelOptions,
-            tooltip: {
-                enabled: themeSeriesDefaults.tooltip && themeSeriesDefaults.tooltip.enabled,
-                renderer: themeSeriesDefaults.tooltip && themeSeriesDefaults.tooltip.renderer
-            },
-            fill: {
-                colors: themeSeriesDefaults.fills || theme.palette.fills,
-                opacity: themeSeriesDefaults.fillOpacity
-            },
-            stroke: {
-                colors: themeSeriesDefaults.strokes || theme.palette.strokes,
-                opacity: themeSeriesDefaults.strokeOpacity,
-                width: themeSeriesDefaults.strokeWidth
-            },
-            formatter: themeSeriesDefaults.formatter,
-            lineDash: themeSeriesDefaults.lineDash ? themeSeriesDefaults.lineDash : [0],
-            lineDashOffset: themeSeriesDefaults.lineDashOffset,
-            highlightStyle: themeSeriesDefaults.highlightStyle as HighlightOptions,
-            listeners: themeSeriesDefaults.listeners
-        } as BarSeriesOptions;
-
-        return iChartOptions;
     }
 
     private isColumnChart(): boolean {

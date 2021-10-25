@@ -5,7 +5,7 @@ import { GridApi } from './gridApi';
 import { ColumnApi } from './columns/columnApi';
 import { ProvidedColumnGroup } from './entities/providedColumnGroup';
 import { FilterRequestSource } from './filter/filterManager';
-import { ChartOptions, ChartType } from './interfaces/iChartOptions';
+import { ChartType } from './interfaces/iChartOptions';
 import { IFilterComp } from './interfaces/iFilter';
 import { CellRange, CellRangeParams } from './interfaces/IRangeService';
 import { ServerSideTransactionResult } from "./interfaces/serverSideTransaction";
@@ -247,8 +247,6 @@ export interface ChartOptionsChanged extends AgGridEvent {
     chartType: ChartType;
     /** Chart theme name of currently selected theme. */
     chartThemeName: string;
-    /** Chart options.  */
-    chartOptions: ChartOptions<any>;
 }
 
 export interface ChartDestroyed extends AgGridEvent {

@@ -7,8 +7,8 @@ import {
     PostConstruct,
     RefSelector
 } from "@ag-grid-community/core";
-import { ChartController } from "../../../chartController";
 import { ChartTranslator } from "../../../chartTranslator";
+import { ChartOptionsService } from "../../chartOptionsService";
 
 export class BackgroundPanel extends Component {
     public static TEMPLATE = /* html */
@@ -23,11 +23,8 @@ export class BackgroundPanel extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
-    private readonly chartController: ChartController;
-
-    constructor(chartController: ChartController) {
+    constructor(private readonly chartOptionsService: ChartOptionsService) {
         super();
-        this.chartController = chartController;
     }
 
     @PostConstruct
@@ -46,10 +43,10 @@ export class BackgroundPanel extends Component {
     private initGroup(): void {
         this.group
             .setTitle(this.chartTranslator.translate('background'))
-            .setEnabled(this.chartController.getChartProxy().getChartOption('background.visible'))
+            .setEnabled(this.chartOptionsService.getChartOption('background.visible'))
             .hideOpenCloseIcons(true)
             .hideEnabledCheckbox(false)
-            .onEnableChange(enabled => this.chartController.getChartProxy().setChartOption('background.visible', enabled));
+            .onEnableChange(enabled => this.chartOptionsService.setChartOption('background.visible', enabled));
     }
 
     private initColorPicker(): void {
@@ -57,7 +54,7 @@ export class BackgroundPanel extends Component {
             .setLabel(this.chartTranslator.translate('color'))
             .setLabelWidth('flex')
             .setInputWidth(45)
-            .setValue(this.chartController.getChartProxy().getChartOption('background.fill'))
-            .onValueChange(newColor => this.chartController.getChartProxy().setChartOption('background.fill', newColor));
+            .setValue(this.chartOptionsService.getChartOption('background.fill'))
+            .onValueChange(newColor => this.chartOptionsService.setChartOption('background.fill', newColor));
     }
 }

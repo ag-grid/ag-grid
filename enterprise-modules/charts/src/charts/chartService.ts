@@ -54,12 +54,12 @@ export class ChartService extends BeanStub implements IChartService {
 
     public getChartRef(chartId: string): ChartRef | undefined {
         let chartRef;
-        
+
         this.activeCharts.forEach(cr => {
             if (cr.chartId === chartId) {
                 chartRef = cr;
             }
-        })
+        });
 
         return chartRef;
     }
@@ -70,7 +70,7 @@ export class ChartService extends BeanStub implements IChartService {
             if (c.getChartId() === params.chartId) {
                 url = c.getChartImageDataURL(params.fileFormat);
             }
-        })
+        });
         return url;
     }
 
@@ -128,7 +128,7 @@ export class ChartService extends BeanStub implements IChartService {
                 undefined,
                 params.unlinkChart,
                 false,
-                true);
+                model);
         }
 
         const cellRange = getCellRange(params.cellRange);
@@ -148,7 +148,7 @@ export class ChartService extends BeanStub implements IChartService {
             undefined,
             params.unlinkChart,
             false,
-            true);
+            model);
     }
 
     public createRangeChart(params: CreateRangeChartParams): ChartRef | undefined {
@@ -235,7 +235,8 @@ export class ChartService extends BeanStub implements IChartService {
             crossFiltering);
     }
 
-    private createChart(cellRange: CellRange,
+    private createChart(
+        cellRange: CellRange,
         chartType: ChartType,
         chartThemeName?: string,
         pivotChart = false,
@@ -245,7 +246,7 @@ export class ChartService extends BeanStub implements IChartService {
         chartThemeOverrides?: AgChartThemeOverrides,
         unlinkChart = false,
         crossFiltering  = false,
-        restoringChart  = false): ChartRef | undefined {
+        chartModel?: ChartModel): ChartRef | undefined {
 
         const createChartContainerFunc = this.gridOptionsWrapper.getCreateChartContainerFunc();
 
@@ -261,7 +262,7 @@ export class ChartService extends BeanStub implements IChartService {
             unlinkChart,
             crossFiltering,
             crossFilteringContext: this.crossFilteringContext,
-            restoringChart: restoringChart,
+            chartModel
         };
 
         const chartComp = new GridChartComp(params);
@@ -321,18 +322,6 @@ export class ChartService extends BeanStub implements IChartService {
     private getSelectedRange(): CellRange {
         const ranges = this.rangeService.getCellRanges();
         return ranges.length > 0 ? ranges[0] : {} as CellRange;
-    }
-
-    private mapToRangeParam(model: ChartModel, chartContainer?: HTMLElement): CreateRangeChartParams {
-        return {
-            cellRange: model.cellRange,
-            chartType: model.chartType,
-            chartThemeName: model.chartThemeName,
-            chartContainer: chartContainer,
-            suppressChartRanges: model.suppressChartRanges,
-            aggFunc: model.aggFunc,
-            unlinkChart: model.unlinkChart
-        };
     }
 
     @PreDestroy

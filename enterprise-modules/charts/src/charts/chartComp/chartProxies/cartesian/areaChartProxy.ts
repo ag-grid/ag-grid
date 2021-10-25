@@ -1,18 +1,13 @@
 import {
     AgAreaSeriesOptions,
     AgCartesianChartOptions,
-    AreaSeriesOptions,
-    CartesianChartOptions,
     ChartType,
-    DropShadowOptions,
-    HighlightOptions,
-    LineSeriesLabelOptions
 } from "@ag-grid-community/core";
-import { AgChart, AreaSeries, CartesianChart, ChartTheme } from "ag-charts-community";
+import { AgChart, AreaSeries, CartesianChart, ChartTheme, AgChartTheme } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 
-export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
+export class AreaChartProxy extends CartesianChartProxy<any> {
 
     public constructor(params: ChartProxyParams) {
         super(params);
@@ -22,48 +17,26 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
     }
 
     protected createChart(): CartesianChart {
+        const agChartOptions = { theme: this.chartOptions } as AgCartesianChartOptions;
         const { grouping, parentElement } = this.chartProxyParams;
-        const seriesDefaults = this.getSeriesDefaults();
-        const marker = { ...seriesDefaults.marker };
-        if (marker.type) { // deprecated
-            marker.shape = marker.type;
-            delete marker.type;
-        }
 
-        const options = this.iChartOptions;
-        const agChartOptions = options as AgCartesianChartOptions;
+        const [xAxis, yAxis] = this.getAxes();
+        const xAxisType = xAxis.type ? xAxis.type : 'category';
+        if (grouping) { agChartOptions.type = 'groupedCategory'; }
 
-        const xAxisType = options.xAxis.type ? options.xAxis.type : 'category';
-
-        if (grouping) {
-            agChartOptions.type = 'groupedCategory';
-        }
-        agChartOptions.autoSize = true;
-        agChartOptions.axes = [{
-            type: grouping ? 'groupedCategory' : xAxisType,
-            position: 'bottom',
-            paddingInner: 1,
-            paddingOuter: 0,
-            ...this.getXAxisDefaults(xAxisType, options)
-        }, {
-            type: 'number',
-            position: 'left',
-            ...options.yAxis
-        }];
-        agChartOptions.series = [{
-            ...seriesDefaults,
-            type: 'area',
-            fills: seriesDefaults.fill.colors,
-            fillOpacity: seriesDefaults.fill.opacity,
-            strokes: seriesDefaults.stroke.colors,
-            strokeOpacity: seriesDefaults.stroke.opacity,
-            strokeWidth: seriesDefaults.stroke.width,
-            tooltip: {
-                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
-                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
-            },
-            marker
-        }];
+        agChartOptions.axes = [
+            {
+                type: grouping ? 'groupedCategory' : xAxisType,
+                position: 'bottom',
+                paddingInner: 1,
+                paddingOuter: 0,
+                ...this.getXAxisDefaults(xAxisType, agChartOptions)
+            }, {
+                type: 'number',
+                position: 'left',
+                ...yAxis
+            }
+        ];
 
         return AgChart.create(agChartOptions, parentElement);
     }
@@ -82,27 +55,13 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
             let areaSeries = this.chart.series[0] as AreaSeries;
 
             if (!areaSeries) {
-                const seriesDefaults = this.getSeriesDefaults();
-                const marker = { ...seriesDefaults.marker };
-                if (marker.type) { // deprecated
-                    marker.shape = marker.type;
-                    delete marker.type;
-                }
-                areaSeries = AgChart.createComponent({
-                    ...seriesDefaults,
-                    fills: seriesDefaults.fill.colors,
-                    fillOpacity: seriesDefaults.fill.opacity,
-                    strokes: seriesDefaults.stroke.colors,
-                    strokeOpacity: seriesDefaults.stroke.opacity,
-                    strokeWidth: seriesDefaults.stroke.width,
-                    marker
-                }, 'area.series');
+                const agChartOptions = { theme: this.chartOptions } as AgCartesianChartOptions;
+                const overrides = (agChartOptions.theme! as AgChartTheme).overrides;
+                const seriesOverrides = overrides && overrides!.area ? overrides!.area.series : {};
 
-                if (areaSeries) {
-                    this.chart.addSeries(areaSeries);
-                } else {
-                    return;
-                }
+                areaSeries = AgChart.createComponent({ ...seriesOverrides }, 'area.series');
+                if (!areaSeries) { return; }
+                this.chart.addSeries(areaSeries);
             }
 
             const { fills, strokes } = this.getPalette();
@@ -162,15 +121,12 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                 areaSeries.strokes = [stroke];
 
             } else {
-                const seriesDefaults = this.getSeriesDefaults();
-                const marker = { ...seriesDefaults.marker };
-                if (marker.type) { // deprecated
-                    marker.shape = marker.type;
-                    delete marker.type;
-                }
+                const agChartOptions = { theme: this.chartOptions } as AgCartesianChartOptions;
+                const overrides = (agChartOptions.theme! as AgChartTheme).overrides;
+                const seriesOverrides = overrides && overrides!.area ? overrides!.area.series : {};
 
-                const options: any /*InternalAreaSeriesOptions */ = {
-                    ...seriesDefaults,
+                const options: any = {
+                    ...seriesOverrides,
                     data,
                     xKey: params.category.id,
                     xName: params.category.name,
@@ -178,10 +134,11 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
                     yNames: [f.displayName],
                     fills: [fill],
                     strokes: [stroke],
-                    fillOpacity: seriesDefaults.fill.opacity,
-                    strokeOpacity: seriesDefaults.stroke.opacity,
-                    strokeWidth: seriesDefaults.stroke.width,
-                    marker
+                    marker: {
+                        ...seriesOverrides!.marker,
+                        fill,
+                        stroke
+                    },
                 };
 
                 areaSeries = AgChart.createComponent(options, 'area.series');
@@ -192,49 +149,5 @@ export class AreaChartProxy extends CartesianChartProxy<AreaSeriesOptions> {
 
             previousSeries = areaSeries;
         });
-    }
-
-    protected extractIChartOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<AreaSeriesOptions> {
-        const options = super.extractIChartOptionsFromTheme(theme);
-
-        const seriesDefaults = theme.getConfig<AgAreaSeriesOptions>('area.series.area');
-        options.seriesDefaults = {
-            shadow: seriesDefaults.shadow as DropShadowOptions,
-            tooltip: {
-                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
-                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
-            },
-            fill: {
-                colors: seriesDefaults.fills || theme.palette.fills,
-                opacity: seriesDefaults.fillOpacity
-            },
-            stroke: {
-                colors: seriesDefaults.strokes || theme.palette.strokes,
-                opacity: seriesDefaults.strokeOpacity,
-                width: seriesDefaults.strokeWidth
-            },
-            label: seriesDefaults.label as LineSeriesLabelOptions,
-            marker: {
-                enabled: seriesDefaults.marker!.enabled,
-                shape: seriesDefaults.marker!.shape,
-                size: seriesDefaults.marker!.size,
-                strokeWidth: seriesDefaults.marker!.strokeWidth,
-                formatter: seriesDefaults.marker!.formatter
-            },
-            lineDash: seriesDefaults.lineDash ? seriesDefaults.lineDash : [0],
-            lineDashOffset: seriesDefaults.lineDashOffset,
-            highlightStyle: seriesDefaults.highlightStyle as HighlightOptions,
-            listeners: seriesDefaults.listeners
-        } as AreaSeriesOptions;
-
-        return options;
-    }
-
-    private getSeriesDefaults(): any /*InternalAreaSeriesOptions*/ {
-        return {
-            ...this.iChartOptions.seriesDefaults,
-            type: 'area',
-            normalizedTo: this.chartType === ChartType.NormalizedArea ? 100 : undefined,
-        };
     }
 }

@@ -6,18 +6,14 @@ import {
     AgToggleButton,
     Autowired,
     Component,
-    FontStyle,
-    FontWeight,
     PostConstruct,
     RefSelector
 } from "@ag-grid-community/core";
-import { ChartController } from "../../../chartController";
 import { ShadowPanel } from "./shadowPanel";
 import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { CalloutPanel } from "./calloutPanel";
 import { ChartTranslator } from "../../../chartTranslator";
-import { PieChartProxy } from "../../../chartProxies/polar/pieChartProxy";
-import { DoughnutChartProxy } from "../../../chartProxies/polar/doughnutChartProxy";
+import { ChartOptionsService } from "../../chartOptionsService";
 
 export class PieSeriesPanel extends Component {
 
@@ -39,12 +35,10 @@ export class PieSeriesPanel extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
-    private readonly chartController: ChartController;
     private activePanels: Component[] = [];
 
-    constructor(chartController: ChartController) {
+    constructor(private readonly chartOptionsService: ChartOptionsService) {
         super();
-        this.chartController = chartController;
     }
 
     @PostConstruct
@@ -76,8 +70,8 @@ export class PieSeriesPanel extends Component {
             .setLabelAlignment("left")
             .setLabelWidth("flex")
             .setInputWidth(45)
-            .setValue(this.getChartProxy().getSeriesOption("tooltip.enabled") || false)
-            .onValueChange(newValue => this.getChartProxy().setSeriesOption("tooltip.enabled", newValue));
+            .setValue(this.chartOptionsService.getSeriesOption("tooltip.enabled") || false)
+            .onValueChange(newValue => this.chartOptionsService.setSeriesOption("tooltip.enabled", newValue));
     }
 
     private initSeriesStrokeWidth() {
@@ -85,8 +79,8 @@ export class PieSeriesPanel extends Component {
             .setLabel(this.chartTranslator.translate("strokeWidth"))
             .setMaxValue(10)
             .setTextFieldWidth(45)
-            .setValue(this.getChartProxy().getSeriesOption("stroke.width"))
-            .onValueChange(newValue => this.getChartProxy().setSeriesOption("stroke.width", newValue));
+            .setValue(this.chartOptionsService.getSeriesOption("stroke.width"))
+            .onValueChange(newValue => this.chartOptionsService.setSeriesOption("stroke.width", newValue));
     }
 
     private initOpacity() {
@@ -95,52 +89,49 @@ export class PieSeriesPanel extends Component {
             .setStep(0.05)
             .setMaxValue(1)
             .setTextFieldWidth(45)
-            .setValue(this.getChartProxy().getSeriesOption("stroke.opacity") || "1")
-            .onValueChange(newValue => this.getChartProxy().setSeriesOption("stroke.opacity", newValue));
+            .setValue(this.chartOptionsService.getSeriesOption("stroke.opacity") || "1")
+            .onValueChange(newValue => this.chartOptionsService.setSeriesOption("stroke.opacity", newValue));
 
         this.seriesFillOpacitySlider
             .setLabel(this.chartTranslator.translate("fillOpacity"))
             .setStep(0.05)
             .setMaxValue(1)
             .setTextFieldWidth(45)
-            .setValue(this.getChartProxy().getSeriesOption("fillOpacity") || "1")
-            .onValueChange(newValue => this.getChartProxy().setSeriesOption("fillOpacity", newValue));
+            .setValue(this.chartOptionsService.getSeriesOption("fillOpacity") || "1")
+            .onValueChange(newValue => this.chartOptionsService.setSeriesOption("fillOpacity", newValue));
     }
 
     private initLabelPanel() {
-        const chartProxy = this.getChartProxy();
         const initialFont = {
-            family: chartProxy.getSeriesOption("label.fontFamily"),
-            style: chartProxy.getSeriesOption<FontStyle>("label.fontStyle"),
-            weight: chartProxy.getSeriesOption<FontWeight>("label.fontWeight"),
-            size: chartProxy.getSeriesOption<number>("label.fontSize"),
-            color: chartProxy.getSeriesOption("label.color")
+            family: this.chartOptionsService.getSeriesOption("label.fontFamily"),
+            style: this.chartOptionsService.getSeriesOption("label.fontStyle"),
+            weight: this.chartOptionsService.getSeriesOption("label.fontWeight"),
+            size: this.chartOptionsService.getSeriesOption<number>("label.fontSize"),
+            color: this.chartOptionsService.getSeriesOption("label.color")
         };
 
         const setFont = (font: Font) => {
-            const proxy = this.getChartProxy();
-
             if (font.family) {
-                proxy.setSeriesOption("label.fontFamily", font.family);
+                this.chartOptionsService.setSeriesOption("label.fontFamily", font.family);
             }
             if (font.weight) {
-                proxy.setSeriesOption("label.fontWeight", font.weight);
+                this.chartOptionsService.setSeriesOption("label.fontWeight", font.weight);
             }
             if (font.style) {
-                proxy.setSeriesOption("label.fontStyle", font.style);
+                this.chartOptionsService.setSeriesOption("label.fontStyle", font.style);
             }
             if (font.size) {
-                proxy.setSeriesOption("label.fontSize", font.size);
+                this.chartOptionsService.setSeriesOption("label.fontSize", font.size);
             }
             if (font.color) {
-                proxy.setSeriesOption("label.color", font.color);
+                this.chartOptionsService.setSeriesOption("label.color", font.color);
             }
         };
 
         const params: FontPanelParams = {
             name: this.chartTranslator.translate('labels'),
-            enabled: chartProxy.getSeriesOption("label.enabled") || false,
-            setEnabled: (enabled: boolean) => this.getChartProxy().setSeriesOption("label.enabled", enabled),
+            enabled: this.chartOptionsService.getSeriesOption("label.enabled") || false,
+            setEnabled: (enabled: boolean) => this.chartOptionsService.setSeriesOption("label.enabled", enabled),
             suppressEnabledCheckbox: false,
             initialFont: initialFont,
             setFont: setFont
@@ -149,7 +140,7 @@ export class PieSeriesPanel extends Component {
         const labelPanelComp = this.createBean(new FontPanel(params));
         this.activePanels.push(labelPanelComp);
 
-        const calloutPanelComp = this.createBean(new CalloutPanel(this.chartController));
+        const calloutPanelComp = this.createBean(new CalloutPanel(this.chartOptionsService));
         labelPanelComp.addCompToPanel(calloutPanelComp);
         this.activePanels.push(calloutPanelComp);
 
@@ -157,7 +148,7 @@ export class PieSeriesPanel extends Component {
     }
 
     private initShadowPanel() {
-        const shadowPanelComp = this.createBean(new ShadowPanel(this.chartController));
+        const shadowPanelComp = this.createBean(new ShadowPanel(this.chartOptionsService));
         this.seriesGroup.getGui().appendChild(shadowPanelComp.getGui());
         this.seriesGroup.addItem(shadowPanelComp);
     }
@@ -167,10 +158,6 @@ export class PieSeriesPanel extends Component {
             _.removeFromParent(panel.getGui());
             this.destroyBean(panel);
         });
-    }
-
-    private getChartProxy(): PieChartProxy | DoughnutChartProxy {
-        return this.chartController.getChartProxy() as PieChartProxy | DoughnutChartProxy;
     }
 
     protected destroy(): void {

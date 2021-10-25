@@ -61,7 +61,6 @@ import {
     IsServerSideGroup,
     SuppressKeyboardEventParams,
     ChartRef,
-    ChartOptions,
     GetChartToolbarItems,
     FillOperationParams,
     IsApplyServerSideTransaction,

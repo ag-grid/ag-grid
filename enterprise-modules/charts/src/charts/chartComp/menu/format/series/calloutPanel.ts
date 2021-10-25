@@ -8,7 +8,7 @@ import {
     RefSelector
 } from "@ag-grid-community/core";
 import { ChartTranslator } from "../../../chartTranslator";
-import { ChartController } from "../../../chartController";
+import { ChartOptionsService } from "../../chartOptionsService";
 
 export class CalloutPanel extends Component {
 
@@ -28,11 +28,8 @@ export class CalloutPanel extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
-    private readonly chartController: ChartController;
-
-    constructor(chartController: ChartController) {
+    constructor(private readonly chartOptionsService: ChartOptionsService) {
         super();
-        this.chartController = chartController;
     }
 
     @PostConstruct
@@ -54,10 +51,10 @@ export class CalloutPanel extends Component {
 
         const initInput = (expression: string, input: AgSlider, labelKey: string, maxValue: number) => {
             input.setLabel(this.chartTranslator.translate(labelKey))
-                .setValue(this.chartController.getChartProxy().getSeriesOption(expression))
+                .setValue(this.chartOptionsService.getSeriesOption(expression))
                 .setMaxValue(maxValue)
                 .setTextFieldWidth(45)
-                .onValueChange(newValue => this.chartController.getChartProxy().setSeriesOption(expression, newValue));
+                .onValueChange(newValue => this.chartOptionsService.setSeriesOption(expression, newValue));
         };
 
         initInput("callout.length", this.calloutLengthSlider, "length", 40);

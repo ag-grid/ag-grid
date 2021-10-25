@@ -4,7 +4,7 @@ import {
     AgEvent,
     Autowired,
     BeanStub,
-    ChartModel,
+    ChartModel, ChartOptionsChanged,
     ChartRangeSelectionChanged,
     ChartType,
     ColumnApi,
@@ -87,6 +87,7 @@ export class ChartController extends BeanStub {
 
     public getChartModel(): ChartModel {
         const modelType: ChartModelType = this.model.isPivotChart() ? 'pivot' : 'range';
+
         return {
             modelType,
             chartId: this.model.getChartId(),
@@ -207,7 +208,17 @@ export class ChartController extends BeanStub {
     }
 
     private raiseChartOptionsChangedEvent(): void {
-        this.chartProxy.raiseChartOptionsChangedEvent();
+        const {chartId, chartType} = this.getChartModel();
+        const event: ChartOptionsChanged = Object.freeze({
+            type: Events.EVENT_CHART_OPTIONS_CHANGED,
+            chartId,
+            chartType,
+            chartThemeName: this.getThemeName(),
+            api: this.gridApi,
+            columnApi: this.columnApi,
+        });
+
+        this.eventService.dispatchEvent(event);
     }
 
     private raiseChartRangeSelectionChangedEvent(): void {

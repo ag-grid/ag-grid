@@ -5,9 +5,10 @@ import {
     ChartTheme,
     LegendClickEvent,
     PieSeries,
-    PolarChart
+    PolarChart,
+    AgChartTheme
 } from "ag-charts-community";
-import { _, HighlightOptions, PieSeriesOptions, PolarChartOptions } from "@ag-grid-community/core";
+import { _ } from "@ag-grid-community/core";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { PolarChartProxy } from "./polarChartProxy";
 
@@ -15,7 +16,7 @@ interface UpdateDoughnutSeriesParams {
     seriesMap: { [p: string]: PieSeries };
     angleField: FieldDefinition;
     field: FieldDefinition;
-    seriesDefaults: PieSeriesOptions;
+    seriesDefaults: any; //TODO: PieSeriesOptions;
     index: number;
     params: UpdateChartParams;
     fills: string[];
@@ -36,10 +37,9 @@ export class DoughnutChartProxy extends PolarChartProxy {
     }
 
     protected createChart(): PolarChart {
-        const options = this.iChartOptions;
-        const agChartOptions = options as AgPolarChartOptions;
+        const agChartOptions = { theme: this.chartOptions } as AgPolarChartOptions;
+
         agChartOptions.type = 'pie';
-        agChartOptions.autoSize = true;
         agChartOptions.series = [];
 
         return AgChart.create(agChartOptions, this.chartProxyParams.parentElement);
@@ -63,14 +63,22 @@ export class DoughnutChartProxy extends PolarChartProxy {
             }
         });
 
-        const { seriesDefaults } = this.iChartOptions;
-        const fills = seriesDefaults.fill.colors;
-        const strokes = seriesDefaults.stroke.colors;
+        //TODO verify
+        const palette = this.getPalette();
+        const fills = palette.fills;
+        const strokes = palette.strokes;
+        // const fills = seriesDefaults.fill.colors;
+        // const strokes = seriesDefaults.stroke.colors;
+
+        //TODO interrogate different options
+        const agChartOptions = { theme: this.chartOptions } as AgPolarChartOptions;
+        const overrides = (agChartOptions.theme! as AgChartTheme).overrides;
+        const seriesOverrides = overrides && overrides!.pie ? overrides!.pie.series : {};
+
         const numFields = params.fields.length;
 
         let offset = 0;
         if (this.crossFiltering) {
-
             params.fields.forEach((field: FieldDefinition, index: number) => {
                 const filteredOutField = {...field};
                 filteredOutField.colId = field.colId + '-filtered-out';
@@ -86,7 +94,7 @@ export class DoughnutChartProxy extends PolarChartProxy {
                         seriesMap,
                         angleField: field,
                         field: filteredOutField,
-                        seriesDefaults,
+                        seriesDefaults: seriesOverrides,
                         index,
                         params,
                         fills,
@@ -101,7 +109,7 @@ export class DoughnutChartProxy extends PolarChartProxy {
                     seriesMap,
                     angleField: field,
                     field: field,
-                    seriesDefaults,
+                    seriesDefaults: seriesOverrides,
                     index,
                     params,
                     fills,
@@ -120,7 +128,7 @@ export class DoughnutChartProxy extends PolarChartProxy {
                     seriesMap,
                     angleField: f,
                     field: f,
-                    seriesDefaults,
+                    seriesDefaults: seriesOverrides,
                     index,
                     params,
                     fills,
@@ -147,20 +155,20 @@ export class DoughnutChartProxy extends PolarChartProxy {
             type: 'pie',
             angleKey: this.crossFiltering ? updateParams.angleField.colId + '-total' : updateParams.angleField.colId,
             radiusKey: this.crossFiltering ? updateParams.field.colId : undefined,
-            title: {
-                ...updateParams.seriesDefaults.title,
-                text: updateParams.seriesDefaults.title.text || updateParams.field.displayName!,
-                showInLegend: updateParams.numFields > 1
-            },
-            fills: updateParams.seriesDefaults.fill.colors,
-            fillOpacity: updateParams.seriesDefaults.fill.opacity,
-            strokes: updateParams.seriesDefaults.stroke.colors,
-            strokeOpacity: updateParams.seriesDefaults.stroke.opacity,
-            strokeWidth: updateParams.seriesDefaults.stroke.width,
-            tooltip: {
-                enabled: updateParams.seriesDefaults.tooltip && updateParams.seriesDefaults.tooltip.enabled,
-                renderer: (updateParams.seriesDefaults.tooltip && updateParams.seriesDefaults.tooltip.enabled && updateParams.seriesDefaults.tooltip.renderer) || undefined,
-            }
+            // title: {
+            //     ...updateParams.seriesDefaults.title,
+            //     text: updateParams.seriesDefaults.title.text || updateParams.field.displayName!,
+            //     showInLegend: updateParams.numFields > 1
+            // },
+            // fills: updateParams.seriesDefaults.fill.colors,
+            // fillOpacity: updateParams.seriesDefaults.fill.opacity,
+            // strokes: updateParams.seriesDefaults.stroke.colors,
+            // strokeOpacity: updateParams.seriesDefaults.stroke.opacity,
+            // strokeWidth: updateParams.seriesDefaults.stroke.width,
+            // tooltip: {
+            //     enabled: updateParams.seriesDefaults.tooltip && updateParams.seriesDefaults.tooltip.enabled,
+            //     renderer: (updateParams.seriesDefaults.tooltip && updateParams.seriesDefaults.tooltip.enabled && updateParams.seriesDefaults.tooltip.renderer) || undefined,
+            // }
         };
 
         const calloutColors = seriesOptions.callout && seriesOptions.callout.colors || seriesOptions.strokes || [];
@@ -242,36 +250,5 @@ export class DoughnutChartProxy extends PolarChartProxy {
         }
 
         return {updatedOffset: updateParams.offset, pieSeries};
-    }
-
-    protected extractIChartOptionsFromTheme(theme: ChartTheme): PolarChartOptions<PieSeriesOptions> {
-        const options = super.extractIChartOptionsFromTheme(theme);
-
-        const seriesDefaults = theme.getConfig<AgPieSeriesOptions>('pie.series.pie');
-        options.seriesDefaults = {
-            title: seriesDefaults.title,
-            label: seriesDefaults.label,
-            callout: seriesDefaults.callout,
-            shadow: seriesDefaults.shadow,
-            tooltip: {
-                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
-                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
-            },
-            fill: {
-                colors: seriesDefaults.fills || theme.palette.fills,
-                opacity: seriesDefaults.fillOpacity
-            },
-            stroke: {
-                colors: seriesDefaults.strokes || theme.palette.strokes,
-                opacity: seriesDefaults.strokeOpacity,
-                width: seriesDefaults.strokeWidth
-            },
-            lineDash: seriesDefaults.lineDash,
-            lineDashOffset: seriesDefaults.lineDashOffset,
-            highlightStyle: seriesDefaults.highlightStyle as HighlightOptions,
-            listeners: seriesDefaults.listeners
-        } as PieSeriesOptions;
-
-        return options;
     }
 }

@@ -6,15 +6,13 @@ import {
     AgSlider,
     Autowired,
     Component,
-    FontStyle,
-    FontWeight,
-    LegendPosition,
     PostConstruct,
     RefSelector,
 } from "@ag-grid-community/core";
-import { ChartController } from "../../../chartController";
 import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslator } from "../../../chartTranslator";
+import { ChartOptionsService } from "../../chartOptionsService";
+import { LegendPosition } from "ag-charts-community";
 
 export class LegendPanel extends Component {
 
@@ -43,11 +41,9 @@ export class LegendPanel extends Component {
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
     private activePanels: Component[] = [];
-    private readonly chartController: ChartController;
 
-    constructor(chartController: ChartController) {
+    constructor(private readonly chartOptionsService: ChartOptionsService) {
         super();
-        this.chartController = chartController;
     }
 
     @PostConstruct
@@ -69,16 +65,16 @@ export class LegendPanel extends Component {
         this.legendGroup
             .setTitle(this.chartTranslator.translate("legend"))
             .hideEnabledCheckbox(false)
-            .setEnabled(this.chartController.getChartProxy().getChartOption<boolean>("legend.enabled") || false)
+            .setEnabled(this.chartOptionsService.getChartOption<boolean>("legend.enabled") || false)
             .toggleGroupExpand(false)
             .onEnableChange(enabled => {
-                this.chartController.getChartProxy().setChartOption("legend.enabled", enabled);
+                this.chartOptionsService.setChartOption("legend.enabled", enabled);
                 this.legendGroup.toggleGroupExpand(true);
             });
     }
 
     private initLegendPosition() {
-        const positions: LegendPosition[] = [LegendPosition.Top, LegendPosition.Right, LegendPosition.Bottom, LegendPosition.Left];
+        const positions = [LegendPosition.Top, LegendPosition.Right, LegendPosition.Bottom, LegendPosition.Left];
 
         this.legendPositionSelect
             .setLabel(this.chartTranslator.translate("position"))
@@ -88,27 +84,27 @@ export class LegendPanel extends Component {
                 value: position,
                 text: this.chartTranslator.translate(position)
             })))
-            .setValue(this.chartController.getChartProxy().getChartOption("legend.position"))
-            .onValueChange(newValue => this.chartController.getChartProxy().setChartOption("legend.position", newValue));
+            .setValue(this.chartOptionsService.getChartOption("legend.position"))
+            .onValueChange(newValue => this.chartOptionsService.setChartOption("legend.position", newValue));
     }
 
     private initLegendPadding() {
         this.legendPaddingSlider
             .setLabel(this.chartTranslator.translate("spacing"))
-            .setValue(this.chartController.getChartProxy().getChartOption("legend.spacing"))
+            .setValue(this.chartOptionsService.getChartOption("legend.spacing"))
             .setTextFieldWidth(45)
             .setMaxValue(200)
-            .onValueChange(newValue => this.chartController.getChartProxy().setChartOption("legend.spacing", newValue));
+            .onValueChange(newValue => this.chartOptionsService.setChartOption("legend.spacing", newValue));
     }
 
     private initLegendItems() {
         const initSlider = (expression: string, labelKey: string, input: AgSlider, maxValue: number) => {
             input.setLabel(this.chartTranslator.translate(labelKey))
-                .setValue(this.chartController.getChartProxy().getChartOption(`legend.${expression}`))
+                .setValue(this.chartOptionsService.getChartOption(`legend.${expression}`))
                 .setMaxValue(maxValue)
                 .setTextFieldWidth(45)
                 .onValueChange(newValue => {
-                        this.chartController.getChartProxy().setChartOption(`legend.${expression}`, newValue)
+                        this.chartOptionsService.setChartOption(`legend.${expression}`, newValue)
                 });
         };
 
@@ -120,17 +116,17 @@ export class LegendPanel extends Component {
     }
 
     private initLabelPanel() {
-        const chartProxy = this.chartController.getChartProxy();
+        const chartProxy = this.chartOptionsService;
         const initialFont = {
             family: chartProxy.getChartOption("legend.item.label.fontFamily"),
-            style: chartProxy.getChartOption<FontStyle>("legend.item.label.fontStyle"),
-            weight: chartProxy.getChartOption<FontWeight>("legend.item.label.fontWeight"),
+            style: chartProxy.getChartOption("legend.item.label.fontStyle"),
+            weight: chartProxy.getChartOption("legend.item.label.fontWeight"),
             size: chartProxy.getChartOption<number>("legend.item.label.fontSize"),
             color: chartProxy.getChartOption("legend.item.label.color")
         };
 
         const setFont = (font: Font) => {
-            const proxy = this.chartController.getChartProxy();
+            const proxy = this.chartOptionsService;
 
             if (font.family) {
                 proxy.setChartOption("legend.item.label.fontFamily", font.family);

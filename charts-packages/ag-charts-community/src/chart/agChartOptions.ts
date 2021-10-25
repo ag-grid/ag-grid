@@ -1,5 +1,5 @@
-type FontStyle = 'normal' | 'italic' | 'oblique';
-type FontWeight = 'normal' | 'bold' | 'bolder' | 'lighter'
+export type FontStyle = 'normal' | 'italic' | 'oblique';
+export type FontWeight = 'normal' | 'bold' | 'bolder' | 'lighter'
     | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
 
 export type AgChartThemeName = 'ag-default' | 'ag-default-dark'

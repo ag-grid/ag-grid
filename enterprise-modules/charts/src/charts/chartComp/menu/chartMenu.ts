@@ -13,6 +13,7 @@ import {
 import { TabbedChartMenu } from "./tabbedChartMenu";
 import { ChartController } from "../chartController";
 import { ChartTranslator } from "../chartTranslator";
+import { ChartOptionsService } from "./chartOptionsService";
 
 type ChartToolbarButtons = {
     [key in ChartMenuOptions]: [string, (e: MouseEvent) => any | void]
@@ -43,7 +44,8 @@ export class ChartMenu extends Component {
     constructor(
         private readonly eChartContainer: HTMLElement,
         private readonly eMenuPanelContainer: HTMLElement,
-        private readonly chartController: ChartController) {
+        private readonly chartController: ChartController,
+        private readonly chartOptionsService: ChartOptionsService) {
         super(ChartMenu.TEMPLATE);
     }
 
@@ -164,7 +166,8 @@ export class ChartMenu extends Component {
         this.tabbedMenu = this.createBean(new TabbedChartMenu({
             controller: this.chartController,
             type: this.chartController.getChartType(),
-            panels: this.tabs
+            panels: this.tabs,
+            chartOptionsService: this.chartOptionsService
         }));
 
         this.addManagedListener(

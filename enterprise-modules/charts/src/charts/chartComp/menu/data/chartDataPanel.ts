@@ -19,6 +19,7 @@ import {
 import { ChartController } from "../../chartController";
 import { ColState } from "../../chartDataModel";
 import { ChartTranslator } from "../../chartTranslator";
+import { ChartOptionsService } from "../chartOptionsService";
 
 export class ChartDataPanel extends Component {
     public static TEMPLATE = /* html */ `<div class="ag-chart-data-wrapper"></div>`;
@@ -32,11 +33,10 @@ export class ChartDataPanel extends Component {
     private chartType?: ChartType;
     private insertIndex?: number;
 
-    private readonly chartController: ChartController;
-
-    constructor(chartController: ChartController) {
-        super(ChartDataPanel.TEMPLATE);
-        this.chartController = chartController;
+    constructor(
+        private readonly chartController: ChartController,
+        private readonly chartOptionsService: ChartOptionsService) {
+            super(ChartDataPanel.TEMPLATE);
     }
 
     @PostConstruct
@@ -130,16 +130,15 @@ export class ChartDataPanel extends Component {
 
         if (this.chartController.isActiveXYChart()) {
             const pairedModeToggle = this.seriesGroupComp.createManagedBean(new AgToggleButton());
-            const chartProxy = this.chartController.getChartProxy();
 
             pairedModeToggle
                 .setLabel(this.chartTranslator.translate('paired'))
                 .setLabelAlignment('left')
                 .setLabelWidth('flex')
                 .setInputWidth(45)
-                .setValue(chartProxy.getSeriesOption('paired') || false)
+                .setValue(this.chartOptionsService.getSeriesOption('paired') || false)
                 .onValueChange(newValue => {
-                    chartProxy.setSeriesOption('paired', newValue);
+                    this.chartOptionsService.setSeriesOption('paired', newValue);
                     this.chartController.updateForGridChange();
                 });
 
@@ -244,7 +243,7 @@ export class ChartDataPanel extends Component {
     }
 
     private isInPairedMode() {
-        return this.chartController.isActiveXYChart() && this.chartController.getChartProxy().getSeriesOption('paired');
+        return this.chartController.isActiveXYChart() && this.chartOptionsService.getSeriesOption('paired');
     }
 
     private clearComponents() {

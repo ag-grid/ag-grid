@@ -11,6 +11,7 @@ import {
 import { ChartController } from "../../../chartController";
 import { ChartTranslator } from "../../../chartTranslator";
 import { CartesianChartProxy } from "../../../chartProxies/cartesian/cartesianChartProxy";
+import { ChartOptionsService } from "../../chartOptionsService";
 
 export class AxisTicksPanel extends Component {
 
@@ -30,11 +31,8 @@ export class AxisTicksPanel extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
-    private readonly chartController: ChartController;
-
-    constructor(chartController: ChartController) {
+    constructor(private readonly chartOptionsService: ChartOptionsService) {
         super();
-        this.chartController = chartController;
     }
 
     @PostConstruct
@@ -58,22 +56,18 @@ export class AxisTicksPanel extends Component {
             .setLabel(this.chartTranslator.translate("color"))
             .setLabelWidth("flex")
             .setInputWidth(45)
-            .setValue(this.getChartProxy().getAxisProperty("tick.color"))
-            .onValueChange(newColor => this.getChartProxy().setAxisProperty("tick.color", newColor));
+            .setValue(this.chartOptionsService.getAxisProperty("tick.color"))
+            .onValueChange(newColor => this.chartOptionsService.setAxisProperty("tick.color", newColor));
 
         const initInput = (expression: string, input: AgSlider, label: string, maxValue: number) => {
             input.setLabel(label)
-                .setValue(this.getChartProxy().getAxisProperty(expression))
+                .setValue(this.chartOptionsService.getAxisProperty(expression))
                 .setMaxValue(maxValue)
                 .setTextFieldWidth(45)
-                .onValueChange(newValue => this.getChartProxy().setAxisProperty(expression, newValue));
+                .onValueChange(newValue => this.chartOptionsService.setAxisProperty(expression, newValue));
         };
 
         initInput("tick.width", this.axisTicksWidthSlider, this.chartTranslator.translate("width"), 10);
         initInput("tick.size", this.axisTicksSizeSlider, this.chartTranslator.translate("length"), 30);
-    }
-
-    private getChartProxy(): CartesianChartProxy<any> {
-        return this.chartController.getChartProxy() as CartesianChartProxy<any>;
     }
 }

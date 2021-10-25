@@ -7,10 +7,7 @@ import {
     AgSelect,
     AgSlider,
     Autowired,
-    AxisType,
     Component,
-    FontStyle,
-    FontWeight,
     PostConstruct,
     RefSelector,
 } from "@ag-grid-community/core";
@@ -20,6 +17,7 @@ import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslator } from "../../../chartTranslator";
 import { AgCartesianAxisOptions, ChartAxisPosition, find } from "ag-charts-community";
 import { CartesianChartProxy } from "../../../chartProxies/cartesian/cartesianChartProxy";
+import { ChartOptionsService } from "../../chartOptionsService";
 
 export class AxisPanel extends Component {
 
@@ -39,13 +37,13 @@ export class AxisPanel extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
-    private readonly chartController: ChartController;
     private activePanels: Component[] = [];
     private axisLabelUpdateFuncs: Function[] = [];
 
-    constructor(chartController: ChartController) {
-        super();
-        this.chartController = chartController;
+    constructor(
+        private readonly chartController: ChartController,
+        private readonly chartOptionsService: ChartOptionsService) {
+            super();
     }
 
     @PostConstruct
@@ -76,22 +74,22 @@ export class AxisPanel extends Component {
             .setLabel(chartTranslator.translate("color"))
             .setLabelWidth("flex")
             .setInputWidth(45)
-            .setValue(this.getChartProxy().getAxisProperty("line.color"))
-            .onValueChange(newColor => this.getChartProxy().setAxisProperty("line.color", newColor));
+            .setValue(this.chartOptionsService.getAxisProperty("line.color"))
+            .onValueChange(newColor => this.chartOptionsService.setAxisProperty("line.color", newColor));
 
         this.axisLineWidthSlider
             .setLabel(chartTranslator.translate("thickness"))
             .setMaxValue(10)
             .setTextFieldWidth(45)
-            .setValue(this.getChartProxy().getAxisProperty("line.width"))
-            .onValueChange(newValue => this.getChartProxy().setAxisProperty("line.width", newValue));
+            .setValue(this.chartOptionsService.getAxisProperty("line.width"))
+            .onValueChange(newValue => this.chartOptionsService.setAxisProperty("line.width", newValue));
 
         if (_.includes(['line', 'scatter', 'bubble'], this.chartController.getChartType()) && !this.chartController.isGrouping()) {
-            const options: { value: AxisType | '', text: string }[] = [
+            const options: { value: any | '', text: string }[] = [
                 { value: '', text: chartTranslator.translate('automatic') }
             ];
 
-            ['category', 'time', 'number'].forEach((type: AxisType) => {
+            ['category', 'time', 'number'].forEach((type: any) => {
                 options.push({ value: type, text: chartTranslator.translate(type) });
             });
 
@@ -99,9 +97,9 @@ export class AxisPanel extends Component {
                 .setLabel(chartTranslator.translate('xType'))
                 .setLabelWidth('flex')
                 .addOptions(options)
-                .setValue(this.getChartProxy().getChartOption('xAxis.type') || '')
+                .setValue(this.chartOptionsService.getChartOption('xAxis.type') || '')
                 .onValueChange(newValue => {
-                    const chartProxy = this.getChartProxy();
+                    const chartProxy = this.chartOptionsService;
 
                     chartProxy.setChartOption('xAxis.type', typeof newValue === 'string' && newValue.length && newValue);
 
@@ -113,34 +111,28 @@ export class AxisPanel extends Component {
     }
 
     private initAxisTicks() {
-        const axisTicksComp = this.createBean(new AxisTicksPanel(this.chartController));
+        const axisTicksComp = this.createBean(new AxisTicksPanel(this.chartOptionsService));
         this.axisGroup.addItem(axisTicksComp);
         this.activePanels.push(axisTicksComp);
     }
 
     private initAxisLabels() {
-        const chartProxy = this.getChartProxy();
-
         const initialFont = {
-            family: chartProxy.getAxisProperty("label.fontFamily"),
-            style: chartProxy.getAxisProperty<FontStyle>("label.fontStyle"),
-            weight: chartProxy.getAxisProperty<FontWeight>("label.fontWeight"),
-            size: chartProxy.getAxisProperty<number>("label.fontSize"),
-            color: chartProxy.getAxisProperty("label.color")
+            family: this.chartOptionsService.getAxisProperty("label.fontFamily"),
+            style: this.chartOptionsService.getAxisProperty("label.fontStyle"),
+            weight: this.chartOptionsService.getAxisProperty("label.fontWeight"),
+            size: this.chartOptionsService.getAxisProperty<number>("label.fontSize"),
+            color: this.chartOptionsService.getAxisProperty("label.color")
         };
 
         const setFont = (font: Font) => {
-            const proxy = this.getChartProxy();
+            if (font.family) { this.chartOptionsService.setAxisProperty("label.fontFamily", font.family); }
+            if (font.weight) { this.chartOptionsService.setAxisProperty("label.fontWeight", font.weight); }
+            if (font.style) { this.chartOptionsService.setAxisProperty("label.fontStyle", font.style); }
+            if (font.size) { this.chartOptionsService.setAxisProperty("label.fontSize", font.size); }
+            if (font.color) { this.chartOptionsService.setAxisProperty("label.color", font.color); }
 
-            if (font.family) { proxy.setAxisProperty("label.fontFamily", font.family); }
-            if (font.weight) { proxy.setAxisProperty("label.fontWeight", font.weight); }
-            if (font.style) { proxy.setAxisProperty("label.fontStyle", font.style); }
-            if (font.size) { proxy.setAxisProperty("label.fontSize", font.size); }
-            if (font.color) { proxy.setAxisProperty("label.color", font.color); }
-
-            const chart = proxy.getChart();
-
-            chart.layoutPending = true;
+            this.chartController.getChartProxy().getChart().layoutPending = true;
         };
 
         const params: FontPanelParams = {
@@ -159,7 +151,7 @@ export class AxisPanel extends Component {
 
     private addAdditionalLabelComps(labelPanelComp: FontPanel) {
         const createAngleComp = (label: string, expression: string, updateFunc: (value: number) => void) => {
-            const value = this.getChartProxy().getChartOption(expression) as number;
+            const value = this.chartOptionsService.getChartOption(expression) as number;
             const angleSelect = new AgAngleSelect()
                 .setLabel(label)
                 .setLabelWidth("flex")
@@ -168,7 +160,7 @@ export class AxisPanel extends Component {
 
             // the axis label rotation needs to be updated when the default category changes in the data panel
             this.axisLabelUpdateFuncs.push(() => {
-                const value = this.getChartProxy().getChartOption(expression) as number;
+                const value = this.chartOptionsService.getChartOption(expression) as number;
                 angleSelect.setValue(value);
             });
 
@@ -178,19 +170,18 @@ export class AxisPanel extends Component {
 
         const degreesSymbol = String.fromCharCode(176);
         const createLabelUpdateFunc = (axisPosition: ChartAxisPosition) => (newValue: number) => {
-            const chartProxy = this.getChartProxy();
-            const chart = chartProxy.getChart();
-            const axis = find(chart.axes as AgCartesianAxisOptions[], currentAxis => currentAxis.position === axisPosition);
+            //FIXME
 
-            if (axis) {
-                axis.label!.rotation = newValue;
-                if (axis.position === ChartAxisPosition.Bottom) {
-                    _.set(chartProxy.getChartOptions().xAxis, "label.rotation", newValue);
-                } else if (axis.position === ChartAxisPosition.Left) {
-                    _.set(chartProxy.getChartOptions().yAxis, "label.rotation", newValue);
-                }
-                chart.layoutPending = true;
-            }
+            // const axis = find(chart.axes as AgCartesianAxisOptions[], currentAxis => currentAxis.position === axisPosition);
+            // if (axis) {
+            //     axis.label!.rotation = newValue;
+            //     if (axis.position === ChartAxisPosition.Bottom) {
+            //         _.set(chartProxy.getChartOptions().xAxis, "label.rotation", newValue);
+            //     } else if (axis.position === ChartAxisPosition.Left) {
+            //         _.set(chartProxy.getChartOptions().yAxis, "label.rotation", newValue);
+            //     }
+            //     chart.layoutPending = true;
+            // }
         };
 
         const xRotationLabel = `${this.chartTranslator.translate("xRotation")} ${degreesSymbol}`;
@@ -202,10 +193,10 @@ export class AxisPanel extends Component {
         const labelPaddingSlider = this.createBean(new AgSlider());
 
         labelPaddingSlider.setLabel(this.chartTranslator.translate("padding"))
-            .setValue(this.getChartProxy().getAxisProperty("label.padding"))
+            .setValue(this.chartOptionsService.getAxisProperty("label.padding"))
             .setMaxValue(30)
             .setTextFieldWidth(45)
-            .onValueChange(newValue => this.getChartProxy().setAxisProperty("label.padding", newValue));
+            .onValueChange(newValue => this.chartOptionsService.setAxisProperty("label.padding", newValue));
 
         labelPanelComp.addCompToPanel(labelPaddingSlider);
     }
@@ -215,10 +206,6 @@ export class AxisPanel extends Component {
             _.removeFromParent(panel.getGui());
             this.destroyBean(panel);
         });
-    }
-
-    private getChartProxy(): CartesianChartProxy<any> {
-        return this.chartController.getChartProxy() as CartesianChartProxy<any>;
     }
 
     protected destroy(): void {

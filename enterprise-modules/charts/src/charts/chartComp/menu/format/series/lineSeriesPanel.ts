@@ -9,10 +9,9 @@ import {
     PostConstruct,
     RefSelector
 } from "@ag-grid-community/core";
-import { ChartController } from "../../../chartController";
 import { MarkersPanel } from "./markersPanel";
 import { ChartTranslator } from "../../../chartTranslator";
-import { LineChartProxy } from "../../../chartProxies/cartesian/lineChartProxy";
+import { ChartOptionsService } from "../../chartOptionsService";
 import { initFontPanelParams } from "../widgetInitialiser";
 import { FontPanel, FontPanelParams } from "../fontPanel";
 
@@ -36,11 +35,8 @@ export class LineSeriesPanel extends Component {
 
     private activePanels: Component[] = [];
 
-    private readonly chartController: ChartController;
-
-    constructor(chartController: ChartController) {
+    constructor(private readonly chartOptionsService: ChartOptionsService) {
         super();
-        this.chartController = chartController;
     }
 
     @PostConstruct
@@ -72,8 +68,8 @@ export class LineSeriesPanel extends Component {
             .setLabelAlignment("left")
             .setLabelWidth("flex")
             .setInputWidth(45)
-            .setValue(this.getChartProxy().getSeriesOption("tooltip.enabled") || false)
-            .onValueChange(newValue => this.getChartProxy().setSeriesOption("tooltip.enabled", newValue));
+            .setValue(this.chartOptionsService.getSeriesOption("tooltip.enabled") || false)
+            .onValueChange(newValue => this.chartOptionsService.setSeriesOption("tooltip.enabled", newValue));
     }
 
     private initSeriesLineWidth() {
@@ -81,8 +77,8 @@ export class LineSeriesPanel extends Component {
             .setLabel(this.chartTranslator.translate('lineWidth'))
             .setMaxValue(10)
             .setTextFieldWidth(45)
-            .setValue(this.getChartProxy().getSeriesOption("stroke.width"))
-            .onValueChange(newValue => this.getChartProxy().setSeriesOption("stroke.width", newValue));
+            .setValue(this.chartOptionsService.getSeriesOption("stroke.width"))
+            .onValueChange(newValue => this.chartOptionsService.setSeriesOption("stroke.width", newValue));
     }
 
     private initSeriesLineDash() {
@@ -90,18 +86,18 @@ export class LineSeriesPanel extends Component {
             .setLabel(this.chartTranslator.translate('lineDash'))
             .setMaxValue(30)
             .setTextFieldWidth(45)
-            .setValue(this.getChartProxy().getSeriesOption("lineDash"))
-            .onValueChange(newValue => this.getChartProxy().setSeriesOption("lineDash", [newValue]));
+            .setValue(this.chartOptionsService.getSeriesOption("lineDash"))
+            .onValueChange(newValue => this.chartOptionsService.setSeriesOption("lineDash", [newValue]));
     }
 
     private initMarkersPanel() {
-        const markersPanelComp = this.createBean(new MarkersPanel(this.chartController));
+        const markersPanelComp = this.createBean(new MarkersPanel(this.chartOptionsService));
         this.seriesGroup.addItem(markersPanelComp);
         this.activePanels.push(markersPanelComp);
     }
 
     private initLabelPanel() {
-        const params: FontPanelParams = initFontPanelParams(this.chartTranslator, this.getChartProxy());
+        const params: FontPanelParams = initFontPanelParams(this.chartTranslator, this.chartOptionsService);
         const labelPanelComp = this.createBean(new FontPanel(params));
         this.activePanels.push(labelPanelComp);
         this.seriesGroup.addItem(labelPanelComp);
@@ -112,10 +108,6 @@ export class LineSeriesPanel extends Component {
             _.removeFromParent(panel.getGui());
             this.destroyBean(panel);
         });
-    }
-
-    private getChartProxy(): LineChartProxy {
-        return this.chartController.getChartProxy() as LineChartProxy;
     }
 
     protected destroy(): void {

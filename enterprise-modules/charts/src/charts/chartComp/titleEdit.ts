@@ -3,7 +3,8 @@ import { ChartMenu } from "./menu/chartMenu";
 
 import { Chart } from "ag-charts-community";
 import { ChartTranslator } from "./chartTranslator";
-import { ChartProxy } from "./chartProxies/chartProxy";
+import { ChartController } from "./chartController";
+import { ChartOptionsService } from "./menu/chartOptionsService";
 
 interface BBox { x: number; y: number; width: number; height: number }
 
@@ -16,8 +17,9 @@ export class TitleEdit extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
-    private chartProxy: ChartProxy<Chart, any>;
     private destroyableChartListeners: (() => void)[];
+    private chartController: ChartController;
+    private chartOptionsService: ChartOptionsService;
 
     constructor(private readonly chartMenu: ChartMenu) {
         super(TitleEdit.TEMPLATE);
@@ -34,16 +36,20 @@ export class TitleEdit extends Component {
     }
 
     /* should be called when the containing component changes to a new chart proxy */
-    public setChartProxy(chartProxy: ChartProxy<Chart, any>) {
-        if (this.chartProxy) {
+    public refreshTitle(chartController: ChartController, chartOptionsService: ChartOptionsService) {
+        this.chartController = chartController;
+        this.chartOptionsService = chartOptionsService;
+
+        const chartProxy = this.chartController.getChartProxy();
+
+        if (chartProxy) {
             for (let i = 0; i++; i < this.destroyableChartListeners.length) {
                 this.destroyableChartListeners[i]();
             }
             this.destroyableChartListeners = [];
         }
 
-        this.chartProxy = chartProxy;
-        const chart = this.chartProxy.getChart();
+        const chart = chartProxy.getChart();
         const canvas = chart.scene.canvas.element;
 
         const destroyDbleClickListener = this.addManagedListener(canvas, 'dblclick', event => {
@@ -80,7 +86,7 @@ export class TitleEdit extends Component {
         }
 
         const minimumTargetInputWidth: number = 300;
-        const maximumInputWidth: number = this.chartProxy.getChart().width;
+        const maximumInputWidth: number = this.chartController.getChartProxy().getChart().width;
         const inputWidth = Math.max(Math.min(titleBBox.width + 20, maximumInputWidth), minimumTargetInputWidth);
 
         const inputElement = this.getGui() as HTMLInputElement;
@@ -89,14 +95,14 @@ export class TitleEdit extends Component {
         const inputStyle = inputElement.style;
 
         // match style of input to title that we're editing
-        inputStyle.fontFamily = this.chartProxy.getTitleOption('fontFamily');
-        inputStyle.fontWeight = this.chartProxy.getTitleOption('fontWeight');
-        inputStyle.fontStyle = this.chartProxy.getTitleOption('fontStyle');
-        inputStyle.fontSize = this.chartProxy.getTitleOption('fontSize') + 'px';
-        inputStyle.color = this.chartProxy.getTitleOption('color');
+        inputStyle.fontFamily = this.chartOptionsService.getTitleOption('title.fontFamily');
+        inputStyle.fontWeight = this.chartOptionsService.getTitleOption('title.fontWeight');
+        inputStyle.fontStyle = this.chartOptionsService.getTitleOption('title.fontStyle');
+        inputStyle.fontSize = this.chartOptionsService.getTitleOption('title.fontSize') + 'px';
+        inputStyle.color = this.chartOptionsService.getTitleOption('title.color');
 
         // populate the input with the title, unless the title is the placeholder:
-        const oldTitle = this.chartProxy.getTitleOption('text');
+        const oldTitle = this.chartOptionsService.getTitleOption('title.text');
         const inputValue = oldTitle === this.chartTranslator.translate('titlePlaceholder') ? '' : oldTitle;
         inputElement.value = inputValue;
 
@@ -112,7 +118,7 @@ export class TitleEdit extends Component {
     private endEditing(): void {
         const value = (this.getGui() as HTMLInputElement).value;
 
-        this.chartProxy.setTitleOption('text', value);
+        this.chartOptionsService.setTitleOption('title.text', value);
 
         this.eventService.dispatchEvent({type: 'chartTitleEdit'});
 

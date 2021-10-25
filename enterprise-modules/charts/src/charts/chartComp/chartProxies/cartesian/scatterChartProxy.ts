@@ -1,11 +1,7 @@
 import {
     _,
     AgScatterSeriesOptions,
-    CartesianChartOptions,
     ChartType,
-    HighlightOptions,
-    ScatterSeriesLabelOptions,
-    ScatterSeriesOptions
 } from "@ag-grid-community/core";
 import {
     AgCartesianChartOptions,
@@ -13,7 +9,8 @@ import {
     CartesianChart,
     ChartTheme,
     LegendClickEvent,
-    ScatterSeries
+    ScatterSeries,
+    AgChartTheme
 } from "ag-charts-community";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { ChartDataModel } from "../../chartDataModel";
@@ -25,7 +22,7 @@ interface SeriesDefinition {
     sizeField?: FieldDefinition;
 }
 
-export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions> {
+export class ScatterChartProxy extends CartesianChartProxy<any> {
 
     public constructor(params: ChartProxyParams) {
         super(params);
@@ -35,17 +32,17 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
     }
 
     protected createChart(): CartesianChart {
-        const options = this.iChartOptions;
-        const agChartOptions = options as AgCartesianChartOptions;
-        agChartOptions.autoSize = true;
+        const agChartOptions = { theme: this.chartOptions } as AgCartesianChartOptions;
+
+        const [xAxis, yAxis] = this.getAxes();
         agChartOptions.axes = [{
             type: 'number',
             position: 'bottom',
-            ...options.xAxis,
+            ...xAxis,
         }, {
             type: 'number',
             position: 'left',
-            ...options.yAxis,
+            ...yAxis,
         }];
 
         return AgChart.create(agChartOptions, this.chartProxyParams.parentElement);
@@ -68,8 +65,8 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
             });
         }
 
-        const { seriesDefaults } = this.iChartOptions as any;
-        const seriesDefinitions = this.getSeriesDefinitions(fields, seriesDefaults.paired);
+        const paired = true; //FIXME: seriesDefaults.paired
+        const seriesDefinitions = this.getSeriesDefinitions(fields, paired);
 
         let dataDomain: number[] | undefined;
         if (this.crossFiltering) {
@@ -115,29 +112,19 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
         const labelFieldDefinition = params.category.id === ChartDataModel.DEFAULT_CATEGORY ? undefined : params.category;
         let previousSeries: ScatterSeries | undefined;
 
+
+        const agChartOptions = { theme: this.chartOptions } as AgCartesianChartOptions;
+        const overrides = (agChartOptions.theme! as AgChartTheme).overrides;
+        const seriesOverrides = overrides && overrides!.scatter ? overrides!.scatter.series : {};
+
         seriesDefinitions.forEach((seriesDefinition, index) => {
             const existingSeries = existingSeriesById.get(seriesDefinition!.yField.colId);
-            const marker = { ...seriesDefaults.marker };
-            if (marker.type) { // deprecated
-                marker.shape = marker.type;
-                delete marker.type;
-            }
             const series = existingSeries || AgChart.createComponent({
-                ...seriesDefaults,
+                ...seriesOverrides,
                 type: 'scatter',
-                fillOpacity: seriesDefaults.fill.opacity,
-                strokeOpacity: seriesDefaults.stroke.opacity,
-                strokeWidth: seriesDefaults.stroke.width,
-                marker,
-                tooltip: {
-                    enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
-                    renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
-                },
             }, 'scatter.series');
 
-            if (!series) {
-                return;
-            }
+            if (!series) { return; }
 
             const {
                 xField: xFieldDefinition,
@@ -202,74 +189,7 @@ export class ScatterChartProxy extends CartesianChartProxy<ScatterSeriesOptions>
         });
     }
 
-    protected extractIChartOptionsFromTheme(theme: ChartTheme): CartesianChartOptions<ScatterSeriesOptions> {
-        const options = super.extractIChartOptionsFromTheme(theme);
-
-        const seriesDefaults = theme.getConfig<AgScatterSeriesOptions>('scatter.series.scatter');
-        options.seriesDefaults = {
-            tooltip: {
-                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
-                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
-            },
-            fill: {
-                colors: (seriesDefaults.fill && [seriesDefaults.fill]) || theme.palette.fills,
-                opacity: seriesDefaults.fillOpacity,
-            },
-            stroke: {
-                colors: (seriesDefaults.stroke && [seriesDefaults.stroke]) || theme.palette.strokes,
-                opacity: seriesDefaults.strokeOpacity,
-                width: seriesDefaults.strokeWidth
-            },
-            label: seriesDefaults.label as ScatterSeriesLabelOptions,
-            marker: {
-                enabled: seriesDefaults.marker!.enabled,
-                shape: seriesDefaults.marker!.shape,
-                size: seriesDefaults.marker!.size,
-                strokeWidth: seriesDefaults.marker!.strokeWidth
-            },
-            highlightStyle: seriesDefaults.highlightStyle as HighlightOptions,
-            listeners: seriesDefaults.listeners,
-            paired: true
-        } as ScatterSeriesOptions;
-
-        return options;
-    }
-
-    public getTooltipsEnabled(): boolean {
-        return this.iChartOptions.seriesDefaults.tooltip != null && !!this.iChartOptions.seriesDefaults.tooltip.enabled;
-    }
-
     public getMarkersEnabled = (): boolean => true; // markers are always enabled on scatter charts
-
-    protected getDefaultOptions(): CartesianChartOptions<ScatterSeriesOptions> {
-        const isBubble = this.chartType === ChartType.Bubble;
-        const options = {} as CartesianChartOptions<ScatterSeriesOptions>;
-
-        options.seriesDefaults = {
-            ...options.seriesDefaults,
-            fill: {
-                ...options.seriesDefaults.fill,
-                opacity: isBubble ? 0.7 : 1,
-            },
-            stroke: {
-                ...options.seriesDefaults.stroke,
-                width: 3,
-            },
-            marker: {
-                shape: 'circle',
-                enabled: true,
-                size: 6,
-                maxSize: 30,
-                strokeWidth: 1,
-            },
-            tooltip: {
-                enabled: true,
-            },
-            paired: true,
-        };
-
-        return options;
-    }
 
     private getSeriesDefinitions(fields: FieldDefinition[], paired: boolean): (SeriesDefinition | null)[] {
         if (fields.length < 2) { return []; }

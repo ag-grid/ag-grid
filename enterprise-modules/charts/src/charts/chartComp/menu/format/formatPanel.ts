@@ -10,19 +10,19 @@ import { ChartPanel } from "./chart/chartPanel";
 import { AreaSeriesPanel } from "./series/areaSeriesPanel";
 import { ScatterSeriesPanel } from "./series/scatterSeriesPanel";
 import { HistogramSeriesPanel } from "./series/histogramSeriesPanel";
+import { ChartOptionsService } from "../chartOptionsService";
 
-export class ChartFormattingPanel extends Component {
+export class FormatPanel extends Component {
     public static TEMPLATE = /* html */ `<div class="ag-chart-format-wrapper"></div>`;
 
     private chartType: ChartType;
     private isGrouping: boolean;
     private panels: Component[] = [];
-    private readonly chartController: ChartController;
 
-    constructor(chartController: ChartController) {
-        super(ChartFormattingPanel.TEMPLATE);
-
-        this.chartController = chartController;
+    constructor(
+        private readonly chartController: ChartController,
+        private readonly chartOptionsService: ChartOptionsService) {
+            super(FormatPanel.TEMPLATE);
     }
 
     @PostConstruct
@@ -42,8 +42,8 @@ export class ChartFormattingPanel extends Component {
 
         this.destroyPanels();
 
-        this.addComponent(new ChartPanel(this.chartController));
-        this.addComponent(new LegendPanel(this.chartController));
+        this.addComponent(new ChartPanel(this.chartOptionsService));
+        this.addComponent(new LegendPanel(this.chartOptionsService));
 
         switch (chartType) {
             case ChartType.GroupedColumn:
@@ -52,36 +52,36 @@ export class ChartFormattingPanel extends Component {
             case ChartType.GroupedBar:
             case ChartType.StackedBar:
             case ChartType.NormalizedBar:
-                this.addComponent(new AxisPanel(this.chartController));
-                this.addComponent(new BarSeriesPanel(this.chartController));
-                this.addComponent(new NavigatorPanel(this.chartController));
+                this.addComponent(new AxisPanel(this.chartController, this.chartOptionsService));
+                this.addComponent(new BarSeriesPanel(this.chartOptionsService));
+                this.addComponent(new NavigatorPanel(this.chartOptionsService));
                 break;
             case ChartType.Pie:
             case ChartType.Doughnut:
-                this.addComponent(new PieSeriesPanel(this.chartController));
+                this.addComponent(new PieSeriesPanel(this.chartOptionsService));
                 break;
             case ChartType.Line:
-                this.addComponent(new AxisPanel(this.chartController));
-                this.addComponent(new LineSeriesPanel(this.chartController));
-                this.addComponent(new NavigatorPanel(this.chartController));
+                this.addComponent(new AxisPanel(this.chartController, this.chartOptionsService));
+                this.addComponent(new LineSeriesPanel(this.chartOptionsService));
+                this.addComponent(new NavigatorPanel(this.chartOptionsService));
                 break;
             case ChartType.Scatter:
             case ChartType.Bubble:
-                this.addComponent(new AxisPanel(this.chartController));
-                this.addComponent(new ScatterSeriesPanel(this.chartController));
-                this.addComponent(new NavigatorPanel(this.chartController));
+                this.addComponent(new AxisPanel(this.chartController, this.chartOptionsService));
+                this.addComponent(new ScatterSeriesPanel(this.chartOptionsService));
+                this.addComponent(new NavigatorPanel(this.chartOptionsService));
                 break;
             case ChartType.Area:
             case ChartType.StackedArea:
             case ChartType.NormalizedArea:
-                this.addComponent(new AxisPanel(this.chartController));
-                this.addComponent(new AreaSeriesPanel(this.chartController));
-                this.addComponent(new NavigatorPanel(this.chartController));
+                this.addComponent(new AxisPanel(this.chartController, this.chartOptionsService));
+                this.addComponent(new AreaSeriesPanel(this.chartOptionsService));
+                this.addComponent(new NavigatorPanel(this.chartOptionsService));
                 break;
             case ChartType.Histogram:
-                this.addComponent(new AxisPanel(this.chartController));
-                this.addComponent(new HistogramSeriesPanel(this.chartController));
-                this.addComponent(new NavigatorPanel(this.chartController));
+                this.addComponent(new AxisPanel(this.chartController, this.chartOptionsService));
+                this.addComponent(new HistogramSeriesPanel(this.chartOptionsService));
+                this.addComponent(new NavigatorPanel(this.chartOptionsService));
                 break;
             default:
                 console.warn(`AG Grid: ChartFormattingPanel - unexpected chart type index: ${chartType} supplied`);

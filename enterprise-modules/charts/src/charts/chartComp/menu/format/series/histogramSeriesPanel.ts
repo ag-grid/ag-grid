@@ -9,12 +9,11 @@ import {
     PostConstruct,
     RefSelector,
 } from "@ag-grid-community/core";
-import { ChartController } from "../../../chartController";
 import { ShadowPanel } from "./shadowPanel";
 import { FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslator } from "../../../chartTranslator";
-import { HistogramChartProxy } from "../../../chartProxies/cartesian/histogramChartProxy";
 import { initFillOpacitySlider, initFontPanelParams, initLineOpacitySlider } from "../widgetInitialiser";
+import { ChartOptionsService } from "../../chartOptionsService";
 
 export class HistogramSeriesPanel extends Component {
 
@@ -40,12 +39,10 @@ export class HistogramSeriesPanel extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
-    private readonly chartController: ChartController;
     private activePanels: Component[] = [];
 
-    constructor(chartController: ChartController) {
+    constructor(private readonly chartOptionsService: ChartOptionsService) {
         super();
-        this.chartController = chartController;
     }
 
     @PostConstruct
@@ -76,8 +73,8 @@ export class HistogramSeriesPanel extends Component {
             .setLabelAlignment("left")
             .setLabelWidth("flex")
             .setInputWidth(45)
-            .setValue(this.getChartProxy().getSeriesOption("tooltip.enabled") || false)
-            .onValueChange(newValue => this.getChartProxy().setSeriesOption("tooltip.enabled", newValue));
+            .setValue(this.chartOptionsService.getSeriesOption("tooltip.enabled") || false)
+            .onValueChange(newValue => this.chartOptionsService.setSeriesOption("tooltip.enabled", newValue));
     }
 
     private initBins() {
@@ -86,8 +83,8 @@ export class HistogramSeriesPanel extends Component {
             .setMinValue(4)
             .setMaxValue(100)
             .setTextFieldWidth(45)
-            .setValue(this.getChartProxy().getSeriesOption("binCount"))
-            .onValueChange(newValue => this.getChartProxy().setSeriesOption("binCount", newValue));
+            .setValue(this.chartOptionsService.getSeriesOption("binCount"))
+            .onValueChange(newValue => this.chartOptionsService.setSeriesOption("binCount", newValue));
     }
 
     private initSeriesStrokeWidth() {
@@ -95,8 +92,8 @@ export class HistogramSeriesPanel extends Component {
             .setLabel(this.chartTranslator.translate("strokeWidth"))
             .setMaxValue(10)
             .setTextFieldWidth(45)
-            .setValue(this.getChartProxy().getSeriesOption("stroke.width"))
-            .onValueChange(newValue => this.getChartProxy().setSeriesOption("stroke.width", newValue));
+            .setValue(this.chartOptionsService.getSeriesOption("stroke.width"))
+            .onValueChange(newValue => this.chartOptionsService.setSeriesOption("stroke.width", newValue));
     }
 
     private initSeriesLineDash() {
@@ -104,24 +101,24 @@ export class HistogramSeriesPanel extends Component {
             .setLabel(this.chartTranslator.translate('lineDash'))
             .setMaxValue(30)
             .setTextFieldWidth(45)
-            .setValue(this.getChartProxy().getSeriesOption("lineDash"))
-            .onValueChange(newValue => this.getChartProxy().setSeriesOption("lineDash", [newValue]));
+            .setValue(this.chartOptionsService.getSeriesOption("lineDash"))
+            .onValueChange(newValue => this.chartOptionsService.setSeriesOption("lineDash", [newValue]));
     }
 
     private initOpacity() {
-        initLineOpacitySlider(this.seriesLineOpacitySlider, this.chartTranslator, this.getChartProxy());
-        initFillOpacitySlider(this.seriesFillOpacitySlider, this.chartTranslator, this.getChartProxy());
+        initLineOpacitySlider(this.seriesLineOpacitySlider, this.chartTranslator, this.chartOptionsService);
+        initFillOpacitySlider(this.seriesFillOpacitySlider, this.chartTranslator, this.chartOptionsService);
     }
 
     private initLabelPanel() {
-        const params: FontPanelParams = initFontPanelParams(this.chartTranslator, this.getChartProxy());
+        const params: FontPanelParams = initFontPanelParams(this.chartTranslator, this.chartOptionsService);
         const labelPanelComp = this.createBean(new FontPanel(params));
         this.activePanels.push(labelPanelComp);
         this.seriesGroup.addItem(labelPanelComp);
     }
 
     private initShadowPanel() {
-        const shadowPanelComp = this.createBean(new ShadowPanel(this.chartController));
+        const shadowPanelComp = this.createBean(new ShadowPanel(this.chartOptionsService));
         this.seriesGroup.addItem(shadowPanelComp);
         this.activePanels.push(shadowPanelComp);
     }
@@ -131,10 +128,6 @@ export class HistogramSeriesPanel extends Component {
             _.removeFromParent(panel.getGui());
             this.destroyBean(panel);
         });
-    }
-
-    private getChartProxy(): HistogramChartProxy {
-        return this.chartController.getChartProxy() as HistogramChartProxy;
     }
 
     protected destroy(): void {

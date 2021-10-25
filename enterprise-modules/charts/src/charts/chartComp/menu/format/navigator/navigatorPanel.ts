@@ -8,9 +8,8 @@ import {
     PostConstruct,
     RefSelector
 } from "@ag-grid-community/core";
-import { ChartController } from "../../../chartController";
 import { ChartTranslator } from "../../../chartTranslator";
-import { CartesianChartProxy } from "../../../chartProxies/cartesian/cartesianChartProxy";
+import { ChartOptionsService } from "../../chartOptionsService";
 
 export class NavigatorPanel extends Component {
 
@@ -26,12 +25,10 @@ export class NavigatorPanel extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
-    private readonly chartController: ChartController;
     private activePanels: Component[] = [];
 
-    constructor(chartController: ChartController) {
+    constructor(private readonly chartOptionsService: ChartOptionsService) {
         super();
-        this.chartController = chartController;
     }
 
     @PostConstruct
@@ -52,9 +49,9 @@ export class NavigatorPanel extends Component {
             .setTitle(chartTranslator.translate("navigator"))
             .toggleGroupExpand(false)
             .hideEnabledCheckbox(false)
-            .setEnabled(this.getChartProxy().getChartOption<boolean>("navigator.enabled") || false)
+            .setEnabled(this.chartOptionsService.getChartOption<boolean>("navigator.enabled") || false)
             .onEnableChange(enabled => {
-                this.getChartProxy().setChartOption("navigator.enabled", enabled);
+                this.chartOptionsService.setChartOption("navigator.enabled", enabled);
                 this.navigatorGroup.toggleGroupExpand(true);
             });
 
@@ -63,8 +60,8 @@ export class NavigatorPanel extends Component {
             .setMinValue(10)
             .setMaxValue(60)
             .setTextFieldWidth(45)
-            .setValue(String(this.getChartProxy().getChartOption<number>("navigator.height") || "30"))
-            .onValueChange(height => this.getChartProxy().setChartOption("navigator.height", height));
+            .setValue(String(this.chartOptionsService.getChartOption<number>("navigator.height") || "30"))
+            .onValueChange(height => this.chartOptionsService.setChartOption("navigator.height", height));
     }
 
     private destroyActivePanels(): void {
@@ -72,10 +69,6 @@ export class NavigatorPanel extends Component {
             _.removeFromParent(panel.getGui());
             this.destroyBean(panel);
         });
-    }
-
-    private getChartProxy(): CartesianChartProxy<any> {
-        return this.chartController.getChartProxy() as CartesianChartProxy<any>;
     }
 
     protected destroy(): void {

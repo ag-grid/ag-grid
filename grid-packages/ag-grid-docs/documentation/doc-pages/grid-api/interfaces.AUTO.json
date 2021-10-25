@@ -3066,7 +3066,6 @@
       "chartId": "string",
       "chartType": "ChartType",
       "chartThemeName": "string",
-      "chartOptions": "ChartOptions<any>",
       "api": "GridApi",
       "columnApi": "ColumnApi"
     },
@@ -3074,8 +3073,7 @@
       "type": "/** Will always be `chartOptionsChanged`. */",
       "chartId": "/** Id of the effected chart. */",
       "chartType": "/** ChartType */",
-      "chartThemeName": "/** Chart theme name of currently selected theme. */",
-      "chartOptions": "/** Chart options. */"
+      "chartThemeName": "/** Chart theme name of currently selected theme. */"
     }
   },
   "ChartDestroyed": {
@@ -5269,7 +5267,7 @@
       "histogram?": "AgCartesianChartOptions<AgCartesianAxesTheme, AgHistogramSeriesOptions>",
       "polar?": "AgPolarChartOptions<AgPolarAxesTheme, AgPolarSeriesTheme>",
       "pie?": "AgPolarChartOptions<AgPolarAxesTheme, AgPieSeriesOptions>",
-      "common?": "any"
+      "common?": "AgBaseChartOptions"
     }
   },
   "AgCartesianAxesTheme": {
@@ -6255,633 +6253,6 @@
     "meta": { "isTypeAlias": true },
     "type": "'chartSettings' | 'chartData' | 'chartFormat' | 'chartLink' | 'chartUnlink' | 'chartDownload'"
   },
-  "SeriesOptions": {
-    "meta": {},
-    "type": {
-      "fill": "FillOptions",
-      "stroke": "StrokeOptions",
-      "highlightStyle": "HighlightOptions",
-      "listeners?": "{[key in string]: Function}"
-    }
-  },
-  "ChartTooltip": {
-    "meta": {},
-    "type": {
-      "enabled?": "boolean",
-      "class?": "string",
-      "tracking?": "boolean",
-      "delay?": "number"
-    }
-  },
-  "ChartOptions": {
-    "meta": { "typeParams": ["T extends SeriesOptions"] },
-    "type": {
-      "document?": "Document",
-      "seriesDefaults": "T",
-      "width?": "number",
-      "height?": "number",
-      "padding": "PaddingOptions",
-      "background": "BackgroundOptions",
-      "title": "CaptionOptions",
-      "subtitle": "CaptionOptions",
-      "navigator": "NavigatorOptions",
-      "legend": "LegendOptions",
-      "tooltip?": "ChartTooltip",
-      "listeners?": "{[key in string]: Function}"
-    }
-  },
-  "PaddingOptions": {
-    "meta": {},
-    "type": {
-      "top": "number",
-      "right": "number",
-      "bottom": "number",
-      "left": "number"
-    }
-  },
-  "BackgroundOptions": {
-    "meta": {},
-    "type": { "fill": "string", "visible": "boolean" }
-  },
-  "FontOptions": {
-    "meta": {},
-    "type": {
-      "fontStyle": "FontStyle",
-      "fontWeight": "FontWeight",
-      "fontSize": "number",
-      "fontFamily": "string",
-      "color": "string"
-    }
-  },
-  "CaptionOptions": {
-    "meta": {},
-    "type": {
-      "enabled": "boolean",
-      "text?": "string",
-      "fontStyle": "FontStyle",
-      "fontWeight": "FontWeight",
-      "fontSize": "number",
-      "fontFamily": "string",
-      "color": "string"
-    }
-  },
-  "LegendOptions": {
-    "meta": {},
-    "type": {
-      "enabled": "boolean",
-      "position": "LegendPosition",
-      "spacing": "number",
-      "item": "LegendItemOptions"
-    }
-  },
-  "LegendPosition": {
-    "meta": { "isEnum": true },
-    "type": [
-      "Top = 'top'",
-      "Right = 'right'",
-      "Bottom = 'bottom'",
-      "Left = 'left'"
-    ],
-    "docs": [null, null, null, null]
-  },
-  "LegendItemOptions": {
-    "meta": {},
-    "type": {
-      "label": "LegendLabelOptions",
-      "marker": "LegendMarkerOptions",
-      "paddingX": "number",
-      "paddingY": "number"
-    }
-  },
-  "LegendLabelOptions": {
-    "meta": {},
-    "type": {
-      "fontStyle": "FontStyle",
-      "fontWeight": "FontWeight",
-      "fontSize": "number",
-      "fontFamily": "string",
-      "color": "string"
-    }
-  },
-  "NavigatorOptions": {
-    "meta": {},
-    "type": {
-      "enabled": "boolean",
-      "height": "number",
-      "min": "number",
-      "max": "number",
-      "mask": "NavigatorMaskOptions",
-      "minHandle": "NavigatorHandleOptions",
-      "maxHandle": "NavigatorHandleOptions"
-    }
-  },
-  "NavigatorMaskOptions": {
-    "meta": {},
-    "type": {
-      "fill": "string",
-      "stroke": "string",
-      "strokeWidth": "number",
-      "fillOpacity": "number"
-    }
-  },
-  "NavigatorHandleOptions": {
-    "meta": {},
-    "type": {
-      "fill": "string",
-      "stroke": "string",
-      "strokeWidth": "number",
-      "width": "number",
-      "height": "number",
-      "gripLineGap": "number",
-      "gripLineLength": "number"
-    }
-  },
-  "MarkerShape": {
-    "meta": { "isTypeAlias": true },
-    "type": "'circle' | 'cross' | 'diamond' | 'plus' | 'square' | 'triangle'"
-  },
-  "LegendMarkerOptions": {
-    "meta": {},
-    "type": {
-      "shape": "MarkerShape",
-      "size": "number",
-      "padding": "number",
-      "strokeWidth": "number"
-    }
-  },
-  "CartesianChartOptions": {
-    "meta": { "typeParams": ["T extends SeriesOptions"] },
-    "type": {
-      "xAxis": "AxisOptions",
-      "yAxis": "AxisOptions",
-      "navigator": "NavigatorOptions",
-      "document?": "Document",
-      "seriesDefaults": "T",
-      "width?": "number",
-      "height?": "number",
-      "padding": "PaddingOptions",
-      "background": "BackgroundOptions",
-      "title": "CaptionOptions",
-      "subtitle": "CaptionOptions",
-      "legend": "LegendOptions",
-      "tooltip?": "ChartTooltip",
-      "listeners?": "{[key in string]: Function}"
-    }
-  },
-  "PolarChartOptions": {
-    "meta": { "typeParams": ["T extends SeriesOptions"] },
-    "type": {
-      "document?": "Document",
-      "seriesDefaults": "T",
-      "width?": "number",
-      "height?": "number",
-      "padding": "PaddingOptions",
-      "background": "BackgroundOptions",
-      "title": "CaptionOptions",
-      "subtitle": "CaptionOptions",
-      "navigator": "NavigatorOptions",
-      "legend": "LegendOptions",
-      "tooltip?": "ChartTooltip",
-      "listeners?": "{[key in string]: Function}"
-    }
-  },
-  "AxisOptions": {
-    "meta": {},
-    "type": {
-      "type?": "AxisType",
-      "title": "CaptionOptions",
-      "line": "AxisLineOptions",
-      "tick": "AxisTickOptions",
-      "label": "AxisLabelOptions",
-      "gridStyle": "GridStyle[]"
-    }
-  },
-  "AxisType": {
-    "meta": { "isTypeAlias": true },
-    "type": "'number' | 'category' | 'time'"
-  },
-  "AxisLineOptions": {
-    "meta": {},
-    "type": { "width": "number", "color": "string" }
-  },
-  "AxisTickOptions": {
-    "meta": {},
-    "type": { "width": "number", "size": "number", "color": "string" }
-  },
-  "AxisLabelFormatterParams": {
-    "meta": {},
-    "type": {
-      "value": "any",
-      "index": "number",
-      "fractionDigits?": "number",
-      "formatter?": "(x: any) => string"
-    }
-  },
-  "AxisLabelOptions": {
-    "meta": {},
-    "type": {
-      "padding": "number",
-      "rotation": "number",
-      "format?": "string",
-      "formatter?": "(params: AxisLabelFormatterParams) => string",
-      "fontStyle": "FontStyle",
-      "fontWeight": "FontWeight",
-      "fontSize": "number",
-      "fontFamily": "string",
-      "color": "string"
-    }
-  },
-  "GridStyle": {
-    "meta": {},
-    "type": { "stroke": "string", "lineDash?": "number[]" }
-  },
-  "HighlightOptions": {
-    "meta": {},
-    "type": {
-      "fill": "string",
-      "stroke?": "string",
-      "strokeWidth?": "number",
-      "series?": "{ enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }"
-    }
-  },
-  "FillOptions": {
-    "meta": {},
-    "type": { "colors": "string[]", "opacity": "number" }
-  },
-  "StrokeOptions": {
-    "meta": {},
-    "type": { "colors": "string[]", "opacity": "number", "width": "number" }
-  },
-  "DropShadowOptions": {
-    "meta": {},
-    "type": {
-      "enabled": "boolean",
-      "color": "string",
-      "xOffset": "number",
-      "yOffset": "number",
-      "blur": "number"
-    }
-  },
-  "SeriesLabelOptions": {
-    "meta": {},
-    "type": {
-      "enabled": "boolean",
-      "fontStyle": "FontStyle",
-      "fontWeight": "FontWeight",
-      "fontSize": "number",
-      "fontFamily": "string",
-      "color": "string"
-    }
-  },
-  "TooltipRendererResult": {
-    "meta": {},
-    "type": {
-      "enabled?": "boolean",
-      "content?": "string",
-      "title?": "string",
-      "color?": "string",
-      "backgroundColor?": "string",
-      "opacity?": "number"
-    },
-    "docs": {
-      "enabled?": "/** Set to false to disable individual tooltip. */",
-      "content?": "/** The content to display in each tooltip. */",
-      "title?": "/** The title of the tooltip. */",
-      "color?": "/** The CSS color for the title text. */",
-      "backgroundColor?": "/** The CSS color for the background of the tooltip title. */",
-      "opacity?": "/** The opacity of the background for the tooltip title. */"
-    }
-  },
-  "TooltipOptions": {
-    "meta": { "typeParams": ["TParams"] },
-    "type": {
-      "enabled": "boolean",
-      "renderer?": "(params: TParams) => string | TooltipRendererResult"
-    }
-  },
-  "TooltipRendererParams": {
-    "meta": {},
-    "type": {
-      "context?": "any",
-      "datum": "any",
-      "xValue": "any",
-      "yValue": "any"
-    },
-    "docs": {
-      "context?": "/** The grid context, includes row data, giving access to data from other columns in the same row. */",
-      "datum": "/** The raw datum associated with the point. */",
-      "xValue": "/** The X value of the data point. */",
-      "yValue": "/** The Y value of the data point. */"
-    }
-  },
-  "CartesianTooltipRendererParams": {
-    "meta": {},
-    "type": {
-      "xKey": "string",
-      "xValue": "any",
-      "xName": "string",
-      "yKey": "string",
-      "yValue": "any",
-      "yName": "string",
-      "context?": "any",
-      "datum": "any"
-    },
-    "docs": {
-      "context?": "/** The grid context, includes row data, giving access to data from other columns in the same row. */",
-      "datum": "/** The raw datum associated with the point. */",
-      "xValue": "/** The X value of the data point. */",
-      "yValue": "/** The Y value of the data point. */"
-    }
-  },
-  "BarSeriesOptions": {
-    "meta": {},
-    "type": {
-      "shadow": "DropShadowOptions",
-      "label": "BarSeriesLabelOptions",
-      "tooltip": "TooltipOptions<BarTooltipRendererParams>",
-      "lineDash": "number[]",
-      "lineDashOffset": "number",
-      "fill": "FillOptions",
-      "stroke": "StrokeOptions",
-      "highlightStyle": "HighlightOptions",
-      "listeners?": "{[key in string]: Function}"
-    }
-  },
-  "HistogramSeriesOptions": {
-    "meta": {},
-    "type": {
-      "binCount?": "number",
-      "shadow": "DropShadowOptions",
-      "label": "BarSeriesLabelOptions",
-      "tooltip": "TooltipOptions<BarTooltipRendererParams>",
-      "lineDash": "number[]",
-      "lineDashOffset": "number",
-      "fill": "FillOptions",
-      "stroke": "StrokeOptions",
-      "highlightStyle": "HighlightOptions",
-      "listeners?": "{[key in string]: Function}"
-    }
-  },
-  "BarSeriesLabelOptions": {
-    "meta": {},
-    "type": {
-      "formatter?": "(params: { value: number; }) => string",
-      "enabled": "boolean",
-      "fontStyle": "FontStyle",
-      "fontWeight": "FontWeight",
-      "fontSize": "number",
-      "fontFamily": "string",
-      "color": "string"
-    }
-  },
-  "BarTooltipRendererParams": {
-    "meta": {},
-    "type": {
-      "xKey": "string",
-      "xValue": "any",
-      "xName": "string",
-      "yKey": "string",
-      "yValue": "any",
-      "yName": "string",
-      "context?": "any",
-      "datum": "any"
-    },
-    "docs": {
-      "context?": "/** The grid context, includes row data, giving access to data from other columns in the same row. */",
-      "datum": "/** The raw datum associated with the point. */",
-      "xValue": "/** The X value of the data point. */",
-      "yValue": "/** The Y value of the data point. */"
-    }
-  },
-  "LineSeriesOptions": {
-    "meta": {},
-    "type": {
-      "marker": "MarkerOptions",
-      "label": "LineSeriesLabelOptions",
-      "tooltip": "TooltipOptions<LineTooltipRendererParams>",
-      "lineDash": "number[]",
-      "lineDashOffset": "number",
-      "fill": "FillOptions",
-      "stroke": "StrokeOptions",
-      "highlightStyle": "HighlightOptions",
-      "listeners?": "{[key in string]: Function}"
-    }
-  },
-  "LineSeriesLabelOptions": {
-    "meta": {},
-    "type": {
-      "formatter?": "(params: { value: any; }) => string",
-      "enabled": "boolean",
-      "fontStyle": "FontStyle",
-      "fontWeight": "FontWeight",
-      "fontSize": "number",
-      "fontFamily": "string",
-      "color": "string"
-    }
-  },
-  "MarkerOptions": {
-    "meta": {},
-    "type": {
-      "enabled": "boolean",
-      "shape": "MarkerShape",
-      "size": "number",
-      "strokeWidth": "number",
-      "formatter?": "Function"
-    }
-  },
-  "LineTooltipRendererParams": {
-    "meta": {},
-    "type": {
-      "xKey": "string",
-      "xValue": "any",
-      "xName": "string",
-      "yKey": "string",
-      "yValue": "any",
-      "yName": "string",
-      "context?": "any",
-      "datum": "any"
-    },
-    "docs": {
-      "context?": "/** The grid context, includes row data, giving access to data from other columns in the same row. */",
-      "datum": "/** The raw datum associated with the point. */",
-      "xValue": "/** The X value of the data point. */",
-      "yValue": "/** The Y value of the data point. */"
-    }
-  },
-  "ScatterSeriesLabelOptions": {
-    "meta": {},
-    "type": {
-      "enabled": "boolean",
-      "fontStyle": "FontStyle",
-      "fontWeight": "FontWeight",
-      "fontSize": "number",
-      "fontFamily": "string",
-      "color": "string"
-    }
-  },
-  "ScatterSeriesOptions": {
-    "meta": {},
-    "type": {
-      "marker": "ScatterMarkerOptions",
-      "label": "ScatterSeriesLabelOptions",
-      "tooltip": "TooltipOptions<ScatterTooltipRendererParams>",
-      "paired": "boolean",
-      "fill": "FillOptions",
-      "stroke": "StrokeOptions",
-      "highlightStyle": "HighlightOptions",
-      "listeners?": "{[key in string]: Function}"
-    }
-  },
-  "ScatterMarkerOptions": {
-    "meta": {},
-    "type": {
-      "maxSize?": "number",
-      "enabled": "boolean",
-      "shape": "MarkerShape",
-      "size": "number",
-      "strokeWidth": "number",
-      "formatter?": "Function"
-    }
-  },
-  "ScatterTooltipRendererParams": {
-    "meta": {},
-    "type": {
-      "sizeKey?": "string",
-      "sizeName?": "string",
-      "labelKey?": "string",
-      "labelName?": "string",
-      "xKey": "string",
-      "xValue": "any",
-      "xName": "string",
-      "yKey": "string",
-      "yValue": "any",
-      "yName": "string",
-      "context?": "any",
-      "datum": "any"
-    },
-    "docs": {
-      "context?": "/** The grid context, includes row data, giving access to data from other columns in the same row. */",
-      "datum": "/** The raw datum associated with the point. */",
-      "xValue": "/** The X value of the data point. */",
-      "yValue": "/** The Y value of the data point. */"
-    }
-  },
-  "AreaSeriesLabelOptions": {
-    "meta": {},
-    "type": {
-      "formatter?": "(params: { value: any; }) => string",
-      "enabled": "boolean",
-      "fontStyle": "FontStyle",
-      "fontWeight": "FontWeight",
-      "fontSize": "number",
-      "fontFamily": "string",
-      "color": "string"
-    }
-  },
-  "AreaSeriesOptions": {
-    "meta": {},
-    "type": {
-      "marker": "MarkerOptions",
-      "label": "AreaSeriesLabelOptions",
-      "shadow": "DropShadowOptions",
-      "tooltip": "TooltipOptions<AreaTooltipRendererParams>",
-      "lineDash": "number[]",
-      "lineDashOffset": "number",
-      "fill": "FillOptions",
-      "stroke": "StrokeOptions",
-      "highlightStyle": "HighlightOptions",
-      "listeners?": "{[key in string]: Function}"
-    }
-  },
-  "AreaTooltipRendererParams": {
-    "meta": {},
-    "type": {
-      "xKey": "string",
-      "xValue": "any",
-      "xName": "string",
-      "yKey": "string",
-      "yValue": "any",
-      "yName": "string",
-      "context?": "any",
-      "datum": "any"
-    },
-    "docs": {
-      "context?": "/** The grid context, includes row data, giving access to data from other columns in the same row. */",
-      "datum": "/** The raw datum associated with the point. */",
-      "xValue": "/** The X value of the data point. */",
-      "yValue": "/** The Y value of the data point. */"
-    }
-  },
-  "PieTitleOptions": {
-    "meta": {},
-    "type": {
-      "showInLegend?": "boolean",
-      "enabled": "boolean",
-      "text?": "string",
-      "fontStyle": "FontStyle",
-      "fontWeight": "FontWeight",
-      "fontSize": "number",
-      "fontFamily": "string",
-      "color": "string"
-    }
-  },
-  "PieSeriesOptions": {
-    "meta": {},
-    "type": {
-      "title": "PieTitleOptions",
-      "label": "PieSeriesLabelOptions",
-      "callout": "PieSeriesCalloutOptions",
-      "shadow": "DropShadowOptions",
-      "tooltip": "TooltipOptions<PieTooltipRendererParams>",
-      "lineDash": "number[]",
-      "lineDashOffset": "number",
-      "fill": "FillOptions",
-      "stroke": "StrokeOptions",
-      "highlightStyle": "HighlightOptions",
-      "listeners?": "{[key in string]: Function}"
-    }
-  },
-  "PieSeriesLabelOptions": {
-    "meta": {},
-    "type": {
-      "minAngle": "number",
-      "offset": "number",
-      "enabled": "boolean",
-      "fontStyle": "FontStyle",
-      "fontWeight": "FontWeight",
-      "fontSize": "number",
-      "fontFamily": "string",
-      "color": "string"
-    }
-  },
-  "PieSeriesCalloutOptions": {
-    "meta": {},
-    "type": {
-      "length": "number",
-      "strokeWidth": "number",
-      "colors": "string[]"
-    }
-  },
-  "PieTooltipRendererParams": {
-    "meta": {},
-    "type": {
-      "angleKey": "string",
-      "angleValue": "any",
-      "angleName?": "string",
-      "labelKey?": "string",
-      "labelName?": "string",
-      "context?": "any",
-      "datum": "any",
-      "xValue": "any",
-      "yValue": "any"
-    },
-    "docs": {
-      "context?": "/** The grid context, includes row data, giving access to data from other columns in the same row. */",
-      "datum": "/** The raw datum associated with the point. */",
-      "xValue": "/** The X value of the data point. */",
-      "yValue": "/** The Y value of the data point. */"
-    }
-  },
   "GetChartImageDataUrlParams": {
     "meta": {},
     "type": { "chartId": "string", "fileFormat?": "string" },
@@ -6902,7 +6273,7 @@
       "chartType": "ChartType",
       "cellRange": "CellRangeParams",
       "chartThemeName?": "string",
-      "chartOptions": "ChartOptions<any>",
+      "chartOptions": "any",
       "suppressChartRanges?": "boolean",
       "aggFunc?": "string | IAggFunc",
       "unlinkChart?": "boolean"
@@ -8387,6 +7758,10 @@
       "strokeWidth?": "/** The thickness in pixels for the stroke of the horizontal axis line.\n * Default: `1` */"
     }
   },
+  "AxisType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'number' | 'category' | 'time'"
+  },
   "SparklineTooltip": {
     "meta": {},
     "type": {
@@ -8403,6 +7778,40 @@
   "SparklineTooltipRenderer": {
     "meta": { "isTypeAlias": true },
     "type": "(params: TooltipRendererParams) => TooltipRendererResult"
+  },
+  "TooltipRendererResult": {
+    "meta": {},
+    "type": {
+      "enabled?": "boolean",
+      "content?": "string",
+      "title?": "string",
+      "color?": "string",
+      "backgroundColor?": "string",
+      "opacity?": "number"
+    },
+    "docs": {
+      "enabled?": "/** Set to false to disable individual tooltip. */",
+      "content?": "/** The content to display in each tooltip. */",
+      "title?": "/** The title of the tooltip. */",
+      "color?": "/** The CSS color for the title text. */",
+      "backgroundColor?": "/** The CSS color for the background of the tooltip title. */",
+      "opacity?": "/** The opacity of the background for the tooltip title. */"
+    }
+  },
+  "TooltipRendererParams": {
+    "meta": {},
+    "type": {
+      "context?": "any",
+      "datum": "any",
+      "xValue": "any",
+      "yValue": "any"
+    },
+    "docs": {
+      "context?": "/** The grid context, includes row data, giving access to data from other columns in the same row. */",
+      "datum": "/** The raw datum associated with the point. */",
+      "xValue": "/** The X value of the data point. */",
+      "yValue": "/** The Y value of the data point. */"
+    }
   },
   "SparklineLine": {
     "meta": {},

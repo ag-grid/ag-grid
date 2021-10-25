@@ -34,6 +34,7 @@ import { HistogramChartProxy } from "./chartProxies/cartesian/histogramChartProx
 import { ChartTranslator } from "./chartTranslator";
 import { ChartCrossFilter } from "./chartCrossFilter";
 import { CrossFilteringContext } from "../chartService";
+import { ChartOptionsService } from "./menu/chartOptionsService";
 
 export interface GridChartParams {
     pivotChart: boolean;
@@ -47,7 +48,7 @@ export interface GridChartParams {
     unlinkChart?: boolean;
     crossFiltering: boolean;
     crossFilteringContext: CrossFilteringContext;
-    restoringChart: boolean;
+    chartModel?: ChartModel;
 }
 
 export class GridChartComp extends Component {
@@ -82,6 +83,7 @@ export class GridChartComp extends Component {
 
     private model: ChartDataModel;
     private chartController: ChartController;
+    private chartOptionsService: ChartOptionsService;
 
     private chartProxy: ChartProxy<any, any>;
     private chartType: ChartType;
@@ -208,11 +210,11 @@ export class GridChartComp extends Component {
             height,
             grouping: isGrouping,
             document: this.gridOptionsWrapper.getDocument(),
-            eventService: this.eventService,
-            gridApi: this.gridApi,
-            columnApi: this.columnApi,
-            restoringChart: this.params.restoringChart,
+            chartModel: this.params.chartModel
         };
+
+        //TODO temp solution ensure 'restoring' options are not reused when switching chart types
+        this.params.chartModel = undefined;
 
         // set local state used to detect when chart changes
         this.chartType = chartType;
@@ -224,15 +226,15 @@ export class GridChartComp extends Component {
             return;
         }
 
-        this.titleEdit && this.titleEdit.setChartProxy(this.chartProxy);
-
         const canvas = this.eChart.querySelector('canvas');
-
         if (canvas) {
             _.addCssClass(canvas, 'ag-charts-canvas');
         }
 
         this.chartController.setChartProxy(this.chartProxy);
+        this.chartOptionsService = this.createBean(new ChartOptionsService(this.chartController));
+
+        this.titleEdit && this.titleEdit.refreshTitle(this.chartController, this.chartOptionsService);
     }
 
     private getChartThemeName(): string {
@@ -329,7 +331,7 @@ export class GridChartComp extends Component {
 
     private addMenu(): void {
         if (!this.params.crossFiltering) {
-            this.chartMenu = this.createBean(new ChartMenu(this.eChartContainer, this.eMenuContainer, this.chartController));
+            this.chartMenu = this.createBean(new ChartMenu(this.eChartContainer, this.eMenuContainer, this.chartController, this.chartOptionsService));
             this.eChartContainer.appendChild(this.chartMenu.getGui());
         }
     }
@@ -337,9 +339,8 @@ export class GridChartComp extends Component {
     private addTitleEditComp(): void {
         this.titleEdit = this.createBean(new TitleEdit(this.chartMenu));
         this.eTitleEditContainer.appendChild(this.titleEdit.getGui());
-
         if (this.chartProxy) {
-            this.titleEdit.setChartProxy(this.chartProxy);
+            this.titleEdit.refreshTitle(this.chartController, this.chartOptionsService);
         }
     }
 
@@ -399,7 +400,7 @@ export class GridChartComp extends Component {
         };
 
         chartProxy.update(chartUpdateParams);
-        this.titleEdit.setChartProxy(this.chartProxy);
+        this.titleEdit.refreshTitle(this.chartController, this.chartOptionsService);
     }
 
     private getChartDataType(colId: string): string | undefined {
@@ -450,16 +451,13 @@ export class GridChartComp extends Component {
             return;
         }
 
-        const { chartProxy, eChart } = this;
+        const { eChart } = this;
         if (this.chartMenu.isVisible()) {
             // we don't want the menu showing to affect the chart options
             const chart = this.chartProxy.getChart();
 
             chart.height = _.getInnerHeight(eChart);
             chart.width = _.getInnerWidth(eChart);
-        } else {
-            chartProxy.setChartOption('width', _.getInnerWidth(eChart));
-            chartProxy.setChartOption('height', _.getInnerHeight(eChart));
         }
     }
 

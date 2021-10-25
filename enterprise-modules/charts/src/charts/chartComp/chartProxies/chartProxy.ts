@@ -2,22 +2,14 @@ import {
     _,
     AgChartCaptionOptions,
     AgChartLegendOptions,
+    AgChartPaddingOptions,
+    AgChartThemeOptions,
     AgChartThemeOverrides,
     AgNavigatorOptions,
-    CaptionOptions,
-    ChartOptions,
+    ChartModel,
     ChartOptionsChanged,
     ChartType,
     Color,
-    ColumnApi,
-    DropShadowOptions,
-    Events,
-    EventService,
-    FontOptions,
-    GridApi,
-    LegendOptions,
-    NavigatorOptions,
-    PaddingOptions,
 } from "@ag-grid-community/core";
 import {
     AgChartTheme,
@@ -55,10 +47,7 @@ export interface ChartProxyParams {
     isDarkTheme: () => boolean;
     crossFiltering: boolean;
     crossFilterCallback: (event: any, reset?: boolean) => void;
-    eventService: EventService;
-    gridApi: GridApi;
-    columnApi: ColumnApi;
-    restoringChart?: boolean;
+    chartModel?: ChartModel; //TODO this is a grid object!
 }
 
 export interface FieldDefinition {
@@ -79,32 +68,27 @@ export interface UpdateChartParams {
     getCrossFilteringContext: () => CrossFilteringContext,
 }
 
-export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOptions<any>> {
+export abstract class ChartProxy<TChart extends Chart, TOptions extends any> {
     protected readonly chartId: string;
     protected readonly chartType: ChartType;
-    protected readonly eventService: EventService;
-    private readonly gridApi: GridApi;
-    private readonly columnApi: ColumnApi;
 
     protected chart: TChart;
-    protected customPalette: AgChartThemePalette;
-    protected iChartOptions: TOptions;
-    protected mergedThemeOverrides: any;
+    protected chartOptions: any;
     protected chartTheme: ChartTheme;
+    protected customPalette: AgChartThemePalette;
     protected crossFiltering: boolean;
     protected crossFilterCallback: (event: any, reset?: boolean) => void;
 
     protected constructor(protected readonly chartProxyParams: ChartProxyParams) {
         this.chartId = chartProxyParams.chartId;
         this.chartType = chartProxyParams.chartType;
-        this.eventService = chartProxyParams.eventService;
-        this.gridApi = chartProxyParams.gridApi;
-        this.columnApi = chartProxyParams.columnApi;
         this.crossFiltering = chartProxyParams.crossFiltering;
         this.crossFilterCallback = chartProxyParams.crossFilterCallback;
     }
 
     protected abstract createChart(options?: TOptions): TChart;
+
+    public abstract update(params: UpdateChartParams): void;
 
     public recreateChart(): void {
         if (this.chart) {
@@ -120,59 +104,44 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         }
     }
 
-    public abstract update(params: UpdateChartParams): void;
-
     public getChart(): TChart {
         return this.chart;
     }
 
-    public downloadChart(): void {
-        const { chart } = this;
-        const fileName = chart.title ? chart.title.text : 'chart';
-        chart.scene.download(fileName);
-    }
-
-    public getChartImageDataURL(type?: string) {
-        return this.chart.scene.getDataURL(type);
-    }
-
-    private isDarkTheme = () => this.chartProxyParams.isDarkTheme();
-    protected getFontColor = (): string => this.isDarkTheme() ? 'rgb(221, 221, 221)' : 'rgb(87, 87, 87)';
-    protected getAxisGridColor = (): string => this.isDarkTheme() ? 'rgb(100, 100, 100)' : 'rgb(219, 219, 219)';
-
     protected initChartOptions(): void {
-        // the theme object is used later to determine cartesian label rotation
-        this.mergedThemeOverrides = this.getMergedThemeOverrides();
+        if (this.chartProxyParams.chartModel) {
+            const chartModel = this.chartProxyParams.chartModel;
+            this.chartOptions = chartModel.chartOptions;
+            this.chartTheme = getChartTheme(this.chartOptions);
+            return;
+        }
 
-        // create the theme instance from the theme object
-        this.chartTheme = getChartTheme(this.mergedThemeOverrides);
-
-        // extract the iChartOptions from the theme instance - this is the backing model for integrated charts
-        this.iChartOptions = this.extractIChartOptionsFromTheme(this.chartTheme);
-    }
-
-    private paletteOverridden(originalOptions: any, overriddenOptions: TOptions) {
-        return !_.areEqual(originalOptions.seriesDefaults.fill.colors, overriddenOptions.seriesDefaults.fill.colors) ||
-            !_.areEqual(originalOptions.seriesDefaults.stroke.colors, overriddenOptions.seriesDefaults.stroke.colors);
-    }
-
-    private getMergedThemeOverrides() {
         const themeName = this.getSelectedTheme();
         const gridOptionsThemeOverrides: AgChartThemeOverrides | undefined = this.chartProxyParams.getGridOptionsChartThemeOverrides();
         const apiThemeOverrides: AgChartThemeOverrides | undefined  = this.chartProxyParams.apiChartThemeOverrides;
 
-        let mergedThemeOverrides;
-        if (gridOptionsThemeOverrides || apiThemeOverrides) {
-            const themeOverrides = {
-                overrides: this.mergeThemeOverrides(gridOptionsThemeOverrides, apiThemeOverrides)
-            };
-            const getCustomTheme = () => deepMerge(this.lookupCustomChartTheme(themeName), themeOverrides);
-            mergedThemeOverrides = this.isStockTheme(themeName) ? { baseTheme: themeName, ...themeOverrides } : getCustomTheme();
-        } else {
-            mergedThemeOverrides = this.isStockTheme(themeName) ? themeName : this.lookupCustomChartTheme(themeName);
-        }
+        const defaultOverrides = {
+            common: {
+                padding: { top: 20, right: 20, bottom: 20, left: 20 },
+                title: {
+                    enabled: true,
+                    text: '',
+                }
+            }
+        };
 
-        return mergedThemeOverrides;
+        if (gridOptionsThemeOverrides || apiThemeOverrides) {
+            let overrides = this.mergeThemeOverrides(defaultOverrides, gridOptionsThemeOverrides);
+            overrides = this.mergeThemeOverrides(overrides, apiThemeOverrides);
+            const themeOverrides = { overrides };
+            const getCustomTheme = () => deepMerge(this.lookupCustomChartTheme(themeName), themeOverrides);
+            this.chartOptions = this.isStockTheme(themeName) ? { baseTheme: themeName, ...themeOverrides } : getCustomTheme();
+            this.chartTheme = getChartTheme(this.chartOptions);
+        } else {
+            const baseTheme = this.isStockTheme(themeName) ? themeName : this.lookupCustomChartTheme(themeName);
+            this.chartTheme = getChartTheme(baseTheme);
+            this.chartOptions = { baseTheme, overrides: defaultOverrides };
+        }
     }
 
     public lookupCustomChartTheme(name: string) {
@@ -195,6 +164,16 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         if (!gridOptionsThemeOverrides) { return apiThemeOverrides; }
         if (!apiThemeOverrides) { return gridOptionsThemeOverrides; }
         return deepMerge(gridOptionsThemeOverrides, apiThemeOverrides);
+    }
+
+    public downloadChart(): void {
+        const { chart } = this;
+        const fileName = chart.title ? chart.title.text : 'chart';
+        chart.scene.download(fileName);
+    }
+
+    public getChartImageDataURL(type?: string) {
+        return this.chart.scene.getDataURL(type);
     }
 
     protected getStandaloneChartType(): string {
@@ -226,29 +205,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         }
     }
 
-    // Merges theme defaults into default options. To be overridden in subclasses.
-    protected extractIChartOptionsFromTheme(theme: ChartTheme): TOptions {
-        const options = {} as TOptions;
-
-        const standaloneChartType = this.getStandaloneChartType();
-
-        options.title = theme.getConfig<AgChartCaptionOptions>(standaloneChartType + '.title') as CaptionOptions;
-        options.subtitle = theme.getConfig<AgChartCaptionOptions>(standaloneChartType + '.subtitle') as CaptionOptions;
-        options.background = theme.getConfig(standaloneChartType + '.background');
-        options.legend = theme.getConfig<AgChartLegendOptions>(standaloneChartType + '.legend') as LegendOptions;
-        options.navigator = theme.getConfig<AgNavigatorOptions>(standaloneChartType + '.navigator') as NavigatorOptions;
-        options.tooltip = {
-            enabled: theme.getConfig(standaloneChartType + '.tooltip.enabled'),
-            tracking: theme.getConfig(standaloneChartType + '.tooltip.tracking'),
-            class: theme.getConfig(standaloneChartType + '.tooltip.class'),
-            delay: theme.getConfig(standaloneChartType + '.tooltip.delay')
-        };
-        options.listeners = theme.getConfig(standaloneChartType + '.listeners');
-        options.padding = theme.getConfig(standaloneChartType + '.padding');
-
-        return options;
-    }
-
     private getSelectedTheme(): string {
         let chartThemeName = this.chartProxyParams.getChartThemeName();
         const availableThemes = this.chartProxyParams.getChartThemes();
@@ -260,163 +216,21 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         return chartThemeName;
     }
 
-    public getChartOptions(): TOptions {
-        return this.iChartOptions;
+    public getChartOptions(): any {
+        return this.chartOptions;
     }
+
+    private isDarkTheme = () => this.chartProxyParams.isDarkTheme();
+
+    protected getFontColor = (): string => this.isDarkTheme() ? 'rgb(221, 221, 221)' : 'rgb(87, 87, 87)';
+
+    protected getAxisGridColor = (): string => this.isDarkTheme() ? 'rgb(100, 100, 100)' : 'rgb(219, 219, 219)';
 
     public getCustomPalette(): AgChartThemePalette | undefined {
         return this.customPalette;
     }
 
-    public getChartOption<T = string>(expression: string): T {
-        return _.get(this.iChartOptions, expression, undefined) as T;
-    }
-
-    public setChartOption(expression: string, value: any): void {
-        if (_.get(this.iChartOptions, expression, undefined) === value) {
-            // option is already set to the specified value
-            return;
-        }
-
-        _.set(this.iChartOptions, expression, value);
-        _.set(this.chart, expression, value);
-
-        this.raiseChartOptionsChangedEvent();
-    }
-
-    public getSeriesOption<T = string>(expression: string): T {
-        return _.get(this.iChartOptions.seriesDefaults, expression, undefined) as T;
-    }
-
-    public setSeriesOption(expression: string, value: any): void {
-        if (_.get(this.iChartOptions.seriesDefaults, expression, undefined) === value) {
-            // option is already set to the specified value
-            return;
-        }
-
-        _.set(this.iChartOptions.seriesDefaults, expression, value);
-
-        const mappings: { [key: string]: string; } = {
-            'stroke.width': 'strokeWidth',
-            'stroke.opacity': 'strokeOpacity',
-            'fill.opacity': 'fillOpacity',
-        };
-
-        const series = this.chart.series;
-        series.forEach(s => _.set(s, mappings[expression] || expression, value));
-
-        this.raiseChartOptionsChangedEvent();
-    }
-
-    public setTitleOption(property: keyof CaptionOptions, value: any) {
-        if (_.get(this.iChartOptions.title, property, undefined) === value) {
-            // option is already set to the specified value
-            return;
-        }
-
-        (this.iChartOptions.title as any)[property] = value;
-
-        if (!this.chart.title) {
-            this.chart.title = {} as Caption;
-        }
-
-        (this.chart.title as any)[property] = value;
-
-        if (property === 'text') {
-            this.setTitleOption('enabled', _.exists(value));
-        }
-
-        this.raiseChartOptionsChangedEvent();
-    }
-
-    public getTitleOption(property: keyof CaptionOptions) {
-        return (this.iChartOptions.title as any)[property];
-    }
-
-    public getChartPaddingOption = (property: keyof PaddingOptions): string => this.iChartOptions.padding ? `${this.iChartOptions.padding[property]}` : '';
-
-    public setChartPaddingOption(property: keyof PaddingOptions, value: number): void {
-        let { padding } = this.iChartOptions;
-
-        if (_.get(padding, property, undefined) === value) {
-            // option is already set to the specified value
-            return;
-        }
-
-        if (!padding) {
-            padding = this.iChartOptions.padding = { top: 0, right: 0, bottom: 0, left: 0 };
-            this.chart.padding = new Padding(0);
-        }
-
-        padding[property] = value;
-
-        (this.chart.padding as any)[property] = value;
-
-        this.raiseChartOptionsChangedEvent();
-    }
-
-    public getShadowEnabled = (): boolean => !!this.getShadowProperty('enabled');
-
-    public getShadowProperty(property: keyof DropShadowOptions): any {
-        const { seriesDefaults } = this.iChartOptions;
-
-        return seriesDefaults.shadow ? seriesDefaults.shadow[property] : '';
-    }
-
-    public setShadowProperty(property: keyof DropShadowOptions, value: any): void {
-        const { seriesDefaults } = this.iChartOptions;
-
-        if (_.get(seriesDefaults.shadow, property, undefined) === value) {
-            // option is already set to the specified value
-            return;
-        }
-
-        if (!seriesDefaults.shadow) {
-            seriesDefaults.shadow = {
-                enabled: false,
-                blur: 0,
-                xOffset: 0,
-                yOffset: 0,
-                color: 'rgba(0,0,0,0.5)'
-            };
-        }
-
-        seriesDefaults.shadow[property] = value;
-
-        const series = this.getChart().series as (BarSeries | AreaSeries | PieSeries)[];
-
-        series.forEach(s => {
-            if (!s.shadow) {
-                const shadow = new DropShadow();
-                shadow.enabled = false;
-                shadow.blur = 0;
-                shadow.xOffset = 0;
-                shadow.yOffset = 0;
-                shadow.color = 'rgba(0,0,0,0.5)';
-                s.shadow = shadow;
-            }
-
-            (s.shadow as any)[property] = value;
-        });
-
-        this.raiseChartOptionsChangedEvent();
-    }
-
-    public raiseChartOptionsChangedEvent(): void {
-        const event: ChartOptionsChanged = Object.freeze({
-            type: Events.EVENT_CHART_OPTIONS_CHANGED,
-            chartId: this.chartId,
-            chartType: this.chartType,
-            chartThemeName: this.chartProxyParams.getChartThemeName(),
-            chartOptions: this.iChartOptions,
-            api: this.gridApi,
-            columnApi: this.columnApi,
-        });
-
-        this.eventService.dispatchEvent(event);
-    }
-
-    protected getDefaultFontOptions(): FontOptions {
+    protected getDefaultFontOptions(): any {
         return {
             fontStyle: 'normal',
             fontWeight: 'normal',
@@ -426,7 +240,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends ChartOpt
         };
     }
 
-    protected getDefaultDropShadowOptions(): DropShadowOptions {
+    protected getDefaultDropShadowOptions(): any {
         return {
             enabled: false,
             blur: 5,

@@ -5856,10 +5856,6 @@
       "description": "/** Chart theme name of currently selected theme. */",
       "type": { "returnType": "string", "optional": false }
     },
-    "chartOptions": {
-      "description": "/** Chart options. */",
-      "type": { "returnType": "ChartOptions<any>", "optional": false }
-    },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
     "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
   },
@@ -9336,7 +9332,9 @@
         "optional": true
       }
     },
-    "common": { "type": { "returnType": "any", "optional": true } }
+    "common": {
+      "type": { "returnType": "AgBaseChartOptions", "optional": true }
+    }
   },
   "AgCartesianAxesTheme": {
     "number": {
@@ -10674,708 +10672,6 @@
   },
   "ChartType": {},
   "ChartMenuOptions": {},
-  "SeriesOptions": {
-    "fill": { "type": { "returnType": "FillOptions", "optional": false } },
-    "stroke": { "type": { "returnType": "StrokeOptions", "optional": false } },
-    "highlightStyle": {
-      "type": { "returnType": "HighlightOptions", "optional": false }
-    },
-    "listeners": {
-      "type": {
-        "returnType": "{ [key in string]: Function }",
-        "optional": true
-      }
-    }
-  },
-  "ChartTooltip": {
-    "enabled": { "type": { "returnType": "boolean", "optional": true } },
-    "class": { "type": { "returnType": "string", "optional": true } },
-    "tracking": { "type": { "returnType": "boolean", "optional": true } },
-    "delay": { "type": { "returnType": "number", "optional": true } }
-  },
-  "ChartOptions": {
-    "document": { "type": { "returnType": "Document", "optional": true } },
-    "seriesDefaults": { "type": { "returnType": "T", "optional": false } },
-    "width": { "type": { "returnType": "number", "optional": true } },
-    "height": { "type": { "returnType": "number", "optional": true } },
-    "padding": {
-      "type": { "returnType": "PaddingOptions", "optional": false }
-    },
-    "background": {
-      "type": { "returnType": "BackgroundOptions", "optional": false }
-    },
-    "title": { "type": { "returnType": "CaptionOptions", "optional": false } },
-    "subtitle": {
-      "type": { "returnType": "CaptionOptions", "optional": false }
-    },
-    "navigator": {
-      "type": { "returnType": "NavigatorOptions", "optional": false }
-    },
-    "legend": { "type": { "returnType": "LegendOptions", "optional": false } },
-    "tooltip": { "type": { "returnType": "ChartTooltip", "optional": true } },
-    "listeners": {
-      "type": {
-        "returnType": "{ [key in string]: Function }",
-        "optional": true
-      }
-    },
-    "meta": { "typeParams": ["T extends SeriesOptions"] }
-  },
-  "PaddingOptions": {
-    "top": { "type": { "returnType": "number", "optional": false } },
-    "right": { "type": { "returnType": "number", "optional": false } },
-    "bottom": { "type": { "returnType": "number", "optional": false } },
-    "left": { "type": { "returnType": "number", "optional": false } }
-  },
-  "BackgroundOptions": {
-    "fill": { "type": { "returnType": "string", "optional": false } },
-    "visible": { "type": { "returnType": "boolean", "optional": false } }
-  },
-  "FontOptions": {
-    "fontStyle": { "type": { "returnType": "FontStyle", "optional": false } },
-    "fontWeight": { "type": { "returnType": "FontWeight", "optional": false } },
-    "fontSize": { "type": { "returnType": "number", "optional": false } },
-    "fontFamily": { "type": { "returnType": "string", "optional": false } },
-    "color": { "type": { "returnType": "string", "optional": false } }
-  },
-  "CaptionOptions": {
-    "enabled": { "type": { "returnType": "boolean", "optional": false } },
-    "text": { "type": { "returnType": "string", "optional": true } },
-    "fontStyle": { "type": { "returnType": "FontStyle", "optional": false } },
-    "fontWeight": { "type": { "returnType": "FontWeight", "optional": false } },
-    "fontSize": { "type": { "returnType": "number", "optional": false } },
-    "fontFamily": { "type": { "returnType": "string", "optional": false } },
-    "color": { "type": { "returnType": "string", "optional": false } }
-  },
-  "LegendOptions": {
-    "enabled": { "type": { "returnType": "boolean", "optional": false } },
-    "position": {
-      "type": { "returnType": "LegendPosition", "optional": false }
-    },
-    "spacing": { "type": { "returnType": "number", "optional": false } },
-    "item": { "type": { "returnType": "LegendItemOptions", "optional": false } }
-  },
-  "LegendPosition": {},
-  "LegendItemOptions": {
-    "label": {
-      "type": { "returnType": "LegendLabelOptions", "optional": false }
-    },
-    "marker": {
-      "type": { "returnType": "LegendMarkerOptions", "optional": false }
-    },
-    "paddingX": { "type": { "returnType": "number", "optional": false } },
-    "paddingY": { "type": { "returnType": "number", "optional": false } }
-  },
-  "LegendLabelOptions": {
-    "fontStyle": { "type": { "returnType": "FontStyle", "optional": false } },
-    "fontWeight": { "type": { "returnType": "FontWeight", "optional": false } },
-    "fontSize": { "type": { "returnType": "number", "optional": false } },
-    "fontFamily": { "type": { "returnType": "string", "optional": false } },
-    "color": { "type": { "returnType": "string", "optional": false } }
-  },
-  "NavigatorOptions": {
-    "enabled": { "type": { "returnType": "boolean", "optional": false } },
-    "height": { "type": { "returnType": "number", "optional": false } },
-    "min": { "type": { "returnType": "number", "optional": false } },
-    "max": { "type": { "returnType": "number", "optional": false } },
-    "mask": {
-      "type": { "returnType": "NavigatorMaskOptions", "optional": false }
-    },
-    "minHandle": {
-      "type": { "returnType": "NavigatorHandleOptions", "optional": false }
-    },
-    "maxHandle": {
-      "type": { "returnType": "NavigatorHandleOptions", "optional": false }
-    }
-  },
-  "NavigatorMaskOptions": {
-    "fill": { "type": { "returnType": "string", "optional": false } },
-    "stroke": { "type": { "returnType": "string", "optional": false } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": false } },
-    "fillOpacity": { "type": { "returnType": "number", "optional": false } }
-  },
-  "NavigatorHandleOptions": {
-    "fill": { "type": { "returnType": "string", "optional": false } },
-    "stroke": { "type": { "returnType": "string", "optional": false } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": false } },
-    "width": { "type": { "returnType": "number", "optional": false } },
-    "height": { "type": { "returnType": "number", "optional": false } },
-    "gripLineGap": { "type": { "returnType": "number", "optional": false } },
-    "gripLineLength": { "type": { "returnType": "number", "optional": false } }
-  },
-  "MarkerShape": {},
-  "LegendMarkerOptions": {
-    "shape": { "type": { "returnType": "MarkerShape", "optional": false } },
-    "size": { "type": { "returnType": "number", "optional": false } },
-    "padding": { "type": { "returnType": "number", "optional": false } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": false } }
-  },
-  "CartesianChartOptions": {
-    "xAxis": { "type": { "returnType": "AxisOptions", "optional": false } },
-    "yAxis": { "type": { "returnType": "AxisOptions", "optional": false } },
-    "navigator": {
-      "type": { "returnType": "NavigatorOptions", "optional": false }
-    },
-    "meta": { "typeParams": ["T extends SeriesOptions"] },
-    "document": { "type": { "returnType": "Document", "optional": true } },
-    "seriesDefaults": { "type": { "returnType": "T", "optional": false } },
-    "width": { "type": { "returnType": "number", "optional": true } },
-    "height": { "type": { "returnType": "number", "optional": true } },
-    "padding": {
-      "type": { "returnType": "PaddingOptions", "optional": false }
-    },
-    "background": {
-      "type": { "returnType": "BackgroundOptions", "optional": false }
-    },
-    "title": { "type": { "returnType": "CaptionOptions", "optional": false } },
-    "subtitle": {
-      "type": { "returnType": "CaptionOptions", "optional": false }
-    },
-    "legend": { "type": { "returnType": "LegendOptions", "optional": false } },
-    "tooltip": { "type": { "returnType": "ChartTooltip", "optional": true } },
-    "listeners": {
-      "type": {
-        "returnType": "{ [key in string]: Function }",
-        "optional": true
-      }
-    }
-  },
-  "PolarChartOptions": {
-    "meta": { "typeParams": ["T extends SeriesOptions"] },
-    "document": { "type": { "returnType": "Document", "optional": true } },
-    "seriesDefaults": { "type": { "returnType": "T", "optional": false } },
-    "width": { "type": { "returnType": "number", "optional": true } },
-    "height": { "type": { "returnType": "number", "optional": true } },
-    "padding": {
-      "type": { "returnType": "PaddingOptions", "optional": false }
-    },
-    "background": {
-      "type": { "returnType": "BackgroundOptions", "optional": false }
-    },
-    "title": { "type": { "returnType": "CaptionOptions", "optional": false } },
-    "subtitle": {
-      "type": { "returnType": "CaptionOptions", "optional": false }
-    },
-    "navigator": {
-      "type": { "returnType": "NavigatorOptions", "optional": false }
-    },
-    "legend": { "type": { "returnType": "LegendOptions", "optional": false } },
-    "tooltip": { "type": { "returnType": "ChartTooltip", "optional": true } },
-    "listeners": {
-      "type": {
-        "returnType": "{ [key in string]: Function }",
-        "optional": true
-      }
-    }
-  },
-  "AxisOptions": {
-    "type": { "type": { "returnType": "AxisType", "optional": true } },
-    "title": { "type": { "returnType": "CaptionOptions", "optional": false } },
-    "line": { "type": { "returnType": "AxisLineOptions", "optional": false } },
-    "tick": { "type": { "returnType": "AxisTickOptions", "optional": false } },
-    "label": {
-      "type": { "returnType": "AxisLabelOptions", "optional": false }
-    },
-    "gridStyle": { "type": { "returnType": "GridStyle[]", "optional": false } }
-  },
-  "AxisType": {},
-  "AxisLineOptions": {
-    "width": { "type": { "returnType": "number", "optional": false } },
-    "color": { "type": { "returnType": "string", "optional": false } }
-  },
-  "AxisTickOptions": {
-    "width": { "type": { "returnType": "number", "optional": false } },
-    "size": { "type": { "returnType": "number", "optional": false } },
-    "color": { "type": { "returnType": "string", "optional": false } }
-  },
-  "AxisLabelFormatterParams": {
-    "value": { "type": { "returnType": "any", "optional": false } },
-    "index": { "type": { "returnType": "number", "optional": false } },
-    "fractionDigits": { "type": { "returnType": "number", "optional": true } },
-    "formatter": {
-      "type": {
-        "arguments": { "x": "any" },
-        "returnType": "string",
-        "optional": true
-      }
-    }
-  },
-  "AxisLabelOptions": {
-    "padding": { "type": { "returnType": "number", "optional": false } },
-    "rotation": { "type": { "returnType": "number", "optional": false } },
-    "format": { "type": { "returnType": "string", "optional": true } },
-    "formatter": {
-      "type": {
-        "arguments": { "params": "AxisLabelFormatterParams" },
-        "returnType": "string",
-        "optional": true
-      }
-    },
-    "fontStyle": { "type": { "returnType": "FontStyle", "optional": false } },
-    "fontWeight": { "type": { "returnType": "FontWeight", "optional": false } },
-    "fontSize": { "type": { "returnType": "number", "optional": false } },
-    "fontFamily": { "type": { "returnType": "string", "optional": false } },
-    "color": { "type": { "returnType": "string", "optional": false } }
-  },
-  "GridStyle": {
-    "stroke": { "type": { "returnType": "string", "optional": false } },
-    "lineDash": { "type": { "returnType": "number[]", "optional": true } }
-  },
-  "HighlightOptions": {
-    "fill": { "type": { "returnType": "string", "optional": false } },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": true } },
-    "series": {
-      "type": {
-        "returnType": "{\n        enabled?: boolean;\n        dimOpacity?: number;\n        strokeWidth?: number;\n    }",
-        "optional": true
-      }
-    }
-  },
-  "FillOptions": {
-    "colors": { "type": { "returnType": "string[]", "optional": false } },
-    "opacity": { "type": { "returnType": "number", "optional": false } }
-  },
-  "StrokeOptions": {
-    "colors": { "type": { "returnType": "string[]", "optional": false } },
-    "opacity": { "type": { "returnType": "number", "optional": false } },
-    "width": { "type": { "returnType": "number", "optional": false } }
-  },
-  "DropShadowOptions": {
-    "enabled": { "type": { "returnType": "boolean", "optional": false } },
-    "color": { "type": { "returnType": "string", "optional": false } },
-    "xOffset": { "type": { "returnType": "number", "optional": false } },
-    "yOffset": { "type": { "returnType": "number", "optional": false } },
-    "blur": { "type": { "returnType": "number", "optional": false } }
-  },
-  "SeriesLabelOptions": {
-    "enabled": { "type": { "returnType": "boolean", "optional": false } },
-    "fontStyle": { "type": { "returnType": "FontStyle", "optional": false } },
-    "fontWeight": { "type": { "returnType": "FontWeight", "optional": false } },
-    "fontSize": { "type": { "returnType": "number", "optional": false } },
-    "fontFamily": { "type": { "returnType": "string", "optional": false } },
-    "color": { "type": { "returnType": "string", "optional": false } }
-  },
-  "TooltipRendererResult": {
-    "enabled": {
-      "description": "/** Set to false to disable individual tooltip. */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "content": {
-      "description": "/** The content to display in each tooltip. */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "title": {
-      "description": "/** The title of the tooltip. */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "color": {
-      "description": "/** The CSS color for the title text. */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "backgroundColor": {
-      "description": "/** The CSS color for the background of the tooltip title. */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "opacity": {
-      "description": "/** The opacity of the background for the tooltip title. */",
-      "type": { "returnType": "number", "optional": true }
-    }
-  },
-  "TooltipOptions": {
-    "enabled": { "type": { "returnType": "boolean", "optional": false } },
-    "renderer": {
-      "type": {
-        "arguments": { "params": "TParams" },
-        "returnType": "string | TooltipRendererResult",
-        "optional": true
-      }
-    },
-    "meta": { "typeParams": ["TParams"] }
-  },
-  "TooltipRendererParams": {
-    "context": {
-      "description": "/** The grid context, includes row data, giving access to data from other columns in the same row. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "datum": {
-      "description": "/** The raw datum associated with the point. */",
-      "type": { "returnType": "any", "optional": false }
-    },
-    "xValue": {
-      "description": "/** The X value of the data point. */",
-      "type": { "returnType": "any", "optional": false }
-    },
-    "yValue": {
-      "description": "/** The Y value of the data point. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "CartesianTooltipRendererParams": {
-    "xKey": { "type": { "returnType": "string", "optional": false } },
-    "xValue": { "type": { "returnType": "any", "optional": false } },
-    "xName": { "type": { "returnType": "string", "optional": false } },
-    "yKey": { "type": { "returnType": "string", "optional": false } },
-    "yValue": { "type": { "returnType": "any", "optional": false } },
-    "yName": { "type": { "returnType": "string", "optional": false } },
-    "context": {
-      "description": "/** The grid context, includes row data, giving access to data from other columns in the same row. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "datum": {
-      "description": "/** The raw datum associated with the point. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "BarSeriesOptions": {
-    "shadow": {
-      "type": { "returnType": "DropShadowOptions", "optional": false }
-    },
-    "label": {
-      "type": { "returnType": "BarSeriesLabelOptions", "optional": false }
-    },
-    "tooltip": {
-      "type": {
-        "returnType": "TooltipOptions<BarTooltipRendererParams>",
-        "optional": false
-      }
-    },
-    "lineDash": { "type": { "returnType": "number[]", "optional": false } },
-    "lineDashOffset": { "type": { "returnType": "number", "optional": false } },
-    "fill": { "type": { "returnType": "FillOptions", "optional": false } },
-    "stroke": { "type": { "returnType": "StrokeOptions", "optional": false } },
-    "highlightStyle": {
-      "type": { "returnType": "HighlightOptions", "optional": false }
-    },
-    "listeners": {
-      "type": {
-        "returnType": "{ [key in string]: Function }",
-        "optional": true
-      }
-    }
-  },
-  "HistogramSeriesOptions": {
-    "binCount": { "type": { "returnType": "number", "optional": true } },
-    "shadow": {
-      "type": { "returnType": "DropShadowOptions", "optional": false }
-    },
-    "label": {
-      "type": { "returnType": "BarSeriesLabelOptions", "optional": false }
-    },
-    "tooltip": {
-      "type": {
-        "returnType": "TooltipOptions<BarTooltipRendererParams>",
-        "optional": false
-      }
-    },
-    "lineDash": { "type": { "returnType": "number[]", "optional": false } },
-    "lineDashOffset": { "type": { "returnType": "number", "optional": false } },
-    "fill": { "type": { "returnType": "FillOptions", "optional": false } },
-    "stroke": { "type": { "returnType": "StrokeOptions", "optional": false } },
-    "highlightStyle": {
-      "type": { "returnType": "HighlightOptions", "optional": false }
-    },
-    "listeners": {
-      "type": {
-        "returnType": "{ [key in string]: Function }",
-        "optional": true
-      }
-    }
-  },
-  "BarSeriesLabelOptions": {
-    "formatter": {
-      "type": {
-        "arguments": { "params": "{ value: number; }" },
-        "returnType": "string",
-        "optional": true
-      }
-    },
-    "enabled": { "type": { "returnType": "boolean", "optional": false } },
-    "fontStyle": { "type": { "returnType": "FontStyle", "optional": false } },
-    "fontWeight": { "type": { "returnType": "FontWeight", "optional": false } },
-    "fontSize": { "type": { "returnType": "number", "optional": false } },
-    "fontFamily": { "type": { "returnType": "string", "optional": false } },
-    "color": { "type": { "returnType": "string", "optional": false } }
-  },
-  "BarTooltipRendererParams": {
-    "xKey": { "type": { "returnType": "string", "optional": false } },
-    "xValue": { "type": { "returnType": "any", "optional": false } },
-    "xName": { "type": { "returnType": "string", "optional": false } },
-    "yKey": { "type": { "returnType": "string", "optional": false } },
-    "yValue": { "type": { "returnType": "any", "optional": false } },
-    "yName": { "type": { "returnType": "string", "optional": false } },
-    "context": {
-      "description": "/** The grid context, includes row data, giving access to data from other columns in the same row. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "datum": {
-      "description": "/** The raw datum associated with the point. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "LineSeriesOptions": {
-    "marker": { "type": { "returnType": "MarkerOptions", "optional": false } },
-    "label": {
-      "type": { "returnType": "LineSeriesLabelOptions", "optional": false }
-    },
-    "tooltip": {
-      "type": {
-        "returnType": "TooltipOptions<LineTooltipRendererParams>",
-        "optional": false
-      }
-    },
-    "lineDash": { "type": { "returnType": "number[]", "optional": false } },
-    "lineDashOffset": { "type": { "returnType": "number", "optional": false } },
-    "fill": { "type": { "returnType": "FillOptions", "optional": false } },
-    "stroke": { "type": { "returnType": "StrokeOptions", "optional": false } },
-    "highlightStyle": {
-      "type": { "returnType": "HighlightOptions", "optional": false }
-    },
-    "listeners": {
-      "type": {
-        "returnType": "{ [key in string]: Function }",
-        "optional": true
-      }
-    }
-  },
-  "LineSeriesLabelOptions": {
-    "formatter": {
-      "type": {
-        "arguments": { "params": "{ value: any; }" },
-        "returnType": "string",
-        "optional": true
-      }
-    },
-    "enabled": { "type": { "returnType": "boolean", "optional": false } },
-    "fontStyle": { "type": { "returnType": "FontStyle", "optional": false } },
-    "fontWeight": { "type": { "returnType": "FontWeight", "optional": false } },
-    "fontSize": { "type": { "returnType": "number", "optional": false } },
-    "fontFamily": { "type": { "returnType": "string", "optional": false } },
-    "color": { "type": { "returnType": "string", "optional": false } }
-  },
-  "MarkerOptions": {
-    "enabled": { "type": { "returnType": "boolean", "optional": false } },
-    "shape": { "type": { "returnType": "MarkerShape", "optional": false } },
-    "size": { "type": { "returnType": "number", "optional": false } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": false } },
-    "formatter": { "type": { "returnType": "Function", "optional": true } }
-  },
-  "LineTooltipRendererParams": {
-    "xKey": { "type": { "returnType": "string", "optional": false } },
-    "xValue": { "type": { "returnType": "any", "optional": false } },
-    "xName": { "type": { "returnType": "string", "optional": false } },
-    "yKey": { "type": { "returnType": "string", "optional": false } },
-    "yValue": { "type": { "returnType": "any", "optional": false } },
-    "yName": { "type": { "returnType": "string", "optional": false } },
-    "context": {
-      "description": "/** The grid context, includes row data, giving access to data from other columns in the same row. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "datum": {
-      "description": "/** The raw datum associated with the point. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "ScatterSeriesLabelOptions": {
-    "enabled": { "type": { "returnType": "boolean", "optional": false } },
-    "fontStyle": { "type": { "returnType": "FontStyle", "optional": false } },
-    "fontWeight": { "type": { "returnType": "FontWeight", "optional": false } },
-    "fontSize": { "type": { "returnType": "number", "optional": false } },
-    "fontFamily": { "type": { "returnType": "string", "optional": false } },
-    "color": { "type": { "returnType": "string", "optional": false } }
-  },
-  "ScatterSeriesOptions": {
-    "marker": {
-      "type": { "returnType": "ScatterMarkerOptions", "optional": false }
-    },
-    "label": {
-      "type": { "returnType": "ScatterSeriesLabelOptions", "optional": false }
-    },
-    "tooltip": {
-      "type": {
-        "returnType": "TooltipOptions<ScatterTooltipRendererParams>",
-        "optional": false
-      }
-    },
-    "paired": { "type": { "returnType": "boolean", "optional": false } },
-    "fill": { "type": { "returnType": "FillOptions", "optional": false } },
-    "stroke": { "type": { "returnType": "StrokeOptions", "optional": false } },
-    "highlightStyle": {
-      "type": { "returnType": "HighlightOptions", "optional": false }
-    },
-    "listeners": {
-      "type": {
-        "returnType": "{ [key in string]: Function }",
-        "optional": true
-      }
-    }
-  },
-  "ScatterMarkerOptions": {
-    "maxSize": { "type": { "returnType": "number", "optional": true } },
-    "enabled": { "type": { "returnType": "boolean", "optional": false } },
-    "shape": { "type": { "returnType": "MarkerShape", "optional": false } },
-    "size": { "type": { "returnType": "number", "optional": false } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": false } },
-    "formatter": { "type": { "returnType": "Function", "optional": true } }
-  },
-  "ScatterTooltipRendererParams": {
-    "sizeKey": { "type": { "returnType": "string", "optional": true } },
-    "sizeName": { "type": { "returnType": "string", "optional": true } },
-    "labelKey": { "type": { "returnType": "string", "optional": true } },
-    "labelName": { "type": { "returnType": "string", "optional": true } },
-    "xKey": { "type": { "returnType": "string", "optional": false } },
-    "xValue": { "type": { "returnType": "any", "optional": false } },
-    "xName": { "type": { "returnType": "string", "optional": false } },
-    "yKey": { "type": { "returnType": "string", "optional": false } },
-    "yValue": { "type": { "returnType": "any", "optional": false } },
-    "yName": { "type": { "returnType": "string", "optional": false } },
-    "context": {
-      "description": "/** The grid context, includes row data, giving access to data from other columns in the same row. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "datum": {
-      "description": "/** The raw datum associated with the point. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "AreaSeriesLabelOptions": {
-    "formatter": {
-      "type": {
-        "arguments": { "params": "{ value: any; }" },
-        "returnType": "string",
-        "optional": true
-      }
-    },
-    "enabled": { "type": { "returnType": "boolean", "optional": false } },
-    "fontStyle": { "type": { "returnType": "FontStyle", "optional": false } },
-    "fontWeight": { "type": { "returnType": "FontWeight", "optional": false } },
-    "fontSize": { "type": { "returnType": "number", "optional": false } },
-    "fontFamily": { "type": { "returnType": "string", "optional": false } },
-    "color": { "type": { "returnType": "string", "optional": false } }
-  },
-  "AreaSeriesOptions": {
-    "marker": { "type": { "returnType": "MarkerOptions", "optional": false } },
-    "label": {
-      "type": { "returnType": "AreaSeriesLabelOptions", "optional": false }
-    },
-    "shadow": {
-      "type": { "returnType": "DropShadowOptions", "optional": false }
-    },
-    "tooltip": {
-      "type": {
-        "returnType": "TooltipOptions<AreaTooltipRendererParams>",
-        "optional": false
-      }
-    },
-    "lineDash": { "type": { "returnType": "number[]", "optional": false } },
-    "lineDashOffset": { "type": { "returnType": "number", "optional": false } },
-    "fill": { "type": { "returnType": "FillOptions", "optional": false } },
-    "stroke": { "type": { "returnType": "StrokeOptions", "optional": false } },
-    "highlightStyle": {
-      "type": { "returnType": "HighlightOptions", "optional": false }
-    },
-    "listeners": {
-      "type": {
-        "returnType": "{ [key in string]: Function }",
-        "optional": true
-      }
-    }
-  },
-  "AreaTooltipRendererParams": {
-    "xKey": { "type": { "returnType": "string", "optional": false } },
-    "xValue": { "type": { "returnType": "any", "optional": false } },
-    "xName": { "type": { "returnType": "string", "optional": false } },
-    "yKey": { "type": { "returnType": "string", "optional": false } },
-    "yValue": { "type": { "returnType": "any", "optional": false } },
-    "yName": { "type": { "returnType": "string", "optional": false } },
-    "context": {
-      "description": "/** The grid context, includes row data, giving access to data from other columns in the same row. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "datum": {
-      "description": "/** The raw datum associated with the point. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "PieTitleOptions": {
-    "showInLegend": { "type": { "returnType": "boolean", "optional": true } },
-    "enabled": { "type": { "returnType": "boolean", "optional": false } },
-    "text": { "type": { "returnType": "string", "optional": true } },
-    "fontStyle": { "type": { "returnType": "FontStyle", "optional": false } },
-    "fontWeight": { "type": { "returnType": "FontWeight", "optional": false } },
-    "fontSize": { "type": { "returnType": "number", "optional": false } },
-    "fontFamily": { "type": { "returnType": "string", "optional": false } },
-    "color": { "type": { "returnType": "string", "optional": false } }
-  },
-  "PieSeriesOptions": {
-    "title": { "type": { "returnType": "PieTitleOptions", "optional": false } },
-    "label": {
-      "type": { "returnType": "PieSeriesLabelOptions", "optional": false }
-    },
-    "callout": {
-      "type": { "returnType": "PieSeriesCalloutOptions", "optional": false }
-    },
-    "shadow": {
-      "type": { "returnType": "DropShadowOptions", "optional": false }
-    },
-    "tooltip": {
-      "type": {
-        "returnType": "TooltipOptions<PieTooltipRendererParams>",
-        "optional": false
-      }
-    },
-    "lineDash": { "type": { "returnType": "number[]", "optional": false } },
-    "lineDashOffset": { "type": { "returnType": "number", "optional": false } },
-    "fill": { "type": { "returnType": "FillOptions", "optional": false } },
-    "stroke": { "type": { "returnType": "StrokeOptions", "optional": false } },
-    "highlightStyle": {
-      "type": { "returnType": "HighlightOptions", "optional": false }
-    },
-    "listeners": {
-      "type": {
-        "returnType": "{ [key in string]: Function }",
-        "optional": true
-      }
-    }
-  },
-  "PieSeriesLabelOptions": {
-    "minAngle": { "type": { "returnType": "number", "optional": false } },
-    "offset": { "type": { "returnType": "number", "optional": false } },
-    "enabled": { "type": { "returnType": "boolean", "optional": false } },
-    "fontStyle": { "type": { "returnType": "FontStyle", "optional": false } },
-    "fontWeight": { "type": { "returnType": "FontWeight", "optional": false } },
-    "fontSize": { "type": { "returnType": "number", "optional": false } },
-    "fontFamily": { "type": { "returnType": "string", "optional": false } },
-    "color": { "type": { "returnType": "string", "optional": false } }
-  },
-  "PieSeriesCalloutOptions": {
-    "length": { "type": { "returnType": "number", "optional": false } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": false } },
-    "colors": { "type": { "returnType": "string[]", "optional": false } }
-  },
-  "PieTooltipRendererParams": {
-    "angleKey": { "type": { "returnType": "string", "optional": false } },
-    "angleValue": { "type": { "returnType": "any", "optional": false } },
-    "angleName": { "type": { "returnType": "string", "optional": true } },
-    "labelKey": { "type": { "returnType": "string", "optional": true } },
-    "labelName": { "type": { "returnType": "string", "optional": true } },
-    "context": {
-      "description": "/** The grid context, includes row data, giving access to data from other columns in the same row. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "datum": {
-      "description": "/** The raw datum associated with the point. */",
-      "type": { "returnType": "any", "optional": false }
-    },
-    "xValue": {
-      "description": "/** The X value of the data point. */",
-      "type": { "returnType": "any", "optional": false }
-    },
-    "yValue": {
-      "description": "/** The Y value of the data point. */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
   "GetChartImageDataUrlParams": {
     "chartId": {
       "description": "/** The id of the created chart. */",
@@ -11397,9 +10693,7 @@
       "type": { "returnType": "CellRangeParams", "optional": false }
     },
     "chartThemeName": { "type": { "returnType": "string", "optional": true } },
-    "chartOptions": {
-      "type": { "returnType": "ChartOptions<any>", "optional": false }
-    },
+    "chartOptions": { "type": { "returnType": "any", "optional": false } },
     "suppressChartRanges": {
       "type": { "returnType": "boolean", "optional": true }
     },
@@ -14596,6 +13890,7 @@
       "type": { "returnType": "number", "optional": true }
     }
   },
+  "AxisType": {},
   "SparklineTooltip": {
     "enabled": {
       "description": "/** Set to false to disable tooltips. */",
@@ -14611,6 +13906,50 @@
     }
   },
   "SparklineTooltipRenderer": {},
+  "TooltipRendererResult": {
+    "enabled": {
+      "description": "/** Set to false to disable individual tooltip. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "content": {
+      "description": "/** The content to display in each tooltip. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "title": {
+      "description": "/** The title of the tooltip. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "color": {
+      "description": "/** The CSS color for the title text. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "backgroundColor": {
+      "description": "/** The CSS color for the background of the tooltip title. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "opacity": {
+      "description": "/** The opacity of the background for the tooltip title. */",
+      "type": { "returnType": "number", "optional": true }
+    }
+  },
+  "TooltipRendererParams": {
+    "context": {
+      "description": "/** The grid context, includes row data, giving access to data from other columns in the same row. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "datum": {
+      "description": "/** The raw datum associated with the point. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "xValue": {
+      "description": "/** The X value of the data point. */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "yValue": {
+      "description": "/** The Y value of the data point. */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
   "SparklineLine": {
     "stroke": {
       "description": "/** The CSS colour value for the line.\n * Default: `'rgb(124, 181, 236)'` */",

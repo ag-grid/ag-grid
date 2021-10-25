@@ -1,4 +1,4 @@
-import { ChartOptions, ChartType } from "./iChartOptions";
+import { ChartType } from "./iChartOptions";
 import { ChartRef } from "../entities/gridOptions";
 import { CreateCrossFilterChartParams, CreatePivotChartParams, CreateRangeChartParams } from "../gridApi";
 import { CellRangeParams } from "./IRangeService";
@@ -23,7 +23,7 @@ export interface ChartModel {
     chartType: ChartType;
     cellRange: CellRangeParams;
     chartThemeName?: string;
-    chartOptions: ChartOptions<any>;
+    chartOptions: any; //TODO
     suppressChartRanges?: boolean;
     aggFunc?: string | IAggFunc;
     unlinkChart?: boolean;

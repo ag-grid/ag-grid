@@ -1,5 +1,5 @@
-import { AgChart, AgPolarChartOptions, ChartTheme, PieSeries, PolarChart } from "ag-charts-community";
-import { AgPieSeriesOptions, HighlightOptions, PieSeriesOptions, PolarChartOptions } from "@ag-grid-community/core";
+import { AgChart, AgPolarChartOptions, ChartTheme, PieSeries, PolarChart, AgChartTheme } from "ag-charts-community";
+import { AgPieSeriesOptions } from "@ag-grid-community/core";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { PolarChartProxy } from "./polarChartProxy";
 import { LegendClickEvent } from "ag-charts-community/dist/cjs/chart/legend";
@@ -14,18 +14,20 @@ export class PieChartProxy extends PolarChartProxy {
     }
 
     protected createChart(): PolarChart {
-        const options = this.iChartOptions;
-        const seriesDefaults = options.seriesDefaults;
-        const agChartOptions = options as AgPolarChartOptions;
+        const agChartOptions = { theme: this.chartOptions } as AgPolarChartOptions;
+
+        //TODO interrogate different options
+        const overrides = (agChartOptions.theme! as AgChartTheme).overrides;
+        const seriesOverrides = overrides && overrides!.pie ? overrides!.pie.series : {};
 
         agChartOptions.autoSize = true;
         agChartOptions.series = [{
-            ...seriesDefaults,
-            fills: seriesDefaults.fill.colors,
-            fillOpacity: seriesDefaults.fill.opacity,
-            strokes: seriesDefaults.stroke.colors,
-            strokeOpacity: seriesDefaults.stroke.opacity,
-            strokeWidth: seriesDefaults.stroke.width,
+            ...seriesOverrides,
+            // fills: seriesDefaults.fill.colors,
+            // fillOpacity: seriesDefaults.fill.opacity,
+            // strokes: seriesDefaults.stroke.colors,
+            // strokeOpacity: seriesDefaults.stroke.opacity,
+            // strokeWidth: seriesDefaults.stroke.width,
             type: 'pie'
         }];
 
@@ -83,33 +85,43 @@ export class PieChartProxy extends PolarChartProxy {
         opaqueSeries: PieSeries | undefined
     ) {
         const existingSeriesId = series && series.angleKey;
-        const { seriesDefaults } = this.iChartOptions;
+
+        //TODO interrogate different options
+        const agChartOptions = { theme: this.chartOptions } as AgPolarChartOptions;
+        const overrides = (agChartOptions.theme! as AgChartTheme).overrides;
+        const seriesOverrides = overrides && overrides!.pie ? overrides!.pie.series : {};
 
         let pieSeries = series;
 
         if (existingSeriesId !== field.colId) {
             chart.removeSeries(series);
 
+
             const options = {
-                ...seriesDefaults,
+                ...seriesOverrides,
                 type: 'pie',
                 angleKey: this.crossFiltering ? angleField.colId + '-total' : angleField.colId,
                 radiusKey: this.crossFiltering ? field.colId : undefined,
-                title: {
-                    ...seriesDefaults.title,
-                    text: seriesDefaults.title.text || params.fields[0].displayName,
-                },
-                fills: seriesDefaults.fill.colors,
-                fillOpacity: seriesDefaults.fill.opacity,
-                strokes: seriesDefaults.stroke.colors,
-                strokeOpacity: seriesDefaults.stroke.opacity,
-                strokeWidth: seriesDefaults.stroke.width,
-                tooltip: {
-                    enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
-                    renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
-                },
+                // title: {
+                //     ...seriesDefaults.title,
+                //     text: seriesDefaults.title.text || params.fields[0].displayName,
+                // },
+                // fills: seriesDefaults.fill.colors,
+                // fillOpacity: seriesDefaults.fill.opacity,
+                // strokes: seriesDefaults.stroke.colors,
+                // strokeOpacity: seriesDefaults.stroke.opacity,
+                // strokeWidth: seriesDefaults.stroke.width,
+                // tooltip: {
+                //     enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
+                //     renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
+                // },
             };
             pieSeries = AgChart.createComponent(options, 'pie.series');
+
+            //TODO verify
+            const palette = this.getPalette();
+            pieSeries.fills = palette.fills;
+            pieSeries.strokes = palette.strokes;
 
             if (this.crossFiltering && pieSeries && !pieSeries.tooltip.renderer) {
                 // only add renderer if user hasn't provided one
@@ -149,41 +161,5 @@ export class PieChartProxy extends PolarChartProxy {
         chart.addSeries(pieSeries);
 
         return pieSeries;
-    }
-
-    protected extractIChartOptionsFromTheme(theme: ChartTheme): PolarChartOptions<PieSeriesOptions> {
-        const options = super.extractIChartOptionsFromTheme(theme);
-
-        const seriesDefaults = theme.getConfig<AgPieSeriesOptions>('pie.series.pie');
-        options.seriesDefaults = {
-            title: seriesDefaults.title,
-            label: seriesDefaults.label,
-            callout: seriesDefaults.callout,
-            shadow: seriesDefaults.shadow,
-            tooltip: {
-                enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
-                renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
-            },
-            fill: {
-                colors: seriesDefaults.fills || theme.palette.fills,
-                opacity: seriesDefaults.fillOpacity
-            },
-            stroke: {
-                colors: seriesDefaults.strokes || theme.palette.strokes,
-                opacity: seriesDefaults.strokeOpacity,
-                width: seriesDefaults.strokeWidth
-            },
-            lineDash: seriesDefaults.lineDash,
-            lineDashOffset: seriesDefaults.lineDashOffset,
-            highlightStyle: seriesDefaults.highlightStyle as HighlightOptions,
-            listeners: seriesDefaults.listeners
-        } as PieSeriesOptions;
-
-        const { callout } = options.seriesDefaults;
-        if (callout && !callout.colors) {
-            callout.colors = options.seriesDefaults.fill.colors;
-        }
-
-        return options;
     }
 }

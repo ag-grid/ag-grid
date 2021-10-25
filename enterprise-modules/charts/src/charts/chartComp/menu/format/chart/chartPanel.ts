@@ -7,11 +7,11 @@ import {
     PostConstruct,
     RefSelector
 } from "@ag-grid-community/core";
-import { ChartController } from "../../../chartController";
 import { PaddingPanel } from "./paddingPanel";
 import { ChartTranslator } from "../../../chartTranslator";
 import { BackgroundPanel } from "./backgroundPanel";
 import TitlePanel from "./titlePanel";
+import { ChartOptionsService } from "../../chartOptionsService";
 
 export class ChartPanel extends Component {
 
@@ -25,11 +25,9 @@ export class ChartPanel extends Component {
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
     private activePanels: Component[] = [];
-    private readonly chartController: ChartController;
 
-    constructor(chartController: ChartController) {
+    constructor(private readonly chartOptionsService: ChartOptionsService) {
         super();
-        this.chartController = chartController;
     }
 
     @PostConstruct
@@ -54,20 +52,20 @@ export class ChartPanel extends Component {
     }
 
     private initTitles(): void {
-        const titlePanelComp = this.createBean(new TitlePanel(this.chartController));
+        const titlePanelComp = this.createBean(new TitlePanel(this.chartOptionsService));
 
         this.chartGroup.addItem(titlePanelComp);
         this.activePanels.push(titlePanelComp);
     }
 
     private initPaddingPanel(): void {
-        const paddingPanelComp = this.createBean(new PaddingPanel(this.chartController));
+        const paddingPanelComp = this.createBean(new PaddingPanel(this.chartOptionsService));
         this.chartGroup.addItem(paddingPanelComp);
         this.activePanels.push(paddingPanelComp);
     }
 
     private initBackgroundPanel(): void {
-        const backgroundPanelComp = this.createBean(new BackgroundPanel(this.chartController));
+        const backgroundPanelComp = this.createBean(new BackgroundPanel(this.chartOptionsService));
         this.chartGroup.addItem(backgroundPanelComp);
         this.activePanels.push(backgroundPanelComp);
     }

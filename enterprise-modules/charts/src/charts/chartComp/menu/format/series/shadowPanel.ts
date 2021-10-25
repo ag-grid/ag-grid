@@ -5,12 +5,11 @@ import {
     AgSlider,
     Autowired,
     Component,
-    DropShadowOptions,
     PostConstruct,
     RefSelector,
 } from "@ag-grid-community/core";
 import { ChartTranslator } from "../../../chartTranslator";
-import { ChartController } from "../../../chartController";
+import { ChartOptionsService } from "../../chartOptionsService";
 
 export class ShadowPanel extends Component {
 
@@ -32,11 +31,8 @@ export class ShadowPanel extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
-    private readonly chartController: ChartController;
-
-    constructor(chartController: ChartController) {
+    constructor(private readonly chartOptionsService: ChartOptionsService) {
         super();
-        this.chartController = chartController;
     }
 
     @PostConstruct
@@ -58,24 +54,26 @@ export class ShadowPanel extends Component {
     private initSeriesShadow() {
         this.shadowGroup
             .setTitle(this.chartTranslator.translate("shadow"))
-            .setEnabled(this.chartController.getChartProxy().getShadowEnabled())
+            .setEnabled(this.chartOptionsService.getShadowEnabled())
             .hideOpenCloseIcons(true)
             .hideEnabledCheckbox(false)
-            .onEnableChange(newValue => this.chartController.getChartProxy().setShadowProperty("enabled", newValue));
+            .onEnableChange(newValue => this.chartOptionsService.setShadowProperty("enabled", newValue));
 
         this.shadowColorPicker
             .setLabel(this.chartTranslator.translate("color"))
             .setLabelWidth("flex")
             .setInputWidth(45)
             .setValue("rgba(0,0,0,0.5)")
-            .onValueChange(newValue => this.chartController.getChartProxy().setShadowProperty("color", newValue));
+            .onValueChange(newValue => this.chartOptionsService.setShadowProperty("color", newValue));
 
-        const initInput = (input: AgSlider, property: keyof DropShadowOptions, minValue: number, maxValue: number) => {
+        //TODO
+        // const initInput = (input: AgSlider, property: keyof DropShadowOptions, minValue: number, maxValue: number) => {
+        const initInput = (input: AgSlider, property: string, minValue: number, maxValue: number) => {
             input.setLabel(this.chartTranslator.translate(property))
-                .setValue(this.chartController.getChartProxy().getShadowProperty(property))
+                .setValue(this.chartOptionsService.getShadowProperty(property))
                 .setMinValue(minValue)
                 .setMaxValue(maxValue)
-                .onValueChange(newValue => this.chartController.getChartProxy().setShadowProperty(property, newValue));
+                .onValueChange(newValue => this.chartOptionsService.setShadowProperty(property, newValue));
         };
 
         initInput(this.shadowBlurSlider, "blur", 0, 20);

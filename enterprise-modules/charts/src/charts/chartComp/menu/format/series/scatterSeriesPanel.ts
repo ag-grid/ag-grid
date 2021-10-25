@@ -8,12 +8,11 @@ import {
     PostConstruct,
     RefSelector
 } from "@ag-grid-community/core";
-import { ChartController } from "../../../chartController";
 import { MarkersPanel } from "./markersPanel";
 import { ChartTranslator } from "../../../chartTranslator";
-import { ScatterChartProxy } from "../../../chartProxies/cartesian/scatterChartProxy";
 import { initFontPanelParams } from "../widgetInitialiser";
 import { FontPanel, FontPanelParams } from "../fontPanel";
+import { ChartOptionsService } from "../../chartOptionsService";
 
 export class ScatterSeriesPanel extends Component {
 
@@ -31,11 +30,8 @@ export class ScatterSeriesPanel extends Component {
 
     private activePanels: Component[] = [];
 
-    private readonly chartController: ChartController;
-
-    constructor(chartController: ChartController) {
+    constructor(private readonly chartOptionsService: ChartOptionsService) {
         super();
-        this.chartController = chartController;
     }
 
     @PostConstruct
@@ -65,18 +61,18 @@ export class ScatterSeriesPanel extends Component {
             .setLabelAlignment("left")
             .setLabelWidth("flex")
             .setInputWidth(45)
-            .setValue(this.getChartProxy().getSeriesOption("tooltip.enabled") || false)
-            .onValueChange(newValue => this.getChartProxy().setSeriesOption("tooltip.enabled", newValue));
+            .setValue(this.chartOptionsService.getSeriesOption("tooltip.enabled") || false)
+            .onValueChange(newValue => this.chartOptionsService.setSeriesOption("tooltip.enabled", newValue));
     }
 
     private initMarkersPanel() {
-        const markersPanelComp = this.createBean(new MarkersPanel(this.chartController));
+        const markersPanelComp = this.createBean(new MarkersPanel(this.chartOptionsService));
         this.seriesGroup.addItem(markersPanelComp);
         this.activePanels.push(markersPanelComp);
     }
 
     private initLabelPanel() {
-        const params: FontPanelParams = initFontPanelParams(this.chartTranslator, this.getChartProxy());
+        const params: FontPanelParams = initFontPanelParams(this.chartTranslator, this.chartOptionsService);
         const labelPanelComp = this.createBean(new FontPanel(params));
         this.activePanels.push(labelPanelComp);
         this.seriesGroup.addItem(labelPanelComp);
@@ -87,10 +83,6 @@ export class ScatterSeriesPanel extends Component {
             _.removeFromParent(panel.getGui());
             this.destroyBean(panel);
         });
-    }
-
-    private getChartProxy(): ScatterChartProxy {
-        return this.chartController.getChartProxy() as ScatterChartProxy;
     }
 
     protected destroy(): void {
