@@ -56,6 +56,10 @@ export class InfiniteBlock extends RowNodeBlock {
     }
 
     protected setDataAndId(rowNode: RowNode, data: any, index: number): void {
+        if (!rowNode.id && rowNode.alreadyRendered) {
+            rowNode.alreadyRendered = false;
+        }
+
         if (_.exists(data)) {
             // this means if the user is not providing id's we just use the
             // index for the row. this will allow selection to work (that is based
