@@ -14,6 +14,7 @@ import {
 } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
+import { deepMerge } from "../../object";
 
 export class BarChartProxy extends CartesianChartProxy<any> {
 
@@ -53,16 +54,10 @@ export class BarChartProxy extends CartesianChartProxy<any> {
             numberAxis.label = {...numberAxis.label, formatter: params => Math.round(params.value) + '%'};
         }
 
-        // ...(agChartOptions.theme! as AgChartTheme).overrides!.cartesian!.series!,
-        // ...(agChartOptions.theme! as AgChartTheme).overrides!.column!.series!,
-        //TODO interrogate different options
-        const overrides = (agChartOptions.theme! as AgChartTheme).overrides;
-        const seriesOverrides = overrides && overrides!.column ? overrides!.column.series : {};
-
         const isGrouped = !this.crossFiltering && _.includes([ChartType.GroupedColumn, ChartType.GroupedBar], this.chartType);
         agChartOptions.series = [{
-            fills: this.chartTheme.palette.fills, //TODO: ???
-            ...seriesOverrides,
+            fills: this.chartTheme.palette.fills, //TODO
+            ...this.extractSeriesOverrides(agChartOptions),
             type: isColumn ? 'column' : 'bar',
             grouped: isGrouped,
             normalizedTo: normalised ? 100 : undefined,
@@ -135,6 +130,25 @@ export class BarChartProxy extends CartesianChartProxy<any> {
         barSeries.yNames = params.fields.map(f => f.displayName!) as any;
 
         this.updateLabelRotation(params.category.id, !this.isColumnChart());
+    }
+
+    private extractSeriesOverrides(agChartOptions: AgCartesianChartOptions) {
+        const overrides = (agChartOptions.theme! as AgChartTheme).overrides;
+
+        const cartesianSeriesOverrides = overrides && overrides!.cartesian ? overrides!.cartesian.series : {};
+
+        let seriesOverrides = {};
+        if (this.isColumnChart()) {
+            if (overrides && overrides.column && overrides.column.series) {
+                seriesOverrides = overrides.column.series;
+            }
+        } else {
+            if (overrides && overrides.bar && overrides.bar.series) {
+                seriesOverrides = overrides.bar.series;
+            }
+        }
+
+        return deepMerge(cartesianSeriesOverrides, seriesOverrides);
     }
 
     private isColumnChart(): boolean {
