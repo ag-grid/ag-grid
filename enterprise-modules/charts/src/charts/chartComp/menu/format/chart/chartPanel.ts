@@ -11,7 +11,7 @@ import { PaddingPanel } from "./paddingPanel";
 import { ChartTranslator } from "../../../chartTranslator";
 import { BackgroundPanel } from "./backgroundPanel";
 import TitlePanel from "./titlePanel";
-import { ChartOptionsService } from "../../chartOptionsService";
+import { ChartOptionsService } from "../../../chartOptionsService";
 
 export class ChartPanel extends Component {
 

@@ -11,7 +11,7 @@ import {
 } from "@ag-grid-community/core";
 import { MarkersPanel } from "./markersPanel";
 import { ChartTranslator } from "../../../chartTranslator";
-import { ChartOptionsService } from "../../chartOptionsService";
+import { ChartOptionsService } from "../../../chartOptionsService";
 import { initFontPanelParams } from "../widgetInitialiser";
 import { FontPanel, FontPanelParams } from "../fontPanel";
 

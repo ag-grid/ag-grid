@@ -4,7 +4,7 @@ import { ChartMenu } from "./menu/chartMenu";
 import { Chart } from "ag-charts-community";
 import { ChartTranslator } from "./chartTranslator";
 import { ChartController } from "./chartController";
-import { ChartOptionsService } from "./menu/chartOptionsService";
+import { ChartOptionsService } from "./chartOptionsService";
 
 interface BBox { x: number; y: number; width: number; height: number }
 

@@ -13,7 +13,7 @@ import {
 import { TabbedChartMenu } from "./tabbedChartMenu";
 import { ChartController } from "../chartController";
 import { ChartTranslator } from "../chartTranslator";
-import { ChartOptionsService } from "./chartOptionsService";
+import { ChartOptionsService } from "../chartOptionsService";
 
 type ChartToolbarButtons = {
     [key in ChartMenuOptions]: [string, (e: MouseEvent) => any | void]

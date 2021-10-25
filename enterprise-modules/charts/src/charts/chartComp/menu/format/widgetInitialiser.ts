@@ -2,7 +2,7 @@ import { ChartTranslator } from "../../chartTranslator";
 import { ChartProxy } from "../../chartProxies/chartProxy";
 import { AgSlider } from "@ag-grid-community/core";
 import { Font, FontPanelParams } from "./fontPanel";
-import { ChartOptionsService } from "../chartOptionsService";
+import { ChartOptionsService } from "../../chartOptionsService";
 
 export function initLineOpacitySlider(seriesLineOpacitySlider: AgSlider, chartTranslator: ChartTranslator, chartOptionsService: ChartOptionsService) {
     seriesLineOpacitySlider

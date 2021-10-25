@@ -19,7 +19,7 @@ import {
 import { ChartController } from "../../chartController";
 import { ColState } from "../../chartDataModel";
 import { ChartTranslator } from "../../chartTranslator";
-import { ChartOptionsService } from "../chartOptionsService";
+import { ChartOptionsService } from "../../chartOptionsService";
 
 export class ChartDataPanel extends Component {
     public static TEMPLATE = /* html */ `<div class="ag-chart-data-wrapper"></div>`;
