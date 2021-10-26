@@ -134,16 +134,15 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
 
     protected onFocusIn(e: FocusEvent): void {
         const eGui = this.getGui();
-        const wrapperHasFocus = e.target === eGui;
         const fromWithin = eGui.contains(e.relatedTarget as HTMLElement);
 
         if (!fromWithin) {
-            this.focusService.focusInto(eGui);
-            e.preventDefault();
-            if (wrapperHasFocus) {
-                const rowIndex = this.ctrl.getRowIndex();
-                this.beans.focusService.setFocusedHeader(rowIndex, this.getColumn());
-            }
+            const currentFocusedHeader = this.beans.focusService.getFocusedHeader();
+            const shouldFocusLast = !!currentFocusedHeader && this.beans.columnModel.getDisplayedColAfter(this.column) === currentFocusedHeader.column;
+
+            const rowIndex = this.ctrl.getRowIndex();
+            this.beans.focusService.setFocusedHeader(rowIndex, this.getColumn());
+            this.focusService.focusInto(eGui, shouldFocusLast);
         }
     }
 
