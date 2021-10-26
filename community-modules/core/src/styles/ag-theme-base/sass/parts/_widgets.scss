@@ -63,6 +63,12 @@
             box-shadow: ag-param(input-focus-box-shadow);
             @include ag-color-property(border-color, input-focus-border-color);
         }
+
+        &:invalid {
+            border-width: 1px;
+            border-style: solid;
+            @include ag-color-property(border-color, input-border-color-invalid);
+        }
     }
 
     input[class^='ag-'][type='number'] {

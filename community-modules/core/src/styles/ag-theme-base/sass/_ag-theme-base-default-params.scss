@@ -153,6 +153,7 @@ $ag-theme-base-default-params: (
     suppress-native-widget-styling: false,
     
     input-border-color: null,
+    input-border-color-invalid: null,
     input-disabled-border-color: ag-derived(input-border-color, $opacity: 0.3),
     input-disabled-background-color: null,
 
