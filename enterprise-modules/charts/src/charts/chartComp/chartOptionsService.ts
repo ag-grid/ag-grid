@@ -10,7 +10,6 @@ import {
 } from "@ag-grid-community/core";
 import { ChartController } from "./chartController";
 import { CategoryAxis, GroupedCategoryAxis, NumberAxis, TimeAxis } from "ag-charts-community";
-import { LogAxis } from "ag-charts-community/dist/cjs/chart/axis/logAxis";
 import { getStandaloneChartType } from "./chartTypeMapper";
 
 export class ChartOptionsService extends BeanStub {
