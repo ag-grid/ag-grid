@@ -3,7 +3,7 @@ import { Observable, reactive } from "../../util/observable";
 
 export class Label extends Observable {
     @reactive('change', 'dataChange') enabled = true;
-    @reactive('change') fontSize = 12;
+    @reactive('change') fontSize = 8;
     @reactive('change') fontFamily = 'Verdana, sans-serif';
     @reactive('change') fontStyle?: FontStyle;
     @reactive('change') fontWeight?: FontWeight;

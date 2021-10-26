@@ -100,7 +100,7 @@ export class ColumnSparkline extends BarColumnSparkline {
             let labelTextBaseline: CanvasTextBaseline;
 
             const isPositiveY = yDatum !== undefined && yDatum >= 0;
-            const labelPadding = 4;
+            const labelPadding = 2;
 
             switch (labelPlacement) {
                 case BarColumnLabelPlacement.InsideBase:
