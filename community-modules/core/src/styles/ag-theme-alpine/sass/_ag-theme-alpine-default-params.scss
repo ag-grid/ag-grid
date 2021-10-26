@@ -15,6 +15,7 @@ $ag-theme-alpine-default-params: (
     border-color: #babfc7,
     control-panel-background-color: #f8f8f8,
     subheader-background-color: #fff,
+    invalid-color: darkred,
     
     checkbox-checked-color: ag-derived(alpine-active-color),
     checkbox-unchecked-color: #999,
@@ -30,6 +31,7 @@ $ag-theme-alpine-default-params: (
     input-disabled-background-color: ag-derived(background-color, $mix: border-color 20%),
     disabled-foreground-color: ag-derived(foreground-color, $opacity: 0.5),
     input-border-color: ag-derived(border-color),
+    input-border-color-invalid: ag-derived(invalid-color),
     header-cell-moving-background-color: ag-derived(background-color),
     range-selection-border-color: #2196f3,
 
