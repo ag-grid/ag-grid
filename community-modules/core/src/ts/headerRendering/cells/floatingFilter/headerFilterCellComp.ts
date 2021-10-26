@@ -136,19 +136,21 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
         const eGui = this.getGui();
         const fromWithin = eGui.contains(e.relatedTarget as HTMLElement);
 
-        if (!fromWithin) {
-            const keyboardMode = this.focusService.isKeyboardMode();
-            const currentFocusedHeader = this.beans.focusService.getFocusedHeader();
-            const shouldFocusLast = (
-                keyboardMode &&
-                !!currentFocusedHeader &&
-                this.beans.columnModel.getDisplayedColAfter(this.column) === currentFocusedHeader.column
-            );
+        // when the focus is already within the component,
+        // we default to the browser's behavior
+        if (fromWithin) { return; }
 
-            const rowIndex = this.ctrl.getRowIndex();
-            this.beans.focusService.setFocusedHeader(rowIndex, this.getColumn());
-            this.focusService.focusInto(eGui, shouldFocusLast);
-        }
+        const keyboardMode = this.focusService.isKeyboardMode();
+        const currentFocusedHeader = this.beans.focusService.getFocusedHeader();
+        const shouldFocusLast = (
+            keyboardMode &&
+            !!currentFocusedHeader &&
+            this.beans.columnModel.getDisplayedColAfter(this.column) === currentFocusedHeader.column
+        );
+
+        const rowIndex = this.ctrl.getRowIndex();
+        this.beans.focusService.setFocusedHeader(rowIndex, this.getColumn());
+        this.focusService.focusInto(eGui, shouldFocusLast);
     }
 
     private setupFloatingFilter(): void {
