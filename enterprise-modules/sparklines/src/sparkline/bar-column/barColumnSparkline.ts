@@ -40,12 +40,17 @@ enum BarColumnNodeTag {
 }
 
 export enum BarColumnLabelPlacement {
-    Inside = 'inside',
-    Outside = 'outside'
+    InsideBase = 'inside-base',
+    InsideEnd = 'inside-end',
+    Center = 'center',
+    OutsideEnd = 'outside-end',
+    Left = 'left',
+    Right = 'right'
 }
+
 export class BarColumnLabel extends Label {
     formatter?: (params: { value: number | undefined }) => string = undefined;
-    placement = BarColumnLabelPlacement.Inside;
+    placement = BarColumnLabelPlacement.OutsideEnd;
 }
 
 export abstract class BarColumnSparkline extends Sparkline {
@@ -75,7 +80,7 @@ export abstract class BarColumnSparkline extends Sparkline {
         super();
 
         this.rootGroup.append(this.sparklineGroup);
-        this.sparklineGroup.append([this.rectGroup, this.labelGroup, this.axisLine]);
+        this.sparklineGroup.append([this.rectGroup, this.axisLine, this.labelGroup]);
 
         this.axisLine.lineCap = 'round';
 
