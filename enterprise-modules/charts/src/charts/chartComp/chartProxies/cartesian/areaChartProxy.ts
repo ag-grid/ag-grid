@@ -16,8 +16,6 @@ export class AreaChartProxy extends CartesianChartProxy<any> {
         this.recreateChart();
     }
 
-    // normalizedTo: this.chartType === ChartType.NormalizedArea ? 100 : undefined,
-
     protected createChart(): CartesianChart {
         const agChartOptions = { theme: this.chartOptions } as AgCartesianChartOptions;
         const { grouping, parentElement } = this.chartProxyParams;
@@ -39,21 +37,6 @@ export class AreaChartProxy extends CartesianChartProxy<any> {
                 ...yAxis
             }
         ];
-
-        // agChartOptions.series = [{
-        //     ...seriesDefaults,
-        //     type: 'area',
-        //     fills: seriesDefaults.fill.colors,
-        //     fillOpacity: seriesDefaults.fill.opacity,
-        //     strokes: seriesDefaults.stroke.colors,
-        //     strokeOpacity: seriesDefaults.stroke.opacity,
-        //     strokeWidth: seriesDefaults.stroke.width,
-        //     tooltip: {
-        //         renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
-        //     },
-        //     marker
-        // }];
-
 
         return AgChart.create(agChartOptions, parentElement);
     }
