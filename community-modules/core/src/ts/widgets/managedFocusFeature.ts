@@ -5,7 +5,6 @@ import { KeyCode } from '../constants/keyCode';
 import { isStopPropagationForAgGrid, stopPropagationForAgGrid } from '../utils/event';
 import { BeanStub } from '../context/beanStub';
 
-
 export interface ManagedFocusCallbacks {
     shouldStopEventPropagation?: (e: KeyboardEvent) => boolean;
     onTabKeyDown?: (e: KeyboardEvent) => void;
@@ -26,14 +25,14 @@ export class ManagedFocusFeature extends BeanStub {
     ) {
         super();
         this.callbacks = {
-            shouldStopEventPropagation: ()=> false,
+            shouldStopEventPropagation: () => false,
             onTabKeyDown: (e: KeyboardEvent) => {
                 if (e.defaultPrevented) { return; }
-    
+
                 const nextRoot = this.focusService.findNextFocusableElement(this.eFocusableElement, false, e.shiftKey);
-        
+
                 if (!nextRoot) { return; }
-        
+
                 nextRoot.focus();
                 e.preventDefault();
             },

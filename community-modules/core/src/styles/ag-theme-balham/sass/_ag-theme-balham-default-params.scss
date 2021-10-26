@@ -18,6 +18,7 @@ $ag-theme-balham-default-params: (
     row-hover-color: #ecf0f1,
     column-hover-color: #ecf0f1,
     input-border-color: #95a5a6,
+    invalid-color: darkred,
     input-disabled-background-color: #ebebeb,
     checkbox-border-radius: 3px,
     checkbox-unchecked-color: #7f8c8d,
@@ -40,6 +41,8 @@ $ag-theme-balham-default-params: (
     header-column-separator: true,
     header-column-separator-color: ag-derived(border-color, $opacity: 0.5),
     header-column-separator-height: 50%,
+
+    input-border-color-invalid: ag-derived(invalid-color),
 
     // sizing
     grid-size: 4px,

@@ -95,14 +95,11 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
 
         if (wrapperHasFocus) { return; }
 
-        e.preventDefault();
-
         const nextFocusableEl = this.focusService.findNextFocusableElement(eGui, null, e.shiftKey);
 
         if (nextFocusableEl) {
+            e.preventDefault();
             nextFocusableEl.focus();
-        } else {
-            eGui.focus();
         }
     }
 
@@ -137,10 +134,16 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
 
     protected onFocusIn(e: FocusEvent): void {
         const eGui = this.getGui();
+        const wrapperHasFocus = e.target === eGui;
+        const fromWithin = eGui.contains(e.relatedTarget as HTMLElement);
 
-        if (!eGui.contains(e.relatedTarget as HTMLElement)) {
-            const rowIndex = this.ctrl.getRowIndex();
-            this.beans.focusService.setFocusedHeader(rowIndex, this.getColumn());
+        if (!fromWithin) {
+            this.focusService.focusInto(eGui);
+            e.preventDefault();
+            if (wrapperHasFocus) {
+                const rowIndex = this.ctrl.getRowIndex();
+                this.beans.focusService.setFocusedHeader(rowIndex, this.getColumn());
+            }
         }
     }
 

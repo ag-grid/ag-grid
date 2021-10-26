@@ -2,13 +2,37 @@ import { SetValueModel, SetFilterModelValuesType } from './setValueModel';
 import { Constants, RowNode, IClientSideRowModel, ValueFormatterService, ISetFilterParams } from '@ag-grid-community/core';
 import { mock } from '../test-utils/mock';
 
+type ValueType = string | number | boolean | Date;
+
 const DEFAULT_OPTS = {
-    values: ['A', 'B', 'C'] as string[] | string[][],
+    values: ['A', 'B', 'C'] as ValueType[] | ValueType[][],
     filterParams: {} as any,
     doesRowPassOtherFilters: _ => true,
     suppressSorting: false,
     simulateCaseSensitivity: false,
 };
+
+type ValueTestCase<T> = { type: T, values: T[], distinctValues: string[], distinctCaseInsensitiveValues?: T[]};
+const VALUE_TEST_CASES: {[key: string]: ValueTestCase<ValueType>} = {
+    number: {
+        values: [1, 2, 3, 4, 3, 3, 2, 1],
+        distinctValues: ['1', '2', '3', '4'],
+    } as ValueTestCase<number>,
+    boolean: {
+        values: [true, false, true, true, false],
+        distinctValues: ['false', 'true'],
+    } as ValueTestCase<boolean>,
+    string: {
+        values: ['A', 'B', 'a', 'b', 'C', 'A'],
+        distinctValues: ['A', 'B', 'C', 'a', 'b'],
+        distinctCaseInsensitiveValues: ['A', 'B', 'C'],
+    } as ValueTestCase<string>,
+    // date: {
+    //     values: [new Date(2021, 0, 1), new Date(2021, 0, 1), new Date(2021, 1, 1)],
+    //     distinctValues: ['Fri Jan 01 2021 00:00:00 GMT+0000 (Greenwich Mean Time)', 'Mon Feb 01 2021 00:00:00 GMT+0000 (Greenwich Mean Time)'],
+    // } as ValueTestCase<Date>,
+};
+const VALUE_TEST_CASE_KEYS = Object.keys(VALUE_TEST_CASES);
 
 function createSetValueModel(opts: Partial<typeof DEFAULT_OPTS> = DEFAULT_OPTS) {
     const { values, filterParams, doesRowPassOtherFilters, suppressSorting, simulateCaseSensitivity} = { ...DEFAULT_OPTS, ...opts };
@@ -35,7 +59,7 @@ function createSetValueModel(opts: Partial<typeof DEFAULT_OPTS> = DEFAULT_OPTS) 
     };
 
     const caseFormatFn = simulateCaseSensitivity ?
-        v => v : (v) => v ? v.toUpperCase() : v;
+        v => v : (v) => typeof v === 'string' ? v.toUpperCase() : v;
 
     return new SetValueModel(
         svmParams,
@@ -286,18 +310,20 @@ describe('SetValueModel', () => {
             expect(getDisplayedValues(model)).toStrictEqual(['A', 'B', 'C']);
         });
 
-        it('only shows distinct values (case-insensitive)', () => {
-            const values = ['A', 'B', 'a', 'b', 'C', 'A'];
+        it.each(VALUE_TEST_CASE_KEYS)('only shows distinct %s values (case-insensitive)', (key) => {
+            const values = VALUE_TEST_CASES[key].values;
             model = createSetValueModel({values, simulateCaseSensitivity: false});
 
-            expect(getDisplayedValues(model)).toStrictEqual(['A', 'B', 'C']);
+            const expectedValues = VALUE_TEST_CASES[key].distinctCaseInsensitiveValues || VALUE_TEST_CASES[key].distinctValues;
+            expect(getDisplayedValues(model)).toStrictEqual(expectedValues);
         });
 
-        it('only shows distinct values (case-sensitive)', () => {
-            const values = ['A', 'B', 'a', 'b', 'C', 'A'];
+        it.each(VALUE_TEST_CASE_KEYS)('only shows distinct %s values (case-sensitive)', (key) => {
+            const values = VALUE_TEST_CASES[key].values;
             model = createSetValueModel({values, simulateCaseSensitivity: true});
 
-            expect(getDisplayedValues(model)).toStrictEqual(['A', 'B', 'C', 'a', 'b']);
+            const expectedValues = VALUE_TEST_CASES[key].distinctValues;
+            expect(getDisplayedValues(model)).toStrictEqual(expectedValues);
         });
 
         it('sorts values alphabetically by default', () => {
@@ -406,16 +432,20 @@ describe('SetValueModel', () => {
             expect(getDisplayedValues(model)).toStrictEqual(['A2', 'B2', 'C2']);
         });
 
-        it('only shows distinct provided values (case-insensitive)', () => {
-            model = createSetValueModel({filterParams: { values: ['A2', 'B2', 'C2', 'b2', 'c2'] }, simulateCaseSensitivity: false});
+        it.each(VALUE_TEST_CASE_KEYS)('only shows distinct %s values (case-insensitive)', (key) => {
+            const values = VALUE_TEST_CASES[key].values;
+            model = createSetValueModel({filterParams: {values}, simulateCaseSensitivity: false});
 
-            expect(getDisplayedValues(model)).toStrictEqual(['A2', 'B2', 'C2']);
+            const expectedValues = VALUE_TEST_CASES[key].distinctCaseInsensitiveValues || VALUE_TEST_CASES[key].distinctValues;
+            expect(getDisplayedValues(model)).toStrictEqual(expectedValues);
         });
 
-        it('only shows distinct provided values (case-sensitive)', () => {
-            model = createSetValueModel({filterParams: { values: ['A2', 'B2', 'C2', 'b2', 'c2'] }, simulateCaseSensitivity: true});
+        it.each(VALUE_TEST_CASE_KEYS)('only shows distinct %s values (case-sensitive)', (key) => {
+            const values = VALUE_TEST_CASES[key].values;
+            model = createSetValueModel({filterParams: {values}, simulateCaseSensitivity: true});
 
-            expect(getDisplayedValues(model)).toStrictEqual(['A2', 'B2', 'C2', 'b2', 'c2']);
+            const expectedValues = VALUE_TEST_CASES[key].distinctValues;
+            expect(getDisplayedValues(model)).toStrictEqual(expectedValues);
         });
 
         it('sorts provided values alphabetically by default', () => {
@@ -455,23 +485,29 @@ describe('SetValueModel', () => {
             delayAssert(done, () => expect(getDisplayedValues(model)).toStrictEqual(['A2', 'B2', 'C2']));
         });
 
-        it('only shows distinct provided callback values (case-insensitive)', done => {
-            model = createSetValueModel({
-                filterParams: { values: (params: any) => params.success(['A2', 'B2', 'C2', 'b2', 'c2']) },
-                simulateCaseSensitivity: false,
+        for (const key of VALUE_TEST_CASE_KEYS) {
+            it('only shows distinct %s provided callback values (case-insensitive)', (done) => {
+                const rawValues = VALUE_TEST_CASES[key].values;
+                model = createSetValueModel({
+                    filterParams: { values: (params: any) => params.success(rawValues) },
+                    simulateCaseSensitivity: false,
+                });
+
+                const expectedValues = VALUE_TEST_CASES[key].distinctCaseInsensitiveValues || VALUE_TEST_CASES[key].distinctValues;
+                delayAssert(done, () => expect(getDisplayedValues(model)).toStrictEqual(expectedValues));
             });
 
-            delayAssert(done, () => expect(getDisplayedValues(model)).toStrictEqual(['A2', 'B2', 'C2']));
-        });
+            it('only shows distinct %s provided callback values (case-sensitive)', (done) => {
+                const rawValues = VALUE_TEST_CASES[key].values;
+                model = createSetValueModel({
+                    filterParams: { values: (params: any) => params.success(rawValues) },
+                    simulateCaseSensitivity: true,
+                });
 
-        it('only shows distinct provided callback values (case-sensitive)', done => {
-            model = createSetValueModel({
-                filterParams: { values: (params: any) => params.success(['A2', 'B2', 'C2', 'b2', 'c2']) },
-                simulateCaseSensitivity: true,
+                const expectedValues = VALUE_TEST_CASES[key].distinctValues;
+                delayAssert(done, () => expect(getDisplayedValues(model)).toStrictEqual(expectedValues));
             });
-
-            delayAssert(done, () => expect(getDisplayedValues(model)).toStrictEqual(['A2', 'B2', 'C2', 'b2', 'c2']));
-        });
+        }
 
         it('sorts provided callback values alphabetically by default', done => {
             model = createSetValueModel({filterParams: { values: (params: any) => params.success(['1', '5', '10', '50']) }});

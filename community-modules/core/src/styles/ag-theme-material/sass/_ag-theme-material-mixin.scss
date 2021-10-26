@@ -151,6 +151,13 @@
             border-bottom: 1px solid;
             @include ag-color-property(border-bottom-color, border-color);
         }
+
+        &:invalid {
+            border-width: 0;
+            border-bottom: 1px solid;
+            @include ag-color-property(border-bottom-color, invalid-color);
+            @include ag-color-property(color, invalid-color);
+        }
     }
 
     .ag-standard-button {
