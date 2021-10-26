@@ -40,12 +40,10 @@ enum BarColumnNodeTag {
 }
 
 export enum BarColumnLabelPlacement {
-    InsideBase = 'inside-base',
-    InsideEnd = 'inside-end',
+    InsideBase = 'insideBase',
+    InsideEnd = 'insideEnd',
     Center = 'center',
-    OutsideEnd = 'outside-end',
-    Left = 'left',
-    Right = 'right'
+    OutsideEnd = 'outsideEnd',
 }
 
 export class BarColumnLabel extends Label {
