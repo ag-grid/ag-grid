@@ -1,5 +1,5 @@
 import { SetValueModel, SetFilterModelValuesType } from './setValueModel';
-import { Constants, RowNode, IClientSideRowModel, ValueFormatterService, ISetFilterParams } from '@ag-grid-community/core';
+import { Constants, RowNode, IClientSideRowModel, ValueFormatterService, ISetFilterParams, ValueFormatterFunc } from '@ag-grid-community/core';
 import { mock } from '../test-utils/mock';
 
 type ValueType = string | number | boolean | Date;
@@ -12,7 +12,14 @@ const DEFAULT_OPTS = {
     simulateCaseSensitivity: false,
 };
 
-type ValueTestCase<T> = { type: T, values: T[], distinctValues: string[], distinctCaseInsensitiveValues?: T[]};
+type ValueTestCase<T> = {
+    values: T[],
+    distinctValues: string[],
+    distinctCaseInsensitiveValues?: T[],
+    valueFormatter?: ValueFormatterFunc,
+};
+const EXAMPLE_DATE_1 = new Date(2021, 0, 1);
+const EXAMPLE_DATE_2 = new Date(2021, 1, 1);
 const VALUE_TEST_CASES: {[key: string]: ValueTestCase<ValueType>} = {
     number: {
         values: [1, 2, 3, 4, 3, 3, 2, 1],
@@ -27,10 +34,11 @@ const VALUE_TEST_CASES: {[key: string]: ValueTestCase<ValueType>} = {
         distinctValues: ['A', 'B', 'C', 'a', 'b'],
         distinctCaseInsensitiveValues: ['A', 'B', 'C'],
     } as ValueTestCase<string>,
-    // date: {
-    //     values: [new Date(2021, 0, 1), new Date(2021, 0, 1), new Date(2021, 1, 1)],
-    //     distinctValues: ['Fri Jan 01 2021 00:00:00 GMT+0000 (Greenwich Mean Time)', 'Mon Feb 01 2021 00:00:00 GMT+0000 (Greenwich Mean Time)'],
-    // } as ValueTestCase<Date>,
+    date: {
+        values: [EXAMPLE_DATE_1, EXAMPLE_DATE_1, EXAMPLE_DATE_2],
+        // _.toStringOrNull() is used in the implementation, so the expected strings are environment local/TZ specific :P
+        distinctValues: [EXAMPLE_DATE_1.toString(), EXAMPLE_DATE_2.toString()],
+    } as ValueTestCase<Date>,
 };
 const VALUE_TEST_CASE_KEYS = Object.keys(VALUE_TEST_CASES);
 
@@ -311,7 +319,7 @@ describe('SetValueModel', () => {
         });
 
         it.each(VALUE_TEST_CASE_KEYS)('only shows distinct %s values (case-insensitive)', (key) => {
-            const values = VALUE_TEST_CASES[key].values;
+            const { values } = VALUE_TEST_CASES[key];
             model = createSetValueModel({values, simulateCaseSensitivity: false});
 
             const expectedValues = VALUE_TEST_CASES[key].distinctCaseInsensitiveValues || VALUE_TEST_CASES[key].distinctValues;
@@ -319,7 +327,7 @@ describe('SetValueModel', () => {
         });
 
         it.each(VALUE_TEST_CASE_KEYS)('only shows distinct %s values (case-sensitive)', (key) => {
-            const values = VALUE_TEST_CASES[key].values;
+            const { values } = VALUE_TEST_CASES[key];
             model = createSetValueModel({values, simulateCaseSensitivity: true});
 
             const expectedValues = VALUE_TEST_CASES[key].distinctValues;
@@ -433,7 +441,7 @@ describe('SetValueModel', () => {
         });
 
         it.each(VALUE_TEST_CASE_KEYS)('only shows distinct %s values (case-insensitive)', (key) => {
-            const values = VALUE_TEST_CASES[key].values;
+            const { values } = VALUE_TEST_CASES[key];
             model = createSetValueModel({filterParams: {values}, simulateCaseSensitivity: false});
 
             const expectedValues = VALUE_TEST_CASES[key].distinctCaseInsensitiveValues || VALUE_TEST_CASES[key].distinctValues;
@@ -441,7 +449,7 @@ describe('SetValueModel', () => {
         });
 
         it.each(VALUE_TEST_CASE_KEYS)('only shows distinct %s values (case-sensitive)', (key) => {
-            const values = VALUE_TEST_CASES[key].values;
+            const { values } = VALUE_TEST_CASES[key];
             model = createSetValueModel({filterParams: {values}, simulateCaseSensitivity: true});
 
             const expectedValues = VALUE_TEST_CASES[key].distinctValues;
@@ -487,9 +495,9 @@ describe('SetValueModel', () => {
 
         for (const key of VALUE_TEST_CASE_KEYS) {
             it('only shows distinct %s provided callback values (case-insensitive)', (done) => {
-                const rawValues = VALUE_TEST_CASES[key].values;
+                const { values } = VALUE_TEST_CASES[key];
                 model = createSetValueModel({
-                    filterParams: { values: (params: any) => params.success(rawValues) },
+                    filterParams: { values: (params: any) => params.success(values) },
                     simulateCaseSensitivity: false,
                 });
 
@@ -498,9 +506,9 @@ describe('SetValueModel', () => {
             });
 
             it('only shows distinct %s provided callback values (case-sensitive)', (done) => {
-                const rawValues = VALUE_TEST_CASES[key].values;
+                const { values } = VALUE_TEST_CASES[key];
                 model = createSetValueModel({
-                    filterParams: { values: (params: any) => params.success(rawValues) },
+                    filterParams: { values: (params: any) => params.success(values) },
                     simulateCaseSensitivity: true,
                 });
 
