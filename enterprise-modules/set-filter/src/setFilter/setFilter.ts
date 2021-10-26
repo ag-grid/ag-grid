@@ -832,8 +832,8 @@ export class SetFilter extends ProvidedFilter<SetFilterModel> {
         super.destroy();
     }
 
-    private caseFormat<T extends string | null>(valueToFormat: T): typeof valueToFormat {
-        if (valueToFormat == null) {
+    private caseFormat<T extends string | number | null>(valueToFormat: T): typeof valueToFormat {
+        if (valueToFormat == null || typeof valueToFormat !== 'string') {
             return valueToFormat;
         }
         return this.caseSensitive ? valueToFormat : <T>valueToFormat.toUpperCase();
