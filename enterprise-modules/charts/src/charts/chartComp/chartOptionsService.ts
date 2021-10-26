@@ -42,7 +42,7 @@ export class ChartOptionsService extends BeanStub {
             return;
         }
 
-        _.set(chartOptions.overrides.common, expression, value);
+        _.set(chartOptions.overrides.cartesian, expression, value); //TODO
         _.set(chart, expression, value);
 
         this.raiseChartOptionsChangedEvent();

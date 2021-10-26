@@ -47,7 +47,7 @@ export class ChartTheme {
         return palette;
     }
 
-    private readonly config: any;
+    readonly config: any;
 
     private static fontFamily = 'Verdana, sans-serif';
 
