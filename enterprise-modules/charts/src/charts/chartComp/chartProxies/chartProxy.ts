@@ -120,28 +120,19 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends any> {
         const gridOptionsThemeOverrides: AgChartThemeOverrides | undefined = this.chartProxyParams.getGridOptionsChartThemeOverrides();
         const apiThemeOverrides: AgChartThemeOverrides | undefined  = this.chartProxyParams.apiChartThemeOverrides;
 
-        const defaultOverrides = {
-            common: {
-                padding: { top: 20, right: 20, bottom: 20, left: 20 },
-                title: {
-                    enabled: true,
-                    text: '',
-                }
-            }
-        };
-
         if (gridOptionsThemeOverrides || apiThemeOverrides) {
-            let overrides = this.mergeThemeOverrides(defaultOverrides, gridOptionsThemeOverrides);
-            overrides = this.mergeThemeOverrides(overrides, apiThemeOverrides);
+            const overrides = this.mergeThemeOverrides(gridOptionsThemeOverrides, apiThemeOverrides);
             const themeOverrides = { overrides };
             const getCustomTheme = () => deepMerge(this.lookupCustomChartTheme(themeName), themeOverrides);
-            this.chartOptions = this.isStockTheme(themeName) ? { baseTheme: themeName, ...themeOverrides } : getCustomTheme();
-            this.chartTheme = getChartTheme(this.chartOptions);
+            const theme = this.isStockTheme(themeName) ? { baseTheme: themeName, ...themeOverrides } : getCustomTheme();
+            this.chartTheme = getChartTheme(theme); //TODO remove
         } else {
             const baseTheme = this.isStockTheme(themeName) ? themeName : this.lookupCustomChartTheme(themeName);
-            this.chartTheme = getChartTheme(baseTheme);
-            this.chartOptions = { baseTheme, overrides: defaultOverrides };
+            this.chartTheme = getChartTheme(baseTheme); //TODO remove
         }
+
+        const { palette, config } = this.chartTheme;
+        this.chartOptions = { baseTheme: themeName, palette, overrides: config };
     }
 
     public lookupCustomChartTheme(name: string) {
