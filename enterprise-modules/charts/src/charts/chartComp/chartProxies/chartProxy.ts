@@ -117,22 +117,32 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends any> {
         }
 
         const themeName = this.getSelectedTheme();
-        const gridOptionsThemeOverrides: AgChartThemeOverrides | undefined = this.chartProxyParams.getGridOptionsChartThemeOverrides();
-        const apiThemeOverrides: AgChartThemeOverrides | undefined  = this.chartProxyParams.apiChartThemeOverrides;
+        this.chartTheme = this.createChartTheme(themeName);
+
+        this.chartOptions = {
+            baseTheme: themeName,
+            palette: this.chartTheme.palette,
+            overrides: this.chartTheme.config,
+        };
+    }
+
+    private createChartTheme(themeName: string): ChartTheme {
+        const stockTheme = this.isStockTheme(themeName);
+        const gridOptionsThemeOverrides = this.chartProxyParams.getGridOptionsChartThemeOverrides();
+        const apiThemeOverrides = this.chartProxyParams.apiChartThemeOverrides;
 
         if (gridOptionsThemeOverrides || apiThemeOverrides) {
-            const overrides = this.mergeThemeOverrides(gridOptionsThemeOverrides, apiThemeOverrides);
-            const themeOverrides = { overrides };
+            const themeOverrides = {overrides: this.mergeThemeOverrides(gridOptionsThemeOverrides, apiThemeOverrides)};
             const getCustomTheme = () => deepMerge(this.lookupCustomChartTheme(themeName), themeOverrides);
-            const theme = this.isStockTheme(themeName) ? { baseTheme: themeName, ...themeOverrides } : getCustomTheme();
-            this.chartTheme = getChartTheme(theme); //TODO remove
-        } else {
-            const baseTheme = this.isStockTheme(themeName) ? themeName : this.lookupCustomChartTheme(themeName);
-            this.chartTheme = getChartTheme(baseTheme); //TODO remove
+            return getChartTheme(stockTheme ? {baseTheme: themeName, ...themeOverrides} : getCustomTheme());
         }
+        return getChartTheme(stockTheme ? themeName : this.lookupCustomChartTheme(themeName));
+    }
 
-        const { palette, config } = this.chartTheme;
-        this.chartOptions = { baseTheme: themeName, palette, overrides: config };
+    private mergeThemeOverrides(gridOptionsThemeOverrides?: AgChartThemeOverrides, apiThemeOverrides?: AgChartThemeOverrides) {
+        if (!gridOptionsThemeOverrides) { return apiThemeOverrides; }
+        if (!apiThemeOverrides) { return gridOptionsThemeOverrides; }
+        return deepMerge(gridOptionsThemeOverrides, apiThemeOverrides);
     }
 
     public lookupCustomChartTheme(name: string) {
@@ -151,12 +161,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends any> {
         return _.includes(Object.keys(themes), themeName);
     }
 
-    private mergeThemeOverrides(gridOptionsThemeOverrides?: AgChartThemeOverrides, apiThemeOverrides?: AgChartThemeOverrides) {
-        if (!gridOptionsThemeOverrides) { return apiThemeOverrides; }
-        if (!apiThemeOverrides) { return gridOptionsThemeOverrides; }
-        return deepMerge(gridOptionsThemeOverrides, apiThemeOverrides);
-    }
-
     public downloadChart(): void {
         const { chart } = this;
         const fileName = chart.title ? chart.title.text : 'chart';
@@ -165,35 +169,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends any> {
 
     public getChartImageDataURL(type?: string) {
         return this.chart.scene.getDataURL(type);
-    }
-
-    protected getStandaloneChartType(): string {
-        switch (this.chartType) {
-            case ChartType.GroupedBar:
-            case ChartType.StackedBar:
-            case ChartType.NormalizedBar:
-                return 'bar';
-            case ChartType.GroupedColumn:
-            case ChartType.StackedColumn:
-            case ChartType.NormalizedColumn:
-                return 'column';
-            case ChartType.Line:
-                return 'line';
-            case ChartType.Area:
-            case ChartType.StackedArea:
-            case ChartType.NormalizedArea:
-                return 'area';
-            case ChartType.Scatter:
-            case ChartType.Bubble:
-                return 'scatter';
-            case ChartType.Histogram:
-                return 'histogram';
-            case ChartType.Pie:
-            case ChartType.Doughnut:
-                return 'pie';
-            default:
-                return 'cartesian';
-        }
     }
 
     private getSelectedTheme(): string {

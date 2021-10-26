@@ -18,6 +18,7 @@ import { ChartDataModel } from "../../chartDataModel";
 import { isDate } from "../../typeChecker";
 import { deepMerge } from "../../object";
 import { ChartController, ChartModelUpdatedEvent } from "../../chartController";
+import { getStandaloneChartType } from "../../chartTypeMapper";
 
 enum AXIS_TYPE {REGULAR, SPECIAL}
 
@@ -32,7 +33,7 @@ export abstract class CartesianChartProxy<T extends any> extends ChartProxy<Cart
     }
 
     protected getAxes(): any {
-        const standaloneChartType = this.getStandaloneChartType();
+        const standaloneChartType = getStandaloneChartType(this.chartType);
         const flipXY = standaloneChartType === 'bar';
 
         let xAxisType = (standaloneChartType === 'scatter' || standaloneChartType === 'histogram') ? 'number' : 'category';
@@ -97,7 +98,7 @@ export abstract class CartesianChartProxy<T extends any> extends ChartProxy<Cart
             return;
         }
 
-        const chartType = this.getStandaloneChartType();
+        const chartType = getStandaloneChartType(this.chartType);
         const overrides = this.chartOptions.overrides;
         const axisPosition = isHorizontalChart ? ChartAxisPosition.Left : ChartAxisPosition.Bottom;
 
@@ -196,7 +197,7 @@ export abstract class CartesianChartProxy<T extends any> extends ChartProxy<Cart
     protected getXAxisDefaults(xAxisType: any, options: any) {
         if (xAxisType === 'time') {
             let xAxisTheme: any = {};
-            const standaloneChartType = this.getStandaloneChartType();
+            const standaloneChartType = getStandaloneChartType(this.chartType);
             xAxisTheme = deepMerge(xAxisTheme, this.chartTheme.getConfig(standaloneChartType + '.axes.time'));
             xAxisTheme = deepMerge(xAxisTheme, this.chartTheme.getConfig(standaloneChartType + '.axes.time.bottom'));
             return xAxisTheme;

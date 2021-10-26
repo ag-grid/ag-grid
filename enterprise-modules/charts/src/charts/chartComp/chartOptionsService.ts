@@ -9,6 +9,9 @@ import {
     PostConstruct
 } from "@ag-grid-community/core";
 import { ChartController } from "./chartController";
+import { CategoryAxis, GroupedCategoryAxis, NumberAxis, TimeAxis } from "ag-charts-community";
+import { LogAxis } from "ag-charts-community/dist/cjs/chart/axis/logAxis";
+import { getStandaloneChartType } from "./chartTypeMapper";
 
 export class ChartOptionsService extends BeanStub {
 
@@ -88,21 +91,82 @@ export class ChartOptionsService extends BeanStub {
     }
 
     public getAxisProperty<T = string>(expression: string): T {
-        return _.get(this.getChart().xAxis, expression, undefined) as T;
+        return _.get(this.getChart().axes[0], expression, undefined) as T;
     }
 
     public setAxisProperty(expression: string, value: any) {
-        const [chart, chartOptions] = [this.getChart(), this.getChartOptions()];
+        const chart = this.getChart();
 
-        _.set(chartOptions.xAxis, expression, value);
-        _.set(chartOptions.yAxis, expression, value);
+        chart.axes.forEach((axis: any) => {
+            // update axis options
+            this.updateAxisOptions(axis, expression, value);
 
-        chart.axes.forEach((axis: any) => _.set(axis, expression, value));
+            // update chart
+            _.set(axis, expression, value)
+        });
 
         // chart axis properties are not reactive, need to schedule a layout
         chart.layoutPending = true;
 
         this.raiseChartOptionsChangedEvent();
+    }
+
+    public getLabelRotation(axisType: 'xAxis' | 'yAxis'): number {
+        const axis = this.getAxis(axisType);
+        return _.get(axis, 'label.rotation', undefined);
+    }
+
+    public setLabelRotation(axisType: 'xAxis' | 'yAxis', value: any) {
+        const expression = 'label.rotation';
+
+        // update axis options
+        const chartAxis = this.getAxis(axisType);
+        this.updateAxisOptions(chartAxis, expression, value);
+
+        // update chart
+        _.set(chartAxis, expression, value);
+
+        // chart axis properties are not reactive, need to schedule a layout
+        this.getChart().layoutPending = true;
+
+        this.raiseChartOptionsChangedEvent();
+    }
+
+    private updateAxisOptions(chartAxis: any, expression: string, value: any) {
+        const chartOptions = this.getChartOptions();
+        let axesOptions = this.getAxesObject(chartOptions);
+        if (chartAxis instanceof NumberAxis) {
+            _.set(axesOptions.number, expression, value);
+        } else if (chartAxis instanceof CategoryAxis) {
+            _.set(axesOptions.category, expression, value);
+        } else if (chartAxis instanceof TimeAxis) {
+            _.set(axesOptions.time, expression, value);
+        } else if (chartAxis instanceof GroupedCategoryAxis) {
+            _.set(axesOptions.groupedCategory, expression, value);
+        }
+    }
+
+    private getAxesObject(chartOptions: any) {
+        const optionsType = getStandaloneChartType(this.getChartType());
+        if (optionsType === 'bar') {
+            return chartOptions.overrides.bar.axes;
+        } else if (optionsType === 'column') {
+            return chartOptions.overrides.column.axes;
+        } else if (optionsType === 'line') {
+            return chartOptions.overrides.line.axes;
+        } else if (optionsType === 'scatter') {
+            return chartOptions.overrides.scatter.axes;
+        } else if (optionsType === 'histogram') {
+            return chartOptions.overrides.histogram.axes;
+        }
+    }
+
+    private getAxis(axisType: string) {
+        const chart = this.getChart();
+        if (axisType === 'xAxis') {
+            return chart.axes[0].direction === 'x' ? chart.axes[0] : chart.axes[1];
+        }
+        return chart.axes[1].direction === 'y' ? chart.axes[1] : chart.axes[0];
     }
 
     public getSeriesOption<T = string>(expression: string): T {

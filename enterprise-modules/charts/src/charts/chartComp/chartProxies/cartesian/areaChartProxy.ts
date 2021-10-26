@@ -16,6 +16,8 @@ export class AreaChartProxy extends CartesianChartProxy<any> {
         this.recreateChart();
     }
 
+    // normalizedTo: this.chartType === ChartType.NormalizedArea ? 100 : undefined,
+
     protected createChart(): CartesianChart {
         const agChartOptions = { theme: this.chartOptions } as AgCartesianChartOptions;
         const { grouping, parentElement } = this.chartProxyParams;
@@ -38,6 +40,21 @@ export class AreaChartProxy extends CartesianChartProxy<any> {
             }
         ];
 
+        // agChartOptions.series = [{
+        //     ...seriesDefaults,
+        //     type: 'area',
+        //     fills: seriesDefaults.fill.colors,
+        //     fillOpacity: seriesDefaults.fill.opacity,
+        //     strokes: seriesDefaults.stroke.colors,
+        //     strokeOpacity: seriesDefaults.stroke.opacity,
+        //     strokeWidth: seriesDefaults.stroke.width,
+        //     tooltip: {
+        //         renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.renderer
+        //     },
+        //     marker
+        // }];
+
+
         return AgChart.create(agChartOptions, parentElement);
     }
 
@@ -55,7 +72,12 @@ export class AreaChartProxy extends CartesianChartProxy<any> {
             let areaSeries = this.chart.series[0] as AreaSeries;
 
             if (!areaSeries) {
-                const seriesDefaults = this.chartOptions.overrides.area.series.area;
+                const seriesDefaults = {
+                    ...this.chartOptions.overrides.area.series.area,
+                    type: 'area',
+                    normalizedTo: this.chartType === ChartType.NormalizedArea ? 100 : undefined,
+                };
+
                 areaSeries = AgChart.createComponent({ ...seriesDefaults }, 'area.series');
                 if (!areaSeries) { return; }
                 this.chart.addSeries(areaSeries);
@@ -118,7 +140,14 @@ export class AreaChartProxy extends CartesianChartProxy<any> {
                 areaSeries.strokes = [stroke];
 
             } else {
-                const seriesDefaults = this.chartOptions.overrides.area.series.area;
+
+                const seriesOverrides = this.chartOptions.overrides.area.series.area;
+                const seriesDefaults = {
+                    ...seriesOverrides,
+                    type: 'area',
+                    normalizedTo: this.chartType === ChartType.NormalizedArea ? 100 : undefined,
+                };
+
                 const options: any = {
                     ...seriesDefaults,
                     data,

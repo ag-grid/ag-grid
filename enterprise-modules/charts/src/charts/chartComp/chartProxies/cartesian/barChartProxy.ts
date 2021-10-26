@@ -15,6 +15,7 @@ import {
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { deepMerge } from "../../object";
+import { getStandaloneChartType } from "../../chartTypeMapper";
 
 export class BarChartProxy extends CartesianChartProxy<any> {
 
@@ -28,7 +29,7 @@ export class BarChartProxy extends CartesianChartProxy<any> {
     protected createChart(): CartesianChart {
         const agChartOptions = { theme: this.chartOptions } as AgCartesianChartOptions;
 
-        const isColumn = this.getStandaloneChartType() === 'column';
+        const isColumn = getStandaloneChartType(this.chartType) === 'column';
         const [xAxis, yAxis] = this.getAxes();
         agChartOptions.axes = [
             {
@@ -71,7 +72,7 @@ export class BarChartProxy extends CartesianChartProxy<any> {
     public update(params: UpdateChartParams): void {
         this.chartProxyParams.grouping = params.grouping;
 
-        const isColumn = this.getStandaloneChartType() === 'column';
+        const isColumn = getStandaloneChartType(this.chartType) === 'column';
         this.updateAxes('category', !isColumn);
 
         const barSeries = this.chart.series[0] as BarSeries;
