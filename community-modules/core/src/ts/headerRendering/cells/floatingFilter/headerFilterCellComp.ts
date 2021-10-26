@@ -142,11 +142,11 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
 
         const keyboardMode = this.focusService.isKeyboardMode();
         const currentFocusedHeader = this.beans.focusService.getFocusedHeader();
-        const shouldFocusLast = (
-            keyboardMode &&
-            !!currentFocusedHeader &&
-            this.beans.columnModel.getDisplayedColAfter(this.column) === currentFocusedHeader.column
-        );
+        const nextColumn = this.beans.columnModel.getDisplayedColAfter(this.column);
+        const focusingLastColumnFromOutside = !currentFocusedHeader && !nextColumn;
+        const fromNextColumn = !!(currentFocusedHeader && nextColumn === currentFocusedHeader.column);
+
+        const shouldFocusLast = keyboardMode && (focusingLastColumnFromOutside || fromNextColumn);
 
         const rowIndex = this.ctrl.getRowIndex();
         this.beans.focusService.setFocusedHeader(rowIndex, this.getColumn());
