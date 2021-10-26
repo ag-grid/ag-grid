@@ -27,10 +27,10 @@ const VALUE_TEST_CASES: {[key: string]: ValueTestCase<ValueType>} = {
         distinctValues: ['A', 'B', 'C', 'a', 'b'],
         distinctCaseInsensitiveValues: ['A', 'B', 'C'],
     } as ValueTestCase<string>,
-    date: {
-        values: [new Date(2021, 0, 1), new Date(2021, 0, 1), new Date(2021, 1, 1)],
-        distinctValues: ['Fri Jan 01 2021 00:00:00 GMT+0000 (Greenwich Mean Time)', 'Mon Feb 01 2021 00:00:00 GMT+0000 (Greenwich Mean Time)'],
-    } as ValueTestCase<Date>,
+    // date: {
+    //     values: [new Date(2021, 0, 1), new Date(2021, 0, 1), new Date(2021, 1, 1)],
+    //     distinctValues: ['Fri Jan 01 2021 00:00:00 GMT+0000 (Greenwich Mean Time)', 'Mon Feb 01 2021 00:00:00 GMT+0000 (Greenwich Mean Time)'],
+    // } as ValueTestCase<Date>,
 };
 const VALUE_TEST_CASE_KEYS = Object.keys(VALUE_TEST_CASES);
 
