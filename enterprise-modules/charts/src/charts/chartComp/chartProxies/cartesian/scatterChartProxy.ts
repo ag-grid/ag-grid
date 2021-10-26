@@ -112,11 +112,7 @@ export class ScatterChartProxy extends CartesianChartProxy<any> {
         const labelFieldDefinition = params.category.id === ChartDataModel.DEFAULT_CATEGORY ? undefined : params.category;
         let previousSeries: ScatterSeries | undefined;
 
-
-        const agChartOptions = { theme: this.chartOptions } as AgCartesianChartOptions;
-        const overrides = (agChartOptions.theme! as AgChartTheme).overrides;
-        const seriesOverrides = overrides && overrides!.scatter ? overrides!.scatter.series : {};
-
+        const seriesOverrides = this.chartOptions.overrides.scatter.series.scatter;
         seriesDefinitions.forEach((seriesDefinition, index) => {
             const existingSeries = existingSeriesById.get(seriesDefinition!.yField.colId);
             const series = existingSeries || AgChart.createComponent({

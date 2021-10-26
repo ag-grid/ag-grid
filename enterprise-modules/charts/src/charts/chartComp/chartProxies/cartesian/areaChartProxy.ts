@@ -55,11 +55,8 @@ export class AreaChartProxy extends CartesianChartProxy<any> {
             let areaSeries = this.chart.series[0] as AreaSeries;
 
             if (!areaSeries) {
-                const agChartOptions = { theme: this.chartOptions } as AgCartesianChartOptions;
-                const overrides = (agChartOptions.theme! as AgChartTheme).overrides;
-                const seriesOverrides = overrides && overrides!.area ? overrides!.area.series : {};
-
-                areaSeries = AgChart.createComponent({ ...seriesOverrides }, 'area.series');
+                const seriesDefaults = this.chartOptions.overrides.area.series.area;
+                areaSeries = AgChart.createComponent({ ...seriesDefaults }, 'area.series');
                 if (!areaSeries) { return; }
                 this.chart.addSeries(areaSeries);
             }
@@ -121,12 +118,9 @@ export class AreaChartProxy extends CartesianChartProxy<any> {
                 areaSeries.strokes = [stroke];
 
             } else {
-                const agChartOptions = { theme: this.chartOptions } as AgCartesianChartOptions;
-                const overrides = (agChartOptions.theme! as AgChartTheme).overrides;
-                const seriesOverrides = overrides && overrides!.area ? overrides!.area.series : {};
-
+                const seriesDefaults = this.chartOptions.overrides.area.series.area;
                 const options: any = {
-                    ...seriesOverrides,
+                    ...seriesDefaults,
                     data,
                     xKey: params.category.id,
                     xName: params.category.name,
@@ -135,7 +129,7 @@ export class AreaChartProxy extends CartesianChartProxy<any> {
                     fills: [fill],
                     strokes: [stroke],
                     marker: {
-                        ...seriesOverrides!.marker,
+                        ...seriesDefaults!.marker,
                         fill,
                         stroke
                     },

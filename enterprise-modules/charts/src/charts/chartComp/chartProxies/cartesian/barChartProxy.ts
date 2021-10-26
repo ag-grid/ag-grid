@@ -28,7 +28,7 @@ export class BarChartProxy extends CartesianChartProxy<any> {
     protected createChart(): CartesianChart {
         const agChartOptions = { theme: this.chartOptions } as AgCartesianChartOptions;
 
-        const isColumn = this.isColumnChart();
+        const isColumn = this.getStandaloneChartType() === 'column';
         const [xAxis, yAxis] = this.getAxes();
         agChartOptions.axes = [
             {
@@ -54,11 +54,11 @@ export class BarChartProxy extends CartesianChartProxy<any> {
         }
 
         const chartOverrides = this.chartOptions.overrides;
-        const seriesDefaults = isColumn ? chartOverrides.column.series.column : chartOverrides.bar.series.bar;
+        const seriesOverrides = isColumn ? chartOverrides.column.series.column : chartOverrides.bar.series.bar;
 
         const isGrouped = !this.crossFiltering && _.includes([ChartType.GroupedColumn, ChartType.GroupedBar], this.chartType);
         agChartOptions.series = [{
-            ...seriesDefaults,
+            ...seriesOverrides,
             type: isColumn ? 'column' : 'bar',
             grouped: isGrouped,
             normalizedTo: normalised ? 100 : undefined,
@@ -71,7 +71,8 @@ export class BarChartProxy extends CartesianChartProxy<any> {
     public update(params: UpdateChartParams): void {
         this.chartProxyParams.grouping = params.grouping;
 
-        this.updateAxes('category', !this.isColumnChart());
+        const isColumn = this.getStandaloneChartType() === 'column';
+        this.updateAxes('category', !isColumn);
 
         const barSeries = this.chart.series[0] as BarSeries;
         if (this.crossFiltering) {
@@ -87,7 +88,7 @@ export class BarChartProxy extends CartesianChartProxy<any> {
         barSeries.yKeys = params.fields.map(f => f.colId) as any;
         barSeries.yNames = params.fields.map(f => f.displayName!) as any;
 
-        this.updateLabelRotation(params.category.id, !this.isColumnChart());
+        this.updateLabelRotation(params.category.id, !isColumn);
     }
 
     private updateCrossFilteringSeries(barSeries: BarSeries, params: UpdateChartParams) {
@@ -134,9 +135,5 @@ export class BarChartProxy extends CartesianChartProxy<any> {
 
         // add node click cross filtering callback to series
         barSeries.addEventListener('nodeClick', this.crossFilterCallback);
-    }
-
-    private isColumnChart(): boolean {
-        return _.includes([ChartType.Column, ChartType.GroupedColumn, ChartType.StackedColumn, ChartType.NormalizedColumn], this.chartType);
     }
 }
