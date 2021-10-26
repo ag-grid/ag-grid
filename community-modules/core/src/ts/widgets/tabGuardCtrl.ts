@@ -17,9 +17,9 @@ export class TabGuardCtrl extends BeanStub {
 
     private readonly eFocusableElement: HTMLElement;
 
-    private readonly providedFocusInnerElement?: (fromBottom: boolean)=> void;
-    private readonly providedFocusIn?: (event: FocusEvent)=> boolean;
-    private readonly providedFocusOut?: (event: FocusEvent)=> boolean;
+    private readonly providedFocusInnerElement?: (fromBottom: boolean) => void;
+    private readonly providedFocusIn?: (event: FocusEvent) => boolean;
+    private readonly providedFocusOut?: (event: FocusEvent) => boolean;
 
     private readonly providedShouldStopEventPropagation?: () => boolean;
     private readonly providedOnTabKeyDown?: (e: KeyboardEvent) => void;
@@ -32,7 +32,7 @@ export class TabGuardCtrl extends BeanStub {
         eTopGuard: HTMLElement,
         eBottomGuard: HTMLElement,
         eFocusableElement: HTMLElement,
-        focusInnerElement?: (fromBottom: boolean)=> void,
+        focusInnerElement?: (fromBottom: boolean) => void,
         onFocusIn?: (event: FocusEvent) => boolean,
         onFocusOut?: (event: FocusEvent) => boolean,
         shouldStopEventPropagation?: () => boolean,
@@ -59,7 +59,7 @@ export class TabGuardCtrl extends BeanStub {
         this.eTopGuard = eTopGuard;
         this.eBottomGuard = eBottomGuard;
         this.providedFocusInnerElement = focusInnerElement;
-        this.eFocusableElement = eFocusableElement
+        this.eFocusableElement = eFocusableElement;
 
         this.providedFocusIn = onFocusIn;
         this.providedFocusOut = onFocusOut;
@@ -108,7 +108,7 @@ export class TabGuardCtrl extends BeanStub {
     private activateTabGuards(): void {
         this.comp.setTabIndex(this.getGridTabIndex());
     }
-    
+
     private deactivateTabGuards(): void {
         this.comp.setTabIndex();
     }
@@ -175,7 +175,7 @@ export class TabGuardCtrl extends BeanStub {
 
     public focusInnerElement(fromBottom = false): void {
         const focusable = this.focusService.findFocusableElements(this.eFocusableElement);
-    
+
         if (this.tabGuardsAreActive()) {
             // remove tab guards from this component from list of focusable elements
             focusable.splice(0, 1);
