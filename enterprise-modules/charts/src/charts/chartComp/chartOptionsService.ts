@@ -114,6 +114,11 @@ export class ChartOptionsService extends BeanStub {
 
     private getAxis(axisType: string) {
         const chart = this.getChart();
+
+        if (!chart.axes || chart.axes.length < 1) {
+            return undefined;
+        }
+
         if (axisType === 'xAxis') {
             return (chart.axes && chart.axes[0].direction === 'x') ? chart.axes[0] : chart.axes[1];
         }

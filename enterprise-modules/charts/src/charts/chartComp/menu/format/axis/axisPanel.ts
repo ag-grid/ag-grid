@@ -15,8 +15,6 @@ import { ChartController } from "../../../chartController";
 import { AxisTicksPanel } from "./axisTicksPanel";
 import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslator } from "../../../chartTranslator";
-import { AgCartesianAxisOptions, ChartAxisPosition, find } from "ag-charts-community";
-import { CartesianChartProxy } from "../../../chartProxies/cartesian/cartesianChartProxy";
 import { ChartOptionsService } from "../../../chartOptionsService";
 
 export class AxisPanel extends Component {
@@ -99,10 +97,7 @@ export class AxisPanel extends Component {
                 .addOptions(options)
                 .setValue(this.chartOptionsService.getChartOption('xAxis.type') || '')
                 .onValueChange(newValue => {
-                    const chartProxy = this.chartOptionsService;
-
-                    chartProxy.setChartOption('xAxis.type', typeof newValue === 'string' && newValue.length && newValue);
-
+                    this.chartOptionsService.setChartOption('xAxis.type', typeof newValue === 'string' && newValue.length && newValue);
                     this.chartController.updateForDataChange();
                 });
         } else {

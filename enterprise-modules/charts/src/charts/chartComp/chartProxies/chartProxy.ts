@@ -229,11 +229,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends any> {
         });
     }
 
-    // TODO: implement theme switching options updates
-    // private isDarkTheme = () => this.chartProxyParams.isDarkTheme();
-    // protected getFontColor = (): string => this.isDarkTheme() ? 'rgb(221, 221, 221)' : 'rgb(87, 87, 87)';
-    // protected getAxisGridColor = (): string => this.isDarkTheme() ? 'rgb(100, 100, 100)' : 'rgb(219, 219, 219)';
-
     public destroy(): void {
         this.destroyChart();
     }
