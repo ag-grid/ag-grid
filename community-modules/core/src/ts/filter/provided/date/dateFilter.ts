@@ -122,9 +122,13 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
     protected resetUiToDefaults(silent?: boolean): AgPromise<void> {
         return super.resetUiToDefaults(silent).then(() => {
             this.dateCondition1FromComp.setDate(null);
+            this.dateCondition1FromComp.setDisabled(this.isReadOnly());
             this.dateCondition1ToComp.setDate(null);
+            this.dateCondition1ToComp.setDisabled(this.isReadOnly());
             this.dateCondition2FromComp.setDate(null);
+            this.dateCondition2FromComp.setDisabled(this.isReadOnly());
             this.dateCondition2ToComp.setDate(null);
+            this.dateCondition2ToComp.setDisabled(this.isReadOnly());
         });
     }
 

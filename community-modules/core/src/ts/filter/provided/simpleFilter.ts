@@ -317,22 +317,25 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
     }
 
     protected updateUiVisibility(): void {
-        const isCondition2Enabled = this.isCondition2Enabled();
-
+        const isCondition2Visible = this.isCondition2Enabled();
+        const isCondition2Disabled = this.isReadOnly() || !isCondition2Visible;
+    
         if (this.alwaysShowBothConditions) {
-            this.eJoinOperatorAnd.setDisabled(!isCondition2Enabled);
-            this.eJoinOperatorOr.setDisabled(!isCondition2Enabled);
-            this.eType2.setDisabled(!isCondition2Enabled);
-            setDisabled(this.eCondition2Body, !isCondition2Enabled);
+            this.eJoinOperatorAnd.setDisabled(isCondition2Disabled);
+            this.eJoinOperatorOr.setDisabled(isCondition2Disabled);
+            this.eType2.setDisabled(isCondition2Disabled);
+            setDisabled(this.eCondition2Body, isCondition2Disabled);
         } else {
-            setDisplayed(this.eJoinOperatorPanel, isCondition2Enabled);
-            setDisplayed(this.eType2.getGui(), isCondition2Enabled);
-            setDisplayed(this.eCondition2Body, isCondition2Enabled);
+            setDisplayed(this.eJoinOperatorPanel, isCondition2Visible);
+            setDisplayed(this.eType2.getGui(), isCondition2Visible);
+            setDisplayed(this.eCondition2Body, isCondition2Visible);
         }
     }
 
     protected isCondition2Enabled(): boolean {
-        return this.allowTwoConditions && this.isConditionUiComplete(ConditionPosition.One);
+        return this.allowTwoConditions && 
+            this.isConditionUiComplete(ConditionPosition.One) &&
+            (!this.isReadOnly() || this.isConditionUiComplete(ConditionPosition.Two));
     }
 
     protected resetUiToDefaults(silent?: boolean): AgPromise<void> {
@@ -341,18 +344,26 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
         const uniqueGroupId = 'ag-simple-filter-and-or-' + this.getCompId();
         const defaultOption = this.optionsFactory.getDefaultOption();
 
-        this.eType1.setValue(defaultOption, silent).setAriaLabel(filteringLabel);
-        this.eType2.setValue(defaultOption, silent).setAriaLabel(filteringLabel);
+        this.eType1
+            .setValue(defaultOption, silent)
+            .setAriaLabel(filteringLabel)
+            .setDisabled(this.isReadOnly());
+        this.eType2
+            .setValue(defaultOption, silent)
+            .setAriaLabel(filteringLabel)
+            .setDisabled(this.isReadOnly());
 
         this.eJoinOperatorAnd
             .setValue(this.isDefaultOperator('AND'), silent)
             .setName(uniqueGroupId)
-            .setLabel(this.translate('andCondition'));
+            .setLabel(this.translate('andCondition'))
+            .setDisabled(this.isReadOnly());
 
         this.eJoinOperatorOr
             .setValue(this.isDefaultOperator('OR'), silent)
             .setName(uniqueGroupId)
-            .setLabel(this.translate('orCondition'));
+            .setLabel(this.translate('orCondition'))
+            .setDisabled(this.isReadOnly());
 
         return AgPromise.resolve();
     }
@@ -362,6 +373,10 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
     }
 
     private addChangedListeners() {
+        if (this.isReadOnly()) {
+            return;
+        }
+
         const listener = () => this.onUiChanged();
         this.eType1.onValueChange(listener);
         this.eType2.onValueChange(listener);

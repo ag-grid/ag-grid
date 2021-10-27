@@ -15,7 +15,7 @@ export class AgRadioButton extends AgCheckbox {
     public toggle(): void {
         // do not allow an active radio button to be deselected
         if (!this.isSelected()) {
-            this.setValue(true);
+            super.toggle();
         }
     }
 

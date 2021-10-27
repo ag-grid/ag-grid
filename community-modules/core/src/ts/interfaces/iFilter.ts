@@ -156,6 +156,9 @@ export interface IFilterParams {
     columnApi: ColumnApi;
     /** The context as provided on `gridOptions.context` */
     context: any;
+    /** Defaults to false. If true, all UI inputs related to this filter are for display only, and
+     * the filter can only be affected by API calls. */
+    readOnly?: boolean;
 }
 
 /** @deprecated, use iFilter */

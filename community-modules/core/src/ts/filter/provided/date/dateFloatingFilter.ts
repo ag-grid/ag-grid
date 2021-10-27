@@ -72,7 +72,8 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
 
         super.setLastTypeFromModel(model);
 
-        const allowEditing = this.canWeEditAfterModelFromParentFilter(model);
+        const allowEditing = !this.isReadOnly() && 
+            this.canWeEditAfterModelFromParentFilter(model);
 
         this.setEditable(allowEditing);
 

@@ -131,3 +131,22 @@ The example below shows how you can interact with an individual filter instance,
 
 <grid-example title='Accessing Individual Filters' name='filter-api' type='generated' options='{ "enterprise": true, "exampleHeight": 624, "modules": ["clientside", "setfilter", "menu", "columnpanel"] }'></grid-example>
 
+## Read-only Filter UI
+
+Sometimes it maybe useful to strictly control the filters used by the grid via API, whilst still exposing filter settings in-use to users. The `readOnly` filter parameter changes the behaviour of all provided column filters so their UI is read-only. In this mode, API filter changes are still honoured and reflected in the UI:
+
+<snippet>
+const gridOptions = {
+    columnDefs: [
+        {
+            field: 'age',
+            filter: true,
+            filterParams: {
+                readOnly: true
+            }
+        }
+    ]
+}
+</snippet>
+
+<grid-example title='Read-only Filter UI' name='filter-api-readonly' type='generated' options='{ "enterprise": true, "exampleHeight": 624, "modules": ["clientside", "setfilter", "menu", "columnpanel"] }'></grid-example>

@@ -35,10 +35,14 @@ export class DefaultDateComponent extends Component implements IDateComp {
         }
 
         // ensures that the input element is focussed when a clear button is clicked
-        this.addManagedListener(inputElement, 'mousedown', () => inputElement.focus());
+        this.addManagedListener(inputElement, 'mousedown', () => {
+            if (this.eDateInput.isDisabled()) { return; }
+            inputElement.focus();
+        });
 
-        this.addManagedListener(this.eDateInput.getInputElement(), 'input', e => {
+        this.addManagedListener(inputElement, 'input', e => {
             if (e.target !== document.activeElement) { return; }
+            if (this.eDateInput.isDisabled()) { return; }
 
             params.onDateChanged();
         });
@@ -62,6 +66,10 @@ export class DefaultDateComponent extends Component implements IDateComp {
 
     public setInputPlaceholder(placeholder: string): void {
         this.eDateInput.setInputPlaceholder(placeholder);
+    }
+
+    public setDisabled(disabled: boolean): void {
+        this.eDateInput.setDisabled(disabled);
     }
 
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {

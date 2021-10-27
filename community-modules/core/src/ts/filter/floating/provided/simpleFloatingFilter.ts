@@ -21,6 +21,8 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
 
     private optionsFactory: OptionsFactory;
 
+    private readOnly: boolean;
+
     protected getDefaultDebounceMs(): number {
         return 0;
     }
@@ -68,6 +70,10 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
         return this.lastType;
     }
 
+    protected isReadOnly(): boolean {
+        return this.readOnly;
+    }
+
     protected setLastTypeFromModel(model: ProvidedFilterModel): void {
         // if no model provided by the parent filter use default
         if (!model) {
@@ -112,6 +118,7 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
         this.optionsFactory = new OptionsFactory();
         this.optionsFactory.init(params.filterParams as IScalarFilterParams, this.getDefaultFilterOptions());
         this.lastType = this.optionsFactory.getDefaultOption();
+        this.readOnly = !!params.filterParams.readOnly;
 
         // we are editable if:
         // 1) there is a type (user has configured filter wrong if not type)
@@ -127,8 +134,10 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
     }
 
     private isTypeEditable(type?: string | null): boolean {
-        return !!type && !this.doesFilterHaveHiddenInput(type) &&
-            type !== SimpleFilter.IN_RANGE
-            && type !== SimpleFilter.EMPTY;
+        return !!type &&
+            !this.isReadOnly() &&
+            !this.doesFilterHaveHiddenInput(type) &&
+            type !== SimpleFilter.IN_RANGE &&
+            type !== SimpleFilter.EMPTY;
     }
 }

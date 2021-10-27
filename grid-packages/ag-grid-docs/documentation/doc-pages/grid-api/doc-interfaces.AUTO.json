@@ -7308,6 +7308,10 @@
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }
+    },
+    "readOnly": {
+      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "type": { "returnType": "boolean", "optional": true }
     }
   },
   "IDateComparatorFunc": {},
@@ -7455,6 +7459,10 @@
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }
+    },
+    "readOnly": {
+      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "type": { "returnType": "boolean", "optional": true }
     }
   },
   "FilterButtonType": {},
@@ -7525,6 +7533,10 @@
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }
+    },
+    "readOnly": {
+      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "type": { "returnType": "boolean", "optional": true }
     }
   },
   "NullComparator": {
@@ -7646,6 +7658,10 @@
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }
+    },
+    "readOnly": {
+      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "type": { "returnType": "boolean", "optional": true }
     }
   },
   "Comparator": { "meta": { "typeParams": ["T"] } },
@@ -7740,6 +7756,10 @@
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }
+    },
+    "readOnly": {
+      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "type": { "returnType": "boolean", "optional": true }
     }
   },
   "ISimpleFilterModel": {
@@ -7883,6 +7903,10 @@
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }
+    },
+    "readOnly": {
+      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "type": { "returnType": "boolean", "optional": true }
     }
   },
   "GridParams": {
@@ -11959,6 +11983,10 @@
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }
+    },
+    "readOnly": {
+      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "type": { "returnType": "boolean", "optional": true }
     }
   },
   "Filter": {
@@ -13520,6 +13548,10 @@
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }
+    },
+    "readOnly": {
+      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "type": { "returnType": "boolean", "optional": true }
     }
   },
   "ISideBar": {
@@ -15795,6 +15827,14 @@
         "optional": false
       }
     },
+    "setDisabled": {
+      "description": "/** Sets the disabled state of this component */",
+      "type": {
+        "arguments": { "disabled": "boolean" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
     "setInputPlaceholder": {
       "type": {
         "arguments": { "placeholder": "string" },
@@ -15860,6 +15900,14 @@
       "description": "/** Sets the date represented by this component */",
       "type": {
         "arguments": { "date": "Date | null" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "setDisabled": {
+      "description": "/** Sets the disabled state of this component */",
+      "type": {
+        "arguments": { "disabled": "boolean" },
         "returnType": "void",
         "optional": false
       }
@@ -16865,6 +16913,10 @@
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }
+    },
+    "readOnly": {
+      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "type": { "returnType": "boolean", "optional": true }
     }
   },
   "IMultiFilterModel": {

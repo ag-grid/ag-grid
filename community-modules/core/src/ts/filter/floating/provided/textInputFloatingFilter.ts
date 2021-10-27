@@ -50,20 +50,23 @@ export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
         this.params = params;
         this.applyActive = ProvidedFilter.isUseApplyButton(this.params.filterParams);
 
-        const debounceMs = ProvidedFilter.getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
-        const toDebounce: () => void = debounce(this.syncUpWithParentFilter.bind(this), debounceMs);
-        const filterGui = this.eFloatingFilterInput.getGui();
+        if (!this.isReadOnly()) {
+            const debounceMs = ProvidedFilter.getDebounceMs(this.params.filterParams, this.getDefaultDebounceMs());
+            const toDebounce: () => void = debounce(this.syncUpWithParentFilter.bind(this), debounceMs);
+            const filterGui = this.eFloatingFilterInput.getGui();
 
-        this.addManagedListener(filterGui, 'input', toDebounce);
-        this.addManagedListener(filterGui, 'keypress', toDebounce);
-        this.addManagedListener(filterGui, 'keydown', toDebounce);
+            this.addManagedListener(filterGui, 'input', toDebounce);
+            this.addManagedListener(filterGui, 'keypress', toDebounce);
+            this.addManagedListener(filterGui, 'keydown', toDebounce);
+        }
 
         const columnDef = (params.column.getDefinition() as any);
 
-        if (columnDef.filterParams &&
+        if (this.isReadOnly() || (
+            columnDef.filterParams &&
             columnDef.filterParams.filterOptions &&
             columnDef.filterParams.filterOptions.length === 1 &&
-            columnDef.filterParams.filterOptions[0] === 'inRange') {
+            columnDef.filterParams.filterOptions[0] === 'inRange')) {
             this.eFloatingFilterInput.setDisabled(true);
         }
 

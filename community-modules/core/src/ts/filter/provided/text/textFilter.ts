@@ -174,7 +174,10 @@ export class TextFilter extends SimpleFilter<TextFilterModel> {
 
     protected resetUiToDefaults(silent?: boolean): AgPromise<void> {
         return super.resetUiToDefaults(silent).then(() => {
-            this.forEachInput(field => field.setValue(null, silent));
+            this.forEachInput(field => {
+                field.setValue(null, silent)
+                    .setDisabled(this.isReadOnly());
+            });
             this.resetPlaceholder();
         });
     }
