@@ -79,8 +79,8 @@ export class PieSeriesPanel extends Component {
             .setLabel(this.chartTranslator.translate("strokeWidth"))
             .setMaxValue(10)
             .setTextFieldWidth(45)
-            .setValue(this.chartOptionsService.getSeriesOption("stroke.width"))
-            .onValueChange(newValue => this.chartOptionsService.setSeriesOption("stroke.width", newValue));
+            .setValue(this.chartOptionsService.getSeriesOption("strokeWidth"))
+            .onValueChange(newValue => this.chartOptionsService.setSeriesOption("strokeWidth", newValue));
     }
 
     private initOpacity() {
@@ -89,8 +89,8 @@ export class PieSeriesPanel extends Component {
             .setStep(0.05)
             .setMaxValue(1)
             .setTextFieldWidth(45)
-            .setValue(this.chartOptionsService.getSeriesOption("stroke.opacity") || "1")
-            .onValueChange(newValue => this.chartOptionsService.setSeriesOption("stroke.opacity", newValue));
+            .setValue(this.chartOptionsService.getSeriesOption("strokeOpacity") || "1")
+            .onValueChange(newValue => this.chartOptionsService.setSeriesOption("strokeOpacity", newValue));
 
         this.seriesFillOpacitySlider
             .setLabel(this.chartTranslator.translate("fillOpacity"))

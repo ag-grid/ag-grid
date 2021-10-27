@@ -92,8 +92,8 @@ export class HistogramSeriesPanel extends Component {
             .setLabel(this.chartTranslator.translate("strokeWidth"))
             .setMaxValue(10)
             .setTextFieldWidth(45)
-            .setValue(this.chartOptionsService.getSeriesOption("stroke.width"))
-            .onValueChange(newValue => this.chartOptionsService.setSeriesOption("stroke.width", newValue));
+            .setValue(this.chartOptionsService.getSeriesOption("strokeWidth"))
+            .onValueChange(newValue => this.chartOptionsService.setSeriesOption("strokeWidth", newValue));
     }
 
     private initSeriesLineDash() {
