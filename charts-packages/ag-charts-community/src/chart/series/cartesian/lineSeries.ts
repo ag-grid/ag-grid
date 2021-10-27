@@ -84,7 +84,7 @@ export class LineSeries extends CartesianSeries {
     @reactive('layoutChange') title?: string;
 
     @reactive('update') stroke?: string = '#874349';
-    @reactive('update') lineDash?: number[] = undefined;
+    @reactive('update') lineDash?: number[] = [0];
     @reactive('update') lineDashOffset: number = 0;
     @reactive('update') strokeWidth: number = 2;
     @reactive('update') strokeOpacity: number = 1;
