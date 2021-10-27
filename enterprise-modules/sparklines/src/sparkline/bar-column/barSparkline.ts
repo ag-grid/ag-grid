@@ -91,7 +91,7 @@ export class BarSparkline extends BarColumnSparkline {
             if (labelFormatter) {
                 labelText = labelFormatter({ value: yDatum });
             } else {
-                labelText = yDatum !== undefined && isNumber(yDatum) ? yDatum.toFixed(1) : '';
+                labelText = yDatum !== undefined && isNumber(yDatum) ? this.formatLabelValue(yDatum) : '';
             }
 
             const labelY: number = y + (height / 2);

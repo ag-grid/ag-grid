@@ -272,4 +272,8 @@ export abstract class BarColumnSparkline extends Sparkline {
 
         return toTooltipHtml(defaults);
     }
+
+    protected formatLabelValue(value: number): string {
+        return value % 1 !== 0 ? value.toFixed(1) : value.toFixed(0)
+    }
 }
