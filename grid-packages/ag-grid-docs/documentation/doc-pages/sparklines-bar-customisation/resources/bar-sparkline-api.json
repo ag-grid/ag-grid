@@ -63,11 +63,7 @@
                 "normal",
                 "italic",
                 "oblique"
-            ],
-            "more": {
-                "name": "FontStyle",
-                "url": "/sparklines-bar-customisation/#fontstyle"
-            }
+            ]
         },
         "fontWeight": {
             "description": "Set how thick or thin characters in label text should be displayed.",
@@ -86,11 +82,7 @@
                 "700",
                 "800",
                 "900"
-            ],
-            "more": {
-                "name": "FontWeight",
-                "url": "/sparklines-bar-customisation/#fontweight"
-            }
+            ]
         },
         "color": {
             "description": "Set the color of the label text. The color can be specified by a color name, a HEX or an RGB value.",
