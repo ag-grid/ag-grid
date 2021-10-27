@@ -95,14 +95,14 @@ export class TitleEdit extends Component {
         const inputStyle = inputElement.style;
 
         // match style of input to title that we're editing
-        inputStyle.fontFamily = this.chartOptionsService.getTitleOption('title.fontFamily');
-        inputStyle.fontWeight = this.chartOptionsService.getTitleOption('title.fontWeight');
-        inputStyle.fontStyle = this.chartOptionsService.getTitleOption('title.fontStyle');
-        inputStyle.fontSize = this.chartOptionsService.getTitleOption('title.fontSize') + 'px';
-        inputStyle.color = this.chartOptionsService.getTitleOption('title.color');
+        inputStyle.fontFamily = this.chartOptionsService.getChartOption('title.fontFamily');
+        inputStyle.fontWeight = this.chartOptionsService.getChartOption('title.fontWeight');
+        inputStyle.fontStyle = this.chartOptionsService.getChartOption('title.fontStyle');
+        inputStyle.fontSize = this.chartOptionsService.getChartOption('title.fontSize') + 'px';
+        inputStyle.color = this.chartOptionsService.getChartOption('title.color');
 
         // populate the input with the title, unless the title is the placeholder:
-        const oldTitle = this.chartOptionsService.getTitleOption('title.text');
+        const oldTitle = this.chartOptionsService.getChartOption('title.text');
         const inputValue = oldTitle === this.chartTranslator.translate('titlePlaceholder') ? '' : oldTitle;
         inputElement.value = inputValue;
 
@@ -118,7 +118,7 @@ export class TitleEdit extends Component {
     private endEditing(): void {
         const value = (this.getGui() as HTMLInputElement).value;
 
-        this.chartOptionsService.setTitleOption('title.text', value);
+        this.chartOptionsService.setChartOption('title.text', value);
 
         this.eventService.dispatchEvent({type: 'chartTitleEdit'});
 

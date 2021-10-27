@@ -28,6 +28,14 @@ export class ChartOptionsService extends BeanStub {
     private init(): void {
     }
 
+    private getChart() {
+        return this.chartController.getChartProxy().getChart();
+    }
+
+    private getChartOptions() {
+        return this.chartController.getChartProxy().getChartOptions();
+    }
+
     public getChartType(): ChartType {
         return this.chartController.getChartType();
     }
@@ -39,54 +47,12 @@ export class ChartOptionsService extends BeanStub {
     public setChartOption(expression: string, value: any): void {
         const [chart, chartOptions] = [this.getChart(), this.getChartOptions()];
 
-        if (_.get(chart, expression, undefined) === value) {
-            // option is already set to the specified value
-            return;
-        }
+        if (_.get(chart, expression, undefined) === value) { return; }
 
-        _.set(chartOptions.overrides.cartesian, expression, value); //TODO
+        _.set(this.extractChartOptions(chartOptions), expression, value);
         _.set(chart, expression, value);
 
         this.raiseChartOptionsChangedEvent();
-    }
-
-    // public setTitleOption(property: keyof any, value: any) {
-    //     if (_.get(this.iChartOptions.title, property, undefined) === value) {
-    //         // option is already set to the specified value
-    //         return;
-    //     }
-    //
-    //     (this.iChartOptions.title as any)[property] = value;
-    //
-    //     if (!this.chart.title) {
-    //         this.chart.title = {} as Caption;
-    //     }
-    //
-    //     (this.chart.title as any)[property] = value;
-    //
-    //     if (property === 'text') {
-    //         this.setTitleOption('enabled', _.exists(value));
-    //     }
-    //
-    //     this.raiseChartOptionsChangedEvent();
-    // }
-
-
-    public setTitleOption(expression: string, value: any): void {
-        const [chart, chartOptions] = [this.getChart(), this.getChartOptions()];
-        if (_.get(chart, expression, undefined) === value) {
-            // option is already set to the specified value
-            return;
-        }
-
-        _.set(chartOptions.overrides.common, expression, value);
-        _.set(chart, expression, value);
-
-        this.raiseChartOptionsChangedEvent();
-    }
-
-    public getTitleOption(expression: string) {
-        return _.get(this.getChart(), expression, undefined);
     }
 
     public getAxisProperty<T = string>(expression: string): T {
@@ -98,7 +64,7 @@ export class ChartOptionsService extends BeanStub {
 
         chart.axes.forEach((axis: any) => {
             // update axis options
-            this.updateAxisOptions(axis, expression, value);
+            this.updateAxisOption(axis, expression, value);
 
             // update chart
             _.set(axis, expression, value)
@@ -120,7 +86,7 @@ export class ChartOptionsService extends BeanStub {
 
         // update axis options
         const chartAxis = this.getAxis(axisType);
-        this.updateAxisOptions(chartAxis, expression, value);
+        this.updateAxisOption(chartAxis, expression, value);
 
         // update chart
         _.set(chartAxis, expression, value);
@@ -131,66 +97,18 @@ export class ChartOptionsService extends BeanStub {
         this.raiseChartOptionsChangedEvent();
     }
 
-    private updateAxisOptions(chartAxis: any, expression: string, value: any) {
-        const chartOptions = this.getChartOptions();
-        let axesOptions = this.getAxesObject(chartOptions);
-        if (chartAxis instanceof NumberAxis) {
-            _.set(axesOptions.number, expression, value);
-        } else if (chartAxis instanceof CategoryAxis) {
-            _.set(axesOptions.category, expression, value);
-        } else if (chartAxis instanceof TimeAxis) {
-            _.set(axesOptions.time, expression, value);
-        } else if (chartAxis instanceof GroupedCategoryAxis) {
-            _.set(axesOptions.groupedCategory, expression, value);
-        }
-    }
-
-    private getAxesObject(chartOptions: any) {
-        const optionsType = getStandaloneChartType(this.getChartType());
-        if (optionsType === 'bar') {
-            return chartOptions.overrides.bar.axes;
-        } else if (optionsType === 'column') {
-            return chartOptions.overrides.column.axes;
-        } else if (optionsType === 'line') {
-            return chartOptions.overrides.line.axes;
-        } else if (optionsType === 'scatter') {
-            return chartOptions.overrides.scatter.axes;
-        } else if (optionsType === 'histogram') {
-            return chartOptions.overrides.histogram.axes;
-        }
-    }
-
-    private getAxis(axisType: string) {
-        const chart = this.getChart();
-        if (axisType === 'xAxis') {
-            return chart.axes[0].direction === 'x' ? chart.axes[0] : chart.axes[1];
-        }
-        return chart.axes[1].direction === 'y' ? chart.axes[1] : chart.axes[0];
-    }
-
     public getSeriesOption<T = string>(expression: string): T {
-        // return _.get(this.options.seriesDefaults, expression, undefined) as T;
-        return undefined!;
+        return _.get(this.getChart().series[0], expression, undefined) as T;
     }
 
     public setSeriesOption(expression: string, value: any): void {
-        // if (_.get(this.options.seriesDefaults, expression, undefined) === value) {
-        //     // option is already set to the specified value
-        //     return;
-        // }
-        //
-        // _.set(this.options.seriesDefaults, expression, value);
-        //
-        // const mappings: { [key: string]: string; } = {
-        //     'stroke.width': 'strokeWidth',
-        //     'stroke.opacity': 'strokeOpacity',
-        //     'fill.opacity': 'fillOpacity',
-        // };
-        //
-        // const series = this.chart.series;
-        // series.forEach(s => _.set(s, mappings[expression] || expression, value));
-        //
-        // this.raiseChartOptionsChangedEvent();
+        // update chart series options
+        _.set(this.getSeriesOptions(), expression, value);
+
+        // update chart
+        this.getChart().series.forEach((s: any) => _.set(s, expression, value));
+
+        this.raiseChartOptionsChangedEvent();
     }
 
     public getShadowEnabled = (): boolean => !!this.getShadowProperty('enabled');
@@ -240,7 +158,47 @@ export class ChartOptionsService extends BeanStub {
         // this.raiseChartOptionsChangedEvent();
     }
 
-    public raiseChartOptionsChangedEvent(): void {
+    private getAxis(axisType: string) {
+        const chart = this.getChart();
+        if (axisType === 'xAxis') {
+            return (chart.axes && chart.axes[0].direction === 'x') ? chart.axes[0] : chart.axes[1];
+        }
+        return (chart.axes && chart.axes[1].direction === 'y') ? chart.axes[1] : chart.axes[0];
+    }
+
+    private getAxesOptions() {
+        const optionsType = getStandaloneChartType(this.getChartType());
+        const options = _.get(this.getChartOptions().overrides, optionsType, undefined);
+        return options ? options.axes : undefined;
+    }
+
+    private updateAxisOption(chartAxis: any, expression: string, value: any) {
+        let axesOptions = this.getAxesOptions();
+        if (chartAxis instanceof NumberAxis) {
+            _.set(axesOptions.number, expression, value);
+        } else if (chartAxis instanceof CategoryAxis) {
+            _.set(axesOptions.category, expression, value);
+        } else if (chartAxis instanceof TimeAxis) {
+            _.set(axesOptions.time, expression, value);
+        } else if (chartAxis instanceof GroupedCategoryAxis) {
+            _.set(axesOptions.groupedCategory, expression, value);
+        }
+    }
+
+    private getSeriesOptions() {
+        const optionsType = getStandaloneChartType(this.getChartType());
+        const expression = `${optionsType}.series.${optionsType}`;
+        return _.get(this.getChartOptions().overrides, expression, undefined);
+    }
+
+    private extractChartOptions(chartOptions: any) {
+        // TODO: remove this workaround once bug in standalone themes is fixed - this won't work if users override in
+        //  lower level objects such as 'bar', 'pie' etc...
+        const chartType = getStandaloneChartType(this.getChartType());
+        return chartType === 'pie' ? chartOptions.overrides.polar : chartOptions.overrides.cartesian;
+    }
+
+    private raiseChartOptionsChangedEvent(): void {
         const chartModel = this.chartController.getChartModel();
 
         const event: ChartOptionsChanged = Object.freeze({
@@ -253,14 +211,6 @@ export class ChartOptionsService extends BeanStub {
         });
 
         this.eventService.dispatchEvent(event);
-    }
-
-    private getChart() {
-        return this.chartController.getChartProxy().getChart();
-    }
-
-    private getChartOptions() {
-        return this.chartController.getChartProxy().getChartOptions();
     }
 
     protected destroy(): void {

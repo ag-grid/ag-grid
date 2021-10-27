@@ -66,7 +66,8 @@ export class BarChartProxy extends CartesianChartProxy<any> {
         }];
 
         agChartOptions.container = this.chartProxyParams.parentElement;
-        return AgChart.create(agChartOptions);
+        const res = AgChart.create(agChartOptions);
+        return res;
     }
 
     public update(params: UpdateChartParams): void {
