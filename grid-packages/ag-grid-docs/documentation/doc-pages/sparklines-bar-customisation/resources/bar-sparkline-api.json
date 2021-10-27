@@ -8,6 +8,14 @@
                 "name": "SparklineAxisOptions",
                 "url": "/sparklines-bar-customisation/#sparklineaxisoptions"
             }
+        },
+        "label": {
+            "description": "Configuration for the labels.",
+            "type": "SparklineLabel",
+            "more": {
+                "name": "SparklineLabel",
+                "url": "/sparklines-bar-customisation/#sparklinelabel"
+            }
         }
     },
     "SparklineAxisOptions": {
@@ -15,7 +23,11 @@
             "description": "The type of the x-axis.",
             "type": "string",
             "default": "category",
-            "options": ["category", "number", "time"]
+            "options": [
+                "category",
+                "number",
+                "time"
+            ]
         },
         "stroke": {
             "description": "The CSS colour value for the outline of the horizontal axis line.",
@@ -26,6 +38,83 @@
             "description": "The thickness in pixels for the stroke of the horizontal axis line.",
             "type": "number",
             "default": 1
+        }
+    },
+    "SparklineLabel": {
+        "enabled": {
+            "description": "Set to true to enable labels.",
+            "type": "boolean",
+            "default": "false"
+        },
+        "fontSize": {
+            "description": "Set size of the font.",
+            "type": "number",
+            "default": 8
+        },
+        "fontFamily": {
+            "description": "Specify the font for the label text.",
+            "type": "string",
+            "default": "Verdana, sans-serif"
+        },
+        "fontStyle": {
+            "description": "Specify the font style for the label text.",
+            "type": "FontStyle",
+            "options": [
+                "normal",
+                "italic",
+                "oblique"
+            ],
+            "more": {
+                "name": "FontStyle",
+                "url": "/sparklines-bar-customisation/#fontstyle"
+            }
+        },
+        "fontWeight": {
+            "description": "Set how thick or thin characters in label text should be displayed.",
+            "type": "FontWeight",
+            "options": [
+                "normal",
+                "bold",
+                "bolder",
+                "lighter",
+                "100",
+                "200",
+                "300",
+                "400",
+                "500",
+                "600",
+                "700",
+                "800",
+                "900"
+            ],
+            "more": {
+                "name": "FontWeight",
+                "url": "/sparklines-bar-customisation/#fontweight"
+            }
+        },
+        "color": {
+            "description": "Set the color of the label text. The color can be specified by a color name, a HEX or an RGB value.",
+            "type": "string",
+            "default": "rgba(70, 70, 70, 1)"
+        },
+        "formatter": {
+            "type": {
+                "parameters": {
+                    "value": "number"
+                },
+                "returnType": "string"
+            },
+            "description": "A callback function to return the text to be displayed as the label, based on the value represented by the column or bar. By default the values are simply stringified."
+        },
+        "placement": {
+            "description": "Where to render labels relative to the segments.",
+            "default": "outsideEnd",
+            "options": [
+                "insideBase",
+                "insideEnd",
+                "center",
+                "outsideEnd"
+            ]
         }
     }
 }

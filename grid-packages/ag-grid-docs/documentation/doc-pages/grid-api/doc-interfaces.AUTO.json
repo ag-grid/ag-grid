@@ -13803,6 +13803,10 @@
       "description": "/** A callback function to return format styles of type ColumnFormat, based on the data represented by individual columns. */",
       "type": { "returnType": "SparklineColumnFormatter", "optional": true }
     },
+    "label": {
+      "description": "/** Configuration for the labels. */",
+      "type": { "returnType": "SparklineLabel", "optional": true }
+    },
     "xKey": {
       "description": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
       "type": { "returnType": "string", "optional": true }
@@ -13854,10 +13858,77 @@
       "type": { "returnType": "number", "optional": true }
     },
     "formatter": {
-      "description": "/** A callback function to return format styles of type ColumnFormat, based on the data represented by individual bars. */",
+      "description": "/** A callback function to return format styles of type BarFormat, based on the data represented by individual bars. */",
       "type": { "returnType": "SparklineBarFormatter", "optional": true }
+    },
+    "label": {
+      "description": "/** Configuration for the labels. */",
+      "type": { "returnType": "SparklineLabel", "optional": true }
+    },
+    "xKey": {
+      "description": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "yKey": {
+      "description": "/** The key to use to retrieve Y values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "padding": {
+      "description": "/** Configuration for the padding in pixels shown around the sparklines. */",
+      "type": { "returnType": "Padding", "optional": true }
+    },
+    "axis": {
+      "description": "/** The options for the x-axis in the sparklines. */",
+      "type": { "returnType": "SparklineAxisOptions", "optional": true }
+    },
+    "highlightStyle": {
+      "description": "/** The configuration for the highlighting used when the items are hovered over. */",
+      "type": { "returnType": "HighlightStyle", "optional": true }
+    },
+    "tooltip": {
+      "description": "/** Configuration for the tooltips. */",
+      "type": { "returnType": "SparklineTooltip", "optional": true }
     }
   },
+  "SparklineLabel": {
+    "enabled": {
+      "description": "/** Set to true to enable labels. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "fontSize": {
+      "description": "/** Set size of the font. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "fontFamily": {
+      "description": "/** Specify the font for the label text. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "fontStyle": {
+      "description": "/** Specify the font style for the label text. */",
+      "type": { "returnType": "FontStyle", "optional": true }
+    },
+    "fontWeight": {
+      "description": "/** Set how thick or thin characters in label text should be displayed. */",
+      "type": { "returnType": "FontWeight", "optional": true }
+    },
+    "color": {
+      "description": "/** Set the color of the label text. The color can be specified by a color name, a HEX or an RGB value. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "formatter": {
+      "description": "/** A callback function to return the text to be displayed as the label, based on the value represented by the column or bar. By default the values are simply stringified. */",
+      "type": {
+        "arguments": { "params": "{ value: number | undefined; }" },
+        "returnType": "string",
+        "optional": true
+      }
+    },
+    "placement": {
+      "description": "/** Where to render labels relative to the segments. */",
+      "type": { "returnType": "BarColumnLabelPlacement", "optional": false }
+    }
+  },
+  "BarColumnLabelPlacement": {},
   "Padding": {
     "top": {
       "description": "/** The number of pixels of padding at the top of the sparkline area.\n * Default: `3` */",
