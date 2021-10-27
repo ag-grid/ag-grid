@@ -16688,6 +16688,8 @@
       "type": { "returnType": "SetFilterModelValue", "optional": false }
     }
   },
+  "ValueType": {},
+  "ValueTestCase": { "meta": { "typeParams": ["T"] } },
   "SetFilterModelValuesType": {},
   "ToolPanelFiltersCompParams": {
     "suppressExpandAll": {
