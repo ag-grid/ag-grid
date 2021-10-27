@@ -43,7 +43,7 @@ var gridOptions = {
     // tell grid we want virtual row model type
     rowModelType: 'infinite',
     // how big each page in our page cache will be, default is 100
-    paginationPageSize: 100,
+    cacheBlockSize: 100,
     // how many extra blank rows to display to the user at the end of the dataset,
     // which sets the vertical scroll and then allows the grid to request viewing more rows of data.
     // default is 1, ie show 1 row.
