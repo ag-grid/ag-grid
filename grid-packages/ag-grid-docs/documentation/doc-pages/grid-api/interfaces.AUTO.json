@@ -9507,14 +9507,6 @@
     "meta": {},
     "type": { "filterType?": "'set'", "values": "SetFilterModelValue" }
   },
-  "ValueType": {
-    "meta": { "isTypeAlias": true },
-    "type": "string | number | boolean | Date"
-  },
-  "ValueTestCase": {
-    "meta": { "isTypeAlias": true, "typeParams": ["T"] },
-    "type": "{ values: T[]; distinctValues: string[]; distinctCaseInsensitiveValues?: T[]; valueFormatter?: ValueFormatterFunc; }"
-  },
   "SetFilterModelValuesType": {
     "meta": { "isEnum": true },
     "type": ["PROVIDED_LIST", "PROVIDED_CALLBACK", "TAKEN_FROM_GRID_VALUES"],

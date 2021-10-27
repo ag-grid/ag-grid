@@ -10,11 +10,16 @@ const formatNode = getFormatterForTS(ts);
 
 const EVENT_LOOKUP = ComponentUtil.getEventCallbacks();
 
+function buildGlob(basePath) {
+    const opts = { ignore: [`${basePath}/**/*.test.ts`, `${basePath}/**/*.spec.ts`]};
+    return glob.sync(`${basePath}/**/*.ts`, opts);
+}
+
 const INTERFACE_GLOBS = [
-    ...glob.sync('../core/src/ts/**/*.ts'),
-    ...glob.sync('../../enterprise-modules/set-filter/src/**/*.ts'),
-    ...glob.sync('../../enterprise-modules/filter-tool-panel/src/**/*.ts'),
-    ...glob.sync('../../enterprise-modules/multi-filter/src/**/*.ts')
+    ...buildGlob('../core/src/ts'),
+    ...buildGlob('../../enterprise-modules/set-filter/src'),
+    ...buildGlob('../../enterprise-modules/filter-tool-panel/src'),
+    ...buildGlob('../../enterprise-modules/multi-filter/src')
 ];
 
 function findAllInNodesTree(node) {
