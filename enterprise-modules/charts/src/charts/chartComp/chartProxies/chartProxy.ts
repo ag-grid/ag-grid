@@ -186,34 +186,8 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends any> {
         return this.chartOptions;
     }
 
-    private isDarkTheme = () => this.chartProxyParams.isDarkTheme();
-
-    protected getFontColor = (): string => this.isDarkTheme() ? 'rgb(221, 221, 221)' : 'rgb(87, 87, 87)';
-
-    protected getAxisGridColor = (): string => this.isDarkTheme() ? 'rgb(100, 100, 100)' : 'rgb(219, 219, 219)';
-
     public getCustomPalette(): AgChartThemePalette | undefined {
         return this.customPalette;
-    }
-
-    protected getDefaultFontOptions(): any {
-        return {
-            fontStyle: 'normal',
-            fontWeight: 'normal',
-            fontSize: 12,
-            fontFamily: 'Verdana, sans-serif',
-            color: this.getFontColor()
-        };
-    }
-
-    protected getDefaultDropShadowOptions(): any {
-        return {
-            enabled: false,
-            blur: 5,
-            xOffset: 3,
-            yOffset: 3,
-            color: 'rgba(0, 0, 0, 0.5)',
-        };
     }
 
     protected getPredefinedPalette(): AgChartThemePalette {
@@ -254,6 +228,11 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends any> {
             return new Color(c.r, c.g, c.b, alpha).toHexString();
         });
     }
+
+    // TODO: implement theme switching options updates
+    // private isDarkTheme = () => this.chartProxyParams.isDarkTheme();
+    // protected getFontColor = (): string => this.isDarkTheme() ? 'rgb(221, 221, 221)' : 'rgb(87, 87, 87)';
+    // protected getAxisGridColor = (): string => this.isDarkTheme() ? 'rgb(100, 100, 100)' : 'rgb(219, 219, 219)';
 
     public destroy(): void {
         this.destroyChart();

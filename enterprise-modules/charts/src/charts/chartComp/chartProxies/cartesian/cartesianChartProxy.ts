@@ -123,38 +123,6 @@ export abstract class CartesianChartProxy<T extends any> extends ChartProxy<Cart
         }
     }
 
-    protected getDefaultAxisOptions(): any {
-        const fontOptions = this.getDefaultFontOptions();
-        const stroke = this.getAxisGridColor();
-        const axisColor = "rgba(195, 195, 195, 1)";
-
-        return {
-            title: {
-                ...fontOptions,
-                enabled: false,
-                fontSize: 14,
-            },
-            line: {
-                color: axisColor,
-                width: 1,
-            },
-            tick: {
-                color: axisColor,
-                size: 6,
-                width: 1,
-            },
-            label: {
-                ...fontOptions,
-                padding: 5,
-                rotation: 0,
-            },
-            gridStyle: [{
-                stroke,
-                lineDash: [4, 2]
-            }]
-        };
-    }
-
     protected axisTypeToClassMap: { [key in string]: any } = {
         number: NumberAxis,
         category: CategoryAxis,
