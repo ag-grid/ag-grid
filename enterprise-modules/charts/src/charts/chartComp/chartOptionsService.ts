@@ -28,18 +28,6 @@ export class ChartOptionsService extends BeanStub {
     private init(): void {
     }
 
-    private getChart() {
-        return this.chartController.getChartProxy().getChart();
-    }
-
-    private getChartOptions() {
-        return this.chartController.getChartProxy().getChartOptions();
-    }
-
-    public getChartType(): ChartType {
-        return this.chartController.getChartType();
-    }
-
     public getChartOption<T = string>(expression: string): T {
         return _.get(this.getChart(), expression, undefined) as T;
     }
@@ -47,9 +35,10 @@ export class ChartOptionsService extends BeanStub {
     public setChartOption(expression: string, value: any): void {
         const [chart, chartOptions] = [this.getChart(), this.getChartOptions()];
 
-        if (_.get(chart, expression, undefined) === value) { return; }
-
+        // update chart options
         _.set(this.extractChartOptions(chartOptions), expression, value);
+
+        // update chart
         _.set(chart, expression, value);
 
         this.raiseChartOptionsChangedEvent();
@@ -64,9 +53,9 @@ export class ChartOptionsService extends BeanStub {
 
         chart.axes.forEach((axis: any) => {
             // update axis options
-            this.updateAxisOption(axis, expression, value);
+            this.updateAxisOptions(axis, expression, value);
 
-            // update chart
+            // update chart axis
             _.set(axis, expression, value)
         });
 
@@ -86,7 +75,7 @@ export class ChartOptionsService extends BeanStub {
 
         // update axis options
         const chartAxis = this.getAxis(axisType);
-        this.updateAxisOption(chartAxis, expression, value);
+        this.updateAxisOptions(chartAxis, expression, value);
 
         // update chart
         _.set(chartAxis, expression, value);
@@ -111,51 +100,16 @@ export class ChartOptionsService extends BeanStub {
         this.raiseChartOptionsChangedEvent();
     }
 
-    public getShadowEnabled = (): boolean => !!this.getShadowProperty('enabled');
-
-    public getShadowProperty(property: keyof any): any {
-        // const { seriesDefaults } = this.mergedThemeOverrides;
-        // return seriesDefaults.shadow ? seriesDefaults.shadow[property] : '';
-        return '';
+    private getChart() {
+        return this.chartController.getChartProxy().getChart();
     }
 
-    public setShadowProperty(property: keyof any, value: any): void {
-        // const { seriesDefaults } = this.iChartOptions;
-        //
-        // if (_.get(seriesDefaults.shadow, property, undefined) === value) {
-        //     // option is already set to the specified value
-        //     return;
-        // }
-        //
-        // if (!seriesDefaults.shadow) {
-        //     seriesDefaults.shadow = {
-        //         enabled: false,
-        //         blur: 0,
-        //         xOffset: 0,
-        //         yOffset: 0,
-        //         color: 'rgba(0,0,0,0.5)'
-        //     };
-        // }
-        //
-        // seriesDefaults.shadow[property] = value;
-        //
-        // const series = this.getChart().series as (BarSeries | AreaSeries | PieSeries)[];
-        //
-        // series.forEach(s => {
-        //     if (!s.shadow) {
-        //         const shadow = new DropShadow();
-        //         shadow.enabled = false;
-        //         shadow.blur = 0;
-        //         shadow.xOffset = 0;
-        //         shadow.yOffset = 0;
-        //         shadow.color = 'rgba(0,0,0,0.5)';
-        //         s.shadow = shadow;
-        //     }
-        //
-        //     (s.shadow as any)[property] = value;
-        // });
-        //
-        // this.raiseChartOptionsChangedEvent();
+    private getChartOptions() {
+        return this.chartController.getChartProxy().getChartOptions();
+    }
+
+    public getChartType(): ChartType {
+        return this.chartController.getChartType();
     }
 
     private getAxis(axisType: string) {
@@ -172,7 +126,7 @@ export class ChartOptionsService extends BeanStub {
         return options ? options.axes : undefined;
     }
 
-    private updateAxisOption(chartAxis: any, expression: string, value: any) {
+    private updateAxisOptions(chartAxis: any, expression: string, value: any) {
         let axesOptions = this.getAxesOptions();
         if (chartAxis instanceof NumberAxis) {
             _.set(axesOptions.number, expression, value);
