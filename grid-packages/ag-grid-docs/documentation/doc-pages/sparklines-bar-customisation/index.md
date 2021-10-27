@@ -214,6 +214,11 @@ More advanced customisations are discussed separately in the following sections:
 
 <api-documentation source='sparklines-bar-customisation/resources/bar-sparkline-api.json' section='SparklineAxisOptions'></api-documentation>
 
+### SparklineLabel
+
+<api-documentation source='sparklines-bar-customisation/resources/bar-sparkline-api.json' section='SparklineLabel'></api-documentation>
+
+
 ## Next Up
 
 Continue to the next section to learn about: [Area Sparkline Customisation](/sparklines-area-customisation/).

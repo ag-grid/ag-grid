@@ -7686,6 +7686,7 @@
       "paddingInner?": "number",
       "paddingOuter?": "number",
       "formatter?": "SparklineColumnFormatter",
+      "label?": "SparklineLabel",
       "xKey?": "string",
       "yKey?": "string",
       "padding?": "Padding",
@@ -7701,6 +7702,7 @@
       "paddingInner?": "/** The size of the gap between the columns as a proportion, between 0 and 1. This value is a fraction of the “step”, which is the interval between the start of a band and the start of the next band.\n * Default: `0.1` */",
       "paddingOuter?": "/** The padding on the outside i.e. left and right of the first and last columns, to leave some room for the axis. In association with `paddingInner`, this value can be between 0 and 1.\n * Default: `0.2` */",
       "formatter?": "/** A callback function to return format styles of type ColumnFormat, based on the data represented by individual columns. */",
+      "label?": "/** Configuration for the labels. */",
       "xKey?": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
       "yKey?": "/** The key to use to retrieve Y values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
@@ -7718,7 +7720,14 @@
       "strokeWidth?": "number",
       "paddingInner?": "number",
       "paddingOuter?": "number",
-      "formatter?": "SparklineBarFormatter"
+      "formatter?": "SparklineBarFormatter",
+      "label?": "SparklineLabel",
+      "xKey?": "string",
+      "yKey?": "string",
+      "padding?": "Padding",
+      "axis?": "SparklineAxisOptions",
+      "highlightStyle?": "HighlightStyle",
+      "tooltip?": "SparklineTooltip"
     },
     "docs": {
       "type?": "/** The type of sparklines to create, in this case it would be `'bar'`. */",
@@ -7727,8 +7736,48 @@
       "strokeWidth?": "/** The thickness in pixels for the stroke of the bars.\n * Default: `0` */",
       "paddingInner?": "/** The size of the gap between the bars as a proportion, between 0 and 1. This value is a fraction of the “step”, which is the interval between the start of a band and the start of the next band.\n * Default: `0.1` */",
       "paddingOuter?": "/** The padding on the outside i.e. left and right of the first and last bars, to leave some room for the axis. In association with `paddingInner`, this value can be between 0 and 1.\n * Default: `0.2` */",
-      "formatter?": "/** A callback function to return format styles of type ColumnFormat, based on the data represented by individual bars. */"
+      "formatter?": "/** A callback function to return format styles of type BarFormat, based on the data represented by individual bars. */",
+      "label?": "/** Configuration for the labels. */",
+      "xKey?": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
+      "yKey?": "/** The key to use to retrieve Y values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
+      "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
+      "axis?": "/** The options for the x-axis in the sparklines. */",
+      "highlightStyle?": "/** The configuration for the highlighting used when the items are hovered over. */",
+      "tooltip?": "/** Configuration for the tooltips. */"
     }
+  },
+  "SparklineLabel": {
+    "meta": {},
+    "type": {
+      "enabled?": "boolean",
+      "fontSize": "string",
+      "fontFamily": "string",
+      "fontStyle?": "FontStyle",
+      "fontWeight?": "FontWeight",
+      "color": "string",
+      "formatter?": "(params: { value: number | undefined; }) => string",
+      "placement": "BarColumnLabelPlacement"
+    },
+    "docs": {
+      "enabled?": "/** Set to true to enable labels. */",
+      "fontSize": "/** Set size of the font. */",
+      "fontFamily": "/** Specify the font for the label text. */",
+      "fontStyle?": "/** Specify the font style for the label text. */",
+      "fontWeight?": "/** Set how thick or thin characters in label text should be displayed. */",
+      "color": "/** Set the color of the label text. The color can be specified by a color name, a HEX or an RGB value. */",
+      "formatter?": "/** A callback function to return the text to be displayed as the label, based on the value represented by the column or bar. By default the values are simply stringified. */",
+      "placement": "/** Where to render labels relative to the segments. */"
+    }
+  },
+  "BarColumnLabelPlacement": {
+    "meta": { "isEnum": true },
+    "type": [
+      "InsideBase = 'insideBase'",
+      "InsideEnd = 'insideEnd'",
+      "Center = 'center'",
+      "OutsideEnd = 'outsideEnd'"
+    ],
+    "docs": [null, null, null, null]
   },
   "Padding": {
     "meta": {},
