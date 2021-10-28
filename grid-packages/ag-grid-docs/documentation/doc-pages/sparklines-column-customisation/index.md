@@ -10,6 +10,7 @@ The following [Column Sparkline Options](/sparklines-column-customisation/#colum
 - [Column Fill Options](/sparklines-column-customisation/#column-fill-options)
 - [Column Stroke Options](/sparklines-column-customisation/#column-stroke-options)
 - [Column Padding Options](/sparklines-column-customisation/#column-padding-options)
+- [Column Label Options](/sparklines-column-customisation/#column-label-options)
 - [Axis Line Options](/sparklines-column-customisation/#axis-line-options)
 - [Sparkline Padding Options](/sparklines-column-customisation/#sparkline-padding-options)
 
