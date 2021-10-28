@@ -25,6 +25,8 @@ export class AbstractHeaderCellCtrl extends BeanStub {
 
     protected eGui: HTMLElement;
 
+    public lastFocusEvent: KeyboardEvent | null = null;
+
     constructor(columnGroupChild: IHeaderColumn, parentRowCtrl: HeaderRowCtrl) {
         super();
 
@@ -57,8 +59,10 @@ export class AbstractHeaderCellCtrl extends BeanStub {
         this.addDestroyFunc(() => this.gridOptionsWrapper.setDomData(this.eGui, key, null));
     }
 
-    public focus(): boolean {
+    public focus(event?: KeyboardEvent): boolean {
         if (!this.eGui) { return false; }
+
+        this.lastFocusEvent = event || null;
         this.eGui.focus();
         return true;
     }

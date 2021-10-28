@@ -324,7 +324,10 @@ export class NavigationService extends BeanStub {
                 const headerRowIndex = this.headerNavigationService.getHeaderRowCount() - 1;
                 const column = last(this.columnModel.getAllDisplayedColumns());
 
-                this.focusService.focusHeaderPosition({ headerRowIndex, column });
+                this.focusService.focusHeaderPosition({
+                    headerPosition: { headerRowIndex, column },
+                    event: keyboardEvent
+                });
             }
         } else {
             // if the case it's a popup editor, the focus is on the editor and not the previous cell.
@@ -518,9 +521,12 @@ export class NavigationService extends BeanStub {
             if (nextPosition.rowIndex < 0) {
                 const headerLen = this.headerNavigationService.getHeaderRowCount();
 
-                this.focusService.focusHeaderPosition(
-                    { headerRowIndex: headerLen + (nextPosition.rowIndex), column: nextPosition.column }
-                );
+                this.focusService.focusHeaderPosition({
+                    headerPosition: {
+                        headerRowIndex: headerLen + (nextPosition.rowIndex),
+                        column: nextPosition.column
+                    }
+                });
 
                 return null;
             }
@@ -663,9 +669,10 @@ export class NavigationService extends BeanStub {
         if (nextCell.rowIndex < 0) {
             const headerLen = this.headerNavigationService.getHeaderRowCount();
 
-            this.focusService.focusHeaderPosition(
-                { headerRowIndex: headerLen + (nextCell.rowIndex), column: currentCell.column }
-            );
+            this.focusService.focusHeaderPosition({
+                headerPosition: { headerRowIndex: headerLen + (nextCell.rowIndex), column: currentCell.column },
+                event: event || undefined
+            });
 
             return;
         }

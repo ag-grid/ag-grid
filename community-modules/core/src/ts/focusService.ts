@@ -278,13 +278,16 @@ export class FocusService extends BeanStub {
         this.focusedHeaderPosition = { headerRowIndex, column };
     }
 
-    public focusHeaderPosition(
-        headerPosition: HeaderPosition | null,
-        direction: 'Before' | 'After' | undefined | null = null,
-        fromTab: boolean = false,
-        allowUserOverride: boolean = false,
-        event?: KeyboardEvent
-    ): boolean {
+    public focusHeaderPosition(params: {
+        headerPosition: HeaderPosition | null;
+        direction?: 'Before' | 'After' | null;
+        fromTab?: boolean;
+        allowUserOverride?: boolean;
+        event?: KeyboardEvent;
+    }): boolean {
+        const { direction, fromTab, allowUserOverride, event } = params;
+        let { headerPosition } = params;
+
         if (allowUserOverride) {
             const { gridOptionsWrapper } = this;
             const currentPosition = this.getFocusedHeader();
@@ -331,7 +334,7 @@ export class FocusService extends BeanStub {
         const headerRowContainerCtrl = this.ctrlsService.getHeaderRowContainerCtrl(headerPosition.column.getPinned());
 
         // this will automatically call the setFocusedHeader method above
-        const focusSuccess = headerRowContainerCtrl.focusHeader(headerPosition.headerRowIndex, headerPosition.column);
+        const focusSuccess = headerRowContainerCtrl.focusHeader(headerPosition.headerRowIndex, headerPosition.column, event);
 
         return focusSuccess;
     }

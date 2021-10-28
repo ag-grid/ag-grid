@@ -90,13 +90,11 @@ export class HeaderNavigationService extends BeanStub {
             if (!nextFocusColumn) { return false; }
         }
 
-        return this.focusService.focusHeaderPosition(
-            { headerRowIndex: nextRow, column: nextFocusColumn! },
-            undefined,
-            false,
-            true,
+        return this.focusService.focusHeaderPosition({
+            headerPosition: { headerRowIndex: nextRow, column: nextFocusColumn! },
+            allowUserOverride:  true,
             event
-        );
+        });
     }
 
     /*
@@ -120,7 +118,13 @@ export class HeaderNavigationService extends BeanStub {
         }
 
         if (nextHeader) {
-            return this.focusService.focusHeaderPosition(nextHeader, normalisedDirection, fromTab, true, event);
+            return this.focusService.focusHeaderPosition({
+                headerPosition: nextHeader,
+                direction: normalisedDirection,
+                fromTab,
+                allowUserOverride: true,
+                event
+            });
         }
 
         if (!fromTab) { return true; }
@@ -143,7 +147,13 @@ export class HeaderNavigationService extends BeanStub {
             nextPosition = this.headerPositionUtils.findColAtEdgeForHeaderRow(nextRowIndex, 'start')!;
         }
 
-        return this.focusService.focusHeaderPosition(nextPosition, direction, true, true, event);
+        return this.focusService.focusHeaderPosition({
+            headerPosition: nextPosition,
+            direction,
+            fromTab: true,
+            allowUserOverride: true,
+            event
+        });
     }
 
     public scrollToColumn(column: Column | ColumnGroup, direction: 'Before' | 'After' | null = 'After'): void {

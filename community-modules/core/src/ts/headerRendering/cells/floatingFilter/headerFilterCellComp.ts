@@ -143,11 +143,14 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
         if (e.target === eGui) { 
             const keyboardMode = this.focusService.isKeyboardMode();
             const currentFocusedHeader = this.beans.focusService.getFocusedHeader();
+
             const nextColumn = this.beans.columnModel.getDisplayedColAfter(this.column);
-            const focusingLastColumnFromOutside = !currentFocusedHeader && !nextColumn;
+
+            const lastFocusEvent = this.ctrl.lastFocusEvent;
+            const fromShiftTab = !!(lastFocusEvent && lastFocusEvent.shiftKey && lastFocusEvent.keyCode === KeyCode.TAB);
             const fromNextColumn = !!(currentFocusedHeader && nextColumn === currentFocusedHeader.column);
     
-            const shouldFocusLast = keyboardMode && (focusingLastColumnFromOutside || fromNextColumn);
+            const shouldFocusLast = keyboardMode && (fromShiftTab || fromNextColumn);
             this.focusService.focusInto(eGui, shouldFocusLast);
          }
 
