@@ -39,7 +39,35 @@
   font-size: 17px;
 }
 
-.checkbox-label-div {
+.global-search-filter-container {
+  display: flex;
+  width: 100%;
+  padding-bottom: 20px;
+  padding-top: 10px;
+  flex-wrap: wrap;
+}
+
+.search-bar-container {
+  width: 25%;
+  min-width: 250px;
+}
+
+.search-bar {
+  height: 50px;
+  width: 100%;
+  font-size: 20px;
+  min-width: 250px;
+}
+
+.all-checkboxes-container {
+  display: flex;
+  flex-wrap: wrap;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 20px;
+}
+
+.single-checkbox-label-container {
   padding-left: 15px;
   display: flex;
   align-items: center;
