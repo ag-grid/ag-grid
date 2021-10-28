@@ -9630,6 +9630,7 @@
     "meta": {},
     "type": {
       "filters?": "IMultiFilterDef[]",
+      "readOnly?": "boolean",
       "column": "Column",
       "colDef": "ColDef",
       "rowModel": "IRowModel",
@@ -9643,6 +9644,7 @@
     },
     "docs": {
       "filters?": "/** An array of filter definition objects. */",
+      "readOnly?": "/** Defaults to false. If true, all UI inputs managed by this filter are for display only, and\n * the filter can only be affected by API calls. Does NOT affect child filters, they need to be\n * individually configured with `readOnly` where applicable. */",
       "column": "/** The column this filter is for. */",
       "colDef": "/** The column definition for the column. */",
       "rowModel": "/** The row model, helpful for looking up data values if needed.\n * If the filter needs to know which rows are\n * a) in the table,\n * b) currently visible (i.e. not already filtered),\n * c) which groups,\n * d) what order - all of this can be read from the rowModel. */",

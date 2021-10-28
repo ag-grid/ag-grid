@@ -22,8 +22,13 @@
             ]
         },
         "readOnly": {
+            "description": "If set to `true`, disables controls in the filter to mutate it's state. Normally this would be used in conjunction with the Filter API.",
+            "type": "boolean",
             "default": false,
-            "description": "If set to `true`, disables controls in the filter to mutate it's state. Normally this would be used in conjunction with the Filter API. See [Filter API - Read-only Filter UI](/filter-api/#read-only-filter-ui) for more detail and example."
+            "more": {
+                "url": "/filter-api/#read-only-filter-ui",
+                "name": "Read-only Filter UI"
+            }
         }
     },
     "api": {

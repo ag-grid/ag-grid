@@ -16864,6 +16864,10 @@
       "description": "/** An array of filter definition objects. */",
       "type": { "returnType": "IMultiFilterDef[]", "optional": true }
     },
+    "readOnly": {
+      "description": "/** Defaults to false. If true, all UI inputs managed by this filter are for display only, and\n * the filter can only be affected by API calls. Does NOT affect child filters, they need to be\n * individually configured with `readOnly` where applicable. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "column": {
       "description": "/** The column this filter is for. */",
       "type": { "returnType": "Column", "optional": false }

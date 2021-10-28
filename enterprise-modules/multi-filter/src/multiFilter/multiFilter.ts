@@ -35,6 +35,10 @@ export interface IMultiFilterDef extends IFilterDef {
 export interface IMultiFilterParams extends IFilterParams {
     /** An array of filter definition objects. */
     filters?: IMultiFilterDef[];
+    /** Defaults to false. If true, all UI inputs managed by this filter are for display only, and
+     * the filter can only be affected by API calls. Does NOT affect child filters, they need to be
+     * individually configured with `readOnly` where applicable. */
+    readOnly?: boolean;
 }
 
 export interface IMultiFilterModel {
