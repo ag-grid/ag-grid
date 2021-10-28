@@ -28,15 +28,22 @@ export class ChartOptionsService extends BeanStub {
     private init(): void {
     }
 
+    public getChartType(): ChartType {
+        return this.chartController.getChartType();
+    }
+
     public getChartOption<T = string>(expression: string): T {
         return _.get(this.getChart(), expression, undefined) as T;
     }
 
-    public setChartOption(expression: string, value: any): void {
+    public setChartOption<T = string>(expression: string, value: T): void {
         const [chart, chartOptions] = [this.getChart(), this.getChartOptions()];
 
+        const optionsType = getStandaloneChartType(this.getChartType());
+        const options = _.get(chartOptions.overrides, `${optionsType}`, undefined);
+
         // update chart options
-        _.set(this.extractChartOptions(chartOptions), expression, value);
+        _.set(options, expression, value);
 
         // update chart
         _.set(chart, expression, value);
@@ -48,12 +55,12 @@ export class ChartOptionsService extends BeanStub {
         return _.get(this.getChart().axes[0], expression, undefined) as T;
     }
 
-    public setAxisProperty(expression: string, value: any) {
+    public setAxisProperty<T = string>(expression: string, value: T) {
         const chart = this.getChart();
 
         chart.axes.forEach((axis: any) => {
             // update axis options
-            this.updateAxisOptions(axis, expression, value);
+            this.updateAxisOptions<T>(axis, expression, value);
 
             // update chart axis
             _.set(axis, expression, value)
@@ -70,7 +77,7 @@ export class ChartOptionsService extends BeanStub {
         return _.get(axis, 'label.rotation', undefined);
     }
 
-    public setLabelRotation(axisType: 'xAxis' | 'yAxis', value: any) {
+    public setLabelRotation(axisType: 'xAxis' | 'yAxis', value: number) {
         const expression = 'label.rotation';
 
         // update axis options
@@ -90,7 +97,7 @@ export class ChartOptionsService extends BeanStub {
         return _.get(this.getChart().series[0], expression, undefined) as T;
     }
 
-    public setSeriesOption(expression: string, value: any): void {
+    public setSeriesOption<T = string>(expression: string, value: T): void {
         // update chart series options
         _.set(this.getSeriesOptions(), expression, value);
 
@@ -106,10 +113,6 @@ export class ChartOptionsService extends BeanStub {
 
     private getChartOptions() {
         return this.chartController.getChartProxy().getChartOptions();
-    }
-
-    public getChartType(): ChartType {
-        return this.chartController.getChartType();
     }
 
     private getAxis(axisType: string) {
@@ -131,7 +134,12 @@ export class ChartOptionsService extends BeanStub {
         return options ? options.axes : undefined;
     }
 
-    private updateAxisOptions(chartAxis: any, expression: string, value: any) {
+    private getSeriesOptions() {
+        const optionsType = getStandaloneChartType(this.getChartType());
+        return _.get(this.getChartOptions().overrides, `${optionsType}.series.${optionsType}`, undefined);
+    }
+
+    private updateAxisOptions<T = string>(chartAxis: any, expression: string, value: T) {
         let axesOptions = this.getAxesOptions();
         if (chartAxis instanceof NumberAxis) {
             _.set(axesOptions.number, expression, value);
@@ -142,19 +150,6 @@ export class ChartOptionsService extends BeanStub {
         } else if (chartAxis instanceof GroupedCategoryAxis) {
             _.set(axesOptions.groupedCategory, expression, value);
         }
-    }
-
-    private getSeriesOptions() {
-        const optionsType = getStandaloneChartType(this.getChartType());
-        const expression = `${optionsType}.series.${optionsType}`;
-        return _.get(this.getChartOptions().overrides, expression, undefined);
-    }
-
-    private extractChartOptions(chartOptions: any) {
-        // TODO: remove this workaround once bug in standalone themes is fixed - this won't work if users override in
-        //  lower level objects such as 'bar', 'pie' etc...
-        const chartType = getStandaloneChartType(this.getChartType());
-        return chartType === 'pie' ? chartOptions.overrides.polar : chartOptions.overrides.cartesian;
     }
 
     private raiseChartOptionsChangedEvent(): void {
