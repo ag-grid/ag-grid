@@ -69,7 +69,7 @@ export class CellComp extends Component implements TooltipParentComp {
     // the first 19.
     private rendererVersion = 0;
     private editorVersion = 0;
-    
+
     constructor(scope: any, beans: Beans, cellCtrl: CellCtrl,
         autoHeightCell: boolean, printLayout: boolean, eRow: HTMLElement, editingRow: boolean) {
         super();
@@ -122,14 +122,14 @@ export class CellComp extends Component implements TooltipParentComp {
 
             setRenderDetails: (compDetails, valueToDisplay, force) =>
                 this.setRenderDetails(compDetails, valueToDisplay, force),
-            setEditDetails: (compDetails, popup, position) => 
+            setEditDetails: (compDetails, popup, position) =>
                 this.setEditDetails(compDetails, popup, position),
 
             getCellEditor: () => this.cellEditor || null,
             getCellRenderer: () => this.cellRenderer || null,
             getParentOfValue: () => this.eCellValue
         };
-        
+
         this.cellCtrl = cellCtrl;
         cellCtrl.setComp(compProxy, this.scope, this.getGui(), printLayout, editingRow);
     }
@@ -279,7 +279,7 @@ export class CellComp extends Component implements TooltipParentComp {
     private insertValueUsingAngular1Template(): void {
         const { template, templateUrl } = this.column.getColDef();
 
-        let templateToInsert: string | undefined = undefined;
+        let templateToInsert: string | undefined;
 
         if (template != null) {
             templateToInsert = template;
@@ -293,7 +293,7 @@ export class CellComp extends Component implements TooltipParentComp {
             // should never happen, as we only enter this method when template or templateUrl exist
         }
 
-        if (templateToInsert!=null) {
+        if (templateToInsert != null) {
             this.eCellValue.innerHTML = templateToInsert;
             this.updateAngular1ScopeAndCompile();
         }
