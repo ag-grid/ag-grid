@@ -919,6 +919,27 @@ mappings['histogram'] = {
     }
 };
 
+// Special handling for bar charts, for which `bottom` axis should default to type `number` and `left` axis should default to type `category`.
+mappings['bar'] = {
+    ...mappings.cartesian,
+    meta: {
+        ...mappings.cartesian.meta,
+        defaults: { // These values will be used if properties in question are not in the config object.
+            ...chartDefaults,
+            axes: [
+                {
+                    type: 'number',
+                    position: 'bottom'
+                },
+                {
+                    type: 'category',
+                    position: 'left'
+                }
+            ]
+        }
+    }
+}
+
 const groupedCategoryChartMapping = Object.create(mappings[CartesianChart.type]);
 const groupedCategoryChartMeta = Object.create(groupedCategoryChartMapping.meta);
 groupedCategoryChartMeta.constructor = GroupedCategoryChart;
