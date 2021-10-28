@@ -1263,7 +1263,7 @@
     "meta": { "isCallSignature": true },
     "type": {
       "arguments": { "cellClassParams": "CellClassParams" },
-      "returnType": "CellStyle"
+      "returnType": "CellStyle | null | undefined"
     }
   },
   "CellStyle": {
