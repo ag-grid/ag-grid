@@ -4133,6 +4133,7 @@
       "closeOnApply?": "boolean",
       "newRowsAction?": "string",
       "debounceMs?": "number",
+      "readOnly?": "boolean",
       "column": "Column",
       "colDef": "ColDef",
       "rowModel": "IRowModel",
@@ -4142,8 +4143,7 @@
       "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "context": "any",
-      "readOnly?": "boolean"
+      "context": "any"
     },
     "docs": {
       "comparator?": "/** Required if the data for the column are not native JS `Date` objects. */",
@@ -4165,6 +4165,7 @@
       "resetButton?": "/** @deprecated */",
       "applyButton?": "/** @deprecated */",
       "newRowsAction?": "/** @deprecated */",
+      "readOnly?": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
       "column": "/** The column this filter is for. */",
       "colDef": "/** The column definition for the column. */",
       "rowModel": "/** The row model, helpful for looking up data values if needed.\n * If the filter needs to know which rows are\n * a) in the table,\n * b) currently visible (i.e. not already filtered),\n * c) which groups,\n * d) what order - all of this can be read from the rowModel. */",
@@ -4172,8 +4173,7 @@
       "filterModifiedCallback": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
       "valueGetter": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
       "doesRowPassOtherFilter": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
-      "context": "/** The context as provided on `gridOptions.context` */",
-      "readOnly?": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */"
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "IDateComparatorFunc": {
@@ -4221,6 +4221,7 @@
       "closeOnApply?": "boolean",
       "newRowsAction?": "string",
       "debounceMs?": "number",
+      "readOnly?": "boolean",
       "column": "Column",
       "colDef": "ColDef",
       "rowModel": "IRowModel",
@@ -4230,8 +4231,7 @@
       "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "context": "any",
-      "readOnly?": "boolean"
+      "context": "any"
     },
     "docs": {
       "allowedCharPattern?": "/** When specified, the input field will be of type `text` instead of `number`, and this will be used as a regex of all the characters that are allowed to be typed.\n * This will be compared against any typed character and prevent the character from appearing in the input if it does not match, in supported browsers (all except Safari). */",
@@ -4251,6 +4251,7 @@
       "resetButton?": "/** @deprecated */",
       "applyButton?": "/** @deprecated */",
       "newRowsAction?": "/** @deprecated */",
+      "readOnly?": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
       "column": "/** The column this filter is for. */",
       "colDef": "/** The column definition for the column. */",
       "rowModel": "/** The row model, helpful for looking up data values if needed.\n * If the filter needs to know which rows are\n * a) in the table,\n * b) currently visible (i.e. not already filtered),\n * c) which groups,\n * d) what order - all of this can be read from the rowModel. */",
@@ -4258,8 +4259,7 @@
       "filterModifiedCallback": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
       "valueGetter": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
       "doesRowPassOtherFilter": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
-      "context": "/** The context as provided on `gridOptions.context` */",
-      "readOnly?": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */"
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "FilterButtonType": {
@@ -4276,6 +4276,7 @@
       "closeOnApply?": "boolean",
       "newRowsAction?": "string",
       "debounceMs?": "number",
+      "readOnly?": "boolean",
       "column": "Column",
       "colDef": "ColDef",
       "rowModel": "IRowModel",
@@ -4285,14 +4286,14 @@
       "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "context": "any",
-      "readOnly?": "boolean"
+      "context": "any"
     },
     "docs": {
       "clearButton?": "/** @deprecated */",
       "resetButton?": "/** @deprecated */",
       "applyButton?": "/** @deprecated */",
       "newRowsAction?": "/** @deprecated */",
+      "readOnly?": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
       "column": "/** The column this filter is for. */",
       "colDef": "/** The column definition for the column. */",
       "rowModel": "/** The row model, helpful for looking up data values if needed.\n * If the filter needs to know which rows are\n * a) in the table,\n * b) currently visible (i.e. not already filtered),\n * c) which groups,\n * d) what order - all of this can be read from the rowModel. */",
@@ -4300,8 +4301,7 @@
       "filterModifiedCallback": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
       "valueGetter": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
       "doesRowPassOtherFilter": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
-      "context": "/** The context as provided on `gridOptions.context` */",
-      "readOnly?": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */"
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "NullComparator": {
@@ -4333,6 +4333,7 @@
       "closeOnApply?": "boolean",
       "newRowsAction?": "string",
       "debounceMs?": "number",
+      "readOnly?": "boolean",
       "column": "Column",
       "colDef": "ColDef",
       "rowModel": "IRowModel",
@@ -4342,8 +4343,7 @@
       "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "context": "any",
-      "readOnly?": "boolean"
+      "context": "any"
     },
     "docs": {
       "inRangeInclusive?": "/** If `true`, the `'inRange'` filter option will include values equal to the start and end of the range. */",
@@ -4361,6 +4361,7 @@
       "resetButton?": "/** @deprecated */",
       "applyButton?": "/** @deprecated */",
       "newRowsAction?": "/** @deprecated */",
+      "readOnly?": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
       "column": "/** The column this filter is for. */",
       "colDef": "/** The column definition for the column. */",
       "rowModel": "/** The row model, helpful for looking up data values if needed.\n * If the filter needs to know which rows are\n * a) in the table,\n * b) currently visible (i.e. not already filtered),\n * c) which groups,\n * d) what order - all of this can be read from the rowModel. */",
@@ -4368,8 +4369,7 @@
       "filterModifiedCallback": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
       "valueGetter": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
       "doesRowPassOtherFilter": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
-      "context": "/** The context as provided on `gridOptions.context` */",
-      "readOnly?": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */"
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "Comparator": {
@@ -4395,6 +4395,7 @@
       "closeOnApply?": "boolean",
       "newRowsAction?": "string",
       "debounceMs?": "number",
+      "readOnly?": "boolean",
       "column": "Column",
       "colDef": "ColDef",
       "rowModel": "IRowModel",
@@ -4404,8 +4405,7 @@
       "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "context": "any",
-      "readOnly?": "boolean"
+      "context": "any"
     },
     "docs": {
       "filterOptions?": "/** Array of filter options to present to the user. See [Filter Options](/filter-provided-simple/#simple-filter-options) for all options available to each filter type. */",
@@ -4417,6 +4417,7 @@
       "resetButton?": "/** @deprecated */",
       "applyButton?": "/** @deprecated */",
       "newRowsAction?": "/** @deprecated */",
+      "readOnly?": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
       "column": "/** The column this filter is for. */",
       "colDef": "/** The column definition for the column. */",
       "rowModel": "/** The row model, helpful for looking up data values if needed.\n * If the filter needs to know which rows are\n * a) in the table,\n * b) currently visible (i.e. not already filtered),\n * c) which groups,\n * d) what order - all of this can be read from the rowModel. */",
@@ -4424,8 +4425,7 @@
       "filterModifiedCallback": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
       "valueGetter": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
       "doesRowPassOtherFilter": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
-      "context": "/** The context as provided on `gridOptions.context` */",
-      "readOnly?": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */"
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "ISimpleFilterModel": {
@@ -4497,6 +4497,7 @@
       "closeOnApply?": "boolean",
       "newRowsAction?": "string",
       "debounceMs?": "number",
+      "readOnly?": "boolean",
       "column": "Column",
       "colDef": "ColDef",
       "rowModel": "IRowModel",
@@ -4506,8 +4507,7 @@
       "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "context": "any",
-      "readOnly?": "boolean"
+      "context": "any"
     },
     "docs": {
       "textCustomComparator?": "/** Used to override how to filter based on the user input. */",
@@ -4523,6 +4523,7 @@
       "resetButton?": "/** @deprecated */",
       "applyButton?": "/** @deprecated */",
       "newRowsAction?": "/** @deprecated */",
+      "readOnly?": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
       "column": "/** The column this filter is for. */",
       "colDef": "/** The column definition for the column. */",
       "rowModel": "/** The row model, helpful for looking up data values if needed.\n * If the filter needs to know which rows are\n * a) in the table,\n * b) currently visible (i.e. not already filtered),\n * c) which groups,\n * d) what order - all of this can be read from the rowModel. */",
@@ -4530,8 +4531,7 @@
       "filterModifiedCallback": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
       "valueGetter": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
       "doesRowPassOtherFilter": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
-      "context": "/** The context as provided on `gridOptions.context` */",
-      "readOnly?": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */"
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "GridParams": {
@@ -6911,8 +6911,7 @@
       "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "context": "any",
-      "readOnly?": "boolean"
+      "context": "any"
     },
     "docs": {
       "column": "/** The column this filter is for. */",
@@ -6922,8 +6921,7 @@
       "filterModifiedCallback": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
       "valueGetter": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
       "doesRowPassOtherFilter": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
-      "context": "/** The context as provided on `gridOptions.context` */",
-      "readOnly?": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */"
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "Filter": {
@@ -7511,6 +7509,7 @@
       "closeOnApply?": "boolean",
       "newRowsAction?": "string",
       "debounceMs?": "number",
+      "readOnly?": "boolean",
       "column": "Column",
       "colDef": "ColDef",
       "rowModel": "IRowModel",
@@ -7520,8 +7519,7 @@
       "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "context": "any",
-      "readOnly?": "boolean"
+      "context": "any"
     },
     "docs": {
       "values?": "/** The values to display in the Filter List.\n * If this is not set, the filter will takes its values from what is loaded in the table. */",
@@ -7546,6 +7544,7 @@
       "resetButton?": "/** @deprecated */",
       "applyButton?": "/** @deprecated */",
       "newRowsAction?": "/** @deprecated */",
+      "readOnly?": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
       "column": "/** The column this filter is for. */",
       "colDef": "/** The column definition for the column. */",
       "rowModel": "/** The row model, helpful for looking up data values if needed.\n * If the filter needs to know which rows are\n * a) in the table,\n * b) currently visible (i.e. not already filtered),\n * c) which groups,\n * d) what order - all of this can be read from the rowModel. */",
@@ -7553,8 +7552,7 @@
       "filterModifiedCallback": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
       "valueGetter": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
       "doesRowPassOtherFilter": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
-      "context": "/** The context as provided on `gridOptions.context` */",
-      "readOnly?": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */"
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "ISideBar": {
@@ -9641,8 +9639,7 @@
       "doesRowPassOtherFilter": "(rowNode: RowNode) => boolean",
       "api": "GridApi",
       "columnApi": "ColumnApi",
-      "context": "any",
-      "readOnly?": "boolean"
+      "context": "any"
     },
     "docs": {
       "filters?": "/** An array of filter definition objects. */",
@@ -9653,8 +9650,7 @@
       "filterModifiedCallback": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
       "valueGetter": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
       "doesRowPassOtherFilter": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
-      "context": "/** The context as provided on `gridOptions.context` */",
-      "readOnly?": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */"
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "IMultiFilterModel": {

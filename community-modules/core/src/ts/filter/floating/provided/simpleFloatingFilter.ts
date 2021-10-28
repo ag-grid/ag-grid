@@ -5,6 +5,7 @@ import { ICombinedSimpleModel, ISimpleFilterModel, SimpleFilter } from '../../pr
 import { OptionsFactory } from '../../provided/optionsFactory';
 import { IScalarFilterParams } from '../../provided/scalarFilter';
 import { FilterChangedEvent } from '../../../events';
+import { IProvidedFilterParams } from '../../provided/providedFilter';
 
 export abstract class SimpleFloatingFilter extends Component implements IFloatingFilterComp {
 
@@ -118,7 +119,10 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
         this.optionsFactory = new OptionsFactory();
         this.optionsFactory.init(params.filterParams as IScalarFilterParams, this.getDefaultFilterOptions());
         this.lastType = this.optionsFactory.getDefaultOption();
-        this.readOnly = !!params.filterParams.readOnly;
+
+        // readOnly is a property of IProvidedFilterParams - we need to find a better (type-safe)
+        // way to support reading this in the future.
+        this.readOnly = !!(params.filterParams as IProvidedFilterParams).readOnly;
 
         // we are editable if:
         // 1) there is a type (user has configured filter wrong if not type)

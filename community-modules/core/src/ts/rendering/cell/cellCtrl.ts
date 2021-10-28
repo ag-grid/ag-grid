@@ -33,7 +33,6 @@ import { doOnce } from "../../utils/function";
 import { RowDragComp } from "../row/rowDragComp";
 import { getValueUsingField } from "../../utils/object";
 
-
 const CSS_CELL = 'ag-cell';
 const CSS_AUTO_HEIGHT = 'ag-cell-auto-height';
 const CSS_NORMAL_HEIGHT = 'ag-cell-normal-height';
@@ -52,7 +51,7 @@ export interface ICellComp {
     setAriaSelected(selected: boolean | undefined): void;
     setAriaExpanded(expanded: boolean): void;
     getFocusableElement(): HTMLElement;
-    
+
     setLeft(left: string): void;
     setWidth(width: string): void;
     setAriaColIndex(index: number): void;
@@ -163,13 +162,13 @@ export class CellCtrl extends BeanStub {
         const getTooltipValue = () => {
             const colDef = this.column.getColDef();
             const data = this.rowNode.data;
-    
+
             if (colDef.tooltipField && exists(data)) {
                 return getValueUsingField(data, colDef.tooltipField, this.column.isTooltipFieldContainsDots());
             }
-    
+
             const valueGetter = colDef.tooltipValueGetter;
-    
+
             if (valueGetter) {
                 return valueGetter({
                     location: 'cell',
@@ -185,17 +184,17 @@ export class CellCtrl extends BeanStub {
                     valueFormatted: this.valueFormatted,
                 });
             }
-    
+
             return null;
         };
 
         const tooltipCtrl: ITooltipFeatureCtrl = {
-            getColumn: ()=> this.column,
-            getColDef: ()=> this.column.getColDef(),
-            getRowIndex: ()=> this.cellPosition.rowIndex,
+            getColumn: () => this.column,
+            getColDef: () => this.column.getColDef(),
+            getRowIndex: () => this.cellPosition.rowIndex,
             getRowNode: () => this.rowNode,
-            getGui: ()=> this.getGui(),
-            getLocation: ()=> 'cell',
+            getGui: () => this.getGui(),
+            getLocation: () => 'cell',
             getTooltipValue: getTooltipValue,
 
             // this makes no sense, why is the cell formatted value passed to the tooltip???
@@ -260,7 +259,7 @@ export class CellCtrl extends BeanStub {
         }
     }
 
-    public setupAutoHeight(): void {
+    private setupAutoHeight(): void {
         if (!this.column.getColDef().autoHeight) { return; }
 
         const measureHeight = (timesCalled: number) => {
@@ -268,7 +267,7 @@ export class CellCtrl extends BeanStub {
             // maybe it will be ready next VM turn
             const doc = this.beans.gridOptionsWrapper.getDocument();
 
-            if ((!doc || !doc.contains(this.eGui)) && timesCalled < 5) { 
+            if ((!doc || !doc.contains(this.eGui)) && timesCalled < 5) {
                 this.beans.frameworkOverrides.setTimeout(() => measureHeight(timesCalled++), 0);
                 return;
             }
@@ -284,7 +283,7 @@ export class CellCtrl extends BeanStub {
 
         const destroyResizeObserver = this.beans.resizeObserverService.observeResize(this.eGui, listener);
 
-        this.addDestroyFunc(()=> {
+        this.addDestroyFunc(() => {
             destroyResizeObserver();
             this.rowNode.setRowAutoHeight(undefined, this.column);
         });
@@ -309,7 +308,7 @@ export class CellCtrl extends BeanStub {
         this.includeDndSource = this.isIncludeControl(colDef.dndSource);
 
         // text selection requires the value to be wrapped in another element
-        const forceWrapper = this.beans.gridOptionsWrapper.isEnableCellTextSelection() || this.column.getColDef().autoHeight==true;
+        const forceWrapper = this.beans.gridOptionsWrapper.isEnableCellTextSelection() || this.column.getColDef().autoHeight == true;
 
         this.cellComp.setIncludeSelection(this.includeSelection);
         this.cellComp.setIncludeDndSource(this.includeDndSource);
@@ -340,7 +339,7 @@ export class CellCtrl extends BeanStub {
         const colMatches = showingAllGroups || showingThisGroup;
         if (!colMatches) { return; }
 
-        const listener = ()=> {
+        const listener = () => {
             this.cellComp.setAriaExpanded(!!this.rowNode.expanded);
         };
 
@@ -399,7 +398,7 @@ export class CellCtrl extends BeanStub {
     public onPopupEditorClosed(): void {
         if (!this.isEditing()) { return; }
         // note: this happens because of a click outside of the grid or if the popupEditor
-        // is closed with `Escape` key. if another cell was clicked, then the editing will 
+        // is closed with `Escape` key. if another cell was clicked, then the editing will
         // have already stopped and returned on the conditional above.
         this.stopEditingAndFocus();
     }
@@ -552,7 +551,7 @@ export class CellCtrl extends BeanStub {
             // happens so no longer need to fire event.
             addRowCompListener: addRowCompListener
         };
-        
+
         if (this.scope) {
             res.$scope = this.scope;
         }
@@ -1031,7 +1030,7 @@ export class CellCtrl extends BeanStub {
         this.cellComp.addOrRemoveCssClass(CSS_AUTO_HEIGHT, autoHeight);
         this.cellComp.addOrRemoveCssClass(CSS_NORMAL_HEIGHT, !autoHeight);
     }
-    
+
     public onColumnHover(): void {
         if (!this.cellComp) { return; }
         if (!this.beans.gridOptionsWrapper.isColumnHoverHighlight()) { return; }

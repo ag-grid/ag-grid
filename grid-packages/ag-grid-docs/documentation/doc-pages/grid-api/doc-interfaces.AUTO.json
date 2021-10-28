@@ -7263,6 +7263,10 @@
       "type": { "returnType": "string", "optional": true }
     },
     "debounceMs": { "type": { "returnType": "number", "optional": true } },
+    "readOnly": {
+      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "column": {
       "description": "/** The column this filter is for. */",
       "type": { "returnType": "Column", "optional": false }
@@ -7308,10 +7312,6 @@
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }
-    },
-    "readOnly": {
-      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
-      "type": { "returnType": "boolean", "optional": true }
     }
   },
   "IDateComparatorFunc": {},
@@ -7414,6 +7414,10 @@
       "type": { "returnType": "string", "optional": true }
     },
     "debounceMs": { "type": { "returnType": "number", "optional": true } },
+    "readOnly": {
+      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "column": {
       "description": "/** The column this filter is for. */",
       "type": { "returnType": "Column", "optional": false }
@@ -7459,10 +7463,6 @@
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }
-    },
-    "readOnly": {
-      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
-      "type": { "returnType": "boolean", "optional": true }
     }
   },
   "FilterButtonType": {},
@@ -7488,6 +7488,10 @@
       "type": { "returnType": "string", "optional": true }
     },
     "debounceMs": { "type": { "returnType": "number", "optional": true } },
+    "readOnly": {
+      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "column": {
       "description": "/** The column this filter is for. */",
       "type": { "returnType": "Column", "optional": false }
@@ -7533,10 +7537,6 @@
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }
-    },
-    "readOnly": {
-      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
-      "type": { "returnType": "boolean", "optional": true }
     }
   },
   "NullComparator": {
@@ -7613,6 +7613,10 @@
       "type": { "returnType": "string", "optional": true }
     },
     "debounceMs": { "type": { "returnType": "number", "optional": true } },
+    "readOnly": {
+      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "column": {
       "description": "/** The column this filter is for. */",
       "type": { "returnType": "Column", "optional": false }
@@ -7658,10 +7662,6 @@
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }
-    },
-    "readOnly": {
-      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
-      "type": { "returnType": "boolean", "optional": true }
     }
   },
   "Comparator": { "meta": { "typeParams": ["T"] } },
@@ -7711,6 +7711,10 @@
       "type": { "returnType": "string", "optional": true }
     },
     "debounceMs": { "type": { "returnType": "number", "optional": true } },
+    "readOnly": {
+      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "column": {
       "description": "/** The column this filter is for. */",
       "type": { "returnType": "Column", "optional": false }
@@ -7756,10 +7760,6 @@
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }
-    },
-    "readOnly": {
-      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
-      "type": { "returnType": "boolean", "optional": true }
     }
   },
   "ISimpleFilterModel": {
@@ -7858,6 +7858,10 @@
       "type": { "returnType": "string", "optional": true }
     },
     "debounceMs": { "type": { "returnType": "number", "optional": true } },
+    "readOnly": {
+      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "column": {
       "description": "/** The column this filter is for. */",
       "type": { "returnType": "Column", "optional": false }
@@ -7903,10 +7907,6 @@
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }
-    },
-    "readOnly": {
-      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
-      "type": { "returnType": "boolean", "optional": true }
     }
   },
   "GridParams": {
@@ -11983,10 +11983,6 @@
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }
-    },
-    "readOnly": {
-      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
-      "type": { "returnType": "boolean", "optional": true }
     }
   },
   "Filter": {
@@ -13503,6 +13499,10 @@
       "type": { "returnType": "string", "optional": true }
     },
     "debounceMs": { "type": { "returnType": "number", "optional": true } },
+    "readOnly": {
+      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "column": {
       "description": "/** The column this filter is for. */",
       "type": { "returnType": "Column", "optional": false }
@@ -13548,10 +13548,6 @@
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }
-    },
-    "readOnly": {
-      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
-      "type": { "returnType": "boolean", "optional": true }
     }
   },
   "ISideBar": {
@@ -16913,10 +16909,6 @@
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }
-    },
-    "readOnly": {
-      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
-      "type": { "returnType": "boolean", "optional": true }
     }
   },
   "IMultiFilterModel": {
