@@ -22,6 +22,9 @@ export interface IProvidedFilterParams extends IFilterParams {
     closeOnApply?: boolean;
     /** @deprecated */ newRowsAction?: string;
     debounceMs?: number;
+    /** Defaults to false. If true, all UI inputs related to this filter are for display only, and
+     * the filter can only be affected by API calls. */
+    readOnly?: boolean;
 }
 
 /**
