@@ -88,30 +88,30 @@ export class SetFilter extends ProvidedFilter<SetFilterModel> {
         if (!this.eSetFilterList.contains(document.activeElement) || !this.virtualList) { return; }
 
         const currentItem = this.virtualList.getLastFocusedRow();
+        if (currentItem == null) { return; }
 
-        if (currentItem != null) {
-            const component = this.virtualList.getComponentAt(currentItem) as SetFilterListItem;
+        const component = this.virtualList.getComponentAt(currentItem) as SetFilterListItem;
+        if (component == null) { return ; }
 
-            if (component) {
-                e.preventDefault();
-                component.toggleSelected();
-            }
-        }
+        e.preventDefault();
+
+        if (this.setFilterParams && !!this.setFilterParams.readOnly) { return; }
+        component.toggleSelected();
     }
 
     private handleKeyEnter(e: KeyboardEvent): void {
         if (!this.setFilterParams) { return; }
 
-        if (this.setFilterParams.excelMode) {
-            e.preventDefault();
+        if (!this.setFilterParams.excelMode || !!this.setFilterParams.readOnly) { return; }
 
-            // in Excel Mode, hitting Enter is the same as pressing the Apply button
-            this.onBtApply(false, false, e);
+        e.preventDefault();
 
-            if (this.setFilterParams.excelMode === 'mac') {
-                // in Mac version, select all the input text
-                this.eMiniFilter.getInputElement().select();
-            }
+        // in Excel Mode, hitting Enter is the same as pressing the Apply button
+        this.onBtApply(false, false, e);
+
+        if (this.setFilterParams.excelMode === 'mac') {
+            // in Mac version, select all the input text
+            this.eMiniFilter.getInputElement().select();
         }
     }
 
@@ -610,7 +610,8 @@ export class SetFilter extends ProvidedFilter<SetFilterModel> {
     }
 
     private onMiniFilterKeyPress(e: KeyboardEvent): void {
-        if (_.isKeyPressed(e, KeyCode.ENTER) && (!this.setFilterParams || !this.setFilterParams.excelMode)) {
+        const { excelMode, readOnly } = this.setFilterParams || {};
+        if (_.isKeyPressed(e, KeyCode.ENTER) && !excelMode && !readOnly) {
             this.filterOnAllVisibleValues();
         }
     }
@@ -832,8 +833,8 @@ export class SetFilter extends ProvidedFilter<SetFilterModel> {
         super.destroy();
     }
 
-    private caseFormat<T extends string | null>(valueToFormat: T): typeof valueToFormat {
-        if (valueToFormat == null) {
+    private caseFormat<T extends string | number | null>(valueToFormat: T): typeof valueToFormat {
+        if (valueToFormat == null || typeof valueToFormat !== 'string') {
             return valueToFormat;
         }
         return this.caseSensitive ? valueToFormat : <T>valueToFormat.toUpperCase();

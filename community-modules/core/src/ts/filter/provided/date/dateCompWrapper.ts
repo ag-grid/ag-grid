@@ -9,6 +9,7 @@ export class DateCompWrapper {
 
     private dateComp: IDateComp | null | undefined;
     private tempValue: Date | null;
+    private disabled: boolean | null;
     private alive = true;
     private context: Context;
 
@@ -35,6 +36,9 @@ export class DateCompWrapper {
             if (this.tempValue) {
                 dateComp.setDate(this.tempValue);
             }
+            if (this.disabled != null) {
+                dateComp.setDisabled(this.disabled);
+            }
         });
     }
 
@@ -52,6 +56,14 @@ export class DateCompWrapper {
             this.dateComp.setDate(value);
         } else {
             this.tempValue = value;
+        }
+    }
+
+    public setDisabled(disabled: boolean): void {
+        if (this.dateComp) {
+            this.dateComp.setDisabled(disabled);
+        } else {
+            this.disabled = disabled;
         }
     }
 

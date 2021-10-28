@@ -95,14 +95,11 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
 
         if (wrapperHasFocus) { return; }
 
-        e.preventDefault();
-
         const nextFocusableEl = this.focusService.findNextFocusableElement(eGui, null, e.shiftKey);
 
         if (nextFocusableEl) {
+            e.preventDefault();
             nextFocusableEl.focus();
-        } else {
-            eGui.focus();
         }
     }
 
@@ -137,11 +134,28 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
 
     protected onFocusIn(e: FocusEvent): void {
         const eGui = this.getGui();
+        const fromWithin = eGui.contains(e.relatedTarget as HTMLElement);
 
-        if (!eGui.contains(e.relatedTarget as HTMLElement)) {
-            const rowIndex = this.ctrl.getRowIndex();
-            this.beans.focusService.setFocusedHeader(rowIndex, this.getColumn());
-        }
+        // when the focus is already within the component,
+        // we default to the browser's behavior
+        if (fromWithin) { return; }
+
+        if (e.target === eGui) { 
+            const keyboardMode = this.focusService.isKeyboardMode();
+            const currentFocusedHeader = this.beans.focusService.getFocusedHeader();
+
+            const nextColumn = this.beans.columnModel.getDisplayedColAfter(this.column);
+
+            const lastFocusEvent = this.ctrl.lastFocusEvent;
+            const fromShiftTab = !!(lastFocusEvent && lastFocusEvent.shiftKey && lastFocusEvent.keyCode === KeyCode.TAB);
+            const fromNextColumn = !!(currentFocusedHeader && nextColumn === currentFocusedHeader.column);
+    
+            const shouldFocusLast = keyboardMode && (fromShiftTab || fromNextColumn);
+            this.focusService.focusInto(eGui, shouldFocusLast);
+         }
+
+         const rowIndex = this.ctrl.getRowIndex();
+         this.beans.focusService.setFocusedHeader(rowIndex, this.getColumn());
     }
 
     private setupFloatingFilter(): void {

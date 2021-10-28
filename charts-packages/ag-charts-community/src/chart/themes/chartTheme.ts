@@ -47,7 +47,7 @@ export class ChartTheme {
         return palette;
     }
 
-    private readonly config: any;
+    readonly config: any;
 
     private static fontFamily = 'Verdana, sans-serif';
 
@@ -133,7 +133,7 @@ export class ChartTheme {
             grouped: false,
             normalizedTo: undefined,
             strokeWidth: 1,
-            lineDash: undefined,
+            lineDash: [0],
             lineDashOffset: 0,
             tooltipRenderer: undefined,
             label: {
@@ -282,7 +282,7 @@ export class ChartTheme {
                 yName: '',
                 strokeWidth: 2,
                 strokeOpacity: 1,
-                lineDash: undefined,
+                lineDash: [0],
                 lineDashOffset: 0,
                 tooltipRenderer: undefined,
                 marker: {
@@ -336,7 +336,7 @@ export class ChartTheme {
                 fillOpacity: 0.8,
                 strokeOpacity: 1,
                 strokeWidth: 2,
-                lineDash: undefined,
+                lineDash: [0],
                 lineDashOffset: 0,
                 shadow: {
                     enabled: false,
@@ -370,7 +370,7 @@ export class ChartTheme {
                 strokeWidth: 1,
                 fillOpacity: 1,
                 strokeOpacity: 1,
-                lineDash: undefined,
+                lineDash: [0],
                 lineDashOffset: 0,
                 areaPlot: false,
                 binCount: 10,
@@ -462,7 +462,7 @@ export class ChartTheme {
                     fillOpacity: 1,
                     strokeOpacity: 1,
                     strokeWidth: 1,
-                    lineDash: undefined,
+                    lineDash: [0],
                     lineDashOffset: 0,
                     rotation: 0,
                     outerRadiusOffset: 0,

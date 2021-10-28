@@ -177,7 +177,6 @@ var gridOptions = {
     infiniteInitialRowCount: 1,
     maxBlocksInCache: 2,
     pagination: true,
-    paginationPageSize: 10,
     cacheBlockSize: 10,
     // debug: true,
     getRowNodeId: function(item) {

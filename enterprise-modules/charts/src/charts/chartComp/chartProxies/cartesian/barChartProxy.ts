@@ -15,6 +15,7 @@ import {
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { deepMerge } from "../../object";
+import { getStandaloneChartType } from "../../chartTypeMapper";
 
 export class BarChartProxy extends CartesianChartProxy<any> {
 
@@ -28,16 +29,13 @@ export class BarChartProxy extends CartesianChartProxy<any> {
     protected createChart(): CartesianChart {
         const agChartOptions = { theme: this.chartOptions } as AgCartesianChartOptions;
 
-        const { grouping } = this.chartProxyParams;
-        agChartOptions.type = grouping ? 'groupedCategory' : agChartOptions.type;
-
-        const isColumn = this.isColumnChart();
+        const isColumn = getStandaloneChartType(this.chartType) === 'column';
         const [xAxis, yAxis] = this.getAxes();
         agChartOptions.axes = [
             {
                 ...(isColumn ? xAxis : yAxis),
                 position: isColumn ? 'bottom' : 'left',
-                type: grouping ? 'groupedCategory' : 'category'
+                type: this.chartProxyParams.grouping ? 'groupedCategory' : 'category'
             },
             {
                 ...(isColumn ? yAxis : xAxis),
@@ -45,6 +43,8 @@ export class BarChartProxy extends CartesianChartProxy<any> {
                 type: 'number'
             }
         ];
+
+        agChartOptions.type = this.chartProxyParams.grouping ? 'groupedCategory' : agChartOptions.type;
 
         // special handling to add a default label formatter to show '%' for normalized charts if none is provided
         const normalised = !this.crossFiltering && _.includes([ChartType.NormalizedColumn, ChartType.NormalizedBar], this.chartType);
@@ -54,10 +54,12 @@ export class BarChartProxy extends CartesianChartProxy<any> {
             numberAxis.label = {...numberAxis.label, formatter: params => Math.round(params.value) + '%'};
         }
 
+        const chartOverrides = this.chartOptions.overrides;
+        const seriesOverrides = isColumn ? chartOverrides.column.series.column : chartOverrides.bar.series.bar;
+
         const isGrouped = !this.crossFiltering && _.includes([ChartType.GroupedColumn, ChartType.GroupedBar], this.chartType);
         agChartOptions.series = [{
-            fills: this.chartTheme.palette.fills, //TODO
-            ...this.extractSeriesOverrides(agChartOptions),
+            ...seriesOverrides,
             type: isColumn ? 'column' : 'bar',
             grouped: isGrouped,
             normalizedTo: normalised ? 100 : undefined,
@@ -70,7 +72,8 @@ export class BarChartProxy extends CartesianChartProxy<any> {
     public update(params: UpdateChartParams): void {
         this.chartProxyParams.grouping = params.grouping;
 
-        this.updateAxes('category', !this.isColumnChart());
+        const isColumn = getStandaloneChartType(this.chartType) === 'column';
+        this.updateAxes('category', !isColumn);
 
         const barSeries = this.chart.series[0] as BarSeries;
         if (this.crossFiltering) {
@@ -86,7 +89,7 @@ export class BarChartProxy extends CartesianChartProxy<any> {
         barSeries.yKeys = params.fields.map(f => f.colId) as any;
         barSeries.yNames = params.fields.map(f => f.displayName!) as any;
 
-        this.updateLabelRotation(params.category.id, !this.isColumnChart());
+        this.updateLabelRotation(params.category.id, !isColumn);
     }
 
     private updateCrossFilteringSeries(barSeries: BarSeries, params: UpdateChartParams) {
@@ -133,19 +136,5 @@ export class BarChartProxy extends CartesianChartProxy<any> {
 
         // add node click cross filtering callback to series
         barSeries.addEventListener('nodeClick', this.crossFilterCallback);
-    }
-
-    private extractSeriesOverrides(agChartOptions: AgCartesianChartOptions) {
-        const overrides = (agChartOptions.theme! as AgChartTheme).overrides;
-        const cartesianSeriesOverrides = (overrides && overrides!.cartesian) ? overrides!.cartesian.series : {};
-        const seriesOverrides = this.isColumnChart() ?
-            (overrides && overrides.column && overrides.column.series) ? overrides.column.series : {} :
-            (overrides && overrides.bar && overrides.bar.series) ? overrides.bar.series : {};
-
-        return deepMerge(cartesianSeriesOverrides, seriesOverrides);
-    }
-
-    private isColumnChart(): boolean {
-        return _.includes([ChartType.Column, ChartType.GroupedColumn, ChartType.StackedColumn, ChartType.NormalizedColumn], this.chartType);
     }
 }

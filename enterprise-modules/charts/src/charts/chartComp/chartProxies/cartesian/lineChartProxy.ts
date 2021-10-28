@@ -80,10 +80,7 @@ export class LineChartProxy extends CartesianChartProxy<any> {
                 lineSeries.marker.stroke = stroke;
                 lineSeries.stroke = fill; // this is deliberate, so that the line colours match the fills of other series
             } else {
-                const agChartOptions = { theme: this.chartOptions } as AgCartesianChartOptions;
-                const overrides = (agChartOptions.theme! as AgChartTheme).overrides;
-                const seriesOverrides = overrides && overrides!.line ? overrides!.line.series : {};
-
+                const seriesOverrides = this.chartOptions.overrides.line.series.line;
                 const seriesOptions = {
                     ...seriesOverrides,
                     type: 'line',

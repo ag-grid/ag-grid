@@ -19,9 +19,12 @@ function gtm_data_layer($pageCategory, $additional = array()) {
 }
 
 function meta_and_links($title, $keywords, $description, $url, $root = false) {
+    global $socialImage;
+    global $socialUrl;
+
     $socialImage = $GLOBALS['socialImage'];
 
-    if ($socialImage) {
+    if (isset($socialImage)) {
         $socialImageMeta = <<<META
     <meta property="og:image" content="$socialImage" />
     <meta name="twitter:image" content="$socialImage" />
@@ -31,7 +34,8 @@ META;
     }
 
     $socialUrl = $GLOBALS['socialUrl'];
-    if ($socialUrl) {
+
+    if (isset($socialUrl)) {
         $socialUrlMeta = <<<META
     <meta property="og:url" content="$socialUrl" />
     <meta name="twitter:url" content="$socialUrl" />
@@ -89,7 +93,7 @@ META;
 function globalAgGridScript($enterprise = false)
 {
     $archiveMatch = '/archive\/\d+.\d+.\d+/';
-    $host = isset($_SERVER['HTTP_X_PROXY_HTTP_HOST']) ? $_SERVER['HTTP_X_PROXY_HTTP_HOST'] : $_SERVER['HTTP_HOST'] ? $_SERVER['HTTP_HOST'] : 'localhost:8080';
+    $host = isset($_SERVER['HTTP_X_PROXY_HTTP_HOST']) ? $_SERVER['HTTP_X_PROXY_HTTP_HOST'] : (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : 'localhost:8080');
 
     if (preg_match($archiveMatch, $_SERVER['PHP_SELF'], $matches)) {
         $archiveSegment = $matches[0];

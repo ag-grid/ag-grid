@@ -173,7 +173,7 @@ var gridOptions = {
     },
     rowSelection: 'multiple',
     rowModelType: 'infinite',
-    paginationPageSize: 100,
+    cacheBlockSize: 100,
     cacheOverflowSize: 2,
     maxConcurrentDatasourceRequests: 2,
     infiniteInitialRowCount: 1,

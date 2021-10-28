@@ -160,9 +160,9 @@ export class GridCtrl extends BeanStub {
             firstColumn = this.columnModel.getColumnGroupAtLevel(firstColumn, 0)!;
         }
 
-        this.focusService.focusHeaderPosition(
-            { headerRowIndex: 0, column: firstColumn }
-        );
+        this.focusService.focusHeaderPosition({
+            headerPosition: { headerRowIndex: 0, column: firstColumn }
+        });
 
         return true;
     }

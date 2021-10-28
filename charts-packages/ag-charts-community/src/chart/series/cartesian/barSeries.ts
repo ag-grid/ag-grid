@@ -160,7 +160,7 @@ export class BarSeries extends CartesianSeries {
     @reactive('update') fillOpacity = 1;
     @reactive('update') strokeOpacity = 1;
 
-    @reactive('update') lineDash?: number[] = undefined;
+    @reactive('update') lineDash?: number[] = [0];
     @reactive('update') lineDashOffset: number = 0;
 
     @reactive('update') formatter?: (params: BarSeriesFormatterParams) => BarSeriesFormat;

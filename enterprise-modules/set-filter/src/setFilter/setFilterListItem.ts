@@ -46,6 +46,13 @@ export class SetFilterListItem extends Component {
         this.render();
 
         this.eCheckbox.setValue(this.isSelected, true);
+        this.eCheckbox.setDisabled(!!this.params.readOnly);
+
+        if (!!this.params.readOnly) {
+            // Don't add event listeners if we're read-only.
+            return;
+        }
+        
         this.eCheckbox.onValueChange(value => {
             const parsedValue = value || false;
 
@@ -61,6 +68,8 @@ export class SetFilterListItem extends Component {
     }
 
     public toggleSelected(): void {
+        if (!!this.params.readOnly) { return; }
+
         this.isSelected = !this.isSelected;
         this.eCheckbox.setValue(this.isSelected);
     }

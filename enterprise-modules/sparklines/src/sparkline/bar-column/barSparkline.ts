@@ -3,7 +3,7 @@ import { isNumber } from '../../util/value';
 import { BarColumnLabelPlacement, BarColumnSparkline, RectNodeDatum } from './barColumnSparkline';
 
 
-export interface BarNodeDatum extends RectNodeDatum {}
+export interface BarNodeDatum extends RectNodeDatum { }
 export class BarSparkline extends BarColumnSparkline {
 
     static className = 'BarSparkline';
@@ -56,7 +56,7 @@ export class BarSparkline extends BarColumnSparkline {
             color: labelColor,
             formatter: labelFormatter,
             placement: labelPlacement
-         } = label;
+        } = label;
 
         const nodeData: BarNodeDatum[] = [];
 
@@ -91,7 +91,7 @@ export class BarSparkline extends BarColumnSparkline {
             if (labelFormatter) {
                 labelText = labelFormatter({ value: yDatum });
             } else {
-                labelText = yDatum !== undefined && isNumber(yDatum) ? yDatum.toFixed(1) : '';
+                labelText = yDatum !== undefined && isNumber(yDatum) ? this.formatLabelValue(yDatum) : '';
             }
 
             const labelY: number = y + (height / 2);
@@ -100,14 +100,26 @@ export class BarSparkline extends BarColumnSparkline {
             const labelTextBaseline: CanvasTextBaseline = 'middle';
             let labelTextAlign: CanvasTextAlign;
 
-            if (labelPlacement === BarColumnLabelPlacement.Inside) {
-                labelX = x + width / 2;
+            const isPositiveY = yDatum !== undefined && yDatum >= 0;
+            const labelPadding = 4;
 
-                labelTextAlign = 'center';
-            } else {
-                labelX = x + (yDatum !== undefined && yDatum >= 0 ? width : 0);
-
-                labelTextAlign = yDatum !== undefined && yDatum >= 0 ? 'start' : 'end'
+            switch (labelPlacement) {
+                case BarColumnLabelPlacement.InsideBase:
+                    labelX = yZero + labelPadding * (isPositiveY ? 1 : -1);
+                    labelTextAlign = isPositiveY ? 'start' : 'end';
+                    break;
+                case BarColumnLabelPlacement.InsideEnd:
+                    labelX = x + (isPositiveY ? width - labelPadding : labelPadding);
+                    labelTextAlign = isPositiveY ? 'end' : 'start';
+                    break;
+                case BarColumnLabelPlacement.Center:
+                    labelX = x + width / 2;
+                    labelTextAlign = 'center';
+                    break;
+                case BarColumnLabelPlacement.OutsideEnd:
+                default:
+                    labelX = x + (isPositiveY ? width + labelPadding : -labelPadding);
+                    labelTextAlign = isPositiveY ? 'start' : 'end';
             }
 
             nodeData.push({

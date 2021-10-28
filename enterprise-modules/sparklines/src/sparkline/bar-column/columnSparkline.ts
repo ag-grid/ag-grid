@@ -90,7 +90,7 @@ export class ColumnSparkline extends BarColumnSparkline {
             if (labelFormatter) {
                 labelText = labelFormatter({ value: yDatum });
             } else {
-                labelText = yDatum !== undefined && isNumber(yDatum) ? yDatum.toFixed(1) : '';
+                labelText = yDatum !== undefined && isNumber(yDatum) ? this.formatLabelValue(yDatum) : '';
             }
 
             const labelX: number = x + width / 2;
@@ -99,14 +99,26 @@ export class ColumnSparkline extends BarColumnSparkline {
             const labelTextAlign: CanvasTextAlign = 'center';
             let labelTextBaseline: CanvasTextBaseline;
 
-            if (labelPlacement === BarColumnLabelPlacement.Inside) {
-                labelY = y + (height / 2);
+            const isPositiveY = yDatum !== undefined && yDatum >= 0;
+            const labelPadding = 2;
 
-                labelTextBaseline = 'middle';
-            } else {
-                labelY = y + (yDatum !== undefined && yDatum >= 0 ? -1 : height + 1);
-
-                labelTextBaseline = yDatum !== undefined && yDatum >= 0 ? 'bottom' : 'top';
+            switch (labelPlacement) {
+                case BarColumnLabelPlacement.InsideBase:
+                    labelY = yZero + labelPadding * (isPositiveY ? -1 : 1);
+                    labelTextBaseline = isPositiveY ? 'bottom' : 'top';
+                    break;
+                case BarColumnLabelPlacement.InsideEnd:
+                    labelY = y + (isPositiveY ? labelPadding : height - labelPadding);
+                    labelTextBaseline = isPositiveY ? 'top' : 'bottom';
+                    break;
+                case BarColumnLabelPlacement.Center:
+                    labelY = y + height / 2;
+                    labelTextBaseline = 'middle';
+                    break;
+                case BarColumnLabelPlacement.OutsideEnd:
+                default:
+                    labelY = y + (isPositiveY ? -labelPadding : height + labelPadding);
+                    labelTextBaseline = isPositiveY ? 'bottom' : 'top';
             }
 
             nodeData.push({

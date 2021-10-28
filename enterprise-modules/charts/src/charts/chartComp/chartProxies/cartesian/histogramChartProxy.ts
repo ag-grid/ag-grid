@@ -29,9 +29,7 @@ export class HistogramChartProxy extends CartesianChartProxy<any> {
             ...yAxis
         }];
 
-        const overrides = (agChartOptions.theme! as AgChartTheme).overrides;
-        const seriesOverrides = overrides && overrides!.histogram ? overrides!.histogram.series : {};
-
+        const seriesOverrides = this.chartOptions.overrides.histogram.series.histogram;
         agChartOptions.series = [{
             ...seriesOverrides,
             type: 'histogram'

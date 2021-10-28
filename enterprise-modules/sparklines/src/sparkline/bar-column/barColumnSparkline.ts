@@ -40,12 +40,15 @@ enum BarColumnNodeTag {
 }
 
 export enum BarColumnLabelPlacement {
-    Inside = 'inside',
-    Outside = 'outside'
+    InsideBase = 'insideBase',
+    InsideEnd = 'insideEnd',
+    Center = 'center',
+    OutsideEnd = 'outsideEnd',
 }
+
 export class BarColumnLabel extends Label {
     formatter?: (params: { value: number | undefined }) => string = undefined;
-    placement = BarColumnLabelPlacement.Inside;
+    placement = BarColumnLabelPlacement.OutsideEnd;
 }
 
 export abstract class BarColumnSparkline extends Sparkline {
@@ -75,7 +78,7 @@ export abstract class BarColumnSparkline extends Sparkline {
         super();
 
         this.rootGroup.append(this.sparklineGroup);
-        this.sparklineGroup.append([this.rectGroup, this.labelGroup, this.axisLine]);
+        this.sparklineGroup.append([this.rectGroup, this.axisLine, this.labelGroup]);
 
         this.axisLine.lineCap = 'round';
 
@@ -268,5 +271,9 @@ export abstract class BarColumnSparkline extends Sparkline {
         }
 
         return toTooltipHtml(defaults);
+    }
+
+    protected formatLabelValue(value: number): string {
+        return value % 1 !== 0 ? value.toFixed(1) : value.toFixed(0)
     }
 }

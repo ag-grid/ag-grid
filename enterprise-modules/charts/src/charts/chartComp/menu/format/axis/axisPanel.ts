@@ -15,8 +15,6 @@ import { ChartController } from "../../../chartController";
 import { AxisTicksPanel } from "./axisTicksPanel";
 import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslator } from "../../../chartTranslator";
-import { AgCartesianAxisOptions, ChartAxisPosition, find } from "ag-charts-community";
-import { CartesianChartProxy } from "../../../chartProxies/cartesian/cartesianChartProxy";
 import { ChartOptionsService } from "../../../chartOptionsService";
 
 export class AxisPanel extends Component {
@@ -99,10 +97,7 @@ export class AxisPanel extends Component {
                 .addOptions(options)
                 .setValue(this.chartOptionsService.getChartOption('xAxis.type') || '')
                 .onValueChange(newValue => {
-                    const chartProxy = this.chartOptionsService;
-
-                    chartProxy.setChartOption('xAxis.type', typeof newValue === 'string' && newValue.length && newValue);
-
+                    this.chartOptionsService.setChartOption('xAxis.type', typeof newValue === 'string' && newValue.length && newValue);
                     this.chartController.updateForDataChange();
                 });
         } else {
@@ -150,17 +145,17 @@ export class AxisPanel extends Component {
     }
 
     private addAdditionalLabelComps(labelPanelComp: FontPanel) {
-        const createAngleComp = (label: string, expression: string, updateFunc: (value: number) => void) => {
-            const value = this.chartOptionsService.getChartOption(expression) as number;
+        const createAngleComp = (label: string, axisType: 'xAxis' | 'yAxis') => {
+            const value = this.chartOptionsService.getLabelRotation(axisType) as number;
             const angleSelect = new AgAngleSelect()
                 .setLabel(label)
                 .setLabelWidth("flex")
                 .setValue(value || 0)
-                .onValueChange(updateFunc);
+                .onValueChange(newValue => this.chartOptionsService.setLabelRotation(axisType, newValue));
 
             // the axis label rotation needs to be updated when the default category changes in the data panel
             this.axisLabelUpdateFuncs.push(() => {
-                const value = this.chartOptionsService.getChartOption(expression) as number;
+                const value = this.chartOptionsService.getLabelRotation(axisType) as number;
                 angleSelect.setValue(value);
             });
 
@@ -169,26 +164,11 @@ export class AxisPanel extends Component {
         };
 
         const degreesSymbol = String.fromCharCode(176);
-        const createLabelUpdateFunc = (axisPosition: ChartAxisPosition) => (newValue: number) => {
-            //FIXME
-
-            // const axis = find(chart.axes as AgCartesianAxisOptions[], currentAxis => currentAxis.position === axisPosition);
-            // if (axis) {
-            //     axis.label!.rotation = newValue;
-            //     if (axis.position === ChartAxisPosition.Bottom) {
-            //         _.set(chartProxy.getChartOptions().xAxis, "label.rotation", newValue);
-            //     } else if (axis.position === ChartAxisPosition.Left) {
-            //         _.set(chartProxy.getChartOptions().yAxis, "label.rotation", newValue);
-            //     }
-            //     chart.layoutPending = true;
-            // }
-        };
-
         const xRotationLabel = `${this.chartTranslator.translate("xRotation")} ${degreesSymbol}`;
         const yRotationLabel = `${this.chartTranslator.translate("yRotation")} ${degreesSymbol}`;
 
-        createAngleComp(xRotationLabel, "xAxis.label.rotation", createLabelUpdateFunc(ChartAxisPosition.Bottom));
-        createAngleComp(yRotationLabel, "yAxis.label.rotation", createLabelUpdateFunc(ChartAxisPosition.Left));
+        createAngleComp(xRotationLabel, "xAxis");
+        createAngleComp(yRotationLabel, "yAxis");
 
         const labelPaddingSlider = this.createBean(new AgSlider());
 

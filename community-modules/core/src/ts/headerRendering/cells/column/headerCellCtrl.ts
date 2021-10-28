@@ -100,7 +100,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
             eGui,
             {
                 shouldStopEventPropagation: e => this.shouldStopEventPropagation(e),
-                onTabKeyDown: ()=> null,
+                onTabKeyDown: () => null,
                 handleKeyDown: this.handleKeyDown.bind(this),
                 onFocusIn: this.onFocusIn.bind(this),
                 onFocusOut: this.onFocusOut.bind(this)
@@ -214,10 +214,10 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     private setupTooltip(): void {
 
         const tooltipCtrl: ITooltipFeatureCtrl = {
-            getColumn: ()=> this.column,
-            getColDef: ()=> this.column.getColDef(),
-            getGui: ()=> this.eGui,
-            getLocation: ()=> 'header',
+            getColumn: () => this.column,
+            getColDef: () => this.column.getColDef(),
+            getGui: () => this.eGui,
+            getLocation: () => 'header',
             getTooltipValue: () => {
                 const res = this.column.getColDef().headerTooltip;
                 return res;
@@ -228,7 +228,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
 
         tooltipFeature.setComp(this.comp);
 
-        this.refreshFunctions.push( ()=> tooltipFeature.refreshToolTip() );
+        this.refreshFunctions.push(() => tooltipFeature.refreshToolTip());
     }
 
     private setupClassesFromColDef(): void {
@@ -240,7 +240,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
             const oldClasses = this.userHeaderClasses;
             this.userHeaderClasses = new Set(classes);
 
-            classes.forEach( c => {                
+            classes.forEach(c => {
                 if (oldClasses.has(c)) {
                     // class already added, no need to apply it, but remove from old set
                     oldClasses.delete(c);
@@ -251,7 +251,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
             });
 
             // now old set only has classes that were applied last time, but not this time, so remove them
-            oldClasses.forEach(c => this.comp.addOrRemoveCssClass(c, false))
+            oldClasses.forEach(c => this.comp.addOrRemoveCssClass(c, false));
         };
 
         this.refreshFunctions.push(refreshHeaderClasses);
@@ -317,7 +317,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         this.draggable = this.workOutDraggable();
     }
 
-    public addRefreshFunction(func: ()=>void): void {
+    public addRefreshFunction(func: () => void): void {
         this.refreshFunctions.push(func);
     }
 
@@ -333,7 +333,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         const compInstance = this.comp.getUserCompInstance();
 
         // only try refresh if old comp exists adn it is the correct type
-        const attemptRefresh = compInstance!=null && this.userCompDetails.componentClass == newCompDetails.componentClass;
+        const attemptRefresh = compInstance != null && this.userCompDetails.componentClass == newCompDetails.componentClass;
 
         const headerCompRefreshed = attemptRefresh ? this.attemptHeaderCompRefresh(newCompDetails.params) : false;
 
@@ -344,7 +344,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
             this.setDragSource(this.dragSourceElement);
         } else {
             this.setCompDetails(newCompDetails);
-        }        
+        }
     }
 
     public attemptHeaderCompRefresh(params: IHeaderParams): boolean {
@@ -397,13 +397,13 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         const listener = () => {
             this.comp.setWidth(this.column.getActualWidth() + 'px');
         };
-    
+
         this.addManagedListener(this.column, Column.EVENT_WIDTH_CHANGED, listener);
         listener();
     }
 
     private setupMovingCss(): void {
-        const listener = ()=> {
+        const listener = () => {
             // this is what makes the header go dark when it is been moved (gives impression to
             // user that the column was picked up).
             this.comp.addOrRemoveCssClass('ag-header-cell-moving', this.column.isMoving());
@@ -414,7 +414,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     private setupMenuClass(): void {
-        const listener = ()=> {
+        const listener = () => {
             this.comp.addOrRemoveCssClass('ag-column-menu-visible', this.column.isMenuVisible());
         };
 
@@ -446,7 +446,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     private addColumnHoverListener(): void {
-        const listener = ()=> {
+        const listener = () => {
             if (!this.gridOptionsWrapper.isColumnHoverHighlight()) { return; }
             const isHovered = this.columnHoverService.isHovered(this.column);
             this.comp.addOrRemoveCssClass('ag-column-hover', isHovered);
@@ -457,7 +457,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     private setupFilterCss(): void {
-        const listener = ()=> {
+        const listener = () => {
             this.comp.addOrRemoveCssClass('ag-header-cell-filtered', this.column.isFilterActive());
         };
 

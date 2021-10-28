@@ -10,6 +10,7 @@ The following [Bar Sparkline Options](/sparklines-bar-customisation/#barsparklin
 - [Bar Fill Options](/sparklines-bar-customisation/#bar-fill-options)
 - [Bar Stroke Options](/sparklines-bar-customisation/#bar-stroke-options)
 - [Bar Padding Options](/sparklines-bar-customisation/#bar-padding-options)
+- [Bar Label Options](/sparklines-bar-customisation/#bar-label-options)
 - [Axis Line Options](/sparklines-bar-customisation/#axis-line-options)
 - [Sparkline Padding Options](/sparklines-bar-customisation/#sparkline-padding-options)
 
@@ -148,6 +149,91 @@ This is demonstrated below in the middle sparkline.
     <image-caption src="resources/custom-padding-outer-2.png" alt="PaddingOuter customisation" width="250px" constrained="true">Increased paddingOuter</image-caption>
 </div>
 
+## Bar Label Options
+
+To enable bar labels, set the `enabled` property in `label` options as shown:
+
+```js
+sparklineOptions: {
+    type: 'bar',
+    label: {
+        enabled: true // show bar labels
+    }
+}
+```
+
+<div style="display: flex; justify-content: center;">
+    <image-caption src="resources/default.png" alt="Bar default" width="250px" constrained="true">Default</image-caption>
+    <image-caption src="resources/default-label.png" alt="Bar labels enabled" width="250px" constrained="true">Label enabled</image-caption>
+</div>
+
+It is possible to change the text value displayed as the label of individual bars by adding a `formatter` callback function to `label` options as follows:
+
+```js
+sparklineOptions: {
+    type: 'bar',
+    label: {
+        enabled: true,
+        formatter: labelFormatter
+    }
+}
+
+function labelFormatter({ value }) {
+    return `${value}%`
+}
+```
+
+<div style="display: flex; justify-content: center;">
+    <image-caption src="resources/default.png" alt="Bar default" width="250px" constrained="true">Default</image-caption>
+    <image-caption src="resources/custom-label-formatter.png" alt="Bar label text customisation" width="250px" constrained="true">Custom label text</image-caption>
+</div>
+
+To customise the label text style, set the style attributes in `label` options as follows:
+
+```js
+sparklineOptions: {
+    type: 'bar',
+    label: {
+        enabled: true,
+        fontWeight: 'bold',
+        fontStyle: 'italic',
+        fontSize: 9,
+        fontFamily: 'Arial, Helvetica, sans-serif',
+        color: 'black',
+    }
+}
+```
+
+<div style="display: flex; justify-content: center;">
+    <image-caption src="resources/default.png" alt="Bar default" width="250px" constrained="true">Default</image-caption>
+    <image-caption src="resources/custom-label-styles.png" alt="Bar label text style customisation" width="250px" constrained="true">Custom label text styles</image-caption>
+</div>
+
+
+The position of the labels can be specified by setting the `placement` property in `label` options. By default, the labels are positioned at the end of the bars on the outside, i.e. `placement` is set to `outsideEnd `. The snippet below shows how the positioning of the label can be modified:
+
+```js
+sparklineOptions: {
+    type: 'bar',
+    label: {
+        enabled: true,
+        placement: 'center', // positions the labels in the center of the bars
+    }
+}
+```
+
+Label `placement` options include `outsideEnd`, `center`, `insideEnd`, and `insideBase`. These are shown in the screenshots below.
+
+<div style="display: flex; justify-content: center;">
+    <image-caption src="resources/custom-label-placement-outsideEnd.png" alt="Bar label placement default" width="250px" constrained="true">outsideEnd</image-caption>
+    <image-caption src="resources/custom-label-placement-center.png" alt="Bar label center placement" width="250px" constrained="true">center</image-caption>
+</div>
+<div style="display: flex; justify-content: center;">
+    <image-caption src="resources/custom-label-placement-insideEnd.png" alt="Bar label insideEnd placement" width="250px" constrained="true">insideEnd</image-caption>
+    <image-caption src="resources/custom-label-placement-insideBase.png" alt="Bar label insideBase placement" width="250px" constrained="true">insideBase</image-caption>
+</div>
+
+
 ## Axis Line Options
 
 By default, an x-axis line is displayed which can be modified using the `axis` options.
@@ -213,6 +299,11 @@ More advanced customisations are discussed separately in the following sections:
 ### SparklineAxisOptions
 
 <api-documentation source='sparklines-bar-customisation/resources/bar-sparkline-api.json' section='SparklineAxisOptions'></api-documentation>
+
+### SparklineLabel
+
+<api-documentation source='sparklines-bar-customisation/resources/bar-sparkline-api.json' section='SparklineLabel'></api-documentation>
+
 
 ## Next Up
 

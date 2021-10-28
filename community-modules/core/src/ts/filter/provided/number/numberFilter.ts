@@ -73,7 +73,10 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         return super.resetUiToDefaults(silent).then(() => {
             const fields = [this.eValueFrom1, this.eValueFrom2, this.eValueTo1, this.eValueTo2];
 
-            fields.forEach(field => field.setValue(null, silent));
+            fields.forEach(field => {
+                field.setValue(null, silent);
+                field.setDisabled(this.isReadOnly());
+            });
 
             this.resetPlaceholder();
         });
@@ -125,6 +128,10 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
     }
 
     private addValueChangedListeners(): void {
+        if (this.isReadOnly()) {
+            return;
+        }
+
         const listener = () => this.onUiChanged();
 
         this.eValueFrom1.onValueChange(listener);
@@ -164,7 +171,7 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
 
         this.resetPlaceholder();
 
-        if (!params || !params.suppressFocus) {
+        if (!params || (!params.suppressFocus && !this.isReadOnly())) {
             this.eValueFrom1.getInputElement().focus();
         }
     }

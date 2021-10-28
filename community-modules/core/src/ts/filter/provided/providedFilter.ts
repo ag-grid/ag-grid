@@ -112,6 +112,10 @@ export abstract class ProvidedFilter<T> extends Component implements IFilterComp
         this.setTemplate(templateString, paramsMap);
     }
 
+    protected isReadOnly(): boolean {
+        return !!this.providedFilterParams.readOnly;
+    }
+
     public init(params: IProvidedFilterParams): void {
         this.setParams(params);
 
@@ -144,7 +148,9 @@ export abstract class ProvidedFilter<T> extends Component implements IFilterComp
     private createButtonPanel(): void {
         const { buttons } = this.providedFilterParams;
 
-        if (!buttons || buttons.length < 1) { return; }
+        if (!buttons || buttons.length < 1 || this.isReadOnly()) {
+            return;
+        }
 
         const eButtonsPanel = document.createElement('div');
 

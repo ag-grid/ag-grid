@@ -67,14 +67,8 @@ export class DoughnutChartProxy extends PolarChartProxy {
         const palette = this.getPalette();
         const fills = palette.fills;
         const strokes = palette.strokes;
-        // const fills = seriesDefaults.fill.colors;
-        // const strokes = seriesDefaults.stroke.colors;
 
-        //TODO interrogate different options
-        const agChartOptions = { theme: this.chartOptions } as AgPolarChartOptions;
-        const overrides = (agChartOptions.theme! as AgChartTheme).overrides;
-        const seriesOverrides = overrides && overrides!.pie ? overrides!.pie.series : {};
-
+        const seriesOverrides = this.chartOptions.overrides.pie.series.pie;
         const numFields = params.fields.length;
 
         let offset = 0;
@@ -154,21 +148,7 @@ export class DoughnutChartProxy extends PolarChartProxy {
             ...updateParams.seriesDefaults,
             type: 'pie',
             angleKey: this.crossFiltering ? updateParams.angleField.colId + '-total' : updateParams.angleField.colId,
-            radiusKey: this.crossFiltering ? updateParams.field.colId : undefined,
-            // title: {
-            //     ...updateParams.seriesDefaults.title,
-            //     text: updateParams.seriesDefaults.title.text || updateParams.field.displayName!,
-            //     showInLegend: updateParams.numFields > 1
-            // },
-            // fills: updateParams.seriesDefaults.fill.colors,
-            // fillOpacity: updateParams.seriesDefaults.fill.opacity,
-            // strokes: updateParams.seriesDefaults.stroke.colors,
-            // strokeOpacity: updateParams.seriesDefaults.stroke.opacity,
-            // strokeWidth: updateParams.seriesDefaults.stroke.width,
-            // tooltip: {
-            //     enabled: updateParams.seriesDefaults.tooltip && updateParams.seriesDefaults.tooltip.enabled,
-            //     renderer: (updateParams.seriesDefaults.tooltip && updateParams.seriesDefaults.tooltip.enabled && updateParams.seriesDefaults.tooltip.renderer) || undefined,
-            // }
+            radiusKey: this.crossFiltering ? updateParams.field.colId : undefined
         };
 
         const calloutColors = seriesOptions.callout && seriesOptions.callout.colors || seriesOptions.strokes || [];

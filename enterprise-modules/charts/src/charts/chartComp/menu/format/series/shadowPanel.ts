@@ -54,26 +54,24 @@ export class ShadowPanel extends Component {
     private initSeriesShadow() {
         this.shadowGroup
             .setTitle(this.chartTranslator.translate("shadow"))
-            .setEnabled(this.chartOptionsService.getShadowEnabled())
+            .setEnabled(this.chartOptionsService.getSeriesOption("shadow.enabled"))
             .hideOpenCloseIcons(true)
             .hideEnabledCheckbox(false)
-            .onEnableChange(newValue => this.chartOptionsService.setShadowProperty("enabled", newValue));
+            .onEnableChange(newValue => this.chartOptionsService.setSeriesOption("shadow.enabled", newValue));
 
         this.shadowColorPicker
             .setLabel(this.chartTranslator.translate("color"))
             .setLabelWidth("flex")
             .setInputWidth(45)
-            .setValue("rgba(0,0,0,0.5)")
-            .onValueChange(newValue => this.chartOptionsService.setShadowProperty("color", newValue));
+            .setValue(this.chartOptionsService.getSeriesOption("shadow.color"))
+            .onValueChange(newValue => this.chartOptionsService.setSeriesOption("shadow.color", newValue));
 
-        //TODO
-        // const initInput = (input: AgSlider, property: keyof DropShadowOptions, minValue: number, maxValue: number) => {
         const initInput = (input: AgSlider, property: string, minValue: number, maxValue: number) => {
             input.setLabel(this.chartTranslator.translate(property))
-                .setValue(this.chartOptionsService.getShadowProperty(property))
+                .setValue(this.chartOptionsService.getSeriesOption(`shadow.${property}`))
                 .setMinValue(minValue)
                 .setMaxValue(maxValue)
-                .onValueChange(newValue => this.chartOptionsService.setShadowProperty(property, newValue));
+                .onValueChange(newValue => this.chartOptionsService.setSeriesOption(`shadow.${property}`, newValue));
         };
 
         initInput(this.shadowBlurSlider, "blur", 0, 20);

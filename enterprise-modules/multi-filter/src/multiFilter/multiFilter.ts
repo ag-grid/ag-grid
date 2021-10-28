@@ -316,8 +316,14 @@ export class MultiFilter extends TabGuardComp implements IFilterComp {
         const suppressFocus = filters && _.some(filters, filter => filter.display! && filter.display !== 'inline');
 
         this.executeFunctionIfExists('afterGuiAttached', { ...params || {}, suppressFocus });
+        const activeEl = document.activeElement;
 
-        if (suppressFocus && this.getGui().contains(document.activeElement)) {
+        // if suppress focus is true, we might run into two scenarios: 
+        // 1 - we are loading the filter for the first time and the component isn't ready, 
+        //     which means the document will have focus.
+        // 2 - The focus will be somewhere inside the component due to auto focus
+        // In both cases we need to force the focus somewhere valid but outside the filter.
+        if (suppressFocus && (activeEl === document.body || this.getGui().contains(activeEl))) {
             // reset focus to the top of the container, and blur
             this.forceFocusOutOfContainer(true);
         }

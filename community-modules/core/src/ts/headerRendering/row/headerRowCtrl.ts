@@ -277,12 +277,12 @@ export class HeaderRowCtrl extends BeanStub {
         return this.columnModel.getVirtualHeaderGroupRow(this.pinned, this.getActualDepth());
     }
 
-    public focusHeader(column: IHeaderColumn): boolean {
+    public focusHeader(column: IHeaderColumn, event?: KeyboardEvent): boolean {
         const allCtrls = getAllValuesInObject(this.headerCellCtrls);
-        const ctrl = find(allCtrls, ctrl => ctrl.getColumnGroupChild()==column);
+        const ctrl: AbstractHeaderCellCtrl = find(allCtrls, ctrl => ctrl.getColumnGroupChild()==column);
         if (!ctrl) { return false; }
 
-        ctrl.focus();
+        ctrl.focus(event);
 
         return true;
     }

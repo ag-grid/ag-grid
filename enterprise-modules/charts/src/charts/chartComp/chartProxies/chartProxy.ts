@@ -117,31 +117,32 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends any> {
         }
 
         const themeName = this.getSelectedTheme();
-        const gridOptionsThemeOverrides: AgChartThemeOverrides | undefined = this.chartProxyParams.getGridOptionsChartThemeOverrides();
-        const apiThemeOverrides: AgChartThemeOverrides | undefined  = this.chartProxyParams.apiChartThemeOverrides;
+        this.chartTheme = this.createChartTheme(themeName);
 
-        const defaultOverrides = {
-            common: {
-                padding: { top: 20, right: 20, bottom: 20, left: 20 },
-                title: {
-                    enabled: true,
-                    text: '',
-                }
-            }
+        this.chartOptions = {
+            baseTheme: themeName,
+            palette: this.chartTheme.palette,
+            overrides: this.chartTheme.config,
         };
+    }
+
+    private createChartTheme(themeName: string): ChartTheme {
+        const stockTheme = this.isStockTheme(themeName);
+        const gridOptionsThemeOverrides = this.chartProxyParams.getGridOptionsChartThemeOverrides();
+        const apiThemeOverrides = this.chartProxyParams.apiChartThemeOverrides;
 
         if (gridOptionsThemeOverrides || apiThemeOverrides) {
-            let overrides = this.mergeThemeOverrides(defaultOverrides, gridOptionsThemeOverrides);
-            overrides = this.mergeThemeOverrides(overrides, apiThemeOverrides);
-            const themeOverrides = { overrides };
+            const themeOverrides = {overrides: this.mergeThemeOverrides(gridOptionsThemeOverrides, apiThemeOverrides)};
             const getCustomTheme = () => deepMerge(this.lookupCustomChartTheme(themeName), themeOverrides);
-            this.chartOptions = this.isStockTheme(themeName) ? { baseTheme: themeName, ...themeOverrides } : getCustomTheme();
-            this.chartTheme = getChartTheme(this.chartOptions);
-        } else {
-            const baseTheme = this.isStockTheme(themeName) ? themeName : this.lookupCustomChartTheme(themeName);
-            this.chartTheme = getChartTheme(baseTheme);
-            this.chartOptions = { baseTheme, overrides: defaultOverrides };
+            return getChartTheme(stockTheme ? {baseTheme: themeName, ...themeOverrides} : getCustomTheme());
         }
+        return getChartTheme(stockTheme ? themeName : this.lookupCustomChartTheme(themeName));
+    }
+
+    private mergeThemeOverrides(gridOptionsThemeOverrides?: AgChartThemeOverrides, apiThemeOverrides?: AgChartThemeOverrides) {
+        if (!gridOptionsThemeOverrides) { return apiThemeOverrides; }
+        if (!apiThemeOverrides) { return gridOptionsThemeOverrides; }
+        return deepMerge(gridOptionsThemeOverrides, apiThemeOverrides);
     }
 
     public lookupCustomChartTheme(name: string) {
@@ -160,12 +161,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends any> {
         return _.includes(Object.keys(themes), themeName);
     }
 
-    private mergeThemeOverrides(gridOptionsThemeOverrides?: AgChartThemeOverrides, apiThemeOverrides?: AgChartThemeOverrides) {
-        if (!gridOptionsThemeOverrides) { return apiThemeOverrides; }
-        if (!apiThemeOverrides) { return gridOptionsThemeOverrides; }
-        return deepMerge(gridOptionsThemeOverrides, apiThemeOverrides);
-    }
-
     public downloadChart(): void {
         const { chart } = this;
         const fileName = chart.title ? chart.title.text : 'chart';
@@ -174,35 +169,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends any> {
 
     public getChartImageDataURL(type?: string) {
         return this.chart.scene.getDataURL(type);
-    }
-
-    protected getStandaloneChartType(): string {
-        switch (this.chartType) {
-            case ChartType.GroupedBar:
-            case ChartType.StackedBar:
-            case ChartType.NormalizedBar:
-                return 'bar';
-            case ChartType.GroupedColumn:
-            case ChartType.StackedColumn:
-            case ChartType.NormalizedColumn:
-                return 'column';
-            case ChartType.Line:
-                return 'line';
-            case ChartType.Area:
-            case ChartType.StackedArea:
-            case ChartType.NormalizedArea:
-                return 'area';
-            case ChartType.Scatter:
-            case ChartType.Bubble:
-                return 'scatter';
-            case ChartType.Histogram:
-                return 'histogram';
-            case ChartType.Pie:
-            case ChartType.Doughnut:
-                return 'pie';
-            default:
-                return 'cartesian';
-        }
     }
 
     private getSelectedTheme(): string {
@@ -220,34 +186,8 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends any> {
         return this.chartOptions;
     }
 
-    private isDarkTheme = () => this.chartProxyParams.isDarkTheme();
-
-    protected getFontColor = (): string => this.isDarkTheme() ? 'rgb(221, 221, 221)' : 'rgb(87, 87, 87)';
-
-    protected getAxisGridColor = (): string => this.isDarkTheme() ? 'rgb(100, 100, 100)' : 'rgb(219, 219, 219)';
-
     public getCustomPalette(): AgChartThemePalette | undefined {
         return this.customPalette;
-    }
-
-    protected getDefaultFontOptions(): any {
-        return {
-            fontStyle: 'normal',
-            fontWeight: 'normal',
-            fontSize: 12,
-            fontFamily: 'Verdana, sans-serif',
-            color: this.getFontColor()
-        };
-    }
-
-    protected getDefaultDropShadowOptions(): any {
-        return {
-            enabled: false,
-            blur: 5,
-            xOffset: 3,
-            yOffset: 3,
-            color: 'rgba(0, 0, 0, 0.5)',
-        };
     }
 
     protected getPredefinedPalette(): AgChartThemePalette {

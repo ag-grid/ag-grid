@@ -50,6 +50,8 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
     }
 
     public toggle(): void {
+        if (this.eInput.disabled) { return; }
+
         const previousValue = this.isSelected();
         const nextValue = this.getNextValue();
 
@@ -114,7 +116,7 @@ export class AgCheckbox extends AgAbstractInputField<HTMLInputElement, boolean> 
     }
 
     private onCheckboxClick(e: MouseEvent) {
-        if (this.passive) { return; }
+        if (this.passive || this.eInput.disabled) { return; }
         const previousValue = this.isSelected();
         const selected = this.selected = (e.target as HTMLInputElement).checked;
         this.refreshSelectedClass(selected);

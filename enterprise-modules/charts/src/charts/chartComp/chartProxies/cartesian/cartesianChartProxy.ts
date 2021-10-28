@@ -18,6 +18,7 @@ import { ChartDataModel } from "../../chartDataModel";
 import { isDate } from "../../typeChecker";
 import { deepMerge } from "../../object";
 import { ChartController, ChartModelUpdatedEvent } from "../../chartController";
+import { getStandaloneChartType } from "../../chartTypeMapper";
 
 enum AXIS_TYPE {REGULAR, SPECIAL}
 
@@ -32,7 +33,7 @@ export abstract class CartesianChartProxy<T extends any> extends ChartProxy<Cart
     }
 
     protected getAxes(): any {
-        const standaloneChartType = this.getStandaloneChartType();
+        const standaloneChartType = getStandaloneChartType(this.chartType);
         const flipXY = standaloneChartType === 'bar';
 
         let xAxisType = (standaloneChartType === 'scatter' || standaloneChartType === 'histogram') ? 'number' : 'category';
@@ -97,7 +98,7 @@ export abstract class CartesianChartProxy<T extends any> extends ChartProxy<Cart
             return;
         }
 
-        const chartType = this.getStandaloneChartType();
+        const chartType = getStandaloneChartType(this.chartType);
         const overrides = this.chartOptions.overrides;
         const axisPosition = isHorizontalChart ? ChartAxisPosition.Left : ChartAxisPosition.Bottom;
 
@@ -120,38 +121,6 @@ export abstract class CartesianChartProxy<T extends any> extends ChartProxy<Cart
         if (typeof cartesianRotation === 'number' && isFinite(cartesianRotation)) {
             return cartesianRotation;
         }
-    }
-
-    protected getDefaultAxisOptions(): any {
-        const fontOptions = this.getDefaultFontOptions();
-        const stroke = this.getAxisGridColor();
-        const axisColor = "rgba(195, 195, 195, 1)";
-
-        return {
-            title: {
-                ...fontOptions,
-                enabled: false,
-                fontSize: 14,
-            },
-            line: {
-                color: axisColor,
-                width: 1,
-            },
-            tick: {
-                color: axisColor,
-                size: 6,
-                width: 1,
-            },
-            label: {
-                ...fontOptions,
-                padding: 5,
-                rotation: 0,
-            },
-            gridStyle: [{
-                stroke,
-                lineDash: [4, 2]
-            }]
-        };
     }
 
     protected axisTypeToClassMap: { [key in string]: any } = {
@@ -196,7 +165,7 @@ export abstract class CartesianChartProxy<T extends any> extends ChartProxy<Cart
     protected getXAxisDefaults(xAxisType: any, options: any) {
         if (xAxisType === 'time') {
             let xAxisTheme: any = {};
-            const standaloneChartType = this.getStandaloneChartType();
+            const standaloneChartType = getStandaloneChartType(this.chartType);
             xAxisTheme = deepMerge(xAxisTheme, this.chartTheme.getConfig(standaloneChartType + '.axes.time'));
             xAxisTheme = deepMerge(xAxisTheme, this.chartTheme.getConfig(standaloneChartType + '.axes.time.bottom'));
             return xAxisTheme;

@@ -65,7 +65,7 @@
         }
 
         &:invalid {
-            border-width: 1px;
+            border-width: 2px;
             border-style: solid;
             @include ag-color-property(border-color, input-border-color-invalid);
         }

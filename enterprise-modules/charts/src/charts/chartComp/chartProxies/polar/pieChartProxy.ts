@@ -16,18 +16,10 @@ export class PieChartProxy extends PolarChartProxy {
     protected createChart(): PolarChart {
         const agChartOptions = { theme: this.chartOptions } as AgPolarChartOptions;
 
-        //TODO interrogate different options
-        const overrides = (agChartOptions.theme! as AgChartTheme).overrides;
-        const seriesOverrides = overrides && overrides!.pie ? overrides!.pie.series : {};
-
+        const seriesOverrides = this.chartOptions.overrides.pie.series.pie;
         agChartOptions.autoSize = true;
         agChartOptions.series = [{
             ...seriesOverrides,
-            // fills: seriesDefaults.fill.colors,
-            // fillOpacity: seriesDefaults.fill.opacity,
-            // strokes: seriesDefaults.stroke.colors,
-            // strokeOpacity: seriesDefaults.stroke.opacity,
-            // strokeWidth: seriesDefaults.stroke.width,
             type: 'pie'
         }];
 
@@ -86,35 +78,16 @@ export class PieChartProxy extends PolarChartProxy {
     ) {
         const existingSeriesId = series && series.angleKey;
 
-        //TODO interrogate different options
-        const agChartOptions = { theme: this.chartOptions } as AgPolarChartOptions;
-        const overrides = (agChartOptions.theme! as AgChartTheme).overrides;
-        const seriesOverrides = overrides && overrides!.pie ? overrides!.pie.series : {};
-
+        const seriesOverrides = this.chartOptions.overrides.pie.series.pie;
         let pieSeries = series;
-
         if (existingSeriesId !== field.colId) {
             chart.removeSeries(series);
-
 
             const options = {
                 ...seriesOverrides,
                 type: 'pie',
                 angleKey: this.crossFiltering ? angleField.colId + '-total' : angleField.colId,
                 radiusKey: this.crossFiltering ? field.colId : undefined,
-                // title: {
-                //     ...seriesDefaults.title,
-                //     text: seriesDefaults.title.text || params.fields[0].displayName,
-                // },
-                // fills: seriesDefaults.fill.colors,
-                // fillOpacity: seriesDefaults.fill.opacity,
-                // strokes: seriesDefaults.stroke.colors,
-                // strokeOpacity: seriesDefaults.stroke.opacity,
-                // strokeWidth: seriesDefaults.stroke.width,
-                // tooltip: {
-                //     enabled: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled,
-                //     renderer: seriesDefaults.tooltip && seriesDefaults.tooltip.enabled && seriesDefaults.tooltip.renderer,
-                // },
             };
             pieSeries = AgChart.createComponent(options, 'pie.series');
 

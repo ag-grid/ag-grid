@@ -10,8 +10,8 @@ export function initLineOpacitySlider(seriesLineOpacitySlider: AgSlider, chartTr
         .setStep(0.05)
         .setMaxValue(1)
         .setTextFieldWidth(45)
-        .setValue(chartOptionsService.getSeriesOption("stroke.opacity") || "1")
-        .onValueChange(newValue => chartOptionsService.setSeriesOption("stroke.opacity", newValue));
+        .setValue(chartOptionsService.getSeriesOption("strokeOpacity"))
+        .onValueChange(newValue => chartOptionsService.setSeriesOption("strokeOpacity", newValue));
 }
 
 export function initFillOpacitySlider(seriesFillOpacitySlider: AgSlider, chartTranslator: ChartTranslator, chartOptionsService: ChartOptionsService) {
@@ -20,8 +20,8 @@ export function initFillOpacitySlider(seriesFillOpacitySlider: AgSlider, chartTr
         .setStep(0.05)
         .setMaxValue(1)
         .setTextFieldWidth(45)
-        .setValue(chartOptionsService.getSeriesOption("fill.opacity") || "1")
-        .onValueChange(newValue => chartOptionsService.setSeriesOption("fill.opacity", newValue));
+        .setValue(chartOptionsService.getSeriesOption("fillOpacity"))
+        .onValueChange(newValue => chartOptionsService.setSeriesOption("fillOpacity", newValue));
 }
 
 export function initFontPanelParams(chartTranslator: ChartTranslator, chartOptionsService: ChartOptionsService) {

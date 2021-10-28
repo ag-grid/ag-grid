@@ -25,8 +25,6 @@ export class NavigatorPanel extends Component {
 
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
-    private activePanels: Component[] = [];
-
     constructor(private readonly chartOptionsService: ChartOptionsService) {
         super();
     }
@@ -64,15 +62,7 @@ export class NavigatorPanel extends Component {
             .onValueChange(height => this.chartOptionsService.setChartOption("navigator.height", height));
     }
 
-    private destroyActivePanels(): void {
-        this.activePanels.forEach(panel => {
-            _.removeFromParent(panel.getGui());
-            this.destroyBean(panel);
-        });
-    }
-
     protected destroy(): void {
-        this.destroyActivePanels();
         super.destroy();
     }
 }
