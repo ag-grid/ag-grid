@@ -23,7 +23,8 @@ import {
     ServerSideTransactionResultStatus,
     StoreRefreshAfterParams,
     StoreUpdatedEvent,
-    FocusService
+    FocusService,
+    ColumnModel
 } from "@ag-grid-community/core";
 import { SSRMParams } from "../serverSideRowModel";
 import { StoreUtils } from "./storeUtils";
@@ -45,6 +46,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
     @Autowired('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
     @Autowired('ssrmCacheUtils') private storeUtils: StoreUtils;
     @Autowired("focusService") private focusService: FocusService;
+    @Autowired("columnModel") private columnModel: ColumnModel;
 
     private readonly ssrmParams: SSRMParams;
     private readonly storeParams: ServerSideStoreParams;
@@ -294,7 +296,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
         // otherwise if set to zero rows last time, and we don't update the row count, then after
         // the purge there will still be zero rows, meaning the SSRM won't request any rows.
         // to kick things off, at least one row needs to be asked for.
-        if (this.rowCount === 0) {
+        if (this.columnModel.isAutoRowHeightActive || this.rowCount === 0) {
             this.rowCount = PartialStore.INITIAL_ROW_COUNT;
         }
     }
