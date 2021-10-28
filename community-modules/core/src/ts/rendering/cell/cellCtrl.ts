@@ -120,9 +120,6 @@ export class CellCtrl extends BeanStub {
 
     private suppressRefreshCell = false;
 
-    private destroyAutoHeight: ()=>void;
-    private autoHeightElement: HTMLElement | undefined;
-
     // this comp used only for custom row drag handle (ie when user calls params.registerRowDragger)
     private customRowDragComp: RowDragComp;
 
@@ -238,6 +235,7 @@ export class CellCtrl extends BeanStub {
         this.onColumnHover();
         this.setupControlComps();
         this.setupAriaExpanded();
+        this.setupAutoHeight();
 
         const colIdSanitised = escapeString(this.column.getId());
         const ariaColIndex = this.beans.columnModel.getAriaColumnIndex(this.column);
@@ -260,31 +258,22 @@ export class CellCtrl extends BeanStub {
         } else {
             this.showValue();
         }
-
-        this.addDestroyFunc(()=> {
-            this.destroyAutoHeight && this.destroyAutoHeight();
-        });
     }
 
-    public setupAutoHeight(eParentOfValue: HTMLElement | undefined): void {
-        if (!this.column.getColDef().autoHeight || this.autoHeightElement == eParentOfValue) { return; }
-
-        if (this.destroyAutoHeight) { this.destroyAutoHeight(); }
-        this.autoHeightElement = eParentOfValue;
-
-        if (!eParentOfValue) { return; }
+    public setupAutoHeight(): void {
+        if (!this.column.getColDef().autoHeight) { return; }
 
         const measureHeight = (timesCalled: number) => {
             // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
             // maybe it will be ready next VM turn
             const doc = this.beans.gridOptionsWrapper.getDocument();
 
-            if ((!doc || !doc.contains(eParentOfValue)) && timesCalled < 5) { 
+            if ((!doc || !doc.contains(this.eGui)) && timesCalled < 5) { 
                 this.beans.frameworkOverrides.setTimeout(() => measureHeight(timesCalled++), 0);
                 return;
             }
 
-            const newHeight = eParentOfValue.offsetHeight;
+            const newHeight = this.eGui.offsetHeight;
             this.rowNode.setRowAutoHeight(newHeight, this.column);
         };
 
@@ -293,12 +282,12 @@ export class CellCtrl extends BeanStub {
         // do once to set size in case size doesn't change, common when cell is blank
         listener();
 
-        const destroyResizeObserver = this.beans.resizeObserverService.observeResize(eParentOfValue, listener);
+        const destroyResizeObserver = this.beans.resizeObserverService.observeResize(this.eGui, listener);
 
-        this.destroyAutoHeight = () => {
+        this.addDestroyFunc(()=> {
             destroyResizeObserver();
             this.rowNode.setRowAutoHeight(undefined, this.column);
-        };
+        });
     }
 
     public getInstanceId(): string {

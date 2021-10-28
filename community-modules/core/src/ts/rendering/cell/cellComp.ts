@@ -163,8 +163,6 @@ export class CellComp extends Component implements TooltipParentComp {
                 this.insertValueWithoutCellRenderer(valueToDisplay);
             }
         }
-
-        this.cellCtrl.setupAutoHeight(this.getGui());
     }
 
     private setEditDetails(compDetails: UserCompDetails | undefined, popup?: boolean, position?: string): void {
