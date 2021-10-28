@@ -148,6 +148,91 @@ This is demonstrated below in the middle sparkline.
     <image-caption src="resources/custom-padding-outer-2.png" alt="PaddingOuter customisation" width="250px" constrained="true">Increased paddingOuter</image-caption>
 </div>
 
+## Column Label Options
+
+To enable column labels, set the `enabled` property in `label` options as shown:
+
+```js
+sparklineOptions: {
+    type: 'column',
+    label: {
+        enabled: true // show column labels
+    }
+}
+```
+
+<div style="display: flex; justify-content: center;">
+    <image-caption src="resources/default.png" alt="Column default" width="250px" constrained="true">Default</image-caption>
+    <image-caption src="resources/default-label.png" alt="Column labels enabled" width="250px" constrained="true">Label enabled</image-caption>
+</div>
+
+It is possible to change the text value displayed as the label of individual columns by adding a `formatter` callback function to `label` options as follows:
+
+```js
+sparklineOptions: {
+    type: 'column',
+    label: {
+        enabled: true,
+        formatter: labelFormatter
+    }
+}
+
+function labelFormatter({ value }) {
+    return `${value}%`
+}
+```
+
+<div style="display: flex; justify-content: center;">
+    <image-caption src="resources/default.png" alt="Column default" width="250px" constrained="true">Default</image-caption>
+    <image-caption src="resources/custom-label-formatter.png" alt="Column label text customisation" width="250px" constrained="true">Custom label text</image-caption>
+</div>
+
+To customise the label text style, set the style attributes in `label` options as follows:
+
+```js
+sparklineOptions: {
+    type: 'column',
+    label: {
+        enabled: true,
+        fontWeight: 'bold',
+        fontStyle: 'italic',
+        fontSize: 9,
+        fontFamily: 'Arial, Helvetica, sans-serif',
+        color: 'black',
+    }
+}
+```
+
+<div style="display: flex; justify-content: center;">
+    <image-caption src="resources/default.png" alt="Column default" width="250px" constrained="true">Default</image-caption>
+    <image-caption src="resources/custom-label-styles.png" alt="Column label text style customisation" width="250px" constrained="true">Custom label text styles</image-caption>
+</div>
+
+
+The position of the labels can be specified by setting the `placement` property in `label` options. By default, the labels are positioned at the end of the columns on the outside, i.e. `placement` is set to `outsideEnd `. The snippet below shows how the positioning of the label can be modified:
+
+```js
+sparklineOptions: {
+    type: 'column',
+    label: {
+        enabled: true,
+        placement: 'center', // positions the labels in the center of the columns
+    }
+}
+```
+
+Label `placement` options include `outsideEnd`, `center`, `insideEnd`, and `insideBase`. These are shown in the screenshots below.
+
+<div style="display: flex; justify-content: center;">
+    <image-caption src="resources/custom-label-placement-outsideEnd.png" alt="Column label placement default" width="250px" constrained="true">outsideEnd</image-caption>
+    <image-caption src="resources/custom-label-placement-center.png" alt="Column label center placement" width="250px" constrained="true">center</image-caption>
+</div>
+<div style="display: flex; justify-content: center;">
+    <image-caption src="resources/custom-label-placement-insideEnd.png" alt="Column label insideEnd placement" width="250px" constrained="true">insideEnd</image-caption>
+    <image-caption src="resources/custom-label-placement-insideBase.png" alt="Column label insideBase placement" width="250px" constrained="true">insideBase</image-caption>
+</div>
+
+
 ## Axis Line Options
 
 By default, an x-axis line is displayed which can be modified using the `axis` options.
