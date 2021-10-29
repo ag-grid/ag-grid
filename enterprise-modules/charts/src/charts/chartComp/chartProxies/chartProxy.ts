@@ -28,6 +28,7 @@ import {
 } from "ag-charts-community";
 import { deepMerge } from "../object";
 import { CrossFilteringContext } from "../../chartService";
+import { getStandaloneChartType } from "../chartTypeMapper";
 
 export interface ChartProxyParams {
     chartId: string;
@@ -71,10 +72,11 @@ export interface UpdateChartParams {
 export abstract class ChartProxy<TChart extends Chart, TOptions extends any> {
     protected readonly chartId: string;
     protected readonly chartType: ChartType;
+    protected readonly standaloneChartType: string;
 
     protected chart: TChart;
     protected chartOptions: any;
-    protected chartTheme: ChartTheme;
+    protected chartTheme: any;
     protected customPalette: AgChartThemePalette;
     protected crossFiltering: boolean;
     protected crossFilterCallback: (event: any, reset?: boolean) => void;
@@ -84,6 +86,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends any> {
         this.chartType = chartProxyParams.chartType;
         this.crossFiltering = chartProxyParams.crossFiltering;
         this.crossFilterCallback = chartProxyParams.crossFilterCallback;
+        this.standaloneChartType = getStandaloneChartType(this.chartType);
     }
 
     protected abstract createChart(options?: TOptions): TChart;
@@ -112,17 +115,18 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends any> {
         if (this.chartProxyParams.chartModel) {
             const chartModel = this.chartProxyParams.chartModel;
             this.chartOptions = chartModel.chartOptions;
-            this.chartTheme = getChartTheme(this.chartOptions);
+            this.chartTheme = getChartTheme({ overrides: this.chartOptions });
             return;
         }
 
         const themeName = this.getSelectedTheme();
-        this.chartTheme = this.createChartTheme(themeName);
+        const theme = this.createChartTheme(themeName);
+        this.chartOptions = this.convertConfigToOverrides(theme.config);
 
-        this.chartOptions = {
+        this.chartTheme = {
             baseTheme: themeName,
-            palette: this.chartTheme.palette,
-            overrides: this.chartTheme.config,
+            palette: theme.palette,
+            overrides: this.chartOptions,
         };
     }
 
@@ -227,6 +231,12 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends any> {
             const c = Color.fromString(fill);
             return new Color(c.r, c.g, c.b, alpha).toHexString();
         });
+    }
+
+    private convertConfigToOverrides(config: any) {
+        const chartOverrides = config[this.standaloneChartType];
+        chartOverrides.series = chartOverrides.series[this.standaloneChartType];
+        return {[this.standaloneChartType]: chartOverrides};
     }
 
     public destroy(): void {

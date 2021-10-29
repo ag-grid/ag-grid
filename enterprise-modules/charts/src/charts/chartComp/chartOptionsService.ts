@@ -37,16 +37,13 @@ export class ChartOptionsService extends BeanStub {
     }
 
     public setChartOption<T = string>(expression: string, value: T): void {
-        const [chart, chartOptions] = [this.getChart(), this.getChartOptions()];
-
-        const optionsType = getStandaloneChartType(this.getChartType());
-        const options = _.get(chartOptions.overrides, `${optionsType}`, undefined);
-
         // update chart options
+        const optionsType = getStandaloneChartType(this.getChartType());
+        const options = _.get(this.getChartOptions(), `${optionsType}`, undefined);
         _.set(options, expression, value);
 
         // update chart
-        _.set(chart, expression, value);
+        _.set(this.getChart(), expression, value);
 
         this.raiseChartOptionsChangedEvent();
     }
@@ -98,8 +95,9 @@ export class ChartOptionsService extends BeanStub {
     }
 
     public setSeriesOption<T = string>(expression: string, value: T): void {
-        // update chart series options
-        _.set(this.getSeriesOptions(), expression, value);
+        // update series options
+        const optionsType = getStandaloneChartType(this.getChartType());
+        _.set(this.getChartOptions()[optionsType].series, expression, value);
 
         // update chart
         this.getChart().series.forEach((s: any) => _.set(s, expression, value));
@@ -117,10 +115,7 @@ export class ChartOptionsService extends BeanStub {
 
     private getAxis(axisType: string) {
         const chart = this.getChart();
-
-        if (!chart.axes || chart.axes.length < 1) {
-            return undefined;
-        }
+        if (!chart.axes || chart.axes.length < 1) { return; }
 
         if (axisType === 'xAxis') {
             return (chart.axes && chart.axes[0].direction === 'x') ? chart.axes[0] : chart.axes[1];
@@ -128,27 +123,17 @@ export class ChartOptionsService extends BeanStub {
         return (chart.axes && chart.axes[1].direction === 'y') ? chart.axes[1] : chart.axes[0];
     }
 
-    private getAxesOptions() {
-        const optionsType = getStandaloneChartType(this.getChartType());
-        const options = _.get(this.getChartOptions().overrides, optionsType, undefined);
-        return options ? options.axes : undefined;
-    }
-
-    private getSeriesOptions() {
-        const optionsType = getStandaloneChartType(this.getChartType());
-        return _.get(this.getChartOptions().overrides, `${optionsType}.series.${optionsType}`, undefined);
-    }
-
     private updateAxisOptions<T = string>(chartAxis: any, expression: string, value: T) {
-        let axesOptions = this.getAxesOptions();
+        const optionsType = getStandaloneChartType(this.getChartType());
+        const axisOptions = this.getChartOptions()[optionsType].axes;
         if (chartAxis instanceof NumberAxis) {
-            _.set(axesOptions.number, expression, value);
+            _.set(axisOptions.number, expression, value);
         } else if (chartAxis instanceof CategoryAxis) {
-            _.set(axesOptions.category, expression, value);
+            _.set(axisOptions.category, expression, value);
         } else if (chartAxis instanceof TimeAxis) {
-            _.set(axesOptions.time, expression, value);
+            _.set(axisOptions.time, expression, value);
         } else if (chartAxis instanceof GroupedCategoryAxis) {
-            _.set(axesOptions.groupedCategory, expression, value);
+            _.set(axisOptions.groupedCategory, expression, value);
         }
     }
 

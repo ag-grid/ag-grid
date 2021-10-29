@@ -16,7 +16,7 @@ interface UpdateDoughnutSeriesParams {
     seriesMap: { [p: string]: PieSeries };
     angleField: FieldDefinition;
     field: FieldDefinition;
-    seriesDefaults: any; //TODO: PieSeriesOptions;
+    seriesDefaults: any;
     index: number;
     params: UpdateChartParams;
     fills: string[];
@@ -37,12 +37,12 @@ export class DoughnutChartProxy extends PolarChartProxy {
     }
 
     protected createChart(): PolarChart {
-        const agChartOptions = { theme: this.chartOptions } as AgPolarChartOptions;
+        const agChartOptions = { theme: this.chartTheme } as AgPolarChartOptions;
+        const { parentElement } = this.chartProxyParams;
 
         agChartOptions.type = 'pie';
-        agChartOptions.series = [];
 
-        return AgChart.create(agChartOptions, this.chartProxyParams.parentElement);
+        return AgChart.create(agChartOptions, parentElement);
     }
 
     public update(params: UpdateChartParams): void {
@@ -68,7 +68,7 @@ export class DoughnutChartProxy extends PolarChartProxy {
         const fills = palette.fills;
         const strokes = palette.strokes;
 
-        const seriesOverrides = this.chartOptions.overrides.pie.series.pie;
+        const seriesOverrides = this.chartOptions[this.standaloneChartType].series;
         const numFields = params.fields.length;
 
         let offset = 0;

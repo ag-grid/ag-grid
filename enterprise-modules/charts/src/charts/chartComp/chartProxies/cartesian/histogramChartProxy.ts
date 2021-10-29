@@ -15,7 +15,7 @@ export class HistogramChartProxy extends CartesianChartProxy<any> {
     }
 
     protected createChart(): CartesianChart {
-        const agChartOptions = { theme: this.chartOptions } as AgCartesianChartOptions;
+        const agChartOptions = { theme: this.chartTheme } as AgCartesianChartOptions;
         const { parentElement } = this.chartProxyParams;
 
         const [xAxis, yAxis] = this.getAxes();
@@ -29,9 +29,8 @@ export class HistogramChartProxy extends CartesianChartProxy<any> {
             ...yAxis
         }];
 
-        const seriesOverrides = this.chartOptions.overrides.histogram.series.histogram;
         agChartOptions.series = [{
-            ...seriesOverrides,
+            ...this.chartOptions[this.standaloneChartType].series,
             type: 'histogram'
         }];
 

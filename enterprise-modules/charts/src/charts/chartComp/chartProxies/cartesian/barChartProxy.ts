@@ -21,21 +21,23 @@ export class BarChartProxy extends CartesianChartProxy<any> {
 
     public constructor(params: ChartProxyParams) {
         super(params);
-
         this.initChartOptions();
         this.recreateChart();
     }
 
     protected createChart(): CartesianChart {
-        const agChartOptions = { theme: this.chartOptions } as AgCartesianChartOptions;
+        const agChartOptions = { theme: this.chartTheme } as AgCartesianChartOptions;
+        const { grouping, parentElement } = this.chartProxyParams;
 
-        const isColumn = getStandaloneChartType(this.chartType) === 'column';
+        agChartOptions.type = grouping ? 'groupedCategory' : (this.standaloneChartType === 'bar' ? 'bar' : 'column');
+
+        const isColumn = this.standaloneChartType === 'column';
         const [xAxis, yAxis] = this.getAxes();
         agChartOptions.axes = [
             {
                 ...(isColumn ? xAxis : yAxis),
                 position: isColumn ? 'bottom' : 'left',
-                type: this.chartProxyParams.grouping ? 'groupedCategory' : 'category'
+                type: grouping ? 'groupedCategory' : 'category'
             },
             {
                 ...(isColumn ? yAxis : xAxis),
@@ -43,8 +45,6 @@ export class BarChartProxy extends CartesianChartProxy<any> {
                 type: 'number'
             }
         ];
-
-        agChartOptions.type = this.chartProxyParams.grouping ? 'groupedCategory' : agChartOptions.type;
 
         // special handling to add a default label formatter to show '%' for normalized charts if none is provided
         const normalised = !this.crossFiltering && _.includes([ChartType.NormalizedColumn, ChartType.NormalizedBar], this.chartType);
@@ -54,26 +54,22 @@ export class BarChartProxy extends CartesianChartProxy<any> {
             numberAxis.label = {...numberAxis.label, formatter: params => Math.round(params.value) + '%'};
         }
 
-        const chartOverrides = this.chartOptions.overrides;
-        const seriesOverrides = isColumn ? chartOverrides.column.series.column : chartOverrides.bar.series.bar;
-
         const isGrouped = !this.crossFiltering && _.includes([ChartType.GroupedColumn, ChartType.GroupedBar], this.chartType);
         agChartOptions.series = [{
-            ...seriesOverrides,
-            type: isColumn ? 'column' : 'bar',
+            ...this.chartOptions[this.standaloneChartType].series,
+            type: this.standaloneChartType,
             grouped: isGrouped,
             normalizedTo: normalised ? 100 : undefined,
         }];
 
-        agChartOptions.container = this.chartProxyParams.parentElement;
-        return AgChart.create(agChartOptions);
+        return AgChart.create(agChartOptions, parentElement);
     }
 
     public update(params: UpdateChartParams): void {
         this.chartProxyParams.grouping = params.grouping;
+        const isHorizontalChart = this.standaloneChartType === 'bar';
 
-        const isColumn = getStandaloneChartType(this.chartType) === 'column';
-        this.updateAxes('category', !isColumn);
+        this.updateAxes('category', isHorizontalChart);
 
         const barSeries = this.chart.series[0] as BarSeries;
         if (this.crossFiltering) {
@@ -89,7 +85,7 @@ export class BarChartProxy extends CartesianChartProxy<any> {
         barSeries.yKeys = params.fields.map(f => f.colId) as any;
         barSeries.yNames = params.fields.map(f => f.displayName!) as any;
 
-        this.updateLabelRotation(params.category.id, !isColumn);
+        this.updateLabelRotation(params.category.id, isHorizontalChart);
     }
 
     private updateCrossFilteringSeries(barSeries: BarSeries, params: UpdateChartParams) {

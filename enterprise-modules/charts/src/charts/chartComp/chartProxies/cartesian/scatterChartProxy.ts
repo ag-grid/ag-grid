@@ -32,7 +32,10 @@ export class ScatterChartProxy extends CartesianChartProxy<any> {
     }
 
     protected createChart(): CartesianChart {
-        const agChartOptions = { theme: this.chartOptions } as AgCartesianChartOptions;
+        const agChartOptions = { theme: this.chartTheme } as AgCartesianChartOptions;
+        const { parentElement } = this.chartProxyParams;
+
+        agChartOptions.type = 'scatter';
 
         const [xAxis, yAxis] = this.getAxes();
         agChartOptions.axes = [{
@@ -45,7 +48,7 @@ export class ScatterChartProxy extends CartesianChartProxy<any> {
             ...yAxis,
         }];
 
-        return AgChart.create(agChartOptions, this.chartProxyParams.parentElement);
+        return AgChart.create(agChartOptions, parentElement);
     }
 
     public update(params: UpdateChartParams): void {
@@ -112,7 +115,7 @@ export class ScatterChartProxy extends CartesianChartProxy<any> {
         const labelFieldDefinition = params.category.id === ChartDataModel.DEFAULT_CATEGORY ? undefined : params.category;
         let previousSeries: ScatterSeries | undefined;
 
-        const seriesOverrides = this.chartOptions.overrides.scatter.series.scatter;
+        const seriesOverrides = this.chartOptions[this.standaloneChartType].series;
         seriesDefinitions.forEach((seriesDefinition, index) => {
             const existingSeries = existingSeriesById.get(seriesDefinition!.yField.colId);
             const series = existingSeries || AgChart.createComponent({
