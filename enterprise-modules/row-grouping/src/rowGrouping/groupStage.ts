@@ -423,18 +423,25 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
         // groups are about to get disposed, so need to deselect any that are selected
         this.selectionService.removeGroupsFromSelection();
 
+        const {rootNode, groupedCols} = details;
         // because we are not creating the root node each time, we have the logic
         // here to change leafGroup once.
         // we set .leafGroup to false for tree data, as .leafGroup is only used when pivoting, and pivoting
         // isn't allowed with treeData, so the grid never actually use .leafGroup when doing treeData.
-        details.rootNode.leafGroup = this.usingTreeData ? false : details.groupedCols.length === 0;
+        rootNode.leafGroup = this.usingTreeData ? false : groupedCols.length === 0;
 
         // we are doing everything from scratch, so reset childrenAfterGroup and childrenMapped from the rootNode
-        details.rootNode.childrenAfterGroup = [];
-        details.rootNode.childrenMapped = {};
-        details.rootNode.updateHasChildren();
+        rootNode.childrenAfterGroup = [];
+        rootNode.childrenMapped = {};
+        rootNode.updateHasChildren();
 
-        this.insertNodes(details.rootNode.allLeafChildren, details, false);
+        const sibling = rootNode.sibling;
+        if (sibling) {
+            sibling.childrenAfterGroup = rootNode.childrenAfterGroup;
+            sibling.childrenMapped = rootNode.childrenMapped;
+        }
+
+        this.insertNodes(rootNode.allLeafChildren, details, false);
     }
 
     private noChangeInGroupingColumns(details: GroupingDetails, afterColumnsChanged: boolean): boolean {

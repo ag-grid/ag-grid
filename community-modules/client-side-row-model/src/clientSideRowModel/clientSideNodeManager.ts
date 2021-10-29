@@ -85,26 +85,40 @@ export class ClientSideNodeManager {
     }
 
     public setRowData(rowData: any[]): RowNode[] | undefined {
-        this.rootNode.childrenAfterFilter = null;
-        this.rootNode.childrenAfterGroup = null;
-        this.rootNode.childrenAfterSort = null;
-        this.rootNode.childrenMapped = null;
-        this.rootNode.updateHasChildren();
+        if (typeof rowData === 'string') {
+            console.warn('AG Grid: rowData must be an array, however you passed in a string. If you are loading JSON, make sure you convert the JSON string to JavaScript objects first');
+            return;
+        }
+
+        const rootNode = this.rootNode;
+        const sibling = this.rootNode.sibling;
+
+        rootNode.childrenAfterFilter = null;
+        rootNode.childrenAfterGroup = null;
+        rootNode.childrenAfterSort = null;
+        rootNode.childrenMapped = null;
+        rootNode.updateHasChildren();
 
         this.nextId = 0;
         this.allNodesMap = {};
 
-        if (!rowData) {
-            this.rootNode.allLeafChildren = [];
-            this.rootNode.childrenAfterGroup = [];
-            return;
+        if (rowData) {
+            // we use rootNode as the parent, however if using ag-grid-enterprise, the grouping stage
+            // sets the parent node on each row (even if we are not grouping). so setting parent node
+            // here is for benefit of ag-grid-community users
+            rootNode.allLeafChildren = rowData.map( dataItem => this.createNode(dataItem, this.rootNode, ClientSideNodeManager.TOP_LEVEL));
+        } else {
+            rootNode.allLeafChildren = [];
+            rootNode.childrenAfterGroup = [];
         }
 
-        // kick off recursion
-        // we add rootNode as the parent, however if using ag-grid-enterprise, the grouping stage
-        // sets the parent node on each row (even if we are not grouping). so setting parent node
-        // here is for benefit of ag-grid-community users
-        this.rootNode.allLeafChildren = this.recursiveFunction(rowData, this.rootNode, ClientSideNodeManager.TOP_LEVEL)!;
+        if (sibling) {
+            sibling.childrenAfterFilter = rootNode.childrenAfterFilter;
+            sibling.childrenAfterGroup = rootNode.childrenAfterGroup;
+            sibling.childrenAfterSort = rootNode.childrenAfterSort;
+            sibling.childrenMapped = rootNode.childrenMapped;
+            sibling.allLeafChildren = rootNode.allLeafChildren;
+        }
     }
 
     public updateRowData(rowDataTran: RowDataTransaction, rowNodeOrder: {[id:string]: number} | null | undefined): RowNodeTransaction {
@@ -173,6 +187,10 @@ export class ClientSideNodeManager {
             this.rootNode.allLeafChildren = [...this.rootNode.allLeafChildren, ...newNodes];
         }
 
+        if (this.rootNode.sibling) {
+            this.rootNode.sibling.allLeafChildren = this.rootNode.allLeafChildren;
+        }
+
         // add new row nodes to the transaction add items
         rowNodeTransaction.add = newNodes;
     }
@@ -208,6 +226,9 @@ export class ClientSideNodeManager {
         });
 
         this.rootNode.allLeafChildren = this.rootNode.allLeafChildren.filter(rowNode => !rowIdsRemoved[rowNode.id!]);
+        if (this.rootNode.sibling) {
+            this.rootNode.sibling.allLeafChildren = this.rootNode.allLeafChildren;
+        }
     }
 
     private executeUpdate(rowDataTran: RowDataTransaction, rowNodeTransaction: RowNodeTransaction, nodesToUnselect: RowNode[]): void {
@@ -253,21 +274,6 @@ export class ClientSideNodeManager {
         }
 
         return rowNode;
-    }
-
-    private recursiveFunction(rowData: any[], parent: RowNode, level: number): RowNode[] | undefined {
-        // make sure the rowData is an array and not a string of json - this was a commonly reported problem on the forum
-        if (typeof rowData === 'string') {
-            console.warn('AG Grid: rowData must be an array, however you passed in a string. If you are loading JSON, make sure you convert the JSON string to JavaScript objects first');
-            return;
-        }
-
-        const rowNodes: RowNode[] = [];
-        rowData.forEach((dataItem) => {
-            const node = this.createNode(dataItem, parent, level);
-            rowNodes.push(node);
-        });
-        return rowNodes;
     }
 
     private createNode(dataItem: any, parent: RowNode, level: number): RowNode {

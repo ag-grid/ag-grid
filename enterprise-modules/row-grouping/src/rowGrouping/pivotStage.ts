@@ -120,10 +120,13 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
 
         if (pivotColumns.length === 0) {
             rowNode.childrenMapped = null;
-            return;
+        } else {
+            rowNode.childrenMapped = this.bucketChildren(rowNode.childrenAfterFilter!, pivotColumns, 0, uniqueValues);
         }
 
-        rowNode.childrenMapped = this.bucketChildren(rowNode.childrenAfterFilter!, pivotColumns, 0, uniqueValues);
+        if (rowNode.sibling) {
+            rowNode.sibling.childrenMapped = rowNode.childrenMapped;
+        }
     }
 
     private bucketChildren(children: RowNode[], pivotColumns: Column[], pivotIndex: number, uniqueValues: any): any {
