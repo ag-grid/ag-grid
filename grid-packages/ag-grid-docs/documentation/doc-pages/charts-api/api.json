@@ -528,6 +528,24 @@
           "unit": "px"
         }
       }
+    },
+    "listeners": {
+      "meta": {
+        "description": "A map of event names to event listeners."
+      },
+      "seriesNodeClick": {
+        "type": {
+          "parameters": {
+            "type": "'seriesNodeClick'",
+            "series": "LineSeries | AreaSeries | BarSeries | HistogramSeries | PieSeries | ScatterSeries | TreemapSeries",
+            "datum": "any",
+            "xKey": "string",
+            "yKey": "string"
+          },
+          "returnType": "any"
+        },
+        "description": "The listener to call when a node (marker, column, bar, tile or a pie slice) in any series is clicked. In case a chart has multiple series, the chart's `seriesNodeClick` event can be used to listen to `nodeClick` events of all the series at once."
+      }
     }
   },
   "axis": {
