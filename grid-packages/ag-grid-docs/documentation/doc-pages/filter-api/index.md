@@ -149,4 +149,16 @@ const gridOptions = {
 }
 </snippet>
 
+The following example demonstrates all of the provided filters with `readOnly: true` enabled:
+- [Simple Column Filters](/filter-provided-simple/) have a read-only display with no buttons; if there is no 2nd condition set then the join operator and 2nd condition are hidden:
+    - `athlete` column demonstrates [Text Filter](/filter-text/).
+    - `age` and `year` columns demonstrate [Number Filter](/filter-number/).
+    - `date` column demonstrates [Date Filter](/filter-date/).
+- [Set Filter](/filter-set/) allows Mini Filter searching of values, but value inclusion/exclusion cannot be toggled; buttons are also hidden, and pressing enter in the Mini Filter input has no effect:
+    - `country`, `gold`, `silver` and `bronze` columns demonstrate [Set Filter](/filter-set/).
+- [Multi Filter](/filter-multi/) has no direct behaviour change, sub-filters need to be individually made read-only. `readOnly: true` is needed to affect any associated [Floating Filters](/floating-filters/).
+    - `sport` column demonstrates [Multi Filter](/filter-multi/).
+- [Floating Filters](/floating-filters/) are enabled and inherit `readOnly: true` from their parent, disabling any UI input.
+- Buttons above the grid provide API interactions to configure the filters.
+
 <grid-example title='Read-only Filter UI' name='filter-api-readonly' type='generated' options='{ "enterprise": true, "exampleHeight": 624, "modules": ["clientside", "setfilter", "menu", "columnpanel"] }'></grid-example>
