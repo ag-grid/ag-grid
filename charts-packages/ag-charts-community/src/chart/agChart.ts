@@ -414,24 +414,18 @@ function provideDefaultChartType(options: any): any {
     if (options.type) {
         return options;
     }
+
     // If chart type is not specified, try to infer it from the type of first series.
     const series = options.series && options.series[0];
-
     if (series && series.type) {
-        outerLoop: for (const chartType in mappings) {
-            for (const seriesType in mappings[chartType].series) {
-                if (series.type === seriesType) {
-                    options = Object.create(options);
-                    options.type = chartType;
-                    break outerLoop;
-                }
-            }
-        }
-    }
-    if (!options.type) {
         options = Object.create(options);
-        options.type = 'cartesian';
+        options.type = series.type;
+        return options;
     }
+
+    // If chart type is not specified in the first series either, set it to 'cartesian'.
+    options = Object.create(options);
+    options.type = 'cartesian';
 
     return options;
 }

@@ -20,7 +20,18 @@ var columnDefs = [
         },
         suppressMenu: true,
     },
-    { field: 'sport', suppressMenu: true, filter: 'agTextColumnFilter', filterParams: defaultFilterParams },
+    {
+        field: 'sport',
+        suppressMenu: true,
+        filter: 'agMultiColumnFilter',
+        filterParams: {
+            filters: [
+                { filter: 'agTextColumnFilter', filterParams: { readOnly: true } },
+                { filter: 'agSetColumnFilter', filterParams: { readOnly: true } },
+            ],
+            readOnly: true,
+        }
+    },
     { field: 'gold', filterParams: defaultFilterParams },
     { field: 'silver', filterParams: defaultFilterParams },
     { field: 'bronze', filterParams: defaultFilterParams },
@@ -79,27 +90,27 @@ function printCountryModel() {
 
 function sportStartsWithS() {
     var sportsFilterComponent = gridOptions.api.getFilterInstance('sport');
-    sportsFilterComponent.setModel({
+    sportsFilterComponent.setModel({ filterModels: [{
         type: 'startsWith',
         filter: 's',
-    });
+    }]});
 
     gridOptions.api.onFilterChanged();
 }
 
 function sportEndsWithG() {
     var sportsFilterComponent = gridOptions.api.getFilterInstance('sport');
-    sportsFilterComponent.setModel({
+    sportsFilterComponent.setModel({ filterModels: [{
         type: 'endsWith',
         filter: 'g',
-    });
+    }]});
 
     gridOptions.api.onFilterChanged();
 }
 
 function sportsCombined() {
     var sportsFilterComponent = gridOptions.api.getFilterInstance('sport');
-    sportsFilterComponent.setModel({
+    sportsFilterComponent.setModel({ filterModels: [{
         condition2: {
             type: 'endsWith',
             filter: 'g',
@@ -109,7 +120,7 @@ function sportsCombined() {
             type: 'startsWith',
             filter: 's',
         },
-    });
+    }]});
 
     gridOptions.api.onFilterChanged();
 }

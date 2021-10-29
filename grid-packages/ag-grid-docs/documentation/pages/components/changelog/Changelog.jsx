@@ -291,45 +291,18 @@ const Changelog = ({location}) => {
                         items in our backlog.
                     </div>
 
-                    <div
-                        className={"global-search-pane"}
-                        style={{
-                            display: "flex",
-                            width: "100%",
-                            paddingBottom: "20px",
-                            paddingTop: "10px",
-                        }}
-                    >
-                        <div
-                            style={{
-                                width: "35%",
-                                display: "flex",
-                                alignItems: "center",
-                            }}
-                        >
+                    <div className={styles["global-search-filter-container"]}>
+                        <div className={styles["search-bar-container"]}>
                             <input
                                 type="text"
-                                className={"clearable global-report-search"}
+                                className={styles["search-bar"]}
                                 placeholder={"Search changelog... (e.g. AG-1280 or filtering)"}
-                                style={{
-                                    height: "50px",
-                                    width: "100%",
-                                    fontSize: "20px",
-                                }}
                                 onChange={onQuickFilterChange}
                             ></input>
                         </div>
 
-                        <div
-                            id="checkbox-container"
-                            style={{
-                                display: "flex",
-                                paddingTop: "10px",
-                                paddingBottom: "10px",
-                                paddingLeft: "20px",
-                            }}
-                        >
-                            <div className={styles["checkbox-label-div"]}>
+                        <div className={styles["all-checkboxes-container"]}>
+                            <div className={styles["single-checkbox-label-container"]}>
                                 <div>
                                     <input
                                         id="featureRequest-checkbox"
@@ -337,7 +310,7 @@ const Changelog = ({location}) => {
                                         className={styles["checkbox-class"]}
                                         defaultChecked
                                         onChange={event =>
-                                            checkboxUnchecked(event.target.checked, "featureRequest")
+                                        checkboxUnchecked(event, "featureRequest")
                                         }
                                     ></input>
                                 </div>
@@ -350,11 +323,11 @@ const Changelog = ({location}) => {
                                     </label>
                                 </div>
                             </div>
-                            <div className={styles["checkbox-label-div"]}>
+                            <div className={styles["single-checkbox-label-container"]}>
                                 <div>
                                     <input
                                         id="defect-checkbox"
-                                        onChange={event => checkboxUnchecked(event.target.checked, "defect")}
+                                        onChange={event => checkboxUnchecked(event, "defect")}
                                         type="checkbox"
                                         className={styles["checkbox-class"]}
                                         defaultChecked
@@ -369,12 +342,12 @@ const Changelog = ({location}) => {
                                     </label>
                                 </div>
                             </div>
-                            <div className={styles["checkbox-label-div"]}>
+                            <div className={styles["single-checkbox-label-container"]}>
                                 <div>
                                     <input
                                         id="deprecated-checkbox"
                                         className={styles["checkbox-class"]}
-                                        onChange={event => checkboxUnchecked(event.target.checked, "deprecated")}
+                                        onChange={event => checkboxUnchecked(event, "deprecated")}
                                         type="checkbox"
                                     ></input>
                                 </div>
@@ -388,15 +361,15 @@ const Changelog = ({location}) => {
                                 </div>
                             </div>
                             <div
-                                className={styles["checkbox-label-div"]}
-                                style={{paddingRight: "10px"}}
+                                className={styles["single-checkbox-label-container"]}
+                                style={{ paddingRight: "10px" }}
                             >
                                 <div>
                                     <input
                                         id="breakingChange-checkbox"
                                         className={styles["checkbox-class"]}
                                         onChange={event =>
-                                            checkboxUnchecked(event.target.checked, "breakingChange")
+                                        checkboxUnchecked(event, "breakingChange")
                                         }
                                         type="checkbox"
                                     ></input>

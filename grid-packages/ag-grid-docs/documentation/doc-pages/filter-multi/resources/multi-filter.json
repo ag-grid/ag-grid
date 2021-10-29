@@ -10,6 +10,15 @@
                 ],
                 "include": []
             }
+        },
+        "readOnly": {
+            "description": "If true, all UI inputs managed by this filter are for display only, and the filter can only be affected by API calls. Does NOT affect child filters, they need to be individually configured with `readOnly` where applicable.",
+            "type": "boolean",
+            "default": false,
+            "more": {
+                "url": "/filter-api/#read-only-filter-ui",
+                "name": "Read-only Filter UI"
+            }
         }
     },
     "IMultiFilterDef": {

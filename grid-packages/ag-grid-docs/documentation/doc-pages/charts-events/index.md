@@ -52,9 +52,7 @@ Note that the `datum` object is untyped and can contain keys that are not plotte
 
 #### Area series
 
-No events yet.
-
-<!-- <api-documentation source='charts-api/api.json' section='area.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation> -->
+<api-documentation source='charts-api/api.json' section='area.listeners' config='{ "showSnippets": true, "skipHeader": true }'></api-documentation>
 
 #### Scatter series
 
@@ -75,7 +73,7 @@ No events yet.
 
 Note that the `datum` in this case is not an element from the `chart.data` or `series.data` array provided by the user. It's a histogram bin, which represents an aggregated value of one or more `datum`s, where the datums themselves can be accessed via the `datum.data` property.
 
-For example, to get all x values used by the bin, one could so the following:
+For example, to get all x values used by the bin, one could do the following:
 
 ```js
 for (var element of event.datum.data) {

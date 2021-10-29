@@ -234,39 +234,17 @@ const Pipeline = () => {
                             containing the list of completed items.
                         </p>
                     </div>
-                    <div
-                        className={"global-search-pane"}
-                        style={{
-                            display: "flex",
-                            width: "100%",
-                            paddingBottom: "20px",
-                            paddingTop: "10px",
-                        }}
-                    >
-                        <div
-                            style={{
-                                width: "40%",
-                            }}
-                        >
+                    <div className={styles["global-search-filter-container"]}>
+                        <div className={styles["search-bar-container"]}>
                             <input
                                 type="text"
-                                className={"clearable global-report-search"}
                                 placeholder={"Search pipeline… (e.g. AG-1280 or filtering)"}
-                                style={{height: "50px", width: "100%", fontSize: "20px"}}
+                                className={styles["search-bar"]}
                                 onChange={onQuickFilterChange}
                             ></input>
                         </div>
-                        <div
-                            id="checkbox-container"
-                            style={{
-                                display: "flex",
-                                paddingTop: "10px",
-                                paddingBottom: "10px",
-                                paddingLeft: "20px",
-                                width: "75%",
-                            }}
-                        >
-                            <div className={styles["checkbox-label-div"]}>
+                        <div className={styles["all-checkboxes-container"]}>
+                            <div className={styles["single-checkbox-label-container"]}>
                                 <div>
                                     <input
                                         id="featureRequest-checkbox"
@@ -274,7 +252,7 @@ const Pipeline = () => {
                                         className={styles["checkbox-class"]}
                                         defaultChecked={true}
                                         onChange={event =>
-                                            checkboxUnchecked(event, "featureRequest")
+                                        checkboxUnchecked(event, "featureRequest")
                                         }
                                     ></input>
                                 </div>
@@ -287,7 +265,7 @@ const Pipeline = () => {
                                     </label>
                                 </div>
                             </div>
-                            <div className={styles["checkbox-label-div"]}>
+                            <div className={styles["single-checkbox-label-container"]}>
                                 <div>
                                     <input
                                         id="bug-checkbox"
@@ -306,7 +284,7 @@ const Pipeline = () => {
                                     </label>
                                 </div>
                             </div>
-                            <div className={styles["checkbox-label-div"]}>
+                            <div className={styles["single-checkbox-label-container"]}>
                                 <div>
                                     <input
                                         className={styles["checkbox-class"]}

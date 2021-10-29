@@ -1134,6 +1134,24 @@
         "max": 20,
         "unit": "px"
       }
+    },
+    "listeners": {
+      "meta": {
+        "description": "A map of event names to event listeners."
+      },
+      "nodeClick": {
+        "type": {
+          "parameters": {
+            "type": "'nodeClick'",
+            "series": "AreaSeries",
+            "datum": "any",
+            "xKey": "string",
+            "yKey": "string"
+          },
+          "returnType": "any"
+        },
+        "description": "The listener to call when an area series node (marker) is clicked."
+      }
     }
   },
   "bar": {

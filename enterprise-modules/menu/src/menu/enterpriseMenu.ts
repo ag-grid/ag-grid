@@ -24,12 +24,11 @@ import {
     TabbedLayout,
     FocusService,
     IAfterGuiAttachedParams,
-    GridBodyComp,
     ContainerType,
     CtrlsService
 } from '@ag-grid-community/core';
 import { MenuList } from './menuList';
-import { MenuItemComponent } from './menuItemComponent';
+import { MenuItemComponent, MenuItemSelectedEvent } from './menuItemComponent';
 import { MenuItemMapper } from './menuItemMapper';
 import { PrimaryColsPanel } from '@ag-grid-enterprise/column-tool-panel';
 
@@ -439,8 +438,14 @@ export class EnterpriseMenu extends BeanStub {
         return this.tabItemGeneral;
     }
 
-    private onHidePopup(): void {
-        this.hidePopupFunc();
+    private onHidePopup(event?: MenuItemSelectedEvent): void {
+        let keyboardEvent: KeyboardEvent | undefined;
+
+        if (event && event.event && event.event instanceof KeyboardEvent) {
+            keyboardEvent = event.event;
+        }
+
+        this.hidePopupFunc(keyboardEvent && { keyboardEvent: keyboardEvent });
 
         // this method only gets called when the menu was closed by selection an option
         // in this case we highlight the cell that was previously highlighted

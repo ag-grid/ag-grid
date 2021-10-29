@@ -39,7 +39,39 @@
   margin-top: 2rem;
   font-size: 17px;
 }
-.checkbox-label-div {
+
+.global-search-filter-container {
+  display: flex;
+  width: 100%;
+  padding-bottom: 20px;
+  padding-top: 10px;
+  flex-wrap: wrap;
+}
+
+.search-bar-container {
+  width: 40%;
+  min-width: 250px;
+  display: flex;
+  align-items: center;
+}
+
+.search-bar {
+  height: 50px;
+  width: 100%;
+  min-width: 250px;
+  font-size: 20px;
+}
+
+.all-checkboxes-container {
+  display: flex;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  width: 60%;
+  flex-wrap: wrap;
+}
+
+.single-checkbox-label-container {
   padding-left: 15px;
   display: flex;
   align-items: center;
@@ -49,6 +81,7 @@
   padding-left: 10px;
   padding-right: 10px;
   font-size: 20px;
+  white-space: nowrap;
 }
 
 .header-padding-class {

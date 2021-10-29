@@ -7,6 +7,7 @@ import { PopupService } from "./popupService";
 import { UserComponentFactory } from "../components/framework/userComponentFactory";
 import { addCssClass, containsClass } from "../utils/dom";
 import { exists } from "../utils/generic";
+import { isIOSUserAgent } from "../utils/browser";
 
 export interface TooltipParentComp {
     getTooltipParams(): ITooltipParams;
@@ -77,6 +78,7 @@ export class CustomTooltipFeature extends BeanStub {
     }
 
     public onMouseEnter(e: MouseEvent): void {
+        if (isIOSUserAgent()) { return; }
         // every mouseenter should be following by a mouseleave, however for some unkonwn, it's possible for
         // mouseenter to be called twice in a row, which can happen if editing the cell. this was reported
         // in https://ag-grid.atlassian.net/browse/AG-4422. to get around this, we check the state, and if
