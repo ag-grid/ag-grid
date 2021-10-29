@@ -382,7 +382,7 @@ export class RowRenderer extends BeanStub {
     private getCellToRestoreFocusToAfterRefresh(params: RefreshViewParams): CellPosition | null {
         const focusedCell = params.suppressKeepFocus ? null : this.focusService.getFocusCellToUseAfterRefresh();
 
-        if (missing(focusedCell)) { return null; }
+        if (focusedCell == null) { return null; }
 
         // if the dom is not actually focused on a cell, then we don't try to refocus. the problem this
         // solves is with editing - if the user is editing, eg focus is on a text field, and not on the
@@ -391,10 +391,12 @@ export class RowRenderer extends BeanStub {
         // the cell, and not the textfield. that means if the user is in a text field, and the grid refreshes,
         // the focus is lost from the text field. we do not want this.
         const activeElement = document.activeElement;
-        const domData = this.gridOptionsWrapper.getDomData(activeElement, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
-        const elementIsNotACellDev = missing(domData);
+        const cellDomData = this.gridOptionsWrapper.getDomData(activeElement, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
+        const rowDomData = this.gridOptionsWrapper.getDomData(activeElement, RowCtrl.DOM_DATA_KEY_ROW_CTRL);
 
-        return elementIsNotACellDev ? null : focusedCell;
+        const gridElementFocused = cellDomData || rowDomData;
+
+        return gridElementFocused ? focusedCell : null;
     }
 
     // gets called from:

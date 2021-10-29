@@ -73,6 +73,7 @@
         .ag-context-menu-open .ag-cell-focus:not(.ag-cell-range-selected),
         .ag-has-focus .ag-full-width-row.ag-row-focus .ag-cell-wrapper.ag-row-group,
         .ag-cell-range-single-cell,
+        .ag-full-width-focus,
         .ag-cell-range-single-cell.ag-cell-range-handle {
             border: 1px solid;
             @include ag-color-property(border-color, range-selection-border-color);

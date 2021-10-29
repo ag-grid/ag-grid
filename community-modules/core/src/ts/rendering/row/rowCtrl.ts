@@ -83,7 +83,7 @@ interface CellCtrlListAndMap {
 
 export class RowCtrl extends BeanStub {
 
-    public static DOM_DATA_KEY_RENDERED_ROW = 'renderedRow';
+    public static DOM_DATA_KEY_ROW_CTRL = 'renderedRow';
 
     private instanceId: string;
 
@@ -260,9 +260,9 @@ export class RowCtrl extends BeanStub {
             }
 
             // DOM DATA
-            gow.setDomData(gui.element, RowCtrl.DOM_DATA_KEY_RENDERED_ROW, this);
+            gow.setDomData(gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, this);
             this.addDestroyFunc(
-                () => gow.setDomData(gui.element, RowCtrl.DOM_DATA_KEY_RENDERED_ROW, null)
+                () => gow.setDomData(gui.element, RowCtrl.DOM_DATA_KEY_ROW_CTRL, null)
             );
 
             // adding hover functionality adds listener to this row, so we
