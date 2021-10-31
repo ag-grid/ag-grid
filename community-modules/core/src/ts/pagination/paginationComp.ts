@@ -215,8 +215,20 @@ export class PaginationComp extends Component {
     private setTotalLabels() {
         const lastPageFound = this.paginationProxy.isLastPageFound();
         const totalPages = this.paginationProxy.getTotalPages();
-        const rowCount = lastPageFound ?
-            this.paginationProxy.getMasterRowCount() : null;
+        const rowCount = lastPageFound ? this.paginationProxy.getMasterRowCount() : null;
+
+        // if the grid contains a single root node with no total aggregations it will appear that there are no rows,
+        // however the pagination totals will contain non zero values which is confusing to users. This can happen when
+        // `pivotMode=true` and no grouping or value columns exist. To address this we simply set all totals to zero in
+        // the UI as the grid is 'mathematically correct' otherwise.
+        if (rowCount === 1) {
+            const firstRow = this.paginationProxy.getRow(0);
+            const rootNodeWithNoTotalAggregations = firstRow && firstRow.group && !firstRow.aggData;
+            if (rootNodeWithNoTotalAggregations) {
+                this.setTotalLabelsToZero();
+                return;
+            }
+        }
 
         if (lastPageFound) {
             this.lbTotal.innerHTML = this.formatNumber(totalPages);
@@ -226,5 +238,13 @@ export class PaginationComp extends Component {
             this.lbTotal.innerHTML = moreText;
             this.lbRecordCount.innerHTML = moreText;
         }
+    }
+
+    private setTotalLabelsToZero() {
+        this.lbFirstRowOnPage.innerHTML = this.formatNumber(0);
+        this.lbCurrent.innerHTML = this.formatNumber(0);
+        this.lbLastRowOnPage.innerHTML = this.formatNumber(0);
+        this.lbTotal.innerHTML = this.formatNumber(0);
+        this.lbRecordCount.innerHTML = this.formatNumber(0);
     }
 }
