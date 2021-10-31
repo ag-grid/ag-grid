@@ -217,14 +217,15 @@ export class PaginationComp extends Component {
         const totalPages = this.paginationProxy.getTotalPages();
         const rowCount = lastPageFound ? this.paginationProxy.getMasterRowCount() : null;
 
-        // if the grid contains a single root node with no total aggregations it will appear that there are no rows,
-        // however the pagination totals will contain non zero values which is confusing to users. This can happen when
-        // `pivotMode=true` and no grouping or value columns exist. To address this we simply set all totals to zero in
-        // the UI as the grid is 'mathematically correct' otherwise.
+        // When `pivotMode=true` and no grouping or value columns exist, a single 'hidden' group row (root node) is in
+        // the grid and the pagination totals will correctly display total = 1. However this is confusing to users as
+        // they can't see it. To address this UX issue we simply set the totals to zero in the pagination panel.
         if (rowCount === 1) {
             const firstRow = this.paginationProxy.getRow(0);
-            const rootNodeWithNoTotalAggregations = firstRow && firstRow.group && !firstRow.aggData;
-            if (rootNodeWithNoTotalAggregations) {
+
+            // a group node with no group or agg data will not be visible to users
+            const hiddenGroupRow = firstRow && firstRow.group && !(firstRow.groupData || firstRow.aggData);
+            if (hiddenGroupRow) {
                 this.setTotalLabelsToZero();
                 return;
             }
