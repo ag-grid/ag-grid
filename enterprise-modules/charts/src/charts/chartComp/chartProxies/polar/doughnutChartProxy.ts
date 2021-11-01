@@ -172,23 +172,6 @@ export class DoughnutChartProxy extends PolarChartProxy {
         pieSeries.labelName = updateParams.params.category.name;
         pieSeries.data = updateParams.params.data;
 
-        // Normally all series provide legend items for every slice.
-        // For our use case, where all series have the same number of slices in the same order with the same labels
-        // (all of which can be different in other use cases) we don't want to show repeating labels in the legend,
-        // so we only show legend items for the first series, and then when the user toggles the slices of the
-        // first series in the legend, we programmatically toggle the corresponding slices of other series.
-        if (updateParams.index === 0) {
-            pieSeries.toggleSeriesItem = (itemId: any, enabled: boolean) => {
-                if (updateParams.doughnutChart) {
-                    updateParams.doughnutChart.series.forEach((series: any) => {
-                        (series as PieSeries).seriesItemEnabled[itemId] = enabled;
-                    });
-                }
-
-                pieSeries.scheduleData();
-            };
-        }
-
         if (this.crossFiltering) {
             pieSeries.radiusMin = 0;
             pieSeries.radiusMax = 1;
