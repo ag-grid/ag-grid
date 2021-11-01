@@ -2,10 +2,12 @@ import { ChartType } from "@ag-grid-community/core";
 
 export function getStandaloneChartType(chartType: ChartType): string {
     switch (chartType) {
+        case ChartType.Bar:
         case ChartType.GroupedBar:
         case ChartType.StackedBar:
         case ChartType.NormalizedBar:
             return 'bar';
+        case ChartType.Column:
         case ChartType.GroupedColumn:
         case ChartType.StackedColumn:
         case ChartType.NormalizedColumn:

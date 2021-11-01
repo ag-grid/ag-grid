@@ -144,7 +144,7 @@ export abstract class CartesianChartProxy<T extends any> extends ChartProxy<Cart
         // 'category' axis to a 'time' axis)
         const axisTypeChanged = !(baseAxis instanceof this.axisTypeToClassMap[baseAxisType]);
         if (axisTypeChanged) {
-            (isHorizontalChart ? this.chartOptions.yAxis : this.chartOptions.xAxis).type = baseAxisType;
+            this.chartOptions[this.standaloneChartType].axes.type = baseAxisType;
             this.recreateChart();
         }
     }
