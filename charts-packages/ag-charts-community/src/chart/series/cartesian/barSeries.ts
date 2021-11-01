@@ -736,7 +736,7 @@ export class BarSeries extends CartesianSeries {
             rect.fillShadow = shadow;
             // Prevent stroke from rendering for zero height columns and zero width bars.
             rect.visible = flipXY ? datum.width > 0 : datum.height > 0;
-            rect.zIndex = datum === highlightedDatum || (highlightedDatum && datum.itemId === highlightedDatum.itemId) ? Series.highlightedZIndex : index;
+            rect.zIndex = isDatumHighlighted ? Series.highlightedZIndex : index;
             rect.opacity = this.getOpacity(datum);
         });
     }
