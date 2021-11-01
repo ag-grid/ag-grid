@@ -2,19 +2,22 @@ import { IDateComp, IDateParams } from '../../../rendering/dateComponent';
 import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import { Context } from '../../../context/context';
 import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
+import { setDisplayed } from '../../../utils/dom';
 
 /** Provides sync access to async component. Date component can be lazy created - this class encapsulates
  * this by keeping value locally until DateComp has loaded, then passing DateComp the value. */
 export class DateCompWrapper {
-
     private dateComp: IDateComp | null | undefined;
     private tempValue: Date | null;
     private disabled: boolean | null;
+    private displayed: boolean | null;
     private alive = true;
     private context: Context;
+    private eParent: HTMLElement;
 
     constructor(context: Context, userComponentFactory: UserComponentFactory, dateComponentParams: IDateParams, eParent: HTMLElement) {
         this.context = context;
+        this.eParent = eParent;
 
         userComponentFactory.newDateComponent(dateComponentParams)!.then(dateComp => {
             // because async, check the filter still exists after component comes back
@@ -65,6 +68,10 @@ export class DateCompWrapper {
         } else {
             this.disabled = disabled;
         }
+    }
+
+    public setDisplayed(displayed: boolean) {
+        setDisplayed(this.eParent, displayed);
     }
 
     public setInputPlaceholder(placeholder: string): void {

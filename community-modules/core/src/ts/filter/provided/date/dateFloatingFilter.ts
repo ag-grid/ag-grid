@@ -100,7 +100,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         this.params.parentFilterInstance(filterInstance => {
             if (filterInstance) {
                 const simpleFilter = filterInstance as SimpleFilter<ISimpleFilterModel, Date>;
-                simpleFilter.onFloatingFilterChanged(this.getLastType(), filterValueText);
+                simpleFilter.onFloatingFilterChanged(this.getLastType(), parseDateTimeFromString(filterValueText));
             }
         });
     }

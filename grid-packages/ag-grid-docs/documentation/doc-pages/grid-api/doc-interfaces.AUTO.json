@@ -7175,7 +7175,10 @@
     },
     "type": {
       "description": "/** One of the filter options, e.g. `'equals'` */",
-      "type": { "returnType": "string | null", "optional": true }
+      "type": {
+        "returnType": "ISimpleFilterModelType | null",
+        "optional": true
+      }
     }
   },
   "IDateFilterParams": {
@@ -7330,7 +7333,10 @@
     },
     "type": {
       "description": "/** One of the filter options, e.g. `'equals'` */",
-      "type": { "returnType": "string | null", "optional": true }
+      "type": {
+        "returnType": "ISimpleFilterModelType | null",
+        "optional": true
+      }
     }
   },
   "INumberFilterParams": {
@@ -7762,10 +7768,14 @@
       "type": { "returnType": "any", "optional": false }
     }
   },
+  "ISimpleFilterModelType": {},
   "ISimpleFilterModel": {
     "type": {
       "description": "/** One of the filter options, e.g. `'equals'` */",
-      "type": { "returnType": "string | null", "optional": true }
+      "type": {
+        "returnType": "ISimpleFilterModelType | null",
+        "optional": true
+      }
     },
     "filterType": { "type": { "returnType": "string", "optional": true } }
   },
@@ -7777,6 +7787,7 @@
     "filterType": { "type": { "returnType": "string", "optional": true } }
   },
   "ConditionPosition": {},
+  "Tuple": { "meta": { "typeParams": ["T"] } },
   "TextFilterModel": {
     "filterType": {
       "description": "/** Filter type is always `'text'` */",
@@ -7788,7 +7799,10 @@
     },
     "type": {
       "description": "/** One of the filter options, e.g. `'equals'` */",
-      "type": { "returnType": "string | null", "optional": true }
+      "type": {
+        "returnType": "ISimpleFilterModelType | null",
+        "optional": true
+      }
     }
   },
   "TextComparator": {},
