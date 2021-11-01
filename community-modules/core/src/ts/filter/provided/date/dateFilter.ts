@@ -2,12 +2,11 @@ import { RefSelector } from '../../../widgets/componentAnnotations';
 import { Autowired } from '../../../context/context';
 import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import { DateCompWrapper } from './dateCompWrapper';
-import { ConditionPosition, ISimpleFilterModel, SimpleFilter } from '../simpleFilter';
+import { ConditionPosition, ISimpleFilterModel, SimpleFilter, Tuple } from '../simpleFilter';
 import { Comparator, IScalarFilterParams, ScalarFilter } from '../scalarFilter';
 import { serialiseDate, parseDateTimeFromString } from '../../../utils/date';
-import { setDisplayed } from '../../../utils/dom';
-import { AgPromise } from '../../../utils';
 import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
+import { setDisplayed } from '../../../utils/dom';
 
 // The date filter model takes strings, although the filter actually works with dates. This is because a Date object
 // won't convert easily to JSON. When the model is used for doing the filtering, it's converted to a Date object.
@@ -51,7 +50,7 @@ export interface IDateComparatorFunc {
 const DEFAULT_MIN_YEAR = 1000;
 const DEFAULT_MAX_YEAR = Infinity;
 
-export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
+export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrapper> {
     public static DEFAULT_FILTER_OPTIONS = [
         ScalarFilter.EQUALS,
         ScalarFilter.GREATER_THAN,
@@ -86,7 +85,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
         this.dateCondition1FromComp.afterGuiAttached(params);
     }
 
-    protected mapRangeFromModel(filterModel: DateFilterModel): { from: Date | null; to: Date | null; } {
+    protected mapValuesFromModel(filterModel: DateFilterModel): Tuple<Date> {
         // unlike the other filters, we do two things here:
         // 1) allow for different attribute names (same as done for other filters) (eg the 'from' and 'to'
         //    are in different locations in Date and Number filter models)
@@ -95,42 +94,10 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
         // NOTE: The conversion of string to date also removes the timezone - i.e. when user picks
         //       a date from the UI, it will have timezone info in it. This is lost when creating
         //       the model. When we recreate the date again here, it's without a timezone.
-        return {
-            from: parseDateTimeFromString(filterModel.dateFrom),
-            to: parseDateTimeFromString(filterModel.dateTo)
-        };
-    }
-
-    protected setValueFromFloatingFilter(value: string): void {
-        this.dateCondition1FromComp.setDate(value == null ? null : parseDateTimeFromString(value));
-        this.dateCondition1ToComp.setDate(null);
-        this.dateCondition2FromComp.setDate(null);
-        this.dateCondition2ToComp.setDate(null);
-    }
-
-    protected setConditionIntoUi(model: DateFilterModel, position: ConditionPosition): void {
-        const [dateFrom, dateTo] = model ?
-            [parseDateTimeFromString(model.dateFrom), parseDateTimeFromString(model.dateTo)] :
-            [null, null];
-
-        const [compFrom, compTo] = this.getFromToComponents(position);
-
-        compFrom.setDate(dateFrom);
-        compTo.setDate(dateTo);
-    }
-
-    protected resetUiToDefaults(silent?: boolean): AgPromise<void> {
-        return super.resetUiToDefaults(silent).then(() => {
-            const readOnly = this.isReadOnly();
-            this.dateCondition1FromComp.setDate(null);
-            this.dateCondition1FromComp.setDisabled(readOnly);
-            this.dateCondition1ToComp.setDate(null);
-            this.dateCondition1ToComp.setDisabled(readOnly);
-            this.dateCondition2FromComp.setDate(null);
-            this.dateCondition2FromComp.setDisabled(readOnly);
-            this.dateCondition2ToComp.setDate(null);
-            this.dateCondition2ToComp.setDisabled(readOnly);
-        });
+        return [
+            parseDateTimeFromString(filterModel.dateFrom),
+            parseDateTimeFromString(filterModel.dateTo),
+        ];
     }
 
     protected comparator(): Comparator<Date> {
@@ -196,6 +163,18 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
             this.dateCondition2ToComp.destroy();
         });
     }
+    
+    protected setElementValue(element: DateCompWrapper, value: Date | null, silent?: boolean): void {
+        element.setDate(value);
+    }
+
+    protected setElementDisplayed(element: DateCompWrapper, displayed: boolean): void {
+        element.setDisplayed(displayed);
+    }
+
+    protected setElementDisabled(element: DateCompWrapper, disabled: boolean): void {
+        element.setDisabled(disabled);
+    }
 
     protected getDefaultFilterOptions(): string[] {
         return DateFilter.DEFAULT_FILTER_OPTIONS;
@@ -212,47 +191,63 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
     }
 
     protected isConditionUiComplete(position: ConditionPosition): boolean {
-        const positionOne = position === ConditionPosition.One;
-        const option = positionOne ? this.getCondition1Type() : this.getCondition2Type();
-
-        if (option === SimpleFilter.EMPTY) { return false; }
-
-        if (this.doesFilterHaveHiddenInput(option)) {
-            return true;
+        if (!super.isConditionUiComplete(position)) {
+            return false;
         }
 
-        const [compFrom, compTo] = this.getFromToComponents(position);
         const isValidDate = (value: Date | null) => value != null
             && value.getUTCFullYear() >= this.minValidYear
             && value.getUTCFullYear() <= this.maxValidYear;
 
-        return isValidDate(compFrom.getDate()) && (!this.showValueTo(option) || isValidDate(compTo.getDate()));
+        let valid = true;
+        this.forEachInput((element, index, elPosition, numberOfInputs) => {
+            if (elPosition !== position || !valid || index >= numberOfInputs) {
+                return;
+            }
+            valid = valid && isValidDate(element.getDate());
+        });
+
+        return valid;
     }
 
     protected areSimpleModelsEqual(aSimple: DateFilterModel, bSimple: DateFilterModel): boolean {
         return aSimple.dateFrom === bSimple.dateFrom
             && aSimple.dateTo === bSimple.dateTo
             && aSimple.type === bSimple.type;
-    }
+            // @todo(AG-3453): uncomment.
+            // && _.every(aSimple.dateRest || [], (v, index) => v === (bSimple.dateRest || [])[index]);
+        }
 
     protected getFilterType(): 'date' {
         return 'date';
     }
 
     protected createCondition(position: ConditionPosition): DateFilterModel {
-        const positionOne = position === ConditionPosition.One;
-        const type = positionOne ? this.getCondition1Type() : this.getCondition2Type();
-        const [compFrom, compTo] = this.getFromToComponents(position);
+        const type = this.getConditionTypes()[position];
+        const model: Partial<DateFilterModel> = {};
+
+        const values = this.getValues(position);
+        if (values.length > 0) {
+            model.dateFrom = serialiseDate(values[0]);
+        }
+        if (values.length > 1) {
+            model.dateTo = serialiseDate(values[1]);
+        }
+        // @todo(AG-3453): uncomment.
+        // if (values.length > 2) {
+        //     model.dateRest = values.slice(2);
+        // }
 
         return {
-            dateFrom: serialiseDate(compFrom.getDate()),
-            dateTo: serialiseDate(compTo.getDate()),
+            dateFrom: null,
+            dateTo: null,
+            filterType: this.getFilterType(),
             type,
-            filterType: this.getFilterType()
+            ...model,
         };
     }
 
-    private resetPlaceholder(): void {
+    protected resetPlaceholder(): void {
         const globalTranslate = this.gridOptionsWrapper.getLocaleTextFunc();
         const placeholder = this.translate('dateFormatOoo');
         const ariaLabel = globalTranslate('ariaFilterValue', 'Filter Value');
@@ -270,23 +265,21 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date> {
         this.dateCondition2ToComp.setInputAriaLabel(ariaLabel);
     }
 
-    protected updateUiVisibility(): void {
-        super.updateUiVisibility();
-
-        this.resetPlaceholder();
-
-        const condition1Type = this.getCondition1Type();
-        setDisplayed(this.eCondition1PanelFrom, this.showValueFrom(condition1Type));
-        setDisplayed(this.eCondition1PanelTo, this.showValueTo(condition1Type));
-
-        const condition2Type = this.getCondition2Type();
-        setDisplayed(this.eCondition2PanelFrom, this.showValueFrom(condition2Type));
-        setDisplayed(this.eCondition2PanelTo, this.showValueTo(condition2Type));
+    protected getInputs(): Tuple<DateCompWrapper>[] {
+        return [
+            [this.dateCondition1FromComp, this.dateCondition1ToComp],
+            [this.dateCondition2FromComp, this.dateCondition2ToComp],
+        ];
     }
 
-    private getFromToComponents(position: ConditionPosition): [DateCompWrapper, DateCompWrapper] {
-        return position === ConditionPosition.One ?
-            [this.dateCondition1FromComp, this.dateCondition1ToComp] :
-            [this.dateCondition2FromComp, this.dateCondition2ToComp];
+    protected getValues(position: ConditionPosition): Tuple<Date> {
+        const result: Tuple<Date> = [];
+        this.forEachInput((element, index, elPosition, numberOfInputs) => {
+            if (position === elPosition && index < numberOfInputs) {
+                result.push(element.getDate());
+            }
+        });
+
+        return result;
     }
 }

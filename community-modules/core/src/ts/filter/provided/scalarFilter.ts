@@ -1,5 +1,5 @@
-import { SimpleFilter, ISimpleFilterParams, ISimpleFilterModel } from "./simpleFilter";
-import { IDoesFilterPassParams } from "../../interfaces/iFilter";
+import { AgInputTextField } from "../../widgets/agInputTextField";
+import { SimpleFilter, ISimpleFilterParams, ISimpleFilterModel, ISimpleFilterModelType, Tuple } from "./simpleFilter";
 
 /** @deprecated in v21*/
 export interface NullComparator {
@@ -28,13 +28,10 @@ export interface Comparator<T> {
     (left: T, right: T): number;
 }
 
-export abstract class ScalarFilter<M extends ISimpleFilterModel, V> extends SimpleFilter<M, V> {
+export abstract class ScalarFilter<M extends ISimpleFilterModel, V, E = AgInputTextField> extends SimpleFilter<M, V, E> {
     private scalarFilterParams: IScalarFilterParams;
 
     protected abstract comparator(): Comparator<V>;
-
-    // because the date and number filter models have different attribute names, we have to map
-    protected abstract mapRangeFromModel(filterModel: ISimpleFilterModel): { from: V | null | undefined, to: V | null | undefined; };
 
     protected setParams(params: IScalarFilterParams): void {
         super.setParams(params);
@@ -54,57 +51,43 @@ export abstract class ScalarFilter<M extends ISimpleFilterModel, V> extends Simp
         }
     }
 
-    protected individualConditionPasses(params: IDoesFilterPassParams, filterModel: ISimpleFilterModel) {
-        const cellValue = this.scalarFilterParams.valueGetter(params.node);
-        const range = this.mapRangeFromModel(filterModel);
-        const filterValue = range.from;
-        const filterValueTo = range.to;
-        const filterType = filterModel.type;
-        const customFilterOption = this.optionsFactory.getCustomOption(filterType);
-
-        if (customFilterOption) {
-            // only execute the custom filter if a value exists or a value isn't required, i.e. input is hidden
-            if (filterValue != null || customFilterOption.hideFilterInput) {
-                return customFilterOption.test(filterValue, cellValue);
-            }
-        }
-
-        if (cellValue == null) {
-            switch (filterType) {
-                case ScalarFilter.EQUALS:
-                case ScalarFilter.NOT_EQUAL:
-                    if (this.scalarFilterParams.includeBlanksInEquals) {
-                        return true;
-                    }
-                    break;
-
-                case ScalarFilter.GREATER_THAN:
-                case ScalarFilter.GREATER_THAN_OR_EQUAL:
-                    if (this.scalarFilterParams.includeBlanksInGreaterThan) {
-                        return true;
-                    }
-                    break;
-
-                case ScalarFilter.LESS_THAN:
-                case ScalarFilter.LESS_THAN_OR_EQUAL:
-                    if (this.scalarFilterParams.includeBlanksInLessThan) {
-                        return true;
-                    }
-                    break;
-                case ScalarFilter.IN_RANGE:
-                    if (this.scalarFilterParams.includeBlanksInRange) {
-                        return true;
-                    }
-                    break;
-            }
-
-            return false;
-        }
-
-        const comparator = this.comparator();
-        const compareResult = comparator(filterValue!, cellValue);
-
+    protected evaluateNullValue(filterType?: ISimpleFilterModelType | null) {
         switch (filterType) {
+            case ScalarFilter.EQUALS:
+            case ScalarFilter.NOT_EQUAL:
+                if (this.scalarFilterParams.includeBlanksInEquals) {
+                    return true;
+                }
+                break;
+
+            case ScalarFilter.GREATER_THAN:
+            case ScalarFilter.GREATER_THAN_OR_EQUAL:
+                if (this.scalarFilterParams.includeBlanksInGreaterThan) {
+                    return true;
+                }
+                break;
+
+            case ScalarFilter.LESS_THAN:
+            case ScalarFilter.LESS_THAN_OR_EQUAL:
+                if (this.scalarFilterParams.includeBlanksInLessThan) {
+                    return true;
+                }
+                break;
+            case ScalarFilter.IN_RANGE:
+                if (this.scalarFilterParams.includeBlanksInRange) {
+                    return true;
+                }
+                break;
+        }
+
+        return false;
+    }
+
+    protected evaluateNonNullValue(values: Tuple<V>, cellValue: V, filterModel: M): boolean {
+        const comparator = this.comparator();
+        const compareResult = comparator(values[0]!, cellValue);
+
+        switch (filterModel.type) {
             case ScalarFilter.EQUALS:
                 return compareResult === 0;
 
@@ -124,7 +107,7 @@ export abstract class ScalarFilter<M extends ISimpleFilterModel, V> extends Simp
                 return compareResult <= 0;
 
             case ScalarFilter.IN_RANGE: {
-                const compareToResult = comparator(filterValueTo!, cellValue);
+                const compareToResult = comparator(values[1]!, cellValue);
 
                 return this.scalarFilterParams.inRangeInclusive ?
                     compareResult >= 0 && compareToResult <= 0 :
@@ -132,7 +115,7 @@ export abstract class ScalarFilter<M extends ISimpleFilterModel, V> extends Simp
             }
 
             default:
-                console.warn('AG Grid: Unexpected type of filter "' + filterType + '", it looks like the filter was configured with incorrect Filter Options');
+                console.warn('AG Grid: Unexpected type of filter "' + filterModel.type + '", it looks like the filter was configured with incorrect Filter Options');
                 return true;
         }
     }

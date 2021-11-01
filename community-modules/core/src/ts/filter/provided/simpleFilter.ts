@@ -2,12 +2,16 @@ import { IDoesFilterPassParams, IFilterOptionDef, ProvidedFilterModel } from '..
 import { RefSelector } from '../../widgets/componentAnnotations';
 import { OptionsFactory } from './optionsFactory';
 import { IProvidedFilterParams, ProvidedFilter } from './providedFilter';
-import { AgPromise } from '../../utils';
+import { AgPromise, _ } from '../../utils';
 import { AgSelect } from '../../widgets/agSelect';
 import { AgRadioButton } from '../../widgets/agRadioButton';
 import { forEach, every, some, includes } from '../../utils/array';
 import { setDisplayed, setDisabled } from '../../utils/dom';
 import { IFilterLocaleText } from '../filterLocaleText';
+import { AgInputTextField } from '../../widgets/agInputTextField';
+import { Component } from '../../widgets/component';
+import { AgAbstractInputField } from '../../widgets/agAbstractInputField';
+import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
 
 export type JoinOperator = 'AND' | 'OR';
 
@@ -38,9 +42,22 @@ export interface ISimpleFilterParams extends IProvidedFilterParams {
     alwaysShowBothConditions?: boolean;
 }
 
+export type ISimpleFilterModelType = 
+    'empty'
+    | 'equals'
+    | 'notEqual'
+    | 'lessThan'
+    | 'lessThanOrEqual'
+    | 'greaterThan'
+    | 'greaterThanOrEqual'
+    | 'inRange'
+    | 'contains'
+    | 'notContains'
+    | 'startsWith'
+    | 'endsWith';
 export interface ISimpleFilterModel extends ProvidedFilterModel {
     /** One of the filter options, e.g. `'equals'` */
-    type?: string | null;
+    type?: ISimpleFilterModelType | null;
 }
 
 export interface ICombinedSimpleModel<M extends ISimpleFilterModel> extends ProvidedFilterModel {
@@ -51,10 +68,16 @@ export interface ICombinedSimpleModel<M extends ISimpleFilterModel> extends Prov
 
 export enum ConditionPosition { One, Two }
 
+export type Tuple<T> = (T | null)[];
+
 /**
- * Every filter with a dropdown where the user can specify a comparing type against the filter values
+ * Every filter with a dropdown where the user can specify a comparing type against the filter values.
+ * 
+ * @param M type of filter-model managed by the concrete sub-class that extends this type
+ * @param V type of value managed by the concrete sub-class that extends this type
+ * @param E type of UI element used for collecting user-input
  */
-export abstract class SimpleFilter<M extends ISimpleFilterModel, V> extends ProvidedFilter<M | ICombinedSimpleModel<M>, V> {
+export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputTextField> extends ProvidedFilter<M | ICombinedSimpleModel<M>, V> {
 
     public static EMPTY = 'empty';
     public static EQUALS = 'equals';
@@ -87,40 +110,51 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V> extends Prov
     // gets called once during initialisation, to build up the html template
     protected abstract createValueTemplate(position: ConditionPosition): string;
 
-    // returns true in the row passes the said condition
-    protected abstract individualConditionPasses(params: IDoesFilterPassParams, type: ISimpleFilterModel): boolean;
-
-    // returns true if the UI represents a working filter, eg all parts are filled out.
-    // eg if text filter and textfield blank then returns false.
-    protected abstract isConditionUiComplete(position: ConditionPosition): boolean;
-
     // filter uses this to know if new model is different from previous model, ie if filter has changed
     protected abstract areSimpleModelsEqual(a: ISimpleFilterModel, b: ISimpleFilterModel): boolean;
-
-    // after floating filter changes, this sets the 'value' section. this is implemented by the base class
-    // (as that's where value is controlled), the 'type' part from the floating filter is dealt with in this class.
-    protected abstract setValueFromFloatingFilter(value: string): void;
 
     // getModel() calls this to create the two conditions. if only one condition,
     // the result is returned by getModel(), otherwise is called twice and both results
     // returned in a CombinedFilter object.
     protected abstract createCondition(position: ConditionPosition): M;
 
-    // puts model values into the UI
-    protected abstract setConditionIntoUi(model: ISimpleFilterModel | null, position: ConditionPosition): void;
+    // because the sub-class filter models have different attribute names, we have to map
+    protected abstract mapValuesFromModel(filterModel: ISimpleFilterModel | null): Tuple<V>;
 
-    // returns true if this type requires a 'from' field, eg any filter that requires at least one text value
-    protected showValueFrom(type?: string | null): boolean {
-        return !this.doesFilterHaveHiddenInput(type) && type !== SimpleFilter.EMPTY;
-    }
+    // allow value-type specific handling of null cell values.
+    protected abstract evaluateNullValue(filterType?: ISimpleFilterModelType | null): boolean;
 
-    // returns true if this type requires a 'to' field, currently only 'range' returns true
-    protected showValueTo(type?: string | null): boolean {
-        return type === SimpleFilter.IN_RANGE;
+    // allow value-type specific handling of non-null cell values.
+    protected abstract evaluateNonNullValue(range: Tuple<V>, cellValue: V, filterModel: M): boolean;
+
+    // allow iteration of all condition inputs managed by sub-classes.
+    protected abstract getInputs(): Tuple<E>[];
+
+    // allow sub-classes to reset HTML placeholders after UI update.
+    protected abstract resetPlaceholder(): void;
+
+    // allow retrieval of all condition input values.
+    protected abstract getValues(position: ConditionPosition): Tuple<V>;
+
+    protected getNumberOfInputs(type?: string | null): number {
+        const customOpts = this.optionsFactory.getCustomOption(type);
+        if (customOpts) {
+            // @todo(AG-3453): uncomment.
+            // return customOpts.hideFilterInput === true ? 0 : (customOpts.numberOfInputs || 1);
+            return customOpts.hideFilterInput === true ? 0 : 1;
+        }
+
+        if (type === SimpleFilter.EMPTY) {
+            return 0;
+        } else if (type === SimpleFilter.IN_RANGE) {
+            return 2;
+        }
+
+        return 1;
     }
 
     // floating filter calls this when user applies filter from floating filter
-    public onFloatingFilterChanged(type: string | null | undefined, value: any): void {
+    public onFloatingFilterChanged(type: string | null | undefined, value: V | null): void {
         this.setTypeFromFloatingFilter(type);
         this.setValueFromFloatingFilter(value);
         this.onUiChanged(true);
@@ -149,12 +183,11 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V> extends Prov
         return this.createCondition(ConditionPosition.One);
     }
 
-    protected getCondition1Type(): string | null | undefined {
-        return this.eType1.getValue();
-    }
-
-    protected getCondition2Type(): string | null | undefined {
-        return this.eType2.getValue();
+    protected getConditionTypes(): Tuple<ISimpleFilterModelType> {
+        return [
+            this.eType1.getValue() as ISimpleFilterModelType,
+            this.eType2.getValue() as ISimpleFilterModelType,
+        ];
     }
 
     protected getJoinOperator(): JoinOperator {
@@ -330,12 +363,84 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V> extends Prov
             setDisplayed(this.eType2.getGui(), isCondition2Visible);
             setDisplayed(this.eCondition2Body, isCondition2Visible);
         }
+
+        const readOnly = this.isReadOnly();
+        this.forEachInput((element, index, position, numberOfInputs) => {
+            this.setElementDisplayed(element, index < numberOfInputs);
+            this.setElementDisabled(element, readOnly || (position > 0 && isCondition2Disabled));
+        });
+    }
+
+    public afterGuiAttached(params?: IAfterGuiAttachedParams) {
+        super.afterGuiAttached(params);
+
+        this.resetPlaceholder();
+
+        if (!params || (!params.suppressFocus && !this.isReadOnly())) {
+            const firstInput = this.getInputs()[0][0];
+            if (!firstInput) { return; }
+            
+            if (firstInput instanceof AgAbstractInputField) {
+                firstInput.getInputElement().focus();
+            }
+        }
+    }
+
+    protected setElementValue(element: E, value: V | null, silent?: boolean): void {
+        if (element instanceof AgAbstractInputField) {
+            element.setValue(value ? String(value) : null, silent);
+        }
+    }
+
+    protected setElementDisplayed(element: E, displayed: boolean): void {
+        if (element instanceof Component) {
+            setDisplayed(element.getGui(), displayed);
+        }
+    }
+
+    protected setElementDisabled(element: E, disabled: boolean): void {
+        if (element instanceof Component) {
+            setDisabled(element.getGui(), disabled);
+        }
+    }
+
+    protected attachElementOnChange(element: E, listener: () => void): void {
+        if (element instanceof AgAbstractInputField) {
+            element.onValueChange(listener);
+        }
+    }
+
+    protected forEachInput(cb: (element: E, index: number, position: number, numberOfInputs: number) => void): void {
+        const inputs = this.getInputs();
+        this.getConditionTypes().forEach((type, position) => {
+            const numberOfInputs = this.getNumberOfInputs(type);
+            for (let index = 0; index < inputs[position].length; index++) {
+                const input = inputs[position][index];
+                if (input != null) {
+                    cb(input, index, position, numberOfInputs);
+                }
+            }
+        });
     }
 
     protected isCondition2Enabled(): boolean {
         return this.allowTwoConditions && 
             this.isConditionUiComplete(ConditionPosition.One) &&
             (!this.isReadOnly() || this.isConditionUiComplete(ConditionPosition.Two));
+    }
+
+    // returns true if the UI represents a working filter, eg all parts are filled out.
+    // eg if text filter and textfield blank then returns false.
+    protected isConditionUiComplete(position: ConditionPosition): boolean {
+        const type = this.getConditionTypes()[position];
+
+        if (type === SimpleFilter.EMPTY) { return false; }
+
+        if (_.some(this.getValues(position), (v) => v == null)) {
+            return false;
+        }
+
+        return true;
     }
 
     protected resetUiToDefaults(silent?: boolean): AgPromise<void> {
@@ -365,7 +470,32 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V> extends Prov
             .setLabel(this.translate('orCondition'))
             .setDisabled(this.isReadOnly());
 
+        this.forEachInput((element) => {
+            this.setElementValue(element, null, silent);
+            this.setElementDisabled(element, this.isReadOnly());
+        });
+
+        this.resetPlaceholder();
+
         return AgPromise.resolve();
+    }
+
+    // puts model values into the UI
+    protected setConditionIntoUi(model: M | null, position: ConditionPosition): void {
+        const values = this.mapValuesFromModel(model);
+        this.forEachInput((element, index, elPosition, _) => {
+            if (elPosition !== position) { return; }
+
+            this.setElementValue(element, values[index] ? values[index] : null);
+        });
+    }
+
+    // after floating filter changes, this sets the 'value' section. this is implemented by the base class
+    // (as that's where value is controlled), the 'type' part from the floating filter is dealt with in this class.
+    protected setValueFromFloatingFilter(value: V | null): void {
+        this.forEachInput((element, index, position, _) => {
+            this.setElementValue(element, index === 0 && position === 0 ? value : null);
+        });
     }
 
     private isDefaultOperator(operator: JoinOperator): boolean {
@@ -382,11 +512,60 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V> extends Prov
         this.eType2.onValueChange(listener);
         this.eJoinOperatorOr.onValueChange(listener);
         this.eJoinOperatorAnd.onValueChange(listener);
+
+        this.forEachInput((element) => {
+            this.attachElementOnChange(element, listener);
+        });
     }
 
     protected doesFilterHaveHiddenInput(filterType?: string | null) {
         const customFilterOption = this.optionsFactory.getCustomOption(filterType);
 
         return customFilterOption && customFilterOption.hideFilterInput;
+    }
+
+    /** returns true if the row passes the said condition */
+    protected individualConditionPasses(params: IDoesFilterPassParams, filterModel: M) {
+        const cellValue = this.getCellValue(params.node);
+        const values = this.mapValuesFromModel(filterModel);
+        const customFilterOption = this.optionsFactory.getCustomOption(filterModel.type);
+
+        const customFilterResult = this.evaluateCustomFilter(customFilterOption, values, cellValue);
+        if (customFilterResult != null) {
+            return customFilterResult;
+        }
+
+        if (cellValue == null) {
+            return this.evaluateNullValue(filterModel.type);
+        }
+
+        return this.evaluateNonNullValue(values, cellValue, filterModel);
+    }
+
+    protected evaluateCustomFilter(
+        customFilterOption: IFilterOptionDef | undefined,
+        values: Tuple<V>,
+        cellValue: V,
+    ): boolean | undefined {
+        if (customFilterOption == null) {
+            return;
+        }
+
+        const predicate = customFilterOption.test;
+        // @todo(AG-3453): uncomment.
+        // const test = customFilterOption.test;
+        // const predicate = test ? ((v: Tuple<V>, cv: V) => test(v[0], cv)) : customFilterOption.predicate;
+        if (predicate != null) {
+            // only execute the custom filter if a value exists or a value isn't required, i.e. input is hidden
+            for (const value of values) {
+                if (value == null) {
+                    return;
+                }
+            }
+            return predicate(values, cellValue);
+        }
+
+        // No custom filter invocation, indicate that to the caller.
+        return;
     }
 }

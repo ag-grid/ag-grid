@@ -1,17 +1,16 @@
-import { IDoesFilterPassParams } from '../../../interfaces/iFilter';
 import { RefSelector } from '../../../widgets/componentAnnotations';
 import {
     SimpleFilter,
     ConditionPosition,
     ISimpleFilterParams,
-    ISimpleFilterModel
+    ISimpleFilterModel,
+    ISimpleFilterModelType,
+    Tuple
 } from '../simpleFilter';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { makeNull } from '../../../utils/generic';
-import { setDisplayed } from '../../../utils/dom';
 import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
-import { AgPromise } from '../../../utils';
-import { forEach } from '../../../utils/array';
+import { _ } from '../../../utils';
 
 export interface TextFilterModel extends ISimpleFilterModel {
     /** Filter type is always `'text'` */
@@ -115,12 +114,6 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
         return 500;
     }
 
-    private getCleanValue(inputField: AgInputTextField): string | null | undefined {
-        const value = makeNull(inputField.getValue());
-
-        return this.textFilterParams.trimInput ? TextFilter.trimInput(value) : value;
-    }
-
     private addValueChangedListeners(): void {
         const listener = () => this.onUiChanged();
         this.eValue1.onValueChange(listener);
@@ -146,19 +139,16 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
     }
 
     protected createCondition(position: ConditionPosition): TextFilterModel {
-        const positionOne = position === ConditionPosition.One;
-        const type = positionOne ? this.getCondition1Type() : this.getCondition2Type();
-        const eValue = positionOne ? this.eValue1 : this.eValue2;
-        const value = this.getCleanValue(eValue);
-        eValue.setValue(value, true); // ensure clean value is visible
+        const type = this.getConditionTypes()[position];
 
         const model: TextFilterModel = {
             filterType: this.getFilterType(),
-            type
+            type,
         };
 
-        if (!this.doesFilterHaveHiddenInput(type)) {
-            model.filter = value;
+        const values = this.getValues(position);
+        if (values.length > 0) {
+            model.filter = values[0];
         }
 
         return model;
@@ -172,33 +162,35 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
         return aSimple.filter === bSimple.filter && aSimple.type === bSimple.type;
     }
 
-    protected resetUiToDefaults(silent?: boolean): AgPromise<void> {
-        return super.resetUiToDefaults(silent).then(() => {
-            this.forEachInput(field => {
-                field.setValue(null, silent)
-                    .setDisabled(this.isReadOnly());
-            });
-            this.resetPlaceholder();
-        });
-    }
-
-    private resetPlaceholder(): void {
+    protected resetPlaceholder(): void {
         const globalTranslate = this.gridOptionsWrapper.getLocaleTextFunc();
         const placeholder = this.translate('filterOoo');
 
-        this.forEachInput(field => {
-            field.setInputPlaceholder(placeholder);
-            field.setInputAriaLabel(globalTranslate('ariaFilterValue', 'Filter Value'));
+        this.forEachInput((element) => {
+            element.setInputPlaceholder(placeholder);
+            element.setInputAriaLabel(globalTranslate('ariaFilterValue', 'Filter Value'));
         });
     }
 
-    private forEachInput(action: (field: AgInputTextField) => void): void {
-        forEach([this.eValue1, this.eValue2], action);
+    protected getInputs(): Tuple<AgInputTextField>[] {
+        return [
+            [this.eValue1],
+            [this.eValue2],
+        ];
     }
 
-    protected setValueFromFloatingFilter(value: string): void {
-        this.eValue1.setValue(value);
-        this.eValue2.setValue(null);
+    protected getValues(position: ConditionPosition): Tuple<string> {
+        const result: Tuple<string> = [];
+        this.forEachInput((element, index, elPosition, numberOfInputs) => {
+            if (position === elPosition && index < numberOfInputs) {
+                const value = makeNull(element.getValue());
+                const cleanValue = (this.textFilterParams.trimInput ? TextFilter.trimInput(value) : value) || null;
+                result.push(cleanValue);
+                element.setValue(cleanValue, true); // ensure clean value is visible
+            }
+        });
+
+        return result;
     }
 
     protected getDefaultFilterOptions(): string[] {
@@ -214,53 +206,18 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
             </div>`;
     }
 
-    protected updateUiVisibility(): void {
-        super.updateUiVisibility();
-
-        setDisplayed(this.eCondition1Body, this.showValueFrom(this.getCondition1Type()));
-        setDisplayed(this.eCondition2Body, this.isCondition2Enabled() && this.showValueFrom(this.getCondition2Type()));
+    protected mapValuesFromModel(filterModel: TextFilterModel): Tuple<string> {
+        return [ filterModel.filter || null ];
     }
 
-    public afterGuiAttached(params?: IAfterGuiAttachedParams) {
-        super.afterGuiAttached(params);
-
-        this.resetPlaceholder();
-
-        if (!params || !params.suppressFocus) {
-            this.eValue1.getInputElement().focus();
-        }
+    protected evaluateNullValue(filterType: ISimpleFilterModelType | null) {
+        return filterType === SimpleFilter.NOT_EQUAL || filterType === SimpleFilter.NOT_CONTAINS;
     }
 
-    protected isConditionUiComplete(position: ConditionPosition): boolean {
-        const positionOne = position === ConditionPosition.One;
-        const option = positionOne ? this.getCondition1Type() : this.getCondition2Type();
-
-        if (option === SimpleFilter.EMPTY) { return false; }
-        if (this.doesFilterHaveHiddenInput(option)) { return true; }
-
-        return this.getCleanValue(positionOne ? this.eValue1 : this.eValue2) != null;
-    }
-
-    protected individualConditionPasses(params: IDoesFilterPassParams, filterModel: TextFilterModel): boolean {
-        const filterText = filterModel.filter;
-        const filterOption = filterModel.type;
-        const cellValue = this.textFilterParams.valueGetter(params.node);
+    protected evaluateNonNullValue(values: Tuple<string>, cellValue: string, filterModel: TextFilterModel): boolean {
+        const formattedValues = _.map(values, (v) => this.formatter(v)) || [];
         const cellValueFormatted = this.formatter(cellValue);
-        const customFilterOption = this.optionsFactory.getCustomOption(filterOption);
 
-        if (customFilterOption) {
-            // only execute the custom filter if a value exists or a value isn't required, i.e. input is hidden
-            if (filterText != null || customFilterOption.hideFilterInput) {
-                return customFilterOption.test(filterText, cellValueFormatted);
-            }
-        }
-
-        if (cellValue == null) {
-            return filterOption === SimpleFilter.NOT_EQUAL || filterOption === SimpleFilter.NOT_CONTAINS;
-        }
-
-        const filterTextFormatted = this.formatter(filterText);
-
-        return this.comparator(filterOption, cellValueFormatted, filterTextFormatted);
+        return _.some(formattedValues, (v) => this.comparator(filterModel.type, cellValueFormatted, v));
     }
 }
