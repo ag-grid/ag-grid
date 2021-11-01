@@ -63,7 +63,7 @@ export class AgGridVue extends Vue {
             changes[propertyName] = {
                 // decouple the rowdata - if we don't when the grid changes rowdata directly that'll trigger this component to react to rowData changes,
                 // which can reset grid state (ie row selection)
-                currentValue: propertyName === 'rowData' ? markRaw(toRaw(currentValue)) : currentValue,
+                currentValue: propertyName === 'rowData' ? (Object.isFrozen(currentValue) ? currentValue : markRaw(toRaw(currentValue))) : currentValue,
                 previousValue,
             };
             ComponentUtil.processOnChange(changes,
@@ -90,7 +90,7 @@ export class AgGridVue extends Vue {
         this.checkForBindingConflicts();
 
         const rowData = this.getRowDataBasedOnBindings();
-        gridOptions.rowData = rowData ? markRaw(toRaw(rowData)) : rowData;
+        gridOptions.rowData = rowData ? (Object.isFrozen(rowData) ? rowData : markRaw(toRaw(rowData))) : rowData;
 
         if (AgGridColumn.hasChildColumns(this.$slots)) {
             gridOptions.columnDefs = AgGridColumn.mapChildColumnDefs(this.$slots);
