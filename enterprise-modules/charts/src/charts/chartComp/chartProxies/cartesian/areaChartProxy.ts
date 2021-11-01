@@ -1,9 +1,5 @@
-import {
-    AgAreaSeriesOptions,
-    AgCartesianChartOptions,
-    ChartType,
-} from "@ag-grid-community/core";
-import { AgChart, AreaSeries, CartesianChart, ChartTheme, AgChartTheme } from "ag-charts-community";
+import { AgCartesianChartOptions, ChartType, } from "@ag-grid-community/core";
+import { AgChart, AreaSeries, CartesianChart } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 

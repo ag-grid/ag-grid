@@ -10,6 +10,7 @@ import {
 } from "@ag-grid-community/core";
 import { ChartTranslator } from "../../../chartTranslator";
 import { ChartOptionsService } from "../../../chartOptionsService";
+import { getMaxValue } from "../formatPanel";
 
 export class PaddingPanel extends Component {
 
@@ -56,10 +57,12 @@ export class PaddingPanel extends Component {
     }
 
     private initChartPaddingItems(): void {
+
         const initInput = (property: keyof AgChartPaddingOptions, input: AgSlider) => {
+            const currentValue = this.chartOptionsService.getChartOption<number>('padding.' + property);
             input.setLabel(this.chartTranslator.translate(property))
-                .setValue(this.chartOptionsService.getChartOption('padding.' + property))
-                .setMaxValue(200)
+                .setValue(`${currentValue}`)
+                .setMaxValue(getMaxValue(currentValue, 200))
                 .setTextFieldWidth(45)
                 .onValueChange(newValue => this.chartOptionsService.setChartOption('padding.' + property, newValue));
         };
@@ -69,4 +72,6 @@ export class PaddingPanel extends Component {
         initInput('bottom', this.paddingBottomSlider);
         initInput('left', this.paddingLeftSlider);
     }
+
+
 }

@@ -14,6 +14,7 @@ import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { CalloutPanel } from "./calloutPanel";
 import { ChartTranslator } from "../../../chartTranslator";
 import { ChartOptionsService } from "../../../chartOptionsService";
+import { getMaxValue } from "../formatPanel";
 
 export class PieSeriesPanel extends Component {
 
@@ -75,29 +76,32 @@ export class PieSeriesPanel extends Component {
     }
 
     private initSeriesStrokeWidth() {
+        const currentValue = this.chartOptionsService.getSeriesOption<number>("strokeWidth");
         this.seriesStrokeWidthSlider
             .setLabel(this.chartTranslator.translate("strokeWidth"))
-            .setMaxValue(10)
+            .setMaxValue(getMaxValue(currentValue, 10))
             .setTextFieldWidth(45)
-            .setValue(this.chartOptionsService.getSeriesOption("strokeWidth"))
+            .setValue(`${currentValue}`)
             .onValueChange(newValue => this.chartOptionsService.setSeriesOption("strokeWidth", newValue));
     }
 
     private initOpacity() {
+        const currentLineOpacityValue = this.chartOptionsService.getSeriesOption<number>("strokeOpacity") || 1;
         this.seriesLineOpacitySlider
             .setLabel(this.chartTranslator.translate("strokeOpacity"))
             .setStep(0.05)
-            .setMaxValue(1)
+            .setMaxValue(getMaxValue(currentLineOpacityValue, 1))
             .setTextFieldWidth(45)
-            .setValue(this.chartOptionsService.getSeriesOption("strokeOpacity") || "1")
+            .setValue(`${currentLineOpacityValue}`)
             .onValueChange(newValue => this.chartOptionsService.setSeriesOption("strokeOpacity", newValue));
 
+        const currentFillOpacityValue = this.chartOptionsService.getSeriesOption<number>("fillOpacity") || 1;
         this.seriesFillOpacitySlider
             .setLabel(this.chartTranslator.translate("fillOpacity"))
             .setStep(0.05)
-            .setMaxValue(1)
+            .setMaxValue(getMaxValue(currentFillOpacityValue, 1))
             .setTextFieldWidth(45)
-            .setValue(this.chartOptionsService.getSeriesOption("fillOpacity") || "1")
+            .setValue(`${currentFillOpacityValue}`)
             .onValueChange(newValue => this.chartOptionsService.setSeriesOption("fillOpacity", newValue));
     }
 

@@ -1,17 +1,5 @@
-import {
-    _,
-    AgScatterSeriesOptions,
-    ChartType,
-} from "@ag-grid-community/core";
-import {
-    AgCartesianChartOptions,
-    AgChart,
-    CartesianChart,
-    ChartTheme,
-    LegendClickEvent,
-    ScatterSeries,
-    AgChartTheme
-} from "ag-charts-community";
+import { _, ChartType, } from "@ag-grid-community/core";
+import { AgCartesianChartOptions, AgChart, CartesianChart, LegendClickEvent, ScatterSeries } from "ag-charts-community";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { ChartDataModel } from "../../chartDataModel";
 import { CartesianChartProxy } from "./cartesianChartProxy";
