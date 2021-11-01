@@ -146,7 +146,11 @@ export class DoughnutChartProxy extends PolarChartProxy {
             ...updateParams.seriesDefaults,
             type: 'pie',
             angleKey: this.crossFiltering ? updateParams.angleField.colId + '-total' : updateParams.angleField.colId,
-            radiusKey: this.crossFiltering ? updateParams.field.colId : undefined
+            radiusKey: this.crossFiltering ? updateParams.field.colId : undefined,
+            title: {
+                ...updateParams.seriesDefaults.title,
+                text: updateParams.seriesDefaults.title.text || updateParams.field.displayName!,
+            }
         };
 
         const calloutColors = seriesOptions.callout && seriesOptions.callout.colors || seriesOptions.strokes || [];
