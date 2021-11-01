@@ -70,9 +70,9 @@ export class ShadowPanel extends Component {
         const initInput = (input: AgSlider, property: string, minValue: number, defaultMaxValue: number) => {
             const currentValue = this.chartOptionsService.getSeriesOption<number>(`shadow.${property}`);
             input.setLabel(this.chartTranslator.translate(property))
-                .setValue(`${currentValue}`)
                 .setMinValue(minValue)
                 .setMaxValue(getMaxValue(currentValue, defaultMaxValue))
+                .setValue(`${currentValue}`)
                 .onValueChange(newValue => this.chartOptionsService.setSeriesOption(`shadow.${property}`, newValue));
         };
 

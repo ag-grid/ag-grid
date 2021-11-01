@@ -53,8 +53,8 @@ export class CalloutPanel extends Component {
         const initInput = (expression: string, input: AgSlider, labelKey: string, defaultMaxValue: number) => {
             const currentValue = this.chartOptionsService.getSeriesOption<number>(expression);
             input.setLabel(this.chartTranslator.translate(labelKey))
-                .setValue(`${currentValue}`)
                 .setMaxValue(getMaxValue(currentValue, defaultMaxValue))
+                .setValue(`${currentValue}`)
                 .setTextFieldWidth(45)
                 .onValueChange(newValue => this.chartOptionsService.setSeriesOption(expression, newValue));
         };

@@ -78,8 +78,8 @@ export class AxisPanel extends Component {
 
         const currentValue = this.chartOptionsService.getAxisProperty<number>("line.width");
         this.axisLineWidthSlider
-            .setLabel(chartTranslator.translate("thickness"))
             .setMaxValue(getMaxValue(currentValue, 10))
+            .setLabel(chartTranslator.translate("thickness"))
             .setTextFieldWidth(45)
             .setValue(`${currentValue}`)
             .onValueChange(newValue => this.chartOptionsService.setAxisProperty("line.width", newValue));
@@ -176,8 +176,8 @@ export class AxisPanel extends Component {
 
         const currentValue = this.chartOptionsService.getAxisProperty<number>("label.padding");
         labelPaddingSlider.setLabel(this.chartTranslator.translate("padding"))
-            .setValue(`${currentValue}`)
             .setMaxValue(getMaxValue(currentValue, 30))
+            .setValue(`${currentValue}`)
             .setTextFieldWidth(45)
             .onValueChange(newValue => this.chartOptionsService.setAxisProperty("label.padding", newValue));
 

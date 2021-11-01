@@ -61,8 +61,8 @@ export class AxisTicksPanel extends Component {
         const initInput = (expression: string, input: AgSlider, label: string, defaultMaxValue: number) => {
             const currentValue = this.chartOptionsService.getAxisProperty<number>(expression);
             input.setLabel(label)
-                .setValue(`${currentValue}`)
                 .setMaxValue(getMaxValue(currentValue, defaultMaxValue))
+                .setValue(`${currentValue}`)
                 .setTextFieldWidth(45)
                 .onValueChange(newValue => this.chartOptionsService.setAxisProperty(expression, newValue));
         };

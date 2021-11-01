@@ -93,9 +93,9 @@ export class LegendPanel extends Component {
         const currentValue = this.chartOptionsService.getChartOption<number>("legend.spacing");
         this.legendPaddingSlider
             .setLabel(this.chartTranslator.translate("spacing"))
+            .setMaxValue(getMaxValue(currentValue, 200))
             .setValue(`${currentValue}`)
             .setTextFieldWidth(45)
-            .setMaxValue(getMaxValue(currentValue, 200))
             .onValueChange(newValue => this.chartOptionsService.setChartOption("legend.spacing", newValue));
     }
 
@@ -103,8 +103,8 @@ export class LegendPanel extends Component {
         const initSlider = (expression: string, labelKey: string, input: AgSlider, defaultMaxValue: number) => {
             const currentValue = this.chartOptionsService.getChartOption<number>(`legend.${expression}`);
             input.setLabel(this.chartTranslator.translate(labelKey))
-                .setValue(`${currentValue}`)
                 .setMaxValue(getMaxValue(currentValue, defaultMaxValue))
+                .setValue(`${currentValue}`)
                 .setTextFieldWidth(45)
                 .onValueChange(newValue => {
                         this.chartOptionsService.setChartOption(`legend.${expression}`, newValue)
