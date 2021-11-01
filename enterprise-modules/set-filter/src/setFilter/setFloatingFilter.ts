@@ -57,7 +57,7 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
     }
 
     private addAvailableValuesListener(): void {
-        this.params.parentFilterInstance((setFilter: SetFilter) => {
+        this.params.parentFilterInstance((setFilter: SetFilter<unknown>) => {
             const setValueModel = setFilter.getValueModel();
 
             if (!setValueModel) { return; }
@@ -92,7 +92,7 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
             return;
         }
 
-        this.params.parentFilterInstance((setFilter: SetFilter) => {
+        this.params.parentFilterInstance((setFilter: SetFilter<unknown>) => {
             const valueModel = setFilter.getValueModel();
 
             if (!valueModel) { return; }

@@ -56,7 +56,7 @@ export interface ITextFilterParams extends ISimpleFilterParams {
     trimInput?: boolean;
 }
 
-export class TextFilter extends SimpleFilter<TextFilterModel> {
+export class TextFilter extends SimpleFilter<TextFilterModel, string> {
     public static DEFAULT_FILTER_OPTIONS = [
         SimpleFilter.CONTAINS,
         SimpleFilter.NOT_CONTAINS,

@@ -28,13 +28,13 @@ export interface Comparator<T> {
     (left: T, right: T): number;
 }
 
-export abstract class ScalarFilter<M extends ISimpleFilterModel, T> extends SimpleFilter<M> {
+export abstract class ScalarFilter<M extends ISimpleFilterModel, V> extends SimpleFilter<M, V> {
     private scalarFilterParams: IScalarFilterParams;
 
-    protected abstract comparator(): Comparator<T>;
+    protected abstract comparator(): Comparator<V>;
 
     // because the date and number filter models have different attribute names, we have to map
-    protected abstract mapRangeFromModel(filterModel: ISimpleFilterModel): { from: T | null | undefined, to: T | null | undefined; };
+    protected abstract mapRangeFromModel(filterModel: ISimpleFilterModel): { from: V | null | undefined, to: V | null | undefined; };
 
     protected setParams(params: IScalarFilterParams): void {
         super.setParams(params);

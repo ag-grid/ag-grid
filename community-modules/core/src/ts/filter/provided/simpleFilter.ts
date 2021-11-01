@@ -54,7 +54,7 @@ export enum ConditionPosition { One, Two }
 /**
  * Every filter with a dropdown where the user can specify a comparing type against the filter values
  */
-export abstract class SimpleFilter<M extends ISimpleFilterModel> extends ProvidedFilter<M | ICombinedSimpleModel<M>> {
+export abstract class SimpleFilter<M extends ISimpleFilterModel, V> extends ProvidedFilter<M | ICombinedSimpleModel<M>, V> {
 
     public static EMPTY = 'empty';
     public static EQUALS = 'equals';
@@ -231,14 +231,14 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel> extends Provide
         if (model == null) { return true; }
 
         const { operator } = model as ICombinedSimpleModel<M>;
-        const models: ISimpleFilterModel[] = [];
+        const models: M[] = [];
 
         if (operator) {
             const combinedModel = model as ICombinedSimpleModel<M>;
 
             models.push(combinedModel.condition1, combinedModel.condition2);
         } else {
-            models.push(model as ISimpleFilterModel);
+            models.push(model as M);
         }
 
         const combineFunction = operator && operator === 'OR' ? some : every;
