@@ -2,11 +2,9 @@ import {
     AgChart,
     AgPieSeriesOptions,
     AgPolarChartOptions,
-    ChartTheme,
     LegendClickEvent,
     PieSeries,
-    PolarChart,
-    AgChartTheme
+    PolarChart
 } from "ag-charts-community";
 import { _ } from "@ag-grid-community/core";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";

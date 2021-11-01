@@ -24,7 +24,7 @@ import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 import { SetFilterListItem, SetFilterListItemSelectionChangedEvent } from './setFilterListItem';
 import { SetFilterModel, SetFilterModelValue } from './setFilterModel';
 import { ISetFilterLocaleText, DEFAULT_LOCALE_TEXT } from './localeText';
-export class SetFilter extends ProvidedFilter<SetFilterModel> {
+export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> {
     public static SELECT_ALL_VALUE = '__AG_SELECT_ALL__';
 
     @RefSelector('eMiniFilter') private readonly eMiniFilter: AgInputTextField;

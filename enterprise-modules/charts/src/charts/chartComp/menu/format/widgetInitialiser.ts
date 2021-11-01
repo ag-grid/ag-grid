@@ -1,26 +1,28 @@
 import { ChartTranslator } from "../../chartTranslator";
-import { ChartProxy } from "../../chartProxies/chartProxy";
 import { AgSlider } from "@ag-grid-community/core";
 import { Font, FontPanelParams } from "./fontPanel";
 import { ChartOptionsService } from "../../chartOptionsService";
+import { getMaxValue } from "./formatPanel";
 
 export function initLineOpacitySlider(seriesLineOpacitySlider: AgSlider, chartTranslator: ChartTranslator, chartOptionsService: ChartOptionsService) {
+    const currentValue = chartOptionsService.getSeriesOption<number>("strokeOpacity");
     seriesLineOpacitySlider
         .setLabel(chartTranslator.translate("strokeOpacity"))
         .setStep(0.05)
-        .setMaxValue(1)
+        .setMaxValue(getMaxValue(currentValue, 1))
         .setTextFieldWidth(45)
-        .setValue(chartOptionsService.getSeriesOption("strokeOpacity"))
+        .setValue(`${currentValue}`)
         .onValueChange(newValue => chartOptionsService.setSeriesOption("strokeOpacity", newValue));
 }
 
 export function initFillOpacitySlider(seriesFillOpacitySlider: AgSlider, chartTranslator: ChartTranslator, chartOptionsService: ChartOptionsService) {
+    const currentValue = chartOptionsService.getSeriesOption<number>("fillOpacity");
     seriesFillOpacitySlider
         .setLabel(chartTranslator.translate("fillOpacity"))
         .setStep(0.05)
-        .setMaxValue(1)
+        .setMaxValue(getMaxValue(currentValue, 1))
         .setTextFieldWidth(45)
-        .setValue(chartOptionsService.getSeriesOption("fillOpacity"))
+        .setValue(`${currentValue}`)
         .onValueChange(newValue => chartOptionsService.setSeriesOption("fillOpacity", newValue));
 }
 

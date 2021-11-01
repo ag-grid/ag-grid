@@ -6,7 +6,6 @@ import {
     CategoryAxis,
     ChartAxis,
     ChartAxisPosition,
-    ChartTheme,
     find,
     GroupedCategoryAxis,
     GroupedCategoryChart,
@@ -17,7 +16,6 @@ import {
 import { ChartDataModel } from "../../chartDataModel";
 import { isDate } from "../../typeChecker";
 import { deepMerge } from "../../object";
-import { ChartController, ChartModelUpdatedEvent } from "../../chartController";
 import { getStandaloneChartType } from "../../chartTypeMapper";
 
 enum AXIS_TYPE {REGULAR, SPECIAL}

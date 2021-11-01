@@ -11,6 +11,7 @@ import { IFilterLocaleText, IFilterTitleLocaleText, DEFAULT_FILTER_LOCALE_TEXT }
 import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
 import { convertToSet } from '../../utils/set';
 import { Component } from '../../widgets/component';
+import { RowNode } from '../../entities/rowNode';
 
 type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
 
@@ -31,8 +32,11 @@ export interface IProvidedFilterParams extends IFilterParams {
  * Contains common logic to all provided filters (apply button, clear button, etc).
  * All the filters that come with AG Grid extend this class. User filters do not
  * extend this class.
+ * 
+ * @param M type of filter-model managed by the concrete sub-class that extends this type
+ * @param V type of value managed by the concrete sub-class that extends this type
  */
-export abstract class ProvidedFilter<T> extends Component implements IFilterComp {
+export abstract class ProvidedFilter<M, V> extends Component implements IFilterComp {
     private newRowsActionKeep: boolean;
 
     // each level in the hierarchy will save params with the appropriate type for that level.
@@ -49,7 +53,7 @@ export abstract class ProvidedFilter<T> extends Component implements IFilterComp
     // inactive, this model will be in sync (following the debounce ms). if the UI is not a valid filter
     // (eg the value is missing so nothing to filter on, or for set filter all checkboxes are checked so filter
     // not active) then this appliedModel will be null/undefined.
-    private appliedModel: T | null = null;
+    private appliedModel: M | null = null;
 
     @Autowired('rowModel') protected readonly rowModel: IRowModel;
 
@@ -65,8 +69,8 @@ export abstract class ProvidedFilter<T> extends Component implements IFilterComp
     protected abstract getCssIdentifier(): string;
     protected abstract resetUiToDefaults(silent?: boolean): AgPromise<void>;
 
-    protected abstract setModelIntoUi(model: T): AgPromise<void>;
-    protected abstract areModelsEqual(a: T, b: T): boolean;
+    protected abstract setModelIntoUi(model: M): AgPromise<void>;
+    protected abstract areModelsEqual(a: M, b: M): boolean;
 
     /** Used to get the filter type for filter models. */
     protected abstract getFilterType(): string;
@@ -85,7 +89,7 @@ export abstract class ProvidedFilter<T> extends Component implements IFilterComp
     // override
     protected handleKeyDown(e: KeyboardEvent): void {}
 
-    public abstract getModelFromUi(): T | null;
+    public abstract getModelFromUi(): M | null;
 
     public getFilterTitle(): string {
         return this.translate(this.filterNameKey);
@@ -244,11 +248,11 @@ export abstract class ProvidedFilter<T> extends Component implements IFilterComp
         this.onBtApplyDebounce = debounce(this.onBtApply.bind(this), debounceMs);
     }
 
-    public getModel(): T | null {
+    public getModel(): M | null {
         return this.appliedModel;
     }
 
-    public setModel(model: T | null): AgPromise<void> {
+    public setModel(model: M | null): AgPromise<void> {
         const promise = model ? this.setModelIntoUi(model) : this.resetUiToDefaults();
 
         return promise.then(() => {
@@ -305,7 +309,7 @@ export abstract class ProvidedFilter<T> extends Component implements IFilterComp
         return !this.areModelsEqual(previousModel!, newModel!);
     }
 
-    protected isModelValid(model: T): boolean {
+    protected isModelValid(model: M): boolean {
         return true;
     }
 
@@ -408,5 +412,9 @@ export abstract class ProvidedFilter<T> extends Component implements IFilterComp
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         return translate(key, DEFAULT_FILTER_LOCALE_TEXT[key]);
+    }
+
+    protected getCellValue(rowNode: RowNode): V {
+        return this.providedFilterParams.valueGetter(rowNode);
     }
 }

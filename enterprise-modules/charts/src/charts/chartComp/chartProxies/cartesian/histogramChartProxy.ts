@@ -1,7 +1,4 @@
-import {
-    AgHistogramSeriesOptions,
-} from "@ag-grid-community/core";
-import { AgCartesianChartOptions, AgChart, CartesianChart, ChartTheme, HistogramSeries, AgChartTheme } from "ag-charts-community";
+import { AgCartesianChartOptions, AgChart, CartesianChart, HistogramSeries } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 

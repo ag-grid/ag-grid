@@ -16,6 +16,7 @@ import { AxisTicksPanel } from "./axisTicksPanel";
 import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslator } from "../../../chartTranslator";
 import { ChartOptionsService } from "../../../chartOptionsService";
+import { getMaxValue } from "../formatPanel";
 
 export class AxisPanel extends Component {
 
@@ -75,11 +76,12 @@ export class AxisPanel extends Component {
             .setValue(this.chartOptionsService.getAxisProperty("line.color"))
             .onValueChange(newColor => this.chartOptionsService.setAxisProperty("line.color", newColor));
 
+        const currentValue = this.chartOptionsService.getAxisProperty<number>("line.width");
         this.axisLineWidthSlider
             .setLabel(chartTranslator.translate("thickness"))
-            .setMaxValue(10)
+            .setMaxValue(getMaxValue(currentValue, 10))
             .setTextFieldWidth(45)
-            .setValue(this.chartOptionsService.getAxisProperty("line.width"))
+            .setValue(`${currentValue}`)
             .onValueChange(newValue => this.chartOptionsService.setAxisProperty("line.width", newValue));
 
         if (_.includes(['line', 'scatter', 'bubble'], this.chartController.getChartType()) && !this.chartController.isGrouping()) {
@@ -172,9 +174,10 @@ export class AxisPanel extends Component {
 
         const labelPaddingSlider = this.createBean(new AgSlider());
 
+        const currentValue = this.chartOptionsService.getAxisProperty<number>("label.padding");
         labelPaddingSlider.setLabel(this.chartTranslator.translate("padding"))
-            .setValue(this.chartOptionsService.getAxisProperty("label.padding"))
-            .setMaxValue(30)
+            .setValue(`${currentValue}`)
+            .setMaxValue(getMaxValue(currentValue, 30))
             .setTextFieldWidth(45)
             .onValueChange(newValue => this.chartOptionsService.setAxisProperty("label.padding", newValue));
 

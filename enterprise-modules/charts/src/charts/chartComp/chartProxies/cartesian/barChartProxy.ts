@@ -1,21 +1,7 @@
-import {
-    _,
-    AgBarSeriesOptions,
-    ChartType,
-} from "@ag-grid-community/core";
-import {
-    AgCartesianChartOptions,
-    AgChart,
-    BarSeries,
-    CartesianChart,
-    ChartTheme,
-    LegendClickEvent,
-    AgChartTheme
-} from "ag-charts-community";
+import { _, ChartType, } from "@ag-grid-community/core";
+import { AgCartesianChartOptions, AgChart, BarSeries, CartesianChart, LegendClickEvent } from "ag-charts-community";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
-import { deepMerge } from "../../object";
-import { getStandaloneChartType } from "../../chartTypeMapper";
 
 export class BarChartProxy extends CartesianChartProxy<any> {
 

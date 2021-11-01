@@ -14,6 +14,7 @@ import { FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslator } from "../../../chartTranslator";
 import { initFillOpacitySlider, initFontPanelParams, initLineOpacitySlider } from "../widgetInitialiser";
 import { ChartOptionsService } from "../../../chartOptionsService";
+import { getMaxValue } from "../formatPanel";
 
 export class HistogramSeriesPanel extends Component {
 
@@ -78,30 +79,33 @@ export class HistogramSeriesPanel extends Component {
     }
 
     private initBins() {
+        const currentValue = this.chartOptionsService.getSeriesOption<number>("binCount");
         this.seriesBinCountSlider
             .setLabel(this.chartTranslator.translate("histogramBinCount"))
             .setMinValue(4)
-            .setMaxValue(100)
+            .setMaxValue(getMaxValue(currentValue, 100))
             .setTextFieldWidth(45)
-            .setValue(this.chartOptionsService.getSeriesOption("binCount"))
+            .setValue(`${currentValue}`)
             .onValueChange(newValue => this.chartOptionsService.setSeriesOption("binCount", newValue));
     }
 
     private initSeriesStrokeWidth() {
+        const currentValue = this.chartOptionsService.getSeriesOption<number>("strokeWidth");
         this.seriesStrokeWidthSlider
             .setLabel(this.chartTranslator.translate("strokeWidth"))
-            .setMaxValue(10)
+            .setMaxValue(getMaxValue(currentValue, 10))
             .setTextFieldWidth(45)
-            .setValue(this.chartOptionsService.getSeriesOption("strokeWidth"))
+            .setValue(`${currentValue}`)
             .onValueChange(newValue => this.chartOptionsService.setSeriesOption("strokeWidth", newValue));
     }
 
     private initSeriesLineDash() {
+        const currentValue = this.chartOptionsService.getSeriesOption<number>("lineDash");
         this.seriesLineDashSlider
             .setLabel(this.chartTranslator.translate('lineDash'))
-            .setMaxValue(30)
+            .setMaxValue(getMaxValue(currentValue, 30))
             .setTextFieldWidth(45)
-            .setValue(this.chartOptionsService.getSeriesOption("lineDash"))
+            .setValue(`${currentValue}`)
             .onValueChange(newValue => this.chartOptionsService.setSeriesOption("lineDash", [newValue]));
     }
 

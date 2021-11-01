@@ -89,7 +89,7 @@ export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
 
         this.params.parentFilterInstance(filterInstance => {
             if (filterInstance) {
-                const simpleFilter = filterInstance as SimpleFilter<ISimpleFilterModel>;
+                const simpleFilter = filterInstance as SimpleFilter<ISimpleFilterModel, string>;
                 simpleFilter.onFloatingFilterChanged(this.getLastType(), value);
             }
         });

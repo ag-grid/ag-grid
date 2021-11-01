@@ -1,29 +1,11 @@
-import {
-    _,
-    AgChartCaptionOptions,
-    AgChartLegendOptions,
-    AgChartPaddingOptions,
-    AgChartThemeOptions,
-    AgChartThemeOverrides,
-    AgNavigatorOptions,
-    ChartModel,
-    ChartOptionsChanged,
-    ChartType,
-    Color,
-} from "@ag-grid-community/core";
+import { _, AgChartThemeOverrides, ChartModel, ChartType, Color, } from "@ag-grid-community/core";
 import {
     AgChartTheme,
     AgChartThemePalette,
-    AreaSeries,
-    BarSeries,
-    Caption,
     CategoryAxis,
     Chart,
     ChartTheme,
-    DropShadow,
     getChartTheme,
-    Padding,
-    PieSeries,
     themes,
 } from "ag-charts-community";
 import { deepMerge } from "../object";
