@@ -64,22 +64,12 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
     }
 
     protected mapValuesFromModel(filterModel: NumberFilterModel | null): Tuple<number> {
-        const result: Tuple<number> = [];
-
-        if (filterModel) {
-            if (filterModel.filter) {
-                result.push(filterModel.filter);
-            }
-            if (filterModel.filterTo) {
-                result.push(filterModel.filterTo);
-            }
+        return [
+            filterModel && filterModel.filter || null,
+            filterModel && filterModel.filterTo || null,
             // @todo(AG-3453): uncomment.
-            // if (filterModel.filterRest) {
-            //     result.push(...filterModel.filterRest);
-            // }
-        }
-
-        return result;
+            // ...(filterModel && filterModel.filterRest || []),
+        ];
     }
 
     protected getDefaultDebounceMs(): number {

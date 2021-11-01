@@ -206,8 +206,8 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
             </div>`;
     }
 
-    protected mapValuesFromModel(filterModel: TextFilterModel): Tuple<string> {
-        return [ filterModel.filter || null ];
+    protected mapValuesFromModel(filterModel: TextFilterModel | null): Tuple<string> {
+        return [ filterModel && filterModel.filter || null ];
     }
 
     protected evaluateNullValue(filterType: ISimpleFilterModelType | null) {

@@ -85,7 +85,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         this.dateCondition1FromComp.afterGuiAttached(params);
     }
 
-    protected mapValuesFromModel(filterModel: DateFilterModel): Tuple<Date> {
+    protected mapValuesFromModel(filterModel: DateFilterModel | null): Tuple<Date> {
         // unlike the other filters, we do two things here:
         // 1) allow for different attribute names (same as done for other filters) (eg the 'from' and 'to'
         //    are in different locations in Date and Number filter models)
@@ -95,8 +95,8 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         //       a date from the UI, it will have timezone info in it. This is lost when creating
         //       the model. When we recreate the date again here, it's without a timezone.
         return [
-            parseDateTimeFromString(filterModel.dateFrom),
-            parseDateTimeFromString(filterModel.dateTo),
+            filterModel && parseDateTimeFromString(filterModel.dateFrom) || null,
+            filterModel && parseDateTimeFromString(filterModel.dateTo) || null,
         ];
     }
 
