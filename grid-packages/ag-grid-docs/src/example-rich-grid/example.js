@@ -1,4 +1,4 @@
-(function() {
+(function () {
     var COUNTRY_CODES = {
         Ireland: "ie",
         Spain: "es",
@@ -40,7 +40,7 @@
 
     function ContactInfoRenderer() { }
 
-    ContactInfoRenderer.prototype.init = function(params) {
+    ContactInfoRenderer.prototype.init = function (params) {
         var wrapperEl = document.createElement('div');
         wrapperEl.style.lineHeight = 'normal';
         wrapperEl.style.padding = '10px 0';
@@ -74,7 +74,7 @@
         this.eGui = wrapperEl;
     };
 
-    ContactInfoRenderer.prototype.getGui = function() {
+    ContactInfoRenderer.prototype.getGui = function () {
         return this.eGui;
     };
 
@@ -99,7 +99,27 @@
             field: "proficiency",
             filter: "number",
             width: 150,
-            cellRenderer: percentCellRenderer,
+            cellRendererParams: {
+                sparklineOptions: {
+                    type: 'bar',
+                    valueAxisDomain: [0, 100],
+                    axis: {
+                        strokeWidth: 0
+                    },
+                    formatter: barSparklineFormatter,
+                    label: {
+                        enabled: true,
+                        color: 'black',
+                        fontSize: 10,
+                        fontWeight: 'bold',
+                        placement: 'insideBase',
+                        formatter: (params) => `${params.value}%`
+                    },
+                    tooltip: {
+                        enabled: false
+                    }
+                },
+            },
             cellStyle: {
                 padding: '0 2px'
             }
@@ -156,7 +176,28 @@
                     field: "proficiency",
                     filter: "number",
                     width: 150,
-                    cellRenderer: percentCellRenderer,
+                    cellRenderer: 'agSparklineCellRenderer',
+                    cellRendererParams: {
+                        sparklineOptions: {
+                            type: 'bar',
+                            valueAxisDomain: [0, 100],
+                            axis: {
+                                strokeWidth: 0
+                            },
+                            formatter: barSparklineFormatter,
+                            label: {
+                                enabled: true,
+                                color: 'black',
+                                fontSize: 10,
+                                fontWeight: 'bold',
+                                placement: 'insideBase',
+                                formatter: (params) => `${params.value}%`
+                            },
+                            tooltip: {
+                                enabled: false
+                            }
+                        },
+                    },
                     filter: ProficiencyFilter,
                     cellStyle: {
                         padding: '0 2px'
@@ -194,7 +235,7 @@
 
     // wait for the document to be loaded, otherwise
     // AG Grid will not find the div in the document.
-    var loadGrid = function() {
+    var loadGrid = function () {
         btBringGridBack = document.querySelector("#btBringGridBack");
         btDestroyGrid = document.querySelector("#btDestroyGrid");
 
@@ -249,7 +290,7 @@
         }
 
         var data = params.data;
-        IT_SKILLS.forEach(function(skill) {
+        IT_SKILLS.forEach(function (skill) {
             var img;
             if (data && data.skills[skill]) {
                 img = document.createElement('img');
@@ -274,49 +315,11 @@
         return flag + " " + params.value;
     }
 
-    function createRandomPhoneNumber() {
-        var result = "+";
-        for (var i = 0; i < 12; i++) {
-            result += Math.round(Math.random() * 10);
-            if (i === 2 || i === 5 || i === 8) {
-                result += " ";
-            }
+    function barSparklineFormatter(params) {
+        const { yValue } = params;
+        return {
+            fill: yValue < 20 ? 'rgb(245, 93, 81)' : yValue < 60 ? 'rgb(255, 179, 0)' : 'rgb(130, 210, 73)'
         }
-        return result;
-    }
-
-    function percentCellRenderer(params) {
-        var value = params.value;
-
-        var eDivPercentBarWrapper = document.createElement('div');
-        eDivPercentBarWrapper.className = 'div-percent-bar-wrapper';
-        var eDivPercentBar = document.createElement('div');
-
-        eDivPercentBarWrapper.appendChild(eDivPercentBar);
-        eDivPercentBar.className = "div-percent-bar";
-        eDivPercentBar.style.width = value + "%";
-
-        if (value < 20) {
-            eDivPercentBar.style.backgroundColor = "#f55d51";
-        } else if (value < 60) {
-            eDivPercentBar.style.backgroundColor = "#ffb300";
-        } else {
-            eDivPercentBar.style.backgroundColor = "#82d249";
-        }
-
-        var eValue = document.createElement("div");
-        eValue.className = "div-percent-value";
-        eValue.innerHTML = value + "%";
-
-        var eOuterDiv = document.createElement("div");
-        eOuterDiv.className = "div-outer-div";
-        if (isSmall) {
-            eOuterDiv.classList.add('small');
-        }
-        eOuterDiv.appendChild(eDivPercentBarWrapper);
-        eOuterDiv.appendChild(eValue);
-
-        return eOuterDiv;
     }
 
     var SKILL_TEMPLATE =
@@ -334,7 +337,7 @@
 
     function SkillFilter() { }
 
-    SkillFilter.prototype.init = function(params) {
+    SkillFilter.prototype.init = function (params) {
         this.filterChangedCallback = params.filterChangedCallback;
         this.model = {
             android: false,
@@ -345,11 +348,11 @@
         };
     };
 
-    SkillFilter.prototype.getModel = function() { };
+    SkillFilter.prototype.getModel = function () { };
 
-    SkillFilter.prototype.setModel = function(model) { };
+    SkillFilter.prototype.setModel = function (model) { };
 
-    SkillFilter.prototype.getGui = function() {
+    SkillFilter.prototype.getGui = function () {
         var eGui = document.createElement("div");
         var eInstructions = document.createElement("div");
         eInstructions.innerHTML = FILTER_TITLE.replace("TITLE_NAME", "Custom Skills Filter");
@@ -357,14 +360,14 @@
 
         var that = this;
 
-        IT_SKILLS.forEach(function(skill, index) {
+        IT_SKILLS.forEach(function (skill, index) {
             var skillName = IT_SKILLS_NAMES[index];
             var eSpan = document.createElement("span");
             var html = SKILL_TEMPLATE.replace("SKILL_NAME", skillName).replace("SKILL", skill);
             eSpan.innerHTML = html;
 
             var eCheckbox = eSpan.querySelector("input");
-            eCheckbox.addEventListener("click", function() {
+            eCheckbox.addEventListener("click", function () {
                 that.model[skill] = eCheckbox.checked;
                 that.filterChangedCallback();
             });
@@ -375,12 +378,12 @@
         return eGui;
     };
 
-    SkillFilter.prototype.doesFilterPass = function(params) {
+    SkillFilter.prototype.doesFilterPass = function (params) {
         var rowSkills = params.data.skills;
         var model = this.model;
         var passed = true;
 
-        IT_SKILLS.forEach(function(skill) {
+        IT_SKILLS.forEach(function (skill) {
             if (model[skill]) {
                 if (!rowSkills[skill]) {
                     passed = false;
@@ -391,7 +394,7 @@
         return passed;
     };
 
-    SkillFilter.prototype.isFilterActive = function() {
+    SkillFilter.prototype.isFilterActive = function () {
         var model = this.model;
         var somethingSelected = model.android || model.css || model.html5 || model.mac || model.windows;
         return somethingSelected;
@@ -409,17 +412,17 @@
 
     function ProficiencyFilter() { }
 
-    ProficiencyFilter.prototype.init = function(params) {
+    ProficiencyFilter.prototype.init = function (params) {
         this.filterChangedCallback = params.filterChangedCallback;
         this.selected = PROFICIENCY_NONE;
         this.valueGetter = params.valueGetter;
     };
 
-    ProficiencyFilter.prototype.getModel = function() { };
+    ProficiencyFilter.prototype.getModel = function () { };
 
-    ProficiencyFilter.prototype.setModel = function(model) { };
+    ProficiencyFilter.prototype.setModel = function (model) { };
 
-    ProficiencyFilter.prototype.getGui = function() {
+    ProficiencyFilter.prototype.getGui = function () {
         var eGui = document.createElement("div");
         var eInstructions = document.createElement("div");
         eInstructions.innerHTML = FILTER_TITLE.replace("TITLE_NAME", "Custom Proficiency Filter");
@@ -428,7 +431,7 @@
         var random = "" + Math.random();
 
         var that = this;
-        PROFICIENCY_NAMES.forEach(function(name, index) {
+        PROFICIENCY_NAMES.forEach(function (name, index) {
             var eFilter = document.createElement("div");
             var html = PROFICIENCY_TEMPLATE.replace("PROFICIENCY_NAME", name).replace("RANDOM", random);
             eFilter.innerHTML = html;
@@ -438,7 +441,7 @@
             }
             eGui.appendChild(eFilter);
 
-            eRadio.addEventListener("click", function() {
+            eRadio.addEventListener("click", function () {
                 that.selected = PROFICIENCY_VALUES[index];
                 that.filterChangedCallback();
             });
@@ -447,7 +450,7 @@
         return eGui;
     };
 
-    ProficiencyFilter.prototype.doesFilterPass = function(params) {
+    ProficiencyFilter.prototype.doesFilterPass = function (params) {
         var value = this.valueGetter(params);
         var valueAsNumber = parseFloat(value);
 
@@ -463,7 +466,7 @@
         }
     };
 
-    ProficiencyFilter.prototype.isFilterActive = function() {
+    ProficiencyFilter.prototype.isFilterActive = function () {
         return this.selected !== PROFICIENCY_NONE;
     };
 })();
