@@ -1,4 +1,4 @@
-import { AgPromise } from '../utils';
+import { AgPromise, _ } from '../utils';
 import { ValueService } from '../valueService/valueService';
 import { ColumnModel } from '../columns/columnModel';
 import { ColumnApi } from '../columns/columnApi';
@@ -66,7 +66,7 @@ export class FilterManager extends BeanStub {
 
     public setFilterModel(model: { [key: string]: any; }): void {
         const allPromises: AgPromise<void>[] = [];
-        const columns: Column[] = [];
+        const previousModel = this.getFilterModel();
 
         if (model) {
             // mark the filters as we set them, so any active filters left over we stop
@@ -75,7 +75,6 @@ export class FilterManager extends BeanStub {
             this.allAdvancedFilters.forEach((filterWrapper, colId) => {
                 const newModel = model[colId];
 
-                columns.push(filterWrapper.column);
                 allPromises.push(this.setModelOnFilterWrapper(filterWrapper.filterPromise!, newModel));
                 modelKeys.delete(colId);
             });
@@ -90,21 +89,31 @@ export class FilterManager extends BeanStub {
                 }
 
                 const filterWrapper = this.getOrCreateFilterWrapper(column, 'NO_UI');
-                columns.push(filterWrapper.column);
-
                 allPromises.push(this.setModelOnFilterWrapper(filterWrapper.filterPromise!, model[colId]));
             });
         } else {
-            const currentModel = this.getFilterModel();
             this.allAdvancedFilters.forEach(filterWrapper => {
-                if (currentModel && currentModel[filterWrapper.column.getId()] != null) {
-                    columns.push(filterWrapper.column);
-                    allPromises.push(this.setModelOnFilterWrapper(filterWrapper.filterPromise!, null));
-                }
+                allPromises.push(this.setModelOnFilterWrapper(filterWrapper.filterPromise!, null));
             });
         }
 
-        AgPromise.all(allPromises).then(() => this.onFilterChanged({ columns }));
+        AgPromise.all(allPromises).then(() => {
+            const currentModel = this.getFilterModel();
+
+            const columns: Column[] = [];
+            this.allAdvancedFilters.forEach((filterWrapper, colId) => {
+                const before = previousModel ? previousModel[colId] : null;
+                const after = currentModel ? currentModel[colId] : null;
+
+                if (!_.jsonEquals(before, after)) {
+                    columns.push(filterWrapper.column);
+                }
+            });
+
+            if (columns.length > 0) {
+                this.onFilterChanged({ columns });
+            }
+        });
     }
 
     private setModelOnFilterWrapper(filterPromise: AgPromise<IFilterComp>, newModel: any): AgPromise<void> {
