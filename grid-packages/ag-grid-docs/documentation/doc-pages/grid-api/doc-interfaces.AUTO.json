@@ -5365,7 +5365,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "columns": {
-      "description": "/** Columns affected by the filter change. Array contents depend on the source of the event.\n * \n * - Expect 1 element for UI-driven column filter changes.\n * - Expect N elements (all columns) for calls to `gridOptions.api.setFilterModel()`.\n * - Expect M elements (removed columns) for calls to `gridOptions.api.setColumnDefs()`.\n * - Expect 0 elements for quick-filters and calls to `gridOptions.api.onFilterChanged()`. */",
+      "description": "/** Columns affected by the filter change. Array contents depend on the source of the event.\n * \n * - Expect 1 element for UI-driven column filter changes.\n * - Expect 0-N elements (all affected columns) for calls to `gridOptions.api.setFilterModel()`.\n * - Expect 0-N elements (removed columns) for calls to `gridOptions.api.setColumnDefs()`.\n * - Expect 0 elements for quick-filters and calls to `gridOptions.api.onFilterChanged()`. */",
       "type": { "returnType": "Column[]", "optional": false }
     },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
