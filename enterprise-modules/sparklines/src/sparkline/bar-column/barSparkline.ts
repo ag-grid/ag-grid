@@ -1,6 +1,9 @@
 import { BandScale } from '../../scale/bandScale';
 import { isNumber } from '../../util/value';
 import { BarColumnLabelPlacement, BarColumnSparkline, RectNodeDatum } from './barColumnSparkline';
+import { Text } from "../label/text";
+import { HdpiCanvas } from '../../canvas/hdpiCanvas';
+
 
 
 export interface BarNodeDatum extends RectNodeDatum { }
@@ -113,8 +116,10 @@ export class BarSparkline extends BarColumnSparkline {
                 labelX = x + (isPositiveY ? width - labelPadding : labelPadding);
                 labelTextAlign = isPositiveY ? 'end' : 'start';
 
-                const positiveBoundary = yZero + 20;
-                const negativeBoundary = yZero - 20;
+                const textSize = HdpiCanvas.getTextSize(labelText, labelFontFamily);
+                const textWidth = textSize.width || 20;
+                const positiveBoundary = yZero + textWidth;
+                const negativeBoundary = yZero - textWidth;
                 const exceedsBoundaries = (isPositiveY && labelX < positiveBoundary) || (!isPositiveY && labelX > negativeBoundary);
 
                 if (exceedsBoundaries) {
