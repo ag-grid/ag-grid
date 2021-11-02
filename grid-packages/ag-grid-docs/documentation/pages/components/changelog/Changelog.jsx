@@ -7,6 +7,7 @@ import PaddingCellRenderer from "../grid/PaddingCellRenderer"
 import ChevronButtonCellRenderer from "../grid/ChevronButtonRenderer"
 import Grid from "../grid/Grid"
 import DepOrBreakFilterComponent from "../grid/DepOrBreakFilterComponent"
+import IssueTypeCellRenderer from "../grid/IssueTypeRenderer"
 
 import "./overrides.css"
 
@@ -14,6 +15,7 @@ const COLUMN_DEFS = [
     {
         field: "key",
         headerName: "Issue",
+        suppressSizeToFit: true,
         headerClass: styles["header-padding-class"],
         width: 131,
         filter: false,
@@ -46,11 +48,13 @@ const COLUMN_DEFS = [
     },
     {
         field: "issueType",
-        width: 155,
+        width: 175,
+        suppressSizeToFit: true,
         valueFormatter: params => params.value === "Bug" ? "Defect" : "Feature Request",
         filterParams: {
             valueFormatter: params => params.colDef.valueFormatter(params),
         },
+        cellRenderer: 'issueTypeCellRenderer'
     },
     {
         field: "status",
@@ -401,6 +405,7 @@ const Changelog = ({location}) => {
                             paddingCellRenderer: PaddingCellRenderer,
                             chevronButtonCellRenderer: ChevronButtonCellRenderer,
                             depOrBreakFilterComponent: DepOrBreakFilterComponent,
+                            issueTypeCellRenderer: IssueTypeCellRenderer
                         }}
                         defaultColDef={defaultColDef}
                         detailRowAutoHeight={true}

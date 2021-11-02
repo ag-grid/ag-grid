@@ -4,6 +4,7 @@ import DetailCellRenderer from "../grid/DetailCellRendererComponent"
 import PaddingCellRenderer from "../grid/PaddingCellRenderer"
 import Grid from "../grid/Grid"
 import ChevronButtonCellRenderer from "../grid/ChevronButtonRenderer"
+import IssueTypeCellRenderer from "../grid/IssueTypeRenderer"
 
 const COLUMN_DEFS = [
     {
@@ -35,7 +36,8 @@ const COLUMN_DEFS = [
     },
     {
         field: "issueType",
-        width: 155,
+        width: 175,
+        suppressSizeToFit: true,
         valueFormatter: params =>
             params.value === "Bug" ? "Defect" : "Feature Request",
         filterParams: {
@@ -43,6 +45,7 @@ const COLUMN_DEFS = [
                 return params.colDef.valueFormatter(params)
             },
         },
+        cellRenderer: 'issueTypeCellRenderer'
     },
     {
         field: "status",
@@ -314,6 +317,7 @@ const Pipeline = () => {
                             myDetailCellRenderer: DetailCellRenderer,
                             paddingCellRenderer: PaddingCellRenderer,
                             chevronButtonRenderer: ChevronButtonCellRenderer,
+                            issueTypeCellRenderer: IssueTypeCellRenderer
                         }}
                         defaultColDef={defaultColDef}
                         enableCellTextSelection={true}
@@ -322,7 +326,8 @@ const Pipeline = () => {
                         masterDetail={true}
                         rowData={rowData}
                         onGridReady={gridReady}
-                        onFirstDataRendered={() => gridApi.sizeColumnsToFit()}
+
+                        
                     ></Grid>
                 </div>
             )}
