@@ -44,7 +44,7 @@
         "enabled": {
             "description": "Set to true to enable labels.",
             "type": "boolean",
-            "default": "false"
+            "default": false
         },
         "fontSize": {
             "description": "Set size of the font.",
