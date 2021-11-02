@@ -14,7 +14,6 @@ var gridOptions = {
                     },
                     label: {
                         enabled: true,
-                        placement: 'insideEnd',
                     }
                 },
             }
