@@ -61,9 +61,11 @@ const gridOptions = {
 
 Each Sparkline type contains specific `sparklineOptions` that can be overridden and are covered in the following sections:
 
-- [Line Customisation](/sparklines-line-customisation/)
-- [Column Customisation](/sparklines-column-customisation)
 - [Area Customisation](/sparklines-area-customisation)
+- [Bar Customisation](/sparklines-bar-customisation)
+- [Column Customisation](/sparklines-column-customisation)
+- [Line Customisation](/sparklines-line-customisation/)
+
 
 The following sections are relevant to all sparkline types:
 

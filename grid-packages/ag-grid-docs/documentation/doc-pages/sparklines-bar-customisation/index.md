@@ -22,17 +22,25 @@ The snippet below shows option overrides for the Bar Sparkline:
 ```js
 sparklineOptions: {
     type: 'bar',
-    fill: '#91cc75',
+    // Optional customisation properties
+    fill: '#5470c6',
     stroke: '#91cc75',
     highlightStyle: {
-        fill: 'orange'
+        fill: '#fac858'
     },
-    paddingInner: 0.3,
-    paddingOuter: 0.1,
+    valueAxisDomain: [0, 1]
 },
 ```
 
+In the snippet above, the `valueAxisDomain` property is optional.
+
+`valueAxisDomain` is used to specify the interval within which the data values lie. These boundaries are used to create a scale which will be used to map data values from `0px` to the size of the sparkline.
+
+If the `valueAxisDomain` property is ommitted, the domain will be set to the minmum and maximum values in the provided data, hence it could be different for different sparklines in the grid depending on the provided data.
+
 The following example demonstrates the results of the Bar Sparkline options above:
+
+- Note that `valueAxisDomain` has been set to `[0, 1]`, indicating that the supplied data across all sparklines will contain values from `0` to `1`. This allows easy comparisons across the different sparklines in the grid column as all sparklines will have the same domain.
 
 <grid-example title='Bar Sparkline Customisation' name='bar-sparkline-customisation' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
@@ -166,6 +174,8 @@ sparklineOptions: {
     <image-caption src="resources/default.png" alt="Bar default" width="250px" constrained="true">Default</image-caption>
     <image-caption src="resources/default-label.png" alt="Bar labels enabled" width="250px" constrained="true">Label enabled</image-caption>
 </div>
+
+<grid-example title='Bar Sparkline label' name='bar-sparkline-labels' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 It is possible to change the text value displayed as the label of individual bars by adding a `formatter` callback function to `label` options as follows:
 

@@ -82,8 +82,8 @@ export interface FilterChangedEvent extends AgGridEvent {
      * Columns affected by the filter change. Array contents depend on the source of the event.
      * 
      * - Expect 1 element for UI-driven column filter changes.
-     * - Expect N elements (all columns) for calls to `gridOptions.api.setFilterModel()`.
-     * - Expect M elements (removed columns) for calls to `gridOptions.api.setColumnDefs()`.
+     * - Expect 0-N elements (all affected columns) for calls to `gridOptions.api.setFilterModel()`.
+     * - Expect 0-N elements (removed columns) for calls to `gridOptions.api.setColumnDefs()`.
      * - Expect 0 elements for quick-filters and calls to `gridOptions.api.onFilterChanged()`.
      */
     columns: Column[];
