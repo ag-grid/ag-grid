@@ -2,7 +2,7 @@ import { BandScale } from '../../scale/bandScale';
 import { isNumber } from '../../util/value';
 import { BarColumnLabelPlacement, BarColumnSparkline, RectNodeDatum } from './barColumnSparkline';
 
-export interface ColumnNodeDatum extends RectNodeDatum {}
+export interface ColumnNodeDatum extends RectNodeDatum { }
 export class ColumnSparkline extends BarColumnSparkline {
     static className = 'ColumnSparkline';
 
@@ -55,7 +55,7 @@ export class ColumnSparkline extends BarColumnSparkline {
             color: labelColor,
             formatter: labelFormatter,
             placement: labelPlacement
-         } = label;
+        } = label;
 
         const nodeData: ColumnNodeDatum[] = [];
 
@@ -102,23 +102,30 @@ export class ColumnSparkline extends BarColumnSparkline {
             const isPositiveY = yDatum !== undefined && yDatum >= 0;
             const labelPadding = 2;
 
-            switch (labelPlacement) {
-                case BarColumnLabelPlacement.InsideBase:
+            if (labelPlacement === BarColumnLabelPlacement.Center) {
+                labelY = y + height / 2;
+                labelTextBaseline = 'middle';
+            } else if (labelPlacement === BarColumnLabelPlacement.OutsideEnd) {
+                labelY = y + (isPositiveY ? -labelPadding : height + labelPadding);
+                labelTextBaseline = isPositiveY ? 'bottom' : 'top';
+            } else if (labelPlacement === BarColumnLabelPlacement.InsideEnd) {
+                labelY = y + (isPositiveY ? labelPadding : height - labelPadding);
+                labelTextBaseline = isPositiveY ? 'top' : 'bottom';
+
+                const positiveBoundary = yZero - 10;
+                const negativeBoundary = yZero + 10;
+                const exceedsBoundaries = (isPositiveY && labelY > positiveBoundary) || (!isPositiveY && labelY < negativeBoundary);
+
+                if (exceedsBoundaries) {
+                    // if labelY exceeds the y boundary, labels should be positioned at the insideBase
                     labelY = yZero + labelPadding * (isPositiveY ? -1 : 1);
                     labelTextBaseline = isPositiveY ? 'bottom' : 'top';
-                    break;
-                case BarColumnLabelPlacement.InsideEnd:
-                    labelY = y + (isPositiveY ? labelPadding : height - labelPadding);
-                    labelTextBaseline = isPositiveY ? 'top' : 'bottom';
-                    break;
-                case BarColumnLabelPlacement.Center:
-                    labelY = y + height / 2;
-                    labelTextBaseline = 'middle';
-                    break;
-                case BarColumnLabelPlacement.OutsideEnd:
-                default:
-                    labelY = y + (isPositiveY ? -labelPadding : height + labelPadding);
-                    labelTextBaseline = isPositiveY ? 'bottom' : 'top';
+                }
+
+            } else {
+                // if labelPlacement === BarColumnLabelPlacement.InsideBase
+                labelY = yZero + labelPadding * (isPositiveY ? -1 : 1);
+                labelTextBaseline = isPositiveY ? 'bottom' : 'top';
             }
 
             nodeData.push({
