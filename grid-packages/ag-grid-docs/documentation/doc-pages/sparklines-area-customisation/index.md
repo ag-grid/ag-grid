@@ -21,7 +21,7 @@ The snippet below shows option overrides for the Area Sparkline:
 ```js
 sparklineOptions: {
     type: 'area',
-        fill: 'rgba(216, 204, 235, 0.3)',
+    fill: 'rgba(216, 204, 235, 0.3)',
     line: {
         stroke: 'rgb(119,77,185)',
     },

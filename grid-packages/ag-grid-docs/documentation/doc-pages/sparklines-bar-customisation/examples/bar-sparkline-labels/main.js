@@ -8,12 +8,14 @@ var gridOptions = {
             cellRendererParams: {
                 sparklineOptions: {
                     type: 'bar',
-                    fill: '#5470c6',
-                    stroke: '#91cc75',
+                    fill: '#fac858',
                     highlightStyle: {
-                        fill: '#fac858'
+                        stroke: '#fac858'
                     },
-                    valueAxisDomain: [0, 1]
+                    label: {
+                        enabled: true,
+                        placement: 'insideEnd',
+                    }
                 },
             }
         },
