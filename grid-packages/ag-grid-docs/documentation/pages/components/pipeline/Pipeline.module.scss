@@ -22,6 +22,7 @@
     }
   }
 }
+
 .note {
   padding: 1rem 1rem 1rem calc(30px + 2rem);
   background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgc3Ryb2tlPSIjRkZDMTA3IiBzdHJva2Utd2lkdGg9IjIiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTTIwIDQ1bDEwLjUtM000NS41IDIwaC01TTMwLjUgMzZDMzAgMzEgMzcgMjkgMzcgMjFzLTctMTEtMTItMTEtMTEuNSAzLTExLjUgMTEgNyAxMSA3IDE2LjVjLTEuNSAzIDEwLTEuNSAxMC0xLjV6TTIwIDQybDEwLjUtM00yOC41IDQ2LjVjLTIuMzMzIDEuNjY3LTQuNSAxLjY2Ny02LjUgME0xMiAzMWwtMi41IDJNOS41IDIwaC01TTM4IDMxbDMgMk0zNiAxMWw0LTRNMjUgNi41VjFNMTQgMTFsLTQtMy41Ii8+PC9nPjwvc3ZnPg==);
@@ -39,7 +40,38 @@
   font-size: 17px;
 }
 
-.checkbox-label-div {
+.global-search-filter-container {
+  display: flex;
+  width: 100%;
+  padding-bottom: 20px;
+  padding-top: 10px;
+  flex-wrap: wrap;
+}
+
+.search-bar-container {
+  width: 40%;
+  min-width: 250px;
+  display: flex;
+  align-items: center;
+}
+
+.search-bar {
+  height: 50px;
+  width: 100%;
+  min-width: 250px;
+  font-size: 20px;
+}
+
+.all-checkboxes-container {
+  display: flex;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  width: 60%;
+  flex-wrap: wrap;
+}
+
+.single-checkbox-label-container {
   padding-left: 15px;
   display: flex;
   align-items: center;
