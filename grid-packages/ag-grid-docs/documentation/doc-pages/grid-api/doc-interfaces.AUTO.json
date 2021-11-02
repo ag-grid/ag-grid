@@ -7797,6 +7797,10 @@
       "description": "/** The text value associated with the filter.\n * It's optional as custom filters may not have a text value. */",
       "type": { "returnType": "string | null", "optional": true }
     },
+    "filterTo": {
+      "description": "/** The 2nd text value associated with the filter, if supported. */",
+      "type": { "returnType": "string | null", "optional": true }
+    },
     "type": {
       "description": "/** One of the filter options, e.g. `'equals'` */",
       "type": {
@@ -11938,8 +11942,20 @@
       "description": "/** Display name for the filter. Can be replaced by a locale-specific value using a `localeTextFunc`. */",
       "type": { "returnType": "string", "optional": false }
     },
+    "predicate": {
+      "description": "/** Custom filter logic that returns a boolean based on the `filterValues` and `cellValue`. */",
+      "type": {
+        "arguments": { "filterValues": "any[]", "cellValue": "any" },
+        "returnType": "boolean",
+        "optional": false
+      }
+    },
+    "numberOfInputs": {
+      "description": "/** Number of inputs to display for this option. */",
+      "type": { "returnType": "0 | 1 | 2", "optional": true }
+    },
     "test": {
-      "description": "/** Custom filter logic that returns a boolean based on the `filterValue` and `cellValue`. */",
+      "description": "/** @deprecated use `predicate` instead.\n */",
       "type": {
         "arguments": { "filterValue": "any", "cellValue": "any" },
         "returnType": "boolean",
@@ -11947,7 +11963,7 @@
       }
     },
     "hideFilterInput": {
-      "description": "/** Optionally hide the filter input field. */",
+      "description": "/** @deprecated use `numberOfInputs: 0` instead.\n */",
       "type": { "returnType": "boolean", "optional": true }
     }
   },

@@ -4463,11 +4463,13 @@
     "type": {
       "filterType?": "'text'",
       "filter?": "string | null",
+      "filterTo?": "string | null",
       "type?": "ISimpleFilterModelType | null"
     },
     "docs": {
       "filterType?": "/** Filter type is always `'text'` */",
       "filter?": "/** The text value associated with the filter.\n * It's optional as custom filters may not have a text value. */",
+      "filterTo?": "/** The 2nd text value associated with the filter, if supported. */",
       "type?": "/** One of the filter options, e.g. `'equals'` */"
     }
   },
@@ -6900,14 +6902,18 @@
     "type": {
       "displayKey": "string",
       "displayName": "string",
+      "predicate": "(filterValues: any[], cellValue: any) => boolean",
+      "numberOfInputs?": "0 | 1 | 2",
       "test": "(filterValue: any, cellValue: any) => boolean",
       "hideFilterInput?": "boolean"
     },
     "docs": {
       "displayKey": "/** A unique key that does not clash with the built-in filter keys. */",
       "displayName": "/** Display name for the filter. Can be replaced by a locale-specific value using a `localeTextFunc`. */",
-      "test": "/** Custom filter logic that returns a boolean based on the `filterValue` and `cellValue`. */",
-      "hideFilterInput?": "/** Optionally hide the filter input field. */"
+      "predicate": "/** Custom filter logic that returns a boolean based on the `filterValues` and `cellValue`. */",
+      "numberOfInputs?": "/** Number of inputs to display for this option. */",
+      "test": "/** @deprecated use `predicate` instead.\n */",
+      "hideFilterInput?": "/** @deprecated use `numberOfInputs: 0` instead.\n */"
     }
   },
   "IFilterParams": {

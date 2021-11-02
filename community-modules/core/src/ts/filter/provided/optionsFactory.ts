@@ -25,18 +25,30 @@ export class OptionsFactory {
         this.filterOptions.forEach(filterOption => {
             if (typeof filterOption === 'string') { return; }
 
-            const requiredProperties: (keyof IFilterOptionDef)[] = ['displayKey', 'displayName', 'test'];
-
-            if (every(requiredProperties, key => {
+            const requiredProperties: (keyof IFilterOptionDef)[] = ['displayKey', 'displayName', 'predicate'];
+            const propertyCheck = (key: keyof IFilterOptionDef) => {
                 if (!filterOption[key]) {
                     console.warn(`AG Grid: ignoring FilterOptionDef as it doesn't contain a '${key}'`);
                     return false;
                 }
 
                 return true;
-            })) {
-                this.customFilterOptions[filterOption.displayKey] = filterOption;
+            };
+
+            if (!every(requiredProperties, propertyCheck)) { return; }
+
+            const { test } = filterOption;
+            const mutatedFilterOptions = { ...filterOption };
+            if (test != null && filterOption.predicate == null) {
+                mutatedFilterOptions.predicate = (v: any[], cv: any) => test(v[0], cv);
+                delete mutatedFilterOptions.test;
             }
+            if (mutatedFilterOptions.hideFilterInput && mutatedFilterOptions.numberOfInputs == null) {
+                mutatedFilterOptions.numberOfInputs = 0;
+                delete mutatedFilterOptions.hideFilterInput;
+            }
+
+            this.customFilterOptions[filterOption.displayKey] = mutatedFilterOptions;
         });
     }
 

@@ -136,9 +136,8 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     protected getNumberOfInputs(type?: string | null): number {
         const customOpts = this.optionsFactory.getCustomOption(type);
         if (customOpts) {
-            // @todo(AG-3453): uncomment.
-            // return customOpts.hideFilterInput === true ? 0 : (customOpts.numberOfInputs || 1);
-            return customOpts.hideFilterInput === true ? 0 : 1;
+            const { numberOfInputs } = customOpts;
+            return numberOfInputs != null ? numberOfInputs : 1;
         }
 
         if (type === SimpleFilter.EMPTY) {
@@ -573,17 +572,9 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
             return;
         }
 
-        const predicate = customFilterOption.test;
-        // @todo(AG-3453): uncomment.
-        // const test = customFilterOption.test;
-        // const predicate = test ? ((v: Tuple<V>, cv: V) => test(v[0], cv)) : customFilterOption.predicate;
-        if (predicate != null) {
-            // only execute the custom filter if a value exists or a value isn't required, i.e. input is hidden
-            for (const value of values) {
-                if (value == null) {
-                    return;
-                }
-            }
+        const { predicate } = customFilterOption;
+        // only execute the custom filter if a value exists or a value isn't required, i.e. input is hidden
+        if (predicate != null && !_.some(values, (v) => v == null)) {
             return predicate(values, cellValue);
         }
 

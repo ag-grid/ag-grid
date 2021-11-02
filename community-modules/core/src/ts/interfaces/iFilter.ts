@@ -95,13 +95,13 @@ export interface IFilterOptionDef {
     displayKey: string;
     /** Display name for the filter. Can be replaced by a locale-specific value using a `localeTextFunc`. */
     displayName: string;
-    /**
-     * Custom filter logic that returns a boolean based on the `filterValue` and `cellValue`.
-     */
-    test: (filterValue: any, cellValue: any) => boolean;
-    /**
-     * Optionally hide the filter input field.
-     */
+    /** Custom filter logic that returns a boolean based on the `filterValues` and `cellValue`. */
+    predicate?: (filterValues: any[], cellValue: any) => boolean;
+    /** Number of inputs to display for this option. */
+    numberOfInputs?: 0 | 1 | 2;
+    /** @deprecated use `predicate` instead. */
+    test?: (filterValue: any, cellValue: any) => boolean;
+    /** @deprecated use `numberOfInputs: 0` instead. */
     hideFilterInput?: boolean;
 }
 

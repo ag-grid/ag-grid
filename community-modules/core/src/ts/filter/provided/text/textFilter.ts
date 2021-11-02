@@ -20,7 +20,11 @@ export interface TextFilterModel extends ISimpleFilterModel {
      * It's optional as custom filters may not have a text value.
      * */
     filter?: string | null;
-}
+    /**
+     * The 2nd text value associated with the filter, if supported.
+     * */
+     filterTo?: string | null;
+    }
 
 export interface TextComparator {
     (filter: string | null | undefined, gridValue: any, filterText: string | null): boolean;
@@ -91,8 +95,11 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
         }
     };
 
-    @RefSelector('eValue1') private readonly eValue1: AgInputTextField;
-    @RefSelector('eValue2') private readonly eValue2: AgInputTextField;
+    @RefSelector('eValue-index0-1') private readonly eValueFrom1: AgInputTextField;
+    @RefSelector('eValue-index1-1') private readonly eValueTo1: AgInputTextField;
+
+    @RefSelector('eValue-index0-2') private readonly eValueFrom2: AgInputTextField;
+    @RefSelector('eValue-index1-2') private readonly eValueTo2: AgInputTextField;
 
     private comparator: TextComparator;
     private formatter: TextFormatter;
@@ -135,6 +142,9 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
         if (values.length > 0) {
             model.filter = values[0];
         }
+        if (values.length > 1) {
+            model.filterTo = values[1];
+        }
 
         return model;
     }
@@ -144,14 +154,15 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
     }
 
     protected areSimpleModelsEqual(aSimple: TextFilterModel, bSimple: TextFilterModel): boolean {
-        return aSimple.filter === bSimple.filter && aSimple.type === bSimple.type;
+        return aSimple.filter === bSimple.filter &&
+            aSimple.filterTo === bSimple.filterTo &&
+            aSimple.type === bSimple.type;
     }
-
 
     protected getInputs(): Tuple<AgInputTextField>[] {
         return [
-            [this.eValue1],
-            [this.eValue2],
+            [this.eValueFrom1, this.eValueTo1],
+            [this.eValueFrom2, this.eValueTo2],
         ];
     }
 
@@ -178,12 +189,16 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
 
         return /* html */`
             <div class="ag-filter-body" ref="eCondition${pos}Body" role="presentation">
-                <ag-input-text-field class="ag-filter-filter" ref="eValue${pos}"></ag-input-text-field>
+                <ag-input-text-field class=".ag-filter-from ag-filter-filter" ref="eValue-index0-${pos}"></ag-input-text-field>
+                <ag-input-text-field class="ag-filter-to ag-filter-filter" ref="eValue-index1-${pos}"></ag-input-text-field>
             </div>`;
     }
 
     protected mapValuesFromModel(filterModel: TextFilterModel | null): Tuple<string> {
-        return [ filterModel && filterModel.filter || null ];
+        return [
+            filterModel && filterModel.filter || null,
+            filterModel && filterModel.filterTo || null,
+        ];
     }
 
     protected evaluateNullValue(filterType: ISimpleFilterModelType | null) {

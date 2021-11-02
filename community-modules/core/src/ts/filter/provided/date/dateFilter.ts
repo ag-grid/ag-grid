@@ -210,8 +210,6 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         return aSimple.dateFrom === bSimple.dateFrom
             && aSimple.dateTo === bSimple.dateTo
             && aSimple.type === bSimple.type;
-            // @todo(AG-3453): uncomment.
-            // && _.every(aSimple.dateRest || [], (v, index) => v === (bSimple.dateRest || [])[index]);
         }
 
     protected getFilterType(): 'date' {
@@ -229,10 +227,6 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         if (values.length > 1) {
             model.dateTo = serialiseDate(values[1]);
         }
-        // @todo(AG-3453): uncomment.
-        // if (values.length > 2) {
-        //     model.dateRest = values.slice(2);
-        // }
 
         return {
             dateFrom: null,

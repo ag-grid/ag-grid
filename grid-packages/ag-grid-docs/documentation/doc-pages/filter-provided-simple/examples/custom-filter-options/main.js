@@ -4,27 +4,39 @@ var filterParams = {
         {
             displayKey: 'evenNumbers',
             displayName: 'Even Numbers',
-            test: function(filterValue, cellValue) {
+            predicate: function(_, cellValue) {
                 return cellValue != null && cellValue % 2 === 0;
             },
-            hideFilterInput: true
+            numberOfInputs: 0
         },
         {
             displayKey: 'oddNumbers',
             displayName: 'Odd Numbers',
-            test: function(filterValue, cellValue) {
+            predicate: function(_, cellValue) {
                 return cellValue != null && cellValue % 2 !== 0;
             },
-            hideFilterInput: true
+            numberOfInputs: 0
         },
         {
             displayKey: 'blanks',
             displayName: 'Blanks',
-            test: function(filterValue, cellValue) {
+            predicate: function([filterValue], cellValue) {
                 return cellValue == null;
             },
-            hideFilterInput: true
+            numberOfInputs: 0
         },
+        {
+            displayKey: 'age5YearsAgo',
+            displayName: 'Age 5 Years Ago',
+            predicate: ([fv1], cellValue) => cellValue == null || (cellValue - 5) === (fv1),
+            numberOfInputs: 1,
+        },
+        {
+            displayKey: 'betweenExclusive',
+            displayName: 'Between (Exclusive)',
+            predicate: ([fv1, fv2], cellValue) => cellValue == null || fv1 < cellValue && fv2 > cellValue,
+            numberOfInputs: 2,
+        }
     ],
     suppressAndOrCondition: true
 };
@@ -35,18 +47,30 @@ var containsFilterParams = {
         {
             displayKey: 'startsA',
             displayName: 'Starts With "A"',
-            test: function(filterValue, cellValue) {
+            predicate: function([filterValue], cellValue) {
                 return cellValue != null && cellValue.indexOf('a') === 0;
             },
-            hideFilterInput: true
+            numberOfInputs: 0
         },
         {
             displayKey: 'startsN',
             displayName: 'Starts With "N"',
-            test: function(filterValue, cellValue) {
+            predicate: function([filterValue], cellValue) {
                 return cellValue != null && cellValue.indexOf('n') === 0;
             },
-            hideFilterInput: true
+            numberOfInputs: 0
+        },
+        {
+            displayKey: 'regexp',
+            displayName: 'Regular Expression',
+            predicate: ([fv1], cellValue) => cellValue == null || cellValue === new RegExp(fv1).test(cellValue),
+            numberOfInputs: 1,
+        },
+        {
+            displayKey: 'betweenExclusive',
+            displayName: 'Between (Exclusive)',
+            predicate: ([fv1, fv2], cellValue) => cellValue == null || fv1 < cellValue && fv2 > cellValue,
+            numberOfInputs: 2,
         }
     ]
 };
@@ -57,7 +81,7 @@ var equalsFilterParams = {
         {
             displayKey: 'equalsWithNulls',
             displayName: 'Equals (with Nulls)',
-            test: function(filterValue, cellValue) {
+            predicate: function([filterValue], cellValue) {
                 if (cellValue == null) return true;
 
                 var parts = cellValue.split("/");
@@ -70,6 +94,35 @@ var equalsFilterParams = {
                 return cellDate.getTime() === filterValue.getTime();
             }
         },
+        {
+            displayKey: 'leapYear',
+            displayName: 'Leap Year',
+            predicate: function(_, cellValue) {
+                if (cellValue == null) return true;
+
+                const year = Number(cellValue.split("/")[2]);
+
+                return year % 4 === 0 && year % 200 !== 0;
+            },
+            numberOfInputs: 0,
+        },
+        {
+            displayKey: 'betweenExclusive',
+            displayName: 'Between (Exclusive)',
+            predicate: ([fv1, fv2], cellValue) => {
+                if (cellValue == null) return true;
+
+                var parts = cellValue.split("/");
+                var cellDate = new Date(
+                    Number(parts[2]),
+                    Number(parts[1] - 1),
+                    Number(parts[0])
+                );
+
+                return cellDate.getTime() > fv1.getTime() && cellDate.getTime() < fv2.getTime();
+            },
+            numberOfInputs: 2,
+        }
     ],
     comparator: function(filterLocalDateAtMidnight, cellValue) {
         var dateAsString = cellValue;
@@ -98,7 +151,7 @@ var notEqualsFilterParams = {
         {
             displayKey: 'notEqualNoNulls',
             displayName: 'Not Equals without Nulls',
-            test: function(filterValue, cellValue) {
+            predicate: function([filterValue], cellValue) {
                 if (cellValue == null) return false;
 
                 return cellValue !== filterValue.toLowerCase();

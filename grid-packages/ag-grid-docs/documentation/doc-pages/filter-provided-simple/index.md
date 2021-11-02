@@ -226,13 +226,19 @@ Custom `FilterOptionDef`s can be supplied alongside the built-in filter option `
 |                    {
 |                        displayKey: 'lessThanWithNulls',
 |                        displayName: 'Less Than with Nulls',
-|                        test: (filterValue, cellValue) => cellValue == null || cellValue < filterValue,
+|                        predicate: ([filterValue], cellValue) => cellValue == null || cellValue < filterValue,
 |                    },
 |                    'greaterThan',
 |                    {
 |                        displayKey: 'greaterThanWithNulls',
 |                        displayName: 'Greater Than with Nulls',
-|                        test: (filterValue, cellValue) => cellValue == null || cellValue > filterValue,
+|                        predicate: ([filterValue], cellValue) => cellValue == null || cellValue > filterValue,
+|                    },
+|                    {
+|                        displayKey: 'betweenExclusive',
+|                        displayName: 'Between (Exclusive)',
+|                        predicate: ([fv1, fv2], cellValue) => cellValue == null || fv1 < cellValue && fv2 > cellValue,
+                         numberOfInputs: 2,
 |                    }
 |                ]
 |            }
@@ -243,11 +249,24 @@ Custom `FilterOptionDef`s can be supplied alongside the built-in filter option `
 
 The following example demonstrates several custom filter options:
 
-- The **Athlete** column contains two custom filter options: `Starts with "A"` and `Starts with "N"`. Both these options take no text filter input.
-- The **Age** column contains three custom filter options: `evenNumbers`, `oddNumbers` and `blanks`. It also uses the built-in `'empty'` filter along with `suppressAndOrCondition=true`.
-- The **Date** column includes a custom `equalsWithNulls` filter. Note that a custom `comparator` is still required for the built-in date filter options, i.e. `equals`.
-- The **Country** column includes a custom `notEqualNoNulls` filter which also removes null values.
-- The **Country** columns also demonstrates how localisation can be achieved via the `gridOptions.localeTextFunc()` callback function, where the default value is replaced for the filter option `'notEqualNoNulls'`.
+- The **Athlete** column contains four custom filter options managed by a [Text Filter](/filter-text/):
+  - `Starts with "A"` and `Starts with "N"` have no inputs; their predicate function is provided zero values.
+  - `Regular Expression` has one input; its predicate function is provided one value.
+  - `Between (Exclusive)` has two inputs; its predicate function is provided two values.
+- The **Age** column contains five custom filter options managed by a [Number Filter](/filter-number/):
+  - `Even Numbers`, `Odd Numbers` and `Blanks` have no inputs; their predicate function is provided zero values.
+  - `Age 5 Years Ago` has one input; its predicate function is provided one value.
+  - `Between (Exclusive)` has two inputs; its predicate function is provided two values.
+  - `Choose One` is a built-in option and acts as an inactive filter option.
+  - The `suppressAndOrCondition=true` option is used to suppress the join operator panel and condition 2.
+- The **Date** column contains three custom filter options managed by a [Date Filter](/filter-date/):
+  - `Equals (with Nulls)` has one inputs; its predicate function is provided one value.
+  - `Leap Year` has no inputs; its predicate function is provided zero values.
+  - `Between (Exclusive)` has two inputs; its predicate function is provided two values.
+  - NOTE: a custom `comparator` is still required for the built-in date filter options, i.e. `equals`.
+- The **Country** column includes:
+    - a custom `* Not Equals (No Nulls) *` filter which also removes null values.
+    - it also demonstrates how localisation can be achieved via the `gridOptions.localeTextFunc()` callback function, where the default value is replaced for the filter option `'notEqualNoNulls'`.
 - Saving and restoring custom filter options via `api.getFilterModel()` and `api.setFilterModel()` can be tested using the provided buttons.
 
 <grid-example title='Custom Filter Options' name='custom-filter-options' type='generated'></grid-example>

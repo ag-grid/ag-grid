@@ -20,11 +20,6 @@ export interface NumberFilterModel extends ISimpleFilterModel {
      * Range filter `to` value.
      */
     filterTo?: number | null;
-    // @todo(AG-3453): uncomment.
-    // /**
-    //  * If more than two inputs, the remaining input values.
-    //  */
-    // filterRest?: Tuple<number>;
 }
 
 export interface INumberFilterParams extends IScalarFilterParams {
@@ -50,7 +45,6 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         ScalarFilter.IN_RANGE
     ];
 
-    private readonly maxInputs = 2;
     @RefSelector('eValue-index0-1') private readonly eValueFrom1: AgInputTextField;
     @RefSelector('eValue-index1-1') private readonly eValueTo1: AgInputTextField;
 
@@ -67,8 +61,6 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         return [
             filterModel && filterModel.filter || null,
             filterModel && filterModel.filterTo || null,
-            // @todo(AG-3453): uncomment.
-            // ...(filterModel && filterModel.filterRest || []),
         ];
     }
 
@@ -134,8 +126,6 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         return aSimple.filter === bSimple.filter
             && aSimple.filterTo === bSimple.filterTo
             && aSimple.type === bSimple.type;
-            // @todo(AG-3453): uncomment.
-            // && _.every(aSimple.filterRest || [], (v, index) => v === (bSimple.filterRest || [])[index]);
     }
 
     protected getFilterType(): 'number' {
@@ -174,10 +164,6 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         if (values.length > 1) {
             model.filterTo = values[1];
         }
-        // @todo(AG-3453): uncomment.
-        // if (values.length > 2) {
-        //     model.filterRest = values.slice(2);
-        // }
 
         return model;
     }
