@@ -22,7 +22,7 @@ The snippet below shows option overrides for the Bar Sparkline:
 ```js
 sparklineOptions: {
     type: 'bar',
-    // Optional customisation properties.
+    // Optional customisation properties
     fill: '#5470c6',
     stroke: '#91cc75',
     highlightStyle: {
