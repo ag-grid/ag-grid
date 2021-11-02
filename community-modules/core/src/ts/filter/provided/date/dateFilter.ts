@@ -156,10 +156,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         this.dateCondition2ToComp = createDateCompWrapper(this.eCondition2PanelTo);
 
         this.addDestroyFunc(() => {
-            this.dateCondition1FromComp.destroy();
-            this.dateCondition1ToComp.destroy();
-            this.dateCondition2FromComp.destroy();
-            this.dateCondition2ToComp.destroy();
+            this.forEachInput((element) => element.destroy());
         });
     }
     
@@ -251,17 +248,10 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         const placeholder = this.translate('dateFormatOoo');
         const ariaLabel = globalTranslate('ariaFilterValue', 'Filter Value');
 
-        this.dateCondition1FromComp.setInputPlaceholder(placeholder);
-        this.dateCondition1FromComp.setInputAriaLabel(ariaLabel);
-
-        this.dateCondition1ToComp.setInputPlaceholder(placeholder);
-        this.dateCondition1ToComp.setInputAriaLabel(ariaLabel);
-
-        this.dateCondition2FromComp.setInputPlaceholder(placeholder);
-        this.dateCondition2FromComp.setInputAriaLabel(ariaLabel);
-
-        this.dateCondition2ToComp.setInputPlaceholder(placeholder);
-        this.dateCondition2ToComp.setInputAriaLabel(ariaLabel);
+        this.forEachInput((element) => {
+            element.setInputPlaceholder(placeholder);
+            element.setInputAriaLabel(ariaLabel);
+        });
     }
 
     protected getInputs(): Tuple<DateCompWrapper>[] {

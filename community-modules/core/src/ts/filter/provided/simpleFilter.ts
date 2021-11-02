@@ -130,9 +130,6 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     // allow iteration of all condition inputs managed by sub-classes.
     protected abstract getInputs(): Tuple<E>[];
 
-    // allow sub-classes to reset HTML placeholders after UI update.
-    protected abstract resetPlaceholder(): void;
-
     // allow retrieval of all condition input values.
     protected abstract getValues(position: ConditionPosition): Tuple<V>;
 
@@ -369,6 +366,8 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
             this.setElementDisplayed(element, index < numberOfInputs);
             this.setElementDisabled(element, readOnly || (position > 0 && isCondition2Disabled));
         });
+
+        this.resetPlaceholder();
     }
 
     public afterGuiAttached(params?: IAfterGuiAttachedParams) {
@@ -384,6 +383,29 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
                 firstInput.getInputElement().focus();
             }
         }
+    }
+
+    // allow sub-classes to reset HTML placeholders after UI update.
+    protected resetPlaceholder(): void {
+        const globalTranslate = this.gridOptionsWrapper.getLocaleTextFunc();
+
+        this.forEachInput((element, index, _, numberOfInputs) => {
+            if (!(element instanceof AgAbstractInputField)) {
+                return;
+            }
+
+            const placeholder =
+                index === 0 && numberOfInputs > 1 ? 'inRangeStart' : 
+                index === 0 ? 'filterOoo' :
+                'inRangeEnd';
+            const ariaLabel = 
+                index === 0 && numberOfInputs > 1 ? globalTranslate('ariaFilterFromValue', 'Filter from value') : 
+                index === 0 ? globalTranslate('ariaFilterValue', 'Filter Value') :
+                globalTranslate('ariaFilterToValue', 'Filter to Value');
+
+            element.setInputPlaceholder(this.translate(placeholder));
+            element.setInputAriaLabel(ariaLabel)
+        });
     }
 
     protected setElementValue(element: E, value: V | null, silent?: boolean): void {

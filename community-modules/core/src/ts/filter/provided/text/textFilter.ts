@@ -114,12 +114,6 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
         return 500;
     }
 
-    private addValueChangedListeners(): void {
-        const listener = () => this.onUiChanged();
-        this.eValue1.onValueChange(listener);
-        this.eValue2.onValueChange(listener);
-    }
-
     protected setParams(params: ITextFilterParams): void {
         super.setParams(params);
 
@@ -127,15 +121,6 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
         this.comparator = this.textFilterParams.textCustomComparator || TextFilter.DEFAULT_COMPARATOR;
         this.formatter = this.textFilterParams.textFormatter ||
             (this.textFilterParams.caseSensitive ? TextFilter.DEFAULT_FORMATTER : TextFilter.DEFAULT_LOWERCASE_FORMATTER);
-
-        this.addValueChangedListeners();
-    }
-
-    protected setConditionIntoUi(model: TextFilterModel, position: ConditionPosition): void {
-        const positionOne = position === ConditionPosition.One;
-        const eValue = positionOne ? this.eValue1 : this.eValue2;
-
-        eValue.setValue(model ? model.filter : null);
     }
 
     protected createCondition(position: ConditionPosition): TextFilterModel {
@@ -162,15 +147,6 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
         return aSimple.filter === bSimple.filter && aSimple.type === bSimple.type;
     }
 
-    protected resetPlaceholder(): void {
-        const globalTranslate = this.gridOptionsWrapper.getLocaleTextFunc();
-        const placeholder = this.translate('filterOoo');
-
-        this.forEachInput((element) => {
-            element.setInputPlaceholder(placeholder);
-            element.setInputAriaLabel(globalTranslate('ariaFilterValue', 'Filter Value'));
-        });
-    }
 
     protected getInputs(): Tuple<AgInputTextField>[] {
         return [

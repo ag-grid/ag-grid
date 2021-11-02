@@ -103,24 +103,6 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         super.setParams(params);
     }
 
-    protected resetPlaceholder(): void {
-        const globalTranslate = this.gridOptionsWrapper.getLocaleTextFunc();
-
-        this.forEachInput((element, index, _, numberOfInputs) => {
-            const placeholder =
-                index === 0 && numberOfInputs > 1 ? 'inRangeStart' : 
-                index === 0 ? 'filterOoo' :
-                'inRangeEnd';
-            const ariaLabel = 
-                index === 0 && numberOfInputs > 1 ? globalTranslate('ariaFilterFromValue', 'Filter from value') : 
-                index === 0 ? globalTranslate('ariaFilterValue', 'Filter Value') :
-                globalTranslate('ariaFilterToValue', 'Filter to Value');
-
-            element.setInputPlaceholder(this.translate(placeholder));
-            element.setInputAriaLabel(ariaLabel)
-        });
-    }
-
     protected getDefaultFilterOptions(): string[] {
         return NumberFilter.DEFAULT_FILTER_OPTIONS;
     }
@@ -198,12 +180,6 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         // }
 
         return model;
-    }
-
-    protected updateUiVisibility(): void {
-        super.updateUiVisibility();
-
-        this.resetPlaceholder();
     }
 
     protected getInputs(): Tuple<AgInputTextField>[] {
