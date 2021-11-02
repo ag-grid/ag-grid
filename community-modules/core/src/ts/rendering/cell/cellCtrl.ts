@@ -984,12 +984,11 @@ export class CellCtrl extends BeanStub {
     }
 
     public onCellFocused(event?: CellFocusedEvent): void {
-        if (!this.cellComp) { return; }
+        if (!this.cellComp || this.gow.isSuppressCellSelection()) { return; }
+
         const cellFocused = this.beans.focusService.isCellFocused(this.cellPosition);
 
-        if (!this.gow.isSuppressCellSelection()) {
-            this.cellComp.addOrRemoveCssClass(CSS_CELL_FOCUS, cellFocused);
-        }
+        this.cellComp.addOrRemoveCssClass(CSS_CELL_FOCUS, cellFocused);
 
         // see if we need to force browser focus - this can happen if focus is programmatically set
         if (cellFocused && event && event.forceBrowserFocus) {
