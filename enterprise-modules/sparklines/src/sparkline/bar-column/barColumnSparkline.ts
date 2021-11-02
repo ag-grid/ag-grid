@@ -48,7 +48,7 @@ export enum BarColumnLabelPlacement {
 
 export class BarColumnLabel extends Label {
     formatter?: (params: { value: number | undefined }) => string = undefined;
-    placement = BarColumnLabelPlacement.OutsideEnd;
+    placement = BarColumnLabelPlacement.InsideEnd;
 }
 
 export abstract class BarColumnSparkline extends Sparkline {

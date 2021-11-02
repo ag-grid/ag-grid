@@ -7710,6 +7710,7 @@
       "strokeWidth?": "number",
       "paddingInner?": "number",
       "paddingOuter?": "number",
+      "valueAxisDomain?": "[number, number]",
       "formatter?": "SparklineColumnFormatter",
       "label?": "SparklineLabel",
       "xKey?": "string",
@@ -7726,6 +7727,7 @@
       "strokeWidth?": "/** The thickness in pixels for the stroke of the columns.\n * Default: `0` */",
       "paddingInner?": "/** The size of the gap between the columns as a proportion, between 0 and 1. This value is a fraction of the “step”, which is the interval between the start of a band and the start of the next band.\n * Default: `0.1` */",
       "paddingOuter?": "/** The padding on the outside i.e. left and right of the first and last columns, to leave some room for the axis. In association with `paddingInner`, this value can be between 0 and 1.\n * Default: `0.2` */",
+      "valueAxisDomain?": "/** User override for the automatically determinted domain (based on data min and max values). Only applied to \\\"number\\\" axes.\n * used to interpolate the numeric pixel values corresponding to each data value. */",
       "formatter?": "/** A callback function to return format styles of type ColumnFormat, based on the data represented by individual columns. */",
       "label?": "/** Configuration for the labels. */",
       "xKey?": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
@@ -7745,6 +7747,7 @@
       "strokeWidth?": "number",
       "paddingInner?": "number",
       "paddingOuter?": "number",
+      "valueAxisDomain?": "[number, number]",
       "formatter?": "SparklineBarFormatter",
       "label?": "SparklineLabel",
       "xKey?": "string",
@@ -7761,6 +7764,7 @@
       "strokeWidth?": "/** The thickness in pixels for the stroke of the bars.\n * Default: `0` */",
       "paddingInner?": "/** The size of the gap between the bars as a proportion, between 0 and 1. This value is a fraction of the “step”, which is the interval between the start of a band and the start of the next band.\n * Default: `0.1` */",
       "paddingOuter?": "/** The padding on the outside i.e. left and right of the first and last bars, to leave some room for the axis. In association with `paddingInner`, this value can be between 0 and 1.\n * Default: `0.2` */",
+      "valueAxisDomain?": "/** User override for the automatically determinted domain (based on data min and max values). Only applied to \\\"number\\\" axes.\n * used to interpolate the numeric pixel values corresponding to each data value. */",
       "formatter?": "/** A callback function to return format styles of type BarFormat, based on the data represented by individual bars. */",
       "label?": "/** Configuration for the labels. */",
       "xKey?": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
@@ -7791,7 +7795,7 @@
       "fontWeight?": "/** Set how thick or thin characters in label text should be displayed. */",
       "color": "/** Set the color of the label text. The color can be specified by a color name, a HEX or an RGB value. */",
       "formatter?": "/** A callback function to return the text to be displayed as the label, based on the value represented by the column or bar. By default the values are simply stringified. */",
-      "placement": "/** Where to render labels relative to the segments. */"
+      "placement": "/** Where to render labels relative to the segments.\n * Default: `insideEnd` */"
     }
   },
   "BarColumnLabelPlacement": {

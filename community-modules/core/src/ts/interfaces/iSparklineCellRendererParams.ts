@@ -70,6 +70,10 @@ export interface ColumnSparklineOptions extends BaseSparklineOptions {
      * Default: `0.2`
      */
     paddingOuter?: number;
+    /** User override for the automatically determinted domain (based on data min and max values). Only applied to \"number\" axes.
+     * used to interpolate the numeric pixel values corresponding to each data value.
+     */
+    valueAxisDomain?: [number, number];
     /** A callback function to return format styles of type ColumnFormat, based on the data represented by individual columns. */
     formatter?: SparklineColumnFormatter;
     /** Configuration for the labels. */
@@ -99,6 +103,10 @@ export interface BarSparklineOptions extends BaseSparklineOptions {
      * Default: `0.2`
      */
     paddingOuter?: number;
+    /** User override for the automatically determinted domain (based on data min and max values). Only applied to \"number\" axes.
+     * used to interpolate the numeric pixel values corresponding to each data value.
+     */
+    valueAxisDomain?: [number, number];
     /** A callback function to return format styles of type BarFormat, based on the data represented by individual bars. */
     formatter?: SparklineBarFormatter;
     /** Configuration for the labels. */
@@ -120,7 +128,9 @@ export interface SparklineLabel {
     color: string;
     /** A callback function to return the text to be displayed as the label, based on the value represented by the column or bar. By default the values are simply stringified. */
     formatter?: (params: { value: number | undefined }) => string;
-    /** Where to render labels relative to the segments. */
+    /** Where to render labels relative to the segments.
+    * Default: `insideEnd`
+    * */
     placement: BarColumnLabelPlacement;
 }
 

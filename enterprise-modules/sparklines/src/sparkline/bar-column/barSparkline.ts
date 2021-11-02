@@ -103,23 +103,30 @@ export class BarSparkline extends BarColumnSparkline {
             const isPositiveY = yDatum !== undefined && yDatum >= 0;
             const labelPadding = 4;
 
-            switch (labelPlacement) {
-                case BarColumnLabelPlacement.InsideBase:
+            if (labelPlacement === BarColumnLabelPlacement.Center) {
+                labelX = x + width / 2;
+                labelTextAlign = 'center';
+            } else if (labelPlacement === BarColumnLabelPlacement.OutsideEnd) {
+                labelX = x + (isPositiveY ? width + labelPadding : -labelPadding);
+                labelTextAlign = isPositiveY ? 'start' : 'end';
+            } else if (labelPlacement === BarColumnLabelPlacement.InsideEnd) {
+                labelX = x + (isPositiveY ? width - labelPadding : labelPadding);
+                labelTextAlign = isPositiveY ? 'end' : 'start';
+
+                const positiveBoundary = yZero + 20;
+                const negativeBoundary = yZero - 20;
+                const exceedsBoundaries = (isPositiveY && labelX < positiveBoundary) || (!isPositiveY && labelX > negativeBoundary);
+
+                if (exceedsBoundaries) {
+                    // if labelX exceeds the boundary, labels should be positioned at `insideBase`.
                     labelX = yZero + labelPadding * (isPositiveY ? 1 : -1);
                     labelTextAlign = isPositiveY ? 'start' : 'end';
-                    break;
-                case BarColumnLabelPlacement.InsideEnd:
-                    labelX = x + (isPositiveY ? width - labelPadding : labelPadding);
-                    labelTextAlign = isPositiveY ? 'end' : 'start';
-                    break;
-                case BarColumnLabelPlacement.Center:
-                    labelX = x + width / 2;
-                    labelTextAlign = 'center';
-                    break;
-                case BarColumnLabelPlacement.OutsideEnd:
-                default:
-                    labelX = x + (isPositiveY ? width + labelPadding : -labelPadding);
-                    labelTextAlign = isPositiveY ? 'start' : 'end';
+                }
+
+            } else {
+                // if labelPlacement === BarColumnLabelPlacement.InsideBase
+                labelX = yZero + labelPadding * (isPositiveY ? 1 : -1);
+                labelTextAlign = isPositiveY ? 'start' : 'end';
             }
 
             nodeData.push({
