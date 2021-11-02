@@ -539,12 +539,6 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         });
     }
 
-    protected doesFilterHaveHiddenInput(filterType?: string | null) {
-        const customFilterOption = this.optionsFactory.getCustomOption(filterType);
-
-        return customFilterOption && customFilterOption.hideFilterInput;
-    }
-
     /** returns true if the row passes the said condition */
     protected individualConditionPasses(params: IDoesFilterPassParams, filterModel: M) {
         const cellValue = this.getCellValue(params.node);

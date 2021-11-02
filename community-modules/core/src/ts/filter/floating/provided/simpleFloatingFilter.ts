@@ -55,9 +55,10 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
 
             // For custom filter options we display the Name of the filter instead
             // of displaying the `from` value, as it wouldn't be relevant
-            if (customOption && customOption.hideFilterInput) {
-                this.gridOptionsWrapper.getLocaleTextFunc()(customOption.displayKey, customOption.displayName);
-                return customOption.displayName;
+            const { displayKey, displayName } = customOption || {};
+            if (displayKey && displayName) {
+                this.gridOptionsWrapper.getLocaleTextFunc()(displayKey, displayName);
+                return displayName;
             }
             return this.conditionToString(condition);
         }
@@ -132,15 +133,16 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
         this.setEditable(editable);
     }
 
-    private doesFilterHaveHiddenInput(filterType: string) {
+    private doesFilterHaveSingleInput(filterType: string) {
         const customFilterOption = this.optionsFactory.getCustomOption(filterType);
-        return customFilterOption && customFilterOption.hideFilterInput;
+        const { numberOfInputs } = customFilterOption || {};
+        return numberOfInputs == null || numberOfInputs == 1;
     }
 
     private isTypeEditable(type?: string | null): boolean {
         return !!type &&
             !this.isReadOnly() &&
-            !this.doesFilterHaveHiddenInput(type) &&
+            this.doesFilterHaveSingleInput(type) &&
             type !== SimpleFilter.IN_RANGE &&
             type !== SimpleFilter.EMPTY;
     }

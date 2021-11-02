@@ -208,9 +208,12 @@ Custom filter options are supplied to the grid via `filterParams.filterOptions` 
 
 The `displayKey` should contain a unique key value that doesn't clash with the built-in filter keys. A default `displayName` should also be provided but can be replaced by a locale-specific value using a [localeTextFunc](/localisation/#locale-callback).
 
-The custom filter logic is implemented through the `test` function, which receives the `filterValue` typed by the user along with the `cellValue` from the grid, and returns `true` or `false`.
+The custom filter logic is implemented through the `predicate` function, which receives the `filterValues` typed by the user along with the `cellValue` from the grid, and returns `true` or `false`.
 
-It is also possible to hide the filter input field by enabling the optional property `hideFilterInput`.
+The number of `filterValues` and corresponding inputs is controlled by the optional property `numberOfInputs`:
+- If set to `0`  all inputs are hidden, and an empty array of `filterValues` is provided to the `predicate` function.
+- If unspecified or set to `1` a single input is displayed, and one-element array of `filterValues` are provided to the `predicate` function.
+- If set to `2` two inputs are displayed, and a two-element array of `filterValues` is provided to the `predicate` function.
 
 Custom `FilterOptionDef`s can be supplied alongside the built-in filter option `string` keys as shown below:
 
