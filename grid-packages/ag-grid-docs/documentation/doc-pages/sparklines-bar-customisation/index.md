@@ -220,7 +220,7 @@ sparklineOptions: {
 </div>
 
 
-The position of the labels can be specified by setting the `placement` property in `label` options. By default, the labels are positioned at the end of the bars on the outside, i.e. `placement` is set to `outsideEnd `. The snippet below shows how the positioning of the label can be modified:
+The position of the labels can be specified by setting the `placement` property in `label` options. By default, the labels are positioned at the end of the bars on the inside, i.e. `placement` is set to `insideEnd `. The snippet below shows how the positioning of the label can be modified:
 
 ```js
 sparklineOptions: {
@@ -232,15 +232,15 @@ sparklineOptions: {
 }
 ```
 
-Label `placement` options include `outsideEnd`, `center`, `insideEnd`, and `insideBase`. These are shown in the screenshots below.
+Label `placement` options include `insideBase`, `center`, `insideEnd` and `outsideEnd`. These are shown in the screenshots below.
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/custom-label-placement-outsideEnd.png" alt="Bar label placement default" width="250px" constrained="true">outsideEnd</image-caption>
+    <image-caption src="resources/custom-label-placement-insideBase.png" alt="Bar label insideBase placement" width="250px" constrained="true">insideBase</image-caption>
     <image-caption src="resources/custom-label-placement-center.png" alt="Bar label center placement" width="250px" constrained="true">center</image-caption>
 </div>
 <div style="display: flex; justify-content: center;">
     <image-caption src="resources/custom-label-placement-insideEnd.png" alt="Bar label insideEnd placement" width="250px" constrained="true">insideEnd</image-caption>
-    <image-caption src="resources/custom-label-placement-insideBase.png" alt="Bar label insideBase placement" width="250px" constrained="true">insideBase</image-caption>
+    <image-caption src="resources/custom-label-placement-outsideEnd.png" alt="Bar label placement default" width="250px" constrained="true">outsideEnd</image-caption>
 </div>
 
 
