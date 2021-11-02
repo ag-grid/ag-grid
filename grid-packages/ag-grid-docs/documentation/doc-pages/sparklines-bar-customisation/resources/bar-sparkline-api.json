@@ -100,7 +100,7 @@
         },
         "placement": {
             "description": "Where to render labels relative to the segments.",
-            "default": "outsideEnd",
+            "default": "insideEnd",
             "options": [
                 "insideBase",
                 "insideEnd",

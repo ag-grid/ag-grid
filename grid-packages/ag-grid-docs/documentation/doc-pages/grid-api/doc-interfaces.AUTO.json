@@ -13841,6 +13841,10 @@
       "description": "/** The padding on the outside i.e. left and right of the first and last columns, to leave some room for the axis. In association with `paddingInner`, this value can be between 0 and 1.\n * Default: `0.2` */",
       "type": { "returnType": "number", "optional": true }
     },
+    "valueAxisDomain": {
+      "description": "/** User override for the automatically determinted domain (based on data min and max values). Only applied to \\\"number\\\" axes.\n * used to interpolate the numeric pixel values corresponding to each data value. */",
+      "type": { "returnType": "[number, number]", "optional": true }
+    },
     "formatter": {
       "description": "/** A callback function to return format styles of type ColumnFormat, based on the data represented by individual columns. */",
       "type": { "returnType": "SparklineColumnFormatter", "optional": true }
@@ -13898,6 +13902,10 @@
     "paddingOuter": {
       "description": "/** The padding on the outside i.e. left and right of the first and last bars, to leave some room for the axis. In association with `paddingInner`, this value can be between 0 and 1.\n * Default: `0.2` */",
       "type": { "returnType": "number", "optional": true }
+    },
+    "valueAxisDomain": {
+      "description": "/** User override for the automatically determinted domain (based on data min and max values). Only applied to \\\"number\\\" axes.\n * used to interpolate the numeric pixel values corresponding to each data value. */",
+      "type": { "returnType": "[number, number]", "optional": true }
     },
     "formatter": {
       "description": "/** A callback function to return format styles of type BarFormat, based on the data represented by individual bars. */",
@@ -13966,7 +13974,7 @@
       }
     },
     "placement": {
-      "description": "/** Where to render labels relative to the segments. */",
+      "description": "/** Where to render labels relative to the segments.\n * Default: `insideEnd` */",
       "type": { "returnType": "BarColumnLabelPlacement", "optional": false }
     }
   },
