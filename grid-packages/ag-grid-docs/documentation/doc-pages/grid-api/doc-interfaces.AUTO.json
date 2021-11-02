@@ -11947,7 +11947,7 @@
       "type": {
         "arguments": { "filterValues": "any[]", "cellValue": "any" },
         "returnType": "boolean",
-        "optional": false
+        "optional": true
       }
     },
     "numberOfInputs": {
@@ -11959,7 +11959,7 @@
       "type": {
         "arguments": { "filterValue": "any", "cellValue": "any" },
         "returnType": "boolean",
-        "optional": false
+        "optional": true
       }
     },
     "hideFilterInput": {

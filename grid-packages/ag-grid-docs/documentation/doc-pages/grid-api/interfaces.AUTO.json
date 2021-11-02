@@ -6902,17 +6902,17 @@
     "type": {
       "displayKey": "string",
       "displayName": "string",
-      "predicate": "(filterValues: any[], cellValue: any) => boolean",
+      "predicate?": "(filterValues: any[], cellValue: any) => boolean",
       "numberOfInputs?": "0 | 1 | 2",
-      "test": "(filterValue: any, cellValue: any) => boolean",
+      "test?": "(filterValue: any, cellValue: any) => boolean",
       "hideFilterInput?": "boolean"
     },
     "docs": {
       "displayKey": "/** A unique key that does not clash with the built-in filter keys. */",
       "displayName": "/** Display name for the filter. Can be replaced by a locale-specific value using a `localeTextFunc`. */",
-      "predicate": "/** Custom filter logic that returns a boolean based on the `filterValues` and `cellValue`. */",
+      "predicate?": "/** Custom filter logic that returns a boolean based on the `filterValues` and `cellValue`. */",
       "numberOfInputs?": "/** Number of inputs to display for this option. */",
-      "test": "/** @deprecated use `predicate` instead.\n */",
+      "test?": "/** @deprecated use `predicate` instead.\n */",
       "hideFilterInput?": "/** @deprecated use `numberOfInputs: 0` instead.\n */"
     }
   },
