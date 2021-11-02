@@ -209,8 +209,7 @@ sparklineOptions: {
     <image-caption src="resources/custom-label-styles.png" alt="Column label text style customisation" width="250px" constrained="true">Custom label text styles</image-caption>
 </div>
 
-
-The position of the labels can be specified by setting the `placement` property in `label` options. By default, the labels are positioned at the end of the columns on the outside, i.e. `placement` is set to `outsideEnd `. The snippet below shows how the positioning of the label can be modified:
+The position of the labels can be specified by setting the `placement` property in `label` options. By default, the labels are positioned at the end of the columns on the inside, i.e. `placement` is set to `insideEnd `. The snippet below shows how the positioning of the label can be modified:
 
 ```js
 sparklineOptions: {
@@ -222,17 +221,19 @@ sparklineOptions: {
 }
 ```
 
-Label `placement` options include `outsideEnd`, `center`, `insideEnd`, and `insideBase`. These are shown in the screenshots below.
+Label `placement` options include `insideBase`, `center`, `insideEnd` and `outsideEnd`. These are shown in the screenshots below.
 
 <div style="display: flex; justify-content: center;">
-    <image-caption src="resources/custom-label-placement-outsideEnd.png" alt="Column label placement default" width="250px" constrained="true">outsideEnd</image-caption>
+    <image-caption src="resources/custom-label-placement-insideBase.png" alt="Column label insideBase placement" width="250px" constrained="true">insideBase</image-caption>
     <image-caption src="resources/custom-label-placement-center.png" alt="Column label center placement" width="250px" constrained="true">center</image-caption>
 </div>
 <div style="display: flex; justify-content: center;">
     <image-caption src="resources/custom-label-placement-insideEnd.png" alt="Column label insideEnd placement" width="250px" constrained="true">insideEnd</image-caption>
-    <image-caption src="resources/custom-label-placement-insideBase.png" alt="Column label insideBase placement" width="250px" constrained="true">insideBase</image-caption>
+    <image-caption src="resources/custom-label-placement-outsideEnd.png" alt="Column label placement default" width="250px" constrained="true">outsideEnd</image-caption>
 </div>
 
+[[note]]
+| When configuring labels with placement:`outsideEnd`, it is recommended to add some padding to the sparkline using the `padding` options in order to prevent the labels from being clipped.
 
 ## Axis Line Options
 

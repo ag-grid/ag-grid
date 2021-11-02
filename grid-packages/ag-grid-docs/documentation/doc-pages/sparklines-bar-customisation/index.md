@@ -243,6 +243,8 @@ Label `placement` options include `insideBase`, `center`, `insideEnd` and `outsi
     <image-caption src="resources/custom-label-placement-outsideEnd.png" alt="Bar label placement default" width="250px" constrained="true">outsideEnd</image-caption>
 </div>
 
+[[note]]
+| When configuring labels with placement:`outsideEnd`, it is recommended to add some padding to the sparkline using the `padding` options in order to prevent the labels from being clipped.
 
 ## Axis Line Options
 
