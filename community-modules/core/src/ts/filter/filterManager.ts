@@ -95,9 +95,12 @@ export class FilterManager extends BeanStub {
                 allPromises.push(this.setModelOnFilterWrapper(filterWrapper.filterPromise!, model[colId]));
             });
         } else {
+            const currentModel = this.getFilterModel();
             this.allAdvancedFilters.forEach(filterWrapper => {
-                columns.push(filterWrapper.column);
-                allPromises.push(this.setModelOnFilterWrapper(filterWrapper.filterPromise!, null));
+                if (currentModel && currentModel[filterWrapper.column.getId()] != null) {
+                    columns.push(filterWrapper.column);
+                    allPromises.push(this.setModelOnFilterWrapper(filterWrapper.filterPromise!, null));
+                }
             });
         }
 
