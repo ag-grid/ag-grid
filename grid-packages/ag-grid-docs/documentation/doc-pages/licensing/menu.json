@@ -1371,14 +1371,8 @@
             "showInCollapsed": true,
             "items": [
               {
-                "title": "Line",
-                "url": "/sparklines-line-customisation/",
-                "enterprise": true,
-                "showInCollapsed": true
-              },
-              {
-                "title": "Column",
-                "url": "/sparklines-column-customisation/",
+                "title": "Area",
+                "url": "/sparklines-area-customisation/",
                 "enterprise": true,
                 "showInCollapsed": true
               },
@@ -1389,8 +1383,14 @@
                 "showInCollapsed": true
               },
               {
-                "title": "Area",
-                "url": "/sparklines-area-customisation/",
+                "title": "Column",
+                "url": "/sparklines-column-customisation/",
+                "enterprise": true,
+                "showInCollapsed": true
+              },
+              {
+                "title": "Line",
+                "url": "/sparklines-line-customisation/",
                 "enterprise": true,
                 "showInCollapsed": true
               }
