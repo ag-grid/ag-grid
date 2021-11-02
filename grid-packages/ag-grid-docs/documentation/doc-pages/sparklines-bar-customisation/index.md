@@ -175,7 +175,7 @@ sparklineOptions: {
     <image-caption src="resources/default-label.png" alt="Bar labels enabled" width="250px" constrained="true">Label enabled</image-caption>
 </div>
 
-<grid-example title='Bar Sparkline label' name='bar-sparkline-labels' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
+<grid-example title='Bar Sparkline labels' name='bar-sparkline-labels' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 It is possible to change the text value displayed as the label of individual bars by adding a `formatter` callback function to `label` options as follows:
 

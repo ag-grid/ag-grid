@@ -167,6 +167,8 @@ sparklineOptions: {
     <image-caption src="resources/default-label.png" alt="Column labels enabled" width="250px" constrained="true">Label enabled</image-caption>
 </div>
 
+<grid-example title='Column Sparkline Labels' name='column-sparkline-labels' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
+
 It is possible to change the text value displayed as the label of individual columns by adding a `formatter` callback function to `label` options as follows:
 
 ```js
