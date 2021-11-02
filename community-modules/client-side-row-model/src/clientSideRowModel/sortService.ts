@@ -61,6 +61,10 @@ export class SortService extends BeanStub {
                     rowNode.childrenAfterSort!.slice(0) : rowNode.childrenAfterFilter!.slice(0);
             }
 
+            if (rowNode.sibling) {
+                rowNode.sibling.childrenAfterSort = rowNode.childrenAfterSort;
+            }
+
             this.updateChildIndexes(rowNode);
 
             if (this.postSortFunc) {

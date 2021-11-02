@@ -10,6 +10,7 @@ import {
 } from "@ag-grid-community/core";
 import { ChartTranslator } from "../../../chartTranslator";
 import { ChartOptionsService } from "../../../chartOptionsService";
+import { getMaxValue } from "../formatPanel";
 
 export class ShadowPanel extends Component {
 
@@ -66,11 +67,12 @@ export class ShadowPanel extends Component {
             .setValue(this.chartOptionsService.getSeriesOption("shadow.color"))
             .onValueChange(newValue => this.chartOptionsService.setSeriesOption("shadow.color", newValue));
 
-        const initInput = (input: AgSlider, property: string, minValue: number, maxValue: number) => {
+        const initInput = (input: AgSlider, property: string, minValue: number, defaultMaxValue: number) => {
+            const currentValue = this.chartOptionsService.getSeriesOption<number>(`shadow.${property}`);
             input.setLabel(this.chartTranslator.translate(property))
-                .setValue(this.chartOptionsService.getSeriesOption(`shadow.${property}`))
                 .setMinValue(minValue)
-                .setMaxValue(maxValue)
+                .setMaxValue(getMaxValue(currentValue, defaultMaxValue))
+                .setValue(`${currentValue}`)
                 .onValueChange(newValue => this.chartOptionsService.setSeriesOption(`shadow.${property}`, newValue));
         };
 

@@ -4,6 +4,7 @@ import { CellCtrl, ICellComp } from "./cellCtrl";
 import { Column } from "../../entities/column";
 import { RowNode } from "../../entities/rowNode";
 import { Beans } from "../beans";
+import { CellStyleFunc, CellStyle } from "../../entities/colDef";
 
 export class CellCustomStyleFeature extends BeanStub {
 
@@ -63,7 +64,7 @@ export class CellCustomStyleFeature extends BeanStub {
 
         if (!colDef.cellStyle) { return; }
 
-        let styles: {};
+        let styles: CellStyle | null | undefined;
 
         if (typeof colDef.cellStyle === 'function') {
             const cellStyleParams = {
@@ -78,7 +79,7 @@ export class CellCustomStyleFeature extends BeanStub {
                 columnApi: this.beans.gridOptionsWrapper.getColumnApi()!,
                 context: this.beans.gridOptionsWrapper.getContext(),
             } as CellClassParams;
-            const cellStyleFunc = colDef.cellStyle as Function;
+            const cellStyleFunc = colDef.cellStyle as CellStyleFunc;
             styles = cellStyleFunc(cellStyleParams);
         } else {
             styles = colDef.cellStyle;

@@ -99,8 +99,8 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
 
         this.params.parentFilterInstance(filterInstance => {
             if (filterInstance) {
-                const simpleFilter = filterInstance as SimpleFilter<ISimpleFilterModel>;
-                simpleFilter.onFloatingFilterChanged(this.getLastType(), filterValueText);
+                const simpleFilter = filterInstance as SimpleFilter<ISimpleFilterModel, Date>;
+                simpleFilter.onFloatingFilterChanged(this.getLastType(), parseDateTimeFromString(filterValueText));
             }
         });
     }

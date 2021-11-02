@@ -12,6 +12,10 @@ import { ScatterSeriesPanel } from "./series/scatterSeriesPanel";
 import { HistogramSeriesPanel } from "./series/histogramSeriesPanel";
 import { ChartOptionsService } from "../../chartOptionsService";
 
+export function getMaxValue(currentValue: number, defaultMaxValue: number) {
+    return Math.max(currentValue, defaultMaxValue);
+}
+
 export class FormatPanel extends Component {
     public static TEMPLATE = /* html */ `<div class="ag-chart-format-wrapper"></div>`;
 

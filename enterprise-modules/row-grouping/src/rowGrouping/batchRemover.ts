@@ -48,6 +48,7 @@ export class BatchRemover {
     public flush(): void {
         this.allParents.forEach(parent => {
             const nodeDetails = this.allSets[parent.id!];
+
             parent.childrenAfterGroup = parent.childrenAfterGroup!.filter(
                 child => !nodeDetails.removeFromChildrenAfterGroup[child.id!]
             );
@@ -55,6 +56,11 @@ export class BatchRemover {
                 child => !nodeDetails.removeFromAllLeafChildren[child.id!]
             );
             parent.updateHasChildren();
+
+            if (parent.sibling) {
+                parent.sibling.childrenAfterGroup = parent.childrenAfterGroup;
+                parent.sibling.allLeafChildren = parent.allLeafChildren;
+            }
         });
         this.allSets = {};
         this.allParents.length = 0;

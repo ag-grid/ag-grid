@@ -802,6 +802,9 @@ module.exports = async (skipFrameworks, skipExampleFormatting, done) => {
             app.use(`/example-rich-grid`, express.static(`./src/example-rich-grid`));
             app.use(`/live-stream-updates`, express.static(`./src/live-stream-updates`));
             app.use(`/integrated-charting`, express.static(`./src/integrated-charting`));
+            app.use(`/example.js`, express.static(`./src/example.js`));
+            app.use(`/images/star.svg`, express.static(`./src/images/star.svg`));
+            app.use(`/images/lab.svg`, express.static(`./src/images/lab.svg`));
 
             const httpServer = http.createServer(app).listen(EXPRESS_HTTP_PORT);
             const httpsServer = https.createServer(credentials, app).listen(EXPRESS_HTTPS_PORT);

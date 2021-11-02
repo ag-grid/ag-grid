@@ -215,8 +215,21 @@ export class PaginationComp extends Component {
     private setTotalLabels() {
         const lastPageFound = this.paginationProxy.isLastPageFound();
         const totalPages = this.paginationProxy.getTotalPages();
-        const rowCount = lastPageFound ?
-            this.paginationProxy.getMasterRowCount() : null;
+        const rowCount = lastPageFound ? this.paginationProxy.getMasterRowCount() : null;
+
+        // When `pivotMode=true` and no grouping or value columns exist, a single 'hidden' group row (root node) is in
+        // the grid and the pagination totals will correctly display total = 1. However this is confusing to users as
+        // they can't see it. To address this UX issue we simply set the totals to zero in the pagination panel.
+        if (rowCount === 1) {
+            const firstRow = this.paginationProxy.getRow(0);
+
+            // a group node with no group or agg data will not be visible to users
+            const hiddenGroupRow = firstRow && firstRow.group && !(firstRow.groupData || firstRow.aggData);
+            if (hiddenGroupRow) {
+                this.setTotalLabelsToZero();
+                return;
+            }
+        }
 
         if (lastPageFound) {
             this.lbTotal.innerHTML = this.formatNumber(totalPages);
@@ -226,5 +239,13 @@ export class PaginationComp extends Component {
             this.lbTotal.innerHTML = moreText;
             this.lbRecordCount.innerHTML = moreText;
         }
+    }
+
+    private setTotalLabelsToZero() {
+        this.lbFirstRowOnPage.innerHTML = this.formatNumber(0);
+        this.lbCurrent.innerHTML = this.formatNumber(0);
+        this.lbLastRowOnPage.innerHTML = this.formatNumber(0);
+        this.lbTotal.innerHTML = this.formatNumber(0);
+        this.lbRecordCount.innerHTML = this.formatNumber(0);
     }
 }

@@ -118,7 +118,7 @@ export class RowContainerEventsFeature extends BeanStub {
         let sourceElement: Element | null = getTarget(event);
 
         while (sourceElement) {
-            const rowCon = this.gridOptionsWrapper.getDomData(sourceElement, RowCtrl.DOM_DATA_KEY_RENDERED_ROW);
+            const rowCon = this.gridOptionsWrapper.getDomData(sourceElement, RowCtrl.DOM_DATA_KEY_ROW_CTRL);
             if (rowCon) {
                 return rowCon;
             }
@@ -151,7 +151,7 @@ export class RowContainerEventsFeature extends BeanStub {
 
     private processKeyboardEvent(eventName: string, keyboardEvent: KeyboardEvent): void {
         const cellComp = getCtrlForEvent<CellCtrl>(this.gridOptionsWrapper, keyboardEvent, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
-        const rowComp = getCtrlForEvent<RowCtrl>(this.gridOptionsWrapper, keyboardEvent, RowCtrl.DOM_DATA_KEY_RENDERED_ROW);
+        const rowComp = getCtrlForEvent<RowCtrl>(this.gridOptionsWrapper, keyboardEvent, RowCtrl.DOM_DATA_KEY_ROW_CTRL);
 
         if (keyboardEvent.defaultPrevented) { return; }
         if (cellComp) {

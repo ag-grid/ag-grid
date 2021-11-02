@@ -1,5 +1,4 @@
 import {
-    _,
     AgGroupComponent,
     AgGroupComponentParams,
     AgSlider,
@@ -10,6 +9,7 @@ import {
 } from "@ag-grid-community/core";
 import { ChartTranslator } from "../../../chartTranslator";
 import { ChartOptionsService } from "../../../chartOptionsService";
+import { getMaxValue } from "../formatPanel";
 
 export class NavigatorPanel extends Component {
 
@@ -53,12 +53,13 @@ export class NavigatorPanel extends Component {
                 this.navigatorGroup.toggleGroupExpand(true);
             });
 
+        const currentValue = this.chartOptionsService.getChartOption<number>("navigator.height");
         this.navigatorHeightSlider
             .setLabel(chartTranslator.translate("height"))
             .setMinValue(10)
-            .setMaxValue(60)
+            .setMaxValue(getMaxValue(currentValue,60))
             .setTextFieldWidth(45)
-            .setValue(String(this.chartOptionsService.getChartOption<number>("navigator.height") || "30"))
+            .setValue(`${currentValue || 30}`)
             .onValueChange(height => this.chartOptionsService.setChartOption("navigator.height", height));
     }
 

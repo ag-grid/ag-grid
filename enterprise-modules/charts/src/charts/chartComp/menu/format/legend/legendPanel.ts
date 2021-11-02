@@ -13,6 +13,7 @@ import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslator } from "../../../chartTranslator";
 import { ChartOptionsService } from "../../../chartOptionsService";
 import { LegendPosition } from "ag-charts-community";
+import { getMaxValue } from "../formatPanel";
 
 export class LegendPanel extends Component {
 
@@ -89,19 +90,21 @@ export class LegendPanel extends Component {
     }
 
     private initLegendPadding() {
+        const currentValue = this.chartOptionsService.getChartOption<number>("legend.spacing");
         this.legendPaddingSlider
             .setLabel(this.chartTranslator.translate("spacing"))
-            .setValue(this.chartOptionsService.getChartOption("legend.spacing"))
+            .setMaxValue(getMaxValue(currentValue, 200))
+            .setValue(`${currentValue}`)
             .setTextFieldWidth(45)
-            .setMaxValue(200)
             .onValueChange(newValue => this.chartOptionsService.setChartOption("legend.spacing", newValue));
     }
 
     private initLegendItems() {
-        const initSlider = (expression: string, labelKey: string, input: AgSlider, maxValue: number) => {
+        const initSlider = (expression: string, labelKey: string, input: AgSlider, defaultMaxValue: number) => {
+            const currentValue = this.chartOptionsService.getChartOption<number>(`legend.${expression}`);
             input.setLabel(this.chartTranslator.translate(labelKey))
-                .setValue(this.chartOptionsService.getChartOption(`legend.${expression}`))
-                .setMaxValue(maxValue)
+                .setMaxValue(getMaxValue(currentValue, defaultMaxValue))
+                .setValue(`${currentValue}`)
                 .setTextFieldWidth(45)
                 .onValueChange(newValue => {
                         this.chartOptionsService.setChartOption(`legend.${expression}`, newValue)

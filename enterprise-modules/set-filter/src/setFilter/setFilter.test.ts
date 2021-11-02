@@ -57,7 +57,7 @@ beforeEach(() => {
     setValueModel = mock<SetValueModel>('getModel', 'isEverythingVisibleSelected');
 });
 
-function createSetFilter(filterParams?: any): SetFilter {
+function createSetFilter(filterParams?: any): SetFilter<unknown> {
     const colDef: ColDef = {};
 
     const params: ISetFilterParams = {

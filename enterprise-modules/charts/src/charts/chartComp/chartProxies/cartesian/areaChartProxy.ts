@@ -1,9 +1,5 @@
-import {
-    AgAreaSeriesOptions,
-    AgCartesianChartOptions,
-    ChartType,
-} from "@ag-grid-community/core";
-import { AgChart, AreaSeries, CartesianChart, ChartTheme, AgChartTheme } from "ag-charts-community";
+import { AgCartesianChartOptions, ChartType, } from "@ag-grid-community/core";
+import { AgChart, AreaSeries, CartesianChart } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 
@@ -11,19 +7,18 @@ export class AreaChartProxy extends CartesianChartProxy<any> {
 
     public constructor(params: ChartProxyParams) {
         super(params);
-
         this.initChartOptions();
         this.recreateChart();
     }
 
     protected createChart(): CartesianChart {
-        const agChartOptions = { theme: this.chartOptions } as AgCartesianChartOptions;
+        const agChartOptions = { theme: this.chartTheme } as AgCartesianChartOptions;
         const { grouping, parentElement } = this.chartProxyParams;
+
+        agChartOptions.type = grouping ? 'groupedCategory' : 'area';
 
         const [xAxis, yAxis] = this.getAxes();
         const xAxisType = xAxis.type ? xAxis.type : 'category';
-        if (grouping) { agChartOptions.type = 'groupedCategory'; }
-
         agChartOptions.axes = [
             {
                 type: grouping ? 'groupedCategory' : xAxisType,
@@ -56,7 +51,7 @@ export class AreaChartProxy extends CartesianChartProxy<any> {
 
             if (!areaSeries) {
                 const seriesDefaults = {
-                    ...this.chartOptions.overrides.area.series.area,
+                    ...this.chartOptions[this.standaloneChartType].series,
                     type: 'area',
                     normalizedTo: this.chartType === ChartType.NormalizedArea ? 100 : undefined,
                 };
@@ -123,8 +118,7 @@ export class AreaChartProxy extends CartesianChartProxy<any> {
                 areaSeries.strokes = [stroke];
 
             } else {
-
-                const seriesOverrides = this.chartOptions.overrides.area.series.area;
+                const seriesOverrides = this.chartOptions[this.standaloneChartType].series;
                 const seriesDefaults = {
                     ...seriesOverrides,
                     type: 'area',

@@ -1,7 +1,4 @@
-import {
-    AgLineSeriesOptions,
-} from "@ag-grid-community/core";
-import { AgCartesianChartOptions, AgChart, CartesianChart, ChartTheme, LineSeries, AgChartTheme } from "ag-charts-community";
+import { AgCartesianChartOptions, AgChart, CartesianChart, LineSeries } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 
@@ -9,21 +6,18 @@ export class LineChartProxy extends CartesianChartProxy<any> {
 
     public constructor(params: ChartProxyParams) {
         super(params);
-
         this.initChartOptions();
         this.recreateChart();
     }
 
     protected createChart(): CartesianChart {
-        const agChartOptions = { theme: this.chartOptions } as AgCartesianChartOptions;
+        const agChartOptions = { theme: this.chartTheme } as AgCartesianChartOptions;
         const { grouping, parentElement } = this.chartProxyParams;
+
+        agChartOptions.type = grouping ? 'groupedCategory' : 'line';
 
         const [xAxis, yAxis] = this.getAxes();
         const xAxisType = xAxis.type ? xAxis.type : 'category';
-
-        if (grouping) {
-            agChartOptions.type = 'groupedCategory';
-        }
         agChartOptions.axes = [{
             type: grouping ? 'groupedCategory' : xAxisType,
             position: 'bottom',
@@ -80,7 +74,7 @@ export class LineChartProxy extends CartesianChartProxy<any> {
                 lineSeries.marker.stroke = stroke;
                 lineSeries.stroke = fill; // this is deliberate, so that the line colours match the fills of other series
             } else {
-                const seriesOverrides = this.chartOptions.overrides.line.series.line;
+                const seriesOverrides = this.chartOptions[this.standaloneChartType].series;
                 const seriesOptions = {
                     ...seriesOverrides,
                     type: 'line',

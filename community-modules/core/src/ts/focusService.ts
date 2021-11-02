@@ -20,7 +20,7 @@ import { makeNull } from './utils/generic';
 import { Constants } from "./constants/constants";
 import { GridCtrl } from "./gridComp/gridCtrl";
 import { NavigationService } from "./gridBodyComp/navigationService";
-import { CellCtrl } from "./rendering/cell/cellCtrl";
+import { RowCtrl } from "./rendering/row/rowCtrl";
 import { CtrlsService } from "./ctrlsService";
 import { HeaderCellCtrl } from "./headerRendering/cells/column/headerCellCtrl";
 import { TabToNextHeaderParams, NavigateToNextHeaderParams } from "./entities/gridOptions";
@@ -179,8 +179,9 @@ export class FocusService extends BeanStub {
         }
 
         // we check that the browser is actually focusing on the grid, if it is not, then
-        // we have nothing to worry about
-        if (this.isDomDataMissingInHierarchy(document.activeElement, CellCtrl.DOM_DATA_KEY_CELL_CTRL)) {
+        // we have nothing to worry about. we check for ROW data, as this covers both focused Rows (for Full Width Rows)
+        // and Cells (covers cells as cells live in rows)
+        if (this.isDomDataMissingInHierarchy(document.activeElement, RowCtrl.DOM_DATA_KEY_ROW_CTRL)) {
             return null;
         }
 

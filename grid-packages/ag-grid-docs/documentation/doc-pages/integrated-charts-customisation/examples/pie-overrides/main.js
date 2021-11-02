@@ -30,7 +30,6 @@ var gridOptions = {
                 strokeWidth: 2,
                 title: {
                     enabled: true,
-                    text: 'Custom title',
                     fontStyle: 'italic',
                     fontWeight: 'bold',
                     fontSize: 14,

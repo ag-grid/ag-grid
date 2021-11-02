@@ -1,5 +1,4 @@
-import { AgChart, AgPolarChartOptions, ChartTheme, PieSeries, PolarChart, AgChartTheme } from "ag-charts-community";
-import { AgPieSeriesOptions } from "@ag-grid-community/core";
+import { AgChart, AgPolarChartOptions, PieSeries, PolarChart } from "ag-charts-community";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { PolarChartProxy } from "./polarChartProxy";
 import { LegendClickEvent } from "ag-charts-community/dist/cjs/chart/legend";
@@ -14,16 +13,12 @@ export class PieChartProxy extends PolarChartProxy {
     }
 
     protected createChart(): PolarChart {
-        const agChartOptions = { theme: this.chartOptions } as AgPolarChartOptions;
+        const agChartOptions = { theme: this.chartTheme } as AgPolarChartOptions;
+        const { parentElement } = this.chartProxyParams;
 
-        const seriesOverrides = this.chartOptions.overrides.pie.series.pie;
-        agChartOptions.autoSize = true;
-        agChartOptions.series = [{
-            ...seriesOverrides,
-            type: 'pie'
-        }];
+        agChartOptions.type = 'pie';
 
-        return AgChart.create(agChartOptions, this.chartProxyParams.parentElement);
+        return AgChart.create(agChartOptions, parentElement);
     }
 
     public update(params: UpdateChartParams): void {
@@ -78,7 +73,7 @@ export class PieChartProxy extends PolarChartProxy {
     ) {
         const existingSeriesId = series && series.angleKey;
 
-        const seriesOverrides = this.chartOptions.overrides.pie.series.pie;
+        const seriesOverrides = this.chartOptions[this.standaloneChartType].series;
         let pieSeries = series;
         if (existingSeriesId !== field.colId) {
             chart.removeSeries(series);

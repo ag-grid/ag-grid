@@ -58,6 +58,10 @@ export class FilterService extends BeanStub {
                 rowNode.childrenAfterFilter = rowNode.childrenAfterGroup;
                 rowNode.setAllChildrenCount(null);
             }
+
+            if (rowNode.sibling) {
+                rowNode.sibling.childrenAfterFilter = rowNode.childrenAfterFilter;
+            }
         };
 
         if (this.doingTreeDataFiltering()) {

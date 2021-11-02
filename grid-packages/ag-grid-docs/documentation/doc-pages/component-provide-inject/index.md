@@ -3,7 +3,7 @@ title: "Provide/Inject With AG Grid Vue Components"
 frameworks: ["vue"]
 ---
 
-When using Vue Components within you are able to use `provide` / `context`, but only in the `Options` format below:
+When using Vue Components within AG Grid you are able to use `provide` / `context`, but only in the `Options` format below:
 
 ```js
 // Parent Grid

@@ -1,10 +1,9 @@
 import { RefSelector } from '../../../widgets/componentAnnotations';
-import { AgPromise } from '../../../utils';
-import { SimpleFilter, ConditionPosition, ISimpleFilterModel } from '../simpleFilter';
+import { _ } from '../../../utils';
+import { ConditionPosition, ISimpleFilterModel, Tuple } from '../simpleFilter';
 import { ScalarFilter, Comparator, IScalarFilterParams } from '../scalarFilter';
 import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import { makeNull } from '../../../utils/generic';
-import { setDisplayed } from '../../../utils/dom';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { isBrowserChrome, isBrowserEdge } from '../../../utils/browser';
 
@@ -21,6 +20,11 @@ export interface NumberFilterModel extends ISimpleFilterModel {
      * Range filter `to` value.
      */
     filterTo?: number | null;
+    // @todo(AG-3453): uncomment.
+    // /**
+    //  * If more than two inputs, the remaining input values.
+    //  */
+    // filterRest?: Tuple<number>;
 }
 
 export interface INumberFilterParams extends IScalarFilterParams {
@@ -46,11 +50,12 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         ScalarFilter.IN_RANGE
     ];
 
-    @RefSelector('eValueFrom1') private readonly eValueFrom1: AgInputTextField;
-    @RefSelector('eValueTo1') private readonly eValueTo1: AgInputTextField;
+    private readonly maxInputs = 2;
+    @RefSelector('eValue-index0-1') private readonly eValueFrom1: AgInputTextField;
+    @RefSelector('eValue-index1-1') private readonly eValueTo1: AgInputTextField;
 
-    @RefSelector('eValueFrom2') private readonly eValueFrom2: AgInputTextField;
-    @RefSelector('eValueTo2') private readonly eValueTo2: AgInputTextField;
+    @RefSelector('eValue-index0-2') private readonly eValueFrom2: AgInputTextField;
+    @RefSelector('eValue-index1-2') private readonly eValueTo2: AgInputTextField;
 
     private numberFilterParams: INumberFilterParams;
 
@@ -58,44 +63,17 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         super('numberFilter');
     }
 
-    protected mapRangeFromModel(filterModel: NumberFilterModel): { from: number | null | undefined, to: number | null | undefined; } {
-        return {
-            from: filterModel.filter,
-            to: filterModel.filterTo
-        };
+    protected mapValuesFromModel(filterModel: NumberFilterModel | null): Tuple<number> {
+        return [
+            filterModel && filterModel.filter || null,
+            filterModel && filterModel.filterTo || null,
+            // @todo(AG-3453): uncomment.
+            // ...(filterModel && filterModel.filterRest || []),
+        ];
     }
 
     protected getDefaultDebounceMs(): number {
         return 500;
-    }
-
-    protected resetUiToDefaults(silent?: boolean): AgPromise<void> {
-        return super.resetUiToDefaults(silent).then(() => {
-            const fields = [this.eValueFrom1, this.eValueFrom2, this.eValueTo1, this.eValueTo2];
-
-            fields.forEach(field => {
-                field.setValue(null, silent);
-                field.setDisabled(this.isReadOnly());
-            });
-
-            this.resetPlaceholder();
-        });
-    }
-
-    protected setConditionIntoUi(model: NumberFilterModel, position: ConditionPosition): void {
-        const positionOne = position === ConditionPosition.One;
-        const eValueFrom = positionOne ? this.eValueFrom1 : this.eValueFrom2;
-        const eValueTo = positionOne ? this.eValueTo1 : this.eValueTo2;
-
-        eValueFrom.setValue(model ? ('' + model.filter) : null);
-        eValueTo.setValue(model ? ('' + model.filterTo) : null);
-    }
-
-    protected setValueFromFloatingFilter(value: string): void {
-        this.eValueFrom1.setValue(value);
-        this.eValueTo1.setValue(null);
-        this.eValueFrom2.setValue(null);
-        this.eValueTo2.setValue(null);
     }
 
     protected comparator(): Comparator<number> {
@@ -123,57 +101,24 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         }
 
         super.setParams(params);
-
-        this.addValueChangedListeners();
     }
 
-    private addValueChangedListeners(): void {
-        if (this.isReadOnly()) {
-            return;
-        }
-
-        const listener = () => this.onUiChanged();
-
-        this.eValueFrom1.onValueChange(listener);
-        this.eValueTo1.onValueChange(listener);
-        this.eValueFrom2.onValueChange(listener);
-        this.eValueTo2.onValueChange(listener);
-    }
-
-    private resetPlaceholder(): void {
+    protected resetPlaceholder(): void {
         const globalTranslate = this.gridOptionsWrapper.getLocaleTextFunc();
-        const isRange1 = this.showValueTo(this.getCondition1Type());
-        const isRange2 = this.showValueTo(this.getCondition2Type());
 
-        this.eValueFrom1.setInputPlaceholder(this.translate(isRange1 ? 'inRangeStart' : 'filterOoo'));
-        this.eValueFrom1.setInputAriaLabel(
-            isRange1
-                ? globalTranslate('ariaFilterFromValue', 'Filter from value')
-                : globalTranslate('ariaFilterValue', 'Filter Value')
-        );
+        this.forEachInput((element, index, _, numberOfInputs) => {
+            const placeholder =
+                index === 0 && numberOfInputs > 1 ? 'inRangeStart' : 
+                index === 0 ? 'filterOoo' :
+                'inRangeEnd';
+            const ariaLabel = 
+                index === 0 && numberOfInputs > 1 ? globalTranslate('ariaFilterFromValue', 'Filter from value') : 
+                index === 0 ? globalTranslate('ariaFilterValue', 'Filter Value') :
+                globalTranslate('ariaFilterToValue', 'Filter to Value');
 
-        this.eValueTo1.setInputPlaceholder(this.translate('inRangeEnd'));
-        this.eValueTo1.setInputAriaLabel(globalTranslate('ariaFilterToValue', 'Filter to Value'));
-
-        this.eValueFrom2.setInputPlaceholder(this.translate(isRange2 ? 'inRangeStart' : 'filterOoo'));
-        this.eValueFrom2.setInputAriaLabel(
-            isRange2
-                ? globalTranslate('ariaFilterFromValue', 'Filter from value')
-                : globalTranslate('ariaFilterValue', 'Filter Value')
-        );
-
-        this.eValueTo2.setInputPlaceholder(this.translate('inRangeEnd'));
-        this.eValueTo2.setInputAriaLabel(globalTranslate('ariaFilterToValue', 'Filter to Value'));
-    }
-
-    public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
-        super.afterGuiAttached(params);
-
-        this.resetPlaceholder();
-
-        if (!params || (!params.suppressFocus && !this.isReadOnly())) {
-            this.eValueFrom1.getInputElement().focus();
-        }
+            element.setInputPlaceholder(this.translate(placeholder));
+            element.setInputAriaLabel(ariaLabel)
+        });
     }
 
     protected getDefaultFilterOptions(): string[] {
@@ -187,32 +132,28 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
 
         return /* html */`
             <div class="ag-filter-body" ref="eCondition${pos}Body" role="presentation">
-                <${agElementTag} class="ag-filter-from ag-filter-filter" ref="eValueFrom${pos}"></${agElementTag}>
-                <${agElementTag} class="ag-filter-to ag-filter-filter" ref="eValueTo${pos}"></${agElementTag}>
+                <${agElementTag} class="ag-filter-from ag-filter-filter" ref="eValue-index0-${pos}"></${agElementTag}>
+                <${agElementTag} class="ag-filter-to ag-filter-filter" ref="eValue-index1-${pos}"></${agElementTag}>
             </div>`;
     }
 
-    protected isConditionUiComplete(position: ConditionPosition): boolean {
-        const positionOne = position === ConditionPosition.One;
-        const option = positionOne ? this.getCondition1Type() : this.getCondition2Type();
+    protected getValues(position: ConditionPosition): Tuple<number> {
+        const result: Tuple<number> = [];
+        this.forEachInput((element, index, elPosition, numberOfInputs) => {
+            if (position === elPosition && index < numberOfInputs) {
+                result.push(this.stringToFloat(element.getValue()));
+            }
+        });
 
-        if (option === SimpleFilter.EMPTY) { return false; }
-
-        if (this.doesFilterHaveHiddenInput(option)) {
-            return true;
-        }
-
-        const eValue = positionOne ? this.eValueFrom1 : this.eValueFrom2;
-        const eValueTo = positionOne ? this.eValueTo1 : this.eValueTo2;
-        const value = this.stringToFloat(eValue.getValue());
-
-        return value != null && (!this.showValueTo(option) || this.stringToFloat(eValueTo.getValue()) != null);
+        return result;
     }
 
     protected areSimpleModelsEqual(aSimple: NumberFilterModel, bSimple: NumberFilterModel): boolean {
         return aSimple.filter === bSimple.filter
             && aSimple.filterTo === bSimple.filterTo
             && aSimple.type === bSimple.type;
+            // @todo(AG-3453): uncomment.
+            // && _.every(aSimple.filterRest || [], (v, index) => v === (bSimple.filterRest || [])[index]);
     }
 
     protected getFilterType(): 'number' {
@@ -238,26 +179,23 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
     }
 
     protected createCondition(position: ConditionPosition): NumberFilterModel {
-        const positionOne = position === ConditionPosition.One;
-        const type = positionOne ? this.getCondition1Type() : this.getCondition2Type();
-        const eValue = positionOne ? this.eValueFrom1 : this.eValueFrom2;
-        const value = this.stringToFloat(eValue.getValue());
-
+        const type = this.getConditionTypes()[position];
         const model: NumberFilterModel = {
             filterType: this.getFilterType(),
             type
         };
 
-        if (!this.doesFilterHaveHiddenInput(type)) {
-            model.filter = value;
-
-            if (this.showValueTo(type)) {
-                const eValueTo = positionOne ? this.eValueTo1 : this.eValueTo2;
-                const valueTo = this.stringToFloat(eValueTo.getValue());
-
-                model.filterTo = valueTo;
-            }
+        const values = this.getValues(position);
+        if (values.length > 0) {
+            model.filter = values[0];
         }
+        if (values.length > 1) {
+            model.filterTo = values[1];
+        }
+        // @todo(AG-3453): uncomment.
+        // if (values.length > 2) {
+        //     model.filterRest = values.slice(2);
+        // }
 
         return model;
     }
@@ -266,14 +204,13 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         super.updateUiVisibility();
 
         this.resetPlaceholder();
+    }
 
-        const condition1Type = this.getCondition1Type();
-        const condition2Type = this.getCondition2Type();
-
-        setDisplayed(this.eValueFrom1.getGui(), this.showValueFrom(condition1Type));
-        setDisplayed(this.eValueTo1.getGui(), this.showValueTo(condition1Type));
-        setDisplayed(this.eValueFrom2.getGui(), this.showValueFrom(condition2Type));
-        setDisplayed(this.eValueTo2.getGui(), this.showValueTo(condition2Type));
+    protected getInputs(): Tuple<AgInputTextField>[] {
+        return [
+            [this.eValueFrom1, this.eValueTo1],
+            [this.eValueFrom2, this.eValueTo2],
+        ];
     }
 
     private getAllowedCharPattern(): string | null {

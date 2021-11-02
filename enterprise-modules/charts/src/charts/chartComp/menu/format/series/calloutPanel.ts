@@ -9,6 +9,7 @@ import {
 } from "@ag-grid-community/core";
 import { ChartTranslator } from "../../../chartTranslator";
 import { ChartOptionsService } from "../../../chartOptionsService";
+import { getMaxValue } from "../formatPanel";
 
 export class CalloutPanel extends Component {
 
@@ -49,10 +50,11 @@ export class CalloutPanel extends Component {
             .hideOpenCloseIcons(true)
             .hideEnabledCheckbox(true);
 
-        const initInput = (expression: string, input: AgSlider, labelKey: string, maxValue: number) => {
+        const initInput = (expression: string, input: AgSlider, labelKey: string, defaultMaxValue: number) => {
+            const currentValue = this.chartOptionsService.getSeriesOption<number>(expression);
             input.setLabel(this.chartTranslator.translate(labelKey))
-                .setValue(this.chartOptionsService.getSeriesOption(expression))
-                .setMaxValue(maxValue)
+                .setMaxValue(getMaxValue(currentValue, defaultMaxValue))
+                .setValue(`${currentValue}`)
                 .setTextFieldWidth(45)
                 .onValueChange(newValue => this.chartOptionsService.setSeriesOption(expression, newValue));
         };

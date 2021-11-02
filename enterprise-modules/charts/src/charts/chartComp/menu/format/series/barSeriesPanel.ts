@@ -14,6 +14,7 @@ import { FontPanel, FontPanelParams } from "../fontPanel";
 import { ChartTranslator } from "../../../chartTranslator";
 import { initFillOpacitySlider, initFontPanelParams, initLineOpacitySlider } from "../widgetInitialiser";
 import { ChartOptionsService } from "../../../chartOptionsService";
+import { getMaxValue } from "../formatPanel";
 
 export class BarSeriesPanel extends Component {
 
@@ -75,20 +76,22 @@ export class BarSeriesPanel extends Component {
     }
 
     private initSeriesStrokeWidth() {
+        const currentValue = this.chartOptionsService.getSeriesOption<number>("strokeWidth");
         this.seriesStrokeWidthSlider
             .setLabel(this.chartTranslator.translate("strokeWidth"))
-            .setMaxValue(10)
+            .setMaxValue(getMaxValue(currentValue, 10))
             .setTextFieldWidth(45)
-            .setValue(this.chartOptionsService.getSeriesOption("strokeWidth"))
+            .setValue('${currentValue}')
             .onValueChange(newValue => this.chartOptionsService.setSeriesOption("strokeWidth", newValue));
     }
 
     private initSeriesLineDash() {
+        const currentValue = this.chartOptionsService.getSeriesOption<number[]>("lineDash")[0];
         this.seriesLineDashSlider
             .setLabel(this.chartTranslator.translate('lineDash'))
-            .setMaxValue(30)
+            .setMaxValue(getMaxValue(currentValue, 30))
             .setTextFieldWidth(45)
-            .setValue(`${this.chartOptionsService.getSeriesOption<number[]>("lineDash")[0]}`)
+            .setValue(`${currentValue}`)
             .onValueChange(newValue => this.chartOptionsService.setSeriesOption("lineDash", [newValue]));
     }
 

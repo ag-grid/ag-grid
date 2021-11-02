@@ -1263,7 +1263,7 @@
     "meta": { "isCallSignature": true },
     "type": {
       "arguments": { "cellClassParams": "CellClassParams" },
-      "returnType": "CellStyle"
+      "returnType": "CellStyle | null | undefined"
     }
   },
   "CellStyle": {
@@ -4099,7 +4099,7 @@
       "filterType?": "'date'",
       "dateFrom": "string | null",
       "dateTo": "string | null",
-      "type?": "string | null"
+      "type?": "ISimpleFilterModelType | null"
     },
     "docs": {
       "filterType?": "/** Filter type is always `'date'` */",
@@ -4189,7 +4189,7 @@
       "filterType?": "'number'",
       "filter?": "number | null",
       "filterTo?": "number | null",
-      "type?": "string | null"
+      "type?": "ISimpleFilterModelType | null"
     },
     "docs": {
       "filterType?": "/** Filter type is always `'number'` */",
@@ -4428,9 +4428,16 @@
       "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
+  "ISimpleFilterModelType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'empty' | 'equals' | 'notEqual' | 'lessThan' | 'lessThanOrEqual' | 'greaterThan' | 'greaterThanOrEqual' | 'inRange' | 'contains' | 'notContains' | 'startsWith' | 'endsWith'"
+  },
   "ISimpleFilterModel": {
     "meta": {},
-    "type": { "type?": "string | null", "filterType?": "string" },
+    "type": {
+      "type?": "ISimpleFilterModelType | null",
+      "filterType?": "string"
+    },
     "docs": { "type?": "/** One of the filter options, e.g. `'equals'` */" }
   },
   "ICombinedSimpleModel": {
@@ -4447,12 +4454,16 @@
     "type": ["One", "Two"],
     "docs": [null, null]
   },
+  "Tuple": {
+    "meta": { "isTypeAlias": true, "typeParams": ["T"] },
+    "type": "(T | null)[]"
+  },
   "TextFilterModel": {
     "meta": {},
     "type": {
       "filterType?": "'text'",
       "filter?": "string | null",
-      "type?": "string | null"
+      "type?": "ISimpleFilterModelType | null"
     },
     "docs": {
       "filterType?": "/** Filter type is always `'text'` */",

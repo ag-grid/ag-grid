@@ -1,7 +1,5 @@
 import { _, Autowired, Component, PostConstruct } from "@ag-grid-community/core";
 import { ChartMenu } from "./menu/chartMenu";
-
-import { Chart } from "ag-charts-community";
 import { ChartTranslator } from "./chartTranslator";
 import { ChartController } from "./chartController";
 import { ChartOptionsService } from "./chartOptionsService";

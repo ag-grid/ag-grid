@@ -8,10 +8,9 @@ import {
     PostConstruct,
     RefSelector
 } from "@ag-grid-community/core";
-import { ChartController } from "../../../chartController";
 import { ChartTranslator } from "../../../chartTranslator";
-import { CartesianChartProxy } from "../../../chartProxies/cartesian/cartesianChartProxy";
 import { ChartOptionsService } from "../../../chartOptionsService";
+import { getMaxValue } from "../formatPanel";
 
 export class AxisTicksPanel extends Component {
 
@@ -59,10 +58,11 @@ export class AxisTicksPanel extends Component {
             .setValue(this.chartOptionsService.getAxisProperty("tick.color"))
             .onValueChange(newColor => this.chartOptionsService.setAxisProperty("tick.color", newColor));
 
-        const initInput = (expression: string, input: AgSlider, label: string, maxValue: number) => {
+        const initInput = (expression: string, input: AgSlider, label: string, defaultMaxValue: number) => {
+            const currentValue = this.chartOptionsService.getAxisProperty<number>(expression);
             input.setLabel(label)
-                .setValue(this.chartOptionsService.getAxisProperty(expression))
-                .setMaxValue(maxValue)
+                .setMaxValue(getMaxValue(currentValue, defaultMaxValue))
+                .setValue(`${currentValue}`)
                 .setTextFieldWidth(45)
                 .onValueChange(newValue => this.chartOptionsService.setAxisProperty(expression, newValue));
         };

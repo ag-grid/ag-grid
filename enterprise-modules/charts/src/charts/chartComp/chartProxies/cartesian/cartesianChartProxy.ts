@@ -6,7 +6,6 @@ import {
     CategoryAxis,
     ChartAxis,
     ChartAxisPosition,
-    ChartTheme,
     find,
     GroupedCategoryAxis,
     GroupedCategoryChart,
@@ -17,7 +16,6 @@ import {
 import { ChartDataModel } from "../../chartDataModel";
 import { isDate } from "../../typeChecker";
 import { deepMerge } from "../../object";
-import { ChartController, ChartModelUpdatedEvent } from "../../chartController";
 import { getStandaloneChartType } from "../../chartTypeMapper";
 
 enum AXIS_TYPE {REGULAR, SPECIAL}
@@ -33,10 +31,9 @@ export abstract class CartesianChartProxy<T extends any> extends ChartProxy<Cart
     }
 
     protected getAxes(): any {
-        const standaloneChartType = getStandaloneChartType(this.chartType);
-        const flipXY = standaloneChartType === 'bar';
+        const flipXY = this.standaloneChartType === 'bar';
 
-        let xAxisType = (standaloneChartType === 'scatter' || standaloneChartType === 'histogram') ? 'number' : 'category';
+        let xAxisType = (this.standaloneChartType === 'scatter' || this.standaloneChartType === 'histogram') ? 'number' : 'category';
         let yAxisType = 'number';
 
         if (flipXY) {
@@ -44,12 +41,12 @@ export abstract class CartesianChartProxy<T extends any> extends ChartProxy<Cart
         }
 
         let xAxis: any = {};
-        xAxis = deepMerge(xAxis, this.chartTheme.getConfig(standaloneChartType + '.axes.' + xAxisType));
-        xAxis = deepMerge(xAxis, this.chartTheme.getConfig(standaloneChartType + '.axes.' + xAxisType + '.bottom'));
+        xAxis = deepMerge(xAxis, this.chartOptions[this.standaloneChartType].axes[xAxisType]);
+        xAxis = deepMerge(xAxis, this.chartOptions[this.standaloneChartType].axes[xAxisType].bottom);
 
         let yAxis: any = {};
-        yAxis = deepMerge(yAxis, this.chartTheme.getConfig(standaloneChartType + '.axes.' + yAxisType));
-        yAxis = deepMerge(yAxis, this.chartTheme.getConfig(standaloneChartType + '.axes.' + yAxisType + '.left'));
+        yAxis = deepMerge(yAxis, this.chartOptions[this.standaloneChartType].axes[yAxisType]);
+        yAxis = deepMerge(yAxis, this.chartOptions[this.standaloneChartType].axes[yAxisType].left);
 
         return [xAxis, yAxis];
     }
@@ -147,7 +144,7 @@ export abstract class CartesianChartProxy<T extends any> extends ChartProxy<Cart
         // 'category' axis to a 'time' axis)
         const axisTypeChanged = !(baseAxis instanceof this.axisTypeToClassMap[baseAxisType]);
         if (axisTypeChanged) {
-            (isHorizontalChart ? this.chartOptions.yAxis : this.chartOptions.xAxis).type = baseAxisType;
+            this.chartOptions[this.standaloneChartType].axes.type = baseAxisType;
             this.recreateChart();
         }
     }
@@ -165,11 +162,11 @@ export abstract class CartesianChartProxy<T extends any> extends ChartProxy<Cart
     protected getXAxisDefaults(xAxisType: any, options: any) {
         if (xAxisType === 'time') {
             let xAxisTheme: any = {};
-            const standaloneChartType = getStandaloneChartType(this.chartType);
-            xAxisTheme = deepMerge(xAxisTheme, this.chartTheme.getConfig(standaloneChartType + '.axes.time'));
-            xAxisTheme = deepMerge(xAxisTheme, this.chartTheme.getConfig(standaloneChartType + '.axes.time.bottom'));
+            xAxisTheme = deepMerge(xAxisTheme, this.chartOptions[this.standaloneChartType].axes.time);
+            xAxisTheme = deepMerge(xAxisTheme, this.chartOptions[this.standaloneChartType].axes.bottom);
             return xAxisTheme;
         }
+        // TODO: verify
         return options.xAxis;
     }
 

@@ -2,11 +2,9 @@ import {
     AgChart,
     AgPieSeriesOptions,
     AgPolarChartOptions,
-    ChartTheme,
     LegendClickEvent,
     PieSeries,
-    PolarChart,
-    AgChartTheme
+    PolarChart
 } from "ag-charts-community";
 import { _ } from "@ag-grid-community/core";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
@@ -16,7 +14,7 @@ interface UpdateDoughnutSeriesParams {
     seriesMap: { [p: string]: PieSeries };
     angleField: FieldDefinition;
     field: FieldDefinition;
-    seriesDefaults: any; //TODO: PieSeriesOptions;
+    seriesDefaults: any;
     index: number;
     params: UpdateChartParams;
     fills: string[];
@@ -37,12 +35,12 @@ export class DoughnutChartProxy extends PolarChartProxy {
     }
 
     protected createChart(): PolarChart {
-        const agChartOptions = { theme: this.chartOptions } as AgPolarChartOptions;
+        const agChartOptions = { theme: this.chartTheme } as AgPolarChartOptions;
+        const { parentElement } = this.chartProxyParams;
 
         agChartOptions.type = 'pie';
-        agChartOptions.series = [];
 
-        return AgChart.create(agChartOptions, this.chartProxyParams.parentElement);
+        return AgChart.create(agChartOptions, parentElement);
     }
 
     public update(params: UpdateChartParams): void {
@@ -68,7 +66,7 @@ export class DoughnutChartProxy extends PolarChartProxy {
         const fills = palette.fills;
         const strokes = palette.strokes;
 
-        const seriesOverrides = this.chartOptions.overrides.pie.series.pie;
+        const seriesOverrides = this.chartOptions[this.standaloneChartType].series;
         const numFields = params.fields.length;
 
         let offset = 0;
@@ -148,7 +146,11 @@ export class DoughnutChartProxy extends PolarChartProxy {
             ...updateParams.seriesDefaults,
             type: 'pie',
             angleKey: this.crossFiltering ? updateParams.angleField.colId + '-total' : updateParams.angleField.colId,
-            radiusKey: this.crossFiltering ? updateParams.field.colId : undefined
+            radiusKey: this.crossFiltering ? updateParams.field.colId : undefined,
+            title: {
+                ...updateParams.seriesDefaults.title,
+                text: updateParams.seriesDefaults.title.text || updateParams.field.displayName!,
+            }
         };
 
         const calloutColors = seriesOptions.callout && seriesOptions.callout.colors || seriesOptions.strokes || [];
@@ -169,23 +171,6 @@ export class DoughnutChartProxy extends PolarChartProxy {
         pieSeries.labelKey = updateParams.params.category.id;
         pieSeries.labelName = updateParams.params.category.name;
         pieSeries.data = updateParams.params.data;
-
-        // Normally all series provide legend items for every slice.
-        // For our use case, where all series have the same number of slices in the same order with the same labels
-        // (all of which can be different in other use cases) we don't want to show repeating labels in the legend,
-        // so we only show legend items for the first series, and then when the user toggles the slices of the
-        // first series in the legend, we programmatically toggle the corresponding slices of other series.
-        if (updateParams.index === 0) {
-            pieSeries.toggleSeriesItem = (itemId: any, enabled: boolean) => {
-                if (updateParams.doughnutChart) {
-                    updateParams.doughnutChart.series.forEach((series: any) => {
-                        (series as PieSeries).seriesItemEnabled[itemId] = enabled;
-                    });
-                }
-
-                pieSeries.scheduleData();
-            };
-        }
 
         if (this.crossFiltering) {
             pieSeries.radiusMin = 0;
