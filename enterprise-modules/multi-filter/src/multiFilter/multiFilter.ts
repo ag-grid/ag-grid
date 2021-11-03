@@ -380,10 +380,12 @@ export class MultiFilter extends TabGuardComp implements IFilterComp {
                 doesRowPassOtherFilter(node) && this.doesFilterPass({ node, data: node.data }, filterInstance),
         };
 
-        const filterPromise = this.userComponentFactory.newFilterComponent(filterDef, filterParams, 'agTextColumnFilter');
+        const compDetails = this.userComponentFactory.getFilterDetails(filterDef, filterParams, 'agTextColumnFilter');
+        if (!compDetails) { return null; }
+        const filterPromise = this.userComponentFactory.createInstanceFromCompDetails(compDetails);
 
-        if (filterPromise != null) {
-            return filterPromise.then(filter => filterInstance = filter!);
+        if (filterPromise) {
+            filterPromise.then(filter => filterInstance = filter!);
         }
 
         return filterPromise;

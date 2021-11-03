@@ -431,13 +431,15 @@ export class FilterManager extends BeanStub {
             doesRowPassOtherFilter: node => this.doesRowPassOtherFilters(filterInstance, node),
         };
 
-        const res = this.userComponentFactory.newFilterComponent(colDef, params, defaultFilter);
+        const compDetails = this.userComponentFactory.getFilterDetails(colDef, params, defaultFilter);
+        if (!compDetails) { return null; }
+        const componentPromise = this.userComponentFactory.createInstanceFromCompDetails(compDetails);
 
-        if (res) {
-            res.then(r => filterInstance = r!);
+        if (componentPromise) {
+            componentPromise.then(r => filterInstance = r!);
         }
 
-        return res;
+        return componentPromise;
     }
 
     public createFilterParams(column: Column, colDef: ColDef, $scope: any = null): IFilterParams {

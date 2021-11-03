@@ -21,6 +21,8 @@ export interface SharedProps extends GridOptions {
     containerStyle?: any;
     className?: string;
     setGridApi?: (gridApi: GridApi, columnApi: ColumnApi) => void;
+    componentWrappingElement?: string; // only used when putting React into JS
+    maxComponentCreationTimeMs?: number; // only used when putting React into JS
 }
 
 export interface AgReactUiProps extends SharedProps {
@@ -29,9 +31,7 @@ export interface AgReactUiProps extends SharedProps {
 export interface AgGridReactProps extends SharedProps {
     children?: any;
     rowDataChangeDetectionStrategy?: ChangeDetectionStrategyType;
-    componentWrappingElement?: string;
     disableStaticMarkup?: boolean;  // only used when legacyComponentRendering is true
-    maxComponentCreationTimeMs?: number,
     legacyComponentRendering?: boolean,
 }
 

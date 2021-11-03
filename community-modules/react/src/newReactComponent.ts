@@ -2,18 +2,20 @@ import { ReactPortal, createElement } from 'react';
 import { createPortal } from 'react-dom';
 import { ComponentType, AgPromise } from '@ag-grid-community/core';
 import { AgGridReactLegacy } from "./agGridReactLegacy";
-import { ReactComponent } from './reactComponent';
+import { IPortalManager, ReactComponent } from './reactComponent';
 import { renderToStaticMarkup } from "react-dom/server";
 import generateNewKey from "./keyGenerator";
 
+
 export class NewReactComponent extends ReactComponent {
+    
     private key: string;
     private portalKey: string;
     private oldPortal: ReactPortal | null = null;
     private reactElement: any;
     private params: any;
 
-    constructor(reactComponent: any, parentComponent: AgGridReactLegacy, componentType: ComponentType) {
+    constructor(reactComponent: any, parentComponent: IPortalManager, componentType: ComponentType) {
         super(reactComponent, parentComponent, componentType);
 
         this.key = generateNewKey();
@@ -48,7 +50,7 @@ export class NewReactComponent extends ReactComponent {
     }
 
     private createReactComponent(resolve: (value: any) => void) {
-        this.parentComponent.mountReactPortal(this.portal!, this, (value: any) => {
+        this.portalManager.mountReactPortal(this.portal!, this, (value: any) => {
             resolve(value);
         });
     }
@@ -99,7 +101,7 @@ export class NewReactComponent extends ReactComponent {
     protected refreshComponent(args: any): void {
         this.oldPortal = this.portal;
         this.createOrUpdatePortal(args);
-        this.parentComponent.updateReactPortal(this.oldPortal!, this.portal!);
+        this.portalManager.updateReactPortal(this.oldPortal!, this.portal!);
     }
 
     protected fallbackMethod(name: string, params: any): any {

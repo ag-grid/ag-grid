@@ -3,6 +3,13 @@ import { _, ComponentType, IComponent, WrappableInterface } from 'ag-grid-commun
 import { assignProperties } from './utils';
 import { AgGridReactLegacy } from './agGridReactLegacy';
 
+export interface IPortalManager {
+    destroyPortal(portal: ReactPortal): void;    
+    getComponentWrappingElement(): string | undefined;
+    mountReactPortal(portal: ReactPortal, reactComponent: ReactComponent, resolve: (value: any) => void): void;
+    updateReactPortal(oldPortal: ReactPortal, newPortal: ReactPortal): void;
+}
+
 abstract class BaseReactComponent implements IComponent<any>, WrappableInterface {
     abstract getGui(): HTMLElement;
 
@@ -25,16 +32,16 @@ export abstract class ReactComponent extends BaseReactComponent {
     protected eParentElement!: HTMLElement;
     protected componentInstance: any;
     protected reactComponent: any;
-    protected parentComponent: AgGridReactLegacy;
+    protected portalManager: IPortalManager;
     protected portal: ReactPortal | null = null;
     protected statelessComponent: boolean;
     protected componentType: ComponentType;
 
-    constructor(reactComponent: any, parentComponent: AgGridReactLegacy, componentType: ComponentType) {
+    constructor(reactComponent: any, portalManager: IPortalManager, componentType: ComponentType) {
         super();
 
         this.reactComponent = reactComponent;
-        this.parentComponent = parentComponent;
+        this.portalManager = portalManager;
         this.componentType = componentType;
 
         this.statelessComponent = this.isStateless(this.reactComponent);
@@ -45,11 +52,12 @@ export abstract class ReactComponent extends BaseReactComponent {
     }
 
     public destroy(): void {
-        return this.parentComponent.destroyPortal(this.portal as ReactPortal);
+        return this.portalManager.destroyPortal(this.portal as ReactPortal);
     }
 
     protected createParentElement(params: any) {
-        const eParentElement = document.createElement(this.parentComponent.props.componentWrappingElement || 'div');
+        const componentWrappingElement = this.portalManager.getComponentWrappingElement();
+        const eParentElement = document.createElement(componentWrappingElement || 'div');
 
         _.addCssClass(eParentElement as HTMLElement, 'ag-react-container');
 

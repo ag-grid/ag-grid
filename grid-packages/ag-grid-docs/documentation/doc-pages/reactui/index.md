@@ -97,6 +97,11 @@ Below is an example showing different types of Cell Editors and also mixing Reac
 
 See [Cell Editors](/component-cell-editor/) for full details on creating Cell Editors.
 
+## Using Filters
+
+<grid-example title='React UI Filters' name='filters' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>
+
+
 ## Customising Headers
 
 When React UI is enabled, the grid will work natively with custom React Column Header components.

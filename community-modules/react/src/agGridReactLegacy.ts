@@ -14,12 +14,14 @@ import {
 } from '@ag-grid-community/core';
 import { AgGridColumn } from './agGridColumn';
 import { ChangeDetectionService, ChangeDetectionStrategyType } from './changeDetectionService';
-import { ReactComponent } from './reactComponent';
+import { IPortalManager, ReactComponent } from './reactComponent';
 import { LegacyReactComponent } from './legacyReactComponent';
 import { NewReactComponent } from './newReactComponent';
 import { AgGridReactProps } from './interfaces';
+import { PortalManager } from './portalManager';
 
 export class AgGridReactLegacy extends Component<AgGridReactProps, {}> {
+
     private static MAX_COMPONENT_CREATION_TIME_IN_MS: number = 1000; // a second should be more than enough to instantiate a component
 
     static propTypes: any;
@@ -36,8 +38,8 @@ export class AgGridReactLegacy extends Component<AgGridReactProps, {}> {
 
     api: GridApi | null = null;
     columnApi!: ColumnApi;
-    portals: ReactPortal[] = [];
-    hasPendingPortalUpdate = false;
+
+    portalManager: PortalManager;
 
     destroyed = false;
 
@@ -47,6 +49,8 @@ export class AgGridReactLegacy extends Component<AgGridReactProps, {}> {
 
     constructor(public props: AgGridReactProps) {
         super(props);
+
+        this.portalManager = new PortalManager(this, props.componentWrappingElement, props.maxComponentCreationTimeMs);
     }
 
     render() {
@@ -56,7 +60,7 @@ export class AgGridReactLegacy extends Component<AgGridReactProps, {}> {
             ref: (e: HTMLElement) => {
                 this.eGridDiv = e;
             }
-        }, this.portals);
+        }, this.portalManager.getPortals());
     }
 
     createStyleForDiv() {
@@ -71,7 +75,7 @@ export class AgGridReactLegacy extends Component<AgGridReactProps, {}> {
         const gridParams = {
             providedBeanInstances: {
                 agGridReact: this,
-                frameworkComponentWrapper: new ReactFrameworkComponentWrapper(this)
+                frameworkComponentWrapper: new ReactFrameworkComponentWrapper(this, this.portalManager)
             },
             modules
         };
@@ -92,72 +96,6 @@ export class AgGridReactLegacy extends Component<AgGridReactProps, {}> {
         this.columnApi = this.gridOptions.columnApi!;
 
         this.props.setGridApi!(this.api, this.columnApi);
-    }
-
-    waitForInstance(reactComponent: ReactComponent, resolve: (value: any) => void, startTime = Date.now()): void {
-        // if the grid has been destroyed in the meantime just resolve
-        if (this.destroyed) {
-            resolve(null);
-            return;
-        }
-
-        if (reactComponent.rendered()) {
-            resolve(reactComponent);
-        } else {
-            if (Date.now() - startTime >= this.props.maxComponentCreationTimeMs! && !this.hasPendingPortalUpdate) {
-                // last check - we check if this is a null value being rendered - we do this last as using SSR to check the value
-                // can mess up contexts
-                if (reactComponent.isNullValue()) {
-                    resolve(reactComponent);
-                    return;
-                }
-
-                console.error(`AG Grid: React Component '${reactComponent.getReactComponentName()}' not created within ${AgGridReactLegacy.MAX_COMPONENT_CREATION_TIME_IN_MS}ms`);
-                return;
-            }
-
-            window.setTimeout(() => {
-                this.waitForInstance(reactComponent, resolve, startTime);
-            });
-        }
-    }
-
-    /**
-     * Mounts a react portal for components registered under the componentFramework.
-     * We do this because we want all portals to be in the same tree - in order to get
-     * Context to work properly.
-     */
-    mountReactPortal(portal: ReactPortal, reactComponent: ReactComponent, resolve: (value: any) => void) {
-        this.portals = [...this.portals, portal];
-        this.waitForInstance(reactComponent, resolve);
-        this.batchUpdate();
-    }
-
-    updateReactPortal(oldPortal: ReactPortal, newPortal: ReactPortal) {
-        this.portals[this.portals.indexOf(oldPortal)] = newPortal;
-        this.batchUpdate();
-    }
-
-    batchUpdate(): void {
-        if (this.hasPendingPortalUpdate) {
-            return;
-        }
-
-        setTimeout(() => {
-            if (this.api) { // destroyed?
-                this.forceUpdate(() => {
-                    this.hasPendingPortalUpdate = false;
-                });
-            }
-        });
-
-        this.hasPendingPortalUpdate = true;
-    }
-
-
-    destroyPortal(portal: ReactPortal) {
-        this.portals = this.portals.filter(curPortal => curPortal !== portal);
-        this.batchUpdate();
     }
 
     private getStrategyTypeForProp(propKey: string) {
@@ -278,6 +216,7 @@ export class AgGridReactLegacy extends Component<AgGridReactProps, {}> {
         }
 
         this.destroyed = true;
+        this.portalManager.destroy();
     }
 
     public isDisableStaticMarkup(): boolean {
@@ -337,16 +276,19 @@ function addProperties(listOfProps: string[], propType: any) {
 }
 
 class ReactFrameworkComponentWrapper extends BaseComponentWrapper<WrappableInterface> implements FrameworkComponentWrapper {
-    private readonly agGridReact!: AgGridReactLegacy;
 
-    constructor(agGridReact: AgGridReactLegacy) {
+    private readonly agGridReact!: AgGridReactLegacy;
+    private readonly portalManager!: IPortalManager;
+
+    constructor(agGridReact: AgGridReactLegacy, portalManager: IPortalManager) {
         super();
         this.agGridReact = agGridReact;
+        this.portalManager = portalManager;
     }
 
     createWrapper(UserReactComponent: { new(): any; }, componentType: ComponentType): WrappableInterface {
         return this.agGridReact.isLegacyComponentRendering() ?
-            new LegacyReactComponent(UserReactComponent, this.agGridReact, componentType) :
-            new NewReactComponent(UserReactComponent, this.agGridReact, componentType);
+            new LegacyReactComponent(UserReactComponent, this.agGridReact, this.portalManager, componentType) :
+            new NewReactComponent(UserReactComponent, this.portalManager, componentType);
     }
 }

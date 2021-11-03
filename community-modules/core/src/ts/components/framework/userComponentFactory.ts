@@ -99,7 +99,17 @@ export class UserComponentFactory extends BeanStub {
         return this.getCompDetails(def, CellEditorComponent, 'agCellEditor', params, true);
     }
 
+    // FILTER
+    public getFilterDetails(def: IFilterDef, params: IFilterParams, defaultFilter: string): UserCompDetails | undefined {
+        return this.getCompDetails(def, FilterComponent, defaultFilter, params, true);
+    }
+
+
+    ////////
     //////// OLD (before React UI)
+    ////////
+
+    // used by richSelectEditor
     public newCellRenderer(
         def: ColDef | IRichCellEditorParams,
         params: ICellRendererParams): AgPromise<ICellRendererComp> | null {
@@ -120,10 +130,6 @@ export class UserComponentFactory extends BeanStub {
 
     public newTooltipComponent(params: ITooltipParams): AgPromise<ITooltipComp> | null {
         return this.lookupAndCreateComponent(params.colDef!, params, TooltipComponent, 'agTooltipComponent');
-    }
-
-    public newFilterComponent(def: IFilterDef, params: IFilterParams, defaultFilter: string): AgPromise<IFilterComp> | null {
-        return this.lookupAndCreateComponent(def, params, FilterComponent, defaultFilter, false);
     }
 
     public newSetFilterCellRenderer(
@@ -369,11 +375,6 @@ export class UserComponentFactory extends BeanStub {
         const jsComponent = !componentFromFramework;
         if (jsComponent) {
             return new component!();
-        }
-
-        if (!this.frameworkComponentWrapper) {
-            console.warn(`AG Grid - Because you are using our new React UI (property reactUi=true), it is not possible to use a React Component for ${componentType.propertyName}. This is work in progress and we plan to support this soon. In the meantime, please either set reactUi=false, or replace this component with one written in JavaScript.`);
-            return null;
         }
 
         // Using framework component
