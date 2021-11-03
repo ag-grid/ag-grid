@@ -558,28 +558,31 @@ export class PopupService extends BeanStub {
             }
         }, 0);
 
-        if (positionCallback) {
-            positionCallback();
-        }
-
-        if (anchorToElement) {
-            // keeps popup positioned under created, eg if context menu, if user scrolls
-            // using touchpad and the cell moves, it moves the popup to keep it with the cell.
-            destroyPositionTracker = this.keepPopupPositionedRelativeTo({
-                element: anchorToElement,
-                ePopup: eChild,
-                hidePopup
+        try {
+            if (positionCallback) {
+                positionCallback();
+            }
+            if (anchorToElement) {
+                // keeps popup positioned under created, eg if context menu, if user scrolls
+                // using touchpad and the cell moves, it moves the popup to keep it with the cell.
+                destroyPositionTracker = this.keepPopupPositionedRelativeTo({
+                    element: anchorToElement,
+                    ePopup: eChild,
+                    hidePopup
+                });
+            }
+        } finally {
+            // AG-5957: If we get this far, make sure to track the fact the popup exists, even if
+            // positionCallback() fails.
+            this.popupList.push({
+                element: eChild,
+                wrapper: eWrapper,
+                hideFunc: hidePopup,
+                stopAnchoringPromise: destroyPositionTracker,
+                instanceId: instanceIdSeq++,
+                isAnchored: !!anchorToElement
             });
         }
-
-        this.popupList.push({
-            element: eChild,
-            wrapper: eWrapper,
-            hideFunc: hidePopup,
-            stopAnchoringPromise: destroyPositionTracker,
-            instanceId: instanceIdSeq++,
-            isAnchored: !!anchorToElement
-        });
 
         return {
             hideFunc: hidePopup,

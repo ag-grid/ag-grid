@@ -363,7 +363,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IFilterC
         this.updateUiVisibility();
         this.providedFilterParams.filterModifiedCallback();
 
-        if (this.applyActive) {
+        if (this.applyActive && !this.isReadOnly) {
             const isValid = this.isModelValid(this.getModelFromUi()!);
 
             setDisabled(this.getRefElement('applyFilterButton'), !isValid);
