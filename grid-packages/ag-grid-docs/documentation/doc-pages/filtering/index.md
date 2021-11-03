@@ -101,8 +101,7 @@ const gridOptions = {
 
 Filtering causes the following events to be emitted:
 
-- **Filter Changed:** Filter has changed and been applied by the grid.
-- **Filter Modified:** Filter UI has changed but not necessarily applied. This is useful when using an apply button if you want to know if the filter changed but was not applied.
+<api-documentation source='grid-events/events.json' section='filter'></api-documentation>
 
 ## Filtering Animation
 
