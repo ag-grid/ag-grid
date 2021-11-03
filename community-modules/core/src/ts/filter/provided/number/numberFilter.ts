@@ -58,10 +58,11 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
     }
 
     protected mapValuesFromModel(filterModel: NumberFilterModel | null): Tuple<number> {
+        const { filter, filterTo, type } = filterModel || {};
         return [
-            filterModel && filterModel.filter || null,
-            filterModel && filterModel.filterTo || null,
-        ];
+            filter || null,
+            filterTo || null,
+        ].slice(0, this.getNumberOfInputs(type));
     }
 
     protected getDefaultDebounceMs(): number {

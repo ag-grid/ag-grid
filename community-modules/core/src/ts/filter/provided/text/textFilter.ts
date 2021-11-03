@@ -89,8 +89,6 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
                 const index = value.lastIndexOf(filterText);
                 return index >= 0 && index === (value.length - filterText.length);
             default:
-                // should never happen
-                console.warn('AG Grid: Unexpected type of filter "' + filter + '", it looks like the filter was configured with incorrect Filter Options');
                 return false;
         }
     };
@@ -195,10 +193,11 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
     }
 
     protected mapValuesFromModel(filterModel: TextFilterModel | null): Tuple<string> {
+        const { filter, filterTo, type } = filterModel || {};
         return [
-            filterModel && filterModel.filter || null,
-            filterModel && filterModel.filterTo || null,
-        ];
+            filter || null,
+            filterTo || null,
+        ].slice(0, this.getNumberOfInputs(type));
     }
 
     protected evaluateNullValue(filterType: ISimpleFilterModelType | null) {
