@@ -22,7 +22,7 @@
             ]
         },
         "readOnly": {
-            "description": "If set to `true`, disables controls in the filter to mutate it's state. Normally this would be used in conjunction with the Filter API.",
+            "description": "If set to `true`, disables controls in the filter to mutate its state. Normally this would be used in conjunction with the Filter API.",
             "type": "boolean",
             "default": false,
             "more": {
