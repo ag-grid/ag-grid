@@ -174,8 +174,14 @@ export class LineSeries extends CartesianSeries {
             const x = datum[xKey];
             const y = datum[yKey];
 
-            xData.push(isContinuousX ? x : String(x));
-            yData.push(isContinuousY ? y : String(y));
+            if (isContinuousX) {
+                xData.push(x);
+            } else {
+                // i.e. category axis
+                xData.push(isDiscrete(x) ? x : String(x));
+            }
+
+            yData.push(y);
         }
 
         this.xDomain = isContinuousX ? this.fixNumericExtent(extent(xData, isContinuous), 'x') : xData;
