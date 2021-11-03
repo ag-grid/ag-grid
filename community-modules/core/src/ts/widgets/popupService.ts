@@ -572,8 +572,7 @@ export class PopupService extends BeanStub {
                 });
             }
         } finally {
-            // AG-5957: If we get this far, make sure to track the fact the popup exists, even if
-            // positionCallback() fails.
+            // If we get this far, make sure to track the fact the popup exists, even if positionCallback() fails.
             this.popupList.push({
                 element: eChild,
                 wrapper: eWrapper,
