@@ -19,6 +19,7 @@ var options = {
             },
             title: {
                 text: '2018/19',
+                showInLegend: true,
             },
             innerRadiusOffset: -40
         },
@@ -31,8 +32,8 @@ var options = {
             },
             title: {
                 text: '2017/18',
+                showInLegend: true,
             },
-            showInLegend: false,
             outerRadiusOffset: -70,
             innerRadiusOffset: -110
         },
@@ -45,8 +46,8 @@ var options = {
             },
             title: {
                 text: '2016/17',
+                showInLegend: true,
             },
-            showInLegend: false,
             outerRadiusOffset: -140,
             innerRadiusOffset: -180
         }
