@@ -70,7 +70,7 @@ export interface ColumnSparklineOptions extends BaseSparklineOptions {
      * Default: `0.2`
      */
     paddingOuter?: number;
-    /** User override for the automatically determinted domain (based on data min and max values). Only applied to \"number\" axes.
+    /** User override for the automatically determinted domain (based on data min and max values). Only applied to `number` axes.
      * used to interpolate the numeric pixel values corresponding to each data value.
      */
     valueAxisDomain?: [number, number];
@@ -103,7 +103,7 @@ export interface BarSparklineOptions extends BaseSparklineOptions {
      * Default: `0.2`
      */
     paddingOuter?: number;
-    /** User override for the automatically determinted domain (based on data min and max values). Only applied to \"number\" axes.
+    /** User override for the automatically determinted domain (based on data min and max values). Only applied to `number` axes.
      * used to interpolate the numeric pixel values corresponding to each data value.
      */
     valueAxisDomain?: [number, number];
