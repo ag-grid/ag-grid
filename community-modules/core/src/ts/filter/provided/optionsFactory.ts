@@ -2,6 +2,7 @@ import { IFilterOptionDef } from '../../interfaces/iFilter';
 import { IScalarFilterParams } from './scalarFilter';
 import { ISimpleFilterParams } from './simpleFilter';
 import { every } from '../../utils/array';
+import { _ } from '../../utils';
 
 /* Common logic for options, used by both filters and floating filters. */
 export class OptionsFactory {
@@ -13,6 +14,17 @@ export class OptionsFactory {
         this.filterOptions = params.filterOptions || defaultOptions;
         this.mapCustomOptions();
         this.selectDefaultItem(params);
+
+        this.checkForDeprecatedParams();
+    }
+
+    private checkForDeprecatedParams(): void {
+        if (_.some(this.filterOptions, (opt) => typeof opt != 'string' && opt.test != null)) {
+            console.warn(`AG Grid: [IFilterOptionDef] since v26.2.0, test() has been replaced with predicate().`);
+        }
+        if (_.some(this.filterOptions, (opt) => typeof opt != 'string' && opt.hideFilterInput != null)) {
+            console.warn(`AG Grid: [IFilterOptionDef] since v26.2.0, useOfHideFilterInput has been replaced with numberOfInputs.`);
+        }
     }
 
     public getFilterOptions(): (IFilterOptionDef | string)[] {
