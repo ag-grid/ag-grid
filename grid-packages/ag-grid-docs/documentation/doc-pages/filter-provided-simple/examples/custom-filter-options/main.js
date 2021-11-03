@@ -4,25 +4,19 @@ var filterParams = {
         {
             displayKey: 'evenNumbers',
             displayName: 'Even Numbers',
-            predicate: function(_, cellValue) {
-                return cellValue != null && cellValue % 2 === 0;
-            },
+            predicate: (_, cellValue) => cellValue != null && cellValue % 2 === 0,
             numberOfInputs: 0
         },
         {
             displayKey: 'oddNumbers',
             displayName: 'Odd Numbers',
-            predicate: function(_, cellValue) {
-                return cellValue != null && cellValue % 2 !== 0;
-            },
+            predicate: (_, cellValue) => cellValue != null && cellValue % 2 !== 0,
             numberOfInputs: 0
         },
         {
             displayKey: 'blanks',
             displayName: 'Blanks',
-            predicate: function([filterValue], cellValue) {
-                return cellValue == null;
-            },
+            predicate: (_, cellValue) => cellValue == null,
             numberOfInputs: 0
         },
         {
@@ -47,23 +41,19 @@ var containsFilterParams = {
         {
             displayKey: 'startsA',
             displayName: 'Starts With "A"',
-            predicate: function([filterValue], cellValue) {
-                return cellValue != null && cellValue.indexOf('a') === 0;
-            },
+            predicate: (_, cellValue) => cellValue != null && cellValue.indexOf('a') === 0,
             numberOfInputs: 0
         },
         {
             displayKey: 'startsN',
             displayName: 'Starts With "N"',
-            predicate: function([filterValue], cellValue) {
-                return cellValue != null && cellValue.indexOf('n') === 0;
-            },
+            predicate: (_, cellValue) => cellValue != null && cellValue.indexOf('n') === 0,
             numberOfInputs: 0
         },
         {
             displayKey: 'regexp',
             displayName: 'Regular Expression',
-            predicate: ([fv1], cellValue) => cellValue == null || cellValue === new RegExp(fv1).test(cellValue),
+            predicate: ([fv1], cellValue) => cellValue == null || new RegExp(fv1, 'gi').test(cellValue),
             numberOfInputs: 1,
         },
         {
@@ -81,7 +71,7 @@ var equalsFilterParams = {
         {
             displayKey: 'equalsWithNulls',
             displayName: 'Equals (with Nulls)',
-            predicate: function([filterValue], cellValue) {
+            predicate: ([filterValue], cellValue) => {
                 if (cellValue == null) return true;
 
                 var parts = cellValue.split("/");
@@ -97,7 +87,7 @@ var equalsFilterParams = {
         {
             displayKey: 'leapYear',
             displayName: 'Leap Year',
-            predicate: function(_, cellValue) {
+            predicate: (_, cellValue) => {
                 if (cellValue == null) return true;
 
                 const year = Number(cellValue.split("/")[2]);
@@ -151,7 +141,7 @@ var notEqualsFilterParams = {
         {
             displayKey: 'notEqualNoNulls',
             displayName: 'Not Equals without Nulls',
-            predicate: function([filterValue], cellValue) {
+            predicate: ([filterValue], cellValue) => {
                 if (cellValue == null) return false;
 
                 return cellValue !== filterValue.toLowerCase();
@@ -195,7 +185,7 @@ var gridOptions = {
         sortable: true,
         filter: true
     },
-    localeTextFunc: function(key, defaultValue) {
+    localeTextFunc: (key, defaultValue) => {
         if (key === 'notEqualNoNulls') {
             return '* Not Equals (No Nulls) *';
         }
