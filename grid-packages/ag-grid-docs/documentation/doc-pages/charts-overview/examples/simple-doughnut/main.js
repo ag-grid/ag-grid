@@ -13,43 +13,16 @@ var options = {
         {
             type: 'pie',
             labelKey: 'type',
+            fillOpacity: 0.9,
+            strokeWidth: 0,
             angleKey: '2018/19',
             label: {
                 enabled: false,
             },
             title: {
                 text: '2018/19',
-                showInLegend: true,
             },
-            innerRadiusOffset: -40
-        },
-        {
-            type: 'pie',
-            labelKey: 'type',
-            angleKey: '2017/18',
-            label: {
-                enabled: false,
-            },
-            title: {
-                text: '2017/18',
-                showInLegend: true,
-            },
-            outerRadiusOffset: -70,
-            innerRadiusOffset: -110
-        },
-        {
-            type: 'pie',
-            labelKey: 'type',
-            angleKey: '2016/17',
-            label: {
-                enabled: false,
-            },
-            title: {
-                text: '2016/17',
-                showInLegend: true,
-            },
-            outerRadiusOffset: -140,
-            innerRadiusOffset: -180
+            innerRadiusOffset: -100
         }
     ],
 };
