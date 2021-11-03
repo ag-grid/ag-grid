@@ -14,10 +14,9 @@ export interface DateFilterModel extends ISimpleFilterModel {
     /** Filter type is always `'date'` */
     filterType?: 'date';
     /**
-     * The date value(s) associated with the filter.
-     * The type is `string` and format is always `YYYY-MM-DD` e.g. 2019-05-24.
-     * Custom filters can have no values (hence both are optional).
-     * Range filter has two values (from and to).
+     * The date value(s) associated with the filter. The type is `string` and format is always
+     * `YYYY-MM-DD hh:mm:ss` e.g. 2019-05-24 00:00:00. Custom filters can have no values (hence both
+     * are optional). Range filter has two values (from and to).
      */
     dateFrom: string | null;
     /**

@@ -4103,7 +4103,7 @@
     },
     "docs": {
       "filterType?": "/** Filter type is always `'date'` */",
-      "dateFrom": "/** The date value(s) associated with the filter.\n * The type is `string` and format is always `YYYY-MM-DD` e.g. 2019-05-24.\n * Custom filters can have no values (hence both are optional).\n * Range filter has two values (from and to). */",
+      "dateFrom": "/** The date value(s) associated with the filter. The type is `string` and format is always\n * `YYYY-MM-DD hh:mm:ss` e.g. 2019-05-24 00:00:00. Custom filters can have no values (hence both\n * are optional). Range filter has two values (from and to). */",
       "dateTo": "/** Range filter `to` date value. */",
       "type?": "/** One of the filter options, e.g. `'equals'` */"
     }
