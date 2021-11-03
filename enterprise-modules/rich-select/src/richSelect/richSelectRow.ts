@@ -51,7 +51,9 @@ export class RichSelectRow extends Component {
             api: this.gridOptionsWrapper.getApi()
         } as ICellRendererParams;
 
-        const cellRendererPromise: AgPromise<ICellRendererComp> | null = this.userComponentFactory.newCellRenderer(this.params, params);
+        const compDetails = this.userComponentFactory.getCellRendererDetails(this.params, params);
+        const cellRendererPromise = compDetails ? compDetails.newJsInstance() : undefined;
+
         if (cellRendererPromise != null) {
             _.bindCellRendererToHtmlElement(cellRendererPromise, this.getGui());
         } else {

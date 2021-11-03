@@ -55,7 +55,7 @@ const useJsCellRenderer = (
                 destroyCellRenderer();
             }
 
-            const promise = userComponentFactory.createInstanceFromCompDetails(compDetails!);
+            const promise = compDetails!.newJsInstance();;
             if (!promise) { return; }
 
             const comp = promise.resolveNow(null, x => x); // js comps are never async

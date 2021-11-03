@@ -433,7 +433,7 @@ export class FilterManager extends BeanStub {
 
         const compDetails = this.userComponentFactory.getFilterDetails(colDef, params, defaultFilter);
         if (!compDetails) { return null; }
-        const componentPromise = this.userComponentFactory.createInstanceFromCompDetails(compDetails);
+        const componentPromise = compDetails.newJsInstance();
 
         if (componentPromise) {
             componentPromise.then(r => filterInstance = r!);

@@ -137,7 +137,14 @@
       "type": { "returnType": "boolean", "optional": false }
     },
     "params": { "type": { "returnType": "any", "optional": false } },
-    "type": { "type": { "returnType": "ComponentType", "optional": false } }
+    "type": { "type": { "returnType": "ComponentType", "optional": false } },
+    "newJsInstance": {
+      "type": {
+        "arguments": { "defaultComponentName?": "string | null" },
+        "returnType": "AgPromise<any> | null",
+        "optional": false
+      }
+    }
   },
   "RegisteredComponent": {
     "component": { "type": { "returnType": "any", "optional": false } },

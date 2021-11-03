@@ -300,7 +300,8 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
         // the params are for the floating filter component, but this property is actually for the wrapper.
         this.suppressFilterButton = colDef.floatingFilterComponentParams ? !!colDef.floatingFilterComponentParams.suppressFilterButton : false;
 
-        let promise = this.userComponentFactory.newFloatingFilterComponent(colDef, params, defaultFloatingFilterType);
+        const compDetails = this.userComponentFactory.getFloatingFilterCompDetails(colDef, params, defaultFloatingFilterType);
+        let promise = compDetails ? compDetails.newJsInstance() : undefined;
 
         if (!promise) {
             const compInstance =

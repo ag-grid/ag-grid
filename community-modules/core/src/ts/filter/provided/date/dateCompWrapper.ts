@@ -16,7 +16,10 @@ export class DateCompWrapper {
     constructor(context: Context, userComponentFactory: UserComponentFactory, dateComponentParams: IDateParams, eParent: HTMLElement) {
         this.context = context;
 
-        userComponentFactory.newDateComponent(dateComponentParams)!.then(dateComp => {
+        const compDetails = userComponentFactory.getDateCompDetails(dateComponentParams);
+        const promise = compDetails.newJsInstance();
+
+        promise!.then(dateComp => {
             // because async, check the filter still exists after component comes back
             if (!this.alive) {
                 context.destroyBean(dateComp);

@@ -51,9 +51,9 @@ export class ToolPanelWrapper extends Component {
             columnApi: this.gridOptionsWrapper.getColumnApi()!
         };
 
-        const componentPromise: AgPromise<IToolPanelComp> | null = this.userComponentFactory.newToolPanelComponent(
-            toolPanelDef, params);
-
+        const compDetails = this.userComponentFactory.getToolPanelCompDetails(toolPanelDef, params);
+        const componentPromise = compDetails.newJsInstance();
+        
         if (componentPromise == null) {
             console.warn(`ag-grid: error processing tool panel component ${id}. You need to specify either 'toolPanel' or 'toolPanelFramework'`);
             return;

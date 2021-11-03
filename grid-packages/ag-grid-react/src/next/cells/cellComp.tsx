@@ -191,7 +191,7 @@ const CellComp = (props: {
         const compDetails = editDetails!.compDetails;
         const isPopup = editDetails!.popup===true;
     
-        const cellEditor = createJsComp(context, factory => factory.createInstanceFromCompDetails(compDetails) ) as ICellEditorComp;
+        const cellEditor = createJsComp(compDetails) as ICellEditorComp;
         if (!cellEditor) { return; }
 
         const compGui = cellEditor.getGui();

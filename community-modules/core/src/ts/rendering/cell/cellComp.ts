@@ -252,7 +252,7 @@ export class CellComp extends Component implements TooltipParentComp {
     private createCellEditorInstance(compDetails: UserCompDetails, popup?: boolean, position?: string): void {
         const versionCopy = this.editorVersion;
 
-        const cellEditorPromise = this.beans.userComponentFactory.createInstanceFromCompDetails(compDetails);
+        const cellEditorPromise = compDetails.newJsInstance();
         if (!cellEditorPromise) { return; } // if empty, userComponentFactory already did a console message
 
         const { params } = compDetails;
@@ -344,7 +344,7 @@ export class CellComp extends Component implements TooltipParentComp {
         return result === true || result === undefined;
     }
 
-    private createCellRendererInstance(compClassAndParams: UserCompDetails): void {
+    private createCellRendererInstance(compDetails: UserCompDetails): void {
         // never use task service if angularCompileRows=true, as that assume the cell renderers
         // are finished when the row is created. also we never use it if animation frame service
         // is turned off.
@@ -356,7 +356,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         const displayComponentVersionCopy = this.rendererVersion;
 
-        const {componentClass} = compClassAndParams;
+        const {componentClass} = compDetails;
 
         const createCellRendererFunc = () => {
             const staleTask = this.rendererVersion !== displayComponentVersionCopy || !this.isAlive();
@@ -364,7 +364,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
             // this can return null in the event that the user has switched from a renderer component to nothing, for example
             // when using a cellRendererSelect to return a component or null depending on row data etc
-            const componentPromise = this.beans.userComponentFactory.createInstanceFromCompDetails(compClassAndParams);
+            const componentPromise = compDetails.newJsInstance();
             const callback = this.afterCellRendererCreated.bind(this, displayComponentVersionCopy, componentClass);
             if (componentPromise) {
                 componentPromise.then(callback);
