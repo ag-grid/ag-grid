@@ -7160,6 +7160,7 @@
     },
     "apply": { "type": { "returnType": "boolean", "optional": false } }
   },
+  "ModelUnion": {},
   "DateFilterModel": {
     "filterType": {
       "description": "/** Filter type is always `'date'` */",

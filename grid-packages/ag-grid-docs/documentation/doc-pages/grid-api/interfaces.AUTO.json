@@ -4093,6 +4093,10 @@
     "meta": {},
     "type": { "model": "ProvidedFilterModel", "apply": "boolean" }
   },
+  "ModelUnion": {
+    "meta": { "isTypeAlias": true },
+    "type": "TextFilterModel | NumberFilterModel"
+  },
   "DateFilterModel": {
     "meta": {},
     "type": {
