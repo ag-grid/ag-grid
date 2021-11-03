@@ -1,6 +1,6 @@
 import { Component } from '../../../widgets/component';
 import { IFloatingFilterComp, IFloatingFilterParams } from '../floatingFilter';
-import { ProvidedFilterModel } from '../../../interfaces/iFilter';
+import { IFilterOptionDef, ProvidedFilterModel } from '../../../interfaces/iFilter';
 import { ICombinedSimpleModel, ISimpleFilterModel, SimpleFilter } from '../../provided/simpleFilter';
 import { OptionsFactory } from '../../provided/optionsFactory';
 import { IScalarFilterParams } from '../../provided/scalarFilter';
@@ -14,7 +14,7 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
     public abstract onParentModelChanged(model: ProvidedFilterModel, event: FilterChangedEvent): void;
 
     // creates text equivalent of FilterModel. if it's a combined model, this takes just one condition.
-    protected abstract conditionToString(condition: ProvidedFilterModel): string;
+    protected abstract conditionToString(condition: ProvidedFilterModel, opts?: IFilterOptionDef): string;
     protected abstract getDefaultFilterOptions(): string[];
     protected abstract setEditable(editable: boolean): void;
 
@@ -40,27 +40,30 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
     protected getTextFromModel(model: ProvidedFilterModel): string | null {
         if (!model) { return null; }
 
-        const isCombined = (model as any).operator;
-
+        const isCombined = (model as any).operator != null;
         if (isCombined) {
             const combinedModel = model as ICombinedSimpleModel<ISimpleFilterModel>;
+            const { condition1, condition2 } = combinedModel || {};
+            const customOption1 = this.optionsFactory.getCustomOption(condition1.type);
+            const customOption2 = this.optionsFactory.getCustomOption(condition2.type);
 
-            const con1Str = this.conditionToString(combinedModel.condition1);
-            const con2Str = this.conditionToString(combinedModel.condition2);
-
-            return `${con1Str} ${combinedModel.operator} ${con2Str}`;
+            return [
+                this.conditionToString(condition1, customOption1),
+                combinedModel.operator,
+                this.conditionToString(condition2, customOption2),
+            ].join(' ');
         } else {
             const condition = model as ISimpleFilterModel;
             const customOption = this.optionsFactory.getCustomOption(condition.type);
 
             // For custom filter options we display the Name of the filter instead
             // of displaying the `from` value, as it wouldn't be relevant
-            const { displayKey, displayName } = customOption || {};
-            if (displayKey && displayName) {
+            const { displayKey, displayName, numberOfInputs } = customOption || {};
+            if (displayKey && displayName && numberOfInputs === 0) {
                 this.gridOptionsWrapper.getLocaleTextFunc()(displayKey, displayName);
                 return displayName;
             }
-            return this.conditionToString(condition);
+            return this.conditionToString(condition, customOption);
         }
     }
 

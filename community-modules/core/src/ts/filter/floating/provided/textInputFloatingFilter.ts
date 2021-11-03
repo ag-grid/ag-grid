@@ -1,6 +1,6 @@
 import { IFloatingFilterParams } from '../floatingFilter';
 import { RefSelector } from '../../../widgets/componentAnnotations';
-import { ProvidedFilterModel } from '../../../interfaces/iFilter';
+import { IFilterOptionDef, ProvidedFilterModel } from '../../../interfaces/iFilter';
 import { debounce } from '../../../utils/function';
 import { ProvidedFilter } from '../../provided/providedFilter';
 import { PostConstruct, Autowired } from '../../../context/context';
@@ -11,9 +11,11 @@ import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { isKeyPressed } from '../../../utils/keyboard';
 import { ColumnModel } from '../../../columns/columnModel';
 import { KeyCode } from '../../../constants/keyCode';
-import { ITextFilterParams, TextFilter } from '../../provided/text/textFilter';
+import { ITextFilterParams, TextFilter, TextFilterModel } from '../../provided/text/textFilter';
+import { NumberFilterModel } from '../../../main';
 
-export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
+type ModelUnion = TextFilterModel | NumberFilterModel;
+export abstract class TextInputFloatingFilter<M extends ModelUnion> extends SimpleFloatingFilter {
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @RefSelector('eFloatingFilterInput') private readonly eFloatingFilterInput: AgInputTextField;
 
@@ -93,6 +95,22 @@ export abstract class TextInputFloatingFilter extends SimpleFloatingFilter {
                 simpleFilter.onFloatingFilterChanged(this.getLastType(), value || null);
             }
         });
+    }
+
+    protected conditionToString(condition: M, options?: IFilterOptionDef): string {
+        const { numberOfInputs } = options || {};
+        const isRange = condition.type == SimpleFilter.IN_RANGE || numberOfInputs === 2;
+
+        if (isRange) {
+            return `${condition.filter}-${condition.filterTo}`;
+        }
+
+        // cater for when the type doesn't need a value
+        if (condition.filter != null) {
+            return `${condition.filter}`;
+        }
+
+        return `${condition.type}`;
     }
 
     protected setEditable(editable: boolean): void {

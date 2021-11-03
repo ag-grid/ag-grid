@@ -13,6 +13,7 @@ import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { setDisplayed } from '../../../utils/dom';
 import { parseDateTimeFromString, serialiseDate } from '../../../utils/date';
 import { debounce } from '../../../utils/function';
+import { IFilterOptionDef } from '../../../interfaces/iFilter';
 
 export class DateFloatingFilter extends SimpleFloatingFilter {
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
@@ -35,18 +36,24 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         return DateFilter.DEFAULT_FILTER_OPTIONS;
     }
 
-    protected conditionToString(condition: DateFilterModel): string {
+    protected conditionToString(condition: DateFilterModel, options?: IFilterOptionDef): string {
         const { type } = condition;
+        const { numberOfInputs } = options || {};
+        const isRange = type == SimpleFilter.IN_RANGE || numberOfInputs === 2;
+        
         const dateFrom = parseDateTimeFromString(condition.dateFrom);
+        const dateTo = parseDateTimeFromString(condition.dateTo);
 
-        if (type === SimpleFilter.IN_RANGE) {
-            const dateTo = parseDateTimeFromString(condition.dateTo);
-
+        if (isRange) {
             return `${serialiseDate(dateFrom, false)}-${serialiseDate(dateTo, false)}`;
         }
 
+        if (dateFrom != null) {
+            return `${serialiseDate(dateFrom, false)}`;
+        }
+
         // cater for when the type doesn't need a value
-        return dateFrom == null ? `${type}` : `${serialiseDate(dateFrom, false)}`;
+        return `${type}`;
     }
 
     public init(params: IFloatingFilterParams): void {
