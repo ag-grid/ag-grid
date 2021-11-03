@@ -48,7 +48,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
             params.onDateChanged();
         });
 
-        const { minValidYear, maxValidYear } = params.filterParams;
+        const { minValidYear, maxValidYear } = params.filterParams || {};
         if (minValidYear) {
             inputElement.min = `${minValidYear}-01-01`;
         }
