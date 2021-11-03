@@ -37,7 +37,7 @@ export const ExampleRunner = props => {
     </GlobalContextConsumer>;
 };
 
-const saveIndexHtmlPermutations = (nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, useVue3, exampleImportType) => {
+const saveGridIndexHtmlPermutations = (nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, useVue3, exampleImportType) => {
     if (isGeneratedExample(type)) {
         // Need to generate the different permutations of index.html file:
         // 1. Default version (already saved)
@@ -87,6 +87,21 @@ const saveIndexHtmlPermutations = (nodes, library, pageName, name, title, type, 
     }
 };
 
+const saveChartIndexHtmlPermutations = (nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, useVue3, exampleImportType) => {
+    if (isGeneratedExample(type)) {
+        // Need to generate the different permutations of index.html file:
+        // 1. Default version (already saved)
+
+        // 2. For Vue, also copy html file for Vue 3
+        if(framework === 'vue') {
+            const vue3PackagesExampleInfo =
+                getExampleInfo(nodes, library, pageName, name, title, type, options, framework, !useFunctionalReact, true, 'packages');
+
+            writeIndexHtmlFile(vue3PackagesExampleInfo);
+        }
+    }
+};
+
 const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, library, exampleImportType, useFunctionalReact, enableVue3, useVue3, set }) => {
     const nodes = useExampleFileNodes();
     const [showCode, setShowCode] = useState(!!(options && options.showCode));
@@ -105,7 +120,9 @@ const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, l
 
         if (library === 'grid') {
             // grid examples can have multiple permutations
-            saveIndexHtmlPermutations(nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, useVue3, exampleImportType);
+            saveGridIndexHtmlPermutations(nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, useVue3, exampleImportType);
+        } else {
+            saveChartIndexHtmlPermutations(nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, useVue3, exampleImportType);
         }
     }
 
