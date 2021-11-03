@@ -84,7 +84,12 @@ export class FilterManager extends BeanStub {
                 const column = this.columnModel.getPrimaryColumn(colId);
 
                 if (!column) {
-                    console.warn('Warning ag-grid setFilterModel - no column found for colId ' + colId);
+                    console.warn('AG-Grid: setFilterModel() - no column found for colId: ' + colId);
+                    return;
+                }
+
+                if (!column.isFilterAllowed()) {
+                    console.warn('AG-Grid: setFilterModel() - unable to fully apply model, filtering disabled for colId: ' + colId);
                     return;
                 }
 
