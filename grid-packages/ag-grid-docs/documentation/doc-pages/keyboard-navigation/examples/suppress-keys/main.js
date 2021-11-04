@@ -1,27 +1,27 @@
 var columnDefs = [
     {
         field: "athlete", minWidth: 170,
-        suppressKeyboardEvent: function(params) {
+        suppressKeyboardEvent: function (params) {
             return suppressEnter(params) || suppressNavigation(params);
         },
     },
-    { field: "age" },
+    {field: "age"},
     {
         field: "country",
         minWidth: 130,
-        suppressHeaderKeyboardEvent: function(params) {
+        suppressHeaderKeyboardEvent: function (params) {
             var key = params.event.key;
 
             return (key === 'ArrowLeft' || key === 'ArrowRight' || key === 'Enter');
         }
     },
-    { field: "year" },
-    { field: "date" },
-    { field: "sport" },
-    { field: "gold" },
-    { field: "silver" },
-    { field: "bronze" },
-    { field: "total" }
+    {field: "year"},
+    {field: "date"},
+    {field: "sport"},
+    {field: "gold"},
+    {field: "silver"},
+    {field: "bronze"},
+    {field: "total"}
 ];
 
 function suppressEnter(params) {
@@ -77,7 +77,7 @@ function suppressNavigation(params) {
         return false;
     }
 
-    var suppress = keysToSuppress.some(function(suppressedKey) {
+    var suppress = keysToSuppress.some(function (suppressedKey) {
         return suppressedKey === key || key.toUpperCase() === suppressedKey;
     });
 
@@ -109,12 +109,11 @@ var gridOptions = {
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

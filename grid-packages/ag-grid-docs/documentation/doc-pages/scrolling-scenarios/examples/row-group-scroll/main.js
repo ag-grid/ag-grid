@@ -1,9 +1,9 @@
 var columnDefs = [
-    { field: "athlete", width: 150, rowGroupIndex: 0 },
-    { field: "age", width: 90, rowGroupIndex: 1 },
-    { field: "country", width: 120, rowGroupIndex: 2 },
-    { field: "year", width: 90 },
-    { field: "date", width: 110, rowGroupIndex: 2 }
+    {field: "athlete", width: 150, rowGroupIndex: 0},
+    {field: "age", width: 90, rowGroupIndex: 1},
+    {field: "country", width: 120, rowGroupIndex: 2},
+    {field: "year", width: 90},
+    {field: "date", width: 110, rowGroupIndex: 2}
 ];
 
 var gridOptions = {
@@ -31,12 +31,11 @@ function onRowGroupOpened(event) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

@@ -81,7 +81,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const gridDivBottom = document.querySelector('#myGridBottom');
     new agGrid.Grid(gridDivBottom, gridOptionsBottom);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
         .then(data => {
             gridOptionsTop.api.setRowData(data);
             gridOptionsTop.columnApi.autoSizeAllColumns();

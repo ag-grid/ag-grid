@@ -2,14 +2,14 @@ var swimmingHeight, groupHeight, russiaHeight;
 
 var gridOptions = {
     columnDefs: [
-        { field: "country", rowGroup: true },
-        { field: "athlete" },
-        { field: "date" },
-        { field: "sport" },
-        { field: "gold" },
-        { field: "silver" },
-        { field: "bronze" },
-        { field: "total" }
+        {field: "country", rowGroup: true},
+        {field: "athlete"},
+        {field: "date"},
+        {field: "sport"},
+        {field: "gold"},
+        {field: "silver"},
+        {field: "bronze"},
+        {field: "total"}
     ],
     animateRows: true,
     getRowHeight: getRowHeight
@@ -39,7 +39,7 @@ function setRussiaHeight(height) {
     // this is used next time resetRowHeights is called
     russiaHeight = height;
 
-    gridOptions.api.forEachNode(function(rowNode) {
+    gridOptions.api.forEachNode(function (rowNode) {
         if (rowNode.data && rowNode.data.country === 'Russia') {
             rowNode.setRowHeight(height);
         }
@@ -48,12 +48,11 @@ function setRussiaHeight(height) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

@@ -53,8 +53,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
         .then(data => {
-            gridOptions.api.setRowData(data);
+            gridOptionsTop.api.setRowData(data);
         });
 });

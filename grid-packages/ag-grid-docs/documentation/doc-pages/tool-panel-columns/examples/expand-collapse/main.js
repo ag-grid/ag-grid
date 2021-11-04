@@ -3,13 +3,13 @@ var columnDefs = [
         groupId: 'athleteGroupId',
         headerName: 'Athlete',
         children: [
-            { headerName: 'Name', field: "athlete", minWidth: 200, filter: 'agTextColumnFilter' },
+            {headerName: 'Name', field: "athlete", minWidth: 200, filter: 'agTextColumnFilter'},
             {
                 groupId: 'competitionGroupId',
                 headerName: 'Competition',
                 children: [
-                    { field: "year" },
-                    { field: "date", minWidth: 180 },
+                    {field: "year"},
+                    {field: "date", minWidth: 180},
                 ]
             },
         ]
@@ -18,10 +18,10 @@ var columnDefs = [
         groupId: 'medalsGroupId',
         headerName: 'Medals',
         children: [
-            { field: "gold" },
-            { field: "silver" },
-            { field: "bronze" },
-            { field: "total" }
+            {field: "gold"},
+            {field: "silver"},
+            {field: "bronze"},
+            {field: "total"}
         ]
     }
 ];
@@ -42,7 +42,7 @@ var gridOptions = {
         resizable: true,
     },
     sideBar: 'columns',
-    onGridReady: function(params) {
+    onGridReady: function (params) {
         params.api.getToolPanelInstance('columns').collapseColumnGroups();
     }
 };
@@ -66,12 +66,11 @@ function collapseCompetitionGroups() {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

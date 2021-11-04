@@ -12,7 +12,7 @@ var countries = ['United States', 'Russia', 'Australia', 'Canada', 'Norway', 'Ch
     'Bahrain', 'Grenada', 'Uganda', 'Sudan', 'Ecuador', 'Panama', 'Eritrea', 'Sri Lanka', 'Mozambique', 'Barbados'];
 
 var columnDefs = [
-    { field: "athlete", enableRowGroup: true, enablePivot: true, filter: false },
+    {field: "athlete", enableRowGroup: true, enablePivot: true, filter: false},
     {
         field: "age", enableRowGroup: true,
         filter: 'customAgeFilter'
@@ -24,16 +24,16 @@ var columnDefs = [
         rowGroup: true,
         hide: true,
         filter: 'agSetColumnFilter',
-        filterParams: { values: countries }
+        filterParams: {values: countries}
     },
     {
         field: "year", enableRowGroup: true, enablePivot: true, rowGroup: true, hide: true, filter: 'agSetColumnFilter',
-        filterParams: { values: ['2000', '2002', '2004', '2006', '2008', '2010', '2012'] }
+        filterParams: {values: ['2000', '2002', '2004', '2006', '2008', '2010', '2012']}
     },
-    { field: "sport", enableRowGroup: true, enablePivot: true, filter: false },
-    { field: "gold", aggFunc: 'sum', filter: false, enableValue: true },
-    { field: "silver", aggFunc: 'sum', filter: false, enableValue: true },
-    { field: "bronze", aggFunc: 'sum', filter: false, enableValue: true }
+    {field: "sport", enableRowGroup: true, enablePivot: true, filter: false},
+    {field: "gold", aggFunc: 'sum', filter: false, enableValue: true},
+    {field: "silver", aggFunc: 'sum', filter: false, enableValue: true},
+    {field: "bronze", aggFunc: 'sum', filter: false, enableValue: true}
 ];
 
 var gridOptions = {
@@ -77,18 +77,19 @@ function onFirstDataRendered(params) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
     // do http request to get our sample data - not using any framework to keep the example self contained.
     // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            var fakeServer = createFakeServer(data);
-            var datasource = createServerSideDatasource(fakeServer, gridOptions);
-            gridOptions.api.setServerSideDatasource(datasource);
-        }
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(function (data) {
+                var fakeServer = createFakeServer(data);
+                var datasource = createServerSideDatasource(fakeServer, gridOptions);
+                gridOptions.api.setServerSideDatasource(datasource);
+            }
         );
 });
 
@@ -113,7 +114,7 @@ function createCustomAgeFilter() {
         '' +
         '';
 
-    CustomAgeFilter.prototype.init = function(params) {
+    CustomAgeFilter.prototype.init = function (params) {
         this.eGui = document.createElement('div');
         this.eGui.innerHTML = CUSTOM_AGE_FILTER_TEMPLATE;
         this.filterValue = null;
@@ -126,26 +127,26 @@ function createCustomAgeFilter() {
         this.eGui.querySelector('[ref="bt22"]').addEventListener('change', this.onSelection.bind(this, 22));
     };
 
-    CustomAgeFilter.prototype.onSelection = function(value) {
+    CustomAgeFilter.prototype.onSelection = function (value) {
         this.filterValue = value;
         this.params.filterChangedCallback();
     };
 
-    CustomAgeFilter.prototype.getGui = function() {
+    CustomAgeFilter.prototype.getGui = function () {
         return this.eGui;
     };
 
-    CustomAgeFilter.prototype.isFilterActive = function() {
+    CustomAgeFilter.prototype.isFilterActive = function () {
         return this.filterValue !== null;
     };
 
-    CustomAgeFilter.prototype.doesFilterPass = function(params) {
+    CustomAgeFilter.prototype.doesFilterPass = function (params) {
         // not needed for server side filtering
         var value = this.params.valueGetter(params);
         return value == this.filterValue;
     };
 
-    CustomAgeFilter.prototype.getModel = function() {
+    CustomAgeFilter.prototype.getModel = function () {
         if (this.filterValue === null) {
             return null;
         } else {
@@ -159,7 +160,7 @@ function createCustomAgeFilter() {
     };
 
     // not needed for this example
-    CustomAgeFilter.prototype.setModel = function(model) {
+    CustomAgeFilter.prototype.setModel = function (model) {
         if (model && model.filter === 20) {
             this.eGui.querySelector('[ref="bt20"]').checked = true;
             this.filterValue = 20;

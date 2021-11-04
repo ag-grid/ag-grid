@@ -1,15 +1,15 @@
 var gridOptions = {
     columnDefs: [
-        { field: "athlete", minWidth: 150 },
-        { field: "age", maxWidth: 90 },
-        { field: "country", minWidth: 150 },
-        { field: "year", maxWidth: 90 },
-        { field: "date", minWidth: 150 },
-        { field: "sport", minWidth: 150 },
-        { field: "gold" },
-        { field: "silver" },
-        { field: "bronze" },
-        { field: "total" }
+        {field: "athlete", minWidth: 150},
+        {field: "age", maxWidth: 90},
+        {field: "country", minWidth: 150},
+        {field: "year", maxWidth: 90},
+        {field: "date", minWidth: 150},
+        {field: "sport", minWidth: 150},
+        {field: "gold"},
+        {field: "silver"},
+        {field: "bronze"},
+        {field: "total"}
     ],
     defaultColDef: {
         flex: 1,
@@ -19,7 +19,7 @@ var gridOptions = {
     enableRangeSelection: true,
     onRangeSelectionChanged: onRangeSelectionChanged,
 
-    processCellForClipboard: function(params) {
+    processCellForClipboard: function (params) {
         if (params.column.getColId() === 'athlete' && params.value && params.value.toUpperCase) {
             return params.value.toUpperCase();
         }
@@ -27,7 +27,7 @@ var gridOptions = {
         return params.value;
     },
 
-    processCellFromClipboard: function(params) {
+    processCellFromClipboard: function (params) {
         if (params.column.getColId() === 'athlete' && params.value && params.value.toLowerCase) {
             return params.value.toLowerCase();
         }
@@ -68,13 +68,13 @@ function onRangeSelectionChanged(event) {
     var sum = 0;
     var api = gridOptions.api;
 
-    cellRanges.forEach(function(range) {
+    cellRanges.forEach(function (range) {
         // get starting and ending row, remember rowEnd could be before rowStart
         var startRow = Math.min(range.startRow.rowIndex, range.endRow.rowIndex);
         var endRow = Math.max(range.startRow.rowIndex, range.endRow.rowIndex);
 
         for (var rowIndex = startRow; rowIndex <= endRow; rowIndex++) {
-            range.columns.forEach(function(column) {
+            range.columns.forEach(function (column) {
                 var rowModel = api.getModel();
                 var rowNode = rowModel.getRow(rowIndex);
                 var value = api.getValue(column, rowNode);
@@ -96,12 +96,11 @@ function onRangeSelectionChanged(event) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

@@ -1,13 +1,13 @@
-var columnDefs = [
-    { field: "country", rowGroup: true, hide: true },
-    { field: "year", filter: 'agNumberColumnFilter' },
-    { field: "gold", aggFunc: 'sum' },
-    { field: "silver", aggFunc: 'sum' },
-    { field: "bronze", aggFunc: 'sum' },
-    { field: "total", aggFunc: 'sum' }
+const columnDefs = [
+    {field: "country", rowGroup: true, hide: true},
+    {field: "year", filter: 'agNumberColumnFilter'},
+    {field: "gold", aggFunc: 'sum'},
+    {field: "silver", aggFunc: 'sum'},
+    {field: "bronze", aggFunc: 'sum'},
+    {field: "total", aggFunc: 'sum'}
 ];
 
-var gridOptions = {
+const gridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
         flex: 1,
@@ -21,12 +21,11 @@ var gridOptions = {
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv = document.querySelector('#myGrid');
+document.addEventListener('DOMContentLoaded', () => {
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

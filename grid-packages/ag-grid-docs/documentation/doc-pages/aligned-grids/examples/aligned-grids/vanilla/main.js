@@ -1,10 +1,10 @@
-var columnDefs = [
-    { field: "athlete" },
-    { field: "age" },
-    { field: "country" },
-    { field: "year" },
-    { field: "date" },
-    { field: "sport" },
+const columnDefs = [
+    {field: "athlete"},
+    {field: "age"},
+    {field: "country"},
+    {field: "year"},
+    {field: "date"},
+    {field: "sport"},
     // in the total col, we have a value getter, which usually means we don't need to provide a field
     // however the master/slave depends on the column id (which is derived from the field if provided) in
     // order to match up the columns
@@ -15,15 +15,15 @@ var columnDefs = [
                 columnGroupShow: 'closed', field: "total",
                 valueGetter: "data.gold + data.silver + data.bronze"
             },
-            { columnGroupShow: 'open', field: "gold" },
-            { columnGroupShow: 'open', field: "silver" },
-            { columnGroupShow: 'open', field: "bronze" }
+            {columnGroupShow: 'open', field: "gold"},
+            {columnGroupShow: 'open', field: "silver"},
+            {columnGroupShow: 'open', field: "bronze"}
         ]
     }
 ];
 
 // this is the grid options for the top grid
-var gridOptionsTop = {
+const gridOptionsTop = {
     defaultColDef: {
         editable: true,
         sortable: true,
@@ -39,7 +39,7 @@ var gridOptionsTop = {
 };
 
 // this is the grid options for the bottom grid
-var gridOptionsBottom = {
+const gridOptionsBottom = {
     defaultColDef: {
         editable: true,
         sortable: true,
@@ -79,15 +79,14 @@ function setData(rowData) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
-    var gridDivTop = document.querySelector('#myGridTop');
+document.addEventListener('DOMContentLoaded', () => {
+    const gridDivTop = document.querySelector('#myGridTop');
     new agGrid.Grid(gridDivTop, gridOptionsTop);
 
-    var gridDivBottom = document.querySelector('#myGridBottom');
+    const gridDivBottom = document.querySelector('#myGridBottom');
     new agGrid.Grid(gridDivBottom, gridOptionsBottom);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            setData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => setData(data));
 });

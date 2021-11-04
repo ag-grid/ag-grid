@@ -1,26 +1,26 @@
-var columnDefs = [
+const columnDefs = [
     {
         headerName: "Athlete",
         children: [
-            { field: "athlete" },
-            { field: "country", columnGroupShow: 'open' },
-            { field: 'sport', columnGroupShow: 'open' },
-            { field: 'year', columnGroupShow: 'open' },
-            { field: 'date', columnGroupShow: 'open' }
+            {field: "athlete"},
+            {field: "country", columnGroupShow: 'open'},
+            {field: 'sport', columnGroupShow: 'open'},
+            {field: 'year', columnGroupShow: 'open'},
+            {field: 'date', columnGroupShow: 'open'}
         ]
     },
     {
         headerName: "Medals",
         children: [
-            { field: "total", columnGroupShow: 'closed' },
-            { field: "gold", columnGroupShow: 'open' },
-            { field: "silver", columnGroupShow: 'open' },
-            { field: "bronze", columnGroupShow: 'open' }
+            {field: "total", columnGroupShow: 'closed'},
+            {field: "gold", columnGroupShow: 'open'},
+            {field: "silver", columnGroupShow: 'open'},
+            {field: "bronze", columnGroupShow: 'open'}
         ]
     }
 ];
 
-var gridOptions = {
+const gridOptions = {
     defaultColDef: {
         width: 150,
         resizable: true
@@ -50,12 +50,11 @@ function resetState() {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv = document.querySelector('#myGrid');
+document.addEventListener('DOMContentLoaded', () => {
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

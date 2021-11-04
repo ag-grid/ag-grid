@@ -1,15 +1,15 @@
 var gridOptions = {
     columnDefs: [
-        { headerName: "Name", field: "athlete", minWidth: 200 },
-        { field: "age", enableRowGroup: true },
-        { field: "country", minWidth: 200 },
-        { field: "year" },
-        { field: "date", suppressColumnsToolPanel: true, minWidth: 180 },
-        { field: "sport", minWidth: 200 },
-        { field: "gold", aggFunc: 'sum' },
-        { field: "silver", aggFunc: 'sum' },
-        { field: "bronze", aggFunc: 'sum' },
-        { field: "total", aggFunc: 'sum' },
+        {headerName: "Name", field: "athlete", minWidth: 200},
+        {field: "age", enableRowGroup: true},
+        {field: "country", minWidth: 200},
+        {field: "year"},
+        {field: "date", suppressColumnsToolPanel: true, minWidth: 180},
+        {field: "sport", minWidth: 200},
+        {field: "gold", aggFunc: 'sum'},
+        {field: "silver", aggFunc: 'sum'},
+        {field: "bronze", aggFunc: 'sum'},
+        {field: "total", aggFunc: 'sum'},
     ],
     defaultColDef: {
         flex: 1,
@@ -59,12 +59,11 @@ function showPivotSection() {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

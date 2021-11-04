@@ -1,15 +1,15 @@
-var gridOptions = {
+const gridOptions = {
     columnDefs: [
-        { field: 'athlete' },
-        { field: 'age' },
-        { field: 'country' },
-        { field: 'year' },
-        { field: 'date' },
-        { field: 'sport' },
-        { field: 'gold' },
-        { field: 'silver' },
-        { field: 'bronze' },
-        { field: 'total' }
+        {field: 'athlete'},
+        {field: 'age'},
+        {field: 'country'},
+        {field: 'year'},
+        {field: 'date'},
+        {field: 'sport'},
+        {field: 'gold'},
+        {field: 'silver'},
+        {field: 'bronze'},
+        {field: 'total'}
     ],
     defaultColDef: {
         width: 150
@@ -34,21 +34,18 @@ function onSwapFirstTwo() {
 }
 
 function onPrintColumns() {
-    var cols = gridOptions.columnApi.getAllGridColumns();
-    var colToNameFunc = function(col, index) {
-        return index + ' = ' + col.getId();
-    };
-    var colNames = cols.map(colToNameFunc).join(', ');
+    const cols = gridOptions.columnApi.getAllGridColumns();
+    const colToNameFunc = (col, index) => index + ' = ' + col.getId();
+    const colNames = cols.map(colToNameFunc).join(', ');
     console.log('columns are: ' + colNames);
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv = document.querySelector('#myGrid');
+document.addEventListener('DOMContentLoaded', () => {
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

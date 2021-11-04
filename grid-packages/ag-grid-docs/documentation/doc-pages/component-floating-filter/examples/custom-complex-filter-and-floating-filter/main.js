@@ -14,14 +14,14 @@ var columnDefs = [
             debounceMs: 0
         }
     },
-    { field: 'country' },
-    { field: 'year' },
+    {field: 'country'},
+    {field: 'year'},
     {
         field: 'date',
         minWidth: 180,
         filter: 'date',
         filterParams: {
-            comparator: function(filterLocalDateAtMidnight, cellValue) {
+            comparator: function (filterLocalDateAtMidnight, cellValue) {
                 var dateAsString = cellValue;
                 var dateParts = dateAsString.split('/');
                 var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));
@@ -43,7 +43,7 @@ var columnDefs = [
             suppressFilterButton: true
         }
     },
-    { field: 'sport' },
+    {field: 'sport'},
     {
         field: 'gold',
         floatingFilterComponent: 'numberFloatingFilter',
@@ -107,7 +107,7 @@ function isNumeric(n) {
 function NumberFilter() {
 }
 
-NumberFilter.prototype.init = function(params) {
+NumberFilter.prototype.init = function (params) {
     this.valueGetter = params.valueGetter;
     this.filterText = null;
     this.params = params;
@@ -115,7 +115,7 @@ NumberFilter.prototype.init = function(params) {
 };
 
 // not called by AG Grid, just for us to help setup
-NumberFilter.prototype.setupGui = function() {
+NumberFilter.prototype.setupGui = function () {
     this.gui = document.createElement('div');
     this.gui.innerHTML =
         '<div style="padding: 4px;">' +
@@ -124,7 +124,7 @@ NumberFilter.prototype.setupGui = function() {
         '</div>';
 
     var that = this;
-    this.onFilterChanged = function() {
+    this.onFilterChanged = function () {
         that.extractFilterText();
         that.params.filterChangedCallback();
     };
@@ -133,15 +133,15 @@ NumberFilter.prototype.setupGui = function() {
     this.eFilterText.addEventListener('input', this.onFilterChanged);
 };
 
-NumberFilter.prototype.extractFilterText = function() {
+NumberFilter.prototype.extractFilterText = function () {
     this.filterText = this.eFilterText.value;
 };
 
-NumberFilter.prototype.getGui = function() {
+NumberFilter.prototype.getGui = function () {
     return this.gui;
 };
 
-NumberFilter.prototype.doesFilterPass = function(params) {
+NumberFilter.prototype.doesFilterPass = function (params) {
     var valueGetter = this.valueGetter;
     var value = valueGetter(params);
     var filterValue = this.filterText;
@@ -152,35 +152,35 @@ NumberFilter.prototype.doesFilterPass = function(params) {
     }
 };
 
-NumberFilter.prototype.isFilterActive = function() {
+NumberFilter.prototype.isFilterActive = function () {
     return this.filterText !== null &&
         this.filterText !== undefined &&
         this.filterText !== '' &&
         isNumeric(this.filterText);
 };
 
-NumberFilter.prototype.getModel = function() {
+NumberFilter.prototype.getModel = function () {
     return this.isFilterActive() ? Number(this.eFilterText.value) : null;
 };
 
-NumberFilter.prototype.setModel = function(model) {
+NumberFilter.prototype.setModel = function (model) {
     this.eFilterText.value = model;
     this.extractFilterText();
 };
 
-NumberFilter.prototype.myMethodForTakingValueFromFloatingFilter = function(value) {
+NumberFilter.prototype.myMethodForTakingValueFromFloatingFilter = function (value) {
     this.eFilterText.value = value;
     this.onFilterChanged();
 };
 
-NumberFilter.prototype.destroy = function() {
+NumberFilter.prototype.destroy = function () {
     this.eFilterText.removeEventListener('input', this.onFilterChanged);
 };
 
 function NumberFloatingFilter() {
 }
 
-NumberFloatingFilter.prototype.init = function(params) {
+NumberFloatingFilter.prototype.init = function (params) {
     this.onFloatingFilterChanged = params.onFloatingFilterChanged;
     this.eGui = document.createElement('div');
     this.eGui.innerHTML = '<div style="width:75%; margin-left:10px" class="slider"></div>';
@@ -190,7 +190,7 @@ NumberFloatingFilter.prototype.init = function(params) {
     this.eSlider.slider({
         min: 0,
         max: params.maxValue,
-        change: function(e, ui) {
+        change: function (e, ui) {
             //Every time the value of the slider changes
             if (!e.originalEvent) {
                 //If this event its triggered from outside. ie setModel() on the parent Filter we
@@ -199,14 +199,14 @@ NumberFloatingFilter.prototype.init = function(params) {
                 return;
             }
             that.currentValue = ui.value;
-            params.parentFilterInstance(function(instance) {
+            params.parentFilterInstance(function (instance) {
                 instance.myMethodForTakingValueFromFloatingFilter(that.buildModel());
             });
         }
     });
 };
 
-NumberFloatingFilter.prototype.onParentModelChanged = function(parentModel) {
+NumberFloatingFilter.prototype.onParentModelChanged = function (parentModel) {
     // When the filter is empty we will receive a null message her
     if (!parentModel) {
         //If there is no filtering set to the minimun
@@ -222,22 +222,21 @@ NumberFloatingFilter.prototype.onParentModelChanged = function(parentModel) {
     this.eSlider.children('.ui-slider-handle').html(this.currentValue ? '>' + this.currentValue : '');
 };
 
-NumberFloatingFilter.prototype.getGui = function() {
+NumberFloatingFilter.prototype.getGui = function () {
     return this.eGui;
 };
 
-NumberFloatingFilter.prototype.buildModel = function() {
+NumberFloatingFilter.prototype.buildModel = function () {
     if (this.currentValue === 0) return null;
     return this.currentValue;
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

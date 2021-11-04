@@ -1,15 +1,15 @@
 var gridOptions = {
     columnDefs: [
-        { field: "athlete", enableRowGroup: true, enablePivot: true },
-        { field: "age", enableValue: true },
-        { field: "country", enableRowGroup: true, enablePivot: true },
-        { field: "year", enableRowGroup: true, enablePivot: true },
-        { field: "date", enableRowGroup: true, enablePivot: true },
-        { field: "sport", enableRowGroup: true, enablePivot: true, pivot: true },
-        { field: "gold", enableValue: true },
-        { field: "silver", enableValue: true },
-        { field: "bronze", enableValue: true },
-        { field: "total", enableValue: true }
+        {field: "athlete", enableRowGroup: true, enablePivot: true},
+        {field: "age", enableValue: true},
+        {field: "country", enableRowGroup: true, enablePivot: true},
+        {field: "year", enableRowGroup: true, enablePivot: true},
+        {field: "date", enableRowGroup: true, enablePivot: true},
+        {field: "sport", enableRowGroup: true, enablePivot: true, pivot: true},
+        {field: "gold", enableValue: true},
+        {field: "silver", enableValue: true},
+        {field: "bronze", enableValue: true},
+        {field: "total", enableValue: true}
     ],
     defaultColDef: {
         flex: 1,
@@ -59,12 +59,11 @@ function resetState() {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

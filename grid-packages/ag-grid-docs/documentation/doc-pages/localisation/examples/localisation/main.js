@@ -1,11 +1,11 @@
 var columnDefs = [
     // this row just shows the row index, doesn't use any data from the row
-    { headerName: '#', cellRenderer: 'rowNodeIdRenderer', checkboxSelection: true, headerCheckboxSelection: true },
-    { field: 'athlete', filterParams: { buttons: ['clear', 'reset', 'apply'] } },
-    { field: 'age', filterParams: { buttons: ['apply', 'cancel'] }, enablePivot: true },
-    { field: 'country', enableRowGroup: true },
-    { field: 'year', filter: 'agNumberColumnFilter' },
-    { field: 'date' },
+    {headerName: '#', cellRenderer: 'rowNodeIdRenderer', checkboxSelection: true, headerCheckboxSelection: true},
+    {field: 'athlete', filterParams: {buttons: ['clear', 'reset', 'apply']}},
+    {field: 'age', filterParams: {buttons: ['apply', 'cancel']}, enablePivot: true},
+    {field: 'country', enableRowGroup: true},
+    {field: 'year', filter: 'agNumberColumnFilter'},
+    {field: 'date'},
     {
         field: 'sport',
         filter: 'agMultiColumnFilter',
@@ -22,10 +22,10 @@ var columnDefs = [
             ]
         }
     },
-    { field: 'gold', enableValue: true },
-    { field: 'silver', enableValue: true },
-    { field: 'bronze', enableValue: true },
-    { field: 'total', enableValue: true }
+    {field: 'gold', enableValue: true},
+    {field: 'silver', enableValue: true},
+    {field: 'bronze', enableValue: true},
+    {field: 'total', enableValue: true}
 ];
 
 
@@ -42,7 +42,7 @@ var gridOptions = {
     },
     // note - we do not set 'virtualPaging' here, so the grid knows we are doing standard paging
     components: {
-        rowNodeIdRenderer: function(params) {
+        rowNodeIdRenderer: function (params) {
             return params.node.id + 1;
         }
     },
@@ -52,8 +52,8 @@ var gridOptions = {
     rowGroupPanelShow: 'always',
     statusBar: {
         statusPanels: [
-            { statusPanel: 'agTotalAndFilteredRowCountComponent', align: 'left' },
-            { statusPanel: 'agAggregationComponent' }
+            {statusPanel: 'agTotalAndFilteredRowCountComponent', align: 'left'},
+            {statusPanel: 'agAggregationComponent'}
         ]
     },
     paginationPageSize: 500,
@@ -65,12 +65,12 @@ var gridOptions = {
 function setDataSource(allOfTheData) {
     var dataSource = {
         //rowCount: ???, - not setting the row count, infinite paging will be used
-        getRows: function(params) {
+        getRows: function (params) {
             // this code should contact the server for rows. however for the purposes of the demo,
             // the data is generated locally, and a timer is used to give the expereince of
             // an asynchronous call
             console.log('asking for ' + params.startRow + ' to ' + params.endRow);
-            setTimeout(function() {
+            setTimeout(function () {
                 // take a chunk of the array, matching the start and finish times
                 var rowsThisPage = allOfTheData.slice(params.startRow, params.endRow);
                 var lastRow = -1;
@@ -86,12 +86,11 @@ function setDataSource(allOfTheData) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

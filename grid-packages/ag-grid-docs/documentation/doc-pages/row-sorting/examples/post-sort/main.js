@@ -1,15 +1,15 @@
 const gridOptions = {
     columnDefs: [
-        { field: "athlete" },
-        { field: "age", width: 100 },
-        { field: "country", sort: 'asc' },
-        { field: "year" },
-        { field: "date" },
-        { field: "sport" },
-        { field: "gold" },
-        { field: "silver" },
-        { field: "bronze" },
-        { field: "total" }
+        {field: "athlete"},
+        {field: "age", width: 100},
+        {field: "country", sort: 'asc'},
+        {field: "year"},
+        {field: "date"},
+        {field: "sport"},
+        {field: "gold"},
+        {field: "silver"},
+        {field: "bronze"},
+        {field: "total"}
     ],
     defaultColDef: {
         width: 170,
@@ -33,8 +33,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
         .then(data => {
-            gridOptions.api.setRowData(data);
+            gridOptionsTop.api.setRowData(data);
         });
 });

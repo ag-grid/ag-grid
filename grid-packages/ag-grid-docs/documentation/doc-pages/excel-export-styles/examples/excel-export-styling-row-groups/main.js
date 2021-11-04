@@ -1,13 +1,13 @@
 var gridOptions = {
     columnDefs: [
-        { field: 'country', minWidth: 120, rowGroup: true },
-        { field: 'year', rowGroup: true },
-        { headerName: 'Name', field: 'athlete', minWidth: 150 },
-        { headerName: 'Name Length', valueGetter: 'data ? data.athlete.length : ""' },
-        { field: 'sport', minWidth: 120, rowGroup: true },
-        { field: 'silver' },
-        { field: 'bronze' },
-        { field: 'total' }
+        {field: 'country', minWidth: 120, rowGroup: true},
+        {field: 'year', rowGroup: true},
+        {headerName: 'Name', field: 'athlete', minWidth: 150},
+        {headerName: 'Name Length', valueGetter: 'data ? data.athlete.length : ""'},
+        {field: 'sport', minWidth: 120, rowGroup: true},
+        {field: 'silver'},
+        {field: 'bronze'},
+        {field: 'total'}
     ],
 
     defaultColDef: {
@@ -72,14 +72,15 @@ function onBtnExportDataAsExcel() {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(function (data) {
             gridOptions.api.setRowData(data);
-            gridOptions.api.forEachNode(function(node) {
+            gridOptions.api.forEachNode(function (node) {
                 node.expanded = true;
             });
             gridOptions.api.onGroupExpandedOrCollapsed();

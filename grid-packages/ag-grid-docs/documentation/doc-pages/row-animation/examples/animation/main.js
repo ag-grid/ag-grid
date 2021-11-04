@@ -1,12 +1,12 @@
 var countDownDirection = true;
 
 var columnDefs = [
-    { field: "athlete", minWidth: 150 },
-    { field: "country", minWidth: 150 },
-    { field: "year", minWidth: 120 },
-    { field: "gold", aggFunc: "sum" },
-    { field: "silver", aggFunc: "sum" },
-    { field: "bronze", aggFunc: "sum" }
+    {field: "athlete", minWidth: 150},
+    {field: "country", minWidth: 150},
+    {field: "year", minWidth: 120},
+    {field: "gold", aggFunc: "sum"},
+    {field: "silver", aggFunc: "sum"},
+    {field: "bronze", aggFunc: "sum"}
 ];
 
 var gridOptions = {
@@ -39,7 +39,7 @@ function startInterval(api, columnApi) {
     executeAfterXSeconds();
 
     function executeAfterXSeconds() {
-        setTimeout(function() {
+        setTimeout(function () {
             var action = getActions()[actionIndex];
             action(api, columnApi);
             actionIndex++;
@@ -86,30 +86,30 @@ function setTitleFormatted(apiName, methodName, paramsName) {
 function getActions() {
 
     return [
-        function(api, columnApi) {
+        function (api, columnApi) {
             columnApi.applyColumnState({
-                state: [{ colId: 'country', sort: 'asc' }],
-                defaultState: { sort: null }
+                state: [{colId: 'country', sort: 'asc'}],
+                defaultState: {sort: null}
             });
             setTitleFormatted("api", "applyColumnState", "country: 'asc'");
         },
-        function(api, columnApi) {
+        function (api, columnApi) {
             columnApi.applyColumnState({
-                state: [{ colId: 'year', sort: 'asc' }, { colId: 'country', sort: 'asc' }],
-                defaultState: { sort: null }
+                state: [{colId: 'year', sort: 'asc'}, {colId: 'country', sort: 'asc'}],
+                defaultState: {sort: null}
             });
             setTitleFormatted("api", "applyColumnState", "year: 'asc', country 'asc'");
         },
-        function(api, columnApi) {
+        function (api, columnApi) {
             columnApi.applyColumnState({
-                state: [{ colId: 'year', sort: 'asc' }, { colId: 'country', sort: 'desc' }],
-                defaultState: { sort: null }
+                state: [{colId: 'year', sort: 'asc'}, {colId: 'country', sort: 'desc'}],
+                defaultState: {sort: null}
             });
             setTitleFormatted("api", "applyColumnState", "year: 'asc', country: 'desc'");
         },
-        function(api, columnApi) {
+        function (api, columnApi) {
             columnApi.applyColumnState({
-                defaultState: { sort: null }
+                defaultState: {sort: null}
             });
             setTitleFormatted("api", "applyColumnState", "clear sort");
         }
@@ -117,13 +117,14 @@ function getActions() {
 }
 
 // from actual demo page (/animation/)
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector("#myGrid") || document.querySelector("#animationGrid");
 
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(function (data) {
             gridOptions.api.setRowData(data.slice(0, 50));
             startInterval(gridOptions.api, gridOptions.columnApi);
         });

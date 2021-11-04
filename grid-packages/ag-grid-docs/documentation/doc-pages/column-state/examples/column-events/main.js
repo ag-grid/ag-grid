@@ -1,11 +1,11 @@
-var columnDefs = [
-    { field: 'athlete' },
-    { field: 'age' },
-    { field: 'country' },
-    { field: 'sport' },
-    { field: 'gold' },
-    { field: 'silver' },
-    { field: 'bronze' }
+const columnDefs = [
+    {field: 'athlete'},
+    {field: 'age'},
+    {field: 'country'},
+    {field: 'sport'},
+    {field: 'gold'},
+    {field: 'silver'},
+    {field: 'bronze'}
 ];
 
 function onSortChanged(e) {
@@ -40,7 +40,7 @@ function onColumnPinned(e) {
     console.log('Event Column Pinned', e);
 }
 
-var gridOptions = {
+const gridOptions = {
     defaultColDef: {
         sortable: true,
         resizable: true,
@@ -65,23 +65,23 @@ var gridOptions = {
 function onBtSortOn() {
     gridOptions.columnApi.applyColumnState({
         state: [
-            { colId: 'age', sort: 'desc' },
-            { colId: 'athlete', sort: 'asc' }
+            {colId: 'age', sort: 'desc'},
+            {colId: 'athlete', sort: 'asc'}
         ]
     });
 }
 
 function onBtSortOff() {
     gridOptions.columnApi.applyColumnState({
-        defaultState: { sort: null }
+        defaultState: {sort: null}
     });
 }
 
 function onBtWidthNarrow() {
     gridOptions.columnApi.applyColumnState({
         state: [
-            { colId: 'age', width: 100 },
-            { colId: 'athlete', width: 100 }
+            {colId: 'age', width: 100},
+            {colId: 'athlete', width: 100}
         ]
     });
 }
@@ -89,8 +89,8 @@ function onBtWidthNarrow() {
 function onBtWidthNormal() {
     gridOptions.columnApi.applyColumnState({
         state: [
-            { colId: 'age', width: 200 },
-            { colId: 'athlete', width: 200 }
+            {colId: 'age', width: 200},
+            {colId: 'athlete', width: 200}
         ]
     });
 }
@@ -98,15 +98,15 @@ function onBtWidthNormal() {
 function onBtHide() {
     gridOptions.columnApi.applyColumnState({
         state: [
-            { colId: 'age', hide: true },
-            { colId: 'athlete', hide: true }
+            {colId: 'age', hide: true},
+            {colId: 'athlete', hide: true}
         ]
     });
 }
 
 function onBtShow() {
     gridOptions.columnApi.applyColumnState({
-        defaultState: { hide: false }
+        defaultState: {hide: false}
     });
 }
 
@@ -114,7 +114,7 @@ function onBtPivotOn() {
     gridOptions.columnApi.setPivotMode(true);
     gridOptions.columnApi.applyColumnState({
         state: [
-            { colId: 'country', pivot: true }
+            {colId: 'country', pivot: true}
         ]
     });
 }
@@ -122,50 +122,50 @@ function onBtPivotOn() {
 function onBtPivotOff() {
     gridOptions.columnApi.setPivotMode(false);
     gridOptions.columnApi.applyColumnState({
-        defaultState: { pivot: false }
+        defaultState: {pivot: false}
     });
 }
 
 function onBtRowGroupOn() {
     gridOptions.columnApi.applyColumnState({
         state: [
-            { colId: 'sport', rowGroup: true }
+            {colId: 'sport', rowGroup: true}
         ]
     });
 }
 
 function onBtRowGroupOff() {
     gridOptions.columnApi.applyColumnState({
-        defaultState: { rowGroup: false }
+        defaultState: {rowGroup: false}
     });
 }
 
 function onBtAggFuncOn() {
     gridOptions.columnApi.applyColumnState({
         state: [
-            { colId: 'gold', aggFunc: 'sum' },
-            { colId: 'silver', aggFunc: 'sum' },
-            { colId: 'bronze', aggFunc: 'sum' },
+            {colId: 'gold', aggFunc: 'sum'},
+            {colId: 'silver', aggFunc: 'sum'},
+            {colId: 'bronze', aggFunc: 'sum'},
         ]
     });
 }
 
 function onBtAggFuncOff() {
     gridOptions.columnApi.applyColumnState({
-        defaultState: { aggFunc: null }
+        defaultState: {aggFunc: null}
     });
 }
 
 function onBtNormalOrder() {
     gridOptions.columnApi.applyColumnState({
         state: [
-            { colId: 'athlete' },
-            { colId: 'age' },
-            { colId: 'country' },
-            { colId: 'sport' },
-            { colId: 'gold' },
-            { colId: 'silver' },
-            { colId: 'bronze' }
+            {colId: 'athlete'},
+            {colId: 'age'},
+            {colId: 'country'},
+            {colId: 'sport'},
+            {colId: 'gold'},
+            {colId: 'silver'},
+            {colId: 'bronze'}
         ],
         applyOrder: true
     });
@@ -174,13 +174,13 @@ function onBtNormalOrder() {
 function onBtReverseOrder() {
     gridOptions.columnApi.applyColumnState({
         state: [
-            { colId: 'athlete' },
-            { colId: 'age' },
-            { colId: 'country' },
-            { colId: 'sport' },
-            { colId: 'bronze' },
-            { colId: 'silver' },
-            { colId: 'gold' }
+            {colId: 'athlete'},
+            {colId: 'age'},
+            {colId: 'country'},
+            {colId: 'sport'},
+            {colId: 'bronze'},
+            {colId: 'silver'},
+            {colId: 'gold'}
         ],
         applyOrder: true
     });
@@ -189,25 +189,24 @@ function onBtReverseOrder() {
 function onBtPinnedOn() {
     gridOptions.columnApi.applyColumnState({
         state: [
-            { colId: 'athlete', pinned: 'left' },
-            { colId: 'age', pinned: 'right' }
+            {colId: 'athlete', pinned: 'left'},
+            {colId: 'age', pinned: 'right'}
         ]
     });
 }
 
 function onBtPinnedOff() {
     gridOptions.columnApi.applyColumnState({
-        defaultState: { pinned: null }
+        defaultState: {pinned: null}
     });
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv = document.querySelector('#myGrid');
+document.addEventListener('DOMContentLoaded', () => {
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

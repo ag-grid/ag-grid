@@ -18,21 +18,21 @@ var columnDefs = [
     {
         headerName: 'Participant',
         children: [
-            { field: 'athlete', minWidth: 170 },
-            { field: 'country', minWidth: 150 }
+            {field: 'athlete', minWidth: 170},
+            {field: 'country', minWidth: 150}
         ],
     },
-    { field: 'sport' },
+    {field: 'sport'},
     {
         headerName: 'Medals',
         children: [
-            { field: 'total', columnGroupShow: 'closed', filter: 'agNumberColumnFilter', width: 120, flex: 0 },
-            { field: 'gold', columnGroupShow: 'open', filter: 'agNumberColumnFilter', width: 100, flex: 0 },
-            { field: 'silver', columnGroupShow: 'open', filter: 'agNumberColumnFilter', width: 100, flex: 0 },
-            { field: 'bronze', columnGroupShow: 'open', filter: 'agNumberColumnFilter', width: 100, flex: 0 },
+            {field: 'total', columnGroupShow: 'closed', filter: 'agNumberColumnFilter', width: 120, flex: 0},
+            {field: 'gold', columnGroupShow: 'open', filter: 'agNumberColumnFilter', width: 100, flex: 0},
+            {field: 'silver', columnGroupShow: 'open', filter: 'agNumberColumnFilter', width: 100, flex: 0},
+            {field: 'bronze', columnGroupShow: 'open', filter: 'agNumberColumnFilter', width: 100, flex: 0},
         ]
     },
-    { field: 'year', filter: 'agNumberColumnFilter' }
+    {field: 'year', filter: 'agNumberColumnFilter'}
 ];
 
 var gridOptions = {
@@ -56,12 +56,11 @@ var gridOptions = {
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

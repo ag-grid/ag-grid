@@ -1,12 +1,12 @@
 function getColumnDefs() {
     return [
-        { field: 'athlete' },
-        { field: 'age' },
-        { field: 'country' },
-        { field: 'sport' },
-        { field: 'gold' },
-        { field: 'silver' },
-        { field: 'bronze' }
+        {field: 'athlete'},
+        {field: 'age'},
+        {field: 'country'},
+        {field: 'sport'},
+        {field: 'gold'},
+        {field: 'silver'},
+        {field: 'bronze'}
     ];
 }
 
@@ -65,7 +65,7 @@ var gridOptions = {
 
 function onBtSortOn() {
     var columnDefs = getColumnDefs();
-    columnDefs.forEach(function(colDef) {
+    columnDefs.forEach(function (colDef) {
         if (colDef.field === 'age') {
             colDef.sort = 'desc';
         }
@@ -78,7 +78,7 @@ function onBtSortOn() {
 
 function onBtSortOff() {
     var columnDefs = getColumnDefs();
-    columnDefs.forEach(function(colDef) {
+    columnDefs.forEach(function (colDef) {
         colDef.sort = null;
     });
     gridOptions.api.setColumnDefs(columnDefs);
@@ -86,7 +86,7 @@ function onBtSortOff() {
 
 function onBtWidthNarrow() {
     var columnDefs = getColumnDefs();
-    columnDefs.forEach(function(colDef) {
+    columnDefs.forEach(function (colDef) {
         if (colDef.field === 'age' || colDef.field === 'athlete') {
             colDef.width = 100;
         }
@@ -96,7 +96,7 @@ function onBtWidthNarrow() {
 
 function onBtWidthNormal() {
     var columnDefs = getColumnDefs();
-    columnDefs.forEach(function(colDef) {
+    columnDefs.forEach(function (colDef) {
         colDef.width = 200;
     });
     gridOptions.api.setColumnDefs(columnDefs);
@@ -104,7 +104,7 @@ function onBtWidthNormal() {
 
 function onBtHide() {
     var columnDefs = getColumnDefs();
-    columnDefs.forEach(function(colDef) {
+    columnDefs.forEach(function (colDef) {
         if (colDef.field === 'age' || colDef.field === 'athlete') {
             colDef.hide = true;
         }
@@ -114,7 +114,7 @@ function onBtHide() {
 
 function onBtShow() {
     var columnDefs = getColumnDefs();
-    columnDefs.forEach(function(colDef) {
+    columnDefs.forEach(function (colDef) {
         colDef.hide = false;
     });
     gridOptions.api.setColumnDefs(columnDefs);
@@ -124,7 +124,7 @@ function onBtPivotOn() {
     gridOptions.columnApi.setPivotMode(true);
 
     var columnDefs = getColumnDefs();
-    columnDefs.forEach(function(colDef) {
+    columnDefs.forEach(function (colDef) {
         if (colDef.field === 'country') {
             colDef.pivot = true;
         }
@@ -136,7 +136,7 @@ function onBtPivotOff() {
     gridOptions.columnApi.setPivotMode(false);
 
     var columnDefs = getColumnDefs();
-    columnDefs.forEach(function(colDef) {
+    columnDefs.forEach(function (colDef) {
         colDef.pivot = false;
     });
     gridOptions.api.setColumnDefs(columnDefs);
@@ -144,7 +144,7 @@ function onBtPivotOff() {
 
 function onBtRowGroupOn() {
     var columnDefs = getColumnDefs();
-    columnDefs.forEach(function(colDef) {
+    columnDefs.forEach(function (colDef) {
         if (colDef.field === 'sport') {
             colDef.rowGroup = true;
         }
@@ -154,7 +154,7 @@ function onBtRowGroupOn() {
 
 function onBtRowGroupOff() {
     var columnDefs = getColumnDefs();
-    columnDefs.forEach(function(colDef) {
+    columnDefs.forEach(function (colDef) {
         colDef.rowGroup = false;
     });
     gridOptions.api.setColumnDefs(columnDefs);
@@ -162,7 +162,7 @@ function onBtRowGroupOff() {
 
 function onBtAggFuncOn() {
     var columnDefs = getColumnDefs();
-    columnDefs.forEach(function(colDef) {
+    columnDefs.forEach(function (colDef) {
         if (colDef.field === 'gold' || colDef.field === 'silver' || colDef.field === 'bronze') {
             colDef.aggFunc = 'sum';
         }
@@ -172,7 +172,7 @@ function onBtAggFuncOn() {
 
 function onBtAggFuncOff() {
     var columnDefs = getColumnDefs();
-    columnDefs.forEach(function(colDef) {
+    columnDefs.forEach(function (colDef) {
         colDef.aggFunc = null;
     });
     gridOptions.api.setColumnDefs(columnDefs);
@@ -180,7 +180,7 @@ function onBtAggFuncOff() {
 
 function onBtPinnedOn() {
     var columnDefs = getColumnDefs();
-    columnDefs.forEach(function(colDef) {
+    columnDefs.forEach(function (colDef) {
         if (colDef.field === 'athlete') {
             colDef.pinned = 'left';
         }
@@ -193,19 +193,18 @@ function onBtPinnedOn() {
 
 function onBtPinnedOff() {
     var columnDefs = getColumnDefs();
-    columnDefs.forEach(function(colDef) {
+    columnDefs.forEach(function (colDef) {
         colDef.pinned = null;
     });
     gridOptions.api.setColumnDefs(columnDefs);
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

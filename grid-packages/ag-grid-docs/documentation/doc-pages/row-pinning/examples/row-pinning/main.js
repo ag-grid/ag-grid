@@ -1,12 +1,12 @@
 var columnDefs = [
     {
         field: 'athlete',
-        cellRendererSelector: function(params) {
+        cellRendererSelector: function (params) {
             if (params.node.rowPinned) {
                 return {
                     component: 'customPinnedRowRenderer',
                     params: {
-                        style: { 'color': 'blue' }
+                        style: {'color': 'blue'}
                     }
                 };
             } else {
@@ -17,12 +17,12 @@ var columnDefs = [
     },
     {
         field: 'age',
-        cellRendererSelector: function(params) {
+        cellRendererSelector: function (params) {
             if (params.node.rowPinned) {
                 return {
                     component: 'customPinnedRowRenderer',
                     params: {
-                        style: { 'font-style': 'italic' }
+                        style: {'font-style': 'italic'}
                     }
                 };
             } else {
@@ -31,10 +31,10 @@ var columnDefs = [
             }
         }
     },
-    { field: 'country' },
-    { field: 'year' },
-    { field: 'date' },
-    { field: 'sport' },
+    {field: 'country'},
+    {field: 'year'},
+    {field: 'date'},
+    {field: 'sport'},
 ];
 
 var gridOptions = {
@@ -46,9 +46,9 @@ var gridOptions = {
     },
     columnDefs: columnDefs,
     rowData: null,
-    getRowStyle: function(params) {
+    getRowStyle: function (params) {
         if (params.node.rowPinned) {
-            return { 'font-weight': 'bold' };
+            return {'font-weight': 'bold'};
         }
     },
     // no rows to pin to start with
@@ -89,12 +89,11 @@ function createData(count, prefix) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });
