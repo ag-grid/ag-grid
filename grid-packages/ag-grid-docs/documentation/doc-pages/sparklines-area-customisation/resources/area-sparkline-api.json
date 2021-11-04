@@ -11,10 +11,10 @@
         },
         "marker": {
             "description": "The configuration for the marker styles.",
-            "type": "SparklineMarker",
+            "type": "SparklineMarkerOptions",
             "more": {
-                "name": "SparklineMarker",
-                "url": "/sparklines-area-customisation/#sparklinemarker"
+                "name": "SparklineMarkerOptions",
+                "url": "/sparklines-area-customisation/#sparklinemarkeroptions"
             }
         }
     },
@@ -40,7 +40,7 @@
             "default": 1
         }
     },
-    "SparklineMarker": {
+    "SparklineMarkerOptions": {
         "enabled": {
             "description": "By default this is set to `true` whilst marker `size` is set to `0`, which means the markers are present but not visible.",
             "type": "boolean",

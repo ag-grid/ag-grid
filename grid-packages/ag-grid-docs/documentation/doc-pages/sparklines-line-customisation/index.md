@@ -138,9 +138,9 @@ More advanced customisations are discussed separately in the following sections:
 
 <interface-documentation interfaceName='LineSparklineOptions' overrideSrc='sparklines-line-customisation/resources/line-sparkline-api.json'></interface-documentation>
 
-### SparklineMarker
+### SparklineMarkerOptions
 
-<api-documentation source='sparklines-line-customisation/resources/line-sparkline-api.json' section='SparklineMarker'></api-documentation>
+<api-documentation source='sparklines-line-customisation/resources/line-sparkline-api.json' section='SparklineMarkerOptions'></api-documentation>
 
 ### SparklineAxisOptions
 

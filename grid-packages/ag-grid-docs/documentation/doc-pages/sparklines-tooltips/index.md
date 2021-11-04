@@ -110,9 +110,9 @@ The following example demonstrates the results of the tooltip title styles above
 
 ## Interfaces
 
-### SparklineTooltip
+### SparklineTooltipOptions
 
-<interface-documentation interfaceName='SparklineTooltip' overrideSrc='sparklines-tooltips/resources/sparkline-tooltip-api.json'></interface-documentation>
+<interface-documentation interfaceName='SparklineTooltipOptions' overrideSrc='sparklines-tooltips/resources/sparkline-tooltip-api.json'></interface-documentation>
 
 ### TooltipRendererParams
 

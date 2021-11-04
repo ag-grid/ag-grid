@@ -13745,7 +13745,7 @@
     },
     "padding": {
       "description": "/** Configuration for the padding in pixels shown around the sparklines. */",
-      "type": { "returnType": "Padding", "optional": true }
+      "type": { "returnType": "PaddingOptions", "optional": true }
     },
     "axis": {
       "description": "/** The options for the x-axis in the sparklines. */",
@@ -13753,11 +13753,11 @@
     },
     "highlightStyle": {
       "description": "/** The configuration for the highlighting used when the items are hovered over. */",
-      "type": { "returnType": "HighlightStyle", "optional": true }
+      "type": { "returnType": "HighlightStyleOptions", "optional": true }
     },
     "tooltip": {
       "description": "/** Configuration for the tooltips. */",
-      "type": { "returnType": "SparklineTooltip", "optional": true }
+      "type": { "returnType": "SparklineTooltipOptions", "optional": true }
     }
   },
   "LineSparklineOptions": {
@@ -13767,11 +13767,11 @@
     },
     "line": {
       "description": "/** The configuration for the line. */",
-      "type": { "returnType": "SparklineLine", "optional": true }
+      "type": { "returnType": "SparklineLineOptions", "optional": true }
     },
     "marker": {
       "description": "/** The configuration for the marker styles. */",
-      "type": { "returnType": "SparklineMarker", "optional": true }
+      "type": { "returnType": "SparklineMarkerOptions", "optional": true }
     },
     "xKey": {
       "description": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
@@ -13783,7 +13783,7 @@
     },
     "padding": {
       "description": "/** Configuration for the padding in pixels shown around the sparklines. */",
-      "type": { "returnType": "Padding", "optional": true }
+      "type": { "returnType": "PaddingOptions", "optional": true }
     },
     "axis": {
       "description": "/** The options for the x-axis in the sparklines. */",
@@ -13791,11 +13791,11 @@
     },
     "highlightStyle": {
       "description": "/** The configuration for the highlighting used when the items are hovered over. */",
-      "type": { "returnType": "HighlightStyle", "optional": true }
+      "type": { "returnType": "HighlightStyleOptions", "optional": true }
     },
     "tooltip": {
       "description": "/** Configuration for the tooltips. */",
-      "type": { "returnType": "SparklineTooltip", "optional": true }
+      "type": { "returnType": "SparklineTooltipOptions", "optional": true }
     }
   },
   "AreaSparklineOptions": {
@@ -13809,11 +13809,11 @@
     },
     "line": {
       "description": "/** The configuration for the line. */",
-      "type": { "returnType": "SparklineLine", "optional": true }
+      "type": { "returnType": "SparklineLineOptions", "optional": true }
     },
     "marker": {
       "description": "/** The configuration for the marker styles. */",
-      "type": { "returnType": "SparklineMarker", "optional": true }
+      "type": { "returnType": "SparklineMarkerOptions", "optional": true }
     },
     "xKey": {
       "description": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
@@ -13825,7 +13825,7 @@
     },
     "padding": {
       "description": "/** Configuration for the padding in pixels shown around the sparklines. */",
-      "type": { "returnType": "Padding", "optional": true }
+      "type": { "returnType": "PaddingOptions", "optional": true }
     },
     "axis": {
       "description": "/** The options for the x-axis in the sparklines. */",
@@ -13833,11 +13833,11 @@
     },
     "highlightStyle": {
       "description": "/** The configuration for the highlighting used when the items are hovered over. */",
-      "type": { "returnType": "HighlightStyle", "optional": true }
+      "type": { "returnType": "HighlightStyleOptions", "optional": true }
     },
     "tooltip": {
       "description": "/** Configuration for the tooltips. */",
-      "type": { "returnType": "SparklineTooltip", "optional": true }
+      "type": { "returnType": "SparklineTooltipOptions", "optional": true }
     }
   },
   "ColumnSparklineOptions": {
@@ -13875,7 +13875,7 @@
     },
     "label": {
       "description": "/** Configuration for the labels. */",
-      "type": { "returnType": "SparklineLabel", "optional": true }
+      "type": { "returnType": "SparklineLabelOptions", "optional": true }
     },
     "xKey": {
       "description": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
@@ -13887,7 +13887,7 @@
     },
     "padding": {
       "description": "/** Configuration for the padding in pixels shown around the sparklines. */",
-      "type": { "returnType": "Padding", "optional": true }
+      "type": { "returnType": "PaddingOptions", "optional": true }
     },
     "axis": {
       "description": "/** The options for the x-axis in the sparklines. */",
@@ -13895,11 +13895,11 @@
     },
     "highlightStyle": {
       "description": "/** The configuration for the highlighting used when the items are hovered over. */",
-      "type": { "returnType": "HighlightStyle", "optional": true }
+      "type": { "returnType": "HighlightStyleOptions", "optional": true }
     },
     "tooltip": {
       "description": "/** Configuration for the tooltips. */",
-      "type": { "returnType": "SparklineTooltip", "optional": true }
+      "type": { "returnType": "SparklineTooltipOptions", "optional": true }
     }
   },
   "BarSparklineOptions": {
@@ -13937,7 +13937,7 @@
     },
     "label": {
       "description": "/** Configuration for the labels. */",
-      "type": { "returnType": "SparklineLabel", "optional": true }
+      "type": { "returnType": "SparklineLabelOptions", "optional": true }
     },
     "xKey": {
       "description": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
@@ -13949,7 +13949,7 @@
     },
     "padding": {
       "description": "/** Configuration for the padding in pixels shown around the sparklines. */",
-      "type": { "returnType": "Padding", "optional": true }
+      "type": { "returnType": "PaddingOptions", "optional": true }
     },
     "axis": {
       "description": "/** The options for the x-axis in the sparklines. */",
@@ -13957,14 +13957,14 @@
     },
     "highlightStyle": {
       "description": "/** The configuration for the highlighting used when the items are hovered over. */",
-      "type": { "returnType": "HighlightStyle", "optional": true }
+      "type": { "returnType": "HighlightStyleOptions", "optional": true }
     },
     "tooltip": {
       "description": "/** Configuration for the tooltips. */",
-      "type": { "returnType": "SparklineTooltip", "optional": true }
+      "type": { "returnType": "SparklineTooltipOptions", "optional": true }
     }
   },
-  "SparklineLabel": {
+  "SparklineLabelOptions": {
     "enabled": {
       "description": "/** Set to true to enable labels. */",
       "type": { "returnType": "boolean", "optional": true }
@@ -14003,7 +14003,7 @@
     }
   },
   "BarColumnLabelPlacement": {},
-  "Padding": {
+  "PaddingOptions": {
     "top": {
       "description": "/** The number of pixels of padding at the top of the sparkline area.\n * Default: `3` */",
       "type": { "returnType": "number", "optional": true }
@@ -14036,7 +14036,7 @@
     }
   },
   "AxisType": {},
-  "SparklineTooltip": {
+  "SparklineTooltipOptions": {
     "enabled": {
       "description": "/** Set to false to disable tooltips. */",
       "type": { "returnType": "boolean", "optional": true }
@@ -14095,7 +14095,7 @@
       "type": { "returnType": "any", "optional": false }
     }
   },
-  "SparklineLine": {
+  "SparklineLineOptions": {
     "stroke": {
       "description": "/** The CSS colour value for the line.\n * Default: `'rgb(124, 181, 236)'` */",
       "type": { "returnType": "string", "optional": true }
@@ -14105,7 +14105,7 @@
       "type": { "returnType": "number", "optional": true }
     }
   },
-  "HighlightStyle": {
+  "HighlightStyleOptions": {
     "size": {
       "description": "/** The width in pixels of the markers when hovered over. This is only for the Line and Area sparklines as Column and Bar sparklines do not have markers.\n * Default: `6` */",
       "type": { "returnType": "number", "optional": true }
@@ -14261,7 +14261,7 @@
       "type": { "returnType": "number", "optional": true }
     }
   },
-  "SparklineMarker": {
+  "SparklineMarkerOptions": {
     "enabled": {
       "description": "/** By default this is set to `true` whilst marker size is set to `0`, which means the markers are present but not visible.\n * Default: `true` */",
       "type": { "returnType": "boolean", "optional": true }

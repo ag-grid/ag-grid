@@ -1,7 +1,6 @@
 import { BandScale } from '../../scale/bandScale';
 import { isNumber } from '../../util/value';
 import { BarColumnLabelPlacement, BarColumnSparkline, RectNodeDatum } from './barColumnSparkline';
-import { Text } from "../label/text";
 import { HdpiCanvas } from '../../canvas/hdpiCanvas';
 
 
