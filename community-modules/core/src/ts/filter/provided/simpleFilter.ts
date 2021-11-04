@@ -12,6 +12,7 @@ import { AgInputTextField } from '../../widgets/agInputTextField';
 import { Component } from '../../widgets/component';
 import { AgAbstractInputField } from '../../widgets/agAbstractInputField';
 import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
+import { ListOption } from '../../widgets/agList';
 
 export type JoinOperator = 'AND' | 'OR';
 
@@ -92,6 +93,9 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     public static STARTS_WITH = 'startsWith';
     public static ENDS_WITH = 'endsWith';
 
+    // Used to ensure 2nd condition isn't applied without explicit user-input.
+    private static DEFAULT_2ND_OPTION = SimpleFilter.EMPTY;
+
     @RefSelector('eOptions1') protected readonly eType1: AgSelect;
     @RefSelector('eOptions2') protected readonly eType2: AgSelect;
     @RefSelector('eJoinOperatorPanel') protected readonly eJoinOperatorPanel: HTMLElement;
@@ -158,7 +162,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
     protected setTypeFromFloatingFilter(type?: string | null): void {
         this.eType1.setValue(type);
-        this.eType2.setValue(this.optionsFactory.getDefaultOption());
+        this.eType2.setValue(SimpleFilter.DEFAULT_2ND_OPTION);
         (this.isDefaultOperator('AND') ? this.eJoinOperatorAnd : this.eJoinOperatorOr).setValue(true);
     }
 
@@ -245,7 +249,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
             this.eJoinOperatorOr.setValue(this.isDefaultOperator('OR'));
 
             this.eType1.setValue(simpleModel.type);
-            this.eType2.setValue(this.optionsFactory.getDefaultOption());
+            this.eType2.setValue(SimpleFilter.DEFAULT_2ND_OPTION);
 
             this.setConditionIntoUi(simpleModel as M, ConditionPosition.One);
             this.setConditionIntoUi(null, ConditionPosition.Two);
@@ -295,35 +299,50 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
     private putOptionsIntoDropdown(): void {
         const filterOptions = this.optionsFactory.getFilterOptions();
+        const eTypes = [this.eType1, this.eType2];
+        const eTypeOptionCount = [0, 0];
 
-        forEach(filterOptions, option => {
-            let value: string;
-            let text: string;
-
-            if (typeof option === 'string') {
-                value = option;
-                text = this.translate(value as keyof IFilterLocaleText);
-            } else {
-                value = option.displayKey;
-
-                const customOption = this.optionsFactory.getCustomOption(value);
-
-                text = customOption ?
-                    this.gridOptionsWrapper.getLocaleTextFunc()(customOption.displayKey, customOption.displayName) :
-                    this.translate(value as keyof IFilterLocaleText);
-            }
-
-            const createOption = () => ({ value, text });
-
-            this.eType1.addOption(createOption());
-            this.eType2.addOption(createOption());
+        const addOption = (option: ListOption) => ((eType: AgSelect, idx: number) => {
+            eType.addOption(option);
+            eTypeOptionCount[idx]++;
         });
 
-        const readOnly = filterOptions.length <= 1;
+        // Ensure 2nd (and later) condition isn't applied without explicit user-input.
+        const addEmptySelector = !_.some(filterOptions, (opt) => opt === SimpleFilter.DEFAULT_2ND_OPTION);
+        if (addEmptySelector) {
+            const emptySelector = this.createBoilerplateListOption(SimpleFilter.DEFAULT_2ND_OPTION);
+            const trailingETypes = eTypes.slice(1);
+            forEach(trailingETypes, addOption(emptySelector));
+        }
+        
+        // Add specified options to all condition drop-downs.
+        forEach(filterOptions, option => {
+            let listOption = typeof option === 'string' ?
+                this.createBoilerplateListOption(option) :
+                this.createCustomListOption(option);
 
-        this.eType1.setDisabled(readOnly);
-        this.eType2.setDisabled(readOnly);
+            forEach(eTypes, addOption(listOption));
+        });
+
+        // Make drop-downs read-only if there is only one option.
+        forEach(eTypes, (eType, idx) => eType.setDisabled(eTypeOptionCount[idx] <= 1))
     }
+
+    private createBoilerplateListOption(option: string): ListOption {
+        return { value: option, text: this.translate(option as keyof IFilterLocaleText) };
+    };
+
+    private createCustomListOption(option: IFilterOptionDef): ListOption {
+        const { displayKey } = option;
+        const customOption = this.optionsFactory.getCustomOption(option.displayKey);
+        return {
+            value: displayKey,
+            text: customOption ?
+                this.gridOptionsWrapper.getLocaleTextFunc()(customOption.displayKey, customOption.displayName) :
+                this.translate(displayKey as keyof IFilterLocaleText),
+        };
+    };
+
 
     public isAllowTwoConditions(): boolean {
         return this.allowTwoConditions;
@@ -475,7 +494,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
             .setAriaLabel(filteringLabel)
             .setDisabled(this.isReadOnly());
         this.eType2
-            .setValue(defaultOption, silent)
+            .setValue(SimpleFilter.DEFAULT_2ND_OPTION, silent)
             .setAriaLabel(filteringLabel)
             .setDisabled(this.isReadOnly());
 
