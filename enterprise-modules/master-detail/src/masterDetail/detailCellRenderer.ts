@@ -79,16 +79,26 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
     private setDetailGrid(gridOptions: GridOptions): void {
         if (!this.eDetailGrid) { return; }
 
+        // a temporary fix for AG-1574
+        // AG-1715 raised to do a wider ranging refactor to improve this
+        // this is only needed when reactUi=false, once we remove the old way
+        // of doing react, and Master / Details is all native React, then we
+        // can remove this code.
+        const agGridReact = this.context.getBean('agGridReact');
+        const agGridReactCloned = agGridReact ? _.cloneObject(agGridReact) : undefined;
+
+        // when we create detail grid, the detail grid needs frameworkComponentWrapper so that
+        // it created child components correctly, ie  Angular detail grid can have Angular cell renderer.
+        // this is only used by Angular and Vue, as React uses native React AG Grid detail grids
+        const frameworkComponentWrapper = this.context.getBean('frameworkComponentWrapper');
+
         // tslint:disable-next-line
         new Grid(this.eDetailGrid, gridOptions, {
             $scope: this.params.$scope,
             $compile: this.params.$compile,
             providedBeanInstances: {
-                // a temporary fix for AG-1574
-                // AG-1715 raised to do a wider ranging refactor to improve this
-                agGridReact: this.params.agGridReact,
-                // AG-1716 - directly related to AG-1574 and AG-1715
-                frameworkComponentWrapper: this.params.frameworkComponentWrapper
+                agGridReact: agGridReactCloned,
+                frameworkComponentWrapper: frameworkComponentWrapper
             }
         });
 
