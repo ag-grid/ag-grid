@@ -61,7 +61,7 @@ export interface UserCompDetails {
 
 @Bean('userComponentFactory')
 export class UserComponentFactory extends BeanStub {
-    
+
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;
     @Autowired('agComponentUtils') private readonly agComponentUtils: AgComponentUtils;
     @Autowired('componentMetadataProvider') private readonly componentMetadataProvider: ComponentMetadataProvider;
@@ -138,13 +138,15 @@ export class UserComponentFactory extends BeanStub {
 
 
 
-    private newInstance(componentClass: any, componentFromFramework: boolean, params: any, type: ComponentType, defaultComponentName?: string | null): AgPromise<any> | null {
+    private newInstance(componentClass: any, componentFromFramework: boolean, params: any, type: ComponentType, defaultComponentName: string | null | undefined, masterDetail: boolean): AgPromise<any> | null {
 
         // Create the component instance
         const instance = this.createComponentInstance(type, defaultComponentName, componentClass, componentFromFramework);
         if (!instance) { return null; }
 
-        this.addReactHacks(params);
+        if (masterDetail) {
+            this.addMasterDetailHacks(params);
+        }
 
         const deferredInit = this.initComponent(instance, params);
 
@@ -206,7 +208,7 @@ export class UserComponentFactory extends BeanStub {
         return params;
     }
 
-    private getCompDetails(defObject: DefinitionObject, type: ComponentType, defaultName: string | null | undefined, params: any, mandatory = false): UserCompDetails | undefined {
+    private getCompDetails(defObject: DefinitionObject, type: ComponentType, defaultName: string | null | undefined, params: any, mandatory = false, masterDetail = false): UserCompDetails | undefined {
         const propName = type.propertyName;
 
         const propertyName = type.propertyName;
@@ -281,11 +283,11 @@ export class UserComponentFactory extends BeanStub {
             componentClass,
             params: paramsMerged,
             type: type,
-            newJsInstance: (defaultCompName?: string) => this.newInstance(componentClass, componentFromFramework, paramsMerged, type, defaultCompName)
+            newJsInstance: (defaultCompName?: string) => this.newInstance(componentClass, componentFromFramework, paramsMerged, type, defaultCompName, masterDetail)
         };
     }
 
-    private addReactHacks(params: any): void {
+    private addMasterDetailHacks(params: any): void {
         // a temporary fix for AG-1574
         // AG-1715 raised to do a wider ranging refactor to improve this
         const agGridReact = this.context.getBean('agGridReact');
@@ -294,7 +296,9 @@ export class UserComponentFactory extends BeanStub {
             params.agGridReact = cloneObject(agGridReact);
         }
 
-        // AG-1716 - directly related to AG-1574 and AG-1715
+        // when we create detail grid, the detail grid needs frameworkComponentWrapper so that
+        // it created child components correctly, ie  Angular detail grid can have Angular cell renderer.
+        // this is only used by Angular and Vue, as React uses native React AG Grid detail grids
         const frameworkComponentWrapper = this.context.getBean('frameworkComponentWrapper');
 
         if (frameworkComponentWrapper) {
