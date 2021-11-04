@@ -57,7 +57,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
     private setRenderDetails(compDetails: UserCompDetails | undefined, valueToDisplay: any): void {
 
         if (compDetails) {
-            const componentPromise = compDetails.newJsInstance();
+            const componentPromise = compDetails.newAgStackInstance();
             if (!componentPromise) { return; }
             componentPromise.then( comp => {
                 if (!comp) { return; }

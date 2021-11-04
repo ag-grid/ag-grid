@@ -48,7 +48,7 @@ const setRef = (ref: MutableRefObject<any> | ((ref: any)=>void) | undefined, val
 };
 
 export const createJsComp = (compDetails: UserCompDetails): any => {
-    const promise = compDetails.newJsInstance();
+    const promise = compDetails.newAgStackInstance();
     if (!promise) { return; }
     return promise.resolveNow(null, x => x); // js comps are never async
 };

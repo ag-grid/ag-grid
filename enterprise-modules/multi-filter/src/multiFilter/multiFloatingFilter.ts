@@ -103,6 +103,6 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
             HeaderFilterCellComp.getDefaultFloatingFilterType(filterDef) || 'agTextColumnFloatingFilter';
 
         const compDetails = this.userComponentFactory.getFloatingFilterCompDetails(filterDef, params, defaultComponentName);
-        return compDetails ? compDetails.newJsInstance() : null;
+        return compDetails ? compDetails.newAgStackInstance() : null;
     }
 }

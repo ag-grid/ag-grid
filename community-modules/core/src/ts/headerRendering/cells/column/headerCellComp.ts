@@ -79,7 +79,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
         const versionCopy = this.headerCompVersion;
 
         const callback = this.afterHeaderCompCreated.bind(this, this.headerCompVersion);
-        compDetails.newJsInstance()!.then( comp => {
+        compDetails.newAgStackInstance()!.then( comp => {
             this.afterHeaderCompCreated(versionCopy, comp);
         });
     }

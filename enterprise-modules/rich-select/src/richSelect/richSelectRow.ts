@@ -52,7 +52,7 @@ export class RichSelectRow extends Component {
         } as ICellRendererParams;
 
         const compDetails = this.userComponentFactory.getCellRendererDetails(this.params, params);
-        const cellRendererPromise = compDetails ? compDetails.newJsInstance() : undefined;
+        const cellRendererPromise = compDetails ? compDetails.newAgStackInstance() : undefined;
 
         if (cellRendererPromise != null) {
             _.bindCellRendererToHtmlElement(cellRendererPromise, this.getGui());

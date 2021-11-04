@@ -189,7 +189,7 @@ export class CustomTooltipFeature extends BeanStub {
         const callback = this.newTooltipComponentCallback.bind(this, this.tooltipInstanceCount);
 
         const userDetails = this.userComponentFactory.getTooltipCompDetails(params);
-        userDetails.newJsInstance()!.then(callback);
+        userDetails.newAgStackInstance()!.then(callback);
     }
 
     private newTooltipComponentCallback(tooltipInstanceCopy: number, tooltipComp: ITooltipComp): void {

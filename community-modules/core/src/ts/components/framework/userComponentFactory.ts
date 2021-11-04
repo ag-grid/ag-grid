@@ -56,7 +56,7 @@ export interface UserCompDetails {
     componentFromFramework: boolean;
     params: any;
     type: ComponentType;
-    newJsInstance: (defaultComponentName?: string | null)=> AgPromise<any> | null;
+    newAgStackInstance: (defaultComponentName?: string | null)=> AgPromise<any> | null;
 }
 
 @Bean('userComponentFactory')
@@ -136,82 +136,13 @@ export class UserComponentFactory extends BeanStub {
         return this.getCompDetails(def, StatusPanelComponent, null, params, true)!;
     }
 
-
-
-    private newInstance(componentClass: any, componentFromFramework: boolean, params: any, type: ComponentType, defaultComponentName: string | null | undefined): AgPromise<any> | null {
-
-        // Create the component instance
-        const instance = this.createComponentInstance(type, defaultComponentName, componentClass, componentFromFramework);
-        if (!instance) { return null; }
-
-        const deferredInit = this.initComponent(instance, params);
-
-        if (deferredInit == null) {
-            return AgPromise.resolve(instance);
-        }
-        return (deferredInit as AgPromise<void>).then(() => instance);
-    }
-
-    /**
-     * This method creates a component given everything needed to guess what sort of component needs to be instantiated
-     * It takes
-     *  @param CompClass: The class to instantiate,
-     *  @param agGridParams: Params to be passed to the component and passed by AG Grid. This will get merged with any params
-     *      specified by the user in the configuration
-     *  @param modifyParamsCallback: A chance to customise the params passed to the init method. It receives what the current
-     *  params are and the component that init is about to get called for
-     */
-    public createUserComponentFromConcreteClass(CompClass: any, agGridParams: any): any {
-        const internalComponent = new CompClass();
-
-        this.initComponent(internalComponent, agGridParams);
-
-        return internalComponent;
-    }
-
-    /**
-     * Useful to check what would be the resultant params for a given object
-     *  @param definitionObject: This is the context for which this component needs to be created, it can be gridOptions
-     *      (global) or columnDef mostly.
-     *  @param propertyName: The name of the property used in ag-grid as a convention to refer to the component, it can be:
-     *      'floatingFilter', 'cellRenderer', is used to find if the user is specifying a custom component
-     *  @param paramsFromGrid: Params to be passed to the component and passed by AG Grid. This will get merged with any params
-     *      specified by the user in the configuration
-     * @returns {TParams} It merges the user agGridParams with the actual params specified by the user.
-     */
-    public mergeParamsWithApplicationProvidedParams(
-        definitionObject: DefinitionObject,
-        propertyName: string,
-        paramsFromGrid: any,
-        paramsFromSelector: any = null): any {
-        const params = {} as any;
-
-        mergeDeep(params, paramsFromGrid);
-
-        const userParams = definitionObject ? (definitionObject as any)[propertyName + "Params"] : null;
-
-        if (userParams != null) {
-            if (typeof userParams === 'function') {
-                const userParamsFromFunc = userParams(paramsFromGrid);
-                mergeDeep(params, userParamsFromFunc);
-            } else if (typeof userParams === 'object') {
-                mergeDeep(params, userParams);
-            }
-        }
-
-        mergeDeep(params, paramsFromSelector);
-
-        return params;
-    }
-
     private getCompDetails(defObject: DefinitionObject, type: ComponentType, defaultName: string | null | undefined, params: any, mandatory = false): UserCompDetails | undefined {
-        const propName = type.propertyName;
 
         const propertyName = type.propertyName;
 
-        let paramsFromSelector: any;
         let comp: any;
         let frameworkComp: any;
+        let paramsFromSelector: any;
 
         // pull from defObject if available
         if (defObject) {
@@ -264,12 +195,14 @@ export class UserComponentFactory extends BeanStub {
 
         if (!comp && !frameworkComp) {
             if (mandatory) {
-                this.logComponentMissing(defObject, propName);
+                const overrideName = defObject ? (defObject as any)[propertyName] : defaultName;
+                const nameToReport = overrideName ? overrideName : defaultName;
+                console.error(`Could not find component ${nameToReport}, did you forget to configure this component?`);
             }
             return;
         }
 
-        const paramsMerged = this.mergeParamsWithApplicationProvidedParams(defObject, propName, params, paramsFromSelector);
+        const paramsMerged = this.mergeParamsWithApplicationProvidedParams(defObject, propertyName, params, paramsFromSelector);
 
         const componentFromFramework = comp == null;
         const componentClass = comp ? comp : frameworkComp;
@@ -279,42 +212,76 @@ export class UserComponentFactory extends BeanStub {
             componentClass,
             params: paramsMerged,
             type: type,
-            newJsInstance: (defaultCompName?: string) => this.newInstance(componentClass, componentFromFramework, paramsMerged, type, defaultCompName)
+            newAgStackInstance: (defaultCompName?: string) => this.newAgStackInstance(componentClass, componentFromFramework, paramsMerged, type, defaultCompName)
         };
     }
 
-    private logComponentMissing(holder: any, propertyName: string, defaultComponentName?: string | null): void {
-        // to help the user, we print out the name they are looking for, rather than the default name.
-        // i don't know why the default name was originally printed out (that doesn't help the user)
-        const overrideName = holder ? (holder as any)[propertyName] : defaultComponentName;
-        const nameToReport = overrideName ? overrideName : defaultComponentName;
-        console.error(`Could not find component ${nameToReport}, did you forget to configure this component?`);
-    }
+    private newAgStackInstance(ComponentClass: any, componentFromFramework: boolean, params: any, type: ComponentType, defaultComponentName: string | null | undefined): AgPromise<any> | null {
 
-    private createComponentInstance(
-        componentType: ComponentType,
-        defaultComponentName: string | null | undefined,
-        component: any,
-        componentFromFramework: boolean
-    ): any {
-        const propertyName = componentType.propertyName;
+        const propertyName = type.propertyName;
 
         // using javascript component
+        let instance: any;
         const jsComponent = !componentFromFramework;
+
         if (jsComponent) {
-            return new component!();
+            instance = new ComponentClass!();
+        } else {
+            // Using framework component
+            const thisComponentConfig: ComponentMetadata = this.componentMetadataProvider.retrieve(propertyName);
+            instance = this.frameworkComponentWrapper.wrap(
+                ComponentClass,
+                thisComponentConfig.mandatoryMethodList,
+                thisComponentConfig.optionalMethodList,
+                type,
+                defaultComponentName
+            );
         }
 
-        // Using framework component
-        const FrameworkComponentRaw: any = component;
-        const thisComponentConfig: ComponentMetadata = this.componentMetadataProvider.retrieve(propertyName);
-        return this.frameworkComponentWrapper.wrap(
-            FrameworkComponentRaw,
-            thisComponentConfig.mandatoryMethodList,
-            thisComponentConfig.optionalMethodList,
-            componentType,
-            defaultComponentName
-        );
+        if (!instance) { return null; }
+
+        const deferredInit = this.initComponent(instance, params);
+
+        if (deferredInit == null) {
+            return AgPromise.resolve(instance);
+        }
+        return (deferredInit as AgPromise<void>).then(() => instance);
+    }
+
+    // used by Floating Filter
+    public createUserComponentFromConcreteClass(CompClass: any, agGridParams: any): any {
+        const internalComponent = new CompClass();
+
+        this.initComponent(internalComponent, agGridParams);
+
+        return internalComponent;
+    }
+
+    // used by Floating Filter
+    public mergeParamsWithApplicationProvidedParams(
+        defObject: DefinitionObject,
+        propertyName: string,
+        paramsFromGrid: any,
+        paramsFromSelector: any = null): any {
+            
+        const params = {} as any;
+
+        mergeDeep(params, paramsFromGrid);
+
+        const userParams = defObject ? (defObject as any)[propertyName + "Params"] : null;
+
+        if (userParams != null) {
+            if (typeof userParams === 'function') {
+                const userParamsFromFunc = userParams(paramsFromGrid);
+                mergeDeep(params, userParamsFromFunc);
+            } else if (typeof userParams === 'object') {
+                mergeDeep(params, userParams);
+            }
+        }
+
+        mergeDeep(params, paramsFromSelector);
+
+        return params;
     }
 
     private initComponent(component: any, params: any): AgPromise<void> | void {

@@ -75,7 +75,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         };
 
         const compDetails = this.userComponentFactory.getLoadingOverlayCompDetails(params);
-        const promise = compDetails.newJsInstance();
+        const promise = compDetails.newAgStackInstance();
 
         this.showOverlay(promise, LoadingType.Loading);
     }
@@ -88,7 +88,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
         };
 
         const compDetails = this.userComponentFactory.getNoRowsOverlayCompDetails(params);        
-        const promise = compDetails.newJsInstance();
+        const promise = compDetails.newAgStackInstance();
 
         this.showOverlay(promise, LoadingType.NoRows);
     }

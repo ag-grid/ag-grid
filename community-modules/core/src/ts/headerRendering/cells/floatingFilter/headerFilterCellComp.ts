@@ -301,7 +301,7 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
         this.suppressFilterButton = colDef.floatingFilterComponentParams ? !!colDef.floatingFilterComponentParams.suppressFilterButton : false;
 
         const compDetails = this.userComponentFactory.getFloatingFilterCompDetails(colDef, params, defaultFloatingFilterType);
-        let promise = compDetails ? compDetails.newJsInstance() : undefined;
+        let promise = compDetails ? compDetails.newAgStackInstance() : undefined;
 
         if (!promise) {
             const compInstance =

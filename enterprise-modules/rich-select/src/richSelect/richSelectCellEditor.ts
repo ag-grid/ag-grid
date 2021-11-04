@@ -217,7 +217,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         } as ICellRendererParams;
 
         const compDetails = this.userComponentFactory.getCellRendererDetails(this.params, params);
-        const promise = compDetails ? compDetails.newJsInstance() : undefined;
+        const promise = compDetails ? compDetails.newAgStackInstance() : undefined;
 
         if (promise) {
             _.bindCellRendererToHtmlElement(promise, eValue);

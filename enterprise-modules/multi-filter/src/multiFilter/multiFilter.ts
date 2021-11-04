@@ -382,7 +382,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp {
 
         const compDetails = this.userComponentFactory.getFilterDetails(filterDef, filterParams, 'agTextColumnFilter');
         if (!compDetails) { return null; }
-        const filterPromise = compDetails.newJsInstance();
+        const filterPromise = compDetails.newAgStackInstance();
 
         if (filterPromise) {
             filterPromise.then(filter => filterInstance = filter!);

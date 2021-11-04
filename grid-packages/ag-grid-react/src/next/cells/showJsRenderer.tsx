@@ -55,7 +55,7 @@ const useJsCellRenderer = (
                 destroyCellRenderer();
             }
 
-            const promise = compDetails!.newJsInstance();;
+            const promise = compDetails!.newAgStackInstance();;
             if (!promise) { return; }
 
             const comp = promise.resolveNow(null, x => x); // js comps are never async
