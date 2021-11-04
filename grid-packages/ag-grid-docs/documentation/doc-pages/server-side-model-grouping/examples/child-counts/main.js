@@ -1,10 +1,10 @@
 var gridOptions = {
     columnDefs: [
-        { field: "country", rowGroup: true, hide: true },
-        { field: "sport", rowGroup: true, hide: true },
-        { field: "gold", aggFunc: 'sum' },
-        { field: "silver", aggFunc: 'sum' },
-        { field: "bronze", aggFunc: 'sum' }
+        {field: "country", rowGroup: true, hide: true},
+        {field: "sport", rowGroup: true, hide: true},
+        {field: "gold", aggFunc: 'sum'},
+        {field: "silver", aggFunc: 'sum'},
+        {field: "bronze", aggFunc: 'sum'}
     ],
     defaultColDef: {
         flex: 1,
@@ -22,7 +22,7 @@ var gridOptions = {
     serverSideStoreType: 'partial',
 
     // fetch group child count from 'childCount' returned by the server
-    getChildCount: function(data) {
+    getChildCount: function (data) {
         return data ? data.childCount : undefined;
     },
 
@@ -33,16 +33,16 @@ var gridOptions = {
 
 function ServerSideDatasource(server) {
     return {
-        getRows: function(params) {
+        getRows: function (params) {
             console.log('[Datasource] - rows requested by grid: ', params.request);
 
             var response = server.getData(params.request);
 
             // adding delay to simulate real server call
-            setTimeout(function() {
+            setTimeout(function () {
                 if (response.success) {
                     // call the success callback
-                    params.success({ rowData: response.rows, rowCount: response.lastRow });
+                    params.success({rowData: response.rows, rowCount: response.lastRow});
                 } else {
                     // inform the grid request failed
                     params.fail();
@@ -53,11 +53,11 @@ function ServerSideDatasource(server) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' }).then(function(data) {
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json').then(response => response.json()).then(function (data) {
         // setup the fake server with entire dataset
         var fakeServer = new FakeServer(data);
 

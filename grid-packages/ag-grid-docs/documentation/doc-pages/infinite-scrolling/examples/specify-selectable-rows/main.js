@@ -8,16 +8,16 @@ var gridOptions = {
             valueGetter: 'node.id',
             cellRenderer: 'loadingRenderer'
         },
-        { field: "athlete", minWidth: 200 },
-        { field: "age" },
-        { field: "country", minWidth: 200, checkboxSelection: true },
-        { field: "year" },
-        { field: "date", minWidth: 150 },
-        { field: "sport", minWidth: 150 },
-        { field: "gold" },
-        { field: "silver" },
-        { field: "bronze" },
-        { field: "total" }
+        {field: "athlete", minWidth: 200},
+        {field: "age"},
+        {field: "country", minWidth: 200, checkboxSelection: true},
+        {field: "year"},
+        {field: "date", minWidth: 150},
+        {field: "sport", minWidth: 150},
+        {field: "gold"},
+        {field: "silver"},
+        {field: "bronze"},
+        {field: "total"}
 
     ],
     defaultColDef: {
@@ -26,7 +26,7 @@ var gridOptions = {
         resizable: true
     },
     components: {
-        loadingRenderer: function(params) {
+        loadingRenderer: function (params) {
             if (params.value !== undefined) {
                 return params.value;
             } else {
@@ -37,7 +37,7 @@ var gridOptions = {
     rowBuffer: 0,
     // debug: true,
     rowSelection: 'multiple',
-    isRowSelectable: function(rowNode) {
+    isRowSelectable: function (rowNode) {
         return rowNode.data ? rowNode.data.country === 'United States' : false;
     },
     // tell grid we want virtual row model type
@@ -61,18 +61,18 @@ var gridOptions = {
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' }).then(function(data) {
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json').then(response => response.json()).then(function (data) {
         var dataSource = {
             rowCount: null, // behave as infinite scroll
-            getRows: function(params) {
+            getRows: function (params) {
                 // console.log('asking for ' + params.startRow + ' to ' + params.endRow);
                 // At this point in your code, you would call the server, using $http if in AngularJS 1.x.
                 // To make the demo look real, wait for 500ms before returning
-                setTimeout(function() {
+                setTimeout(function () {
                     // take a slice of the total rows
                     var rowsThisPage = data.slice(params.startRow, params.endRow);
                     // if on or after the last page, work out the last row.

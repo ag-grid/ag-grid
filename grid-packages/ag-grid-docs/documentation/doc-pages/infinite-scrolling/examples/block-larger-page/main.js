@@ -113,7 +113,7 @@ function countries() {
     ];
 }
 
-var filterParams = { values: countries() };
+var filterParams = {values: countries()};
 var columnDefs = [
     // this row just shows the row index, doesn't use any data from the row
     {
@@ -126,7 +126,7 @@ var columnDefs = [
         sortable: false,
         suppressMenu: true
     },
-    { headerName: 'Athlete', field: 'athlete', suppressMenu: true },
+    {headerName: 'Athlete', field: 'athlete', suppressMenu: true},
     {
         field: 'age',
         filter: 'agNumberColumnFilter',
@@ -142,14 +142,14 @@ var columnDefs = [
     {
         field: 'year',
         filter: 'agSetColumnFilter',
-        filterParams: { values: ['2000', '2004', '2008', '2012'] }
+        filterParams: {values: ['2000', '2004', '2008', '2012']}
     },
-    { field: 'date' },
-    { field: 'sport', suppressMenu: true },
-    { field: 'gold', suppressMenu: true },
-    { field: 'silver', suppressMenu: true },
-    { field: 'bronze', suppressMenu: true },
-    { field: 'total', suppressMenu: true }
+    {field: 'date'},
+    {field: 'sport', suppressMenu: true},
+    {field: 'gold', suppressMenu: true},
+    {field: 'silver', suppressMenu: true},
+    {field: 'bronze', suppressMenu: true},
+    {field: 'total', suppressMenu: true}
 
 ];
 
@@ -163,7 +163,7 @@ var gridOptions = {
         floatingFilter: true,
     },
     components: {
-        loadingRenderer: function(params) {
+        loadingRenderer: function (params) {
             if (params.value !== undefined) {
                 return params.value;
             } else {
@@ -181,7 +181,7 @@ var gridOptions = {
     pagination: true,
     paginationAutoPageSize: true,
     // debug: true,
-    getRowNodeId: function(item) {
+    getRowNodeId: function (item) {
         return item.id;
     }
 };
@@ -197,7 +197,7 @@ function sortData(sortModel, data) {
     }
     // do an in memory sort of the data, across all the fields
     var resultOfSort = data.slice();
-    resultOfSort.sort(function(a, b) {
+    resultOfSort.sort(function (a, b) {
         for (var k = 0; k < sortModel.length; k++) {
             var sortColModel = sortModel[k];
             var valueA = a[sortColModel.colId];
@@ -270,22 +270,22 @@ function filterData(filterModel, data) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' }).then(function(data) {
-        data.forEach(function(data, index) {
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json').then(response => response.json()).then(function (data) {
+        data.forEach(function (data, index) {
             data.id = 'R' + (index + 1);
         });
 
         var dataSource = {
             rowCount: null, // behave as infinite scroll
-            getRows: function(params) {
+            getRows: function (params) {
                 console.log('asking for ' + params.startRow + ' to ' + params.endRow);
                 // At this point in your code, you would call the server, using $http if in AngularJS 1.x.
                 // To make the demo look real, wait for 500ms before returning
-                setTimeout(function() {
+                setTimeout(function () {
                     // take a slice of the total rows
                     var dataAfterSortingAndFiltering = sortAndFilter(data, params.sortModel, params.filterModel);
                     var rowsThisPage = dataAfterSortingAndFiltering.slice(params.startRow, params.endRow);

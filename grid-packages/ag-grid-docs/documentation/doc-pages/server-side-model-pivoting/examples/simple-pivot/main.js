@@ -1,8 +1,8 @@
 var gridOptions = {
     columnDefs: [
-        { field: "country", rowGroup: true },
-        { field: "year", pivot: true }, // pivot on 'year'
-        { field: "total", aggFunc: 'sum' },
+        {field: "country", rowGroup: true},
+        {field: "year", pivot: true}, // pivot on 'year'
+        {field: "total", aggFunc: 'sum'},
     ],
     defaultColDef: {
         flex: 4,
@@ -26,11 +26,11 @@ var gridOptions = {
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' }).then(function(data) {
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json').then(response => response.json()).then(function (data) {
         // setup the fake server with entire dataset
         var fakeServer = new FakeServer(data);
 
@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function ServerSideDatasource(server) {
     return {
-        getRows: function(params) {
+        getRows: function (params) {
             console.log('[Datasource] - rows requested by grid: ', params.request);
 
             // get data for request from our fake server
@@ -54,10 +54,10 @@ function ServerSideDatasource(server) {
             addPivotColDefs(response, params.columnApi);
 
             // simulating real server call with a 500ms delay
-            setTimeout(function() {
+            setTimeout(function () {
                 if (response.success) {
                     // supply data to grid
-                    params.success({ rowData: response.rows, rowCount: response.lastRow });
+                    params.success({rowData: response.rows, rowCount: response.lastRow});
                 } else {
                     params.fail();
                 }
@@ -74,9 +74,9 @@ function addPivotColDefs(response, columnApi) {
     }
 
     // create colDefs
-    var pivotColDefs = response.pivotFields.map(function(field) {
+    var pivotColDefs = response.pivotFields.map(function (field) {
         var headerName = field.split('_')[0];
-        return { headerName: headerName, field: field };
+        return {headerName: headerName, field: field};
     });
 
     // supply secondary columns to the grid
