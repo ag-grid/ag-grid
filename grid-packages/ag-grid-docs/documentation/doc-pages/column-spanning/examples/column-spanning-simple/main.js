@@ -3,7 +3,7 @@ const columnDefs = [
     {field: 'age', pinned: 'left'},
     {
         field: 'country',
-        colSpan: params => {
+        colSpan: function(params) {
             const country = params.data.country;
             if (country === 'Russia') {
                 // have all Russia age columns width 2

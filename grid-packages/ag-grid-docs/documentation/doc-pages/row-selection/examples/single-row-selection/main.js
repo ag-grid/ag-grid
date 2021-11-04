@@ -1,4 +1,4 @@
-var gridOptions = {
+const gridOptions = {
     columnDefs: [
         {field: "athlete", minWidth: 150},
         {field: "age", maxWidth: 90},
@@ -20,13 +20,13 @@ var gridOptions = {
 };
 
 function onSelectionChanged() {
-    var selectedRows = gridOptions.api.getSelectedRows();
+    const selectedRows = gridOptions.api.getSelectedRows();
     document.querySelector('#selectedRows').innerHTML = selectedRows.length === 1 ? selectedRows[0].athlete : '';
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector('#myGrid');
+document.addEventListener('DOMContentLoaded', () => {
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')

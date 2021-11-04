@@ -1,4 +1,4 @@
-import { generate } from 'escodegen';
+import {generate} from 'escodegen';
 import * as esprima from 'esprima';
 import {Events} from '../../../../community-modules/core/src/ts/eventKeys';
 import {PropertyKeys} from '../../../../community-modules/core/src/ts/propertyKeys';
@@ -43,13 +43,10 @@ function nodeIsHttpOpen(node) {
         callee.property.name === 'open';
 }
 
-function nodeIsSimpleHttpRequest(node) {
+function nodeIsSimpleFetchRequest(node) {
     const calleeObject = node.expression && node.expression.callee && node.expression.callee.object;
-    const callee = calleeObject && calleeObject.callee;
-    const innerCallee = callee && callee.object;
-    const innerProperty = callee && callee.property;
-
-    return innerCallee && innerProperty && innerCallee.name == 'agGrid' && innerProperty.name == 'simpleHttpRequest';
+    const calleeName = calleeObject && calleeObject.callee && calleeObject.callee.object && calleeObject.callee.object.callee && calleeObject.callee.object.callee.name;
+    return calleeName && calleeName === 'fetch';
 }
 
 function generateWithReplacedGridOptions(node, options?) {
@@ -160,9 +157,9 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
 
     // extract the simpleHttpRequest call
     onReadyCollectors.push({
-        matches: nodeIsSimpleHttpRequest,
+        matches: nodeIsSimpleFetchRequest,
         apply: (bindings, node) => {
-            const url = node.expression.callee.object.arguments[0].properties[0].value.raw;
+            const url = node.expression.callee.object.callee.object.arguments[0].raw;
             const callback = generate(node.expression.arguments[0].body).replace(/gridOptions/g, 'params');
 
             bindings.data = {url, callback};
@@ -296,8 +293,11 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
                 }
                 if (processComponentsForVue(propertyName, exampleType, providedExamples) && node.value.type === 'ObjectExpression') {
                     for (const componentDefinition of node.value.properties) {
-                        if(componentDefinition.value.type !== 'CallExpression' && componentDefinition.value.type !== 'FunctionExpression') {
-                            bindings.components.push({name: componentDefinition.key.type === 'Identifier' ? componentDefinition.key.name : componentDefinition.key.value , value: componentDefinition.value.name});
+                        if (componentDefinition.value.type !== 'CallExpression' && componentDefinition.value.type !== 'FunctionExpression') {
+                            bindings.components.push({
+                                name: componentDefinition.key.type === 'Identifier' ? componentDefinition.key.name : componentDefinition.key.value,
+                                value: componentDefinition.value.name
+                            });
                         }
                     }
                 }
