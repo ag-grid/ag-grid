@@ -126,7 +126,6 @@ async function generateThumbnails(galleryConfig) {
 
             const url = `https://localhost:8000/example-runner/?library=charts&pageName=${options.rootPageName}&name=${name}&importType=packages&framework=javascript`;
 
-            https://localhost:8000/example-runner/?library=charts&pageName=charts-overview&name=${name}&importType=packages&framework=javascript
             await page.goto(url, { waitUntil: 'networkidle2' });
             await page.screenshot({ path: Path.join(outputDirectory, `${name}.png`) });
 
