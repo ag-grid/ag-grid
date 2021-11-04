@@ -1,7 +1,7 @@
 import { IFilterOptionDef } from '../../interfaces/iFilter';
 import { IScalarFilterParams } from './scalarFilter';
 import { ISimpleFilterParams } from './simpleFilter';
-import { every } from '../../utils/array';
+import { every, some } from '../../utils/array';
 import { _ } from '../../utils';
 
 /* Common logic for options, used by both filters and floating filters. */
@@ -37,17 +37,20 @@ export class OptionsFactory {
         this.filterOptions.forEach(filterOption => {
             if (typeof filterOption === 'string') { return; }
 
-            const requiredProperties: (keyof IFilterOptionDef)[] = ['displayKey', 'displayName', 'predicate'];
-            const propertyCheck = (key: keyof IFilterOptionDef) => {
-                if (!filterOption[key]) {
-                    console.warn(`AG Grid: ignoring FilterOptionDef as it doesn't contain a '${key}'`);
+            const requiredProperties = [['displayKey'], ['displayName'], ['predicate', 'test']];
+            const propertyCheck = (keys: [keyof IFilterOptionDef]) => {
+                if (!some(keys, (key) => filterOption[key] != null)) {
+                    console.warn(`AG Grid: ignoring FilterOptionDef as it doesn't contain one of '${keys}'`);
                     return false;
                 }
 
                 return true;
             };
 
-            if (!every(requiredProperties, propertyCheck)) { return; }
+            if (!every(requiredProperties, propertyCheck)) {
+                this.filterOptions = _.filter(this.filterOptions, (v) => v === filterOption) || [];
+                return;
+            }
 
             const { test } = filterOption;
             const mutatedFilterOptions = { ...filterOption };
