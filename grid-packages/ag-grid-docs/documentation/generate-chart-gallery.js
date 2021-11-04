@@ -120,12 +120,13 @@ async function generateThumbnails(galleryConfig) {
 
     for (let name of namesToGenerate) {
         try {
-            const browser = await puppeteer.launch({ executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome' });
+            const browser = await puppeteer.launch({ executablePath: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome', ignoreHTTPSErrors: true  });
             const page = await browser.newPage();
             await page.setViewport({ width: 800, height: 570 });
 
-            const url = `http://localhost:8000/example-runner/?library=charts&pageName=${options.rootPageName}&name=${name}&importType=packages&framework=javascript`;
+            const url = `https://localhost:8000/example-runner/?library=charts&pageName=${options.rootPageName}&name=${name}&importType=packages&framework=javascript`;
 
+            https://localhost:8000/example-runner/?library=charts&pageName=charts-overview&name=${name}&importType=packages&framework=javascript
             await page.goto(url, { waitUntil: 'networkidle2' });
             await page.screenshot({ path: Path.join(outputDirectory, `${name}.png`) });
 
