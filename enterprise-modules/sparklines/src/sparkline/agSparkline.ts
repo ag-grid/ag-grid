@@ -6,10 +6,10 @@ import { ColumnSparkline } from "./bar-column/columnSparkline";
 
 import {
     SparklineOptions,
-    HighlightStyle,
-    SparklineMarker,
-    SparklineLine,
-    Padding,
+    HighlightStyleOptions,
+    SparklineMarkerOptions,
+    SparklineLineOptions,
+    PaddingOptions,
 } from "@ag-grid-community/core";
 import { SparklineTooltip } from "./tooltip/sparklineTooltip";
 import { BarColumnLabel } from "./bar-column/barColumnSparkline";
@@ -150,14 +150,14 @@ function setValueIfPropertyExists(target: any, property: string, value: any, opt
     }
 }
 
-function initPaddingOptions(target: Padding, options: any) {
+function initPaddingOptions(target: PaddingOptions, options: any) {
     setValueIfPropertyExists(target, 'top', options.top, options);
     setValueIfPropertyExists(target, 'right', options.right, options);
     setValueIfPropertyExists(target, 'bottom', options.bottom, options);
     setValueIfPropertyExists(target, 'left', options.left, options);
 }
 
-function initMarkerOptions(target: SparklineMarker, options: any) {
+function initMarkerOptions(target: SparklineMarkerOptions, options: any) {
     setValueIfPropertyExists(target, 'enabled', options.enabled, options);
     setValueIfPropertyExists(target, 'size', options.size, options);
     setValueIfPropertyExists(target, 'shape', options.shape, options);
@@ -180,7 +180,7 @@ function initLabelOptions(target: BarColumnLabel, options: any) {
     setValueIfPropertyExists(target, 'placement', options.placement, options);
 }
 
-function initLineOptions(target: SparklineLine, options: any) {
+function initLineOptions(target: SparklineLineOptions, options: any) {
     setValueIfPropertyExists(target, 'stroke', options.stroke, options);
     setValueIfPropertyExists(target, 'strokeWidth', options.strokeWidth, options);
 }
@@ -191,7 +191,7 @@ function initAxisOptions(target: SparklineAxis, options: any) {
     setValueIfPropertyExists(target, 'strokeWidth', options.strokeWidth, options);
 }
 
-function initHighlightStyleOptions(target: HighlightStyle, options: any) {
+function initHighlightStyleOptions(target: HighlightStyleOptions, options: any) {
     setValueIfPropertyExists(target, 'fill', options.fill, options);
     setValueIfPropertyExists(target, 'size', options.size, options);
     setValueIfPropertyExists(target, 'stroke', options.stroke, options);

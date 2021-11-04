@@ -11,10 +11,10 @@
         },
         "label": {
             "description": "Configuration for the labels.",
-            "type": "SparklineLabel",
+            "type": "SparklineLabelOptions",
             "more": {
-                "name": "SparklineLabel",
-                "url": "/sparklines-bar-customisation/#sparklinelabel"
+                "name": "SparklineLabelOptions",
+                "url": "/sparklines-bar-customisation/#sparklinelabeloptions"
             }
         }
     },
@@ -40,7 +40,7 @@
             "default": 1
         }
     },
-    "SparklineLabel": {
+    "SparklineLabelOptions": {
         "enabled": {
             "description": "Set to true to enable labels.",
             "type": "boolean",

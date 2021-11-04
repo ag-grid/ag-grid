@@ -7646,10 +7646,10 @@
     "type": {
       "xKey?": "string",
       "yKey?": "string",
-      "padding?": "Padding",
+      "padding?": "PaddingOptions",
       "axis?": "SparklineAxisOptions",
-      "highlightStyle?": "HighlightStyle",
-      "tooltip?": "SparklineTooltip"
+      "highlightStyle?": "HighlightStyleOptions",
+      "tooltip?": "SparklineTooltipOptions"
     },
     "docs": {
       "xKey?": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
@@ -7664,14 +7664,14 @@
     "meta": {},
     "type": {
       "type?": "'line'",
-      "line?": "SparklineLine",
-      "marker?": "SparklineMarker",
+      "line?": "SparklineLineOptions",
+      "marker?": "SparklineMarkerOptions",
       "xKey?": "string",
       "yKey?": "string",
-      "padding?": "Padding",
+      "padding?": "PaddingOptions",
       "axis?": "SparklineAxisOptions",
-      "highlightStyle?": "HighlightStyle",
-      "tooltip?": "SparklineTooltip"
+      "highlightStyle?": "HighlightStyleOptions",
+      "tooltip?": "SparklineTooltipOptions"
     },
     "docs": {
       "type?": "/** The type of sparklines to create, in this case it would be `'line'`. */",
@@ -7690,14 +7690,14 @@
     "type": {
       "type?": "'area'",
       "fill?": "string",
-      "line?": "SparklineLine",
-      "marker?": "SparklineMarker",
+      "line?": "SparklineLineOptions",
+      "marker?": "SparklineMarkerOptions",
       "xKey?": "string",
       "yKey?": "string",
-      "padding?": "Padding",
+      "padding?": "PaddingOptions",
       "axis?": "SparklineAxisOptions",
-      "highlightStyle?": "HighlightStyle",
-      "tooltip?": "SparklineTooltip"
+      "highlightStyle?": "HighlightStyleOptions",
+      "tooltip?": "SparklineTooltipOptions"
     },
     "docs": {
       "type?": "/** The type of sparklines to create, in this case it would be `'area'`. */",
@@ -7723,13 +7723,13 @@
       "paddingOuter?": "number",
       "valueAxisDomain?": "[number, number]",
       "formatter?": "SparklineColumnFormatter",
-      "label?": "SparklineLabel",
+      "label?": "SparklineLabelOptions",
       "xKey?": "string",
       "yKey?": "string",
-      "padding?": "Padding",
+      "padding?": "PaddingOptions",
       "axis?": "SparklineAxisOptions",
-      "highlightStyle?": "HighlightStyle",
-      "tooltip?": "SparklineTooltip"
+      "highlightStyle?": "HighlightStyleOptions",
+      "tooltip?": "SparklineTooltipOptions"
     },
     "docs": {
       "type?": "/** The type of sparklines to create, in this case it would be `'column'`. */",
@@ -7760,13 +7760,13 @@
       "paddingOuter?": "number",
       "valueAxisDomain?": "[number, number]",
       "formatter?": "SparklineBarFormatter",
-      "label?": "SparklineLabel",
+      "label?": "SparklineLabelOptions",
       "xKey?": "string",
       "yKey?": "string",
-      "padding?": "Padding",
+      "padding?": "PaddingOptions",
       "axis?": "SparklineAxisOptions",
-      "highlightStyle?": "HighlightStyle",
-      "tooltip?": "SparklineTooltip"
+      "highlightStyle?": "HighlightStyleOptions",
+      "tooltip?": "SparklineTooltipOptions"
     },
     "docs": {
       "type?": "/** The type of sparklines to create, in this case it would be `'bar'`. */",
@@ -7786,7 +7786,7 @@
       "tooltip?": "/** Configuration for the tooltips. */"
     }
   },
-  "SparklineLabel": {
+  "SparklineLabelOptions": {
     "meta": {},
     "type": {
       "enabled?": "boolean",
@@ -7819,7 +7819,7 @@
     ],
     "docs": [null, null, null, null]
   },
-  "Padding": {
+  "PaddingOptions": {
     "meta": {},
     "type": {
       "top?": "number",
@@ -7851,7 +7851,7 @@
     "meta": { "isTypeAlias": true },
     "type": "'number' | 'category' | 'time'"
   },
-  "SparklineTooltip": {
+  "SparklineTooltipOptions": {
     "meta": {},
     "type": {
       "enabled?": "boolean",
@@ -7902,7 +7902,7 @@
       "yValue": "/** The Y value of the data point. */"
     }
   },
-  "SparklineLine": {
+  "SparklineLineOptions": {
     "meta": {},
     "type": { "stroke?": "string", "strokeWidth?": "number" },
     "docs": {
@@ -7910,7 +7910,7 @@
       "strokeWidth?": "/** The thickness in pixels for the stroke of the line.\n * Default: `1` */"
     }
   },
-  "HighlightStyle": {
+  "HighlightStyleOptions": {
     "meta": {},
     "type": {
       "size?": "number",
@@ -8025,7 +8025,7 @@
       "strokeWidth?": "/** The thickness in pixels for the stroke of the individual bar. */"
     }
   },
-  "SparklineMarker": {
+  "SparklineMarkerOptions": {
     "meta": {},
     "type": {
       "enabled?": "boolean",

@@ -5,7 +5,7 @@ import { createId } from "../util/id";
 import { Padding } from '../util/padding';
 import { defaultTooltipCss } from './tooltip/defaultTooltipCss';
 import { SparklineTooltip } from './tooltip/sparklineTooltip';
-import { HighlightStyle } from "@ag-grid-community/core";
+import { HighlightStyleOptions } from "@ag-grid-community/core";
 import { isContinuous, isDate, isNumber, isString, isStringObject } from '../util/value';
 import { LinearScale } from '../scale/linearScale';
 import { TimeScale } from '../scale/timeScale';
@@ -119,7 +119,7 @@ export abstract class Sparkline extends Observable {
     protected yScale: LinearScale = new LinearScale();
 
     readonly axis = new SparklineAxis();
-    readonly highlightStyle: HighlightStyle = {
+    readonly highlightStyle: HighlightStyleOptions = {
         size: 6,
         fill: 'yellow',
         stroke: 'silver',

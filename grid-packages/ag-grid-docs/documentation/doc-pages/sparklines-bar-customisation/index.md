@@ -312,9 +312,9 @@ More advanced customisations are discussed separately in the following sections:
 
 <api-documentation source='sparklines-bar-customisation/resources/bar-sparkline-api.json' section='SparklineAxisOptions'></api-documentation>
 
-### SparklineLabel
+### SparklineLabelOptions
 
-<api-documentation source='sparklines-bar-customisation/resources/bar-sparkline-api.json' section='SparklineLabel'></api-documentation>
+<api-documentation source='sparklines-bar-customisation/resources/bar-sparkline-api.json' section='SparklineLabelOptions'></api-documentation>
 
 
 ## Next Up

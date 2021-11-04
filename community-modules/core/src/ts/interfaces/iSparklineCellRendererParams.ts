@@ -16,22 +16,22 @@ export interface BaseSparklineOptions {
      */
     yKey?: string;
     /** Configuration for the padding in pixels shown around the sparklines. */
-    padding?: Padding;
+    padding?: PaddingOptions;
     /** The options for the x-axis in the sparklines. */
     axis?: SparklineAxisOptions;
     /** The configuration for the highlighting used when the items are hovered over. */
-    highlightStyle?: HighlightStyle;
+    highlightStyle?: HighlightStyleOptions;
     /** Configuration for the tooltips. */
-    tooltip?: SparklineTooltip;
+    tooltip?: SparklineTooltipOptions;
 }
 
 export interface LineSparklineOptions extends BaseSparklineOptions {
     /** The type of sparklines to create, in this case it would be `'line'`. */
     type?: 'line';
     /** The configuration for the line. */
-    line?: SparklineLine;
+    line?: SparklineLineOptions;
     /** The configuration for the marker styles. */
-    marker?: SparklineMarker;
+    marker?: SparklineMarkerOptions;
 }
 
 export interface AreaSparklineOptions extends BaseSparklineOptions {
@@ -42,9 +42,9 @@ export interface AreaSparklineOptions extends BaseSparklineOptions {
      */
     fill?: string;
     /** The configuration for the line. */
-    line?: SparklineLine;
+    line?: SparklineLineOptions;
     /** The configuration for the marker styles. */
-    marker?: SparklineMarker;
+    marker?: SparklineMarkerOptions;
 }
 
 export interface ColumnSparklineOptions extends BaseSparklineOptions {
@@ -77,7 +77,7 @@ export interface ColumnSparklineOptions extends BaseSparklineOptions {
     /** A callback function to return format styles of type ColumnFormat, based on the data represented by individual columns. */
     formatter?: SparklineColumnFormatter;
     /** Configuration for the labels. */
-    label?: SparklineLabel;
+    label?: SparklineLabelOptions;
 }
 
 export interface BarSparklineOptions extends BaseSparklineOptions {
@@ -110,10 +110,10 @@ export interface BarSparklineOptions extends BaseSparklineOptions {
     /** A callback function to return format styles of type BarFormat, based on the data represented by individual bars. */
     formatter?: SparklineBarFormatter;
     /** Configuration for the labels. */
-    label?: SparklineLabel;
+    label?: SparklineLabelOptions;
 }
 
-export interface SparklineLabel {
+export interface SparklineLabelOptions {
     /** Set to true to enable labels. */
     enabled?: boolean;
     /** Set size of the font. */
@@ -144,7 +144,7 @@ export enum BarColumnLabelPlacement {
     OutsideEnd = 'outsideEnd',
 }
 
-export interface Padding {
+export interface PaddingOptions {
     /** The number of pixels of padding at the top of the sparkline area.
      * Default: `3`
      */
@@ -180,7 +180,7 @@ export interface SparklineAxisOptions {
 
 export type AxisType = 'number' | 'category' | 'time';
 
-export interface SparklineTooltip {
+export interface SparklineTooltipOptions {
     /** Set to false to disable tooltips. */
     enabled?: boolean;
     /** The element to place the tooltip into. This can be used to confine the tooltip to a specific area which may be outside of the sparkline grid cell. */
@@ -215,7 +215,7 @@ export interface TooltipRendererParams {
     yValue: any;
 }
 
-export interface SparklineLine {
+export interface SparklineLineOptions {
     /** The CSS colour value for the line.
      *  Default: `'rgb(124, 181, 236)'`
      */
@@ -226,7 +226,7 @@ export interface SparklineLine {
     strokeWidth?: number;
 }
 
-export interface HighlightStyle {
+export interface HighlightStyleOptions {
     /** The width in pixels of the markers when hovered over. This is only for the Line and Area sparklines as Column and Bar sparklines do not have markers.
      * Default: `6`
      */
@@ -322,7 +322,7 @@ export interface BarFormat {
     strokeWidth?: number;
 }
 
-export interface SparklineMarker {
+export interface SparklineMarkerOptions {
     /** By default this is set to `true` whilst marker size is set to `0`, which means the markers are present but not visible.
      * Default: `true`
      */
