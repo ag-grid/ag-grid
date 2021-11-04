@@ -1,7 +1,7 @@
 var columnDefs = [
-    { field: "Month", width: 150, chartDataType: 'category' },
-    { field: "Sunshine (hours)", chartDataType: 'series' },
-    { field: "Rainfall (mm)", chartDataType: 'series' }
+    {field: "Month", width: 150, chartDataType: 'category'},
+    {field: "Sunshine (hours)", chartDataType: 'series'},
+    {field: "Rainfall (mm)", chartDataType: 'series'}
 ];
 
 var gridOptions = {
@@ -40,12 +40,12 @@ function onChartDestroyed(event) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/weather-se-england.json' })
-        .then(function(data) {
+    fetch('https://www.ag-grid.com/example-assets/weather-se-england.json').then(response => response.json())
+        .then(function (data) {
             gridOptions.api.setRowData(data);
         });
 });

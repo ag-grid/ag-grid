@@ -1,8 +1,8 @@
 var columnDefs = [
-    { field: "employeeId", hide: true },
-    { field: "employeeName", hide: true },
-    { field: "jobTitle" },
-    { field: "employmentType" }
+    {field: "employeeId", hide: true},
+    {field: "employeeName", hide: true},
+    {field: "jobTitle"},
+    {field: "employmentType"}
 ];
 
 var gridOptions = {
@@ -14,7 +14,7 @@ var gridOptions = {
     autoGroupColumnDef: {
         field: 'employeeName',
         cellRendererParams: {
-            innerRenderer: function(params) {
+            innerRenderer: function (params) {
                 // display employeeName rather than group key (employeeId)
                 return params.data.employeeName;
             }
@@ -25,26 +25,26 @@ var gridOptions = {
     treeData: true,
     columnDefs: columnDefs,
     animateRows: true,
-    isServerSideGroupOpenByDefault: function(params) {
+    isServerSideGroupOpenByDefault: function (params) {
         // open first two levels by default
         return params.rowNode.level < 2;
     },
-    isServerSideGroup: function(dataItem) {
+    isServerSideGroup: function (dataItem) {
         // indicate if node is a group
         return dataItem.group;
     },
-    getServerSideGroupKey: function(dataItem) {
+    getServerSideGroupKey: function (dataItem) {
         // specify which group key to use
         return dataItem.employeeId;
     }
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/small-tree-data.json' }).then(function(data) {
+    fetch('https://www.ag-grid.com/example-assets/small-tree-data.json').then(response => response.json()).then(function (data) {
         var fakeServer = createFakeServer(data);
         var datasource = createServerSideDatasource(fakeServer);
         gridOptions.api.setServerSideDatasource(datasource);
@@ -56,10 +56,10 @@ function createFakeServer(fakeServerData) {
         this.data = allData;
     }
 
-    FakeServer.prototype.getData = function(request) {
+    FakeServer.prototype.getData = function (request) {
         function extractRowsFromData(groupKeys, data) {
             if (groupKeys.length === 0) {
-                return data.map(function(d) {
+                return data.map(function (d) {
                     return {
                         group: !!d.children,
                         employeeId: d.employeeId,
@@ -89,7 +89,7 @@ function createServerSideDatasource(fakeServer) {
         this.fakeServer = fakeServer;
     }
 
-    ServerSideDatasource.prototype.getRows = function(params) {
+    ServerSideDatasource.prototype.getRows = function (params) {
         console.log('ServerSideDatasource.getRows: params = ', params);
 
         var allRows = this.fakeServer.getData(params.request);
@@ -97,10 +97,10 @@ function createServerSideDatasource(fakeServer) {
         var request = params.request;
         var doingInfinite = request.startRow != null && request.endRow != null;
         var result = doingInfinite ?
-            { rowData: allRows.slice(request.startRow, request.endRow), rowCount: allRows.length } :
-            { rowData: allRows };
+            {rowData: allRows.slice(request.startRow, request.endRow), rowCount: allRows.length} :
+            {rowData: allRows};
         console.log('getRows: result = ', result);
-        setTimeout(function() {
+        setTimeout(function () {
             params.success(result);
         }, 200);
     };

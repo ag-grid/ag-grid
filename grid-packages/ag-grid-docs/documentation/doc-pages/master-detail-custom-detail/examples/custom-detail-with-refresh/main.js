@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({url: 'https://www.ag-grid.com/example-assets/master-detail-data.json'}).then(function (data) {
+    fetch('https://www.ag-grid.com/example-assets/master-detail-data.json').then(response => response.json()).then(function (data) {
         allRowData = data;
         gridOptions.api.setRowData(allRowData);
     });

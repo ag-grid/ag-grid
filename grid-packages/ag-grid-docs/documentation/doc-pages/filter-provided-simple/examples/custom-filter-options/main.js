@@ -114,7 +114,7 @@ var equalsFilterParams = {
             numberOfInputs: 2,
         }
     ],
-    comparator: function(filterLocalDateAtMidnight, cellValue) {
+    comparator: function (filterLocalDateAtMidnight, cellValue) {
         var dateAsString = cellValue;
         if (dateAsString == null) return -1;
         var dateParts = dateAsString.split("/");
@@ -171,10 +171,10 @@ var columnDefs = [
         field: "country",
         filterParams: notEqualsFilterParams
     },
-    { field: "gold", filter: 'agNumberColumnFilter' },
-    { field: "silver", filter: 'agNumberColumnFilter' },
-    { field: "bronze", filter: 'agNumberColumnFilter' },
-    { field: "total", filter: false },
+    {field: "gold", filter: 'agNumberColumnFilter'},
+    {field: "silver", filter: 'agNumberColumnFilter'},
+    {field: "bronze", filter: 'agNumberColumnFilter'},
+    {field: "total", filter: false},
 ];
 
 var gridOptions = {
@@ -214,13 +214,13 @@ function resetState() {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/small-olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        }
+    fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json').then(response => response.json())
+        .then(function (data) {
+                gridOptions.api.setRowData(data);
+            }
         );
 });

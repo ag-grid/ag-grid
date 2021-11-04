@@ -1,33 +1,35 @@
 var gridOptions = {
     masterDetail: true,
-    isRowMaster: function(dataItem) {
+    isRowMaster: function (dataItem) {
         return dataItem ? dataItem.callRecords.length > 0 : false;
     },
     columnDefs: [
         // group cell renderer needed for expand / collapse icons
-        { field: 'name', cellRenderer: 'agGroupCellRenderer' },
-        { field: 'account' },
-        { field: 'calls' },
-        { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" }
+        {field: 'name', cellRenderer: 'agGroupCellRenderer'},
+        {field: 'account'},
+        {field: 'calls'},
+        {field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'"}
     ],
     defaultColDef: {
         flex: 1
     },
-    getRowNodeId: function(data) { return data.account; },
+    getRowNodeId: function (data) {
+        return data.account;
+    },
     detailCellRendererParams: {
         detailGridOptions: {
             columnDefs: [
-                { field: 'callId' },
-                { field: 'direction' },
-                { field: 'number', minWidth: 150 },
-                { field: 'duration', valueFormatter: "x.toLocaleString() + 's'" },
-                { field: 'switchCode', minWidth: 150 }
+                {field: 'callId'},
+                {field: 'direction'},
+                {field: 'number', minWidth: 150},
+                {field: 'duration', valueFormatter: "x.toLocaleString() + 's'"},
+                {field: 'switchCode', minWidth: 150}
             ],
             defaultColDef: {
                 flex: 1
             },
         },
-        getDetailRowData: function(params) {
+        getDetailRowData: function (params) {
             params.successCallback(params.data.callRecords);
         }
     },
@@ -36,14 +38,16 @@ var gridOptions = {
 
 function onFirstDataRendered(params) {
     // arbitrarily expand a row for presentational purposes
-    setTimeout(function() { params.api.getDisplayedRowAtIndex(1).setExpanded(true); }, 0);
+    setTimeout(function () {
+        params.api.getDisplayedRowAtIndex(1).setExpanded(true);
+    }, 0);
 }
 
 function onBtClearMilaCalls() {
     var milaSmithRowNode = gridOptions.api.getRowNode('177001');
     var milaSmithData = milaSmithRowNode.data;
     milaSmithData.callRecords = [];
-    gridOptions.api.applyTransaction({ update: [milaSmithData] });
+    gridOptions.api.applyTransaction({update: [milaSmithData]});
 }
 
 function onBtSetMilaCalls() {
@@ -64,15 +68,15 @@ function onBtSetMilaCalls() {
         "direction": "In",
         "number": "(02) 32367069"
     }];
-    gridOptions.api.applyTransaction({ update: [milaSmithData] });
+    gridOptions.api.applyTransaction({update: [milaSmithData]});
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/master-detail-dynamic-data.json' }).then(function(data) {
+    fetch('https://www.ag-grid.com/example-assets/master-detail-dynamic-data.json').then(response => response.json()).then(function (data) {
         gridOptions.api.setRowData(data);
     });
 });
