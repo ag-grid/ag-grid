@@ -249,15 +249,6 @@ export class UserComponentFactory extends BeanStub {
     }
 
     // used by Floating Filter
-    public createUserComponentFromConcreteClass(CompClass: any, agGridParams: any): any {
-        const internalComponent = new CompClass();
-
-        this.initComponent(internalComponent, agGridParams);
-
-        return internalComponent;
-    }
-
-    // used by Floating Filter
     public mergeParamsWithApplicationProvidedParams(
         defObject: DefinitionObject,
         propertyName: string,

@@ -1,6 +1,7 @@
 import { BeanStub } from "../../context/beanStub";
 import { Autowired, Bean, PostConstruct } from "../../context/context";
 import { GridOptions } from "../../entities/gridOptions";
+import { ReadOnlyFloatingFilter } from "../../filter/floating/provided/readOnlyFloatingFilter";
 import { DateFilter } from "../../filter/provided/date/dateFilter";
 import { DateFloatingFilter } from "../../filter/provided/date/dateFloatingFilter";
 import { DefaultDateComponent } from "../../filter/provided/date/defaultDateComponent";
@@ -58,7 +59,8 @@ export class UserComponentRegistry extends BeanStub {
         agTextColumnFloatingFilter: TextFloatingFilter,
         agNumberColumnFloatingFilter: NumberFloatingFilter,
         agDateColumnFloatingFilter: DateFloatingFilter,
-
+        agReadOnlyFloatingFilter: ReadOnlyFloatingFilter,
+        
         // renderers
         agAnimateShowChangeCellRenderer: AnimateShowChangeCellRenderer,
         agAnimateSlideCellRenderer: AnimateSlideCellRenderer,

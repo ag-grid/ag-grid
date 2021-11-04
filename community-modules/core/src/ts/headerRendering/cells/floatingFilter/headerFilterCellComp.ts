@@ -60,7 +60,14 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
 
     @PostConstruct
     private postConstruct(): void {
+
+        const compProxy: IHeaderFilterCellComp = {
+        };
+
+        this.ctrl.setComp(compProxy, this.getGui());
+
         this.setupFloatingFilter();
+        
         this.setupWidth();
         this.setupLeftPositioning();
         this.setupColumnHover();
@@ -77,11 +84,6 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
         ));
 
         this.addManagedListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
-
-        const compProxy: IHeaderFilterCellComp = {
-        };
-
-        this.ctrl.setComp(compProxy, this.getGui());
     }
 
     public getColumn(): Column {
@@ -163,9 +165,10 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
 
         if ((!colDef.filter || !colDef.floatingFilter) &&  (!colDef.filterFramework || !colDef.floatingFilterComponentFramework)) { return; }
 
-        this.floatingFilterCompPromise = this.getFloatingFilterInstance();
+        const promise = this.getFloatingFilterInstance();
+        if (!promise) { return; }
 
-        if (!this.floatingFilterCompPromise) { return; }
+        this.floatingFilterCompPromise = promise;
 
         this.floatingFilterCompPromise.then(compInstance => {
             if (compInstance) {
@@ -281,9 +284,13 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
 
     private getFloatingFilterInstance(): AgPromise<IFloatingFilterComp> | null {
         const colDef = this.column.getColDef();
-        const defaultFloatingFilterType = HeaderFilterCellComp.getDefaultFloatingFilterType(colDef);
         const filterParams = this.filterManager.createFilterParams(this.column, colDef);
         const finalFilterParams = this.userComponentFactory.mergeParamsWithApplicationProvidedParams(colDef, 'filter', filterParams);
+
+        let defaultFloatingFilterType = HeaderFilterCellComp.getDefaultFloatingFilterType(colDef);
+        if (defaultFloatingFilterType==null) {
+            defaultFloatingFilterType = 'agReadOnlyFloatingFilter';
+        }
 
         const params: IFloatingFilterParams = {
             api: this.gridApi,
@@ -301,14 +308,8 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
         this.suppressFilterButton = colDef.floatingFilterComponentParams ? !!colDef.floatingFilterComponentParams.suppressFilterButton : false;
 
         const compDetails = this.userComponentFactory.getFloatingFilterCompDetails(colDef, params, defaultFloatingFilterType);
-        let promise = compDetails ? compDetails.newAgStackInstance() : undefined;
-
-        if (!promise) {
-            const compInstance =
-                this.userComponentFactory.createUserComponentFromConcreteClass(ReadOnlyFloatingFilter, params);
-
-            promise = AgPromise.resolve(compInstance);
-        }
+        // because we are providing defaultFloatingFilterType, we know it will never be undefined;
+        let promise = compDetails!.newAgStackInstance();
 
         return promise;
     }

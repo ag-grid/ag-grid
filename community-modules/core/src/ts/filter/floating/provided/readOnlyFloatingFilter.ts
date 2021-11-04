@@ -9,6 +9,7 @@ import { ColumnModel } from '../../../columns/columnModel';
 // they can provide a getModelAsString() method on the filter instead. this class just displays
 // the string returned from getModelAsString()
 export class ReadOnlyFloatingFilter extends Component implements IFloatingFilterComp {
+
     @RefSelector('eFloatingFilterText') private eFloatingFilterText: AgInputTextField;
     @Autowired('columnModel') private columnModel: ColumnModel;
 
