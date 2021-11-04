@@ -10,9 +10,7 @@ export const showJsComp = (
     const doNothing = !compDetails || compDetails.componentFromFramework;
     if (doNothing) { return; }
 
-    const callCompFactory = (compFactory: UserComponentFactory) => compFactory.createInstanceFromCompDetails(compDetails);
-
-    const comp = createJsComp(context, callCompFactory) as ICellRendererComp;
+    const comp = createJsComp(compDetails) as ICellRendererComp;
 
     if (!comp) { return; }
 
@@ -49,14 +47,8 @@ const setRef = (ref: MutableRefObject<any> | ((ref: any)=>void) | undefined, val
     }
 };
 
-export const createJsComp = (
-    context: Context,
-    callCompFactory: (compFactory: UserComponentFactory) => AgPromise<IComponent<any>> | null
-): any => {
-
-    const compFactory = context.getBean('userComponentFactory') as UserComponentFactory;
-    const promise = callCompFactory(compFactory);
+export const createJsComp = (compDetails: UserCompDetails): any => {
+    const promise = compDetails.newJsInstance();
     if (!promise) { return; }
-
     return promise.resolveNow(null, x => x); // js comps are never async
 };

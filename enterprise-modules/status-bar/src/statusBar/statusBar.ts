@@ -60,7 +60,9 @@ export class StatusBar extends Component {
                 context: this.gridOptionsWrapper.getContext()
             };
 
-            const promise = this.userComponentFactory.newStatusPanelComponent(componentConfig, params)!;
+            const compDetails = this.userComponentFactory.getStatusPanelCompDetails(componentConfig, params);
+            const promise = compDetails.newJsInstance();
+            
             if (!promise) { return; }
 
             componentDetails.push({

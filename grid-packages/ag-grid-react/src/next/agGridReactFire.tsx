@@ -1,10 +1,13 @@
-import React, { Component } from 'react';
-import { _, ColumnApi, ComponentUtil, Context, GridApi, GridCoreCreator, GridOptions, GridParams } from 'ag-grid-community';
+import { BaseComponentWrapper, ColumnApi, ComponentType, ComponentUtil, Context, FrameworkComponentWrapper, GridApi, GridCoreCreator, GridOptions, GridParams, IComponent, IFilter, IFilterParams, WrappableInterface, _ } from 'ag-grid-community';
+import React, { Component, ReactPortal } from 'react';
 import { AgGridColumn } from '../agGridColumn';
 import { ChangeDetectionService, ChangeDetectionStrategyType } from '../changeDetectionService';
 import { AgReactUiProps } from '../interfaces';
-import { ReactFrameworkOverrides } from './reactFrameworkOverrides';
+import { NewReactComponent } from '../newReactComponent';
+import { PortalManager } from '../portalManager';
+import { ReactComponent, IPortalManager } from '../reactComponent';
 import GridComp from './gridComp';
+import { ReactFrameworkOverrides } from './reactFrameworkOverrides';
 
 export class AgGridReactFire extends Component<AgReactUiProps, { context: Context | undefined }> {
 
@@ -17,15 +20,19 @@ export class AgGridReactFire extends Component<AgReactUiProps, { context: Contex
     private changeDetectionService = new ChangeDetectionService();
     private eGui = React.createRef<HTMLDivElement>();
 
+    private portalManager: PortalManager;
+
     constructor(public props: any) {
         super(props);
         this.state = {context: undefined};
+        this.portalManager = new PortalManager(this, props.componentWrappingElement, props.maxComponentCreationTimeMs);
     }
 
     public render() {
         return (
             <div style={ this.createStyleForDiv() } className={ this.props.className } ref={ this.eGui }>
                 { this.state.context && <GridComp context={ this.state.context }/> }
+                { this.portalManager.getPortals() }
             </div>
         );
     }
@@ -41,10 +48,9 @@ export class AgGridReactFire extends Component<AgReactUiProps, { context: Contex
 
         const modules = this.props.modules || [];
         const gridParams: GridParams = {
-            // providedBeanInstances: {
-            //     agGridReact: this,
-            //     frameworkComponentWrapper: new ReactFrameworkComponentWrapper(this)
-            // },
+            providedBeanInstances: {
+                frameworkComponentWrapper: new ReactFrameworkComponentWrapper(this.portalManager)
+            },
             modules,
             frameworkOverrides: new ReactFrameworkOverrides()
         };
@@ -181,5 +187,19 @@ export class AgGridReactFire extends Component<AgReactUiProps, { context: Contex
     private isImmutableDataActive() {
         return (this.props.deltaRowDataMode || this.props.immutableData) ||
             (this.props.gridOptions && (this.props.gridOptions.deltaRowDataMode || this.props.gridOptions.immutableData));
+    }
+}
+
+class ReactFrameworkComponentWrapper extends BaseComponentWrapper<WrappableInterface> implements FrameworkComponentWrapper {
+
+    private readonly parent: IPortalManager;    
+
+    constructor(parent: IPortalManager) {
+        super();
+        this.parent = parent;
+    }
+
+    createWrapper(UserReactComponent: { new(): any; }, componentType: ComponentType): WrappableInterface {
+        return new NewReactComponent(UserReactComponent, this.parent, componentType);
     }
 }

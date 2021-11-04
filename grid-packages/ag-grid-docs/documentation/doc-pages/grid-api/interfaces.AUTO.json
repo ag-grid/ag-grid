@@ -85,7 +85,8 @@
       "componentClass": "any",
       "componentFromFramework": "boolean",
       "params": "any",
-      "type": "ComponentType"
+      "type": "ComponentType",
+      "newJsInstance": "(defaultComponentName?: string | null) => AgPromise<any> | null"
     }
   },
   "RegisteredComponent": {

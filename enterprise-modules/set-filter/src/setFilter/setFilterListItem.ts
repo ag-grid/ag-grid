@@ -115,8 +115,9 @@ export class SetFilterListItem extends Component {
     }
 
     private renderCell(params: any): void {
-        const cellRendererPromise = this.userComponentFactory.newSetFilterCellRenderer(this.params, params);
-
+        const compDetails = this.userComponentFactory.getSetFilterCellRendererDetails(this.params, params);
+        const cellRendererPromise = compDetails ? compDetails.newJsInstance() : undefined;
+        
         if (cellRendererPromise == null) {
             const valueToRender = params.valueFormatted == null ? params.value : params.valueFormatted;
 

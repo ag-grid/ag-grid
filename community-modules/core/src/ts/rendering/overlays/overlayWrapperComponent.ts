@@ -70,21 +70,27 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     public showLoadingOverlay(): void {
         if (this.gridOptionsWrapper.isSuppressLoadingOverlay()) { return; }
 
-        const workItem = this.userComponentFactory.newLoadingOverlayComponent({
+        const params = {
             api: this.gridOptionsWrapper.getApi()!
-        });
+        };
 
-        this.showOverlay(workItem, LoadingType.Loading);
+        const compDetails = this.userComponentFactory.getLoadingOverlayCompDetails(params);
+        const promise = compDetails.newJsInstance();
+
+        this.showOverlay(promise, LoadingType.Loading);
     }
 
     public showNoRowsOverlay(): void {
         if (this.gridOptionsWrapper.isSuppressNoRowsOverlay()) { return; }
 
-        const workItem = this.userComponentFactory.newNoRowsOverlayComponent({
+        const params = {
             api: this.gridOptionsWrapper.getApi()!
-        });
+        };
 
-        this.showOverlay(workItem, LoadingType.NoRows);
+        const compDetails = this.userComponentFactory.getNoRowsOverlayCompDetails(params);        
+        const promise = compDetails.newJsInstance();
+
+        this.showOverlay(promise, LoadingType.NoRows);
     }
 
     private showOverlay(workItem: AgPromise<ILoadingOverlayComp | INoRowsOverlayComp> | null, type: LoadingType): void {

@@ -1,15 +1,23 @@
 import { createElement, ReactPortal } from 'react';
 import { createPortal } from 'react-dom';
-import { AgPromise } from 'ag-grid-community';
-import { ReactComponent } from './reactComponent';
+import { AgPromise, ComponentType } from 'ag-grid-community';
+import { IPortalManager, ReactComponent } from './reactComponent';
 import { renderToStaticMarkup } from 'react-dom/server';
 import generateNewKey from './keyGenerator';
+import { AgGridReactLegacy } from './agGridReactLegacy';
 
 export class LegacyReactComponent extends ReactComponent {
     static SLOW_RENDERING_THRESHOLD = 3;
 
     private staticMarkup: HTMLElement | null | string = null;
     private staticRenderTime: number = 0;
+
+    private parentComponent: AgGridReactLegacy;
+
+    constructor(reactComponent: any, parentComponent: AgGridReactLegacy, portalManager: IPortalManager, componentType: ComponentType) {
+        super(reactComponent, portalManager, componentType);
+        this.parentComponent = parentComponent;
+    }
 
     public init(params: any): AgPromise<void> {
         this.eParentElement = this.createParentElement(params);
@@ -38,7 +46,7 @@ export class LegacyReactComponent extends ReactComponent {
         );
 
         this.portal = portal;
-        this.parentComponent.mountReactPortal(portal, this, (value: any) => {
+        this.portalManager.mountReactPortal(portal, this, (value: any) => {
             resolve(value);
 
             // functional/stateless components have a slightly different lifecycle (no refs) so we'll clean them up

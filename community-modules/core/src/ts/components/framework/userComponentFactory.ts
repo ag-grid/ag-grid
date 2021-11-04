@@ -1,24 +1,27 @@
+import { BeanStub } from "../../context/beanStub";
 import { Autowired, Bean, Optional } from "../../context/context";
+import { CellEditorSelectorFunc, CellRendererSelectorFunc, ColDef, ColGroupDef } from "../../entities/colDef";
 import { GridOptions } from "../../entities/gridOptions";
-import { FrameworkComponentWrapper } from "./frameworkComponentWrapper";
-import { ColDef, ColGroupDef, CellEditorSelectorFunc, CellRendererSelectorFunc, CellEditorSelectorResult } from "../../entities/colDef";
-import { UserComponentRegistry } from "./userComponentRegistry";
+import { ToolPanelDef } from "../../entities/sideBar";
+import { IFloatingFilterParams } from "../../filter/floating/floatingFilter";
+import { IHeaderParams } from "../../headerRendering/cells/column/headerComp";
+import { IHeaderGroupParams } from "../../headerRendering/cells/columnGroup/headerGroupComp";
+import { ICellEditorParams } from "../../interfaces/iCellEditor";
+import { IFilterDef, IFilterParams } from "../../interfaces/iFilter";
+import { IRichCellEditorParams } from "../../interfaces/iRichCellEditorParams";
+import { ISetFilterParams } from "../../interfaces/iSetFilterParams";
+import { IStatusPanelParams, StatusPanelDef } from "../../interfaces/iStatusPanel";
+import { IToolPanelParams } from "../../interfaces/iToolPanel";
+import { GroupCellRendererParams } from "../../rendering/cellRenderers/groupCellRendererCtrl";
+import { ICellRendererParams, ISetFilterCellRendererParams } from "../../rendering/cellRenderers/iCellRenderer";
+import { IDateParams } from "../../rendering/dateComponent";
+import { ILoadingOverlayParams } from "../../rendering/overlays/loadingOverlayComponent";
+import { INoRowsOverlayParams } from "../../rendering/overlays/noRowsOverlayComponent";
+import { ITooltipParams } from "../../rendering/tooltipComponent";
+import { AgPromise } from "../../utils";
+import { cloneObject, mergeDeep } from '../../utils/object';
 import { AgComponentUtils } from "./agComponentUtils";
 import { ComponentMetadata, ComponentMetadataProvider } from "./componentMetadataProvider";
-import { ISetFilterParams } from "../../interfaces/iSetFilterParams";
-import { IRichCellEditorParams } from "../../interfaces/iRichCellEditorParams";
-import { ToolPanelDef } from "../../entities/sideBar";
-import { AgPromise } from "../../utils";
-import { IDateComp, IDateParams } from "../../rendering/dateComponent";
-import { ICellRendererComp, ICellRendererParams, ISetFilterCellRendererParams } from "../../rendering/cellRenderers/iCellRenderer";
-import { ILoadingOverlayComp, ILoadingOverlayParams } from "../../rendering/overlays/loadingOverlayComponent";
-import { INoRowsOverlayComp, INoRowsOverlayParams } from "../../rendering/overlays/noRowsOverlayComponent";
-import { ITooltipComp, ITooltipParams } from "../../rendering/tooltipComponent";
-import { IFilterComp, IFilterParams, IFilterDef } from "../../interfaces/iFilter";
-import { IFloatingFilterComp, IFloatingFilterParams } from "../../filter/floating/floatingFilter";
-import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor";
-import { IToolPanelComp, IToolPanelParams } from "../../interfaces/iToolPanel";
-import { IStatusPanelComp, IStatusPanelParams, StatusPanelDef } from "../../interfaces/iStatusPanel";
 import {
     CellEditorComponent,
     CellRendererComponent,
@@ -35,11 +38,8 @@ import {
     ToolPanelComponent,
     TooltipComponent
 } from "./componentTypes";
-import { BeanStub } from "../../context/beanStub";
-import { cloneObject, mergeDeep } from '../../utils/object';
-import { GroupCellRendererParams } from "../../rendering/cellRenderers/groupCellRendererCtrl";
-import { IHeaderGroupComp, IHeaderGroupParams } from "../../headerRendering/cells/columnGroup/headerGroupComp";
-import { IHeaderComp, IHeaderParams } from "../../headerRendering/cells/column/headerComp";
+import { FrameworkComponentWrapper } from "./frameworkComponentWrapper";
+import { UserComponentRegistry } from "./userComponentRegistry";
 
 export type DefinitionObject =
     GridOptions
@@ -56,17 +56,17 @@ export interface UserCompDetails {
     componentFromFramework: boolean;
     params: any;
     type: ComponentType;
+    newJsInstance: (defaultComponentName?: string | null)=> AgPromise<any> | null;
 }
 
 @Bean('userComponentFactory')
 export class UserComponentFactory extends BeanStub {
+
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;
     @Autowired('agComponentUtils') private readonly agComponentUtils: AgComponentUtils;
     @Autowired('componentMetadataProvider') private readonly componentMetadataProvider: ComponentMetadataProvider;
     @Autowired('userComponentRegistry') private readonly userComponentRegistry: UserComponentRegistry;
     @Optional('frameworkComponentWrapper') private readonly frameworkComponentWrapper: FrameworkComponentWrapper;
-
-    //////// NEW (after React UI)
 
     public getHeaderCompDetails(colDef: ColDef, params: IHeaderParams): UserCompDetails | undefined {
         return this.getCompDetails(colDef, HeaderComponent, 'agColumnHeader', params);
@@ -99,131 +99,54 @@ export class UserComponentFactory extends BeanStub {
         return this.getCompDetails(def, CellEditorComponent, 'agCellEditor', params, true);
     }
 
-    //////// OLD (before React UI)
-    public newCellRenderer(
-        def: ColDef | IRichCellEditorParams,
-        params: ICellRendererParams): AgPromise<ICellRendererComp> | null {
-        return this.lookupAndCreateComponent(def, params, CellRendererComponent, null, true);
+    // FILTER
+    public getFilterDetails(def: IFilterDef, params: IFilterParams, defaultFilter: string): UserCompDetails | undefined {
+        return this.getCompDetails(def, FilterComponent, defaultFilter, params, true);
     }
 
-    public newDateComponent(params: IDateParams): AgPromise<IDateComp> | null {
-        return this.lookupAndCreateComponent(this.gridOptions, params, DateComponent, 'agDateInput');
+    public getDateCompDetails(params: IDateParams): UserCompDetails {
+        return this.getCompDetails(this.gridOptions, DateComponent, 'agDateInput', params, true)!;
     }
 
-    public newLoadingOverlayComponent(params: ILoadingOverlayParams): AgPromise<ILoadingOverlayComp> | null {
-        return this.lookupAndCreateComponent(this.gridOptions, params, LoadingOverlayComponent, 'agLoadingOverlay');
+    public getLoadingOverlayCompDetails(params: ILoadingOverlayParams): UserCompDetails {
+        return this.getCompDetails(this.gridOptions, LoadingOverlayComponent, 'agLoadingOverlay', params, true)!;
     }
 
-    public newNoRowsOverlayComponent(params: INoRowsOverlayParams): AgPromise<INoRowsOverlayComp> | null {
-        return this.lookupAndCreateComponent(this.gridOptions, params, NoRowsOverlayComponent, 'agNoRowsOverlay');
+    public getNoRowsOverlayCompDetails(params: INoRowsOverlayParams): UserCompDetails {
+        return this.getCompDetails(this.gridOptions, NoRowsOverlayComponent, 'agNoRowsOverlay', params, true)!;
     }
 
-    public newTooltipComponent(params: ITooltipParams): AgPromise<ITooltipComp> | null {
-        return this.lookupAndCreateComponent(params.colDef!, params, TooltipComponent, 'agTooltipComponent');
+    public getTooltipCompDetails(params: ITooltipParams): UserCompDetails {
+        return this.getCompDetails(params.colDef!, TooltipComponent, 'agTooltipComponent', params, true)!;
     }
 
-    public newFilterComponent(def: IFilterDef, params: IFilterParams, defaultFilter: string): AgPromise<IFilterComp> | null {
-        return this.lookupAndCreateComponent(def, params, FilterComponent, defaultFilter, false);
+    public getSetFilterCellRendererDetails(def: ISetFilterParams, params: ISetFilterCellRendererParams): UserCompDetails | undefined {
+        return this.getCompDetails(def, CellRendererComponent, null, params);
     }
 
-    public newSetFilterCellRenderer(
-        def: ISetFilterParams, params: ISetFilterCellRendererParams): AgPromise<ICellRendererComp> | null {
-        return this.lookupAndCreateComponent(def, params, CellRendererComponent, null, true);
+    public getFloatingFilterCompDetails(def: IFilterDef, params: IFloatingFilterParams, defaultFloatingFilter: string | null):  UserCompDetails | undefined {
+        return this.getCompDetails(def, FloatingFilterComponent, defaultFloatingFilter, params);
     }
 
-    public newFloatingFilterComponent(
-        def: IFilterDef, params: IFloatingFilterParams, defaultFloatingFilter: string | null): AgPromise<IFloatingFilterComp> | null {
-        return this.lookupAndCreateComponent(def, params, FloatingFilterComponent, defaultFloatingFilter, true);
+    public getToolPanelCompDetails(toolPanelDef: ToolPanelDef, params: IToolPanelParams):  UserCompDetails {
+        return this.getCompDetails(toolPanelDef, ToolPanelComponent, null, params, true)!;
     }
 
-    public newToolPanelComponent(toolPanelDef: ToolPanelDef, params: IToolPanelParams): AgPromise<IToolPanelComp> | null {
-        return this.lookupAndCreateComponent(toolPanelDef, params, ToolPanelComponent);
+    public getStatusPanelCompDetails(def: StatusPanelDef, params: IStatusPanelParams):  UserCompDetails {
+        return this.getCompDetails(def, StatusPanelComponent, null, params, true)!;
     }
 
-    public newStatusPanelComponent(def: StatusPanelDef, params: IStatusPanelParams): AgPromise<IStatusPanelComp> | null {
-        return this.lookupAndCreateComponent(def, params, StatusPanelComponent);
-    }
 
-    private lookupComponent(defObject: DefinitionObject, type: ComponentType,
-        params: any = null, defaultComponentName?: string | null): UserCompDetails | null {
 
-        const propertyName = type.propertyName;
-
-        let paramsFromSelector: any;
-        let comp: any;
-        let frameworkComp: any;
-
-        // pull from defObject if available
-        if (defObject) {
-            let defObjectAny = defObject as any;
-
-            // if selector, use this
-            const selectorFunc: CellEditorSelectorFunc | CellRendererSelectorFunc = defObjectAny[propertyName + 'Selector'];
-            const selectorRes = selectorFunc ? selectorFunc(params) : null;
-            if (selectorRes) {
-                comp = selectorRes.component;
-                frameworkComp = selectorRes.frameworkComponent;
-                paramsFromSelector = selectorRes.params;
-            } else {
-                // if no selector, or result of selector is empty, take from defObject
-                comp = defObjectAny[propertyName];
-                frameworkComp = defObjectAny[propertyName + 'Framework'];
-            }
-
-            // for filters only, we allow 'true' for the component, which means default filter to be used
-            if (comp === true) {
-                comp = undefined;
-            }
-        }
-
-        const lookupFromRegistry = (key: string) => {
-            const item = this.userComponentRegistry.retrieve(key);
-            if (item) {
-                comp = !item.componentFromFramework ? item.component : undefined;
-                frameworkComp = item.componentFromFramework ? item.component : undefined;
-            } else {
-                comp = undefined;
-                frameworkComp = undefined;
-            }
-        };
-
-        // if compOption is a string, means we need to look the item up
-        if (typeof comp === 'string') {
-            lookupFromRegistry(comp);
-        }
-
-        // if lookup brought nothing back, and we have a default, lookup the default
-        if (comp == null && frameworkComp == null && defaultComponentName != null) {
-            lookupFromRegistry(defaultComponentName);
-        }
-
-        // if we have a comp option, and it's a function, replace it with an object equivalent adaptor
-        if (comp && !this.agComponentUtils.doesImplementIComponent(comp)) {
-            comp = this.agComponentUtils.adaptFunction(propertyName, comp);
-        }
-
-        if (!comp && !frameworkComp) {
-            return null;
-        }
-
-        return {
-            componentFromFramework: comp == null,
-            componentClass: comp ? comp : frameworkComp,
-            params: paramsFromSelector,
-            type: type
-        };
-    }
-
-    public createInstanceFromCompDetails(compDetails: UserCompDetails, defaultComponentName?: string | null): AgPromise<any> | null {
-        if (!compDetails) { return null; }
-
-        const { params, componentClass, componentFromFramework } = compDetails;
+    private newInstance(componentClass: any, componentFromFramework: boolean, params: any, type: ComponentType, defaultComponentName: string | null | undefined, masterDetail: boolean): AgPromise<any> | null {
 
         // Create the component instance
-        const instance = this.createComponentInstance(compDetails.type, defaultComponentName, componentClass, componentFromFramework);
+        const instance = this.createComponentInstance(type, defaultComponentName, componentClass, componentFromFramework);
         if (!instance) { return null; }
 
-        this.addReactHacks(params);
+        if (masterDetail) {
+            this.addMasterDetailHacks(params);
+        }
 
         const deferredInit = this.initComponent(instance, params);
 
@@ -285,54 +208,86 @@ export class UserComponentFactory extends BeanStub {
         return params;
     }
 
-    private getCompDetails(defObject: DefinitionObject, type: ComponentType, defaultName: string | null | undefined, params: any, mandatory = false): UserCompDetails | undefined {
+    private getCompDetails(defObject: DefinitionObject, type: ComponentType, defaultName: string | null | undefined, params: any, mandatory = false, masterDetail = false): UserCompDetails | undefined {
         const propName = type.propertyName;
-        const compDetails = this.lookupComponent(defObject, type, params, defaultName);
-        if (!compDetails || !compDetails.componentClass) {
+
+        const propertyName = type.propertyName;
+
+        let paramsFromSelector: any;
+        let comp: any;
+        let frameworkComp: any;
+
+        // pull from defObject if available
+        if (defObject) {
+            let defObjectAny = defObject as any;
+
+            // if selector, use this
+            const selectorFunc: CellEditorSelectorFunc | CellRendererSelectorFunc = defObjectAny[propertyName + 'Selector'];
+            const selectorRes = selectorFunc ? selectorFunc(params) : null;
+            if (selectorRes) {
+                comp = selectorRes.component;
+                frameworkComp = selectorRes.frameworkComponent;
+                paramsFromSelector = selectorRes.params;
+            } else {
+                // if no selector, or result of selector is empty, take from defObject
+                comp = defObjectAny[propertyName];
+                frameworkComp = defObjectAny[propertyName + 'Framework'];
+            }
+
+            // for filters only, we allow 'true' for the component, which means default filter to be used
+            if (comp === true) {
+                comp = undefined;
+            }
+        }
+
+        const lookupFromRegistry = (key: string) => {
+            const item = this.userComponentRegistry.retrieve(key);
+            if (item) {
+                comp = !item.componentFromFramework ? item.component : undefined;
+                frameworkComp = item.componentFromFramework ? item.component : undefined;
+            } else {
+                comp = undefined;
+                frameworkComp = undefined;
+            }
+        };
+
+        // if compOption is a string, means we need to look the item up
+        if (typeof comp === 'string') {
+            lookupFromRegistry(comp);
+        }
+
+        // if lookup brought nothing back, and we have a default, lookup the default
+        if (comp == null && frameworkComp == null && defaultName != null) {
+            lookupFromRegistry(defaultName);
+        }
+
+        // if we have a comp option, and it's a function, replace it with an object equivalent adaptor
+        if (comp && !this.agComponentUtils.doesImplementIComponent(comp)) {
+            comp = this.agComponentUtils.adaptFunction(propertyName, comp);
+        }
+
+        if (!comp && !frameworkComp) {
             if (mandatory) {
                 this.logComponentMissing(defObject, propName);
             }
-            return undefined;
+            return;
         }
 
-        const paramsMerged = this.mergeParamsWithApplicationProvidedParams(
-            defObject, propName, params, compDetails.params);
+        const paramsMerged = this.mergeParamsWithApplicationProvidedParams(defObject, propName, params, paramsFromSelector);
 
-        return { ...compDetails, params: paramsMerged };
+        const componentFromFramework = comp == null;
+        const componentClass = comp ? comp : frameworkComp;
+
+        return {
+            componentFromFramework,
+            componentClass,
+            params: paramsMerged,
+            type: type,
+            newJsInstance: (defaultCompName?: string) => this.newInstance(componentClass, componentFromFramework, paramsMerged, type, defaultCompName, masterDetail)
+        };
     }
 
-    /**
-     * This method creates a component given everything needed to guess what sort of component needs to be instantiated
-     * It takes
-     *  @param definitionObject: This is the context for which this component needs to be created, it can be gridOptions
-     *      (global) or columnDef mostly.
-     *  @param paramsFromGrid: Params to be passed to the component and passed by AG Grid. This will get merged with any params
-     *      specified by the user in the configuration
-     *  @param propertyName: The name of the property used in ag-grid as a convention to refer to the component, it can be:
-     *      'floatingFilter', 'cellRenderer', is used to find if the user is specifying a custom component
-     *  @param defaultComponentName: The actual name of the component to instantiate, this is usually the same as propertyName, but in
-     *      some cases is not, like floatingFilter, if it is the same is not necessary to specify
-     *  @param optional: Handy method to tell if this should return a component ALWAYS. if that is the case, but there is no
-     *      component found, it throws an error, by default all components are MANDATORY
-     */
-    private lookupAndCreateComponent(
-        def: DefinitionObject,
-        paramsFromGrid: any,
-        componentType: ComponentType,
-        defaultComponentName?: string | null,
-        // optional items are: FloatingFilter, CellComp (for cellRenderer)
-        optional = false
-    ): AgPromise<any> | null {
-
-        const compDetails = this.getCompDetails(
-            def, componentType, defaultComponentName, paramsFromGrid, !optional);
-
-        if (!compDetails) { return null; }
-
-        return this.createInstanceFromCompDetails(compDetails, defaultComponentName);
-    }
-
-    private addReactHacks(params: any): void {
+    private addMasterDetailHacks(params: any): void {
         // a temporary fix for AG-1574
         // AG-1715 raised to do a wider ranging refactor to improve this
         const agGridReact = this.context.getBean('agGridReact');
@@ -341,7 +296,9 @@ export class UserComponentFactory extends BeanStub {
             params.agGridReact = cloneObject(agGridReact);
         }
 
-        // AG-1716 - directly related to AG-1574 and AG-1715
+        // when we create detail grid, the detail grid needs frameworkComponentWrapper so that
+        // it created child components correctly, ie  Angular detail grid can have Angular cell renderer.
+        // this is only used by Angular and Vue, as React uses native React AG Grid detail grids
         const frameworkComponentWrapper = this.context.getBean('frameworkComponentWrapper');
 
         if (frameworkComponentWrapper) {
@@ -369,11 +326,6 @@ export class UserComponentFactory extends BeanStub {
         const jsComponent = !componentFromFramework;
         if (jsComponent) {
             return new component!();
-        }
-
-        if (!this.frameworkComponentWrapper) {
-            console.warn(`AG Grid - Because you are using our new React UI (property reactUi=true), it is not possible to use a React Component for ${componentType.propertyName}. This is work in progress and we plan to support this soon. In the meantime, please either set reactUi=false, or replace this component with one written in JavaScript.`);
-            return null;
         }
 
         // Using framework component

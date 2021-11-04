@@ -43,8 +43,7 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
     }
 
     private setUserCompDetails(details: UserCompDetails): void {
-        this.userComponentFactory.createInstanceFromCompDetails(details)!
-            .then( comp => this.afterHeaderCompCreated(comp));
+        details.newJsInstance()!.then( comp => this.afterHeaderCompCreated(comp));
     }
 
     private afterHeaderCompCreated(headerGroupComp: IHeaderGroupComp): void {

@@ -216,9 +216,10 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
             api: this.gridOptionsWrapper.getApi()
         } as ICellRendererParams;
 
-        const promise: AgPromise<ICellRendererComp> | null = this.userComponentFactory.newCellRenderer(this.params, params);
+        const compDetails = this.userComponentFactory.getCellRendererDetails(this.params, params);
+        const promise = compDetails ? compDetails.newJsInstance() : undefined;
 
-        if (_.exists(promise)) {
+        if (promise) {
             _.bindCellRendererToHtmlElement(promise, eValue);
             promise.then(renderer => {
                 this.addDestroyFunc(() => this.getContext().destroyBean(renderer));
