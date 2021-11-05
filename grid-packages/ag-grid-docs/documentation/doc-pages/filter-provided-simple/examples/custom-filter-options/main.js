@@ -41,13 +41,13 @@ var containsFilterParams = {
         {
             displayKey: 'startsA',
             displayName: 'Starts With "A"',
-            predicate: (_, cellValue) => cellValue != null && cellValue.indexOf('a') === 0,
+            predicate: (_, cellValue) => cellValue != null && cellValue.indexOf('A') === 0,
             numberOfInputs: 0
         },
         {
             displayKey: 'startsN',
             displayName: 'Starts With "N"',
-            predicate: (_, cellValue) => cellValue != null && cellValue.indexOf('n') === 0,
+            predicate: (_, cellValue) => cellValue != null && cellValue.indexOf('N') === 0,
             numberOfInputs: 0
         },
         {
