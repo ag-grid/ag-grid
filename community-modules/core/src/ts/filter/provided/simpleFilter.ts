@@ -460,43 +460,31 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     }
 
     protected isConditionVisible(position: ConditionPosition): boolean {
+        if (position === 0) { return true; } // Position 0 should always be visible.
+        if (!this.allowTwoConditions) { return false; } // Short-circuit if no tail conditions.
+
         if (this.isReadOnly()) {
             // Only display a condition when read-only if the condition is complete.
-            return position === 0 || this.isConditionUiComplete(position);
-        }
-        if (
-            this.alwaysShowBothConditions ||
-            position > 0 &&
-            this.isConditionUiComplete(position - 1) &&
-            this.allowTwoConditions
-        ) {
-            // Only display a 2nd or later condition when the previous condition is complete,
-            // multiple conditions are allowed, or we must always show all conditions.
-            return true;
+            return this.isConditionUiComplete(position);
         }
 
-        return position === 0;
+        if (this.alwaysShowBothConditions) { return true; }
+
+        // Only display a 2nd or later condition when the previous condition is complete.
+        return this.isConditionUiComplete(position - 1);
     }
 
     protected isConditionDisabled(position: ConditionPosition): boolean {
-        if (this.isReadOnly()) {
-            return true;
-        }
-        if (!this.isConditionVisible(position)) {
-            return true;
-        }
-        if (position > 0 && !this.isConditionUiComplete(position - 1)) {
-            // Only allow editing of a 2nd or later condition if the previous is complete.
-            return true;
-        }
+        if (this.isReadOnly()) { return true; } // Read-only mode trumps everything.
+        if (!this.isConditionVisible(position)) { return true; } // Invisible implies disabled.
+        if (position === 0) { return false; } // Position 0 should typically be editable.
 
-        return false;
+        // Only allow editing of a 2nd or later condition if the previous condition is complete.
+        return !this.isConditionUiComplete(position - 1);
     }
 
     protected isConditionBodyVisible(position: ConditionPosition): boolean {
-        if (!this.isConditionVisible(position)) {
-            return false;
-        }
+        if (!this.isConditionVisible(position)) { return false; }
 
         // Check that the condition needs inputs.
         const type = this.getConditionTypes()[position];
