@@ -351,24 +351,34 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     }
 
     protected updateUiVisibility(): void {
-        const isCondition2Visible = this.isCondition2Enabled();
-        const isCondition2Disabled = this.isReadOnly() || !isCondition2Visible;
-    
-        if (this.alwaysShowBothConditions) {
-            this.eJoinOperatorAnd.setDisabled(isCondition2Disabled);
-            this.eJoinOperatorOr.setDisabled(isCondition2Disabled);
-            this.eType2.setDisabled(isCondition2Disabled);
-            setDisabled(this.eCondition2Body, isCondition2Disabled);
-        } else {
-            setDisplayed(this.eJoinOperatorPanel, isCondition2Visible);
-            setDisplayed(this.eType2.getGui(), isCondition2Visible);
-            setDisplayed(this.eCondition2Body, isCondition2Visible);
-        }
+        const elementConditionGroups = [
+            [this.eType1],
+            [this.eType2, this.eJoinOperatorPanel, this.eJoinOperatorAnd, this.eJoinOperatorOr],
+        ];
+        const elementBodies = [this.eCondition1Body, this.eCondition2Body];
 
-        const readOnly = this.isReadOnly();
+        forEach(elementConditionGroups, (group, position) => {
+            const visible = this.isConditionVisible(position);
+            const disabled = this.isConditionDisabled(position);
+
+            forEach(group, (element) => {
+                if (element instanceof AgAbstractInputField || element instanceof AgSelect) {
+                    element.setDisabled(disabled);
+                    element.setDisplayed(visible);
+                } else {
+                    setDisabled(element, disabled);
+                    setDisplayed(element, visible);
+                }
+            });
+        });
+
+        forEach(elementBodies, (element, index) => {
+            setDisplayed(element, this.isConditionBodyVisible(index));
+        });
+
         this.forEachInput((element, index, position, numberOfInputs) => {
             this.setElementDisplayed(element, index < numberOfInputs);
-            this.setElementDisabled(element, readOnly || (position > 0 && isCondition2Disabled));
+            this.setElementDisabled(element, this.isConditionDisabled(position));
         });
 
         this.resetPlaceholder();
@@ -449,10 +459,49 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         });
     }
 
-    protected isCondition2Enabled(): boolean {
-        return this.allowTwoConditions && 
-            this.isConditionUiComplete(ConditionPosition.One) &&
-            (!this.isReadOnly() || this.isConditionUiComplete(ConditionPosition.Two));
+    protected isConditionVisible(position: ConditionPosition): boolean {
+        if (this.isReadOnly()) {
+            // Only display a condition when read-only if the condition is complete.
+            return position === 0 || this.isConditionUiComplete(position);
+        }
+        if (
+            this.alwaysShowBothConditions ||
+            position > 0 &&
+            this.isConditionUiComplete(position - 1) &&
+            this.allowTwoConditions
+        ) {
+            // Only display a 2nd or later condition when the previous condition is complete,
+            // multiple conditions are allowed, or we must always show all conditions.
+            return true;
+        }
+
+        return position === 0;
+    }
+
+    protected isConditionDisabled(position: ConditionPosition): boolean {
+        if (this.isReadOnly()) {
+            return true;
+        }
+        if (!this.isConditionVisible(position)) {
+            return true;
+        }
+        if (position > 0 && !this.isConditionUiComplete(position - 1)) {
+            // Only allow editing of a 2nd or later condition if the previous is complete.
+            return true;
+        }
+
+        return false;
+    }
+
+    protected isConditionBodyVisible(position: ConditionPosition): boolean {
+        if (!this.isConditionVisible(position)) {
+            return false;
+        }
+
+        // Check that the condition needs inputs.
+        const type = this.getConditionTypes()[position];
+        const numberOfInputs = this.getNumberOfInputs(type);
+        return numberOfInputs > 0;
     }
 
     // returns true if the UI represents a working filter, eg all parts are filled out.
