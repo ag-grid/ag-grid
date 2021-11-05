@@ -79,8 +79,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
     private setDetailGrid(gridOptions: GridOptions): void {
         if (!this.eDetailGrid) { return; }
 
-        // a temporary fix for AG-1574
-        // AG-1715 raised to do a wider ranging refactor to improve this
+        // AG-1715
         // this is only needed when reactUi=false, once we remove the old way
         // of doing react, and Master / Details is all native React, then we
         // can remove this code.
