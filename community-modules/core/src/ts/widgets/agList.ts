@@ -2,8 +2,8 @@ import { AgAbstractField } from "./agAbstractField";
 import { Component } from "./component";
 import { PostConstruct } from "../context/context";
 import { escapeString } from "../utils/string";
-import { addCssClass, removeCssClass } from "../utils/dom";
-import { findIndex } from "../utils/array";
+import { addCssClass, getElementSize, removeCssClass } from "../utils/dom";
+import { findIndex, forEach } from "../utils/array";
 import { KeyCode } from '../constants/keyCode';
 import { setAriaRole, setAriaSelected } from '../utils/aria';
 
@@ -18,6 +18,7 @@ export class AgList extends Component {
 
     private options: ListOption[] = [];
     private itemEls: HTMLElement[] = [];
+    private itemWidths: number[] = [];
     private highlightedEl: HTMLElement | null;
     private value: string | null;
     private displayValue: string | null;
@@ -143,6 +144,23 @@ export class AgList extends Component {
         if (idx !== -1) {
             this.highlightItem(this.itemEls[idx]);
         }
+    }
+
+    public getMaxItemWidth(): number {
+        if (this.itemWidths.length === 0) {
+            forEach(this.itemEls, (itemEl) => {
+                const spanEl = itemEl.children[0] as HTMLElement;
+
+                const itemElSize = getElementSize(itemEl);
+                const textElSize = getElementSize(spanEl);
+                const padding = itemElSize.paddingLeft + itemElSize.paddingRight;
+                const textWidth = textElSize.width;
+
+                this.itemWidths.push(Math.ceil(padding + textWidth));
+            });
+        }
+
+        return Math.max(...this.itemWidths);
     }
 
     private reset(): void {

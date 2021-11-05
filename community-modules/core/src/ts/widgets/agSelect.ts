@@ -3,7 +3,7 @@ import { AgPickerField } from "./agPickerField";
 import { ListOption, AgList } from "./agList";
 import { Autowired, PostConstruct } from "../context/context";
 import { PopupService } from "./popupService";
-import { setElementWidth, getAbsoluteWidth, getInnerHeight } from "../utils/dom";
+import { setElementWidth, getInnerHeight, getElementSize } from "../utils/dom";
 import { IAgLabel } from './agAbstractLabel';
 
 export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
@@ -78,7 +78,9 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
         }
         this.isPickerDisplayed = true;
 
-        setElementWidth(listGui, getAbsoluteWidth(this.eWrapper));
+        const listGuiSize = getElementSize(listGui);
+        const listGuiWidth = this.listComponent.getMaxItemWidth() + listGuiSize.paddingLeft + listGuiSize.paddingRight;
+        setElementWidth(listGui, listGuiWidth);
 
         listGui.style.maxHeight = getInnerHeight(this.popupService.getPopupParent()) + 'px';
         listGui.style.position = 'absolute';
