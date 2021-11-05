@@ -18,7 +18,6 @@ export class AgList extends Component {
 
     private options: ListOption[] = [];
     private itemEls: HTMLElement[] = [];
-    private itemWidths: number[] = [];
     private highlightedEl: HTMLElement | null;
     private value: string | null;
     private displayValue: string | null;
@@ -147,20 +146,20 @@ export class AgList extends Component {
     }
 
     public getMaxItemWidth(): number {
-        if (this.itemWidths.length === 0) {
-            forEach(this.itemEls, (itemEl) => {
-                const spanEl = itemEl.children[0] as HTMLElement;
+        const itemWidths: number[] = [];
 
-                const itemElSize = getElementSize(itemEl);
-                const textElSize = getElementSize(spanEl);
-                const padding = itemElSize.paddingLeft + itemElSize.paddingRight;
-                const textWidth = textElSize.width;
+        forEach(this.itemEls, (itemEl) => {
+            const spanEl = itemEl.children[0] as HTMLElement;
 
-                this.itemWidths.push(Math.ceil(padding + textWidth));
-            });
-        }
+            const itemElSize = getElementSize(itemEl);
+            const textElSize = getElementSize(spanEl);
+            const padding = itemElSize.paddingLeft + itemElSize.paddingRight;
+            const textWidth = textElSize.width;
 
-        return Math.max(...this.itemWidths);
+            itemWidths.push(Math.ceil(padding + textWidth));
+        });
+
+        return Math.max(...itemWidths);
     }
 
     private reset(): void {
