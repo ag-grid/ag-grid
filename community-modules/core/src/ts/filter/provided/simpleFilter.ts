@@ -298,6 +298,9 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         const filterOptions = this.optionsFactory.getFilterOptions();
         const eTypes = [this.eType1, this.eType2];
 
+        // Enable auto-resize of popup to fit options when displayed.
+        forEach(eTypes, (eType) => eType.setAutoSizePopupList(true));
+
         // Add specified options to all condition drop-downs.
         forEach(filterOptions, option => {
             let listOption = typeof option === 'string' ?
