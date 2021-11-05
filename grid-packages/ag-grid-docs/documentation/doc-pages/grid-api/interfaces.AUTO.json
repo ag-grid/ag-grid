@@ -8847,9 +8847,14 @@
       "value": "any",
       "valueFormatted": "any",
       "api": "GridApi",
+      "colDef?": "ColDef",
+      "column?": "Column",
+      "columnApi": "ColumnApi",
       "context": "any"
     },
     "docs": {
+      "colDef?": "/** The cell's column definition. */",
+      "column?": "/** The cell's column. */",
       "context": "/** The context as provided on `gridOptions.context` */"
     }
   },

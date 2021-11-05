@@ -15695,6 +15695,15 @@
     "value": { "type": { "returnType": "any", "optional": false } },
     "valueFormatted": { "type": { "returnType": "any", "optional": false } },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "colDef": {
+      "description": "/** The cell's column definition. */",
+      "type": { "returnType": "ColDef", "optional": true }
+    },
+    "column": {
+      "description": "/** The cell's column. */",
+      "type": { "returnType": "Column", "optional": true }
+    },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }
