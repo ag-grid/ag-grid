@@ -4,6 +4,7 @@ export interface SimpleHttpRequestParams {
     url: string;
 }
 
+/* deprecated */
 export function simpleHttpRequest(params: SimpleHttpRequestParams): AgPromise<any> {
     return new AgPromise<any>(resolve => {
         const httpRequest = new XMLHttpRequest();
