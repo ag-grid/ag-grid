@@ -79,12 +79,13 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
         }
         this.isPickerDisplayed = true;
 
+        const eWrapperWidth = getAbsoluteWidth(this.eWrapper);
         if (this.autoSizePopupList) {
             const listGuiSize = getElementSize(listGui);
             const listGuiWidth = this.listComponent.getMaxItemWidth() + listGuiSize.paddingLeft + listGuiSize.paddingRight;
-            setElementWidth(listGui, listGuiWidth);
+            setElementWidth(listGui, Math.max(listGuiWidth, eWrapperWidth));
         } else {
-            setElementWidth(listGui, getAbsoluteWidth(this.eWrapper));
+            setElementWidth(listGui, eWrapperWidth);
         }
 
         listGui.style.maxHeight = getInnerHeight(this.popupService.getPopupParent()) + 'px';
