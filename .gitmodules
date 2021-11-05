@@ -45,3 +45,6 @@
 [submodule "examples-grid/ag-grid-angular-cli-package-example"]
 	path = examples-grid/ag-grid-angular-cli-package-example
 	url = https://github.com/ag-grid/ag-grid-angular-cli-package-example.git
+[submodule "examples-grid/ag-grid-react-package-example"]
+	path = examples-grid/ag-grid-react-package-example
+	url = https://github.com/ag-grid/ag-grid-react-package-example.git
