@@ -30,17 +30,9 @@
 	path = examples-charts/ag-charts-angular-example
 	url = https://github.com/ag-grid/ag-charts-angular-example.git
 	branch = latest
-[submodule "examples-grid/ag-grid-vue-package-example"]
-	path = examples-grid/ag-grid-vue-package-example
-	url = https://github.com/seanlandsman/ag-grid-vue-package-example.git
-	branch = latest
 [submodule "examples-grid/ag-grid-react-package-example"]
 	path = examples-grid/ag-grid-react-package-example
 	url = https://github.com/seanlandsman/ag-grid-react-package-example.git
-	branch = latest
-[submodule "examples-grid/ag-grid-angular-cli-package-example"]
-	path = examples-grid/ag-grid-angular-cli-package-example
-	url = https://github.com/seanlandsman/ag-grid-angular-cli-package-example.git
 	branch = latest
 [submodule "examples-grid/ag-grid-vue3-package-example"]
 	path = examples-grid/ag-grid-vue3-package-example
