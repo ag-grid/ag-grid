@@ -46,6 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
         .then(response => response.json())
         .then(data => {
             this.onBtIncludeMedalColumns();
-            gridOptionsTop.api.setRowData(data);
+            gridOptions.api.setRowData(data);
         });
 });

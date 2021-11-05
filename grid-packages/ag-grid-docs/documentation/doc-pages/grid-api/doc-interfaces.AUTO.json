@@ -138,7 +138,7 @@
     },
     "params": { "type": { "returnType": "any", "optional": false } },
     "type": { "type": { "returnType": "ComponentType", "optional": false } },
-    "newJsInstance": {
+    "newAgStackInstance": {
       "type": {
         "arguments": { "defaultComponentName?": "string | null" },
         "returnType": "AgPromise<any> | null",

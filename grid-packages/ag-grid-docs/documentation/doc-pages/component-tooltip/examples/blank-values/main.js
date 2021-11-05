@@ -47,6 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then(response => response.json())
         .then(data => {
-            gridOptionsTop.api.setRowData(data);
+            gridOptions.api.setRowData(data);
         });
 });
