@@ -7,18 +7,16 @@ export class PieChartProxy extends PolarChartProxy {
 
     public constructor(params: ChartProxyParams) {
         super(params);
-
         this.initChartOptions();
         this.recreateChart();
     }
 
     protected createChart(): PolarChart {
-        const agChartOptions = { theme: this.chartTheme } as AgPolarChartOptions;
-        const { parentElement } = this.chartProxyParams;
-
-        agChartOptions.type = 'pie';
-
-        return AgChart.create(agChartOptions, parentElement);
+        return AgChart.create({
+            type: 'pie',
+            container: this.chartProxyParams.parentElement,
+            theme: this.chartTheme,
+        });
     }
 
     public update(params: UpdateChartParams): void {

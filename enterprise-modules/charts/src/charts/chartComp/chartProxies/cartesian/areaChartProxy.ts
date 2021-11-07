@@ -1,46 +1,32 @@
-import { AgCartesianChartOptions, ChartType, } from "@ag-grid-community/core";
-import { AgChart, AreaSeries, CartesianChart } from "ag-charts-community";
+import { ChartType, } from "@ag-grid-community/core";
+import { AgChart, AreaSeries, CartesianChart, ChartAxisPosition } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
+import { deepMerge } from "../../object";
 
 export class AreaChartProxy extends CartesianChartProxy<any> {
 
     public constructor(params: ChartProxyParams) {
         super(params);
+
+        this.xAxisType = params.grouping ? 'groupedCategory' : 'category';
+        this.yAxisType = 'number';
+
         this.initChartOptions();
         this.recreateChart();
     }
 
     protected createChart(): CartesianChart {
-        const agChartOptions = { theme: this.chartTheme } as AgCartesianChartOptions;
-        const { grouping, parentElement } = this.chartProxyParams;
-
-        agChartOptions.type = grouping ? 'groupedCategory' : 'area';
-
-        const [xAxis, yAxis] = this.getAxes();
-        const xAxisType = xAxis.type ? xAxis.type : 'category';
-        agChartOptions.axes = [
-            {
-                type: grouping ? 'groupedCategory' : xAxisType,
-                position: 'bottom',
-                paddingInner: 1,
-                paddingOuter: 0,
-                ...this.getXAxisDefaults(xAxisType, agChartOptions)
-            }, {
-                type: 'number',
-                position: 'left',
-                ...yAxis
-            }
-        ];
-
-        return AgChart.create(agChartOptions, parentElement);
+        return AgChart.create({
+            type: this.xAxisType === 'groupedCategory' ? 'groupedCategory' : 'area',
+            container: this.chartProxyParams.parentElement,
+            theme: this.chartTheme,
+            axes: this.getAxes()
+        });
     }
 
     public update(params: UpdateChartParams): void {
-        this.chartProxyParams.grouping = params.grouping;
-
-        const axisType = this.isTimeAxis(params) ? 'time' : 'category';
-        this.updateAxes(axisType);
+        this.updateAxes(params);
 
         if (this.chartType === ChartType.Area) {
             // area charts have multiple series
@@ -72,7 +58,7 @@ export class AreaChartProxy extends CartesianChartProxy<any> {
             areaSeries.strokes = strokes;
         }
 
-        this.updateLabelRotation(params.category.id, false, axisType);
+        this.updateLabelRotation(params.category.id);
     }
 
     private updateAreaChart(params: UpdateChartParams): void {
@@ -149,5 +135,21 @@ export class AreaChartProxy extends CartesianChartProxy<any> {
 
             previousSeries = areaSeries;
         });
+    }
+
+    private getAxes() {
+        const axisOptions = this.getAxesOptions();
+        return [
+            {
+                ...deepMerge(axisOptions[this.xAxisType], axisOptions[this.xAxisType].bottom),
+                type: this.xAxisType,
+                position: ChartAxisPosition.Bottom
+            },
+            {
+                ...deepMerge(axisOptions[this.yAxisType], axisOptions[this.yAxisType].left),
+                type: this.yAxisType,
+                position: ChartAxisPosition.Left
+            },
+        ];
     }
 }

@@ -1,61 +1,43 @@
 import { _, ChartType, } from "@ag-grid-community/core";
-import { AgCartesianChartOptions, AgChart, BarSeries, CartesianChart, LegendClickEvent } from "ag-charts-community";
+import {
+    AgCartesianChartOptions,
+    AgChart,
+    BarSeries,
+    CartesianChart,
+    ChartAxisPosition,
+    LegendClickEvent
+} from "ag-charts-community";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
+import { deepMerge } from "../../object";
 
 export class BarChartProxy extends CartesianChartProxy<any> {
 
     public constructor(params: ChartProxyParams) {
         super(params);
+
+        // when the standalone chart type is 'bar' - xAxis is positioned to the 'left'
+        this.xAxisType = params.grouping ? 'groupedCategory' : 'category';
+        this.yAxisType = 'number';
+
         this.initChartOptions();
         this.recreateChart();
     }
 
     protected createChart(): CartesianChart {
-        const agChartOptions = { theme: this.chartTheme } as AgCartesianChartOptions;
-        const { grouping, parentElement } = this.chartProxyParams;
+        const [isBar, isNormalised] = [this.standaloneChartType === 'bar', this.isNormalised()];
 
-        agChartOptions.type = grouping ? 'groupedCategory' : (this.standaloneChartType === 'bar' ? 'bar' : 'column');
-
-        const isColumn = this.standaloneChartType === 'column';
-        const [xAxis, yAxis] = this.getAxes();
-        agChartOptions.axes = [
-            {
-                ...(isColumn ? xAxis : yAxis),
-                position: isColumn ? 'bottom' : 'left',
-                type: grouping ? 'groupedCategory' : 'category'
-            },
-            {
-                ...(isColumn ? yAxis : xAxis),
-                position: isColumn ? 'left' : 'bottom',
-                type: 'number'
-            }
-        ];
-
-        // special handling to add a default label formatter to show '%' for normalized charts if none is provided
-        const normalised = !this.crossFiltering && _.includes([ChartType.NormalizedColumn, ChartType.NormalizedBar], this.chartType);
-        if (normalised) {
-            const numberAxis = agChartOptions.axes[1];
-            // FIXME: only update labels when no formatter is supplied
-            numberAxis.label = {...numberAxis.label, formatter: params => Math.round(params.value) + '%'};
-        }
-
-        const isGrouped = !this.crossFiltering && _.includes([ChartType.GroupedColumn, ChartType.GroupedBar], this.chartType);
-        agChartOptions.series = [{
-            ...this.chartOptions[this.standaloneChartType].series,
-            type: this.standaloneChartType,
-            grouped: isGrouped,
-            normalizedTo: normalised ? 100 : undefined,
-        }];
-
-        return AgChart.create(agChartOptions, parentElement);
+        return AgChart.create({
+            type: this.xAxisType === 'groupedCategory' ? 'groupedCategory' : isBar ? 'bar' : 'column',
+            container: this.chartProxyParams.parentElement,
+            theme: this.chartTheme,
+            axes: this.getAxes(isBar, isNormalised),
+            series: this.getSeries(isNormalised),
+        });
     }
 
     public update(params: UpdateChartParams): void {
-        this.chartProxyParams.grouping = params.grouping;
-        const isHorizontalChart = this.standaloneChartType === 'bar';
-
-        this.updateAxes('category', isHorizontalChart);
+        this.updateAxes(params);
 
         const barSeries = this.chart.series[0] as BarSeries;
         if (this.crossFiltering) {
@@ -71,7 +53,7 @@ export class BarChartProxy extends CartesianChartProxy<any> {
         barSeries.yKeys = params.fields.map(f => f.colId) as any;
         barSeries.yNames = params.fields.map(f => f.displayName!) as any;
 
-        this.updateLabelRotation(params.category.id, isHorizontalChart);
+        this.updateLabelRotation(params.category.id);
     }
 
     private updateCrossFilteringSeries(barSeries: BarSeries, params: UpdateChartParams) {
@@ -118,5 +100,44 @@ export class BarChartProxy extends CartesianChartProxy<any> {
 
         // add node click cross filtering callback to series
         barSeries.addEventListener('nodeClick', this.crossFilterCallback);
+    }
+
+    private getAxes(isBar: boolean, normalised: boolean) {
+        const axisOptions = this.getAxesOptions();
+        let axes = [
+            {
+                ...deepMerge(axisOptions[this.xAxisType], axisOptions[this.xAxisType].bottom),
+                type: this.xAxisType,
+                position: isBar ? ChartAxisPosition.Left : ChartAxisPosition.Bottom,
+            },
+            {
+                ...deepMerge(axisOptions[this.yAxisType], axisOptions[this.yAxisType].left),
+                type: this.yAxisType,
+                position: isBar ? ChartAxisPosition.Bottom : ChartAxisPosition.Left,
+            },
+        ];
+        // special handling to add a default label formatter to show '%' for normalized charts if none is provided
+        if (normalised) {
+            const numberAxis = axes[1];
+            // FIXME: only update labels when no formatter is supplied
+            numberAxis.label = {...numberAxis.label, formatter: (params: any) => Math.round(params.value) + '%'};
+        }
+        return axes;
+    }
+
+    private getSeries(normalised: boolean) {
+        const groupedCharts = [ChartType.GroupedColumn, ChartType.GroupedBar];
+        const isGrouped = !this.crossFiltering && _.includes(groupedCharts, this.chartType);
+        return [{
+            ...this.chartOptions[this.standaloneChartType].series,
+            type: this.standaloneChartType,
+            grouped: isGrouped,
+            normalizedTo: normalised ? 100 : undefined,
+        }];
+    }
+
+    private isNormalised() {
+        const normalisedCharts = [ChartType.NormalizedColumn, ChartType.NormalizedBar];
+        return !this.crossFiltering && _.includes(normalisedCharts, this.chartType);
     }
 }

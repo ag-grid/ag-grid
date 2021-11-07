@@ -30,7 +30,7 @@ export interface ChartProxyParams {
     isDarkTheme: () => boolean;
     crossFiltering: boolean;
     crossFilterCallback: (event: any, reset?: boolean) => void;
-    chartModel?: ChartModel; //TODO this is a grid object!
+    chartModel?: ChartModel;
 }
 
 export interface FieldDefinition {
