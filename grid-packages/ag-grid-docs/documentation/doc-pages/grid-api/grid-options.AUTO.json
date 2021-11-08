@@ -8,31 +8,31 @@
     "type": { "returnType": "SideBarDef | string | boolean | null" }
   },
   "suppressContextMenu": {
-    "description": "/** Set to `true` to not show the context menu. Use if you don't want to use the default 'right click' context menu. */",
+    "description": "/** Set to `true` to not show the context menu. Use if you don't want to use the default 'right click' context menu. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "preventDefaultOnContextMenu": {
-    "description": "/** When using `suppressContextMenu`, you can use the `onCellContextMenu` function to provide your own code to handle cell `contextmenu` events.\n * This flag is useful to prevent the browser from showing its default context menu. */",
+    "description": "/** When using `suppressContextMenu`, you can use the `onCellContextMenu` function to provide your own code to handle cell `contextmenu` events.\n * This flag is useful to prevent the browser from showing its default context menu.\n * Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "allowContextMenuWithControlKey": {
-    "description": "/** Allows context menu to show, even when `Ctrl` key is held down. */",
+    "description": "/** Allows context menu to show, even when `Ctrl` key is held down. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressMenuHide": {
-    "description": "/** Set to `true` to always show the column menu button, rather than only showing when the mouse is over the column header. */",
+    "description": "/** Set to `true` to always show the column menu button, rather than only showing when the mouse is over the column header. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "enableBrowserTooltips": {
-    "description": "/** Set to `true` to use the browser's default tooltip instead of using the grid's Tooltip Component */",
+    "description": "/** Set to `true` to use the browser's default tooltip instead of using the grid's Tooltip Component. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "tooltipShowDelay": {
-    "description": "/** The delay in milliseconds that it takes for tooltips to show up once an element is hovered over.\n * **Note:** This property does not work if `enableBrowserTooltips` is `true`. */",
+    "description": "/** The delay in milliseconds that it takes for tooltips to show up once an element is hovered over.\n * **Note:** This property does not work if `enableBrowserTooltips` is `true`.\n * Default: `2000` */",
     "type": { "returnType": "number" }
   },
   "tooltipMouseTrack": {
-    "description": "/** Set to `true` to have tooltips follow the cursor once they are displayed. */",
+    "description": "/** Set to `true` to have tooltips follow the cursor once they are displayed. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "popupParent": {
@@ -40,7 +40,7 @@
     "type": { "returnType": "HTMLElement" }
   },
   "copyHeadersToClipboard": {
-    "description": "/** Set to `true` to also include headers when copying to clipboard using `Ctrl + C` clipboard. */",
+    "description": "/** Set to `true` to also include headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "clipboardDeliminator": {
@@ -48,11 +48,11 @@
     "type": { "returnType": "string" }
   },
   "suppressCopyRowsToClipboard": {
-    "description": "/** Set to `true` to only have the range selection, and not row selection, copied to clipboard. */",
+    "description": "/** Set to `true` to only have the range selection, and not row selection, copied to clipboard. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressLastEmptyLineOnPaste": {
-    "description": "/** Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard. */",
+    "description": "/** Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressClipboardPaste": {
@@ -152,7 +152,7 @@
     "type": { "returnType": "boolean" }
   },
   "suppressDragLeaveHidesColumns": {
-    "description": "/** If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden. */",
+    "description": "/** If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "colResizeDefault": {
@@ -430,7 +430,7 @@
     "type": { "returnType": "boolean" }
   },
   "pagination": {
-    "description": "/** Set whether pagination is enabled. */",
+    "description": "/** Set whether pagination is enabled. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "paginationPageSize": {
@@ -498,11 +498,11 @@
     "type": { "returnType": "boolean" }
   },
   "animateRows": {
-    "description": "/** Set to `true` to enable Row Animation. */",
+    "description": "/** Set to `true` to enable Row Animation. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "enableCellChangeFlash": {
-    "description": "/** Set to `true` to have cells flash after data changes. */",
+    "description": "/** Set to `true` to have cells flash after data changes. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "cellFlashDelay": {
@@ -514,7 +514,7 @@
     "type": { "returnType": "number" }
   },
   "allowShowChangeAfterFilter": {
-    "description": "/** Set to `true` to have cells flash after data changes even when the change is due to filtering. */",
+    "description": "/** Set to `true` to have cells flash after data changes even when the change is due to filtering. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "domLayout": {
@@ -522,39 +522,39 @@
     "type": { "returnType": "string" }
   },
   "ensureDomOrder": {
-    "description": "/** When `true`, the order of rows and columns in the DOM are consistent with what is on screen. */",
+    "description": "/** When `true`, the order of rows and columns in the DOM are consistent with what is on screen. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "enableRtl": {
-    "description": "/** Set to `true` to operate the grid in RTL (Right to Left) mode. */",
+    "description": "/** Set to `true` to operate the grid in RTL (Right to Left) mode. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressColumnVirtualisation": {
-    "description": "/** Set to `true` so that the grid doesn't virtualise the columns. For example, if you have 100 columns, but only 10 visible due to scrolling, all 100 will always be rendered. */",
+    "description": "/** Set to `true` so that the grid doesn't virtualise the columns. For example, if you have 100 columns, but only 10 visible due to scrolling, all 100 will always be rendered. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressMaxRenderedRowRestriction": {
-    "description": "/** By default the grid has a limit of rendering a maximum of 500 rows at once (remember the grid only renders rows you can see, so unless your display shows more than 500 rows without vertically scrolling this will never be an issue).\n * <br />**This is only relevant if you are manually setting `rowBuffer` to a high value (rendering more rows than can be seen) or if your grid height is able to display more than 500 rows at once.** */",
+    "description": "/** By default the grid has a limit of rendering a maximum of 500 rows at once (remember the grid only renders rows you can see, so unless your display shows more than 500 rows without vertically scrolling this will never be an issue).\n * <br />**This is only relevant if you are manually setting `rowBuffer` to a high value (rendering more rows than can be seen) or if your grid height is able to display more than 500 rows at once.** \n * Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "rowDragManaged": {
-    "description": "/** Set to `true` to enable Managed Row Dragging. */",
+    "description": "/** Set to `true` to enable Managed Row Dragging. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressRowDrag": {
-    "description": "/** Set to `true` to suppress row dragging. */",
+    "description": "/** Set to `true` to suppress row dragging. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressMoveWhenRowDragging": {
-    "description": "/** Set to `true` to suppress moving rows while dragging the `rowDrag` waffle. This option highlights the position where the row will be placed and it will only move the row on mouse up. */",
+    "description": "/** Set to `true` to suppress moving rows while dragging the `rowDrag` waffle. This option highlights the position where the row will be placed and it will only move the row on mouse up. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "rowDragEntireRow": {
-    "description": "/** Set to `true` to enable clicking and dragging anywhere on the row without the need for a drag handle. */",
+    "description": "/** Set to `true` to enable clicking and dragging anywhere on the row without the need for a drag handle. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "rowDragMultiRow": {
-    "description": "/** Set to `true` to enable dragging multiple rows at the same time. */",
+    "description": "/** Set to `true` to enable dragging multiple rows at the same time. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "fullWidthCellRenderer": {
@@ -584,7 +584,7 @@
     "type": { "returnType": "RowGroupingDisplayType" }
   },
   "groupDefaultExpanded": {
-    "description": "/** If grouping, set to the number of levels to expand by default, e.g. `0` for none, `1` for first level only, etc. Set to `-1` to expand everything. */",
+    "description": "/** If grouping, set to the number of levels to expand by default, e.g. `0` for none, `1` for first level only, etc. Set to `-1` to expand everything. Default: `0` */",
     "type": { "returnType": "number" }
   },
   "autoGroupColumnDef": {
@@ -592,31 +592,31 @@
     "type": { "returnType": "ColDef" }
   },
   "groupMaintainOrder": {
-    "description": "/** When `true`, preserves the current group order when sorting on non-group columns. */",
+    "description": "/** When `true`, preserves the current group order when sorting on non-group columns. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "groupSelectsChildren": {
-    "description": "/** When `true`, if you select a group, the children of the group will also be selected. */",
+    "description": "/** When `true`, if you select a group, the children of the group will also be selected. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "groupIncludeFooter": {
-    "description": "/** If grouping, this controls whether to show a group footer when the group is expanded.\n * If `true`, then by default, the footer will contain aggregate data (if any) when shown and the header will be blank.\n * When closed, the header will contain the aggregate data regardless of this setting (as the footer is hidden anyway).\n * This is handy for 'total' rows, that are displayed below the data when the group is open, and alongside the group when it is closed. */",
+    "description": "/** If grouping, this controls whether to show a group footer when the group is expanded.\n * If `true`, then by default, the footer will contain aggregate data (if any) when shown and the header will be blank.\n * When closed, the header will contain the aggregate data regardless of this setting (as the footer is hidden anyway).\n * This is handy for 'total' rows, that are displayed below the data when the group is open, and alongside the group when it is closed.\n * Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "groupIncludeTotalFooter": {
-    "description": "/** Set to `true` to show a 'grand total' group footer across all groups. */",
+    "description": "/** Set to `true` to show a 'grand total' group footer across all groups. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "groupSuppressBlankHeader": {
-    "description": "/** If `true`, and showing footer, aggregate data will always be displayed at both the header and footer levels. This stops the possibly undesirable behaviour of the header details 'jumping' to the footer on expand. */",
+    "description": "/** If `true`, and showing footer, aggregate data will always be displayed at both the header and footer levels. This stops the possibly undesirable behaviour of the header details 'jumping' to the footer on expand. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "groupSelectsFiltered": {
-    "description": "/** If using `groupSelectsChildren`, then only the children that pass the current filter will get selected. */",
+    "description": "/** If using `groupSelectsChildren`, then only the children that pass the current filter will get selected. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "showOpenedGroup": {
-    "description": "/** Shows the open group in the group column for non-group rows. */",
+    "description": "/** Shows the open group in the group column for non-group rows. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "groupRemoveSingleChildren": {
@@ -624,15 +624,16 @@
     "type": { "returnType": "boolean" }
   },
   "groupRemoveLowestSingleChildren": {
-    "description": "/** Set to `true` to collapse lowest level groups that only have one child. */",
+    "description": "/** Set to `true` to collapse lowest level groups that only have one child. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
+  "undefined": { "type": { "returnType": "\"never\"" } },
   "groupHideOpenParents": {
-    "description": "/** Set to `true` to hide parents that are open. When used with multiple columns for showing groups, it can give a more pleasing user experience. */",
+    "description": "/** Set to `true` to hide parents that are open. When used with multiple columns for showing groups, it can give a more pleasing user experience. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "rowGroupPanelShow": {
-    "description": "/** When to show the 'row group panel' (where you drag rows to group) at the top. */",
+    "description": "/** When to show the 'row group panel' (where you drag rows to group) at the top. Default: `never` */",
     "type": { "returnType": "string" }
   },
   "groupRowRenderer": {
@@ -650,7 +651,7 @@
     "type": { "returnType": "any" }
   },
   "suppressMakeColumnVisibleAfterUnGroup": {
-    "description": "/** By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping. */",
+    "description": "/** By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "treeData": {
@@ -692,7 +693,7 @@
     "type": { "returnType": "any[]" }
   },
   "rowModelType": {
-    "description": "/** Sets the row model type. */",
+    "description": "/** Sets the row model type. Default: `clientSide` */",
     "type": { "returnType": "string" }
   },
   "rowData": {
@@ -700,7 +701,7 @@
     "type": { "returnType": "any[] | null" }
   },
   "immutableData": {
-    "description": "/** Enables Immutable Data mode, for compatibility with immutable stores. */",
+    "description": "/** Enables Immutable Data mode, for compatibility with immutable stores. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "asyncTransactionWaitMillis": {
@@ -708,7 +709,7 @@
     "type": { "returnType": "number" }
   },
   "suppressModelUpdateAfterUpdateTransaction": {
-    "description": "/** Prevents Transactions changing sort, filter, group or pivot state when transaction only contains updates. */",
+    "description": "/** Prevents Transactions changing sort, filter, group or pivot state when transaction only contains updates. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "deltaRowDataMode": {
@@ -752,7 +753,7 @@
     "type": { "returnType": "number" }
   },
   "purgeClosedRowNodes": {
-    "description": "/** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping */",
+    "description": "/** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "serverSideDatasource": {
@@ -760,11 +761,11 @@
     "type": { "returnType": "IServerSideDatasource" }
   },
   "serverSideSortingAlwaysResets": {
-    "description": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping. */",
+    "description": "/** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "serverSideFilteringAlwaysResets": {
-    "description": "/** When enabled, always refreshes stores after filter has changed. Used by Full Store only, to allow Server-Side Filtering. */",
+    "description": "/** When enabled, always refreshes stores after filter has changed. Used by Full Store only, to allow Server-Side Filtering. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressEnterpriseResetOnNewColumns": {
@@ -784,19 +785,19 @@
     "type": { "returnType": "number" }
   },
   "alwaysShowHorizontalScroll": {
-    "description": "/** Set to `true` to always show the horizontal scrollbar. */",
+    "description": "/** Set to `true` to always show the horizontal scrollbar. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "alwaysShowVerticalScroll": {
-    "description": "/** Set to `true` to always show the vertical scrollbar. */",
+    "description": "/** Set to `true` to always show the vertical scrollbar. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "debounceVerticalScrollbar": {
-    "description": "/** Set to `true` to debounce the vertical scrollbar. Can provide smoother scrolling on older browsers, e.g. Internet Explorer. */",
+    "description": "/** Set to `true` to debounce the vertical scrollbar. Can provide smoother scrolling on older browsers, e.g. Internet Explorer. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressHorizontalScroll": {
-    "description": "/** Set to `true` to never show the horizontal scroll. This is useful if the grid is aligned with another grid and will scroll when the other grid scrolls. (Should not be used in combination with `alwaysShowHorizontalScroll`.) */",
+    "description": "/** Set to `true` to never show the horizontal scroll. This is useful if the grid is aligned with another grid and will scroll when the other grid scrolls. (Should not be used in combination with `alwaysShowHorizontalScroll`.) Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressScrollOnNewData": {
@@ -828,39 +829,39 @@
     "type": { "returnType": "string" }
   },
   "rowMultiSelectWithClick": {
-    "description": "/** Set to `true` to allow multiple rows to be selected using single click. */",
+    "description": "/** Set to `true` to allow multiple rows to be selected using single click. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressRowDeselection": {
-    "description": "/** If `true`, rows will not be deselected if you hold down `Ctrl` and click the row or press `Space`. */",
+    "description": "/** If `true`, rows will not be deselected if you hold down `Ctrl` and click the row or press `Space`. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressRowClickSelection": {
-    "description": "/** If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection. */",
+    "description": "/** If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressCellSelection": {
-    "description": "/** If `true`, cells won't be selectable. This means cells will not get keyboard focus when you click on them. */",
+    "description": "/** If `true`, cells won't be selectable. This means cells will not get keyboard focus when you click on them. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressMultiRangeSelection": {
-    "description": "/** If `true`, only a single range can be selected. */",
+    "description": "/** If `true`, only a single range can be selected. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "enableCellTextSelection": {
-    "description": "/** Set to `true` to be able to select the text within cells.\n * \n * **Note:** When this is set to `true`, the clipboard service is disabled. */",
+    "description": "/** Set to `true` to be able to select the text within cells.\n * \n * **Note:** When this is set to `true`, the clipboard service is disabled.\n * Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "enableRangeSelection": {
-    "description": "/** Set to `true` to enable Range Selection. */",
+    "description": "/** Set to `true` to enable Range Selection. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "enableRangeHandle": {
-    "description": "/** Set to `true` to enable the Range Handle. */",
+    "description": "/** Set to `true` to enable the Range Handle. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "enableFillHandle": {
-    "description": "/** Set to `true` to enable the Fill Handle. */",
+    "description": "/** Set to `true` to enable the Fill Handle. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "fillHandleDirection": {
@@ -876,19 +877,19 @@
     "type": { "returnType": "boolean" }
   },
   "sortingOrder": {
-    "description": "/** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`. */",
+    "description": "/** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`. Default: `[null, 'asc', 'desc']` */",
     "type": { "returnType": "(string | null)[]" }
   },
   "accentedSort": {
-    "description": "/** Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower. */",
+    "description": "/** Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "unSortIcon": {
-    "description": "/** Set to `true` to show the 'no sort' icon. */",
+    "description": "/** Set to `true` to show the 'no sort' icon. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressMultiSort": {
-    "description": "/** Set to `true` to suppress multi-sort when the user shift-clicks a column header. */",
+    "description": "/** Set to `true` to suppress multi-sort when the user shift-clicks a column header. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "multiSortKey": {
@@ -896,7 +897,7 @@
     "type": { "returnType": "string" }
   },
   "suppressMaintainUnsortedOrder": {
-    "description": "/** Set to `true` to suppress sorting of un-sorted data to match original row data. */",
+    "description": "/** Set to `true` to suppress sorting of un-sorted data to match original row data. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "icons": {
@@ -904,7 +905,7 @@
     "type": { "returnType": "{ [key: string]: Function | string; }" }
   },
   "rowHeight": {
-    "description": "/** Default row height in pixels. */",
+    "description": "/** Default row height in pixels. Default: `25` */",
     "type": { "returnType": "number" }
   },
   "rowStyle": {
@@ -920,15 +921,15 @@
     "type": { "returnType": "RowClassRules" }
   },
   "suppressRowHoverHighlight": {
-    "description": "/** Set to `true` to not highlight rows by adding the `ag-row-hover` CSS class. */",
+    "description": "/** Set to `true` to not highlight rows by adding the `ag-row-hover` CSS class. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressRowTransform": {
-    "description": "/** Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in row spanning. */",
+    "description": "/** Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in row spanning. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "columnHoverHighlight": {
-    "description": "/** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class. */",
+    "description": "/** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "deltaSort": { "type": { "returnType": "boolean" } },

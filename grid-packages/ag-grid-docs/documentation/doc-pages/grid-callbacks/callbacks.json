@@ -158,7 +158,6 @@
             "description": "Allows overriding the default behaviour for when user hits <kbd>Tab</kbd> key when a cell is focused."
         },
         "suppressKeyboardEvent": {
-            "default": false,
             "more": {
                 "name": "Suppress Keyboard Events",
                 "url": "/keyboard-navigation/#suppresskeyboardevent"

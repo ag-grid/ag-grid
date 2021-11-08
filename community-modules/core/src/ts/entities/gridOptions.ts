@@ -107,37 +107,39 @@ export interface GridOptions {
     statusBar?: { statusPanels: StatusPanelDef[]; };
     /** Specifies the side bar components. */
     sideBar?: SideBarDef | string | boolean | null;
-    /** Set to `true` to not show the context menu. Use if you don't want to use the default 'right click' context menu. */
+    /** Set to `true` to not show the context menu. Use if you don't want to use the default 'right click' context menu. Default: `false`  */
     suppressContextMenu?: boolean;
     /** 
      * When using `suppressContextMenu`, you can use the `onCellContextMenu` function to provide your own code to handle cell `contextmenu` events.
      * This flag is useful to prevent the browser from showing its default context menu.
+     * Default: `false` 
      */
     preventDefaultOnContextMenu?: boolean;
-    /** Allows context menu to show, even when `Ctrl` key is held down. */
+    /** Allows context menu to show, even when `Ctrl` key is held down. Default: `false`  */
     allowContextMenuWithControlKey?: boolean;
-    /** Set to `true` to always show the column menu button, rather than only showing when the mouse is over the column header. */
+    /** Set to `true` to always show the column menu button, rather than only showing when the mouse is over the column header. Default: `false` */
     suppressMenuHide?: boolean;
-    /** Set to `true` to use the browser's default tooltip instead of using the grid's Tooltip Component */
+    /** Set to `true` to use the browser's default tooltip instead of using the grid's Tooltip Component. Default: `false`  */
     enableBrowserTooltips?: boolean;
     /**
      * The delay in milliseconds that it takes for tooltips to show up once an element is hovered over.
      * **Note:** This property does not work if `enableBrowserTooltips` is `true`.
+     * Default: `2000` 
      */
     tooltipShowDelay?: number;
-    /** Set to `true` to have tooltips follow the cursor once they are displayed. */
+    /** Set to `true` to have tooltips follow the cursor once they are displayed. Default: `false`  */
     tooltipMouseTrack?: boolean;
     /** DOM element to use as the popup parent for grid popups (context menu, column menu etc). */
     popupParent?: HTMLElement;
 
     // *** Clipboard *** //
-    /** Set to `true` to also include headers when copying to clipboard using `Ctrl + C` clipboard. */
+    /** Set to `true` to also include headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */
     copyHeadersToClipboard?: boolean;
     /** Specify the deliminator to use when copying to clipboard. */
     clipboardDeliminator?: string;
-    /** Set to `true` to only have the range selection, and not row selection, copied to clipboard. */
+    /** Set to `true` to only have the range selection, and not row selection, copied to clipboard. Default: `false` */
     suppressCopyRowsToClipboard?: boolean;
-    /** Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard. */
+    /** Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard. Default: `false` */
     suppressLastEmptyLineOnPaste?: boolean;
     /** Set to `true` to turn off paste operations within the grid. */
     suppressClipboardPaste?: boolean;
@@ -195,7 +197,7 @@ export interface GridOptions {
     suppressMovableColumns?: boolean;
     /** If `true`, the `ag-column-moving` class is not added to the grid while columns are moving. In the default themes, this results in no animation when moving columns. */
     suppressColumnMoveAnimation?: boolean;
-    /** If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden. */
+    /** If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden. Default: `false` */
     suppressDragLeaveHidesColumns?: boolean;
 
     // *** Column Sizing *** //
@@ -381,7 +383,7 @@ export interface GridOptions {
     suppressNoRowsOverlay?: boolean;
 
     // *** Pagination *** //
-    /** Set whether pagination is enabled. */
+    /** Set whether pagination is enabled. Default: `false` */
     pagination?: boolean;
     /** How many rows to load per page. If `paginationAutoPageSize` is specified, this property is ignored. Default: `100` */
     paginationPageSize?: number;
@@ -423,9 +425,9 @@ export interface GridOptions {
     suppressAggFilteredOnly?: boolean;
 
     // *** Rendering *** //
-    /** Set to `true` to enable Row Animation. */
+    /** Set to `true` to enable Row Animation. Default: `false` */
     animateRows?: boolean;
-    /** Set to `true` to have cells flash after data changes. */
+    /** Set to `true` to have cells flash after data changes. Default: `false` */
     enableCellChangeFlash?: boolean;
     /**
      * To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long a cell should remain in its \"flashed\" state.
@@ -437,33 +439,35 @@ export interface GridOptions {
      * Default: `1000`
      */
     cellFadeDelay?: number;
-    /** Set to `true` to have cells flash after data changes even when the change is due to filtering. */
+    /** Set to `true` to have cells flash after data changes even when the change is due to filtering. Default: `false` */
     allowShowChangeAfterFilter?: boolean;
     /**
      * Switch between layout options: `normal`, `autoHeight`, `print`.
      * Default: `normal`
      */
     domLayout?: string;
-    /** When `true`, the order of rows and columns in the DOM are consistent with what is on screen. */
+    /** When `true`, the order of rows and columns in the DOM are consistent with what is on screen. Default: `false` */
     ensureDomOrder?: boolean;
-    /** Set to `true` to operate the grid in RTL (Right to Left) mode. */
+    /** Set to `true` to operate the grid in RTL (Right to Left) mode. Default: `false` */
     enableRtl?: boolean;
-    /** Set to `true` so that the grid doesn't virtualise the columns. For example, if you have 100 columns, but only 10 visible due to scrolling, all 100 will always be rendered. */
+    /** Set to `true` so that the grid doesn't virtualise the columns. For example, if you have 100 columns, but only 10 visible due to scrolling, all 100 will always be rendered. Default: `false` */
     suppressColumnVirtualisation?: boolean;
     /** By default the grid has a limit of rendering a maximum of 500 rows at once (remember the grid only renders rows you can see, so unless your display shows more than 500 rows without vertically scrolling this will never be an issue).
-     * <br />**This is only relevant if you are manually setting `rowBuffer` to a high value (rendering more rows than can be seen) or if your grid height is able to display more than 500 rows at once.** */
+     * <br />**This is only relevant if you are manually setting `rowBuffer` to a high value (rendering more rows than can be seen) or if your grid height is able to display more than 500 rows at once.** 
+     * Default: `false` 
+     */
     suppressMaxRenderedRowRestriction?: boolean;
 
     // *** Row Drag and Drop *** //
-    /** Set to `true` to enable Managed Row Dragging. */
+    /** Set to `true` to enable Managed Row Dragging. Default: `false` */
     rowDragManaged?: boolean;
-    /** Set to `true` to suppress row dragging. */
+    /** Set to `true` to suppress row dragging. Default: `false` */
     suppressRowDrag?: boolean;
-    /** Set to `true` to suppress moving rows while dragging the `rowDrag` waffle. This option highlights the position where the row will be placed and it will only move the row on mouse up. */
+    /** Set to `true` to suppress moving rows while dragging the `rowDrag` waffle. This option highlights the position where the row will be placed and it will only move the row on mouse up. Default: `false` */
     suppressMoveWhenRowDragging?: boolean;
-    /** Set to `true` to enable clicking and dragging anywhere on the row without the need for a drag handle. */
+    /** Set to `true` to enable clicking and dragging anywhere on the row without the need for a drag handle. Default: `false` */
     rowDragEntireRow?: boolean;
-    /** Set to `true` to enable dragging multiple rows at the same time. */
+    /** Set to `true` to enable dragging multiple rows at the same time. Default: `false` */
     rowDragMultiRow?: boolean;
 
     // *** Row Full Width *** //
@@ -490,36 +494,38 @@ export interface GridOptions {
      *      `'custom'`: informs the grid that group columns will be provided.
      */
     groupDisplayType?: RowGroupingDisplayType;
-    /** If grouping, set to the number of levels to expand by default, e.g. `0` for none, `1` for first level only, etc. Set to `-1` to expand everything. */
+    /** If grouping, set to the number of levels to expand by default, e.g. `0` for none, `1` for first level only, etc. Set to `-1` to expand everything. Default: `0` */
     groupDefaultExpanded?: number;
     /** Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included. */
     autoGroupColumnDef?: ColDef;
-    /** When `true`, preserves the current group order when sorting on non-group columns. */
+    /** When `true`, preserves the current group order when sorting on non-group columns. Default: `false` */
     groupMaintainOrder?: boolean;
-    /** When `true`, if you select a group, the children of the group will also be selected. */
+    /** When `true`, if you select a group, the children of the group will also be selected. Default: `false` */
     groupSelectsChildren?: boolean;
     /**
      * If grouping, this controls whether to show a group footer when the group is expanded.
      * If `true`, then by default, the footer will contain aggregate data (if any) when shown and the header will be blank.
      * When closed, the header will contain the aggregate data regardless of this setting (as the footer is hidden anyway).
      * This is handy for 'total' rows, that are displayed below the data when the group is open, and alongside the group when it is closed.
+     * Default: `false`
      */
     groupIncludeFooter?: boolean;
-    /** Set to `true` to show a 'grand total' group footer across all groups. */
+    /** Set to `true` to show a 'grand total' group footer across all groups. Default: `false` */
     groupIncludeTotalFooter?: boolean;
-    /** If `true`, and showing footer, aggregate data will always be displayed at both the header and footer levels. This stops the possibly undesirable behaviour of the header details 'jumping' to the footer on expand. */
+    /** If `true`, and showing footer, aggregate data will always be displayed at both the header and footer levels. This stops the possibly undesirable behaviour of the header details 'jumping' to the footer on expand. Default: `false` */
     groupSuppressBlankHeader?: boolean;
-    /** If using `groupSelectsChildren`, then only the children that pass the current filter will get selected. */
+    /** If using `groupSelectsChildren`, then only the children that pass the current filter will get selected. Default: `false` */
     groupSelectsFiltered?: boolean;
-    /** Shows the open group in the group column for non-group rows. */
+    /** Shows the open group in the group column for non-group rows. Default: `false` */
     showOpenedGroup?: boolean;
     /** Set to `true` to collapse groups that only have one child. */
     groupRemoveSingleChildren?: boolean;
-    /** Set to `true` to collapse lowest level groups that only have one child. */
+    /** Set to `true` to collapse lowest level groups that only have one child. Default: `false` */
     groupRemoveLowestSingleChildren?: boolean;
-    /** Set to `true` to hide parents that are open. When used with multiple columns for showing groups, it can give a more pleasing user experience. */
+    "default": "never",
+    /** Set to `true` to hide parents that are open. When used with multiple columns for showing groups, it can give a more pleasing user experience. Default: `false` */
     groupHideOpenParents?: boolean;
-    /** When to show the 'row group panel' (where you drag rows to group) at the top. */
+    /** When to show the 'row group panel' (where you drag rows to group) at the top. Default: `never` */
     rowGroupPanelShow?: string;
     /** Sets the Cell Renderer to use when `groupDisplayType = 'groupRows'`. */
     groupRowRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
@@ -527,7 +533,7 @@ export interface GridOptions {
     groupRowRendererFramework?: any;
     /** Customise the parameters provided to the `groupRowRenderer` component. */
     groupRowRendererParams?: any;
-    /** By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping. */
+    /** By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping. Default: `false` */
     suppressMakeColumnVisibleAfterUnGroup?: boolean;
     /** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback. */
     treeData?: boolean;
@@ -552,18 +558,18 @@ export interface GridOptions {
     pinnedBottomRowData?: any[];
 
     // *** Row Model *** //
-    /** Sets the row model type. */
+    /** Sets the row model type. Default: `clientSide` */
     rowModelType?: string;
 
     // *** Row Model: Client-side *** //
     // changeable with impact
     /** Set the data to be displayed as rows in the grid. */
     rowData?: any[] | null;
-    /** Enables Immutable Data mode, for compatibility with immutable stores. */
+    /** Enables Immutable Data mode, for compatibility with immutable stores. Default: `false` */
     immutableData?: boolean;
     /** How many milliseconds to wait before executing a batch of async transactions. */
     asyncTransactionWaitMillis?: number;
-    /** Prevents Transactions changing sort, filter, group or pivot state when transaction only contains updates. */
+    /** Prevents Transactions changing sort, filter, group or pivot state when transaction only contains updates. Default: `false` */
     suppressModelUpdateAfterUpdateTransaction?: boolean;
     /** @deprecated */
     deltaRowDataMode?: boolean;
@@ -598,13 +604,13 @@ export interface GridOptions {
     maxConcurrentDatasourceRequests?: number;
     /** How many milliseconds to wait before loading a block. Useful when scrolling over many rows, spanning many Partial Store blocks, as it prevents blocks loading until scrolling has settled. */
     blockLoadDebounceMillis?: number;
-    /** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping */
+    /** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping. Default: `false`  */
     purgeClosedRowNodes?: boolean;
     /** Provide the `serverSideDatasource` for server side row model. */
     serverSideDatasource?: IServerSideDatasource;
-    /** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping. */
+    /** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping. Default: `false` */
     serverSideSortingAlwaysResets?: boolean;
-    /** When enabled, always refreshes stores after filter has changed. Used by Full Store only, to allow Server-Side Filtering. */
+    /** When enabled, always refreshes stores after filter has changed. Used by Full Store only, to allow Server-Side Filtering. Default: `false` */
     serverSideFilteringAlwaysResets?: boolean;
 
     /** @deprecated */
@@ -619,13 +625,13 @@ export interface GridOptions {
     viewportRowModelBufferSize?: number;
 
     // *** Scrolling *** //
-    /** Set to `true` to always show the horizontal scrollbar. */
+    /** Set to `true` to always show the horizontal scrollbar. Default: `false` */
     alwaysShowHorizontalScroll?: boolean;
-    /** Set to `true` to always show the vertical scrollbar. */
+    /** Set to `true` to always show the vertical scrollbar. Default: `false` */
     alwaysShowVerticalScroll?: boolean;
-    /** Set to `true` to debounce the vertical scrollbar. Can provide smoother scrolling on older browsers, e.g. Internet Explorer. */
+    /** Set to `true` to debounce the vertical scrollbar. Can provide smoother scrolling on older browsers, e.g. Internet Explorer. Default: `false` */
     debounceVerticalScrollbar?: boolean;
-    /** Set to `true` to never show the horizontal scroll. This is useful if the grid is aligned with another grid and will scroll when the other grid scrolls. (Should not be used in combination with `alwaysShowHorizontalScroll`.) */
+    /** Set to `true` to never show the horizontal scroll. This is useful if the grid is aligned with another grid and will scroll when the other grid scrolls. (Should not be used in combination with `alwaysShowHorizontalScroll`.) Default: `false` */
     suppressHorizontalScroll?: boolean;
     /** When `true`, the grid will not scroll to the top when new row data is provided. Use this if you don't want the default behaviour of scrolling to the top every time you load new data. */
     suppressScrollOnNewData?: boolean;
@@ -643,27 +649,28 @@ export interface GridOptions {
     // *** Selection *** //
     /** Type of Row Selection: `single`, `multiple`. */
     rowSelection?: string;
-    /** Set to `true` to allow multiple rows to be selected using single click. */
+    /** Set to `true` to allow multiple rows to be selected using single click. Default: `false` */
     rowMultiSelectWithClick?: boolean;
-    /** If `true`, rows will not be deselected if you hold down `Ctrl` and click the row or press `Space`. */
+    /** If `true`, rows will not be deselected if you hold down `Ctrl` and click the row or press `Space`. Default: `false` */
     suppressRowDeselection?: boolean;
-    /** If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection. */
+    /** If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection. Default: `false` */
     suppressRowClickSelection?: boolean;
-    /** If `true`, cells won't be selectable. This means cells will not get keyboard focus when you click on them. */
+    /** If `true`, cells won't be selectable. This means cells will not get keyboard focus when you click on them. Default: `false` */
     suppressCellSelection?: boolean;
-    /** If `true`, only a single range can be selected. */
+    /** If `true`, only a single range can be selected. Default: `false` */
     suppressMultiRangeSelection?: boolean;
     /**
      * Set to `true` to be able to select the text within cells.
      *
      * **Note:** When this is set to `true`, the clipboard service is disabled.
+     * Default: `false`
      */
     enableCellTextSelection?: boolean;
-    /** Set to `true` to enable Range Selection. */
+    /** Set to `true` to enable Range Selection. Default: `false` */
     enableRangeSelection?: boolean;
-    /** Set to `true` to enable the Range Handle. */
+    /** Set to `true` to enable the Range Handle. Default: `false` */
     enableRangeHandle?: boolean;
-    /** Set to `true` to enable the Fill Handle. */
+    /** Set to `true` to enable the Fill Handle. Default: `false` */
     enableFillHandle?: boolean;
     /** Set to `'x'` to force the fill handle direction to horizontal, or set to `'y'` to force the fill handle direction to vertical. */
     fillHandleDirection?: string;
@@ -674,23 +681,23 @@ export interface GridOptions {
     rowDeselection?: boolean;
 
     // *** Sorting *** //
-    /** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`. */
+    /** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`. Default: `[null, 'asc', 'desc']`  */
     sortingOrder?: (string | null)[];
-    /** Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower. */
+    /** Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower. Default: `false` */
     accentedSort?: boolean;
-    /** Set to `true` to show the 'no sort' icon. */
+    /** Set to `true` to show the 'no sort' icon. Default: `false` */
     unSortIcon?: boolean;
-    /** Set to `true` to suppress multi-sort when the user shift-clicks a column header. */
+    /** Set to `true` to suppress multi-sort when the user shift-clicks a column header. Default: `false` */
     suppressMultiSort?: boolean;
     /** Set to `'ctrl'` to have multi sorting work using the `Ctrl` (or `Command ⌘` for Mac) key. */
     multiSortKey?: string;
-    /** Set to `true` to suppress sorting of un-sorted data to match original row data. */
+    /** Set to `true` to suppress sorting of un-sorted data to match original row data. Default: `false` */
     suppressMaintainUnsortedOrder?: boolean;
 
     // *** Styling *** //
     /** Icons to use inside the grid instead of the grid's default icons. */
     icons?: { [key: string]: Function | string; };
-    /** Default row height in pixels. */
+    /** Default row height in pixels. Default: `25` */
     rowHeight?: number;
     /** The style properties to apply to all rows. Set to an object of key (style names) and values (style values) */
     rowStyle?: RowStyle;
@@ -698,11 +705,11 @@ export interface GridOptions {
     rowClass?: string | string[];
     /** Rules which can be applied to include certain CSS classes. */
     rowClassRules?: RowClassRules;
-    /** Set to `true` to not highlight rows by adding the `ag-row-hover` CSS class. */
+    /** Set to `true` to not highlight rows by adding the `ag-row-hover` CSS class. Default: `false` */
     suppressRowHoverHighlight?: boolean;
-    /** Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in row spanning. */
+    /** Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in row spanning. Default: `false` */
     suppressRowTransform?: boolean;
-    /** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class. */
+    /** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class. Default: `false` */
     columnHoverHighlight?: boolean;
 
     deltaSort?: boolean;

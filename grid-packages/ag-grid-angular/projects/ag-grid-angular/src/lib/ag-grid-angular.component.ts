@@ -292,31 +292,33 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public statusBar: { statusPanels: StatusPanelDef[]; } | undefined = undefined;
     /** Specifies the side bar components.     */
     @Input() public sideBar: SideBarDef | string | boolean | null | undefined = undefined;
-    /** Set to `true` to not show the context menu. Use if you don't want to use the default 'right click' context menu.     */
+    /** Set to `true` to not show the context menu. Use if you don't want to use the default 'right click' context menu. Default: `false`     */
     @Input() public suppressContextMenu: boolean | undefined = undefined;
     /** When using `suppressContextMenu`, you can use the `onCellContextMenu` function to provide your own code to handle cell `contextmenu` events.
-     * This flag is useful to prevent the browser from showing its default context menu.     */
+     * This flag is useful to prevent the browser from showing its default context menu.
+     * Default: `false`     */
     @Input() public preventDefaultOnContextMenu: boolean | undefined = undefined;
-    /** Allows context menu to show, even when `Ctrl` key is held down.     */
+    /** Allows context menu to show, even when `Ctrl` key is held down. Default: `false`     */
     @Input() public allowContextMenuWithControlKey: boolean | undefined = undefined;
-    /** Set to `true` to always show the column menu button, rather than only showing when the mouse is over the column header.     */
+    /** Set to `true` to always show the column menu button, rather than only showing when the mouse is over the column header. Default: `false`     */
     @Input() public suppressMenuHide: boolean | undefined = undefined;
-    /** Set to `true` to use the browser's default tooltip instead of using the grid's Tooltip Component     */
+    /** Set to `true` to use the browser's default tooltip instead of using the grid's Tooltip Component. Default: `false`     */
     @Input() public enableBrowserTooltips: boolean | undefined = undefined;
     /** The delay in milliseconds that it takes for tooltips to show up once an element is hovered over.
-     *     **Note:** This property does not work if `enableBrowserTooltips` is `true`.     */
+     *     **Note:** This property does not work if `enableBrowserTooltips` is `true`.
+     * Default: `2000`     */
     @Input() public tooltipShowDelay: number | undefined = undefined;
-    /** Set to `true` to have tooltips follow the cursor once they are displayed.     */
+    /** Set to `true` to have tooltips follow the cursor once they are displayed. Default: `false`     */
     @Input() public tooltipMouseTrack: boolean | undefined = undefined;
     /** DOM element to use as the popup parent for grid popups (context menu, column menu etc).     */
     @Input() public popupParent: HTMLElement | undefined = undefined;
-    /** Set to `true` to also include headers when copying to clipboard using `Ctrl + C` clipboard.     */
+    /** Set to `true` to also include headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false`     */
     @Input() public copyHeadersToClipboard: boolean | undefined = undefined;
     /** Specify the deliminator to use when copying to clipboard.     */
     @Input() public clipboardDeliminator: string | undefined = undefined;
-    /** Set to `true` to only have the range selection, and not row selection, copied to clipboard.     */
+    /** Set to `true` to only have the range selection, and not row selection, copied to clipboard. Default: `false`     */
     @Input() public suppressCopyRowsToClipboard: boolean | undefined = undefined;
-    /** Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard.     */
+    /** Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard. Default: `false`     */
     @Input() public suppressLastEmptyLineOnPaste: boolean | undefined = undefined;
     /** Set to `true` to turn off paste operations within the grid.     */
     @Input() public suppressClipboardPaste: boolean | undefined = undefined;
@@ -369,7 +371,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public suppressMovableColumns: boolean | undefined = undefined;
     /** If `true`, the `ag-column-moving` class is not added to the grid while columns are moving. In the default themes, this results in no animation when moving columns.     */
     @Input() public suppressColumnMoveAnimation: boolean | undefined = undefined;
-    /** If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden.     */
+    /** If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden. Default: `false`     */
     @Input() public suppressDragLeaveHidesColumns: boolean | undefined = undefined;
     /** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing).     */
     @Input() public colResizeDefault: string | undefined = undefined;
@@ -518,7 +520,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public noRowsOverlayComponentParams: any = undefined;
     /** Disables the 'no rows' overlay.     */
     @Input() public suppressNoRowsOverlay: boolean | undefined = undefined;
-    /** Set whether pagination is enabled.     */
+    /** Set whether pagination is enabled. Default: `false`     */
     @Input() public pagination: boolean | undefined = undefined;
     /** How many rows to load per page. If `paginationAutoPageSize` is specified, this property is ignored. Default: `100`     */
     @Input() public paginationPageSize: number | undefined = undefined;
@@ -640,7 +642,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public groupRowRendererFramework: any = undefined;
     /** Customise the parameters provided to the `groupRowRenderer` component.     */
     @Input() public groupRowRendererParams: any = undefined;
-    /** By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping.     */
+    /** By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping. Default: `false`     */
     @Input() public suppressMakeColumnVisibleAfterUnGroup: boolean | undefined = undefined;
     /** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback.     */
     @Input() public treeData: boolean | undefined = undefined;
@@ -666,15 +668,15 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public pinnedTopRowData: any[] | undefined = undefined;
     /** Data to be displayed as pinned bottom rows in the grid.     */
     @Input() public pinnedBottomRowData: any[] | undefined = undefined;
-    /** Sets the row model type.     */
+    /** Sets the row model type. Default: `clientSide`     */
     @Input() public rowModelType: string | undefined = undefined;
     /** Set the data to be displayed as rows in the grid.     */
     @Input() public rowData: any[] | null | undefined = undefined;
-    /** Enables Immutable Data mode, for compatibility with immutable stores.     */
+    /** Enables Immutable Data mode, for compatibility with immutable stores. Default: `false`     */
     @Input() public immutableData: boolean | undefined = undefined;
     /** How many milliseconds to wait before executing a batch of async transactions.     */
     @Input() public asyncTransactionWaitMillis: number | undefined = undefined;
-    /** Prevents Transactions changing sort, filter, group or pivot state when transaction only contains updates.     */
+    /** Prevents Transactions changing sort, filter, group or pivot state when transaction only contains updates. Default: `false`     */
     @Input() public suppressModelUpdateAfterUpdateTransaction: boolean | undefined = undefined;
     /** @deprecated     */
     @Input() public deltaRowDataMode: boolean | undefined = undefined;
@@ -700,13 +702,13 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public maxConcurrentDatasourceRequests: number | undefined = undefined;
     /** How many milliseconds to wait before loading a block. Useful when scrolling over many rows, spanning many Partial Store blocks, as it prevents blocks loading until scrolling has settled.     */
     @Input() public blockLoadDebounceMillis: number | undefined = undefined;
-    /** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping     */
+    /** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping. Default: `false`     */
     @Input() public purgeClosedRowNodes: boolean | undefined = undefined;
     /** Provide the `serverSideDatasource` for server side row model.     */
     @Input() public serverSideDatasource: IServerSideDatasource | undefined = undefined;
-    /** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping.     */
+    /** When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is Row Grouping. Default: `false`     */
     @Input() public serverSideSortingAlwaysResets: boolean | undefined = undefined;
-    /** When enabled, always refreshes stores after filter has changed. Used by Full Store only, to allow Server-Side Filtering.     */
+    /** When enabled, always refreshes stores after filter has changed. Used by Full Store only, to allow Server-Side Filtering. Default: `false`     */
     @Input() public serverSideFilteringAlwaysResets: boolean | undefined = undefined;
     /** @deprecated     */
     @Input() public suppressEnterpriseResetOnNewColumns: boolean | undefined = undefined;
@@ -716,13 +718,13 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public viewportRowModelPageSize: number | undefined = undefined;
     /** When using viewport row model, sets the buffer size for the viewport.     */
     @Input() public viewportRowModelBufferSize: number | undefined = undefined;
-    /** Set to `true` to always show the horizontal scrollbar.     */
+    /** Set to `true` to always show the horizontal scrollbar. Default: `false`     */
     @Input() public alwaysShowHorizontalScroll: boolean | undefined = undefined;
-    /** Set to `true` to always show the vertical scrollbar.     */
+    /** Set to `true` to always show the vertical scrollbar. Default: `false`     */
     @Input() public alwaysShowVerticalScroll: boolean | undefined = undefined;
-    /** Set to `true` to debounce the vertical scrollbar. Can provide smoother scrolling on older browsers, e.g. Internet Explorer.     */
+    /** Set to `true` to debounce the vertical scrollbar. Can provide smoother scrolling on older browsers, e.g. Internet Explorer. Default: `false`     */
     @Input() public debounceVerticalScrollbar: boolean | undefined = undefined;
-    /** Set to `true` to never show the horizontal scroll. This is useful if the grid is aligned with another grid and will scroll when the other grid scrolls. (Should not be used in combination with `alwaysShowHorizontalScroll`.)     */
+    /** Set to `true` to never show the horizontal scroll. This is useful if the grid is aligned with another grid and will scroll when the other grid scrolls. (Should not be used in combination with `alwaysShowHorizontalScroll`.) Default: `false`     */
     @Input() public suppressHorizontalScroll: boolean | undefined = undefined;
     /** When `true`, the grid will not scroll to the top when new row data is provided. Use this if you don't want the default behaviour of scrolling to the top every time you load new data.     */
     @Input() public suppressScrollOnNewData: boolean | undefined = undefined;
@@ -738,45 +740,46 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public scrollbarWidth: number | undefined = undefined;
     /** Type of Row Selection: `single`, `multiple`.     */
     @Input() public rowSelection: string | undefined = undefined;
-    /** Set to `true` to allow multiple rows to be selected using single click.     */
+    /** Set to `true` to allow multiple rows to be selected using single click. Default: `false`     */
     @Input() public rowMultiSelectWithClick: boolean | undefined = undefined;
-    /** If `true`, rows will not be deselected if you hold down `Ctrl` and click the row or press `Space`.     */
+    /** If `true`, rows will not be deselected if you hold down `Ctrl` and click the row or press `Space`. Default: `false`     */
     @Input() public suppressRowDeselection: boolean | undefined = undefined;
-    /** If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection.     */
+    /** If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection. Default: `false`     */
     @Input() public suppressRowClickSelection: boolean | undefined = undefined;
-    /** If `true`, cells won't be selectable. This means cells will not get keyboard focus when you click on them.     */
+    /** If `true`, cells won't be selectable. This means cells will not get keyboard focus when you click on them. Default: `false`     */
     @Input() public suppressCellSelection: boolean | undefined = undefined;
-    /** If `true`, only a single range can be selected.     */
+    /** If `true`, only a single range can be selected. Default: `false`     */
     @Input() public suppressMultiRangeSelection: boolean | undefined = undefined;
     /** Set to `true` to be able to select the text within cells.
      * 
-     *     **Note:** When this is set to `true`, the clipboard service is disabled.     */
+     *     **Note:** When this is set to `true`, the clipboard service is disabled.
+     * Default: `false`     */
     @Input() public enableCellTextSelection: boolean | undefined = undefined;
-    /** Set to `true` to enable Range Selection.     */
+    /** Set to `true` to enable Range Selection. Default: `false`     */
     @Input() public enableRangeSelection: boolean | undefined = undefined;
-    /** Set to `true` to enable the Range Handle.     */
+    /** Set to `true` to enable the Range Handle. Default: `false`     */
     @Input() public enableRangeHandle: boolean | undefined = undefined;
-    /** Set to `true` to enable the Fill Handle.     */
+    /** Set to `true` to enable the Fill Handle. Default: `false`     */
     @Input() public enableFillHandle: boolean | undefined = undefined;
     /** Set to `'x'` to force the fill handle direction to horizontal, or set to `'y'` to force the fill handle direction to vertical.     */
     @Input() public fillHandleDirection: string | undefined = undefined;
     /** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle.     */
     @Input() public suppressClearOnFillReduction: boolean | undefined = undefined;
-    /** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`.     */
+    /** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`. Default: `[null, 'asc', 'desc']`     */
     @Input() public sortingOrder: (string | null)[] | undefined = undefined;
-    /** Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower.     */
+    /** Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower. Default: `false`     */
     @Input() public accentedSort: boolean | undefined = undefined;
-    /** Set to `true` to show the 'no sort' icon.     */
+    /** Set to `true` to show the 'no sort' icon. Default: `false`     */
     @Input() public unSortIcon: boolean | undefined = undefined;
-    /** Set to `true` to suppress multi-sort when the user shift-clicks a column header.     */
+    /** Set to `true` to suppress multi-sort when the user shift-clicks a column header. Default: `false`     */
     @Input() public suppressMultiSort: boolean | undefined = undefined;
     /** Set to `'ctrl'` to have multi sorting work using the `Ctrl` (or `Command ⌘` for Mac) key.     */
     @Input() public multiSortKey: string | undefined = undefined;
-    /** Set to `true` to suppress sorting of un-sorted data to match original row data.     */
+    /** Set to `true` to suppress sorting of un-sorted data to match original row data. Default: `false`     */
     @Input() public suppressMaintainUnsortedOrder: boolean | undefined = undefined;
     /** Icons to use inside the grid instead of the grid's default icons.     */
     @Input() public icons: { [key: string]: Function | string; } | undefined = undefined;
-    /** Default row height in pixels.     */
+    /** Default row height in pixels. Default: `25`     */
     @Input() public rowHeight: number | undefined = undefined;
     /** The style properties to apply to all rows. Set to an object of key (style names) and values (style values)     */
     @Input() public rowStyle: RowStyle | undefined = undefined;
@@ -784,11 +787,11 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public rowClass: string | string[] | undefined = undefined;
     /** Rules which can be applied to include certain CSS classes.     */
     @Input() public rowClassRules: RowClassRules | undefined = undefined;
-    /** Set to `true` to not highlight rows by adding the `ag-row-hover` CSS class.     */
+    /** Set to `true` to not highlight rows by adding the `ag-row-hover` CSS class. Default: `false`     */
     @Input() public suppressRowHoverHighlight: boolean | undefined = undefined;
-    /** Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in row spanning.     */
+    /** Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in row spanning. Default: `false`     */
     @Input() public suppressRowTransform: boolean | undefined = undefined;
-    /** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class.     */
+    /** Set to `true` to highlight columns by adding the `ag-column-hover` CSS class. Default: `false`     */
     @Input() public columnHoverHighlight: boolean | undefined = undefined;
     @Input() public deltaSort: boolean | undefined = undefined;
     @Input() public treeDataDisplayType: TreeDataDisplayType | undefined = undefined;

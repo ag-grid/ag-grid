@@ -55,7 +55,7 @@ export interface ColumnSparklineOptions extends BaseSparklineOptions {
      */
     fill?: string;
     /** The CSS colour value for the outline of the columns.
-     * Default `'silver'`
+     * Default: `'silver'`
      */
     stroke?: string;
     /** The thickness in pixels for the stroke of the columns.

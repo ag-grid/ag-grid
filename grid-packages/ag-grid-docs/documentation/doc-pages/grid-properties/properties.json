@@ -31,39 +31,30 @@
             }
         },
         "suppressContextMenu": {
-            "default": false,
             "more": {
                 "name": "Context Menu",
                 "url": "/context-menu/"
             }
         },
-        "preventDefaultOnContextMenu": {
-            "default": false
-        },
+        "preventDefaultOnContextMenu": {},
         "allowContextMenuWithControlKey": {
             "default": false,
             "description": "Allows context menu to show, even when <kbd>Ctrl</kbd> key is held down."
         },
         "suppressMenuHide": {
-            "default": false,
             "more": {
                 "name": "Column Menu",
                 "url": "/column-menu/"
             }
         },
         "enableBrowserTooltips": {
-            "default": false,
             "more": {
                 "name": "Tooltip Component",
                 "url": "/component-tooltip/"
             }
         },
-        "tooltipShowDelay": {
-            "default": 2000
-        },
-        "tooltipMouseTrack": {
-            "default": false
-        },
+        "tooltipShowDelay": {},
+        "tooltipMouseTrack": {},
         "popupParent": {
             "more": {
                 "name": "Popup Parent",
@@ -84,12 +75,8 @@
             "description": "Set to `true` to also include headers when copying to clipboard using <kbd>Ctrl</kbd>+<kbd>C</kbd> clipboard."
         },
         "clipboardDeliminator": {},
-        "suppressCopyRowsToClipboard": {
-            "default": false
-        },
-        "suppressLastEmptyLineOnPaste": {
-            "default": false
-        },
+        "suppressCopyRowsToClipboard": {},
+        "suppressLastEmptyLineOnPaste": {},
         "suppressClipboardPaste": {},
         "suppressClipboardApi": {}
     },
@@ -601,9 +588,7 @@
                 "url": "/row-pagination"
             }
         },
-        "pagination": {
-            "default": false
-        },
+        "pagination": {},
         "paginationPageSize": {
             "more": {
                 "name": "Customising Pagination",
@@ -722,14 +707,12 @@
             "displayName": "Rendering"
         },
         "animateRows": {
-            "default": false,
             "more": {
                 "name": "Row Animation",
                 "url": "/row-animation/"
             }
         },
         "enableCellChangeFlash": {
-            "default": false,
             "more": {
                 "name": "Flashing Data Changes",
                 "url": "/flashing-cells/"
@@ -738,7 +721,6 @@
         "cellFlashDelay": {},
         "cellFadeDelay": {},
         "allowShowChangeAfterFilter": {
-            "default": false,
             "more": {
                 "name": "Flashing Data Changes",
                 "url": "/flashing-cells/"
@@ -754,31 +736,25 @@
             "description": "Switch between layout options. See [Printing](/printing/) and [Auto Height](/grid-size/#grid-auto-height)."
         },
         "ensureDomOrder": {
-            "default": false,
             "more": {
                 "name": "Accessibility - Row and Column Order",
                 "url": "/accessibility/#ensure-dom-element-order"
             }
         },
         "enableRtl": {
-            "default": false,
             "more": {
                 "name": "RTL (Right to Left)",
                 "url": "/rtl/"
             }
         },
-        "suppressColumnVirtualisation": {
-            "default": false
-        },
+        "suppressColumnVirtualisation": {},
         "suppressRowVirtualisation": {
             "overrideMissingPropCheck": true,
             "strikeThrough": true,
             "type": "never",
             "description": "There is no such property as `suppressRowVirtualisation` - if you want to do this, then set the `rowBuffer` property to be very large, e.g. `9999`. **Warning: rendering lots of rows will mean a very large amount of rendering in the DOM which will slow things down.**"
         },
-        "suppressMaxRenderedRowRestriction": {
-            "default": false
-        }
+        "suppressMaxRenderedRowRestriction": {}
     },
     "rowDragging": {
         "meta": {
@@ -789,32 +765,25 @@
             }
         },
         "rowDragManaged": {
-            "default": false,
             "more": {
                 "name": "Managed Row Dragging",
                 "url": "/row-dragging/#managed-dragging"
             }
         },
         "rowDragEntireRow": {
-            "default": false,
             "more": {
                 "name": "Entire Row Dragging",
                 "url": "/row-dragging/#entire-row-dragging"
             }
         },
         "rowDragMultiRow": {
-            "default": false,
             "more": {
                 "name": "Mulit-Row Dragging",
                 "url": "/row-dragging/#multi-row-dragging"
             }
         },
-        "suppressRowDrag": {
-            "default": false
-        },
-        "suppressMoveWhenRowDragging": {
-            "default": false
-        }
+        "suppressRowDrag": {},
+        "suppressMoveWhenRowDragging": {}
     },
     "fullWidth": {
         "meta": {
@@ -855,7 +824,6 @@
             }
         },
         "groupDefaultExpanded": {
-            "default": 0,
             "more": {
                 "name": "Opening Group Levels by Default",
                 "url": "/grouping-opening-groups/#opening-group-levels-by-default"
@@ -868,52 +836,43 @@
             }
         },
         "groupMaintainOrder": {
-            "default": false,
             "more": {
                 "name": "Maintain Group Order",
                 "url": "/grouping-sorting/#maintain-group-order"
             }
         },
         "groupSelectsChildren": {
-            "default": false,
             "more": {
                 "name": "Group Selection",
                 "url": "/row-selection/#group-selection"
             }
         },
         "groupIncludeFooter": {
-            "default": false,
             "more": {
                 "name": "Enabling Group Footers",
                 "url": "/grouping-footers/#enabling-group-footers"
             }
         },
         "groupIncludeTotalFooter": {
-            "default": false,
             "more": {
                 "name": "Enabling Group Footers",
                 "url": "/grouping-footers/#enabling-group-footers"
             }
         },
-        "groupSuppressBlankHeader": {
-            "default": false
-        },
+        "groupSuppressBlankHeader": {},
         "groupSelectsFiltered": {
-            "default": false,
             "more": {
                 "name": "Group Selection",
                 "url": "/row-selection/#group-selection"
             }
         },
         "showOpenedGroup": {
-            "default": false,
             "more": {
                 "name": "Showing Open Groups",
                 "url": "/grouping-single-group-column/#showing-open-groups"
             }
         },
         "groupRemoveSingleChildren": {
-            "default": false,
             "more": {
                 "name": "Remove Single Children",
                 "url": "/grouping-single-group-column/#removing-single-children"
@@ -927,14 +886,12 @@
             }
         },
         "groupHideOpenParents": {
-            "default": false,
             "more": {
                 "name": "Hide Open Parents",
                 "url": "/grouping-multiple-group-columns/#hide-open-parents"
             }
         },
         "rowGroupPanelShow": {
-            "default": "never",
             "options": [
                 "never",
                 "always",
@@ -958,9 +915,7 @@
             }
         },
         "groupRowRendererFramework": {},
-        "groupRowRendererParams": {
-            "description": ""
-        },
+        "groupRowRendererParams": {},
         "suppressDragLeaveHidesColumns": {
             "default": false,
             "description": "By default, dragging a column out of the grid, i.e. to the [Row Group Panel](/grouping-group-panel/), it will be hidden in the grid. This property prevents the column becoming hidden in the grid.",
@@ -1004,7 +959,6 @@
             }
         },
         "rowModelType": {
-            "default": "clientSide",
             "options": [
                 "clientSide",
                 "infinite",
@@ -1021,11 +975,8 @@
                 "url": "/client-side-model/"
             }
         },
-        "rowData": {
-            "description": ""
-        },
+        "rowData": {},
         "immutableData": {
-            "default": false,
             "more": {
                 "name": "Immutable Data",
                 "url": "/immutable-data/"
@@ -1087,9 +1038,7 @@
             "default": false,
             "description": "When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is [Row Grouping](/server-side-model-grouping/)."
         },
-        "serverSideFilteringAlwaysResets": {
-            "default": false
-        }
+        "serverSideFilteringAlwaysResets": {}
     },
     "infiniteRowModel": {
         "meta": {
@@ -1140,21 +1089,15 @@
                 "url": "/scrolling-scenarios/"
             }
         },
-        "alwaysShowHorizontalScroll": {
-            "default": false
-        },
-        "alwaysShowVerticalScroll": {
-            "default": false
-        },
+        "alwaysShowHorizontalScroll": {},
+        "alwaysShowVerticalScroll": {},
         "debounceVerticalScrollbar": {
-            "default": false,
             "more": {
                 "name": "Debounce Vertical Scroll",
                 "url": "/scrolling-performance/#8-debounce-vertical-scroll"
             }
         },
         "suppressHorizontalScroll": {
-            "default": false,
             "more": {
                 "name": "Aligned Grid as Footer",
                 "url": "/aligned-grids/#example-aligned-floating-footer"
@@ -1197,7 +1140,6 @@
             "description": "Type of Row Selection."
         },
         "rowMultiSelectWithClick": {
-            "default": false,
             "more": {
                 "name": "Multi Select Single Click",
                 "url": "/row-selection/#example-multi-select-with-click"
@@ -1207,39 +1149,28 @@
             "default": false,
             "description": "If `true`, rows will not be deselected if you hold down <kbd>Ctrl</kbd> and click the row or press <kbd>Space</kbd>."
         },
-        "suppressRowClickSelection": {
-            "default": false
-        },
-        "suppressCellSelection": {
-            "default": false
-        },
+        "suppressRowClickSelection": {},
+        "suppressCellSelection": {},
         "suppressMultiRangeSelection": {
-            "default": false,
             "more": {
                 "name": "Suppress Multi Range Selection",
                 "url": "/range-selection/#suppress-multi-range-selection"
             }
         },
-        "enableCellTextSelection": {
-            "default": false,
-            "description": ""
-        },
+        "enableCellTextSelection": {},
         "enableRangeSelection": {
-            "default": false,
             "more": {
                 "name": "Range Selection",
                 "url": "/range-selection"
             }
         },
         "enableRangeHandle": {
-            "default": false,
             "more": {
                 "name": "Range Handle",
                 "url": "/range-selection-handle"
             }
         },
         "enableFillHandle": {
-            "default": false,
             "more": {
                 "name": "Fill Handle",
                 "url": "/range-selection-fill-handle/"
@@ -1266,33 +1197,24 @@
             }
         },
         "sortingOrder": {
-            "default": [
-                null,
-                "asc",
-                "desc"
-            ],
             "more": {
                 "name": "Example Sorting Order and Animation",
                 "url": "/row-sorting/#example-sorting-order-and-animation"
             }
         },
         "accentedSort": {
-            "default": false,
             "more": {
                 "name": "Accented Sort",
                 "url": "/row-sorting/#accented-sort"
             }
         },
         "unSortIcon": {
-            "default": false,
             "more": {
                 "name": "Example Custom Sorting",
                 "url": "/row-sorting/#example-custom-sorting"
             }
         },
-        "suppressMultiSort": {
-            "default": false
-        },
+        "suppressMultiSort": {},
         "multiSortKey": {
             "description": "Set to `'ctrl'` to have multi sorting work using the <kbd>Ctrl</kbd> (or <kbd>Command ⌘</kbd> for Mac) key.",
             "options": [
@@ -1304,7 +1226,6 @@
             }
         },
         "suppressMaintainUnsortedOrder": {
-            "default": false,
             "more": {
                 "name": "Big Data Small Transactions",
                 "url": "/immutable-data/"
@@ -1322,7 +1243,6 @@
             }
         },
         "rowHeight": {
-            "default": 25,
             "more": {
                 "name": "Row Height",
                 "url": "/row-height/"
@@ -1346,15 +1266,11 @@
                 "url": "/row-styles/#row-class-rules"
             }
         },
-        "suppressRowHoverHighlight": {
-            "default": false
-        },
+        "suppressRowHoverHighlight": {},
         "suppressRowTransform": {
             "default": false,
             "description": "Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in [row spanning](/row-spanning/)."
         },
-        "columnHoverHighlight": {
-            "default": false
-        }
+        "columnHoverHighlight": {}
     }
 }

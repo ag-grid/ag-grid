@@ -27,7 +27,7 @@ export interface ISetFilterParams extends IProvidedFilterParams {
     /** 
      * If `true`, the Set Filter values will not be sorted.
      * Use this if you are providing your own values and don't want them sorted as you are providing in the order you want.
-     * Default: false
+     * Default: `false`
      */
     suppressSorting?: boolean;
     /** 
