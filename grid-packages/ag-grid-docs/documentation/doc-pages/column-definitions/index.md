@@ -141,7 +141,9 @@ const gridOptions = {
 }
 </snippet>
 
-When the grid creates a column it starts with the default column definition, then adds in anything from the column type, then finally adds in items from the specific column definition.
+When the grid creates a column it starts with the default column definition, then adds properties defined via column types and then finally adds in properties from the specific column definition.
+
+At each stage if a column property already exists, the latter will override the existing value. For example, if the `defaultColDef` sets `editable: true` but a `columnType` sets `editable: false` then this column will not be editable. 
 
 For example, the following is an outline of the steps used when creating 'Col C' shown above:
 
@@ -152,10 +154,10 @@ For example, the following is an outline of the steps used when creating 'Col C'
 // Step 2: default column properties are merged in
 { width: 100, editable: true, filter: 'agTextColumnFilter' }
 
-// Step 3: column type properties are merged in (using the 'type' property)
+// Step 3: column type properties are merged in (using the 'type' property), overriding where necessary
 { width: 100, editable: false, filter: 'agTextColumnFilter' }
 
-// Step 4: finally column definition properties are merged in
+// Step 4: finally column definition properties are merged in, overriding where necessary
 { headerName: 'Col C', field: 'c', width: 100, editable: false, filter: 'agTextColumnFilter' }
 ```
 
@@ -179,6 +181,16 @@ const gridOptions = {
     ]
 }
 </snippet>
+
+
+The `rightAligned` column type works by setting the header and cell class properties as follows. If you manually set either `headerClass` or `cellClass` then you may need to include the right aligned CSS classes yourself as column type properties are overridden by explicitly defined column properties.
+
+```ts
+rightAligned: {
+    headerClass: 'ag-right-aligned-header',
+    cellClass: 'ag-right-aligned-cell'
+}
+```
 
 ## Column IDs
 
