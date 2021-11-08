@@ -5,7 +5,7 @@ import React, { useState } from 'react';
 import styles from './ApiDocumentation.module.scss';
 import { ApiProps, Config, DocEntryMap, FunctionCode, ICallSignature, IEvent, ObjectCode, PropertyCall, PropertyType, SectionProps, InterfaceEntry, ChildDocEntry } from './ApiDocumentation.types';
 import Code from './Code';
-import { extractInterfaces, writeAllInterfaces, removeJsDocStars, sortAndFilterProperties, applyUndefinedUnionType } from './documentation-helpers';
+import { extractInterfaces, writeAllInterfaces, formatJsDocString, sortAndFilterProperties, addMoreLink } from './documentation-helpers';
 import { useJsonFileNodes } from './use-json-file-nodes';
 
 
@@ -55,7 +55,7 @@ export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework
         // as this is what is listed in the doc-interfaces.AUTO.json file
         propNameOnly = propNameOnly.split('(')[0];
         if ((namesArr.length === 0 || namesArr.includes(propNameOnly)) && (excludeArr.length == 0 || !excludeArr.includes(propNameOnly))) {
-            const docs = (li.docs && removeJsDocStars(li.docs[k])) || '';
+            const docs = (li.docs && formatJsDocString(li.docs[k])) || '';
             if (!docs.includes('@deprecated')) {
                 props[propNameOnly] = { description: docs || v, ...interfaceOverrides[propNameOnly] }
             }
@@ -282,14 +282,15 @@ const Property: React.FC<PropertyCall> = ({ framework, id, name, definition, con
 
     let propDescription = definition.description || (gridParams && gridParams.description) || undefined;
     if (propDescription) {
-        propDescription = removeJsDocStars(propDescription);
+        propDescription = formatJsDocString(propDescription);
         // process property object
         description = convertMarkdown(propDescription, framework);
 
         const { more } = definition;
 
         if (more != null && more.url && !config.hideMore) {
-            description += ` See <a href="${convertUrl(more.url, framework)}">${more.name}</a>.`;
+            const seeMore = ` See <a href="${convertUrl(more.url, framework)}">${more.name}</a>.`;
+            description = addMoreLink(description, seeMore);
         }
     } else {
         // this must be the parent of a child object
