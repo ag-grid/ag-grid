@@ -35,9 +35,9 @@
 |`
 |})
 |export class AppComponent {
-|   frameworkComponents: [
+|   frameworkComponents: {
 |       'cubeComponent': CubeComponent
-|   ];          
+|   };          
 |   columnDefs: [
 |       {
 |           headerName: "Cube",
