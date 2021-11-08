@@ -6,7 +6,7 @@
   "module": "./dist/es6/main.js",
   "types": "./dist/cjs/main.d.ts",
   "scripts": {
-    "test": "npx jest",
+    "test": "npx jest --passWithNoTests",
     "build-cjs": "npx tsc -p tsconfig.json",
     "build-es6": "npx tsc -p tsconfig.es6.json",
     "package": "node ../../module-build/rollup/build.js",

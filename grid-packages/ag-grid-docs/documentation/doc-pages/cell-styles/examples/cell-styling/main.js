@@ -1,17 +1,11 @@
-var ragCellClassRules = {
-    'rag-green-outer': function(params) {
-        return params.value === 2008;
-    },
-    'rag-amber-outer': function(params) {
-        return params.value === 2004;
-    },
-    'rag-red-outer': function(params) {
-        return params.value === 2000;
-    }
+const ragCellClassRules = {
+    'rag-green-outer': params => params.value === 2008,
+    'rag-amber-outer': params => params.value === 2004,
+    'rag-red-outer': params => params.value === 2000
 };
 
-var columnDefs = [
-    { field: "athlete" },
+const columnDefs = [
+    {field: "athlete"},
     {
         field: "age",
         maxWidth: 90,
@@ -22,7 +16,7 @@ var columnDefs = [
             'rag-red': 'x >= 25'
         }
     },
-    { field: "country" },
+    {field: "country"},
     {
         field: "year",
         maxWidth: 90,
@@ -30,7 +24,7 @@ var columnDefs = [
         cellClassRules: ragCellClassRules,
         cellRenderer: ragRenderer
     },
-    { field: "date", cellClass: 'rag-amber' },
+    {field: "date", cellClass: 'rag-amber'},
     {
         field: "sport",
         cellClass: cellClass
@@ -59,7 +53,7 @@ var columnDefs = [
 ];
 
 function cellStyle(params) {
-    var color = numberToColor(params.value);
+    const color = numberToColor(params.value);
     return {
         backgroundColor: color
     };
@@ -85,8 +79,8 @@ function ragRenderer(params) {
 }
 
 function numberParser(params) {
-    var newValue = params.newValue;
-    var valueAsNumber;
+    const newValue = params.newValue;
+    let valueAsNumber;
     if (newValue === null || newValue === undefined || newValue === '') {
         valueAsNumber = null;
     } else {
@@ -95,7 +89,7 @@ function numberParser(params) {
     return valueAsNumber;
 }
 
-var gridOptions = {
+const gridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
         flex: 1,
@@ -105,12 +99,11 @@ var gridOptions = {
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv = document.querySelector('#myGrid');
+document.addEventListener('DOMContentLoaded', () => {
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

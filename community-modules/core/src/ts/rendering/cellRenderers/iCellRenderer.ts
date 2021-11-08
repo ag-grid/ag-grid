@@ -55,7 +55,14 @@ export interface ICellRendererParams {
 export interface ISetFilterCellRendererParams {
     value: any;
     valueFormatted: any;
+
     api: GridApi;
+    /** The cell's column definition. */
+    colDef?: ColDef;
+    /** The cell's column. */
+    column?: Column;
+    columnApi: ColumnApi;
+
     /** The context as provided on `gridOptions.context` */
     context: any;
 }

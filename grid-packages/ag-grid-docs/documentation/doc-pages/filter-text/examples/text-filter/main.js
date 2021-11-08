@@ -4,7 +4,7 @@ function contains(target, lookingFor) {
 
 var athleteFilterParams = {
     filterOptions: ['contains', 'notContains'],
-    textFormatter: function(r) {
+    textFormatter: function (r) {
         if (r == null) return null;
 
         return r.toLowerCase()
@@ -25,7 +25,7 @@ var athleteFilterParams = {
 
 var countryFilterParams = {
     filterOptions: ['contains'],
-    textCustomComparator: function(_, value, filterText) {
+    textCustomComparator: function (_, value, filterText) {
         var filterTextLowerCase = filterText.toLowerCase();
         var valueLowerCase = value.toString().toLowerCase();
         var aliases = {
@@ -78,12 +78,11 @@ var gridOptions = {
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

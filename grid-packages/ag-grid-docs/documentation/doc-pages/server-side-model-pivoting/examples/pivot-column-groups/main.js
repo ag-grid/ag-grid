@@ -1,11 +1,11 @@
 var gridOptions = {
     columnDefs: [
-        { field: "country", rowGroup: true },
-        { field: "sport", rowGroup: true },
-        { field: "year", pivot: true }, // pivot on 'year'
-        { field: "gold", aggFunc: 'sum' },
-        { field: "silver", aggFunc: 'sum' },
-        { field: "bronze", aggFunc: 'sum' }
+        {field: "country", rowGroup: true},
+        {field: "sport", rowGroup: true},
+        {field: "year", pivot: true}, // pivot on 'year'
+        {field: "gold", aggFunc: 'sum'},
+        {field: "silver", aggFunc: 'sum'},
+        {field: "bronze", aggFunc: 'sum'}
     ],
     defaultColDef: {
         width: 150,
@@ -28,11 +28,11 @@ var gridOptions = {
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' }).then(function(data) {
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json').then(response => response.json()).then(function (data) {
         // setup the fake server with entire dataset
         var fakeServer = new FakeServer(data);
 
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function ServerSideDatasource(server) {
     return {
-        getRows: function(params) {
+        getRows: function (params) {
             var request = params.request;
 
             console.log('[Datasource] - rows requested by grid: ', params.request);
@@ -58,10 +58,10 @@ function ServerSideDatasource(server) {
             addPivotColDefs(request, response, params.columnApi);
 
             // simulating real server call with a 500ms delay
-            setTimeout(function() {
+            setTimeout(function () {
                 if (response.success) {
                     // supply data to grid
-                    params.success({ rowData: response.rows, rowCount: response.lastRow });
+                    params.success({rowData: response.rows, rowCount: response.lastRow});
                 } else {
                     params.fail();
                 }
@@ -91,7 +91,9 @@ function createPivotColDefs(request, pivotFields) {
 
         var first = parts.shift();
 
-        var existing = res.filter(function(r) { return r.groupId === first; })[0];
+        var existing = res.filter(function (r) {
+            return r.groupId === first;
+        })[0];
         if (existing) {
             existing['children'] = addColDef(colId, parts, existing.children);
         } else {
@@ -101,7 +103,9 @@ function createPivotColDefs(request, pivotFields) {
                 colDef['groupId'] = first;
                 colDef['headerName'] = first;
             } else {
-                var valueCol = request.valueCols.filter(function(r) { return r.field === first; })[0];
+                var valueCol = request.valueCols.filter(function (r) {
+                    return r.field === first;
+                })[0];
                 colDef['colId'] = colId;
                 colDef['headerName'] = valueCol.displayName;
                 colDef['field'] = colId;
@@ -118,7 +122,7 @@ function createPivotColDefs(request, pivotFields) {
 
     if (request.pivotMode && request.pivotCols.length > 0) {
         var secondaryCols = [];
-        pivotFields.forEach(function(field) {
+        pivotFields.forEach(function (field) {
             addColDef(field, field.split('_'), secondaryCols);
         });
         return secondaryCols;

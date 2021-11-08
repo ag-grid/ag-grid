@@ -1,12 +1,12 @@
 var columnDefs = [
-    { field: "athlete", width: 150 },
-    { field: "age" },
-    { field: "country", width: 150 },
-    { field: "year" },
-    { field: "sport" },
-    { field: "gold" },
-    { field: "silver" },
-    { field: "bronze" }
+    {field: "athlete", width: 150},
+    {field: "age"},
+    {field: "country", width: 150},
+    {field: "year"},
+    {field: "sport"},
+    {field: "gold"},
+    {field: "silver"},
+    {field: "bronze"}
 ];
 
 var gridOptions = {
@@ -21,11 +21,11 @@ var gridOptions = {
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' }).then(function(data) {
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json').then(response => response.json()).then(function (data) {
         var datasource = createMyDataSource(data);
         gridOptions.api.setServerSideDatasource(datasource);
     });
@@ -35,13 +35,15 @@ var newItemCount = 0;
 
 function onBtRemove() {
     var selectedRows = gridOptions.api.getSelectedNodes();
-    if (!selectedRows || selectedRows.length === 0) { return; }
+    if (!selectedRows || selectedRows.length === 0) {
+        return;
+    }
 
     var selectedRow = selectedRows[0];
 
     var indexToRemove = window.rowDataServerSide.indexOf(selectedRow.data);
     // the record could be missing, if the user hit the 'remove' button a few times before refresh happens
-    if (indexToRemove>=0) {
+    if (indexToRemove >= 0) {
         window.rowDataServerSide.splice(indexToRemove, 1);
     }
 
@@ -50,7 +52,9 @@ function onBtRemove() {
 
 function onBtAdd() {
     var selectedRows = gridOptions.api.getSelectedNodes();
-    if (!selectedRows || selectedRows.length === 0) { return; }
+    if (!selectedRows || selectedRows.length === 0) {
+        return;
+    }
 
     var selectedRow = selectedRows[0];
 
@@ -70,12 +74,12 @@ function createMyDataSource(data) {
     function MyDatasource() {
     }
 
-    MyDatasource.prototype.getRows = function(params) {
-        setTimeout(function() {
+    MyDatasource.prototype.getRows = function (params) {
+        setTimeout(function () {
             // take a slice of the total rows
             var rowsThisPage = data.slice(params.request.startRow, params.request.endRow);
             // call the success callback
-            params.success({ rowData: rowsThisPage, rowCount: window.rowDataServerSide.length });
+            params.success({rowData: rowsThisPage, rowCount: window.rowDataServerSide.length});
         }, 500);
     };
 

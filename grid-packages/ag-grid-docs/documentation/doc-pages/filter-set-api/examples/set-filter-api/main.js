@@ -46,7 +46,7 @@ function countryKeyCreator(params) {
 
 function patchData(data) {
     // hack the data, replace each country with an object of country name and code
-    data.forEach(function(row) {
+    data.forEach(function (row) {
         const countryName = row.country;
         const countryCode = countryName.substring(0, 2).toUpperCase();
         row.country = {
@@ -58,7 +58,7 @@ function patchData(data) {
 
 function selectJohnAndKenny() {
     const instance = gridOptions.api.getFilterInstance('athlete');
-    instance.setModel({ values: ['John Joe Nevin', 'Kenny Egan'] });
+    instance.setModel({values: ['John Joe Nevin', 'Kenny Egan']});
     gridOptions.api.onFilterChanged();
 }
 
@@ -70,7 +70,7 @@ function selectEverything() {
 
 function selectNothing() {
     const instance = gridOptions.api.getFilterInstance('athlete');
-    instance.setModel({ values: [] });
+    instance.setModel({values: []});
     gridOptions.api.onFilterChanged();
 }
 
@@ -89,12 +89,13 @@ function setCountriesToAll() {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(function (data) {
             patchData(data);
             gridOptions.api.setRowData(data);
         });

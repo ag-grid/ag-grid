@@ -1,10 +1,10 @@
-var gridOptions = {
+const gridOptions = {
     columnDefs: [
-        { field: 'country', rowGroup: true, hide: true, suppressColumnsToolPanel: true },
-        { field: 'sport', rowGroup: true, hide: true, suppressColumnsToolPanel: true },
-        { field: 'year', pivot: true, hide: true, suppressColumnsToolPanel: true },
-        { field: 'gold', aggFunc: 'sum', valueFormatter: numberFormatter },
-        { field: 'silver', aggFunc: 'sum', valueFormatter: numberFormatter },
+        {field: 'country', rowGroup: true, hide: true, suppressColumnsToolPanel: true},
+        {field: 'sport', rowGroup: true, hide: true, suppressColumnsToolPanel: true},
+        {field: 'year', pivot: true, hide: true, suppressColumnsToolPanel: true},
+        {field: 'gold', aggFunc: 'sum', valueFormatter: numberFormatter},
+        {field: 'silver', aggFunc: 'sum', valueFormatter: numberFormatter},
         {
             headerName: 'Ratio',
             colId: 'goldSilverRatio',
@@ -38,9 +38,9 @@ function ratioValueGetter(params) {
 }
 
 function ratioAggFunc(params) {
-    var goldSum = 0;
-    var silverSum = 0;
-    params.values.forEach(function(value) {
+    let goldSum = 0;
+    let silverSum = 0;
+    params.values.forEach(value => {
         if (value && value.gold) {
             goldSum += value.gold;
         }
@@ -55,9 +55,7 @@ function createValueObject(gold, silver) {
     return {
         gold: gold,
         silver: silver,
-        toString: function() {
-            return (gold && silver) ? gold / silver : 0;
-        }
+        toString: () => (gold && silver) ? gold / silver : 0
     };
 }
 
@@ -67,12 +65,11 @@ function ratioFormatter(params) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv = document.querySelector('#myGrid');
+document.addEventListener('DOMContentLoaded', () => {
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

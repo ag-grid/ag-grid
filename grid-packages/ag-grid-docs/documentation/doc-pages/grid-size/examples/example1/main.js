@@ -1,15 +1,15 @@
 var gridOptions = {
     columnDefs: [
-        { field: 'athlete', minWidth: 150 },
-        { field: 'age', minWidth: 70, maxWidth: 90 },
-        { field: 'country', minWidth: 130 },
-        { field: 'year', minWidth: 70, maxWidth: 90 },
-        { field: 'date', minWidth: 120 },
-        { field: 'sport', minWidth: 120 },
-        { field: 'gold', minWidth: 80 },
-        { field: 'silver', minWidth: 80 },
-        { field: 'bronze', minWidth: 80 },
-        { field: 'total', minWidth: 80 }
+        {field: 'athlete', minWidth: 150},
+        {field: 'age', minWidth: 70, maxWidth: 90},
+        {field: 'country', minWidth: 130},
+        {field: 'year', minWidth: 70, maxWidth: 90},
+        {field: 'date', minWidth: 120},
+        {field: 'sport', minWidth: 120},
+        {field: 'gold', minWidth: 80},
+        {field: 'silver', minWidth: 80},
+        {field: 'bronze', minWidth: 80},
+        {field: 'total', minWidth: 80}
     ],
 
     defaultColDef: {
@@ -56,12 +56,11 @@ function onGridSizeChanged(params) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

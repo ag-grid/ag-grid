@@ -1,37 +1,27 @@
-import { AgCartesianChartOptions, AgChart, CartesianChart, HistogramSeries } from "ag-charts-community";
+import { AgChart, CartesianChart, ChartAxisPosition, HistogramSeries } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
+import { deepMerge } from "../../object";
 
 export class HistogramChartProxy extends CartesianChartProxy<any> {
 
     public constructor(params: ChartProxyParams) {
         super(params);
 
+        this.xAxisType = 'number';
+        this.yAxisType = 'number';
+
         this.initChartOptions();
         this.recreateChart();
     }
 
     protected createChart(): CartesianChart {
-        const agChartOptions = { theme: this.chartTheme } as AgCartesianChartOptions;
-        const { parentElement } = this.chartProxyParams;
-
-        const [xAxis, yAxis] = this.getAxes();
-        agChartOptions.axes = [{
-            type: 'number',
-            position: 'bottom',
-            ...xAxis
-        }, {
-            type: 'number',
-            position: 'left',
-            ...yAxis
-        }];
-
-        agChartOptions.series = [{
-            ...this.chartOptions[this.standaloneChartType].series,
-            type: 'histogram'
-        }];
-
-        return AgChart.create(agChartOptions, parentElement);
+        return AgChart.create({
+            container: this.chartProxyParams.parentElement,
+            theme: this.chartTheme,
+            axes: this.getAxes(),
+            series: [{ ...this.chartOptions[this.standaloneChartType].series, type: 'histogram' }]
+        });
     }
 
     public update(params: UpdateChartParams): void {
@@ -50,5 +40,21 @@ export class HistogramChartProxy extends CartesianChartProxy<any> {
         const { fills, strokes } = this.getPalette();
         series.fill = fills[0];
         series.stroke = strokes[0];
+    }
+
+    private getAxes() {
+        const axisOptions = this.getAxesOptions();
+        return [
+            {
+                ...deepMerge(axisOptions[this.xAxisType], axisOptions[this.xAxisType].bottom),
+                type: this.xAxisType,
+                position: ChartAxisPosition.Bottom,
+            },
+            {
+                ...deepMerge(axisOptions[this.yAxisType], axisOptions[this.yAxisType].left),
+                type: this.yAxisType,
+                position: ChartAxisPosition.Left,
+            },
+        ];
     }
 }

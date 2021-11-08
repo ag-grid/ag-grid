@@ -12,6 +12,7 @@ import {
 import { ChartController } from "./chartController";
 import { CategoryAxis, GroupedCategoryAxis, NumberAxis, TimeAxis } from "ag-charts-community";
 import { getStandaloneChartType } from "./chartTypeMapper";
+import { ChartDataModel } from "./chartDataModel";
 
 export class ChartOptionsService extends BeanStub {
 
@@ -78,17 +79,18 @@ export class ChartOptionsService extends BeanStub {
     public setLabelRotation(axisType: 'xAxis' | 'yAxis', value: number) {
         const expression = 'label.rotation';
 
-        // update axis options
-        const chartAxis = this.getAxis(axisType);
-        this.updateAxisOptions(chartAxis, expression, value);
-
         // update chart
+        const chartAxis = this.getAxis(axisType);
         _.set(chartAxis, expression, value);
 
         // chart axis properties are not reactive, need to schedule a layout
         this.getChart().layoutPending = true;
 
-        this.raiseChartOptionsChangedEvent();
+        // do not update axis options when the default category is selected
+        if (!this.chartController.isDefaultCategorySelected()) {
+            this.updateAxisOptions(chartAxis, expression, value);
+            this.raiseChartOptionsChangedEvent();
+        }
     }
 
     public getSeriesOption<T = string>(expression: string): T {

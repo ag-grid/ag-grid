@@ -2,26 +2,26 @@ var columnDefs = [
     {
         headerName: 'Athlete',
         children: [
-            { headerName: 'Name', field: "athlete", minWidth: 200, filter: 'agTextColumnFilter' },
-            { field: "age" },
-            { field: "country", minWidth: 200 }
+            {headerName: 'Name', field: "athlete", minWidth: 200, filter: 'agTextColumnFilter'},
+            {field: "age"},
+            {field: "country", minWidth: 200}
         ]
     },
     {
         headerName: 'Competition',
         children: [
-            { field: "year" },
-            { field: "date", minWidth: 180 },
+            {field: "year"},
+            {field: "date", minWidth: 180},
         ]
     },
-    { colId: 'sport', field: "sport", minWidth: 200 },
+    {colId: 'sport', field: "sport", minWidth: 200},
     {
         headerName: 'Medals',
         children: [
-            { field: "gold" },
-            { field: "silver" },
-            { field: "bronze" },
-            { field: "total" }
+            {field: "gold"},
+            {field: "silver"},
+            {field: "bronze"},
+            {field: "total"}
         ]
     }
 ];
@@ -30,41 +30,41 @@ var sortedToolPanelColumnDefs = [
     {
         headerName: 'Athlete',
         children: [
-            { field: "age" },
-            { field: "country" },
-            { headerName: 'Name', field: "athlete" },
+            {field: "age"},
+            {field: "country"},
+            {headerName: 'Name', field: "athlete"},
         ]
     },
     {
         headerName: 'Competition',
         children: [
-            { field: "date" },
-            { field: "year" },
+            {field: "date"},
+            {field: "year"},
         ]
     },
     {
         headerName: 'Medals',
         children: [
-            { field: "bronze" },
-            { field: "gold" },
-            { field: "silver" },
-            { field: "total" }
+            {field: "bronze"},
+            {field: "gold"},
+            {field: "silver"},
+            {field: "total"}
         ]
     },
-    { colId: 'sport', field: "sport", width: 110 },
+    {colId: 'sport', field: "sport", width: 110},
 ];
 
 var customToolPanelColumnDefs = [
     {
         headerName: 'Dummy Group 1',
         children: [
-            { field: "age" },
-            { headerName: 'Name', field: "athlete" },
+            {field: "age"},
+            {headerName: 'Name', field: "athlete"},
             {
                 headerName: 'Dummy Group 2',
                 children: [
-                    { colId: "sport" },
-                    { field: "country" },
+                    {colId: "sport"},
+                    {field: "country"},
                 ]
             }
         ]
@@ -72,13 +72,13 @@ var customToolPanelColumnDefs = [
     {
         headerName: 'Medals',
         children: [
-            { field: "total" },
-            { field: "bronze" },
+            {field: "total"},
+            {field: "bronze"},
             {
                 headerName: 'Dummy Group 3',
                 children: [
-                    { field: "silver" },
-                    { field: "gold" }
+                    {field: "silver"},
+                    {field: "gold"}
                 ]
             }
         ]
@@ -128,12 +128,11 @@ function setCustomGroupLayout() {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

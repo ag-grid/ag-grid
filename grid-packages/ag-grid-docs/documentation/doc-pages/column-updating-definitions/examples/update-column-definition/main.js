@@ -1,16 +1,15 @@
-
 function getColumnDefs() {
     return [
-        { field: 'athlete' },
-        { field: 'age' },
-        { field: 'country' },
-        { field: 'sport' },
-        { field: 'year' },
-        { field: 'date' },
-        { field: 'gold' },
-        { field: 'silver' },
-        { field: 'bronze' },
-        { field: 'total' }
+        {field: 'athlete'},
+        {field: 'age'},
+        {field: 'country'},
+        {field: 'sport'},
+        {field: 'year'},
+        {field: 'date'},
+        {field: 'gold'},
+        {field: 'silver'},
+        {field: 'bronze'},
+        {field: 'total'}
     ];
 }
 
@@ -26,7 +25,7 @@ const gridOptions = {
 
 function setHeaderNames() {
     const columnDefs = getColumnDefs();
-    columnDefs.forEach(function(colDef, index) {
+    columnDefs.forEach(function (colDef, index) {
         colDef.headerName = 'C' + index;
     });
     gridOptions.api.setColumnDefs(columnDefs);
@@ -34,7 +33,7 @@ function setHeaderNames() {
 
 function removeHeaderNames() {
     const columnDefs = getColumnDefs();
-    columnDefs.forEach(function(colDef, index) {
+    columnDefs.forEach(function (colDef, index) {
         colDef.headerName = undefined;
     });
     gridOptions.api.setColumnDefs(columnDefs);
@@ -42,8 +41,8 @@ function removeHeaderNames() {
 
 function setValueFormatters() {
     const columnDefs = getColumnDefs();
-    columnDefs.forEach(function(colDef, index) {
-        colDef.valueFormatter = function(params) {
+    columnDefs.forEach(function (colDef, index) {
+        colDef.valueFormatter = function (params) {
             return '[ ' + params.value + ' ]';
         };
     });
@@ -52,7 +51,7 @@ function setValueFormatters() {
 
 function removeValueFormatters() {
     const columnDefs = getColumnDefs();
-    columnDefs.forEach(function(colDef, index) {
+    columnDefs.forEach(function (colDef, index) {
         colDef.valueFormatter = undefined;
     });
     gridOptions.api.setColumnDefs(columnDefs);
@@ -63,7 +62,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
         .then(data => {
             gridOptions.api.setRowData(data);
         });

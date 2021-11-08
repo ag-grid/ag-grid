@@ -1,7 +1,7 @@
 var columnDefs = [
     // row group columns
-    { field: 'country', rowGroup: true },
-    { field: 'athlete', rowGroup: true },
+    {field: 'country', rowGroup: true},
+    {field: 'athlete', rowGroup: true},
 
     // pivot column
     {
@@ -12,10 +12,10 @@ var columnDefs = [
     },
 
     // aggregation columns
-    { field: 'gold', aggFunc: 'sum' },
-    { field: 'silver', aggFunc: 'sum' },
-    { field: 'bronze', aggFunc: 'sum' },
-    { field: 'total', aggFunc: 'sum' }
+    {field: 'gold', aggFunc: 'sum'},
+    {field: 'silver', aggFunc: 'sum'},
+    {field: 'bronze', aggFunc: 'sum'},
+    {field: 'total', aggFunc: 'sum'}
 ];
 
 var gridOptions = {
@@ -42,13 +42,13 @@ var gridOptions = {
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
     // do http request to get our sample data - not using any framework to keep the example self contained.
     // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' }).then(function(data) {
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json').then(response => response.json()).then(function (data) {
         gridOptions.api.setRowData(data);
     });
 });

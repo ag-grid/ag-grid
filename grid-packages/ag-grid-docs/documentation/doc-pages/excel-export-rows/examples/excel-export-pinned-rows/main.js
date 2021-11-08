@@ -3,19 +3,19 @@ const columnDefs = [{
     children: [{
         headerName: 'Group A',
         children: [
-            { field: 'athlete', minWidth: 200 },
-            { field: 'country', minWidth: 200, },
-            { headerName: 'Group', valueGetter: 'data.country.charAt(0)', },
+            {field: 'athlete', minWidth: 200},
+            {field: 'country', minWidth: 200,},
+            {headerName: 'Group', valueGetter: 'data.country.charAt(0)',},
         ]
     }, {
         headerName: 'Group B',
         children: [
-            { field: 'date', minWidth: 150 },
-            { field: 'sport', minWidth: 150 },
-            { field: 'gold' },
-            { field: 'silver' },
-            { field: 'bronze' },
-            { field: 'total', }
+            {field: 'date', minWidth: 150},
+            {field: 'sport', minWidth: 150},
+            {field: 'gold'},
+            {field: 'silver'},
+            {field: 'bronze'},
+            {field: 'total',}
         ]
     }]
 }];
@@ -70,7 +70,7 @@ function getParams() {
     });
 }
 
-function onBtExport(){
+function onBtExport() {
     gridOptions.api.exportDataAsExcel(getParams());
 }
 
@@ -78,6 +78,6 @@ function onBtExport(){
 document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
-    agGrid.simpleHttpRequest({url: 'https://www.ag-grid.com/example-assets/small-olympic-winners.json'})
-    .then((data) => gridOptions.api.setRowData(data.filter(rec => rec.country != null)));
+    fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json').then(response => response.json())
+        .then((data) => gridOptions.api.setRowData(data.filter(rec => rec.country != null)));
 });

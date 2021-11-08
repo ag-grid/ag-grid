@@ -10,32 +10,32 @@ import 'styles.css';
 
 const VueExample = {
     template: `
-      <div style="height: 100%; display: flex; flex-direction: column" class="ag-theme-alpine">
-          <div style="flex: 0 1 auto;">
-            <label><input type="checkbox" checked @change="onCbAthlete($event.target.checked)"/>Athlete</label>
-            <label><input type="checkbox" checked @change="onCbAge($event.target.checked)"/>Age</label>
-            <label><input type="checkbox" checked @change="onCbCountry($event.target.checked)"/>Country</label>
-          </div>
-    
-          <ag-grid-vue style="flex: 1 1 auto;"
-                       ref="topGrid"
-                       class="ag-theme-alpine"
-                       :columnDefs="columnDefs"
-                       :rowData="rowData"
-                       :modules="modules"
-                       :gridOptions="topOptions"
-                       @first-data-rendered="onFirstDataRendered($event)">
-          </ag-grid-vue>
-    
-          <ag-grid-vue style="flex: 1 1 auto;"
-                       ref="bottomGrid"
-                       class="ag-theme-alpine"
-                       :columnDefs="columnDefs"
-                       :rowData="rowData"
-                       :modules="modules"
-                       :gridOptions="bottomOptions">
-          </ag-grid-vue>
-      </div>
+        <div style="height: 100%; display: flex; flex-direction: column" class="ag-theme-alpine">
+            <div style="flex: 0 1 auto;">
+                <label><input type="checkbox" checked @change="onCbAthlete($event.target.checked)"/>Athlete</label>
+                <label><input type="checkbox" checked @change="onCbAge($event.target.checked)"/>Age</label>
+                <label><input type="checkbox" checked @change="onCbCountry($event.target.checked)"/>Country</label>
+            </div>
+
+            <ag-grid-vue style="flex: 1 1 auto;"
+                         ref="topGrid"
+                         class="ag-theme-alpine"
+                         :columnDefs="columnDefs"
+                         :rowData="rowData"
+                         :modules="modules"
+                         :gridOptions="topOptions"
+                         @first-data-rendered="onFirstDataRendered($event)">
+            </ag-grid-vue>
+
+            <ag-grid-vue style="flex: 1 1 auto;"
+                         ref="bottomGrid"
+                         class="ag-theme-alpine"
+                         :columnDefs="columnDefs"
+                         :rowData="rowData"
+                         :modules="modules"
+                         :gridOptions="bottomOptions">
+            </ag-grid-vue>
+        </div>
     `,
     components: {
         'ag-grid-vue': AgGridVue
@@ -94,9 +94,7 @@ const VueExample = {
 
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .then(resp => resp.json())
-            .then(rowData => {
-                this.rowData = rowData
-            });
+            .then(rowData => this.rowData = rowData);
     },
     methods: {
         onCbAthlete(value) {

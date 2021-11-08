@@ -1,46 +1,37 @@
-import { AgCartesianChartOptions, AgChart, CartesianChart, LineSeries } from "ag-charts-community";
+import { AgChart, CartesianChart, ChartAxisPosition, LineSeries } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
+import { deepMerge } from "../../object";
+import { ChartDataModel } from "../../chartDataModel";
 
 export class LineChartProxy extends CartesianChartProxy<any> {
 
     public constructor(params: ChartProxyParams) {
         super(params);
+
+        this.xAxisType = params.grouping ? 'groupedCategory' : 'category';
+        this.yAxisType = 'number';
+
         this.initChartOptions();
         this.recreateChart();
     }
 
     protected createChart(): CartesianChart {
-        const agChartOptions = { theme: this.chartTheme } as AgCartesianChartOptions;
-        const { grouping, parentElement } = this.chartProxyParams;
-
-        agChartOptions.type = grouping ? 'groupedCategory' : 'line';
-
-        const [xAxis, yAxis] = this.getAxes();
-        const xAxisType = xAxis.type ? xAxis.type : 'category';
-        agChartOptions.axes = [{
-            type: grouping ? 'groupedCategory' : xAxisType,
-            position: 'bottom',
-            ...this.getXAxisDefaults(xAxisType, agChartOptions)
-        }, {
-            type: 'number',
-            position: 'left',
-            ...yAxis
-        }];
-
-        return AgChart.create(agChartOptions, parentElement);
+        return AgChart.create({
+            type: 'line',
+            container: this.chartProxyParams.parentElement,
+            theme: this.chartTheme,
+            axes: this.getAxes()
+        });
     }
 
     public update(params: UpdateChartParams): void {
-        this.chartProxyParams.grouping = params.grouping;
-
         if (params.fields.length === 0) {
             this.chart.removeAllSeries();
             return;
         }
 
-        const axisType = this.isTimeAxis(params) ? 'time' : 'category';
-        this.updateAxes(axisType);
+        this.updateAxes(params);
 
         const { chart } = this;
         const { fields } = params;
@@ -102,6 +93,22 @@ export class LineChartProxy extends CartesianChartProxy<any> {
             previousSeries = lineSeries;
         });
 
-        this.updateLabelRotation(params.category.id, false, axisType);
+        this.updateLabelRotation(params.category.id);
+    }
+
+    private getAxes() {
+        const axisOptions = this.getAxesOptions();
+        return [
+            {
+                ...deepMerge(axisOptions[this.xAxisType], axisOptions[this.xAxisType].bottom),
+                type: this.xAxisType,
+                position: ChartAxisPosition.Bottom
+            },
+            {
+                ...deepMerge(axisOptions[this.yAxisType], axisOptions[this.yAxisType].left),
+                type: this.yAxisType,
+                position: ChartAxisPosition.Left
+            },
+        ];
     }
 }

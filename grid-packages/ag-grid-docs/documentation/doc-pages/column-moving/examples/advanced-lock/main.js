@@ -1,4 +1,4 @@
-var columnDefs = [
+const columnDefs = [
     {
         lockPosition: true,
         valueGetter: 'node.rowIndex',
@@ -13,19 +13,19 @@ var columnDefs = [
         width: 120,
         suppressNavigable: true
     },
-    { field: 'athlete' },
-    { field: 'age' },
-    { field: 'country' },
-    { field: 'year' },
-    { field: 'date' },
-    { field: 'sport' },
-    { field: 'gold' },
-    { field: 'silver' },
-    { field: 'bronze' },
-    { field: 'total' }
+    {field: 'athlete'},
+    {field: 'age'},
+    {field: 'country'},
+    {field: 'year'},
+    {field: 'date'},
+    {field: 'sport'},
+    {field: 'gold'},
+    {field: 'silver'},
+    {field: 'bronze'},
+    {field: 'total'}
 ];
 
-var gridOptions = {
+const gridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
         width: 150,
@@ -36,17 +36,17 @@ var gridOptions = {
 };
 
 function onColumnPinned(event) {
-    var allCols = event.columnApi.getAllGridColumns();
+    const allCols = event.columnApi.getAllGridColumns();
 
-    var allFixedCols = allCols.filter(function(col) { return col.getColDef().lockPosition; });
-    var allNonFixedCols = allCols.filter(function(col) { return !col.getColDef().lockPosition; });
+    const allFixedCols = allCols.filter(col => col.getColDef().lockPosition);
+    const allNonFixedCols = allCols.filter(col => !col.getColDef().lockPosition);
 
-    var pinnedCount = allNonFixedCols.filter(function(col) { return col.getPinned() === 'left'; }).length;
+    const pinnedCount = allNonFixedCols.filter(col => col.getPinned() === 'left').length;
 
-    var pinFixed = pinnedCount > 0;
+    const pinFixed = pinnedCount > 0;
 
-    var columnStates = [];
-    allFixedCols.forEach(function(col) {
+    const columnStates = [];
+    allFixedCols.forEach(col => {
         if (pinFixed !== col.isPinned()) {
             columnStates.push({
                 colId: col.getId(),
@@ -56,16 +56,16 @@ function onColumnPinned(event) {
     });
 
     if (columnStates.length > 0) {
-        event.columnApi.applyColumnState({ state: columnStates });
+        event.columnApi.applyColumnState({state: columnStates});
     }
 }
 
 function onPinAthlete() {
-    gridOptions.columnApi.applyColumnState({ state: [{ colId: 'athlete', pinned: 'left' }] });
+    gridOptions.columnApi.applyColumnState({state: [{colId: 'athlete', pinned: 'left'}]});
 }
 
 function onUnpinAthlete() {
-    gridOptions.columnApi.applyColumnState({ state: [{ colId: 'athlete', pinned: null }] });
+    gridOptions.columnApi.applyColumnState({state: [{colId: 'athlete', pinned: null}]});
 }
 
 // simple cell renderer returns dummy buttons. in a real application, a component would probably
@@ -76,12 +76,11 @@ function controlsCellRenderer() {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv = document.querySelector('#myGrid');
+document.addEventListener('DOMContentLoaded', () => {
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

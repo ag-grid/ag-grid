@@ -49,7 +49,7 @@ var columnDefs = [
         field: "bronze",
         hide: true,
         enableValue: true,
-        toolPanelClass: function(params) {
+        toolPanelClass: function (params) {
             return 'tp-bronze';
         }
     },
@@ -74,22 +74,27 @@ var gridOptions = {
 
 function countryHeaderValueGetter(params) {
     switch (params.location) {
-        case 'csv': return 'CSV Country';
-        case 'clipboard': return 'CLIP Country';
-        case 'toolPanel': return 'TP Country';
-        case 'columnDrop': return 'CD Country';
-        case 'header': return 'H Country';
-        default: return 'Should never happen!';
+        case 'csv':
+            return 'CSV Country';
+        case 'clipboard':
+            return 'CLIP Country';
+        case 'toolPanel':
+            return 'TP Country';
+        case 'columnDrop':
+            return 'CD Country';
+        case 'header':
+            return 'H Country';
+        default:
+            return 'Should never happen!';
     }
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

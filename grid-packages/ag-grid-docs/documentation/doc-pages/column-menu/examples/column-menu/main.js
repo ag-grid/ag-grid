@@ -1,8 +1,8 @@
-var columnDefs = [
-    { field: "athlete", minWidth: 200 },
-    { field: "age" },
-    { field: "country", minWidth: 200 },
-    { field: "year" },
+const columnDefs = [
+    {field: "athlete", minWidth: 200},
+    {field: "age"},
+    {field: "country", minWidth: 200},
+    {field: "year"},
     {
         field: "date",
         minWidth: 180,
@@ -17,12 +17,12 @@ var columnDefs = [
         field: "gold",
         menuTabs: ['generalMenuTab', 'gibberishMenuTab'],
     },
-    { field: "silver", menuTabs: [] },
-    { field: "bronze" },
-    { field: "total" }
+    {field: "silver", menuTabs: []},
+    {field: "bronze"},
+    {field: "total"}
 ];
 
-var gridOptions = {
+const gridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
         flex: 1,
@@ -30,20 +30,20 @@ var gridOptions = {
         filter: true
     },
     getMainMenuItems: getMainMenuItems,
-    postProcessPopup: function(params) {
+    postProcessPopup: params => {
         // check callback is for menu
         if (params.type !== 'columnMenu') {
             return;
         }
-        var columnId = params.column.getId();
+        const columnId = params.column.getId();
         if (columnId === 'gold') {
-            var ePopup = params.ePopup;
+            const ePopup = params.ePopup;
 
-            var oldTopStr = ePopup.style.top;
+            let oldTopStr = ePopup.style.top;
             // remove 'px' from the string (AG Grid uses px positioning)
             oldTopStr = oldTopStr.substring(0, oldTopStr.indexOf('px'));
-            var oldTop = parseInt(oldTopStr);
-            var newTop = oldTop + 25;
+            const oldTop = parseInt(oldTopStr);
+            const newTop = oldTop + 25;
 
             ePopup.style.top = newTop + 'px';
         }
@@ -57,19 +57,35 @@ function getMainMenuItems(params) {
 
         // return the defaults, put add some extra items at the end
         case 'athlete':
-            var athleteMenuItems = params.defaultItems.slice(0);
+            const athleteMenuItems = params.defaultItems.slice(0);
             athleteMenuItems.push({
-                name: 'AG Grid Is Great', action: function() { console.log('AG Grid is great was selected'); }
+                name: 'AG Grid Is Great', action: () => {
+                    console.log('AG Grid is great was selected');
+                }
             });
             athleteMenuItems.push({
-                name: 'Casio Watch', action: function() { console.log('People who wear casio watches are cool'); }
+                name: 'Casio Watch', action: () => {
+                    console.log('People who wear casio watches are cool');
+                }
             });
             athleteMenuItems.push({
                 name: 'Custom Sub Menu',
                 subMenu: [
-                    { name: 'Black', action: function() { console.log('Black was pressed'); } },
-                    { name: 'White', action: function() { console.log('White was pressed'); } },
-                    { name: 'Grey', action: function() { console.log('Grey was pressed'); } }
+                    {
+                        name: 'Black', action: () => {
+                            console.log('Black was pressed');
+                        }
+                    },
+                    {
+                        name: 'White', action: () => {
+                            console.log('White was pressed');
+                        }
+                    },
+                    {
+                        name: 'Grey', action: () => {
+                            console.log('Grey was pressed');
+                        }
+                    }
                 ]
             });
             return athleteMenuItems;
@@ -79,12 +95,16 @@ function getMainMenuItems(params) {
             return [
                 { // our own item with an icon
                     name: 'Joe Abercrombie',
-                    action: function() { console.log('He wrote a book'); },
+                    action: () => {
+                        console.log('He wrote a book');
+                    },
                     icon: '<img src="https://www.ag-grid.com/example-assets/lab.png" style="width: 14px;" />'
                 },
                 { // our own icon with a check box
                     name: 'Larsson',
-                    action: function() { console.log('He also wrote a book'); },
+                    action: () => {
+                        console.log('He also wrote a book');
+                    },
                     checked: true
                 },
                 'resetColumns' // a built in item
@@ -92,9 +112,9 @@ function getMainMenuItems(params) {
 
         // return all the default items, but remove app separators and the two sub menus
         case 'country':
-            var countryMenuItems = [];
-            var itemsToExclude = ['separator', 'pinSubMenu', 'valueAggSubMenu'];
-            params.defaultItems.forEach(function(item) {
+            const countryMenuItems = [];
+            const itemsToExclude = ['separator', 'pinSubMenu', 'valueAggSubMenu'];
+            params.defaultItems.forEach(item => {
                 if (itemsToExclude.indexOf(item) < 0) {
                     countryMenuItems.push(item);
                 }
@@ -108,12 +128,11 @@ function getMainMenuItems(params) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv = document.querySelector('#myGrid');
+document.addEventListener('DOMContentLoaded', () => {
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

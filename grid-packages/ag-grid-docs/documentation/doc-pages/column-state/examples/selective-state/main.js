@@ -1,17 +1,17 @@
-var columnDefs = [
-    { field: 'athlete' },
-    { field: 'age' },
-    { field: 'country' },
-    { field: 'sport' },
-    { field: 'year' },
-    { field: 'date' },
-    { field: 'gold' },
-    { field: 'silver' },
-    { field: 'bronze' },
-    { field: 'total' }
+const columnDefs = [
+    {field: 'athlete'},
+    {field: 'age'},
+    {field: 'country'},
+    {field: 'sport'},
+    {field: 'year'},
+    {field: 'date'},
+    {field: 'gold'},
+    {field: 'silver'},
+    {field: 'bronze'},
+    {field: 'total'}
 ];
 
-var gridOptions = {
+const gridOptions = {
     defaultColDef: {
         sortable: true,
         resizable: true,
@@ -31,8 +31,8 @@ var gridOptions = {
 };
 
 function onBtSaveSortState() {
-    var allState = gridOptions.columnApi.getColumnState();
-    var sortState = allState.map(function(state) { return { colId: state.colId, sort: state.sort, sortIndex: state.sortIndex }; });
+    const allState = gridOptions.columnApi.getColumnState();
+    const sortState = allState.map(state => ({colId: state.colId, sort: state.sort, sortIndex: state.sortIndex}));
     window.sortState = sortState;
     console.log('sort state saved', sortState);
 }
@@ -49,8 +49,8 @@ function onBtRestoreSortState() {
 }
 
 function onBtSaveOrderAndVisibilityState() {
-    var allState = gridOptions.columnApi.getColumnState();
-    var orderAndVisibilityState = allState.map(function(state) { return { colId: state.colId, hide: state.hide }; });
+    const allState = gridOptions.columnApi.getColumnState();
+    const orderAndVisibilityState = allState.map(state => ({colId: state.colId, hide: state.hide}));
     window.orderAndVisibilityState = orderAndVisibilityState;
     console.log('order and visibility state saved', orderAndVisibilityState);
 }
@@ -68,12 +68,11 @@ function onBtRestoreOrderAndVisibilityState() {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv = document.querySelector('#myGrid');
+document.addEventListener('DOMContentLoaded', () => {
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

@@ -1,5 +1,5 @@
-var colDefCountry = { field: "country", rowGroup: true };
-var colDefYear = { field: "year", rowGroup: true };
+var colDefCountry = {field: "country", rowGroup: true};
+var colDefYear = {field: "year", rowGroup: true};
 var colDefAthlete = {
     field: "athlete",
     filter: 'agSetColumnFilter',
@@ -8,11 +8,11 @@ var colDefAthlete = {
     },
     menuTabs: ['filterMenuTab']
 };
-var colDefAge = { field: "age" };
-var colDefSport = { field: "sport" };
-var colDefGold = { field: "gold", aggFunc: 'sum' };
-var colDefSilver = { field: "silver", aggFunc: 'sum' };
-var colDefBronze = { field: "bronze", aggFunc: 'sum' };
+var colDefAge = {field: "age"};
+var colDefSport = {field: "sport"};
+var colDefGold = {field: "gold", aggFunc: 'sum'};
+var colDefSilver = {field: "silver", aggFunc: 'sum'};
+var colDefBronze = {field: "bronze", aggFunc: 'sum'};
 
 var columnDefs = [colDefAthlete, colDefAge, colDefCountry, colDefYear, colDefSport,
     colDefGold, colDefSilver, colDefBronze];
@@ -32,7 +32,7 @@ var gridOptions = {
     rowModelType: 'serverSide',
     serverSideStoreType: 'partial',
 
-    onGridReady: function() {
+    onGridReady: function () {
         document.getElementById('athlete').checked = true;
         document.getElementById('age').checked = true;
         document.getElementById('country').checked = true;
@@ -52,7 +52,7 @@ function getAthletesAsync(params) {
     var countries = fakeServer.getAthletes();
 
     // simulating real server call with a 500ms delay
-    setTimeout(function() {
+    setTimeout(function () {
         params.success(countries);
     }, 500);
 }
@@ -94,16 +94,16 @@ function getBooleanValue(cssSelector) {
 
 function ServerSideDatasource(server) {
     return {
-        getRows: function(params) {
+        getRows: function (params) {
             console.log('[Datasource] - rows requested by grid: ', params.request);
 
             var response = server.getData(params.request);
 
             // adding delay to simulate real server call
-            setTimeout(function() {
+            setTimeout(function () {
                 if (response.success) {
                     // call the success callback
-                    params.success({ rowData: response.rows, rowCount: response.lastRow });
+                    params.success({rowData: response.rows, rowCount: response.lastRow});
                 } else {
                     // inform the grid request failed
                     params.fail();
@@ -116,11 +116,11 @@ function ServerSideDatasource(server) {
 var fakeServer;
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' }).then(function(data) {
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json').then(response => response.json()).then(function (data) {
         // setup the fake server with entire dataset
         fakeServer = new FakeServer(data);
 

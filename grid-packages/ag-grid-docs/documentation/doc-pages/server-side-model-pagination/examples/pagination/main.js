@@ -1,12 +1,12 @@
 var gridOptions = {
     columnDefs: [
-        { field: 'id', maxWidth: 75 },
-        { field: 'athlete', minWidth: 190 },
-        { field: 'age' },
-        { field: 'year' },
-        { field: 'gold' },
-        { field: 'silver' },
-        { field: 'bronze' }
+        {field: 'id', maxWidth: 75},
+        {field: 'athlete', minWidth: 190},
+        {field: 'age'},
+        {field: 'year'},
+        {field: 'gold'},
+        {field: 'silver'},
+        {field: 'bronze'}
     ],
 
     defaultColDef: {
@@ -32,14 +32,14 @@ var gridOptions = {
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' }).then(function(data) {
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json').then(response => response.json()).then(function (data) {
         // add id to data
         var idSequence = 1;
-        data.forEach(function(item) {
+        data.forEach(function (item) {
             item.id = idSequence++;
         });
 
@@ -56,16 +56,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function ServerSideDatasource(server) {
     return {
-        getRows: function(params) {
+        getRows: function (params) {
             console.log('[Datasource] - rows requested by grid: ', params.request);
 
             var response = server.getData(params.request);
 
             // adding delay to simulate real server call
-            setTimeout(function() {
+            setTimeout(function () {
                 if (response.success) {
                     // call the success callback
-                    params.success({ rowData: response.rows, rowCount: response.lastRow });
+                    params.success({rowData: response.rows, rowCount: response.lastRow});
                 } else {
                     // inform the grid request failed
                     params.fail();

@@ -1,21 +1,21 @@
 var gridOptions = {
     columnDefs: [
         // group cell renderer needed for expand / collapse icons
-        { field: 'name', cellRenderer: 'agGroupCellRenderer' },
-        { field: 'account' },
-        { field: 'calls' },
-        { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" }
+        {field: 'name', cellRenderer: 'agGroupCellRenderer'},
+        {field: 'account'},
+        {field: 'calls'},
+        {field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'"}
     ],
     defaultColDef: {
         flex: 1
     },
     masterDetail: true,
     detailRowHeight: 195,
-    detailCellRendererParams: function(params) {
+    detailCellRendererParams: function (params) {
         var res = {};
 
         // we use the same getDetailRowData for both options
-        res.getDetailRowData = function(params) {
+        res.getDetailRowData = function (params) {
             params.successCallback(params.data.callRecords);
         };
 
@@ -25,8 +25,8 @@ var gridOptions = {
             // grid options for columns {callId, number}
             res.detailGridOptions = {
                 columnDefs: [
-                    { field: 'callId' },
-                    { field: 'number' }
+                    {field: 'callId'},
+                    {field: 'number'}
                 ],
                 defaultColDef: {
                     flex: 1
@@ -36,10 +36,10 @@ var gridOptions = {
             // grid options for columns {callId, direction, duration, switchCode}
             res.detailGridOptions = {
                 columnDefs: [
-                    { field: 'callId' },
-                    { field: 'direction' },
-                    { field: 'duration', valueFormatter: "x.toLocaleString() + 's'" },
-                    { field: 'switchCode' }
+                    {field: 'callId'},
+                    {field: 'direction'},
+                    {field: 'duration', valueFormatter: "x.toLocaleString() + 's'"},
+                    {field: 'switchCode'}
                 ],
                 defaultColDef: {
                     flex: 1
@@ -54,7 +54,7 @@ var gridOptions = {
 
 function onFirstDataRendered(params) {
     // arbitrarily expand a row for presentational purposes
-    setTimeout(function() {
+    setTimeout(function () {
         var node1 = params.api.getDisplayedRowAtIndex(1);
         var node2 = params.api.getDisplayedRowAtIndex(2);
         node1.setExpanded(true);
@@ -63,11 +63,11 @@ function onFirstDataRendered(params) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/master-detail-data.json' }).then(function(data) {
+    fetch('https://www.ag-grid.com/example-assets/master-detail-data.json').then(response => response.json()).then(function (data) {
         gridOptions.api.setRowData(data);
     });
 });

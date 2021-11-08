@@ -1,11 +1,11 @@
 var gridOptions = {
     columnDefs: [
-        { field: 'country', rowGroup: true, enableRowGroup: true, hide: true },
-        { field: 'year', rowGroup: true, enableRowGroup: true, hide: true },
-        { field: 'sport', enableRowGroup: true },
-        { field: 'gold' },
-        { field: 'silver' },
-        { field: 'bronze' },
+        {field: 'country', rowGroup: true, enableRowGroup: true, hide: true},
+        {field: 'year', rowGroup: true, enableRowGroup: true, hide: true},
+        {field: 'sport', enableRowGroup: true},
+        {field: 'gold'},
+        {field: 'silver'},
+        {field: 'bronze'},
     ],
     defaultColDef: {
         flex: 1,
@@ -21,12 +21,11 @@ var gridOptions = {
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

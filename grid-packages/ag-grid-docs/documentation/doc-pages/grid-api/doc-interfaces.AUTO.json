@@ -138,7 +138,7 @@
     },
     "params": { "type": { "returnType": "any", "optional": false } },
     "type": { "type": { "returnType": "ComponentType", "optional": false } },
-    "newJsInstance": {
+    "newAgStackInstance": {
       "type": {
         "arguments": { "defaultComponentName?": "string | null" },
         "returnType": "AgPromise<any> | null",
@@ -11959,7 +11959,7 @@
       }
     },
     "numberOfInputs": {
-      "description": "/** Number of inputs to display for this option. */",
+      "description": "/** Number of inputs to display for this option. Defaults to `1` if unspecified. */",
       "type": { "returnType": "0 | 1 | 2", "optional": true }
     },
     "test": {
@@ -15695,6 +15695,15 @@
     "value": { "type": { "returnType": "any", "optional": false } },
     "valueFormatted": { "type": { "returnType": "any", "optional": false } },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "colDef": {
+      "description": "/** The cell's column definition. */",
+      "type": { "returnType": "ColDef", "optional": true }
+    },
+    "column": {
+      "description": "/** The cell's column. */",
+      "type": { "returnType": "Column", "optional": true }
+    },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }

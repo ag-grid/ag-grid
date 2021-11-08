@@ -583,12 +583,16 @@ var gridOptions = {
         },
         cartesian: {
             common: {
-
             },
             axes: {
                 number: {
                     label: {
                         formatter: axisLabelFormatter
+                    }
+                },
+                category: {
+                    label: {
+                        rotation: 335
                     }
                 }
             },

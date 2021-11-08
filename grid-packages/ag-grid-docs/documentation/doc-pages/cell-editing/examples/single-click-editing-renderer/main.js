@@ -1,15 +1,15 @@
-var gridOptions = {
+const gridOptions = {
     columnDefs: [
-        { field: 'athlete', minWidth: 180 },
-        { field: 'age' },
-        { field: 'country', minWidth: 160 },
-        { field: 'year' },
-        { field: 'date', minWidth: 160 },
-        { field: 'sport', minWidth: 180 },
-        { field: 'gold' },
-        { field: 'silver' },
-        { field: 'bronze' },
-        { field: 'total' },
+        {field: 'athlete', minWidth: 180},
+        {field: 'age'},
+        {field: 'country', minWidth: 160},
+        {field: 'year'},
+        {field: 'date', minWidth: 160},
+        {field: 'sport', minWidth: 180},
+        {field: 'gold'},
+        {field: 'silver'},
+        {field: 'bronze'},
+        {field: 'total'},
     ],
     defaultColDef: {
         flex: 1,
@@ -30,14 +30,14 @@ function getRenderer() {
     function CellRenderer() {
     }
 
-    CellRenderer.prototype.createGui = function() {
-        var template = '<span><button id="theButton" style="height: 39px">#</button><span id="theValue" style="padding-left: 4px;"></span></span>';
-        var tempDiv = document.createElement('div');
+    CellRenderer.prototype.createGui = function () {
+        const template = '<span><button id="theButton" style="height: 39px">#</button><span id="theValue" style="padding-left: 4px;"></span></span>';
+        const tempDiv = document.createElement('div');
         tempDiv.innerHTML = template;
         this.eGui = tempDiv.firstElementChild;
     };
 
-    CellRenderer.prototype.init = function(params) {
+    CellRenderer.prototype.init = function (params) {
 
         // create the gui
         this.createGui();
@@ -45,7 +45,7 @@ function getRenderer() {
         this.params = params;
 
         // attach the value to the value span
-        var eValue = this.eGui.querySelector('#theValue');
+        const eValue = this.eGui.querySelector('#theValue');
 
         eValue.innerHTML = params.value;
         // setup the button, first get reference to it
@@ -56,20 +56,20 @@ function getRenderer() {
         // add the listener
         this.eButton.addEventListener('click', this.buttonClickListener);
     };
-    CellRenderer.prototype.onButtonClicked = function() {
+    CellRenderer.prototype.onButtonClicked = function () {
 
         // start editing this cell. see the docs on the params that this method takes
-        var startEditingParams = {
+        const startEditingParams = {
             rowIndex: this.params.rowIndex,
             colKey: this.params.column.getId()
         };
         this.params.api.startEditingCell(startEditingParams);
     };
-    CellRenderer.prototype.getGui = function() {
+    CellRenderer.prototype.getGui = function () {
         // returns our gui to the grid for this cell
         return this.eGui;
     };
-    CellRenderer.prototype.destroy = function() {
+    CellRenderer.prototype.destroy = function () {
 
         // be good, clean up the listener
         this.eButton.removeEventListener('click', this.buttonClickListener);
@@ -79,12 +79,11 @@ function getRenderer() {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv = document.querySelector('#myGrid');
+document.addEventListener('DOMContentLoaded', () => {
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

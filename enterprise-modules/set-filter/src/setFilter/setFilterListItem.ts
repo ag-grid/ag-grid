@@ -12,7 +12,7 @@ import {
     PostConstruct,
     RefSelector,
     UserComponentFactory,
-    ValueFormatterService
+    ValueFormatterService,
 } from '@ag-grid-community/core';
 import { ISetFilterLocaleText } from './localeText';
 
@@ -32,12 +32,13 @@ export class SetFilterListItem extends Component {
         </div>`;
 
     @RefSelector('eCheckbox') private readonly eCheckbox: AgCheckbox;
-
+    
     constructor(
         private readonly value: string | (() => string),
         private readonly params: ISetFilterParams,
         private readonly translate: (key: keyof ISetFilterLocaleText) => string,
-        private isSelected?: boolean) {
+        private isSelected?: boolean,
+    ) {
         super(SetFilterListItem.TEMPLATE);
     }
 
@@ -95,7 +96,10 @@ export class SetFilterListItem extends Component {
             value,
             valueFormatted: formattedValue,
             api: this.gridOptionsWrapper.getApi()!,
-            context: this.gridOptionsWrapper.getContext()
+            columnApi: this.gridOptionsWrapper.getColumnApi()!,
+            context: this.gridOptionsWrapper.getContext(),
+            colDef: this.params.colDef,
+            column: this.params.column,
         };
 
         this.renderCell(params);
@@ -114,7 +118,7 @@ export class SetFilterListItem extends Component {
         return this.valueFormatterService.formatValue(column, null, null, value, formatter, false);
     }
 
-    private renderCell(params: any): void {
+    private renderCell(params: ISetFilterCellRendererParams): void {
         const compDetails = this.userComponentFactory.getSetFilterCellRendererDetails(this.params, params);
         const cellRendererPromise = compDetails ? compDetails.newAgStackInstance() : undefined;
         

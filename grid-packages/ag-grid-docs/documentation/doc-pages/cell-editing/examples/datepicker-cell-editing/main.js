@@ -1,17 +1,17 @@
-var columnDefs = [
-    { field: 'athlete' },
-    { field: 'date', editable: true, cellEditor: 'datePicker' },
-    { field: 'age', maxWidth: 110 },
-    { field: 'country' },
-    { field: 'year', maxWidth: 120 },
-    { field: 'sport' },
-    { field: 'gold' },
-    { field: 'silver' },
-    { field: 'bronze' },
-    { field: 'total' }
+const columnDefs = [
+    {field: 'athlete'},
+    {field: 'date', editable: true, cellEditor: 'datePicker'},
+    {field: 'age', maxWidth: 110},
+    {field: 'country'},
+    {field: 'year', maxWidth: 120},
+    {field: 'sport'},
+    {field: 'gold'},
+    {field: 'silver'},
+    {field: 'bronze'},
+    {field: 'total'}
 ];
 
-var gridOptions = {
+const gridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
         flex: 1,
@@ -24,10 +24,11 @@ var gridOptions = {
 
 function getDatePicker() {
     // function to act as a class
-    function Datepicker() { }
+    function Datepicker() {
+    }
 
     // gets called once before the renderer is used
-    Datepicker.prototype.init = function(params) {
+    Datepicker.prototype.init = function (params) {
         // create the cell
         this.eInput = document.createElement('input');
         this.eInput.value = params.value;
@@ -41,29 +42,29 @@ function getDatePicker() {
     };
 
     // gets called once when grid ready to insert the element
-    Datepicker.prototype.getGui = function() {
+    Datepicker.prototype.getGui = function () {
         return this.eInput;
     };
 
     // focus and select can be done after the gui is attached
-    Datepicker.prototype.afterGuiAttached = function() {
+    Datepicker.prototype.afterGuiAttached = function () {
         this.eInput.focus();
         this.eInput.select();
     };
 
     // returns the new value after editing
-    Datepicker.prototype.getValue = function() {
+    Datepicker.prototype.getValue = function () {
         return this.eInput.value;
     };
 
     // any cleanup we need to be done here
-    Datepicker.prototype.destroy = function() {
+    Datepicker.prototype.destroy = () => {
         // but this example is simple, no cleanup, we could
         // even leave this method out as it's optional
     };
 
     // if true, then this editor will appear in a popup
-    Datepicker.prototype.isPopup = function() {
+    Datepicker.prototype.isPopup = () => {
         // and we could leave this method out also, false is the default
         return false;
     };
@@ -72,12 +73,11 @@ function getDatePicker() {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv = document.querySelector('#myGrid');
+document.addEventListener('DOMContentLoaded', () => {
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

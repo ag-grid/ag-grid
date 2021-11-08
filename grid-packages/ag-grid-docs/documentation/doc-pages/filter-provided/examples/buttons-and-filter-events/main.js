@@ -31,11 +31,11 @@ var columnDefs = [
         },
         maxWidth: 100,
     },
-    { field: 'sport' },
-    { field: 'gold', filter: 'agNumberColumnFilter' },
-    { field: 'silver', filter: 'agNumberColumnFilter' },
-    { field: 'bronze', filter: 'agNumberColumnFilter' },
-    { field: 'total', filter: 'agNumberColumnFilter' },
+    {field: 'sport'},
+    {field: 'gold', filter: 'agNumberColumnFilter'},
+    {field: 'silver', filter: 'agNumberColumnFilter'},
+    {field: 'bronze', filter: 'agNumberColumnFilter'},
+    {field: 'total', filter: 'agNumberColumnFilter'},
 ];
 
 var gridOptions = {
@@ -48,11 +48,11 @@ var gridOptions = {
     onFilterOpened: function (e) {
         console.log('onFilterOpened', e);
     },
-    onFilterChanged: function(e) {
+    onFilterChanged: function (e) {
         console.log('onFilterChanged', e);
         console.log('gridApi.getFilterModel() =>', e.api.getFilterModel());
     },
-    onFilterModified: function(e) {
+    onFilterModified: function (e) {
         console.log('onFilterModified', e);
         console.log('filterInstance.getModel() =>', e.filterInstance.getModel());
         console.log('filterInstance.getModelFromUi() =>', e.filterInstance.getModelFromUi());
@@ -60,12 +60,11 @@ var gridOptions = {
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

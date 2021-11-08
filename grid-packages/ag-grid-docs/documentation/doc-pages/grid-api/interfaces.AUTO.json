@@ -86,7 +86,7 @@
       "componentFromFramework": "boolean",
       "params": "any",
       "type": "ComponentType",
-      "newJsInstance": "(defaultComponentName?: string | null) => AgPromise<any> | null"
+      "newAgStackInstance": "(defaultComponentName?: string | null) => AgPromise<any> | null"
     }
   },
   "RegisteredComponent": {
@@ -6916,7 +6916,7 @@
       "displayKey": "/** A unique key that does not clash with the built-in filter keys. */",
       "displayName": "/** Display name for the filter. Can be replaced by a locale-specific value using a `localeTextFunc`. */",
       "predicate?": "/** Custom filter logic that returns a boolean based on the `filterValues` and `cellValue`. */",
-      "numberOfInputs?": "/** Number of inputs to display for this option. */",
+      "numberOfInputs?": "/** Number of inputs to display for this option. Defaults to `1` if unspecified. */",
       "test?": "/** @deprecated use `predicate` instead.\n */",
       "hideFilterInput?": "/** @deprecated use `numberOfInputs: 0` instead.\n */"
     }
@@ -8847,9 +8847,14 @@
       "value": "any",
       "valueFormatted": "any",
       "api": "GridApi",
+      "colDef?": "ColDef",
+      "column?": "Column",
+      "columnApi": "ColumnApi",
       "context": "any"
     },
     "docs": {
+      "colDef?": "/** The cell's column definition. */",
+      "column?": "/** The cell's column. */",
       "context": "/** The context as provided on `gridOptions.context` */"
     }
   },

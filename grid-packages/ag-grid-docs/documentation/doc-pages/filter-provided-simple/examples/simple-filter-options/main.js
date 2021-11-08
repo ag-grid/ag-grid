@@ -1,6 +1,6 @@
 var filterParams = {
     suppressAndOrCondition: true,
-    comparator: function(filterLocalDateAtMidnight, cellValue) {
+    comparator: function (filterLocalDateAtMidnight, cellValue) {
         var dateAsString = cellValue;
         if (dateAsString == null) return -1;
         var dateParts = dateAsString.split("/");
@@ -22,7 +22,7 @@ var filterParams = {
 };
 
 var columnDefs = [
-    { field: 'athlete' },
+    {field: 'athlete'},
     {
         field: 'country',
         filterParams: {
@@ -56,12 +56,11 @@ var gridOptions = {
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

@@ -1,5 +1,5 @@
 var dateFilterParams = {
-    comparator: function(filterLocalDateAtMidnight, cellValue) {
+    comparator: function (filterLocalDateAtMidnight, cellValue) {
         var cellDate = asDate(cellValue);
 
         if (filterLocalDateAtMidnight.getTime() === cellDate.getTime()) {
@@ -17,18 +17,18 @@ var dateFilterParams = {
 };
 
 var columnDefs = [
-    { field: 'athlete', minWidth: 180 },
-    { field: 'age', filter: 'agNumberColumnFilter', maxWidth: 80 },
-    { field: 'country' },
-    { field: 'year', maxWidth: 90 },
+    {field: 'athlete', minWidth: 180},
+    {field: 'age', filter: 'agNumberColumnFilter', maxWidth: 80},
+    {field: 'country'},
+    {field: 'year', maxWidth: 90},
     {
         field: 'date',
         filter: 'agDateColumnFilter',
         filterParams: dateFilterParams
     },
-    { field: 'gold', filter: 'agNumberColumnFilter' },
-    { field: 'silver', filter: 'agNumberColumnFilter' },
-    { field: 'bronze', filter: 'agNumberColumnFilter' },
+    {field: 'gold', filter: 'agNumberColumnFilter'},
+    {field: 'silver', filter: 'agNumberColumnFilter'},
+    {field: 'bronze', filter: 'agNumberColumnFilter'},
 ];
 
 var gridOptions = {
@@ -52,11 +52,16 @@ function isExternalFilterPresent() {
 
 function doesExternalFilterPass(node) {
     switch (ageType) {
-        case 'below25': return node.data.age < 25;
-        case 'between25and50': return node.data.age >= 25 && node.data.age <= 50;
-        case 'above50': return node.data.age > 50;
-        case 'dateAfter2008': return asDate(node.data.date) > new Date(2008, 1, 1);
-        default: return true;
+        case 'below25':
+            return node.data.age < 25;
+        case 'between25and50':
+            return node.data.age >= 25 && node.data.age <= 50;
+        case 'above50':
+            return node.data.age > 50;
+        case 'dateAfter2008':
+            return asDate(node.data.date) > new Date(2008, 1, 1);
+        default:
+            return true;
     }
 }
 
@@ -71,12 +76,13 @@ function externalFilterChanged(newValue) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(function (data) {
             document.querySelector('#everyone').checked = true;
             gridOptions.api.setRowData(data);
         });

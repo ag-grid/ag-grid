@@ -5,7 +5,7 @@ var monthCellClassRules = {
     'cell-negative': 'x < 0'
 };
 var yearToDateValueGetter = 'var total = 0; ctx.months.forEach( function(monthName, monthIndex) { if (monthIndex<=ctx.month) { total += data[monthName + "_act"]; } }); return total; ';
-var accountingCellRenderer = function(params) {
+var accountingCellRenderer = function (params) {
     if (params.value == null) {
         return '';
     } else if (params.value >= 0) {
@@ -60,7 +60,7 @@ var columnDefs = [
 
             {
                 headerName: 'YTD', cellClass: 'cell-figure', cellRenderer: accountingCellRenderer,
-                valueGetter: yearToDateValueGetter, cellStyle: { 'font-weight': 'bold' }, aggFunc: 'sum'
+                valueGetter: yearToDateValueGetter, cellStyle: {'font-weight': 'bold'}, aggFunc: 'sum'
             }
         ]
     }
@@ -97,7 +97,7 @@ var gridOptions = {
 var monthNames = ['Budget Only', 'Year to Jan', 'Year to Feb', 'Year to Mar', 'Year to Apr', 'Year to May',
     'Year to Jun', 'Year to Jul', 'Year to Aug', 'Year to Sep', 'Year to Oct', 'Year to Nov', 'Full Year'];
 
-onChangeMonth = function(i) {
+onChangeMonth = function (i) {
     var newMonth = gridOptions.context.month += i;
 
     if (newMonth < -1) {
@@ -127,12 +127,12 @@ function modelUpdated() {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/monthly-sales.json' })
-        .then(function(data) {
+    fetch('https://www.ag-grid.com/example-assets/monthly-sales.json').then(response => response.json())
+        .then(function (data) {
             gridOptions.api.setRowData(data);
         });
 });

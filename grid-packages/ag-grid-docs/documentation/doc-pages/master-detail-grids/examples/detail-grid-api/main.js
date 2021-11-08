@@ -1,21 +1,21 @@
 var gridOptions = {
     columnDefs: [
         // group cell renderer needed for expand / collapse icons
-        { field: 'name', cellRenderer: 'agGroupCellRenderer' },
-        { field: 'account' },
-        { field: 'calls' },
-        { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" }
+        {field: 'name', cellRenderer: 'agGroupCellRenderer'},
+        {field: 'account'},
+        {field: 'calls'},
+        {field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'"}
     ],
     masterDetail: true,
     detailRowHeight: 200,
     detailCellRendererParams: {
         detailGridOptions: {
             columnDefs: [
-                { field: 'callId' },
-                { field: 'direction' },
-                { field: 'number', minWidth: 150 },
-                { field: 'duration', valueFormatter: "x.toLocaleString() + 's'" },
-                { field: 'switchCode', minWidth: 150 }
+                {field: 'callId'},
+                {field: 'direction'},
+                {field: 'number', minWidth: 150},
+                {field: 'duration', valueFormatter: "x.toLocaleString() + 's'"},
+                {field: 'switchCode', minWidth: 150}
             ],
             defaultColDef: {
                 flex: 1,
@@ -23,11 +23,11 @@ var gridOptions = {
                 resizable: true
             }
         },
-        getDetailRowData: function(params) {
+        getDetailRowData: function (params) {
             params.successCallback(params.data.callRecords);
         }
     },
-    getRowNodeId: function(data) {
+    getRowNodeId: function (data) {
         // use 'account' as the row ID
         return data.account;
     },
@@ -41,8 +41,8 @@ var gridOptions = {
 
 function onFirstDataRendered(params) {
     // expand the first two rows
-    setTimeout(function() {
-        params.api.forEachNode(function(node) {
+    setTimeout(function () {
+        params.api.forEachNode(function (node) {
             node.setExpanded(true);
         });
     }, 0);
@@ -57,17 +57,17 @@ function flashMilaSmithOnly() {
 }
 
 function flashAll() {
-    gridOptions.api.forEachDetailGridInfo(function(detailGridApi) {
+    gridOptions.api.forEachDetailGridInfo(function (detailGridApi) {
         detailGridApi.api.flashCells();
     });
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/master-detail-data.json' }).then(function(data) {
+    fetch('https://www.ag-grid.com/example-assets/master-detail-data.json').then(response => response.json()).then(function (data) {
         gridOptions.api.setRowData(data);
     });
 });

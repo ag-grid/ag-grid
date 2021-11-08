@@ -1,14 +1,14 @@
 var columnDefs = [
-    { field: "athlete" },
-    { field: "age", width: 90 },
-    { field: "country" },
-    { field: "year", width: 90 },
-    { field: "date" },
-    { field: "sport" },
-    { field: "gold" },
-    { field: "silver" },
-    { field: "bronze" },
-    { field: "total" }
+    {field: "athlete"},
+    {field: "age", width: 90},
+    {field: "country"},
+    {field: "year", width: 90},
+    {field: "date"},
+    {field: "sport"},
+    {field: "gold"},
+    {field: "silver"},
+    {field: "bronze"},
+    {field: "total"}
 ];
 
 var gridOptions = {
@@ -21,44 +21,44 @@ var gridOptions = {
 function sortByAthleteAsc() {
     gridOptions.columnApi.applyColumnState({
         state: [
-            { colId: 'athlete', sort: 'asc' }
+            {colId: 'athlete', sort: 'asc'}
         ],
-        defaultState: { sort: null }
+        defaultState: {sort: null}
     });
 }
 
 function sortByAthleteDesc() {
     gridOptions.columnApi.applyColumnState({
         state: [
-            { colId: 'athlete', sort: 'desc' }
+            {colId: 'athlete', sort: 'desc'}
         ],
-        defaultState: { sort: null }
+        defaultState: {sort: null}
     });
 }
 
 function sortByCountryThenSport() {
     gridOptions.columnApi.applyColumnState({
         state: [
-            { colId: 'country', sort: 'asc', sortIndex: 0 },
-            { colId: 'sport', sort: 'asc', sortIndex: 1 }
+            {colId: 'country', sort: 'asc', sortIndex: 0},
+            {colId: 'sport', sort: 'asc', sortIndex: 1}
         ],
-        defaultState: { sort: null }
+        defaultState: {sort: null}
     });
 }
 
 function sortBySportThenCountry() {
     gridOptions.columnApi.applyColumnState({
         state: [
-            { colId: 'country', sort: 'asc', sortIndex: 1 },
-            { colId: 'sport', sort: 'asc', sortIndex: 0 }
+            {colId: 'country', sort: 'asc', sortIndex: 1},
+            {colId: 'sport', sort: 'asc', sortIndex: 0}
         ],
-        defaultState: { sort: null }
+        defaultState: {sort: null}
     });
 }
 
 function clearSort() {
     gridOptions.columnApi.applyColumnState({
-        defaultState: { sort: null }
+        defaultState: {sort: null}
     });
 }
 
@@ -67,11 +67,11 @@ var savedSort;
 function saveSort() {
     var colState = gridOptions.columnApi.getColumnState();
     var sortState = colState
-        .filter(function(s) {
+        .filter(function (s) {
             return s.sort != null;
         })
-        .map(function(s) {
-            return { colId: s.colId, sort: s.sort, sortIndex: s.sortIndex };
+        .map(function (s) {
+            return {colId: s.colId, sort: s.sort, sortIndex: s.sortIndex};
         });
     savedSort = sortState;
     console.log('saved sort', sortState);
@@ -80,17 +80,16 @@ function saveSort() {
 function restoreFromSave() {
     gridOptions.columnApi.applyColumnState({
         state: savedSort,
-        defaultState: { sort: null }
+        defaultState: {sort: null}
     });
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

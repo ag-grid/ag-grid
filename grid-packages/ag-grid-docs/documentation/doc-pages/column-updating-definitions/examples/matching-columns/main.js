@@ -9,22 +9,22 @@ function getColDefsMedalsIncluded() {
     return [
         athleteColumn,
         {
-            colId: 'myAgeCol', headerName: 'Age', valueGetter: function(params) {
+            colId: 'myAgeCol', headerName: 'Age', valueGetter: function (params) {
                 return params.data.age;
             }
         },
         {
-            headerName: 'Country', headerClass: 'country-header', valueGetter: function(params) {
+            headerName: 'Country', headerClass: 'country-header', valueGetter: function (params) {
                 return params.data.country;
             }
         },
-        { field: 'sport' },
-        { field: 'year' },
-        { field: 'date' },
-        { field: 'gold' },
-        { field: 'silver' },
-        { field: 'bronze' },
-        { field: 'total' }
+        {field: 'sport'},
+        {field: 'year'},
+        {field: 'date'},
+        {field: 'gold'},
+        {field: 'silver'},
+        {field: 'bronze'},
+        {field: 'total'}
     ];
 }
 
@@ -32,18 +32,18 @@ function getColDefsMedalsExcluded() {
     return [
         athleteColumn,
         {
-            colId: 'myAgeCol', headerName: 'Age', valueGetter: function(params) {
+            colId: 'myAgeCol', headerName: 'Age', valueGetter: function (params) {
                 return params.data.age;
             }
         },
         {
-            headerName: 'Country', headerClass: 'country-header', valueGetter: function(params) {
+            headerName: 'Country', headerClass: 'country-header', valueGetter: function (params) {
                 return params.data.country;
             }
         },
-        { field: 'sport' },
-        { field: 'year' },
-        { field: 'date' }
+        {field: 'sport'},
+        {field: 'year'},
+        {field: 'date'}
     ];
 }
 
@@ -65,12 +65,11 @@ function onBtIncludeMedalColumns() {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

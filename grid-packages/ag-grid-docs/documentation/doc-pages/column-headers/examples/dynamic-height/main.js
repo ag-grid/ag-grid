@@ -1,12 +1,12 @@
-var columnDefs = [
+const columnDefs = [
     {
         headerName: 'Athlete Details',
         children: [
-            { headerName: 'Athlete', field: 'athlete', width: 150, suppressSizeToFit: true, enableRowGroup: true, rowGroupIndex: 0 },
-            { headerName: 'Age', field: 'age', width: 90, minwidth: 75, maxWidth: 100, enableRowGroup: true },
-            { headerName: 'Country', field: 'country', width: 120, enableRowGroup: true },
-            { headerName: 'Year', field: 'year', width: 90, enableRowGroup: true, pivotIndex: 0 },
-            { headerName: 'Sport', field: 'sport', width: 110, enableRowGroup: true },
+            {headerName: 'Athlete', field: 'athlete', width: 150, suppressSizeToFit: true, enableRowGroup: true, rowGroupIndex: 0},
+            {headerName: 'Age', field: 'age', width: 90, minwidth: 75, maxWidth: 100, enableRowGroup: true},
+            {headerName: 'Country', field: 'country', width: 120, enableRowGroup: true},
+            {headerName: 'Year', field: 'year', width: 90, enableRowGroup: true, pivotIndex: 0},
+            {headerName: 'Sport', field: 'sport', width: 110, enableRowGroup: true},
             {
                 headerName: 'Gold',
                 field: 'gold',
@@ -47,7 +47,7 @@ var columnDefs = [
     }
 ];
 
-var gridOptions = {
+const gridOptions = {
     defaultColDef: {
         sortable: true,
         resizable: true,
@@ -101,12 +101,11 @@ function setPivotHeaderHeight(value) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
-    var gridDiv = document.querySelector('#myGrid');
+document.addEventListener('DOMContentLoaded', () => {
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

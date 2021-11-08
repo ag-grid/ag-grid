@@ -1,11 +1,11 @@
 var gridOptions = {
     columnDefs: [
-        { field: "country", rowGroup: true, hide: true },
-        { field: "year", rowGroup: true, hide: true },
-        { field: "version" },
-        { field: "gold", aggFunc: 'sum' },
-        { field: "silver", aggFunc: 'sum' },
-        { field: "bronze", aggFunc: 'sum' }
+        {field: "country", rowGroup: true, hide: true},
+        {field: "year", rowGroup: true, hide: true},
+        {field: "version"},
+        {field: "gold", aggFunc: 'sum'},
+        {field: "silver", aggFunc: 'sum'},
+        {field: "bronze", aggFunc: 'sum'}
     ],
     defaultColDef: {
         flex: 1,
@@ -18,7 +18,7 @@ var gridOptions = {
         minWidth: 280,
         field: 'athlete'
     },
-    getRowNodeId: function(data) {
+    getRowNodeId: function (data) {
         var parts = [];
         if (data.country != null) {
             parts.push(data.country);
@@ -43,10 +43,11 @@ var gridOptions = {
 };
 
 var versionCounter = 1;
+
 function refreshCache(route) {
     versionCounter++;
     var purge = document.querySelector('#purge').checked === true;
-    gridOptions.api.refreshServerSideStore({ route: route, purge: purge });
+    gridOptions.api.refreshServerSideStore({route: route, purge: purge});
 }
 
 function getBlockState() {
@@ -56,19 +57,19 @@ function getBlockState() {
 
 function ServerSideDatasource(server) {
     return {
-        getRows: function(params) {
+        getRows: function (params) {
             console.log('[Datasource] - rows requested by grid: ', params.request);
 
             var response = server.getData(params.request);
 
-            response.rows = response.rows.map(function(item) {
+            response.rows = response.rows.map(function (item) {
                 var res = {};
                 Object.assign(res, item);
                 res.version = versionCounter + ' - ' + versionCounter + ' - ' + versionCounter;
 
                 // for unique-id purposes in the client, we also want to attached
                 // the parent group keys
-                params.request.groupKeys.forEach(function(groupKey, index) {
+                params.request.groupKeys.forEach(function (groupKey, index) {
                     var col = params.request.rowGroupCols[index];
                     var field = col.id;
                     res[field] = groupKey;
@@ -78,10 +79,10 @@ function ServerSideDatasource(server) {
             });
 
             // adding delay to simulate real server call
-            setTimeout(function() {
+            setTimeout(function () {
                 if (response.success) {
                     // call the success callback
-                    params.success({ rowData: response.rows, rowCount: response.lastRow });
+                    params.success({rowData: response.rows, rowCount: response.lastRow});
                 } else {
                     // inform the grid request failed
                     params.fail();
@@ -92,13 +93,13 @@ function ServerSideDatasource(server) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' }).then(function(data) {
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json').then(response => response.json()).then(function (data) {
         // give each data item an ID
-        data.forEach(function(dataItem, index) {
+        data.forEach(function (dataItem, index) {
             dataItem.id = index;
         });
 

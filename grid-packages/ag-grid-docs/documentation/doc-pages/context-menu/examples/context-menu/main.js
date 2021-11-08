@@ -1,15 +1,15 @@
 var gridOptions = {
     columnDefs: [
-        { field: 'athlete', minWidth: 200 },
-        { field: 'age' },
-        { field: 'country', minWidth: 200 },
-        { field: 'year' },
-        { field: 'date', minWidth: 180 },
-        { field: 'sport', minWidth: 200 },
-        { field: 'gold' },
-        { field: 'silver' },
-        { field: 'bronze' },
-        { field: 'total' }
+        {field: 'athlete', minWidth: 200},
+        {field: 'age'},
+        {field: 'country', minWidth: 200},
+        {field: 'year'},
+        {field: 'date', minWidth: 180},
+        {field: 'sport', minWidth: 200},
+        {field: 'gold'},
+        {field: 'silver'},
+        {field: 'bronze'},
+        {field: 'total'}
     ],
     defaultColDef: {
         flex: 1,
@@ -30,7 +30,7 @@ function getContextMenuItems(params) {
         {
             // custom item
             name: 'Alert ' + params.value,
-            action: function() {
+            action: function () {
                 window.alert('Alerting about ' + params.value);
             },
             cssClasses: ['redFont', 'bold']
@@ -46,21 +46,21 @@ function getContextMenuItems(params) {
             subMenu: [
                 {
                     name: 'Ireland',
-                    action: function() {
+                    action: function () {
                         console.log('Ireland was pressed');
                     },
                     icon: createFlagImg('ie')
                 },
                 {
                     name: 'UK',
-                    action: function() {
+                    action: function () {
                         console.log('UK was pressed');
                     },
                     icon: createFlagImg('gb')
                 },
                 {
                     name: 'France',
-                    action: function() {
+                    action: function () {
                         console.log('France was pressed');
                     },
                     icon: createFlagImg('fr')
@@ -72,55 +72,55 @@ function getContextMenuItems(params) {
             subMenu: [
                 {
                     name: 'Niall',
-                    action: function() {
+                    action: function () {
                         console.log('Niall was pressed');
                     }
                 },
                 {
                     name: 'Sean',
-                    action: function() {
+                    action: function () {
                         console.log('Sean was pressed');
                     }
                 },
                 {
                     name: 'John',
-                    action: function() {
+                    action: function () {
                         console.log('John was pressed');
                     }
                 },
                 {
                     name: 'Alberto',
-                    action: function() {
+                    action: function () {
                         console.log('Alberto was pressed');
                     }
                 },
                 {
                     name: 'Tony',
-                    action: function() {
+                    action: function () {
                         console.log('Tony was pressed');
                     }
                 },
                 {
                     name: 'Andrew',
-                    action: function() {
+                    action: function () {
                         console.log('Andrew was pressed');
                     }
                 },
                 {
                     name: 'Kev',
-                    action: function() {
+                    action: function () {
                         console.log('Kev was pressed');
                     }
                 },
                 {
                     name: 'Will',
-                    action: function() {
+                    action: function () {
                         console.log('Will was pressed');
                     }
                 },
                 {
                     name: 'Armaan',
-                    action: function() {
+                    action: function () {
                         console.log('Armaan was pressed');
                     }
                 }
@@ -131,7 +131,7 @@ function getContextMenuItems(params) {
             // custom item
             name: 'Windows',
             shortcut: 'Alt + W',
-            action: function() {
+            action: function () {
                 console.log('Windows Item Selected');
             },
             icon: '<img src="https://www.ag-grid.com/example-assets/skills/windows.png" />'
@@ -140,7 +140,7 @@ function getContextMenuItems(params) {
             // custom item
             name: 'Mac',
             shortcut: 'Alt + M',
-            action: function() {
+            action: function () {
                 console.log('Mac Item Selected');
             },
             icon: '<img src="https://www.ag-grid.com/example-assets/skills/mac.png"/>'
@@ -150,7 +150,7 @@ function getContextMenuItems(params) {
             // custom item
             name: 'Checked',
             checked: true,
-            action: function() {
+            action: function () {
                 console.log('Checked Selected');
             },
             icon: '<img src="https://www.ag-grid.com/example-assets/skills/mac.png"/>'
@@ -164,12 +164,11 @@ function getContextMenuItems(params) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

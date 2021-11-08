@@ -1,5 +1,5 @@
 var columnDefs = [
-    { field: 'athlete', filter: 'agSetColumnFilter' },
+    {field: 'athlete', filter: 'agSetColumnFilter'},
 ];
 
 var gridOptions = {
@@ -37,12 +37,11 @@ function resetFilter() {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

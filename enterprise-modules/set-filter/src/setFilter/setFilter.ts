@@ -95,14 +95,16 @@ export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> {
 
         e.preventDefault();
 
-        if (this.setFilterParams && !!this.setFilterParams.readOnly) { return; }
+        const { readOnly } = this.setFilterParams || {};
+        if (!!readOnly) { return; }
         component.toggleSelected();
     }
 
     private handleKeyEnter(e: KeyboardEvent): void {
         if (!this.setFilterParams) { return; }
 
-        if (!this.setFilterParams.excelMode || !!this.setFilterParams.readOnly) { return; }
+        const { excelMode, readOnly } = this.setFilterParams || {};
+        if (!excelMode || !!readOnly) { return; }
 
         e.preventDefault();
 
@@ -564,12 +566,13 @@ export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> {
         if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
         if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
-        if (this.valueModel.setMiniFilter(this.eMiniFilter.getValue())) {
-            if (this.setFilterParams.applyMiniFilterWhileTyping) {
-                this.filterOnAllVisibleValues(false);
-            } else {
-                this.updateUiAfterMiniFilterChange();
-            }
+        if (!this.valueModel.setMiniFilter(this.eMiniFilter.getValue())) { return; }
+
+        const { applyMiniFilterWhileTyping, readOnly } = this.setFilterParams || {};
+        if (!readOnly && applyMiniFilterWhileTyping) {
+            this.filterOnAllVisibleValues(false);
+        } else {
+            this.updateUiAfterMiniFilterChange();
         }
     }
 
@@ -577,16 +580,15 @@ export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> {
         if (!this.setFilterParams) { throw new Error('Set filter params have not been provided.'); }
         if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
-        if (this.setFilterParams.excelMode) {
-            if (this.valueModel.getMiniFilter() == null) {
-                this.resetUiToActiveModel();
-            } else {
-                this.valueModel.selectAllMatchingMiniFilter(true);
-                this.refresh();
-                this.onUiChanged();
-            }
-        } else {
+        const { excelMode, readOnly } = this.setFilterParams || {};
+        if (excelMode == null || !!readOnly) {
             this.refresh();
+        } else if (this.valueModel.getMiniFilter() == null) {
+            this.resetUiToActiveModel();
+        } else {
+            this.valueModel.selectAllMatchingMiniFilter(true);
+            this.refresh();
+            this.onUiChanged();
         }
 
         this.showOrHideResults();
@@ -617,7 +619,10 @@ export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> {
     }
 
     private filterOnAllVisibleValues(applyImmediately = true): void {
+        const { readOnly } = this.setFilterParams || {};
+
         if (!this.valueModel) { throw new Error('Value model has not been created.'); }
+        if (!!readOnly) { throw new Error('Unable to filter in readOnly mode.')}
 
         this.valueModel.selectAllMatchingMiniFilter(true);
         this.refresh();

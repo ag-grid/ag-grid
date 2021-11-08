@@ -1,16 +1,16 @@
 var gridOptions = {
     columnDefs: [
-        { "field": "rowHeight" },
-        { "field": "athlete" },
-        { "field": "age", "width": 80 },
-        { "field": "country" },
-        { "field": "year", "width": 90 },
-        { "field": "date" },
-        { "field": "sport" },
-        { "field": "gold" },
-        { "field": "silver" },
-        { "field": "bronze" },
-        { "field": "total" }
+        {"field": "rowHeight"},
+        {"field": "athlete"},
+        {"field": "age", "width": 80},
+        {"field": "country"},
+        {"field": "year", "width": 90},
+        {"field": "date"},
+        {"field": "sport"},
+        {"field": "gold"},
+        {"field": "silver"},
+        {"field": "bronze"},
+        {"field": "total"}
     ],
     defaultColDef: {
         width: 150,
@@ -28,14 +28,15 @@ function getRowHeight(params) {
 
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(function (data) {
             var differentHeights = [40, 80, 120, 200];
-            data.forEach(function(dataItem, index) {
+            data.forEach(function (dataItem, index) {
                 dataItem.rowHeight = differentHeights[index % 4];
             });
             gridOptions.api.setRowData(data);

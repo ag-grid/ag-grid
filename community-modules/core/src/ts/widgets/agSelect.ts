@@ -3,12 +3,13 @@ import { AgPickerField } from "./agPickerField";
 import { ListOption, AgList } from "./agList";
 import { Autowired, PostConstruct } from "../context/context";
 import { PopupService } from "./popupService";
-import { setElementWidth, getAbsoluteWidth, getInnerHeight } from "../utils/dom";
+import { setElementWidth, getInnerHeight, getElementSize, getAbsoluteWidth } from "../utils/dom";
 import { IAgLabel } from './agAbstractLabel';
 
 export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
     protected listComponent: AgList;
     private hideList: ((event?: any) => void) | null;
+    private autoSizePopupList = false;
 
     @Autowired('popupService') private popupService: PopupService;
 
@@ -78,7 +79,14 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
         }
         this.isPickerDisplayed = true;
 
-        setElementWidth(listGui, getAbsoluteWidth(this.eWrapper));
+        const eWrapperWidth = getAbsoluteWidth(this.eWrapper);
+        if (this.autoSizePopupList) {
+            const listGuiSize = getElementSize(listGui);
+            const listGuiWidth = this.listComponent.getMaxItemWidth() + listGuiSize.paddingLeft + listGuiSize.paddingRight;
+            setElementWidth(listGui, Math.max(listGuiWidth, eWrapperWidth));
+        } else {
+            setElementWidth(listGui, eWrapperWidth);
+        }
 
         listGui.style.maxHeight = getInnerHeight(this.popupService.getPopupParent()) + 'px';
         listGui.style.position = 'absolute';
@@ -121,6 +129,10 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
         this.eDisplayField.innerHTML = this.listComponent.getDisplayValue()!;
 
         return super.setValue(value, silent);
+    }
+
+    public setAutoSizePopupList(enable: boolean): void {
+        this.autoSizePopupList = enable;
     }
 
     protected destroy(): void {

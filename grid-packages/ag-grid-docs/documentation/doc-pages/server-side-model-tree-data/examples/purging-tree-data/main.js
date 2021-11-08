@@ -1,8 +1,8 @@
 var columnDefs = [
-    { field: "employeeId", hide: true },
-    { field: "employeeName", hide: true },
-    { field: "employmentType" },
-    { field: "startDate" },
+    {field: "employeeId", hide: true},
+    {field: "employeeName", hide: true},
+    {field: "employmentType"},
+    {field: "startDate"},
 ];
 
 var gridOptions = {
@@ -37,15 +37,15 @@ var gridOptions = {
 };
 
 function refreshCache(route) {
-    gridOptions.api.refreshServerSideStore({ route: route, purge: true });
+    gridOptions.api.refreshServerSideStore({route: route, purge: true});
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/tree-data.json' }).then(function(data) {
+    fetch('https://www.ag-grid.com/example-assets/tree-data.json').then(response => response.json()).then(function (data) {
         var fakeServer = createFakeServer(data);
         var datasource = createServerSideDatasource(fakeServer);
         gridOptions.api.setServerSideDatasource(datasource);
@@ -57,10 +57,10 @@ function createFakeServer(data) {
         this.data = allData;
     }
 
-    FakeServer.prototype.getData = function(request) {
+    FakeServer.prototype.getData = function (request) {
         function extractRowsFromData(groupKeys, data) {
             if (groupKeys.length === 0) {
-                return data.map(function(d) {
+                return data.map(function (d) {
                     return {
                         group: !!d.underlings,
                         employeeId: d.employeeId + "",
@@ -90,16 +90,16 @@ function createServerSideDatasource(fakeServer) {
         this.fakeServer = fakeServer;
     }
 
-    ServerSideDatasource.prototype.getRows = function(params) {
+    ServerSideDatasource.prototype.getRows = function (params) {
         console.log('ServerSideDatasource.getRows: params = ', params);
         var request = params.request;
         var allRows = this.fakeServer.getData(request);
         var doingInfinite = request.startRow != null && request.endRow != null;
         var result = doingInfinite ?
-            { rowData: allRows.slice(request.startRow, request.endRow), rowCount: allRows.length } :
-            { rowData: allRows };
+            {rowData: allRows.slice(request.startRow, request.endRow), rowCount: allRows.length} :
+            {rowData: allRows};
         console.log('getRows: result = ', result);
-        setTimeout(function() {
+        setTimeout(function () {
             params.success(result);
         }, 500);
     };

@@ -8,23 +8,23 @@ import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
 
 const VueExample = {
     template: `
-      <div style="height: 100%; display: flex; flex-direction: column" class="ag-theme-alpine">
-          <ag-grid-vue style="flex: 1 1 auto;"
-                       :gridOptions="topGridOptions"
-                       @first-data-rendered="onFirstDataRendered"
-                       :columnDefs="columnDefs"
-                       :rowData="rowData"
-                       :modules="modules">            
-          </ag-grid-vue>
-          <ag-grid-vue style="height: 60px; flex: none;"
-                       :gridOptions="bottomGridOptions"
-                       :headerHeight="0"
-                       :columnDefs="columnDefs"
-                       :rowData="bottomData"
-                       :modules="modules"
-                       :rowStyle="rowStyle">            
-          </ag-grid-vue>
-      </div>
+        <div style="height: 100%; display: flex; flex-direction: column" class="ag-theme-alpine">
+            <ag-grid-vue style="flex: 1 1 auto;"
+                         :gridOptions="topGridOptions"
+                         @first-data-rendered="onFirstDataRendered"
+                         :columnDefs="columnDefs"
+                         :rowData="rowData"
+                         :modules="modules">
+            </ag-grid-vue>
+            <ag-grid-vue style="height: 60px; flex: none;"
+                         :gridOptions="bottomGridOptions"
+                         :headerHeight="0"
+                         :columnDefs="columnDefs"
+                         :rowData="bottomData"
+                         :modules="modules"
+                         :rowStyle="rowStyle">
+            </ag-grid-vue>
+        </div>
     `,
     components: {
         "ag-grid-vue": AgGridVue
@@ -114,9 +114,7 @@ const VueExample = {
 
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .then(resp => resp.json())
-            .then(rowData => {
-                this.rowData = rowData
-            });
+            .then(rowData => this.rowData = rowData);
     },
     methods: {
         onFirstDataRendered: function () {

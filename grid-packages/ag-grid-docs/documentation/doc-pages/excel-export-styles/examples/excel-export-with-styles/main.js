@@ -5,15 +5,15 @@ var columnDefs = [
             {
                 headerName: 'Group A',
                 children: [
-                    { field: 'athlete', minWidth: 200 },
+                    {field: 'athlete', minWidth: 200},
                     {
                         field: 'age',
                         cellClass: 'twoDecimalPlaces',
                         cellClassRules: {
-                            greenBackground: function(params) {
+                            greenBackground: function (params) {
                                 return params.value < 23;
                             },
-                            redFont: function(params) {
+                            redFont: function (params) {
                                 return params.value < 20;
                             }
                         }
@@ -22,7 +22,7 @@ var columnDefs = [
                         field: 'country',
                         minWidth: 200,
                         cellClassRules: {
-                            redFont: function(params) {
+                            redFont: function (params) {
                                 return params.value === 'United States';
                             }
                         }
@@ -31,7 +31,7 @@ var columnDefs = [
                         headerName: 'Group',
                         valueGetter: 'data.country.charAt(0)',
                         cellClassRules: {
-                            boldBorders: function(params) {
+                            boldBorders: function (params) {
                                 return params.value === 'U';
                             }
                         },
@@ -40,7 +40,7 @@ var columnDefs = [
                     {
                         field: 'year',
                         cellClassRules: {
-                            notInExcel: function(params) {
+                            notInExcel: function (params) {
                                 return true;
                             }
                         }
@@ -54,10 +54,12 @@ var columnDefs = [
                         field: 'date',
                         minWidth: 150,
                         cellClass: 'dateFormat',
-                        valueGetter: function(params) {
+                        valueGetter: function (params) {
                             var val = params.data.date;
 
-                            if (val.indexOf('/') < 0) { return val; }
+                            if (val.indexOf('/') < 0) {
+                                return val;
+                            }
 
                             var split = val.split('/');
 
@@ -65,18 +67,18 @@ var columnDefs = [
 
                         }
                     },
-                    { field: 'sport', minWidth: 150 },
+                    {field: 'sport', minWidth: 150},
                     {
                         field: 'gold',
                         cellClassRules: {
-                            boldBorders: function(params) {
+                            boldBorders: function (params) {
                                 return params.value > 2;
                             }
                         }
                     },
-                    { field: 'silver', cellClass: 'textFormat' },
-                    { field: 'bronze' },
-                    { field: 'total', }
+                    {field: 'silver', cellClass: 'textFormat'},
+                    {field: 'bronze'},
+                    {field: 'total',}
                 ]
             }
         ]
@@ -86,7 +88,7 @@ var columnDefs = [
 var gridOptions = {
     defaultColDef: {
         cellClassRules: {
-            darkGreyBackground: function(params) {
+            darkGreyBackground: function (params) {
                 return params.node.rowIndex % 2 == 0;
             }
         },
@@ -99,7 +101,7 @@ var gridOptions = {
 
     columnDefs: columnDefs,
 
-    onGridReady: function(params) {
+    onGridReady: function (params) {
         document.getElementById("fontSize").checked = true;
         document.getElementById("rowHeight").checked = true;
         document.getElementById("headerRowHeight").checked = true;
@@ -266,12 +268,11 @@ function onBtExport() {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

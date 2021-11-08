@@ -1,15 +1,15 @@
 var gridOptions = {
     columnDefs: [
-        { field: 'athlete', minWidth: 200 },
-        { field: 'age', filter: 'agNumberColumnFilter' },
-        { field: 'country', enableRowGroup: true, minWidth: 200 },
-        { field: 'year', enableRowGroup: true },
-        { field: 'date', minWidth: 180 },
-        { field: 'sport', minWidth: 200 },
-        { field: 'gold', enableValue: true },
-        { field: 'silver', enableValue: true },
-        { field: 'bronze', enableValue: true },
-        { field: 'total', enableValue: true }
+        {field: 'athlete', minWidth: 200},
+        {field: 'age', filter: 'agNumberColumnFilter'},
+        {field: 'country', enableRowGroup: true, minWidth: 200},
+        {field: 'year', enableRowGroup: true},
+        {field: 'date', minWidth: 180},
+        {field: 'sport', minWidth: 200},
+        {field: 'gold', enableValue: true},
+        {field: 'silver', enableValue: true},
+        {field: 'bronze', enableValue: true},
+        {field: 'total', enableValue: true}
     ],
     defaultColDef: {
         flex: 1,
@@ -21,11 +21,11 @@ var gridOptions = {
     rowSelection: "multiple",
     statusBar: {
         statusPanels: [
-            { statusPanel: 'agTotalAndFilteredRowCountComponent', align: 'left' },
-            { statusPanel: 'agTotalRowCountComponent', align: 'center' },
-            { statusPanel: 'agFilteredRowCountComponent' },
-            { statusPanel: 'agSelectedRowCountComponent' },
-            { statusPanel: 'agAggregationComponent' }
+            {statusPanel: 'agTotalAndFilteredRowCountComponent', align: 'left'},
+            {statusPanel: 'agTotalRowCountComponent', align: 'center'},
+            {statusPanel: 'agFilteredRowCountComponent'},
+            {statusPanel: 'agSelectedRowCountComponent'},
+            {statusPanel: 'agAggregationComponent'}
         ]
     },
     sideBar: {
@@ -49,12 +49,11 @@ var gridOptions = {
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

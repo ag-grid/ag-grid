@@ -3,15 +3,15 @@ var leftColumnDefs = [
         rowDrag: true,
         maxWidth: 50,
         suppressMenu: true,
-        rowDragText: function(params, dragItemCount) {
+        rowDragText: function (params, dragItemCount) {
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes';
             }
             return params.rowNode.data.athlete;
         },
     },
-    { field: "athlete" },
-    { field: "sport" }
+    {field: "athlete"},
+    {field: "sport"}
 ];
 
 var rightColumnDefs = [
@@ -19,23 +19,23 @@ var rightColumnDefs = [
         rowDrag: true,
         maxWidth: 50,
         suppressMenu: true,
-        rowDragText: function(params, dragItemCount) {
+        rowDragText: function (params, dragItemCount) {
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes';
             }
             return params.rowNode.data.athlete;
         },
     },
-    { field: "athlete" },
-    { field: "sport" },
+    {field: "athlete"},
+    {field: "sport"},
     {
         suppressMenu: true,
         maxWidth: 50,
-        cellRenderer: function(params) {
+        cellRenderer: function (params) {
             var button = document.createElement('i');
 
-            button.addEventListener('click', function() {
-                params.api.applyTransaction({ remove: [params.node.data] });
+            button.addEventListener('click', function () {
+                params.api.applyTransaction({remove: [params.node.data]});
             });
 
             button.classList.add('far');
@@ -57,12 +57,14 @@ var leftGridOptions = {
     },
     rowSelection: 'multiple',
     rowDragMultiRow: true,
-    getRowNodeId: function(data) { return data.athlete; },
+    getRowNodeId: function (data) {
+        return data.athlete;
+    },
     rowDragManaged: true,
     suppressMoveWhenRowDragging: true,
     columnDefs: leftColumnDefs,
     animateRows: true,
-    onGridReady: function(params) {
+    onGridReady: function (params) {
         addGridDropZone(params);
     }
 };
@@ -75,7 +77,9 @@ var rightGridOptions = {
         filter: true,
         resizable: true
     },
-    getRowNodeId: function(data) { return data.athlete; },
+    getRowNodeId: function (data) {
+        return data.athlete;
+    },
     rowDragManaged: true,
     columnDefs: rightColumnDefs,
     animateRows: true
@@ -83,11 +87,13 @@ var rightGridOptions = {
 
 function addGridDropZone(params) {
     var dropZoneParams = rightGridOptions.api.getRowDropZoneParams({
-        onDragStop: function(params) {
+        onDragStop: function (params) {
             var nodes = params.nodes;
 
             leftGridOptions.api.applyTransaction({
-                remove: nodes.map(function(node) { return node.data; })
+                remove: nodes.map(function (node) {
+                    return node.data;
+                })
             });
         }
     });
@@ -107,14 +113,19 @@ function loadGrid(options, side, data) {
 }
 
 function loadGrids() {
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(function (data) {
             var athletes = [];
             var i = 0;
 
             while (athletes.length < 20 && i < data.length) {
                 var pos = i++;
-                if (athletes.some(function(rec) { return rec.athlete === data[pos].athlete; })) { continue; }
+                if (athletes.some(function (rec) {
+                    return rec.athlete === data[pos].athlete;
+                })) {
+                    continue;
+                }
                 athletes.push(data[pos]);
             }
 
@@ -125,10 +136,10 @@ function loadGrids() {
 
 function onExcelExport() {
     var spreadsheets = [];
-    
+
     spreadsheets.push(
-        leftGridOptions.api.getSheetDataForExcel({ sheetName: 'Athletes' }),
-        rightGridOptions.api.getSheetDataForExcel({ sheetName: 'Selected Athletes' })
+        leftGridOptions.api.getSheetDataForExcel({sheetName: 'Athletes'}),
+        rightGridOptions.api.getSheetDataForExcel({sheetName: 'Selected Athletes'})
     );
 
     // could be leftGridOptions or rightGridOptions
@@ -139,15 +150,15 @@ function onExcelExport() {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var resetBtn = document.querySelector('button.reset');
     var exportBtn = document.querySelector('button.excel');
 
-    resetBtn.addEventListener('click', function() {
+    resetBtn.addEventListener('click', function () {
         loadGrids();
     });
 
-    exportBtn.addEventListener('click', function() {
+    exportBtn.addEventListener('click', function () {
         onExcelExport();
     });
 

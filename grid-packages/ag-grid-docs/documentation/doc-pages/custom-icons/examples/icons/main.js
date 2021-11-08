@@ -1,8 +1,8 @@
 var myIcons = {
-    sortAscending: function() {
+    sortAscending: function () {
         return 'ASC';
     },
-    sortDescending: function() {
+    sortDescending: function () {
         return 'DESC';
     }
 };
@@ -30,17 +30,17 @@ var columnDefs = [
             sortDescending: '<i class="fa fa-sort-alpha-down"/>'
         }
     },
-    { field: 'year', width: 90, enableRowGroup: true },
-    { field: 'date' },
+    {field: 'year', width: 90, enableRowGroup: true},
+    {field: 'date'},
     {
         field: 'sport',
         width: 110,
         icons: myIcons
     },
-    { field: 'gold', width: 100 },
-    { field: 'silver', width: 100 },
-    { field: 'bronze', width: 100 },
-    { field: 'total', width: 100 }
+    {field: 'gold', width: 100},
+    {field: 'silver', width: 100},
+    {field: 'bronze', width: 100},
+    {field: 'total', width: 100}
 ];
 
 var gridOptions = {
@@ -102,12 +102,11 @@ var gridOptions = {
 };
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

@@ -2,21 +2,21 @@ var columnDefs = [
     {
         headerName: 'Athlete',
         children: [
-            { field: 'athlete', headerName: 'Name', minWidth: 170 },
-            { field: 'age' },
-            { field: 'country' },
+            {field: 'athlete', headerName: 'Name', minWidth: 170},
+            {field: 'age'},
+            {field: 'country'},
         ]
     },
 
-    { field: 'year' },
-    { field: 'sport' },
+    {field: 'year'},
+    {field: 'sport'},
     {
         headerName: 'Medals',
         children: [
-            { field: 'gold' },
-            { field: 'silver' },
-            { field: 'bronze' },
-            { field: 'total' }
+            {field: 'gold'},
+            {field: 'silver'},
+            {field: 'bronze'},
+            {field: 'total'}
         ]
     }
 ];
@@ -73,8 +73,12 @@ function moveHeaderFocusUpDown(previousHeader, headerRowCount, isUp) {
         nextRowIndex = isUp ? lastRowIndex - 1 : lastRowIndex + 1,
         nextColumn, parentColumn;
 
-    if (nextRowIndex === -1) { return previousHeader; }
-    if (nextRowIndex === headerRowCount) { nextRowIndex = -1; }
+    if (nextRowIndex === -1) {
+        return previousHeader;
+    }
+    if (nextRowIndex === headerRowCount) {
+        nextRowIndex = -1;
+    }
 
     parentColumn = previousColumn.getParent();
 
@@ -122,16 +126,20 @@ function navigateToNextCell(params) {
         case KEY_DOWN:
             // return the cell above
             nextRowIndex = previousCell.rowIndex - 1;
-            if (nextRowIndex < -1) { return null; } // returning null means don't navigate
+            if (nextRowIndex < -1) {
+                return null;
+            } // returning null means don't navigate
 
-            return { rowIndex: nextRowIndex, column: previousCell.column, floating: previousCell.floating };
+            return {rowIndex: nextRowIndex, column: previousCell.column, floating: previousCell.floating};
         case KEY_UP:
             // return the cell below
             nextRowIndex = previousCell.rowIndex + 1;
             renderedRowCount = gridOptions.api.getModel().getRowCount();
-            if (nextRowIndex >= renderedRowCount) { return null; } // returning null means don't navigate
+            if (nextRowIndex >= renderedRowCount) {
+                return null;
+            } // returning null means don't navigate
 
-            return { rowIndex: nextRowIndex, column: previousCell.column, floating: previousCell.floating };
+            return {rowIndex: nextRowIndex, column: previousCell.column, floating: previousCell.floating};
         case KEY_LEFT:
         case KEY_RIGHT:
             return suggestedNextCell;
@@ -141,12 +149,11 @@ function navigateToNextCell(params) {
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/olympic-winners.json' })
-        .then(function(data) {
-            gridOptions.api.setRowData(data);
-        });
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => gridOptions.api.setRowData(data));
 });

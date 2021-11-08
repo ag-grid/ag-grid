@@ -1,10 +1,10 @@
 var gridOptions = {
     columnDefs: [
-        { field: "country", pivot: true },
-        { field: "year", rowGroup: true },
-        { field: "sport", rowGroup: true },
-        { field: "total", aggFunc: 'sum' },
-        { field: "gold", aggFunc: 'sum' },
+        {field: "country", pivot: true},
+        {field: "year", rowGroup: true},
+        {field: "sport", rowGroup: true},
+        {field: "total", aggFunc: 'sum'},
+        {field: "gold", aggFunc: 'sum'},
     ],
     defaultColDef: {
         editable: true,
@@ -52,16 +52,18 @@ function onFirstDataRendered(event) {
     event.api.createPivotChart(params);
 
     // expand one row for demonstration purposes
-    setTimeout(function() { event.api.getDisplayedRowAtIndex(2).setExpanded(true); }, 0);
+    setTimeout(function () {
+        event.api.getDisplayedRowAtIndex(2).setExpanded(true);
+    }, 0);
 }
 
 // setup the grid after the page has finished loading
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid.simpleHttpRequest({ url: 'https://www.ag-grid.com/example-assets/wide-spread-of-sports.json' })
-        .then(function(data) {
+    fetch('https://www.ag-grid.com/example-assets/wide-spread-of-sports.json').then(response => response.json())
+        .then(function (data) {
             gridOptions.api.setRowData(data);
         });
 });
