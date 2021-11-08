@@ -22,7 +22,6 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
 
     private params: IFloatingFilterParams;
-    private lastKnownModel: SetFilterModel;
     private availableValuesListenerAdded = false;
 
     constructor() {
@@ -52,8 +51,7 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
     }
 
     public onParentModelChanged(parentModel: SetFilterModel): void {
-        this.lastKnownModel = parentModel;
-        this.updateFloatingFilterText();
+        this.updateFloatingFilterText(parentModel);
     }
 
     private addAvailableValuesListener(): void {
@@ -74,47 +72,45 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
         this.availableValuesListenerAdded = true;
     }
 
-    private updateFloatingFilterText(): void {
-        if (!this.lastKnownModel) {
-            this.eFloatingFilterText.setValue('');
-            return;
-        }
-
+    private updateFloatingFilterText(parentModel?: SetFilterModel | null): void {
         if (!this.availableValuesListenerAdded) {
             this.addAvailableValuesListener();
         }
 
-        // also supporting old filter model for backwards compatibility
-        const values = this.lastKnownModel instanceof Array ? this.lastKnownModel as string[] : this.lastKnownModel.values;
+        // Decide source of update for UI state, depending on whether a model was supplied or we
+        // need to retrieve it from the parent SetFilter.
+        if (parentModel === undefined) {
+            this.params.parentFilterInstance((setFilter: SetFilter<unknown>) => {
+                const { values } = setFilter.getModel() || {};
+                this.applyModel(values || null);
+            });
+        } else {
+            this.applyModel(parentModel && parentModel.values || null);
+        }
+    }
 
-        if (!values) {
+    private applyModel(values: unknown[] | null): void {
+        if (values == null) {
             this.eFloatingFilterText.setValue('');
             return;
         }
 
-        this.params.parentFilterInstance((setFilter: SetFilter<unknown>) => {
-            const valueModel = setFilter.getValueModel();
+        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
 
-            if (!valueModel) { return; }
+        // format all the values, if a formatter is provided
+        const formattedValues = _.map(values, value => {
+            const { column, filterParams } = this.params;
+            const formattedValue = this.valueFormatterService.formatValue(
+                column, null, null, value, (filterParams as ISetFilterParams).valueFormatter, false);
 
-            const availableValues = _.filter(values, v => valueModel.isValueAvailable(v))!;
-            const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+            const valueToRender = formattedValue != null ? formattedValue : value;
 
-            // format all the values, if a formatter is provided
-            const formattedValues = _.map(availableValues, value => {
-                const { column, filterParams } = this.params;
-                const formattedValue = this.valueFormatterService.formatValue(
-                    column, null, null, value, (filterParams as ISetFilterParams).valueFormatter, false);
+            return valueToRender == null ? localeTextFunc('blanks', DEFAULT_LOCALE_TEXT.blanks) : valueToRender;
+        })!;
 
-                const valueToRender = formattedValue != null ? formattedValue : value;
+        const arrayToDisplay = formattedValues.length > 10 ? formattedValues.slice(0, 10).concat('...') : formattedValues;
+        const valuesString = `(${formattedValues.length}) ${arrayToDisplay.join(',')}`;
 
-                return valueToRender == null ? localeTextFunc('blanks', DEFAULT_LOCALE_TEXT.blanks) : valueToRender;
-            })!;
-
-            const arrayToDisplay = formattedValues.length > 10 ? formattedValues.slice(0, 10).concat('...') : formattedValues;
-            const valuesString = `(${formattedValues.length}) ${arrayToDisplay.join(',')}`;
-
-            this.eFloatingFilterText.setValue(valuesString);
-        });
-    }
+        this.eFloatingFilterText.setValue(valuesString);
+    };
 }

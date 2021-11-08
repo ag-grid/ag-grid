@@ -131,7 +131,7 @@ export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> {
         return this.setModelAndRefresh(null);
     }
 
-    protected setModelIntoUi(model: SetFilterModel): AgPromise<void> {
+    protected setModelIntoUi(model: SetFilterModel | null): AgPromise<void> {
         this.setMiniFilter(null);
 
         if (model instanceof Array) {
@@ -160,10 +160,6 @@ export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> {
         }
 
         return { values, filterType: this.getFilterType() };
-    }
-
-    public getModel(): SetFilterModel {
-        return super.getModel() as SetFilterModel;
     }
 
     public getFilterType(): 'set' {
