@@ -7,7 +7,7 @@ import { Column } from '../entities/column';
 import { Autowired, Bean, PostConstruct, PreDestroy } from '../context/context';
 import { IRowModel } from '../interfaces/iRowModel';
 import { ColumnEventType, Events, FilterChangedEvent, FilterModifiedEvent, FilterOpenedEvent } from '../events';
-import { IFilterComp, IFilterParams } from '../interfaces/iFilter';
+import { IFilterComp, IFilter, IFilterParams } from '../interfaces/iFilter';
 import { ColDef, GetQuickFilterTextParams } from '../entities/colDef';
 import { GridApi } from '../gridApi';
 import { UserComponentFactory } from '../components/framework/userComponentFactory';
@@ -170,8 +170,17 @@ export class FilterManager extends BeanStub {
     private updateActiveFilters(): void {
         this.activeAdvancedFilters.length = 0;
 
+        const isFilterActive = (filter: IFilter | null) => {
+            if (!filter) { return false; } // this never happens, including to avoid compile error
+            if (!filter.isFilterActive) {
+                console.warn('AG Grid: Filter is missing isFilterActive() method');
+                return false;
+            }
+            return filter.isFilterActive();
+        };
+
         this.allAdvancedFilters.forEach(filterWrapper => {
-            if (filterWrapper.filterPromise!.resolveNow(false, filter => filter!.isFilterActive())) {
+            if (filterWrapper.filterPromise!.resolveNow(false, isFilterActive)) {
                 const resolvedPromise = filterWrapper.filterPromise!.resolveNow(null, filter => filter);
                 this.activeAdvancedFilters.push(resolvedPromise!);
             }
