@@ -540,7 +540,7 @@ export class PopupService extends BeanStub {
         };
 
         if (afterGuiAttached) {
-            afterGuiAttached({ hidePopup });
+            afterGuiAttached({ hidePopup, repositionPopup: positionCallback });
         }
 
         // if we add these listeners now, then the current mouse

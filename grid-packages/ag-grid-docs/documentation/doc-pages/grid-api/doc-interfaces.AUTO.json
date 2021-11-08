@@ -11959,7 +11959,7 @@
       }
     },
     "numberOfInputs": {
-      "description": "/** Number of inputs to display for this option. */",
+      "description": "/** Number of inputs to display for this option. Defaults to `1` if unspecified. */",
       "type": { "returnType": "0 | 1 | 2", "optional": true }
     },
     "test": {

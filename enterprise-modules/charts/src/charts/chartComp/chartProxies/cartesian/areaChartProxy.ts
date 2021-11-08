@@ -143,7 +143,9 @@ export class AreaChartProxy extends CartesianChartProxy<any> {
             {
                 ...deepMerge(axisOptions[this.xAxisType], axisOptions[this.xAxisType].bottom),
                 type: this.xAxisType,
-                position: ChartAxisPosition.Bottom
+                position: ChartAxisPosition.Bottom,
+                paddingInner: 1,
+                paddingOuter: 0,
             },
             {
                 ...deepMerge(axisOptions[this.yAxisType], axisOptions[this.yAxisType].left),
