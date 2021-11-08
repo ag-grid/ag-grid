@@ -72,7 +72,7 @@ function onChart2() {
 function createRowData() {
     var countries = ["Ireland", "Spain", "United Kingdom", "France", "Germany", "Luxembourg", "Sweden",
         "Norway", "Italy", "Greece", "Iceland", "Portugal", "Malta", "Brazil", "Argentina",
-        "Colombia", "Peru", "Venezuela", "Uruguay", "Belgium"];
+        "Colombia", "Peru", "Belgium"];
 
     return countries.map(function(country, index) {
         return {

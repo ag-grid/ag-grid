@@ -15,9 +15,6 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
             <div ref="eResize" class="ag-header-cell-resize" role="presentation"></div>
         </div>`;
 
-    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
-    @Autowired('beans') protected beans: Beans;
-
     @RefSelector('eResize') private eResize: HTMLElement;
 
     protected readonly column: Column;
@@ -78,13 +75,10 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
 
         const versionCopy = this.headerCompVersion;
 
-        const callback = this.afterHeaderCompCreated.bind(this, this.headerCompVersion);
-        compDetails.newAgStackInstance()!.then( comp => {
-            this.afterHeaderCompCreated(versionCopy, comp);
-        });
+        compDetails.newAgStackInstance()!.then( comp => this.afterCompCreated(versionCopy, comp) );
     }
 
-    private afterHeaderCompCreated(version: number, headerComp: IHeaderComp): void {
+    private afterCompCreated(version: number, headerComp: IHeaderComp): void {
 
         if (version != this.headerCompVersion || !this.isAlive()) {
             this.destroyBean(headerComp);

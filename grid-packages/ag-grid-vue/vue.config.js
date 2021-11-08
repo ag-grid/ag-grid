@@ -1,7 +1,10 @@
 module.exports = {
-    chainWebpack: config => {
-        config.externals({
+    configureWebpack: {
+        output: {
+            library: "agGridVue"
+        },
+        externals: {
             'ag-grid-community': 'agGrid'
-        })
+        }
     }
 }

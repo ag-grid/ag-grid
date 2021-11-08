@@ -18,7 +18,7 @@ export class AreaChartProxy extends CartesianChartProxy<any> {
 
     protected createChart(): CartesianChart {
         return AgChart.create({
-            type: this.xAxisType === 'groupedCategory' ? 'groupedCategory' : 'area',
+            type: 'area',
             container: this.chartProxyParams.parentElement,
             theme: this.chartTheme,
             axes: this.getAxes()

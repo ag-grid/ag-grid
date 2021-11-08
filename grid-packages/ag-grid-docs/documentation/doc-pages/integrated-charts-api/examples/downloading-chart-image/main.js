@@ -17,6 +17,17 @@ var gridOptions = {
     enableRangeSelection: true,
     popupParent: document.body,
     enableCharts: true,
+    chartThemeOverrides: {
+      cartesian: {
+          axes: {
+              category: {
+                  label: {
+                      rotation: 335
+                  }
+              }
+          }
+      }
+    },
     onFirstDataRendered: onFirstDataRendered,
     onChartCreated: onChartCreated,
 };

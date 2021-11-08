@@ -56,7 +56,7 @@ export interface UserCompDetails {
     componentFromFramework: boolean;
     params: any;
     type: ComponentType;
-    newAgStackInstance: (defaultComponentName?: string | null)=> AgPromise<any> | null;
+    newAgStackInstance: (defaultComponentName?: string | null)=> AgPromise<any>;
 }
 
 @Bean('userComponentFactory')
@@ -216,7 +216,8 @@ export class UserComponentFactory extends BeanStub {
         };
     }
 
-    private newAgStackInstance(ComponentClass: any, componentFromFramework: boolean, params: any, type: ComponentType, defaultComponentName: string | null | undefined): AgPromise<any> | null {
+    private newAgStackInstance(ComponentClass: any, componentFromFramework: boolean, params: any, 
+        type: ComponentType, defaultComponentName: string | null | undefined): AgPromise<any> {
 
         const propertyName = type.propertyName;
 
@@ -225,7 +226,7 @@ export class UserComponentFactory extends BeanStub {
         const jsComponent = !componentFromFramework;
 
         if (jsComponent) {
-            instance = new ComponentClass!();
+            instance = new ComponentClass();
         } else {
             // Using framework component
             const thisComponentConfig: ComponentMetadata = this.componentMetadataProvider.retrieve(propertyName);
@@ -237,8 +238,6 @@ export class UserComponentFactory extends BeanStub {
                 defaultComponentName
             );
         }
-
-        if (!instance) { return null; }
 
         const deferredInit = this.initComponent(instance, params);
 

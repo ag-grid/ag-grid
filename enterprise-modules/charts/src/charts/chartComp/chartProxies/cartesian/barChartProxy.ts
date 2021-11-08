@@ -28,7 +28,7 @@ export class BarChartProxy extends CartesianChartProxy<any> {
         const [isBar, isNormalised] = [this.standaloneChartType === 'bar', this.isNormalised()];
 
         return AgChart.create({
-            type: this.xAxisType === 'groupedCategory' ? 'groupedCategory' : isBar ? 'bar' : 'column',
+            type: isBar ? 'bar' : 'column',
             container: this.chartProxyParams.parentElement,
             theme: this.chartTheme,
             axes: this.getAxes(isBar, isNormalised),
