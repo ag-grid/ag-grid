@@ -522,7 +522,6 @@ export interface GridOptions {
     groupRemoveSingleChildren?: boolean;
     /** Set to `true` to collapse lowest level groups that only have one child. Default: `false` */
     groupRemoveLowestSingleChildren?: boolean;
-    "default": "never",
     /** Set to `true` to hide parents that are open. When used with multiple columns for showing groups, it can give a more pleasing user experience. Default: `false` */
     groupHideOpenParents?: boolean;
     /** When to show the 'row group panel' (where you drag rows to group) at the top. Default: `never` */

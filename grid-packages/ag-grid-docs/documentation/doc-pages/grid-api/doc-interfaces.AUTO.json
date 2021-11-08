@@ -2633,7 +2633,6 @@
       "description": "/** Set to `true` to collapse lowest level groups that only have one child. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "undefined": { "type": { "returnType": "\"never\"", "optional": false } },
     "groupHideOpenParents": {
       "description": "/** Set to `true` to hide parents that are open. When used with multiple columns for showing groups, it can give a more pleasing user experience. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }

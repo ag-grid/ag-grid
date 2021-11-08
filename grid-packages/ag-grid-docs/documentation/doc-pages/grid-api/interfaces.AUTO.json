@@ -1476,7 +1476,6 @@
       "showOpenedGroup?": "boolean",
       "groupRemoveSingleChildren?": "boolean",
       "groupRemoveLowestSingleChildren?": "boolean",
-      "\"default\"": "\"never\"",
       "groupHideOpenParents?": "boolean",
       "rowGroupPanelShow?": "string",
       "groupRowRenderer?": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
