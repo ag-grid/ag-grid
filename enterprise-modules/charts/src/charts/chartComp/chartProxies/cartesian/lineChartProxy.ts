@@ -18,7 +18,7 @@ export class LineChartProxy extends CartesianChartProxy<any> {
 
     protected createChart(): CartesianChart {
         return AgChart.create({
-            type: this.xAxisType === 'groupedCategory' ? 'groupedCategory' : 'line',
+            type: 'line',
             container: this.chartProxyParams.parentElement,
             theme: this.chartTheme,
             axes: this.getAxes()
