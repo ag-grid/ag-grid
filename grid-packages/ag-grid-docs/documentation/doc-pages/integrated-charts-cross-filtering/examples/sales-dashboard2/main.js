@@ -126,6 +126,12 @@ function createHandsetSalesChart(gridApi) {
                 legend: {
                     enabled: false
                 },
+                padding: {
+                    top: 20,
+                    right: 60,
+                    bottom: 20,
+                    left: 50,
+                }
             },
             axes: {
                 number: {

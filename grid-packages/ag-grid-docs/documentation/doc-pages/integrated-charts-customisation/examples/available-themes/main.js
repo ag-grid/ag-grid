@@ -19,6 +19,17 @@ var gridOptions = {
     enableRangeSelection: true,
     enableCharts: true,
     chartThemes: ['ag-pastel', 'ag-material-dark', 'ag-vivid-dark', 'ag-solar'],
+    chartThemeOverrides: {
+        cartesian: {
+            axes: {
+                category: {
+                    label: {
+                        rotation: 335
+                    }
+                }
+            }
+        }
+    },
     rowData: createRowData(),
     onFirstDataRendered: onFirstDataRendered,
 };
