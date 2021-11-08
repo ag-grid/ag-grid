@@ -97,7 +97,7 @@ export interface IFilterOptionDef {
     displayName: string;
     /** Custom filter logic that returns a boolean based on the `filterValues` and `cellValue`. */
     predicate?: (filterValues: any[], cellValue: any) => boolean;
-    /** Number of inputs to display for this option. */
+    /** Number of inputs to display for this option. Defaults to `1` if unspecified. */
     numberOfInputs?: 0 | 1 | 2;
     /** @deprecated use `predicate` instead. */
     test?: (filterValue: any, cellValue: any) => boolean;
