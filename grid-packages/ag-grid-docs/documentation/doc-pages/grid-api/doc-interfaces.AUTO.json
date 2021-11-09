@@ -5863,6 +5863,10 @@
       "description": "/** Chart theme name of currently selected theme. */",
       "type": { "returnType": "string", "optional": false }
     },
+    "chartOptions": {
+      "description": "/** Chart options. */",
+      "type": { "returnType": "any", "optional": false }
+    },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
     "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
   },
@@ -7145,7 +7149,7 @@
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
     "afterGuiAttached": {
-      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been\n * rendered on the screen. If a parent popup is closed and reopened (e.g. for filters), this\n * method is called each time the component is shown. This is useful for any logic that\n * requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
       "type": {
         "arguments": { "params?": "IAfterGuiAttachedParams" },
         "returnType": "void",
@@ -8673,7 +8677,7 @@
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
     "afterGuiAttached": {
-      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been\n * rendered on the screen. If a parent popup is closed and reopened (e.g. for filters), this\n * method is called each time the component is shown. This is useful for any logic that\n * requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
       "type": {
         "arguments": { "params?": "IAfterGuiAttachedParams" },
         "returnType": "void",
@@ -8783,7 +8787,7 @@
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
     "afterGuiAttached": {
-      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been\n * rendered on the screen. If a parent popup is closed and reopened (e.g. for filters), this\n * method is called each time the component is shown. This is useful for any logic that\n * requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
       "type": {
         "arguments": { "params?": "IAfterGuiAttachedParams" },
         "returnType": "void",
@@ -9347,11 +9351,6 @@
       "type": { "returnType": "ContainerType", "optional": true }
     },
     "hidePopup": {
-      "description": "/** Callback to hide the parent popup - e.g. close after 'Apply' button pressed. */",
-      "type": { "arguments": {}, "returnType": "void", "optional": true }
-    },
-    "repositionPopup": {
-      "description": "/** Callback to reposition the parent popup - e.g. after filter UI dimensions change. */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
     "suppressFocus": { "type": { "returnType": "boolean", "optional": true } }
@@ -10759,7 +10758,7 @@
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
     "afterGuiAttached": {
-      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been\n * rendered on the screen. If a parent popup is closed and reopened (e.g. for filters), this\n * method is called each time the component is shown. This is useful for any logic that\n * requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
       "type": {
         "arguments": { "params?": "IAfterGuiAttachedParams" },
         "returnType": "void",
@@ -11237,7 +11236,7 @@
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
     "afterGuiAttached": {
-      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been\n * rendered on the screen. If a parent popup is closed and reopened (e.g. for filters), this\n * method is called each time the component is shown. This is useful for any logic that\n * requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
       "type": {
         "arguments": { "params?": "IAfterGuiAttachedParams" },
         "returnType": "void",
@@ -11970,7 +11969,7 @@
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
     "afterGuiAttached": {
-      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been\n * rendered on the screen. If a parent popup is closed and reopened (e.g. for filters), this\n * method is called each time the component is shown. This is useful for any logic that\n * requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
       "type": {
         "arguments": { "params?": "IAfterGuiAttachedParams" },
         "returnType": "void",
@@ -12438,7 +12437,7 @@
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
     "afterGuiAttached": {
-      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been\n * rendered on the screen. If a parent popup is closed and reopened (e.g. for filters), this\n * method is called each time the component is shown. This is useful for any logic that\n * requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
       "type": {
         "arguments": { "params?": "IAfterGuiAttachedParams" },
         "returnType": "void",
@@ -14481,7 +14480,7 @@
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
     "afterGuiAttached": {
-      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been\n * rendered on the screen. If a parent popup is closed and reopened (e.g. for filters), this\n * method is called each time the component is shown. This is useful for any logic that\n * requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
       "type": {
         "arguments": { "params?": "IAfterGuiAttachedParams" },
         "returnType": "void",
@@ -14523,7 +14522,7 @@
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
     "afterGuiAttached": {
-      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been\n * rendered on the screen. If a parent popup is closed and reopened (e.g. for filters), this\n * method is called each time the component is shown. This is useful for any logic that\n * requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
       "type": {
         "arguments": { "params?": "IAfterGuiAttachedParams" },
         "returnType": "void",
@@ -15796,7 +15795,7 @@
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
     "afterGuiAttached": {
-      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been\n * rendered on the screen. If a parent popup is closed and reopened (e.g. for filters), this\n * method is called each time the component is shown. This is useful for any logic that\n * requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
       "type": {
         "arguments": { "params?": "IAfterGuiAttachedParams" },
         "returnType": "void",
@@ -15979,7 +15978,7 @@
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
     "afterGuiAttached": {
-      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been\n * rendered on the screen. If a parent popup is closed and reopened (e.g. for filters), this\n * method is called each time the component is shown. This is useful for any logic that\n * requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
       "type": {
         "arguments": { "params?": "IAfterGuiAttachedParams" },
         "returnType": "void",
@@ -16083,7 +16082,7 @@
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
     "afterGuiAttached": {
-      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been\n * rendered on the screen. If a parent popup is closed and reopened (e.g. for filters), this\n * method is called each time the component is shown. This is useful for any logic that\n * requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
       "type": {
         "arguments": { "params?": "IAfterGuiAttachedParams" },
         "returnType": "void",
@@ -16116,7 +16115,7 @@
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
     "afterGuiAttached": {
-      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been\n * rendered on the screen. If a parent popup is closed and reopened (e.g. for filters), this\n * method is called each time the component is shown. This is useful for any logic that\n * requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
       "type": {
         "arguments": { "params?": "IAfterGuiAttachedParams" },
         "returnType": "void",
@@ -16384,7 +16383,7 @@
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
     "afterGuiAttached": {
-      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been\n * rendered on the screen. If a parent popup is closed and reopened (e.g. for filters), this\n * method is called each time the component is shown. This is useful for any logic that\n * requires attachment before executing, such as putting focus on a particular DOM element. */",
+      "description": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
       "type": {
         "arguments": { "params?": "IAfterGuiAttachedParams" },
         "returnType": "void",

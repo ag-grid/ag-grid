@@ -148,6 +148,7 @@ export class ChartOptionsService extends BeanStub {
             chartId: chartModel.chartId,
             chartType: chartModel.chartType,
             chartThemeName: chartModel.chartThemeName!,
+            chartOptions: chartModel.chartOptions,
             api: this.gridApi,
             columnApi: this.columnApi,
         });

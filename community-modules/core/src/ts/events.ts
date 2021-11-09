@@ -247,6 +247,8 @@ export interface ChartOptionsChanged extends AgGridEvent {
     chartType: ChartType;
     /** Chart theme name of currently selected theme. */
     chartThemeName: string;
+    /** Chart options.  */
+    chartOptions: any;
 }
 
 export interface ChartDestroyed extends AgGridEvent {

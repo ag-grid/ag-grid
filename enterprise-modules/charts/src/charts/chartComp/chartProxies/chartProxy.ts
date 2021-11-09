@@ -216,7 +216,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends any> {
     }
 
     private convertConfigToOverrides(config: any) {
-        const chartOverrides = config[this.standaloneChartType];
+        const chartOverrides = deepMerge({}, config[this.standaloneChartType]);
         chartOverrides.series = chartOverrides.series[this.standaloneChartType];
 
         // special handing to add the scatter paired mode to the chart options
