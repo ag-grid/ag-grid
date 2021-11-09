@@ -102,6 +102,11 @@
         min-width: (ag-param(tab-min-width) - (2 * ag-param(widget-container-horizontal-padding)) - 2);
     }
 
+    .ag-filter-select .ag-picker-field-wrapper {
+        // Force picker to match width of sibling inputs.
+        width: 0;
+    }
+
     ////////////////////////////////////////
     // Value Set Filter
     ////////////////////////////////////////
