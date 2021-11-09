@@ -535,18 +535,18 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "headerGroupComponent": {
-      "description": "/** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used */",
+      "description": "/** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used. */",
       "type": {
         "returnType": "string | { new(): IHeaderGroupComp; }",
         "optional": true
       }
     },
     "headerGroupComponentFramework": {
-      "description": "/** The custom header group component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid is used */",
+      "description": "/** The custom header group component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid is used. */",
       "type": { "returnType": "any", "optional": true }
     },
     "headerGroupComponentParams": {
-      "description": "/** The params used to configure the header group component. * */",
+      "description": "/** The params used to configure the header group component. */",
       "type": { "returnType": "any", "optional": true }
     },
     "headerName": {
@@ -762,7 +762,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "initialHide": {
-      "description": "/** Same as 'hide', except only applied when creating a new column. Not applied when updating column definitions. */",
+      "description": "/** Same as `hide`, except only applied when creating a new column. Not applied when updating column definitions. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "lockVisible": {
@@ -825,7 +825,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "cellEditorPopupPosition": {
-      "description": "/** Set the position for the popup cell editor. Possible values are\n *   - `over` Popup will be positioned over the cell\n *   - `under` Popup will be positioned below the cell leaving the cell value visible.\n * \n * The default is `over`. */",
+      "description": "/** Set the position for the popup cell editor. Possible values are\n *   - `over` Popup will be positioned over the cell\n *   - `under` Popup will be positioned below the cell leaving the cell value visible.\n * \n * Default: `over`. */",
       "type": { "returnType": "string", "optional": true }
     },
     "onCellValueChanged": {
@@ -877,15 +877,15 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "headerComponent": {
-      "description": "/** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used. * */",
+      "description": "/** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used. */",
       "type": { "returnType": "string | { new(): any; }", "optional": true }
     },
     "headerComponentFramework": {
-      "description": "/** The custom header component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid header component is used* */",
+      "description": "/** The custom header component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid header component is used. */",
       "type": { "returnType": "any", "optional": true }
     },
     "headerComponentParams": {
-      "description": "/** The parameters to be passed to the header component. * */",
+      "description": "/** The parameters to be passed to the header component. */",
       "type": { "returnType": "any", "optional": true }
     },
     "menuTabs": {
@@ -923,7 +923,7 @@
       "type": { "returnType": "boolean | string | null", "optional": true }
     },
     "initialPinned": {
-      "description": "/** Same as 'pinned', except only applied when creating a new column. Not applied when updating column definitions. */",
+      "description": "/** Same as `pinned`, except only applied when creating a new column. Not applied when updating column definitions. */",
       "type": { "returnType": "boolean | string", "optional": true }
     },
     "lockPinned": {
@@ -954,7 +954,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "initialPivot": {
-      "description": "/** Same as 'pivot', except only applied when creating a new column. Not applied when updating column definitions. */",
+      "description": "/** Same as `pivot`, except only applied when creating a new column. Not applied when updating column definitions. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "pivotIndex": {
@@ -962,7 +962,7 @@
       "type": { "returnType": "number | null", "optional": true }
     },
     "initialPivotIndex": {
-      "description": "/** Same as 'pivotIndex', except only applied when creating a new column. Not applied when updating column definitions. */",
+      "description": "/** Same as `pivotIndex`, except only applied when creating a new column. Not applied when updating column definitions. */",
       "type": { "returnType": "number", "optional": true }
     },
     "pivotComparator": {
@@ -1054,11 +1054,11 @@
       }
     },
     "rowGroup": {
-      "description": "/** Set to `true` to row group by this column. */",
+      "description": "/** Set to `true` to row group by this column. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "initialRowGroup": {
-      "description": "/** Same as 'rowGroup', except only applied when creating a new column. Not applied when updating column definitions. */",
+      "description": "/** Same as `rowGroup`, except only applied when creating a new column. Not applied when updating column definitions. */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "rowGroupIndex": {
@@ -1066,7 +1066,7 @@
       "type": { "returnType": "number | null", "optional": true }
     },
     "initialRowGroupIndex": {
-      "description": "/** Same as 'rowGroupIndex', except only applied when creating a new column. Not applied when updating column definitions. */",
+      "description": "/** Same as `rowGroupIndex`, except only applied when creating a new column. Not applied when updating column definitions. */",
       "type": { "returnType": "number", "optional": true }
     },
     "enableRowGroup": {
@@ -1082,7 +1082,7 @@
       "type": { "returnType": "string | IAggFunc | null", "optional": true }
     },
     "initialAggFunc": {
-      "description": "/** Same as 'aggFunc', except only applied when creating a new column. Not applied when updating column definitions. */",
+      "description": "/** Same as `aggFunc`, except only applied when creating a new column. Not applied when updating column definitions. */",
       "type": { "returnType": "string | IAggFunc", "optional": true }
     },
     "allowedAggFuncs": {
@@ -1098,7 +1098,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "sort": {
-      "description": "/** If sorting by default, set it here. Set to 'asc' or 'desc'. */",
+      "description": "/** If sorting by default, set it here. Set to `asc` or `desc`. */",
       "type": { "returnType": "string | null", "optional": true }
     },
     "initialSort": {
@@ -1110,11 +1110,11 @@
       "type": { "returnType": "number | null", "optional": true }
     },
     "initialSortIndex": {
-      "description": "/** Same as 'sortIndex', except only applied when creating a new column. Not applied when updating column definitions. */",
+      "description": "/** Same as `sortIndex`, except only applied when creating a new column. Not applied when updating column definitions. */",
       "type": { "returnType": "number", "optional": true }
     },
     "sortingOrder": {
-      "description": "/** Array defining the order in which sorting occurs (if sorting is enabled). An array with any of the following in any order ['asc','desc',null] */",
+      "description": "/** Array defining the order in which sorting occurs (if sorting is enabled). An array with any of the following in any order `['asc','desc',null]` */",
       "type": { "returnType": "(string | null)[]", "optional": true }
     },
     "comparator": {
@@ -1160,7 +1160,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "initialWidth": {
-      "description": "/** Same as 'width', except only applied when creating a new column. Not applied when updating column definitions. */",
+      "description": "/** Same as `width`, except only applied when creating a new column. Not applied when updating column definitions. */",
       "type": { "returnType": "number", "optional": true }
     },
     "minWidth": {
@@ -1176,7 +1176,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "initialFlex": {
-      "description": "/** Same as 'flex', except only applied when creating a new column. Not applied when updating column definitions. */",
+      "description": "/** Same as `flex`, except only applied when creating a new column. Not applied when updating column definitions. */",
       "type": { "returnType": "number", "optional": true }
     },
     "resizable": {

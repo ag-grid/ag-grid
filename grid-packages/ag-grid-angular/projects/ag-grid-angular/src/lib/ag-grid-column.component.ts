@@ -76,11 +76,11 @@ export class AgGridColumn {
     @Input() public openByDefault: boolean | undefined = undefined;
     /** Set to `true` to keep columns in this group beside each other in the grid. Moving the columns outside of the group (and hence breaking the group) is not allowed. Default: `false`     */
     @Input() public marryChildren: boolean | undefined = undefined;
-    /** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used     */
+    /** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used.     */
     @Input() public headerGroupComponent: string | { new(): IHeaderGroupComp; } | undefined = undefined;
-    /** The custom header group component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid is used     */
+    /** The custom header group component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid is used.     */
     @Input() public headerGroupComponentFramework: any = undefined;
-    /** The params used to configure the header group component.     *     */
+    /** The params used to configure the header group component.     */
     @Input() public headerGroupComponentParams: any = undefined;
     /** The unique ID to give the column. This is optional. If missing, the ID will default to the field.
      * If both field and colId are missing, a unique ID will be generated.
@@ -125,7 +125,7 @@ export class AgGridColumn {
     @Input() public suppressFillHandle: boolean | undefined = undefined;
     /** Set to `true` for this column to be hidden. Default: `false`     */
     @Input() public hide: boolean | undefined = undefined;
-    /** Same as 'hide', except only applied when creating a new column. Not applied when updating column definitions.     */
+    /** Same as `hide`, except only applied when creating a new column. Not applied when updating column definitions.     */
     @Input() public initialHide: boolean | undefined = undefined;
     /** Set to `true` to block making column visible / hidden via the UI (API will still work). Default: `false`     */
     @Input() public lockVisible: boolean | undefined = undefined;
@@ -158,7 +158,7 @@ export class AgGridColumn {
      *   - `over` Popup will be positioned over the cell
      *   - `under` Popup will be positioned below the cell leaving the cell value visible.
      * 
-     * The default is `over`.     */
+     * Default: `over`.     */
     @Input() public cellEditorPopupPosition: string | undefined = undefined;
     /** Callback for after the value of a cell has changed, either due to editing or the application calling `api.setValue()`.     */
     @Input() public onCellValueChanged: ((event: NewValueParams) => void) | undefined = undefined;
@@ -174,11 +174,11 @@ export class AgGridColumn {
     @Input() public filterValueGetter: string | ValueGetterFunc | undefined = undefined;
     /** Whether to display a floating filter for this column. Default: `false`     */
     @Input() public floatingFilter: boolean | undefined = undefined;
-    /** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.     *     */
+    /** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.     */
     @Input() public headerComponent: string | { new(): any; } | undefined = undefined;
-    /** The custom header component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid header component is used*     */
+    /** The custom header component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid header component is used.     */
     @Input() public headerComponentFramework: any = undefined;
-    /** The parameters to be passed to the header component.     *     */
+    /** The parameters to be passed to the header component.     */
     @Input() public headerComponentParams: any = undefined;
     /** Set to an array containing zero, one or many of the following options: `'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab'`.
      * This is used to figure out which menu tabs are present and in which order the tabs are shown.     */
@@ -195,7 +195,7 @@ export class AgGridColumn {
     @Input() public chartDataType: 'category' | 'series' | 'time' | 'excluded' | undefined = undefined;
     /** Pin a column to one side: `right` or `left`. A value of `true` is converted to `'left'`.     */
     @Input() public pinned: boolean | string | null | undefined = undefined;
-    /** Same as 'pinned', except only applied when creating a new column. Not applied when updating column definitions.     */
+    /** Same as `pinned`, except only applied when creating a new column. Not applied when updating column definitions.     */
     @Input() public initialPinned: boolean | string | undefined = undefined;
     /** Set to true to block the user pinning the column, the column can only be pinned via definitions or API. Default: `false`     */
     @Input() public lockPinned: boolean | undefined = undefined;
@@ -213,13 +213,13 @@ export class AgGridColumn {
     @Input() public pinnedRowValueFormatter: string | ValueFormatterFunc | undefined = undefined;
     /** Set to true to pivot by this column.     */
     @Input() public pivot: boolean | undefined = undefined;
-    /** Same as 'pivot', except only applied when creating a new column. Not applied when updating column definitions.     */
+    /** Same as `pivot`, except only applied when creating a new column. Not applied when updating column definitions.     */
     @Input() public initialPivot: boolean | undefined = undefined;
     /** Set this in columns you want to pivot by.
      * If only pivoting by one column, set this to any number (e.g. `0`).
      * If pivoting by multiple columns, set this to where you want this column to be in the order of pivots (e.g. `0` for first, `1` for second, and so on).     */
     @Input() public pivotIndex: number | null | undefined = undefined;
-    /** Same as 'pivotIndex', except only applied when creating a new column. Not applied when updating column definitions.     */
+    /** Same as `pivotIndex`, except only applied when creating a new column. Not applied when updating column definitions.     */
     @Input() public initialPivotIndex: number | undefined = undefined;
     /** Comparator to use when ordering the pivot columns, when this column is used to pivot on.
      * The values will always be strings, as the pivot service uses strings as keys for the pivot groups.     */
@@ -257,15 +257,15 @@ export class AgGridColumn {
     @Input() public dndSource: boolean | DndSourceCallback | undefined = undefined;
     /** Function to allow custom drag functionality for native drag and drop.     */
     @Input() public dndSourceOnRowDrag: ((params: { rowNode: RowNode, dragEvent: DragEvent; }) => void) | undefined = undefined;
-    /** Set to `true` to row group by this column.     */
+    /** Set to `true` to row group by this column. Default: `false`     */
     @Input() public rowGroup: boolean | undefined = undefined;
-    /** Same as 'rowGroup', except only applied when creating a new column. Not applied when updating column definitions.     */
+    /** Same as `rowGroup`, except only applied when creating a new column. Not applied when updating column definitions.     */
     @Input() public initialRowGroup: boolean | undefined = undefined;
     /** Set this in columns you want to group by.
      * If only grouping by one column, set this to any number (e.g. `0`).
      * If grouping by multiple columns, set this to where you want this column to be in the group (e.g. `0` for first, `1` for second, and so on).     */
     @Input() public rowGroupIndex: number | null | undefined = undefined;
-    /** Same as 'rowGroupIndex', except only applied when creating a new column. Not applied when updating column definitions.     */
+    /** Same as `rowGroupIndex`, except only applied when creating a new column. Not applied when updating column definitions.     */
     @Input() public initialRowGroupIndex: number | undefined = undefined;
     /** Set to `true` if you want to be able to row group by this column via the GUI.
      * This will not block the API or properties being used to achieve row grouping.
@@ -277,7 +277,7 @@ export class AgGridColumn {
     @Input() public enableValue: boolean | undefined = undefined;
     /** Name of function to use for aggregation. You can also provide your own agg function.     */
     @Input() public aggFunc: string | IAggFunc | null | undefined = undefined;
-    /** Same as 'aggFunc', except only applied when creating a new column. Not applied when updating column definitions.     */
+    /** Same as `aggFunc`, except only applied when creating a new column. Not applied when updating column definitions.     */
     @Input() public initialAggFunc: string | IAggFunc | undefined = undefined;
     /** Aggregation functions allowed on this column e.g. `['sum', 'avg']`.
      * If missing, all installed functions are allowed.
@@ -287,15 +287,15 @@ export class AgGridColumn {
     @Input() public showRowGroup: string | boolean | undefined = undefined;
     /** Set to `true` to allow sorting on this column. Default: `false`     */
     @Input() public sortable: boolean | undefined = undefined;
-    /** If sorting by default, set it here. Set to 'asc' or 'desc'.     */
+    /** If sorting by default, set it here. Set to `asc` or `desc`.     */
     @Input() public sort: string | null | undefined = undefined;
     /** Same as `sort`, except only applied when creating a new column. Not applied when updating column definitions.     */
     @Input() public initialSort: string | undefined = undefined;
     /** If sorting more than one column by default, specifies order in which the sorting should be applied.     */
     @Input() public sortIndex: number | null | undefined = undefined;
-    /** Same as 'sortIndex', except only applied when creating a new column. Not applied when updating column definitions.     */
+    /** Same as `sortIndex`, except only applied when creating a new column. Not applied when updating column definitions.     */
     @Input() public initialSortIndex: number | undefined = undefined;
-    /** Array defining the order in which sorting occurs (if sorting is enabled). An array with any of the following in any order ['asc','desc',null]     */
+    /** Array defining the order in which sorting occurs (if sorting is enabled). An array with any of the following in any order `['asc','desc',null]`     */
     @Input() public sortingOrder: (string | null)[] | undefined = undefined;
     /** Comparator function for custom sorting.     */
     @Input() public comparator: ((valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, isInverted: boolean) => number) | undefined = undefined;
@@ -310,7 +310,7 @@ export class AgGridColumn {
     @Input() public rowSpan: ((params: RowSpanParams) => number) | undefined = undefined;
     /** Initial width in pixels for the cell.     */
     @Input() public width: number | undefined = undefined;
-    /** Same as 'width', except only applied when creating a new column. Not applied when updating column definitions.     */
+    /** Same as `width`, except only applied when creating a new column. Not applied when updating column definitions.     */
     @Input() public initialWidth: number | undefined = undefined;
     /** Minimum width in pixels for the cell.     */
     @Input() public minWidth: number | undefined = undefined;
@@ -318,7 +318,7 @@ export class AgGridColumn {
     @Input() public maxWidth: number | undefined = undefined;
     /** Used instead of `width` when the goal is to fill the remaining empty space of the grid.     */
     @Input() public flex: number | undefined = undefined;
-    /** Same as 'flex', except only applied when creating a new column. Not applied when updating column definitions.     */
+    /** Same as `flex`, except only applied when creating a new column. Not applied when updating column definitions.     */
     @Input() public initialFlex: number | undefined = undefined;
     /** Set to `true` to allow this column should be resized. Default: `false`     */
     @Input() public resizable: boolean | undefined = undefined;

@@ -3,7 +3,6 @@
   "getModelFromUi": {
     "type": { "arguments": {}, "returnType": "SetFilterModel | null" }
   },
-  "getModel": { "type": { "arguments": {}, "returnType": "SetFilterModel" } },
   "getFilterType": { "type": { "arguments": {}, "returnType": "'set'" } },
   "getValueModel": {
     "type": { "arguments": {}, "returnType": "SetValueModel | null" }

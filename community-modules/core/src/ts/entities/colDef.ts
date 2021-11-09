@@ -57,11 +57,11 @@ export interface ColGroupDef extends AbstractColDef {
     openByDefault?: boolean;
     /** Set to `true` to keep columns in this group beside each other in the grid. Moving the columns outside of the group (and hence breaking the group) is not allowed. Default: `false` */
     marryChildren?: boolean;
-    /** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used */
+    /** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used. */
     headerGroupComponent?: string | { new(): IHeaderGroupComp; };
-    /** The custom header group component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid is used */
+    /** The custom header group component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid is used. */
     headerGroupComponentFramework?: any;
-    /** The params used to configure the header group component. **/
+    /** The params used to configure the header group component. */
     headerGroupComponentParams?: any;
 }
 
@@ -159,7 +159,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
 
     /** Set to `true` for this column to be hidden. Default: `false` */
     hide?: boolean;
-    /** Same as 'hide', except only applied when creating a new column. Not applied when updating column definitions. */
+    /** Same as `hide`, except only applied when creating a new column. Not applied when updating column definitions. */
     initialHide?: boolean;
     /** Set to `true` to block making column visible / hidden via the UI (API will still work). Default: `false` */
     lockVisible?: boolean;
@@ -198,7 +198,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
      *  - `over` Popup will be positioned over the cell
      *  - `under` Popup will be positioned below the cell leaving the cell value visible.
      *
-     * The default is `over`. */
+     * Default: `over`. */
     cellEditorPopupPosition?: string;
 
     // *** Columns: Events *** //
@@ -223,16 +223,16 @@ export interface ColDef extends AbstractColDef, IFilterDef {
 
     // *** Column Headers *** //
 
-    /** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used. **/
+    /** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used. */
     headerComponent?: string | { new(): any; };
-    /** The custom header component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid header component is used**/
+    /** The custom header component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid header component is used. */
     headerComponentFramework?: any;
-    /** The parameters to be passed to the header component. **/
+    /** The parameters to be passed to the header component. */
     headerComponentParams?: any;
     /**
      * Set to an array containing zero, one or many of the following options: `'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab'`.
      * This is used to figure out which menu tabs are present and in which order the tabs are shown.
-     **/
+     */
     menuTabs?: string[];
     /** Params used to change the behaviour and appearance of the Columns Menu tab. */
     columnsMenuParams?: ColumnsMenuParams;
@@ -252,7 +252,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
 
     /** Pin a column to one side: `right` or `left`. A value of `true` is converted to `'left'`. */
     pinned?: boolean | string | null;
-    /** Same as 'pinned', except only applied when creating a new column. Not applied when updating column definitions. */
+    /** Same as `pinned`, except only applied when creating a new column. Not applied when updating column definitions. */
     initialPinned?: boolean | string;
     /** Set to true to block the user pinning the column, the column can only be pinned via definitions or API. Default: `false`  */
     lockPinned?: boolean;
@@ -270,7 +270,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
 
     /** Set to true to pivot by this column. */
     pivot?: boolean;
-    /** Same as 'pivot', except only applied when creating a new column. Not applied when updating column definitions. */
+    /** Same as `pivot`, except only applied when creating a new column. Not applied when updating column definitions. */
     initialPivot?: boolean;
     /**
      * Set this in columns you want to pivot by.
@@ -278,7 +278,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
      * If pivoting by multiple columns, set this to where you want this column to be in the order of pivots (e.g. `0` for first, `1` for second, and so on).
      */
     pivotIndex?: number | null;
-    /** Same as 'pivotIndex', except only applied when creating a new column. Not applied when updating column definitions. */
+    /** Same as `pivotIndex`, except only applied when creating a new column. Not applied when updating column definitions. */
     initialPivotIndex?: number;
     /**
      * Comparator to use when ordering the pivot columns, when this column is used to pivot on.
@@ -330,9 +330,9 @@ export interface ColDef extends AbstractColDef, IFilterDef {
 
     // *** Columns: Row Grouping *** //
 
-    /** Set to `true` to row group by this column. */
+    /** Set to `true` to row group by this column. Default: `false` */
     rowGroup?: boolean;
-    /** Same as 'rowGroup', except only applied when creating a new column. Not applied when updating column definitions. */
+    /** Same as `rowGroup`, except only applied when creating a new column. Not applied when updating column definitions. */
     initialRowGroup?: boolean;
     /**
      * Set this in columns you want to group by.
@@ -340,7 +340,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
      * If grouping by multiple columns, set this to where you want this column to be in the group (e.g. `0` for first, `1` for second, and so on).
      */
     rowGroupIndex?: number | null;
-    /** Same as 'rowGroupIndex', except only applied when creating a new column. Not applied when updating column definitions. */
+    /** Same as `rowGroupIndex`, except only applied when creating a new column. Not applied when updating column definitions. */
     initialRowGroupIndex?: number;
     /**
      * Set to `true` if you want to be able to row group by this column via the GUI.
@@ -356,7 +356,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     enableValue?: boolean;
     /** Name of function to use for aggregation. You can also provide your own agg function. */
     aggFunc?: string | IAggFunc | null;
-    /** Same as 'aggFunc', except only applied when creating a new column. Not applied when updating column definitions. */
+    /** Same as `aggFunc`, except only applied when creating a new column. Not applied when updating column definitions. */
     initialAggFunc?: string | IAggFunc;
     /**
      * Aggregation functions allowed on this column e.g. `['sum', 'avg']`.
@@ -371,15 +371,15 @@ export interface ColDef extends AbstractColDef, IFilterDef {
 
     /** Set to `true` to allow sorting on this column. Default: `false` */
     sortable?: boolean;
-    /** If sorting by default, set it here. Set to 'asc' or 'desc'. */
+    /** If sorting by default, set it here. Set to `asc` or `desc`. */
     sort?: string | null;
     /** Same as `sort`, except only applied when creating a new column. Not applied when updating column definitions. */
     initialSort?: string;
     /** If sorting more than one column by default, specifies order in which the sorting should be applied. */
     sortIndex?: number | null;
-    /** Same as 'sortIndex', except only applied when creating a new column. Not applied when updating column definitions. */
+    /** Same as `sortIndex`, except only applied when creating a new column. Not applied when updating column definitions. */
     initialSortIndex?: number;
-    /**  Array defining the order in which sorting occurs (if sorting is enabled). An array with any of the following in any order ['asc','desc',null] */
+    /**  Array defining the order in which sorting occurs (if sorting is enabled). An array with any of the following in any order `['asc','desc',null]` */
     sortingOrder?: (string | null)[];
     /** Comparator function for custom sorting. */
     comparator?: (valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, isInverted: boolean) => number;
@@ -400,7 +400,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
 
     /** Initial width in pixels for the cell. */
     width?: number;
-    /** Same as 'width', except only applied when creating a new column. Not applied when updating column definitions. */
+    /** Same as `width`, except only applied when creating a new column. Not applied when updating column definitions. */
     initialWidth?: number;
     /** Minimum width in pixels for the cell. */
     minWidth?: number;
@@ -408,7 +408,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     maxWidth?: number;
     /** Used instead of `width` when the goal is to fill the remaining empty space of the grid. */
     flex?: number;
-    /** Same as 'flex', except only applied when creating a new column. Not applied when updating column definitions. */
+    /** Same as `flex`, except only applied when creating a new column. Not applied when updating column definitions. */
     initialFlex?: number;
     /** Set to `true` to allow this column should be resized. Default: `false` */
     resizable?: boolean;
@@ -420,7 +420,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     /** Cell template to use for cell. Useful for AngularJS cells. */
     template?: string;
     // This property can be reported as Critical Issues by some security scans.
-    // We are aware of this, however As 'templateUrl' is a legacy property used by angular 1.x users
+    // We are aware of this, however As `templateUrl` is a legacy property used by angular 1.x users
     // we don't want to sanitise it at this late stage due to the potential impact to existing users.
     // Note that if this property is not used by application developers it won't pose a security risk
     // in an application.
