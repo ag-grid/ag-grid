@@ -77,6 +77,7 @@ $ag-theme-alpine-default-params: (
     selected-tab-underline-color: ag-derived(alpine-active-color),
     selected-tab-underline-width: 2px,
     full-width-tabs: true,
+    tab-min-width: 240px,
 
     card-shadow: 0 1px 4px 1px rgba(186, 191, 199, 0.4),
     popup-shadow: ag-derived(card-shadow),

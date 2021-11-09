@@ -70,10 +70,6 @@
         padding-top: 1px; // hack to align column menu tab header border with header row border
     }
 
-    .ag-tabs {
-        min-width: 240px;
-    }
-
     .ag-tabs-header {
         @include ag-border(primary, bottom);
     }
