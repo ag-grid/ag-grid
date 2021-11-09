@@ -20,7 +20,7 @@ const packageDirs = JSON.parse(packageDirsRaw);
 
 function main() {
     updatePackageBowserJsonFiles();
-    // updateLernaJson();
+    updateLernaJson();
 }
 
 function updateAngularProject(CWD, packageDirectory, directory) {
