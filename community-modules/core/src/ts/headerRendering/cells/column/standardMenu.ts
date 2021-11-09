@@ -102,11 +102,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
             positionCallback(eMenu);
 
             if (filter!.afterGuiAttached) {
-                filter!.afterGuiAttached({
-                    container: 'columnMenu',
-                    hidePopup,
-                    repositionPopup: () => positionCallback(eMenu),
-                });
+                filter!.afterGuiAttached({ container: 'columnMenu', hidePopup });
             }
         });
 
