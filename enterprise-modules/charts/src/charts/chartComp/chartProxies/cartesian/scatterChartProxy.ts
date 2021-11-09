@@ -49,7 +49,7 @@ export class ScatterChartProxy extends CartesianChartProxy<any> {
             });
         }
 
-        const paired = true; //FIXME: seriesDefaults.paired
+        const paired = this.chartOptions[this.standaloneChartType].paired;
         const seriesDefinitions = this.getSeriesDefinitions(fields, paired);
 
         let dataDomain: number[] | undefined;
@@ -168,8 +168,6 @@ export class ScatterChartProxy extends CartesianChartProxy<any> {
             previousSeries = series;
         });
     }
-
-    public getMarkersEnabled = (): boolean => true; // markers are always enabled on scatter charts
 
     private getSeriesDefinitions(fields: FieldDefinition[], paired: boolean): (SeriesDefinition | null)[] {
         if (fields.length < 2) { return []; }
