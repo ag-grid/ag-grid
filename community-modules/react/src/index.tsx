@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model'
-import { AgGridColumn } from './agGridColumn'
-import { AgGridReactFire } from './next/agGridReactFire';
+import { AgGridColumn } from './shared/agGridColumn'
+import { AgGridReactUi } from './reactUi/agGridReactUi';
 
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
@@ -28,7 +28,7 @@ const App = () => {
         <div style={{ display: 'flex' }}>
             <div className="ag-theme-alpine" style={{ height: 400, width: 600, margin: 10 }}>
                 {/*<AgGridReact*/}
-                <AgGridReactFire
+                <AgGridReactUi
                     defaultColDef={{
                         resizable: true,
                         filter: true,
@@ -43,7 +43,7 @@ const App = () => {
                     <AgGridColumn field="make"></AgGridColumn>
                     <AgGridColumn field="model"></AgGridColumn>
                     <AgGridColumn field="price"></AgGridColumn>
-                </AgGridReactFire>
+                </AgGridReactUi>
                 {/*</AgGridReact>*/}
             </div>
 {/*

@@ -1,7 +1,7 @@
 import { Component, ReactPortal } from "react";
-import { ReactComponent, IPortalManager } from "./reactComponent";
+import { ReactComponent } from "./reactComponent";
 
-export class PortalManager implements IPortalManager {
+export class PortalManager {
 
     private static MAX_COMPONENT_CREATION_TIME_IN_MS: number = 1000; // a second should be more than enough to instantiate a component
 

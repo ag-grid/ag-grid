@@ -1,5 +1,5 @@
 import { ReactPortal } from 'react';
-import { _, ComponentType, IComponent, WrappableInterface } from 'ag-grid-community';
+import { _, ComponentType, IComponent, WrappableInterface } from '@ag-grid-community/core';
 import { assignProperties } from './utils';
 import { PortalManager } from './portalManager';
 

@@ -2,7 +2,7 @@ import React, { memo, useState, useMemo, useRef, useEffect, useContext, useCallb
 import { CssClasses } from "../utils";
 import { IDetailCellRenderer, IDetailCellRendererCtrl, IDetailCellRendererParams, GridOptions, GridApi, ColumnApi } from "@ag-grid-community/core";
 import { BeansContext } from "../beansContext";
-import { AgGridReactFire } from "../agGridReactFire";
+import { AgGridReactUi } from "../agGridReactUi";
 
 const DetailCellRenderer = (props: IDetailCellRendererParams, ref: any) => {
 
@@ -21,7 +21,7 @@ const DetailCellRenderer = (props: IDetailCellRendererParams, ref: any) => {
 
     if (ref) {
         useImperativeHandle(ref, ()=> ({
-            refresh() {return ctrlRef.current.refresh();}
+            refresh() {return ctrlRef.current!.refresh();}
         }));    
     }
     
@@ -95,7 +95,7 @@ const DetailCellRenderer = (props: IDetailCellRendererParams, ref: any) => {
         <div className={topClassName} ref={eGuiRef}>
             { 
                 detailGridOptions && 
-                <AgGridReactFire className={gridClassName} {...detailGridOptions} rowData={detailRowData} setGridApi={ setGridApi }></AgGridReactFire> 
+                <AgGridReactUi className={gridClassName} {...detailGridOptions} rowData={detailRowData} setGridApi={ setGridApi }></AgGridReactUi> 
             }
         </div>
     );

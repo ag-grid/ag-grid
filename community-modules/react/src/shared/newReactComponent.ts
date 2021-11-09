@@ -1,7 +1,7 @@
 import { ReactPortal, createElement } from 'react';
 import { createPortal } from 'react-dom';
-import { ComponentType, AgPromise } from 'ag-grid-community';
-import { AgGridReactLegacy } from "./agGridReactLegacy";
+import { ComponentType, AgPromise } from '@ag-grid-community/core';
+import { AgGridReactLegacy } from "../legacy/agGridReactLegacy";
 import { ReactComponent } from './reactComponent';
 import { renderToStaticMarkup } from "react-dom/server";
 import generateNewKey from "./keyGenerator";

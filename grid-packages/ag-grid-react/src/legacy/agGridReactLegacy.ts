@@ -12,13 +12,13 @@ import {
     GridOptions,
     WrappableInterface
 } from 'ag-grid-community';
-import { AgGridColumn } from './shared/agGridColumn';
-import { ChangeDetectionService, ChangeDetectionStrategyType } from './shared/changeDetectionService';
-import { ReactComponent } from './shared/reactComponent';
+import { AgGridColumn } from '../shared/agGridColumn';
+import { ChangeDetectionService, ChangeDetectionStrategyType } from '../shared/changeDetectionService';
+import { ReactComponent } from '../shared/reactComponent';
 import { LegacyReactComponent } from './legacyReactComponent';
-import { NewReactComponent } from './shared/newReactComponent';
-import { AgGridReactProps } from './shared/interfaces';
-import { PortalManager } from './shared/portalManager';
+import { NewReactComponent } from '../shared/newReactComponent';
+import { AgGridReactProps } from '../shared/interfaces';
+import { PortalManager } from '../shared/portalManager';
 
 export class AgGridReactLegacy extends Component<AgGridReactProps, {}> {
 

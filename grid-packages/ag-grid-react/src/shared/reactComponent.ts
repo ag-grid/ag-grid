@@ -1,14 +1,7 @@
 import { ReactPortal } from 'react';
-import { _, ComponentType, IComponent, WrappableInterface } from '@ag-grid-community/core';
+import { _, ComponentType, IComponent, WrappableInterface } from 'ag-grid-community';
 import { assignProperties } from './utils';
-import { AgGridReactLegacy } from './agGridReactLegacy';
-
-export interface IPortalManager {
-    destroyPortal(portal: ReactPortal): void;    
-    getComponentWrappingElement(): string | undefined;
-    mountReactPortal(portal: ReactPortal, reactComponent: ReactComponent, resolve: (value: any) => void): void;
-    updateReactPortal(oldPortal: ReactPortal, newPortal: ReactPortal): void;
-}
+import { PortalManager } from './portalManager';
 
 abstract class BaseReactComponent implements IComponent<any>, WrappableInterface {
     abstract getGui(): HTMLElement;
@@ -32,12 +25,12 @@ export abstract class ReactComponent extends BaseReactComponent {
     protected eParentElement!: HTMLElement;
     protected componentInstance: any;
     protected reactComponent: any;
-    protected portalManager: IPortalManager;
+    protected portalManager: PortalManager;
     protected portal: ReactPortal | null = null;
     protected statelessComponent: boolean;
     protected componentType: ComponentType;
 
-    constructor(reactComponent: any, portalManager: IPortalManager, componentType: ComponentType) {
+    constructor(reactComponent: any, portalManager: PortalManager, componentType: ComponentType) {
         super();
 
         this.reactComponent = reactComponent;

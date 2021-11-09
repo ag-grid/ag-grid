@@ -5,12 +5,12 @@ import {
     GridCtrl,
     IGridComp,
     AgStackComponentsRegistry
-} from '@ag-grid-community/core';
+} from 'ag-grid-community';
 import { classesList } from './utils';
 import useReactCommentEffect from './reactComment';
 import TabGuardComp, { TabGuardCompCallback } from './tabGuardComp';
 import GridBodyComp  from './gridBodyComp';
-import { Beans } from '@ag-grid-community/core';
+import { Beans } from 'ag-grid-community';
 import { BeansContext } from './beansContext';
 
 interface GridCompProps {

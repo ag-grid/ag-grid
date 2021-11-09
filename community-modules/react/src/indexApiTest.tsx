@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { AgGridReact } from './agGridReact';
-import { AgGridColumn } from './agGridColumn';
+import { AgGridColumn } from './shared/agGridColumn';
 import useGridApis from "./useGridApi";
 
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
