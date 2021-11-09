@@ -12,7 +12,7 @@ if (process.argv.length < 5) {
     process.exit(1);
 }
 
-const [exec, scriptPath, gridNewVersion, dependencyVersion, packageDirsRaw, modulesToVersion, chartsDependencyVersion ] = process.argv;
+const [exec, scriptPath, gridNewVersion, dependencyVersion, packageDirsRaw, modulesToVersion, chartsDependencyVersion] = process.argv;
 
 const resolvedModulesToVersion = modulesToVersion === "all" ? modulesToVersion : modulesToVersion.split(',')
 
@@ -53,6 +53,11 @@ function updatePackageBowserJsonFiles() {
                     // angular projects have "sub" projects which we need to update
                     if (directory.includes("angular") && !directory.includes("example")) {
                         updateAngularProject(CWD, packageDirectory, directory);
+                    }
+
+                    // docs has a documentation sub dir that we need to handle too
+                    if(directory === 'ag-grid-docs') {
+                        updateFileWithNewVersions(`${CWD}/${packageDirectory}/${directory}/documentation/package.json`);
                     }
 
                     // update all bower.json files, if they exist
