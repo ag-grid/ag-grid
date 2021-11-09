@@ -556,9 +556,9 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public aggregateOnlyChangedColumns: boolean | undefined = undefined;
     /** Set to `true` so that aggregations are not impacted by filtering.     */
     @Input() public suppressAggFilteredOnly: boolean | undefined = undefined;
-    /** Set to `true` to enable Row Animation.     */
+    /** Set to `true` to enable Row Animation. Default: `false`     */
     @Input() public animateRows: boolean | undefined = undefined;
-    /** Set to `true` to have cells flash after data changes.     */
+    /** Set to `true` to have cells flash after data changes. Default: `false`     */
     @Input() public enableCellChangeFlash: boolean | undefined = undefined;
     /** To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long a cell should remain in its \"flashed\" state.
      * Default: `500`     */
@@ -569,24 +569,25 @@ export class AgGridAngular implements AfterViewInit {
     /** Switch between layout options: `normal`, `autoHeight`, `print`.
      * Default: `normal`     */
     @Input() public domLayout: string | undefined = undefined;
-    /** When `true`, the order of rows and columns in the DOM are consistent with what is on screen.     */
+    /** When `true`, the order of rows and columns in the DOM are consistent with what is on screen. Default: `false`     */
     @Input() public ensureDomOrder: boolean | undefined = undefined;
-    /** Set to `true` to operate the grid in RTL (Right to Left) mode.     */
+    /** Set to `true` to operate the grid in RTL (Right to Left) mode. Default: `false`     */
     @Input() public enableRtl: boolean | undefined = undefined;
-    /** Set to `true` so that the grid doesn't virtualise the columns. For example, if you have 100 columns, but only 10 visible due to scrolling, all 100 will always be rendered.     */
+    /** Set to `true` so that the grid doesn't virtualise the columns. For example, if you have 100 columns, but only 10 visible due to scrolling, all 100 will always be rendered. Default: `false`     */
     @Input() public suppressColumnVirtualisation: boolean | undefined = undefined;
     /** By default the grid has a limit of rendering a maximum of 500 rows at once (remember the grid only renders rows you can see, so unless your display shows more than 500 rows without vertically scrolling this will never be an issue).
-     * <br />**This is only relevant if you are manually setting `rowBuffer` to a high value (rendering more rows than can be seen) or if your grid height is able to display more than 500 rows at once.**     */
+     * <br />**This is only relevant if you are manually setting `rowBuffer` to a high value (rendering more rows than can be seen) or if your grid height is able to display more than 500 rows at once.** 
+     * Default: `false`     */
     @Input() public suppressMaxRenderedRowRestriction: boolean | undefined = undefined;
-    /** Set to `true` to enable Managed Row Dragging.     */
+    /** Set to `true` to enable Managed Row Dragging. Default: `false`     */
     @Input() public rowDragManaged: boolean | undefined = undefined;
-    /** Set to `true` to suppress row dragging.     */
+    /** Set to `true` to suppress row dragging. Default: `false`     */
     @Input() public suppressRowDrag: boolean | undefined = undefined;
-    /** Set to `true` to suppress moving rows while dragging the `rowDrag` waffle. This option highlights the position where the row will be placed and it will only move the row on mouse up.     */
+    /** Set to `true` to suppress moving rows while dragging the `rowDrag` waffle. This option highlights the position where the row will be placed and it will only move the row on mouse up. Default: `false`     */
     @Input() public suppressMoveWhenRowDragging: boolean | undefined = undefined;
-    /** Set to `true` to enable clicking and dragging anywhere on the row without the need for a drag handle.     */
+    /** Set to `true` to enable clicking and dragging anywhere on the row without the need for a drag handle. Default: `false`     */
     @Input() public rowDragEntireRow: boolean | undefined = undefined;
-    /** Set to `true` to enable dragging multiple rows at the same time.     */
+    /** Set to `true` to enable dragging multiple rows at the same time. Default: `false`     */
     @Input() public rowDragMultiRow: boolean | undefined = undefined;
     /** Sets the Cell Renderer to use for full width rows.     */
     @Input() public fullWidthCellRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;
@@ -607,34 +608,35 @@ export class AgGridAngular implements AfterViewInit {
      *       `'groupRows'`: group rows are automatically added instead of group columns.
      *       `'custom'`: informs the grid that group columns will be provided.     */
     @Input() public groupDisplayType: RowGroupingDisplayType | undefined = undefined;
-    /** If grouping, set to the number of levels to expand by default, e.g. `0` for none, `1` for first level only, etc. Set to `-1` to expand everything.     */
+    /** If grouping, set to the number of levels to expand by default, e.g. `0` for none, `1` for first level only, etc. Set to `-1` to expand everything. Default: `0`     */
     @Input() public groupDefaultExpanded: number | undefined = undefined;
     /** Allows specifying the group 'auto column' if you are not happy with the default. If grouping, this column definition is included as the first column in the grid. If not grouping, this column is not included.     */
     @Input() public autoGroupColumnDef: ColDef | undefined = undefined;
-    /** When `true`, preserves the current group order when sorting on non-group columns.     */
+    /** When `true`, preserves the current group order when sorting on non-group columns. Default: `false`     */
     @Input() public groupMaintainOrder: boolean | undefined = undefined;
-    /** When `true`, if you select a group, the children of the group will also be selected.     */
+    /** When `true`, if you select a group, the children of the group will also be selected. Default: `false`     */
     @Input() public groupSelectsChildren: boolean | undefined = undefined;
     /** If grouping, this controls whether to show a group footer when the group is expanded.
      * If `true`, then by default, the footer will contain aggregate data (if any) when shown and the header will be blank.
      * When closed, the header will contain the aggregate data regardless of this setting (as the footer is hidden anyway).
-     * This is handy for 'total' rows, that are displayed below the data when the group is open, and alongside the group when it is closed.     */
+     * This is handy for 'total' rows, that are displayed below the data when the group is open, and alongside the group when it is closed.
+     * Default: `false`     */
     @Input() public groupIncludeFooter: boolean | undefined = undefined;
-    /** Set to `true` to show a 'grand total' group footer across all groups.     */
+    /** Set to `true` to show a 'grand total' group footer across all groups. Default: `false`     */
     @Input() public groupIncludeTotalFooter: boolean | undefined = undefined;
-    /** If `true`, and showing footer, aggregate data will always be displayed at both the header and footer levels. This stops the possibly undesirable behaviour of the header details 'jumping' to the footer on expand.     */
+    /** If `true`, and showing footer, aggregate data will always be displayed at both the header and footer levels. This stops the possibly undesirable behaviour of the header details 'jumping' to the footer on expand. Default: `false`     */
     @Input() public groupSuppressBlankHeader: boolean | undefined = undefined;
-    /** If using `groupSelectsChildren`, then only the children that pass the current filter will get selected.     */
+    /** If using `groupSelectsChildren`, then only the children that pass the current filter will get selected. Default: `false`     */
     @Input() public groupSelectsFiltered: boolean | undefined = undefined;
-    /** Shows the open group in the group column for non-group rows.     */
+    /** Shows the open group in the group column for non-group rows. Default: `false`     */
     @Input() public showOpenedGroup: boolean | undefined = undefined;
     /** Set to `true` to collapse groups that only have one child.     */
     @Input() public groupRemoveSingleChildren: boolean | undefined = undefined;
-    /** Set to `true` to collapse lowest level groups that only have one child.     */
+    /** Set to `true` to collapse lowest level groups that only have one child. Default: `false`     */
     @Input() public groupRemoveLowestSingleChildren: boolean | undefined = undefined;
-    /** Set to `true` to hide parents that are open. When used with multiple columns for showing groups, it can give a more pleasing user experience.     */
+    /** Set to `true` to hide parents that are open. When used with multiple columns for showing groups, it can give a more pleasing user experience. Default: `false`     */
     @Input() public groupHideOpenParents: boolean | undefined = undefined;
-    /** When to show the 'row group panel' (where you drag rows to group) at the top.     */
+    /** When to show the 'row group panel' (where you drag rows to group) at the top. Default: `never`     */
     @Input() public rowGroupPanelShow: string | undefined = undefined;
     /** Sets the Cell Renderer to use when `groupDisplayType = 'groupRows'`.     */
     @Input() public groupRowRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;

@@ -10,10 +10,7 @@ export default class TitlePanel extends Component {
     @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
 
     private activePanels: Component[] = [];
-
-    // When the title is disabled, and then re-enabled, we want the same title to be
-    // present in the chart. It is kept here so it can later be restored.
-    private disabledTitle: string;
+    private titlePlaceholder: string;
 
     constructor(private readonly chartOptionsService: ChartOptionsService) {
         super(TitlePanel.TEMPLATE);
@@ -22,6 +19,7 @@ export default class TitlePanel extends Component {
     @PostConstruct
     private init() {
         this.initFontPanel();
+        this.titlePlaceholder = this.chartTranslator.translate('titlePlaceholder');
     }
 
     private hasTitle(): boolean {
@@ -59,13 +57,10 @@ export default class TitlePanel extends Component {
             initialFont,
             setFont,
             setEnabled: (enabled) => {
-                if (enabled) {
-                    const newTitle = this.disabledTitle || this.chartTranslator.translate('titlePlaceholder');
-                    this.setOption('title.text', newTitle);
-                    this.disabledTitle = '';
-                } else {
-                    this.disabledTitle = this.getOption('title.text');
-                    this.setOption('title.text', '');
+                this.setOption('title.enabled', enabled);
+                const currentTitleText = this.getOption('title.text');
+                if (enabled && currentTitleText === 'Title') {
+                    this.setOption('title.text', this.titlePlaceholder);
                 }
             }
         };
