@@ -11,7 +11,7 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
 
     private static TEMPLATE = /* html */
         `<div class="ag-header-cell ag-floating-filter" role="gridcell" tabindex="-1">
-            <div class="ag-floating-filter-full-body" ref="eFloatingFilterBody" role="presentation"></div>
+            <div ref="eFloatingFilterBody" role="presentation"></div>
             <div class="ag-floating-filter-button ag-hidden" ref="eButtonWrapper" role="presentation">
                 <button type="button" aria-label="Open Filter Menu" class="ag-floating-filter-button-button" ref="eButtonShowMainFilter" tabindex="-1"></button>
             </div>
@@ -35,10 +35,10 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
         const compProxy: IHeaderFilterCellComp = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             addOrRemoveBodyCssClass: (cssClassName, on) => addOrRemoveCssClass(this.eFloatingFilterBody, cssClassName, on),
+            addOrRemoveButtonWrapperCssClass: (cssClassName, on) => addOrRemoveCssClass(this.eButtonWrapper, cssClassName, on),
             setCompDetails: compDetails => this.setCompDetails(compDetails),
             getFloatingFilterComp: ()=> this.compPromise,
             setWidth: width => eGui.style.width = width,
-            setButtonDisplayed: displayed => setDisplayed(this.eButtonWrapper, displayed),
             setMenuIcon: eIcon => this.eButtonShowMainFilter.appendChild(eIcon)
         };
 

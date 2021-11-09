@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { BeansContext } from '../beansContext';
-import { AgPromise, ColumnSortState, HeaderFilterCellCtrl, IFloatingFilter, IHeader, IHeaderFilterCellComp, UserCompDetails } from 'ag-grid-community';
+import { AgPromise, ColumnSortState, HeaderFilterCellCtrl, IFloatingFilter, IHeader, IHeaderFilterCellComp, UserCompDetails } from '@ag-grid-community/core';
 import { CssClasses, isComponentStateless } from '../utils';
 import { showJsComp } from '../jsComp';
 

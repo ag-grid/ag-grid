@@ -8814,6 +8814,13 @@
         "optional": false
       }
     },
+    "addOrRemoveButtonWrapperCssClass": {
+      "type": {
+        "arguments": { "cssClassName": "string", "on": "boolean" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
     "setCompDetails": {
       "type": {
         "arguments": { "compDetails": "UserCompDetails" },
@@ -8824,20 +8831,13 @@
     "getFloatingFilterComp": {
       "type": {
         "arguments": {},
-        "returnType": "AgPromise<IFloatingFilterComp> | null",
+        "returnType": "AgPromise<IFloatingFilter> | null",
         "optional": false
       }
     },
     "setWidth": {
       "type": {
         "arguments": { "width": "string" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "setButtonDisplayed": {
-      "type": {
-        "arguments": { "displayed": "boolean" },
         "returnType": "void",
         "optional": false
       }

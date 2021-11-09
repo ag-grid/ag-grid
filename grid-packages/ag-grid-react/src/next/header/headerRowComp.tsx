@@ -1,12 +1,13 @@
-import { AbstractHeaderCellCtrl, HeaderGroupCellCtrl, HeaderCellCtrl, HeaderFilterCellComp, HeaderFilterCellCtrl, HeaderRowCtrl, HeaderRowType, IHeaderRowComp, _ } from 'ag-grid-community';
+import { AbstractHeaderCellCtrl, HeaderGroupCellCtrl, HeaderCellCtrl, HeaderFilterCellCtrl, HeaderRowCtrl, HeaderRowType, IHeaderRowComp, _ } from 'ag-grid-community';
 import React, { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { BeansContext } from '../beansContext';
 import HeaderCellComp from './headerCellComp';
 import HeaderGroupCellComp from './headerGroupCellComp';
+import HeaderFilterCellComp from './headerFilterCellComp';
 
 const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
 
-    const {context, gridOptionsWrapper} = useContext(BeansContext);
+    const {gridOptionsWrapper} = useContext(BeansContext);
 
     const [ transform, setTransform ] = useState<string>();
     const [ height, setHeight ] = useState<string>();
@@ -22,8 +23,6 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
     const typeColumn = ctrl.getType() === HeaderRowType.COLUMN;
     const typeGroup = ctrl.getType() === HeaderRowType.COLUMN_GROUP;
     const typeFilter = ctrl.getType() === HeaderRowType.FLOATING_FILTER;
-
-    const jsFilterCells = useRef<{[id: string]: HeaderFilterCellComp}>({});
 
     const setCellCtrlsMaintainOrder = useCallback( (prev: AbstractHeaderCellCtrl[], next: AbstractHeaderCellCtrl[]) => {
 
@@ -58,47 +57,6 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
 
     }, []);
 
-    const destroyJsFilterComps = useCallback( (cellCtrls: AbstractHeaderCellCtrl[])=> {
-        cellCtrls.forEach( cellCtrl => {
-            const comp = jsFilterCells.current[cellCtrl.getInstanceId()];
-            if (comp) {
-                const compGui = comp.getGui();
-                context.destroyBean(comp);
-                if (compGui && compGui.parentElement) {
-                    compGui.parentElement.removeChild(compGui);
-                }
-            }
-        });
-    }, []);
-
-    // manage filter comps, which are still JS
-    typeFilter && useEffect( ()=> {
-        const oldCompsMap = jsFilterCells.current;
-        jsFilterCells.current = {};
-        const newCompsMap = jsFilterCells.current;
-        cellCtrls.forEach(cellCtrl => {
-            const id = cellCtrl.getInstanceId();
-            const existing = oldCompsMap[id];
-            delete oldCompsMap[id];
-            if (existing) {
-                newCompsMap[id] = existing;
-            } else {
-                const newComp = context.createBean(new HeaderFilterCellComp(cellCtrl as HeaderFilterCellCtrl))
-                eGui.current!.appendChild(newComp.getGui());
-            }
-        });
-        const oldComps = _.getAllValuesInObject(oldCompsMap);
-        destroyJsFilterComps(oldComps);
-    }, [cellCtrls]);
-
-    // when row comp is destroyed, make sure no child floating filters left
-    typeFilter && useEffect( ()=> {
-        const cellCtrls: AbstractHeaderCellCtrl[] = [];
-        _.getAllValuesInObject(jsFilterCells.current)
-            .forEach(comp => cellCtrls.push(comp.getCtrl()));
-        destroyJsFilterComps(cellCtrls);
-    }, []);
-
     const style = useMemo( ()=> ({
         transform: transform,
         height: height,
@@ -120,6 +78,9 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
         switch (ctrl.getType()) {
             case HeaderRowType.COLUMN_GROUP :
                 return <HeaderGroupCellComp ctrl={cellCtrl as HeaderGroupCellCtrl} key={cellCtrl.getInstanceId()} />;
+
+            case HeaderRowType.FLOATING_FILTER :
+                return <HeaderFilterCellComp ctrl={cellCtrl as HeaderFilterCellCtrl} key={cellCtrl.getInstanceId()} />;
                 
             default :
                 return <HeaderCellComp ctrl={cellCtrl as HeaderCellCtrl} key={cellCtrl.getInstanceId()} />;
@@ -129,7 +90,7 @@ const HeaderRowComp = (props: {ctrl: HeaderRowCtrl}) => {
     // below, we are not doing floating filters, not yet
     return (
         <div ref={eGui} className={className} role="row" style={style} aria-rowindex={ariaRowIndex}>
-            { !typeFilter && cellCtrls.map( createCellJsx ) }
+            { cellCtrls.map( createCellJsx ) }
         </div>
     );
 };

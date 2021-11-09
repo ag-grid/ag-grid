@@ -7,7 +7,7 @@ import { Autowired, PostConstruct } from '../../../context/context';
 import { Column } from '../../../entities/column';
 import { Events, FilterChangedEvent } from '../../../events';
 import { FilterManager } from '../../../filter/filterManager';
-import { IFloatingFilterComp, IFloatingFilterParams } from '../../../filter/floating/floatingFilter';
+import { IFloatingFilter, IFloatingFilterComp, IFloatingFilterParams } from '../../../filter/floating/floatingFilter';
 import { FloatingFilterMapper } from '../../../filter/floating/floatingFilterMapper';
 import { ReadOnlyFloatingFilter } from '../../../filter/floating/provided/readOnlyFloatingFilter';
 import { GridApi } from '../../../gridApi';
@@ -30,10 +30,10 @@ import { UserCompDetails } from "../../../components/framework/userComponentFact
 export interface IHeaderFilterCellComp extends IAbstractHeaderCellComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     addOrRemoveBodyCssClass(cssClassName: string, on: boolean): void;
+    addOrRemoveButtonWrapperCssClass(cssClassName: string, on: boolean): void;
     setCompDetails(compDetails: UserCompDetails): void;
-    getFloatingFilterComp(): AgPromise<IFloatingFilterComp> | null;
+    getFloatingFilterComp(): AgPromise<IFloatingFilter> | null;
     setWidth(width: string): void;
-    setButtonDisplayed(displayed: boolean): void;
     setMenuIcon(icon: HTMLElement): void;
 }
 
@@ -54,6 +54,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
     private eFloatingFilterBody: HTMLElement;
 
     private suppressFilterButton: boolean;    
+    private active: boolean;
 
     constructor(column: Column, parentRowCtrl: HeaderRowCtrl) {
         super(column, parentRowCtrl);
@@ -66,16 +67,14 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
         this.eButtonShowMainFilter = eButtonShowMainFilter;
         this.eFloatingFilterBody = eFloatingFilterBody;
 
+        const colDef = this.column.getColDef();
+        // const active = !(!(colDef.filter && colDef.floatingFilter) && !(colDef.filterFramework && colDef.floatingFilterComponentFramework));
+        this.active = (!!colDef.filter || !!colDef.filterFramework) && !!colDef.floatingFilter;
+
         this.setupWidth();
         this.setupLeft();
         this.setupHover();
         this.setupFocus();
-
-        const colDef = this.column.getColDef();
-        // i don't think the logic here is correct, however it's production tested and I 
-        // don't want to change it in case it's doing something I'm not aware of.
-        if (!(colDef.filter && colDef.floatingFilter) && !(colDef.filterFramework && colDef.floatingFilterComponentFramework)) { return; }
-
         this.setupUserComp();
         this.setupSyncWithFilter();
         this.setupUi();
@@ -85,12 +84,15 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
 
     private setupUi(): void {
 
+        this.comp.addOrRemoveButtonWrapperCssClass('ag-hidden', !this.active || this.suppressFilterButton);
+
+        if (!this.active) { return; }
+
         this.comp.addOrRemoveBodyCssClass('ag-floating-filter-full-body', this.suppressFilterButton);
         this.comp.addOrRemoveBodyCssClass('ag-floating-filter-body', !this.suppressFilterButton);
-        this.comp.setButtonDisplayed(!this.suppressFilterButton);
-
+        
         const eMenuIcon = createIconNoSpan('filter', this.gridOptionsWrapper, this.column);
-        eMenuIcon && this.eButtonShowMainFilter.appendChild(eMenuIcon);
+        eMenuIcon && this.eButtonShowMainFilter.appendChild(eMenuIcon);        
     }
 
     private setupFocus(): void {
@@ -192,6 +194,8 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
 
     private setupUserComp(): void {
 
+        if (!this.active) { return; }
+
         const colDef = this.column.getColDef();
 
         const filterParams = this.filterManager.createFilterParams(this.column, colDef);
@@ -273,6 +277,8 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     private setupSyncWithFilter(): void {
+        if (!this.active) { return; }
+
         const syncWithFilter = (filterChangedEvent: FilterChangedEvent | null) => {
             const compPromise = this.comp.getFloatingFilterComp();
             if (!compPromise) { return; }

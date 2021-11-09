@@ -1,8 +1,8 @@
-import React, { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { HeaderGroupCellCtrl, IHeaderGroupCellComp, UserCompDetails } from 'ag-grid-community';
+import React, { memo, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { BeansContext } from '../beansContext';
-import { ColumnSortState, HeaderGroupCellCtrl, IHeader, IHeaderGroupCellComp, UserCompDetails } from 'ag-grid-community';
-import { CssClasses, isComponentStateless } from '../utils';
 import { showJsComp } from '../jsComp';
+import { CssClasses } from '../utils';
 
 const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
 
@@ -59,7 +59,7 @@ const HeaderGroupCellComp = (props: {ctrl: HeaderGroupCellCtrl}) => {
     }), [width]);
     
     const className = useMemo( ()=> 'ag-header-group-cell ' + cssClasses.toString(), [cssClasses] );
-    const resizableClassName = useMemo( ()=> 'ag-header-cell-resize' + cssResizableClasses.toString(), [cssResizableClasses] );
+    const resizableClassName = useMemo( ()=> 'ag-header-cell-resize ' + cssResizableClasses.toString(), [cssResizableClasses] );
 
     const reactUserComp = userCompDetails && userCompDetails.componentFromFramework;
     const UserCompClass = userCompDetails && userCompDetails.componentClass;

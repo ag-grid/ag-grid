@@ -5003,10 +5003,10 @@
     "type": {
       "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
       "addOrRemoveBodyCssClass(cssClassName: string, on: boolean)": "void",
+      "addOrRemoveButtonWrapperCssClass(cssClassName: string, on: boolean)": "void",
       "setCompDetails(compDetails: UserCompDetails)": "void",
-      "getFloatingFilterComp()": "AgPromise<IFloatingFilterComp> | null",
+      "getFloatingFilterComp()": "AgPromise<IFloatingFilter> | null",
       "setWidth(width: string)": "void",
-      "setButtonDisplayed(displayed: boolean)": "void",
       "setMenuIcon(icon: HTMLElement)": "void"
     }
   },
