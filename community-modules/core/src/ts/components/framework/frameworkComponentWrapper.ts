@@ -12,6 +12,8 @@ export interface FrameworkComponentWrapper {
                                     componentType: ComponentType,
                                     componentName?: string | null
     ): A;
+
+    unwrap(comp: any): any;
 }
 
 export interface WrappableInterface {
@@ -23,7 +25,7 @@ export interface WrappableInterface {
 }
 
 export abstract class BaseComponentWrapper<F extends WrappableInterface> implements FrameworkComponentWrapper {
-    wrap<A extends IComponent<any>>(OriginalConstructor: { new(): any },
+    public wrap<A extends IComponent<any>>(OriginalConstructor: { new(): any },
                                     mandatoryMethodList: string[],
                                     optionalMethodList: string[] = [],
                                     componentType: ComponentType,
@@ -40,6 +42,10 @@ export abstract class BaseComponentWrapper<F extends WrappableInterface> impleme
 
         return wrapper as any as A;
 
+    }
+
+    public unwrap(comp: any): any {
+        return comp;
     }
 
     abstract createWrapper(OriginalConstructor: { new(): any }, componentType: ComponentType, componentName?: string): F;

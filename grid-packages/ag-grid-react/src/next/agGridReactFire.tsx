@@ -1,11 +1,11 @@
-import { BaseComponentWrapper, ColumnApi, ComponentType, ComponentUtil, Context, FrameworkComponentWrapper, GridApi, GridCoreCreator, GridOptions, GridParams, IComponent, IFilter, IFilterParams, WrappableInterface, _ } from 'ag-grid-community';
-import React, { Component, ReactPortal } from 'react';
+import { BaseComponentWrapper, ColumnApi, ComponentType, ComponentUtil, Context, FrameworkComponentWrapper, GridApi, GridCoreCreator, GridOptions, GridParams, IComponent, WrappableInterface, _ } from 'ag-grid-community';
+import React, { Component } from 'react';
 import { AgGridColumn } from '../agGridColumn';
 import { ChangeDetectionService, ChangeDetectionStrategyType } from '../changeDetectionService';
 import { AgReactUiProps } from '../interfaces';
 import { NewReactComponent } from '../newReactComponent';
 import { PortalManager } from '../portalManager';
-import { ReactComponent, IPortalManager } from '../reactComponent';
+import { IPortalManager } from '../reactComponent';
 import GridComp from './gridComp';
 import { ReactFrameworkOverrides } from './reactFrameworkOverrides';
 
@@ -201,5 +201,12 @@ class ReactFrameworkComponentWrapper extends BaseComponentWrapper<WrappableInter
 
     createWrapper(UserReactComponent: { new(): any; }, componentType: ComponentType): WrappableInterface {
         return new NewReactComponent(UserReactComponent, this.parent, componentType);
+    }
+
+    unwrap(comp: any): any {
+        if (comp && comp.getFrameworkComponentInstance) {
+            return comp.getFrameworkComponentInstance();
+        }
+        return comp;
     }
 }

@@ -20,7 +20,7 @@ import { IClipboardService } from "./interfaces/iClipboardService";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 import { IMenuFactory } from "./interfaces/iMenuFactory";
 import { IAggFuncService } from "./interfaces/iAggFuncService";
-import { IFilterComp } from "./interfaces/iFilter";
+import { IFilter, IFilterComp } from "./interfaces/iFilter";
 import { CsvExportParams, ProcessCellForExportParams } from "./interfaces/exportParams";
 import {
     ExcelExportMultipleSheetParams,
@@ -45,7 +45,7 @@ import {
     RefreshStoreParams
 } from "./interfaces/iServerSideRowModel";
 import { IStatusBarService } from "./interfaces/iStatusBarService";
-import { IStatusPanelComp } from "./interfaces/iStatusPanel";
+import { IStatusPanel } from "./interfaces/iStatusPanel";
 import { SideBarDef, SideBarDefParser } from "./entities/sideBar";
 import { ChartModel, GetChartImageDataUrlParams, IChartService } from "./interfaces/IChartService";
 import { ModuleNames } from "./modules/moduleNames";
@@ -99,6 +99,7 @@ import { GridBodyCtrl } from "./gridBodyComp/gridBodyCtrl";
 import { OverlayWrapperComponent } from "./rendering/overlays/overlayWrapperComponent";
 import { HeaderPosition } from "./headerRendering/common/headerPosition";
 import { NavigationService } from "./gridBodyComp/navigationService";
+import { FrameworkComponentWrapper } from "./components/framework/frameworkComponentWrapper";
 
 export interface StartEditingCellParams {
     /** The row index of the row to start editing */
@@ -220,6 +221,7 @@ export class GridApi {
     @Optional('rowNodeBlockLoader') private rowNodeBlockLoader: RowNodeBlockLoader;
     @Optional('ssrmTransactionManager') private serverSideTransactionManager: IServerSideTransactionManager;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
+    @Optional('frameworkComponentWrapper') private frameworkComponentWrapper: FrameworkComponentWrapper;
 
     private overlayWrapperComp: OverlayWrapperComponent;
 
@@ -758,7 +760,9 @@ export class GridApi {
             console.warn('AG Grid: toolPanel is only available in AG Grid Enterprise');
             return;
         }
-        return this.sideBarComp.getToolPanelInstance(id);
+        const comp = this.sideBarComp.getToolPanelInstance(id);
+        const unwrapped = this.frameworkComponentWrapper.unwrap(comp);
+        return unwrapped;
     }
 
     public addVirtualRowListener(eventName: string, rowIndex: number, callback: Function) {
@@ -979,23 +983,27 @@ export class GridApi {
      * Returns the filter component instance for a column.
      * `key` can be a string field name or a ColDef object (matches on object reference, useful if field names are not unique).
      *  */
-    public getFilterInstance(key: string | Column, callback?: (filter: IFilterComp) => void): IFilterComp | null | undefined {
+    public getFilterInstance(key: string | Column, callback?: (filter: IFilter) => void): IFilter | null | undefined {
         const column = this.columnModel.getPrimaryColumn(key);
 
-        if (column) {
-            const filterPromise = this.filterManager.getFilterComponent(column, 'NO_UI');
-            const currentValue = filterPromise && filterPromise.resolveNow<IFilterComp | null>(null, filterComp => filterComp);
+        if (!column) { return undefined; }
 
-            if (callback) {
-                if (currentValue) {
-                    setTimeout(callback, 0, currentValue);
-                } else if (filterPromise) {
-                    filterPromise.then(callback);
-                }
+        const filterPromise = this.filterManager.getFilterComponent(column, 'NO_UI');
+        const currentValue = filterPromise && filterPromise.resolveNow<IFilterComp | null>(null, filterComp => filterComp);
+        const currentValueUnwrapped = this.frameworkComponentWrapper.unwrap(currentValue);
+
+        if (callback) {
+            if (currentValueUnwrapped) {
+                setTimeout(callback, 0, currentValueUnwrapped);
+            } else if (filterPromise) {
+                filterPromise.then( comp => {
+                    const unwrapped = this.frameworkComponentWrapper.unwrap(comp);
+                    callback(unwrapped);
+                });
             }
-
-            return currentValue;
         }
+
+        return currentValueUnwrapped;
     }
 
     public getFilterApi(key: string | Column) {
@@ -1012,10 +1020,12 @@ export class GridApi {
     }
 
     /** Gets the status panel instance corresponding to the supplied `id`. */
-    public getStatusPanel(key: string): IStatusPanelComp | undefined {
-        if (this.statusBarService) {
-            return this.statusBarService.getStatusPanel(key);
-        }
+    public getStatusPanel(key: string): IStatusPanel | undefined {
+        if (!this.statusBarService) { return; }
+
+        const comp = this.statusBarService.getStatusPanel(key);
+        const unwrapped = this.frameworkComponentWrapper.unwrap(comp);
+        return unwrapped;
     }
 
     public getColumnDef(key: string | Column) {
