@@ -110,14 +110,16 @@ export class AutoWidthCalculator extends BeanStub {
         let pointer = eCell.parentElement;
         while (pointer) {
             if (pointer.classList.contains('ag-header-row') || pointer.classList.contains('ag-row')) {
-                pointer.classList.forEach( item => {
-                    // we skit ag-row-position-absolute, as this has structural CSS applied that stops the
+                for (let i = 0; i < pointer.classList.length; i++) {
+                    const item = pointer.classList[i];
+
+                    // we skip ag-row-position-absolute, as this has structural CSS applied that stops the
                     // element from fitting into it's parent, and we need the element to stretch the parent
                     // as we are measuring the parents width
                     if (item != 'ag-row-position-absolute') {
                         addCssClass(eCloneParent, item);
                     }
-                });
+                }
                 break;
             }
             pointer = pointer.parentElement;
