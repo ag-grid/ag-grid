@@ -155,9 +155,9 @@ export interface GridOptions {
     defaultColGroupDef?: Partial<ColGroupDef>;
     /** An object map of custom column types which contain groups of properties that column definitions can inherit by referencing in their `type` property. */
     columnTypes?: { [key: string]: ColDef; };
-    /** Keeps the order of Columns maintained after new Column Definitions are updated. */
+    /** Keeps the order of Columns maintained after new Column Definitions are updated. Default: `false` */
     maintainColumnOrder?: boolean;
-    /** If `true`, then dots in field names (e.g. `address.firstline`) are not treated as deep references. Allows you to use dots in your field name if you prefer. */
+    /** If `true`, then dots in field names (e.g. `address.firstline`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false` */
     suppressFieldDotNotation?: boolean;
 
     /** @deprecated */
@@ -191,11 +191,11 @@ export interface GridOptions {
     pivotGroupHeaderHeight?: number;
 
     // *** Column Moving *** //
-    /** Allow reordering and pinning columns by dragging columns from the Columns Tool Panel to the grid. */
+    /** Allow reordering and pinning columns by dragging columns from the Columns Tool Panel to the grid. Default: `false` */
     allowDragFromColumnsToolPanel?: boolean;
-    /** Set to `true` to suppress column moving, i.e. to make the columns fixed position. */
+    /** Set to `true` to suppress column moving, i.e. to make the columns fixed position. Default: `false` */
     suppressMovableColumns?: boolean;
-    /** If `true`, the `ag-column-moving` class is not added to the grid while columns are moving. In the default themes, this results in no animation when moving columns. */
+    /** If `true`, the `ag-column-moving` class is not added to the grid while columns are moving. In the default themes, this results in no animation when moving columns. Default: `false` */
     suppressColumnMoveAnimation?: boolean;
     /** If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden. Default: `false` */
     suppressDragLeaveHidesColumns?: boolean;
@@ -203,14 +203,15 @@ export interface GridOptions {
     // *** Column Sizing *** //
     /** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing). */
     colResizeDefault?: string;
-    /** Suppresses auto-sizing columns for columns. In other words, double clicking a column's header's edge will not auto-size. */
+    /** Suppresses auto-sizing columns for columns. In other words, double clicking a column's header's edge will not auto-size. Default: `false` */
     suppressAutoSize?: boolean;
     /** 
      * Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.
      * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.
+     * Default: `4` 
      */
     autoSizePadding?: number;
-    /** Set this to `true` to skip the `headerName` when `autoSize` is called by default. */
+    /** Set this to `true` to skip the `headerName` when `autoSize` is called by default. Default: `false` */
     skipHeaderOnAutoSize?: boolean;
 
     // *** Components *** //
@@ -222,28 +223,31 @@ export interface GridOptions {
     // *** Editing *** //
     /** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time. */
     editType?: string;
-    /** Set to `true` to enable Single Click Editing for cells, to start editing with a single click. */
+    /** Set to `true` to enable Single Click Editing for cells, to start editing with a single click. Default: `false` */
     singleClickEdit?: boolean;
-    /** Set to `true` so that neither single nor double click starts editing. */
+    /** Set to `true` so that neither single nor double click starts editing. Default: `false` */
     suppressClickEdit?: boolean;
     /**
      * Set this to `true` to stop cell editing when grid loses focus.
      * The default is that the grid stays editing until focus goes onto another cell. For inline (non-popup) editors only.
+     * Default: `false` 
      */
     stopEditingWhenCellsLoseFocus?: boolean;
     /**
      * Set to `true` along with `enterMovesDownAfterEdit` to have Excel-style behaviour for the `Enter` key.
      * i.e. pressing the `Enter` key will move down to the cell beneath.
+     * Default: `false` 
      */
     enterMovesDown?: boolean;
     /**
      * Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the 'Enter' key.
      * i.e. pressing the Enter key will move down to the cell beneath.
+     * Default: `false` 
      */
     enterMovesDownAfterEdit?: boolean;
     /** Set to `true` to enable Undo / Redo while editing. */
     undoRedoCellEditing?: boolean;
-    /** Set the size of the undo / redo stack. */
+    /** Set the size of the undo / redo stack. Default: `10` */
     undoRedoCellEditingLimit?: number;
 
     /** @deprecated Use stopEditingWhenCellsLoseFocus instead */
@@ -252,11 +256,11 @@ export interface GridOptions {
     // *** Export *** //
     /** A default configuration object used to export to CSV. */
     defaultCsvExportParams?: CsvExportParams;
-    /** Prevents the user from exporting the grid to CSV. */
+    /** Prevents the user from exporting the grid to CSV. Default: `false` */
     suppressCsvExport?: boolean;
     /** A default configuration object used to export to Excel. */
     defaultExcelExportParams?: ExcelExportParams;
-    /** Prevents the user from exporting the grid to Excel. */
+    /** Prevents the user from exporting the grid to Excel. Default: `false` */
     suppressExcelExport?: boolean;
     /** A list (array) of Excel styles to be used when exporting to Excel with styles. */
     excelStyles?: ExcelStyle[];
@@ -266,9 +270,9 @@ export interface GridOptions {
     // *** Filter *** //
     /** Rows are filtered using this text as a quick filter. */
     quickFilterText?: string;
-    /** Set to `true` to turn on the quick filter cache, used to improve performance when using the quick filter. */
+    /** Set to `true` to turn on the quick filter cache, used to improve performance when using the quick filter. Default: `false` */
     cacheQuickFilter?: boolean;
-    /** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. */
+    /** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. Default: `false` */
     excludeChildrenWhenTreeDataFiltering?: boolean;
     /** @deprecated Use floatingFilter on the colDef instead */
     floatingFilter?: boolean;
@@ -276,7 +280,7 @@ export interface GridOptions {
     enableOldSetFilterModel?: boolean;
 
     // *** Integrated Charts *** //
-    /** Set to `true` to Enable Charts. */
+    /** Set to `true` to Enable Charts. Default: `false` */
     enableCharts?: boolean;
     /** The list of chart themes to be used. */
     chartThemes?: string[];
@@ -301,11 +305,11 @@ export interface GridOptions {
     localeText?: { [key: string]: string };
 
     // *** Master Detail *** //
-    /** Set to `true` to enable Master Detail. */
+    /** Set to `true` to enable Master Detail. Default: `false` */
     masterDetail?: boolean;
-    /** Set to `true` to keep detail rows for when they are displayed again. */
+    /** Set to `true` to keep detail rows for when they are displayed again. Default: `false` */
     keepDetailRows?: boolean;
-    /** Sets the number of details rows to keep. */
+    /** Sets the number of details rows to keep. Default: `10` */
     keepDetailRowsCount?: number;
     /** Provide a custom `detailCellRenderer` to use when a master row is expanded. */
     detailCellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
@@ -332,31 +336,32 @@ export interface GridOptions {
      * Default: `10`
      */
     rowBuffer?: number;
-    /** Set to `true` to turn on the value cache. */
+    /** Set to `true` to turn on the value cache. Default: `false` */
     valueCache?: boolean;
-    /** Set to `true` to configure the value cache to not expire after data updates. */
+    /** Set to `true` to configure the value cache to not expire after data updates. Default: `false` */
     valueCacheNeverExpires?: boolean;
-    /** Set to `true` to allow cell expressions. */
+    /** Set to `true` to allow cell expressions. Default: `false` */
     enableCellExpressions?: boolean;
     /**
      * If `true`, row nodes do not have their parents set.
      * The grid doesn't use the parent reference, but it is included to help the client code navigate the node tree if it wants by providing bi-direction navigation up and down the tree.
      * If this is a problem (e.g. if you need to convert the tree to JSON, which does not allow cyclic dependencies) then set this to `true`.
+     * Default: `false` 
      */
     suppressParentsInRowNodes?: boolean;
-    /** Disables touch support (but does not remove the browser's efforts to simulate mouse events on touch). */
+    /** Disables touch support (but does not remove the browser's efforts to simulate mouse events on touch). Default: `false` */
     suppressTouch?: boolean;
-    /** Set to `true` to not set focus back on the grid after a refresh. This can avoid issues where you want to keep the focus on another part of the browser. */
+    /** Set to `true` to not set focus back on the grid after a refresh. This can avoid issues where you want to keep the focus on another part of the browser. Default: `false` */
     suppressFocusAfterRefresh?: boolean;
-    /** Disables the asynchronous nature of the events introduced in v10, and makes them synchronous. This property only exists for the purpose of supporting legacy code which has a dependency on synchronous events from earlier versions (v9 or earlier) of AG Grid. **It is strongly recommended that you do not change this property unless you have legacy issues.** */
+    /** Disables the asynchronous nature of the events introduced in v10, and makes them synchronous. This property only exists for the purpose of supporting legacy code which has a dependency on synchronous events from earlier versions (v9 or earlier) of AG Grid. **It is strongly recommended that you do not change this property unless you have legacy issues.** Default: `false` */
     suppressAsyncEvents?: boolean;
-    /** The grid will check for `ResizeObserver` and use it if it exists in the browser, otherwise it will use the grid's alternative implementation. Some users reported issues with Chrome's `ResizeObserver`. Use this property to always use the grid's alternative implementation should such problems exist. */
+    /** The grid will check for `ResizeObserver` and use it if it exists in the browser, otherwise it will use the grid's alternative implementation. Some users reported issues with Chrome's `ResizeObserver`. Use this property to always use the grid's alternative implementation should such problems exist. Default: `false` */
     suppressBrowserResizeObserver?: boolean;
-    /** Disables showing a warning message in the console if using a `gridOptions` or `colDef` property that doesn't exist. */
+    /** Disables showing a warning message in the console if using a `gridOptions` or `colDef` property that doesn't exist. Default: `false` */
     suppressPropertyNamesCheck?: boolean;
-    /** Disables change detection. */
+    /** Disables change detection. Default: `false` */
     suppressChangeDetection?: boolean;
-    /** Set this to `true` to enable debug information from the grid and related components. Will result in additional logging being output, but very useful when investigating problems. */
+    /** Set this to `true` to enable debug information from the grid and related components. Will result in additional logging being output, but very useful when investigating problems. Default: `false` */
     debug?: boolean;
 
     // *** Overlays *** //
@@ -368,7 +373,7 @@ export interface GridOptions {
     loadingOverlayComponentFramework?: any;
     /** Customise the parameters provided to the loading overlay component. */
     loadingOverlayComponentParams?: any;
-    /** Disables the 'loading' overlay. */
+    /** Disables the 'loading' overlay. Default: `false` */
     suppressLoadingOverlay?: boolean;
 
     /** Provide a template for 'no rows' overlay. */
@@ -379,7 +384,7 @@ export interface GridOptions {
     noRowsOverlayComponentFramework?: any;
     /** Customise the parameters provided to the no rows overlay component. */
     noRowsOverlayComponentParams?: any;
-    /** Disables the 'no rows' overlay. */
+    /** Disables the 'no rows' overlay. Default: `false` */
     suppressNoRowsOverlay?: boolean;
 
     // *** Pagination *** //
@@ -387,41 +392,42 @@ export interface GridOptions {
     pagination?: boolean;
     /** How many rows to load per page. If `paginationAutoPageSize` is specified, this property is ignored. Default: `100` */
     paginationPageSize?: number;
-    /** Set to `true` so that the number of rows to load per page is automatically adjusted by the grid so each page shows enough rows to just fill the area designated for the grid. If `false`, `paginationPageSize` is used. */
+    /** Set to `true` so that the number of rows to load per page is automatically adjusted by the grid so each page shows enough rows to just fill the area designated for the grid. If `false`, `paginationPageSize` is used. Default: `false` */
     paginationAutoPageSize?: boolean;
-    /** Set to `true` to have pages split children of groups when using Row Grouping or detail rows with Master Detail. */
+    /** Set to `true` to have pages split children of groups when using Row Grouping or detail rows with Master Detail. Default: `false` */
     paginateChildRows?: boolean;
     /**
      * If `true`, the default grid controls for navigation are hidden.
      * This is useful if `pagination=true` and you want to provide your own pagination controls.
      * Otherwise, when `pagination=true` the grid automatically shows the necessary controls at the bottom so that the user can navigate through the different pages.
+     * Default: `false`
      */
     suppressPaginationPanel?: boolean;
 
     // *** Pivot and Aggregation *** //
-    /** Set to `true` to enable pivot mode. */
+    /** Set to `true` to enable pivot mode. Default: `false` */
     pivotMode?: boolean;
-    /** When to show the 'pivot panel' (where you drag rows to pivot) at the top. Note that the pivot panel will never show if `pivotMode` is off. */
+    /** When to show the 'pivot panel' (where you drag rows to pivot) at the top. Note that the pivot panel will never show if `pivotMode` is off. Default: `never` */
     pivotPanelShow?: string;
     /** When set and the grid is in pivot mode, automatically calculated totals will appear within the Pivot Column Groups, in the position specified. */
     pivotColumnGroupTotals?: string;
     /** When set and the grid is in pivot mode, automatically calculated totals will appear for each value column in the position specified. */
     pivotRowTotals?: string;
-    /** If `true`, the grid will not swap in the grouping column when pivoting. Useful if pivoting using Server Side Row Model or Viewport Row Model and you want full control of all columns including the group column. */
+    /** If `true`, the grid will not swap in the grouping column when pivoting. Useful if pivoting using Server Side Row Model or Viewport Row Model and you want full control of all columns including the group column. Default: `false` */
     pivotSuppressAutoColumn?: boolean;
-    /** When enabled, pivot column groups will appear 'fixed', without the ability to expand and collapse the column groups. */
+    /** When enabled, pivot column groups will appear 'fixed', without the ability to expand and collapse the column groups. Default: `false` */
     suppressExpandablePivotGroups?: boolean;
-    /** If `true`, then row group, pivot and value aggregation will be read-only from the GUI. The grid will display what values are used for each, but will not allow the user to change the selection. */
+    /** If `true`, then row group, pivot and value aggregation will be read-only from the GUI. The grid will display what values are used for each, but will not allow the user to change the selection. Default: `false` */
     functionsReadOnly?: boolean;
     /** A map of 'function name' to 'function' for custom aggregation functions. */
     aggFuncs?: { [key: string]: IAggFunc; };
-    /** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`. */
+    /** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`. Default: `false` */
     suppressAggFuncInHeader?: boolean;
-    /** When `true`, the aggregations won't be computed for the root node of the grid. */
+    /** When `true`, the aggregations won't be computed for the root node of the grid. Default: `false` */
     suppressAggAtRootLevel?: boolean;
-    /** When using change detection, only the updated column will be re-aggregated. */
+    /** When using change detection, only the updated column will be re-aggregated. Default: `false` */
     aggregateOnlyChangedColumns?: boolean;
-    /** Set to `true` so that aggregations are not impacted by filtering. */
+    /** Set to `true` so that aggregations are not impacted by filtering. Default: `false` */
     suppressAggFilteredOnly?: boolean;
 
     // *** Rendering *** //
@@ -430,12 +436,12 @@ export interface GridOptions {
     /** Set to `true` to have cells flash after data changes. Default: `false` */
     enableCellChangeFlash?: boolean;
     /**
-     * To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long a cell should remain in its \"flashed\" state.
+     * To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long a cell should remain in its "flashed" state.
      * Default: `500`
      */
     cellFlashDelay?: number;
     /**
-     * To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long the \"flashed\" state animation takes to fade away after the timer set by `cellFlashDelay` has completed.
+     * To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long the "flashed" state animation takes to fade away after the timer set by `cellFlashDelay` has completed.
      * Default: `1000`
      */
     cellFadeDelay?: number;
@@ -588,7 +594,7 @@ export interface GridOptions {
      * Default: `1`
      */
     infiniteInitialRowCount?: number;
-    /** Whether to use Full Store or Partial Store for storing rows. */
+    /** Whether to use Full Store or Partial Store for storing rows. Default: `full`*/
     serverSideStoreType?: ServerSideStoreType;
     /**
      * How many rows for each block in the store, i.e. how many rows returned from the server at a time.
@@ -632,15 +638,15 @@ export interface GridOptions {
     debounceVerticalScrollbar?: boolean;
     /** Set to `true` to never show the horizontal scroll. This is useful if the grid is aligned with another grid and will scroll when the other grid scrolls. (Should not be used in combination with `alwaysShowHorizontalScroll`.) Default: `false` */
     suppressHorizontalScroll?: boolean;
-    /** When `true`, the grid will not scroll to the top when new row data is provided. Use this if you don't want the default behaviour of scrolling to the top every time you load new data. */
+    /** When `true`, the grid will not scroll to the top when new row data is provided. Use this if you don't want the default behaviour of scrolling to the top every time you load new data. Default: `false` */
     suppressScrollOnNewData?: boolean;
-    /** When `true`, the grid will not allow mousewheel / touchpad scroll when popup elements are present. */
+    /** When `true`, the grid will not allow mousewheel / touchpad scroll when popup elements are present. Default: `false` */
     suppressScrollWhenPopupsAreOpen?: boolean;
-    /** When `true`, the grid will not use animation frames when drawing rows while scrolling. Use this if the grid is working fast enough that you don't need animation frames and you don't want the grid to flicker. */
+    /** When `true`, the grid will not use animation frames when drawing rows while scrolling. Use this if the grid is working fast enough that you don't need animation frames and you don't want the grid to flicker. Default: `false` */
     suppressAnimationFrame?: boolean;
-    /** If `true`, middle clicks will result in `click` events for cells and rows. Otherwise the browser will use middle click to scroll the grid.<br />**Note:** Not all browsers fire `click` events with the middle button. Most will fire only `mousedown` and `mouseup` events, which can be used to focus a cell, but will not work to call the `onCellClicked` function. */
+    /** If `true`, middle clicks will result in `click` events for cells and rows. Otherwise the browser will use middle click to scroll the grid.<br />**Note:** Not all browsers fire `click` events with the middle button. Most will fire only `mousedown` and `mouseup` events, which can be used to focus a cell, but will not work to call the `onCellClicked` function. Default: `false` */
     suppressMiddleClickScrolls?: boolean;
-    /** If `true`, mouse wheel events will be passed to the browser. Useful if your grid has no vertical scrolls and you want the mouse to scroll the browser page. */
+    /** If `true`, mouse wheel events will be passed to the browser. Useful if your grid has no vertical scrolls and you want the mouse to scroll the browser page. Default: `false` */
     suppressPreventDefaultOnMouseWheel?: boolean;
     /** Tell the grid how wide in pixels the scrollbar is, which is used in grid width calculations. Set only if using non-standard browser-provided scrollbars, so the grid can use the non-standard size in its calculations. */
     scrollbarWidth?: number;
@@ -671,9 +677,9 @@ export interface GridOptions {
     enableRangeHandle?: boolean;
     /** Set to `true` to enable the Fill Handle. Default: `false` */
     enableFillHandle?: boolean;
-    /** Set to `'x'` to force the fill handle direction to horizontal, or set to `'y'` to force the fill handle direction to vertical. */
+    /** Set to `'x'` to force the fill handle direction to horizontal, or set to `'y'` to force the fill handle direction to vertical. Default: `xy` */
     fillHandleDirection?: string;
-    /** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. */
+    /** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. Default: `false`*/
     suppressClearOnFillReduction?: boolean;
 
     /** @deprecated - rowDeselection is now true by default and should be suppressed by using suppressRowDeselection */

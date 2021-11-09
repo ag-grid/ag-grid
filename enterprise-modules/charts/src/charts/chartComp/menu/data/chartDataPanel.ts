@@ -136,9 +136,9 @@ export class ChartDataPanel extends Component {
                 .setLabelAlignment('left')
                 .setLabelWidth('flex')
                 .setInputWidth(45)
-                .setValue(this.chartOptionsService.getSeriesOption('paired') || false)
+                .setValue(this.chartOptionsService.getChartOption('paired') || false)
                 .onValueChange(newValue => {
-                    this.chartOptionsService.setSeriesOption('paired', newValue);
+                    this.chartOptionsService.setChartOption('paired', newValue);
                     this.chartController.updateForGridChange();
                 });
 

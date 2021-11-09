@@ -8,7 +8,7 @@
     "type": { "returnType": "string | HeaderValueGetterFunc" }
   },
   "headerTooltip": {
-    "description": "/** Whether to show the column when the group is open / closed. */\n/** Tooltip for the column header */",
+    "description": "/** Tooltip for the column header */",
     "type": { "returnType": "string" }
   },
   "headerClass": {
@@ -31,11 +31,11 @@
     "type": { "returnType": "ToolPanelClass" }
   },
   "suppressColumnsToolPanel": {
-    "description": "/** Set to `true` if you do not want this column or group to appear in the Columns Tool Panel. */",
+    "description": "/** Set to `true` if you do not want this column or group to appear in the Columns Tool Panel. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressFiltersToolPanel": {
-    "description": "/** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. */",
+    "description": "/** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "tooltipComponent": {
@@ -56,23 +56,23 @@
     "type": { "returnType": "string" }
   },
   "openByDefault": {
-    "description": "/** Set to `true` if this group should be opened by default. */",
+    "description": "/** Set to `true` if this group should be opened by default. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "marryChildren": {
-    "description": "/** Set to `true` to keep columns in this group beside each other in the grid. Moving the columns outside of the group (and hence breaking the group) is not allowed. */",
+    "description": "/** Set to `true` to keep columns in this group beside each other in the grid. Moving the columns outside of the group (and hence breaking the group) is not allowed. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "headerGroupComponent": {
-    "description": "/** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used* */",
+    "description": "/** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used. */",
     "type": { "returnType": "string | { new(): IHeaderGroupComp; }" }
   },
   "headerGroupComponentFramework": {
-    "description": "/** The custom header group component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid is used* */",
+    "description": "/** The custom header group component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid is used. */",
     "type": { "returnType": "any" }
   },
   "headerGroupComponentParams": {
-    "description": "/** The params used to configure the header group component. * */",
+    "description": "/** The params used to configure the header group component. */",
     "type": { "returnType": "any" }
   },
   "colId": {
@@ -125,7 +125,7 @@
     }
   },
   "checkboxSelection": {
-    "description": "/** `boolean` or `Function`. Set to `true` (or return `true` from function) to render a selection checkbox in the column. */",
+    "description": "/** `boolean` or `Function`. Set to `true` (or return `true` from function) to render a selection checkbox in the column. Default: `false` */",
     "type": { "returnType": "boolean | CheckboxSelectionCallback" }
   },
   "icons": {
@@ -133,11 +133,11 @@
     "type": { "returnType": "{ [key: string]: Function | string; }" }
   },
   "suppressNavigable": {
-    "description": "/** Set to `true` if this column is not navigable (i.e. cannot be tabbed into), otherwise `false`.\n * Can also be a callback function to have different rows navigable. */",
+    "description": "/** Set to `true` if this column is not navigable (i.e. cannot be tabbed into), otherwise `false`.\n * Can also be a callback function to have different rows navigable.\n * Default: `false` */",
     "type": { "returnType": "boolean | SuppressNavigableCallback" }
   },
   "suppressKeyboardEvent": {
-    "description": "/** Allows the user to suppress certain keyboard events in the grid cell */",
+    "description": "/** Allows the user to suppress certain keyboard events in the grid cell. Default: `false` */",
     "type": {
       "arguments": { "params": "SuppressKeyboardEventParams" },
       "returnType": "boolean"
@@ -152,27 +152,27 @@
     "type": { "returnType": "boolean" }
   },
   "hide": {
-    "description": "/** Set to `true` for this column to be hidden. */",
+    "description": "/** Set to `true` for this column to be hidden. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "initialHide": {
-    "description": "/** Same as 'hide', except only applied when creating a new column. Not applied when updating column definitions. */",
+    "description": "/** Same as `hide`, except only applied when creating a new column. Not applied when updating column definitions. */",
     "type": { "returnType": "boolean" }
   },
   "lockVisible": {
-    "description": "/** Set to `true` to block making column visible / hidden via the UI (API will still work). */",
+    "description": "/** Set to `true` to block making column visible / hidden via the UI (API will still work). Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "lockPosition": {
-    "description": "/** Set to `true` to always have this column displayed first. */",
+    "description": "/** Set to `true` to always have this column displayed first. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressMovable": {
-    "description": "/** Set to `true` if you do not want this column to be movable via dragging. */",
+    "description": "/** Set to `true` if you do not want this column to be movable via dragging. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "editable": {
-    "description": "/** Set to `true` if this column is editable, otherwise `false`. Can also be a function to have different rows editable. */",
+    "description": "/** Set to `true` if this column is editable, otherwise `false`. Can also be a function to have different rows editable. Default: `false` */",
     "type": { "returnType": "boolean | EditableCallback" }
   },
   "valueSetter": {
@@ -200,7 +200,7 @@
     "type": { "returnType": "CellEditorSelectorFunc" }
   },
   "singleClickEdit": {
-    "description": "/** Set to `true` to have cells under this column enter edit mode after single click. */",
+    "description": "/** Set to `true` to have cells under this column enter edit mode after single click. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "newValueHandler": {
@@ -215,7 +215,7 @@
     "type": { "returnType": "boolean" }
   },
   "cellEditorPopupPosition": {
-    "description": "/** Set the position for the popup cell editor. Possible values are\n *   - `over` Popup will be positioned over the cell\n *   - `under` Popup will be positioned below the cell leaving the cell value visible.\n * \n * The default is `over`. */",
+    "description": "/** Set the position for the popup cell editor. Possible values are\n *   - `over` Popup will be positioned over the cell\n *   - `under` Popup will be positioned below the cell leaving the cell value visible.\n * \n * Default: `over`. */",
     "type": { "returnType": "string" }
   },
   "onCellValueChanged": {
@@ -255,19 +255,19 @@
     "type": { "returnType": "string | ValueGetterFunc" }
   },
   "floatingFilter": {
-    "description": "/** Whether to display a floating filter for this column. */",
+    "description": "/** Whether to display a floating filter for this column. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "headerComponent": {
-    "description": "/** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used. * */",
+    "description": "/** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used. */",
     "type": { "returnType": "string | { new(): any; }" }
   },
   "headerComponentFramework": {
-    "description": "/** The custom header component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid header component is used* */",
+    "description": "/** The custom header component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid header component is used. */",
     "type": { "returnType": "any" }
   },
   "headerComponentParams": {
-    "description": "/** The parameters to be passed to the header component. * */",
+    "description": "/** The parameters to be passed to the header component. */",
     "type": { "returnType": "any" }
   },
   "menuTabs": {
@@ -279,7 +279,7 @@
     "type": { "returnType": "ColumnsMenuParams" }
   },
   "suppressMenu": {
-    "description": "/** Set to `true` if no menu should be shown for this column header. */",
+    "description": "/** Set to `true` if no menu should be shown for this column header. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "headerCheckboxSelection": {
@@ -299,11 +299,11 @@
     "type": { "returnType": "boolean | string | null" }
   },
   "initialPinned": {
-    "description": "/** Same as 'pinned', except only applied when creating a new column. Not applied when updating column definitions. */",
+    "description": "/** Same as `pinned`, except only applied when creating a new column. Not applied when updating column definitions. */",
     "type": { "returnType": "boolean | string" }
   },
   "lockPinned": {
-    "description": "/** Set to true to block the user pinning the column, the column can only be pinned via definitions or API */",
+    "description": "/** Set to true to block the user pinning the column, the column can only be pinned via definitions or API. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "pinnedRowCellRenderer": {
@@ -329,7 +329,7 @@
     "type": { "returnType": "boolean" }
   },
   "initialPivot": {
-    "description": "/** Same as 'pivot', except only applied when creating a new column. Not applied when updating column definitions. */",
+    "description": "/** Same as `pivot`, except only applied when creating a new column. Not applied when updating column definitions. */",
     "type": { "returnType": "boolean" }
   },
   "pivotIndex": {
@@ -337,7 +337,7 @@
     "type": { "returnType": "number | null" }
   },
   "initialPivotIndex": {
-    "description": "/** Same as 'pivotIndex', except only applied when creating a new column. Not applied when updating column definitions. */",
+    "description": "/** Same as `pivotIndex`, except only applied when creating a new column. Not applied when updating column definitions. */",
     "type": { "returnType": "number" }
   },
   "pivotComparator": {
@@ -348,7 +348,7 @@
     }
   },
   "enablePivot": {
-    "description": "/** Set to `true` if you want to be able to pivot by this column via the GUI. This will not block the API or properties being used to achieve pivot. */",
+    "description": "/** Set to `true` if you want to be able to pivot by this column via the GUI. This will not block the API or properties being used to achieve pivot. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "cellStyle": {
@@ -382,23 +382,23 @@
     "type": { "returnType": "CellRendererSelectorFunc" }
   },
   "autoHeight": {
-    "description": "/** Set to `true` to have the grid calculate the height of a row based on contents of this column. */",
+    "description": "/** Set to `true` to have the grid calculate the height of a row based on contents of this column. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "wrapText": {
-    "description": "/** Set to `true` to have the text wrap inside the cell - typically used with `autoHeight`. */",
+    "description": "/** Set to `true` to have the text wrap inside the cell - typically used with `autoHeight`. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "enableCellChangeFlash": {
-    "description": "/** Set to `true` to flash a cell when it's refreshed. */",
+    "description": "/** Set to `true` to flash a cell when it's refreshed. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressCellFlash": {
-    "description": "/** Set to `true` to prevent this column from flashing on changes. Only applicable if cell flashing is turned on for the grid. */",
+    "description": "/** Set to `true` to prevent this column from flashing on changes. Only applicable if cell flashing is turned on for the grid. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "rowDrag": {
-    "description": "/** `boolean` or `Function`. Set to `true` (or return `true` from function) to allow row dragging. */",
+    "description": "/** `boolean` or `Function`. Set to `true` (or return `true` from function) to allow row dragging. Default: `false` */",
     "type": { "returnType": "boolean | RowDragCallback" }
   },
   "rowDragText": {
@@ -409,7 +409,7 @@
     }
   },
   "dndSource": {
-    "description": "/** `boolean` or `Function`. Set to `true` (or return `true` from function) to allow dragging for native drag and drop. */",
+    "description": "/** `boolean` or `Function`. Set to `true` (or return `true` from function) to allow dragging for native drag and drop. Default: `false` */",
     "type": { "returnType": "boolean | DndSourceCallback" }
   },
   "dndSourceOnRowDrag": {
@@ -420,11 +420,11 @@
     }
   },
   "rowGroup": {
-    "description": "/** Set to `true` to row group by this column. */",
+    "description": "/** Set to `true` to row group by this column. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "initialRowGroup": {
-    "description": "/** Same as 'rowGroup', except only applied when creating a new column. Not applied when updating column definitions. */",
+    "description": "/** Same as `rowGroup`, except only applied when creating a new column. Not applied when updating column definitions. */",
     "type": { "returnType": "boolean" }
   },
   "rowGroupIndex": {
@@ -432,15 +432,15 @@
     "type": { "returnType": "number | null" }
   },
   "initialRowGroupIndex": {
-    "description": "/** Same as 'rowGroupIndex', except only applied when creating a new column. Not applied when updating column definitions. */",
+    "description": "/** Same as `rowGroupIndex`, except only applied when creating a new column. Not applied when updating column definitions. */",
     "type": { "returnType": "number" }
   },
   "enableRowGroup": {
-    "description": "/** Set to `true` if you want to be able to row group by this column via the GUI.\n * This will not block the API or properties being used to achieve row grouping. */",
+    "description": "/** Set to `true` if you want to be able to row group by this column via the GUI.\n * This will not block the API or properties being used to achieve row grouping.\n * Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "enableValue": {
-    "description": "/** Set to `true` if you want to be able to aggregate by this column via the GUI.\n * This will not block the API or properties being used to achieve aggregation. */",
+    "description": "/** Set to `true` if you want to be able to aggregate by this column via the GUI.\n * This will not block the API or properties being used to achieve aggregation.\n * Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "aggFunc": {
@@ -448,7 +448,7 @@
     "type": { "returnType": "string | IAggFunc | null" }
   },
   "initialAggFunc": {
-    "description": "/** Same as 'aggFunc', except only applied when creating a new column. Not applied when updating column definitions. */",
+    "description": "/** Same as `aggFunc`, except only applied when creating a new column. Not applied when updating column definitions. */",
     "type": { "returnType": "string | IAggFunc" }
   },
   "allowedAggFuncs": {
@@ -460,11 +460,11 @@
     "type": { "returnType": "string | boolean" }
   },
   "sortable": {
-    "description": "/** Set to `true` to allow sorting on this column. */",
+    "description": "/** Set to `true` to allow sorting on this column. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "sort": {
-    "description": "/** If sorting by default, set it here. Set to 'asc' or 'desc'. */",
+    "description": "/** If sorting by default, set it here. Set to `asc` or `desc`. */",
     "type": { "returnType": "string | null" }
   },
   "initialSort": {
@@ -476,11 +476,11 @@
     "type": { "returnType": "number | null" }
   },
   "initialSortIndex": {
-    "description": "/** Same as 'sortIndex', except only applied when creating a new column. Not applied when updating column definitions. */",
+    "description": "/** Same as `sortIndex`, except only applied when creating a new column. Not applied when updating column definitions. */",
     "type": { "returnType": "number" }
   },
   "sortingOrder": {
-    "description": "/** Array defining the order in which sorting occurs (if sorting is enabled). An array with any of the following in any order ['asc','desc',null] */",
+    "description": "/** Array defining the order in which sorting occurs (if sorting is enabled). An array with any of the following in any order `['asc','desc',null]` */",
     "type": { "returnType": "(string | null)[]" }
   },
   "comparator": {
@@ -497,7 +497,7 @@
     }
   },
   "unSortIcon": {
-    "description": "/** Set to `true` if you want the unsorted icon to be shown when no sort is applied to this column. */",
+    "description": "/** Set to `true` if you want the unsorted icon to be shown when no sort is applied to this column. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "sortedAt": {
@@ -523,7 +523,7 @@
     "type": { "returnType": "number" }
   },
   "initialWidth": {
-    "description": "/** Same as 'width', except only applied when creating a new column. Not applied when updating column definitions. */",
+    "description": "/** Same as `width`, except only applied when creating a new column. Not applied when updating column definitions. */",
     "type": { "returnType": "number" }
   },
   "minWidth": {
@@ -539,19 +539,19 @@
     "type": { "returnType": "number" }
   },
   "initialFlex": {
-    "description": "/** Same as 'flex', except only applied when creating a new column. Not applied when updating column definitions. */",
+    "description": "/** Same as `flex`, except only applied when creating a new column. Not applied when updating column definitions. */",
     "type": { "returnType": "number" }
   },
   "resizable": {
-    "description": "/** Set to `true` to allow this column should be resized. */",
+    "description": "/** Set to `true` to allow this column should be resized. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressSizeToFit": {
-    "description": "/** Set to `true` if you want this column's width to be fixed during 'size to fit' operations. */",
+    "description": "/** Set to `true` if you want this column's width to be fixed during 'size to fit' operations. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressAutoSize": {
-    "description": "/** Set to `true` if you do not want this column to be auto-resizable by double clicking it's edge. */",
+    "description": "/** Set to `true` if you do not want this column to be auto-resizable by double clicking it's edge. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "template": {

@@ -332,9 +332,9 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public defaultColGroupDef: Partial<ColGroupDef> | undefined = undefined;
     /** An object map of custom column types which contain groups of properties that column definitions can inherit by referencing in their `type` property.     */
     @Input() public columnTypes: { [key: string]: ColDef; } | undefined = undefined;
-    /** Keeps the order of Columns maintained after new Column Definitions are updated.     */
+    /** Keeps the order of Columns maintained after new Column Definitions are updated. Default: `false`     */
     @Input() public maintainColumnOrder: boolean | undefined = undefined;
-    /** If `true`, then dots in field names (e.g. `address.firstline`) are not treated as deep references. Allows you to use dots in your field name if you prefer.     */
+    /** If `true`, then dots in field names (e.g. `address.firstline`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false`     */
     @Input() public suppressFieldDotNotation: boolean | undefined = undefined;
     /** @deprecated     */
     @Input() public deltaColumnMode: boolean | undefined = undefined;
@@ -365,22 +365,23 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public pivotHeaderHeight: number | undefined = undefined;
     /** The height in pixels for the row containing header column groups when in pivot mode. If not specified, it uses `groupHeaderHeight`.     */
     @Input() public pivotGroupHeaderHeight: number | undefined = undefined;
-    /** Allow reordering and pinning columns by dragging columns from the Columns Tool Panel to the grid.     */
+    /** Allow reordering and pinning columns by dragging columns from the Columns Tool Panel to the grid. Default: `false`     */
     @Input() public allowDragFromColumnsToolPanel: boolean | undefined = undefined;
-    /** Set to `true` to suppress column moving, i.e. to make the columns fixed position.     */
+    /** Set to `true` to suppress column moving, i.e. to make the columns fixed position. Default: `false`     */
     @Input() public suppressMovableColumns: boolean | undefined = undefined;
-    /** If `true`, the `ag-column-moving` class is not added to the grid while columns are moving. In the default themes, this results in no animation when moving columns.     */
+    /** If `true`, the `ag-column-moving` class is not added to the grid while columns are moving. In the default themes, this results in no animation when moving columns. Default: `false`     */
     @Input() public suppressColumnMoveAnimation: boolean | undefined = undefined;
     /** If `true`, when you drag a column out of the grid (e.g. to the group zone) the column is not hidden. Default: `false`     */
     @Input() public suppressDragLeaveHidesColumns: boolean | undefined = undefined;
     /** Set to `'shift'` to have shift-resize as the default resize operation (same as user holding down `Shift` while resizing).     */
     @Input() public colResizeDefault: string | undefined = undefined;
-    /** Suppresses auto-sizing columns for columns. In other words, double clicking a column's header's edge will not auto-size.     */
+    /** Suppresses auto-sizing columns for columns. In other words, double clicking a column's header's edge will not auto-size. Default: `false`     */
     @Input() public suppressAutoSize: boolean | undefined = undefined;
     /** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.
-     * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.     */
+     * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.
+     * Default: `4`     */
     @Input() public autoSizePadding: number | undefined = undefined;
-    /** Set this to `true` to skip the `headerName` when `autoSize` is called by default.     */
+    /** Set this to `true` to skip the `headerName` when `autoSize` is called by default. Default: `false`     */
     @Input() public skipHeaderOnAutoSize: boolean | undefined = undefined;
     /** A map of component names to plain JavaScript components.     */
     @Input() public components: { [p: string]: any; } | undefined = undefined;
@@ -388,33 +389,36 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public frameworkComponents: { [p: string]: { new(): any; }; } | any | undefined = undefined;
     /** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time.     */
     @Input() public editType: string | undefined = undefined;
-    /** Set to `true` to enable Single Click Editing for cells, to start editing with a single click.     */
+    /** Set to `true` to enable Single Click Editing for cells, to start editing with a single click. Default: `false`     */
     @Input() public singleClickEdit: boolean | undefined = undefined;
-    /** Set to `true` so that neither single nor double click starts editing.     */
+    /** Set to `true` so that neither single nor double click starts editing. Default: `false`     */
     @Input() public suppressClickEdit: boolean | undefined = undefined;
     /** Set this to `true` to stop cell editing when grid loses focus.
-     * The default is that the grid stays editing until focus goes onto another cell. For inline (non-popup) editors only.     */
+     * The default is that the grid stays editing until focus goes onto another cell. For inline (non-popup) editors only.
+     * Default: `false`     */
     @Input() public stopEditingWhenCellsLoseFocus: boolean | undefined = undefined;
     /** Set to `true` along with `enterMovesDownAfterEdit` to have Excel-style behaviour for the `Enter` key.
-     * i.e. pressing the `Enter` key will move down to the cell beneath.     */
+     * i.e. pressing the `Enter` key will move down to the cell beneath.
+     * Default: `false`     */
     @Input() public enterMovesDown: boolean | undefined = undefined;
     /** Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the 'Enter' key.
-     * i.e. pressing the Enter key will move down to the cell beneath.     */
+     * i.e. pressing the Enter key will move down to the cell beneath.
+     * Default: `false`     */
     @Input() public enterMovesDownAfterEdit: boolean | undefined = undefined;
     /** Set to `true` to enable Undo / Redo while editing.     */
     @Input() public undoRedoCellEditing: boolean | undefined = undefined;
-    /** Set the size of the undo / redo stack.     */
+    /** Set the size of the undo / redo stack. Default: `10`     */
     @Input() public undoRedoCellEditingLimit: number | undefined = undefined;
     /** @deprecated Use stopEditingWhenCellsLoseFocus instead
      */
     @Input() public stopEditingWhenGridLosesFocus: boolean | undefined = undefined;
     /** A default configuration object used to export to CSV.     */
     @Input() public defaultCsvExportParams: CsvExportParams | undefined = undefined;
-    /** Prevents the user from exporting the grid to CSV.     */
+    /** Prevents the user from exporting the grid to CSV. Default: `false`     */
     @Input() public suppressCsvExport: boolean | undefined = undefined;
     /** A default configuration object used to export to Excel.     */
     @Input() public defaultExcelExportParams: ExcelExportParams | undefined = undefined;
-    /** Prevents the user from exporting the grid to Excel.     */
+    /** Prevents the user from exporting the grid to Excel. Default: `false`     */
     @Input() public suppressExcelExport: boolean | undefined = undefined;
     /** A list (array) of Excel styles to be used when exporting to Excel with styles.     */
     @Input() public excelStyles: ExcelStyle[] | undefined = undefined;
@@ -423,16 +427,16 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public defaultExportParams: CsvExportParams | ExcelExportParams | undefined = undefined;
     /** Rows are filtered using this text as a quick filter.     */
     @Input() public quickFilterText: string | undefined = undefined;
-    /** Set to `true` to turn on the quick filter cache, used to improve performance when using the quick filter.     */
+    /** Set to `true` to turn on the quick filter cache, used to improve performance when using the quick filter. Default: `false`     */
     @Input() public cacheQuickFilter: boolean | undefined = undefined;
-    /** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results.     */
+    /** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. Default: `false`     */
     @Input() public excludeChildrenWhenTreeDataFiltering: boolean | undefined = undefined;
     /** @deprecated Use floatingFilter on the colDef instead
      */
     @Input() public floatingFilter: boolean | undefined = undefined;
     /** @deprecated     */
     @Input() public enableOldSetFilterModel: boolean | undefined = undefined;
-    /** Set to `true` to Enable Charts.     */
+    /** Set to `true` to Enable Charts. Default: `false`     */
     @Input() public enableCharts: boolean | undefined = undefined;
     /** The list of chart themes to be used.     */
     @Input() public chartThemes: string[] | undefined = undefined;
@@ -450,11 +454,11 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public loadingCellRendererSelector: LoadingCellRendererSelectorFunc | undefined = undefined;
     /** A map of key->value pairs for localising text within the grid.     */
     @Input() public localeText: { [key: string]: string } | undefined = undefined;
-    /** Set to `true` to enable Master Detail.     */
+    /** Set to `true` to enable Master Detail. Default: `false`     */
     @Input() public masterDetail: boolean | undefined = undefined;
-    /** Set to `true` to keep detail rows for when they are displayed again.     */
+    /** Set to `true` to keep detail rows for when they are displayed again. Default: `false`     */
     @Input() public keepDetailRows: boolean | undefined = undefined;
-    /** Sets the number of details rows to keep.     */
+    /** Sets the number of details rows to keep. Default: `10`     */
     @Input() public keepDetailRowsCount: number | undefined = undefined;
     /** Provide a custom `detailCellRenderer` to use when a master row is expanded.     */
     @Input() public detailCellRenderer: { new(): ICellRendererComp; } | ICellRendererFunc | string | undefined = undefined;
@@ -476,29 +480,30 @@ export class AgGridAngular implements AfterViewInit {
      * Having a buffer means the grid will have rows ready to show as the user slowly scrolls vertically.
      * Default: `10`     */
     @Input() public rowBuffer: number | undefined = undefined;
-    /** Set to `true` to turn on the value cache.     */
+    /** Set to `true` to turn on the value cache. Default: `false`     */
     @Input() public valueCache: boolean | undefined = undefined;
-    /** Set to `true` to configure the value cache to not expire after data updates.     */
+    /** Set to `true` to configure the value cache to not expire after data updates. Default: `false`     */
     @Input() public valueCacheNeverExpires: boolean | undefined = undefined;
-    /** Set to `true` to allow cell expressions.     */
+    /** Set to `true` to allow cell expressions. Default: `false`     */
     @Input() public enableCellExpressions: boolean | undefined = undefined;
     /** If `true`, row nodes do not have their parents set.
      * The grid doesn't use the parent reference, but it is included to help the client code navigate the node tree if it wants by providing bi-direction navigation up and down the tree.
-     * If this is a problem (e.g. if you need to convert the tree to JSON, which does not allow cyclic dependencies) then set this to `true`.     */
+     * If this is a problem (e.g. if you need to convert the tree to JSON, which does not allow cyclic dependencies) then set this to `true`.
+     * Default: `false`     */
     @Input() public suppressParentsInRowNodes: boolean | undefined = undefined;
-    /** Disables touch support (but does not remove the browser's efforts to simulate mouse events on touch).     */
+    /** Disables touch support (but does not remove the browser's efforts to simulate mouse events on touch). Default: `false`     */
     @Input() public suppressTouch: boolean | undefined = undefined;
-    /** Set to `true` to not set focus back on the grid after a refresh. This can avoid issues where you want to keep the focus on another part of the browser.     */
+    /** Set to `true` to not set focus back on the grid after a refresh. This can avoid issues where you want to keep the focus on another part of the browser. Default: `false`     */
     @Input() public suppressFocusAfterRefresh: boolean | undefined = undefined;
-    /** Disables the asynchronous nature of the events introduced in v10, and makes them synchronous. This property only exists for the purpose of supporting legacy code which has a dependency on synchronous events from earlier versions (v9 or earlier) of AG Grid.     **It is strongly recommended that you do not change this property unless you have legacy issues.**     */
+    /** Disables the asynchronous nature of the events introduced in v10, and makes them synchronous. This property only exists for the purpose of supporting legacy code which has a dependency on synchronous events from earlier versions (v9 or earlier) of AG Grid.     **It is strongly recommended that you do not change this property unless you have legacy issues.** Default: `false`     */
     @Input() public suppressAsyncEvents: boolean | undefined = undefined;
-    /** The grid will check for `ResizeObserver` and use it if it exists in the browser, otherwise it will use the grid's alternative implementation. Some users reported issues with Chrome's `ResizeObserver`. Use this property to always use the grid's alternative implementation should such problems exist.     */
+    /** The grid will check for `ResizeObserver` and use it if it exists in the browser, otherwise it will use the grid's alternative implementation. Some users reported issues with Chrome's `ResizeObserver`. Use this property to always use the grid's alternative implementation should such problems exist. Default: `false`     */
     @Input() public suppressBrowserResizeObserver: boolean | undefined = undefined;
-    /** Disables showing a warning message in the console if using a `gridOptions` or `colDef` property that doesn't exist.     */
+    /** Disables showing a warning message in the console if using a `gridOptions` or `colDef` property that doesn't exist. Default: `false`     */
     @Input() public suppressPropertyNamesCheck: boolean | undefined = undefined;
-    /** Disables change detection.     */
+    /** Disables change detection. Default: `false`     */
     @Input() public suppressChangeDetection: boolean | undefined = undefined;
-    /** Set this to `true` to enable debug information from the grid and related components. Will result in additional logging being output, but very useful when investigating problems.     */
+    /** Set this to `true` to enable debug information from the grid and related components. Will result in additional logging being output, but very useful when investigating problems. Default: `false`     */
     @Input() public debug: boolean | undefined = undefined;
     /** Provide a template for 'loading' overlay.     */
     @Input() public overlayLoadingTemplate: string | undefined = undefined;
@@ -508,7 +513,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public loadingOverlayComponentFramework: any = undefined;
     /** Customise the parameters provided to the loading overlay component.     */
     @Input() public loadingOverlayComponentParams: any = undefined;
-    /** Disables the 'loading' overlay.     */
+    /** Disables the 'loading' overlay. Default: `false`     */
     @Input() public suppressLoadingOverlay: boolean | undefined = undefined;
     /** Provide a template for 'no rows' overlay.     */
     @Input() public overlayNoRowsTemplate: string | undefined = undefined;
@@ -518,52 +523,53 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public noRowsOverlayComponentFramework: any = undefined;
     /** Customise the parameters provided to the no rows overlay component.     */
     @Input() public noRowsOverlayComponentParams: any = undefined;
-    /** Disables the 'no rows' overlay.     */
+    /** Disables the 'no rows' overlay. Default: `false`     */
     @Input() public suppressNoRowsOverlay: boolean | undefined = undefined;
     /** Set whether pagination is enabled. Default: `false`     */
     @Input() public pagination: boolean | undefined = undefined;
     /** How many rows to load per page. If `paginationAutoPageSize` is specified, this property is ignored. Default: `100`     */
     @Input() public paginationPageSize: number | undefined = undefined;
-    /** Set to `true` so that the number of rows to load per page is automatically adjusted by the grid so each page shows enough rows to just fill the area designated for the grid. If `false`, `paginationPageSize` is used.     */
+    /** Set to `true` so that the number of rows to load per page is automatically adjusted by the grid so each page shows enough rows to just fill the area designated for the grid. If `false`, `paginationPageSize` is used. Default: `false`     */
     @Input() public paginationAutoPageSize: boolean | undefined = undefined;
-    /** Set to `true` to have pages split children of groups when using Row Grouping or detail rows with Master Detail.     */
+    /** Set to `true` to have pages split children of groups when using Row Grouping or detail rows with Master Detail. Default: `false`     */
     @Input() public paginateChildRows: boolean | undefined = undefined;
     /** If `true`, the default grid controls for navigation are hidden.
      * This is useful if `pagination=true` and you want to provide your own pagination controls.
-     * Otherwise, when `pagination=true` the grid automatically shows the necessary controls at the bottom so that the user can navigate through the different pages.     */
+     * Otherwise, when `pagination=true` the grid automatically shows the necessary controls at the bottom so that the user can navigate through the different pages.
+     * Default: `false`     */
     @Input() public suppressPaginationPanel: boolean | undefined = undefined;
-    /** Set to `true` to enable pivot mode.     */
+    /** Set to `true` to enable pivot mode. Default: `false`     */
     @Input() public pivotMode: boolean | undefined = undefined;
-    /** When to show the 'pivot panel' (where you drag rows to pivot) at the top. Note that the pivot panel will never show if `pivotMode` is off.     */
+    /** When to show the 'pivot panel' (where you drag rows to pivot) at the top. Note that the pivot panel will never show if `pivotMode` is off. Default: `never`     */
     @Input() public pivotPanelShow: string | undefined = undefined;
     /** When set and the grid is in pivot mode, automatically calculated totals will appear within the Pivot Column Groups, in the position specified.     */
     @Input() public pivotColumnGroupTotals: string | undefined = undefined;
     /** When set and the grid is in pivot mode, automatically calculated totals will appear for each value column in the position specified.     */
     @Input() public pivotRowTotals: string | undefined = undefined;
-    /** If `true`, the grid will not swap in the grouping column when pivoting. Useful if pivoting using Server Side Row Model or Viewport Row Model and you want full control of all columns including the group column.     */
+    /** If `true`, the grid will not swap in the grouping column when pivoting. Useful if pivoting using Server Side Row Model or Viewport Row Model and you want full control of all columns including the group column. Default: `false`     */
     @Input() public pivotSuppressAutoColumn: boolean | undefined = undefined;
-    /** When enabled, pivot column groups will appear 'fixed', without the ability to expand and collapse the column groups.     */
+    /** When enabled, pivot column groups will appear 'fixed', without the ability to expand and collapse the column groups. Default: `false`     */
     @Input() public suppressExpandablePivotGroups: boolean | undefined = undefined;
-    /** If `true`, then row group, pivot and value aggregation will be read-only from the GUI. The grid will display what values are used for each, but will not allow the user to change the selection.     */
+    /** If `true`, then row group, pivot and value aggregation will be read-only from the GUI. The grid will display what values are used for each, but will not allow the user to change the selection. Default: `false`     */
     @Input() public functionsReadOnly: boolean | undefined = undefined;
     /** A map of 'function name' to 'function' for custom aggregation functions.     */
     @Input() public aggFuncs: { [key: string]: IAggFunc; } | undefined = undefined;
-    /** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`.     */
+    /** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`. Default: `false`     */
     @Input() public suppressAggFuncInHeader: boolean | undefined = undefined;
-    /** When `true`, the aggregations won't be computed for the root node of the grid.     */
+    /** When `true`, the aggregations won't be computed for the root node of the grid. Default: `false`     */
     @Input() public suppressAggAtRootLevel: boolean | undefined = undefined;
-    /** When using change detection, only the updated column will be re-aggregated.     */
+    /** When using change detection, only the updated column will be re-aggregated. Default: `false`     */
     @Input() public aggregateOnlyChangedColumns: boolean | undefined = undefined;
-    /** Set to `true` so that aggregations are not impacted by filtering.     */
+    /** Set to `true` so that aggregations are not impacted by filtering. Default: `false`     */
     @Input() public suppressAggFilteredOnly: boolean | undefined = undefined;
     /** Set to `true` to enable Row Animation. Default: `false`     */
     @Input() public animateRows: boolean | undefined = undefined;
     /** Set to `true` to have cells flash after data changes. Default: `false`     */
     @Input() public enableCellChangeFlash: boolean | undefined = undefined;
-    /** To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long a cell should remain in its \"flashed\" state.
+    /** To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long a cell should remain in its "flashed" state.
      * Default: `500`     */
     @Input() public cellFlashDelay: number | undefined = undefined;
-    /** To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long the \"flashed\" state animation takes to fade away after the timer set by `cellFlashDelay` has completed.
+    /** To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long the "flashed" state animation takes to fade away after the timer set by `cellFlashDelay` has completed.
      * Default: `1000`     */
     @Input() public cellFadeDelay: number | undefined = undefined;
     /** Switch between layout options: `normal`, `autoHeight`, `print`.
@@ -693,7 +699,7 @@ export class AgGridAngular implements AfterViewInit {
     /** How many extra blank rows to display to the user at the end of the dataset, which sets the vertical scroll and then allows the grid to request viewing more rows of data.
      * Default: `1`     */
     @Input() public infiniteInitialRowCount: number | undefined = undefined;
-    /** Whether to use Full Store or Partial Store for storing rows.     */
+    /** Whether to use Full Store or Partial Store for storing rows. Default: `full`     */
     @Input() public serverSideStoreType: ServerSideStoreType | undefined = undefined;
     /** How many rows for each block in the store, i.e. how many rows returned from the server at a time.
      * Default: `100`     */
@@ -728,15 +734,15 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public debounceVerticalScrollbar: boolean | undefined = undefined;
     /** Set to `true` to never show the horizontal scroll. This is useful if the grid is aligned with another grid and will scroll when the other grid scrolls. (Should not be used in combination with `alwaysShowHorizontalScroll`.) Default: `false`     */
     @Input() public suppressHorizontalScroll: boolean | undefined = undefined;
-    /** When `true`, the grid will not scroll to the top when new row data is provided. Use this if you don't want the default behaviour of scrolling to the top every time you load new data.     */
+    /** When `true`, the grid will not scroll to the top when new row data is provided. Use this if you don't want the default behaviour of scrolling to the top every time you load new data. Default: `false`     */
     @Input() public suppressScrollOnNewData: boolean | undefined = undefined;
-    /** When `true`, the grid will not allow mousewheel / touchpad scroll when popup elements are present.     */
+    /** When `true`, the grid will not allow mousewheel / touchpad scroll when popup elements are present. Default: `false`     */
     @Input() public suppressScrollWhenPopupsAreOpen: boolean | undefined = undefined;
-    /** When `true`, the grid will not use animation frames when drawing rows while scrolling. Use this if the grid is working fast enough that you don't need animation frames and you don't want the grid to flicker.     */
+    /** When `true`, the grid will not use animation frames when drawing rows while scrolling. Use this if the grid is working fast enough that you don't need animation frames and you don't want the grid to flicker. Default: `false`     */
     @Input() public suppressAnimationFrame: boolean | undefined = undefined;
-    /** If `true`, middle clicks will result in `click` events for cells and rows. Otherwise the browser will use middle click to scroll the grid.<br />**Note:** Not all browsers fire `click` events with the middle button. Most will fire only `mousedown` and `mouseup` events, which can be used to focus a cell, but will not work to call the `onCellClicked` function.     */
+    /** If `true`, middle clicks will result in `click` events for cells and rows. Otherwise the browser will use middle click to scroll the grid.<br />**Note:** Not all browsers fire `click` events with the middle button. Most will fire only `mousedown` and `mouseup` events, which can be used to focus a cell, but will not work to call the `onCellClicked` function. Default: `false`     */
     @Input() public suppressMiddleClickScrolls: boolean | undefined = undefined;
-    /** If `true`, mouse wheel events will be passed to the browser. Useful if your grid has no vertical scrolls and you want the mouse to scroll the browser page.     */
+    /** If `true`, mouse wheel events will be passed to the browser. Useful if your grid has no vertical scrolls and you want the mouse to scroll the browser page. Default: `false`     */
     @Input() public suppressPreventDefaultOnMouseWheel: boolean | undefined = undefined;
     /** Tell the grid how wide in pixels the scrollbar is, which is used in grid width calculations. Set only if using non-standard browser-provided scrollbars, so the grid can use the non-standard size in its calculations.     */
     @Input() public scrollbarWidth: number | undefined = undefined;
@@ -763,9 +769,9 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public enableRangeHandle: boolean | undefined = undefined;
     /** Set to `true` to enable the Fill Handle. Default: `false`     */
     @Input() public enableFillHandle: boolean | undefined = undefined;
-    /** Set to `'x'` to force the fill handle direction to horizontal, or set to `'y'` to force the fill handle direction to vertical.     */
+    /** Set to `'x'` to force the fill handle direction to horizontal, or set to `'y'` to force the fill handle direction to vertical. Default: `xy`     */
     @Input() public fillHandleDirection: string | undefined = undefined;
-    /** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle.     */
+    /** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. Default: `false`     */
     @Input() public suppressClearOnFillReduction: boolean | undefined = undefined;
     /** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`. Default: `[null, 'asc', 'desc']`     */
     @Input() public sortingOrder: (string | null)[] | undefined = undefined;

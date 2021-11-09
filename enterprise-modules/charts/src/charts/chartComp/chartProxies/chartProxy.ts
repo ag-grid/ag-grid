@@ -218,6 +218,12 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends any> {
     private convertConfigToOverrides(config: any) {
         const chartOverrides = config[this.standaloneChartType];
         chartOverrides.series = chartOverrides.series[this.standaloneChartType];
+
+        // special handing to add the scatter paired mode to the chart options
+        if (this.standaloneChartType === 'scatter') {
+            chartOverrides.paired = true;
+        }
+
         return {[this.standaloneChartType]: chartOverrides};
     }
 
