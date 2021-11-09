@@ -1,7 +1,7 @@
 // noinspection ES6UnusedImports
 import React, {useState} from 'react'
 import {mount} from 'cypress-react-unit-test'
-import {AgGridColumn} from "../../lib/agGridColumn";
+import {AgGridColumn} from "../../lib/shared/agGridColumn";
 import {AgGridReact} from "../../lib/agGridReact";
 import {ClientSideRowModelModule} from "@ag-grid-community/client-side-row-model";
 import {ensureGridApiHasBeenSet} from "./utils";
