@@ -23,7 +23,6 @@ export interface AbstractColDef {
     headerName?: string;
     /** Function or expression. Gets the value for display in the header. */
     headerValueGetter?: string | HeaderValueGetterFunc;
-    /** Whether to show the column when the group is open / closed. */
     /** Tooltip for the column header */
     headerTooltip?: string;
     /** CSS class to use for the header cell. Can be a string, array of strings, or function. */
@@ -35,10 +34,10 @@ export interface AbstractColDef {
     columnGroupShow?: string;
     /** CSS class to use for the tool panel cell. Can be a string, array of strings, or function. */
     toolPanelClass?: ToolPanelClass;
-    /** Set to `true` if you do not want this column or group to appear in the Columns Tool Panel. */
+    /** Set to `true` if you do not want this column or group to appear in the Columns Tool Panel. Default: `false` */
     suppressColumnsToolPanel?: boolean;
 
-    /** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. */
+    /** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. Default: `false` */
     suppressFiltersToolPanel?: boolean;
 
     tooltipComponent?: { new(): ITooltipComp; } | string;
@@ -54,13 +53,13 @@ export interface ColGroupDef extends AbstractColDef {
     children: (ColDef | ColGroupDef)[];
     /** The unique ID to give the column. This is optional. If missing, a unique ID will be generated. This ID is used to identify the column group in the column API. */
     groupId?: string;
-    /** Set to `true` if this group should be opened by default. */
+    /** Set to `true` if this group should be opened by default. Default: `false` */
     openByDefault?: boolean;
-    /** Set to `true` to keep columns in this group beside each other in the grid. Moving the columns outside of the group (and hence breaking the group) is not allowed. */
+    /** Set to `true` to keep columns in this group beside each other in the grid. Moving the columns outside of the group (and hence breaking the group) is not allowed. Default: `false` */
     marryChildren?: boolean;
-    /** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used**/
+    /** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used */
     headerGroupComponent?: string | { new(): IHeaderGroupComp; };
-    /** The custom header group component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid is used**/
+    /** The custom header group component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid is used */
     headerGroupComponentFramework?: any;
     /** The params used to configure the header group component. **/
     headerGroupComponentParams?: any;
@@ -136,16 +135,17 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     tooltipField?: string;
     /** Callback that should return the string used for a tooltip, `tooltipField` takes precedence if set. */
     tooltipValueGetter?: (params: ITooltipParams) => string;
-    /** `boolean` or `Function`. Set to `true` (or return `true` from function) to render a selection checkbox in the column. */
+    /** `boolean` or `Function`. Set to `true` (or return `true` from function) to render a selection checkbox in the column. Default: `false` */
     checkboxSelection?: boolean | CheckboxSelectionCallback;
     /** Icons to use inside the column instead of the grid's default icons. Leave undefined to use defaults. */
     icons?: { [key: string]: Function | string; };
     /**
      * Set to `true` if this column is not navigable (i.e. cannot be tabbed into), otherwise `false`.
      * Can also be a callback function to have different rows navigable.
+     * Default: `false` 
      */
     suppressNavigable?: boolean | SuppressNavigableCallback;
-    /** Allows the user to suppress certain keyboard events in the grid cell */
+    /** Allows the user to suppress certain keyboard events in the grid cell. Default: `false` */
     suppressKeyboardEvent?: (params: SuppressKeyboardEventParams) => boolean;
     /**
      * Pasting is on by default as long as cells are editable (non-editable cells cannot be modified, even with a paste operation).
@@ -157,20 +157,20 @@ export interface ColDef extends AbstractColDef, IFilterDef {
 
     // *** Columns: Display *** //
 
-    /** Set to `true` for this column to be hidden. */
+    /** Set to `true` for this column to be hidden. Default: `false` */
     hide?: boolean;
     /** Same as 'hide', except only applied when creating a new column. Not applied when updating column definitions. */
     initialHide?: boolean;
-    /** Set to `true` to block making column visible / hidden via the UI (API will still work). */
+    /** Set to `true` to block making column visible / hidden via the UI (API will still work). Default: `false` */
     lockVisible?: boolean;
-    /** Set to `true` to always have this column displayed first. */
+    /** Set to `true` to always have this column displayed first. Default: `false` */
     lockPosition?: boolean;
-    /** Set to `true` if you do not want this column to be movable via dragging. */
+    /** Set to `true` if you do not want this column to be movable via dragging. Default: `false` */
     suppressMovable?: boolean;
 
     // *** Columns: Editing *** //
 
-    /** Set to `true` if this column is editable, otherwise `false`. Can also be a function to have different rows editable. */
+    /** Set to `true` if this column is editable, otherwise `false`. Can also be a function to have different rows editable. Default: `false` */
     editable?: boolean | EditableCallback;
     /** Function or expression. Sets the value into your data for saving. Return `true` if the data changed. */
     valueSetter?: string | ValueSetterFunc;
@@ -184,7 +184,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     cellEditorParams?: any;
     /** Callback to select which cell editor to be used for a given row within the same column. */
     cellEditorSelector?: CellEditorSelectorFunc;
-    /** Set to `true` to have cells under this column enter edit mode after single click. */
+    /** Set to `true` to have cells under this column enter edit mode after single click. Default: `false` */
     singleClickEdit?: boolean;
     /** @deprecated use `valueSetter` instead */
     newValueHandler?: (params: NewValueParams) => boolean;
@@ -218,7 +218,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     getQuickFilterText?: (params: GetQuickFilterTextParams) => string;
     /** Function or expression. Gets the value for filtering purposes. */
     filterValueGetter?: string | ValueGetterFunc;
-    /** Whether to display a floating filter for this column. */
+    /** Whether to display a floating filter for this column. Default: `false` */
     floatingFilter?: boolean;
 
     // *** Column Headers *** //
@@ -236,7 +236,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     menuTabs?: string[];
     /** Params used to change the behaviour and appearance of the Columns Menu tab. */
     columnsMenuParams?: ColumnsMenuParams;
-    /** Set to `true` if no menu should be shown for this column header. */
+    /** Set to `true` if no menu should be shown for this column header. Default: `false` */
     suppressMenu?: boolean;
     /** If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header. */
     headerCheckboxSelection?: boolean | HeaderCheckboxSelectionCallback;
@@ -254,7 +254,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     pinned?: boolean | string | null;
     /** Same as 'pinned', except only applied when creating a new column. Not applied when updating column definitions. */
     initialPinned?: boolean | string;
-    /** Set to true to block the user pinning the column, the column can only be pinned via definitions or API */
+    /** Set to true to block the user pinning the column, the column can only be pinned via definitions or API. Default: `false`  */
     lockPinned?: boolean;
 
     /** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned. */
@@ -285,7 +285,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
      * The values will always be strings, as the pivot service uses strings as keys for the pivot groups.
      */
     pivotComparator?: (valueA: string, valueB: string) => number;
-    /** Set to `true` if you want to be able to pivot by this column via the GUI. This will not block the API or properties being used to achieve pivot. */
+    /** Set to `true` if you want to be able to pivot by this column via the GUI. This will not block the API or properties being used to achieve pivot. Default: `false` */
     enablePivot?: boolean;
 
     // *** Columns: Rendering and Styling *** //
@@ -305,25 +305,25 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     /** Callback to select which cell renderer to be used for a given row within the same column. */
     cellRendererSelector?: CellRendererSelectorFunc;
 
-    /** Set to `true` to have the grid calculate the height of a row based on contents of this column. */
+    /** Set to `true` to have the grid calculate the height of a row based on contents of this column. Default: `false` */
     autoHeight?: boolean;
-    /** Set to `true` to have the text wrap inside the cell - typically used with `autoHeight`. */
+    /** Set to `true` to have the text wrap inside the cell - typically used with `autoHeight`. Default: `false` */
     wrapText?: boolean;
-    /** Set to `true` to flash a cell when it's refreshed. */
+    /** Set to `true` to flash a cell when it's refreshed. Default: `false` */
     enableCellChangeFlash?: boolean;
-    /** Set to `true` to prevent this column from flashing on changes. Only applicable if cell flashing is turned on for the grid. */
+    /** Set to `true` to prevent this column from flashing on changes. Only applicable if cell flashing is turned on for the grid. Default: `false` */
     suppressCellFlash?: boolean;
 
     // *** Columns: Row Dragging *** //
 
-    /** `boolean` or `Function`. Set to `true` (or return `true` from function) to allow row dragging. */
+    /** `boolean` or `Function`. Set to `true` (or return `true` from function) to allow row dragging. Default: `false` */
     rowDrag?: boolean | RowDragCallback;
     /**
      * A callback that should return a string to be displayed by the `rowDragComp` while dragging a row.
      * If this callback is not set, the current cell value will be used.
      */
     rowDragText?: (params: IRowDragItem, dragItemCount: number) => string;
-    /** `boolean` or `Function`. Set to `true` (or return `true` from function) to allow dragging for native drag and drop. */
+    /** `boolean` or `Function`. Set to `true` (or return `true` from function) to allow dragging for native drag and drop. Default: `false` */
     dndSource?: boolean | DndSourceCallback;
     /** Function to allow custom drag functionality for native drag and drop. */
     dndSourceOnRowDrag?: (params: { rowNode: RowNode, dragEvent: DragEvent; }) => void;
@@ -345,11 +345,13 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     /**
      * Set to `true` if you want to be able to row group by this column via the GUI.
      * This will not block the API or properties being used to achieve row grouping.
+     * Default: `false` 
      */
     enableRowGroup?: boolean;
     /**
      * Set to `true` if you want to be able to aggregate by this column via the GUI.
      * This will not block the API or properties being used to achieve aggregation.
+     * Default: `false` 
      */
     enableValue?: boolean;
     /** Name of function to use for aggregation. You can also provide your own agg function. */
@@ -367,7 +369,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
 
     // *** Columns: Sort *** //
 
-    /** Set to `true` to allow sorting on this column. */
+    /** Set to `true` to allow sorting on this column. Default: `false` */
     sortable?: boolean;
     /** If sorting by default, set it here. Set to 'asc' or 'desc'. */
     sort?: string | null;
@@ -381,7 +383,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     sortingOrder?: (string | null)[];
     /** Comparator function for custom sorting. */
     comparator?: (valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, isInverted: boolean) => number;
-    /** Set to `true` if you want the unsorted icon to be shown when no sort is applied to this column. */
+    /** Set to `true` if you want the unsorted icon to be shown when no sort is applied to this column. Default: `false` */
     unSortIcon?: boolean;
 
     /** @deprecated since v24 - use sortIndex instead*/
@@ -408,11 +410,11 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     flex?: number;
     /** Same as 'flex', except only applied when creating a new column. Not applied when updating column definitions. */
     initialFlex?: number;
-    /** Set to `true` to allow this column should be resized. */
+    /** Set to `true` to allow this column should be resized. Default: `false` */
     resizable?: boolean;
-    /** Set to `true` if you want this column's width to be fixed during 'size to fit' operations. */
+    /** Set to `true` if you want this column's width to be fixed during 'size to fit' operations. Default: `false` */
     suppressSizeToFit?: boolean;
-    /** Set to `true` if you do not want this column to be auto-resizable by double clicking it's edge. */
+    /** Set to `true` if you do not want this column to be auto-resizable by double clicking it's edge. Default: `false` */
     suppressAutoSize?: boolean;
 
     /** Cell template to use for cell. Useful for AngularJS cells. */

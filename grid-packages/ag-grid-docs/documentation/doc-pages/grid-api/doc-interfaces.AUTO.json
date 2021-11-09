@@ -469,7 +469,7 @@
       }
     },
     "headerTooltip": {
-      "description": "/** Whether to show the column when the group is open / closed. */\n/** Tooltip for the column header */",
+      "description": "/** Tooltip for the column header */",
       "type": { "returnType": "string", "optional": true }
     },
     "headerClass": {
@@ -493,11 +493,11 @@
       "type": { "returnType": "ToolPanelClass", "optional": true }
     },
     "suppressColumnsToolPanel": {
-      "description": "/** Set to `true` if you do not want this column or group to appear in the Columns Tool Panel. */",
+      "description": "/** Set to `true` if you do not want this column or group to appear in the Columns Tool Panel. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressFiltersToolPanel": {
-      "description": "/** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. */",
+      "description": "/** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "tooltipComponent": {
@@ -527,22 +527,22 @@
       "type": { "returnType": "string", "optional": true }
     },
     "openByDefault": {
-      "description": "/** Set to `true` if this group should be opened by default. */",
+      "description": "/** Set to `true` if this group should be opened by default. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "marryChildren": {
-      "description": "/** Set to `true` to keep columns in this group beside each other in the grid. Moving the columns outside of the group (and hence breaking the group) is not allowed. */",
+      "description": "/** Set to `true` to keep columns in this group beside each other in the grid. Moving the columns outside of the group (and hence breaking the group) is not allowed. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "headerGroupComponent": {
-      "description": "/** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used* */",
+      "description": "/** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used */",
       "type": {
         "returnType": "string | { new(): IHeaderGroupComp; }",
         "optional": true
       }
     },
     "headerGroupComponentFramework": {
-      "description": "/** The custom header group component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid is used* */",
+      "description": "/** The custom header group component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid is used */",
       "type": { "returnType": "any", "optional": true }
     },
     "headerGroupComponentParams": {
@@ -561,7 +561,7 @@
       }
     },
     "headerTooltip": {
-      "description": "/** Whether to show the column when the group is open / closed. */\n/** Tooltip for the column header */",
+      "description": "/** Tooltip for the column header */",
       "type": { "returnType": "string", "optional": true }
     },
     "headerClass": {
@@ -585,11 +585,11 @@
       "type": { "returnType": "ToolPanelClass", "optional": true }
     },
     "suppressColumnsToolPanel": {
-      "description": "/** Set to `true` if you do not want this column or group to appear in the Columns Tool Panel. */",
+      "description": "/** Set to `true` if you do not want this column or group to appear in the Columns Tool Panel. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressFiltersToolPanel": {
-      "description": "/** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. */",
+      "description": "/** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "tooltipComponent": {
@@ -718,7 +718,7 @@
       }
     },
     "checkboxSelection": {
-      "description": "/** `boolean` or `Function`. Set to `true` (or return `true` from function) to render a selection checkbox in the column. */",
+      "description": "/** `boolean` or `Function`. Set to `true` (or return `true` from function) to render a selection checkbox in the column. Default: `false` */",
       "type": {
         "returnType": "boolean | CheckboxSelectionCallback",
         "optional": true
@@ -732,14 +732,14 @@
       }
     },
     "suppressNavigable": {
-      "description": "/** Set to `true` if this column is not navigable (i.e. cannot be tabbed into), otherwise `false`.\n * Can also be a callback function to have different rows navigable. */",
+      "description": "/** Set to `true` if this column is not navigable (i.e. cannot be tabbed into), otherwise `false`.\n * Can also be a callback function to have different rows navigable.\n * Default: `false` */",
       "type": {
         "returnType": "boolean | SuppressNavigableCallback",
         "optional": true
       }
     },
     "suppressKeyboardEvent": {
-      "description": "/** Allows the user to suppress certain keyboard events in the grid cell */",
+      "description": "/** Allows the user to suppress certain keyboard events in the grid cell. Default: `false` */",
       "type": {
         "arguments": { "params": "SuppressKeyboardEventParams" },
         "returnType": "boolean",
@@ -758,7 +758,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "hide": {
-      "description": "/** Set to `true` for this column to be hidden. */",
+      "description": "/** Set to `true` for this column to be hidden. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "initialHide": {
@@ -766,19 +766,19 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "lockVisible": {
-      "description": "/** Set to `true` to block making column visible / hidden via the UI (API will still work). */",
+      "description": "/** Set to `true` to block making column visible / hidden via the UI (API will still work). Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "lockPosition": {
-      "description": "/** Set to `true` to always have this column displayed first. */",
+      "description": "/** Set to `true` to always have this column displayed first. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressMovable": {
-      "description": "/** Set to `true` if you do not want this column to be movable via dragging. */",
+      "description": "/** Set to `true` if you do not want this column to be movable via dragging. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "editable": {
-      "description": "/** Set to `true` if this column is editable, otherwise `false`. Can also be a function to have different rows editable. */",
+      "description": "/** Set to `true` if this column is editable, otherwise `false`. Can also be a function to have different rows editable. Default: `false` */",
       "type": { "returnType": "boolean | EditableCallback", "optional": true }
     },
     "valueSetter": {
@@ -809,7 +809,7 @@
       "type": { "returnType": "CellEditorSelectorFunc", "optional": true }
     },
     "singleClickEdit": {
-      "description": "/** Set to `true` to have cells under this column enter edit mode after single click. */",
+      "description": "/** Set to `true` to have cells under this column enter edit mode after single click. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "newValueHandler": {
@@ -873,7 +873,7 @@
       "type": { "returnType": "string | ValueGetterFunc", "optional": true }
     },
     "floatingFilter": {
-      "description": "/** Whether to display a floating filter for this column. */",
+      "description": "/** Whether to display a floating filter for this column. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "headerComponent": {
@@ -897,7 +897,7 @@
       "type": { "returnType": "ColumnsMenuParams", "optional": true }
     },
     "suppressMenu": {
-      "description": "/** Set to `true` if no menu should be shown for this column header. */",
+      "description": "/** Set to `true` if no menu should be shown for this column header. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "headerCheckboxSelection": {
@@ -927,7 +927,7 @@
       "type": { "returnType": "boolean | string", "optional": true }
     },
     "lockPinned": {
-      "description": "/** Set to true to block the user pinning the column, the column can only be pinned via definitions or API */",
+      "description": "/** Set to true to block the user pinning the column, the column can only be pinned via definitions or API. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "pinnedRowCellRenderer": {
@@ -974,7 +974,7 @@
       }
     },
     "enablePivot": {
-      "description": "/** Set to `true` if you want to be able to pivot by this column via the GUI. This will not block the API or properties being used to achieve pivot. */",
+      "description": "/** Set to `true` if you want to be able to pivot by this column via the GUI. This will not block the API or properties being used to achieve pivot. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "cellStyle": {
@@ -1012,23 +1012,23 @@
       "type": { "returnType": "CellRendererSelectorFunc", "optional": true }
     },
     "autoHeight": {
-      "description": "/** Set to `true` to have the grid calculate the height of a row based on contents of this column. */",
+      "description": "/** Set to `true` to have the grid calculate the height of a row based on contents of this column. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "wrapText": {
-      "description": "/** Set to `true` to have the text wrap inside the cell - typically used with `autoHeight`. */",
+      "description": "/** Set to `true` to have the text wrap inside the cell - typically used with `autoHeight`. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "enableCellChangeFlash": {
-      "description": "/** Set to `true` to flash a cell when it's refreshed. */",
+      "description": "/** Set to `true` to flash a cell when it's refreshed. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressCellFlash": {
-      "description": "/** Set to `true` to prevent this column from flashing on changes. Only applicable if cell flashing is turned on for the grid. */",
+      "description": "/** Set to `true` to prevent this column from flashing on changes. Only applicable if cell flashing is turned on for the grid. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "rowDrag": {
-      "description": "/** `boolean` or `Function`. Set to `true` (or return `true` from function) to allow row dragging. */",
+      "description": "/** `boolean` or `Function`. Set to `true` (or return `true` from function) to allow row dragging. Default: `false` */",
       "type": { "returnType": "boolean | RowDragCallback", "optional": true }
     },
     "rowDragText": {
@@ -1040,7 +1040,7 @@
       }
     },
     "dndSource": {
-      "description": "/** `boolean` or `Function`. Set to `true` (or return `true` from function) to allow dragging for native drag and drop. */",
+      "description": "/** `boolean` or `Function`. Set to `true` (or return `true` from function) to allow dragging for native drag and drop. Default: `false` */",
       "type": { "returnType": "boolean | DndSourceCallback", "optional": true }
     },
     "dndSourceOnRowDrag": {
@@ -1070,11 +1070,11 @@
       "type": { "returnType": "number", "optional": true }
     },
     "enableRowGroup": {
-      "description": "/** Set to `true` if you want to be able to row group by this column via the GUI.\n * This will not block the API or properties being used to achieve row grouping. */",
+      "description": "/** Set to `true` if you want to be able to row group by this column via the GUI.\n * This will not block the API or properties being used to achieve row grouping.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "enableValue": {
-      "description": "/** Set to `true` if you want to be able to aggregate by this column via the GUI.\n * This will not block the API or properties being used to achieve aggregation. */",
+      "description": "/** Set to `true` if you want to be able to aggregate by this column via the GUI.\n * This will not block the API or properties being used to achieve aggregation.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "aggFunc": {
@@ -1094,7 +1094,7 @@
       "type": { "returnType": "string | boolean", "optional": true }
     },
     "sortable": {
-      "description": "/** Set to `true` to allow sorting on this column. */",
+      "description": "/** Set to `true` to allow sorting on this column. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "sort": {
@@ -1132,7 +1132,7 @@
       }
     },
     "unSortIcon": {
-      "description": "/** Set to `true` if you want the unsorted icon to be shown when no sort is applied to this column. */",
+      "description": "/** Set to `true` if you want the unsorted icon to be shown when no sort is applied to this column. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "sortedAt": {
@@ -1180,15 +1180,15 @@
       "type": { "returnType": "number", "optional": true }
     },
     "resizable": {
-      "description": "/** Set to `true` to allow this column should be resized. */",
+      "description": "/** Set to `true` to allow this column should be resized. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressSizeToFit": {
-      "description": "/** Set to `true` if you want this column's width to be fixed during 'size to fit' operations. */",
+      "description": "/** Set to `true` if you want this column's width to be fixed during 'size to fit' operations. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressAutoSize": {
-      "description": "/** Set to `true` if you do not want this column to be auto-resizable by double clicking it's edge. */",
+      "description": "/** Set to `true` if you do not want this column to be auto-resizable by double clicking it's edge. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "template": {
@@ -1219,7 +1219,7 @@
       }
     },
     "headerTooltip": {
-      "description": "/** Whether to show the column when the group is open / closed. */\n/** Tooltip for the column header */",
+      "description": "/** Tooltip for the column header */",
       "type": { "returnType": "string", "optional": true }
     },
     "headerClass": {
@@ -1243,11 +1243,11 @@
       "type": { "returnType": "ToolPanelClass", "optional": true }
     },
     "suppressColumnsToolPanel": {
-      "description": "/** Set to `true` if you do not want this column or group to appear in the Columns Tool Panel. */",
+      "description": "/** Set to `true` if you do not want this column or group to appear in the Columns Tool Panel. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressFiltersToolPanel": {
-      "description": "/** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. */",
+      "description": "/** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "tooltipComponent": {

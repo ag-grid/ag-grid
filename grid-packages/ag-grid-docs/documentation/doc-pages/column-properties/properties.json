@@ -42,13 +42,9 @@
         },
         "tooltipField": {},
         "tooltipValueGetter": {},
-        "checkboxSelection": {
-            "default": false
-        },
+        "checkboxSelection": {},
         "toolPanelClass": {},
-        "suppressColumnsToolPanel": {
-            "default": false
-        },
+        "suppressColumnsToolPanel": {},
         "columnGroupShow": {},
         "icons": {
             "more": {
@@ -56,11 +52,8 @@
                 "url": "/custom-icons/#set-the-icons-through-gridoptions-javascript"
             }
         },
-        "suppressNavigable": {
-            "default": false
-        },
+        "suppressNavigable": {},
         "suppressKeyboardEvent": {
-            "default": false,
             "more": {
                 "name": "Suppress Keyboard Events",
                 "url": "/keyboard-navigation/#suppresskeyboardevent"
@@ -114,11 +107,8 @@
                 "url": "/column-menu/#customising-the-columns-menu-tab"
             }
         },
-        "suppressMenu": {
-            "default": false
-        },
+        "suppressMenu": {},
         "suppressHeaderKeyboardEvent": {
-            "default": false,
             "more": {
                 "name": "Suppress Keyboard Events",
                 "url": "/keyboard-navigation/#suppressheaderkeyboardevent"
@@ -141,19 +131,11 @@
         "meta": {
             "displayName": "Columns: Display"
         },
-        "hide": {
-            "default": false
-        },
+        "hide": {},
         "initialHide": {},
-        "lockVisible": {
-            "default": false
-        },
-        "lockPosition": {
-            "default": false
-        },
-        "suppressMovable": {
-            "default": false
-        }
+        "lockVisible": {},
+        "lockPosition": {},
+        "suppressMovable": {}
     },
     "width": {
         "meta": {
@@ -170,12 +152,8 @@
             }
         },
         "initialFlex": {},
-        "resizable": {
-            "default": false
-        },
-        "suppressSizeToFit": {
-            "default": false
-        },
+        "resizable": {},
+        "suppressSizeToFit": {},
         "suppressAutoSize": {}
     },
     "pinned": {
@@ -189,9 +167,7 @@
             ]
         },
         "initialPinned": {},
-        "lockPinned": {
-            "default": false
-        }
+        "lockPinned": {}
     },
     "spanning": {
         "meta": {
@@ -261,26 +237,16 @@
                 ]
             }
         },
-        "autoHeight": {
-            "default": false
-        },
-        "wrapText": {
-            "default": false
-        },
-        "enableCellChangeFlash": {
-            "default": false
-        },
-        "suppressCellFlash": {
-            "default": false
-        }
+        "autoHeight": {},
+        "wrapText": {},
+        "enableCellChangeFlash": {},
+        "suppressCellFlash": {}
     },
     "sort": {
         "meta": {
             "displayName": "Columns: Sort"
         },
-        "sortable": {
-            "default": false
-        },
+        "sortable": {},
         "sort": {
             "options": [
                 null,
@@ -299,9 +265,7 @@
             ]
         },
         "comparator": {},
-        "unSortIcon": {
-            "default": false
-        }
+        "unSortIcon": {}
     },
     "filtering": {
         "meta": {
@@ -336,7 +300,6 @@
             }
         },
         "floatingFilter": {
-            "default": false,
             "more": {
                 "name": "Floating Filter",
                 "url": "/floating-filters"
@@ -366,17 +329,13 @@
                 "url": "/component-floating-filter/#custom-filter-parameters"
             }
         },
-        "suppressFiltersToolPanel": {
-            "default": false
-        }
+        "suppressFiltersToolPanel": {}
     },
     "editing": {
         "meta": {
             "displayName": "Columns: Editing"
         },
-        "editable": {
-            "default": false
-        },
+        "editable": {},
         "valueSetter": {
             "description": "Function or [expression](/cell-expressions/#column-definition-expressions). Sets the value into your data for saving. Return `true` if the data changed."
         },
@@ -416,9 +375,7 @@
         },
         "cellEditorPopup": {},
         "cellEditorPopupPosition": {},
-        "singleClickEdit": {
-            "default": false
-        }
+        "singleClickEdit": {}
     },
     "grouping": {
         "meta": {
@@ -429,18 +386,14 @@
         "initialRowGroup": {},
         "rowGroupIndex": {},
         "initialRowGroupIndex": {},
-        "enableRowGroup": {
-            "default": false
-        },
+        "enableRowGroup": {},
         "showRowGroup": {
             "more": {
                 "name": "Custom Group Columns",
                 "url": "/grouping-custom-group-columns/"
             }
         },
-        "enableValue": {
-            "default": false
-        },
+        "enableValue": {},
         "aggFunc": {
             "options": [
                 "sum",
@@ -463,22 +416,16 @@
         "pivotIndex": {},
         "initialPivotIndex": {},
         "pivotComparator": {},
-        "enablePivot": {
-            "default": false
-        }
+        "enablePivot": {}
     },
     "row dragging": {
         "meta": {
             "displayName": "Columns: Row Dragging",
             "description": "See [Row Dragging](/row-dragging/)"
         },
-        "rowDrag": {
-            "default": false
-        },
+        "rowDrag": {},
         "rowDragText": {},
-        "dndSource": {
-            "default": false
-        },
+        "dndSource": {},
         "dndSourceOnRowDrag": {}
     },
     "events": {
@@ -500,20 +447,12 @@
             "isRequired": true
         },
         "groupId": {},
-        "marryChildren": {
-            "default": false
-        },
-        "openByDefault": {
-            "default": false
-        },
+        "marryChildren": {},
+        "openByDefault": {},
         "columnGroupShow": {},
         "toolPanelClass": {},
-        "suppressColumnsToolPanel": {
-            "default": false
-        },
-        "suppressFiltersToolPanel": {
-            "default": false
-        }
+        "suppressColumnsToolPanel": {},
+        "suppressFiltersToolPanel": {}
     },
     "groupsHeader": {
         "meta": {

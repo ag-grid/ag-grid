@@ -51,8 +51,7 @@ export class AgGridColumn {
     @Input() public headerName: string | undefined = undefined;
     /** Function or expression. Gets the value for display in the header.     */
     @Input() public headerValueGetter: string | HeaderValueGetterFunc | undefined = undefined;
-    /** Whether to show the column when the group is open / closed.     */
-/** Tooltip for the column header     */
+    /** Tooltip for the column header     */
     @Input() public headerTooltip: string | undefined = undefined;
     /** CSS class to use for the header cell. Can be a string, array of strings, or function.     */
     @Input() public headerClass: HeaderClass | undefined = undefined;
@@ -62,9 +61,9 @@ export class AgGridColumn {
     @Input() public columnGroupShow: string | undefined = undefined;
     /** CSS class to use for the tool panel cell. Can be a string, array of strings, or function.     */
     @Input() public toolPanelClass: ToolPanelClass | undefined = undefined;
-    /** Set to `true` if you do not want this column or group to appear in the Columns Tool Panel.     */
+    /** Set to `true` if you do not want this column or group to appear in the Columns Tool Panel. Default: `false`     */
     @Input() public suppressColumnsToolPanel: boolean | undefined = undefined;
-    /** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel.     */
+    /** Set to `true` if you do not want this column (filter) or group (filter group) to appear in the Filters Tool Panel. Default: `false`     */
     @Input() public suppressFiltersToolPanel: boolean | undefined = undefined;
     @Input() public tooltipComponent: { new(): ITooltipComp; } | string | undefined = undefined;
     @Input() public tooltipComponentFramework: any = undefined;
@@ -73,13 +72,13 @@ export class AgGridColumn {
     @Input() public children: (ColDef | ColGroupDef)[] | undefined = undefined;
     /** The unique ID to give the column. This is optional. If missing, a unique ID will be generated. This ID is used to identify the column group in the column API.     */
     @Input() public groupId: string | undefined = undefined;
-    /** Set to `true` if this group should be opened by default.     */
+    /** Set to `true` if this group should be opened by default. Default: `false`     */
     @Input() public openByDefault: boolean | undefined = undefined;
-    /** Set to `true` to keep columns in this group beside each other in the grid. Moving the columns outside of the group (and hence breaking the group) is not allowed.     */
+    /** Set to `true` to keep columns in this group beside each other in the grid. Moving the columns outside of the group (and hence breaking the group) is not allowed. Default: `false`     */
     @Input() public marryChildren: boolean | undefined = undefined;
-    /** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used*     */
+    /** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used     */
     @Input() public headerGroupComponent: string | { new(): IHeaderGroupComp; } | undefined = undefined;
-    /** The custom header group component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid is used*     */
+    /** The custom header group component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid is used     */
     @Input() public headerGroupComponentFramework: any = undefined;
     /** The params used to configure the header group component.     *     */
     @Input() public headerGroupComponentParams: any = undefined;
@@ -109,31 +108,32 @@ export class AgGridColumn {
     @Input() public tooltipField: string | undefined = undefined;
     /** Callback that should return the string used for a tooltip, `tooltipField` takes precedence if set.     */
     @Input() public tooltipValueGetter: ((params: ITooltipParams) => string) | undefined = undefined;
-    /** `boolean` or `Function`. Set to `true` (or return `true` from function) to render a selection checkbox in the column.     */
+    /** `boolean` or `Function`. Set to `true` (or return `true` from function) to render a selection checkbox in the column. Default: `false`     */
     @Input() public checkboxSelection: boolean | CheckboxSelectionCallback | undefined = undefined;
     /** Icons to use inside the column instead of the grid's default icons. Leave undefined to use defaults.     */
     @Input() public icons: { [key: string]: Function | string; } | undefined = undefined;
     /** Set to `true` if this column is not navigable (i.e. cannot be tabbed into), otherwise `false`.
-     * Can also be a callback function to have different rows navigable.     */
+     * Can also be a callback function to have different rows navigable.
+     * Default: `false`     */
     @Input() public suppressNavigable: boolean | SuppressNavigableCallback | undefined = undefined;
-    /** Allows the user to suppress certain keyboard events in the grid cell     */
+    /** Allows the user to suppress certain keyboard events in the grid cell. Default: `false`     */
     @Input() public suppressKeyboardEvent: ((params: SuppressKeyboardEventParams) => boolean) | undefined = undefined;
     /** Pasting is on by default as long as cells are editable (non-editable cells cannot be modified, even with a paste operation).
      * Set to `true` turn paste operations off.     */
     @Input() public suppressPaste: boolean | SuppressPasteCallback | undefined = undefined;
     /** Set to true to prevent the fillHandle from being rendered in any cell that belongs to this column     */
     @Input() public suppressFillHandle: boolean | undefined = undefined;
-    /** Set to `true` for this column to be hidden.     */
+    /** Set to `true` for this column to be hidden. Default: `false`     */
     @Input() public hide: boolean | undefined = undefined;
     /** Same as 'hide', except only applied when creating a new column. Not applied when updating column definitions.     */
     @Input() public initialHide: boolean | undefined = undefined;
-    /** Set to `true` to block making column visible / hidden via the UI (API will still work).     */
+    /** Set to `true` to block making column visible / hidden via the UI (API will still work). Default: `false`     */
     @Input() public lockVisible: boolean | undefined = undefined;
-    /** Set to `true` to always have this column displayed first.     */
+    /** Set to `true` to always have this column displayed first. Default: `false`     */
     @Input() public lockPosition: boolean | undefined = undefined;
-    /** Set to `true` if you do not want this column to be movable via dragging.     */
+    /** Set to `true` if you do not want this column to be movable via dragging. Default: `false`     */
     @Input() public suppressMovable: boolean | undefined = undefined;
-    /** Set to `true` if this column is editable, otherwise `false`. Can also be a function to have different rows editable.     */
+    /** Set to `true` if this column is editable, otherwise `false`. Can also be a function to have different rows editable. Default: `false`     */
     @Input() public editable: boolean | EditableCallback | undefined = undefined;
     /** Function or expression. Sets the value into your data for saving. Return `true` if the data changed.     */
     @Input() public valueSetter: string | ValueSetterFunc | undefined = undefined;
@@ -147,7 +147,7 @@ export class AgGridColumn {
     @Input() public cellEditorParams: any = undefined;
     /** Callback to select which cell editor to be used for a given row within the same column.     */
     @Input() public cellEditorSelector: CellEditorSelectorFunc | undefined = undefined;
-    /** Set to `true` to have cells under this column enter edit mode after single click.     */
+    /** Set to `true` to have cells under this column enter edit mode after single click. Default: `false`     */
     @Input() public singleClickEdit: boolean | undefined = undefined;
     /** @deprecated use `valueSetter` instead
      */
@@ -172,7 +172,7 @@ export class AgGridColumn {
     @Input() public getQuickFilterText: ((params: GetQuickFilterTextParams) => string) | undefined = undefined;
     /** Function or expression. Gets the value for filtering purposes.     */
     @Input() public filterValueGetter: string | ValueGetterFunc | undefined = undefined;
-    /** Whether to display a floating filter for this column.     */
+    /** Whether to display a floating filter for this column. Default: `false`     */
     @Input() public floatingFilter: boolean | undefined = undefined;
     /** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used.     *     */
     @Input() public headerComponent: string | { new(): any; } | undefined = undefined;
@@ -185,7 +185,7 @@ export class AgGridColumn {
     @Input() public menuTabs: string[] | undefined = undefined;
     /** Params used to change the behaviour and appearance of the Columns Menu tab.     */
     @Input() public columnsMenuParams: ColumnsMenuParams | undefined = undefined;
-    /** Set to `true` if no menu should be shown for this column header.     */
+    /** Set to `true` if no menu should be shown for this column header. Default: `false`     */
     @Input() public suppressMenu: boolean | undefined = undefined;
     /** If `true` or the callback returns `true`, a 'select all' checkbox will be put into the header.     */
     @Input() public headerCheckboxSelection: boolean | HeaderCheckboxSelectionCallback | undefined = undefined;
@@ -197,7 +197,7 @@ export class AgGridColumn {
     @Input() public pinned: boolean | string | null | undefined = undefined;
     /** Same as 'pinned', except only applied when creating a new column. Not applied when updating column definitions.     */
     @Input() public initialPinned: boolean | string | undefined = undefined;
-    /** Set to true to block the user pinning the column, the column can only be pinned via definitions or API     */
+    /** Set to true to block the user pinning the column, the column can only be pinned via definitions or API. Default: `false`     */
     @Input() public lockPinned: boolean | undefined = undefined;
     /** @deprecated Use cellRendererSelector if you want a different Cell Renderer for pinned rows. Check params.node.rowPinned.
      */
@@ -224,7 +224,7 @@ export class AgGridColumn {
     /** Comparator to use when ordering the pivot columns, when this column is used to pivot on.
      * The values will always be strings, as the pivot service uses strings as keys for the pivot groups.     */
     @Input() public pivotComparator: ((valueA: string, valueB: string) => number) | undefined = undefined;
-    /** Set to `true` if you want to be able to pivot by this column via the GUI. This will not block the API or properties being used to achieve pivot.     */
+    /** Set to `true` if you want to be able to pivot by this column via the GUI. This will not block the API or properties being used to achieve pivot. Default: `false`     */
     @Input() public enablePivot: boolean | undefined = undefined;
     /** An object of css values / or function returning an object of css values for a particular cell.     */
     @Input() public cellStyle: CellStyle | CellStyleFunc | undefined = undefined;
@@ -240,20 +240,20 @@ export class AgGridColumn {
     @Input() public cellRendererParams: any = undefined;
     /** Callback to select which cell renderer to be used for a given row within the same column.     */
     @Input() public cellRendererSelector: CellRendererSelectorFunc | undefined = undefined;
-    /** Set to `true` to have the grid calculate the height of a row based on contents of this column.     */
+    /** Set to `true` to have the grid calculate the height of a row based on contents of this column. Default: `false`     */
     @Input() public autoHeight: boolean | undefined = undefined;
-    /** Set to `true` to have the text wrap inside the cell - typically used with `autoHeight`.     */
+    /** Set to `true` to have the text wrap inside the cell - typically used with `autoHeight`. Default: `false`     */
     @Input() public wrapText: boolean | undefined = undefined;
-    /** Set to `true` to flash a cell when it's refreshed.     */
+    /** Set to `true` to flash a cell when it's refreshed. Default: `false`     */
     @Input() public enableCellChangeFlash: boolean | undefined = undefined;
-    /** Set to `true` to prevent this column from flashing on changes. Only applicable if cell flashing is turned on for the grid.     */
+    /** Set to `true` to prevent this column from flashing on changes. Only applicable if cell flashing is turned on for the grid. Default: `false`     */
     @Input() public suppressCellFlash: boolean | undefined = undefined;
-    /** `boolean` or `Function`. Set to `true` (or return `true` from function) to allow row dragging.     */
+    /** `boolean` or `Function`. Set to `true` (or return `true` from function) to allow row dragging. Default: `false`     */
     @Input() public rowDrag: boolean | RowDragCallback | undefined = undefined;
     /** A callback that should return a string to be displayed by the `rowDragComp` while dragging a row.
      * If this callback is not set, the current cell value will be used.     */
     @Input() public rowDragText: ((params: IRowDragItem, dragItemCount: number) => string) | undefined = undefined;
-    /** `boolean` or `Function`. Set to `true` (or return `true` from function) to allow dragging for native drag and drop.     */
+    /** `boolean` or `Function`. Set to `true` (or return `true` from function) to allow dragging for native drag and drop. Default: `false`     */
     @Input() public dndSource: boolean | DndSourceCallback | undefined = undefined;
     /** Function to allow custom drag functionality for native drag and drop.     */
     @Input() public dndSourceOnRowDrag: ((params: { rowNode: RowNode, dragEvent: DragEvent; }) => void) | undefined = undefined;
@@ -268,10 +268,12 @@ export class AgGridColumn {
     /** Same as 'rowGroupIndex', except only applied when creating a new column. Not applied when updating column definitions.     */
     @Input() public initialRowGroupIndex: number | undefined = undefined;
     /** Set to `true` if you want to be able to row group by this column via the GUI.
-     * This will not block the API or properties being used to achieve row grouping.     */
+     * This will not block the API or properties being used to achieve row grouping.
+     * Default: `false`     */
     @Input() public enableRowGroup: boolean | undefined = undefined;
     /** Set to `true` if you want to be able to aggregate by this column via the GUI.
-     * This will not block the API or properties being used to achieve aggregation.     */
+     * This will not block the API or properties being used to achieve aggregation.
+     * Default: `false`     */
     @Input() public enableValue: boolean | undefined = undefined;
     /** Name of function to use for aggregation. You can also provide your own agg function.     */
     @Input() public aggFunc: string | IAggFunc | null | undefined = undefined;
@@ -283,7 +285,7 @@ export class AgGridColumn {
     @Input() public allowedAggFuncs: string[] | undefined = undefined;
     /** Set to true to have the grid place the values for the group into the cell, or put the name of a grouped column to just show that group.     */
     @Input() public showRowGroup: string | boolean | undefined = undefined;
-    /** Set to `true` to allow sorting on this column.     */
+    /** Set to `true` to allow sorting on this column. Default: `false`     */
     @Input() public sortable: boolean | undefined = undefined;
     /** If sorting by default, set it here. Set to 'asc' or 'desc'.     */
     @Input() public sort: string | null | undefined = undefined;
@@ -297,7 +299,7 @@ export class AgGridColumn {
     @Input() public sortingOrder: (string | null)[] | undefined = undefined;
     /** Comparator function for custom sorting.     */
     @Input() public comparator: ((valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, isInverted: boolean) => number) | undefined = undefined;
-    /** Set to `true` if you want the unsorted icon to be shown when no sort is applied to this column.     */
+    /** Set to `true` if you want the unsorted icon to be shown when no sort is applied to this column. Default: `false`     */
     @Input() public unSortIcon: boolean | undefined = undefined;
     /** @deprecated since v24 - use sortIndex instead
      */
@@ -318,11 +320,11 @@ export class AgGridColumn {
     @Input() public flex: number | undefined = undefined;
     /** Same as 'flex', except only applied when creating a new column. Not applied when updating column definitions.     */
     @Input() public initialFlex: number | undefined = undefined;
-    /** Set to `true` to allow this column should be resized.     */
+    /** Set to `true` to allow this column should be resized. Default: `false`     */
     @Input() public resizable: boolean | undefined = undefined;
-    /** Set to `true` if you want this column's width to be fixed during 'size to fit' operations.     */
+    /** Set to `true` if you want this column's width to be fixed during 'size to fit' operations. Default: `false`     */
     @Input() public suppressSizeToFit: boolean | undefined = undefined;
-    /** Set to `true` if you do not want this column to be auto-resizable by double clicking it's edge.     */
+    /** Set to `true` if you do not want this column to be auto-resizable by double clicking it's edge. Default: `false`     */
     @Input() public suppressAutoSize: boolean | undefined = undefined;
 
 
