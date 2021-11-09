@@ -215,6 +215,7 @@ export class ChartController extends BeanStub {
             chartId,
             chartType,
             chartThemeName: this.getThemeName(),
+            chartOptions: this.chartProxy.getChartOptions(),
             api: this.gridApi,
             columnApi: this.columnApi,
         });

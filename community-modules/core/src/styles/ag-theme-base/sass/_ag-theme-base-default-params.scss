@@ -226,6 +226,8 @@ $ag-theme-base-default-params: (
 
     // Cause tabs to stretch across the full width of the tab panel header
     full-width-tabs: false,
+    tab-min-width: 220px,
+    menu-min-width: 181px,
 
     // Fonts
     font-family: ("Helvetica Neue", sans-serif),

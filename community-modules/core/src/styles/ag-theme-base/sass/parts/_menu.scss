@@ -55,7 +55,7 @@
     // Column Filter
     ////////////////////////////////////////
     .ag-tabs {
-        min-width: 220px;
+        min-width: ag-param(tab-min-width);
     }
 
     .ag-tabs-header {
@@ -92,6 +92,19 @@
 
     .ag-filter-separator {
         @include ag-border(critical, top);
+    }
+
+    .ag-menu:not(.ag-tabs) .ag-filter-select {
+        min-width: (ag-param(menu-min-width) - (2 * ag-param(widget-container-horizontal-padding)) - 2);
+    }
+
+    .ag-tabs .ag-filter-select {
+        min-width: (ag-param(tab-min-width) - (2 * ag-param(widget-container-horizontal-padding)) - 2);
+    }
+
+    .ag-filter-select .ag-picker-field-wrapper {
+        // Force picker to match width of sibling inputs.
+        width: 0;
     }
 
     ////////////////////////////////////////

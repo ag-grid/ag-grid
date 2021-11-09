@@ -44,7 +44,6 @@ export abstract class ProvidedFilter<M, V> extends Component implements IFilterC
 
     private applyActive = false;
     private hidePopup: ((params: PopupEventParams) => void) | null | undefined = null;
-    private repositionPopup: (() => void) | null | undefined = null;
     // a debounce of the onBtApply method
     private onBtApplyDebounce: () => void;
 
@@ -348,14 +347,6 @@ export abstract class ProvidedFilter<M, V> extends Component implements IFilterC
 
         this.hidePopup(params!);
         this.hidePopup = null;
-        this.repositionPopup = null;
-    }
-
-    // Reposition if there is a significant UI change.
-    protected reposition(): void {
-        if (!this.repositionPopup) { return; }
-
-        this.repositionPopup();
     }
 
     // called by set filter
@@ -383,17 +374,12 @@ export abstract class ProvidedFilter<M, V> extends Component implements IFilterC
         } else if ((!this.applyActive && !apply) || apply === 'debounce') {
             this.onBtApplyDebounce();
         }
-
-        if (!fromFloatingFilter) {
-            this.reposition();
-        }
     }
 
     public afterGuiAttached(params?: IAfterGuiAttachedParams): void {
         if (params == null) { return; }
 
         this.hidePopup = params.hidePopup;
-        this.repositionPopup = params.repositionPopup;
     }
 
     // static, as used by floating filter also
@@ -418,7 +404,6 @@ export abstract class ProvidedFilter<M, V> extends Component implements IFilterC
 
     public destroy(): void {
         this.hidePopup = null;
-        this.repositionPopup = null;
 
         super.destroy();
     }

@@ -2,8 +2,8 @@ import { AgAbstractField } from "./agAbstractField";
 import { Component } from "./component";
 import { PostConstruct } from "../context/context";
 import { escapeString } from "../utils/string";
-import { addCssClass, getElementSize, removeCssClass } from "../utils/dom";
-import { findIndex, forEach } from "../utils/array";
+import { addCssClass, removeCssClass } from "../utils/dom";
+import { findIndex } from "../utils/array";
 import { KeyCode } from '../constants/keyCode';
 import { setAriaRole, setAriaSelected } from '../utils/aria';
 
@@ -143,23 +143,6 @@ export class AgList extends Component {
         if (idx !== -1) {
             this.highlightItem(this.itemEls[idx]);
         }
-    }
-
-    public getMaxItemWidth(): number {
-        const itemWidths: number[] = [];
-
-        forEach(this.itemEls, (itemEl) => {
-            const spanEl = itemEl.children[0] as HTMLElement;
-
-            const itemElSize = getElementSize(itemEl);
-            const textElSize = getElementSize(spanEl);
-            const padding = itemElSize.paddingLeft + itemElSize.paddingRight;
-            const textWidth = textElSize.width;
-
-            itemWidths.push(Math.ceil(padding + textWidth));
-        });
-
-        return Math.max(...itemWidths);
     }
 
     private reset(): void {
