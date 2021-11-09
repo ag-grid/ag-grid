@@ -1,4 +1,4 @@
-import {ChangeDetectionService, ChangeDetectionStrategyType} from "../changeDetectionService";
+import {ChangeDetectionService, ChangeDetectionStrategyType} from "../shared/changeDetectionService";
 
 let service: ChangeDetectionService;
 
