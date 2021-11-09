@@ -38,8 +38,7 @@
         },
         "preventDefaultOnContextMenu": {},
         "allowContextMenuWithControlKey": {
-            "default": false,
-            "description": "Allows context menu to show, even when <kbd>Ctrl</kbd> key is held down."
+            "description": "Allows context menu to show, even when <kbd>Ctrl</kbd> key is held down. Default: `false`"
         },
         "suppressMenuHide": {
             "more": {
@@ -71,8 +70,7 @@
             }
         },
         "copyHeadersToClipboard": {
-            "default": false,
-            "description": "Set to `true` to also include headers when copying to clipboard using <kbd>Ctrl</kbd>+<kbd>C</kbd> clipboard."
+            "description": "Set to `true` to also include headers when copying to clipboard using <kbd>Ctrl</kbd>+<kbd>C</kbd> clipboard. Default: `false`"
         },
         "clipboardDeliminator": {},
         "suppressCopyRowsToClipboard": {},
@@ -105,15 +103,12 @@
             }
         },
         "maintainColumnOrder": {
-            "default": false,
             "more": {
                 "name": "Maintain Column Order",
                 "url": "/column-updating-definitions/#maintain-column-order"
             }
         },
-        "suppressFieldDotNotation": {
-            "default": false
-        }
+        "suppressFieldDotNotation": {}
     },
     "headers": {
         "meta": {
@@ -138,22 +133,16 @@
             }
         },
         "allowDragFromColumnsToolPanel": {
-            "default": false,
             "more": {
                 "name": "Columns Tool Panel",
                 "url": "/tool-panel-columns/"
             }
         },
-        "suppressMovableColumns": {
-            "default": false
-        },
+        "suppressMovableColumns": {},
         "suppressColumnMoveAnimation": {
-            "default": false,
-            "description": "If `true`, the `ag-column-moving` class is not added to the grid while columns are moving. In the default [themes](/themes/), this results in no animation when moving columns."
+            "description": "If `true`, the `ag-column-moving` class is not added to the grid while columns are moving. In the default [themes](/themes/), this results in no animation when moving columns. Default: `false` "
         },
-        "suppressDragLeaveHidesColumns": {
-            "default": false
-        }
+        "suppressDragLeaveHidesColumns": {}
     },
     "columnSizing": {
         "meta": {
@@ -170,21 +159,18 @@
             ]
         },
         "suppressAutoSize": {
-            "default": false,
             "more": {
                 "name": "Auto-sizing Columns",
                 "url": "/column-sizing/#auto-size-columns"
             }
         },
         "autoSizePadding": {
-            "default": 4,
             "more": {
                 "name": "Auto-sizing Columns",
                 "url": "/column-sizing/#auto-size-columns"
             }
         },
         "skipHeaderOnAutoSize": {
-            "default": false,
             "more": {
                 "name": "Resizing Example",
                 "url": "/column-sizing/#resizing-example"
@@ -220,34 +206,28 @@
             }
         },
         "singleClickEdit": {
-            "default": false,
             "more": {
                 "name": "Single Click Editing",
                 "url": "/cell-editing/#single-click-editing"
             }
         },
         "suppressClickEdit": {
-            "default": false,
             "more": {
                 "name": "Single Click, Double Click, No Click Editing",
                 "url": "/cell-editing/#single-click-double-click-no-click-editing"
             }
         },
         "stopEditingWhenCellsLoseFocus": {
-            "default": false,
-            "description": "",
             "more": {
                 "name": "Stop cell editing",
                 "url": "/cell-editing/#stop-editing-when-grid-loses-focus"
             }
         },
         "enterMovesDown": {
-            "default": false,
-            "description": "Set to `true` along with `enterMovesDownAfterEdit` to have Excel-style behaviour for the <kbd>Enter</kbd> key, i.e. pressing the <kbd>Enter</kbd> key will move down to the cell beneath [as described here](/cell-editing/#enter-key-navigation)."
+            "description": "Set to `true` along with `enterMovesDownAfterEdit` to have Excel-style behaviour for the <kbd>Enter</kbd> key, i.e. pressing the <kbd>Enter</kbd> key will move down to the cell beneath [as described here](/cell-editing/#enter-key-navigation). Default: `false` "
         },
         "enterMovesDownAfterEdit": {
-            "default": false,
-            "description": "Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the <kbd>Enter</kbd> key, i.e. pressing the <kbd>Enter</kbd> key will move down to the cell beneath [as described here](/cell-editing/#enter-key-navigation)."
+            "description": "Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the <kbd>Enter</kbd> key, i.e. pressing the <kbd>Enter</kbd> key will move down to the cell beneath [as described here](/cell-editing/#enter-key-navigation). Default: `false` "
         },
         "undoRedoCellEditing": {
             "more": {
@@ -255,9 +235,7 @@
                 "url": "/undo-redo-edits/"
             }
         },
-        "undoRedoCellEditingLimit": {
-            "default": 10
-        }
+        "undoRedoCellEditingLimit": {}
     },
     "export": {
         "meta": {
@@ -273,18 +251,14 @@
                 "url": "/csv-export"
             }
         },
-        "suppressCsvExport": {
-            "default": false
-        },
+        "suppressCsvExport": {},
         "defaultExcelExportParams": {
             "more": {
                 "name": "Excel Export",
                 "url": "/excel-export"
             }
         },
-        "suppressExcelExport": {
-            "default": false
-        },
+        "suppressExcelExport": {},
         "excelStyles": {
             "more": {
                 "name": "Excel Export Styles",
@@ -307,14 +281,12 @@
             }
         },
         "cacheQuickFilter": {
-            "default": false,
             "more": {
                 "name": "Quick Filter Cache",
                 "url": "/filter-quick/#quick-filter-cache"
             }
         },
         "excludeChildrenWhenTreeDataFiltering": {
-            "default": false,
             "more": {
                 "name": "Tree Data Filtering",
                 "url": "/tree-data/#tree-data-filtering"
@@ -330,7 +302,6 @@
             }
         },
         "enableCharts": {
-            "default": false,
             "more": {
                 "name": "Enable Charts",
                 "url": "/integrated-charts-customisation/#enabling-charts"
@@ -414,9 +385,7 @@
                 "url": "/master-detail/"
             }
         },
-        "masterDetail": {
-            "default": false
-        },
+        "masterDetail": {},
         "detailCellRenderer": {
             "more": {
                 "name": "Custom Detail",
@@ -460,12 +429,8 @@
                 "url": "/master-detail-other/#syncing-detail-scrolling-with-master"
             }
         },
-        "keepDetailRows": {
-            "default": false
-        },
-        "keepDetailRowsCount": {
-            "default": 10
-        }
+        "keepDetailRows": {},
+        "keepDetailRowsCount": {}
     },
     "miscellaneous": {
         "meta": {
@@ -486,54 +451,36 @@
         "tabIndex": {},
         "rowBuffer": {},
         "valueCache": {
-            "default": false,
             "more": {
                 "name": "Value Cache",
                 "url": "/value-getters/#value-cache-properties"
             }
         },
         "valueCacheNeverExpires": {
-            "default": false,
             "more": {
                 "name": "Value Cache",
                 "url": "/value-getters/#value-cache-properties"
             }
         },
         "enableCellExpressions": {
-            "default": false,
             "more": {
                 "name": "Cell Expressions",
                 "url": "/cell-expressions/#cell-expressions"
             }
         },
-        "suppressParentsInRowNodes": {
-            "default": false
-        },
+        "suppressParentsInRowNodes": {},
         "suppressTouch": {
-            "default": false,
             "more": {
                 "name": "Touch Support",
                 "url": "/touch/"
             }
         },
-        "suppressFocusAfterRefresh": {
-            "default": false
-        },
-        "suppressAsyncEvents": {
-            "default": false
-        },
-        "suppressBrowserResizeObserver": {
-            "default": false
-        },
-        "suppressPropertyNamesCheck": {
-            "default": false
-        },
-        "suppressChangeDetection": {
-            "default": false
-        },
-        "debug": {
-            "default": false
-        }
+        "suppressFocusAfterRefresh": {},
+        "suppressAsyncEvents": {},
+        "suppressBrowserResizeObserver": {},
+        "suppressPropertyNamesCheck": {},
+        "suppressChangeDetection": {},
+        "debug": {}
     },
     "overlays": {
         "meta": {
@@ -558,9 +505,7 @@
         },
         "loadingOverlayComponentFramework": {},
         "loadingOverlayComponentParams": {},
-        "suppressLoadingOverlay": {
-            "default": false
-        },
+        "suppressLoadingOverlay": {},
         "overlayNoRowsTemplate": {},
         "noRowsOverlayComponent": {
             "more": {
@@ -576,9 +521,7 @@
         },
         "noRowsOverlayComponentFramework": {},
         "noRowsOverlayComponentParams": {},
-        "suppressNoRowsOverlay": {
-            "default": false
-        }
+        "suppressNoRowsOverlay": {}
     },
     "pagination": {
         "meta": {
@@ -596,21 +539,18 @@
             }
         },
         "paginationAutoPageSize": {
-            "default": false,
             "more": {
                 "name": "Auto Page Size",
                 "url": "/row-pagination/#example-auto-page-size"
             }
         },
         "paginateChildRows": {
-            "default": false,
             "more": {
                 "name": "Pagination & Child Rows",
                 "url": "/row-pagination/#pagination--child-rows"
             }
         },
         "suppressPaginationPanel": {
-            "default": false,
             "more": {
                 "name": "Custom Pagination Controls",
                 "url": "/row-pagination/#example-customising-pagination"
@@ -622,11 +562,8 @@
             "displayName": "Pivot and Aggregation",
             "description": "See [Pivot](/pivoting/) and [Aggregation](/aggregation/) for more information"
         },
-        "pivotMode": {
-            "default": false
-        },
+        "pivotMode": {},
         "pivotPanelShow": {
-            "default": "never",
             "options": [
                 "never",
                 "always",
@@ -654,18 +591,15 @@
             }
         },
         "pivotSuppressAutoColumn": {
-            "default": false,
             "description": "If `true`, the grid will not swap in the grouping column when pivoting. Useful if pivoting using [Server Side Row Model](/server-side-model/) or [Viewport Row Model](/viewport/) and you want full control of all columns including the group column."
         },
         "suppressExpandablePivotGroups": {
-            "default": false,
             "more": {
                 "name": "Fixed Pivot Column Groups",
                 "url": "/pivoting/#fixed-pivot-column-groups"
             }
         },
         "functionsReadOnly": {
-            "default": false,
             "more": {
                 "name": "Read Only Functions",
                 "url": "/tool-panel-columns/#read-only-functions"
@@ -677,25 +611,20 @@
                 "url": "/aggregation/#custom-aggregation-functions"
             }
         },
-        "suppressAggFuncInHeader": {
-            "default": false
-        },
+        "suppressAggFuncInHeader": {},
         "suppressAggAtRootLevel": {
-            "default": false,
             "more": {
                 "name": "Big Data Small Transactions",
                 "url": "/data-update-transactions/#example-small-changes-big-data"
             }
         },
         "aggregateOnlyChangedColumns": {
-            "default": false,
             "more": {
                 "name": "Change Detection",
                 "url": "/change-detection/#tree-path-selection"
             }
         },
         "suppressAggFilteredOnly": {
-            "default": false,
             "more": {
                 "name": "Custom Aggregation Functions",
                 "url": "/aggregation/#filtering"
@@ -727,13 +656,12 @@
             }
         },
         "domLayout": {
-            "default": "normal",
             "options": [
                 "normal",
                 "autoHeight",
                 "print"
             ],
-            "description": "Switch between layout options. See [Printing](/printing/) and [Auto Height](/grid-size/#grid-auto-height)."
+            "description": "Switch between layout options. See [Printing](/printing/) and [Auto Height](/grid-size/#grid-auto-height). Default: `normal`"
         },
         "ensureDomOrder": {
             "more": {
@@ -879,7 +807,6 @@
             }
         },
         "groupRemoveLowestSingleChildren": {
-            "default": false,
             "more": {
                 "name": "Remove Single Children",
                 "url": "/grouping-single-group-column/#removing-single-children"
@@ -917,16 +844,14 @@
         "groupRowRendererFramework": {},
         "groupRowRendererParams": {},
         "suppressDragLeaveHidesColumns": {
-            "default": false,
-            "description": "By default, dragging a column out of the grid, i.e. to the [Row Group Panel](/grouping-group-panel/), it will be hidden in the grid. This property prevents the column becoming hidden in the grid.",
+            "description": "By default, dragging a column out of the grid, i.e. to the [Row Group Panel](/grouping-group-panel/), it will be hidden in the grid. This property prevents the column becoming hidden in the grid. Default: `false`",
             "more": {
                 "name": "Keeping Columns Visible",
                 "url": "/grouping-group-panel/#keeping-columns-visible"
             }
         },
         "suppressMakeColumnVisibleAfterUnGroup": {
-            "default": false,
-            "description": "By default, when a column is un-grouped, i.e. using the [Row Group Panel](/grouping-group-panel/), it is made visible in the grid. This property stops the column becoming visible again when un-grouping.",
+            "description": "By default, when a column is un-grouped, i.e. using the [Row Group Panel](/grouping-group-panel/), it is made visible in the grid. This property stops the column becoming visible again when un-grouping. Default: `false`",
             "more": {
                 "name": "Keeping Columns Visible",
                 "url": "/grouping-group-panel/#keeping-columns-visible"
@@ -989,8 +914,7 @@
             }
         },
         "suppressModelUpdateAfterUpdateTransaction": {
-            "default": false,
-            "description": "Prevents [Transactions](/data-update-transactions/) changing sort, filter, group or pivot state when transaction only contains updates.",
+            "description": "Prevents [Transactions](/data-update-transactions/) changing sort, filter, group or pivot state when transaction only contains updates. Default: `false`",
             "more": {
                 "name": "Suppress Model Updates",
                 "url": "/data-update-transactions/#suppress-model-updates"
@@ -1006,7 +930,6 @@
             }
         },
         "serverSideStoreType": {
-            "default": "full",
             "more": {
                 "name": "Row Stores",
                 "url": "/server-side-model-row-stores/"
@@ -1019,24 +942,20 @@
             }
         },
         "cacheBlockSize": {
-            "default": 100,
-            "description": "(Partial Store only) How many rows for each block in the store, i.e. how many rows returned from the server at a time."
+            "description": "(Partial Store only) How many rows for each block in the store, i.e. how many rows returned from the server at a time. Default: `100`"
         },
         "maxBlocksInCache": {
             "description": "(Partial Store only) How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value."
         },
         "maxConcurrentDatasourceRequests": {
-            "default": 1,
-            "description": "How many requests to hit the server with concurrently. If the max is reached, requests are queued."
+            "default": 1
         },
         "blockLoadDebounceMillis": {},
         "purgeClosedRowNodes": {
-            "default": false,
-            "description": "When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is [Row Grouping](/server-side-model-grouping/)."
+            "description": "When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is [Row Grouping](/server-side-model-grouping/). Default: `false`"
         },
         "serverSideSortingAlwaysResets": {
-            "default": false,
-            "description": "When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is [Row Grouping](/server-side-model-grouping/)."
+            "description": "When enabled, always refreshes top level groups regardless of which column was sorted. This property only applies when there is [Row Grouping](/server-side-model-grouping/). Default: `false`"
         },
         "serverSideFilteringAlwaysResets": {}
     },
@@ -1103,21 +1022,11 @@
                 "url": "/aligned-grids/#example-aligned-floating-footer"
             }
         },
-        "suppressScrollOnNewData": {
-            "default": false
-        },
-        "suppressScrollWhenPopupsAreOpen": {
-            "default": false
-        },
-        "suppressAnimationFrame": {
-            "default": false
-        },
-        "suppressMiddleClickScrolls": {
-            "default": false
-        },
-        "suppressPreventDefaultOnMouseWheel": {
-            "default": false
-        },
+        "suppressScrollOnNewData": {},
+        "suppressScrollWhenPopupsAreOpen": {},
+        "suppressAnimationFrame": {},
+        "suppressMiddleClickScrolls": {},
+        "suppressPreventDefaultOnMouseWheel": {},
         "scrollbarWidth": {}
     },
     "selection": {
@@ -1146,8 +1055,7 @@
             }
         },
         "suppressRowDeselection": {
-            "default": false,
-            "description": "If `true`, rows will not be deselected if you hold down <kbd>Ctrl</kbd> and click the row or press <kbd>Space</kbd>."
+            "description": "If `true`, rows will not be deselected if you hold down <kbd>Ctrl</kbd> and click the row or press <kbd>Space</kbd>. Default: `false`"
         },
         "suppressRowClickSelection": {},
         "suppressCellSelection": {},
@@ -1177,16 +1085,13 @@
             }
         },
         "fillHandleDirection": {
-            "default": "xy",
             "options": [
                 "x",
                 "y",
                 "xy"
             ]
         },
-        "suppressClearOnFillReduction": {
-            "default": false
-        }
+        "suppressClearOnFillReduction": {}
     },
     "sort": {
         "meta": {
@@ -1268,8 +1173,7 @@
         },
         "suppressRowHoverHighlight": {},
         "suppressRowTransform": {
-            "default": false,
-            "description": "Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in [row spanning](/row-spanning/)."
+            "description": "Uses CSS `top` instead of CSS `transform` for positioning rows. Useful if the transform function is causing issues such as used in [row spanning](/row-spanning/). Default: `false`"
         },
         "columnHoverHighlight": {}
     }

@@ -80,11 +80,11 @@
     "type": { "returnType": "{ [key: string]: ColDef; }" }
   },
   "maintainColumnOrder": {
-    "description": "/** Keeps the order of Columns maintained after new Column Definitions are updated. */",
+    "description": "/** Keeps the order of Columns maintained after new Column Definitions are updated. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressFieldDotNotation": {
-    "description": "/** If `true`, then dots in field names (e.g. `address.firstline`) are not treated as deep references. Allows you to use dots in your field name if you prefer. */",
+    "description": "/** If `true`, then dots in field names (e.g. `address.firstline`) are not treated as deep references. Allows you to use dots in your field name if you prefer. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "deltaColumnMode": {
@@ -140,15 +140,15 @@
     "type": { "returnType": "number" }
   },
   "allowDragFromColumnsToolPanel": {
-    "description": "/** Allow reordering and pinning columns by dragging columns from the Columns Tool Panel to the grid. */",
+    "description": "/** Allow reordering and pinning columns by dragging columns from the Columns Tool Panel to the grid. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressMovableColumns": {
-    "description": "/** Set to `true` to suppress column moving, i.e. to make the columns fixed position. */",
+    "description": "/** Set to `true` to suppress column moving, i.e. to make the columns fixed position. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressColumnMoveAnimation": {
-    "description": "/** If `true`, the `ag-column-moving` class is not added to the grid while columns are moving. In the default themes, this results in no animation when moving columns. */",
+    "description": "/** If `true`, the `ag-column-moving` class is not added to the grid while columns are moving. In the default themes, this results in no animation when moving columns. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressDragLeaveHidesColumns": {
@@ -160,15 +160,15 @@
     "type": { "returnType": "string" }
   },
   "suppressAutoSize": {
-    "description": "/** Suppresses auto-sizing columns for columns. In other words, double clicking a column's header's edge will not auto-size. */",
+    "description": "/** Suppresses auto-sizing columns for columns. In other words, double clicking a column's header's edge will not auto-size. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "autoSizePadding": {
-    "description": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header. */",
+    "description": "/** Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.\n * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.\n * Default: `4` */",
     "type": { "returnType": "number" }
   },
   "skipHeaderOnAutoSize": {
-    "description": "/** Set this to `true` to skip the `headerName` when `autoSize` is called by default. */",
+    "description": "/** Set this to `true` to skip the `headerName` when `autoSize` is called by default. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "components": {
@@ -184,23 +184,23 @@
     "type": { "returnType": "string" }
   },
   "singleClickEdit": {
-    "description": "/** Set to `true` to enable Single Click Editing for cells, to start editing with a single click. */",
+    "description": "/** Set to `true` to enable Single Click Editing for cells, to start editing with a single click. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressClickEdit": {
-    "description": "/** Set to `true` so that neither single nor double click starts editing. */",
+    "description": "/** Set to `true` so that neither single nor double click starts editing. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "stopEditingWhenCellsLoseFocus": {
-    "description": "/** Set this to `true` to stop cell editing when grid loses focus.\n * The default is that the grid stays editing until focus goes onto another cell. For inline (non-popup) editors only. */",
+    "description": "/** Set this to `true` to stop cell editing when grid loses focus.\n * The default is that the grid stays editing until focus goes onto another cell. For inline (non-popup) editors only.\n * Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "enterMovesDown": {
-    "description": "/** Set to `true` along with `enterMovesDownAfterEdit` to have Excel-style behaviour for the `Enter` key.\n * i.e. pressing the `Enter` key will move down to the cell beneath. */",
+    "description": "/** Set to `true` along with `enterMovesDownAfterEdit` to have Excel-style behaviour for the `Enter` key.\n * i.e. pressing the `Enter` key will move down to the cell beneath.\n * Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "enterMovesDownAfterEdit": {
-    "description": "/** Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the 'Enter' key.\n * i.e. pressing the Enter key will move down to the cell beneath. */",
+    "description": "/** Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the 'Enter' key.\n * i.e. pressing the Enter key will move down to the cell beneath.\n * Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "undoRedoCellEditing": {
@@ -208,7 +208,7 @@
     "type": { "returnType": "boolean" }
   },
   "undoRedoCellEditingLimit": {
-    "description": "/** Set the size of the undo / redo stack. */",
+    "description": "/** Set the size of the undo / redo stack. Default: `10` */",
     "type": { "returnType": "number" }
   },
   "stopEditingWhenGridLosesFocus": {
@@ -220,7 +220,7 @@
     "type": { "returnType": "CsvExportParams" }
   },
   "suppressCsvExport": {
-    "description": "/** Prevents the user from exporting the grid to CSV. */",
+    "description": "/** Prevents the user from exporting the grid to CSV. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "defaultExcelExportParams": {
@@ -228,7 +228,7 @@
     "type": { "returnType": "ExcelExportParams" }
   },
   "suppressExcelExport": {
-    "description": "/** Prevents the user from exporting the grid to Excel. */",
+    "description": "/** Prevents the user from exporting the grid to Excel. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "excelStyles": {
@@ -244,11 +244,11 @@
     "type": { "returnType": "string" }
   },
   "cacheQuickFilter": {
-    "description": "/** Set to `true` to turn on the quick filter cache, used to improve performance when using the quick filter. */",
+    "description": "/** Set to `true` to turn on the quick filter cache, used to improve performance when using the quick filter. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "excludeChildrenWhenTreeDataFiltering": {
-    "description": "/** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. */",
+    "description": "/** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "floatingFilter": {
@@ -260,7 +260,7 @@
     "type": { "returnType": "boolean" }
   },
   "enableCharts": {
-    "description": "/** Set to `true` to Enable Charts. */",
+    "description": "/** Set to `true` to Enable Charts. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "chartThemes": {
@@ -296,15 +296,15 @@
     "type": { "returnType": "{ [key: string]: string }" }
   },
   "masterDetail": {
-    "description": "/** Set to `true` to enable Master Detail. */",
+    "description": "/** Set to `true` to enable Master Detail. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "keepDetailRows": {
-    "description": "/** Set to `true` to keep detail rows for when they are displayed again. */",
+    "description": "/** Set to `true` to keep detail rows for when they are displayed again. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "keepDetailRowsCount": {
-    "description": "/** Sets the number of details rows to keep. */",
+    "description": "/** Sets the number of details rows to keep. Default: `10` */",
     "type": { "returnType": "number" }
   },
   "detailCellRenderer": {
@@ -346,47 +346,47 @@
     "type": { "returnType": "number" }
   },
   "valueCache": {
-    "description": "/** Set to `true` to turn on the value cache. */",
+    "description": "/** Set to `true` to turn on the value cache. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "valueCacheNeverExpires": {
-    "description": "/** Set to `true` to configure the value cache to not expire after data updates. */",
+    "description": "/** Set to `true` to configure the value cache to not expire after data updates. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "enableCellExpressions": {
-    "description": "/** Set to `true` to allow cell expressions. */",
+    "description": "/** Set to `true` to allow cell expressions. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressParentsInRowNodes": {
-    "description": "/** If `true`, row nodes do not have their parents set.\n * The grid doesn't use the parent reference, but it is included to help the client code navigate the node tree if it wants by providing bi-direction navigation up and down the tree.\n * If this is a problem (e.g. if you need to convert the tree to JSON, which does not allow cyclic dependencies) then set this to `true`. */",
+    "description": "/** If `true`, row nodes do not have their parents set.\n * The grid doesn't use the parent reference, but it is included to help the client code navigate the node tree if it wants by providing bi-direction navigation up and down the tree.\n * If this is a problem (e.g. if you need to convert the tree to JSON, which does not allow cyclic dependencies) then set this to `true`.\n * Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressTouch": {
-    "description": "/** Disables touch support (but does not remove the browser's efforts to simulate mouse events on touch). */",
+    "description": "/** Disables touch support (but does not remove the browser's efforts to simulate mouse events on touch). Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressFocusAfterRefresh": {
-    "description": "/** Set to `true` to not set focus back on the grid after a refresh. This can avoid issues where you want to keep the focus on another part of the browser. */",
+    "description": "/** Set to `true` to not set focus back on the grid after a refresh. This can avoid issues where you want to keep the focus on another part of the browser. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressAsyncEvents": {
-    "description": "/** Disables the asynchronous nature of the events introduced in v10, and makes them synchronous. This property only exists for the purpose of supporting legacy code which has a dependency on synchronous events from earlier versions (v9 or earlier) of AG Grid. **It is strongly recommended that you do not change this property unless you have legacy issues.** */",
+    "description": "/** Disables the asynchronous nature of the events introduced in v10, and makes them synchronous. This property only exists for the purpose of supporting legacy code which has a dependency on synchronous events from earlier versions (v9 or earlier) of AG Grid. **It is strongly recommended that you do not change this property unless you have legacy issues.** Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressBrowserResizeObserver": {
-    "description": "/** The grid will check for `ResizeObserver` and use it if it exists in the browser, otherwise it will use the grid's alternative implementation. Some users reported issues with Chrome's `ResizeObserver`. Use this property to always use the grid's alternative implementation should such problems exist. */",
+    "description": "/** The grid will check for `ResizeObserver` and use it if it exists in the browser, otherwise it will use the grid's alternative implementation. Some users reported issues with Chrome's `ResizeObserver`. Use this property to always use the grid's alternative implementation should such problems exist. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressPropertyNamesCheck": {
-    "description": "/** Disables showing a warning message in the console if using a `gridOptions` or `colDef` property that doesn't exist. */",
+    "description": "/** Disables showing a warning message in the console if using a `gridOptions` or `colDef` property that doesn't exist. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressChangeDetection": {
-    "description": "/** Disables change detection. */",
+    "description": "/** Disables change detection. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "debug": {
-    "description": "/** Set this to `true` to enable debug information from the grid and related components. Will result in additional logging being output, but very useful when investigating problems. */",
+    "description": "/** Set this to `true` to enable debug information from the grid and related components. Will result in additional logging being output, but very useful when investigating problems. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "overlayLoadingTemplate": {
@@ -406,7 +406,7 @@
     "type": { "returnType": "any" }
   },
   "suppressLoadingOverlay": {
-    "description": "/** Disables the 'loading' overlay. */",
+    "description": "/** Disables the 'loading' overlay. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "overlayNoRowsTemplate": {
@@ -426,7 +426,7 @@
     "type": { "returnType": "any" }
   },
   "suppressNoRowsOverlay": {
-    "description": "/** Disables the 'no rows' overlay. */",
+    "description": "/** Disables the 'no rows' overlay. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "pagination": {
@@ -438,23 +438,23 @@
     "type": { "returnType": "number" }
   },
   "paginationAutoPageSize": {
-    "description": "/** Set to `true` so that the number of rows to load per page is automatically adjusted by the grid so each page shows enough rows to just fill the area designated for the grid. If `false`, `paginationPageSize` is used. */",
+    "description": "/** Set to `true` so that the number of rows to load per page is automatically adjusted by the grid so each page shows enough rows to just fill the area designated for the grid. If `false`, `paginationPageSize` is used. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "paginateChildRows": {
-    "description": "/** Set to `true` to have pages split children of groups when using Row Grouping or detail rows with Master Detail. */",
+    "description": "/** Set to `true` to have pages split children of groups when using Row Grouping or detail rows with Master Detail. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressPaginationPanel": {
-    "description": "/** If `true`, the default grid controls for navigation are hidden.\n * This is useful if `pagination=true` and you want to provide your own pagination controls.\n * Otherwise, when `pagination=true` the grid automatically shows the necessary controls at the bottom so that the user can navigate through the different pages. */",
+    "description": "/** If `true`, the default grid controls for navigation are hidden.\n * This is useful if `pagination=true` and you want to provide your own pagination controls.\n * Otherwise, when `pagination=true` the grid automatically shows the necessary controls at the bottom so that the user can navigate through the different pages.\n * Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "pivotMode": {
-    "description": "/** Set to `true` to enable pivot mode. */",
+    "description": "/** Set to `true` to enable pivot mode. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "pivotPanelShow": {
-    "description": "/** When to show the 'pivot panel' (where you drag rows to pivot) at the top. Note that the pivot panel will never show if `pivotMode` is off. */",
+    "description": "/** When to show the 'pivot panel' (where you drag rows to pivot) at the top. Note that the pivot panel will never show if `pivotMode` is off. Default: `never` */",
     "type": { "returnType": "string" }
   },
   "pivotColumnGroupTotals": {
@@ -466,15 +466,15 @@
     "type": { "returnType": "string" }
   },
   "pivotSuppressAutoColumn": {
-    "description": "/** If `true`, the grid will not swap in the grouping column when pivoting. Useful if pivoting using Server Side Row Model or Viewport Row Model and you want full control of all columns including the group column. */",
+    "description": "/** If `true`, the grid will not swap in the grouping column when pivoting. Useful if pivoting using Server Side Row Model or Viewport Row Model and you want full control of all columns including the group column. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressExpandablePivotGroups": {
-    "description": "/** When enabled, pivot column groups will appear 'fixed', without the ability to expand and collapse the column groups. */",
+    "description": "/** When enabled, pivot column groups will appear 'fixed', without the ability to expand and collapse the column groups. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "functionsReadOnly": {
-    "description": "/** If `true`, then row group, pivot and value aggregation will be read-only from the GUI. The grid will display what values are used for each, but will not allow the user to change the selection. */",
+    "description": "/** If `true`, then row group, pivot and value aggregation will be read-only from the GUI. The grid will display what values are used for each, but will not allow the user to change the selection. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "aggFuncs": {
@@ -482,19 +482,19 @@
     "type": { "returnType": "{ [key: string]: IAggFunc; }" }
   },
   "suppressAggFuncInHeader": {
-    "description": "/** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`. */",
+    "description": "/** When `true`, column headers won't include the `aggFunc` name, e.g. `'sum(Bank Balance)`' will just be `'Bank Balance'`. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressAggAtRootLevel": {
-    "description": "/** When `true`, the aggregations won't be computed for the root node of the grid. */",
+    "description": "/** When `true`, the aggregations won't be computed for the root node of the grid. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "aggregateOnlyChangedColumns": {
-    "description": "/** When using change detection, only the updated column will be re-aggregated. */",
+    "description": "/** When using change detection, only the updated column will be re-aggregated. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressAggFilteredOnly": {
-    "description": "/** Set to `true` so that aggregations are not impacted by filtering. */",
+    "description": "/** Set to `true` so that aggregations are not impacted by filtering. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "animateRows": {
@@ -506,11 +506,11 @@
     "type": { "returnType": "boolean" }
   },
   "cellFlashDelay": {
-    "description": "/** To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long a cell should remain in its \\\"flashed\\\" state.\n * Default: `500` */",
+    "description": "/** To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long a cell should remain in its \"flashed\" state.\n * Default: `500` */",
     "type": { "returnType": "number" }
   },
   "cellFadeDelay": {
-    "description": "/** To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long the \\\"flashed\\\" state animation takes to fade away after the timer set by `cellFlashDelay` has completed.\n * Default: `1000` */",
+    "description": "/** To be used in combination with `enableCellChangeFlash`, this configuration will set the delay in milliseconds of how long the \"flashed\" state animation takes to fade away after the timer set by `cellFlashDelay` has completed.\n * Default: `1000` */",
     "type": { "returnType": "number" }
   },
   "allowShowChangeAfterFilter": {
@@ -732,7 +732,7 @@
     "type": { "returnType": "number" }
   },
   "serverSideStoreType": {
-    "description": "/** Whether to use Full Store or Partial Store for storing rows. */",
+    "description": "/** Whether to use Full Store or Partial Store for storing rows. Default: `full` */",
     "type": { "returnType": "ServerSideStoreType" }
   },
   "cacheBlockSize": {
@@ -800,23 +800,23 @@
     "type": { "returnType": "boolean" }
   },
   "suppressScrollOnNewData": {
-    "description": "/** When `true`, the grid will not scroll to the top when new row data is provided. Use this if you don't want the default behaviour of scrolling to the top every time you load new data. */",
+    "description": "/** When `true`, the grid will not scroll to the top when new row data is provided. Use this if you don't want the default behaviour of scrolling to the top every time you load new data. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressScrollWhenPopupsAreOpen": {
-    "description": "/** When `true`, the grid will not allow mousewheel / touchpad scroll when popup elements are present. */",
+    "description": "/** When `true`, the grid will not allow mousewheel / touchpad scroll when popup elements are present. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressAnimationFrame": {
-    "description": "/** When `true`, the grid will not use animation frames when drawing rows while scrolling. Use this if the grid is working fast enough that you don't need animation frames and you don't want the grid to flicker. */",
+    "description": "/** When `true`, the grid will not use animation frames when drawing rows while scrolling. Use this if the grid is working fast enough that you don't need animation frames and you don't want the grid to flicker. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressMiddleClickScrolls": {
-    "description": "/** If `true`, middle clicks will result in `click` events for cells and rows. Otherwise the browser will use middle click to scroll the grid.<br />**Note:** Not all browsers fire `click` events with the middle button. Most will fire only `mousedown` and `mouseup` events, which can be used to focus a cell, but will not work to call the `onCellClicked` function. */",
+    "description": "/** If `true`, middle clicks will result in `click` events for cells and rows. Otherwise the browser will use middle click to scroll the grid.<br />**Note:** Not all browsers fire `click` events with the middle button. Most will fire only `mousedown` and `mouseup` events, which can be used to focus a cell, but will not work to call the `onCellClicked` function. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressPreventDefaultOnMouseWheel": {
-    "description": "/** If `true`, mouse wheel events will be passed to the browser. Useful if your grid has no vertical scrolls and you want the mouse to scroll the browser page. */",
+    "description": "/** If `true`, mouse wheel events will be passed to the browser. Useful if your grid has no vertical scrolls and you want the mouse to scroll the browser page. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "scrollbarWidth": {
@@ -864,11 +864,11 @@
     "type": { "returnType": "boolean" }
   },
   "fillHandleDirection": {
-    "description": "/** Set to `'x'` to force the fill handle direction to horizontal, or set to `'y'` to force the fill handle direction to vertical. */",
+    "description": "/** Set to `'x'` to force the fill handle direction to horizontal, or set to `'y'` to force the fill handle direction to vertical. Default: `xy` */",
     "type": { "returnType": "string" }
   },
   "suppressClearOnFillReduction": {
-    "description": "/** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. */",
+    "description": "/** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "rowDeselection": {
