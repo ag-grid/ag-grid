@@ -37,6 +37,7 @@ export class SortService extends BeanStub {
         sortContainsGroupColumns: boolean,
     ): void {
         const groupMaintainOrder = this.gridOptionsWrapper.isGroupMaintainOrder();
+        const groupColumnsPresent = _.some(this.columnModel.getAllGridColumns(), (c) => c.isRowGroupActive());
 
         const callback = (rowNode: RowNode) => {
             // we clear out the 'pull down open parents' first, as the values mix up the sorting
@@ -48,7 +49,7 @@ export class SortService extends BeanStub {
             if (sortActive) {
 
                 // when 'groupMaintainOrder' is enabled we skip sorting groups unless we are sorting on group columns
-                let skipSortingGroups = groupMaintainOrder && !rowNode.leafGroup && !sortContainsGroupColumns;
+                let skipSortingGroups = groupMaintainOrder && groupColumnsPresent && !rowNode.leafGroup && !sortContainsGroupColumns;
                 if (skipSortingGroups) {
                     rowNode.childrenAfterSort = rowNode.childrenAfterFilter!.slice(0);
                 } else {
