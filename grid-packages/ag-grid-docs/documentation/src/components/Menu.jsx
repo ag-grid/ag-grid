@@ -54,11 +54,17 @@ const MenuItem = ({ item, currentFramework }) => {
  * link is shown and highlighted.
  */
 const Menu = ({ currentFramework, currentPage }) => {
-    const groupItemHasApplicableChild = group => group.items.some(item => item.frameworks === undefined || item.frameworks.includes(currentFramework))
+    const groupItemHasApplicableChild = items => {
+        if(!items) {
+            return false;
+        }
+        return items.some(item => item.frameworks === undefined || item.frameworks.includes(currentFramework) || groupItemHasApplicableChild(items.items))
+    }
 
     const [activeSection, setActiveSection] = useState(null);
     const combinedMenuItems = menuData.reduce((combined, group) => [...combined, ...group.items], [])
-        .filter(groupItemHasApplicableChild);
+        .filter(group => groupItemHasApplicableChild(group.items));
+
     const containsPage = (items, frameworks) => items.reduce(
         (hasPage, item) => {
             const availableFrameworks = item.frameworks || frameworks;

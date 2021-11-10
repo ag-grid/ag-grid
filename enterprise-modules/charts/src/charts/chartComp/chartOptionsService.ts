@@ -1,5 +1,6 @@
 import {
     _,
+    AgChartThemeOverrides,
     Autowired,
     BeanStub,
     ChartOptionsChanged,
@@ -10,9 +11,8 @@ import {
     PostConstruct
 } from "@ag-grid-community/core";
 import { ChartController } from "./chartController";
-import { CategoryAxis, GroupedCategoryAxis, NumberAxis, TimeAxis } from "ag-charts-community";
-import { getChartThemeOverrideObjectName } from "./chartThemeOverrideMapper";
-import { ChartDataModel } from "./chartDataModel";
+import { CategoryAxis, Chart, ChartAxis, GroupedCategoryAxis, NumberAxis, TimeAxis } from "ag-charts-community";
+import { getChartThemeOverridesObjectName } from "./chartThemeOverridesMapper";
 
 export class ChartOptionsService extends BeanStub {
 
@@ -40,7 +40,7 @@ export class ChartOptionsService extends BeanStub {
 
     public setChartOption<T = string>(expression: string, value: T): void {
         // update chart options
-        const optionsType = getChartThemeOverrideObjectName(this.getChartType());
+        const optionsType = getChartThemeOverridesObjectName(this.getChartType());
         const options = _.get(this.getChartOptions(), `${optionsType}`, undefined);
         _.set(options, expression, value);
 
@@ -87,7 +87,7 @@ export class ChartOptionsService extends BeanStub {
         this.getChart().layoutPending = true;
 
         // do not update axis options when the default category is selected
-        if (!this.chartController.isDefaultCategorySelected()) {
+        if (chartAxis && !this.chartController.isDefaultCategorySelected()) {
             this.updateAxisOptions(chartAxis, expression, value);
             this.raiseChartOptionsChangedEvent();
         }
@@ -99,7 +99,7 @@ export class ChartOptionsService extends BeanStub {
 
     public setSeriesOption<T = string>(expression: string, value: T): void {
         // update series options
-        const optionsType = getChartThemeOverrideObjectName(this.getChartType());
+        const optionsType = getChartThemeOverridesObjectName(this.getChartType());
         _.set(this.getChartOptions()[optionsType].series, expression, value);
 
         // update chart
@@ -108,17 +108,17 @@ export class ChartOptionsService extends BeanStub {
         this.raiseChartOptionsChangedEvent();
     }
 
-    private getChart() {
+    private getChart(): Chart {
         return this.chartController.getChartProxy().getChart();
     }
 
-    private getChartOptions() {
+    private getChartOptions(): AgChartThemeOverrides {
         return this.chartController.getChartProxy().getChartOptions();
     }
 
-    private getAxis(axisType: string) {
+    private getAxis(axisType: string): ChartAxis | undefined {
         const chart = this.getChart();
-        if (!chart.axes || chart.axes.length < 1) { return; }
+        if (!chart.axes || chart.axes.length < 1) { return undefined; }
 
         if (axisType === 'xAxis') {
             return (chart.axes && chart.axes[0].direction === 'x') ? chart.axes[0] : chart.axes[1];
@@ -126,8 +126,8 @@ export class ChartOptionsService extends BeanStub {
         return (chart.axes && chart.axes[1].direction === 'y') ? chart.axes[1] : chart.axes[0];
     }
 
-    private updateAxisOptions<T = string>(chartAxis: any, expression: string, value: T) {
-        const optionsType = getChartThemeOverrideObjectName(this.getChartType());
+    private updateAxisOptions<T = string>(chartAxis: ChartAxis, expression: string, value: T) {
+        const optionsType = getChartThemeOverridesObjectName(this.getChartType());
         const axisOptions = this.getChartOptions()[optionsType].axes;
         if (chartAxis instanceof NumberAxis) {
             _.set(axisOptions.number, expression, value);

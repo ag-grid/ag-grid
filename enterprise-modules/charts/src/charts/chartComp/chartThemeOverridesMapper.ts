@@ -15,7 +15,7 @@ export type ChartThemeOverrideObjectName =
     'treemap' |
     'common';
 
-export function getChartThemeOverrideObjectName(chartType: ChartType): ChartThemeOverrideObjectName {
+export function getChartThemeOverridesObjectName(chartType: ChartType): ChartThemeOverrideObjectName {
     switch (chartType) {
         case ChartType.Bar:
         case ChartType.GroupedBar:

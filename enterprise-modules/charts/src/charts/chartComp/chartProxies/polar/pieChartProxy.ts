@@ -1,7 +1,8 @@
-import { AgChart, AgPolarChartOptions, PieSeries, PolarChart } from "ag-charts-community";
+import { AgChart, PieSeries, PolarChart } from "ag-charts-community";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { PolarChartProxy } from "./polarChartProxy";
 import { LegendClickEvent } from "ag-charts-community/dist/cjs/chart/legend";
+import { changeOpacity } from "../../color.";
 
 export class PieChartProxy extends PolarChartProxy {
 
@@ -84,10 +85,8 @@ export class PieChartProxy extends PolarChartProxy {
             };
             pieSeries = AgChart.createComponent(options, 'pie.series');
 
-            //TODO verify
-            const palette = this.getPalette();
-            pieSeries.fills = palette.fills;
-            pieSeries.strokes = palette.strokes;
+            pieSeries.fills = this.chartTheme.palette.fills;
+            pieSeries.strokes = this.chartTheme.palette.strokes;
 
             if (this.crossFiltering && pieSeries && !pieSeries.tooltip.renderer) {
                 // only add renderer if user hasn't provided one
@@ -106,8 +105,8 @@ export class PieChartProxy extends PolarChartProxy {
 
             const isOpaqueSeries = !opaqueSeries;
             if (isOpaqueSeries) {
-                pieSeries.fills = this.changeOpacity(pieSeries.fills, 0.3);
-                pieSeries.strokes = this.changeOpacity(pieSeries.strokes, 0.3);
+                pieSeries.fills = changeOpacity(pieSeries.fills, 0.3);
+                pieSeries.strokes = changeOpacity(pieSeries.strokes, 0.3);
                 pieSeries.showInLegend = false;
             } else {
                 chart.legend.addEventListener('click', (event: LegendClickEvent) => {

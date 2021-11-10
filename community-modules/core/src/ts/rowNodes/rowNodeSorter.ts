@@ -86,17 +86,16 @@ export class RowNodeSorter {
             return rowNode.rowGroupColumn.getColDef().comparator;
         }
 
-        if (column.getColDef().showRowGroup) {
-            // if a 'field' is supplied on the autoGroupColumnDef we need to use the associated column comparator
-            const groupLeafField = !rowNode.group && column.getColDef().field;
-            if (groupLeafField) {
-                const primaryColumn = this.columnModel.getPrimaryColumn(column.getColDef().field!);
-                const groupLeafComparator = primaryColumn!.getColDef().comparator;
-                if (groupLeafComparator) {
-                    return groupLeafComparator;
-                }
-            }
-        }
+        if (!column.getColDef().showRowGroup) { return; }
+
+        // if a 'field' is supplied on the autoGroupColumnDef we need to use the associated column comparator
+        const groupLeafField = !rowNode.group && column.getColDef().field;
+        if (!groupLeafField) { return; }
+
+        const primaryColumn = this.columnModel.getPrimaryColumn(groupLeafField);
+        if (!primaryColumn) { return; }
+
+        return primaryColumn.getColDef().comparator;
     }
 
     private getValue(nodeA: RowNode, column: Column): string {

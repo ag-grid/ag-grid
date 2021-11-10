@@ -166,18 +166,8 @@ export class GridChartComp extends Component {
     }
 
     private createChart(): void {
-        let width, height;
-
         // if chart already exists, destroy it and remove it from DOM
         if (this.chartProxy) {
-            const chart = this.chartProxy.getChart();
-
-            if (chart) {
-                // preserve existing width/height
-                width = chart.width;
-                height = chart.height;
-            }
-
             this.chartProxy.destroy();
         }
 
@@ -195,21 +185,15 @@ export class GridChartComp extends Component {
         const chartProxyParams: ChartProxyParams = {
             chartId: this.getChartId(),
             chartType,
-            chartThemeName: this.model.getChartThemeName(),
             getChartThemeName: this.getChartThemeName.bind(this),
             getChartThemes: this.getChartThemes.bind(this),
             customChartThemes: customChartThemes,
             getGridOptionsChartThemeOverrides: this.getGridOptionsChartThemeOverrides.bind(this),
             apiChartThemeOverrides: this.params.chartThemeOverrides,
-            allowPaletteOverride: !this.params.chartThemeName,
-            isDarkTheme: this.environment.isThemeDark.bind(this.environment),
             crossFiltering: this.params.crossFiltering,
             crossFilterCallback,
             parentElement: this.eChart,
-            width,
-            height,
             grouping: isGrouping,
-            document: this.gridOptionsWrapper.getDocument(),
             chartModel: this.params.chartModel
         };
 
@@ -305,16 +289,10 @@ export class GridChartComp extends Component {
         const maxWidth = _.getAbsoluteWidth(popupParent) * 0.75;
         const maxHeight = _.getAbsoluteHeight(popupParent) * 0.75;
         const ratio = 0.553;
-        let { width, height } = this.chartProxy.getChartOptions();
-
-        if (width && height) {
-            return { width, height };
-        }
 
         const chart = this.chartProxy.getChart();
-
-        width = this.params.insideDialog ? 850 : chart.width;
-        height = this.params.insideDialog ? 470 : chart.height;
+        let width = this.params.insideDialog ? 850 : chart.width;
+        let height = this.params.insideDialog ? 470 : chart.height;
 
         if (width > maxWidth || height > maxHeight) {
             width = Math.min(width, maxWidth);

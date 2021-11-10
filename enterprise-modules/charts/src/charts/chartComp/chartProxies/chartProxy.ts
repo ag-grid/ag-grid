@@ -1,33 +1,19 @@
-import { _, ChartModel, ChartType, Color, AgChartThemeOverrides } from "@ag-grid-community/core";
-import {
-    AgChartTheme,
-    AgChartThemePalette,
-    CategoryAxis,
-    Chart,
-    ChartTheme,
-    getChartTheme,
-    themes,
-} from "ag-charts-community";
+import { _, AgChartThemeOverrides, ChartModel, ChartType } from "@ag-grid-community/core";
+import { AgChartTheme, CategoryAxis, Chart, ChartTheme, getChartTheme, themes, } from "ag-charts-community";
 import { deepMerge } from "../object";
 import { CrossFilteringContext } from "../../chartService";
-import { getChartThemeOverrideObjectName, ChartThemeOverrideObjectName } from "../chartThemeOverrideMapper";
+import { ChartThemeOverrideObjectName, getChartThemeOverridesObjectName } from "../chartThemeOverridesMapper";
 
 export interface ChartProxyParams {
     chartId: string;
     chartType: ChartType;
-    chartThemeName?: string;
     customChartThemes?: { [name: string]: AgChartTheme; };
-    width?: number;
-    height?: number;
     parentElement: HTMLElement;
     grouping: boolean;
-    document: Document;
     getChartThemeName: () => string;
     getChartThemes: () => string[];
     getGridOptionsChartThemeOverrides: () => AgChartThemeOverrides | undefined;
     apiChartThemeOverrides?: AgChartThemeOverrides;
-    allowPaletteOverride: boolean;
-    isDarkTheme: () => boolean;
     crossFiltering: boolean;
     crossFilterCallback: (event: any, reset?: boolean) => void;
     chartModel?: ChartModel;
@@ -59,7 +45,6 @@ export abstract class ChartProxy {
     protected chart: Chart;
     protected chartOptions: AgChartThemeOverrides;
     protected chartTheme: ChartTheme;
-    protected customPalette: AgChartThemePalette;
     protected crossFiltering: boolean;
     protected crossFilterCallback: (event: any, reset?: boolean) => void;
 
@@ -68,7 +53,7 @@ export abstract class ChartProxy {
         this.chartType = chartProxyParams.chartType;
         this.crossFiltering = chartProxyParams.crossFiltering;
         this.crossFilterCallback = chartProxyParams.crossFilterCallback;
-        this.standaloneChartType = getChartThemeOverrideObjectName(this.chartType);
+        this.standaloneChartType = getChartThemeOverridesObjectName(this.chartType);
     }
 
     protected abstract createChart(options?: AgChartThemeOverrides): Chart;
@@ -121,10 +106,19 @@ export abstract class ChartProxy {
         return getChartTheme(stockTheme ? themeName : this.lookupCustomChartTheme(themeName));
     }
 
-    private static mergeThemeOverrides(gridOptionsThemeOverrides?: AgChartThemeOverrides, apiThemeOverrides?: AgChartThemeOverrides) {
-        if (!gridOptionsThemeOverrides) { return apiThemeOverrides; }
-        if (!apiThemeOverrides) { return gridOptionsThemeOverrides; }
-        return deepMerge(gridOptionsThemeOverrides, apiThemeOverrides);
+    public isStockTheme(themeName: string): boolean {
+        return _.includes(Object.keys(themes), themeName);
+    }
+
+    private getSelectedTheme(): string {
+        let chartThemeName = this.chartProxyParams.getChartThemeName();
+        const availableThemes = this.chartProxyParams.getChartThemes();
+
+        if (!_.includes(availableThemes, chartThemeName)) {
+            chartThemeName = availableThemes[0];
+        }
+
+        return chartThemeName;
     }
 
     public lookupCustomChartTheme(name: string) {
@@ -139,8 +133,10 @@ export abstract class ChartProxy {
         return customChartTheme;
     }
 
-    public isStockTheme(themeName: string): boolean {
-        return _.includes(Object.keys(themes), themeName);
+    private static mergeThemeOverrides(gridOptionsThemeOverrides?: AgChartThemeOverrides, apiThemeOverrides?: AgChartThemeOverrides) {
+        if (!gridOptionsThemeOverrides) { return apiThemeOverrides; }
+        if (!apiThemeOverrides) { return gridOptionsThemeOverrides; }
+        return deepMerge(gridOptionsThemeOverrides, apiThemeOverrides);
     }
 
     public downloadChart(): void {
@@ -153,31 +149,8 @@ export abstract class ChartProxy {
         return this.chart.scene.getDataURL(type);
     }
 
-    private getSelectedTheme(): string {
-        let chartThemeName = this.chartProxyParams.getChartThemeName();
-        const availableThemes = this.chartProxyParams.getChartThemes();
-
-        if (!_.includes(availableThemes, chartThemeName)) {
-            chartThemeName = availableThemes[0];
-        }
-
-        return chartThemeName;
-    }
-
-    public getChartOptions(): any {
+    public getChartOptions(): AgChartThemeOverrides {
         return this.chartOptions;
-    }
-
-    public getCustomPalette(): AgChartThemePalette | undefined {
-        return this.customPalette;
-    }
-
-    protected getPredefinedPalette(): AgChartThemePalette {
-        return this.chartTheme.palette;
-    }
-
-    protected getPalette(): AgChartThemePalette {
-        return this.customPalette || this.chartTheme.palette;
     }
 
     protected transformData(data: any[], categoryKey: string): any[] {
@@ -194,20 +167,6 @@ export abstract class ChartProxy {
             datum[categoryKey] = { id: index, value, toString: () => valueString };
 
             return datum;
-        });
-    }
-
-    protected hexToRGBA(hex: string, alpha: string) {
-        const r = parseInt(hex.slice(1, 3), 16);
-        const g = parseInt(hex.slice(3, 5), 16);
-        const b = parseInt(hex.slice(5, 7), 16);
-        return alpha ? `rgba(${r}, ${g}, ${b}, ${alpha})` : `rgba(${r}, ${g}, ${b})`;
-    }
-
-    protected changeOpacity(fills: string[], alpha: number) {
-        return fills.map(fill => {
-            const c = Color.fromString(fill);
-            return new Color(c.r, c.g, c.b, alpha).toHexString();
         });
     }
 

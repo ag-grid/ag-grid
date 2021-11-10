@@ -106,11 +106,13 @@ const exclude = [
     'ag-grid-documentation',
 ];
 
-const excludePackage = packageName => !exclude.includes(packageName) && !packageName.includes("-example") && !packageName.includes("seans");
+ const excludePackage = (packageName, includeExamples) => !exclude.includes(packageName) &&
+     (!packageName.includes("-example") ||(packageName.includes("-example") && includeExamples)) &&
+    !packageName.includes("seans");
 
-const filterExcludedRoots = dependencyTree => {
+const filterExcludedRoots = (dependencyTree, includeExamples) => {
     const prunedDependencyTree = {};
-    const agRoots = Object.keys(dependencyTree).filter(excludePackage);
+    const agRoots = Object.keys(dependencyTree).filter(packageName => excludePackage(packageName, includeExamples));
 
     agRoots.forEach(root => {
         prunedDependencyTree[root] = dependencyTree[root] ? dependencyTree[root].filter(dependency => dependency.includes("@ag-") || dependency.includes("ag-charts-community")) : [];
@@ -119,11 +121,11 @@ const filterExcludedRoots = dependencyTree => {
     return prunedDependencyTree;
 };
 
-const getOrderedDependencies = async packageName => {
+const getOrderedDependencies = async (packageName, includeExamples = false) => {
     const lernaArgs = `ls --all --sort --toposort --json --scope ${packageName} --include-dependents`.split(" ");
     const { stdout } = await execa("./node_modules/.bin/lerna", lernaArgs, { cwd: '../../' });
     let dependenciesOrdered = JSON.parse(stdout);
-    dependenciesOrdered = dependenciesOrdered.filter(dependency => excludePackage(dependency.name));
+    dependenciesOrdered = dependenciesOrdered.filter(dependency => excludePackage(dependency.name, includeExamples));
 
     const paths = dependenciesOrdered.map(dependency => dependency.location);
     const orderedPackageNames = dependenciesOrdered.map(dependency => dependency.name);
@@ -134,13 +136,13 @@ const getOrderedDependencies = async packageName => {
     };
 };
 
-const generateBuildChain = async (packageName, allPackagesOrdered) => {
+const generateBuildChain = async (packageName, allPackagesOrdered, includeExamples = false) => {
     let lernaArgs = `ls --all --toposort --graph --scope ${packageName} --include-dependents`.split(" ");
     let { stdout } = await execa("./node_modules/.bin/lerna", lernaArgs, { cwd: '../../' });
     let dependencyTree = JSON.parse(stdout);
 
     dependencyTree = filterAgGridOnly(dependencyTree);
-    dependencyTree = filterExcludedRoots(dependencyTree);
+    dependencyTree = filterExcludedRoots(dependencyTree, includeExamples);
 
     return buildBuildTree(packageName, dependencyTree, allPackagesOrdered);
 };
@@ -194,15 +196,15 @@ const watchCss = () => {
     spawnCssWatcher(cssBuildChain);
 };
 
-const getBuildChainInfo = async () => {
+const getBuildChainInfo = async (includeExamples) => {
     const cacheFilePath = getCacheFilePath();
     if (!fs.existsSync(cacheFilePath)) {
-        const { paths: gridPaths, orderedPackageNames: orderedGridPackageNames } = await getOrderedDependencies("@ag-grid-community/core");
-        const { paths: chartPaths, orderedPackageNames: orderedChartPackageNames } = await getOrderedDependencies("ag-charts-community");
+        const { paths: gridPaths, orderedPackageNames: orderedGridPackageNames } = await getOrderedDependencies("@ag-grid-community/core", includeExamples);
+        const { paths: chartPaths, orderedPackageNames: orderedChartPackageNames } = await getOrderedDependencies("ag-charts-community", false);
 
         const buildChains = {};
         for (let packageName of orderedGridPackageNames.concat(orderedChartPackageNames)) {
-            buildChains[packageName] = await generateBuildChain(packageName, orderedGridPackageNames);
+            buildChains[packageName] = await generateBuildChain(packageName, orderedGridPackageNames, includeExamples);
         }
 
         buildChainInfo = {
@@ -217,8 +219,8 @@ const getBuildChainInfo = async () => {
     return buildChainInfo;
 };
 
-const getFlattenedBuildChainInfo = async () => {
-    const buildChainInfo = await getBuildChainInfo();
+const getFlattenedBuildChainInfo = async (includeExamples) => {
+    const buildChainInfo = await getBuildChainInfo(includeExamples);
 
     const flattenedBuildChainInfo = {};
     const packageNames = Object.keys(buildChainInfo.buildChains);
@@ -238,8 +240,8 @@ const buildPackages = async (packageNames, command = 'build', arguments) => {
     return await buildDependencies(packageNames, command, arguments);
 };
 
-const getAgBuildChain = async () => {
-    const lernaBuildChainInfo = await getFlattenedBuildChainInfo();
+const getAgBuildChain = async (includeExamples) => {
+    const lernaBuildChainInfo = await getFlattenedBuildChainInfo(includeExamples);
 
     Object.keys(lernaBuildChainInfo).forEach(packageName => {
         lernaBuildChainInfo[packageName] = lernaBuildChainInfo[packageName]
@@ -299,8 +301,8 @@ let getLastBuild = function() {
     return null;
 };
 
-const rebuildPackagesBasedOnChangeState = async (runTests = true) => {
-    const buildChain = await getAgBuildChain();
+const rebuildPackagesBasedOnChangeState = async (runTests = true, includeExamples = false) => {
+    const buildChain = await getAgBuildChain(includeExamples);
     const modulesState = readModulesState();
 
     const changedPackages = flattenArray(Object.keys(modulesState)
@@ -370,6 +372,7 @@ const printState = async () => {
 };
 
 exports.rebuildPackagesBasedOnChangeState = rebuildPackagesBasedOnChangeState;
+exports.rebuildPackagesBasedOnChangeStateIncludingExamples = rebuildPackagesBasedOnChangeState.bind(null, true, true);
 exports.printState = printState;
 exports.rebuildPackagesBasedOnChangeStateNoTest = rebuildPackagesBasedOnChangeState.bind(null, false);
 exports.buildPackages = buildPackages;

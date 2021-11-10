@@ -1,15 +1,9 @@
-import { _, AgChartThemeOverrides, ChartType, } from "@ag-grid-community/core";
-import {
-    AgCartesianChartOptions,
-    AgChart,
-    BarSeries,
-    CartesianChart,
-    ChartAxisPosition,
-    LegendClickEvent
-} from "ag-charts-community";
+import { _, ChartType, } from "@ag-grid-community/core";
+import { AgChart, BarSeries, CartesianChart, ChartAxisPosition, LegendClickEvent } from "ag-charts-community";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { deepMerge } from "../../object";
+import { hexToRGBA } from "../../color.";
 
 export class BarChartProxy extends CartesianChartProxy {
 
@@ -57,22 +51,21 @@ export class BarChartProxy extends CartesianChartProxy {
     }
 
     private updateCrossFilteringSeries(barSeries: BarSeries, params: UpdateChartParams) {
-        const chart = this.chart;
-        const palette = this.getPalette();
-        let fields: FieldDefinition[] = params.fields;
-
         // add additional filtered out field
+        let fields: FieldDefinition[] = params.fields;
         fields.forEach(field => {
             const crossFilteringField = {...field};
             crossFilteringField.colId = field.colId + '-filtered-out';
             fields.push(crossFilteringField);
         });
 
+        const palette = this.chartTheme.palette;
+
         // introduce cross filtering transparent fills
         const fills: string[] = [];
         palette.fills.forEach(fill => {
             fills.push(fill);
-            fills.push(this.hexToRGBA(fill, '0.3'));
+            fills.push(hexToRGBA(fill, '0.3'));
         });
         barSeries.fills = fills;
 
@@ -80,7 +73,7 @@ export class BarChartProxy extends CartesianChartProxy {
         const strokes: string[] = [];
         palette.strokes.forEach(stroke => {
             fills.push(stroke);
-            fills.push(this.hexToRGBA(stroke, '0.3'));
+            fills.push(hexToRGBA(stroke, '0.3'));
         });
         barSeries.strokes = strokes;
 
@@ -92,11 +85,11 @@ export class BarChartProxy extends CartesianChartProxy {
         barSeries.hideInLegend = colIds.filter(colId => colId.indexOf('-filtered-out') !== -1);
 
         // sync toggling of legend item with hidden 'filtered out' item
-        chart.legend.addEventListener('click', (event: LegendClickEvent) => {
+        this.chart.legend.addEventListener('click', (event: LegendClickEvent) => {
             barSeries.toggleSeriesItem(event.itemId + '-filtered-out', event.enabled);
         });
 
-        chart.tooltip.delay = 500;
+        this.chart.tooltip.delay = 500;
 
         // add node click cross filtering callback to series
         barSeries.addEventListener('nodeClick', this.crossFilterCallback);

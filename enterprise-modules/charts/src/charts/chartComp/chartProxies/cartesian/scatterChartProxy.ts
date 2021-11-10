@@ -4,6 +4,7 @@ import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartPr
 import { ChartDataModel } from "../../chartDataModel";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { deepMerge } from "../../object";
+import { hexToRGBA } from "../../color.";
 
 interface SeriesDefinition {
     xField: FieldDefinition;
@@ -74,13 +75,13 @@ export class ScatterChartProxy extends CartesianChartProxy {
             return map;
         }, new Map<string, ScatterSeries>());
 
-        let { fills, strokes } = this.getPalette();
+        let { fills, strokes } = this.chartTheme.palette;
         if (this.crossFiltering) {
             // introduce cross filtering transparent fills
             const fillsMod: string[] = [];
             fills.forEach(fill => {
                 fillsMod.push(fill);
-                fillsMod.push(this.hexToRGBA(fill, '0.3'));
+                fillsMod.push(hexToRGBA(fill, '0.3'));
             });
             fills = fillsMod;
 
@@ -88,7 +89,7 @@ export class ScatterChartProxy extends CartesianChartProxy {
             const strokesMod: string[] = [];
             strokes.forEach(stroke => {
                 strokesMod.push(stroke);
-                strokesMod.push(this.hexToRGBA(stroke, '0.3'));
+                strokesMod.push(hexToRGBA(stroke, '0.3'));
             });
             strokes = strokesMod;
         }

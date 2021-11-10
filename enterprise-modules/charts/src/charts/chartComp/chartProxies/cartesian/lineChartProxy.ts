@@ -2,7 +2,6 @@ import { AgChart, CartesianChart, ChartAxisPosition, LineSeries } from "ag-chart
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { deepMerge } from "../../object";
-import { ChartDataModel } from "../../chartDataModel";
 
 export class LineChartProxy extends CartesianChartProxy {
 
@@ -46,7 +45,7 @@ export class LineChartProxy extends CartesianChartProxy {
 
         let previousSeries: LineSeries | undefined;
 
-        let { fills, strokes } = this.getPalette();
+        let { fills, strokes } = this.chartTheme.palette;
         fields.forEach((f, index) => {
             let {yKey, atLeastOneSelectedPoint} = this.processDataForCrossFiltering(data, f.colId, params);
 

@@ -5,13 +5,11 @@ import {
     CartesianChart,
     CategoryAxis,
     GroupedCategoryAxis,
-    GroupedCategoryChart,
     LineSeries,
     NumberAxis,
     TimeAxis
 } from "ag-charts-community";
 import { ChartDataModel } from "../../chartDataModel";
-import { AgChartThemeOverrides } from "@ag-grid-community/core";
 
 export abstract class CartesianChartProxy extends ChartProxy {
     protected xAxisType: AgCartesianAxisType;

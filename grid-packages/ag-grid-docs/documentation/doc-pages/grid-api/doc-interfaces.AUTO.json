@@ -9459,108 +9459,102 @@
   },
   "AgCartesianAxisThemeOptions": {
     "top": {
-      "type": { "returnType": "Omit<Omit<T, 'top'>, 'type'>", "optional": true }
+      "type": { "returnType": "Omit<T, 'top' | 'type'>", "optional": true }
     },
     "right": {
-      "type": {
-        "returnType": "Omit<Omit<T, 'right'>, 'type'>",
-        "optional": true
-      }
+      "type": { "returnType": "Omit<T, 'right' | 'type'>", "optional": true }
     },
     "bottom": {
-      "type": {
-        "returnType": "Omit<Omit<T, 'bottom'>, 'type'>",
-        "optional": true
-      }
+      "type": { "returnType": "Omit<T, 'bottom' | 'type'>", "optional": true }
     },
     "left": {
-      "type": {
-        "returnType": "Omit<Omit<T, 'left'>, 'type'>",
-        "optional": true
-      }
+      "type": { "returnType": "Omit<T, 'left' | 'type'>", "optional": true }
     },
     "meta": { "typeParams": ["T"] }
   },
   "AgNumberAxisThemeOptions": {
-    "palette": {
-      "type": { "returnType": "AgChartThemePalette", "optional": true }
-    },
-    "overrides": {
-      "type": { "returnType": "AgChartThemeOverrides", "optional": true }
-    },
+    "nice": { "type": { "returnType": "boolean", "optional": true } },
+    "min": { "type": { "returnType": "number", "optional": true } },
+    "max": { "type": { "returnType": "number", "optional": true } },
     "top": {
       "type": {
-        "returnType": "Omit<Omit<AgNumberAxisOptions, 'top'>, 'type'>",
+        "returnType": "Omit<AgNumberAxisOptions, 'top' | 'type'>",
         "optional": true
       }
     },
     "right": {
       "type": {
-        "returnType": "Omit<Omit<AgNumberAxisOptions, 'right'>, 'type'>",
+        "returnType": "Omit<AgNumberAxisOptions, 'right' | 'type'>",
         "optional": true
       }
     },
     "bottom": {
       "type": {
-        "returnType": "Omit<Omit<AgNumberAxisOptions, 'bottom'>, 'type'>",
+        "returnType": "Omit<AgNumberAxisOptions, 'bottom' | 'type'>",
         "optional": true
       }
     },
     "left": {
       "type": {
-        "returnType": "Omit<Omit<AgNumberAxisOptions, 'left'>, 'type'>",
+        "returnType": "Omit<AgNumberAxisOptions, 'left' | 'type'>",
         "optional": true
       }
     }
   },
   "AgLogAxisThemeOptions": {
+    "nice": { "type": { "returnType": "boolean", "optional": true } },
+    "min": { "type": { "returnType": "number", "optional": true } },
+    "max": { "type": { "returnType": "number", "optional": true } },
+    "base": { "type": { "returnType": "number", "optional": true } },
     "top": {
       "type": {
-        "returnType": "Omit<Omit<AgLogAxisOptions, 'top'>, 'type'>",
+        "returnType": "Omit<AgLogAxisOptions, 'top' | 'type'>",
         "optional": true
       }
     },
     "right": {
       "type": {
-        "returnType": "Omit<Omit<AgLogAxisOptions, 'right'>, 'type'>",
+        "returnType": "Omit<AgLogAxisOptions, 'right' | 'type'>",
         "optional": true
       }
     },
     "bottom": {
       "type": {
-        "returnType": "Omit<Omit<AgLogAxisOptions, 'bottom'>, 'type'>",
+        "returnType": "Omit<AgLogAxisOptions, 'bottom' | 'type'>",
         "optional": true
       }
     },
     "left": {
       "type": {
-        "returnType": "Omit<Omit<AgLogAxisOptions, 'left'>, 'type'>",
+        "returnType": "Omit<AgLogAxisOptions, 'left' | 'type'>",
         "optional": true
       }
     }
   },
   "AgCategoryAxisThemeOptions": {
+    "paddingInner": { "type": { "returnType": "number", "optional": true } },
+    "paddingOuter": { "type": { "returnType": "number", "optional": true } },
     "top": {
       "type": {
-        "returnType": "Omit<Omit<AgCategoryAxisOptions, 'top'>, 'type'>",
+        "returnType": "Omit<AgCategoryAxisOptions, 'top' | 'type'>",
         "optional": true
       }
     },
     "right": {
       "type": {
-        "returnType": "Omit<Omit<AgCategoryAxisOptions, 'right'>, 'type'>",
+        "returnType": "Omit<AgCategoryAxisOptions, 'right' | 'type'>",
         "optional": true
       }
     },
     "bottom": {
       "type": {
-        "returnType": "Omit<Omit<AgCategoryAxisOptions, 'bottom'>, 'type'>",
+        "returnType": "Omit<AgCategoryAxisOptions, 'bottom' | 'type'>",
         "optional": true
       }
     },
     "left": {
       "type": {
-        "returnType": "Omit<Omit<AgCategoryAxisOptions, 'left'>, 'type'>",
+        "returnType": "Omit<AgCategoryAxisOptions, 'left' | 'type'>",
         "optional": true
       }
     }
@@ -9568,51 +9562,52 @@
   "AgGroupedCategoryAxisThemeOptions": {
     "top": {
       "type": {
-        "returnType": "Omit<Omit<AgGroupedCategoryAxisOptions, 'top'>, 'type'>",
+        "returnType": "Omit<AgGroupedCategoryAxisOptions, 'top' | 'type'>",
         "optional": true
       }
     },
     "right": {
       "type": {
-        "returnType": "Omit<Omit<AgGroupedCategoryAxisOptions, 'right'>, 'type'>",
+        "returnType": "Omit<AgGroupedCategoryAxisOptions, 'right' | 'type'>",
         "optional": true
       }
     },
     "bottom": {
       "type": {
-        "returnType": "Omit<Omit<AgGroupedCategoryAxisOptions, 'bottom'>, 'type'>",
+        "returnType": "Omit<AgGroupedCategoryAxisOptions, 'bottom' | 'type'>",
         "optional": true
       }
     },
     "left": {
       "type": {
-        "returnType": "Omit<Omit<AgGroupedCategoryAxisOptions, 'left'>, 'type'>",
+        "returnType": "Omit<AgGroupedCategoryAxisOptions, 'left' | 'type'>",
         "optional": true
       }
     }
   },
   "AgTimeAxisThemeOptions": {
+    "nice": { "type": { "returnType": "boolean", "optional": true } },
     "top": {
       "type": {
-        "returnType": "Omit<Omit<AgTimeAxisOptions, 'top'>, 'type'>",
+        "returnType": "Omit<AgTimeAxisOptions, 'top' | 'type'>",
         "optional": true
       }
     },
     "right": {
       "type": {
-        "returnType": "Omit<Omit<AgTimeAxisOptions, 'right'>, 'type'>",
+        "returnType": "Omit<AgTimeAxisOptions, 'right' | 'type'>",
         "optional": true
       }
     },
     "bottom": {
       "type": {
-        "returnType": "Omit<Omit<AgTimeAxisOptions, 'bottom'>, 'type'>",
+        "returnType": "Omit<AgTimeAxisOptions, 'bottom' | 'type'>",
         "optional": true
       }
     },
     "left": {
       "type": {
-        "returnType": "Omit<Omit<AgTimeAxisOptions, 'left'>, 'type'>",
+        "returnType": "Omit<AgTimeAxisOptions, 'left' | 'type'>",
         "optional": true
       }
     }

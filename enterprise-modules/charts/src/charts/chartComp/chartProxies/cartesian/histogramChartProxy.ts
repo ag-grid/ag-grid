@@ -37,9 +37,8 @@ export class HistogramChartProxy extends CartesianChartProxy {
         // for now, only constant width is supported via integrated charts
         series.areaPlot = false;
 
-        const { fills, strokes } = this.getPalette();
-        series.fill = fills[0];
-        series.stroke = strokes[0];
+        series.fill = this.chartTheme.palette.fills[0];
+        series.stroke = this.chartTheme.palette.strokes[0];
     }
 
     private getAxes() {

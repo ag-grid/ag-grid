@@ -123,18 +123,11 @@ export class ChartController extends BeanStub {
     }
 
     public getPalettes(): AgChartThemePalette[] {
-        const customPalette = this.chartProxy.getCustomPalette();
-
-        if (customPalette) {
-            return [customPalette];
-        }
-
         const themeNames = this.gridOptionsWrapper.getChartThemes();
 
         return themeNames.map(themeName => {
-            const theme = this.chartProxy.isStockTheme(themeName) ?
-                themeName : this.chartProxy.lookupCustomChartTheme(themeName);
-
+            const stockTheme = this.chartProxy.isStockTheme(themeName);
+            const theme = stockTheme ? themeName : this.chartProxy.lookupCustomChartTheme(themeName);
             return getChartTheme(theme).palette;
         });
     }
