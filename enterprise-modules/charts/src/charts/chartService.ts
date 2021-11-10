@@ -128,7 +128,7 @@ export class ChartService extends BeanStub implements IChartService {
                 undefined,
                 params.unlinkChart,
                 false,
-                model);
+                model.chartOptions);
         }
 
         const cellRange = getCellRange(params.cellRange);
@@ -148,7 +148,7 @@ export class ChartService extends BeanStub implements IChartService {
             undefined,
             params.unlinkChart,
             false,
-            model);
+            model.chartOptions);
     }
 
     public createRangeChart(params: CreateRangeChartParams): ChartRef | undefined {
@@ -246,7 +246,7 @@ export class ChartService extends BeanStub implements IChartService {
         chartThemeOverrides?: AgChartThemeOverrides,
         unlinkChart = false,
         crossFiltering  = false,
-        chartModel?: ChartModel): ChartRef | undefined {
+        chartOptionsToRestore?: AgChartThemeOverrides): ChartRef | undefined {
 
         const createChartContainerFunc = this.gridOptionsWrapper.getCreateChartContainerFunc();
 
@@ -262,7 +262,7 @@ export class ChartService extends BeanStub implements IChartService {
             unlinkChart,
             crossFiltering,
             crossFilteringContext: this.crossFilteringContext,
-            chartModel
+            chartOptionsToRestore
         };
 
         const chartComp = new GridChartComp(params);

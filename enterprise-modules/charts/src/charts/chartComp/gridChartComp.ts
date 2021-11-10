@@ -48,7 +48,7 @@ export interface GridChartParams {
     unlinkChart?: boolean;
     crossFiltering: boolean;
     crossFilteringContext: CrossFilteringContext;
-    chartModel?: ChartModel;
+    chartOptionsToRestore?: AgChartThemeOverrides;
 }
 
 export class GridChartComp extends Component {
@@ -194,11 +194,11 @@ export class GridChartComp extends Component {
             crossFilterCallback,
             parentElement: this.eChart,
             grouping: isGrouping,
-            chartModel: this.params.chartModel
+            chartOptionsToRestore: this.params.chartOptionsToRestore
         };
 
         //TODO temp solution ensure 'restoring' options are not reused when switching chart types
-        this.params.chartModel = undefined;
+        this.params.chartOptionsToRestore = undefined;
 
         // set local state used to detect when chart changes
         this.chartType = chartType;

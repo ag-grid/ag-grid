@@ -11117,7 +11117,9 @@
       "type": { "returnType": "CellRangeParams", "optional": false }
     },
     "chartThemeName": { "type": { "returnType": "string", "optional": true } },
-    "chartOptions": { "type": { "returnType": "any", "optional": false } },
+    "chartOptions": {
+      "type": { "returnType": "AgChartThemeOverrides", "optional": false }
+    },
     "suppressChartRanges": {
       "type": { "returnType": "boolean", "optional": true }
     },
