@@ -30,6 +30,7 @@ export interface ExcelGridSerializingParams extends GridSerializingParams {
     autoConvertFormulas?: boolean;
     baseExcelStyles: ExcelStyle[];
     columnWidth?: number | ((params: ColumnWidthCallbackParams) => number);
+    maxColumnWidth?: number;
     headerFooterConfig?: ExcelHeaderFooterConfig;
     headerRowHeight?: number | ((params: RowHeightCallbackParams) => number);
     rowHeight?: number | ((params: RowHeightCallbackParams) => number);
@@ -160,6 +161,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
 
     private convertColumnToExcel(column: Column | null, index: number): ExcelColumn {
         const columnWidth = this.config.columnWidth;
+        const maxColumnWidth = this.config.maxColumnWidth;
         if (columnWidth) {
             if (typeof columnWidth === 'number') {
                 return { width: columnWidth };
@@ -168,6 +170,9 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
         }
 
         if (column) {
+            if (maxColumnWidth) {
+                return { width: Math.min(column.getActualWidth(), maxColumnWidth) };
+            }
             const smallestUsefulWidth = 75;
             return { width: Math.max(column.getActualWidth(), smallestUsefulWidth) };
         }

@@ -4,6 +4,7 @@
 .idea/codeStyles/Project.xml
 .idea/encodings.xml
 /.idea/atlassian-ide-plugin.xml
+.idea/ag-grid.iml
 .vscode
 
 grid-packages/ag-grid-docs/src/jira_reports/prod/credentials.json

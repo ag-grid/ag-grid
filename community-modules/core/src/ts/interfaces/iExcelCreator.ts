@@ -194,6 +194,7 @@ export interface ExcelExportParams extends ExportParams<ExcelCell[][]> {
     author?: string;
     autoConvertFormulas?: boolean;
     columnWidth?: number | ((params: ColumnWidthCallbackParams) => number);
+    maxColumnWidth?: number;
     exportMode?: 'xlsx' | 'xml';
     fontSize?: number;
     headerRowHeight?: number | ((params: RowHeightCallbackParams) => number);

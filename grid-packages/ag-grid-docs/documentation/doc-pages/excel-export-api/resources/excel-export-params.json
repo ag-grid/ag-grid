@@ -15,6 +15,10 @@
             "description": "Defines the default column width. If no value is present, each column will have value currently set in the application with a min value of 75px. This property can also be supplied a callback function that returns a number: `(params: ColumnWidthCallbackParams) => number`.",
             "type": "number"
         },
+        "maxColumnWidth": {
+            "description": "Defines the max column width (Applicable when columnWidth is not used). It sets the \"maximum\" width of the columns in excel. If no value is present, each column will have value currently set in the application with a min value of 75px.",
+            "type": "number"
+        },
         "exportMode": {
             "default": "xlsx",
             "description": "For backwards compatibility, this property could be set to `xml`, which will export an Excel Spreadsheet compatible with old Office versions (prior to Office 2007). Setting this to `xml` is not recommended as some features will not work in legacy mode.",
