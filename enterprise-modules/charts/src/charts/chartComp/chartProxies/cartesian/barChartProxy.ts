@@ -1,12 +1,5 @@
-import { _, AgChartThemeOverrides, ChartType, } from "@ag-grid-community/core";
-import {
-    AgCartesianChartOptions,
-    AgChart,
-    BarSeries,
-    CartesianChart,
-    ChartAxisPosition,
-    LegendClickEvent
-} from "ag-charts-community";
+import { _, ChartType, } from "@ag-grid-community/core";
+import { AgChart, BarSeries, CartesianChart, ChartAxisPosition, LegendClickEvent } from "ag-charts-community";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { deepMerge } from "../../object";

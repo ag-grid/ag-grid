@@ -1,11 +1,4 @@
-import {
-    AgChart,
-    AgPieSeriesOptions,
-    AgPolarChartOptions,
-    LegendClickEvent,
-    PieSeries,
-    PolarChart
-} from "ag-charts-community";
+import { AgChart, AgPieSeriesOptions, LegendClickEvent, PieSeries, PolarChart } from "ag-charts-community";
 import { _ } from "@ag-grid-community/core";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { PolarChartProxy } from "./polarChartProxy";

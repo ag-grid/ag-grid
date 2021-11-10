@@ -2,7 +2,6 @@ import { AgChart, CartesianChart, ChartAxisPosition, LineSeries } from "ag-chart
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { deepMerge } from "../../object";
-import { ChartDataModel } from "../../chartDataModel";
 
 export class LineChartProxy extends CartesianChartProxy {
 

@@ -1,33 +1,19 @@
-import { _, ChartModel, ChartType, Color, AgChartThemeOverrides } from "@ag-grid-community/core";
-import {
-    AgChartTheme,
-    AgChartThemePalette,
-    CategoryAxis,
-    Chart,
-    ChartTheme,
-    getChartTheme,
-    themes,
-} from "ag-charts-community";
+import { _, AgChartThemeOverrides, ChartModel, ChartType } from "@ag-grid-community/core";
+import { AgChartTheme, CategoryAxis, Chart, ChartTheme, getChartTheme, themes, } from "ag-charts-community";
 import { deepMerge } from "../object";
 import { CrossFilteringContext } from "../../chartService";
-import { getChartThemeOverridesObjectName, ChartThemeOverrideObjectName } from "../chartThemeOverridesMapper";
+import { ChartThemeOverrideObjectName, getChartThemeOverridesObjectName } from "../chartThemeOverridesMapper";
 
 export interface ChartProxyParams {
     chartId: string;
     chartType: ChartType;
-    chartThemeName?: string;
     customChartThemes?: { [name: string]: AgChartTheme; };
-    width?: number;
-    height?: number;
     parentElement: HTMLElement;
     grouping: boolean;
-    document: Document;
     getChartThemeName: () => string;
     getChartThemes: () => string[];
     getGridOptionsChartThemeOverrides: () => AgChartThemeOverrides | undefined;
     apiChartThemeOverrides?: AgChartThemeOverrides;
-    allowPaletteOverride: boolean;
-    isDarkTheme: () => boolean;
     crossFiltering: boolean;
     crossFilterCallback: (event: any, reset?: boolean) => void;
     chartModel?: ChartModel;

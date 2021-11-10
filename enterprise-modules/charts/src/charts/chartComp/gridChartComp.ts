@@ -166,18 +166,8 @@ export class GridChartComp extends Component {
     }
 
     private createChart(): void {
-        let width, height;
-
         // if chart already exists, destroy it and remove it from DOM
         if (this.chartProxy) {
-            const chart = this.chartProxy.getChart();
-
-            if (chart) {
-                // preserve existing width/height
-                width = chart.width;
-                height = chart.height;
-            }
-
             this.chartProxy.destroy();
         }
 
@@ -195,21 +185,15 @@ export class GridChartComp extends Component {
         const chartProxyParams: ChartProxyParams = {
             chartId: this.getChartId(),
             chartType,
-            chartThemeName: this.model.getChartThemeName(),
             getChartThemeName: this.getChartThemeName.bind(this),
             getChartThemes: this.getChartThemes.bind(this),
             customChartThemes: customChartThemes,
             getGridOptionsChartThemeOverrides: this.getGridOptionsChartThemeOverrides.bind(this),
             apiChartThemeOverrides: this.params.chartThemeOverrides,
-            allowPaletteOverride: !this.params.chartThemeName,
-            isDarkTheme: this.environment.isThemeDark.bind(this.environment),
             crossFiltering: this.params.crossFiltering,
             crossFilterCallback,
             parentElement: this.eChart,
-            width,
-            height,
             grouping: isGrouping,
-            document: this.gridOptionsWrapper.getDocument(),
             chartModel: this.params.chartModel
         };
 

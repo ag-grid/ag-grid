@@ -1,5 +1,6 @@
 import {
-    _, AgChartThemeOverrides,
+    _,
+    AgChartThemeOverrides,
     Autowired,
     BeanStub,
     ChartOptionsChanged,
@@ -12,7 +13,6 @@ import {
 import { ChartController } from "./chartController";
 import { CategoryAxis, Chart, ChartAxis, GroupedCategoryAxis, NumberAxis, TimeAxis } from "ag-charts-community";
 import { getChartThemeOverridesObjectName } from "./chartThemeOverridesMapper";
-import { ChartDataModel } from "./chartDataModel";
 
 export class ChartOptionsService extends BeanStub {
 
