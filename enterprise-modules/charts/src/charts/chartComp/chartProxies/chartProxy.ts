@@ -1,6 +1,7 @@
-import { _, AgChartThemeOverrides, ChartModel, ChartType, Color, } from "@ag-grid-community/core";
+import { _, ChartModel, ChartType, Color } from "@ag-grid-community/core";
 import {
     AgChartTheme,
+    AgChartThemeOverrides,
     AgChartThemePalette,
     CategoryAxis,
     Chart,
@@ -10,7 +11,7 @@ import {
 } from "ag-charts-community";
 import { deepMerge } from "../object";
 import { CrossFilteringContext } from "../../chartService";
-import { getStandaloneChartType } from "../chartTypeMapper";
+import { getChartThemeOverrideObjectName, ChartThemeOverrideObjectName } from "../chartThemeOverrideMapper";
 
 export interface ChartProxyParams {
     chartId: string;
@@ -54,11 +55,11 @@ export interface UpdateChartParams {
 export abstract class ChartProxy<TChart extends Chart, TOptions extends any> {
     protected readonly chartId: string;
     protected readonly chartType: ChartType;
-    protected readonly standaloneChartType: string;
+    protected readonly standaloneChartType: ChartThemeOverrideObjectName;
 
     protected chart: TChart;
-    protected chartOptions: any;
-    protected chartTheme: any;
+    protected chartOptions: AgChartThemeOverrides;
+    protected chartTheme: ChartTheme;
     protected customPalette: AgChartThemePalette;
     protected crossFiltering: boolean;
     protected crossFilterCallback: (event: any, reset?: boolean) => void;
@@ -68,7 +69,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends any> {
         this.chartType = chartProxyParams.chartType;
         this.crossFiltering = chartProxyParams.crossFiltering;
         this.crossFilterCallback = chartProxyParams.crossFilterCallback;
-        this.standaloneChartType = getStandaloneChartType(this.chartType);
+        this.standaloneChartType = getChartThemeOverrideObjectName(this.chartType);
     }
 
     protected abstract createChart(options?: TOptions): TChart;
@@ -101,31 +102,27 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends any> {
             return;
         }
 
-        const themeName = this.getSelectedTheme();
-        const theme = this.createChartTheme(themeName);
-        this.chartOptions = this.convertConfigToOverrides(theme.config);
-
-        this.chartTheme = {
-            baseTheme: themeName,
-            palette: theme.palette,
-            overrides: this.chartOptions,
-        };
+        this.chartTheme = this.createChartTheme();
+        this.chartOptions = this.convertConfigToOverrides(this.chartTheme.config);
     }
 
-    private createChartTheme(themeName: string): ChartTheme {
+    private createChartTheme(): ChartTheme {
+        const themeName = this.getSelectedTheme();
         const stockTheme = this.isStockTheme(themeName);
         const gridOptionsThemeOverrides = this.chartProxyParams.getGridOptionsChartThemeOverrides();
         const apiThemeOverrides = this.chartProxyParams.apiChartThemeOverrides;
 
         if (gridOptionsThemeOverrides || apiThemeOverrides) {
-            const themeOverrides = {overrides: this.mergeThemeOverrides(gridOptionsThemeOverrides, apiThemeOverrides)};
+            const themeOverrides = {
+                overrides: ChartProxy.mergeThemeOverrides(gridOptionsThemeOverrides, apiThemeOverrides)
+            };
             const getCustomTheme = () => deepMerge(this.lookupCustomChartTheme(themeName), themeOverrides);
             return getChartTheme(stockTheme ? {baseTheme: themeName, ...themeOverrides} : getCustomTheme());
         }
         return getChartTheme(stockTheme ? themeName : this.lookupCustomChartTheme(themeName));
     }
 
-    private mergeThemeOverrides(gridOptionsThemeOverrides?: AgChartThemeOverrides, apiThemeOverrides?: AgChartThemeOverrides) {
+    private static mergeThemeOverrides(gridOptionsThemeOverrides?: AgChartThemeOverrides, apiThemeOverrides?: AgChartThemeOverrides) {
         if (!gridOptionsThemeOverrides) { return apiThemeOverrides; }
         if (!apiThemeOverrides) { return gridOptionsThemeOverrides; }
         return deepMerge(gridOptionsThemeOverrides, apiThemeOverrides);
