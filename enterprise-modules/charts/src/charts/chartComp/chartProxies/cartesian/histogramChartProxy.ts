@@ -11,7 +11,6 @@ export class HistogramChartProxy extends CartesianChartProxy {
         this.xAxisType = 'number';
         this.yAxisType = 'number';
 
-        this.initChartOptions();
         this.recreateChart();
     }
 

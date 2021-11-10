@@ -11,7 +11,6 @@ export class LineChartProxy extends CartesianChartProxy {
         this.xAxisType = params.grouping ? 'groupedCategory' : 'category';
         this.yAxisType = 'number';
 
-        this.initChartOptions();
         this.recreateChart();
     }
 

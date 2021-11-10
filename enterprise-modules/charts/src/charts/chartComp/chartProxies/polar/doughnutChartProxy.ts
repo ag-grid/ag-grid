@@ -23,7 +23,6 @@ export class DoughnutChartProxy extends PolarChartProxy {
 
     public constructor(params: ChartProxyParams) {
         super(params);
-        this.initChartOptions();
         this.recreateChart();
     }
 
