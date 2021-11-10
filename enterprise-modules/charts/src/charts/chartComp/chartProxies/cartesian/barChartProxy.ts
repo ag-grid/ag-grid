@@ -10,6 +10,7 @@ import {
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { deepMerge } from "../../object";
+import { hexToRGBA } from "../../color.";
 
 export class BarChartProxy extends CartesianChartProxy {
 
@@ -72,7 +73,7 @@ export class BarChartProxy extends CartesianChartProxy {
         const fills: string[] = [];
         palette.fills.forEach(fill => {
             fills.push(fill);
-            fills.push(this.hexToRGBA(fill, '0.3'));
+            fills.push(hexToRGBA(fill, '0.3'));
         });
         barSeries.fills = fills;
 
@@ -80,7 +81,7 @@ export class BarChartProxy extends CartesianChartProxy {
         const strokes: string[] = [];
         palette.strokes.forEach(stroke => {
             fills.push(stroke);
-            fills.push(this.hexToRGBA(stroke, '0.3'));
+            fills.push(hexToRGBA(stroke, '0.3'));
         });
         barSeries.strokes = strokes;
 

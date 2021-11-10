@@ -59,7 +59,6 @@ export abstract class ChartProxy {
     protected chart: Chart;
     protected chartOptions: AgChartThemeOverrides;
     protected chartTheme: ChartTheme;
-    protected customPalette: AgChartThemePalette;
     protected crossFiltering: boolean;
     protected crossFilterCallback: (event: any, reset?: boolean) => void;
 
@@ -168,16 +167,8 @@ export abstract class ChartProxy {
         return this.chartOptions;
     }
 
-    public getCustomPalette(): AgChartThemePalette | undefined {
-        return this.customPalette;
-    }
-
-    protected getPredefinedPalette(): AgChartThemePalette {
-        return this.chartTheme.palette;
-    }
-
     protected getPalette(): AgChartThemePalette {
-        return this.customPalette || this.chartTheme.palette;
+        return this.chartTheme.palette;
     }
 
     protected transformData(data: any[], categoryKey: string): any[] {
@@ -194,20 +185,6 @@ export abstract class ChartProxy {
             datum[categoryKey] = { id: index, value, toString: () => valueString };
 
             return datum;
-        });
-    }
-
-    protected hexToRGBA(hex: string, alpha: string) {
-        const r = parseInt(hex.slice(1, 3), 16);
-        const g = parseInt(hex.slice(3, 5), 16);
-        const b = parseInt(hex.slice(5, 7), 16);
-        return alpha ? `rgba(${r}, ${g}, ${b}, ${alpha})` : `rgba(${r}, ${g}, ${b})`;
-    }
-
-    protected changeOpacity(fills: string[], alpha: number) {
-        return fills.map(fill => {
-            const c = Color.fromString(fill);
-            return new Color(c.r, c.g, c.b, alpha).toHexString();
         });
     }
 

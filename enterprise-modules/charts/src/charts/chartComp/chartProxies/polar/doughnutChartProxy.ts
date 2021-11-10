@@ -9,6 +9,7 @@ import {
 import { _ } from "@ag-grid-community/core";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { PolarChartProxy } from "./polarChartProxy";
+import { hexToRGBA } from "../../color.";
 
 interface UpdateDoughnutSeriesParams {
     seriesMap: { [p: string]: PieSeries };
@@ -176,8 +177,8 @@ export class DoughnutChartProxy extends PolarChartProxy {
 
             const isOpaqueSeries = !updateParams.opaqueSeries;
             if (isOpaqueSeries) {
-                pieSeries.fills = updateParams.fills.map(fill => this.hexToRGBA(fill, '0.3'));
-                pieSeries.strokes = updateParams.strokes.map(stroke => this.hexToRGBA(stroke, '0.3'));
+                pieSeries.fills = updateParams.fills.map(fill => hexToRGBA(fill, '0.3'));
+                pieSeries.strokes = updateParams.strokes.map(stroke => hexToRGBA(stroke, '0.3'));
                 pieSeries.showInLegend = false;
             } else {
                 updateParams.doughnutChart.legend.addEventListener('click', (event: LegendClickEvent) => {
