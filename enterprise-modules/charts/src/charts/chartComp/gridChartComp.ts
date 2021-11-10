@@ -305,16 +305,10 @@ export class GridChartComp extends Component {
         const maxWidth = _.getAbsoluteWidth(popupParent) * 0.75;
         const maxHeight = _.getAbsoluteHeight(popupParent) * 0.75;
         const ratio = 0.553;
-        let { width, height } = this.chartProxy.getChartOptions();
-
-        if (width && height) {
-            return { width, height };
-        }
 
         const chart = this.chartProxy.getChart();
-
-        width = this.params.insideDialog ? 850 : chart.width;
-        height = this.params.insideDialog ? 470 : chart.height;
+        let width = this.params.insideDialog ? 850 : chart.width;
+        let height = this.params.insideDialog ? 470 : chart.height;
 
         if (width > maxWidth || height > maxHeight) {
             width = Math.min(width, maxWidth);
