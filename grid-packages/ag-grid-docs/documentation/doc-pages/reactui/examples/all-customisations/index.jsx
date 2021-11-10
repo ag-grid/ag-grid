@@ -9,6 +9,7 @@ import MyToolPanel from './myToolPanel.jsx';
 import MyStatusPanel from './myStatusPanel.jsx';
 import MyLoadingOverlay from './myLoadingOverlay.jsx';
 import MyNoRowsOverlay from './myNoRowsOverlay.jsx';
+import MyTooltip from './myTooltip.jsx';
 import { AllModules } from '@ag-grid-enterprise/all-modules';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
@@ -19,23 +20,19 @@ function GridExample() {
 
     // never changes, so we can use useMemo
     const columnDefs = useMemo( ()=> [
-        { field: 'athlete' },
-        { field: 'age', filter: 'agNumberColumnFilter' },
-        { field: 'country' },
-        { field: 'year', filterFramework: YearFilter, floatingFilter: true, floatingFilterComponentFramework: YearFloatingFilter },
-        { field: 'date' },
-        { field: 'sport' },
-        { field: 'gold' },
-        { field: 'silver' },
-        { field: 'bronze' },
-        { field: 'total' }
+        { field: 'athlete', tooltipField: 'athlete' },
+        { field: 'age', tooltipField: 'athlete' },
+        { field: 'country', tooltipField: 'athlete' },
+        { field: 'year', filterFramework: YearFilter, floatingFilter: true, floatingFilterComponentFramework: YearFloatingFilter, tooltipField: 'athlete' },
     ], []);
 
     // never changes, so we can use useMemo
     const defaultColDef = useMemo( ()=> ({
         resizable: true,
         sortable: true,
-        filter: true
+        filter: true,
+        flex: 1,
+        tooltipComponentFramework: MyTooltip
     }), []);
 
     // changes, needs to be state
