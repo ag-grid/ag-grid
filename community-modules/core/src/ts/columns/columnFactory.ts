@@ -415,7 +415,7 @@ export class ColumnFactory extends BeanStub {
 
         // merge properties from default column definitions
         const defaultColDef = this.gridOptionsWrapper.getDefaultColDef();
-        mergeDeep(colDefMerged, defaultColDef, true, true);
+        mergeDeep(colDefMerged, defaultColDef, false, true);
 
         // merge properties from column type properties
         let columnType = colDef.type;
@@ -430,7 +430,7 @@ export class ColumnFactory extends BeanStub {
         }
 
         // merge properties from column definitions
-        mergeDeep(colDefMerged, colDef, true, true);
+        mergeDeep(colDefMerged, colDef, false, true);
 
         return colDefMerged;
     }
@@ -467,7 +467,7 @@ export class ColumnFactory extends BeanStub {
         typeKeys.forEach((t) => {
             const typeColDef = allColumnTypes[t.trim()];
             if (typeColDef) {
-                mergeDeep(colDefMerged, typeColDef, true, true);
+                mergeDeep(colDefMerged, typeColDef, false, true);
             } else {
                 console.warn("ag-grid: colDef.type '" + t + "' does not correspond to defined gridOptions.columnTypes");
             }
