@@ -208,7 +208,8 @@ function getGridColumnPropertiesJs() {
             const inputType = getSafeType(typeName)
 
             let line = addDocLine(context.docLookup, property, '');
-            line += `    @Input() public ${property}: ${inputType} = undefined;${EOL}`;
+            // We don't initialise Column Inputs as this breaks the merging with defaultColDef options
+            line += `    @Input() public ${property}: ${inputType};${EOL}`;
             const order = typeKeysOrder.findIndex(p => p === property);
             propsToWrite.push({ order, line });
         }
