@@ -77,40 +77,33 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
             this.addAvailableValuesListener();
         }
 
-        // Decide source of update for UI state, depending on whether a model was supplied or we
-        // need to retrieve it from the parent SetFilter.
-        if (parentModel === undefined) {
-            this.params.parentFilterInstance((setFilter: SetFilter<unknown>) => {
-                const { values } = setFilter.getModel() || {};
-                this.applyModel(values || null);
-            });
-        } else {
-            this.applyModel(parentModel && parentModel.values || null);
-        }
+        this.params.parentFilterInstance((setFilter: SetFilter<unknown>) => {
+            const { values } = parentModel || setFilter.getModel() || {};
+            const valueModel = setFilter.getValueModel();
+
+            if (values == null || valueModel == null) {
+                this.eFloatingFilterText.setValue('');
+                return;
+            }
+    
+            const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+            const availableValues = _.filter(values, v => valueModel.isValueAvailable(v))!;
+            
+            // format all the values, if a formatter is provided
+            const formattedValues = _.map(availableValues, value => {
+                const { column, filterParams } = this.params;
+                const formattedValue = this.valueFormatterService.formatValue(
+                    column, null, null, value, (filterParams as ISetFilterParams).valueFormatter, false);
+    
+                const valueToRender = formattedValue != null ? formattedValue : value;
+    
+                return valueToRender == null ? localeTextFunc('blanks', DEFAULT_LOCALE_TEXT.blanks) : valueToRender;
+            })!;
+    
+            const arrayToDisplay = formattedValues.length > 10 ? formattedValues.slice(0, 10).concat('...') : formattedValues;
+            const valuesString = `(${formattedValues.length}) ${arrayToDisplay.join(',')}`;
+    
+            this.eFloatingFilterText.setValue(valuesString);
+        });
     }
-
-    private applyModel(values: unknown[] | null): void {
-        if (values == null) {
-            this.eFloatingFilterText.setValue('');
-            return;
-        }
-
-        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-
-        // format all the values, if a formatter is provided
-        const formattedValues = _.map(values, value => {
-            const { column, filterParams } = this.params;
-            const formattedValue = this.valueFormatterService.formatValue(
-                column, null, null, value, (filterParams as ISetFilterParams).valueFormatter, false);
-
-            const valueToRender = formattedValue != null ? formattedValue : value;
-
-            return valueToRender == null ? localeTextFunc('blanks', DEFAULT_LOCALE_TEXT.blanks) : valueToRender;
-        })!;
-
-        const arrayToDisplay = formattedValues.length > 10 ? formattedValues.slice(0, 10).concat('...') : formattedValues;
-        const valuesString = `(${formattedValues.length}) ${arrayToDisplay.join(',')}`;
-
-        this.eFloatingFilterText.setValue(valuesString);
-    };
 }

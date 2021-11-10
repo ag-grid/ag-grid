@@ -1,10 +1,11 @@
 import { createElement, ReactPortal } from 'react';
 import { createPortal } from 'react-dom';
 import { AgPromise, ComponentType } from 'ag-grid-community';
-import { IPortalManager, ReactComponent } from './reactComponent';
+import { ReactComponent } from '../shared/reactComponent';
 import { renderToStaticMarkup } from 'react-dom/server';
-import generateNewKey from './keyGenerator';
+import generateNewKey from '../shared/keyGenerator';
 import { AgGridReactLegacy } from './agGridReactLegacy';
+import { PortalManager } from '../shared/portalManager';
 
 export class LegacyReactComponent extends ReactComponent {
     static SLOW_RENDERING_THRESHOLD = 3;
@@ -14,7 +15,7 @@ export class LegacyReactComponent extends ReactComponent {
 
     private parentComponent: AgGridReactLegacy;
 
-    constructor(reactComponent: any, parentComponent: AgGridReactLegacy, portalManager: IPortalManager, componentType: ComponentType) {
+    constructor(reactComponent: any, parentComponent: AgGridReactLegacy, portalManager: PortalManager, componentType: ComponentType) {
         super(reactComponent, portalManager, componentType);
         this.parentComponent = parentComponent;
     }

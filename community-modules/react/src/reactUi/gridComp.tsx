@@ -1,17 +1,15 @@
-import React, { useEffect, useRef, useState, useCallback, useMemo, memo } from 'react';
 import {
-    Context,
+    Beans, Context,
     FocusService,
     GridCtrl,
-    IGridComp,
-    AgStackComponentsRegistry
-} from 'ag-grid-community';
-import { classesList } from './utils';
+    IGridComp
+} from '@ag-grid-community/core';
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { BeansContext } from './beansContext';
+import GridBodyComp from './gridBodyComp';
 import useReactCommentEffect from './reactComment';
 import TabGuardComp, { TabGuardCompCallback } from './tabGuardComp';
-import GridBodyComp  from './gridBodyComp';
-import { Beans } from 'ag-grid-community';
-import { BeansContext } from './beansContext';
+import { classesList } from './utils';
 
 interface GridCompProps {
     context: Context;

@@ -1,7 +1,4 @@
-import React, { Component, ReactPortal } from 'react';
-import PropTypes from 'prop-types';
 import {
-    _,
     BaseComponentWrapper,
     ColumnApi,
     ComponentType,
@@ -10,15 +7,16 @@ import {
     Grid,
     GridApi,
     GridOptions,
-    WrappableInterface
+    WrappableInterface, _
 } from 'ag-grid-community';
-import { AgGridColumn } from './agGridColumn';
-import { ChangeDetectionService, ChangeDetectionStrategyType } from './changeDetectionService';
-import { IPortalManager, ReactComponent } from './reactComponent';
+import PropTypes from 'prop-types';
+import React, { Component } from 'react';
 import { LegacyReactComponent } from './legacyReactComponent';
-import { NewReactComponent } from './newReactComponent';
-import { AgGridReactProps } from './interfaces';
-import { PortalManager } from './portalManager';
+import { AgGridColumn } from '../shared/agGridColumn';
+import { ChangeDetectionService, ChangeDetectionStrategyType } from '../shared/changeDetectionService';
+import { AgGridReactProps } from '../shared/interfaces';
+import { NewReactComponent } from '../shared/newReactComponent';
+import { PortalManager } from '../shared/portalManager';
 
 export class AgGridReactLegacy extends Component<AgGridReactProps, {}> {
 
@@ -278,17 +276,19 @@ function addProperties(listOfProps: string[], propType: any) {
 class ReactFrameworkComponentWrapper extends BaseComponentWrapper<WrappableInterface> implements FrameworkComponentWrapper {
 
     private readonly agGridReact!: AgGridReactLegacy;
-    private readonly portalManager!: IPortalManager;
+    private readonly portalManager!: PortalManager;
 
-    constructor(agGridReact: AgGridReactLegacy, portalManager: IPortalManager) {
+    constructor(agGridReact: AgGridReactLegacy, portalManager: PortalManager) {
         super();
         this.agGridReact = agGridReact;
         this.portalManager = portalManager;
     }
 
     createWrapper(UserReactComponent: { new(): any; }, componentType: ComponentType): WrappableInterface {
-        return this.agGridReact.isLegacyComponentRendering() ?
-            new LegacyReactComponent(UserReactComponent, this.agGridReact, this.portalManager, componentType) :
-            new NewReactComponent(UserReactComponent, this.portalManager, componentType);
+        if (this.agGridReact.isLegacyComponentRendering())  {
+            return new LegacyReactComponent(UserReactComponent, this.agGridReact, this.portalManager, componentType);
+        } else {
+            return new NewReactComponent(UserReactComponent, this.portalManager, componentType);
+        }
     }
 }

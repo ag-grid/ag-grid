@@ -1,15 +1,14 @@
-import { BaseComponentWrapper, ColumnApi, ComponentType, ComponentUtil, Context, FrameworkComponentWrapper, GridApi, GridCoreCreator, GridOptions, GridParams, IComponent, WrappableInterface, _ } from '@ag-grid-community/core';
+import { BaseComponentWrapper, ColumnApi, ComponentType, ComponentUtil, Context, FrameworkComponentWrapper, GridApi, GridCoreCreator, GridOptions, GridParams, IComponent, WrappableInterface, _ } from 'ag-grid-community';
 import React, { Component } from 'react';
-import { AgGridColumn } from '../agGridColumn';
-import { ChangeDetectionService, ChangeDetectionStrategyType } from '../changeDetectionService';
-import { AgReactUiProps } from '../interfaces';
-import { NewReactComponent } from '../newReactComponent';
-import { PortalManager } from '../portalManager';
-import { IPortalManager } from '../reactComponent';
+import { AgGridColumn } from '../shared/agGridColumn';
+import { ChangeDetectionService, ChangeDetectionStrategyType } from '../shared/changeDetectionService';
+import { AgReactUiProps } from '../shared/interfaces';
+import { NewReactComponent } from '../shared/newReactComponent';
+import { PortalManager } from '../shared/portalManager';
 import GridComp from './gridComp';
 import { ReactFrameworkOverrides } from './reactFrameworkOverrides';
 
-export class AgGridReactFire extends Component<AgReactUiProps, { context: Context | undefined }> {
+export class AgGridReactUi extends Component<AgReactUiProps, { context: Context | undefined }> {
 
     public api!: GridApi;
     public columnApi!: ColumnApi;
@@ -192,9 +191,9 @@ export class AgGridReactFire extends Component<AgReactUiProps, { context: Contex
 
 class ReactFrameworkComponentWrapper extends BaseComponentWrapper<WrappableInterface> implements FrameworkComponentWrapper {
 
-    private readonly parent: IPortalManager;    
+    private readonly parent: PortalManager;    
 
-    constructor(parent: IPortalManager) {
+    constructor(parent: PortalManager) {
         super();
         this.parent = parent;
     }

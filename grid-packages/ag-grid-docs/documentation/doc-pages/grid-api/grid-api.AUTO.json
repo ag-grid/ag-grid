@@ -487,9 +487,9 @@
     "type": {
       "arguments": {
         "key": "string | Column",
-        "callback?": "(filter: IFilterComp) => void"
+        "callback?": "(filter: IFilter) => void"
       },
-      "returnType": "IFilterComp | null | undefined"
+      "returnType": "IFilter | null | undefined"
     }
   },
   "getFilterApi": { "type": { "arguments": { "key": "string | Column" } } },
@@ -501,7 +501,7 @@
     "description": "/** Gets the status panel instance corresponding to the supplied `id`. */",
     "type": {
       "arguments": { "key": "string" },
-      "returnType": "IStatusPanelComp | undefined"
+      "returnType": "IStatusPanel | undefined"
     }
   },
   "getColumnDef": { "type": { "arguments": { "key": "string | Column" } } },

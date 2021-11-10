@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { AgGridReactLegacy } from './agGridReactLegacy';
-import { AgGridReactFire } from './next/agGridReactFire';
-import { AgGridReactProps, AgReactUiProps } from './interfaces';
+import { AgGridReactLegacy } from './legacy/agGridReactLegacy';
+import { AgGridReactUi } from './reactUi/agGridReactUi';
+import { AgGridReactProps, AgReactUiProps } from './shared/interfaces';
 import { ColumnApi, GridApi } from 'ag-grid-community';
 
 
@@ -16,7 +16,7 @@ export class AgGridReact extends Component<AgGridReactProps | AgReactUiProps, {}
 
     render() {
         if (this.props.reactUi) {
-            return <AgGridReactFire { ...this.props } setGridApi={ this.setGridApi } />;
+            return <AgGridReactUi { ...this.props } setGridApi={ this.setGridApi } />;
         }
         return <AgGridReactLegacy { ...this.props } setGridApi={ this.setGridApi } />;
     }
