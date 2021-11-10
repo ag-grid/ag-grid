@@ -1,7 +1,6 @@
-import { _, ChartModel, ChartType, Color } from "@ag-grid-community/core";
+import { _, ChartModel, ChartType, Color, AgChartThemeOverrides } from "@ag-grid-community/core";
 import {
     AgChartTheme,
-    AgChartThemeOverrides,
     AgChartThemePalette,
     CategoryAxis,
     Chart,

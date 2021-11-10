@@ -10,6 +10,7 @@ import { IFilterComp } from './interfaces/iFilter';
 import { CellRange, CellRangeParams } from './interfaces/IRangeService';
 import { ServerSideTransactionResult } from "./interfaces/serverSideTransaction";
 import { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
+import { AgChartThemeOverrides } from "./interfaces/iAgChartOptions";
 export { Events } from './eventKeys';
 
 export interface ModelUpdatedEvent extends AgGridEvent {
