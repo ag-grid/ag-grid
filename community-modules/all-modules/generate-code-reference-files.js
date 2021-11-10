@@ -117,68 +117,81 @@ function getInterfaces() {
     return interfaces;
 }
 
-function applyInheritance(extensions, interfaces, isDocStyle) {
-    Object.entries(extensions).forEach(([i, exts]) => {
+function getAncestors(extensions, child) {
+    let ancestors = [];
+    const extended = typeof (child) === 'string' ? child : child.extends;
+    const parents = extensions[extended];
+    if (parents) {
+        ancestors = [...ancestors, ...parents];
+        parents.forEach(p => {
+            ancestors = [...ancestors, ...getAncestors(extensions, p)]
+        })
+    }
+    return ancestors;
+}
 
-        const getAncestors = (child) => {
-            let ancestors = [];
-            const extended = typeof (child) === 'string' ? child : child.extends;
-            const parents = extensions[extended];
-            if (parents) {
-                ancestors = [...ancestors, ...parents];
-                parents.forEach(p => {
-                    ancestors = [...ancestors, ...getAncestors(p)]
-                })
-            }
-            return ancestors;
-        }
+function mergeAncestorProps(isDocStyle, parent, child, getProps) {
+    const props = { ...getProps(child) };
+    let mergedProps = props;
+    // If the parent has a generic params lets apply the child's specific types
+    if (parent.params && parent.params.length > 0) {
 
-        const mergeAncestorProps = (parent, child, getProps) => {
+        if (child.meta && child.meta.typeParams) {
+            child.meta.typeParams.forEach((t, i) => {
+                Object.entries(props).forEach(([k, v]) => {
+                    delete mergedProps[k];
+                    // Replace the generic params. Regex to make sure you are not just replacing 
+                    // random letters in variable names.
+                    var rep = `(?<!\\w)${t}(?!\\w)`;
+                    var re = new RegExp(rep, "g");
+                    var newKey = k.replace(re, parent.params[i]);
 
-            const props = { ...getProps(child) };
-            let mergedProps = props;
-            // If the parent has a generic params lets apply the child's specific types
-            if (parent.params && parent.params.length > 0) {
-
-                if (child.meta && child.meta.typeParams) {
-                    child.meta.typeParams.forEach((t, i) => {
-                        Object.entries(props).forEach(([k, v]) => {
-                            delete mergedProps[k];
-                            // Replace the generic params. Regex to make sure you are not just replacing 
-                            // random letters in variable names.
-                            var rep = `(?<!\\w)${t}(?!\\w)`;
-                            var re = new RegExp(rep, "g");
-                            var newKey = k.replace(re, parent.params[i]);
-
-                            if (isDocStyle) {
-                                if (v.type) {
-                                    let newArgs = undefined;
-                                    if (v.type.arguments) {
-                                        newArgs = {};
-                                        Object.entries(v.type.arguments).forEach(([ak, av]) => {
-                                            newArgs[ak] = av.replace(re, parent.params[i])
-                                        })
-                                    }
-                                    const newReturnType = v.type.returnType.replace(re, parent.params[i])
-                                    newValue = { ...v, type: { ...v.type, returnType: newReturnType, arguments: newArgs } }
-                                }
-                            } else {
-                                var newValue = v.replace(re, parent.params[i]);
+                    if (isDocStyle) {
+                        if (v.type) {
+                            let newArgs = undefined;
+                            if (v.type.arguments) {
+                                newArgs = {};
+                                Object.entries(v.type.arguments).forEach(([ak, av]) => {
+                                    newArgs[ak] = av.replace(re, parent.params[i])
+                                })
                             }
-
-                            mergedProps[newKey] = newValue;
-                        });
-                    });
-                }
-                else {
-                    if (parent.extends !== 'Omit') {
-                        throw new Error(`Parent interface ${parent.extends} takes generic params: [${parent.params.join()}] but child does not have typeParams.`);
+                            const newReturnType = v.type.returnType.replace(re, parent.params[i])
+                            newValue = { ...v, type: { ...v.type, returnType: newReturnType, arguments: newArgs } }
+                        }
+                    } else {
+                        var newValue = v.replace(re, parent.params[i]);
                     }
-                }
+
+                    mergedProps[newKey] = newValue;
+                });
+            });
+        }
+        else {
+            if (parent.extends !== 'Omit') {
+                throw new Error(`Parent interface ${parent.extends} takes generic params: [${parent.params.join()}] but child does not have typeParams.`);
             }
-            return mergedProps;
-        };
-        const allAncestors = getAncestors(i);
+        }
+    }
+    return mergedProps;
+};
+
+function mergeRespectingChildOverrides(parent, child) {
+    let merged = { ...child };
+    // We want the child properties to be list first for better doc reading experience
+    // Normal spread merge to get the correct order wipes out child overrides
+    // Hence the manual approach to the merge here.
+    Object.entries(parent).forEach(([k, v]) => {
+        if (!merged[k]) {
+            merged[k] = v;
+        }
+    })
+    return merged;
+}
+
+function applyInheritance(extensions, interfaces, isDocStyle) {
+    Object.entries(extensions).forEach(([i,]) => {
+
+        const allAncestors = getAncestors(extensions, i);
         let extendedInterface = interfaces[i];
 
         // TODO: Inherited Generic types do not get passed through
@@ -188,51 +201,50 @@ function applyInheritance(extensions, interfaces, isDocStyle) {
         allAncestors.forEach(a => {
             let extended = a.extends;
 
-            let ai = undefined;
+            let extInt = undefined;
             if (extended === 'Omit') {
+                // Omit: https://www.typescriptlang.org/docs/handbook/utility-types.html#omittype-keys
+                // Special logic to handle the removing of properties via the Omit utility when a type is defined via extension.
+                // e.g. export interface AgNumberAxisThemeOptions extends Omit<AgNumberAxisOptions, 'type'> { }
                 extended = a.params[0];
-
-                let toOmit = interfaces[extended];
-                /*  a.params.slice(1).forEach(toRemove => {
- 
-                     const typeName = toRemove.replace(/'/g, "");
-                     delete toOmit.type[typeName];
-                 }) */
-                ai = toOmit;
+                const fullInterface = interfaces[extended];
+                if (isDocStyle) {
+                    let toOmitFrom = { ...fullInterface };
+                    a.params.slice(1).forEach(toRemove => {
+                        const typeName = toRemove.replace(/'/g, "");
+                        delete toOmitFrom[typeName];
+                    })
+                    extInt = toOmitFrom;
+                } else {
+                    let toOmitFrom = { ...fullInterface, type: { ...fullInterface.type }, docs: fullInterface.docs ? { ...fullInterface.docs } : fullInterface.docs };
+                    a.params.slice(1).forEach(toRemove => {
+                        const typeName = toRemove.replace(/'/g, "");
+                        delete toOmitFrom.type[typeName];
+                        if (toOmitFrom.docs) {
+                            delete toOmitFrom.docs[typeName];
+                        }
+                    })
+                    extInt = toOmitFrom;
+                }
             } else {
-                aI = interfaces[extended];
+                extInt = interfaces[extended];
             }
 
-            if (!aI) {
+            if (!extInt) {
                 //Check for type params                
-                throw new Error('Missing interface', a);
-
-            }
-            const mergeRespectingChildOverrides = (parent, child) => {
-                let merged = { ...child };
-
-                // We want the child properties to be list first for better doc reading experience
-                // Normal spread merge to get the correct order wipes out child overrides
-                // Hence the manual approach to the merge here.
-                Object.entries(parent).forEach(([k, v]) => {
-                    if (!merged[k]) {
-                        merged[k] = v;
-                    }
-                })
-
-                return merged;
+                throw new Error('Missing interface' + a);
             }
 
             if (isDocStyle) {
-                if (aI) {
-                    extendedInterface = mergeRespectingChildOverrides(mergeAncestorProps(a, aI, a => a), extendedInterface);
+                if (extInt) {
+                    extendedInterface = mergeRespectingChildOverrides(mergeAncestorProps(isDocStyle, a, extInt, a => a), extendedInterface);
                 }
             } else {
-                if (aI && aI.type) {
-                    extendedInterface.type = mergeRespectingChildOverrides(mergeAncestorProps(a, aI, a => a.type), extendedInterface.type);
+                if (extInt && extInt.type) {
+                    extendedInterface.type = mergeRespectingChildOverrides(mergeAncestorProps(isDocStyle, a, extInt, a => a.type), extendedInterface.type);
                 }
-                if (aI && aI.docs) {
-                    extendedInterface.docs = mergeRespectingChildOverrides(mergeAncestorProps(a, aI, a => a.docs), extendedInterface.docs);
+                if (extInt && extInt.docs) {
+                    extendedInterface.docs = mergeRespectingChildOverrides(mergeAncestorProps(isDocStyle, a, extInt, a => a.docs), extendedInterface.docs);
                 }
             }
         });

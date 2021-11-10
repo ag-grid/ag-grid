@@ -41,17 +41,17 @@ export interface AgChartThemeOverrides {
 }
 
 interface AgCartesianAxisThemeOptions<T> {
-    top?: Omit<Omit<T, 'top'>, 'type'>;
-    right?: Omit<Omit<T, 'right'>, 'type'>;
-    bottom?: Omit<Omit<T, 'bottom'>, 'type'>;
-    left?: Omit<Omit<T, 'left'>, 'type'>;
+    top?: Omit<T, 'top' | 'type'>;
+    right?: Omit<T, 'right' | 'type'>;
+    bottom?: Omit<T, 'bottom' | 'type'>;
+    left?: Omit<T, 'left' | 'type'>;
 }
 
-export interface AgNumberAxisThemeOptions extends Omit<AgNumberAxisOptions, 'type'>, AgCartesianAxisThemeOptions<AgNumberAxisOptions> {}
-export interface AgLogAxisThemeOptions extends Omit<AgLogAxisOptions, 'type'>, AgCartesianAxisThemeOptions<AgLogAxisOptions> {}
-export interface AgCategoryAxisThemeOptions extends Omit<AgCategoryAxisOptions, 'type'>, AgCartesianAxisThemeOptions<AgCategoryAxisOptions> {}
-export interface AgGroupedCategoryAxisThemeOptions extends Omit<AgGroupedCategoryAxisOptions, 'type'>, AgCartesianAxisThemeOptions<AgGroupedCategoryAxisOptions> {}
-export interface AgTimeAxisThemeOptions extends Omit<AgTimeAxisOptions, 'type'>, AgCartesianAxisThemeOptions<AgTimeAxisOptions> {}
+export interface AgNumberAxisThemeOptions extends Omit<AgNumberAxisOptions, 'type'>, AgCartesianAxisThemeOptions<AgNumberAxisOptions> { }
+export interface AgLogAxisThemeOptions extends Omit<AgLogAxisOptions, 'type'>, AgCartesianAxisThemeOptions<AgLogAxisOptions> { }
+export interface AgCategoryAxisThemeOptions extends Omit<AgCategoryAxisOptions, 'type'>, AgCartesianAxisThemeOptions<AgCategoryAxisOptions> { }
+export interface AgGroupedCategoryAxisThemeOptions extends Omit<AgGroupedCategoryAxisOptions, 'type'>, AgCartesianAxisThemeOptions<AgGroupedCategoryAxisOptions> { }
+export interface AgTimeAxisThemeOptions extends Omit<AgTimeAxisOptions, 'type'>, AgCartesianAxisThemeOptions<AgTimeAxisOptions> { }
 
 export interface AgCartesianAxesTheme {
     number?: AgNumberAxisThemeOptions;

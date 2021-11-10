@@ -5319,57 +5319,65 @@
   "AgCartesianAxisThemeOptions": {
     "meta": { "typeParams": ["T"] },
     "type": {
-      "top?": "Omit<Omit<T, 'top'>, 'type'>",
-      "right?": "Omit<Omit<T, 'right'>, 'type'>",
-      "bottom?": "Omit<Omit<T, 'bottom'>, 'type'>",
-      "left?": "Omit<Omit<T, 'left'>, 'type'>"
+      "top?": "Omit<T, 'top' | 'type'>",
+      "right?": "Omit<T, 'right' | 'type'>",
+      "bottom?": "Omit<T, 'bottom' | 'type'>",
+      "left?": "Omit<T, 'left' | 'type'>"
     }
   },
   "AgNumberAxisThemeOptions": {
     "meta": {},
     "type": {
-      "palette?": "AgChartThemePalette",
-      "overrides?": "AgChartThemeOverrides",
-      "top?": "Omit<Omit<AgNumberAxisOptions, 'top'>, 'type'>",
-      "right?": "Omit<Omit<AgNumberAxisOptions, 'right'>, 'type'>",
-      "bottom?": "Omit<Omit<AgNumberAxisOptions, 'bottom'>, 'type'>",
-      "left?": "Omit<Omit<AgNumberAxisOptions, 'left'>, 'type'>"
+      "nice?": "boolean",
+      "min?": "number",
+      "max?": "number",
+      "top?": "Omit<AgNumberAxisOptions, 'top' | 'type'>",
+      "right?": "Omit<AgNumberAxisOptions, 'right' | 'type'>",
+      "bottom?": "Omit<AgNumberAxisOptions, 'bottom' | 'type'>",
+      "left?": "Omit<AgNumberAxisOptions, 'left' | 'type'>"
     }
   },
   "AgLogAxisThemeOptions": {
     "meta": {},
     "type": {
-      "top?": "Omit<Omit<AgLogAxisOptions, 'top'>, 'type'>",
-      "right?": "Omit<Omit<AgLogAxisOptions, 'right'>, 'type'>",
-      "bottom?": "Omit<Omit<AgLogAxisOptions, 'bottom'>, 'type'>",
-      "left?": "Omit<Omit<AgLogAxisOptions, 'left'>, 'type'>"
+      "nice?": "boolean",
+      "min?": "number",
+      "max?": "number",
+      "base?": "number",
+      "top?": "Omit<AgLogAxisOptions, 'top' | 'type'>",
+      "right?": "Omit<AgLogAxisOptions, 'right' | 'type'>",
+      "bottom?": "Omit<AgLogAxisOptions, 'bottom' | 'type'>",
+      "left?": "Omit<AgLogAxisOptions, 'left' | 'type'>"
     }
   },
   "AgCategoryAxisThemeOptions": {
     "meta": {},
     "type": {
-      "top?": "Omit<Omit<AgCategoryAxisOptions, 'top'>, 'type'>",
-      "right?": "Omit<Omit<AgCategoryAxisOptions, 'right'>, 'type'>",
-      "bottom?": "Omit<Omit<AgCategoryAxisOptions, 'bottom'>, 'type'>",
-      "left?": "Omit<Omit<AgCategoryAxisOptions, 'left'>, 'type'>"
+      "paddingInner?": "number",
+      "paddingOuter?": "number",
+      "top?": "Omit<AgCategoryAxisOptions, 'top' | 'type'>",
+      "right?": "Omit<AgCategoryAxisOptions, 'right' | 'type'>",
+      "bottom?": "Omit<AgCategoryAxisOptions, 'bottom' | 'type'>",
+      "left?": "Omit<AgCategoryAxisOptions, 'left' | 'type'>"
     }
   },
   "AgGroupedCategoryAxisThemeOptions": {
     "meta": {},
     "type": {
-      "top?": "Omit<Omit<AgGroupedCategoryAxisOptions, 'top'>, 'type'>",
-      "right?": "Omit<Omit<AgGroupedCategoryAxisOptions, 'right'>, 'type'>",
-      "bottom?": "Omit<Omit<AgGroupedCategoryAxisOptions, 'bottom'>, 'type'>",
-      "left?": "Omit<Omit<AgGroupedCategoryAxisOptions, 'left'>, 'type'>"
+      "top?": "Omit<AgGroupedCategoryAxisOptions, 'top' | 'type'>",
+      "right?": "Omit<AgGroupedCategoryAxisOptions, 'right' | 'type'>",
+      "bottom?": "Omit<AgGroupedCategoryAxisOptions, 'bottom' | 'type'>",
+      "left?": "Omit<AgGroupedCategoryAxisOptions, 'left' | 'type'>"
     }
   },
   "AgTimeAxisThemeOptions": {
     "meta": {},
     "type": {
-      "top?": "Omit<Omit<AgTimeAxisOptions, 'top'>, 'type'>",
-      "right?": "Omit<Omit<AgTimeAxisOptions, 'right'>, 'type'>",
-      "bottom?": "Omit<Omit<AgTimeAxisOptions, 'bottom'>, 'type'>",
-      "left?": "Omit<Omit<AgTimeAxisOptions, 'left'>, 'type'>"
+      "nice?": "boolean",
+      "top?": "Omit<AgTimeAxisOptions, 'top' | 'type'>",
+      "right?": "Omit<AgTimeAxisOptions, 'right' | 'type'>",
+      "bottom?": "Omit<AgTimeAxisOptions, 'bottom' | 'type'>",
+      "left?": "Omit<AgTimeAxisOptions, 'left' | 'type'>"
     }
   },
   "AgCartesianAxesTheme": {
