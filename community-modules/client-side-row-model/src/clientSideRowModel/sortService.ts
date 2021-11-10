@@ -50,15 +50,14 @@ export class SortService extends BeanStub {
                 // when 'groupMaintainOrder' is enabled we skip sorting groups unless we are sorting on group columns
                 let skipSortingGroups = groupMaintainOrder && !rowNode.leafGroup && !sortContainsGroupColumns;
                 if (skipSortingGroups) {
-                    rowNode.childrenAfterSort = rowNode.childrenAfterSort!.slice(0);
+                    rowNode.childrenAfterSort = rowNode.childrenAfterFilter!.slice(0);
                 } else {
                     rowNode.childrenAfterSort = deltaSort ?
                         this.doDeltaSort(rowNode, sortOptions, dirtyLeafNodes, changedPath, noAggregations)
                         : this.rowNodeSorter.doFullSort(rowNode.childrenAfterFilter!, sortOptions);
                 }
             } else {
-                rowNode.childrenAfterSort = groupMaintainOrder && rowNode.childrenAfterSort ?
-                    rowNode.childrenAfterSort!.slice(0) : rowNode.childrenAfterFilter!.slice(0);
+                rowNode.childrenAfterSort = rowNode.childrenAfterFilter!.slice(0);
             }
 
             if (rowNode.sibling) {
