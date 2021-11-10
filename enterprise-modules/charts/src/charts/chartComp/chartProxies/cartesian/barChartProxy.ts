@@ -3,7 +3,7 @@ import { AgChart, BarSeries, CartesianChart, ChartAxisPosition, LegendClickEvent
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { deepMerge } from "../../object";
-import { hexToRGBA } from "../../color.";
+import { hexToRGBA } from "../../color";
 
 export class BarChartProxy extends CartesianChartProxy {
 
