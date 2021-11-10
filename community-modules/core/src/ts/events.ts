@@ -249,7 +249,7 @@ export interface ChartOptionsChanged extends AgGridEvent {
     /** Chart theme name of currently selected theme. */
     chartThemeName: string;
     /** Chart options.  */
-    chartOptions: any;
+    chartOptions: AgChartThemeOverrides;
 }
 
 export interface ChartDestroyed extends AgGridEvent {
@@ -275,7 +275,7 @@ export interface BodyScrollEvent extends AgGridEvent {
     top: number;
 }
 
-export interface BodyScrollEndEvent extends BodyScrollEvent {}
+export interface BodyScrollEndEvent extends BodyScrollEvent { }
 
 // not documented
 export interface FlashCellsEvent extends AgGridEvent {

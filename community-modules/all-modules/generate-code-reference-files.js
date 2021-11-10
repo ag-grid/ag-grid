@@ -11,7 +11,7 @@ const formatNode = getFormatterForTS(ts);
 const EVENT_LOOKUP = ComponentUtil.getEventCallbacks();
 
 function buildGlob(basePath) {
-    const opts = { ignore: [`${basePath}/**/*.test.ts`, `${basePath}/**/*.spec.ts`]};
+    const opts = { ignore: [`${basePath}/**/*.test.ts`, `${basePath}/**/*.spec.ts`] };
     return glob.sync(`${basePath}/**/*.ts`, opts);
 }
 
@@ -140,7 +140,7 @@ function applyInheritance(extensions, interfaces, isDocStyle) {
             // If the parent has a generic params lets apply the child's specific types
             if (parent.params && parent.params.length > 0) {
 
-                if (child.meta.typeParams) {
+                if (child.meta && child.meta.typeParams) {
                     child.meta.typeParams.forEach((t, i) => {
                         Object.entries(props).forEach(([k, v]) => {
                             delete mergedProps[k];
@@ -171,7 +171,9 @@ function applyInheritance(extensions, interfaces, isDocStyle) {
                     });
                 }
                 else {
-                    throw new Error(`Parent interface ${parent.extends} takes generic params: [${parent.params.join()}] but child does not have typeParams.`);
+                    if (parent.extends !== 'Omit') {
+                        throw new Error(`Parent interface ${parent.extends} takes generic params: [${parent.params.join()}] but child does not have typeParams.`);
+                    }
                 }
             }
             return mergedProps;
@@ -184,8 +186,23 @@ function applyInheritance(extensions, interfaces, isDocStyle) {
         // Example interface is ICellEditorComp
 
         allAncestors.forEach(a => {
-            const extended = a.extends;
-            let aI = interfaces[extended];
+            let extended = a.extends;
+
+            let ai = undefined;
+            if (extended === 'Omit') {
+                extended = a.params[0];
+
+                let toOmit = interfaces[extended];
+                /*  a.params.slice(1).forEach(toRemove => {
+ 
+                     const typeName = toRemove.replace(/'/g, "");
+                     delete toOmit.type[typeName];
+                 }) */
+                ai = toOmit;
+            } else {
+                aI = interfaces[extended];
+            }
+
             if (!aI) {
                 //Check for type params                
                 throw new Error('Missing interface', a);
