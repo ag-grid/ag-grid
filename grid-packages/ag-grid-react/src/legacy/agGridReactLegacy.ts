@@ -193,8 +193,7 @@ export class AgGridReactLegacy extends Component<AgGridReactProps, {}> {
         });
 
         ComponentUtil.getEventCallbacks().forEach(funcName => {
-            const propsAny = this.props as any;
-            if (propsAny[funcName] !== nextProps[funcName]) {
+            if (prevProps[funcName] !== nextProps[funcName]) {
                 if (debugLogging) {
                     console.log(`agGridReact: [${funcName}] event callback changed`);
                 }

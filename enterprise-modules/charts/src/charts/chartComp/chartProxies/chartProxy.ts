@@ -16,7 +16,7 @@ export interface ChartProxyParams {
     apiChartThemeOverrides?: AgChartThemeOverrides;
     crossFiltering: boolean;
     crossFilterCallback: (event: any, reset?: boolean) => void;
-    chartModel?: ChartModel;
+    chartOptionsToRestore?: AgChartThemeOverrides;
 }
 
 export interface FieldDefinition {
@@ -79,9 +79,8 @@ export abstract class ChartProxy {
     }
 
     protected initChartOptions(): void {
-        if (this.chartProxyParams.chartModel) {
-            const chartModel = this.chartProxyParams.chartModel;
-            this.chartOptions = chartModel.chartOptions;
+        if (this.chartProxyParams.chartOptionsToRestore) {
+            this.chartOptions = this.chartProxyParams.chartOptionsToRestore;
             this.chartTheme = getChartTheme({ overrides: this.chartOptions });
             return;
         }

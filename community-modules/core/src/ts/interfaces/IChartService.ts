@@ -3,6 +3,7 @@ import { ChartRef } from "../entities/gridOptions";
 import { CreateCrossFilterChartParams, CreatePivotChartParams, CreateRangeChartParams } from "../gridApi";
 import { CellRangeParams } from "./IRangeService";
 import { IAggFunc } from "../entities/colDef";
+import { AgChartThemeOverrides } from "./iAgChartOptions";
 
 export interface GetChartImageDataUrlParams {
     /** The id of the created chart. */
@@ -23,7 +24,7 @@ export interface ChartModel {
     chartType: ChartType;
     cellRange: CellRangeParams;
     chartThemeName?: string;
-    chartOptions: any; //TODO
+    chartOptions: AgChartThemeOverrides;
     suppressChartRanges?: boolean;
     aggFunc?: string | IAggFunc;
     unlinkChart?: boolean;

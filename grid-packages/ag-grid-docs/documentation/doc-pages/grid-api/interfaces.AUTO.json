@@ -6527,7 +6527,7 @@
       "chartType": "ChartType",
       "cellRange": "CellRangeParams",
       "chartThemeName?": "string",
-      "chartOptions": "any",
+      "chartOptions": "AgChartThemeOverrides",
       "suppressChartRanges?": "boolean",
       "aggFunc?": "string | IAggFunc",
       "unlinkChart?": "boolean"
