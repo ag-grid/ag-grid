@@ -64,7 +64,7 @@ const Menu = ({ currentFramework, currentPage }) => {
     const [activeSection, setActiveSection] = useState(null);
     const combinedMenuItems = menuData.reduce((combined, group) => [...combined, ...group.items], [])
         .filter(group => groupItemHasApplicableChild(group.items));
-    console.log(combinedMenuItems);
+
     const containsPage = (items, frameworks) => items.reduce(
         (hasPage, item) => {
             const availableFrameworks = item.frameworks || frameworks;
