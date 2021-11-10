@@ -11,7 +11,7 @@ interface SeriesDefinition {
     sizeField?: FieldDefinition;
 }
 
-export class ScatterChartProxy extends CartesianChartProxy<any> {
+export class ScatterChartProxy extends CartesianChartProxy {
 
     public constructor(params: ChartProxyParams) {
         super(params);

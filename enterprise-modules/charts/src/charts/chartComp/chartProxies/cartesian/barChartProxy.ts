@@ -1,4 +1,4 @@
-import { _, ChartType, } from "@ag-grid-community/core";
+import { _, AgChartThemeOverrides, ChartType, } from "@ag-grid-community/core";
 import {
     AgCartesianChartOptions,
     AgChart,
@@ -11,7 +11,7 @@ import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartPr
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { deepMerge } from "../../object";
 
-export class BarChartProxy extends CartesianChartProxy<any> {
+export class BarChartProxy extends CartesianChartProxy {
 
     public constructor(params: ChartProxyParams) {
         super(params);

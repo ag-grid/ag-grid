@@ -51,7 +51,7 @@ export interface UpdateChartParams {
     getCrossFilteringContext: () => CrossFilteringContext,
 }
 
-export abstract class ChartProxy<TChart extends Chart, TOptions extends any> {
+export abstract class ChartProxy<TChart extends Chart> {
     protected readonly chartId: string;
     protected readonly chartType: ChartType;
     protected readonly standaloneChartType: ChartThemeOverrideObjectName;
@@ -71,7 +71,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends any> {
         this.standaloneChartType = getChartThemeOverrideObjectName(this.chartType);
     }
 
-    protected abstract createChart(options?: TOptions): TChart;
+    protected abstract createChart(options?: AgChartThemeOverrides): TChart;
 
     public abstract update(params: UpdateChartParams): void;
 

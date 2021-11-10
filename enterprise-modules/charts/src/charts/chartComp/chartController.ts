@@ -30,7 +30,7 @@ export class ChartController extends BeanStub {
     @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('columnApi') private readonly columnApi: ColumnApi;
 
-    private chartProxy: ChartProxy<any, any>;
+    private chartProxy: ChartProxy<any>;
 
     public constructor(private readonly model: ChartDataModel) {
         super();
@@ -184,11 +184,11 @@ export class ChartController extends BeanStub {
         }
     }
 
-    public setChartProxy(chartProxy: ChartProxy<any, any>): void {
+    public setChartProxy(chartProxy: ChartProxy<any>): void {
         this.chartProxy = chartProxy;
     }
 
-    public getChartProxy(): ChartProxy<any, any> {
+    public getChartProxy(): ChartProxy<any> {
         return this.chartProxy;
     }
 

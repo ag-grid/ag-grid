@@ -4,7 +4,7 @@ import { CartesianChartProxy } from "./cartesianChartProxy";
 import { deepMerge } from "../../object";
 import { ChartDataModel } from "../../chartDataModel";
 
-export class LineChartProxy extends CartesianChartProxy<any> {
+export class LineChartProxy extends CartesianChartProxy {
 
     public constructor(params: ChartProxyParams) {
         super(params);

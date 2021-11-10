@@ -85,7 +85,7 @@ export class GridChartComp extends Component {
     private chartController: ChartController;
     private chartOptionsService: ChartOptionsService;
 
-    private chartProxy: ChartProxy<any, any>;
+    private chartProxy: ChartProxy<any>;
     private chartType: ChartType;
     private chartThemeName?: string;
 
@@ -249,7 +249,7 @@ export class GridChartComp extends Component {
         return this.gridOptionsWrapper.getChartThemeOverrides();
     }
 
-    private static createChartProxy(chartProxyParams: ChartProxyParams): ChartProxy<any, any> {
+    private static createChartProxy(chartProxyParams: ChartProxyParams): ChartProxy<any> {
         switch (chartProxyParams.chartType) {
             case ChartType.Column:
             case ChartType.Bar:
