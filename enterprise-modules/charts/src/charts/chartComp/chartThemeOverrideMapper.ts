@@ -1,6 +1,21 @@
 import { ChartType } from "@ag-grid-community/core";
 
-export function getStandaloneChartType(chartType: ChartType): string {
+// these values correspond to top level object names in `AgChartThemeOverrides`
+export type ChartThemeOverrideObjectName =
+    'cartesian' |
+    'column' |
+    'bar' |
+    'line' |
+    'area' |
+    'scatter' |
+    'histogram' |
+    'polar' |
+    'pie' |
+    'hierarchy' |
+    'treemap' |
+    'common';
+
+export function getChartThemeOverrideObjectName(chartType: ChartType): ChartThemeOverrideObjectName {
     switch (chartType) {
         case ChartType.Bar:
         case ChartType.GroupedBar:
