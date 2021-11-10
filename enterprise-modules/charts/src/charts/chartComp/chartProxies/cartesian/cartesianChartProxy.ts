@@ -11,8 +11,9 @@ import {
     TimeAxis
 } from "ag-charts-community";
 import { ChartDataModel } from "../../chartDataModel";
+import { AgChartThemeOverrides } from "@ag-grid-community/core";
 
-export abstract class CartesianChartProxy<T extends any> extends ChartProxy<CartesianChart | GroupedCategoryChart, any> {
+export abstract class CartesianChartProxy extends ChartProxy {
     protected xAxisType: AgCartesianAxisType;
     protected yAxisType: AgCartesianAxisType;
 

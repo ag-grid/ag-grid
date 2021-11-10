@@ -31,6 +31,7 @@ function createRootIndex() {
         <html style="height: 100%">
         <head lang="en">
         <meta charset="UTF-8">
+        <meta name="robots" content="noindex">
         <meta http-equiv="refresh" content="0; URL='https://www.ag-grid.com/archive/${newVersion}/documentation/'" />
         </head>
         <body class="big-text">
@@ -109,6 +110,10 @@ walker.on("file", (root, fileStats, next) => {
 });
 
 walker.on("end", () => {
+    archive.append("User-agent: * Disallow: /", {
+        name: 'robots.txt'
+    });
+
     archive.finalize();
     console.log("Finalising Archive");
 });

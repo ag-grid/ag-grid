@@ -30,7 +30,7 @@ export class ChartController extends BeanStub {
     @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('columnApi') private readonly columnApi: ColumnApi;
 
-    private chartProxy: ChartProxy<any, any>;
+    private chartProxy: ChartProxy;
 
     public constructor(private readonly model: ChartDataModel) {
         super();
@@ -123,18 +123,11 @@ export class ChartController extends BeanStub {
     }
 
     public getPalettes(): AgChartThemePalette[] {
-        const customPalette = this.chartProxy.getCustomPalette();
-
-        if (customPalette) {
-            return [customPalette];
-        }
-
         const themeNames = this.gridOptionsWrapper.getChartThemes();
 
         return themeNames.map(themeName => {
-            const theme = this.chartProxy.isStockTheme(themeName) ?
-                themeName : this.chartProxy.lookupCustomChartTheme(themeName);
-
+            const stockTheme = this.chartProxy.isStockTheme(themeName);
+            const theme = stockTheme ? themeName : this.chartProxy.lookupCustomChartTheme(themeName);
             return getChartTheme(theme).palette;
         });
     }
@@ -184,11 +177,11 @@ export class ChartController extends BeanStub {
         }
     }
 
-    public setChartProxy(chartProxy: ChartProxy<any, any>): void {
+    public setChartProxy(chartProxy: ChartProxy): void {
         this.chartProxy = chartProxy;
     }
 
-    public getChartProxy(): ChartProxy<any, any> {
+    public getChartProxy(): ChartProxy {
         return this.chartProxy;
     }
 

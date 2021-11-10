@@ -2,6 +2,7 @@ import { AgChart, AgPolarChartOptions, PieSeries, PolarChart } from "ag-charts-c
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { PolarChartProxy } from "./polarChartProxy";
 import { LegendClickEvent } from "ag-charts-community/dist/cjs/chart/legend";
+import { changeOpacity } from "../../color.";
 
 export class PieChartProxy extends PolarChartProxy {
 
@@ -106,8 +107,8 @@ export class PieChartProxy extends PolarChartProxy {
 
             const isOpaqueSeries = !opaqueSeries;
             if (isOpaqueSeries) {
-                pieSeries.fills = this.changeOpacity(pieSeries.fills, 0.3);
-                pieSeries.strokes = this.changeOpacity(pieSeries.strokes, 0.3);
+                pieSeries.fills = changeOpacity(pieSeries.fills, 0.3);
+                pieSeries.strokes = changeOpacity(pieSeries.strokes, 0.3);
                 pieSeries.showInLegend = false;
             } else {
                 chart.legend.addEventListener('click', (event: LegendClickEvent) => {

@@ -53,7 +53,9 @@
     "cleanAndRebuild": "npm run clean && npm run updateAndRebuild",
     "ciBuildNoTest": "cd grid-packages/ag-grid-docs && node -e 'require(\"./lernaOperations.js\").rebuildPackagesBasedOnChangeStateNoTest()'",
     "ciBuildAndTest": "cd grid-packages/ag-grid-docs && node -e 'require(\"./lernaOperations.js\").rebuildPackagesBasedOnChangeState()'",
+    "ciBuildAndTestIncludingExamples": "cd grid-packages/ag-grid-docs && node -e 'require(\"./lernaOperations.js\").rebuildPackagesBasedOnChangeStateIncludingExamples()'",
     "ciUpdateRebuildAndTest": "npm i && npm run bootstrap && npm run ciBuildAndTest",
+    "ciUpdateRebuildAndTestIncludingExamples": "npm i && npm run bootstrap && npm run ciBuildAndTestIncludingExamples",
     "ciUpdateRebuild": "npm i && npm run bootstrap && npm run ciBuildNoTest"
   },
   "devDependencies": {

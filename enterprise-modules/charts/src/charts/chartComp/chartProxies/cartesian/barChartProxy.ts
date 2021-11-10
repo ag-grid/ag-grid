@@ -1,4 +1,4 @@
-import { _, ChartType, } from "@ag-grid-community/core";
+import { _, AgChartThemeOverrides, ChartType, } from "@ag-grid-community/core";
 import {
     AgCartesianChartOptions,
     AgChart,
@@ -10,8 +10,9 @@ import {
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { deepMerge } from "../../object";
+import { hexToRGBA } from "../../color.";
 
-export class BarChartProxy extends CartesianChartProxy<any> {
+export class BarChartProxy extends CartesianChartProxy {
 
     public constructor(params: ChartProxyParams) {
         super(params);
@@ -72,7 +73,7 @@ export class BarChartProxy extends CartesianChartProxy<any> {
         const fills: string[] = [];
         palette.fills.forEach(fill => {
             fills.push(fill);
-            fills.push(this.hexToRGBA(fill, '0.3'));
+            fills.push(hexToRGBA(fill, '0.3'));
         });
         barSeries.fills = fills;
 
@@ -80,7 +81,7 @@ export class BarChartProxy extends CartesianChartProxy<any> {
         const strokes: string[] = [];
         palette.strokes.forEach(stroke => {
             fills.push(stroke);
-            fills.push(this.hexToRGBA(stroke, '0.3'));
+            fills.push(hexToRGBA(stroke, '0.3'));
         });
         barSeries.strokes = strokes;
 

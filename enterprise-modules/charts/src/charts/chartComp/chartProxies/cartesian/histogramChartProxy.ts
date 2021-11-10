@@ -3,7 +3,7 @@ import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { deepMerge } from "../../object";
 
-export class HistogramChartProxy extends CartesianChartProxy<any> {
+export class HistogramChartProxy extends CartesianChartProxy {
 
     public constructor(params: ChartProxyParams) {
         super(params);

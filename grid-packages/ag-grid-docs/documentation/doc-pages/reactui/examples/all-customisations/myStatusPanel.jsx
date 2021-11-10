@@ -7,20 +7,20 @@ export default forwardRef((props, ref) => {
     // expose AG Grid Filter Lifecycle callbacks
     useImperativeHandle(ref, () => {
         return {
-            sampleToolPanelMethod() {
+            sampleStatusPanelMethod() {
                 setValue( value => value + 1);
             }
         }
     });
 
     return (
-        <div className='my-tool-panel'>
-            <div>
-                Sample Tool Panel
-            </div>
-            <div className='my-tool-panel-value'>
+        <div className='my-status-panel'>
+            <span>
+                Sample Status Panel
+            </span>
+            <span className='my-status-panel-value'>
                 {value}
-            </div>
+            </span>
         </div>
     )
 });

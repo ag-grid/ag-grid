@@ -4,7 +4,7 @@ import { CartesianChartProxy } from "./cartesianChartProxy";
 import { deepMerge } from "../../object";
 import { ChartDataModel } from "../../chartDataModel";
 
-export class LineChartProxy extends CartesianChartProxy<any> {
+export class LineChartProxy extends CartesianChartProxy {
 
     public constructor(params: ChartProxyParams) {
         super(params);
@@ -33,7 +33,7 @@ export class LineChartProxy extends CartesianChartProxy<any> {
 
         this.updateAxes(params);
 
-        const { chart } = this;
+        const chart = this.chart as CartesianChart;
         const { fields } = params;
         const fieldIds = fields.map(f => f.colId);
         const data = this.transformData(params.data, params.category.id);

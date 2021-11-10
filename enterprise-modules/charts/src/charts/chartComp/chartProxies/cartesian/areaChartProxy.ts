@@ -4,7 +4,7 @@ import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { deepMerge } from "../../object";
 
-export class AreaChartProxy extends CartesianChartProxy<any> {
+export class AreaChartProxy extends CartesianChartProxy {
 
     public constructor(params: ChartProxyParams) {
         super(params);
@@ -62,7 +62,7 @@ export class AreaChartProxy extends CartesianChartProxy<any> {
     }
 
     private updateAreaChart(params: UpdateChartParams): void {
-        const { chart } = this;
+        const chart: CartesianChart  = this.chart as CartesianChart;
 
         if (params.fields.length === 0) {
             chart.removeAllSeries();

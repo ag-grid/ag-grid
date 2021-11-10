@@ -10,7 +10,7 @@ import {
 } from "ag-charts-community";
 import { deepMerge } from "../object";
 import { CrossFilteringContext } from "../../chartService";
-import { getChartThemeOverrideObjectName, ChartThemeOverrideObjectName } from "../chartThemeOverrideMapper";
+import { getChartThemeOverridesObjectName, ChartThemeOverrideObjectName } from "../chartThemeOverridesMapper";
 
 export interface ChartProxyParams {
     chartId: string;
@@ -51,15 +51,14 @@ export interface UpdateChartParams {
     getCrossFilteringContext: () => CrossFilteringContext,
 }
 
-export abstract class ChartProxy<TChart extends Chart, TOptions extends any> {
+export abstract class ChartProxy {
     protected readonly chartId: string;
     protected readonly chartType: ChartType;
     protected readonly standaloneChartType: ChartThemeOverrideObjectName;
 
-    protected chart: TChart;
+    protected chart: Chart;
     protected chartOptions: AgChartThemeOverrides;
     protected chartTheme: ChartTheme;
-    protected customPalette: AgChartThemePalette;
     protected crossFiltering: boolean;
     protected crossFilterCallback: (event: any, reset?: boolean) => void;
 
@@ -68,10 +67,10 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends any> {
         this.chartType = chartProxyParams.chartType;
         this.crossFiltering = chartProxyParams.crossFiltering;
         this.crossFilterCallback = chartProxyParams.crossFilterCallback;
-        this.standaloneChartType = getChartThemeOverrideObjectName(this.chartType);
+        this.standaloneChartType = getChartThemeOverridesObjectName(this.chartType);
     }
 
-    protected abstract createChart(options?: TOptions): TChart;
+    protected abstract createChart(options?: AgChartThemeOverrides): Chart;
 
     public abstract update(params: UpdateChartParams): void;
 
@@ -89,7 +88,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends any> {
         }
     }
 
-    public getChart(): TChart {
+    public getChart(): Chart {
         return this.chart;
     }
 
@@ -121,10 +120,19 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends any> {
         return getChartTheme(stockTheme ? themeName : this.lookupCustomChartTheme(themeName));
     }
 
-    private static mergeThemeOverrides(gridOptionsThemeOverrides?: AgChartThemeOverrides, apiThemeOverrides?: AgChartThemeOverrides) {
-        if (!gridOptionsThemeOverrides) { return apiThemeOverrides; }
-        if (!apiThemeOverrides) { return gridOptionsThemeOverrides; }
-        return deepMerge(gridOptionsThemeOverrides, apiThemeOverrides);
+    public isStockTheme(themeName: string): boolean {
+        return _.includes(Object.keys(themes), themeName);
+    }
+
+    private getSelectedTheme(): string {
+        let chartThemeName = this.chartProxyParams.getChartThemeName();
+        const availableThemes = this.chartProxyParams.getChartThemes();
+
+        if (!_.includes(availableThemes, chartThemeName)) {
+            chartThemeName = availableThemes[0];
+        }
+
+        return chartThemeName;
     }
 
     public lookupCustomChartTheme(name: string) {
@@ -139,8 +147,10 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends any> {
         return customChartTheme;
     }
 
-    public isStockTheme(themeName: string): boolean {
-        return _.includes(Object.keys(themes), themeName);
+    private static mergeThemeOverrides(gridOptionsThemeOverrides?: AgChartThemeOverrides, apiThemeOverrides?: AgChartThemeOverrides) {
+        if (!gridOptionsThemeOverrides) { return apiThemeOverrides; }
+        if (!apiThemeOverrides) { return gridOptionsThemeOverrides; }
+        return deepMerge(gridOptionsThemeOverrides, apiThemeOverrides);
     }
 
     public downloadChart(): void {
@@ -153,31 +163,12 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends any> {
         return this.chart.scene.getDataURL(type);
     }
 
-    private getSelectedTheme(): string {
-        let chartThemeName = this.chartProxyParams.getChartThemeName();
-        const availableThemes = this.chartProxyParams.getChartThemes();
-
-        if (!_.includes(availableThemes, chartThemeName)) {
-            chartThemeName = availableThemes[0];
-        }
-
-        return chartThemeName;
-    }
-
-    public getChartOptions(): any {
+    public getChartOptions(): AgChartThemeOverrides {
         return this.chartOptions;
     }
 
-    public getCustomPalette(): AgChartThemePalette | undefined {
-        return this.customPalette;
-    }
-
-    protected getPredefinedPalette(): AgChartThemePalette {
-        return this.chartTheme.palette;
-    }
-
     protected getPalette(): AgChartThemePalette {
-        return this.customPalette || this.chartTheme.palette;
+        return this.chartTheme.palette;
     }
 
     protected transformData(data: any[], categoryKey: string): any[] {
@@ -194,20 +185,6 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends any> {
             datum[categoryKey] = { id: index, value, toString: () => valueString };
 
             return datum;
-        });
-    }
-
-    protected hexToRGBA(hex: string, alpha: string) {
-        const r = parseInt(hex.slice(1, 3), 16);
-        const g = parseInt(hex.slice(3, 5), 16);
-        const b = parseInt(hex.slice(5, 7), 16);
-        return alpha ? `rgba(${r}, ${g}, ${b}, ${alpha})` : `rgba(${r}, ${g}, ${b})`;
-    }
-
-    protected changeOpacity(fills: string[], alpha: number) {
-        return fills.map(fill => {
-            const c = Color.fromString(fill);
-            return new Color(c.r, c.g, c.b, alpha).toHexString();
         });
     }
 
