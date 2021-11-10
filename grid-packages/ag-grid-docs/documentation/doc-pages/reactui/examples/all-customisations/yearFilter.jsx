@@ -15,8 +15,6 @@ export default forwardRef((props, ref) => {
                 return isActive;
             },
  
-            // this example isn't using getModel() and setModel(),
-            // so safe to just leave these empty. don't do this in your code!!!
             getModel() {
                 return isActive ? {active: true} : undefined;
             },
@@ -30,7 +28,7 @@ export default forwardRef((props, ref) => {
                 setYear(value ? '2010' : 'All');
             },
 
-            sampleToggleMethod(value) {
+            sampleToggleMethod() {
                 setYear(!isActive ? '2010' : 'All');
             }
         }
