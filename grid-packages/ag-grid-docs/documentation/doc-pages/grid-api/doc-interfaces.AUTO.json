@@ -5872,7 +5872,7 @@
     },
     "chartOptions": {
       "description": "/** Chart options. */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "AgChartThemeOverrides", "optional": false }
     },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
     "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
@@ -9443,34 +9443,198 @@
         "optional": true
       }
     },
-    "common": {
-      "type": { "returnType": "AgBaseChartOptions", "optional": true }
+    "hierarchy": {
+      "type": {
+        "returnType": "AgHierarchyChartOptions<AgHierarchySeriesTheme>",
+        "optional": true
+      }
+    },
+    "treemap": {
+      "type": {
+        "returnType": "AgHierarchyChartOptions<AgHierarchySeriesOptions>",
+        "optional": true
+      }
+    },
+    "common": { "type": { "returnType": "any", "optional": true } }
+  },
+  "AgCartesianAxisThemeOptions": {
+    "top": {
+      "type": { "returnType": "Omit<Omit<T, 'top'>, 'type'>", "optional": true }
+    },
+    "right": {
+      "type": {
+        "returnType": "Omit<Omit<T, 'right'>, 'type'>",
+        "optional": true
+      }
+    },
+    "bottom": {
+      "type": {
+        "returnType": "Omit<Omit<T, 'bottom'>, 'type'>",
+        "optional": true
+      }
+    },
+    "left": {
+      "type": {
+        "returnType": "Omit<Omit<T, 'left'>, 'type'>",
+        "optional": true
+      }
+    },
+    "meta": { "typeParams": ["T"] }
+  },
+  "AgNumberAxisThemeOptions": {
+    "palette": {
+      "type": { "returnType": "AgChartThemePalette", "optional": true }
+    },
+    "overrides": {
+      "type": { "returnType": "AgChartThemeOverrides", "optional": true }
+    },
+    "top": {
+      "type": {
+        "returnType": "Omit<Omit<AgNumberAxisOptions, 'top'>, 'type'>",
+        "optional": true
+      }
+    },
+    "right": {
+      "type": {
+        "returnType": "Omit<Omit<AgNumberAxisOptions, 'right'>, 'type'>",
+        "optional": true
+      }
+    },
+    "bottom": {
+      "type": {
+        "returnType": "Omit<Omit<AgNumberAxisOptions, 'bottom'>, 'type'>",
+        "optional": true
+      }
+    },
+    "left": {
+      "type": {
+        "returnType": "Omit<Omit<AgNumberAxisOptions, 'left'>, 'type'>",
+        "optional": true
+      }
+    }
+  },
+  "AgLogAxisThemeOptions": {
+    "top": {
+      "type": {
+        "returnType": "Omit<Omit<AgLogAxisOptions, 'top'>, 'type'>",
+        "optional": true
+      }
+    },
+    "right": {
+      "type": {
+        "returnType": "Omit<Omit<AgLogAxisOptions, 'right'>, 'type'>",
+        "optional": true
+      }
+    },
+    "bottom": {
+      "type": {
+        "returnType": "Omit<Omit<AgLogAxisOptions, 'bottom'>, 'type'>",
+        "optional": true
+      }
+    },
+    "left": {
+      "type": {
+        "returnType": "Omit<Omit<AgLogAxisOptions, 'left'>, 'type'>",
+        "optional": true
+      }
+    }
+  },
+  "AgCategoryAxisThemeOptions": {
+    "top": {
+      "type": {
+        "returnType": "Omit<Omit<AgCategoryAxisOptions, 'top'>, 'type'>",
+        "optional": true
+      }
+    },
+    "right": {
+      "type": {
+        "returnType": "Omit<Omit<AgCategoryAxisOptions, 'right'>, 'type'>",
+        "optional": true
+      }
+    },
+    "bottom": {
+      "type": {
+        "returnType": "Omit<Omit<AgCategoryAxisOptions, 'bottom'>, 'type'>",
+        "optional": true
+      }
+    },
+    "left": {
+      "type": {
+        "returnType": "Omit<Omit<AgCategoryAxisOptions, 'left'>, 'type'>",
+        "optional": true
+      }
+    }
+  },
+  "AgGroupedCategoryAxisThemeOptions": {
+    "top": {
+      "type": {
+        "returnType": "Omit<Omit<AgGroupedCategoryAxisOptions, 'top'>, 'type'>",
+        "optional": true
+      }
+    },
+    "right": {
+      "type": {
+        "returnType": "Omit<Omit<AgGroupedCategoryAxisOptions, 'right'>, 'type'>",
+        "optional": true
+      }
+    },
+    "bottom": {
+      "type": {
+        "returnType": "Omit<Omit<AgGroupedCategoryAxisOptions, 'bottom'>, 'type'>",
+        "optional": true
+      }
+    },
+    "left": {
+      "type": {
+        "returnType": "Omit<Omit<AgGroupedCategoryAxisOptions, 'left'>, 'type'>",
+        "optional": true
+      }
+    }
+  },
+  "AgTimeAxisThemeOptions": {
+    "top": {
+      "type": {
+        "returnType": "Omit<Omit<AgTimeAxisOptions, 'top'>, 'type'>",
+        "optional": true
+      }
+    },
+    "right": {
+      "type": {
+        "returnType": "Omit<Omit<AgTimeAxisOptions, 'right'>, 'type'>",
+        "optional": true
+      }
+    },
+    "bottom": {
+      "type": {
+        "returnType": "Omit<Omit<AgTimeAxisOptions, 'bottom'>, 'type'>",
+        "optional": true
+      }
+    },
+    "left": {
+      "type": {
+        "returnType": "Omit<Omit<AgTimeAxisOptions, 'left'>, 'type'>",
+        "optional": true
+      }
     }
   },
   "AgCartesianAxesTheme": {
     "number": {
-      "type": {
-        "returnType": "Omit<AgNumberAxisOptions, 'type'>",
-        "optional": true
-      }
+      "type": { "returnType": "AgNumberAxisThemeOptions", "optional": true }
+    },
+    "log": {
+      "type": { "returnType": "AgLogAxisThemeOptions", "optional": true }
     },
     "category": {
-      "type": {
-        "returnType": "Omit<AgCategoryAxisOptions, 'type'>",
-        "optional": true
-      }
+      "type": { "returnType": "AgCategoryAxisThemeOptions", "optional": true }
     },
     "groupedCategory": {
       "type": {
-        "returnType": "Omit<AgGroupedCategoryAxisOptions, 'type'>",
+        "returnType": "AgGroupedCategoryAxisThemeOptions",
         "optional": true
       }
     },
     "time": {
-      "type": {
-        "returnType": "Omit<AgTimeAxisOptions, 'type'>",
-        "optional": true
-      }
+      "type": { "returnType": "AgTimeAxisThemeOptions", "optional": true }
     }
   },
   "AgCartesianSeriesTheme": {
@@ -9484,6 +9648,9 @@
       "type": { "returnType": "AgAreaSeriesOptions", "optional": true }
     },
     "bar": { "type": { "returnType": "AgBarSeriesOptions", "optional": true } },
+    "column": {
+      "type": { "returnType": "AgBarSeriesOptions", "optional": true }
+    },
     "histogram": {
       "type": { "returnType": "AgHistogramSeriesOptions", "optional": true }
     }
@@ -9491,6 +9658,11 @@
   "AgPolarAxesTheme": {},
   "AgPolarSeriesTheme": {
     "pie": { "type": { "returnType": "AgPieSeriesOptions", "optional": true } }
+  },
+  "AgHierarchySeriesTheme": {
+    "treemap": {
+      "type": { "returnType": "AgTreemapSeriesOptions", "optional": true }
+    }
   },
   "AgChartPaddingOptions": {
     "top": { "type": { "returnType": "number", "optional": true } },
@@ -9590,50 +9762,6 @@
     "spacing": { "type": { "returnType": "number", "optional": true } },
     "item": {
       "type": { "returnType": "AgChartLegendItemOptions", "optional": true }
-    },
-    "layoutHorizontalSpacing": {
-      "description": "/** @deprecated */",
-      "type": { "returnType": "number", "optional": true }
-    },
-    "layoutVerticalSpacing": {
-      "description": "/** @deprecated */",
-      "type": { "returnType": "number", "optional": true }
-    },
-    "itemSpacing": {
-      "description": "/** @deprecated */",
-      "type": { "returnType": "number", "optional": true }
-    },
-    "markerShape": {
-      "description": "/** @deprecated */",
-      "type": { "returnType": "string | (new () => any)", "optional": true }
-    },
-    "markerSize": {
-      "description": "/** @deprecated */",
-      "type": { "returnType": "number", "optional": true }
-    },
-    "strokeWidth": {
-      "description": "/** @deprecated */",
-      "type": { "returnType": "number", "optional": true }
-    },
-    "color": {
-      "description": "/** @deprecated */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "fontStyle": {
-      "description": "/** @deprecated */",
-      "type": { "returnType": "FontStyle", "optional": true }
-    },
-    "fontWeight": {
-      "description": "/** @deprecated */",
-      "type": { "returnType": "FontWeight", "optional": true }
-    },
-    "fontSize": {
-      "description": "/** @deprecated */",
-      "type": { "returnType": "number", "optional": true }
-    },
-    "fontFamily": {
-      "description": "/** @deprecated */",
-      "type": { "returnType": "string", "optional": true }
     }
   },
   "AgChartTooltipOptions": {
@@ -9643,7 +9771,9 @@
     "delay": { "type": { "returnType": "number", "optional": true } }
   },
   "AgBaseChartOptions": {
-    "container": { "type": { "returnType": "HTMLElement", "optional": true } },
+    "container": {
+      "type": { "returnType": "HTMLElement | null", "optional": true }
+    },
     "data": { "type": { "returnType": "any[]", "optional": true } },
     "width": { "type": { "returnType": "number", "optional": true } },
     "height": { "type": { "returnType": "number", "optional": true } },
@@ -9729,6 +9859,7 @@
     "stroke": { "type": { "returnType": "string", "optional": true } },
     "lineDash": { "type": { "returnType": "number[]", "optional": true } }
   },
+  "AgCartesianAxisType": {},
   "AgBaseCartesianAxisOptions": {
     "position": {
       "type": { "returnType": "AgCartesianAxisPosition", "optional": true }
@@ -9751,6 +9882,28 @@
     "nice": { "type": { "returnType": "boolean", "optional": true } },
     "min": { "type": { "returnType": "number", "optional": true } },
     "max": { "type": { "returnType": "number", "optional": true } },
+    "position": {
+      "type": { "returnType": "AgCartesianAxisPosition", "optional": true }
+    },
+    "title": {
+      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+    },
+    "line": { "type": { "returnType": "AgAxisLineOptions", "optional": true } },
+    "tick": { "type": { "returnType": "AgAxisTickOptions", "optional": true } },
+    "label": {
+      "type": { "returnType": "AgAxisLabelOptions", "optional": true }
+    },
+    "gridStyle": {
+      "type": { "returnType": "AgAxisGridStyle[]", "optional": true }
+    },
+    "keys": { "type": { "returnType": "string[]", "optional": true } }
+  },
+  "AgLogAxisOptions": {
+    "type": { "type": { "returnType": "'log'", "optional": false } },
+    "nice": { "type": { "returnType": "boolean", "optional": true } },
+    "min": { "type": { "returnType": "number", "optional": true } },
+    "max": { "type": { "returnType": "number", "optional": true } },
+    "base": { "type": { "returnType": "number", "optional": true } },
     "position": {
       "type": { "returnType": "AgCartesianAxisPosition", "optional": true }
     },
@@ -9829,10 +9982,10 @@
   "AgCartesianAxisOptions": {},
   "AgPolarAxisOptions": {},
   "AgBaseSeriesOptions": {
-    "tooltipEnabled": { "type": { "returnType": "boolean", "optional": true } },
     "data": { "type": { "returnType": "any[]", "optional": true } },
     "visible": { "type": { "returnType": "boolean", "optional": true } },
     "showInLegend": { "type": { "returnType": "boolean", "optional": true } },
+    "cursor": { "type": { "returnType": "string", "optional": true } },
     "listeners": {
       "type": {
         "returnType": "{ [key in string]: Function }",
@@ -9841,7 +9994,7 @@
     },
     "highlightStyle": {
       "type": {
-        "returnType": "{\n        fill?: string;\n        stroke?: string;\n        strokeWidth?: number;\n        series?: {\n            enabled?: boolean;\n            dimOpacity?: number;\n            strokeWidth?: number;\n        }\n    }",
+        "returnType": "{\n        /**\n         * @deprecated Use item.fill instead.\n         */\n        fill?: string;\n        /**\n         * @deprecated Use item.stroke instead.\n         */\n        stroke?: string;\n        /**\n         * @deprecated Use item.strokeWidth instead.\n         */\n        strokeWidth?: number;\n        item?: {\n            fill?: string;\n            stroke?: string;\n            strokeWidth?: number;\n        },\n        series?: {\n            enabled?: boolean;\n            dimOpacity?: number;\n            strokeWidth?: number;\n        }\n    }",
         "optional": true
       }
     }
@@ -9899,7 +10052,9 @@
     "maxSize": { "type": { "returnType": "number", "optional": true } },
     "fill": { "type": { "returnType": "string", "optional": true } },
     "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": true } }
+    "strokeWidth": { "type": { "returnType": "number", "optional": true } },
+    "fillOpacity": { "type": { "returnType": "number", "optional": true } },
+    "strokeOpacity": { "type": { "returnType": "number", "optional": true } }
   },
   "AgCartesianSeriesMarkerFormatterParams": {
     "xKey": { "type": { "returnType": "string", "optional": false } },
@@ -9911,11 +10066,11 @@
     "strokeWidth": { "type": { "returnType": "number", "optional": true } },
     "size": { "type": { "returnType": "number", "optional": true } }
   },
+  "AgCartesianSeriesMarkerFormatter": {},
   "AgCartesianSeriesMarker": {
     "formatter": {
       "type": {
-        "arguments": { "params": "AgCartesianSeriesMarkerFormatterParams" },
-        "returnType": "AgCartesianSeriesMarkerFormat",
+        "returnType": "AgCartesianSeriesMarkerFormatter",
         "optional": true
       }
     },
@@ -9925,19 +10080,11 @@
     "maxSize": { "type": { "returnType": "number", "optional": true } },
     "fill": { "type": { "returnType": "string", "optional": true } },
     "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": true } }
+    "strokeWidth": { "type": { "returnType": "number", "optional": true } },
+    "fillOpacity": { "type": { "returnType": "number", "optional": true } },
+    "strokeOpacity": { "type": { "returnType": "number", "optional": true } }
   },
   "AgSeriesTooltip": {
-    "enabled": { "type": { "returnType": "boolean", "optional": true } }
-  },
-  "AgLineSeriesTooltip": {
-    "renderer": {
-      "type": {
-        "arguments": { "params": "AgCartesianSeriesTooltipRendererParams" },
-        "returnType": "string | AgTooltipRendererResult",
-        "optional": true
-      }
-    },
     "enabled": { "type": { "returnType": "boolean", "optional": true } }
   },
   "AgLineSeriesLabelOptions": {
@@ -9955,13 +10102,20 @@
     "fontFamily": { "type": { "returnType": "string", "optional": true } },
     "color": { "type": { "returnType": "string", "optional": true } }
   },
+  "AgLineSeriesTooltip": {
+    "renderer": {
+      "type": {
+        "arguments": { "params": "AgCartesianSeriesTooltipRendererParams" },
+        "returnType": "string | AgTooltipRendererResult",
+        "optional": true
+      }
+    },
+    "enabled": { "type": { "returnType": "boolean", "optional": true } }
+  },
   "AgLineSeriesOptions": {
     "type": { "type": { "returnType": "'line'", "optional": true } },
     "marker": {
       "type": { "returnType": "AgCartesianSeriesMarker", "optional": true }
-    },
-    "label": {
-      "type": { "returnType": "AgLineSeriesLabelOptions", "optional": true }
     },
     "xKey": { "type": { "returnType": "string", "optional": true } },
     "yKey": { "type": { "returnType": "string", "optional": true } },
@@ -9973,20 +10127,16 @@
     "strokeOpacity": { "type": { "returnType": "number", "optional": true } },
     "lineDash": { "type": { "returnType": "number[]", "optional": true } },
     "lineDashOffset": { "type": { "returnType": "number", "optional": true } },
+    "label": {
+      "type": { "returnType": "AgLineSeriesLabelOptions", "optional": true }
+    },
     "tooltip": {
       "type": { "returnType": "AgLineSeriesTooltip", "optional": true }
     },
-    "tooltipRenderer": {
-      "type": {
-        "arguments": { "params": "AgCartesianSeriesTooltipRendererParams" },
-        "returnType": "string | AgTooltipRendererResult",
-        "optional": true
-      }
-    },
-    "tooltipEnabled": { "type": { "returnType": "boolean", "optional": true } },
     "data": { "type": { "returnType": "any[]", "optional": true } },
     "visible": { "type": { "returnType": "boolean", "optional": true } },
     "showInLegend": { "type": { "returnType": "boolean", "optional": true } },
+    "cursor": { "type": { "returnType": "string", "optional": true } },
     "listeners": {
       "type": {
         "returnType": "{ [key in string]: Function }",
@@ -9995,7 +10145,60 @@
     },
     "highlightStyle": {
       "type": {
-        "returnType": "{\n        fill?: string;\n        stroke?: string;\n        strokeWidth?: number;\n        series?: {\n            enabled?: boolean;\n            dimOpacity?: number;\n            strokeWidth?: number;\n        }\n    }",
+        "returnType": "{\n        /**\n         * @deprecated Use item.fill instead.\n         */\n        fill?: string;\n        /**\n         * @deprecated Use item.stroke instead.\n         */\n        stroke?: string;\n        /**\n         * @deprecated Use item.strokeWidth instead.\n         */\n        strokeWidth?: number;\n        item?: {\n            fill?: string;\n            stroke?: string;\n            strokeWidth?: number;\n        },\n        series?: {\n            enabled?: boolean;\n            dimOpacity?: number;\n            strokeWidth?: number;\n        }\n    }",
+        "optional": true
+      }
+    }
+  },
+  "AgOHLCTooltipRendererParams": {
+    "dateKey": { "type": { "returnType": "string", "optional": true } },
+    "dateName": { "type": { "returnType": "string", "optional": true } },
+    "openKey": { "type": { "returnType": "string", "optional": true } },
+    "openName": { "type": { "returnType": "string", "optional": true } },
+    "highKey": { "type": { "returnType": "string", "optional": true } },
+    "highName": { "type": { "returnType": "string", "optional": true } },
+    "lowKey": { "type": { "returnType": "string", "optional": true } },
+    "lowName": { "type": { "returnType": "string", "optional": true } },
+    "closeKey": { "type": { "returnType": "string", "optional": true } },
+    "closeName": { "type": { "returnType": "string", "optional": true } },
+    "datum": { "type": { "returnType": "any", "optional": false } },
+    "title": { "type": { "returnType": "string", "optional": true } },
+    "color": { "type": { "returnType": "string", "optional": true } }
+  },
+  "AgOHLCSeriesTooltip": {
+    "renderer": {
+      "type": {
+        "arguments": { "params": "AgOHLCTooltipRendererParams" },
+        "returnType": "string | AgTooltipRendererResult",
+        "optional": true
+      }
+    },
+    "enabled": { "type": { "returnType": "boolean", "optional": true } }
+  },
+  "AgOHLCSeriesOptions": {
+    "type": { "type": { "returnType": "'ohlc'", "optional": true } },
+    "dateKey": { "type": { "returnType": "string", "optional": true } },
+    "openKey": { "type": { "returnType": "string", "optional": true } },
+    "highKey": { "type": { "returnType": "string", "optional": true } },
+    "lowKey": { "type": { "returnType": "string", "optional": true } },
+    "closeKey": { "type": { "returnType": "string", "optional": true } },
+    "labelKey": { "type": { "returnType": "string", "optional": true } },
+    "tooltip": {
+      "type": { "returnType": "AgOHLCSeriesTooltip", "optional": true }
+    },
+    "data": { "type": { "returnType": "any[]", "optional": true } },
+    "visible": { "type": { "returnType": "boolean", "optional": true } },
+    "showInLegend": { "type": { "returnType": "boolean", "optional": true } },
+    "cursor": { "type": { "returnType": "string", "optional": true } },
+    "listeners": {
+      "type": {
+        "returnType": "{ [key in string]: Function }",
+        "optional": true
+      }
+    },
+    "highlightStyle": {
+      "type": {
+        "returnType": "{\n        /**\n         * @deprecated Use item.fill instead.\n         */\n        fill?: string;\n        /**\n         * @deprecated Use item.stroke instead.\n         */\n        stroke?: string;\n        /**\n         * @deprecated Use item.strokeWidth instead.\n         */\n        strokeWidth?: number;\n        item?: {\n            fill?: string;\n            stroke?: string;\n            strokeWidth?: number;\n        },\n        series?: {\n            enabled?: boolean;\n            dimOpacity?: number;\n            strokeWidth?: number;\n        }\n    }",
         "optional": true
       }
     }
@@ -10031,25 +10234,33 @@
     "xName": { "type": { "returnType": "string", "optional": true } },
     "yName": { "type": { "returnType": "string", "optional": true } },
     "title": { "type": { "returnType": "string", "optional": true } },
-    "fill": { "type": { "returnType": "string", "optional": true } },
-    "stroke": { "type": { "returnType": "string", "optional": true } },
-    "strokeWidth": { "type": { "returnType": "number", "optional": true } },
-    "fillOpacity": { "type": { "returnType": "number", "optional": true } },
-    "strokeOpacity": { "type": { "returnType": "number", "optional": true } },
+    "fill": {
+      "description": "/** @deprecated Use {@link marker.fill} instead.\n */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "stroke": {
+      "description": "/** @deprecated Use {@link marker.stroke} instead.\n */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "strokeWidth": {
+      "description": "/** @deprecated Use {@link marker.strokeWidth} instead.\n */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "fillOpacity": {
+      "description": "/** @deprecated Use {@link marker.fillOpacity} instead.\n */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "strokeOpacity": {
+      "description": "/** @deprecated Use {@link marker.strokeOpacity} instead.\n */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "tooltip": {
       "type": { "returnType": "AgScatterSeriesTooltip", "optional": true }
     },
-    "tooltipRenderer": {
-      "type": {
-        "arguments": { "params": "AgScatterSeriesTooltipRendererParams" },
-        "returnType": "string | AgTooltipRendererResult",
-        "optional": true
-      }
-    },
-    "tooltipEnabled": { "type": { "returnType": "boolean", "optional": true } },
     "data": { "type": { "returnType": "any[]", "optional": true } },
     "visible": { "type": { "returnType": "boolean", "optional": true } },
     "showInLegend": { "type": { "returnType": "boolean", "optional": true } },
+    "cursor": { "type": { "returnType": "string", "optional": true } },
     "listeners": {
       "type": {
         "returnType": "{ [key in string]: Function }",
@@ -10058,7 +10269,7 @@
     },
     "highlightStyle": {
       "type": {
-        "returnType": "{\n        fill?: string;\n        stroke?: string;\n        strokeWidth?: number;\n        series?: {\n            enabled?: boolean;\n            dimOpacity?: number;\n            strokeWidth?: number;\n        }\n    }",
+        "returnType": "{\n        /**\n         * @deprecated Use item.fill instead.\n         */\n        fill?: string;\n        /**\n         * @deprecated Use item.stroke instead.\n         */\n        stroke?: string;\n        /**\n         * @deprecated Use item.strokeWidth instead.\n         */\n        strokeWidth?: number;\n        item?: {\n            fill?: string;\n            stroke?: string;\n            strokeWidth?: number;\n        },\n        series?: {\n            enabled?: boolean;\n            dimOpacity?: number;\n            strokeWidth?: number;\n        }\n    }",
         "optional": true
       }
     }
@@ -10094,9 +10305,6 @@
     "marker": {
       "type": { "returnType": "AgCartesianSeriesMarker", "optional": true }
     },
-    "label": {
-      "type": { "returnType": "AgAreaSeriesLabelOptions", "optional": true }
-    },
     "xKey": { "type": { "returnType": "string", "optional": true } },
     "yKeys": { "type": { "returnType": "string[]", "optional": true } },
     "xName": { "type": { "returnType": "string", "optional": true } },
@@ -10111,20 +10319,16 @@
     "shadow": {
       "type": { "returnType": "AgDropShadowOptions", "optional": true }
     },
+    "label": {
+      "type": { "returnType": "AgAreaSeriesLabelOptions", "optional": true }
+    },
     "tooltip": {
       "type": { "returnType": "AgAreaSeriesTooltip", "optional": true }
     },
-    "tooltipRenderer": {
-      "type": {
-        "arguments": { "params": "AgCartesianSeriesTooltipRendererParams" },
-        "returnType": "string | AgTooltipRendererResult",
-        "optional": true
-      }
-    },
-    "tooltipEnabled": { "type": { "returnType": "boolean", "optional": true } },
     "data": { "type": { "returnType": "any[]", "optional": true } },
     "visible": { "type": { "returnType": "boolean", "optional": true } },
     "showInLegend": { "type": { "returnType": "boolean", "optional": true } },
+    "cursor": { "type": { "returnType": "string", "optional": true } },
     "listeners": {
       "type": {
         "returnType": "{ [key in string]: Function }",
@@ -10133,7 +10337,7 @@
     },
     "highlightStyle": {
       "type": {
-        "returnType": "{\n        fill?: string;\n        stroke?: string;\n        strokeWidth?: number;\n        series?: {\n            enabled?: boolean;\n            dimOpacity?: number;\n            strokeWidth?: number;\n        }\n    }",
+        "returnType": "{\n        /**\n         * @deprecated Use item.fill instead.\n         */\n        fill?: string;\n        /**\n         * @deprecated Use item.stroke instead.\n         */\n        stroke?: string;\n        /**\n         * @deprecated Use item.strokeWidth instead.\n         */\n        strokeWidth?: number;\n        item?: {\n            fill?: string;\n            stroke?: string;\n            strokeWidth?: number;\n        },\n        series?: {\n            enabled?: boolean;\n            dimOpacity?: number;\n            strokeWidth?: number;\n        }\n    }",
         "optional": true
       }
     }
@@ -10145,6 +10349,9 @@
         "returnType": "string",
         "optional": true
       }
+    },
+    "placement": {
+      "type": { "returnType": "'inside' | 'outside'", "optional": true }
     },
     "enabled": { "type": { "returnType": "boolean", "optional": true } },
     "fontStyle": { "type": { "returnType": "FontStyle", "optional": true } },
@@ -10208,13 +10415,6 @@
     "tooltip": {
       "type": { "returnType": "AgBarSeriesTooltip", "optional": true }
     },
-    "tooltipRenderer": {
-      "type": {
-        "arguments": { "params": "AgCartesianSeriesTooltipRendererParams" },
-        "returnType": "string | AgTooltipRendererResult",
-        "optional": true
-      }
-    },
     "formatter": {
       "type": {
         "arguments": { "params": "AgBarSeriesFormatterParams" },
@@ -10222,10 +10422,10 @@
         "optional": true
       }
     },
-    "tooltipEnabled": { "type": { "returnType": "boolean", "optional": true } },
     "data": { "type": { "returnType": "any[]", "optional": true } },
     "visible": { "type": { "returnType": "boolean", "optional": true } },
     "showInLegend": { "type": { "returnType": "boolean", "optional": true } },
+    "cursor": { "type": { "returnType": "string", "optional": true } },
     "listeners": {
       "type": {
         "returnType": "{ [key in string]: Function }",
@@ -10234,7 +10434,7 @@
     },
     "highlightStyle": {
       "type": {
-        "returnType": "{\n        fill?: string;\n        stroke?: string;\n        strokeWidth?: number;\n        series?: {\n            enabled?: boolean;\n            dimOpacity?: number;\n            strokeWidth?: number;\n        }\n    }",
+        "returnType": "{\n        /**\n         * @deprecated Use item.fill instead.\n         */\n        fill?: string;\n        /**\n         * @deprecated Use item.stroke instead.\n         */\n        stroke?: string;\n        /**\n         * @deprecated Use item.strokeWidth instead.\n         */\n        strokeWidth?: number;\n        item?: {\n            fill?: string;\n            stroke?: string;\n            strokeWidth?: number;\n        },\n        series?: {\n            enabled?: boolean;\n            dimOpacity?: number;\n            strokeWidth?: number;\n        }\n    }",
         "optional": true
       }
     }
@@ -10297,17 +10497,10 @@
     "tooltip": {
       "type": { "returnType": "AgHistogramSeriesTooltip", "optional": true }
     },
-    "tooltipRenderer": {
-      "type": {
-        "arguments": { "params": "AgCartesianSeriesTooltipRendererParams" },
-        "returnType": "string | AgTooltipRendererResult",
-        "optional": true
-      }
-    },
-    "tooltipEnabled": { "type": { "returnType": "boolean", "optional": true } },
     "data": { "type": { "returnType": "any[]", "optional": true } },
     "visible": { "type": { "returnType": "boolean", "optional": true } },
     "showInLegend": { "type": { "returnType": "boolean", "optional": true } },
+    "cursor": { "type": { "returnType": "string", "optional": true } },
     "listeners": {
       "type": {
         "returnType": "{ [key in string]: Function }",
@@ -10316,7 +10509,7 @@
     },
     "highlightStyle": {
       "type": {
-        "returnType": "{\n        fill?: string;\n        stroke?: string;\n        strokeWidth?: number;\n        series?: {\n            enabled?: boolean;\n            dimOpacity?: number;\n            strokeWidth?: number;\n        }\n    }",
+        "returnType": "{\n        /**\n         * @deprecated Use item.fill instead.\n         */\n        fill?: string;\n        /**\n         * @deprecated Use item.stroke instead.\n         */\n        stroke?: string;\n        /**\n         * @deprecated Use item.strokeWidth instead.\n         */\n        strokeWidth?: number;\n        item?: {\n            fill?: string;\n            stroke?: string;\n            strokeWidth?: number;\n        },\n        series?: {\n            enabled?: boolean;\n            dimOpacity?: number;\n            strokeWidth?: number;\n        }\n    }",
         "optional": true
       }
     }
@@ -10408,13 +10601,6 @@
     "tooltip": {
       "type": { "returnType": "AgPieSeriesTooltip", "optional": true }
     },
-    "tooltipRenderer": {
-      "type": {
-        "arguments": { "params": "AgPieSeriesTooltipRendererParams" },
-        "returnType": "string | AgTooltipRendererResult",
-        "optional": true
-      }
-    },
     "formatter": {
       "type": {
         "arguments": { "params": "AgPieSeriesFormatterParams" },
@@ -10422,10 +10608,10 @@
         "optional": true
       }
     },
-    "tooltipEnabled": { "type": { "returnType": "boolean", "optional": true } },
     "data": { "type": { "returnType": "any[]", "optional": true } },
     "visible": { "type": { "returnType": "boolean", "optional": true } },
     "showInLegend": { "type": { "returnType": "boolean", "optional": true } },
+    "cursor": { "type": { "returnType": "string", "optional": true } },
     "listeners": {
       "type": {
         "returnType": "{ [key in string]: Function }",
@@ -10434,7 +10620,7 @@
     },
     "highlightStyle": {
       "type": {
-        "returnType": "{\n        fill?: string;\n        stroke?: string;\n        strokeWidth?: number;\n        series?: {\n            enabled?: boolean;\n            dimOpacity?: number;\n            strokeWidth?: number;\n        }\n    }",
+        "returnType": "{\n        /**\n         * @deprecated Use item.fill instead.\n         */\n        fill?: string;\n        /**\n         * @deprecated Use item.stroke instead.\n         */\n        stroke?: string;\n        /**\n         * @deprecated Use item.strokeWidth instead.\n         */\n        strokeWidth?: number;\n        item?: {\n            fill?: string;\n            stroke?: string;\n            strokeWidth?: number;\n        },\n        series?: {\n            enabled?: boolean;\n            dimOpacity?: number;\n            strokeWidth?: number;\n        }\n    }",
         "optional": true
       }
     }
@@ -10452,19 +10638,102 @@
     "title": { "type": { "returnType": "string", "optional": true } },
     "color": { "type": { "returnType": "string", "optional": true } }
   },
+  "AgTreemapSeriesLabelOptions": {
+    "padding": { "type": { "returnType": "number", "optional": true } },
+    "enabled": { "type": { "returnType": "boolean", "optional": true } },
+    "fontStyle": { "type": { "returnType": "FontStyle", "optional": true } },
+    "fontWeight": { "type": { "returnType": "FontWeight", "optional": true } },
+    "fontSize": { "type": { "returnType": "number", "optional": true } },
+    "fontFamily": { "type": { "returnType": "string", "optional": true } },
+    "color": { "type": { "returnType": "string", "optional": true } }
+  },
+  "AgTreemapNodeDatum": {
+    "datum": { "type": { "returnType": "any", "optional": false } },
+    "parent": {
+      "type": { "returnType": "AgTreemapNodeDatum", "optional": true }
+    },
+    "children": {
+      "type": { "returnType": "AgTreemapNodeDatum[]", "optional": true }
+    },
+    "depth": { "type": { "returnType": "number", "optional": false } }
+  },
+  "AgTreemapSeriesTooltipRendererParams": {
+    "datum": {
+      "type": { "returnType": "AgTreemapNodeDatum", "optional": false }
+    },
+    "sizeKey": { "type": { "returnType": "string", "optional": false } },
+    "labelKey": { "type": { "returnType": "string", "optional": false } },
+    "valueKey": { "type": { "returnType": "string", "optional": false } },
+    "color": { "type": { "returnType": "string", "optional": false } }
+  },
+  "AgTreemapSeriesTooltip": {
+    "renderer": {
+      "type": {
+        "arguments": { "params": "AgTreemapSeriesTooltipRendererParams" },
+        "returnType": "string | AgTooltipRendererResult",
+        "optional": true
+      }
+    },
+    "enabled": { "type": { "returnType": "boolean", "optional": true } }
+  },
+  "AgTreemapSeriesOptions": {
+    "type": { "type": { "returnType": "'treemap'", "optional": true } },
+    "title": {
+      "type": { "returnType": "AgTreemapSeriesLabelOptions", "optional": true }
+    },
+    "subtitle": {
+      "type": { "returnType": "AgTreemapSeriesLabelOptions", "optional": true }
+    },
+    "labels": {
+      "type": {
+        "returnType": "{\n        large?: AgChartLabelOptions;\n        medium?: AgChartLabelOptions;\n        small?: AgChartLabelOptions;\n        value?: AgChartLabelOptions;\n    }",
+        "optional": true
+      }
+    },
+    "labelKey": { "type": { "returnType": "string", "optional": true } },
+    "sizeKey": { "type": { "returnType": "string", "optional": true } },
+    "colorKey": { "type": { "returnType": "string", "optional": true } },
+    "colorDomain": { "type": { "returnType": "number[]", "optional": true } },
+    "colorRange": { "type": { "returnType": "string[]", "optional": true } },
+    "colorParents": { "type": { "returnType": "boolean", "optional": true } },
+    "tooltip": {
+      "type": { "returnType": "AgTreemapSeriesTooltip", "optional": true }
+    },
+    "nodePadding": { "type": { "returnType": "number", "optional": true } },
+    "gradient": { "type": { "returnType": "boolean", "optional": true } },
+    "data": { "type": { "returnType": "any[]", "optional": true } },
+    "visible": { "type": { "returnType": "boolean", "optional": true } },
+    "showInLegend": { "type": { "returnType": "boolean", "optional": true } },
+    "cursor": { "type": { "returnType": "string", "optional": true } },
+    "listeners": {
+      "type": {
+        "returnType": "{ [key in string]: Function }",
+        "optional": true
+      }
+    },
+    "highlightStyle": {
+      "type": {
+        "returnType": "{\n        /**\n         * @deprecated Use item.fill instead.\n         */\n        fill?: string;\n        /**\n         * @deprecated Use item.stroke instead.\n         */\n        stroke?: string;\n        /**\n         * @deprecated Use item.strokeWidth instead.\n         */\n        strokeWidth?: number;\n        item?: {\n            fill?: string;\n            stroke?: string;\n            strokeWidth?: number;\n        },\n        series?: {\n            enabled?: boolean;\n            dimOpacity?: number;\n            strokeWidth?: number;\n        }\n    }",
+        "optional": true
+      }
+    }
+  },
   "AgCartesianSeriesOptions": {},
   "AgPolarSeriesOptions": {},
+  "AgHierarchySeriesOptions": {},
   "AgCartesianChartOptions": {
     "type": {
       "type": {
-        "returnType": "'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter'",
+        "returnType": "'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'ohlc'",
         "optional": true
       }
     },
     "axes": { "type": { "returnType": "TAxisOptions", "optional": true } },
     "series": { "type": { "returnType": "TSeriesOptions", "optional": true } },
     "meta": { "typeParams": ["TAxisOptions", "TSeriesOptions"] },
-    "container": { "type": { "returnType": "HTMLElement", "optional": true } },
+    "container": {
+      "type": { "returnType": "HTMLElement | null", "optional": true }
+    },
     "data": { "type": { "returnType": "any[]", "optional": true } },
     "width": { "type": { "returnType": "number", "optional": true } },
     "height": { "type": { "returnType": "number", "optional": true } },
@@ -10508,8 +10777,57 @@
     "axes": { "type": { "returnType": "TAxisOptions", "optional": true } },
     "series": { "type": { "returnType": "TSeriesOptions", "optional": true } },
     "meta": { "typeParams": ["TAxisOptions", "TSeriesOptions"] },
-    "container": { "type": { "returnType": "HTMLElement", "optional": true } },
+    "container": {
+      "type": { "returnType": "HTMLElement | null", "optional": true }
+    },
     "data": { "type": { "returnType": "any[]", "optional": true } },
+    "width": { "type": { "returnType": "number", "optional": true } },
+    "height": { "type": { "returnType": "number", "optional": true } },
+    "autoSize": { "type": { "returnType": "boolean", "optional": true } },
+    "padding": {
+      "type": { "returnType": "AgChartPaddingOptions", "optional": true }
+    },
+    "background": {
+      "type": {
+        "returnType": "{\n        visible?: boolean;\n        fill?: string;\n    }",
+        "optional": true
+      }
+    },
+    "title": {
+      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+    },
+    "subtitle": {
+      "type": { "returnType": "AgChartCaptionOptions", "optional": true }
+    },
+    "tooltip": {
+      "type": { "returnType": "AgChartTooltipOptions", "optional": true }
+    },
+    "navigator": {
+      "type": { "returnType": "AgNavigatorOptions", "optional": true }
+    },
+    "legend": {
+      "type": { "returnType": "AgChartLegendOptions", "optional": true }
+    },
+    "listeners": {
+      "type": {
+        "returnType": "{ [key in string]: Function }",
+        "optional": true
+      }
+    },
+    "theme": {
+      "type": { "returnType": "string | AgChartTheme", "optional": true }
+    }
+  },
+  "AgHierarchyChartOptions": {
+    "type": {
+      "type": { "returnType": "'hierarchy' | 'treemap'", "optional": true }
+    },
+    "data": { "type": { "returnType": "any", "optional": true } },
+    "series": { "type": { "returnType": "TSeriesOptions", "optional": true } },
+    "meta": { "typeParams": ["TSeriesOptions"] },
+    "container": {
+      "type": { "returnType": "HTMLElement | null", "optional": true }
+    },
     "width": { "type": { "returnType": "number", "optional": true } },
     "height": { "type": { "returnType": "number", "optional": true } },
     "autoSize": { "type": { "returnType": "boolean", "optional": true } },

@@ -1,7 +1,6 @@
-import { _, ChartModel, ChartType, Color } from "@ag-grid-community/core";
+import { _, ChartModel, ChartType, Color, AgChartThemeOverrides } from "@ag-grid-community/core";
 import {
     AgChartTheme,
-    AgChartThemeOverrides,
     AgChartThemePalette,
     CategoryAxis,
     Chart,
@@ -52,12 +51,12 @@ export interface UpdateChartParams {
     getCrossFilteringContext: () => CrossFilteringContext,
 }
 
-export abstract class ChartProxy<TChart extends Chart, TOptions extends any> {
+export abstract class ChartProxy {
     protected readonly chartId: string;
     protected readonly chartType: ChartType;
     protected readonly standaloneChartType: ChartThemeOverrideObjectName;
 
-    protected chart: TChart;
+    protected chart: Chart;
     protected chartOptions: AgChartThemeOverrides;
     protected chartTheme: ChartTheme;
     protected customPalette: AgChartThemePalette;
@@ -72,7 +71,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends any> {
         this.standaloneChartType = getChartThemeOverrideObjectName(this.chartType);
     }
 
-    protected abstract createChart(options?: TOptions): TChart;
+    protected abstract createChart(options?: AgChartThemeOverrides): Chart;
 
     public abstract update(params: UpdateChartParams): void;
 
@@ -90,7 +89,7 @@ export abstract class ChartProxy<TChart extends Chart, TOptions extends any> {
         }
     }
 
-    public getChart(): TChart {
+    public getChart(): Chart {
         return this.chart;
     }
 

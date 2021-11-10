@@ -3068,7 +3068,7 @@
       "chartId": "string",
       "chartType": "ChartType",
       "chartThemeName": "string",
-      "chartOptions": "any",
+      "chartOptions": "AgChartThemeOverrides",
       "api": "GridApi",
       "columnApi": "ColumnApi"
     },
@@ -5311,16 +5311,75 @@
       "histogram?": "AgCartesianChartOptions<AgCartesianAxesTheme, AgHistogramSeriesOptions>",
       "polar?": "AgPolarChartOptions<AgPolarAxesTheme, AgPolarSeriesTheme>",
       "pie?": "AgPolarChartOptions<AgPolarAxesTheme, AgPieSeriesOptions>",
-      "common?": "AgBaseChartOptions"
+      "hierarchy?": "AgHierarchyChartOptions<AgHierarchySeriesTheme>",
+      "treemap?": "AgHierarchyChartOptions<AgHierarchySeriesOptions>",
+      "common?": "any"
+    }
+  },
+  "AgCartesianAxisThemeOptions": {
+    "meta": { "typeParams": ["T"] },
+    "type": {
+      "top?": "Omit<Omit<T, 'top'>, 'type'>",
+      "right?": "Omit<Omit<T, 'right'>, 'type'>",
+      "bottom?": "Omit<Omit<T, 'bottom'>, 'type'>",
+      "left?": "Omit<Omit<T, 'left'>, 'type'>"
+    }
+  },
+  "AgNumberAxisThemeOptions": {
+    "meta": {},
+    "type": {
+      "palette?": "AgChartThemePalette",
+      "overrides?": "AgChartThemeOverrides",
+      "top?": "Omit<Omit<AgNumberAxisOptions, 'top'>, 'type'>",
+      "right?": "Omit<Omit<AgNumberAxisOptions, 'right'>, 'type'>",
+      "bottom?": "Omit<Omit<AgNumberAxisOptions, 'bottom'>, 'type'>",
+      "left?": "Omit<Omit<AgNumberAxisOptions, 'left'>, 'type'>"
+    }
+  },
+  "AgLogAxisThemeOptions": {
+    "meta": {},
+    "type": {
+      "top?": "Omit<Omit<AgLogAxisOptions, 'top'>, 'type'>",
+      "right?": "Omit<Omit<AgLogAxisOptions, 'right'>, 'type'>",
+      "bottom?": "Omit<Omit<AgLogAxisOptions, 'bottom'>, 'type'>",
+      "left?": "Omit<Omit<AgLogAxisOptions, 'left'>, 'type'>"
+    }
+  },
+  "AgCategoryAxisThemeOptions": {
+    "meta": {},
+    "type": {
+      "top?": "Omit<Omit<AgCategoryAxisOptions, 'top'>, 'type'>",
+      "right?": "Omit<Omit<AgCategoryAxisOptions, 'right'>, 'type'>",
+      "bottom?": "Omit<Omit<AgCategoryAxisOptions, 'bottom'>, 'type'>",
+      "left?": "Omit<Omit<AgCategoryAxisOptions, 'left'>, 'type'>"
+    }
+  },
+  "AgGroupedCategoryAxisThemeOptions": {
+    "meta": {},
+    "type": {
+      "top?": "Omit<Omit<AgGroupedCategoryAxisOptions, 'top'>, 'type'>",
+      "right?": "Omit<Omit<AgGroupedCategoryAxisOptions, 'right'>, 'type'>",
+      "bottom?": "Omit<Omit<AgGroupedCategoryAxisOptions, 'bottom'>, 'type'>",
+      "left?": "Omit<Omit<AgGroupedCategoryAxisOptions, 'left'>, 'type'>"
+    }
+  },
+  "AgTimeAxisThemeOptions": {
+    "meta": {},
+    "type": {
+      "top?": "Omit<Omit<AgTimeAxisOptions, 'top'>, 'type'>",
+      "right?": "Omit<Omit<AgTimeAxisOptions, 'right'>, 'type'>",
+      "bottom?": "Omit<Omit<AgTimeAxisOptions, 'bottom'>, 'type'>",
+      "left?": "Omit<Omit<AgTimeAxisOptions, 'left'>, 'type'>"
     }
   },
   "AgCartesianAxesTheme": {
     "meta": {},
     "type": {
-      "number?": "Omit<AgNumberAxisOptions, 'type'>",
-      "category?": "Omit<AgCategoryAxisOptions, 'type'>",
-      "groupedCategory?": "Omit<AgGroupedCategoryAxisOptions, 'type'>",
-      "time?": "Omit<AgTimeAxisOptions, 'type'>"
+      "number?": "AgNumberAxisThemeOptions",
+      "log?": "AgLogAxisThemeOptions",
+      "category?": "AgCategoryAxisThemeOptions",
+      "groupedCategory?": "AgGroupedCategoryAxisThemeOptions",
+      "time?": "AgTimeAxisThemeOptions"
     }
   },
   "AgCartesianSeriesTheme": {
@@ -5330,6 +5389,7 @@
       "scatter?": "AgScatterSeriesOptions",
       "area?": "AgAreaSeriesOptions",
       "bar?": "AgBarSeriesOptions",
+      "column?": "AgBarSeriesOptions",
       "histogram?": "AgHistogramSeriesOptions"
     }
   },
@@ -5337,6 +5397,10 @@
   "AgPolarSeriesTheme": {
     "meta": {},
     "type": { "pie?": "AgPieSeriesOptions" }
+  },
+  "AgHierarchySeriesTheme": {
+    "meta": {},
+    "type": { "treemap?": "AgTreemapSeriesOptions" }
   },
   "AgChartPaddingOptions": {
     "meta": {},
@@ -5453,31 +5517,7 @@
       "enabled?": "boolean",
       "position?": "AgChartLegendPosition",
       "spacing?": "number",
-      "item?": "AgChartLegendItemOptions",
-      "layoutHorizontalSpacing?": "number",
-      "layoutVerticalSpacing?": "number",
-      "itemSpacing?": "number",
-      "markerShape?": "string | (new () => any)",
-      "markerSize?": "number",
-      "strokeWidth?": "number",
-      "color?": "string",
-      "fontStyle?": "FontStyle",
-      "fontWeight?": "FontWeight",
-      "fontSize?": "number",
-      "fontFamily?": "string"
-    },
-    "docs": {
-      "layoutHorizontalSpacing?": "/** @deprecated */",
-      "layoutVerticalSpacing?": "/** @deprecated */",
-      "itemSpacing?": "/** @deprecated */",
-      "markerShape?": "/** @deprecated */",
-      "markerSize?": "/** @deprecated */",
-      "strokeWidth?": "/** @deprecated */",
-      "color?": "/** @deprecated */",
-      "fontStyle?": "/** @deprecated */",
-      "fontWeight?": "/** @deprecated */",
-      "fontSize?": "/** @deprecated */",
-      "fontFamily?": "/** @deprecated */"
+      "item?": "AgChartLegendItemOptions"
     }
   },
   "AgChartTooltipOptions": {
@@ -5492,7 +5532,7 @@
   "AgBaseChartOptions": {
     "meta": {},
     "type": {
-      "container?": "HTMLElement",
+      "container?": "HTMLElement | null",
       "data?": "any[]",
       "width?": "number",
       "height?": "number",
@@ -5553,6 +5593,10 @@
     "meta": {},
     "type": { "stroke?": "string", "lineDash?": "number[]" }
   },
+  "AgCartesianAxisType": {
+    "meta": { "isTypeAlias": true },
+    "type": "'category' | 'groupedCategory' | 'number' | 'log' | 'time'"
+  },
   "AgBaseCartesianAxisOptions": {
     "meta": {},
     "type": {
@@ -5572,6 +5616,23 @@
       "nice?": "boolean",
       "min?": "number",
       "max?": "number",
+      "position?": "AgCartesianAxisPosition",
+      "title?": "AgChartCaptionOptions",
+      "line?": "AgAxisLineOptions",
+      "tick?": "AgAxisTickOptions",
+      "label?": "AgAxisLabelOptions",
+      "gridStyle?": "AgAxisGridStyle[]",
+      "keys?": "string[]"
+    }
+  },
+  "AgLogAxisOptions": {
+    "meta": {},
+    "type": {
+      "type": "'log'",
+      "nice?": "boolean",
+      "min?": "number",
+      "max?": "number",
+      "base?": "number",
       "position?": "AgCartesianAxisPosition",
       "title?": "AgChartCaptionOptions",
       "line?": "AgAxisLineOptions",
@@ -5625,18 +5686,18 @@
   },
   "AgCartesianAxisOptions": {
     "meta": { "isTypeAlias": true },
-    "type": "AgNumberAxisOptions | AgCategoryAxisOptions | AgGroupedCategoryAxisOptions | AgTimeAxisOptions"
+    "type": "AgNumberAxisOptions | AgLogAxisOptions | AgCategoryAxisOptions | AgGroupedCategoryAxisOptions | AgTimeAxisOptions"
   },
   "AgPolarAxisOptions": { "meta": { "isTypeAlias": true }, "type": "any" },
   "AgBaseSeriesOptions": {
     "meta": {},
     "type": {
-      "tooltipEnabled?": "boolean",
       "data?": "any[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
+      "cursor?": "string",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
+      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; item?: { fill?: string; stroke?: string; strokeWidth?: number; }; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
     }
   },
   "AgTooltipRendererResult": {
@@ -5702,7 +5763,9 @@
       "maxSize?": "number",
       "fill?": "string",
       "stroke?": "string",
-      "strokeWidth?": "number"
+      "strokeWidth?": "number",
+      "fillOpacity?": "number",
+      "strokeOpacity?": "number"
     }
   },
   "AgCartesianSeriesMarkerFormatterParams": {
@@ -5718,27 +5781,26 @@
       "size?": "number"
     }
   },
+  "AgCartesianSeriesMarkerFormatter": {
+    "meta": { "isTypeAlias": true },
+    "type": "(params: AgCartesianSeriesMarkerFormatterParams) => AgCartesianSeriesMarkerFormat"
+  },
   "AgCartesianSeriesMarker": {
     "meta": {},
     "type": {
-      "formatter?": "(params: AgCartesianSeriesMarkerFormatterParams) => AgCartesianSeriesMarkerFormat",
+      "formatter?": "AgCartesianSeriesMarkerFormatter",
       "enabled?": "boolean",
       "shape?": "string",
       "size?": "number",
       "maxSize?": "number",
       "fill?": "string",
       "stroke?": "string",
-      "strokeWidth?": "number"
+      "strokeWidth?": "number",
+      "fillOpacity?": "number",
+      "strokeOpacity?": "number"
     }
   },
   "AgSeriesTooltip": { "meta": {}, "type": { "enabled?": "boolean" } },
-  "AgLineSeriesTooltip": {
-    "meta": {},
-    "type": {
-      "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
-      "enabled?": "boolean"
-    }
-  },
   "AgLineSeriesLabelOptions": {
     "meta": {},
     "type": {
@@ -5751,12 +5813,18 @@
       "color?": "string"
     }
   },
+  "AgLineSeriesTooltip": {
+    "meta": {},
+    "type": {
+      "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
+      "enabled?": "boolean"
+    }
+  },
   "AgLineSeriesOptions": {
     "meta": {},
     "type": {
       "type?": "'line'",
       "marker?": "AgCartesianSeriesMarker",
-      "label?": "AgLineSeriesLabelOptions",
       "xKey?": "string",
       "yKey?": "string",
       "xName?": "string",
@@ -5767,14 +5835,58 @@
       "strokeOpacity?": "number",
       "lineDash?": "number[]",
       "lineDashOffset?": "number",
+      "label?": "AgLineSeriesLabelOptions",
       "tooltip?": "AgLineSeriesTooltip",
-      "tooltipRenderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
-      "tooltipEnabled?": "boolean",
       "data?": "any[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
+      "cursor?": "string",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
+      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; item?: { fill?: string; stroke?: string; strokeWidth?: number; }; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
+    }
+  },
+  "AgOHLCTooltipRendererParams": {
+    "meta": {},
+    "type": {
+      "dateKey?": "string",
+      "dateName?": "string",
+      "openKey?": "string",
+      "openName?": "string",
+      "highKey?": "string",
+      "highName?": "string",
+      "lowKey?": "string",
+      "lowName?": "string",
+      "closeKey?": "string",
+      "closeName?": "string",
+      "datum": "any",
+      "title?": "string",
+      "color?": "string"
+    }
+  },
+  "AgOHLCSeriesTooltip": {
+    "meta": {},
+    "type": {
+      "renderer?": "(params: AgOHLCTooltipRendererParams) => string | AgTooltipRendererResult",
+      "enabled?": "boolean"
+    }
+  },
+  "AgOHLCSeriesOptions": {
+    "meta": {},
+    "type": {
+      "type?": "'ohlc'",
+      "dateKey?": "string",
+      "openKey?": "string",
+      "highKey?": "string",
+      "lowKey?": "string",
+      "closeKey?": "string",
+      "labelKey?": "string",
+      "tooltip?": "AgOHLCSeriesTooltip",
+      "data?": "any[]",
+      "visible?": "boolean",
+      "showInLegend?": "boolean",
+      "cursor?": "string",
+      "listeners?": "{[key in string]: Function}",
+      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; item?: { fill?: string; stroke?: string; strokeWidth?: number; }; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
     }
   },
   "AgScatterSeriesTooltip": {
@@ -5812,13 +5924,19 @@
       "fillOpacity?": "number",
       "strokeOpacity?": "number",
       "tooltip?": "AgScatterSeriesTooltip",
-      "tooltipRenderer?": "(params: AgScatterSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
-      "tooltipEnabled?": "boolean",
       "data?": "any[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
+      "cursor?": "string",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
+      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; item?: { fill?: string; stroke?: string; strokeWidth?: number; }; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
+    },
+    "docs": {
+      "fill?": "/** @deprecated Use {@link marker.fill} instead.\n */",
+      "stroke?": "/** @deprecated Use {@link marker.stroke} instead.\n */",
+      "strokeWidth?": "/** @deprecated Use {@link marker.strokeWidth} instead.\n */",
+      "fillOpacity?": "/** @deprecated Use {@link marker.fillOpacity} instead.\n */",
+      "strokeOpacity?": "/** @deprecated Use {@link marker.strokeOpacity} instead.\n */"
     }
   },
   "AgAreaSeriesTooltip": {
@@ -5846,7 +5964,6 @@
     "type": {
       "type?": "'area'",
       "marker?": "AgCartesianSeriesMarker",
-      "label?": "AgAreaSeriesLabelOptions",
       "xKey?": "string",
       "yKeys?": "string[]",
       "xName?": "string",
@@ -5859,20 +5976,21 @@
       "lineDash?": "number[]",
       "lineDashOffset?": "number",
       "shadow?": "AgDropShadowOptions",
+      "label?": "AgAreaSeriesLabelOptions",
       "tooltip?": "AgAreaSeriesTooltip",
-      "tooltipRenderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
-      "tooltipEnabled?": "boolean",
       "data?": "any[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
+      "cursor?": "string",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
+      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; item?: { fill?: string; stroke?: string; strokeWidth?: number; }; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
     }
   },
   "AgBarSeriesLabelOptions": {
     "meta": {},
     "type": {
       "formatter?": "(params: { value: number; }) => string",
+      "placement?": "'inside' | 'outside'",
       "enabled?": "boolean",
       "fontStyle?": "FontStyle",
       "fontWeight?": "FontWeight",
@@ -5924,14 +6042,13 @@
       "shadow?": "AgDropShadowOptions",
       "label?": "AgBarSeriesLabelOptions",
       "tooltip?": "AgBarSeriesTooltip",
-      "tooltipRenderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "formatter?": "(params: AgBarSeriesFormatterParams) => AgBarSeriesFormat",
-      "tooltipEnabled?": "boolean",
       "data?": "any[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
+      "cursor?": "string",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
+      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; item?: { fill?: string; stroke?: string; strokeWidth?: number; }; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
     }
   },
   "AgHistogramSeriesLabelOptions": {
@@ -5975,13 +6092,12 @@
       "shadow?": "AgDropShadowOptions",
       "label?": "AgHistogramSeriesLabelOptions",
       "tooltip?": "AgHistogramSeriesTooltip",
-      "tooltipRenderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
-      "tooltipEnabled?": "boolean",
       "data?": "any[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
+      "cursor?": "string",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
+      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; item?: { fill?: string; stroke?: string; strokeWidth?: number; }; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
     }
   },
   "AgPieSeriesLabelOptions": {
@@ -6059,14 +6175,13 @@
       "innerRadiusOffset?": "number",
       "shadow?": "AgDropShadowOptions",
       "tooltip?": "AgPieSeriesTooltip",
-      "tooltipRenderer?": "(params: AgPieSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
       "formatter?": "(params: AgPieSeriesFormatterParams) => AgPieSeriesFormat",
-      "tooltipEnabled?": "boolean",
       "data?": "any[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
+      "cursor?": "string",
       "listeners?": "{[key in string]: Function}",
-      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
+      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; item?: { fill?: string; stroke?: string; strokeWidth?: number; }; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
     }
   },
   "AgPieSeriesTooltipRendererParams": {
@@ -6085,21 +6200,87 @@
       "color?": "string"
     }
   },
+  "AgTreemapSeriesLabelOptions": {
+    "meta": {},
+    "type": {
+      "padding?": "number",
+      "enabled?": "boolean",
+      "fontStyle?": "FontStyle",
+      "fontWeight?": "FontWeight",
+      "fontSize?": "number",
+      "fontFamily?": "string",
+      "color?": "string"
+    }
+  },
+  "AgTreemapNodeDatum": {
+    "meta": {},
+    "type": {
+      "datum": "any",
+      "parent?": "AgTreemapNodeDatum",
+      "children?": "AgTreemapNodeDatum[]",
+      "depth": "number"
+    }
+  },
+  "AgTreemapSeriesTooltipRendererParams": {
+    "meta": {},
+    "type": {
+      "datum": "AgTreemapNodeDatum",
+      "sizeKey": "string",
+      "labelKey": "string",
+      "valueKey": "string",
+      "color": "string"
+    }
+  },
+  "AgTreemapSeriesTooltip": {
+    "meta": {},
+    "type": {
+      "renderer?": "(params: AgTreemapSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
+      "enabled?": "boolean"
+    }
+  },
+  "AgTreemapSeriesOptions": {
+    "meta": {},
+    "type": {
+      "type?": "'treemap'",
+      "title?": "AgTreemapSeriesLabelOptions",
+      "subtitle?": "AgTreemapSeriesLabelOptions",
+      "labels?": "{ large?: AgChartLabelOptions; medium?: AgChartLabelOptions; small?: AgChartLabelOptions; value?: AgChartLabelOptions; }",
+      "labelKey?": "string",
+      "sizeKey?": "string",
+      "colorKey?": "string",
+      "colorDomain?": "number[]",
+      "colorRange?": "string[]",
+      "colorParents?": "boolean",
+      "tooltip?": "AgTreemapSeriesTooltip",
+      "nodePadding?": "number",
+      "gradient?": "boolean",
+      "data?": "any[]",
+      "visible?": "boolean",
+      "showInLegend?": "boolean",
+      "cursor?": "string",
+      "listeners?": "{[key in string]: Function}",
+      "highlightStyle?": "{ fill?: string; stroke?: string; strokeWidth?: number; item?: { fill?: string; stroke?: string; strokeWidth?: number; }; series?: { enabled?: boolean; dimOpacity?: number; strokeWidth?: number; }; }"
+    }
+  },
   "AgCartesianSeriesOptions": {
     "meta": { "isTypeAlias": true },
-    "type": "AgLineSeriesOptions | AgScatterSeriesOptions | AgAreaSeriesOptions | AgBarSeriesOptions | AgHistogramSeriesOptions"
+    "type": "AgLineSeriesOptions | AgScatterSeriesOptions | AgAreaSeriesOptions | AgBarSeriesOptions | AgHistogramSeriesOptions | AgOHLCSeriesOptions"
   },
   "AgPolarSeriesOptions": {
     "meta": { "isTypeAlias": true },
     "type": "AgPieSeriesOptions"
   },
+  "AgHierarchySeriesOptions": {
+    "meta": { "isTypeAlias": true },
+    "type": "AgTreemapSeriesOptions"
+  },
   "AgCartesianChartOptions": {
     "meta": { "typeParams": ["TAxisOptions", "TSeriesOptions"] },
     "type": {
-      "type?": "'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter'",
+      "type?": "'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'ohlc'",
       "axes?": "TAxisOptions",
       "series?": "TSeriesOptions",
-      "container?": "HTMLElement",
+      "container?": "HTMLElement | null",
       "data?": "any[]",
       "width?": "number",
       "height?": "number",
@@ -6121,8 +6302,29 @@
       "type?": "'polar' | 'pie'",
       "axes?": "TAxisOptions",
       "series?": "TSeriesOptions",
-      "container?": "HTMLElement",
+      "container?": "HTMLElement | null",
       "data?": "any[]",
+      "width?": "number",
+      "height?": "number",
+      "autoSize?": "boolean",
+      "padding?": "AgChartPaddingOptions",
+      "background?": "{ visible?: boolean; fill?: string; }",
+      "title?": "AgChartCaptionOptions",
+      "subtitle?": "AgChartCaptionOptions",
+      "tooltip?": "AgChartTooltipOptions",
+      "navigator?": "AgNavigatorOptions",
+      "legend?": "AgChartLegendOptions",
+      "listeners?": "{[key in string]: Function}",
+      "theme?": "string | AgChartTheme"
+    }
+  },
+  "AgHierarchyChartOptions": {
+    "meta": { "typeParams": ["TSeriesOptions"] },
+    "type": {
+      "type?": "'hierarchy' | 'treemap'",
+      "data?": "any",
+      "series?": "TSeriesOptions",
+      "container?": "HTMLElement | null",
       "width?": "number",
       "height?": "number",
       "autoSize?": "boolean",
@@ -6139,7 +6341,7 @@
   },
   "AgChartOptions": {
     "meta": { "isTypeAlias": true },
-    "type": "AgCartesianChartOptions | AgPolarChartOptions"
+    "type": "AgCartesianChartOptions | AgPolarChartOptions | AgHierarchyChartOptions"
   },
   "IAggFuncService": {
     "meta": {},
