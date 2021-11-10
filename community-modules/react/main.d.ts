@@ -1,5 +1,5 @@
 import {Component} from "react";
-import {AgGridReactProps, AgReactUiProps} from "./lib/interfaces";
+import {AgGridReactProps, AgReactUiProps} from "./lib/shared/interfaces";
 import {AgGridColumnGroupProps, AgGridColumnProps} from "./lib/shared/agGridColumn";
 
 export * from './lib/agGridReact';
