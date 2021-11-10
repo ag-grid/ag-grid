@@ -1,7 +1,7 @@
 import { ChartProxy, ChartProxyParams } from "../chartProxy";
 import { PieSeries, PieTooltipRendererParams, PolarChart } from "ag-charts-community";
 
-export abstract class PolarChartProxy extends ChartProxy<PolarChart> {
+export abstract class PolarChartProxy extends ChartProxy {
 
     protected constructor(params: ChartProxyParams) {
         super(params);

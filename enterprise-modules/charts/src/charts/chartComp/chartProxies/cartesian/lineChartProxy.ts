@@ -33,7 +33,7 @@ export class LineChartProxy extends CartesianChartProxy {
 
         this.updateAxes(params);
 
-        const { chart } = this;
+        const chart = this.chart as CartesianChart;
         const { fields } = params;
         const fieldIds = fields.map(f => f.colId);
         const data = this.transformData(params.data, params.category.id);

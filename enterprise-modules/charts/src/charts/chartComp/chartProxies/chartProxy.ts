@@ -51,12 +51,12 @@ export interface UpdateChartParams {
     getCrossFilteringContext: () => CrossFilteringContext,
 }
 
-export abstract class ChartProxy<TChart extends Chart> {
+export abstract class ChartProxy {
     protected readonly chartId: string;
     protected readonly chartType: ChartType;
     protected readonly standaloneChartType: ChartThemeOverrideObjectName;
 
-    protected chart: TChart;
+    protected chart: Chart;
     protected chartOptions: AgChartThemeOverrides;
     protected chartTheme: ChartTheme;
     protected customPalette: AgChartThemePalette;
@@ -71,7 +71,7 @@ export abstract class ChartProxy<TChart extends Chart> {
         this.standaloneChartType = getChartThemeOverrideObjectName(this.chartType);
     }
 
-    protected abstract createChart(options?: AgChartThemeOverrides): TChart;
+    protected abstract createChart(options?: AgChartThemeOverrides): Chart;
 
     public abstract update(params: UpdateChartParams): void;
 
@@ -89,7 +89,7 @@ export abstract class ChartProxy<TChart extends Chart> {
         }
     }
 
-    public getChart(): TChart {
+    public getChart(): Chart {
         return this.chart;
     }
 

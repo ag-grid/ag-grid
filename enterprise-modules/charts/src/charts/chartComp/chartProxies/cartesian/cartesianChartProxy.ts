@@ -13,7 +13,7 @@ import {
 import { ChartDataModel } from "../../chartDataModel";
 import { AgChartThemeOverrides } from "@ag-grid-community/core";
 
-export abstract class CartesianChartProxy extends ChartProxy<CartesianChart | GroupedCategoryChart> {
+export abstract class CartesianChartProxy extends ChartProxy {
     protected xAxisType: AgCartesianAxisType;
     protected yAxisType: AgCartesianAxisType;
 

@@ -62,7 +62,7 @@ export class AreaChartProxy extends CartesianChartProxy {
     }
 
     private updateAreaChart(params: UpdateChartParams): void {
-        const { chart } = this;
+        const chart: CartesianChart  = this.chart as CartesianChart;
 
         if (params.fields.length === 0) {
             chart.removeAllSeries();
