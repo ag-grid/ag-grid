@@ -150,7 +150,7 @@ export class AgGridReactUi extends Component<AgReactUiProps, { context: Context 
         });
 
         ComponentUtil.getEventCallbacks().forEach(funcName => {
-            if (this.props[funcName] !== nextProps[funcName]) {
+            if (prevProps[funcName] !== nextProps[funcName]) {
                 if (debugLogging) {
                     console.log(`agGridReact: [${funcName}] event callback changed`);
                 }
