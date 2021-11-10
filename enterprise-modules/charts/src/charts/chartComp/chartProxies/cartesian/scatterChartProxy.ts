@@ -75,7 +75,7 @@ export class ScatterChartProxy extends CartesianChartProxy {
             return map;
         }, new Map<string, ScatterSeries>());
 
-        let { fills, strokes } = this.getPalette();
+        let { fills, strokes } = this.chartTheme.palette;
         if (this.crossFiltering) {
             // introduce cross filtering transparent fills
             const fillsMod: string[] = [];

@@ -85,10 +85,8 @@ export class PieChartProxy extends PolarChartProxy {
             };
             pieSeries = AgChart.createComponent(options, 'pie.series');
 
-            //TODO verify
-            const palette = this.getPalette();
-            pieSeries.fills = palette.fills;
-            pieSeries.strokes = palette.strokes;
+            pieSeries.fills = this.chartTheme.palette.fills;
+            pieSeries.strokes = this.chartTheme.palette.strokes;
 
             if (this.crossFiltering && pieSeries && !pieSeries.tooltip.renderer) {
                 // only add renderer if user hasn't provided one

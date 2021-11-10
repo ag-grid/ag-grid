@@ -60,10 +60,8 @@ export class DoughnutChartProxy extends PolarChartProxy {
             }
         });
 
-        //TODO verify
-        const palette = this.getPalette();
-        const fills = palette.fills;
-        const strokes = palette.strokes;
+        const fills = this.chartTheme.palette.fills;
+        const strokes = this.chartTheme.palette.strokes;
 
         const seriesOverrides = this.chartOptions[this.standaloneChartType].series;
         const numFields = params.fields.length;

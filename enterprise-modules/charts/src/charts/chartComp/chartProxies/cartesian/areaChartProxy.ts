@@ -26,6 +26,7 @@ export class AreaChartProxy extends CartesianChartProxy {
     }
 
     public update(params: UpdateChartParams): void {
+
         this.updateAxes(params);
 
         if (this.chartType === ChartType.Area) {
@@ -47,15 +48,13 @@ export class AreaChartProxy extends CartesianChartProxy {
                 this.chart.addSeries(areaSeries);
             }
 
-            const { fills, strokes } = this.getPalette();
-
             areaSeries.data = this.transformData(params.data, params.category.id);
             areaSeries.xKey = params.category.id;
             areaSeries.xName = params.category.name;
             areaSeries.yKeys = params.fields.map(f => f.colId);
             areaSeries.yNames = params.fields.map(f => f.displayName!);
-            areaSeries.fills = fills;
-            areaSeries.strokes = strokes;
+            areaSeries.fills = this.chartTheme.palette.fills;
+            areaSeries.strokes = this.chartTheme.palette.strokes;
         }
 
         this.updateLabelRotation(params.category.id);
@@ -85,7 +84,7 @@ export class AreaChartProxy extends CartesianChartProxy {
         const data = this.transformData(params.data, params.category.id);
         let previousSeries: AreaSeries | undefined;
 
-        let { fills, strokes } = this.getPalette();
+        let { fills, strokes } = this.chartTheme.palette;
 
         params.fields.forEach((f, index) => {
             let {yKey, atLeastOneSelectedPoint} = this.processDataForCrossFiltering(data, f.colId, params);

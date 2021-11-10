@@ -167,10 +167,6 @@ export abstract class ChartProxy {
         return this.chartOptions;
     }
 
-    protected getPalette(): AgChartThemePalette {
-        return this.chartTheme.palette;
-    }
-
     protected transformData(data: any[], categoryKey: string): any[] {
         if (this.chart.axes.filter(a => a instanceof CategoryAxis).length < 1) {
             return data;

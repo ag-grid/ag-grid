@@ -46,7 +46,7 @@ export class LineChartProxy extends CartesianChartProxy {
 
         let previousSeries: LineSeries | undefined;
 
-        let { fills, strokes } = this.getPalette();
+        let { fills, strokes } = this.chartTheme.palette;
         fields.forEach((f, index) => {
             let {yKey, atLeastOneSelectedPoint} = this.processDataForCrossFiltering(data, f.colId, params);
 
