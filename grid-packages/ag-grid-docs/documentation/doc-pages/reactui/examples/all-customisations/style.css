@@ -1,0 +1,28 @@
+.buttons-bar {
+    display: inline-block;
+}
+
+.buttons-bar button {
+    margin-bottom: 10px;
+    margin-right: 10px;
+}
+
+.top-level {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.my-grid {
+    flex-grow: 1;
+}
+
+.my-tool-panel {
+    padding: 20px;
+}
+
+.my-tool-panel-value {
+    padding: 20px;
+    font-weight: bold;
+    font-size: 20px;
+}

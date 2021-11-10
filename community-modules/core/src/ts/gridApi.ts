@@ -761,7 +761,7 @@ export class GridApi {
             return;
         }
         const comp = this.sideBarComp.getToolPanelInstance(id);
-        const unwrapped = this.frameworkComponentWrapper.unwrap(comp);
+        const unwrapped = this.frameworkComponentWrapper ? this.frameworkComponentWrapper.unwrap(comp) : comp;
         return unwrapped;
     }
 
@@ -990,14 +990,14 @@ export class GridApi {
 
         const filterPromise = this.filterManager.getFilterComponent(column, 'NO_UI');
         const currentValue = filterPromise && filterPromise.resolveNow<IFilterComp | null>(null, filterComp => filterComp);
-        const currentValueUnwrapped = this.frameworkComponentWrapper.unwrap(currentValue);
+        const currentValueUnwrapped = this.frameworkComponentWrapper ? this.frameworkComponentWrapper.unwrap(currentValue) : currentValue;
 
         if (callback) {
             if (currentValueUnwrapped) {
                 setTimeout(callback, 0, currentValueUnwrapped);
             } else if (filterPromise) {
                 filterPromise.then( comp => {
-                    const unwrapped = this.frameworkComponentWrapper.unwrap(comp);
+                    const unwrapped = this.frameworkComponentWrapper ? this.frameworkComponentWrapper.unwrap(comp) : comp;
                     callback(unwrapped);
                 });
             }
@@ -1024,7 +1024,7 @@ export class GridApi {
         if (!this.statusBarService) { return; }
 
         const comp = this.statusBarService.getStatusPanel(key);
-        const unwrapped = this.frameworkComponentWrapper.unwrap(comp);
+        const unwrapped = this.frameworkComponentWrapper ? this.frameworkComponentWrapper.unwrap(comp) : comp;
         return unwrapped;
     }
 

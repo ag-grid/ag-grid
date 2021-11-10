@@ -97,10 +97,6 @@ Below is an example showing different types of Cell Editors and also mixing Reac
 
 See [Cell Editors](/component-cell-editor/) for full details on creating Cell Editors.
 
-## Using Filters
-
-<grid-example title='React UI Filters' name='filters' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>
-
 
 ## Customising Headers
 
@@ -159,38 +155,27 @@ This is in line with React thinking, in that React is used for rendering only, a
 
 This also means the AG Grid React UI not only supports all features of the current AG Grid React, but also the interface into AG Grid React has not changed. All features are configured in the same way. All that will be needed in your application to test React UI is set the switch `reactUi=true`.
 
+## All Customisations Supported
 
-## How Much of AG Grid is now React UI?
+Above we saw customising the grid Cells (Renderers and Editors) and Headers using React Components.
+All of the other customisations allowed by AG Grid are also supported when `reactUi=true`.
 
-The work covers the core grid, rows and cells. This means if you provide Cell Renderers and Cell Editors, they will live inside the same React Context as your application.
-
-The following areas are yet to be completed. All of these areas use the old rendering engine alongside the new React UI:
+The example below shows the following customisations:
 1. Column Filters and Floating Filters.
 1. Tool Panels.
 1. Status Bar.
 1. Overlays.
-1. Custom Tooltip.
+1. Tooltip.
 
-
-When `reactUi=true`, the mechanism of using React inside the old AG Grid rendering engine is turned off. This means React components provided to areas of the grid not yet using React UI will not work. For example if you have a custom Header Component written in React, it will currently not work when `reactUi=true`.
-
-This is temporary while we implement React UI across all of AG Grid. Once complete, there will be no part using the old rendering engine and this issue will be no longer relevant.
+<grid-example title='React UI All Customisations' name='all-customisations' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>
 
 ## Community vs Enterprise
 
-React UI is covering both AG Grid Community and AG Grid Enterprise. Once complete, both Community and Enterprise
-will be 100% React.
+React UI is covering both AG Grid Community and AG Grid Enterprise.
 
 ## What's Next for React UI
 
-We are now charging ahead at completing the React UI work. That means going through the list in the previous section and converting everything to React UI.
-
-Once all parts of AG Grid are fully working with React UI we will make React UI the default with a property to go back to the old way of rendering. After some time the old way will be deprecated and then after some more time it will be removed.
-
-
-## How Long Will It Take
-
-We have spent six months getting this far. We feel most of the hard work has been done. We estimate a fully working version of AG Grid supporting React Rendering in Q4 of this year, in time for Christmas.
+Our work on React UI is now complete. There is nothing more for us to do. In the next major release, we plan to make `reactUi=true` the default when using React and AG Grid. There will be a fallback property to keep the old rendering, however this is for emergency only and will be released as deprecated. The old way of rendering will be dropped once we are happy our React UI is Battle Tested in your production environments.
 
 ## Can I use React UI In Production Now?
 

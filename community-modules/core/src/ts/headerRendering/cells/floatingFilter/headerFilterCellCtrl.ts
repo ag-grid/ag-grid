@@ -3,7 +3,7 @@ import { HeaderRowCtrl } from "../../row/headerRowCtrl";
 import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellCtrl";
 import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import { KeyCode } from '../../../constants/keyCode';
-import { Autowired, PostConstruct } from '../../../context/context';
+import { Autowired, Optional } from '../../../context/context';
 import { Column } from '../../../entities/column';
 import { Events, FilterChangedEvent } from '../../../events';
 import { FilterManager } from '../../../filter/filterManager';
@@ -26,6 +26,7 @@ import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
 import { HoverFeature } from '../hoverFeature';
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
+import { FrameworkComponentWrapper } from "../../../components/framework/frameworkComponentWrapper";
 
 export interface IHeaderFilterCellComp extends IAbstractHeaderCellComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
@@ -45,6 +46,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
     @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('menuFactory') private readonly menuFactory: IMenuFactory;
     @Autowired('beans') protected readonly beans: Beans;
+    @Optional('frameworkComponentWrapper') private frameworkComponentWrapper: FrameworkComponentWrapper;
 
     private comp: IHeaderFilterCellComp;
 
@@ -267,7 +269,10 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
         const filterComponent = this.getFilterComponent();
 
         if (filterComponent) {
-            filterComponent.then(callback);
+            filterComponent.then( instance => {
+                const instanceUnwrapped = this.frameworkComponentWrapper ? this.frameworkComponentWrapper.unwrap(instance) : instance;
+                callback(instanceUnwrapped);
+            });
         }
     }
 
