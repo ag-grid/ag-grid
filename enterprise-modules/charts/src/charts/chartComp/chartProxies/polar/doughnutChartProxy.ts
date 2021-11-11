@@ -2,7 +2,7 @@ import { AgChart, AgPieSeriesOptions, LegendClickEvent, PieSeries, PolarChart } 
 import { _ } from "@ag-grid-community/core";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { PolarChartProxy } from "./polarChartProxy";
-import { hexToRGBA } from "../../color.";
+import { hexToRGBA } from "../../color";
 
 interface UpdateDoughnutSeriesParams {
     seriesMap: { [p: string]: PieSeries };
@@ -23,7 +23,6 @@ export class DoughnutChartProxy extends PolarChartProxy {
 
     public constructor(params: ChartProxyParams) {
         super(params);
-        this.initChartOptions();
         this.recreateChart();
     }
 

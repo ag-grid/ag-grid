@@ -2,13 +2,12 @@ import { AgChart, PieSeries, PolarChart } from "ag-charts-community";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { PolarChartProxy } from "./polarChartProxy";
 import { LegendClickEvent } from "ag-charts-community/dist/cjs/chart/legend";
-import { changeOpacity } from "../../color.";
+import { changeOpacity } from "../../color";
 
 export class PieChartProxy extends PolarChartProxy {
 
     public constructor(params: ChartProxyParams) {
         super(params);
-        this.initChartOptions();
         this.recreateChart();
     }
 

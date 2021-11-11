@@ -4,7 +4,7 @@ import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartPr
 import { ChartDataModel } from "../../chartDataModel";
 import { CartesianChartProxy } from "./cartesianChartProxy";
 import { deepMerge } from "../../object";
-import { hexToRGBA } from "../../color.";
+import { hexToRGBA } from "../../color";
 
 interface SeriesDefinition {
     xField: FieldDefinition;
@@ -20,7 +20,6 @@ export class ScatterChartProxy extends CartesianChartProxy {
         this.xAxisType = 'number';
         this.yAxisType = 'number';
 
-        this.initChartOptions();
         this.recreateChart();
     }
 

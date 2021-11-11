@@ -217,7 +217,8 @@ export class ToolPanelColumnComp extends Component {
             this.cbSelect.setValue(this.column.isVisible());
         }
 
-        let checkboxReadOnly: boolean;
+        let canBeToggled = true;
+        let canBeDragged = true;
 
         if (isPivotMode) {
             // when in pivot mode, the item should be read only if:
@@ -225,14 +226,15 @@ export class ToolPanelColumnComp extends Component {
             const functionsReadOnly = this.gridOptionsWrapper.isFunctionsReadOnly();
             //  b) column is not allow any functions on it
             const noFunctionsAllowed = !this.column.isAnyFunctionAllowed();
-            checkboxReadOnly = functionsReadOnly || noFunctionsAllowed;
+            canBeToggled = !functionsReadOnly && !noFunctionsAllowed;
         } else {
-            // when in normal mode, the checkbox is read only if visibility is locked
-            checkboxReadOnly = !!this.column.getColDef().lockVisible;
+            canBeToggled = !this.column.getColDef().lockVisible;
+            canBeDragged = !this.column.getColDef().lockPosition;
         }
 
-        this.cbSelect.setReadOnly(checkboxReadOnly);
-        _.addOrRemoveCssClass(this.getGui(), 'ag-column-select-column-readonly', checkboxReadOnly);
+        this.cbSelect.setReadOnly(!canBeToggled);
+        _.addOrRemoveCssClass(this.eDragHandle, 'ag-column-select-column-readonly', !canBeDragged);
+        _.addOrRemoveCssClass(this.getGui(), 'ag-column-select-column-readonly', !canBeDragged && !canBeToggled);
 
         const checkboxPassive = isPivotMode && this.gridOptionsWrapper.isFunctionsPassive();
         this.cbSelect.setPassive(checkboxPassive);

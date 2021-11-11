@@ -5,7 +5,6 @@ import { CrossFilteringContext } from "../../chartService";
 import { ChartThemeOverrideObjectName, getChartThemeOverridesObjectName } from "../chartThemeOverridesMapper";
 
 export interface ChartProxyParams {
-    chartId: string;
     chartType: ChartType;
     customChartThemes?: { [name: string]: AgChartTheme; };
     parentElement: HTMLElement;
@@ -16,7 +15,7 @@ export interface ChartProxyParams {
     apiChartThemeOverrides?: AgChartThemeOverrides;
     crossFiltering: boolean;
     crossFilterCallback: (event: any, reset?: boolean) => void;
-    chartModel?: ChartModel;
+    chartOptionsToRestore?: AgChartThemeOverrides;
 }
 
 export interface FieldDefinition {
@@ -38,7 +37,6 @@ export interface UpdateChartParams {
 }
 
 export abstract class ChartProxy {
-    protected readonly chartId: string;
     protected readonly chartType: ChartType;
     protected readonly standaloneChartType: ChartThemeOverrideObjectName;
 
@@ -49,11 +47,19 @@ export abstract class ChartProxy {
     protected crossFilterCallback: (event: any, reset?: boolean) => void;
 
     protected constructor(protected readonly chartProxyParams: ChartProxyParams) {
-        this.chartId = chartProxyParams.chartId;
         this.chartType = chartProxyParams.chartType;
         this.crossFiltering = chartProxyParams.crossFiltering;
         this.crossFilterCallback = chartProxyParams.crossFilterCallback;
         this.standaloneChartType = getChartThemeOverridesObjectName(this.chartType);
+
+        if (this.chartProxyParams.chartOptionsToRestore) {
+            this.chartOptions = this.chartProxyParams.chartOptionsToRestore;
+            this.chartTheme = getChartTheme({ overrides: this.chartOptions });
+            return;
+        }
+
+        this.chartTheme = this.createChartTheme();
+        this.chartOptions = this.convertConfigToOverrides(this.chartTheme.config);
     }
 
     protected abstract createChart(options?: AgChartThemeOverrides): Chart;
@@ -76,18 +82,6 @@ export abstract class ChartProxy {
 
     public getChart(): Chart {
         return this.chart;
-    }
-
-    protected initChartOptions(): void {
-        if (this.chartProxyParams.chartModel) {
-            const chartModel = this.chartProxyParams.chartModel;
-            this.chartOptions = chartModel.chartOptions;
-            this.chartTheme = getChartTheme({ overrides: this.chartOptions });
-            return;
-        }
-
-        this.chartTheme = this.createChartTheme();
-        this.chartOptions = this.convertConfigToOverrides(this.chartTheme.config);
     }
 
     private createChartTheme(): ChartTheme {

@@ -77,6 +77,12 @@ export class MenuItemComponent extends Component {
                     this.onItemSelected(e);
                 }
             });
+            this.addGuiEventListener('mousedown', e => {
+                // Prevent event bubbling to other event handlers such as PopupService triggering
+                // premature closing of any open sub-menu popup.
+                e.stopPropagation();
+                e.preventDefault();
+            });
 
             this.addGuiEventListener('mouseenter', () => this.onMouseEnter());
             this.addGuiEventListener('mouseleave', () => this.onMouseLeave());

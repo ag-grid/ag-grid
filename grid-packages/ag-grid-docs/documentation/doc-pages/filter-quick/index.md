@@ -17,7 +17,11 @@ gridOptions.api.setQuickFilter('new filter text');
 
 ## Overriding the Quick Filter Value
 
-If your data contains complex objects, the quick filter will end up comparing against `[object Object]` instead of searchable string values. Alternatively, you might want to format string values specifically for searching (e.g. replace accented characters in strings, or remove commas from numbers). If you want to do this, provide `getQuickFilterText` to the column definition, e.g.:
+If your data contains complex objects, the quick filter will end up comparing against `[object Object]` instead of searchable string values. In this case you will need to implement `getQuickFilterText` to extract a searchable string from your complex object. 
+
+Alternatively, you might want to format string values specifically for searching (e.g. replace accented characters in strings, or remove commas from numbers).
+
+Finally, if you want a column to be ignored by the quick filter, have `getQuickFilterText` return an empty string `''`.
 
 <api-documentation source='column-properties/properties.json' section='filtering' names='["getQuickFilterText"]'></api-documentation>
 
