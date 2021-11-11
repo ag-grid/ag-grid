@@ -1030,6 +1030,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.showOpenedGroup);
     }
 
+    public isReactUi() {
+        return isTrue(this.gridOptions.reactUi);
+    }
+
     public isEnableRangeSelection(): boolean {
         return ModuleRegistry.isRegistered(ModuleNames.RangeSelectionModule) && isTrue(this.gridOptions.enableRangeSelection);
     }

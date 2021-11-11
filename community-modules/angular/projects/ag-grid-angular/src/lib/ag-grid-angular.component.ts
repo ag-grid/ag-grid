@@ -387,6 +387,8 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public components: { [p: string]: any; } | undefined = undefined;
     /** A map of component names to framework (Angular, React, Vue etc.) components.     */
     @Input() public frameworkComponents: { [p: string]: { new(): any; }; } | any | undefined = undefined;
+    /** Set to true to enable the experimental React UI. Works with React framework only.     */
+    @Input() public reactUi: boolean | undefined = undefined;
     /** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time.     */
     @Input() public editType: string | undefined = undefined;
     /** Set to `true` to enable Single Click Editing for cells, to start editing with a single click. Default: `false`     */
@@ -1178,6 +1180,7 @@ export class AgGridAngular implements AfterViewInit {
     static ngAcceptInputType_maintainColumnOrder: boolean | null | '';
     static ngAcceptInputType_groupMaintainOrder: boolean | null | '';
     static ngAcceptInputType_columnHoverHighlight: boolean | null | '';
+    static ngAcceptInputType_reactUi: boolean | null | '';
     // @END@
 }
 

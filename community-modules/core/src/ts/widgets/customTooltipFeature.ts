@@ -208,6 +208,10 @@ export class CustomTooltipFeature extends BeanStub {
             addCssClass(eGui, 'ag-tooltip-custom');
         }
 
+        if (this.gridOptionsWrapper.isReactUi()) {
+            addCssClass(eGui, 'ag-tooltip-reactui');
+        }
+
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
 
         const addPopupRes = this.popupService.addPopup({

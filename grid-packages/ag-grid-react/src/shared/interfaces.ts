@@ -15,7 +15,6 @@ import {
 import {ChangeDetectionStrategyType} from './changeDetectionService';
 
 export interface SharedProps extends GridOptions {
-    reactUi?: boolean;
     gridOptions?: GridOptions;
     modules?: Module[];
     containerStyle?: any;

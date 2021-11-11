@@ -53,3 +53,10 @@
 .my-spinner {
     width: 100px;
 }
+
+.my-tooltip {
+    border: 1px solid black;
+    border-radius: 4pm;
+    background-color: white;
+    padding: 10px;
+}

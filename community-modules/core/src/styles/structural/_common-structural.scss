@@ -1007,6 +1007,16 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
     z-index: 99999;
 }
 
+.ag-tooltip-reactui {
+    position: absolute;
+    pointer-events: none;
+    z-index: 99999;
+    transition: opacity 1s;
+    &.ag-tooltip-hiding {
+        opacity: 0;
+    }
+}
+
 /**
  ****************************
  * Animations

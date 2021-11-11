@@ -2172,6 +2172,10 @@
         "optional": true
       }
     },
+    "reactUi": {
+      "description": "/** Set to true to enable the experimental React UI. Works with React framework only. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "editType": {
       "description": "/** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time. */",
       "type": { "returnType": "string", "optional": true }

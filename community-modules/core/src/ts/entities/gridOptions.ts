@@ -220,6 +220,9 @@ export interface GridOptions {
     /** A map of component names to framework (Angular, React, Vue etc.) components. */
     frameworkComponents?: { [p: string]: { new(): any; }; } | any;
 
+    /** Set to true to enable the experimental React UI. Works with React framework only. */
+    reactUi?: boolean;
+
     // *** Editing *** //
     /** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time. */
     editType?: string;
