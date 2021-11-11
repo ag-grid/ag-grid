@@ -2765,19 +2765,21 @@ export class ColumnModel extends BeanStub {
 
         const res: Column[] = ([] as Column[]).concat(colsWithIndex);
 
-        // second add columns that were there before and in the same order as they were before,
-        // so we are preserving order of current grouping of columns that simply have rowGroup=true
-        previousCols.forEach(col => {
-            if (colsWithValue.indexOf(col) >= 0) {
-                res.push(col);
-            }
-        });
+        if (this.gridOptionsWrapper.isMaintainColumnOrder()) {
+            // second add columns that were there before and in the same order as they were before,
+            // so we are preserving order of current grouping of columns that simply have rowGroup=true
+            previousCols.forEach(col => {
+                if (colsWithValue.indexOf(col) >= 0) {
+                    res.push(col);
+                }
+            });
+        }
 
         // lastly put in all remaining cols
         colsWithValue.forEach(col => {
-            if (res.indexOf(col) < 0) {
-                res.push(col);
-            }
+            if (res.indexOf(col) >= 0) { return; }
+
+            res.push(col);
         });
 
         // set flag=false for removed cols
