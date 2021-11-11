@@ -81,7 +81,7 @@ export class BarSeriesPanel extends Component {
             .setLabel(this.chartTranslator.translate("strokeWidth"))
             .setMaxValue(getMaxValue(currentValue, 10))
             .setTextFieldWidth(45)
-            .setValue('${currentValue}')
+            .setValue(`${currentValue}`)
             .onValueChange(newValue => this.chartOptionsService.setSeriesOption("strokeWidth", newValue));
     }
 
