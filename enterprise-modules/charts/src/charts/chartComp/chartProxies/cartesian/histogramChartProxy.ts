@@ -10,11 +10,9 @@ export class HistogramChartProxy extends CartesianChartProxy {
 
         this.xAxisType = 'number';
         this.yAxisType = 'number';
-
-        this.recreateChart();
     }
 
-    protected createChart(): CartesianChart {
+    protected create(): CartesianChart {
         return AgChart.create({
             container: this.chartProxyParams.parentElement,
             theme: this.chartTheme,

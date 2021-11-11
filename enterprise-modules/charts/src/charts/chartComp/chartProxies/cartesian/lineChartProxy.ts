@@ -10,11 +10,9 @@ export class LineChartProxy extends CartesianChartProxy {
 
         this.xAxisType = params.grouping ? 'groupedCategory' : 'category';
         this.yAxisType = 'number';
-
-        this.recreateChart();
     }
 
-    protected createChart(): CartesianChart {
+    protected create(): CartesianChart {
         return AgChart.create({
             type: 'line',
             container: this.chartProxyParams.parentElement,

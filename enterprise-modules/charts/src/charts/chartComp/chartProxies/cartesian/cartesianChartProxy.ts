@@ -31,7 +31,7 @@ export abstract class CartesianChartProxy extends ChartProxy {
         if (params.grouping) {
             if (!(this.axisTypeToClassMap[this.xAxisType] instanceof GroupedCategoryAxis)) {
                 this.xAxisType = 'groupedCategory';
-                this.recreateChart();
+                this.create();
             }
             return;
         }
@@ -40,7 +40,7 @@ export abstract class CartesianChartProxy extends ChartProxy {
         const newXAxisType = CartesianChartProxy.isTimeAxis(params) ? 'time' : 'category';
         if (newXAxisType !== this.xAxisType) {
             this.xAxisType = newXAxisType;
-            this.recreateChart();
+            this.create();
         }
     }
 

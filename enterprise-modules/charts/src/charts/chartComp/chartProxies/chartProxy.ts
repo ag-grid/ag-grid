@@ -29,7 +29,7 @@ export interface UpdateChartParams {
     category: {
         id: string;
         name: string;
-        chartDataType?: string
+        chartDataType?: string;
     };
     fields: FieldDefinition[];
     chartId?: string;
@@ -62,26 +62,22 @@ export abstract class ChartProxy {
         this.chartOptions = this.convertConfigToOverrides(this.chartTheme.config);
     }
 
-    protected abstract createChart(options?: AgChartThemeOverrides): Chart;
+    protected abstract create(): Chart;
 
     public abstract update(params: UpdateChartParams): void;
 
-    public recreateChart(): void {
+    public createChart(): void {
         if (this.chart) {
             this.destroyChart();
         }
 
-        this.chart = this.createChart();
+        this.chart = this.create();
 
         if (this.crossFiltering) {
             // add event listener to chart canvas to detect when user wishes to reset filters
             const resetFilters = true;
             this.chart.addEventListener('click', (e) => this.crossFilterCallback(e, resetFilters));
         }
-    }
-
-    public getChart(): Chart {
-        return this.chart;
     }
 
     private createChartTheme(): ChartTheme {
@@ -145,6 +141,10 @@ export abstract class ChartProxy {
 
     public getChartOptions(): AgChartThemeOverrides {
         return this.chartOptions;
+    }
+
+    public getChart(): Chart {
+        return this.chart;
     }
 
     protected transformData(data: any[], categoryKey: string): any[] {

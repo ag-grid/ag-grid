@@ -209,6 +209,8 @@ export class GridChartComp extends Component {
             return;
         }
 
+        this.chartProxy.createChart();
+
         const canvas = this.eChart.querySelector('canvas');
         if (canvas) {
             _.addCssClass(canvas, 'ag-charts-canvas');

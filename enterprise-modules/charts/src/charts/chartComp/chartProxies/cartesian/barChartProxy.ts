@@ -13,11 +13,9 @@ export class BarChartProxy extends CartesianChartProxy {
         // when the standalone chart type is 'bar' - xAxis is positioned to the 'left'
         this.xAxisType = params.grouping ? 'groupedCategory' : 'category';
         this.yAxisType = 'number';
-
-        this.recreateChart();
     }
 
-    protected createChart(): CartesianChart {
+    protected create(): CartesianChart {
         const [isBar, isNormalised] = [this.standaloneChartType === 'bar', this.isNormalised()];
 
         return AgChart.create({
@@ -111,7 +109,6 @@ export class BarChartProxy extends CartesianChartProxy {
         // special handling to add a default label formatter to show '%' for normalized charts if none is provided
         if (normalised) {
             const numberAxis = axes[1];
-            // FIXME: only update labels when no formatter is supplied
             numberAxis.label = {...numberAxis.label, formatter: (params: any) => Math.round(params.value) + '%'};
         }
         return axes;
