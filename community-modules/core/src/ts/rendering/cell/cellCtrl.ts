@@ -367,7 +367,6 @@ export class CellCtrl extends BeanStub {
         const position = colDef.cellEditorPopupPosition;
 
         this.setEditing(true, popup);
-
         this.cellComp.setEditDetails(compDetails!, popup, position);
 
         const event: CellEditingStartedEvent = this.createEvent(null, Events.EVENT_CELL_EDITING_STARTED);
@@ -380,10 +379,6 @@ export class CellCtrl extends BeanStub {
         this.editing = editing;
         this.editingInPopup = inPopup;
         this.setInlineEditingClass();
-
-        if (!editing) {
-            this.cellComp.setEditDetails();
-        }
     }
 
     // pass in 'true' to cancel the editing.
@@ -447,6 +442,7 @@ export class CellCtrl extends BeanStub {
         }
 
         this.setEditing(false);
+        this.cellComp.setEditDetails(); // passing nothing stops editing
         this.updateAndFormatValue();
         this.refreshCell({ forceRefresh: true, suppressFlash: true });
         this.dispatchEditingStoppedEvent(oldValue, newValue);
