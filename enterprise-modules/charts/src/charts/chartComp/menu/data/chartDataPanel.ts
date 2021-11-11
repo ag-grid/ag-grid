@@ -130,15 +130,14 @@ export class ChartDataPanel extends Component {
 
         if (this.chartController.isActiveXYChart()) {
             const pairedModeToggle = this.seriesGroupComp.createManagedBean(new AgToggleButton());
-
             pairedModeToggle
                 .setLabel(this.chartTranslator.translate('paired'))
                 .setLabelAlignment('left')
                 .setLabelWidth('flex')
                 .setInputWidth(45)
-                .setValue(this.chartOptionsService.getChartOption('paired') || false)
+                .setValue(this.chartOptionsService.getPairedMode())
                 .onValueChange(newValue => {
-                    this.chartOptionsService.setChartOption('paired', newValue);
+                    this.chartOptionsService.setPairedMode(!!newValue);
                     this.chartController.updateForGridChange();
                 });
 

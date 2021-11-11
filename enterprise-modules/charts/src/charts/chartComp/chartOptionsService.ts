@@ -108,6 +108,17 @@ export class ChartOptionsService extends BeanStub {
         this.raiseChartOptionsChangedEvent();
     }
 
+    public getPairedMode(): boolean {
+        const optionsType = getChartThemeOverridesObjectName(this.getChartType());
+        return _.get(this.getChartOptions(), `${optionsType}.paired`, undefined);
+    }
+
+    public setPairedMode(paired: boolean): void {
+        const optionsType = getChartThemeOverridesObjectName(this.getChartType());
+        const options = _.get(this.getChartOptions(), `${optionsType}`, undefined);
+        _.set(options, 'paired', paired);
+    }
+
     private getChart(): Chart {
         return this.chartController.getChartProxy().getChart();
     }
