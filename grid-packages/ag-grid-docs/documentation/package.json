@@ -19,7 +19,7 @@
     "serve": "npx gatsby serve --prefix-paths -H 0.0.0.0",
     "clean": "npx gatsby clean",
     "test": "npx jest",
-    "convert-ts-to-js": "node strip-types.js"
+    "convert-ts-to-js": "gulp"
   },
   "dependencies": {
     "@ag-grid-community/core": "^26.1.0",
