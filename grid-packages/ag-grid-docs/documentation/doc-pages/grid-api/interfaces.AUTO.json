@@ -7714,10 +7714,19 @@
   },
   "SetFilterValuesFuncParams": {
     "meta": {},
-    "type": { "success": "(values: string[]) => void", "colDef": "ColDef" },
+    "type": {
+      "success": "(values: string[]) => void",
+      "colDef": "ColDef",
+      "column": "Column",
+      "columnApi": "ColumnApi",
+      "api": "GridApi",
+      "context": "any"
+    },
     "docs": {
       "success": "/** The function to call with the values to load into the filter once they are ready. */",
-      "colDef": "/** The column definition from which the set filter is invoked. */"
+      "colDef": "/** The column definition from which the set filter is invoked. */",
+      "column": "/** Column from which the set filter is invoked. */",
+      "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "SetFilterValuesFunc": {

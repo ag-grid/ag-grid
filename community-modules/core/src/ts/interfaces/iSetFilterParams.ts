@@ -1,12 +1,21 @@
 import { ICellRendererComp, ICellRendererFunc } from '../rendering/cellRenderers/iCellRenderer';
 import { ColDef, ValueFormatterParams } from '../entities/colDef';
 import { IProvidedFilterParams } from '../filter/provided/providedFilter';
+import { Column } from '../entities/column';
+import { GridApi } from '../gridApi';
+import { ColumnApi } from '../columns/columnApi';
 
 export interface SetFilterValuesFuncParams {
     /** The function to call with the values to load into the filter once they are ready. */
     success: (values: string[]) => void;
     /** The column definition from which the set filter is invoked. */
     colDef: ColDef;
+    /** Column from which the set filter is invoked. */
+    column: Column;
+    columnApi: ColumnApi;
+    api: GridApi;
+    /** The context as provided on `gridOptions.context` */
+    context: any;
 }
 
 export type SetFilterValuesFunc = (params: SetFilterValuesFuncParams) => void;

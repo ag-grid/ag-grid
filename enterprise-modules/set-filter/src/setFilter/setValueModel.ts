@@ -182,6 +182,7 @@ export class SetValueModel implements IEventEmitter {
                     this.setIsLoading(true);
 
                     const callback = this.providedValues as SetFilterValuesFunc;
+                    const { columnApi, api, context, column, colDef } = this.filterParams;
                     const params: SetFilterValuesFuncParams = {
                         success: values => {
                             const processedValues = _.values(this.uniqueValues(_.toStrings(values) || []));
@@ -194,7 +195,12 @@ export class SetValueModel implements IEventEmitter {
 
                             resolve(sortedValues);
                         },
-                        colDef: this.colDef
+                        colDef,
+                        column,
+                        columnApi,
+                        api,
+                        context,
+
                     };
 
                     window.setTimeout(() => callback(params), 0);

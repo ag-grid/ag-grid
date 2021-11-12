@@ -13801,6 +13801,16 @@
     "colDef": {
       "description": "/** The column definition from which the set filter is invoked. */",
       "type": { "returnType": "ColDef", "optional": false }
+    },
+    "column": {
+      "description": "/** Column from which the set filter is invoked. */",
+      "type": { "returnType": "Column", "optional": false }
+    },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "context": {
+      "description": "/** The context as provided on `gridOptions.context` */",
+      "type": { "returnType": "any", "optional": false }
     }
   },
   "SetFilterValuesFunc": {},
