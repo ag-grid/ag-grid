@@ -58,8 +58,8 @@
     "webpack-merge": "4.1.4"
   },
   "devDependencies": {
-    "@ag-grid-community/core": "~26.1.0",
     "@ag-grid-community/angular": "~26.1.0",
+    "@ag-grid-community/core": "~26.1.0",
     "@ag-grid-community/react": "~26.1.0",
     "@ag-grid-community/vue": "~26.1.0",
     "@angular/common": "8.2.14",
@@ -90,19 +90,20 @@
     "eslint": "^6.3.0",
     "execa": "^3.2.0",
     "express": "4.16.3",
-    "http": "0.0.1-security",
-    "https": "1.0.0",
     "gulp": "4.0.0",
     "gulp-debug": "4.0.0",
     "gulp-filter": "6.0.0",
     "gulp-if": "3.0.0",
     "gulp-inline-source": "4.0.0",
     "gulp-postcss": "8.0.0",
-    "gulp-replace": "1.0.0",
     "gulp-prettier": "3.0.0",
+    "gulp-replace": "1.0.0",
     "html-loader": "0.5.5",
     "html-webpack-plugin": "3.2.0",
+    "http": "0.0.1-security",
+    "https": "1.0.0",
     "jest": "^25.4.0",
+    "json5": "2.2.0",
     "merge-stream": "1.0.1",
     "mini-css-extract-plugin": "1.6.0",
     "node-sass": "^6.0.1",
@@ -120,6 +121,7 @@
     "sass-loader": "~10.2.0",
     "source-map-loader": "^0.2.4",
     "style-loader": "0.23.0",
+    "sucrase": "^3.20.3",
     "terser-webpack-plugin": "^2.0.1",
     "thread-loader": "1.2.0",
     "ts-jest": "^25.4.0",
@@ -142,7 +144,6 @@
     "webpack-filter-warnings-plugin": "1.2.1",
     "webpack-hot-middleware": "2.23.1",
     "webpack-stream": "5.1.1",
-    "zone.js": "0.9.1",
-    "json5": "2.2.0"
+    "zone.js": "0.9.1"
   }
 }

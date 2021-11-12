@@ -41,7 +41,7 @@ const gridOptions: GridOptions = {
         }]
     },
     defaultColDef: {
-        width: 100
+        width: 123
     }
 };
 
