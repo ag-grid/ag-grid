@@ -1,0 +1,28 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "esnext",
+        "strict": true,
+        "importHelpers": true,
+        "noImplicitThis": false,
+        "noImplicitAny": false,
+        "moduleResolution": "node",
+        "experimentalDecorators": true,
+        "esModuleInterop": true,
+        "noEmit": true,
+        "skipLibCheck": true,
+        "lib": [
+            "esnext",
+            "dom",
+            "dom.iterable",
+            "scripthost"
+        ]
+    },
+    "include": [
+        "./doc-pages/column-moving/**/main.ts",
+        "./typings/**/*"
+    ],
+    "exclude": [
+        "./node_modules"
+    ]
+}

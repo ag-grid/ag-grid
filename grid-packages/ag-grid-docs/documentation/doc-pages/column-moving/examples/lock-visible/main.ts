@@ -1,27 +1,29 @@
-const columnDefs = [
+import { ColDef, ColGroupDef, GridOptions } from "@ag-grid-community/core";
+
+const columnDefs: (ColDef | ColGroupDef)[] = [
     {
         headerName: 'Athlete',
         children: [
-            {field: 'athlete', width: 150},
-            {field: 'age', lockVisible: true, cellClass: 'locked-visible'},
-            {field: 'country', width: 150},
-            {field: 'year'},
-            {field: 'date'},
-            {field: 'sport'}
+            { field: 'athlete', width: 150 },
+            { field: 'age', lockVisible: true, cellClass: 'locked-visible' },
+            { field: 'country', width: 150 },
+            { field: 'year' },
+            { field: 'date' },
+            { field: 'sport' }
         ]
     },
     {
         headerName: 'Medals',
         children: [
-            {field: 'gold', lockVisible: true, cellClass: 'locked-visible'},
-            {field: 'silver', lockVisible: true, cellClass: 'locked-visible'},
-            {field: 'bronze', lockVisible: true, cellClass: 'locked-visible'},
-            {field: 'total', lockVisible: true, cellClass: 'locked-visible', hide: true}
+            { field: 'gold', lockVisible: true, cellClass: 'locked-visible' },
+            { field: 'silver', lockVisible: true, cellClass: 'locked-visible' },
+            { field: 'bronze', lockVisible: true, cellClass: 'locked-visible' },
+            { field: 'total', lockVisible: true, cellClass: 'locked-visible', hide: true }
         ]
     }
 ];
 
-const gridOptions = {
+const gridOptions: GridOptions = {
     columnDefs: columnDefs,
     sideBar: {
         toolPanels: [{
@@ -47,8 +49,7 @@ const gridOptions = {
 document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
-
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then(response => response.json())
-        .then(data => gridOptions.api.setRowData(data));
+        .then(data => gridOptions.api!.setRowData(data));
 });
