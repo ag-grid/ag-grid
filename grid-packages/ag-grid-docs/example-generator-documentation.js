@@ -1,5 +1,6 @@
 const { JSDOM } = require('jsdom');
 const { window, document } = new JSDOM('<!DOCTYPE html><html lang="en"></html>');
+const sucrase = require("sucrase");
 
 window.Date = Date;
 global.window = window;
@@ -159,6 +160,12 @@ function createExampleGenerator(prefix, importTypes) {
         if (!document) {
             throw new Error('examples are required to have an index.html file');
         }
+        let tsScripts = getMatchingPaths('main.ts');
+        let mainJs = undefined;
+        if (tsScripts.length > 0) {
+            const tsMainPath = tsScripts[0];
+            mainJs = sucrase.transform(fs.readFileSync(tsMainPath, 'utf8'), { transforms: ["typescript"] }).code;
+        }
 
         let scripts = getMatchingPaths('*.js');
         let mainScript = scripts[0];
@@ -182,7 +189,9 @@ function createExampleGenerator(prefix, importTypes) {
         const stylesheets = getMatchingPaths('*.css');
 
         // read the main script (js) and the associated index.html
-        const mainJs = getFileContents(mainScript);
+        if (!mainJs) {
+            mainJs = getFileContents(mainScript);
+        }
         const indexHtml = getFileContents(document);
         const bindings = parser(mainJs, indexHtml, options, type, providedExamples);
 
@@ -217,7 +226,7 @@ function createExampleGenerator(prefix, importTypes) {
         const style = /<style>(.*)<\/style>/s.exec(indexHtml);
         let inlineStyles = style && style.length > 0 && format(style[1], 'css');
 
-       if (type === 'mixed' && providedExamples['react']) {
+        if (type === 'mixed' && providedExamples['react']) {
             importTypes.forEach(importType => copyProvidedExample(importType, 'react', providedExamples['react']));
         } else {
             const reactScripts = getMatchingPaths('*_react.*');
@@ -303,7 +312,7 @@ function createExampleGenerator(prefix, importTypes) {
         if (type === 'mixed' && providedExamples['vue3']) {
             importTypes.forEach(importType => copyProvidedExample(importType, 'vue3', providedExamples['vue3']));
         } else {
-            if(vanillaToVue3) {
+            if (vanillaToVue3) {
                 const vueScripts = getMatchingPaths('*_vue*');
                 const vueConfigs = new Map();
                 try {
@@ -321,9 +330,36 @@ function createExampleGenerator(prefix, importTypes) {
             }
         }
 
-        inlineStyles = undefined; // unset these as they don't need to be copied for vanilla
-        const vanillaScripts = getMatchingPaths('*.{html,js}', { ignore: ['**/*_{angular,react,vue,vue3}.js'] });
-        importTypes.forEach(importType => writeExampleFiles(importType, 'vanilla', 'vanilla', vanillaScripts, {}));
+        if (type === 'mixed' && providedExamples['vanilla']) {
+            importTypes.forEach(importType => copyProvidedExample(importType, 'vanilla', providedExamples['vanilla']));
+        } else {
+
+            inlineStyles = undefined; // unset these as they don't need to be copied for vanilla
+            const tsScripts = getMatchingPaths('*.ts');
+
+            try {
+                tsScripts.forEach(tss => {
+                    mainJs = sucrase.transform(fs.readFileSync(tss, 'utf8'), { transforms: ["typescript"] }).code;
+                    writeFile(tss.replace('.ts', '_vanilla.js'), mainJs);
+                })
+
+                const updatedScripts = getMatchingPaths('*.{html,js}', { ignore: ['**/*_{angular,react,vue,vue3}.js'] });
+
+                importTypes.forEach(importType => writeExampleFiles(importType, 'vanilla', 'vanilla', updatedScripts, {}));
+
+                tsScripts.forEach(tss => {
+                    fs.unlink(tss.replace('.ts', '_vanilla.js'));
+                })
+
+            } catch (e) {
+                console.error(`Failed to process Vanilla example in ${examplePath}`, e);
+                throw e;
+            }
+        }
+
+        // inlineStyles = undefined; // unset these as they don't need to be copied for vanilla
+        //const vanillaScripts = getMatchingPaths('*.{html,js,ts}', { ignore: ['**/* _{ angular, react, vue, vue3 }.js'] });
+        //importTypes.forEach(importType => writeExampleFiles(importType, 'vanilla', 'vanilla', vanillaScripts, {})); 
     };
 }
 
@@ -331,7 +367,7 @@ function getGeneratorCode(prefix) {
     const gridExamples = prefix === './src/example-generation/grid-' || false;
     const generateReactFire = process.env.AG_GENERATE_REACT_FIRE || false;
 
-    if(generateReactFire) {
+    if (generateReactFire) {
         console.warn("********************************************");
         console.warn("************ React Fire Enabled ************");
         console.warn("********************************************");

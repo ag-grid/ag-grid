@@ -1,14 +1,20 @@
 const sucrase = require('@sucrase/gulp-plugin');
 const { dest, series, src } = require('gulp');
-const gulp = require('gulp');
+const rename = require('gulp-rename');
 const ts = require('gulp-typescript');
 const tsProject = ts.createProject("tsconfig.json");
 const stripTypes = () => {
     return src(["./doc-pages/**/main.ts"], { base: './' })
         .pipe(sucrase({ transforms: ['typescript'] }))
-        .pipe(dest((d) => {
-            return d.path.replace('main.js', '_gen/main.js');
-        }))
+        /* .pipe(rename(function (path) {
+            // Updates the object in-place
+            path.dirname += "/gen";
+        })) */
+        /* .pipe(rename(function (path) {
+            // Updates the object in-place
+            path.basename += "-generated";
+        })) */
+        .pipe(dest('./'))
 };
 
 const checkTypes = () => {
@@ -16,4 +22,4 @@ const checkTypes = () => {
         .pipe(tsProject())
 };
 
-exports.default = series(checkTypes, stripTypes)
+exports.default = series(checkTypes)
