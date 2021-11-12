@@ -45,6 +45,9 @@ export abstract class ReactComponent extends BaseReactComponent {
     }
 
     public destroy(): void {
+        if(this.componentInstance && typeof this.componentInstance.destroy == 'function') {
+            this.componentInstance.destroy();
+        }
         return this.portalManager.destroyPortal(this.portal as ReactPortal);
     }
 

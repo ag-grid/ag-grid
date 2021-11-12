@@ -102,6 +102,9 @@ abstract class VueComponent<P, T> {
     }
 
     public destroy(): void {
+        if(this.getFrameworkComponentInstance() && typeof this.getFrameworkComponentInstance().destroy === 'function') {
+            this.getFrameworkComponentInstance().destroy();
+        }
         this.unmount();
     }
 
