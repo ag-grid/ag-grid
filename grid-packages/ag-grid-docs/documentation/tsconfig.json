@@ -19,8 +19,8 @@
         ]
     },
     "include": [
-        "./doc-pages/column-moving/**/main.ts",
-        "./typings/**/*"
+        "./doc-pages/**/main.ts",
+        "./custom-types/**/*"
     ],
     "exclude": [
         "./node_modules"
