@@ -1,0 +1,56 @@
+import { BeanStub } from "../../context/beanStub";
+import { ColDef, ColGroupDef } from "../../entities/colDef";
+import { GridOptions } from "../../entities/gridOptions";
+import { ToolPanelDef } from "../../entities/sideBar";
+import { IFloatingFilterParams } from "../../filter/floating/floatingFilter";
+import { IHeaderParams } from "../../headerRendering/cells/column/headerComp";
+import { IHeaderGroupParams } from "../../headerRendering/cells/columnGroup/headerGroupComp";
+import { ICellEditorParams } from "../../interfaces/iCellEditor";
+import { IFilterDef, IFilterParams } from "../../interfaces/iFilter";
+import { IRichCellEditorParams } from "../../interfaces/iRichCellEditorParams";
+import { ISetFilterParams } from "../../interfaces/iSetFilterParams";
+import { IStatusPanelParams, StatusPanelDef } from "../../interfaces/iStatusPanel";
+import { IToolPanelParams } from "../../interfaces/iToolPanel";
+import { GroupCellRendererParams } from "../../rendering/cellRenderers/groupCellRendererCtrl";
+import { ICellRendererParams, ISetFilterCellRendererParams } from "../../rendering/cellRenderers/iCellRenderer";
+import { IDateParams } from "../../rendering/dateComponent";
+import { ILoadingOverlayParams } from "../../rendering/overlays/loadingOverlayComponent";
+import { INoRowsOverlayParams } from "../../rendering/overlays/noRowsOverlayComponent";
+import { ITooltipParams } from "../../rendering/tooltipComponent";
+import { AgPromise } from "../../utils";
+import { ComponentType } from "./componentTypes";
+export declare type DefinitionObject = GridOptions | ColDef | ColGroupDef | IFilterDef | ISetFilterParams | IRichCellEditorParams | ToolPanelDef | StatusPanelDef;
+export interface UserCompDetails {
+    componentClass: any;
+    componentFromFramework: boolean;
+    params: any;
+    type: ComponentType;
+    newAgStackInstance: (defaultComponentName?: string | null) => AgPromise<any>;
+}
+export declare class UserComponentFactory extends BeanStub {
+    private readonly gridOptions;
+    private readonly agComponentUtils;
+    private readonly componentMetadataProvider;
+    private readonly userComponentRegistry;
+    private readonly frameworkComponentWrapper;
+    getHeaderCompDetails(colDef: ColDef, params: IHeaderParams): UserCompDetails | undefined;
+    getHeaderGroupCompDetails(params: IHeaderGroupParams): UserCompDetails | undefined;
+    getFullWidthCellRendererDetails(params: ICellRendererParams, cellRendererType: string, cellRendererName: string): UserCompDetails | undefined;
+    getInnerRendererDetails(def: GroupCellRendererParams, params: ICellRendererParams): UserCompDetails | undefined;
+    getFullWidthGroupRowInnerCellRenderer(def: any, params: ICellRendererParams): UserCompDetails | undefined;
+    getCellRendererDetails(def: ColDef | IRichCellEditorParams, params: ICellRendererParams): UserCompDetails | undefined;
+    getCellEditorDetails(def: ColDef, params: ICellEditorParams): UserCompDetails | undefined;
+    getFilterDetails(def: IFilterDef, params: IFilterParams, defaultFilter: string): UserCompDetails | undefined;
+    getDateCompDetails(params: IDateParams): UserCompDetails;
+    getLoadingOverlayCompDetails(params: ILoadingOverlayParams): UserCompDetails;
+    getNoRowsOverlayCompDetails(params: INoRowsOverlayParams): UserCompDetails;
+    getTooltipCompDetails(params: ITooltipParams): UserCompDetails;
+    getSetFilterCellRendererDetails(def: ISetFilterParams, params: ISetFilterCellRendererParams): UserCompDetails | undefined;
+    getFloatingFilterCompDetails(def: IFilterDef, params: IFloatingFilterParams, defaultFloatingFilter: string | null): UserCompDetails | undefined;
+    getToolPanelCompDetails(toolPanelDef: ToolPanelDef, params: IToolPanelParams): UserCompDetails;
+    getStatusPanelCompDetails(def: StatusPanelDef, params: IStatusPanelParams): UserCompDetails;
+    private getCompDetails;
+    private newAgStackInstance;
+    mergeParamsWithApplicationProvidedParams(defObject: DefinitionObject, propertyName: string, paramsFromGrid: any, paramsFromSelector?: any): any;
+    private initComponent;
+}

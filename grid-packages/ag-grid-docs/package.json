@@ -1,6 +1,6 @@
 {
   "name": "ag-grid-docs",
-  "version": "26.1.0",
+  "version": "26.2.0",
   "description": "Documentation for AG Grid",
   "scripts": {
     "postinstall": "npx webdriver-manager update",
@@ -58,10 +58,10 @@
     "webpack-merge": "4.1.4"
   },
   "devDependencies": {
-    "@ag-grid-community/core": "~26.1.0",
-    "@ag-grid-community/angular": "~26.1.0",
-    "@ag-grid-community/react": "~26.1.0",
-    "@ag-grid-community/vue": "~26.1.0",
+    "@ag-grid-community/core": "~26.2.0",
+    "@ag-grid-community/angular": "~26.2.0",
+    "@ag-grid-community/react": "~26.2.0",
+    "@ag-grid-community/vue": "~26.2.0",
     "@angular/common": "8.2.14",
     "@angular/compiler": "8.2.14",
     "@angular/core": "8.2.14",
@@ -78,7 +78,7 @@
     "@types/esprima": "4.0.2",
     "@types/jasmine": "^3.4.6",
     "@types/jest": "^25.2.1",
-    "ag-grid-community": "~26.1.0",
+    "ag-grid-community": "~26.2.0",
     "ag-grid-testing": "0.0.2",
     "autoprefixer": "^9.6.0",
     "awesome-typescript-loader": "5.2.1",

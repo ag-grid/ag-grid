@@ -1,0 +1,32 @@
+import { Component } from "@ag-grid-community/core";
+import { ChartController } from "../../chartController";
+import { ChartOptionsService } from "../../chartOptionsService";
+export declare class ChartDataPanel extends Component {
+    private readonly chartController;
+    private readonly chartOptionsService;
+    static TEMPLATE: string;
+    private dragAndDropService;
+    private chartTranslator;
+    private categoriesGroupComp?;
+    private seriesGroupComp?;
+    private columnComps;
+    private chartType?;
+    private insertIndex?;
+    constructor(chartController: ChartController, chartOptionsService: ChartOptionsService);
+    init(): void;
+    protected destroy(): void;
+    private updatePanels;
+    private addComponent;
+    private addChangeListener;
+    private createCategoriesGroupComponent;
+    private createSeriesGroupComponent;
+    private addDragHandle;
+    private generateGetSeriesLabel;
+    private getCategoryGroupTitle;
+    private getSeriesGroupTitle;
+    private isInPairedMode;
+    private clearComponents;
+    private onDragging;
+    private checkInsertIndex;
+    private isInterestedIn;
+}

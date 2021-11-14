@@ -1,0 +1,239 @@
+
+@mixin ag-theme-base-part-grid-layout {
+
+    .ag-rtl {
+        text-align: right;
+    }
+
+    .ag-root-wrapper {
+        @include ag-border(primary);
+    }
+    
+    // support 100 levels here because row group indentation is used for tree data which can be quite deep
+    @for $i from 1 to 100 {
+        .ag-row > .ag-cell-wrapper.ag-row-group-indent-#{$i} {
+            @include ag-theme-rtl(( padding-left: ag-param(cell-horizontal-padding) + $i * ag-param(row-group-indent-size) ));
+        }
+        
+        .ag-row-group-indent-#{$i} {
+            @include ag-theme-rtl(( padding-left: $i * ag-param(row-group-indent-size) ));
+        }
+
+        .ag-row-level-#{$i} .ag-pivot-leaf-group {
+            @include ag-theme-rtl(( margin-left: ag-param(row-group-indent-size) ));
+        }
+    }
+
+    .ag-row-group-leaf-indent {
+        @include ag-theme-rtl(( margin-left: ag-param(row-group-indent-size) ));
+    }
+
+    .ag-value-change-delta {
+        padding-right: 2px;
+    }
+
+    .ag-value-change-delta-up {
+        @include ag-color-property(color, value-change-delta-up-color);
+    }
+
+    .ag-value-change-delta-down {
+        @include ag-color-property(color, value-change-delta-down-color);
+    }
+
+    .ag-value-change-value {
+        background-color: transparent;
+        border-radius: 1px;
+        padding-left: 1px;
+        padding-right: 1px;
+        transition: background-color 1s;
+    }
+
+    .ag-value-change-value-highlight {
+        @include ag-color-property(background-color, value-change-value-highlight-background-color);
+        transition: background-color 0.1s;
+    }
+
+    .ag-cell-data-changed {
+        @include ag-color-property(background-color, value-change-value-highlight-background-color, $important: true);
+    }
+
+    .ag-cell-data-changed-animation {
+        background-color: transparent;
+    }
+
+    .ag-cell-highlight {
+        @include ag-color-property(background-color, range-selection-highlight-color, $important: true);
+    }
+
+    .ag-row {
+        height: ag-param(row-height);
+        @include ag-color-property(background-color, background-color);
+        @include ag-color-property(color, data-color);
+        
+        @if ag-param-is-set(row-border-color) and ag-param(borders-critical) {
+            // NOTE: we define border-width and border-color at .ag-row level and only set
+            // border-style inside nested pseudoclass selectors, to allow derived themes
+            // to override border-width on .ag-row
+            border-width: 1px;
+            @include ag-color-property(border-color, row-border-color);
+
+            border-bottom-style: solid;
+        }
+    }
+
+    .ag-row-highlight-above::after, .ag-row-highlight-below::after {
+        content: '';
+        position: absolute;
+        width: calc(100% - 1px);
+        height: 1px;
+        @include ag-color-property(background-color, range-selection-border-color);
+        left: 1px;
+    }
+
+    .ag-row-highlight-above::after {
+        top: -1px;
+    }
+
+    .ag-row-highlight-above.ag-row-first::after {
+        top: 0;
+    }
+
+    .ag-row-highlight-below::after {
+        bottom: 0px;
+    }
+
+    .ag-row-odd {
+        @include ag-color-property(background-color, odd-row-background-color);
+    }
+
+    // NOTE: these don't need an RTL version because the "left spacer" is always the one visually on the left
+    .ag-body-horizontal-scroll:not(.ag-scrollbar-invisible) {
+        .ag-horizontal-left-spacer:not(.ag-scroller-corner) {
+            @include ag-border(critical, right);
+        }
+
+        .ag-horizontal-right-spacer:not(.ag-scroller-corner) {
+            @include ag-border(critical, left);
+        }
+    }
+
+    .ag-row-hover {
+        @if ag-param-is-set(row-hover-color) {
+            @include ag-color-property(background-color, row-hover-color);
+        }
+    }
+
+    .ag-column-hover {
+        @if ag-param-is-set(column-hover-color) {
+            @include ag-color-property(background-color, column-hover-color);
+        }
+    }
+
+    .ag-right-aligned-cell {
+        @include ag-theme-rtl(( text-align: right ));
+    }
+
+    // right-align numeric values in cells with wrappers
+    .ag-right-aligned-cell .ag-cell-value,
+    .ag-right-aligned-cell .ag-group-value {
+        @include ag-theme-rtl(( margin-left: auto ));
+    }
+
+    .ag-cell, .ag-full-width-row .ag-cell-wrapper.ag-row-group {
+        // draw a transparent border so that the cell size doesn't change when we add a range border
+        border: 1px solid transparent;
+        // adjust for transparent border
+        line-height: ag-param(row-height) - 2px;
+        padding-left: ag-param(cell-horizontal-padding) - 1px;
+        padding-right: ag-param(cell-horizontal-padding) - 1px;
+        -webkit-font-smoothing: subpixel-antialiased;
+    }
+
+    // in full width rows, a cell renderer is rendered directly into a row with no cell in between,
+    // in which case we need to apply the padding to the cell renderer's wrapper.
+    .ag-row > .ag-cell-wrapper {
+        padding-left: ag-param(cell-horizontal-padding) - 1px;
+        padding-right: ag-param(cell-horizontal-padding) - 1px;
+    }
+
+    .ag-row-dragging {
+        cursor: move;
+        opacity: 0.5;
+    }
+
+    .ag-cell-inline-editing {
+        @include ag-card();
+        padding: 0;
+        height: ag-param(row-height);
+        @include ag-color-property(background-color, control-panel-background-color);
+    }
+
+    .ag-popup-editor {
+        @include ag-card();
+        @include ag-color-property(background-color, control-panel-background-color);
+        padding: 0;
+    }
+
+    .ag-large-text-input {
+        height: auto;
+        padding: ag-param(cell-horizontal-padding);
+    }
+
+    .ag-details-row {
+        padding: ag-param(grid-size) * 5;
+        @include ag-color-property(background-color, background-color);
+    }
+
+    .ag-layout-auto-height, .ag-layout-print {
+        .ag-center-cols-clipper, .ag-center-cols-container {
+            min-height: 50px;
+        }
+    }
+
+    .ag-overlay-loading-wrapper {
+        @include ag-color-property(background-color, modal-overlay-background-color);
+    }
+
+    .ag-overlay-loading-center {
+        @include ag-card();
+    }
+
+    // in auto-height mode with no rows, add padding to prevent grid being too small
+    .ag-overlay-no-rows-wrapper.ag-layout-auto-height {
+        padding-top: 30px;
+    }
+
+    .ag-loading {
+        padding-left: ag-param(cell-horizontal-padding);
+        display: flex;
+        height: 100%;
+        align-items: center;
+    }
+
+    .ag-loading-icon {
+        padding-right: ag-param(cell-widget-spacing);
+    }
+
+    .ag-icon-loading {
+        animation-name: spin;
+        animation-duration: 1000ms;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+    }
+
+    @keyframes spin {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    .ag-floating-top {
+        @include ag-border(critical, bottom);
+    }
+    .ag-floating-bottom {
+        @include ag-border(critical, top);
+    }
+}

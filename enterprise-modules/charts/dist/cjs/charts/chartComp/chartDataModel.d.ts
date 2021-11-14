@@ -1,0 +1,88 @@
+import { BeanStub, CellRange, CellRangeParams, ChartType, Column, IAggFunc } from "@ag-grid-community/core";
+export interface ColState {
+    column?: Column;
+    colId: string;
+    displayName: string | null;
+    selected?: boolean;
+    order: number;
+}
+export interface ChartModelParams {
+    pivotChart: boolean;
+    chartType: ChartType;
+    chartThemeName: string;
+    aggFunc?: string | IAggFunc;
+    cellRange: CellRange;
+    suppressChartRanges: boolean;
+    unlinkChart?: boolean;
+    crossFiltering?: boolean;
+}
+export declare class ChartDataModel extends BeanStub {
+    static DEFAULT_CATEGORY: string;
+    private readonly columnModel;
+    private readonly valueService;
+    private readonly rangeService;
+    private readonly rowRenderer;
+    private readonly chartTranslator;
+    private readonly chartId;
+    private readonly pivotChart;
+    private readonly aggFunc?;
+    private readonly suppressChartRanges;
+    private referenceCellRange;
+    private suppliedCellRange;
+    private dimensionCellRange?;
+    private valueCellRange?;
+    private dimensionColState;
+    private valueColState;
+    private chartData;
+    private chartType;
+    private chartThemeName;
+    private datasource;
+    private unlinked;
+    private grouping;
+    private crossFiltering;
+    private columnNames;
+    constructor(params: ChartModelParams);
+    private init;
+    updateCellRanges(updatedColState?: ColState): void;
+    getData(): any[];
+    private isGroupActive;
+    isGrouping(): boolean;
+    isPivotActive(): boolean;
+    isPivotMode(): boolean;
+    isPivotChart(): boolean;
+    getChartId(): string;
+    getValueColState(): ColState[];
+    getDimensionColState(): ColState[];
+    getCellRanges(): CellRange[];
+    getCellRangeParams(): CellRangeParams;
+    setChartType(chartType: ChartType): void;
+    getChartType(): ChartType;
+    setChartThemeName(chartThemeName: string): void;
+    getChartThemeName(): string;
+    isSuppressChartRanges(): boolean;
+    isUnlinked(): boolean;
+    toggleUnlinked(): void;
+    getAggFunc(): string | IAggFunc | undefined;
+    getSelectedValueColState(): {
+        colId: string;
+        displayName: string | null;
+    }[];
+    getSelectedValueCols(): Column[];
+    getSelectedDimension(): ColState;
+    private createCellRange;
+    private getAllColumnsFromRanges;
+    private getColDisplayName;
+    private getRowIndexes;
+    private getAllChartColumns;
+    private isNumberCol;
+    private extractLeafData;
+    private displayNameMapper;
+    private generateId;
+    updateData(): void;
+    private resetColumnState;
+    private updateColumnState;
+    private reorderColState;
+    private setDimensionCellRange;
+    private setValueCellRange;
+    private syncDimensionCellRange;
+}

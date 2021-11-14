@@ -1,0 +1,41 @@
+// Type definitions for @ag-grid-community/core v26.2.0
+// Project: http://www.ag-grid.com/
+// Definitions by: Niall Crosby <https://github.com/ag-grid/>
+import { BeanStub } from "../context/beanStub";
+import { Column } from "../entities/column";
+import { ColumnGroup } from "../entities/columnGroup";
+import { RowNode } from "../entities/rowNode";
+import { Beans } from "../rendering/beans";
+import { ITooltipParams } from "../rendering/tooltipComponent";
+import { ColDef, ColGroupDef } from "../entities/colDef";
+export interface ITooltipFeatureCtrl {
+    getTooltipValue(): any;
+    getGui(): HTMLElement;
+    getLocation(): string;
+    getColumn?(): Column | ColumnGroup;
+    getColDef?(): ColDef | ColGroupDef;
+    getRowIndex?(): number;
+    getRowNode?(): RowNode;
+    getValueFormatted?(): string;
+}
+export interface ITooltipFeatureComp {
+    setTitle(title: string | undefined): void;
+}
+export declare class TooltipFeature extends BeanStub {
+    private readonly ctrl;
+    private readonly beans;
+    private comp;
+    private tooltip;
+    private tooltipSanatised;
+    private genericTooltipFeature;
+    private browserTooltips;
+    constructor(ctrl: ITooltipFeatureCtrl, beans: Beans);
+    setComp(comp: ITooltipFeatureComp): void;
+    private setupTooltip;
+    private updateTooltipText;
+    private createTooltipFeatureIfNeeded;
+    refreshToolTip(): void;
+    getTooltipParams(): ITooltipParams;
+    private getTooltipText;
+    destroy(): void;
+}
