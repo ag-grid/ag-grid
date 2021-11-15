@@ -32,7 +32,7 @@ This section details how such state items can be manipulated without having to u
 ## Save and Apply State {#save-and-apply}
 
 There are two API methods provided for getting and setting Column State. `columnApi.getColumnState()` gets the current
-column state and `columnApi.applyColumnState()` sets the column state.
+column state and `columnApi.applyColumnState(params)` sets the column state.
 
 <snippet>
 // save the columns state
@@ -203,7 +203,7 @@ Column Group State is concerned with the state of Column Groups. There is only o
 which is whether the group is open or closed.
 
 To get the state of Column Groups use the API method `columnApi.getColumnGroupState()`. To
-set the Column Group state use the API method `columnApi.setColumnGroupState(state)`.
+set the Column Group state use the API method `columnApi.setColumnGroupState(stateItems)`.
 
 <api-documentation source='column-api/api.json' section='state' names='["getColumnGroupState", "setColumnGroupState"]' ></api-documentation>
 

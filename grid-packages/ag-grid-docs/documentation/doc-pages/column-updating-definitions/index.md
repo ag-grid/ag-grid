@@ -169,7 +169,7 @@ If the Columns are cleared out (clicking Clear) then when columns are set again 
 
 <grid-example title='Column Definition Order' name='col-def-order' type='mixed' options='{ "modules": true }'></grid-example>
 
-If there are new Columns added (eg the new set of Column Definitions has additional Columns that those currently
+If there are new Columns added (eg the new set of Column Definitions has additional Columns to those currently
 present), then these new Column will always be added at the end.
 
 In order for the Column Order to be maintained, the grid needs to match the Columns. This can be doing by ensuring

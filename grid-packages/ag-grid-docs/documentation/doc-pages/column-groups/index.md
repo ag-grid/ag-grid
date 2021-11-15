@@ -43,9 +43,9 @@ The list of Columns in `gridOptions.columnDefs` can be a mix of Columns and Colu
 You can mix and match at will, every level can have any number of Columns and Column Groups and in any order.
 The difference in Column vs Column Group definitions is as follows:
 
-- The 'children' attribute is mandatory for Column Groups and not applicable for Columns.
-- If a definition has a 'children' attribute, it is treated as a Column Group. If it does not have a 'children' attribute, it is treated as a Column.
-- Most other attributes are not common across groups and columns (eg 'groupId' is only used for groups). If you provide attributes that are not applicable (eg you give a column a 'groupId') they will be ignored.
+- The `children` attribute is mandatory for Column Groups and not applicable for Columns.
+- If a definition has a `children` attribute, it is treated as a Column Group. If it does not have a `children` attribute, it is treated as a Column.
+- Most other attributes are not common across groups and columns (eg `groupId` is only used for groups). If you provide attributes that are not applicable (eg you give a column a `groupId`) they will be ignored.
 
 ## Showing / Hiding Columns
 
@@ -122,7 +122,7 @@ And here, to hammer in the 'no limit to the number of levels or groups', we have
 
 ## Group Changes
 
-Similar to adding and removing columns, you can also add and remove column groups. If the column definitions passed in have column groups, then the columns will grouped to the new configuration.
+Similar to adding and removing columns, you can also add and remove column groups. If the column definitions passed in have column groups, then the columns will be grouped to the new configuration.
 
 The example below shows adding and removing groups to columns. Note the following:
 
