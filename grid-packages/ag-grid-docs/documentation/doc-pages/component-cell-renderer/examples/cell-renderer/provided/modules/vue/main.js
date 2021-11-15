@@ -71,11 +71,43 @@ const VueExample = {
             gridApi: null,
             columnDefs: [
                 {
+                    headerName: "Month",
+                    field: "Month",
+                    width: 75,
+                    cellStyle: {color: "darkred"}
+                },
+                {
+                    headerName: "Max Temp (\u02DAC)",
+                    field: "Max temp (C)",
+                    width: 120,
+                    cellRenderer: 'deltaIndicator'                      // Function cell renderer
+                },
+                {
+                    headerName: "Min Temp (\u02DAC)",
+                    field: "Min temp (C)",
+                    width: 120,
+                    cellRenderer: 'deltaIndicator'                      // Function cell renderer
+                },
+                {
                     headerName: "Days of Air Frost",
                     field: "Days of air frost (days)",
                     width: 233,
                     cellRendererFramework: "daysFrostRenderer",         // Component Cell Renderer
                     cellRendererParams: {rendererImage: "frost.png"}    // Complementing the Cell Renderer parameters
+                },
+                {
+                    headerName: "Days Sunshine",
+                    field: "Sunshine (hours)",
+                    width: 190,
+                    cellRenderer: 'daysSunshineRenderer',
+                    cellRendererParams: {rendererImage: "sun.png"}      // Complementing the Cell Renderer parameters
+                },
+                {
+                    headerName: "Rainfall (10mm)",
+                    field: "Rainfall (mm)",
+                    width: 180,
+                    cellRenderer: 'rainPerTenMmRenderer',
+                    cellRendererParams: {rendererImage: "rain.png"}     // Complementing the Cell Renderer parameters
                 }
             ],
             defaultColDef: {
