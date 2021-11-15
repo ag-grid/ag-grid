@@ -8,9 +8,10 @@ export class PieChartProxy extends PolarChartProxy {
 
     public constructor(params: ChartProxyParams) {
         super(params);
+        this.recreateChart();
     }
 
-    protected create(): PolarChart {
+    protected createChart(): PolarChart {
         return AgChart.create({
             type: 'pie',
             container: this.chartProxyParams.parentElement,
