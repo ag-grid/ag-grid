@@ -18,7 +18,7 @@ import { Beans } from '../../../rendering/beans';
 import { ColumnHoverService } from '../../../rendering/columnHoverService';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import { AgPromise } from '../../../utils';
-import { isElementChildOfClass } from '../../../utils/dom';
+import { isElementChildOfClass, containsClass } from '../../../utils/dom';
 import { createIconNoSpan } from '../../../utils/icon';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import { HoverFeature } from '../hoverFeature';
@@ -152,24 +152,26 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     protected onFocusIn(e: FocusEvent): void {
-        const fromWithin = this.eGui.contains(e.relatedTarget as HTMLElement);
+        const isRelatedWithin = this.eGui.contains(e.relatedTarget as HTMLElement);
 
         // when the focus is already within the component,
         // we default to the browser's behavior
-        if (fromWithin) { return; }
+        if (isRelatedWithin) { return; }
 
-        if (e.target === this.eGui) {
-            const keyboardMode = this.focusService.isKeyboardMode();
+        const keyboardMode = this.focusService.isKeyboardMode();
+        const notFromHeaderWrapper = !!e.relatedTarget && !containsClass(e.relatedTarget as HTMLElement, 'ag-floating-filter');
+        const fromWithinHeader = !!e.relatedTarget && isElementChildOfClass(e.relatedTarget as HTMLElement, 'ag-floating-filter');
+
+        if (keyboardMode && notFromHeaderWrapper && fromWithinHeader && e.target === this.eGui) {
             const lastFocusEvent = this.lastFocusEvent;
             const fromTab = !!(lastFocusEvent && lastFocusEvent.keyCode === KeyCode.TAB);
-            const fromWithinHeader = !!e.relatedTarget && isElementChildOfClass(e.relatedTarget as HTMLElement, 'ag-floating-filter');
 
-            if (lastFocusEvent && fromTab && fromWithinHeader) {
+            if (lastFocusEvent && fromTab) {
                 const currentFocusedHeader = this.beans.focusService.getFocusedHeader();
                 const nextColumn = this.beans.columnModel.getDisplayedColAfter(this.column);
                 const fromNextColumn = currentFocusedHeader && nextColumn === currentFocusedHeader.column;
-
                 const shouldFocusLast = !!(keyboardMode && lastFocusEvent.shiftKey && fromNextColumn);
+
                 this.focusService.focusInto(this.eGui, shouldFocusLast);
             }
          }
