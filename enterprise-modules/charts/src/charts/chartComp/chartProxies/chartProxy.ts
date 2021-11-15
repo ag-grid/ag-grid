@@ -54,7 +54,8 @@ export abstract class ChartProxy {
 
         if (this.chartProxyParams.chartOptionsToRestore) {
             this.chartOptions = this.chartProxyParams.chartOptionsToRestore;
-            this.chartTheme = getChartTheme({ overrides: this.chartOptions });
+            const themeOverrides = { overrides:  this.chartOptions } as any;
+            this.chartTheme = getChartTheme({baseTheme: this.getSelectedTheme(), ...themeOverrides});
             return;
         }
 
