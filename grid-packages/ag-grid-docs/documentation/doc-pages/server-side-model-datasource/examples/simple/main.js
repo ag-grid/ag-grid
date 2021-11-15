@@ -23,11 +23,8 @@ document.addEventListener('DOMContentLoaded', function() {
   var gridDiv = document.querySelector('#myGrid');
   new agGrid.Grid(gridDiv, gridOptions);
 
-  agGrid
-    .simpleHttpRequest({
-      url:
-        'https://www.ag-grid.com/example-assets/olympic-winners.json',
-    })
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
     .then(function(data) {
       // setup the fake server with entire dataset
       var fakeServer = createFakeServer(data);
