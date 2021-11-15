@@ -8,9 +8,10 @@ export class PieChartProxy extends PolarChartProxy {
 
     public constructor(params: ChartProxyParams) {
         super(params);
+        this.recreateChart();
     }
 
-    protected create(): PolarChart {
+    protected createChart(): PolarChart {
         return AgChart.create({
             type: 'pie',
             container: this.chartProxyParams.parentElement,
@@ -85,6 +86,7 @@ export class PieChartProxy extends PolarChartProxy {
 
             pieSeries.fills = this.chartTheme.palette.fills;
             pieSeries.strokes = this.chartTheme.palette.strokes;
+            pieSeries.callout.colors = this.chartTheme.palette.strokes;
 
             if (this.crossFiltering && pieSeries && !pieSeries.tooltip.renderer) {
                 // only add renderer if user hasn't provided one
@@ -105,6 +107,7 @@ export class PieChartProxy extends PolarChartProxy {
             if (isOpaqueSeries) {
                 pieSeries.fills = changeOpacity(pieSeries.fills, 0.3);
                 pieSeries.strokes = changeOpacity(pieSeries.strokes, 0.3);
+                pieSeries.callout.colors = changeOpacity(pieSeries.strokes, 0.3);
                 pieSeries.showInLegend = false;
             } else {
                 chart.legend.addEventListener('click', (event: LegendClickEvent) => {

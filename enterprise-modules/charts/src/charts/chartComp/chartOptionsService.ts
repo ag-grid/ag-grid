@@ -26,10 +26,6 @@ export class ChartOptionsService extends BeanStub {
         this.chartController = chartController;
     }
 
-    @PostConstruct
-    private init(): void {
-    }
-
     public getChartType(): ChartType {
         return this.chartController.getChartType();
     }

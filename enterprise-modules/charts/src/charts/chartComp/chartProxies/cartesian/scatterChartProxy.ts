@@ -19,9 +19,11 @@ export class ScatterChartProxy extends CartesianChartProxy {
 
         this.xAxisType = 'number';
         this.yAxisType = 'number';
+
+        this.recreateChart();
     }
 
-    protected create(): CartesianChart {
+    protected createChart(): CartesianChart {
         return AgChart.create({
             type: 'scatter',
             container: this.chartProxyParams.parentElement,

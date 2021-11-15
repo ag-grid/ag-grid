@@ -64,7 +64,7 @@ export const getAgGridProperties = (): [Properties, Properties, { prop: string, 
             handler(currentValue: any, previousValue: any) {
                 this.processChanges(propertyName, currentValue, previousValue);
             },
-            deep: propertyName !== 'popupParent'
+            deep: propertyName !== 'popupParent' && propertyName !== 'context'
         };
     });
 

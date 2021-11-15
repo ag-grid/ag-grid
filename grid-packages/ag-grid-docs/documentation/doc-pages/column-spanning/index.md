@@ -27,7 +27,7 @@ The interface for the colSpan callback is as follows:
 
 ## Column Spanning Simple Example
 
-Below shows a simple example using column spanning. The example doesn't make much sense, it just arbitrarily sets column span on some cells for demonstrations purposes, however we though it easier to show column spanning with the familiar Olympic winners data before going a bit deeper into its usages. The following can be noted:
+Below shows a simple example using column spanning. The example doesn't make much sense, it just arbitrarily sets column span on some cells for demonstrations purposes, however we thought it easier to show column spanning with the familiar Olympic winners data before going a bit deeper into its usages. The following can be noted:
 
 - The Country column is configured to span 2 columns when 'Russia' and 4 columns when 'United States'. All other times it's normal (1 column).
 - To help demonstrate the spanned column, the County column is shaded using CSS styling.

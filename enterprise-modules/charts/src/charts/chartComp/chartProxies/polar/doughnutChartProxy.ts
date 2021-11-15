@@ -23,9 +23,10 @@ export class DoughnutChartProxy extends PolarChartProxy {
 
     public constructor(params: ChartProxyParams) {
         super(params);
+        this.recreateChart();
     }
 
-    protected create(): PolarChart {
+    protected createChart(): PolarChart {
         return AgChart.create({
             type: 'pie',
             container: this.chartProxyParams.parentElement,
@@ -141,7 +142,6 @@ export class DoughnutChartProxy extends PolarChartProxy {
             }
         };
 
-        const calloutColors = seriesOptions.callout && seriesOptions.callout.colors || seriesOptions.strokes || [];
         const pieSeries = existingSeries || AgChart.createComponent(seriesOptions, 'pie.series') as PieSeries;
 
         if (pieSeries.title) {
@@ -177,7 +177,7 @@ export class DoughnutChartProxy extends PolarChartProxy {
                 });
                 pieSeries.fills = updateParams.fills;
                 pieSeries.strokes = updateParams.strokes;
-                pieSeries.callout.colors = calloutColors;
+                pieSeries.callout.colors = updateParams.strokes;
             }
 
             // disable series highlighting by default
@@ -189,7 +189,7 @@ export class DoughnutChartProxy extends PolarChartProxy {
         } else {
             pieSeries.fills = updateParams.fills;
             pieSeries.strokes = updateParams.strokes;
-            pieSeries.callout.colors = calloutColors;
+            pieSeries.callout.colors = updateParams.strokes;
         }
 
         const offsetAmount = updateParams. numFields > 1 ? 20 : 40;

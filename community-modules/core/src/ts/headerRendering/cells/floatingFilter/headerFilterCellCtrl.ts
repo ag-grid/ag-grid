@@ -7,9 +7,8 @@ import { Autowired, Optional } from '../../../context/context';
 import { Column } from '../../../entities/column';
 import { Events, FilterChangedEvent } from '../../../events';
 import { FilterManager } from '../../../filter/filterManager';
-import { IFloatingFilter, IFloatingFilterComp, IFloatingFilterParams } from '../../../filter/floating/floatingFilter';
+import { IFloatingFilter, IFloatingFilterParams } from '../../../filter/floating/floatingFilter';
 import { FloatingFilterMapper } from '../../../filter/floating/floatingFilterMapper';
-import { ReadOnlyFloatingFilter } from '../../../filter/floating/provided/readOnlyFloatingFilter';
 import { GridApi } from '../../../gridApi';
 import { IFilterComp, IFilterDef } from '../../../interfaces/iFilter';
 import { IMenuFactory } from '../../../interfaces/iMenuFactory';
@@ -19,11 +18,9 @@ import { Beans } from '../../../rendering/beans';
 import { ColumnHoverService } from '../../../rendering/columnHoverService';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import { AgPromise } from '../../../utils';
-import { addOrRemoveCssClass, setDisplayed } from '../../../utils/dom';
+import { isElementChildOfClass, containsClass } from '../../../utils/dom';
 import { createIconNoSpan } from '../../../utils/icon';
-import { RefSelector } from '../../../widgets/componentAnnotations';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
-import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
 import { HoverFeature } from '../hoverFeature';
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
 import { FrameworkComponentWrapper } from "../../../components/framework/frameworkComponentWrapper";
@@ -51,11 +48,11 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
     private comp: IHeaderFilterCellComp;
 
     private column: Column;
-    
+
     private eButtonShowMainFilter: HTMLElement;
     private eFloatingFilterBody: HTMLElement;
 
-    private suppressFilterButton: boolean;    
+    private suppressFilterButton: boolean;
     private active: boolean;
 
     constructor(column: Column, parentRowCtrl: HeaderRowCtrl) {
@@ -92,9 +89,12 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
 
         this.comp.addOrRemoveBodyCssClass('ag-floating-filter-full-body', this.suppressFilterButton);
         this.comp.addOrRemoveBodyCssClass('ag-floating-filter-body', !this.suppressFilterButton);
-        
+
         const eMenuIcon = createIconNoSpan('filter', this.gridOptionsWrapper, this.column);
-        eMenuIcon && this.eButtonShowMainFilter.appendChild(eMenuIcon);        
+
+        if (eMenuIcon) {
+            this.eButtonShowMainFilter.appendChild(eMenuIcon);
+        }
     }
 
     private setupFocus(): void {
@@ -152,37 +152,41 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     protected onFocusIn(e: FocusEvent): void {
-        const fromWithin = this.eGui.contains(e.relatedTarget as HTMLElement);
+        const isRelatedWithin = this.eGui.contains(e.relatedTarget as HTMLElement);
 
         // when the focus is already within the component,
         // we default to the browser's behavior
-        if (fromWithin) { return; }
+        if (isRelatedWithin) { return; }
 
-        if (e.target === this.eGui) { 
-            const keyboardMode = this.focusService.isKeyboardMode();
-            const currentFocusedHeader = this.beans.focusService.getFocusedHeader();
+        const keyboardMode = this.focusService.isKeyboardMode();
+        const notFromHeaderWrapper = !!e.relatedTarget && !containsClass(e.relatedTarget as HTMLElement, 'ag-floating-filter');
+        const fromWithinHeader = !!e.relatedTarget && isElementChildOfClass(e.relatedTarget as HTMLElement, 'ag-floating-filter');
 
-            const nextColumn = this.beans.columnModel.getDisplayedColAfter(this.column);
-
+        if (keyboardMode && notFromHeaderWrapper && fromWithinHeader && e.target === this.eGui) {
             const lastFocusEvent = this.lastFocusEvent;
-            const fromShiftTab = !!(lastFocusEvent && lastFocusEvent.shiftKey && lastFocusEvent.keyCode === KeyCode.TAB);
-            const fromNextColumn = !!(currentFocusedHeader && nextColumn === currentFocusedHeader.column);
-    
-            const shouldFocusLast = keyboardMode && (fromShiftTab || fromNextColumn);
-            this.focusService.focusInto(this.eGui, shouldFocusLast);
+            const fromTab = !!(lastFocusEvent && lastFocusEvent.keyCode === KeyCode.TAB);
+
+            if (lastFocusEvent && fromTab) {
+                const currentFocusedHeader = this.beans.focusService.getFocusedHeader();
+                const nextColumn = this.beans.columnModel.getDisplayedColAfter(this.column);
+                const fromNextColumn = currentFocusedHeader && nextColumn === currentFocusedHeader.column;
+                const shouldFocusLast = !!(keyboardMode && lastFocusEvent.shiftKey && fromNextColumn);
+
+                this.focusService.focusInto(this.eGui, shouldFocusLast);
+            }
          }
 
-         const rowIndex = this.getRowIndex();
-         this.beans.focusService.setFocusedHeader(rowIndex, this.column);
+        const rowIndex = this.getRowIndex();
+        this.beans.focusService.setFocusedHeader(rowIndex, this.column);
     }
 
     private setupHover(): void {
         this.createManagedBean(new HoverFeature([this.column], this.eGui));
 
-        const listener = ()=> {
+        const listener = () => {
             if (!this.gridOptionsWrapper.isColumnHoverHighlight()) { return; }
             const hovered = this.columnHoverService.isHovered(this.column);
-            this.comp.addOrRemoveCssClass('ag-column-hover', hovered);    
+            this.comp.addOrRemoveCssClass('ag-column-hover', hovered);
         };
 
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, listener);
@@ -204,7 +208,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
         const finalFilterParams = this.userComponentFactory.mergeParamsWithApplicationProvidedParams(colDef, 'filter', filterParams);
 
         let defaultFloatingFilterType = HeaderFilterCellCtrl.getDefaultFloatingFilterType(colDef);
-        if (defaultFloatingFilterType==null) {
+        if (defaultFloatingFilterType == null) {
             defaultFloatingFilterType = 'agReadOnlyFloatingFilter';
         }
 
@@ -269,7 +273,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
         const filterComponent = this.getFilterComponent();
 
         if (filterComponent) {
-            filterComponent.then( instance => {
+            filterComponent.then(instance => {
                 const instanceUnwrapped = this.frameworkComponentWrapper ? this.frameworkComponentWrapper.unwrap(instance) : instance;
                 callback(instanceUnwrapped);
             });
@@ -299,9 +303,9 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     private setupWidth(): void {
-        const listener = ()=> {
+        const listener = () => {
             const width = `${this.column.getActualWidth()}px`;
-            this.comp.setWidth(width)
+            this.comp.setWidth(width);
         };
 
         this.addManagedListener(this.column, Column.EVENT_WIDTH_CHANGED, listener);

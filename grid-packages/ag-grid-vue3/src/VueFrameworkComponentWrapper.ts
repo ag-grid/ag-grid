@@ -1,4 +1,3 @@
-
 import {BaseComponentWrapper, Bean, WrappableInterface} from 'ag-grid-community';
 import {AgGridVue} from './AgGridVue';
 import {VueComponentFactory} from './VueComponentFactory';
@@ -102,7 +101,7 @@ abstract class VueComponent<P, T> {
     }
 
     public destroy(): void {
-        if(this.getFrameworkComponentInstance() && typeof this.getFrameworkComponentInstance().destroy === 'function') {
+        if (this.getFrameworkComponentInstance() && typeof this.getFrameworkComponentInstance().destroy === 'function') {
             this.getFrameworkComponentInstance().destroy();
         }
         this.unmount();

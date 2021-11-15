@@ -120,10 +120,6 @@ As you can see in the example below, if you change any of the header heights, th
 
 <grid-example title='Dynamic Header Height' name='dynamic-height' type='generated' options='{ "enterprise": true }'></grid-example>
 
-## Custom Header
-
-Header templates are meant to be used for simple UI customisation, if you need to have more control over the header check how to create your own [Header Components](/component-header/).
-
 ## Header Tooltips
 
 You can provide a tooltip to the header using `colDef.headerTooltip` or `colDef.headerTooltip`.
@@ -205,3 +201,7 @@ Note that specifying your own templates is compatible with other configurations:
 - **Gold** is the only column that doesn't have `sortable=false` or `suppressMenu`
 
 <grid-example title='Header template' name='header-template' type='vanilla' options='{ "extras": ["fontawesome"] }'></grid-example>
+
+## Custom Header
+
+Header templates are meant to be used for simple UI customisation, if you need to have more control over the header check how to create your own [Header Components](/component-header/).

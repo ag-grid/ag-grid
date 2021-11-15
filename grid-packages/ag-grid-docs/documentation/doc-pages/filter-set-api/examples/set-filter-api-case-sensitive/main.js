@@ -40,8 +40,6 @@ var FILTER_TYPES = {
     sensitive: 'colour_1',
 }
 
-var gridApi;
-
 function colourCellRenderer(params) {
     if (!params.value || params.value === '(Select All)') {
         return params.value;
@@ -51,20 +49,20 @@ function colourCellRenderer(params) {
 }
 
 function setModel(type) {
-    const instance = gridApi.getFilterInstance(FILTER_TYPES[type]);
+    const instance = gridOptions.api.getFilterInstance(FILTER_TYPES[type]);
 
     instance.setModel({ values: MANGLED_COLOURS });
     gridOptions.api.onFilterChanged();
 }
 
 function getModel(type) {
-    const instance = gridApi.getFilterInstance(FILTER_TYPES[type]);
+    const instance = gridOptions.api.getFilterInstance(FILTER_TYPES[type]);
 
     alert(JSON.stringify(instance.getModel(), null, 2));
 }
 
 function setFilterValues(type) {
-    const instance = gridApi.getFilterInstance(FILTER_TYPES[type]);
+    const instance = gridOptions.api.getFilterInstance(FILTER_TYPES[type]);
 
     instance.setFilterValues(MANGLED_COLOURS);
     instance.applyModel();
@@ -72,13 +70,13 @@ function setFilterValues(type) {
 }
 
 function getValues(type) {
-    const instance = gridApi.getFilterInstance(FILTER_TYPES[type]);
+    const instance = gridOptions.api.getFilterInstance(FILTER_TYPES[type]);
 
     alert(JSON.stringify(instance.getValues(), null, 2));
 }
 
 function reset(type) {
-    const instance = gridApi.getFilterInstance(FILTER_TYPES[type]);
+    const instance = gridOptions.api.getFilterInstance(FILTER_TYPES[type]);
 
     instance.resetFilterValues();
     instance.setModel(null);
@@ -88,8 +86,7 @@ function reset(type) {
 var MANGLED_COLOURS = ['ReD', 'OrAnGe', 'WhItE', 'YeLlOw'];
 
 function onFirstDataRendered(params) {
-    gridApi = params.api;
-    gridApi.getToolPanelInstance('filters').expandFilters();
+    gridOptions.api.getToolPanelInstance('filters').expandFilters();
 }
 
 // setup the grid after the page has finished loading

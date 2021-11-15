@@ -62,11 +62,8 @@ document.addEventListener('DOMContentLoaded', function() {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
-    agGrid
-        .simpleHttpRequest({
-            url:
-                'https://www.ag-grid.com/example-assets/weather-se-england.json',
-        })
+    fetch('https://www.ag-grid.com/example-assets/weather-se-england.json')
+        .then(response => response.json())
         .then(function(data) {
             gridOptions.api.setRowData(data);
         });
