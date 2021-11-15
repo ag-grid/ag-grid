@@ -94,8 +94,7 @@ const VueExample = {
                 minWidth: 100,
                 filter: true,
                 resizable: true
-            }
-            ,
+            },
             modules: AllCommunityModules
         }
     },
