@@ -36,7 +36,7 @@ var gridOptions = {
     pivotMode: true,
     groupDefaultExpanded: 9,
     groupHideOpenParents: true,
-    groupMultiAutoColumn: true,
+    groupDisplayType: 'multipleColumns',
     animateRows: true,
     sideBar: true,
 };

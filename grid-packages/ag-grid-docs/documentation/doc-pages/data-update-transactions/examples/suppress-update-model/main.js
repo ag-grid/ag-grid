@@ -71,6 +71,10 @@ function getMyFilter() {
         this.getValueFromInput();
     };
 
+    MyFilter.prototype.getModel = function () {
+        return { value: this.eInput.value };
+    };
+
     MyFilter.prototype.isFilterActive = function () {
         return this.filterValue !== null;
     };

@@ -252,7 +252,7 @@ const gridOptions = {
 </snippet>
 
 In the example below, note the following:
-1. Clicking the top buttons alternatives the columns from two sets of definitions.
+1. Clicking the top buttons alternates the columns from two sets of definitions.
 1. Column Group A - `groupId` is provided, so expand / collapse is preserved. The Header Name also changes.
 1. Column Group B - `groupId` is NOT provided, so expand / collapse is lost, group always closes when updates happen.
 1. Column Group C - `groupId` is provided, so expand / collapse is preserved. Child columns are changed.

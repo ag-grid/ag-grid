@@ -8,7 +8,7 @@ export interface IDate {
     setDate(date: Date | null): void;
 
     /** Sets the disabled state of this component */
-    setDisabled(disabled: boolean): void;
+    setDisabled?(disabled: boolean): void;
 
     /* [optional method] sets the current input placeholder */
     setInputPlaceholder?(placeholder: string): void;

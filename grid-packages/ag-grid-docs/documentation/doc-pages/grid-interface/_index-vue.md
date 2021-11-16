@@ -4,8 +4,8 @@
 |
 | - **Attributes**: attributes are properties, but aren't bound - they are instead provided literal values (e.g. `rowSelection="multiple"`).
 | - **Properties**: properties are bound attributes (e.g. `:columnDefs="columnDefs"`).
-| - **Callbacks**: callbacks are bound in the same as properties are (e.g. `:isScrollLag="myIsScrollLagFunction"`).
-| - **Event Handlers**: event handlers are are bound in the standard Angular way (e.g. `@cell-clicked="onCellClicked"`). Event names must use `kebab-case`.
+| - **Callbacks**: callbacks are bound in the same as properties are (e.g. `:getRowHeight="myGetRowHeightFunction"`).
+| - **Event Handlers**: event handlers are are bound in the standard way (e.g. `@cell-clicked="onCellClicked"`). Event names must use `kebab-case`.
 | - **API**: the grid API and column API are accessible through the component.
 |
 | All of the above (attributes, properties, callbacks and event handlers) are registered using their 'dash' syntax and not camel-case. For example, the property `pivotMode` is bound using `pivot-mode`. The following example shows some bindings:
@@ -25,7 +25,7 @@
 |    :columnDefs="columnDefs"
 |
 |    // this is a callback
-|    :isScrollLag="myIsScrollLagFunction"
+|    :getRowHeight="myGetRowHeightFunction"
 |
 |    // these are registering event callbacks
 |    @model-updated="onModelUpdated"
@@ -85,7 +85,7 @@
 |     onGridReady: event => console.log('The grid is now ready')
 |
 |     // CALLBACKS
-|     isScrollLag: () => false
+|     getRowHeight: (params) => 25
 | }
 | ```
 |

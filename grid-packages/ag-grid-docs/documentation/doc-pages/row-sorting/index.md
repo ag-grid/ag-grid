@@ -106,7 +106,7 @@ the <kbd>Ctrl</kbd> key (or <kbd>Command</kbd> key on Apple) instead set the pro
 The example below demonstrates the following:
 
 - The grid sorts by **Country** then **Athlete** by default.
-- The property `multiSortKey='ctrl'` is set so multiple column sorting is achieved by holding down <kbd>Ctrl</kbd> and selecting multiple columns.
+- The property `multiSortKey='ctrl'` is set so multiple column sorting is achieved by holding down <kbd>Ctrl</kbd> (or <kbd>Command</kbd> on Apple) and selecting multiple columns.
 
 <grid-example title='Multi Column Sort' name='multi-column' type='generated'></grid-example>
 

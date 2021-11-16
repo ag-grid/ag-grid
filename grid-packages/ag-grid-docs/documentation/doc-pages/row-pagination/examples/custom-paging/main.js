@@ -68,16 +68,20 @@ var gridOptions = {
     pagination: true,
     paginationPageSize: 10,
     autoGroupColumnDef: autoGroupColumnDef,
+    onFirstDataRendered: onFirstDataRendered,
     paginationNumberFormatter: function (params) {
         return '[' + params.value.toLocaleString() + ']';
     }
 };
 
+function onFirstDataRendered(params) {
+    params.api.paginationGoToPage(4);
+}
+
 function onPageSizeChanged(newPageSize) {
     var value = document.getElementById('page-size').value;
     gridOptions.api.paginationSetPageSize(Number(value));
 }
-
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
@@ -86,6 +90,5 @@ document.addEventListener('DOMContentLoaded', function () {
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json').then(response => response.json()).then(function (data) {
         gridOptions.api.setRowData(data);
-        gridOptions.api.paginationGoToPage(4);
     });
 });

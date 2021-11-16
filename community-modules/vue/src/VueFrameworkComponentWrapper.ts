@@ -1,9 +1,10 @@
-import { BaseComponentWrapper, Bean, WrappableInterface } from '@ag-grid-community/core';
-import { AgGridVue} from './AgGridVue';
-import { VueComponentFactory } from './VueComponentFactory';
+import {BaseComponentWrapper, Bean, WrappableInterface} from '@ag-grid-community/core';
+import {AgGridVue} from './AgGridVue';
+import {VueComponentFactory} from './VueComponentFactory';
 
 interface VueWrappableInterface extends WrappableInterface {
     overrideProcessing(methodName: string): boolean;
+
     processMethod(methodName: string, args: IArguments): any;
 }
 
@@ -73,7 +74,7 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<Wrappable
     }
 
     protected createMethodProxy(wrapper: VueWrappableInterface, methodName: string, mandatory: boolean): () => any {
-        return function() {
+        return function () {
             if (wrapper.overrideProcessing(methodName)) {
                 return wrapper.processMethod(methodName, arguments);
             }
@@ -102,7 +103,8 @@ abstract class VueComponent<P, T> {
     }
 
     public destroy(): void {
-        if(this.getFrameworkComponentInstance() && typeof this.getFrameworkComponentInstance().destroy === 'function') {
+        if (this.getFrameworkComponentInstance() &&
+            typeof this.getFrameworkComponentInstance().destroy === 'function') {
             this.getFrameworkComponentInstance().destroy();
         }
         this.component.$destroy();

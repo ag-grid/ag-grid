@@ -33,6 +33,8 @@ export function convertTemplate(template: string) {
         template = template.replace(new RegExp(`on${event}=`, 'g'), `v-on:${event}=`);
     });
 
+    template = template.replace(/\(event\)/g, '($event)')
+
     // re-indent
     return template.split("\n").filter(line => line.length > 0).join('\n            ');
 }

@@ -44,7 +44,7 @@ var gridOptions = {
         simpleCellRenderer: getSimpleCellRenderer()
     },
     // we don't want the auto column here, as we are providing our own cols
-    groupSuppressAutoColumn: true,
+    groupDisplayType: 'custom',
     suppressRowClickSelection: true,
     groupDefaultExpanded: 1,
     rowSelection: 'multiple',

@@ -1,11 +1,20 @@
 import {h} from 'vue';
 import {Options, Vue} from 'vue-class-component';
 import {AgChart, AgChartOptions, Chart} from 'ag-charts-community';
+import {toRaw} from '@vue/reactivity';
 
 @Options({
     props: {
         options: {},
     },
+    // watch: {
+    //     options: {
+    //         handler(currentValue, previousValue) {
+    //             this.processChanges( currentValue, previousValue);
+    //         },
+    //         deep: true,
+    //     },
+    // },
 })
 export class AgChartsVue extends Vue {
     private isCreated = false;
@@ -17,7 +26,7 @@ export class AgChartsVue extends Vue {
 
     // noinspection JSUnusedGlobalSymbols, JSMethodCanBeStatic
     public render() {
-        return h('div', {style: {height: '100%'}});
+        return h('div', {style: {height: '100%'}, ref: 'agChartRef'});
     }
 
     public mounted() {
@@ -27,6 +36,8 @@ export class AgChartsVue extends Vue {
 
         this.$watch('options', (newValue: any, oldValue: any) => {
             this.processChanges(newValue, oldValue);
+        }, {
+            deep: true,
         });
 
         this.isCreated = true;
@@ -48,7 +59,7 @@ export class AgChartsVue extends Vue {
 
     public processChanges(currentValue: any, previousValue: any) {
         if (this.isCreated) {
-            AgChart.update(this.chart, this.applyContainerIfNotSet(this.options));
+            AgChart.update(this.chart, toRaw(this.applyContainerIfNotSet(toRaw(this.options))));
         }
     }
 
@@ -57,6 +68,6 @@ export class AgChartsVue extends Vue {
             return propsOptions;
         }
 
-        return {...propsOptions, container: this.$el as HTMLElement};
+        return {...propsOptions, container: this.$refs.agChartRef as HTMLElement};
     }
 }

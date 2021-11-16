@@ -2,9 +2,9 @@
 title: "Row Pagination"
 ---
 
-To enable pagination in, set the grid property `pagination=true`. The following simple example shows this, the only difference to this and previous examples is the `pagination=true` property.
+Pagination allows the grid to paginate rows, removing the need for a vertical scroll to view more data.
 
-Remember Pagination works with all frameworks as well as plain JavaScript.
+To enable pagination set the grid property `pagination=true`.
 
 <grid-example title='Client Paging' name='client-paging' type='generated' options='{ "enterprise": true }'></grid-example>
 

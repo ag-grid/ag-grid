@@ -43,7 +43,7 @@ export class DateCompWrapper {
                 dateComp.setDate(this.tempValue);
             }
             if (this.disabled != null) {
-                dateComp.setDisabled(this.disabled);
+                this.setDateCompDisabled(this.disabled);
             }
         });
     }
@@ -67,7 +67,7 @@ export class DateCompWrapper {
 
     public setDisabled(disabled: boolean): void {
         if (this.dateComp) {
-            this.dateComp.setDisabled(disabled);
+            this.setDateCompDisabled(disabled);
         } else {
             this.disabled = disabled;
         }
@@ -94,4 +94,12 @@ export class DateCompWrapper {
             this.dateComp.afterGuiAttached(params);
         }
     }
+
+    private setDateCompDisabled(disabled: boolean): void {
+        if (this.dateComp == null) { return; }
+        if (this.dateComp.setDisabled == null) { return; }
+
+        this.dateComp.setDisabled(disabled);
+    }
+
 }

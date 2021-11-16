@@ -310,4 +310,4 @@ More advanced customisations are discussed separately in the following sections:
 
 ## Next Up
 
-Continue to the next section to learn about: [Area Sparkline Customisation](/sparklines-area-customisation/).
+Continue to the next section to learn about: [Line Sparkline Customisation](/sparklines-line-customisation/).
