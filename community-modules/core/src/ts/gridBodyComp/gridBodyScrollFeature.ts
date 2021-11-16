@@ -170,7 +170,10 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     private doHorizontalScroll(scrollLeft: number): void {
-        if (this.scrollLeft === scrollLeft) { return; }
+        const fakeHScrollViewport = this.ctrlsService.getFakeHScrollCtrl().getViewport();
+        const fakeScrollLeft = getScrollLeft(fakeHScrollViewport, this.enableRtl);
+
+        if (this.scrollLeft === scrollLeft && scrollLeft === fakeScrollLeft) { return; }
 
         this.scrollLeft = scrollLeft;
 

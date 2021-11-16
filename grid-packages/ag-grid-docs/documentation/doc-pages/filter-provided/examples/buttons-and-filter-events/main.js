@@ -1,4 +1,4 @@
-var columnDefs = [
+const columnDefs = [
     {
         field: 'athlete',
         filter: 'agTextColumnFilter',
@@ -38,30 +38,36 @@ var columnDefs = [
     {field: 'total', filter: 'agNumberColumnFilter'},
 ];
 
-var gridOptions = {
+function onFilterOpened(e) {
+    console.log('onFilterOpened', e);
+}
+
+function onFilterChanged(e) {
+    console.log('onFilterChanged', e);
+    console.log('gridApi.getFilterModel() =>', e.api.getFilterModel());
+}
+
+function onFilterModified(e) {
+    console.log('onFilterModified', e);
+    console.log('filterInstance.getModel() =>', e.filterInstance.getModel());
+    console.log('filterInstance.getModelFromUi() =>', e.filterInstance.getModelFromUi());
+}
+
+const gridOptions = {
     columnDefs: columnDefs,
     defaultColDef: {
         flex: 1,
         minWidth: 150,
         filter: true,
     },
-    onFilterOpened: function (e) {
-        console.log('onFilterOpened', e);
-    },
-    onFilterChanged: function (e) {
-        console.log('onFilterChanged', e);
-        console.log('gridApi.getFilterModel() =>', e.api.getFilterModel());
-    },
-    onFilterModified: function (e) {
-        console.log('onFilterModified', e);
-        console.log('filterInstance.getModel() =>', e.filterInstance.getModel());
-        console.log('filterInstance.getModelFromUi() =>', e.filterInstance.getModelFromUi());
-    }
+    onFilterOpened: onFilterOpened,
+    onFilterChanged: onFilterChanged,
+    onFilterModified: onFilterModified
 };
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector('#myGrid');
+    const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')

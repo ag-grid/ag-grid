@@ -107,7 +107,7 @@ Note the following:
 
 - As you can see in the column **Group**, the Excel styles can be combined into cellClassRules and cellClass
 
-- Note that there are specific to Excel styles applied, the age column has a number formatting style applied and the group column uses italic and bold font
+- Note that there are specific to Excel styles applied - the age column has a conditional number formatting styling applied: age values less than `23` have a green background applied, and age values less than `20` are using red italic underlined font. Also, the group column header cells use bold font.
 
 - The silver column has a style with `dataType=string`. This forces this column to be rendered as text in Excel even though all of their cells are numeric.
 

@@ -38,11 +38,6 @@ const gridOptions = {
 
 Groups are explained in more detail in the section [Column Groups](/column-groups/).
 
-[[only-react]]
-| ## Declarative Columns
-|
-| You can use the `AgGridColumn` element to declare your column definitions declaratively if you prefer.
-
 [[only-vue]]
 | ## Declarative Columns
 |

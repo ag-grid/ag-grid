@@ -18,10 +18,12 @@ export class CustomHeader {
 
     agInit(params): void {
         this.params = params;
+        console.log('CustomHeader.init() -> ' + this.params.column.getId());
     }
 
     refresh(params): boolean {
         this.params = params;
+        console.log('CustomHeader.refresh() -> ' + this.params.column.getId() + ' returning ' + true);
         return true;
     }
 

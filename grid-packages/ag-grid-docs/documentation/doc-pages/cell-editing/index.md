@@ -118,7 +118,7 @@ The following events are fired as editing starts and stops:
 - `rowEditingStarted`: editing has started on a row. Only for full row editing.
 - `rowEditingStopped`: editing has stopped on a row. Only for full row editing.
 
-## Example: Cell Editing
+## Example: Cell Editing Api
 
 The example below illustrates different parts of the editing API. Each button starts editing the 'Last Name' column of the first row with the following differences:
 
