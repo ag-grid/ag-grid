@@ -10,17 +10,20 @@ import styles from './Announcements.module.scss';
  */
 const Announcements = ({ framework }) => <div className={styles['announcements']}>
 
-    <Announcement date="Oct 1" version="26.1.0">
+    <Announcement date="Nov 17" version="26.2.0">
         <p className="card-text">
-            <a href="https://blog.ag-grid.com/whats-new-in-ag-grid-26-1/">What's new in AG Grid 26.1.0</a><br/><br/>
+            <a href="https://blog.ag-grid.com/whats-new-in-ag-grid-26-2/">What's new in AG Grid 26.2.0</a><br/><br/>
             Minor release with new features and bug fixes.
         </p>
         <ul>
             <li className={styles['announcement__list-item']}>
-                <DocumentationLink framework={framework} href="/sparklines-overview/">Sparklines</DocumentationLink>
+                <a href="https://www.ag-grid.com/react-data-grid/reactui/">React UI - All Customisations Supported</a>
             </li>
             <li className={styles['announcement__list-item']}>
-                Grid UX Enhancements
+                <DocumentationLink framework={framework} href="/sparklines-bar-customisation/">Bar Sparkline</DocumentationLink>
+            </li>
+            <li className={styles['announcement__list-item']}>
+                Filter Enhancements
             </li>
             <li className={styles['announcement__list-item']}>
                 Accessibility Enhancements
