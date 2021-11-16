@@ -1,5 +1,5 @@
 import {createApp} from "vue";
-import { AgGridVue } from "@ag-grid-community/vue";
+import { AgGridVue } from "@ag-grid-community/vue3";
 
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
