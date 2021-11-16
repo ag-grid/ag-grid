@@ -144,7 +144,7 @@ var notEqualsFilterParams = {
             predicate: ([filterValue], cellValue) => {
                 if (cellValue == null) return false;
 
-                return cellValue !== filterValue.toLowerCase();
+                return cellValue.toLowerCase() !== filterValue.toLowerCase();
             }
         }
     ]
