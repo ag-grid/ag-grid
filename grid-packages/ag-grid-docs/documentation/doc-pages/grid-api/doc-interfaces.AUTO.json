@@ -14256,7 +14256,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "valueAxisDomain": {
-      "description": "/** User override for the automatically determinted domain (based on data min and max values). Only applied to `number` axes.\n * used to interpolate the numeric pixel values corresponding to each data value. */",
+      "description": "/** User override for the automatically determined domain (based on data min and max values). Only applied to `number` axes.\n * Used to interpolate the numeric pixel values corresponding to each data value. */",
       "type": { "returnType": "[number, number]", "optional": true }
     },
     "formatter": {
@@ -14318,7 +14318,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "valueAxisDomain": {
-      "description": "/** User override for the automatically determinted domain (based on data min and max values). Only applied to `number` axes.\n * used to interpolate the numeric pixel values corresponding to each data value. */",
+      "description": "/** User override for the automatically determined domain (based on data min and max values). Only applied to `number` axes.\n * Used to interpolate the numeric pixel values corresponding to each data value. */",
       "type": { "returnType": "[number, number]", "optional": true }
     },
     "formatter": {
