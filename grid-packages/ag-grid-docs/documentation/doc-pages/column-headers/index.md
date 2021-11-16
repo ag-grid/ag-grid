@@ -139,14 +139,14 @@ This is the default template used in AG Grid:
 
 ```html
 <div class="ag-cell-label-container" role="presentation">
-    <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button"></span>
-    <div ref="eLabel" class="ag-header-cell-label" role="presentation">
-        <span ref="eText" class="ag-header-cell-text" role="columnheader"></span>
-        <span ref="eFilter" class="ag-header-icon ag-filter-icon"></span>
-        <span ref="eSortOrder" class="ag-header-icon ag-sort-order"></span>
-        <span ref="eSortAsc" class="ag-header-icon ag-sort-ascending-icon"></span>
-        <span ref="eSortDesc" class="ag-header-icon ag-sort-descending-icon"></span>
-        <span ref="eSortNone" class="ag-header-icon ag-sort-none-icon"></span>
+    <span ref="eMenu" class="ag-header-icon ag-header-cell-menu-button" aria-hidden="true"></span>
+    <div ref="eLabel" class="ag-header-cell-label" role="presentation" unselectable="on">
+        <span ref="eText" class="ag-header-cell-text" unselectable="on"></span>
+        <span ref="eFilter" class="ag-header-icon ag-header-label-icon ag-filter-icon" aria-hidden="true"></span>
+        <span ref="eSortOrder" class="ag-header-icon ag-header-label-icon ag-sort-order" aria-hidden="true"></span>
+        <span ref="eSortAsc" class="ag-header-icon ag-header-label-icon ag-sort-ascending-icon" aria-hidden="true"></span>
+        <span ref="eSortDesc" class="ag-header-icon ag-header-label-icon ag-sort-descending-icon" aria-hidden="true"></span>
+        <span ref="eSortNone" class="ag-header-icon ag-header-label-icon ag-sort-none-icon" aria-hidden="true"></span>
     </div>
 </div>
 ```
@@ -155,6 +155,7 @@ When you provide your own template, everything should work as expected as long a
 
 | Ref | Description |
 |-|-|
+| `eMenu` | The container where the column menu icon will appear to enable opening the column menu. |
 | `eLabel` | The container where there is going to be an onClick mouse listener to trigger the sort. |
 | `eText` | The text displayed on the column. |
 | `eFilter` | The container with the icon that will appear if the user filters this column. |
