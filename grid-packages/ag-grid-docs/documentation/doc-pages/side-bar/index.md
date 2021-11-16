@@ -232,7 +232,7 @@ The example below demonstrates different usages of the tool panel API methods. T
 - Initially the side bar is not visible as `sideBar.hiddenByDefault=true`.
 - **Visibility Buttons:** These toggle visibility of the tool panel. Note that when you make `visible=false`, the entire tool panel is hidden including the tabs. Make sure the tool panel is left visible before testing the other API features so you can see the impact.
 - **Open / Close Buttons:** These open and close different tool panel items.
-- **Reset Buttons:** These reset the tool panel to a new configuration. Notice that [shortcuts](#shortcuts) are provided as configuration however `getSideBar()` returns back the long form.
+- **Reset Buttons:** These reset the tool panel to a new configuration. Notice that [shortcuts](#configuration-shortcuts) are provided as configuration however `getSideBar()` returns back the long form.
 - **Position Buttons:** These change the position of the side bar relative to the grid.
 
 
