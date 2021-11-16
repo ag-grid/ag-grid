@@ -198,4 +198,4 @@ More advanced customisations are discussed separately in the following sections:
 
 ## Next Up
 
-Continue to the next section to learn about: [Sparkline Data](/sparklines-data/).
+Continue to the next section to learn about: [Bar Customisation](/sparklines-bar-customisation/).
