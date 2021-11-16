@@ -510,7 +510,7 @@
         "noRowsOverlayComponent": {
             "more": {
                 "name": "No Rows Overlay Component",
-                "url": "/component-overlay/##no-rows-overlay-interface"
+                "url": "/component-overlay/#no-rows-overlay-interface"
             },
             "interfaceHierarchyOverrides": {
                 "exclude": [
