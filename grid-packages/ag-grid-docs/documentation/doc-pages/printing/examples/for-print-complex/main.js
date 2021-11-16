@@ -36,7 +36,7 @@ const gridOptions = {
     columnDefs: columnDefs,
     rowData: createRowData(),
     animateRows: true,
-    groupUseEntireRow: true,
+    groupDisplayType: 'groupRows',
     onFirstDataRendered: onFirstDataRendered
 };
 
