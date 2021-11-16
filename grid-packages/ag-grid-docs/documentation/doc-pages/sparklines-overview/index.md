@@ -66,7 +66,6 @@ Each Sparkline type contains specific `sparklineOptions` that can be overridden 
 - [Column Customisation](/sparklines-column-customisation)
 - [Line Customisation](/sparklines-line-customisation/)
 
-
 The following sections are relevant to all sparkline types:
 
 - [Sparkline Data](/sparklines-data/) - compares the different data formats that can be supplied to sparklines.
@@ -76,4 +75,4 @@ The following sections are relevant to all sparkline types:
 
 ## Next Up
 
-Continue to the next section to learn about: [Line Customisation](/sparklines-line-customisation/).
+Continue to the next section to learn about: [Area Customisation](/sparklines-area-customisation/).

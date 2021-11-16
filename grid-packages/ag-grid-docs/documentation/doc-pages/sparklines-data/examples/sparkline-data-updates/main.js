@@ -26,16 +26,17 @@ var intervalId;
 function start() {
     if (intervalId) { return; }
 
+    var gridApi = gridOptions.api;
     function updateData() {
         const itemsToUpdate = [];
-        gridOptions.api.forEachNodeAfterFilterAndSort(function(rowNode) {
+        gridApi.forEachNodeAfterFilterAndSort(function(rowNode) {
             let data = rowNode.data;
             const n = data.change.length;
             const v = Math.random() > 0.5 ? Number(Math.random()) : -Number(Math.random());
             data.change = [...data.change.slice(1, n), v];
             itemsToUpdate.push(data);
         });
-        gridOptions.api.applyTransaction({ update: itemsToUpdate });
+        gridApi.applyTransaction({ update: itemsToUpdate });
     }
 
     this.intervalId = setInterval(updateData, 300);

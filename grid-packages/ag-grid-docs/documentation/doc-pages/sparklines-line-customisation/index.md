@@ -149,4 +149,4 @@ More advanced customisations are discussed separately in the following sections:
 ## Next Up
 
 
-Continue to the next section to learn about: [Column Sparkline Customisation](/sparklines-column-customisation/).
+Continue to the next section to learn about: [Sparkline Data](/sparklines-data/).
