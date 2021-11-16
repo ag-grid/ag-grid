@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from "react"
+import React, { useCallback, useEffect, useState } from "react"
 import VersionDropdownMenu from "../grid/VersionDropdownMenu"
 import styles from "./Changelog.module.scss"
 import ReleaseVersionNotes from "./ReleaseVersionNotes.jsx"
@@ -100,7 +100,7 @@ const defaultColDef = {
             params.event.type === "keydown"
         ) {
             params.api
-                .getCellRendererInstances({rowNodes: [params.node]})[0]
+                .getCellRendererInstances({ rowNodes: [params.node] })[0]
                 .getFrameworkComponentInstance()
                 .clickHandlerFunc()
             return true
@@ -167,7 +167,7 @@ const extractFixVersionParameter = location => location && location.search ? new
 
 const IS_SSR = typeof window === "undefined"
 
-const Changelog = ({location}) => {
+const Changelog = ({ location }) => {
     const [rowData, setRowData] = useState(null)
     const [gridApi, setGridApi] = useState(null)
     const [versions, setVersions] = useState([])
@@ -178,7 +178,7 @@ const Changelog = ({location}) => {
     const applyFixVersionFilter = useCallback(() => {
         if (gridApi && fixVersion) {
             const versionsFilterComponent = gridApi.getFilterInstance('versions');
-            const newModel = {values: fixVersion === ALL_FIX_VERSIONS ? versions : [fixVersion], filterType: "set"};
+            const newModel = { values: fixVersion === ALL_FIX_VERSIONS ? versions : [fixVersion], filterType: "set" };
             versionsFilterComponent.setModel(newModel)
             gridApi.onFilterChanged();
         }
@@ -239,7 +239,7 @@ const Changelog = ({location}) => {
         })
     }
 
-    const checkboxUnchecked = (checked, filterTerm) => {
+    const checkboxUnchecked = (event, filterTerm) => {
         function setTheFilter(column, filterValue, shouldFilter) {
             const filterInstance = gridApi.getFilterInstance(column);
             const currentFilterModel = filterInstance.getModel();
@@ -259,23 +259,23 @@ const Changelog = ({location}) => {
             } else {
                 return
             }
-            const newModel = {values: newValues, filterType: "set"};
+            const newModel = { values: newValues, filterType: "set" };
             filterInstance.setModel(newModel)
             gridApi.onFilterChanged()
         }
 
         switch (filterTerm) {
             case "defect":
-                setTheFilter("issueType", "Bug", checked)
+                setTheFilter("issueType", "Bug", event.target.checked)
                 break
             case "featureRequest":
-                setTheFilter("issueType", "Task", checked)
+                setTheFilter("issueType", "Task", event.target.checked)
                 break
             case "breakingChange":
-                filterOnDepsAndBreaking("breakingChange", checked)
+                filterOnDepsAndBreaking("breakingChange", event.target.checked)
                 break
             case "deprecated":
-                filterOnDepsAndBreaking("deprecated", checked)
+                filterOnDepsAndBreaking("deprecated", event.target.checked)
                 break
             default:
                 break
@@ -285,8 +285,8 @@ const Changelog = ({location}) => {
     return (
         <>
             {!IS_SSR && (
-                <div style={{height: "100%", width: "99%%", marginLeft: "1rem", marginRight: "5rem"}}>
-                    <div style={{fontWeight: 400, fontSize: "2.5rem", lineHeight: 1.2, marginTop: "20px", marginBottom: "20px"}}>AG Grid Changelog</div>
+                <div style={{ height: "100%", width: "99%%", marginLeft: "1rem", marginRight: "5rem" }}>
+                    <div style={{ fontWeight: 400, fontSize: "2.5rem", lineHeight: 1.2, marginTop: "20px", marginBottom: "20px" }}>AG Grid Changelog</div>
                     <div className={styles["note"]}>
                         The AG Grid Changelog lists the feature requests implemented and
                         defects resolved across AG Grid releases. If you can’t find the item
@@ -314,7 +314,7 @@ const Changelog = ({location}) => {
                                         className={styles["checkbox-class"]}
                                         defaultChecked
                                         onChange={event =>
-                                        checkboxUnchecked(event, "featureRequest")
+                                            checkboxUnchecked(event, "featureRequest")
                                         }
                                     ></input>
                                 </div>
@@ -373,7 +373,7 @@ const Changelog = ({location}) => {
                                         id="breakingChange-checkbox"
                                         className={styles["checkbox-class"]}
                                         onChange={event =>
-                                        checkboxUnchecked(event, "breakingChange")
+                                            checkboxUnchecked(event, "breakingChange")
                                         }
                                         type="checkbox"
                                     ></input>
@@ -395,7 +395,7 @@ const Changelog = ({location}) => {
                         </div>
                     </div>
 
-                    <ReleaseVersionNotes releaseNotes={currentReleaseNotes}/>
+                    <ReleaseVersionNotes releaseNotes={currentReleaseNotes} />
                     <Grid
                         gridHeight={"66vh"}
                         columnDefs={COLUMN_DEFS}
