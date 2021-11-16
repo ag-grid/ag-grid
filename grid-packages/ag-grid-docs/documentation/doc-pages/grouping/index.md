@@ -52,7 +52,7 @@ however extensive Row Grouping customisations are also possible as summarised be
     - ***[Group Rows](../grouping-group-rows/)*** - group rows are automatically added by the grid containing the row groups instead of group columns.
     - ***[Custom Group Columns](../grouping-custom-group-columns/)*** - customise how row groups are displayed without using the built-in display types.
 - **[Row Group Panel](../grouping-group-panel/)** - add a panel above the grid to allow users control which columns the rows are grouped by.
-- **[Group Order](../grouping-sorting/)** - control how row groups are ordered.
+- **[Group Order](../grouping-group-order/)** - control how row groups are ordered.
 - **[Sorting Groups](../grouping-sorting/)** - configure and customise how row groups are sorted.
 - **[Filtering Groups](../grouping-filtering/)** - configure and customise how row groups are filtered.
 - **[Group Footers](../grouping-footers/)** - add group footers showing totals for each group level.
