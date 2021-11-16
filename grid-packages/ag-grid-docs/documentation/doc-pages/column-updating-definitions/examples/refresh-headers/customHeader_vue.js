@@ -19,8 +19,12 @@ export default {
         };
     },
     mounted() {
+        console.log('CustomHeader - mounted() -> ' + this.params.column.getId());
         this.params.column.addEventListener('sortChanged', this.onSortChanged);
         this.onSortChanged();
+    },
+    unmounted() {
+        console.log('CustomHeader unmounted() -> ' + this.params.column.getId());
     },
     methods: {
         onMenuClicked() {
@@ -44,6 +48,7 @@ export default {
 
         refresh(params) {
             this.params = params;
+            console.log('CustomHeader refresh() -> ' + this.params.column.getId());
             return true;
         }
     }

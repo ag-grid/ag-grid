@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 
 export default class CustomHeader extends Component {
     render() {
+        console.log('CustomHeader.render() -> ' + this.props.displayName);
+
         return (
             <div style={{ display: 'flex' }}>
                 {this.props.enableMenu && <div

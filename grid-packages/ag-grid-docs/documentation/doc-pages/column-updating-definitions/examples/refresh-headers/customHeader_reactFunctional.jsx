@@ -3,6 +3,8 @@ import React, { useRef } from 'react';
 const CustomHeader = ({ enableMenu, displayName, showColumnMenu }) => {
     const menuButtonRef = useRef();
 
+    console.log('CustomHeader rendered -> ' + displayName);
+
     return (
         <div style={{ display: 'flex' }}>
             {enableMenu && <div
