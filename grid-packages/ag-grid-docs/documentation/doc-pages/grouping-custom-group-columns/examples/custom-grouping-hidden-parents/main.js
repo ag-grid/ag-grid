@@ -1,8 +1,15 @@
 var gridOptions = {
     columnDefs: [
         {headerName: 'Country', showRowGroup: 'country', cellRenderer: 'agGroupCellRenderer', minWidth: 200},
-        {headerName: 'Year', valueGetter: 'data.year', showRowGroup: 'year', cellRenderer: 'agGroupCellRenderer'},
-
+        {   headerName: 'Year',
+            valueGetter: function(params) {
+                if (params.data) {
+                    return params.data.year;
+                }
+            },
+            showRowGroup: 'year',
+            cellRenderer: 'agGroupCellRenderer'
+        },
         {field: 'athlete', minWidth: 200},
         {field: 'gold', aggFunc: 'sum'},
         {field: 'silver', aggFunc: 'sum'},
