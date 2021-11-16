@@ -39,7 +39,7 @@ function start() {
         gridApi.applyTransaction({ update: itemsToUpdate });
     }
 
-    this.intervalId = setInterval(updateData, 300);
+    intervalId = setInterval(updateData, 300);
 }
 
 function stop() {
@@ -49,6 +49,7 @@ function stop() {
 }
 
 // setup the grid after the page has finished loading
+
 document.addEventListener('DOMContentLoaded', function () {
     var gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
