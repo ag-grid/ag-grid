@@ -3,7 +3,7 @@
 |
 | - **Attributes**: attributes are properties, but aren't bound - they are instead provided literal values (e.g. `rowSelection="multiple"`).
 | - **Properties**: properties are bound attributes (e.g. `[columnDefs]="columnDefs"`).
-| - **Callbacks**: callbacks are bound in the same as properties are (e.g. `[isScrollLag]="myIsScrollLagFunction"`).
+| - **Callbacks**: callbacks are bound in the same as properties are (e.g. `[getRowHeight]="myGetRowHeight"`).
 | - **Event Handlers**: event handlers are are bound in the standard Angular way (e.g. `(cellClicked)="onCellClicked($event)"`).
 | - **API**: the grid API and column API are accessible through the component.
 |
@@ -24,7 +24,7 @@
 |    [showToolPanel]="showToolPanel"
 |
 |    // register a callback
-|    [isScrollLag]="myIsScrollLagFunction"
+|    [getRowHeight]="myGetRowHeight"
 |
 |    // register events
 |    (cellClicked)="onCellClicked($event)"
@@ -62,8 +62,7 @@
 | ```
 | ## Grid Options
 |
-| The `gridOptions` object is a 'one stop shop' for the entire interface into the grid, commonly used if using plain JavaScript.
-| Grid options can however be used instead of, or in addition to, normal framework binding.
+| The `gridOptions` object is a 'one stop shop' for the entire interface into the grid and can be used instead of or in addition to the normal framework bindings.
 |
 | The example below shows the different types of items available on `gridOptions`.
 |
@@ -83,7 +82,7 @@
 |     onGridReady: event => console.log('The grid is now ready'),
 |
 |     // CALLBACKS
-|     isScrollLag: () => false
+|     getRowHeight: (params) => 25
 | }
 | ```
 |

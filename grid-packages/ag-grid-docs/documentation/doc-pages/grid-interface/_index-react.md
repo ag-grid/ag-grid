@@ -3,7 +3,7 @@
 | ## Properties, Events, Callbacks and APIs
 |
 | - **Properties**: properties are defined by passing React props down to AG Grid (e.g. `columnDefs={this.state.columnDefs}`)
-| - **Callbacks**: callbacks are also defined using React Props (e.g. `isScrollLag={this.isScrollLagFunction}`).
+| - **Callbacks**: callbacks are also defined using React Props (e.g. `getRowHeight={this.myGetRowHeightFunction}`).
 | - **Event Handlers**: event handlers are also defined using React Props (e.g. `onCellClicked={this.onCellClicked}`).
 | - **API**: The grid API and column API are provided to you via the `onGridReady()` event callback.
 |
@@ -20,7 +20,7 @@
 |    showToolPanel={this.state.showToolPanel}
 |
 |    // this is a callback
-|    isScrollLag={this.myIsScrollLagFunction}
+|    getRowHeight={this.myGetRowHeightFunction}
 |
 |    // these are registering event callbacks
 |    onCellClicked={this.onCellClicked}
@@ -82,7 +82,7 @@
 | ## Grid Options
 |
 | The `gridOptions` object is a 'one stop shop' for the entire interface into the grid, commonly used if using plain JavaScript.
-| Grid options can however be used instead of, or in addition to, normal framework binding.
+| Grid options can however be used instead of, or in addition to, normal framework bindings.
 |
 | The example below shows the different types of items available on `gridOptions`.
 |
@@ -102,7 +102,7 @@
 |     onGridReady: event => console.log('The grid is now ready'),
 |
 |     // CALLBACKS
-|     isScrollLag: () => false
+|     getRowHeight: (params) => 25
 | }
 | ```
 |
