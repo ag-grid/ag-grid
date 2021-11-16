@@ -165,7 +165,7 @@ class VueTransformer extends AngularTransformer {
         if (this.options.suppressFrameworkContext || this.propertiesVisited.length === 0) {
             return result.trim();
         }
-        const props = this.propertiesVisited.map(property => `${tab(1)}[${property}]="${property}"`).join('\n');
+        const props = this.propertiesVisited.map(property => `${tab(1)}:${property}="${property}"`).join('\n');
         return '<ag-grid-vue\n' + props +
             '\n    /* other grid options ... */>\n' +
             '</ag-grid-vue>\n' +
