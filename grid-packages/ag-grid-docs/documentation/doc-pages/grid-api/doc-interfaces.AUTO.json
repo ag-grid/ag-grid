@@ -16273,7 +16273,7 @@
       "type": {
         "arguments": { "disabled": "boolean" },
         "returnType": "void",
-        "optional": false
+        "optional": true
       }
     },
     "setInputPlaceholder": {
@@ -16350,7 +16350,7 @@
       "type": {
         "arguments": { "disabled": "boolean" },
         "returnType": "void",
-        "optional": false
+        "optional": true
       }
     },
     "setInputPlaceholder": {
