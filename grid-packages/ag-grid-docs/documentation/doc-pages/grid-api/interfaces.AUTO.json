@@ -9181,14 +9181,14 @@
     "type": {
       "getDate()": "Date | null",
       "setDate(date: Date | null)": "void",
-      "setDisabled(disabled: boolean)": "void",
+      "setDisabled?(disabled: boolean)": "void",
       "setInputPlaceholder?(placeholder: string)": "void",
       "setInputAriaLabel?(placeholder: string)": "void"
     },
     "docs": {
       "getDate()": "/** Returns the current date represented by this editor */",
       "setDate(date: Date | null)": "/** Sets the date represented by this component */",
-      "setDisabled(disabled: boolean)": "/** Sets the disabled state of this component */"
+      "setDisabled?(disabled: boolean)": "/** Sets the disabled state of this component */"
     }
   },
   "IDateParams": {
@@ -9210,7 +9210,7 @@
       "init?(params: IDateParams)": "AgPromise<void> | void",
       "getDate()": "Date | null",
       "setDate(date: Date | null)": "void",
-      "setDisabled(disabled: boolean)": "void",
+      "setDisabled?(disabled: boolean)": "void",
       "setInputPlaceholder?(placeholder: string)": "void",
       "setInputAriaLabel?(placeholder: string)": "void"
     },
@@ -9221,7 +9221,7 @@
       "init?(params: IDateParams)": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
       "getDate()": "/** Returns the current date represented by this editor */",
       "setDate(date: Date | null)": "/** Sets the date represented by this component */",
-      "setDisabled(disabled: boolean)": "/** Sets the disabled state of this component */"
+      "setDisabled?(disabled: boolean)": "/** Sets the disabled state of this component */"
     }
   },
   "PositionableOptions": {
