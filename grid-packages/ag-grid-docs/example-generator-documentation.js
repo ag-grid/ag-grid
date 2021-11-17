@@ -217,7 +217,7 @@ function createExampleGenerator(prefix, importTypes) {
         const style = /<style>(.*)<\/style>/s.exec(indexHtml);
         let inlineStyles = style && style.length > 0 && format(style[1], 'css');
 
-       if (type === 'mixed' && providedExamples['react']) {
+        if (type === 'mixed' && providedExamples['react']) {
             importTypes.forEach(importType => copyProvidedExample(importType, 'react', providedExamples['react']));
         } else {
             const reactScripts = getMatchingPaths('*_react.*');
@@ -303,7 +303,7 @@ function createExampleGenerator(prefix, importTypes) {
         if (type === 'mixed' && providedExamples['vue3']) {
             importTypes.forEach(importType => copyProvidedExample(importType, 'vue3', providedExamples['vue3']));
         } else {
-            if(vanillaToVue3) {
+            if (vanillaToVue3) {
                 const vueScripts = getMatchingPaths('*_vue*');
                 const vueConfigs = new Map();
                 try {
@@ -331,7 +331,7 @@ function getGeneratorCode(prefix) {
     const gridExamples = prefix === './src/example-generation/grid-' || false;
     const generateReactFire = process.env.AG_GENERATE_REACT_FIRE || false;
 
-    if(generateReactFire) {
+    if (generateReactFire) {
         console.warn("********************************************");
         console.warn("************ React Fire Enabled ************");
         console.warn("********************************************");

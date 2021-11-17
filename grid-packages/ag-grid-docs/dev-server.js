@@ -14,10 +14,10 @@ const proxy = require('express-http-proxy');
 const webpackMiddleware = require('webpack-dev-middleware');
 const chokidar = require('chokidar');
 const tcpPortUsed = require('tcp-port-used');
-const {generateDocumentationExamples} = require('./example-generator-documentation');
-const {updateBetweenStrings, getAllModules} = require('./utils');
-const {getFlattenedBuildChainInfo, buildPackages, buildCss, watchCss} = require('./lernaOperations');
-const {EOL} = os;
+const { generateDocumentationExamples } = require('./example-generator-documentation');
+const { updateBetweenStrings, getAllModules } = require('./utils');
+const { getFlattenedBuildChainInfo, buildPackages, buildCss, watchCss } = require('./lernaOperations');
+const { EOL } = os;
 
 const key = fs.readFileSync(process.env.AG_DOCS_KEY || './selfsigned.key', 'utf8');
 const cert = fs.readFileSync(process.env.AG_DOCS_CRT || './selfsigned.crt', 'utf8');
@@ -36,7 +36,7 @@ const HOST = '127.0.0.1';
 const WINDOWS = /^win/.test(os.platform());
 
 function reporter(middlewareOptions, options) {
-    const {log, state, stats} = options;
+    const { log, state, stats } = options;
 
     if (state) {
         const displayStats = middlewareOptions.stats !== false;
@@ -138,8 +138,8 @@ function symlinkModules(gridCommunityModules, gridEnterpriseModules, chartCommun
         linkType = 'junction';
     }
 
-    lnk('../../community-modules/vue/', '_dev/@ag-grid-community', {force: true, type: linkType, rename: 'vue'});
-    lnk('../../community-modules/vue3/', '_dev/@ag-grid-community', {force: true, type: linkType, rename: 'vue3'});
+    lnk('../../community-modules/vue/', '_dev/@ag-grid-community', { force: true, type: linkType, rename: 'vue' });
+    lnk('../../community-modules/vue3/', '_dev/@ag-grid-community', { force: true, type: linkType, rename: 'vue3' });
     lnk('../../community-modules/angular/', '_dev/@ag-grid-community', {
         force: true,
         type: linkType,
@@ -259,11 +259,11 @@ async function watchAndGenerateExamples() {
     }
 
     chokidar
-        .watch([`./documentation/doc-pages/**/examples/**/*.{html,css,js,jsx,ts}`], {ignored: ['**/_gen/**/*']})
+        .watch([`./documentation/doc-pages/**/examples/**/*.{html,css,js,jsx,ts}`], { ignored: ['**/_gen/**/*'] })
         .on('change', regenerateDocumentationExamplesForFileChange);
 
     chokidar
-        .watch([`./documentation/doc-pages/**/*.md`], {ignoreInitial: true})
+        .watch([`./documentation/doc-pages/**/*.md`], { ignoreInitial: true })
         .on('add', regenerateDocumentationExamplesForFileChange);
 }
 
@@ -404,7 +404,7 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
         gridCommunityModules,
         gridEnterpriseModules,
         module => `        "${module.publishedName}": \`\${localPrefix}/${module.cjsFilename}\`,`,
-        module => `        "${module.publishedName}": \`\${localPrefix}/${module.cjsFilename}\`,`,);
+        module => `        "${module.publishedName}": \`\${localPrefix}/${module.cjsFilename}\`,`);
 
     updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
         '        /* START OF GRID CSS DEV - DO NOT DELETE */',
@@ -433,7 +433,7 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
         gridCommunityModules,
         gridEnterpriseModules,
         module => `        "${module.publishedName}": \`https://unpkg.com/${module.cjsFilename}\`,`,
-        module => `        "${module.publishedName}": \`https://unpkg.com/${module.cjsFilename}\`,`,);
+        module => `        "${module.publishedName}": \`https://unpkg.com/${module.cjsFilename}\`,`);
 
     updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
         '        /* START OF GRID CSS PROD - DO NOT DELETE */',
@@ -596,7 +596,7 @@ function updateModuleChangedHash(moduleRoot) {
     const npm = WINDOWS ? 'npm.cmd' : 'npm';
     const resolvedPath = resolve(moduleRoot).replace(/\\/g, '/').replace("C:", "/c");
 
-    cp.spawnSync(npm, ['run', 'hash'], {cwd: resolvedPath});
+    cp.spawnSync(npm, ['run', 'hash'], { cwd: resolvedPath });
 }
 
 function updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gridEnterpriseModules, chartsCommunityModules) {
@@ -716,13 +716,13 @@ const readModulesState = () => {
     moduleRootNames.forEach(moduleRootName => {
         const moduleRootDirectory = WINDOWS ? `..\\..\\${moduleRootName}\\` : `../../${moduleRootName}/`;
 
-        fs.readdirSync(moduleRootDirectory, {withFileTypes: true})
+        fs.readdirSync(moduleRootDirectory, { withFileTypes: true })
             .filter(d => d.isDirectory())
             .filter(d => !exclusions.includes(d.name))
             .map(d => WINDOWS ? `..\\..\\${moduleRootName}\\${d.name}` : `../../${moduleRootName}/${d.name}`)
             .map(d => {
                 const packageName = require(WINDOWS ? `${d}\\package.json` : `${d}/package.json`).name;
-                modulesState[packageName] = {moduleChanged: moduleChanged(d)};
+                modulesState[packageName] = { moduleChanged: moduleChanged(d) };
             });
     });
 
