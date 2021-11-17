@@ -1635,7 +1635,7 @@
         "optional": true
       }
     },
-    "originalColumnGroup": {
+    "providedColumnGroup": {
       "description": "/** Original column group if applicable */",
       "type": { "returnType": "ProvidedColumnGroup | null", "optional": false }
     },
@@ -2763,7 +2763,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "maxConcurrentDatasourceRequests": {
-      "description": "/** How many requests to hit the server with concurrently. If the max is reached, requests are queued. */",
+      "description": "/** How many requests to hit the server with concurrently. If the max is reached, requests are queued.\n * Set to `-1` for no maximum restriction on requests.\n * Default: `2` */",
       "type": { "returnType": "number", "optional": true }
     },
     "blockLoadDebounceMillis": {

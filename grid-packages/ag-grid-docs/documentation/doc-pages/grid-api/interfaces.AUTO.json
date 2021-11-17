@@ -1001,7 +1001,7 @@
       "colDef": "AbstractColDef",
       "column?": "Column | null",
       "columnGroup?": "ColumnGroup | ProvidedColumnGroup | null",
-      "originalColumnGroup": "ProvidedColumnGroup | null",
+      "providedColumnGroup": "ProvidedColumnGroup | null",
       "location": "string | null",
       "api": "GridApi",
       "context?": "any"
@@ -1009,7 +1009,7 @@
     "docs": {
       "column?": "/** Column for this callback if applicable */",
       "columnGroup?": "/** ColumnGroup for this callback if applicable */",
-      "originalColumnGroup": "/** Original column group if applicable */",
+      "providedColumnGroup": "/** Original column group if applicable */",
       "location": "/** Where the column is going to appear */",
       "context?": "/** The context as provided on `gridOptions.context` */"
     }
@@ -1863,7 +1863,7 @@
       "serverSideStoreType?": "/** Whether to use Full Store or Partial Store for storing rows. Default: `full` */",
       "cacheBlockSize?": "/** How many rows for each block in the store, i.e. how many rows returned from the server at a time.\n * Default: `100` */",
       "maxBlocksInCache?": "/** How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value. */",
-      "maxConcurrentDatasourceRequests?": "/** How many requests to hit the server with concurrently. If the max is reached, requests are queued. */",
+      "maxConcurrentDatasourceRequests?": "/** How many requests to hit the server with concurrently. If the max is reached, requests are queued.\n * Set to `-1` for no maximum restriction on requests.\n * Default: `2` */",
       "blockLoadDebounceMillis?": "/** How many milliseconds to wait before loading a block. Useful when scrolling over many rows, spanning many Partial Store blocks, as it prevents blocks loading until scrolling has settled. */",
       "purgeClosedRowNodes?": "/** When enabled, closing group rows will remove children of that row. Next time the row is opened, child rows will be read from the datasource again. This property only applies when there is Row Grouping. Default: `false` */",
       "serverSideDatasource?": "/** Provide the `serverSideDatasource` for server side row model. */",

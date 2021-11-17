@@ -608,6 +608,8 @@ export interface GridOptions {
     maxBlocksInCache?: number;
     /**
      * How many requests to hit the server with concurrently. If the max is reached, requests are queued.
+     * Set to `-1` for no maximum restriction on requests.
+     * Default: `2`
      */
     maxConcurrentDatasourceRequests?: number;
     /** How many milliseconds to wait before loading a block. Useful when scrolling over many rows, spanning many Partial Store blocks, as it prevents blocks loading until scrolling has settled. */
