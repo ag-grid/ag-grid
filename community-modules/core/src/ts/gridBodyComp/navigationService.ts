@@ -320,14 +320,7 @@ export class NavigationService extends BeanStub {
             const firstRow = rowPinned ? rowIndex === 0 : rowIndex === this.paginationProxy.getPageFirstRow();
             if (firstRow) {
                 keyboardEvent.preventDefault();
-
-                const headerRowIndex = this.headerNavigationService.getHeaderRowCount() - 1;
-                const column = last(this.columnModel.getAllDisplayedColumns());
-
-                this.focusService.focusHeaderPosition({
-                    headerPosition: { headerRowIndex, column },
-                    event: keyboardEvent
-                });
+                this.focusService.focusLastHeader(keyboardEvent);
             }
         } else {
             // if the case it's a popup editor, the focus is on the editor and not the previous cell.
@@ -337,7 +330,7 @@ export class NavigationService extends BeanStub {
                 previous.focusCell(true);
             }
 
-            if (this.focusService.focusNextGridCoreContainer(false)) {
+            if (this.focusService.focusNextGridCoreContainer(backwards)) {
                 keyboardEvent.preventDefault();
             }
         }
