@@ -15,7 +15,7 @@ var gridOptions: GridOptions = {
     ],
     defaultColDef: {
         flex: 1,
-        minWidth: "dst"
+        minWidth: 170,
     },
     enableRangeSelection: true
 };

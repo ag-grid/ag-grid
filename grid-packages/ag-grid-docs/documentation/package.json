@@ -19,7 +19,7 @@
     "serve": "npx gatsby serve --prefix-paths -H 0.0.0.0",
     "clean": "npx gatsby clean",
     "test": "npx jest",
-    "convert-ts-to-js": "gulp"
+    "validate-examples": "gulp"
   },
   "dependencies": {
     "@ag-grid-community/client-side-row-model": "^26.1.0",
@@ -85,19 +85,16 @@
     "use-query-params": "1.2.0"
   },
   "devDependencies": {
-    "@sucrase/gulp-plugin": "2.0.0",
     "@types/node": "12.20.20",
     "babel-jest": "26.6.3",
     "babel-preset-gatsby": "1.0.0",
     "commander": "7.1.0",
-    "gulp-rename": "^2.0.0",
     "gulp-typescript": "^6.0.0-alpha.1",
     "identity-obj-proxy": "3.0.0",
     "jest": "26.6.3",
     "jsdom": "16.4.0",
     "prettier": "2.2.1",
     "puppeteer-core": "7.1.0",
-    "react-test-renderer": "16.14.0",
-    "sucrase": "^3.20.3"
+    "react-test-renderer": "16.14.0"
   }
 }
