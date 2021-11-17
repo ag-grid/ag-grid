@@ -126,7 +126,7 @@
     "terser-webpack-plugin": "4.2.3",
     "ts-pnp": "1.2.0",
     "tslib": "^1.10.0",
-    "typescript": "3.6.3",
+    "typescript": "3.7.7",
     "url-loader": "4.1.1",
     "vinyl-source-stream": "^2.0.0",
     "web-vitals": "^0.2.4",
