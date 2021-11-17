@@ -13,17 +13,17 @@ export default {
     beforeMount() {
     },
     mounted() {
-        this.params.columnGroup.getOriginalColumnGroup().addEventListener('expandedChanged', this.syncExpandButtons.bind(this));
+        this.params.columnGroup.getProvidedColumnGroup().addEventListener('expandedChanged', this.syncExpandButtons.bind(this));
 
         this.syncExpandButtons();
     },
     methods: {
         expandOrCollapse() {
-            let currentState = this.params.columnGroup.getOriginalColumnGroup().isExpanded();
+            let currentState = this.params.columnGroup.getProvidedColumnGroup().isExpanded();
             this.params.setExpanded(!currentState);
         },
         syncExpandButtons() {
-            this.groupExpanded = this.params.columnGroup.getOriginalColumnGroup().isExpanded();
+            this.groupExpanded = this.params.columnGroup.getProvidedColumnGroup().isExpanded();
         }
     }
 };

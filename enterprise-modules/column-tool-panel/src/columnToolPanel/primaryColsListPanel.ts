@@ -246,7 +246,7 @@ export class PrimaryColsListPanel extends Component {
                 return;
             }
 
-            const displayName = this.columnModel.getDisplayNameForOriginalColumnGroup(null, columnGroup, this.eventType);
+            const displayName = this.columnModel.getDisplayNameForProvidedColumnGroup(null, columnGroup, this.eventType);
             const item: ColumnModelItem = new ColumnModelItem(displayName, columnGroup, dept, true, this.expandGroupsByDefault);
 
             parentList.push(item);

@@ -31,7 +31,7 @@ export class ColumnGroup implements IHeaderColumn {
 
     private readonly groupId: string;
     private readonly instanceId: number;
-    private readonly originalColumnGroup: ProvidedColumnGroup;
+    private readonly providedColumnGroup: ProvidedColumnGroup;
     private readonly pinned: 'left' | 'right' | null;
 
     // private moving = false
@@ -41,10 +41,10 @@ export class ColumnGroup implements IHeaderColumn {
 
     private parent: ColumnGroup | null;
 
-    constructor(originalColumnGroup: ProvidedColumnGroup, groupId: string, instanceId: number, pinned: 'left' | 'right' | null) {
+    constructor(providedColumnGroup: ProvidedColumnGroup, groupId: string, instanceId: number, pinned: 'left' | 'right' | null) {
         this.groupId = groupId;
         this.instanceId = instanceId;
-        this.originalColumnGroup = originalColumnGroup;
+        this.providedColumnGroup = providedColumnGroup;
         this.pinned = pinned;
     }
 
@@ -73,7 +73,7 @@ export class ColumnGroup implements IHeaderColumn {
     }
 
     public isMoving(): boolean {
-        const allLeafColumns = this.getOriginalColumnGroup().getLeafColumns();
+        const allLeafColumns = this.getProvidedColumnGroup().getLeafColumns();
         if (!allLeafColumns || allLeafColumns.length === 0) { return false; }
 
         return allLeafColumns.every(col => col.isMoving());
@@ -218,27 +218,27 @@ export class ColumnGroup implements IHeaderColumn {
 
     // why two methods here doing the same thing?
     public getDefinition(): AbstractColDef | null {
-        return this.originalColumnGroup.getColGroupDef();
+        return this.providedColumnGroup.getColGroupDef();
     }
 
     public getColGroupDef(): ColGroupDef | null {
-        return this.originalColumnGroup.getColGroupDef();
+        return this.providedColumnGroup.getColGroupDef();
     }
 
     public isPadding(): boolean {
-        return this.originalColumnGroup.isPadding();
+        return this.providedColumnGroup.isPadding();
     }
 
     public isExpandable(): boolean {
-        return this.originalColumnGroup.isExpandable();
+        return this.providedColumnGroup.isExpandable();
     }
 
     public isExpanded(): boolean {
-        return this.originalColumnGroup.isExpanded();
+        return this.providedColumnGroup.isExpanded();
     }
 
     public setExpanded(expanded: boolean): void {
-        this.originalColumnGroup.setExpanded(expanded);
+        this.providedColumnGroup.setExpanded(expanded);
     }
 
     private addDisplayedLeafColumns(leafColumns: Column[]): void {
@@ -266,11 +266,17 @@ export class ColumnGroup implements IHeaderColumn {
     }
 
     public getColumnGroupShow(): string | undefined {
-        return this.originalColumnGroup.getColumnGroupShow();
+        return this.providedColumnGroup.getColumnGroupShow();
     }
 
+    public getProvidedColumnGroup(): ProvidedColumnGroup {
+        return this.providedColumnGroup;
+    }
+
+    /** @deprecated getOriginalColumnGroup is deprecated, use getOriginalColumnGroup. */
     public getOriginalColumnGroup(): ProvidedColumnGroup {
-        return this.originalColumnGroup;
+        console.warn('AG Grid: columnGroup.getOriginalColumnGroup() is deprecated due toa method rename, use columnGroup.getProvidedColumnGroup() instead');
+        return this.getProvidedColumnGroup();
     }
 
     public getPaddingLevel(): number {
@@ -294,7 +300,7 @@ export class ColumnGroup implements IHeaderColumn {
             parentWithExpansion = parentWithExpansion.getParent();
         }
 
-        const isExpandable = parentWithExpansion ? parentWithExpansion.originalColumnGroup.isExpandable() : false;
+        const isExpandable = parentWithExpansion ? parentWithExpansion.providedColumnGroup.isExpandable() : false;
         // it not expandable, everything is visible
         if (!isExpandable) {
             this.displayedChildren = this.children;
@@ -314,13 +320,13 @@ export class ColumnGroup implements IHeaderColumn {
             switch (headerGroupShow) {
                 case ColumnGroup.HEADER_GROUP_SHOW_OPEN:
                     // when set to open, only show col if group is open
-                    if (parentWithExpansion.originalColumnGroup.isExpanded()) {
+                    if (parentWithExpansion.providedColumnGroup.isExpanded()) {
                         this.displayedChildren!.push(child);
                     }
                     break;
                 case ColumnGroup.HEADER_GROUP_SHOW_CLOSED:
                     // when set to open, only show col if group is open
-                    if (!parentWithExpansion.originalColumnGroup.isExpanded()) {
+                    if (!parentWithExpansion.providedColumnGroup.isExpanded()) {
                         this.displayedChildren!.push(child);
                     }
                     break;

@@ -82,13 +82,13 @@ export class DisplayedGroupCreator extends BeanStub {
     }
 
     private createColumnGroup(
-            originalGroup: ProvidedColumnGroup,
+            providedGroup: ProvidedColumnGroup,
             groupInstanceIdCreator: GroupInstanceIdCreator,
             oldColumnsMapped: {[key: string]: ColumnGroup},
             pinned: 'left' | 'right' | null
         ): ColumnGroup {
 
-        const groupId = originalGroup.getGroupId();
+        const groupId = providedGroup.getGroupId();
         const instanceId = groupInstanceIdCreator.getInstanceIdForKey(groupId);
         const uniqueId = ColumnGroup.createUniqueId(groupId, instanceId);
 
@@ -97,7 +97,7 @@ export class DisplayedGroupCreator extends BeanStub {
         // if the user is setting new colDefs, it is possible that the id's overlap, and we
         // would have a false match from above. so we double check we are talking about the
         // same original column group.
-        if (columnGroup && columnGroup.getOriginalColumnGroup() !== originalGroup) {
+        if (columnGroup && columnGroup.getProvidedColumnGroup() !== providedGroup) {
             columnGroup = null;
         }
 
@@ -105,7 +105,7 @@ export class DisplayedGroupCreator extends BeanStub {
             // clean out the old column group here, as we will be adding children into it again
             columnGroup.reset();
         } else {
-            columnGroup = new ColumnGroup(originalGroup, groupId, instanceId, pinned);
+            columnGroup = new ColumnGroup(providedGroup, groupId, instanceId, pinned);
             this.context.createBean(columnGroup);
         }
 

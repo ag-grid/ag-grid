@@ -101,18 +101,18 @@ export class CustomHeaderGroup {
     agInit(params): void {
         this.params = params;
 
-        this.params.columnGroup.getOriginalColumnGroup().addEventListener('expandedChanged', this.syncExpandButtons.bind(this));
+        this.params.columnGroup.getProvidedColumnGroup().addEventListener('expandedChanged', this.syncExpandButtons.bind(this));
 
         this.syncExpandButtons();
     }
 
     expandOrCollapse() {
-        let currentState = this.params.columnGroup.getOriginalColumnGroup().isExpanded();
+        let currentState = this.params.columnGroup.getProvidedColumnGroup().isExpanded();
         this.params.setExpanded(!currentState);
     }
 
     syncExpandButtons() {
-        if (this.params.columnGroup.getOriginalColumnGroup().isExpanded()) {
+        if (this.params.columnGroup.getProvidedColumnGroup().isExpanded()) {
             this.expandState = 'expanded';
         } else {
             this.expandState = 'collapsed';

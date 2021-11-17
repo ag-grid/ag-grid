@@ -207,7 +207,7 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     private getColumnGroupName(columnGroup: ProvidedColumnGroup): string | null {
-        return this.columnModel.getDisplayNameForOriginalColumnGroup(null, columnGroup, 'filterToolPanel');
+        return this.columnModel.getDisplayNameForProvidedColumnGroup(null, columnGroup, 'filterToolPanel');
     }
 
     private getColumnName(column: Column): string | null {

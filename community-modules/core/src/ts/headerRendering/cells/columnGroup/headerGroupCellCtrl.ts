@@ -69,7 +69,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
         this.setupUserComp();
 
         const pinned = this.getParentRowCtrl().getPinned();
-        const leafCols = this.columnGroup.getOriginalColumnGroup().getLeafColumns();
+        const leafCols = this.columnGroup.getProvidedColumnGroup().getLeafColumns();
 
         this.createManagedBean(new HoverFeature(leafCols, eGui));
         this.createManagedBean(new SetLeftFeature(this.columnGroup, eGui, this.beans));
@@ -95,7 +95,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
             displayName: this.displayName!,
             columnGroup: this.columnGroup,
             setExpanded: (expanded: boolean) => {
-                this.columnModel.setColumnGroupOpened(this.columnGroup.getOriginalColumnGroup(), expanded, "gridInitializing");
+                this.columnModel.setColumnGroupOpened(this.columnGroup.getProvidedColumnGroup(), expanded, "gridInitializing");
             },
             api: this.gridApi,
             columnApi: this.columnApi,
@@ -152,7 +152,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     private setupExpandable(): void {
-        const providedColGroup = this.columnGroup.getOriginalColumnGroup();
+        const providedColGroup = this.columnGroup.getProvidedColumnGroup();
 
         this.refreshExpanded();
 
@@ -189,7 +189,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     private setupMovingCss(): void {
-        const providedColumnGroup = this.columnGroup.getOriginalColumnGroup();
+        const providedColumnGroup = this.columnGroup.getProvidedColumnGroup();
         const leafColumns = providedColumnGroup.getLeafColumns();
 
         // this function adds or removes the moving css, based on if the col is moving.
@@ -221,7 +221,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
             const column = this.columnGroup;
             const newExpandedValue = !column.isExpanded();
 
-            this.columnModel.setColumnGroupOpened(column.getOriginalColumnGroup(), newExpandedValue, "uiColumnExpanded");
+            this.columnModel.setColumnGroupOpened(column.getProvidedColumnGroup(), newExpandedValue, "uiColumnExpanded");
         }
     }
 
@@ -231,7 +231,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
 
         if (this.isSuppressMoving()) { return; }
 
-        const allLeafColumns = this.columnGroup.getOriginalColumnGroup().getLeafColumns();
+        const allLeafColumns = this.columnGroup.getProvidedColumnGroup().getLeafColumns();
         const dragSource: DragSource = {
             type: DragSourceType.HeaderCell,
             eElement: eHeaderGroup,
@@ -250,7 +250,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
     // when moving the columns, we want to move all the columns (contained within the DragItem) in this group in one go,
     // and in the order they are currently in the screen.
     public getDragItemForGroup(): DragItem {
-        const allColumnsOriginalOrder = this.columnGroup.getOriginalColumnGroup().getLeafColumns();
+        const allColumnsOriginalOrder = this.columnGroup.getProvidedColumnGroup().getLeafColumns();
 
         // capture visible state, used when re-entering grid to dictate which columns should be visible
         const visibleState: { [key: string]: boolean; } = {};
