@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-community/angular",
-  "version": "26.1.0",
+  "version": "26.2.0",
   "scripts": {
     "ng": "./node_modules/.bin/ng",
     "start": "./node_modules/.bin/ng serve",
@@ -39,7 +39,7 @@
     "@types/jasmine": "~3.5.0",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "12.20.20",
-    "@ag-grid-community/core": "~26.1.0",
+    "@ag-grid-community/core": "~26.2.0",
     "codelyzer": "^5.1.2",
     "jasmine-core": "~3.5.0",
     "jasmine-spec-reporter": "~4.2.1",

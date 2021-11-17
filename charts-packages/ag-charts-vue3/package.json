@@ -1,7 +1,7 @@
 {
   "name": "ag-charts-vue3",
   "description": "AG Charts Vue 3 Component",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "author": "Sean Landsman <sean@thelandsmans.com>",
   "license": "MIT",
   "main": "main.js",
@@ -30,7 +30,7 @@
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "devDependencies": {
-    "ag-charts-community": "~4.1.0",
+    "ag-charts-community": "~4.2.0",
     "@types/node": "12.20.20",
     "@vue/cli-plugin-typescript": "^3.11.0",
     "@vue/cli-plugin-unit-jest": "^3.11.0",
@@ -43,7 +43,7 @@
     "vue-template-compiler": "^2.6.12"
   },
   "peerDependencies": {
-    "ag-charts-community": "~4.1.0",
+    "ag-charts-community": "~4.2.0",
     "vue": "^3.0.0",
     "vue-class-component": ">= ^8.0.0-beta.3"
   },
