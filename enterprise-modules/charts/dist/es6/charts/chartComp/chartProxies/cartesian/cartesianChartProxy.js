@@ -31,7 +31,7 @@ var CartesianChartProxy = /** @class */ (function (_super) {
         if (params.grouping) {
             if (!(this.axisTypeToClassMap[this.xAxisType] instanceof GroupedCategoryAxis)) {
                 this.xAxisType = 'groupedCategory';
-                this.create();
+                this.recreateChart();
             }
             return;
         }
@@ -39,7 +39,7 @@ var CartesianChartProxy = /** @class */ (function (_super) {
         var newXAxisType = CartesianChartProxy.isTimeAxis(params) ? 'time' : 'category';
         if (newXAxisType !== this.xAxisType) {
             this.xAxisType = newXAxisType;
-            this.create();
+            this.recreateChart();
         }
     };
     CartesianChartProxy.prototype.updateLabelRotation = function (categoryId) {

@@ -3736,7 +3736,7 @@ var DateCompWrapper = /** @class */ (function () {
                 dateComp.setDate(_this.tempValue);
             }
             if (_this.disabled != null) {
-                dateComp.setDisabled(_this.disabled);
+                _this.setDateCompDisabled(_this.disabled);
             }
         });
     }
@@ -3757,7 +3757,7 @@ var DateCompWrapper = /** @class */ (function () {
     };
     DateCompWrapper.prototype.setDisabled = function (disabled) {
         if (this.dateComp) {
-            this.dateComp.setDisabled(disabled);
+            this.setDateCompDisabled(disabled);
         }
         else {
             this.disabled = disabled;
@@ -3780,6 +3780,15 @@ var DateCompWrapper = /** @class */ (function () {
         if (this.dateComp && typeof this.dateComp.afterGuiAttached === 'function') {
             this.dateComp.afterGuiAttached(params);
         }
+    };
+    DateCompWrapper.prototype.setDateCompDisabled = function (disabled) {
+        if (this.dateComp == null) {
+            return;
+        }
+        if (this.dateComp.setDisabled == null) {
+            return;
+        }
+        this.dateComp.setDisabled(disabled);
     };
     return DateCompWrapper;
 }());
@@ -20368,7 +20377,9 @@ var gridBodyScrollFeature_GridBodyScrollFeature = /** @class */ (function (_supe
         this.lastHorizontalScrollElement = null;
     };
     GridBodyScrollFeature.prototype.doHorizontalScroll = function (scrollLeft) {
-        if (this.scrollLeft === scrollLeft) {
+        var fakeHScrollViewport = this.ctrlsService.getFakeHScrollCtrl().getViewport();
+        var fakeScrollLeft = Object(dom["getScrollLeft"])(fakeHScrollViewport, this.enableRtl);
+        if (this.scrollLeft === scrollLeft && scrollLeft === fakeScrollLeft) {
             return;
         }
         this.scrollLeft = scrollLeft;
@@ -34804,9 +34815,10 @@ function createIconNoSpan(iconName, gridOptionsWrapper, column, forceCreate) {
 /* harmony import */ var _modules_moduleNames__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__("203c");
 /* harmony import */ var _modules_moduleRegistry__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__("7749");
 /* harmony import */ var _rendering_features_setLeftFeature__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__("5263");
-/* harmony import */ var _utils_icon__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("c651");
-/* harmony import */ var _widgets_managedFocusFeature__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("fa05");
-/* harmony import */ var _hoverFeature__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("361b");
+/* harmony import */ var _utils_dom__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__("683d");
+/* harmony import */ var _utils_icon__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__("c651");
+/* harmony import */ var _widgets_managedFocusFeature__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__("fa05");
+/* harmony import */ var _hoverFeature__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__("361b");
 /**
  * @ag-grid-community/core - Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components
  * @version v26.2.0
@@ -34832,6 +34844,7 @@ var __decorate = (undefined && undefined.__decorate) || function (decorators, ta
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+
 
 
 
@@ -34875,11 +34888,13 @@ var HeaderFilterCellCtrl = /** @class */ (function (_super) {
         }
         this.comp.addOrRemoveBodyCssClass('ag-floating-filter-full-body', this.suppressFilterButton);
         this.comp.addOrRemoveBodyCssClass('ag-floating-filter-body', !this.suppressFilterButton);
-        var eMenuIcon = Object(_utils_icon__WEBPACK_IMPORTED_MODULE_9__["createIconNoSpan"])('filter', this.gridOptionsWrapper, this.column);
-        eMenuIcon && this.eButtonShowMainFilter.appendChild(eMenuIcon);
+        var eMenuIcon = Object(_utils_icon__WEBPACK_IMPORTED_MODULE_10__["createIconNoSpan"])('filter', this.gridOptionsWrapper, this.column);
+        if (eMenuIcon) {
+            this.eButtonShowMainFilter.appendChild(eMenuIcon);
+        }
     };
     HeaderFilterCellCtrl.prototype.setupFocus = function () {
-        this.createManagedBean(new _widgets_managedFocusFeature__WEBPACK_IMPORTED_MODULE_10__[/* ManagedFocusFeature */ "a"](this.eGui, {
+        this.createManagedBean(new _widgets_managedFocusFeature__WEBPACK_IMPORTED_MODULE_11__[/* ManagedFocusFeature */ "a"](this.eGui, {
             shouldStopEventPropagation: this.shouldStopEventPropagation.bind(this),
             onTabKeyDown: this.onTabKeyDown.bind(this),
             handleKeyDown: this.handleKeyDown.bind(this),
@@ -34927,28 +34942,32 @@ var HeaderFilterCellCtrl = /** @class */ (function (_super) {
         }
     };
     HeaderFilterCellCtrl.prototype.onFocusIn = function (e) {
-        var fromWithin = this.eGui.contains(e.relatedTarget);
+        var isRelatedWithin = this.eGui.contains(e.relatedTarget);
         // when the focus is already within the component,
         // we default to the browser's behavior
-        if (fromWithin) {
+        if (isRelatedWithin) {
             return;
         }
-        if (e.target === this.eGui) {
-            var keyboardMode = this.focusService.isKeyboardMode();
-            var currentFocusedHeader = this.beans.focusService.getFocusedHeader();
-            var nextColumn = this.beans.columnModel.getDisplayedColAfter(this.column);
+        var keyboardMode = this.focusService.isKeyboardMode();
+        var notFromHeaderWrapper = !!e.relatedTarget && !Object(_utils_dom__WEBPACK_IMPORTED_MODULE_9__["containsClass"])(e.relatedTarget, 'ag-floating-filter');
+        var fromWithinHeader = !!e.relatedTarget && Object(_utils_dom__WEBPACK_IMPORTED_MODULE_9__["isElementChildOfClass"])(e.relatedTarget, 'ag-floating-filter');
+        if (keyboardMode && notFromHeaderWrapper && fromWithinHeader && e.target === this.eGui) {
             var lastFocusEvent = this.lastFocusEvent;
-            var fromShiftTab = !!(lastFocusEvent && lastFocusEvent.shiftKey && lastFocusEvent.keyCode === _constants_keyCode__WEBPACK_IMPORTED_MODULE_1__[/* KeyCode */ "a"].TAB);
-            var fromNextColumn = !!(currentFocusedHeader && nextColumn === currentFocusedHeader.column);
-            var shouldFocusLast = keyboardMode && (fromShiftTab || fromNextColumn);
-            this.focusService.focusInto(this.eGui, shouldFocusLast);
+            var fromTab = !!(lastFocusEvent && lastFocusEvent.keyCode === _constants_keyCode__WEBPACK_IMPORTED_MODULE_1__[/* KeyCode */ "a"].TAB);
+            if (lastFocusEvent && fromTab) {
+                var currentFocusedHeader = this.beans.focusService.getFocusedHeader();
+                var nextColumn = this.beans.columnModel.getDisplayedColAfter(this.column);
+                var fromNextColumn = currentFocusedHeader && nextColumn === currentFocusedHeader.column;
+                var shouldFocusLast = !!(keyboardMode && lastFocusEvent.shiftKey && fromNextColumn);
+                this.focusService.focusInto(this.eGui, shouldFocusLast);
+            }
         }
         var rowIndex = this.getRowIndex();
         this.beans.focusService.setFocusedHeader(rowIndex, this.column);
     };
     HeaderFilterCellCtrl.prototype.setupHover = function () {
         var _this = this;
-        this.createManagedBean(new _hoverFeature__WEBPACK_IMPORTED_MODULE_11__[/* HoverFeature */ "a"]([this.column], this.eGui));
+        this.createManagedBean(new _hoverFeature__WEBPACK_IMPORTED_MODULE_12__[/* HoverFeature */ "a"]([this.column], this.eGui));
         var listener = function () {
             if (!_this.gridOptionsWrapper.isColumnHoverHighlight()) {
                 return;
@@ -52318,7 +52337,8 @@ var VueComponent = /** @class */ (function () {
         return this.component.$el;
     };
     VueComponent.prototype.destroy = function () {
-        if (this.getFrameworkComponentInstance() && typeof this.getFrameworkComponentInstance().destroy === 'function') {
+        if (this.getFrameworkComponentInstance() &&
+            typeof this.getFrameworkComponentInstance().destroy === 'function') {
             this.getFrameworkComponentInstance().destroy();
         }
         this.component.$destroy();

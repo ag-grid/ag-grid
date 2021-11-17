@@ -6,7 +6,7 @@ export interface IDate {
     /** Sets the date represented by this component */
     setDate(date: Date | null): void;
     /** Sets the disabled state of this component */
-    setDisabled(disabled: boolean): void;
+    setDisabled?(disabled: boolean): void;
     setInputPlaceholder?(placeholder: string): void;
     setInputAriaLabel?(placeholder: string): void;
 }

@@ -1152,7 +1152,8 @@ var VueComponent = /** @class */ (function () {
         return this.component.$el;
     };
     VueComponent.prototype.destroy = function () {
-        if (this.getFrameworkComponentInstance() && typeof this.getFrameworkComponentInstance().destroy === 'function') {
+        if (this.getFrameworkComponentInstance() &&
+            typeof this.getFrameworkComponentInstance().destroy === 'function') {
             this.getFrameworkComponentInstance().destroy();
         }
         this.component.$destroy();

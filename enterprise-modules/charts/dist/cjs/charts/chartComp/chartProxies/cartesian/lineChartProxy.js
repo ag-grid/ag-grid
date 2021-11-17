@@ -33,9 +33,10 @@ var LineChartProxy = /** @class */ (function (_super) {
         var _this = _super.call(this, params) || this;
         _this.xAxisType = params.grouping ? 'groupedCategory' : 'category';
         _this.yAxisType = 'number';
+        _this.recreateChart();
         return _this;
     }
-    LineChartProxy.prototype.create = function () {
+    LineChartProxy.prototype.createChart = function () {
         return ag_charts_community_1.AgChart.create({
             type: 'line',
             container: this.chartProxyParams.parentElement,

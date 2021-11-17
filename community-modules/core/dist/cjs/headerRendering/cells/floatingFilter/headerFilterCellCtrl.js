@@ -34,6 +34,7 @@ var floatingFilterMapper_1 = require("../../../filter/floating/floatingFilterMap
 var moduleNames_1 = require("../../../modules/moduleNames");
 var moduleRegistry_1 = require("../../../modules/moduleRegistry");
 var setLeftFeature_1 = require("../../../rendering/features/setLeftFeature");
+var dom_1 = require("../../../utils/dom");
 var icon_1 = require("../../../utils/icon");
 var managedFocusFeature_1 = require("../../../widgets/managedFocusFeature");
 var hoverFeature_1 = require("../hoverFeature");
@@ -69,7 +70,9 @@ var HeaderFilterCellCtrl = /** @class */ (function (_super) {
         this.comp.addOrRemoveBodyCssClass('ag-floating-filter-full-body', this.suppressFilterButton);
         this.comp.addOrRemoveBodyCssClass('ag-floating-filter-body', !this.suppressFilterButton);
         var eMenuIcon = icon_1.createIconNoSpan('filter', this.gridOptionsWrapper, this.column);
-        eMenuIcon && this.eButtonShowMainFilter.appendChild(eMenuIcon);
+        if (eMenuIcon) {
+            this.eButtonShowMainFilter.appendChild(eMenuIcon);
+        }
     };
     HeaderFilterCellCtrl.prototype.setupFocus = function () {
         this.createManagedBean(new managedFocusFeature_1.ManagedFocusFeature(this.eGui, {
@@ -120,21 +123,25 @@ var HeaderFilterCellCtrl = /** @class */ (function (_super) {
         }
     };
     HeaderFilterCellCtrl.prototype.onFocusIn = function (e) {
-        var fromWithin = this.eGui.contains(e.relatedTarget);
+        var isRelatedWithin = this.eGui.contains(e.relatedTarget);
         // when the focus is already within the component,
         // we default to the browser's behavior
-        if (fromWithin) {
+        if (isRelatedWithin) {
             return;
         }
-        if (e.target === this.eGui) {
-            var keyboardMode = this.focusService.isKeyboardMode();
-            var currentFocusedHeader = this.beans.focusService.getFocusedHeader();
-            var nextColumn = this.beans.columnModel.getDisplayedColAfter(this.column);
+        var keyboardMode = this.focusService.isKeyboardMode();
+        var notFromHeaderWrapper = !!e.relatedTarget && !dom_1.containsClass(e.relatedTarget, 'ag-floating-filter');
+        var fromWithinHeader = !!e.relatedTarget && dom_1.isElementChildOfClass(e.relatedTarget, 'ag-floating-filter');
+        if (keyboardMode && notFromHeaderWrapper && fromWithinHeader && e.target === this.eGui) {
             var lastFocusEvent = this.lastFocusEvent;
-            var fromShiftTab = !!(lastFocusEvent && lastFocusEvent.shiftKey && lastFocusEvent.keyCode === keyCode_1.KeyCode.TAB);
-            var fromNextColumn = !!(currentFocusedHeader && nextColumn === currentFocusedHeader.column);
-            var shouldFocusLast = keyboardMode && (fromShiftTab || fromNextColumn);
-            this.focusService.focusInto(this.eGui, shouldFocusLast);
+            var fromTab = !!(lastFocusEvent && lastFocusEvent.keyCode === keyCode_1.KeyCode.TAB);
+            if (lastFocusEvent && fromTab) {
+                var currentFocusedHeader = this.beans.focusService.getFocusedHeader();
+                var nextColumn = this.beans.columnModel.getDisplayedColAfter(this.column);
+                var fromNextColumn = currentFocusedHeader && nextColumn === currentFocusedHeader.column;
+                var shouldFocusLast = !!(keyboardMode && lastFocusEvent.shiftKey && fromNextColumn);
+                this.focusService.focusInto(this.eGui, shouldFocusLast);
+            }
         }
         var rowIndex = this.getRowIndex();
         this.beans.focusService.setFocusedHeader(rowIndex, this.column);

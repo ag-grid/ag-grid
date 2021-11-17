@@ -25686,23 +25686,27 @@ var ChartProxy = /** @class */ (function () {
         this.standaloneChartType = getChartThemeOverridesObjectName(this.chartType);
         if (this.chartProxyParams.chartOptionsToRestore) {
             this.chartOptions = this.chartProxyParams.chartOptionsToRestore;
-            this.chartTheme = getChartTheme({ overrides: this.chartOptions });
+            var themeOverrides = { overrides: this.chartOptions };
+            this.chartTheme = getChartTheme(__assign$8({ baseTheme: this.getSelectedTheme() }, themeOverrides));
             return;
         }
         this.chartTheme = this.createChartTheme();
         this.chartOptions = this.convertConfigToOverrides(this.chartTheme.config);
     }
-    ChartProxy.prototype.createChart = function () {
+    ChartProxy.prototype.recreateChart = function () {
         var _this = this;
         if (this.chart) {
             this.destroyChart();
         }
-        this.chart = this.create();
+        this.chart = this.createChart();
         if (this.crossFiltering) {
             // add event listener to chart canvas to detect when user wishes to reset filters
             var resetFilters_1 = true;
             this.chart.addEventListener('click', function (e) { return _this.crossFilterCallback(e, resetFilters_1); });
         }
+    };
+    ChartProxy.prototype.getChart = function () {
+        return this.chart;
     };
     ChartProxy.prototype.createChartTheme = function () {
         var _this = this;
@@ -25758,9 +25762,6 @@ var ChartProxy = /** @class */ (function () {
     };
     ChartProxy.prototype.getChartOptions = function () {
         return this.chartOptions;
-    };
-    ChartProxy.prototype.getChart = function () {
-        return this.chart;
     };
     ChartProxy.prototype.transformData = function (data, categoryKey) {
         if (this.chart.axes.filter(function (a) { return a instanceof CategoryAxis; }).length < 1) {
@@ -25827,7 +25828,7 @@ var CartesianChartProxy = /** @class */ (function (_super) {
         if (params.grouping) {
             if (!(this.axisTypeToClassMap[this.xAxisType] instanceof GroupedCategoryAxis)) {
                 this.xAxisType = 'groupedCategory';
-                this.create();
+                this.recreateChart();
             }
             return;
         }
@@ -25835,7 +25836,7 @@ var CartesianChartProxy = /** @class */ (function (_super) {
         var newXAxisType = CartesianChartProxy.isTimeAxis(params) ? 'time' : 'category';
         if (newXAxisType !== this.xAxisType) {
             this.xAxisType = newXAxisType;
-            this.create();
+            this.recreateChart();
         }
     };
     CartesianChartProxy.prototype.updateLabelRotation = function (categoryId) {
@@ -25948,9 +25949,10 @@ var BarChartProxy = /** @class */ (function (_super) {
         // when the standalone chart type is 'bar' - xAxis is positioned to the 'left'
         _this.xAxisType = params.grouping ? 'groupedCategory' : 'category';
         _this.yAxisType = 'number';
+        _this.recreateChart();
         return _this;
     }
-    BarChartProxy.prototype.create = function () {
+    BarChartProxy.prototype.createChart = function () {
         var _a = [this.standaloneChartType === 'bar', this.isNormalised()], isBar = _a[0], isNormalised = _a[1];
         return AgChart.create({
             type: isBar ? 'bar' : 'column',
@@ -26022,6 +26024,7 @@ var BarChartProxy = /** @class */ (function (_super) {
         // special handling to add a default label formatter to show '%' for normalized charts if none is provided
         if (normalised) {
             var numberAxis = axes[1];
+            // FIXME: only update labels when no formatter is supplied
             numberAxis.label = __assign$9(__assign$9({}, numberAxis.label), { formatter: function (params) { return Math.round(params.value) + '%'; } });
         }
         return axes;
@@ -26068,9 +26071,10 @@ var AreaChartProxy = /** @class */ (function (_super) {
         var _this = _super.call(this, params) || this;
         _this.xAxisType = params.grouping ? 'groupedCategory' : 'category';
         _this.yAxisType = 'number';
+        _this.recreateChart();
         return _this;
     }
-    AreaChartProxy.prototype.create = function () {
+    AreaChartProxy.prototype.createChart = function () {
         return AgChart.create({
             type: 'area',
             container: this.chartProxyParams.parentElement,
@@ -26193,9 +26197,10 @@ var LineChartProxy = /** @class */ (function (_super) {
         var _this = _super.call(this, params) || this;
         _this.xAxisType = params.grouping ? 'groupedCategory' : 'category';
         _this.yAxisType = 'number';
+        _this.recreateChart();
         return _this;
     }
-    LineChartProxy.prototype.create = function () {
+    LineChartProxy.prototype.createChart = function () {
         return AgChart.create({
             type: 'line',
             container: this.chartProxyParams.parentElement,
@@ -26318,9 +26323,11 @@ var __assign$c = (undefined && undefined.__assign) || function () {
 var PieChartProxy = /** @class */ (function (_super) {
     __extends$1O(PieChartProxy, _super);
     function PieChartProxy(params) {
-        return _super.call(this, params) || this;
+        var _this = _super.call(this, params) || this;
+        _this.recreateChart();
+        return _this;
     }
-    PieChartProxy.prototype.create = function () {
+    PieChartProxy.prototype.createChart = function () {
         return AgChart.create({
             type: 'pie',
             container: this.chartProxyParams.parentElement,
@@ -26371,6 +26378,7 @@ var PieChartProxy = /** @class */ (function (_super) {
             pieSeries = AgChart.createComponent(options, 'pie.series');
             pieSeries.fills = this.chartTheme.palette.fills;
             pieSeries.strokes = this.chartTheme.palette.strokes;
+            pieSeries.callout.colors = this.chartTheme.palette.strokes;
             if (this.crossFiltering && pieSeries && !pieSeries.tooltip.renderer) {
                 // only add renderer if user hasn't provided one
                 this.addCrossFilteringTooltipRenderer(pieSeries);
@@ -26387,6 +26395,7 @@ var PieChartProxy = /** @class */ (function (_super) {
             if (isOpaqueSeries) {
                 pieSeries.fills = changeOpacity(pieSeries.fills, 0.3);
                 pieSeries.strokes = changeOpacity(pieSeries.strokes, 0.3);
+                pieSeries.callout.colors = changeOpacity(pieSeries.strokes, 0.3);
                 pieSeries.showInLegend = false;
             }
             else {
@@ -26434,9 +26443,11 @@ var __assign$d = (undefined && undefined.__assign) || function () {
 var DoughnutChartProxy = /** @class */ (function (_super) {
     __extends$1P(DoughnutChartProxy, _super);
     function DoughnutChartProxy(params) {
-        return _super.call(this, params) || this;
+        var _this = _super.call(this, params) || this;
+        _this.recreateChart();
+        return _this;
     }
-    DoughnutChartProxy.prototype.create = function () {
+    DoughnutChartProxy.prototype.createChart = function () {
         return AgChart.create({
             type: 'pie',
             container: this.chartProxyParams.parentElement,
@@ -26530,7 +26541,6 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
     DoughnutChartProxy.prototype.updateSeries = function (updateParams) {
         var existingSeries = updateParams.seriesMap[updateParams.field.colId];
         var seriesOptions = __assign$d(__assign$d({}, updateParams.seriesDefaults), { type: 'pie', angleKey: this.crossFiltering ? updateParams.angleField.colId + '-total' : updateParams.angleField.colId, radiusKey: this.crossFiltering ? updateParams.field.colId : undefined, title: __assign$d(__assign$d({}, updateParams.seriesDefaults.title), { text: updateParams.seriesDefaults.title.text || updateParams.field.displayName }) });
-        var calloutColors = seriesOptions.callout && seriesOptions.callout.colors || seriesOptions.strokes || [];
         var pieSeries = existingSeries || AgChart.createComponent(seriesOptions, 'pie.series');
         if (pieSeries.title) {
             pieSeries.title.showInLegend = updateParams.numFields > 1;
@@ -26562,7 +26572,7 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
                 });
                 pieSeries.fills = updateParams.fills;
                 pieSeries.strokes = updateParams.strokes;
-                pieSeries.callout.colors = calloutColors;
+                pieSeries.callout.colors = updateParams.strokes;
             }
             // disable series highlighting by default
             pieSeries.highlightStyle.fill = undefined;
@@ -26572,7 +26582,7 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
         else {
             pieSeries.fills = updateParams.fills;
             pieSeries.strokes = updateParams.strokes;
-            pieSeries.callout.colors = calloutColors;
+            pieSeries.callout.colors = updateParams.strokes;
         }
         var offsetAmount = updateParams.numFields > 1 ? 20 : 40;
         pieSeries.outerRadiusOffset = updateParams.offset;
@@ -26617,9 +26627,10 @@ var ScatterChartProxy = /** @class */ (function (_super) {
         var _this = _super.call(this, params) || this;
         _this.xAxisType = 'number';
         _this.yAxisType = 'number';
+        _this.recreateChart();
         return _this;
     }
-    ScatterChartProxy.prototype.create = function () {
+    ScatterChartProxy.prototype.createChart = function () {
         return AgChart.create({
             type: 'scatter',
             container: this.chartProxyParams.parentElement,
@@ -26826,9 +26837,10 @@ var HistogramChartProxy = /** @class */ (function (_super) {
         var _this = _super.call(this, params) || this;
         _this.xAxisType = 'number';
         _this.yAxisType = 'number';
+        _this.recreateChart();
         return _this;
     }
-    HistogramChartProxy.prototype.create = function () {
+    HistogramChartProxy.prototype.createChart = function () {
         return AgChart.create({
             container: this.chartProxyParams.parentElement,
             theme: this.chartTheme,
@@ -26884,8 +26896,6 @@ var ChartOptionsService = /** @class */ (function (_super) {
         _this.chartController = chartController;
         return _this;
     }
-    ChartOptionsService.prototype.init = function () {
-    };
     ChartOptionsService.prototype.getChartType = function () {
         return this.chartController.getChartType();
     };
@@ -27008,9 +27018,6 @@ var ChartOptionsService = /** @class */ (function (_super) {
     __decorate$K([
         core.Autowired('columnApi')
     ], ChartOptionsService.prototype, "columnApi", void 0);
-    __decorate$K([
-        core.PostConstruct
-    ], ChartOptionsService.prototype, "init", null);
     return ChartOptionsService;
 }(core.BeanStub));
 
@@ -27129,7 +27136,6 @@ var GridChartComp = /** @class */ (function (_super) {
             console.warn('AG Grid: invalid chart type supplied: ', chartProxyParams.chartType);
             return;
         }
-        this.chartProxy.createChart();
         var canvas = this.eChart.querySelector('canvas');
         if (canvas) {
             core._.addCssClass(canvas, 'ag-charts-canvas');

@@ -43,9 +43,10 @@ export declare abstract class ChartProxy {
     protected crossFiltering: boolean;
     protected crossFilterCallback: (event: any, reset?: boolean) => void;
     protected constructor(chartProxyParams: ChartProxyParams);
-    protected abstract create(): Chart;
+    protected abstract createChart(options?: AgChartThemeOverrides): Chart;
     abstract update(params: UpdateChartParams): void;
-    createChart(): void;
+    recreateChart(): void;
+    getChart(): Chart;
     private createChartTheme;
     isStockTheme(themeName: string): boolean;
     private getSelectedTheme;
@@ -54,7 +55,6 @@ export declare abstract class ChartProxy {
     downloadChart(): void;
     getChartImageDataURL(type?: string): string;
     getChartOptions(): AgChartThemeOverrides;
-    getChart(): Chart;
     protected transformData(data: any[], categoryKey: string): any[];
     private convertConfigToOverrides;
     destroy(): void;

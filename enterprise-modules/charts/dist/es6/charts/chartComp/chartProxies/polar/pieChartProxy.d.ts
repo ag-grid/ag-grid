@@ -3,7 +3,7 @@ import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { PolarChartProxy } from "./polarChartProxy";
 export declare class PieChartProxy extends PolarChartProxy {
     constructor(params: ChartProxyParams);
-    protected create(): PolarChart;
+    protected createChart(): PolarChart;
     update(params: UpdateChartParams): void;
     private updateSeries;
 }

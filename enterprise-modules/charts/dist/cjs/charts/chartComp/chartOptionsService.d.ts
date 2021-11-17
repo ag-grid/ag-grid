@@ -5,7 +5,6 @@ export declare class ChartOptionsService extends BeanStub {
     private readonly columnApi;
     private readonly chartController;
     constructor(chartController: ChartController);
-    private init;
     getChartType(): ChartType;
     getChartOption<T = string>(expression: string): T;
     setChartOption<T = string>(expression: string, value: T): void;

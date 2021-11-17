@@ -22,23 +22,27 @@ var ChartProxy = /** @class */ (function () {
         this.standaloneChartType = getChartThemeOverridesObjectName(this.chartType);
         if (this.chartProxyParams.chartOptionsToRestore) {
             this.chartOptions = this.chartProxyParams.chartOptionsToRestore;
-            this.chartTheme = getChartTheme({ overrides: this.chartOptions });
+            var themeOverrides = { overrides: this.chartOptions };
+            this.chartTheme = getChartTheme(__assign({ baseTheme: this.getSelectedTheme() }, themeOverrides));
             return;
         }
         this.chartTheme = this.createChartTheme();
         this.chartOptions = this.convertConfigToOverrides(this.chartTheme.config);
     }
-    ChartProxy.prototype.createChart = function () {
+    ChartProxy.prototype.recreateChart = function () {
         var _this = this;
         if (this.chart) {
             this.destroyChart();
         }
-        this.chart = this.create();
+        this.chart = this.createChart();
         if (this.crossFiltering) {
             // add event listener to chart canvas to detect when user wishes to reset filters
             var resetFilters_1 = true;
             this.chart.addEventListener('click', function (e) { return _this.crossFilterCallback(e, resetFilters_1); });
         }
+    };
+    ChartProxy.prototype.getChart = function () {
+        return this.chart;
     };
     ChartProxy.prototype.createChartTheme = function () {
         var _this = this;
@@ -94,9 +98,6 @@ var ChartProxy = /** @class */ (function () {
     };
     ChartProxy.prototype.getChartOptions = function () {
         return this.chartOptions;
-    };
-    ChartProxy.prototype.getChart = function () {
-        return this.chart;
     };
     ChartProxy.prototype.transformData = function (data, categoryKey) {
         if (this.chart.axes.filter(function (a) { return a instanceof CategoryAxis; }).length < 1) {

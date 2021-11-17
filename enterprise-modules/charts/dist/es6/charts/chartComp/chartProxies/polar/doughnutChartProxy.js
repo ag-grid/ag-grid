@@ -29,9 +29,11 @@ import { hexToRGBA } from "../../color";
 var DoughnutChartProxy = /** @class */ (function (_super) {
     __extends(DoughnutChartProxy, _super);
     function DoughnutChartProxy(params) {
-        return _super.call(this, params) || this;
+        var _this = _super.call(this, params) || this;
+        _this.recreateChart();
+        return _this;
     }
-    DoughnutChartProxy.prototype.create = function () {
+    DoughnutChartProxy.prototype.createChart = function () {
         return AgChart.create({
             type: 'pie',
             container: this.chartProxyParams.parentElement,
@@ -125,7 +127,6 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
     DoughnutChartProxy.prototype.updateSeries = function (updateParams) {
         var existingSeries = updateParams.seriesMap[updateParams.field.colId];
         var seriesOptions = __assign(__assign({}, updateParams.seriesDefaults), { type: 'pie', angleKey: this.crossFiltering ? updateParams.angleField.colId + '-total' : updateParams.angleField.colId, radiusKey: this.crossFiltering ? updateParams.field.colId : undefined, title: __assign(__assign({}, updateParams.seriesDefaults.title), { text: updateParams.seriesDefaults.title.text || updateParams.field.displayName }) });
-        var calloutColors = seriesOptions.callout && seriesOptions.callout.colors || seriesOptions.strokes || [];
         var pieSeries = existingSeries || AgChart.createComponent(seriesOptions, 'pie.series');
         if (pieSeries.title) {
             pieSeries.title.showInLegend = updateParams.numFields > 1;
@@ -157,7 +158,7 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
                 });
                 pieSeries.fills = updateParams.fills;
                 pieSeries.strokes = updateParams.strokes;
-                pieSeries.callout.colors = calloutColors;
+                pieSeries.callout.colors = updateParams.strokes;
             }
             // disable series highlighting by default
             pieSeries.highlightStyle.fill = undefined;
@@ -167,7 +168,7 @@ var DoughnutChartProxy = /** @class */ (function (_super) {
         else {
             pieSeries.fills = updateParams.fills;
             pieSeries.strokes = updateParams.strokes;
-            pieSeries.callout.colors = calloutColors;
+            pieSeries.callout.colors = updateParams.strokes;
         }
         var offsetAmount = updateParams.numFields > 1 ? 20 : 40;
         pieSeries.outerRadiusOffset = updateParams.offset;

@@ -29,8 +29,6 @@ var ChartOptionsService = /** @class */ (function (_super) {
         _this.chartController = chartController;
         return _this;
     }
-    ChartOptionsService.prototype.init = function () {
-    };
     ChartOptionsService.prototype.getChartType = function () {
         return this.chartController.getChartType();
     };
@@ -153,9 +151,6 @@ var ChartOptionsService = /** @class */ (function (_super) {
     __decorate([
         core_1.Autowired('columnApi')
     ], ChartOptionsService.prototype, "columnApi", void 0);
-    __decorate([
-        core_1.PostConstruct
-    ], ChartOptionsService.prototype, "init", null);
     return ChartOptionsService;
 }(core_1.BeanStub));
 exports.ChartOptionsService = ChartOptionsService;

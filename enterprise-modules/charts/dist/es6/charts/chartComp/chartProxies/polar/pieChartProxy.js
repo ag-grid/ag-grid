@@ -28,9 +28,11 @@ import { changeOpacity } from "../../color";
 var PieChartProxy = /** @class */ (function (_super) {
     __extends(PieChartProxy, _super);
     function PieChartProxy(params) {
-        return _super.call(this, params) || this;
+        var _this = _super.call(this, params) || this;
+        _this.recreateChart();
+        return _this;
     }
-    PieChartProxy.prototype.create = function () {
+    PieChartProxy.prototype.createChart = function () {
         return AgChart.create({
             type: 'pie',
             container: this.chartProxyParams.parentElement,
@@ -81,6 +83,7 @@ var PieChartProxy = /** @class */ (function (_super) {
             pieSeries = AgChart.createComponent(options, 'pie.series');
             pieSeries.fills = this.chartTheme.palette.fills;
             pieSeries.strokes = this.chartTheme.palette.strokes;
+            pieSeries.callout.colors = this.chartTheme.palette.strokes;
             if (this.crossFiltering && pieSeries && !pieSeries.tooltip.renderer) {
                 // only add renderer if user hasn't provided one
                 this.addCrossFilteringTooltipRenderer(pieSeries);
@@ -97,6 +100,7 @@ var PieChartProxy = /** @class */ (function (_super) {
             if (isOpaqueSeries) {
                 pieSeries.fills = changeOpacity(pieSeries.fills, 0.3);
                 pieSeries.strokes = changeOpacity(pieSeries.strokes, 0.3);
+                pieSeries.callout.colors = changeOpacity(pieSeries.strokes, 0.3);
                 pieSeries.showInLegend = false;
             }
             else {

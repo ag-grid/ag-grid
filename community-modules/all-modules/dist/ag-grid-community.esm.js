@@ -11092,7 +11092,7 @@ var DateCompWrapper = /** @class */ (function () {
                 dateComp.setDate(_this.tempValue);
             }
             if (_this.disabled != null) {
-                dateComp.setDisabled(_this.disabled);
+                _this.setDateCompDisabled(_this.disabled);
             }
         });
     }
@@ -11113,7 +11113,7 @@ var DateCompWrapper = /** @class */ (function () {
     };
     DateCompWrapper.prototype.setDisabled = function (disabled) {
         if (this.dateComp) {
-            this.dateComp.setDisabled(disabled);
+            this.setDateCompDisabled(disabled);
         }
         else {
             this.disabled = disabled;
@@ -11136,6 +11136,15 @@ var DateCompWrapper = /** @class */ (function () {
         if (this.dateComp && typeof this.dateComp.afterGuiAttached === 'function') {
             this.dateComp.afterGuiAttached(params);
         }
+    };
+    DateCompWrapper.prototype.setDateCompDisabled = function (disabled) {
+        if (this.dateComp == null) {
+            return;
+        }
+        if (this.dateComp.setDisabled == null) {
+            return;
+        }
+        this.dateComp.setDisabled(disabled);
     };
     return DateCompWrapper;
 }());
@@ -26512,7 +26521,9 @@ var HeaderFilterCellCtrl = /** @class */ (function (_super) {
         this.comp.addOrRemoveBodyCssClass('ag-floating-filter-full-body', this.suppressFilterButton);
         this.comp.addOrRemoveBodyCssClass('ag-floating-filter-body', !this.suppressFilterButton);
         var eMenuIcon = createIconNoSpan('filter', this.gridOptionsWrapper, this.column);
-        eMenuIcon && this.eButtonShowMainFilter.appendChild(eMenuIcon);
+        if (eMenuIcon) {
+            this.eButtonShowMainFilter.appendChild(eMenuIcon);
+        }
     };
     HeaderFilterCellCtrl.prototype.setupFocus = function () {
         this.createManagedBean(new ManagedFocusFeature(this.eGui, {
@@ -26563,21 +26574,25 @@ var HeaderFilterCellCtrl = /** @class */ (function (_super) {
         }
     };
     HeaderFilterCellCtrl.prototype.onFocusIn = function (e) {
-        var fromWithin = this.eGui.contains(e.relatedTarget);
+        var isRelatedWithin = this.eGui.contains(e.relatedTarget);
         // when the focus is already within the component,
         // we default to the browser's behavior
-        if (fromWithin) {
+        if (isRelatedWithin) {
             return;
         }
-        if (e.target === this.eGui) {
-            var keyboardMode = this.focusService.isKeyboardMode();
-            var currentFocusedHeader = this.beans.focusService.getFocusedHeader();
-            var nextColumn = this.beans.columnModel.getDisplayedColAfter(this.column);
+        var keyboardMode = this.focusService.isKeyboardMode();
+        var notFromHeaderWrapper = !!e.relatedTarget && !containsClass(e.relatedTarget, 'ag-floating-filter');
+        var fromWithinHeader = !!e.relatedTarget && isElementChildOfClass(e.relatedTarget, 'ag-floating-filter');
+        if (keyboardMode && notFromHeaderWrapper && fromWithinHeader && e.target === this.eGui) {
             var lastFocusEvent = this.lastFocusEvent;
-            var fromShiftTab = !!(lastFocusEvent && lastFocusEvent.shiftKey && lastFocusEvent.keyCode === KeyCode.TAB);
-            var fromNextColumn = !!(currentFocusedHeader && nextColumn === currentFocusedHeader.column);
-            var shouldFocusLast = keyboardMode && (fromShiftTab || fromNextColumn);
-            this.focusService.focusInto(this.eGui, shouldFocusLast);
+            var fromTab = !!(lastFocusEvent && lastFocusEvent.keyCode === KeyCode.TAB);
+            if (lastFocusEvent && fromTab) {
+                var currentFocusedHeader = this.beans.focusService.getFocusedHeader();
+                var nextColumn = this.beans.columnModel.getDisplayedColAfter(this.column);
+                var fromNextColumn = currentFocusedHeader && nextColumn === currentFocusedHeader.column;
+                var shouldFocusLast = !!(keyboardMode && lastFocusEvent.shiftKey && fromNextColumn);
+                this.focusService.focusInto(this.eGui, shouldFocusLast);
+            }
         }
         var rowIndex = this.getRowIndex();
         this.beans.focusService.setFocusedHeader(rowIndex, this.column);
@@ -29785,7 +29800,9 @@ var GridBodyScrollFeature = /** @class */ (function (_super) {
         this.lastHorizontalScrollElement = null;
     };
     GridBodyScrollFeature.prototype.doHorizontalScroll = function (scrollLeft) {
-        if (this.scrollLeft === scrollLeft) {
+        var fakeHScrollViewport = this.ctrlsService.getFakeHScrollCtrl().getViewport();
+        var fakeScrollLeft = getScrollLeft(fakeHScrollViewport, this.enableRtl);
+        if (this.scrollLeft === scrollLeft && scrollLeft === fakeScrollLeft) {
             return;
         }
         this.scrollLeft = scrollLeft;

@@ -35,7 +35,7 @@ var DateCompWrapper = /** @class */ (function () {
                 dateComp.setDate(_this.tempValue);
             }
             if (_this.disabled != null) {
-                dateComp.setDisabled(_this.disabled);
+                _this.setDateCompDisabled(_this.disabled);
             }
         });
     }
@@ -56,7 +56,7 @@ var DateCompWrapper = /** @class */ (function () {
     };
     DateCompWrapper.prototype.setDisabled = function (disabled) {
         if (this.dateComp) {
-            this.dateComp.setDisabled(disabled);
+            this.setDateCompDisabled(disabled);
         }
         else {
             this.disabled = disabled;
@@ -79,6 +79,15 @@ var DateCompWrapper = /** @class */ (function () {
         if (this.dateComp && typeof this.dateComp.afterGuiAttached === 'function') {
             this.dateComp.afterGuiAttached(params);
         }
+    };
+    DateCompWrapper.prototype.setDateCompDisabled = function (disabled) {
+        if (this.dateComp == null) {
+            return;
+        }
+        if (this.dateComp.setDisabled == null) {
+            return;
+        }
+        this.dateComp.setDisabled(disabled);
     };
     return DateCompWrapper;
 }());

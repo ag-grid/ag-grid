@@ -34,9 +34,10 @@ var AreaChartProxy = /** @class */ (function (_super) {
         var _this = _super.call(this, params) || this;
         _this.xAxisType = params.grouping ? 'groupedCategory' : 'category';
         _this.yAxisType = 'number';
+        _this.recreateChart();
         return _this;
     }
-    AreaChartProxy.prototype.create = function () {
+    AreaChartProxy.prototype.createChart = function () {
         return ag_charts_community_1.AgChart.create({
             type: 'area',
             container: this.chartProxyParams.parentElement,

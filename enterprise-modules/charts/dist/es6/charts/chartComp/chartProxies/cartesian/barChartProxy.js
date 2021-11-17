@@ -34,9 +34,10 @@ var BarChartProxy = /** @class */ (function (_super) {
         // when the standalone chart type is 'bar' - xAxis is positioned to the 'left'
         _this.xAxisType = params.grouping ? 'groupedCategory' : 'category';
         _this.yAxisType = 'number';
+        _this.recreateChart();
         return _this;
     }
-    BarChartProxy.prototype.create = function () {
+    BarChartProxy.prototype.createChart = function () {
         var _a = [this.standaloneChartType === 'bar', this.isNormalised()], isBar = _a[0], isNormalised = _a[1];
         return AgChart.create({
             type: isBar ? 'bar' : 'column',
@@ -108,6 +109,7 @@ var BarChartProxy = /** @class */ (function (_super) {
         // special handling to add a default label formatter to show '%' for normalized charts if none is provided
         if (normalised) {
             var numberAxis = axes[1];
+            // FIXME: only update labels when no formatter is supplied
             numberAxis.label = __assign(__assign({}, numberAxis.label), { formatter: function (params) { return Math.round(params.value) + '%'; } });
         }
         return axes;

@@ -53,7 +53,7 @@ export var getAgGridProperties = function () {
             handler: function (currentValue, previousValue) {
                 this.processChanges(propertyName, currentValue, previousValue);
             },
-            deep: propertyName !== 'popupParent'
+            deep: propertyName !== 'popupParent' && propertyName !== 'context'
         };
     });
     var model = {

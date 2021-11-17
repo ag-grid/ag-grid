@@ -31,6 +31,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 import { h } from 'vue';
 import { Options, Vue } from 'vue-class-component';
 import { AgChart } from 'ag-charts-community';
+import { toRaw } from '@vue/reactivity';
 var AgChartsVue = /** @class */ (function (_super) {
     __extends(AgChartsVue, _super);
     function AgChartsVue() {
@@ -41,7 +42,7 @@ var AgChartsVue = /** @class */ (function (_super) {
     }
     // noinspection JSUnusedGlobalSymbols, JSMethodCanBeStatic
     AgChartsVue.prototype.render = function () {
-        return h('div', { style: { height: '100%' } });
+        return h('div', { style: { height: '100%' }, ref: 'agChartRef' });
     };
     AgChartsVue.prototype.mounted = function () {
         var _this = this;
@@ -49,6 +50,8 @@ var AgChartsVue = /** @class */ (function (_super) {
         this.chart = AgChart.create(options);
         this.$watch('options', function (newValue, oldValue) {
             _this.processChanges(newValue, oldValue);
+        }, {
+            deep: true,
         });
         this.isCreated = true;
     };
@@ -65,14 +68,14 @@ var AgChartsVue = /** @class */ (function (_super) {
     };
     AgChartsVue.prototype.processChanges = function (currentValue, previousValue) {
         if (this.isCreated) {
-            AgChart.update(this.chart, this.applyContainerIfNotSet(this.options));
+            AgChart.update(this.chart, toRaw(this.applyContainerIfNotSet(toRaw(this.options))));
         }
     };
     AgChartsVue.prototype.applyContainerIfNotSet = function (propsOptions) {
         if (propsOptions.container) {
             return propsOptions;
         }
-        return __assign(__assign({}, propsOptions), { container: this.$el });
+        return __assign(__assign({}, propsOptions), { container: this.$refs.agChartRef });
     };
     AgChartsVue = __decorate([
         Options({

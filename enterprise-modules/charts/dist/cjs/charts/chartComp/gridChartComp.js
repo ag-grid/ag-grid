@@ -128,7 +128,6 @@ var GridChartComp = /** @class */ (function (_super) {
             console.warn('AG Grid: invalid chart type supplied: ', chartProxyParams.chartType);
             return;
         }
-        this.chartProxy.createChart();
         var canvas = this.eChart.querySelector('canvas');
         if (canvas) {
             core_1._.addCssClass(canvas, 'ag-charts-canvas');

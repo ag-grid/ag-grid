@@ -17,7 +17,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-import { _, Autowired, BeanStub, Events, PostConstruct } from "@ag-grid-community/core";
+import { _, Autowired, BeanStub, Events } from "@ag-grid-community/core";
 import { CategoryAxis, GroupedCategoryAxis, NumberAxis, TimeAxis } from "ag-charts-community";
 import { getChartThemeOverridesObjectName } from "./chartThemeOverridesMapper";
 var ChartOptionsService = /** @class */ (function (_super) {
@@ -27,8 +27,6 @@ var ChartOptionsService = /** @class */ (function (_super) {
         _this.chartController = chartController;
         return _this;
     }
-    ChartOptionsService.prototype.init = function () {
-    };
     ChartOptionsService.prototype.getChartType = function () {
         return this.chartController.getChartType();
     };
@@ -151,9 +149,6 @@ var ChartOptionsService = /** @class */ (function (_super) {
     __decorate([
         Autowired('columnApi')
     ], ChartOptionsService.prototype, "columnApi", void 0);
-    __decorate([
-        PostConstruct
-    ], ChartOptionsService.prototype, "init", null);
     return ChartOptionsService;
 }(BeanStub));
 export { ChartOptionsService };

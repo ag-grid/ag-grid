@@ -21,4 +21,5 @@ export declare class DateCompWrapper {
     setInputPlaceholder(placeholder: string): void;
     setInputAriaLabel(label: string): void;
     afterGuiAttached(params?: IAfterGuiAttachedParams): void;
+    private setDateCompDisabled;
 }

@@ -142,7 +142,9 @@ var GridBodyScrollFeature = /** @class */ (function (_super) {
         this.lastHorizontalScrollElement = null;
     };
     GridBodyScrollFeature.prototype.doHorizontalScroll = function (scrollLeft) {
-        if (this.scrollLeft === scrollLeft) {
+        var fakeHScrollViewport = this.ctrlsService.getFakeHScrollCtrl().getViewport();
+        var fakeScrollLeft = getScrollLeft(fakeHScrollViewport, this.enableRtl);
+        if (this.scrollLeft === scrollLeft && scrollLeft === fakeScrollLeft) {
             return;
         }
         this.scrollLeft = scrollLeft;

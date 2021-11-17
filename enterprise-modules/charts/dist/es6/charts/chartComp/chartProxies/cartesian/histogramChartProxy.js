@@ -31,9 +31,10 @@ var HistogramChartProxy = /** @class */ (function (_super) {
         var _this = _super.call(this, params) || this;
         _this.xAxisType = 'number';
         _this.yAxisType = 'number';
+        _this.recreateChart();
         return _this;
     }
-    HistogramChartProxy.prototype.create = function () {
+    HistogramChartProxy.prototype.createChart = function () {
         return AgChart.create({
             container: this.chartProxyParams.parentElement,
             theme: this.chartTheme,

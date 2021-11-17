@@ -30,9 +30,11 @@ var color_1 = require("../../color");
 var PieChartProxy = /** @class */ (function (_super) {
     __extends(PieChartProxy, _super);
     function PieChartProxy(params) {
-        return _super.call(this, params) || this;
+        var _this = _super.call(this, params) || this;
+        _this.recreateChart();
+        return _this;
     }
-    PieChartProxy.prototype.create = function () {
+    PieChartProxy.prototype.createChart = function () {
         return ag_charts_community_1.AgChart.create({
             type: 'pie',
             container: this.chartProxyParams.parentElement,
@@ -83,6 +85,7 @@ var PieChartProxy = /** @class */ (function (_super) {
             pieSeries = ag_charts_community_1.AgChart.createComponent(options, 'pie.series');
             pieSeries.fills = this.chartTheme.palette.fills;
             pieSeries.strokes = this.chartTheme.palette.strokes;
+            pieSeries.callout.colors = this.chartTheme.palette.strokes;
             if (this.crossFiltering && pieSeries && !pieSeries.tooltip.renderer) {
                 // only add renderer if user hasn't provided one
                 this.addCrossFilteringTooltipRenderer(pieSeries);
@@ -99,6 +102,7 @@ var PieChartProxy = /** @class */ (function (_super) {
             if (isOpaqueSeries) {
                 pieSeries.fills = color_1.changeOpacity(pieSeries.fills, 0.3);
                 pieSeries.strokes = color_1.changeOpacity(pieSeries.strokes, 0.3);
+                pieSeries.callout.colors = color_1.changeOpacity(pieSeries.strokes, 0.3);
                 pieSeries.showInLegend = false;
             }
             else {
