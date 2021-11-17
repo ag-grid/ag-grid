@@ -130,6 +130,13 @@ function deepCloneObject(object) {
     return JSON.parse(JSON.stringify(object));
 }
 
+function readAsJsFile(tsFile) {
+    let jsFile = sucrase.transform(fs.readFileSync(tsFile, 'utf8'), { transforms: ["typescript"] }).code;
+    // Remove empty lines left by sucrase removing the imports 
+    jsFile = jsFile.replace(/^\s*[\r\n]/, '');
+    return jsFile;
+}
+
 function createExampleGenerator(prefix, importTypes) {
     const [parser, vanillaToVue, vanillaToVue3, vanillaToReact, vanillaToReactFunctional, vanillaToAngular] = getGeneratorCode(prefix);
     const appModuleAngular = new Map();
@@ -160,11 +167,14 @@ function createExampleGenerator(prefix, importTypes) {
         if (!document) {
             throw new Error('examples are required to have an index.html file');
         }
-        let tsScripts = getMatchingPaths('main.ts');
+
         let mainJs = undefined;
+        let tsScripts = getMatchingPaths('main.ts');
         if (tsScripts.length > 0) {
+            // If the example is written in Typescript we need to strip the types and pass this in as the
+            // source javascript main.js file.
             const tsMainPath = tsScripts[0];
-            mainJs = sucrase.transform(fs.readFileSync(tsMainPath, 'utf8'), { transforms: ["typescript"] }).code;
+            mainJs = readAsJsFile(tsMainPath);
         }
 
         let scripts = getMatchingPaths('*.js');
@@ -336,20 +346,19 @@ function createExampleGenerator(prefix, importTypes) {
 
             inlineStyles = undefined; // unset these as they don't need to be copied for vanilla
             const tsScripts = getMatchingPaths('*.ts');
+            const tsToVanilla = (tsFile) => tsFile.replace('.ts', '_vanilla.js');
 
             try {
-                tsScripts.forEach(tss => {
-                    mainJs = sucrase.transform(fs.readFileSync(tss, 'utf8'), { transforms: ["typescript"] }).code;
-                    writeFile(tss.replace('.ts', '_vanilla.js'), mainJs);
+                tsScripts.forEach(tsFile => {
+                    mainJs = readAsJsFile(tsFile);
+                    writeFile(tsToVanilla(tsFile), mainJs);
                 })
 
                 const updatedScripts = getMatchingPaths('*.{html,js}', { ignore: ['**/*_{angular,react,vue,vue3}.js'] });
-
                 importTypes.forEach(importType => writeExampleFiles(importType, 'vanilla', 'vanilla', updatedScripts, {}));
 
-                tsScripts.forEach(tss => {
-                    fs.unlink(tss.replace('.ts', '_vanilla.js'));
-                })
+                // Clean up the intermediary files
+                tsScripts.forEach(tsFile => fs.unlink(tsToVanilla(tsFile)));
 
             } catch (e) {
                 console.error(`Failed to process Vanilla example in ${examplePath}`, e);
@@ -357,9 +366,9 @@ function createExampleGenerator(prefix, importTypes) {
             }
         }
 
-        // inlineStyles = undefined; // unset these as they don't need to be copied for vanilla
-        //const vanillaScripts = getMatchingPaths('*.{html,js,ts}', { ignore: ['**/* _{ angular, react, vue, vue3 }.js'] });
-        //importTypes.forEach(importType => writeExampleFiles(importType, 'vanilla', 'vanilla', vanillaScripts, {})); 
+        inlineStyles = undefined; // unset these as they don't need to be copied for typescript
+        const typescriptScripts = getMatchingPaths('*.{html,ts}', { ignore: ['**/* _{ angular, react, vue, vue3 }.js'] });
+        importTypes.forEach(importType => writeExampleFiles(importType, 'typescript', 'typescript', typescriptScripts, {}));
     };
 }
 
