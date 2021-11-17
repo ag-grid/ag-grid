@@ -4,5 +4,5 @@
 // https://stackoverflow.com/questions/39040108/import-class-in-definition-file-d-ts 
 
 declare const agGrid: {
-    Grid: (eGridDiv: Element | null, gridOptions: import("@ag-grid-community/core").GridOptions, params?: import("@ag-grid-community/core").GridParams) => void
+    Grid: new (eGridDiv: Element | null, gridOptions: import("@ag-grid-community/core").GridOptions, params?: import("@ag-grid-community/core").GridParams) => import("@ag-grid-community/core").Grid
 };
