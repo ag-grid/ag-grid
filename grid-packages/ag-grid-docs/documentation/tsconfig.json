@@ -23,6 +23,7 @@
         "./custom-types/**/*"
     ],
     "exclude": [
-        "./node_modules"
+        "./node_modules",
+        "./doc-pages/**/_gen/**/main.ts"
     ]
 }

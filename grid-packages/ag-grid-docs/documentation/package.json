@@ -2,7 +2,7 @@
   "name": "ag-grid-documentation",
   "private": true,
   "description": "The website for AG Grid",
-  "version": "26.1.0",
+  "version": "26.2.0",
   "license": "0BSD",
   "scripts": {
     "generate-examples": "cd .. && node dev-server.js generate-examples && cd documentation",
@@ -18,21 +18,20 @@
     "start": "npm run customise && npm run develop",
     "serve": "npx gatsby serve --prefix-paths -H 0.0.0.0",
     "clean": "npx gatsby clean",
-    "test": "npx jest",
-    "validate-examples": "gulp"
+    "test": "npx jest"
   },
   "dependencies": {
-    "@ag-grid-community/client-side-row-model": "^26.1.0",
-    "@ag-grid-community/core": "^26.1.0",
-    "@ag-grid-community/react": "^26.1.0",
-    "@ag-grid-enterprise/column-tool-panel": "^26.1.0",
-    "@ag-grid-enterprise/master-detail": "^26.1.0",
-    "@ag-grid-enterprise/set-filter": "^26.1.0",
-    "@ag-grid-enterprise/status-bar": "^26.1.0",
+    "@ag-grid-community/core": "~26.2.0",
+    "@ag-grid-community/client-side-row-model": "~26.2.0",
+    "@ag-grid-community/react": "~26.2.0",
+    "@ag-grid-enterprise/master-detail": "~26.2.0",
+    "@ag-grid-enterprise/set-filter": "~26.2.0",
+    "@ag-grid-enterprise/column-tool-panel": "~26.2.0",
+    "@ag-grid-enterprise/status-bar": "~26.2.0",
     "@fortawesome/fontawesome-svg-core": "1.2.34",
     "@fortawesome/free-solid-svg-icons": "5.15.2",
     "@fortawesome/react-fontawesome": "0.1.14",
-    "ag-charts-community": "^4.0.0",
+    "ag-charts-community": "~4.2.0",
     "algoliasearch": "4.8.5",
     "bootstrap": "4.6.0",
     "classnames": "2.2.6",
@@ -85,16 +84,14 @@
     "use-query-params": "1.2.0"
   },
   "devDependencies": {
-    "@types/node": "12.20.20",
     "babel-jest": "26.6.3",
     "babel-preset-gatsby": "1.0.0",
-    "commander": "7.1.0",
-    "gulp-typescript": "^6.0.0-alpha.1",
     "identity-obj-proxy": "3.0.0",
     "jest": "26.6.3",
     "jsdom": "16.4.0",
     "prettier": "2.2.1",
     "puppeteer-core": "7.1.0",
-    "react-test-renderer": "16.14.0"
+    "react-test-renderer": "16.14.0",
+    "commander": "7.1.0"
   }
 }

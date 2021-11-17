@@ -184,7 +184,7 @@ function createExampleGenerator(prefix, importTypes) {
             // multiple scripts - main.js is the main one, the rest are supplemental
             mainScript = getMatchingPaths('main.js')[0];
 
-            if (!mainScript) {
+            if (!mainScript && !mainJs) {
                 throw new Error('for an example with multiple scripts matching *.js, one must be named main.js');
             }
 
@@ -348,7 +348,7 @@ function createExampleGenerator(prefix, importTypes) {
 
             try {
                 let jsFiles = {}
-                const tsScripts = getMatchingPaths('*.ts');
+                const tsScripts = getMatchingPaths('*.ts', { ignore: ['**/*_{angular,react,vue,vue3}.ts'] });
                 tsScripts.forEach(tsFile => {
                     mainJs = readAsJsFile(tsFile);
                     const jsFileName = path.parse(tsFile).base.replace('.ts', '.js');
