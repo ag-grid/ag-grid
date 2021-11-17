@@ -38,6 +38,7 @@ The example below shows multi-row selection.
 
 - Property `rowSelection='multiple'` is set to enable multiple row selection. Selecting multiple rows can be achieved by holding down <kbd>Ctrl</kbd> and mouse clicking the rows. A range of rows can be selected by using <kbd>Shift</kbd>.
 
+<grid-example title='Multiple Row Selection' name='multiple-row-selection' type='generated'></grid-example>
 
 ### Example: Multi Select With Click
 
@@ -47,6 +48,7 @@ The example below shows multi-select with click. Clicking multiple rows will sel
 - Clicking multiple rows will select multiple rows without needing to press <kbd>Ctrl</kbd> or <kbd>Shift</kbd> keys.
 - Clicking a selected row will deselect that row.
 
+<grid-example title='Multi Select With Click' name='multi-select-single-click' type='generated'></grid-example>
 
 ## Checkbox Selection
 
@@ -98,11 +100,13 @@ The example below shows checkbox selection with groups. Selecting the group has 
 
 The example also shows a checkbox for selection on the age column. In practice, it is not normal to have more than one column for selection, the below is just for demonstration. Having a checkbox within a non-group row is best for grids that are not using grouping.
 
+<grid-example title='Groups & Checkbox Selection' name='group-selection' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
 ### Example: Groups & Checkbox Selection With Unselectable Leaf Nodes
 
 The example below is similar to the previous example except it does not put checkboxes on the leaf level nodes, allowing only entire groups to be selected. This is achieved by providing functions for `colDef.checkboxSelection` and `autoGroupColumnDef.cellRendererParams.checkbox`.
 
+<grid-example title='Groups & Checkbox Selection With Unselectable Leaf Nodes' name='selection-checkbox' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
 ### Example: Groups & Checkbox Selection With Only Filtered Children
 
@@ -115,6 +119,7 @@ To demonstrate, try this in the example:
 1. Notice that all filtered rows get selected. If you remove the filter, the non-filtered rows are not selected.
 1. Notice that the group checkbox becomes indeterminate while all its filtered children get selected. This is because the selected state of the group node is independent to the filter, so it becomes indeterminate as not all of its children are selected.
 
+<grid-example title='Groups & Checkbox Selection With Only Filtered Children' name='selection-checkbox-filtered' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "modules": ["clientside", "rowgrouping", "setfilter", "menu", "columnpanel"] }'></grid-example>
 
 ## Header Checkbox Selection
 
@@ -162,6 +167,7 @@ This example has the following characteristics:
 
 - The checkbox is always on the athlete column, even if the athlete column is moved.
 
+<grid-example title='Just Filtered' name='header-checkbox' type='generated' options='{ "exampleHeight": 590 }'></grid-example>
 
 ### Example: Select Everything
 
@@ -170,6 +176,7 @@ The next example is similar to the one above with the following changes:
 - The checkbox selects everything, not just filtered.
 - The column that the selection checkbox appears in is always the first column. This can be observed by dragging the columns to reorder them.
 
+<grid-example title='Select Everything' name='header-checkbox-entire-set' type='generated' options='{ "exampleHeight": 590 }'></grid-example>
 
 ## Specify Selectable Rows
 
@@ -192,6 +199,7 @@ This example demonstrates the following:
 - The `isRowSelectable(node)` callback only allows selections on rows where the year < 2007.
 - The country column has `headerCheckboxSelection: true` and `checkboxSelection: true`, but only rows which are selectable will obtain a selectable checkbox. Similarly, the header checkbox will only select selectable rows.
 
+<grid-example title='Selectable Rows with Header Checkbox' name='specify-selectable-rows' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 ### Example: Specifying Selectable Rows with Groups
 
@@ -207,6 +215,7 @@ This example demonstrates the following:
     1. Click 'Clear Filter'.
     1. Notice that only 'United States' for 2008 is selected.
 
+<grid-example title='Specifying Selectable Rows with Groups' name='specify-selectable-rows-with-groups' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "modules": ["clientside", "rowgrouping", "setfilter", "menu", "columnpanel"] }'></grid-example>
 
 ## Selection Events
 
@@ -214,6 +223,7 @@ There are two events with regards to selection:<br/>
 
 <api-documentation source='grid-events/events.json' section='selection' names='["rowSelected", "selectionChanged"]'></api-documentation>
 
+<grid-example title='Selection Events' name='selection-events' type='generated'></grid-example>
 
 ## Node Selection API
 
@@ -257,6 +267,7 @@ gridOptions.api.forEachNodeAfterFilter(node => {
 
 There is an API function `forEachNode`. This is useful for doing group selections on a business key. The example below shows selecting all rows with country = 'United States'. This method is also useful when you load data and need to know the node equivalent of the data for selection purposes.
 
+<grid-example title='Using forEachNode' name='using-foreachnode' type='generated' options='{ "exampleHeight": 590 }'></grid-example>
 
 ### Example: Selection with Keyboard Arrow Keys
 
@@ -293,4 +304,5 @@ We need to provide a callback to the `navigateToNextCell` grid option to overrid
 
 From the code above you can see that we iterate over each node and call the `setSelected()` method if it matches the current `rowIndex`.
 
+<grid-example title='Selection with Keyboard Arrow Keys' name='selection-with-arrow-keys' type='generated'></grid-example>
 
