@@ -26,7 +26,7 @@
 |
 |```js
 |// get a reference to the original column group
-|const columnGroup = this.params.columnGroup.getOriginalColumnGroup();
+|const columnGroup = this.params.columnGroup.getProvidedColumnGroup();
 |// create listener
 |const listener = () => { console.log('group was opened or closed'); };
 |// add listener

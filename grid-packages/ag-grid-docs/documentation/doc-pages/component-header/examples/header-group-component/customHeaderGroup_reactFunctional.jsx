@@ -4,20 +4,20 @@ export default props => {
     const [expandState, setExpandState] = useState('collapsed');
 
     const expandOrCollapse = () => {
-        let currentState = props.columnGroup.getOriginalColumnGroup().isExpanded();
+        let currentState = props.columnGroup.getProvidedColumnGroup().isExpanded();
         props.setExpanded(!currentState);
     }
 
     const syncExpandButtons = () => {
-        setExpandState(props.columnGroup.getOriginalColumnGroup().isExpanded() ? 'expanded' : 'collapsed');
+        setExpandState(props.columnGroup.getProvidedColumnGroup().isExpanded() ? 'expanded' : 'collapsed');
     }
 
     useEffect(() => {
-        props.columnGroup.getOriginalColumnGroup().addEventListener('expandedChanged', syncExpandButtons);
+        props.columnGroup.getProvidedColumnGroup().addEventListener('expandedChanged', syncExpandButtons);
         syncExpandButtons();
 
         return () => {
-            props.columnGroup.getOriginalColumnGroup().removeEventListener('expandedChanged', syncExpandButtons);
+            props.columnGroup.getProvidedColumnGroup().removeEventListener('expandedChanged', syncExpandButtons);
         };
     }, []);
 

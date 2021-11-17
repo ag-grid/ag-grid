@@ -14,7 +14,7 @@ CustomHeaderGroup.prototype.init = function (params) {
     this.eExpandButton.addEventListener('click', this.onExpandButtonClickedListener);
 
     this.onExpandChangedListener = this.syncExpandButtons.bind(this);
-    this.params.columnGroup.getOriginalColumnGroup().addEventListener('expandedChanged', this.onExpandChangedListener);
+    this.params.columnGroup.getProvidedColumnGroup().addEventListener('expandedChanged', this.onExpandChangedListener);
 
     this.syncExpandButtons();
 };
@@ -24,7 +24,7 @@ CustomHeaderGroup.prototype.getGui = function () {
 };
 
 CustomHeaderGroup.prototype.expandOrCollapse = function () {
-    var currentState = this.params.columnGroup.getOriginalColumnGroup().isExpanded();
+    var currentState = this.params.columnGroup.getProvidedColumnGroup().isExpanded();
     this.params.setExpanded(!currentState);
 };
 
@@ -37,7 +37,7 @@ CustomHeaderGroup.prototype.syncExpandButtons = function () {
         toActivate.className = toActivate.className.split(' ')[0] + ' expanded';
     }
 
-    if (this.params.columnGroup.getOriginalColumnGroup().isExpanded()) {
+    if (this.params.columnGroup.getProvidedColumnGroup().isExpanded()) {
         expanded(this.eExpandButton);
     } else {
         collapsed(this.eExpandButton);

@@ -8,7 +8,7 @@ export default class CustomHeaderGroup extends Component {
             expandState: 'collapsed'
         };
 
-        props.columnGroup.getOriginalColumnGroup().addEventListener('expandedChanged', this.syncExpandButtons.bind(this));
+        props.columnGroup.getProvidedColumnGroup().addEventListener('expandedChanged', this.syncExpandButtons.bind(this));
     }
 
     componentDidMount() {
@@ -28,13 +28,13 @@ export default class CustomHeaderGroup extends Component {
     }
 
     expandOrCollapse() {
-        let currentState = this.props.columnGroup.getOriginalColumnGroup().isExpanded();
+        let currentState = this.props.columnGroup.getProvidedColumnGroup().isExpanded();
         this.props.setExpanded(!currentState);
     }
 
     syncExpandButtons() {
         this.setState({
-            expandState: this.props.columnGroup.getOriginalColumnGroup().isExpanded() ? 'expanded' : 'collapsed'
+            expandState: this.props.columnGroup.getProvidedColumnGroup().isExpanded() ? 'expanded' : 'collapsed'
         });
     }
 }

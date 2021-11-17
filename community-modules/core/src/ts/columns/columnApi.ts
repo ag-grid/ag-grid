@@ -26,7 +26,7 @@ export class ColumnApi {
     public setColumnGroupOpened(group: ProvidedColumnGroup | string, newValue: boolean): void { this.columnModel.setColumnGroupOpened(group, newValue, 'api'); }
     /** Returns the column group with the given name. */
     public getColumnGroup(name: string, instanceId?: number): ColumnGroup | null { return this.columnModel.getColumnGroup(name, instanceId); }
-    public getOriginalColumnGroup(name: string): ProvidedColumnGroup | null { return this.columnModel.getOriginalColumnGroup(name); }
+    public getProvidedColumnGroup(name: string): ProvidedColumnGroup | null { return this.columnModel.getProvidedColumnGroup(name); }
 
     /** Returns the display name for a column. Useful if you are doing your own header rendering and want the grid to work out if `headerValueGetter` is used, or if you are doing your own column management GUI, to know what to show as the column name. */
     public getDisplayNameForColumn(column: Column, location: string | null): string { return this.columnModel.getDisplayNameForColumn(column, location) || ''; }
@@ -271,6 +271,12 @@ export class ColumnApi {
     public setColumnState(columnState: ColumnState[]): boolean {
         console.error('AG Grid: setColumnState is deprecated, use applyColumnState');
         return this.columnModel.applyColumnState({ state: columnState, applyOrder: true }, 'api');
+    }
+
+    /** @deprecated getOriginalColumnGroup is deprecated, use getProvidedColumnGroup. */
+    public getOriginalColumnGroup(name: string): ProvidedColumnGroup | null { 
+        console.error('AG Grid: getOriginalColumnGroup is deprecated, use getProvidedColumnGroup');
+        return this.columnModel.getProvidedColumnGroup(name); 
     }
 
 }

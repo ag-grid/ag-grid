@@ -25,8 +25,8 @@
 |To know if a group is expanded or collapsed, listen for the `expandedChanged` event on the column group.
 |
 |```js
-|// get a reference to the original column group
-|const columnGroup = this.params.columnGroup.getOriginalColumnGroup();
+|// get a reference to the provided column group
+|const columnGroup = this.params.columnGroup.getProvidedColumnGroup();
 |// create listener
 |const listener = () => { console.log('group was opened or closed'); };
 |// add listener

@@ -19,7 +19,6 @@ import { InfiniteBlock } from "./infiniteBlock";
 
 export interface InfiniteCacheParams {
     datasource: IDatasource;
-    maxConcurrentRequests: number;
     initialRowCount: number;
     blockSize?: number;
     overflowSize: number;

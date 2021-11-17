@@ -157,7 +157,7 @@ export class AlignedGridsService extends BeanStub {
 
         if (masterColumnGroup) {
             const groupId = masterColumnGroup.getGroupId();
-            otherColumnGroup = this.columnModel.getOriginalColumnGroup(groupId);
+            otherColumnGroup = this.columnModel.getProvidedColumnGroup(groupId);
         }
 
         if (masterColumnGroup && !otherColumnGroup) { return; }

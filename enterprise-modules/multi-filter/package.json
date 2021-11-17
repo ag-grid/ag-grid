@@ -1,6 +1,6 @@
 {
   "name": "@ag-grid-enterprise/multi-filter",
-  "version": "26.1.0",
+  "version": "26.2.0",
   "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
   "main": "./dist/cjs/main.js",
   "module": "./dist/es6/main.js",
@@ -43,9 +43,9 @@
   ],
   "homepage": "http://www.ag-grid.com/",
   "dependencies": {
-    "@ag-grid-community/core": "~26.1.0",
-    "@ag-grid-enterprise/core": "~26.1.0",
-    "@ag-grid-enterprise/menu": "~26.1.0"
+    "@ag-grid-community/core": "~26.2.0",
+    "@ag-grid-enterprise/core": "~26.2.0",
+    "@ag-grid-enterprise/menu": "~26.2.0"
   },
   "devDependencies": {
     "@babel/types": "7.12.7",

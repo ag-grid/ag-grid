@@ -20,7 +20,7 @@
       "returnType": "ColumnGroup | null"
     }
   },
-  "getOriginalColumnGroup": {
+  "getProvidedColumnGroup": {
     "type": {
       "arguments": { "name": "string" },
       "returnType": "ProvidedColumnGroup | null"
@@ -483,6 +483,13 @@
     "type": {
       "arguments": { "columnState": "ColumnState[]" },
       "returnType": "boolean"
+    }
+  },
+  "getOriginalColumnGroup": {
+    "description": "/** @deprecated getOriginalColumnGroup is deprecated, use getProvidedColumnGroup.\n */",
+    "type": {
+      "arguments": { "name": "string" },
+      "returnType": "ProvidedColumnGroup | null"
     }
   }
 }

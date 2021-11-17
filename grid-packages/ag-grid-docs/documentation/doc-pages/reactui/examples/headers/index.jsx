@@ -44,7 +44,7 @@ const MyGroupHeader = memo((props) => {
     const [expanded, setExpanded] = useState();
     const {columnGroup} = props;
     const expandable = columnGroup.isExpandable();
-    const originalColumnGroup = columnGroup.getOriginalColumnGroup();
+    const providedColumnGroup = columnGroup.getProvidedColumnGroup();
 
     const onExpandClicked = useCallback( ()=> props.setExpanded(!columnGroup.isExpanded()), []);
 
@@ -53,8 +53,8 @@ const MyGroupHeader = memo((props) => {
             setExpanded(columnGroup.isExpanded());
         };
         listener();
-        originalColumnGroup.addEventListener('expandedChanged', listener);
-        return ()=> originalColumnGroup.removeEventListener('expandedChanged', listener);
+        providedColumnGroup.addEventListener('expandedChanged', listener);
+        return ()=> providedColumnGroup.removeEventListener('expandedChanged', listener);
     }, []);
 
     const showExpandJsx = ()=> (

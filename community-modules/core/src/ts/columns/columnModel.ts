@@ -1660,7 +1660,7 @@ export class ColumnModel extends BeanStub {
 
     public getDisplayedGroupAtDirection(columnGroup: ColumnGroup, direction: 'After' | 'Before'): ColumnGroup | null {
         // pick the last displayed column in this group
-        const requiredLevel = columnGroup.getOriginalColumnGroup().getLevel() + columnGroup.getPaddingLevel();
+        const requiredLevel = columnGroup.getProvidedColumnGroup().getLevel() + columnGroup.getPaddingLevel();
         const colGroupLeafColumns = columnGroup.getDisplayedLeafColumns();
         const col: Column | null = direction === 'After' ? last(colGroupLeafColumns) : colGroupLeafColumns[0];
         const getDisplayColMethod: 'getDisplayedColAfter' | 'getDisplayedColBefore' = `getDisplayedCol${direction}` as any;
@@ -1686,8 +1686,8 @@ export class ColumnModel extends BeanStub {
         let groupPointerLevel: number;
 
         while (true) {
-            const groupPointerOriginalColumnGroup = groupPointer.getOriginalColumnGroup();
-            originalGroupLevel = groupPointerOriginalColumnGroup.getLevel();
+            const groupPointerProvidedColumnGroup = groupPointer.getProvidedColumnGroup();
+            originalGroupLevel = groupPointerProvidedColumnGroup.getLevel();
             groupPointerLevel = groupPointer.getPaddingLevel();
 
             if (originalGroupLevel + groupPointerLevel <= level) { break; }
@@ -2500,22 +2500,22 @@ export class ColumnModel extends BeanStub {
         return headerName;
     }
 
-    public getDisplayNameForOriginalColumnGroup(
+    public getDisplayNameForProvidedColumnGroup(
         columnGroup: ColumnGroup | null,
-        originalColumnGroup: ProvidedColumnGroup | null,
+        providedColumnGroup: ProvidedColumnGroup | null,
         location: string
     ): string | null {
-        const colGroupDef = originalColumnGroup ? originalColumnGroup.getColGroupDef() : null;
+        const colGroupDef = providedColumnGroup ? providedColumnGroup.getColGroupDef() : null;
 
         if (colGroupDef) {
-            return this.getHeaderName(colGroupDef, null, columnGroup, originalColumnGroup, location);
+            return this.getHeaderName(colGroupDef, null, columnGroup, providedColumnGroup, location);
         }
 
         return null;
     }
 
     public getDisplayNameForColumnGroup(columnGroup: ColumnGroup, location: string): string | null {
-        return this.getDisplayNameForOriginalColumnGroup(columnGroup, columnGroup.getOriginalColumnGroup(), location);
+        return this.getDisplayNameForProvidedColumnGroup(columnGroup, columnGroup.getProvidedColumnGroup(), location);
     }
 
     // location is where the column is going to appear, ie who is calling us
@@ -2523,7 +2523,7 @@ export class ColumnModel extends BeanStub {
         colDef: AbstractColDef,
         column: Column | null,
         columnGroup: ColumnGroup | null,
-        originalColumnGroup: ProvidedColumnGroup | null,
+        providedColumnGroup: ProvidedColumnGroup | null,
         location: string | null
     ): string | null {
         const headerValueGetter = colDef.headerValueGetter;
@@ -2533,7 +2533,7 @@ export class ColumnModel extends BeanStub {
                 colDef: colDef,
                 column: column,
                 columnGroup: columnGroup,
-                originalColumnGroup: originalColumnGroup,
+                providedColumnGroup: providedColumnGroup,
                 location: location,
                 api: this.gridOptionsWrapper.getApi()!,
                 context: this.gridOptionsWrapper.getContext()
@@ -2830,10 +2830,10 @@ export class ColumnModel extends BeanStub {
 
         this.columnUtils.depthFirstOriginalTreeSearch(null, this.gridBalancedTree, node => {
             if (node instanceof ProvidedColumnGroup) {
-                const originalColumnGroup = node;
+                const providedColumnGroup = node;
                 columnGroupState.push({
-                    groupId: originalColumnGroup.getGroupId(),
-                    open: originalColumnGroup.isExpanded()
+                    groupId: providedColumnGroup.getGroupId(),
+                    open: providedColumnGroup.isExpanded()
                 });
             }
         });
@@ -2849,23 +2849,23 @@ export class ColumnModel extends BeanStub {
         stateItems.forEach(stateItem => {
             const groupKey = stateItem.groupId;
             const newValue = stateItem.open;
-            const originalColumnGroup: ProvidedColumnGroup | null = this.getOriginalColumnGroup(groupKey);
+            const providedColumnGroup: ProvidedColumnGroup | null = this.getProvidedColumnGroup(groupKey);
 
-            if (!originalColumnGroup) { return; }
-            if (originalColumnGroup.isExpanded() === newValue) { return; }
+            if (!providedColumnGroup) { return; }
+            if (providedColumnGroup.isExpanded() === newValue) { return; }
 
-            this.logger.log('columnGroupOpened(' + originalColumnGroup.getGroupId() + ',' + newValue + ')');
-            originalColumnGroup.setExpanded(newValue);
-            impactedGroups.push(originalColumnGroup);
+            this.logger.log('columnGroupOpened(' + providedColumnGroup.getGroupId() + ',' + newValue + ')');
+            providedColumnGroup.setExpanded(newValue);
+            impactedGroups.push(providedColumnGroup);
         });
 
         this.updateGroupsAndDisplayedColumns(source);
         this.setFirstRightAndLastLeftPinned(source);
 
-        impactedGroups.forEach(originalColumnGroup => {
+        impactedGroups.forEach(providedColumnGroup => {
             const event: ColumnGroupOpenedEvent = {
                 type: Events.EVENT_COLUMN_GROUP_OPENED,
-                columnGroup: originalColumnGroup,
+                columnGroup: providedColumnGroup,
                 api: this.gridApi,
                 columnApi: this.columnApi
             };
@@ -2887,8 +2887,8 @@ export class ColumnModel extends BeanStub {
         this.setColumnGroupState([{ groupId: keyAsString, open: newValue }], source);
     }
 
-    public getOriginalColumnGroup(key: ProvidedColumnGroup | string): ProvidedColumnGroup | null {
-        if (key instanceof ProvidedColumnGroup) { return key; }
+    public getProvidedColumnGroup(key: string): ProvidedColumnGroup | null {
+        // if (key instanceof ProvidedColumnGroup) { return key; }
 
         if (typeof key !== 'string') {
             console.error('AG Grid: group key must be a string');
@@ -2899,9 +2899,9 @@ export class ColumnModel extends BeanStub {
 
         this.columnUtils.depthFirstOriginalTreeSearch(null, this.gridBalancedTree, node => {
             if (node instanceof ProvidedColumnGroup) {
-                const originalColumnGroup = node;
-                if (originalColumnGroup.getId() === key) {
-                    res = originalColumnGroup;
+                const providedColumnGroup = node;
+                if (providedColumnGroup.getId() === key) {
+                    res = providedColumnGroup;
                 }
             }
         });

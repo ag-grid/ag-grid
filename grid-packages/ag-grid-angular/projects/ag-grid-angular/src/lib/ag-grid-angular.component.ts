@@ -708,7 +708,9 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public cacheBlockSize: number | undefined = undefined;
     /** How many blocks to keep in the store. Default is no limit, so every requested block is kept. Use this if you have memory concerns, and blocks that were least recently viewed will be purged when the limit is hit. The grid will additionally make sure it has all the blocks needed to display what is currently visible, in case this property is set to a low value.     */
     @Input() public maxBlocksInCache: number | undefined = undefined;
-    /** How many requests to hit the server with concurrently. If the max is reached, requests are queued.     */
+    /** How many requests to hit the server with concurrently. If the max is reached, requests are queued.
+     * Set to `-1` for no maximum restriction on requests.
+     * Default: `2`     */
     @Input() public maxConcurrentDatasourceRequests: number | undefined = undefined;
     /** How many milliseconds to wait before loading a block. Useful when scrolling over many rows, spanning many Partial Store blocks, as it prevents blocks loading until scrolling has settled.     */
     @Input() public blockLoadDebounceMillis: number | undefined = undefined;

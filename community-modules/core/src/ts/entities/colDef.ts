@@ -554,7 +554,7 @@ export interface HeaderValueGetterParams {
     /** ColumnGroup for this callback if applicable */
     columnGroup?: ColumnGroup | ProvidedColumnGroup | null;
     /** Original column group if applicable */
-    originalColumnGroup: ProvidedColumnGroup | null;
+    providedColumnGroup: ProvidedColumnGroup | null;
     /** Where the column is going to appear */
     location: string | null;
     api: GridApi;
