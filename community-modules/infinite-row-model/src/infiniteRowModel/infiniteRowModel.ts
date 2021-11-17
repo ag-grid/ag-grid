@@ -187,8 +187,6 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
         // if not first time creating a cache, need to destroy the old one
         this.destroyCache();
 
-        const maxConcurrentRequests = this.gridOptionsWrapper.getMaxConcurrentDatasourceRequests();
-
         this.cacheParams = {
             // the user provided datasource
             datasource: this.datasource,
@@ -202,7 +200,6 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
             // properties - this way we take a snapshot of them, so if user changes any, they will be
             // used next time we create a new cache, which is generally after a filter or sort change,
             // or a new datasource is set
-            maxConcurrentRequests: this.defaultIfInvalid(maxConcurrentRequests, 2),
             initialRowCount: this.defaultIfInvalid(this.gridOptionsWrapper.getInfiniteInitialRowCount(), 1),
             maxBlocksInCache: this.gridOptionsWrapper.getMaxBlocksInCache(),
             rowHeight: this.gridOptionsWrapper.getRowHeightAsNumber(),

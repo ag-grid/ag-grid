@@ -842,7 +842,10 @@ export class GridOptionsWrapper {
     }
 
     public getMaxConcurrentDatasourceRequests(): number | undefined {
-        return this.gridOptions.maxConcurrentDatasourceRequests;
+        const res = toNumber(this.gridOptions.maxConcurrentDatasourceRequests);
+        if (res==null) { return 2; } // 2 is the default
+        if (res<=0) { return; } // negative number, eg -1, means no max restriction
+        return res;
     }
 
     public getMaxBlocksInCache(): number | undefined {
