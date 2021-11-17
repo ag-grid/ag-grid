@@ -2,21 +2,21 @@ const columnDefs = [
     {
         headerName: 'Athlete',
         children: [
-            { field: 'athlete', width: 150 },
-            { field: 'age', lockVisible: true, cellClass: 'locked-visible' },
-            { field: 'country', width: 150 },
-            { field: 'year' },
-            { field: 'date' },
-            { field: 'sport' }
+            {field: 'athlete', width: 150},
+            {field: 'age', lockVisible: true, cellClass: 'locked-visible'},
+            {field: 'country', width: 150},
+            {field: 'year'},
+            {field: 'date'},
+            {field: 'sport'}
         ]
     },
     {
         headerName: 'Medals',
         children: [
-            { field: 'gold', lockVisible: true, cellClass: 'locked-visible' },
-            { field: 'silver', lockVisible: true, cellClass: 'locked-visible' },
-            { field: 'bronze', lockVisible: true, cellClass: 'locked-visible' },
-            { field: 'total', lockVisible: true, cellClass: 'locked-visible', hide: true }
+            {field: 'gold', lockVisible: true, cellClass: 'locked-visible'},
+            {field: 'silver', lockVisible: true, cellClass: 'locked-visible'},
+            {field: 'bronze', lockVisible: true, cellClass: 'locked-visible'},
+            {field: 'total', lockVisible: true, cellClass: 'locked-visible', hide: true}
         ]
     }
 ];
