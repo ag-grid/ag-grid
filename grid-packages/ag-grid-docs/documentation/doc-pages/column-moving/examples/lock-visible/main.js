@@ -1,6 +1,4 @@
-import { ColDef, ColGroupDef, GridOptions } from "@ag-grid-community/core";
-
-const columnDefs: (ColDef | ColGroupDef)[] = [
+const columnDefs = [
     {
         headerName: 'Athlete',
         children: [
@@ -23,7 +21,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
     }
 ];
 
-const gridOptions: GridOptions = {
+const gridOptions = {
     columnDefs: columnDefs,
     sideBar: {
         toolPanels: [{
@@ -41,7 +39,7 @@ const gridOptions: GridOptions = {
         }]
     },
     defaultColDef: {
-        width: 123
+        width: 100
     }
 };
 
@@ -49,7 +47,8 @@ const gridOptions: GridOptions = {
 document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector('#myGrid');
     new agGrid.Grid(gridDiv, gridOptions);
+
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then(response => response.json())
-        .then(data => gridOptions.api!.setRowData(data));
+        .then(data => gridOptions.api.setRowData(data));
 });
