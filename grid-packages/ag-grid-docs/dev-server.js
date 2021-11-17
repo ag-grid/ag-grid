@@ -259,7 +259,7 @@ async function watchAndGenerateExamples() {
     }
 
     chokidar
-        .watch([`./documentation/doc-pages/**/examples/**/*.{html,css,js,jsx,ts}`], { ignored: ['**/_gen/**/*', '**/*_vanilla.js'] })
+        .watch([`./documentation/doc-pages/**/examples/**/*.{html,css,js,jsx,ts}`], { ignored: ['**/_gen/**/*'] })
         .on('change', regenerateDocumentationExamplesForFileChange);
 
     chokidar

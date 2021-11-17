@@ -345,20 +345,18 @@ function createExampleGenerator(prefix, importTypes) {
         } else {
 
             inlineStyles = undefined; // unset these as they don't need to be copied for vanilla
-            const tsScripts = getMatchingPaths('*.ts');
-            const tsToVanilla = (tsFile) => tsFile.replace('.ts', '_vanilla.js');
 
             try {
+                let jsFiles = {}
+                const tsScripts = getMatchingPaths('*.ts');
                 tsScripts.forEach(tsFile => {
                     mainJs = readAsJsFile(tsFile);
-                    writeFile(tsToVanilla(tsFile), mainJs);
-                })
+                    const jsFileName = path.parse(tsFile).base.replace('.ts', '.js');
+                    jsFiles[jsFileName] = mainJs;
+                });
 
                 const updatedScripts = getMatchingPaths('*.{html,js}', { ignore: ['**/*_{angular,react,vue,vue3}.js'] });
-                importTypes.forEach(importType => writeExampleFiles(importType, 'vanilla', 'vanilla', updatedScripts, {}));
-
-                // Clean up the intermediary files
-                tsScripts.forEach(tsFile => fs.unlink(tsToVanilla(tsFile)));
+                importTypes.forEach(importType => writeExampleFiles(importType, 'vanilla', 'vanilla', updatedScripts, jsFiles));
 
             } catch (e) {
                 console.error(`Failed to process Vanilla example in ${examplePath}`, e);
