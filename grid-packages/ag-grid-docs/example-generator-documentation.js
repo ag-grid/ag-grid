@@ -168,13 +168,13 @@ function createExampleGenerator(prefix, importTypes) {
             throw new Error('examples are required to have an index.html file');
         }
 
-        let mainJs = undefined;
+        let jsFile = undefined;
         let tsScripts = getMatchingPaths('main.ts');
         if (tsScripts.length > 0) {
             // If the example is written in Typescript we need to strip the types and pass this in as the
             // source javascript main.js file.
             const tsMainPath = tsScripts[0];
-            mainJs = readAsJsFile(tsMainPath);
+            jsFile = readAsJsFile(tsMainPath);
         }
 
         let scripts = getMatchingPaths('*.js');
@@ -184,8 +184,8 @@ function createExampleGenerator(prefix, importTypes) {
             // multiple scripts - main.js is the main one, the rest are supplemental
             mainScript = getMatchingPaths('main.js')[0];
 
-            if (!mainScript && !mainJs) {
-                throw new Error('for an example with multiple scripts matching *.js, one must be named main.js');
+            if (!mainScript && !jsFile) {
+                throw new Error('for an example with multiple scripts matching *.js, one must be named main.[js,ts]');
             }
 
             // get the rest of the scripts
@@ -199,11 +199,11 @@ function createExampleGenerator(prefix, importTypes) {
         const stylesheets = getMatchingPaths('*.css');
 
         // read the main script (js) and the associated index.html
-        if (!mainJs) {
-            mainJs = getFileContents(mainScript);
+        if (!jsFile) {
+            jsFile = getFileContents(mainScript);
         }
         const indexHtml = getFileContents(document);
-        const bindings = parser(mainJs, indexHtml, options, type, providedExamples);
+        const bindings = parser(jsFile, indexHtml, options, type, providedExamples);
 
         const writeExampleFiles = (importType, framework, tokenToReplace, frameworkScripts, files, subdirectory, componentPostfix = '') => {
             const basePath = path.join(createExamplePath(`_gen/${importType}`), framework);
@@ -350,9 +350,9 @@ function createExampleGenerator(prefix, importTypes) {
                 let jsFiles = {}
                 const tsScripts = getMatchingPaths('*.ts', { ignore: ['**/*_{angular,react,vue,vue3}.ts'] });
                 tsScripts.forEach(tsFile => {
-                    mainJs = readAsJsFile(tsFile);
+                    jsFile = readAsJsFile(tsFile);
                     const jsFileName = path.parse(tsFile).base.replace('.ts', '.js');
-                    jsFiles[jsFileName] = mainJs;
+                    jsFiles[jsFileName] = jsFile;
                 });
 
                 const updatedScripts = getMatchingPaths('*.{html,js}', { ignore: ['**/*_{angular,react,vue,vue3}.js'] });
