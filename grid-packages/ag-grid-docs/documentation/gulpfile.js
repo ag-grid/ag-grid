@@ -8,6 +8,7 @@ const gulpIf = require('gulp-if');
 const gulpIgnore = require('gulp-ignore');
 const fs = require('fs-extra');
 const del = require('del');
+const tap = require('gulp-tap')
 var argv = require('yargs').argv;
 
 // npx gulp --dir accessing-data
@@ -16,19 +17,10 @@ console.log('Running on ', folder)
 
 const renameFiles = () => {
     return src([`./doc-pages/**/${folder}/**/main.js`, '!./doc-pages/**/_gen/**/*.js'], { base: './' })
-        .pipe(rename(function (path) {
-            //path.extname = ".ts";
-            return {
-                dirname: path.dirname,
-                basename: path.basename,
-                extname: ".ts"
-            };
+        .pipe(tap(function (file) {
+            fs.moveSync(file.path, file.path.replace('.js', '.ts'));
+            return file
         }))
-        .pipe(dest('./'))
-};
-
-const deleteOriginal = () => {
-    return del([`./doc-pages/**/${folder}/**/main.js`, '!./doc-pages/**/_gen/**/*.js'], { base: './' })
 };
 
 const containsGridOptions = function (file) {
@@ -65,5 +57,4 @@ const prettify = () => {
 };
 
 
-
-exports.default = series(renameFiles, deleteOriginal, applyTypes, prettify)
+exports.default = series(renameFiles, applyTypes, prettify)

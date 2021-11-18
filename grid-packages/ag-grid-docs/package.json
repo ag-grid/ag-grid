@@ -14,7 +14,8 @@
     "test": "npx jest && npm run validate-examples && cd documentation && npm run test",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash",
     "dev-server": "node dev-server.js",
-    "validate-examples": "node example-validator.js"
+    "validate-examples": "node example-validator.js validate",
+    "validate-examples-watch": "node example-validator.js watch"
   },
   "repository": {
     "type": "git",

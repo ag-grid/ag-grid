@@ -52,6 +52,6 @@ const [cmd, script, execFunc] = process.argv;
 
 if (process.argv.length >= 3 && execFunc === 'watch') {
     this.watchValidateExampleTypes();
-} else {
+} else if (process.argv.length >= 3 && execFunc === 'validate') {
     this.validateExampleTypes();
 }

@@ -94,6 +94,7 @@
     "gulp-prettier": "^4.0.0",
     "gulp-rename": "^2.0.0",
     "gulp-string-replace": "^1.1.2",
+    "gulp-tap": "^2.0.0",
     "identity-obj-proxy": "3.0.0",
     "jest": "26.6.3",
     "jsdom": "16.4.0",
