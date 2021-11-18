@@ -7,7 +7,7 @@ function getTscPath() {
 }
 
 /** Called from dev-server.js */
-const watchValidateExampleTypes = async () => {
+module.exports.watchValidateExampleTypes = async () => {
     console.log("Watching TS example files only...");
     const tsc = getTscPath();
     const tsWatch = cp.spawn(tsc, ['--watch', "--project", "./grid-packages/ag-grid-docs/documentation/tsconfig.json"], {
