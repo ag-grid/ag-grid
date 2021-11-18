@@ -559,9 +559,9 @@ export class RowNode implements IEventEmitter {
         if (notAllPresent) { return; }
 
         // we take min of 10, so we don't adjust for empty rows. if <10, we put to default.
-        // this prevents the row starting very small when waiting for async components, 
+        // this prevents the row starting very small when waiting for async components,
         // which would then mean the grid squashes in far to many rows (as small heights
-        // means more rows fit in) which looks crap. so best ignore small values and assume 
+        // means more rows fit in) which looks crap. so best ignore small values and assume
         // we are still waiting for values to render.
         if (nonePresent || newRowHeight < 10) {
             newRowHeight = this.beans.gridOptionsWrapper.getRowHeightForNode(this).height;
@@ -572,7 +572,10 @@ export class RowNode implements IEventEmitter {
         this.setRowHeight(newRowHeight);
 
         const rowModel = this.beans.rowModel as (IClientSideRowModel | IServerSideRowModel);
-        rowModel.onRowHeightChanged && rowModel.onRowHeightChanged();
+
+        if (rowModel.onRowHeightChanged) {
+            rowModel.onRowHeightChanged();
+        }
     }
 
     public setRowIndex(rowIndex: number | null): void {
@@ -804,7 +807,7 @@ export class RowNode implements IEventEmitter {
      * Select (or deselect) the node.
      * @param newValue -`true` for selection, `false` for deselection.
      * @param clearSelection - If selecting, then passing `true` for `clearSelection` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact.
-     * @param suppressFinishActions 
+     * @param suppressFinishActions
      */
     public setSelected(newValue: boolean, clearSelection: boolean = false, suppressFinishActions: boolean = false) {
         this.setSelectedParams({

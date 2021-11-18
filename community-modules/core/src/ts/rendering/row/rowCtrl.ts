@@ -24,7 +24,6 @@ import { AngularRowUtils } from "./angularRowUtils";
 import { RowCssClassCalculatorParams } from "./rowCssClassCalculator";
 import { RowDragComp } from "./rowDragComp";
 
-
 export enum RowType {
     Normal = 'Normal',
     FullWidth = 'FullWidth',
@@ -200,7 +199,7 @@ export class RowCtrl extends BeanStub {
     }
 
     public isCacheable(): boolean {
-        return this.rowType === RowType.FullWidthDetail 
+        return this.rowType === RowType.FullWidthDetail
                 && this.beans.gridOptionsWrapper.isKeepDetailRows();
     }
 
@@ -291,8 +290,8 @@ export class RowCtrl extends BeanStub {
             // very bad UX (eg 10 rows get inserted, then all 10 expand, look particularly bad
             // when scrolling). so this makes sure when rows are shown for the first time, they
             // are resized immediately without animation.
-            this.beans.animationFrameService.addDestroyTask( ()=> {
-                if (this.isAlive()) {                    
+            this.beans.animationFrameService.addDestroyTask(() => {
+                if (this.isAlive()) {
                     gui.rowComp.addOrRemoveCssClass('ag-after-created', true);
                 }
             });
@@ -437,7 +436,7 @@ export class RowCtrl extends BeanStub {
             list: [],
             map: {}
         };
-        
+
         const addCell = (colInstanceId: number, cellCtrl: CellCtrl) => {
             res.list.push(cellCtrl);
             res.map[colInstanceId] = cellCtrl;
@@ -456,13 +455,13 @@ export class RowCtrl extends BeanStub {
         });
 
         prev.list.forEach(prevCellCtrl => {
-            const cellInResult = res.map[prevCellCtrl.getColumn().getInstanceId()]!=null;
+            const cellInResult = res.map[prevCellCtrl.getColumn().getInstanceId()] != null;
             if (cellInResult) { return; }
 
             const keepCell = !this.isCellEligibleToBeRemoved(prevCellCtrl, pinned);
-            if (keepCell) { 
+            if (keepCell) {
                 addCell(prevCellCtrl.getColumn().getInstanceId(), prevCellCtrl);
-                return; 
+                return;
             }
 
             prevCellCtrl.destroy();
@@ -560,7 +559,7 @@ export class RowCtrl extends BeanStub {
             // to it (happens in react when comp is stateless). if comp not ready, we don't need to
             // refresh, however we don't know which one, so we refresh to cover the case where it's
             // react comp without reference so need to force a refresh
-            if (!cellRenderer) { return false; } 
+            if (!cellRenderer) { return false; }
 
             // no refresh method present, so can't refresh, hard refresh needed
             if (!cellRenderer.refresh) { return false; }
@@ -785,8 +784,8 @@ export class RowCtrl extends BeanStub {
             case 'dblclick': this.onRowDblClick(mouseEvent); break;
             case 'click': this.onRowClick(mouseEvent); break;
             case 'touchstart':
-            case 'mousedown': 
-                this.onRowMouseDown(mouseEvent); 
+            case 'mousedown':
+                this.onRowMouseDown(mouseEvent);
                 break;
         }
     }
@@ -1421,6 +1420,7 @@ export class RowCtrl extends BeanStub {
         if (this.rowNode.rowIndex != null) {
             this.onCellFocusChanged();
             this.updateRowIndexes();
+            this.postProcessCss();
         }
     }
 

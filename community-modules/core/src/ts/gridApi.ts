@@ -365,9 +365,9 @@ export class GridApi {
 
     /**
      * Sets an ARIA property in the grid panel (element with `role=\"grid\"`), and removes an ARIA property when the value is null.
-     * 
+     *
      * Example: `api.setGridAriaProperty('label', 'my grid')` will set `aria-label=\"my grid\"`.
-     * 
+     *
      * `api.setGridAriaProperty('label', null)` will remove the `aria-label` attribute from the grid element.
      */
     public setGridAriaProperty(property: string, value: string | null): void {
@@ -778,7 +778,7 @@ export class GridApi {
      * Unlike normal events, you do not need to unregister rendered row listeners.
      * When the rendered row is removed from the grid, all associated rendered row listeners will also be removed.
      * Currently supports only one event, `virtualRowRemoved`;
-     * listen for this event if your `cellRenderer` needs to do cleanup when the row no longer exists. 
+     * listen for this event if your `cellRenderer` needs to do cleanup when the row no longer exists.
      */
     public addRenderedRowListener(eventName: string, rowIndex: number, callback: Function) {
         if (eventName === 'virtualRowSelected') {
@@ -979,7 +979,7 @@ export class GridApi {
         return this.getFilterInstance(colDef);
     }
 
-    /** 
+    /**
      * Returns the filter component instance for a column.
      * `key` can be a string field name or a ColDef object (matches on object reference, useful if field names are not unique).
      *  */
@@ -996,7 +996,7 @@ export class GridApi {
             if (currentValueUnwrapped) {
                 setTimeout(callback, 0, currentValueUnwrapped);
             } else if (filterPromise) {
-                filterPromise.then( comp => {
+                filterPromise.then(comp => {
                     const unwrapped = this.frameworkComponentWrapper ? this.frameworkComponentWrapper.unwrap(comp) : comp;
                     callback(unwrapped);
                 });
@@ -1476,7 +1476,10 @@ export class GridApi {
 
         // destroy the UI first (as they use the services)
         const gridCtrl = this.ctrlsService.getGridCtrl();
-        gridCtrl && gridCtrl.destroyGridUi();
+
+        if (gridCtrl) {
+            gridCtrl.destroyGridUi();
+        }
 
         // destroy the services
         this.context.destroy();

@@ -124,7 +124,7 @@ export class RowRenderer extends BeanStub {
     private updateAllRowCtrls(): void {
         const liveList = getAllValuesInObject(this.rowCtrlsByRowIndex);
         if (this.beans.gridOptionsWrapper.isEnsureDomOrder()) {
-            liveList.sort( (a,b) => a.getRowNode().rowIndex - b.getRowNode.rowIndex );
+            liveList.sort((a, b) => a.getRowNode().rowIndex - b.getRowNode.rowIndex);
         }
         const zombieList = getAllValuesInObject(this.zombieRowCtrls);
         const cachedList = this.cachedRowCtrls ? this.cachedRowCtrls.getEntries() : [];
@@ -1162,11 +1162,11 @@ export class RowRenderer extends BeanStub {
 
         const rowCtrlFromCache = this.cachedRowCtrls ? this.cachedRowCtrls.getRow(rowNode) : null;
         if (rowCtrlFromCache) { return rowCtrlFromCache; }
-        
+
         // we don't use animations frames for printing, so the user can put the grid into print mode
         // and immediately print - otherwise the user would have to wait for the rows to draw in the background
         // (via the animation frames) which is awkward to do from code.
-        
+
         // we only do the animation frames after scrolling, as this is where we want the smooth user experience.
         // having animation frames for other times makes the grid look 'jumpy'.
 
@@ -1249,16 +1249,12 @@ class RowCtrlCache {
         this.maxCount = maxCount;
     }
 
-    private toString(): string {
-        return this.entriesList.map(item => item.getRowNode().data.name).join(', ');
-    }
-
     public addRow(rowCtrl: RowCtrl): void {
         this.entriesMap[rowCtrl.getRowNode().id!] = rowCtrl;
         this.entriesList.push(rowCtrl);
         rowCtrl.setCached(true);
 
-        if (this.entriesList.length>this.maxCount) {
+        if (this.entriesList.length > this.maxCount) {
             const rowCtrlToDestroy = this.entriesList[0];
             rowCtrlToDestroy.destroyFirstPass();
             rowCtrlToDestroy.destroySecondPass();
@@ -1267,7 +1263,7 @@ class RowCtrlCache {
     }
 
     public getRow(rowNode: RowNode): RowCtrl | null {
-        if (rowNode==null || rowNode.id==null) { return null;}
+        if (rowNode == null || rowNode.id == null) { return null; }
 
         const res = this.entriesMap[rowNode.id];
 
