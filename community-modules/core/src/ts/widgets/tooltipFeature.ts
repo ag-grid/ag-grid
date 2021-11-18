@@ -3,7 +3,6 @@ import { Column } from "../entities/column";
 import { ColumnGroup } from "../entities/columnGroup";
 import { RowNode } from "../entities/rowNode";
 import { Beans } from "../rendering/beans";
-import { escapeString } from "../utils/string";
 import { CustomTooltipFeature, TooltipParentComp } from "./customTooltipFeature";
 import { ITooltipParams } from "../rendering/tooltipComponent";
 import { ColDef, ColGroupDef } from "../entities/colDef";
@@ -34,7 +33,6 @@ export class TooltipFeature extends BeanStub {
     private comp: ITooltipFeatureComp;
 
     private tooltip: any;
-    private tooltipSanatised: string | null;
 
     private genericTooltipFeature: CustomTooltipFeature;
     private browserTooltips: boolean;
@@ -56,7 +54,7 @@ export class TooltipFeature extends BeanStub {
         this.updateTooltipText();
 
         if (this.browserTooltips) {
-            this.comp.setTitle(this.tooltipSanatised != null ? this.tooltipSanatised : undefined);
+            this.comp.setTitle(this.tooltip != null ? this.tooltip : undefined);
         } else {
             this.createTooltipFeatureIfNeeded();
         }
@@ -64,7 +62,6 @@ export class TooltipFeature extends BeanStub {
 
     private updateTooltipText(): void {
         this.tooltip = this.ctrl.getTooltipValue();
-        this.tooltipSanatised = escapeString(this.tooltip);
     }
 
     private createTooltipFeatureIfNeeded(): void {
@@ -82,7 +79,7 @@ export class TooltipFeature extends BeanStub {
         this.updateTooltipText();
 
         if (this.browserTooltips) {
-            this.comp.setTitle(this.tooltipSanatised != null ? this.tooltipSanatised : undefined);
+            this.comp.setTitle(this.tooltip != null ? this.tooltip : undefined);
         }
     }
 
