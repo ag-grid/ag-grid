@@ -31,7 +31,7 @@ module.exports.watchValidateExampleTypes = async () => {
 };
 
 
-const validateExampleTypes = async (exitOnError) => {
+module.exports.validateExampleTypes = async () => {
     console.log('Validating Typescript examples...')
     const tsc = getTscPath();
     const result = cp.spawnSync(tsc, ['--build', "./grid-packages/ag-grid-docs/documentation/tsconfig.json"], {
@@ -41,14 +41,17 @@ const validateExampleTypes = async (exitOnError) => {
 
     if (result && result.status !== 0) {
         console.log('ERROR Validating Typescript examples');
-
-        if (exitOnError) {
-            process.exit(result.status);
-        }
-
-        return;
+        process.exit(result.status);
     }
     console.log("Typescript examples validated.");
 }
 
-validateExampleTypes(true)
+
+// *** Don't remove these unused vars! ***
+const [cmd, script, execFunc] = process.argv;
+
+if (process.argv.length >= 3 && execFunc === 'watch') {
+    this.watchValidateExampleTypes();
+} else {
+    this.validateExampleTypes();
+}
