@@ -1,10 +1,6 @@
 import React, {Component} from 'react';
 
-export default class CustomTooltip extends Component {
-    getReactContainerClasses() {
-        return ['custom-tooltip'];
-    }
-
+export default class CustomTooltip extends Component {    
     render() {
         const valueToDisplay = this.props.value.value ? this.props.value.value : '- Missing -';
         return (

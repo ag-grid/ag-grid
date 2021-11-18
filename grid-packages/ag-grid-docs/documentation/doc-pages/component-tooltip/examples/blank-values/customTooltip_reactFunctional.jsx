@@ -1,15 +1,8 @@
-import React, {forwardRef, useImperativeHandle, useState} from 'react';
+import React, {useMemo} from 'react';
 
-export default forwardRef((props, ref) => {
-    const [data, setData] = useState(props.api.getDisplayedRowAtIndex(props.rowIndex).data);
+export default props => {
 
-    useImperativeHandle(ref, () => {
-        return {
-            getReactContainerClasses() {
-                return ['custom-tooltip'];
-            }
-        }
-    });
+    const data = useMemo( ()=> props.api.getDisplayedRowAtIndex(props.rowIndex).data, []);
 
     const valueToDisplay = props.value.value ? props.value.value : '- Missing -';
     return (
@@ -18,5 +11,4 @@ export default forwardRef((props, ref) => {
             <p><span>{valueToDisplay}</span></p>
         </div>
     );
-});
-
+};

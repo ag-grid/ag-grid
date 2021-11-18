@@ -1,15 +1,8 @@
-import React, {forwardRef, useImperativeHandle, useState} from 'react';
+import React, {useMemo} from 'react';
 
-export default forwardRef((props, ref) => {
-    const [data, setData] = useState(props.api.getDisplayedRowAtIndex(props.rowIndex).data);
+export default props => {
 
-    useImperativeHandle(ref, () => {
-        return {
-            getReactContainerClasses() {
-                return ['custom-tooltip'];
-            }
-        }
-    });
+    const data = useMemo( ()=> props.api.getDisplayedRowAtIndex(props.rowIndex).data, []);
 
     return (
         <div className={'panel panel-' + (props.type || 'primary')}>
@@ -22,5 +15,4 @@ export default forwardRef((props, ref) => {
             </div>
         </div>
     );
-});
-
+};

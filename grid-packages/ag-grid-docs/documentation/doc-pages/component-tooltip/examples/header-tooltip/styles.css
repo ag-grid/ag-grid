@@ -1,16 +1,9 @@
 .custom-tooltip {
-    position: absolute;
     width: 165px;
     height: 80px;
     border: 1px solid cornflowerblue;
     overflow: hidden;
-    pointer-events: none;
-    transition: opacity 1s;
     background-color: white;
-}
-
-.custom-tooltip.ag-tooltip-hiding {
-    opacity: 0;
 }
 
 .custom-tooltip p {

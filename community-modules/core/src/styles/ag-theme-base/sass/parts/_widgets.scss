@@ -445,6 +445,13 @@
         }
     }
 
+    .ag-tooltip-custom {
+        transition: opacity 1s;
+        &.ag-tooltip-hiding {
+            opacity: 0;
+        }
+    }
+
     // Column select
     @for $i from 1 to 10 {
         .ag-column-select-indent-#{$i} {

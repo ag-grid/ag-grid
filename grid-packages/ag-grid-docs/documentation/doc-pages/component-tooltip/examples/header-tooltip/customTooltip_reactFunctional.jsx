@@ -1,17 +1,9 @@
-import React, {forwardRef, useImperativeHandle} from 'react';
+import React from 'react';
 
-export default forwardRef((props, ref) => {
+export default props => {
     const isHeader = props.rowIndex === undefined;
     const isGroupedHeader = isHeader && !!props.colDef.children;
     const valueToDisplay = props.value.value ? props.value.value : '- Missing -';
-
-    useImperativeHandle(ref, () => {
-        return {
-            getReactContainerClasses() {
-                return ['custom-tooltip'];
-            },
-        };
-    });
 
     return isHeader ?
         (
@@ -34,5 +26,5 @@ export default forwardRef((props, ref) => {
                 <p><span>{valueToDisplay}</span></p>
             </div>
         );
-});
+};
 
