@@ -5,7 +5,6 @@
 |```jsx
 |export default props => {
 |    const data = useMemo(props.api.getDisplayedRowAtIndex(props.rowIndex).data, []);
-
 |    return (
 |        <div className="custom-tooltip" style={{backgroundColor: props.color || 'white'}}>
 |            <p><span>{data.athlete}</span></p>
@@ -40,7 +39,7 @@
 |import {ITooltipReactComp} from "@ag-grid-community/react";
 |
 |const CustomTooltip = (props: ITooltipParams) => {
-     const data = useMemo(props.api.getDisplayedRowAtIndex(props.rowIndex).data, []);
+|    const data = useMemo(props.api.getDisplayedRowAtIndex(props.rowIndex).data, []);
 |    
 |    return (
 |        <div style={{backgroundColor: props.color || 'white'}}>
