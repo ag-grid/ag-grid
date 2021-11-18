@@ -14,6 +14,7 @@ meta_and_links("AG Grid: Privacy Policy", "About AG Grid", "We take your privacy
 </head>
 
 <body>
+<?php include_once("./includes/analytics.php"); ?>
 	<header id="nav" class="compact">
 	<?php
 		$version = 'latest';
@@ -296,6 +297,5 @@ meta_and_links("AG Grid: Privacy Policy", "About AG Grid", "We take your privacy
 
 		<?php include_once("./includes/footer.php"); ?>
 	</div>
-<?php include_once("./includes/analytics.php"); ?>
 </body>
 </html>

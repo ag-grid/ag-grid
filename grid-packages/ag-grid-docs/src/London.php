@@ -13,6 +13,7 @@ gtm_data_layer('about');
 </head>
 
 <body>
+<?php include_once("./includes/analytics.php"); ?>
     <header id="nav" class="compact">
         <?php
         $version = 'latest';
@@ -307,6 +308,5 @@ gtm_data_layer('about');
 <br><br>
 
 <?php include_once("./includes/footer.php"); ?>
-<?php include_once("./includes/analytics.php"); ?>
 </body>
 </html>

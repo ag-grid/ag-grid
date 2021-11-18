@@ -17,6 +17,7 @@ gtm_data_layer('community-enterprise');
 </head>
 
 <body ng-app="index">
+<?php include_once("./includes/analytics.php"); ?>
 
 <header id="nav">
     <?php
@@ -508,7 +509,6 @@ gtm_data_layer('community-enterprise');
     </div>
     <?php include_once("./includes/footer.php"); ?>
 </div>
-<?php include_once("./includes/analytics.php"); ?>
 <script src="dist/homepage.js"></script>
 </body>
 </html>

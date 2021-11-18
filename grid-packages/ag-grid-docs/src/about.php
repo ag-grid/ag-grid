@@ -15,6 +15,7 @@
 </head>
 
 <body>
+<?php include_once("./includes/analytics.php"); ?>
 <header id="nav" class="compact">
     <?php
             $version = 'latest';
@@ -344,7 +345,6 @@
     </div>
     <?php include_once("./includes/footer.php"); ?>
 </div>
-<?php include_once("./includes/analytics.php"); ?>
 </body>
 
 </html>

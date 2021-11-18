@@ -16,6 +16,7 @@ meta_and_links("Current Opportunities at AG Grid", "AG Grid jobs", "We are looki
 <link rel="stylesheet" href="../dist/homepage.css">
 </head>
 <body>
+<?php include_once("../includes/analytics.php"); ?>
 <header id="nav" class="compact">
 <?php
     $version = 'latest';
@@ -120,6 +121,5 @@ meta_and_links("Current Opportunities at AG Grid", "AG Grid jobs", "We are looki
     </div>
     <?php include_once("../includes/footer.php"); ?>
 </div>
-<?php include_once("../includes/analytics.php"); ?>
 </body>
 </html>

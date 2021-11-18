@@ -14,6 +14,7 @@ meta_and_links("Our Mission, Our Principles and Our Team at AG Grid", "About AG 
     </head>
 
     <body>
+    <?php include_once("./includes/analytics.php"); ?>
         <header id="nav" class="compact">
 <?php
     $version = 'latest';
@@ -69,6 +70,5 @@ meta_and_links("Our Mission, Our Principles and Our Team at AG Grid", "About AG 
             </div>
         </div>
 <?php include_once("./includes/footer.php"); ?>
-<?php include_once("./includes/analytics.php"); ?>
     </body>
 </html>

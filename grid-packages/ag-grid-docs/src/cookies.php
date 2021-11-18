@@ -15,6 +15,7 @@ meta_and_links("AG Grid: Cookies Policy", "About AG Grid", "This page outlines o
 </head>
 
 <body>
+<?php include_once("./includes/analytics.php"); ?>
   <header id="nav" class="compact">
   <?php
       $version = 'latest';
@@ -42,7 +43,7 @@ meta_and_links("AG Grid: Cookies Policy", "About AG Grid", "This page outlines o
         <ol>
           <li>
                       <!-- OneTrust CookiePro Details -->
-            <h3 id="manage-your-cookie-consent">Manage Cookie Consent</h2>
+            <h3 id="manage-your-cookie-consent">Manage Cookie Consent</h3>
             <hr>
             <p>You can manage your optin and optout cookie consent settings by clicking the button below.</p>
             <button id="ot-sdk-btn" class="ot-sdk-show-settings">Cookie Settings</button>
@@ -144,6 +145,5 @@ meta_and_links("AG Grid: Cookies Policy", "About AG Grid", "This page outlines o
     </div>
     <?php include_once("./includes/footer.php"); ?>
   </div>
-<?php include_once("./includes/analytics.php"); ?>
 </body>
 </html>
