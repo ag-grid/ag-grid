@@ -15,6 +15,7 @@ const webpackMiddleware = require('webpack-dev-middleware');
 const chokidar = require('chokidar');
 const tcpPortUsed = require('tcp-port-used');
 const { generateDocumentationExamples } = require('./example-generator-documentation');
+const { watchValidateExampleTypes } = require('./example-validator');
 const { updateBetweenStrings, getAllModules } = require('./utils');
 const { getFlattenedBuildChainInfo, buildPackages, buildCss, watchCss } = require('./lernaOperations');
 const { EOL } = os;
@@ -771,6 +772,9 @@ module.exports = async (skipFrameworks, skipExampleFormatting, done) => {
 
             console.log("Watch Core Modules & CSS");
             await watchCoreModulesAndCss(skipFrameworks);
+
+            console.log("Watch Typescript examples...");
+            await watchValidateExampleTypes();
 
             if (!skipFrameworks) {
                 console.log("Watch Framework Modules");

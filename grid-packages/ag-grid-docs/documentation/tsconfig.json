@@ -1,0 +1,29 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "esnext",
+        "strict": true,
+        "importHelpers": true,
+        "noImplicitThis": true,
+        "noImplicitAny": true,
+        "moduleResolution": "node",
+        "experimentalDecorators": true,
+        "esModuleInterop": true,
+        "noEmit": true,
+        "skipLibCheck": true,
+        "lib": [
+            "esnext",
+            "dom",
+            "dom.iterable",
+            "scripthost"
+        ]
+    },
+    "include": [
+        "./doc-pages/**/main.ts",
+        "./custom-types/**/*"
+    ],
+    "exclude": [
+        "./node_modules",
+        "./doc-pages/**/_gen/**/main.ts"
+    ]
+}
