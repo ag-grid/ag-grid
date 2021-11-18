@@ -126,12 +126,8 @@ export class GridCtrl extends BeanStub {
         const idxWithFocus = findIndex(focusableContainers, container => container.contains(document.activeElement));
         const nextIdx = idxWithFocus + (backwards ? -1 : 1);
 
-        if (nextIdx < 0 || nextIdx >= focusableContainers.length) {
+        if (nextIdx <= 0 || nextIdx >= focusableContainers.length) {
             return false;
-        }
-
-        if (nextIdx === 0) {
-            return this.focusGridHeader();
         }
 
         return this.focusService.focusInto(focusableContainers[nextIdx]);
@@ -149,22 +145,7 @@ export class GridCtrl extends BeanStub {
             if (this.focusService.focusGridView(lastColumn, true)) { return true; }
         }
 
-        return this.focusGridHeader();
-    }
-
-    public focusGridHeader(): boolean {
-        let firstColumn: Column | ColumnGroup = this.columnModel.getAllDisplayedColumns()[0];
-        if (!firstColumn) { return false; }
-
-        if (firstColumn.getParent()) {
-            firstColumn = this.columnModel.getColumnGroupAtLevel(firstColumn, 0)!;
-        }
-
-        this.focusService.focusHeaderPosition({
-            headerPosition: { headerRowIndex: 0, column: firstColumn }
-        });
-
-        return true;
+        return this.focusService.focusFirstHeader();
     }
 
     public forceFocusOutOfContainer(up = false): void {

@@ -340,6 +340,29 @@ export class FocusService extends BeanStub {
         return focusSuccess;
     }
 
+    public focusFirstHeader(): boolean {
+        let firstColumn: Column | ColumnGroup = this.columnModel.getAllDisplayedColumns()[0];
+        if (!firstColumn) { return false; }
+
+        if (firstColumn.getParent()) {
+            firstColumn = this.columnModel.getColumnGroupAtLevel(firstColumn, 0)!;
+        }
+
+        return this.focusHeaderPosition({
+            headerPosition: { headerRowIndex: 0, column: firstColumn }
+        });
+    }
+
+    public focusLastHeader(event?: KeyboardEvent): boolean {
+        const headerRowIndex = this.headerNavigationService.getHeaderRowCount() - 1;
+        const column = last(this.columnModel.getAllDisplayedColumns());
+
+        return this.focusHeaderPosition({
+            headerPosition: { headerRowIndex, column },
+            event
+        });
+    }
+
     public isAnyCellFocused(): boolean {
         return !!this.focusedCellPosition;
     }
@@ -460,6 +483,15 @@ export class FocusService extends BeanStub {
     }
 
     public focusGridView(column?: Column, backwards?: boolean): boolean {
+        if (this.gridOptionsWrapper.isSuppressCellSelection()) {
+
+            if (backwards) {
+                return this.focusLastHeader();
+            }
+
+            return this.focusNextGridCoreContainer(false);
+        }
+
         const nextRow = backwards
             ? this.rowPositionUtils.getLastRow()
             : this.rowPositionUtils.getFirstRow();

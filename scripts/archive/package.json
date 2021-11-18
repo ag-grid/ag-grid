@@ -1,0 +1,16 @@
+{
+  "name": "archive-sanitiser",
+  "version": "1.0.0",
+  "description": "removes seo and cookie type scripts/blocks from archives",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "parse5": "^6.0.1",
+    "walk": "^2.3.15"
+  }
+}

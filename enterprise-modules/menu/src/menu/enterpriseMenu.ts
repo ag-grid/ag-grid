@@ -451,7 +451,7 @@ export class EnterpriseMenu extends BeanStub {
         // in this case we highlight the cell that was previously highlighted
         const focusedCell = this.focusService.getFocusedCell();
 
-        if (focusedCell) {
+        if (document.activeElement === document.body && focusedCell) {
             const { rowIndex, rowPinned, column } = focusedCell;
             this.focusService.setFocusedCell(rowIndex, column, rowPinned, true);
         }
