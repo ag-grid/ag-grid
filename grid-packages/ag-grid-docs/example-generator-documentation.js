@@ -364,9 +364,10 @@ function createExampleGenerator(prefix, importTypes) {
             }
         }
 
-        inlineStyles = undefined; // unset these as they don't need to be copied for typescript
-        const typescriptScripts = getMatchingPaths('*.{html,ts}', { ignore: ['**/* _{ angular, react, vue, vue3 }.js'] });
-        importTypes.forEach(importType => writeExampleFiles(importType, 'typescript', 'typescript', typescriptScripts, {}));
+        // Uncomment when ready to setup Typescript examples
+        // inlineStyles = undefined; // unset these as they don't need to be copied for typescript
+        // const typescriptScripts = getMatchingPaths('*.{html,ts}', { ignore: ['**/* _{ angular, react, vue, vue3 }.js'] });
+        // importTypes.forEach(importType => writeExampleFiles(importType, 'typescript', 'typescript', typescriptScripts, {}));
     };
 }
 
