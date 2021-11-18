@@ -187,6 +187,9 @@ export class NavigationService extends BeanStub {
 
         const pageLastRow = this.paginationProxy.getPageLastRow();
 
+        if (focusIndex === gridCell.rowIndex && focusIndex === scrollIndex) {
+            focusIndex = scrollIndex = gridCell.rowIndex + 1;
+        }
         if (focusIndex > pageLastRow) { focusIndex = pageLastRow; }
         if (scrollIndex > pageLastRow) { scrollIndex = pageLastRow; }
 
@@ -224,6 +227,10 @@ export class NavigationService extends BeanStub {
         let focusIndex = this.paginationProxy.getRowIndexAtPixel(nextCellPixel + pagingPixelOffset);
 
         const firstRow = this.paginationProxy.getPageFirstRow();
+
+        if (focusIndex === gridCell.rowIndex && focusIndex === scrollIndex) {
+            scrollIndex = focusIndex = gridCell.rowIndex - 1;
+        }
 
         if (focusIndex < firstRow) { focusIndex = firstRow; }
         if (scrollIndex < firstRow) { scrollIndex = firstRow; }
