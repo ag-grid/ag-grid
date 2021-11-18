@@ -100,6 +100,7 @@
     "prettier": "2.2.1",
     "prettier-plugin-organize-imports": "^2.3.4",
     "puppeteer-core": "7.1.0",
-    "react-test-renderer": "16.14.0"
+    "react-test-renderer": "16.14.0",
+    "yargs": "^16.2.0"
   }
 }

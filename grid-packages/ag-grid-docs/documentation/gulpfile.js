@@ -7,8 +7,12 @@ const prettier = require('gulp-prettier');
 const gulpIf = require('gulp-if');
 const gulpIgnore = require('gulp-ignore');
 const fs = require('fs-extra');
-const folder = 'aggregation'
 const del = require('del');
+var argv = require('yargs').argv;
+
+// npx gulp --dir accessing-data
+let folder = argv.dir;
+console.log('Running on ', folder)
 
 const renameFiles = () => {
     return src([`./doc-pages/**/${folder}/**/main.js`], { base: './' })
