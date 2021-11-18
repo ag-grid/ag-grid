@@ -60,7 +60,7 @@ const ImageCaption = ({
         });
 
     return (
-        <div className={classnames(styles['image-caption'], { [styles['image-caption--centered']]: centered })} style={style}>
+        <div className={classnames(styles['image-caption'], { [styles['image-caption--centered']]: centered, [styles['image-caption--constrained']]: constrained })} style={style}>
             {descriptionTop && description}
             {src.endsWith('.gif') ?
                 <Gif src={src} alt={alt} className={imageClasses} wrapped={true} /> :
