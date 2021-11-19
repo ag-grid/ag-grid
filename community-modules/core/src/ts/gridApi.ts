@@ -172,7 +172,7 @@ export interface CreateCrossFilterChartParams extends CreateChartParams {
     aggFunc?: string | IAggFunc;
 }
 
-export interface CreatePivotChartParams extends CreateChartParams {}
+export interface CreatePivotChartParams extends CreateChartParams { }
 
 export interface DetailGridInfo {
     /**
@@ -1623,13 +1623,13 @@ export class GridApi {
      * Set `includeHeaders = true` to include the headers (default is `false`).
      * Set `columnKeys` to the list of columns if you want just specific columns.
      */
-    public copySelectedRowsToClipboard(includeHeader: boolean, columnKeys?: (string | Column)[]): void {
+    public copySelectedRowsToClipboard(includeHeader?: boolean, columnKeys?: (string | Column)[]): void {
         if (!this.clipboardService) { console.warn('AG Grid: clipboard is only available in AG Grid Enterprise'); }
         this.clipboardService.copySelectedRowsToClipboard(includeHeader, columnKeys);
     }
 
     /** Copies the selected ranges to the clipboard. */
-    public copySelectedRangeToClipboard(includeHeader: boolean): void {
+    public copySelectedRangeToClipboard(includeHeader?: boolean): void {
         if (!this.clipboardService) { console.warn('AG Grid: clipboard is only available in AG Grid Enterprise'); }
         this.clipboardService.copySelectedRangeToClipboard(includeHeader);
     }

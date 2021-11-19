@@ -1051,7 +1051,7 @@
     "description": "/** Copies the selected rows to the clipboard.\n * Set `includeHeaders = true` to include the headers (default is `false`).\n * Set `columnKeys` to the list of columns if you want just specific columns. */",
     "type": {
       "arguments": {
-        "includeHeader": "boolean",
+        "includeHeader?": "boolean",
         "columnKeys?": "(string | Column)[]"
       },
       "returnType": "void"
@@ -1060,7 +1060,7 @@
   "copySelectedRangeToClipboard": {
     "description": "/** Copies the selected ranges to the clipboard. */",
     "type": {
-      "arguments": { "includeHeader": "boolean" },
+      "arguments": { "includeHeader?": "boolean" },
       "returnType": "void"
     }
   },
