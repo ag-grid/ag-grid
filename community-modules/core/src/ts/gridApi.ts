@@ -1169,17 +1169,22 @@ export class GridApi {
     }
 
     /** Sets the height in pixels for the rows containing header column groups. */
-    public setGroupHeaderHeight(headerHeight: number) {
+    public setGroupHeaderHeight(headerHeight?: number) {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GROUP_HEADER_HEIGHT, headerHeight);
     }
 
     /** Sets the height in pixels for the row containing the floating filters. */
-    public setFloatingFiltersHeight(headerHeight: number) {
+    public setFloatingFiltersHeight(headerHeight?: number) {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_FLOATING_FILTERS_HEIGHT, headerHeight);
     }
 
+    /** Sets the height in pixels for the row containing the columns when in pivot mode. */
+    public setPivotHeaderHeight(headerHeight?: number) {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, headerHeight);
+    }
+
     /** Sets the height in pixels for the row containing header column groups when in pivot mode. */
-    public setPivotGroupHeaderHeight(headerHeight: number) {
+    public setPivotGroupHeaderHeight(headerHeight?: number) {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PIVOT_GROUP_HEADER_HEIGHT, headerHeight);
     }
 
@@ -1321,11 +1326,6 @@ export class GridApi {
 
     public setGetRowHeight(rowHeightFunc: (params: RowHeightParams) => number): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_ROW_HEIGHT, rowHeightFunc);
-    }
-
-    /** Sets the height in pixels for the row containing the columns when in pivot mode. */
-    public setPivotHeaderHeight(headerHeight: number) {
-        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, headerHeight);
     }
 
     /** Returns `true` if the side bar is visible. */

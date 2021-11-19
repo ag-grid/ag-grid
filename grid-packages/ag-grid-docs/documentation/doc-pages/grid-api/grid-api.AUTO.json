@@ -600,15 +600,19 @@
   },
   "setGroupHeaderHeight": {
     "description": "/** Sets the height in pixels for the rows containing header column groups. */",
-    "type": { "arguments": { "headerHeight": "number" } }
+    "type": { "arguments": { "headerHeight?": "number" } }
   },
   "setFloatingFiltersHeight": {
     "description": "/** Sets the height in pixels for the row containing the floating filters. */",
-    "type": { "arguments": { "headerHeight": "number" } }
+    "type": { "arguments": { "headerHeight?": "number" } }
+  },
+  "setPivotHeaderHeight": {
+    "description": "/** Sets the height in pixels for the row containing the columns when in pivot mode. */",
+    "type": { "arguments": { "headerHeight?": "number" } }
   },
   "setPivotGroupHeaderHeight": {
     "description": "/** Sets the height in pixels for the row containing header column groups when in pivot mode. */",
-    "type": { "arguments": { "headerHeight": "number" } }
+    "type": { "arguments": { "headerHeight?": "number" } }
   },
   "setIsExternalFilterPresent": {
     "type": {
@@ -855,10 +859,6 @@
       "arguments": { "rowHeightFunc": "(params: RowHeightParams) => number" },
       "returnType": "void"
     }
-  },
-  "setPivotHeaderHeight": {
-    "description": "/** Sets the height in pixels for the row containing the columns when in pivot mode. */",
-    "type": { "arguments": { "headerHeight": "number" } }
   },
   "isSideBarVisible": {
     "description": "/** Returns `true` if the side bar is visible. */",
