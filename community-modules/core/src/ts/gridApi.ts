@@ -620,12 +620,6 @@ export class GridApi {
         return this.filterManager.isAnyFilterPresent();
     }
 
-    /** @deprecated */
-    public isAdvancedFilterPresent(): boolean {
-        console.warn('AG Grid: isAdvancedFilterPresent() is deprecated, please use isColumnFilterPresent()');
-        return this.isColumnFilterPresent();
-    }
-
     /** Returns `true` if any column filter is set, otherwise `false`. */
     public isColumnFilterPresent(): boolean {
         return this.filterManager.isAdvancedFilterPresent();
@@ -974,11 +968,6 @@ export class GridApi {
         this.clientSideRowModel.forEachNodeAfterFilterAndSort(callback);
     }
 
-    public getFilterApiForColDef(colDef: any): any {
-        console.warn('ag-grid API method getFilterApiForColDef deprecated, use getFilterInstance instead');
-        return this.getFilterInstance(colDef);
-    }
-
     /**
      * Returns the filter component instance for a column.
      * `key` can be a string field name or a ColDef object (matches on object reference, useful if field names are not unique).
@@ -1004,11 +993,6 @@ export class GridApi {
         }
 
         return currentValueUnwrapped;
-    }
-
-    public getFilterApi(key: string | Column) {
-        console.warn('AG Grid: getFilterApi is deprecated, use getFilterInstance instead');
-        return this.getFilterInstance(key);
     }
 
     /** Destroys a filter. Useful to force a particular filter to be created from scratch again. */

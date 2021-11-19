@@ -277,10 +277,6 @@ export interface GridOptions {
     cacheQuickFilter?: boolean;
     /** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. Default: `false` */
     excludeChildrenWhenTreeDataFiltering?: boolean;
-    /** @deprecated Use floatingFilter on the colDef instead */
-    floatingFilter?: boolean;
-    /** @deprecated */
-    enableOldSetFilterModel?: boolean;
 
     // *** Integrated Charts *** //
     /** Set to `true` to Enable Charts. Default: `false` */

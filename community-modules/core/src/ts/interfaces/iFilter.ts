@@ -157,7 +157,3 @@ export interface IFilterParams {
     /** The context as provided on `gridOptions.context` */
     context: any;
 }
-
-/** @deprecated, use iFilter */
-export interface Filter extends IFilter {
-}

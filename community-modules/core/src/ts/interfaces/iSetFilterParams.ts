@@ -83,8 +83,4 @@ export interface ISetFilterParams extends IProvidedFilterParams {
     caseSensitive?: boolean;
     /** Changes the behaviour of the Set Filter to match that of Excel's AutoFilter. */
     excelMode?: 'mac' | 'windows';
-    /** @deprecated */ suppressRemoveEntries?: boolean;
-    /** @deprecated */ suppressSyncValuesAfterDataChange?: boolean;
-    /** @deprecated */ selectAllOnMiniFilter?: boolean;
-    /** @deprecated */ syncValuesLikeExcel?: boolean;
 }

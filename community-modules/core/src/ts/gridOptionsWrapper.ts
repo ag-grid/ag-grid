@@ -1157,16 +1157,8 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.functionsReadOnly);
     }
 
-    public isFloatingFilter(): boolean | undefined {
-        return this.gridOptions.floatingFilter;
-    }
-
     public isEnableCellTextSelect(): boolean {
         return isTrue(this.gridOptions.enableCellTextSelection);
-    }
-
-    public isEnableOldSetFilterModel(): boolean {
-        return isTrue(this.gridOptions.enableOldSetFilterModel);
     }
 
     public getDefaultColDef(): ColDef | undefined {
@@ -1565,26 +1557,6 @@ export class GridOptionsWrapper {
 
         if (options.deprecatedEmbedFullWidthRows) {
             console.warn(`AG Grid: since v21.2, deprecatedEmbedFullWidthRows has been replaced with embedFullWidthRows.`);
-        }
-
-        if (options.enableOldSetFilterModel) {
-            console.warn(
-                'AG Grid: since v22.x, enableOldSetFilterModel is deprecated. Please move to the new Set Filter Model as the old one may not be supported in v23 onwards.'
-            );
-        }
-
-        if (options.floatingFilter) {
-            console.warn(
-                'AG Grid: since v23.1, floatingFilter on the gridOptions is deprecated. Please use floatingFilter on the colDef instead.'
-            );
-
-            if (!options.defaultColDef) {
-                options.defaultColDef = {};
-            }
-
-            if (options.defaultColDef.floatingFilter == null) {
-                options.defaultColDef.floatingFilter = true;
-            }
         }
 
         if (options.rowDeselection) {

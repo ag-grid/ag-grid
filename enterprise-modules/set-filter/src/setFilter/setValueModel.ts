@@ -231,8 +231,7 @@ export class SetValueModel implements IEventEmitter {
     }
 
     private showAvailableOnly(): boolean {
-        return this.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES &&
-            !this.filterParams.suppressRemoveEntries;
+        return this.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
     }
 
     private updateAvailableValues(allValues: (string | null)[]): void {
@@ -332,14 +331,6 @@ export class SetValueModel implements IEventEmitter {
         return this.filterParams.defaultToNothingSelected ?
             this.selectedValues.size > 0 :
             this.allValues.length !== this.selectedValues.size;
-    }
-
-    public getUniqueValueCount(): number {
-        return this.allValues.length;
-    }
-
-    public getUniqueValue(index: any): string | null {
-        return this.allValues[index];
     }
 
     public getValues(): (string | null)[] {

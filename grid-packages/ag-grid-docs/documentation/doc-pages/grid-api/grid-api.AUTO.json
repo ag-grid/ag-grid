@@ -268,10 +268,6 @@
     "description": "/** Returns `true` if any filter is set. This includes quick filter, advanced filter or external filter. */",
     "type": { "arguments": {}, "returnType": "boolean" }
   },
-  "isAdvancedFilterPresent": {
-    "description": "/** @deprecated */",
-    "type": { "arguments": {}, "returnType": "boolean" }
-  },
   "isColumnFilterPresent": {
     "description": "/** Returns `true` if any column filter is set, otherwise `false`. */",
     "type": { "arguments": {}, "returnType": "boolean" }
@@ -479,9 +475,6 @@
       "arguments": { "callback": "(rowNode: RowNode, index: number) => void" }
     }
   },
-  "getFilterApiForColDef": {
-    "type": { "arguments": { "colDef": "any" }, "returnType": "any" }
-  },
   "getFilterInstance": {
     "description": "/** Returns the filter component instance for a column.\n * `key` can be a string field name or a ColDef object (matches on object reference, useful if field names are not unique). */",
     "type": {
@@ -492,7 +485,6 @@
       "returnType": "IFilter | null | undefined"
     }
   },
-  "getFilterApi": { "type": { "arguments": { "key": "string | Column" } } },
   "destroyFilter": {
     "description": "/** Destroys a filter. Useful to force a particular filter to be created from scratch again. */",
     "type": { "arguments": { "key": "string | Column" } }

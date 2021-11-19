@@ -16,9 +16,6 @@ import { RowNode } from '../../entities/rowNode';
 type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
 
 export interface IProvidedFilterParams extends IFilterParams {
-    /** @deprecated */ clearButton?: boolean;
-    /** @deprecated */ resetButton?: boolean;
-    /** @deprecated */ applyButton?: boolean;
     buttons?: FilterButtonType[];
     closeOnApply?: boolean;
     /** @deprecated */ newRowsAction?: string;
@@ -95,14 +92,6 @@ export abstract class ProvidedFilter<M, V> extends Component implements IFilterC
         return this.translate(this.filterNameKey);
     }
 
-    /** @deprecated */
-    public onFilterChanged(): void {
-        console.warn(`AG Grid: you should not call onFilterChanged() directly on the filter, please call
-        gridApi.onFilterChanged() instead. onFilterChanged is not part of the exposed filter interface (it was
-        a method that existed on an old version of the filters that was not intended for public use.`);
-        this.providedFilterParams.filterChangedCallback();
-    }
-
     public isFilterActive(): boolean {
         // filter is active if we have a valid applied model
         return !!this.appliedModel;
@@ -133,8 +122,6 @@ export abstract class ProvidedFilter<M, V> extends Component implements IFilterC
     }
 
     protected setParams(params: IProvidedFilterParams): void {
-        ProvidedFilter.checkForDeprecatedParams(params);
-
         this.providedFilterParams = params;
 
         if (params.newRowsAction === 'keep') {
@@ -206,36 +193,6 @@ export abstract class ProvidedFilter<M, V> extends Component implements IFilterC
         convertToSet(buttons).forEach(type => addButton(type));
 
         this.getGui().appendChild(eButtonsPanel);
-    }
-
-    private static checkForDeprecatedParams(params: IProvidedFilterParams): void {
-        const buttons = params.buttons || [];
-
-        if (buttons.length > 0) { return; }
-
-        const { applyButton, resetButton, clearButton } = params;
-
-        if (clearButton) {
-            console.warn('AG Grid: as of AG Grid v23.2, filterParams.clearButton is deprecated. Please use filterParams.buttons instead');
-            buttons.push('clear');
-        }
-
-        if (resetButton) {
-            console.warn('AG Grid: as of AG Grid v23.2, filterParams.resetButton is deprecated. Please use filterParams.buttons instead');
-            buttons.push('reset');
-        }
-
-        if (applyButton) {
-            console.warn('AG Grid: as of AG Grid v23.2, filterParams.applyButton is deprecated. Please use filterParams.buttons instead');
-            buttons.push('apply');
-        }
-
-        if ((params as any).apply) {
-            console.warn('AG Grid: as of AG Grid v21, filterParams.apply is deprecated. Please use filterParams.buttons instead');
-            buttons.push('apply');
-        }
-
-        params.buttons = buttons;
     }
 
     // subclasses can override this to provide alternative debounce defaults
@@ -397,8 +354,6 @@ export abstract class ProvidedFilter<M, V> extends Component implements IFilterC
 
     // static, as used by floating filter also
     public static isUseApplyButton(params: IProvidedFilterParams): boolean {
-        ProvidedFilter.checkForDeprecatedParams(params);
-
         return !!params.buttons && params.buttons.indexOf('apply') >= 0;
     }
 

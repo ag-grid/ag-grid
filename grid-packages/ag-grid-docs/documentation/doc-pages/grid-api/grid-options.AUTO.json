@@ -255,14 +255,6 @@
     "description": "/** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
-  "floatingFilter": {
-    "description": "/** @deprecated Use floatingFilter on the colDef instead\n */",
-    "type": { "returnType": "boolean" }
-  },
-  "enableOldSetFilterModel": {
-    "description": "/** @deprecated */",
-    "type": { "returnType": "boolean" }
-  },
   "enableCharts": {
     "description": "/** Set to `true` to Enable Charts. Default: `false` */",
     "type": { "returnType": "boolean" }

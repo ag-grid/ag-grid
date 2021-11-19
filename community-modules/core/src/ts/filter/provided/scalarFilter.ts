@@ -1,13 +1,6 @@
 import { AgInputTextField } from "../../widgets/agInputTextField";
 import { SimpleFilter, ISimpleFilterParams, ISimpleFilterModel, ISimpleFilterModelType, Tuple } from "./simpleFilter";
 
-/** @deprecated in v21*/
-export interface NullComparator {
-    equals?: boolean;
-    lessThan?: boolean;
-    greaterThan?: boolean;
-}
-
 export interface IScalarFilterParams extends ISimpleFilterParams {
     /** If `true`, the `'inRange'` filter option will include values equal to the start and end of the range. */
     inRangeInclusive?: boolean;
@@ -19,9 +12,6 @@ export interface IScalarFilterParams extends ISimpleFilterParams {
     includeBlanksInGreaterThan?: boolean;
     /** If `true`, blank (`null` or `undefined`) values will pass the `'inRange'` filter option. */
     includeBlanksInRange?: boolean;
-
-    /** @deprecated in v21*/
-    nullComparator?: NullComparator;
 }
 
 export interface Comparator<T> {
@@ -36,19 +26,6 @@ export abstract class ScalarFilter<M extends ISimpleFilterModel, V, E = AgInputT
     protected setParams(params: IScalarFilterParams): void {
         super.setParams(params);
         this.scalarFilterParams = params;
-        this.checkDeprecatedParams();
-    }
-
-    private checkDeprecatedParams(): void {
-        if (this.scalarFilterParams.nullComparator) {
-            console.warn('AG Grid: Since v21.0, the property filterParams.nullComparator is deprecated. ' +
-                'Please use filterParams.includeBlanksInEquals, filterParams.includeBlanksInLessThan and ' +
-                'filterParams.includeBlanksInGreaterThan instead.');
-
-            this.scalarFilterParams.includeBlanksInEquals = this.scalarFilterParams.nullComparator.equals;
-            this.scalarFilterParams.includeBlanksInLessThan = this.scalarFilterParams.nullComparator.lessThan;
-            this.scalarFilterParams.includeBlanksInGreaterThan = this.scalarFilterParams.nullComparator.greaterThan;
-        }
     }
 
     protected evaluateNullValue(filterType?: ISimpleFilterModelType | null) {

@@ -379,15 +379,6 @@ describe('SetValueModel', () => {
             expect(getDisplayedValues(model)).toStrictEqual(['A', 'C']);
         });
 
-        it('shows all values regardless of whether they pass other filters if suppressRemoveEntries = true', () => {
-            const value = 'B';
-            const values = ['A', value, 'C'];
-            const doesRowPassOtherFilters = (row: RowNode) => row.data.value != value;
-            model = createSetValueModel({values, filterParams: { suppressRemoveEntries: true }, doesRowPassOtherFilters});
-
-            expect(getDisplayedValues(model)).toStrictEqual(['A', 'B', 'C']);
-        });
-
         it.each([undefined, null, ''])('turns "%s" into null entry', value => {
             model = createSetValueModel({values: [value]});
 
