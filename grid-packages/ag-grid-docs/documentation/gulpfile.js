@@ -44,7 +44,6 @@ const applyTypes = () => {
         .pipe(replace(new RegExp('(var|const) columnDefs =', 'g'), 'const columnDefs: ColDef[] ='))
         .pipe(replace(new RegExp('gridOptions\.api(?!!.)', 'g'), 'gridOptions.api!'))
         .pipe(replace(new RegExp('gridOptions\.columnApi(?!!.)', 'g'), 'gridOptions.columnApi!'))
-        .pipe(replace(new RegExp('document\.getElementById\(.*\)', 'g'), '(document.getElementById($1) as any)'))
         .pipe(gulpIf(containsGridOptions, replace(new RegExp('^', 'g'), 'import { GridOptions } from "@ag-grid-community/core";\n\n')))
         .pipe(gulpIf(containsColDef, replace(new RegExp('^', 'g'), 'import { ColDef } from "@ag-grid-community/core";\n\n')))
         .pipe(dest('./'))
