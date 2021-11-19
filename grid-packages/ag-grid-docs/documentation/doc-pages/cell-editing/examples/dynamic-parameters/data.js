@@ -13,8 +13,8 @@ function getData() {
             gender: 'Female',
             age: 11,
             address: '3685 Rocky Glade, Showtucket, NU, X1E-9I0, CA, (867) 371-4215',
-            city: 'Dublin',
-            country: 'Ireland',
+            city: 'New York',
+            country: 'USA',
         },
         {
             name: 'Sadiq Khan',
