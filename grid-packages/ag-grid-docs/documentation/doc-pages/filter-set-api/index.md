@@ -69,11 +69,11 @@ The following example demonstrates the difference in behaviour between `caseSens
 - With `caseSensitive: false` (the default):
   - `setModel()` will perform **case-insensitive** matching against available values to decide what is enabled in the Filter List.
   - `setFilterValues()` will override the available values and force the case of the presented values in the Filter List to those provided.
-    - Selected values will be maintained based upon **case-insensitive** matching, if [`newRowsAction='keep'` is set](/filter-set-data-updates/#setting-new-data).
+    - Selected values will be maintained based upon **case-insensitive** matching.
 - With `caseSensitive: true`:
   - `setModel()` will perform **case-sensitive** matching against available values to decide what is enabled in the Filter List.
   - `setFilterValues()` will override the available values and force the case of the presented values in the Filter List to those provided.
-    - Selected values will be maintained based upon **case-sensitive** matching, if [`newRowsAction='keep'` is set](/filter-set-data-updates/#setting-new-data).
+    - Selected values will be maintained based upon **case-sensitive** matching.
 - In both cases `getModel()` and `getFilterValues()` will return the values with casing that matches those displayed in the Filter List.
 
 <grid-example title='Set Filter API - Case Sensitivity' name='set-filter-api-case-sensitive' type='mixed' options='{ "enterprise": true, "exampleHeight": 570, "modules": ["clientside", "setfilter", "menu", "filterpanel"] }'></grid-example>

@@ -18,7 +18,6 @@ type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
 export interface IProvidedFilterParams extends IFilterParams {
     buttons?: FilterButtonType[];
     closeOnApply?: boolean;
-    /** @deprecated */ newRowsAction?: string;
     debounceMs?: number;
     /** Defaults to false. If true, all UI inputs related to this filter are for display only, and
      * the filter can only be affected by API calls. */
@@ -34,8 +33,6 @@ export interface IProvidedFilterParams extends IFilterParams {
  * @param V type of value managed by the concrete sub-class that extends this type
  */
 export abstract class ProvidedFilter<M, V> extends Component implements IFilterComp {
-    private newRowsActionKeep: boolean;
-
     // each level in the hierarchy will save params with the appropriate type for that level.
     private providedFilterParams: IProvidedFilterParams;
 
@@ -123,16 +120,6 @@ export abstract class ProvidedFilter<M, V> extends Component implements IFilterC
 
     protected setParams(params: IProvidedFilterParams): void {
         this.providedFilterParams = params;
-
-        if (params.newRowsAction === 'keep') {
-            this.newRowsActionKeep = true;
-        } else if (params.newRowsAction === 'clear') {
-            this.newRowsActionKeep = false;
-        } else {
-            // the default for SSRM and IRM is 'keep', for CSRM and VRM the default is 'clear'
-            const modelsForKeep = [Constants.ROW_MODEL_TYPE_SERVER_SIDE, Constants.ROW_MODEL_TYPE_INFINITE];
-            this.newRowsActionKeep = modelsForKeep.indexOf(this.rowModel.getType()) >= 0;
-        }
 
         this.applyActive = ProvidedFilter.isUseApplyButton(params);
 
@@ -286,9 +273,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IFilterC
     }
 
     public onNewRowsLoaded(): void {
-        if (!this.newRowsActionKeep) {
-            this.resetUiToDefaults().then(() => this.appliedModel = null);
-        }
+        this.resetUiToDefaults().then(() => this.appliedModel = null);
     }
 
     public close(e?: Event): void {
@@ -304,11 +289,6 @@ export abstract class ProvidedFilter<M, V> extends Component implements IFilterC
 
         this.hidePopup(params!);
         this.hidePopup = null;
-    }
-
-    // called by set filter
-    protected isNewRowsActionKeep(): boolean {
-        return this.newRowsActionKeep;
     }
 
     /**

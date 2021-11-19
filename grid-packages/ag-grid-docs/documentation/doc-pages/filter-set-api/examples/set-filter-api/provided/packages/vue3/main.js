@@ -68,8 +68,7 @@ const VueExample = {
             }, {
                 field: "country",
                 cellRenderer: "countryCellRenderer",
-                keyCreator: countryKeyCreator,
-                filterParams: {"newRowsAction": "keep"}
+                keyCreator: countryKeyCreator
             }, {
                 field: "year",
                 maxWidth: 120
