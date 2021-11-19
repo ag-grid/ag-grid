@@ -16,7 +16,7 @@ let folder = argv.dir;
 console.log('Running on ', folder)
 
 const renameFiles = () => {
-    return src([`./doc-pages/**/${folder}/**/main.js`, '!./doc-pages/**/_gen/**/*.js'], { base: './' })
+    return src([`./doc-pages/**/${folder}/**/main.js`, '!./doc-pages/**/{_gen,provided}/**/*.js'], { base: './' })
         .pipe(tap(function (file) {
             fs.moveSync(file.path, file.path.replace('.js', '.ts'));
             return file
@@ -38,7 +38,7 @@ const fileFixed = function (file) {
 }
 
 const applyTypes = () => {
-    return src([`./doc-pages/**/${folder}/**/main.ts`, '!./doc-pages/**/_gen/**/*.ts'], { base: './' })
+    return src([`./doc-pages/**/${folder}/**/main.ts`, '!./doc-pages/**/{_gen,provided}/**/*.ts'], { base: './' })
         .pipe(gulpIgnore.exclude(fileFixed))
         .pipe(replace(new RegExp('(var|const) gridOptions =', 'g'), 'const gridOptions: GridOptions ='))
         .pipe(replace(new RegExp('(var|const) columnDefs =', 'g'), 'const columnDefs: ColDef[] ='))
@@ -50,7 +50,7 @@ const applyTypes = () => {
 };
 
 const prettify = () => {
-    return src([`./doc-pages/**/${folder}/**/main.ts`, '!./doc-pages/**/_gen/**/*.ts'], { base: './' })
+    return src([`./doc-pages/**/${folder}/**/main.ts`, '!./doc-pages/**/{_gen,provided}/**/*.ts'], { base: './' })
         .pipe(prettier({ singleQuote: true }))
         .pipe(dest('./'))
 };

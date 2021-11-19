@@ -18,11 +18,11 @@ import isDevelopment from 'utils/is-development';
  * - 'vue3' (Vue 3)
  */
 const getInternalFramework = (framework, useFunctionalReact, useVue3) => {
-    if (framework === 'javascript') {
+    if (framework === 'javascript' || framework === 'typescript') {
         return 'vanilla';
     } else if (framework === 'react' && useFunctionalReact) {
         return 'reactFunctional';
-    } else if(framework === 'vue' && useVue3) {
+    } else if (framework === 'vue' && useVue3) {
         return 'vue3'
     }
 
@@ -57,6 +57,7 @@ export const getExampleInfo = (
     switch (type) {
         case 'generated':
         case 'mixed':
+        case 'typescript':
             sourcePath += `_gen/${importType}/${internalFramework}/`;
             appLocation += `${importType}/${internalFramework}/`;
             break;

@@ -239,7 +239,7 @@ const VueStyleSelector = ({useVue3, onChange}) => {
     </div>;
 };
 
-const isGeneratedExample = type => ['generated', 'mixed'].includes(type);
+const isGeneratedExample = type => ['generated', 'mixed', 'typescript'].includes(type);
 
 const writeIndexHtmlFile = exampleInfo => {
     const {appLocation, type} = exampleInfo;
