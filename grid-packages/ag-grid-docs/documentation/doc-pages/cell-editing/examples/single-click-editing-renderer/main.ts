@@ -1,4 +1,4 @@
-import { GridOptions } from '@ag-grid-community/core'
+import { GridOptions, ICellRendererParams } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -29,7 +29,7 @@ const gridOptions: GridOptions = {
 }
 
 function getRenderer() {
-  function CellRenderer() {}
+  function CellRenderer() { }
 
   CellRenderer.prototype.createGui = function () {
     const template =
@@ -39,7 +39,7 @@ function getRenderer() {
     this.eGui = tempDiv.firstElementChild
   }
 
-  CellRenderer.prototype.init = function (params) {
+  CellRenderer.prototype.init = function (params: ICellRendererParams) {
     // create the gui
     this.createGui()
     // keep params, we use it in onButtonClicked

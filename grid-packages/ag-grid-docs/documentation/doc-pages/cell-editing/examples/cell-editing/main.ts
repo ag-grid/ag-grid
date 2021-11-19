@@ -1,31 +1,5 @@
 import { GridOptions } from '@ag-grid-community/core'
 
-function getPinnedTopData() {
-  return [
-    {
-      firstName: '##',
-      lastName: '##',
-      gender: '##',
-      address: '##',
-      mood: '##',
-      country: '##',
-    },
-  ]
-}
-
-function getPinnedBottomData() {
-  return [
-    {
-      firstName: '##',
-      lastName: '##',
-      gender: '##',
-      address: '##',
-      mood: '##',
-      country: '##',
-    },
-  ]
-}
-
 const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'firstName' },
@@ -59,11 +33,36 @@ const gridOptions: GridOptions = {
   },
 }
 
+function getPinnedTopData() {
+  return [
+    {
+      firstName: '##',
+      lastName: '##',
+      gender: '##',
+      address: '##',
+      mood: '##',
+      country: '##',
+    },
+  ]
+}
+
+function getPinnedBottomData() {
+  return [
+    {
+      firstName: '##',
+      lastName: '##',
+      gender: '##',
+      address: '##',
+      mood: '##',
+      country: '##',
+    },
+  ]
+}
 function onBtStopEditing() {
   gridOptions.api!.stopEditing()
 }
 
-function onBtStartEditing(key, char, pinned) {
+function onBtStartEditing(key: number | undefined, char: string | undefined, pinned: string) {
   gridOptions.api!.setFocusedCell(0, 'lastName', pinned)
 
   gridOptions.api!.startEditingCell({
@@ -74,21 +73,6 @@ function onBtStartEditing(key, char, pinned) {
     keyPress: key,
     charPress: char,
   })
-}
-
-function getCharCodeFromEvent(event) {
-  event = event || window.event
-  return typeof event.which === 'undefined' ? event.keyCode : event.which
-}
-
-function isCharNumeric(charStr) {
-  return !!/\d/.test(charStr)
-}
-
-function isKeyPressedNumeric(event) {
-  var charCode = getCharCodeFromEvent(event)
-  var charStr = String.fromCharCode(charCode)
-  return isCharNumeric(charStr)
 }
 
 function onBtNextCell() {

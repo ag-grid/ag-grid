@@ -1,4 +1,4 @@
-import { ColDef, GridOptions } from '@ag-grid-community/core'
+import { ColDef, GridOptions, ICellEditorParams } from '@ag-grid-community/core'
 
 const columnDefs: ColDef[] = [
   { field: 'athlete' },
@@ -26,10 +26,10 @@ const gridOptions: GridOptions = {
 
 function getDatePicker() {
   // function to act as a class
-  function Datepicker() {}
+  function Datepicker() { }
 
   // gets called once before the renderer is used
-  Datepicker.prototype.init = function (params) {
+  Datepicker.prototype.init = function (params: ICellEditorParams) {
     // create the cell
     this.eInput = document.createElement('input')
     this.eInput.value = params.value

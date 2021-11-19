@@ -1,13 +1,6 @@
-import { ColDef, GridOptions } from '@ag-grid-community/core'
-
-var rowData = [
-  { value: 14, type: 'age' },
-  { value: 'Female', type: 'gender' },
-  { value: 'Happy', type: 'mood' },
-  { value: 21, type: 'age' },
-  { value: 'Male', type: 'gender' },
-  { value: 'Sad', type: 'mood' },
-]
+import { CellEditingStartedEvent, CellEditingStoppedEvent, ColDef, GridOptions, ICellEditorParams, RowEditingStartedEvent, RowEditingStoppedEvent } from '@ag-grid-community/core'
+declare var NumericCellEditor: any;
+declare var MoodEditor: any;
 
 const columnDefs: ColDef[] = [
   {
@@ -23,7 +16,7 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
   },
-  rowData: rowData,
+  rowData: getData(),
 
   components: {
     numericCellEditor: NumericCellEditor,
@@ -36,23 +29,23 @@ const gridOptions: GridOptions = {
   onCellEditingStopped: onCellEditingStopped,
 }
 
-function onRowEditingStarted(event) {
+function onRowEditingStarted(event: RowEditingStartedEvent) {
   console.log('never called - not doing row editing')
 }
 
-function onRowEditingStopped(event) {
+function onRowEditingStopped(event: RowEditingStoppedEvent) {
   console.log('never called - not doing row editing')
 }
 
-function onCellEditingStarted(event) {
+function onCellEditingStarted(event: CellEditingStartedEvent) {
   console.log('cellEditingStarted')
 }
 
-function onCellEditingStopped(event) {
+function onCellEditingStopped(event: CellEditingStoppedEvent) {
   console.log('cellEditingStopped')
 }
 
-function cellEditorSelector(params) {
+function cellEditorSelector(params: ICellEditorParams) {
   if (params.data.type === 'age') {
     return {
       component: 'numericCellEditor',
@@ -77,16 +70,16 @@ function cellEditorSelector(params) {
   return undefined
 }
 
-function getCharCodeFromEvent(event) {
+function getCharCodeFromEvent(event: any) {
   event = event || window.event
   return typeof event.which == 'undefined' ? event.keyCode : event.which
 }
 
-function isCharNumeric(charStr) {
+function isCharNumeric(charStr: string) {
   return !!/\d/.test(charStr)
 }
 
-function isKeyPressedNumeric(event) {
+function isKeyPressedNumeric(event: any) {
   var charCode = getCharCodeFromEvent(event)
   var charStr = String.fromCharCode(charCode)
   return isCharNumeric(charStr)

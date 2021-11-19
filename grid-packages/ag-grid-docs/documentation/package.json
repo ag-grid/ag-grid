@@ -31,6 +31,8 @@
     "@fortawesome/fontawesome-svg-core": "1.2.34",
     "@fortawesome/free-solid-svg-icons": "5.15.2",
     "@fortawesome/react-fontawesome": "0.1.14",
+    "@types/jquery": "^3.5.8",
+    "@types/jqueryui": "^1.12.16",
     "ag-charts-community": "~4.2.0",
     "algoliasearch": "4.8.5",
     "bootstrap": "4.6.0",

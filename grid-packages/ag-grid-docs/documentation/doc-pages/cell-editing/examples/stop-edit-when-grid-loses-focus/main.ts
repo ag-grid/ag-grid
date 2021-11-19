@@ -1,4 +1,4 @@
-import { GridOptions } from '@ag-grid-community/core'
+import { GridOptions, ICellEditorComp, ICellEditorParams } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -28,8 +28,10 @@ const gridOptions: GridOptions = {
 }
 
 function getYearCellEditor() {
-  class YearCellEditor {
-    constructor() {}
+  class YearCellEditor implements ICellEditorComp {
+    eGui: any
+    value: any
+    constructor() { }
 
     getGui() {
       return this.eGui
@@ -43,9 +45,9 @@ function getYearCellEditor() {
       return true
     }
 
-    init(params) {
+    init(params: ICellEditorParams) {
       this.value = params.value
-      const tempElement = document.createElement('div')
+      const tempElement = document.createElement('div');
       tempElement.innerHTML =
         '<div class="yearSelect">' +
         '<div>Clicking here does not close the popup!</div>' +
@@ -58,10 +60,10 @@ function getYearCellEditor() {
         '</div>' +
         '</div>'
 
-      const that = this
-      ;[2006, 2008, 2010, 2012].forEach(year => {
+      const that = this;
+      [2006, 2008, 2010, 2012].forEach(year => {
         tempElement
-          .querySelector('#bt' + year)
+          .querySelector('#bt' + year)!
           .addEventListener('click', () => {
             that.value = year
             params.stopEditing()

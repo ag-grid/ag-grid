@@ -1,4 +1,4 @@
-import { GridOptions } from '@ag-grid-community/core'
+import { CellValueChangedEvent, GridOptions, ICellEditorParams, RowValueChangedEvent } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -34,24 +34,24 @@ const gridOptions: GridOptions = {
   onRowValueChanged: onRowValueChanged,
 }
 
-function onCellValueChanged(event) {
+function onCellValueChanged(event: CellValueChangedEvent) {
   console.log(
     'onCellValueChanged: ' + event.colDef.field + ' = ' + event.newValue
   )
 }
 
-function onRowValueChanged(event) {
+function onRowValueChanged(event: RowValueChangedEvent) {
   var data = event.data
   console.log(
     'onRowValueChanged: (' +
-      data.make +
-      ', ' +
-      data.model +
-      ', ' +
-      data.price +
-      ', ' +
-      data.field5 +
-      ')'
+    data.make +
+    ', ' +
+    data.model +
+    ', ' +
+    data.price +
+    ', ' +
+    data.field5 +
+    ')'
   )
 }
 
@@ -99,26 +99,26 @@ function onBtStartEditing() {
 }
 
 function getNumericCellEditor() {
-  function isCharNumeric(charStr) {
+  function isCharNumeric(charStr: string) {
     return !!/\d/.test(charStr)
   }
 
-  function isKeyPressedNumeric(event) {
+  function isKeyPressedNumeric(event: any) {
     var charCode = getCharCodeFromEvent(event)
     var charStr = String.fromCharCode(charCode)
     return isCharNumeric(charStr)
   }
 
-  function getCharCodeFromEvent(event) {
+  function getCharCodeFromEvent(event: any) {
     event = event || window.event
     return typeof event.which === 'undefined' ? event.keyCode : event.which
   }
 
   // function to act as a class
-  function NumericCellEditor() {}
+  function NumericCellEditor() { }
 
   // gets called once before the renderer is used
-  NumericCellEditor.prototype.init = function (params) {
+  NumericCellEditor.prototype.init = function (params: ICellEditorParams) {
     // we only want to highlight this cell if it started the edit, it is possible
     // another cell in this row started the edit
     this.focusAfterAttached = params.cellStartedEdit
@@ -127,12 +127,12 @@ function getNumericCellEditor() {
     this.eInput = document.createElement('input')
     this.eInput.style.width = '100%'
     this.eInput.style.height = '100%'
-    this.eInput.value = isCharNumeric(params.charPress)
+    this.eInput.value = (params.charPress && isCharNumeric(params.charPress))
       ? params.charPress
       : params.value
 
     var that = this
-    this.eInput.addEventListener('keypress', function (event) {
+    this.eInput.addEventListener('keypress', function (event: any) {
       if (!isKeyPressedNumeric(event)) {
         that.eInput.focus()
         if (event.preventDefault) event.preventDefault()
@@ -161,7 +161,7 @@ function getNumericCellEditor() {
 
   // example - will reject the number if it contains the value 007
   // - not very practical, but demonstrates the method.
-  NumericCellEditor.prototype.isCancelAfterEnd = function () {}
+  NumericCellEditor.prototype.isCancelAfterEnd = function () { }
 
   // returns the new value after editing
   NumericCellEditor.prototype.getValue = function () {
