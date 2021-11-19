@@ -355,11 +355,11 @@ export class AgGridAngular implements AfterViewInit {
     /** @deprecated Set via `defaultColDef.maxWidth`
      */
     @Input() public maxColWidth: number | undefined = undefined;
-    /** The height in pixels for the row containing the column label header. Default: `25`     */
+    /** The height in pixels for the row containing the column label header. If not specified, it uses the theme value of `header-height`.     */
     @Input() public headerHeight: number | undefined = undefined;
     /** The height in pixels for the rows containing header column groups. If not specified, it uses `headerHeight`.     */
     @Input() public groupHeaderHeight: number | undefined = undefined;
-    /** The height in pixels for the row containing the floating filters. Default: `20`     */
+    /** The height in pixels for the row containing the floating filters. If not specified, it uses the theme value of `header-height`.     */
     @Input() public floatingFiltersHeight: number | undefined = undefined;
     /** The height in pixels for the row containing the columns when in pivot mode. If not specified, it uses `headerHeight`.     */
     @Input() public pivotHeaderHeight: number | undefined = undefined;

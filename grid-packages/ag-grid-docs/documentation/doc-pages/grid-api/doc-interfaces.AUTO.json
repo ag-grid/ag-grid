@@ -2110,7 +2110,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "headerHeight": {
-      "description": "/** The height in pixels for the row containing the column label header. Default: `25` */",
+      "description": "/** The height in pixels for the row containing the column label header. If not specified, it uses the theme value of `header-height`. */",
       "type": { "returnType": "number", "optional": true }
     },
     "groupHeaderHeight": {
@@ -2118,7 +2118,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "floatingFiltersHeight": {
-      "description": "/** The height in pixels for the row containing the floating filters. Default: `20` */",
+      "description": "/** The height in pixels for the row containing the floating filters. If not specified, it uses the theme value of `header-height`. */",
       "type": { "returnType": "number", "optional": true }
     },
     "pivotHeaderHeight": {
