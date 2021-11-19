@@ -168,40 +168,32 @@ function createExampleGenerator(prefix, importTypes) {
             throw new Error('examples are required to have an index.html file');
         }
 
-        let jsFile = undefined;
-        let tsScripts = getMatchingPaths('main.ts');
-        if (tsScripts.length > 0) {
-            // If the example is written in Typescript we need to strip the types and pass this in as the
-            // source javascript main.js file.
-            const tsMainPath = tsScripts[0];
-            jsFile = readAsJsFile(tsMainPath);
-        }
 
-        let scripts = getMatchingPaths('*.js');
-        let mainScript = scripts[0];
+        let rawScripts = getMatchingPaths('*.{js,ts}');
+        let mainScript = rawScripts[0];
 
-        if (scripts.length > 1) {
-            // multiple scripts - main.js is the main one, the rest are supplemental
-            mainScript = getMatchingPaths('main.js')[0];
+        if (rawScripts.length > 1) {
+            // multiple scripts - main.{js, ts} is the main one, the rest are supplemental
+            const mainJsScripts = getMatchingPaths('main.js');
+            const mainTsScripts = getMatchingPaths('main.ts');
+            mainScript = mainJsScripts.length > 0 ? mainJsScripts[0] : mainTsScripts[0];
 
-            if (!mainScript && !jsFile) {
+            if (!mainScript) {
                 throw new Error('for an example with multiple scripts matching *.js, one must be named main.[js,ts]');
             }
 
             // get the rest of the scripts
-            scripts = getMatchingPaths('*.js', { ignore: ['**/main.js', '**/*_{angular,react,vanilla,vue}.js'] });
+            rawScripts = getMatchingPaths('*.{js,ts}', { ignore: ['**/main.{js,ts}', '**/*_{angular,react,vanilla,vue}.{js,ts}'] });
         } else {
             // only one script, which is the main one
-            scripts = [];
+            rawScripts = [];
         }
 
         // any associated css
         const stylesheets = getMatchingPaths('*.css');
 
-        // read the main script (js) and the associated index.html
-        if (!jsFile) {
-            jsFile = getFileContents(mainScript);
-        }
+        // read the main script (ts / js) and the associated index.html
+        let jsFile = mainScript.endsWith('.ts') ? readAsJsFile(mainScript) : getFileContents(mainScript);
         const indexHtml = getFileContents(document);
         const bindings = parser(jsFile, indexHtml, options, type, providedExamples);
 
@@ -218,7 +210,7 @@ function createExampleGenerator(prefix, importTypes) {
             }
 
             copyFiles(stylesheets, basePath);
-            copyFiles(scripts, basePath);
+            copyFiles(rawScripts, basePath);
             copyFiles(frameworkScripts, scriptsPath, `_${tokenToReplace}`, componentPostfix);
         };
 
