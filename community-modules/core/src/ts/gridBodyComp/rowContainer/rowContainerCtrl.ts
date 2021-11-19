@@ -234,9 +234,7 @@ export class RowContainerCtrl extends BeanStub {
     private addPreventScrollWhileDragging(): void {
         const preventScroll = (e: TouchEvent) => {
             if (this.dragService.isDragging()) {
-                if (e.cancelable) {
-                    e.preventDefault();
-                }
+                if (e.cancelable) { e.preventDefault(); }
             }
         };
 

@@ -74,8 +74,8 @@ export class DragService extends BeanStub {
         const suppressTouch = this.gridOptionsWrapper.isSuppressTouch();
 
         if (includeTouch && !suppressTouch) {
-            touchListener = (touchEvent: TouchEvent) => { 
-                touchEvent.preventDefault();
+            touchListener = (touchEvent: TouchEvent) => {
+                if (touchEvent.cancelable) { touchEvent.preventDefault(); }
                 this.onTouchStart(params, touchEvent);
             };
             params.eElement.addEventListener('touchstart', touchListener, { passive: true });
