@@ -7,7 +7,6 @@ var gridOptions = {
             filterParams: {
                 caseSensitive: false,
                 cellRenderer: colourCellRenderer,
-                newRowsAction: 'keep', // Added to make example follow the v27 expected default.
             },
         },
         {
@@ -17,7 +16,6 @@ var gridOptions = {
             filterParams: {
                 caseSensitive: true,
                 cellRenderer: colourCellRenderer,
-                newRowsAction: 'keep', // Added to make example follow the v27 expected default.
             },
         },
     ],

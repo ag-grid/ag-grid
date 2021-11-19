@@ -184,7 +184,6 @@ var defaultCols = [
                 },
                 pinned: 'right',
                 headerTooltip: 'Example tooltip for Language',
-                filterParams: { newRowsAction: 'keep' }
             },
             {
                 headerName: "Country",
@@ -207,7 +206,6 @@ var defaultCols = [
                 floatCell: true,
                 filterParams: {
                     cellRenderer: CountryCellRenderer,
-                    newRowsAction: 'keep'
                 }
             }
         ]
@@ -245,7 +243,7 @@ var defaultCols = [
                 enableValue: true,
                 cellRenderer: booleanCellRenderer, cellStyle: { 'text-align': 'center' }, comparator: booleanComparator,
                 floatCell: true,
-                filterParams: { newRowsAction: 'keep', cellRenderer: booleanFilterCellRenderer }
+                filterParams: { cellRenderer: booleanFilterCellRenderer }
             }
         ]
     },

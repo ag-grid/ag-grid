@@ -4,9 +4,6 @@ var gridOptions = {
             headerName: 'Set Filter Column',
             field: 'col1',
             filter: 'agSetColumnFilter',
-            filterParams: {
-                newRowsAction: 'keep'
-            },
             flex: 1,
             editable: true
         }

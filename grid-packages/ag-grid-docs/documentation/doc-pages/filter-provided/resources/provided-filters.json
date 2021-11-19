@@ -13,14 +13,6 @@
             "description": "By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by 500ms. This is because these filters have text field inputs, so time is given to the user to type items in before the input is formatted and the filtering applied. The [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To override these defaults, set `debounceMs` to the number of milliseconds to debounce by.",
             "type": "number"
         },
-        "newRowsAction": {
-            "default": "clear",
-            "description": "This property is for when using the [Client Side Row Model](/client-side-model/) only. When set to `'clear'`, updating the data in the grid by calling `api.setRowData()` (or updating the `rowData` property if bound by a framework) will clear (reset) the filter. If you instead set this to `'keep'`, the grid will keep its currently set filter when the data is updated.",
-            "options": [
-                "clear",
-                "keep"
-            ]
-        },
         "readOnly": {
             "description": "If set to `true`, disables controls in the filter to mutate its state. Normally this would be used in conjunction with the Filter API.",
             "type": "boolean",

@@ -7252,10 +7252,6 @@
       "type": { "returnType": "FilterButtonType[]", "optional": true }
     },
     "closeOnApply": { "type": { "returnType": "boolean", "optional": true } },
-    "newRowsAction": {
-      "description": "/** @deprecated */",
-      "type": { "returnType": "string", "optional": true }
-    },
     "debounceMs": { "type": { "returnType": "number", "optional": true } },
     "readOnly": {
       "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
@@ -7390,10 +7386,6 @@
       "type": { "returnType": "FilterButtonType[]", "optional": true }
     },
     "closeOnApply": { "type": { "returnType": "boolean", "optional": true } },
-    "newRowsAction": {
-      "description": "/** @deprecated */",
-      "type": { "returnType": "string", "optional": true }
-    },
     "debounceMs": { "type": { "returnType": "number", "optional": true } },
     "readOnly": {
       "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
@@ -7452,10 +7444,6 @@
       "type": { "returnType": "FilterButtonType[]", "optional": true }
     },
     "closeOnApply": { "type": { "returnType": "boolean", "optional": true } },
-    "newRowsAction": {
-      "description": "/** @deprecated */",
-      "type": { "returnType": "string", "optional": true }
-    },
     "debounceMs": { "type": { "returnType": "number", "optional": true } },
     "readOnly": {
       "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
@@ -7556,10 +7544,6 @@
       "type": { "returnType": "FilterButtonType[]", "optional": true }
     },
     "closeOnApply": { "type": { "returnType": "boolean", "optional": true } },
-    "newRowsAction": {
-      "description": "/** @deprecated */",
-      "type": { "returnType": "string", "optional": true }
-    },
     "debounceMs": { "type": { "returnType": "number", "optional": true } },
     "readOnly": {
       "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
@@ -7642,10 +7626,6 @@
       "type": { "returnType": "FilterButtonType[]", "optional": true }
     },
     "closeOnApply": { "type": { "returnType": "boolean", "optional": true } },
-    "newRowsAction": {
-      "description": "/** @deprecated */",
-      "type": { "returnType": "string", "optional": true }
-    },
     "debounceMs": { "type": { "returnType": "number", "optional": true } },
     "readOnly": {
       "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
@@ -7789,10 +7769,6 @@
       "type": { "returnType": "FilterButtonType[]", "optional": true }
     },
     "closeOnApply": { "type": { "returnType": "boolean", "optional": true } },
-    "newRowsAction": {
-      "description": "/** @deprecated */",
-      "type": { "returnType": "string", "optional": true }
-    },
     "debounceMs": { "type": { "returnType": "number", "optional": true } },
     "readOnly": {
       "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
@@ -13743,10 +13719,6 @@
       "type": { "returnType": "FilterButtonType[]", "optional": true }
     },
     "closeOnApply": { "type": { "returnType": "boolean", "optional": true } },
-    "newRowsAction": {
-      "description": "/** @deprecated */",
-      "type": { "returnType": "string", "optional": true }
-    },
     "debounceMs": { "type": { "returnType": "number", "optional": true } },
     "readOnly": {
       "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",

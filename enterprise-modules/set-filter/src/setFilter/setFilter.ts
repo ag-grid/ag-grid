@@ -227,15 +227,13 @@ export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> {
             });
     }
 
-    private syncAfterDataChange(refreshValues = true, keepSelection = true): AgPromise<void> {
+    private syncAfterDataChange(refreshValues = true): AgPromise<void> {
         if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
         let promise: AgPromise<void> = AgPromise.resolve();
 
         if (refreshValues) {
-            promise = this.valueModel.refreshValues(keepSelection);
-        } else if (!keepSelection) {
-            promise = this.valueModel.setModel(null);
+            promise = this.valueModel.refreshValues();
         }
 
         return promise.then(() => {
@@ -453,9 +451,8 @@ export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> {
         if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
         const valuesType = this.valueModel.getValuesType();
-        const keepSelection = this.isNewRowsActionKeep();
 
-        this.syncAfterDataChange(valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES, keepSelection);
+        this.syncAfterDataChange(valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES);
     }
 
     //noinspection JSUnusedGlobalSymbols
@@ -467,7 +464,7 @@ export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> {
     public setFilterValues(options: string[]): void {
         if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
-        this.valueModel.overrideValues(options, this.isNewRowsActionKeep()).then(() => {
+        this.valueModel.overrideValues(options).then(() => {
             this.refresh();
             this.onUiChanged();
         });
@@ -481,7 +478,7 @@ export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> {
         if (!this.valueModel) { throw new Error('Value model has not been created.'); }
 
         this.valueModel.setValuesType(SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES);
-        this.syncAfterDataChange(true, this.isNewRowsActionKeep());
+        this.syncAfterDataChange(true);
     }
 
     public refreshFilterValues(): void {

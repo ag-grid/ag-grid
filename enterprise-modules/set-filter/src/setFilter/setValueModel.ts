@@ -125,13 +125,13 @@ export class SetValueModel implements IEventEmitter {
      * If keepSelection is false, the filter selection will be reset to everything selected,
      * otherwise the current selection will be preserved.
      */
-    public refreshValues(keepSelection = true): AgPromise<void> {
+    public refreshValues(): AgPromise<void> {
         const currentModel = this.getModel();
 
         this.updateAllValues();
 
         // ensure model is updated for new values
-        return this.setModel(keepSelection ? currentModel : null);
+        return this.setModel(currentModel);
     }
 
     /**
@@ -139,13 +139,13 @@ export class SetValueModel implements IEventEmitter {
      * If keepSelection is false, the filter selection will be reset to everything selected,
      * otherwise the current selection will be preserved.
      */
-    public overrideValues(valuesToUse: (string | null)[], keepSelection = true): AgPromise<void> {
+    public overrideValues(valuesToUse: (string | null)[]): AgPromise<void> {
         return new AgPromise<void>(resolve => {
             // wait for any existing values to be populated before overriding
             this.allValuesPromise.then(() => {
                 this.valuesType = SetFilterModelValuesType.PROVIDED_LIST;
                 this.providedValues = valuesToUse;
-                this.refreshValues(keepSelection).then(() => resolve());
+                this.refreshValues().then(() => resolve());
             });
         });
     }
