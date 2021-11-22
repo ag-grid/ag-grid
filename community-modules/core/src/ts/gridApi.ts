@@ -770,6 +770,7 @@ export class GridApi {
         return unwrapUserComp(comp);
     }
 
+    /** @deprecated */
     public getToolPanelProxyInstance(id: string): IToolPanel | undefined {
         if (!this.sideBarComp) {
             console.warn('AG Grid: toolPanel is only available in AG Grid Enterprise');
@@ -1002,6 +1003,7 @@ export class GridApi {
         return unwrapped;
     }
 
+    /** @deprecated */
     public getFilterProxyInstance(key: string | Column, callback?: (filter: IFilter) => void): IFilter | null | undefined {
         const res = this.getFilterInstanceImpl(key, instance => {
             if (!callback) { return; }
@@ -1047,6 +1049,7 @@ export class GridApi {
         return unwrapUserComp(comp);
     }
 
+    /** @deprecated */
     public getStatusPanelProxy(key: string): IStatusPanel | undefined {
         if (!this.statusBarService) { return; }
 
@@ -1722,6 +1725,7 @@ export class GridApi {
         return unwrapped;
     }
 
+    /** @deprecated */
     public getCellRendererProxyInstances(params: GetCellRendererInstancesParams = {}): (ICellRenderer|undefined)[] {
         const res = this.rowRenderer.getCellRendererInstances(params);
         const proxies = res.map(returnIfProxy);
@@ -1735,6 +1739,7 @@ export class GridApi {
         return unwrapped;
     }
 
+    /** @deprecated */
     public getCellEditorProxyInstances(params: GetCellEditorInstancesParams = {}): (ICellEditor|undefined)[] {
         const res = this.rowRenderer.getCellEditorInstances(params);
         const proxies = res.map(returnIfProxy);
