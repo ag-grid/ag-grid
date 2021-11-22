@@ -214,8 +214,10 @@ export abstract class Sparkline extends Observable {
 
     // Update x scale range based on width and padding (seriesRect).
     protected updateXScaleRange(): void {
-        const { seriesRect } = this;
-        this.xScale.range = [0, seriesRect.width];
+        // `xScale` may not exist if data is initially `undefined` but can be subsequently updated
+        if (!this.xScale) { return; }
+
+        this.xScale.range = [0, this.seriesRect.width];
     }
 
     // Update x scale domain based on processed data and type of scale.
@@ -223,7 +225,6 @@ export abstract class Sparkline extends Observable {
         const { xData, xScale } = this;
 
         let xMinMax;
-
         if (xScale instanceof LinearScale) {
             xMinMax = extent(xData, isNumber);
         } else if (xScale instanceof TimeScale) {
