@@ -185,13 +185,21 @@ export class ChartDatasource extends BeanStub {
                 }
             });
 
+            // row data from footer nodes should not be included in charts
+            if (rowNode.footer) {
+                // 'stamping' data as footer to avoid impacting previously calculated `groupIndexesToRemove` and will
+                // be removed from the results along with any expanded group nodes
+                data.footer = true;
+            }
+
             // add data to results
             extractedRowData.push(data);
         }
 
         if (params.grouping) {
             const groupIndexesToRemove = _.values(groupsToRemove);
-            extractedRowData = extractedRowData.filter((_1, index) => !_.includes(groupIndexesToRemove, index));
+            const filterFunc = (data: any, index: number) => !data.footer && !_.includes(groupIndexesToRemove, index);
+            extractedRowData = extractedRowData.filter(filterFunc);
         }
 
         return { data: extractedRowData, columnNames };
