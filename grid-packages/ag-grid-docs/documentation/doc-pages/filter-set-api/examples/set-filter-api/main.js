@@ -11,11 +11,7 @@ const gridOptions = {
         {
             field: 'country',
             cellRenderer: 'countryCellRenderer',
-            keyCreator: countryKeyCreator,
-            filterParams: {
-                // values: ['England', 'France', 'Australia'],
-                newRowsAction: 'keep'
-            }
+            keyCreator: countryKeyCreator
         },
         {field: 'year', maxWidth: 120},
         {field: 'date'},

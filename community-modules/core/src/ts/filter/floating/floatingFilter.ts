@@ -44,9 +44,6 @@ export interface IFloatingFilterParams {
      * Shows the parent filter popup.
      */
     showParentFilter: () => void;
-
-    /** @deprecated in v21, use parentFilterInstance() callback instead and tell filter directly */
-    onFloatingFilterChanged: (change: any) => boolean;
 }
 
 export interface IFloatingFilter {

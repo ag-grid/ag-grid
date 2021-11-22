@@ -6,3 +6,7 @@
 declare const agGrid: {
     Grid: new (eGridDiv: Element | null, gridOptions: import("@ag-grid-community/core").GridOptions, params?: import("@ag-grid-community/core").GridParams) => import("@ag-grid-community/core").Grid
 };
+
+// Useful for extracting row data in a file called data.js with a function getData()
+// and setting the rowData: getData()
+declare const getData: () => any[]

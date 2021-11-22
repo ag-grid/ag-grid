@@ -135,7 +135,7 @@ const ExampleRunnerInner = ({pageName, framework, name, title, type, options, li
         height: exampleInfo.options.exampleHeight || '500px',
     };
 
-    const isGenerated = exampleInfo.type === 'generated' || exampleInfo.type === 'mixed';
+    const isGenerated = isGeneratedExample(type);
     const linkId = `example-${name}`;
 
     return <div className={styles['example-runner']}>
@@ -239,7 +239,7 @@ const VueStyleSelector = ({useVue3, onChange}) => {
     </div>;
 };
 
-const isGeneratedExample = type => ['generated', 'mixed'].includes(type);
+const isGeneratedExample = type => ['generated', 'mixed', 'typescript'].includes(type);
 
 const writeIndexHtmlFile = exampleInfo => {
     const {appLocation, type} = exampleInfo;

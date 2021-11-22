@@ -268,10 +268,6 @@
     "description": "/** Returns `true` if any filter is set. This includes quick filter, advanced filter or external filter. */",
     "type": { "arguments": {}, "returnType": "boolean" }
   },
-  "isAdvancedFilterPresent": {
-    "description": "/** @deprecated */",
-    "type": { "arguments": {}, "returnType": "boolean" }
-  },
   "isColumnFilterPresent": {
     "description": "/** Returns `true` if any column filter is set, otherwise `false`. */",
     "type": { "arguments": {}, "returnType": "boolean" }
@@ -479,9 +475,6 @@
       "arguments": { "callback": "(rowNode: RowNode, index: number) => void" }
     }
   },
-  "getFilterApiForColDef": {
-    "type": { "arguments": { "colDef": "any" }, "returnType": "any" }
-  },
   "getFilterInstance": {
     "description": "/** Returns the filter component instance for a column.\n * `key` can be a string field name or a ColDef object (matches on object reference, useful if field names are not unique). */",
     "type": {
@@ -492,7 +485,6 @@
       "returnType": "IFilter | null | undefined"
     }
   },
-  "getFilterApi": { "type": { "arguments": { "key": "string | Column" } } },
   "destroyFilter": {
     "description": "/** Destroys a filter. Useful to force a particular filter to be created from scratch again. */",
     "type": { "arguments": { "key": "string | Column" } }
@@ -600,15 +592,19 @@
   },
   "setGroupHeaderHeight": {
     "description": "/** Sets the height in pixels for the rows containing header column groups. */",
-    "type": { "arguments": { "headerHeight": "number" } }
+    "type": { "arguments": { "headerHeight?": "number" } }
   },
   "setFloatingFiltersHeight": {
     "description": "/** Sets the height in pixels for the row containing the floating filters. */",
-    "type": { "arguments": { "headerHeight": "number" } }
+    "type": { "arguments": { "headerHeight?": "number" } }
+  },
+  "setPivotHeaderHeight": {
+    "description": "/** Sets the height in pixels for the row containing the columns when in pivot mode. */",
+    "type": { "arguments": { "headerHeight?": "number" } }
   },
   "setPivotGroupHeaderHeight": {
     "description": "/** Sets the height in pixels for the row containing header column groups when in pivot mode. */",
-    "type": { "arguments": { "headerHeight": "number" } }
+    "type": { "arguments": { "headerHeight?": "number" } }
   },
   "setIsExternalFilterPresent": {
     "type": {
@@ -856,10 +852,6 @@
       "returnType": "void"
     }
   },
-  "setPivotHeaderHeight": {
-    "description": "/** Sets the height in pixels for the row containing the columns when in pivot mode. */",
-    "type": { "arguments": { "headerHeight": "number" } }
-  },
   "isSideBarVisible": {
     "description": "/** Returns `true` if the side bar is visible. */",
     "type": { "arguments": {}, "returnType": "boolean" }
@@ -1051,7 +1043,7 @@
     "description": "/** Copies the selected rows to the clipboard.\n * Set `includeHeaders = true` to include the headers (default is `false`).\n * Set `columnKeys` to the list of columns if you want just specific columns. */",
     "type": {
       "arguments": {
-        "includeHeader": "boolean",
+        "includeHeader?": "boolean",
         "columnKeys?": "(string | Column)[]"
       },
       "returnType": "void"
@@ -1060,7 +1052,7 @@
   "copySelectedRangeToClipboard": {
     "description": "/** Copies the selected ranges to the clipboard. */",
     "type": {
-      "arguments": { "includeHeader": "boolean" },
+      "arguments": { "includeHeader?": "boolean" },
       "returnType": "void"
     }
   },

@@ -179,11 +179,11 @@ export interface GridOptions {
     maxColWidth?: number;
 
     // *** Column Headers *** //
-    /** The height in pixels for the row containing the column label header. Default: `25` */
+    /** The height in pixels for the row containing the column label header. If not specified, it uses the theme value of `header-height`. */
     headerHeight?: number;
     /** The height in pixels for the rows containing header column groups. If not specified, it uses `headerHeight`. */
     groupHeaderHeight?: number;
-    /** The height in pixels for the row containing the floating filters. Default: `20` */
+    /** The height in pixels for the row containing the floating filters. If not specified, it uses the theme value of `header-height`. */
     floatingFiltersHeight?: number;
     /** The height in pixels for the row containing the columns when in pivot mode. If not specified, it uses `headerHeight`. */
     pivotHeaderHeight?: number;
@@ -277,10 +277,6 @@ export interface GridOptions {
     cacheQuickFilter?: boolean;
     /** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. Default: `false` */
     excludeChildrenWhenTreeDataFiltering?: boolean;
-    /** @deprecated Use floatingFilter on the colDef instead */
-    floatingFilter?: boolean;
-    /** @deprecated */
-    enableOldSetFilterModel?: boolean;
 
     // *** Integrated Charts *** //
     /** Set to `true` to Enable Charts. Default: `false` */

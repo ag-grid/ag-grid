@@ -22,7 +22,7 @@ const getInternalFramework = (framework, useFunctionalReact, useVue3) => {
         return 'vanilla';
     } else if (framework === 'react' && useFunctionalReact) {
         return 'reactFunctional';
-    } else if(framework === 'vue' && useVue3) {
+    } else if (framework === 'vue' && useVue3) {
         return 'vue3'
     }
 
@@ -66,11 +66,16 @@ export const getExampleInfo = (
             appLocation += `${internalFramework}/`;
             break;
 
+        case 'typescript':
+            sourcePath += `_gen/${importType}/vanilla/`;
+            appLocation += `${importType}/vanilla/`;
+            break;
         default:
             break;
     }
 
-    if (type === 'vanilla') {
+    if (type === 'vanilla' || type === 'typescript') {
+        // Override so even if viewing a framework the example only shows the javascript version.
         framework = 'javascript';
     }
 

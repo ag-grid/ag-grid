@@ -218,7 +218,6 @@ var columnDefs = [
         valueFormatter: countryValueFormatter,
         filter: 'agSetColumnFilter',
         filterParams: {
-            newRowsAction: 'keep',
             values: getCountryValuesAsync,
             valueFormatter: countryFilterValueFormatter
         },

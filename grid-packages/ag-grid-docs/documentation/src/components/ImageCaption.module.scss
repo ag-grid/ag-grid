@@ -6,6 +6,10 @@
         composes: mx-auto from global;
     }
 
+    &--constrained {
+        max-width: 100%;
+    }
+
     &__image {
         composes: p-2 from global;
 

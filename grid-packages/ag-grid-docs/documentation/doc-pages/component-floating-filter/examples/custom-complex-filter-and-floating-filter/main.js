@@ -181,7 +181,6 @@ function NumberFloatingFilter() {
 }
 
 NumberFloatingFilter.prototype.init = function (params) {
-    this.onFloatingFilterChanged = params.onFloatingFilterChanged;
     this.eGui = document.createElement('div');
     this.eGui.innerHTML = '<div style="width:75%; margin-left:10px" class="slider"></div>';
     this.eSlider = $(this.eGui.querySelector('div'));
@@ -194,8 +193,7 @@ NumberFloatingFilter.prototype.init = function (params) {
             //Every time the value of the slider changes
             if (!e.originalEvent) {
                 //If this event its triggered from outside. ie setModel() on the parent Filter we
-                //would be in this area of the code and we need to prevent an infinite loop:
-                //onParentModelChanged => onFloatingFilterChanged => onParentModelChanged => onFloatingFilterChanged ...
+                //would be in this area of the code and we need to prevent an infinite loop.
                 return;
             }
             that.currentValue = ui.value;

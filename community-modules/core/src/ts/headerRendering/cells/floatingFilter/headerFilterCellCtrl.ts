@@ -219,7 +219,6 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
             currentParentModel: this.currentParentModel.bind(this),
             parentFilterInstance: this.parentFilterInstance.bind(this),
             showParentFilter: this.showParentFilter.bind(this),
-            onFloatingFilterChanged: this.onFloatingFilterChanged.bind(this),
             suppressFilterButton: false // This one might be overridden from the colDef
         };
 
@@ -261,12 +260,6 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
 
     private getFilterComponent(createIfDoesNotExist = true): AgPromise<IFilterComp> | null {
         return this.filterManager.getFilterComponent(this.column, 'NO_UI', createIfDoesNotExist);
-    }
-
-    private onFloatingFilterChanged(): void {
-        console.warn('AG Grid: since version 21.x, how floating filters are implemented has changed. ' +
-            'Instead of calling params.onFloatingFilterChanged(), get a reference to the main filter via ' +
-            'params.parentFilterInstance() and then set a value on the parent filter directly.');
     }
 
     private parentFilterInstance(callback: (filterInstance: IFilterComp) => void): void {

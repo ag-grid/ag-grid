@@ -83,34 +83,13 @@ The following example demonstrates these rules. Try the following:
 
 ## Setting New Data
 
-By default, when `api.setRowData(data)` is called, all Set Filter selections will be lost.
-
-It is recommended that `newRowsAction='keep'` is set on the filter params to keep existing filter selections when new rows are added, as shown below:
-
-<snippet>
-const gridOptions = {
-    columnDefs: [
-        {
-            field: 'country',
-            filter: 'agSetColumnFilter',
-            filterParams: {
-                newRowsAction: 'keep'
-            }
-        }
-    ]
-}
-</snippet>
-
-[[note]]
-| `newRowsAction` is deprecated, and `newRowsAction='keep'` will become the default behaviour in v27.
-
-However it is still possible to clear filter selections using: `api.setFilterModel([])`.
+When `api.setRowData(data)` is called existing filter selections are kept when new rows are added. However it is possible to clear filter selections using: `api.setFilterModel([])`.
 
 The following example demonstrates how `api.setRowData(data)` affects filter selections. Try the following:
 
 - Deselect value 'B' from the set filter list and click the **Set New Data** button which calls `api.setRowData(newData)` to add new data with extra rows to the grid.
 
-- Notice 'B' remains deselected after new data is supplied to the grid as the set filter has set `newRowsAction='keep'` in the filter params.
+- Notice 'B' remains deselected after new data is supplied to the grid.
 
 - Clicking **Reset** invokes `api.setRowData(origData)` to restore the original data but also clears any selections using `api.setFilterModel([])`.
 

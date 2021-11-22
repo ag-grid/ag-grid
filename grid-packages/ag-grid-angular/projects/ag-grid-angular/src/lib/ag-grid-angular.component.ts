@@ -355,11 +355,11 @@ export class AgGridAngular implements AfterViewInit {
     /** @deprecated Set via `defaultColDef.maxWidth`
      */
     @Input() public maxColWidth: number | undefined = undefined;
-    /** The height in pixels for the row containing the column label header. Default: `25`     */
+    /** The height in pixels for the row containing the column label header. If not specified, it uses the theme value of `header-height`.     */
     @Input() public headerHeight: number | undefined = undefined;
     /** The height in pixels for the rows containing header column groups. If not specified, it uses `headerHeight`.     */
     @Input() public groupHeaderHeight: number | undefined = undefined;
-    /** The height in pixels for the row containing the floating filters. Default: `20`     */
+    /** The height in pixels for the row containing the floating filters. If not specified, it uses the theme value of `header-height`.     */
     @Input() public floatingFiltersHeight: number | undefined = undefined;
     /** The height in pixels for the row containing the columns when in pivot mode. If not specified, it uses `headerHeight`.     */
     @Input() public pivotHeaderHeight: number | undefined = undefined;
@@ -433,11 +433,6 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public cacheQuickFilter: boolean | undefined = undefined;
     /** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. Default: `false`     */
     @Input() public excludeChildrenWhenTreeDataFiltering: boolean | undefined = undefined;
-    /** @deprecated Use floatingFilter on the colDef instead
-     */
-    @Input() public floatingFilter: boolean | undefined = undefined;
-    /** @deprecated     */
-    @Input() public enableOldSetFilterModel: boolean | undefined = undefined;
     /** Set to `true` to Enable Charts. Default: `false`     */
     @Input() public enableCharts: boolean | undefined = undefined;
     /** The list of chart themes to be used.     */
@@ -1117,7 +1112,6 @@ export class AgGridAngular implements AfterViewInit {
     static ngAcceptInputType_embedFullWidthRows: boolean | null | '';
     static ngAcceptInputType_deprecatedEmbedFullWidthRows: boolean | null | '';
     static ngAcceptInputType_suppressPaginationPanel: boolean | null | '';
-    static ngAcceptInputType_floatingFilter: boolean | null | '';
     static ngAcceptInputType_groupHideOpenParents: boolean | null | '';
     static ngAcceptInputType_groupMultiAutoColumn: boolean | null | '';
     static ngAcceptInputType_pagination: boolean | null | '';
@@ -1145,7 +1139,6 @@ export class AgGridAngular implements AfterViewInit {
     static ngAcceptInputType_suppressPropertyNamesCheck: boolean | null | '';
     static ngAcceptInputType_rowMultiSelectWithClick: boolean | null | '';
     static ngAcceptInputType_suppressEnterpriseResetOnNewColumns: boolean | null | '';
-    static ngAcceptInputType_enableOldSetFilterModel: boolean | null | '';
     static ngAcceptInputType_suppressRowHoverHighlight: boolean | null | '';
     static ngAcceptInputType_suppressRowTransform: boolean | null | '';
     static ngAcceptInputType_suppressClipboardPaste: boolean | null | '';

@@ -19,7 +19,7 @@ The rest of this section will cover concepts that are common to every provided f
 
 The diagram below outlines the structure of the filters. Each box represents a filter type with the functions listed in it. For example, all provided filters have button logic, but only the Date filter has a Date Comparator or a Date Picker.
 
-<image-caption src="filter-provided/resources/provided-filters.png" alt="Provided Filters" width="52rem" centered="true"></image-caption>
+<image-caption src="filter-provided/resources/provided-filters.png" alt="Provided Filters" width="52rem" centered="true" constrained="true"></image-caption>
 
 ## Provided Filter UI
 

@@ -125,13 +125,13 @@ export class SetValueModel implements IEventEmitter {
      * If keepSelection is false, the filter selection will be reset to everything selected,
      * otherwise the current selection will be preserved.
      */
-    public refreshValues(keepSelection = true): AgPromise<void> {
+    public refreshValues(): AgPromise<void> {
         const currentModel = this.getModel();
 
         this.updateAllValues();
 
         // ensure model is updated for new values
-        return this.setModel(keepSelection ? currentModel : null);
+        return this.setModel(currentModel);
     }
 
     /**
@@ -139,13 +139,13 @@ export class SetValueModel implements IEventEmitter {
      * If keepSelection is false, the filter selection will be reset to everything selected,
      * otherwise the current selection will be preserved.
      */
-    public overrideValues(valuesToUse: (string | null)[], keepSelection = true): AgPromise<void> {
+    public overrideValues(valuesToUse: (string | null)[]): AgPromise<void> {
         return new AgPromise<void>(resolve => {
             // wait for any existing values to be populated before overriding
             this.allValuesPromise.then(() => {
                 this.valuesType = SetFilterModelValuesType.PROVIDED_LIST;
                 this.providedValues = valuesToUse;
-                this.refreshValues(keepSelection).then(() => resolve());
+                this.refreshValues().then(() => resolve());
             });
         });
     }
@@ -231,8 +231,7 @@ export class SetValueModel implements IEventEmitter {
     }
 
     private showAvailableOnly(): boolean {
-        return this.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES &&
-            !this.filterParams.suppressRemoveEntries;
+        return this.valuesType === SetFilterModelValuesType.TAKEN_FROM_GRID_VALUES;
     }
 
     private updateAvailableValues(allValues: (string | null)[]): void {
@@ -332,14 +331,6 @@ export class SetValueModel implements IEventEmitter {
         return this.filterParams.defaultToNothingSelected ?
             this.selectedValues.size > 0 :
             this.allValues.length !== this.selectedValues.size;
-    }
-
-    public getUniqueValueCount(): number {
-        return this.allValues.length;
-    }
-
-    public getUniqueValue(index: any): string | null {
-        return this.allValues[index];
     }
 
     public getValues(): (string | null)[] {

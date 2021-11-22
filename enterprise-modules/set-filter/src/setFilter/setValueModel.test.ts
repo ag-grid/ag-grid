@@ -203,18 +203,6 @@ describe('SetValueModel', () => {
             });
         });
 
-        it('can reset value selections when values are refreshed', done => {
-            const value = 'A';
-
-            model.deselectValue(value);
-
-            expect(model.isValueSelected(value)).toBe(false);
-
-            model.refreshValues(false).then(() => {
-                asyncAssert(done, () => expect(model.isValueSelected(value)).toBe(true));
-            });
-        });
-
         it.each(['windows', 'mac'])('only uses visible values in set when first value is deselected in %s Excel mode', excelMode => {
             const values = ['A', 'B', 'C'];
             const doesRowPassOtherFilters = (row: RowNode) => row.data.value != 'B';
@@ -290,15 +278,6 @@ describe('SetValueModel', () => {
                     expect(model.isValueSelected(lowerCaseValue)).toBe(false)
                     expect(model.isValueSelected(value)).toBe(false)
                 });
-            });
-        });
-
-        it('can reset existing selection', done => {
-            const values = ['A2', value, 'C2'];
-
-            model.deselectValue(value);
-            model.overrideValues(values, false).then(() => {
-                asyncAssert(done, () => expect(model.isValueSelected(value)).toBe(true));
             });
         });
     });
@@ -377,15 +356,6 @@ describe('SetValueModel', () => {
             model.refreshAfterAnyFilterChanged();
 
             expect(getDisplayedValues(model)).toStrictEqual(['A', 'C']);
-        });
-
-        it('shows all values regardless of whether they pass other filters if suppressRemoveEntries = true', () => {
-            const value = 'B';
-            const values = ['A', value, 'C'];
-            const doesRowPassOtherFilters = (row: RowNode) => row.data.value != value;
-            model = createSetValueModel({values, filterParams: { suppressRemoveEntries: true }, doesRowPassOtherFilters});
-
-            expect(getDisplayedValues(model)).toStrictEqual(['A', 'B', 'C']);
         });
 
         it.each([undefined, null, ''])('turns "%s" into null entry', value => {

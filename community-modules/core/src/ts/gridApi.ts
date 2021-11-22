@@ -172,7 +172,7 @@ export interface CreateCrossFilterChartParams extends CreateChartParams {
     aggFunc?: string | IAggFunc;
 }
 
-export interface CreatePivotChartParams extends CreateChartParams {}
+export interface CreatePivotChartParams extends CreateChartParams { }
 
 export interface DetailGridInfo {
     /**
@@ -365,9 +365,9 @@ export class GridApi {
 
     /**
      * Sets an ARIA property in the grid panel (element with `role=\"grid\"`), and removes an ARIA property when the value is null.
-     * 
+     *
      * Example: `api.setGridAriaProperty('label', 'my grid')` will set `aria-label=\"my grid\"`.
-     * 
+     *
      * `api.setGridAriaProperty('label', null)` will remove the `aria-label` attribute from the grid element.
      */
     public setGridAriaProperty(property: string, value: string | null): void {
@@ -620,12 +620,6 @@ export class GridApi {
         return this.filterManager.isAnyFilterPresent();
     }
 
-    /** @deprecated */
-    public isAdvancedFilterPresent(): boolean {
-        console.warn('AG Grid: isAdvancedFilterPresent() is deprecated, please use isColumnFilterPresent()');
-        return this.isColumnFilterPresent();
-    }
-
     /** Returns `true` if any column filter is set, otherwise `false`. */
     public isColumnFilterPresent(): boolean {
         return this.filterManager.isAdvancedFilterPresent();
@@ -778,7 +772,7 @@ export class GridApi {
      * Unlike normal events, you do not need to unregister rendered row listeners.
      * When the rendered row is removed from the grid, all associated rendered row listeners will also be removed.
      * Currently supports only one event, `virtualRowRemoved`;
-     * listen for this event if your `cellRenderer` needs to do cleanup when the row no longer exists. 
+     * listen for this event if your `cellRenderer` needs to do cleanup when the row no longer exists.
      */
     public addRenderedRowListener(eventName: string, rowIndex: number, callback: Function) {
         if (eventName === 'virtualRowSelected') {
@@ -974,12 +968,7 @@ export class GridApi {
         this.clientSideRowModel.forEachNodeAfterFilterAndSort(callback);
     }
 
-    public getFilterApiForColDef(colDef: any): any {
-        console.warn('ag-grid API method getFilterApiForColDef deprecated, use getFilterInstance instead');
-        return this.getFilterInstance(colDef);
-    }
-
-    /** 
+    /**
      * Returns the filter component instance for a column.
      * `key` can be a string field name or a ColDef object (matches on object reference, useful if field names are not unique).
      *  */
@@ -996,7 +985,7 @@ export class GridApi {
             if (currentValueUnwrapped) {
                 setTimeout(callback, 0, currentValueUnwrapped);
             } else if (filterPromise) {
-                filterPromise.then( comp => {
+                filterPromise.then(comp => {
                     const unwrapped = this.frameworkComponentWrapper ? this.frameworkComponentWrapper.unwrap(comp) : comp;
                     callback(unwrapped);
                 });
@@ -1004,11 +993,6 @@ export class GridApi {
         }
 
         return currentValueUnwrapped;
-    }
-
-    public getFilterApi(key: string | Column) {
-        console.warn('AG Grid: getFilterApi is deprecated, use getFilterInstance instead');
-        return this.getFilterInstance(key);
     }
 
     /** Destroys a filter. Useful to force a particular filter to be created from scratch again. */
@@ -1169,17 +1153,22 @@ export class GridApi {
     }
 
     /** Sets the height in pixels for the rows containing header column groups. */
-    public setGroupHeaderHeight(headerHeight: number) {
+    public setGroupHeaderHeight(headerHeight?: number) {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GROUP_HEADER_HEIGHT, headerHeight);
     }
 
     /** Sets the height in pixels for the row containing the floating filters. */
-    public setFloatingFiltersHeight(headerHeight: number) {
+    public setFloatingFiltersHeight(headerHeight?: number) {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_FLOATING_FILTERS_HEIGHT, headerHeight);
     }
 
+    /** Sets the height in pixels for the row containing the columns when in pivot mode. */
+    public setPivotHeaderHeight(headerHeight?: number) {
+        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, headerHeight);
+    }
+
     /** Sets the height in pixels for the row containing header column groups when in pivot mode. */
-    public setPivotGroupHeaderHeight(headerHeight: number) {
+    public setPivotGroupHeaderHeight(headerHeight?: number) {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PIVOT_GROUP_HEADER_HEIGHT, headerHeight);
     }
 
@@ -1321,11 +1310,6 @@ export class GridApi {
 
     public setGetRowHeight(rowHeightFunc: (params: RowHeightParams) => number): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_GET_ROW_HEIGHT, rowHeightFunc);
-    }
-
-    /** Sets the height in pixels for the row containing the columns when in pivot mode. */
-    public setPivotHeaderHeight(headerHeight: number) {
-        this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_PIVOT_HEADER_HEIGHT, headerHeight);
     }
 
     /** Returns `true` if the side bar is visible. */
@@ -1476,7 +1460,10 @@ export class GridApi {
 
         // destroy the UI first (as they use the services)
         const gridCtrl = this.ctrlsService.getGridCtrl();
-        gridCtrl && gridCtrl.destroyGridUi();
+
+        if (gridCtrl) {
+            gridCtrl.destroyGridUi();
+        }
 
         // destroy the services
         this.context.destroy();
@@ -1620,13 +1607,13 @@ export class GridApi {
      * Set `includeHeaders = true` to include the headers (default is `false`).
      * Set `columnKeys` to the list of columns if you want just specific columns.
      */
-    public copySelectedRowsToClipboard(includeHeader: boolean, columnKeys?: (string | Column)[]): void {
+    public copySelectedRowsToClipboard(includeHeader?: boolean, columnKeys?: (string | Column)[]): void {
         if (!this.clipboardService) { console.warn('AG Grid: clipboard is only available in AG Grid Enterprise'); }
         this.clipboardService.copySelectedRowsToClipboard(includeHeader, columnKeys);
     }
 
     /** Copies the selected ranges to the clipboard. */
-    public copySelectedRangeToClipboard(includeHeader: boolean): void {
+    public copySelectedRangeToClipboard(includeHeader?: boolean): void {
         if (!this.clipboardService) { console.warn('AG Grid: clipboard is only available in AG Grid Enterprise'); }
         this.clipboardService.copySelectedRangeToClipboard(includeHeader);
     }

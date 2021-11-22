@@ -852,7 +852,6 @@ var desktopDefaultCols = [
                         {
                             filter: 'agSetColumnFilter',
                             filterParams: {
-                                newRowsAction: 'keep',
                                 buttons: ['reset']
                             }
                         }
@@ -909,7 +908,6 @@ var desktopDefaultCols = [
                 filterParams: {
                     cellRenderer: 'countryCellRenderer',
                     // cellHeight: 20,
-                    newRowsAction: 'keep',
                     buttons: ['reset'],
                     // suppressSelectAll: true
                 },
@@ -942,7 +940,6 @@ var desktopDefaultCols = [
                         {
                             filter: 'agSetColumnFilter',
                             filterParams: {
-                                newRowsAction: 'keep',
                                 buttons: ['reset'],
                             }
                         }
@@ -969,7 +966,6 @@ var desktopDefaultCols = [
                 floatCell: true,
                 filterParams: {
                     cellRenderer: 'booleanFilterCellRenderer',
-                    newRowsAction: 'keep',
                     buttons: ['reset'],
                 }
             }
