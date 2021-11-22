@@ -109,27 +109,7 @@ export class RowDragComp extends Component {
             dragSourceDomDataKey: this.beans.gridOptionsWrapper.getDomDataKey()
         };
 
-        this.addMouseDownListenerIfNeeded();
-
         this.beans.dragAndDropService.addDragSource(this.dragSource, true);
-    }
-
-    private addMouseDownListenerIfNeeded(): void {
-        if (this.customGui || !this.column || !this.gridOptionsWrapper.isEnableCellTextSelect()) {
-            return;
-        }
-
-        // mouse down needs to be prevented when enableCellTextSelect
-        // is true so text doesn't get selected while dragging rows
-        this.addManagedListener(this.getGui(), 'mousedown', (e: MouseEvent) => {
-            e.preventDefault();
-            this.beans.focusService.setFocusedCell(
-                this.rowNode.rowIndex!,
-                this.column!,
-                this.rowNode.rowPinned,
-                true
-            );
-        });
     }
 
     @PreDestroy

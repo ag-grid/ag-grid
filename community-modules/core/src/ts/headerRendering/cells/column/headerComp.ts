@@ -19,13 +19,13 @@ import { LongTapEvent, TapEvent, TouchListener } from "../../../widgets/touchLis
 export interface IHeaderParams {
     /** The column the header is for. */
     column: Column;
-    /** 
-     * The name to display for the column. 
-     * If the column is using a headerValueGetter, the displayName will take this into account. 
+    /**
+     * The name to display for the column.
+     * If the column is using a headerValueGetter, the displayName will take this into account.
      */
     displayName: string;
     /**
-     * Whether sorting is enabled for the column. 
+     * Whether sorting is enabled for the column.
      * Only put sort logic into your header if this is true.
      */
     enableSorting: boolean;
@@ -54,7 +54,7 @@ export interface IHeaderParams {
     setSort: (sort: string, multiSort?: boolean) => void;
     template: string;
     /**
-     * The header the grid provides. 
+     * The header the grid provides.
      * The custom header component is a child of the grid provided header.
      * The grid's header component is what contains the grid managed functionality such as resizing, keyboard navigation etc.
      * This is provided should you want to make changes to this cell,

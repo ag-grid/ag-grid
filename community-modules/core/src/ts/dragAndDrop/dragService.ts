@@ -243,6 +243,9 @@ export class DragService extends BeanStub {
     // only gets called after a mouse down - as this is only added after mouseDown
     // and is removed when mouseUp happens
     private onMouseMove(mouseEvent: MouseEvent, el: HTMLElement): void {
+        if (mouseEvent.cancelable) {
+            mouseEvent.preventDefault();
+        }
         this.onCommonMove(mouseEvent, this.mouseStartEvent!, el);
     }
 
