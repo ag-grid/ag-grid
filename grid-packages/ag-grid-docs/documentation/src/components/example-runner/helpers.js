@@ -18,7 +18,7 @@ import isDevelopment from 'utils/is-development';
  * - 'vue3' (Vue 3)
  */
 const getInternalFramework = (framework, useFunctionalReact, useVue3) => {
-    if (framework === 'javascript' || framework === 'typescript') {
+    if (framework === 'javascript') {
         return 'vanilla';
     } else if (framework === 'react' && useFunctionalReact) {
         return 'reactFunctional';
@@ -57,7 +57,6 @@ export const getExampleInfo = (
     switch (type) {
         case 'generated':
         case 'mixed':
-        case 'typescript':
             sourcePath += `_gen/${importType}/${internalFramework}/`;
             appLocation += `${importType}/${internalFramework}/`;
             break;
@@ -67,11 +66,16 @@ export const getExampleInfo = (
             appLocation += `${internalFramework}/`;
             break;
 
+        case 'typescript':
+            sourcePath += `_gen/${importType}/vanilla/`;
+            appLocation += `${importType}/vanilla/`;
+            break;
         default:
             break;
     }
 
-    if (type === 'vanilla') {
+    if (type === 'vanilla' || type === 'typescript') {
+        // Override so even if viewing a framework the example only shows the javascript version.
         framework = 'javascript';
     }
 

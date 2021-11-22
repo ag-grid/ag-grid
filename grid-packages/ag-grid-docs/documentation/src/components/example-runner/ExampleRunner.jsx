@@ -135,7 +135,7 @@ const ExampleRunnerInner = ({pageName, framework, name, title, type, options, li
         height: exampleInfo.options.exampleHeight || '500px',
     };
 
-    const isGenerated = exampleInfo.type === 'generated' || exampleInfo.type === 'mixed';
+    const isGenerated = isGeneratedExample(type);
     const linkId = `example-${name}`;
 
     return <div className={styles['example-runner']}>

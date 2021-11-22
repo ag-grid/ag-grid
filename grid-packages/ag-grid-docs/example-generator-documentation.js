@@ -229,6 +229,7 @@ function createExampleGenerator(prefix, importTypes) {
         let inlineStyles = style && style.length > 0 && format(style[1], 'css');
 
         if (type !== 'typescript') {
+            // When the type == typescript we only want to generate the vanilla option and so skip all other frameworks
 
             if (type === 'mixed' && providedExamples['react']) {
                 importTypes.forEach(importType => copyProvidedExample(importType, 'react', providedExamples['react']));
