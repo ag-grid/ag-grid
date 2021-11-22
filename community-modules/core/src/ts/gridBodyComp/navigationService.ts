@@ -23,6 +23,7 @@ import { RowRenderer } from "../rendering/rowRenderer";
 import { HeaderNavigationService } from "../headerRendering/common/headerNavigationService";
 import { CellNavigationService } from "../cellNavigationService";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
+import { RowHighlightPosition } from "../entities/rowNode";
 
 interface NavigateParams {
     /** The rowIndex to vertically scroll to. */
@@ -168,18 +169,13 @@ export class NavigationService extends BeanStub {
 
         const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         const scrollPosition = gridBodyCon.getScrollFeature().getVScrollPosition();
-        const scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
-        let pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
-
-        if (this.ctrlsService.getCenterRowContainerCtrl().isHorizontalScrollShowing()) {
-            pixelsInOnePage -= scrollbarWidth;
-        }
+        const pixelsInOnePage = this.getViewportHeight();
 
         const pagingPixelOffset = this.paginationProxy.getPixelOffset();
 
         const currentPageBottomPixel = scrollPosition.top + pixelsInOnePage;
         const currentPageBottomRow = this.paginationProxy.getRowIndexAtPixel(currentPageBottomPixel + pagingPixelOffset);
-        let scrollIndex = currentPageBottomRow;
+        let scrollIndex = currentPageBottomRow + 1;
 
         const currentCellPixel = this.paginationProxy.getRow(gridCell.rowIndex)!.rowTop;
         const nextCellPixel = currentCellPixel! + pixelsInOnePage - pagingPixelOffset;
@@ -187,11 +183,15 @@ export class NavigationService extends BeanStub {
 
         const pageLastRow = this.paginationProxy.getPageLastRow();
 
-        if (focusIndex === gridCell.rowIndex && focusIndex === scrollIndex) {
-            focusIndex = scrollIndex = gridCell.rowIndex + 1;
+        if (focusIndex === gridCell.rowIndex) {
+            scrollIndex = focusIndex = gridCell.rowIndex + 1;
         }
         if (focusIndex > pageLastRow) { focusIndex = pageLastRow; }
         if (scrollIndex > pageLastRow) { scrollIndex = pageLastRow; }
+
+        if (this.isRowTallerThanView(focusIndex)) {
+            scrollIndex = focusIndex;
+        }
 
         this.navigateTo({
             scrollIndex,
@@ -209,18 +209,13 @@ export class NavigationService extends BeanStub {
 
         const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
         const scrollPosition = gridBodyCon.getScrollFeature().getVScrollPosition();
-        const scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
-        let pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
-
-        if (this.ctrlsService.getCenterRowContainerCtrl().isHorizontalScrollShowing()) {
-            pixelsInOnePage -= scrollbarWidth;
-        }
+        const pixelsInOnePage = this.getViewportHeight();
 
         const pagingPixelOffset = this.paginationProxy.getPixelOffset();
 
         const currentPageTopPixel = scrollPosition.top;
         const currentPageTopRow = this.paginationProxy.getRowIndexAtPixel(currentPageTopPixel + pagingPixelOffset);
-        let scrollIndex = currentPageTopRow;
+        let scrollIndex = currentPageTopRow - 1;
 
         const currentRowNode = this.paginationProxy.getRow(gridCell.rowIndex)!;
         const nextCellPixel = currentRowNode.rowTop! + currentRowNode.rowHeight! - pixelsInOnePage - pagingPixelOffset;
@@ -228,19 +223,16 @@ export class NavigationService extends BeanStub {
 
         const firstRow = this.paginationProxy.getPageFirstRow();
 
-        if (focusIndex === gridCell.rowIndex && focusIndex === scrollIndex) {
-            focusIndex = scrollIndex = gridCell.rowIndex - 1;
+        if (focusIndex === gridCell.rowIndex) {
+            scrollIndex = focusIndex = gridCell.rowIndex - 1;
         }
 
         if (focusIndex < firstRow) { focusIndex = firstRow; }
         if (scrollIndex < firstRow) { scrollIndex = firstRow; }
 
-        const newRow = this.paginationProxy.getRow(focusIndex);
-        const newRowHeight = newRow && newRow.rowHeight;
-
         let scrollType: 'top' | 'bottom' = 'bottom';
 
-        if (typeof newRowHeight === 'number' && newRowHeight > pixelsInOnePage) {
+        if (this.isRowTallerThanView(focusIndex)) {
             scrollIndex = focusIndex;
             scrollType = 'top';
         }
@@ -254,6 +246,30 @@ export class NavigationService extends BeanStub {
         });
 
         this.setTimeLastPageEventProcessed();
+    }
+
+    private getViewportHeight(): number {
+        const gridBodyCon = this.ctrlsService.getGridBodyCtrl();
+        const scrollPosition = gridBodyCon.getScrollFeature().getVScrollPosition();
+        const scrollbarWidth = this.gridOptionsWrapper.getScrollbarWidth();
+        let pixelsInOnePage = scrollPosition.bottom - scrollPosition.top;
+
+        if (this.ctrlsService.getCenterRowContainerCtrl().isHorizontalScrollShowing()) {
+            pixelsInOnePage -= scrollbarWidth;
+        }
+
+        return pixelsInOnePage;
+    }
+
+    private isRowTallerThanView(rowIndex: number): boolean {
+        const rowNode = this.paginationProxy.getRow(rowIndex);
+        if (!rowNode) { return false; }
+
+        const rowHeight = rowNode.rowHeight;
+
+        if (typeof rowHeight !== 'number') { return false; }
+
+        return rowHeight > this.getViewportHeight();
     }
 
     private getIndexToFocus(indexToScrollTo: number, isDown: boolean) {

@@ -452,12 +452,20 @@
   },
   "ensureIndexVisible": {
     "description": "/** Ensures the row index is visible by vertically scrolling the grid.\n * If a position of `'top'`, `'middle'` or `'bottom'` is supplied, the grid will scroll the grid to place the row at the top, middle or bottom respectively.\n * Otherwise, the grid will do the minimum scrolling possible to show the row.\n * i.e.\n * - if the grid needs to scroll up then it will scroll so that the row is at the top,\n * - if the grid needs to scroll down then it will scroll so that the row is at the bottom,\n * - if the row is already in view then the grid will do nothing. */",
-    "type": { "arguments": { "index": "any", "position?": "string | null" } }
+    "type": {
+      "arguments": {
+        "index": "any",
+        "position?": "'top' | 'bottom' | 'middle' | null"
+      }
+    }
   },
   "ensureNodeVisible": {
     "description": "/** Ensures a row node is visible, scrolling the grid if needed.\n * Provide either:\n * - the node,\n * - the data object\n * - a comparator function (that takes the node as a parameter, and returns `true` for match or `false` for no match). */",
     "type": {
-      "arguments": { "comparator": "any", "position": "string | null = null" }
+      "arguments": {
+        "comparator": "any",
+        "position": "'top' | 'bottom' | 'middle' | null = null"
+      }
     }
   },
   "forEachLeafNode": {
@@ -1134,7 +1142,7 @@
     "description": "/** @deprecated */",
     "type": {
       "arguments": { "params": "GetCellRendererInstancesParams = {}" },
-      "returnType": "(ICellRenderer|undefined)[]"
+      "returnType": "(ICellRenderer | undefined)[]"
     }
   },
   "getCellEditorInstances": {
@@ -1148,7 +1156,7 @@
     "description": "/** @deprecated */",
     "type": {
       "arguments": { "params": "GetCellEditorInstancesParams = {}" },
-      "returnType": "(ICellEditor|undefined)[]"
+      "returnType": "(ICellEditor | undefined)[]"
     }
   },
   "getEditingCells": {

@@ -185,13 +185,13 @@ export class CtrlsService extends BeanStub {
 
     public registerHeaderContainer(ctrl: HeaderRowContainerCtrl, pinned: string | null): void {
         switch (pinned) {
-            case Constants.PINNED_LEFT: 
-                this.leftHeaderRowContainerCtrl = ctrl; 
+            case Constants.PINNED_LEFT:
+                this.leftHeaderRowContainerCtrl = ctrl;
                 break;
-            case Constants.PINNED_RIGHT: 
-                this.rightHeaderRowContainerCtrl = ctrl; 
+            case Constants.PINNED_RIGHT:
+                this.rightHeaderRowContainerCtrl = ctrl;
                 break;
-            default: this.centerHeaderRowContainerCtrl = ctrl; 
+            default: this.centerHeaderRowContainerCtrl = ctrl;
                 break;
         }
         this.checkReady();

@@ -93,7 +93,7 @@ export class GridBodyCtrl extends BeanStub {
         this.createManagedBean(new LayoutFeature(this.comp));
         this.bodyScrollFeature = this.createManagedBean(new GridBodyScrollFeature(this.eBodyViewport));
         this.addRowDragListener();
-        
+
         this.setupRowAnimationCssClass();
 
         this.ctrlsService.registerGridBodyCtrl(this);
@@ -383,7 +383,7 @@ export class GridBodyCtrl extends BeanStub {
     private addAngularApplyCheck(): void {
         // these are the events we need to do an apply after - these are the ones that can end up
         // with columns added or removed
-        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, ()=> this.requestAngularApply() );
-        this.addManagedListener(this.eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, ()=> this.requestAngularApply() );
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, () => this.requestAngularApply());
+        this.addManagedListener(this.eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, () => this.requestAngularApply());
     }
 }
