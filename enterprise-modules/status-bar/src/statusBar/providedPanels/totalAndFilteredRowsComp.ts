@@ -31,8 +31,12 @@ export class TotalAndFilteredRowsComp extends NameValueComp implements IStatusPa
     }
 
     private onDataChanged() {
-        const rowCount = _.formatNumberCommas(this.getFilteredRowCountValue());
-        const totalRowCount = _.formatNumberCommas(this.getTotalRowCount());
+        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const thousandSeparator = localeTextFunc('thousandSeparator', ',');
+        const decimalSeparator = localeTextFunc('decimalSeparator', '.');
+
+        const rowCount = _.formatNumberCommas(this.getFilteredRowCountValue(), thousandSeparator, decimalSeparator);
+        const totalRowCount = _.formatNumberCommas(this.getTotalRowCount(), thousandSeparator, decimalSeparator);
 
         if (rowCount === totalRowCount) {
             this.setValue(rowCount);

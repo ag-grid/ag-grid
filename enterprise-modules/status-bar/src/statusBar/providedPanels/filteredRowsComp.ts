@@ -34,7 +34,11 @@ export class FilteredRowsComp extends NameValueComp implements IStatusPanelComp 
     private onDataChanged() {
         const totalRowCountValue = this.getTotalRowCountValue();
         const filteredRowCountValue = this.getFilteredRowCountValue();
-        this.setValue(_.formatNumberCommas(filteredRowCountValue));
+        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const thousandSeparator = localeTextFunc('thousandSeparator', ',');
+        const decimalSeparator = localeTextFunc('decimalSeparator', '.');
+
+        this.setValue(_.formatNumberCommas(filteredRowCountValue, thousandSeparator, decimalSeparator));
         this.setDisplayed(totalRowCountValue !== filteredRowCountValue);
     }
 

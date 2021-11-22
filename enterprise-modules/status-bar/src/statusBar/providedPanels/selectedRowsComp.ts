@@ -19,7 +19,11 @@ export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp 
         this.addCssClass('ag-status-panel-selected-row-count');
 
         const selectedRowCount = this.gridApi.getSelectedRows().length;
-        this.setValue(_.formatNumberCommas(selectedRowCount));
+        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const thousandSeparator = localeTextFunc('thousandSeparator', ',');
+        const decimalSeparator = localeTextFunc('decimalSeparator', '.');
+
+        this.setValue(_.formatNumberCommas(selectedRowCount, thousandSeparator, decimalSeparator));
         this.setDisplayed(selectedRowCount > 0);
 
         const eventListener = this.onRowSelectionChanged.bind(this);
@@ -35,7 +39,10 @@ export class SelectedRowsComp extends NameValueComp implements IStatusPanelComp 
 
     private onRowSelectionChanged() {
         const selectedRowCount = this.gridApi.getSelectedRows().length;
-        this.setValue(_.formatNumberCommas(selectedRowCount));
+        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const thousandSeparator = localeTextFunc('thousandSeparator', ',');
+        const decimalSeparator = localeTextFunc('decimalSeparator', '.');
+        this.setValue(_.formatNumberCommas(selectedRowCount, thousandSeparator, decimalSeparator));
         this.setDisplayed(selectedRowCount > 0);
     }
 

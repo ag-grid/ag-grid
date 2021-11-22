@@ -57,7 +57,14 @@ var gridOptions = {
     enableRangeSelection: true,
     enableCharts: true,
     localeTextFunc: function (key, defaultValue) {
-        return defaultValue ? defaultValue.toUpperCase() : '';
+        switch (key) {
+            case 'thousandSeparator':
+                return '.';
+            case 'decimalSeparator':
+                return ',';
+            default:
+                return defaultValue ? defaultValue.toUpperCase() : '';
+        }
     }
 };
 

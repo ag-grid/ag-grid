@@ -98,7 +98,11 @@ export class PaginationComp extends Component {
 
         if (userFunc) { return userFunc({ value: value }); }
 
-        return formatNumberCommas(value);
+        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const thousandSeparator = localeTextFunc('thousandSeparator', ',');
+        const decimalSeparator = localeTextFunc('decimalSeparator', '.');
+
+        return formatNumberCommas(value, thousandSeparator, decimalSeparator);
     }
 
     private getTemplate(): string {

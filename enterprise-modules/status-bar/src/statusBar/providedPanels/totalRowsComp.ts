@@ -24,7 +24,10 @@ export class TotalRowsComp extends NameValueComp implements IStatusPanelComp {
     }
 
     private onDataChanged() {
-        this.setValue(_.formatNumberCommas(this.getRowCountValue()));
+        const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
+        const thousandSeparator = localeTextFunc('thousandSeparator', ',');
+        const decimalSeparator = localeTextFunc('decimalSeparator', '.');
+        this.setValue(_.formatNumberCommas(this.getRowCountValue(), thousandSeparator, decimalSeparator));
     }
 
     private getRowCountValue(): number {

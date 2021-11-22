@@ -52,10 +52,10 @@ export function decToHex(number: number, bytes: number): string {
     return hex;
 }
 
-export function formatNumberTwoDecimalPlacesAndCommas(value: number): string {
+export function formatNumberTwoDecimalPlacesAndCommas(value: number, thousandSeparator: string, decimalSeparator: string): string {
     if (typeof value !== 'number') { return ''; }
 
-    return formatNumberCommas(Math.round(value * 100) / 100);
+    return formatNumberCommas(Math.round(value * 100) / 100, thousandSeparator, decimalSeparator);
 }
 
 /**
@@ -65,10 +65,10 @@ export function formatNumberTwoDecimalPlacesAndCommas(value: number): string {
  * @param {number} value
  * @returns {string}
  */
-export function formatNumberCommas(value: number): string {
+export function formatNumberCommas(value: number, thousandSeparator: string, decimalSeparator: string): string {
     if (typeof value !== 'number') { return ''; }
 
-    return value.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1,");
+    return value.toString().replace('.', decimalSeparator).replace(/(\d)(?=(\d{3})+(?!\d))/g, `$1${thousandSeparator}`);
 }
 
 export function sum(values: number[] | null) {

@@ -282,6 +282,10 @@ const AG_GRID_LOCALE_EN = {
     ariaLabelContextMenu: 'Context Menu',
     ariaLabelColumnMenu: 'Column Menu',
     ariaLabelSubMenu: 'SubMenu',
-    ariaLabelAggregationFunction: 'Aggregation Function'
+    ariaLabelAggregationFunction: 'Aggregation Function',
+
+    // NUMBER FORMAT
+    thousandSeparator: ',',
+    decimalSeparator: '.'
 
 }
