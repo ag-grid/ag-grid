@@ -332,6 +332,7 @@
     }
   },
   "getToolPanelProxyInstance": {
+    "description": "/** @deprecated */",
     "type": {
       "arguments": { "id": "string" },
       "returnType": "IToolPanel | undefined"
@@ -492,6 +493,7 @@
     }
   },
   "getFilterProxyInstance": {
+    "description": "/** @deprecated */",
     "type": {
       "arguments": {
         "key": "string | Column",
@@ -512,6 +514,7 @@
     }
   },
   "getStatusPanelProxy": {
+    "description": "/** @deprecated */",
     "type": {
       "arguments": { "key": "string" },
       "returnType": "IStatusPanel | undefined"
@@ -1128,6 +1131,7 @@
     }
   },
   "getCellRendererProxyInstances": {
+    "description": "/** @deprecated */",
     "type": {
       "arguments": { "params": "GetCellRendererInstancesParams = {}" },
       "returnType": "(ICellRenderer|undefined)[]"
@@ -1141,6 +1145,7 @@
     }
   },
   "getCellEditorProxyInstances": {
+    "description": "/** @deprecated */",
     "type": {
       "arguments": { "params": "GetCellEditorInstancesParams = {}" },
       "returnType": "(ICellEditor|undefined)[]"

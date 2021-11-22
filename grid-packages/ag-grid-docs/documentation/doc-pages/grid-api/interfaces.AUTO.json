@@ -6309,8 +6309,7 @@
       "isCancelBeforeStart?()": "boolean",
       "isCancelAfterEnd?()": "boolean",
       "focusIn?()": "void",
-      "focusOut?()": "void",
-      "getFrameworkComponentInstance?()": "any"
+      "focusOut?()": "void"
     },
     "docs": {
       "getValue()": "/** Return the final value - called by the grid once after editing is complete */",
@@ -6319,8 +6318,7 @@
       "isCancelBeforeStart?()": "/** Gets called once after initialised. If you return true, the editor will not be\n * used and the grid will continue editing. Use this to make a decision on editing\n * inside the init() function, eg maybe you want to only start editing if the user\n * hits a numeric key, but not a letter, if the editor is for numbers. */",
       "isCancelAfterEnd?()": "/** Gets called once after editing is complete. If your return true, then the new\n * value will not be used. The editing will have no impact on the record. Use this\n * if you do not want a new value from your gui, i.e. you want to cancel the editing. */",
       "focusIn?()": "/** If doing full line edit, then gets called when focus should be put into the editor */",
-      "focusOut?()": "/** If doing full line edit, then gets called when focus is leaving the editor */",
-      "getFrameworkComponentInstance?()": "/** If using a framework this returns the underlying component instance, so you can call\n * methods on it if you want. */"
+      "focusOut?()": "/** If doing full line edit, then gets called when focus is leaving the editor */"
     }
   },
   "ICellEditorParams": {
@@ -6374,7 +6372,6 @@
       "isCancelAfterEnd?()": "boolean",
       "focusIn?()": "void",
       "focusOut?()": "void",
-      "getFrameworkComponentInstance?()": "any",
       "getGui()": "HTMLElement",
       "destroy?()": "void",
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void",
@@ -6388,7 +6385,6 @@
       "isCancelAfterEnd?()": "/** Gets called once after editing is complete. If your return true, then the new\n * value will not be used. The editing will have no impact on the record. Use this\n * if you do not want a new value from your gui, i.e. you want to cancel the editing. */",
       "focusIn?()": "/** If doing full line edit, then gets called when focus should be put into the editor */",
       "focusOut?()": "/** If doing full line edit, then gets called when focus is leaving the editor */",
-      "getFrameworkComponentInstance?()": "/** If using a framework this returns the underlying component instance, so you can call\n * methods on it if you want. */",
       "getGui()": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
       "destroy?()": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",
@@ -7005,7 +7001,6 @@
       "setModel(model: any)": "void | AgPromise<void>",
       "onNewRowsLoaded?()": "void",
       "onAnyFilterChanged?()": "void",
-      "getFrameworkComponentInstance?()": "any",
       "getModelAsString?(model: any)": "string"
     },
     "docs": {
@@ -7015,7 +7010,6 @@
       "setModel(model: any)": "/** Restores the filter state. */",
       "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
       "onAnyFilterChanged?()": "/** Called whenever any filter is changed. */",
-      "getFrameworkComponentInstance?()": "/** If using React or Angular 2, returns the underlying component instance, so you can call methods\n * on it if you want. */",
       "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */"
     }
   },
@@ -7029,7 +7023,6 @@
       "setModel(model: any)": "void | AgPromise<void>",
       "onNewRowsLoaded?()": "void",
       "onAnyFilterChanged?()": "void",
-      "getFrameworkComponentInstance?()": "any",
       "getModelAsString?(model: any)": "string",
       "getGui()": "HTMLElement",
       "destroy?()": "void",
@@ -7043,7 +7036,6 @@
       "setModel(model: any)": "/** Restores the filter state. */",
       "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
       "onAnyFilterChanged?()": "/** Called whenever any filter is changed. */",
-      "getFrameworkComponentInstance?()": "/** If using React or Angular 2, returns the underlying component instance, so you can call methods\n * on it if you want. */",
       "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */",
       "getGui()": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
       "destroy?()": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
@@ -8249,24 +8241,16 @@
       "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
-  "IStatusPanel": {
-    "meta": {},
-    "type": { "getFrameworkComponentInstance?()": "any" },
-    "docs": {
-      "getFrameworkComponentInstance?()": "/** If using a framework, returns the underlying component instance, so you can call methods\n * on it if you want. */"
-    }
-  },
+  "IStatusPanel": { "meta": {}, "type": {} },
   "IStatusPanelComp": {
     "meta": {},
     "type": {
-      "getFrameworkComponentInstance?()": "any",
       "getGui()": "HTMLElement",
       "destroy?()": "void",
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "void",
       "init?(params: IStatusPanelParams)": "AgPromise<void> | void"
     },
     "docs": {
-      "getFrameworkComponentInstance?()": "/** If using a framework, returns the underlying component instance, so you can call methods\n * on it if you want. */",
       "getGui()": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
       "destroy?()": "/** Gets called once by grid when the component is being removed; if your component needs to do any cleanup, do it here */",
       "afterGuiAttached?(params?: IAfterGuiAttachedParams)": "/** A hook to perform any necessary operation just after the GUI for this component has been rendered\n * on the screen.\n * If a parent popup is closed and reopened (e.g. for filters), this method is called each time the component is shown.\n * This is useful for any\n * logic that requires attachment before executing, such as putting focus on a particular DOM\n * element. The params has one callback method 'hidePopup', which you can call at any later\n * point to hide the popup - good if you have an 'Apply' button and you want to hide the popup\n * after it is pressed. */",

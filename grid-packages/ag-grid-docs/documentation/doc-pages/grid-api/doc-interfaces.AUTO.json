@@ -10806,10 +10806,6 @@
     "focusOut": {
       "description": "/** If doing full line edit, then gets called when focus is leaving the editor */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
-    },
-    "getFrameworkComponentInstance": {
-      "description": "/** If using a framework this returns the underlying component instance, so you can call\n * methods on it if you want. */",
-      "type": { "arguments": {}, "returnType": "any", "optional": true }
     }
   },
   "ICellEditorParams": {
@@ -10928,10 +10924,6 @@
     "focusOut": {
       "description": "/** If doing full line edit, then gets called when focus is leaving the editor */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
-    },
-    "getFrameworkComponentInstance": {
-      "description": "/** If using a framework this returns the underlying component instance, so you can call\n * methods on it if you want. */",
-      "type": { "arguments": {}, "returnType": "any", "optional": true }
     },
     "getGui": {
       "description": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
@@ -12085,10 +12077,6 @@
       "description": "/** Called whenever any filter is changed. */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
     },
-    "getFrameworkComponentInstance": {
-      "description": "/** If using React or Angular 2, returns the underlying component instance, so you can call methods\n * on it if you want. */",
-      "type": { "arguments": {}, "returnType": "any", "optional": true }
-    },
     "getModelAsString": {
       "description": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */",
       "type": {
@@ -12133,10 +12121,6 @@
     "onAnyFilterChanged": {
       "description": "/** Called whenever any filter is changed. */",
       "type": { "arguments": {}, "returnType": "void", "optional": true }
-    },
-    "getFrameworkComponentInstance": {
-      "description": "/** If using React or Angular 2, returns the underlying component instance, so you can call methods\n * on it if you want. */",
-      "type": { "arguments": {}, "returnType": "any", "optional": true }
     },
     "getModelAsString": {
       "description": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */",
@@ -14578,17 +14562,8 @@
       "type": { "returnType": "any", "optional": false }
     }
   },
-  "IStatusPanel": {
-    "getFrameworkComponentInstance": {
-      "description": "/** If using a framework, returns the underlying component instance, so you can call methods\n * on it if you want. */",
-      "type": { "arguments": {}, "returnType": "any", "optional": true }
-    }
-  },
+  "IStatusPanel": {},
   "IStatusPanelComp": {
-    "getFrameworkComponentInstance": {
-      "description": "/** If using a framework, returns the underlying component instance, so you can call methods\n * on it if you want. */",
-      "type": { "arguments": {}, "returnType": "any", "optional": true }
-    },
     "getGui": {
       "description": "/** Return the DOM element of your component, this is what the grid puts into the DOM */",
       "type": {
