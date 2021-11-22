@@ -37,7 +37,7 @@ const gridOptions: GridOptions = {
     return data.student
   },
   onGridReady: function (params: GridReadyEvent) {
-    (document.getElementById('pivot-mode') as any).checked = true
+    (document.getElementById('pivot-mode') as HTMLInputElement).checked = true
   },
 }
 
@@ -85,7 +85,7 @@ function createRow(): Student {
 }
 
 function pivotMode() {
-  var pivotModeOn = (document.getElementById('pivot-mode') as any).checked
+  var pivotModeOn = (document.getElementById('pivot-mode') as HTMLInputElement).checked
 
   gridOptions.columnApi!.setPivotMode(pivotModeOn)
 
