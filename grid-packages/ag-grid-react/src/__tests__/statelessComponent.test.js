@@ -31,7 +31,7 @@ it('stateless function has no component instance', () => {
     expect(instances).toBeTruthy();
     expect(instances.length).toEqual(1);
 
-    const frameworkInstance = instances[0].getFrameworkComponentInstance();
+    const frameworkInstance = instances[0];
     expect(frameworkInstance).not.toBeTruthy()
 });
 

@@ -50,16 +50,6 @@ After the grid has created an instance of a status bar component it is possible 
 
 <api-documentation source='grid-api/api.json' section='accessories' names='["getStatusPanel"]'></api-documentation>
 
-If your are using a framework component then the returned object is a wrapper and you can get the underlying status bar component using `getFrameworkComponentInstance()`
-
-```js
-// example - get status bar component
-const statusBarComponent = gridOptions.api.getStatusPanel('statusBarCompKey');
-if (statusBarComponent) {
-    componentInstance = statusBarComponent.getFrameworkComponentInstance();
-}
-```
-
 The example below shows using `getStatusPanel`:
 
 <grid-example title='Get Status Bar Panel Instance' name='component-instance' type='generated' options='{ "enterprise": true }'></grid-example>

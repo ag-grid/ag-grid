@@ -31,9 +31,6 @@ it('stateless function has no component instance', () => {
     const instances = agGridReact.api.getCellRendererInstances({columns: ['age']});
     expect(instances).toBeTruthy();
     expect(instances.length).toEqual(1);
-
-    const frameworkInstance = instances[0].getFrameworkComponentInstance();
-    expect(frameworkInstance).not.toBeTruthy()
 });
 
 class GridWithStatelessFunction extends Component {

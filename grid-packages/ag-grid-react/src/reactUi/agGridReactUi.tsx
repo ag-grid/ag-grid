@@ -201,11 +201,4 @@ class ReactFrameworkComponentWrapper extends BaseComponentWrapper<WrappableInter
     createWrapper(UserReactComponent: { new(): any; }, componentType: ComponentType): WrappableInterface {
         return new NewReactComponent(UserReactComponent, this.parent, componentType);
     }
-
-    unwrap(comp: any): any {
-        if (comp && comp.getFrameworkComponentInstance) {
-            return comp.getFrameworkComponentInstance();
-        }
-        return comp;
-    }
 }

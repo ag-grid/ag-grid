@@ -331,6 +331,12 @@
       "returnType": "IToolPanel | undefined"
     }
   },
+  "getToolPanelProxyInstance": {
+    "type": {
+      "arguments": { "id": "string" },
+      "returnType": "IToolPanel | undefined"
+    }
+  },
   "addVirtualRowListener": {
     "type": {
       "arguments": {
@@ -485,12 +491,27 @@
       "returnType": "IFilter | null | undefined"
     }
   },
+  "getFilterProxyInstance": {
+    "type": {
+      "arguments": {
+        "key": "string | Column",
+        "callback?": "(filter: IFilter) => void"
+      },
+      "returnType": "IFilter | null | undefined"
+    }
+  },
   "destroyFilter": {
     "description": "/** Destroys a filter. Useful to force a particular filter to be created from scratch again. */",
     "type": { "arguments": { "key": "string | Column" } }
   },
   "getStatusPanel": {
     "description": "/** Gets the status panel instance corresponding to the supplied `id`. */",
+    "type": {
+      "arguments": { "key": "string" },
+      "returnType": "IStatusPanel | undefined"
+    }
+  },
+  "getStatusPanelProxy": {
     "type": {
       "arguments": { "key": "string" },
       "returnType": "IStatusPanel | undefined"
@@ -1106,11 +1127,23 @@
       "returnType": "ICellRenderer[]"
     }
   },
+  "getCellRendererProxyInstances": {
+    "type": {
+      "arguments": { "params": "GetCellRendererInstancesParams = {}" },
+      "returnType": "(ICellRenderer|undefined)[]"
+    }
+  },
   "getCellEditorInstances": {
     "description": "/** Returns the list of active cell editor instances. Optionally provide parameters to restrict to certain columns / row nodes. */",
     "type": {
       "arguments": { "params": "GetCellEditorInstancesParams = {}" },
       "returnType": "ICellEditor[]"
+    }
+  },
+  "getCellEditorProxyInstances": {
+    "type": {
+      "arguments": { "params": "GetCellEditorInstancesParams = {}" },
+      "returnType": "(ICellEditor|undefined)[]"
     }
   },
   "getEditingCells": {

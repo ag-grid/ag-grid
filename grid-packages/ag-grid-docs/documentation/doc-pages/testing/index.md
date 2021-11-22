@@ -344,7 +344,7 @@ title: "Testing AG Grid"
 |
 | ## Testing User Supplied Components
 |
-| The easiest way to test user supplied components is to access them via `getFrameworkComponentInstance`.
+| The easiest way to test user supplied components is to access them via the grid API.
 |
 | For example, given the following code:
 |
@@ -432,7 +432,7 @@ title: "Testing AG Grid"
 |     const instances = component.api.getCellEditorInstances();
 |     expect(instances.length).toEqual(1);
 |
-|     const editorComponent = instances[0].getFrameworkComponentInstance();
+|     const editorComponent = instances[0];
 |     editorComponent.setValue(100);
 |
 |     component.api.stopEditing();
@@ -633,7 +633,7 @@ title: "Testing AG Grid"
 |     const instances = agGridReact.api.getCellEditorInstances();
 |     expect(instances.length).toEqual(1);
 |
-|     const editorComponent = instances[0].getFrameworkComponentInstance();
+|     const editorComponent = instances[0];
 |     editorComponent.setValue(50);
 |
 |     agGridReact.api.stopEditing();

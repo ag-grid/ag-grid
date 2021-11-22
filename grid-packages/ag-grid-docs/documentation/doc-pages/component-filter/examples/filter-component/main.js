@@ -28,7 +28,7 @@ function createRowData() {
 
 function onClicked() {
     this.gridApi.getFilterInstance('name', function(instance) {
-        instance.getFrameworkComponentInstance().componentMethod('Hello World!');
+        instance.componentMethod('Hello World!');
     });
 }
 

@@ -36,10 +36,7 @@ it('stateful component returns a valid component instance', () => {
     const instances = agGridReact.api.getCellRendererInstances({ columns: ['age'] });
     expect(instances).toBeTruthy();
     expect(instances.length).toEqual(1);
-
-    const frameworkInstance = instances[0].getFrameworkComponentInstance();
-    expect(frameworkInstance).toBeTruthy();
-    expect(frameworkInstance.getValue()).toEqual("Test Value");
+    expect(instances.getValue()).toEqual("Test Value");
 });
 
 it('cell should be editable and editor component usable', async () => {
@@ -58,7 +55,7 @@ it('cell should be editable and editor component usable', async () => {
     const instances = agGridReact.api.getCellEditorInstances();
     expect(instances.length).toEqual(1);
 
-    const editorComponent = instances[0].getFrameworkComponentInstance();
+    const editorComponent = instances[0];
     editorComponent.setValue(50);
 
     agGridReact.api.stopEditing();

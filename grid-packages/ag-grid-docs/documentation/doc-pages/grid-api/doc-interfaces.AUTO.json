@@ -105,13 +105,6 @@
         "returnType": "A",
         "optional": false
       }
-    },
-    "unwrap": {
-      "type": {
-        "arguments": { "comp": "any" },
-        "returnType": "any",
-        "optional": false
-      }
     }
   },
   "WrappableInterface": {

@@ -186,6 +186,18 @@ export interface DetailGridInfo {
     columnApi?: ColumnApi;
 }
 
+export function unwrapUserComp<T>(comp: T): T {
+    const compAsAny = comp as any;
+    const isProxy = compAsAny!=null && compAsAny.getFrameworkComponentInstance!=null;
+    return isProxy ? compAsAny.getFrameworkComponentInstance() : comp;
+}
+
+function returnIfProxy<T>(comp: T): T | undefined {
+    const compAsAny = comp as any;
+    const isProxy = compAsAny!=null && compAsAny.getFrameworkComponentInstance!=null;
+    return isProxy ? comp : undefined;
+}
+
 @Bean('gridApi')
 export class GridApi {
 
@@ -755,8 +767,16 @@ export class GridApi {
             return;
         }
         const comp = this.sideBarComp.getToolPanelInstance(id);
-        const unwrapped = this.frameworkComponentWrapper ? this.frameworkComponentWrapper.unwrap(comp) : comp;
-        return unwrapped;
+        return unwrapUserComp(comp);
+    }
+
+    public getToolPanelProxyInstance(id: string): IToolPanel | undefined {
+        if (!this.sideBarComp) {
+            console.warn('AG Grid: toolPanel is only available in AG Grid Enterprise');
+            return;
+        }
+        const comp = this.sideBarComp.getToolPanelInstance(id);
+        return returnIfProxy(comp);
     }
 
     public addVirtualRowListener(eventName: string, rowIndex: number, callback: Function) {
@@ -973,26 +993,42 @@ export class GridApi {
      * `key` can be a string field name or a ColDef object (matches on object reference, useful if field names are not unique).
      *  */
     public getFilterInstance(key: string | Column, callback?: (filter: IFilter) => void): IFilter | null | undefined {
+        const res = this.getFilterInstanceImpl(key, instance => {
+            if (!callback) { return; }
+            const unwrapped = unwrapUserComp(instance);
+            callback(unwrapped);
+        });
+        const unwrapped = unwrapUserComp(res);
+        return unwrapped;
+    }
+
+    public getFilterProxyInstance(key: string | Column, callback?: (filter: IFilter) => void): IFilter | null | undefined {
+        const res = this.getFilterInstanceImpl(key, instance => {
+            if (!callback) { return; }
+            const proxy = returnIfProxy(instance);
+            callback(proxy!);
+        });
+        const proxy = returnIfProxy(res);
+        return proxy;
+    }
+
+    private getFilterInstanceImpl(key: string | Column, callback: (filter: IFilter) => void): IFilter | null | undefined {
         const column = this.columnModel.getPrimaryColumn(key);
 
         if (!column) { return undefined; }
 
         const filterPromise = this.filterManager.getFilterComponent(column, 'NO_UI');
         const currentValue = filterPromise && filterPromise.resolveNow<IFilterComp | null>(null, filterComp => filterComp);
-        const currentValueUnwrapped = this.frameworkComponentWrapper ? this.frameworkComponentWrapper.unwrap(currentValue) : currentValue;
 
-        if (callback) {
-            if (currentValueUnwrapped) {
-                setTimeout(callback, 0, currentValueUnwrapped);
-            } else if (filterPromise) {
-                filterPromise.then(comp => {
-                    const unwrapped = this.frameworkComponentWrapper ? this.frameworkComponentWrapper.unwrap(comp) : comp;
-                    callback(unwrapped);
-                });
-            }
+        if (currentValue) {
+            setTimeout(callback, 0, currentValue);
+        } else if (filterPromise) {
+            filterPromise.then(comp => {
+                callback(comp!);
+            });
         }
 
-        return currentValueUnwrapped;
+        return currentValue;
     }
 
     /** Destroys a filter. Useful to force a particular filter to be created from scratch again. */
@@ -1008,8 +1044,14 @@ export class GridApi {
         if (!this.statusBarService) { return; }
 
         const comp = this.statusBarService.getStatusPanel(key);
-        const unwrapped = this.frameworkComponentWrapper ? this.frameworkComponentWrapper.unwrap(comp) : comp;
-        return unwrapped;
+        return unwrapUserComp(comp);
+    }
+
+    public getStatusPanelProxy(key: string): IStatusPanel | undefined {
+        if (!this.statusBarService) { return; }
+
+        const comp = this.statusBarService.getStatusPanel(key);
+        return returnIfProxy(comp);
     }
 
     public getColumnDef(key: string | Column) {
@@ -1675,12 +1717,28 @@ export class GridApi {
 
     /** Returns the list of active cell renderer instances. */
     public getCellRendererInstances(params: GetCellRendererInstancesParams = {}): ICellRenderer[] {
-        return this.rowRenderer.getCellRendererInstances(params);
+        const res = this.rowRenderer.getCellRendererInstances(params);
+        const unwrapped = res.map(unwrapUserComp);
+        return unwrapped;
+    }
+
+    public getCellRendererProxyInstances(params: GetCellRendererInstancesParams = {}): (ICellRenderer|undefined)[] {
+        const res = this.rowRenderer.getCellRendererInstances(params);
+        const proxies = res.map(returnIfProxy);
+        return proxies;
     }
 
     /** Returns the list of active cell editor instances. Optionally provide parameters to restrict to certain columns / row nodes. */
     public getCellEditorInstances(params: GetCellEditorInstancesParams = {}): ICellEditor[] {
-        return this.rowRenderer.getCellEditorInstances(params);
+        const res = this.rowRenderer.getCellEditorInstances(params);
+        const unwrapped = res.map(unwrapUserComp);
+        return unwrapped;
+    }
+
+    public getCellEditorProxyInstances(params: GetCellEditorInstancesParams = {}): (ICellEditor|undefined)[] {
+        const res = this.rowRenderer.getCellEditorInstances(params);
+        const proxies = res.map(returnIfProxy);
+        return proxies;
     }
 
     /** If the grid is editing, returns back details of the editing cell(s). */

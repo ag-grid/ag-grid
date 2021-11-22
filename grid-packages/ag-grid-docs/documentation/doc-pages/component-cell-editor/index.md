@@ -107,13 +107,6 @@ if (instances.length > 0) {
 }
 ```
 
-[[only-angular]]
-md-include:editor-instance-fw.md
-[[only-react]]
-md-include:editor-instance-fw.md
-[[only-vue]]
-md-include:editor-instance-fw.md
-
 The example below shows using `getCellEditorInstances`. The following can be noted:
 
 - All cells are editable.

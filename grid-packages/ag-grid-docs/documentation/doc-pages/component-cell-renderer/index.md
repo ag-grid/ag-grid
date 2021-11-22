@@ -147,22 +147,6 @@ The example below demonstrates custom methods on cell renderers called by the ap
 
 <grid-example title='Get Cell Renderer' name='get-cell-renderer' type='generated'></grid-example>
 
-If your are using a framework component (detailed below), then the returned object is a wrapper and you can get the underlying cell renderer using `getFrameworkComponentInstance()`
-
-
-```js
-// example - get cell renderer for first row and column 'gold'
-const firstRowNode = gridOptions.api.getDisplayedRowAtIndex(0);
-const params = { columns: ['gold'], rowNodes: [firstRowNode] };
-const instances = gridOptions.api.getCellRendererInstances(params);
-
-if (instances.length > 0) {
-    // got it, user must be scrolled so that it exists
-    const wrapperInstance = instances[0];
-    const frameworkInstance = wrapperInstance.getFrameworkComponentInstance();
-}
-```
-
 [[only-angular]]
 |### Example: Rendering using more complex Components
 |This example illustrates a few different ideas:

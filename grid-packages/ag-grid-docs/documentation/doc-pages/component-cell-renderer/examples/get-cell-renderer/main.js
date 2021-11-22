@@ -29,11 +29,7 @@ function onCallGold() {
     const params = {columns: ['gold']};
     const instances = gridOptions.api.getCellRendererInstances(params);
     instances.forEach(instance => {
-        if (instance.getFrameworkComponentInstance) {
-            instance.getFrameworkComponentInstance().medalUserFunction();
-        } else {
-            instance.medalUserFunction();
-        }
+        instance.medalUserFunction();
     });
 }
 
@@ -45,11 +41,7 @@ function onFirstRowGold() {
 
     const instances = gridOptions.api.getCellRendererInstances(params);
     instances.forEach(instance => {
-        if (instance.getFrameworkComponentInstance) {
-            instance.getFrameworkComponentInstance().medalUserFunction();
-        } else {
-            instance.medalUserFunction();
-        }
+        instance.medalUserFunction();
     });
 }
 
@@ -58,11 +50,7 @@ function onCallAllCells() {
     // no params, goes through all rows and columns where cell renderer exists
     const instances = gridOptions.api.getCellRendererInstances();
     instances.forEach(instance => {
-        if (instance.getFrameworkComponentInstance) {
-            instance.getFrameworkComponentInstance().medalUserFunction();
-        } else {
-            instance.medalUserFunction();
-        }
+        instance.medalUserFunction();
     });
 }
 

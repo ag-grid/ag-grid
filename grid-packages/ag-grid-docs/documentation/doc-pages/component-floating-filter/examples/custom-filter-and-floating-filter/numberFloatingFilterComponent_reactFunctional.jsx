@@ -23,13 +23,13 @@ export default forwardRef((props, ref) => {
         if (value === '') {
             // Remove the filter
             props.parentFilterInstance(instance => {
-                instance.getFrameworkComponentInstance().myMethodForTakingValueFromFloatingFilter(null);
+                instance.myMethodForTakingValueFromFloatingFilter(null);
             });
             return;
         }
 
         props.parentFilterInstance(instance => {
-            instance.getFrameworkComponentInstance().myMethodForTakingValueFromFloatingFilter(value);
+            instance.myMethodForTakingValueFromFloatingFilter(value);
         });
     }
 

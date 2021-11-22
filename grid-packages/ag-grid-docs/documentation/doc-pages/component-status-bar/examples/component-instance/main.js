@@ -12,11 +12,6 @@ function toggleStatusBarComp() {
 
     // if using a framework component, you need to get the underlying framework component instance
     let componentInstance = statusBarComponent;
-
-    if (statusBarComponent.getFrameworkComponentInstance) {
-        componentInstance = statusBarComponent.getFrameworkComponentInstance();
-    }
-
     componentInstance.setVisible(!componentInstance.isVisible());
 }
 

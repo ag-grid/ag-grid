@@ -26,13 +26,13 @@ export default class NumberFloatingFilterComponent extends Component {
             if (!!!this.state.currentValue) {
                 // Remove the filter
                 this.props.parentFilterInstance((instance) => {
-                    instance.getFrameworkComponentInstance().myMethodForTakingValueFromFloatingFilter(null);
+                    instance.myMethodForTakingValueFromFloatingFilter(null);
                 });
                 return;
             }
 
             this.props.parentFilterInstance((instance) => {
-                instance.getFrameworkComponentInstance().myMethodForTakingValueFromFloatingFilter(this.state.currentValue);
+                instance.myMethodForTakingValueFromFloatingFilter(this.state.currentValue);
             });
         });
     }

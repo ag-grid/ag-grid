@@ -14,13 +14,13 @@ export default {
             if (this.currentValue === '') {
                 // Remove the filter
                 this.params.parentFilterInstance(instance => {
-                    instance.getFrameworkComponentInstance().myMethodForTakingValueFromFloatingFilter(null);
+                    instance.myMethodForTakingValueFromFloatingFilter(null);
                 });
                 return;
             }
 
             this.params.parentFilterInstance(instance => {
-                instance.getFrameworkComponentInstance().myMethodForTakingValueFromFloatingFilter(this.currentValue);
+                instance.myMethodForTakingValueFromFloatingFilter(this.currentValue);
             });
         },
 

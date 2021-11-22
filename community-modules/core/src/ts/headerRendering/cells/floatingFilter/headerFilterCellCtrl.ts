@@ -9,7 +9,7 @@ import { Events, FilterChangedEvent } from '../../../events';
 import { FilterManager } from '../../../filter/filterManager';
 import { IFloatingFilter, IFloatingFilterParams } from '../../../filter/floating/floatingFilter';
 import { FloatingFilterMapper } from '../../../filter/floating/floatingFilterMapper';
-import { GridApi } from '../../../gridApi';
+import { GridApi, unwrapUserComp } from '../../../gridApi';
 import { IFilterComp, IFilterDef } from '../../../interfaces/iFilter';
 import { IMenuFactory } from '../../../interfaces/iMenuFactory';
 import { ModuleNames } from '../../../modules/moduleNames';
@@ -267,7 +267,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
 
         if (filterComponent) {
             filterComponent.then(instance => {
-                const instanceUnwrapped = this.frameworkComponentWrapper ? this.frameworkComponentWrapper.unwrap(instance) : instance;
+                const instanceUnwrapped = unwrapUserComp(instance!);
                 callback(instanceUnwrapped);
             });
         }

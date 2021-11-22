@@ -55,9 +55,6 @@ There are two ways you can get fix this problem:
 | ## Accessing the Angular Component Instance
 |
 | AG Grid allows you to get a reference to the filter instances via the `api.getFilterInstance(colKey)` method.
-| If your component is a Angular component, this will give you a reference to AG Grid's component which wraps your
-| Angular component, just like Russian Dolls. To get to the wrapped Angular instance of your component, use the
-| `getFrameworkComponentInstance()` method as follows:
 |
 | ```ts
 | // let's assume an Angular component as follows
@@ -78,13 +75,7 @@ There are two ways you can get fix this problem:
 |
 | // later in your app, if you want to execute myMethod()...
 | laterOnInYourApplicationSomewhere() {
-|     // get reference to the AG Grid Filter component
-|     const agGridFilter = api.getFilterInstance('name'); // assume filter on name column
-|
-|     // get Angular instance from the AG Grid instance
-|     const angularFilterInstance = agGridFilter.getFrameworkComponentInstance();
-|
-|     // now we're sucking diesel!!!
+|     const angularFilterInstance = api.getFilterInstance('name'); // assume filter on name column
 |     angularFilterInstance.myMethod();
 | }
 | ```
@@ -96,9 +87,7 @@ There are two ways you can get fix this problem:
 [[only-react]]
 | ## Accessing the React Component Instance
 |
-| AG Grid allows you to get a reference to the filter instances via `api.getFilterInstance(colKey, callback)`. React components | are created asynchronously, so it is necessary to use a callback rather than relying on the return value of this method. If
-| your component is a React component, this will give you a reference to AG Grid's component which wraps your React component, | just like Russian Dolls. To get to the wrapped React instance of your component, use the `getFrameworkComponentInstance()`
-| method as follows:
+| AG Grid allows you to get a reference to the filter instances via `api.getFilterInstance(colKey, callback)`. React components are created asynchronously, so it is necessary to use a callback rather than relying on the return value of this method. 
 |
 | ```ts
 | // let's assume a React component as follows
@@ -114,12 +103,8 @@ There are two ways you can get fix this problem:
 | // later in your app, if you want to execute myMethod()...
 | laterOnInYourApplicationSomewhere() {
 |     // get reference to the AG Grid Filter component on name column
-|     api.getFilterInstance('name', agGridFilterInstance => {
-|         // get React instance from the AG Grid instance
-|         var reactFilterInstance = agGridFilterInstance.getFrameworkComponentInstance();
-|
-|         // now we're sucking diesel!!!
-|         reactFilterInstance.myMethod();
+|     api.getFilterInstance('name', filterInstance => {
+|         filterInstance.myMethod();
 |     });
 | }
 | ```
@@ -132,9 +117,6 @@ There are two ways you can get fix this problem:
 | ## Accessing the VueJS Component Instance
 |
 | AG Grid allows you to get a reference to the filter instances via the `api.getFilterInstance(colKey)` method.
-| If your component is a VueJS component, then this will give you a reference to AG Grid's component which wraps
-| your VueJS component, just like Russian Dolls. To get to the wrapped VueJS instance of your component, use
-| the `getFrameworkComponentInstance()` method as follows:
 |
 | ```ts
 | // let's assume a VueJS component as follows
@@ -152,14 +134,8 @@ There are two ways you can get fix this problem:
 |
 |     // later in your app, if you want to execute myMethod()...
 |     laterOnInYourApplicationSomewhere() {
-|         // get reference to the AG Grid Filter component
-|         const agGridFilterInstance = api.getFilterInstance('name'); // assume filter on name column
-|
-|         // get VueJS instance from the AG Grid instance
-|         const vueFilterInstance = agGridFilterInstance.getFrameworkComponentInstance();
-|
-|         // now we're sucking diesel!!!
-|         vueFilterInstance.myMethod();
+|         const filterInstance = api.getFilterInstance('name'); // assume filter on name column
+|         filterInstance.myMethod();
 |     }
 | ```
 |

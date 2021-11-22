@@ -28,13 +28,13 @@ export class NumberFloatingFilterComponent implements AgFloatingFilterComponent 
         if (!!!this.currentValue) {
             // Remove the filter
             this.params.parentFilterInstance((instance: any) => {
-                instance.getFrameworkComponentInstance().myMethodForTakingValueFromFloatingFilter(null);
+                instance.myMethodForTakingValueFromFloatingFilter(null);
             });
             return;
         }
 
         this.params.parentFilterInstance((instance: any) => {
-            instance.getFrameworkComponentInstance().myMethodForTakingValueFromFloatingFilter(this.currentValue);
+            instance.myMethodForTakingValueFromFloatingFilter(this.currentValue);
         });
     }
 }

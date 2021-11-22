@@ -12,8 +12,6 @@ export interface FrameworkComponentWrapper {
                                     componentType: ComponentType,
                                     componentName?: string | null
     ): A;
-
-    unwrap(comp: any): any;
 }
 
 export interface WrappableInterface {

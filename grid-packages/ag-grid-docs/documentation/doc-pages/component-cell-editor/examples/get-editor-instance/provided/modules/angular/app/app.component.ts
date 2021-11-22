@@ -84,8 +84,8 @@ export class AppComponent implements OnDestroy {
             const instances = params.api.getCellEditorInstances();
             if (instances.length > 0) {
                 const instance = instances[0];
-                if (instance.getFrameworkComponentInstance && instance.getFrameworkComponentInstance().myCustomFunction) {
-                    const result = instance.getFrameworkComponentInstance().myCustomFunction();
+                if (instance.myCustomFunction) {
+                    const result = instance.myCustomFunction();
                     console.log(`found editing cell: row index = ${result.rowIndex}, column = ${result.colId}.`);
                 } else {
                     console.log('found editing cell, but method myCustomFunction not found, must be the default editor.');

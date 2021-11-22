@@ -46,11 +46,6 @@ export interface ICellEditor {
      * If doing full line edit, then gets called when focus is leaving the editor
      */
     focusOut?(): void;
-
-    /** If using a framework this returns the underlying component instance, so you can call
-     * methods on it if you want.
-     */
-    getFrameworkComponentInstance?(): any;
 }
 
 export interface ICellEditorParams {
