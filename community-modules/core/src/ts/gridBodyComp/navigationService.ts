@@ -229,15 +229,25 @@ export class NavigationService extends BeanStub {
         const firstRow = this.paginationProxy.getPageFirstRow();
 
         if (focusIndex === gridCell.rowIndex && focusIndex === scrollIndex) {
-            scrollIndex = focusIndex = gridCell.rowIndex - 1;
+            focusIndex = scrollIndex = gridCell.rowIndex - 1;
         }
 
         if (focusIndex < firstRow) { focusIndex = firstRow; }
         if (scrollIndex < firstRow) { scrollIndex = firstRow; }
 
+        const newRow = this.paginationProxy.getRow(focusIndex);
+        const newRowHeight = newRow && newRow.rowHeight;
+
+        let scrollType: 'top' | 'bottom' = 'bottom';
+
+        if (typeof newRowHeight === 'number' && newRowHeight > pixelsInOnePage) {
+            scrollIndex = focusIndex;
+            scrollType = 'top';
+        }
+
         this.navigateTo({
             scrollIndex,
-            scrollType: 'bottom',
+            scrollType,
             scrollColumn: null,
             focusIndex,
             focusColumn: gridCell.column

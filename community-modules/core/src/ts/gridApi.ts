@@ -188,13 +188,13 @@ export interface DetailGridInfo {
 
 export function unwrapUserComp<T>(comp: T): T {
     const compAsAny = comp as any;
-    const isProxy = compAsAny!=null && compAsAny.getFrameworkComponentInstance!=null;
+    const isProxy = compAsAny != null && compAsAny.getFrameworkComponentInstance != null;
     return isProxy ? compAsAny.getFrameworkComponentInstance() : comp;
 }
 
 function returnIfProxy<T>(comp: T): T | undefined {
     const compAsAny = comp as any;
-    const isProxy = compAsAny!=null && compAsAny.getFrameworkComponentInstance!=null;
+    const isProxy = compAsAny != null && compAsAny.getFrameworkComponentInstance != null;
     return isProxy ? comp : undefined;
 }
 
@@ -941,7 +941,7 @@ export class GridApi {
      * - if the grid needs to scroll down then it will scroll so that the row is at the bottom,
      * - if the row is already in view then the grid will do nothing.
      */
-    public ensureIndexVisible(index: any, position?: string | null) {
+    public ensureIndexVisible(index: any, position?: 'top' | 'bottom' | 'middle' | null) {
         this.gridBodyCon.getScrollFeature().ensureIndexVisible(index, position);
     }
 
@@ -952,7 +952,7 @@ export class GridApi {
      * - the data object
      * - a comparator function (that takes the node as a parameter, and returns `true` for match or `false` for no match).
      */
-    public ensureNodeVisible(comparator: any, position: string | null = null) {
+    public ensureNodeVisible(comparator: any, position: 'top' | 'bottom' | 'middle' | null = null) {
         this.gridBodyCon.getScrollFeature().ensureNodeVisible(comparator, position);
     }
 
@@ -1726,7 +1726,7 @@ export class GridApi {
     }
 
     /** @deprecated */
-    public getCellRendererProxyInstances(params: GetCellRendererInstancesParams = {}): (ICellRenderer|undefined)[] {
+    public getCellRendererProxyInstances(params: GetCellRendererInstancesParams = {}): (ICellRenderer | undefined)[] {
         const res = this.rowRenderer.getCellRendererInstances(params);
         const proxies = res.map(returnIfProxy);
         return proxies;
@@ -1740,7 +1740,7 @@ export class GridApi {
     }
 
     /** @deprecated */
-    public getCellEditorProxyInstances(params: GetCellEditorInstancesParams = {}): (ICellEditor|undefined)[] {
+    public getCellEditorProxyInstances(params: GetCellEditorInstancesParams = {}): (ICellEditor | undefined)[] {
         const res = this.rowRenderer.getCellEditorInstances(params);
         const proxies = res.map(returnIfProxy);
         return proxies;

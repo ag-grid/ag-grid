@@ -330,7 +330,7 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     // Valid values for position are bottom, middle and top
-    public ensureNodeVisible(comparator: any, position: string | null = null) {
+    public ensureNodeVisible(comparator: any, position: 'top' | 'bottom' | 'middle' | null = null) {
 
         // look for the node index we want to display
         const rowCount = this.rowModel.getRowCount();
@@ -363,7 +363,7 @@ export class GridBodyScrollFeature extends BeanStub {
     // eg if grid needs to scroll up, it scrolls until row is on top,
     //    if grid needs to scroll down, it scrolls until row is on bottom,
     //    if row is already in view, grid does not scroll
-    public ensureIndexVisible(index: any, position?: string | null) {
+    public ensureIndexVisible(index: any, position?: 'top' | 'bottom' | 'middle' | null) {
         // if for print or auto height, everything is always visible
         if (this.gridOptionsWrapper.getDomLayout() === Constants.DOM_LAYOUT_PRINT) { return; }
 
