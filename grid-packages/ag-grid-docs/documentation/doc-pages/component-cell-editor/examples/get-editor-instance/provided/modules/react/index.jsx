@@ -1,9 +1,9 @@
 'use strict'
 
-import React, {Component} from 'react';
-import {render} from 'react-dom';
-import {AgGridReact} from '@ag-grid-community/react';
-import {AllModules} from '@ag-grid-enterprise/all-modules';
+import React, { Component } from 'react';
+import { render } from 'react-dom';
+import { AgGridReact } from '@ag-grid-community/react';
+import { AllModules } from '@ag-grid-enterprise/all-modules';
 import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
 import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
 import MySimpleEditor from './mySimpleEditor.jsx';
@@ -62,7 +62,7 @@ class GridExample extends Component {
                 resizable: true
             },
             rowData: this.createRowData(),
-            frameworkComponents: {mySimpleEditor: MySimpleEditor}
+            frameworkComponents: { mySimpleEditor: MySimpleEditor }
         };
     }
 
@@ -110,7 +110,7 @@ class GridExample extends Component {
                 country: 'Ireland'
             },
             {
-                first_name: 'Sadiq',
+                first_name: 'Zahid',
                 last_name: 'Khan',
                 gender: 'Male',
                 age: 12,
@@ -142,7 +142,7 @@ class GridExample extends Component {
 
     render() {
         return (
-            <div style={{width: '100%', height: '100%'}}>
+            <div style={{ width: '100%', height: '100%' }}>
                 <div
                     style={{
                         height: '100%',

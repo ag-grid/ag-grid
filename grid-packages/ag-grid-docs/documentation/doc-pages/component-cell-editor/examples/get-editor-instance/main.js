@@ -11,7 +11,7 @@ const createRowData = () => {
             age: 11, address: '3685 Rocky Glade, Showtucket, NU, X1E-9I0, CA, (867) 371-4215',
             mood: "Sad", country: 'Ireland'
         }, {
-            first_name: 'Sadiq', last_name: 'Khan', gender: 'Male', age: 12,
+            first_name: 'Zahid', last_name: 'Khan', gender: 'Male', age: 12,
             address: '3235 High Forest, Glen Campbell, MS, 39035-6845, US, (601) 638-8186',
             mood: "Happy", country: 'Ireland'
         }, {
@@ -36,8 +36,8 @@ const createRowData = () => {
 }
 
 const columnDefs = [
-    {field: "first_name", headerName: "First Name", width: 120, editable: true},
-    {field: "last_name", headerName: "Last Name", width: 120, editable: true},
+    { field: "first_name", headerName: "First Name", width: 120, editable: true },
+    { field: "last_name", headerName: "Last Name", width: 120, editable: true },
     {
         field: "gender",
         width: 100,
@@ -79,7 +79,7 @@ const gridOptions = {
     components: {
         mySimpleEditor: MySimpleEditor
     },
-    onGridReady: function() {
+    onGridReady: function () {
         setInterval(() => {
             const instances = gridOptions.api.getCellEditorInstances();
             if (instances.length > 0) {

@@ -411,7 +411,7 @@ AG Charts is an exciting new addition to the AG Grid family, offering both integ
 ## Getting Started
 
 [[only-javascript]]
-| In this article we will walk through the necessary steps to add AG Charts to an existing JavaScript project and produce your first charts.
+| In this article we will walk through the necessary steps to add AG Charts to an existing JavaScript project and produce your first chart.
 |
 | ## Your First Chart
 |
@@ -1128,7 +1128,7 @@ If we then want to add a title and subtitle to the chart, we can simply add this
 | import * as agCharts from 'ag-charts-community';
 | ```
 |
-| Creating charts is the done using the `agCharts.AgChart` factory as shown in the example above, i.e.
+| Creating charts is done using the `agCharts.AgChart` factory as shown in the example above, i.e.
 |
 | ```js
 | agCharts.AgChart.create(options);

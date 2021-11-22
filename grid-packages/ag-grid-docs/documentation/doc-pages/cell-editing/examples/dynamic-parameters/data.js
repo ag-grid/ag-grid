@@ -17,7 +17,7 @@ function getData() {
             country: 'USA',
         },
         {
-            name: 'Sadiq Khan',
+            name: 'Zahid Khan',
             gender: 'Male',
             age: 12,
             address:
@@ -51,7 +51,7 @@ function getData() {
             country: 'Ireland',
         },
         {
-            name: 'Sadiq Khan',
+            name: 'Zahid Khan',
             gender: 'Male',
             age: 12,
             address:
@@ -85,7 +85,7 @@ function getData() {
             country: 'Ireland',
         },
         {
-            name: 'Sadiq Khan',
+            name: 'Zahid Khan',
             gender: 'Male',
             age: 12,
             address:
@@ -119,7 +119,7 @@ function getData() {
             country: 'Ireland',
         },
         {
-            name: 'Sadiq Khan',
+            name: 'Zahid Khan',
             gender: 'Male',
             age: 12,
             address:
@@ -153,7 +153,7 @@ function getData() {
             country: 'Ireland',
         },
         {
-            name: 'Sadiq Khan',
+            name: 'Zahid Khan',
             gender: 'Male',
             age: 12,
             address:
@@ -187,7 +187,7 @@ function getData() {
             country: 'Ireland',
         },
         {
-            name: 'Sadiq Khan',
+            name: 'Zahid Khan',
             gender: 'Male',
             age: 12,
             address:

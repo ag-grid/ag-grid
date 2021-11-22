@@ -1,8 +1,8 @@
-import {Component, OnDestroy} from '@angular/core';
-import {AllModules, GridReadyEvent, Module} from '@ag-grid-enterprise/all-modules';
+import { Component, OnDestroy } from '@angular/core';
+import { AllModules, GridReadyEvent, Module } from '@ag-grid-enterprise/all-modules';
 import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
 import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
-import {MySimpleEditor} from './mySimple-editor.component';
+import { MySimpleEditor } from './mySimple-editor.component';
 
 @Component({
     selector: 'my-app',
@@ -70,7 +70,7 @@ export class AppComponent implements OnDestroy {
         resizable: true
     };
 
-    private frameworkComponents = {mySimpleEditor: MySimpleEditor};
+    private frameworkComponents = { mySimpleEditor: MySimpleEditor };
 
     private interval: number;
     private rowData: any[];
@@ -122,7 +122,7 @@ export class AppComponent implements OnDestroy {
                 country: 'Ireland'
             },
             {
-                first_name: 'Sadiq',
+                first_name: 'Zahid',
                 last_name: 'Khan',
                 gender: 'Male',
                 age: 12,

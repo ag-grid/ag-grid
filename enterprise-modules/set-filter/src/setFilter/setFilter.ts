@@ -439,12 +439,12 @@ export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> {
         value = _.makeNull(value);
 
         if (Array.isArray(value)) {
-            return _.some(value, v => this.appliedModelValues![this.caseFormat(_.makeNull(v))] === true);
+            return _.some(value, v => this.appliedModelValues![this.caseFormat(String(_.makeNull(v)))] === true);
         }
 
         // Comparing against a value performs better than just checking for undefined
         // https://jsbench.me/hdk91jbw1h/
-        return this.appliedModelValues[this.caseFormat(value)] === true;
+        return this.appliedModelValues[this.caseFormat(String(value))] === true;
     }
 
     public onNewRowsLoaded(): void {
