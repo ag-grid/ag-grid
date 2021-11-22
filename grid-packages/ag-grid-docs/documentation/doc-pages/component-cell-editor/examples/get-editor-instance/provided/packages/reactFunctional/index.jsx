@@ -1,8 +1,8 @@
 'use strict'
 
-import React, {useEffect, useState} from 'react';
-import {render} from 'react-dom';
-import {AgGridColumn, AgGridReact} from 'ag-grid-react';
+import React, { useEffect, useState } from 'react';
+import { render } from 'react-dom';
+import { AgGridColumn, AgGridReact } from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 import MySimpleEditor from './mySimpleEditor.jsx';
@@ -29,7 +29,7 @@ const GridExample = () => {
                 country: 'Ireland'
             },
             {
-                first_name: 'Sadiq',
+                first_name: 'Zahid',
                 last_name: 'Khan',
                 gender: 'Male',
                 age: 12,
@@ -84,7 +84,7 @@ const GridExample = () => {
     }, [gridApi])
 
     return (
-        <div style={{width: '100%', height: '100%'}}>
+        <div style={{ width: '100%', height: '100%' }}>
             <div
                 style={{
                     height: '100%',
@@ -101,17 +101,17 @@ const GridExample = () => {
                         resizable: true
                     }}
                     rowData={rowData}
-                    frameworkComponents={{mySimpleEditor: MySimpleEditor}}
+                    frameworkComponents={{ mySimpleEditor: MySimpleEditor }}
                     onGridReady={params => setGridApi(params.api)}
                 >
-                    <AgGridColumn field="first_name" headerName="First Name" width={120} editable={true}/><AgGridColumn
-                    field="last_name" headerName="Last Name" width={120} editable={true}/><AgGridColumn field="gender"
-                                                                                                        width={100}
-                                                                                                        cellEditor="mySimpleEditor"/><AgGridColumn
-                    field="age" width={80} cellEditor="mySimpleEditor"/><AgGridColumn field="mood" width={90}
-                                                                                      cellEditor="mySimpleEditor"/><AgGridColumn
-                    field="country" width={110} cellEditor="mySimpleEditor"/><AgGridColumn field="address" width={502}
-                                                                                           cellEditor="mySimpleEditor"/>
+                    <AgGridColumn field="first_name" headerName="First Name" width={120} editable={true} /><AgGridColumn
+                        field="last_name" headerName="Last Name" width={120} editable={true} /><AgGridColumn field="gender"
+                            width={100}
+                            cellEditor="mySimpleEditor" /><AgGridColumn
+                        field="age" width={80} cellEditor="mySimpleEditor" /><AgGridColumn field="mood" width={90}
+                            cellEditor="mySimpleEditor" /><AgGridColumn
+                        field="country" width={110} cellEditor="mySimpleEditor" /><AgGridColumn field="address" width={502}
+                            cellEditor="mySimpleEditor" />
                 </AgGridReact>
             </div>
         </div>

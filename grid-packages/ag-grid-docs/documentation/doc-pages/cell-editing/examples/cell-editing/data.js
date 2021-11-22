@@ -19,7 +19,7 @@ function getData() {
             country: 'Ireland',
         },
         {
-            firstName: 'Sadiq',
+            firstName: 'Zahid',
             lastName: 'Khan',
             gender: 'Male',
             age: 12,
@@ -57,7 +57,7 @@ function getData() {
             country: 'Ireland',
         },
         {
-            firstName: 'Sadiq',
+            firstName: 'Zahid',
             lastName: 'Khan',
             gender: 'Male',
             age: 12,
@@ -95,7 +95,7 @@ function getData() {
             country: 'Ireland',
         },
         {
-            firstName: 'Sadiq',
+            firstName: 'Zahid',
             lastName: 'Khan',
             gender: 'Male',
             age: 12,
@@ -133,7 +133,7 @@ function getData() {
             country: 'Ireland',
         },
         {
-            firstName: 'Sadiq',
+            firstName: 'Zahid',
             lastName: 'Khan',
             gender: 'Male',
             age: 12,
@@ -171,7 +171,7 @@ function getData() {
             country: 'Ireland',
         },
         {
-            firstName: 'Sadiq',
+            firstName: 'Zahid',
             lastName: 'Khan',
             gender: 'Male',
             age: 12,
@@ -209,7 +209,7 @@ function getData() {
             country: 'Ireland',
         },
         {
-            firstName: 'Sadiq',
+            firstName: 'Zahid',
             lastName: 'Khan',
             gender: 'Male',
             age: 12,
