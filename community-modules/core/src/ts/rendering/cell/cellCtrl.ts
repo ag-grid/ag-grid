@@ -268,7 +268,7 @@ export class CellCtrl extends BeanStub {
             const doc = this.beans.gridOptionsWrapper.getDocument();
 
             if ((!doc || !doc.contains(this.eGui)) && timesCalled < 5) {
-                this.beans.frameworkOverrides.setTimeout(() => measureHeight(timesCalled++), 0);
+                this.beans.frameworkOverrides.setTimeout(() => measureHeight(timesCalled+1), 0);
                 return;
             }
 
