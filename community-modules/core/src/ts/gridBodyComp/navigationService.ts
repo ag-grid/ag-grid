@@ -23,7 +23,6 @@ import { RowRenderer } from "../rendering/rowRenderer";
 import { HeaderNavigationService } from "../headerRendering/common/headerNavigationService";
 import { CellNavigationService } from "../cellNavigationService";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
-import { RowHighlightPosition } from "../entities/rowNode";
 
 interface NavigateParams {
     /** The rowIndex to vertically scroll to. */
@@ -175,7 +174,7 @@ export class NavigationService extends BeanStub {
 
         const currentPageBottomPixel = scrollPosition.top + pixelsInOnePage;
         const currentPageBottomRow = this.paginationProxy.getRowIndexAtPixel(currentPageBottomPixel + pagingPixelOffset);
-        let scrollIndex = currentPageBottomRow + 1;
+        let scrollIndex = currentPageBottomRow;
 
         const currentCellPixel = this.paginationProxy.getRow(gridCell.rowIndex)!.rowTop;
         const nextCellPixel = currentCellPixel! + pixelsInOnePage - pagingPixelOffset;
@@ -215,7 +214,7 @@ export class NavigationService extends BeanStub {
 
         const currentPageTopPixel = scrollPosition.top;
         const currentPageTopRow = this.paginationProxy.getRowIndexAtPixel(currentPageTopPixel + pagingPixelOffset);
-        let scrollIndex = currentPageTopRow - 1;
+        let scrollIndex = currentPageTopRow;
 
         const currentRowNode = this.paginationProxy.getRow(gridCell.rowIndex)!;
         const nextCellPixel = currentRowNode.rowTop! + currentRowNode.rowHeight! - pixelsInOnePage - pagingPixelOffset;
