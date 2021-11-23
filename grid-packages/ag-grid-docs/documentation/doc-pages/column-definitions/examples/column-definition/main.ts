@@ -1,25 +1,27 @@
-const gridOptions = {
+import { GridOptions } from "@ag-grid-community/core";
+
+const gridOptions: GridOptions = {
     // define grid columns
     columnDefs: [
         // using default ColDef
-        {headerName: 'Athlete', field: 'athlete'},
-        {headerName: 'Sport', field: 'sport'},
+        { field: 'athlete' },
+        { field: 'sport' },
 
         // using number column type
-        {headerName: 'Age', field: 'age', type: 'numberColumn'},
-        {headerName: 'Year', field: 'year', type: 'numberColumn'},
+        { field: 'age', type: 'numberColumn' },
+        { field: 'year', type: 'numberColumn' },
 
         // using date and non-editable column types
-        {headerName: 'Date', field: 'date', type: ['dateColumn', 'nonEditableColumn'], width: 220},
+        { field: 'date', type: ['dateColumn', 'nonEditableColumn'], width: 220 },
         {
             headerName: 'Medals',
             groupId: 'medalsGroup',
             children: [
                 // using medal column type
-                {headerName: 'Gold', field: 'gold', type: 'medalColumn'},
-                {headerName: 'Silver', field: 'silver', type: 'medalColumn'},
-                {headerName: 'Bronze', field: 'bronze', type: 'medalColumn'},
-                {headerName: 'Total', field: 'total', type: 'medalColumn', columnGroupShow: 'closed'}
+                { headerName: 'Gold', field: 'gold', type: 'medalColumn' },
+                { headerName: 'Silver', field: 'silver', type: 'medalColumn' },
+                { headerName: 'Bronze', field: 'bronze', type: 'medalColumn' },
+                { headerName: 'Total', field: 'total', type: 'medalColumn', columnGroupShow: 'closed' }
             ]
         }
     ],
@@ -45,9 +47,9 @@ const gridOptions = {
 
     // define specific column types
     columnTypes: {
-        numberColumn: {width: 130, filter: 'agNumberColumnFilter'},
-        medalColumn: {width: 100, columnGroupShow: 'open', filter: false},
-        nonEditableColumn: {editable: false},
+        numberColumn: { width: 130, filter: 'agNumberColumnFilter' },
+        medalColumn: { width: 100, columnGroupShow: 'open', filter: false },
+        nonEditableColumn: { editable: false },
         dateColumn: {
             // specify we want to use the date filter
             filter: 'agDateColumnFilter',
@@ -55,7 +57,7 @@ const gridOptions = {
             // add extra parameters for the date filter
             filterParams: {
                 // provide comparator function
-                comparator: (filterLocalDateAtMidnight, cellValue) => {
+                comparator: (filterLocalDateAtMidnight: Date, cellValue: string) => {
                     // In the example application, dates are stored as dd/mm/yyyy
                     // We create a Date object for comparison against the filter date
                     const dateParts = cellValue.split('/');
@@ -86,5 +88,5 @@ document.addEventListener('DOMContentLoaded', () => {
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then(response => response.json())
-        .then(data => gridOptions.api.setRowData(data));
+        .then(data => gridOptions.api!.setRowData(data));
 });
