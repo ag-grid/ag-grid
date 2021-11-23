@@ -95,7 +95,7 @@ that has a `console.log()` statement. This will allow us to see exactly when the
 - As you **open and close groups**, the value getters are executed, as the DOM needs values for rendering.
 - Now turn the value cache **on** by selecting the radio button at the top. The grid gets reset and then works with the value cache on. Notice in the console that the value getter gets executed exactly 100 times, once for each row. Even through the value getter result is used in two places (aggregation and rendering the row), the value getter is only called once. Even scrolling and opening / closing the groups does not result in the value getter getting executed again.
 
-<grid-example title='Value Cache' name='value-cache' type='vanilla' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Value Cache' name='value-cache' type='typescript' options='{ "enterprise": true }'></grid-example>
 
 [[note]]
 | Note that the example still works fast when the value cache is turned off. This emphasises you don't need to turn the value cache on if your application is not getting slowed down by your value getters.
