@@ -60,8 +60,8 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
     protected mapValuesFromModel(filterModel: NumberFilterModel | null): Tuple<number> {
         const { filter, filterTo, type } = filterModel || {};
         return [
-            filter || null,
-            filterTo || null,
+            filter == null ? null : filter,
+            filterTo == null ? null : filterTo,
         ].slice(0, this.getNumberOfInputs(type));
     }
 
