@@ -434,8 +434,8 @@ export class ChartTheme {
                         padding: new Padding(0),
                         text: '',
                         fontStyle: undefined,
-                        fontWeight: undefined,
-                        fontSize: 12,
+                        fontWeight: 'bold',
+                        fontSize: 14,
                         fontFamily: ChartTheme.fontFamily,
                         color: 'rgb(70, 70, 70)'
                     },
