@@ -5,16 +5,24 @@
     "strict": true,
     "jsx": "preserve",
     "importHelpers": true,
-    "noImplicitThis": false,
     "moduleResolution": "node",
-    "experimentalDecorators": true,
+    "declaration": true,
+    "skipLibCheck": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "sourceMap": true,
+    "baseUrl": ".",
+    "rootDir": "src",
+    "outDir": "lib",
     "types": [
-      "webpack-env"
+      "webpack-env",
+      "jest"
     ],
-    "outDir": "lib/",
+    "paths": {
+      "@/*": [
+        "src/*"
+      ]
+    },
     "lib": [
       "esnext",
       "dom",
@@ -24,10 +32,10 @@
   },
   "include": [
     "src/**/*.ts",
-    "src/**/*.tsx",
-    "src/**/*.vue"
+    "src/**/*.tsx"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "tests"
   ]
 }

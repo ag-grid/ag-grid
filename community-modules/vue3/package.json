@@ -4,8 +4,8 @@
   "version": "26.2.0",
   "author": "Sean Landsman <sean@thelandsmans.com>",
   "license": "MIT",
-  "main": "main.js",
-  "typings": "main.d.ts",
+  "main": "./lib/AgGridVue.js",
+  "typings": "./lib/AgGridVue.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/ag-grid/ag-grid.git"
@@ -22,33 +22,28 @@
     "vuejs"
   ],
   "scripts": {
-    "bundle": "npx vue-cli-service build --target lib src/AgGridVue.ts",
-    "lib": "npx tsc -p tsconfig-lib.json",
-    "build": "npm run lib && npm run bundle && rm ./dist/demo.html && npm run hash",
-    "lint": "npx vue-cli-service lint",
-    "hash": "sh ../../scripts/hashDirectory.sh > .hash"
+    "build": "vue-cli-service build --target lib src/AgGridVue.ts && npx tsc && rm ./dist/demo.html && npm run hash",
+    "hash": "sh ../../scripts/hashDirectory.sh > .hash",
+    "test:unit": "vue-cli-service test:unit",
+    "test:e2e": "vue-cli-service test:e2e"
+  },
+  "dependencies": {
+    "@ag-grid-community/core": "^26.2.0",
+    "vue": "^3.0.0"
   },
   "devDependencies": {
-    "@ag-grid-community/core": "~26.2.0",
-    "@types/node": "12.20.20",
-    "@vue/cli-plugin-typescript": "^3.11.0",
-    "@vue/cli-plugin-unit-jest": "^3.11.0",
-    "@vue/cli-service": "^3.11.0",
-    "gulp": "^4.0.0",
-    "gulp-typescript": "^5.0.0",
-    "typescript": "^3.6.0",
-    "vue": "3.0.0",
-    "core-js": "^3.6.5",
-    "vue-class-component": "^8.0.0-rc.1",
-    "@vue/composition-api": "^1.0.0-beta.14",
-    "vue-template-compiler": "^2.6.12"
-  },
-  "peerDependencies": {
-    "@ag-grid-community/core": "~26.2.0",
-    "vue": "^3.0.0",
-    "vue-class-component": ">= ^8.0.0-beta.3"
+    "@types/jest": "^24.0.19",
+    "@vue/cli-plugin-e2e-cypress": "~4.5.0",
+    "@vue/cli-plugin-typescript": "~4.5.0",
+    "@vue/cli-plugin-unit-jest": "~4.5.0",
+    "@vue/cli-service": "~4.5.0",
+    "@vue/compiler-sfc": "^3.0.0",
+    "@vue/test-utils": "^2.0.0-0",
+    "typescript": "~4.1.5",
+    "vue-jest": "^5.0.0-0"
   },
   "publishConfig": {
     "access": "public"
   }
+
 }

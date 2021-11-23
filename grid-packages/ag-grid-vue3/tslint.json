@@ -5,22 +5,13 @@
   ],
   "linterOptions": {
     "exclude": [
-      "node_modules"
+      "node_modules/**"
     ]
   },
   "rules": {
     "no-console": false,
-    "quotemark": [
-      true,
-      "single"
-    ],
-    "indent": [
-      true,
-      "spaces",
-      2
-    ],
-    "member-ordering": false,
-    "arrow-parens": false,
+    "quotemark": [true, "single"],
+    "indent": [true, "spaces", 2],
     "interface-name": false,
     "ordered-imports": false,
     "object-literal-sort-keys": false,
@@ -30,7 +21,9 @@
     "only-arrow-functions": false,
     "semicolon": false,
     "space-before-function-paren": false,
+    "trailing-comma": false,
+    "member-ordering": false,
     "max-line-length": false,
-    "trailing-comma": false
+    "arrow-parens": false
   }
 }

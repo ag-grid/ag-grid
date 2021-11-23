@@ -63,6 +63,7 @@ grid-packages/ag-grid-vue/lib/**
 grid-packages/ag-grid-vue/dist/**
 grid-packages/ag-grid-vue/main.js
 grid-packages/ag-grid-vue/main.d.ts
+grid-packages/ag-grid-vue3/dist/**
 grid-packages/ag-grid-vue3/lib/**
 grid-packages/ag-grid-vue3/main.js
 grid-packages/ag-grid-vue3/main.d.ts
@@ -70,6 +71,7 @@ community-modules/vue/lib/**
 community-modules/vue/dist/**
 community-modules/vue/main.js
 community-modules/vue3/lib/**
+community-modules/vue3/dist/**
 community-modules/vue3/main.js
 
 grid-packages/ag-grid-angular/exports.d.ts
