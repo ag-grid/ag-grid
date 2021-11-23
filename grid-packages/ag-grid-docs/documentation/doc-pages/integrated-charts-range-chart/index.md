@@ -50,7 +50,8 @@ Chart ranges can be adjusted from within the grid by dragging on the chart range
 
 There are several ways for columns to be classified as chart categories or series. Columns can be explicitly configured or left for the grid to infer the type based on the data contained in the cells.
 
-The different approaches will be presented in the order of precedence used by the grid.
+[[warning]]
+| It is recommended that `ColDef.chartDataType` is specified rather than relying on the grid to infer the chart data type as `null` and `undefined` values can yield unexpected results. 
 
 ### ColDef.chartDataType
 
