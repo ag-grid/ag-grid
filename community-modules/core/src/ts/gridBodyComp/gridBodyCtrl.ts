@@ -16,7 +16,7 @@ import { PaginationProxy } from "../pagination/paginationProxy";
 import { RowDragFeature } from "./rowDragFeature";
 import { DragAndDropService } from "../dragAndDrop/dragAndDropService";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
-import { getTabIndex, isBrowserIE } from "../utils/browser";
+import { getTabIndex } from "../utils/browser";
 import { RowRenderer } from "../rendering/rowRenderer";
 import { PopupService } from "../widgets/popupService";
 import { MouseEventService } from "./mouseEventService";
@@ -331,7 +331,7 @@ export class GridBodyCtrl extends BeanStub {
     public sizeColumnsToFit(nextTimeout?: number) {
         // IE is different to the other browsers, it already removes the scroll width
         // while calling window.getComputedStyle() (which is called by getInnerWidth())
-        const removeScrollWidth = this.isVerticalScrollShowing() && !isBrowserIE();
+        const removeScrollWidth = this.isVerticalScrollShowing();
         const scrollWidthToRemove = removeScrollWidth ? this.gridOptionsWrapper.getScrollbarWidth() : 0;
         const bodyViewportWidth = getInnerWidth(this.eBodyViewport);
         const availableWidth = bodyViewportWidth - scrollWidthToRemove;

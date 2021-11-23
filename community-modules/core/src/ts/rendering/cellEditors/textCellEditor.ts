@@ -3,7 +3,7 @@ import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor
 import { AgInputTextField } from "../../widgets/agInputTextField";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { exists } from "../../utils/generic";
-import { isBrowserSafari, isBrowserIE } from "../../utils/browser";
+import { isBrowserSafari } from "../../utils/browser";
 import { KeyCode } from '../../constants/keyCode';
 
 /**
@@ -107,13 +107,6 @@ export class TextCellEditor extends PopupComponent implements ICellEditorComp {
 
         focusEl.focus();
         inputEl.select();
-    }
-
-    public focusOut(): void {
-        const inputEl = this.eInput.getInputElement();
-        if (isBrowserIE()) {
-            inputEl.setSelectionRange(0, 0);
-        }
     }
 
     public getValue(): any {
