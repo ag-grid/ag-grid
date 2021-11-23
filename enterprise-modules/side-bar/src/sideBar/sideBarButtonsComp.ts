@@ -36,7 +36,7 @@ export class SideBarButtonsComp extends Component {
     }
 
     private handleKeyDown(e: KeyboardEvent): void {
-        if (e.keyCode !== KeyCode.TAB || !e.shiftKey) { return; }
+        if (e.key !== KeyCode.TAB || !e.shiftKey) { return; }
 
         const lastColumn = _.last(this.columnModel.getAllDisplayedColumns());
 

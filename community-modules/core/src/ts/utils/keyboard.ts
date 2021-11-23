@@ -9,10 +9,6 @@ import { exists } from './generic';
 const NUMPAD_DEL_NUMLOCK_ON_KEY = 'Del';
 const NUMPAD_DEL_NUMLOCK_ON_CHARCODE = 46;
 
-export function isKeyPressed(event: KeyboardEvent, keyToCheck: number) {
-    return (event.which || event.keyCode) === keyToCheck;
-}
-
 export function isEventFromPrintableCharacter(event: KeyboardEvent): boolean {
     // no allowed printable chars have alt or ctrl key combinations
     if (event.altKey || event.ctrlKey || event.metaKey) { return false; }

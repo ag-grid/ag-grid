@@ -64,7 +64,7 @@ export class ExcelXlsxFactory {
         if (!image.position || !image.position.row || !image.position.column) {
             if (!image.position) { image.position = {}; }
 
-            image.position = _.assign({}, image.position, {
+            image.position = Object.assign({}, image.position, {
                 row: rowIndex,
                 column: columnsToExport.indexOf(col) + 1
             });
@@ -76,7 +76,7 @@ export class ExcelXlsxFactory {
         setExcelImageTotalHeight(calculatedImage, rowHeight);
 
         if (registeredImage) {
-            const currentSheetImages = _.find(registeredImage, (currentImage) => currentImage.sheetId === currentSheetIndex);
+            const currentSheetImages = registeredImage.find(currentImage => currentImage.sheetId === currentSheetIndex);
             if (currentSheetImages) {
                 currentSheetImages.image.push(calculatedImage);
             } else {
@@ -192,7 +192,7 @@ export class ExcelXlsxFactory {
     }
 
     public static createWorkbookRels(sheetLen: number): string {
-        const worksheets = _.fill(new Array(sheetLen), undefined).map((v, i) => ({
+        const worksheets = new Array(sheetLen).fill(undefined).map((v, i) => ({
             Id: `rId${i + 1}`,
             Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet',
             Target: `worksheets/sheet${i + 1}.xml`

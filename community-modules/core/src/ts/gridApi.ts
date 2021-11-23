@@ -109,7 +109,7 @@ export interface StartEditingCellParams {
     /** Set to `'top'` or `'bottom'` to start editing a pinned row */
     rowPinned?: string;
     /** The keyPress to pass to the cell editor */
-    keyPress?: number;
+    key?: string;
     /** The charPress to pass to the cell editor */
     charPress?: string;
 }
@@ -1775,7 +1775,7 @@ export class GridApi {
 
         const cell = this.navigationService.getCellByPosition(cellPosition);
         if (!cell) { return; }
-        cell.startRowOrCellEdit(params.keyPress, params.charPress);
+        cell.startRowOrCellEdit(params.key, params.charPress);
     }
 
     /** Add an aggregation function with the specified key. */

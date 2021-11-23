@@ -47,7 +47,7 @@ export abstract class BaseGridSerializingSession<T> implements GridSerializingSe
     abstract parse(): string;
 
     public prepare(columnsToExport: Column[]): void {
-        this.groupColumns = _.filter(columnsToExport, col => !!col.getColDef().showRowGroup)!;
+        this.groupColumns = columnsToExport.filter(col => !!col.getColDef().showRowGroup)!;
     }
 
     public extractHeaderValue(column: Column): string {

@@ -6,7 +6,7 @@ Niall Crosby | 8th September 2017
 
 ## Make It Faster
 
-[AG Grid](https://www.ag-grid.com/) is a JavaScript data grid for displaying large amounts of data in the browser in a style similar to Excel spreadsheets. AG Grid is fast, even in Internet Explorer with large volumes of data. This blog presents performance patterns, or performance 'hacks', that we used to put our grid on steroids.
+[AG Grid](https://www.ag-grid.com/) is a JavaScript data grid for displaying large amounts of data in the browser in a style similar to Excel spreadsheets. AG Grid is fast with large volumes of data. This blog presents performance patterns, or performance 'hacks', that we used to put our grid on steroids.
 
 We describe how to squeeze performance out of the browser which can be applied to anyone wanting to tune their own applications. It will be of particular interest to users of AG Grid to  improve understanding of how to work with the grid. We also think that it will be of interest to anyone creating a grid.  We relish the idea of healthy competition so we are happy to contribute to the wider community knowledge.
 
@@ -118,7 +118,7 @@ This works well when there are no custom cell renderers. So for all cells that d
 
 Cell renderers are a type of component. The component concept is great for applications. They are the building blocks of the composite design pattern used for building large applications, where smaller pieces (components) fit together to create bigger pieces. However, in AG Grid, we want the fastest grid possible, so it's best to avoid the use of cell renderer components to leverage the power of `innerHTML` for the fastest rendering of rows.
 
-If you are a user of AG Grid, you might be wondering how cell renderers impact performance. The answer depends on your platform, using Chrome or a small non-complex grid, they should not pose a problem. If you are displaying large grids using Internet Explorer, it is worth checking the impact your cell renderers are adding.
+If you are a user of AG Grid, you might be wondering how cell renderers impact performance. The answer depends on your platform, using Chrome or a small non-complex grid, they should not pose a problem. If you are displaying large grids on a slow computer, it is worth checking the impact your cell renderers are adding.
 
 ## Hack 6 - Debouncing Scroll Events
 
@@ -128,7 +128,7 @@ To get around this, the grid uses debouncing of scroll events with animation fra
 
 ## Hack 7 - Animation Frames
 
-Even with all the above performance tunings, our users still asked us to "make it faster, it's not good enough in Internet Explorer, the scrolling is awful, it takes too long". Some users experienced lag times of two to three seconds in Internet Explorer for rows to draw after a scroll.
+Even with all the above performance tunings, our users still asked us to "make it faster, it's not good enough on slow machines, the scrolling is awful, it takes too long". Some users experienced lag times of two to three seconds on slow machines for rows to draw after a scroll.
 
 So the next performance hack was to break the rendering of the rows into different tasks using animation frames. When the user scrolls vertically to show different rows, the following tasks are set up in a task queue:
 
@@ -153,7 +153,7 @@ The grid then uses animation frames (or timeouts if the browser does not support
 
 Having this many tasks should result in a lot of animation frames. To avoid this, the grid does not put each individual task into an animation frame. This would be overkill as then the create, destroy and schedule of animations frames would add their own overhead. Instead the grid requests one animation frame and executes as many tasks as it can within 60ms. We picked this timeframe following tests for the best user experience. If the grid does not exhaust the task queue, it requests another animation frame and tries again, and keeps trying until the task queue is emptied.
 
-Fast browsers such as Chrome can get everything done in one animation frame and produces zero flicker. Slower browsers such as Internet Explorer can take 10+ animation frames to process the task queue  for a standard scroll. The user experiences smooth scrolling with iterative feedback as the grid is rendered in stages, which is better than blocking the UI and painting everything in one go.
+Fast browsers such as Chrome can get everything done in one animation frame and produces zero flicker. Slower browsers can take 10+ animation frames to process the task queue  for a standard scroll. The user experiences smooth scrolling with iterative feedback as the grid is rendered in stages, which is better than blocking the UI and painting everything in one go.
 
 As we move through these improvements, you will notice we are using animation frames to add _mouseenter_ and _mouseleave_. This is different to the other events where we use event propagation to listen for all other events at the parent level. _mouseenter_ and _mouseleave_ do not propagate, so instead we add these in an animation frame after the rows are rendered. This has minimal impact to the user. They are not waiting for these events to be added before they see the row on the
 screen.

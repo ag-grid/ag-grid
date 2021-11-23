@@ -54,7 +54,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
     private columnPanelItemDragStart({ column }: ColumnPanelItemDragStartEvent): void {
         this.currentDragColumn = column;
         const currentColumns = this.getCurrentColumns();
-        const hasNotMovable = _.find(currentColumns, col => {
+        const hasNotMovable = currentColumns.find(col => {
             const colDef = col.getColDef();
             return !!colDef.suppressMovable || !!colDef.lockPosition;
         });
@@ -205,7 +205,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
                 'ag-item-highlight-top',
                 'ag-item-highlight-bottom'
             ].forEach(cls => {
-                _.removeCssClass((el as HTMLElement), cls);
+                (el as HTMLElement).classList.remove(cls);
             });
         });
         this.lastHoveredColumnItem = null;

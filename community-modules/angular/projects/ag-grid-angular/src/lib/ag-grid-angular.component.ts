@@ -733,7 +733,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public alwaysShowHorizontalScroll: boolean | undefined = undefined;
     /** Set to `true` to always show the vertical scrollbar. Default: `false`     */
     @Input() public alwaysShowVerticalScroll: boolean | undefined = undefined;
-    /** Set to `true` to debounce the vertical scrollbar. Can provide smoother scrolling on older browsers, e.g. Internet Explorer. Default: `false`     */
+    /** Set to `true` to debounce the vertical scrollbar. Can provide smoother scrolling on slow machines. Default: `false`     */
     @Input() public debounceVerticalScrollbar: boolean | undefined = undefined;
     /** Set to `true` to never show the horizontal scroll. This is useful if the grid is aligned with another grid and will scroll when the other grid scrolls. (Should not be used in combination with `alwaysShowHorizontalScroll`.) Default: `false`     */
     @Input() public suppressHorizontalScroll: boolean | undefined = undefined;

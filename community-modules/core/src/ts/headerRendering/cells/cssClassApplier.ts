@@ -4,32 +4,54 @@ import { ColumnGroup } from "../../entities/columnGroup";
 import { Column } from "../../entities/column";
 import { ProvidedColumnGroup } from "../../entities/providedColumnGroup";
 import { missing } from "../../utils/generic";
-import { addCssClass } from "../../utils/dom";
 
 export class CssClassApplier {
 
-    public static getHeaderClassesFromColDef(abstractColDef: AbstractColDef | null, gridOptionsWrapper: GridOptionsWrapper, column: Column | null, columnGroup: ColumnGroup | null): string[] {
+    public static getHeaderClassesFromColDef(
+        abstractColDef: AbstractColDef | null,
+        gridOptionsWrapper: GridOptionsWrapper,
+        column: Column | null,
+        columnGroup: ColumnGroup | null
+    ): string[] {
         if (missing(abstractColDef)) { return []; }
-        return this.getColumnClassesFromCollDef(abstractColDef.headerClass, abstractColDef, gridOptionsWrapper, column, columnGroup);
+
+        return this.getColumnClassesFromCollDef(
+            abstractColDef.headerClass,
+            abstractColDef,
+            gridOptionsWrapper,
+            column,
+            columnGroup
+        );
     }
 
-    public static getToolPanelClassesFromColDef(abstractColDef: AbstractColDef | null, gridOptionsWrapper: GridOptionsWrapper, column: Column | null, columnGroup: ProvidedColumnGroup | null): string[] {
+    public static getToolPanelClassesFromColDef(
+        abstractColDef: AbstractColDef | null,
+        gridOptionsWrapper: GridOptionsWrapper,
+        column: Column | null,
+        columnGroup: ProvidedColumnGroup | null
+    ): string[] {
         if (missing(abstractColDef)) { return []; }
-        return this.getColumnClassesFromCollDef(abstractColDef.toolPanelClass, abstractColDef, gridOptionsWrapper, column, columnGroup);
+
+        return this.getColumnClassesFromCollDef(
+            abstractColDef.toolPanelClass,
+            abstractColDef,
+            gridOptionsWrapper,
+            column,
+            columnGroup
+        );
     }
 
-    private static getColumnClassesFromCollDef(classesOrFunc: string 
-                                                            | string[] 
-                                                            | ((params: HeaderClassParams | ToolPanelClassParams) 
-                                                                    => string | string[]) | null | undefined,
-                                              abstractColDef: AbstractColDef,
-                                              gridOptionsWrapper: GridOptionsWrapper,
-                                              column: Column | null,
-                                              columnGroup: ColumnGroup | ProvidedColumnGroup | null): string[] {
-        if (missing(classesOrFunc)) {
-            return [];
-        }
+    private static getColumnClassesFromCollDef(
+        classesOrFunc: string | string[] | ((params: HeaderClassParams | ToolPanelClassParams) => string | string[]) | null | undefined,
+        abstractColDef: AbstractColDef,
+        gridOptionsWrapper: GridOptionsWrapper,
+        column: Column | null,
+        columnGroup: ColumnGroup | ProvidedColumnGroup | null
+    ): string[] {
+        if (missing(classesOrFunc)) { return []; }
+
         let classToUse: string | string[];
+
         if (typeof classesOrFunc === 'function') {
             const params: HeaderClassParams = {
                 // bad naming, as colDef here can be a group or a column,
@@ -46,12 +68,9 @@ export class CssClassApplier {
             classToUse = classesOrFunc;
         }
 
-        if (typeof classToUse === 'string') {
-            return [classToUse];
-        } else if (Array.isArray(classToUse)) {
-            return classToUse
-        } else {
-            return [];
-        }
+        if (typeof classToUse === 'string') { return [classToUse]; }
+        if (Array.isArray(classToUse)) { return classToUse; }
+
+        return [];
     }
 }

@@ -2,7 +2,6 @@ import { RowRenderer } from "./rowRenderer";
 import { Column } from "../entities/column";
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { BeanStub } from "../context/beanStub";
-import { containsClass, addCssClass } from "../utils/dom";
 import { CtrlsService } from "../ctrlsService";
 import { RowContainerCtrl } from "../gridBodyComp/rowContainer/rowContainerCtrl";
 import { RowCssClassCalculator } from "./row/rowCssClassCalculator";
@@ -71,7 +70,7 @@ export class AutoWidthCalculator extends BeanStub {
 
         this.ctrlsService.getHeaderRowContainerCtrls().forEach(container => {
                 const res = container.getHtmlElementForColumnHeader(column);
-                if (res!=null) { element = res; }
+                if (res != null) { element = res; }
             }
         );
 
@@ -95,13 +94,14 @@ export class AutoWidthCalculator extends BeanStub {
         // on the same line, standard flow layout, by putting them into divs, they are laid
         // out one per line
         const eCloneParent = document.createElement('div');
+        const eCloneParentClassList = eCloneParent.classList;
 
-        if (containsClass(eCellClone, 'ag-header-cell')) {
-            addCssClass(eCloneParent, 'ag-header');
-            addCssClass(eCloneParent, 'ag-header-row');
+        if (eCellClone.classList.contains('ag-header-cell')) {
+            eCloneParentClassList.add('ag-header');
+            eCloneParentClassList.add('ag-header-row');
             eCloneParent.style.position = 'static';
         } else {
-            addCssClass(eCloneParent, 'ag-row');
+            eCloneParentClassList.add('ag-row');
         }
 
         // find parent using classes (headers have ag-header-cell, rows have ag-row), and copy classes from it.
@@ -117,7 +117,7 @@ export class AutoWidthCalculator extends BeanStub {
                     // element from fitting into it's parent, and we need the element to stretch the parent
                     // as we are measuring the parents width
                     if (item != 'ag-row-position-absolute') {
-                        addCssClass(eCloneParent, item);
+                        eCloneParentClassList.add(item);
                     }
                 }
                 break;

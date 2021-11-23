@@ -80,7 +80,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
             eGui,
             {
                 shouldStopEventPropagation: this.shouldStopEventPropagation.bind(this),
-                onTabKeyDown: ()=> undefined,
+                onTabKeyDown: () => undefined,
                 handleKeyDown: this.handleKeyDown.bind(this),
                 onFocusIn: this.onFocusIn.bind(this)
             }
@@ -136,14 +136,14 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
         const colGroupDef = this.columnGroup.getColGroupDef();
 
         const tooltipCtrl: ITooltipFeatureCtrl = {
-            getColumn: ()=> this.columnGroup,
-            getGui: ()=> this.eGui,
-            getLocation: ()=> 'headerGroup',
+            getColumn: () => this.columnGroup,
+            getGui: () => this.eGui,
+            getLocation: () => 'headerGroup',
             getTooltipValue: () => colGroupDef && colGroupDef.headerTooltip
         };
 
         if (colGroupDef) {
-            tooltipCtrl.getColDef = ()=> colGroupDef;
+            tooltipCtrl.getColDef = () => colGroupDef;
         }
 
         const tooltipFeature = this.createManagedBean(new TooltipFeature(tooltipCtrl, this.beans));
@@ -180,12 +180,12 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
 
         const colGroupDef = this.columnGroup.getColGroupDef();
         const classes = CssClassApplier.getHeaderClassesFromColDef(colGroupDef, this.gridOptionsWrapper, null, this.columnGroup);
-        
+
         // having different classes below allows the style to not have a bottom border
         // on the group header, if no group is specified
         classes.push(this.columnGroup.isPadding() ? `ag-header-group-cell-no-group` : `ag-header-group-cell-with-group`);
 
-        classes.forEach( c => this.comp.addOrRemoveCssClass(c, true) );
+        classes.forEach(c => this.comp.addOrRemoveCssClass(c, true));
     }
 
     private setupMovingCss(): void {
@@ -195,7 +195,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
         // this function adds or removes the moving css, based on if the col is moving.
         // this is what makes the header go dark when it is been moved (gives impression to
         // user that the column was picked up).
-        const listener = ()=> this.comp.addOrRemoveCssClass('ag-header-cell-moving', this.columnGroup.isMoving());
+        const listener = () => this.comp.addOrRemoveCssClass('ag-header-cell-moving', this.columnGroup.isMoving());
 
         leafColumns.forEach(col => {
             this.addManagedListener(col, Column.EVENT_MOVING_CHANGED, listener);
@@ -217,7 +217,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
 
         if (!this.expandable || !wrapperHasFocus) { return; }
 
-        if (e.keyCode === KeyCode.ENTER) {
+        if (e.key === KeyCode.ENTER) {
             const column = this.columnGroup;
             const newExpandedValue = !column.isExpanded();
 

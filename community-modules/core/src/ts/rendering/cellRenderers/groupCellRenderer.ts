@@ -1,7 +1,7 @@
 import { UserCompDetails, UserComponentFactory } from "../../components/framework/userComponentFactory";
 import { Autowired } from "../../context/context";
 import { setAriaRole } from "../../utils/aria";
-import { addOrRemoveCssClass, setDisplayed } from "../../utils/dom";
+import { setDisplayed } from "../../utils/dom";
 import { Component } from "../../widgets/component";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { GroupCellRendererCtrl, GroupCellRendererParams, IGroupCellRenderer } from "./groupCellRendererCtrl";
@@ -41,14 +41,14 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
             addOrRemoveCssClass: (cssClass, value) => this.addOrRemoveCssClass(cssClass, value),
             setContractedDisplayed: expanded => setDisplayed(this.eContracted, expanded),
             setExpandedDisplayed: expanded => setDisplayed(this.eExpanded, expanded),
-            setCheckboxVisible: visible => addOrRemoveCssClass(this.eCheckbox, 'ag-invisible', !visible)
+            setCheckboxVisible: visible => this.eCheckbox.classList.toggle('ag-invisible', !visible)
         };
 
         const ctrl = this.createManagedBean(new GroupCellRendererCtrl());
         const fullWidth = !params.colDef;
         const eGui = this.getGui();
         ctrl.init(compProxy, eGui, this.eCheckbox, this.eExpanded, this.eContracted, this.constructor, params);
-        
+
         if (fullWidth) {
             setAriaRole(eGui, 'gridcell');
         }
@@ -59,7 +59,7 @@ export class GroupCellRenderer extends Component implements ICellRendererComp {
         if (compDetails) {
             const componentPromise = compDetails.newAgStackInstance();
             if (!componentPromise) { return; }
-            componentPromise.then( comp => {
+            componentPromise.then(comp => {
                 if (!comp) { return; }
                 const destroyComp = () => this.context.destroyBean(comp);
                 if (this.isAlive()) {

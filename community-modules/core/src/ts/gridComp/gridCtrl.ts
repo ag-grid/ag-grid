@@ -1,22 +1,18 @@
-import { Autowired, Optional, PostConstruct } from "../context/context";
+import { Autowired, PostConstruct } from "../context/context";
 import { GridApi } from "../gridApi";
 import { FocusService } from "../focusService";
 import { BeanStub } from "../context/beanStub";
 import { ModuleRegistry } from "../modules/moduleRegistry";
 import { ModuleNames } from "../modules/moduleNames";
-import { IClipboardService } from "../interfaces/iClipboardService";
 import { LayoutFeature, LayoutView } from "../styling/layoutFeature";
 import { Events } from "../eventKeys";
-import { Logger, LoggerFactory } from "../logger";
 import { ResizeObserverService } from "../misc/resizeObserverService";
 import { GridSizeChangedEvent } from "../events";
 import { ColumnApi } from "../columns/columnApi";
-import { findIndex, last } from "../utils/array";
-import { Column } from "../entities/column";
-import { ColumnGroup } from "../entities/columnGroup";
 import { ColumnModel } from "../columns/columnModel";
 import { CtrlsService } from "../ctrlsService";
 import { MouseEventService } from "../gridBodyComp/mouseEventService";
+import { last } from "../utils/array";
 
 export interface IGridComp extends LayoutView {
     setRtlClass(cssClass: string): void;
@@ -123,7 +119,7 @@ export class GridCtrl extends BeanStub {
 
     public focusNextInnerContainer(backwards: boolean): boolean {
         const focusableContainers = this.view.getFocusableContainers();
-        const idxWithFocus = findIndex(focusableContainers, container => container.contains(document.activeElement));
+        const idxWithFocus = focusableContainers.findIndex(container => container.contains(document.activeElement));
         const nextIdx = idxWithFocus + (backwards ? -1 : 1);
 
         if (nextIdx <= 0 || nextIdx >= focusableContainers.length) {

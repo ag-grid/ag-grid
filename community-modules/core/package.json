@@ -11,7 +11,6 @@
     "precheck": "npx tsc -p tsconfig-precheck.json",
     "build": "npm run precheck && npx gulp && npx tsc -p tsconfig.typings.json && npm run hash",
     "test": "npx jest",
-    "validate-es5": "npx eslint dist/cjs",
     "package": "node ../../module-build/rollup/build.js",
     "clean": "npx rimraf dist typings",
     "build-es6": "npx gulp tsc-no-clean-es6",

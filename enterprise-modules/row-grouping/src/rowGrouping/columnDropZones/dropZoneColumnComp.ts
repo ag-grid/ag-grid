@@ -115,7 +115,7 @@ export class DropZoneColumnComp extends Component {
         this.setupRemove();
 
         if (this.ghost) {
-            _.addCssClass(this.getGui(), 'ag-column-drop-cell-ghost');
+            this.addCssClass('ag-column-drop-cell-ghost');
         }
 
         if (this.valueColumn && !this.gridOptionsWrapper.isFunctionsReadOnly()) {
@@ -241,9 +241,9 @@ export class DropZoneColumnComp extends Component {
 
     private addElementClasses(el: HTMLElement, suffix?: string) {
         suffix = suffix ? `-${suffix}` : '';
-        _.addCssClass(el, `ag-column-drop-cell${suffix}`);
+        el.classList.add(`ag-column-drop-cell${suffix}`);
         const direction = this.horizontal ? 'horizontal' : 'vertical';
-        _.addCssClass(el, `ag-column-drop-${direction}-cell${suffix}`);
+        el.classList.add(`ag-column-drop-${direction}-cell${suffix}`);
     }
 }
 

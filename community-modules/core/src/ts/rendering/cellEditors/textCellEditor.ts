@@ -59,9 +59,9 @@ export class TextCellEditor extends PopupComponent implements ICellEditorComp {
         }
 
         this.addManagedListener(eInput.getGui(), 'keydown', (event: KeyboardEvent) => {
-            const { keyCode } = event;
+            const { key } = event;
 
-            if (keyCode === KeyCode.PAGE_UP || keyCode === KeyCode.PAGE_DOWN) {
+            if (key === KeyCode.PAGE_UP || key === KeyCode.PAGE_DOWN) {
                 event.preventDefault();
             }
         });

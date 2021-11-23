@@ -98,7 +98,7 @@ export class FormatPanel extends Component {
     private addComponent(component: Component): void {
         this.createBean(component);
         this.panels.push(component);
-        _.addCssClass(component.getGui(), 'ag-chart-format-section');
+        component.addCssClass('ag-chart-format-section');
         this.getGui().appendChild(component.getGui());
     }
 

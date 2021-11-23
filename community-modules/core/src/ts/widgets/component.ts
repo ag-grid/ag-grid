@@ -9,13 +9,8 @@ import {
     iterateNamedNodeMap,
     loadTemplate,
     setVisible,
-    setDisplayed,
-    addCssClass,
-    removeCssClass,
-    addOrRemoveCssClass,
-    clearElement
+    setDisplayed
 } from '../utils/dom';
-import { forEach } from '../utils/array';
 import { getFunctionName } from '../utils/function';
 import { CustomTooltipFeature } from "./customTooltipFeature";
 import { ITooltipParams } from "../rendering/tooltipComponent";
@@ -119,7 +114,7 @@ export class Component extends BeanStub {
         // which messes up the traversal order of the children.
         const childNodeList: Node[] = copyNodeList(parentNode.childNodes);
 
-        forEach(childNodeList, childNode => {
+        childNodeList.forEach(childNode => {
             if (!(childNode instanceof HTMLElement)) {
                 return;
             }
@@ -127,7 +122,7 @@ export class Component extends BeanStub {
             const childComp = this.createComponentFromElement(childNode, childComp => {
                 // copy over all attributes, including css classes, so any attributes user put on the tag
                 // wll be carried across
-                const childGui = childComp.getGui()
+                const childGui = childComp.getGui();
                 if (childGui) {
                     this.copyAttributesFromNode(childNode, childComp.getGui());
                 }
@@ -200,7 +195,7 @@ export class Component extends BeanStub {
             const currentProtoName = getFunctionName(thisPrototype.constructor);
 
             if (metaData && metaData[currentProtoName] && metaData[currentProtoName].querySelectors) {
-                forEach(metaData[currentProtoName].querySelectors, (querySelector: any) => action(querySelector));
+                metaData[currentProtoName].querySelectors.forEach((querySelector: any) => action(querySelector));
             }
 
             thisPrototype = Object.getPrototypeOf(thisPrototype);
@@ -348,7 +343,7 @@ export class Component extends BeanStub {
     public addCssClass(className: string): void {
         const updateNeeded = this.cssClassStates[className] !== true;
         if (updateNeeded) {
-            addCssClass(this.eGui, className);
+            this.eGui.classList.add(className);
             this.cssClassStates[className] = true;
         }
     }
@@ -356,7 +351,7 @@ export class Component extends BeanStub {
     public removeCssClass(className: string): void {
         const updateNeeded = this.cssClassStates[className] !== false;
         if (updateNeeded) {
-            removeCssClass(this.eGui, className);
+            this.eGui.classList.remove(className);
             this.cssClassStates[className] = false;
         }
     }
@@ -364,7 +359,7 @@ export class Component extends BeanStub {
     public addOrRemoveCssClass(className: string, addOrRemove: boolean): void {
         const updateNeeded = this.cssClassStates[className] !== addOrRemove;
         if (updateNeeded) {
-            addOrRemoveCssClass(this.eGui, className, addOrRemove);
+            this.eGui.classList.toggle(className, addOrRemove);
             this.cssClassStates[className] = addOrRemove;
         }
     }

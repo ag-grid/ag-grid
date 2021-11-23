@@ -792,7 +792,7 @@
     "type": { "returnType": "boolean" }
   },
   "debounceVerticalScrollbar": {
-    "description": "/** Set to `true` to debounce the vertical scrollbar. Can provide smoother scrolling on older browsers, e.g. Internet Explorer. Default: `false` */",
+    "description": "/** Set to `true` to debounce the vertical scrollbar. Can provide smoother scrolling on slow machines. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressHorizontalScroll": {

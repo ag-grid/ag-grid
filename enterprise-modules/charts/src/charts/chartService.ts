@@ -280,7 +280,7 @@ export class ChartService extends BeanStub implements IChartService {
             const theme = this.environment.getTheme();
 
             if (theme.el && !theme.el.contains(container)) {
-                _.addCssClass(container, theme.theme!);
+                container.classList.add(theme.theme!);
             }
         } else if (createChartContainerFunc) {
             // otherwise user created chart via grid UI, check if developer provides containers (eg if the application

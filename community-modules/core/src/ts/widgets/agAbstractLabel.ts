@@ -1,6 +1,6 @@
 import { Component } from "./component";
 import { PostConstruct } from "../context/context";
-import { addCssClass, clearElement, addOrRemoveCssClass, setElementWidth, removeCssClass } from "../utils/dom";
+import { clearElement, setElementWidth } from "../utils/dom";
 import { setAriaRole } from "../utils/aria";
 
 export type LabelAlignment = 'left' | 'right' | 'top';
@@ -28,8 +28,8 @@ export abstract class AgAbstractLabel<TConfig extends IAgLabel = IAgLabel> exten
 
     @PostConstruct
     protected postConstruct() {
-        addCssClass(this.getGui(), 'ag-labeled');
-        addCssClass(this.eLabel, 'ag-label');
+        this.addCssClass('ag-labeled');
+        this.eLabel.classList.add('ag-label');
 
         const { labelSeparator, label, labelWidth, labelAlignment } = this.config;
 
@@ -59,10 +59,10 @@ export abstract class AgAbstractLabel<TConfig extends IAgLabel = IAgLabel> exten
         }
 
         if (this.label === '') {
-            addCssClass(this.eLabel, 'ag-hidden');
+            this.eLabel.classList.add('ag-hidden');
             setAriaRole(this.eLabel, 'presentation');
         } else {
-            removeCssClass(this.eLabel, 'ag-hidden');
+            this.eLabel.classList.remove('ag-hidden');
             setAriaRole(this.eLabel, null);
         }
     }
@@ -105,10 +105,11 @@ export abstract class AgAbstractLabel<TConfig extends IAgLabel = IAgLabel> exten
 
     public setLabelAlignment(alignment: LabelAlignment): this {
         const eGui = this.getGui();
+        const eGuiClassList = eGui.classList;
 
-        addOrRemoveCssClass(eGui, 'ag-label-align-left', alignment === 'left');
-        addOrRemoveCssClass(eGui, 'ag-label-align-right', alignment === 'right');
-        addOrRemoveCssClass(eGui, 'ag-label-align-top', alignment === 'top');
+        eGuiClassList.toggle('ag-label-align-left', alignment === 'left');
+        eGuiClassList.toggle('ag-label-align-right', alignment === 'right');
+        eGuiClassList.toggle('ag-label-align-top', alignment === 'top');
 
         return this;
     }

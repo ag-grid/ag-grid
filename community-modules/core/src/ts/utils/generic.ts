@@ -152,37 +152,6 @@ export function defaultComparator(valueA: any, valueB: any, accentedCompare: boo
 
 }
 
-export function find<T>(collection: T[] | { [id: string]: T; } | null, predicate: string | boolean | ((item: T) => boolean), value?: any): T | null {
-    if (collection === null || collection === undefined) { return null; }
-
-    if (!Array.isArray(collection)) {
-        const objToArray = values(collection);
-        return find(objToArray, predicate, value);
-    }
-
-    const collectionAsArray = collection;
-
-    let firstMatchingItem: T | null = null;
-    for (let i = 0; i < collectionAsArray.length; i++) {
-        const item: T = collectionAsArray[i];
-
-        if (typeof predicate === 'string') {
-            if ((item as any)[predicate] === value) {
-                firstMatchingItem = item;
-                break;
-            }
-        } else {
-            const callback = predicate as (item: T) => boolean;
-            if (callback(item)) {
-                firstMatchingItem = item;
-                break;
-            }
-        }
-    }
-
-    return firstMatchingItem;
-}
-
 export function values<T>(object: { [key: string]: T; } | Set<T> | Map<any, T>): T[] {
     if (object instanceof Set || object instanceof Map) {
         const arr: T[] = [];
@@ -192,5 +161,5 @@ export function values<T>(object: { [key: string]: T; } | Set<T> | Map<any, T>):
         return arr;
     }
 
-    return Object.keys(object).map(key => object[key]);
+    return Object.values(object);
 }

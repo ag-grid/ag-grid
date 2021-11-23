@@ -1,13 +1,12 @@
 import { missing, exists, values } from './generic';
-import { forEach } from './array';
 
 export function iterateObject<T>(object: { [p: string]: T; } | T[] | null | undefined, callback: (key: string, value: T) => void) {
     if (object == null) { return; }
 
     if (Array.isArray(object)) {
-        forEach(object, (value, index) => callback(`${index}`, value));
+        object.forEach((value, index) => callback(`${index}`, value));
     } else {
-        forEach(Object.keys(object), key => callback(key, object[key]));
+        Object.keys(object).forEach(key => callback(key, object[key]));
     }
 }
 
@@ -73,7 +72,7 @@ export function setProperty<T, K extends keyof T>(object: T, key: K, value: any)
  * a value of `undefined`.
  */
 export function copyPropertiesIfPresent<S, T extends S, K extends keyof S>(source: S, target: T, ...properties: K[]) {
-    forEach(properties, p => copyPropertyIfPresent(source, target, p));
+    properties.forEach(p => copyPropertyIfPresent(source, target, p));
 }
 
 /**
@@ -92,7 +91,7 @@ export function getAllKeysInObjects(objects: any[]): string[] {
     const allValues: any = {};
 
     objects.filter(obj => obj != null).forEach(obj => {
-        forEach(Object.keys(obj), key => allValues[key] = null);
+        Object.keys(obj).forEach(key => allValues[key] = null);
     });
 
     return Object.keys(allValues);
@@ -151,15 +150,6 @@ export function mergeDeep(dest: any, source: any, copyUndefined = true, makeCopy
     });
 }
 
-export function assign<T, U>(target: T, source: U): T & U;
-export function assign<T, U, V>(target: T, source1: U, source2: V): T & U & V;
-export function assign<T, U, V, W>(target: T, source1: U, source2: V, source3: W): T & U & V & W;
-export function assign(object: any, ...sources: any[]): any {
-    forEach(sources, source => iterateObject(source, (key: string, value: any) => object[key] = value));
-
-    return object;
-}
-
 export function missingOrEmptyObject(value: any): boolean {
     return missing(value) || Object.keys(value).length === 0;
 }
@@ -203,7 +193,7 @@ export function set(target: any, expression: string, value: any) {
 export function deepFreeze(object: any): any {
     Object.freeze(object);
 
-    forEach(values(object), v => {
+    values(object).forEach(v => {
         if (isNonNullObject(v) || typeof v === 'function') {
             deepFreeze(v);
         }

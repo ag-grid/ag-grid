@@ -19,8 +19,7 @@
     "precheck": "npx tsc -p tsconfig-precheck.json",
     "webpack-updater": "node webpackUpdater.js",
     "rollup": "node ../../module-build/rollup/build.js --bundlePrefix ag-grid-enterprise",
-    "lint": "npx tsc -p tsconfig-lint.json && npx tslint --project tsconfig.json",
-    "validate-es5": "npx eslint dist/lib"
+    "lint": "npx tsc -p tsconfig-lint.json && npx tslint --project tsconfig.json"
   },
   "repository": {
     "type": "git",

@@ -8,7 +8,7 @@ import { IMenuFactory } from "../../../interfaces/iMenuFactory";
 import { SortController } from "../../../sortController";
 import { firstExistingValue } from "../../../utils/array";
 import { isIOSUserAgent } from "../../../utils/browser";
-import { addOrRemoveCssClass, clearElement, removeFromParent, setDisplayed } from "../../../utils/dom";
+import { clearElement, removeFromParent, setDisplayed } from "../../../utils/dom";
 import { exists } from "../../../utils/generic";
 import { createIconNoSpan } from "../../../utils/icon";
 import { escapeString } from "../../../utils/string";
@@ -250,7 +250,7 @@ export class HeaderComp extends Component implements IHeaderComp {
 
         const suppressMenuHide = this.gridOptionsWrapper.isSuppressMenuHide();
         this.addManagedListener(this.eMenu, 'click', () => this.showMenu(this.eMenu));
-        addOrRemoveCssClass(this.eMenu, 'ag-header-menu-always-show', suppressMenuHide);
+        this.eMenu.classList.toggle('ag-header-menu-always-show', suppressMenuHide);
     }
 
     public showMenu(eventSource?: HTMLElement) {
@@ -315,22 +315,21 @@ export class HeaderComp extends Component implements IHeaderComp {
     }
 
     private onSortChanged(): void {
-
-        addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-asc', this.params.column.isSortAscending());
-        addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-desc', this.params.column.isSortDescending());
-        addOrRemoveCssClass(this.getGui(), 'ag-header-cell-sorted-none', this.params.column.isSortNone());
+        this.addOrRemoveCssClass('ag-header-cell-sorted-asc', this.params.column.isSortAscending());
+        this.addOrRemoveCssClass('ag-header-cell-sorted-desc', this.params.column.isSortDescending());
+        this.addOrRemoveCssClass('ag-header-cell-sorted-none', this.params.column.isSortNone());
 
         if (this.eSortAsc) {
-            addOrRemoveCssClass(this.eSortAsc, 'ag-hidden', !this.params.column.isSortAscending());
+            this.eSortAsc.classList.toggle('ag-hidden', !this.params.column.isSortAscending());
         }
 
         if (this.eSortDesc) {
-            addOrRemoveCssClass(this.eSortDesc, 'ag-hidden', !this.params.column.isSortDescending());
+            this.eSortDesc.classList.toggle('ag-hidden', !this.params.column.isSortDescending());
         }
 
         if (this.eSortNone) {
             const alwaysHideNoSort = !this.params.column.getColDef().unSortIcon && !this.gridOptionsWrapper.isUnSortIcon();
-            addOrRemoveCssClass(this.eSortNone, 'ag-hidden', alwaysHideNoSort || !this.params.column.isSortNone());
+            this.eSortNone.classList.toggle('ag-hidden', alwaysHideNoSort || !this.params.column.isSortNone());
         }
     }
 
@@ -366,6 +365,6 @@ export class HeaderComp extends Component implements IHeaderComp {
 
     private onFilterChanged(): void {
         const filterPresent = this.params.column.isFilterActive();
-        addOrRemoveCssClass(this.eFilter, 'ag-hidden', !filterPresent);
+        this.eFilter.classList.toggle('ag-hidden', !filterPresent);
     }
 }

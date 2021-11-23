@@ -3,7 +3,7 @@ import { RefSelector } from './componentAnnotations';
 import { PostConstruct } from '../context/context';
 import { AgCheckbox } from './agCheckbox';
 import { createIcon } from '../utils/icon';
-import { setDisplayed, removeCssClass, addCssClass, addOrRemoveCssClass } from '../utils/dom';
+import { setDisplayed } from '../utils/dom';
 import { KeyCode } from '../constants/keyCode';
 import { setAriaExpanded } from '../utils/aria';
 
@@ -116,7 +116,7 @@ export class AgGroupComponent extends Component {
         this.eGroupOpenedIcon.appendChild(createIcon('columnSelectOpen', this.gridOptionsWrapper, null));
         this.addManagedListener(this.eTitleBar, 'click', () => this.toggleGroupExpand());
         this.addManagedListener(this.eTitleBar, 'keydown', (e: KeyboardEvent) => {
-            switch (e.keyCode) {
+            switch (e.key) {
                 case KeyCode.ENTER:
                 case KeyCode.SPACE:
                     e.preventDefault();
@@ -125,7 +125,7 @@ export class AgGroupComponent extends Component {
                 case KeyCode.RIGHT:
                 case KeyCode.LEFT:
                     e.preventDefault();
-                    this.toggleGroupExpand(e.keyCode === KeyCode.RIGHT);
+                    this.toggleGroupExpand(e.key === KeyCode.RIGHT);
                     break;
             }
         });
@@ -150,16 +150,14 @@ export class AgGroupComponent extends Component {
     }
 
     public setAlignItems(alignment: AgGroupComponentParams['alignItems']): this {
-        const eGui = this.getGui();
-
         if (this.alignItems !== alignment) {
-            removeCssClass(eGui, `ag-group-item-alignment-${this.alignItems}`);
+            this.removeCssClass(`ag-group-item-alignment-${this.alignItems}`);
         }
 
         this.alignItems = alignment;
         const newCls = `ag-group-item-alignment-${this.alignItems}`;
 
-        addCssClass(eGui, newCls);
+        this.addCssClass(newCls);
 
         return this;
     }
@@ -198,8 +196,8 @@ export class AgGroupComponent extends Component {
         const container = this.eContainer;
         const el = item instanceof Component ? item.getGui() : item;
 
-        addCssClass(el, 'ag-group-item');
-        addCssClass(el, `ag-${this.cssIdentifier}-group-item`);
+        el.classList.add('ag-group-item');
+        el.classList.add(`ag-${this.cssIdentifier}-group-item`);
 
         container.appendChild(el);
         this.items.push(el);
@@ -207,7 +205,7 @@ export class AgGroupComponent extends Component {
 
     public hideItem(hide: boolean, index: number) {
         const itemToHide = this.items[index] as HTMLElement;
-        addOrRemoveCssClass(itemToHide, 'ag-hidden', hide);
+        itemToHide.classList.toggle('ag-hidden', hide);
     }
 
     public setTitle(title: string): this {
@@ -216,7 +214,7 @@ export class AgGroupComponent extends Component {
     }
 
     public addCssClassToTitleBar(cssClass: string) {
-        addCssClass(this.eTitleBar, cssClass);
+        this.eTitleBar.classList.add(cssClass);
     }
 
     public setEnabled(enabled: boolean, skipToggle?: boolean): this {
@@ -263,16 +261,16 @@ export class AgGroupComponent extends Component {
     }
 
     private refreshDisabledStyles() {
-        addOrRemoveCssClass(this.getGui(), 'ag-disabled', !this.enabled);
+        this.getGui().classList.toggle('ag-disabled', !this.enabled);
 
         if (this.suppressEnabledCheckbox && !this.enabled) {
-            addCssClass(this.eTitleBar, 'ag-disabled-group-title-bar');
+            this.eTitleBar.classList.add('ag-disabled-group-title-bar');
             this.eTitleBar.removeAttribute('tabindex');
         } else {
-            removeCssClass(this.eTitleBar, 'ag-disabled-group-title-bar');
+            this.eTitleBar.classList.remove('ag-disabled-group-title-bar');
             this.eTitleBar.setAttribute('tabindex', '0');
         }
 
-        addOrRemoveCssClass(this.eContainer, 'ag-disabled-group-container', !this.enabled);
+        this.eContainer.classList.toggle('ag-disabled-group-container', !this.enabled);
     }
 }

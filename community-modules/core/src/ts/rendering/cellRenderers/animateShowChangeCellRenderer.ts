@@ -3,7 +3,7 @@ import { ICellRenderer } from "./iCellRenderer";
 import { Component } from "../../widgets/component";
 import { FilterManager } from "../../filter/filterManager";
 import { exists } from "../../utils/generic";
-import { addOrRemoveCssClass, removeCssClass, clearElement, addCssClass } from "../../utils/dom";
+import { clearElement } from "../../utils/dom";
 
 const ARROW_UP = '\u2191';
 const ARROW_DOWN = '\u2193';
@@ -55,8 +55,8 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
             this.eDelta.innerHTML = ARROW_DOWN + valueToUse;
         }
 
-        addOrRemoveCssClass(this.eDelta, 'ag-value-change-delta-up', deltaUp);
-        addOrRemoveCssClass(this.eDelta, 'ag-value-change-delta-down', !deltaUp);
+        this.eDelta.classList.toggle('ag-value-change-delta-up', deltaUp);
+        this.eDelta.classList.toggle('ag-value-change-delta-down', !deltaUp);
     }
 
     private setTimerToRemoveDelta(): void {
@@ -73,7 +73,7 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
     }
 
     private hideDeltaValue(): void {
-        removeCssClass(this.eValue, 'ag-value-change-value-highlight');
+        this.eValue.classList.remove('ag-value-change-value-highlight');
         clearElement(this.eDelta);
     }
 
@@ -106,7 +106,7 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
         // highlight the current value, but only if it's not new, otherwise it
         // would get highlighted first time the value is shown
         if (this.lastValue) {
-            addCssClass(this.eValue, 'ag-value-change-value-highlight');
+            this.eValue.classList.add('ag-value-change-value-highlight');
         }
 
         this.setTimerToRemoveDelta();

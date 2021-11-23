@@ -52,7 +52,7 @@ export class PrimaryColsHeaderPanel extends Component {
         this.addManagedListener(this.eExpand, 'click', this.onExpandClicked.bind(this));
 
         this.addManagedListener(this.eExpand, 'keydown', (e: KeyboardEvent) => {
-            if (e.keyCode === KeyCode.SPACE) {
+            if (e.key === KeyCode.SPACE) {
                 this.onExpandClicked();
             }
         });
@@ -126,7 +126,7 @@ export class PrimaryColsHeaderPanel extends Component {
     }
 
     private onMiniFilterKeyPress(e: KeyboardEvent): void {
-        if (_.isKeyPressed(e, KeyCode.ENTER)) {
+        if (e.key === KeyCode.ENTER) {
             // we need to add a delay that corresponds to the filter text debounce delay to ensure
             // the text filtering has happened, otherwise all columns will be deselected
             setTimeout(() => this.onSelectClicked(), PrimaryColsHeaderPanel.DEBOUNCE_DELAY);

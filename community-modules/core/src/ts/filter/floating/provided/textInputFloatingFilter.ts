@@ -8,7 +8,6 @@ import { SimpleFloatingFilter } from './simpleFloatingFilter';
 import { ISimpleFilterModel, SimpleFilter } from '../../provided/simpleFilter';
 import { FilterChangedEvent } from '../../../events';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
-import { isKeyPressed } from '../../../utils/keyboard';
 import { ColumnModel } from '../../../columns/columnModel';
 import { KeyCode } from '../../../constants/keyCode';
 import { ITextFilterParams, TextFilter, TextFilterModel } from '../../provided/text/textFilter';
@@ -78,7 +77,7 @@ export abstract class TextInputFloatingFilter<M extends ModelUnion> extends Simp
     }
 
     private syncUpWithParentFilter(e: KeyboardEvent): void {
-        const enterKeyPressed = isKeyPressed(e, KeyCode.ENTER);
+        const enterKeyPressed = e.key === KeyCode.ENTER;
 
         if (this.applyActive && !enterKeyPressed) { return; }
 

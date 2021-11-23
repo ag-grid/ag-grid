@@ -1,27 +1,26 @@
 export class KeyCode {
-    static BACKSPACE = 8;
-    static TAB = 9;
-    static ENTER = 13;
-    static SHIFT = 16;
-    static ESCAPE = 27;
-    static SPACE = 32;
-    static LEFT = 37;
-    static UP = 38;
-    static RIGHT = 39;
-    static DOWN = 40;
-    static DELETE = 46;
+    static BACKSPACE = 'Backspace';
+    static TAB = 'Tab';
+    static ENTER = 'Enter';
+    static ESCAPE = 'Escape';
+    static SPACE = ' ';
+    static LEFT = 'ArrowLeft';
+    static UP = 'ArrowUp';
+    static RIGHT = 'ArrowRight';
+    static DOWN = 'ArrowDown';
+    static DELETE = 'Delete';
 
-    static A = 65;
-    static C = 67;
-    static V = 86;
-    static D = 68;
-    static Z = 90;
-    static Y = 89;
+    static A = 'A';
+    static C = 'C';
+    static V = 'V';
+    static D = 'D';
+    static Z = 'Z';
+    static Y = 'Y';
 
-    static F2 = 113;
+    static F2 = 'F2';
 
-    static PAGE_UP = 33;
-    static PAGE_DOWN = 34;
-    static PAGE_HOME = 36;
-    static PAGE_END = 35;
+    static PAGE_UP = 'PageUp';
+    static PAGE_DOWN = 'PageDown';
+    static PAGE_HOME = 'Home';
+    static PAGE_END = 'End';
 }

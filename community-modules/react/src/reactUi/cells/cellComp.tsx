@@ -337,7 +337,7 @@ const CellComp = (props: {
             transition,
             zIndex: (zIndex as any)
         };
-        _.assign(res, userStyles);
+        Object.assign(res, userStyles);
         return res;
     }, [left, width, height, transition, zIndex, userStyles]);
 

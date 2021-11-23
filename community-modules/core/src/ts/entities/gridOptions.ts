@@ -641,7 +641,7 @@ export interface GridOptions {
     alwaysShowHorizontalScroll?: boolean;
     /** Set to `true` to always show the vertical scrollbar. Default: `false` */
     alwaysShowVerticalScroll?: boolean;
-    /** Set to `true` to debounce the vertical scrollbar. Can provide smoother scrolling on older browsers, e.g. Internet Explorer. Default: `false` */
+    /** Set to `true` to debounce the vertical scrollbar. Can provide smoother scrolling on slow machines. Default: `false` */
     debounceVerticalScrollbar?: boolean;
     /** Set to `true` to never show the horizontal scroll. This is useful if the grid is aligned with another grid and will scroll when the other grid scrolls. (Should not be used in combination with `alwaysShowHorizontalScroll`.) Default: `false` */
     suppressHorizontalScroll?: boolean;
@@ -1246,8 +1246,8 @@ export interface TabToNextHeaderParams {
 
 export interface NavigateToNextCellParams {
     /** The keycode for the arrow key pressed:
-     *  left = 37, up = 38, right = 39, down = 40 */
-    key: number;
+     *  left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */
+    key: string;
     /** The cell that currently has focus */
     previousCellPosition: CellPosition;
     /** The cell the grid would normally pick as the next cell for navigation */

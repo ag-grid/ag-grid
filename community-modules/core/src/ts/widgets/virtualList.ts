@@ -1,7 +1,6 @@
 import { Component } from './component';
 import { Autowired, PostConstruct } from '../context/context';
 import { RefSelector } from './componentAnnotations';
-import { addCssClass, containsClass } from '../utils/dom';
 import { getAriaPosInSet, setAriaSetSize, setAriaPosInSet, setAriaSelected, setAriaChecked, setAriaRole, setAriaLabel } from '../utils/aria';
 import { KeyCode } from '../constants/keyCode';
 import { ResizeObserverService } from "../misc/resizeObserverService";
@@ -74,7 +73,7 @@ export class VirtualList extends TabGuardComp {
     protected onFocusIn(e: FocusEvent): boolean {
         const target = e.target as HTMLElement;
 
-        if (containsClass(target, 'ag-virtual-list-item')) {
+        if (target.classList.contains('ag-virtual-list-item')) {
             this.lastFocusedRowIndex = getAriaPosInSet(target) - 1;
         }
 
@@ -90,10 +89,10 @@ export class VirtualList extends TabGuardComp {
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {
-        switch (e.keyCode) {
+        switch (e.key) {
             case KeyCode.UP:
             case KeyCode.DOWN:
-                if (this.navigate(e.keyCode === KeyCode.UP)) {
+                if (this.navigate(e.key === KeyCode.UP)) {
                     e.preventDefault();
                 }
 
@@ -255,8 +254,8 @@ export class VirtualList extends TabGuardComp {
         const value = this.model.getRow(rowIndex);
         const eDiv = document.createElement('div');
 
-        addCssClass(eDiv, 'ag-virtual-list-item');
-        addCssClass(eDiv, `ag-${this.cssIdentifier}-virtual-list-item`);
+        eDiv.classList.add('ag-virtual-list-item');
+        eDiv.classList.add(`ag-${this.cssIdentifier}-virtual-list-item`);
 
         setAriaRole(eDiv, this.ariaRole === 'tree' ? 'treeitem' : 'option');
         setAriaSetSize(eDiv, this.model.getRowCount());

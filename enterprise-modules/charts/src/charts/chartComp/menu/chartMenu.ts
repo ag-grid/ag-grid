@@ -103,10 +103,10 @@ export class ChartMenu extends Component {
 
     private toggleDetached(e: MouseEvent): void {
         const target = e.target as HTMLElement;
-        const active = _.containsClass(target, 'ag-icon-linked');
+        const active = target.classList.contains('ag-icon-linked');
 
-        _.addOrRemoveCssClass(target, 'ag-icon-linked', !active);
-        _.addOrRemoveCssClass(target, 'ag-icon-unlinked', active);
+        target.classList.toggle('ag-icon-linked', !active);
+        target.classList.toggle('ag-icon-unlinked', active);
 
         const tooltipKey = active ? 'chartUnlinkToolbarTooltip' : 'chartLinkToolbarTooltip';
         const tooltipTitle = this.chartTranslator.translate(tooltipKey);
@@ -130,7 +130,7 @@ export class ChartMenu extends Component {
                 undefined,
                 true
             )!;
-            _.addCssClass(buttonEl, 'ag-chart-menu-icon');
+            buttonEl.classList.add('ag-chart-menu-icon');
 
             const tooltipTitle = this.chartTranslator.translate(button + 'ToolbarTooltip');
             if (tooltipTitle) {
@@ -226,8 +226,8 @@ export class ChartMenu extends Component {
     }
 
     private refreshMenuClasses() {
-        _.addOrRemoveCssClass(this.eChartContainer, 'ag-chart-menu-visible', this.menuVisible);
-        _.addOrRemoveCssClass(this.eChartContainer, 'ag-chart-menu-hidden', !this.menuVisible);
+        this.eChartContainer.classList.toggle('ag-chart-menu-visible', this.menuVisible);
+        this.eChartContainer.classList.toggle('ag-chart-menu-hidden', !this.menuVisible);
     }
 
     private showParent(width: number): void {

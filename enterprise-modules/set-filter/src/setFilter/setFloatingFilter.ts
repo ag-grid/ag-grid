@@ -87,10 +87,10 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
             }
     
             const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
-            const availableValues = _.filter(values, v => valueModel.isValueAvailable(v))!;
+            const availableValues = values.filter(v => valueModel.isValueAvailable(v))!;
             
             // format all the values, if a formatter is provided
-            const formattedValues = _.map(availableValues, value => {
+            const formattedValues = availableValues.map(value => {
                 const { column, filterParams } = this.params;
                 const formattedValue = this.valueFormatterService.formatValue(
                     column, null, null, value, (filterParams as ISetFilterParams).valueFormatter, false);

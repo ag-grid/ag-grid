@@ -33,7 +33,7 @@ export class SelectCellEditor extends PopupComponent implements ICellEditorComp 
             return;
         }
 
-        this.startedByEnter = params.keyPress === KeyCode.ENTER;
+        this.startedByEnter = params.keyPress != null ? params.keyPress === KeyCode.ENTER : false;
 
         let hasValue = false;
         params.values.forEach((value: any) => {

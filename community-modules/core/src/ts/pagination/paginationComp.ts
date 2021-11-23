@@ -5,7 +5,6 @@ import { Events } from "../events";
 import { PaginationProxy } from "./paginationProxy";
 import { createIconNoSpan } from "../utils/icon";
 import { formatNumberCommas } from "../utils/number";
-import { addOrRemoveCssClass } from "../utils/dom";
 import { setAriaDisabled } from "../utils/aria";
 import { KeyCode } from '../constants/keyCode';
 import { RowNodeBlockLoader } from "../rowNodeCache/rowNodeBlockLoader";
@@ -62,7 +61,7 @@ export class PaginationComp extends Component {
             const { el, fn } = item;
             this.addManagedListener(el, 'click', fn);
             this.addManagedListener(el, 'keydown', (e: KeyboardEvent) => {
-                if (e.keyCode === KeyCode.ENTER || e.keyCode === KeyCode.SPACE) {
+                if (e.key === KeyCode.ENTER || e.key === KeyCode.SPACE) {
                     e.preventDefault();
                     fn();
                 }
@@ -164,21 +163,21 @@ export class PaginationComp extends Component {
         const totalPages = this.paginationProxy.getTotalPages();
 
         this.previousAndFirstButtonsDisabled = currentPage === 0;
-        addOrRemoveCssClass(this.btFirst, 'ag-disabled', this.previousAndFirstButtonsDisabled);
+        this.btFirst.classList.toggle('ag-disabled', this.previousAndFirstButtonsDisabled);
         setAriaDisabled(this.btFirst, this.previousAndFirstButtonsDisabled);
 
-        addOrRemoveCssClass(this.btPrevious, 'ag-disabled', this.previousAndFirstButtonsDisabled);
+        this.btPrevious.classList.toggle('ag-disabled', this.previousAndFirstButtonsDisabled);
         setAriaDisabled(this.btPrevious, this.previousAndFirstButtonsDisabled);
 
         const zeroPagesToDisplay = this.isZeroPagesToDisplay();
         const onLastPage = maxRowFound && currentPage === (totalPages - 1);
 
         this.nextButtonDisabled = onLastPage || zeroPagesToDisplay;
-        addOrRemoveCssClass(this.btNext, 'ag-disabled', this.nextButtonDisabled);
+        this.btNext.classList.toggle('ag-disabled', this.nextButtonDisabled);
         setAriaDisabled(this.btNext, this.nextButtonDisabled);
 
         this.lastButtonDisabled = !maxRowFound || zeroPagesToDisplay || currentPage === (totalPages - 1);
-        addOrRemoveCssClass(this.btLast, 'ag-disabled', this.lastButtonDisabled);
+        this.btLast.classList.toggle('ag-disabled', this.lastButtonDisabled);
         setAriaDisabled(this.btLast, this.lastButtonDisabled);
     }
 

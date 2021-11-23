@@ -2800,7 +2800,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "debounceVerticalScrollbar": {
-      "description": "/** Set to `true` to debounce the vertical scrollbar. Can provide smoother scrolling on older browsers, e.g. Internet Explorer. Default: `false` */",
+      "description": "/** Set to `true` to debounce the vertical scrollbar. Can provide smoother scrolling on slow machines. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressHorizontalScroll": {
@@ -4804,8 +4804,8 @@
   },
   "NavigateToNextCellParams": {
     "key": {
-      "description": "/** The keycode for the arrow key pressed:\n * left = 37, up = 38, right = 39, down = 40 */",
-      "type": { "returnType": "number", "optional": false }
+      "description": "/** The keycode for the arrow key pressed:\n * left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */",
+      "type": { "returnType": "string", "optional": false }
     },
     "previousCellPosition": {
       "description": "/** The cell that currently has focus */",
@@ -7242,7 +7242,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "alwaysShowBothConditions": {
-      "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions. \n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
+      "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
@@ -7376,7 +7376,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "alwaysShowBothConditions": {
-      "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions. \n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
+      "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
@@ -7534,7 +7534,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "alwaysShowBothConditions": {
-      "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions. \n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
+      "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
@@ -7616,7 +7616,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "alwaysShowBothConditions": {
-      "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions. \n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
+      "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
@@ -7759,7 +7759,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "alwaysShowBothConditions": {
-      "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions. \n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
+      "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
@@ -7845,9 +7845,9 @@
       "description": "/** Set to `'top'` or `'bottom'` to start editing a pinned row */",
       "type": { "returnType": "string", "optional": true }
     },
-    "keyPress": {
+    "key": {
       "description": "/** The keyPress to pass to the cell editor */",
-      "type": { "returnType": "number", "optional": true }
+      "type": { "returnType": "string", "optional": true }
     },
     "charPress": {
       "description": "/** The charPress to pass to the cell editor */",
@@ -10818,8 +10818,8 @@
       "type": { "returnType": "any", "optional": false }
     },
     "keyPress": {
-      "description": "/** Key code of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
-      "type": { "returnType": "number | null", "optional": false }
+      "description": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
+      "type": { "returnType": "string | null", "optional": false }
     },
     "charPress": {
       "description": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n * shift + letter 'a' only printable characters appear here */",
@@ -12677,7 +12677,7 @@
     },
     "extendLatestRangeInDirection": {
       "type": {
-        "arguments": { "key": "number" },
+        "arguments": { "key": "string" },
         "returnType": "CellPosition | undefined",
         "optional": false
       }
@@ -12850,8 +12850,8 @@
       "type": { "returnType": "any", "optional": false }
     },
     "keyPress": {
-      "description": "/** Key code of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
-      "type": { "returnType": "number | null", "optional": false }
+      "description": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
+      "type": { "returnType": "string | null", "optional": false }
     },
     "charPress": {
       "description": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n * shift + letter 'a' only printable characters appear here */",
@@ -15305,8 +15305,8 @@
       "type": { "returnType": "any", "optional": false }
     },
     "keyPress": {
-      "description": "/** Key code of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
-      "type": { "returnType": "number | null", "optional": false }
+      "description": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
+      "type": { "returnType": "string | null", "optional": false }
     },
     "charPress": {
       "description": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n * shift + letter 'a' only printable characters appear here */",
@@ -15390,8 +15390,8 @@
       "type": { "returnType": "any", "optional": false }
     },
     "keyPress": {
-      "description": "/** Key code of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
-      "type": { "returnType": "number | null", "optional": false }
+      "description": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
+      "type": { "returnType": "string | null", "optional": false }
     },
     "charPress": {
       "description": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n * shift + letter 'a' only printable characters appear here */",
@@ -15475,8 +15475,8 @@
       "type": { "returnType": "any", "optional": false }
     },
     "keyPress": {
-      "description": "/** Key code of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
-      "type": { "returnType": "number | null", "optional": false }
+      "description": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
+      "type": { "returnType": "string | null", "optional": false }
     },
     "charPress": {
       "description": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n * shift + letter 'a' only printable characters appear here */",

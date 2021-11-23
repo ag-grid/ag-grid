@@ -335,7 +335,7 @@ export class PivotColDefService extends BeanStub {
 
         if (valueColumn) {
             const colDefToCopy = valueColumn.getColDef();
-            _.assign(colDef, colDefToCopy);
+            Object.assign(colDef, colDefToCopy);
             // even if original column was hidden, we always show the pivot value column, otherwise it would be
             // very confusing for people thinking the pivot is broken
             colDef.hide = false;
