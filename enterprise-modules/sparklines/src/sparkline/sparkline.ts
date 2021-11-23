@@ -214,9 +214,6 @@ export abstract class Sparkline extends Observable {
 
     // Update x scale range based on width and padding (seriesRect).
     protected updateXScaleRange(): void {
-        // `xScale` may not exist if data is initially `undefined` but can be subsequently updated
-        if (!this.xScale) { return; }
-
         this.xScale.range = [0, this.seriesRect.width];
     }
 
@@ -320,9 +317,7 @@ export abstract class Sparkline extends Observable {
     private processData() {
         const { data, yData, xData } = this;
 
-        if (!data) {
-            return;
-        }
+        if (!data || !Array.isArray(data) || data.length === 0) { return; }
 
         yData.length = 0;
         xData.length = 0;
@@ -450,6 +445,11 @@ export abstract class Sparkline extends Observable {
             cancelAnimationFrame(this.layoutId);
         }
         this.layoutId = requestAnimationFrame(() => {
+
+            const { data } = this;
+
+            if (!data || !Array.isArray(data) || data.length === 0) { return; }
+
             const { width, height, padding, seriesRect, rootGroup } = this;
 
             const shrunkWidth = width - padding.left - padding.right;
