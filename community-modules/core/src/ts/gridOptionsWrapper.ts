@@ -55,7 +55,6 @@ import { getScrollbarWidth } from './utils/browser';
 import { HeaderPosition } from './headerRendering/common/headerPosition';
 import { ExcelExportParams } from './interfaces/iExcelCreator';
 import { capitalise } from './utils/string';
-import { _ } from './utils';
 
 const DEFAULT_ROW_HEIGHT = 25;
 const DEFAULT_DETAIL_ROW_HEIGHT = 300;

@@ -5,7 +5,7 @@ import { FilterManager } from '../../../filter/filterManager';
 import { Column } from '../../../entities/column';
 import { PopupService } from '../../../widgets/popupService';
 import { FocusService } from '../../../focusService';
-import { addCssClass, isVisible } from '../../../utils/dom';
+import { isVisible } from '../../../utils/dom';
 import { KeyCode } from '../../../constants/keyCode';
 import { ContainerType } from '../../../interfaces/iAfterGuiAttachedParams';
 import { CtrlsService } from '../../../ctrlsService';
@@ -56,7 +56,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
         const eMenu = document.createElement('div');
 
         setAriaRole(eMenu, 'presentation');
-        addCssClass(eMenu, 'ag-menu');
+        eMenu.classList.add('ag-menu');
 
         this.tabListener = this.addManagedListener(eMenu, 'keydown', (e) => this.trapFocusWithin(e, eMenu))!;
 
@@ -110,7 +110,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
     }
 
     private trapFocusWithin(e: KeyboardEvent, menu: HTMLElement) {
-        if (e.keyCode !== KeyCode.TAB ||
+        if (e.key === KeyCode.TAB ||
             e.defaultPrevented ||
             this.focusService.findNextFocusableElement(menu, false, e.shiftKey)) {
             return;

@@ -1872,7 +1872,7 @@
       "viewportRowModelBufferSize?": "/** When using viewport row model, sets the buffer size for the viewport. */",
       "alwaysShowHorizontalScroll?": "/** Set to `true` to always show the horizontal scrollbar. Default: `false` */",
       "alwaysShowVerticalScroll?": "/** Set to `true` to always show the vertical scrollbar. Default: `false` */",
-      "debounceVerticalScrollbar?": "/** Set to `true` to debounce the vertical scrollbar. Can provide smoother scrolling on older browsers, e.g. Internet Explorer. Default: `false` */",
+      "debounceVerticalScrollbar?": "/** Set to `true` to debounce the vertical scrollbar. Can provide smoother scrolling on slow machines. Default: `false` */",
       "suppressHorizontalScroll?": "/** Set to `true` to never show the horizontal scroll. This is useful if the grid is aligned with another grid and will scroll when the other grid scrolls. (Should not be used in combination with `alwaysShowHorizontalScroll`.) Default: `false` */",
       "suppressScrollOnNewData?": "/** When `true`, the grid will not scroll to the top when new row data is provided. Use this if you don't want the default behaviour of scrolling to the top every time you load new data. Default: `false` */",
       "suppressScrollWhenPopupsAreOpen?": "/** When `true`, the grid will not allow mousewheel / touchpad scroll when popup elements are present. Default: `false` */",
@@ -2283,7 +2283,7 @@
   "NavigateToNextCellParams": {
     "meta": {},
     "type": {
-      "key": "number",
+      "key": "string",
       "previousCellPosition": "CellPosition",
       "nextCellPosition": "CellPosition | null",
       "event": "KeyboardEvent | null",
@@ -2291,7 +2291,7 @@
       "columnApi": "ColumnApi"
     },
     "docs": {
-      "key": "/** The keycode for the arrow key pressed:\n * left = 37, up = 38, right = 39, down = 40 */",
+      "key": "/** The keycode for the arrow key pressed:\n * left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */",
       "previousCellPosition": "/** The cell that currently has focus */",
       "nextCellPosition": "/** The cell the grid would normally pick as the next cell for navigation */"
     }
@@ -4159,7 +4159,7 @@
       "defaultOption?": "/** The default filter option to be selected. */",
       "defaultJoinOperator?": "/** By default, the two conditions are combined using `AND`.\n * You can change this default by setting this property.\n * Options: `AND`, `OR` */",
       "suppressAndOrCondition?": "/** If `true`, the filter will only allow one condition.\n * Default: `false` */",
-      "alwaysShowBothConditions?": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions. \n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
+      "alwaysShowBothConditions?": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
       "readOnly?": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
       "column": "/** The column this filter is for. */",
       "colDef": "/** The column definition for the column. */",
@@ -4235,7 +4235,7 @@
       "defaultOption?": "/** The default filter option to be selected. */",
       "defaultJoinOperator?": "/** By default, the two conditions are combined using `AND`.\n * You can change this default by setting this property.\n * Options: `AND`, `OR` */",
       "suppressAndOrCondition?": "/** If `true`, the filter will only allow one condition.\n * Default: `false` */",
-      "alwaysShowBothConditions?": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions. \n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
+      "alwaysShowBothConditions?": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
       "readOnly?": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
       "column": "/** The column this filter is for. */",
       "colDef": "/** The column definition for the column. */",
@@ -4319,7 +4319,7 @@
       "defaultOption?": "/** The default filter option to be selected. */",
       "defaultJoinOperator?": "/** By default, the two conditions are combined using `AND`.\n * You can change this default by setting this property.\n * Options: `AND`, `OR` */",
       "suppressAndOrCondition?": "/** If `true`, the filter will only allow one condition.\n * Default: `false` */",
-      "alwaysShowBothConditions?": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions. \n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
+      "alwaysShowBothConditions?": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
       "readOnly?": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
       "column": "/** The column this filter is for. */",
       "colDef": "/** The column definition for the column. */",
@@ -4367,7 +4367,7 @@
       "defaultOption?": "/** The default filter option to be selected. */",
       "defaultJoinOperator?": "/** By default, the two conditions are combined using `AND`.\n * You can change this default by setting this property.\n * Options: `AND`, `OR` */",
       "suppressAndOrCondition?": "/** If `true`, the filter will only allow one condition.\n * Default: `false` */",
-      "alwaysShowBothConditions?": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions. \n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
+      "alwaysShowBothConditions?": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
       "readOnly?": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
       "column": "/** The column this filter is for. */",
       "colDef": "/** The column definition for the column. */",
@@ -4478,7 +4478,7 @@
       "defaultOption?": "/** The default filter option to be selected. */",
       "defaultJoinOperator?": "/** By default, the two conditions are combined using `AND`.\n * You can change this default by setting this property.\n * Options: `AND`, `OR` */",
       "suppressAndOrCondition?": "/** If `true`, the filter will only allow one condition.\n * Default: `false` */",
-      "alwaysShowBothConditions?": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions. \n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
+      "alwaysShowBothConditions?": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
       "readOnly?": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
       "column": "/** The column this filter is for. */",
       "colDef": "/** The column definition for the column. */",
@@ -4507,14 +4507,14 @@
       "rowIndex": "number",
       "colKey": "string | Column",
       "rowPinned?": "string",
-      "keyPress?": "number",
+      "key?": "string",
       "charPress?": "string"
     },
     "docs": {
       "rowIndex": "/** The row index of the row to start editing */",
       "colKey": "/** The column key of the row to start editing */",
       "rowPinned?": "/** Set to `'top'` or `'bottom'` to start editing a pinned row */",
-      "keyPress?": "/** The keyPress to pass to the cell editor */",
+      "key?": "/** The keyPress to pass to the cell editor */",
       "charPress?": "/** The charPress to pass to the cell editor */"
     }
   },
@@ -6327,7 +6327,7 @@
     "meta": {},
     "type": {
       "value": "any",
-      "keyPress": "number | null",
+      "keyPress": "string | null",
       "charPress": "string | null",
       "column": "Column",
       "colDef": "ColDef",
@@ -6347,7 +6347,7 @@
     },
     "docs": {
       "value": "/** Current value of the cell */",
-      "keyPress": "/** Key code of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
+      "keyPress": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
       "charPress": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n * shift + letter 'a' only printable characters appear here */",
       "column": "/** Grid column */",
       "colDef": "/** Column definition */",
@@ -7230,7 +7230,7 @@
       "setRangeToCell(cell: CellPosition, appendRange?: boolean)": "void",
       "setCellRange(params: CellRangeParams)": "void",
       "addCellRange(params: CellRangeParams)": "void",
-      "extendLatestRangeInDirection(key: number)": "CellPosition | undefined",
+      "extendLatestRangeInDirection(key: string)": "CellPosition | undefined",
       "extendLatestRangeToCell(cell: CellPosition)": "void",
       "updateRangeEnd(cellRange: CellRange, cellPosition: CellPosition, silent?: boolean)": "void",
       "getRangeStartRow(cellRange: CellRange)": "RowPosition",
@@ -7332,7 +7332,7 @@
       "cellRenderer": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
       "searchDebounceDelay?": "number",
       "value": "any",
-      "keyPress": "number | null",
+      "keyPress": "string | null",
       "charPress": "string | null",
       "column": "Column",
       "colDef": "ColDef",
@@ -7352,7 +7352,7 @@
     },
     "docs": {
       "value": "/** Current value of the cell */",
-      "keyPress": "/** Key code of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
+      "keyPress": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
       "charPress": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n * shift + letter 'a' only printable characters appear here */",
       "column": "/** Grid column */",
       "colDef": "/** Column definition */",
@@ -8675,7 +8675,6 @@
       "setRole(role: string)": "void",
       "setColId(colId: string)": "void",
       "setTitle(title: string | undefined)": "void",
-      "setUnselectable(value: 'on' | null)": "void",
       "setTransition(value: string | undefined)": "void",
       "setIncludeSelection(include: boolean)": "void",
       "setIncludeRowDrag(include: boolean)": "void",
@@ -8695,7 +8694,7 @@
       "rows": "number",
       "cols": "number",
       "value": "any",
-      "keyPress": "number | null",
+      "keyPress": "string | null",
       "charPress": "string | null",
       "column": "Column",
       "colDef": "ColDef",
@@ -8715,7 +8714,7 @@
     },
     "docs": {
       "value": "/** Current value of the cell */",
-      "keyPress": "/** Key code of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
+      "keyPress": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
       "charPress": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n * shift + letter 'a' only printable characters appear here */",
       "column": "/** Grid column */",
       "colDef": "/** Column definition */",
@@ -8737,7 +8736,7 @@
     "type": {
       "values": "any[]",
       "value": "any",
-      "keyPress": "number | null",
+      "keyPress": "string | null",
       "charPress": "string | null",
       "column": "Column",
       "colDef": "ColDef",
@@ -8757,7 +8756,7 @@
     },
     "docs": {
       "value": "/** Current value of the cell */",
-      "keyPress": "/** Key code of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
+      "keyPress": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
       "charPress": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n * shift + letter 'a' only printable characters appear here */",
       "column": "/** Grid column */",
       "colDef": "/** Column definition */",
@@ -8781,7 +8780,7 @@
     "type": {
       "useFormatter": "boolean",
       "value": "any",
-      "keyPress": "number | null",
+      "keyPress": "string | null",
       "charPress": "string | null",
       "column": "Column",
       "colDef": "ColDef",
@@ -8801,7 +8800,7 @@
     },
     "docs": {
       "value": "/** Current value of the cell */",
-      "keyPress": "/** Key code of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
+      "keyPress": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
       "charPress": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n * shift + letter 'a' only printable characters appear here */",
       "column": "/** Grid column */",
       "colDef": "/** Column definition */",

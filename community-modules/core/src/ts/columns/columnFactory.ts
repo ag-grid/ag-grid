@@ -9,8 +9,8 @@ import { Autowired, Bean, Qualifier } from "../context/context";
 import { DefaultColumnTypes } from "../entities/defaultColumnTypes";
 import { BeanStub } from "../context/beanStub";
 import { Constants } from "../constants/constants";
-import { assign, iterateObject, mergeDeep } from '../utils/object';
-import { attrToNumber, attrToBoolean, find } from '../utils/generic';
+import { iterateObject, mergeDeep } from '../utils/object';
+import { attrToNumber, attrToBoolean } from '../utils/generic';
 import { removeFromArray } from '../utils/array';
 
 // takes ColDefs and ColGroupDefs and turns them into Columns and OriginalGroups
@@ -271,8 +271,8 @@ export class ColumnFactory extends BeanStub {
 
     private createMergedColGroupDef(colGroupDef: ColGroupDef | null): ColGroupDef {
         const colGroupDefMerged: ColGroupDef = {} as ColGroupDef;
-        assign(colGroupDefMerged, this.gridOptionsWrapper.getDefaultColGroupDef());
-        assign(colGroupDefMerged, colGroupDef);
+        Object.assign(colGroupDefMerged, this.gridOptionsWrapper.getDefaultColGroupDef());
+        Object.assign(colGroupDefMerged, colGroupDef);
         this.checkForDeprecatedItems(colGroupDefMerged);
 
         return colGroupDefMerged;
@@ -354,7 +354,7 @@ export class ColumnFactory extends BeanStub {
     }
 
     public findExistingColumn(newColDef: ColDef, existingColsCopy: Column[] | null): Column | null {
-        const res: Column | null = find(existingColsCopy, existingCol => {
+        const res: Column | undefined = (existingColsCopy || []).find(existingCol => {
 
             const existingColDef = existingCol.getUserProvidedColDef();
             if (!existingColDef) { return false; }
@@ -382,13 +382,13 @@ export class ColumnFactory extends BeanStub {
             removeFromArray(existingColsCopy, res);
         }
 
-        return res;
+        return res || null;
     }
 
     public findExistingGroup(newGroupDef: ColGroupDef, existingGroups: ProvidedColumnGroup[]): ProvidedColumnGroup | null {
-        const res: ProvidedColumnGroup | null = find(existingGroups, existingGroup => {
+        const res: ProvidedColumnGroup | undefined = existingGroups.find(existingGroup => {
 
-            const existingDef = existingGroup.getColGroupDef()
+            const existingDef = existingGroup.getColGroupDef();
             if (!existingDef) { return false; }
 
             const newHasId = newGroupDef.groupId != null;
@@ -406,7 +406,7 @@ export class ColumnFactory extends BeanStub {
             removeFromArray(existingGroups, res);
         }
 
-        return res;
+        return res || null;
     }
 
     public mergeColDefs(colDef: ColDef) {
@@ -453,7 +453,7 @@ export class ColumnFactory extends BeanStub {
         }
 
         // merge user defined with default column types
-        const allColumnTypes = assign({}, DefaultColumnTypes);
+        const allColumnTypes = Object.assign({}, DefaultColumnTypes);
         const userTypes = this.gridOptionsWrapper.getColumnTypes() || {};
 
         iterateObject(userTypes, (key, value) => {

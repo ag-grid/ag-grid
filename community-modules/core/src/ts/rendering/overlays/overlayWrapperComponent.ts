@@ -5,7 +5,7 @@ import { RefSelector } from '../../widgets/componentAnnotations';
 import { ILoadingOverlayComp } from './loadingOverlayComponent';
 import { INoRowsOverlayComp } from './noRowsOverlayComponent';
 import { AgPromise } from '../../utils';
-import { addOrRemoveCssClass, clearElement } from '../../utils/dom';
+import { clearElement } from '../../utils/dom';
 import { LayoutCssClasses, LayoutFeature, LayoutView, UpdateLayoutClassesParams } from "../../styling/layoutFeature";
 import { PaginationProxy } from "../../pagination/paginationProxy";
 import { Events } from "../../eventKeys";
@@ -41,9 +41,10 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     }
 
     public updateLayoutClasses(cssClass: string, params: UpdateLayoutClassesParams): void {
-        addOrRemoveCssClass(this.eOverlayWrapper, LayoutCssClasses.AUTO_HEIGHT, params.autoHeight);
-        addOrRemoveCssClass(this.eOverlayWrapper, LayoutCssClasses.NORMAL, params.normal);
-        addOrRemoveCssClass(this.eOverlayWrapper, LayoutCssClasses.PRINT, params.print);
+        const overlayWrapperClassList = this.eOverlayWrapper.classList;
+        overlayWrapperClassList.toggle(LayoutCssClasses.AUTO_HEIGHT, params.autoHeight);
+        overlayWrapperClassList.toggle(LayoutCssClasses.NORMAL, params.normal);
+        overlayWrapperClassList.toggle(LayoutCssClasses.PRINT, params.print);
     }
 
     @PostConstruct
@@ -63,8 +64,9 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
     }
 
     private setWrapperTypeClass(loadingType: LoadingType): void {
-        addOrRemoveCssClass(this.eOverlayWrapper, 'ag-overlay-loading-wrapper', loadingType === LoadingType.Loading);
-        addOrRemoveCssClass(this.eOverlayWrapper, 'ag-overlay-no-rows-wrapper', loadingType === LoadingType.NoRows);
+        const overlayWrapperClassList = this.eOverlayWrapper.classList;
+        overlayWrapperClassList.toggle('ag-overlay-loading-wrapper', loadingType === LoadingType.Loading);
+        overlayWrapperClassList.toggle('ag-overlay-no-rows-wrapper', loadingType === LoadingType.NoRows);
     }
 
     public showLoadingOverlay(): void {
@@ -87,7 +89,7 @@ export class OverlayWrapperComponent extends Component implements LayoutView {
             api: this.gridOptionsWrapper.getApi()!
         };
 
-        const compDetails = this.userComponentFactory.getNoRowsOverlayCompDetails(params);        
+        const compDetails = this.userComponentFactory.getNoRowsOverlayCompDetails(params);
         const promise = compDetails.newAgStackInstance();
 
         this.showOverlay(promise, LoadingType.NoRows);

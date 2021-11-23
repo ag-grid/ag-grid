@@ -12,7 +12,7 @@ let isIOS: boolean;
 let invisibleScrollbar: boolean;
 let browserScrollbarWidth: number;
 
-export function isBrowserIE(): boolean {
+function isBrowserIE(): boolean {
     if (isIE === undefined) {
         isIE = /*@cc_on!@*/false || !!(document as any).documentMode; // At least IE6
     }
@@ -75,24 +75,6 @@ export function getTabIndex(el: HTMLElement | null): string | null {
 
     const numberTabIndex = el.tabIndex;
     const tabIndex = el.getAttribute('tabIndex');
-
-    if (isBrowserIE() && numberTabIndex === 0 && tabIndex === null) {
-        const map: { [key: string]: boolean; } = {
-            a: true,
-            body: true,
-            button: true,
-            frame: true,
-            iframe: true,
-            img: true,
-            input: true,
-            isindex: true,
-            object: true,
-            select: true,
-            textarea: true
-        };
-
-        return map[el.nodeName.toLowerCase()] === true ? '0' : null;
-    }
 
     if (numberTabIndex === -1 && (tabIndex === null || (tabIndex === '' && !isBrowserFirefox()))) {
         return null;

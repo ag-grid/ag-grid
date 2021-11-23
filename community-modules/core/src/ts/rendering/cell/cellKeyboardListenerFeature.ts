@@ -5,14 +5,12 @@ import { Column } from "../../entities/column";
 import { RowNode } from "../../entities/rowNode";
 import { KeyCode } from "../../constants/keyCode";
 import { RowCtrl } from "../row/rowCtrl";
-import { getTarget } from "../../utils/event";
 import { isEventFromPrintableCharacter } from "../../utils/keyboard";
 
 export class CellKeyboardListenerFeature extends BeanStub {
 
     private readonly cellCtrl: CellCtrl;
     private readonly beans: Beans;
-    private readonly column: Column;
     private readonly rowNode: RowNode;
     private readonly rowCtrl: RowCtrl;
 
@@ -22,7 +20,6 @@ export class CellKeyboardListenerFeature extends BeanStub {
         super();
         this.cellCtrl = ctrl;
         this.beans = beans;
-        this.column = column;
         this.rowNode = rowNode;
         this.rowCtrl = rowCtrl;
     }
@@ -32,7 +29,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
     }
 
     public onKeyDown(event: KeyboardEvent): void {
-        const key = event.which || event.keyCode;
+        const key = event.key;
 
         switch (key) {
             case KeyCode.ENTER:
@@ -60,7 +57,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
         }
     }
 
-    private onNavigationKeyPressed(event: KeyboardEvent, key: number): void {
+    private onNavigationKeyPressed(event: KeyboardEvent, key: string): void {
         if (this.cellCtrl.isEditing()) { return; }
 
         if (event.shiftKey && this.cellCtrl.isRangeSelectionEnabled()) {
@@ -73,7 +70,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
         event.preventDefault();
     }
 
-    private onShiftRangeSelect(key: number): void {
+    private onShiftRangeSelect(key: string): void {
         if (!this.beans.rangeService) { return; }
 
         const endCell = this.beans.rangeService.extendLatestRangeInDirection(key);
@@ -87,7 +84,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
         this.beans.navigationService.onTabKeyDown(this.cellCtrl, event);
     }
 
-    private onBackspaceOrDeleteKeyPressed(key: number): void {
+    private onBackspaceOrDeleteKeyPressed(key: string): void {
         if (!this.cellCtrl.isEditing()) {
             this.cellCtrl.startRowOrCellEdit(key);
         }
@@ -128,7 +125,7 @@ export class CellKeyboardListenerFeature extends BeanStub {
     public onKeyPress(event: KeyboardEvent): void {
         // check this, in case focus is on a (for example) a text field inside the cell,
         // in which cse we should not be listening for these key pressed
-        const eventTarget = getTarget(event);
+        const eventTarget = event.target;
         const eventOnChildComponent = eventTarget !== this.eGui;
 
         if (eventOnChildComponent || this.cellCtrl.isEditing()) { return; }

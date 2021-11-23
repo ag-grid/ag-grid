@@ -43,7 +43,7 @@ export class LargeTextCellEditor extends PopupComponent implements ICellEditorCo
     }
 
     private onKeyDown(event: KeyboardEvent): void {
-        const key = event.which || event.keyCode;
+        const key = event.key;
 
         if (key === KeyCode.LEFT ||
             key === KeyCode.UP ||

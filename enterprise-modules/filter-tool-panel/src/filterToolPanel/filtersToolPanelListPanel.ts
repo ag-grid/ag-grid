@@ -359,12 +359,13 @@ export class FiltersToolPanelListPanel extends Component {
 
         this.filterGroupComps.forEach((filterGroup, idx) => {
             recursivelySearch(filterGroup, false);
+            const filterGroupClassList = filterGroup.getGui().classList;
             if (firstVisible === undefined) {
-                if (!_.containsClass(filterGroup.getGui(), 'ag-hidden')) {
+                if (!filterGroupClassList.contains('ag-hidden')) {
                     firstVisible = idx;
                     lastVisible = idx;
                 }
-            } else if (!_.containsClass(filterGroup.getGui(), 'ag-hidden') && lastVisible !== idx) {
+            } else if (!filterGroupClassList.contains('ag-hidden') && lastVisible !== idx) {
                 lastVisible = idx;
             }
         });
@@ -374,13 +375,14 @@ export class FiltersToolPanelListPanel extends Component {
 
     private setFirstAndLastVisible(firstIdx?: number, lastIdx?: number) {
         this.filterGroupComps.forEach((filterGroup, idx) => {
-            _.removeCssClass(filterGroup.getGui(), 'ag-first-group-visible');
-            _.removeCssClass(filterGroup.getGui(), 'ag-last-group-visible');
+            filterGroup.removeCssClass('ag-first-group-visible');
+            filterGroup.removeCssClass('ag-last-group-visible');
+
             if (idx === firstIdx) {
-                _.addCssClass(filterGroup.getGui(), 'ag-first-group-visible');
+                filterGroup.addCssClass('ag-first-group-visible')
             }
             if (idx === lastIdx) {
-                _.addCssClass(filterGroup.getGui(), 'ag-last-group-visible');
+                filterGroup.addCssClass('ag-last-group-visible')
             }
         });
     }

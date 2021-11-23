@@ -1,7 +1,7 @@
 import { Autowired } from "../context/context";
 import { PanelOptions, AgPanel } from "./agPanel";
 import { Component } from "./component";
-import { addCssClass, setDisplayed } from "../utils/dom";
+import { setDisplayed } from "../utils/dom";
 import { createIconNoSpan } from "../utils/icon";
 import { PopupService } from "./popupService";
 import { ResizableStructure } from "../rendering/features/positionableFeature";
@@ -52,7 +52,7 @@ export class AgDialog extends AgPanel {
         const eGui = this.getGui();
         const { movable, resizable, maximizable } = this.config as DialogOptions;
 
-        addCssClass(eGui, 'ag-dialog');
+        this.addCssClass('ag-dialog');
 
         super.postConstruct();
 
@@ -160,11 +160,11 @@ export class AgDialog extends AgPanel {
         const eGui = maximizeButtonComp.getGui();
 
         eGui.appendChild(this.maximizeIcon = createIconNoSpan('maximize', this.gridOptionsWrapper)!);
-        addCssClass(this.maximizeIcon, 'ag-panel-title-bar-button-icon');
+        this.maximizeIcon.classList.add('ag-panel-title-bar-button-icon');
 
         eGui.appendChild(this.minimizeIcon = createIconNoSpan('minimize', this.gridOptionsWrapper)!);
-        addCssClass(this.minimizeIcon, 'ag-panel-title-bar-button-icon');
-        addCssClass(this.minimizeIcon, 'ag-hidden');
+        this.minimizeIcon.classList.add('ag-panel-title-bar-button-icon');
+        this.minimizeIcon.classList.add('ag-hidden');
 
         maximizeButtonComp.addManagedListener(eGui, 'click', this.toggleMaximize.bind(this));
 

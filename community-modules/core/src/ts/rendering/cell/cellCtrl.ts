@@ -61,7 +61,6 @@ export interface ICellComp {
     setRole(role: string): void;
     setColId(colId: string): void;
     setTitle(title: string | undefined): void;
-    setUnselectable(value: 'on' | null): void;
     setTransition(value: string | undefined): void;
 
     setIncludeSelection(include: boolean): void;
@@ -243,7 +242,6 @@ export class CellCtrl extends BeanStub {
         this.cellComp.setRole('gridcell');
         this.cellComp.setAriaColIndex(ariaColIndex);
         this.cellComp.setColId(colIdSanitised!);
-        this.cellComp.setUnselectable(!this.beans.gridOptionsWrapper.isEnableCellTextSelection() ? 'on' : null);
 
         this.cellPositionFeature.setComp(comp);
         this.cellCustomStyleFeature.setComp(comp, scope);
@@ -357,7 +355,7 @@ export class CellCtrl extends BeanStub {
     }
 
     // either called internally if single cell editing, or called by rowRenderer if row editing
-    public startEditing(keyPress: number | null = null, charPress: string | null = null, cellStartedEdit = false): void {
+    public startEditing(keyPress: string | null = null, charPress: string | null = null, cellStartedEdit = false): void {
         if (!this.isCellEditable() || this.editing) { return; }
 
         const editorParams = this.createCellEditorParams(keyPress, charPress, cellStartedEdit);
@@ -488,10 +486,10 @@ export class CellCtrl extends BeanStub {
         this.setInlineEditingClass();
     }
 
-    private createCellEditorParams(keyPress: number | null, charPress: string | null, cellStartedEdit: boolean): ICellEditorParams {
+    private createCellEditorParams(key: string | null, charPress: string | null, cellStartedEdit: boolean): ICellEditorParams {
         const res: any = {
             value: this.getValueFromValueService(),
-            keyPress: keyPress,
+            keyPress: key,
             charPress: charPress,
             column: this.column,
             colDef: this.column.getColDef(),
@@ -916,7 +914,7 @@ export class CellCtrl extends BeanStub {
     }
 
     // called by rowRenderer when user navigates via tab key
-    public startRowOrCellEdit(keyPress?: number | null, charPress?: string | null): void {
+    public startRowOrCellEdit(keyPress?: string | null, charPress?: string | null): void {
         if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
             this.rowCtrl.startRowEditing(keyPress, charPress, this);
         } else {

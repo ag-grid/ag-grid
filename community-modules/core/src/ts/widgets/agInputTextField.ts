@@ -1,5 +1,4 @@
 import { AgAbstractInputField, IInputField } from './agAbstractInputField';
-import { some } from '../utils/array';
 import { exists } from '../utils/generic';
 
 export interface ITextInputField extends IInputField {
@@ -43,7 +42,7 @@ export class AgInputTextField extends AgAbstractInputField<HTMLInputElement, str
         this.addManagedListener(this.eInput, 'paste', e => {
             const text = e.clipboardData.getData('text');
 
-            if (some(text, (c: string) => !pattern.test(c))) {
+            if (text.some((c: string) => !pattern.test(c))) {
                 e.preventDefault();
             }
         });

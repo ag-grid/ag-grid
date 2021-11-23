@@ -3,7 +3,7 @@ import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor
 import { AgInputTextField } from "../../widgets/agInputTextField";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { exists } from "../../utils/generic";
-import { isBrowserSafari, isBrowserIE } from "../../utils/browser";
+import { isBrowserSafari } from "../../utils/browser";
 import { KeyCode } from '../../constants/keyCode';
 
 /**
@@ -59,9 +59,9 @@ export class TextCellEditor extends PopupComponent implements ICellEditorComp {
         }
 
         this.addManagedListener(eInput.getGui(), 'keydown', (event: KeyboardEvent) => {
-            const { keyCode } = event;
+            const { key } = event;
 
-            if (keyCode === KeyCode.PAGE_UP || keyCode === KeyCode.PAGE_DOWN) {
+            if (key === KeyCode.PAGE_UP || key === KeyCode.PAGE_DOWN) {
                 event.preventDefault();
             }
         });
@@ -107,13 +107,6 @@ export class TextCellEditor extends PopupComponent implements ICellEditorComp {
 
         focusEl.focus();
         inputEl.select();
-    }
-
-    public focusOut(): void {
-        const inputEl = this.eInput.getInputElement();
-        if (isBrowserIE()) {
-            inputEl.setSelectionRange(0, 0);
-        }
     }
 
     public getValue(): any {

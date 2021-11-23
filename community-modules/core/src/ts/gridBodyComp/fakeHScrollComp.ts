@@ -2,7 +2,7 @@ import { Component } from "../widgets/component";
 import { RefSelector } from "../widgets/componentAnnotations";
 import { PostConstruct } from "../context/context";
 import { FakeHScrollCtrl, IFakeHScrollComp } from "./fakeHScrollCtrl";
-import { addOrRemoveCssClass, setFixedHeight, setFixedWidth } from "../utils/dom";
+import { setFixedHeight, setFixedWidth } from "../utils/dom";
 import { CenterWidthFeature } from "./centerWidthFeature";
 
 export class FakeHScrollComp extends Component {
@@ -36,9 +36,9 @@ export class FakeHScrollComp extends Component {
             setRightSpacerFixedWidth: width => setFixedWidth(this.eRightSpacer, width),
             setLeftSpacerFixedWidth: width => setFixedWidth(this.eLeftSpacer, width),
             includeLeftSpacerScrollerCss: (cssClass: string, include: boolean) =>
-                addOrRemoveCssClass(this.eLeftSpacer, cssClass, include),
+                this.eLeftSpacer.classList.toggle(cssClass, include),
             includeRightSpacerScrollerCss: (cssClass: string, include: boolean) =>
-                addOrRemoveCssClass(this.eRightSpacer, cssClass, include),
+                this.eRightSpacer.classList.toggle(cssClass, include),
         };
         const ctrl = this.createManagedBean(new FakeHScrollCtrl());
         ctrl.setComp(compProxy, this.getGui(), this.eViewport, this.eContainer);

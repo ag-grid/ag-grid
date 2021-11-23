@@ -1,7 +1,6 @@
-import { UserCompDetails, UserComponentFactory } from "../../../components/framework/userComponentFactory";
-import { Autowired, PostConstruct, PreDestroy } from "../../../context/context";
+import { UserCompDetails } from "../../../components/framework/userComponentFactory";
+import { PostConstruct, PreDestroy } from "../../../context/context";
 import { Column } from "../../../entities/column";
-import { Beans } from "../../../rendering/beans";
 import { removeAriaSort, setAriaDescribedBy, setAriaSort } from "../../../utils/aria";
 import { RefSelector } from "../../../widgets/componentAnnotations";
 import { AbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellComp";
@@ -11,7 +10,7 @@ import { IHeaderComp } from "./headerComp";
 export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
 
     private static TEMPLATE = /* html */
-        `<div class="ag-header-cell" role="columnheader" unselectable="on" tabindex="-1">
+        `<div class="ag-header-cell" role="columnheader" tabindex="-1">
             <div ref="eResize" class="ag-header-cell-resize" role="presentation"></div>
         </div>`;
 
@@ -52,7 +51,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
             setTitle: title => setAttribute('title', title),
             setAriaDescribedBy: value => setAriaDescribedBy(eGui, value),
             setUserCompDetails: compDetails => this.setUserCompDetails(compDetails),
-            getUserCompInstance: ()=> this.headerComp
+            getUserCompInstance: () => this.headerComp
         };
 
         this.ctrl.setComp(compProxy, this.getGui(), this.eResize);
@@ -75,7 +74,7 @@ export class HeaderCellComp extends AbstractHeaderCellComp<HeaderCellCtrl> {
 
         const versionCopy = this.headerCompVersion;
 
-        compDetails.newAgStackInstance()!.then( comp => this.afterCompCreated(versionCopy, comp) );
+        compDetails.newAgStackInstance()!.then(comp => this.afterCompCreated(versionCopy, comp));
     }
 
     private afterCompCreated(version: number, headerComp: IHeaderComp): void {

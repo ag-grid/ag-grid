@@ -72,8 +72,8 @@ export class ToolPanelColumnGroupComp extends Component {
         this.setTemplate(ToolPanelColumnGroupComp.TEMPLATE);
 
         this.eDragHandle = _.createIconNoSpan('columnDrag', this.gridOptionsWrapper)!;
-        _.addCssClass(this.eDragHandle, 'ag-drag-handle');
-        _.addCssClass(this.eDragHandle, 'ag-column-select-column-group-drag-handle');
+        this.eDragHandle.classList.add('ag-drag-handle');
+        this.eDragHandle.classList.add('ag-column-select-column-group-drag-handle');
 
         const checkboxGui = this.cbSelect.getGui();
         const checkboxInput = this.cbSelect.getInputElement();
@@ -137,7 +137,7 @@ export class ToolPanelColumnGroupComp extends Component {
     }
 
     private handleKeyDown(e: KeyboardEvent): void {
-        switch (e.keyCode) {
+        switch (e.key) {
             case KeyCode.LEFT:
                 e.preventDefault();
                 this.modelItem.setExpanded(false);
@@ -271,7 +271,7 @@ export class ToolPanelColumnGroupComp extends Component {
         this.processingColumnStateChange = true;
         this.cbSelect.setValue(selectedValue);
         this.cbSelect.setReadOnly(readOnlyValue);
-        _.addOrRemoveCssClass(this.getGui(), 'ag-column-select-column-group-readonly', readOnlyValue);
+        this.addOrRemoveCssClass('ag-column-select-column-group-readonly', readOnlyValue)
         this.processingColumnStateChange = false;
     }
 

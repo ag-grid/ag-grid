@@ -12,7 +12,6 @@ import { isElementInEventPath, isStopPropagationForAgGrid, stopPropagationForAgG
 import { doOnce } from "../../utils/function";
 import { missing } from "../../utils/generic";
 import { createIconNoSpan } from "../../utils/icon";
-import { isKeyPressed } from "../../utils/keyboard";
 import { cloneObject } from "../../utils/object";
 import { ExpressionService } from "../../valueService/expressionService";
 import { CheckboxSelectionComponent } from "../checkboxSelectionComponent";
@@ -618,7 +617,7 @@ export class GroupCellRendererCtrl extends BeanStub {
     }
 
     private onKeyDown(event: KeyboardEvent): void {
-        const enterKeyPressed = isKeyPressed(event, KeyCode.ENTER);
+        const enterKeyPressed = event.key === KeyCode.ENTER;
 
         if (!enterKeyPressed || this.params.suppressEnterExpand) { return; }
 

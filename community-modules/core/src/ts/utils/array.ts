@@ -12,11 +12,6 @@ export function firstExistingValue<A>(...values: A[]): A | null {
     return null;
 }
 
-/** @deprecated */
-export function anyExists(values: any[]): boolean {
-    return values && firstExistingValue(values) != null;
-}
-
 export function existsAndNotEmpty<T>(value?: T[]): boolean {
     return value != null && value.length > 0;
 }
@@ -37,7 +32,7 @@ export function areEqual<T>(a?: T[] | null, b?: T[] | null, comparator?: (a: T, 
     return a != null &&
         b != null &&
         a.length === b.length &&
-        every(a, (value, index) => comparator ? comparator(value, b[index]) : b[index] === value);
+        a.every((value, index) => comparator ? comparator(value, b[index]) : b[index] === value);
 }
 
 /** @deprecated */
@@ -76,7 +71,7 @@ export function removeFromArray<T>(array: T[], object: T) {
 }
 
 export function removeAllFromArray<T>(array: T[], toRemove: T[]) {
-    forEach(toRemove, item => removeFromArray(array, item));
+    toRemove.forEach(item => removeFromArray(array, item));
 }
 
 export function insertIntoArray<T>(array: T[], object: T, toIndex: number) {
@@ -99,7 +94,7 @@ export function moveInArray<T>(array: T[], objectsToMove: T[], toIndex: number) 
 
     // now add the objects, in same order as provided to us, that means we start at the end
     // as the objects will be pushed to the right as they are inserted
-    forEach(objectsToMove.slice().reverse(), obj => insertIntoArray(array, obj, toIndex));
+    objectsToMove.slice().reverse().forEach(obj => insertIntoArray(array, obj, toIndex));
 }
 
 export function includes<T>(array: T[], value: T): boolean {
@@ -113,82 +108,11 @@ export function flatten(arrayOfArrays: any[]): any[] {
 export function pushAll<T>(target: T[], source: T[]): void {
     if (source == null || target == null) { return; }
 
-    forEach(source, value => target.push(value));
+    source.forEach(value => target.push(value));
 }
 
 export function toStrings<T>(array: T[]): ((string | null)[]) | null {
-    return map(array, toStringOrNull);
-}
-
-export function findIndex<T>(collection: T[], predicate: (item: T, idx: number, collection: T[]) => boolean): number {
-    for (let i = 0; i < collection.length; i++) {
-        if (predicate(collection[i], i, collection)) {
-            return i;
-        }
-    }
-
-    return -1;
-}
-
-export function fill(collection: any[], value: any = null, start: number = 0, end: number = collection.length): any[] {
-    for (let i = start; i < end; i++) {
-        collection[i] = value;
-    }
-
-    return collection;
-}
-
-/**
- * The implementation of Array.prototype.every in browsers is always slower than just using a simple for loop, so
- * use this for improved performance.
- * https://jsbench.me/bek91dtit8/
- */
-export function every<T>(list: T[], predicate: (value: T, index: number) => boolean): boolean {
-    if (list == null) {
-        return true;
-    }
-
-    for (let i = 0; i < list.length; i++) {
-        if (!predicate(list[i], i)) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-/**
- * The implementation of Array.prototype.some in browsers is always slower than just using a simple for loop, so
- * use this for improved performance.
- * https://jsbench.me/5dk91e4tmt/
- */
-export function some<T>(list: T[], predicate: (value: T, index: number) => boolean): boolean {
-    if (list == null) {
-        return false;
-    }
-
-    for (let i = 0; i < list.length; i++) {
-        if (predicate(list[i], i)) {
-            return true;
-        }
-    }
-
-    return false;
-}
-
-/**
- * The implementation of Array.prototype.forEach in browsers is often slower than just using a simple for loop, so
- * use this for improved performance.
- * https://jsbench.me/apk91elt8a/
- */
-export function forEach<T>(list: T[], action: (value: T, index: number) => void): void {
-    if (list == null) {
-        return;
-    }
-
-    for (let i = 0; i < list.length; i++) {
-        action(list[i], i);
-    }
+    return array.map(toStringOrNull);
 }
 
 export function forEachReverse<T>(list: T[], action: (value: T, index: number) => void): void {
@@ -199,74 +123,4 @@ export function forEachReverse<T>(list: T[], action: (value: T, index: number) =
     for (let i = list.length - 1; i >= 0; i--) {
         action(list[i], i);
     }
-}
-
-/**
- * The implementation of Array.prototype.map in browsers is generally the same as just using a simple for loop. However,
- * Firefox does exhibit some difference, and this performs no worse in other browsers, so use this if you want improved
- * performance.
- * https://jsbench.me/njk91ez8pc/
- */
-export function map<T, V>(list: T[], process: (value: T, index: number) => V): V[] | null {
-    if (list == null) {
-        return null;
-    }
-
-    const mapped: V[] = [];
-
-    for (let i = 0; i < list.length; i++) {
-        mapped.push(process(list[i], i));
-    }
-
-    return mapped;
-}
-
-/**
- * The implementation of Array.prototype.filter in browsers is always slower than just using a simple for loop, so
- * use this for improved performance.
- * https://jsbench.me/7bk91fk08c/
- */
-
-export function filter<T>(list: T[], predicate: (value: T, index: number) => boolean): T[] | null {
-    if (list == null) {
-        return null;
-    }
-
-    const filtered: T[] = [];
-
-    for (let i = 0; i < list.length; i++) {
-        if (predicate(list[i], i)) {
-            filtered.push(list[i]);
-        }
-    }
-
-    return filtered;
-}
-
-/**
- * The implementation of Array.prototype.reduce in browsers is generally the same as just using a simple for loop. However,
- * Chrome does exhibit some difference, and this performs no worse in other browsers, so use this if you want improved
- * performance.
- * https://jsbench.me/7vk92n6u1f/
- */
-export function reduce<T, V>(list: T[], step: (acc: V, value: T, index: number) => V, initial: V): V | null {
-    if (list == null || initial == null) {
-        return null;
-    }
-
-    let result = initial;
-
-    for (let i = 0; i < list.length; i++) {
-        result = step(result, list[i], i);
-    }
-
-    return result;
-}
-
-/** @deprecated */
-export function forEachSnapshotFirst<T>(list: T[], callback: (item: T) => void): void {
-    if (!list) { return; }
-
-    const arrayCopy = list.slice(0);
-    arrayCopy.forEach(callback);
 }

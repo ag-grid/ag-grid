@@ -176,7 +176,7 @@ export class FontPanel extends Component {
             { name: 'boldItalic', weight: 'bold', style: 'italic' }
         ];
 
-        let selectedOption = _.find(weightStyles, x => x.weight === weight && x.style === style);
+        let selectedOption = weightStyles.find(x => x.weight === weight && x.style === style);
 
         if (!selectedOption) {
             selectedOption = { name: 'predefined', weight, style };
@@ -192,7 +192,7 @@ export class FontPanel extends Component {
             .setInputWidth('flex')
             .setValue(selectedOption.name)
             .onValueChange(newValue => {
-                const selectedWeightStyle = _.find(weightStyles, x => x.name === newValue);
+                const selectedWeightStyle = weightStyles.find(x => x.name === newValue);
 
                 this.params.setFont({ weight: selectedWeightStyle!.weight, style: selectedWeightStyle!.style });
             });

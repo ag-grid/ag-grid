@@ -5,7 +5,6 @@ import { ProvidedColumnGroup } from "../entities/providedColumnGroup";
 import { Column } from "../entities/column";
 import { Bean } from "../context/context";
 import { BeanStub } from "../context/beanStub";
-import { getMaxSafeInteger } from "../utils/number";
 import { attrToNumber } from "../utils/generic";
 import { ColDef } from "../entities/colDef";
 
@@ -18,7 +17,7 @@ export class ColumnUtils extends BeanStub {
     }
 
     public calculateColMaxWidth(colDef: ColDef): number {
-        return colDef.maxWidth != null ? colDef.maxWidth : (this.gridOptionsWrapper.getMaxColWidth() || getMaxSafeInteger());
+        return colDef.maxWidth != null ? colDef.maxWidth : (this.gridOptionsWrapper.getMaxColWidth() || Number.MAX_SAFE_INTEGER);
     }
 
     public calculateColInitialWidth(colDef: ColDef): number {

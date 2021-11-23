@@ -19,7 +19,7 @@ export interface IRangeService {
     setRangeToCell(cell: CellPosition, appendRange?: boolean): void;
     setCellRange(params: CellRangeParams): void;
     addCellRange(params: CellRangeParams): void;
-    extendLatestRangeInDirection(key: number): CellPosition | undefined;
+    extendLatestRangeInDirection(key: string): CellPosition | undefined;
     extendLatestRangeToCell(cell: CellPosition): void;
     updateRangeEnd(cellRange: CellRange, cellPosition: CellPosition, silent?: boolean): void;
     getRangeStartRow(cellRange: CellRange): RowPosition;

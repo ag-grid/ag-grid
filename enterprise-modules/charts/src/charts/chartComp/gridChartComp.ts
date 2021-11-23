@@ -123,7 +123,7 @@ export class GridChartComp extends Component {
 
         const isRtl = this.gridOptionsWrapper.isEnableRtl();
 
-        _.addCssClass(this.getGui(), isRtl ? 'ag-rtl' : 'ag-ltr');
+        this.addCssClass(isRtl ? 'ag-rtl' : 'ag-ltr');
 
         this.model = this.createBean(new ChartDataModel(modelParams));
         this.chartController = this.createManagedBean(new ChartController(this.model));
@@ -211,7 +211,7 @@ export class GridChartComp extends Component {
 
         const canvas = this.eChart.querySelector('canvas');
         if (canvas) {
-            _.addCssClass(canvas, 'ag-charts-canvas');
+            canvas.classList.add('ag-charts-canvas');
         }
 
         this.chartController.setChartProxy(this.chartProxy);

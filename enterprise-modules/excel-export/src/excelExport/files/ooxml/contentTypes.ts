@@ -5,7 +5,7 @@ import contentTypeFactory from './contentType';
 const contentTypesFactory: ExcelOOXMLTemplate = {
     getTemplate(sheetLen: number) {
 
-        const worksheets = _.fill(new Array(sheetLen), undefined).map((v, i) => ({
+        const worksheets = new Array(sheetLen).fill(undefined).map((v, i) => ({
             name: 'Override',
             ContentType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml',
             PartName: `/xl/worksheets/sheet${i + 1}.xml`
@@ -18,7 +18,7 @@ const contentTypesFactory: ExcelOOXMLTemplate = {
             imageTypesObject[v.type] = true;
         });
 
-        const imageDocs = _.fill(new Array(sheetsWithImages), undefined).map((v, i) => ({
+        const imageDocs = new Array(sheetsWithImages).fill(undefined).map((v, i) => ({
             name: 'Override',
             ContentType: 'application/vnd.openxmlformats-officedocument.drawing+xml',
             PartName: `/xl/drawings/drawing${i + 1}.xml`

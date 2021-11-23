@@ -2,7 +2,7 @@ import { Autowired } from "../../context/context";
 import { ICellRenderer } from "./iCellRenderer";
 import { Component } from "../../widgets/component";
 import { FilterManager } from "../../filter/filterManager";
-import { loadTemplate, addCssClass, clearElement } from "../../utils/dom";
+import { loadTemplate, clearElement } from "../../utils/dom";
 import { missing, exists } from "../../utils/generic";
 
 export class AnimateSlideCellRenderer extends Component implements ICellRenderer {
@@ -52,7 +52,7 @@ export class AnimateSlideCellRenderer extends Component implements ICellRenderer
         // complex set of setTimeout below creates the animation
         window.setTimeout(() => {
             if (refreshCountCopy !== this.refreshCount) { return; }
-            addCssClass(this.ePrevious!, 'ag-value-slide-out-end');
+            this.ePrevious!.classList.add('ag-value-slide-out-end');
         }, 50);
 
         window.setTimeout(() => {

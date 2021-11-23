@@ -18,9 +18,9 @@ import { doOnce } from "../../../utils/function";
 export interface IHeaderGroupParams {
     /** The column group the header is for. */
     columnGroup: ColumnGroup;
-    /** 
+    /**
      * The text label to render.
-     * If the column is using a headerValueGetter, the displayName will take this into account.  
+     * If the column is using a headerValueGetter, the displayName will take this into account.
      */
     displayName: string;
     /** Opens / closes the column group */

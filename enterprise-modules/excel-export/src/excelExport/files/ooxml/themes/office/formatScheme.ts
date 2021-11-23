@@ -116,7 +116,7 @@ const getEffectStyle = (shadow?: [string, string, string, string, string]): XmlE
 
     return {
         name: 'a:effectStyle',
-        children: [_.assign({}, {
+        children: [Object.assign({}, {
             name: 'a:effectLst'
         }, children.length ? {children} : {})]
     };

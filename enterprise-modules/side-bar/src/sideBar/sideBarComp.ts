@@ -98,10 +98,10 @@ export class SideBarComp extends Component implements ISideBar {
         const sideBarGui = this.sideBarButtonsComp.getGui();
         const buttons: HTMLElement[] = Array.prototype.slice.call(sideBarGui.querySelectorAll('.ag-side-button'));
         const currentButton = document.activeElement;
-        const currentPos = _.findIndex(buttons, button => button.contains(currentButton))
+        const currentPos = buttons.findIndex(button => button.contains(currentButton))
         let nextPos: number | null = null;
 
-        switch (e.keyCode) {
+        switch (e.key) {
             case KeyCode.LEFT:
             case KeyCode.UP:
                 nextPos = Math.max(0, currentPos - 1);
@@ -167,10 +167,8 @@ export class SideBarComp extends Component implements ISideBar {
         const isLeft =  position === 'left';
         const resizerSide = isLeft ? 'right' : 'left';
 
-        const eGui = this.getGui();
-
-        _.addOrRemoveCssClass(eGui, 'ag-side-bar-left', isLeft);
-        _.addOrRemoveCssClass(eGui, 'ag-side-bar-right', !isLeft);
+        this.addOrRemoveCssClass('ag-side-bar-left', isLeft);
+        this.addOrRemoveCssClass('ag-side-bar-right', !isLeft)
 
         this.toolPanelWrappers.forEach(wrapper => {
             wrapper.setResizerSizerSide(resizerSide);

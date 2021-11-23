@@ -90,14 +90,14 @@ export class ToolPanelColDefService extends BeanStub {
                     // skip over padding groups
                     leafPathTree = childDef;
                 } else {
-                    const groupDef = _.assign({}, node.getColGroupDef());
+                    const groupDef = Object.assign({}, node.getColGroupDef());
                     // ensure group contains groupId
                     groupDef.groupId = node.getGroupId();
                     groupDef.children = [childDef];
                     leafPathTree = groupDef;
                 }
             } else {
-                const colDef = _.assign({}, node.getColDef());
+                const colDef = Object.assign({}, node.getColDef());
                 // ensure col contains colId
                 colDef.colId = node.getColId();
                 leafPathTree = colDef;

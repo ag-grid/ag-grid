@@ -69,8 +69,8 @@ export class TabbedChartMenu extends Component {
         ChildClass: new (controller: ChartController, chartOptionsService: ChartOptionsService) => Component
     ): { comp: Component, tab: TabbedItem; } {
         const eWrapperDiv = document.createElement('div');
-        _.addCssClass(eWrapperDiv, 'ag-chart-tab');
-        _.addCssClass(eWrapperDiv, `ag-chart-${title}`);
+        eWrapperDiv.classList.add('ag-chart-tab');
+        eWrapperDiv.classList.add(`ag-chart-${title}`);
 
         const comp = new ChildClass(this.chartController, this.chartOptionsService);
         this.getContext().createBean(comp);

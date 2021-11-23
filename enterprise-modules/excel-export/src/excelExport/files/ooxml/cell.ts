@@ -54,7 +54,7 @@ const cellFactory: ExcelOOXMLTemplate = {
             }];
         }
 
-        return _.assign({}, obj, { children });
+        return Object.assign({}, obj, { children });
     }
 };
 

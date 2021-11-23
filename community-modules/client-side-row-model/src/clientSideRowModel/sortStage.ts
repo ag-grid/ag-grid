@@ -36,7 +36,7 @@ export class SortStage extends BeanStub {
         const dirtyLeafNodes = deltaSort ? this.calculateDirtyNodes(params.rowNodeTransactions) : null;
 
         const noAggregations = _.missingOrEmpty(this.columnModel.getValueColumns());
-        const sortContainsGroupColumns = _.some(sortOptions, opt => !!opt.column.getColDef().showRowGroup);
+        const sortContainsGroupColumns = sortOptions.some(opt => !!opt.column.getColDef().showRowGroup);
 
         this.sortService.sort(sortOptions, sortActive, deltaSort, dirtyLeafNodes, params.changedPath, noAggregations, sortContainsGroupColumns);
     }

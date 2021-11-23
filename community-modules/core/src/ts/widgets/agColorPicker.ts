@@ -2,7 +2,6 @@ import { AgColorPanel } from "./agColorPanel";
 import { AgDialog } from "./agDialog";
 import { IAgLabel } from "./agAbstractLabel";
 import { AgPickerField } from "./agPickerField";
-import { addCssClass } from "../utils/dom";
 
 interface ColorPickerConfig extends IAgLabel {
     color: string;
@@ -40,7 +39,7 @@ export class AgColorPicker extends AgPickerField<HTMLElement, string> {
 
         this.isPickerDisplayed = true;
 
-        addCssClass(colorDialog.getGui(), 'ag-color-dialog');
+        colorDialog.addCssClass('ag-color-dialog');
 
         const colorPanel = this.createBean(new AgColorPanel({ picker: this }));
 

@@ -2,7 +2,7 @@ import { RowNode } from "../entities/rowNode";
 import { Bean, PostConstruct } from "../context/context";
 import { IsRowSelectable } from "../entities/gridOptions";
 import { BeanStub } from "../context/beanStub";
-import { find, exists } from "../utils/generic";
+import { exists } from "../utils/generic";
 
 @Bean('selectableService')
 export class SelectableService extends BeanStub {
@@ -45,7 +45,7 @@ export class SelectableService extends BeanStub {
 
             if (this.groupSelectsChildren) {
                 // have this group selectable if at least one direct child is selectable
-                const firstSelectable = find(nextChildrenFunc(child), 'selectable', true);
+                const firstSelectable = (nextChildrenFunc(child) || []).find(rowNode => rowNode.selectable ===  true);
                 rowSelectable = exists(firstSelectable);
             } else {
                 // directly retrieve selectable value from user callback

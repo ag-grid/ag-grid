@@ -70,7 +70,7 @@ export abstract class AgPickerField<TElement extends HTMLElement, TValue> extend
         });
 
         this.addManagedListener(eGui, 'keydown', (e: KeyboardEvent) => {
-            switch (e.keyCode) {
+            switch (e.key) {
                 case KeyCode.UP:
                 case KeyCode.DOWN:
                 case KeyCode.ENTER:

@@ -1,9 +1,8 @@
 import { IDoesFilterPassParams, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
 import { Autowired, PostConstruct } from '../../context/context';
 import { IRowModel } from '../../interfaces/iRowModel';
-import { Constants } from '../../constants/constants';
 import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
-import { loadTemplate, addCssClass, setDisabled } from '../../utils/dom';
+import { loadTemplate, setDisabled } from '../../utils/dom';
 import { debounce } from '../../utils/function';
 import { AgPromise } from '../../utils/promise';
 import { PopupEventParams } from '../../widgets/popupService';
@@ -28,7 +27,7 @@ export interface IProvidedFilterParams extends IFilterParams {
  * Contains common logic to all provided filters (apply button, clear button, etc).
  * All the filters that come with AG Grid extend this class. User filters do not
  * extend this class.
- * 
+ *
  * @param M type of filter-model managed by the concrete sub-class that extends this type
  * @param V type of value managed by the concrete sub-class that extends this type
  */
@@ -135,7 +134,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IFilterC
 
         const eButtonsPanel = document.createElement('div');
 
-        addCssClass(eButtonsPanel, 'ag-filter-apply-panel');
+        eButtonsPanel.classList.add('ag-filter-apply-panel');
 
         const addButton = (type: FilterButtonType): void => {
             let text;

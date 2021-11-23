@@ -43,7 +43,7 @@ beforeEach(() => {
     context = mock<Context>('createBean');
     context.createBean.mockImplementation(bean => bean);
 
-    eMiniFilter = mock<AgInputTextField>('getGui', 'getValue', 'setValue', 'onValueChange', 'getInputElement', 'setInputAriaLabel');
+    eMiniFilter = mock<AgInputTextField>('getGui', 'getValue', 'setValue', 'setDisplayed', 'onValueChange', 'getInputElement', 'setInputAriaLabel');
     eMiniFilter.getGui.mockImplementation(() => mock<HTMLElement>());
     eMiniFilter.getInputElement.mockImplementation(() => mock<HTMLInputElement>('addEventListener'));
 

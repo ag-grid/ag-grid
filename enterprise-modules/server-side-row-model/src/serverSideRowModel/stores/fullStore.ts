@@ -195,7 +195,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         if (!this.isAlive()) { return; }
 
         if (params.storeInfo) {
-            _.assign(this.info, params.storeInfo);
+            Object.assign(this.info, params.storeInfo);
         }
 
         const nodesToRecycle = this.allRowNodes.length > 0 ? this.allNodesMap : undefined;
@@ -436,7 +436,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
     public getChildStore(keys: string[]): IServerSideStore | null {
         return this.storeUtils.getChildStore(keys, this, (key: string) => {
-            const rowNode = _.find(this.allRowNodes, currentRowNode => currentRowNode.key === key);
+            const rowNode = this.allRowNodes.find(currentRowNode => currentRowNode.key === key);
 
             return rowNode!;
         });
@@ -618,7 +618,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
             }
         } else {
             // find rowNode using object references
-            rowNode = _.find(this.allRowNodes, currentRowNode => currentRowNode.data === data)!;
+            rowNode = this.allRowNodes.find(currentRowNode => currentRowNode.data === data)!;
             if (!rowNode) {
                 console.error(`AG Grid: could not find data item as object was not found`, data);
                 return null;

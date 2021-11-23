@@ -16,7 +16,7 @@ export class WatermarkComp extends Component {
     private postConstruct(): void {
         const show = this.shouldDisplayWatermark();
 
-        _.addOrRemoveCssClass(this.getGui(), 'ag-hidden', !show);
+        this.addOrRemoveCssClass('ag-hidden', !show);
 
         if (show) {
             this.eLicenseTextRef.innerText = this.licenseManager.getWatermarkMessage();

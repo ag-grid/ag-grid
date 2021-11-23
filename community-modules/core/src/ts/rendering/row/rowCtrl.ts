@@ -10,12 +10,11 @@ import { CellFocusedEvent, Events, RowClickedEvent, RowDoubleClickedEvent, RowEd
 import { IFrameworkOverrides } from "../../interfaces/iFrameworkOverrides";
 import { ModuleNames } from "../../modules/moduleNames";
 import { ModuleRegistry } from "../../modules/moduleRegistry";
-import { addCssClass, addOrRemoveCssClass, isElementChildOfClass, removeCssClass } from "../../utils/dom";
+import { isElementChildOfClass } from "../../utils/dom";
 import { isStopPropagationForAgGrid } from "../../utils/event";
 import { doOnce, executeNextVMTurn } from "../../utils/function";
-import { exists, find } from "../../utils/generic";
+import { exists } from "../../utils/generic";
 import { convertToMap } from "../../utils/map";
-import { assign } from "../../utils/object";
 import { escapeString } from "../../utils/string";
 import { Beans } from "../beans";
 import { CellCtrl } from "../cell/cellCtrl";
@@ -711,7 +710,7 @@ export class RowCtrl extends BeanStub {
     }
 
     public onKeyboardNavigate(keyboardEvent: KeyboardEvent) {
-        const currentFullWidthComp = find(this.allRowGuis, c => c.element.contains(keyboardEvent.target as HTMLElement));
+        const currentFullWidthComp = this.allRowGuis.find(c => c.element.contains(keyboardEvent.target as HTMLElement));
         const currentFullWidthContainer = currentFullWidthComp ? currentFullWidthComp.element : null;
         const isFullWidthContainerFocused = currentFullWidthContainer === keyboardEvent.target;
 
@@ -725,13 +724,13 @@ export class RowCtrl extends BeanStub {
             column: (lastFocusedCell && lastFocusedCell.column) as Column
         };
 
-        this.beans.navigationService.navigateToNextCell(keyboardEvent, keyboardEvent.keyCode, cellPosition, true);
+        this.beans.navigationService.navigateToNextCell(keyboardEvent, keyboardEvent.key, cellPosition, true);
         keyboardEvent.preventDefault();
     }
 
     public onTabKeyDown(keyboardEvent: KeyboardEvent) {
         if (keyboardEvent.defaultPrevented || isStopPropagationForAgGrid(keyboardEvent)) { return; }
-        const currentFullWidthComp = find(this.allRowGuis, c => c.element.contains(keyboardEvent.target as HTMLElement));
+        const currentFullWidthComp = this.allRowGuis.find(c => c.element.contains(keyboardEvent.target as HTMLElement));
         const currentFullWidthContainer = currentFullWidthComp ? currentFullWidthComp.element : null;
         const isFullWidthContainerFocused = currentFullWidthContainer === keyboardEvent.target;
         let nextEl: HTMLElement | null = null;
@@ -751,7 +750,7 @@ export class RowCtrl extends BeanStub {
 
         const element = this.fullWidthGui ? this.fullWidthGui.element : this.centerGui.element;
 
-        addOrRemoveCssClass(element, 'ag-full-width-focus', isFocused);
+        element.classList.toggle('ag-full-width-focus', isFocused);
         if (isFocused) {
             // we don't scroll normal rows into view when we focus them, so we don't want
             // to scroll Full Width rows either.
@@ -1032,7 +1031,7 @@ export class RowCtrl extends BeanStub {
         this.beans.eventService.dispatchEvent(event);
     }
 
-    public startRowEditing(keyPress: number | null = null, charPress: string | null = null, sourceRenderedCell: CellCtrl | null = null): void {
+    public startRowEditing(keyPress: string | null = null, charPress: string | null = null, sourceRenderedCell: CellCtrl | null = null): void {
         // don't do it if already editing
         if (this.editingRow) { return; }
 
@@ -1129,7 +1128,7 @@ export class RowCtrl extends BeanStub {
             rowStyleFuncResult = rowStyleFunc(params);
         }
 
-        return assign({}, rowStyle, rowStyleFuncResult);
+        return Object.assign({}, rowStyle, rowStyleFuncResult);
     }
 
     private onRowSelected(): void {
@@ -1183,12 +1182,12 @@ export class RowCtrl extends BeanStub {
             // toggles this property mid way, we remove the hover form the last row, but we stop
             // adding hovers from that point onwards.
             if (!this.beans.gridOptionsWrapper.isSuppressRowHoverHighlight()) {
-                addCssClass(eRow, 'ag-row-hover');
+                eRow.classList.add('ag-row-hover');
             }
         });
 
         this.addManagedListener(this.rowNode, RowNode.EVENT_MOUSE_LEAVE, () => {
-            removeCssClass(eRow, 'ag-row-hover');
+            eRow.classList.remove('ag-row-hover');
         });
     }
 

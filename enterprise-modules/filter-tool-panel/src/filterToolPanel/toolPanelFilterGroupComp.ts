@@ -60,7 +60,7 @@ export class ToolPanelFilterGroupComp extends Component {
         this.setGroupTitle();
         this.filterGroupComp.setAlignItems('stretch');
 
-        _.addCssClass(this.filterGroupComp.getGui(), `ag-filter-toolpanel-group-level-${this.depth}`);
+        this.filterGroupComp.addCssClass(`ag-filter-toolpanel-group-level-${this.depth}`);
         this.filterGroupComp.addCssClassToTitleBar(`ag-filter-toolpanel-group-level-${this.depth}-header`);
 
         this.childFilterComps.forEach(filterComp => {
@@ -135,11 +135,11 @@ export class ToolPanelFilterGroupComp extends Component {
     }
 
     public hideGroup(hide: boolean) {
-        _.addOrRemoveCssClass(this.getGui(), 'ag-hidden', hide);
+        this.addOrRemoveCssClass('ag-hidden', hide);
     }
 
     private forEachToolPanelFilterChild(action: (filterComp: ToolPanelFilterItem) => void) {
-        _.forEach(this.childFilterComps, filterComp => {
+        this.childFilterComps.forEach(filterComp => {
             if (filterComp instanceof ToolPanelFilterComp) {
                 action(filterComp);
             }
@@ -166,7 +166,7 @@ export class ToolPanelFilterGroupComp extends Component {
 
             group.getLeafColumns().forEach(column => {
                 this.addManagedListener(column, Column.EVENT_FILTER_CHANGED, () => {
-                    _.addOrRemoveCssClass(this.filterGroupComp.getGui(), 'ag-has-filter', anyChildFiltersActive());
+                    this.filterGroupComp.addOrRemoveCssClass('ag-has-filter', anyChildFiltersActive());
                 });
             });
         } else {
@@ -175,7 +175,7 @@ export class ToolPanelFilterGroupComp extends Component {
             this.addManagedListener(this.eventService, Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
 
             this.addManagedListener(column, Column.EVENT_FILTER_CHANGED, () => {
-                _.addOrRemoveCssClass(this.filterGroupComp.getGui(), 'ag-has-filter', column.isFilterActive());
+                this.filterGroupComp.addOrRemoveCssClass('ag-has-filter', column.isFilterActive());
             });
         }
     }

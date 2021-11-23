@@ -286,7 +286,7 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     // returns true if successful, false if not successful
-    public extendLatestRangeInDirection(key: number): CellPosition | undefined {
+    public extendLatestRangeInDirection(key: string): CellPosition | undefined {
         if (this.isEmpty() || !this.newestRangeStartCell) {
             return;
         }

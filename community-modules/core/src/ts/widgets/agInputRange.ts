@@ -1,5 +1,4 @@
 import { IInputField, AgAbstractInputField } from "./agAbstractInputField";
-import { isBrowserIE } from "../utils/browser";
 
 interface IInputRange extends IInputField {
     min?: number;
@@ -32,10 +31,7 @@ export class AgInputRange extends AgAbstractInputField<HTMLInputElement, string,
     }
 
     protected addInputListeners() {
-        const isIE = isBrowserIE();
-        const eventName = isIE ? 'change' : 'input';
-
-        this.addManagedListener(this.eInput, eventName, (e) => {
+        this.addManagedListener(this.eInput, 'input', (e) => {
             const value = e.target.value;
 
             this.setValue(value);

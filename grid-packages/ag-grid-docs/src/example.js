@@ -250,10 +250,8 @@ function suppressColumnMoveAnimation() {
     var isFirefox = typeof InstallTrigger !== 'undefined';
     // At least Safari 3+: "[object HTMLElementConstructor]"
     var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
-    // Internet Explorer 6-11
-    var isIE = /*@cc_on!@*/false || !!document.documentMode;
 
-    return isFirefox || isSafari || isIE;
+    return isFirefox || isSafari;
 }
 
 function toggleOptionsCollapsed() {

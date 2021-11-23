@@ -1,6 +1,6 @@
 import { ILogger } from "../iLogger";
 import { Component } from "../widgets/component";
-import { values, exists } from "../utils/generic";
+import { exists, values } from "../utils/generic";
 import { iterateObject } from "../utils/object";
 import { getFunctionName } from "../utils/function";
 

@@ -115,7 +115,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
         this.logger.log(`onPageLoaded: page = ${block.getId()}, lastRow = ${params.rowCount}`);
 
         if (params.storeInfo) {
-            _.assign(this.info, params.storeInfo);
+            Object.assign(this.info, params.storeInfo);
         }
 
         if (!params.rowData) {
