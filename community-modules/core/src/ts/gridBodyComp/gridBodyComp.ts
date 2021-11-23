@@ -18,9 +18,9 @@ import {
 import { RowContainerName } from "./rowContainer/rowContainerCtrl";
 
 const GRID_BODY_TEMPLATE = /* html */
-    `<div class="ag-root ag-unselectable" role="grid" unselectable="on">
-        <ag-header-root ref="gridHeader" unselectable="on"></ag-header-root>
-        <div class="ag-floating-top" ref="eTop" role="presentation" unselectable="on">
+    `<div class="ag-root ag-unselectable" role="grid">
+        <ag-header-root ref="gridHeader"></ag-header-root>
+        <div class="ag-floating-top" ref="eTop" role="presentation">
             <ag-row-container ref="topLeftContainer" name="${RowContainerName.TOP_LEFT}"></ag-row-container>
             <ag-row-container ref="topCenterContainer" name="${RowContainerName.TOP_CENTER}"></ag-row-container>
             <ag-row-container ref="topRightContainer" name="${RowContainerName.TOP_RIGHT}"></ag-row-container>
@@ -32,7 +32,7 @@ const GRID_BODY_TEMPLATE = /* html */
             <ag-row-container ref="rightContainer" name="${RowContainerName.RIGHT}"></ag-row-container>
             <ag-row-container ref="fullWidthContainer" name="${RowContainerName.FULL_WIDTH}"></ag-row-container>
         </div>
-        <div class="ag-floating-bottom" ref="eBottom" role="presentation" unselectable="on">
+        <div class="ag-floating-bottom" ref="eBottom" role="presentation">
             <ag-row-container ref="bottomLeftContainer" name="${RowContainerName.BOTTOM_LEFT}"></ag-row-container>
             <ag-row-container ref="bottomCenterContainer" name="${RowContainerName.BOTTOM_CENTER}"></ag-row-container>
             <ag-row-container ref="bottomRightContainer" name="${RowContainerName.BOTTOM_RIGHT}"></ag-row-container>

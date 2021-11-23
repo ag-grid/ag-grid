@@ -15217,13 +15217,6 @@
         "optional": false
       }
     },
-    "setUnselectable": {
-      "type": {
-        "arguments": { "value": "'on' | null" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
     "setTransition": {
       "type": {
         "arguments": { "value": "string | undefined" },

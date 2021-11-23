@@ -111,7 +111,6 @@ export class CellComp extends Component implements TooltipParentComp {
             setRole: role => setAriaRole(eGui, role),
             setColId: colId => setAttribute('col-id', colId),
             setTitle: title => setAttribute('title', title),
-            setUnselectable: value => setAttribute('unselectable', value, this.eCellValue),
             setTransition: transition => style.transition = transition ? transition : '',
 
             setIncludeSelection: include => this.includeSelection = include,

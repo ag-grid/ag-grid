@@ -61,7 +61,6 @@ export interface ICellComp {
     setRole(role: string): void;
     setColId(colId: string): void;
     setTitle(title: string | undefined): void;
-    setUnselectable(value: 'on' | null): void;
     setTransition(value: string | undefined): void;
 
     setIncludeSelection(include: boolean): void;
@@ -243,7 +242,6 @@ export class CellCtrl extends BeanStub {
         this.cellComp.setRole('gridcell');
         this.cellComp.setAriaColIndex(ariaColIndex);
         this.cellComp.setColId(colIdSanitised!);
-        this.cellComp.setUnselectable(!this.beans.gridOptionsWrapper.isEnableCellTextSelection() ? 'on' : null);
 
         this.cellPositionFeature.setComp(comp);
         this.cellCustomStyleFeature.setComp(comp, scope);

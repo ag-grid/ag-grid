@@ -8675,7 +8675,6 @@
       "setRole(role: string)": "void",
       "setColId(colId: string)": "void",
       "setTitle(title: string | undefined)": "void",
-      "setUnselectable(value: 'on' | null)": "void",
       "setTransition(value: string | undefined)": "void",
       "setIncludeSelection(include: boolean)": "void",
       "setIncludeRowDrag(include: boolean)": "void",
