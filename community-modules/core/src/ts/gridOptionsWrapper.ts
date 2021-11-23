@@ -55,6 +55,7 @@ import { getScrollbarWidth } from './utils/browser';
 import { HeaderPosition } from './headerRendering/common/headerPosition';
 import { ExcelExportParams } from './interfaces/iExcelCreator';
 import { capitalise } from './utils/string';
+import { _ } from './utils';
 
 const DEFAULT_ROW_HEIGHT = 25;
 const DEFAULT_DETAIL_ROW_HEIGHT = 300;
@@ -843,8 +844,8 @@ export class GridOptionsWrapper {
 
     public getMaxConcurrentDatasourceRequests(): number | undefined {
         const res = toNumber(this.gridOptions.maxConcurrentDatasourceRequests);
-        if (res==null) { return 2; } // 2 is the default
-        if (res<=0) { return; } // negative number, eg -1, means no max restriction
+        if (res == null) { return 2; } // 2 is the default
+        if (res <= 0) { return; } // negative number, eg -1, means no max restriction
         return res;
     }
 
@@ -1445,15 +1446,17 @@ export class GridOptionsWrapper {
         return false;
     }
 
-    public getTooltipShowDelay(): number | null {
-        const { tooltipShowDelay } = this.gridOptions;
+    public getTooltipDelay(type: 'show' | 'hide'): number | null {
+        const { tooltipShowDelay, tooltipHideDelay } = this.gridOptions;
+        const delay = type === 'show' ? tooltipShowDelay : tooltipHideDelay;
+        const capitalisedType = capitalise(type);
 
-        if (exists(tooltipShowDelay)) {
-            if (tooltipShowDelay < 0) {
-                console.warn('ag-grid: tooltipShowDelay should not be lower than 0');
+        if (exists(delay)) {
+            if (delay < 0) {
+                doOnce(() => console.warn(`ag-grid: tooltip${capitalisedType}Delay should not be lower than 0`), `tooltip${capitalisedType}DelayWarn`);
             }
 
-            return Math.max(200, tooltipShowDelay);
+            return Math.max(200, delay);
         }
 
         return null;
@@ -1758,7 +1761,7 @@ export class GridOptionsWrapper {
     }
 
     public getRowHeightForNode(rowNode: RowNode, allowEstimate = false, defaultRowHeight?: number): { height: number; estimated: boolean; } {
-        if (defaultRowHeight==null) {
+        if (defaultRowHeight == null) {
             defaultRowHeight = this.getDefaultRowHeight();
         }
 
@@ -1788,10 +1791,10 @@ export class GridOptionsWrapper {
 
         if (rowNode.detail && this.isMasterDetail()) {
             // if autoHeight, we want the height to grow to the new height starting at 1, as otherwise a flicker would happen,
-            // as the detail goes to the default (eg 200px) and then immediately shrink up/down to the new measured height 
+            // as the detail goes to the default (eg 200px) and then immediately shrink up/down to the new measured height
             // (due to auto height) which looks bad, especially if doing row animation.
-            if (this.isDetailRowAutoHeight()) { 
-                return {height: 1, estimated: false}; 
+            if (this.isDetailRowAutoHeight()) {
+                return {height: 1, estimated: false};
             }
 
             if (this.isNumeric(this.gridOptions.detailRowHeight)) {

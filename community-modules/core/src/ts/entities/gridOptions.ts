@@ -109,10 +109,10 @@ export interface GridOptions {
     sideBar?: SideBarDef | string | boolean | null;
     /** Set to `true` to not show the context menu. Use if you don't want to use the default 'right click' context menu. Default: `false`  */
     suppressContextMenu?: boolean;
-    /** 
+    /**
      * When using `suppressContextMenu`, you can use the `onCellContextMenu` function to provide your own code to handle cell `contextmenu` events.
      * This flag is useful to prevent the browser from showing its default context menu.
-     * Default: `false` 
+     * Default: `false`
      */
     preventDefaultOnContextMenu?: boolean;
     /** Allows context menu to show, even when `Ctrl` key is held down. Default: `false`  */
@@ -124,9 +124,15 @@ export interface GridOptions {
     /**
      * The delay in milliseconds that it takes for tooltips to show up once an element is hovered over.
      * **Note:** This property does not work if `enableBrowserTooltips` is `true`.
-     * Default: `2000` 
+     * Default: `2000`
      */
     tooltipShowDelay?: number;
+    /**
+     * The delay in milliseconds that it takes for tooltips to hide once they have been displayed.
+     * **Note:** This property does not work if `enableBrowserTooltips` is `true`.
+     * Default: `10000`
+     */
+    tooltipHideDelay?: number;
     /** Set to `true` to have tooltips follow the cursor once they are displayed. Default: `false`  */
     tooltipMouseTrack?: boolean;
     /** DOM element to use as the popup parent for grid popups (context menu, column menu etc). */
@@ -205,10 +211,10 @@ export interface GridOptions {
     colResizeDefault?: string;
     /** Suppresses auto-sizing columns for columns. In other words, double clicking a column's header's edge will not auto-size. Default: `false` */
     suppressAutoSize?: boolean;
-    /** 
+    /**
      * Number of pixels to add to a column width after the [auto-sizing](/column-sizing/#auto-size-columns) calculation.
      * Set this if you want to add extra room to accommodate (for example) sort icons, or some other dynamic nature of the header.
-     * Default: `4` 
+     * Default: `4`
      */
     autoSizePadding?: number;
     /** Set this to `true` to skip the `headerName` when `autoSize` is called by default. Default: `false` */
@@ -233,19 +239,19 @@ export interface GridOptions {
     /**
      * Set this to `true` to stop cell editing when grid loses focus.
      * The default is that the grid stays editing until focus goes onto another cell. For inline (non-popup) editors only.
-     * Default: `false` 
+     * Default: `false`
      */
     stopEditingWhenCellsLoseFocus?: boolean;
     /**
      * Set to `true` along with `enterMovesDownAfterEdit` to have Excel-style behaviour for the `Enter` key.
      * i.e. pressing the `Enter` key will move down to the cell beneath.
-     * Default: `false` 
+     * Default: `false`
      */
     enterMovesDown?: boolean;
     /**
      * Set to `true` along with `enterMovesDown` to have Excel-style behaviour for the 'Enter' key.
      * i.e. pressing the Enter key will move down to the cell beneath.
-     * Default: `false` 
+     * Default: `false`
      */
     enterMovesDownAfterEdit?: boolean;
     /** Set to `true` to enable Undo / Redo while editing. */
@@ -345,7 +351,7 @@ export interface GridOptions {
      * If `true`, row nodes do not have their parents set.
      * The grid doesn't use the parent reference, but it is included to help the client code navigate the node tree if it wants by providing bi-direction navigation up and down the tree.
      * If this is a problem (e.g. if you need to convert the tree to JSON, which does not allow cyclic dependencies) then set this to `true`.
-     * Default: `false` 
+     * Default: `false`
      */
     suppressParentsInRowNodes?: boolean;
     /** Disables touch support (but does not remove the browser's efforts to simulate mouse events on touch). Default: `false` */
@@ -458,8 +464,8 @@ export interface GridOptions {
     /** Set to `true` so that the grid doesn't virtualise the columns. For example, if you have 100 columns, but only 10 visible due to scrolling, all 100 will always be rendered. Default: `false` */
     suppressColumnVirtualisation?: boolean;
     /** By default the grid has a limit of rendering a maximum of 500 rows at once (remember the grid only renders rows you can see, so unless your display shows more than 500 rows without vertically scrolling this will never be an issue).
-     * <br />**This is only relevant if you are manually setting `rowBuffer` to a high value (rendering more rows than can be seen) or if your grid height is able to display more than 500 rows at once.** 
-     * Default: `false` 
+     * <br />**This is only relevant if you are manually setting `rowBuffer` to a high value (rendering more rows than can be seen) or if your grid height is able to display more than 500 rows at once.**
+     * Default: `false`
      */
     suppressMaxRenderedRowRestriction?: boolean;
 
@@ -959,7 +965,7 @@ export interface GridOptions {
     // *** Pagination *** //
     /**
      * Triggered every time the paging state changes. Some of the most common scenarios for this event to be triggered are:
-     * 
+     *
      *  - The page size changes.
      *  - The current shown page is changed.
      *  - New data is loaded onto the grid.

@@ -18,7 +18,8 @@ enum TooltipStates { NOTHING, WAITING_TO_SHOW, SHOWING }
 
 export class CustomTooltipFeature extends BeanStub {
 
-    private readonly DEFAULT_HIDE_TOOLTIP_TIMEOUT = 10000;
+    private readonly DEFAULT_SHOW_TOOLTIP_DELAY = 2000;
+    private readonly DEFAULT_HIDE_TOOLTIP_DELAY = 10000;
     private readonly SHOW_QUICK_TOOLTIP_DIFF = 1000;
     private readonly FADE_OUT_TOOLTIP_TIMEOUT = 1000;
 
@@ -32,6 +33,7 @@ export class CustomTooltipFeature extends BeanStub {
     @Autowired('gridApi') private gridApi: GridApi;
 
     private tooltipShowDelay: number;
+    private tooltipHideDelay: number;
 
     private parentComp: TooltipParentComp;
 
@@ -58,7 +60,8 @@ export class CustomTooltipFeature extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.tooltipShowDelay = this.gridOptionsWrapper.getTooltipShowDelay() || 2000;
+        this.tooltipShowDelay = this.gridOptionsWrapper.getTooltipDelay('show') || this.DEFAULT_SHOW_TOOLTIP_DELAY;
+        this.tooltipHideDelay = this.gridOptionsWrapper.getTooltipDelay('hide') || this.DEFAULT_HIDE_TOOLTIP_DELAY;
         this.tooltipMouseTrack = this.gridOptionsWrapper.isTooltipMouseTrack();
 
         const el = this.parentComp.getGui();
@@ -220,7 +223,7 @@ export class CustomTooltipFeature extends BeanStub {
         // this.tooltipPopupDestroyFunc = this.popupService.addPopup(false, eGui, false);
 
         this.positionTooltipUnderLastMouseEvent();
-        this.hideTooltipTimeoutId = window.setTimeout(this.hideTooltip.bind(this), this.DEFAULT_HIDE_TOOLTIP_TIMEOUT);
+        this.hideTooltipTimeoutId = window.setTimeout(this.hideTooltip.bind(this), this.tooltipHideDelay);
     }
 
     private positionTooltipUnderLastMouseEvent(): void {

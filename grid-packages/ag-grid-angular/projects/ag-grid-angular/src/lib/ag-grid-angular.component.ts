@@ -308,6 +308,10 @@ export class AgGridAngular implements AfterViewInit {
      *     **Note:** This property does not work if `enableBrowserTooltips` is `true`.
      * Default: `2000`     */
     @Input() public tooltipShowDelay: number | undefined = undefined;
+    /** The delay in milliseconds that it takes for tooltips to hide once they have been displayed.
+     *     **Note:** This property does not work if `enableBrowserTooltips` is `true`.
+     * Default: `10000`     */
+    @Input() public tooltipHideDelay: number | undefined = undefined;
     /** Set to `true` to have tooltips follow the cursor once they are displayed. Default: `false`     */
     @Input() public tooltipMouseTrack: boolean | undefined = undefined;
     /** DOM element to use as the popup parent for grid popups (context menu, column menu etc).     */
@@ -579,7 +583,7 @@ export class AgGridAngular implements AfterViewInit {
     /** Set to `true` so that the grid doesn't virtualise the columns. For example, if you have 100 columns, but only 10 visible due to scrolling, all 100 will always be rendered. Default: `false`     */
     @Input() public suppressColumnVirtualisation: boolean | undefined = undefined;
     /** By default the grid has a limit of rendering a maximum of 500 rows at once (remember the grid only renders rows you can see, so unless your display shows more than 500 rows without vertically scrolling this will never be an issue).
-     * <br />**This is only relevant if you are manually setting `rowBuffer` to a high value (rendering more rows than can be seen) or if your grid height is able to display more than 500 rows at once.** 
+     * <br />**This is only relevant if you are manually setting `rowBuffer` to a high value (rendering more rows than can be seen) or if your grid height is able to display more than 500 rows at once.**
      * Default: `false`     */
     @Input() public suppressMaxRenderedRowRestriction: boolean | undefined = undefined;
     /** Set to `true` to enable Managed Row Dragging. Default: `false`     */
