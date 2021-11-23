@@ -25,7 +25,7 @@
     "build": "vue-cli-service build --target lib src/AgGridVue.ts && npx tsc && rm ./dist/demo.html && npm run hash",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash",
     "test:unit": "vue-cli-service test:unit",
-    "test:e2e": "vue-cli-service test:e2e"
+    "test:e2ex": "vue-cli-service test:e2e"
   },
   "dependencies": {
     "@ag-grid-community/core": "^26.2.0",

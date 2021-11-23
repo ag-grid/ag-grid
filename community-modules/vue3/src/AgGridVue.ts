@@ -1,4 +1,4 @@
-import {defineComponent, PropType} from 'vue';
+import {defineComponent, PropType, h} from 'vue';
 import {markRaw, toRaw} from '@vue/reactivity';
 import {ComponentUtil, Grid, GridOptions, Module, RowNode} from '@ag-grid-community/core';
 
@@ -13,7 +13,9 @@ const DATA_MODEL_ATTR_NAME = kebabNameToAttrEventName(kebabProperty('data-model-
 const [props, watch, model] = getAgGridProperties();
 
 export const AgGridVue = defineComponent({
-    template: `<div></div>`,
+    render() {
+        return h('div')
+    },
     props: {
         gridOptions: {
             type: Object as PropType<GridOptions>,
