@@ -1,10 +1,8 @@
 import {createVNode, defineComponent, render} from 'vue';
-import {Vue} from 'vue-class-component';
-import {AgGridVue} from './AgGridVue';
 
 export class VueComponentFactory {
 
-    private static getComponentDefinition(component: any, parent: AgGridVue) {
+    private static getComponentDefinition(component: any, parent: any) {
         let componentDefinition: any;
 
         // when referencing components by name - ie: cellRendererFramework: 'MyComponent'
@@ -44,7 +42,7 @@ export class VueComponentFactory {
         return props;
     }
 
-    public static createAndMountComponent(component: any, params: any, parent: AgGridVue) {
+    public static createAndMountComponent(component: any, params: any, parent: any) {
         const componentDefinition = VueComponentFactory.getComponentDefinition(component, parent);
         if (!componentDefinition) {
             return;
@@ -81,13 +79,13 @@ export class VueComponentFactory {
         return {vNode, destroy, el}
     }
 
-    public static searchForComponentInstance(parent: AgGridVue,
+    public static searchForComponentInstance(parent: any,
                                              component: any,
                                              maxDepth = 10,
                                              suppressError = false) {
         let componentInstance: any = null;
 
-        let currentParent: Vue<any> = parent.$parent;
+        let currentParent = parent.$parent;
         let depth = 0;
         while (!componentInstance &&
         currentParent &&

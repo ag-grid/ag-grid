@@ -14,59 +14,31 @@ export interface Properties {
 }
 
 export const getAgGridProperties = (): [Properties, Properties, { prop: string, event: string }] => {
-    const props: Properties = {
-        gridOptions: {
-            default() {
-                return {};
-            },
-        },
-        autoParamsRefresh: false,
-        componentDependencies: {
-            default() {
-                return []
-            }
-        },
-        plugins: {
-            default() {
-                return []
-            }
-        },
-        modules: {
-            default() {
-                return []
-            }
-        },
-        rowDataModel: undefined
-    };
+    const props: Properties = {};
 
     // for example, 'grid-ready' would become 'onGrid-ready': undefined
     // without this emitting events results in a warning
     // and adding 'grid-ready' (and variations of this to the emits option in AgGridVue doesn't help either)
-    const eventNameAsProps = ComponentUtil.PUBLIC_EVENTS.map(eventName => kebabNameToAttrEventName(kebabProperty(eventName)));
-    eventNameAsProps.reduce((accumulator, eventName) => {
+    const eventNameAsProps = ComponentUtil.PUBLIC_EVENTS.map((eventName: string) => kebabNameToAttrEventName(kebabProperty(eventName)));
+    eventNameAsProps.reduce((accumulator: { [key: string]: any }, eventName: string) => {
         accumulator[eventName] = undefined
         return accumulator;
     }, props);
 
-    const watch: Properties = {
-        rowDataModel: {
-            handler(currentValue: any, previousValue: any) {
-                this.processChanges('rowData', currentValue, previousValue);
-            },
-            deep: true
-        }
-    };
+    const watch: Properties = {};
 
-    ComponentUtil.ALL_PROPERTIES.forEach((propertyName) => {
-        props[propertyName] = {};
+    ComponentUtil.ALL_PROPERTIES
+        .filter((propertyName: string) => propertyName != 'gridOptions') // dealt with in AgGridVue itself
+        .forEach((propertyName: string) => {
+            props[propertyName] = {};
 
-        watch[propertyName] = {
-            handler(currentValue: any, previousValue: any) {
-                this.processChanges(propertyName, currentValue, previousValue);
-            },
-            deep: propertyName !== 'popupParent' && propertyName !== 'context'
-        };
-    });
+            watch[propertyName] = {
+                handler(currentValue: any, previousValue: any) {
+                    this.processChanges(propertyName, currentValue, previousValue);
+                },
+                deep: propertyName !== 'popupParent' && propertyName !== 'context'
+            };
+        });
 
     const model: { prop: string, event: string } = {
         prop: 'rowDataModel',

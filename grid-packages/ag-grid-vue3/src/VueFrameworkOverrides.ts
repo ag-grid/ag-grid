@@ -1,11 +1,10 @@
 import {VanillaFrameworkOverrides} from 'ag-grid-community';
-import {AgGridVue} from './AgGridVue';
 import {VueComponentFactory} from './VueComponentFactory';
 
 export class VueFrameworkOverrides extends VanillaFrameworkOverrides {
-    private readonly parent: AgGridVue;
+    private readonly parent: any;
 
-    constructor(parent: AgGridVue) {
+    constructor(parent: any) {
         super();
 
         this.parent = parent;

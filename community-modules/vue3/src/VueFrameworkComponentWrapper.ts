@@ -1,5 +1,4 @@
 import {BaseComponentWrapper, Bean, WrappableInterface} from '@ag-grid-community/core';
-import {AgGridVue} from './AgGridVue';
 import {VueComponentFactory} from './VueComponentFactory';
 
 interface VueWrappableInterface extends WrappableInterface {
@@ -8,11 +7,10 @@ interface VueWrappableInterface extends WrappableInterface {
     processMethod(methodName: string, args: IArguments): any;
 }
 
-@Bean('frameworkComponentWrapper')
 export class VueFrameworkComponentWrapper extends BaseComponentWrapper<WrappableInterface> {
-    private parent: AgGridVue | null;
+    private parent: any | null;
 
-    constructor(parent: AgGridVue) {
+    constructor(parent: any) {
         super();
 
         this.parent = parent;
