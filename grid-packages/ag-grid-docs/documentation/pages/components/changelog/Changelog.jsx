@@ -101,7 +101,6 @@ const defaultColDef = {
         ) {
             params.api
                 .getCellRendererInstances({ rowNodes: [params.node] })[0]
-                .getFrameworkComponentInstance()
                 .clickHandlerFunc()
             return true
         }
@@ -235,7 +234,7 @@ const Changelog = ({ location }) => {
 
     const filterOnDepsAndBreaking = (field, changed) => {
         gridApi.getFilterInstance("deprecated", instance => {
-            instance.getFrameworkComponentInstance().checkboxChanged(field, changed)
+            instance.checkboxChanged(field, changed)
         })
     }
 
