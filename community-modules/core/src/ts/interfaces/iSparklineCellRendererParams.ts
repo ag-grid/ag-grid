@@ -185,6 +185,14 @@ export interface SparklineTooltipOptions {
     enabled?: boolean;
     /** The element to place the tooltip into. This can be used to confine the tooltip to a specific area which may be outside of the sparkline grid cell. */
     container?: HTMLElement;
+    /** The horizontal distance in pixels between the cursor and the top left corner of the tooltip.
+     * Default: `10`
+     */
+    xOffset?: number;
+    /** The vertical distance in pixels between the cursor and the top left corner of the tooltip.
+     * Default: `0`
+     */
+    yOffset?: number;
     /** A callback function used to create the content for the tooltips. This function should return an object or a HTML string used to render the tooltip. */
     renderer?: SparklineTooltipRenderer;
 }
