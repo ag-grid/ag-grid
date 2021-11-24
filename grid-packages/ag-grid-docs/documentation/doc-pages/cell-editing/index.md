@@ -26,7 +26,7 @@ To get simple string editing, you do not need to provide an editor. The grid by 
 
 If you have `colDef.editable=true` set for a column, editing will start upon any of the following:
 
-- **Edit Key Pressed**: One of the following is pressed: <kbd>Enter</kbd>, <kbd>F2</kbd>, <kbd>Backspace</kbd>, <kbd>Delete</kbd>. If this happens then `params.keyPress` will contain the key code of the key that started the edit. The default editor will clear the contents of the cell if <kbd>Backspace</kbd> or <kbd>Delete</kbd> are pressed.
+- **Edit Key Pressed**: One of the following is pressed: <kbd>Enter</kbd>, <kbd>F2</kbd>, <kbd>Backspace</kbd>, <kbd>Delete</kbd>. If this happens then `params.key` will contain the key code of the key that started the edit. The default editor will clear the contents of the cell if <kbd>Backspace</kbd> or <kbd>Delete</kbd> are pressed.
 - **Printable Key Pressed**: Any of the following characters are pressed: `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!"£$%^&amp;*()_+-=[];\'#,./\|<>?:@~{}`<br/> If this happens then `params.charPress` will contain the character that started the edit. The default editor places this character into the edit field so that the user experience is they are typing into the cell.
 - **Mouse Double Click**: If the mouse is double-clicked. There is a grid property `singleClickEdit` that will allow single-click to start editing instead of double-click. Another property `suppressClickEdit` will prevent both single-click and double-click from starting the edit; use this if you only want to have your own way of starting editing, such as clicking a button in your custom cell renderer.
 - **api.startEditingCell(params)**: If you call `startEditingCell(params)` on the grid API

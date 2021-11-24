@@ -37,14 +37,14 @@ export class TextCellEditor extends PopupComponent implements ICellEditorComp {
         if (params.cellStartedEdit) {
             this.focusAfterAttached = true;
 
-            if (params.keyPress === KeyCode.BACKSPACE || params.keyPress === KeyCode.DELETE) {
+            if (params.key === KeyCode.BACKSPACE || params.key === KeyCode.DELETE) {
                 startValue = '';
             } else if (params.charPress) {
                 startValue = params.charPress;
             } else {
                 startValue = this.getStartValue(params);
 
-                if (params.keyPress !== KeyCode.F2) {
+                if (params.key !== KeyCode.F2) {
                     this.highlightAllOnFocus = true;
                 }
             }

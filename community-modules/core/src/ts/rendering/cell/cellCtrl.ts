@@ -355,10 +355,10 @@ export class CellCtrl extends BeanStub {
     }
 
     // either called internally if single cell editing, or called by rowRenderer if row editing
-    public startEditing(keyPress: string | null = null, charPress: string | null = null, cellStartedEdit = false): void {
+    public startEditing(key: string | null = null, charPress: string | null = null, cellStartedEdit = false): void {
         if (!this.isCellEditable() || this.editing) { return; }
 
-        const editorParams = this.createCellEditorParams(keyPress, charPress, cellStartedEdit);
+        const editorParams = this.createCellEditorParams(key, charPress, cellStartedEdit);
         const colDef = this.column.getColDef();
         const compDetails = this.beans.userComponentFactory.getCellEditorDetails(colDef, editorParams);
         const popup = !!colDef.cellEditorPopup;
@@ -489,7 +489,7 @@ export class CellCtrl extends BeanStub {
     private createCellEditorParams(key: string | null, charPress: string | null, cellStartedEdit: boolean): ICellEditorParams {
         const res: any = {
             value: this.getValueFromValueService(),
-            keyPress: key,
+            key: key,
             charPress: charPress,
             column: this.column,
             colDef: this.column.getColDef(),
@@ -914,11 +914,11 @@ export class CellCtrl extends BeanStub {
     }
 
     // called by rowRenderer when user navigates via tab key
-    public startRowOrCellEdit(keyPress?: string | null, charPress?: string | null): void {
+    public startRowOrCellEdit(key?: string | null, charPress?: string | null): void {
         if (this.beans.gridOptionsWrapper.isFullRowEdit()) {
-            this.rowCtrl.startRowEditing(keyPress, charPress, this);
+            this.rowCtrl.startRowEditing(key, charPress, this);
         } else {
-            this.startEditing(keyPress, charPress, true);
+            this.startEditing(key, charPress, true);
         }
     }
 

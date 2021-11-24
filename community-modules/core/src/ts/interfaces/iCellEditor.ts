@@ -53,7 +53,7 @@ export interface ICellEditorParams {
     value: any;
     /** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable
      *  characters appear here */
-    keyPress: string | null;
+    key: string | null;
     /** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if
      *  shift + letter 'a' only printable characters appear here */
     charPress: string | null;

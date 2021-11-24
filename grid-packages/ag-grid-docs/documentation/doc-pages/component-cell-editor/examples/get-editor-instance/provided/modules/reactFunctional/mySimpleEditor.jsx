@@ -1,14 +1,14 @@
 import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} from 'react';
 
-const KEY_BACKSPACE = 8;
-const KEY_DELETE = 46;
+const KEY_BACKSPACE = 'Backspace';
+const KEY_DELETE = 'Delete';
 
 export default forwardRef((props, ref) => {
     const getInitialValue = props => {
         let startValue = props.value;
 
-        const keyPressBackspaceOrDelete = props.keyPress === KEY_BACKSPACE || props.keyPress === KEY_DELETE;
-        if (keyPressBackspaceOrDelete) {
+        const isBackspaceOrDelete = props.key === KEY_BACKSPACE || props.key === KEY_DELETE;
+        if (isBackspaceOrDelete) {
             startValue = '';
         } else if (props.charPress) {
             startValue = props.charPress;

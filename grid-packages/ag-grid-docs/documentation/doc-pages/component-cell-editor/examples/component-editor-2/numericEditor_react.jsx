@@ -60,7 +60,7 @@ export default class NumericEditor extends Component {
         let startValue;
         let highlightAllOnFocus = true;
 
-        if (props.keyPress === KEY_BACKSPACE || props.keyPress === KEY_DELETE) {
+        if (props.key === KEY_BACKSPACE || props.key === KEY_DELETE) {
             // if backspace or delete pressed, we clear the cell
             startValue = '';
         } else if (props.charPress) {
@@ -70,7 +70,7 @@ export default class NumericEditor extends Component {
         } else {
             // otherwise we start with the current value
             startValue = props.value;
-            if (props.keyPress === KEY_F2) {
+            if (props.key === KEY_F2) {
                 highlightAllOnFocus = false;
             }
         }

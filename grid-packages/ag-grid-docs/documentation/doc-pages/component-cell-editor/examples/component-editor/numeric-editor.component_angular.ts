@@ -33,7 +33,7 @@ export class NumericEditor implements AgEditorComponent, AfterViewInit {
         let startValue;
         let highlightAllOnFocus = true;
 
-        if (params.keyPress === KEY_BACKSPACE || params.keyPress === KEY_DELETE) {
+        if (params.key === KEY_BACKSPACE || params.key === KEY_DELETE) {
             // if backspace or delete pressed, we clear the cell
             startValue = '';
         } else if (params.charPress) {
@@ -43,7 +43,7 @@ export class NumericEditor implements AgEditorComponent, AfterViewInit {
         } else {
             // otherwise we start with the current value
             startValue = params.value;
-            if (params.keyPress === KEY_F2) {
+            if (params.key === KEY_F2) {
                 highlightAllOnFocus = false;
             }
         }

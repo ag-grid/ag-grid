@@ -108,7 +108,7 @@ export interface StartEditingCellParams {
     colKey: string | Column;
     /** Set to `'top'` or `'bottom'` to start editing a pinned row */
     rowPinned?: string;
-    /** The keyPress to pass to the cell editor */
+    /** The key to pass to the cell editor */
     key?: string;
     /** The charPress to pass to the cell editor */
     charPress?: string;

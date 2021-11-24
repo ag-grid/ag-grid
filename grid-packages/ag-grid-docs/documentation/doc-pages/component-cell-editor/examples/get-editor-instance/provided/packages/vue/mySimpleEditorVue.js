@@ -1,7 +1,7 @@
 import {nextTick} from 'vue';
 
-const KEY_BACKSPACE = 8;
-const KEY_DELETE = 46;
+const KEY_BACKSPACE = 'Backspace';
+const KEY_DELETE = 'Delete';
 
 export default {
     template: `<input v-model="value" :ref="'input'"/>`,
@@ -25,8 +25,8 @@ export default {
         getInitialValue() {
             let startValue = this.params.value;
 
-            const keyPressBackspaceOrDelete = this.params.keyPress === KEY_BACKSPACE || this.params.keyPress === KEY_DELETE;
-            if (keyPressBackspaceOrDelete) {
+            const isBackspaceOrDelete = this.params.key === KEY_BACKSPACE || this.params.key === KEY_DELETE;
+            if (isBackspaceOrDelete) {
                 startValue = '';
             } else if (this.params.charPress) {
                 startValue = this.params.charPress;
