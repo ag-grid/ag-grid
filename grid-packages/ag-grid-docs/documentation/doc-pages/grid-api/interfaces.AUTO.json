@@ -7977,11 +7977,15 @@
     "type": {
       "enabled?": "boolean",
       "container?": "HTMLElement",
+      "xOffset?": "number",
+      "yOffset?": "number",
       "renderer?": "SparklineTooltipRenderer"
     },
     "docs": {
       "enabled?": "/** Set to false to disable tooltips. */",
       "container?": "/** The element to place the tooltip into. This can be used to confine the tooltip to a specific area which may be outside of the sparkline grid cell. */",
+      "xOffset?": "/** The horizontal distance in pixels between the cursor and the top left corner of the tooltip.\n * Default: `10` */",
+      "yOffset?": "/** The vertical distance in pixels between the cursor and the top left corner of the tooltip.\n * Default: `0` */",
       "renderer?": "/** A callback function used to create the content for the tooltips. This function should return an object or a HTML string used to render the tooltip. */"
     }
   },
