@@ -61,8 +61,7 @@ class GridExample extends Component {
 
     componentDidMount() {
         this.myInput.current.addEventListener('keydown', event => {
-            const tabKeyCode = 9;
-            if (event.keyCode !== tabKeyCode) { return; }
+            if (event.key !== 'Tab') { return; }
 
             event.preventDefault();
             this.gridApi.ensureIndexVisible(0);

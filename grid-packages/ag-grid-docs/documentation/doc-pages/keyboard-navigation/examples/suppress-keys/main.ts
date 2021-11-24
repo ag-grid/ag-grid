@@ -46,13 +46,13 @@ const gridOptions: GridOptions = {
 }
 
 function suppressEnter(params: SuppressKeyboardEventParams) {
-  var KEY_ENTER = 13
+  var KEY_ENTER = 'Enter';
 
-  var event = params.event
-  var key = event.which
-  var suppress = key === KEY_ENTER
+  var event = params.event;
+  var key = event.key;
+  var suppress = key === KEY_ENTER;
 
-  return suppress
+  return suppress;
 }
 
 function suppressNavigation(params: SuppressKeyboardEventParams) {

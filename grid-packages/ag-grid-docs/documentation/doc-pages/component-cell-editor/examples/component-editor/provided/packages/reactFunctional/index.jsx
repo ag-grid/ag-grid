@@ -8,11 +8,11 @@ import 'ag-grid-enterprise';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
-const KEY_BACKSPACE = 8;
-const KEY_DELETE = 46;
-const KEY_F2 = 113;
-const KEY_ENTER = 13;
-const KEY_TAB = 9;
+const KEY_BACKSPACE = 'Backspace';
+const KEY_DELETE = 'Delete';
+const KEY_F2 = 'F2';
+const KEY_ENTER = 'Enter';
+const KEY_TAB = 'Tab';
 
 const DoublingEditor = forwardRef((props, ref) => {
     const [value, setValue] = useState(parseInt(props.value));
@@ -87,7 +87,7 @@ const MoodEditor = forwardRef((props, ref) => {
     }, []);
 
     const checkAndToggleMoodIfLeftRight = (event) => {
-        if ([37, 39].indexOf(event.keyCode) > -1) { // left and right
+        if (['ArrowLeft', 'ArrowRight'].indexOf(event.key) > -1) { // left and right
             setHappy(!happy);
             event.stopPropagation();
         }
@@ -206,12 +206,7 @@ const NumericEditor = forwardRef((props, ref) => {
     const cancelBeforeStart = props.charPress && ('1234567890'.indexOf(props.charPress) < 0);
 
     const isLeftOrRight = event => {
-        return [37, 39].indexOf(event.keyCode) > -1;
-    };
-
-    const getCharCodeFromEvent = event => {
-        event = event || window.event;
-        return (typeof event.which === "undefined") ? event.keyCode : event.which;
+        return ['ArrowLeft', 'ArrowRight'].indexOf(event.key) > -1;
     };
 
     const isCharNumeric = charStr => {
@@ -219,18 +214,17 @@ const NumericEditor = forwardRef((props, ref) => {
     };
 
     const isKeyPressedNumeric = event => {
-        const charCode = getCharCodeFromEvent(event);
-        const charStr = event.key ? event.key : String.fromCharCode(charCode);
+        const charStr = event.key;
         return isCharNumeric(charStr);
     };
 
     const deleteOrBackspace = event => {
-        return [KEY_DELETE, KEY_BACKSPACE].indexOf(event.keyCode) > -1;
+        return [KEY_DELETE, KEY_BACKSPACE].indexOf(event.key) > -1;
     };
 
     const finishedEditingPressed = event => {
-        const charCode = getCharCodeFromEvent(event);
-        return charCode === KEY_ENTER || charCode === KEY_TAB;
+        const key = event.key;
+        return key === KEY_ENTER || key === KEY_TAB;
     };
     const onKeyDown = event => {
         if (isLeftOrRight(event) || deleteOrBackspace(event)) {

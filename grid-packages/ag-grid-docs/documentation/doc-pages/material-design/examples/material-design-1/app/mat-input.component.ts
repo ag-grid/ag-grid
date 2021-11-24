@@ -67,8 +67,8 @@ export class MatInputComponent implements ICellEditorAngularComp {
      * say for example in full row editing
      */
     onKeyDown(event): void {
-        let key = event.which || event.keyCode;
-        if (key == 9) {
+        const key = event.key;
+        if (key == 'Tab') {
             // tab
             this.preventDefaultAndPropagation(event);
 
@@ -81,7 +81,7 @@ export class MatInputComponent implements ICellEditorAngularComp {
             });
 
             this.focusOnInputNextTick(inputToFocusOn);
-        } else if (key == 13) {
+        } else if (key == 'Enter') {
             // Enter
             // perform some validation on Enter - in this example we assume all inputs are mandatory
             // in a proper application you'd probably want to inform the user that an input is blank

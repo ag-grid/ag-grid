@@ -1,10 +1,9 @@
 import React, { Component, createRef } from "react";
 
-const KEY_BACKSPACE = 8;
-const KEY_DELETE = 46;
-const KEY_F2 = 113;
-const KEY_ENTER = 13;
-const KEY_TAB = 9;
+const KEY_BACKSPACE = 'Backspace';
+const KEY_DELETE = 'Delete';
+const KEY_ENTER = 'Enter';
+const KEY_TAB = 'Tab';
 
 export default class NumericEditor extends Component {
     constructor(props) {
@@ -21,7 +20,7 @@ export default class NumericEditor extends Component {
     }
 
     componentDidMount() {
-        this.setCarot();
+        this.setCaret();
     }
 
     render() {
@@ -86,16 +85,11 @@ export default class NumericEditor extends Component {
     }
 
     isLeftOrRight(event) {
-        return [37, 39].indexOf(event.keyCode) > -1;
+        return ['ArrowLeft', 'ArrowRight'].indexOf(event.key) > -1;
     }
 
     handleChange(event) {
         this.setState({ value: event.target.value });
-    }
-
-    getCharCodeFromEvent(event) {
-        event = event || window.event;
-        return (typeof event.which === "undefined") ? event.keyCode : event.which;
     }
 
     isCharNumeric(charStr) {
@@ -103,21 +97,20 @@ export default class NumericEditor extends Component {
     }
 
     isKeyPressedNumeric(event) {
-        const charCode = this.getCharCodeFromEvent(event);
-        const charStr = event.key ? event.key : String.fromCharCode(charCode);
+        const charStr = event.key;
         return this.isCharNumeric(charStr);
     }
 
     deleteOrBackspace(event) {
-        return [KEY_DELETE, KEY_BACKSPACE].indexOf(event.keyCode) > -1;
+        return [KEY_DELETE, KEY_BACKSPACE].indexOf(event.key) > -1;
     }
 
     finishedEditingPressed(event) {
-        const charCode = this.getCharCodeFromEvent(event);
-        return charCode === KEY_ENTER || charCode === KEY_TAB;
+        const key = event.key;
+        return key === KEY_ENTER || key === KEY_TAB;
     }
 
-    setCarot() {
+    setCaret() {
         // https://github.com/facebook/react/issues/7835#issuecomment-395504863
         setTimeout(() => {
             const currentInput = this.inputRef.current;

@@ -30,8 +30,8 @@ NumericCellEditor.prototype.init = function(params) {
 };
 
 NumericCellEditor.prototype.isKeyPressedNavigation = function(event) {
-    return event.keyCode === 39
-        || event.keyCode === 37;
+    return event.key === 'ArrowLeft'
+        || event.key === 'ArrowRight';
 };
 
 

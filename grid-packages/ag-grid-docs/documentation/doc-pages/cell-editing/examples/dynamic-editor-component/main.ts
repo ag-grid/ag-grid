@@ -70,21 +70,6 @@ function cellEditorSelector(params: ICellEditorParams) {
   return undefined
 }
 
-function getCharCodeFromEvent(event: any) {
-  event = event || window.event
-  return typeof event.which == 'undefined' ? event.keyCode : event.which
-}
-
-function isCharNumeric(charStr: string) {
-  return !!/\d/.test(charStr)
-}
-
-function isKeyPressedNumeric(event: any) {
-  var charCode = getCharCodeFromEvent(event)
-  var charStr = String.fromCharCode(charCode)
-  return isCharNumeric(charStr)
-}
-
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector('#myGrid')

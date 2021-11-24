@@ -27,7 +27,7 @@ export default class MoodEditor extends Component {
     }
 
     checkAndToggleMoodIfLeftRight = (event) => {
-        if ([37, 39].indexOf(event.keyCode) > -1) { // left and right
+        if (['ArrowLeft', 'ArrowRight'].indexOf(event.key) > -1) { // left and right
             this.toggleMood();
             event.stopPropagation();
         }
