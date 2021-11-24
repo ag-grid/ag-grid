@@ -106,10 +106,10 @@ export default {
 
                     this.highlightAllOnFocus = false;
                 } else {
-                    // when we started editing, we want the carot at the end, not the start.
-                    // this comes into play in two scenarios: a) when user hits F2 and b)
-                    // when user hits a printable character, then on IE (and only IE) the carot
-                    // was placed after the first character, thus 'apply' would end up as 'pplea'
+                    // when we started editing, we want the caret at the end, not the start.
+                    // this comes into play in two scenarios: 
+                    //   a) when user hits F2 
+                    //   b) when user hits a printable character
                     const length = this.$refs.input.value ? this.$refs.input.value.length : 0;
                     if (length > 0) {
                         this.$refs.input.setSelectionRange(length, length);

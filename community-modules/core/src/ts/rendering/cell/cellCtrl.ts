@@ -988,11 +988,6 @@ export class CellCtrl extends BeanStub {
         if (cellFocused && event && event.forceBrowserFocus) {
             const focusEl = this.cellComp.getFocusableElement();
             focusEl.focus();
-            // Fix for AG-3465 "IE11 - After editing cell's content, selection doesn't go one cell below on enter"
-            // IE can fail to focus the cell after the first call to focus(), and needs a second call
-            if (!document.activeElement || document.activeElement === document.body) {
-                focusEl.focus();
-            }
         }
 
         // if another cell was focused, and we are editing, then stop editing

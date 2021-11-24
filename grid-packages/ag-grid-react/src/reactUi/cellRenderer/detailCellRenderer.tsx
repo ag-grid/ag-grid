@@ -1,4 +1,4 @@
-import React, { memo, useState, useMemo, useRef, useEffect, useContext, useCallback, forwardRef, Ref, useImperativeHandle } from "react";
+import React, { useState, useMemo, useRef, useEffect, useContext, useCallback, forwardRef, useImperativeHandle } from "react";
 import { CssClasses } from "../utils";
 import { IDetailCellRenderer, IDetailCellRendererCtrl, IDetailCellRendererParams, GridOptions, GridApi, ColumnApi } from "ag-grid-community";
 import { BeansContext } from "../beansContext";

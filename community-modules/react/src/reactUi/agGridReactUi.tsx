@@ -1,4 +1,4 @@
-import { BaseComponentWrapper, ColumnApi, ComponentType, ComponentUtil, Context, FrameworkComponentWrapper, GridApi, GridCoreCreator, GridOptions, GridParams, IComponent, WrappableInterface, _ } from '@ag-grid-community/core';
+import { BaseComponentWrapper, ColumnApi, ComponentType, ComponentUtil, Context, FrameworkComponentWrapper, GridApi, GridCoreCreator, GridOptions, GridParams, WrappableInterface, _ } from '@ag-grid-community/core';
 import React, { Component } from 'react';
 import { AgGridColumn } from '../shared/agGridColumn';
 import { ChangeDetectionService, ChangeDetectionStrategyType } from '../shared/changeDetectionService';

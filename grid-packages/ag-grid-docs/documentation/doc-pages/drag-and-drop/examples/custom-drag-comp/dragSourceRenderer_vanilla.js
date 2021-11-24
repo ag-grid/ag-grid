@@ -15,8 +15,7 @@ DragSourceRenderer.prototype.init = function (params) {
 
 DragSourceRenderer.prototype.onDragStart = function (dragEvent) {
     var userAgent = window.navigator.userAgent;
-    var isIE = userAgent.indexOf('Trident/') >= 0;
-    dragEvent.dataTransfer.setData(isIE ? 'text' : 'text/plain', 'Dragged item with ID: ' + this.rowNode.data.id);
+    dragEvent.dataTransfer.setData('text/plain', 'Dragged item with ID: ' + this.rowNode.data.id);
 };
 
 DragSourceRenderer.prototype.getGui = function () {

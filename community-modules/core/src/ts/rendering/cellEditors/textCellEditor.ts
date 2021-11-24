@@ -87,9 +87,9 @@ export class TextCellEditor extends PopupComponent implements ICellEditorComp {
             inputEl.select();
         } else {
             // when we started editing, we want the caret at the end, not the start.
-            // this comes into play in two scenarios: a) when user hits F2 and b)
-            // when user hits a printable character, then on IE (and only IE) the caret
-            // was placed after the first character, thus 'apply' would end up as 'pplea'
+            // this comes into play in two scenarios: 
+            //   a) when user hits F2 
+            //   b) when user hits a printable character
             const value = eInput.getValue();
             const len = (exists(value) && value.length) || 0;
 

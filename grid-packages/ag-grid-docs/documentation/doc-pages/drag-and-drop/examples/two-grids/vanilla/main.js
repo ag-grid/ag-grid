@@ -78,9 +78,8 @@ function binDragOver(event) {
 
 function binDrop(event) {
     event.preventDefault();
-    var userAgent = window.navigator.userAgent;
-    var isIE = userAgent.indexOf('Trident/') >= 0;
-    var jsonData = event.dataTransfer.getData(isIE ? 'text' : 'application/json');
+
+    var jsonData = event.dataTransfer.getData('application/json');
     var data = JSON.parse(jsonData);
 
     // if data missing or data has no id, do nothing
@@ -104,10 +103,8 @@ function binDrop(event) {
 function dragStart(event, color) {
     var newItem = createDataItem(color);
     var jsonData = JSON.stringify(newItem);
-    var userAgent = window.navigator.userAgent;
-    var isIE = userAgent.indexOf('Trident/') >= 0;
 
-    event.dataTransfer.setData(isIE ? 'text' : 'application/json', jsonData);
+    event.dataTransfer.setData('application/json', jsonData);
 }
 
 function gridDragOver(event) {
@@ -123,10 +120,7 @@ function gridDragOver(event) {
 function gridDrop(event, grid) {
     event.preventDefault();
 
-    var userAgent = window.navigator.userAgent;
-    var isIE = userAgent.indexOf('Trident/') >= 0;
-
-    var jsonData = event.dataTransfer.getData(isIE ? 'text' : 'application/json');
+    var jsonData = event.dataTransfer.getData('application/json');
     var data = JSON.parse(jsonData);
 
     // if data missing or data has no it, do nothing

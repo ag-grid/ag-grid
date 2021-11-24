@@ -328,8 +328,6 @@ export class GridBodyCtrl extends BeanStub {
     // method will call itself if no available width. this covers if the grid
     // isn't visible, but is just about to be visible.
     public sizeColumnsToFit(nextTimeout?: number) {
-        // IE is different to the other browsers, it already removes the scroll width
-        // while calling window.getComputedStyle() (which is called by getInnerWidth())
         const removeScrollWidth = this.isVerticalScrollShowing();
         const scrollWidthToRemove = removeScrollWidth ? this.gridOptionsWrapper.getScrollbarWidth() : 0;
         const bodyViewportWidth = getInnerWidth(this.eBodyViewport);

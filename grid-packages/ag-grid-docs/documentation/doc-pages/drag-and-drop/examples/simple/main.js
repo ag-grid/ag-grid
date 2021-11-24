@@ -51,9 +51,7 @@ function onDragOver(event) {
 }
 
 function onDrop(event) {
-    var userAgent = window.navigator.userAgent;
-    var isIE = userAgent.indexOf('Trident/') >= 0;
-    var jsonData = event.dataTransfer.getData(isIE ? 'text' : 'application/json');
+    var jsonData = event.dataTransfer.getData('application/json');
 
     var eJsonRow = document.createElement('div');
     eJsonRow.classList.add('json-row');

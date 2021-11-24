@@ -560,10 +560,6 @@ PersonFilter.prototype.setupGui = function(params) {
     this.eFilterText.addEventListener('changed', listener);
     this.eFilterText.addEventListener('paste', listener);
     this.eFilterText.addEventListener('input', listener);
-    // IE doesn't fire changed for special keys (eg delete, backspace), so need to
-    // listen for this further ones
-    this.eFilterText.addEventListener('keydown', listener);
-    this.eFilterText.addEventListener('keyup', listener);
 
     var that = this;
 

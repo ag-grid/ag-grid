@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useMemo, memo, useContext } from 'react';
-import { CellCtrl, IRowComp, RowCtrl, UserCompDetails, _, ICellRenderer } from 'ag-grid-community';
+import { CellCtrl, IRowComp, RowCtrl, UserCompDetails, ICellRenderer } from 'ag-grid-community';
 import { showJsComp } from '../jsComp';
 import { CssClasses, isComponentStateless } from '../utils';
 import { BeansContext } from '../beansContext';
