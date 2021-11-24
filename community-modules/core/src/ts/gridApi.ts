@@ -486,13 +486,13 @@ export class GridApi {
         return this.getPinnedBottomRow(index);
     }
 
-    /** Set the top pinned rows. */
-    public setPinnedTopRowData(rows: any[]): void {
+    /** Set the top pinned rows. Call with no rows / undefined to clear top pinned rows. */
+    public setPinnedTopRowData(rows?: any[]): void {
         this.pinnedRowModel.setPinnedTopRowData(rows);
     }
 
-    /** Set the bottom pinned rows. */
-    public setPinnedBottomRowData(rows: any[]): void {
+    /** Set the bottom pinned rows. Call with no rows / undefined to clear bottom pinned rows. */
+    public setPinnedBottomRowData(rows?: any[]): void {
         this.pinnedRowModel.setPinnedBottomRowData(rows);
     }
 
