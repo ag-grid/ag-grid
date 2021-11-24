@@ -356,6 +356,10 @@ export class Component extends BeanStub {
         }
     }
 
+    public containsCssClass(className: string): boolean {
+        return this.eGui.classList.contains(className);
+    }
+
     public addOrRemoveCssClass(className: string, addOrRemove: boolean): void {
         const updateNeeded = this.cssClassStates[className] !== addOrRemove;
         if (updateNeeded) {

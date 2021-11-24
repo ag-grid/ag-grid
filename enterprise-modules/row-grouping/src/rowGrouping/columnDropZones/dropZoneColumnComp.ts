@@ -241,9 +241,8 @@ export class DropZoneColumnComp extends Component {
 
     private addElementClasses(el: HTMLElement, suffix?: string) {
         suffix = suffix ? `-${suffix}` : '';
-        el.classList.add(`ag-column-drop-cell${suffix}`);
         const direction = this.horizontal ? 'horizontal' : 'vertical';
-        el.classList.add(`ag-column-drop-${direction}-cell${suffix}`);
+        el.classList.add(`ag-column-drop-cell${suffix}`, `ag-column-drop-${direction}-cell${suffix}`);
     }
 }
 

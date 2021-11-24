@@ -97,8 +97,7 @@ export class AutoWidthCalculator extends BeanStub {
         const eCloneParentClassList = eCloneParent.classList;
 
         if (eCellClone.classList.contains('ag-header-cell')) {
-            eCloneParentClassList.add('ag-header');
-            eCloneParentClassList.add('ag-header-row');
+            eCloneParentClassList.add('ag-header', 'ag-header-row');
             eCloneParent.style.position = 'static';
         } else {
             eCloneParentClassList.add('ag-row');

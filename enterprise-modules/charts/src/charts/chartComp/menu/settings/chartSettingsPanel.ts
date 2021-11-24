@@ -162,7 +162,7 @@ export class ChartSettingsPanel extends Component {
         window.setTimeout(() => {
             this.isAnimating = false;
 
-            currentPalette.addCssClass(animatingClass);
+            currentPalette.removeCssClass(animatingClass);
             futurePalette.removeCssClass(animatingClass);
             currentPalette.addCssClass('ag-hidden');
         }, 300);

@@ -196,8 +196,7 @@ export class AgGroupComponent extends Component {
         const container = this.eContainer;
         const el = item instanceof Component ? item.getGui() : item;
 
-        el.classList.add('ag-group-item');
-        el.classList.add(`ag-${this.cssIdentifier}-group-item`);
+        el.classList.add('ag-group-item', `ag-${this.cssIdentifier}-group-item`);
 
         container.appendChild(el);
         this.items.push(el);
@@ -261,7 +260,7 @@ export class AgGroupComponent extends Component {
     }
 
     private refreshDisabledStyles() {
-        this.getGui().classList.toggle('ag-disabled', !this.enabled);
+        this.addOrRemoveCssClass('ag-disabled', !this.enabled);
 
         if (this.suppressEnabledCheckbox && !this.enabled) {
             this.eTitleBar.classList.add('ag-disabled-group-title-bar');

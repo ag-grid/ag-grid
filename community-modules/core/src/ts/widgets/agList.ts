@@ -79,9 +79,7 @@ export class AgList extends Component {
         const itemEl = document.createElement('div');
 
         setAriaRole(itemEl, 'option');
-        itemEl.classList.add('ag-list-item');
-        itemEl.classList.add(`ag-${this.cssIdentifier}-list-item`);
-
+        itemEl.classList.add('ag-list-item', `ag-${this.cssIdentifier}-list-item`);
         itemEl.innerHTML = `<span>${text}</span>`;
         itemEl.tabIndex = -1;
 

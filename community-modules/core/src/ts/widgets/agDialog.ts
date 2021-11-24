@@ -163,8 +163,7 @@ export class AgDialog extends AgPanel {
         this.maximizeIcon.classList.add('ag-panel-title-bar-button-icon');
 
         eGui.appendChild(this.minimizeIcon = createIconNoSpan('minimize', this.gridOptionsWrapper)!);
-        this.minimizeIcon.classList.add('ag-panel-title-bar-button-icon');
-        this.minimizeIcon.classList.add('ag-hidden');
+        this.minimizeIcon.classList.add('ag-panel-title-bar-button-icon', 'ag-hidden');
 
         maximizeButtonComp.addManagedListener(eGui, 'click', this.toggleMaximize.bind(this));
 

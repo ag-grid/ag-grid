@@ -359,13 +359,13 @@ export class FiltersToolPanelListPanel extends Component {
 
         this.filterGroupComps.forEach((filterGroup, idx) => {
             recursivelySearch(filterGroup, false);
-            const filterGroupClassList = filterGroup.getGui().classList;
+
             if (firstVisible === undefined) {
-                if (!filterGroupClassList.contains('ag-hidden')) {
+                if (!filterGroup.containsCssClass('ag-hidden')) {
                     firstVisible = idx;
                     lastVisible = idx;
                 }
-            } else if (!filterGroupClassList.contains('ag-hidden') && lastVisible !== idx) {
+            } else if (!filterGroup.containsCssClass('ag-hidden') && lastVisible !== idx) {
                 lastVisible = idx;
             }
         });

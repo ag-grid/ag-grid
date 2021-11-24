@@ -467,8 +467,10 @@ export class PopupService extends BeanStub {
         }
 
         eWrapper.classList.add('ag-popup');
-        eChild.classList.add(this.gridOptionsWrapper.isEnableRtl() ? 'ag-rtl' : 'ag-ltr');
-        eChild.classList.add('ag-popup-child');
+        eChild.classList.add(
+            this.gridOptionsWrapper.isEnableRtl() ? 'ag-rtl' : 'ag-ltr',
+            'ag-popup-child'
+        );
         setAriaRole(eChild, 'dialog');
         setAriaLabel(eChild, ariaLabel);
 

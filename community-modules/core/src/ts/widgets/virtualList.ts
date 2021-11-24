@@ -254,9 +254,7 @@ export class VirtualList extends TabGuardComp {
         const value = this.model.getRow(rowIndex);
         const eDiv = document.createElement('div');
 
-        eDiv.classList.add('ag-virtual-list-item');
-        eDiv.classList.add(`ag-${this.cssIdentifier}-virtual-list-item`);
-
+        eDiv.classList.add('ag-virtual-list-item', `ag-${this.cssIdentifier}-virtual-list-item`);
         setAriaRole(eDiv, this.ariaRole === 'tree' ? 'treeitem' : 'option');
         setAriaSetSize(eDiv, this.model.getRowCount());
         setAriaPosInSet(eDiv, rowIndex + 1);

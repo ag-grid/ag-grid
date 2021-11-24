@@ -120,9 +120,8 @@ export abstract class BaseDropZonePanel extends Component {
 
     private addElementClasses(el: HTMLElement, suffix?: string) {
         suffix = suffix ? `-${suffix}` : '';
-        el.classList.add(`ag-column-drop${suffix}`);
         const direction = this.horizontal ? 'horizontal' : 'vertical';
-        el.classList.add(`ag-column-drop-${direction}${suffix}`);
+        el.classList.add(`ag-column-drop${suffix}`, `ag-column-drop-${direction}${suffix}`);
     }
 
     private setupDropTarget(): void {

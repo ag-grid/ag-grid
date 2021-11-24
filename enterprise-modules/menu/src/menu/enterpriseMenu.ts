@@ -509,8 +509,9 @@ export class EnterpriseMenu extends BeanStub {
             columnApi: this.columnApi
         }, 'columnMenu');
 
-        this.columnSelectPanel.getGui().classList.add('ag-menu-column-select');
-        eWrapperDiv.appendChild(this.columnSelectPanel.getGui());
+        const columnSelectPanelGui = this.columnSelectPanel.getGui();
+        columnSelectPanelGui.classList.add('ag-menu-column-select');
+        eWrapperDiv.appendChild(columnSelectPanelGui);
 
         this.tabItemColumns = {
             title: _.createIconNoSpan('columns', this.gridOptionsWrapper, this.column)!, //createColumnsIcon(),
