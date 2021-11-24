@@ -7787,6 +7787,7 @@
       "type?": "'line'",
       "line?": "SparklineLineOptions",
       "marker?": "SparklineMarkerOptions",
+      "crosshairs?": "SparklineCrosshairsOptions",
       "xKey?": "string",
       "yKey?": "string",
       "padding?": "PaddingOptions",
@@ -7798,6 +7799,7 @@
       "type?": "/** The type of sparklines to create, in this case it would be `'line'`. */",
       "line?": "/** The configuration for the line. */",
       "marker?": "/** The configuration for the marker styles. */",
+      "crosshairs?": "/** The configuration for the crosshairs. */",
       "xKey?": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
       "yKey?": "/** The key to use to retrieve Y values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
@@ -7813,6 +7815,7 @@
       "fill?": "string",
       "line?": "SparklineLineOptions",
       "marker?": "SparklineMarkerOptions",
+      "crosshairs?": "SparklineCrosshairsOptions",
       "xKey?": "string",
       "yKey?": "string",
       "padding?": "PaddingOptions",
@@ -7825,6 +7828,7 @@
       "fill?": "/** The CSS colour value for the fill of the area.\n * Default: `'rgba(124, 181, 236, 0.25)'` */",
       "line?": "/** The configuration for the line. */",
       "marker?": "/** The configuration for the marker styles. */",
+      "crosshairs?": "/** The configuration for the crosshairs. */",
       "xKey?": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
       "yKey?": "/** The key to use to retrieve Y values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'y'` */",
       "padding?": "/** Configuration for the padding in pixels shown around the sparklines. */",
@@ -8048,6 +8052,26 @@
       "fill?": "/** The fill colour of the markers, columns or bars when hovered over. Use `undefined` for no highlight fill.\n * Default: `'yellow'` */",
       "stroke?": "/** The CSS colour value for the outline of the markers, columns or bars when hovered over. Use `undefined` for no highlight stroke.\n * Default: `'silver'` */",
       "strokeWidth?": "/** The thickness in pixels for the stroke of the markers, columns or bars when hovered over.\n * Default: `1` */"
+    }
+  },
+  "SparklineCrosshairsOptions": {
+    "meta": {},
+    "type": {
+      "xLine?": "CrosshairLineOptions",
+      "yLine?": "CrosshairLineOptions"
+    }
+  },
+  "CrosshairLineOptions": {
+    "meta": {},
+    "type": {
+      "enabled?": "boolean",
+      "stroke?": "string",
+      "strokeWidth?": "number"
+    },
+    "docs": {
+      "enabled?": "/** Set to true to show crosshair line.\n * Default: false */",
+      "stroke?": "/** The CSS colour value for the crosshair line. */",
+      "strokeWidth?": "/** The thickness in pixels for the crosshair line. */"
     }
   },
   "SparklineColumnFormatter": {

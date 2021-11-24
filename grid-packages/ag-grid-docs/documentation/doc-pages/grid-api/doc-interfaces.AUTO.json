@@ -13937,6 +13937,10 @@
       "description": "/** The configuration for the marker styles. */",
       "type": { "returnType": "SparklineMarkerOptions", "optional": true }
     },
+    "crosshairs": {
+      "description": "/** The configuration for the crosshairs. */",
+      "type": { "returnType": "SparklineCrosshairsOptions", "optional": true }
+    },
     "xKey": {
       "description": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
       "type": { "returnType": "string", "optional": true }
@@ -13978,6 +13982,10 @@
     "marker": {
       "description": "/** The configuration for the marker styles. */",
       "type": { "returnType": "SparklineMarkerOptions", "optional": true }
+    },
+    "crosshairs": {
+      "description": "/** The configuration for the crosshairs. */",
+      "type": { "returnType": "SparklineCrosshairsOptions", "optional": true }
     },
     "xKey": {
       "description": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
@@ -14292,6 +14300,28 @@
     },
     "strokeWidth": {
       "description": "/** The thickness in pixels for the stroke of the markers, columns or bars when hovered over.\n * Default: `1` */",
+      "type": { "returnType": "number", "optional": true }
+    }
+  },
+  "SparklineCrosshairsOptions": {
+    "xLine": {
+      "type": { "returnType": "CrosshairLineOptions", "optional": true }
+    },
+    "yLine": {
+      "type": { "returnType": "CrosshairLineOptions", "optional": true }
+    }
+  },
+  "CrosshairLineOptions": {
+    "enabled": {
+      "description": "/** Set to true to show crosshair line.\n * Default: false */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "stroke": {
+      "description": "/** The CSS colour value for the crosshair line. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "strokeWidth": {
+      "description": "/** The thickness in pixels for the crosshair line. */",
       "type": { "returnType": "number", "optional": true }
     }
   },

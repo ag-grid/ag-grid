@@ -32,6 +32,8 @@ export interface LineSparklineOptions extends BaseSparklineOptions {
     line?: SparklineLineOptions;
     /** The configuration for the marker styles. */
     marker?: SparklineMarkerOptions;
+    /** The configuration for the crosshairs. */
+    crosshairs?: SparklineCrosshairsOptions;
 }
 
 export interface AreaSparklineOptions extends BaseSparklineOptions {
@@ -45,6 +47,8 @@ export interface AreaSparklineOptions extends BaseSparklineOptions {
     line?: SparklineLineOptions;
     /** The configuration for the marker styles. */
     marker?: SparklineMarkerOptions;
+    /** The configuration for the crosshairs. */
+    crosshairs?: SparklineCrosshairsOptions;
 }
 
 export interface ColumnSparklineOptions extends BaseSparklineOptions {
@@ -250,6 +254,20 @@ export interface HighlightStyleOptions {
     /** The thickness in pixels for the stroke of the markers, columns or bars when hovered over.
      * Default: `1`
      */
+    strokeWidth?: number;
+}
+export interface SparklineCrosshairsOptions {
+    xLine?: CrosshairLineOptions;
+    yLine?: CrosshairLineOptions;
+}
+export interface CrosshairLineOptions {
+    /** Set to true to show crosshair line.
+     * Default: false
+     */
+    enabled?: boolean;
+    /** The CSS colour value for the crosshair line. */
+    stroke?: string;
+    /** The thickness in pixels for the crosshair line. */
     strokeWidth?: number;
 }
 
