@@ -1,7 +1,6 @@
 import { BandScale } from '../../scale/bandScale';
 import { Group } from '../../scene/group';
 import { Path } from '../../scene/shape/path';
-import { Observable } from '../../util/observable';
 import { Selection } from '../../scene/selection';
 import { Marker } from '../marker/marker';
 import { Point, SeriesNodeDatum, Sparkline } from '../sparkline';
@@ -10,12 +9,14 @@ import { getMarker } from '../marker/markerFactory';
 import { MarkerFormat, MarkerFormatterParams } from "@ag-grid-community/core";
 import { extent } from '../../util/array';
 import { isNumber } from '../../util/value';
+import { Line } from '../../scene/shape/line';
+import { CrosshairLineOptions } from '@ag-grid-community/core/dist/cjs/interfaces/iSparklineCellRendererParams';
 
 interface LineNodeDatum extends SeriesNodeDatum {
     readonly point: Point;
 }
 
-class SparklineMarker extends Observable {
+class SparklineMarker {
     enabled: boolean = true;
     shape: string = 'circle';
     size: number = 0;
@@ -25,27 +26,41 @@ class SparklineMarker extends Observable {
     formatter?: (params: MarkerFormatterParams) => MarkerFormat = undefined;
 }
 
-class SparklineLine extends Observable {
+class SparklineLine {
     stroke: string = 'rgb(124, 181, 236)';
     strokeWidth: number = 1;
+}
+
+class SparklineCrosshairs {
+    private static crosshairLineOptions = {
+        enabled: true,
+        stroke: 'rgba(0,0,0, 0.54)',
+        strokeWidth: 1
+    }
+    xLine: CrosshairLineOptions = SparklineCrosshairs.crosshairLineOptions;
+    yLine: CrosshairLineOptions = SparklineCrosshairs.crosshairLineOptions;
 }
 
 export class LineSparkline extends Sparkline {
     static className = 'LineSparkline';
 
-    private lineSparklineGroup: Group = new Group();
     protected linePath: Path = new Path();
+    protected xCrosshairLine: Line = new Line();
+    protected yCrosshairLine: Line = new Line();
+
+    private lineSparklineGroup: Group = new Group();
     private markers: Group = new Group();
     private markerSelection: Selection<Marker, Group, LineNodeDatum, any> = Selection.select(this.markers).selectAll<Marker>();
     private markerSelectionData: LineNodeDatum[] = [];
 
     readonly marker = new SparklineMarker();
     readonly line = new SparklineLine();
+    readonly crosshairs = new SparklineCrosshairs();
 
     constructor() {
         super();
         this.rootGroup.append(this.lineSparklineGroup);
-        this.lineSparklineGroup.append([this.linePath, this.markers]);
+        this.lineSparklineGroup.append([this.linePath, this.xCrosshairLine, this.yCrosshairLine, this.markers]);
     }
 
     protected getNodeData(): LineNodeDatum[] {
@@ -82,7 +97,7 @@ export class LineSparkline extends Sparkline {
         const yMinMax = extent(yData, isNumber);
 
         let yMin = 0;
-        let yMax= 1;
+        let yMax = 1;
 
         if (yMinMax !== undefined) {
             yMin = this.min = yMinMax[0] as number;
@@ -143,7 +158,7 @@ export class LineSparkline extends Sparkline {
     }
 
     protected updateNodes(): void {
-        const { highlightedDatum, highlightStyle, marker, min, max } = this;
+        const { highlightedDatum, highlightStyle, marker } = this;
         const { size: highlightSize, fill: highlightFill, stroke: highlightStroke, strokeWidth: highlightStrokeWidth } = highlightStyle;
         const markerFormatter = marker.formatter;
 
@@ -227,6 +242,42 @@ export class LineSparkline extends Sparkline {
         linePath.fill = undefined;
         linePath.stroke = line.stroke;
         linePath.strokeWidth = line.strokeWidth;
+    }
+
+    protected updateXCrosshairLine(): void {
+        const { yScale, xCrosshairLine, highlightedDatum, crosshairs: { xLine } } = this;
+
+        if (!xLine.enabled || highlightedDatum == undefined) {
+            xCrosshairLine.strokeWidth = 0;
+            return;
+        }
+
+        xCrosshairLine.y1 = yScale.range[0];
+        xCrosshairLine.y2 = yScale.range[1];
+        xCrosshairLine.x1 = xCrosshairLine.x2 = 0;
+        xCrosshairLine.stroke = xLine.stroke;
+        xCrosshairLine.strokeWidth = xLine.strokeWidth || 1;
+        // xCrosshairLine.lineDash = [3, 1];
+
+        xCrosshairLine.translationX = highlightedDatum.point!.x;
+    }
+
+    protected updateYCrosshairLine() {
+        const { xScale, yCrosshairLine, highlightedDatum, crosshairs: { yLine } } = this;
+
+        if (!yLine.enabled || highlightedDatum == undefined) {
+            yCrosshairLine.strokeWidth = 0;
+            return;
+        }
+
+        yCrosshairLine.x1 = xScale.range[0];
+        yCrosshairLine.x2 = xScale.range[1];
+        yCrosshairLine.y1 = yCrosshairLine.y2 = 0;
+        yCrosshairLine.stroke = yLine.stroke;
+        yCrosshairLine.strokeWidth = yLine.strokeWidth || 1;
+        // yCrosshairLine.lineDash = [3, 1];
+
+        yCrosshairLine.translationY = highlightedDatum.point!.y;
     }
 
     getTooltipHtml(datum: SeriesNodeDatum): string | undefined {

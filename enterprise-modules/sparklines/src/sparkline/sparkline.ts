@@ -249,12 +249,19 @@ export abstract class Sparkline extends Observable {
     }
 
     // Update axis line.
-    protected updateAxisLine() { }
+    protected updateAxisLine(): void { }
 
-    protected updateAxes() {
+    // Update X and Y scales and the axis line.
+    protected updateAxes(): void {
         this.updateYScale();
         this.updateXScale();
         this.updateAxisLine();
+    }
+
+    // Update horizontal and vertical crosshair lines.
+    protected updateCrosshairs(): void {
+        this.updateXCrosshairLine();
+        this.updateYCrosshairLine();
     }
 
     // Using processed data, generate data that backs visible nodes.
@@ -266,6 +273,11 @@ export abstract class Sparkline extends Observable {
     // Update the selection's nodes.
     protected updateNodes(): void { }
 
+    // Update the vertical crosshair line.
+    protected updateXCrosshairLine(): void { }
+    // Update the horizontal crosshair line.
+    protected updateYCrosshairLine(): void { }
+
     // Efficiently update sparkline nodes on hightlight changes.
     protected highlightedDatum?: SeriesNodeDatum;
     protected highlightDatum(closestDatum: SeriesNodeDatum): void {
@@ -275,6 +287,7 @@ export abstract class Sparkline extends Observable {
     protected dehighlightDatum(): void {
         this.highlightedDatum = undefined;
         this.updateNodes();
+        this.updateCrosshairs();
     }
 
     abstract getTooltipHtml(datum: SeriesNodeDatum): string | undefined;
@@ -298,6 +311,7 @@ export abstract class Sparkline extends Observable {
         if ((this.highlightedDatum && !oldHighlightedDatum) ||
             (this.highlightedDatum && oldHighlightedDatum && this.highlightedDatum !== oldHighlightedDatum)) {
             this.highlightDatum(closestDatum);
+            this.updateCrosshairs();
         }
 
         if (this.tooltip.enabled) {
