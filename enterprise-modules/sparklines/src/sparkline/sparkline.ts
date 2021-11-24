@@ -298,9 +298,10 @@ export abstract class Sparkline extends Observable {
         if ((this.highlightedDatum && !oldHighlightedDatum) ||
             (this.highlightedDatum && oldHighlightedDatum && this.highlightedDatum !== oldHighlightedDatum)) {
             this.highlightDatum(closestDatum);
-            if (this.tooltip.enabled) {
-                this.handleTooltip(closestDatum);
-            }
+        }
+
+        if (this.tooltip.enabled) {
+            this.handleTooltip(event, closestDatum);
         }
     }
 
@@ -511,17 +512,19 @@ export abstract class Sparkline extends Observable {
      * calculate x/y coordinates for tooltip based on coordinates of highlighted datum, position of canvas and page offset.
      * @param datum
      */
-    private handleTooltip(datum: SeriesNodeDatum): void {
+    private handleTooltip(event: MouseEvent, datum: SeriesNodeDatum): void {
         const { seriesDatum } = datum;
         const { canvasElement } = this;
-        const canvasRect = canvasElement.getBoundingClientRect();
-        const { pageXOffset, pageYOffset } = window;
-        // pickClosestSeriesNodeDatum only returns datum with point
-        const point = this.rootGroup.inverseTransformPoint(datum.point!.x, datum.point!.y);
+        const { clientX, clientY } = event;
+
+        // confine tooltip to sparkline width if tooltip container not provided.
+        if (this.tooltip.container == undefined) {
+            this.tooltip.container = canvasElement;
+        }
 
         const meta = {
-            pageX: (point.x + canvasRect.left + pageXOffset),
-            pageY: (point.y + canvasRect.top + pageYOffset)
+            pageX: clientX,
+            pageY: clientY
         }
 
         const yValue = seriesDatum.y;
