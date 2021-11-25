@@ -46,6 +46,10 @@ const gridOptions = {
 
 Components can be aligned either to the `left`, in the `center` of the bar or on the `right` (the default). Components within these alignments will be added in the order specified.
 
+### Labels and Number Formats
+
+Labels within the Status Bar (ie. "Rows", "Total Rows", "Average") and number formatters such as the decimal and thousand separators can be changed by using the Grid's Localisation, for more info see [Localisation](/localisation/).
+
 ### Simple Status Bar Example
 
 The example below shows a simply configured status bar. Note the following:
