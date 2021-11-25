@@ -102,17 +102,9 @@ function GridExample() {
                 </div>
             </div>
             <AgGridReact 
-                // turn on AG Grid React UI
-                reactUi="true"
-
-                // reference so we can call the API
                 ref={gridRef}
-
                 sideBar={sideBar}
-
                 statusBar={statusBar}
-
-                // all other properties as normal...
                 className="ag-theme-alpine my-grid"
                 animateRows="true"
                 loadingOverlayComponentFramework={MyLoadingOverlay}

@@ -68,14 +68,7 @@ function GridExample() {
             </div>
             <div className="grid-div">
                 <AgGridReact 
-
-                    // turn on AG Grid React UI
-                    reactUi="true"
-
-                    // used to access grid API
                     ref={gridRef}
-
-                    // all other properties as normal...
                     className="ag-theme-alpine"
                     animateRows="true"
                     modules={modules}

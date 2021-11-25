@@ -1037,6 +1037,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.reactUi);
     }
 
+    public isSuppressReactUi() {
+        return isTrue(this.gridOptions.suppressReactUi);
+    }
+
     public isEnableRangeSelection(): boolean {
         return ModuleRegistry.isRegistered(ModuleNames.RangeSelectionModule) && isTrue(this.gridOptions.enableRangeSelection);
     }
@@ -1688,6 +1692,12 @@ export class GridOptionsWrapper {
         }
         if (options.maxColWidth) {
             console.warn('AG Grid: since v26.1, the grid property `maxColWidth` is deprecated and should be set via `defaultColDef.maxWidth`.');
+        }
+        if (options.reactUi) {
+            console.warn('AG Grid: since v27.0, React UI is on by default, so no need for reactUi=true. To turn it off, set suppressReactUi=true.');
+        }
+        if (options.suppressReactUi) {
+            console.warn('AG Grid: The legacy React rendering engine is deprecated and will be removed in the next major version of the grid.');
         }
     }
 
