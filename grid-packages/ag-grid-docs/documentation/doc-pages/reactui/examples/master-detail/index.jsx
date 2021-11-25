@@ -88,11 +88,9 @@ function MyRenderer(params) {
 
     return  (
             <AgGridReact
-                reactUi={true}
                 ref={gridRef}
                 className="ag-theme-alpine"
                 columnDefs={columnDefs}
-                reactUi={true}
                 modules={modules}
                 defaultColDef={{ flex: 1 }}
                 masterDetail={true}
