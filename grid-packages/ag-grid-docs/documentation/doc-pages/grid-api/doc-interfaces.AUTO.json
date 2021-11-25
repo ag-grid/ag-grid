@@ -8473,11 +8473,11 @@
       "type": { "returnType": "Column", "optional": false }
     },
     "displayName": {
-      "description": "/** The name to display for the column. \n * If the column is using a headerValueGetter, the displayName will take this into account. */",
+      "description": "/** The name to display for the column.\n * If the column is using a headerValueGetter, the displayName will take this into account. */",
       "type": { "returnType": "string", "optional": false }
     },
     "enableSorting": {
-      "description": "/** Whether sorting is enabled for the column. \n * Only put sort logic into your header if this is true. */",
+      "description": "/** Whether sorting is enabled for the column.\n * Only put sort logic into your header if this is true. */",
       "type": { "returnType": "boolean", "optional": false }
     },
     "enableMenu": {
@@ -8510,7 +8510,7 @@
     },
     "template": { "type": { "returnType": "string", "optional": false } },
     "eGridHeader": {
-      "description": "/** The header the grid provides. \n * The custom header component is a child of the grid provided header.\n * The grid's header component is what contains the grid managed functionality such as resizing, keyboard navigation etc.\n * This is provided should you want to make changes to this cell,\n * eg add ARIA tags, or add keyboard event listener (as focus goes here when navigating to the header). */",
+      "description": "/** The header the grid provides.\n * The custom header component is a child of the grid provided header.\n * The grid's header component is what contains the grid managed functionality such as resizing, keyboard navigation etc.\n * This is provided should you want to make changes to this cell,\n * eg add ARIA tags, or add keyboard event listener (as focus goes here when navigating to the header). */",
       "type": { "returnType": "HTMLElement", "optional": false }
     },
     "api": { "type": { "returnType": "GridApi", "optional": false } },

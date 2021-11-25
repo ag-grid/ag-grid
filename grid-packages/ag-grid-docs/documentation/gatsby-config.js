@@ -77,13 +77,15 @@ const plugins = [
             quality: 100,
           },
         },
-        'gatsby-remark-attr', // This allows attributes to be used in Markdown, e.g. for images
+        'gatsby-remark-attr', // This allows attributes to be used in Markdown, e.g. for images//
         {
           // This adds custom blocks to Markdown, e.g. for info or warning messages, and our framework-specific sections
           resolve: 'gatsby-remark-custom-blocks',
           options: {
             blocks: {
               note: {
+
+
                 classes: 'note',
                 title: 'optional',
               },
@@ -145,9 +147,17 @@ const plugins = [
     resolve: 'gatsby-plugin-sass',
     options: {
       additionalData: `@import './src/custom.module';`, // adds this import into every SCSS file
+
       cssLoaderOptions: {
-        camelCase: false, // Preserve CSS names as-is, rather than converting to camelCase, when accessing in JS
+        esModule: false,
+        modules: {
+          namedExport: false,
+          exportLocalsConvention: 'asIs',
+        },
       },
+      // cssLoaderOptions: {
+      //   camelCase: false, // Preserve CSS names as-is, rather than converting to camelCase, when accessing in JS
+      // },
     }
   },
   'gatsby-plugin-minify-classnames', // This minifies classnames to reduce CSS size
@@ -164,7 +174,7 @@ const plugins = [
     // This generates the sitemap
     resolve: 'gatsby-plugin-sitemap',
     options: {
-      exclude: [`/documentation`, '/changelog'], // changelog is a POC not using PHP
+      excludes: [`/documentation`, '/changelog'],
       output: 'sitemap-documentation.xml'
     }
   },

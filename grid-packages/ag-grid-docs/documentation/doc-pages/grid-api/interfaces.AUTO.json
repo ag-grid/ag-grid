@@ -4851,13 +4851,13 @@
     },
     "docs": {
       "column": "/** The column the header is for. */",
-      "displayName": "/** The name to display for the column. \n * If the column is using a headerValueGetter, the displayName will take this into account. */",
-      "enableSorting": "/** Whether sorting is enabled for the column. \n * Only put sort logic into your header if this is true. */",
+      "displayName": "/** The name to display for the column.\n * If the column is using a headerValueGetter, the displayName will take this into account. */",
+      "enableSorting": "/** Whether sorting is enabled for the column.\n * Only put sort logic into your header if this is true. */",
       "enableMenu": "/** Whether menu is enabled for the column.\n * Only display a menu button in your header if this is true. */",
       "showColumnMenu": "/** Callback to request the grid to show the column menu.\n * Pass in the html element of the column menu to have the\n *   grid position the menu over the button. */",
       "progressSort": "/** Callback to progress the sort for this column.\n * The grid will decide the next sort direction eg ascending, descending or 'no sort'.\n * Pass `multiSort=true` if you want to do a multi sort (eg user has Shift held down when they click). */",
       "setSort": "/** Callback to set the sort for this column.\n * Pass the sort direction to use ignoring the current sort eg one of 'asc', 'desc' or null (for no sort).\n * Pass `multiSort=true` if you want to do a multi sort (eg user has Shift held down when they click) */",
-      "eGridHeader": "/** The header the grid provides. \n * The custom header component is a child of the grid provided header.\n * The grid's header component is what contains the grid managed functionality such as resizing, keyboard navigation etc.\n * This is provided should you want to make changes to this cell,\n * eg add ARIA tags, or add keyboard event listener (as focus goes here when navigating to the header). */",
+      "eGridHeader": "/** The header the grid provides.\n * The custom header component is a child of the grid provided header.\n * The grid's header component is what contains the grid managed functionality such as resizing, keyboard navigation etc.\n * This is provided should you want to make changes to this cell,\n * eg add ARIA tags, or add keyboard event listener (as focus goes here when navigating to the header). */",
       "context": "/** The context as provided on `gridOptions.context` */"
     }
   },

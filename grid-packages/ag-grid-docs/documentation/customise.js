@@ -33,7 +33,7 @@ const updateFileContents = (filename, existingContent, newContent) => {
 const addMarkdownIncludeSupport = () => {
     // updates the method for reading files to automatically replace the Markdown imports with file contents at this stage
 
-    return applyCustomisation('gatsby-source-filesystem', '2.11.0', {
+    return applyCustomisation('gatsby-source-filesystem', '3.14.0', {
         name: 'Add support for including Markdown files into other Markdown files',
         apply: () => updateFileContents(
             './node_modules/gatsby-source-filesystem/index.js',
@@ -64,7 +64,7 @@ const fixScrollingIssue = () => {
     // removes some of the scroll handling that this plugin adds which seems to cause the page to scroll to the wrong
     // position when hash URLs are initially loaded
 
-    return applyCustomisation('gatsby-remark-autolink-headers', '2.11.0', {
+    return applyCustomisation('gatsby-remark-autolink-headers', '4.11.0', {
         name: 'Fix scrolling issue for hash URLs',
         apply: () => updateFileContents(
             './node_modules/gatsby-remark-autolink-headers/gatsby-browser.js',
@@ -74,11 +74,26 @@ const fixScrollingIssue = () => {
     });
 };
 
+const ignoreFsUsages = () => {
+    // ignores fs usages when doing prod builds
+    // this feature is added to allow for incremental builds but causes issue with code out of our control (algolia) as well as with the ExampleRunner
+    // remove this check and just allow it to continue
+
+    return applyCustomisation('gatsby', '3.14.6', {
+        name: `Don't track fs usages when doing prod build`,
+        apply: () => updateFileContents(
+            './node_modules/gatsby/dist/utils/webpack.config.js',
+            'const builtinModulesToTrack = [`fs`, `http`, `http2`, `https`, `child_process`];',
+            'const builtinModulesToTrack = [`http`, `http2`, `https`, `child_process`];'
+        )
+    });
+};
+
 const fixFileLoadingIssue = () => {
     // adds error handling around loading of files to avoid the Gatsby process periodically dying when file contents
     // cannot be read correctly when saving examples
 
-    return applyCustomisation('gatsby-source-filesystem', '2.11.0', {
+    return applyCustomisation('gatsby-source-filesystem', '3.14.0', {
         name: 'Fix file loading issue',
         apply: () => updateFileContents(
             './node_modules/gatsby-source-filesystem/gatsby-node.js',
@@ -112,7 +127,7 @@ const fixFileLoadingIssue = () => {
 const restrictSearchForPageQueries = () => {
     // restricts the files that Gatsby searches for queries, which improves performance
 
-    return applyCustomisation('gatsby', '2.32.9', {
+    return applyCustomisation('gatsby', '3.14.6', {
         name: 'Restrict search for page queries',
         apply: () => updateFileContents(
             './node_modules/gatsby/dist/query/query-compiler.js',
@@ -130,6 +145,7 @@ const success = [
     fixScrollingIssue(),
     fixFileLoadingIssue(),
     restrictSearchForPageQueries(),
+    ignoreFsUsages(),
 ].every(x => x);
 
 if (success) {
