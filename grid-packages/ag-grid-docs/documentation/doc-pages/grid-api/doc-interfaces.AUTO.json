@@ -11646,14 +11646,14 @@
     }
   },
   "ExcelInterior": {
-    "color": { "type": { "returnType": "string", "optional": false } },
+    "color": { "type": { "returnType": "string", "optional": true } },
     "pattern": {
       "type": {
         "returnType": "'None' | 'Solid' | 'Gray75' | 'Gray50' | 'Gray25' | 'Gray125' | 'Gray0625' | 'HorzStripe' | 'VertStripe' | 'ReverseDiagStripe' | 'DiagStripe' | 'DiagCross' | 'ThickDiagCross' | 'ThinHorzStripe' | 'ThinVertStripe' | 'ThinReverseDiagStripe' | 'ThinDiagStripe' | 'ThinHorzCross' | 'ThinDiagCross'",
-        "optional": false
+        "optional": true
       }
     },
-    "patternColor": { "type": { "returnType": "string", "optional": false } }
+    "patternColor": { "type": { "returnType": "string", "optional": true } }
   },
   "ExcelNumberFormat": {
     "format": { "type": { "returnType": "string", "optional": false } }
