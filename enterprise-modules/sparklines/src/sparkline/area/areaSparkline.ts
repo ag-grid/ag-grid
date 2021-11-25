@@ -39,8 +39,8 @@ class SparklineCrosshairs {
         stroke: 'rgba(0,0,0, 0.54)',
         strokeWidth: 1
     }
-    xLine: CrosshairLineOptions = SparklineCrosshairs.crosshairLineOptions;
-    yLine: CrosshairLineOptions = SparklineCrosshairs.crosshairLineOptions;
+    xLine: CrosshairLineOptions = Object.create(SparklineCrosshairs.crosshairLineOptions);
+    yLine: CrosshairLineOptions = Object.create(SparklineCrosshairs.crosshairLineOptions);
 }
 
 export class AreaSparkline extends Sparkline {
