@@ -201,5 +201,7 @@ function initHighlightStyleOptions(target: HighlightStyleOptions, options: any) 
 function initTooltipOptions(target: SparklineTooltip, options: any) {
     setValueIfPropertyExists(target, 'enabled', options.enabled, options);
     setValueIfPropertyExists(target, 'container', options.container, options);
+    setValueIfPropertyExists(target, 'xOffset', options.xOffset, options);
+    setValueIfPropertyExists(target, 'yOffset', options.yOffset, options);
     setValueIfPropertyExists(target, 'renderer', options.renderer, options);
 }
