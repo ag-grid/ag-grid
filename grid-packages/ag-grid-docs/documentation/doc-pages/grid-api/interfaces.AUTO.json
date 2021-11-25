@@ -7501,7 +7501,7 @@
   "IServerSideRowModel": {
     "meta": {},
     "type": {
-      "refreshStore(params: RefreshStoreParams)": "void",
+      "refreshStore(params?: RefreshStoreParams)": "void",
       "onRowHeightChanged()": "void",
       "getStoreState()": "ServerSideStoreState[]",
       "retryLoads()": "void",

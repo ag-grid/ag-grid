@@ -1974,7 +1974,7 @@ export class GridApi {
      * If you pass no parameters, then the top level cache is purged.
      * To purge a child cache, pass in the string of keys to get to the child cache.
      */
-    public refreshServerSideStore(params: RefreshStoreParams): void {
+    public refreshServerSideStore(params?: RefreshStoreParams): void {
         if (this.serverSideRowModel) {
             this.serverSideRowModel.refreshStore(params);
         } else {

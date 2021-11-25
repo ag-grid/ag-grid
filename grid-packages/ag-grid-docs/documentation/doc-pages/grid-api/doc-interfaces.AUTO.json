@@ -13231,7 +13231,7 @@
   "IServerSideRowModel": {
     "refreshStore": {
       "type": {
-        "arguments": { "params": "RefreshStoreParams" },
+        "arguments": { "params?": "RefreshStoreParams" },
         "returnType": "void",
         "optional": false
       }
