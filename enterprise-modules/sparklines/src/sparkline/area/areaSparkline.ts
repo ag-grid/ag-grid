@@ -11,7 +11,7 @@ import { MarkerFormat, MarkerFormatterParams } from "@ag-grid-community/core";
 import { extent } from '../../util/array';
 import { isNumber } from '../../util/value';
 import { CrosshairLineOptions } from '@ag-grid-community/core/dist/cjs/interfaces/iSparklineCellRendererParams';
-import { getLineDash } from '../../util/linedash';
+import { getLineDash } from '../../util/lineDash';
 
 interface AreaNodeDatum extends SeriesNodeDatum { }
 
