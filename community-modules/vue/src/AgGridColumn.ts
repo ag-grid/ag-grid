@@ -27,7 +27,7 @@ export class AgGridColumn {
 
     private static createColDefFromGridColumn(column: any): ColDef {
         const colDef: ColDef = {};
-        AgGridColumn.assign(colDef, column.data.attrs);
+        Object.assign(colDef, column.data.attrs);
         delete (colDef as any).children;
 
         // booleans passed down just as is are here as property=""
@@ -40,16 +40,6 @@ export class AgGridColumn {
         });
 
         return colDef;
-    }
-
-    private static assign(colDef: any, from: AgGridColumn): ColDef {
-        // effectively Object.assign - here for IE compatibility
-        return [from].reduce(function(r, o) {
-            Object.keys(o).forEach(function(k) {
-                r[k] = (o as any)[k];
-            });
-            return r;
-        }, colDef);
     }
 
 }

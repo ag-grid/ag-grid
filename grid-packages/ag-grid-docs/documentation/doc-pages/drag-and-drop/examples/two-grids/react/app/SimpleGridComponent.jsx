@@ -123,9 +123,8 @@ export default class extends Component {
     dragStart(color, event) {
         const newItem = this.createDataItem(color);
         const jsonData = JSON.stringify(newItem);
-        const userAgent = window.navigator.userAgent;
-        const isIE = userAgent.indexOf('Trident/') >= 0;
-        event.dataTransfer.setData(isIE ? 'text' : 'application/json', jsonData);
+
+        event.dataTransfer.setData('application/json', jsonData);
     };
 
     gridDragOver = (event) => {
@@ -139,9 +138,8 @@ export default class extends Component {
 
     gridDrop = (grid, event) => {
         event.preventDefault();
-        const userAgent = window.navigator.userAgent;
-        const isIE = userAgent.indexOf('Trident/') >= 0;
-        const jsonData = event.dataTransfer.getData(isIE ? 'text' : 'application/json');
+
+        const jsonData = event.dataTransfer.getData('application/json');
         const data = JSON.parse(jsonData);
 
         // if data missing or data has no it, do nothing

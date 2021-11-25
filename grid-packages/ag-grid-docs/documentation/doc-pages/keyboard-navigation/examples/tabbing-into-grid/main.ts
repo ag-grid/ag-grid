@@ -36,24 +36,21 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
   myInput.addEventListener(
     'keydown',
     function (event) {
-      // code for Tab key
-      var tabKeyCode = 9
-
       // ignore non Tab key strokes
-      if (event.keyCode !== tabKeyCode) return
+      if (event.key !== 'Tab') return;
 
       // prevents tabbing into the url section
-      event.preventDefault()
+      event.preventDefault();
 
       // scrolls to the first row
-      params.api.ensureIndexVisible(0)
+      params.api.ensureIndexVisible(0);
 
       // scrolls to the first column
-      var firstCol = params.columnApi.getAllDisplayedColumns()[0]
-      params.api.ensureColumnVisible(firstCol)
+      var firstCol = params.columnApi.getAllDisplayedColumns()[0];
+      params.api.ensureColumnVisible(firstCol);
 
       // sets focus into the first grid cell
-      params.api.setFocusedCell(0, firstCol)
+      params.api.setFocusedCell(0, firstCol);
     },
     true
   )

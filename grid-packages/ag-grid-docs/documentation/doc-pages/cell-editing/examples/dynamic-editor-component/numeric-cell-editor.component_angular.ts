@@ -3,11 +3,10 @@ import {AfterViewInit, Component, ViewChild, ViewContainerRef} from "@angular/co
 import {AgEditorComponent} from "@ag-grid-community/angular";
 import { element } from "@angular/core/src/render3";
 
-const KEY_BACKSPACE = 8;
-const KEY_DELETE = 46;
-const KEY_F2 = 113;
-const KEY_ENTER = 13;
-const KEY_TAB = 9;
+const KEY_BACKSPACE = 'Backspace';
+const KEY_DELETE = 'Delete';
+const KEY_ENTER = 'Enter';
+const KEY_TAB = 'Tab';
 
 @Component({
     selector: 'numeric-cell',
@@ -32,7 +31,7 @@ export class NumericCellEditor implements AgEditorComponent, AfterViewInit {
     setInitialState(params: any) {
         let startValue;
 
-        if (params.keyPress === KEY_BACKSPACE || params.keyPress === KEY_DELETE) {
+        if (params.key === KEY_BACKSPACE || params.key === KEY_DELETE) {
             // if backspace or delete pressed, we clear the cell
             startValue = '';
         } else if (params.charPress) {
@@ -79,31 +78,25 @@ export class NumericCellEditor implements AgEditorComponent, AfterViewInit {
         });
     }
 
-    private getCharCodeFromEvent(event: any): any {
-        event = event || window.event;
-        return (typeof event.which == "undefined") ? event.keyCode : event.which;
-    }
-
     private isCharNumeric(charStr: string): boolean {
         return !!/\d/.test(charStr);
     }
 
     private isKeyPressedNumeric(event: any): boolean {
-        const charCode = this.getCharCodeFromEvent(event);
-        const charStr = event.key ? event.key : String.fromCharCode(charCode);
+        const charStr = event.key;
         return this.isCharNumeric(charStr);
     }
 
     private deleteOrBackspace(event: any) {
-        return [KEY_DELETE, KEY_BACKSPACE].indexOf(this.getCharCodeFromEvent(event)) > -1;
+        return [KEY_DELETE, KEY_BACKSPACE].indexOf(event.key) > -1;
     }
 
     private isLeftOrRight(event:any) {
-        return [37, 39].indexOf(this.getCharCodeFromEvent(event)) > -1;
+        return ['ArrowLeft', 'ArrowRight'].indexOf(event.key) > -1;
     }
 
     private finishedEditingPressed(event: any) {
-        const charCode = this.getCharCodeFromEvent(event);
-        return charCode === KEY_ENTER || charCode === KEY_TAB;
+        const key = event.key;
+        return key === KEY_ENTER || key === KEY_TAB;
     }
 }

@@ -1,8 +1,8 @@
-const KEY_BACKSPACE = 8;
-const KEY_DELETE = 46;
-const KEY_F2 = 113;
-const KEY_ENTER = 13;
-const KEY_TAB = 9;
+const KEY_BACKSPACE = 'Backspace';
+const KEY_DELETE = 'Delete';
+const KEY_F2 = 'F2';
+const KEY_ENTER = 'Enter';
+const KEY_TAB = 'Tab';
 
 export default {
     template: `<input :ref="'input'" @keydown="onKeyDown($event)" v-model="value"/>`,
@@ -26,7 +26,7 @@ export default {
             let startValue;
             let highlightAllOnFocus = true;
 
-            if (params.keyPress === KEY_BACKSPACE || params.keyPress === KEY_DELETE) {
+            if (params.key === KEY_BACKSPACE || params.key === KEY_DELETE) {
                 // if backspace or delete pressed, we clear the cell
                 startValue = '';
             } else if (params.charPress) {
@@ -36,7 +36,7 @@ export default {
             } else {
                 // otherwise we start with the current value
                 startValue = params.value;
-                if (params.keyPress === KEY_F2) {
+                if (params.key === KEY_F2) {
                     highlightAllOnFocus = false;
                 }
             }
@@ -62,32 +62,26 @@ export default {
             }
         },
 
-        getCharCodeFromEvent(event) {
-            event = event || window.event;
-            return (typeof event.which === "undefined") ? event.keyCode : event.which;
-        },
-
         isCharNumeric(charStr) {
             return /\d/.test(charStr);
         },
 
         isKeyPressedNumeric(event) {
-            const charCode = this.getCharCodeFromEvent(event);
-            const charStr = String.fromCharCode(charCode);
+            const charStr = event.key;
             return this.isCharNumeric(charStr);
         },
 
         finishedEditingPressed(event) {
-            const charCode = this.getCharCodeFromEvent(event);
-            return charCode === KEY_ENTER || charCode === KEY_TAB;
+            const key = event.key;
+            return key === KEY_ENTER || key === KEY_TAB;
         },
 
         deleteOrBackspace(event) {
-            return [KEY_DELETE, KEY_BACKSPACE].indexOf(this.getCharCodeFromEvent(event)) > -1;
+            return [KEY_DELETE, KEY_BACKSPACE].indexOf(event.key) > -1;
         },
 
         isLeftOrRight(event) {
-            return [37, 39].indexOf(this.getCharCodeFromEvent(event)) > -1;
+            return ['ArrowLeft', 'ArrowRight'].indexOf(event.key) > -1;
         }
     },
 
@@ -110,10 +104,10 @@ export default {
 
                     this.highlightAllOnFocus = false;
                 } else {
-                    // when we started editing, we want the carot at the end, not the start.
-                    // this comes into play in two scenarios: a) when user hits F2 and b)
-                    // when user hits a printable character, then on IE (and only IE) the carot
-                    // was placed after the first character, thus 'apply' would end up as 'pplea'
+                    // when we started editing, we want the caret at the end, not the start.
+                    // this comes into play in two scenarios: 
+                    //   a) when user hits F2 
+                    //   b) when user hits a printable character
                     const length = this.$refs.input.value ? this.$refs.input.value.length : 0;
                     if (length > 0) {
                         this.$refs.input.setSelectionRange(length, length);

@@ -86,32 +86,14 @@ function getRowData() {
   return rowData
 }
 
-function onBtStopEditing() {
-  gridOptions.api!.stopEditing()
-}
-
-function onBtStartEditing() {
-  gridOptions.api!.setFocusedCell(2, 'make')
-  gridOptions.api!.startEditingCell({
-    rowIndex: 2,
-    colKey: 'make',
-  })
-}
-
 function getNumericCellEditor() {
   function isCharNumeric(charStr: string) {
     return !!/\d/.test(charStr)
   }
 
   function isKeyPressedNumeric(event: any) {
-    var charCode = getCharCodeFromEvent(event)
-    var charStr = String.fromCharCode(charCode)
+    var charStr = event.key;
     return isCharNumeric(charStr)
-  }
-
-  function getCharCodeFromEvent(event: any) {
-    event = event || window.event
-    return typeof event.which === 'undefined' ? event.keyCode : event.which
   }
 
   // function to act as a class

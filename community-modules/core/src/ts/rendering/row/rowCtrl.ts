@@ -1031,14 +1031,14 @@ export class RowCtrl extends BeanStub {
         this.beans.eventService.dispatchEvent(event);
     }
 
-    public startRowEditing(keyPress: string | null = null, charPress: string | null = null, sourceRenderedCell: CellCtrl | null = null): void {
+    public startRowEditing(key: string | null = null, charPress: string | null = null, sourceRenderedCell: CellCtrl | null = null): void {
         // don't do it if already editing
         if (this.editingRow) { return; }
 
         this.getAllCellCtrls().forEach(cellCtrl => {
             const cellStartedEdit = cellCtrl === sourceRenderedCell;
             if (cellStartedEdit) {
-                cellCtrl.startEditing(keyPress, charPress, cellStartedEdit);
+                cellCtrl.startEditing(key, charPress, cellStartedEdit);
             } else {
                 cellCtrl.startEditing(null, null, cellStartedEdit);
             }

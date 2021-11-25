@@ -81,10 +81,6 @@ export function addChangeListener(element: HTMLElement, listener: EventListener)
     element.addEventListener('changed', listener);
     element.addEventListener('paste', listener);
     element.addEventListener('input', listener);
-    // IE doesn't fire changed for special keys (eg delete, backspace), so need to
-    // listen for this further ones
-    element.addEventListener('keydown', listener);
-    element.addEventListener('keyup', listener);
 }
 
 export function isElementInEventPath(element: HTMLElement, event: Event): boolean {
@@ -127,11 +123,6 @@ export function addAgGridEventPath(event: Event): void {
  */
 export function getEventPath(event: Event): EventTarget[] {
     const eventNoType = event as any;
-
-    if (eventNoType.deepPath) {
-        // IE supports deep path
-        return eventNoType.deepPath();
-    }
 
     if (eventNoType.path) {
         // Chrome supports path

@@ -5,19 +5,6 @@ declare var NumericEditor: any;
 declare var MoodRenderer: any;
 declare var MoodEditor: any;
 
-const getCharCodeFromEvent = (event: any) => {
-  event = event || window.event
-  return typeof event.which == 'undefined' ? event.keyCode : event.which
-}
-
-const isCharNumeric = (charStr: string) => !!/\d/.test(charStr)
-
-const isKeyPressedNumeric = (event: any) => {
-  const charCode = getCharCodeFromEvent(event)
-  const charStr = String.fromCharCode(charCode)
-  return isCharNumeric(charStr)
-}
-
 const countryCellRenderer = (params: ICellRendererParams) => params.value.name
 
 const columnDefs: ColDef[] = [

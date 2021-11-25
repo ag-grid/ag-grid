@@ -511,7 +511,7 @@ export class CellComp extends Component implements TooltipParentComp {
             keepWithinBounds: true
         };
 
-        const positionCallback = position === 'under' ?
+        const positionCallback = positionToUse === 'under' ?
             popupService.positionPopupUnderComponent.bind(popupService, positionParams)
             : popupService.positionPopupOverComponent.bind(popupService, positionParams);
 

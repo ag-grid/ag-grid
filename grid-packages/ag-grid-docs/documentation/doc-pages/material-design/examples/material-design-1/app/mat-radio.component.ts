@@ -85,14 +85,14 @@ export class MatRadioComponent implements ICellEditorAngularComp {
      * buttons with up & down keys (instead of finishing editing)
      */
     onKeyDown(event): void {
-        let key = event.which || event.keyCode;
-        if (key === 38 || key === 40) {
+        const key = event.key;
+        if (key === 'ArrowUp' || key === 'ArrowDown') {
             this.preventDefaultAndPropagation(event);
 
-            if (key == 38) {
+            if (key == 'ArrowUp') {
                 // up
                 this.selectedIndex = this.selectedIndex === 0 ? this.fruits.length - 1 : this.selectedIndex - 1;
-            } else if (key == 40) {
+            } else if (key == 'ArrowDown') {
                 // down
                 this.selectedIndex = this.selectedIndex === this.fruits.length - 1 ? 0 : this.selectedIndex + 1;
             }

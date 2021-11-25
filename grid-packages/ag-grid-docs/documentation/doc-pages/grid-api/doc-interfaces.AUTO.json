@@ -7846,7 +7846,7 @@
       "type": { "returnType": "string", "optional": true }
     },
     "key": {
-      "description": "/** The keyPress to pass to the cell editor */",
+      "description": "/** The key to pass to the cell editor */",
       "type": { "returnType": "string", "optional": true }
     },
     "charPress": {
@@ -10817,7 +10817,7 @@
       "description": "/** Current value of the cell */",
       "type": { "returnType": "any", "optional": false }
     },
-    "keyPress": {
+    "key": {
       "description": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
       "type": { "returnType": "string | null", "optional": false }
     },
@@ -12849,7 +12849,7 @@
       "description": "/** Current value of the cell */",
       "type": { "returnType": "any", "optional": false }
     },
-    "keyPress": {
+    "key": {
       "description": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
       "type": { "returnType": "string | null", "optional": false }
     },
@@ -15342,7 +15342,7 @@
       "description": "/** Current value of the cell */",
       "type": { "returnType": "any", "optional": false }
     },
-    "keyPress": {
+    "key": {
       "description": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
       "type": { "returnType": "string | null", "optional": false }
     },
@@ -15427,7 +15427,7 @@
       "description": "/** Current value of the cell */",
       "type": { "returnType": "any", "optional": false }
     },
-    "keyPress": {
+    "key": {
       "description": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
       "type": { "returnType": "string | null", "optional": false }
     },
@@ -15512,7 +15512,7 @@
       "description": "/** Current value of the cell */",
       "type": { "returnType": "any", "optional": false }
     },
-    "keyPress": {
+    "key": {
       "description": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
       "type": { "returnType": "string | null", "optional": false }
     },

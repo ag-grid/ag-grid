@@ -1,6 +1,5 @@
 import { ReactPortal } from 'react';
 import { ComponentType, IComponent, WrappableInterface } from '@ag-grid-community/core';
-import { assignProperties } from './utils';
 import { PortalManager } from './portalManager';
 
 abstract class BaseReactComponent implements IComponent<any>, WrappableInterface {
@@ -70,7 +69,7 @@ export abstract class ReactComponent extends BaseReactComponent {
         }
 
         if (this.componentInstance.getReactContainerStyle && this.componentInstance.getReactContainerStyle()) {
-            assignProperties(this.eParentElement.style, this.componentInstance.getReactContainerStyle());
+            Object.assign(this.eParentElement.style, this.componentInstance.getReactContainerStyle());
         }
 
         if (this.componentInstance.getReactContainerClasses && this.componentInstance.getReactContainerClasses()) {

@@ -75,10 +75,10 @@ export class MoodEditor implements AgEditorComponent, AfterViewInit {
         this.params.api.stopEditing();
     }
 
-    onKeyDown(event): void {
-        let key = event.which || event.keyCode;
-        if (key == 37 ||  // left
-            key == 39) {  // right
+    onKeyDown(event: KeyboardEvent): void {
+        let key = event.key;
+        if (key === 'ArrowLeft' ||  // left
+            key == 'ArrowRight') {  // right
             this.toggleMood();
             event.stopPropagation();
         }
