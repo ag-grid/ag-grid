@@ -843,8 +843,8 @@ export interface GridOptions {
     postSort?(nodes: RowNode[]): void;
 
     // *** Styling *** //
-    /** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values. */
-    getRowStyle?: (params: RowClassParams) => RowStyle;
+    /** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles. */
+    getRowStyle?: (params: RowClassParams) => RowStyle | undefined;
     /** Callback version of property `rowClass` to set class(es) for each row individually. Function should return either a string (class name), array of strings (array of class names) or undefined for no class. */
     getRowClass?: (params: RowClassParams) => string | string[] | undefined;
     /** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height. */

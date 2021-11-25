@@ -892,8 +892,8 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public fillOperation: ((params: FillOperationParams) => any) | undefined = undefined;
     /** Callback to perform additional sorting after the grid has sorted the rows.     */
     @Input() public postSort: ((nodes: RowNode[]) =>  void) | undefined = undefined;
-    /** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values.     */
-    @Input() public getRowStyle: ((params: RowClassParams) => RowStyle) | undefined = undefined;
+    /** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles.     */
+    @Input() public getRowStyle: ((params: RowClassParams) => RowStyle | undefined) | undefined = undefined;
     /** Callback version of property `rowClass` to set class(es) for each row individually. Function should return either a string (class name), array of strings (array of class names) or undefined for no class.     */
     @Input() public getRowClass: ((params: RowClassParams) => string | string[] | undefined) | undefined = undefined;
     /** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height.     */
