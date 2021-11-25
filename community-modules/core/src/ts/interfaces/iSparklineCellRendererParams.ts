@@ -269,6 +269,18 @@ export interface CrosshairLineOptions {
     stroke?: string;
     /** The thickness in pixels for the crosshair line. */
     strokeWidth?: number;
+    /**
+     * Defines how the crosshair stroke is rendered. This can be one of the lineDash style options or an array specifying the length in pixels of alternating dashes and gaps.
+     * For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels.
+     * The default is `solid` which is equivalent to an empty array, this renders a solid stroke with no gaps.
+     */
+    lineDash?: 'dash' | 'dashDot' | 'dashDotDot' | 'dot' | 'longDash' | 'longDashDot' | 'longDashDotDot' | 'shortDash' | 'shortDashDot' | 'shortDashDotDot' | 'shortDot' | 'solid' | string | number[];
+    /**
+     * The shape used to draw the end points of the crosshair line.
+     * The options include `butt` (the ends of the line are squared off at the endpoints), `round` (the ends of the line are rounded) and `square` (the ends of the line are squared off by adding a box with width equal to the line's strokeWidth and height equal to the half the line's strokeWidth).
+     * Default: `round`
+     */
+    lineCap?: 'round'| 'square' | 'butt';
 }
 
 export type SparklineColumnFormatter = (params: ColumnFormatterParams) => ColumnFormat;

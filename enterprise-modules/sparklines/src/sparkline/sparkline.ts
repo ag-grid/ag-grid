@@ -275,6 +275,7 @@ export abstract class Sparkline extends Observable {
 
     // Update the vertical crosshair line.
     protected updateXCrosshairLine(): void { }
+
     // Update the horizontal crosshair line.
     protected updateYCrosshairLine(): void { }
 
