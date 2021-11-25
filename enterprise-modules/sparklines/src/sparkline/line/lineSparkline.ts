@@ -10,7 +10,7 @@ import { MarkerFormat, MarkerFormatterParams } from "@ag-grid-community/core";
 import { extent } from '../../util/array';
 import { isNumber } from '../../util/value';
 import { Line } from '../../scene/shape/line';
-import { CrosshairLineOptions } from '@ag-grid-community/core/dist/cjs/interfaces/iSparklineCellRendererParams';
+import { CrosshairLineOptions } from '@ag-grid-community/core';
 import { getLineDash } from '../../util/lineDash';
 
 interface LineNodeDatum extends SeriesNodeDatum {

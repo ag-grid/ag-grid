@@ -5,15 +5,16 @@ import { BarSparkline } from "./bar-column/barSparkline";
 import { ColumnSparkline } from "./bar-column/columnSparkline";
 
 import {
+    CrosshairLineOptions,
     SparklineOptions,
     HighlightStyleOptions,
     SparklineMarkerOptions,
     SparklineLineOptions,
     PaddingOptions,
+    SparklineCrosshairsOptions
 } from "@ag-grid-community/core";
 import { SparklineTooltip } from "./tooltip/sparklineTooltip";
 import { BarColumnLabel } from "./bar-column/barColumnSparkline";
-import { CrosshairLineOptions, SparklineCrosshairsOptions } from "@ag-grid-community/core/dist/cjs/interfaces/iSparklineCellRendererParams";
 
 export type SparklineFactoryOptions = SparklineOptions & {
     data: any[];

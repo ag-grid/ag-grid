@@ -434,6 +434,8 @@ export * from "./interfaces/iAgChartOptions";
 export {
     ISparklineCellRendererParams,
     SparklineOptions,
+    CrosshairLineOptions,
+    SparklineCrosshairsOptions,
     BaseSparklineOptions,
     LineSparklineOptions,
     AreaSparklineOptions,
