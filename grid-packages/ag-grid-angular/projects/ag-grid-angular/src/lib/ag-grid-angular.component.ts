@@ -840,14 +840,14 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public getChartToolbarItems: GetChartToolbarItems | undefined = undefined;
     /** Callback to enable displaying the chart in an alternative chart container.     */
     @Input() public createChartContainer: ((params: ChartRef) => void) | undefined = undefined;
-    /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused.     */
-    @Input() public navigateToNextHeader: ((params: NavigateToNextHeaderParams) => HeaderPosition) | undefined = undefined;
-    /** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused.     */
-    @Input() public tabToNextHeader: ((params: TabToNextHeaderParams) => HeaderPosition) | undefined = undefined;
-    /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused.     */
-    @Input() public navigateToNextCell: ((params: NavigateToNextCellParams) => CellPosition) | undefined = undefined;
-    /** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused.     */
-    @Input() public tabToNextCell: ((params: TabToNextCellParams) => CellPosition) | undefined = undefined;
+    /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header.     */
+    @Input() public navigateToNextHeader: ((params: NavigateToNextHeaderParams) => (HeaderPosition | null)) | undefined = undefined;
+    /** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header.     */
+    @Input() public tabToNextHeader: ((params: TabToNextHeaderParams) => (HeaderPosition | null)) | undefined = undefined;
+    /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell.     */
+    @Input() public navigateToNextCell: ((params: NavigateToNextCellParams) => (CellPosition | null)) | undefined = undefined;
+    /** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell.     */
+    @Input() public tabToNextCell: ((params: TabToNextCellParams) => (CellPosition | null)) | undefined = undefined;
     /** Suppress the grid taking action for the relevant keyboard event when a cell is focused.     */
     @Input() public suppressKeyboardEvent: ((params: SuppressKeyboardEventParams) => boolean) | undefined = undefined;
     /** A callback for localising text within the grid.     */

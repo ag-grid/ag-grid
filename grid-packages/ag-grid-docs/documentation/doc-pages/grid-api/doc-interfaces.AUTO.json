@@ -3043,34 +3043,34 @@
       }
     },
     "navigateToNextHeader": {
-      "description": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. */",
+      "description": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header. */",
       "type": {
         "arguments": { "params": "NavigateToNextHeaderParams" },
-        "returnType": "HeaderPosition",
+        "returnType": "(HeaderPosition | null)",
         "optional": true
       }
     },
     "tabToNextHeader": {
-      "description": "/** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused. */",
+      "description": "/** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header. */",
       "type": {
         "arguments": { "params": "TabToNextHeaderParams" },
-        "returnType": "HeaderPosition",
+        "returnType": "(HeaderPosition | null)",
         "optional": true
       }
     },
     "navigateToNextCell": {
-      "description": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. */",
+      "description": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell. */",
       "type": {
         "arguments": { "params": "NavigateToNextCellParams" },
-        "returnType": "CellPosition",
+        "returnType": "(CellPosition | null)",
         "optional": true
       }
     },
     "tabToNextCell": {
-      "description": "/** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. */",
+      "description": "/** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell. */",
       "type": {
         "arguments": { "params": "TabToNextCellParams" },
-        "returnType": "CellPosition",
+        "returnType": "(CellPosition | null)",
         "optional": true
       }
     },

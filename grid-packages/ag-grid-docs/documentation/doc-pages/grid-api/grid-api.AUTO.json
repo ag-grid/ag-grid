@@ -655,7 +655,7 @@
   "setNavigateToNextCell": {
     "type": {
       "arguments": {
-        "navigateToNextCellFunc": "(params: NavigateToNextCellParams) => CellPosition"
+        "navigateToNextCellFunc": "(params: NavigateToNextCellParams) => (CellPosition | null)"
       },
       "returnType": "void"
     }
@@ -663,7 +663,7 @@
   "setTabToNextCell": {
     "type": {
       "arguments": {
-        "tabToNextCellFunc": "(params: TabToNextCellParams) => CellPosition"
+        "tabToNextCellFunc": "(params: TabToNextCellParams) => (CellPosition | null)"
       },
       "returnType": "void"
     }
@@ -671,7 +671,7 @@
   "setTabToNextHeader": {
     "type": {
       "arguments": {
-        "tabToNextHeaderFunc": "(params: TabToNextHeaderParams) => HeaderPosition"
+        "tabToNextHeaderFunc": "(params: TabToNextHeaderParams) => (HeaderPosition | null)"
       },
       "returnType": "void"
     }
@@ -679,7 +679,7 @@
   "setNavigateToNextHeader": {
     "type": {
       "arguments": {
-        "navigateToNextHeaderFunc": "(params: NavigateToNextHeaderParams) => HeaderPosition"
+        "navigateToNextHeaderFunc": "(params: NavigateToNextHeaderParams) => (HeaderPosition | null)"
       },
       "returnType": "void"
     }

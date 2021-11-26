@@ -1245,19 +1245,19 @@ export class GridOptionsWrapper {
         return this.gridOptions.getRowNodeId;
     }
 
-    public getNavigateToNextHeaderFunc(): ((params: NavigateToNextHeaderParams) => HeaderPosition) | undefined {
+    public getNavigateToNextHeaderFunc(): ((params: NavigateToNextHeaderParams) => (HeaderPosition | null)) | undefined {
         return this.gridOptions.navigateToNextHeader;
     }
 
-    public getTabToNextHeaderFunc(): ((params: TabToNextHeaderParams) => HeaderPosition) | undefined {
+    public getTabToNextHeaderFunc(): ((params: TabToNextHeaderParams) => (HeaderPosition | null)) | undefined {
         return this.gridOptions.tabToNextHeader;
     }
 
-    public getNavigateToNextCellFunc(): ((params: NavigateToNextCellParams) => CellPosition) | undefined {
+    public getNavigateToNextCellFunc(): ((params: NavigateToNextCellParams) => (CellPosition | null)) | undefined {
         return this.gridOptions.navigateToNextCell;
     }
 
-    public getTabToNextCellFunc(): ((params: TabToNextCellParams) => CellPosition) | undefined {
+    public getTabToNextCellFunc(): ((params: TabToNextCellParams) => (CellPosition | null)) | undefined {
         return this.gridOptions.tabToNextCell;
     }
 
@@ -1803,7 +1803,7 @@ export class GridOptionsWrapper {
             // as the detail goes to the default (eg 200px) and then immediately shrink up/down to the new measured height
             // (due to auto height) which looks bad, especially if doing row animation.
             if (this.isDetailRowAutoHeight()) {
-                return {height: 1, estimated: false};
+                return { height: 1, estimated: false };
             }
 
             if (this.isNumeric(this.gridOptions.detailRowHeight)) {
@@ -1838,7 +1838,7 @@ export class GridOptionsWrapper {
     // Material data table has strict guidelines about whitespace, and these values are different than the ones
     // ag-grid uses by default. We override the default ones for the sake of making it better out of the box
     private getFromTheme(defaultValue: number, sassVariableName: SASS_PROPERTIES): number;
-    private getFromTheme(defaultValue: null, sassVariableName: SASS_PROPERTIES): number |  null | undefined;
+    private getFromTheme(defaultValue: null, sassVariableName: SASS_PROPERTIES): number | null | undefined;
     private getFromTheme(defaultValue: any, sassVariableName: SASS_PROPERTIES): any {
         const { theme } = this.environment.getTheme();
         if (theme && theme.indexOf('ag-theme') === 0) {

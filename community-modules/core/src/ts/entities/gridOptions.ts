@@ -773,14 +773,14 @@ export interface GridOptions {
     createChartContainer?: (params: ChartRef) => void;
 
     // *** Keyboard Navigation *** //
-    /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. */
-    navigateToNextHeader?: (params: NavigateToNextHeaderParams) => HeaderPosition;
-    /** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused. */
-    tabToNextHeader?: (params: TabToNextHeaderParams) => HeaderPosition;
-    /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. */
-    navigateToNextCell?: (params: NavigateToNextCellParams) => CellPosition;
-    /** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. */
-    tabToNextCell?: (params: TabToNextCellParams) => CellPosition;
+    /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header. */
+    navigateToNextHeader?: (params: NavigateToNextHeaderParams) => (HeaderPosition | null);
+    /** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header.  */
+    tabToNextHeader?: (params: TabToNextHeaderParams) => (HeaderPosition | null);
+    /** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell.  */
+    navigateToNextCell?: (params: NavigateToNextCellParams) => (CellPosition | null);
+    /** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell.  */
+    tabToNextCell?: (params: TabToNextCellParams) => (CellPosition | null);
     /** Suppress the grid taking action for the relevant keyboard event when a cell is focused. */
     suppressKeyboardEvent?: (params: SuppressKeyboardEventParams) => boolean;
 
