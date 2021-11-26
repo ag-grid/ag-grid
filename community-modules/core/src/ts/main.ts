@@ -452,6 +452,7 @@ export {
     SparklineMarkerOptions,
     SparklineLineOptions,
     PaddingOptions,
+    SparklineTooltipOptions,
     TooltipRendererResult,
     TooltipRendererParams
 } from "./interfaces/iSparklineCellRendererParams";
