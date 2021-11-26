@@ -93,6 +93,7 @@ const GridComponent = () => {
         <div style={{height: 400, width: 900, marginTop: 15}}
              className="ag-theme-alpine">
             <AgGridReact
+                suppressReactUi={true}
                 ref={(element) => {
                     window.gridComponentInstance = element
                 }}

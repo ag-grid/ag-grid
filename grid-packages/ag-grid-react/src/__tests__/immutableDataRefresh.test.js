@@ -170,6 +170,7 @@ class GridComponent extends Component {
                 <button onClick={this.addNew}>Add New Row</button>
                 <button onClick={this.modifyRow}>Modify Row</button>
                 <AgGridReact
+                    suppressReactUi={true}
                     columnDefs={this.state.columnDefs}
                     onGridReady={this.onGridReady.bind(this)}
                     rowData={this.state.rowData}

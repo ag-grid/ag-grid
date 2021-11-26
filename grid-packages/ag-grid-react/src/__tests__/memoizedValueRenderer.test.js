@@ -66,6 +66,7 @@ class GridComponent extends Component {
                 className="ag-theme-balham"
                 style={{height: 100}}>
                 <AgGridReact
+                    suppressReactUi={true}
                     columnDefs={this.state.columnDefs}
                     onGridReady={this.onGridReady.bind(this)}
                     rowData={this.state.rowData}

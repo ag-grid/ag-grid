@@ -95,6 +95,7 @@ const GridComponent = () => {
                 ref={(element) => {
                     window.gridComponentInstance = element
                 }}
+                suppressReactUi={true}
                 columnDefs={columnDefs}
                 rowData={rowData}
                 onGridReady={onGridReady}>

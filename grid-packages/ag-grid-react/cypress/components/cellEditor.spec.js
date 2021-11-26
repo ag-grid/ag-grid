@@ -60,6 +60,7 @@ const GridComponent = () => {
                 ref={(element) => {
                     window.gridComponentInstance = element
                 }}
+                suppressReactUi={true}
                 frameworkComponents={{
                     cellEditor: CellEditor
                 }}

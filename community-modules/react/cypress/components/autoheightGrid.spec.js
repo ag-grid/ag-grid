@@ -32,6 +32,7 @@ const App = () => {
                 ref={(element) => {
                     window.gridComponentInstance = element
                 }}
+                suppressReactUi={true}
                 onGridReady={onGridReady}
                 rowData={rowData}
                 modules={[ClientSideRowModelModule]}

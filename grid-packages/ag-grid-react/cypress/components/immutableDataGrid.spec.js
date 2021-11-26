@@ -92,6 +92,7 @@ class GridComponent extends Component {
                     ref={(element) => {
                         window.gridComponentInstance = element
                     }}
+                    suppressReactUi={true}
                     columnDefs={this.state.columnDefs}
                     onGridReady={this.onGridReady}
                     rowData={this.state.rowData}
