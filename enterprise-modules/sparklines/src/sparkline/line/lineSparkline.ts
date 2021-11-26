@@ -33,7 +33,7 @@ class SparklineLine {
 }
 
 class SparklineCrosshairs {
-    private static crosshairLineOptions = {
+    private static crosshairLineOptions: CrosshairLineOptions = {
         enabled: false,
         stroke: 'rgba(0,0,0, 0.54)',
         strokeWidth: 1,
