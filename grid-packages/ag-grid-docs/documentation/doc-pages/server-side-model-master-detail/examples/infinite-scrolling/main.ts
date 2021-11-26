@@ -1,4 +1,4 @@
-import { GetDetailRowDataParams, GridOptions, IServerSideDatasource, IServerSideGetRowsRequest } from '@ag-grid-community/core'
+import { GridOptions, IDetailCellRendererParams, IServerSideDatasource, IServerSideGetRowsRequest } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -35,11 +35,11 @@ const gridOptions: GridOptions = {
         flex: 1,
       },
     },
-    getDetailRowData: function (params: GetDetailRowDataParams) {
+    getDetailRowData: function (params) {
       // supply details records to detail cell renderer (i.e. detail grid)
       params.successCallback(params.data.callRecords)
     },
-  },
+  } as IDetailCellRendererParams,
   onGridReady: function (params) {
     setTimeout(function () {
       // expand some master row

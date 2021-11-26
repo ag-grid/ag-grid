@@ -1,6 +1,10 @@
 import { FirstDataRenderedEvent, GridOptions, IDetailCellRendererParams } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
+  masterDetail: true,
+  isRowMaster: function (dataItem) {
+    return dataItem ? dataItem.callRecords.length > 0 : false
+  },
   columnDefs: [
     // group cell renderer needed for expand / collapse icons
     { field: 'name', cellRenderer: 'agGroupCellRenderer' },
@@ -12,11 +16,8 @@ const gridOptions: GridOptions = {
     flex: 1,
   },
   getRowNodeId: function (data) {
-    return data.name
+    return data.account
   },
-  groupDefaultExpanded: 1,
-  rowBuffer: 100,
-  masterDetail: true,
   detailCellRendererParams: {
     detailGridOptions: {
       columnDefs: [
@@ -34,35 +35,45 @@ const gridOptions: GridOptions = {
       params.successCallback(params.data.callRecords)
     },
   } as IDetailCellRendererParams,
+  onFirstDataRendered: onFirstDataRendered,
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  params.api.forEachNode(function (node) {
-    node.setExpanded(true)
-  })
+  // arbitrarily expand a row for presentational purposes
+  setTimeout(function () {
+    params.api.getDisplayedRowAtIndex(1)!.setExpanded(true)
+  }, 0)
 }
 
-function onBtExport() {
-  var spreadsheets = []
+function onBtClearMilaCalls() {
+  var milaSmithRowNode = gridOptions.api!.getRowNode('177001')!
+  var milaSmithData = milaSmithRowNode.data
+  milaSmithData.callRecords = []
+  gridOptions.api!.applyTransaction({ update: [milaSmithData] })
+}
 
-  const mainSheet = gridOptions.api!.getSheetDataForExcel();
-  if (mainSheet) {
-    spreadsheets.push(mainSheet);
-  }
-
-  gridOptions.api!.forEachDetailGridInfo(function (node) {
-    const sheet = node.api!.getSheetDataForExcel({
-      sheetName: node.id.replace('detail_', ''),
-    });
-    if (sheet) {
-      spreadsheets.push(sheet)
-    }
-  })
-
-  gridOptions.api!.exportMultipleSheetsAsExcel({
-    data: spreadsheets,
-    fileName: 'ag-grid.xlsx',
-  })
+function onBtSetMilaCalls() {
+  var milaSmithRowNode = gridOptions.api!.getRowNode('177001')!
+  var milaSmithData = milaSmithRowNode.data
+  milaSmithData.callRecords = [
+    {
+      name: 'susan',
+      callId: 579,
+      duration: 23,
+      switchCode: 'SW5',
+      direction: 'Out',
+      number: '(02) 47485405',
+    },
+    {
+      name: 'susan',
+      callId: 580,
+      duration: 52,
+      switchCode: 'SW3',
+      direction: 'In',
+      number: '(02) 32367069',
+    },
+  ]
+  gridOptions.api!.applyTransaction({ update: [milaSmithData] })
 }
 
 // setup the grid after the page has finished loading
@@ -70,7 +81,9 @@ document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector('#myGrid')
   new agGrid.Grid(gridDiv, gridOptions)
 
-  fetch('https://www.ag-grid.com/example-assets/master-detail-data.json')
+  fetch(
+    'https://www.ag-grid.com/example-assets/master-detail-dynamic-data.json'
+  )
     .then(response => response.json())
     .then(function (data) {
       gridOptions.api!.setRowData(data)

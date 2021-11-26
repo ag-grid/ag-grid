@@ -1,4 +1,4 @@
-import { FirstDataRenderedEvent, GridOptions, IDetailCellRendererParams } from '@ag-grid-community/core'
+import { GridOptions, IDetailCellRendererParams } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -11,18 +11,13 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
   },
-  getRowNodeId: function (data) {
-    return data.name
-  },
-  groupDefaultExpanded: 1,
-  rowBuffer: 100,
   masterDetail: true,
   detailCellRendererParams: {
     detailGridOptions: {
       columnDefs: [
         { field: 'callId' },
-        { field: 'direction' },
-        { field: 'number', minWidth: 150 },
+        { field: 'direction', minWidth: 150 },
+        { field: 'number' },
         { field: 'duration', valueFormatter: "x.toLocaleString() + 's'" },
         { field: 'switchCode', minWidth: 150 },
       ],
@@ -31,38 +26,12 @@ const gridOptions: GridOptions = {
       },
     },
     getDetailRowData: function (params) {
-      params.successCallback(params.data.callRecords)
+      // simulate delayed supply of data to the detail pane
+      setTimeout(function () {
+        params.successCallback(params.data.callRecords)
+      }, 1000)
     },
   } as IDetailCellRendererParams,
-}
-
-function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  params.api.forEachNode(function (node) {
-    node.setExpanded(true)
-  })
-}
-
-function onBtExport() {
-  var spreadsheets = []
-
-  const mainSheet = gridOptions.api!.getSheetDataForExcel();
-  if (mainSheet) {
-    spreadsheets.push(mainSheet);
-  }
-
-  gridOptions.api!.forEachDetailGridInfo(function (node) {
-    const sheet = node.api!.getSheetDataForExcel({
-      sheetName: node.id.replace('detail_', ''),
-    });
-    if (sheet) {
-      spreadsheets.push(sheet)
-    }
-  })
-
-  gridOptions.api!.exportMultipleSheetsAsExcel({
-    data: spreadsheets,
-    fileName: 'ag-grid.xlsx',
-  })
 }
 
 // setup the grid after the page has finished loading

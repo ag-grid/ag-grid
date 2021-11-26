@@ -1,4 +1,4 @@
-import { CsvCell, CsvExportParams, ExcelCell, ExcelExportParams, GetDetailRowDataParams, GridOptions, ProcessRowGroupForExportParams } from '@ag-grid-community/core'
+import { CsvCell, CsvExportParams, ExcelCell, ExcelExportParams, GetDetailRowDataParams, GridOptions, IDetailCellRendererParams, ProcessRowGroupForExportParams } from '@ag-grid-community/core'
 
 var getCells = (params: ProcessRowGroupForExportParams) => {
   const cells: ExcelCell[][] = [
@@ -59,10 +59,10 @@ const gridOptions: GridOptions = {
         flex: 1,
       },
     },
-    getDetailRowData: function (params: GetDetailRowDataParams) {
+    getDetailRowData: function (params) {
       params.successCallback(params.data.callRecords)
     },
-  },
+  } as IDetailCellRendererParams,
   defaultCsvExportParams: defaultCsvExportParams,
   defaultExcelExportParams: defaultExportParams,
   excelStyles: [

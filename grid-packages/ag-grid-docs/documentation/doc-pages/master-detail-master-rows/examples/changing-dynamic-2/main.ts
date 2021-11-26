@@ -1,22 +1,27 @@
 import { FirstDataRenderedEvent, GridOptions, IDetailCellRendererParams } from '@ag-grid-community/core'
-
+declare var CallsCellRenderer: any;
 const gridOptions: GridOptions = {
+  masterDetail: true,
+  isRowMaster: function (dataItem) {
+    return dataItem ? dataItem.callRecords.length > 0 : false
+  },
   columnDefs: [
     // group cell renderer needed for expand / collapse icons
     { field: 'name', cellRenderer: 'agGroupCellRenderer' },
     { field: 'account' },
-    { field: 'calls' },
+    { field: 'calls', cellRenderer: 'CallsCellRenderer' },
     { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" },
   ],
   defaultColDef: {
     flex: 1,
   },
+  animateRows: true,
   getRowNodeId: function (data) {
-    return data.name
+    return data.account
   },
-  groupDefaultExpanded: 1,
-  rowBuffer: 100,
-  masterDetail: true,
+  components: {
+    CallsCellRenderer: CallsCellRenderer,
+  },
   detailCellRendererParams: {
     detailGridOptions: {
       columnDefs: [
@@ -34,35 +39,14 @@ const gridOptions: GridOptions = {
       params.successCallback(params.data.callRecords)
     },
   } as IDetailCellRendererParams,
+  onFirstDataRendered: onFirstDataRendered,
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  params.api.forEachNode(function (node) {
-    node.setExpanded(true)
-  })
-}
-
-function onBtExport() {
-  var spreadsheets = []
-
-  const mainSheet = gridOptions.api!.getSheetDataForExcel();
-  if (mainSheet) {
-    spreadsheets.push(mainSheet);
-  }
-
-  gridOptions.api!.forEachDetailGridInfo(function (node) {
-    const sheet = node.api!.getSheetDataForExcel({
-      sheetName: node.id.replace('detail_', ''),
-    });
-    if (sheet) {
-      spreadsheets.push(sheet)
-    }
-  })
-
-  gridOptions.api!.exportMultipleSheetsAsExcel({
-    data: spreadsheets,
-    fileName: 'ag-grid.xlsx',
-  })
+  // arbitrarily expand a row for presentational purposes
+  setTimeout(function () {
+    params.api.getDisplayedRowAtIndex(1)!.setExpanded(true)
+  }, 0)
 }
 
 // setup the grid after the page has finished loading
@@ -70,7 +54,9 @@ document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector('#myGrid')
   new agGrid.Grid(gridDiv, gridOptions)
 
-  fetch('https://www.ag-grid.com/example-assets/master-detail-data.json')
+  fetch(
+    'https://www.ag-grid.com/example-assets/master-detail-dynamic-data.json'
+  )
     .then(response => response.json())
     .then(function (data) {
       gridOptions.api!.setRowData(data)

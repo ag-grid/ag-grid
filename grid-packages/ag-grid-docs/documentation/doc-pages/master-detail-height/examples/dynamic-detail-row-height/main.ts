@@ -11,58 +11,46 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
   },
-  getRowNodeId: function (data) {
-    return data.name
-  },
-  groupDefaultExpanded: 1,
-  rowBuffer: 100,
   masterDetail: true,
   detailCellRendererParams: {
     detailGridOptions: {
       columnDefs: [
         { field: 'callId' },
         { field: 'direction' },
-        { field: 'number', minWidth: 150 },
+        { field: 'number' },
         { field: 'duration', valueFormatter: "x.toLocaleString() + 's'" },
-        { field: 'switchCode', minWidth: 150 },
+        { field: 'switchCode' },
       ],
       defaultColDef: {
         flex: 1,
+      },
+      onGridReady: function (params) {
+        // using auto height to fit the height of the the detail grid
+        params.api.setDomLayout('autoHeight')
       },
     },
     getDetailRowData: function (params) {
       params.successCallback(params.data.callRecords)
     },
   } as IDetailCellRendererParams,
+  getRowHeight: function (params) {
+    if (params.node && params.node.detail) {
+      var offset = 80
+      var allDetailRowHeight =
+        params.data.callRecords.length *
+        params.api.getSizesForCurrentTheme().rowHeight
+      var gridSizes = params.api.getSizesForCurrentTheme()
+      return allDetailRowHeight + (gridSizes && gridSizes.headerHeight || 0) + offset
+    }
+  },
+  onFirstDataRendered: onFirstDataRendered,
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  params.api.forEachNode(function (node) {
-    node.setExpanded(true)
-  })
-}
-
-function onBtExport() {
-  var spreadsheets = []
-
-  const mainSheet = gridOptions.api!.getSheetDataForExcel();
-  if (mainSheet) {
-    spreadsheets.push(mainSheet);
-  }
-
-  gridOptions.api!.forEachDetailGridInfo(function (node) {
-    const sheet = node.api!.getSheetDataForExcel({
-      sheetName: node.id.replace('detail_', ''),
-    });
-    if (sheet) {
-      spreadsheets.push(sheet)
-    }
-  })
-
-  gridOptions.api!.exportMultipleSheetsAsExcel({
-    data: spreadsheets,
-    fileName: 'ag-grid.xlsx',
-  })
+  // arbitrarily expand a row for presentational purposes
+  setTimeout(function () {
+    params.api.getDisplayedRowAtIndex(1)!.setExpanded(true)
+  }, 0)
 }
 
 // setup the grid after the page has finished loading
@@ -70,7 +58,9 @@ document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector('#myGrid')
   new agGrid.Grid(gridDiv, gridOptions)
 
-  fetch('https://www.ag-grid.com/example-assets/master-detail-data.json')
+  fetch(
+    'https://www.ag-grid.com/example-assets/master-detail-dynamic-row-height-data.json'
+  )
     .then(response => response.json())
     .then(function (data) {
       gridOptions.api!.setRowData(data)

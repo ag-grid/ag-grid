@@ -8,15 +8,8 @@ const gridOptions: GridOptions = {
     { field: 'calls' },
     { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" },
   ],
-  defaultColDef: {
-    flex: 1,
-  },
-  getRowNodeId: function (data) {
-    return data.name
-  },
-  groupDefaultExpanded: 1,
-  rowBuffer: 100,
   masterDetail: true,
+  detailRowHeight: 200,
   detailCellRendererParams: {
     detailGridOptions: {
       columnDefs: [
@@ -28,40 +21,46 @@ const gridOptions: GridOptions = {
       ],
       defaultColDef: {
         flex: 1,
+        editable: true,
+        resizable: true,
       },
     },
     getDetailRowData: function (params) {
       params.successCallback(params.data.callRecords)
     },
   } as IDetailCellRendererParams,
+  getRowNodeId: function (data) {
+    // use 'account' as the row ID
+    return data.account
+  },
+  defaultColDef: {
+    flex: 1,
+    editable: true,
+    resizable: true,
+  },
+  onFirstDataRendered: onFirstDataRendered,
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  params.api.forEachNode(function (node) {
-    node.setExpanded(true)
-  })
+  // expand the first two rows
+  setTimeout(function () {
+    params.api.forEachNode(function (node) {
+      node.setExpanded(true)
+    })
+  }, 0)
 }
 
-function onBtExport() {
-  var spreadsheets = []
-
-  const mainSheet = gridOptions.api!.getSheetDataForExcel();
-  if (mainSheet) {
-    spreadsheets.push(mainSheet);
+function flashMilaSmithOnly() {
+  // flash Mila Smith - we know her account is 177001 and we use the account for the row ID
+  var detailGrid = gridOptions.api!.getDetailGridInfo('detail_177001')
+  if (detailGrid) {
+    detailGrid.api!.flashCells()
   }
+}
 
-  gridOptions.api!.forEachDetailGridInfo(function (node) {
-    const sheet = node.api!.getSheetDataForExcel({
-      sheetName: node.id.replace('detail_', ''),
-    });
-    if (sheet) {
-      spreadsheets.push(sheet)
-    }
-  })
-
-  gridOptions.api!.exportMultipleSheetsAsExcel({
-    data: spreadsheets,
-    fileName: 'ag-grid.xlsx',
+function flashAll() {
+  gridOptions.api!.forEachDetailGridInfo(function (detailGridApi) {
+    detailGridApi.api!.flashCells()
   })
 }
 

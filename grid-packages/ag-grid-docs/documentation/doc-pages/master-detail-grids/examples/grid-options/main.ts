@@ -11,22 +11,23 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
   },
-  getRowNodeId: function (data) {
-    return data.name
-  },
-  groupDefaultExpanded: 1,
-  rowBuffer: 100,
   masterDetail: true,
   detailCellRendererParams: {
     detailGridOptions: {
+      rowSelection: 'multiple',
+      suppressRowClickSelection: true,
+      enableRangeSelection: true,
+      pagination: true,
+      paginationAutoPageSize: true,
       columnDefs: [
-        { field: 'callId' },
+        { field: 'callId', checkboxSelection: true },
         { field: 'direction' },
         { field: 'number', minWidth: 150 },
         { field: 'duration', valueFormatter: "x.toLocaleString() + 's'" },
         { field: 'switchCode', minWidth: 150 },
       ],
       defaultColDef: {
+        sortable: true,
         flex: 1,
       },
     },
@@ -34,35 +35,14 @@ const gridOptions: GridOptions = {
       params.successCallback(params.data.callRecords)
     },
   } as IDetailCellRendererParams,
+  onFirstDataRendered: onFirstDataRendered,
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  params.api.forEachNode(function (node) {
-    node.setExpanded(true)
-  })
-}
-
-function onBtExport() {
-  var spreadsheets = []
-
-  const mainSheet = gridOptions.api!.getSheetDataForExcel();
-  if (mainSheet) {
-    spreadsheets.push(mainSheet);
-  }
-
-  gridOptions.api!.forEachDetailGridInfo(function (node) {
-    const sheet = node.api!.getSheetDataForExcel({
-      sheetName: node.id.replace('detail_', ''),
-    });
-    if (sheet) {
-      spreadsheets.push(sheet)
-    }
-  })
-
-  gridOptions.api!.exportMultipleSheetsAsExcel({
-    data: spreadsheets,
-    fileName: 'ag-grid.xlsx',
-  })
+  // arbitrarily expand a row for presentational purposes
+  setTimeout(function () {
+    params.api.getDisplayedRowAtIndex(1)!.setExpanded(true)
+  }, 0)
 }
 
 // setup the grid after the page has finished loading
