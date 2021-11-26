@@ -14326,7 +14326,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "left": {
-      "description": "/** The number of pixels of padding at the left of the sparkline area.\n * Default\" `3` */",
+      "description": "/** The number of pixels of padding at the left of the sparkline area.\n * Default: `3` */",
       "type": { "returnType": "number", "optional": true }
     }
   },
@@ -14469,7 +14469,7 @@
       }
     },
     "lineCap": {
-      "description": "/** The shape used to draw the end points of the crosshair line.\n * The options include `butt` (the ends of the line are squared off at the endpoints), `round` (the ends of the line are rounded) and `square` (the ends of the line are squared off by adding a box with width equal to the line's strokeWidth and height equal to the half the line's strokeWidth).\n * Default: `round` */",
+      "description": "/** The shape used to draw the end points of the crosshair line.\n * The options include `butt` (the ends of the line are squared off at the endpoints), `round` (the ends of the line are rounded) and `square` (the ends of the line are squared off by adding a box with width equal to the line's strokeWidth and height equal to half the line's strokeWidth).\n * Default: `butt` */",
       "type": { "returnType": "'round'| 'square' | 'butt'", "optional": true }
     }
   },

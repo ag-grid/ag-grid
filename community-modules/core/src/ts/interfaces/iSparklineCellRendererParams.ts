@@ -162,7 +162,7 @@ export interface PaddingOptions {
      */
     bottom?: number;
     /** The number of pixels of padding at the left of the sparkline area.
-     * Default" `3`
+     * Default: `3`
      */
     left?: number;
 }
@@ -277,8 +277,8 @@ export interface CrosshairLineOptions {
     lineDash?: 'dash' | 'dashDot' | 'dashDotDot' | 'dot' | 'longDash' | 'longDashDot' | 'longDashDotDot' | 'shortDash' | 'shortDashDot' | 'shortDashDotDot' | 'shortDot' | 'solid' | string | number[];
     /**
      * The shape used to draw the end points of the crosshair line.
-     * The options include `butt` (the ends of the line are squared off at the endpoints), `round` (the ends of the line are rounded) and `square` (the ends of the line are squared off by adding a box with width equal to the line's strokeWidth and height equal to the half the line's strokeWidth).
-     * Default: `round`
+     * The options include `butt` (the ends of the line are squared off at the endpoints), `round` (the ends of the line are rounded) and `square` (the ends of the line are squared off by adding a box with width equal to the line's strokeWidth and height equal to half the line's strokeWidth).
+     * Default: `butt`
      */
     lineCap?: 'round'| 'square' | 'butt';
 }
