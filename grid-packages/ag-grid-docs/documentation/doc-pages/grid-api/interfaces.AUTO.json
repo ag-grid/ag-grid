@@ -8033,7 +8033,7 @@
       "top?": "/** The number of pixels of padding at the top of the sparkline area.\n * Default: `3` */",
       "right?": "/** The number of pixels of padding at the right of the sparkline area.\n * Default: `3` */",
       "bottom?": "/** The number of pixels of padding at the bottom of the sparkline area.\n * Default: `3` */",
-      "left?": "/** The number of pixels of padding at the left of the sparkline area.\n * Default\" `3` */"
+      "left?": "/** The number of pixels of padding at the left of the sparkline area.\n * Default: `3` */"
     }
   },
   "SparklineAxisOptions": {
@@ -8152,7 +8152,7 @@
       "stroke?": "/** The CSS colour value for the crosshair line. */",
       "strokeWidth?": "/** The thickness in pixels for the crosshair line. */",
       "lineDash?": "/** Defines how the crosshair stroke is rendered. This can be one of the lineDash style options or an array specifying the length in pixels of alternating dashes and gaps.\n * For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels.\n * The default is `solid` which is equivalent to an empty array, this renders a solid stroke with no gaps. */",
-      "lineCap?": "/** The shape used to draw the end points of the crosshair line.\n * The options include `butt` (the ends of the line are squared off at the endpoints), `round` (the ends of the line are rounded) and `square` (the ends of the line are squared off by adding a box with width equal to the line's strokeWidth and height equal to the half the line's strokeWidth).\n * Default: `round` */"
+      "lineCap?": "/** The shape used to draw the end points of the crosshair line.\n * The options include `butt` (the ends of the line are squared off at the endpoints), `round` (the ends of the line are rounded) and `square` (the ends of the line are squared off by adding a box with width equal to the line's strokeWidth and height equal to half the line's strokeWidth).\n * Default: `butt` */"
     }
   },
   "SparklineColumnFormatter": {
