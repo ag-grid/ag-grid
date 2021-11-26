@@ -1,5 +1,4 @@
-import { GridOptions } from '@ag-grid-community/core'
-import { SparklineTooltipOptions, TooltipRendererParams } from '@ag-grid-community/core'
+import { GridOptions, LineSparklineOptions, TooltipRendererParams } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -13,8 +12,8 @@ const gridOptions: GridOptions = {
           tooltip: {
             enabled: true,
             renderer: tooltipRenderer,
-          } as SparklineTooltipOptions,
-        },
+          },
+        } as LineSparklineOptions,
       },
     },
     {
