@@ -71,6 +71,7 @@ export { SideBarDef, ToolPanelDef } from "ag-grid-community";
 export { IFilterDef, IFilterParams, IFilterOptionDef, IDoesFilterPassParams, ProvidedFilterModel, IFilter, IFilterComp, IFilterType, IFloatingFilterType } from "ag-grid-community";
 export { ISetFilterParams, SetFilterValues, SetFilterValuesFunc, SetFilterValuesFuncParams } from "ag-grid-community";
 export { FilterManager, FilterWrapper, FilterRequestSource } from "ag-grid-community";
+export { IMultiFilterModel, IMultiFilterComp, IMultiFilterParams, IMultiFilterDef } from "ag-grid-community";
 export { ProvidedFilter, IProvidedFilterParams } from "ag-grid-community";
 export { SimpleFilter, ISimpleFilterParams, ISimpleFilterModel, ICombinedSimpleModel, JoinOperator } from "ag-grid-community";
 export { ScalarFilter, IScalarFilterParams } from "ag-grid-community";

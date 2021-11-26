@@ -10,8 +10,10 @@ import {
     IFilterDef,
     AgPromise,
     IFilterComp,
+    IMultiFilterParams,
+    IMultiFilterModel
 } from '@ag-grid-community/core';
-import { IMultiFilterParams, IMultiFilterModel, MultiFilter } from './multiFilter';
+import { MultiFilter } from './multiFilter';
 
 export class MultiFloatingFilterComp extends Component implements IFloatingFilterComp {
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
@@ -36,7 +38,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
                 parentFilterInstance: (callback: (filterInstance: IFilterComp) => void) => {
                     params.parentFilterInstance(parent => {
                         const childFilterInstance = (parent as MultiFilter).getChildFilterInstance(index);
-                        callback(childFilterInstance);
+                        callback(childFilterInstance!);
                     });
                 }
             };

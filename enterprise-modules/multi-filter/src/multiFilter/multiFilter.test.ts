@@ -1,6 +1,8 @@
-import { MultiFilter, IMultiFilterParams, IMultiFilterModel } from './multiFilter';
+import { MultiFilter, } from './multiFilter';
 import {
     ColDef,
+    IMultiFilterParams,
+    IMultiFilterModel,
     IClientSideRowModel,
     FilterManager,
     IProvidedFilterParams,
