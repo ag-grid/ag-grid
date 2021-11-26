@@ -501,10 +501,6 @@ export abstract class Sparkline extends Observable {
      * @param y
      */
     private pickClosestSeriesNodeDatum(x: number, y: number): SeriesNodeDatum | undefined {
-        function getXDistance(p1: Point, p2: Point): number {
-            return Math.abs(p1.x - p2.x);
-        }
-
         let minDistance = Infinity;
         let closestDatum: SeriesNodeDatum | undefined;
         const hitPoint = this.rootGroup.transformPoint(x, y);
@@ -513,7 +509,7 @@ export abstract class Sparkline extends Observable {
             if (!datum.point) {
                 return;
             }
-            const distance = getXDistance(hitPoint, datum.point);
+            const distance = this.getDistance(hitPoint, datum.point);
             if (distance < minDistance) {
                 minDistance = distance;
                 closestDatum = datum;
@@ -521,6 +517,16 @@ export abstract class Sparkline extends Observable {
         });
 
         return closestDatum;
+    }
+
+    /**
+    * Return the relevant distance between two points.
+    * The distance will be calculated based on the x value of the points for all sparklines except bar sparkline, where the distance is based on the y values.
+    * @param x
+    * @param y
+    */
+    protected getDistance(p1: Point, p2: Point): number {
+        return Math.abs(p1.x - p2.x);
     }
 
     /**
