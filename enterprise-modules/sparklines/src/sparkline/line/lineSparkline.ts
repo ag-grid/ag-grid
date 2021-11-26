@@ -33,12 +33,12 @@ class SparklineLine {
 }
 
 class SparklineCrosshairs {
-    private static crosshairLineOptions = {
-        enabled: true,
+    private static crosshairLineOptions: CrosshairLineOptions = {
+        enabled: false,
         stroke: 'rgba(0,0,0, 0.54)',
         strokeWidth: 1,
         lineDash: 'solid',
-        lineCap: 'round'
+        lineCap: undefined
     }
     xLine: CrosshairLineOptions = Object.create(SparklineCrosshairs.crosshairLineOptions);
     yLine: CrosshairLineOptions = Object.create(SparklineCrosshairs.crosshairLineOptions);
