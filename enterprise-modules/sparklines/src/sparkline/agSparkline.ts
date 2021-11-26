@@ -230,4 +230,6 @@ function initCrosshairLineOptions(target: CrosshairLineOptions, options: any) {
     setValueIfPropertyExists(target, 'enabled', options.enabled, options);
     setValueIfPropertyExists(target, 'stroke', options.stroke, options);
     setValueIfPropertyExists(target, 'strokeWidth', options.strokeWidth, options);
+    setValueIfPropertyExists(target, 'lineDash', options.lineDash, options);
+    setValueIfPropertyExists(target, 'lineCap', options.lineCap, options);
 }
