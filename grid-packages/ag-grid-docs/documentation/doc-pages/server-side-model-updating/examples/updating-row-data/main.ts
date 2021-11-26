@@ -1,5 +1,5 @@
 import { ColDef, GridOptions, IServerSideDatasource, IServerSideGetRowsParams, IServerSideGetRowsRequest, RowNode } from '@ag-grid-community/core'
-import _ from 'lodash'
+declare var _: any;
 
 const columnDefs: ColDef[] = [
   { field: 'id', hide: true },
@@ -126,7 +126,7 @@ function group(data: any[], rowGroupColIds: string[], groupKeys: string[], paren
   if (!groupColId) return data
 
   var groupedData = _(data)
-    .groupBy(function (x) {
+    .groupBy(function (x: any) {
       return x[groupColId!]
     })
     .value()
