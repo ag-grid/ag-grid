@@ -49,7 +49,7 @@ This remainder of this documentation page goes through the grid provided cell re
 
 ## No Cell Renderer
 
-If you have no requirements for custom cells, then you should use no cell renderer. Having no custom cell renderers will result in the fastest possible grid (which might be important to you if using Internet Explorer) as even the simplest cell renderer will result in some extra div's in the DOM
+If you have no requirements for custom cells, then you should use no cell renderer. Having no custom cell renderers will result in the fastest possible grid, as even the simplest cell renderer will result in some extra div's in the DOM
 
 If you just want to do simple formatting of the data (eg currency or date formatting) then you can use `colDef.valueFormatter`.
 

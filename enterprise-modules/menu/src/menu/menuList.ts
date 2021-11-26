@@ -31,7 +31,7 @@ export class MenuList extends TabGuardComp {
     protected onTabKeyDown(e: KeyboardEvent) {
         const parent = this.getParentComponent();
         const parentGui = parent && parent.getGui();
-        const isManaged = parentGui && _.containsClass(parentGui, 'ag-focus-managed');
+        const isManaged = parentGui && parentGui.classList.contains('ag-focus-managed');
 
         if (!isManaged) {
             e.preventDefault();
@@ -43,13 +43,13 @@ export class MenuList extends TabGuardComp {
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {
-        switch (e.keyCode) {
+        switch (e.key) {
             case KeyCode.UP:
             case KeyCode.RIGHT:
             case KeyCode.DOWN:
             case KeyCode.LEFT:
                 e.preventDefault();
-                this.handleNavKey(e.keyCode);
+                this.handleNavKey(e.key);
                 break;
             case KeyCode.ESCAPE:
                 const topMenu = this.findTopMenu();
@@ -86,7 +86,7 @@ export class MenuList extends TabGuardComp {
     public addItem(menuItemDef: MenuItemDef): void {
         const menuItem = this.createManagedBean(new MenuItemComponent({
             ...menuItemDef,
-            isAnotherSubMenuOpen: () => _.some(this.menuItems, m => m.isSubMenuOpen())
+            isAnotherSubMenuOpen: () => this.menuItems.some(m => m.isSubMenuOpen())
         }));
 
         menuItem.setParentComponent(this);
@@ -147,7 +147,7 @@ export class MenuList extends TabGuardComp {
         return parent instanceof MenuList ? parent : undefined;
     }
 
-    private handleNavKey(key: number): void {
+    private handleNavKey(key: string): void {
         switch (key) {
             case KeyCode.UP:
             case KeyCode.DOWN:

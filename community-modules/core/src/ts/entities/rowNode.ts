@@ -5,9 +5,8 @@ import { Constants } from "../constants/constants";
 import { IEventEmitter } from "../interfaces/iEventEmitter";
 import { DetailGridInfo } from "../gridApi";
 import { exists, missing, missingOrEmpty } from "../utils/generic";
-import { assign, getAllKeysInObjects } from "../utils/object";
+import { getAllKeysInObjects } from "../utils/object";
 import { IServerSideStore } from "../interfaces/IServerSideStore";
-import { startsWith } from "../utils/string";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 import { IServerSideRowModel } from "../interfaces/iServerSideRowModel";
 import { debounce } from "../utils/function";
@@ -367,7 +366,7 @@ export class RowNode implements IEventEmitter {
                 this.id = getRowNodeId(this.data);
                 // make sure id provided doesn't start with 'row-group-' as this is reserved. also check that
                 // it has 'startsWith' in case the user provided a number.
-                if (this.id && typeof this.id === 'string' && startsWith(this.id, RowNode.ID_PREFIX_ROW_GROUP)) {
+                if (this.id && typeof this.id === 'string' && this.id.startsWith(RowNode.ID_PREFIX_ROW_GROUP)) {
                     console.error(`AG Grid: Row ID's cannot start with ${RowNode.ID_PREFIX_ROW_GROUP}, this is a reserved prefix for AG Grid's row grouping feature.`);
                 }
                 // force id to be a string
@@ -597,7 +596,7 @@ export class RowNode implements IEventEmitter {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_EXPANDED_CHANGED));
         }
 
-        const event = assign({}, this.createGlobalRowEvent(Events.EVENT_ROW_GROUP_OPENED), {
+        const event = Object.assign({}, this.createGlobalRowEvent(Events.EVENT_ROW_GROUP_OPENED), {
             expanded
         });
 

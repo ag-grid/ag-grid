@@ -4,11 +4,6 @@
     $border-color: rgba(0,0,0,0)
 ) {
     @if (lightness($background-color) < 50) {
-        // For Internet Explorer
-        scrollbar-face-color: $foreground-color;
-        scrollbar-track-color: $background-color;
-        scrollbar-arrow-color: $foreground-color;
-
         // For Firefox
         scrollbar-color: $foreground-color $background-color;
     }

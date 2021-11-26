@@ -62,7 +62,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
 
     constructor(config: ExcelGridSerializingParams) {
         super(config);
-        this.config = _.assign({}, config);
+        this.config = Object.assign({}, config);
         this.stylesByIds = {};
         this.config.baseExcelStyles.forEach(style => {
             this.stylesByIds[style.id] = style;
@@ -150,7 +150,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
 
     protected isFormula(value: string | null) {
         if (value == null) { return false; }
-        return this.config.autoConvertFormulas && _.startsWith(value.toString(), '=');
+        return this.config.autoConvertFormulas && value.toString().startsWith('=');
     }
 
     protected getStyleById(styleId?: string | null): ExcelStyle | null {

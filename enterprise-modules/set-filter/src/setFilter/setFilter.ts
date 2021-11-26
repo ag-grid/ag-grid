@@ -74,7 +74,7 @@ export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> {
 
         if (e.defaultPrevented) { return; }
 
-        switch (e.which || e.keyCode) {
+        switch (e.key) {
             case KeyCode.SPACE:
                 this.handleKeySpace(e);
                 break;
@@ -333,8 +333,7 @@ export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> {
         const { eMiniFilter, gridOptionsWrapper } = this;
         const translate = gridOptionsWrapper.getLocaleTextFunc();
 
-        _.setDisplayed(eMiniFilter.getGui(), !this.setFilterParams.suppressMiniFilter);
-
+        eMiniFilter.setDisplayed(!this.setFilterParams.suppressMiniFilter)
         eMiniFilter.setValue(this.valueModel.getMiniFilter());
         eMiniFilter.onValueChange(() => this.onMiniFilterInput());
         eMiniFilter.setInputAriaLabel(translate('ariaSearchFilterValues', 'Search filter values'));
@@ -397,8 +396,7 @@ export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> {
         const appliedModel = this.getModel();
 
         if (appliedModel) {
-            this.appliedModelValues = _.reduce(
-                appliedModel.values,
+            this.appliedModelValues = appliedModel.values.reduce(
                 (values, value) => {
                     values[this.caseFormat(String(value))] = true;
                     return values;
@@ -439,7 +437,7 @@ export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> {
         value = _.makeNull(value);
 
         if (Array.isArray(value)) {
-            return _.some(value, v => this.appliedModelValues![this.caseFormat(String(_.makeNull(v)))] === true);
+            return value.some(v => this.appliedModelValues![this.caseFormat(String(_.makeNull(v)))] === true);
         }
 
         // Comparing against a value performs better than just checking for undefined
@@ -555,7 +553,7 @@ export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> {
 
     private onMiniFilterKeyPress(e: KeyboardEvent): void {
         const { excelMode, readOnly } = this.setFilterParams || {};
-        if (_.isKeyPressed(e, KeyCode.ENTER) && !excelMode && !readOnly) {
+        if (e.key === KeyCode.ENTER && !excelMode && !readOnly) {
             this.filterOnAllVisibleValues();
         }
     }

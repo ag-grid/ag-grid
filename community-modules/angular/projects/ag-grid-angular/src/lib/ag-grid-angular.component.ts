@@ -308,6 +308,10 @@ export class AgGridAngular implements AfterViewInit {
      *     **Note:** This property does not work if `enableBrowserTooltips` is `true`.
      * Default: `2000`     */
     @Input() public tooltipShowDelay: number | undefined = undefined;
+    /** The delay in milliseconds that it takes for tooltips to hide once they have been displayed.
+     *     **Note:** This property does not work if `enableBrowserTooltips` is `true`.
+     * Default: `10000`     */
+    @Input() public tooltipHideDelay: number | undefined = undefined;
     /** Set to `true` to have tooltips follow the cursor once they are displayed. Default: `false`     */
     @Input() public tooltipMouseTrack: boolean | undefined = undefined;
     /** DOM element to use as the popup parent for grid popups (context menu, column menu etc).     */
@@ -387,8 +391,14 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public components: { [p: string]: any; } | undefined = undefined;
     /** A map of component names to framework (Angular, React, Vue etc.) components.     */
     @Input() public frameworkComponents: { [p: string]: { new(): any; }; } | any | undefined = undefined;
-    /** Set to true to enable the experimental React UI. Works with React framework only.     */
+    /** @deprecated React UI is enabled by default. Use suppressReactUi=true to turn it off.
+     */
     @Input() public reactUi: boolean | undefined = undefined;
+    /** @deprecated Set to true to enable the experimental React UI. Works with React framework only. 
+It is planned the next major release of the grid will drop support of the legacy React engine,
+hence this property is deprecated as will be removed in the next major release.
+     */
+    @Input() public suppressReactUi: boolean | undefined = undefined;
     /** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time.     */
     @Input() public editType: string | undefined = undefined;
     /** Set to `true` to enable Single Click Editing for cells, to start editing with a single click. Default: `false`     */
@@ -579,7 +589,7 @@ export class AgGridAngular implements AfterViewInit {
     /** Set to `true` so that the grid doesn't virtualise the columns. For example, if you have 100 columns, but only 10 visible due to scrolling, all 100 will always be rendered. Default: `false`     */
     @Input() public suppressColumnVirtualisation: boolean | undefined = undefined;
     /** By default the grid has a limit of rendering a maximum of 500 rows at once (remember the grid only renders rows you can see, so unless your display shows more than 500 rows without vertically scrolling this will never be an issue).
-     * <br />**This is only relevant if you are manually setting `rowBuffer` to a high value (rendering more rows than can be seen) or if your grid height is able to display more than 500 rows at once.** 
+     * <br />**This is only relevant if you are manually setting `rowBuffer` to a high value (rendering more rows than can be seen) or if your grid height is able to display more than 500 rows at once.**
      * Default: `false`     */
     @Input() public suppressMaxRenderedRowRestriction: boolean | undefined = undefined;
     /** Set to `true` to enable Managed Row Dragging. Default: `false`     */
@@ -729,7 +739,7 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public alwaysShowHorizontalScroll: boolean | undefined = undefined;
     /** Set to `true` to always show the vertical scrollbar. Default: `false`     */
     @Input() public alwaysShowVerticalScroll: boolean | undefined = undefined;
-    /** Set to `true` to debounce the vertical scrollbar. Can provide smoother scrolling on older browsers, e.g. Internet Explorer. Default: `false`     */
+    /** Set to `true` to debounce the vertical scrollbar. Can provide smoother scrolling on slow machines. Default: `false`     */
     @Input() public debounceVerticalScrollbar: boolean | undefined = undefined;
     /** Set to `true` to never show the horizontal scroll. This is useful if the grid is aligned with another grid and will scroll when the other grid scrolls. (Should not be used in combination with `alwaysShowHorizontalScroll`.) Default: `false`     */
     @Input() public suppressHorizontalScroll: boolean | undefined = undefined;
@@ -888,8 +898,8 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public fillOperation: ((params: FillOperationParams) => any) | undefined = undefined;
     /** Callback to perform additional sorting after the grid has sorted the rows.     */
     @Input() public postSort: ((nodes: RowNode[]) =>  void) | undefined = undefined;
-    /** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values.     */
-    @Input() public getRowStyle: ((params: RowClassParams) => RowStyle) | undefined = undefined;
+    /** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles.     */
+    @Input() public getRowStyle: ((params: RowClassParams) => RowStyle | undefined) | undefined = undefined;
     /** Callback version of property `rowClass` to set class(es) for each row individually. Function should return either a string (class name), array of strings (array of class names) or undefined for no class.     */
     @Input() public getRowClass: ((params: RowClassParams) => string | string[] | undefined) | undefined = undefined;
     /** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height.     */
@@ -1176,6 +1186,7 @@ export class AgGridAngular implements AfterViewInit {
     static ngAcceptInputType_groupMaintainOrder: boolean | null | '';
     static ngAcceptInputType_columnHoverHighlight: boolean | null | '';
     static ngAcceptInputType_reactUi: boolean | null | '';
+    static ngAcceptInputType_suppressReactUi: boolean | null | '';
     // @END@
 }
 

@@ -2011,6 +2011,10 @@
       "description": "/** The delay in milliseconds that it takes for tooltips to show up once an element is hovered over.\n * **Note:** This property does not work if `enableBrowserTooltips` is `true`.\n * Default: `2000` */",
       "type": { "returnType": "number", "optional": true }
     },
+    "tooltipHideDelay": {
+      "description": "/** The delay in milliseconds that it takes for tooltips to hide once they have been displayed.\n * **Note:** This property does not work if `enableBrowserTooltips` is `true`.\n * Default: `10000` */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "tooltipMouseTrack": {
       "description": "/** Set to `true` to have tooltips follow the cursor once they are displayed. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
@@ -2166,7 +2170,11 @@
       }
     },
     "reactUi": {
-      "description": "/** Set to true to enable the experimental React UI. Works with React framework only. */",
+      "description": "/** @deprecated React UI is enabled by default. Use suppressReactUi=true to turn it off.\n */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "suppressReactUi": {
+      "description": "/** @deprecated Set to true to enable the experimental React UI. Works with React framework only. \nIt is planned the next major release of the grid will drop support of the legacy React engine,\nhence this property is deprecated as will be removed in the next major release.\n */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "editType": {
@@ -2535,7 +2543,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressMaxRenderedRowRestriction": {
-      "description": "/** By default the grid has a limit of rendering a maximum of 500 rows at once (remember the grid only renders rows you can see, so unless your display shows more than 500 rows without vertically scrolling this will never be an issue).\n * <br />**This is only relevant if you are manually setting `rowBuffer` to a high value (rendering more rows than can be seen) or if your grid height is able to display more than 500 rows at once.** \n * Default: `false` */",
+      "description": "/** By default the grid has a limit of rendering a maximum of 500 rows at once (remember the grid only renders rows you can see, so unless your display shows more than 500 rows without vertically scrolling this will never be an issue).\n * <br />**This is only relevant if you are manually setting `rowBuffer` to a high value (rendering more rows than can be seen) or if your grid height is able to display more than 500 rows at once.**\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "rowDragManaged": {
@@ -2796,7 +2804,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "debounceVerticalScrollbar": {
-      "description": "/** Set to `true` to debounce the vertical scrollbar. Can provide smoother scrolling on older browsers, e.g. Internet Explorer. Default: `false` */",
+      "description": "/** Set to `true` to debounce the vertical scrollbar. Can provide smoother scrolling on slow machines. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressHorizontalScroll": {
@@ -3227,10 +3235,10 @@
       }
     },
     "getRowStyle": {
-      "description": "/** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values. */",
+      "description": "/** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles. */",
       "type": {
         "arguments": { "params": "RowClassParams" },
-        "returnType": "RowStyle",
+        "returnType": "RowStyle | undefined",
         "optional": true
       }
     },
@@ -4800,8 +4808,8 @@
   },
   "NavigateToNextCellParams": {
     "key": {
-      "description": "/** The keycode for the arrow key pressed:\n * left = 37, up = 38, right = 39, down = 40 */",
-      "type": { "returnType": "number", "optional": false }
+      "description": "/** The keycode for the arrow key pressed:\n * left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */",
+      "type": { "returnType": "string", "optional": false }
     },
     "previousCellPosition": {
       "description": "/** The cell that currently has focus */",
@@ -7238,7 +7246,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "alwaysShowBothConditions": {
-      "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions. \n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
+      "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
@@ -7372,7 +7380,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "alwaysShowBothConditions": {
-      "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions. \n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
+      "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
@@ -7530,7 +7538,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "alwaysShowBothConditions": {
-      "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions. \n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
+      "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
@@ -7612,7 +7620,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "alwaysShowBothConditions": {
-      "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions. \n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
+      "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
@@ -7755,7 +7763,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "alwaysShowBothConditions": {
-      "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions. \n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
+      "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
@@ -7841,9 +7849,9 @@
       "description": "/** Set to `'top'` or `'bottom'` to start editing a pinned row */",
       "type": { "returnType": "string", "optional": true }
     },
-    "keyPress": {
-      "description": "/** The keyPress to pass to the cell editor */",
-      "type": { "returnType": "number", "optional": true }
+    "key": {
+      "description": "/** The key to pass to the cell editor */",
+      "type": { "returnType": "string", "optional": true }
     },
     "charPress": {
       "description": "/** The charPress to pass to the cell editor */",
@@ -8473,11 +8481,11 @@
       "type": { "returnType": "Column", "optional": false }
     },
     "displayName": {
-      "description": "/** The name to display for the column. \n * If the column is using a headerValueGetter, the displayName will take this into account. */",
+      "description": "/** The name to display for the column.\n * If the column is using a headerValueGetter, the displayName will take this into account. */",
       "type": { "returnType": "string", "optional": false }
     },
     "enableSorting": {
-      "description": "/** Whether sorting is enabled for the column. \n * Only put sort logic into your header if this is true. */",
+      "description": "/** Whether sorting is enabled for the column.\n * Only put sort logic into your header if this is true. */",
       "type": { "returnType": "boolean", "optional": false }
     },
     "enableMenu": {
@@ -8510,7 +8518,7 @@
     },
     "template": { "type": { "returnType": "string", "optional": false } },
     "eGridHeader": {
-      "description": "/** The header the grid provides. \n * The custom header component is a child of the grid provided header.\n * The grid's header component is what contains the grid managed functionality such as resizing, keyboard navigation etc.\n * This is provided should you want to make changes to this cell,\n * eg add ARIA tags, or add keyboard event listener (as focus goes here when navigating to the header). */",
+      "description": "/** The header the grid provides.\n * The custom header component is a child of the grid provided header.\n * The grid's header component is what contains the grid managed functionality such as resizing, keyboard navigation etc.\n * This is provided should you want to make changes to this cell,\n * eg add ARIA tags, or add keyboard event listener (as focus goes here when navigating to the header). */",
       "type": { "returnType": "HTMLElement", "optional": false }
     },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
@@ -10813,9 +10821,9 @@
       "description": "/** Current value of the cell */",
       "type": { "returnType": "any", "optional": false }
     },
-    "keyPress": {
-      "description": "/** Key code of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
-      "type": { "returnType": "number | null", "optional": false }
+    "key": {
+      "description": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
+      "type": { "returnType": "string | null", "optional": false }
     },
     "charPress": {
       "description": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n * shift + letter 'a' only printable characters appear here */",
@@ -11638,14 +11646,14 @@
     }
   },
   "ExcelInterior": {
-    "color": { "type": { "returnType": "string", "optional": false } },
     "pattern": {
       "type": {
         "returnType": "'None' | 'Solid' | 'Gray75' | 'Gray50' | 'Gray25' | 'Gray125' | 'Gray0625' | 'HorzStripe' | 'VertStripe' | 'ReverseDiagStripe' | 'DiagStripe' | 'DiagCross' | 'ThickDiagCross' | 'ThinHorzStripe' | 'ThinVertStripe' | 'ThinReverseDiagStripe' | 'ThinDiagStripe' | 'ThinHorzCross' | 'ThinDiagCross'",
         "optional": false
       }
     },
-    "patternColor": { "type": { "returnType": "string", "optional": false } }
+    "color": { "type": { "returnType": "string", "optional": true } },
+    "patternColor": { "type": { "returnType": "string", "optional": true } }
   },
   "ExcelNumberFormat": {
     "format": { "type": { "returnType": "string", "optional": false } }
@@ -12673,7 +12681,7 @@
     },
     "extendLatestRangeInDirection": {
       "type": {
-        "arguments": { "key": "number" },
+        "arguments": { "key": "string" },
         "returnType": "CellPosition | undefined",
         "optional": false
       }
@@ -12845,9 +12853,9 @@
       "description": "/** Current value of the cell */",
       "type": { "returnType": "any", "optional": false }
     },
-    "keyPress": {
-      "description": "/** Key code of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
-      "type": { "returnType": "number | null", "optional": false }
+    "key": {
+      "description": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
+      "type": { "returnType": "string | null", "optional": false }
     },
     "charPress": {
       "description": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n * shift + letter 'a' only printable characters appear here */",
@@ -13227,7 +13235,7 @@
   "IServerSideRowModel": {
     "refreshStore": {
       "type": {
-        "arguments": { "params": "RefreshStoreParams" },
+        "arguments": { "params?": "RefreshStoreParams" },
         "returnType": "void",
         "optional": false
       }
@@ -13933,6 +13941,10 @@
       "description": "/** The configuration for the marker styles. */",
       "type": { "returnType": "SparklineMarkerOptions", "optional": true }
     },
+    "crosshairs": {
+      "description": "/** The configuration for the crosshairs. */",
+      "type": { "returnType": "SparklineCrosshairsOptions", "optional": true }
+    },
     "xKey": {
       "description": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
       "type": { "returnType": "string", "optional": true }
@@ -13974,6 +13986,10 @@
     "marker": {
       "description": "/** The configuration for the marker styles. */",
       "type": { "returnType": "SparklineMarkerOptions", "optional": true }
+    },
+    "crosshairs": {
+      "description": "/** The configuration for the crosshairs. */",
+      "type": { "returnType": "SparklineCrosshairsOptions", "optional": true }
     },
     "xKey": {
       "description": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
@@ -14205,6 +14221,14 @@
       "description": "/** The element to place the tooltip into. This can be used to confine the tooltip to a specific area which may be outside of the sparkline grid cell. */",
       "type": { "returnType": "HTMLElement", "optional": true }
     },
+    "xOffset": {
+      "description": "/** The horizontal distance in pixels between the cursor and the top left corner of the tooltip.\n * Default: `10` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "yOffset": {
+      "description": "/** The vertical distance in pixels between the cursor and the top left corner of the tooltip.\n * Default: `0` */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "renderer": {
       "description": "/** A callback function used to create the content for the tooltips. This function should return an object or a HTML string used to render the tooltip. */",
       "type": { "returnType": "SparklineTooltipRenderer", "optional": true }
@@ -14281,6 +14305,39 @@
     "strokeWidth": {
       "description": "/** The thickness in pixels for the stroke of the markers, columns or bars when hovered over.\n * Default: `1` */",
       "type": { "returnType": "number", "optional": true }
+    }
+  },
+  "SparklineCrosshairsOptions": {
+    "xLine": {
+      "type": { "returnType": "CrosshairLineOptions", "optional": true }
+    },
+    "yLine": {
+      "type": { "returnType": "CrosshairLineOptions", "optional": true }
+    }
+  },
+  "CrosshairLineOptions": {
+    "enabled": {
+      "description": "/** Set to true to show crosshair line.\n * Default: false */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "stroke": {
+      "description": "/** The CSS colour value for the crosshair line. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "strokeWidth": {
+      "description": "/** The thickness in pixels for the crosshair line. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "lineDash": {
+      "description": "/** Defines how the crosshair stroke is rendered. This can be one of the lineDash style options or an array specifying the length in pixels of alternating dashes and gaps.\n * For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels.\n * The default is `solid` which is equivalent to an empty array, this renders a solid stroke with no gaps. */",
+      "type": {
+        "returnType": "'dash' | 'dashDot' | 'dashDotDot' | 'dot' | 'longDash' | 'longDashDot' | 'longDashDotDot' | 'shortDash' | 'shortDashDot' | 'shortDashDotDot' | 'shortDot' | 'solid' | string | number[]",
+        "optional": true
+      }
+    },
+    "lineCap": {
+      "description": "/** The shape used to draw the end points of the crosshair line.\n * The options include `butt` (the ends of the line are squared off at the endpoints), `round` (the ends of the line are rounded) and `square` (the ends of the line are squared off by adding a box with width equal to the line's strokeWidth and height equal to the half the line's strokeWidth).\n * Default: `round` */",
+      "type": { "returnType": "'round'| 'square' | 'butt'", "optional": true }
     }
   },
   "SparklineColumnFormatter": {},
@@ -15213,13 +15270,6 @@
         "optional": false
       }
     },
-    "setUnselectable": {
-      "type": {
-        "arguments": { "value": "'on' | null" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
     "setTransition": {
       "type": {
         "arguments": { "value": "string | undefined" },
@@ -15307,9 +15357,9 @@
       "description": "/** Current value of the cell */",
       "type": { "returnType": "any", "optional": false }
     },
-    "keyPress": {
-      "description": "/** Key code of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
-      "type": { "returnType": "number | null", "optional": false }
+    "key": {
+      "description": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
+      "type": { "returnType": "string | null", "optional": false }
     },
     "charPress": {
       "description": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n * shift + letter 'a' only printable characters appear here */",
@@ -15392,9 +15442,9 @@
       "description": "/** Current value of the cell */",
       "type": { "returnType": "any", "optional": false }
     },
-    "keyPress": {
-      "description": "/** Key code of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
-      "type": { "returnType": "number | null", "optional": false }
+    "key": {
+      "description": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
+      "type": { "returnType": "string | null", "optional": false }
     },
     "charPress": {
       "description": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n * shift + letter 'a' only printable characters appear here */",
@@ -15477,9 +15527,9 @@
       "description": "/** Current value of the cell */",
       "type": { "returnType": "any", "optional": false }
     },
-    "keyPress": {
-      "description": "/** Key code of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
-      "type": { "returnType": "number | null", "optional": false }
+    "key": {
+      "description": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
+      "type": { "returnType": "string | null", "optional": false }
     },
     "charPress": {
       "description": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n * shift + letter 'a' only printable characters appear here */",

@@ -8,6 +8,7 @@ import {
     ChartType,
     Column,
     ColumnModel,
+    Constants,
     IAggFunc,
     IRangeService,
     PostConstruct,
@@ -262,7 +263,11 @@ export class ChartDataModel extends BeanStub {
 
         if (rangeService && range) {
             startRow = rangeService.getRangeStartRow(range).rowIndex;
-            endRow = rangeService.getRangeEndRow(range).rowIndex;
+
+            // when the last row the cell range is a pinned 'bottom' row, the `endRow` index is set to -1 which results
+            // in the ChartDatasource processing all non pinned rows from the `startRow` index.
+            const endRowPosition = rangeService.getRangeEndRow(range);
+            endRow = endRowPosition.rowPinned === Constants.PINNED_BOTTOM ? -1 : endRowPosition.rowIndex;
         }
 
         return { startRow, endRow };
@@ -503,13 +508,9 @@ export class ChartDataModel extends BeanStub {
         if (!updatedColState && !dimensionColState.length) {
             // use first dimension column in range by default
             dimensionCols.forEach(col => {
-                if (this.dimensionCellRange || !colsInRange.has(col)) {
-                    return;
-                }
-
+                if (this.dimensionCellRange || !colsInRange.has(col)) { return; }
                 this.dimensionCellRange = this.createCellRange(CellRangeType.DIMENSION, col);
             });
-
             return;
         }
 

@@ -6,14 +6,12 @@
   "module": "./dist/es6/main.js",
   "types": "./dist/cjs/main.d.ts",
   "scripts": {
-    "test": "npm run validate-es5",
     "jest": "jest",
     "build-cjs": "npx tsc -p tsconfig.json",
     "build-es6": "npx tsc -p tsconfig.es6.json",
     "package": "node ../../module-build/rollup/build.js --bundlePrefix ag-charts-community --umdModuleName agCharts",
     "build": "npm run build-cjs && npm run build-es6 && npm run hash",
     "watch": "npx tsc -p tsconfig.json --watch",
-    "validate-es5": "npx eslint dist/cjs",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
   "repository": {
@@ -39,8 +37,8 @@
   "browserslist": [
     "> 1%",
     "last 2 versions",
-    "not ie <= 10",
-    "not ie_mob <= 11",
+    "not ie >= 0",
+    "not ie_mob >= 0",
     "not blackberry > 0",
     "not op_mini all",
     "not operamobile >= 0"

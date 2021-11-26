@@ -135,7 +135,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
             closedCallback: (e?: Event) => { // menu closed callback
                 closedFuncs.forEach(f => f(e));
             },
-            afterGuiAttached: params => menu.afterGuiAttached(_.assign({}, {container: containerType }, params)),
+            afterGuiAttached: params => menu.afterGuiAttached(Object.assign({}, {container: containerType }, params)),
             positionCallback: () => positionCallback(menu),
             anchorToElement,
             ariaLabel: translate('ariaLabelColumnMenu', 'Column Menu')
@@ -487,7 +487,7 @@ export class EnterpriseMenu extends BeanStub {
 
     private createColumnsPanel(): TabbedItem {
         const eWrapperDiv = document.createElement('div');
-        _.addCssClass(eWrapperDiv, 'ag-menu-column-select-wrapper');
+        eWrapperDiv.classList.add('ag-menu-column-select-wrapper');
 
         this.columnSelectPanel = this.createManagedBean(new PrimaryColsPanel());
 
@@ -509,8 +509,9 @@ export class EnterpriseMenu extends BeanStub {
             columnApi: this.columnApi
         }, 'columnMenu');
 
-        _.addCssClass(this.columnSelectPanel.getGui(), 'ag-menu-column-select');
-        eWrapperDiv.appendChild(this.columnSelectPanel.getGui());
+        const columnSelectPanelGui = this.columnSelectPanel.getGui();
+        columnSelectPanelGui.classList.add('ag-menu-column-select');
+        eWrapperDiv.appendChild(columnSelectPanelGui);
 
         this.tabItemColumns = {
             title: _.createIconNoSpan('columns', this.gridOptionsWrapper, this.column)!, //createColumnsIcon(),

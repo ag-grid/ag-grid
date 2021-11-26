@@ -72,7 +72,7 @@ export class MenuItemComponent extends Component {
         } else {
             this.addGuiEventListener('click', e => this.onItemSelected(e));
             this.addGuiEventListener('keydown', (e: KeyboardEvent) => {
-                if (e.keyCode === KeyCode.ENTER || e.keyCode === KeyCode.SPACE) {
+                if (e.key === KeyCode.ENTER || e.key === KeyCode.SPACE) {
                     e.preventDefault();
                     this.onItemSelected(e);
                 }
@@ -89,7 +89,7 @@ export class MenuItemComponent extends Component {
         }
 
         if (this.params.cssClasses) {
-            this.params.cssClasses.forEach(it => _.addCssClass(eGui, it));
+            this.params.cssClasses.forEach(it => this.addCssClass(it));
         }
     }
 

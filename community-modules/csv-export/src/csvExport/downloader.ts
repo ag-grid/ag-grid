@@ -7,33 +7,25 @@ export class Downloader {
             return;
         }
 
-        // Internet Explorer
+        const element = document.createElement('a');
         // @ts-ignore
-        if (win.navigator.msSaveOrOpenBlob) {
+        const url = win.URL.createObjectURL(content);
+        element.setAttribute('href', url);
+        element.setAttribute('download', fileName);
+        element.style.display = 'none';
+        document.body.appendChild(element);
+
+        element.dispatchEvent(new MouseEvent('click', {
+            bubbles: false,
+            cancelable: true,
+            view: win
+        }));
+
+        document.body.removeChild(element);
+
+        win.setTimeout(() => {
             // @ts-ignore
-            win.navigator.msSaveOrOpenBlob(content, fileName);
-        } else {
-            // Other Browsers
-            const element = document.createElement('a');
-            // @ts-ignore
-            const url = win.URL.createObjectURL(content);
-            element.setAttribute('href', url);
-            element.setAttribute('download', fileName);
-            element.style.display = 'none';
-            document.body.appendChild(element);
-
-            element.dispatchEvent(new MouseEvent('click', {
-                bubbles: false,
-                cancelable: true,
-                view: win
-            }));
-
-            document.body.removeChild(element);
-
-            win.setTimeout(() => {
-                // @ts-ignore
-                win.URL.revokeObjectURL(url);
-            }, 0);
-        }
+            win.URL.revokeObjectURL(url);
+        }, 0);
     }
 }

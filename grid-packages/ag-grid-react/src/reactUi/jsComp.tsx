@@ -1,4 +1,4 @@
-import { Context, UserCompDetails, UserComponentFactory, IComponent, AgPromise, ICellRendererComp } from 'ag-grid-community';
+import { Context, UserCompDetails, ICellRendererComp } from 'ag-grid-community';
 import { MutableRefObject } from 'react';
 
 export const showJsComp = (

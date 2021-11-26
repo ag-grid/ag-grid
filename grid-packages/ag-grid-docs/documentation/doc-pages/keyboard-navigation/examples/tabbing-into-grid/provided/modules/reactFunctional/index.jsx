@@ -31,9 +31,7 @@ const GridExample = () => {
         if (!myInput.current || !gridApi || !gridColumnApi) { return; }
 
         myInput.current.addEventListener('keydown', function (event) {
-            const tabKeyCode = 9;
-
-            if (event.keyCode !== tabKeyCode) { return; }
+            if (event.key !== 'Tab') { return; }
 
             event.preventDefault();
             gridApi.ensureIndexVisible(0);

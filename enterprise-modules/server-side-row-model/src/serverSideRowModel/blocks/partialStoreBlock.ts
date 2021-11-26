@@ -315,7 +315,7 @@ export class PartialStoreBlock extends RowNodeBlock {
         this.touchLastAccessed();
 
         let res: RowBounds | undefined;
-        _.find(this.rowNodes, rowNode => {
+        this.rowNodes.find(rowNode => {
             res = this.blockUtils.extractRowBounds(rowNode, index);
             return res != null;
         });
@@ -328,7 +328,7 @@ export class PartialStoreBlock extends RowNodeBlock {
 
         let res: number | null = null;
 
-        _.find(this.rowNodes, rowNode => {
+        this.rowNodes.find(rowNode => {
             res = this.blockUtils.getIndexAtPixel(rowNode, pixel);
             return res != null;
         });

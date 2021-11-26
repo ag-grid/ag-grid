@@ -3,7 +3,7 @@ import { ICellEditorComp, ICellEditorParams } from "../../interfaces/iCellEditor
 import { AgInputTextField } from "../../widgets/agInputTextField";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { exists } from "../../utils/generic";
-import { isBrowserSafari, isBrowserIE } from "../../utils/browser";
+import { isBrowserSafari } from "../../utils/browser";
 import { KeyCode } from '../../constants/keyCode';
 
 /**
@@ -37,14 +37,14 @@ export class TextCellEditor extends PopupComponent implements ICellEditorComp {
         if (params.cellStartedEdit) {
             this.focusAfterAttached = true;
 
-            if (params.keyPress === KeyCode.BACKSPACE || params.keyPress === KeyCode.DELETE) {
+            if (params.key === KeyCode.BACKSPACE || params.key === KeyCode.DELETE) {
                 startValue = '';
             } else if (params.charPress) {
                 startValue = params.charPress;
             } else {
                 startValue = this.getStartValue(params);
 
-                if (params.keyPress !== KeyCode.F2) {
+                if (params.key !== KeyCode.F2) {
                     this.highlightAllOnFocus = true;
                 }
             }
@@ -59,9 +59,9 @@ export class TextCellEditor extends PopupComponent implements ICellEditorComp {
         }
 
         this.addManagedListener(eInput.getGui(), 'keydown', (event: KeyboardEvent) => {
-            const { keyCode } = event;
+            const { key } = event;
 
-            if (keyCode === KeyCode.PAGE_UP || keyCode === KeyCode.PAGE_DOWN) {
+            if (key === KeyCode.PAGE_UP || key === KeyCode.PAGE_DOWN) {
                 event.preventDefault();
             }
         });
@@ -87,9 +87,9 @@ export class TextCellEditor extends PopupComponent implements ICellEditorComp {
             inputEl.select();
         } else {
             // when we started editing, we want the caret at the end, not the start.
-            // this comes into play in two scenarios: a) when user hits F2 and b)
-            // when user hits a printable character, then on IE (and only IE) the caret
-            // was placed after the first character, thus 'apply' would end up as 'pplea'
+            // this comes into play in two scenarios: 
+            //   a) when user hits F2 
+            //   b) when user hits a printable character
             const value = eInput.getValue();
             const len = (exists(value) && value.length) || 0;
 
@@ -107,13 +107,6 @@ export class TextCellEditor extends PopupComponent implements ICellEditorComp {
 
         focusEl.focus();
         inputEl.select();
-    }
-
-    public focusOut(): void {
-        const inputEl = this.eInput.getInputElement();
-        if (isBrowserIE()) {
-            inputEl.setSelectionRange(0, 0);
-        }
     }
 
     public getValue(): any {

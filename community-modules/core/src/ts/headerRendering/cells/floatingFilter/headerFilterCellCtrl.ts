@@ -18,7 +18,7 @@ import { Beans } from '../../../rendering/beans';
 import { ColumnHoverService } from '../../../rendering/columnHoverService';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
 import { AgPromise } from '../../../utils';
-import { isElementChildOfClass, containsClass } from '../../../utils/dom';
+import { isElementChildOfClass } from '../../../utils/dom';
 import { createIconNoSpan } from '../../../utils/icon';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import { HoverFeature } from '../hoverFeature';
@@ -127,7 +127,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
         const activeEl = document.activeElement;
         const wrapperHasFocus = activeEl === this.eGui;
 
-        switch (e.keyCode) {
+        switch (e.key) {
             case KeyCode.UP:
             case KeyCode.DOWN:
                 if (!wrapperHasFocus) {
@@ -159,12 +159,12 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
         if (isRelatedWithin) { return; }
 
         const keyboardMode = this.focusService.isKeyboardMode();
-        const notFromHeaderWrapper = !!e.relatedTarget && !containsClass(e.relatedTarget as HTMLElement, 'ag-floating-filter');
+        const notFromHeaderWrapper = !!e.relatedTarget && !(e.relatedTarget as HTMLElement).classList.contains('ag-floating-filter');
         const fromWithinHeader = !!e.relatedTarget && isElementChildOfClass(e.relatedTarget as HTMLElement, 'ag-floating-filter');
 
         if (keyboardMode && notFromHeaderWrapper && fromWithinHeader && e.target === this.eGui) {
             const lastFocusEvent = this.lastFocusEvent;
-            const fromTab = !!(lastFocusEvent && lastFocusEvent.keyCode === KeyCode.TAB);
+            const fromTab = !!(lastFocusEvent && lastFocusEvent.key === KeyCode.TAB);
 
             if (lastFocusEvent && fromTab) {
                 const currentFocusedHeader = this.beans.focusService.getFocusedHeader();

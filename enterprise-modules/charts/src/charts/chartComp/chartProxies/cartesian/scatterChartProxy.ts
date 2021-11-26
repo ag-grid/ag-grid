@@ -60,7 +60,7 @@ export class ScatterChartProxy extends CartesianChartProxy {
         const { chart } = this;
 
         const existingSeriesById = (chart.series as ScatterSeries[]).reduceRight((map, series, i) => {
-            const matchingIndex = _.findIndex(seriesDefinitions, (s: any) =>
+            const matchingIndex = seriesDefinitions.findIndex((s: any) =>
                 s.xField.colId === series.xKey &&
                 s.yField.colId === series.yKey &&
                 ((!s.sizeField && !series.sizeKey) || (s.sizeField && s.sizeField.colId === series.sizeKey)));

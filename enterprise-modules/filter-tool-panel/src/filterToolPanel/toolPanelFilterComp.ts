@@ -58,18 +58,18 @@ export class ToolPanelFilterComp extends Component {
         this.eFilterName.innerText = this.columnModel.getDisplayNameForColumn(this.column, 'filterToolPanel', false) || '';
         this.addManagedListener(this.eFilterToolPanelHeader, 'click', this.toggleExpanded.bind(this));
         this.addManagedListener(this.eFilterToolPanelHeader, 'keydown', (e: KeyboardEvent) => {
-            if (e.keyCode === KeyCode.ENTER) {
+            if (e.key === KeyCode.ENTER) {
                 this.toggleExpanded();
             }
         });
         this.addManagedListener(this.eventService, Events.EVENT_FILTER_OPENED, this.onFilterOpened.bind(this));
         this.addInIcon('filter', this.eFilterIcon, this.column);
 
-        _.addOrRemoveCssClass(this.eFilterIcon, 'ag-hidden', !this.isFilterActive());
-        _.addCssClass(this.eExpandChecked, 'ag-hidden');
+        this.eFilterIcon.classList.toggle('ag-hidden', !this.isFilterActive());
+        this.eExpandChecked.classList.add('ag-hidden');
 
         if (this.hideHeader) {
-            _.addOrRemoveCssClass(this.eFilterToolPanelHeader, 'ag-hidden', true);
+            this.eFilterToolPanelHeader.classList.toggle('ag-hidden', true);
             this.eFilterToolPanelHeader.removeAttribute('tabindex');
         } else {
             this.eFilterToolPanelHeader.setAttribute('tabindex', '0');
@@ -87,7 +87,7 @@ export class ToolPanelFilterComp extends Component {
     }
 
     public addCssClassToTitleBar(cssClass: string) {
-        _.addCssClass(this.eFilterToolPanelHeader, cssClass);
+        this.eFilterToolPanelHeader.classList.add(cssClass);
     }
 
     private addInIcon(iconName: string, eParent: HTMLElement, column: Column): void {
@@ -102,7 +102,7 @@ export class ToolPanelFilterComp extends Component {
     }
 
     private onFilterChanged(): void {
-        _.addOrRemoveCssClass(this.eFilterIcon, 'ag-hidden', !this.isFilterActive());
+        this.eFilterIcon.classList.toggle('ag-hidden', !this.isFilterActive());
 
         this.dispatchEvent({ type: Column.EVENT_FILTER_CHANGED });
     }

@@ -25,7 +25,8 @@ export class RichSelectRow extends Component {
         if (!rendererSuccessful) {
             this.populateWithoutRenderer(value, valueFormatted);
         }
-        _.addOrRemoveCssClass(this.getGui(), 'ag-rich-select-row-selected', selected);
+
+        this.addOrRemoveCssClass('ag-rich-select-row-selected', selected)
     }
 
     private populateWithoutRenderer(value: any, valueFormatted: string) {

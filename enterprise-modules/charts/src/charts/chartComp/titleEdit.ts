@@ -89,7 +89,7 @@ export class TitleEdit extends Component {
 
         const inputElement = this.getGui() as HTMLInputElement;
 
-        _.addCssClass(inputElement, 'currently-editing');
+        inputElement.classList.add('currently-editing');
         const inputStyle = inputElement.style;
 
         // match style of input to title that we're editing
@@ -119,7 +119,6 @@ export class TitleEdit extends Component {
         this.chartOptionsService.setChartOption('title.text', value);
 
         this.eventService.dispatchEvent({type: 'chartTitleEdit'});
-
-        _.removeCssClass(this.getGui(), 'currently-editing');
+        this.removeCssClass('currently-editing')
     }
 }

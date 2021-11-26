@@ -48,7 +48,7 @@ class DeepValueStrategy implements ChangeDetectionStrategy {
         }
 
         // for anything without keys (boolean, string etc).
-        // Object.keys - chrome will swallow them, IE will fail (correctly, imho)
+        // Object.keys - chrome will swallow them
         if (typeof value !== "object") {
             return value;
         }

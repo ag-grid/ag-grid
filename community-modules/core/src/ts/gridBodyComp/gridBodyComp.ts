@@ -4,7 +4,6 @@ import { IRangeService } from '../interfaces/IRangeService';
 import { ResizeObserverService } from '../misc/resizeObserverService';
 import { LayoutCssClasses } from "../styling/layoutFeature";
 import { setAriaColCount, setAriaMultiSelectable, setAriaRowCount } from '../utils/aria';
-import { addOrRemoveCssClass } from '../utils/dom';
 import { Component } from '../widgets/component';
 import { RefSelector } from '../widgets/componentAnnotations';
 import {
@@ -18,9 +17,9 @@ import {
 import { RowContainerName } from "./rowContainer/rowContainerCtrl";
 
 const GRID_BODY_TEMPLATE = /* html */
-    `<div class="ag-root ag-unselectable" role="grid" unselectable="on">
-        <ag-header-root ref="gridHeader" unselectable="on"></ag-header-root>
-        <div class="ag-floating-top" ref="eTop" role="presentation" unselectable="on">
+    `<div class="ag-root ag-unselectable" role="grid">
+        <ag-header-root ref="gridHeader"></ag-header-root>
+        <div class="ag-floating-top" ref="eTop" role="presentation">
             <ag-row-container ref="topLeftContainer" name="${RowContainerName.TOP_LEFT}"></ag-row-container>
             <ag-row-container ref="topCenterContainer" name="${RowContainerName.TOP_CENTER}"></ag-row-container>
             <ag-row-container ref="topRightContainer" name="${RowContainerName.TOP_RIGHT}"></ag-row-container>
@@ -32,7 +31,7 @@ const GRID_BODY_TEMPLATE = /* html */
             <ag-row-container ref="rightContainer" name="${RowContainerName.RIGHT}"></ag-row-container>
             <ag-row-container ref="fullWidthContainer" name="${RowContainerName.FULL_WIDTH}"></ag-row-container>
         </div>
-        <div class="ag-floating-bottom" ref="eBottom" role="presentation" unselectable="on">
+        <div class="ag-floating-bottom" ref="eBottom" role="presentation">
             <ag-row-container ref="bottomLeftContainer" name="${RowContainerName.BOTTOM_LEFT}"></ag-row-container>
             <ag-row-container ref="bottomCenterContainer" name="${RowContainerName.BOTTOM_CENTER}"></ag-row-container>
             <ag-row-container ref="bottomRightContainer" name="${RowContainerName.BOTTOM_RIGHT}"></ag-row-container>
@@ -78,16 +77,17 @@ export class GridBodyComp extends Component {
             setBottomDisplay: display => this.eBottom.style.display = display,
             setColumnMovingCss: (cssClass, flag) => this.addOrRemoveCssClass(CSS_CLASS_COLUMN_MOVING, flag),
             updateLayoutClasses: (cssClass, params) => {
-                addOrRemoveCssClass(this.eBodyViewport, LayoutCssClasses.AUTO_HEIGHT, params.autoHeight);
-                addOrRemoveCssClass(this.eBodyViewport, LayoutCssClasses.NORMAL, params.normal);
-                addOrRemoveCssClass(this.eBodyViewport, LayoutCssClasses.PRINT, params.print);
+                const bodyViewportClassList = this.eBodyViewport.classList;
+                bodyViewportClassList.toggle(LayoutCssClasses.AUTO_HEIGHT, params.autoHeight);
+                bodyViewportClassList.toggle(LayoutCssClasses.NORMAL, params.normal);
+                bodyViewportClassList.toggle(LayoutCssClasses.PRINT, params.print);
 
                 this.addOrRemoveCssClass(LayoutCssClasses.AUTO_HEIGHT, params.autoHeight);
                 this.addOrRemoveCssClass(LayoutCssClasses.NORMAL, params.normal);
                 this.addOrRemoveCssClass(LayoutCssClasses.PRINT, params.print);
             },
             setAlwaysVerticalScrollClass: (cssClass, on) =>
-                addOrRemoveCssClass(this.eBodyViewport, CSS_CLASS_FORCE_VERTICAL_SCROLL, on),
+                this.eBodyViewport.classList.toggle(CSS_CLASS_FORCE_VERTICAL_SCROLL, on),
             registerBodyViewportResizeListener: listener => {
                 const unsubscribeFromResize = this.resizeObserverService.observeResize(this.eBodyViewport, listener);
                 this.addDestroyFunc(() => unsubscribeFromResize());
@@ -95,7 +95,7 @@ export class GridBodyComp extends Component {
             setPinnedTopBottomOverflowY: overflow => this.eTop.style.overflowY = this.eBottom.style.overflowY = overflow,
             setCellSelectableCss: (cssClass, selectable) => {
                 [this.eTop, this.eBodyViewport, this.eBottom]
-                    .forEach(ct => addOrRemoveCssClass(ct, CSS_CLASS_CELL_SELECTABLE, selectable));
+                    .forEach(ct => ct.classList.toggle(CSS_CLASS_CELL_SELECTABLE, selectable));
             },
         };
 
@@ -108,8 +108,9 @@ export class GridBodyComp extends Component {
     }
 
     private setRowAnimationCssOnBodyViewport(cssClass: string, animateRows: boolean): void {
-        addOrRemoveCssClass(this.eBodyViewport, RowAnimationCssClasses.ANIMATION_ON, animateRows);
-        addOrRemoveCssClass(this.eBodyViewport, RowAnimationCssClasses.ANIMATION_OFF, !animateRows);
+        const bodyViewportClassList = this.eBodyViewport.classList;
+        bodyViewportClassList.toggle(RowAnimationCssClasses.ANIMATION_ON, animateRows);
+        bodyViewportClassList.toggle(RowAnimationCssClasses.ANIMATION_OFF, !animateRows);
     }
 
     public getFloatingTopBottom(): HTMLElement[] {

@@ -1,7 +1,5 @@
-import { padStart } from "./string";
-
 export function padStartWidthZeros(value: number, totalStringSize: number): string {
-    return padStart(value.toString(), totalStringSize, '0');
+    return value.toString().padStart(totalStringSize, '0');
 }
 
 export function createArrayOfNumbers(first: number, last: number): number[] {
@@ -22,11 +20,6 @@ export function createArrayOfNumbers(first: number, last: number): number[] {
  */
 export function isNumeric(value: any): boolean {
     return value !== '' && !isNaN(parseFloat(value)) && isFinite(value);
-}
-
-export function getMaxSafeInteger(): number {
-    // @ts-ignore
-    return Number.MAX_SAFE_INTEGER || 9007199254740991;
 }
 
 export function cleanNumber(value: any): number | null {

@@ -4,8 +4,8 @@ import { ComponentStateChangedEvent, Events } from '../events';
 import { PropertyKeys } from '../propertyKeys';
 import { ColumnApi } from '../columns/columnApi';
 import { iterateObject } from '../utils/object';
-import { values } from '../utils/generic';
 import { includes } from '../utils/array';
+import { values } from '../utils/generic';
 
 export class ComponentUtil {
     // all the events are populated in here AFTER this class (at the bottom of the file).
@@ -171,12 +171,12 @@ export class ComponentUtil {
         const dynamicApi = (api as any);
         Object.keys(changesToApply)
             .forEach(property => {
-                const setterName = `set${property.charAt(0).toUpperCase()}${property.substring(1)}`
+                const setterName = `set${property.charAt(0).toUpperCase()}${property.substring(1)}`;
 
                 if (dynamicApi[setterName]) {
                     dynamicApi[setterName](changes[property].currentValue);
                 }
-            })
+            });
 
         // copy changes into an event for dispatch
         const event: ComponentStateChangedEvent = {

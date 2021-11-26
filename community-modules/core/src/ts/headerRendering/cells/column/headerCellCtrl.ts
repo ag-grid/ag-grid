@@ -166,10 +166,10 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {
-        if (e.keyCode === KeyCode.SPACE) {
+        if (e.key === KeyCode.SPACE) {
             this.selectAllFeature.onSpaceKeyPressed(e);
         }
-        if (e.keyCode === KeyCode.ENTER) {
+        if (e.key === KeyCode.ENTER) {
             this.onEnterKeyPressed(e);
         }
     }

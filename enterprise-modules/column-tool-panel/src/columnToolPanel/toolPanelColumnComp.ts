@@ -53,8 +53,7 @@ export class ToolPanelColumnComp extends Component {
 
         this.setTemplate(ToolPanelColumnComp.TEMPLATE);
         this.eDragHandle = _.createIconNoSpan('columnDrag', this.gridOptionsWrapper)!;
-        _.addCssClass(this.eDragHandle, 'ag-drag-handle');
-        _.addCssClass(this.eDragHandle, 'ag-column-select-column-drag-handle');
+        this.eDragHandle.classList.add('ag-drag-handle', 'ag-column-select-column-drag-handle');
 
         const checkboxGui = this.cbSelect.getGui();
         const checkboxInput = this.cbSelect.getInputElement();
@@ -119,7 +118,7 @@ export class ToolPanelColumnComp extends Component {
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {
-        if (e.keyCode === KeyCode.SPACE) {
+        if (e.key === KeyCode.SPACE) {
             e.preventDefault();
             if (this.isSelectable()) {
                 this.onSelectAllChanged(!this.isSelected());
@@ -233,8 +232,8 @@ export class ToolPanelColumnComp extends Component {
         }
 
         this.cbSelect.setReadOnly(!canBeToggled);
-        _.addOrRemoveCssClass(this.eDragHandle, 'ag-column-select-column-readonly', !canBeDragged);
-        _.addOrRemoveCssClass(this.getGui(), 'ag-column-select-column-readonly', !canBeDragged && !canBeToggled);
+        this.eDragHandle.classList.toggle('ag-column-select-column-readonly', !canBeDragged);
+        this.addOrRemoveCssClass('ag-column-select-column-readonly', !canBeDragged && !canBeToggled)
 
         const checkboxPassive = isPivotMode && this.gridOptionsWrapper.isFunctionsPassive();
         this.cbSelect.setPassive(checkboxPassive);

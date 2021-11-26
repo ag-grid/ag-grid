@@ -3,9 +3,8 @@ import { Component } from '../../../widgets/component';
 import { IDateComp, IDateParams } from '../../../rendering/dateComponent';
 import { RefSelector } from '../../../widgets/componentAnnotations';
 import { serialiseDate, parseDateTimeFromString } from '../../../utils/date';
-import { isBrowserChrome, isBrowserFirefox, isBrowserIE } from '../../../utils/browser';
+import { isBrowserChrome, isBrowserFirefox } from '../../../utils/browser';
 import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
-import { setDisplayed } from '../../../utils/dom';
 
 export class DefaultDateComponent extends Component implements IDateComp {
     @RefSelector('eDateInput') private readonly eDateInput: AgInputTextField;
@@ -28,11 +27,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
         const inputElement = this.eDateInput.getInputElement();
 
         if (this.shouldUseBrowserDatePicker(params)) {
-            if (isBrowserIE()) {
-                console.warn('ag-grid: browserDatePicker is specified to true, but it is not supported in IE 11; reverting to text date picker');
-            } else {
-                inputElement.type = 'date';
-            }
+            inputElement.type = 'date';
         }
 
         // ensures that the input element is focussed when a clear button is clicked

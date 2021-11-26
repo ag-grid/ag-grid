@@ -32,8 +32,8 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
     private mergeDefaultParams(userParams?: P): P {
         const baseParams: P | undefined = this.getDefaultExportParams();
         const params: P = {} as P;
-        _.assign(params, baseParams);
-        _.assign(params, userParams);
+        Object.assign(params, baseParams);
+        Object.assign(params, userParams);
 
         return params;
     }

@@ -5,7 +5,6 @@ import { GridApi } from "../gridApi";
 import { ITooltipComp, ITooltipParams } from "../rendering/tooltipComponent";
 import { PopupService } from "./popupService";
 import { UserComponentFactory } from "../components/framework/userComponentFactory";
-import { addCssClass, containsClass } from "../utils/dom";
 import { exists } from "../utils/generic";
 import { isIOSUserAgent } from "../utils/browser";
 
@@ -18,7 +17,8 @@ enum TooltipStates { NOTHING, WAITING_TO_SHOW, SHOWING }
 
 export class CustomTooltipFeature extends BeanStub {
 
-    private readonly DEFAULT_HIDE_TOOLTIP_TIMEOUT = 10000;
+    private readonly DEFAULT_SHOW_TOOLTIP_DELAY = 2000;
+    private readonly DEFAULT_HIDE_TOOLTIP_DELAY = 10000;
     private readonly SHOW_QUICK_TOOLTIP_DIFF = 1000;
     private readonly FADE_OUT_TOOLTIP_TIMEOUT = 1000;
 
@@ -32,6 +32,7 @@ export class CustomTooltipFeature extends BeanStub {
     @Autowired('gridApi') private gridApi: GridApi;
 
     private tooltipShowDelay: number;
+    private tooltipHideDelay: number;
 
     private parentComp: TooltipParentComp;
 
@@ -58,7 +59,8 @@ export class CustomTooltipFeature extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.tooltipShowDelay = this.gridOptionsWrapper.getTooltipShowDelay() || 2000;
+        this.tooltipShowDelay = this.gridOptionsWrapper.getTooltipDelay('show') || this.DEFAULT_SHOW_TOOLTIP_DELAY;
+        this.tooltipHideDelay = this.gridOptionsWrapper.getTooltipDelay('hide') || this.DEFAULT_HIDE_TOOLTIP_DELAY;
         this.tooltipMouseTrack = this.gridOptionsWrapper.isTooltipMouseTrack();
 
         const el = this.parentComp.getGui();
@@ -143,7 +145,7 @@ export class CustomTooltipFeature extends BeanStub {
 
     private destroyTooltipComp(): void {
         // add class to fade out the tooltip
-        addCssClass(this.tooltipComp!.getGui(), 'ag-tooltip-hiding');
+        this.tooltipComp!.getGui().classList.add('ag-tooltip-hiding');
 
         // make local copies of these variables, as we use them in the async function below,
         // and we clear then to 'undefined' later, so need to take a copy before they are undefined.
@@ -204,8 +206,8 @@ export class CustomTooltipFeature extends BeanStub {
 
         this.tooltipComp = tooltipComp;
 
-        if (!containsClass(eGui, 'ag-tooltip')) {
-            addCssClass(eGui, 'ag-tooltip-custom');
+        if (!eGui.classList.contains('ag-tooltip')) {
+            eGui.classList.add('ag-tooltip-custom');
         }
 
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
@@ -220,7 +222,7 @@ export class CustomTooltipFeature extends BeanStub {
         // this.tooltipPopupDestroyFunc = this.popupService.addPopup(false, eGui, false);
 
         this.positionTooltipUnderLastMouseEvent();
-        this.hideTooltipTimeoutId = window.setTimeout(this.hideTooltip.bind(this), this.DEFAULT_HIDE_TOOLTIP_TIMEOUT);
+        this.hideTooltipTimeoutId = window.setTimeout(this.hideTooltip.bind(this), this.tooltipHideDelay);
     }
 
     private positionTooltipUnderLastMouseEvent(): void {

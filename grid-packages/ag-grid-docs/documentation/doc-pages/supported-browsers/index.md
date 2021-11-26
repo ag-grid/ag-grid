@@ -23,7 +23,6 @@ The officially supported desktop browsers are as follows:
 | ![Chrome](resources/chrome.svg) Chrome                                  | Two latest versions.                                                      |
 | ![Firefox](resources/firefox.svg) Firefox                               | Two latest versions.                                                      |
 | ![Microsoft Edge](resources/edge.svg) Microsoft Edge                    | Two latest versions.                                                      |
-| ![Internet Explorer](resources/internet_explorer.svg) Internet Explorer | Version 11                                                                |
 | ![Safari](resources/safari.svg) Safari                                  | Two latest versions on OSX only (Microsoft Windows version not supported) |
 
 ## Mobile Browsers

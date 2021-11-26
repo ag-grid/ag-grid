@@ -10,9 +10,8 @@ import { RowNode } from "../entities/rowNode";
 import { escapeString } from "../utils/string";
 import { createIcon } from "../utils/icon";
 import { removeFromArray } from "../utils/array";
-import { find } from "../utils/generic";
 import { getBodyHeight, getBodyWidth } from "../utils/browser";
-import { loadTemplate, addCssClass, clearElement, addOrRemoveCssClass } from "../utils/dom";
+import { loadTemplate, clearElement } from "../utils/dom";
 import { isFunction } from "../utils/function";
 
 export interface DragItem {
@@ -195,7 +194,7 @@ export class DragAndDropService extends BeanStub {
     }
 
     public removeDragSource(dragSource: DragSource): void {
-        const sourceAndParams = find(this.dragSourceAndParamsList, item => item.dragSource === dragSource);
+        const sourceAndParams = this.dragSourceAndParamsList.find(item => item.dragSource === dragSource);
 
         if (sourceAndParams) {
             this.dragService.removeDragSource(sourceAndParams.params);
@@ -324,7 +323,7 @@ export class DragAndDropService extends BeanStub {
             const rect = container.getBoundingClientRect();
 
             // if element is not visible, then width and height are zero
-            if (rect.width === 0 || rect.height === 0) { return false }
+            if (rect.width === 0 || rect.height === 0) { return false; }
 
             const horizontalFit = mouseEvent.clientX >= rect.left && mouseEvent.clientX < rect.right;
             const verticalFit = mouseEvent.clientY >= rect.top && mouseEvent.clientY < rect.bottom;
@@ -364,7 +363,7 @@ export class DragAndDropService extends BeanStub {
     public findExternalZone(params: RowDropZoneParams): DropTarget | null {
         const externalTargets = this.dropTargets.filter(target => target.external);
 
-        return find(externalTargets, zone => zone.getContainer() === params.getContainer());
+        return externalTargets.find(zone => zone.getContainer() === params.getContainer()) || null;
     }
 
     public getHorizontalDirection(event: MouseEvent): HorizontalDirection | null {
@@ -457,7 +456,7 @@ export class DragAndDropService extends BeanStub {
         const { theme } = this.environment.getTheme();
 
         if (theme) {
-            addCssClass(this.eGhost, theme);
+            this.eGhost.classList.add(theme);
         }
 
         this.eGhostIcon = this.eGhost.querySelector('.ag-dnd-ghost-icon') as HTMLElement;
@@ -509,7 +508,7 @@ export class DragAndDropService extends BeanStub {
             case DragAndDropService.ICON_HIDE:        eIcon = this.eHideIcon; break;
         }
 
-        addOrRemoveCssClass(this.eGhostIcon, 'ag-shake-left-to-right', shake);
+        this.eGhostIcon.classList.toggle('ag-shake-left-to-right', shake);
 
         if (eIcon === this.eHideIcon && this.gridOptionsWrapper.isSuppressDragLeaveHidesColumns()) {
             return;

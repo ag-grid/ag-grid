@@ -2,16 +2,12 @@ import { GridOptionsWrapper } from '../gridOptionsWrapper';
 import { RowNode } from '../entities/rowNode';
 import { Column } from '../entities/column';
 import { SuppressHeaderKeyboardEventParams, SuppressKeyboardEventParams } from '../entities/colDef';
-import { isBrowserEdge, isBrowserIE } from './browser';
+import { isBrowserEdge } from './browser';
 import { ColumnGroup } from '../entities/columnGroup';
 import { exists } from './generic';
 
 const NUMPAD_DEL_NUMLOCK_ON_KEY = 'Del';
 const NUMPAD_DEL_NUMLOCK_ON_CHARCODE = 46;
-
-export function isKeyPressed(event: KeyboardEvent, keyToCheck: number) {
-    return (event.which || event.keyCode) === keyToCheck;
-}
 
 export function isEventFromPrintableCharacter(event: KeyboardEvent): boolean {
     // no allowed printable chars have alt or ctrl key combinations
@@ -23,7 +19,7 @@ export function isEventFromPrintableCharacter(event: KeyboardEvent): boolean {
 
     // IE11 & Edge treat the numpad del key differently - with numlock on we get "Del" for key,
     // so this addition checks if its IE11/Edge and handles that specific case the same was as all other browsers
-    const numpadDelWithNumlockOnForEdgeOrIe = isNumpadDelWithNumlockOnForEdgeOrIe(event);
+    const numpadDelWithNumlockOnForEdgeOrIe = isNumpadDelWithNumLockOnForEdge(event);
 
     return printableCharacter || numpadDelWithNumlockOnForEdgeOrIe;
 }
@@ -102,8 +98,8 @@ export function isUserSuppressingHeaderKeyboardEvent(
     return !!colDefFunc(params);
 }
 
-function isNumpadDelWithNumlockOnForEdgeOrIe(event: KeyboardEvent) {
-    return (isBrowserEdge() || isBrowserIE()) &&
+function isNumpadDelWithNumLockOnForEdge(event: KeyboardEvent) {
+    return (isBrowserEdge()) &&
         event.key === NUMPAD_DEL_NUMLOCK_ON_KEY &&
         event.charCode === NUMPAD_DEL_NUMLOCK_ON_CHARCODE;
 }

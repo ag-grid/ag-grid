@@ -7,7 +7,7 @@ export function convertToMap<K, V>(arr: [K, V][]): Map<K, V> {
 }
 
 // handy for organising a list into a map, where each item is mapped by an attribute, eg mapping Columns by ID
-export function mapById<V>(arr: V[], callback: (obj: V)=>string): Map<string, V> {
+export function mapById<V>(arr: V[], callback: (obj: V) => string): Map<string, V> {
     const map = new Map<string, V>();
 
     arr.forEach(item => map.set(callback(item), item));

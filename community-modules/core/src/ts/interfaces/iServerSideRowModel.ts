@@ -5,7 +5,7 @@ import { IServerSideDatasource } from "./iServerSideDatasource";
 import { RowNode } from "../entities/rowNode";
 
 export interface IServerSideRowModel extends IRowModel {
-    refreshStore(params: RefreshStoreParams): void;
+    refreshStore(params?: RefreshStoreParams): void;
     onRowHeightChanged(): void;
     getStoreState(): ServerSideStoreState[];
     retryLoads(): void;

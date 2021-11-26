@@ -9,7 +9,7 @@ const getWeightName = (value?: number): string => {
     }
 };
 
-const mappedBorderNames: {[key: string]: string} = {
+const mappedBorderNames: { [key: string]: string } = {
     None: 'None',
     Dot: 'Dotted',
     Dash: 'Dashed',
@@ -43,7 +43,7 @@ const colorMap: ColorMap = {
     Gray0625: 'gray0625'
 };
 
-const horizontalAlignmentMap:{[key: string]: string} = {
+const horizontalAlignmentMap: { [key: string]: string } = {
     Automatic: 'general',
     Left: 'left',
     Center: 'center',
@@ -55,7 +55,7 @@ const horizontalAlignmentMap:{[key: string]: string} = {
     JustifyDistributed: 'justify'
 };
 
-const verticalAlignmentMap:{[key: string]: string | undefined} = {
+const verticalAlignmentMap: { [key: string]: string | undefined } = {
     Automatic: undefined,
     Top: 'top',
     Bottom: 'bottom',
@@ -65,7 +65,7 @@ const verticalAlignmentMap:{[key: string]: string | undefined} = {
     JustifyDistributed: 'justify'
 };
 
-export const convertLegacyPattern = (name: string): string => {
+export const convertLegacyPattern = (name: string | undefined): string => {
     if (!name) { return 'none'; }
 
     return colorMap[name] || name;

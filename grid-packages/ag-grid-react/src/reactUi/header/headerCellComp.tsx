@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { BeansContext } from '../beansContext';
 import { ColumnSortState, HeaderCellCtrl, IHeader, IHeaderCellComp, UserCompDetails } from 'ag-grid-community';
 import { CssClasses, isComponentStateless } from '../utils';
@@ -77,7 +77,7 @@ const HeaderCellComp = (props: {ctrl: HeaderCellCtrl}) => {
 
     return (
         <div ref={eGui} className={className} style={style} title={title} col-id={colId} 
-                    aria-sort={ariaSort} role="columnheader" unselectable="on" tabIndex={-1}
+                    aria-sort={ariaSort} role="columnheader" tabIndex={-1}
                     aria-describedby={ariaDescribedBy}>
             <div ref={eResize} className="ag-header-cell-resize" role="presentation"></div>
             { reactUserComp && userCompStateless && <UserCompClass { ...userCompDetails!.params } /> }

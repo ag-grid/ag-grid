@@ -76,8 +76,8 @@ export class MatSliderComponent implements ICellEditorAngularComp {
     }
 
     onKeyDown(event): void {
-        let key = event.which || event.keyCode;
-        if (key === 39 || key === 37) {
+        const key = event.key;
+        if (key === 'ArrowLeft' || key === 'ArrowRight') {
             // left/right
             event.stopPropagation();
         }

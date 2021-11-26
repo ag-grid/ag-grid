@@ -254,7 +254,7 @@ export {
     CellRange, CellRangeParams, CellRangeType, RangeSelection, AddRangeSelectionParams, IRangeService,
     ISelectionHandle, SelectionHandleType, ISelectionHandleFactory
 } from "./interfaces/IRangeService";
-export { IChartService, ChartModel, GetChartImageDataUrlParams } from "./interfaces/IChartService";
+export { IChartService, ChartModel, GetChartImageDataUrlParams, ChartModelType } from "./interfaces/IChartService";
 
 // master detail
 export { IDetailCellRendererParams, GetDetailRowData, GetDetailRowDataParams, IDetailCellRenderer, IDetailCellRendererCtrl } from './interfaces/masterDetail';
@@ -434,6 +434,8 @@ export * from "./interfaces/iAgChartOptions";
 export {
     ISparklineCellRendererParams,
     SparklineOptions,
+    CrosshairLineOptions,
+    SparklineCrosshairsOptions,
     BaseSparklineOptions,
     LineSparklineOptions,
     AreaSparklineOptions,

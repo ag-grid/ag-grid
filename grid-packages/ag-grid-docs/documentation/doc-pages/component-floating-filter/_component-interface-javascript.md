@@ -9,7 +9,7 @@
 |
 |    // The init(params) method is called on the floating filter once.
 |    // See below for details on the parameters.
-|    init(params: IFilterFloatingParams): void;
+|    init(params: IFloatingFilterParams): void;
 |
 |    // Gets called every time the parent filter changes. Your floating
 |    // filter would typically refresh its UI to reflect the new filter

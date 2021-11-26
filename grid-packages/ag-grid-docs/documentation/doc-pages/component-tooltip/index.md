@@ -18,6 +18,7 @@ The example below demonstrates how to provide custom tooltips to the grid. Notic
 - The **Custom Tooltip Component** is supplied by name via `colDef.tooltipComponent`.
 - The **Custom Tooltip Parameters** (for tooltip background color) are supplied using `colDef.tooltipComponentParams`.
 - Tooltips are displayed instantly by setting `tooltipShowDelay` to `0`.
+- Tooltips hide in 2000ms by setting `tooltipHideDelay` to `2000`.
 - Tooltips will be shown for the `athlete` and `country` columns
 
 <grid-example title='Custom Tooltip Component' name='custom-tooltip-component' type='generated'></grid-example>
@@ -37,12 +38,12 @@ See the [registering custom components](/components/#registering-custom-componen
 
 If you don't want to use the grid's tooltip component, you can use the `enableBrowserTooltips` config to use the browser's default tooltip. The grid will simply set an element's title attribute to display the tooltip.
 
-## Tooltip Show Delay
+## Tooltip Show and Hide Delay
 
-By default, when you hover on an item, it will take 2 seconds for the tooltip to be displayed. If you need to change this delay, the `tooltipShowDelay` config should be used, which is set in milliseconds.
+By default, when you hover on an item, it will take 2 seconds for the tooltip to be displayed and then 10 seconds for the tooltip to hide. If you need to change these delays, the `tooltipShowDelay` and `tooltipHideDelay` configs should be used, which are set in milliseconds.
 
 [[note]]
-| The show delay will have no effect if you are using browser tooltips, as they are controlled entirely by the browser.
+| The delays will have no effect if you are using browser tooltips, as they are controlled entirely by the browser.
 
 ## Showing Blank Values
 

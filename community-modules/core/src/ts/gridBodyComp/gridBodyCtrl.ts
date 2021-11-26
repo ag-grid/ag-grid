@@ -7,16 +7,15 @@ import { RowContainerHeightService } from "../rendering/rowContainerHeightServic
 import { CtrlsService } from "../ctrlsService";
 import { ColumnModel } from "../columns/columnModel";
 import { ScrollVisibleService } from "./scrollVisibleService";
-import { getTarget } from "../utils/event";
 import { IContextMenuFactory } from "../interfaces/iContextMenuFactory";
 import { GridBodyScrollFeature } from "./gridBodyScrollFeature";
-import { getInnerWidth, isVerticalScrollShowing, addCssClass, removeCssClass } from "../utils/dom";
+import { getInnerWidth, isVerticalScrollShowing } from "../utils/dom";
 import { HeaderNavigationService } from "../headerRendering/common/headerNavigationService";
 import { PaginationProxy } from "../pagination/paginationProxy";
 import { RowDragFeature } from "./rowDragFeature";
 import { DragAndDropService } from "../dragAndDrop/dragAndDropService";
 import { PinnedRowModel } from "../pinnedRowModel/pinnedRowModel";
-import { getTabIndex, isBrowserIE } from "../utils/browser";
+import { getTabIndex } from "../utils/browser";
 import { RowRenderer } from "../rendering/rowRenderer";
 import { PopupService } from "../widgets/popupService";
 import { MouseEventService } from "./mouseEventService";
@@ -124,12 +123,12 @@ export class GridBodyCtrl extends BeanStub {
     private addFocusListeners(elements: HTMLElement[]): void {
         elements.forEach(element => {
             this.addManagedListener(element, 'focusin', () => {
-                addCssClass(element, 'ag-has-focus');
+                element.classList.add('ag-has-focus');
             });
 
             this.addManagedListener(element, 'focusout', (e: FocusEvent) => {
                 if (!element.contains(e.relatedTarget as HTMLElement)) {
-                    removeCssClass(element, 'ag-has-focus');
+                    element.classList.remove('ag-has-focus');
                 }
             });
         });
@@ -260,7 +259,7 @@ export class GridBodyCtrl extends BeanStub {
             if (this.gridOptionsWrapper.isPreventDefaultOnContextMenu()) {
                 mouseEvent.preventDefault();
             }
-            const target = getTarget(mouseEvent);
+            const { target } = mouseEvent;
             if (target === this.eBodyViewport || target === this.ctrlsService.getCenterRowContainerCtrl().getViewportElement()) {
                 // show it
                 if (this.contextMenuFactory) {
@@ -329,9 +328,7 @@ export class GridBodyCtrl extends BeanStub {
     // method will call itself if no available width. this covers if the grid
     // isn't visible, but is just about to be visible.
     public sizeColumnsToFit(nextTimeout?: number) {
-        // IE is different to the other browsers, it already removes the scroll width
-        // while calling window.getComputedStyle() (which is called by getInnerWidth())
-        const removeScrollWidth = this.isVerticalScrollShowing() && !isBrowserIE();
+        const removeScrollWidth = this.isVerticalScrollShowing();
         const scrollWidthToRemove = removeScrollWidth ? this.gridOptionsWrapper.getScrollbarWidth() : 0;
         const bodyViewportWidth = getInnerWidth(this.eBodyViewport);
         const availableWidth = bodyViewportWidth - scrollWidthToRemove;

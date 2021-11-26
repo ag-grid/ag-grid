@@ -5,11 +5,13 @@ import { BarSparkline } from "./bar-column/barSparkline";
 import { ColumnSparkline } from "./bar-column/columnSparkline";
 
 import {
+    CrosshairLineOptions,
     SparklineOptions,
     HighlightStyleOptions,
     SparklineMarkerOptions,
     SparklineLineOptions,
     PaddingOptions,
+    SparklineCrosshairsOptions
 } from "@ag-grid-community/core";
 import { SparklineTooltip } from "./tooltip/sparklineTooltip";
 import { BarColumnLabel } from "./bar-column/barColumnSparkline";
@@ -110,6 +112,10 @@ function initLineSparkline(sparkline: LineSparkline, options: any) {
     if (options.line) {
         initLineOptions(sparkline.line, options.line);
     }
+
+    if (options.crosshairs) {
+        initCrosshairsOptions(sparkline.crosshairs, options.crosshairs);
+    }
 }
 
 function initAreaSparkline(sparkline: AreaSparkline, options: any) {
@@ -121,6 +127,10 @@ function initAreaSparkline(sparkline: AreaSparkline, options: any) {
 
     if (options.line) {
         initLineOptions(sparkline.line, options.line);
+    }
+
+    if (options.crosshairs) {
+        initCrosshairsOptions(sparkline.crosshairs, options.crosshairs);
     }
 }
 
@@ -201,5 +211,23 @@ function initHighlightStyleOptions(target: HighlightStyleOptions, options: any) 
 function initTooltipOptions(target: SparklineTooltip, options: any) {
     setValueIfPropertyExists(target, 'enabled', options.enabled, options);
     setValueIfPropertyExists(target, 'container', options.container, options);
+    setValueIfPropertyExists(target, 'xOffset', options.xOffset, options);
+    setValueIfPropertyExists(target, 'yOffset', options.yOffset, options);
     setValueIfPropertyExists(target, 'renderer', options.renderer, options);
+}
+
+function initCrosshairsOptions(target: SparklineCrosshairsOptions, options: any) {
+    if (target.xLine && options.xLine) {
+        initCrosshairLineOptions(target.xLine, options.xLine);
+    }
+
+    if (target.yLine && options.yLine) {
+        initCrosshairLineOptions(target.yLine, options.yLine);
+    }
+}
+
+function initCrosshairLineOptions(target: CrosshairLineOptions, options: any) {
+    setValueIfPropertyExists(target, 'enabled', options.enabled, options);
+    setValueIfPropertyExists(target, 'stroke', options.stroke, options);
+    setValueIfPropertyExists(target, 'strokeWidth', options.strokeWidth, options);
 }

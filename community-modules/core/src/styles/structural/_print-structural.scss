@@ -30,7 +30,7 @@
         .ag-center-cols-clipper,
         .ag-body-horizontal-scroll-viewport,
         .ag-virtual-list-viewport {
-            // Need auto height because 100% height elements with overflow hidden cause printing issues in IE and Edge
+            // Need auto height because 100% height elements with overflow hidden cause printing issues in Edge
             height: auto !important;
             // Overflow hidden, because otherwise scroll bars print in IE
             overflow: hidden !important;

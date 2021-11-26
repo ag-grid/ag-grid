@@ -145,12 +145,12 @@
     }
   },
   "setPinnedTopRowData": {
-    "description": "/** Set the top pinned rows. */",
-    "type": { "arguments": { "rows": "any[]" }, "returnType": "void" }
+    "description": "/** Set the top pinned rows. Call with no rows / undefined to clear top pinned rows. */",
+    "type": { "arguments": { "rows?": "any[]" }, "returnType": "void" }
   },
   "setPinnedBottomRowData": {
-    "description": "/** Set the bottom pinned rows. */",
-    "type": { "arguments": { "rows": "any[]" }, "returnType": "void" }
+    "description": "/** Set the bottom pinned rows. Call with no rows / undefined to clear bottom pinned rows. */",
+    "type": { "arguments": { "rows?": "any[]" }, "returnType": "void" }
   },
   "getPinnedTopRowCount": {
     "description": "/** Gets the number of top pinned rows. */",
@@ -1312,7 +1312,7 @@
   "refreshServerSideStore": {
     "description": "/** Refresh a server-side store.\n * If you pass no parameters, then the top level cache is purged.\n * To purge a child cache, pass in the string of keys to get to the child cache. */",
     "type": {
-      "arguments": { "params": "RefreshStoreParams" },
+      "arguments": { "params?": "RefreshStoreParams" },
       "returnType": "void"
     }
   },

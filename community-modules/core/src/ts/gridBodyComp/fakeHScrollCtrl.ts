@@ -1,5 +1,5 @@
 import { BeanStub } from "../context/beanStub";
-import { isBrowserIE, isInvisibleScrollbar } from "../utils/browser";
+import { isInvisibleScrollbar } from "../utils/browser";
 import { Autowired, PostConstruct } from "../context/context";
 import { ScrollVisibleService } from "./scrollVisibleService";
 import { Events } from "../eventKeys";
@@ -125,12 +125,10 @@ export class FakeHScrollCtrl extends BeanStub {
         const scrollbarWidth = hScrollShowing ? (this.gridOptionsWrapper.getScrollbarWidth() || 0) : 0;
         const adjustedScrollbarWidth = (scrollbarWidth === 0 && invisibleScrollbar) ? 15 : scrollbarWidth;
         const scrollContainerSize = !isSuppressHorizontalScroll ? adjustedScrollbarWidth : 0;
-        const addIEPadding = isBrowserIE() && hScrollShowing;
+
         this.view.addOrRemoveCssClass('ag-scrollbar-invisible', invisibleScrollbar);
         this.view.setHeight(scrollContainerSize);
-        // we have to add an extra pixel to the scroller viewport on IE because
-        // if the container has the same size as the scrollbar, the scroll button won't work
-        this.view.setViewportHeight(scrollContainerSize + (addIEPadding ? 1 : 0));
+        this.view.setViewportHeight(scrollContainerSize);
         this.view.setContainerHeight(scrollContainerSize);
     }
 

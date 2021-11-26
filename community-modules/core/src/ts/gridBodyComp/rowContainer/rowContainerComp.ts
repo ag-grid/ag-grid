@@ -20,19 +20,19 @@ function templateFactory(): string {
 
     if (template1) {
         res = /* html */
-            `<div class="${cssClasses.wrapper}" ref="eWrapper" role="presentation" unselectable="on">
+            `<div class="${cssClasses.wrapper}" ref="eWrapper" role="presentation">
                 <div class="${cssClasses.viewport}" ref="eViewport" role="presentation">
-                    <div class="${cssClasses.container}" ref="eContainer" role="rowgroup" unselectable="on"></div>
+                    <div class="${cssClasses.container}" ref="eContainer" role="rowgroup"></div>
                 </div>
             </div>`;
     } else if (template2) {
         res = /* html */
-            `<div class="${cssClasses.viewport}" ref="eViewport" role="presentation" unselectable="on">
-                <div class="${cssClasses.container}" ref="eContainer" role="presentation" unselectable="on"></div>
+            `<div class="${cssClasses.viewport}" ref="eViewport" role="presentation">
+                <div class="${cssClasses.container}" ref="eContainer" role="presentation"></div>
             </div>`;
     } else {
         res = /* html */
-            `<div class="${cssClasses.container}" ref="eContainer" role="presentation" unselectable="on"></div>`;
+            `<div class="${cssClasses.container}" ref="eContainer" role="presentation"></div>`;
     }
 
     return res;

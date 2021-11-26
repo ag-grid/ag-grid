@@ -16,7 +16,6 @@ import { RowContainerHeightService } from "../rendering/rowContainerHeightServic
 import { RowRenderer } from "../rendering/rowRenderer";
 import { ColumnModel } from "../columns/columnModel";
 import { RowContainerCtrl } from "./rowContainer/rowContainerCtrl";
-import { assign } from "../utils/object";
 
 type ScrollDirection = 'horizontal' | 'vertical';
 
@@ -198,7 +197,7 @@ export class GridBodyScrollFeature extends BeanStub {
         this.scrollTimer = undefined;
 
         this.scrollTimer = window.setTimeout(() => {
-            const bodyScrollEndEvent: BodyScrollEndEvent = assign({}, bodyScrollEvent, {
+            const bodyScrollEndEvent: BodyScrollEndEvent = Object.assign({}, bodyScrollEvent, {
                 type: Events.EVENT_BODY_SCROLL_END
             });
             this.eventService.dispatchEvent(bodyScrollEndEvent);

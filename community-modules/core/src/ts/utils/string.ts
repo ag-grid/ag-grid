@@ -67,7 +67,7 @@ export function utf8_encode(s: string | null): string {
     function encodeCodePoint(point: number): string {
         if ((point >= 0 && point <= 31 && point !== 10)) {
             const convertedCode = point.toString(16).toUpperCase();
-            const paddedCode = padStart(convertedCode, 4, '0');
+            const paddedCode = convertedCode.padStart(4, '0');
 
             return `_x${paddedCode}_`;
         }
@@ -105,45 +105,6 @@ export function utf8_encode(s: string | null): string {
     }
 
     return byteString;
-}
-
-/**
- * @param str The string to be repeated
- * @param len The size of the output string
- * @returns A string with size len created from repeated `str`.
- */
-export function stringRepeat(str: string, len: number): string {
-    len = Math.floor(len);
-    if (str.length === 0 || len === 0) { return ''; }
-
-    const maxCount = str.length * len;
-    len = Math.floor(Math.log(len) / Math.log(2));
-    while (len) {
-       str += str;
-       len--;
-    }
-    str += str.substring(0, maxCount - str.length);
-    return str;
-}
-
-/**
- * @param str The string to be padded
- * @param totalLength The final length needed
- * @param padStr The string to generate the padding
- * @returns The padded string
- */
-export function padStart(str: string, totalLength: number, padStr: string): string {
-    if (str.length > totalLength) {
-      return str;
-    }
-
-    totalLength -=  str.length;
-
-    if (totalLength > padStr.length) {
-        padStr += stringRepeat(padStr, totalLength / padStr.length);
-    }
-
-    return padStr.slice(0, totalLength) + str;
 }
 
 /**
@@ -195,10 +156,4 @@ export function camelCaseToHumanText(camelCase: string | undefined): string | nu
     const words: string[] = camelCase.replace(rex, '$1$4 $2$3$5').replace('.', ' ').split(' ');
 
     return words.map(word => word.substring(0, 1).toUpperCase() + ((word.length > 1) ? word.substring(1, word.length) : '')).join(' ');
-}
-
-export function startsWith(str: string, matchStart: string): boolean {
-    if (str === matchStart) { return true; }
-
-    return str != null && str.slice(0, matchStart.length) === matchStart;
 }

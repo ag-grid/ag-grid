@@ -14,7 +14,7 @@ export class HeaderRowContainerComp extends Component {
 
     private static PINNED_RIGHT_TEMPLATE =  /* html */ `<div class="ag-pinned-right-header" role="presentation"/>`;
 
-    private static CENTER_TEMPLATE =  /* html */ 
+    private static CENTER_TEMPLATE =  /* html */
         `<div class="ag-header-viewport" role="presentation">
             <div class="ag-header-container" ref="eCenterContainer" role="rowgroup"></div>
         </div>`;
@@ -40,7 +40,7 @@ export class HeaderRowContainerComp extends Component {
         const compProxy: IHeaderRowContainerComp = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
             setCtrls: ctrls => this.setCtrls(ctrls),
-            
+
             // only gets called for center section
             setCenterWidth: width => this.eCenterContainer.style.width = width,
             setContainerTransform: transform => this.eCenterContainer.style.transform = transform,
@@ -62,7 +62,7 @@ export class HeaderRowContainerComp extends Component {
         const pinnedLeft = this.pinned == Constants.PINNED_LEFT;
         const pinnedRight = this.pinned == Constants.PINNED_RIGHT;
 
-        const template = pinnedLeft ? HeaderRowContainerComp.PINNED_LEFT_TEMPLATE : 
+        const template = pinnedLeft ? HeaderRowContainerComp.PINNED_LEFT_TEMPLATE :
                          pinnedRight ? HeaderRowContainerComp.PINNED_RIGHT_TEMPLATE : HeaderRowContainerComp.CENTER_TEMPLATE;
 
         this.setTemplate(template);
@@ -93,7 +93,7 @@ export class HeaderRowContainerComp extends Component {
         const appendEnsuringDomOrder = (rowComp: HeaderRowComp) => {
             const eGui = rowComp.getGui();
 
-            const notAlreadyIn = eGui.parentElement!=this.eRowContainer;
+            const notAlreadyIn = eGui.parentElement != this.eRowContainer;
             if (notAlreadyIn) {
                 this.eRowContainer.appendChild(eGui);
             }

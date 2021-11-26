@@ -19,6 +19,10 @@ To see the specifics of pagination on the other row models check the relevant do
 
 Pagination does not reduce the feature set of the grid, as long as the underlying row model supports it. In other words, if you are paging over the Client-Side Row Model, all features of the Client-Side Row Model (grouping, filtering etc) are still available. Likewise for the other row models, if the row model supports it, it's available through pagination and that row model.
 
+## Number Formats
+
+The numbers within the Paging Toolbar can be formatted by replacing the thousand and decimal separators. This can be achieve by customising localisation, for more info see [Localisation](/localisation/).
+
 ## Example: Auto Page Size
 
 If you set `paginationAutoPageSize=true` the grid will automatically show as many rows in each page as it can fit. This is demonstrated below. Note if you resize the display area of the grid, the page size automatically changes. To view this, open the example up in a new tab and resize your browser.

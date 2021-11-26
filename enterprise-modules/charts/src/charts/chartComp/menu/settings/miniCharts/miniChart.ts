@@ -16,7 +16,7 @@ export abstract class MiniChart extends Component {
         super();
 
         const scene = new Scene(window.document, this.size, this.size);
-        _.addCssClass(scene.canvas.element, 'ag-chart-mini-thumbnail-canvas');
+        scene.canvas.element.classList.add('ag-chart-mini-thumbnail-canvas');
 
         scene.root = this.root;
         scene.container = container;

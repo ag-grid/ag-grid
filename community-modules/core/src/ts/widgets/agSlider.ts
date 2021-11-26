@@ -4,7 +4,6 @@ import { AgAbstractLabel, LabelAlignment, IAgLabel } from "./agAbstractLabel";
 import { AgInputNumberField } from "./agInputNumberField";
 import { AgAbstractField } from "./agAbstractField";
 import { PostConstruct } from "../context/context";
-import { addCssClass } from "../utils/dom";
 
 export class AgSlider extends AgAbstractLabel {
     private static TEMPLATE = /* html */
@@ -28,7 +27,7 @@ export class AgSlider extends AgAbstractLabel {
 
     @PostConstruct
     private init() {
-        addCssClass(this.eSlider.getGui(), 'ag-slider-field');
+        this.eSlider.addCssClass('ag-slider-field');
     }
 
     public onValueChange(callbackFn: (newValue: number) => void) {

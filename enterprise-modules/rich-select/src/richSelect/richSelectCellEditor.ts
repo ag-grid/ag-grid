@@ -2,11 +2,9 @@ import {
     Autowired,
     Component,
     ICellEditor,
-    ICellRendererComp,
     ICellRendererParams,
     IRichCellEditorParams,
     PopupComponent,
-    AgPromise,
     UserComponentFactory,
     RefSelector,
     VirtualList,
@@ -58,7 +56,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         this.focusAfterAttached = params.cellStartedEdit;
 
         const icon = _.createIconNoSpan('smallDown', this.gridOptionsWrapper);
-        _.addCssClass(icon!, 'ag-rich-select-value-icon');
+        icon!.classList.add('ag-rich-select-value-icon');
         this.eValue.appendChild(icon!);
 
         this.virtualList = this.getContext().createBean(new VirtualList('rich-select'));
@@ -100,7 +98,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
     }
 
     private onKeyDown(event: KeyboardEvent): void {
-        const key = event.keyCode;
+        const key = event.key;
         event.preventDefault();
 
         switch (key) {
@@ -128,7 +126,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
         this.params.stopEditing();
     }
 
-    private onNavigationKeyPressed(event: any, key: number): void {
+    private onNavigationKeyPressed(event: any, key: string): void {
         // if we don't preventDefault the page body and/or grid scroll will move.
         event.preventDefault();
         const oldIndex = this.params.values.indexOf(this.selectedValue);
@@ -142,10 +140,9 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
 
     private searchText(key: KeyboardEvent | string) {
         if (typeof key !== 'string') {
-            const keyCode = key.keyCode;
             let keyString = key.key;
 
-            if (keyCode === KeyCode.BACKSPACE) {
+            if (keyString === KeyCode.BACKSPACE) {
                 this.searchString = this.searchString.slice(0, -1);
                 keyString = '';
             } else if (!_.isEventFromPrintableCharacter(key)) {

@@ -1,6 +1,6 @@
-const KEY_BACKSPACE = 8;
-const KEY_F2 = 113;
-const KEY_DELETE = 46;
+const KEY_BACKSPACE = 'Backspace';
+const KEY_DELETE = 'Delete';
+const KEY_F2 = 'F2';
 
 class MySimpleEditor {
     init(params) {
@@ -12,8 +12,8 @@ class MySimpleEditor {
 
         let startValue = params.value;
 
-        const keyPressBackspaceOrDelete = params.keyPress === KEY_BACKSPACE || params.keyPress === KEY_DELETE;
-        if (keyPressBackspaceOrDelete) {
+        const isBackspaceOrDelete = params.key === KEY_BACKSPACE || params.key === KEY_DELETE;
+        if (isBackspaceOrDelete) {
             startValue = '';
         } else if (params.charPress) {
             startValue = params.charPress;

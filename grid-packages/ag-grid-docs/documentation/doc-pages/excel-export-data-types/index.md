@@ -54,7 +54,7 @@ const gridOptions = {
         },
         {
             id: 'booleanType',
-            dataType: 'boolean',
+            dataType: 'Boolean',
         },
         {
             id: 'stringType',

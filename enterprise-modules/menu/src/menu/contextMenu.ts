@@ -30,7 +30,7 @@ import { MenuList } from "./menuList";
 import { MenuItemMapper } from "./menuItemMapper";
 
 const CSS_MENU = 'ag-menu';
-const CSS_CONTEXT_MENU_OPEN = ' ag-context-menu-open';
+const CSS_CONTEXT_MENU_OPEN = 'ag-context-menu-open';
 
 @Bean('contextMenuFactory')
 export class ContextMenuFactory extends BeanStub implements IContextMenuFactory {
@@ -164,12 +164,12 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
             eChild: eMenuGui,
             closeOnEsc: true,
             closedCallback: () => {
-                _.removeCssClass(eGridBodyGui, CSS_CONTEXT_MENU_OPEN);
+                eGridBodyGui.classList.remove(CSS_CONTEXT_MENU_OPEN);
                 this.destroyBean(menu);
             },
             click: mouseEvent,
             positionCallback: () => {
-                this.popupService.positionPopupUnderMouseEvent(_.assign({}, {
+                this.popupService.positionPopupUnderMouseEvent(Object.assign({}, {
                     nudgeX: this.gridOptionsWrapper.isEnableRtl() ? (eMenuGui.offsetWidth + 1) * -1 : 1
                 }, positionParams));
             },
@@ -179,7 +179,7 @@ export class ContextMenuFactory extends BeanStub implements IContextMenuFactory 
         });
 
         if (addPopupRes) {
-            _.addCssClass(eGridBodyGui, CSS_CONTEXT_MENU_OPEN);
+            eGridBodyGui.classList.add(CSS_CONTEXT_MENU_OPEN);
             menu.afterGuiAttached({ container: 'contextMenu', hidePopup: addPopupRes.hideFunc });
         }
 

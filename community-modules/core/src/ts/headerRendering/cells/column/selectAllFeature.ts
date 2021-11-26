@@ -51,7 +51,7 @@ export class SelectAllFeature extends BeanStub {
         this.comp = comp;
         this.cbSelectAll = this.createManagedBean(new AgCheckbox());
         this.cbSelectAll.addCssClass('ag-header-select-all');
-        setAriaRole(this.cbSelectAll.getGui(), 'presentation')
+        setAriaRole(this.cbSelectAll.getGui(), 'presentation');
         this.showOrHideSelectAll();
 
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.showOrHideSelectAll.bind(this));

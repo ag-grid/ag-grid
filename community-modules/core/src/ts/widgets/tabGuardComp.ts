@@ -44,7 +44,6 @@ export class TabGuardComp extends Component {
             eTopGuard: this.eTopGuard,
             eBottomGuard: this.eBottomGuard,
             eFocusableElement: this.eFocusableElement,
-            
             onFocusIn: params.onFocusIn,
             onFocusOut: params.onFocusOut,
             focusInnerElement: params.focusInnerElement,
@@ -57,8 +56,7 @@ export class TabGuardComp extends Component {
     private createTabGuard(side: 'top' | 'bottom'): HTMLElement {
         const tabGuard = document.createElement('div');
 
-        tabGuard.classList.add('ag-tab-guard');
-        tabGuard.classList.add(`ag-tab-guard-${side}`);
+        tabGuard.classList.add('ag-tab-guard', `ag-tab-guard-${side}`);
         setAriaRole(tabGuard, 'presentation');
 
         return tabGuard;

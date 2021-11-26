@@ -142,10 +142,8 @@ const VueExample = {
         dragStart(event, color) {
             var newItem = this.createDataItem(color);
             var jsonData = JSON.stringify(newItem);
-            var userAgent = window.navigator.userAgent;
-            var isIE = userAgent.indexOf('Trident/') >= 0;
-
-            event.dataTransfer.setData(isIE ? 'text' : 'application/json', jsonData);
+            
+            event.dataTransfer.setData('application/json', jsonData);
         },
 
         gridDragOver(event) {
@@ -161,10 +159,7 @@ const VueExample = {
         gridDrop(event, grid) {
             event.preventDefault();
 
-            var userAgent = window.navigator.userAgent;
-            var isIE = userAgent.indexOf('Trident/') >= 0;
-
-            var jsonData = event.dataTransfer.getData(isIE ? 'text' : 'application/json');
+            var jsonData = event.dataTransfer.getData('application/json');
             var data = JSON.parse(jsonData);
 
             // if data missing or data has no it, do nothing
@@ -196,9 +191,8 @@ const VueExample = {
 
         binDrop(event) {
             event.preventDefault();
-            var userAgent = window.navigator.userAgent;
-            var isIE = userAgent.indexOf('Trident/') >= 0;
-            var jsonData = event.dataTransfer.getData(isIE ? 'text' : 'application/json');
+            
+            var jsonData = event.dataTransfer.getData('application/json');
             var data = JSON.parse(jsonData);
 
             // if data missing or data has no id, do nothing

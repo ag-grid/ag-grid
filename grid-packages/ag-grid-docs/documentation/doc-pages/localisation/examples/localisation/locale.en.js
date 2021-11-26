@@ -273,18 +273,17 @@ const AG_GRID_LOCALE_EN = {
     ariaSearch: 'Search',
     ariaSearchFilterValues: 'Search filter values',
 
-    // ARIA LABEL FOR DIALOGS
+    // ARIA Labels for Dialogs
     ariaLabelColumnMenu: 'Column Menu',
     ariaLabelCellEditor: 'Cell Editor',
     ariaLabelDialog: 'Dialog',
     ariaLabelSelectField: 'Select Field',
     ariaLabelTooltip: 'Tooltip',
     ariaLabelContextMenu: 'Context Menu',
-    ariaLabelColumnMenu: 'Column Menu',
     ariaLabelSubMenu: 'SubMenu',
     ariaLabelAggregationFunction: 'Aggregation Function',
 
-    // NUMBER FORMAT
+    // Number Format (Status Bar, Pagination Panel)
     thousandSeparator: ',',
     decimalSeparator: '.'
 

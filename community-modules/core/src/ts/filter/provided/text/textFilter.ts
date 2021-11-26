@@ -9,7 +9,6 @@ import {
 } from '../simpleFilter';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { makeNull } from '../../../utils/generic';
-import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
 import { _ } from '../../../utils';
 
 export interface TextFilterModel extends ISimpleFilterModel {
@@ -35,16 +34,16 @@ export interface TextFormatter {
 }
 
 export interface ITextFilterParams extends ISimpleFilterParams {
-    /** 
+    /**
      * Used to override how to filter based on the user input.
      */
     textCustomComparator?: TextComparator;
-    /** 
+    /**
      * By default, text filtering is case-insensitive. Set this to `true` to make text filtering case-sensitive.
      * Default: `false`
      */
     caseSensitive?: boolean;
-    /** 
+    /**
      * Formats the text before applying the filter compare logic.
      * Useful if you want to substitute accented characters, for example.
      */
@@ -91,7 +90,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
             default:
                 return false;
         }
-    };
+    }
 
     @RefSelector('eValue-index0-1') private readonly eValueFrom1: AgInputTextField;
     @RefSelector('eValue-index1-1') private readonly eValueTo1: AgInputTextField;
@@ -205,9 +204,9 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
     }
 
     protected evaluateNonNullValue(values: Tuple<string>, cellValue: string, filterModel: TextFilterModel): boolean {
-        const formattedValues = _.map(values, (v) => this.formatter(v)) || [];
+        const formattedValues = values.map(v => this.formatter(v)) || [];
         const cellValueFormatted = this.formatter(cellValue);
 
-        return _.some(formattedValues, (v) => this.comparator(filterModel.type, cellValueFormatted, v));
+        return formattedValues.some(v => this.comparator(filterModel.type, cellValueFormatted, v));
     }
 }

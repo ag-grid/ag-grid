@@ -81,7 +81,7 @@ import { AgStackComponentsRegistry } from "./components/agStackComponentsRegistr
 import { HeaderPositionUtils } from "./headerRendering/common/headerPosition";
 import { HeaderNavigationService } from "./headerRendering/common/headerNavigationService";
 import { exists, missing } from "./utils/generic";
-import { assign, iterateObject } from "./utils/object";
+import { iterateObject } from "./utils/object";
 import { ColumnDefFactory } from "./columns/columnDefFactory";
 import { RowCssClassCalculator } from "./rendering/row/rowCssClassCalculator";
 import { RowNodeBlockLoader } from "./rowNodeCache/rowNodeBlockLoader";
@@ -183,8 +183,10 @@ export class GridCoreCreator {
     }
 
     private registerControllers(beans: Beans, registeredModules: Module[]): void {
-        registeredModules.forEach( module => {
-            module.controllers && module.controllers.forEach( meta => beans.ctrlsFactory.register(meta))
+        registeredModules.forEach(module => {
+            if (module.controllers) {
+                module.controllers.forEach(meta => beans.ctrlsFactory.register(meta));
+            }
         });
     }
 
@@ -252,7 +254,7 @@ export class GridCoreCreator {
             frameworkOverrides: frameworkOverrides
         };
         if (params && params.providedBeanInstances) {
-            assign(seed, params.providedBeanInstances);
+            Object.assign(seed, params.providedBeanInstances);
         }
 
         return seed;

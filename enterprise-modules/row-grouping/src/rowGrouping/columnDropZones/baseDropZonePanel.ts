@@ -120,9 +120,8 @@ export abstract class BaseDropZonePanel extends Component {
 
     private addElementClasses(el: HTMLElement, suffix?: string) {
         suffix = suffix ? `-${suffix}` : '';
-        _.addCssClass(el, `ag-column-drop${suffix}`);
         const direction = this.horizontal ? 'horizontal' : 'vertical';
-        _.addCssClass(el, `ag-column-drop-${direction}${suffix}`);
+        el.classList.add(`ag-column-drop${suffix}`, `ag-column-drop-${direction}${suffix}`);
     }
 
     private setupDropTarget(): void {
@@ -412,7 +411,7 @@ export abstract class BaseDropZonePanel extends Component {
         const eTitleBar = document.createElement('div');
         this.addElementClasses(eTitleBar, 'title-bar');
         this.addElementClasses(eGroupIcon, 'icon');
-        _.addOrRemoveCssClass(this.getGui(), 'ag-column-drop-empty', this.isExistingColumnsEmpty());
+        this.addOrRemoveCssClass('ag-column-drop-empty', this.isExistingColumnsEmpty());
 
         eTitleBar.appendChild(eGroupIcon);
 

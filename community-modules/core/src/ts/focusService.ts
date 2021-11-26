@@ -15,7 +15,6 @@ import { HeaderNavigationService } from "./headerRendering/common/headerNavigati
 import { ColumnGroup } from "./entities/columnGroup";
 import { ManagedFocusFeature } from "./widgets/managedFocusFeature";
 import { getTabIndex } from './utils/browser';
-import { findIndex, last } from './utils/array';
 import { makeNull } from './utils/generic';
 import { Constants } from "./constants/constants";
 import { GridCtrl } from "./gridComp/gridCtrl";
@@ -25,6 +24,7 @@ import { CtrlsService } from "./ctrlsService";
 import { HeaderCellCtrl } from "./headerRendering/cells/column/headerCellCtrl";
 import { TabToNextHeaderParams, NavigateToNextHeaderParams } from "./entities/gridOptions";
 import { AbstractHeaderCellCtrl } from "./headerRendering/cells/abstractCell/abstractHeaderCellCtrl";
+import { last } from "./utils/array";
 
 @Bean('focusService')
 export class FocusService extends BeanStub {
@@ -413,7 +413,7 @@ export class FocusService extends BeanStub {
         let currentIndex: number;
 
         if (onlyManaged) {
-            currentIndex = findIndex(focusable, el => el.contains(document.activeElement));
+            currentIndex = focusable.findIndex(el => el.contains(document.activeElement));
         } else {
             currentIndex = focusable.indexOf(document.activeElement as HTMLElement);
         }

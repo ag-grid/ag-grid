@@ -93,7 +93,7 @@ export class MiniChartsContainer extends Component {
 
             chartGroup.forEach(MiniClass => {
                 const miniWrapper = document.createElement('div');
-                _.addCssClass(miniWrapper, 'ag-chart-mini-thumbnail');
+                miniWrapper.classList.add('ag-chart-mini-thumbnail');
 
                 this.addManagedListener(miniWrapper, 'click', () => {
                     this.chartController.setChartType(MiniClass.chartType);
@@ -116,7 +116,7 @@ export class MiniChartsContainer extends Component {
         const type = this.chartController.getChartType();
 
         for (const wrapper in this.wrappers) {
-            _.addOrRemoveCssClass(this.wrappers[wrapper], 'ag-selected', wrapper === type);
+            this.wrappers[wrapper].classList.toggle('ag-selected', wrapper === type);
         }
     }
 }
