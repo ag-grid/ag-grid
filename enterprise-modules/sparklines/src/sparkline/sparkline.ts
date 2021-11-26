@@ -501,8 +501,8 @@ export abstract class Sparkline extends Observable {
      * @param y
      */
     private pickClosestSeriesNodeDatum(x: number, y: number): SeriesNodeDatum | undefined {
-        function getDistance(p1: Point, p2: Point): number {
-            return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
+        function getXDistance(p1: Point, p2: Point): number {
+            return Math.abs(p1.x - p2.x);
         }
 
         let minDistance = Infinity;
@@ -513,7 +513,7 @@ export abstract class Sparkline extends Observable {
             if (!datum.point) {
                 return;
             }
-            const distance = getDistance(hitPoint, datum.point);
+            const distance = getXDistance(hitPoint, datum.point);
             if (distance < minDistance) {
                 minDistance = distance;
                 closestDatum = datum;
