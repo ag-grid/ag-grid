@@ -3,6 +3,8 @@ declare function createFakeServer(data: any): any;
 declare function createServerSideDatasource(server: any, gridOptions: GridOptions): IServerSideDatasource;
 declare function getCountries(): string[];
 
+const countries = getCountries();
+
 const columnDefs: ColDef[] = [
   { field: 'athlete', enableRowGroup: true, enablePivot: true, filter: false },
   {
@@ -17,7 +19,7 @@ const columnDefs: ColDef[] = [
     rowGroup: true,
     hide: true,
     filter: 'agSetColumnFilter',
-    filterParams: { values: getCountries() },
+    filterParams: { values: countries },
   },
   {
     field: 'year',
