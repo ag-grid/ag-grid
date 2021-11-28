@@ -8,7 +8,6 @@
     "build": "npx gulp && npm run hash",
     "umd": "npx rollup -c",
     "test": "npx jest",
-    "test:e2e": "npx gulp link-umd-e2e && npm run cypress:components",
     "test:e2ex": "npx gulp link-umd-e2e && npm run cypress:e2e && npm run cypress:components",
     "test:watch": "npx jest --watch",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
