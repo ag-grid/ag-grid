@@ -1,4 +1,4 @@
-function getRowData() {
+function getData() {
     return [
         {
             "animalsArray": [

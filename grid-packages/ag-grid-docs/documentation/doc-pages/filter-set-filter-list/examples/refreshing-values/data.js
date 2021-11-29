@@ -1,6 +1,6 @@
 var animals = ['Monkey', 'Lion', 'Elephant', 'Tiger', 'Giraffe', 'Antelope'];
 
-function getRowData() {
+function getData() {
     var rows = [];
 
     for (var i = 0; i < 2000; i++) {
