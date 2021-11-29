@@ -21,6 +21,7 @@
     }
   },
   "getProvidedColumnGroup": {
+    "description": "/** Returns the provided column group with the given name. */",
     "type": {
       "arguments": { "name": "string" },
       "returnType": "ProvidedColumnGroup | null"
