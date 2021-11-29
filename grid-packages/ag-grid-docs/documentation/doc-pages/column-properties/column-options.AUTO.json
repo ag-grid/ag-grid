@@ -118,10 +118,10 @@
     "type": { "returnType": "string" }
   },
   "tooltipValueGetter": {
-    "description": "/** Callback that should return the string used for a tooltip, `tooltipField` takes precedence if set. */",
+    "description": "/** Callback that should return the string to use for a tooltip, `tooltipField` takes precedence if set.\n * If using a custom `tooltipComponent` you may return any custom value to be passed to your tooltip component. */",
     "type": {
       "arguments": { "params": "ITooltipParams" },
-      "returnType": "string"
+      "returnType": "string | any"
     }
   },
   "checkboxSelection": {

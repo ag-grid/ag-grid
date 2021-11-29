@@ -41,7 +41,12 @@
             }
         },
         "tooltipField": {},
-        "tooltipValueGetter": {},
+        "tooltipValueGetter": {
+            "more": {
+                "name": "Tooltip Component",
+                "url": "/component-tooltip"
+            }
+        },
         "checkboxSelection": {},
         "toolPanelClass": {},
         "suppressColumnsToolPanel": {},

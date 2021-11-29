@@ -133,8 +133,11 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     equals?: (valueA: any, valueB: any) => boolean;
     /** The field of the tooltip to apply to the cell. */
     tooltipField?: string;
-    /** Callback that should return the string used for a tooltip, `tooltipField` takes precedence if set. */
-    tooltipValueGetter?: (params: ITooltipParams) => string;
+    /**
+     * Callback that should return the string to use for a tooltip, `tooltipField` takes precedence if set.
+     * If using a custom `tooltipComponent` you may return any custom value to be passed to your tooltip component.
+     */
+    tooltipValueGetter?: (params: ITooltipParams) => string | any;
     /** `boolean` or `Function`. Set to `true` (or return `true` from function) to render a selection checkbox in the column. Default: `false` */
     checkboxSelection?: boolean | CheckboxSelectionCallback;
     /** Icons to use inside the column instead of the grid's default icons. Leave undefined to use defaults. */
