@@ -1,13 +1,13 @@
-import React, { useCallback, useEffect, useState } from "react"
-import VersionDropdownMenu from "../grid/VersionDropdownMenu"
+import React, {useCallback, useEffect, useState} from "react"
 import styles from "./Changelog.module.scss"
-import ReleaseVersionNotes from "./ReleaseVersionNotes.jsx"
 import DetailCellRenderer from "../grid/DetailCellRendererComponent"
 import PaddingCellRenderer from "../grid/PaddingCellRenderer"
 import ChevronButtonCellRenderer from "../grid/ChevronButtonRenderer"
 import Grid from "../grid/Grid"
-import DepOrBreakFilterComponent from "../grid/DepOrBreakFilterComponent"
 import IssueTypeCellRenderer from "../grid/IssueTypeRenderer"
+import DepOrBreakFilterComponent from "../grid/DepOrBreakFilterComponent"
+import ReleaseVersionNotes from "./ReleaseVersionNotes.jsx"
+import VersionDropdownMenu from "../grid/VersionDropdownMenu"
 
 import "./overrides.css"
 
@@ -100,7 +100,7 @@ const defaultColDef = {
             params.event.type === "keydown"
         ) {
             params.api
-                .getCellRendererInstances({ rowNodes: [params.node] })[0]
+                .getCellRendererInstances({rowNodes: [params.node]})[0]
                 .clickHandlerFunc()
             return true
         }
@@ -166,7 +166,7 @@ const extractFixVersionParameter = location => location && location.search ? new
 
 const IS_SSR = typeof window === "undefined"
 
-const Changelog = ({ location }) => {
+const Changelog = ({location}) => {
     const [rowData, setRowData] = useState(null)
     const [gridApi, setGridApi] = useState(null)
     const [versions, setVersions] = useState([])
@@ -177,7 +177,7 @@ const Changelog = ({ location }) => {
     const applyFixVersionFilter = useCallback(() => {
         if (gridApi && fixVersion) {
             const versionsFilterComponent = gridApi.getFilterInstance('versions');
-            const newModel = { values: fixVersion === ALL_FIX_VERSIONS ? versions : [fixVersion], filterType: "set" };
+            const newModel = {values: fixVersion === ALL_FIX_VERSIONS ? versions : [fixVersion], filterType: "set"};
             versionsFilterComponent.setModel(newModel)
             gridApi.onFilterChanged();
         }
@@ -258,7 +258,7 @@ const Changelog = ({ location }) => {
             } else {
                 return
             }
-            const newModel = { values: newValues, filterType: "set" };
+            const newModel = {values: newValues, filterType: "set"};
             filterInstance.setModel(newModel)
             gridApi.onFilterChanged()
         }
@@ -284,9 +284,10 @@ const Changelog = ({ location }) => {
     return (
         <>
             {!IS_SSR && (
-                <div style={{ height: "100%", width: "99%%", marginLeft: "1rem", marginRight: "5rem" }}>
-                    <div style={{ fontWeight: 400, fontSize: "2.5rem", lineHeight: 1.2, marginTop: "20px", marginBottom: "20px" }}>AG Grid Changelog</div>
-                    <div className={styles["note"]}>
+                <div style={{height: "100%", width: "99%%", marginLeft: "1rem", marginRight: "5rem"}}>
+                    <div style={{fontWeight: 400, fontSize: "2.5rem", lineHeight: 1.2, marginTop: "20px", marginBottom: "20px"}}>AG Grid Changelog
+                    </div>
+                    <div className={styles["note"]}>asdfasd
                         The AG Grid Changelog lists the feature requests implemented and
                         defects resolved across AG Grid releases. If you can’t find the item
                         you’re looking for, check the{" "}
@@ -365,7 +366,7 @@ const Changelog = ({ location }) => {
                             </div>
                             <div
                                 className={styles["single-checkbox-label-container"]}
-                                style={{ paddingRight: "10px" }}
+                                style={{paddingRight: "10px"}}
                             >
                                 <div>
                                     <input
@@ -394,7 +395,7 @@ const Changelog = ({ location }) => {
                         </div>
                     </div>
 
-                    <ReleaseVersionNotes releaseNotes={currentReleaseNotes} />
+                    <ReleaseVersionNotes releaseNotes={currentReleaseNotes}/>
                     <Grid
                         gridHeight={"66vh"}
                         columnDefs={COLUMN_DEFS}
