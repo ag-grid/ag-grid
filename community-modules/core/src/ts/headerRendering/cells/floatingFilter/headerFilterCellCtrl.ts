@@ -43,7 +43,6 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
     @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('menuFactory') private readonly menuFactory: IMenuFactory;
     @Autowired('beans') protected readonly beans: Beans;
-    @Optional('frameworkComponentWrapper') private frameworkComponentWrapper: FrameworkComponentWrapper;
 
     private comp: IHeaderFilterCellComp;
 
@@ -120,7 +119,38 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
         if (nextFocusableEl) {
             e.preventDefault();
             nextFocusableEl.focus();
+            return;
         }
+
+        const nextFocusableColumn = this.findNextColumnWithFloatingFilter(e.shiftKey);
+
+        if (!nextFocusableColumn) { return; }
+
+        if (this.focusService.focusHeaderPosition({
+            headerPosition: {
+                headerRowIndex: this.getParentRowCtrl().getRowIndex(),
+                column: nextFocusableColumn
+            },
+            event: e
+        })) {
+            e.preventDefault();
+        }
+    }
+
+    private findNextColumnWithFloatingFilter(backwards: boolean): Column | null {
+        const columModel = this.beans.columnModel;
+        let nextCol: Column | null = this.column;
+
+        do {
+            nextCol = backwards
+            ? columModel.getDisplayedColBefore(nextCol)
+            : columModel.getDisplayedColAfter(nextCol);
+
+            if (!nextCol) { break; }
+
+        } while (!nextCol.getColDef().filter || !nextCol.getColDef().floatingFilter);
+
+        return nextCol;
     }
 
     protected handleKeyDown(e: KeyboardEvent) {
@@ -158,19 +188,15 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
         // we default to the browser's behavior
         if (isRelatedWithin) { return; }
 
-        const keyboardMode = this.focusService.isKeyboardMode();
         const notFromHeaderWrapper = !!e.relatedTarget && !(e.relatedTarget as HTMLElement).classList.contains('ag-floating-filter');
         const fromWithinHeader = !!e.relatedTarget && isElementChildOfClass(e.relatedTarget as HTMLElement, 'ag-floating-filter');
 
-        if (keyboardMode && notFromHeaderWrapper && fromWithinHeader && e.target === this.eGui) {
+        if (notFromHeaderWrapper && fromWithinHeader && e.target === this.eGui) {
             const lastFocusEvent = this.lastFocusEvent;
             const fromTab = !!(lastFocusEvent && lastFocusEvent.key === KeyCode.TAB);
 
             if (lastFocusEvent && fromTab) {
-                const currentFocusedHeader = this.beans.focusService.getFocusedHeader();
-                const nextColumn = this.beans.columnModel.getDisplayedColAfter(this.column);
-                const fromNextColumn = currentFocusedHeader && nextColumn === currentFocusedHeader.column;
-                const shouldFocusLast = !!(keyboardMode && lastFocusEvent.shiftKey && fromNextColumn);
+                const shouldFocusLast = lastFocusEvent.shiftKey;
 
                 this.focusService.focusInto(this.eGui, shouldFocusLast);
             }

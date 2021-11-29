@@ -43,7 +43,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
         super();
         this.pinned = pinned;
     }
-    
+
     public setComp(comp: IHeaderRowContainerComp, eGui: HTMLElement): void {
         this.comp = comp;
 
@@ -84,7 +84,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
 
         const refreshColumns = () => {
             const rowIndex = sequence.next();
-            const needNewInstance = this.columnsRowCtrl==null || !keepColumns || this.columnsRowCtrl.getRowIndex() !== rowIndex;
+            const needNewInstance = this.columnsRowCtrl == null || !keepColumns || this.columnsRowCtrl.getRowIndex() !== rowIndex;
 
             if (needNewInstance) {
                 this.destroyBean(this.columnsRowCtrl);
@@ -150,7 +150,7 @@ export class HeaderRowContainerCtrl extends BeanStub {
     }
 
     private setupCenterWidth(): void {
-        if (this.pinned!=null) { return; }
+        if (this.pinned != null) { return; }
 
         this.createManagedBean(new CenterWidthFeature(width => this.comp.setCenterWidth(`${width}px`)));
     }
@@ -160,14 +160,14 @@ export class HeaderRowContainerCtrl extends BeanStub {
     }
 
     private setupPinnedWidth(): void {
-        if (this.pinned==null) { return; }
+        if (this.pinned == null) { return; }
 
         const pinningLeft = this.pinned === Constants.PINNED_LEFT;
         const pinningRight = this.pinned === Constants.PINNED_RIGHT;
 
-        const listener = ()=> {
+        const listener = () => {
             const width = pinningLeft ? this.pinnedWidthService.getPinnedLeftWidth() : this.pinnedWidthService.getPinnedRightWidth();
-            if (width==null) { return; } // can happen at initialisation, width not yet set
+            if (width == null) { return; } // can happen at initialisation, width not yet set
 
             const hidden = width == 0;
             const isRtl = this.gridOptionsWrapper.isEnableRtl();
