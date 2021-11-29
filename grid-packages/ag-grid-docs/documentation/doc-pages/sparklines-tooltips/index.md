@@ -19,12 +19,13 @@ sparklineOptions: {
 
 ## Default Tooltip
 
-The default tooltip will show the Y value of the hovered item in the __Content__ section of the tooltip, whereas the X value (if it exists) is displayed in the __Title__ section of the tooltip.
+The default tooltip will show the Y value of the hovered item in the __Content__ section of the tooltip, and the X value (if it exists) is displayed in the __Title__ section of the tooltip. Both of these sections are inline <span> elements.
+
 See the screenshots below for illustrations of these two cases.
 
 <div style="display: flex; justify-content: center;">
     <image-caption src="resources/tooltip-no-title.png" alt="Tooltip without the title element" width="250px" constrained="true">No Title</image-caption>
-    <image-caption src="resources/tooltip-title.png" alt="Tooltip with a title element" width="250px" constrained="true">With Title</image-caption>
+    <image-caption src="resources/tooltip-with-title.png" alt="Tooltip with a title element" width="250px" constrained="true">With Title</image-caption>
 </div>
 
 ## Customising Tooltip Appearance
@@ -32,10 +33,10 @@ See the screenshots below for illustrations of these two cases.
 The default sparkline tooltip has the following template:
 
 ```html
-<div class="ag-sparkline-tooltip">
-    <div class="ag-sparkline-tooltip-title"></div>
-    <div class="ag-sparkline-tooltip-content"></div>
-</div>
+    <div class="ag-sparkline-tooltip">
+        <span class="ag-sparkline-tooltip-title"></span>
+        <span class="ag-sparkline-tooltip-content"></span>
+    </div>
 ```
 
 The tooltips can be customised using a tooltip `renderer` function supplied to the `tooltip` options as shown below:
@@ -90,8 +91,8 @@ The following example demonstrates the above tooltip renderer:
 
 ## Styling Tooltip Titles
 
-The tooltip titles can be customised using the [Tooltip Renderer](/sparklines-tooltips/#tooltip-renderer).
-The `renderer` function can return style attributes such as `color`, `backgroundColor` and `opacity` for the tooltip title as shown below:
+The tooltip can be customised using the [Tooltip Renderer](/sparklines-tooltips/#tooltip-renderer).
+The `renderer` function can return style attributes such as `color`, `backgroundColor` and `opacity` for the tooltip as shown below:
 
 ```js
 const tooltipRenderer = (params) => {

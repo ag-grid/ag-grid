@@ -111,6 +111,7 @@ const HomePage = ({ pageContext: { framework } }) => {
 
     return (
         <div className={styles['docs-home']}>
+            {/*eslint-disable-next-line react/jsx-pascal-case*/}
             <SEO
                 title="Documentation"
                 description="Our documentation will help you to get up and running with AG Grid."

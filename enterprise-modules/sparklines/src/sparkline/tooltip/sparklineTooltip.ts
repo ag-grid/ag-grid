@@ -35,9 +35,9 @@ export function toTooltipHtml(input: string | TooltipRendererResult, defaults?: 
     const titleHtml = title ? `<span class="${SparklineTooltip.class}-title";
     style="color: ${color}">${title}</span>` : '';
 
-    return `<div class="${SparklineTooltip.class}-content" style="background-color: ${bgColorRgbaString}">
+    return `<div class="${SparklineTooltip.class}" style="background-color: ${bgColorRgbaString}">
                 ${titleHtml}
-                <span style="color: ${color}">${content}</span>
+                <span class="${SparklineTooltip.class}-content" style="color: ${color}">${content}</span>
             </div>`;
 }
 
@@ -60,23 +60,23 @@ export class SparklineTooltip extends Observable {
     isVisible(): boolean {
         const { element } = this;
         if (element.classList) {
-            return !element.classList.contains(`${SparklineTooltip.class}-hidden`);
+            return !element.classList.contains(`${SparklineTooltip.class}-wrapper-hidden`);
         }
 
         // IE11
         const classes = element.getAttribute('class');
         if (classes) {
-            return classes.split(' ').indexOf(`${SparklineTooltip.class}-hidden`) < 0;
+            return classes.split(' ').indexOf(`${SparklineTooltip.class}-wrapper-hidden`) < 0;
         }
 
         return false;
     }
 
     updateClass(visible?: boolean) {
-        const classList = [SparklineTooltip.class];
+        const classList = [`${SparklineTooltip.class}-wrapper`];
 
         if (visible !== true) {
-            classList.push(`${SparklineTooltip.class}-hidden`);
+            classList.push(`${SparklineTooltip.class}-wrapper-hidden`);
         }
 
         this.element.setAttribute('class', classList.join(' '));

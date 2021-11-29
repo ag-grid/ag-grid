@@ -50,7 +50,7 @@ import treeData from './treeData.gif';
 import updatingData from './updatingData.gif';
 import viewRefresh from './viewRefresh.gif';
 
-export default {
+const EXPORTS = {
     accessingData,
     aggregation,
     alignedGrids,
@@ -103,3 +103,5 @@ export default {
     updatingData,
     viewRefresh,
 };
+
+export default EXPORTS;

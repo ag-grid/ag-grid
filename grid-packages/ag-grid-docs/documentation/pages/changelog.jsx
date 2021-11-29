@@ -1,5 +1,6 @@
 import React from "react";
 import Changelog from "./components/changelog/Changelog";
 
-export default (props) => <Changelog {...props} />
+const ChangelogPage = (props) => <Changelog {...props} />;
+export default ChangelogPage;
 

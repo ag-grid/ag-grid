@@ -113,6 +113,7 @@ export const ApiDocumentation: React.FC<ApiProps> = ({ pageName, framework, sour
 
     const propertiesFromFiles = sources.map(s => getJsonFromFile(nodes, pageName, s));
 
+
     const configs = propertiesFromFiles.map(p => p['_config_']);
     propertiesFromFiles.forEach(p => delete p['_config_']);
 
