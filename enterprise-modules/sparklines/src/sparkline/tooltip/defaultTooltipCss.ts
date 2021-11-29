@@ -1,19 +1,19 @@
 export const defaultTooltipCss = `
 .ag-sparkline-tooltip-wrapper {
     position: absolute;
-    display: table;
     user-select: none;
     pointer-events: none;
-    white-space: nowrap;
-    z-index: 99999;
 }
 
 .ag-sparkline-tooltip {
+    position: relative;
     font: 12px arial,sans-serif;
     border-radius: 2px;
     box-shadow: 0 1px 3px rgb(0 0 0 / 20%), 0 1px 1px rgb(0 0 0 / 14%);
     line-height: 1.7em;
     overflow: hidden;
+    white-space: nowrap;
+    z-index: 99999;
 }
 
 .ag-sparkline-tooltip-content {

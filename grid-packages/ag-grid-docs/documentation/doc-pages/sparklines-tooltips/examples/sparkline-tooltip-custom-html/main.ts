@@ -1,6 +1,6 @@
-import { GridOptions, LineSparklineOptions, TooltipRendererParams } from '@ag-grid-community/core'
+import { LineSparklineOptions, TooltipRendererParams } from '@ag-grid-community/core'
 
-const gridOptions: GridOptions = {
+var gridOptions = {
   columnDefs: [
     { field: 'symbol', maxWidth: 120 },
     { field: 'name', minWidth: 250 },
@@ -9,9 +9,15 @@ const gridOptions: GridOptions = {
       cellRenderer: 'agSparklineCellRenderer',
       cellRendererParams: {
         sparklineOptions: {
+          line: {
+            stroke: 'rgb(0, 113, 235)',
+          },
           tooltip: {
-            enabled: true,
             renderer: tooltipRenderer,
+          },
+          highlightStyle: {
+            fill: 'rgb(0, 113, 235)',
+            strokeWidth: 0,
           },
         } as LineSparklineOptions,
       },
@@ -29,17 +35,18 @@ const gridOptions: GridOptions = {
   },
   rowData: getData(),
   rowHeight: 50,
-}
+};
 
 function tooltipRenderer(params: TooltipRendererParams) {
-  return {
-    title: new Date(params.xValue).toLocaleDateString(),
-    content: params.yValue.toFixed(1),
-  }
+  const { yValue, context } = params;
+  return `<div class='my-custom-tooltip'>
+            <span class='tooltip-title'>${context.data.symbol}</span>
+            <span class='tooltip-content'>${yValue}</span>
+          </div>`;
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
-})
+  var gridDiv = document.querySelector('#myGrid');
+  new agGrid.Grid(gridDiv, gridOptions);
+});
