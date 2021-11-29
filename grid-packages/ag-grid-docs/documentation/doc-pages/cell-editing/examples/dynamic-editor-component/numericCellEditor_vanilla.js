@@ -17,7 +17,7 @@ NumericCellEditor.prototype.init = function(params) {
 
     
     this.eInput.addEventListener('keypress', function(event) {
-        if (!isKeyPressedNumeric(event)) {
+        if (!that.isKeyPressedNumeric(event)) {
             that.eInput.focus();
             if (event.preventDefault) event.preventDefault();
         } else if (that.isKeyPressedNavigation(event)) {
@@ -28,6 +28,11 @@ NumericCellEditor.prototype.init = function(params) {
     // only start edit if key pressed is a number, not a letter
     var charPressIsNotANumber = params.charPress && ('1234567890'.indexOf(params.charPress) < 0);
     this.cancelBeforeStart = charPressIsNotANumber;
+};
+
+NumericCellEditor.prototype.isKeyPressedNumeric = function(event) {
+    const charStr = event.key;
+    return this.isCharNumeric(charStr);
 };
 
 NumericCellEditor.prototype.isKeyPressedNavigation = function(event) {
