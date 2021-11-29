@@ -33,6 +33,7 @@
                 "url": "/column-groups/"
             }
         },
+        "getProvidedColumnGroup": {},
         "setColumnGroupOpened": {}
     },
     "Sizing": {
