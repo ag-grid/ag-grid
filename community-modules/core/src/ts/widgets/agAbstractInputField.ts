@@ -1,7 +1,7 @@
 import { IAgLabel } from './agAbstractLabel';
 import { RefSelector } from './componentAnnotations';
 import { AgAbstractField, FieldElement } from './agAbstractField';
-import { setDisabled, setElementWidth, addCssClass, addOrRemoveAttribute } from '../utils/dom';
+import { setDisabled, setElementWidth, addOrRemoveAttribute } from '../utils/dom';
 import { setAriaLabelledBy, setAriaLabel } from '../utils/aria';
 import { exists } from '../utils/generic';
 
@@ -30,10 +30,10 @@ export abstract class AgAbstractInputField<TElement extends FieldElement, TValue
         super.postConstruct();
         this.setInputType();
 
-        addCssClass(this.eLabel, `${this.className}-label`);
-        addCssClass(this.eWrapper, `${this.className}-input-wrapper`);
-        addCssClass(this.eInput, `${this.className}-input`);
-        addCssClass(this.getGui(), 'ag-input-field');
+        this.eLabel.classList.add(`${this.className}-label`);
+        this.eWrapper.classList.add(`${this.className}-input-wrapper`);
+        this.eInput.classList.add(`${this.className}-input`);
+        this.addCssClass('ag-input-field');
 
         this.eInput.id = this.eInput.id || `ag-${this.getCompId()}-input`;
 

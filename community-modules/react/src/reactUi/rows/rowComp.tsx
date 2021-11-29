@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useMemo, memo, useContext } from 'react';
-import { CellCtrl, IRowComp, RowCtrl, UserCompDetails, _, ICellRenderer } from '@ag-grid-community/core';
+import { CellCtrl, IRowComp, RowCtrl, UserCompDetails, ICellRenderer } from '@ag-grid-community/core';
 import { showJsComp } from '../jsComp';
 import { CssClasses, isComponentStateless } from '../utils';
 import { BeansContext } from '../beansContext';
@@ -117,7 +117,7 @@ const RowComp = (params: {rowCtrl: RowCtrl, pinned: string | null}) => {
             transform,
             display
         };
-        _.assign(res, userStyles);
+        Object.assign(res, userStyles);
         return res;
     }, [height, top, transform, userStyles, display]);
 

@@ -5,8 +5,8 @@ import { Column } from "../entities/column";
 import { Environment } from "../environment";
 import { Events } from '../events';
 import { BeanStub } from "../context/beanStub";
-import { addCssClass, addOrRemoveCssClass, containsClass, getAbsoluteHeight, getAbsoluteWidth, removeCssClass } from '../utils/dom';
-import { findIndex, forEach, last, some } from '../utils/array';
+import { getAbsoluteHeight, getAbsoluteWidth } from '../utils/dom';
+import { last } from '../utils/array';
 import { isElementInEventPath } from '../utils/event';
 import { KeyCode } from '../constants/keyCode';
 import { FocusService } from "../focusService";
@@ -69,7 +69,7 @@ export interface AddPopupParams {
     anchorToElement?: HTMLElement;
 
     // an aria label should be added to provided context to screen readers
-    ariaLabel: string
+    ariaLabel: string;
 }
 
 export interface AddPopupResult {
@@ -92,13 +92,13 @@ export class PopupService extends BeanStub {
 
     @PostConstruct
     private postConstruct(): void {
-        this.ctrlsService.whenReady( p => {
+        this.ctrlsService.whenReady(p => {
             this.gridCtrl = p.gridCtrl;
             this.addManagedListener(this.gridCtrl, Events.EVENT_KEYBOARD_FOCUS, () => {
-                forEach(this.popupList, popup => addCssClass(popup.element, FocusService.AG_KEYBOARD_FOCUS));
+                this.popupList.forEach(popup => popup.element.classList.add(FocusService.AG_KEYBOARD_FOCUS));
             });
             this.addManagedListener(this.gridCtrl, Events.EVENT_MOUSE_FOCUS, () => {
-                forEach(this.popupList, popup => removeCssClass(popup.element, FocusService.AG_KEYBOARD_FOCUS));
+                this.popupList.forEach(popup => popup.element.classList.remove(FocusService.AG_KEYBOARD_FOCUS));
             });
         });
     }
@@ -415,7 +415,7 @@ export class PopupService extends BeanStub {
                 };
                 resolve(result);
             });
-        })
+        });
     }
 
     public addPopup(params: AddPopupParams): AddPopupResult {
@@ -441,7 +441,7 @@ export class PopupService extends BeanStub {
             return { hideFunc: () => {}, stopAnchoringPromise: destroyPositionTracker };
         }
 
-        const pos = findIndex(this.popupList, popup => popup.element === eChild);
+        const pos = this.popupList.findIndex(popup => popup.element === eChild);
 
         if (pos !== -1) {
             const popup = this.popupList[pos];
@@ -463,17 +463,19 @@ export class PopupService extends BeanStub {
         const { theme } = this.environment.getTheme();
 
         if (theme) {
-            addCssClass(eWrapper, theme);
+            eWrapper.classList.add(theme);
         }
 
-        addCssClass(eWrapper, 'ag-popup');
-        addCssClass(eChild, this.gridOptionsWrapper.isEnableRtl() ? 'ag-rtl' : 'ag-ltr');
-        addCssClass(eChild, 'ag-popup-child');
+        eWrapper.classList.add('ag-popup');
+        eChild.classList.add(
+            this.gridOptionsWrapper.isEnableRtl() ? 'ag-rtl' : 'ag-ltr',
+            'ag-popup-child'
+        );
         setAriaRole(eChild, 'dialog');
         setAriaLabel(eChild, ariaLabel);
 
         if (this.focusService.isKeyboardMode()) {
-            addCssClass(eChild, FocusService.AG_KEYBOARD_FOCUS);
+            eChild.classList.add(FocusService.AG_KEYBOARD_FOCUS);
         }
 
         eWrapper.appendChild(eChild);
@@ -492,7 +494,7 @@ export class PopupService extends BeanStub {
                 return;
             }
 
-            const key = event.which || event.keyCode;
+            const key = event.key;
 
             if (key === KeyCode.ESCAPE) {
                 hidePopup({ keyboardEvent: event });
@@ -587,7 +589,7 @@ export class PopupService extends BeanStub {
     }
 
     public hasAnchoredPopup(): boolean {
-        return some(this.popupList, popup => popup.isAnchored);
+        return this.popupList.some(popup => popup.isAnchored);
     }
 
     private isEventFromCurrentPopup(params: PopupEventParams, target: HTMLElement): boolean {
@@ -597,7 +599,7 @@ export class PopupService extends BeanStub {
 
         if (!event) { return false; }
 
-        const indexOfThisChild = findIndex(this.popupList, popup => popup.element === target);
+        const indexOfThisChild = this.popupList.findIndex(popup => popup.element === target);
 
         if (indexOfThisChild === -1) { return false; }
 
@@ -660,11 +662,11 @@ export class PopupService extends BeanStub {
     }
 
     private getWrapper(ePopup: HTMLElement): HTMLElement | null {
-        while (!containsClass(ePopup, 'ag-popup') && ePopup.parentElement) {
+        while (!ePopup.classList.contains('ag-popup') && ePopup.parentElement) {
             ePopup = ePopup.parentElement;
         }
 
-        return containsClass(ePopup, 'ag-popup') ? ePopup : null;
+        return ePopup.classList.contains('ag-popup') ? ePopup : null;
     }
 
     public setAlwaysOnTop(ePopup: HTMLElement, alwaysOnTop?: boolean): void {
@@ -674,7 +676,7 @@ export class PopupService extends BeanStub {
             return;
         }
 
-        addOrRemoveCssClass(eWrapper, 'ag-always-on-top', !!alwaysOnTop);
+        eWrapper.classList.toggle('ag-always-on-top', !!alwaysOnTop);
 
         if (alwaysOnTop) {
             this.bringPopupToFront(eWrapper);
@@ -696,7 +698,7 @@ export class PopupService extends BeanStub {
         const pos = popupList.indexOf(eWrapper);
 
         if (onTopLength) {
-            const isPopupAlwaysOnTop = containsClass(eWrapper, 'ag-always-on-top');
+            const isPopupAlwaysOnTop = eWrapper.classList.contains('ag-always-on-top');
 
             if (isPopupAlwaysOnTop) {
                 if (pos !== popupLen - 1) {

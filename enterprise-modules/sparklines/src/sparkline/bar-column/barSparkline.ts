@@ -2,6 +2,7 @@ import { BandScale } from '../../scale/bandScale';
 import { isNumber } from '../../util/value';
 import { BarColumnLabelPlacement, BarColumnSparkline, RectNodeDatum } from './barColumnSparkline';
 import { HdpiCanvas } from '../../canvas/hdpiCanvas';
+import { Point } from '../sparkline';
 
 
 
@@ -158,5 +159,9 @@ export class BarSparkline extends BarColumnSparkline {
             });
         }
         return nodeData;
+    }
+
+    protected getDistance(p1: Point, p2: Point): number {
+        return Math.abs(p1.y - p2.y);
     }
 }

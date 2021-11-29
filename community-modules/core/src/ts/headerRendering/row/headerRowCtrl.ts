@@ -9,14 +9,13 @@ import { Events } from "../../eventKeys";
 import { FocusService } from "../../focusService";
 import { GridOptionsWrapper } from "../../gridOptionsWrapper";
 import { isBrowserSafari } from "../../utils/browser";
-import { find } from "../../utils/generic";
 import { getAllValuesInObject, iterateObject } from "../../utils/object";
 import { AbstractHeaderCellCtrl } from "../cells/abstractCell/abstractHeaderCellCtrl";
 import { HeaderFilterCellCtrl } from "../cells/floatingFilter/headerFilterCellCtrl";
 import { HeaderCellCtrl } from "../cells/column/headerCellCtrl";
 import { HeaderGroupCellCtrl } from "../cells/columnGroup/headerGroupCellCtrl";
 import { HeaderRowType } from "./headerRowComp";
-import { _ } from "../../utils";
+import { values } from "../../utils/generic";
 
 export interface IHeaderRowComp {
     setTransform(transform: string): void;
@@ -79,7 +78,7 @@ export class HeaderRowCtrl extends BeanStub {
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_DOM_LAYOUT, this.onDisplayedColumnsChanged.bind(this));
 
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, this.onDisplayedColumnsChanged.bind(this));
-        
+
         this.addManagedListener(this.eventService, Events.EVENT_VIRTUAL_COLUMNS_CHANGED, this.onVirtualColumnsChanged.bind(this));
 
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_HEADER_HEIGHT, this.onRowHeightChanged.bind(this));
@@ -92,7 +91,8 @@ export class HeaderRowCtrl extends BeanStub {
     public getHtmlElementForColumnHeader(column: Column): HTMLElement | undefined {
         if (this.type != HeaderRowType.COLUMN) { return; }
 
-        const cellCtrl = find(this.headerCellCtrls, cellCtrl => cellCtrl.getColumnGroupChild() == column);
+        const cellCtrl = values(this.headerCellCtrls).find(cellCtrl => cellCtrl.getColumnGroupChild() == column);
+
         if (!cellCtrl) { return; }
 
         const res = (cellCtrl as HeaderCellCtrl).getGui();
@@ -115,7 +115,7 @@ export class HeaderRowCtrl extends BeanStub {
 
     private setWidth(): void {
         const width = this.getWidthForRow();
-        this.comp.setWidth(width + 'px');
+        this.comp.setWidth(`${width}px`);
     }
 
     private getWidthForRow(): number {
@@ -210,7 +210,7 @@ export class HeaderRowCtrl extends BeanStub {
                 headerCtrl = undefined;
             }
 
-            if (headerCtrl==null) {
+            if (headerCtrl == null) {
                 switch (this.type) {
                     case HeaderRowType.FLOATING_FILTER:
                         headerCtrl = this.createBean(new HeaderFilterCellCtrl(child as Column, this));
@@ -279,7 +279,7 @@ export class HeaderRowCtrl extends BeanStub {
 
     public focusHeader(column: IHeaderColumn, event?: KeyboardEvent): boolean {
         const allCtrls = getAllValuesInObject(this.headerCellCtrls);
-        const ctrl: AbstractHeaderCellCtrl = find(allCtrls, ctrl => ctrl.getColumnGroupChild()==column);
+        const ctrl: AbstractHeaderCellCtrl = allCtrls.find(ctrl => ctrl.getColumnGroupChild() == column);
         if (!ctrl) { return false; }
 
         ctrl.focus(event);

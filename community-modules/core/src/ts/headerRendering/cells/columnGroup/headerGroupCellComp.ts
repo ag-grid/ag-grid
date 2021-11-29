@@ -1,6 +1,5 @@
 import { UserCompDetails, UserComponentFactory } from "../../../components/framework/userComponentFactory";
 import { Autowired, PostConstruct } from "../../../context/context";
-import { addOrRemoveCssClass } from "../../../utils/dom";
 import { RefSelector } from "../../../widgets/componentAnnotations";
 import { AbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellComp";
 import { HeaderGroupCellCtrl, IHeaderGroupCellComp } from "./headerGroupCellCtrl";
@@ -26,12 +25,12 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
 
         const eGui = this.getGui();
 
-        const setAttribute = (key: string, value: string | undefined) => 
-                value!=undefined ? eGui.setAttribute(key, value) : eGui.removeAttribute(key);
+        const setAttribute = (key: string, value: string | undefined) =>
+                value != undefined ? eGui.setAttribute(key, value) : eGui.removeAttribute(key);
 
         const compProxy: IHeaderGroupCellComp = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
-            addOrRemoveResizableCssClass: (cssClassName, on) => addOrRemoveCssClass(this.eResize, cssClassName, on),
+            addOrRemoveResizableCssClass: (cssClassName, on) => this.eResize.classList.toggle(cssClassName, on),
             setWidth: width => eGui.style.width = width,
             setColId: id => eGui.setAttribute("col-id", id),
             setAriaExpanded: expanded => setAttribute('aria-expanded', expanded),
@@ -43,12 +42,12 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
     }
 
     private setUserCompDetails(details: UserCompDetails): void {
-        details.newAgStackInstance()!.then( comp => this.afterHeaderCompCreated(comp));
+        details.newAgStackInstance()!.then(comp => this.afterHeaderCompCreated(comp));
     }
 
     private afterHeaderCompCreated(headerGroupComp: IHeaderGroupComp): void {
 
-        const destroyFunc = ()=> this.destroyBean(headerGroupComp);
+        const destroyFunc = () => this.destroyBean(headerGroupComp);
 
         if (!this.isAlive()) {
             destroyFunc();
@@ -60,6 +59,5 @@ export class HeaderGroupCellComp extends AbstractHeaderCellComp<HeaderGroupCellC
 
         this.ctrl.setDragSource(headerGroupComp.getGui());
     }
-
 
 }

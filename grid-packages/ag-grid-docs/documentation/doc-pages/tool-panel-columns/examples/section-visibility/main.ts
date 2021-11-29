@@ -43,22 +43,30 @@ const gridOptions: GridOptions = {
 }
 
 function showPivotModeSection() {
-  var columnToolPanel = gridOptions.api!.getToolPanelInstance('columns') as unknown as IColumnToolPanel;
+  var columnToolPanel = (gridOptions.api!.getToolPanelInstance(
+    'columns'
+  ) as unknown) as IColumnToolPanel
   columnToolPanel.setPivotModeSectionVisible(true)
 }
 
 function showRowGroupsSection() {
-  var columnToolPanel = gridOptions.api!.getToolPanelInstance('columns') as unknown as IColumnToolPanel;
+  var columnToolPanel = (gridOptions.api!.getToolPanelInstance(
+    'columns'
+  ) as unknown) as IColumnToolPanel
   columnToolPanel.setRowGroupsSectionVisible(true)
 }
 
 function showValuesSection() {
-  var columnToolPanel = gridOptions.api!.getToolPanelInstance('columns') as unknown as IColumnToolPanel;
+  var columnToolPanel = (gridOptions.api!.getToolPanelInstance(
+    'columns'
+  ) as unknown) as IColumnToolPanel
   columnToolPanel.setValuesSectionVisible(true)
 }
 
 function showPivotSection() {
-  var columnToolPanel = gridOptions.api!.getToolPanelInstance('columns') as unknown as IColumnToolPanel;
+  var columnToolPanel = (gridOptions.api!.getToolPanelInstance(
+    'columns'
+  ) as unknown) as IColumnToolPanel
   columnToolPanel.setPivotSectionVisible(true)
 }
 

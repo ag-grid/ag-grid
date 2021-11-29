@@ -17,6 +17,7 @@ export interface SeriesNodeDatum {
     readonly seriesDatum: any;
     readonly point?: Point;
 }
+
 export interface Point {
     readonly x: number;
     readonly y: number;
@@ -30,7 +31,6 @@ interface SeriesRect {
 }
 
 type Container = HTMLElement | undefined | null;
-// type Data = number[] | [number | string | Date | { toString: () => string }, number][] | { [key: string]: any }[] | undefined | null;
 type Data = any[] | undefined | null;
 type DataType = 'number' | 'array' | 'object' | undefined;
 type AxisType = 'number' | 'category' | 'time';
@@ -249,12 +249,19 @@ export abstract class Sparkline extends Observable {
     }
 
     // Update axis line.
-    protected updateAxisLine() { }
+    protected updateAxisLine(): void { }
 
-    protected updateAxes() {
+    // Update X and Y scales and the axis line.
+    protected updateAxes(): void {
         this.updateYScale();
         this.updateXScale();
         this.updateAxisLine();
+    }
+
+    // Update horizontal and vertical crosshair lines.
+    protected updateCrosshairs(): void {
+        this.updateXCrosshairLine();
+        this.updateYCrosshairLine();
     }
 
     // Using processed data, generate data that backs visible nodes.
@@ -266,6 +273,12 @@ export abstract class Sparkline extends Observable {
     // Update the selection's nodes.
     protected updateNodes(): void { }
 
+    // Update the vertical crosshair line.
+    protected updateXCrosshairLine(): void { }
+
+    // Update the horizontal crosshair line.
+    protected updateYCrosshairLine(): void { }
+
     // Efficiently update sparkline nodes on hightlight changes.
     protected highlightedDatum?: SeriesNodeDatum;
     protected highlightDatum(closestDatum: SeriesNodeDatum): void {
@@ -275,6 +288,7 @@ export abstract class Sparkline extends Observable {
     protected dehighlightDatum(): void {
         this.highlightedDatum = undefined;
         this.updateNodes();
+        this.updateCrosshairs();
     }
 
     abstract getTooltipHtml(datum: SeriesNodeDatum): string | undefined;
@@ -298,9 +312,11 @@ export abstract class Sparkline extends Observable {
         if ((this.highlightedDatum && !oldHighlightedDatum) ||
             (this.highlightedDatum && oldHighlightedDatum && this.highlightedDatum !== oldHighlightedDatum)) {
             this.highlightDatum(closestDatum);
-            if (this.tooltip.enabled) {
-                this.handleTooltip(closestDatum);
-            }
+            this.updateCrosshairs();
+        }
+
+        if (this.tooltip.enabled) {
+            this.handleTooltip(event, closestDatum);
         }
     }
 
@@ -317,7 +333,7 @@ export abstract class Sparkline extends Observable {
     private processData() {
         const { data, yData, xData } = this;
 
-        if (!data || !Array.isArray(data) || data.length === 0) { return; }
+        if (!data || this.invalidData(this.data)) { return; }
 
         yData.length = 0;
         xData.length = 0;
@@ -445,23 +461,11 @@ export abstract class Sparkline extends Observable {
             cancelAnimationFrame(this.layoutId);
         }
         this.layoutId = requestAnimationFrame(() => {
+            this.setSparklineDimensions();
 
-            const { data } = this;
-
-            if (!data || !Array.isArray(data) || data.length === 0) { return; }
-
-            const { width, height, padding, seriesRect, rootGroup } = this;
-
-            const shrunkWidth = width - padding.left - padding.right;
-            const shrunkHeight = height - padding.top - padding.bottom;
-
-            seriesRect.width = shrunkWidth;
-            seriesRect.height = shrunkHeight;
-            seriesRect.x = padding.left;
-            seriesRect.y = padding.top;
-
-            rootGroup.translationX = seriesRect.x;
-            rootGroup.translationY = seriesRect.y;
+            if (this.invalidData(this.data)) {
+                return;
+            }
 
             // update axes ranges
             this.updateXScaleRange();
@@ -477,16 +481,26 @@ export abstract class Sparkline extends Observable {
         })
     }
 
+    private setSparklineDimensions() {
+        const { width, height, padding, seriesRect, rootGroup } = this;
+        const shrunkWidth = width - padding.left - padding.right;
+        const shrunkHeight = height - padding.top - padding.bottom;
+
+        seriesRect.width = shrunkWidth;
+        seriesRect.height = shrunkHeight;
+        seriesRect.x = padding.left;
+        seriesRect.y = padding.top;
+
+        rootGroup.translationX = seriesRect.x;
+        rootGroup.translationY = seriesRect.y;
+    }
+
     /**
      * Return the closest data point to x/y canvas coordinates.
      * @param x
      * @param y
      */
     private pickClosestSeriesNodeDatum(x: number, y: number): SeriesNodeDatum | undefined {
-        function getDistance(p1: Point, p2: Point): number {
-            return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
-        }
-
         let minDistance = Infinity;
         let closestDatum: SeriesNodeDatum | undefined;
         const hitPoint = this.rootGroup.transformPoint(x, y);
@@ -495,7 +509,7 @@ export abstract class Sparkline extends Observable {
             if (!datum.point) {
                 return;
             }
-            const distance = getDistance(hitPoint, datum.point);
+            const distance = this.getDistance(hitPoint, datum.point);
             if (distance < minDistance) {
                 minDistance = distance;
                 closestDatum = datum;
@@ -506,20 +520,32 @@ export abstract class Sparkline extends Observable {
     }
 
     /**
+    * Return the relevant distance between two points.
+    * The distance will be calculated based on the x value of the points for all sparklines except bar sparkline, where the distance is based on the y values.
+    * @param x
+    * @param y
+    */
+    protected getDistance(p1: Point, p2: Point): number {
+        return Math.abs(p1.x - p2.x);
+    }
+
+    /**
      * calculate x/y coordinates for tooltip based on coordinates of highlighted datum, position of canvas and page offset.
      * @param datum
      */
-    private handleTooltip(datum: SeriesNodeDatum): void {
+    private handleTooltip(event: MouseEvent, datum: SeriesNodeDatum): void {
         const { seriesDatum } = datum;
         const { canvasElement } = this;
-        const canvasRect = canvasElement.getBoundingClientRect();
-        const { pageXOffset, pageYOffset } = window;
-        // pickClosestSeriesNodeDatum only returns datum with point
-        const point = this.rootGroup.inverseTransformPoint(datum.point!.x, datum.point!.y);
+        const { clientX, clientY } = event;
+
+        // confine tooltip to sparkline width if tooltip container not provided.
+        if (this.tooltip.container == undefined) {
+            this.tooltip.container = canvasElement;
+        }
 
         const meta = {
-            pageX: (point.x + canvasRect.left + pageXOffset),
-            pageY: (point.y + canvasRect.top + pageYOffset)
+            pageX: clientX,
+            pageY: clientY
         }
 
         const yValue = seriesDatum.y;
@@ -569,25 +595,22 @@ export abstract class Sparkline extends Observable {
         chartElement.addEventListener('mouseout', this._onMouseOut);
     }
 
-    private cleanupDomEventListerners(chartElement: HTMLCanvasElement): void {
+    private cleanupDomEventListeners(chartElement: HTMLCanvasElement): void {
         chartElement.removeEventListener('mousemove', this._onMouseMove);
         chartElement.removeEventListener('mouseout', this._onMouseOut);
+    }
+
+    private invalidData(data: any) {
+        return !data || !Array.isArray(data) || data.length === 0;
     }
 
     /**
      * Cleanup and remove canvas element from the DOM.
      */
-    destroy() {
+    public destroy(): void {
         this.scene.container = undefined;
         // remove canvas element from the DOM
         this.container = undefined;
-        this.cleanupDomEventListerners(this.scene.canvas.element);
-    }
-
-    /**
-     * @returns this.scene.canvas.element
-     */
-    public getCanvasElement(): HTMLCanvasElement {
-        return this.canvasElement;
+        this.cleanupDomEventListeners(this.scene.canvas.element);
     }
 }

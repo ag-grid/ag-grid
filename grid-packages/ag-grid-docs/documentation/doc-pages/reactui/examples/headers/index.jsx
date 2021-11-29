@@ -117,11 +117,6 @@ function GridExample() {
 
     return (
         <AgGridReact 
-
-            // turn on AG Grid React UI
-            reactUi="true"
-
-            // all other properties as normal...
             className="ag-theme-alpine"
             animateRows="true"
             modules={modules}

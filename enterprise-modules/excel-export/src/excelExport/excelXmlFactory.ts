@@ -44,7 +44,7 @@ export class ExcelXmlFactory {
             this.stylesXmlElement(styles)
         ].concat(worksheet.getTemplate(currentWorksheet));
 
-        return _.assign({}, workbook.getTemplate(), {children});
+        return Object.assign({}, workbook.getTemplate(), {children});
     }
 
     private static excelXmlHeader(): string {
@@ -70,7 +70,7 @@ export class ExcelXmlFactory {
             this.addProperty('numberFormat', styleProperties)
         )([]);
 
-        return _.assign({}, style.getTemplate(styleProperties), {children});
+        return Object.assign({}, style.getTemplate(styleProperties), {children});
     }
 
     private static addProperty<K extends keyof ExcelStyle>(property: K, styleProperties: ExcelStyle) {

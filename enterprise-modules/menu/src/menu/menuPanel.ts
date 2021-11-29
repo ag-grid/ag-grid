@@ -17,7 +17,7 @@ export class MenuPanel extends TabGuardComp {
     }
 
     private handleKeyDown(e: KeyboardEvent): void {
-        if (e.keyCode === KeyCode.ESCAPE) {
+        if (e.key === KeyCode.ESCAPE) {
             this.closePanel();
         }
     }

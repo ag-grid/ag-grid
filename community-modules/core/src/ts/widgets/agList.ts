@@ -2,8 +2,6 @@ import { AgAbstractField } from "./agAbstractField";
 import { Component } from "./component";
 import { PostConstruct } from "../context/context";
 import { escapeString } from "../utils/string";
-import { addCssClass, removeCssClass } from "../utils/dom";
-import { findIndex } from "../utils/array";
 import { KeyCode } from '../constants/keyCode';
 import { setAriaRole, setAriaSelected } from '../utils/aria';
 
@@ -32,7 +30,7 @@ export class AgList extends Component {
     }
 
     private handleKeyDown(e: KeyboardEvent): void {
-        const key = e.keyCode;
+        const key = e.key;
         switch (key) {
             case KeyCode.ENTER:
                 if (!this.highlightedEl) {
@@ -81,9 +79,7 @@ export class AgList extends Component {
         const itemEl = document.createElement('div');
 
         setAriaRole(itemEl, 'option');
-        addCssClass(itemEl, 'ag-list-item');
-        addCssClass(itemEl, `ag-${this.cssIdentifier}-list-item`);
-
+        itemEl.classList.add('ag-list-item', `ag-${this.cssIdentifier}-list-item`);
         itemEl.innerHTML = `<span>${text}</span>`;
         itemEl.tabIndex = -1;
 
@@ -107,7 +103,7 @@ export class AgList extends Component {
             return this;
         }
 
-        const idx = findIndex(this.options, option => option.value === value);
+        const idx = this.options.findIndex(option => option.value === value);
 
         if (idx !== -1) {
             const option = this.options[idx];
@@ -138,7 +134,7 @@ export class AgList extends Component {
 
     public refreshHighlighted(): void {
         this.clearHighlighted();
-        const idx = findIndex(this.options, option => option.value === this.value);
+        const idx = this.options.findIndex(option => option.value === this.value);
 
         if (idx !== -1) {
             this.highlightItem(this.itemEls[idx]);
@@ -158,7 +154,7 @@ export class AgList extends Component {
         this.clearHighlighted();
         this.highlightedEl = el;
 
-        addCssClass(this.highlightedEl, AgList.ACTIVE_CLASS);
+        this.highlightedEl.classList.add(AgList.ACTIVE_CLASS);
         setAriaSelected(this.highlightedEl, true);
 
         this.highlightedEl.focus();
@@ -167,7 +163,7 @@ export class AgList extends Component {
     private clearHighlighted(): void {
         if (!this.highlightedEl || !this.highlightedEl.offsetParent) { return; }
 
-        removeCssClass(this.highlightedEl, AgList.ACTIVE_CLASS);
+        this.highlightedEl.classList.remove(AgList.ACTIVE_CLASS);
         setAriaSelected(this.highlightedEl, false);
 
         this.highlightedEl = null;

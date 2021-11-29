@@ -1,5 +1,5 @@
 import { BeanStub } from "../../context/beanStub";
-import { getCtrlForEvent, getTarget, isStopPropagationForAgGrid, isEventSupported } from "../../utils/event";
+import { getCtrlForEvent, isStopPropagationForAgGrid, isEventSupported } from "../../utils/event";
 import { Autowired, Optional, PostConstruct } from "../../context/context";
 import { MouseEventService } from "./../mouseEventService";
 import { RowCtrl } from "../../rendering/row/rowCtrl";
@@ -115,7 +115,7 @@ export class RowContainerEventsFeature extends BeanStub {
     }
 
     private getRowForEvent(event: Event): RowCtrl | null {
-        let sourceElement: Element | null = getTarget(event);
+        let sourceElement: HTMLElement | null = event.target as HTMLElement | null;
 
         while (sourceElement) {
             const rowCon = this.gridOptionsWrapper.getDomData(sourceElement, RowCtrl.DOM_DATA_KEY_ROW_CTRL);
@@ -207,7 +207,7 @@ export class RowContainerEventsFeature extends BeanStub {
         const gridProcessingAllowed = !isUserSuppressingKeyboardEvent(this.gridOptionsWrapper, keyboardEvent, rowNode, column, false);
 
         if (gridProcessingAllowed) {
-            const key = keyboardEvent.keyCode;
+            const key = keyboardEvent.key;
             if (eventName === 'keydown') {
                 switch (key) {
                     case KeyCode.UP:
@@ -245,7 +245,7 @@ export class RowContainerEventsFeature extends BeanStub {
         // was from a child grid (happens in master detail)
         if (!this.mouseEventService.isEventFromThisGrid(keyboardEvent)) { return; }
 
-        switch (keyboardEvent.which) {
+        switch (keyboardEvent.key.toUpperCase()) {
             case KeyCode.A:
                 return this.onCtrlAndA(keyboardEvent);
             case KeyCode.C:

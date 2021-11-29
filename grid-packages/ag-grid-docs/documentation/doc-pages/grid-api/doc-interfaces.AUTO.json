@@ -2011,6 +2011,10 @@
       "description": "/** The delay in milliseconds that it takes for tooltips to show up once an element is hovered over.\n * **Note:** This property does not work if `enableBrowserTooltips` is `true`.\n * Default: `2000` */",
       "type": { "returnType": "number", "optional": true }
     },
+    "tooltipHideDelay": {
+      "description": "/** The delay in milliseconds that it takes for tooltips to hide once they have been displayed.\n * **Note:** This property does not work if `enableBrowserTooltips` is `true`.\n * Default: `10000` */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "tooltipMouseTrack": {
       "description": "/** Set to `true` to have tooltips follow the cursor once they are displayed. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
@@ -2166,7 +2170,11 @@
       }
     },
     "reactUi": {
-      "description": "/** Set to true to enable the experimental React UI. Works with React framework only. */",
+      "description": "/** @deprecated React UI is enabled by default. Use suppressReactUi=true to turn it off.\n */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "suppressReactUi": {
+      "description": "/** @deprecated Set to true to enable the experimental React UI. Works with React framework only. \nIt is planned the next major release of the grid will drop support of the legacy React engine,\nhence this property is deprecated as will be removed in the next major release.\n */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "editType": {
@@ -2535,7 +2543,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressMaxRenderedRowRestriction": {
-      "description": "/** By default the grid has a limit of rendering a maximum of 500 rows at once (remember the grid only renders rows you can see, so unless your display shows more than 500 rows without vertically scrolling this will never be an issue).\n * <br />**This is only relevant if you are manually setting `rowBuffer` to a high value (rendering more rows than can be seen) or if your grid height is able to display more than 500 rows at once.** \n * Default: `false` */",
+      "description": "/** By default the grid has a limit of rendering a maximum of 500 rows at once (remember the grid only renders rows you can see, so unless your display shows more than 500 rows without vertically scrolling this will never be an issue).\n * <br />**This is only relevant if you are manually setting `rowBuffer` to a high value (rendering more rows than can be seen) or if your grid height is able to display more than 500 rows at once.**\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "rowDragManaged": {
@@ -2796,7 +2804,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "debounceVerticalScrollbar": {
-      "description": "/** Set to `true` to debounce the vertical scrollbar. Can provide smoother scrolling on older browsers, e.g. Internet Explorer. Default: `false` */",
+      "description": "/** Set to `true` to debounce the vertical scrollbar. Can provide smoother scrolling on slow machines. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressHorizontalScroll": {
@@ -3035,34 +3043,34 @@
       }
     },
     "navigateToNextHeader": {
-      "description": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. */",
+      "description": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header. */",
       "type": {
         "arguments": { "params": "NavigateToNextHeaderParams" },
-        "returnType": "HeaderPosition",
+        "returnType": "(HeaderPosition | null)",
         "optional": true
       }
     },
     "tabToNextHeader": {
-      "description": "/** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused. */",
+      "description": "/** Allows overriding the default behaviour for when user hits `Tab` key when a header is focused. Return the next Header position to navigate to or `null` to stay on current header. */",
       "type": {
         "arguments": { "params": "TabToNextHeaderParams" },
-        "returnType": "HeaderPosition",
+        "returnType": "(HeaderPosition | null)",
         "optional": true
       }
     },
     "navigateToNextCell": {
-      "description": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. */",
+      "description": "/** Allows overriding the default behaviour for when user hits navigation (arrow) key when a cell is focused. Return the next Cell position to navigate to or `null` to stay on current cell. */",
       "type": {
         "arguments": { "params": "NavigateToNextCellParams" },
-        "returnType": "CellPosition",
+        "returnType": "(CellPosition | null)",
         "optional": true
       }
     },
     "tabToNextCell": {
-      "description": "/** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. */",
+      "description": "/** Allows overriding the default behaviour for when user hits `Tab` key when a cell is focused. Return the next Cell position to navigate to or null to stay on current cell. */",
       "type": {
         "arguments": { "params": "TabToNextCellParams" },
-        "returnType": "CellPosition",
+        "returnType": "(CellPosition | null)",
         "optional": true
       }
     },
@@ -3227,10 +3235,10 @@
       }
     },
     "getRowStyle": {
-      "description": "/** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values. */",
+      "description": "/** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles. */",
       "type": {
         "arguments": { "params": "RowClassParams" },
-        "returnType": "RowStyle",
+        "returnType": "RowStyle | undefined",
         "optional": true
       }
     },
@@ -4800,8 +4808,8 @@
   },
   "NavigateToNextCellParams": {
     "key": {
-      "description": "/** The keycode for the arrow key pressed:\n * left = 37, up = 38, right = 39, down = 40 */",
-      "type": { "returnType": "number", "optional": false }
+      "description": "/** The keycode for the arrow key pressed:\n * left = 'ArrowLeft', up = 'ArrowUp', right = 'ArrowRight', down = 'ArrowDown' */",
+      "type": { "returnType": "string", "optional": false }
     },
     "previousCellPosition": {
       "description": "/** The cell that currently has focus */",
@@ -7238,7 +7246,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "alwaysShowBothConditions": {
-      "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions. \n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
+      "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
@@ -7372,7 +7380,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "alwaysShowBothConditions": {
-      "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions. \n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
+      "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
@@ -7530,7 +7538,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "alwaysShowBothConditions": {
-      "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions. \n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
+      "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
@@ -7612,7 +7620,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "alwaysShowBothConditions": {
-      "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions. \n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
+      "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
@@ -7755,7 +7763,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "alwaysShowBothConditions": {
-      "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions. \n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
+      "description": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
@@ -7841,9 +7849,9 @@
       "description": "/** Set to `'top'` or `'bottom'` to start editing a pinned row */",
       "type": { "returnType": "string", "optional": true }
     },
-    "keyPress": {
-      "description": "/** The keyPress to pass to the cell editor */",
-      "type": { "returnType": "number", "optional": true }
+    "key": {
+      "description": "/** The key to pass to the cell editor */",
+      "type": { "returnType": "string", "optional": true }
     },
     "charPress": {
       "description": "/** The charPress to pass to the cell editor */",
@@ -10813,9 +10821,9 @@
       "description": "/** Current value of the cell */",
       "type": { "returnType": "any", "optional": false }
     },
-    "keyPress": {
-      "description": "/** Key code of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
-      "type": { "returnType": "number | null", "optional": false }
+    "key": {
+      "description": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
+      "type": { "returnType": "string | null", "optional": false }
     },
     "charPress": {
       "description": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n * shift + letter 'a' only printable characters appear here */",
@@ -11638,14 +11646,14 @@
     }
   },
   "ExcelInterior": {
-    "color": { "type": { "returnType": "string", "optional": false } },
     "pattern": {
       "type": {
         "returnType": "'None' | 'Solid' | 'Gray75' | 'Gray50' | 'Gray25' | 'Gray125' | 'Gray0625' | 'HorzStripe' | 'VertStripe' | 'ReverseDiagStripe' | 'DiagStripe' | 'DiagCross' | 'ThickDiagCross' | 'ThinHorzStripe' | 'ThinVertStripe' | 'ThinReverseDiagStripe' | 'ThinDiagStripe' | 'ThinHorzCross' | 'ThinDiagCross'",
         "optional": false
       }
     },
-    "patternColor": { "type": { "returnType": "string", "optional": false } }
+    "color": { "type": { "returnType": "string", "optional": true } },
+    "patternColor": { "type": { "returnType": "string", "optional": true } }
   },
   "ExcelNumberFormat": {
     "format": { "type": { "returnType": "string", "optional": false } }
@@ -12538,6 +12546,139 @@
       "type": { "returnType": "Module[]", "optional": true }
     }
   },
+  "IMultiFilterDef": {
+    "display": {
+      "description": "/** Configures how the filter is shown in the Multi Filter.\n * Default: `inline` */",
+      "type": {
+        "returnType": "'inline' | 'accordion' | 'subMenu'",
+        "optional": true
+      }
+    },
+    "title": {
+      "description": "/** The title to be used when a filter is displayed inside a sub-menu or accordion. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "filter": {
+      "description": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Set to the name of a provided filter: `set`, `number`, `text`, `date`. \n * - Set to a `IFilterComp`. */",
+      "type": { "returnType": "IFilterType", "optional": true }
+    },
+    "filterFramework": {
+      "description": "/** Provided a custom framework filter to use for this column. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "filterParams": {
+      "description": "/** Params to be passed to the filter component specified in `filter` or `filterFramework`. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "floatingFilterComponent": {
+      "description": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
+      "type": { "returnType": "IFloatingFilterType", "optional": true }
+    },
+    "floatingFilterComponentFramework": {
+      "description": "/** Floating filter framework component to use for this column. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "floatingFilterComponentParams": {
+      "description": "/** Params to be passed to `floatingFilterComponent` or `floatingFilterComponentFramework`. */",
+      "type": { "returnType": "any", "optional": true }
+    }
+  },
+  "IMultiFilterParams": {
+    "filters": {
+      "description": "/** An array of filter definition objects. */",
+      "type": { "returnType": "IMultiFilterDef[]", "optional": true }
+    },
+    "readOnly": {
+      "description": "/** Defaults to false. If true, all UI inputs managed by this filter are for display only, and\n * the filter can only be affected by API calls. Does NOT affect child filters, they need to be\n * individually configured with `readOnly` where applicable. */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "column": {
+      "description": "/** The column this filter is for. */",
+      "type": { "returnType": "Column", "optional": false }
+    },
+    "colDef": {
+      "description": "/** The column definition for the column. */",
+      "type": { "returnType": "ColDef", "optional": false }
+    },
+    "rowModel": {
+      "description": "/** The row model, helpful for looking up data values if needed.\n * If the filter needs to know which rows are\n * a) in the table,\n * b) currently visible (i.e. not already filtered),\n * c) which groups,\n * d) what order - all of this can be read from the rowModel. */",
+      "type": { "returnType": "IRowModel", "optional": false }
+    },
+    "filterChangedCallback": {
+      "description": "/** A function callback to be called when the filter changes. The\n * grid will then respond by filtering the grid data. The callback\n * takes one optional parameter which, if included, will get merged\n * to the FilterChangedEvent object (useful for passing additional\n * information to anyone listening to this event, however such extra\n * attributes are not used by the grid). */",
+      "type": {
+        "arguments": { "additionalEventAttributes?": "any" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "filterModifiedCallback": {
+      "description": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
+    "valueGetter": {
+      "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
+      "type": {
+        "arguments": { "rowNode": "RowNode" },
+        "returnType": "any",
+        "optional": false
+      }
+    },
+    "doesRowPassOtherFilter": {
+      "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
+      "type": {
+        "arguments": { "rowNode": "RowNode" },
+        "returnType": "boolean",
+        "optional": false
+      }
+    },
+    "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "context": {
+      "description": "/** The context as provided on `gridOptions.context` */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "IMultiFilterModel": {
+    "filterType": {
+      "description": "/** Multi filter type. */",
+      "type": { "returnType": "'multi'", "optional": true }
+    },
+    "filterModels": {
+      "description": "/** Child filter models in the same order as the filters are specified in `filterParams`. */",
+      "type": { "returnType": "any[] | null", "optional": false }
+    }
+  },
+  "IMultiFilterComp": {
+    "isFilterActive": {
+      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
+    "getModel": {
+      "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is not active. */",
+      "type": {
+        "arguments": {},
+        "returnType": "ProvidedFilterModel | null",
+        "optional": false
+      }
+    },
+    "setModel": {
+      "description": "/** Sets the state of the child filters using the supplied models.\n * Providing `null` will de-activate all child filters.\n *   - **Note:** if you are providing values asynchronously to a child Set Filter, \n * you need to wait for these changes to be applied before performing any further actions by waiting on the returned grid promise,\n *   e.g. `filter.setModel([null, { values: ['a', 'b'] }]).then(function() { gridApi.onFilterChanged(); });` */",
+      "type": {
+        "arguments": { "model": "IMultiFilterModel | null" },
+        "returnType": "void | AgPromise<void>",
+        "optional": false
+      }
+    },
+    "getChildFilterInstance": {
+      "description": "/** Returns the child filter instance at the specified index or `undefined` for an invalid index. */",
+      "type": {
+        "arguments": { "index": "number" },
+        "returnType": "IFilterComp | undefined",
+        "optional": false
+      }
+    }
+  },
   "IPopupComponent": {
     "isPopup": {
       "description": "/** Gets called once after initialised. If you return true, the component will appear in a popup, and it will be\n * constrained to the boundaries of the popupParent. This is great if you want to, for example, provide you own\n * custom dropdown list for selection. Default is false (ie if you don't provide the method). */",
@@ -12673,7 +12814,7 @@
     },
     "extendLatestRangeInDirection": {
       "type": {
-        "arguments": { "key": "number" },
+        "arguments": { "key": "string" },
         "returnType": "CellPosition | undefined",
         "optional": false
       }
@@ -12845,9 +12986,9 @@
       "description": "/** Current value of the cell */",
       "type": { "returnType": "any", "optional": false }
     },
-    "keyPress": {
-      "description": "/** Key code of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
-      "type": { "returnType": "number | null", "optional": false }
+    "key": {
+      "description": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
+      "type": { "returnType": "string | null", "optional": false }
     },
     "charPress": {
       "description": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n * shift + letter 'a' only printable characters appear here */",
@@ -13227,7 +13368,7 @@
   "IServerSideRowModel": {
     "refreshStore": {
       "type": {
-        "arguments": { "params": "RefreshStoreParams" },
+        "arguments": { "params?": "RefreshStoreParams" },
         "returnType": "void",
         "optional": false
       }
@@ -13933,6 +14074,10 @@
       "description": "/** The configuration for the marker styles. */",
       "type": { "returnType": "SparklineMarkerOptions", "optional": true }
     },
+    "crosshairs": {
+      "description": "/** The configuration for the crosshairs. */",
+      "type": { "returnType": "SparklineCrosshairsOptions", "optional": true }
+    },
     "xKey": {
       "description": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
       "type": { "returnType": "string", "optional": true }
@@ -13974,6 +14119,10 @@
     "marker": {
       "description": "/** The configuration for the marker styles. */",
       "type": { "returnType": "SparklineMarkerOptions", "optional": true }
+    },
+    "crosshairs": {
+      "description": "/** The configuration for the crosshairs. */",
+      "type": { "returnType": "SparklineCrosshairsOptions", "optional": true }
     },
     "xKey": {
       "description": "/** The key to use to retrieve X values from the data. This will only be used if the data array contains objects with key-value pairs.\n * Default: `'x'` */",
@@ -14177,7 +14326,7 @@
       "type": { "returnType": "number", "optional": true }
     },
     "left": {
-      "description": "/** The number of pixels of padding at the left of the sparkline area.\n * Default\" `3` */",
+      "description": "/** The number of pixels of padding at the left of the sparkline area.\n * Default: `3` */",
       "type": { "returnType": "number", "optional": true }
     }
   },
@@ -14204,6 +14353,14 @@
     "container": {
       "description": "/** The element to place the tooltip into. This can be used to confine the tooltip to a specific area which may be outside of the sparkline grid cell. */",
       "type": { "returnType": "HTMLElement", "optional": true }
+    },
+    "xOffset": {
+      "description": "/** The horizontal distance in pixels between the cursor and the top left corner of the tooltip.\n * Default: `10` */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "yOffset": {
+      "description": "/** The vertical distance in pixels between the cursor and the top left corner of the tooltip.\n * Default: `0` */",
+      "type": { "returnType": "number", "optional": true }
     },
     "renderer": {
       "description": "/** A callback function used to create the content for the tooltips. This function should return an object or a HTML string used to render the tooltip. */",
@@ -14281,6 +14438,39 @@
     "strokeWidth": {
       "description": "/** The thickness in pixels for the stroke of the markers, columns or bars when hovered over.\n * Default: `1` */",
       "type": { "returnType": "number", "optional": true }
+    }
+  },
+  "SparklineCrosshairsOptions": {
+    "xLine": {
+      "type": { "returnType": "CrosshairLineOptions", "optional": true }
+    },
+    "yLine": {
+      "type": { "returnType": "CrosshairLineOptions", "optional": true }
+    }
+  },
+  "CrosshairLineOptions": {
+    "enabled": {
+      "description": "/** Set to true to show crosshair line.\n * Default: false */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "stroke": {
+      "description": "/** The CSS colour value for the crosshair line. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "strokeWidth": {
+      "description": "/** The thickness in pixels for the crosshair line. */",
+      "type": { "returnType": "number", "optional": true }
+    },
+    "lineDash": {
+      "description": "/** Defines how the crosshair stroke is rendered. This can be one of the lineDash style options or an array specifying the length in pixels of alternating dashes and gaps.\n * For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels.\n * The default is `solid` which is equivalent to an empty array, this renders a solid stroke with no gaps. */",
+      "type": {
+        "returnType": "'dash' | 'dashDot' | 'dashDotDot' | 'dot' | 'longDash' | 'longDashDot' | 'longDashDotDot' | 'shortDash' | 'shortDashDot' | 'shortDashDotDot' | 'shortDot' | 'solid' | string | number[]",
+        "optional": true
+      }
+    },
+    "lineCap": {
+      "description": "/** The shape used to draw the end points of the crosshair line.\n * The options include `butt` (the ends of the line are squared off at the endpoints), `round` (the ends of the line are rounded) and `square` (the ends of the line are squared off by adding a box with width equal to the line's strokeWidth and height equal to half the line's strokeWidth).\n * Default: `butt` */",
+      "type": { "returnType": "'round'| 'square' | 'butt'", "optional": true }
     }
   },
   "SparklineColumnFormatter": {},
@@ -15150,37 +15340,9 @@
         "optional": false
       }
     },
-    "setLeft": {
-      "type": {
-        "arguments": { "left": "string" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "setWidth": {
-      "type": {
-        "arguments": { "width": "string" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
     "setAriaColIndex": {
       "type": {
         "arguments": { "index": "number" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "setHeight": {
-      "type": {
-        "arguments": { "height": "string" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "setZIndex": {
-      "type": {
-        "arguments": { "zIndex": "string" },
         "returnType": "void",
         "optional": false
       }
@@ -15209,20 +15371,6 @@
     "setTitle": {
       "type": {
         "arguments": { "title": "string | undefined" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "setUnselectable": {
-      "type": {
-        "arguments": { "value": "'on' | null" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "setTransition": {
-      "type": {
-        "arguments": { "value": "string | undefined" },
         "returnType": "void",
         "optional": false
       }
@@ -15307,9 +15455,9 @@
       "description": "/** Current value of the cell */",
       "type": { "returnType": "any", "optional": false }
     },
-    "keyPress": {
-      "description": "/** Key code of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
-      "type": { "returnType": "number | null", "optional": false }
+    "key": {
+      "description": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
+      "type": { "returnType": "string | null", "optional": false }
     },
     "charPress": {
       "description": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n * shift + letter 'a' only printable characters appear here */",
@@ -15392,9 +15540,9 @@
       "description": "/** Current value of the cell */",
       "type": { "returnType": "any", "optional": false }
     },
-    "keyPress": {
-      "description": "/** Key code of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
-      "type": { "returnType": "number | null", "optional": false }
+    "key": {
+      "description": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
+      "type": { "returnType": "string | null", "optional": false }
     },
     "charPress": {
       "description": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n * shift + letter 'a' only printable characters appear here */",
@@ -15477,9 +15625,9 @@
       "description": "/** Current value of the cell */",
       "type": { "returnType": "any", "optional": false }
     },
-    "keyPress": {
-      "description": "/** Key code of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
-      "type": { "returnType": "number | null", "optional": false }
+    "key": {
+      "description": "/** Key value of key that started the edit, eg 'Enter' or 'Delete' - non-printable\n * characters appear here */",
+      "type": { "returnType": "string | null", "optional": false }
     },
     "charPress": {
       "description": "/** The string that started the edit, eg 'a' if letter 'a' was pressed, or 'A' if\n * shift + letter 'a' only printable characters appear here */",
@@ -17027,108 +17175,5 @@
     "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } }
   },
   "EXPAND_STATE": {},
-  "ToolPanelFilterItem": {},
-  "IMultiFilterDef": {
-    "display": {
-      "description": "/** Configures how the filter is shown in the Multi Filter.\n * Default: `inline` */",
-      "type": {
-        "returnType": "'inline' | 'accordion' | 'subMenu'",
-        "optional": true
-      }
-    },
-    "title": {
-      "description": "/** The title to be used when a filter is displayed inside a sub-menu or accordion. */",
-      "type": { "returnType": "string", "optional": true }
-    },
-    "filter": {
-      "description": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Set to the name of a provided filter: `set`, `number`, `text`, `date`. \n * - Set to a `IFilterComp`. */",
-      "type": { "returnType": "IFilterType", "optional": true }
-    },
-    "filterFramework": {
-      "description": "/** Provided a custom framework filter to use for this column. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "filterParams": {
-      "description": "/** Params to be passed to the filter component specified in `filter` or `filterFramework`. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "floatingFilterComponent": {
-      "description": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
-      "type": { "returnType": "IFloatingFilterType", "optional": true }
-    },
-    "floatingFilterComponentFramework": {
-      "description": "/** Floating filter framework component to use for this column. */",
-      "type": { "returnType": "any", "optional": true }
-    },
-    "floatingFilterComponentParams": {
-      "description": "/** Params to be passed to `floatingFilterComponent` or `floatingFilterComponentFramework`. */",
-      "type": { "returnType": "any", "optional": true }
-    }
-  },
-  "IMultiFilterParams": {
-    "filters": {
-      "description": "/** An array of filter definition objects. */",
-      "type": { "returnType": "IMultiFilterDef[]", "optional": true }
-    },
-    "readOnly": {
-      "description": "/** Defaults to false. If true, all UI inputs managed by this filter are for display only, and\n * the filter can only be affected by API calls. Does NOT affect child filters, they need to be\n * individually configured with `readOnly` where applicable. */",
-      "type": { "returnType": "boolean", "optional": true }
-    },
-    "column": {
-      "description": "/** The column this filter is for. */",
-      "type": { "returnType": "Column", "optional": false }
-    },
-    "colDef": {
-      "description": "/** The column definition for the column. */",
-      "type": { "returnType": "ColDef", "optional": false }
-    },
-    "rowModel": {
-      "description": "/** The row model, helpful for looking up data values if needed.\n * If the filter needs to know which rows are\n * a) in the table,\n * b) currently visible (i.e. not already filtered),\n * c) which groups,\n * d) what order - all of this can be read from the rowModel. */",
-      "type": { "returnType": "IRowModel", "optional": false }
-    },
-    "filterChangedCallback": {
-      "description": "/** A function callback to be called when the filter changes. The\n * grid will then respond by filtering the grid data. The callback\n * takes one optional parameter which, if included, will get merged\n * to the FilterChangedEvent object (useful for passing additional\n * information to anyone listening to this event, however such extra\n * attributes are not used by the grid). */",
-      "type": {
-        "arguments": { "additionalEventAttributes?": "any" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "filterModifiedCallback": {
-      "description": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
-    },
-    "valueGetter": {
-      "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
-      "type": {
-        "arguments": { "rowNode": "RowNode" },
-        "returnType": "any",
-        "optional": false
-      }
-    },
-    "doesRowPassOtherFilter": {
-      "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
-      "type": {
-        "arguments": { "rowNode": "RowNode" },
-        "returnType": "boolean",
-        "optional": false
-      }
-    },
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
-    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
-    "context": {
-      "description": "/** The context as provided on `gridOptions.context` */",
-      "type": { "returnType": "any", "optional": false }
-    }
-  },
-  "IMultiFilterModel": {
-    "filterType": {
-      "description": "/** Multi filter type. */",
-      "type": { "returnType": "'multi'", "optional": true }
-    },
-    "filterModels": {
-      "description": "/** Child filter models in the same order as the filters are specified in `filterParams`. */",
-      "type": { "returnType": "any[] | null", "optional": false }
-    }
-  }
+  "ToolPanelFilterItem": {}
 }

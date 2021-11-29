@@ -1,5 +1,5 @@
 import { AgAbstractLabel, IAgLabel } from './agAbstractLabel';
-import { setDisabled, addOrRemoveCssClass, setFixedWidth, addCssClass } from '../utils/dom';
+import { setDisabled, setFixedWidth } from '../utils/dom';
 
 export type FieldElement = HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 export abstract class AgAbstractField<TValue, TConfig extends IAgLabel = IAgLabel> extends AgAbstractLabel<TConfig> {
@@ -17,7 +17,7 @@ export abstract class AgAbstractField<TValue, TConfig extends IAgLabel = IAgLabe
         super.postConstruct();
 
         if (this.className) {
-            addCssClass(this.getGui(), this.className);
+            this.addCssClass(this.className);
         }
     }
 
@@ -66,7 +66,7 @@ export abstract class AgAbstractField<TValue, TConfig extends IAgLabel = IAgLabe
         const element = this.getGui();
 
         setDisabled(element, disabled);
-        addOrRemoveCssClass(element, 'ag-disabled', disabled);
+        element.classList.toggle('ag-disabled', disabled);
 
         this.disabled = disabled;
 

@@ -1,4 +1,4 @@
-import { Context, IRowContainerComp, RowContainerCtrl, RowContainerName, RowCtrl } from '@ag-grid-community/core';
+import { IRowContainerComp, RowContainerCtrl, RowContainerName, RowCtrl } from '@ag-grid-community/core';
 import React, { useEffect, useMemo, useRef, useState, memo, useContext } from 'react';
 import { classesList } from '../utils';
 import useReactCommentEffect from '../reactComment';
@@ -68,11 +68,11 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
 
     }, []);
 
-    const viewportStyle = useMemo( ()=> ({
+    const viewportStyle = useMemo(() => ({
         height: viewportHeight
     }), [viewportHeight]);
 
-    const containerStyle = useMemo( ()=> ({
+    const containerStyle = useMemo(() => ({
         width: containerWidth
     }), [containerWidth]);
 
@@ -81,8 +81,7 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
             className={ containerClasses }
             ref={ eContainer }
             role="rowgroup" 
-            style={ containerStyle }
-            unselectable="on">
+            style={ containerStyle }>
             {
                 rowCtrls.map(rowCtrl => <RowComp rowCtrl={ rowCtrl } pinned={ pinned } key={ rowCtrl.getInstanceId() }></RowComp>)
             }
@@ -93,7 +92,7 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
         <>
             {
                 template1 &&
-                <div className={ wrapperClasses } ref={ eWrapper } role="presentation" unselectable="on">
+                <div className={ wrapperClasses } ref={ eWrapper } role="presentation">
                     <div className={ viewportClasses } ref= { eViewport } role="presentation" style={ viewportStyle }>
                         { buildContainer() }
                     </div>

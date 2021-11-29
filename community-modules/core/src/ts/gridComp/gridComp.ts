@@ -4,7 +4,7 @@ import { Autowired, PostConstruct } from "../context/context";
 import { Component } from "../widgets/component";
 import { ISideBar } from "../interfaces/iSideBar";
 import { RefSelector } from "../widgets/componentAnnotations";
-import { addCssClass, addOrRemoveCssClass, isVisible } from "../utils/dom";
+import { isVisible } from "../utils/dom";
 import { FocusService } from "../focusService";
 import { GridCtrl, IGridComp } from "./gridCtrl";
 import { LayoutCssClasses, UpdateLayoutClassesParams } from "../styling/layoutFeature";
@@ -35,7 +35,7 @@ export class GridComp extends TabGuardComp {
             destroyGridUi:
                 () => this.destroyBean(this),
             setRtlClass:
-                (cssClass: string) => addCssClass(this.getGui(), cssClass),
+                (cssClass: string) => this.addCssClass(cssClass),
             addOrRemoveKeyboardFocusClass:
                 (addOrRemove: boolean) => this.addOrRemoveCssClass(FocusService.AG_KEYBOARD_FOCUS, addOrRemove),
             forceFocusOutOfContainer: this.forceFocusOutOfContainer.bind(this),
@@ -76,9 +76,10 @@ export class GridComp extends TabGuardComp {
     }
 
     private updateLayoutClasses(cssClass: string, params: UpdateLayoutClassesParams): void {
-        addOrRemoveCssClass(this.eRootWrapperBody, LayoutCssClasses.AUTO_HEIGHT, params.autoHeight);
-        addOrRemoveCssClass(this.eRootWrapperBody, LayoutCssClasses.NORMAL, params.normal);
-        addOrRemoveCssClass(this.eRootWrapperBody, LayoutCssClasses.PRINT, params.print);
+        const eRootWrapperBodyClassList = this.eRootWrapperBody.classList;
+        eRootWrapperBodyClassList.toggle(LayoutCssClasses.AUTO_HEIGHT, params.autoHeight);
+        eRootWrapperBodyClassList.toggle(LayoutCssClasses.NORMAL, params.normal);
+        eRootWrapperBodyClassList.toggle(LayoutCssClasses.PRINT, params.print);
 
         this.addOrRemoveCssClass(LayoutCssClasses.AUTO_HEIGHT, params.autoHeight);
         this.addOrRemoveCssClass(LayoutCssClasses.NORMAL, params.normal);

@@ -23,6 +23,7 @@ const gridOptions = {
     },
 
     tooltipShowDelay: 0,
+    tooltipHideDelay: 2000,
 
     // set rowData to null or undefined to show loading panel by default
     rowData: null,

@@ -90,6 +90,7 @@ class DeclarativeColumnsGrid extends Component {
                 style={{height: 200, width: 500}}
                 className="ag-theme-balham">
                 <AgGridReact
+                    suppressReactUi={true}
                     onGridReady={this.onGridReady.bind(this)}
                     rowData={this.state.rowData}
                     modules={[ClientSideRowModelModule]}>

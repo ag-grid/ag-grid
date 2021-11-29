@@ -135,8 +135,8 @@ processRowGroupCallback(params: ProcessRowGroupForExportParams): string {
             alignment: {
                 indent: 1
             },
-            // note, dataType: 'string' required to ensure that numeric values aren't right-aligned
-            dataType: 'string'
+            // note, dataType: 'String' required to ensure that numeric values aren't right-aligned
+            dataType: 'String'
         },
         //...
     ]

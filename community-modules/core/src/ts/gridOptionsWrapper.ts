@@ -843,8 +843,8 @@ export class GridOptionsWrapper {
 
     public getMaxConcurrentDatasourceRequests(): number | undefined {
         const res = toNumber(this.gridOptions.maxConcurrentDatasourceRequests);
-        if (res==null) { return 2; } // 2 is the default
-        if (res<=0) { return; } // negative number, eg -1, means no max restriction
+        if (res == null) { return 2; } // 2 is the default
+        if (res <= 0) { return; } // negative number, eg -1, means no max restriction
         return res;
     }
 
@@ -1035,6 +1035,10 @@ export class GridOptionsWrapper {
 
     public isReactUi() {
         return isTrue(this.gridOptions.reactUi);
+    }
+
+    public isSuppressReactUi() {
+        return isTrue(this.gridOptions.suppressReactUi);
     }
 
     public isEnableRangeSelection(): boolean {
@@ -1241,19 +1245,19 @@ export class GridOptionsWrapper {
         return this.gridOptions.getRowNodeId;
     }
 
-    public getNavigateToNextHeaderFunc(): ((params: NavigateToNextHeaderParams) => HeaderPosition) | undefined {
+    public getNavigateToNextHeaderFunc(): ((params: NavigateToNextHeaderParams) => (HeaderPosition | null)) | undefined {
         return this.gridOptions.navigateToNextHeader;
     }
 
-    public getTabToNextHeaderFunc(): ((params: TabToNextHeaderParams) => HeaderPosition) | undefined {
+    public getTabToNextHeaderFunc(): ((params: TabToNextHeaderParams) => (HeaderPosition | null)) | undefined {
         return this.gridOptions.tabToNextHeader;
     }
 
-    public getNavigateToNextCellFunc(): ((params: NavigateToNextCellParams) => CellPosition) | undefined {
+    public getNavigateToNextCellFunc(): ((params: NavigateToNextCellParams) => (CellPosition | null)) | undefined {
         return this.gridOptions.navigateToNextCell;
     }
 
-    public getTabToNextCellFunc(): ((params: TabToNextCellParams) => CellPosition) | undefined {
+    public getTabToNextCellFunc(): ((params: TabToNextCellParams) => (CellPosition | null)) | undefined {
         return this.gridOptions.tabToNextCell;
     }
 
@@ -1445,15 +1449,17 @@ export class GridOptionsWrapper {
         return false;
     }
 
-    public getTooltipShowDelay(): number | null {
-        const { tooltipShowDelay } = this.gridOptions;
+    public getTooltipDelay(type: 'show' | 'hide'): number | null {
+        const { tooltipShowDelay, tooltipHideDelay } = this.gridOptions;
+        const delay = type === 'show' ? tooltipShowDelay : tooltipHideDelay;
+        const capitalisedType = capitalise(type);
 
-        if (exists(tooltipShowDelay)) {
-            if (tooltipShowDelay < 0) {
-                console.warn('ag-grid: tooltipShowDelay should not be lower than 0');
+        if (exists(delay)) {
+            if (delay < 0) {
+                doOnce(() => console.warn(`ag-grid: tooltip${capitalisedType}Delay should not be lower than 0`), `tooltip${capitalisedType}DelayWarn`);
             }
 
-            return Math.max(200, tooltipShowDelay);
+            return Math.max(200, delay);
         }
 
         return null;
@@ -1687,6 +1693,12 @@ export class GridOptionsWrapper {
         if (options.maxColWidth) {
             console.warn('AG Grid: since v26.1, the grid property `maxColWidth` is deprecated and should be set via `defaultColDef.maxWidth`.');
         }
+        if (options.reactUi) {
+            console.warn('AG Grid: since v27.0, React UI is on by default, so no need for reactUi=true. To turn it off, set suppressReactUi=true.');
+        }
+        if (options.suppressReactUi) {
+            console.warn('AG Grid: The legacy React rendering engine is deprecated and will be removed in the next major version of the grid.');
+        }
     }
 
     private checkForViolations() {
@@ -1758,7 +1770,7 @@ export class GridOptionsWrapper {
     }
 
     public getRowHeightForNode(rowNode: RowNode, allowEstimate = false, defaultRowHeight?: number): { height: number; estimated: boolean; } {
-        if (defaultRowHeight==null) {
+        if (defaultRowHeight == null) {
             defaultRowHeight = this.getDefaultRowHeight();
         }
 
@@ -1788,10 +1800,10 @@ export class GridOptionsWrapper {
 
         if (rowNode.detail && this.isMasterDetail()) {
             // if autoHeight, we want the height to grow to the new height starting at 1, as otherwise a flicker would happen,
-            // as the detail goes to the default (eg 200px) and then immediately shrink up/down to the new measured height 
+            // as the detail goes to the default (eg 200px) and then immediately shrink up/down to the new measured height
             // (due to auto height) which looks bad, especially if doing row animation.
-            if (this.isDetailRowAutoHeight()) { 
-                return {height: 1, estimated: false}; 
+            if (this.isDetailRowAutoHeight()) {
+                return { height: 1, estimated: false };
             }
 
             if (this.isNumeric(this.gridOptions.detailRowHeight)) {
@@ -1826,7 +1838,7 @@ export class GridOptionsWrapper {
     // Material data table has strict guidelines about whitespace, and these values are different than the ones
     // ag-grid uses by default. We override the default ones for the sake of making it better out of the box
     private getFromTheme(defaultValue: number, sassVariableName: SASS_PROPERTIES): number;
-    private getFromTheme(defaultValue: null, sassVariableName: SASS_PROPERTIES): number |  null | undefined;
+    private getFromTheme(defaultValue: null, sassVariableName: SASS_PROPERTIES): number | null | undefined;
     private getFromTheme(defaultValue: any, sassVariableName: SASS_PROPERTIES): any {
         const { theme } = this.environment.getTheme();
         if (theme && theme.indexOf('ag-theme') === 0) {

@@ -4,7 +4,6 @@ import { RowNode } from "../entities/rowNode";
 import { Beans } from "./beans";
 import { Column } from "../entities/column";
 import { createIconNoSpan } from "../utils/icon";
-import { isBrowserIE } from "../utils/browser";
 
 export class DndSourceComp extends Component {
 
@@ -41,23 +40,16 @@ export class DndSourceComp extends Component {
     private onDragStart(dragEvent: DragEvent): void {
 
         const providedOnRowDrag = this.column.getColDef().dndSourceOnRowDrag;
-        const isIE = isBrowserIE();
 
-        if (!isIE) {
-            dragEvent.dataTransfer!.setDragImage(this.eCell, 0, 0);
-        }
+        dragEvent.dataTransfer!.setDragImage(this.eCell, 0, 0);
 
         // default behaviour is to convert data to json and set into drag component
         const defaultOnRowDrag = () => {
             try {
                 const jsonData = JSON.stringify(this.rowNode.data);
 
-                if (isIE) {
-                    dragEvent.dataTransfer!.setData('text', jsonData);
-                } else {
-                    dragEvent.dataTransfer!.setData('application/json', jsonData);
-                    dragEvent.dataTransfer!.setData('text/plain', jsonData);
-                }
+                dragEvent.dataTransfer!.setData('application/json', jsonData);
+                dragEvent.dataTransfer!.setData('text/plain', jsonData);
 
             } catch (e) {
                 // if we cannot convert the data to json, then we do not set the type

@@ -1,14 +1,14 @@
 [[only-vue]]
 |
 |```js
-|const KEY_LEFT = 37;
-|const KEY_UP = 38;
-|const KEY_RIGHT = 39;
-|const KEY_DOWN = 40;
-|const KEY_PAGE_UP = 33;
-|const KEY_PAGE_DOWN = 34;
-|const KEY_PAGE_HOME = 36;
-|const KEY_PAGE_END = 35;
+|const KEY_LEFT = 'ArrowLeft';
+|const KEY_UP = 'ArrowUp';
+|const KEY_RIGHT = 'ArrowRight';
+|const KEY_DOWN = 'ArrowDown';
+|const KEY_PAGE_UP = 'PageUp';
+|const KEY_PAGE_DOWN = 'PageDown';
+|const KEY_PAGE_HOME = 'Home';
+|const KEY_PAGE_END = 'End';
 |
 |const MyCellEditor = {
 |    template: `<input v-model="value" @keydown="onKeyDown" /lo>`,
@@ -24,16 +24,16 @@
 |        },
 |        
 |        onKeyDown(event) {
-|           const keyCode = event.keyCode;
+|           const key = event.key;
 |
 |           const isNavigationKey = keyCode === KEY_LEFT ||
-|               keyCode === KEY_RIGHT ||
-|               keyCode === KEY_UP ||
-|               keyCode === KEY_DOWN ||
-|               keyCode === KEY_PAGE_DOWN ||
-|               keyCode === KEY_PAGE_UP ||
-|               keyCode === KEY_PAGE_HOME ||
-|               keyCode === KEY_PAGE_END;
+|               key === KEY_RIGHT ||
+|               key === KEY_UP ||
+|               key === KEY_DOWN ||
+|               key === KEY_PAGE_DOWN ||
+|               key === KEY_PAGE_UP ||
+|               key === KEY_PAGE_HOME ||
+|               key === KEY_PAGE_END;
 |
 |               if (isNavigationKey) {
 |                   // this stops the grid from receiving the event and executing keyboard navigation

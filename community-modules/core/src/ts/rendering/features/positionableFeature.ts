@@ -1,8 +1,7 @@
 import { BeanStub } from "../../context/beanStub";
 import { Autowired } from "../../context/context";
 import { DragListenerParams, DragService } from "../../dragAndDrop/dragService";
-import { addCssClass, containsClass, getAbsoluteHeight, getAbsoluteWidth, removeCssClass, setFixedHeight, setFixedWidth } from "../../utils/dom";
-import { assign } from "../../utils/object";
+import { getAbsoluteHeight, getAbsoluteWidth, setFixedHeight, setFixedWidth } from "../../utils/dom";
 import { PopupService } from "../../widgets/popupService";
 
 const RESIZE_CONTAINER_STYLE = 'ag-resizer-wrapper';
@@ -102,7 +101,7 @@ export class PositionableFeature extends BeanStub {
         config?: PositionableOptions
     ) {
         super();
-        this.config = assign({}, { popup: false }, config);
+        this.config = Object.assign({}, { popup: false }, config);
     }
 
     public center() {
@@ -536,8 +535,8 @@ export class PositionableFeature extends BeanStub {
             isLeft: !!side.match(/left/i),
         };
 
-        addCssClass(this.element, 'ag-resizing');
-        addCssClass(this.resizerMap![side].element, 'ag-active');
+        this.element.classList.add('ag-resizing');
+        this.resizerMap![side].element.classList.add('ag-active');
 
         const { popup, forcePopupParentAsOffsetParent } = this.config;
 
@@ -554,7 +553,7 @@ export class PositionableFeature extends BeanStub {
         const parent = element.parentElement;
         if (!parent) { return null; }
 
-        return Array.prototype.slice.call(parent.children).filter((el: HTMLElement) => !containsClass(el, 'ag-hidden'));
+        return Array.prototype.slice.call(parent.children).filter((el: HTMLElement) => !el.classList.contains('ag-hidden'));
     }
 
     private getMinSizeOfSiblings(): { height: number, width: number } {
@@ -707,8 +706,8 @@ export class PositionableFeature extends BeanStub {
             columnApi: this.gridOptionsWrapper.getColumnApi()
         };
 
-        removeCssClass(this.element, 'ag-resizing');
-        removeCssClass(this.resizerMap![side].element, 'ag-active');
+        this.element.classList.remove('ag-resizing');
+        this.resizerMap![side].element.classList.remove('ag-active');
 
         this.dispatchEvent(params);
     }
@@ -734,7 +733,7 @@ export class PositionableFeature extends BeanStub {
 
         this.isMoving = true;
 
-        addCssClass(this.element, 'ag-moving');
+        this.element.classList.add('ag-moving');
         this.updateDragStartPosition(e.clientX, e.clientY);
     }
 
@@ -762,7 +761,7 @@ export class PositionableFeature extends BeanStub {
     private onMoveEnd() {
         this.isMoving = false;
         this.boundaryEl = null;
-        removeCssClass(this.element, 'ag-moving');
+        this.element.classList.remove('ag-moving');
     }
 
     private setOffsetParent() {

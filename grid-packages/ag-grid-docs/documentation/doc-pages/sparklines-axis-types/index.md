@@ -151,4 +151,4 @@ The example below demonstrates the Time Axis used in an Area Sparkline. Note the
 
 ## Next Up
 
-Continue to the next section to learn about: [Sparkling Tooltips](/sparklines-tooltips/).
+Continue to the next section to learn about: [Sparkline Tooltips](/sparklines-tooltips/).

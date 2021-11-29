@@ -7,7 +7,7 @@ import { HeaderRowContainerComp } from './rowContainer/headerRowContainerComp';
 export class GridHeaderComp extends Component {
 
     private static TEMPLATE = /* html */
-        `<div class="ag-header" role="presentation" unselectable="on"/>`;
+        `<div class="ag-header" role="presentation"/>`;
 
     constructor() {
         super(GridHeaderComp.TEMPLATE);

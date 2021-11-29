@@ -1,7 +1,4 @@
-import {
-    GridBodyCtrl,
-    IGridBodyComp, RowContainerName
-} from 'ag-grid-community';
+import { GridBodyCtrl, IGridBodyComp, RowContainerName } from 'ag-grid-community';
 import React, { memo, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { BeansContext } from './beansContext';
 import GridHeaderComp from './header/gridHeaderComp';
@@ -13,7 +10,6 @@ interface SectionProperties {
     section: React.RefObject<HTMLDivElement>;
     className: string;
     style?: React.CSSProperties;
-    unselectable?: 'on';
 }
 
 const GridBodyComp = () => {
@@ -129,18 +125,17 @@ const GridBodyComp = () => {
         section, 
         children,
         className, 
-        style,
-        unselectable
+        style
     }: SectionProperties & { children: RowContainerName[] } ) => (
-        <div ref={ section } className={ className } role="presentation" style={ style } unselectable={unselectable}>
+        <div ref={ section } className={ className } role="presentation" style={ style }>
             { children.map(createRowContainer) }
         </div>
     );
 
     return (
-        <div ref={ eRoot } className={ rootClasses } role="grid" unselectable="on" aria-colcount={ ariaColCount } aria-rowcount={ ariaRowCount }>
+        <div ref={ eRoot } className={ rootClasses } role="grid" aria-colcount={ ariaColCount } aria-rowcount={ ariaRowCount }>
             <GridHeaderComp/>
-            { createSection({ section: eTop, className: topClasses, style: topStyle, unselectable: 'on', children: [
+            { createSection({ section: eTop, className: topClasses, style: topStyle, children: [
                 RowContainerName.TOP_LEFT,
                 RowContainerName.TOP_CENTER,
                 RowContainerName.TOP_RIGHT,
@@ -152,7 +147,7 @@ const GridBodyComp = () => {
                 RowContainerName.RIGHT,
                 RowContainerName.FULL_WIDTH,
             ]}) }
-            { createSection({ section: eBottom, className: bottomClasses, style: bottomStyle, unselectable: 'on', children: [
+            { createSection({ section: eBottom, className: bottomClasses, style: bottomStyle, children: [
                 RowContainerName.BOTTOM_LEFT,
                 RowContainerName.BOTTOM_CENTER,
                 RowContainerName.BOTTOM_RIGHT,

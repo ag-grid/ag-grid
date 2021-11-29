@@ -69,7 +69,6 @@ const jsxShowValue = (
     parentId: string,
     cellRendererRef: MutableRefObject<any>,
     showTools: boolean,
-    unSelectable: 'on' | undefined,
     reactCellRendererStateless: boolean,
     toolsRefCallback: (ref:any) => void,
     toolsValueRefCallback: (ref:any) => void
@@ -93,7 +92,7 @@ const jsxShowValue = (
         <>
             { showTools ?
                 <div className="ag-cell-wrapper" role="presentation" ref={ toolsRefCallback }>
-                    <span role="presentation" id={`cell-${parentId}`} className="ag-cell-value" unselectable={ unSelectable } ref={ toolsValueRefCallback }>
+                    <span role="presentation" id={`cell-${parentId}`} className="ag-cell-value" ref={ toolsValueRefCallback }>
                         { bodyJsxFunc() }
                     </span>
                 </div> :
@@ -129,17 +128,12 @@ const CellComp = (props: {
 
     const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
     const [userStyles, setUserStyles] = useState<any>();
-    const [unselectable, setUnselectable] = useState<'on' | undefined>('on');
-    const [left, setLeft] = useState<string | undefined>();
-    const [width, setWidth] = useState<string | undefined>();
-    const [height, setHeight] = useState<string | undefined>();
-    const [transition, setTransition] = useState<string | undefined>();
+
     const [tabIndex, setTabIndex] = useState<number>();
     const [ariaSelected, setAriaSelected] = useState<boolean | undefined>();
     const [ariaExpanded, setAriaExpanded] = useState<boolean | undefined>();
     const [ariaColIndex, setAriaColIndex] = useState<number>();
     const [ariaDescribedBy, setAriaDescribedBy] = useState<string | undefined>();
-    const [zIndex, setZIndex] = useState<string>();
     const [role, setRole] = useState<string>();
     const [colId, setColId] = useState<string>();
     const [title, setTitle] = useState<string | undefined>();
@@ -266,17 +260,11 @@ const CellComp = (props: {
             setAriaSelected: value => setAriaSelected(value),
             setAriaExpanded: value => setAriaExpanded(value),
             getFocusableElement: () => eGui.current!,
-            setLeft: left => setLeft(left),
-            setWidth: width => setWidth(width),
             setAriaColIndex: index => setAriaColIndex(index),
-            setHeight: height => setHeight(height),
-            setZIndex: zIndex => setZIndex(zIndex),
             setTabIndex: tabIndex => setTabIndex(tabIndex),
             setRole: role => setRole(role),
             setColId: colId => setColId(colId),
             setTitle: title => setTitle(title),
-            setUnselectable: value => setUnselectable(value || undefined),
-            setTransition: transition => setTransition(transition),
             setIncludeSelection: include => setIncludeSelection(include),
             setIncludeRowDrag: include => setIncludeRowDrag(include),
             setIncludeDndSource: include => setIncludeDndSource(include),
@@ -331,28 +319,16 @@ const CellComp = (props: {
         return res;
     }, [cssClasses, showTools]);
 
-    const cellStyles = useMemo( ()=> {
-        const res: React.CSSProperties = {
-            left,
-            width,
-            height,
-            transition,
-            zIndex: (zIndex as any)
-        };
-        _.assign(res, userStyles);
-        return res;
-    }, [left, width, height, transition, zIndex, userStyles]);
-
     const cellInstanceId = useMemo( ()=> cellCtrl.getInstanceId(), []);
 
     return (
-        <div ref={ eGui } className={ className } style={ cellStyles } tabIndex={ tabIndex }
+        <div ref={ eGui } className={ className } style={ userStyles } tabIndex={ tabIndex }
              aria-selected={ ariaSelected } aria-colindex={ ariaColIndex } role={ role }
              aria-expanded={ ariaExpanded } col-id={ colId } title={ title } 
-             unselectable={ unselectable } aria-describedby={ ariaDescribedBy }>
+             aria-describedby={ ariaDescribedBy }>
 
             { renderDetails != null && jsxShowValue(renderDetails, cellInstanceId, cellRendererRef, 
-                                                showTools, unselectable, reactCellRendererStateless,
+                                                showTools, reactCellRendererStateless,
                                                 toolsRefCallback, toolsValueRefCallback) }
             { editDetails != null && jsxEditValue(editDetails, setInlineCellEditorRef, setPopupCellEditorRef, eGui.current!, cellCtrl, jsEditorComp) }
 

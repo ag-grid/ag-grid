@@ -1,6 +1,5 @@
 import {
     IClientSideRowModel,
-    ColDef,
     Column,
     Constants,
     ISetFilterParams,
@@ -32,7 +31,6 @@ export class SetValueModel implements IEventEmitter {
     private readonly formatter: TextFormatter;
     private readonly clientSideValuesExtractor: ClientSideValuesExtractor;
     private readonly column: Column;
-    private readonly colDef: ColDef;
     private readonly doesRowPassOtherFilters: (node: RowNode) => boolean;
     private readonly suppressSorting: boolean;
     private readonly comparator: (a: any, b: any) => number;
@@ -84,7 +82,6 @@ export class SetValueModel implements IEventEmitter {
         } = filterParams;
 
         this.column = column;
-        this.colDef = colDef;
         this.formatter = textFormatter || TextFilter.DEFAULT_FORMATTER;
         this.doesRowPassOtherFilters = doesRowPassOtherFilter;
         this.suppressSorting = suppressSorting || false;
@@ -251,7 +248,7 @@ export class SetValueModel implements IEventEmitter {
         }
 
         // ensure the blank value always appears last
-        return _.filter(values, v => v != null)!.sort(this.comparator).concat(null);
+        return values.filter(v => v != null)!.sort(this.comparator).concat(null);
     }
 
     private getValuesFromRows(removeUnavailableValues = false): (string | null)[] {
@@ -345,7 +342,7 @@ export class SetValueModel implements IEventEmitter {
             // ensure everything that matches the mini filter is selected
             if (clearExistingSelection) { this.selectedValues.clear(); }
 
-            _.forEach(this.displayedValues, value => this.selectedValues.add(value));
+            this.displayedValues.forEach(value => this.selectedValues.add(value));
         }
     }
 
@@ -355,7 +352,7 @@ export class SetValueModel implements IEventEmitter {
             this.selectedValues.clear();
         } else {
             // ensure everything that matches the mini filter is deselected
-            _.forEach(this.displayedValues, value => this.selectedValues.delete(value));
+            this.displayedValues.forEach(value => this.selectedValues.delete(value));
         }
     }
 
@@ -377,11 +374,11 @@ export class SetValueModel implements IEventEmitter {
     }
 
     public isEverythingVisibleSelected(): boolean {
-        return _.filter(this.displayedValues, it => this.isValueSelected(it))!.length === this.displayedValues.length;
+        return this.displayedValues.filter(it => this.isValueSelected(it))!.length === this.displayedValues.length;
     }
 
     public isNothingVisibleSelected(): boolean {
-        return _.filter(this.displayedValues, it => this.isValueSelected(it))!.length === 0;
+        return this.displayedValues.filter(it => this.isValueSelected(it))!.length === 0;
     }
 
     public getModel(): (string | null)[] | null {
@@ -398,7 +395,7 @@ export class SetValueModel implements IEventEmitter {
 
                 const allValues = this.uniqueValues(values || []);
 
-                _.forEach(model, value => {
+                model.forEach(value => {
                     const allValue = allValues[this.uniqueKey(value)];
                     if (allValue !== undefined) {
                         this.selectedValues.add(allValue);
@@ -412,7 +409,7 @@ export class SetValueModel implements IEventEmitter {
         // Honour case-sensitivity setting for matching purposes here, preserving original casing
         // in the selectedValues output.
         const uniqueValues: {[key: string]: string | null} = {};
-        _.forEach(values || [], value => {
+        (values || []).forEach(value => {
             const key = this.uniqueKey(value);
             if (uniqueValues[key] === undefined) {
                 uniqueValues[key] = value;

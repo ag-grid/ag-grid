@@ -5,9 +5,9 @@ class MoodEditor {
     }
 
     onKeyDown(event) {
-        const key = event.which || event.keyCode;
-        if (key === 37 ||  // left
-            key === 39) {  // right
+        const key = event.key;
+        if (key === 'ArrowLeft' ||  // left
+            key === 'ArrowRight') {  // right
             this.toggleMood();
             event.stopPropagation();
         }

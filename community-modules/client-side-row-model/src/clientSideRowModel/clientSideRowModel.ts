@@ -405,7 +405,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         // return true if we are only doing update transactions
         if (params.rowNodeTransactions == null) { return false; }
 
-        const transWithAddsOrDeletes = _.filter(params.rowNodeTransactions, tx =>
+        const transWithAddsOrDeletes = params.rowNodeTransactions.filter(tx =>
             (tx.add != null && tx.add.length > 0) || (tx.remove != null && tx.remove.length > 0)
         );
 

@@ -108,8 +108,8 @@ export interface StartEditingCellParams {
     colKey: string | Column;
     /** Set to `'top'` or `'bottom'` to start editing a pinned row */
     rowPinned?: string;
-    /** The keyPress to pass to the cell editor */
-    keyPress?: number;
+    /** The key to pass to the cell editor */
+    key?: string;
     /** The charPress to pass to the cell editor */
     charPress?: string;
 }
@@ -486,13 +486,13 @@ export class GridApi {
         return this.getPinnedBottomRow(index);
     }
 
-    /** Set the top pinned rows. */
-    public setPinnedTopRowData(rows: any[]): void {
+    /** Set the top pinned rows. Call with no rows / undefined to clear top pinned rows. */
+    public setPinnedTopRowData(rows?: any[]): void {
         this.pinnedRowModel.setPinnedTopRowData(rows);
     }
 
-    /** Set the bottom pinned rows. */
-    public setPinnedBottomRowData(rows: any[]): void {
+    /** Set the bottom pinned rows. Call with no rows / undefined to clear bottom pinned rows. */
+    public setPinnedBottomRowData(rows?: any[]): void {
         this.pinnedRowModel.setPinnedBottomRowData(rows);
     }
 
@@ -992,7 +992,8 @@ export class GridApi {
     /**
      * Returns the filter component instance for a column.
      * `key` can be a string field name or a ColDef object (matches on object reference, useful if field names are not unique).
-     *  */
+     * If your filter is created asynchronously, `getFilterInstance` will return `null` so you will need to use the `callback` to access the filter instance instead. 
+     */
     public getFilterInstance(key: string | Column, callback?: (filter: IFilter) => void): IFilter | null | undefined {
         const res = this.getFilterInstanceImpl(key, instance => {
             if (!callback) { return; }
@@ -1225,19 +1226,19 @@ export class GridApi {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_DOES_EXTERNAL_FILTER_PASS, doesExternalFilterPassFunc);
     }
 
-    public setNavigateToNextCell(navigateToNextCellFunc: (params: NavigateToNextCellParams) => CellPosition): void {
+    public setNavigateToNextCell(navigateToNextCellFunc: (params: NavigateToNextCellParams) => (CellPosition | null)): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_NAVIGATE_TO_NEXT_CELL, navigateToNextCellFunc);
     }
 
-    public setTabToNextCell(tabToNextCellFunc: (params: TabToNextCellParams) => CellPosition): void {
+    public setTabToNextCell(tabToNextCellFunc: (params: TabToNextCellParams) => (CellPosition | null)): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_TAB_TO_NEXT_CELL, tabToNextCellFunc);
     }
 
-    public setTabToNextHeader(tabToNextHeaderFunc: (params: TabToNextHeaderParams) => HeaderPosition): void {
+    public setTabToNextHeader(tabToNextHeaderFunc: (params: TabToNextHeaderParams) => (HeaderPosition | null)): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_TAB_TO_NEXT_HEADER, tabToNextHeaderFunc);
     }
 
-    public setNavigateToNextHeader(navigateToNextHeaderFunc: (params: NavigateToNextHeaderParams) => HeaderPosition): void {
+    public setNavigateToNextHeader(navigateToNextHeaderFunc: (params: NavigateToNextHeaderParams) => (HeaderPosition | null)): void {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_NAVIGATE_TO_NEXT_HEADER, navigateToNextHeaderFunc);
     }
 
@@ -1775,7 +1776,7 @@ export class GridApi {
 
         const cell = this.navigationService.getCellByPosition(cellPosition);
         if (!cell) { return; }
-        cell.startRowOrCellEdit(params.keyPress, params.charPress);
+        cell.startRowOrCellEdit(params.key, params.charPress);
     }
 
     /** Add an aggregation function with the specified key. */
@@ -1974,7 +1975,7 @@ export class GridApi {
      * If you pass no parameters, then the top level cache is purged.
      * To purge a child cache, pass in the string of keys to get to the child cache.
      */
-    public refreshServerSideStore(params: RefreshStoreParams): void {
+    public refreshServerSideStore(params?: RefreshStoreParams): void {
         if (this.serverSideRowModel) {
             this.serverSideRowModel.refreshStore(params);
         } else {

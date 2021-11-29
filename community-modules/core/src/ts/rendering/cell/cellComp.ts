@@ -14,7 +14,6 @@ import { setAriaColIndex, setAriaDescribedBy, setAriaSelected, setAriaExpanded, 
 import { escapeString } from "../../utils/string";
 import { missing } from "../../utils/generic";
 import { addStylesToElement, clearElement, removeFromParent } from "../../utils/dom";
-import { isBrowserIE } from "../../utils/browser";
 import { CellCtrl, ICellComp } from "./cellCtrl";
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
 import { _ } from "../../utils";
@@ -103,17 +102,11 @@ export class CellComp extends Component implements TooltipParentComp {
             setAriaSelected: selected => setAriaSelected(eGui, selected),
             setAriaExpanded: selected => setAriaExpanded(eGui, selected),
             getFocusableElement: () => this.getFocusableElement(),
-            setLeft: left => style.left = left,
-            setWidth: width => style.width = width,
             setAriaColIndex: index => setAriaColIndex(this.getGui(), index),
-            setHeight: height => style.height = height,
-            setZIndex: zIndex => style.zIndex = zIndex,
             setTabIndex: tabIndex => setAttribute('tabindex', tabIndex.toString()),
             setRole: role => setAriaRole(eGui, role),
             setColId: colId => setAttribute('col-id', colId),
             setTitle: title => setAttribute('title', title),
-            setUnselectable: value => setAttribute('unselectable', value, this.eCellValue),
-            setTransition: transition => style.transition = transition ? transition : '',
 
             setIncludeSelection: include => this.includeSelection = include,
             setIncludeRowDrag: include => this.includeRowDrag = include,
@@ -513,7 +506,7 @@ export class CellComp extends Component implements TooltipParentComp {
             keepWithinBounds: true
         };
 
-        const positionCallback = position === 'under' ?
+        const positionCallback = positionToUse === 'under' ?
             popupService.positionPopupUnderComponent.bind(popupService, positionParams)
             : popupService.positionPopupOverComponent.bind(popupService, positionParams);
 
@@ -562,7 +555,7 @@ export class CellComp extends Component implements TooltipParentComp {
 
         // if focus is inside the cell, we move focus to the cell itself
         // before removing it's contents, otherwise errors could be thrown.
-        if (eGui.contains(document.activeElement) && !isBrowserIE()) {
+        if (eGui.contains(document.activeElement)) {
             eGui.focus({
                 preventScroll: true
             });

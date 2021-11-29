@@ -5,7 +5,7 @@ import { ColumnModel } from "./columnModel";
 import { ColumnFactory } from "./columnFactory";
 import { Constants } from "../constants/constants";
 import { BeanStub } from "../context/beanStub";
-import { mergeDeep, assign } from "../utils/object";
+import { mergeDeep } from "../utils/object";
 import { missing } from "../utils/generic";
 
 @Bean('autoGroupColService')
@@ -102,14 +102,14 @@ export class AutoGroupColService extends BeanStub {
 
         if (rowGroupCol) {
             const colDef = rowGroupCol.getColDef();
-            assign(res, {
+            Object.assign(res, {
                 // cellRendererParams.groupKey: colDefToCopy.field;
                 headerName: this.columnModel.getDisplayNameForColumn(rowGroupCol, 'header'),
                 headerValueGetter: colDef.headerValueGetter
             });
 
             if (colDef.cellRenderer) {
-                assign(res, {
+                Object.assign(res, {
                     cellRendererParams: {
                         innerRenderer: colDef.cellRenderer,
                         innerRendererParams: colDef.cellRendererParams

@@ -29,6 +29,7 @@ const App = () => {
                 }}
                 onGridReady={onGridReady}
                 rowData={rowData}
+                suppressReactUi={true}
                 modules={[ClientSideRowModelModule]}>
                 <AgGridColumn field="make"></AgGridColumn>
                 <AgGridColumn field="model"></AgGridColumn>

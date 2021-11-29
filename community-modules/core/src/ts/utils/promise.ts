@@ -1,5 +1,3 @@
-import { forEach } from './array';
-
 export type ResolveAndRejectCallback<T> = (resolve: (value: T | null) => void, reject: (params: any) => void) => void;
 
 export enum AgPromiseStatus {
@@ -16,7 +14,7 @@ export class AgPromise<T> {
             let remainingToResolve = promises.length;
             const combinedValues = new Array<T | null>(remainingToResolve);
 
-            forEach(promises, (promise, index) => {
+            promises.forEach((promise, index) => {
                 promise.then(value => {
                     combinedValues[index] = value;
                     remainingToResolve--;
@@ -55,7 +53,7 @@ export class AgPromise<T> {
         this.status = AgPromiseStatus.RESOLVED;
         this.resolution = value;
 
-        forEach(this.waiters, waiter => waiter(value));
+        this.waiters.forEach(waiter => waiter(value));
     }
 
     private onReject(params: any): void {

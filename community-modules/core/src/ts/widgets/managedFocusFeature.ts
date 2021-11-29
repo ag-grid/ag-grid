@@ -1,6 +1,5 @@
 import { PostConstruct, Autowired } from '../context/context';
 import { FocusService } from '../focusService';
-import { addCssClass } from '../utils/dom';
 import { KeyCode } from '../constants/keyCode';
 import { isStopPropagationForAgGrid, stopPropagationForAgGrid } from '../utils/event';
 import { BeanStub } from '../context/beanStub';
@@ -42,7 +41,7 @@ export class ManagedFocusFeature extends BeanStub {
 
     @PostConstruct
     protected postConstruct(): void {
-        addCssClass(this.eFocusableElement, ManagedFocusFeature.FOCUS_MANAGED_CLASS);
+        this.eFocusableElement.classList.add(ManagedFocusFeature.FOCUS_MANAGED_CLASS);
 
         this.addKeyDownListeners(this.eFocusableElement);
 
@@ -64,7 +63,7 @@ export class ManagedFocusFeature extends BeanStub {
                 return;
             }
 
-            if (e.keyCode === KeyCode.TAB) {
+            if (e.key === KeyCode.TAB) {
                 this.callbacks.onTabKeyDown!(e);
             } else if (this.callbacks.handleKeyDown) {
                 this.callbacks.handleKeyDown(e);

@@ -42,7 +42,7 @@ const GridHeaderComp = () => {
     }), [height]);
 
     return (
-        <div ref={eGui} className={className} style={style} role="presentation" unselectable="on">
+        <div ref={eGui} className={className} style={style} role="presentation">
             <HeaderRowContainerComp pinned={Constants.PINNED_LEFT}/>
             <HeaderRowContainerComp pinned={null}/>
             <HeaderRowContainerComp pinned={Constants.PINNED_RIGHT}/>

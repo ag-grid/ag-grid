@@ -28,7 +28,7 @@ const MyReactEditor = memo(forwardRef((props, ref) => {
  
     const onChangeListener = useCallback( event => setValue(event.target.value), []);
     const onKeyDownListener = useCallback( event => {
-        if (event.keyCode==13) {
+        if (event.key === 'Enter') {
             props.stopEditing();
         }
     }, []);
@@ -52,7 +52,7 @@ class MyJavaScriptEditor {
         this.gui.className = 'my-editor'
         this.gui.value = props.value;
         this.gui.addEventListener('keydown', event => {
-            if (event.keyCode==13) {
+            if (event.key === 'Enter') {
                 props.stopEditing();
             }
         });
@@ -129,11 +129,6 @@ class MyJavaScriptEditor {
 
     return (
         <AgGridReact 
-
-            // turn on AG Grid React UI
-            reactUi="true"
-
-            // all other properties as normal...
             className="ag-theme-alpine"
             animateRows="true"
             modules={modules}

@@ -56,7 +56,7 @@ export const isEventSupported = (() => {
 })();
 
 export function getCtrlForEvent<T>(gridOptionsWrapper: GridOptionsWrapper, event: Event, type: string): T | null {
-    let sourceElement = getTarget(event);
+    let sourceElement = event.target as HTMLElement;
 
     while (sourceElement) {
         const renderedComp = gridOptionsWrapper.getDomData(sourceElement, type);
@@ -81,22 +81,6 @@ export function addChangeListener(element: HTMLElement, listener: EventListener)
     element.addEventListener('changed', listener);
     element.addEventListener('paste', listener);
     element.addEventListener('input', listener);
-    // IE doesn't fire changed for special keys (eg delete, backspace), so need to
-    // listen for this further ones
-    element.addEventListener('keydown', listener);
-    element.addEventListener('keyup', listener);
-}
-
-/**
- * srcElement is only available in IE. In all other browsers it is target
- * http://stackoverflow.com/questions/5301643/how-can-i-make-event-srcelement-work-in-firefox-and-what-does-it-mean
- * @param {Event} event
- * @returns {Element}
- */
-export function getTarget(event: Event): Element {
-    const eventNoType = event as any;
-
-    return eventNoType.target || eventNoType.srcElement;
 }
 
 export function isElementInEventPath(element: HTMLElement, event: Event): boolean {
@@ -109,7 +93,7 @@ export function isElementInEventPath(element: HTMLElement, event: Event): boolea
 
 export function createEventPath(event: Event): EventTarget[] {
     const res: EventTarget[] = [];
-    let pointer: any = getTarget(event);
+    let pointer: any = event.target;
 
     while (pointer) {
         res.push(pointer);
@@ -139,11 +123,6 @@ export function addAgGridEventPath(event: Event): void {
  */
 export function getEventPath(event: Event): EventTarget[] {
     const eventNoType = event as any;
-
-    if (eventNoType.deepPath) {
-        // IE supports deep path
-        return eventNoType.deepPath();
-    }
 
     if (eventNoType.path) {
         // Chrome supports path

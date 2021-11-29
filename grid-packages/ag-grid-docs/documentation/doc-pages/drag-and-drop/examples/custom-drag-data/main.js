@@ -52,9 +52,7 @@ function onDragOver(event) {
 
 function onDrop(event) {
     event.preventDefault();
-    var userAgent = window.navigator.userAgent;
-    var isIE = userAgent.indexOf('Trident/') >= 0;
-    var jsonData = event.dataTransfer.getData(isIE ? 'text' : 'application/json');
+    var jsonData = event.dataTransfer.getData('application/json');
 
     var eJsonRow = document.createElement('div');
     eJsonRow.classList.add('json-row');
@@ -75,17 +73,9 @@ function onRowDrag(params) {
         selected: rowNode.isSelected()
     };
     var jsonData = JSON.stringify(jsonObject);
-    var userAgent = window.navigator.userAgent;
-    var isIE = userAgent.indexOf('Trident/') >= 0;
 
-    // set data into the event
-    if (isIE) {
-        e.dataTransfer.setData('text', jsonData);
-    } else {
-        e.dataTransfer.setData('application/json', jsonData);
-        e.dataTransfer.setData('text/plain', jsonData);
-    }
-    
+    e.dataTransfer.setData('application/json', jsonData);
+    e.dataTransfer.setData('text/plain', jsonData);
 }
 
 // setup the grid after the page has finished loading

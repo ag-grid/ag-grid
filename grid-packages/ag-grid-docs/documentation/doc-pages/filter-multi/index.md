@@ -141,4 +141,4 @@ The example below shows how you can access child filter instances and call metho
 
 ## Multi Filter API
 
-<api-documentation source='filter-multi/resources/multi-filter.json' section='api'></api-documentation>
+<interface-documentation interfaceName='IMultiFilterComp' overrideSrc='filter-multi/resources/multi-filter.json' ></interface-documentation>

@@ -154,16 +154,33 @@ const renderPropertyColumn = (framework, value, isTree, rowData, level) => {
     return <span dangerouslySetInnerHTML={{ __html: convertMarkdown(value, framework) }} />;
 };
 
+const renderCross = () => {
+    return <FontAwesomeIcon icon={faTimes} fixedWidth className={styles['matrix-table__false']} />;
+};
+
+const renderTick = () => {
+    return <FontAwesomeIcon icon={faCheck} fixedWidth className={styles['matrix-table__true']} />
+};
+
 const renderValue = (value, booleanOnly, stringOnly, notIn) => {
     if (stringOnly) { return value; }
 
     if (value === false || (value === true && notIn)) {
-        return <FontAwesomeIcon icon={faTimes} fixedWidth className={styles['matrix-table__false']} />;
+        return renderCross();
+    }
+
+    if (value instanceof Array && typeof value[0] === 'boolean' && typeof value[1] === 'string') {
+        return (
+            <div>
+                {value[0] ? renderTick() : renderCross()}
+                ({value[1]})
+            </div>
+        );
     }
 
     return (
         <div>
-            <FontAwesomeIcon icon={faCheck} fixedWidth className={styles['matrix-table__true']} />
+            {renderTick()}
             {typeof value === 'string' && !booleanOnly && ` (${value})`}
         </div>
     );

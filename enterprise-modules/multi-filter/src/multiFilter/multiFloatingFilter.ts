@@ -10,8 +10,10 @@ import {
     IFilterDef,
     AgPromise,
     IFilterComp,
+    IMultiFilterParams,
+    IMultiFilterModel
 } from '@ag-grid-community/core';
-import { IMultiFilterParams, IMultiFilterModel, MultiFilter } from './multiFilter';
+import { MultiFilter } from './multiFilter';
 
 export class MultiFloatingFilterComp extends Component implements IFloatingFilterComp {
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
@@ -29,14 +31,14 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         const filterParams = params.filterParams as IMultiFilterParams;
         const floatingFilterPromises: AgPromise<IFloatingFilterComp>[] = [];
 
-        _.forEach(MultiFilter.getFilterDefs(filterParams), (filterDef, index) => {
+        MultiFilter.getFilterDefs(filterParams).forEach((filterDef, index) => {
             const floatingFilterParams: IFloatingFilterParams = {
                 ...params,
                 // set the parent filter instance for each floating filter to the relevant child filter instance
                 parentFilterInstance: (callback: (filterInstance: IFilterComp) => void) => {
                     params.parentFilterInstance(parent => {
                         const childFilterInstance = (parent as MultiFilter).getChildFilterInstance(index);
-                        callback(childFilterInstance);
+                        callback(childFilterInstance!);
                     });
                 }
             };
@@ -49,7 +51,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         });
 
         return AgPromise.all(floatingFilterPromises).then(floatingFilters => {
-            _.forEach(floatingFilters!, (floatingFilter, index) => {
+            floatingFilters!.forEach((floatingFilter, index) => {
                 this.floatingFilters.push(floatingFilter!);
 
                 const gui = floatingFilter!.getGui();
@@ -71,14 +73,14 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
 
         this.params.parentFilterInstance((parent: MultiFilter) => {
             if (model == null) {
-                _.forEach(this.floatingFilters, (filter, i) => {
+                this.floatingFilters.forEach((filter, i) => {
                     filter.onParentModelChanged(null, event);
                     _.setDisplayed(filter.getGui(), i === 0);
                 });
             } else {
                 const lastActiveFloatingFilterIndex = parent.getLastActiveFilterIndex();
 
-                _.forEach(this.floatingFilters, (filter, i) => {
+                this.floatingFilters.forEach((filter, i) => {
                     const filterModel = model.filterModels!.length > i ? model.filterModels![i] : null;
 
                     filter.onParentModelChanged(filterModel, event);

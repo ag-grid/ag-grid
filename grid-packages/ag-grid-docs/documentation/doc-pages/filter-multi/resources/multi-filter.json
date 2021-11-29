@@ -13,7 +13,6 @@
         },
         "readOnly": {
             "description": "If true, all UI inputs managed by this filter are for display only, and the filter can only be affected by API calls. Does NOT affect child filters, they need to be individually configured with `readOnly` where applicable.",
-            "type": "boolean",
             "default": false,
             "more": {
                 "url": "/filter-api/#read-only-filter-ui",
@@ -23,7 +22,13 @@
     },
     "IMultiFilterDef": {
         "filter": {
-            "description": "Child filter component to use inside the Multi Filter."
+            "description": "Child filter component to use inside the Multi Filter.",
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "IFilterComp"
+                ],
+                "include": []
+            }
         },
         "filterFramework": {
             "description": "Child framework filter component to use inside the Multi Filter."
@@ -32,7 +37,13 @@
             "description": "Custom parameters to be passed to the child filter component."
         },
         "floatingFilterComponent": {
-            "description": "Floating filter component to use for the child filter."
+            "description": "Floating filter component to use for the child filter.",
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "IFloatingFilterComp"
+                ],
+                "include": []
+            }
         },
         "floatingFilterComponentFramework": {
             "description": "Floating framework filter component to use for the child filter."
@@ -47,43 +58,13 @@
             }
         }
     },
-    "api": {
-        "isFilterActive()": {
-            "description": "Returns `true` if the filter is currently active, otherwise `false`.",
-            "type": {
-                "arguments": {},
-                "returnType": "boolean"
-            }
-        },
-        "getModel()": {
-            "description": "Returns a model representing the current state of the filter, or `null` if the filter is not active.",
-            "type": {
-                "arguments": {},
-                "returnType": "IMultiFilterModel"
-            }
-        },
-        "setModel()": {
-            "description": "Sets the state of the child filters using the supplied models. Providing `null` will de-activate all child filters.<br /><br />**Note:** if you are [providing values asynchronously](/filter-set-filter-list/#asynchronous-values) to a child [Set Filter](/filter-set/), you need to wait for these changes to be applied before performing any further actions by waiting on the returned grid promise, e.g. `filter.setModel([null, { values: ['a', 'b'] }]).then(function() { gridApi.onFilterChanged(); });`",
-            "type": {
-                "arguments": {
-                    "model": [
-                        "IMultiFilterModel",
-                        "null"
-                    ]
-                }
-            }
-        },
-        "getChildFilterInstance()": {
-            "description": "Returns the child filter instance at the specified index.",
-            "type": {
-                "arguments": {
-                    "index": "number"
-                },
-                "returnType": "IFilterComp"
-            },
-            "more": {
-                "url": "/filter-multi/#accessing-child-filters",
-                "name": "Accessing Child Filters"
+    "IMultiFilterComp": {
+        "getChildFilterInstance": {
+            "interfaceHierarchyOverrides": {
+                "exclude": [
+                    "IFilterComp"
+                ],
+                "include": []
             }
         }
     }

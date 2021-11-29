@@ -6,7 +6,7 @@
         "target": "ES2015",
         "types": ["jest"],
         "lib": [
-            "es2015",
+            "ES2017",
             "dom"
         ]
     },

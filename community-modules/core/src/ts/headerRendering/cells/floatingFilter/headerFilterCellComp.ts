@@ -2,7 +2,6 @@ import { UserCompDetails } from "../../../components/framework/userComponentFact
 import { PostConstruct } from '../../../context/context';
 import { IFloatingFilterComp } from '../../../filter/floating/floatingFilter';
 import { AgPromise } from '../../../utils';
-import { addOrRemoveCssClass, setDisplayed } from '../../../utils/dom';
 import { RefSelector } from '../../../widgets/componentAnnotations';
 import { AbstractHeaderCellComp } from '../abstractCell/abstractHeaderCellComp';
 import { HeaderFilterCellCtrl, IHeaderFilterCellComp } from './headerFilterCellCtrl';
@@ -34,10 +33,10 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
 
         const compProxy: IHeaderFilterCellComp = {
             addOrRemoveCssClass: (cssClassName, on) => this.addOrRemoveCssClass(cssClassName, on),
-            addOrRemoveBodyCssClass: (cssClassName, on) => addOrRemoveCssClass(this.eFloatingFilterBody, cssClassName, on),
-            addOrRemoveButtonWrapperCssClass: (cssClassName, on) => addOrRemoveCssClass(this.eButtonWrapper, cssClassName, on),
+            addOrRemoveBodyCssClass: (cssClassName, on) => this.eFloatingFilterBody.classList.toggle(cssClassName, on),
+            addOrRemoveButtonWrapperCssClass: (cssClassName, on) => this.eButtonWrapper.classList.toggle(cssClassName, on),
             setCompDetails: compDetails => this.setCompDetails(compDetails),
-            getFloatingFilterComp: ()=> this.compPromise,
+            getFloatingFilterComp: () => this.compPromise,
             setWidth: width => eGui.style.width = width,
             setMenuIcon: eIcon => this.eButtonShowMainFilter.appendChild(eIcon)
         };
@@ -48,13 +47,13 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
     private setCompDetails(compDetails: UserCompDetails): void {
         // because we are providing defaultFloatingFilterType, we know it will never be undefined;
         this.compPromise = compDetails.newAgStackInstance();
-        this.compPromise.then( comp => this.afterCompCreated(comp));
+        this.compPromise.then(comp => this.afterCompCreated(comp));
     }
 
     private afterCompCreated(comp: IFloatingFilterComp | null): void {
         if (!comp) { return; }
 
-        this.addDestroyFunc( ()=> this.context.destroyBean(comp) );
+        this.addDestroyFunc(() => this.context.destroyBean(comp));
         if (!this.isAlive()) { return; }
 
         this.eFloatingFilterBody.appendChild(comp.getGui());

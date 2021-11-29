@@ -27,8 +27,8 @@ class NumericEditor {
     }
 
     isKeyPressedNavigation(event) {
-        return event.keyCode === 39
-            || event.keyCode === 37;
+        return event.key === 'ArrowLeft'
+            || event.key === 'ArrowRight';
     }
 
     // gets called once when grid ready to insert the element
@@ -69,18 +69,12 @@ class NumericEditor {
         return false;
     }
 
-    getCharCodeFromEvent(event) {
-        event = event || window.event;
-        return (typeof event.which == "undefined") ? event.keyCode : event.which;
-    };
-
     isCharNumeric(charStr) {
         return !!/\d/.test(charStr);
     }
 
     isKeyPressedNumeric(event) {
-        const charCode = this.getCharCodeFromEvent(event);
-        const charStr = String.fromCharCode(charCode);
+        const charStr = event.key;
         return this.isCharNumeric(charStr);
     }
 }

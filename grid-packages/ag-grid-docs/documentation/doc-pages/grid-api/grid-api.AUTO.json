@@ -145,12 +145,12 @@
     }
   },
   "setPinnedTopRowData": {
-    "description": "/** Set the top pinned rows. */",
-    "type": { "arguments": { "rows": "any[]" }, "returnType": "void" }
+    "description": "/** Set the top pinned rows. Call with no rows / undefined to clear top pinned rows. */",
+    "type": { "arguments": { "rows?": "any[]" }, "returnType": "void" }
   },
   "setPinnedBottomRowData": {
-    "description": "/** Set the bottom pinned rows. */",
-    "type": { "arguments": { "rows": "any[]" }, "returnType": "void" }
+    "description": "/** Set the bottom pinned rows. Call with no rows / undefined to clear bottom pinned rows. */",
+    "type": { "arguments": { "rows?": "any[]" }, "returnType": "void" }
   },
   "getPinnedTopRowCount": {
     "description": "/** Gets the number of top pinned rows. */",
@@ -491,7 +491,7 @@
     }
   },
   "getFilterInstance": {
-    "description": "/** Returns the filter component instance for a column.\n * `key` can be a string field name or a ColDef object (matches on object reference, useful if field names are not unique). */",
+    "description": "/** Returns the filter component instance for a column.\n * `key` can be a string field name or a ColDef object (matches on object reference, useful if field names are not unique).\n * If your filter is created asynchronously, `getFilterInstance` will return `null` so you will need to use the `callback` to access the filter instance instead. */",
     "type": {
       "arguments": {
         "key": "string | Column",
@@ -655,7 +655,7 @@
   "setNavigateToNextCell": {
     "type": {
       "arguments": {
-        "navigateToNextCellFunc": "(params: NavigateToNextCellParams) => CellPosition"
+        "navigateToNextCellFunc": "(params: NavigateToNextCellParams) => (CellPosition | null)"
       },
       "returnType": "void"
     }
@@ -663,7 +663,7 @@
   "setTabToNextCell": {
     "type": {
       "arguments": {
-        "tabToNextCellFunc": "(params: TabToNextCellParams) => CellPosition"
+        "tabToNextCellFunc": "(params: TabToNextCellParams) => (CellPosition | null)"
       },
       "returnType": "void"
     }
@@ -671,7 +671,7 @@
   "setTabToNextHeader": {
     "type": {
       "arguments": {
-        "tabToNextHeaderFunc": "(params: TabToNextHeaderParams) => HeaderPosition"
+        "tabToNextHeaderFunc": "(params: TabToNextHeaderParams) => (HeaderPosition | null)"
       },
       "returnType": "void"
     }
@@ -679,7 +679,7 @@
   "setNavigateToNextHeader": {
     "type": {
       "arguments": {
-        "navigateToNextHeaderFunc": "(params: NavigateToNextHeaderParams) => HeaderPosition"
+        "navigateToNextHeaderFunc": "(params: NavigateToNextHeaderParams) => (HeaderPosition | null)"
       },
       "returnType": "void"
     }
@@ -1312,7 +1312,7 @@
   "refreshServerSideStore": {
     "description": "/** Refresh a server-side store.\n * If you pass no parameters, then the top level cache is purged.\n * To purge a child cache, pass in the string of keys to get to the child cache. */",
     "type": {
-      "arguments": { "params": "RefreshStoreParams" },
+      "arguments": { "params?": "RefreshStoreParams" },
       "returnType": "void"
     }
   },

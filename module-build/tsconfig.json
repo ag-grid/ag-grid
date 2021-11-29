@@ -4,13 +4,12 @@
         "experimentalDecorators": true,
         "emitDecoratorMetadata": false,
         "declaration": true,
-        "target": "es5",
+        "target": "ES5",
         "noImplicitAny": true,
         "sourceMap": true,
         "types": [],                /* to prevent inclusion of node types etc, amongst others - sub modules need to specify types they require */
         "lib": [
-            "es5",
-            "ES2015.Collection",
+            "ES2017",
             "dom"
         ]
     }

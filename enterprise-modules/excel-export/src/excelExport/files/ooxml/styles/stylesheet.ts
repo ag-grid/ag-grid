@@ -47,7 +47,7 @@ const registerFill = (fill: ExcelInterior): number => {
     const convertedFillColor = convertLegacyColor(fill.color);
     const convertedPatternColor = convertLegacyColor(fill.patternColor);
 
-    let pos = _.findIndex(registeredFills, currentFill => {
+    let pos = registeredFills.findIndex(currentFill => {
         const { patternType, fgRgb, bgRgb } = currentFill;
 
         if (
@@ -72,7 +72,7 @@ const registerNumberFmt = (format: string): number => {
     format = _.utf8_encode(format);
     if (numberFormatMap[format]) { return numberFormatMap[format]; }
 
-    let pos = _.findIndex(registeredNumberFmts, currentFormat => currentFormat.formatCode === format);
+    let pos = registeredNumberFmts.findIndex(currentFormat => currentFormat.formatCode === format);
 
     if (pos === -1) {
         pos = registeredNumberFmts.length + 164;
@@ -114,7 +114,7 @@ const registerBorders = (borders: ExcelBorders): number => {
         topColor = convertLegacyColor(borderTop.color);
     }
 
-    let pos = _.findIndex(registeredBorders, currentBorder => {
+    let pos = registeredBorders.findIndex(currentBorder => {
         const { left, right, top, bottom } = currentBorder;
         if (!left && (leftStyle || leftColor)) { return false; }
         if (!right && (rightStyle || rightColor)) { return false; }
@@ -167,7 +167,7 @@ const registerFont = (font: ExcelFont): number => {
     const convertedUnderline = underline ? underline.toLocaleLowerCase() : undefined;
     const convertedVerticalAlign = verticalAlign ? verticalAlign.toLocaleLowerCase() : undefined;
 
-    let pos = _.findIndex(registeredFonts, (currentFont) => {
+    let pos = registeredFonts.findIndex(currentFont => {
         if (
             currentFont.fontName != utf8Name ||
             currentFont.color != convertedColor ||

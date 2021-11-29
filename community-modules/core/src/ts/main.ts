@@ -103,6 +103,7 @@ export { SideBarDef, ToolPanelDef } from "./entities/sideBar";
 export { IFilterDef, IFilterParams, IFilterOptionDef, IDoesFilterPassParams, ProvidedFilterModel, IFilter, IFilterComp, IFilterType, IFloatingFilterType } from "./interfaces/iFilter";
 export { ISetFilterParams, SetFilterValues, SetFilterValuesFunc, SetFilterValuesFuncParams } from "./interfaces/iSetFilterParams";
 export { FilterManager, FilterWrapper, FilterRequestSource } from "./filter/filterManager";
+export { IMultiFilterModel, IMultiFilterComp, IMultiFilterParams, IMultiFilterDef } from './interfaces/iMultiFilter';
 
 export { ProvidedFilter, IProvidedFilterParams } from "./filter/provided/providedFilter";
 export { SimpleFilter, ISimpleFilterParams, ISimpleFilterModel, ICombinedSimpleModel, JoinOperator } from "./filter/provided/simpleFilter";
@@ -254,7 +255,7 @@ export {
     CellRange, CellRangeParams, CellRangeType, RangeSelection, AddRangeSelectionParams, IRangeService,
     ISelectionHandle, SelectionHandleType, ISelectionHandleFactory
 } from "./interfaces/IRangeService";
-export { IChartService, ChartModel, GetChartImageDataUrlParams } from "./interfaces/IChartService";
+export { IChartService, ChartModel, GetChartImageDataUrlParams, ChartModelType } from "./interfaces/IChartService";
 
 // master detail
 export { IDetailCellRendererParams, GetDetailRowData, GetDetailRowDataParams, IDetailCellRenderer, IDetailCellRendererCtrl } from './interfaces/masterDetail';
@@ -434,6 +435,8 @@ export * from "./interfaces/iAgChartOptions";
 export {
     ISparklineCellRendererParams,
     SparklineOptions,
+    CrosshairLineOptions,
+    SparklineCrosshairsOptions,
     BaseSparklineOptions,
     LineSparklineOptions,
     AreaSparklineOptions,
@@ -449,6 +452,7 @@ export {
     SparklineMarkerOptions,
     SparklineLineOptions,
     PaddingOptions,
+    SparklineTooltipOptions,
     TooltipRendererResult,
     TooltipRendererParams
 } from "./interfaces/iSparklineCellRendererParams";

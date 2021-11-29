@@ -1,4 +1,8 @@
-import { ColDef, GridOptions, HeaderValueGetterParams } from '@ag-grid-community/core'
+import {
+  ColDef,
+  GridOptions,
+  HeaderValueGetterParams,
+} from '@ag-grid-community/core'
 
 const columnDefs: ColDef[] = [
   {

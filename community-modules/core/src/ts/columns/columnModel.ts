@@ -40,11 +40,11 @@ import { ValueCache } from '../valueService/valueCache';
 import { GridApi } from '../gridApi';
 import { ApplyColumnStateParams, ColumnApi } from './columnApi';
 import { Constants } from '../constants/constants';
-import { areEqual, last, removeFromArray, moveInArray, filter, includes, insertIntoArray, removeAllFromArray } from '../utils/array';
+import { areEqual, last, removeFromArray, moveInArray, includes, insertIntoArray, removeAllFromArray } from '../utils/array';
 import { AnimationFrameService } from "../misc/animationFrameService";
 import { SortController } from "../sortController";
-import { missingOrEmpty, exists, missing, find, attrToBoolean, attrToNumber } from '../utils/generic';
-import { camelCaseToHumanText, startsWith } from '../utils/string';
+import { missingOrEmpty, exists, missing, attrToBoolean, attrToNumber } from '../utils/generic';
+import { camelCaseToHumanText } from '../utils/string';
 import { ColumnDefFactory } from "./columnDefFactory";
 import { IRowModel } from "../interfaces/iRowModel";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
@@ -1759,7 +1759,7 @@ export class ColumnModel extends BeanStub {
     }
 
     private getPrimaryAndAutoGroupCols(): Column[] | undefined {
-        if (!this.groupAutoColumns) { 
+        if (!this.groupAutoColumns) {
             return this.primaryColumns;
         }
 
@@ -1895,7 +1895,7 @@ export class ColumnModel extends BeanStub {
                 const colId = state.colId || '';
 
                 // auto group columns are re-created so deferring syncing with ColumnState
-                const isAutoGroupColumn = startsWith(colId, groupAutoColumnId);
+                const isAutoGroupColumn = colId.startsWith(groupAutoColumnId);
                 if (isAutoGroupColumn) {
                     autoGroupColumnStates.push(state);
                     return;
@@ -1920,7 +1920,7 @@ export class ColumnModel extends BeanStub {
         // anything left over, we got no data for, so add in the column as non-value, non-rowGroup and hidden
         const applyDefaultsFunc = (col: Column) =>
             this.syncColumnWithStateItem(col, null, params.defaultState, rowGroupIndexes,
-                pivotIndexes, false, source)
+                pivotIndexes, false, source);
 
         columnsWithNoState.forEach(applyDefaultsFunc);
 
@@ -2117,7 +2117,7 @@ export class ColumnModel extends BeanStub {
                 const aggFuncChanged = oldActive && cs.aggFunc != c.getAggFunc();
 
                 return activeChanged || aggFuncChanged;
-            }
+            };
             const changedValues = getChangedColumns(valueChangePredicate);
             if (changedValues.length > 0) {
                 // we pass all value columns, now the ones that changed. this is the same
@@ -2225,8 +2225,8 @@ export class ColumnModel extends BeanStub {
         });
 
         // filter state lists, so we only have cols that were present before and after
-        const beforeFiltered = filter(colStateBefore, c => colsIntersectIds[c.colId!]);
-        const afterFiltered = filter(colStateAfter, c => colsIntersectIds[c.colId!]);
+        const beforeFiltered = colStateBefore.filter(c => colsIntersectIds[c.colId!]);
+        const afterFiltered = colStateAfter.filter(c => colsIntersectIds[c.colId!]);
 
         // see if any cols are in a different location
         const movedColumns: Column[] = [];
@@ -2477,7 +2477,7 @@ export class ColumnModel extends BeanStub {
             missing(this.groupAutoColumns)
         ) { return null; }
 
-        return find(this.groupAutoColumns, groupCol => this.columnsMatch(groupCol, key));
+        return this.groupAutoColumns.find(groupCol => this.columnsMatch(groupCol, key)) || null;
     }
 
     private columnsMatch(column: Column, key: string | Column): boolean {
@@ -3074,13 +3074,13 @@ export class ColumnModel extends BeanStub {
         this.gridColumns.forEach(col => this.gridColumnsMap[col.getId()] = col);
 
         this.setAutoHeightActive();
-        
+
         const event: GridColumnsChangedEvent = {
             type: Events.EVENT_GRID_COLUMNS_CHANGED,
             api: this.gridApi,
             columnApi: this.columnApi
         };
-        
+
         this.eventService.dispatchEvent(event);
     }
 
@@ -3093,8 +3093,8 @@ export class ColumnModel extends BeanStub {
             const rowModelType = this.rowModel.getType();
             const supportedRowModel = rowModelType === Constants.ROW_MODEL_TYPE_CLIENT_SIDE || rowModelType === Constants.ROW_MODEL_TYPE_SERVER_SIDE;
             if (!supportedRowModel) {
-                const message = 'AG Grid - autoHeight columns only work with Client Side Row Model and Server Side Row Model.'
-                doOnce( ()=> console.warn(message), 'autoHeightActive.wrongRowModel');
+                const message = 'AG Grid - autoHeight columns only work with Client Side Row Model and Server Side Row Model.';
+                doOnce(() => console.warn(message), 'autoHeightActive.wrongRowModel');
             }
         }
     }

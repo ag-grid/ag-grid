@@ -13,7 +13,6 @@ import { GridApi } from '../gridApi';
 import { UserComponentFactory } from '../components/framework/userComponentFactory';
 import { ModuleNames } from '../modules/moduleNames';
 import { ModuleRegistry } from '../modules/moduleRegistry';
-import { forEach, some, every } from '../utils/array';
 import { BeanStub } from '../context/beanStub';
 import { convertToSet } from '../utils/set';
 import { exists } from '../utils/generic';
@@ -295,7 +294,7 @@ export class FilterManager extends BeanStub {
     private doesRowPassQuickFilterNoCache(node: RowNode, filterPart: string): boolean {
         const columns = this.columnModel.getAllColumnsForQuickFilter();
 
-        return some(columns, column => {
+        return columns.some(column => {
             const part = this.getQuickFilterTextForColumn(column, node);
 
             return exists(part) && part.indexOf(filterPart) >= 0;
@@ -314,7 +313,7 @@ export class FilterManager extends BeanStub {
         const usingCache = this.gridOptionsWrapper.isCacheQuickFilter();
 
         // each part must pass, if any fails, then the whole filter fails
-        return every(this.quickFilterParts!, part =>
+        return this.quickFilterParts!.every(part =>
             usingCache ? this.doesRowPassQuickFilterCache(node, part) : this.doesRowPassQuickFilterNoCache(node, part)
         );
     }
@@ -370,7 +369,7 @@ export class FilterManager extends BeanStub {
         const stringParts: string[] = [];
         const columns = this.columnModel.getAllColumnsForQuickFilter();
 
-        forEach(columns, column => {
+        columns.forEach(column => {
             const part = this.getQuickFilterTextForColumn(column, node);
 
             if (exists(part)) {

@@ -69,7 +69,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
 
                 // TODO: this causes a bug where if there are multiple grids in the same page, all of them will
                 // be affected by a drag on any. Move it to the root element.
-                _.removeCssClass(document.body, this.getDraggingCssClass());
+                document.body.classList.remove(this.getDraggingCssClass());
 
                 if (this.shouldDestroyOnEndDragging) {
                     this.destroy();
@@ -139,7 +139,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
             this.updateValuesOnMove.bind(this)
         );
 
-        _.addCssClass(document.body, this.getDraggingCssClass());
+        document.body.classList.add(this.getDraggingCssClass());
     }
 
     private getDraggingCssClass(): string {

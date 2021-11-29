@@ -250,10 +250,8 @@ function suppressColumnMoveAnimation() {
     var isFirefox = typeof InstallTrigger !== 'undefined';
     // At least Safari 3+: "[object HTMLElementConstructor]"
     var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
-    // Internet Explorer 6-11
-    var isIE = /*@cc_on!@*/false || !!document.documentMode;
 
-    return isFirefox || isSafari || isIE;
+    return isFirefox || isSafari;
 }
 
 function toggleOptionsCollapsed() {
@@ -322,6 +320,7 @@ var gridOptions = {
     popupParent: document.querySelector('#example-wrapper'),
     // enableBrowserTooltips: true,
     // tooltipShowDelay: 200,
+    // tooltipHideDelay: 2000,
     // ensureDomOrder: true,
     // enableCellTextSelection: true,
     // postProcessPopup: function(params) {

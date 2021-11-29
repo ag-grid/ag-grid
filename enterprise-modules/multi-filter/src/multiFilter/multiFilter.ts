@@ -5,6 +5,9 @@ import {
     IDoesFilterPassParams,
     IAfterGuiAttachedParams,
     IFilterComp,
+    IMultiFilterDef,
+    IMultiFilterParams,
+    IMultiFilterModel,
     Autowired,
     UserComponentFactory,
     FilterManager,
@@ -19,36 +22,6 @@ import {
     PostConstruct
 } from '@ag-grid-community/core';
 import { MenuItemComponent, MenuItemActivatedEvent } from '@ag-grid-enterprise/menu';
-
-export interface IMultiFilterDef extends IFilterDef {
-    /** 
-     * Configures how the filter is shown in the Multi Filter.
-     * Default: `inline`
-     */
-    display?: 'inline' | 'accordion' | 'subMenu';
-    /**
-     * The title to be used when a filter is displayed inside a sub-menu or accordion.
-     */
-    title?: string;
-}
-
-export interface IMultiFilterParams extends IFilterParams {
-    /** An array of filter definition objects. */
-    filters?: IMultiFilterDef[];
-    /** Defaults to false. If true, all UI inputs managed by this filter are for display only, and
-     * the filter can only be affected by API calls. Does NOT affect child filters, they need to be
-     * individually configured with `readOnly` where applicable. */
-    readOnly?: boolean;
-}
-
-export interface IMultiFilterModel {
-    /** Multi filter type.  */
-    filterType?: 'multi';
-    /**
-     * Child filter models in the same order as the filters are specified in `filterParams`.
-     */
-    filterModels: any[] | null;
-}
 
 export class MultiFilter extends TabGuardComp implements IFilterComp {
     @Autowired('filterManager') private readonly filterManager: FilterManager;
@@ -96,7 +69,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp {
 
         const filterPromises: AgPromise<IFilterComp>[] = [];
 
-        _.forEach(this.filterDefs, (filterDef, index) => {
+        this.filterDefs.forEach((filterDef, index) => {
             const filterPromise = this.createFilter(filterDef, index);
 
             if (filterPromise != null) {
@@ -122,7 +95,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp {
         this.removeAllChildrenExceptTabGuards();
         this.destroyChildren();
 
-        _.forEach(this.filters!, (filter, index) => {
+        this.filters!.forEach((filter, index) => {
             if (index > 0) {
                 this.appendChild(_.loadTemplate(/* html */`<div class="ag-filter-separator"></div>`));
             }
@@ -164,7 +137,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp {
     }
 
     private destroyChildren() {
-        _.forEach(this.guiDestroyFuncs, func => func());
+        this.guiDestroyFuncs.forEach(func => func());
         this.guiDestroyFuncs.length = 0;
     }
 
@@ -220,7 +193,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp {
     }
 
     public isFilterActive(): boolean {
-        return _.some(this.filters!, filter => filter.isFilterActive());
+        return this.filters!.some(filter => filter.isFilterActive());
     }
 
     public getLastActiveFilterIndex(): number | null {
@@ -246,7 +219,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp {
     public getModelFromUi(): IMultiFilterModel | null {
         const model: IMultiFilterModel = {
             filterType: this.getFilterType(),
-            filterModels: _.map(this.filters!, filter => {
+            filterModels: this.filters!.map(filter => {
                 const providedFilter = filter as ProvidedFilter<IMultiFilterModel, unknown>;
 
                 if (typeof providedFilter.getModelFromUi === 'function') {
@@ -267,7 +240,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp {
 
         const model: IMultiFilterModel = {
             filterType: this.getFilterType(),
-            filterModels: _.map(this.filters!, filter => {
+            filterModels: this.filters!.map(filter => {
                 if (filter.isFilterActive()) {
                     return filter.getModel();
                 }
@@ -290,13 +263,13 @@ export class MultiFilter extends TabGuardComp implements IFilterComp {
         let promises: AgPromise<void>[] = [];
 
         if (model == null) {
-            promises = _.map(this.filters!, (filter: IFilterComp, index: number) => {
+            promises = this.filters!.map((filter: IFilterComp, index: number) => {
                 const res = setFilterModel(filter, null);
                 this.updateActiveList(index);
                 return res;
             })!;
         } else {
-            _.forEach(this.filters!, (filter, index) => {
+            this.filters!.forEach((filter, index) => {
                 const filterModel = model.filterModels!.length > index ? model.filterModels![index] : null;
                 const res = setFilterModel(filter, filterModel);
                 promises.push(res);
@@ -307,7 +280,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp {
         return AgPromise.all(promises).then(() => { });
     }
 
-    public getChildFilterInstance(index: number): IFilterComp {
+    public getChildFilterInstance(index: number): IFilterComp | undefined {
         return this.filters![index];
     }
 
@@ -317,7 +290,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp {
         }
 
         const { filters } = this.params;
-        const suppressFocus = filters && _.some(filters, filter => filter.display! && filter.display !== 'inline');
+        const suppressFocus = filters && filters.some(filter => filter.display! && filter.display !== 'inline');
 
         this.executeFunctionIfExists('afterGuiAttached', { ...params || {}, suppressFocus });
         const activeEl = document.activeElement;
@@ -342,7 +315,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp {
     }
 
     public destroy(): void {
-        _.forEach(this.filters!, filter => {
+        this.filters!.forEach(filter => {
             filter.setModel(null);
             this.destroyBean(filter);
         });
@@ -415,7 +388,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp {
         this.filterChangedCallback!(additionalEventAttributes);
         const changedFilter = this.filters![index];
 
-        _.forEach(this.filters!, filter => {
+        this.filters!.forEach(filter => {
             if (filter === changedFilter) { return; }
 
             if (typeof filter.onAnyFilterChanged === 'function') {

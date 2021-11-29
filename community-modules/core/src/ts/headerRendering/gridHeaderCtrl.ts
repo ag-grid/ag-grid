@@ -60,7 +60,6 @@ export class GridHeaderCtrl extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, listener);
     }
 
-
     private setHeaderHeight(): void {
         const {columnModel, gridOptionsWrapper} = this;
 
@@ -121,7 +120,7 @@ export class GridHeaderCtrl extends BeanStub {
     protected handleKeyDown(e: KeyboardEvent): void {
         let direction: HeaderNavigationDirection | null = null;
 
-        switch (e.keyCode) {
+        switch (e.key) {
             case KeyCode.LEFT:
                 direction = HeaderNavigationDirection.LEFT;
             case KeyCode.RIGHT:

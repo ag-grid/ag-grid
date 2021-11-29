@@ -64,7 +64,7 @@ export class NavigationService extends BeanStub {
     }
 
     public handlePageScrollingKey(event: KeyboardEvent): boolean {
-        const key = event.which || event.keyCode;
+        const key = event.key;
         const alt = event.altKey;
         const ctrl = event.ctrlKey || event.metaKey;
 
@@ -287,7 +287,7 @@ export class NavigationService extends BeanStub {
     }
 
     // ctrl + up/down will bring focus to same column, first/last row. no horizontal scrolling.
-    private onCtrlUpOrDown(key: number, gridCell: CellPosition): void {
+    private onCtrlUpOrDown(key: string, gridCell: CellPosition): void {
         const upKey = key === KeyCode.UP;
         const rowIndexToScrollTo = upKey ? this.paginationProxy.getPageFirstRow() : this.paginationProxy.getPageLastRow();
 
@@ -301,7 +301,7 @@ export class NavigationService extends BeanStub {
     }
 
     // ctrl + left/right will bring focus to same row, first/last cell. no vertical scrolling.
-    private onCtrlLeftOrRight(key: number, gridCell: CellPosition): void {
+    private onCtrlLeftOrRight(key: string, gridCell: CellPosition): void {
         const leftKey = key === KeyCode.LEFT;
         const allColumns: Column[] = this.columnModel.getAllDisplayedColumns();
         const isRtl = this.gridOptionsWrapper.isEnableRtl();
@@ -318,7 +318,7 @@ export class NavigationService extends BeanStub {
 
     // home brings focus to top left cell, end brings focus to bottom right, grid scrolled to bring
     // same cell into view (which means either scroll all the way up, or all the way down).
-    private onHomeOrEndKey(key: number): void {
+    private onHomeOrEndKey(key: string): void {
         const homeKey = key === KeyCode.PAGE_HOME;
         const allColumns: Column[] = this.columnModel.getAllDisplayedColumns();
         const columnToSelect = homeKey ? allColumns[0] : last(allColumns);
@@ -627,7 +627,7 @@ export class NavigationService extends BeanStub {
 
     // we use index for rows, but column object for columns, as the next column (by index) might not
     // be visible (header grouping) so it's not reliable, so using the column object instead.
-    public navigateToNextCell(event: KeyboardEvent | null, key: number, currentCell: CellPosition, allowUserOverride: boolean) {
+    public navigateToNextCell(event: KeyboardEvent | null, key: string, currentCell: CellPosition, allowUserOverride: boolean) {
         // we keep searching for a next cell until we find one. this is how the group rows get skipped
         let nextCell: CellPosition | null = currentCell;
         let hitEdgeOfGrid = false;
@@ -650,7 +650,7 @@ export class NavigationService extends BeanStub {
             hitEdgeOfGrid = missing(nextCell);
         }
 
-        if (hitEdgeOfGrid && event && event.keyCode === KeyCode.UP) {
+        if (hitEdgeOfGrid && event && event.key === KeyCode.UP) {
             nextCell = {
                 rowIndex: -1,
                 rowPinned: null,

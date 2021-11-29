@@ -1,5 +1,5 @@
-import {BaseComponentWrapper, Bean, WrappableInterface} from 'ag-grid-community';
-import {VueComponentFactory} from './VueComponentFactory';
+import { BaseComponentWrapper, WrappableInterface } from 'ag-grid-community';
+import { VueComponentFactory } from './VueComponentFactory';
 
 interface VueWrappableInterface extends WrappableInterface {
     overrideProcessing(methodName: string): boolean;
@@ -68,7 +68,7 @@ export class VueFrameworkComponentWrapper extends BaseComponentWrapper<Wrappable
     }
 
     protected createMethodProxy(wrapper: VueWrappableInterface, methodName: string, mandatory: boolean): () => any {
-        return function () {
+        return function() {
             if (wrapper.overrideProcessing(methodName)) {
                 return wrapper.processMethod(methodName, arguments);
             }

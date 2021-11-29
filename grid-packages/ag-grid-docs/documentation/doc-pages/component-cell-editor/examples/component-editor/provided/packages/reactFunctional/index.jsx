@@ -8,11 +8,11 @@ import 'ag-grid-enterprise';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
-const KEY_BACKSPACE = 8;
-const KEY_DELETE = 46;
-const KEY_F2 = 113;
-const KEY_ENTER = 13;
-const KEY_TAB = 9;
+const KEY_BACKSPACE = 'Backspace';
+const KEY_DELETE = 'Delete';
+const KEY_F2 = 'F2';
+const KEY_ENTER = 'Enter';
+const KEY_TAB = 'Tab';
 
 const DoublingEditor = forwardRef((props, ref) => {
     const [value, setValue] = useState(parseInt(props.value));
@@ -87,7 +87,7 @@ const MoodEditor = forwardRef((props, ref) => {
     }, []);
 
     const checkAndToggleMoodIfLeftRight = (event) => {
-        if ([37, 39].indexOf(event.keyCode) > -1) { // left and right
+        if (['ArrowLeft', 'ArrowRight'].indexOf(event.key) > -1) { // left and right
             setHappy(!happy);
             event.stopPropagation();
         }
@@ -176,7 +176,7 @@ const NumericEditor = forwardRef((props, ref) => {
         let startValue;
         let highlightAllOnFocus = true;
 
-        if (props.keyPress === KEY_BACKSPACE || props.keyPress === KEY_DELETE) {
+        if (props.key === KEY_BACKSPACE || props.key === KEY_DELETE) {
             // if backspace or delete pressed, we clear the cell
             startValue = '';
         } else if (props.charPress) {
@@ -186,7 +186,7 @@ const NumericEditor = forwardRef((props, ref) => {
         } else {
             // otherwise we start with the current value
             startValue = props.value;
-            if (props.keyPress === KEY_F2) {
+            if (props.key === KEY_F2) {
                 highlightAllOnFocus = false;
             }
         }
@@ -206,12 +206,7 @@ const NumericEditor = forwardRef((props, ref) => {
     const cancelBeforeStart = props.charPress && ('1234567890'.indexOf(props.charPress) < 0);
 
     const isLeftOrRight = event => {
-        return [37, 39].indexOf(event.keyCode) > -1;
-    };
-
-    const getCharCodeFromEvent = event => {
-        event = event || window.event;
-        return (typeof event.which === "undefined") ? event.keyCode : event.which;
+        return ['ArrowLeft', 'ArrowRight'].indexOf(event.key) > -1;
     };
 
     const isCharNumeric = charStr => {
@@ -219,18 +214,17 @@ const NumericEditor = forwardRef((props, ref) => {
     };
 
     const isKeyPressedNumeric = event => {
-        const charCode = getCharCodeFromEvent(event);
-        const charStr = event.key ? event.key : String.fromCharCode(charCode);
+        const charStr = event.key;
         return isCharNumeric(charStr);
     };
 
     const deleteOrBackspace = event => {
-        return [KEY_DELETE, KEY_BACKSPACE].indexOf(event.keyCode) > -1;
+        return [KEY_DELETE, KEY_BACKSPACE].indexOf(event.key) > -1;
     };
 
     const finishedEditingPressed = event => {
-        const charCode = getCharCodeFromEvent(event);
-        return charCode === KEY_ENTER || charCode === KEY_TAB;
+        const key = event.key;
+        return key === KEY_ENTER || key === KEY_TAB;
     };
     const onKeyDown = event => {
         if (isLeftOrRight(event) || deleteOrBackspace(event)) {
@@ -262,10 +256,10 @@ const NumericEditor = forwardRef((props, ref) => {
 
                     setHighlightAllOnFocus(false);
                 } else {
-                    // when we started editing, we want the carot at the end, not the start.
-                    // comes into play in two scenarios: a) when user hits F2 and b)
-                    // when user hits a printable character, then on IE (and only IE) the carot
-                    // was placed after the first character, thus 'apply' would end up as 'pplea'
+                    // when we started editing, we want the caret at the end, not the start.
+                    // this comes into play in two scenarios: 
+                    //   a) when user hits F2 
+                    //   b) when user hits a printable character
                     const length = eInput.value ? eInput.value.length : 0;
                     if (length > 0) {
                         eInput.setSelectionRange(length, length);

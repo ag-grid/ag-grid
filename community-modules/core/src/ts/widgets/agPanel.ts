@@ -1,7 +1,7 @@
 import { RefSelector } from "./componentAnnotations";
 import { PostConstruct } from "../context/context";
 import { Component } from "./component";
-import { addCssClass, getInnerHeight, getInnerWidth } from "../utils/dom";
+import { getInnerHeight, getInnerWidth } from "../utils/dom";
 import { createIconNoSpan } from "../utils/icon";
 import { PositionableFeature, PositionableOptions, ResizableStructure } from "../rendering/features/positionableFeature";
 
@@ -77,7 +77,7 @@ export class AgPanel extends Component {
             if (title) { this.setTitle(title); }
             this.setClosable(closable != null ? closable : this.closable);
         } else {
-            addCssClass(this.eTitleBar, 'ag-hidden');
+            this.eTitleBar.classList.add('ag-hidden');
         }
 
         this.addManagedListener(this.eTitleBar, 'mousedown', (e: MouseEvent) => {
@@ -143,10 +143,9 @@ export class AgPanel extends Component {
             this.getContext().createBean(closeButtonComp);
 
             const eGui = closeButtonComp.getGui();
-            eGui.appendChild(addCssClass(
-                createIconNoSpan('close', this.gridOptionsWrapper)!,
-                'ag-panel-title-bar-button-icon')!
-            );
+            const child = createIconNoSpan('close', this.gridOptionsWrapper)!;
+            child.classList.add('ag-panel-title-bar-button-icon');
+            eGui.appendChild(child);
 
             this.addTitleBarButton(closeButtonComp);
             closeButtonComp.addManagedListener(eGui, 'click', this.onBtClose.bind(this));
@@ -174,9 +173,9 @@ export class AgPanel extends Component {
 
         position = Math.max(0, Math.min(position, len));
 
-        const eGui = button.getGui();
+        button.addCssClass('ag-panel-title-bar-button');
 
-        addCssClass(eGui, 'ag-panel-title-bar-button');
+        const eGui = button.getGui();
 
         if (position === 0) {
             eTitleBarButtons.insertAdjacentElement('afterbegin', eGui);

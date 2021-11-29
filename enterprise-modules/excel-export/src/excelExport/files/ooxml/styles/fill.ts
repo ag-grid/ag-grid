@@ -26,7 +26,7 @@ const fillFactory: ExcelOOXMLTemplate = {
             }];
         }
 
-        if (bgIndexed) {
+        if (bgIndexed || bgRgb) {
             if (!pf.children) { pf.children = []; }
             pf.children.push({
                 name: 'bgColor',

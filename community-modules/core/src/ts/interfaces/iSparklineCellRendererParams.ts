@@ -32,6 +32,8 @@ export interface LineSparklineOptions extends BaseSparklineOptions {
     line?: SparklineLineOptions;
     /** The configuration for the marker styles. */
     marker?: SparklineMarkerOptions;
+    /** The configuration for the crosshairs. */
+    crosshairs?: SparklineCrosshairsOptions;
 }
 
 export interface AreaSparklineOptions extends BaseSparklineOptions {
@@ -45,6 +47,8 @@ export interface AreaSparklineOptions extends BaseSparklineOptions {
     line?: SparklineLineOptions;
     /** The configuration for the marker styles. */
     marker?: SparklineMarkerOptions;
+    /** The configuration for the crosshairs. */
+    crosshairs?: SparklineCrosshairsOptions;
 }
 
 export interface ColumnSparklineOptions extends BaseSparklineOptions {
@@ -158,7 +162,7 @@ export interface PaddingOptions {
      */
     bottom?: number;
     /** The number of pixels of padding at the left of the sparkline area.
-     * Default" `3`
+     * Default: `3`
      */
     left?: number;
 }
@@ -185,6 +189,14 @@ export interface SparklineTooltipOptions {
     enabled?: boolean;
     /** The element to place the tooltip into. This can be used to confine the tooltip to a specific area which may be outside of the sparkline grid cell. */
     container?: HTMLElement;
+    /** The horizontal distance in pixels between the cursor and the top left corner of the tooltip.
+     * Default: `10`
+     */
+    xOffset?: number;
+    /** The vertical distance in pixels between the cursor and the top left corner of the tooltip.
+     * Default: `0`
+     */
+    yOffset?: number;
     /** A callback function used to create the content for the tooltips. This function should return an object or a HTML string used to render the tooltip. */
     renderer?: SparklineTooltipRenderer;
 }
@@ -243,6 +255,32 @@ export interface HighlightStyleOptions {
      * Default: `1`
      */
     strokeWidth?: number;
+}
+export interface SparklineCrosshairsOptions {
+    xLine?: CrosshairLineOptions;
+    yLine?: CrosshairLineOptions;
+}
+export interface CrosshairLineOptions {
+    /** Set to true to show crosshair line.
+     * Default: false
+     */
+    enabled?: boolean;
+    /** The CSS colour value for the crosshair line. */
+    stroke?: string;
+    /** The thickness in pixels for the crosshair line. */
+    strokeWidth?: number;
+    /**
+     * Defines how the crosshair stroke is rendered. This can be one of the lineDash style options or an array specifying the length in pixels of alternating dashes and gaps.
+     * For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels.
+     * The default is `solid` which is equivalent to an empty array, this renders a solid stroke with no gaps.
+     */
+    lineDash?: 'dash' | 'dashDot' | 'dashDotDot' | 'dot' | 'longDash' | 'longDashDot' | 'longDashDotDot' | 'shortDash' | 'shortDashDot' | 'shortDashDotDot' | 'shortDot' | 'solid' | string | number[];
+    /**
+     * The shape used to draw the end points of the crosshair line.
+     * The options include `butt` (the ends of the line are squared off at the endpoints), `round` (the ends of the line are rounded) and `square` (the ends of the line are squared off by adding a box with width equal to the line's strokeWidth and height equal to half the line's strokeWidth).
+     * Default: `butt`
+     */
+    lineCap?: 'round'| 'square' | 'butt';
 }
 
 export type SparklineColumnFormatter = (params: ColumnFormatterParams) => ColumnFormat;

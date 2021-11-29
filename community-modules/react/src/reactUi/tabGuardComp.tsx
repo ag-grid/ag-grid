@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState, forwardRef, useImperativeHandle, RefForwardingComponent, memo, useContext } from 'react';
 
 import {
-    Context, TabGuardCtrl, ITabGuard, GridCtrl
+    TabGuardCtrl, ITabGuard, GridCtrl
 } from '@ag-grid-community/core';
 import { BeansContext } from './beansContext';
 

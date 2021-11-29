@@ -28,6 +28,11 @@ const containsGridOptions = function (file) {
     return fileContent.includes('gridOptions =')
 }
 
+const containsEvent = (eventName) => function (file) {
+    const fileContent = fs.readFileSync(file.path, "utf8");
+    return fileContent.includes(eventName)
+}
+
 const containsColDef = function (file) {
     const fileContent = fs.readFileSync(file.path, "utf8");
     return fileContent.includes('columnDefs =')
@@ -44,6 +49,8 @@ const applyTypes = () => {
         .pipe(replace(new RegExp('(var|const) columnDefs =', 'g'), 'const columnDefs: ColDef[] ='))
         .pipe(replace(new RegExp('gridOptions\.api(?!!.)', 'g'), 'gridOptions.api!'))
         .pipe(replace(new RegExp('gridOptions\.columnApi(?!!.)', 'g'), 'gridOptions.columnApi!'))
+        .pipe(gulpIf(containsEvent('onGridReady'), replace(new RegExp('^', 'g'), 'import { GridReadyEvent } from "@ag-grid-community/core";\n\n')))
+        .pipe(gulpIf(containsEvent('onFirstDataRendered'), replace(new RegExp('^', 'g'), 'import { FirstDataRenderedEvent } from "@ag-grid-community/core";\n\n')))
         .pipe(gulpIf(containsGridOptions, replace(new RegExp('^', 'g'), 'import { GridOptions } from "@ag-grid-community/core";\n\n')))
         .pipe(gulpIf(containsColDef, replace(new RegExp('^', 'g'), 'import { ColDef } from "@ag-grid-community/core";\n\n')))
         .pipe(dest('./'))

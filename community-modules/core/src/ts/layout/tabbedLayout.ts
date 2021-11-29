@@ -2,9 +2,8 @@ import { AgPromise } from '../utils';
 import { RefSelector } from '../widgets/componentAnnotations';
 import { ManagedFocusFeature } from '../widgets/managedFocusFeature';
 import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
-import { addCssClass, clearElement, removeCssClass } from '../utils/dom';
+import { clearElement } from '../utils/dom';
 import { setAriaLabel, setAriaRole } from '../utils/aria';
-import { find } from '../utils/generic';
 import { callIfPresent } from '../utils/function';
 import { KeyCode } from '../constants/keyCode';
 import { Component } from '../widgets/component';
@@ -51,13 +50,13 @@ export class TabbedLayout extends Component {
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {
-        switch (e.keyCode) {
+        switch (e.key) {
             case KeyCode.RIGHT:
             case KeyCode.LEFT:
                 if (!this.eHeader.contains(document.activeElement)) { return; }
 
                 const currentPosition = this.items.indexOf(this.activeItem);
-                const nextPosition = e.keyCode === KeyCode.RIGHT ? Math.min(currentPosition + 1, this.items.length - 1) : Math.max(currentPosition - 1, 0);
+                const nextPosition = e.key === KeyCode.RIGHT ? Math.min(currentPosition + 1, this.items.length - 1) : Math.max(currentPosition - 1, 0);
 
                 if (currentPosition === nextPosition) { return; }
 
@@ -121,7 +120,7 @@ export class TabbedLayout extends Component {
         setAriaRole(eHeaderButton, 'tab');
         eHeaderButton.setAttribute('tabIndex', '-1');
         eHeaderButton.appendChild(item.title);
-        addCssClass(eHeaderButton, 'ag-tab');
+        eHeaderButton.classList.add('ag-tab');
 
         this.eHeader.appendChild(eHeaderButton);
         setAriaLabel(eHeaderButton, item.titleLabel);
@@ -136,7 +135,7 @@ export class TabbedLayout extends Component {
     }
 
     public showItem(tabbedItem: TabbedItem): void {
-        const itemWrapper = find(this.items, wrapper => wrapper.tabbedItem === tabbedItem);
+        const itemWrapper = this.items.find(wrapper => wrapper.tabbedItem === tabbedItem);
 
         if (itemWrapper) {
             this.showItemWrapper(itemWrapper);
@@ -167,10 +166,10 @@ export class TabbedLayout extends Component {
         });
 
         if (this.activeItem) {
-            removeCssClass(this.activeItem.eHeaderButton, 'ag-tab-selected');
+            this.activeItem.eHeaderButton.classList.remove('ag-tab-selected');
         }
 
-        addCssClass(wrapper.eHeaderButton, 'ag-tab-selected');
+        wrapper.eHeaderButton.classList.add('ag-tab-selected');
 
         this.activeItem = wrapper;
     }

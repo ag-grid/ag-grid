@@ -1,6 +1,5 @@
 import { Bean, Autowired } from './context/context';
 import { BeanStub } from "./context/beanStub";
-import { addCssClass } from './utils/dom';
 import { doOnce } from './utils/function';
 
 export type SASS_PROPERTIES = 'headerHeight' | 'headerCellMinWidth' | 'listItemHeight' | 'rowHeight' | 'chartMenuPanelWidth';
@@ -91,13 +90,13 @@ export class Environment extends BeanStub {
         if (SASS_PROPERTY_BUILDER[key]) {
             const classList = SASS_PROPERTY_BUILDER[key];
             const div = document.createElement('div');
-            addCssClass(div, theme);
+            div.classList.add(theme);
             div.style.position = 'absolute';
 
             const el: HTMLDivElement = classList.reduce((prevEl: HTMLDivElement, currentClass: string) => {
                 const currentDiv = document.createElement('div');
                 currentDiv.style.position = 'static';
-                addCssClass(currentDiv, currentClass);
+                currentDiv.classList.add(currentClass);
                 prevEl.appendChild(currentDiv);
 
                 return currentDiv;

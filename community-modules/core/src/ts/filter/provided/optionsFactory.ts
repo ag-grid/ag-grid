@@ -1,7 +1,6 @@
 import { IFilterOptionDef } from '../../interfaces/iFilter';
 import { IScalarFilterParams } from './scalarFilter';
 import { ISimpleFilterParams } from './simpleFilter';
-import { every, some } from '../../utils/array';
 import { _ } from '../../utils';
 
 /* Common logic for options, used by both filters and floating filters. */
@@ -19,10 +18,10 @@ export class OptionsFactory {
     }
 
     private checkForDeprecatedParams(): void {
-        if (_.some(this.filterOptions, (opt) => typeof opt != 'string' && opt.test != null)) {
+        if (this.filterOptions.some(opt => typeof opt != 'string' && opt.test != null)) {
             console.warn(`AG Grid: [IFilterOptionDef] since v26.2.0, test() has been replaced with predicate().`);
         }
-        if (_.some(this.filterOptions, (opt) => typeof opt != 'string' && opt.hideFilterInput != null)) {
+        if (this.filterOptions.some(opt => typeof opt != 'string' && opt.hideFilterInput != null)) {
             console.warn(`AG Grid: [IFilterOptionDef] since v26.2.0, useOfHideFilterInput has been replaced with numberOfInputs.`);
         }
     }
@@ -39,7 +38,7 @@ export class OptionsFactory {
 
             const requiredProperties = [['displayKey'], ['displayName'], ['predicate', 'test']];
             const propertyCheck = (keys: [keyof IFilterOptionDef]) => {
-                if (!some(keys, (key) => filterOption[key] != null)) {
+                if (!keys.some(key => filterOption[key] != null)) {
                     console.warn(`AG Grid: ignoring FilterOptionDef as it doesn't contain one of '${keys}'`);
                     return false;
                 }
@@ -47,8 +46,8 @@ export class OptionsFactory {
                 return true;
             };
 
-            if (!every(requiredProperties, propertyCheck)) {
-                this.filterOptions = _.filter(this.filterOptions, (v) => v === filterOption) || [];
+            if (!requiredProperties.every(propertyCheck)) {
+                this.filterOptions = this.filterOptions.filter(v => v === filterOption) || [];
                 return;
             }
 

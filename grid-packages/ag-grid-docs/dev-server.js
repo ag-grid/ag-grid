@@ -250,14 +250,14 @@ async function regenerateDocumentationExamplesForFileChange(file) {
 }
 
 async function watchAndGenerateExamples() {
-    if (moduleChanged('.')) {
-        await generateDocumentationExamples();
-
-        const npm = WINDOWS ? 'npm.cmd' : 'npm';
-        cp.spawnSync(npm, ['run', 'hash']);
-    } else {
-        console.log("Docs contents haven't changed - skipping example generation");
-    }
+    // if (moduleChanged('.')) {
+    //     await generateDocumentationExamples();
+    //
+    //     const npm = WINDOWS ? 'npm.cmd' : 'npm';
+    //     cp.spawnSync(npm, ['run', 'hash']);
+    // } else {
+    //     console.log("Docs contents haven't changed - skipping example generation");
+    // }
 
     chokidar
         .watch([`./documentation/doc-pages/**/examples/**/*.{html,css,js,jsx,ts}`], { ignored: ['**/_gen/**/*'] })

@@ -1,10 +1,9 @@
 import {nextTick} from 'vue';
 
-const KEY_BACKSPACE = 8;
-const KEY_DELETE = 46;
-const KEY_F2 = 113;
-const KEY_ENTER = 13;
-const KEY_TAB = 9;
+const KEY_BACKSPACE = 'Backspace';
+const KEY_DELETE = 'Delete';
+const KEY_ENTER = 'Enter';
+const KEY_TAB = 'Tab';
 
 export default {
     template: `<input :ref="'input'" @keydown="onKeyDown($event)" v-model="value"/>`,
@@ -26,7 +25,7 @@ export default {
         setInitialState(params) {
             let startValue;
 
-            if (params.keyPress === KEY_BACKSPACE || params.keyPress === KEY_DELETE) {
+            if (params.key === KEY_BACKSPACE || params.key === KEY_DELETE) {
                 // if backspace or delete pressed, we clear the cell
                 startValue = '';
             } else if (params.charPress) {
@@ -58,32 +57,26 @@ export default {
             }
         },
 
-        getCharCodeFromEvent(event) {
-            event = event || window.event;
-            return (typeof event.which === "undefined") ? event.keyCode : event.which;
-        },
-
         isCharNumeric(charStr) {
             return /\d/.test(charStr);
         },
 
         isKeyPressedNumeric(event) {
-            const charCode = this.getCharCodeFromEvent(event);
-            const charStr = String.fromCharCode(charCode);
+            const charStr = event.key;
             return this.isCharNumeric(charStr);
         },
 
         finishedEditingPressed(event) {
-            const charCode = this.getCharCodeFromEvent(event);
-            return charCode === KEY_ENTER || charCode === KEY_TAB;
+            const key = event.key;
+            return key === KEY_ENTER || key === KEY_TAB;
         },
 
         deleteOrBackspace(event) {
-            return [KEY_DELETE, KEY_BACKSPACE].indexOf(this.getCharCodeFromEvent(event)) > -1;
+            return [KEY_DELETE, KEY_BACKSPACE].indexOf(event.key) > -1;
         },
 
         isLeftOrRight(event) {
-            return [37, 39].indexOf(this.getCharCodeFromEvent(event)) > -1;
+            return ['ArrowLeft', 'ArrowRight'].indexOf(event.key) > -1;
         }
     },
 

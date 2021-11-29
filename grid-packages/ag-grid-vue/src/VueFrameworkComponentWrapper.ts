@@ -1,6 +1,6 @@
-import {BaseComponentWrapper, Bean, WrappableInterface} from 'ag-grid-community';
-import {AgGridVue} from './AgGridVue';
-import {VueComponentFactory} from './VueComponentFactory';
+import { BaseComponentWrapper, Bean, WrappableInterface } from 'ag-grid-community';
+import { AgGridVue } from './AgGridVue';
+import { VueComponentFactory } from './VueComponentFactory';
 
 interface VueWrappableInterface extends WrappableInterface {
     overrideProcessing(methodName: string): boolean;

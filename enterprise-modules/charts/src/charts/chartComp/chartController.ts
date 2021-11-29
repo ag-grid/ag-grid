@@ -17,7 +17,7 @@ import {
 import { ChartDataModel, ColState } from "./chartDataModel";
 import { ChartProxy } from "./chartProxies/chartProxy";
 import { getChartTheme } from "ag-charts-community";
-import { ChartModelType } from "@ag-grid-community/core/dist/cjs/interfaces/IChartService";
+import { ChartModelType } from "@ag-grid-community/core";
 
 export interface ChartModelUpdatedEvent extends AgEvent {
 }

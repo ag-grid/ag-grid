@@ -1,4 +1,8 @@
-import { ColGroupDef, GridOptions, IColumnToolPanel } from '@ag-grid-community/core'
+import {
+  ColGroupDef,
+  GridOptions,
+  IColumnToolPanel,
+} from '@ag-grid-community/core'
 
 const columnDefs: ColGroupDef[] = [
   {
@@ -47,28 +51,38 @@ const gridOptions: GridOptions = {
   },
   sideBar: 'columns',
   onGridReady: function (params) {
-    var columnToolPanel = gridOptions.api!.getToolPanelInstance('columns') as unknown as IColumnToolPanel;
+    var columnToolPanel = (gridOptions.api!.getToolPanelInstance(
+      'columns'
+    ) as unknown) as IColumnToolPanel
     columnToolPanel.collapseColumnGroups()
   },
 }
 
 function expandAllGroups() {
-  var columnToolPanel = gridOptions.api!.getToolPanelInstance('columns') as unknown as IColumnToolPanel;
+  var columnToolPanel = (gridOptions.api!.getToolPanelInstance(
+    'columns'
+  ) as unknown) as IColumnToolPanel
   columnToolPanel.expandColumnGroups()
 }
 
 function collapseAllGroups() {
-  var columnToolPanel = gridOptions.api!.getToolPanelInstance('columns') as unknown as IColumnToolPanel;
+  var columnToolPanel = (gridOptions.api!.getToolPanelInstance(
+    'columns'
+  ) as unknown) as IColumnToolPanel
   columnToolPanel.collapseColumnGroups()
 }
 
 function expandAthleteAndCompetitionGroups() {
-  var columnToolPanel = gridOptions.api!.getToolPanelInstance('columns') as unknown as IColumnToolPanel;
+  var columnToolPanel = (gridOptions.api!.getToolPanelInstance(
+    'columns'
+  ) as unknown) as IColumnToolPanel
   columnToolPanel.expandColumnGroups(['athleteGroupId', 'competitionGroupId'])
 }
 
 function collapseCompetitionGroups() {
-  var columnToolPanel = gridOptions.api!.getToolPanelInstance('columns') as unknown as IColumnToolPanel;
+  var columnToolPanel = (gridOptions.api!.getToolPanelInstance(
+    'columns'
+  ) as unknown) as IColumnToolPanel
   columnToolPanel.collapseColumnGroups(['competitionGroupId'])
 }
 

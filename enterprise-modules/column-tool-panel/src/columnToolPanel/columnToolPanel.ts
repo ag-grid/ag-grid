@@ -89,7 +89,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         this.childDestroyFuncs.push(() => this.destroyBean(this.primaryColsPanel));
 
         this.primaryColsPanel.init(true, this.params, "toolPanelUi");
-        _.addCssClass(this.primaryColsPanel.getGui(), 'ag-column-panel-column-select');
+        this.primaryColsPanel.addCssClass('ag-column-panel-column-select');
         this.appendChild(this.primaryColsPanel);
 
         if (this.isRowGroupingModuleLoaded()) {
@@ -183,7 +183,7 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
         ].forEach(panel => {
             if (!panel) { return; }
             const eGui = panel.getGui();
-            panel.toggleResizable(!_.containsClass(eGui, 'ag-last-column-drop') && !_.containsClass(eGui, 'ag-hidden'));
+            panel.toggleResizable(!eGui.classList.contains('ag-last-column-drop') && !eGui.classList.contains('ag-hidden'));
         });
     }
 
@@ -192,13 +192,13 @@ export class ColumnToolPanel extends Component implements IColumnToolPanel, IToo
 
         const columnDrops: HTMLElement[] = Array.prototype.slice.call(eGui.querySelectorAll('.ag-column-drop'));
 
-        columnDrops.forEach(columnDrop => _.removeCssClass(columnDrop, 'ag-last-column-drop'));
+        columnDrops.forEach(columnDrop => columnDrop.classList.remove('ag-last-column-drop'));
 
         const columnDropEls = eGui.querySelectorAll('.ag-column-drop:not(.ag-hidden)');
         const lastVisible = _.last(columnDropEls) as HTMLElement;
 
         if (lastVisible) {
-            _.addCssClass(lastVisible, 'ag-last-column-drop');
+            lastVisible.classList.add('ag-last-column-drop');
         }
 
         this.setResizers();

@@ -64,6 +64,7 @@ class GridComponent extends Component {
             <div className="ag-theme-alpine" style={{height: 400, width: 600}}>
                 <button className="scrollToBottom" onClick={this.scrollToBottom}>Scroll To Bottom</button>
                 <AgGridReact
+                    suppressReactUi={true}
                     ref={(element) => {
                         window.gridComponentInstance = element
                     }}

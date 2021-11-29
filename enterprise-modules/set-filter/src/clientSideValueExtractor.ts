@@ -49,7 +49,7 @@ export class ClientSideValuesExtractor {
             value = _.makeNull(value);
 
             if (value != null && Array.isArray(value)) {
-                _.forEach(value, x => {
+                value.forEach(x => {
                     const formatted = _.toStringOrNull(_.makeNull(x));
                     addValue(formatted);
                 });

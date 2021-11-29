@@ -4,7 +4,7 @@ import { DragStartedEvent, DragStoppedEvent, Events } from "../events";
 import { ColumnApi } from "../columns/columnApi";
 import { GridApi } from "../gridApi";
 import { BeanStub } from "../context/beanStub";
-import { find, exists } from "../utils/generic";
+import { exists } from "../utils/generic";
 import { removeFromArray } from "../utils/array";
 import { areEventsNear } from "../utils/mouse";
 
@@ -53,7 +53,7 @@ export class DragService extends BeanStub {
     }
 
     public removeDragSource(params: DragListenerParams): void {
-        const dragSourceAndListener = find(this.dragSources, item => item.dragSource === params);
+        const dragSourceAndListener = this.dragSources.find(item => item.dragSource === params);
 
         if (!dragSourceAndListener) { return; }
 

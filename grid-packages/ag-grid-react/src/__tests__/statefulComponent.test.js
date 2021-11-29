@@ -139,6 +139,7 @@ class GridWithStatefulComponent extends Component {
             <div
                 className="ag-theme-balham">
                 <AgGridReact
+                    suppressReactUi={true}
                     columnDefs={this.state.columnDefs}
                     onGridReady={this.onGridReady.bind(this)}
                     rowData={this.state.rowData} />

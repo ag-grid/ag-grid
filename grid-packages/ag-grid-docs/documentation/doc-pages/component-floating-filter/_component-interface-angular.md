@@ -9,7 +9,7 @@
 |
 |    // The agInit(params) method is called on the floating filter once.
 |    // See below for details on the parameters.
-|    agInit(params: IFilterFloatingParams): void;
+|    agInit(params: IFloatingFilterParams): void;
 |
 |    // Gets called every time the parent filter changes. Your floating
 |    // filter would typically refresh its UI to reflect the new filter

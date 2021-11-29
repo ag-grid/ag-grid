@@ -65,7 +65,7 @@ export class ChartSettingsPanel extends Component {
 
         this.palettes = palettes;
         this.themes = this.chartController.getThemes();
-        this.activePaletteIndex = _.findIndex(this.themes, name => name === this.chartController.getThemeName());
+        this.activePaletteIndex = this.themes.findIndex(name => name === this.chartController.getThemeName());
         this.cardItems = [];
 
         _.clearElement(this.eCardSelector);
@@ -84,17 +84,17 @@ export class ChartSettingsPanel extends Component {
             if (isActivePalette) {
                 miniChartsContainer.refreshSelected();
             } else {
-                _.addCssClass(miniChartsContainer.getGui(), 'ag-hidden');
+                miniChartsContainer.addCssClass('ag-hidden');
             }
         });
 
-        _.addOrRemoveCssClass(this.eNavBar, 'ag-hidden', this.palettes.length <= 1);
+        this.eNavBar.classList.toggle('ag-hidden', this.palettes.length <= 1);
         _.radioCssClass(this.cardItems[this.activePaletteIndex], 'ag-selected', 'ag-not-selected');
     }
 
     private addCardLink(index: number): void {
         const link = document.createElement('div');
-        _.addCssClass(link, 'ag-chart-settings-card-item');
+        link.classList.add('ag-chart-settings-card-item');
 
         this.addManagedListener(link, 'click', () => {
             const { activePaletteIndex } = this;
@@ -144,9 +144,9 @@ export class ChartSettingsPanel extends Component {
 
         const animatingClass = 'ag-animating';
 
-        _.removeCssClass(nextGui, 'ag-hidden');
-        _.addCssClass(currentGui, animatingClass);
-        _.addCssClass(nextGui, animatingClass);
+        futurePalette.removeCssClass('ag-hidden');
+        currentPalette.addCssClass(animatingClass);
+        futurePalette.addCssClass(animatingClass);
 
         this.activePaletteIndex = index;
 
@@ -162,9 +162,9 @@ export class ChartSettingsPanel extends Component {
         window.setTimeout(() => {
             this.isAnimating = false;
 
-            _.removeCssClass(currentGui, animatingClass);
-            _.removeCssClass(nextGui, animatingClass);
-            _.addCssClass(currentGui, 'ag-hidden');
+            currentPalette.removeCssClass(animatingClass);
+            futurePalette.removeCssClass(animatingClass);
+            currentPalette.addCssClass('ag-hidden');
         }, 300);
     }
 

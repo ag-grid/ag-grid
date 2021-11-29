@@ -4,7 +4,7 @@ import { Beans } from "../beans";
 import { addStylesToElement, setDomChildOrder } from "../../utils/dom";
 import { IRowComp, RowCtrl, RowType } from "./rowCtrl";
 import { CellComp } from "../cell/cellComp";
-import { assign, getAllValuesInObject } from "../../utils/object";
+import { getAllValuesInObject } from "../../utils/object";
 import { setAriaExpanded, setAriaLabel, setAriaRole, setAriaRowIndex, setAriaSelected } from "../../utils/aria";
 import { CellCtrl } from "../cell/cellCtrl";
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
@@ -93,7 +93,7 @@ export class RowComp extends Component {
     }
 
     private setCellCtrls(cellCtrls: CellCtrl[]): void {
-        const cellsToRemove = assign({}, this.cellComps);
+        const cellsToRemove = Object.assign({}, this.cellComps);
 
         cellCtrls.forEach(cellCtrl => {
             const key = cellCtrl.getInstanceId();
@@ -107,7 +107,7 @@ export class RowComp extends Component {
         });
 
         const cellCompsToRemove = getAllValuesInObject(cellsToRemove)
-            .filter(cellComp => cellComp != null );
+            .filter(cellComp => cellComp != null);
 
         this.destroyCells(cellCompsToRemove as CellComp[]);
         this.ensureDomOrder(cellCtrls);

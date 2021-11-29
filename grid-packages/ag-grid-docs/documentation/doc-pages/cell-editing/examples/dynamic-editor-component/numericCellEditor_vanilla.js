@@ -3,10 +3,11 @@ function NumericCellEditor() {
 
 // gets called once before the renderer is used
 NumericCellEditor.prototype.init = function(params) {
+    var that = this;
     // create the cell
     this.eInput = document.createElement('input');
 
-    if (isCharNumeric(params.charPress)) {
+    if (that.isCharNumeric(params.charPress)) {
         this.eInput.value = params.charPress;
     } else {
         if (params.value !== undefined && params.value !== null) {
@@ -14,7 +15,7 @@ NumericCellEditor.prototype.init = function(params) {
         }
     }
 
-    var that = this;
+    
     this.eInput.addEventListener('keypress', function(event) {
         if (!isKeyPressedNumeric(event)) {
             that.eInput.focus();
@@ -30,10 +31,13 @@ NumericCellEditor.prototype.init = function(params) {
 };
 
 NumericCellEditor.prototype.isKeyPressedNavigation = function(event) {
-    return event.keyCode === 39
-        || event.keyCode === 37;
+    return event.key === 'ArrowLeft'
+        || event.key === 'ArrowRight';
 };
 
+NumericCellEditor.prototype.isCharNumeric = function(charStr) {
+    return !!/\d/.test(charStr);
+}
 
 // gets called once when grid ready to insert the element
 NumericCellEditor.prototype.getGui = function() {
