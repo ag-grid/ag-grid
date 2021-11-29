@@ -192,12 +192,6 @@ export function unwrapUserComp<T>(comp: T): T {
     return isProxy ? compAsAny.getFrameworkComponentInstance() : comp;
 }
 
-function returnIfProxy<T>(comp: T): T | undefined {
-    const compAsAny = comp as any;
-    const isProxy = compAsAny != null && compAsAny.getFrameworkComponentInstance != null;
-    return isProxy ? comp : undefined;
-}
-
 @Bean('gridApi')
 export class GridApi {
 
@@ -770,16 +764,6 @@ export class GridApi {
         return unwrapUserComp(comp);
     }
 
-    /** @deprecated */
-    public getToolPanelProxyInstance(id: string): IToolPanel | undefined {
-        if (!this.sideBarComp) {
-            console.warn('AG Grid: toolPanel is only available in AG Grid Enterprise');
-            return;
-        }
-        const comp = this.sideBarComp.getToolPanelInstance(id);
-        return returnIfProxy(comp);
-    }
-
     public addVirtualRowListener(eventName: string, rowIndex: number, callback: Function) {
         if (typeof eventName !== 'string') {
             console.warn('AG Grid: addVirtualRowListener is deprecated, please use addRenderedRowListener.');
@@ -1004,17 +988,6 @@ export class GridApi {
         return unwrapped;
     }
 
-    /** @deprecated */
-    public getFilterProxyInstance(key: string | Column, callback?: (filter: IFilter) => void): IFilter | null | undefined {
-        const res = this.getFilterInstanceImpl(key, instance => {
-            if (!callback) { return; }
-            const proxy = returnIfProxy(instance);
-            callback(proxy!);
-        });
-        const proxy = returnIfProxy(res);
-        return proxy;
-    }
-
     private getFilterInstanceImpl(key: string | Column, callback: (filter: IFilter) => void): IFilter | null | undefined {
         const column = this.columnModel.getPrimaryColumn(key);
 
@@ -1048,14 +1021,6 @@ export class GridApi {
 
         const comp = this.statusBarService.getStatusPanel(key);
         return unwrapUserComp(comp);
-    }
-
-    /** @deprecated */
-    public getStatusPanelProxy(key: string): IStatusPanel | undefined {
-        if (!this.statusBarService) { return; }
-
-        const comp = this.statusBarService.getStatusPanel(key);
-        return returnIfProxy(comp);
     }
 
     public getColumnDef(key: string | Column) {
@@ -1726,25 +1691,11 @@ export class GridApi {
         return unwrapped;
     }
 
-    /** @deprecated */
-    public getCellRendererProxyInstances(params: GetCellRendererInstancesParams = {}): (ICellRenderer | undefined)[] {
-        const res = this.rowRenderer.getCellRendererInstances(params);
-        const proxies = res.map(returnIfProxy);
-        return proxies;
-    }
-
     /** Returns the list of active cell editor instances. Optionally provide parameters to restrict to certain columns / row nodes. */
     public getCellEditorInstances(params: GetCellEditorInstancesParams = {}): ICellEditor[] {
         const res = this.rowRenderer.getCellEditorInstances(params);
         const unwrapped = res.map(unwrapUserComp);
         return unwrapped;
-    }
-
-    /** @deprecated */
-    public getCellEditorProxyInstances(params: GetCellEditorInstancesParams = {}): (ICellEditor | undefined)[] {
-        const res = this.rowRenderer.getCellEditorInstances(params);
-        const proxies = res.map(returnIfProxy);
-        return proxies;
     }
 
     /** If the grid is editing, returns back details of the editing cell(s). */
@@ -2045,7 +1996,7 @@ export class GridApi {
             console.warn(`AG Grid: api.setRowCount is only available for Infinite Row Model.`);
         }
     }
-
+    
     public getVirtualPageState(): any {
         console.warn('AG Grid: getVirtualPageState() is now called getCacheBlockState(), please call getCacheBlockState() instead');
         return this.getCacheBlockState();
