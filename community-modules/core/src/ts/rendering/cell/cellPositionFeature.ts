@@ -17,7 +17,7 @@ import { RowNode } from "../../entities/rowNode";
 export class CellPositionFeature extends BeanStub {
 
     private cellCtrl: CellCtrl;
-    private cellComp: ICellComp;
+    private eGui: HTMLElement;
 
     private readonly column: Column;
     private readonly rowNode: RowNode;
@@ -44,8 +44,8 @@ export class CellPositionFeature extends BeanStub {
         this.rowSpan = this.column.getRowSpan(this.rowNode);
     }
 
-    public setComp(comp: ICellComp): void {
-        this.cellComp = comp;
+    public setComp(eGui: HTMLElement): void {
+        this.eGui = eGui;
         this.onLeftChanged();
         this.onWidthChanged();
         this.applyRowSpan();
@@ -77,9 +77,9 @@ export class CellPositionFeature extends BeanStub {
     }
 
     public onWidthChanged(): void {
-        if (!this.cellComp) { return; }
+        if (!this.eGui) { return; }
         const width = this.getCellWidth();
-        this.cellComp.setWidth(`${width}px`);
+        this.eGui.style.width = `${width}px`;
     }
 
     private getCellWidth(): number {
@@ -117,9 +117,9 @@ export class CellPositionFeature extends BeanStub {
     }
 
     public onLeftChanged(): void {
-        if (!this.cellComp) { return; }
+        if (!this.eGui) { return; }
         const left = this.modifyLeftForPrintLayout(this.getCellLeft());
-        this.cellComp.setLeft(left + 'px');
+        this.eGui.style.left = left + 'px';
     }
 
     private getCellLeft(): number | null {
@@ -157,8 +157,8 @@ export class CellPositionFeature extends BeanStub {
         const singleRowHeight = this.beans.gridOptionsWrapper.getRowHeightAsNumber();
         const totalRowHeight = singleRowHeight * this.rowSpan;
 
-        this.cellComp.setHeight(`${totalRowHeight}px`);
-        this.cellComp.setZIndex('1');
+        this.eGui.style.height = `${totalRowHeight}px`;
+        this.eGui.style.zIndex = '1';
     }
 
     // overriding to make public, as we don't dispose this bean via context

@@ -15340,37 +15340,9 @@
         "optional": false
       }
     },
-    "setLeft": {
-      "type": {
-        "arguments": { "left": "string" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "setWidth": {
-      "type": {
-        "arguments": { "width": "string" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
     "setAriaColIndex": {
       "type": {
         "arguments": { "index": "number" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "setHeight": {
-      "type": {
-        "arguments": { "height": "string" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "setZIndex": {
-      "type": {
-        "arguments": { "zIndex": "string" },
         "returnType": "void",
         "optional": false
       }
@@ -15399,13 +15371,6 @@
     "setTitle": {
       "type": {
         "arguments": { "title": "string | undefined" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "setTransition": {
-      "type": {
-        "arguments": { "value": "string | undefined" },
         "returnType": "void",
         "optional": false
       }

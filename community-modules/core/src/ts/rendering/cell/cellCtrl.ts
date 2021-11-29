@@ -52,16 +52,11 @@ export interface ICellComp {
     setAriaExpanded(expanded: boolean): void;
     getFocusableElement(): HTMLElement;
 
-    setLeft(left: string): void;
-    setWidth(width: string): void;
     setAriaColIndex(index: number): void;
-    setHeight(height: string): void;
-    setZIndex(zIndex: string): void;
     setTabIndex(tabIndex: number): void;
     setRole(role: string): void;
     setColId(colId: string): void;
     setTitle(title: string | undefined): void;
-    setTransition(value: string | undefined): void;
 
     setIncludeSelection(include: boolean): void;
     setIncludeRowDrag(include: boolean): void;
@@ -243,7 +238,7 @@ export class CellCtrl extends BeanStub {
         this.cellComp.setAriaColIndex(ariaColIndex);
         this.cellComp.setColId(colIdSanitised!);
 
-        this.cellPositionFeature.setComp(comp);
+        this.cellPositionFeature.setComp(eGui);
         this.cellCustomStyleFeature.setComp(comp, scope);
         this.tooltipFeature.setComp(comp);
         this.cellKeyboardListenerFeature.setComp(this.eGui);
@@ -716,11 +711,11 @@ export class CellCtrl extends BeanStub {
             this.cellComp.addOrRemoveCssClass(fullName, false);
             this.cellComp.addOrRemoveCssClass(animationFullName, true);
 
-            this.cellComp.setTransition(`background-color ${fadeDelay}ms`);
+            this.eGui.style.transition = `background-color ${fadeDelay}ms`;
             window.setTimeout(() => {
                 // and then to leave things as we got them, we remove the animation
                 this.cellComp.addOrRemoveCssClass(animationFullName, false);
-                this.cellComp.setTransition('transition');
+                this.eGui.style.transition = '';
             }, fadeDelay!);
         }, flashDelay);
     }
@@ -862,7 +857,7 @@ export class CellCtrl extends BeanStub {
 
     public onLeftChanged(): void {
         this.cellPositionFeature.onLeftChanged();
-        this.refreshAriaIndex(); // should change this to listen for when column order changes
+        // this.refreshAriaIndex(); // should change this to listen for when column order changes
     }
 
     private refreshAriaIndex(): void {
