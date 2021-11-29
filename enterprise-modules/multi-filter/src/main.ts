@@ -1,2 +1,2 @@
 export { MultiFilterModule } from './multiFilterModule';
-export { MultiFilter, IMultiFilterModel } from './multiFilter/multiFilter';
+export { MultiFilter } from './multiFilter/multiFilter';

@@ -87,6 +87,7 @@ class GridComponent extends Component {
                 <button onClick={this.scrollToBottom}>Scroll To Bottom</button>
                 <button onClick={this.scrollToTop}>Scroll To Top</button>
                 <AgGridReact
+                    suppressReactUi={true}
                     columnDefs={this.state.columnDefs}
                     onGridReady={this.onGridReady.bind(this)}
                     rowData={this.state.rowData}

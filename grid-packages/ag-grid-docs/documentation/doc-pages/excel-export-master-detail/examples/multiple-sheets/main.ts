@@ -1,4 +1,4 @@
-import { FirstDataRenderedEvent, GetDetailRowDataParams, GridOptions } from '@ag-grid-community/core'
+import { FirstDataRenderedEvent, GridOptions, IDetailCellRendererParams } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -30,10 +30,10 @@ const gridOptions: GridOptions = {
         flex: 1,
       },
     },
-    getDetailRowData: function (params: GetDetailRowDataParams) {
+    getDetailRowData: function (params) {
       params.successCallback(params.data.callRecords)
     },
-  },
+  } as IDetailCellRendererParams,
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {

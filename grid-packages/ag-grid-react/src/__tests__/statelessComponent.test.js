@@ -30,9 +30,6 @@ it('stateless function has no component instance', () => {
     const instances = agGridReact.api.getCellRendererInstances({columns: ['age']});
     expect(instances).toBeTruthy();
     expect(instances.length).toEqual(1);
-
-    const frameworkInstance = instances[0];
-    expect(frameworkInstance).not.toBeTruthy()
 });
 
 class GridWithStatelessFunction extends Component {
@@ -57,6 +54,7 @@ class GridWithStatelessFunction extends Component {
             <div
                 className="ag-theme-balham">
                 <AgGridReact
+                    suppressReactUi={true}
                     columnDefs={this.state.columnDefs}
                     onGridReady={this.onGridReady.bind(this)}
                     disableStaticMarkup={true}

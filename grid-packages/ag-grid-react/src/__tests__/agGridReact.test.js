@@ -95,6 +95,7 @@ class App extends Component {
                         width: '600px'
                     }}>
                     <AgGridReact
+                        suppressReactUi={true}
                         columnDefs={this.state.columnDefs}
                         rowData={this.state.rowData}
                         onGridReady={this.onGridReady}>

@@ -23,8 +23,8 @@ var gridOptions = {
 function navigateToNextCell(params) {
     var suggestedNextCell = params.nextCellPosition;
 
-    var KEY_UP = 38;
-    var KEY_DOWN = 40;
+    var KEY_UP = 'ArrowUp';
+    var KEY_DOWN = 'ArrowDown';
 
     var noUpOrDownKeyPressed = params.key !== KEY_DOWN && params.key !== KEY_UP;
     if (noUpOrDownKeyPressed) {

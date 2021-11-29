@@ -1,4 +1,4 @@
-import { GetDetailRowDataParams, GridOptions, IServerSideDatasource } from '@ag-grid-community/core'
+import { GridOptions, IDetailCellRendererParams, IServerSideDatasource } from '@ag-grid-community/core'
 declare var FakeServer: any;
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -35,11 +35,11 @@ const gridOptions: GridOptions = {
         flex: 1,
       },
     },
-    getDetailRowData: function (params: GetDetailRowDataParams) {
+    getDetailRowData: function (params) {
       // supply details records to detail cell renderer (i.e. detail grid)
       params.successCallback(params.data.callRecords)
     },
-  },
+  } as IDetailCellRendererParams,
 
   getRowHeight: function (params) {
     if (params.node && params.node.detail) {

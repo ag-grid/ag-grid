@@ -21,7 +21,7 @@ Pagination does not reduce the feature set of the grid, as long as the underlyin
 
 ## Number Formats
 
-The numbers within the Paging Toolbar can be formatted by replacing the thousand and decimal separators. This can be achieve by customising localisation, for more info see [Localisation](/localisation/).
+The numbers within the Paging Toolbar can be formatted by replacing the thousand and decimal separators. This can be achieved by customising localisation, for more info see [Localisation](/localisation/).
 
 ## Example: Auto Page Size
 

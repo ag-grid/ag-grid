@@ -5,6 +5,9 @@ import {
     IDoesFilterPassParams,
     IAfterGuiAttachedParams,
     IFilterComp,
+    IMultiFilterDef,
+    IMultiFilterParams,
+    IMultiFilterModel,
     Autowired,
     UserComponentFactory,
     FilterManager,
@@ -19,36 +22,6 @@ import {
     PostConstruct
 } from '@ag-grid-community/core';
 import { MenuItemComponent, MenuItemActivatedEvent } from '@ag-grid-enterprise/menu';
-
-export interface IMultiFilterDef extends IFilterDef {
-    /** 
-     * Configures how the filter is shown in the Multi Filter.
-     * Default: `inline`
-     */
-    display?: 'inline' | 'accordion' | 'subMenu';
-    /**
-     * The title to be used when a filter is displayed inside a sub-menu or accordion.
-     */
-    title?: string;
-}
-
-export interface IMultiFilterParams extends IFilterParams {
-    /** An array of filter definition objects. */
-    filters?: IMultiFilterDef[];
-    /** Defaults to false. If true, all UI inputs managed by this filter are for display only, and
-     * the filter can only be affected by API calls. Does NOT affect child filters, they need to be
-     * individually configured with `readOnly` where applicable. */
-    readOnly?: boolean;
-}
-
-export interface IMultiFilterModel {
-    /** Multi filter type.  */
-    filterType?: 'multi';
-    /**
-     * Child filter models in the same order as the filters are specified in `filterParams`.
-     */
-    filterModels: any[] | null;
-}
 
 export class MultiFilter extends TabGuardComp implements IFilterComp {
     @Autowired('filterManager') private readonly filterManager: FilterManager;
@@ -307,7 +280,7 @@ export class MultiFilter extends TabGuardComp implements IFilterComp {
         return AgPromise.all(promises).then(() => { });
     }
 
-    public getChildFilterInstance(index: number): IFilterComp {
+    public getChildFilterInstance(index: number): IFilterComp | undefined {
         return this.filters![index];
     }
 

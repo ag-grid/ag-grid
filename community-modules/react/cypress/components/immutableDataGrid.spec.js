@@ -91,6 +91,7 @@ class GridComponent extends Component {
                 <button className="addNewRow" onClick={this.addNew}>Add New Row</button>
                 <button className="modifyRow" onClick={this.modifyRow}>Modify Row</button>
                 <AgGridReact
+                    suppressReactUi={true}
                     ref={(element) => {
                         window.gridComponentInstance = element
                     }}
