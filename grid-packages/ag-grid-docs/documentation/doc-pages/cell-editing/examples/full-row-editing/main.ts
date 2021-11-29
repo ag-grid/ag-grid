@@ -86,6 +86,18 @@ function getRowData() {
   return rowData
 }
 
+function onBtStopEditing() {
+  gridOptions.api!.stopEditing()
+}
+
+function onBtStartEditing() {
+  gridOptions.api!.setFocusedCell(2, 'make')
+  gridOptions.api!.startEditingCell({
+    rowIndex: 2,
+    colKey: 'make',
+  })
+}
+
 function getNumericCellEditor() {
   function isCharNumeric(charStr: string) {
     return !!/\d/.test(charStr)
