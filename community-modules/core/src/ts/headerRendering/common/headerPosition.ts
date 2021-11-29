@@ -49,8 +49,6 @@ export class HeaderPositionUtils extends BeanStub {
         const childContainer = this.ctrlsService.getHeaderRowContainerCtrl(column.getPinned());
         const type = childContainer.getRowType(level);
 
-        console.log(`level=${level} type = ${type}`);
-
         if (type == HeaderRowType.COLUMN_GROUP) {
             const columnGroup = this.columnModel.getColumnGroupAtLevel(column, level);
             return {
