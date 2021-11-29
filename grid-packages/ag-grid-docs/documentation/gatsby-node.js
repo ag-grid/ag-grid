@@ -170,7 +170,7 @@ exports.onCreateNode = async ({ node, loadNodeContent, getNode, actions: { creat
             name: 'path',
             value: filePath.substring(0, filePath.length - 1)
         });
-    } else if (node.internal.type === 'File' && node.extension === 'json') {
+    } else if (node.internal.type === 'File' && node.internal.mediaType === 'application/json') {
         // load contents of JSON files to be used e.g. by ApiDocumentation
         node.internal.content = await loadNodeContent(node);
     }
@@ -232,6 +232,7 @@ const createDocPages = async (createPage, graphql, reporter) => {
         {
             allMarkdownRemark {
                 nodes {
+                    htmlAst
                     frontmatter {
                         frameworks
                     }

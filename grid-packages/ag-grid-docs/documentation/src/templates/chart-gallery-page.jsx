@@ -13,6 +13,7 @@ const ChartGalleryPageTemplate = ({ pageContext: { framework, name, description,
     return (
         <div id="doc-page-wrapper" className={pageStyles['doc-page__wrapper']}>
             <div id="doc-content" className={pageStyles['doc-page']}>
+                {/*eslint-disable-next-line react/jsx-pascal-case*/}
                 <SEO
                     title={`Gallery - ${name}`}
                     description={description.replace(/<[^>]+>/g, '')}
