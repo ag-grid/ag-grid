@@ -7,7 +7,7 @@ const TreeClosed = "/theme-icons/alpine/tree-closed.svg"
 const IS_SSR = typeof window === "undefined"
 
 const ChevronButtonCellRenderer = forwardRef((props, ref) => {
-    let [icon, setIcon] = useState(props.node.expanded ? TreeOpen : TreeClosed)
+    let [icon, setIcon] = useState(props && props.node && props.node.expanded ? TreeOpen : TreeClosed)
 
     function clickHanlder() {
         props.api.setRowNodeExpanded(props.node, !props.node.expanded)
