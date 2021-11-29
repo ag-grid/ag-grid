@@ -1,6 +1,6 @@
 import { GridOptions } from '@ag-grid-community/core'
 
-var gridOptions: GridOptions = {
+const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'athlete', minWidth: 150 },
     { field: 'age', maxWidth: 90 },
@@ -18,6 +18,7 @@ var gridOptions: GridOptions = {
     minWidth: 100,
   },
   enableRangeSelection: true,
+  enableRangeHandle: true,
 }
 
 // setup the grid after the page has finished loading

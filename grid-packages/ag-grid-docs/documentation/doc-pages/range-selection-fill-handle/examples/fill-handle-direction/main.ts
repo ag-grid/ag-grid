@@ -1,6 +1,6 @@
 import { GridOptions } from '@ag-grid-community/core'
 
-var gridOptions: GridOptions = {
+const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'athlete', minWidth: 150 },
     { field: 'age', maxWidth: 90 },
@@ -16,8 +16,25 @@ var gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     minWidth: 100,
+    editable: true,
   },
   enableRangeSelection: true,
+  enableFillHandle: true,
+  fillHandleDirection: 'x',
+}
+
+function fillHandleAxis(direction: 'x' | 'y' | 'xy') {
+  var buttons = Array.prototype.slice.call(
+    document.querySelectorAll('.ag-fill-direction')
+  )
+  var button = document.querySelector('.ag-fill-direction.' + direction)!
+
+  buttons.forEach(function (btn) {
+    btn.classList.remove('selected')
+  })
+
+  button.classList.add('selected')
+  gridOptions.api!.setFillHandleDirection(direction)
 }
 
 // setup the grid after the page has finished loading
