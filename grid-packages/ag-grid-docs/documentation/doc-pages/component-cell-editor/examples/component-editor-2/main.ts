@@ -1,9 +1,14 @@
-import { ColDef, GridOptions, ICellRendererParams, KeyCreatorParams } from '@ag-grid-community/core'
+import {
+  ColDef,
+  GridOptions,
+  ICellRendererParams,
+  KeyCreatorParams,
+} from '@ag-grid-community/core'
 
-declare var GenderRenderer: any;
-declare var NumericEditor: any;
-declare var MoodRenderer: any;
-declare var MoodEditor: any;
+declare var GenderRenderer: any
+declare var NumericEditor: any
+declare var MoodRenderer: any
+declare var MoodEditor: any
 
 const countryCellRenderer = (params: ICellRendererParams) => params.value.name
 

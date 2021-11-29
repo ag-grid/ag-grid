@@ -1,8 +1,8 @@
 import { GridOptions } from '@ag-grid-community/core'
-declare var DoublingEditor: any;
-declare var MoodRenderer: any;
-declare var MoodEditor: any;
-declare var NumericEditor: any;
+declare var DoublingEditor: any
+declare var MoodRenderer: any
+declare var MoodEditor: any
+declare var NumericEditor: any
 
 const gridOptions: GridOptions = {
   columnDefs: [

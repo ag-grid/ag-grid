@@ -1,6 +1,6 @@
 import { ColDef, GridOptions } from '@ag-grid-community/core'
-declare var MedalCellRenderer: any;
-declare var TotalValueRenderer: any;
+declare var MedalCellRenderer: any
+declare var TotalValueRenderer: any
 
 const columnDefs: ColDef[] = [
   { field: 'athlete' },

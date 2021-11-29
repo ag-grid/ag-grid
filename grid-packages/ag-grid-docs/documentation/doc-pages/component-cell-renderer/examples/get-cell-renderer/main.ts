@@ -1,5 +1,5 @@
 import { ColDef, GridOptions } from '@ag-grid-community/core'
-declare var MedalCellRenderer: any;
+declare var MedalCellRenderer: any
 
 const columnDefs: ColDef[] = [
   { field: 'athlete', width: 150 },
@@ -30,7 +30,7 @@ function onCallGold() {
   console.log('=========> calling all gold')
   // pass in list of columns, here it's gold only
   const params = { columns: ['gold'] }
-  const instances = gridOptions.api!.getCellRendererInstances(params) as any[];
+  const instances = gridOptions.api!.getCellRendererInstances(params) as any[]
   instances.forEach(instance => {
     instance.medalUserFunction()
   })
@@ -42,7 +42,7 @@ function onFirstRowGold() {
   const firstRowNode = gridOptions.api!.getDisplayedRowAtIndex(0)!
   const params = { columns: ['gold'], rowNodes: [firstRowNode] }
 
-  const instances = gridOptions.api!.getCellRendererInstances(params) as any[];
+  const instances = gridOptions.api!.getCellRendererInstances(params) as any[]
   instances.forEach(instance => {
     instance.medalUserFunction()
   })
@@ -51,7 +51,7 @@ function onFirstRowGold() {
 function onCallAllCells() {
   console.log('=========> calling everything')
   // no params, goes through all rows and columns where cell renderer exists
-  const instances = gridOptions.api!.getCellRendererInstances() as any[];
+  const instances = gridOptions.api!.getCellRendererInstances() as any[]
   instances.forEach(instance => {
     instance.medalUserFunction()
   })

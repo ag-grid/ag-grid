@@ -1,5 +1,5 @@
 import { ColDef, GridOptions } from '@ag-grid-community/core'
-declare var MySimpleEditor: any;
+declare var MySimpleEditor: any
 
 const columnDefs: ColDef[] = [
   { field: 'first_name', headerName: 'First Name', width: 120, editable: true },
@@ -49,7 +49,7 @@ const gridOptions: GridOptions = {
     setInterval(() => {
       const instances = gridOptions.api!.getCellEditorInstances()
       if (instances.length > 0) {
-        const instance = instances[0] as any;
+        const instance = instances[0] as any
         if (instance.myCustomFunction) {
           const result = instance.myCustomFunction()
           console.log(

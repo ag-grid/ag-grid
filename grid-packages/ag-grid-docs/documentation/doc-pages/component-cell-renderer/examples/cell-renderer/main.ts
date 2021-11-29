@@ -1,8 +1,12 @@
-import { ColDef, GridOptions, ICellRendererParams } from '@ag-grid-community/core'
-declare var DaysFrostRenderer: any;
+import {
+  ColDef,
+  GridOptions,
+  ICellRendererParams,
+} from '@ag-grid-community/core'
+declare var DaysFrostRenderer: any
 
 interface ImageCellRendererParams extends ICellRendererParams {
-  rendererImage: string;
+  rendererImage: string
 }
 
 const columnDefs: ColDef[] = [
@@ -51,7 +55,7 @@ const columnDefs: ColDef[] = [
       rendererImage: 'rain.png', // Complementing the Cell Renderer parameters
     },
   },
-];
+]
 
 /**
  * Demonstrating function cell renderer
