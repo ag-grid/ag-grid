@@ -23,11 +23,10 @@ const ImageCaption = ({
     const { fluidImages, images } = useImageFileNodes();
 
     let imgSrc;
-
     const fluidImage = getImage(fluidImages, pageName, src);
 
     if (fluidImage) {
-        imgSrc = fluidImage.childImageSharp.fluid.src;
+        imgSrc = fluidImage;
     } else {
         const image = getImage(images, pageName, src);
 
@@ -64,7 +63,7 @@ const ImageCaption = ({
             {descriptionTop && description}
             {src.endsWith('.gif') ?
                 <Gif src={src} alt={alt} className={imageClasses} wrapped={true} /> :
-                <img src={imgSrc} className={imageClasses} alt={alt} />}
+                <img src={fluidImage.childImageSharp.gatsbyImageData.images.fallback.src} className={imageClasses} alt={alt} />}
             {!descriptionTop && description}
         </div>
     );

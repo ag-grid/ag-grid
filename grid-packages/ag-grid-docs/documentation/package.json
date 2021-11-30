@@ -49,6 +49,7 @@
     "gatsby-plugin-remove-generator": "^1.2.0",
     "gatsby-plugin-sass": "4.14.0",
     "gatsby-plugin-sharp": "3.14.3",
+    "gatsby-plugin-image": "1.14.2",
     "gatsby-plugin-sitemap": "4.10.0",
     "gatsby-plugin-use-query-params": "^1.0.1",
     "gatsby-remark-attr": "^0.1.0",

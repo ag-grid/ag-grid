@@ -34,8 +34,9 @@ const plugins = [
   },
   // wraps each page with the layout (ie layouts/index.js)
   'gatsby-plugin-layout', // This provides a common template for the website pages
-  'gatsby-transformer-sharp', // This is used for handling images
+  `gatsby-plugin-image`,
   'gatsby-plugin-sharp', // This is used for handling images
+  'gatsby-transformer-sharp', // This is used for handling images
   {
     // This creates pages from React components in the pages folder. The example-runner page is only needed in
     // development mode in order to show examples in a new tab; in production, all the examples have been statically
