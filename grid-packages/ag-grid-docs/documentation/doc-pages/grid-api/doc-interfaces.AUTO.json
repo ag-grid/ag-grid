@@ -14945,7 +14945,7 @@
     "setRowCount": {
       "description": "/** Datasource calls this method when the total row count changes. This in turn sets the height of the grids vertical scroll. */",
       "type": {
-        "arguments": { "count": "number", "keepRenderedRows": "boolean" },
+        "arguments": { "count": "number", "keepRenderedRows?": "boolean" },
         "returnType": "void",
         "optional": false
       }

@@ -8447,7 +8447,7 @@
   "IViewportDatasourceParams": {
     "meta": {},
     "type": {
-      "setRowCount": "(count: number, keepRenderedRows: boolean) => void",
+      "setRowCount": "(count: number, keepRenderedRows?: boolean) => void",
       "setRowData": "(rowData: { [key: number]: any; }) => void",
       "getRow": "(rowIndex: number) => RowNode"
     },
