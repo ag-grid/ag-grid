@@ -196,7 +196,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IFilterC
     }
 
     public setModel(model: M | null): AgPromise<void> {
-        const promise = model ? this.setModelIntoUi(model) : this.resetUiToDefaults();
+        const promise = model != null ? this.setModelIntoUi(model) : this.resetUiToDefaults();
 
         return promise.then(() => {
             this.updateUiVisibility();
