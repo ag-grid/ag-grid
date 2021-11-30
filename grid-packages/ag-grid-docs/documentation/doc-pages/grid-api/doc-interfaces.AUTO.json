@@ -14465,9 +14465,9 @@
       "type": { "returnType": "number", "optional": true }
     },
     "lineDash": {
-      "description": "/** Defines how the crosshair stroke is rendered. This can be one of the lineDash style options or an array specifying the length in pixels of alternating dashes and gaps.\n * For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels.\n * The default is `solid` which is equivalent to an empty array, this renders a solid stroke with no gaps. */",
+      "description": "/** Defines how the crosshair stroke is rendered. This can be one of the lineDash style options.\n * The default is `solid`, this renders a solid stroke with no gaps. */",
       "type": {
-        "returnType": "'dash' | 'dashDot' | 'dashDotDot' | 'dot' | 'longDash' | 'longDashDot' | 'longDashDotDot' | 'shortDash' | 'shortDashDot' | 'shortDashDotDot' | 'shortDot' | 'solid' | string | number[]",
+        "returnType": "'dash' | 'dashDot' | 'dashDotDot' | 'dot' | 'longDash' | 'longDashDot' | 'longDashDotDot' | 'shortDash' | 'shortDashDot' | 'shortDashDotDot' | 'shortDot' | 'solid'",
         "optional": true
       }
     },
