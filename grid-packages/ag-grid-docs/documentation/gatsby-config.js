@@ -42,7 +42,7 @@ const plugins = [
     // generated so have an index.html to open.
     resolve: 'gatsby-plugin-page-creator',
     options: {
-      path: `${__dirname}/pages`,
+      path: `${__dirname}/src/pages`,
       ignore: isDevelopment() ? undefined : ['example-runner.jsx'],
     },
   },
