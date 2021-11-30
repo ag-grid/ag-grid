@@ -59,7 +59,7 @@ If these constraints are not satisfied, a label is not placed.
 
 To enable scatter series labels we have to both set the `label.enabled` config of a series to `true` and to specify which key should be used to fetch the label values.
 
-```
+```js
 labelKey: 'name',
 label: {
     enabled: true

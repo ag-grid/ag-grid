@@ -107,7 +107,7 @@ The example below demonstrates the autoHeight feature. Notice the following:
 
 When using Auto Height, there is a minimum of 150px set to the grid rows section. This is to avoid an empty grid which would look weird. To remove this minimum height, add the following CSS:
 
-```
+```css
 .ag-center-cols-clipper {
     min-height: unset !important;
 }
