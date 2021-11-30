@@ -1450,7 +1450,7 @@
       "cellFlashDelay?": "number",
       "cellFadeDelay?": "number",
       "allowShowChangeAfterFilter?": "boolean",
-      "domLayout?": "string",
+      "domLayout?": "'normal' | 'autoHeight' | 'print'",
       "ensureDomOrder?": "boolean",
       "enableRtl?": "boolean",
       "suppressColumnVirtualisation?": "boolean",

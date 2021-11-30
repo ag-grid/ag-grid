@@ -589,7 +589,12 @@
     "description": "/** Sets the height in pixels for the row containing the column label header. */",
     "type": { "arguments": { "headerHeight?": "number" } }
   },
-  "setDomLayout": { "type": { "arguments": { "domLayout": "string" } } },
+  "setDomLayout": {
+    "description": "/** Switch between layout options: `normal`, `autoHeight`, `print`.\n * Defaults to `normal` if no domLayout provided. */",
+    "type": {
+      "arguments": { "domLayout?": "'normal' | 'autoHeight' | 'print'" }
+    }
+  },
   "setEnableCellTextSelection": {
     "description": "/** Sets the `enableCellTextSelection` property. */",
     "type": { "arguments": { "selectable": "boolean" } }

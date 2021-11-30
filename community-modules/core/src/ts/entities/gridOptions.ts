@@ -461,7 +461,7 @@ export interface GridOptions {
      * Switch between layout options: `normal`, `autoHeight`, `print`.
      * Default: `normal`
      */
-    domLayout?: string;
+    domLayout?: 'normal' | 'autoHeight' | 'print';
     /** When `true`, the order of rows and columns in the DOM are consistent with what is on screen. Default: `false` */
     ensureDomOrder?: boolean;
     /** Set to `true` to operate the grid in RTL (Right to Left) mode. Default: `false` */

@@ -581,7 +581,7 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public cellFadeDelay: number | undefined = undefined;
     /** Switch between layout options: `normal`, `autoHeight`, `print`.
      * Default: `normal`     */
-    @Input() public domLayout: string | undefined = undefined;
+    @Input() public domLayout: 'normal' | 'autoHeight' | 'print' | undefined = undefined;
     /** When `true`, the order of rows and columns in the DOM are consistent with what is on screen. Default: `false`     */
     @Input() public ensureDomOrder: boolean | undefined = undefined;
     /** Set to `true` to operate the grid in RTL (Right to Left) mode. Default: `false`     */

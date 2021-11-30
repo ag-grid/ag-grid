@@ -2528,7 +2528,10 @@
     },
     "domLayout": {
       "description": "/** Switch between layout options: `normal`, `autoHeight`, `print`.\n * Default: `normal` */",
-      "type": { "returnType": "string", "optional": true }
+      "type": {
+        "returnType": "'normal' | 'autoHeight' | 'print'",
+        "optional": true
+      }
     },
     "ensureDomOrder": {
       "description": "/** When `true`, the order of rows and columns in the DOM are consistent with what is on screen. Default: `false` */",
