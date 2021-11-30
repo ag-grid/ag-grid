@@ -147,6 +147,46 @@ Notice that:
 
 <grid-example title='Custom Tooltips' name='sparkline-tooltip-custom-html' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
+
+## Crosshairs
+
+Crosshairs display perpendicular lines running across the sparklines when hovering on a data point. When the mouse is moved, the crosshairs will snap to the closest data point. Crosshairs are only available for line and area sparklines. By default, the vertical crosshair line has been enabled for both line and area sparklines.
+
+The horizontal and vertical crosshair lines can be enabled independently by adding `crosshairs` options as shown below:
+
+```js
+sparklineOptions: {
+    crosshairs: {
+        xLine: {
+            enabled: true // enabled by default
+        },
+        yLine: {
+            enabled: false // disabled by default
+        }
+    }
+}
+```
+
+The style of the crosshair line, including `stroke`, `strokeWidth`, `lineDash` and `lineCap`, can be customised via the `xline` or `yline` options:
+
+```js
+sparklineOptions: {
+    crosshairs: {
+        xLine: {
+            lineDash: 'dash',
+            stroke: 'rgba(52, 168, 83, 0.5)',
+            strokeWidth: 2,
+        },
+    }
+}
+```
+
+### Example: Crosshairs
+
+In this example, the vertical crosshair (xLine) has been customised from the default solid line to a dashed line with a thicker `strokeWidth` and reduced opacity using the `stroke` option.
+
+<grid-example title='Sparkline Crosshairs' name='sparkline-crosshairs' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
+
 ## Interfaces
 
 ### SparklineTooltipOptions

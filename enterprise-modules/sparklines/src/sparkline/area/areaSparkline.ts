@@ -35,17 +35,21 @@ class SparklineLine {
 }
 
 class SparklineCrosshairs {
-    private static crosshairLineOptions: CrosshairLineOptions = {
+    xLine: CrosshairLineOptions = {
+        enabled: true,
+        stroke: 'rgba(0,0,0, 0.54)',
+        strokeWidth: 1,
+        lineDash: 'solid',
+        lineCap: undefined
+    };
+    yLine: CrosshairLineOptions = {
         enabled: false,
         stroke: 'rgba(0,0,0, 0.54)',
         strokeWidth: 1,
         lineDash: 'solid',
         lineCap: undefined
-    }
-    xLine: CrosshairLineOptions = Object.create(SparklineCrosshairs.crosshairLineOptions);
-    yLine: CrosshairLineOptions = Object.create(SparklineCrosshairs.crosshairLineOptions);
+    };
 }
-
 export class AreaSparkline extends Sparkline {
     static className = 'AreaSparkline';
 
