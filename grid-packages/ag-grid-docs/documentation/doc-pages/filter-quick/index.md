@@ -74,7 +74,7 @@ The example also demonstrates having the quick filter cache turned on or off. Th
 - **Normal Quick Filter:** The cache is not used. Value getters are executed on every node each time the filter is executed. Hitting 'Print Quick Filter Texts' will always return `undefined` for every row because the cache is not used.
 - **Cache Quick Filter:** The cache is used. Value getters are executed the first time the quick filter is run. Hitting 'Print Quick Filter Texts' will return back the quick filter text for each row which will initially be `undefined` and then return the quick filter text after the quick filter is executed for the first time. You will notice the quick filter text is correct for each column except E (which would be fixed by adding an appropriate `getQuickFilterText` method as we do for D).
 
-<grid-example title='Quick Filter' name='quick-filter' type='vanilla' options='{ "exampleHeight": 580 }'></grid-example>
+<grid-example title='Quick Filter' name='quick-filter' type='typescript' options='{ "exampleHeight": 580 }'></grid-example>
 
 ## Server Side Data
 

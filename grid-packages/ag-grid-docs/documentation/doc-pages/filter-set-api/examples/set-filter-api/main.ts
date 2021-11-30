@@ -1,4 +1,8 @@
-import { GridOptions, ICellRendererParams, KeyCreatorParams, ProvidedFilter } from '@ag-grid-community/core'
+import {
+  GridOptions,
+  ICellRendererParams,
+  KeyCreatorParams,
+} from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -73,14 +77,14 @@ function selectNothing() {
 }
 
 function setCountriesToFranceAustralia() {
-  const instance = (gridOptions.api!.getFilterInstance('country') as any)
+  const instance = gridOptions.api!.getFilterInstance('country') as any
   instance.setFilterValues(['France', 'Australia'])
   instance.applyModel()
   gridOptions.api!.onFilterChanged()
 }
 
 function setCountriesToAll() {
-  const instance = (gridOptions.api!.getFilterInstance('country') as any)
+  const instance = gridOptions.api!.getFilterInstance('country') as any
   instance.resetFilterValues()
   instance.applyModel()
   gridOptions.api!.onFilterChanged()

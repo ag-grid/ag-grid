@@ -1,4 +1,8 @@
-import { FirstDataRenderedEvent, GridOptions, IDetailCellRendererParams } from '@ag-grid-community/core'
+import {
+  FirstDataRenderedEvent,
+  GridOptions,
+  IDetailCellRendererParams,
+} from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [

@@ -1,6 +1,6 @@
 import { ColDef, GridOptions } from '@ag-grid-community/core'
 
-declare var PartialMatchFilter: any;
+declare var PartialMatchFilter: any
 
 const columnDefs: ColDef[] = [
   { field: 'row' },
@@ -29,10 +29,9 @@ const gridOptions: GridOptions = {
 
 function onClicked() {
   gridOptions.api!.getFilterInstance('name', function (instance) {
-    (instance as any).componentMethod('Hello World!')
+    ;(instance as any).componentMethod('Hello World!')
   })
 }
-
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {

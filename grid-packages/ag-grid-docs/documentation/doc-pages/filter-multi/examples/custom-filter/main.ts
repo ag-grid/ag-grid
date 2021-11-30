@@ -1,6 +1,6 @@
 import { GridOptions } from '@ag-grid-community/core'
-declare var YearFilter: any;
-declare var YearFloatingFilter: any;
+declare var YearFilter: any
+declare var YearFloatingFilter: any
 
 const gridOptions: GridOptions = {
   columnDefs: [

@@ -1,4 +1,9 @@
-import { FirstDataRenderedEvent, GridOptions, IFiltersToolPanel, ValueFormatterParams } from '@ag-grid-community/core'
+import {
+  FirstDataRenderedEvent,
+  GridOptions,
+  IFiltersToolPanel,
+  ValueFormatterParams,
+} from '@ag-grid-community/core'
 
 var countryFilterParams = {
   valueFormatter: countryValueFormatter,
@@ -44,7 +49,9 @@ function printFilterModel() {
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  (params.api.getToolPanelInstance('filters') as any as IFiltersToolPanel).expandFilters()
+  ;((params.api.getToolPanelInstance(
+    'filters'
+  ) as any) as IFiltersToolPanel).expandFilters()
 }
 
 // setup the grid after the page has finished loading

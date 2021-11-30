@@ -1,4 +1,10 @@
-import { FirstDataRenderedEvent, GridOptions, IFiltersToolPanel, KeyCreatorParams, ValueFormatterParams } from '@ag-grid-community/core'
+import {
+  FirstDataRenderedEvent,
+  GridOptions,
+  IFiltersToolPanel,
+  KeyCreatorParams,
+  ValueFormatterParams,
+} from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -33,7 +39,9 @@ function printFilterModel() {
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  (params.api.getToolPanelInstance('filters') as any as IFiltersToolPanel).expandFilters()
+  ;((params.api.getToolPanelInstance(
+    'filters'
+  ) as any) as IFiltersToolPanel).expandFilters()
 }
 
 // setup the grid after the page has finished loading

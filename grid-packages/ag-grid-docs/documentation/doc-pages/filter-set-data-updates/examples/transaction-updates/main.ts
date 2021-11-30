@@ -1,4 +1,8 @@
-import { FirstDataRenderedEvent, GridOptions, IFiltersToolPanel } from '@ag-grid-community/core'
+import {
+  FirstDataRenderedEvent,
+  GridOptions,
+  IFiltersToolPanel,
+} from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   rowData: getRowData(),
@@ -44,7 +48,9 @@ function reset() {
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  (params.api.getToolPanelInstance('filters') as any as IFiltersToolPanel).expandFilters()
+  ;((params.api.getToolPanelInstance(
+    'filters'
+  ) as any) as IFiltersToolPanel).expandFilters()
 }
 
 // setup the grid after the page has finished loading

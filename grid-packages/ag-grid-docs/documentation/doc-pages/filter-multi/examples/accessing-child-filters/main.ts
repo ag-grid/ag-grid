@@ -29,16 +29,16 @@ const gridOptions: GridOptions = {
 }
 
 function getTextUiModel() {
-  var textFilter = (gridOptions
-    .api!.getFilterInstance('athlete') as any)
-    .getChildFilterInstance(0)
+  var textFilter = (gridOptions.api!.getFilterInstance(
+    'athlete'
+  ) as any).getChildFilterInstance(0)
   console.log('Current Text Filter model: ', textFilter.getModelFromUi())
 }
 
 function getSetMiniFilter() {
-  var setFilter = (gridOptions
-    .api!.getFilterInstance('athlete') as any)
-    .getChildFilterInstance(1)
+  var setFilter = (gridOptions.api!.getFilterInstance(
+    'athlete'
+  ) as any).getChildFilterInstance(1)
   console.log('Current Set Filter search text: ', setFilter.getMiniFilter())
 }
 

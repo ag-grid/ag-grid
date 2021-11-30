@@ -292,7 +292,7 @@ In the following example you can filter by age or date and see how blank values 
 - Columns **Age** and **Date** have both `null` and `undefined` values resulting in blank cells.
 - Toggle the controls on the top to see how `includeBlanksInEquals`, `includeBlanksInLessThan`, `includeBlanksInGreaterThan` and `includeBlanksInRange` impact the search result.
 
-<grid-example title='Null Filtering' name='null-filtering' type='vanilla' options='{ "exampleHeight": 310 }'></grid-example>
+<grid-example title='Null Filtering' name='null-filtering' type='typescript' options='{ "exampleHeight": 310 }'></grid-example>
 
 ## Style Header on Filter
 

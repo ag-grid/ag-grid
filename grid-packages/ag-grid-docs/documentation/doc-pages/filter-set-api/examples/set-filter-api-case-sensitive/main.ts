@@ -1,4 +1,9 @@
-import { FirstDataRenderedEvent, GridOptions, ICellRendererParams, IFilter, IFiltersToolPanel } from '@ag-grid-community/core'
+import {
+  FirstDataRenderedEvent,
+  GridOptions,
+  ICellRendererParams,
+  IFiltersToolPanel,
+} from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -46,8 +51,9 @@ function colourCellRenderer(params: ICellRendererParams) {
     return params.value
   }
 
-  return `<div style="background-color: ${params.value.toLowerCase()}; ${FIXED_STYLES}"></div>${params.value
-    }`
+  return `<div style="background-color: ${params.value.toLowerCase()}; ${FIXED_STYLES}"></div>${
+    params.value
+  }`
 }
 
 function setModel(type: string) {
@@ -64,7 +70,9 @@ function getModel(type: string) {
 }
 
 function setFilterValues(type: string) {
-  const instance = gridOptions.api!.getFilterInstance(FILTER_TYPES[type])! as any
+  const instance = gridOptions.api!.getFilterInstance(
+    FILTER_TYPES[type]
+  )! as any
 
   instance.setFilterValues(MANGLED_COLOURS)
   instance.applyModel()
@@ -72,13 +80,17 @@ function setFilterValues(type: string) {
 }
 
 function getValues(type: string) {
-  const instance = gridOptions.api!.getFilterInstance(FILTER_TYPES[type])! as any
+  const instance = gridOptions.api!.getFilterInstance(
+    FILTER_TYPES[type]
+  )! as any
 
   alert(JSON.stringify(instance.getValues(), null, 2))
 }
 
 function reset(type: string) {
-  const instance = gridOptions.api!.getFilterInstance(FILTER_TYPES[type])! as any
+  const instance = gridOptions.api!.getFilterInstance(
+    FILTER_TYPES[type]
+  )! as any
 
   instance.resetFilterValues()
   instance.setModel(null)
@@ -88,7 +100,9 @@ function reset(type: string) {
 var MANGLED_COLOURS = ['ReD', 'OrAnGe', 'WhItE', 'YeLlOw']
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  (gridOptions.api!.getToolPanelInstance('filters') as any as IFiltersToolPanel).expandFilters()
+  ;((gridOptions.api!.getToolPanelInstance(
+    'filters'
+  ) as any) as IFiltersToolPanel).expandFilters()
 }
 
 // setup the grid after the page has finished loading

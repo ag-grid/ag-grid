@@ -1,4 +1,9 @@
-import { GridOptions, KeyCreatorParams, ValueFormatterParams, ValueGetterParams } from '@ag-grid-community/core'
+import {
+  GridOptions,
+  KeyCreatorParams,
+  ValueFormatterParams,
+  ValueGetterParams,
+} from '@ag-grid-community/core'
 
 var valueGetter = function (params: ValueGetterParams) {
   return params.data['animalsString'].split('|')
@@ -41,7 +46,7 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
   },
-  rowData: getData()
+  rowData: getData(),
 }
 
 // setup the grid after the page has finished loading

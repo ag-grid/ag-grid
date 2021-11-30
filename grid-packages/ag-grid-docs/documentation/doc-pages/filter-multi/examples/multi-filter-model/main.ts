@@ -80,7 +80,7 @@ function getDate(value: string) {
   )
 }
 
-var savedFilterState: Record<string, any>;
+var savedFilterState: Record<string, any>
 
 function printState() {
   var filterState = gridOptions.api!.getFilterModel()

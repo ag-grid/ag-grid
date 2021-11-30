@@ -18,7 +18,7 @@ const gridOptions: GridOptions = {
   autoGroupColumnDef: {
     // supplies filter values to the column filters based on the colId
     filterValueGetter: (params: ValueGetterParams) => {
-      const colId = params.column.getColId();
+      const colId = params.column.getColId()
       if (colId.includes('country')) {
         return params.data.country
       }

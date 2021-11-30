@@ -1,4 +1,10 @@
-import { FirstDataRenderedEvent, GridOptions, IFiltersToolPanel, ISetFilterParams, SetFilterValuesFuncParams } from '@ag-grid-community/core'
+import {
+  FirstDataRenderedEvent,
+  GridOptions,
+  IFiltersToolPanel,
+  ISetFilterParams,
+  SetFilterValuesFuncParams,
+} from '@ag-grid-community/core'
 
 var list1 = ['Elephant', 'Lion', 'Monkey']
 var list2 = ['Elephant', 'Giraffe', 'Tiger']
@@ -49,7 +55,9 @@ const gridOptions: GridOptions = {
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  (params.api.getToolPanelInstance('filters') as any as IFiltersToolPanel).expandFilters()
+  ;((params.api.getToolPanelInstance(
+    'filters'
+  ) as any) as IFiltersToolPanel).expandFilters()
 }
 
 function useList1() {
@@ -59,7 +67,7 @@ function useList1() {
     valuesArray.push(value)
   })
 
-  var filter = (gridOptions.api!.getFilterInstance('array') as any)
+  var filter = gridOptions.api!.getFilterInstance('array') as any
   filter.refreshFilterValues()
 
   valuesCallbackList = list1
@@ -72,7 +80,7 @@ function useList2() {
     valuesArray.push(value)
   })
 
-  var filter = (gridOptions.api!.getFilterInstance('array') as any)
+  var filter = gridOptions.api!.getFilterInstance('array') as any
   filter.refreshFilterValues()
 
   valuesCallbackList = list2
