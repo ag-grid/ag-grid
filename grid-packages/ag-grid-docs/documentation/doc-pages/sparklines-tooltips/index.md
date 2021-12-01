@@ -70,6 +70,8 @@ const tooltipRenderer = (params) => {
 - In the snippet above, the renderer function sets the tooltip `content` to render Y values formatted with 1 digit after the decimal point.
 - The title of the tooltips is set to X values provided in the `params` formatted using the `toLocaleString()` method. This is optional because if X values are provided in the data, they will be formatted and displayed in the tooltip title by default.
 
+### Example: Tooltip Title and Content
+
 <grid-example title='Sparkline Tooltip Renderer' name='sparkline-tooltip-renderer' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 ### Modifying Styles
@@ -86,6 +88,7 @@ const tooltipRenderer = (params) => {
     }
 }
 ```
+### Example: Tooltip Styles
 
 The following example demonstrates the results of the tooltip styles above:
 
@@ -95,6 +98,40 @@ The following example demonstrates the results of the tooltip styles above:
 [[note]]
 | Default tooltip styles can also be changed by using the CSS class selector to select the tooltip HTML elements with the following class attributes: `ag-sparkline-tooltip`, `ag-sparkline-tooltip-title`, `ag-sparkline-tooltip-content`, and modifying the style definitions in a stylesheet file.
 
+### Modifying Container and Offset
+
+The tooltip position relative to the mouse cursor can be modified using the `xOffset` and `yOffset` properties in `tooltip` options as shown below:
+
+```js
+sparklineOptions: {
+    tooltip: {
+            xOffset: 0, // positions tooltip 0px to the right of the top left of the mouse cursor
+            yOffset: 20, // positions tooltip 20px down from the top left of the mouse cursor
+    }
+}
+```
+
+By default the tooltip is confined to the length of the sparkline cell, which can be changed by providing a container HTML element to allow the tooltip to overflow the cell.
+
+In the snippet below, the tooltip container has been configured to be the `document.body` which allows the tooltip to be positioned anywhere within the <body> node of the current document.
+
+```js
+sparklineOptions: {
+    tooltip: {
+        container: document.body, // confines the tooltip to the document body node instead of the sparkline cell
+    }
+}
+```
+
+- The effect of the configuration above is that the tooltip will not flip to the left of the mouse cursor when it reaches the end of the sparkline cell width, instead it will only flip if the tooltip position surpasses the document body width.
+
+### Example: Tooltip Container
+
+Here's a live example to demonstrate the configuration above.
+
+- Note that the tooltip is now positioned underneath the mouse cursor and the tooltip width exceeds the sparkline cell as a result of the tooltip `container` configuration.
+
+<grid-example title='Sparkline Tooltip Container' name='sparkline-tooltip-container' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 ## Accessing Row Data
 

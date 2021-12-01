@@ -69,12 +69,14 @@ export class AgGridReactUi extends Component<AgReactUiProps, { context: Context 
             this.setState({context: context});
         }, gridParams);
 
-        this.destroyFuncs.push(() => this.gridOptions.api!.destroy());
+        // if no modules loaded, then the API is not set
+        if (this.gridOptions.api) {
+            this.api = this.gridOptions.api!;
+            this.columnApi = this.gridOptions.columnApi!;
+            this.props.setGridApi(this.api, this.columnApi);    
 
-        this.api = this.gridOptions.api!;
-        this.columnApi = this.gridOptions.columnApi!;
-
-        this.props.setGridApi(this.api, this.columnApi);
+            this.destroyFuncs.push(() => this.api.destroy());
+        }
     }
 
     public componentWillUnmount() {
