@@ -40,6 +40,8 @@ export class CellRangeFeature {
     }
 
     public onRangeSelectionChanged(): void {
+        // when using reactUi, given UI is async, it's possible this method is called before the comp is registered
+        if (!this.cellComp) { return; }
 
         this.rangeCount = this.beans.rangeService.getCellRangeCount(this.cellCtrl.getCellPosition());
         this.hasChartRange = this.getHasChartRange();
