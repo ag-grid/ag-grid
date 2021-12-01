@@ -126,5 +126,5 @@ Note that:
 - Age has no debounce (`debounceMs: 0`)
 - All the other columns have the standard 500ms debounce
 
-<grid-example title='Custom Complex Filter and Floating Filter' name='custom-complex-filter-and-floating-filter' type='vanilla' options='{ "extras": ["jquery", "jqueryui"] }'></grid-example>
+<grid-example title='Custom Complex Filter and Floating Filter' name='custom-complex-filter-and-floating-filter' type='typescript' options='{ "extras": ["jquery", "jqueryui"] }'></grid-example>
 
