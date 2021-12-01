@@ -594,6 +594,10 @@ export class CellCtrl extends BeanStub {
     }
 
     public onCellChanged(event: CellChangedEvent): void {
+        // because of async in React, the cellComp may not be set yet, if no cellComp then we are
+        // yet to initialise the cell, so no need to refresh.
+        if (!this.cellComp) { return; }
+
         const eventImpactsThisCell = event.column === this.column;
 
         if (eventImpactsThisCell) {
