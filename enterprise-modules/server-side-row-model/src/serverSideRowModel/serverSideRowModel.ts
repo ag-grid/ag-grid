@@ -95,10 +95,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.datasource = undefined;
     }
 
-    private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create('ServerSideRowModel');
-    }
-
     @PostConstruct
     private addEventListeners(): void {
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onColumnEverything.bind(this));
