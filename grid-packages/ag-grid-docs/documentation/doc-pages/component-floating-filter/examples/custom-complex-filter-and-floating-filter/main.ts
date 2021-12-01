@@ -1,7 +1,7 @@
 import { ColDef, GridOptions } from '@ag-grid-community/core'
 
-declare var NumberFilter: any;
-declare var NumberFloatingFilter: any;
+declare var NumberFilter: any
+declare var NumberFloatingFilter: any
 
 const columnDefs: ColDef[] = [
   {
@@ -26,7 +26,10 @@ const columnDefs: ColDef[] = [
     minWidth: 180,
     filter: 'date',
     filterParams: {
-      comparator: function (filterLocalDateAtMidnight: Date, cellValue: string) {
+      comparator: function (
+        filterLocalDateAtMidnight: Date,
+        cellValue: string
+      ) {
         var dateAsString = cellValue
         var dateParts = dateAsString.split('/')
         var cellDate = new Date(

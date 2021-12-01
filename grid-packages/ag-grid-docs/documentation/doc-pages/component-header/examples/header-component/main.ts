@@ -1,6 +1,6 @@
 import { ColDef, GridOptions } from '@ag-grid-community/core'
 
-declare var CustomHeader: any;
+declare var CustomHeader: any
 
 const columnDefs: ColDef[] = [
   { field: 'athlete', suppressMenu: true, minWidth: 120 },

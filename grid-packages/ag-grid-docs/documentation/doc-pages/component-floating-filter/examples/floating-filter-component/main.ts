@@ -1,6 +1,6 @@
 import { ColDef, GridOptions } from '@ag-grid-community/core'
 
-declare var SliderFloatingFilter: any;
+declare var SliderFloatingFilter: any
 
 const columnDefs: ColDef[] = [
   { field: 'country', filter: false },

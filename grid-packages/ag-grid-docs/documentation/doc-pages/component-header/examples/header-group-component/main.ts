@@ -1,5 +1,5 @@
 import { ColGroupDef, GridOptions } from '@ag-grid-community/core'
-declare var CustomHeaderGroup: any;
+declare var CustomHeaderGroup: any
 
 const columnDefs: ColGroupDef[] = [
   {

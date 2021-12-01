@@ -1,5 +1,11 @@
-import { ColDef, ColGroupDef, FirstDataRenderedEvent, GridOptions, ITooltipParams } from '@ag-grid-community/core'
-declare var CustomTooltip: any;
+import {
+  ColDef,
+  ColGroupDef,
+  FirstDataRenderedEvent,
+  GridOptions,
+  ITooltipParams,
+} from '@ag-grid-community/core'
+declare var CustomTooltip: any
 
 const tooltipValueGetter = (params: ITooltipParams) => ({ value: params.value })
 

@@ -1,26 +1,14 @@
-import {
-  ColDef,
-  FirstDataRenderedEvent,
-  GridOptions,
-  ITooltipParams,
-} from '@ag-grid-community/core'
-declare var CustomTooltip: any
-const toolTipValueGetter = (params: ITooltipParams) => ({ value: params.value })
+import { ColDef, GridOptions } from '@ag-grid-community/core'
+
+declare var CustomLoadingOverlay: any;
+declare var CustomNoRowsOverlay: any;
 
 const columnDefs: ColDef[] = [
-  {
-    headerName: 'Athlete Col 1',
-    field: 'athlete',
-    width: 150,
-    tooltipField: 'athlete',
-  },
-  {
-    headerName: 'Athlete Col 2',
-    field: 'athlete',
-    width: 150,
-    tooltipComponent: 'customTooltip',
-    tooltipValueGetter: toolTipValueGetter,
-  },
+  { field: 'athlete', width: 150 },
+  { field: 'age', width: 90 },
+  { field: 'country', width: 120 },
+  { field: 'year', width: 90 },
+  { field: 'date', width: 110 },
   { field: 'sport', width: 110 },
   { field: 'gold', width: 100 },
   { field: 'silver', width: 100 },
@@ -43,18 +31,30 @@ const gridOptions: GridOptions = {
   columnDefs: columnDefs,
 
   components: {
-    customTooltip: CustomTooltip,
+    customLoadingOverlay: CustomLoadingOverlay,
+    customNoRowsOverlay: CustomNoRowsOverlay,
   },
 
-  onFirstDataRendered: onFirstDataRendered,
+  loadingOverlayComponent: 'customLoadingOverlay',
+  loadingOverlayComponentParams: {
+    loadingMessage: 'One moment please...',
+  },
+  noRowsOverlayComponent: 'customNoRowsOverlay',
+  noRowsOverlayComponentParams: {
+    noRowsMessageFunc: () => 'Sorry - no rows! at: ' + new Date(),
+  },
 }
 
-function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  params.api.getDisplayedRowAtIndex(0)!.data.athlete = undefined
-  params.api.getDisplayedRowAtIndex(1)!.data.athlete = null
-  params.api.getDisplayedRowAtIndex(2)!.data.athlete = ''
+function onBtShowLoading() {
+  gridOptions.api!.showLoadingOverlay()
+}
 
-  params.api.refreshCells()
+function onBtShowNoRows() {
+  gridOptions.api!.showNoRowsOverlay()
+}
+
+function onBtHide() {
+  gridOptions.api!.hideOverlay()
 }
 
 // setup the grid after the page has finished loading

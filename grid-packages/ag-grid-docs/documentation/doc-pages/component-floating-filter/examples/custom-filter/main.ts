@@ -1,14 +1,22 @@
-import { ColDef, GridOptions, IDoesFilterPassParams, IFilterComp, IFilterParams, RowNode } from '@ag-grid-community/core'
+import {
+  ColDef,
+  GridOptions,
+  IDoesFilterPassParams,
+  IFilterComp,
+  IFilterParams,
+  RowNode,
+} from '@ag-grid-community/core'
 
-const isNumeric = (n: string) => !isNaN(parseFloat(n)) && isFinite(parseFloat(n))
+const isNumeric = (n: string) =>
+  !isNaN(parseFloat(n)) && isFinite(parseFloat(n))
 
 const getNumberFilter = () => {
   return class NumberFilter implements IFilterComp {
     valueGetter!: (rowNode: RowNode) => any
-    filterText: string | null = null;
+    filterText: string | null = null
     eFilterText: any
     params!: IFilterParams
-    gui: any;
+    gui: any
     onFilterChanged!: () => void
 
     init(params: IFilterParams) {
@@ -54,7 +62,7 @@ const getNumberFilter = () => {
         if (!value) return false
         return Number(value) > Number(filterValue)
       }
-      return false;
+      return false
     }
 
     isFilterActive() {
