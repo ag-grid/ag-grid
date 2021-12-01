@@ -1,22 +1,33 @@
 .my-custom-tooltip {
-    background-color: rgba(0, 113, 235, 0.7);
-    color: white;
-    text-align: left;
-    justify-content: center;
-    border-radius: 2px;
-    font: 14px arial,sans-serif;
-    padding: 5px 10px;
-    box-shadow: rgb(0 0 0 / 10%) 0px 2px 4px 2px;
+    position: absolute;
+    user-select: none;
+    pointer-events: none;
+    white-space: nowrap;
+    z-index: 99999;
+    font: 12px Verdana, sans-serif;
+    color: black;
+    border-radius: 5px;
+    background: rgb(209,209,246);
+    padding: 7px;
+    line-height: 1.7em;
+    text-align: center;
 }
 
 .tooltip-title {
-    display: block;
+    font-size: 14px;
     font-weight: bold;
-    border-bottom: 1px solid #ccc;
-    padding-bottom: 2px;
 }
 
 .tooltip-content {
-    display: block;
-    padding-top: 5px;
+    font-size: 13px;
+}
+
+.my-custom-tooltip-arrow::after {
+    content: '';
+    position: absolute;
+    top: 40%;
+    left: -7px;
+    border-top: 7px solid transparent;
+    border-bottom: 7px solid transparent;
+    border-right: 7px solid rgb(209,209,246);
 }

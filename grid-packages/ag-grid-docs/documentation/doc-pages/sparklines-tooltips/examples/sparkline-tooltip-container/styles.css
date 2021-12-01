@@ -4,13 +4,12 @@
     font: 14px Menlo, Monaco, "Courier New", monospace;
     box-shadow: rgb(0 0 0 / 10%) 0px 2px 4px 2px;
     line-height: 20px;
-    letter-spacing: 0px;
     overflow: hidden;
 }
 
 .tooltip-title {
     text-align: left;
-    color: rgb(0, 113, 235);
+    color: rgb(0,76,159);
     font-weight: bold;
     background-color: rgb(185,219,255);
     padding: 10px;

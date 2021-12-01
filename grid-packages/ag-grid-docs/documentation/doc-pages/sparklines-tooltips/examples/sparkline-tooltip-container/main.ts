@@ -26,12 +26,6 @@ const gridOptions: GridOptions = {
             fill: "rgb(0, 113, 235)",
             strokeWidth: 0,
           },
-          crosshairs: {
-            xLine: {
-              stroke: "rgb(28,138,255)",
-              lineDash: "dashDotDot",
-            },
-          },
         } as LineSparklineOptions,
       },
     },
