@@ -14,6 +14,8 @@ export const defaultTooltipCss = `
     overflow: hidden;
     white-space: nowrap;
     z-index: 99999;
+    background-color: rgb(255, 255, 255);
+    color: rgba(0,0,0, 0.67);
 }
 
 .ag-sparkline-tooltip-content {
