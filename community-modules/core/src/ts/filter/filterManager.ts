@@ -50,8 +50,9 @@ export class FilterManager extends BeanStub {
 
     @PostConstruct
     public init(): void {
-        this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, this.onNewRowsLoaded.bind(this));
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, this.onNewColumnsLoaded.bind(this));
+        this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, (source) => this.onNewRowsLoaded(source));
+        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.onColumnsChanged());
+        this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, () => this.onColumnsChanged())
 
         this.quickFilter = this.parseQuickFilter(this.gridOptionsWrapper.getQuickFilterText());
         this.setQuickFilterParts();
@@ -71,7 +72,8 @@ export class FilterManager extends BeanStub {
             // mark the filters as we set them, so any active filters left over we stop
             const modelKeys = convertToSet(Object.keys(model));
 
-            this.allAdvancedFilters.forEach((filterWrapper, colId) => {
+            this.allAdvancedFilters.forEach((filterWrapper) => {
+                const colId = filterWrapper.column.getColId();
                 const newModel = model[colId];
 
                 allPromises.push(this.setModelOnFilterWrapper(filterWrapper.filterPromise!, newModel));
@@ -551,21 +553,18 @@ export class FilterManager extends BeanStub {
         });
     }
 
-    private onNewColumnsLoaded(): void {
-        let atLeastOneFilterGone = false;
+    private onColumnsChanged(): void {
         const columns: Column[] = [];
 
-        this.allAdvancedFilters.forEach(filterWrapper => {
-            const oldColumn = !this.columnModel.getPrimaryColumn(filterWrapper.column);
+        this.allAdvancedFilters.forEach((wrapper) => {
+            const currentColumn = this.columnModel.getGridColumn(wrapper.column.getColId());
+            if (currentColumn) { return }
 
-            if (oldColumn) {
-                atLeastOneFilterGone = true;
-                columns.push(filterWrapper.column);
-                this.disposeFilterWrapper(filterWrapper, 'filterDestroyed');
-            }
+            columns.push(wrapper.column);
+            this.disposeFilterWrapper(wrapper, 'filterDestroyed');
         });
 
-        if (atLeastOneFilterGone) {
+        if (columns.length > 0) {
             this.onFilterChanged({ columns });
         }
     }

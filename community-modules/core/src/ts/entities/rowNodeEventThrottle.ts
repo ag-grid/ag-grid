@@ -38,14 +38,22 @@ export class RowNodeEventThrottle extends BeanStub {
     // (eg user calls api.ensureRowVisible(), which in turn flushes ).
     public dispatchExpanded(event: RowGroupOpenedEvent): void {
 
+        // if not using CSRM, we don't debounce. otherwise this breaks the SSRM.
+        if (this.clientSideRowModel==null) {
+            this.eventService.dispatchEvent(event);
+            return;
+        }
+
         this.events.push(event);
 
+        const func = ()=> {
+            this.clientSideRowModel && this.clientSideRowModel.onRowGroupOpened();
+            this.events.forEach( e => this.eventService.dispatchEvent(e) );
+            this.events = [];
+        };
+
         if (this.dispatchExpandedDebounced==null) {
-            this.dispatchExpandedDebounced = this.animationFrameService.debounce( ()=> {
-                this.clientSideRowModel && this.clientSideRowModel.onRowGroupOpened();
-                this.events.forEach( e => this.eventService.dispatchEvent(e) );
-                this.events = [];
-            });
+            this.dispatchExpandedDebounced = this.animationFrameService.debounce(func);
         }
 
         this.dispatchExpandedDebounced();
