@@ -1,19 +1,12 @@
 [[only-react]]
 |### Events Causing Refresh
 |
-|When the grid can refresh a cell (instead of replacing it altogether) then the update can occur in one of two ways:
+|When the grid can refresh a cell (instead of replacing it altogether) then the update will occur as follows:
 |
-|- A component will have it's props refreshed, with all corresponding lifecycle methods called (i.e. `componentWillReceiveProps`, `getDerivedStateFromProps`)
-|- A `refresh` method that you implement will be called
+|- For class components, `componentWillReceiveProps`, `getDerivedStateFromProps` will get called and the function re-rendered.
+|- For functional components, the function will get called gain with new props.
 |
-|If you provide a `refresh` method then this method will be called over the component's props being refreshed.
-|
-|Note that if you're using Hooks for a Cell Renderer and decide to implement the `refresh` method then you'll need to expose it with
-|`forwardRef` & `useImperativeHandle`. Please refer to the [Hook](/react-hooks/) documentation (or the examples on this page) for more information.
-|
-|In the context of "refresh" being referenced from here on then it'll refer to either of the mechanisms above, whichever you choose to implement.
-|
-|The grid can refresh the data in the browser, but not every refresh / redraw of the grid results in the refresh method of your cell renderer getting called, or for props to be updated.
+|The grid can refresh the data in the browser, but not every refresh / redraw of the grid results in the refresh of your cell renderer.
 |
 |The following items are those that **do** cause refresh to be called:
 |
@@ -22,7 +15,7 @@
 |- Calling `api.refreshCells()` to inform grid data has changed (see [Refresh](/view-refresh/)).
 |- Bound `rowData` changes and `immutableData` is set (see [Immutable Data](/immutable-data/)).
 |
-|If any of the above occur and the grid confirms the data has changed via [Change Detection](/change-detection/), then the `refresh()` method will be called.
+|If any of the above occur and the grid confirms the data has changed via [Change Detection](/change-detection/), then the Cell Renderer is refreshed.
 |
 |The following will **not** result in the cell renderer's refresh method being called:
 |
