@@ -415,7 +415,7 @@
   "dndSourceOnRowDrag": {
     "description": "/** Function to allow custom drag functionality for native drag and drop. */",
     "type": {
-      "arguments": { "params": "{ rowNode: RowNode; dragEvent: DragEvent; }" },
+      "arguments": { "params": "DndSourceOnRowDragParams" },
       "returnType": "void"
     }
   },

@@ -489,7 +489,7 @@
       "rowDrag?": "boolean | RowDragCallback",
       "rowDragText?": "(params: IRowDragItem, dragItemCount: number) => string",
       "dndSource?": "boolean | DndSourceCallback",
-      "dndSourceOnRowDrag?": "(params: { rowNode: RowNode; dragEvent: DragEvent; }) => void",
+      "dndSourceOnRowDrag?": "(params: DndSourceOnRowDragParams) => void",
       "rowGroup?": "boolean",
       "initialRowGroup?": "boolean",
       "rowGroupIndex?": "number | null",
@@ -761,6 +761,14 @@
       "column": "/** Column for this callback */",
       "colDef": "/** ColDef provided for this column */",
       "context": "/** The context as provided on `gridOptions.context` */"
+    }
+  },
+  "DndSourceOnRowDragParams": {
+    "meta": {},
+    "type": { "rowNode": "RowNode", "dragEvent": "DragEvent" },
+    "docs": {
+      "rowNode": "/** Row node for the given row */",
+      "dragEvent": "/** The DOM event that represents a drag and drop interaction */"
     }
   },
   "DndSourceCallback": {

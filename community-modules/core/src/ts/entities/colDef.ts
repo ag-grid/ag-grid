@@ -329,7 +329,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     /** `boolean` or `Function`. Set to `true` (or return `true` from function) to allow dragging for native drag and drop. Default: `false` */
     dndSource?: boolean | DndSourceCallback;
     /** Function to allow custom drag functionality for native drag and drop. */
-    dndSourceOnRowDrag?: (params: { rowNode: RowNode, dragEvent: DragEvent; }) => void;
+    dndSourceOnRowDrag?: (params: DndSourceOnRowDragParams) => void;
 
     // *** Columns: Row Grouping *** //
 
@@ -460,6 +460,13 @@ export interface RowDragCallback {
     (params: RowDragCallbackParams): boolean;
 }
 export interface DndSourceCallbackParams extends ColumnFunctionCallbackParams { }
+
+export interface DndSourceOnRowDragParams {
+    /** Row node for the given row */
+    rowNode: RowNode,
+    /** The DOM event that represents a drag and drop interaction */
+    dragEvent: DragEvent;
+}
 export interface DndSourceCallback {
     (params: DndSourceCallbackParams): boolean;
 }

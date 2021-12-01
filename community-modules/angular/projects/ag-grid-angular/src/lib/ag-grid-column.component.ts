@@ -1,4 +1,4 @@
-import { CellClassFunc, CellClassRules, CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditorSelectorFunc, CellRendererSelectorFunc, CellStyle, CellStyleFunc, CheckboxSelectionCallback, ColDef, ColGroupDef, ColSpanParams, ColumnsMenuParams, DndSourceCallback, EditableCallback, GetQuickFilterTextParams, HeaderCheckboxSelectionCallback, HeaderClass, HeaderValueGetterFunc, IAggFunc, ICellEditorComp, ICellRendererComp, ICellRendererFunc, IHeaderGroupComp, IRowDragItem, ITooltipComp, ITooltipParams, KeyCreatorParams, NewValueParams, RowDragCallback, RowNode, RowSpanParams, SuppressHeaderKeyboardEventParams, SuppressKeyboardEventParams, SuppressNavigableCallback, SuppressPasteCallback, ToolPanelClass, ValueFormatterFunc, ValueGetterFunc, ValueParserFunc, ValueSetterFunc } from "@ag-grid-community/core";
+import { CellClassFunc, CellClassRules, CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditorSelectorFunc, CellRendererSelectorFunc, CellStyle, CellStyleFunc, CheckboxSelectionCallback, ColDef, ColGroupDef, ColSpanParams, ColumnsMenuParams, DndSourceCallback, DndSourceOnRowDragParams, EditableCallback, GetQuickFilterTextParams, HeaderCheckboxSelectionCallback, HeaderClass, HeaderValueGetterFunc, IAggFunc, ICellEditorComp, ICellRendererComp, ICellRendererFunc, IHeaderGroupComp, IRowDragItem, ITooltipComp, ITooltipParams, KeyCreatorParams, NewValueParams, RowDragCallback, RowNode, RowSpanParams, SuppressHeaderKeyboardEventParams, SuppressKeyboardEventParams, SuppressNavigableCallback, SuppressPasteCallback, ToolPanelClass, ValueFormatterFunc, ValueGetterFunc, ValueParserFunc, ValueSetterFunc } from "@ag-grid-community/core";
 import { Component, ContentChildren, Input, QueryList } from "@angular/core";
 
 @Component({
@@ -257,7 +257,7 @@ export class AgGridColumn {
     /** `boolean` or `Function`. Set to `true` (or return `true` from function) to allow dragging for native drag and drop. Default: `false`     */
     @Input() public dndSource: boolean | DndSourceCallback | undefined;
     /** Function to allow custom drag functionality for native drag and drop.     */
-    @Input() public dndSourceOnRowDrag: ((params: { rowNode: RowNode, dragEvent: DragEvent; }) => void) | undefined;
+    @Input() public dndSourceOnRowDrag: ((params: DndSourceOnRowDragParams) => void) | undefined;
     /** Set to `true` to row group by this column. Default: `false`     */
     @Input() public rowGroup: boolean | undefined;
     /** Same as `rowGroup`, except only applied when creating a new column. Not applied when updating column definitions.     */

@@ -1046,9 +1046,7 @@
     "dndSourceOnRowDrag": {
       "description": "/** Function to allow custom drag functionality for native drag and drop. */",
       "type": {
-        "arguments": {
-          "params": "{ rowNode: RowNode; dragEvent: DragEvent; }"
-        },
+        "arguments": { "params": "DndSourceOnRowDragParams" },
         "returnType": "void",
         "optional": true
       }
@@ -1387,6 +1385,16 @@
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "DndSourceOnRowDragParams": {
+    "rowNode": {
+      "description": "/** Row node for the given row */",
+      "type": { "returnType": "RowNode", "optional": false }
+    },
+    "dragEvent": {
+      "description": "/** The DOM event that represents a drag and drop interaction */",
+      "type": { "returnType": "DragEvent", "optional": false }
     }
   },
   "DndSourceCallback": {},
