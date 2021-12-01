@@ -18,7 +18,7 @@ const getAnchor = (name: string, imageAnchor: ImageAnchor): XmlElement => ({
         name: 'xdr:rowOff',
         textNode: imageAnchor.offsetY.toString()
     }]
-})
+});
 
 const getExt = (image: ExcelImage): XmlElement => {
     const children: XmlElement[] = [{
@@ -32,7 +32,7 @@ const getExt = (image: ExcelImage): XmlElement => {
             name: 'a16:creationId',
             properties: {
                 rawMap: {
-                    id: '{822E6D20-D7BC-2841-A643-D49A6EF008A2}',
+                    'id': '{822E6D20-D7BC-2841-A643-D49A6EF008A2}',
                     'xmlns:a16': 'http://schemas.microsoft.com/office/drawing/2014/main'
                 }
             }
@@ -55,7 +55,7 @@ const getExt = (image: ExcelImage): XmlElement => {
                     name: 'adec:decorative',
                     properties: {
                         rawMap: {
-                            val: '0',
+                            'val': '0',
                             'xmlns:adec': 'http://schemas.microsoft.com/office/drawing/2017/decorative'
                         }
                     }
@@ -66,7 +66,7 @@ const getExt = (image: ExcelImage): XmlElement => {
     return {
         name: 'a:extLst',
         children
-    }
+    };
 };
 
 const getNvPicPr = (image: ExcelImage, index: number) => ({
@@ -121,7 +121,7 @@ const getColorDetails = (color: ImageColor): XmlElement[] | undefined => {
     }
 
     return ret;
-}
+};
 
 const getDuoTone = (primaryColor: ImageColor, secondaryColor: ImageColor): XmlElement => {
     return ({
@@ -165,7 +165,7 @@ const getBlipFill = (image: ExcelImage, index: number) => {
         if (!blipChildren) { blipChildren = []; }
         switch (image.recolor.toLocaleLowerCase()) {
             case 'grayscale':
-                blipChildren.push({ name: 'a:grayscl' })
+                blipChildren.push({ name: 'a:grayscl' });
                 break;
             case 'sepia':
                 blipChildren.push(getDuoTone({ color: 'black' }, { color: 'D9C3A5', tint: 50, saturation: 180 }));
@@ -191,7 +191,7 @@ const getBlipFill = (image: ExcelImage, index: number) => {
             name: 'a:blip',
             properties: {
                 rawMap: {
-                    cstate: 'print',
+                    'cstate': 'print',
                     'r:embed': `rId${index}`,
                     'xmlns:r': 'http://schemas.openxmlformats.org/officeDocument/2006/relationships'
                 }
@@ -203,7 +203,7 @@ const getBlipFill = (image: ExcelImage, index: number) => {
                 name: 'a:fillRect'
             }]
         }]
-    })
+    });
 };
 
 const getSpPr = (image: ExcelImage, imageBoxSize: ImageBoxSize) => {
@@ -234,7 +234,7 @@ const getSpPr = (image: ExcelImage, imageBoxSize: ImageBoxSize) => {
             rawMap: {
                 rot: Math.min(Math.max(rotation, 0), 360) * 60000
             }
-        }
+        };
     }
 
     const prstGeom: XmlElement = {
@@ -250,7 +250,7 @@ const getSpPr = (image: ExcelImage, imageBoxSize: ImageBoxSize) => {
     const ret = {
         name: 'xdr:spPr',
         children: [xfrm, prstGeom]
-    }
+    };
 
     return ret;
 };
@@ -259,7 +259,7 @@ const getImageBoxSize = (image: ExcelCalculatedImage): ImageBoxSize => {
     image.fitCell = !!image.fitCell || (!image.width || !image.height);
 
     const { position = {}, fitCell, width = 0, height = 0, totalHeight, totalWidth } = image;
-    const { offsetX = 0 , offsetY = 0, row = 1, rowSpan = 1, column = 1, colSpan = 1 } = position
+    const { offsetX = 0 , offsetY = 0, row = 1, rowSpan = 1, column = 1, colSpan = 1 } = position;
 
     return {
         from: {
@@ -276,8 +276,8 @@ const getImageBoxSize = (image: ExcelCalculatedImage): ImageBoxSize => {
         },
         height: pixelsToEMU(totalHeight || height),
         width: pixelsToEMU(totalWidth || width)
-    }
-}
+    };
+};
 
 const getPicture = (
     image: ExcelImage,
@@ -292,8 +292,8 @@ const getPicture = (
             getBlipFill(image, worksheetImageIndex + 1),
             getSpPr(image, imageBoxSize)
         ]
-    }
-}
+    };
+};
 
 const drawingFactory: ExcelOOXMLTemplate = {
     getTemplate(config: {
@@ -330,7 +330,7 @@ const drawingFactory: ExcelOOXMLTemplate = {
                 }
             },
             children
-        }
+        };
     }
 };
 

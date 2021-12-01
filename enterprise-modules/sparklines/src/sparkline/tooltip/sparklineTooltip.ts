@@ -110,7 +110,7 @@ export class SparklineTooltip extends Observable {
         }
 
         let left = meta.pageX + this.xOffset;
-        let top = meta.pageY + this.yOffset;
+        const top = meta.pageY + this.yOffset;
 
         const tooltipRect = element.getBoundingClientRect();
 

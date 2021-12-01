@@ -52,7 +52,7 @@ export class FilterManager extends BeanStub {
     public init(): void {
         this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, (source) => this.onNewRowsLoaded(source));
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.onColumnsChanged());
-        this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, () => this.onColumnsChanged())
+        this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, () => this.onColumnsChanged());
 
         this.quickFilter = this.parseQuickFilter(this.gridOptionsWrapper.getQuickFilterText());
         this.setQuickFilterParts();
@@ -558,7 +558,7 @@ export class FilterManager extends BeanStub {
 
         this.allAdvancedFilters.forEach((wrapper) => {
             const currentColumn = this.columnModel.getGridColumn(wrapper.column.getColId());
-            if (currentColumn) { return }
+            if (currentColumn) { return; }
 
             columns.push(wrapper.column);
             this.disposeFilterWrapper(wrapper, 'filterDestroyed');

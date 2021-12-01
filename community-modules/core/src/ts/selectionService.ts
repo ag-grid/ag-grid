@@ -177,7 +177,7 @@ export class SelectionService extends BeanStub {
         const oldNodeHasDifferentId = exists(oldNode) && (rowNode.id !== oldNode.id);
         if (oldNodeHasDifferentId && oldNode) {
             const id = oldNode.id!;
-            const oldNodeSelected = this.selectedNodes[id]==rowNode;
+            const oldNodeSelected = this.selectedNodes[id] == rowNode;
             if (oldNodeSelected) {
                 this.selectedNodes[oldNode.id!] = oldNode;
             }

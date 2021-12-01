@@ -35,7 +35,7 @@ export class TabGuardComp extends Component {
             setTabIndex: tabIndex => {
                 tabGuards.forEach(tabGuard => tabIndex != null ? tabGuard.setAttribute('tabIndex', tabIndex) : tabGuard.removeAttribute('tabIndex'));
             }
-        }
+        };
 
         this.addTabGuards(this.eTopGuard, this.eBottomGuard);
 

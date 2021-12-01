@@ -10,7 +10,7 @@ export class GroupWidthFeature extends BeanStub {
     private comp: IHeaderGroupCellComp;
 
     // the children can change, we keep destroy functions related to listening to the children here
-    private removeChildListenersFuncs: (()=>void)[] = [];
+    private removeChildListenersFuncs: (() => void)[] = [];
 
     constructor(comp: IHeaderGroupCellComp, columnGroup: ColumnGroup) {
         super();
@@ -54,7 +54,6 @@ export class GroupWidthFeature extends BeanStub {
         this.removeChildListenersFuncs.forEach(func => func());
         this.removeChildListenersFuncs = [];
     }
-
 
     private onDisplayedChildrenChanged(): void {
         this.addListenersToChildrenColumns();

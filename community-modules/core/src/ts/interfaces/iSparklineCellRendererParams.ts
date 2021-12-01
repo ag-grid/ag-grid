@@ -279,7 +279,7 @@ export interface CrosshairLineOptions {
      * The options include `butt` (the ends of the line are squared off at the endpoints), `round` (the ends of the line are rounded) and `square` (the ends of the line are squared off by adding a box with width equal to the line's strokeWidth and height equal to half the line's strokeWidth).
      * Default: `butt`
      */
-    lineCap?: 'round'| 'square' | 'butt';
+    lineCap?: 'round' | 'square' | 'butt';
 }
 
 export type SparklineColumnFormatter = (params: ColumnFormatterParams) => ColumnFormat;

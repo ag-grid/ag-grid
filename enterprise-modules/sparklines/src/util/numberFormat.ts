@@ -8,9 +8,9 @@ function formatDefault(x: number, p?: number): string {
     out: for (var n = xs.length, i = 1, i0 = -1, i1 = 0; i < n; ++i) {
         switch (xs[i]) {
             case '.': i0 = i1 = i; break;
-            case '0': if (i0 === 0) i0 = i; i1 = i; break;
+            case '0': if (i0 === 0) { i0 = i; } i1 = i; break;
             case 'e': break out;
-            default: if (i0 > 0) i0 = 0; break;
+            default: if (i0 > 0) { i0 = 0; } break;
         }
     }
 
@@ -163,7 +163,7 @@ export function makeFormatSpecifier(specifier: string | FormatSpecifier): Format
     }
 
     let found = false;
-    let string = specifier.replace(interpolateRegEx, function () {
+    const string = specifier.replace(interpolateRegEx, function() {
         if (!found) {
             specifier = arguments[2];
             found = true;
@@ -291,8 +291,8 @@ function formatTrim(s: string): string {
     out: for (var n = s.length, i = 1, i0 = -1, i1 = 0; i < n; ++i) {
         switch (s[i]) {
             case '.': i0 = i1 = i; break;
-            case '0': if (i0 === 0) i0 = i; i1 = i; break;
-            default: if (!+s[i]) break out; if (i0 > 0) i0 = 0; break;
+            case '0': if (i0 === 0) { i0 = i; } i1 = i; break;
+            default: if (!+s[i]) { break out; } if (i0 > 0) { i0 = 0; } break;
         }
     }
     return i0 > 0 ? s.slice(0, i0) + s.slice(i1 + 1) : s;
@@ -523,7 +523,7 @@ export function formatLocale(locale: FormatLocaleOptions): FormatLocale {
             } else {
                 const nx = +x;
                 // Determine the sign. -0 is not less than 0, but 1 / -0 is!
-                var valueNegative = x < 0 || 1 / nx < 0;
+                let valueNegative = x < 0 || 1 / nx < 0;
 
                 // Perform the initial formatting.
                 value = isNaN(nx) ? nan : formatType(Math.abs(nx), precision);
@@ -539,10 +539,10 @@ export function formatLocale(locale: FormatLocaleOptions): FormatLocale {
                 }
 
                 // Compute the prefix and suffix.
-                let signPrefix = valueNegative
+                const signPrefix = valueNegative
                     ? (sign === '(' ? sign : minus)
                     : (sign === '-' || sign === '(' ? '' : sign);
-                let signSuffix = valueNegative && sign === '(' ? ')' : '';
+                const signSuffix = valueNegative && sign === '(' ? ')' : '';
                 valuePrefix = signPrefix + valuePrefix;
                 valueSuffix = (type === 's' ? prefixes[8 + prefixExponent / 3] : '') + valueSuffix + signSuffix;
 
@@ -561,7 +561,7 @@ export function formatLocale(locale: FormatLocaleOptions): FormatLocale {
             }
 
             // If the fill character is not '0', grouping is applied before padding.
-            if (comma && !zero) value = group(value, Infinity);
+            if (comma && !zero) { value = group(value, Infinity); }
 
             // Compute the padding.
             let length = valuePrefix.length + value.length + valueSuffix.length;
@@ -601,7 +601,7 @@ export function formatLocale(locale: FormatLocaleOptions): FormatLocale {
         const k = Math.pow(10, -e);
         const prefix = prefixes[8 + e / 3];
 
-        return function (value: number | { valueOf(): number }) {
+        return function(value: number | { valueOf(): number }) {
             return f(k * +value) + prefix;
         };
     }

@@ -72,7 +72,7 @@ export class ToolPanelColumnGroupComp extends Component {
         this.setTemplate(ToolPanelColumnGroupComp.TEMPLATE);
 
         this.eDragHandle = _.createIconNoSpan('columnDrag', this.gridOptionsWrapper)!;
-        this.eDragHandle.classList.add('ag-drag-handle', 'ag-column-select-column-group-drag-handle')
+        this.eDragHandle.classList.add('ag-drag-handle', 'ag-column-select-column-group-drag-handle');
 
         const checkboxGui = this.cbSelect.getGui();
         const checkboxInput = this.cbSelect.getInputElement();
@@ -107,7 +107,7 @@ export class ToolPanelColumnGroupComp extends Component {
         this.setupTooltip();
 
         const classes = CssClassApplier.getToolPanelClassesFromColDef(this.columnGroup.getColGroupDef(), this.gridOptionsWrapper, null, this.columnGroup);
-        classes.forEach( c => this.addOrRemoveCssClass(c, true) );
+        classes.forEach(c => this.addOrRemoveCssClass(c, true));
     }
 
     public getColumns(): Column[] {
@@ -178,7 +178,7 @@ export class ToolPanelColumnGroupComp extends Component {
                 const event: ColumnPanelItemDragStartEvent = {
                     type: Events.EVENT_COLUMN_PANEL_ITEM_DRAG_START,
                     column: this.columnGroup
-                }
+                };
                 this.eventService.dispatchEvent(event);
             },
             onDragStopped: () => {
@@ -270,7 +270,7 @@ export class ToolPanelColumnGroupComp extends Component {
         this.processingColumnStateChange = true;
         this.cbSelect.setValue(selectedValue);
         this.cbSelect.setReadOnly(readOnlyValue);
-        this.addOrRemoveCssClass('ag-column-select-column-group-readonly', readOnlyValue)
+        this.addOrRemoveCssClass('ag-column-select-column-group-readonly', readOnlyValue);
         this.processingColumnStateChange = false;
     }
 

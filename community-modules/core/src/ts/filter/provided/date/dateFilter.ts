@@ -28,7 +28,7 @@ export interface DateFilterModel extends ISimpleFilterModel {
 export interface IDateFilterParams extends IScalarFilterParams {
     /** Required if the data for the column are not native JS `Date` objects. */
     comparator?: IDateComparatorFunc;
-    /** 
+    /**
      * This is only used if a date component is not provided.
      * By default the grid will use the browser date picker in Chrome and Firefox and a plain text box for all other browsers
      * (This is because Chrome and Firefox are the only current browsers providing a decent out-of-the-box date picker).
@@ -160,7 +160,7 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
             this.forEachInput((element) => element.destroy());
         });
     }
-    
+
     protected setElementValue(element: DateCompWrapper, value: Date | null, silent?: boolean): void {
         element.setDate(value);
     }

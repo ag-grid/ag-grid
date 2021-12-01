@@ -13,10 +13,10 @@ but is a common issue with JavaScript in general, but it is something that is mo
 An example of this (in the context of using AG Grid) would be something like this:
 
 ```jsx
-const KEY_LEFT = 37;
-const KEY_UP = 38;
-const KEY_RIGHT = 39;
-const KEY_DOWN = 40;
+const KEY_LEFT = 'ArrowLeft';
+const KEY_UP = 'ArrowUp';
+const KEY_RIGHT = 'ArrowRight';
+const KEY_DOWN = 'ArrowDown';
 
 const GridExample = () => {
     const [gridApi, setGridApi] = useState(null);
@@ -97,10 +97,10 @@ What we need to do to resolve this is to alter about our approach slightly - in 
 a "dynamic" callback which will always capture the latest values used:
 
 ```jsx
-const KEY_LEFT = 37;
-const KEY_UP = 38;
-const KEY_RIGHT = 39;
-const KEY_DOWN = 40;
+const KEY_LEFT = 'ArrowLeft';
+const KEY_UP = 'ArrowUp';
+const KEY_RIGHT = 'ArrowRight';
+const KEY_DOWN = 'ArrowDown';
 
 const GridExample = () => {
     const [gridApi, setGridApi] = useState(null);

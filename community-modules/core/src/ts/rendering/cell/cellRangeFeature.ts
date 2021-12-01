@@ -198,7 +198,7 @@ export class CellRangeFeature {
 
         let handleIsAvailable = rangesLen === 1 && !this.cellCtrl.isEditing() && (
             isFillHandleAvailable || isRangeHandleAvailable
-        )
+        );
 
         if (this.hasChartRange) {
             const hasCategoryRange = cellRanges[0].type === CellRangeType.DIMENSION;

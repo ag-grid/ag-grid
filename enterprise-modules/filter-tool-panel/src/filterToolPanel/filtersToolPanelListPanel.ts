@@ -379,10 +379,10 @@ export class FiltersToolPanelListPanel extends Component {
             filterGroup.removeCssClass('ag-last-group-visible');
 
             if (idx === firstIdx) {
-                filterGroup.addCssClass('ag-first-group-visible')
+                filterGroup.addCssClass('ag-first-group-visible');
             }
             if (idx === lastIdx) {
-                filterGroup.addCssClass('ag-last-group-visible')
+                filterGroup.addCssClass('ag-last-group-visible');
             }
         });
     }

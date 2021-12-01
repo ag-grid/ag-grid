@@ -33,7 +33,7 @@ export class StylingService extends BeanStub {
             }
 
             // in case className = 'my-class1 my-class2', we need to split into individual class names
-            className.split(' ').forEach( singleClass => {
+            className.split(' ').forEach(singleClass => {
                 if (singleClass == null || singleClass.trim() == '') { return; }
                 resultOfRule ? classesToApply[singleClass] = true : classesToRemove[singleClass] = true;
             });

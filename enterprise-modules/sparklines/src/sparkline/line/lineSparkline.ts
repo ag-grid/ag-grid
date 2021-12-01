@@ -134,8 +134,8 @@ export class LineSparkline extends Sparkline {
         const nodeData: LineNodeDatum[] = [];
 
         for (let i = 0; i < yData.length; i++) {
-            let yDatum = yData[i];
-            let xDatum = xData[i];
+            const yDatum = yData[i];
+            const xDatum = xData[i];
 
             if (yDatum == undefined) {
                 continue;
@@ -157,8 +157,8 @@ export class LineSparkline extends Sparkline {
 
         const shape = getMarker(marker.shape);
 
-        let updateMarkerSelection = this.markerSelection.setData(selectionData);
-        let enterMarkerSelection = updateMarkerSelection.enter.append(shape);
+        const updateMarkerSelection = this.markerSelection.setData(selectionData);
+        const enterMarkerSelection = updateMarkerSelection.enter.append(shape);
 
         updateMarkerSelection.exit.remove();
 
@@ -177,7 +177,7 @@ export class LineSparkline extends Sparkline {
             const markerStrokeWidth = highlighted && highlightStrokeWidth !== undefined ? highlightStrokeWidth : marker.strokeWidth;
             const markerSize = highlighted && highlightSize !== undefined ? highlightSize : marker.size;
 
-            let markerFormat: MarkerFormat | undefined = undefined;
+            let markerFormat: MarkerFormat | undefined;
 
             const { seriesDatum, point } = datum;
 
@@ -307,7 +307,7 @@ export class LineSparkline extends Sparkline {
         const defaults = {
             content,
             title
-        }
+        };
 
         if (this.tooltip.renderer) {
             return toTooltipHtml(this.tooltip.renderer({

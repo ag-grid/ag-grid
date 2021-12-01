@@ -31,7 +31,7 @@ export interface RowDropZoneEvents {
     onDragEnter?: (params: RowDragEnterEvent) => void;
     /** Callback function that will be executed when the rowDrag leaves the target */
     onDragLeave?: (params: RowDragLeaveEvent) => void;
-    /** 
+    /**
      * Callback function that will be executed when the rowDrag is dragged inside the target.
      * Note: this gets called multiple times.
      */
@@ -84,7 +84,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
             this.onSortChanged();
             this.onFilterChanged();
             this.onRowGroupChanged();
-        }
+        };
 
         this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
         this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, this.onFilterChanged.bind(this));

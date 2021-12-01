@@ -194,7 +194,7 @@ interface AgBaseChartOptions {
     background?: {
         visible?: boolean;
         fill?: string;
-    },
+    };
     title?: AgChartCaptionOptions;
     subtitle?: AgChartCaptionOptions;
     tooltip?: AgChartTooltipOptions;
@@ -327,7 +327,7 @@ interface AgBaseSeriesOptions {
             dimOpacity?: number;
             strokeWidth?: number;
         }
-    }
+    };
 }
 
 export interface AgTooltipRendererResult {
@@ -699,7 +699,7 @@ export interface AgTreemapSeriesOptions extends AgBaseSeriesOptions {
         medium?: AgChartLabelOptions;
         small?: AgChartLabelOptions;
         value?: AgChartLabelOptions;
-    },
+    };
     labelKey?: string;
     sizeKey?: string;
     colorKey?: string;

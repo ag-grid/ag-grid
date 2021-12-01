@@ -275,9 +275,9 @@ export class ColumnApi {
     }
 
     /** @deprecated getOriginalColumnGroup is deprecated, use getProvidedColumnGroup. */
-    public getOriginalColumnGroup(name: string): ProvidedColumnGroup | null { 
+    public getOriginalColumnGroup(name: string): ProvidedColumnGroup | null {
         console.error('AG Grid: getOriginalColumnGroup is deprecated, use getProvidedColumnGroup');
-        return this.columnModel.getProvidedColumnGroup(name); 
+        return this.columnModel.getProvidedColumnGroup(name);
     }
 
 }

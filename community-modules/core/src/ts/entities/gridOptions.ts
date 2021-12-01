@@ -229,7 +229,7 @@ export interface GridOptions {
     /** @deprecated React UI is enabled by default. Use suppressReactUi=true to turn it off. */
     reactUi?: boolean;
 
-    /** @deprecated Set to true to enable the experimental React UI. Works with React framework only. 
+    /** @deprecated Set to true to enable the experimental React UI. Works with React framework only.
      * It is planned the next major release of the grid will drop support of the legacy React engine,
      * hence this property is deprecated as will be removed in the next major release. */
     suppressReactUi?: boolean;

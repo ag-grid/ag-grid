@@ -86,7 +86,7 @@ export class ExcelXlsxFactory {
                 });
             }
         } else {
-            this.images.set(calculatedImage.id, [{ sheetId: currentSheetIndex, image: [calculatedImage] }])
+            this.images.set(calculatedImage.id, [{ sheetId: currentSheetIndex, image: [calculatedImage] }]);
             this.workbookImageIds.set(calculatedImage.id, { type: calculatedImage.imageType, index: this.workbookImageIds.size });
         }
 
@@ -120,7 +120,7 @@ export class ExcelXlsxFactory {
 
         while (this.sheetNames.indexOf(name + append) !== -1) {
             if (append === '') {
-                append = '_1'
+                append = '_1';
             } else {
                 const curr = parseInt(append.slice(1), 10);
                 append = `_${curr + 1}`;
@@ -230,7 +230,7 @@ export class ExcelXlsxFactory {
                 Id: `rId${value.index + 1}`,
                 Type: 'http://schemas.openxmlformats.org/officeDocument/2006/relationships/image',
                 Target: `../media/image${this.workbookImageIds.get(key)!.index + 1}.${value.type}`
-            })
+            });
         });
 
         return createXmlPart(relationshipsFactory.getTemplate(XMLArr));

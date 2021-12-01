@@ -145,7 +145,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     /**
      * Set to `true` if this column is not navigable (i.e. cannot be tabbed into), otherwise `false`.
      * Can also be a callback function to have different rows navigable.
-     * Default: `false` 
+     * Default: `false`
      */
     suppressNavigable?: boolean | SuppressNavigableCallback;
     /** Allows the user to suppress certain keyboard events in the grid cell. Default: `false` */
@@ -348,13 +348,13 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     /**
      * Set to `true` if you want to be able to row group by this column via the GUI.
      * This will not block the API or properties being used to achieve row grouping.
-     * Default: `false` 
+     * Default: `false`
      */
     enableRowGroup?: boolean;
     /**
      * Set to `true` if you want to be able to aggregate by this column via the GUI.
      * This will not block the API or properties being used to achieve aggregation.
-     * Default: `false` 
+     * Default: `false`
      */
     enableValue?: boolean;
     /** Name of function to use for aggregation. You can also provide your own agg function. */
@@ -463,7 +463,7 @@ export interface DndSourceCallbackParams extends ColumnFunctionCallbackParams { 
 
 export interface DndSourceOnRowDragParams {
     /** Row node for the given row */
-    rowNode: RowNode,
+    rowNode: RowNode;
     /** The DOM event that represents a drag and drop interaction */
     dragEvent: DragEvent;
 }

@@ -188,7 +188,7 @@
     "type": { "returnType": "boolean" }
   },
   "suppressReactUi": {
-    "description": "/** @deprecated Set to true to enable the experimental React UI. Works with React framework only. \nIt is planned the next major release of the grid will drop support of the legacy React engine,\nhence this property is deprecated as will be removed in the next major release.\n */",
+    "description": "/** @deprecated Set to true to enable the experimental React UI. Works with React framework only.\nIt is planned the next major release of the grid will drop support of the legacy React engine,\nhence this property is deprecated as will be removed in the next major release.\n */",
     "type": { "returnType": "boolean" }
   },
   "editType": {

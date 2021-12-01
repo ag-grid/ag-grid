@@ -15,7 +15,7 @@ export interface IFilterDef {
     /**
      * Filter component to use for this column.
      * - Set to `true` to use the default filter.
-     * - Set to the name of a provided filter: `set`, `number`, `text`, `date`. 
+     * - Set to the name of a provided filter: `set`, `number`, `text`, `date`.
      * - Set to a `IFilterComp`.
      */
     filter?: IFilterType;
@@ -26,7 +26,7 @@ export interface IFilterDef {
 
     /**
      * The custom component to be used for rendering the floating filter.
-     * If none is specified the default AG Grid is used. 
+     * If none is specified the default AG Grid is used.
      */
     floatingFilterComponent?: IFloatingFilterType;
     /** Floating filter framework component to use for this column. */

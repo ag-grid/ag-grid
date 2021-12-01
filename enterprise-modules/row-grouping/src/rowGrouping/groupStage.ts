@@ -379,7 +379,7 @@ export class GroupStage extends BeanStub implements IRowNodeStage {
     private addToParent(child: RowNode, parent: RowNode | null) {
         const mapKey = this.getChildrenMappedKey(child.key!, child.rowGroupColumn);
         if (parent) {
-            const children = parent.childrenMapped!=null;
+            const children = parent.childrenMapped != null;
             if (children) {
                 parent.childrenMapped![mapKey] = child;
             }

@@ -282,7 +282,7 @@ export class GroupCellRendererCtrl extends BeanStub {
 
         if (!relatedColumn) { return this.params; }
 
-        const notFullWidth = column!=null;
+        const notFullWidth = column != null;
         if (notFullWidth) {
             const showingThisRowGroup = column!.isRowGroupDisplayed(relatedColumn.getId());
             if (!showingThisRowGroup) { return this.params; }
@@ -442,7 +442,6 @@ export class GroupCellRendererCtrl extends BeanStub {
             this.addManagedListener(eGroupCell, 'dblclick', this.onCellDblClicked.bind(this));
         }
 
-
         this.addManagedListener(this.eExpanded, 'click', this.onExpandClicked.bind(this));
         this.addManagedListener(this.eContracted, 'click', this.onExpandClicked.bind(this));
 
@@ -459,7 +458,6 @@ export class GroupCellRendererCtrl extends BeanStub {
         this.addManagedListener(this.displayedGroupNode, RowNode.EVENT_MASTER_CHANGED, expandableChangedListener);
         this.addManagedListener(this.displayedGroupNode, RowNode.EVENT_HAS_CHILDREN_CHANGED, expandableChangedListener);
     }
-
 
     public onExpandClicked(mouseEvent: MouseEvent): void {
         if (isStopPropagationForAgGrid(mouseEvent)) { return; }

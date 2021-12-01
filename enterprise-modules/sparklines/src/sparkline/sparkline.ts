@@ -124,7 +124,7 @@ export abstract class Sparkline extends Observable {
         fill: 'yellow',
         stroke: 'silver',
         strokeWidth: 1
-    }
+    };
 
     protected constructor() {
         super();
@@ -411,7 +411,7 @@ export abstract class Sparkline extends Observable {
     * @param data
     */
     private getDataType(data: any): DataType {
-        for (let datum of data) {
+        for (const datum of data) {
             if (datum) {
                 if (isNumber(datum)) {
                     return 'number';
@@ -478,7 +478,7 @@ export abstract class Sparkline extends Observable {
             this.update();
 
             this.layoutId = 0;
-        })
+        });
     }
 
     private setSparklineDimensions() {
@@ -546,7 +546,7 @@ export abstract class Sparkline extends Observable {
         const meta = {
             pageX: clientX,
             pageY: clientY
-        }
+        };
 
         const yValue = seriesDatum.y;
         const xValue = seriesDatum.x;
@@ -555,7 +555,7 @@ export abstract class Sparkline extends Observable {
         let enabled = this.tooltip.enabled;
 
         if (this.tooltip.renderer) {
-            let tooltipRendererResult = this.tooltip.renderer({
+            const tooltipRendererResult = this.tooltip.renderer({
                 context: this.context,
                 datum: seriesDatum,
                 yValue,
@@ -584,7 +584,7 @@ export abstract class Sparkline extends Observable {
             return this.formatNumericDatum(datum);
         } else if (type === 'time' && (datum instanceof Date || isNumber(datum))) {
             return this.defaultDateFormatter(datum);
-        } else return String(datum);
+        } else { return String(datum); }
     }
 
     private _onMouseMove = this.onMouseMove.bind(this);

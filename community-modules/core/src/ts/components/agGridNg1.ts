@@ -33,7 +33,7 @@ function AngularDirectiveController($element: any, $scope: any, $compile: any, $
     const quickFilterUnregisterFn = $scope.$watch(
         quickFilterOnScope,
         (newFilter: any) => {
-            gridOptions.api!.setQuickFilter(newFilter)
+            gridOptions.api!.setQuickFilter(newFilter);
         }
     );
 

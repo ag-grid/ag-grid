@@ -40,7 +40,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
         const { type } = condition;
         const { numberOfInputs } = options || {};
         const isRange = type == SimpleFilter.IN_RANGE || numberOfInputs === 2;
-        
+
         const dateFrom = parseDateTimeFromString(condition.dateFrom);
         const dateTo = parseDateTimeFromString(condition.dateTo);
 
@@ -79,7 +79,7 @@ export class DateFloatingFilter extends SimpleFloatingFilter {
 
         super.setLastTypeFromModel(model);
 
-        const allowEditing = !this.isReadOnly() && 
+        const allowEditing = !this.isReadOnly() &&
             this.canWeEditAfterModelFromParentFilter(model);
 
         this.setEditable(allowEditing);

@@ -3,7 +3,7 @@ import { RowNode } from "../entities/rowNode";
 export interface ServerSideTransaction {
     /**
      * The Row Store to apply the transaction to, ie what group level.
-     * eg ['Ireland','2002'] to update the child store found after expanding Ireland and 2002 groups. 
+     * eg ['Ireland','2002'] to update the child store found after expanding Ireland and 2002 groups.
      * Passing in blank to empty applies the transaction to the top level.
      */
     route?: string[];

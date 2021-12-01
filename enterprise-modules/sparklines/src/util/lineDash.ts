@@ -33,7 +33,7 @@ export function getLineDash(lineCap: 'butt' | 'square' | 'round' | undefined, li
     if (lineCap === 'round' || lineCap === 'square') {
         if (roundOrSquare[lineDash] == undefined) {
             console.warn(`'${lineDash}' is not a valid 'lineDash' option.`);
-            return roundOrSquare['solid'];
+            return roundOrSquare.solid;
         }
 
         return roundOrSquare[lineDash];
@@ -41,7 +41,7 @@ export function getLineDash(lineCap: 'butt' | 'square' | 'round' | undefined, li
 
     if (buttOrNull[lineDash] == undefined) {
         console.warn(`'${lineDash}' is not a valid 'lineDash' option.`);
-        return buttOrNull['solid'];
+        return buttOrNull.solid;
     }
 
     return buttOrNull[lineDash];

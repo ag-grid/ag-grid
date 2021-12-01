@@ -27,7 +27,7 @@ export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession<Exc
     }
 
     protected getDataTypeForValue(valueForCell?: string): ExcelOOXMLDataType {
-        if (valueForCell === undefined) { return 'empty' }
+        if (valueForCell === undefined) { return 'empty'; }
         return _.isNumeric(valueForCell) ? 'n' : 's';
     }
 

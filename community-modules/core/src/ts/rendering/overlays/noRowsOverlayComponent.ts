@@ -3,7 +3,7 @@ import { IComponent } from "../../interfaces/iComponent";
 import { GridApi } from "../../gridApi";
 
 export interface INoRowsOverlayParams {
-    api: GridApi
+    api: GridApi;
 }
 
 export interface INoRowsOverlayComp extends IComponent<INoRowsOverlayParams> {}

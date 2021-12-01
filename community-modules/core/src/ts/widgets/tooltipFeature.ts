@@ -90,7 +90,7 @@ export class TooltipFeature extends BeanStub {
         const rowNode = ctrl.getRowNode ? ctrl.getRowNode() : undefined;
 
         return {
-            location: ctrl.getLocation(),//'cell',
+            location: ctrl.getLocation(), //'cell',
             colDef: colDef,
             column: column,
             rowIndex: ctrl.getRowIndex ? ctrl.getRowIndex() : undefined,

@@ -429,7 +429,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     public getRowNode(id: string): RowNode | undefined {
-        let result: RowNode | undefined = undefined;
+        let result: RowNode | undefined;
         this.forEachNode(rowNode => {
             if (rowNode.id === id) {
                 result = rowNode;
