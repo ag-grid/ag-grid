@@ -54,7 +54,7 @@ export class AgGridReactUi extends Component<AgReactUiProps, { context: Context 
             frameworkOverrides: new ReactFrameworkOverrides()
         };
 
-        this.gridOptions = {...this.props.gridOptions};
+        this.gridOptions = this.props.gridOptions || {};
         const {children} = this.props;
 
         if (AgGridColumn.hasChildColumns(children)) {
