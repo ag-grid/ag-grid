@@ -1,8 +1,4 @@
-import {
-  GridOptions,
-  LineSparklineOptions,
-  TooltipRendererParams
-} from '@ag-grid-community/core'
+import { GridOptions, LineSparklineOptions, TooltipRendererParams } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -16,14 +12,6 @@ const gridOptions: GridOptions = {
           tooltip: {
             enabled: true,
             renderer: tooltipRenderer,
-          },
-          line: {
-            stroke: 'rgb(103,103,255)',
-            strokeWidth: 1,
-          },
-          highlightStyle: {
-            fill: 'white',
-            strokeWidth: 0,
           },
         } as LineSparklineOptions,
       },
@@ -46,10 +34,6 @@ const gridOptions: GridOptions = {
 function tooltipRenderer(params: TooltipRendererParams) {
   return {
     title: params.context.data.symbol,
-    // sets styles for tooltip title
-    color: 'white',
-    backgroundColor: 'rgb(78,78,255)',
-    opacity: 0.7,
   }
 }
 
