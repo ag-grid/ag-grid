@@ -10,7 +10,6 @@ const gridOptions: GridOptions = {
       cellRendererParams: {
         sparklineOptions: {
           tooltip: {
-            enabled: true,
             renderer: tooltipRenderer,
           },
         } as LineSparklineOptions,
@@ -39,6 +38,6 @@ function tooltipRenderer(params: TooltipRendererParams) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector('#myGrid');
+  new agGrid.Grid(gridDiv, gridOptions);
 })
