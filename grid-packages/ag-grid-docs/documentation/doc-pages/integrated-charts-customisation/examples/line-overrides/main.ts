@@ -1,4 +1,4 @@
-import { ChartMenuOptions, ChartType, ColDef, CreateRangeChartParams, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core'
+import { ChartType, ColDef, CreateRangeChartParams, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core'
 
 const columnDefs: ColDef[] = [
   { field: 'country', width: 150, chartDataType: 'category' },
@@ -28,6 +28,7 @@ const columnDefs: ColDef[] = [
 ]
 
 const gridOptions: GridOptions = {
+  columnDefs: columnDefs,
   defaultColDef: {
     editable: true,
     sortable: true,
@@ -36,67 +37,66 @@ const gridOptions: GridOptions = {
     filter: true,
     resizable: true,
   },
-  columnDefs: columnDefs,
-  rowData: getData(),
   popupParent: document.body,
+  rowData: getData(),
   enableRangeSelection: true,
-  onFirstDataRendered: onFirstDataRendered,
   enableCharts: true,
-  getChartToolbarItems: getChartToolbarItems,
+  onFirstDataRendered: onFirstDataRendered,
   chartThemeOverrides: {
-    pie: {
-      title: {
-        enabled: true,
-        text: 'Precious Metals Production',
-        fontWeight: 'bold',
-        fontSize: 20,
-        color: 'rgb(100, 100, 100)',
-      },
-      subtitle: {
-        enabled: true,
-        text: 'by country',
-        fontStyle: 'italic',
-        fontWeight: 'bold',
-        fontSize: 14,
-        color: 'rgb(100, 100, 100)',
-      },
-      padding: {
-        top: 25,
-        right: 20,
-        bottom: 55,
-        left: 20,
-      },
-      legend: {
-        enabled: false,
-      },
+    line: {
       series: {
-        label: {
-          enabled: true,
+        strokeOpacity: 0.7,
+        strokeWidth: 5,
+        highlightStyle: {
+          item: {
+            fill: 'red',
+            stroke: 'yellow',
+          },
         },
-        callout: {
-          length: 20,
+        marker: {
+          enabled: true,
+          shape: 'diamond',
+          size: 12,
+          strokeWidth: 4,
+          fillOpacity: 0.2,
+          strokeOpacity: 0.2
+        },
+        tooltip: {
+          renderer: function (params) {
+            return {
+              content:
+                '<b>' +
+                params.xName!.toUpperCase() +
+                ':</b> ' +
+                params.xValue +
+                '<br/>' +
+                '<b>' +
+                params.yName!.toUpperCase() +
+                ':</b> ' +
+                params.yValue,
+            }
+          },
         },
       },
     },
   },
 }
 
-function getChartToolbarItems(): ChartMenuOptions[] {
-  return ['chartDownload', 'chartData', 'chartSettings']
-}
-
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
+  var cellRange = {
+    rowStartIndex: 0,
+    rowEndIndex: 4,
+    columns: ['country', 'gold', 'silver', 'bronze'],
+  }
+
   var createRangeChartParams: CreateRangeChartParams = {
-    cellRange: {
-      rowStartIndex: 0,
-      rowEndIndex: 5,
-      columns: ['country', 'gold'],
-    },
-    chartType: 'pie' as ChartType,
+    cellRange: cellRange,
+    chartType: 'line' as ChartType,
   }
 
   params.api.createRangeChart(createRangeChartParams)
 }
+
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {

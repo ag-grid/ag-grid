@@ -1,4 +1,4 @@
-import { ChartMenuOptions, ChartType, ColDef, CreateRangeChartParams, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core'
+import { ChartType, ColDef, CreateRangeChartParams, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core'
 
 const columnDefs: ColDef[] = [
   { field: 'country', width: 150, chartDataType: 'category' },
@@ -27,6 +27,7 @@ const columnDefs: ColDef[] = [
   },
 ]
 
+
 const gridOptions: GridOptions = {
   defaultColDef: {
     editable: true,
@@ -36,63 +37,78 @@ const gridOptions: GridOptions = {
     filter: true,
     resizable: true,
   },
+  popupParent: document.body,
   columnDefs: columnDefs,
   rowData: getData(),
-  popupParent: document.body,
   enableRangeSelection: true,
-  onFirstDataRendered: onFirstDataRendered,
   enableCharts: true,
-  getChartToolbarItems: getChartToolbarItems,
+  onFirstDataRendered: onFirstDataRendered,
   chartThemeOverrides: {
-    pie: {
+    common: {
+      padding: {
+        top: 20,
+        right: 30,
+        bottom: 10,
+        left: 2,
+      },
+      background: {
+        fill: '#e5e5e5',
+      },
       title: {
         enabled: true,
         text: 'Precious Metals Production',
-        fontWeight: 'bold',
-        fontSize: 20,
-        color: 'rgb(100, 100, 100)',
+        fontStyle: 'italic',
+        fontWeight: '600',
+        fontSize: 18,
+        fontFamily: 'Impact, sans-serif',
+        color: '#414182',
       },
       subtitle: {
         enabled: true,
         text: 'by country',
-        fontStyle: 'italic',
-        fontWeight: 'bold',
         fontSize: 14,
+        fontFamily: 'Monaco, monospace',
         color: 'rgb(100, 100, 100)',
       },
-      padding: {
-        top: 25,
-        right: 20,
-        bottom: 55,
-        left: 20,
-      },
       legend: {
-        enabled: false,
+        enabled: true,
+        position: 'left',
+        padding: 20,
+        item: {
+          label: {
+            fontStyle: 'italic',
+            fontWeight: 'bold',
+            fontSize: 18,
+            fontFamily: 'Palatino, serif',
+            color: '#555',
+          },
+          marker: {
+            type: 'diamond',
+            size: 10,
+            padding: 10,
+            strokeWidth: 2,
+          },
+          paddingX: 120,
+          paddingY: 20,
+        },
       },
-      series: {
-        label: {
-          enabled: true,
-        },
-        callout: {
-          length: 20,
-        },
+      tooltip: {
+        class: 'my-tooltip-class',
       },
     },
   },
 }
 
-function getChartToolbarItems(): ChartMenuOptions[] {
-  return ['chartDownload', 'chartData', 'chartSettings']
-}
-
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
+  var cellRange = {
+    rowStartIndex: 0,
+    rowEndIndex: 4,
+    columns: ['country', 'gold', 'silver', 'bronze'],
+  }
+
   var createRangeChartParams: CreateRangeChartParams = {
-    cellRange: {
-      rowStartIndex: 0,
-      rowEndIndex: 5,
-      columns: ['country', 'gold'],
-    },
-    chartType: 'pie' as ChartType,
+    cellRange: cellRange,
+    chartType: 'groupedBar' as ChartType,
   }
 
   params.api.createRangeChart(createRangeChartParams)
