@@ -1,7 +1,6 @@
-
 import React from "react"
-import styles from "./Collapsible.module.scss"
 import chevronStyle from "./ChevronButtonRenderer.module.scss"
+import styles from "./Collapsible.module.scss"
 
 const Collapsible = props => {
     return (
