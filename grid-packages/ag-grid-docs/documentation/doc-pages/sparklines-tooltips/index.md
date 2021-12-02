@@ -53,7 +53,7 @@ sparklineOptions: {
 
 - The `renderer` is a callback function which receives data values associated with the highlighted data point.
 - It returns an object with the `content` and `title` properties containing plain text that is used for the __Content__ and __Title__ sections of the tooltip.
-- Alternatively, the `content` property could contain a string representing HTML content, which can be used to provide completely [Custom Tooltips](/sparklines-tooltips/#custom-tooltip).
+- Alternatively, the `renderer` function could return a string representing HTML content, which can be used to provide completely [Custom Tooltips](/sparklines-tooltips/#custom-tooltip).
 
 Here's an example renderer function.
 
@@ -116,7 +116,7 @@ sparklineOptions: {
 
 By default the tooltip is confined to the length of the sparkline cell, which can be changed by providing a container HTML element to allow the tooltip to overflow the cell.
 
-In the snippet below, the tooltip container has been configured to be the `document.body` which allows the tooltip to be positioned anywhere within the <body> node of the current document.
+In the snippet below, the tooltip container has been configured to be the `document.body` which allows the tooltip to be positioned anywhere within the `<body>` node of the current document.
 
 ```js
 sparklineOptions: {
@@ -129,8 +129,8 @@ sparklineOptions: {
 
 Here's a live example to demonstrate the configuration above.
 
-- Note that the tooltip is now positioned underneath the mouse cursor.
-- The effect of the tooltip `container` configuration is that the tooltip will not flip to the left of the mouse cursor when it reaches the end of the sparkline cell width, instead it will only flip if the tooltip position surpasses the document body width.
+- Note that the tooltip is now positioned underneath the mouse cursor as `xOffset` is set to `0`px and `yOffset` to `20`px.
+- The effect of the tooltip `container` configuration is that the tooltip will not flip to the left of the mouse cursor when it reaches the end of the sparkline cell width, instead it will only flip if the tooltip position surpasses the document body element's width.
 
 <grid-example title='Sparkline Tooltip Container' name='sparkline-tooltip-container' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
@@ -142,15 +142,20 @@ We could use the following tooltip renderer to return custom HTML for the sparkl
 
 ```js
 const tooltipRenderer = (params) => {
-    const { yValue, context } = params;
-    return `<div class='my-custom-tooltip'>
-                <span class='tooltip-title'>${context.data.symbol}</span>
-                <span class='tooltip-content'>${yValue}</span>
-            </div>`;
+  const { yValue, context } = params;
+  return `<div class='my-custom-tooltip my-custom-tooltip-arrow'>
+              <div class='tooltip-title'>${context.data.symbol}</div>
+              <div class='tooltip-content'>
+                <div>Change: ${yValue}</div>
+                <div>Volume: ${context.data.volume}</div>
+              </div>
+          </div>`;
 }
 ```
 
-The tooltip renderer function receives the `params` object as a single parameter. Inside that object you get the `xValue` and `yValue` for the highlighted data point as well as the reference to the raw `datum` element from the sparkline data array. You can then process the raw values however you like before using them as a part of the returned HTML string.
+The tooltip renderer function receives the `params` object as a single parameter. Inside that object you get the `xValue` and `yValue` for the highlighted data point as well as the reference to the raw `datum` element from the sparkline data array.
+
+Other row data is provided in the `context.data` object inside the `params` object. You can process the raw values in the `params` object however you like before using them as a part of the returned HTML string.
 
 The effect of applying the tooltip renderer from the snippet above can be seen in the example below.
 
