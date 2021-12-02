@@ -35,7 +35,6 @@
   border-radius: 0.25rem;
   min-height: calc(30px + 2rem);
   margin-bottom: 1rem;
-  margin-top: 2rem;
   font-size: 17px;
 }
 
@@ -48,8 +47,8 @@
 }
 
 .search-bar-container {
-  width: 25%;
-  min-width: 250px;
+  width: 40%;
+  min-width: 508px;
 }
 
 .search-bar {
@@ -63,8 +62,6 @@
   display: flex;
   flex-wrap: wrap;
   padding-top: 10px;
-  padding-bottom: 10px;
-  padding-left: 20px;
 }
 
 .single-checkbox-label-container {
@@ -78,6 +75,10 @@
   padding-right: 10px;
   font-size: 20px;
   white-space: nowrap;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -webkit-touch-callout: none; 
 }
 
 .header-padding-class {
@@ -104,7 +105,6 @@
     height: 50px;
     text-align: left;
     background: #f8f8f8;
-    margin-bottom: 20px;
     font-weight: bold;
     font-size: 18px;
     border-width: 1px;
@@ -115,5 +115,63 @@
     border-color: #babfc7
 
 }
+
+.header-collapsible{
+    width: 17%;
+    height: 50px;
+    text-align: left;
+    background: #f8f8f8;
+    font-weight: bold;
+    font-size: 18px;
+    border-width: 1px;
+    display: flex;
+    align-items: center;
+
+    // border: none;
+    border-color: #babfc7
+}
+
+.header-collapsible:active{
+    border-style: outset;
+}
+
+.status-class-done{
+    position: relative;
+    display: inline-block;
+    color: green;
+    padding: 15px;
+    background-color: white;
+    box-shadow:inset 0px 0px 0px 10px green;
+  }
+  
+ .status-class-done:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("http://i.imgur.com/5O74VI6.jpg");
+    mix-blend-mode: lighten;
+  }
+  .status-class-rejected{
+    position: relative;
+    display: inline-block;
+    color: red;
+    padding: 15px;
+    background-color: white;
+    box-shadow:inset 0px 0px 0px 10px red;
+  }
+  
+ .status-class-rejected:after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url("http://i.imgur.com/5O74VI6.jpg");
+    mix-blend-mode: lighten;
+  }
 
 

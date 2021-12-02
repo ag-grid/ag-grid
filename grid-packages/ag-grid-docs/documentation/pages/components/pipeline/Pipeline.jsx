@@ -1,10 +1,11 @@
-import React, {useEffect, useState} from "react"
+import React, { useEffect, useState } from "react"
 import styles from "./Pipeline.module.scss"
 import DetailCellRenderer from "../grid/DetailCellRendererComponent"
 import PaddingCellRenderer from "../grid/PaddingCellRenderer"
 import ChevronButtonCellRenderer from "../grid/ChevronButtonRenderer"
 import Grid from "../grid/Grid"
 import IssueTypeCellRenderer from "../grid/IssueTypeRenderer"
+
 
 const COLUMN_DEFS = [
     {
@@ -100,7 +101,8 @@ const defaultColDef = {
             params.event.type === "keydown"
         ) {
             params.api
-                .getCellRendererInstances({rowNodes: [params.node]})[0]
+                .getCellRendererInstances({ rowNodes: [params.node] })[0]
+                .getFrameworkComponentInstance()
                 .clickHandlerFunc()
             return true
         }
@@ -165,6 +167,7 @@ const Pipeline = () => {
     const [rowData, setRowData] = useState(null)
     const [gridApi, setGridApi] = useState(null)
 
+
     useEffect(() => {
         fetch("/pipeline/pipeline.json")
             .then(response => response.json())
@@ -197,7 +200,7 @@ const Pipeline = () => {
             } else {
                 return
             }
-            let newModel = {values: newValues, filterType: "set"}
+            let newModel = { values: newValues, filterType: "set" }
             filterInstance.setModel(newModel)
             gridApi.onFilterChanged()
         }
@@ -224,8 +227,8 @@ const Pipeline = () => {
     return (
         <>
             {!IS_SSR && (
-                <div style={{height: "100%", width: "99%%", marginLeft: "1rem", marginRight: "5rem"}}>
-                    <div style={{fontWeight: 400, fontSize: "2.5rem", lineHeight: 1.2, marginTop: "20px", marginBottom: "20px"}}>AG Grid Pipeline
+                <div style={{ height: "100%", width: "99%%", marginLeft: "1rem", marginRight: "5rem" }}>
+                    <div style={{ fontWeight: 400, fontSize: "2.5rem", lineHeight: 1.2, marginTop: "20px", marginBottom: "20px" }}>AG Grid Pipeline
                     </div>
                     <div className={styles["note"]}>
                         <p>
@@ -310,6 +313,7 @@ const Pipeline = () => {
 
                     <Grid
                         gridHeight={"63vh"}
+                        domLayout={'autoHeight'}
                         columnDefs={COLUMN_DEFS}
                         isRowMaster={isRowMaster}
                         detailRowAutoHeight={true}
