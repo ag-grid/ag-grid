@@ -36,7 +36,6 @@
   border-radius: 0.25rem;
   min-height: calc(30px + 2rem);
   margin-bottom: 1rem;
-  margin-top: 2rem;
   font-size: 17px;
 }
 
@@ -50,7 +49,7 @@
 
 .search-bar-container {
   width: 40%;
-  min-width: 250px;
+  min-width: 507px;
   display: flex;
   align-items: center;
 }
@@ -82,6 +81,10 @@
   padding-right: 10px;
   font-size: 20px;
   white-space: nowrap;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -webkit-touch-callout: none; 
 }
 
 .header-padding-class {
