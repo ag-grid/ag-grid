@@ -5,13 +5,11 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
     headerName: 'Athlete Details',
     children: [
       {
-        headerName: 'Athlete',
         field: 'athlete',
         width: 180,
         filter: 'agTextColumnFilter',
       },
       {
-        headerName: 'Age',
         field: 'age',
         width: 90,
         filter: 'agNumberColumnFilter',
@@ -22,30 +20,26 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
   {
     headerName: 'Sports Results',
     children: [
-      { headerName: 'Sport', field: 'sport', width: 140 },
+      { field: 'sport', width: 140 },
       {
-        headerName: 'Total',
         columnGroupShow: 'closed',
         field: 'total',
         width: 100,
         filter: 'agNumberColumnFilter',
       },
       {
-        headerName: 'Gold',
         columnGroupShow: 'open',
         field: 'gold',
         width: 100,
         filter: 'agNumberColumnFilter',
       },
       {
-        headerName: 'Silver',
         columnGroupShow: 'open',
         field: 'silver',
         width: 100,
         filter: 'agNumberColumnFilter',
       },
       {
-        headerName: 'Bronze',
         columnGroupShow: 'open',
         field: 'bronze',
         width: 100,

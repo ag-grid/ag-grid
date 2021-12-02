@@ -29,7 +29,6 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
     headerName: 'Monthly Data',
     children: [
       {
-        headerName: 'Jan',
         field: 'jan',
         cellRenderer: accountingCellRenderer,
         cellClass: 'cell-figure',
@@ -39,7 +38,6 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
       },
 
       {
-        headerName: 'Feb',
         field: 'feb',
         cellRenderer: accountingCellRenderer,
         cellClass: 'cell-figure',
@@ -49,7 +47,6 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
       },
 
       {
-        headerName: 'Mar',
         field: 'mar',
         cellRenderer: accountingCellRenderer,
         cellClass: 'cell-figure',
@@ -59,7 +56,6 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
       },
 
       {
-        headerName: 'Apr',
         field: 'apr',
         cellRenderer: accountingCellRenderer,
         cellClass: 'cell-figure',
@@ -69,7 +65,6 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
       },
 
       {
-        headerName: 'May',
         field: 'may',
         cellRenderer: accountingCellRenderer,
         cellClass: 'cell-figure',
@@ -79,7 +74,6 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
       },
 
       {
-        headerName: 'Jun',
         field: 'jun',
         cellRenderer: accountingCellRenderer,
         cellClass: 'cell-figure',

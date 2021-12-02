@@ -281,7 +281,6 @@ var defaultCols: (ColDef | ColGroupDef)[] = [
     children: [
       firstColumn,
       {
-        headerName: 'Language',
         field: 'language',
         width: 150,
         editable: true,
@@ -312,7 +311,6 @@ var defaultCols: (ColDef | ColGroupDef)[] = [
         headerTooltip: 'Example tooltip for Language',
       },
       {
-        headerName: 'Country',
         field: 'country',
         width: 150,
         editable: true,
@@ -398,11 +396,9 @@ var defaultCols: (ColDef | ColGroupDef)[] = [
   },
   {
     // column group 'Performance'
-    headerName: 'Performance',
     groupId: 'performance',
     children: [
       {
-        headerName: 'Bank Balance',
         field: 'bankBalance',
         width: 150,
         editable: true,
@@ -446,7 +442,6 @@ var defaultCols: (ColDef | ColGroupDef)[] = [
     ],
   },
   {
-    headerName: 'Rating',
     field: 'rating',
     width: 100,
     editable: true,
@@ -457,7 +452,6 @@ var defaultCols: (ColDef | ColGroupDef)[] = [
     filterParams: { cellRenderer: ratingFilterRenderer },
   },
   {
-    headerName: 'Total Winnings',
     field: 'totalWinnings',
     filter: 'agNumberColumnFilter',
     editable: true,
