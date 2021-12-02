@@ -13,13 +13,13 @@ import { Text } from "../label/text";
 import { PointerEvents } from "../../scene/node";
 
 export interface RectNodeDatum extends SeriesNodeDatum {
-    readonly x: number,
-    readonly y: number,
-    readonly width: number,
-    readonly height: number,
-    readonly fill?: string,
-    readonly stroke?: string,
-    readonly strokeWidth: number,
+    readonly x: number;
+    readonly y: number;
+    readonly width: number;
+    readonly height: number;
+    readonly fill?: string;
+    readonly stroke?: string;
+    readonly strokeWidth: number;
     readonly label?: {
         readonly x: number;
         readonly y: number;
@@ -31,7 +31,7 @@ export interface RectNodeDatum extends SeriesNodeDatum {
         readonly textAlign: CanvasTextAlign;
         readonly textBaseline: CanvasTextBaseline;
         readonly fill: string;
-    }
+    };
 }
 
 enum BarColumnNodeTag {
@@ -166,7 +166,7 @@ export abstract class BarColumnSparkline extends Sparkline {
             const nodeStroke = highlighted && highlightStroke !== undefined ? highlightStroke : stroke;
             const nodeStrokeWidth = highlighted && highlightStrokeWidth !== undefined ? highlightStrokeWidth : strokeWidth;
 
-            let nodeFormat: ColumnFormat | undefined = undefined;
+            let nodeFormat: ColumnFormat | undefined;
 
             const { x, y, width, height, seriesDatum } = datum;
 
@@ -190,7 +190,7 @@ export abstract class BarColumnSparkline extends Sparkline {
                     stroke: nodeStroke,
                     strokeWidth: nodeStrokeWidth,
                     highlighted
-                })
+                });
             }
 
             node.fill = nodeFormat && nodeFormat.fill || nodeFill;
@@ -215,8 +215,8 @@ export abstract class BarColumnSparkline extends Sparkline {
 
         const enterLabels = updateLabels.enter.append(Text).each(text => {
             text.tag = BarColumnNodeTag.Label,
-                text.pointerEvents = PointerEvents.None
-        })
+                text.pointerEvents = PointerEvents.None;
+        });
 
         updateLabels.exit.remove();
 
@@ -243,7 +243,7 @@ export abstract class BarColumnSparkline extends Sparkline {
             } else {
                 text.visible = false;
             }
-        })
+        });
     }
 
     getTooltipHtml(datum: SeriesNodeDatum): string | undefined {
@@ -257,7 +257,7 @@ export abstract class BarColumnSparkline extends Sparkline {
         const defaults = {
             content,
             title
-        }
+        };
 
         if (this.tooltip.renderer) {
             return toTooltipHtml(this.tooltip.renderer({
@@ -272,6 +272,6 @@ export abstract class BarColumnSparkline extends Sparkline {
     }
 
     protected formatLabelValue(value: number): string {
-        return value % 1 !== 0 ? value.toFixed(1) : value.toFixed(0)
+        return value % 1 !== 0 ? value.toFixed(1) : value.toFixed(0);
     }
 }

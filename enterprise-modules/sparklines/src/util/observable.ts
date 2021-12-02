@@ -46,7 +46,7 @@ export class Observable {
 
     removePropertyListener<K extends string & keyof this>(name: K, listener?: PropertyChangeEventListener<this, this[K]>, scope: Object = this): void {
         const allPropertyListeners = this.allPropertyListeners as Map<K, Map<PropertyChangeEventListener<this, this[K]>, Set<Object>>>;
-        let propertyListeners = allPropertyListeners.get(name);
+        const propertyListeners = allPropertyListeners.get(name);
 
         if (propertyListeners) {
             if (listener) {
@@ -95,7 +95,7 @@ export class Observable {
 
     removeEventListener(type: string, listener?: SourceEventListener<this>, scope: Object = this): void {
         const allEventListeners = this.allEventListeners as Map<string, Map<SourceEventListener<this>, Set<Object>>>;
-        let eventListeners = allEventListeners.get(type);
+        const eventListeners = allEventListeners.get(type);
 
         if (eventListeners) {
             if (listener) {
@@ -138,8 +138,8 @@ export class Observable {
 }
 
 export function reactive(...events: string[]) {
-    let debug = events.indexOf('debugger') >= 0;
-    return function (target: any, key: string) {
+    const debug = events.indexOf('debugger') >= 0;
+    return function(target: any, key: string) {
         // `target` is either a constructor (static member) or prototype (instance member)
         const privateKey = Observable.privateKeyPrefix + key;
         const privateKeyEvents = privateKey + 'Events';
@@ -149,7 +149,7 @@ export function reactive(...events: string[]) {
                 target[privateKeyEvents] = events;
             }
             Object.defineProperty(target, key, {
-                set: function (value: any) {
+                set: function(value: any) {
                     const oldValue = this[privateKey];
                     // This is a way to stop inside the setter by adding the special
                     // 'debugger' event to a reactive property, for example:
@@ -166,12 +166,12 @@ export function reactive(...events: string[]) {
                         }
                     }
                 },
-                get: function (): any {
+                get: function(): any {
                     return this[privateKey];
                 },
                 enumerable: true,
                 configurable: true
             });
         }
-    }
+    };
 }

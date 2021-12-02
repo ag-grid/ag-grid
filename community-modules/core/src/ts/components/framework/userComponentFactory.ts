@@ -56,7 +56,7 @@ export interface UserCompDetails {
     componentFromFramework: boolean;
     params: any;
     type: ComponentType;
-    newAgStackInstance: (defaultComponentName?: string | null)=> AgPromise<any>;
+    newAgStackInstance: (defaultComponentName?: string | null) => AgPromise<any>;
 }
 
 @Bean('userComponentFactory')
@@ -146,7 +146,7 @@ export class UserComponentFactory extends BeanStub {
 
         // pull from defObject if available
         if (defObject) {
-            let defObjectAny = defObject as any;
+            const defObjectAny = defObject as any;
 
             // if selector, use this
             const selectorFunc: CellEditorSelectorFunc | CellRendererSelectorFunc = defObjectAny[propertyName + 'Selector'];
@@ -216,14 +216,17 @@ export class UserComponentFactory extends BeanStub {
         };
     }
 
-    private newAgStackInstance(ComponentClass: any, componentFromFramework: boolean, params: any, 
-        type: ComponentType, defaultComponentName: string | null | undefined): AgPromise<any> {
-
+    private newAgStackInstance(
+        ComponentClass: any,
+        componentFromFramework: boolean,
+        params: any,
+        type: ComponentType,
+        defaultComponentName: string | null | undefined
+    ): AgPromise<any> {
         const propertyName = type.propertyName;
-
+        const jsComponent = !componentFromFramework;
         // using javascript component
         let instance: any;
-        const jsComponent = !componentFromFramework;
 
         if (jsComponent) {
             instance = new ComponentClass();
@@ -252,8 +255,8 @@ export class UserComponentFactory extends BeanStub {
         defObject: DefinitionObject,
         propertyName: string,
         paramsFromGrid: any,
-        paramsFromSelector: any = null): any {
-            
+        paramsFromSelector: any = null
+    ): any {
         const params = {} as any;
 
         mergeDeep(params, paramsFromGrid);

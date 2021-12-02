@@ -69,12 +69,13 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
     private pauseStoreUpdateListening = false;
 
-    private logger: Logger;
+    private started = false;
 
     // we don't implement as lazy row heights is not supported in this row model
     public ensureRowHeightsValid(): boolean { return false; }
 
     public start(): void {
+        this.started = true;
         const datasource = this.gridOptionsWrapper.getServerSideDatasource();
 
         if (datasource) {
@@ -92,10 +93,6 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
 
         this.rowRenderer.datasourceChanged();
         this.datasource = undefined;
-    }
-
-    private setBeans(@Qualifier('loggerFactory') loggerFactory: LoggerFactory) {
-        this.logger = loggerFactory.create('ServerSideRowModel');
     }
 
     @PostConstruct
@@ -120,6 +117,13 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     public setDatasource(datasource: IServerSideDatasource): void {
+        // sometimes React, due to async, can call gridApi.setDatasource() before we have started.
+        // this happens when React app does this:
+        //      useEffect(() => setDatasource(ds), []);
+        // thus if we set the datasource before the grid UI has finished initialising, we do not set it,
+        // and the ssrm.start() method will set the datasoure when the grid is ready.
+        if (!this.started) { return; }
+
         this.destroyDatasource();
         this.datasource = datasource;
         this.resetRootStore();
@@ -425,7 +429,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     }
 
     public getRowNode(id: string): RowNode | undefined {
-        let result: RowNode | undefined = undefined;
+        let result: RowNode | undefined;
         this.forEachNode(rowNode => {
             if (rowNode.id === id) {
                 result = rowNode;

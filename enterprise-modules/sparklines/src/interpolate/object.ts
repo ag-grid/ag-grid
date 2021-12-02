@@ -1,6 +1,6 @@
 import value from "./value";
 
-export default function (a: any, b: any): (t: number) => object {
+export default function(a: any, b: any): (t: number) => object {
     const i: any = {};
     const c: any = {};
     let k;

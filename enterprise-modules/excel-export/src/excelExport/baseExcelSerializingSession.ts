@@ -207,7 +207,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
             const addedImage = this.addImage(rowIndex, column, valueForCell);
 
             if (addedImage) {
-                currentCells.push(this.createCell(excelStyleId, this.getDataTypeForValue(addedImage.value), addedImage.value == null ? '' : addedImage.value))
+                currentCells.push(this.createCell(excelStyleId, this.getDataTypeForValue(addedImage.value), addedImage.value == null ? '' : addedImage.value));
             } else if (colSpan > 1) {
                 skipCols = colSpan - 1;
                 currentCells.push(this.createMergedCell(excelStyleId, this.getDataTypeForValue(valueForCell), valueForCell, colSpan - 1));
@@ -230,7 +230,7 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
 
     private addNewMixedStyle(styleIds: string[]): void {
         this.mixedStyleCounter += 1;
-        const excelId = `mixedStyle${this.mixedStyleCounter}`
+        const excelId = `mixedStyle${this.mixedStyleCounter}`;
         const resultantStyle: ExcelStyle = {} as ExcelStyle;
 
         styleIds.forEach((styleId: string) => {

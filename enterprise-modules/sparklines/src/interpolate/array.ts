@@ -14,7 +14,7 @@ export default function(a: any[], b: any[]): (t: number) => any[] {
         c[i] = b[i];
     }
 
-    return function (t: number) {
+    return function(t: number) {
         for (i = 0; i < na; ++i) {
             c[i] = x[i](t);
         }

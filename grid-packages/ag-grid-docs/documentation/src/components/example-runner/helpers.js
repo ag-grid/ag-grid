@@ -3,7 +3,7 @@ import { encodeQueryParams } from 'use-query-params';
 import { stringify } from 'query-string';
 import { agGridVersion, localPrefix } from 'utils/consts';
 import { getIndexHtml } from './index-html-helper';
-import { ParameterConfig } from '../../../pages/example-runner';
+import { ParameterConfig } from '../../pages/example-runner';
 import isDevelopment from 'utils/is-development';
 
 /**

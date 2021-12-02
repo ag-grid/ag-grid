@@ -73,7 +73,7 @@ export function findMinMax(values: number[]): { min: number, max: number } {
 
 export function copy(array: any[], start: number = 0, count: number = array.length): any[] {
     const result = [];
-    let n = array.length;
+    const n = array.length;
 
     if (n) {
         for (let i = 0; i < count; i++) {

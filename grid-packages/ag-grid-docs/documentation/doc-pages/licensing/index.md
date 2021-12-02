@@ -198,4 +198,4 @@ If you mix the methods above (eg if you are using CommonJS in your application, 
 ### Invalid License
 If you have an enterprise grid running with an invalid license (no license, expired license) your console log will display a series of warnings and the grid will show a watermark for 5 seconds.
 
-<grid-example title='Invalid License' name='forceWatermark' type='vanilla' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Invalid License' name='forceWatermark' type='typescript' options='{ "enterprise": true }'></grid-example>

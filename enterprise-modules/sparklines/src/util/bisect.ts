@@ -75,7 +75,7 @@ export function complexBisectRight<T, U>(list: T[], x: U, map: (item: T) => U, l
 }
 
 function ascendingComparator<T, U>(map: (item: T) => U) {
-    return function (item: T, x: U) {
+    return function(item: T, x: U) {
         return ascending(map(item), x);
     };
 }

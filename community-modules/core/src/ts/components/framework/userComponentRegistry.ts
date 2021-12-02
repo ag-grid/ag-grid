@@ -60,7 +60,7 @@ export class UserComponentRegistry extends BeanStub {
         agNumberColumnFloatingFilter: NumberFloatingFilter,
         agDateColumnFloatingFilter: DateFloatingFilter,
         agReadOnlyFloatingFilter: ReadOnlyFloatingFilter,
-        
+
         // renderers
         agAnimateShowChangeCellRenderer: AnimateShowChangeCellRenderer,
         agAnimateSlideCellRenderer: AnimateSlideCellRenderer,

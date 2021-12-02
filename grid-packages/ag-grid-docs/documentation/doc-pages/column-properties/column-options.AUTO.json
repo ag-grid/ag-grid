@@ -415,7 +415,7 @@
   "dndSourceOnRowDrag": {
     "description": "/** Function to allow custom drag functionality for native drag and drop. */",
     "type": {
-      "arguments": { "params": "{ rowNode: RowNode; dragEvent: DragEvent; }" },
+      "arguments": { "params": "DndSourceOnRowDragParams" },
       "returnType": "void"
     }
   },
@@ -571,7 +571,7 @@
     "type": { "returnType": "string[]" }
   },
   "filter": {
-    "description": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Set to the name of a provided filter: `set`, `number`, `text`, `date`. \n * - Set to a `IFilterComp`. */",
+    "description": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Set to the name of a provided filter: `set`, `number`, `text`, `date`.\n * - Set to a `IFilterComp`. */",
     "type": { "returnType": "IFilterType" }
   },
   "filterFramework": {

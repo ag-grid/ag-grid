@@ -394,7 +394,7 @@ export class AgGridAngular implements AfterViewInit {
     /** @deprecated React UI is enabled by default. Use suppressReactUi=true to turn it off.
      */
     @Input() public reactUi: boolean | undefined = undefined;
-    /** @deprecated Set to true to enable the experimental React UI. Works with React framework only. 
+    /** @deprecated Set to true to enable the experimental React UI. Works with React framework only.
 It is planned the next major release of the grid will drop support of the legacy React engine,
 hence this property is deprecated as will be removed in the next major release.
      */
@@ -581,7 +581,7 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public cellFadeDelay: number | undefined = undefined;
     /** Switch between layout options: `normal`, `autoHeight`, `print`.
      * Default: `normal`     */
-    @Input() public domLayout: string | undefined = undefined;
+    @Input() public domLayout: 'normal' | 'autoHeight' | 'print' | undefined = undefined;
     /** When `true`, the order of rows and columns in the DOM are consistent with what is on screen. Default: `false`     */
     @Input() public ensureDomOrder: boolean | undefined = undefined;
     /** Set to `true` to operate the grid in RTL (Right to Left) mode. Default: `false`     */

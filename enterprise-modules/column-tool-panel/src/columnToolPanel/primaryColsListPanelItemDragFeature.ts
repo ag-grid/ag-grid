@@ -22,11 +22,11 @@ import { ToolPanelColumnGroupComp } from "./toolPanelColumnGroupComp";
 
 const PRIMARY_COLS_LIST_ITEM_HOVERED = 'ag-column-list-item-hovered';
 
-type DragColumnItem = {
-    rowIndex: number,
-    position: 'top' | 'bottom',
-    component: ToolPanelColumnGroupComp | ToolPanelColumnComp
-};
+interface DragColumnItem {
+    rowIndex: number;
+    position: 'top' | 'bottom';
+    component: ToolPanelColumnGroupComp | ToolPanelColumnComp;
+}
 
 export class PrimaryColsListPanelItemDragFeature extends BeanStub {
     @Autowired('columnModel') private columnModel: ColumnModel;
@@ -102,7 +102,7 @@ export class PrimaryColsListPanelItemDragFeature extends BeanStub {
 
         if (!comp) { return; }
 
-        const el = comp!.getGui().parentElement as HTMLElement
+        const el = comp!.getGui().parentElement as HTMLElement;
 
         if (
             this.lastHoveredColumnItem &&

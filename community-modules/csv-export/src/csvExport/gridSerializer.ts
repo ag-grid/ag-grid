@@ -113,7 +113,7 @@ export class GridSerializer extends BeanStub {
                 gridSerializingSession.addCustomContent(appendContent);
             }
             return gridSerializingSession;
-        }
+        };
     }
 
     private prependContent<T>(params: ExportParams<T>): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
@@ -126,14 +126,14 @@ export class GridSerializer extends BeanStub {
                 gridSerializingSession.addCustomContent(prependContent);
             }
             return gridSerializingSession;
-        }
+        };
     }
 
     private prepareSession<T>(columnsToExport: Column[]): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
         return (gridSerializingSession) => {
             gridSerializingSession.prepare(columnsToExport);
             return gridSerializingSession;
-        }
+        };
     }
 
     private exportColumnGroups<T>(params: ExportParams<T>, columnsToExport: Column[]): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
@@ -151,7 +151,7 @@ export class GridSerializer extends BeanStub {
                 _.doOnce(() => console.warn('AG Grid: Since v25.2 the `columnGroups` param has deprecated, and groups are exported by default.'), 'gridSerializer-columnGroups');
             }
             return gridSerializingSession;
-        }
+        };
     }
 
     private exportHeaders<T>(params: ExportParams<T>, columnsToExport: Column[]): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
@@ -165,7 +165,7 @@ export class GridSerializer extends BeanStub {
                 _.doOnce(() => console.warn('AG Grid: Since v25.2 the `skipHeader` param has been renamed to `skipColumnHeaders`.'), 'gridSerializer-skipHeader');
             }
             return gridSerializingSession;
-        }
+        };
     }
 
     private processPinnedTopRows<T>(params: ExportParams<T>, columnsToExport: Column[]): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
@@ -173,7 +173,7 @@ export class GridSerializer extends BeanStub {
             const processRow = this.processRow.bind(this, gridSerializingSession, params, columnsToExport);
             this.pinnedRowModel.forEachPinnedTopRow(processRow);
             return gridSerializingSession;
-        }
+        };
     }
 
     private processRows<T>(params: ExportParams<T>, columnsToExport: Column[]): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
@@ -216,7 +216,7 @@ export class GridSerializer extends BeanStub {
                 }
             }
             return gridSerializingSession;
-        }
+        };
     }
 
     private processPinnedBottomRows<T>(params: ExportParams<T>, columnsToExport: Column[]): (gridSerializingSession: GridSerializingSession<T>) => GridSerializingSession<T> {
@@ -224,7 +224,7 @@ export class GridSerializer extends BeanStub {
             const processRow = this.processRow.bind(this, gridSerializingSession, params, columnsToExport);
             this.pinnedRowModel.forEachPinnedBottomRow(processRow);
             return gridSerializingSession;
-        }
+        };
     }
 
     private getColumnsToExport(allColumns: boolean = false, columnKeys?: (string | Column)[]): Column[] {

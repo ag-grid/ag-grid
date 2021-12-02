@@ -283,8 +283,8 @@ We need to provide a callback to the `navigateToNextCell` grid option to overrid
 |        const suggestedNextCell = params.nextCellPosition;
 |
 |        // this is some code
-|        const KEY_UP = 38;
-|        const KEY_DOWN = 40;
+|        const KEY_UP = 'ArrowUp';
+|        const KEY_DOWN = 'ArrowDown';
 |
 |        const noUpOrDownKeyPressed = params.key!==KEY_DOWN && params.key!==KEY_UP;
 |        if (noUpOrDownKeyPressed) {

@@ -1,4 +1,4 @@
-import {AgPromise} from "../utils";
+import { AgPromise } from "../utils";
 
 export interface IFrameworkOverrides {
 

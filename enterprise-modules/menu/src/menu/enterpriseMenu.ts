@@ -156,7 +156,7 @@ export class EnterpriseMenuFactory extends BeanStub implements IMenuFactory {
                         column.removeEventListener(Column.EVENT_LEFT_CHANGED, stopAnchoringFunc);
                         column.removeEventListener(Column.EVENT_VISIBLE_CHANGED, stopAnchoringFunc);
                     });
-                })
+                });
             }
         }
 

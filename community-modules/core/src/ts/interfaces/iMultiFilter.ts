@@ -2,7 +2,7 @@ import { AgPromise } from "../utils";
 import { IFilterComp, IFilterDef, IFilterParams, ProvidedFilterModel } from "./iFilter";
 
 export interface IMultiFilterDef extends IFilterDef {
-    /** 
+    /**
      * Configures how the filter is shown in the Multi Filter.
      * Default: `inline`
      */
@@ -41,7 +41,7 @@ export interface IMultiFilterComp {
     /**
      * Sets the state of the child filters using the supplied models.
      * Providing `null` will de-activate all child filters.
-     *  - **Note:** if you are providing values asynchronously to a child Set Filter, 
+     *  - **Note:** if you are providing values asynchronously to a child Set Filter,
      * you need to wait for these changes to be applied before performing any further actions by waiting on the returned grid promise,
      *  e.g. `filter.setModel([null, { values: ['a', 'b'] }]).then(function() { gridApi.onFilterChanged(); });`
      */

@@ -641,6 +641,12 @@
             "displayName": "Miscellaneous"
         },
         "getValue": {},
+        "setDomLayout": {
+            "more": {
+                "name": "DOM Layout",
+                "url": "/grid-size/#dom-layout"
+            }
+        },
         "destroy": {},
         "setGridAriaProperty": {
             "description": "Sets an ARIA property in the grid panel (element with `role=\"grid\"`), and removes an ARIA property when the value is null.<br /><br />Example:<br />`api.setGridAriaProperty('label', 'my grid')` will set `aria-label=\"my grid\"`.<br />`api.setGridAriaProperty('label', null)` will remove the `aria-label` attribute from the grid element."

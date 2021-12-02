@@ -1046,9 +1046,7 @@
     "dndSourceOnRowDrag": {
       "description": "/** Function to allow custom drag functionality for native drag and drop. */",
       "type": {
-        "arguments": {
-          "params": "{ rowNode: RowNode; dragEvent: DragEvent; }"
-        },
+        "arguments": { "params": "DndSourceOnRowDragParams" },
         "returnType": "void",
         "optional": true
       }
@@ -1267,7 +1265,7 @@
       "type": { "returnType": "string[]", "optional": true }
     },
     "filter": {
-      "description": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Set to the name of a provided filter: `set`, `number`, `text`, `date`. \n * - Set to a `IFilterComp`. */",
+      "description": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Set to the name of a provided filter: `set`, `number`, `text`, `date`.\n * - Set to a `IFilterComp`. */",
       "type": { "returnType": "IFilterType", "optional": true }
     },
     "filterFramework": {
@@ -1387,6 +1385,16 @@
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "DndSourceOnRowDragParams": {
+    "rowNode": {
+      "description": "/** Row node for the given row */",
+      "type": { "returnType": "RowNode", "optional": false }
+    },
+    "dragEvent": {
+      "description": "/** The DOM event that represents a drag and drop interaction */",
+      "type": { "returnType": "DragEvent", "optional": false }
     }
   },
   "DndSourceCallback": {},
@@ -2174,7 +2182,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressReactUi": {
-      "description": "/** @deprecated Set to true to enable the experimental React UI. Works with React framework only. \nIt is planned the next major release of the grid will drop support of the legacy React engine,\nhence this property is deprecated as will be removed in the next major release.\n */",
+      "description": "/** @deprecated Set to true to enable the experimental React UI. Works with React framework only.\nIt is planned the next major release of the grid will drop support of the legacy React engine,\nhence this property is deprecated as will be removed in the next major release.\n */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "editType": {
@@ -2528,7 +2536,10 @@
     },
     "domLayout": {
       "description": "/** Switch between layout options: `normal`, `autoHeight`, `print`.\n * Default: `normal` */",
-      "type": { "returnType": "string", "optional": true }
+      "type": {
+        "returnType": "'normal' | 'autoHeight' | 'print'",
+        "optional": true
+      }
     },
     "ensureDomOrder": {
       "description": "/** When `true`, the order of rows and columns in the DOM are consistent with what is on screen. Default: `false` */",
@@ -7084,7 +7095,7 @@
       "type": { "returnType": "Column", "optional": false }
     },
     "filterParams": {
-      "description": "/** The params object passed to the filter. \n * This is to allow the floating filter access to the configuration of the parent filter.\n * For example, the provided filters use debounceMs from the parent filter params. */",
+      "description": "/** The params object passed to the filter.\n * This is to allow the floating filter access to the configuration of the parent filter.\n * For example, the provided filters use debounceMs from the parent filter params. */",
       "type": { "returnType": "IFilterParams", "optional": false }
     },
     "suppressFilterButton": {
@@ -12028,7 +12039,7 @@
   "IFloatingFilterType": {},
   "IFilterDef": {
     "filter": {
-      "description": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Set to the name of a provided filter: `set`, `number`, `text`, `date`. \n * - Set to a `IFilterComp`. */",
+      "description": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Set to the name of a provided filter: `set`, `number`, `text`, `date`.\n * - Set to a `IFilterComp`. */",
       "type": { "returnType": "IFilterType", "optional": true }
     },
     "filterFramework": {
@@ -12559,7 +12570,7 @@
       "type": { "returnType": "string", "optional": true }
     },
     "filter": {
-      "description": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Set to the name of a provided filter: `set`, `number`, `text`, `date`. \n * - Set to a `IFilterComp`. */",
+      "description": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Set to the name of a provided filter: `set`, `number`, `text`, `date`.\n * - Set to a `IFilterComp`. */",
       "type": { "returnType": "IFilterType", "optional": true }
     },
     "filterFramework": {
@@ -12663,7 +12674,7 @@
       }
     },
     "setModel": {
-      "description": "/** Sets the state of the child filters using the supplied models.\n * Providing `null` will de-activate all child filters.\n *   - **Note:** if you are providing values asynchronously to a child Set Filter, \n * you need to wait for these changes to be applied before performing any further actions by waiting on the returned grid promise,\n *   e.g. `filter.setModel([null, { values: ['a', 'b'] }]).then(function() { gridApi.onFilterChanged(); });` */",
+      "description": "/** Sets the state of the child filters using the supplied models.\n * Providing `null` will de-activate all child filters.\n *   - **Note:** if you are providing values asynchronously to a child Set Filter,\n * you need to wait for these changes to be applied before performing any further actions by waiting on the returned grid promise,\n *   e.g. `filter.setModel([null, { values: ['a', 'b'] }]).then(function() { gridApi.onFilterChanged(); });` */",
       "type": {
         "arguments": { "model": "IMultiFilterModel | null" },
         "returnType": "void | AgPromise<void>",
@@ -13353,7 +13364,7 @@
   },
   "IServerSideDatasource": {
     "getRows": {
-      "description": "/** Grid calls `getRows` when it requires more rows as specified in the params. \n * Params object contains callbacks for responding to the request. */",
+      "description": "/** Grid calls `getRows` when it requires more rows as specified in the params.\n * Params object contains callbacks for responding to the request. */",
       "type": {
         "arguments": { "params": "IServerSideGetRowsParams" },
         "returnType": "void",
@@ -14462,15 +14473,15 @@
       "type": { "returnType": "number", "optional": true }
     },
     "lineDash": {
-      "description": "/** Defines how the crosshair stroke is rendered. This can be one of the lineDash style options or an array specifying the length in pixels of alternating dashes and gaps.\n * For example, `[6, 3]` means dashes with a length of `6` pixels with gaps between of `3` pixels.\n * The default is `solid` which is equivalent to an empty array, this renders a solid stroke with no gaps. */",
+      "description": "/** Defines how the crosshair stroke is rendered. This can be one of the lineDash style options.\n * The default is `solid`, this renders a solid stroke with no gaps. */",
       "type": {
-        "returnType": "'dash' | 'dashDot' | 'dashDotDot' | 'dot' | 'longDash' | 'longDashDot' | 'longDashDotDot' | 'shortDash' | 'shortDashDot' | 'shortDashDotDot' | 'shortDot' | 'solid' | string | number[]",
+        "returnType": "'dash' | 'dashDot' | 'dashDotDot' | 'dot' | 'longDash' | 'longDashDot' | 'longDashDotDot' | 'shortDash' | 'shortDashDot' | 'shortDashDotDot' | 'shortDot' | 'solid'",
         "optional": true
       }
     },
     "lineCap": {
       "description": "/** The shape used to draw the end points of the crosshair line.\n * The options include `butt` (the ends of the line are squared off at the endpoints), `round` (the ends of the line are rounded) and `square` (the ends of the line are squared off by adding a box with width equal to the line's strokeWidth and height equal to half the line's strokeWidth).\n * Default: `butt` */",
-      "type": { "returnType": "'round'| 'square' | 'butt'", "optional": true }
+      "type": { "returnType": "'round' | 'square' | 'butt'", "optional": true }
     }
   },
   "SparklineColumnFormatter": {},
@@ -15218,7 +15229,7 @@
   },
   "ServerSideTransaction": {
     "route": {
-      "description": "/** The Row Store to apply the transaction to, ie what group level.\n * eg ['Ireland','2002'] to update the child store found after expanding Ireland and 2002 groups. \n * Passing in blank to empty applies the transaction to the top level. */",
+      "description": "/** The Row Store to apply the transaction to, ie what group level.\n * eg ['Ireland','2002'] to update the child store found after expanding Ireland and 2002 groups.\n * Passing in blank to empty applies the transaction to the top level. */",
       "type": { "returnType": "string[]", "optional": true }
     },
     "addIndex": {

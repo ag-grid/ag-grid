@@ -8,7 +8,7 @@ import { AgChartThemeOverrides } from "./iAgChartOptions";
 export interface GetChartImageDataUrlParams {
     /** The id of the created chart. */
     chartId: string;
-    /** 
+    /**
      * A string indicating the image format.
      * The default format type is `image/png`.
      * Options: `image/png`, `image/jpeg`

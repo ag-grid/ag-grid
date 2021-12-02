@@ -1,4 +1,12 @@
-import { ColDef, GridOptions, ICellRendererParams, IServerSideDatasource, IServerSideGetRowsParams, IServerSideGetRowsRequest, IsServerSideGroup, IsServerSideGroupOpenByDefaultParams } from '@ag-grid-community/core'
+import {
+  ColDef,
+  GridOptions,
+  ICellRendererParams,
+  IServerSideDatasource,
+  IServerSideGetRowsParams,
+  IServerSideGetRowsRequest,
+  IsServerSideGroupOpenByDefaultParams,
+} from '@ag-grid-community/core'
 const columnDefs: ColDef[] = [
   { field: 'employeeId', hide: true },
   { field: 'employeeName', hide: true },
@@ -26,7 +34,9 @@ const gridOptions: GridOptions = {
   treeData: true,
   columnDefs: columnDefs,
   animateRows: true,
-  isServerSideGroupOpenByDefault: function (params: IsServerSideGroupOpenByDefaultParams) {
+  isServerSideGroupOpenByDefault: function (
+    params: IsServerSideGroupOpenByDefaultParams
+  ) {
     // open first two levels by default
     return params.rowNode.level < 2
   },
@@ -55,7 +65,6 @@ document.addEventListener('DOMContentLoaded', function () {
 })
 
 function createFakeServer(fakeServerData: any[]) {
-
   const fakeServer = {
     data: fakeServerData,
     getData: function (request: IServerSideGetRowsRequest) {
@@ -84,14 +93,13 @@ function createFakeServer(fakeServerData: any[]) {
       }
 
       return extractRowsFromData(request.groupKeys, this.data)
-    }
+    },
   }
 
-  return fakeServer;
+  return fakeServer
 }
 
 function createServerSideDatasource(fakeServer: any) {
-
   const dataSource: IServerSideDatasource = {
     getRows: function (params: IServerSideGetRowsParams) {
       console.log('ServerSideDatasource.getRows: params = ', params)
@@ -102,16 +110,16 @@ function createServerSideDatasource(fakeServer: any) {
       var doingInfinite = request.startRow != null && request.endRow != null
       var result = doingInfinite
         ? {
-          rowData: allRows.slice(request.startRow, request.endRow),
-          rowCount: allRows.length,
-        }
+            rowData: allRows.slice(request.startRow, request.endRow),
+            rowCount: allRows.length,
+          }
         : { rowData: allRows }
       console.log('getRows: result = ', result)
       setTimeout(function () {
         params.success(result)
       }, 200)
-    }
+    },
   }
 
-  return dataSource;
+  return dataSource
 }

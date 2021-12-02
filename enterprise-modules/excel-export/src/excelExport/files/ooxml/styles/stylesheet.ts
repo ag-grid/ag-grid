@@ -29,7 +29,7 @@ const getStyleName = (name: string, currentSheet: number): string => {
         name += `_${currentSheet}`;
     }
     return name;
-}
+};
 
 const resetStylesheetValues = (): void => {
     stylesMap = { base: 0 };

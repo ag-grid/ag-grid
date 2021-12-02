@@ -23,11 +23,10 @@ const ImageCaption = ({
     const { fluidImages, images } = useImageFileNodes();
 
     let imgSrc;
-
     const fluidImage = getImage(fluidImages, pageName, src);
 
     if (fluidImage) {
-        imgSrc = fluidImage.childImageSharp.fluid.src;
+        imgSrc = fluidImage.childImageSharp.gatsbyImageData.images.fallback.src;
     } else {
         const image = getImage(images, pageName, src);
 

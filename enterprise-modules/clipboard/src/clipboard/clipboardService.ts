@@ -83,7 +83,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
 
-        this.ctrlsService.whenReady( p => {
+        this.ctrlsService.whenReady(p => {
             this.gridCtrl = p.gridCtrl;
         });
 

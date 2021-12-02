@@ -3,11 +3,11 @@ import { Marker } from "./marker";
 export class Square extends Marker {
 
     static className = "Square";
-    
+
     isPointInStroke(x: number, y: number): boolean {
         return false;
     }
-    
+
     isPointInPath(x: number, y: number): boolean {
         return false;
     }

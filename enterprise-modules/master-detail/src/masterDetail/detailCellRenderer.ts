@@ -28,7 +28,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
             setRowData: rowData => this.setRowData(rowData)
         };
 
-        this.ctrl = this.createManagedBean(new DetailCellRendererCtrl())
+        this.ctrl = this.createManagedBean(new DetailCellRendererCtrl());
         this.ctrl.init(compProxy, params);
     }
 
@@ -70,7 +70,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
             }
         }
 
-        if (this.eDetailGrid==null) {
+        if (this.eDetailGrid == null) {
             console.warn('AG Grid: reference to eDetailGrid was missing from the details template. ' +
                 'Please add ref="eDetailGrid" to the template.');
         }
@@ -103,7 +103,7 @@ export class DetailCellRenderer extends Component implements ICellRenderer {
 
         this.detailApi = gridOptions.api!;
 
-        this.ctrl.registerDetailWithMaster(gridOptions.api!, gridOptions.columnApi!)
+        this.ctrl.registerDetailWithMaster(gridOptions.api!, gridOptions.columnApi!);
 
         this.addDestroyFunc(() => {
             if (gridOptions.api) {

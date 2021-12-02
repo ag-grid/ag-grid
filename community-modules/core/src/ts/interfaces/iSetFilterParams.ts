@@ -33,22 +33,22 @@ export interface ISetFilterParams extends IProvidedFilterParams {
     refreshValuesOnOpen?: boolean;
     /** The height of values in the Filter List in pixels. */
     cellHeight?: number;
-    /** 
+    /**
      * If `true`, the Set Filter values will not be sorted.
      * Use this if you are providing your own values and don't want them sorted as you are providing in the order you want.
      * Default: `false`
      */
     suppressSorting?: boolean;
-    /** 
+    /**
      * Similar to the Cell Renderer for the grid.
      * Setting it separately here allows for the value to be rendered differently in the filter.
      */
     cellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
     /** Set to `true` to hide the Mini Filter.
-     * Default: `false` 
+     * Default: `false`
      */
     suppressMiniFilter?: boolean;
-    /** 
+    /**
      * Set to `true` to apply the Set Filter immediately when the user is typing in the Mini Filter.
      * Default: `false`
      */
@@ -60,7 +60,7 @@ export interface ISetFilterParams extends IProvidedFilterParams {
     suppressSelectAll?: boolean;
     /** By default, when the Set Filter is opened all values are shown selected. Set this to `true` to instead show all values as de-selected by default. */
     defaultToNothingSelected?: boolean;
-    /** 
+    /**
      * Comparator for sorting.
      * If not provided, the Column Definition comparator is used.
      * If Column Definition comparator is also not provided, the default (grid provided) comparator is used.
@@ -71,7 +71,7 @@ export interface ISetFilterParams extends IProvidedFilterParams {
      */
     textFormatter?: (from: string) => string;
     valueFormatter?: (params: ValueFormatterParams) => string;
-    /** 
+    /**
      * If `true`, hovering over a value in the Set Filter will show a tooltip containing the full, untruncated value.
      * Default: `false`
      */

@@ -228,12 +228,6 @@ export class MenuItemMapper extends BeanStub {
         };
 
         switch (key) {
-            // case 'pivotChartAndPivotMode':
-            //     return {
-            //         name: localeTextFunc('pivotChartAndPivotMode', 'Pivot Chart & Pivot Mode&lrm;'),
-            //         action: () => this.chartService.pivotChart(ChartType.GroupedColumn),
-            //         icon: _.createIconNoSpan('chart', this.gridOptionsWrapper, null)
-            //     };
             case 'pivotChart':
                 return {
                     name: localeTextFunc('pivotChart', 'Pivot Chart'),

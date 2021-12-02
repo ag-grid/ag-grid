@@ -72,7 +72,7 @@ const getPageOrientation = (orientation?: 'Portrait' | 'Landscape'): 'portrait' 
     }
 
     return orientation.toLocaleLowerCase() as 'portrait' | 'landscape';
-}
+};
 
 const getPageSize = (pageSize?: string): number => {
     if (pageSize == null) { return 1; }
@@ -81,7 +81,7 @@ const getPageSize = (pageSize?: string): number => {
     const pos = positions.indexOf(pageSize);
 
     return pos === -1 ? 1 : (pos + 1);
-}
+};
 
 const addColumns = (columns: ExcelColumn[]) => {
     return (children: XmlElement[]) => {
@@ -92,8 +92,8 @@ const addColumns = (columns: ExcelColumn[]) => {
             });
         }
         return children;
-    }
-}
+    };
+};
 
 const addSheetData = (rows: ExcelRow[], sheetNumber: number) => {
     return (children: XmlElement[]) => {
@@ -104,8 +104,8 @@ const addSheetData = (rows: ExcelRow[], sheetNumber: number) => {
             });
         }
         return children;
-    }
-}
+    };
+};
 
 const addMergeCells = (mergeCells: string[]) => {
     return (children: XmlElement[]) => {
@@ -121,8 +121,8 @@ const addMergeCells = (mergeCells: string[]) => {
             });
         }
         return children;
-    }
-}
+    };
+};
 
 const addPageMargins = (margins: ExcelSheetMargin) => {
     return (children: XmlElement[]) => {
@@ -136,8 +136,8 @@ const addPageMargins = (margins: ExcelSheetMargin) => {
         });
 
         return children;
-    }
-}
+    };
+};
 
 const addPageSetup = (pageSetup?: ExcelSheetPageSetup) => {
     return (children: XmlElement[]) => {
@@ -152,11 +152,11 @@ const addPageSetup = (pageSetup?: ExcelSheetPageSetup) => {
                         paperSize: getPageSize(pageSetup.pageSize)
                     }
                 }
-            })
+            });
         }
         return children;
-    }
-}
+    };
+};
 
 const replaceHeaderFooterTokens = (value: string): string => {
     const map = {
@@ -174,39 +174,39 @@ const replaceHeaderFooterTokens = (value: string): string => {
     });
 
     return value;
-}
+};
 
 const getHeaderPosition = (position?: string): string => {
     if (position === 'Center') { return 'C'; }
-    else if (position === 'Right') { return 'R'; }
+    if (position === 'Right') { return 'R'; }
 
     return 'L';
-}
+};
 
 const applyHeaderFontStyle = (headerString: string, font?: ExcelFont): string => {
     if (!font) { return headerString; }
 
-    headerString += '&amp;&quot;'
+    headerString += '&amp;&quot;';
     headerString += font.fontName || 'Calibri';
 
     if (font.bold !== font.italic) {
-        headerString += font.bold ? ',Bold' : ',Italic'
+        headerString += font.bold ? ',Bold' : ',Italic';
     } else if (font.bold) {
-        headerString += ',Bold Italic'
+        headerString += ',Bold Italic';
     } else {
-        headerString += ',Regular'
+        headerString += ',Regular';
     }
-    headerString += '&quot;'
+    headerString += '&quot;';
 
-    if (font.size) { headerString += `&amp;${font.size}` }
-    if (font.strikeThrough) { headerString += '&amp;S' }
+    if (font.size) { headerString += `&amp;${font.size}`; }
+    if (font.strikeThrough) { headerString += '&amp;S'; }
     if (font.underline) {
         headerString += `&amp;${font.underline === 'Double' ? 'E' : 'U'}`;
      }
-    if (font.color) { headerString += `&amp;K${font.color.replace('#', '').toUpperCase()}` }
+    if (font.color) { headerString += `&amp;K${font.color.replace('#', '').toUpperCase()}`; }
 
     return headerString;
-}
+};
 
 const processHeaderFooterContent = (content: ExcelHeaderFooterContent[]): string =>
     content.reduce((prev, curr) => {
@@ -244,7 +244,7 @@ const buildHeaderFooter = (headerFooterConfig: ExcelHeaderFooterConfig): XmlElem
     });
 
     return headersAndFooters;
-}
+};
 
 const addHeaderFooter = (headerFooterConfig?: ExcelHeaderFooterConfig) => {
     return (children: XmlElement[]) => {
@@ -262,10 +262,10 @@ const addHeaderFooter = (headerFooterConfig?: ExcelHeaderFooterConfig) => {
                 }
             },
             children: buildHeaderFooter(headerFooterConfig)
-        })
+        });
         return children;
-    }
-}
+    };
+};
 
 const addDrawingRel = (currentSheet: number) => {
     return (children: XmlElement[]) => {
@@ -281,8 +281,8 @@ const addDrawingRel = (currentSheet: number) => {
         }
 
         return children;
-    }
-}
+    };
+};
 
 const worksheetFactory: ExcelOOXMLTemplate = {
     getTemplate(params: {

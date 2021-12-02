@@ -17,28 +17,44 @@ export function toTooltipHtml(input: string | TooltipRendererResult, defaults?: 
     const {
         content = defaults.content || '',
         title = defaults.title || undefined,
-        color = defaults.color || 'rgba(0,0,0, 0.67)',
-        backgroundColor = defaults.backgroundColor || 'rgb(255, 255, 255)',
+        color = defaults.color,
+        backgroundColor = defaults.backgroundColor,
         opacity = defaults.opacity || 1
     } = input;
 
-    const bgColor = Color.fromString(backgroundColor.toLowerCase());
-    const { r, g, b, a } = bgColor;
+    let titleHtml;
+    let contentHtml;
 
-    // TODO: combine a and opacity for alpha?
-    const alpha = opacity;
+    if (color) {
+        titleHtml = title ?
+                    `<span class="${SparklineTooltip.class}-title"; style="color: ${color}">${title}</span>`
+                    : '';
+        contentHtml = `<span class="${SparklineTooltip.class}-content" style="color: ${color}">${content}</span>`;
+    } else {
+        titleHtml = title ? `<span class="${SparklineTooltip.class}-title">${title}</span>` : '';
+        contentHtml = `<span class="${SparklineTooltip.class}-content">${content}</span>`;
+    }
 
-    const bgColorWithAlpha = Color.fromArray([r, g, b, alpha]);
-    const bgColorRgbaString = bgColorWithAlpha.toRgbaString();
+    if (backgroundColor) {
+        const bgColor = Color.fromString(backgroundColor.toLowerCase());
+        const { r, g, b, a } = bgColor;
 
-    // TODO: allow title color to be customisable?
-    const titleHtml = title ? `<span class="${SparklineTooltip.class}-title";
-    style="color: ${color}">${title}</span>` : '';
+        // TODO: combine a and opacity for alpha?
+        const alpha = opacity;
 
-    return `<div class="${SparklineTooltip.class}" style="background-color: ${bgColorRgbaString}">
-                ${titleHtml}
-                <span class="${SparklineTooltip.class}-content" style="color: ${color}">${content}</span>
-            </div>`;
+        const bgColorWithAlpha = Color.fromArray([r, g, b, alpha]);
+        const bgColorRgbaString = bgColorWithAlpha.toRgbaString();
+
+        return `<div class="${SparklineTooltip.class}" style="background-color: ${bgColorRgbaString}">
+                    ${titleHtml}
+                    ${contentHtml}
+                </div>`;
+    } else {
+        return  `<div class="${SparklineTooltip.class}">
+                    ${titleHtml}
+                    ${contentHtml}
+                </div>`;
+    }
 }
 
 export class SparklineTooltip extends Observable {
@@ -94,7 +110,7 @@ export class SparklineTooltip extends Observable {
         }
 
         let left = meta.pageX + this.xOffset;
-        let top = meta.pageY + this.yOffset;
+        const top = meta.pageY + this.yOffset;
 
         const tooltipRect = element.getBoundingClientRect();
 

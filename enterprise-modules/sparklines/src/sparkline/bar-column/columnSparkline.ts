@@ -40,7 +40,6 @@ export class ColumnSparkline extends BarColumnSparkline {
         axisLine.translationY = yZero;
     }
 
-
     protected generateNodeData(): ColumnNodeDatum[] | undefined {
         const { data, yData, xData, xScale, yScale, fill, stroke, strokeWidth, label } = this;
 
@@ -64,9 +63,8 @@ export class ColumnSparkline extends BarColumnSparkline {
 
         for (let i = 0, n = yData.length; i < n; i++) {
             let yDatum = yData[i];
-            let xDatum = xData[i];
-
-            let invalidDatum = yDatum === undefined;
+            const xDatum = xData[i];
+            const invalidDatum = yDatum === undefined;
 
             if (invalidDatum) {
                 yDatum = 0;
@@ -85,7 +83,7 @@ export class ColumnSparkline extends BarColumnSparkline {
             const midPoint = {
                 x: x + (width / 2),
                 y: yZero
-            }
+            };
 
             let labelText: string;
             if (labelFormatter) {
@@ -114,8 +112,8 @@ export class ColumnSparkline extends BarColumnSparkline {
                 labelTextBaseline = isPositiveY ? 'top' : 'bottom';
 
                 const textSize = HdpiCanvas.getTextSize(labelText, labelFontFamily);
-                const textHeight= textSize.height || 10;
-                const positiveBoundary = yZero - textHeight
+                const textHeight = textSize.height || 10;
+                const positiveBoundary = yZero - textHeight;
                 const negativeBoundary = yZero + textHeight;
                 const exceedsBoundaries = (isPositiveY && labelY > positiveBoundary) || (!isPositiveY && labelY < negativeBoundary);
 

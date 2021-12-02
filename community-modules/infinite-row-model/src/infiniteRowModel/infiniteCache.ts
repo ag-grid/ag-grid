@@ -205,7 +205,7 @@ export class InfiniteCache extends BeanStub {
         // if user deleted data and then called refresh on the grid.
         if (typeof lastRow === 'number' && lastRow >= 0) {
             this.rowCount = lastRow;
-            this.lastRowIndexKnown = true
+            this.lastRowIndexKnown = true;
         } else if (!this.lastRowIndexKnown) {
             // otherwise, see if we need to add some virtual rows
             const lastRowIndex = (block.getId() + 1) * this.params.blockSize!;

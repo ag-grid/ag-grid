@@ -1,6 +1,12 @@
-import { LineSparklineOptions, TooltipRendererParams } from '@ag-grid-community/core'
+import {
+  GridOptions,
+  LineSparklineOptions,
+  TooltipRendererParams,
+} from '@ag-grid-community/core'
 
-var gridOptions = {
+const body = document.body;
+
+const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'symbol', maxWidth: 120 },
     { field: 'name', minWidth: 250 },
@@ -10,13 +16,16 @@ var gridOptions = {
       cellRendererParams: {
         sparklineOptions: {
           line: {
-            stroke: 'rgb(0, 113, 235)',
+            stroke: 'rgb(94,94,224)',
           },
           tooltip: {
+            container: body,
+            xOffset: 20,
+            yOffset: -20,
             renderer: tooltipRenderer,
           },
           highlightStyle: {
-            fill: 'rgb(0, 113, 235)',
+            fill: 'rgb(94,94,224)',
             strokeWidth: 0,
           },
         } as LineSparklineOptions,
@@ -35,13 +44,16 @@ var gridOptions = {
   },
   rowData: getData(),
   rowHeight: 50,
-};
+}
 
 function tooltipRenderer(params: TooltipRendererParams) {
   const { yValue, context } = params;
-  return `<div class='my-custom-tooltip'>
-            <span class='tooltip-title'>${context.data.symbol}</span>
-            <span class='tooltip-content'>${yValue}</span>
+  return `<div class='my-custom-tooltip my-custom-tooltip-arrow'>
+              <div class='tooltip-title'>${context.data.symbol}</div>
+              <div class='tooltip-content'>
+                <div>Change: ${yValue}</div>
+                <div>Volume: ${context.data.volume}</div>
+              </div>
           </div>`;
 }
 
@@ -49,4 +61,4 @@ function tooltipRenderer(params: TooltipRendererParams) {
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector('#myGrid');
   new agGrid.Grid(gridDiv, gridOptions);
-});
+})

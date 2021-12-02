@@ -30,7 +30,7 @@ You can use your own date picker to AG Grid by providing a custom Date Component
 |        agDateInput: CustomDateComponent
 |    }
 |};
-|
+|```
 [[only-angular]]
 |```ts
 |@Component({

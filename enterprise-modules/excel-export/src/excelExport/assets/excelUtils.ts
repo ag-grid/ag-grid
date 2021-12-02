@@ -5,15 +5,15 @@ import { ExcelCalculatedImage } from "./excelInterfaces";
 
 export const pixelsToPoint = (pixels: number): number => {
     return Math.round(pixels * 72 / 96);
-}
+};
 
 export const pointsToPixel = (points: number): number => {
     return Math.round(points * 96 / 72);
-}
+};
 
 export const pixelsToEMU = (value: number): number => {
     return Math.ceil(value * INCH_TO_EMU);
-}
+};
 
 export const getFontFamilyId = (name?: string): number | undefined => {
     if (name === undefined) { return; }
@@ -94,7 +94,7 @@ export const createXmlPart = (body: XmlElement): string => {
 
     const xmlBody = XmlFactory.createXml(body);
     return `${header}${xmlBody}`;
-}
+};
 
 export const getExcelColumnName = (colIdx: number): string => {
     const startCode = 65;

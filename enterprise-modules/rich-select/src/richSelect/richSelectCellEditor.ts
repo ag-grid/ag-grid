@@ -179,7 +179,7 @@ export class RichSelectCellEditor extends PopupComponent implements ICellEditor 
                     context: this.gridOptionsWrapper.getContext()
                 };
                 return this.params.colDef.keyCreator!(keyParams);
-            })
+            });
 
         }
 

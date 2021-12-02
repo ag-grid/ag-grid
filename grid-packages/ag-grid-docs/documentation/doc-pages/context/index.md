@@ -22,4 +22,4 @@ The example below demonstrates how the context object can be used. Note the foll
 
 - The price column header is updated to show the selected currency using a header value getter using `ctx.reportingCurrency`.
 
-<grid-example title='Context Object' name='context' type='vanilla'></grid-example>
+<grid-example title='Context Object' name='context' type='typescript'></grid-example>

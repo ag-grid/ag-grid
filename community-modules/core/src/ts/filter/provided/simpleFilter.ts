@@ -420,7 +420,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
     protected setElementValue(element: E, value: V | null, silent?: boolean): void {
         if (element instanceof AgAbstractInputField) {
-            element.setValue(value ? String(value) : null, silent);
+            element.setValue(value != null ? String(value) : null, silent);
         }
     }
 
@@ -545,7 +545,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
         this.forEachInput((element, index, elPosition, _) => {
             if (elPosition !== position) { return; }
 
-            this.setElementValue(element, values[index] ? values[index] : null);
+            this.setElementValue(element, values[index] != null ? values[index] : null);
         });
     }
 

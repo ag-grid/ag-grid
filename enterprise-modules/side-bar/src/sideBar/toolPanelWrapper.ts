@@ -53,7 +53,7 @@ export class ToolPanelWrapper extends Component {
 
         const compDetails = this.userComponentFactory.getToolPanelCompDetails(toolPanelDef, params);
         const componentPromise = compDetails.newAgStackInstance();
-        
+
         if (componentPromise == null) {
             console.warn(`ag-grid: error processing tool panel component ${id}. You need to specify either 'toolPanel' or 'toolPanelFramework'`);
             return;

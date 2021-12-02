@@ -465,8 +465,7 @@ export class Selection<G extends Node | EnterNode, P extends Node | EnterNode, G
 
             if (key) {
                 this.bindKey(parent, group, enterGroup, updateGroup, exitGroup, data, key);
-            }
-            else {
+            } else {
                 this.bindIndex(parent, group, enterGroup, updateGroup, exitGroup, data);
             }
 

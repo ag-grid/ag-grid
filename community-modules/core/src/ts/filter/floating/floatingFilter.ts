@@ -7,10 +7,10 @@ import { FilterChangedEvent } from '../../events';
 export interface IFloatingFilterParams {
     /** The column this filter is for. */
     column: Column;
-    /** 
-     * The params object passed to the filter. 
+    /**
+     * The params object passed to the filter.
      * This is to allow the floating filter access to the configuration of the parent filter.
-     * For example, the provided filters use debounceMs from the parent filter params. 
+     * For example, the provided filters use debounceMs from the parent filter params.
      * */
     filterParams: IFilterParams;
     /**
