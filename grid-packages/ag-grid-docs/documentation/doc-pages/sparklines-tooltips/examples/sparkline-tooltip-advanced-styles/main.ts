@@ -10,7 +10,6 @@ const gridOptions: GridOptions = {
       cellRendererParams: {
         sparklineOptions: {
           tooltip: {
-            enabled: true,
             renderer: tooltipRenderer,
           },
         } as LineSparklineOptions,

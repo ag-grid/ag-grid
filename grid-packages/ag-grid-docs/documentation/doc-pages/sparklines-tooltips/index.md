@@ -3,7 +3,15 @@ title: "Sparklines - Tooltips"
 enterprise: true
 ---
 
-This section shows how sparkline tooltip styles and contents can be customised using the tooltip options.
+Tooltips containing data related to specific points will appear when the sparkline is hovered. Sparkline tooltips are customisable as discussed below.
+
+The following sections cover how sparkline tooltips can be customised:
+
+- [Disabling Tooltips](/sparklines-tooltips/#disabling-sparkline-tooltips) - shows how to disable tooltips.
+- [Tooltip Data](/sparklines-tooltips/#tooltip-data) - covers how to change title and content of the default tooltip and access data from other columns in the same row.
+- [Tooltip Styles](/sparklines-tooltips/#tooltip-styles) - shows the different options available to customise the default tooltip styles.
+- [Tooltip Container and Offset](/sparklines-tooltips/#tooltip-container-and-offset) - shows how the tooltip container and offset position from the mouse cursor can be modified.
+- [Custom Tooltip](/sparklines-tooltips/#custom-tooltip) - demonstrates how a completely custom HTML template can be used as the tooltip.
 
 ## Disabling Sparkline Tooltips
 
@@ -37,9 +45,9 @@ See the screenshots below for illustrations of these two cases.
     <image-caption src="resources/tooltip-with-title.png" alt="Tooltip with a title element" width="250px" constrained="true">With Title</image-caption>
 </div>
 
-## Changing The Default Tooltip
+## Tooltip Data
 
-### Modifying Title and Content
+### Tooltip Renderer
 
 The tooltips can be customised using a tooltip `renderer` function supplied to the `tooltip` options as shown below:
 
@@ -53,7 +61,7 @@ sparklineOptions: {
 
 - The `renderer` is a callback function which receives data values associated with the highlighted data point.
 - It returns an object with the `content` and `title` properties containing plain text that is used for the __Content__ and __Title__ sections of the tooltip.
-- Alternatively, the `content` property could contain a string representing HTML content, which can be used to provide completely [Custom Tooltips](/sparklines-tooltips/#custom-tooltip).
+- Alternatively, the `renderer` function could return a string representing HTML content, which can be used to provide completely [Custom Tooltips](/sparklines-tooltips/#custom-tooltip).
 
 Here's an example renderer function.
 
@@ -74,9 +82,29 @@ The following example demonstrates the results of the tooltip renderer above. No
 
 <grid-example title='Sparkline Tooltip Renderer' name='sparkline-tooltip-renderer' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
-### Modifying Styles
+### Accessing Row Data
 
-The `renderer` function can return style attributes including `color`, `backgroundColor` and `opacity` for the tooltip as shown below:
+It is possible to display data from other columns of the current row in the sparkline tooltip.
+This access is provideded by the input parameter supplied to the [Tooltip Renderer](/sparklines-tooltips/#tooltip-renderer), which includes a `context` object with a `data` property containing the row data.
+
+The following snippet shows how values from the 'Symbol' column can be shown in the tooltip title:
+
+```js
+const tooltipRenderer = (params) => {
+    const { context } = params;
+    return {
+        title: context.data.symbol, // sets title of tooltips to the value for the 'symbol' field
+    }
+}
+```
+
+The following example demonstrates the above tooltip renderer.
+
+<grid-example title='Accessing Row Data' name='sparkline-accessing-row-data' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
+
+## Tooltip Styles
+
+The [renderer](/sparklines-tooltips/#tooltip-renderer) function can return style attributes including `color`, `backgroundColor` and `opacity` for the tooltip as shown below:
 
 ```js
 const tooltipRenderer = (params) => {
@@ -101,7 +129,7 @@ This is shown in the example below. Note that:
 
 <grid-example title='Styling Sparkline Tooltips' name='sparkline-tooltip-advanced-styles' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
-### Modifying Container and Offset
+## Tooltip Container and Offset
 
 The tooltip position relative to the mouse cursor can be modified using the `xOffset` and `yOffset` properties in `tooltip` options as shown below:
 
@@ -116,7 +144,7 @@ sparklineOptions: {
 
 By default the tooltip is confined to the length of the sparkline cell, which can be changed by providing a container HTML element to allow the tooltip to overflow the cell.
 
-In the snippet below, the tooltip container has been configured to be the `document.body` which allows the tooltip to be positioned anywhere within the <body> node of the current document.
+In the snippet below, the tooltip container has been configured to be the `document.body` which allows the tooltip to be positioned anywhere within the `<body>` node of the current document.
 
 ```js
 sparklineOptions: {
@@ -129,28 +157,33 @@ sparklineOptions: {
 
 Here's a live example to demonstrate the configuration above.
 
-- Note that the tooltip is now positioned underneath the mouse cursor.
-- The effect of the tooltip `container` configuration is that the tooltip will not flip to the left of the mouse cursor when it reaches the end of the sparkline cell width, instead it will only flip if the tooltip position surpasses the document body width.
+- Note that the tooltip is now positioned underneath the mouse cursor as `xOffset` is set to `0`px and `yOffset` to `20`px.
+- The effect of the tooltip `container` configuration is that the tooltip will not flip to the left of the mouse cursor when it reaches the end of the sparkline cell width, instead it will only flip if the tooltip position surpasses the document body element's width.
 
 <grid-example title='Sparkline Tooltip Container' name='sparkline-tooltip-container' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 ## Custom Tooltip
 
-Instead of having the tooltip renderer return an object with title and content strings to be used in the default tooltip template, you can return a string with completely custom markup that will override the template.
+Instead of having the tooltip [renderer](/sparklines-tooltips/#tooltip-renderer) return an object with title and content strings to be used in the default tooltip template, you can return a string with completely custom markup that will override the template.
 
 We could use the following tooltip renderer to return custom HTML for the sparkline tooltip:
 
 ```js
 const tooltipRenderer = (params) => {
-    const { yValue, context } = params;
-    return `<div class='my-custom-tooltip'>
-                <span class='tooltip-title'>${context.data.symbol}</span>
-                <span class='tooltip-content'>${yValue}</span>
-            </div>`;
+  const { yValue, context } = params;
+  return `<div class='my-custom-tooltip my-custom-tooltip-arrow'>
+              <div class='tooltip-title'>${context.data.symbol}</div>
+              <div class='tooltip-content'>
+                <div>Change: ${yValue}</div>
+                <div>Volume: ${context.data.volume}</div>
+              </div>
+          </div>`;
 }
 ```
 
-The tooltip renderer function receives the `params` object as a single parameter. Inside that object you get the `xValue` and `yValue` for the highlighted data point as well as the reference to the raw `datum` element from the sparkline data array. You can then process the raw values however you like before using them as a part of the returned HTML string.
+The tooltip renderer function receives the `params` object as a single parameter. Inside that object you get the `xValue` and `yValue` for the highlighted data point as well as the reference to the raw `datum` element from the sparkline data array.
+
+Other row data is provided in the `context.data` object inside the `params` object. You can process the raw values in the `params` object however you like before using them as a part of the returned HTML string.
 
 The effect of applying the tooltip renderer from the snippet above can be seen in the example below.
 
@@ -163,26 +196,6 @@ Note that:
 
 <grid-example title='Custom Tooltips' name='sparkline-tooltip-custom-html' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
-
-## Accessing Row Data
-
-It is possible to display data from other columns of the current row in the sparkline tooltip.
-This access is provideded by the input parameter supplied to the [Tooltip Renderer](/sparklines-tooltips/#modifying-title-and-content), which includes a `context` object with a `data` property containing the row data.
-
-The following snippet shows how values from the 'Symbol' column can be shown in the tooltip title:
-
-```js
-const tooltipRenderer = (params) => {
-    const { context } = params;
-    return {
-        title: context.data.symbol, // sets title of tooltips to the value for the 'symbol' field
-    }
-}
-```
-
-The following example demonstrates the above tooltip renderer.
-
-<grid-example title='Accessing Row Data' name='sparkline-accessing-row-data' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 ## Interfaces
 

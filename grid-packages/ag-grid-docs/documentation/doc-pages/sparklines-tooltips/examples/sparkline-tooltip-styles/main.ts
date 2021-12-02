@@ -14,7 +14,6 @@ const gridOptions: GridOptions = {
       cellRendererParams: {
         sparklineOptions: {
           tooltip: {
-            enabled: true,
             renderer: tooltipRenderer,
           },
           line: {
@@ -46,7 +45,7 @@ const gridOptions: GridOptions = {
 function tooltipRenderer(params: TooltipRendererParams) {
   return {
     title: params.context.data.symbol,
-    // sets styles for tooltip title
+    // sets styles for tooltip
     color: 'white',
     backgroundColor: 'rgb(78,78,255)',
     opacity: 0.7,
