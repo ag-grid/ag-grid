@@ -22,18 +22,16 @@ sparklineOptions: {
     type: 'line',
     line: {
         stroke: 'rgb(124, 255, 178)',
-        strokeWidth: 2
+        strokeWidth: 2,
     },
     padding: {
         top: 5,
-        bottom: 5
-    },
-    marker: {
-        size: 3,
-        shape: 'diamond',
+        bottom: 5,
     },
     highlightStyle: {
-        size: 10,
+        size: 7,
+        fill: 'rgb(124, 255, 178)',
+        strokeWidth: 0
     },
 }
 ```

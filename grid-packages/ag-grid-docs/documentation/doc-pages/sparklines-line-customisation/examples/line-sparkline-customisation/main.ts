@@ -18,12 +18,10 @@ const gridOptions: GridOptions = {
             top: 5,
             bottom: 5,
           },
-          marker: {
-            size: 3,
-            shape: 'diamond',
-          },
           highlightStyle: {
-            size: 10,
+            size: 7,
+            fill: 'rgb(124, 255, 178)',
+            strokeWidth: 0
           },
         } as LineSparklineOptions,
       },
