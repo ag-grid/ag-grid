@@ -122,7 +122,7 @@ The dummy financial application below just touches on what is possible with the 
 - **Dynamic Charts**: Buttons positioned above the grid dynamically create different chart types.
 - **High Performance**: 100 rows are randomly updated 10 times a second (1,000 updates per second). Try updating the example via Plunker with higher update frequencies and more data.
 
-<grid-example title='Application Created Charts' name='application-created-charts' type='vanilla' options='{ "exampleHeight": 825, "enterprise": true }'></grid-example>
+<grid-example title='Application Created Charts' name='application-created-charts' type='typescript' options='{ "exampleHeight": 825, "enterprise": true }'></grid-example>
 
 To learn how to create charts in your applications see the following sections for details:
 
