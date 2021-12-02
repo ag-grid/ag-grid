@@ -9565,7 +9565,7 @@
     "color": { "type": { "returnType": "string", "optional": true } },
     "xOffset": { "type": { "returnType": "number", "optional": true } },
     "yOffset": { "type": { "returnType": "number", "optional": true } },
-    "blue": { "type": { "returnType": "number", "optional": true } }
+    "blur": { "type": { "returnType": "number", "optional": true } }
   },
   "AgChartCaptionOptions": {
     "enabled": { "type": { "returnType": "boolean", "optional": true } },

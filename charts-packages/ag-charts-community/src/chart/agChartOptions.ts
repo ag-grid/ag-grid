@@ -104,7 +104,7 @@ export interface AgDropShadowOptions {
     color?: string;
     xOffset?: number;
     yOffset?: number;
-    blue?: number;
+    blur?: number;
 }
 
 export interface AgChartCaptionOptions {

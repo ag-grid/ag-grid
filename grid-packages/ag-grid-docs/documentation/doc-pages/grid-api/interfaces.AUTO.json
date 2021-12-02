@@ -5382,7 +5382,7 @@
       "color?": "string",
       "xOffset?": "number",
       "yOffset?": "number",
-      "blue?": "number"
+      "blur?": "number"
     }
   },
   "AgChartCaptionOptions": {
