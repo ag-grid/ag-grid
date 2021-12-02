@@ -40,7 +40,7 @@ export interface AgChartThemeOverrides {
     common?: any;
 }
 
-interface AgCartesianAxisThemeOptions<T> {
+export interface AgCartesianAxisThemeOptions<T> {
     top?: Omit<T, 'top' | 'type'>;
     right?: Omit<T, 'right' | 'type'>;
     bottom?: Omit<T, 'bottom' | 'type'>;
@@ -90,7 +90,7 @@ export interface AgChartPaddingOptions {
     left?: number;
 }
 
-interface AgChartLabelOptions {
+export interface AgChartLabelOptions {
     enabled?: boolean;
     fontStyle?: FontStyle;
     fontWeight?: FontWeight;
@@ -99,7 +99,7 @@ interface AgChartLabelOptions {
     color?: string;
 }
 
-interface AgDropShadowOptions {
+export interface AgDropShadowOptions {
     enabled?: boolean;
     color?: string;
     xOffset?: number;
@@ -118,14 +118,14 @@ export interface AgChartCaptionOptions {
     color?: string;
 }
 
-interface AgNavigatorMaskOptions {
+export interface AgNavigatorMaskOptions {
     fill?: string;
     stroke?: string;
     strokeWidth?: number;
     fillOpacity?: number;
 }
 
-interface AgNavigatorHandleOptions {
+export interface AgNavigatorHandleOptions {
     fill?: string;
     stroke?: string;
     strokeWidth?: number;
@@ -146,16 +146,16 @@ export interface AgNavigatorOptions {
     maxHandle?: AgNavigatorHandleOptions;
 }
 
-type AgChartLegendPosition = 'top' | 'right' | 'bottom' | 'left';
+export type AgChartLegendPosition = 'top' | 'right' | 'bottom' | 'left';
 
-interface AgChartLegendMarkerOptions {
+export interface AgChartLegendMarkerOptions {
     size?: number;
     shape?: string | (new () => any); // Remove the (new () => any) eventually.
     padding?: number;
     strokeWidth?: number;
 }
 
-interface AgChartLegendLabelOptions {
+export interface AgChartLegendLabelOptions {
     color?: string;
     fontStyle?: FontStyle;
     fontWeight?: FontWeight;
@@ -163,7 +163,7 @@ interface AgChartLegendLabelOptions {
     fontFamily?: string;
 }
 
-interface AgChartLegendItemOptions {
+export interface AgChartLegendItemOptions {
     marker?: AgChartLegendMarkerOptions;
     label?: AgChartLegendLabelOptions;
     paddingX?: number;
@@ -177,14 +177,14 @@ export interface AgChartLegendOptions {
     item?: AgChartLegendItemOptions;
 }
 
-interface AgChartTooltipOptions {
+export interface AgChartTooltipOptions {
     enabled?: boolean;
     class?: string;
     tracking?: boolean;
     delay?: number;
 }
 
-interface AgBaseChartOptions {
+export interface AgBaseChartOptions {
     container?: HTMLElement | null;
     data?: any[];
     width?: number;
@@ -204,32 +204,32 @@ interface AgBaseChartOptions {
     theme?: string | AgChartTheme; // | ChartTheme
 }
 
-interface AgBaseAxisOptions {
+export interface AgBaseAxisOptions {
     keys?: string[];
 }
 
-type AgCartesianAxisPosition = 'top' | 'right' | 'bottom' | 'left';
+export type AgCartesianAxisPosition = 'top' | 'right' | 'bottom' | 'left';
 
-interface AgAxisLineOptions {
+export interface AgAxisLineOptions {
     width?: number;
     color?: string;
 }
 
-interface AgAxisTickOptions {
+export interface AgAxisTickOptions {
     width?: number;
     size?: number;
     color?: string;
     count?: any;
 }
 
-interface AgAxisLabelFormatterParams {
+export interface AgAxisLabelFormatterParams {
     readonly value: any;
     readonly index: number;
     readonly fractionDigits?: number;
     readonly formatter?: (x: any) => string;
 }
 
-interface AgAxisLabelOptions {
+export interface AgAxisLabelOptions {
     fontStyle?: FontStyle;
     fontWeight?: FontWeight;
     fontSize?: number;
@@ -243,14 +243,14 @@ interface AgAxisLabelOptions {
     formatter?: (params: AgAxisLabelFormatterParams) => string;
 }
 
-interface AgAxisGridStyle {
+export interface AgAxisGridStyle {
     stroke?: string;
     lineDash?: number[];
 }
 
 export type AgCartesianAxisType = 'category' | 'groupedCategory' | 'number' | 'log' | 'time';
 
-interface AgBaseCartesianAxisOptions extends AgBaseAxisOptions {
+export interface AgBaseCartesianAxisOptions extends AgBaseAxisOptions {
     position?: AgCartesianAxisPosition;
     title?: AgChartCaptionOptions;
     line?: AgAxisLineOptions;
@@ -259,14 +259,14 @@ interface AgBaseCartesianAxisOptions extends AgBaseAxisOptions {
     gridStyle?: AgAxisGridStyle[];
 }
 
-interface AgNumberAxisOptions extends AgBaseCartesianAxisOptions {
+export interface AgNumberAxisOptions extends AgBaseCartesianAxisOptions {
     type: 'number';
     nice?: boolean;
     min?: number;
     max?: number;
 }
 
-interface AgLogAxisOptions extends AgBaseCartesianAxisOptions {
+export interface AgLogAxisOptions extends AgBaseCartesianAxisOptions {
     type: 'log';
     nice?: boolean;
     min?: number;
@@ -274,17 +274,17 @@ interface AgLogAxisOptions extends AgBaseCartesianAxisOptions {
     base?: number;
 }
 
-interface AgCategoryAxisOptions extends AgBaseCartesianAxisOptions {
+export interface AgCategoryAxisOptions extends AgBaseCartesianAxisOptions {
     type: 'category';
     paddingInner?: number;
     paddingOuter?: number;
 }
 
-interface AgGroupedCategoryAxisOptions extends AgBaseCartesianAxisOptions {
+export interface AgGroupedCategoryAxisOptions extends AgBaseCartesianAxisOptions {
     type: 'groupedCategory';
 }
 
-interface AgTimeAxisOptions extends AgBaseCartesianAxisOptions {
+export interface AgTimeAxisOptions extends AgBaseCartesianAxisOptions {
     type: 'time';
     nice?: boolean;
 }
@@ -296,9 +296,9 @@ export type AgCartesianAxisOptions =
     AgGroupedCategoryAxisOptions |
     AgTimeAxisOptions;
 
-type AgPolarAxisOptions = any;
+export type AgPolarAxisOptions = any;
 
-interface AgBaseSeriesOptions {
+export interface AgBaseSeriesOptions {
     data?: any[];
     visible?: boolean;
     showInLegend?: boolean;
@@ -335,13 +335,13 @@ export interface AgTooltipRendererResult {
     content?: string;
 }
 
-interface AgSeriesTooltipRendererParams {
+export interface AgSeriesTooltipRendererParams {
     readonly datum: any;
     readonly title?: string;
     readonly color?: string;
 }
 
-interface AgCartesianSeriesTooltipRendererParams extends AgSeriesTooltipRendererParams {
+export interface AgCartesianSeriesTooltipRendererParams extends AgSeriesTooltipRendererParams {
     readonly xKey: string;
     readonly xValue?: any;
     readonly xName?: string;
@@ -361,7 +361,7 @@ export interface AgPolarSeriesTooltipRendererParams extends AgSeriesTooltipRende
     readonly radiusName?: string;
 }
 
-interface AgScatterSeriesTooltipRendererParams extends AgCartesianSeriesTooltipRendererParams {
+export interface AgScatterSeriesTooltipRendererParams extends AgCartesianSeriesTooltipRendererParams {
     readonly sizeKey?: string;
     readonly sizeName?: string;
 
@@ -369,7 +369,7 @@ interface AgScatterSeriesTooltipRendererParams extends AgCartesianSeriesTooltipR
     readonly labelName?: string;
 }
 
-interface AgSeriesMarker {
+export interface AgSeriesMarker {
     enabled?: boolean;
     shape?: string;
     size?: number;
@@ -395,7 +395,7 @@ export interface AgCartesianSeriesMarkerFormat {
 
 export type AgCartesianSeriesMarkerFormatter = (params: AgCartesianSeriesMarkerFormatterParams) => AgCartesianSeriesMarkerFormat;
 
-interface AgCartesianSeriesMarker extends AgSeriesMarker {
+export interface AgCartesianSeriesMarker extends AgSeriesMarker {
     formatter?: AgCartesianSeriesMarkerFormatter;
 }
 
@@ -403,7 +403,7 @@ export interface AgSeriesTooltip {
     enabled?: boolean;
 }
 
-interface AgLineSeriesLabelOptions extends AgChartLabelOptions {
+export interface AgLineSeriesLabelOptions extends AgChartLabelOptions {
     formatter?: (params: { value: any; }) => string;
 }
 
@@ -464,7 +464,7 @@ export interface AgScatterSeriesTooltip extends AgSeriesTooltip {
     renderer?: (params: AgScatterSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
 }
 
-interface AgScatterSeriesLabelOptions extends AgChartLabelOptions {
+export interface AgScatterSeriesLabelOptions extends AgChartLabelOptions {
 }
 
 export interface AgScatterSeriesOptions extends AgBaseSeriesOptions {
@@ -504,7 +504,7 @@ export interface AgAreaSeriesTooltip extends AgSeriesTooltip {
     format?: string;
 }
 
-interface AgAreaSeriesLabelOptions extends AgChartLabelOptions {
+export interface AgAreaSeriesLabelOptions extends AgChartLabelOptions {
     formatter?: (params: { value: any; }) => string;
 }
 
@@ -527,7 +527,7 @@ export interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
     tooltip?: AgAreaSeriesTooltip;
 }
 
-interface AgBarSeriesLabelOptions extends AgChartLabelOptions {
+export interface AgBarSeriesLabelOptions extends AgChartLabelOptions {
     formatter?: (params: { value: number; }) => string;
     placement?: 'inside' | 'outside';
 }
@@ -573,7 +573,7 @@ export interface AgBarSeriesOptions extends AgBaseSeriesOptions {
     formatter?: (params: AgBarSeriesFormatterParams) => AgBarSeriesFormat;
 }
 
-interface AgHistogramSeriesLabelOptions extends AgChartLabelOptions {
+export interface AgHistogramSeriesLabelOptions extends AgChartLabelOptions {
     formatter?: (params: { value: number; }) => string;
 }
 
@@ -603,7 +603,7 @@ export interface AgHistogramSeriesOptions extends AgBaseSeriesOptions {
     tooltip?: AgHistogramSeriesTooltip;
 }
 
-interface AgPieSeriesLabelOptions extends AgChartLabelOptions {
+export interface AgPieSeriesLabelOptions extends AgChartLabelOptions {
     offset?: number;
     minAngle?: number;
 }
@@ -662,23 +662,23 @@ export interface AgPieSeriesOptions extends AgBaseSeriesOptions {
     formatter?: (params: AgPieSeriesFormatterParams) => AgPieSeriesFormat;
 }
 
-interface AgPieSeriesTooltipRendererParams extends AgPolarSeriesTooltipRendererParams {
+export interface AgPieSeriesTooltipRendererParams extends AgPolarSeriesTooltipRendererParams {
     labelKey?: string;
     labelName?: string;
 }
 
-interface AgTreemapSeriesLabelOptions extends AgChartLabelOptions {
+export interface AgTreemapSeriesLabelOptions extends AgChartLabelOptions {
     padding?: number;
 }
 
-interface AgTreemapNodeDatum {
+export interface AgTreemapNodeDatum {
     datum: any;
     parent?: AgTreemapNodeDatum;
     children?: AgTreemapNodeDatum[];
     depth: number;
 }
 
-interface AgTreemapSeriesTooltipRendererParams {
+export interface AgTreemapSeriesTooltipRendererParams {
     datum: AgTreemapNodeDatum;
     sizeKey: string;
     labelKey: string;
@@ -711,7 +711,7 @@ export interface AgTreemapSeriesOptions extends AgBaseSeriesOptions {
     gradient?: boolean;
 }
 
-type AgCartesianSeriesOptions =
+export type AgCartesianSeriesOptions =
     AgLineSeriesOptions |
     AgScatterSeriesOptions |
     AgAreaSeriesOptions |
@@ -719,9 +719,9 @@ type AgCartesianSeriesOptions =
     AgHistogramSeriesOptions |
     AgOHLCSeriesOptions;
 
-type AgPolarSeriesOptions = AgPieSeriesOptions;
+export type AgPolarSeriesOptions = AgPieSeriesOptions;
 
-type AgHierarchySeriesOptions = AgTreemapSeriesOptions;
+export type AgHierarchySeriesOptions = AgTreemapSeriesOptions;
 
 export interface AgCartesianChartOptions<TAxisOptions = AgCartesianAxisOptions[], TSeriesOptions = AgCartesianSeriesOptions[]> extends AgBaseChartOptions {
     type?: 'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'ohlc';
