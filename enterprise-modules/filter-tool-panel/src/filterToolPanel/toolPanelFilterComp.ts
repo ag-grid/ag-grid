@@ -115,7 +115,7 @@ export class ToolPanelFilterComp extends Component {
         if (this.expanded) { return; }
 
         this.expanded = true;
-        _.setAriaExpanded(this.eFilterToolPanelHeader, true)
+        _.setAriaExpanded(this.eFilterToolPanelHeader, true);
 
         const container = _.loadTemplate(/* html */`<div class="ag-filter-toolpanel-instance-filter"></div>`);
         const filterPromise = this.filterManager.getOrCreateFilterWrapper(this.column, 'TOOLBAR').filterPromise;
@@ -143,7 +143,7 @@ export class ToolPanelFilterComp extends Component {
         if (!this.expanded) { return; }
 
         this.expanded = false;
-        _.setAriaExpanded(this.eFilterToolPanelHeader, false)
+        _.setAriaExpanded(this.eFilterToolPanelHeader, false);
         this.agFilterToolPanelBody.removeChild(this.agFilterToolPanelBody.children[0]);
 
         _.setDisplayed(this.eExpandChecked, false);

@@ -15,7 +15,7 @@ import { HeaderRowCtrl, IHeaderRowComp } from './headerRowCtrl';
 
 export enum HeaderRowType {
     COLUMN_GROUP = 'group',
-    COLUMN = 'column', 
+    COLUMN = 'column',
     FLOATING_FILTER = 'filter'
 }
 
@@ -28,8 +28,8 @@ export class HeaderRowComp extends Component {
     constructor(ctrl: HeaderRowCtrl) {
         super();
 
-        const extraClass = ctrl.getType()==HeaderRowType.COLUMN_GROUP ? `ag-header-row-column-group` :
-                            ctrl.getType()==HeaderRowType.FLOATING_FILTER ? `ag-header-row-column-filter` : `ag-header-row-column`;
+        const extraClass = ctrl.getType() == HeaderRowType.COLUMN_GROUP ? `ag-header-row-column-group` :
+                            ctrl.getType() == HeaderRowType.FLOATING_FILTER ? `ag-header-row-column-filter` : `ag-header-row-column`;
 
         this.setTemplate(/* html */`<div class="ag-header-row ${extraClass}" role="row"></div>`);
 
@@ -68,7 +68,7 @@ export class HeaderRowComp extends Component {
             let comp = oldComps[id];
             delete oldComps[id];
 
-            if (comp==null) {
+            if (comp == null) {
                 comp = this.createHeaderComp(ctrl);
                 this.getGui().appendChild(comp.getGui());
             }
@@ -76,7 +76,7 @@ export class HeaderRowComp extends Component {
             this.headerComps[id] = comp;
         });
 
-        iterateObject(oldComps, (id: string, comp: AbstractHeaderCellComp<AbstractHeaderCellCtrl>)=> {
+        iterateObject(oldComps, (id: string, comp: AbstractHeaderCellComp<AbstractHeaderCellCtrl>) => {
             this.getGui().removeChild(comp.getGui());
             this.destroyBean(comp);
         });
@@ -85,12 +85,12 @@ export class HeaderRowComp extends Component {
         if (ensureDomOrder) {
             const comps = getAllValuesInObject(this.headerComps);
             // ordering the columns by left position orders them in the order they appear on the screen
-            comps.sort( (a: AbstractHeaderCellComp<AbstractHeaderCellCtrl>, b: AbstractHeaderCellComp<AbstractHeaderCellCtrl>) => {
+            comps.sort((a: AbstractHeaderCellComp<AbstractHeaderCellCtrl>, b: AbstractHeaderCellComp<AbstractHeaderCellCtrl>) => {
                 const leftA = a.getCtrl().getColumnGroupChild().getLeft()!;
                 const leftB = b.getCtrl().getColumnGroupChild().getLeft()!;
                 return leftA - leftB;
             });
-            const elementsInOrder = comps.map( c => c.getGui() );
+            const elementsInOrder = comps.map(c => c.getGui());
             setDomChildOrder(this.getGui(), elementsInOrder);
         }
     }

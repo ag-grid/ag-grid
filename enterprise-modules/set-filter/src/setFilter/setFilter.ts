@@ -333,7 +333,7 @@ export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> {
         const { eMiniFilter, gridOptionsWrapper } = this;
         const translate = gridOptionsWrapper.getLocaleTextFunc();
 
-        eMiniFilter.setDisplayed(!this.setFilterParams.suppressMiniFilter)
+        eMiniFilter.setDisplayed(!this.setFilterParams.suppressMiniFilter);
         eMiniFilter.setValue(this.valueModel.getMiniFilter());
         eMiniFilter.onValueChange(() => this.onMiniFilterInput());
         eMiniFilter.setInputAriaLabel(translate('ariaSearchFilterValues', 'Search filter values'));
@@ -562,7 +562,7 @@ export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> {
         const { readOnly } = this.setFilterParams || {};
 
         if (!this.valueModel) { throw new Error('Value model has not been created.'); }
-        if (!!readOnly) { throw new Error('Unable to filter in readOnly mode.')}
+        if (!!readOnly) { throw new Error('Unable to filter in readOnly mode.'); }
 
         this.valueModel.selectAllMatchingMiniFilter(true);
         this.refresh();
@@ -688,7 +688,7 @@ export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> {
         if (valueToFormat == null || typeof valueToFormat !== 'string') {
             return valueToFormat;
         }
-        return this.caseSensitive ? valueToFormat : <T>valueToFormat.toUpperCase();
+        return this.caseSensitive ? valueToFormat : valueToFormat.toUpperCase() as T;
     }
 }
 

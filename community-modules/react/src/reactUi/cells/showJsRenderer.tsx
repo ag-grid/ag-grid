@@ -62,6 +62,8 @@ const useJsCellRenderer = (
             if (!comp) { return; }
 
             const compGui = comp.getGui();
+            if (!compGui) { return; }
+
             const parent = showTools ? toolsValueSpan! : eGui.current!;
             parent.appendChild(compGui);
 

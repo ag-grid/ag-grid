@@ -4,8 +4,6 @@ import { BarColumnLabelPlacement, BarColumnSparkline, RectNodeDatum } from './ba
 import { HdpiCanvas } from '../../canvas/hdpiCanvas';
 import { Point } from '../sparkline';
 
-
-
 export interface BarNodeDatum extends RectNodeDatum { }
 export class BarSparkline extends BarColumnSparkline {
 
@@ -67,9 +65,8 @@ export class BarSparkline extends BarColumnSparkline {
 
         for (let i = 0, n = yData.length; i < n; i++) {
             let yDatum = yData[i];
-            let xDatum = xData[i];
-
-            let invalidDatum = yDatum === undefined;
+            const xDatum = xData[i];
+            const invalidDatum = yDatum === undefined;
 
             if (invalidDatum) {
                 yDatum = 0;
@@ -88,7 +85,7 @@ export class BarSparkline extends BarColumnSparkline {
             const midPoint = {
                 x: yZero,
                 y: y
-            }
+            };
 
             let labelText: string;
             if (labelFormatter) {

@@ -249,7 +249,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
             if (nodeToRecycle) {
                 recycleNode(nodeToRecycle, dataItem);
             } else {
-                this.createDataNode(dataItem)
+                this.createDataNode(dataItem);
             }
         });
     }
@@ -405,7 +405,6 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
             const lastRowNodeBottomPx = lastRowNode.rowTop! + lastRowNode.rowHeight!;
 
             if (pixel >= lastRowNodeBottomPx && lastRowNode.expanded) {
-            
                 if (lastRowNode.childStore && lastRowNode.childStore.getRowCount() > 0) {
                     return lastRowNode.childStore.getRowIndexAtPixel(pixel);
                 }

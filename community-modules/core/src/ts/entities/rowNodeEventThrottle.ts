@@ -16,11 +16,11 @@ export class RowNodeEventThrottle extends BeanStub {
 
     private events: RowGroupOpenedEvent[] = [];
 
-    private dispatchExpandedDebounced: ()=>void;
+    private dispatchExpandedDebounced: () => void;
 
     @PostConstruct
     private postConstruct(): void {
-        if (this.rowModel.getType()==Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
+        if (this.rowModel.getType() == Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             this.clientSideRowModel = this.rowModel as IClientSideRowModel;
         }
     }
@@ -29,23 +29,33 @@ export class RowNodeEventThrottle extends BeanStub {
     // we throttle the calls to ClientSideRowModel using animationFrameService. this means for 100
     // row nodes getting expanded, we only update the CSRM once, and then we fire all events after
     // CSRM has updated.
-    // 
+    //
     // if we did not do this, then the user could call setExpanded on 100+ rows, causing the grid
     // to re-render 100+ times, which would be a performance lag.
-    //    
+    //
     // we use animationFrameService
     // rather than _.debounce() so this will get done if anyone flushes the animationFrameService
     // (eg user calls api.ensureRowVisible(), which in turn flushes ).
     public dispatchExpanded(event: RowGroupOpenedEvent): void {
 
+        // if not using CSRM, we don't debounce. otherwise this breaks the SSRM.
+        if (this.clientSideRowModel == null) {
+            this.eventService.dispatchEvent(event);
+            return;
+        }
+
         this.events.push(event);
 
-        if (this.dispatchExpandedDebounced==null) {
-            this.dispatchExpandedDebounced = this.animationFrameService.debounce( ()=> {
-                this.clientSideRowModel && this.clientSideRowModel.onRowGroupOpened();
-                this.events.forEach( e => this.eventService.dispatchEvent(e) );
-                this.events = [];
-            });
+        const func = () => {
+            if (this.clientSideRowModel) {
+                this.clientSideRowModel.onRowGroupOpened();
+            }
+            this.events.forEach(e => this.eventService.dispatchEvent(e));
+            this.events = [];
+        };
+
+        if (this.dispatchExpandedDebounced == null) {
+            this.dispatchExpandedDebounced = this.animationFrameService.debounce(func);
         }
 
         this.dispatchExpandedDebounced();

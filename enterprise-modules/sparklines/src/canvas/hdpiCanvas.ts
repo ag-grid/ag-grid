@@ -1,4 +1,4 @@
-type Size = { width: number, height: number };
+interface Size { width: number; height: number; }
 
 /**
  * Wraps the native Canvas element and overrides its CanvasRenderingContext2D to

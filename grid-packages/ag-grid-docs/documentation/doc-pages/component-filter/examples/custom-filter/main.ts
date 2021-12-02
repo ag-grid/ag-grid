@@ -1,7 +1,7 @@
 import { ColDef, GridOptions } from '@ag-grid-community/core'
 
-declare var PersonFilter: any;
-declare var YearFilter: any;
+declare var PersonFilter: any
+declare var YearFilter: any
 
 const columnDefs: ColDef[] = [
   { field: 'athlete', minWidth: 150, filter: 'personFilter' },
@@ -13,7 +13,10 @@ const columnDefs: ColDef[] = [
     minWidth: 130,
     filter: 'agDateColumnFilter',
     filterParams: {
-      comparator: function (filterLocalDateAtMidnight: Date, cellValue: string) {
+      comparator: function (
+        filterLocalDateAtMidnight: Date,
+        cellValue: string
+      ) {
         const dateAsString = cellValue
         const dateParts = dateAsString.split('/')
         const cellDate = new Date(

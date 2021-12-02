@@ -235,7 +235,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
     public getBlocksInOrder(): PartialStoreBlock[] {
         // get all page id's as NUMBERS (not strings, as we need to sort as numbers) and in descending order
         const blockComparator = (a: PartialStoreBlock, b: PartialStoreBlock) => a.getId() - b.getId();
-        const blocks = _.getAllValuesInObject(this.blocks).sort(blockComparator)
+        const blocks = _.getAllValuesInObject(this.blocks).sort(blockComparator);
 
         return blocks;
     }

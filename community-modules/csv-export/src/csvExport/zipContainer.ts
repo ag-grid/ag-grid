@@ -169,7 +169,7 @@ export class ZipContainer {
         return {
             size: content.length,
             content
-        }
+        };
     }
 
     private static buildFolderEnd(tLen: number, cLen: number, lLen:number): string {

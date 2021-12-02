@@ -85,24 +85,24 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
                 this.eFloatingFilterText.setValue('');
                 return;
             }
-    
+
             const localeTextFunc = this.gridOptionsWrapper.getLocaleTextFunc();
             const availableValues = values.filter(v => valueModel.isValueAvailable(v))!;
-            
+
             // format all the values, if a formatter is provided
             const formattedValues = availableValues.map(value => {
                 const { column, filterParams } = this.params;
                 const formattedValue = this.valueFormatterService.formatValue(
                     column, null, null, value, (filterParams as ISetFilterParams).valueFormatter, false);
-    
+
                 const valueToRender = formattedValue != null ? formattedValue : value;
-    
+
                 return valueToRender == null ? localeTextFunc('blanks', DEFAULT_LOCALE_TEXT.blanks) : valueToRender;
             })!;
-    
+
             const arrayToDisplay = formattedValues.length > 10 ? formattedValues.slice(0, 10).concat('...') : formattedValues;
             const valuesString = `(${formattedValues.length}) ${arrayToDisplay.join(',')}`;
-    
+
             this.eFloatingFilterText.setValue(valuesString);
         });
     }

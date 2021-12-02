@@ -290,7 +290,7 @@ export class BlockUtils extends BeanStub {
             }
         }
 
-        return null
+        return null;
         // pixel is not within this row node or it's children / detail, so return undefined
     }
 

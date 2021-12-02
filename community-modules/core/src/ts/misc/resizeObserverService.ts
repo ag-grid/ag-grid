@@ -7,7 +7,7 @@ const DEBOUNCE_DELAY = 50;
 @Bean('resizeObserverService')
 export class ResizeObserverService extends BeanStub {
 
-    private polyfillFunctions: (()=>void)[] = [];
+    private polyfillFunctions: (() => void)[] = [];
     private polyfillScheduled: boolean;
 
     public observeResize(element: HTMLElement, callback: () => void): () => void {
@@ -62,7 +62,7 @@ export class ResizeObserverService extends BeanStub {
         }
     }
 
-    private doNextPolyfillTurn(func: ()=>void): void {
+    private doNextPolyfillTurn(func: () => void): void {
         this.polyfillFunctions.push(func);
         this.schedulePolyfill();
     }

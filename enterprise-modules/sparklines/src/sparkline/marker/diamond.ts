@@ -3,11 +3,11 @@ import { Marker } from './marker';
 export class Diamond extends Marker {
 
     static className = 'Diamond';
-    
+
     isPointInStroke(x: number, y: number): boolean {
         return false;
     }
-    
+
     isPointInPath(x: number, y: number): boolean {
         return false;
     }
@@ -29,7 +29,7 @@ export class Diamond extends Marker {
         ctx.lineTo(x -= hs, y += hs);
         ctx.lineTo(x -= hs, y -= hs);
         ctx.lineTo(x += hs, y -= hs);
-        
+
         ctx.closePath();
 
         this.fillStroke(ctx);

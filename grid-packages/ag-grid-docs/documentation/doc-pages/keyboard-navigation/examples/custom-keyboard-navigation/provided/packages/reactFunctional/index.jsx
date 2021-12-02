@@ -142,10 +142,10 @@ const GridExample = () => {
 
 }
 
-var KEY_LEFT = 37;
-var KEY_UP = 38;
-var KEY_RIGHT = 39;
-var KEY_DOWN = 40;
+var KEY_LEFT = 'ArrowLeft';
+var KEY_UP = 'ArrowUp';
+var KEY_RIGHT = 'ArrowRight';
+var KEY_DOWN = 'ArrowDown';
 
 function moveHeaderFocusUpDown(previousHeader, headerRowCount, isUp) {
     var previousColumn = previousHeader.column, lastRowIndex = previousHeader.headerRowIndex,

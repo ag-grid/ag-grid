@@ -1,7 +1,7 @@
 import { Autowired, BeanStub, ColumnApi, DetailGridInfo, Environment, GridApi, IDetailCellRendererCtrl, GridOptions, RowNode, IDetailCellRendererParams, IDetailCellRenderer, _ } from "@ag-grid-community/core";
 
 export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRendererCtrl {
-    
+
     @Autowired('environment') private environment: Environment;
 
     private params: IDetailCellRendererParams;
@@ -96,7 +96,7 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
 
         this.comp.setDetailGrid(gridOptions);
     }
-    
+
     public registerDetailWithMaster(api: GridApi, columnApi: ColumnApi): void {
         const rowId = this.params.node.id!;
         const masterGridApi = this.params.api;

@@ -22,7 +22,7 @@ export type SparklineFactoryOptions = SparklineOptions & {
     height: number;
     context?: any;
     container?: HTMLElement;
-}
+};
 
 export type SparklineType = LineSparkline | AreaSparkline | ColumnSparkline | BarSparkline;
 export abstract class AgSparkline {

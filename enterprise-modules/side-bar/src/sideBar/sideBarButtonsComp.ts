@@ -40,7 +40,7 @@ export class SideBarButtonsComp extends Component {
 
         const lastColumn = _.last(this.columnModel.getAllDisplayedColumns());
 
-        if (this.focusService.focusGridView(lastColumn, true)) { 
+        if (this.focusService.focusGridView(lastColumn, true)) {
             e.preventDefault();
         }
     }
@@ -75,4 +75,3 @@ export class SideBarButtonsComp extends Component {
     }
 
 }
-

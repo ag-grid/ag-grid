@@ -1,5 +1,8 @@
-import { GridOptions, LineSparklineOptions } from '@ag-grid-community/core'
-import { TooltipRendererParams } from '@ag-grid-community/core'
+import {
+  GridOptions,
+  LineSparklineOptions,
+  TooltipRendererParams
+} from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -11,8 +14,15 @@ const gridOptions: GridOptions = {
       cellRendererParams: {
         sparklineOptions: {
           tooltip: {
-            enabled: true,
             renderer: tooltipRenderer,
+          },
+          line: {
+            stroke: 'rgb(103,103,255)',
+            strokeWidth: 1,
+          },
+          highlightStyle: {
+            fill: 'white',
+            strokeWidth: 0,
           },
         } as LineSparklineOptions,
       },
@@ -35,15 +45,15 @@ const gridOptions: GridOptions = {
 function tooltipRenderer(params: TooltipRendererParams) {
   return {
     title: params.context.data.symbol,
-    // sets styles for tooltip title
+    // sets styles for tooltip
     color: 'white',
-    backgroundColor: 'red',
-    opacity: 0.3,
+    backgroundColor: 'rgb(78,78,255)',
+    opacity: 0.7,
   }
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector('#myGrid');
+  new agGrid.Grid(gridDiv, gridOptions);
 })

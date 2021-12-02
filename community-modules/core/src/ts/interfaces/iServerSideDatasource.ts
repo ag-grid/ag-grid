@@ -44,7 +44,7 @@ export interface IServerSideGetRowsParams {
      * @deprecated Use `success` method instead and return result as a `LoadSuccessParams` object.
      */
     successCallback(rowsThisPage: any[], lastRow: number): void;
-    /**     
+    /**
      * Success callback, pass the rows back to the grid that were requested.
      */
     success(params: LoadSuccessParams): void;
@@ -65,7 +65,7 @@ export interface IServerSideGetRowsParams {
 // datasource for Server Side Row Model
 export interface IServerSideDatasource {
     /**
-     * Grid calls `getRows` when it requires more rows as specified in the params. 
+     * Grid calls `getRows` when it requires more rows as specified in the params.
      * Params object contains callbacks for responding to the request.
      */
     getRows(params: IServerSideGetRowsParams): void;

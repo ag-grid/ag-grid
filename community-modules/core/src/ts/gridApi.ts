@@ -976,7 +976,7 @@ export class GridApi {
     /**
      * Returns the filter component instance for a column.
      * `key` can be a string field name or a ColDef object (matches on object reference, useful if field names are not unique).
-     * If your filter is created asynchronously, `getFilterInstance` will return `null` so you will need to use the `callback` to access the filter instance instead. 
+     * If your filter is created asynchronously, `getFilterInstance` will return `null` so you will need to use the `callback` to access the filter instance instead.
      */
     public getFilterInstance(key: string | Column, callback?: (filter: IFilter) => void): IFilter | null | undefined {
         const res = this.getFilterInstanceImpl(key, instance => {
@@ -1149,7 +1149,11 @@ export class GridApi {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_HEADER_HEIGHT, headerHeight);
     }
 
-    public setDomLayout(domLayout: string) {
+    /**
+     * Switch between layout options: `normal`, `autoHeight`, `print`.
+     * Defaults to `normal` if no domLayout provided.
+     */
+    public setDomLayout(domLayout?: 'normal' | 'autoHeight' | 'print') {
         this.gridOptionsWrapper.setProperty(GridOptionsWrapper.PROP_DOM_LAYOUT, domLayout);
     }
 
@@ -1996,7 +2000,7 @@ export class GridApi {
             console.warn(`AG Grid: api.setRowCount is only available for Infinite Row Model.`);
         }
     }
-    
+
     public getVirtualPageState(): any {
         console.warn('AG Grid: getVirtualPageState() is now called getCacheBlockState(), please call getCacheBlockState() instead');
         return this.getCacheBlockState();

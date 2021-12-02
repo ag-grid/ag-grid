@@ -186,9 +186,9 @@ export class AnimationFrameService extends BeanStub {
     // the advantage over normal debounce is the client can call flushAllFrames()
     // to make sure all rendering is complete. we don't wait any milliseconds,
     // as this is intended to batch calls in one VM turn.
-    public debounce(func: ()=>void) {
+    public debounce(func: () => void) {
         let pending = false;
-        return ()=> {
+        return () => {
             if (!this.isOn()) {
                 this.getFrameworkOverrides().setTimeout(func, 0);
                 return;
@@ -197,7 +197,7 @@ export class AnimationFrameService extends BeanStub {
                 return;
             }
             pending = true;
-            this.addDestroyTask(()=> {
+            this.addDestroyTask(() => {
                 pending = false;
                 func();
             });

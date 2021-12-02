@@ -92,7 +92,7 @@ export class ToolPanelColumnComp extends Component {
         this.setupTooltip();
 
         const classes = CssClassApplier.getToolPanelClassesFromColDef(this.column.getColDef(), this.gridOptionsWrapper, this.column, null);
-        classes.forEach( c => this.addOrRemoveCssClass(c, true) );
+        classes.forEach(c => this.addOrRemoveCssClass(c, true));
     }
 
     public getColumn(): Column {
@@ -233,7 +233,7 @@ export class ToolPanelColumnComp extends Component {
 
         this.cbSelect.setReadOnly(!canBeToggled);
         this.eDragHandle.classList.toggle('ag-column-select-column-readonly', !canBeDragged);
-        this.addOrRemoveCssClass('ag-column-select-column-readonly', !canBeDragged && !canBeToggled)
+        this.addOrRemoveCssClass('ag-column-select-column-readonly', !canBeDragged && !canBeToggled);
 
         const checkboxPassive = isPivotMode && this.gridOptionsWrapper.isFunctionsPassive();
         this.cbSelect.setPassive(checkboxPassive);

@@ -345,6 +345,7 @@ export {
     RowDragCallbackParams,
     DndSourceCallback,
     DndSourceCallbackParams,
+    DndSourceOnRowDragParams,
     EditableCallbackParams,
     EditableCallback,
     SuppressPasteCallback,

@@ -14,7 +14,7 @@ const cellFactory: ExcelOOXMLTemplate = {
         let convertedType: string = type;
 
         if (type === 'f') {
-            convertedType = 'str'
+            convertedType = 'str';
         } else if (type.charAt(0) === type.charAt(0).toUpperCase()) {
             convertedType = convertLegacyType(type);
         }

@@ -44,7 +44,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
                         data: params.data
                     },
                     ...params.sparklineOptions
-                }
+                };
 
                 // create new instance of sparkline
                 this.sparkline = AgSparkline.create(options, this.sparklineTooltipSingleton.getSparklineTooltip());
@@ -57,7 +57,7 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
                 this.sparkline.width = clientWidth;
                 this.sparkline.height = clientHeight;
             }
-        }
+        };
 
         const unsubscribeFromResize = this.resizeObserverService.observeResize(this.getGui(), updateSparkline);
         this.addDestroyFunc(() => unsubscribeFromResize());

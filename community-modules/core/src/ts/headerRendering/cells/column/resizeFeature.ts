@@ -23,8 +23,13 @@ export class ResizeFeature extends BeanStub {
 
     private ctrl: HeaderCellCtrl;
 
-    constructor(pinned: string | null, column: Column, eResize: HTMLElement, comp: IHeaderCellComp, 
-                ctrl: HeaderCellCtrl) {
+    constructor(
+        pinned: string | null,
+        column: Column,
+        eResize: HTMLElement,
+        comp: IHeaderCellComp,
+        ctrl: HeaderCellCtrl
+    ) {
         super();
         this.pinned = pinned;
         this.column = column;

@@ -1,7 +1,7 @@
 import number from "./number";
 import { Color } from "../util/color";
 
-export default function (a: Color | string, b: Color | string): (t: number) => string {
+export default function(a: Color | string, b: Color | string): (t: number) => string {
     if (typeof a === 'string') {
         try {
             a = Color.fromString(a);
@@ -22,7 +22,7 @@ export default function (a: Color | string, b: Color | string): (t: number) => s
     const blue = number(a.b, b.b);
     const alpha = number(a.a, b.a);
 
-    return function (t: number) {
+    return function(t: number) {
         return Color.fromArray([red(t), green(t), blue(t), alpha(t)]).toRgbaString();
-    }
+    };
 }

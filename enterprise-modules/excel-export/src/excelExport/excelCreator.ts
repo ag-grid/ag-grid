@@ -84,7 +84,7 @@ export const getMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams)
     ExcelXlsxFactory.resetFactory();
 
     return ZipContainer.getContent('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-}
+};
 
 export const exportMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams) => {
     const { fileName = 'export.xlsx' } = params;
@@ -92,7 +92,7 @@ export const exportMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetPara
     if (contents) {
         Downloader.download(fileName, contents);
     }
-}
+};
 
 const createImageRelationsForSheet = (sheetIndex: number, currentRelationIndex: number) => {
     const drawingFolder = 'xl/drawings';
@@ -102,8 +102,8 @@ const createImageRelationsForSheet = (sheetIndex: number, currentRelationIndex: 
 
     ZipContainer.addFile(relFileName, ExcelXlsxFactory.createDrawingRel(sheetIndex));
     ZipContainer.addFile(drawingFileName, ExcelXlsxFactory.createDrawing(sheetIndex));
-    ZipContainer.addFile(worksheetRelFile, ExcelXlsxFactory.createWorksheetDrawingRel(currentRelationIndex))
-}
+    ZipContainer.addFile(worksheetRelFile, ExcelXlsxFactory.createWorksheetDrawingRel(currentRelationIndex));
+};
 
 @Bean('excelCreator')
 export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession, ExcelExportParams> implements IExcelCreator {

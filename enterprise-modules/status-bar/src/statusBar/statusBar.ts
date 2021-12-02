@@ -62,7 +62,7 @@ export class StatusBar extends Component {
 
             const compDetails = this.userComponentFactory.getStatusPanelCompDetails(componentConfig, params);
             const promise = compDetails.newAgStackInstance();
-            
+
             if (!promise) { return; }
 
             componentDetails.push({

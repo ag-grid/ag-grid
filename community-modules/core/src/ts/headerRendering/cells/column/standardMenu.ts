@@ -110,7 +110,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
     }
 
     private trapFocusWithin(e: KeyboardEvent, menu: HTMLElement) {
-        if (e.key === KeyCode.TAB ||
+        if (e.key !== KeyCode.TAB ||
             e.defaultPrevented ||
             this.focusService.findNextFocusableElement(menu, false, e.shiftKey)) {
             return;

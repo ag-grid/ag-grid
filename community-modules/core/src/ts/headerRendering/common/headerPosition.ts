@@ -59,7 +59,7 @@ export class HeaderPositionUtils extends BeanStub {
 
         return {
             // if type==null, means the header level didn't exist
-            headerRowIndex: type==null ? -1 : level,
+            headerRowIndex: type == null ? -1 : level,
             column
         };
     }

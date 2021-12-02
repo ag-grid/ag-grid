@@ -7,7 +7,7 @@ export class MenuPanel extends TabGuardComp {
 
         this.setTemplateFromElement(wrappedComponent.getGui());
     }
-    
+
     @PostConstruct
     private postConstruct() {
         this.initialiseTabGuard({

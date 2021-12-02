@@ -32,7 +32,7 @@ export class SetFilterListItem extends Component {
         </div>`;
 
     @RefSelector('eCheckbox') private readonly eCheckbox: AgCheckbox;
-    
+
     constructor(
         private readonly value: string | (() => string),
         private readonly params: ISetFilterParams,
@@ -53,7 +53,7 @@ export class SetFilterListItem extends Component {
             // Don't add event listeners if we're read-only.
             return;
         }
-        
+
         this.eCheckbox.onValueChange(value => {
             const parsedValue = value || false;
 
@@ -121,7 +121,7 @@ export class SetFilterListItem extends Component {
     private renderCell(params: ISetFilterCellRendererParams): void {
         const compDetails = this.userComponentFactory.getSetFilterCellRendererDetails(this.params, params);
         const cellRendererPromise = compDetails ? compDetails.newAgStackInstance() : undefined;
-        
+
         if (cellRendererPromise == null) {
             const valueToRender = params.valueFormatted == null ? params.value : params.valueFormatted;
 

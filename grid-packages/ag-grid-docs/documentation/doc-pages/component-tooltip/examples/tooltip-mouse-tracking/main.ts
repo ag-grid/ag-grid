@@ -1,5 +1,5 @@
 import { ColDef, GridOptions } from '@ag-grid-community/core'
-declare var CustomTooltip: any;
+declare var CustomTooltip: any
 const columnDefs: ColDef[] = [
   {
     field: 'athlete',

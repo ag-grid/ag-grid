@@ -294,12 +294,10 @@ export class Matrix {
         if (elements) {
             if (elements instanceof Matrix) {
                 Matrix.matrix.setElements(elements.elements);
-            }
-            else {
+            } else {
                 Matrix.matrix.setElements(elements);
             }
-        }
-        else {
+        } else {
             Matrix.matrix.setIdentityElements();
         }
 

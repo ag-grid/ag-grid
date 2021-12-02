@@ -82,7 +82,7 @@ export class RowContainerHeightService extends BeanStub {
 
         const divStretchOffset = scrollPercent * this.pixelsToShave;
 
-        this.logger.log(`Div Stretch Offset = ${divStretchOffset} (${this.pixelsToShave} * ${scrollPercent})`)
+        this.logger.log(`Div Stretch Offset = ${divStretchOffset} (${this.pixelsToShave} * ${scrollPercent})`);
 
         this.setDivStretchOffset(divStretchOffset);
     }

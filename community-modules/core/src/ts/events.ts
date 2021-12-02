@@ -81,7 +81,7 @@ export interface FilterChangedEvent extends AgGridEvent {
     afterFloatingFilter?: boolean;
     /**
      * Columns affected by the filter change. Array contents depend on the source of the event.
-     * 
+     *
      * - Expect 1 element for UI-driven column filter changes.
      * - Expect 0-N elements (all affected columns) for calls to `gridOptions.api.setFilterModel()`.
      * - Expect 0-N elements (removed columns) for calls to `gridOptions.api.setColumnDefs()`.
@@ -119,7 +119,7 @@ export interface BodyHeightChangedEvent extends AgGridEvent { } // not documente
 export interface ComponentStateChangedEvent extends AgGridEvent { }
 
 export interface ColumnPanelItemDragStartEvent extends AgEvent {
-    column: Column | ProvidedColumnGroup
+    column: Column | ProvidedColumnGroup;
 }
 
 export interface ColumnPanelItemDragEndEvent extends AgEvent { }

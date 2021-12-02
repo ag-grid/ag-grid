@@ -35,17 +35,21 @@ class SparklineLine {
 }
 
 class SparklineCrosshairs {
-    private static crosshairLineOptions: CrosshairLineOptions = {
+    xLine: CrosshairLineOptions = {
+        enabled: true,
+        stroke: 'rgba(0,0,0, 0.54)',
+        strokeWidth: 1,
+        lineDash: 'solid',
+        lineCap: undefined
+    };
+    yLine: CrosshairLineOptions = {
         enabled: false,
         stroke: 'rgba(0,0,0, 0.54)',
         strokeWidth: 1,
         lineDash: 'solid',
         lineCap: undefined
-    }
-    xLine: CrosshairLineOptions = Object.create(SparklineCrosshairs.crosshairLineOptions);
-    yLine: CrosshairLineOptions = Object.create(SparklineCrosshairs.crosshairLineOptions);
+    };
 }
-
 export class AreaSparkline extends Sparkline {
     static className = 'AreaSparkline';
 
@@ -109,8 +113,7 @@ export class AreaSparkline extends Sparkline {
 
     protected updateYScaleDomain(): void {
         const { yData, yScale } = this;
-
-        let yMinMax = extent(yData, isNumber);
+        const yMinMax = extent(yData, isNumber);
 
         let yMin = 0;
         let yMax = 1;
@@ -154,8 +157,8 @@ export class AreaSparkline extends Sparkline {
         const yZero = yScale.convert(0);
 
         for (let i = 0; i < n; i++) {
-            let yDatum = yData[i];
-            let xDatum = xData[i];
+            const yDatum = yData[i];
+            const xDatum = xData[i];
 
             const x = xScale.convert(xDatum) + offsetX;
             const y = yScale.convert(yDatum);
@@ -223,8 +226,8 @@ export class AreaSparkline extends Sparkline {
 
         const shape = getMarker(marker.shape);
 
-        let updateMarkerSelection = this.markerSelection.setData(selectionData);
-        let enterMarkerSelection = updateMarkerSelection.enter.append(shape);
+        const updateMarkerSelection = this.markerSelection.setData(selectionData);
+        const enterMarkerSelection = updateMarkerSelection.enter.append(shape);
 
         updateMarkerSelection.exit.remove();
 
@@ -249,7 +252,7 @@ export class AreaSparkline extends Sparkline {
             const markerStrokeWidth = highlighted && highlightStrokeWidth !== undefined ? highlightStrokeWidth : marker.strokeWidth;
             const markerSize = highlighted && highlightSize !== undefined ? highlightSize : marker.size;
 
-            let markerFormat: MarkerFormat | undefined = undefined;
+            let markerFormat: MarkerFormat | undefined;
 
             if (markerFormatter) {
                 const first = index === 0;
@@ -409,7 +412,7 @@ export class AreaSparkline extends Sparkline {
         const defaults = {
             content,
             title
-        }
+        };
 
         if (this.tooltip.renderer) {
             return toTooltipHtml(this.tooltip.renderer({

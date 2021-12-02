@@ -6,7 +6,7 @@ import object from "./object";
 import color from "./color";
 import { Color } from "../util/color";
 
-export default function (a: any, b: any): (t: number) => any {
+export default function(a: any, b: any): (t: number) => any {
     const t = typeof b;
     let c: Color;
 

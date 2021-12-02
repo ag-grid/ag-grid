@@ -95,7 +95,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
 
     private onFilterChanged(): void {
         this.reset();
-    } 
+    }
 
     private onSortChanged(): void {
         this.reset();
@@ -242,7 +242,7 @@ export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
     }
 
     public getRowNode(id: string): RowNode | undefined {
-        let result: RowNode | undefined = undefined;
+        let result: RowNode | undefined;
         this.forEachNode(rowNode => {
             if (rowNode.id === id) {
                 result = rowNode;
