@@ -58,13 +58,6 @@ const COLUMN_DEFS = [
     },
     {
         field: "status",
-        cellClass: (params) => {
-            if (params.value === 'Done') {
-                return styles['status-class-done']
-            } else {
-                return styles['status-class-rejected']
-            }
-        },
         width: 100,
         valueGetter: params => {
             return params.data.resolution
