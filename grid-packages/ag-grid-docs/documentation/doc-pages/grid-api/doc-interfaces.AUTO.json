@@ -14465,11 +14465,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "stroke": {
-      "description": "/** The CSS colour value for the crosshair line. */",
+      "description": "/** The CSS colour value for the crosshair line.\n * Default: `rgba(0,0,0, 0.54)` */",
       "type": { "returnType": "string", "optional": true }
     },
     "strokeWidth": {
-      "description": "/** The thickness in pixels for the crosshair line. */",
+      "description": "/** The thickness in pixels for the crosshair line.\n * Default: 1 */",
       "type": { "returnType": "number", "optional": true }
     },
     "lineDash": {

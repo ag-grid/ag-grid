@@ -265,9 +265,13 @@ export interface CrosshairLineOptions {
      * Default: false
      */
     enabled?: boolean;
-    /** The CSS colour value for the crosshair line. */
+    /** The CSS colour value for the crosshair line.
+     * Default: `rgba(0,0,0, 0.54)`
+     */
     stroke?: string;
-    /** The thickness in pixels for the crosshair line. */
+    /** The thickness in pixels for the crosshair line.
+     * Default: 1
+     */
     strokeWidth?: number;
     /**
      * Defines how the crosshair stroke is rendered. This can be one of the lineDash style options.

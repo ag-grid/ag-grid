@@ -8157,8 +8157,8 @@
     },
     "docs": {
       "enabled?": "/** Set to true to show crosshair line.\n * Default: false */",
-      "stroke?": "/** The CSS colour value for the crosshair line. */",
-      "strokeWidth?": "/** The thickness in pixels for the crosshair line. */",
+      "stroke?": "/** The CSS colour value for the crosshair line.\n * Default: `rgba(0,0,0, 0.54)` */",
+      "strokeWidth?": "/** The thickness in pixels for the crosshair line.\n * Default: 1 */",
       "lineDash?": "/** Defines how the crosshair stroke is rendered. This can be one of the lineDash style options.\n * The default is `solid`, this renders a solid stroke with no gaps. */",
       "lineCap?": "/** The shape used to draw the end points of the crosshair line.\n * The options include `butt` (the ends of the line are squared off at the endpoints), `round` (the ends of the line are rounded) and `square` (the ends of the line are squared off by adding a box with width equal to the line's strokeWidth and height equal to half the line's strokeWidth).\n * Default: `butt` */"
     }
