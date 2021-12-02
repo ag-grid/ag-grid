@@ -11,6 +11,7 @@ The following [Area Sparkline Options](/sparklines-area-customisation/#areaspark
 - [Marker Options](/sparklines-area-customisation/#marker-options)
 - [Area Fill Options](/sparklines-area-customisation/#area-fill-options)
 - [Axis Line Options](/sparklines-area-customisation/#axis-line-options)
+- [Crosshairs Options](/sparklines-area-customisation/#crosshairs-options)
 - [Sparkline Padding Options](/sparklines-area-customisation/#sparkline-padding-options)
 
 Also see [Additional Customisations](/sparklines-area-customisation/#additional-customisations) for more advanced
@@ -147,6 +148,55 @@ Here is the result of the configuration shown in the above snippet:
 
 [[note]]
 | It is possible to remove the x-axis line entirely by setting the axis `strokeWidth` to `0`.
+
+
+## Crosshairs Options
+
+Crosshairs display a vertical and horizontal line running across the sparklines when hovering on a data point. When the mouse is moved, the crosshairs will snap to the closest data point.
+
+By default, the vertical crosshair line has been enabled for area sparklines and is displayed as a solid grey line.
+
+The horizontal and vertical crosshair lines can be enabled or disabled independently by adding `crosshairs` options as shown below:
+
+```js
+sparklineOptions: {
+    crosshairs: {
+        xLine: {
+            enabled: false // enabled by default, set to false to remove the default vertical corsshair line
+        },
+        yLine: {
+            enabled: false // disabled by default, set to true to enable the horizontal crosshair line
+        }
+    }
+}
+```
+
+The style of the crosshair line, including `stroke`, `strokeWidth`, `lineDash` and `lineCap`, can be customised via the `xline` and `yline` options:
+
+```js
+sparklineOptions: {
+    crosshairs: {
+        xLine: {
+            enabled: true, // enabled by default
+            lineDash: 'dash',
+            stroke: 'rgba(0, 0, 0, 0.5)',
+        },
+        yLine: {
+            enabled: true,
+            lineDash: 'dash',
+            stroke: 'rgba(0, 0, 0, 0.5)',
+        },
+    }
+}
+```
+
+Below is an example to show crosshair customisation. Note that:
+
+- The sparklines in the `Change` column have been configured so that both the vertical and horizontal crosshairs (xLine and yLine) are displayed as a dashed grey line.
+- The sparklines in the `Rate Of Change` column have been configured so that no crosshairs are displayed when the sparklines are hovered.
+
+
+<grid-example title='Sparkline Crosshairs' name='sparkline-crosshairs' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 ## Sparkline Padding Options
 
