@@ -19,7 +19,7 @@ var phones = [
     { handset: 'Sony Xperia', price: 279 },
 ];
 
-function generateData() {
+function getData() {
     var data = [];
     for (var i = 0; i < numRows; i++) {
         var phone = phones[getRandomNumber(0, phones.length)];
@@ -35,11 +35,11 @@ function generateData() {
         });
     }
 
-    data.sort(function(a, b) {
+    data.sort(function (a, b) {
         return a.saleDate.getTime() - b.saleDate.getTime();
     });
 
-    data.forEach(function(d) {
+    data.forEach(function (d) {
         d.saleDate = d.saleDate.toISOString().substring(0, 10);
     });
 

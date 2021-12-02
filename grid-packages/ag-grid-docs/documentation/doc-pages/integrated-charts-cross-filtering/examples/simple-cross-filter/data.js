@@ -19,7 +19,7 @@ var phones = [
     { handset: 'Sony Xperia', price: 279 },
 ];
 
-function generateData() {
+function getData() {
     var data = [];
     for (var i = 0; i < numRows; i++) {
         var phone = phones[getRandomNumber(0, phones.length)];
