@@ -90,6 +90,10 @@ export class GridBodyScrollFeature extends BeanStub {
     }
 
     public horizontallyScrollHeaderCenterAndFloatingCenter(scrollLeft?: number): void {
+        // when doing RTL, this method gets called once prematurely
+        const notYetInitialised = this.centerRowContainerCon==null;
+        if (notYetInitialised) { return; }
+
         if (scrollLeft === undefined) {
             scrollLeft = this.centerRowContainerCon.getCenterViewportScrollLeft();
         }
