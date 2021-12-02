@@ -30,6 +30,15 @@
             "pane": "left"
           },
           {
+            "title": "100% React",
+            "icon": "react",
+            "url": "/reactui/",
+            "pane": "left",
+            "frameworks": [
+              "react"
+            ]
+          },
+          {
             "title": "Stackblitz Example",
             "url": "{example}",
             "icon": "stackblitz",
@@ -58,15 +67,6 @@
             "url": "/angularjs/",
             "frameworks": [
               "angular"
-            ],
-            "pane": "right"
-          },
-          {
-            "title": "React UI",
-            "icon": "reactui",
-            "url": "/reactui/",
-            "frameworks": [
-              "react"
             ],
             "pane": "right"
           },

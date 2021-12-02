@@ -27,7 +27,7 @@ const DetailCellRenderer = (props: IDetailCellRendererParams, ref: any) => {
     
     useEffect( ()=> {
         if (props.template) {
-            console.warn('AG Grid: detailCellRendererParams.template is not supported by React UI - this only works with frameworks that work against String templates. To change the template, please provide your own React Detail Cell Renderer.');
+            console.warn('AG Grid: detailCellRendererParams.template is not supported by React - this only works with frameworks that work against String templates. To change the template, please provide your own React Detail Cell Renderer.');
         }
     }, []);
 

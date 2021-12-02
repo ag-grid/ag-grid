@@ -45,28 +45,6 @@ const MyReactEditor = memo(forwardRef((props, ref) => {
     );
  }));
 
-class MyJavaScriptEditor {
-    init(props) {
-        this.gui = document.createElement('input');
-        this.gui.type = 'number';
-        this.gui.className = 'my-editor'
-        this.gui.value = props.value;
-        this.gui.addEventListener('keydown', event => {
-            if (event.key === 'Enter') {
-                props.stopEditing();
-            }
-        });
-    }
-    afterGuiAttached() {
-        this.gui.focus();
-    }
-    getGui() {
-        return this.gui;
-    }
-    getValue() {
-        return this.gui.value;
-    }
-}
 
  function GridExample() {
 
@@ -82,30 +60,14 @@ class MyJavaScriptEditor {
             field: 'athlete',
         },
         {
-            headerName: 'JS Inline',
             field: 'gold',
-            editable: true,
-            cellEditor: MyJavaScriptEditor
-        },
-        {
-            field: 'silver',
-            headerName: 'JS Popup',
-            cellEditor: MyJavaScriptEditor,
-            cellEditorPopup: true,
-            cellEditorPopupPosition: 'under'
-        },
-        {
-            headerName: 'React Inline',
-            field: 'bronze',
             editable: true,
             cellEditorFramework: MyReactEditor
         },
         {
-            field: 'total',
-            headerName: 'React Popup',
+            field: 'silver',
             cellEditorFramework: MyReactEditor,
-            cellEditorPopup: true,
-            cellEditorPopupPosition: 'under'
+            cellEditorPopup: true
         }
     ], []);
 
