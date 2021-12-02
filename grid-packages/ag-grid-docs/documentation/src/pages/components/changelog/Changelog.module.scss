@@ -78,7 +78,7 @@
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
-  -webkit-touch-callout: none; 
+  -webkit-touch-callout: none;
 }
 
 .header-padding-class {
@@ -114,25 +114,6 @@
     // border: none;
     border-color: #babfc7
 
-}
-
-.header-collapsible{
-    width: 17%;
-    height: 50px;
-    text-align: left;
-    background: #f8f8f8;
-    font-weight: bold;
-    font-size: 18px;
-    border-width: 1px;
-    display: flex;
-    align-items: center;
-
-    // border: none;
-    border-color: #babfc7
-}
-
-.header-collapsible:active{
-    border-style: outset;
 }
 
 

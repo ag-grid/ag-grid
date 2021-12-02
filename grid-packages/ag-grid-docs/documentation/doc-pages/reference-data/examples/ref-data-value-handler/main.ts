@@ -37,6 +37,7 @@ const gridOptions: GridOptions = {
       field: 'exteriorColour',
       minWidth: 150,
       cellEditor: 'agRichSelectCellEditor',
+      cellEditorPopup: true,
       cellEditorParams: {
         values: colours,
         cellRenderer: colourCellRenderer,
