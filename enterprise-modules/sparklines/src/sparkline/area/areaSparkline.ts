@@ -209,7 +209,7 @@ export class AreaSparkline extends Sparkline {
     }
 
     protected updateAxisLine() {
-        const { xScale, yScale, axis, xAxisLine } = this;
+        const { xScale, yScale, axis, xAxisLine, yData } = this;
 
         xAxisLine.x1 = xScale.range[0];
         xAxisLine.x2 = xScale.range[1];
@@ -217,7 +217,7 @@ export class AreaSparkline extends Sparkline {
         xAxisLine.stroke = axis.stroke;
         xAxisLine.strokeWidth = axis.strokeWidth;
 
-        const yZero: number = yScale.convert(0);
+        const yZero: number =  yData.length === 1 && yData[0] !== 0 ? yScale.range[0] : yScale.convert(0);
         xAxisLine.translationY = yZero;
     }
 
