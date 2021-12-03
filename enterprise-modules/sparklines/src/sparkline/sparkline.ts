@@ -412,7 +412,7 @@ export abstract class Sparkline extends Observable {
     */
     private getDataType(data: any): DataType {
         for (const datum of data) {
-            if (datum) {
+            if (datum != undefined) {
                 if (isNumber(datum)) {
                     return 'number';
                 } else if (Array.isArray(datum)) {
