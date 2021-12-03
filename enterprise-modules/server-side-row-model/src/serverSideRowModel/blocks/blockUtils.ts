@@ -226,7 +226,9 @@ export class BlockUtils extends BeanStub {
 
             // then check if current row contains a detail row with the index
             const expandedMasterRow = currentRowNode.master && currentRowNode.expanded;
-            if (expandedMasterRow && currentRowNode.detailNode.rowIndex === displayRowIndex) {
+            const detailNode = currentRowNode.detailNode;
+
+            if (expandedMasterRow && detailNode && detailNode.rowIndex === displayRowIndex) {
                 return currentRowNode.detailNode;
             }
 
@@ -278,7 +280,9 @@ export class BlockUtils extends BeanStub {
 
         // then check if current row contains a detail row with pixel in range
         const expandedMasterRow = rowNode.master && rowNode.expanded;
-        if (expandedMasterRow && rowNode.detailNode.isPixelInRange(pixel)) {
+        const detailNode = rowNode.detailNode;
+
+        if (expandedMasterRow && detailNode && detailNode.isPixelInRange(pixel)) {
             return rowNode.detailNode.rowIndex;
         }
 
