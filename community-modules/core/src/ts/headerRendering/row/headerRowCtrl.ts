@@ -88,16 +88,10 @@ export class HeaderRowCtrl extends BeanStub {
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_FLOATING_FILTERS_HEIGHT, this.onRowHeightChanged.bind(this));
     }
 
-    public getHtmlElementForColumnHeader(column: Column): HTMLElement | undefined {
-        if (this.type != HeaderRowType.COLUMN) { return; }
-
-        const cellCtrl = values(this.headerCellCtrls).find(cellCtrl => cellCtrl.getColumnGroupChild() == column);
-
-        if (!cellCtrl) { return; }
-
-        const res = (cellCtrl as HeaderCellCtrl).getGui();
-
-        return res;
+    public getHeaderCellCtrl(column: ColumnGroup): HeaderGroupCellCtrl | undefined;
+    public getHeaderCellCtrl(column: Column): HeaderCellCtrl | undefined;
+    public getHeaderCellCtrl(column: any): any {
+        return values(this.headerCellCtrls).find(cellCtrl => cellCtrl.getColumnGroupChild() === column);
     }
 
     private onDisplayedColumnsChanged(): void {

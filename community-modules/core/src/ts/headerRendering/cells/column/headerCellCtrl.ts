@@ -258,10 +258,6 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
         refreshHeaderClasses();
     }
 
-    public getGui(): HTMLElement {
-        return this.eGui;
-    }
-
     public setDragSource(eSource: HTMLElement | undefined): void {
         this.dragSourceElement = eSource;
         this.removeDragSource();

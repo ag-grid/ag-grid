@@ -59,6 +59,10 @@ export class AbstractHeaderCellCtrl extends BeanStub {
         this.addDestroyFunc(() => this.gridOptionsWrapper.setDomData(this.eGui, key, null));
     }
 
+    public getGui(): HTMLElement {
+        return this.eGui;
+    }
+
     public focus(event?: KeyboardEvent): boolean {
         if (!this.eGui) { return false; }
 

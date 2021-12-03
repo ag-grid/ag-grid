@@ -49,6 +49,7 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
 
     private expandable: boolean;
     private displayName: string | null;
+    private groupResizeFeature: GroupResizeFeature;
 
     constructor(columnGroup: ColumnGroup, parentRowCtrl: HeaderRowCtrl) {
         super(columnGroup, parentRowCtrl);
@@ -73,8 +74,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
 
         this.createManagedBean(new HoverFeature(leafCols, eGui));
         this.createManagedBean(new SetLeftFeature(this.columnGroup, eGui, this.beans));
-        this.createManagedBean(new GroupResizeFeature(comp, eResize, pinned, this.columnGroup));
         this.createManagedBean(new GroupWidthFeature(comp, this.columnGroup));
+        this.groupResizeFeature = this.createManagedBean(new GroupResizeFeature(comp, eResize, pinned, this.columnGroup));
 
         this.createManagedBean(new ManagedFocusFeature(
             eGui,
@@ -85,6 +86,11 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
                 onFocusIn: this.onFocusIn.bind(this)
             }
         ));
+    }
+
+    public resizeLeafColumnsToFit(onlyGrow: Column[]): Column[] {
+        this.groupResizeFeature.onResizeStart(false);
+        return this.groupResizeFeature.resizeLeafColumnsToFit(onlyGrow);
     }
 
     private setupUserComp(): void {

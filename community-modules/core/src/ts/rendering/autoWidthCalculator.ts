@@ -5,6 +5,7 @@ import { BeanStub } from "../context/beanStub";
 import { CtrlsService } from "../ctrlsService";
 import { RowContainerCtrl } from "../gridBodyComp/rowContainer/rowContainerCtrl";
 import { RowCssClassCalculator } from "./row/rowCssClassCalculator";
+import { ColumnGroup } from "../entities/columnGroup";
 
 @Bean('autoWidthCalculator')
 export class AutoWidthCalculator extends BeanStub {
@@ -31,6 +32,27 @@ export class AutoWidthCalculator extends BeanStub {
         // cell isn't visible
         if (!eHeaderCell) { return -1; }
 
+        const elements = this.rowRenderer.getAllCellsForColumn(column);
+
+        if (!skipHeader) {
+            // we only consider the lowest level cell, not the group cell. in 99% of the time, this
+            // will be enough. if we consider groups, then it gets too complicated for what it's worth,
+            // as the groups can span columns and this class only considers one column at a time.
+            elements.push(eHeaderCell);
+        }
+
+        return this.addElementsToContainerAndGetWidth(elements);
+    }
+
+    public getPreferredWidthForColumnGroup(columnGroup: ColumnGroup): number {
+        const eHeaderCell = this.getHeaderCellForColumn(columnGroup);
+
+        if (!eHeaderCell) { return -1; }
+
+        return this.addElementsToContainerAndGetWidth([eHeaderCell]);
+    }
+
+    private addElementsToContainerAndGetWidth(elements: HTMLElement[]): number {
         const eDummyContainer = document.createElement('span');
         // position fixed, so it isn't restricted to the boundaries of the parent
         eDummyContainer.style.position = 'fixed';
@@ -40,16 +62,7 @@ export class AutoWidthCalculator extends BeanStub {
         const eBodyContainer = this.centerRowContainerCon.getContainerElement();
         eBodyContainer.appendChild(eDummyContainer);
 
-        // get all the cells that are currently displayed (this only brings back
-        // rendered cells, rows not rendered due to row visualisation will not be here)
-        this.putRowCellsIntoDummyContainer(column, eDummyContainer);
-
-        if (!skipHeader) {
-            // we only consider the lowest level cell, not the group cell. in 99% of the time, this
-            // will be enough. if we consider groups, then it gets too complicated for what it's worth,
-            // as the groups can span columns and this class only considers one column at a time.
-            this.cloneItemIntoDummy(eHeaderCell, eDummyContainer);
-        }
+        elements.forEach(el => this.cloneItemIntoDummy(el, eDummyContainer));
 
         // at this point, all the clones are lined up vertically with natural widths. the dummy
         // container will have a width wide enough just to fit the largest.
@@ -61,11 +74,15 @@ export class AutoWidthCalculator extends BeanStub {
         // we add padding as I found sometimes the gui still put '...' after some of the texts. so the
         // user can configure the grid to add a few more pixels after the calculated width
         const autoSizePadding = this.gridOptionsWrapper.getAutoSizePadding();
+
         return dummyContainerWidth + autoSizePadding;
     }
 
-    private getHeaderCellForColumn(column: Column): HTMLElement | null {
-
+    /* tslint:disable */
+    private getHeaderCellForColumn(column: ColumnGroup): HTMLElement | null;
+    private getHeaderCellForColumn(column: Column): HTMLElement | null;
+    private getHeaderCellForColumn(column: any): any {
+    /* tslint:enable */
         let element: HTMLElement | null = null;
 
         this.ctrlsService.getHeaderRowContainerCtrls().forEach(container => {
@@ -75,11 +92,6 @@ export class AutoWidthCalculator extends BeanStub {
         );
 
         return element;
-    }
-
-    private putRowCellsIntoDummyContainer(column: Column, eDummyContainer: HTMLElement): void {
-        const eCellElements = this.rowRenderer.getAllCellsForColumn(column);
-        eCellElements.forEach(eCell  => this.cloneItemIntoDummy(eCell, eDummyContainer));
     }
 
     private cloneItemIntoDummy(eCell: HTMLElement, eDummyContainer: HTMLElement): void {
@@ -95,8 +107,11 @@ export class AutoWidthCalculator extends BeanStub {
         // out one per line
         const eCloneParent = document.createElement('div');
         const eCloneParentClassList = eCloneParent.classList;
+        const isHeader = ['ag-header-cell', 'ag-header-group-cell'].some(
+            cls => eCellClone.classList.contains(cls)
+        );
 
-        if (eCellClone.classList.contains('ag-header-cell')) {
+        if (isHeader) {
             eCloneParentClassList.add('ag-header', 'ag-header-row');
             eCloneParent.style.position = 'static';
         } else {
@@ -108,7 +123,10 @@ export class AutoWidthCalculator extends BeanStub {
         // onto group items.
         let pointer = eCell.parentElement;
         while (pointer) {
-            if (pointer.classList.contains('ag-header-row') || pointer.classList.contains('ag-row')) {
+            const isRow = ['ag-header-row', 'ag-row'].some(
+                cls => pointer!.classList.contains(cls)
+            );
+            if (isRow) {
                 for (let i = 0; i < pointer.classList.length; i++) {
                     const item = pointer.classList[i];
 
@@ -123,10 +141,6 @@ export class AutoWidthCalculator extends BeanStub {
             }
             pointer = pointer.parentElement;
         }
-
-        // table-row, so that each cell is on a row. i also tried display='block', but this
-        // didn't work in IE
-        eCloneParent.style.display = 'table-row';
 
         // the twig on the branch, the branch on the tree, the tree in the hole,
         // the hole in the bog, the bog in the clone, the clone in the parent,

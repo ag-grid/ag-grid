@@ -170,8 +170,12 @@ export class ColumnApi {
     public getAllDisplayedColumnGroups(): IHeaderColumn[] | null { return this.columnModel.getAllDisplayedTrees(); }
     /** Auto-sizes a column based on its contents. */
     public autoSizeColumn(key: string | Column, skipHeader?: boolean): void { return this.columnModel.autoSizeColumn(key, skipHeader, 'api'); }
+
     /** Same as `autoSizeColumn`, but provide a list of column keys. */
-    public autoSizeColumns(keys: (string | Column)[], skipHeader?: boolean): void { return this.columnModel.autoSizeColumns(keys, skipHeader, 'api'); }
+    public autoSizeColumns(keys: (string | Column)[], skipHeader?: boolean): void {
+        this.columnModel.autoSizeColumns({ columns: keys, skipHeader: skipHeader });
+    }
+
     /** Calls `autoSizeColumns` on all displayed columns. */
     public autoSizeAllColumns(skipHeader?: boolean): void { this.columnModel.autoSizeAllColumns(skipHeader, 'api'); }
 
