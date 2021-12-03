@@ -1,8 +1,8 @@
-import { AreaSparkline } from "./area/areaSparkline";
-import { SparklineAxis } from "./sparkline";
-import { LineSparkline } from "./line/lineSparkline";
-import { BarSparkline } from "./bar-column/barSparkline";
-import { ColumnSparkline } from "./bar-column/columnSparkline";
+import { AreaSparkline } from './area/areaSparkline';
+import { SparklineAxis } from './sparkline';
+import { LineSparkline } from './line/lineSparkline';
+import { BarSparkline } from './bar-column/barSparkline';
+import { ColumnSparkline } from './bar-column/columnSparkline';
 
 import {
     CrosshairLineOptions,
@@ -11,10 +11,10 @@ import {
     SparklineMarkerOptions,
     SparklineLineOptions,
     PaddingOptions,
-    SparklineCrosshairsOptions
-} from "@ag-grid-community/core";
-import { SparklineTooltip } from "./tooltip/sparklineTooltip";
-import { BarColumnLabel } from "./bar-column/barColumnSparkline";
+    SparklineCrosshairsOptions,
+} from '@ag-grid-community/core';
+import { SparklineTooltip } from './tooltip/sparklineTooltip';
+import { BarColumnLabel } from './bar-column/barColumnSparkline';
 
 export type SparklineFactoryOptions = SparklineOptions & {
     data: any[];
@@ -151,7 +151,8 @@ function initBarColumnSparkline(sparkline: ColumnSparkline | BarSparkline, optio
 function setValueIfPropertyExists(target: any, property: string, value: any, options: any): void {
     if (property in options) {
         if (property in target) {
-            if (target[property] !== value) { // only set property if the value is different to new value
+            if (target[property] !== value) {
+                // only set property if the value is different to new value
                 target[property] = value;
             }
         } else {

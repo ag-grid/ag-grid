@@ -1,7 +1,6 @@
-import { Shape } from "../../scene/shape/shape";
+import { Shape } from '../../scene/shape/shape';
 
 export class Rectangle extends Shape {
-
     static className = 'Column';
 
     private _x: number = 0;
@@ -82,7 +81,7 @@ export class Rectangle extends Shape {
         if (crisp) {
             // ensure stroke aligns to the pixel grid
             const { alignment: a, align: al } = this;
-            ctx.rect(al(a, x), al(a, y), al(a, x, width), al(a, y , height));
+            ctx.rect(al(a, x), al(a, y), al(a, x, width), al(a, y, height));
         } else {
             ctx.rect(x, y, width, height);
         }

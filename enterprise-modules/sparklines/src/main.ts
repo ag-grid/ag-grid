@@ -1,1 +1,1 @@
-export { SparklinesModule } from "./sparklinesModule";
+export { SparklinesModule } from './sparklinesModule';

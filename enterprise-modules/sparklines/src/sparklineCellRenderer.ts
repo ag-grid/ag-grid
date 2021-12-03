@@ -4,15 +4,13 @@ import {
     ICellRenderer,
     ISparklineCellRendererParams,
     RefSelector,
-    ResizeObserverService
-} from "@ag-grid-community/core";
-import { AgSparkline, SparklineFactoryOptions } from "./sparkline/agSparkline";
-import { SparklineTooltipSingleton } from "./tooltip/sparklineTooltipSingleton";
+    ResizeObserverService,
+} from '@ag-grid-community/core';
+import { AgSparkline, SparklineFactoryOptions } from './sparkline/agSparkline';
+import { SparklineTooltipSingleton } from './tooltip/sparklineTooltipSingleton';
 
 export class SparklineCellRenderer extends Component implements ICellRenderer {
-
-    private static TEMPLATE = /* html */
-        `<div class="ag-sparkline-wrapper">
+    private static TEMPLATE /* html */ = `<div class="ag-sparkline-wrapper">
             <span ref="eSparkline"></span>
         </div>`;
 
@@ -41,9 +39,9 @@ export class SparklineCellRenderer extends Component implements ICellRenderer {
                     width: clientWidth,
                     height: clientHeight,
                     context: {
-                        data: params.data
+                        data: params.data,
                     },
-                    ...params.sparklineOptions
+                    ...params.sparklineOptions,
                 };
 
                 // create new instance of sparkline

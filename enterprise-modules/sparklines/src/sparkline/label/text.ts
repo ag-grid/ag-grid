@@ -1,13 +1,25 @@
-import { chainObjects } from "../../util/object";
-import { HdpiCanvas } from "../../canvas/hdpiCanvas";
-import { Shape } from "../../scene/shape/shape";
-import { BBox } from "../../scene/bbox";
+import { chainObjects } from '../../util/object';
+import { HdpiCanvas } from '../../canvas/hdpiCanvas';
+import { Shape } from '../../scene/shape/shape';
+import { BBox } from '../../scene/bbox';
 
 export type FontStyle = 'normal' | 'italic' | 'oblique';
-export type FontWeight = 'normal' | 'bold' | 'bolder' | 'lighter' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
+export type FontWeight =
+    | 'normal'
+    | 'bold'
+    | 'bolder'
+    | 'lighter'
+    | '100'
+    | '200'
+    | '300'
+    | '400'
+    | '500'
+    | '600'
+    | '700'
+    | '800'
+    | '900';
 
 export class Text extends Shape {
-
     static className = 'Text';
 
     protected static defaultStyles = chainObjects(Shape.defaultStyles, {
@@ -16,7 +28,7 @@ export class Text extends Shape {
         fontWeight: undefined,
         fontSize: 10,
         fontFamily: 'sans-serif',
-        textBaseline: 'alphabetic' as CanvasTextBaseline
+        textBaseline: 'alphabetic' as CanvasTextBaseline,
     });
 
     private _x: number = 0;
@@ -174,14 +186,11 @@ export class Text extends Shape {
     }
 
     computeBBox(): BBox | undefined {
-        return HdpiCanvas.has.textMetrics
-            ? this.getPreciseBBox()
-            : this.getApproximateBBox();
+        return HdpiCanvas.has.textMetrics ? this.getPreciseBBox() : this.getApproximateBBox();
     }
 
     private getPreciseBBox(): BBox {
-        const metrics = HdpiCanvas.measureText(this.text, this.font,
-            this.textBaseline, this.textAlign);
+        const metrics = HdpiCanvas.measureText(this.text, this.font, this.textBaseline, this.textAlign);
 
         return new BBox(
             this.x - metrics.actualBoundingBoxLeft,
@@ -309,11 +318,6 @@ export class Text extends Shape {
     }
 }
 
-export function getFont(fontSize: number, fontFamily: string, fontStyle ?: string, fontWeight ?: string): string {
-    return [
-        fontStyle || '',
-        fontWeight || '',
-        fontSize + 'px',
-        fontFamily
-    ].join(' ').trim();
+export function getFont(fontSize: number, fontFamily: string, fontStyle?: string, fontWeight?: string): string {
+    return [fontStyle || '', fontWeight || '', fontSize + 'px', fontFamily].join(' ').trim();
 }

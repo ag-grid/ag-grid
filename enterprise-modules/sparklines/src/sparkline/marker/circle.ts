@@ -1,6 +1,5 @@
 import { Marker } from './marker';
 export class Circle extends Marker {
-
     static className = 'Circle';
 
     isPointInPath(x: number, y: number) {

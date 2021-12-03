@@ -21,7 +21,7 @@ export class ColumnSparkline extends BarColumnSparkline {
         } else {
             // last node will be clipped if the scale is not a band scale
             // subtract maximum possible node width from the range so that the last node is not clipped
-            xScale.range = [0, seriesRect.width - (seriesRect.width / data!.length)];
+            xScale.range = [0, seriesRect.width - seriesRect.width / data!.length];
         }
     }
 
@@ -54,7 +54,7 @@ export class ColumnSparkline extends BarColumnSparkline {
             fontFamily: labelFontFamily,
             color: labelColor,
             formatter: labelFormatter,
-            placement: labelPlacement
+            placement: labelPlacement,
         } = label;
 
         const nodeData: ColumnNodeDatum[] = [];
@@ -76,13 +76,16 @@ export class ColumnSparkline extends BarColumnSparkline {
             const bottom: number = Math.max(yScale.convert(yDatum), yZero);
 
             // if the scale is a band scale, the width of the rects will be the bandwidth, otherwise the width of the rects will be the range / number of items in the data
-            const width = xScale instanceof BandScale ? xScale.bandwidth : (Math.abs(yScale.range[1] - yScale.range[0]) / data.length);
+            const width =
+                xScale instanceof BandScale
+                    ? xScale.bandwidth
+                    : Math.abs(yScale.range[1] - yScale.range[0]) / data.length;
 
             const height = bottom - y;
 
             const midPoint = {
-                x: x + (width / 2),
-                y: yZero
+                x: x + width / 2,
+                y: yZero,
             };
 
             let labelText: string;
@@ -115,14 +118,14 @@ export class ColumnSparkline extends BarColumnSparkline {
                 const textHeight = textSize.height || 10;
                 const positiveBoundary = yZero - textHeight;
                 const negativeBoundary = yZero + textHeight;
-                const exceedsBoundaries = (isPositiveY && labelY > positiveBoundary) || (!isPositiveY && labelY < negativeBoundary);
+                const exceedsBoundaries =
+                    (isPositiveY && labelY > positiveBoundary) || (!isPositiveY && labelY < negativeBoundary);
 
                 if (exceedsBoundaries) {
                     // if labelY exceeds the y boundary, labels should be positioned at the insideBase
                     labelY = yZero + labelPadding * (isPositiveY ? -1 : 1);
                     labelTextBaseline = isPositiveY ? 'bottom' : 'top';
                 }
-
             } else {
                 // if labelPlacement === BarColumnLabelPlacement.InsideBase
                 labelY = yZero + labelPadding * (isPositiveY ? -1 : 1);
@@ -149,8 +152,8 @@ export class ColumnSparkline extends BarColumnSparkline {
                     fontFamily: labelFontFamily,
                     textAlign: labelTextAlign,
                     textBaseline: labelTextBaseline,
-                    fill: labelColor
-                }
+                    fill: labelColor,
+                },
             });
         }
         return nodeData;

@@ -1,6 +1,6 @@
-import { Color } from "../../util/color";
-import { Observable } from "../../util/observable";
-import { TooltipRendererResult, TooltipRendererParams } from "@ag-grid-community/core";
+import { Color } from '../../util/color';
+import { Observable } from '../../util/observable';
+import { TooltipRendererResult, TooltipRendererParams } from '@ag-grid-community/core';
 
 export interface TooltipMeta {
     pageX: number;
@@ -19,16 +19,16 @@ export function toTooltipHtml(input: string | TooltipRendererResult, defaults?: 
         title = defaults.title || undefined,
         color = defaults.color,
         backgroundColor = defaults.backgroundColor,
-        opacity = defaults.opacity || 1
+        opacity = defaults.opacity || 1,
     } = input;
 
     let titleHtml;
     let contentHtml;
 
     if (color) {
-        titleHtml = title ?
-                    `<span class="${SparklineTooltip.class}-title"; style="color: ${color}">${title}</span>`
-                    : '';
+        titleHtml = title
+            ? `<span class="${SparklineTooltip.class}-title"; style="color: ${color}">${title}</span>`
+            : '';
         contentHtml = `<span class="${SparklineTooltip.class}-content" style="color: ${color}">${content}</span>`;
     } else {
         titleHtml = title ? `<span class="${SparklineTooltip.class}-title">${title}</span>` : '';
@@ -50,7 +50,7 @@ export function toTooltipHtml(input: string | TooltipRendererResult, defaults?: 
                     ${contentHtml}
                 </div>`;
     } else {
-        return  `<div class="${SparklineTooltip.class}">
+        return `<div class="${SparklineTooltip.class}">
                     ${titleHtml}
                     ${contentHtml}
                 </div>`;

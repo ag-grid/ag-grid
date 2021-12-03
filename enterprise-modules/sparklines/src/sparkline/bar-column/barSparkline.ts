@@ -6,7 +6,6 @@ import { Point } from '../sparkline';
 
 export interface BarNodeDatum extends RectNodeDatum { }
 export class BarSparkline extends BarColumnSparkline {
-
     static className = 'BarSparkline';
 
     protected updateYScaleRange() {
@@ -23,7 +22,7 @@ export class BarSparkline extends BarColumnSparkline {
         } else {
             // last node will be clipped if the scale is not a band scale
             // subtract maximum possible node width from the range so that the last node is not clipped
-            xScale.range = [0, seriesRect.height - (seriesRect.height / data!.length)];
+            xScale.range = [0, seriesRect.height - seriesRect.height / data!.length];
         }
     }
 
@@ -56,7 +55,7 @@ export class BarSparkline extends BarColumnSparkline {
             fontFamily: labelFontFamily,
             color: labelColor,
             formatter: labelFormatter,
-            placement: labelPlacement
+            placement: labelPlacement,
         } = label;
 
         const nodeData: BarNodeDatum[] = [];
@@ -78,13 +77,16 @@ export class BarSparkline extends BarColumnSparkline {
             const bottom: number = Math.max(yScale.convert(yDatum), yZero);
 
             // if the scale is a band scale, the width of the rects will be the bandwidth, otherwise the width of the rects will be the range / number of items in the data
-            const height = xScale instanceof BandScale ? xScale.bandwidth : (Math.abs(yScale.range[1] - yScale.range[0]) / data.length);
+            const height =
+                xScale instanceof BandScale
+                    ? xScale.bandwidth
+                    : Math.abs(yScale.range[1] - yScale.range[0]) / data.length;
 
             const width = bottom - x;
 
             const midPoint = {
                 x: yZero,
-                y: y
+                y: y,
             };
 
             let labelText: string;
@@ -94,7 +96,7 @@ export class BarSparkline extends BarColumnSparkline {
                 labelText = yDatum !== undefined && isNumber(yDatum) ? this.formatLabelValue(yDatum) : '';
             }
 
-            const labelY: number = y + (height / 2);
+            const labelY: number = y + height / 2;
             let labelX: number;
 
             const labelTextBaseline: CanvasTextBaseline = 'middle';
@@ -117,14 +119,14 @@ export class BarSparkline extends BarColumnSparkline {
                 const textWidth = textSize.width || 20;
                 const positiveBoundary = yZero + textWidth;
                 const negativeBoundary = yZero - textWidth;
-                const exceedsBoundaries = (isPositiveY && labelX < positiveBoundary) || (!isPositiveY && labelX > negativeBoundary);
+                const exceedsBoundaries =
+                    (isPositiveY && labelX < positiveBoundary) || (!isPositiveY && labelX > negativeBoundary);
 
                 if (exceedsBoundaries) {
                     // if labelX exceeds the boundary, labels should be positioned at `insideBase`.
                     labelX = yZero + labelPadding * (isPositiveY ? 1 : -1);
                     labelTextAlign = isPositiveY ? 'start' : 'end';
                 }
-
             } else {
                 // if labelPlacement === BarColumnLabelPlacement.InsideBase
                 labelX = yZero + labelPadding * (isPositiveY ? 1 : -1);
@@ -151,8 +153,8 @@ export class BarSparkline extends BarColumnSparkline {
                     fontFamily: labelFontFamily,
                     textAlign: labelTextAlign,
                     textBaseline: labelTextBaseline,
-                    fill: labelColor
-                }
+                    fill: labelColor,
+                },
             });
         }
         return nodeData;

@@ -1,6 +1,6 @@
-import { Circle } from "./circle";
-import { Diamond } from "./diamond";
-import { Square } from "./square";
+import { Circle } from './circle';
+import { Diamond } from './diamond';
+import { Square } from './square';
 
 export function getMarker(shape: string) {
     switch (shape) {

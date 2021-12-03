@@ -1,4 +1,4 @@
-import { Shape } from "../../scene/shape/shape";
+import { Shape } from '../../scene/shape/shape';
 
 export abstract class Marker extends Shape {
     protected _x: number = 0;

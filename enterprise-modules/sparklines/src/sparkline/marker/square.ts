@@ -1,8 +1,7 @@
-import { Marker } from "./marker";
+import { Marker } from './marker';
 
 export class Square extends Marker {
-
-    static className = "Square";
+    static className = 'Square';
 
     isPointInStroke(x: number, y: number): boolean {
         return false;
@@ -23,11 +22,11 @@ export class Square extends Marker {
 
         ctx.beginPath();
 
-        ctx.moveTo(x -= hs, y -= hs);
-        ctx.lineTo(x += size, y);
-        ctx.lineTo(x, y += size);
-        ctx.lineTo(x -= size, y);
-        ctx.lineTo(x, y -= size);
+        ctx.moveTo((x -= hs), (y -= hs));
+        ctx.lineTo((x += size), y);
+        ctx.lineTo(x, (y += size));
+        ctx.lineTo((x -= size), y);
+        ctx.lineTo(x, (y -= size));
 
         ctx.closePath();
 

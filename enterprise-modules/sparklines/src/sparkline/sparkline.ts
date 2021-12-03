@@ -1,17 +1,17 @@
 import { Group } from '../scene/group';
 import { Scene } from '../scene/scene';
 import { Observable } from '../util/observable';
-import { createId } from "../util/id";
+import { createId } from '../util/id';
 import { Padding } from '../util/padding';
 import { defaultTooltipCss } from './tooltip/defaultTooltipCss';
 import { SparklineTooltip } from './tooltip/sparklineTooltip';
-import { HighlightStyleOptions } from "@ag-grid-community/core";
+import { HighlightStyleOptions } from '@ag-grid-community/core';
 import { isContinuous, isDate, isNumber, isString, isStringObject } from '../util/value';
 import { LinearScale } from '../scale/linearScale';
 import { TimeScale } from '../scale/timeScale';
 import { BandScale } from '../scale/bandScale';
 import { extent } from '../util/array';
-import { locale } from "../util/time/format/defaultLocale";
+import { locale } from '../util/time/format/defaultLocale';
 
 export interface SeriesNodeDatum {
     readonly seriesDatum: any;
@@ -42,7 +42,6 @@ export class SparklineAxis extends Observable {
     strokeWidth: number = 1;
 }
 export abstract class Sparkline extends Observable {
-
     readonly id: string = createId(this);
 
     readonly scene: Scene;
@@ -57,7 +56,7 @@ export abstract class Sparkline extends Observable {
         x: 0,
         y: 0,
         width: 0,
-        height: 0
+        height: 0,
     };
 
     private _context: { data: any } | undefined = undefined;
@@ -123,7 +122,7 @@ export abstract class Sparkline extends Observable {
         size: 6,
         fill: 'yellow',
         stroke: 'silver',
-        strokeWidth: 1
+        strokeWidth: 1,
     };
 
     protected constructor() {
@@ -232,10 +231,10 @@ export abstract class Sparkline extends Observable {
     }
 
     /**
-    * Return xScale instance based on the provided type or return a `BandScale` by default.
-    * The default type is `category`.
-    * @param type
-    */
+     * Return xScale instance based on the provided type or return a `BandScale` by default.
+     * The default type is `category`.
+     * @param type
+     */
     protected getXScale(type: AxisType = 'category'): ScaleType {
         switch (type) {
             case 'number':
@@ -265,10 +264,17 @@ export abstract class Sparkline extends Observable {
     }
 
     // Using processed data, generate data that backs visible nodes.
-    protected generateNodeData(): { nodeData: SeriesNodeDatum[], fillData: SeriesNodeDatum[], strokeData: SeriesNodeDatum[] } | SeriesNodeDatum[] | undefined { return []; }
+    protected generateNodeData():
+        | { nodeData: SeriesNodeDatum[]; fillData: SeriesNodeDatum[]; strokeData: SeriesNodeDatum[] }
+        | SeriesNodeDatum[]
+        | undefined {
+        return [];
+    }
 
     // Returns persisted node data associated with the sparkline's data.
-    protected getNodeData(): readonly SeriesNodeDatum[] { return []; }
+    protected getNodeData(): readonly SeriesNodeDatum[] {
+        return [];
+    }
 
     // Update the selection's nodes.
     protected updateNodes(): void { }
@@ -309,8 +315,10 @@ export abstract class Sparkline extends Observable {
         const oldHighlightedDatum = this.highlightedDatum;
         this.highlightedDatum = closestDatum;
 
-        if ((this.highlightedDatum && !oldHighlightedDatum) ||
-            (this.highlightedDatum && oldHighlightedDatum && this.highlightedDatum !== oldHighlightedDatum)) {
+        if (
+            (this.highlightedDatum && !oldHighlightedDatum) ||
+            (this.highlightedDatum && oldHighlightedDatum && this.highlightedDatum !== oldHighlightedDatum)
+        ) {
             this.highlightDatum(closestDatum);
             this.updateCrosshairs();
         }
@@ -333,7 +341,9 @@ export abstract class Sparkline extends Observable {
     private processData() {
         const { data, yData, xData } = this;
 
-        if (!data || this.invalidData(this.data)) { return; }
+        if (!data || this.invalidData(this.data)) {
+            return;
+        }
 
         yData.length = 0;
         xData.length = 0;
@@ -406,10 +416,10 @@ export abstract class Sparkline extends Observable {
     }
 
     /**
-    * Return the type of data provided to the sparkline based on the first truthy value in the data array.
-    * If the value is not a number, array or object, return `undefined`.
-    * @param data
-    */
+     * Return the type of data provided to the sparkline based on the first truthy value in the data array.
+     * If the value is not a number, array or object, return `undefined`.
+     * @param data
+     */
     private getDataType(data: any): DataType {
         for (const datum of data) {
             if (datum != undefined) {
@@ -425,12 +435,12 @@ export abstract class Sparkline extends Observable {
     }
 
     /**
-    * Return the given value depending on the type of axis.
-    * Return `undefined` if the value is invalid for the given axis type.
-    * @param value
-    */
+     * Return the given value depending on the type of axis.
+     * Return `undefined` if the value is invalid for the given axis type.
+     * @param value
+     */
     private getDatum(value: any, type: AxisType): any {
-        if (type === 'number' && isNumber(value) || type === 'time' && (isNumber(value) || isDate(value))) {
+        if ((type === 'number' && isNumber(value)) || (type === 'time' && (isNumber(value) || isDate(value)))) {
             return value;
         } else if (type === 'category') {
             if (isString(value) || isDate(value) || isNumber(value)) {
@@ -505,7 +515,7 @@ export abstract class Sparkline extends Observable {
         let closestDatum: SeriesNodeDatum | undefined;
         const hitPoint = this.rootGroup.transformPoint(x, y);
 
-        this.getNodeData().forEach(datum => {
+        this.getNodeData().forEach((datum) => {
             if (!datum.point) {
                 return;
             }
@@ -520,11 +530,11 @@ export abstract class Sparkline extends Observable {
     }
 
     /**
-    * Return the relevant distance between two points.
-    * The distance will be calculated based on the x value of the points for all sparklines except bar sparkline, where the distance is based on the y values.
-    * @param x
-    * @param y
-    */
+     * Return the relevant distance between two points.
+     * The distance will be calculated based on the x value of the points for all sparklines except bar sparkline, where the distance is based on the y values.
+     * @param x
+     * @param y
+     */
     protected getDistance(p1: Point, p2: Point): number {
         return Math.abs(p1.x - p2.x);
     }
@@ -545,7 +555,7 @@ export abstract class Sparkline extends Observable {
 
         const meta = {
             pageX: clientX,
-            pageY: clientY
+            pageY: clientY,
         };
 
         const yValue = seriesDatum.y;
@@ -561,7 +571,10 @@ export abstract class Sparkline extends Observable {
                 yValue,
                 xValue,
             });
-            enabled = typeof tooltipRendererResult !== 'string' && tooltipRendererResult.enabled !== undefined ? tooltipRendererResult.enabled : enabled;
+            enabled =
+                typeof tooltipRendererResult !== 'string' && tooltipRendererResult.enabled !== undefined
+                    ? tooltipRendererResult.enabled
+                    : enabled;
         }
 
         const html = enabled && seriesDatum.y !== undefined && this.getTooltipHtml(datum);
@@ -584,7 +597,9 @@ export abstract class Sparkline extends Observable {
             return this.formatNumericDatum(datum);
         } else if (type === 'time' && (datum instanceof Date || isNumber(datum))) {
             return this.defaultDateFormatter(datum);
-        } else { return String(datum); }
+        } else {
+            return String(datum);
+        }
     }
 
     private _onMouseMove = this.onMouseMove.bind(this);

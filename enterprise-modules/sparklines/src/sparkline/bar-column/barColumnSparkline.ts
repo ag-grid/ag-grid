@@ -1,4 +1,4 @@
-import { SeriesNodeDatum, Sparkline } from "../sparkline";
+import { SeriesNodeDatum, Sparkline } from '../sparkline';
 import { Group } from '../../scene/group';
 import { Line } from '../../scene/shape/line';
 import { Selection } from '../../scene/selection';
@@ -6,11 +6,11 @@ import { toTooltipHtml } from '../tooltip/sparklineTooltip';
 import { Rectangle } from './rectangle';
 import { extent } from '../../util/array';
 import { isNumber } from '../../util/value';
-import { ColumnFormat, ColumnFormatterParams } from "@ag-grid-community/core";
-import { FontStyle, FontWeight } from "../../scene/shape/text";
-import { Label } from "../label/label";
-import { Text } from "../label/text";
-import { PointerEvents } from "../../scene/node";
+import { ColumnFormat, ColumnFormatterParams } from '@ag-grid-community/core';
+import { FontStyle, FontWeight } from '../../scene/shape/text';
+import { Label } from '../label/label';
+import { Text } from '../label/text';
+import { PointerEvents } from '../../scene/node';
 
 export interface RectNodeDatum extends SeriesNodeDatum {
     readonly x: number;
@@ -36,7 +36,7 @@ export interface RectNodeDatum extends SeriesNodeDatum {
 
 enum BarColumnNodeTag {
     Rect,
-    Label
+    Label,
 }
 
 export enum BarColumnLabelPlacement {
@@ -52,7 +52,6 @@ export class BarColumnLabel extends Label {
 }
 
 export abstract class BarColumnSparkline extends Sparkline {
-
     fill: string = 'rgb(124, 181, 236)';
     stroke: string = 'silver';
     strokeWidth: number = 0;
@@ -67,8 +66,12 @@ export abstract class BarColumnSparkline extends Sparkline {
     private rectGroup: Group = new Group();
     private labelGroup: Group = new Group();
 
-    private rectSelection: Selection<Rectangle, Group, RectNodeDatum, RectNodeDatum> = Selection.select(this.rectGroup).selectAll<Rectangle>();
-    private labelSelection: Selection<Text, Group, RectNodeDatum, RectNodeDatum> = Selection.select(this.labelGroup).selectAll<Text>();
+    private rectSelection: Selection<Rectangle, Group, RectNodeDatum, RectNodeDatum> = Selection.select(
+        this.rectGroup
+    ).selectAll<Rectangle>();
+    private labelSelection: Selection<Text, Group, RectNodeDatum, RectNodeDatum> = Selection.select(
+        this.labelGroup
+    ).selectAll<Text>();
 
     private nodeSelectionData: RectNodeDatum[] = [];
 
@@ -164,7 +167,8 @@ export abstract class BarColumnSparkline extends Sparkline {
             const highlighted = datum === highlightedDatum;
             const nodeFill = highlighted && highlightFill !== undefined ? highlightFill : fill;
             const nodeStroke = highlighted && highlightStroke !== undefined ? highlightStroke : stroke;
-            const nodeStrokeWidth = highlighted && highlightStrokeWidth !== undefined ? highlightStrokeWidth : strokeWidth;
+            const nodeStrokeWidth =
+                highlighted && highlightStrokeWidth !== undefined ? highlightStrokeWidth : strokeWidth;
 
             let nodeFormat: ColumnFormat | undefined;
 
@@ -189,13 +193,13 @@ export abstract class BarColumnSparkline extends Sparkline {
                     fill: nodeFill,
                     stroke: nodeStroke,
                     strokeWidth: nodeStrokeWidth,
-                    highlighted
+                    highlighted,
                 });
             }
 
-            node.fill = nodeFormat && nodeFormat.fill || nodeFill;
-            node.stroke = nodeFormat && nodeFormat.stroke || nodeStroke;
-            node.strokeWidth = nodeFormat && nodeFormat.strokeWidth || nodeStrokeWidth;
+            node.fill = (nodeFormat && nodeFormat.fill) || nodeFill;
+            node.stroke = (nodeFormat && nodeFormat.stroke) || nodeStroke;
+            node.strokeWidth = (nodeFormat && nodeFormat.strokeWidth) || nodeStrokeWidth;
 
             node.x = node.y = 0;
             node.width = width;
@@ -213,9 +217,8 @@ export abstract class BarColumnSparkline extends Sparkline {
     private updateLabelSelection(selectionData: RectNodeDatum[]): void {
         const updateLabels = this.labelSelection.setData(selectionData);
 
-        const enterLabels = updateLabels.enter.append(Text).each(text => {
-            text.tag = BarColumnNodeTag.Label,
-                text.pointerEvents = PointerEvents.None;
+        const enterLabels = updateLabels.enter.append(Text).each((text) => {
+            (text.tag = BarColumnNodeTag.Label), (text.pointerEvents = PointerEvents.None);
         });
 
         updateLabels.exit.remove();
@@ -224,7 +227,9 @@ export abstract class BarColumnSparkline extends Sparkline {
     }
 
     private updateLabelNodes(): void {
-        const { label: { enabled: labelEnabled, fontStyle, fontWeight, fontSize, fontFamily, color } } = this;
+        const {
+            label: { enabled: labelEnabled, fontStyle, fontWeight, fontSize, fontFamily, color },
+        } = this;
         this.labelSelection.each((text, datum) => {
             const label = datum.label;
 
@@ -256,16 +261,19 @@ export abstract class BarColumnSparkline extends Sparkline {
 
         const defaults = {
             content,
-            title
+            title,
         };
 
         if (this.tooltip.renderer) {
-            return toTooltipHtml(this.tooltip.renderer({
-                context: this.context,
-                datum: seriesDatum,
-                yValue,
-                xValue,
-            }), defaults);
+            return toTooltipHtml(
+                this.tooltip.renderer({
+                    context: this.context,
+                    datum: seriesDatum,
+                    yValue,
+                    xValue,
+                }),
+                defaults
+            );
         }
 
         return toTooltipHtml(defaults);

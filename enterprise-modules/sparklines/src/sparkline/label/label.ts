@@ -1,5 +1,5 @@
-import { FontStyle, FontWeight, getFont } from "../../scene/shape/text";
-import { Observable, reactive } from "../../util/observable";
+import { FontStyle, FontWeight, getFont } from '../../scene/shape/text';
+import { Observable, reactive } from '../../util/observable';
 
 export class Label extends Observable {
     @reactive('change', 'dataChange') enabled = true;
