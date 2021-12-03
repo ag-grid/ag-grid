@@ -113,7 +113,7 @@ title: "Testing AG Grid"
 |
 | For this sample test we'll be testing this simple example:
 |
-| <grid-example title='Hello World' name='hello-world' type='vanilla' options='{ "exampleHeight": "210px" }'></grid-example>
+| <grid-example title='Hello World' name='hello-world' type='typescript' options='{ "exampleHeight": "210px" }'></grid-example>
 |
 | ## Checking Headers
 |
