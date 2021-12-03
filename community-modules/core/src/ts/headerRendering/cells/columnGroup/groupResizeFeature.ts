@@ -4,6 +4,7 @@ import { BeanStub } from "../../../context/beanStub";
 import { Autowired, PostConstruct } from "../../../context/context";
 import { Column } from "../../../entities/column";
 import { ColumnGroup } from "../../../entities/columnGroup";
+import { AutoWidthCalculator } from "../../../rendering/autoWidthCalculator";
 import { HorizontalResizeService } from "../../common/horizontalResizeService";
 import { IHeaderGroupCellComp } from "./headerGroupCellCtrl";
 
@@ -22,8 +23,9 @@ export class GroupResizeFeature extends BeanStub {
     private resizeTakeFromStartWidth: number | null;
     private resizeTakeFromRatios: number[] | null;
 
-    @Autowired('horizontalResizeService') private horizontalResizeService: HorizontalResizeService;
-    @Autowired('columnModel') private columnModel: ColumnModel;
+    @Autowired('horizontalResizeService') private readonly horizontalResizeService: HorizontalResizeService;
+    @Autowired('autoWidthCalculator') private readonly autoWidthCalculator: AutoWidthCalculator;
+    @Autowired('columnModel') private readonly columnModel: ColumnModel;
 
     constructor(comp: IHeaderGroupCellComp, eResize: HTMLElement,  pinned: string | null, columnGroup: ColumnGroup) {
         super();
@@ -54,10 +56,13 @@ export class GroupResizeFeature extends BeanStub {
         if (!this.gridOptionsWrapper.isSuppressAutoSize()) {
             const skipHeaderOnAutoSize = this.gridOptionsWrapper.isSkipHeaderOnAutoSize();
 
-            this.eResize.addEventListener('dblclick', (event: MouseEvent) => {
+            this.eResize.addEventListener('dblclick', () => {
+                this.resizeLeafColumnsToFit();
                 // get list of all the column keys we are responsible for
                 const keys: string[] = [];
-                this.columnGroup.getDisplayedLeafColumns().forEach((column: Column) => {
+                const leafCols = this.columnGroup.getDisplayedLeafColumns();
+
+                leafCols.forEach((column: Column) => {
                     // not all cols in the group may be participating with auto-resize
                     if (!column.getColDef().suppressAutoSize) {
                         keys.push(column.getColId());
@@ -65,7 +70,13 @@ export class GroupResizeFeature extends BeanStub {
                 });
 
                 if (keys.length > 0) {
-                    this.columnModel.autoSizeColumns(keys, skipHeaderOnAutoSize, "uiColumnResized");
+                    this.columnModel.autoSizeColumns({
+                        columns: keys,
+                        skipHeader: skipHeaderOnAutoSize,
+                        skipHeaderGroups: true,
+                        onlyGrow: leafCols,
+                        source: 'uiColumnResized'
+                    });
                 }
             });
         }
@@ -105,28 +116,52 @@ export class GroupResizeFeature extends BeanStub {
     }
 
     public onResizing(finished: boolean, resizeAmount: any): void {
-        const resizeSets: ColumnResizeSet[] = [];
         const resizeAmountNormalised = this.normaliseDragChange(resizeAmount);
+        const width = this.resizeStartWidth + resizeAmountNormalised;
+
+        this.resizeColumns(width, finished);
+    }
+
+    public resizeLeafColumnsToFit(onlyGrow: Column[] = []): Column[] {
+        const preferredSize = this.autoWidthCalculator.getPreferredWidthForColumnGroup(this.columnGroup);
+
+        if (preferredSize > 0) {
+            return this.resizeColumns(preferredSize, true, onlyGrow);
+        }
+
+        return [];
+    }
+
+    public resizeColumns(totalWidth: number, finished: boolean = true, onlyGrow: Column[] = []): Column[] {
+        const resizeSets: ColumnResizeSet[] = [];
 
         resizeSets.push({
             columns: this.resizeCols,
             ratios: this.resizeRatios,
-            width: this.resizeStartWidth + resizeAmountNormalised
+            width: totalWidth
         });
 
         if (this.resizeTakeFromCols) {
+            const diff = totalWidth - this.resizeStartWidth;
             resizeSets.push({
                 columns: this.resizeTakeFromCols,
                 ratios: this.resizeTakeFromRatios!,
-                width: this.resizeTakeFromStartWidth! - resizeAmountNormalised
+                width: this.resizeTakeFromStartWidth! - diff
             });
         }
 
-        this.columnModel.resizeColumnSets(resizeSets, finished, 'uiColumnDragged');
+        const cols = this.columnModel.resizeColumnSets({
+            resizeSets,
+            finished,
+            onlyGrow,
+            source: 'uiColumnDragged'
+        });
 
         if (finished) {
             this.comp.addOrRemoveCssClass('ag-column-resizing', false);
         }
+
+        return cols;
     }
 
     // optionally inverts the drag, depending on pinned and RTL

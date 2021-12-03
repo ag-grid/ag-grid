@@ -50,6 +50,8 @@ import { IRowModel } from "../interfaces/iRowModel";
 import { IClientSideRowModel } from "../interfaces/iClientSideRowModel";
 import { convertToMap } from '../utils/map';
 import { doOnce } from '../utils/function';
+import { CtrlsService } from '../ctrlsService';
+import { HeaderGroupCellCtrl } from '../headerRendering/cells/columnGroup/headerGroupCellCtrl';
 
 export interface ColumnResizeSet {
     columns: Column[];
@@ -90,6 +92,7 @@ export class ColumnModel extends BeanStub {
     @Autowired('expressionService') private expressionService: ExpressionService;
     @Autowired('columnFactory') private columnFactory: ColumnFactory;
     @Autowired('displayedGroupCreator') private displayedGroupCreator: DisplayedGroupCreator;
+    @Autowired('ctrlsService') private ctrlsService: CtrlsService;
     @Autowired('autoWidthCalculator') private autoWidthCalculator: AutoWidthCalculator;
     @Autowired('columnUtils') private columnUtils: ColumnUtils;
     @Autowired('columnAnimationService') private columnAnimationService: ColumnAnimationService;
@@ -493,7 +496,14 @@ export class ColumnModel extends BeanStub {
         });
     }
 
-    public autoSizeColumns(keys: (string | Column)[], skipHeader?: boolean, source: ColumnEventType = "api"): void {
+    public autoSizeColumns(params: {
+        columns: (string | Column)[],
+        skipHeader?: boolean,
+        skipHeaderGroups?: boolean,
+        onlyGrow?: Column[],
+        source?: ColumnEventType;
+    }): void {
+        const { columns, skipHeader, skipHeaderGroups, onlyGrow = [], source = 'api' } = params;
         // because of column virtualisation, we can only do this function on columns that are
         // actually rendered, as non-rendered columns (outside the viewport and not rendered
         // due to column virtualisation) are not present. this can result in all rendered columns
@@ -512,25 +522,30 @@ export class ColumnModel extends BeanStub {
         // initialise with anything except 0 so that while loop executes at least once
         let changesThisTimeAround = -1;
 
-        if (skipHeader == null) {
-            skipHeader = this.gridOptionsWrapper.isSkipHeaderOnAutoSize();
+        const shouldSkipHeader = skipHeader != null ? skipHeader : this.gridOptionsWrapper.isSkipHeaderOnAutoSize();
+
+        if (!shouldSkipHeader && !skipHeaderGroups) {
+            onlyGrow.push(...this.autoSizeColumnGroupsByColumns(columns));
         }
 
         while (changesThisTimeAround !== 0) {
             changesThisTimeAround = 0;
-            this.actionOnGridColumns(keys, (column: Column): boolean => {
+            this.actionOnGridColumns(columns, (column: Column): boolean => {
                 // if already autosized, skip it
                 if (columnsAutosized.indexOf(column) >= 0) {
                     return false;
                 }
                 // get how wide this col should be
-                const preferredWidth = this.autoWidthCalculator.getPreferredWidthForColumn(column, skipHeader);
+                const preferredWidth = this.autoWidthCalculator.getPreferredWidthForColumn(column, shouldSkipHeader);
                 // preferredWidth = -1 if this col is not on the screen
                 if (preferredWidth > 0) {
                     const newWidth = this.normaliseColumnWidth(column, preferredWidth);
-                    column.setActualWidth(newWidth, source);
-                    columnsAutosized.push(column);
-                    changesThisTimeAround++;
+                    const currentColumnWidth = column.getActualWidth();
+                    if (!onlyGrow.length || (onlyGrow.indexOf(column) !== -1 && currentColumnWidth < newWidth)) {
+                        column.setActualWidth(newWidth, source);
+                        columnsAutosized.push(column);
+                        changesThisTimeAround++;
+                    }
                 }
                 return true;
             }, source);
@@ -557,13 +572,44 @@ export class ColumnModel extends BeanStub {
 
     public autoSizeColumn(key: string | Column | null, skipHeader?: boolean, source: ColumnEventType = "api"): void {
         if (key) {
-            this.autoSizeColumns([key], skipHeader, source);
+            this.autoSizeColumns({ columns: [key], skipHeader, skipHeaderGroups: true, source });
         }
+    }
+
+    private autoSizeColumnGroupsByColumns(keys: (string | Column)[]): Column[] {
+        const columnGroups: ColumnGroup[] = [];
+        const columns = this.getGridColumns(keys);
+
+        columns.forEach(col => {
+            let parent: ColumnGroup = col.getParent();
+            while (parent) {
+                if (!parent.isPadding() && columnGroups.indexOf(parent) === -1) {
+                    columnGroups.push(parent);
+                }
+                parent = parent.getParent();
+            }
+        });
+
+        let headerGroupCtrl: HeaderGroupCellCtrl | undefined;
+
+        const resizedColumns: Column[] = [];
+
+        for (const columnGroup of columnGroups) {
+            for (const headerContainerCtrl of this.ctrlsService.getHeaderRowContainerCtrls()) {
+                headerGroupCtrl = headerContainerCtrl.getHeaderCtrlForColumn(columnGroup);
+                if (headerGroupCtrl) { break; }
+            }
+            if (headerGroupCtrl) {
+                resizedColumns.push(...headerGroupCtrl.resizeLeafColumnsToFit(resizedColumns));
+            }
+        }
+
+        return resizedColumns;
     }
 
     public autoSizeAllColumns(skipHeader?: boolean, source: ColumnEventType = "api"): void {
         const allDisplayedColumns = this.getAllDisplayedColumns();
-        this.autoSizeColumns(allDisplayedColumns, skipHeader, source);
+        this.autoSizeColumns({ columns: allDisplayedColumns, skipHeader, source });
     }
 
     private getColumnsFromTree(rootColumns: IProvidedColumn[]): Column[] {
@@ -1038,7 +1084,11 @@ export class ColumnModel extends BeanStub {
 
         if (sets.length === 0) { return; }
 
-        this.resizeColumnSets(sets, finished, source);
+        this.resizeColumnSets({
+            resizeSets: sets,
+            finished,
+            source
+        });
 
     }
 
@@ -1075,11 +1125,13 @@ export class ColumnModel extends BeanStub {
     // be resized. this is used for example when user tries to resize a group and holds shift key,
     // then both the current group (grows), and the adjacent group (shrinks), will get resized,
     // so that's two sets for this method.
-    public resizeColumnSets(
+    public resizeColumnSets(params: {
         resizeSets: ColumnResizeSet[],
         finished: boolean,
+        onlyGrow?: Column[],
         source: ColumnEventType
-    ): void {
+    }): Column[] {
+        const { resizeSets, finished, onlyGrow = [], source } = params;
         const passMinMaxCheck = !resizeSets || resizeSets.every(columnResizeSet => this.checkMinAndMaxWidthsForSet(columnResizeSet));
 
         if (!passMinMaxCheck) {
@@ -1089,7 +1141,7 @@ export class ColumnModel extends BeanStub {
                 this.fireColumnResizedEvent(columns, finished, source);
             }
 
-            return; // don't resize!
+            return []; // don't resize!
         }
 
         const changedCols: Column[] = [];
@@ -1179,7 +1231,10 @@ export class ColumnModel extends BeanStub {
 
             columns.forEach(col => {
                 const newWidth = newWidths[col.getId()];
-                if (col.getActualWidth() !== newWidth) {
+                const isOnlyGrow = onlyGrow.length && onlyGrow.indexOf(col) !== -1;
+                const actualWidth = col.getActualWidth();
+
+                if (actualWidth !== newWidth && (!isOnlyGrow || actualWidth < newWidth)) {
                     col.setActualWidth(newWidth, source);
                     changedCols.push(col);
                 }
@@ -1207,6 +1262,8 @@ export class ColumnModel extends BeanStub {
         if (atLeastOneColChanged || finished) {
             this.fireColumnResizedEvent(colsForEvent, finished, source, flexedCols);
         }
+
+        return colsForEvent;
     }
 
     public setColumnAggFunc(key: string | Column | null | undefined, aggFunc: string, source: ColumnEventType = "api"): void {
