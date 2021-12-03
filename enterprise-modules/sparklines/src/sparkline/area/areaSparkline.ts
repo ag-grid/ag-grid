@@ -123,13 +123,11 @@ export class AreaSparkline extends Sparkline {
             yMax = this.max = yMinMax[1] as number;
         }
 
-        if (yData.length > 1) {
-            // if yMin is positive, set yMin to 0
-            yMin = yMin < 0 ? yMin : 0;
+        // if yMin is positive, set yMin to 0
+        yMin = yMin < 0 ? yMin : 0;
 
-            // if yMax is negative, set yMax to 0
-            yMax = yMax < 0 ? 0 : yMax;
-        }
+        // if yMax is negative, set yMax to 0
+        yMax = yMax < 0 ? 0 : yMax;
 
         yScale.domain = [yMin, yMax];
     }
@@ -209,7 +207,7 @@ export class AreaSparkline extends Sparkline {
     }
 
     protected updateAxisLine() {
-        const { xScale, yScale, axis, xAxisLine, yData } = this;
+        const { xScale, yScale, axis, xAxisLine } = this;
 
         xAxisLine.x1 = xScale.range[0];
         xAxisLine.x2 = xScale.range[1];
@@ -217,7 +215,7 @@ export class AreaSparkline extends Sparkline {
         xAxisLine.stroke = axis.stroke;
         xAxisLine.strokeWidth = axis.strokeWidth;
 
-        const yZero: number =  yData.length === 1 && yData[0] !== 0 ? yScale.range[0] : yScale.convert(0);
+        const yZero: number = yScale.convert(0);
         xAxisLine.translationY = yZero;
     }
 
