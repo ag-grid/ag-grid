@@ -26,6 +26,7 @@ const FUNCTION_PROPERTIES = PropertyKeys.FUNCTION_PROPERTIES;
 function nodeIsDocumentContentLoaded(node) {
     try {
         return nodeIsFunctionCall(node) &&
+        node.expression.arguments.length > 0 &&
             node.expression.arguments[0].type === 'Literal' &&
             node.expression.arguments[0].value === 'DOMContentLoaded';
     } catch (e) {
