@@ -240,7 +240,7 @@ const Changelog = ({ location }) => {
         })
     }
 
-    const checkboxUnchecked = (event, filterTerm) => {
+    const onCheckboxChange = (event, filterTerm) => {
         function setTheFilter(column, filterValue, shouldFilter) {
             const filterInstance = gridApi.getFilterInstance(column);
             const currentFilterModel = filterInstance.getModel();
@@ -283,6 +283,33 @@ const Changelog = ({ location }) => {
         }
     }
 
+    const checkboxes = [
+        { id: 'featureRequest', label: 'Feature Requests', checked: true },
+        { id: 'defect', label: 'Defect', checked: true },
+        { id: 'deprecated', label: 'Deprecations', checked: false },
+        { id: 'breakingChange', label: 'Breaking Changes', checked: false }
+    ];
+
+    const createLabeledCheckbox = (checkboxConfig) => {
+        const { id, label, checked } = checkboxConfig;
+        const key = `${id}-checkbox`
+        return (
+            <div className={styles["single-checkbox-label-container"]} key={key}>
+                <label className={styles["label-for-checkboxes"]}>
+                    <input
+                        id={key}
+                        type="checkbox"
+                        className={styles["checkbox-class"]}
+                        defaultChecked={checked}
+                        onChange={event => onCheckboxChange(event, id)}
+                    >
+                    </input>
+                    {label}
+                </label>
+            </div>
+        );
+    };
+
     return (
         <>
             {!IS_SSR && (
@@ -302,93 +329,12 @@ const Changelog = ({ location }) => {
                             <input
                                 type="text"
                                 className={styles["search-bar"]}
-                                placeholder={"Search changelog... (e.g. AG-1280 or filtering)"}
+                                placeholder={"Search changelog..."}
                                 onChange={onQuickFilterChange}
                             ></input>
                         </div>
-
                         <div className={styles["all-checkboxes-container"]}>
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <div>
-                                    <input
-                                        id="featureRequest-checkbox"
-                                        type="checkbox"
-                                        className={styles["checkbox-class"]}
-                                        defaultChecked
-                                        onChange={event =>
-                                            checkboxUnchecked(event, "featureRequest")
-                                        }
-                                    ></input>
-                                </div>
-                                <div>
-                                    <label
-                                        htmlFor="featureRequest-checkbox"
-                                        className={styles["label-for-checkboxes"]}
-                                    >
-                                        Feature Requests
-                                    </label>
-                                </div>
-                            </div>
-                            <div className={styles["single-checkbox-label-container"]}>
-                                <div>
-                                    <input
-                                        id="defect-checkbox"
-                                        onChange={event => checkboxUnchecked(event, "defect")}
-                                        type="checkbox"
-                                        className={styles["checkbox-class"]}
-                                        defaultChecked
-                                    ></input>
-                                </div>
-                                <div>
-                                    <label
-                                        htmlFor="defect-checkbox"
-                                        className={styles["label-for-checkboxes"]}
-                                    >
-                                        Defects
-                                    </label>
-                                </div>
-                            </div>
-                            <div className={styles["single-checkbox-label-container"]}>
-                                <div>
-                                    <input
-                                        id="deprecated-checkbox"
-                                        className={styles["checkbox-class"]}
-                                        onChange={event => checkboxUnchecked(event, "deprecated")}
-                                        type="checkbox"
-                                    ></input>
-                                </div>
-                                <div>
-                                    <label
-                                        htmlFor="deprecated-checkbox"
-                                        className={styles["label-for-checkboxes"]}
-                                    >
-                                        Deprecations
-                                    </label>
-                                </div>
-                            </div>
-                            <div
-                                className={styles["single-checkbox-label-container"]}
-                                style={{ paddingRight: "10px" }}
-                            >
-                                <div>
-                                    <input
-                                        id="breakingChange-checkbox"
-                                        className={styles["checkbox-class"]}
-                                        onChange={event =>
-                                            checkboxUnchecked(event, "breakingChange")
-                                        }
-                                        type="checkbox"
-                                    ></input>
-                                </div>
-                                <div>
-                                    <label
-                                        htmlFor="breakingChange-checkbox"
-                                        className={styles["label-for-checkboxes"]}
-                                    >
-                                        Breaking Changes
-                                    </label>
-                                </div>
-                            </div>
+                            {checkboxes.map(checkboxConfig => createLabeledCheckbox(checkboxConfig))}
                             <VersionDropdownMenu
                                 versions={versions}
                                 onChange={fixVersion => setFixVersion(fixVersion)}

@@ -46,6 +46,11 @@ main {
     background-color: transparentize($light, 0.05);
     border-bottom: 1px solid $ag-light-grey;
 
+    @supports (backdrop-filter: none) {
+        background-color: transparentize($light, 0.30);
+        backdrop-filter: blur(20px);
+    }
+
     @include media-breakpoint-up(lg) {
         @supports (position: sticky) {
             position: sticky;
