@@ -1348,7 +1348,6 @@ function PersonFilter() {
 }
 
 PersonFilter.prototype.init = function(params) {
-    this.valueGetter = params.valueGetter;
     this.filterText = null;
     this.params = params;
     this.setupGui();
@@ -1389,17 +1388,27 @@ PersonFilter.prototype.getGui = function() {
 };
 
 PersonFilter.prototype.doesFilterPass = function(params) {
-    // make sure each word passes separately, ie search for firstname, lastname
-    var passed = true;
-    var valueGetter = this.valueGetter;
-    this.filterText.toLowerCase().split(" ").forEach(function(filterWord) {
-        var value = valueGetter(params);
-        if (value.toString().toLowerCase().indexOf(filterWord) < 0) {
-            passed = false;
-        }
-    });
+    const { api, colDef, column, columnApi, context } = this.params;
+    const { node } = params;
 
-    return passed;
+    const value = this.params.valueGetter({
+        api,
+        colDef,
+        column,
+        columnApi,
+        context,
+        data: node.data,
+        getValue: (field) => node.data[field],
+        node,
+    }).toString().toLowerCase();
+
+    // make sure each word passes separately, ie search for firstname, lastname
+    return this.filterText
+        .toLowerCase()
+        .split(' ')
+        .every(function (filterWord) {
+            return value.indexOf(filterWord) >= 0;
+        });
 };
 
 PersonFilter.prototype.isFilterActive = function() {
@@ -1484,7 +1493,7 @@ WinningsFilter.prototype.init = function(params) {
     this.cbNegative.onclick = this.filterChangedCallback;
     this.cbGreater50.onclick = this.filterChangedCallback;
     this.cbGreater90.onclick = this.filterChangedCallback;
-    this.valueGetter = params.valueGetter;
+    this.params = params;
 };
 
 WinningsFilter.prototype.getGui = function() {
@@ -1494,8 +1503,20 @@ WinningsFilter.prototype.getGui = function() {
 };
 
 WinningsFilter.prototype.doesFilterPass = function(node) {
+    var { api, colDef, column, columnApi, context } = this.params;
+    var { node } = params;
 
-    var value = this.valueGetter(node);
+    var value = this.params.valueGetter({
+        api,
+        colDef,
+        column,
+        columnApi,
+        context,
+        data: node.data,
+        getValue: (field) => node.data[field],
+        node,
+    })
+    
     if (this.cbNoFilter.checked) { return true; }
     if (this.cbPositive.checked) { return value >= 0; }
     if (this.cbNegative.checked) { return value < 0; }

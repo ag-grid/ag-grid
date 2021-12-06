@@ -30,8 +30,18 @@ export class ClientSideValuesExtractor {
             // only pull values from rows that have data. this means we skip filler group nodes.
             if (!node.data || !predicate(node)) { return; }
 
-            let value: string | null = this.filterParams.valueGetter(node);
-
+            const {api, colDef, column, columnApi, context} = this.filterParams;
+            let value: string | null = this.filterParams.valueGetter({
+                api,
+                colDef,
+                column,
+                columnApi,
+                context,
+                data: node.data,
+                getValue: (field) => node.data[field],
+                node,
+            });
+    
             if (keyCreator) {
                 const params: KeyCreatorParams = {
                     value: value,

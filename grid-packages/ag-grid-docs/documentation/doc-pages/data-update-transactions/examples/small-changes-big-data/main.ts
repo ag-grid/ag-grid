@@ -1,4 +1,4 @@
-import { ColDef, GridOptions, IAggFuncParams, IDoesFilterPassParams, IFilterComp, IFilterParams, IFilterType, RowNode } from '@ag-grid-community/core'
+import { ColDef, GridOptions, IAggFuncParams, IDoesFilterPassParams, IFilterComp, IFilterParams, IFilterType } from '@ag-grid-community/core'
 
 declare var LINUX_DISTROS: string[];
 declare var CITIES: string[];
@@ -26,13 +26,13 @@ function myComparator(a: any, b: any) {
 function getMyFilter(): IFilterType {
 
   class MyFilter implements IFilterComp {
-    valueGetter!: (rowNode: RowNode) => any;
+    filterParams!: IFilterParams;
     filterValue!: number | null;
     eGui: any;
     eInput: any;
 
     init(params: IFilterParams) {
-      this.valueGetter = params.valueGetter
+      this.filterParams = params;
       this.filterValue = null
 
       this.eGui = document.createElement('div')
@@ -70,7 +70,19 @@ function getMyFilter(): IFilterType {
     doesFilterPass(params: IDoesFilterPassParams) {
       filterCallCount++
 
-      var value = this.valueGetter(params.node)
+      const { api, colDef, column, columnApi, context } = this.filterParams;
+      const { node } = params;
+      const value = this.filterParams.valueGetter({
+          api,
+          colDef,
+          column,
+          columnApi,
+          context,
+          data: node.data,
+          getValue: (field) => node.data[field],
+          node,
+      });
+
       return value > (this.filterValue || 0)
     }
   }

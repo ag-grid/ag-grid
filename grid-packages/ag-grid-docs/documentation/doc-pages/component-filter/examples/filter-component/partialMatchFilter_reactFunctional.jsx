@@ -16,9 +16,22 @@ export default forwardRef((props, ref) => {
             },
 
             doesFilterPass(params) {
+                const { api, colDef, column, columnApi, context, valueGetter } = props;
+                const { node } = params;
+                const value = valueGetter({
+                    api,
+                    colDef,
+                    column,
+                    columnApi,
+                    context,
+                    data: node.data,
+                    getValue: (field) => node.data[field],
+                    node,
+                }).toString().toLowerCase();
+        
                 return text.toLowerCase()
                     .split(' ')
-                    .every(filterWord => props.valueGetter(params.node).toString().toLowerCase().indexOf(filterWord) >= 0);
+                    .every(filterWord => value.indexOf(filterWord) >= 0);
             },
 
             getModel() {

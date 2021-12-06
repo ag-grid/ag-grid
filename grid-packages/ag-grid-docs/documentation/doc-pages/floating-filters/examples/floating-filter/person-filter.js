@@ -2,7 +2,7 @@ function getPersonFilter() {
     function PersonFilter() { }
 
     PersonFilter.prototype.init = function (params) {
-        this.valueGetter = params.valueGetter
+        this.params = params
         this.filterText = null
         this.setupGui(params)
     }
@@ -35,16 +35,26 @@ function getPersonFilter() {
     }
 
     PersonFilter.prototype.doesFilterPass = function (params) {
-        // make sure each word passes separately, ie search for firstname, lastname
-        var valueGetter = this.valueGetter
+        const { api, colDef, column, columnApi, context } = this.params;
+        const { node } = params;
 
+        const value = this.params.valueGetter({
+            api,
+            colDef,
+            column,
+            columnApi,
+            context,
+            data: node.data,
+            getValue: (field) => node.data[field],
+            node,
+        }).toString().toLowerCase();
+
+        // make sure each word passes separately, ie search for firstname, lastname
         return this.filterText
             .toLowerCase()
             .split(' ')
             .every(function (filterWord) {
-                return (
-                    valueGetter(params).toString().toLowerCase().indexOf(filterWord) >= 0
-                )
+                return value.indexOf(filterWord) >= 0;
             })
     }
 

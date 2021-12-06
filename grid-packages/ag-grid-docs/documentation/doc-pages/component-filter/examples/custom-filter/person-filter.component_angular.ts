@@ -1,7 +1,7 @@
 import {Component, ViewChild} from "@angular/core";
 
 import {AgFilterComponent} from "@ag-grid-community/angular";
-import {IDoesFilterPassParams, IFilterParams, RowNode} from "@ag-grid-community/core";
+import {IDoesFilterPassParams, IFilterParams, RowNode, ValueGetterFunc} from "@ag-grid-community/core";
 
 @Component({
     selector: 'year-component',
@@ -22,20 +22,30 @@ import {IDoesFilterPassParams, IFilterParams, RowNode} from "@ag-grid-community/
 })
 export class PersonFilter implements AgFilterComponent {
     params: IFilterParams;
-    valueGetter: (rowNode: RowNode) => any;
     filterText: string = '';
 
     agInit(params: IFilterParams): void {
         this.params = params;
-        this.valueGetter = params.valueGetter;
     }
 
     doesFilterPass(params: IDoesFilterPassParams) {
         // make sure each word passes separately, ie search for firstname, lastname
         let passed = true;
-        this.filterText.toLowerCase().split(' ').forEach(filterWord => {
-            const value = this.valueGetter(params);
+        const { api, colDef, column, columnApi, context } = this.params;
+        const { node } = params;
 
+        this.filterText.toLowerCase().split(' ').forEach(filterWord => {
+            const value = this.params.valueGetter({
+                api,
+                colDef,
+                column,
+                columnApi,
+                context,
+                data: node.data,
+                getValue: (field) => node.data[field],
+                node,
+            });
+      
             if (value.toString().toLowerCase().indexOf(filterWord) < 0) {
                 passed = false;
             }

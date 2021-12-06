@@ -9,7 +9,6 @@ export default {
     data() {
         return {
             text: '',
-            valueGetter: null
         }
     },
     methods: {
@@ -18,10 +17,23 @@ export default {
         },
 
         doesFilterPass(params) {
+            const { api, colDef, column, columnApi, context, valueGetter } = this.params;
+            const { node } = params;
+            const value = valueGetter({
+                api,
+                colDef,
+                column,
+                columnApi,
+                context,
+                data: node.data,
+                getValue: (field) => node.data[field],
+                node,
+            }).toString().toLowerCase();
+
             return !this.text || this.text.toLowerCase()
                 .split(" ")
                 .every((filterWord) => {
-                    return this.valueGetter(params.node).toString().toLowerCase().indexOf(filterWord) >= 0;
+                    return value.indexOf(filterWord) >= 0;
                 });
         },
 
@@ -50,7 +62,4 @@ export default {
             }
         }
     },
-    created() {
-        this.valueGetter = this.params.valueGetter;
-    }
 }

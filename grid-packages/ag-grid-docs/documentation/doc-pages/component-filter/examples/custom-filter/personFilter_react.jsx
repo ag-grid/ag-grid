@@ -10,10 +10,22 @@ export default class PersonFilter extends Component {
     }
 
     doesFilterPass(params) {
+        const { api, colDef, column, columnApi, context } = this.props;
+        const { node } = params;
+
         // make sure each word passes separately, ie search for firstname, lastname
         let passed = true;
         this.state.filterText.toLowerCase().split(' ').forEach(filterWord => {
-            const value = this.props.valueGetter(params);
+            const value = this.props.valueGetter({
+                api,
+                colDef,
+                column,
+                columnApi,
+                context,
+                data: node.data,
+                getValue: (field) => node.data[field],
+                node,
+            });
 
             if (value.toString().toLowerCase().indexOf(filterWord) < 0) {
                 passed = false;

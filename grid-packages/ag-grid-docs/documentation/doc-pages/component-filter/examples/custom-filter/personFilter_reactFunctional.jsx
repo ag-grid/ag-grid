@@ -7,11 +7,23 @@ export default forwardRef((props, ref) => {
     useImperativeHandle(ref, () => {
         return {
             doesFilterPass(params) {
+                const { api, colDef, column, columnApi, context } = props;
+                const { node } = params;
+
                 // make sure each word passes separately, ie search for firstname, lastname
                 let passed = true;
                 filterText.toLowerCase().split(' ').forEach(filterWord => {
-                    const value = props.valueGetter(params);
-
+                    const value = props.valueGetter({
+                        api,
+                        colDef,
+                        column,
+                        columnApi,
+                        context,
+                        data: node.data,
+                        getValue: (field) => node.data[field],
+                        node,
+                    });
+        
                     if (value.toString().toLowerCase().indexOf(filterWord) < 0) {
                         passed = false;
                     }

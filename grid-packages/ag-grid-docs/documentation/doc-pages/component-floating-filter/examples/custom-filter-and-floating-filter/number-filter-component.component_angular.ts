@@ -16,22 +16,31 @@ import {IDoesFilterPassParams, IFilterParams, RowNode} from "@ag-grid-community/
 })
 export class NumberFilterComponent implements AgFilterComponent {
     params: IFilterParams;
-    valueGetter: (rowNode: RowNode) => any;
     filterText: Number | null | string = null;
 
     agInit(params: IFilterParams): void {
         this.params = params;
-        this.valueGetter = params.valueGetter;
     }
 
     doesFilterPass(params: IDoesFilterPassParams) {
-        const valueGetter = this.valueGetter;
-        const value = valueGetter(params);
+        if (!this.isFilterActive()) { return; }
 
-        if (this.isFilterActive()) {
-            if (!value) return false;
-            return Number(value) > Number(this.filterText);
-        }
+        var { api, colDef, column, columnApi, context, valueGetter } = this.params;
+        var { node } = params;
+    
+        var value = valueGetter({
+            api,
+            colDef,
+            column,
+            columnApi,
+            context,
+            data: node.data,
+            getValue: (field) => node.data[field],
+            node,
+        });
+    
+        if (!value) return false;
+        return Number(value) > Number(this.filterText);
     }
 
     isFilterActive() {

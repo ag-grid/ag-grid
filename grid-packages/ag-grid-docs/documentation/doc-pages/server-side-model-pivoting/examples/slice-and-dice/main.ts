@@ -150,7 +150,18 @@ function createCustomAgeFilter() {
 
     doesFilterPass(params: IDoesFilterPassParams) {
       // not needed for server side filtering
-      var value = this.params.valueGetter(params.node)
+      const { api, colDef, column, columnApi, context } = this.params;
+      const { node } = params;
+      const value = this.params.valueGetter({
+          api,
+          colDef,
+          column,
+          columnApi,
+          context,
+          data: node.data,
+          getValue: (field) => node.data[field],
+          node,
+      });
       return value == this.filterValue
     }
 

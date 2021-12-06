@@ -1,6 +1,5 @@
 class NumberFilterComponent {
     init(params) {
-        this.valueGetter = params.valueGetter;
         this.filterText = null;
         this.params = params;
         this.setupGui();
@@ -43,14 +42,26 @@ class NumberFilterComponent {
     }
 
     doesFilterPass(params) {
-        const valueGetter = this.valueGetter;
-        const value = valueGetter(params);
+        if (!this.isFilterActive()) { return; }
+
+        const { api, colDef, column, columnApi, context, valueGetter } = this.params;
+        const { node } = params;
+    
+        const value = valueGetter({
+            api,
+            colDef,
+            column,
+            columnApi,
+            context,
+            data: node.data,
+            getValue: (field) => node.data[field],
+            node,
+        });        
+
         const filterValue = this.filterText;
 
-        if (this.isFilterActive()) {
-            if (!value) return false;
-            return Number(value) > Number(filterValue);
-        }
+        if (!value) return false;
+        return Number(value) > Number(filterValue);
     }
 
     isFilterActive() {
