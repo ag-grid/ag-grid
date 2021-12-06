@@ -85,7 +85,8 @@ export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> {
     }
 
     private handleKeySpace(e: KeyboardEvent): void {
-        if (!this.eSetFilterList.contains(document.activeElement) || !this.virtualList) { return; }
+        const eDocument = this.gridOptionsWrapper.getDocument();
+        if (!this.eSetFilterList.contains(eDocument.activeElement) || !this.virtualList) { return; }
 
         const currentItem = this.virtualList.getLastFocusedRow();
         if (currentItem == null) { return; }

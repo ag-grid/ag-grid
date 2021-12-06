@@ -50,10 +50,11 @@ export class TabbedLayout extends Component {
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {
+        const eDocument = this.gridOptionsWrapper.getDocument();
         switch (e.key) {
             case KeyCode.RIGHT:
             case KeyCode.LEFT:
-                if (!this.eHeader.contains(document.activeElement)) { return; }
+                if (!this.eHeader.contains(eDocument.activeElement)) { return; }
 
                 const currentPosition = this.items.indexOf(this.activeItem);
                 const nextPosition = e.key === KeyCode.RIGHT ? Math.min(currentPosition + 1, this.items.length - 1) : Math.max(currentPosition - 1, 0);
@@ -78,7 +79,8 @@ export class TabbedLayout extends Component {
         if (e.defaultPrevented) { return; }
 
         const { focusService, eHeader, eBody, activeItem } = this;
-        const activeElement = document.activeElement as HTMLElement;
+        const eDocument = this.gridOptionsWrapper.getDocument();
+        const activeElement = eDocument.activeElement as HTMLElement;
 
         e.preventDefault();
 

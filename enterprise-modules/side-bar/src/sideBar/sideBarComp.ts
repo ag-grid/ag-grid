@@ -68,7 +68,8 @@ export class SideBarComp extends Component implements ISideBar {
         const { focusService, sideBarButtonsComp } = this;
         const eGui = this.getGui();
         const sideBarGui = sideBarButtonsComp.getGui();
-        const activeElement = document.activeElement as HTMLElement;
+        const eDocument = this.gridOptionsWrapper.getDocument();
+        const activeElement = eDocument.activeElement as HTMLElement;
         const openPanel = eGui.querySelector('.ag-tool-panel-wrapper:not(.ag-hidden)') as HTMLElement;
 
         if (!openPanel) { return; }
@@ -80,7 +81,8 @@ export class SideBarComp extends Component implements ISideBar {
         } else {
             if (!focusService.isFocusUnderManagedComponent(openPanel) && e.shiftKey) {
                 const firstFocusableEl = focusService.findFocusableElements(openPanel)[0];
-                if (document.activeElement === firstFocusableEl) {
+                const eDocument = this.gridOptionsWrapper.getDocument();
+                if (eDocument.activeElement === firstFocusableEl) {
                     const selectedButton = sideBarGui.querySelector('.ag-selected button') as HTMLElement;
 
                     if (selectedButton) {
@@ -94,10 +96,11 @@ export class SideBarComp extends Component implements ISideBar {
     }
 
     protected handleKeyDown(e: KeyboardEvent): void {
-        if (!this.sideBarButtonsComp.getGui().contains(document.activeElement)) { return; }
+        const eDocument = this.gridOptionsWrapper.getDocument();
+        if (!this.sideBarButtonsComp.getGui().contains(eDocument.activeElement)) { return; }
         const sideBarGui = this.sideBarButtonsComp.getGui();
         const buttons: HTMLElement[] = Array.prototype.slice.call(sideBarGui.querySelectorAll('.ag-side-button'));
-        const currentButton = document.activeElement;
+        const currentButton = eDocument.activeElement;
         const currentPos = buttons.findIndex(button => button.contains(currentButton));
         let nextPos: number | null = null;
 

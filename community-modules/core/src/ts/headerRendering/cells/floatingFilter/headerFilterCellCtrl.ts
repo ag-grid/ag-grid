@@ -109,7 +109,8 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     protected onTabKeyDown(e: KeyboardEvent) {
-        const activeEl = document.activeElement as HTMLElement;
+        const eDocument = this.gridOptionsWrapper.getDocument();
+        const activeEl = eDocument.activeElement as HTMLElement;
         const wrapperHasFocus = activeEl === this.eGui;
 
         if (wrapperHasFocus) { return; }
@@ -154,7 +155,8 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     protected handleKeyDown(e: KeyboardEvent) {
-        const activeEl = document.activeElement;
+        const eDocument = this.gridOptionsWrapper.getDocument();
+        const activeEl = eDocument.activeElement;
         const wrapperHasFocus = activeEl === this.eGui;
 
         switch (e.key) {

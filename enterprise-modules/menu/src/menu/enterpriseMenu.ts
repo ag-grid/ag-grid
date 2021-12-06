@@ -450,8 +450,9 @@ export class EnterpriseMenu extends BeanStub {
         // this method only gets called when the menu was closed by selection an option
         // in this case we highlight the cell that was previously highlighted
         const focusedCell = this.focusService.getFocusedCell();
+        const eDocument = this.gridOptionsWrapper.getDocument();
 
-        if (document.activeElement === document.body && focusedCell) {
+        if (eDocument.activeElement === eDocument.body && focusedCell) {
             const { rowIndex, rowPinned, column } = focusedCell;
             this.focusService.setFocusedCell(rowIndex, column, rowPinned, true);
         }
