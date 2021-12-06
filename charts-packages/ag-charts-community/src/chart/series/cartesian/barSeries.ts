@@ -254,6 +254,12 @@ export class BarSeries extends CartesianSeries {
             }
         }
 
+        const { seriesItemEnabled, hideInChart } = this;
+        seriesItemEnabled.clear();
+        yKeys.forEach(stack => {
+            stack.forEach(yKey => hideInChart.indexOf(yKey) < 0 ? seriesItemEnabled.set(yKey, true) : seriesItemEnabled.set(yKey, false));
+        });
+
         if (!equal(this._yKeys, yKeys)) {
             if (flatYKeys) {
                 this.flatYKeys = flatYKeys;
@@ -275,12 +281,6 @@ export class BarSeries extends CartesianSeries {
             });
             this.yData = [];
 
-            const { seriesItemEnabled } = this;
-            seriesItemEnabled.clear();
-            yKeys.forEach(stack => {
-                stack.forEach(yKey => seriesItemEnabled.set(yKey, true));
-            });
-
             const { groupScale } = this;
             groupScale.domain = visibleStacks;
             groupScale.padding = 0.1;
@@ -291,6 +291,19 @@ export class BarSeries extends CartesianSeries {
     }
     get yKeys(): string[][] {
         return this._yKeys;
+    }
+
+    protected _hideInChart: string[] = [];
+    set hideInChart(value: string[]) {
+        if (!equal(this._hideInChart, value)) {
+            this._hideInChart = value;
+            if (this.flatYKeys) {
+                this.yKeys = this.flatYKeys as any;
+            }
+        }
+    }
+    get hideInChart(): string[] {
+        return this._hideInChart;
     }
 
     protected _grouped: boolean = false;
