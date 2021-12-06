@@ -233,7 +233,10 @@ export class CellCtrl extends BeanStub {
         const colIdSanitised = escapeString(this.column.getId());
         const ariaColIndex = this.beans.columnModel.getAriaColumnIndex(this.column);
 
-        this.cellComp.setTabIndex(-1);
+        if (!this.gow.isSuppressCellSelection()) {
+            this.cellComp.setTabIndex(-1);
+        }
+
         this.cellComp.setRole('gridcell');
         this.cellComp.setAriaColIndex(ariaColIndex);
         this.cellComp.setColId(colIdSanitised!);

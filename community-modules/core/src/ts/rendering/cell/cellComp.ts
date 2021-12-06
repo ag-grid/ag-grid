@@ -210,10 +210,6 @@ export class CellComp extends Component implements TooltipParentComp {
         this.eCellValue = this.getRefElement('eCellValue');
         this.eCellWrapper = this.getRefElement('eCellWrapper');
 
-        if (!this.forceWrapper) {
-            this.eCellValue.setAttribute('unselectable', 'on');
-        }
-
         const id = this.eCellValue.id = `cell-${this.getCompId()}`;
         const describedByIds: string[] = [];
 
