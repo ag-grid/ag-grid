@@ -152,7 +152,7 @@ export class ChartService extends BeanStub implements IChartService {
 
     public createRangeChart(params: CreateRangeChartParams): ChartRef | undefined {
         const cellRange = this.rangeService
-            ? this.rangeService.createCellRangeFromCellRangeParams(params.cellRange)
+            ? this.rangeService.createCellRangeFromCellRangeParams(params.cellRange as CellRangeParams)
             : undefined;
 
         if (!cellRange) {
@@ -208,7 +208,7 @@ export class ChartService extends BeanStub implements IChartService {
 
     public createCrossFilterChart(params: CreateCrossFilterChartParams): ChartRef | undefined {
         const cellRange = this.rangeService
-            ? this.rangeService.createCellRangeFromCellRangeParams(params.cellRange)
+            ? this.rangeService.createCellRangeFromCellRangeParams(params.cellRange as CellRangeParams)
             : undefined;
 
         if (!cellRange) {

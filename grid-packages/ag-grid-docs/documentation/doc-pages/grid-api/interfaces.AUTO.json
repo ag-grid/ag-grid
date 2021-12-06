@@ -4608,10 +4608,14 @@
       "unlinkChart?": "/** When enabled the chart will be unlinked from the grid after creation, any updates to the data will not be reflected in the chart. */"
     }
   },
+  "ChartParamsCellRange": {
+    "meta": { "isTypeAlias": true },
+    "type": "Partial<Omit<CellRangeParams, 'rowStartPinned' | 'rowEndPinned'>>"
+  },
   "CreateRangeChartParams": {
     "meta": {},
     "type": {
-      "cellRange": "CellRangeParams",
+      "cellRange": "ChartParamsCellRange",
       "suppressChartRanges?": "boolean",
       "aggFunc?": "string | IAggFunc",
       "chartType": "ChartType",
@@ -4621,7 +4625,7 @@
       "unlinkChart?": "boolean"
     },
     "docs": {
-      "cellRange": "/** The range of cells to be charted. */",
+      "cellRange": "/** The range of cells to be charted. If no rows / rowIndexes are specified all rows will be included. */",
       "suppressChartRanges?": "/** Suppress highlighting the selected range in the grid. */",
       "aggFunc?": "/** The aggregation function that should be applied to all series data. */",
       "chartType": "/** The type of chart to create. */",
@@ -4634,7 +4638,7 @@
   "CreateCrossFilterChartParams": {
     "meta": {},
     "type": {
-      "cellRange": "CellRangeParams",
+      "cellRange": "ChartParamsCellRange",
       "suppressChartRanges?": "boolean",
       "aggFunc?": "string | IAggFunc",
       "chartType": "ChartType",
@@ -4644,7 +4648,7 @@
       "unlinkChart?": "boolean"
     },
     "docs": {
-      "cellRange": "/** The range of cells to be charted. */",
+      "cellRange": "/** The range of cells to be charted. If no rows / rowIndexes are specified all rows will be included. */",
       "suppressChartRanges?": "/** Suppress highlighting the selected range in the grid. */",
       "aggFunc?": "/** The aggregation function that should be applied to all series data. */",
       "chartType": "/** The type of chart to create. */",

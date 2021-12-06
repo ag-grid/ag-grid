@@ -193,7 +193,7 @@ export { AlignedGridsService } from "ag-grid-community";
 export { Constants } from "ag-grid-community";
 export { KeyCode } from "ag-grid-community";
 export { Grid, GridParams, GridCoreCreator } from "ag-grid-community";
-export { GridApi, RedrawRowsParams, RefreshCellsParams, StartEditingCellParams, DetailGridInfo, CreateRangeChartParams, CreatePivotChartParams, CreateCrossFilterChartParams } from "ag-grid-community";
+export { GridApi, RedrawRowsParams, RefreshCellsParams, StartEditingCellParams, DetailGridInfo, CreateRangeChartParams, ChartParamsCellRange, CreatePivotChartParams, CreateCrossFilterChartParams } from "ag-grid-community";
 export { Events } from "ag-grid-community";
 export { FocusService } from "ag-grid-community";
 export { defaultGroupComparator } from "ag-grid-community";

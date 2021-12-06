@@ -155,17 +155,18 @@ interface CreateChartParams {
     unlinkChart?: boolean;
 }
 
+export type ChartParamsCellRange = Partial<Omit<CellRangeParams, 'rowStartPinned' | 'rowEndPinned'>>
 export interface CreateRangeChartParams extends CreateChartParams {
-    /** The range of cells to be charted. */
-    cellRange: CellRangeParams;
+    /** The range of cells to be charted. If no rows / rowIndexes are specified all rows will be included. */
+    cellRange: ChartParamsCellRange;
     /** Suppress highlighting the selected range in the grid. */
     suppressChartRanges?: boolean;
     /** The aggregation function that should be applied to all series data. */
     aggFunc?: string | IAggFunc;
 }
 export interface CreateCrossFilterChartParams extends CreateChartParams {
-    /** The range of cells to be charted. */
-    cellRange: CellRangeParams;
+    /** The range of cells to be charted. If no rows / rowIndexes are specified all rows will be included. */
+    cellRange: ChartParamsCellRange;
     /** Suppress highlighting the selected range in the grid. */
     suppressChartRanges?: boolean;
     /** The aggregation function that should be applied to all series data. */

@@ -7933,10 +7933,11 @@
       "type": { "returnType": "boolean", "optional": true }
     }
   },
+  "ChartParamsCellRange": {},
   "CreateRangeChartParams": {
     "cellRange": {
-      "description": "/** The range of cells to be charted. */",
-      "type": { "returnType": "CellRangeParams", "optional": false }
+      "description": "/** The range of cells to be charted. If no rows / rowIndexes are specified all rows will be included. */",
+      "type": { "returnType": "ChartParamsCellRange", "optional": false }
     },
     "suppressChartRanges": {
       "description": "/** Suppress highlighting the selected range in the grid. */",
@@ -7969,8 +7970,8 @@
   },
   "CreateCrossFilterChartParams": {
     "cellRange": {
-      "description": "/** The range of cells to be charted. */",
-      "type": { "returnType": "CellRangeParams", "optional": false }
+      "description": "/** The range of cells to be charted. If no rows / rowIndexes are specified all rows will be included. */",
+      "type": { "returnType": "ChartParamsCellRange", "optional": false }
     },
     "suppressChartRanges": {
       "description": "/** Suppress highlighting the selected range in the grid. */",
