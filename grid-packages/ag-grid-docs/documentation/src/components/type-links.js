@@ -23,7 +23,6 @@ export const TYPE_LINKS = {
     ICellRendererParams: '/component-cell-renderer/#reference-ICellRendererParams',
     ICellEditorParams: '/component-cell-editor/#reference-ICellEditorParams',
     ChartModel: '/integrated-charts-api/#saving-and-restoring-charts',
-    ChartType: '/integrated-charts-events/#chartoptionschanged',
     ColDef: '/column-properties/',
     ColGroupDef: '/column-properties/',
     AbstractColDef: '/column-properties/',
