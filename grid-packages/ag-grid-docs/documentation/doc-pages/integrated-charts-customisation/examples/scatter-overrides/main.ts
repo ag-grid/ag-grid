@@ -40,7 +40,6 @@ const gridOptions: GridOptions = {
           maxSize: 12,
           strokeWidth: 4,
         },
-        //paired: true,
         tooltip: {
           renderer: function (params) {
             var label = params.datum[params.labelKey!]
