@@ -795,8 +795,8 @@ export class RowNode implements IEventEmitter {
     /**
      * Select (or deselect) the node.
      * @param newValue -`true` for selection, `false` for deselection.
-     * @param clearSelection - If selecting, then passing `true` for `clearSelection` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact.
-     * @param suppressFinishActions
+     * @param clearSelection - If selecting, then passing `true` will select the node exclusively (i.e. NOT do multi select). If doing deselection, `clearSelection` has no impact.
+     * @param suppressFinishActions - Pass `true` to prevent the `selectionChanged` from being fired. Note that the `rowSelected` event will still be fired.
      */
     public setSelected(newValue: boolean, clearSelection: boolean = false, suppressFinishActions: boolean = false) {
         this.setSelectedParams({
