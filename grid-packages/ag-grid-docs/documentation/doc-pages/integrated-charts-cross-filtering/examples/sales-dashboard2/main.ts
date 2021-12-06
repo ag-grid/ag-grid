@@ -1,4 +1,4 @@
-import { ChartType, FirstDataRenderedEvent, Grid, GridApi, GridOptions } from '@ag-grid-community/core'
+import { FirstDataRenderedEvent, Grid, GridApi, GridOptions } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -60,7 +60,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 
 function createQuarterlySalesChart(gridApi: GridApi) {
   gridApi.createCrossFilterChart({
-    chartType: 'line' as ChartType,
+    chartType: 'line',
     cellRange: {
       rowStartIndex: null,
       rowEndIndex: null,
@@ -98,7 +98,7 @@ function createQuarterlySalesChart(gridApi: GridApi) {
 
 function createSalesByRefChart(gridApi: GridApi) {
   gridApi.createCrossFilterChart({
-    chartType: 'doughnut' as ChartType,
+    chartType: 'doughnut',
     cellRange: {
       rowStartIndex: null,
       rowEndIndex: null,
@@ -129,7 +129,7 @@ function createSalesByRefChart(gridApi: GridApi) {
 
 function createHandsetSalesChart(gridApi: GridApi) {
   gridApi.createCrossFilterChart({
-    chartType: 'area' as ChartType,
+    chartType: 'area',
     cellRange: {
       rowStartIndex: null,
       rowEndIndex: null,

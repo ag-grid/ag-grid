@@ -198,7 +198,7 @@ export class ChartDataPanel extends Component {
             return col => _.escapeString(col.displayName)!;
         }
 
-        const isBubble = this.chartType === ChartType.Bubble;
+        const isBubble = this.chartType === 'bubble';
         const isInPairedMode = this.isInPairedMode();
         let selectedValuesCount = 0;
 

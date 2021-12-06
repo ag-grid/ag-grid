@@ -1,9 +1,8 @@
-import { ChartType } from "@ag-grid-community/core";
 import { MiniChartWithAxes } from "./miniChartWithAxes";
 import { LinearScale, Rect } from "ag-charts-community";
 
 export class MiniHistogram extends MiniChartWithAxes {
-    static chartType = ChartType.Histogram;
+    static chartType = 'histogram';
 
     private readonly bars: Rect[];
 

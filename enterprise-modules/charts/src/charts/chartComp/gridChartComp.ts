@@ -234,29 +234,29 @@ export class GridChartComp extends Component {
 
     private static createChartProxy(chartProxyParams: ChartProxyParams): ChartProxy {
         switch (chartProxyParams.chartType) {
-            case ChartType.Column:
-            case ChartType.Bar:
-            case ChartType.GroupedColumn:
-            case ChartType.StackedColumn:
-            case ChartType.NormalizedColumn:
-            case ChartType.GroupedBar:
-            case ChartType.StackedBar:
-            case ChartType.NormalizedBar:
+            case 'column':
+            case 'bar':
+            case 'groupedColumn':
+            case 'stackedColumn':
+            case 'normalizedColumn':
+            case 'groupedBar':
+            case 'stackedBar':
+            case 'normalizedBar':
                 return new BarChartProxy(chartProxyParams);
-            case ChartType.Pie:
+            case 'pie':
                 return new PieChartProxy(chartProxyParams);
-            case ChartType.Doughnut:
+            case 'doughnut':
                 return new DoughnutChartProxy(chartProxyParams);
-            case ChartType.Area:
-            case ChartType.StackedArea:
-            case ChartType.NormalizedArea:
+            case 'area':
+            case 'stackedArea':
+            case 'normalizedArea':
                 return new AreaChartProxy(chartProxyParams);
-            case ChartType.Line:
+            case 'line':
                 return new LineChartProxy(chartProxyParams);
-            case ChartType.Scatter:
-            case ChartType.Bubble:
+            case 'scatter':
+            case 'bubble':
                 return new ScatterChartProxy(chartProxyParams);
-            case ChartType.Histogram:
+            case 'histogram':
                 return new HistogramChartProxy(chartProxyParams);
         }
     }
@@ -391,7 +391,7 @@ export class GridChartComp extends Component {
         let minFieldsRequired = 1;
 
         if (this.chartController.isActiveXYChart()) {
-            minFieldsRequired = this.model.getChartType() === ChartType.Bubble ? 3 : 2;
+            minFieldsRequired = this.model.getChartType() === 'bubble' ? 3 : 2;
         }
 
         const isEmptyChart = fields.length < minFieldsRequired || data.length === 0;

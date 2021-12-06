@@ -1,4 +1,4 @@
-import { ChartMenuOptions, ChartType, ColDef, CreateRangeChartParams, FirstDataRenderedEvent, GridOptions, ValueFormatterParams } from '@ag-grid-community/core'
+import { ChartMenuOptions, ColDef, CreateRangeChartParams, FirstDataRenderedEvent, GridOptions, ValueFormatterParams } from '@ag-grid-community/core'
 declare var moment: any;
 
 function getColumnDefs() {
@@ -80,7 +80,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
       rowEndIndex: null,
       columns: ['date', 'avgTemp'],
     },
-    chartType: 'line' as ChartType,
+    chartType: 'line',
   }
   currentChartRef = params.api.createRangeChart(createRangeChartParams)
 }

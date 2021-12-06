@@ -1,4 +1,4 @@
-import { ChartType, FirstDataRenderedEvent, GridApi, GridOptions } from '@ag-grid-community/core'
+import { FirstDataRenderedEvent, GridApi, GridOptions } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -29,7 +29,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 
 function createColumnChart(gridApi: GridApi) {
   gridApi.createCrossFilterChart({
-    chartType: 'column' as ChartType,
+    chartType: 'column',
     cellRange: {
       rowStartIndex: null,
       rowEndIndex: null,
@@ -62,7 +62,7 @@ function createColumnChart(gridApi: GridApi) {
 
 function createBubbleChart(gridApi: GridApi) {
   gridApi.createCrossFilterChart({
-    chartType: 'bubble' as ChartType,
+    chartType: 'bubble',
     cellRange: {
       rowStartIndex: null,
       rowEndIndex: null,

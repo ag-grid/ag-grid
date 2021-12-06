@@ -1,5 +1,4 @@
 import {
-    _,
     AgChartThemeOverrides,
     Autowired,
     Bean,
@@ -74,7 +73,7 @@ export class ChartService extends BeanStub implements IChartService {
         return url;
     }
 
-    public createChartFromCurrentRange(chartType: ChartType = ChartType.GroupedColumn): ChartRef | undefined {
+    public createChartFromCurrentRange(chartType: ChartType = 'groupedColumn'): ChartRef | undefined {
         const selectedRange: CellRange = this.getSelectedRange();
         return this.createChart(selectedRange, chartType);
     }

@@ -1,4 +1,4 @@
-import { ChartType, CreateRangeChartParams, FirstDataRenderedEvent, GetChartToolbarItemsParams, GridOptions, ValueParserParams } from '@ag-grid-community/core'
+import { CreateRangeChartParams, FirstDataRenderedEvent, GetChartToolbarItemsParams, GridOptions, ValueParserParams } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -71,7 +71,7 @@ function onFirstDataRendered(event: FirstDataRenderedEvent) {
       rowEndIndex: 4,
       columns: ['country', 'gold', 'silver'],
     },
-    chartType: 'groupedBar' as ChartType,
+    chartType: 'groupedBar',
     chartContainer: eContainer1,
   }
 
@@ -84,7 +84,7 @@ function onFirstDataRendered(event: FirstDataRenderedEvent) {
       rowEndIndex: null,
       columns: ['group', 'gold'],
     },
-    chartType: 'pie' as ChartType,
+    chartType: 'pie',
     chartContainer: eContainer2,
     aggFunc: 'sum',
     chartThemeOverrides: {
@@ -112,7 +112,7 @@ function onFirstDataRendered(event: FirstDataRenderedEvent) {
       rowEndIndex: null,
       columns: ['group', 'silver'],
     },
-    chartType: 'pie' as ChartType,
+    chartType: 'pie',
     chartContainer: eContainer3,
     aggFunc: 'sum',
     chartThemeOverrides: {

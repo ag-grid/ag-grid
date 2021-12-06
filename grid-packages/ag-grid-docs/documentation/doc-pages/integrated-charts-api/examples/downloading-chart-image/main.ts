@@ -1,4 +1,4 @@
-import { ChartCreated, ChartType, CreateRangeChartParams, FirstDataRenderedEvent, GetChartImageDataUrlParams, GridOptions } from '@ag-grid-community/core'
+import { ChartCreated, CreateRangeChartParams, FirstDataRenderedEvent, GetChartImageDataUrlParams, GridOptions } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -41,7 +41,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
       rowEndIndex: null,
       columns: ['country', 'sugar', 'fat', 'weight'],
     },
-    chartType: 'groupedColumn' as ChartType,
+    chartType: 'groupedColumn',
     chartContainer: document.querySelector('#myChart') as any,
   }
 

@@ -1,4 +1,4 @@
-import { ChartType, CreateRangeChartParams, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core'
+import { CreateRangeChartParams, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -110,7 +110,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 
   var createRangeChartParams: CreateRangeChartParams = {
     cellRange: cellRange,
-    chartType: 'doughnut' as ChartType,
+    chartType: 'doughnut',
   }
 
   params.api.createRangeChart(createRangeChartParams)

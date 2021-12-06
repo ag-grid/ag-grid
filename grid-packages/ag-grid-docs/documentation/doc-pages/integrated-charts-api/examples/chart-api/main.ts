@@ -1,4 +1,4 @@
-import { ChartType, CreateRangeChartParams, GridOptions } from '@ag-grid-community/core'
+import { CreateRangeChartParams, GridOptions } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -48,7 +48,7 @@ function onChart1() {
       rowEndIndex: 4,
       columns: ['country', 'gold', 'silver'],
     },
-    chartType: 'groupedColumn' as ChartType,
+    chartType: 'groupedColumn',
     chartThemeName: 'ag-vivid',
     chartThemeOverrides: {
       common: {
@@ -70,7 +70,7 @@ function onChart2() {
       rowEndIndex: null,
       columns: ['country', 'bronze'],
     },
-    chartType: 'groupedBar' as ChartType,
+    chartType: 'groupedBar',
     chartThemeName: 'ag-pastel',
     chartThemeOverrides: {
       common: {

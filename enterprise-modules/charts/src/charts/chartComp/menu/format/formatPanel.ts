@@ -50,39 +50,39 @@ export class FormatPanel extends Component {
         this.addComponent(new LegendPanel(this.chartOptionsService));
 
         switch (chartType) {
-            case ChartType.GroupedColumn:
-            case ChartType.StackedColumn:
-            case ChartType.NormalizedColumn:
-            case ChartType.GroupedBar:
-            case ChartType.StackedBar:
-            case ChartType.NormalizedBar:
+            case 'groupedColumn':
+            case 'stackedColumn':
+            case 'normalizedColumn':
+            case 'groupedBar':
+            case 'stackedBar':
+            case 'normalizedBar':
                 this.addComponent(new AxisPanel(this.chartController, this.chartOptionsService));
                 this.addComponent(new BarSeriesPanel(this.chartOptionsService));
                 this.addComponent(new NavigatorPanel(this.chartOptionsService));
                 break;
-            case ChartType.Pie:
-            case ChartType.Doughnut:
+            case 'pie':
+            case 'doughnut':
                 this.addComponent(new PieSeriesPanel(this.chartOptionsService));
                 break;
-            case ChartType.Line:
+            case 'line':
                 this.addComponent(new AxisPanel(this.chartController, this.chartOptionsService));
                 this.addComponent(new LineSeriesPanel(this.chartOptionsService));
                 this.addComponent(new NavigatorPanel(this.chartOptionsService));
                 break;
-            case ChartType.Scatter:
-            case ChartType.Bubble:
+            case 'scatter':
+            case 'bubble':
                 this.addComponent(new AxisPanel(this.chartController, this.chartOptionsService));
                 this.addComponent(new ScatterSeriesPanel(this.chartOptionsService));
                 this.addComponent(new NavigatorPanel(this.chartOptionsService));
                 break;
-            case ChartType.Area:
-            case ChartType.StackedArea:
-            case ChartType.NormalizedArea:
+            case 'area':
+            case 'stackedArea':
+            case 'normalizedArea':
                 this.addComponent(new AxisPanel(this.chartController, this.chartOptionsService));
                 this.addComponent(new AreaSeriesPanel(this.chartOptionsService));
                 this.addComponent(new NavigatorPanel(this.chartOptionsService));
                 break;
-            case ChartType.Histogram:
+            case 'histogram':
                 this.addComponent(new AxisPanel(this.chartController, this.chartOptionsService));
                 this.addComponent(new HistogramSeriesPanel(this.chartOptionsService));
                 this.addComponent(new NavigatorPanel(this.chartOptionsService));

@@ -1,4 +1,3 @@
-import { ChartType } from "@ag-grid-community/core";
 import { MiniChartWithAxes } from "./miniChartWithAxes";
 import { BandScale, LinearScale, Path } from "ag-charts-community";
 
@@ -9,7 +8,7 @@ export interface ICoordinate {
 
 export class MiniArea extends MiniChartWithAxes {
 
-    static chartType = ChartType.Area;
+    static chartType = 'area';
     private readonly areas: Path[];
 
     static readonly data = [

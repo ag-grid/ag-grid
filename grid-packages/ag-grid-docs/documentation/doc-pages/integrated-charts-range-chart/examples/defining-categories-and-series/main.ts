@@ -1,4 +1,4 @@
-import { ChartType, CreateRangeChartParams, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core'
+import { CreateRangeChartParams, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -56,7 +56,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
       rowEndIndex: 79,
       columns: ['age', 'gold', 'silver', 'bronze'],
     },
-    chartType: 'groupedColumn' as ChartType,
+    chartType: 'groupedColumn',
     chartContainer: document.querySelector('#myChart') as any,
     aggFunc: 'sum',
   }

@@ -5,6 +5,7 @@ import {
     Autowired,
     BeanStub,
     ChartModel,
+    ChartModelType,
     ChartOptionsChanged,
     ChartRangeSelectionChanged,
     ChartType,
@@ -17,7 +18,6 @@ import {
 import { ChartDataModel, ColState } from "./chartDataModel";
 import { ChartProxy } from "./chartProxies/chartProxy";
 import { getChartTheme } from "ag-charts-community";
-import { ChartModelType } from "@ag-grid-community/core";
 
 export interface ChartModelUpdatedEvent extends AgEvent {
 }
@@ -186,7 +186,7 @@ export class ChartController extends BeanStub {
     }
 
     public isActiveXYChart(): boolean {
-        return _.includes([ChartType.Scatter, ChartType.Bubble], this.getChartType());
+        return _.includes(['scatter', 'bubble'], this.getChartType());
     }
 
     public isChartLinked(): boolean {

@@ -383,7 +383,7 @@ export class ChartDataModel extends BeanStub {
             valueCols: this.getSelectedValueCols(),
             startRow,
             endRow,
-            isScatter: _.includes([ChartType.Scatter, ChartType.Bubble], this.chartType)
+            isScatter: _.includes(['scatter', 'bubble'], this.chartType)
         };
 
         const result = this.datasource.getData(params);

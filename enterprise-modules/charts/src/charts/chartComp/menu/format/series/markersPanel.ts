@@ -5,7 +5,6 @@ import {
     AgSelect,
     AgSlider,
     Autowired,
-    ChartType,
     Component,
     PostConstruct,
     RefSelector
@@ -87,7 +86,7 @@ export class MarkersPanel extends Component {
 
         // scatter charts should always show markers
         const chartType = this.chartOptionsService.getChartType();
-        const shouldHideEnabledCheckbox = _.includes([ChartType.Scatter, ChartType.Bubble], chartType);
+        const shouldHideEnabledCheckbox = _.includes(['scatter', 'bubble'], chartType);
 
         this.seriesMarkersGroup
             .setTitle(this.chartTranslator.translate("markers"))
@@ -105,7 +104,7 @@ export class MarkersPanel extends Component {
                 .onValueChange(newValue => this.chartOptionsService.setSeriesOption(expression, newValue));
         };
 
-        if (chartType === ChartType.Bubble) {
+        if (chartType === 'bubble') {
             initInput("marker.maxSize", this.seriesMarkerMinSizeSlider, "maxSize", 60);
             initInput("marker.size", this.seriesMarkerSizeSlider, "minSize", 60);
         } else {

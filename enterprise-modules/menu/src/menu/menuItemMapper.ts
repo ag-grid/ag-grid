@@ -264,13 +264,13 @@ export class MenuItemMapper extends BeanStub {
                 };
 
             case 'pivotGroupedColumn':
-                return pivotChartMenuItem('groupedColumn', 'Grouped&lrm;', ChartType.GroupedColumn);
+                return pivotChartMenuItem('groupedColumn', 'Grouped&lrm;', 'groupedColumn');
 
             case 'pivotStackedColumn':
-                return pivotChartMenuItem('stackedColumn', 'Stacked&lrm;', ChartType.StackedColumn);
+                return pivotChartMenuItem('stackedColumn', 'Stacked&lrm;', 'stackedColumn');
 
             case 'pivotNormalizedColumn':
-                return pivotChartMenuItem('normalizedColumn', '100% Stacked&lrm;', ChartType.NormalizedColumn);
+                return pivotChartMenuItem('normalizedColumn', '100% Stacked&lrm;', 'normalizedColumn');
 
             case 'rangeColumnChart':
                 return {
@@ -279,13 +279,13 @@ export class MenuItemMapper extends BeanStub {
                 };
 
             case 'rangeGroupedColumn':
-                return rangeChartMenuItem('groupedColumn', 'Grouped&lrm;', ChartType.GroupedColumn);
+                return rangeChartMenuItem('groupedColumn', 'Grouped&lrm;', 'groupedColumn');
 
             case 'rangeStackedColumn':
-                return rangeChartMenuItem('stackedColumn', 'Stacked&lrm;', ChartType.StackedColumn);
+                return rangeChartMenuItem('stackedColumn', 'Stacked&lrm;', 'stackedColumn');
 
             case 'rangeNormalizedColumn':
-                return rangeChartMenuItem('normalizedColumn', '100% Stacked&lrm;', ChartType.NormalizedColumn);
+                return rangeChartMenuItem('normalizedColumn', '100% Stacked&lrm;', 'normalizedColumn');
 
             case 'pivotBarChart':
                 return {
@@ -294,13 +294,13 @@ export class MenuItemMapper extends BeanStub {
                 };
 
             case 'pivotGroupedBar':
-                return pivotChartMenuItem('groupedBar', 'Grouped&lrm;', ChartType.GroupedBar);
+                return pivotChartMenuItem('groupedBar', 'Grouped&lrm;', 'groupedBar');
 
             case 'pivotStackedBar':
-                return pivotChartMenuItem('stackedBar', 'Stacked&lrm;', ChartType.StackedBar);
+                return pivotChartMenuItem('stackedBar', 'Stacked&lrm;', 'stackedBar');
 
             case 'pivotNormalizedBar':
-                return pivotChartMenuItem('normalizedBar', '100% Stacked&lrm;', ChartType.NormalizedBar);
+                return pivotChartMenuItem('normalizedBar', '100% Stacked&lrm;', 'normalizedBar');
 
             case 'rangeBarChart':
                 return {
@@ -309,13 +309,13 @@ export class MenuItemMapper extends BeanStub {
                 };
 
             case 'rangeGroupedBar':
-                return rangeChartMenuItem('groupedBar', 'Grouped&lrm;', ChartType.GroupedBar);
+                return rangeChartMenuItem('groupedBar', 'Grouped&lrm;', 'groupedBar');
 
             case 'rangeStackedBar':
-                return rangeChartMenuItem('stackedBar', 'Stacked&lrm;', ChartType.StackedBar);
+                return rangeChartMenuItem('stackedBar', 'Stacked&lrm;', 'stackedBar');
 
             case 'rangeNormalizedBar':
-                return rangeChartMenuItem('normalizedBar', '100% Stacked&lrm;', ChartType.NormalizedBar);
+                return rangeChartMenuItem('normalizedBar', '100% Stacked&lrm;', 'normalizedBar');
 
             case 'pivotPieChart':
                 return {
@@ -323,10 +323,10 @@ export class MenuItemMapper extends BeanStub {
                     subMenu: ['pivotPie', 'pivotDoughnut']
                 };
             case 'pivotPie':
-                return pivotChartMenuItem('pie', 'Pie&lrm;', ChartType.Pie);
+                return pivotChartMenuItem('pie', 'Pie&lrm;', 'pie');
 
             case 'pivotDoughnut':
-                return pivotChartMenuItem('doughnut', 'Doughnut&lrm;', ChartType.Doughnut);
+                return pivotChartMenuItem('doughnut', 'Doughnut&lrm;', 'doughnut');
 
             case 'rangePieChart':
                 return {
@@ -334,16 +334,16 @@ export class MenuItemMapper extends BeanStub {
                     subMenu: ['rangePie', 'rangeDoughnut']
                 };
             case 'rangePie':
-                return rangeChartMenuItem('pie', 'Pie&lrm;', ChartType.Pie);
+                return rangeChartMenuItem('pie', 'Pie&lrm;', 'pie');
 
             case 'rangeDoughnut':
-                return rangeChartMenuItem('doughnut', 'Doughnut&lrm;', ChartType.Doughnut);
+                return rangeChartMenuItem('doughnut', 'Doughnut&lrm;', 'doughnut');
 
             case 'pivotLineChart':
-                return pivotChartMenuItem('line', 'Line&lrm;', ChartType.Line);
+                return pivotChartMenuItem('line', 'Line&lrm;', 'line');
 
             case 'rangeLineChart':
-                return rangeChartMenuItem('line', 'Line&lrm;', ChartType.Line);
+                return rangeChartMenuItem('line', 'Line&lrm;', 'line');
 
             case 'pivotXYChart':
                 return {
@@ -351,9 +351,9 @@ export class MenuItemMapper extends BeanStub {
                     subMenu: ['pivotScatter', 'pivotBubble']
                 };
             case 'pivotScatter':
-                return pivotChartMenuItem('scatter', 'Scatter&lrm;', ChartType.Scatter);
+                return pivotChartMenuItem('scatter', 'Scatter&lrm;', 'scatter');
             case 'pivotBubble':
-                return pivotChartMenuItem('bubble', 'Bubble&lrm;', ChartType.Bubble);
+                return pivotChartMenuItem('bubble', 'Bubble&lrm;', 'bubble');
 
             case 'rangeXYChart':
                 return {
@@ -361,9 +361,9 @@ export class MenuItemMapper extends BeanStub {
                     subMenu: ['rangeScatter', 'rangeBubble']
                 };
             case 'rangeScatter':
-                return rangeChartMenuItem('scatter', 'Scatter&lrm;', ChartType.Scatter);
+                return rangeChartMenuItem('scatter', 'Scatter&lrm;', 'scatter');
             case 'rangeBubble':
-                return rangeChartMenuItem('bubble', 'Bubble&lrm;', ChartType.Bubble);
+                return rangeChartMenuItem('bubble', 'Bubble&lrm;', 'bubble');
 
             case 'pivotAreaChart':
                 return {
@@ -371,13 +371,13 @@ export class MenuItemMapper extends BeanStub {
                     subMenu: ['pivotArea', 'pivotStackedArea', 'pivotNormalizedArea']
                 };
             case 'pivotArea':
-                return pivotChartMenuItem('area', 'Area&lrm;', ChartType.Area);
+                return pivotChartMenuItem('area', 'Area&lrm;', 'area');
 
             case 'pivotStackedArea':
-                return pivotChartMenuItem('stackedArea', 'Stacked&lrm;', ChartType.StackedArea);
+                return pivotChartMenuItem('stackedArea', 'Stacked&lrm;', 'stackedArea');
 
             case 'pivotNormalizedArea':
-                return pivotChartMenuItem('normalizedArea', '100% Stacked&lrm;', ChartType.NormalizedArea);
+                return pivotChartMenuItem('normalizedArea', '100% Stacked&lrm;', 'normalizedArea');
 
             case 'rangeAreaChart':
                 return {
@@ -386,16 +386,16 @@ export class MenuItemMapper extends BeanStub {
                 };
 
             case 'rangeArea':
-                return rangeChartMenuItem('area', 'Area&lrm;', ChartType.Area);
+                return rangeChartMenuItem('area', 'Area&lrm;', 'area');
 
             case 'rangeStackedArea':
-                return rangeChartMenuItem('stackedArea', 'Stacked&lrm;', ChartType.StackedArea);
+                return rangeChartMenuItem('stackedArea', 'Stacked&lrm;', 'stackedArea');
 
             case 'rangeNormalizedArea':
-                return rangeChartMenuItem('normalizedArea', '100% Stacked&lrm;', ChartType.NormalizedArea);
+                return rangeChartMenuItem('normalizedArea', '100% Stacked&lrm;', 'normalizedArea');
 
             case 'rangeHistogramChart':
-                return rangeChartMenuItem('histogramChart', 'Histogram&lrm;', ChartType.Histogram);
+                return rangeChartMenuItem('histogramChart', 'Histogram&lrm;', 'histogram');
 
             default:
                 return null;

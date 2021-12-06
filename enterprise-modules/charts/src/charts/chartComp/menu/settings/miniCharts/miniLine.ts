@@ -1,10 +1,9 @@
-import { ChartType } from "@ag-grid-community/core";
 import { MiniChartWithAxes } from "./miniChartWithAxes";
 import { ClipRect, LinearScale, Path } from "ag-charts-community";
 
 export class MiniLine extends MiniChartWithAxes {
 
-    static chartType = ChartType.Line;
+    static chartType = 'line';
     private readonly lines: Path[];
 
     constructor(container: HTMLElement, fills: string[], strokes: string[]) {

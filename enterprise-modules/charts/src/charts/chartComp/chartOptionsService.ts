@@ -7,8 +7,7 @@ import {
     ChartType,
     ColumnApi,
     Events,
-    GridApi,
-    PostConstruct
+    GridApi
 } from "@ag-grid-community/core";
 import { ChartController } from "./chartController";
 import { CategoryAxis, Chart, ChartAxis, GroupedCategoryAxis, NumberAxis, TimeAxis } from "ag-charts-community";

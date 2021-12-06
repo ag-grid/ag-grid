@@ -1,4 +1,4 @@
-import { _, ChartType, } from "@ag-grid-community/core";
+import { _, } from "@ag-grid-community/core";
 import { AgChart, BarSeries, CartesianChart, ChartAxisPosition, LegendClickEvent } from "ag-charts-community";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
@@ -118,7 +118,7 @@ export class BarChartProxy extends CartesianChartProxy {
     }
 
     private getSeries(normalised: boolean) {
-        const groupedCharts = [ChartType.GroupedColumn, ChartType.GroupedBar];
+        const groupedCharts = ['groupedColumn', 'groupedBar'];
         const isGrouped = !this.crossFiltering && _.includes(groupedCharts, this.chartType);
         return [{
             ...this.chartOptions[this.standaloneChartType].series,
@@ -129,7 +129,7 @@ export class BarChartProxy extends CartesianChartProxy {
     }
 
     private isNormalised() {
-        const normalisedCharts = [ChartType.NormalizedColumn, ChartType.NormalizedBar];
+        const normalisedCharts = ['normalizedColumn', 'normalizedBar'];
         return !this.crossFiltering && _.includes(normalisedCharts, this.chartType);
     }
 }

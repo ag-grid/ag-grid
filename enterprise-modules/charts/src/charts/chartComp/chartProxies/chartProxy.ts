@@ -1,4 +1,4 @@
-import { _, AgChartThemeOverrides, ChartModel, ChartType } from "@ag-grid-community/core";
+import { _, AgChartThemeOverrides, ChartType } from "@ag-grid-community/core";
 import { AgChartTheme, CategoryAxis, Chart, ChartTheme, getChartTheme, themes, } from "ag-charts-community";
 import { deepMerge } from "../object";
 import { CrossFilteringContext } from "../../chartService";

@@ -1,4 +1,4 @@
-import { ChartType, CreatePivotChartParams, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core'
+import { CreatePivotChartParams, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -28,7 +28,7 @@ function onFirstDataRendered(event: FirstDataRenderedEvent) {
   var chartContainer = document.querySelector('#chart') as any;
 
   var params: CreatePivotChartParams = {
-    chartType: 'groupedColumn' as ChartType,
+    chartType: 'groupedColumn',
     chartContainer: chartContainer,
     chartThemeName: 'ag-vivid',
     chartThemeOverrides: {

@@ -1,4 +1,3 @@
-import { _, ChartType, } from "@ag-grid-community/core";
 import { AgChart, CartesianChart, ChartAxisPosition, LegendClickEvent, ScatterSeries } from "ag-charts-community";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { ChartDataModel } from "../../chartDataModel";
@@ -172,7 +171,7 @@ export class ScatterChartProxy extends CartesianChartProxy {
     private getSeriesDefinitions(fields: FieldDefinition[], paired: boolean): (SeriesDefinition | null)[] {
         if (fields.length < 2) { return []; }
 
-        const isBubbleChart = this.chartType === ChartType.Bubble;
+        const isBubbleChart = this.chartType === 'bubble';
 
         if (paired) {
             if (isBubbleChart) {

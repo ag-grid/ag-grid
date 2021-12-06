@@ -1,4 +1,4 @@
-import { ChartType, ColDef, CreateRangeChartParams, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core'
+import { ColDef, CreateRangeChartParams, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core'
 
 const columnDefs: ColDef[] = [
   { field: 'country', width: 150, chartDataType: 'category' },
@@ -91,7 +91,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 
   var createRangeChartParams: CreateRangeChartParams = {
     cellRange: cellRange,
-    chartType: 'line' as ChartType,
+    chartType: 'line',
   }
 
   params.api.createRangeChart(createRangeChartParams)

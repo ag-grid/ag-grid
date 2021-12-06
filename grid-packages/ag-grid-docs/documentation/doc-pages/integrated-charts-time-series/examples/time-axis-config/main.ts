@@ -1,4 +1,4 @@
-import { ChartMenuOptions, ChartType, CreateRangeChartParams, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core'
+import { ChartMenuOptions, CreateRangeChartParams, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core'
 declare var moment: any;
 
 const gridOptions: GridOptions = {
@@ -70,7 +70,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
       rowEndIndex: null,
       columns: ['timestamp', 'cpuUsage'],
     },
-    chartType: 'area' as ChartType,
+    chartType: 'area',
   }
 
   params.api.createRangeChart(createRangeChartParams)

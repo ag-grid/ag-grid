@@ -1,21 +1,26 @@
-export enum ChartType {
-    Column = 'column',
-    GroupedColumn = 'groupedColumn',
-    StackedColumn = 'stackedColumn',
-    NormalizedColumn = 'normalizedColumn',
-    Bar = 'bar',
-    GroupedBar = 'groupedBar',
-    StackedBar = 'stackedBar',
-    NormalizedBar = 'normalizedBar',
-    Line = 'line',
-    Scatter = 'scatter',
-    Bubble = 'bubble',
-    Pie = 'pie',
-    Doughnut = 'doughnut',
-    Area = 'area',
-    StackedArea = 'stackedArea',
-    NormalizedArea = 'normalizedArea',
-    Histogram = 'histogram'
-}
+export type ChartType =
+    'column' |
+    'groupedColumn' |
+    'stackedColumn' |
+    'normalizedColumn' |
+    'bar' |
+    'groupedBar' |
+    'stackedBar' |
+    'normalizedBar' |
+    'line' |
+    'scatter' |
+    'bubble' |
+    'pie' |
+    'doughnut' |
+    'area' |
+    'stackedArea' |
+    'normalizedArea' |
+    'histogram';
 
-export type ChartMenuOptions = 'chartSettings' | 'chartData' | 'chartFormat' | 'chartLink' | 'chartUnlink' | 'chartDownload';
+export type ChartMenuOptions =
+    'chartSettings' |
+    'chartData' |
+    'chartFormat' |
+    'chartLink' |
+    'chartUnlink' |
+    'chartDownload';

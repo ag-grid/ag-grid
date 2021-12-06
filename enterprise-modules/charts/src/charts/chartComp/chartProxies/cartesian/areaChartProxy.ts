@@ -1,4 +1,3 @@
-import { ChartType, } from "@ag-grid-community/core";
 import { AgChart, AreaSeries, CartesianChart, ChartAxisPosition } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
@@ -28,7 +27,7 @@ export class AreaChartProxy extends CartesianChartProxy {
 
         this.updateAxes(params);
 
-        if (this.chartType === ChartType.Area) {
+        if (this.chartType === 'area') {
             // area charts have multiple series
             this.updateAreaChart(params);
         } else {
@@ -39,7 +38,7 @@ export class AreaChartProxy extends CartesianChartProxy {
                 const seriesDefaults = {
                     ...this.chartOptions[this.standaloneChartType].series,
                     type: 'area',
-                    normalizedTo: this.chartType === ChartType.NormalizedArea ? 100 : undefined,
+                    normalizedTo: this.chartType === 'normalizedArea' ? 100 : undefined,
                 };
 
                 areaSeries = AgChart.createComponent({ ...seriesDefaults }, 'area.series');
@@ -106,7 +105,7 @@ export class AreaChartProxy extends CartesianChartProxy {
                 const seriesDefaults = {
                     ...seriesOverrides,
                     type: 'area',
-                    normalizedTo: this.chartType === ChartType.NormalizedArea ? 100 : undefined,
+                    normalizedTo: this.chartType === 'normalizedArea' ? 100 : undefined,
                 };
 
                 const options: any = {

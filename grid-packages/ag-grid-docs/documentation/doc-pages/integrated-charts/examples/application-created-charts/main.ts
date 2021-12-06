@@ -62,7 +62,7 @@ const gridOptions: GridOptions = {
         rowStartIndex: null,
         rowEndIndex: null
       },
-      chartType: 'groupedColumn' as ChartType,
+      chartType: 'groupedColumn',
       chartContainer: document.querySelector('#myChart') as any,
       suppressChartRanges: true,
       aggFunc: 'sum',

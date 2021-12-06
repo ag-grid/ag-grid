@@ -17,29 +17,29 @@ export type ChartThemeOverrideObjectName =
 
 export function getChartThemeOverridesObjectName(chartType: ChartType): ChartThemeOverrideObjectName {
     switch (chartType) {
-        case ChartType.Bar:
-        case ChartType.GroupedBar:
-        case ChartType.StackedBar:
-        case ChartType.NormalizedBar:
+        case 'bar':
+        case 'groupedBar':
+        case 'stackedBar':
+        case 'normalizedBar':
             return 'bar';
-        case ChartType.Column:
-        case ChartType.GroupedColumn:
-        case ChartType.StackedColumn:
-        case ChartType.NormalizedColumn:
+        case 'column':
+        case 'groupedColumn':
+        case 'stackedColumn':
+        case 'normalizedColumn':
             return 'column';
-        case ChartType.Line:
+        case 'line':
             return 'line';
-        case ChartType.Area:
-        case ChartType.StackedArea:
-        case ChartType.NormalizedArea:
+        case 'area':
+        case 'stackedArea':
+        case 'normalizedArea':
             return 'area';
-        case ChartType.Scatter:
-        case ChartType.Bubble:
+        case 'scatter':
+        case 'bubble':
             return 'scatter';
-        case ChartType.Histogram:
+        case 'histogram':
             return 'histogram';
-        case ChartType.Pie:
-        case ChartType.Doughnut:
+        case 'pie':
+        case 'doughnut':
             return 'pie';
         default:
             return 'cartesian';

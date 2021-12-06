@@ -1,4 +1,4 @@
-import { ChartMenuOptions, ChartType, ColDef, CreateRangeChartParams, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core'
+import { ChartMenuOptions, ColDef, CreateRangeChartParams, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core'
 
 const columnDefs: ColDef[] = [
   { field: 'country', width: 150, chartDataType: 'category' },
@@ -92,7 +92,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
       rowEndIndex: 5,
       columns: ['country', 'gold'],
     },
-    chartType: 'pie' as ChartType,
+    chartType: 'pie',
   }
 
   params.api.createRangeChart(createRangeChartParams)

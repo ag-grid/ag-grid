@@ -1,4 +1,4 @@
-import { ChartType, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core'
+import { FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -22,7 +22,7 @@ const gridOptions: GridOptions = {
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   params.api.createCrossFilterChart({
-    chartType: 'pie' as ChartType,
+    chartType: 'pie',
     cellRange: {
       rowStartIndex: null,
       rowEndIndex: null,
