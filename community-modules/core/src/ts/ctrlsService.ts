@@ -35,8 +35,10 @@ interface ReadyParams {
     rightHeaderRowContainerCtrl: HeaderRowContainerCtrl;
 }
 
-@Bean('ctrlsService')
+@Bean(CtrlsService.NAME)
 export class CtrlsService extends BeanStub {
+
+    public static readonly NAME = 'ctrlsService';
 
     private gridCtrl: GridCtrl;
     private gridBodyCtrl: GridBodyCtrl;
