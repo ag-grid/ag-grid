@@ -126,7 +126,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     protected abstract evaluateNullValue(filterType?: ISimpleFilterModelType | null): boolean;
 
     // allow value-type specific handling of non-null cell values.
-    protected abstract evaluateNonNullValue(range: Tuple<V>, cellValue: V, filterModel: M): boolean;
+    protected abstract evaluateNonNullValue(range: Tuple<V>, cellValue: V, filterModel: M, params: IDoesFilterPassParams): boolean;
 
     // allow iteration of all condition inputs managed by sub-classes.
     protected abstract getInputs(): Tuple<E>[];
@@ -592,7 +592,7 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
             return this.evaluateNullValue(filterModel.type);
         }
 
-        return this.evaluateNonNullValue(values, cellValue, filterModel);
+        return this.evaluateNonNullValue(values, cellValue, filterModel, params);
     }
 
     protected evaluateCustomFilter(

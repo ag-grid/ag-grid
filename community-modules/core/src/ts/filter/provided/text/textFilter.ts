@@ -10,6 +10,8 @@ import {
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { makeNull } from '../../../utils/generic';
 import { _ } from '../../../utils';
+import { BaseColDefParams } from '../../../entities/colDef';
+import { IDoesFilterPassParams } from '../../../interfaces/iFilter';
 
 export interface TextFilterModel extends ISimpleFilterModel {
     /** Filter type is always `'text'` */
@@ -25,8 +27,14 @@ export interface TextFilterModel extends ISimpleFilterModel {
      filterTo?: string | null;
     }
 
-export interface TextComparator {
-    (filter: string | null | undefined, gridValue: any, filterText: string | null): boolean;
+export interface TextMatcherParams extends BaseColDefParams {
+    filter: string | null | undefined;
+    value: any;
+    filterText: string | null;
+}
+
+export interface TextMatcher {
+    (params: TextMatcherParams): boolean;
 }
 
 export interface TextFormatter {
@@ -37,7 +45,7 @@ export interface ITextFilterParams extends ISimpleFilterParams {
     /**
      * Used to override how to filter based on the user input.
      */
-    textCustomComparator?: TextComparator;
+    textMatcher?: TextMatcher;
     /**
      * By default, text filtering is case-insensitive. Set this to `true` to make text filtering case-sensitive.
      * Default: `false`
@@ -72,7 +80,9 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
 
     static DEFAULT_LOWERCASE_FORMATTER: TextFormatter = (from: string) => from == null ? null : from.toString().toLowerCase();
 
-    static DEFAULT_COMPARATOR: TextComparator = (filter: string, value: any, filterText: string) => {
+    static DEFAULT_MATCHER: TextMatcher = ({filter, value, filterText}) => {
+        if (filterText == null) { return false; }
+
         switch (filter) {
             case TextFilter.CONTAINS:
                 return value.indexOf(filterText) >= 0;
@@ -98,7 +108,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
     @RefSelector('eValue-index0-2') private readonly eValueFrom2: AgInputTextField;
     @RefSelector('eValue-index1-2') private readonly eValueTo2: AgInputTextField;
 
-    private comparator: TextComparator;
+    private matcher: TextMatcher;
     private formatter: TextFormatter;
 
     private textFilterParams: ITextFilterParams;
@@ -122,9 +132,18 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
         super.setParams(params);
 
         this.textFilterParams = params;
-        this.comparator = this.textFilterParams.textCustomComparator || TextFilter.DEFAULT_COMPARATOR;
+        this.matcher = this.getTextMatcher();
         this.formatter = this.textFilterParams.textFormatter ||
             (this.textFilterParams.caseSensitive ? TextFilter.DEFAULT_FORMATTER : TextFilter.DEFAULT_LOWERCASE_FORMATTER);
+    }
+
+    private getTextMatcher(): TextMatcher {
+        const legacyComparator = (this.textFilterParams as any).textCustomComparator;
+        if (legacyComparator) {
+            _.doOnce(() => console.warn('AG Grid - textCustomComparator is deprecated, use textMatcher instead.'), 'textCustomComparator.deprecated');
+            return ({ filter, value, filterText }) => legacyComparator(filter, value, filterText);
+        }
+        return this.textFilterParams.textMatcher || TextFilter.DEFAULT_MATCHER
     }
 
     protected createCondition(position: ConditionPosition): TextFilterModel {
@@ -203,10 +222,23 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
         return filterType === SimpleFilter.NOT_EQUAL || filterType === SimpleFilter.NOT_CONTAINS;
     }
 
-    protected evaluateNonNullValue(values: Tuple<string>, cellValue: string, filterModel: TextFilterModel): boolean {
+    protected evaluateNonNullValue(values: Tuple<string>, cellValue: string, filterModel: TextFilterModel, params: IDoesFilterPassParams): boolean {
         const formattedValues = values.map(v => this.formatter(v)) || [];
         const cellValueFormatted = this.formatter(cellValue);
+        const {api, colDef, column, columnApi, context} = this.textFilterParams;
 
-        return formattedValues.some(v => this.comparator(filterModel.type, cellValueFormatted, v));
+        const matcherParams = {
+            api,
+            colDef,
+            column,
+            columnApi,
+            context,
+            node: params.node,
+            data: params.data,
+            filter: filterModel.type,
+            value: cellValueFormatted,
+        };
+
+        return formattedValues.some(v => this.matcher({ ...matcherParams, filterText: v }));
     }
 }

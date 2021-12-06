@@ -4440,14 +4440,32 @@
       "type?": "/** One of the filter options, e.g. `'equals'` */"
     }
   },
-  "TextComparator": {
+  "TextMatcherParams": {
+    "meta": {},
+    "type": {
+      "filter": "string | null | undefined",
+      "value": "any",
+      "filterText": "string | null",
+      "node": "RowNode | null",
+      "data": "any",
+      "column": "Column",
+      "colDef": "ColDef",
+      "api": "GridApi",
+      "columnApi": "ColumnApi",
+      "context": "any"
+    },
+    "docs": {
+      "node": "/** Row node for the given row */",
+      "data": "/** Data associated with the node */",
+      "column": "/** Column for this callback */",
+      "colDef": "/** ColDef provided for this column */",
+      "context": "/** The context as provided on `gridOptions.context` */"
+    }
+  },
+  "TextMatcher": {
     "meta": { "isCallSignature": true },
     "type": {
-      "arguments": {
-        "filter": "string | null | undefined",
-        "gridValue": "any",
-        "filterText": "string | null"
-      },
+      "arguments": { "params": "TextMatcherParams" },
       "returnType": "boolean"
     }
   },
@@ -4461,7 +4479,7 @@
   "ITextFilterParams": {
     "meta": {},
     "type": {
-      "textCustomComparator?": "TextComparator",
+      "textMatcher?": "TextMatcher",
       "caseSensitive?": "boolean",
       "textFormatter?": "(from: string) => string",
       "trimInput?": "boolean",
@@ -4486,7 +4504,7 @@
       "context": "any"
     },
     "docs": {
-      "textCustomComparator?": "/** Used to override how to filter based on the user input. */",
+      "textMatcher?": "/** Used to override how to filter based on the user input. */",
       "caseSensitive?": "/** By default, text filtering is case-insensitive. Set this to `true` to make text filtering case-sensitive.\n * Default: `false` */",
       "textFormatter?": "/** Formats the text before applying the filter compare logic.\n * Useful if you want to substitute accented characters, for example. */",
       "trimInput?": "/** If `true`, the input that the user enters will be trimmed when the filter is applied, so any leading or trailing whitespace will be removed.\n * If only whitespace is entered, it will be left as-is.\n * If you enable `trimInput`, it is best to also increase the `debounceMs` to give users more time to enter text.\n * Default: `false` */",

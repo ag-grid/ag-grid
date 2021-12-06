@@ -28,7 +28,7 @@ var athleteFilterParams: ITextFilterParams = {
 
 var countryFilterParams: ITextFilterParams = {
   filterOptions: ['contains'],
-  textCustomComparator: function (_, value, filterText) {
+  textMatcher: function ({ value, filterText }) {
     var filterTextLowerCase = filterText ? filterText.toLowerCase() : '';
     var valueLowerCase = value.toString().toLowerCase()
     var aliases: Record<string, string> = {

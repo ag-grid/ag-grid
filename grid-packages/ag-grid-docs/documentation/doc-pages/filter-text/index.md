@@ -14,9 +14,9 @@ Text Filters are configured though the `filterParams` attribute of the column de
 
 In addition, the following parameters are also available for Text filters:
 
-<interface-documentation interfaceName='ITextFilterParams' names='["alwaysShowBothConditions","filterOptions","defaultOption","defaultJoinOperator","suppressAndOrCondition","textCustomComparator","caseSensitive","textFormatter","trimInput","inRangeInclusive","includeBlanksInEquals","includeBlanksInLessThan","includeBlanksInGreaterThan","includeBlanksInRange","allowedCharPattern","numberParser","comparator","browserDatePicker"]' config='{"description":" "}' ></interface-documentation>
+<interface-documentation interfaceName='ITextFilterParams' names='["alwaysShowBothConditions","filterOptions","defaultOption","defaultJoinOperator","suppressAndOrCondition","textMatcher","caseSensitive","textFormatter","trimInput","inRangeInclusive","includeBlanksInEquals","includeBlanksInLessThan","includeBlanksInGreaterThan","includeBlanksInRange","allowedCharPattern","numberParser","comparator","browserDatePicker"]' config='{"description":" "}' ></interface-documentation>
 
-## Text Custom Comparator
+## Text Custom Matcher
 
 By default the text filter performs strict case-insensitive text filtering, i.e. if you provide `['1,234.5USD','345GBP']` as data for a text column:
 
@@ -25,16 +25,16 @@ By default the text filter performs strict case-insensitive text filtering, i.e.
 - **contains '$'** will show 0 values
 - **contains 'gbp'** will show 1 value ['345GBP']
 
-You can change the default behaviour by providing your own `textCustomComparator`, which allows you to provide your own logic to decide when to include a row in the filtered results.
+You can change the default behaviour by providing your own `textMatcher`, which allows you to provide your own logic to decide when to include a row in the filtered results.
 
-<interface-documentation interfaceName='ITextFilterParams' names='["textCustomComparator"]' config='{"description":" ", "overrideBottomMargin":"1rem"}' ></interface-documentation>
+<interface-documentation interfaceName='ITextFilterParams' names='["textMatcher"]' config='{"description":" ", "overrideBottomMargin":"1rem"}' ></interface-documentation>
 
 - `filter` The applicable filter type being tested. One of: `equals`, `notEqual`, `contains`, `notContains`, `startsWith`, `endsWith`
-- `gridValue` The value about to be filtered. If this column has a value getter, this value will be coming from the value getter, otherwise it is the raw value injected into the grid.
+- `value` The value about to be filtered. If this column has a value getter, this value will be coming from the value getter, otherwise it is the raw value injected into the grid.
 - `filterText` The value to filter by.
 - `returns: boolean` Set to `true` if the value passes the filter, otherwise `false`.
 
-The following is an example of a `textCustomComparator` that mimics the current implementation of AG Grid. This can be used as a template to create your own.
+The following is an example of a `textMatcher` that mimics the current implementation of AG Grid. This can be used as a template to create your own.
 
 <snippet>
 const gridOptions = {
@@ -43,7 +43,7 @@ const gridOptions = {
             field: 'athlete',
             filter: 'agTextColumnFilter',
             filterParams: {
-                textCustomComparator: (filter, value, filterText) => {
+                textMatcher: ({filter, value, filterText}) => {
                     const filterTextLowerCase = filterText.toLowerCase();
                     const valueLowerCase = value.toString().toLowerCase();
                     switch (filter) {
@@ -106,7 +106,7 @@ const toLowerWithoutAccents = value =>
 - The **Athlete** column has a debounce of 200ms (`debounceMs = 200`).
 - The **Athlete** column filter has the AND/OR additional filter suppressed (`suppressAndOrCondition = true`)
 - The **Country** column has only one filter option: `filterOptions = ['contains']`
-- The **Country** column has a `textCustomComparator` so that aliases can be entered in the filter, e.g. if you filter using the text `'usa'` it will match `United States` or `'holland'` will match `'Netherlands'`
+- The **Country** column has a `textMatcher` so that aliases can be entered in the filter, e.g. if you filter using the text `'usa'` it will match `United States` or `'holland'` will match `'Netherlands'`
 - The **Country** column will trim the input when the filter is applied (`trimInput = true`)
 - The **Country** column filter has a debounce of 1000ms (`debounceMs = 1000`)
 - The **Sport** column has a different default option (`defaultOption = 'startsWith'`)

@@ -7711,12 +7711,43 @@
       }
     }
   },
-  "TextComparator": {},
+  "TextMatcherParams": {
+    "filter": {
+      "type": { "returnType": "string | null | undefined", "optional": false }
+    },
+    "value": { "type": { "returnType": "any", "optional": false } },
+    "filterText": {
+      "type": { "returnType": "string | null", "optional": false }
+    },
+    "node": {
+      "description": "/** Row node for the given row */",
+      "type": { "returnType": "RowNode | null", "optional": false }
+    },
+    "data": {
+      "description": "/** Data associated with the node */",
+      "type": { "returnType": "any", "optional": false }
+    },
+    "column": {
+      "description": "/** Column for this callback */",
+      "type": { "returnType": "Column", "optional": false }
+    },
+    "colDef": {
+      "description": "/** ColDef provided for this column */",
+      "type": { "returnType": "ColDef", "optional": false }
+    },
+    "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "columnApi": { "type": { "returnType": "ColumnApi", "optional": false } },
+    "context": {
+      "description": "/** The context as provided on `gridOptions.context` */",
+      "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "TextMatcher": {},
   "TextFormatter": {},
   "ITextFilterParams": {
-    "textCustomComparator": {
+    "textMatcher": {
       "description": "/** Used to override how to filter based on the user input. */",
-      "type": { "returnType": "TextComparator", "optional": true }
+      "type": { "returnType": "TextMatcher", "optional": true }
     },
     "caseSensitive": {
       "description": "/** By default, text filtering is case-insensitive. Set this to `true` to make text filtering case-sensitive.\n * Default: `false` */",
