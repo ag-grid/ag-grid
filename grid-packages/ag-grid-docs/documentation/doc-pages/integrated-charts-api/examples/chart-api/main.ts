@@ -66,8 +66,6 @@ function onChart1() {
 function onChart2() {
   var params: CreateRangeChartParams = {
     cellRange: {
-      rowStartIndex: null,
-      rowEndIndex: null,
       columns: ['country', 'bronze'],
     },
     chartType: 'groupedBar',

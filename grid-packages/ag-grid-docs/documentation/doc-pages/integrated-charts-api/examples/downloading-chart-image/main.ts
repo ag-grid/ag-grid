@@ -37,8 +37,6 @@ const gridOptions: GridOptions = {
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
   const createRangeChartParams: CreateRangeChartParams = {
     cellRange: {
-      rowStartIndex: null,
-      rowEndIndex: null,
       columns: ['country', 'sugar', 'fat', 'weight'],
     },
     chartType: 'groupedColumn',

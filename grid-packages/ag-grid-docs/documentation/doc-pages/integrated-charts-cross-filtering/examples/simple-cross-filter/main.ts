@@ -24,8 +24,6 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
   params.api.createCrossFilterChart({
     chartType: 'pie',
     cellRange: {
-      rowStartIndex: null,
-      rowEndIndex: null,
       columns: ['salesRep', 'sale'],
     },
     aggFunc: 'sum',

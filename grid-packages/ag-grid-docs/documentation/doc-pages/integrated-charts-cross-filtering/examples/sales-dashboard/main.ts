@@ -62,8 +62,6 @@ function createQuarterlySalesChart(gridApi: GridApi) {
   gridApi.createCrossFilterChart({
     chartType: 'column',
     cellRange: {
-      rowStartIndex: null,
-      rowEndIndex: null,
       columns: ['quarter', 'sale'],
     },
     aggFunc: 'sum',
@@ -100,8 +98,6 @@ function createSalesByRefChart(gridApi: GridApi) {
   gridApi.createCrossFilterChart({
     chartType: 'pie',
     cellRange: {
-      rowStartIndex: null,
-      rowEndIndex: null,
       columns: ['salesRep', 'sale'],
     },
     aggFunc: 'sum',
@@ -131,8 +127,6 @@ function createHandsetSalesChart(gridApi: GridApi) {
   gridApi.createCrossFilterChart({
     chartType: 'bar',
     cellRange: {
-      rowStartIndex: null,
-      rowEndIndex: null,
       columns: ['handset', 'sale'],
     },
     aggFunc: 'count',

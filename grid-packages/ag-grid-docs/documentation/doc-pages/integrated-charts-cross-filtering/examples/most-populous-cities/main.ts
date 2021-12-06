@@ -31,8 +31,6 @@ function createColumnChart(gridApi: GridApi) {
   gridApi.createCrossFilterChart({
     chartType: 'column',
     cellRange: {
-      rowStartIndex: null,
-      rowEndIndex: null,
       columns: ['country', 'population'],
     },
     aggFunc: 'count',
@@ -64,8 +62,6 @@ function createBubbleChart(gridApi: GridApi) {
   gridApi.createCrossFilterChart({
     chartType: 'bubble',
     cellRange: {
-      rowStartIndex: null,
-      rowEndIndex: null,
       columns: ['longitude', 'latitude', 'population'],
     },
     chartThemeOverrides: {

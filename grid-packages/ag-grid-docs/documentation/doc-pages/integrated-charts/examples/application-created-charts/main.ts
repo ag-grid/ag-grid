@@ -58,9 +58,7 @@ const gridOptions: GridOptions = {
           'pl2',
           'gainDx',
           'sxPx',
-        ],
-        rowStartIndex: null,
-        rowEndIndex: null
+        ]
       },
       chartType: 'groupedColumn',
       chartContainer: document.querySelector('#myChart') as any,
@@ -125,9 +123,7 @@ function createChart(type: ChartType) {
         'pl2',
         'gainDx',
         'sxPx',
-      ],
-      rowStartIndex: null,
-      rowEndIndex: null
+      ]
     },
     chartContainer: document.querySelector('#myChart') as any,
     chartType: type,

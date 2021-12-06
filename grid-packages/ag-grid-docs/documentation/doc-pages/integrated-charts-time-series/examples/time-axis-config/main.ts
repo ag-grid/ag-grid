@@ -66,8 +66,6 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
     chartContainer: document.querySelector('#myChart') as any,
     suppressChartRanges: true,
     cellRange: {
-      rowStartIndex: null,
-      rowEndIndex: null,
       columns: ['timestamp', 'cpuUsage'],
     },
     chartType: 'area',

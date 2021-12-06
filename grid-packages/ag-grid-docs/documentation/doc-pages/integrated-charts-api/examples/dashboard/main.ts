@@ -80,8 +80,6 @@ function onFirstDataRendered(event: FirstDataRenderedEvent) {
   var eContainer2 = document.querySelector('#chart2') as any;
   var params2: CreateRangeChartParams = {
     cellRange: {
-      rowStartIndex: null,
-      rowEndIndex: null,
       columns: ['group', 'gold'],
     },
     chartType: 'pie',
@@ -108,8 +106,6 @@ function onFirstDataRendered(event: FirstDataRenderedEvent) {
   var eContainer3 = document.querySelector('#chart3') as any
   var params3: CreateRangeChartParams = {
     cellRange: {
-      rowStartIndex: null,
-      rowEndIndex: null,
       columns: ['group', 'silver'],
     },
     chartType: 'pie',
