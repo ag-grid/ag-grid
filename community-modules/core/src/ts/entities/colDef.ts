@@ -87,15 +87,23 @@ export interface IAggFuncParams {
 }
 
 export interface HeaderClassParams {
-    api: GridApi;
     colDef: AbstractColDef;
     column?: Column | null;
-    columnGroup?: ColumnGroup | ProvidedColumnGroup | null;
+    columnGroup?: ColumnGroup | null;
+    api: GridApi;
+    /** The context as provided on `gridOptions.context` */
     context?: any;
 }
-export type HeaderClass = string | string[] | ((params: HeaderClassParams) => string | string[]);
-export interface ToolPanelClassParams extends HeaderClassParams { }
-export type ToolPanelClass = string | string[] | ((params: ToolPanelClassParams) => string | string[]);
+export type HeaderClass = string | string[] | ((params: HeaderClassParams) => string | string[] | undefined);
+export interface ToolPanelClassParams {
+    colDef: AbstractColDef;
+    column?: Column | null;
+    columnGroup?: ProvidedColumnGroup | null;
+    api: GridApi;
+    /** The context as provided on `gridOptions.context` */
+    context?: any;
+}
+export type ToolPanelClass = string | string[] | ((params: ToolPanelClassParams) => string | string[] | undefined);
 
 /***********************************************************************
  * Don't forget to update ColDefUtil if changing this class. PLEASE! *

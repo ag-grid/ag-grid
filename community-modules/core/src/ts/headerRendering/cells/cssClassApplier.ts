@@ -41,8 +41,24 @@ export class CssClassApplier {
         );
     }
 
-    private static getColumnClassesFromCollDef(
-        classesOrFunc: string | string[] | ((params: HeaderClassParams | ToolPanelClassParams) => string | string[]) | null | undefined,
+    private static getClassParams<T extends HeaderClassParams | ToolPanelClassParams>(abstractColDef: AbstractColDef,
+        gridOptionsWrapper: GridOptionsWrapper,
+        column: Column | null,
+        columnGroup: T['columnGroup']): T {
+        return {
+            // bad naming, as colDef here can be a group or a column,
+            // however most people won't appreciate the difference,
+            // so keeping it as colDef to avoid confusion.
+            colDef: abstractColDef,
+            column: column,
+            columnGroup: columnGroup,
+            context: gridOptionsWrapper.getContext(),
+            api: gridOptionsWrapper.getApi()!
+        } as T;
+    }
+
+    private static getColumnClassesFromCollDef<T extends HeaderClassParams | ToolPanelClassParams>(
+        classesOrFunc: string | string[] | ((params: T) => string | string[] | undefined) | null | undefined,
         abstractColDef: AbstractColDef,
         gridOptionsWrapper: GridOptionsWrapper,
         column: Column | null,
@@ -50,19 +66,10 @@ export class CssClassApplier {
     ): string[] {
         if (missing(classesOrFunc)) { return []; }
 
-        let classToUse: string | string[];
+        let classToUse: string | string[] | undefined;
 
         if (typeof classesOrFunc === 'function') {
-            const params: HeaderClassParams = {
-                // bad naming, as colDef here can be a group or a column,
-                // however most people won't appreciate the difference,
-                // so keeping it as colDef to avoid confusion.
-                colDef: abstractColDef,
-                column: column,
-                columnGroup: columnGroup,
-                context: gridOptionsWrapper.getContext(),
-                api: gridOptionsWrapper.getApi()!
-            };
+            const params: T = this.getClassParams(abstractColDef, gridOptionsWrapper, column, columnGroup);
             classToUse = classesOrFunc(params);
         } else {
             classToUse = classesOrFunc;

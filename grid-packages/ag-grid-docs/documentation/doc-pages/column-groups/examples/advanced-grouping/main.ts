@@ -150,15 +150,15 @@ function headerClassFunc(params: HeaderClassParams) {
   // for the bottom row of headers, column is present,
   // otherwise columnGroup is present. we are guaranteed
   // at least one is always present.
-  let item = params.column ? params.column : params.columnGroup as any;
+  let item = params.column ? params.column : params.columnGroup;
 
   // walk up the tree, see if we are in C or F groups
   while (item) {
-    // if method getColGroupDef exists, then this is a group
-    // console.log(item.getUniqueId());
-    if (item.getDefinition().groupId === 'GroupC') {
+    // if groupId is set then this must be a group.
+    const colDef = item.getDefinition() as ColGroupDef;
+    if (colDef.groupId === 'GroupC') {
       foundC = true
-    } else if (item.getDefinition().groupId === 'GroupG') {
+    } else if (colDef.groupId === 'GroupG') {
       foundG = true
     }
     item = item.getParent()
@@ -168,8 +168,6 @@ function headerClassFunc(params: HeaderClassParams) {
     return 'column-group-g'
   } else if (foundC) {
     return 'column-group-c'
-  } else {
-    return []
   }
 }
 

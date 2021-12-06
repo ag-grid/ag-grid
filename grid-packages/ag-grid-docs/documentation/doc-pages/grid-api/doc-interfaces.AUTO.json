@@ -639,29 +639,29 @@
     }
   },
   "HeaderClassParams": {
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
     "colDef": { "type": { "returnType": "AbstractColDef", "optional": false } },
     "column": { "type": { "returnType": "Column | null", "optional": true } },
     "columnGroup": {
-      "type": {
-        "returnType": "ColumnGroup | ProvidedColumnGroup | null",
-        "optional": true
-      }
+      "type": { "returnType": "ColumnGroup | null", "optional": true }
     },
-    "context": { "type": { "returnType": "any", "optional": true } }
+    "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "context": {
+      "description": "/** The context as provided on `gridOptions.context` */",
+      "type": { "returnType": "any", "optional": true }
+    }
   },
   "HeaderClass": {},
   "ToolPanelClassParams": {
-    "api": { "type": { "returnType": "GridApi", "optional": false } },
     "colDef": { "type": { "returnType": "AbstractColDef", "optional": false } },
     "column": { "type": { "returnType": "Column | null", "optional": true } },
     "columnGroup": {
-      "type": {
-        "returnType": "ColumnGroup | ProvidedColumnGroup | null",
-        "optional": true
-      }
+      "type": { "returnType": "ProvidedColumnGroup | null", "optional": true }
     },
-    "context": { "type": { "returnType": "any", "optional": true } }
+    "api": { "type": { "returnType": "GridApi", "optional": false } },
+    "context": {
+      "description": "/** The context as provided on `gridOptions.context` */",
+      "type": { "returnType": "any", "optional": true }
+    }
   },
   "ToolPanelClass": {},
   "ColDef": {

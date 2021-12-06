@@ -384,30 +384,36 @@
   "HeaderClassParams": {
     "meta": {},
     "type": {
-      "api": "GridApi",
       "colDef": "AbstractColDef",
       "column?": "Column | null",
-      "columnGroup?": "ColumnGroup | ProvidedColumnGroup | null",
+      "columnGroup?": "ColumnGroup | null",
+      "api": "GridApi",
       "context?": "any"
+    },
+    "docs": {
+      "context?": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "HeaderClass": {
     "meta": { "isTypeAlias": true },
-    "type": "string | string[] | ((params: HeaderClassParams) => string | string[])"
+    "type": "string | string[] | ((params: HeaderClassParams) => string | string[] | undefined)"
   },
   "ToolPanelClassParams": {
     "meta": {},
     "type": {
-      "api": "GridApi",
       "colDef": "AbstractColDef",
       "column?": "Column | null",
-      "columnGroup?": "ColumnGroup | ProvidedColumnGroup | null",
+      "columnGroup?": "ProvidedColumnGroup | null",
+      "api": "GridApi",
       "context?": "any"
+    },
+    "docs": {
+      "context?": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "ToolPanelClass": {
     "meta": { "isTypeAlias": true },
-    "type": "string | string[] | ((params: ToolPanelClassParams) => string | string[])"
+    "type": "string | string[] | ((params: ToolPanelClassParams) => string | string[] | undefined)"
   },
   "ColDef": {
     "meta": {
