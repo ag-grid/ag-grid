@@ -25,7 +25,6 @@ export { UserComponentRegistry } from "./components/framework/userComponentRegis
 export { UserComponentFactory, UserCompDetails } from "./components/framework/userComponentFactory";
 export { ComponentType } from "./components/framework/componentTypes";
 export { initialiseAgGridWithAngular1 } from "./components/agGridNg1";
-export { initialiseAgGridWithWebComponents } from "./components/agGridWebComponent";
 
 // context
 export { BeanStub } from "./context/beanStub";
