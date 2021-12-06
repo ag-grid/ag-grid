@@ -275,6 +275,11 @@ export class GridApi {
         return this.alignedGridsService;
     }
 
+    /** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */
+    public __getContext(): Context {
+        return this.context;
+    }
+
     /** Register a detail grid with the master grid when it is created. */
     public addDetailGridInfo(id: string, gridInfo: DetailGridInfo): void {
         this.detailGridInfoMap[id] = gridInfo;

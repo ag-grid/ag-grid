@@ -12,6 +12,10 @@
     "description": "/** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */",
     "type": { "arguments": {}, "returnType": "AlignedGridsService" }
   },
+  "___getContext": {
+    "description": "/** Used internally by grid. Not intended to be used by the client. Interface may change between releases. */",
+    "type": { "arguments": {}, "returnType": "Context" }
+  },
   "addDetailGridInfo": {
     "description": "/** Register a detail grid with the master grid when it is created. */",
     "type": {

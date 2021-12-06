@@ -6,8 +6,11 @@ import { ColumnApi } from '../columns/columnApi';
 import { iterateObject } from '../utils/object';
 import { includes } from '../utils/array';
 import { values } from '../utils/generic';
+import { Autowired, Bean } from "../context/context";
+import { CtrlsService } from '../ctrlsService';
 
 export class ComponentUtil {
+
     // all the events are populated in here AFTER this class (at the bottom of the file).
     public static EVENTS: string[] = [];
 
@@ -82,114 +85,125 @@ export class ComponentUtil {
             return;
         }
 
-        const changesToApply = {...changes};
+        const applyChanges = ()=> {
+            const changesToApply = {...changes};
 
-        // to allow array style lookup in TypeScript, take type away from 'this' and 'gridOptions'
-        const pGridOptions = gridOptions as any;
-        const keyExists = (key: string) => changesToApply[key];
+            // to allow array style lookup in TypeScript, take type away from 'this' and 'gridOptions'
+            const pGridOptions = gridOptions as any;
+            const keyExists = (key: string) => changesToApply[key];
+    
+            // check if any change for the simple types, and if so, then just copy in the new value
+            [
+                ...ComponentUtil.ARRAY_PROPERTIES,
+                ...ComponentUtil.OBJECT_PROPERTIES,
+                ...ComponentUtil.STRING_PROPERTIES,
+                ...ComponentUtil.getEventCallbacks(),
+            ]
+                .filter(keyExists)
+                .forEach(key => pGridOptions[key] = changesToApply[key].currentValue);
+    
+            ComponentUtil.BOOLEAN_PROPERTIES
+                .filter(keyExists)
+                .forEach(key => pGridOptions[key] = ComponentUtil.toBoolean(changesToApply[key].currentValue));
+    
+            ComponentUtil.NUMBER_PROPERTIES
+                .filter(keyExists)
+                .forEach(key => pGridOptions[key] = ComponentUtil.toNumber(changesToApply[key].currentValue));
 
-        // check if any change for the simple types, and if so, then just copy in the new value
-        [
-            ...ComponentUtil.ARRAY_PROPERTIES,
-            ...ComponentUtil.OBJECT_PROPERTIES,
-            ...ComponentUtil.STRING_PROPERTIES,
-            ...ComponentUtil.getEventCallbacks(),
-        ]
-            .filter(keyExists)
-            .forEach(key => pGridOptions[key] = changesToApply[key].currentValue);
-
-        ComponentUtil.BOOLEAN_PROPERTIES
-            .filter(keyExists)
-            .forEach(key => pGridOptions[key] = ComponentUtil.toBoolean(changesToApply[key].currentValue));
-
-        ComponentUtil.NUMBER_PROPERTIES
-            .filter(keyExists)
-            .forEach(key => pGridOptions[key] = ComponentUtil.toNumber(changesToApply[key].currentValue));
-
-        if (changesToApply.enableCellTextSelection) {
-            api.setEnableCellTextSelection(ComponentUtil.toBoolean(changesToApply.enableCellTextSelection.currentValue));
-            delete changesToApply.enableCellTextSelection;
-        }
-
-        if (changesToApply.quickFilterText) {
-            api.setQuickFilter(changesToApply.quickFilterText.currentValue);
-            delete changesToApply.quickFilterText;
-        }
-
-        if (changesToApply.autoGroupColumnDef) {
-            api.setAutoGroupColumnDef(changesToApply.autoGroupColumnDef.currentValue, "gridOptionsChanged");
-            delete changesToApply.autoGroupColumnDef;
-        }
-
-        if (changesToApply.columnDefs) {
-            api.setColumnDefs(changesToApply.columnDefs.currentValue, "gridOptionsChanged");
-            delete changesToApply.columnDefs;
-        }
-
-        if (changesToApply.paginationPageSize) {
-            api.paginationSetPageSize(ComponentUtil.toNumber(changesToApply.paginationPageSize.currentValue));
-            delete changesToApply.paginationPageSize;
-        }
-
-        if (changesToApply.pivotMode) {
-            columnApi.setPivotMode(ComponentUtil.toBoolean(changesToApply.pivotMode.currentValue));
-            delete changesToApply.pivotMode;
-        }
-
-        if (changesToApply.groupRemoveSingleChildren) {
-            api.setGroupRemoveSingleChildren(ComponentUtil.toBoolean(changesToApply.groupRemoveSingleChildren.currentValue));
-            delete changesToApply.groupRemoveSingleChildren;
-        }
-
-        if (changesToApply.suppressRowDrag) {
-            api.setSuppressRowDrag(ComponentUtil.toBoolean(changesToApply.suppressRowDrag.currentValue));
-            delete changesToApply.suppressRowDrag;
-        }
-
-        if (changesToApply.suppressMoveWhenRowDragging) {
-            api.setSuppressMoveWhenRowDragging(ComponentUtil.toBoolean(changesToApply.suppressMoveWhenRowDragging.currentValue));
-            delete changesToApply.suppressMoveWhenRowDragging;
-        }
-
-        if (changesToApply.suppressRowClickSelection) {
-            api.setSuppressRowClickSelection(ComponentUtil.toBoolean(changesToApply.suppressRowClickSelection.currentValue));
-            delete changesToApply.suppressRowClickSelection;
-        }
-
-        if (changesToApply.suppressClipboardPaste) {
-            api.setSuppressClipboardPaste(ComponentUtil.toBoolean(changesToApply.suppressClipboardPaste.currentValue));
-            delete changesToApply.suppressClipboardPaste;
-        }
-
-        if (changesToApply.headerHeight) {
-            api.setHeaderHeight(ComponentUtil.toNumber(changesToApply.headerHeight.currentValue));
-            delete changesToApply.headerHeight;
-        }
-
-        // any remaining properties can be set in a generic way
-        // ie the setter takes the form of setXXX and the argument requires no formatting/translation first
-        const dynamicApi = (api as any);
-        Object.keys(changesToApply)
-            .forEach(property => {
-                const setterName = `set${property.charAt(0).toUpperCase()}${property.substring(1)}`;
-
-                if (dynamicApi[setterName]) {
-                    dynamicApi[setterName](changes[property].currentValue);
-                }
+                if (changesToApply.enableCellTextSelection) {
+                api.setEnableCellTextSelection(ComponentUtil.toBoolean(changesToApply.enableCellTextSelection.currentValue));
+                delete changesToApply.enableCellTextSelection;
+            }
+    
+            if (changesToApply.quickFilterText) {
+                api.setQuickFilter(changesToApply.quickFilterText.currentValue);
+                delete changesToApply.quickFilterText;
+            }
+    
+            if (changesToApply.autoGroupColumnDef) {
+                api.setAutoGroupColumnDef(changesToApply.autoGroupColumnDef.currentValue, "gridOptionsChanged");
+                delete changesToApply.autoGroupColumnDef;
+            }
+    
+            if (changesToApply.columnDefs) {
+                api.setColumnDefs(changesToApply.columnDefs.currentValue, "gridOptionsChanged");
+                delete changesToApply.columnDefs;
+            }
+    
+            if (changesToApply.paginationPageSize) {
+                api.paginationSetPageSize(ComponentUtil.toNumber(changesToApply.paginationPageSize.currentValue));
+                delete changesToApply.paginationPageSize;
+            }
+    
+            if (changesToApply.pivotMode) {
+                columnApi.setPivotMode(ComponentUtil.toBoolean(changesToApply.pivotMode.currentValue));
+                delete changesToApply.pivotMode;
+            }
+    
+            if (changesToApply.groupRemoveSingleChildren) {
+                api.setGroupRemoveSingleChildren(ComponentUtil.toBoolean(changesToApply.groupRemoveSingleChildren.currentValue));
+                delete changesToApply.groupRemoveSingleChildren;
+            }
+    
+            if (changesToApply.suppressRowDrag) {
+                api.setSuppressRowDrag(ComponentUtil.toBoolean(changesToApply.suppressRowDrag.currentValue));
+                delete changesToApply.suppressRowDrag;
+            }
+    
+            if (changesToApply.suppressMoveWhenRowDragging) {
+                api.setSuppressMoveWhenRowDragging(ComponentUtil.toBoolean(changesToApply.suppressMoveWhenRowDragging.currentValue));
+                delete changesToApply.suppressMoveWhenRowDragging;
+            }
+    
+            if (changesToApply.suppressRowClickSelection) {
+                api.setSuppressRowClickSelection(ComponentUtil.toBoolean(changesToApply.suppressRowClickSelection.currentValue));
+                delete changesToApply.suppressRowClickSelection;
+            }
+    
+            if (changesToApply.suppressClipboardPaste) {
+                api.setSuppressClipboardPaste(ComponentUtil.toBoolean(changesToApply.suppressClipboardPaste.currentValue));
+                delete changesToApply.suppressClipboardPaste;
+            }
+    
+            if (changesToApply.headerHeight) {
+                api.setHeaderHeight(ComponentUtil.toNumber(changesToApply.headerHeight.currentValue));
+                delete changesToApply.headerHeight;
+            }
+    
+            // any remaining properties can be set in a generic way
+            // ie the setter takes the form of setXXX and the argument requires no formatting/translation first
+            const dynamicApi = (api as any);
+            Object.keys(changesToApply)
+                .forEach(property => {
+                    const setterName = `set${property.charAt(0).toUpperCase()}${property.substring(1)}`;
+    
+                    if (dynamicApi[setterName]) {
+                        dynamicApi[setterName](changes[property].currentValue);
+                    }
+                });
+    
+            // copy changes into an event for dispatch
+            const event: ComponentStateChangedEvent = {
+                type: Events.EVENT_COMPONENT_STATE_CHANGED,
+                api: gridOptions.api!,
+                columnApi: gridOptions.columnApi!
+            };
+    
+            iterateObject(changes, (key: string, value: any) => {
+                (event as any)[key] = value;
             });
-
-        // copy changes into an event for dispatch
-        const event: ComponentStateChangedEvent = {
-            type: Events.EVENT_COMPONENT_STATE_CHANGED,
-            api: gridOptions.api!,
-            columnApi: gridOptions.columnApi!
+    
+            api.dispatchEvent(event);
         };
 
-        iterateObject(changes, (key: string, value: any) => {
-            (event as any)[key] = value;
-        });
+        const context = api.__getContext();
+        const ctrlsService = context.getBean(CtrlsService.NAME);
 
-        api.dispatchEvent(event);
+        // we do this in whenReady to stop property changes getting applied before the grid is initialised,
+        // as some of the properties result in work getting done, eg api.setColumnDefs() gets called when columns
+        // change, and api.setRowData() gets called when row data changes, and these would both fail if the grid
+        // hasn't finished initialising.
+        ctrlsService.whenReady(applyChanges);
     }
 
     public static toBoolean(value: any): boolean {
