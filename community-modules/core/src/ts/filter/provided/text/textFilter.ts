@@ -31,6 +31,7 @@ export interface TextMatcherParams extends BaseColDefParams {
     filter: string | null | undefined;
     value: any;
     filterText: string | null;
+    textFormatter?: TextFormatter;
 }
 
 export interface TextMatcher {
@@ -225,7 +226,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
     protected evaluateNonNullValue(values: Tuple<string>, cellValue: string, filterModel: TextFilterModel, params: IDoesFilterPassParams): boolean {
         const formattedValues = values.map(v => this.formatter(v)) || [];
         const cellValueFormatted = this.formatter(cellValue);
-        const {api, colDef, column, columnApi, context} = this.textFilterParams;
+        const {api, colDef, column, columnApi, context, textFormatter} = this.textFilterParams;
 
         const matcherParams = {
             api,
@@ -237,6 +238,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
             data: params.data,
             filter: filterModel.type,
             value: cellValueFormatted,
+            textFormatter,
         };
 
         return formattedValues.some(v => this.matcher({ ...matcherParams, filterText: v }));

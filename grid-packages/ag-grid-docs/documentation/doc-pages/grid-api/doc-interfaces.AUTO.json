@@ -7719,6 +7719,9 @@
     "filterText": {
       "type": { "returnType": "string | null", "optional": false }
     },
+    "textFormatter": {
+      "type": { "returnType": "TextFormatter", "optional": true }
+    },
     "node": {
       "description": "/** Row node for the given row */",
       "type": { "returnType": "RowNode | null", "optional": false }

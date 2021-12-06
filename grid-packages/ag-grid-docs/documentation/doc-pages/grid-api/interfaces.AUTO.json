@@ -4446,6 +4446,7 @@
       "filter": "string | null | undefined",
       "value": "any",
       "filterText": "string | null",
+      "textFormatter?": "TextFormatter",
       "node": "RowNode | null",
       "data": "any",
       "column": "Column",
