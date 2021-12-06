@@ -541,7 +541,9 @@ export class ColumnModel extends BeanStub {
                 if (preferredWidth > 0) {
                     const newWidth = this.normaliseColumnWidth(column, preferredWidth);
                     const currentColumnWidth = column.getActualWidth();
-                    if (!onlyGrow.length || (onlyGrow.indexOf(column) !== -1 && currentColumnWidth < newWidth)) {
+                    const isOnlyGrow = onlyGrow.length && onlyGrow.indexOf(column) !== -1;
+
+                    if (!isOnlyGrow || currentColumnWidth < newWidth) {
                         column.setActualWidth(newWidth, source);
                         columnsAutosized.push(column);
                         changesThisTimeAround++;
