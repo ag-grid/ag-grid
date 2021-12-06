@@ -1,4 +1,4 @@
-import { GridOptions, ICellRendererParams, RowNode } from '@ag-grid-community/core'
+import { GridOptions, ICellRendererComp, ICellRendererParams, RowNode } from '@ag-grid-community/core'
 declare var window: any
 
 const gridOptions: GridOptions = {
@@ -60,24 +60,31 @@ function getNextId() {
 }
 
 function getFileCellRenderer() {
-  function FileCellRenderer() { }
+  class FileCellRenderer implements ICellRendererComp {
+    eGui: any;
 
-  FileCellRenderer.prototype.init = function (params: ICellRendererParams) {
-    var tempDiv = document.createElement('div')
-    var value = params.value
-    var icon = getFileIcon(params.value)
-    tempDiv.innerHTML = icon
-      ? '<span><i class="' +
-      icon +
-      '"></i>' +
-      '<span class="filename"></span>' +
-      value +
-      '</span>'
-      : value
-    this.eGui = tempDiv.firstChild
-  }
-  FileCellRenderer.prototype.getGui = function () {
-    return this.eGui
+    init(params: ICellRendererParams) {
+      var tempDiv = document.createElement('div')
+      var value = params.value
+      var icon = getFileIcon(params.value)
+      tempDiv.innerHTML = icon
+        ? '<span><i class="' +
+        icon +
+        '"></i>' +
+        '<span class="filename"></span>' +
+        value +
+        '</span>'
+        : value
+      this.eGui = tempDiv.firstChild
+    }
+
+    getGui() {
+      return this.eGui;
+    }
+
+    refresh() {
+      return false;
+    }
   }
 
   return FileCellRenderer
