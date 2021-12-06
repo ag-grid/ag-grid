@@ -1,7 +1,6 @@
 function NumberFilter() { }
 
 NumberFilter.prototype.init = function (params) {
-    this.valueGetter = params.valueGetter
     this.filterText = null
     this.params = params
     this.setupGui()
@@ -35,14 +34,28 @@ NumberFilter.prototype.getGui = function () {
 }
 
 NumberFilter.prototype.doesFilterPass = function (params) {
-    var valueGetter = this.valueGetter
-    var value = valueGetter(params)
-    var filterValue = this.filterText
-
-    if (this.isFilterActive()) {
-        if (!value) return false
-        return Number(value) > Number(filterValue)
+    if (!this.isFilterActive()) {
+        return;
     }
+
+    var { api, colDef, column, columnApi, context, valueGetter } = this.params;
+    var { node } = params;
+
+    var value = valueGetter({
+        api,
+        colDef,
+        column,
+        columnApi,
+        context,
+        data: node.data,
+        getValue: (field) => node.data[field],
+        node,
+    });
+
+    var filterValue = this.filterText;
+
+    if (!value) return false;
+    return Number(value) > Number(filterValue);
 }
 
 NumberFilter.prototype.isFilterActive = function () {

@@ -9,8 +9,6 @@ export default class PartialMatchFilter extends Component {
             text: ''
         };
 
-        this.valueGetter = this.props.valueGetter;
-
         this.onChange = this.onChange.bind(this);
     }
 
@@ -19,9 +17,22 @@ export default class PartialMatchFilter extends Component {
     }
 
     doesFilterPass(params) {
+        const { api, colDef, column, columnApi, context, valueGetter } = this.props;
+        const { node } = params;
+        const value = valueGetter({
+            api,
+            colDef,
+            column,
+            columnApi,
+            context,
+            data: node.data,
+            getValue: (field) => node.data[field],
+            node,
+        }).toString().toLowerCase();
+
         return this.state.text.toLowerCase()
             .split(' ')
-            .every(filterWord => this.valueGetter(params.node).toString().toLowerCase().indexOf(filterWord) >= 0);
+            .every(filterWord => value.indexOf(filterWord) >= 0);
     }
 
     getModel() {

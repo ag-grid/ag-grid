@@ -11,6 +11,7 @@ import { ManagedFocusFeature } from '../../widgets/managedFocusFeature';
 import { convertToSet } from '../../utils/set';
 import { Component } from '../../widgets/component';
 import { RowNode } from '../../entities/rowNode';
+import { ValueService } from '../../valueService/valueService';
 
 type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
 
@@ -49,6 +50,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IFilterC
     private appliedModel: M | null = null;
 
     @Autowired('rowModel') protected readonly rowModel: IRowModel;
+    @Autowired('valueService') private valueService: ValueService;
 
     constructor(private readonly filterNameKey: keyof IFilterTitleLocaleText) {
         super();
@@ -349,6 +351,16 @@ export abstract class ProvidedFilter<M, V> extends Component implements IFilterC
     }
 
     protected getCellValue(rowNode: RowNode): V {
-        return this.providedFilterParams.valueGetter(rowNode);
+        const {api, colDef, column, columnApi, context} = this.providedFilterParams;
+        return this.providedFilterParams.valueGetter({
+            api,
+            colDef,
+            column,
+            columnApi,
+            context,
+            data: rowNode.data,
+            getValue: (field) => rowNode.data[field],
+            node: rowNode,
+        });
     }
 }

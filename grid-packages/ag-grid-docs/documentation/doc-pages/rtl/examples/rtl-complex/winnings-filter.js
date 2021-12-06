@@ -35,15 +35,28 @@ function getWinningsFilter() {
         this.cbNegative.onclick = this.filterChangedCallback
         this.cbGreater50.onclick = this.filterChangedCallback
         this.cbGreater90.onclick = this.filterChangedCallback
-        this.valueGetter = params.valueGetter
+        this.params = params
     }
 
     WinningsFilter.prototype.getGui = function () {
         return this.eGui
     }
 
-    WinningsFilter.prototype.doesFilterPass = function (node) {
-        var value = this.valueGetter(node)
+    WinningsFilter.prototype.doesFilterPass = function (params) {
+        var { api, colDef, column, columnApi, context } = this.params;
+        var { node } = params;
+
+        var value = this.params.valueGetter({
+            api,
+            colDef,
+            column,
+            columnApi,
+            context,
+            data: node.data,
+            getValue: (field) => node.data[field],
+            node,
+        })
+
         if (this.cbNoFilter.checked) {
             return true
         } else if (this.cbPositive.checked) {

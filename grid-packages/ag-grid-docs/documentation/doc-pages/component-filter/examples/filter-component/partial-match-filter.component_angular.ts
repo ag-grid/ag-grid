@@ -1,5 +1,5 @@
 import { Component, ViewChild, ViewContainerRef } from '@angular/core';
-import { IAfterGuiAttachedParams, IDoesFilterPassParams, IFilterParams, RowNode } from '@ag-grid-community/all-modules';
+import { IAfterGuiAttachedParams, IDoesFilterPassParams, IFilterParams } from '@ag-grid-community/all-modules';
 import { IFilterAngularComp } from '@ag-grid-community/angular';
 
 @Component({
@@ -26,14 +26,12 @@ import { IFilterAngularComp } from '@ag-grid-community/angular';
 })
 export class PartialMatchFilter implements IFilterAngularComp {
     private params: IFilterParams;
-    private valueGetter: (rowNode: RowNode) => any;
     public text: string = '';
 
     @ViewChild('input', { read: ViewContainerRef }) public input;
 
     agInit(params: IFilterParams): void {
         this.params = params;
-        this.valueGetter = params.valueGetter;
     }
 
     isFilterActive(): boolean {
@@ -41,9 +39,22 @@ export class PartialMatchFilter implements IFilterAngularComp {
     }
 
     doesFilterPass(params: IDoesFilterPassParams): boolean {
+        const { api, colDef, column, columnApi, context, valueGetter } = this.params;
+        const { node } = params;
+        const value = valueGetter({
+            api,
+            colDef,
+            column,
+            columnApi,
+            context,
+            data: node.data,
+            getValue: (field) => node.data[field],
+            node,
+        }).toString().toLowerCase();
+
         return this.text.toLowerCase()
             .split(' ')
-            .every(filterWord => this.valueGetter(params.node).toString().toLowerCase().indexOf(filterWord) >= 0);
+            .every(filterWord => value.indexOf(filterWord) >= 0);
     }
 
     getModel(): any {

@@ -4,7 +4,6 @@ import {
   IDoesFilterPassParams,
   IFilterComp,
   IFilterParams,
-  RowNode,
 } from '@ag-grid-community/core'
 
 const isNumeric = (n: string) =>
@@ -12,7 +11,7 @@ const isNumeric = (n: string) =>
 
 const getNumberFilter = () => {
   return class NumberFilter implements IFilterComp {
-    valueGetter!: (rowNode: RowNode) => any
+    filterParams!: IFilterParams;
     filterText: string | null = null
     eFilterText: any
     params!: IFilterParams
@@ -20,7 +19,7 @@ const getNumberFilter = () => {
     onFilterChanged!: () => void
 
     init(params: IFilterParams) {
-      this.valueGetter = params.valueGetter
+      this.filterParams = params;
       this.filterText = null
       this.params = params
       this.setupGui()
@@ -54,15 +53,27 @@ const getNumberFilter = () => {
     }
 
     doesFilterPass(params: IDoesFilterPassParams) {
-      const valueGetter = this.valueGetter
-      const value = valueGetter(params.node)
-      const filterValue = this.filterText
-
-      if (this.isFilterActive()) {
-        if (!value) return false
-        return Number(value) > Number(filterValue)
+      if (!this.isFilterActive()) {
+        return false;
       }
-      return false
+
+      const { api, colDef, column, columnApi, context } = this.filterParams;
+      const { node } = params;
+      const value = this.filterParams.valueGetter({
+          api,
+          colDef,
+          column,
+          columnApi,
+          context,
+          data: node.data,
+          getValue: (field) => node.data[field],
+          node,
+      });
+
+      const filterValue = this.filterText;
+
+      if (!value) return false;
+      return Number(value) > Number(filterValue);
     }
 
     isFilterActive() {

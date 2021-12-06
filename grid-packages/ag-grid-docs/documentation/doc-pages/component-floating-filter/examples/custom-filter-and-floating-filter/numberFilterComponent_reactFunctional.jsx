@@ -26,12 +26,24 @@ export default forwardRef((props, ref) => {
             isFilterActive,
 
             doesFilterPass(params) {
-                const value = props.valueGetter(params);
+                if (!this.isFilterActive()) { return; }
 
-                if (isFilterActive()) {
-                    if (!value) return false;
-                    return Number(value) > Number(filterText);
-                }
+                const { api, colDef, column, columnApi, context, valueGetter } = props;
+                const { node } = params;
+            
+                const value = valueGetter({
+                    api,
+                    colDef,
+                    column,
+                    columnApi,
+                    context,
+                    data: node.data,
+                    getValue: (field) => node.data[field],
+                    node,
+                });        
+
+                if (!value) return false;
+                return Number(value) > Number(filterText);
             },
 
             isNumeric(n) {

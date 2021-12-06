@@ -1,5 +1,5 @@
 import { Column } from '../entities/column';
-import { ColDef } from '../entities/colDef';
+import { ColDef, ValueGetterFunc } from '../entities/colDef';
 import { IRowModel } from './iRowModel';
 import { RowNode } from '../entities/rowNode';
 import { IComponent } from './iComponent';
@@ -139,7 +139,7 @@ export interface IFilterParams {
      * This is useful in, for example, creating an Excel style filter,
      * where the filter needs to lookup available values to allow the user to select from.
      */
-    valueGetter: (rowNode: RowNode) => any;
+    valueGetter: ValueGetterFunc;
 
     /**
      * A function callback, call with a node to be told whether the node passes all filters except the current filter.

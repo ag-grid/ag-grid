@@ -416,20 +416,30 @@ export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> {
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
         if (!this.setFilterParams || !this.valueModel || !this.appliedModelValues) { return true; }
 
-        const { valueGetter, colDef: { keyCreator } } = this.setFilterParams;
+        const { node, data } = params;
+        const { valueGetter, colDef: { keyCreator }, api, colDef, column, columnApi, context } = this.setFilterParams;
 
-        let value = valueGetter(params.node);
+        let value = valueGetter({
+            api,
+            colDef,
+            column,
+            columnApi,
+            context,
+            data: data,
+            getValue: (field) => data[field],
+            node: node,
+        });
 
         if (keyCreator) {
             const keyParams: KeyCreatorParams = {
-                value: value,
-                colDef: this.setFilterParams.colDef,
-                column: this.setFilterParams.column,
-                node: params.node,
-                data: params.data,
-                api: this.gridOptionsWrapper.getApi()!,
-                columnApi: this.gridOptionsWrapper.getColumnApi()!,
-                context: this.gridOptionsWrapper.getContext()
+                value,
+                colDef,
+                column,
+                node,
+                data,
+                api,
+                columnApi,
+                context,
             };
             value = keyCreator(keyParams);
         }

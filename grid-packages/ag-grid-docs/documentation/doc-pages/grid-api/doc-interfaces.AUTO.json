@@ -7295,11 +7295,7 @@
     },
     "valueGetter": {
       "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
-      "type": {
-        "arguments": { "rowNode": "RowNode" },
-        "returnType": "any",
-        "optional": false
-      }
+      "type": { "returnType": "ValueGetterFunc", "optional": false }
     },
     "doesRowPassOtherFilter": {
       "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
@@ -7429,11 +7425,7 @@
     },
     "valueGetter": {
       "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
-      "type": {
-        "arguments": { "rowNode": "RowNode" },
-        "returnType": "any",
-        "optional": false
-      }
+      "type": { "returnType": "ValueGetterFunc", "optional": false }
     },
     "doesRowPassOtherFilter": {
       "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
@@ -7487,11 +7479,7 @@
     },
     "valueGetter": {
       "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
-      "type": {
-        "arguments": { "rowNode": "RowNode" },
-        "returnType": "any",
-        "optional": false
-      }
+      "type": { "returnType": "ValueGetterFunc", "optional": false }
     },
     "doesRowPassOtherFilter": {
       "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
@@ -7587,11 +7575,7 @@
     },
     "valueGetter": {
       "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
-      "type": {
-        "arguments": { "rowNode": "RowNode" },
-        "returnType": "any",
-        "optional": false
-      }
+      "type": { "returnType": "ValueGetterFunc", "optional": false }
     },
     "doesRowPassOtherFilter": {
       "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
@@ -7669,11 +7653,7 @@
     },
     "valueGetter": {
       "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
-      "type": {
-        "arguments": { "rowNode": "RowNode" },
-        "returnType": "any",
-        "optional": false
-      }
+      "type": { "returnType": "ValueGetterFunc", "optional": false }
     },
     "doesRowPassOtherFilter": {
       "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
@@ -7812,11 +7792,7 @@
     },
     "valueGetter": {
       "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
-      "type": {
-        "arguments": { "rowNode": "RowNode" },
-        "returnType": "any",
-        "optional": false
-      }
+      "type": { "returnType": "ValueGetterFunc", "optional": false }
     },
     "doesRowPassOtherFilter": {
       "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
@@ -12249,11 +12225,7 @@
     },
     "valueGetter": {
       "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
-      "type": {
-        "arguments": { "rowNode": "RowNode" },
-        "returnType": "any",
-        "optional": false
-      }
+      "type": { "returnType": "ValueGetterFunc", "optional": false }
     },
     "doesRowPassOtherFilter": {
       "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
@@ -12629,11 +12601,7 @@
     },
     "valueGetter": {
       "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
-      "type": {
-        "arguments": { "rowNode": "RowNode" },
-        "returnType": "any",
-        "optional": false
-      }
+      "type": { "returnType": "ValueGetterFunc", "optional": false }
     },
     "doesRowPassOtherFilter": {
       "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
@@ -13879,11 +13847,7 @@
     },
     "valueGetter": {
       "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
-      "type": {
-        "arguments": { "rowNode": "RowNode" },
-        "returnType": "any",
-        "optional": false
-      }
+      "type": { "returnType": "ValueGetterFunc", "optional": false }
     },
     "doesRowPassOtherFilter": {
       "description": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",

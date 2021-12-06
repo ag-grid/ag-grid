@@ -395,8 +395,8 @@ export class FilterManager extends BeanStub {
         this.updateActiveFilters();
     }
 
-    private createValueGetter(column: Column): (node: RowNode) => any {
-        return node => this.valueService.getValue(column, node, true);
+    private createValueGetter(column: Column): IFilterParams['valueGetter'] {
+        return ({node}) => this.valueService.getValue(column, node, true);
     }
 
     public getFilterComponent(column: Column, source: FilterRequestSource, createIfDoesNotExist = true): AgPromise<IFilterComp> | null {

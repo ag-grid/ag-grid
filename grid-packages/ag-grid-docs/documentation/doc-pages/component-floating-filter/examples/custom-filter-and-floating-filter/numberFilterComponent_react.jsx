@@ -12,12 +12,24 @@ export default class NumberFilterComponent extends Component {
     }
 
     doesFilterPass(params) {
-        const value = this.props.valueGetter(params);
+        if (!this.isFilterActive()) { return; }
 
-        if (this.isFilterActive()) {
-            if (!value) return false;
-            return Number(value) > Number(this.state.filterText);
-        }
+        const { api, colDef, column, columnApi, context, valueGetter } = this.props;
+        const { node } = params;
+    
+        const value = valueGetter({
+            api,
+            colDef,
+            column,
+            columnApi,
+            context,
+            data: node.data,
+            getValue: (field) => node.data[field],
+            node,
+        });        
+
+        if (!value) return false;
+        return Number(value) > Number(this.state.filterText);
     }
 
     isFilterActive() {
