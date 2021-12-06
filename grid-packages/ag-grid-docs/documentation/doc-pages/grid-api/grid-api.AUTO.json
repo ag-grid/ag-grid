@@ -237,26 +237,6 @@
       "returnType": "void"
     }
   },
-  "refreshView": {
-    "description": "/** @deprecated */",
-    "type": { "arguments": {} }
-  },
-  "refreshRows": {
-    "description": "/** @deprecated */",
-    "type": { "arguments": { "rowNodes": "RowNode[]" }, "returnType": "void" }
-  },
-  "rowDataChanged": {
-    "description": "/** @deprecated */",
-    "type": { "arguments": { "rows": "any" } }
-  },
-  "softRefreshView": {
-    "description": "/** @deprecated */",
-    "type": { "arguments": {} }
-  },
-  "refreshGroupRows": {
-    "description": "/** @deprecated */",
-    "type": { "arguments": {} }
-  },
   "setFunctionsReadOnly": {
     "type": { "arguments": { "readOnly": "boolean" } }
   },

@@ -581,37 +581,6 @@ export class GridApi {
         this.rowRenderer.redrawRows(rowNodes);
     }
 
-    /** @deprecated */
-    public refreshView() {
-        console.warn('AG Grid: since v11.1, refreshView() is deprecated, please call refreshCells() or redrawRows() instead');
-        this.redrawRows();
-    }
-
-    /** @deprecated */
-    public refreshRows(rowNodes: RowNode[]): void {
-        console.warn('since AG Grid v11.1, refreshRows() is deprecated, please use refreshCells({rowNodes: rows}) or redrawRows({rowNodes: rows}) instead');
-        this.refreshCells({ rowNodes: rowNodes });
-    }
-
-    /** @deprecated */
-    public rowDataChanged(rows: any) {
-        console.warn('AG Grid: rowDataChanged is deprecated, either call refreshView() to refresh everything, or call rowNode.setRowData(newData) to set value on a particular node');
-        this.redrawRows();
-    }
-
-    /** @deprecated */
-    public softRefreshView() {
-        console.error('AG Grid: since v16, softRefreshView() is no longer supported. Please check the documentation on how to refresh.');
-    }
-
-    /** @deprecated */
-    public refreshGroupRows() {
-        console.warn('AG Grid: since v11.1, refreshGroupRows() is no longer supported, call refreshCells() instead. ' +
-            'Because refreshCells() now does dirty checking, it will only refresh cells that have changed, so it should ' +
-            'not be necessary to only refresh the group rows.');
-        this.refreshCells();
-    }
-
     public setFunctionsReadOnly(readOnly: boolean) {
         this.gridOptionsWrapper.setProperty('functionsReadOnly', readOnly);
     }

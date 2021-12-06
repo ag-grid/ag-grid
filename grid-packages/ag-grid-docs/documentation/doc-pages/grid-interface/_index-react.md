@@ -115,7 +115,7 @@
 |
 | ```js
 | // refresh the grid
-| gridOptions.api.refreshView();
+| gridOptions.api.redrawRows();
 |
 | // resize columns in the grid to fit the available space
 | gridOptions.columnApi.sizeColumnsToFit();

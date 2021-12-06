@@ -494,8 +494,8 @@ export class RowRenderer extends BeanStub {
             throw new Error(
                 "AG Grid: cannot get grid to draw rows when it is in the middle of drawing rows. " +
                 "Your code probably called a grid API method while the grid was in the render stage. To overcome " +
-                "this, put the API call into a timeout, e.g. instead of api.refreshView(), " +
-                "call setTimeout(function() { api.refreshView(); }, 0). To see what part of your code " +
+                "this, put the API call into a timeout, e.g. instead of api.redrawRows(), " +
+                "call setTimeout(function() { api.redrawRows(); }, 0). To see what part of your code " +
                 "that caused the refresh check this stacktrace."
             );
         }
