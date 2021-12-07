@@ -2,7 +2,12 @@
 title: "External Filter"
 ---
 
-External filtering allows you to mix your own 'outside of the grid' filtering with the grid's filtering.
+External filtering allows you to mix your own filtering logic with the grid's inbuilt filtering, without creating column-based filter components.
+
+[[warning]]
+| This form of filtering is only compatible with the [client-side row model](/client-side-model/#client-side-row-model).
+
+## Implementing External Filtering
 
 The example below shows external filters in action. There are two methods on `gridOptions` you need to implement: `isExternalFilterPresent` and `doesExternalFilterPass`.
 
