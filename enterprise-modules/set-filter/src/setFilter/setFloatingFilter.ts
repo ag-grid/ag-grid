@@ -54,8 +54,18 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
         this.updateFloatingFilterText(parentModel);
     }
 
+    private parentSetFilterInstance(cb: (instance: SetFilter<unknown>) => void): void {
+        this.params.parentFilterInstance((filter) => {
+            if (!(filter instanceof SetFilter)) {
+                throw new Error('AG Grid - SetFloatingFilter expects SetFilter as it\'s parent');
+            }
+
+            cb(filter);
+        });
+    }
+
     private addAvailableValuesListener(): void {
-        this.params.parentFilterInstance((setFilter: SetFilter<unknown>) => {
+        this.parentSetFilterInstance((setFilter) => {
             const setValueModel = setFilter.getValueModel();
 
             if (!setValueModel) { return; }
@@ -77,7 +87,7 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
             this.addAvailableValuesListener();
         }
 
-        this.params.parentFilterInstance((setFilter: SetFilter<unknown>) => {
+        this.parentSetFilterInstance((setFilter) => {
             const { values } = parentModel || setFilter.getModel() || {};
             const valueModel = setFilter.getValueModel();
 

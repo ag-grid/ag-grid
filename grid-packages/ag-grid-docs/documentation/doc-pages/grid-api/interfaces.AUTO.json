@@ -4072,7 +4072,7 @@
       "suppressFilterButton": "boolean",
       "api": "GridApi",
       "currentParentModel": "() => any",
-      "parentFilterInstance": "(callback: (filterInstance: IFilterComp) => void) => void",
+      "parentFilterInstance": "(callback: (filterInstance: ISimpleFilter) => void) => void",
       "showParentFilter": "() => void"
     },
     "docs": {
@@ -4382,6 +4382,35 @@
     }
   },
   "JoinOperator": { "meta": { "isTypeAlias": true }, "type": "'AND' | 'OR'" },
+  "ISimpleFilter": {
+    "meta": {
+      "doc": "/** Interface contract for the public aspects of the SimpleFilter implementation(s). */"
+    },
+    "type": {
+      "onFloatingFilterChanged(type: string | null, value: any)": "void",
+      "applyModel()": "boolean",
+      "getModelFromUi()": "any",
+      "isFilterActive()": "boolean",
+      "doesFilterPass(params: IDoesFilterPassParams)": "boolean",
+      "getModel()": "any",
+      "setModel(model: any)": "void | AgPromise<void>",
+      "onNewRowsLoaded?()": "void",
+      "onAnyFilterChanged?()": "void",
+      "getModelAsString?(model: any)": "string"
+    },
+    "docs": {
+      "onFloatingFilterChanged(type: string | null, value: any)": "/** Notification that a new floating-filter value was input by the user.\n * @param type operation type selected.\n * @param value model-typed value entered.\n */",
+      "applyModel()": "/** Apply the current UI state to the filter model.\n * @returns true if the model was changed.\n */",
+      "getModelFromUi()": "/** Get the current UI state as a filter model. */",
+      "isFilterActive()": "/** This is used to let the grid know if the filter is active or not */",
+      "doesFilterPass(params: IDoesFilterPassParams)": "/** The grid will ask each active filter, in turn, whether each row in the grid passes. If any\n * filter fails, then the row will be excluded from the final set. The method is provided a\n * params object with attributes node (the rodNode the grid creates that wraps the data) and data\n * (the data object that you provided to the grid for that row). */",
+      "getModel()": "/** Gets the filter state for storing */",
+      "setModel(model: any)": "/** Restores the filter state. */",
+      "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
+      "onAnyFilterChanged?()": "/** Called whenever any filter is changed. */",
+      "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */"
+    }
+  },
   "ISimpleFilterParams": {
     "meta": {},
     "type": {

@@ -1,7 +1,7 @@
-import {Component} from "@angular/core";
+import { Component } from "@angular/core";
 
-import {AgFloatingFilterComponent} from "@ag-grid-community/angular";
-import {IFloatingFilterParams} from "@ag-grid-community/core";
+import { AgFloatingFilterComponent } from "@ag-grid-community/angular";
+import { IFloatingFilterParams, ISimpleFilter } from "@ag-grid-community/core";
 
 @Component({
     selector: 'number-component',
@@ -33,7 +33,7 @@ export class NumberFloatingFilterComponent implements AgFloatingFilterComponent 
     onInputBoxChanged() {
         if (!!!this.currentValue) {
             // Remove the filter
-            this.params.parentFilterInstance((instance: any) => {
+            this.params.parentFilterInstance((instance: ISimpleFilter) => {
                 instance.onFloatingFilterChanged(null, null);
             });
             return;

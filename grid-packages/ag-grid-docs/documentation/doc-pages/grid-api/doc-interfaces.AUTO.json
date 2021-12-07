@@ -7110,7 +7110,7 @@
     "parentFilterInstance": {
       "description": "/** Gets a reference to the parent filter. The result is returned asynchronously\n * via a callback as the parent filter may not exist yet. If it does\n * not exist, it is created and asynchronously returned (AG Grid itself\n * does not create components asynchronously, however if providing a framework\n * provided filter e.g. React, it might be).\n * \n * The floating filter can then call any method it likes on the parent filter.\n * The parent filter will typically provide its own method for the floating\n * filter to call to set the filter. For example, if creating custom filter A,\n * it should have a method your floating A can call to set the state\n * when the user updates via the floating filter. */",
       "type": {
-        "arguments": { "callback": "(filterInstance: IFilterComp) => void" },
+        "arguments": { "callback": "(filterInstance: ISimpleFilter) => void" },
         "returnType": "void",
         "optional": false
       }
@@ -7644,6 +7644,64 @@
   },
   "Comparator": { "meta": { "typeParams": ["T"] } },
   "JoinOperator": {},
+  "ISimpleFilter": {
+    "onFloatingFilterChanged": {
+      "description": "/** Notification that a new floating-filter value was input by the user.\n * @param type operation type selected.\n * @param value model-typed value entered.\n */",
+      "type": {
+        "arguments": { "type": "string | null", "value": "any" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "applyModel": {
+      "description": "/** Apply the current UI state to the filter model.\n * @returns true if the model was changed.\n */",
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
+    "getModelFromUi": {
+      "description": "/** Get the current UI state as a filter model. */",
+      "type": { "arguments": {}, "returnType": "any", "optional": false }
+    },
+    "isFilterActive": {
+      "description": "/** This is used to let the grid know if the filter is active or not */",
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
+    "doesFilterPass": {
+      "description": "/** The grid will ask each active filter, in turn, whether each row in the grid passes. If any\n * filter fails, then the row will be excluded from the final set. The method is provided a\n * params object with attributes node (the rodNode the grid creates that wraps the data) and data\n * (the data object that you provided to the grid for that row). */",
+      "type": {
+        "arguments": { "params": "IDoesFilterPassParams" },
+        "returnType": "boolean",
+        "optional": false
+      }
+    },
+    "getModel": {
+      "description": "/** Gets the filter state for storing */",
+      "type": { "arguments": {}, "returnType": "any", "optional": false }
+    },
+    "setModel": {
+      "description": "/** Restores the filter state. */",
+      "type": {
+        "arguments": { "model": "any" },
+        "returnType": "void | AgPromise<void>",
+        "optional": false
+      }
+    },
+    "onNewRowsLoaded": {
+      "description": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onAnyFilterChanged": {
+      "description": "/** Called whenever any filter is changed. */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "getModelAsString": {
+      "description": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */",
+      "type": {
+        "arguments": { "model": "any" },
+        "returnType": "string",
+        "optional": true
+      }
+    }
+  },
   "ISimpleFilterParams": {
     "filterOptions": {
       "description": "/** Array of filter options to present to the user. See [Filter Options](/filter-provided-simple/#simple-filter-options) for all options available to each filter type. */",

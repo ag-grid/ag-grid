@@ -9,9 +9,10 @@ import {
     HeaderFilterCellCtrl,
     IFilterDef,
     AgPromise,
-    IFilterComp,
     IMultiFilterParams,
-    IMultiFilterModel
+    IMultiFilterModel,
+    ISimpleFilter,
+    SimpleFilter,
 } from '@ag-grid-community/core';
 import { MultiFilter } from './multiFilter';
 
@@ -31,14 +32,17 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         const filterParams = params.filterParams as IMultiFilterParams;
         const floatingFilterPromises: AgPromise<IFloatingFilterComp>[] = [];
 
+        const parentFilterInstance = 
+
         MultiFilter.getFilterDefs(filterParams).forEach((filterDef, index) => {
             const floatingFilterParams: IFloatingFilterParams = {
                 ...params,
                 // set the parent filter instance for each floating filter to the relevant child filter instance
-                parentFilterInstance: (callback: (filterInstance: IFilterComp) => void) => {
-                    params.parentFilterInstance(parent => {
-                        const childFilterInstance = (parent as MultiFilter).getChildFilterInstance(index);
-                        callback(childFilterInstance!);
+                parentFilterInstance: (callback) => {
+                    this.parentMultiFilterInstance((parent) => {
+                        // We expect a SimpleFilter, but there is a risk if we strictly enforce the type custom filter implementations
+                        // may break in unexpected ways.
+                        callback(parent.getChildFilterInstance(index) as unknown as ISimpleFilter);
                     });
                 }
             };
@@ -71,7 +75,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         // as it would be updating as the user is typing
         if (event && event.afterFloatingFilter) { return; }
 
-        this.params.parentFilterInstance((parent: MultiFilter) => {
+        this.parentMultiFilterInstance((parent) => {
             if (model == null) {
                 this.floatingFilters.forEach((filter, i) => {
                     filter.onParentModelChanged(null, event);
@@ -106,5 +110,15 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
 
         const compDetails = this.userComponentFactory.getFloatingFilterCompDetails(filterDef, params, defaultComponentName);
         return compDetails ? compDetails.newAgStackInstance() : null;
+    }
+
+    private parentMultiFilterInstance(cb: (instance: MultiFilter) => void): void {
+        this.params.parentFilterInstance((parent) => {
+            if (!(parent instanceof MultiFilter)) {
+                throw new Error('AG Grid - MultiFloatingFilterComp expects MultiFilter as it\'s parent');
+            }
+
+            cb(parent);
+        });
     }
 }

@@ -3,6 +3,7 @@ import { Column } from '../../entities/column';
 import { GridApi } from '../../gridApi';
 import { ProvidedFilterModel, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
 import { FilterChangedEvent } from '../../events';
+import { ISimpleFilter } from '../provided/simpleFilter';
 
 export interface IFloatingFilterParams {
     /** The column this filter is for. */
@@ -39,7 +40,7 @@ export interface IFloatingFilterParams {
      * it should have a method your floating A can call to set the state
      * when the user updates via the floating filter.
      */
-    parentFilterInstance: (callback: (filterInstance: IFilterComp) => void) => void;
+    parentFilterInstance: (callback: (filterInstance: ISimpleFilter) => void) => void;
     /**
      * Shows the parent filter popup.
      */
