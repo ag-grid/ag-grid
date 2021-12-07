@@ -19,11 +19,12 @@ import {
     ContainerType,
     TabGuardComp,
     _,
-    PostConstruct
+    PostConstruct,
+    IMultiFilter,
 } from '@ag-grid-community/core';
 import { MenuItemComponent, MenuItemActivatedEvent } from '@ag-grid-enterprise/menu';
 
-export class MultiFilter extends TabGuardComp implements IFilterComp {
+export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilter {
     @Autowired('filterManager') private readonly filterManager: FilterManager;
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
 
@@ -278,6 +279,18 @@ export class MultiFilter extends TabGuardComp implements IFilterComp {
         }
 
         return AgPromise.all(promises).then(() => { });
+    }
+
+    public applyModel(): boolean {
+        let result = false;
+
+        this.filters!.forEach((filter) => {
+            if (filter instanceof ProvidedFilter) {
+                result = filter.applyModel() || result;
+            }
+        });
+
+        return result;
     }
 
     public getChildFilterInstance(index: number): IFilterComp | undefined {

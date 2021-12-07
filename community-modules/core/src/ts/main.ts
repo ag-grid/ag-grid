@@ -100,11 +100,11 @@ export { SideBarDef, ToolPanelDef } from "./entities/sideBar";
 
 // filter
 export { IFilterDef, IFilterParams, IFilterOptionDef, IDoesFilterPassParams, ProvidedFilterModel, IFilter, IFilterComp, IFilterType, IFloatingFilterType } from "./interfaces/iFilter";
-export { ISetFilterParams, SetFilterValues, SetFilterValuesFunc, SetFilterValuesFuncParams } from "./interfaces/iSetFilterParams";
+export { ISetFilter, SetFilterModel, ISetFilterParams, SetFilterValues, SetFilterModelValue, SetFilterValuesFunc, SetFilterValuesFuncParams } from "./interfaces/iSetFilter";
 export { FilterManager, FilterWrapper, FilterRequestSource } from "./filter/filterManager";
-export { IMultiFilterModel, IMultiFilterComp, IMultiFilterParams, IMultiFilterDef } from './interfaces/iMultiFilter';
+export { IMultiFilter, IMultiFilterModel, IMultiFilterComp, IMultiFilterParams, IMultiFilterDef } from './interfaces/iMultiFilter';
 
-export { ProvidedFilter, IProvidedFilterParams } from "./filter/provided/providedFilter";
+export { ProvidedFilter, IProvidedFilter, IProvidedFilterParams } from "./filter/provided/providedFilter";
 export { SimpleFilter, ISimpleFilterParams, ISimpleFilterModel, ICombinedSimpleModel, JoinOperator } from "./filter/provided/simpleFilter";
 export { ScalarFilter, IScalarFilterParams } from "./filter/provided/scalarFilter";
 

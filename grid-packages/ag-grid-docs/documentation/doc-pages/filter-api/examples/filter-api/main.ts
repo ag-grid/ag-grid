@@ -1,4 +1,4 @@
-import { ColDef, GridOptions } from '@ag-grid-community/core'
+import { ColDef, GridOptions, ISetFilter } from '@ag-grid-community/core'
 
 const columnDefs: ColDef[] = [{ field: 'athlete', filter: 'agSetColumnFilter' }]
 
@@ -12,25 +12,25 @@ const gridOptions: GridOptions = {
   },
 }
 
-var savedMiniFilterText = ''
+let savedMiniFilterText: string | null = '';
 
 function getMiniFilterText() {
-  const athleteFilter = gridOptions.api!.getFilterInstance('athlete')! as any
-  console.log(athleteFilter.getMiniFilter())
+  const athleteFilter = gridOptions.api!.getFilterInstance('athlete') as ISetFilter;
+  console.log(athleteFilter.getMiniFilter());
 }
 
 function saveMiniFilterText() {
-  const athleteFilter = gridOptions.api!.getFilterInstance('athlete')! as any
-  savedMiniFilterText = athleteFilter.getMiniFilter()
+  const athleteFilter = gridOptions.api!.getFilterInstance('athlete') as ISetFilter;
+  savedMiniFilterText = athleteFilter.getMiniFilter();
 }
 
 function restoreMiniFilterText() {
-  const athleteFilter = gridOptions.api!.getFilterInstance('athlete')! as any
+  const athleteFilter = gridOptions.api!.getFilterInstance('athlete') as ISetFilter;
   athleteFilter.setMiniFilter(savedMiniFilterText)
 }
 
 function resetFilter() {
-  const athleteFilter = gridOptions.api!.getFilterInstance('athlete')! as any
+  const athleteFilter = gridOptions.api!.getFilterInstance('athlete') as ISetFilter;
   athleteFilter.setModel(null)
   gridOptions.api!.onFilterChanged()
 }

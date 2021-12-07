@@ -8,10 +8,10 @@ import {
     AgInputTextField,
     _,
     ColumnModel,
-    ISetFilterParams
+    ISetFilterParams,
+    SetFilterModel,
 } from '@ag-grid-community/core';
 
-import { SetFilterModel } from './setFilterModel';
 import { SetFilter } from './setFilter';
 import { SetValueModel } from './setValueModel';
 import { DEFAULT_LOCALE_TEXT } from './localeText';

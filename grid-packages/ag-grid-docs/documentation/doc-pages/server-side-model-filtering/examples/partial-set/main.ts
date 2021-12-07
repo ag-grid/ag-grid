@@ -1,4 +1,5 @@
-import { ColDef, GridOptions, IServerSideDatasource, ISetFilterCellRendererParams, ISetFilterParams, SetFilterValuesFuncParams } from '@ag-grid-community/core'
+import { ColDef, GridOptions, IServerSideDatasource, ISetFilter, SetFilterValuesFuncParams } from '@ag-grid-community/core'
+
 declare var FakeServer: any;
 const columnDefs: ColDef[] = [
   {
@@ -55,7 +56,7 @@ function onFilterChanged() {
     selectedCountries = selected
 
     console.log('Refreshing sports filter')
-    var sportFilter = gridOptions.api!.getFilterInstance('sport') as any;
+    var sportFilter = gridOptions.api!.getFilterInstance('sport') as ISetFilter;
     sportFilter!.refreshFilterValues()
   }
 }

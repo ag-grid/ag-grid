@@ -1,9 +1,37 @@
 import { ICellRendererComp, ICellRendererFunc } from '../rendering/cellRenderers/iCellRenderer';
 import { ColDef, ValueFormatterParams } from '../entities/colDef';
-import { IProvidedFilterParams } from '../filter/provided/providedFilter';
+import { IProvidedFilter, IProvidedFilterParams } from '../filter/provided/providedFilter';
 import { Column } from '../entities/column';
 import { GridApi } from '../gridApi';
 import { ColumnApi } from '../columns/columnApi';
+import { ProvidedFilterModel } from './iFilter';
+
+export type SetFilterModelValue = (string | null)[];
+export interface SetFilterModel extends ProvidedFilterModel {
+    filterType?: 'set';
+    values: SetFilterModelValue;
+}
+
+/** Interface contract for the public aspects of the SetFilter implementation. */
+export interface ISetFilter extends IProvidedFilter {
+    /** @returns the currently selected values. */
+    getValues(): SetFilterModelValue;
+
+    /** Manually set the super-set of filterable values. */
+    setFilterValues(values: SetFilterModelValue): void;
+    /** Triggers a recalculation of displayed super-set of values. */
+    refreshFilterValues(): void;
+    /** Resets the source of filter values to be grid-data derived and triggers a refresh of displayed values. */
+    resetFilterValues(): void;
+
+    /** @returns the current mini-filter text. */
+    getMiniFilter(): string | null;
+    /** Change the current mini-filter text. */
+    setMiniFilter(text: string | null): void;
+
+    /** @returns the current UI state (potentially un-applied). */
+    getModelFromUi(): SetFilterModel | null;
+}
 
 export interface SetFilterValuesFuncParams {
     /** The function to call with the values to load into the filter once they are ready. */

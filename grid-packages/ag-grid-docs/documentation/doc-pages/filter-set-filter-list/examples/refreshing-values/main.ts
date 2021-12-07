@@ -4,6 +4,7 @@ import {
   IFiltersToolPanel,
   ISetFilterParams,
   SetFilterValuesFuncParams,
+  ISetFilter,
 } from '@ag-grid-community/core'
 
 var list1 = ['Elephant', 'Lion', 'Monkey']
@@ -67,7 +68,7 @@ function useList1() {
     valuesArray.push(value)
   })
 
-  var filter = gridOptions.api!.getFilterInstance('array') as any
+  var filter = gridOptions.api!.getFilterInstance('array') as ISetFilter;
   filter.refreshFilterValues()
 
   valuesCallbackList = list1
@@ -80,7 +81,7 @@ function useList2() {
     valuesArray.push(value)
   })
 
-  var filter = gridOptions.api!.getFilterInstance('array') as any
+  var filter = gridOptions.api!.getFilterInstance('array') as ISetFilter;
   filter.refreshFilterValues()
 
   valuesCallbackList = list2

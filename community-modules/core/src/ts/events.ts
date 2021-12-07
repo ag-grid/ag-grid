@@ -6,7 +6,7 @@ import { ColumnApi } from './columns/columnApi';
 import { ProvidedColumnGroup } from './entities/providedColumnGroup';
 import { FilterRequestSource } from './filter/filterManager';
 import { ChartType } from './interfaces/iChartOptions';
-import { IFilterComp } from './interfaces/iFilter';
+import { IFilter } from './interfaces/iFilter';
 import { CellRange, CellRangeParams } from './interfaces/IRangeService';
 import { ServerSideTransactionResult } from "./interfaces/serverSideTransaction";
 import { RowNodeTransaction } from "./interfaces/rowNodeTransaction";
@@ -91,7 +91,7 @@ export interface FilterChangedEvent extends AgGridEvent {
 }
 
 export interface FilterModifiedEvent extends AgGridEvent {
-    filterInstance: IFilterComp;
+    filterInstance: IFilter;
     column: Column;
 }
 

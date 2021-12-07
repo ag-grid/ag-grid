@@ -1,4 +1,4 @@
-import { IDoesFilterPassParams, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
+import { IDoesFilterPassParams, IFilter, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
 import { Autowired, PostConstruct } from '../../context/context';
 import { IRowModel } from '../../interfaces/iRowModel';
 import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
@@ -24,6 +24,18 @@ export interface IProvidedFilterParams extends IFilterParams {
     readOnly?: boolean;
 }
 
+/** Interface contract for the public aspects of the ProvidedFilter implementation(s). */
+export interface IProvidedFilter extends IFilter {
+    /**
+     * Apply the current UI state to the filter model.
+     * 
+     * @returns true if the model was changed.
+     */
+    applyModel(): boolean;
+    /** Get the current UI state as a filter model. */
+    getModelFromUi(): any;
+}
+
 /**
  * Contains common logic to all provided filters (apply button, clear button, etc).
  * All the filters that come with AG Grid extend this class. User filters do not
@@ -32,7 +44,7 @@ export interface IProvidedFilterParams extends IFilterParams {
  * @param M type of filter-model managed by the concrete sub-class that extends this type
  * @param V type of value managed by the concrete sub-class that extends this type
  */
-export abstract class ProvidedFilter<M, V> extends Component implements IFilterComp {
+export abstract class ProvidedFilter<M, V> extends Component implements IProvidedFilter, IFilterComp {
     // each level in the hierarchy will save params with the appropriate type for that level.
     private providedFilterParams: IProvidedFilterParams;
 

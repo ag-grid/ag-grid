@@ -3,6 +3,7 @@ import {
   GridOptions,
   ICellRendererParams,
   IFiltersToolPanel,
+  ISetFilter,
 } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
@@ -72,7 +73,7 @@ function getModel(type: string) {
 function setFilterValues(type: string) {
   const instance = gridOptions.api!.getFilterInstance(
     FILTER_TYPES[type]
-  )! as any
+  ) as ISetFilter
 
   instance.setFilterValues(MANGLED_COLOURS)
   instance.applyModel()
@@ -82,7 +83,7 @@ function setFilterValues(type: string) {
 function getValues(type: string) {
   const instance = gridOptions.api!.getFilterInstance(
     FILTER_TYPES[type]
-  )! as any
+  ) as ISetFilter
 
   alert(JSON.stringify(instance.getValues(), null, 2))
 }
@@ -90,7 +91,7 @@ function getValues(type: string) {
 function reset(type: string) {
   const instance = gridOptions.api!.getFilterInstance(
     FILTER_TYPES[type]
-  )! as any
+  ) as ISetFilter
 
   instance.resetFilterValues()
   instance.setModel(null)
@@ -100,7 +101,7 @@ function reset(type: string) {
 var MANGLED_COLOURS = ['ReD', 'OrAnGe', 'WhItE', 'YeLlOw']
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  ;((gridOptions.api!.getToolPanelInstance(
+  ((gridOptions.api!.getToolPanelInstance(
     'filters'
   ) as any) as IFiltersToolPanel).expandFilters()
 }

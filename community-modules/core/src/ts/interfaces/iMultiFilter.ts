@@ -1,5 +1,12 @@
+import { IProvidedFilter } from "../filter/provided/providedFilter";
 import { AgPromise } from "../utils";
-import { IFilterComp, IFilterDef, IFilterParams, ProvidedFilterModel } from "./iFilter";
+import { IFilter, IFilterComp, IFilterDef, IFilterParams, ProvidedFilterModel } from "./iFilter";
+
+/** Interface contract for the public aspects of the ProvidedFilter implementation(s). */
+export interface IMultiFilter extends IProvidedFilter {
+    /** @returns the child filter instance at the given index. */
+    getChildFilterInstance(index: number): IFilter | undefined;
+}
 
 export interface IMultiFilterDef extends IFilterDef {
     /**

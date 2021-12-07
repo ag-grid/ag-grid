@@ -2,6 +2,7 @@ import {
   GridOptions,
   ICellRendererParams,
   KeyCreatorParams,
+  ISetFilter,
 } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
@@ -77,14 +78,14 @@ function selectNothing() {
 }
 
 function setCountriesToFranceAustralia() {
-  const instance = gridOptions.api!.getFilterInstance('country') as any
+  const instance = gridOptions.api!.getFilterInstance('country') as ISetFilter;
   instance.setFilterValues(['France', 'Australia'])
   instance.applyModel()
   gridOptions.api!.onFilterChanged()
 }
 
 function setCountriesToAll() {
-  const instance = gridOptions.api!.getFilterInstance('country') as any
+  const instance = gridOptions.api!.getFilterInstance('country') as ISetFilter;
   instance.resetFilterValues()
   instance.applyModel()
   gridOptions.api!.onFilterChanged()

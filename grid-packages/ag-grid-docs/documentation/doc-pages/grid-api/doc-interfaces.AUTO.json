@@ -5399,7 +5399,7 @@
   },
   "FilterModifiedEvent": {
     "filterInstance": {
-      "type": { "returnType": "IFilterComp", "optional": false }
+      "type": { "returnType": "IFilter", "optional": false }
     },
     "column": { "type": { "returnType": "Column", "optional": false } },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
@@ -7494,6 +7494,56 @@
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "IProvidedFilter": {
+    "applyModel": {
+      "description": "/** Apply the current UI state to the filter model.\n * @returns true if the model was changed.\n */",
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
+    "getModelFromUi": {
+      "description": "/** Get the current UI state as a filter model. */",
+      "type": { "arguments": {}, "returnType": "any", "optional": false }
+    },
+    "isFilterActive": {
+      "description": "/** This is used to let the grid know if the filter is active or not */",
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
+    "doesFilterPass": {
+      "description": "/** The grid will ask each active filter, in turn, whether each row in the grid passes. If any\n * filter fails, then the row will be excluded from the final set. The method is provided a\n * params object with attributes node (the rodNode the grid creates that wraps the data) and data\n * (the data object that you provided to the grid for that row). */",
+      "type": {
+        "arguments": { "params": "IDoesFilterPassParams" },
+        "returnType": "boolean",
+        "optional": false
+      }
+    },
+    "getModel": {
+      "description": "/** Gets the filter state for storing */",
+      "type": { "arguments": {}, "returnType": "any", "optional": false }
+    },
+    "setModel": {
+      "description": "/** Restores the filter state. */",
+      "type": {
+        "arguments": { "model": "any" },
+        "returnType": "void | AgPromise<void>",
+        "optional": false
+      }
+    },
+    "onNewRowsLoaded": {
+      "description": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onAnyFilterChanged": {
+      "description": "/** Called whenever any filter is changed. */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "getModelAsString": {
+      "description": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */",
+      "type": {
+        "arguments": { "model": "any" },
+        "returnType": "string",
+        "optional": true
+      }
     }
   },
   "IScalarFilterParams": {
@@ -12564,6 +12614,64 @@
       "type": { "returnType": "Module[]", "optional": true }
     }
   },
+  "IMultiFilter": {
+    "getChildFilterInstance": {
+      "description": "/** @returns the child filter instance at the given index.\n */",
+      "type": {
+        "arguments": { "index": "number" },
+        "returnType": "IFilter | undefined",
+        "optional": false
+      }
+    },
+    "applyModel": {
+      "description": "/** Apply the current UI state to the filter model.\n * @returns true if the model was changed.\n */",
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
+    "getModelFromUi": {
+      "description": "/** Get the current UI state as a filter model. */",
+      "type": { "arguments": {}, "returnType": "any", "optional": false }
+    },
+    "isFilterActive": {
+      "description": "/** This is used to let the grid know if the filter is active or not */",
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
+    "doesFilterPass": {
+      "description": "/** The grid will ask each active filter, in turn, whether each row in the grid passes. If any\n * filter fails, then the row will be excluded from the final set. The method is provided a\n * params object with attributes node (the rodNode the grid creates that wraps the data) and data\n * (the data object that you provided to the grid for that row). */",
+      "type": {
+        "arguments": { "params": "IDoesFilterPassParams" },
+        "returnType": "boolean",
+        "optional": false
+      }
+    },
+    "getModel": {
+      "description": "/** Gets the filter state for storing */",
+      "type": { "arguments": {}, "returnType": "any", "optional": false }
+    },
+    "setModel": {
+      "description": "/** Restores the filter state. */",
+      "type": {
+        "arguments": { "model": "any" },
+        "returnType": "void | AgPromise<void>",
+        "optional": false
+      }
+    },
+    "onNewRowsLoaded": {
+      "description": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onAnyFilterChanged": {
+      "description": "/** Called whenever any filter is changed. */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "getModelAsString": {
+      "description": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */",
+      "type": {
+        "arguments": { "model": "any" },
+        "returnType": "string",
+        "optional": true
+      }
+    }
+  },
   "IMultiFilterDef": {
     "display": {
       "description": "/** Configures how the filter is shown in the Multi Filter.\n * Default: `inline` */",
@@ -13744,6 +13852,107 @@
     "cacheBlockSize": {
       "description": "/** Partial store only.\n * The size (number of rows) of each block. */",
       "type": { "returnType": "number", "optional": true }
+    }
+  },
+  "SetFilterModelValue": {},
+  "SetFilterModel": {
+    "filterType": { "type": { "returnType": "'set'", "optional": true } },
+    "values": {
+      "type": { "returnType": "SetFilterModelValue", "optional": false }
+    }
+  },
+  "ISetFilter": {
+    "getValues": {
+      "description": "/** @returns the currently selected values.\n */",
+      "type": {
+        "arguments": {},
+        "returnType": "SetFilterModelValue",
+        "optional": false
+      }
+    },
+    "setFilterValues": {
+      "description": "/** Manually set the super-set of filterable values. */",
+      "type": {
+        "arguments": { "values": "SetFilterModelValue" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "refreshFilterValues": {
+      "description": "/** Triggers a recalculation of displayed super-set of values. */",
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
+    "resetFilterValues": {
+      "description": "/** Resets the source of filter values to be grid-data derived and triggers a refresh of displayed values. */",
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
+    "getMiniFilter": {
+      "description": "/** @returns the current mini-filter text.\n */",
+      "type": {
+        "arguments": {},
+        "returnType": "string | null",
+        "optional": false
+      }
+    },
+    "setMiniFilter": {
+      "description": "/** Change the current mini-filter text. */",
+      "type": {
+        "arguments": { "text": "string | null" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "getModelFromUi": {
+      "description": "/** @returns the current UI state (potentially un-applied).\n */",
+      "type": {
+        "arguments": {},
+        "returnType": "SetFilterModel | null",
+        "optional": false
+      }
+    },
+    "applyModel": {
+      "description": "/** Apply the current UI state to the filter model.\n * @returns true if the model was changed.\n */",
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
+    "isFilterActive": {
+      "description": "/** This is used to let the grid know if the filter is active or not */",
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
+    "doesFilterPass": {
+      "description": "/** The grid will ask each active filter, in turn, whether each row in the grid passes. If any\n * filter fails, then the row will be excluded from the final set. The method is provided a\n * params object with attributes node (the rodNode the grid creates that wraps the data) and data\n * (the data object that you provided to the grid for that row). */",
+      "type": {
+        "arguments": { "params": "IDoesFilterPassParams" },
+        "returnType": "boolean",
+        "optional": false
+      }
+    },
+    "getModel": {
+      "description": "/** Gets the filter state for storing */",
+      "type": { "arguments": {}, "returnType": "any", "optional": false }
+    },
+    "setModel": {
+      "description": "/** Restores the filter state. */",
+      "type": {
+        "arguments": { "model": "any" },
+        "returnType": "void | AgPromise<void>",
+        "optional": false
+      }
+    },
+    "onNewRowsLoaded": {
+      "description": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "onAnyFilterChanged": {
+      "description": "/** Called whenever any filter is changed. */",
+      "type": { "arguments": {}, "returnType": "void", "optional": true }
+    },
+    "getModelAsString": {
+      "description": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */",
+      "type": {
+        "arguments": { "model": "any" },
+        "returnType": "string",
+        "optional": true
+      }
     }
   },
   "SetFilterValuesFuncParams": {
@@ -17158,13 +17367,6 @@
     "type": {
       "description": "/** Event identifier */",
       "type": { "returnType": "string", "optional": false }
-    }
-  },
-  "SetFilterModelValue": {},
-  "SetFilterModel": {
-    "filterType": { "type": { "returnType": "'set'", "optional": true } },
-    "values": {
-      "type": { "returnType": "SetFilterModelValue", "optional": false }
     }
   },
   "SetFilterModelValuesType": {},
