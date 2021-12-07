@@ -4,7 +4,7 @@
  * System configuration for Angular samples
  * Adjust as necessary for your application needs.
  */
-(function(global) {
+(function (global) {
     // simplified version of Object.assign for es3
     function assign() {
         var result = {};
@@ -104,9 +104,9 @@
                 "@angular/cdk/tree": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk-tree.umd.js",
                 "@angular/cdk/stepper": "npm:@angular/cdk@" + ANGULAR_CDK_VERSION + "/bundles/cdk-stepper.umd.js",
 
-                ts: "npm:plugin-typescript@5.2.7/lib/plugin.js",
-                tslib: "npm:tslib@1.7.1/tslib.js",
-                typescript: "npm:typescript@2.3.2/lib/typescript.js",
+                ts: "npm:plugin-typescript@8.0.0/lib/plugin.js",
+                tslib: "npm:tslib@2.3.1/tslib.js",
+                typescript: "npm:typescript@3.7.5/lib/typescript.js",
 
                 // our app is within the app folder, appLocation comes from index.html
                 app: appLocation + "app",
