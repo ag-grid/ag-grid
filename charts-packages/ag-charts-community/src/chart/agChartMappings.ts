@@ -617,8 +617,6 @@ export const mappings: any = {
                 defaults: {
                     enabled: false,
                     height: 30,
-                    min: 0,
-                    max: 1
                 }
             },
             mask: {
