@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { ICellRenderer } from "@ag-grid-community/angular";
+import { ICellRendererAngularComp } from "@ag-grid-community/angular";
+import { ICellRendererParams } from '@ag-grid-community/core';
 
 @Component({
     selector: 'app-loading-cell-renderer',
@@ -9,13 +10,12 @@ import { ICellRenderer } from "@ag-grid-community/angular";
                     <span>{{value}}</span>
                 </span>`
 })
-export class CallsCellRenderer implements ICellRenderer {
+export class CallsCellRenderer implements ICellRendererAngularComp {
 
-    private params: any;
+    private params!: ICellRendererParams;
+    public value!: number;
 
-    private value: number;
-
-    agInit(params: any): void {
+    agInit(params: ICellRendererParams): void {
         this.params = params;
         this.value = params.value;
     }
@@ -27,16 +27,16 @@ export class CallsCellRenderer implements ICellRenderer {
 
         var newCallRecords = oldCallRecords.slice(0); // make a copy
         newCallRecords.push({
-            name: ["Bob","Paul","David","John"][Math.floor(Math.random()*4)],
-            callId: Math.floor(Math.random()*1000),
-            duration: Math.floor(Math.random()*100) + 1,
+            name: ["Bob", "Paul", "David", "John"][Math.floor(Math.random() * 4)],
+            callId: Math.floor(Math.random() * 1000),
+            duration: Math.floor(Math.random() * 100) + 1,
             switchCode: "SW5",
             direction: "Out",
-            number: "(02) " + Math.floor(Math.random()*1000000)
+            number: "(02) " + Math.floor(Math.random() * 1000000)
         }); // add one item
 
         var minutes = 0;
-        newCallRecords.forEach( (r: any) => minutes += r.duration );
+        newCallRecords.forEach((r: any) => minutes += r.duration);
 
         var newData = {
             name: oldData.name,
@@ -46,7 +46,7 @@ export class CallsCellRenderer implements ICellRenderer {
             callRecords: newCallRecords
         };
 
-        this.params.api.applyTransaction({update: [newData]});
+        this.params.api.applyTransaction({ update: [newData] });
 
         this.params.node.setExpanded(true);
     }
@@ -57,13 +57,13 @@ export class CallsCellRenderer implements ICellRenderer {
 
         var oldCallRecords = oldData.callRecords;
 
-        if (oldCallRecords.length==0) { return; }
+        if (oldCallRecords.length == 0) { return; }
 
         var newCallRecords = oldCallRecords.slice(0); // make a copy
         newCallRecords.pop(); // remove one item
 
         var minutes = 0;
-        newCallRecords.forEach( (r:any) => minutes += r.duration );
+        newCallRecords.forEach((r: any) => minutes += r.duration);
 
         var newData = {
             name: oldData.name,
@@ -73,6 +73,6 @@ export class CallsCellRenderer implements ICellRenderer {
             callRecords: newCallRecords
         };
 
-        this.params.api.applyTransaction({update: [newData]});
+        this.params.api.applyTransaction({ update: [newData] });
     }
 }

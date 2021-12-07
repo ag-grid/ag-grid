@@ -1,6 +1,6 @@
-import { Component, HostBinding, ViewChild } from "@angular/core";
+import { ICellRendererParams } from "@ag-grid-community/core";
+import { Component, ElementRef, HostBinding, ViewChild } from "@angular/core";
 
-import { ICellRendererParams } from "@ag-grid-community/all-modules";
 
 @Component({
     selector: 'custom-cell',
@@ -13,12 +13,12 @@ import { ICellRendererParams } from "@ag-grid-community/all-modules";
         <i class="fas fa-arrows-alt-v" #myref></i>`,
 })
 export class CustomCellRenderer {
-    private athlete: string;
-    private country: string;
-    private year: string;
-    private cellRendererParams: ICellRendererParams;
+    public athlete!: string;
+    public country!: string;
+    public year!: string;
+    private cellRendererParams!: ICellRendererParams;
 
-    @ViewChild('myref') myRef;
+    @ViewChild('myref') myRef!: ElementRef;
     @HostBinding('class') class = 'my-custom-cell-renderer';
 
     agInit(params: ICellRendererParams): void {
