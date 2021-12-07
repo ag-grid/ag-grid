@@ -11,11 +11,11 @@ import {
     EventService,
     VirtualList,
     IRowModel,
+    SetFilterModel,
 } from '@ag-grid-community/core';
 import { mock } from '../test-utils/mock';
 import { SetFilter } from './setFilter';
 import { SetValueModel } from './setValueModel';
-import { SetFilterModel } from './setFilterModel';
 
 let rowModel: jest.Mocked<IRowModel>;
 let eventService: jest.Mocked<EventService>;
