@@ -16,6 +16,7 @@ import { RowContainerHeightService } from "../rendering/rowContainerHeightServic
 import { RowRenderer } from "../rendering/rowRenderer";
 import { ColumnModel } from "../columns/columnModel";
 import { RowContainerCtrl } from "./rowContainer/rowContainerCtrl";
+import { Column } from "../entities/column";
 
 type ScrollDirection = 'horizontal' | 'vertical';
 
@@ -91,7 +92,7 @@ export class GridBodyScrollFeature extends BeanStub {
 
     public horizontallyScrollHeaderCenterAndFloatingCenter(scrollLeft?: number): void {
         // when doing RTL, this method gets called once prematurely
-        const notYetInitialised = this.centerRowContainerCon==null;
+        const notYetInitialised = this.centerRowContainerCon == null;
         if (notYetInitialised) { return; }
 
         if (scrollLeft === undefined) {
@@ -447,7 +448,7 @@ export class GridBodyScrollFeature extends BeanStub {
         this.animationFrameService.flushAllFrames();
     }
 
-    public ensureColumnVisible(key: any): void {
+    public ensureColumnVisible(key: any, position: 'auto' | 'start' | 'middle' | 'end' = 'auto'): void {
         const column = this.columnModel.getGridColumn(key);
 
         if (!column) { return; }
@@ -458,44 +459,10 @@ export class GridBodyScrollFeature extends BeanStub {
         // defensive
         if (!this.columnModel.isColumnDisplayed(column)) { return; }
 
-        const colLeftPixel = column.getLeft();
-        const colRightPixel = colLeftPixel! + column.getActualWidth();
+        const newHorizontalScroll: number | null = this.getPositionedHorizontalScroll(column, position);
 
-        const viewportWidth = this.centerRowContainerCon.getCenterWidth();
-        const scrollPosition = this.centerRowContainerCon.getCenterViewportScrollLeft();
-
-        const bodyWidth = this.columnModel.getBodyContainerWidth();
-
-        let viewportLeftPixel: number;
-        let viewportRightPixel: number;
-
-        // the logic of working out left and right viewport px is both here and in the ColumnController,
-        // need to refactor it out to one place
-        if (this.enableRtl) {
-            viewportLeftPixel = bodyWidth - scrollPosition - viewportWidth;
-            viewportRightPixel = bodyWidth - scrollPosition;
-        } else {
-            viewportLeftPixel = scrollPosition;
-            viewportRightPixel = viewportWidth + scrollPosition;
-        }
-
-        const viewportScrolledPastCol = viewportLeftPixel > colLeftPixel!;
-        const viewportScrolledBeforeCol = viewportRightPixel < colRightPixel;
-        const colToSmallForViewport = viewportWidth < column.getActualWidth();
-
-        const alignColToLeft = viewportScrolledPastCol || colToSmallForViewport;
-        const alignColToRight = viewportScrolledBeforeCol;
-
-        if (alignColToLeft || alignColToRight) {
-            let newScrollPosition: number;
-            if (this.enableRtl) {
-                newScrollPosition = alignColToLeft ? (bodyWidth - viewportWidth - colLeftPixel!) : (bodyWidth - colRightPixel);
-            } else {
-                newScrollPosition = alignColToLeft ? colLeftPixel! : (colRightPixel - viewportWidth);
-            }
-            this.centerRowContainerCon.setCenterViewportScrollLeft(newScrollPosition);
-        } else {
-            // otherwise, col is already in view, so do nothing
+        if (newHorizontalScroll !== null) {
+            this.centerRowContainerCon.setCenterViewportScrollLeft(newHorizontalScroll);
         }
 
         // this will happen anyway, as the move will cause a 'scroll' event on the body, however
@@ -506,5 +473,76 @@ export class GridBodyScrollFeature extends BeanStub {
 
         // so when we return back to user, the cells have rendered
         this.animationFrameService.flushAllFrames();
+    }
+
+    private getPositionedHorizontalScroll(column: Column, position: 'auto' | 'start' | 'middle' | 'end'): number | null {
+        const { columnBeforeStart, columnAfterEnd } = this.isColumnOutsideViewport(column);
+
+        const viewportTooSmallForColumn = this.centerRowContainerCon.getCenterWidth() < column.getActualWidth();
+        const viewportWidth = this.centerRowContainerCon.getCenterWidth();
+
+        const isRtl = this.enableRtl;
+
+        let alignColToStart = (isRtl ? columnBeforeStart : columnAfterEnd) || viewportTooSmallForColumn;
+        let alignColToEnd = isRtl ? columnAfterEnd : columnBeforeStart;
+
+        if (position !== 'auto') {
+            alignColToStart = position === 'start';
+            alignColToEnd = position === 'end';
+        }
+
+        const isMiddle = position === 'middle';
+
+        if (alignColToStart || alignColToEnd || isMiddle) {
+            const { colLeft, colMiddle, colRight } = this.getColumnBounds(column);
+
+            if (isMiddle) {
+                return colMiddle - viewportWidth / 2;
+            }
+
+            if (alignColToStart) {
+                return isRtl ?  colRight : colLeft;
+            }
+
+            return isRtl ? (colLeft - viewportWidth) : (colRight - viewportWidth);
+        }
+
+        return null;
+    }
+
+    private isColumnOutsideViewport(column: Column): { columnBeforeStart: boolean, columnAfterEnd: boolean } {
+        const { start: viewportStart, end: viewportEnd } = this.getViewportBounds();
+        const { colLeft, colRight } = this.getColumnBounds(column);
+
+        const isRtl = this.enableRtl;
+
+        const columnBeforeStart = isRtl ? (viewportStart > colRight) : (viewportEnd < colRight);
+        const columnAfterEnd = isRtl ? (viewportEnd < colLeft) : (viewportStart > colLeft);
+
+        return { columnBeforeStart, columnAfterEnd };
+    }
+
+    private getColumnBounds(column: Column): { colLeft: number, colMiddle: number, colRight: number } {
+        const isRtl = this.enableRtl;
+        const bodyWidth = this.columnModel.getBodyContainerWidth();
+        const colWidth = column.getActualWidth();
+        const colLeft = column.getLeft()!;
+        const multiplier = isRtl ? -1 : 1;
+
+        const colLeftPixel = isRtl ? (bodyWidth - colLeft) : colLeft;
+        const colRightPixel = colLeftPixel + colWidth * multiplier;
+        const colMidPixel = colLeftPixel + colWidth / 2 * multiplier;
+
+        return { colLeft: colLeftPixel, colMiddle: colMidPixel, colRight: colRightPixel };
+    }
+
+    private getViewportBounds(): { start: number, end: number, width: number } {
+        const viewportWidth = this.centerRowContainerCon.getCenterWidth();
+        const scrollPosition = this.centerRowContainerCon.getCenterViewportScrollLeft();
+
+        const viewportStartPixel = scrollPosition;
+        const viewportEndPixel = viewportWidth + scrollPosition;
+
+        return { start: viewportStartPixel, end: viewportEndPixel, width: viewportWidth };
     }
 }

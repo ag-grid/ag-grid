@@ -155,7 +155,7 @@ interface CreateChartParams {
     unlinkChart?: boolean;
 }
 
-export type ChartParamsCellRange = Partial<Omit<CellRangeParams, 'rowStartPinned' | 'rowEndPinned'>>
+export type ChartParamsCellRange = Partial<Omit<CellRangeParams, 'rowStartPinned' | 'rowEndPinned'>>;
 export interface CreateRangeChartParams extends CreateChartParams {
     /** The range of cells to be charted. If no rows / rowIndexes are specified all rows will be included. */
     cellRange: ChartParamsCellRange;
@@ -886,9 +886,17 @@ export class GridApi {
         console.warn('AG Grid: ensureColIndexVisible(index) no longer supported, use ensureColumnVisible(colKey) instead.');
     }
 
-    /** Ensures the column is visible, scrolling the table if needed. */
-    public ensureColumnVisible(key: string | Column) {
-        this.gridBodyCon.getScrollFeature().ensureColumnVisible(key);
+    /**
+     *  Ensures the column is visible by scrolling the table if needed.
+     * @param key - The column to ensure visible
+     * @param position - Where the column will be positioned.
+     * - `auto` - Scrolls the minimum amount to make sure the column is visible.
+     * - `start` - Scrolls the column to the start of the viewport.
+     * - `middle` - Scrolls the column to the middle of the viewport.
+     * - `end` - Scrolls the column to the end of the viewport.
+    */
+    public ensureColumnVisible(key: string | Column, position: 'auto' | 'start' | 'middle' | 'end' = 'auto') {
+        this.gridBodyCon.getScrollFeature().ensureColumnVisible(key, position);
     }
 
     /**
