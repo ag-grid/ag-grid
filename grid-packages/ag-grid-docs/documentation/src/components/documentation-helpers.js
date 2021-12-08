@@ -190,7 +190,7 @@ export function formatJsDocString(docString) {
     // Default may or may not be on a new line in JsDoc but in both cases we want the default to be on the next line
     const defaultReg = /(\n \*)?(<br>)? Default:/g;
     // Turn option list, new line starting with - into bullet points
-    const optionReg = /\n[\s]*[\*]*[\s]*- (.*)/g;
+    const optionReg = /\n[\s]*[*]*[\s]*- (.*)/g;
 
     let formatted = docString
         .replace('/**', '')
