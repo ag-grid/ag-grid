@@ -23,7 +23,7 @@
       "hide?": "boolean | null",
       "width?": "number",
       "flex?": "number | null",
-      "sort?": "string | null",
+      "sort?": "'asc' | 'desc' | null",
       "sortIndex?": "number | null",
       "aggFunc?": "string | IAggFunc | null",
       "pivot?": "boolean | null",
@@ -507,11 +507,11 @@
       "allowedAggFuncs?": "string[]",
       "showRowGroup?": "string | boolean",
       "sortable?": "boolean",
-      "sort?": "string | null",
-      "initialSort?": "string",
+      "sort?": "'asc' | 'desc' | null",
+      "initialSort?": "'asc' | 'desc' | null",
       "sortIndex?": "number | null",
       "initialSortIndex?": "number",
-      "sortingOrder?": "(string | null)[]",
+      "sortingOrder?": "('asc' | 'desc' | null)[]",
       "comparator?": "(valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, isInverted: boolean) => number",
       "unSortIcon?": "boolean",
       "sortedAt?": "number",
@@ -1552,7 +1552,7 @@
       "fillHandleDirection?": "string",
       "suppressClearOnFillReduction?": "boolean",
       "rowDeselection?": "boolean",
-      "sortingOrder?": "(string | null)[]",
+      "sortingOrder?": "('asc' | 'desc' | null)[]",
       "accentedSort?": "boolean",
       "unSortIcon?": "boolean",
       "suppressMultiSort?": "boolean",
@@ -4939,7 +4939,7 @@
       "enableMenu": "boolean",
       "showColumnMenu": "(source: HTMLElement) => void",
       "progressSort": "(multiSort?: boolean) => void",
-      "setSort": "(sort: string, multiSort?: boolean) => void",
+      "setSort": "(sort: 'asc' | 'desc' | null, multiSort?: boolean) => void",
       "template": "string",
       "eGridHeader": "HTMLElement",
       "api": "GridApi",
@@ -6706,7 +6706,7 @@
       "endRow": "number",
       "successCallback(rowsThisBlock: any[], lastRow?: number)": "void",
       "failCallback()": "void",
-      "sortModel": "any",
+      "sortModel": "SortModelItem[]",
       "filterModel": "any",
       "context": "any"
     },
@@ -7614,7 +7614,7 @@
       "pivotMode": "boolean",
       "groupKeys": "string[]",
       "filterModel": "any",
-      "sortModel": "any"
+      "sortModel": "SortModelItem[]"
     },
     "docs": {
       "startRow": "/** First row requested or undefined for all rows. */",
@@ -8126,8 +8126,8 @@
       "enabled?": "boolean",
       "fontSize": "string",
       "fontFamily": "string",
-      "fontStyle?": "FontStyle",
-      "fontWeight?": "FontWeight",
+      "fontStyle?": "'normal' | 'italic' | 'oblique'",
+      "fontWeight?": "'normal' | 'bold' | 'bolder' | 'lighter' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900'",
       "color": "string",
       "formatter?": "(params: { value: number | undefined; }) => string",
       "placement": "BarColumnLabelPlacement"
@@ -9554,7 +9554,7 @@
   },
   "SortOption": {
     "meta": {},
-    "type": { "sort": "string", "column": "Column" }
+    "type": { "sort": "'asc' | 'desc'", "column": "Column" }
   },
   "SortedRowNode": {
     "meta": {},
@@ -9562,7 +9562,11 @@
   },
   "SortModelItem": {
     "meta": {},
-    "type": { "colId": "string", "sort": "string" }
+    "type": { "colId": "string", "sort": "'asc' | 'desc'" },
+    "docs": {
+      "colId": "/** Id of the column this sort is for. */",
+      "sort": "/** Sort direction */"
+    }
   },
   "LayoutView": {
     "meta": {},

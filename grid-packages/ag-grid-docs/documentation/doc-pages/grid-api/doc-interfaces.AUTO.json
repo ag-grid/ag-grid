@@ -37,7 +37,7 @@
     },
     "sort": {
       "description": "/** Sort applied to the column */",
-      "type": { "returnType": "string | null", "optional": true }
+      "type": { "returnType": "'asc' | 'desc' | null", "optional": true }
     },
     "sortIndex": {
       "description": "/** The order of the sort, if sorting by many columns */",
@@ -1097,11 +1097,11 @@
     },
     "sort": {
       "description": "/** If sorting by default, set it here. Set to `asc` or `desc`. */",
-      "type": { "returnType": "string | null", "optional": true }
+      "type": { "returnType": "'asc' | 'desc' | null", "optional": true }
     },
     "initialSort": {
       "description": "/** Same as `sort`, except only applied when creating a new column. Not applied when updating column definitions. */",
-      "type": { "returnType": "string", "optional": true }
+      "type": { "returnType": "'asc' | 'desc' | null", "optional": true }
     },
     "sortIndex": {
       "description": "/** If sorting more than one column by default, specifies order in which the sorting should be applied. */",
@@ -1113,7 +1113,7 @@
     },
     "sortingOrder": {
       "description": "/** Array defining the order in which sorting occurs (if sorting is enabled). An array with any of the following in any order `['asc','desc',null]` */",
-      "type": { "returnType": "(string | null)[]", "optional": true }
+      "type": { "returnType": "('asc' | 'desc' | null)[]", "optional": true }
     },
     "comparator": {
       "description": "/** Comparator function for custom sorting. */",
@@ -2900,7 +2900,7 @@
     },
     "sortingOrder": {
       "description": "/** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`. Default: `[null, 'asc', 'desc']` */",
-      "type": { "returnType": "(string | null)[]", "optional": true }
+      "type": { "returnType": "('asc' | 'desc' | null)[]", "optional": true }
     },
     "accentedSort": {
       "description": "/** Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower. Default: `false` */",
@@ -8641,7 +8641,10 @@
     "setSort": {
       "description": "/** Callback to set the sort for this column.\n * Pass the sort direction to use ignoring the current sort eg one of 'asc', 'desc' or null (for no sort).\n * Pass `multiSort=true` if you want to do a multi sort (eg user has Shift held down when they click) */",
       "type": {
-        "arguments": { "sort": "string", "multiSort?": "boolean" },
+        "arguments": {
+          "sort": "'asc' | 'desc' | null",
+          "multiSort?": "boolean"
+        },
         "returnType": "void",
         "optional": false
       }
@@ -11649,7 +11652,7 @@
     },
     "sortModel": {
       "description": "/** If doing server side sorting, contains the sort model */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "SortModelItem[]", "optional": false }
     },
     "filterModel": {
       "description": "/** If doing server side filtering, contains the filter model */",
@@ -13492,7 +13495,7 @@
     },
     "sortModel": {
       "description": "/** If sorting, what the sort model is. */",
-      "type": { "returnType": "any", "optional": false }
+      "type": { "returnType": "SortModelItem[]", "optional": false }
     }
   },
   "IServerSideGetRowsParams": {
@@ -14565,11 +14568,17 @@
     },
     "fontStyle": {
       "description": "/** Specify the font style for the label text. */",
-      "type": { "returnType": "FontStyle", "optional": true }
+      "type": {
+        "returnType": "'normal' | 'italic' | 'oblique'",
+        "optional": true
+      }
     },
     "fontWeight": {
       "description": "/** Set how thick or thin characters in label text should be displayed. */",
-      "type": { "returnType": "FontWeight", "optional": true }
+      "type": {
+        "returnType": "'normal' | 'bold' | 'bolder' | 'lighter' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900'",
+        "optional": true
+      }
     },
     "color": {
       "description": "/** Set the color of the label text. The color can be specified by a color name, a HEX or an RGB value. */",
@@ -16930,7 +16939,7 @@
     }
   },
   "SortOption": {
-    "sort": { "type": { "returnType": "string", "optional": false } },
+    "sort": { "type": { "returnType": "'asc' | 'desc'", "optional": false } },
     "column": { "type": { "returnType": "Column", "optional": false } }
   },
   "SortedRowNode": {
@@ -16938,8 +16947,14 @@
     "rowNode": { "type": { "returnType": "RowNode", "optional": false } }
   },
   "SortModelItem": {
-    "colId": { "type": { "returnType": "string", "optional": false } },
-    "sort": { "type": { "returnType": "string", "optional": false } }
+    "colId": {
+      "description": "/** Id of the column this sort is for. */",
+      "type": { "returnType": "string", "optional": false }
+    },
+    "sort": {
+      "description": "/** Sort direction */",
+      "type": { "returnType": "'asc' | 'desc'", "optional": false }
+    }
   },
   "LayoutView": {
     "updateLayoutClasses": {
