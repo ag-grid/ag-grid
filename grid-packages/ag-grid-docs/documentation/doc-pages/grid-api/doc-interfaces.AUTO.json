@@ -14565,11 +14565,17 @@
     },
     "fontStyle": {
       "description": "/** Specify the font style for the label text. */",
-      "type": { "returnType": "FontStyle", "optional": true }
+      "type": {
+        "returnType": "'normal' | 'italic' | 'oblique'",
+        "optional": true
+      }
     },
     "fontWeight": {
       "description": "/** Set how thick or thin characters in label text should be displayed. */",
-      "type": { "returnType": "FontWeight", "optional": true }
+      "type": {
+        "returnType": "'normal' | 'bold' | 'bolder' | 'lighter' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900'",
+        "optional": true
+      }
     },
     "color": {
       "description": "/** Set the color of the label text. The color can be specified by a color name, a HEX or an RGB value. */",

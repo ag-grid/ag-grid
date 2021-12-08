@@ -8126,8 +8126,8 @@
       "enabled?": "boolean",
       "fontSize": "string",
       "fontFamily": "string",
-      "fontStyle?": "FontStyle",
-      "fontWeight?": "FontWeight",
+      "fontStyle?": "'normal' | 'italic' | 'oblique'",
+      "fontWeight?": "'normal' | 'bold' | 'bolder' | 'lighter' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900'",
       "color": "string",
       "formatter?": "(params: { value: number | undefined; }) => string",
       "placement": "BarColumnLabelPlacement"
