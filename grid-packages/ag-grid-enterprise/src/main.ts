@@ -241,7 +241,6 @@ export { Environment } from "ag-grid-community";
 export { ITooltipComp, ITooltipParams } from "ag-grid-community";
 export { CustomTooltipFeature } from "ag-grid-community";
 export { IAggregationStage } from "ag-grid-community";
-export { ISparklineCellRendererParams, SparklineOptions, CrosshairLineOptions, SparklineCrosshairsOptions, BaseSparklineOptions, LineSparklineOptions, AreaSparklineOptions, ColumnSparklineOptions, BarSparklineOptions, SparklineAxisOptions, HighlightStyleOptions, SparklineColumnFormatter, ColumnFormatterParams, ColumnFormat, SparklineMarkerFormatter, MarkerFormatterParams, MarkerFormat, SparklineMarkerOptions, SparklineLineOptions, PaddingOptions, SparklineTooltipOptions, TooltipRendererResult, TooltipRendererParams } from "ag-grid-community";
 export { Module } from "ag-grid-community";
 export { ModuleNames } from "ag-grid-community";
 export { ModuleRegistry } from "ag-grid-community";

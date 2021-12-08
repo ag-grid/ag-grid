@@ -432,31 +432,7 @@ export * from "./interfaces/iChartOptions";
 export * from "./interfaces/iAgChartOptions";
 
 // sparklines
-export {
-    ISparklineCellRendererParams,
-    SparklineOptions,
-    CrosshairLineOptions,
-    SparklineCrosshairsOptions,
-    BaseSparklineOptions,
-    LineSparklineOptions,
-    AreaSparklineOptions,
-    ColumnSparklineOptions,
-    BarSparklineOptions,
-    SparklineAxisOptions,
-    HighlightStyleOptions,
-    SparklineColumnFormatter,
-    ColumnFormatterParams,
-    ColumnFormat,
-    SparklineMarkerFormatter,
-    MarkerFormatterParams,
-    MarkerFormat,
-    SparklineMarkerOptions,
-    SparklineLineOptions,
-    PaddingOptions,
-    SparklineTooltipOptions,
-    TooltipRendererResult,
-    TooltipRendererParams
-} from "./interfaces/iSparklineCellRendererParams";
+export * from "./interfaces/iSparklineCellRendererParams";
 
 // modules
 export { Module } from "./interfaces/iModule";
