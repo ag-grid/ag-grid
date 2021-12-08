@@ -441,6 +441,7 @@ export {
     LineSparklineOptions,
     AreaSparklineOptions,
     ColumnSparklineOptions,
+    BarSparklineOptions,
     SparklineAxisOptions,
     HighlightStyleOptions,
     SparklineColumnFormatter,

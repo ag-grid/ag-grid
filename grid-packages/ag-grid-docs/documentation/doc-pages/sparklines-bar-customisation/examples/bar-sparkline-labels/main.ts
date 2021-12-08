@@ -1,5 +1,4 @@
-import { GridOptions } from '@ag-grid-community/core'
-import { BarSparklineOptions } from '@ag-grid-community/core/dist/cjs/interfaces/iSparklineCellRendererParams'
+import { GridOptions, BarSparklineOptions } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
