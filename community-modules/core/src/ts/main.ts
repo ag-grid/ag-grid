@@ -240,7 +240,7 @@ export { AgColorPicker } from "./widgets/agColorPicker";
 export { AgGroupComponent, AgGroupComponentParams } from "./widgets/agGroupComponent";
 export { AgDialog } from "./widgets/agDialog";
 export { AgPanel } from "./widgets/agPanel";
-export { Component, VisibleChangedEvent } from "./widgets/component";
+export { Component, VisibleChangedEvent, CssClassManager } from "./widgets/component";
 export { ManagedFocusFeature, ManagedFocusCallbacks } from "./widgets/managedFocusFeature";
 export { TabGuardComp } from "./widgets/tabGuardComp";
 export { TabGuardCtrl, ITabGuard } from "./widgets/tabGuardCtrl";

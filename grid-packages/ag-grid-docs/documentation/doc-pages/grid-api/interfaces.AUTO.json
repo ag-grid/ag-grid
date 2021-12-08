@@ -9436,7 +9436,6 @@
   "IRowComp": {
     "meta": {},
     "type": {
-      "setDisplay(value?: string)": "void",
       "setDomOrder(domOrder: boolean)": "void",
       "addOrRemoveCssClass(cssClassName: string, on: boolean)": "void",
       "setCellCtrls(cellCtrls: CellCtrl[])": "void",
@@ -9444,7 +9443,6 @@
       "getFullWidthCellRenderer()": "ICellRenderer | null | undefined",
       "setAriaExpanded(on: boolean)": "void",
       "setAriaSelected(selected: boolean | undefined)": "void",
-      "setHeight(height: string)": "void",
       "setTop(top: string)": "void",
       "setTransform(transform: string)": "void",
       "setRowIndex(rowIndex: string)": "void",

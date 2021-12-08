@@ -47,7 +47,6 @@ export const FullWidthKeys: Map<RowType, string> = convertToMap([
 let instanceIdSequence = 0;
 
 export interface IRowComp {
-    setDisplay(value?: string): void;
     setDomOrder(domOrder: boolean): void;
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     setCellCtrls(cellCtrls: CellCtrl[]): void;
@@ -55,7 +54,6 @@ export interface IRowComp {
     getFullWidthCellRenderer(): ICellRenderer | null | undefined;
     setAriaExpanded(on: boolean): void;
     setAriaSelected(selected: boolean | undefined): void;
-    setHeight(height: string): void;
     setTop(top: string): void;
     setTransform(transform: string): void;
     setRowIndex(rowIndex: string): void;
@@ -203,8 +201,8 @@ export class RowCtrl extends BeanStub {
     }
 
     public setCached(cached: boolean): void {
-        const displayValue = cached ? 'none' : undefined;
-        this.allRowGuis.forEach(rg => rg.rowComp.setDisplay(displayValue));
+        const displayValue = cached ? 'none' : '';
+        this.allRowGuis.forEach(rg => rg.element.style.display = displayValue);
     }
 
     private initialiseRowComps(): void {
@@ -1215,7 +1213,7 @@ export class RowCtrl extends BeanStub {
         if (exists(this.rowNode.rowHeight)) {
             const heightPx = `${this.rowNode.rowHeight}px`;
 
-            this.allRowGuis.forEach(gui => gui.rowComp.setHeight(heightPx));
+            this.allRowGuis.forEach(gui => gui.element.style.height = heightPx);
         }
     }
 

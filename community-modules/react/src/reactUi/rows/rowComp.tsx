@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useMemo, memo, useContext } from 'react';
-import { CellCtrl, IRowComp, RowCtrl, UserCompDetails, ICellRenderer } from '@ag-grid-community/core';
+import { CellCtrl, IRowComp, RowCtrl, UserCompDetails, ICellRenderer, CssClassManager } from '@ag-grid-community/core';
 import { showJsComp } from '../jsComp';
-import { CssClasses, isComponentStateless } from '../utils';
+import { isComponentStateless } from '../utils';
 import { BeansContext } from '../beansContext';
 import CellComp from '../cells/cellComp';
 
@@ -57,10 +57,6 @@ const RowComp = (params: {rowCtrl: RowCtrl, pinned: string | null}) => {
 
     const { rowCtrl, pinned } = params;
 
-    const [height, setHeight] = useState<string>();
-    const [top, setTop] = useState<string | undefined>(rowCtrl.getInitialRowTop());
-    const [transform, setTransform] = useState<string | undefined>(rowCtrl.getInitialTransform());
-    const [cssClasses, setCssClasses] = useState<CssClasses>(new CssClasses());
     const [rowIndex, setRowIndex] = useState<string>();
     const [rowId, setRowId] = useState<string>();
     const [role, setRole] = useState<string>();
@@ -74,19 +70,29 @@ const RowComp = (params: {rowCtrl: RowCtrl, pinned: string | null}) => {
     const [cellCtrls, setCellCtrls] = useState<CellCtrls>({ list: [], instanceIdMap: new Map() });
     const [fullWidthCompDetails, setFullWidthCompDetails] = useState<UserCompDetails>();
     const [domOrder, setDomOrder] = useState<boolean>(false);
-    const [display, setDisplay] = useState<string>();
+
+    // these styles have initial values, so element is placed into the DOM with them,
+    // rather than an transition getting applied.
+    const [top, setTop] = useState<string | undefined>(rowCtrl.getInitialRowTop());
+    const [transform, setTransform] = useState<string | undefined>(rowCtrl.getInitialTransform());
 
     const eGui = useRef<HTMLDivElement>(null);
     const fullWidthCompRef = useRef<ICellRenderer>();
 
+    const cssClassManager = useMemo( ()=> new CssClassManager( ()=> eGui.current! ), []);
+
     useEffect(() => {
         const compProxy: IRowComp = {
-            setDisplay: value => setDisplay(value),
-            setDomOrder: domOrder => setDomOrder(domOrder),
-            setHeight: value => setHeight(value),
+            // the rowTop is managed by state, instead of direct style manipulation by rowCtrl (like all the other styles)
+            // as we need to have an initial value when it's placed into he DOM for the first time, for animation to work.
             setTop: value => setTop(value),
             setTransform: value => setTransform(value),
-            addOrRemoveCssClass: (name, on) => setCssClasses( prev => prev.setClass(name, on) ),
+
+            // i found using React for managing classes at the row level was to slow, as modifying classes caused a lot of
+            // React code to execute, so avoiding React for managing CSS Classes made the grid go much faster.
+            addOrRemoveCssClass: (name, on) => cssClassManager.addOrRemoveCssClass(name, on),
+
+            setDomOrder: domOrder => setDomOrder(domOrder),
             setRowIndex: value => setRowIndex(value),
             setAriaRowIndex: value => setAriaRowIndex(value),
             setAriaExpanded: value => setAriaExpanded(value),
@@ -112,16 +118,12 @@ const RowComp = (params: {rowCtrl: RowCtrl, pinned: string | null}) => {
 
     const rowStyles = useMemo(() => {
         const res = {
-            height,
             top,
-            transform,
-            display
+            transform
         };
         Object.assign(res, userStyles);
         return res;
-    }, [height, top, transform, userStyles, display]);
-
-    const className = useMemo( ()=> cssClasses.toString(), [cssClasses]);
+    }, [top, transform, userStyles]);
 
     const showFullWidthFramework = fullWidthCompDetails && fullWidthCompDetails.componentFromFramework;
     const showCells = cellCtrls != null;
@@ -157,7 +159,7 @@ const RowComp = (params: {rowCtrl: RowCtrl, pinned: string | null}) => {
     };
 
     return (
-        <div ref={ eGui } role={ role } className={ className } style={ rowStyles } row-index={ rowIndex }
+        <div ref={ eGui } role={ role } style={ rowStyles } row-index={ rowIndex }
              aria-rowindex={ ariaRowIndex } aria-expanded={ ariaExpanded } aria-label={ ariaLabel }
              aria-selected={ ariaSelected } row-id={ rowId } row-business-key={ rowBusinessKey } tabIndex={ tabIndex }>
             {

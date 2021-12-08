@@ -32,13 +32,6 @@ export class RowComp extends Component {
         const style = eGui.style;
 
         const compProxy: IRowComp = {
-            setDisplay: value => {
-                if (value == null) {
-                    style.removeProperty('display');
-                } else {
-                    style.setProperty('display', 'none');
-                }
-            },
             setDomOrder: domOrder => this.domOrder = domOrder,
             setCellCtrls: cellCtrls => this.setCellCtrls(cellCtrls),
             showFullWidth: compDetails => this.showFullWidth(compDetails),
@@ -50,7 +43,6 @@ export class RowComp extends Component {
             setAriaLabel: value => {
                 setAriaLabel(eGui, value == null ? '' : value);
             },
-            setHeight: height => style.height = height,
             setTop: top => style.top = top,
             setTransform: transform => style.transform = transform,
             setRowIndex: rowIndex => eGui.setAttribute('row-index', rowIndex),

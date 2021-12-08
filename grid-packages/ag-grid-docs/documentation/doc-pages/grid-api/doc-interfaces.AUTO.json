@@ -16673,13 +16673,6 @@
   },
   "RowType": {},
   "IRowComp": {
-    "setDisplay": {
-      "type": {
-        "arguments": { "value?": "string" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
     "setDomOrder": {
       "type": {
         "arguments": { "domOrder": "boolean" },
@@ -16725,13 +16718,6 @@
     "setAriaSelected": {
       "type": {
         "arguments": { "selected": "boolean | undefined" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "setHeight": {
-      "type": {
-        "arguments": { "height": "string" },
         "returnType": "void",
         "optional": false
       }
