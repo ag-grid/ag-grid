@@ -504,10 +504,10 @@ export interface GridOptions {
      *
      *  The options are:
      *
-     *      `'singleColumn'`: single group column automatically added by the grid.
-     *      `'multipleColumns'`: a group column per row group is added automatically.
-     *      `'groupRows'`: group rows are automatically added instead of group columns.
-     *      `'custom'`: informs the grid that group columns will be provided.
+     * - `'singleColumn'`: single group column automatically added by the grid.
+     * - `'multipleColumns'`: a group column per row group is added automatically.
+     * - `'groupRows'`: group rows are automatically added instead of group columns.
+     * - `'custom'`: informs the grid that group columns will be provided.
      */
     groupDisplayType?: RowGroupingDisplayType;
     /** If grouping, set to the number of levels to expand by default, e.g. `0` for none, `1` for first level only, etc. Set to `-1` to expand everything. Default: `0` */

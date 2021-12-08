@@ -584,7 +584,7 @@
     "type": { "returnType": "boolean" }
   },
   "groupDisplayType": {
-    "description": "/** Specifies how the results of row grouping should be displayed.\n * \n *   The options are:\n * \n *       `'singleColumn'`: single group column automatically added by the grid.\n *       `'multipleColumns'`: a group column per row group is added automatically.\n *       `'groupRows'`: group rows are automatically added instead of group columns.\n *       `'custom'`: informs the grid that group columns will be provided. */",
+    "description": "/** Specifies how the results of row grouping should be displayed.\n * \n *   The options are:\n * \n * - `'singleColumn'`: single group column automatically added by the grid.\n * - `'multipleColumns'`: a group column per row group is added automatically.\n * - `'groupRows'`: group rows are automatically added instead of group columns.\n * - `'custom'`: informs the grid that group columns will be provided. */",
     "type": { "returnType": "RowGroupingDisplayType" }
   },
   "groupDefaultExpanded": {
