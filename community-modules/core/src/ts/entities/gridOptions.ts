@@ -699,7 +699,7 @@ export interface GridOptions {
 
     // *** Sorting *** //
     /** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`. Default: `[null, 'asc', 'desc']`  */
-    sortingOrder?: (string | null)[];
+    sortingOrder?: ('asc' | 'desc' | null)[];
     /** Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower. Default: `false` */
     accentedSort?: boolean;
     /** Set to `true` to show the 'no sort' icon. Default: `false` */

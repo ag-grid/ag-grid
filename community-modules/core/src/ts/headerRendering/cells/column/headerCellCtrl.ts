@@ -144,7 +144,7 @@ export class HeaderCellCtrl extends AbstractHeaderCellCtrl {
             progressSort: (multiSort?: boolean) => {
                 this.sortController.progressSort(this.column, !!multiSort, "uiColumnSorted");
             },
-            setSort: (sort: string, multiSort?: boolean) => {
+            setSort: (sort: 'asc' | 'desc' | null, multiSort?: boolean) => {
                 this.sortController.setSortForColumn(this.column, sort, !!multiSort, "uiColumnSorted");
             },
             api: this.gridApi,

@@ -783,7 +783,7 @@ hence this property is deprecated as will be removed in the next major release.
     /** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. Default: `false`     */
     @Input() public suppressClearOnFillReduction: boolean | undefined = undefined;
     /** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`. Default: `[null, 'asc', 'desc']`     */
-    @Input() public sortingOrder: (string | null)[] | undefined = undefined;
+    @Input() public sortingOrder: ('asc' | 'desc' | null)[] | undefined = undefined;
     /** Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower. Default: `false`     */
     @Input() public accentedSort: boolean | undefined = undefined;
     /** Set to `true` to show the 'no sort' icon. Default: `false`     */

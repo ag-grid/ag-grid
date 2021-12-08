@@ -31,8 +31,8 @@ export class Constants {
     static PINNED_RIGHT: 'right' = 'right';
     static PINNED_LEFT: 'left' = 'left';
 
-    static SORT_ASC = 'asc';
-    static SORT_DESC = 'desc';
+    static SORT_ASC: 'asc' = 'asc';
+    static SORT_DESC: 'desc' = 'desc';
 
     static INPUT_SELECTOR = 'input, select, button, textarea';
     static FOCUSABLE_SELECTOR = '[tabindex], input, select, button, textarea';

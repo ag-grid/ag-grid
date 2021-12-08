@@ -289,15 +289,15 @@ export class AgGridColumn {
     /** Set to `true` to allow sorting on this column. Default: `false`     */
     @Input() public sortable: boolean | undefined;
     /** If sorting by default, set it here. Set to `asc` or `desc`.     */
-    @Input() public sort: string | null | undefined;
+    @Input() public sort: 'asc' | 'desc' | null | undefined;
     /** Same as `sort`, except only applied when creating a new column. Not applied when updating column definitions.     */
-    @Input() public initialSort: string | undefined;
+    @Input() public initialSort: 'asc' | 'desc' | null | undefined;
     /** If sorting more than one column by default, specifies order in which the sorting should be applied.     */
     @Input() public sortIndex: number | null | undefined;
     /** Same as `sortIndex`, except only applied when creating a new column. Not applied when updating column definitions.     */
     @Input() public initialSortIndex: number | undefined;
     /** Array defining the order in which sorting occurs (if sorting is enabled). An array with any of the following in any order `['asc','desc',null]`     */
-    @Input() public sortingOrder: (string | null)[] | undefined;
+    @Input() public sortingOrder: ('asc' | 'desc' | null)[] | undefined;
     /** Comparator function for custom sorting.     */
     @Input() public comparator: ((valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, isInverted: boolean) => number) | undefined;
     /** Set to `true` if you want the unsorted icon to be shown when no sort is applied to this column. Default: `false`     */

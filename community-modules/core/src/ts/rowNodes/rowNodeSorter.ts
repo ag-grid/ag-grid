@@ -8,7 +8,7 @@ import { Constants } from "../constants/constants";
 import { ColumnModel } from "../columns/columnModel";
 
 export interface SortOption {
-    sort: string;
+    sort: 'asc' | 'desc';
     column: Column;
 }
 
@@ -28,7 +28,7 @@ export class RowNodeSorter {
 
     public doFullSort(rowNodes: RowNode[], sortOptions: SortOption[]): RowNode[] {
 
-        const mapper = (rowNode: RowNode, pos: number) => ({currentPos: pos, rowNode: rowNode});
+        const mapper = (rowNode: RowNode, pos: number) => ({ currentPos: pos, rowNode: rowNode });
         const sortedRowNodes: SortedRowNode[] = rowNodes.map(mapper);
 
         sortedRowNodes.sort(this.compareRowNodes.bind(this, sortOptions));

@@ -1090,7 +1090,7 @@ export class GridOptionsWrapper {
         return this.gridOptions.aggFuncs;
     }
 
-    public getSortingOrder(): (string | null)[] | undefined {
+    public getSortingOrder(): ('asc' | 'desc' | null)[] | undefined {
         return this.gridOptions.sortingOrder;
     }
 

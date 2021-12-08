@@ -51,7 +51,7 @@ export interface IHeaderParams {
      * Pass the sort direction to use ignoring the current sort eg one of 'asc', 'desc' or null (for no sort).
      * Pass `multiSort=true` if you want to do a multi sort (eg user has Shift held down when they click)
      */
-    setSort: (sort: string, multiSort?: boolean) => void;
+    setSort: (sort: 'asc' | 'desc' | null, multiSort?: boolean) => void;
     template: string;
     /**
      * The header the grid provides.

@@ -9,8 +9,10 @@ import { GridApi } from "./gridApi";
 import { SortOption } from "./rowNodes/rowNodeSorter";
 
 export interface SortModelItem {
+    /** Id of the column this sort is for. */
     colId: string;
-    sort: string;
+    /** Sort direction */
+    sort: 'asc' | 'desc';
 }
 
 @Bean('sortController')
@@ -27,7 +29,7 @@ export class SortController extends BeanStub {
         this.setSortForColumn(column, nextDirection, multiSort, source);
     }
 
-    public setSortForColumn(column: Column, sort: string | null, multiSort: boolean, source: ColumnEventType = "api"): void {
+    public setSortForColumn(column: Column, sort: 'asc' | 'desc' | null, multiSort: boolean, source: ColumnEventType = "api"): void {
         // auto correct - if sort not legal value, then set it to 'no sort' (which is null)
         if (sort !== Constants.SORT_ASC && sort !== Constants.SORT_DESC) {
             sort = null;
@@ -102,8 +104,8 @@ export class SortController extends BeanStub {
         });
     }
 
-    private getNextSortDirection(column: Column): string | null {
-        let sortingOrder: (string | null)[] | null | undefined;
+    private getNextSortDirection(column: Column): 'asc' | 'desc' | null {
+        let sortingOrder: ('asc' | 'desc' | null)[] | null | undefined;
 
         if (column.getColDef().sortingOrder) {
             sortingOrder = column.getColDef().sortingOrder;
@@ -121,7 +123,7 @@ export class SortController extends BeanStub {
         const currentIndex = sortingOrder.indexOf(column.getSort()!);
         const notInArray = currentIndex < 0;
         const lastItemInArray = currentIndex == sortingOrder.length - 1;
-        let result: string | null;
+        let result: 'asc' | 'desc' | null;
 
         if (notInArray || lastItemInArray) {
             result = sortingOrder[0];
@@ -146,7 +148,7 @@ export class SortController extends BeanStub {
         // when both cols are missing sortIndex, we use the position of the col in all cols list.
         // this means if colDefs only have sort, but no sortIndex, we deterministically pick which
         // cols is sorted by first.
-        const allColsIndexes: {[id:string]:number} = {};
+        const allColsIndexes: { [id: string]: number } = {};
         allColumnsIncludingAuto.forEach((col: Column, index: number) => allColsIndexes[col.getId()] = index);
 
         // put the columns in order of which one got sorted first
@@ -171,9 +173,9 @@ export class SortController extends BeanStub {
     }
 
     // used by server side row models, to sent sort to server
-    public getSortModel(): any[] {
+    public getSortModel(): SortModelItem[] {
         return this.getColumnsWithSortingOrdered().map(column => ({
-            sort: column.getSort(),
+            sort: column.getSort()!,
             colId: column.getId()
         }));
     }
