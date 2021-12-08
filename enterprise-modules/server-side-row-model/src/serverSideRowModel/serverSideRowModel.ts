@@ -29,7 +29,8 @@ import {
     StoreRefreshAfterParams,
     RefreshStoreParams,
     ServerSideStoreState,
-    Beans
+    Beans,
+    SortModelItem
 } from "@ag-grid-community/core";
 
 import { NodeManager } from "./nodeManager";
@@ -37,7 +38,7 @@ import { SortListener } from "./listeners/sortListener";
 import { StoreFactory } from "./stores/storeFactory";
 
 export interface SSRMParams {
-    sortModel: any;
+    sortModel: SortModelItem[];
     filterModel: any;
     lastAccessedSequence: NumberSequence;
     dynamicRowHeight: boolean;
@@ -176,7 +177,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.nodeManager.clear();
     }
 
-    public refreshAfterSort(newSortModel: any, params: StoreRefreshAfterParams): void {
+    public refreshAfterSort(newSortModel: SortModelItem[], params: StoreRefreshAfterParams): void {
         if (this.storeParams) {
             this.storeParams.sortModel = newSortModel;
         }
@@ -287,7 +288,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     public updateRowIndexesAndBounds(): void {
         const rootStore = this.getRootStore();
         if (!rootStore) { return; }
-        rootStore.setDisplayIndexes(new NumberSequence(), {value: 0});
+        rootStore.setDisplayIndexes(new NumberSequence(), { value: 0 });
     }
 
     public retryLoads(): void {

@@ -31,7 +31,7 @@ export class SortListener extends BeanStub {
         this.addManagedListener(this.eventService, Events.EVENT_SORT_CHANGED, this.onSortChanged.bind(this));
     }
 
-    public extractSortModel(): SortModelItem [] {
+    public extractSortModel(): SortModelItem[] {
         const sortModel = this.sortController.getSortModel();
 
         // when using tree data we just return the sort model with the 'ag-Grid-AutoColumn' as is, i.e not broken out
@@ -71,7 +71,7 @@ export class SortListener extends BeanStub {
             _.removeFromArray(sortModel, autoGroupSortModel);
 
             const isNotInSortModel = (col: Column) => sortModel.filter(sm => sm.colId === col.getColId()).length == 0;
-            const mapColumnToSortModel = (col: Column) => ({ colId: col.getId(), sort: autoGroupSortModel.sort});
+            const mapColumnToSortModel = (col: Column): SortModelItem => ({ colId: col.getId(), sort: autoGroupSortModel.sort });
 
             const newModels = this.columnModel.getRowGroupColumns()
                 .filter(isNotInSortModel)
@@ -109,8 +109,8 @@ export class SortListener extends BeanStub {
     // is impacted by sorting on A or B then it needs to be refreshed. this includes where the cache
     // was previously sorted by A and then the A sort now needs to be cleared.
     private findChangedColumnsInSort(
-        newSortModel: { colId: string, sort: string }[],
-        oldSortModel: { colId: string, sort: string }[]): string[] {
+        newSortModel: SortModelItem[],
+        oldSortModel: SortModelItem[]): string[] {
 
         let allColsInBothSorts: string[] = [];
 
@@ -121,15 +121,15 @@ export class SortListener extends BeanStub {
             }
         });
 
-        const differentSorts = (oldSortItem: any, newSortItem: any) => {
+        const differentSorts = (oldSortItem: SortModelItem | undefined, newSortItem: SortModelItem | undefined) => {
             const oldSort = oldSortItem ? oldSortItem.sort : null;
             const newSort = newSortItem ? newSortItem.sort : null;
             return oldSort !== newSort;
         };
 
-        const differentIndexes = (oldSortItem: any, newSortItem: any) => {
-            const oldIndex = oldSortModel.indexOf(oldSortItem);
-            const newIndex = newSortModel.indexOf(newSortItem);
+        const differentIndexes = (oldSortItem: SortModelItem | undefined, newSortItem: SortModelItem | undefined) => {
+            const oldIndex = oldSortItem ? oldSortModel.indexOf(oldSortItem) : -1;
+            const newIndex = newSortItem ? newSortModel.indexOf(newSortItem) : -1;
             return oldIndex !== newIndex;
         };
 
