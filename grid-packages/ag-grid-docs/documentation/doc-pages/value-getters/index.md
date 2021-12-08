@@ -57,7 +57,7 @@ See the [Column Tool Panel Example](/tool-panel-columns/#column-tool-panel-examp
 
 ### Filter Value Getters
 
-See [Filtering in Row Grouping](/grouping/#filtering-on-group-columns) for more information on Filter Value Getters.
+See [Row Grouping Filtering](/grouping-filtering/) for more information on Filter Value Getters.
 
 <api-documentation source='column-properties/properties.json' section="filtering" names='["filterValueGetter"]' ></api-documentation>
 
