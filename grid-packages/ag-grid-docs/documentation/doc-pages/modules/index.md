@@ -210,7 +210,7 @@ export default class GridExample extends Component {
 
 [[note]]
 | It's important to note that when a module is added via the `modules` property, this module will be available to all other instances of the Grid created afterwards. This will produce the same behaviour as calling `ModuleRegistry.registerModules()`.
-| This means that you can't limit the functionality of specific grid instances based on whether or not you've registered a particular module for that specific grid. If this module was already registered by any one AG Grid instance, it is available to all AG Grid instances created subsequently.
+| This means that you can't limit the functionality of specific grid instances based on whether or not you've registered a particular module for that specific grid. If a module was already registered by any one AG Grid instance, it is available to all AG Grid instances created subsequently.
 
 ## Core Modules
 
