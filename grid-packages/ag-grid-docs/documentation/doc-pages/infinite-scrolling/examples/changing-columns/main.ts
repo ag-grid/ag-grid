@@ -1,4 +1,4 @@
-import { GridOptions, IDatasource } from '@ag-grid-community/core'
+import { GridOptions, IDatasource, SortModelItem } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -36,11 +36,11 @@ function onBtHideYearColumn() {
   ])
 }
 
-function sortAndFilter(allOfTheData: any[], sortModel: any, filterModel: any) {
+function sortAndFilter(allOfTheData: any[], sortModel: SortModelItem[], filterModel: any) {
   return sortData(sortModel, filterData(filterModel, allOfTheData))
 }
 
-function sortData(sortModel: any, data: any[]) {
+function sortData(sortModel: SortModelItem[], data: any[]) {
   var sortPresent = sortModel && sortModel.length > 0
   if (!sortPresent) {
     return data

@@ -1,4 +1,4 @@
-import { ColDef, GridOptions, ICellRendererParams, IDatasource, IGetRowsParams } from '@ag-grid-community/core'
+import { ColDef, GridOptions, ICellRendererParams, IDatasource, IGetRowsParams, SortModelItem } from '@ag-grid-community/core'
 declare function countries(): string[];
 
 var filterParams = { values: countries() }
@@ -72,11 +72,11 @@ const gridOptions: GridOptions = {
   },
 }
 
-function sortAndFilter(allOfTheData: any[], sortModel: any, filterModel: any) {
+function sortAndFilter(allOfTheData: any[], sortModel: SortModelItem[], filterModel: any) {
   return sortData(sortModel, filterData(filterModel, allOfTheData))
 }
 
-function sortData(sortModel: any, data: any[]) {
+function sortData(sortModel: SortModelItem[], data: any[]) {
   var sortPresent = sortModel && sortModel.length > 0
   if (!sortPresent) {
     return data

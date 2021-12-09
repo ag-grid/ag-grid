@@ -1,6 +1,6 @@
-import { GridOptions } from '@ag-grid-community/core'
+import { ColDef, GridOptions } from '@ag-grid-community/core'
 
-function getColumnDefs() {
+function getColumnDefs(): ColDef[] {
   return [
     { field: 'athlete', initialWidth: 100, initialSort: 'asc' },
     { field: 'age' },
