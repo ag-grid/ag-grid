@@ -2,16 +2,26 @@ import { GridOptions, ProcessCellForExportParams, ProcessHeaderForExportParams, 
 
 const gridOptions: GridOptions = {
   columnDefs: [
-    { field: 'athlete', headerName: 'Athlete Name', minWidth: 200 },
-    { field: 'age' },
-    { field: 'country', minWidth: 150 },
-    { field: 'year' },
-    { field: 'date', minWidth: 150 },
-    { field: 'sport', minWidth: 150 },
-    { field: 'gold' },
-    { field: 'silver' },
-    { field: 'bronze' },
-    { field: 'total' },
+    {
+      headerName: 'Participants',
+      children: [
+        { field: 'athlete', headerName: 'Athlete Name', minWidth: 200 },
+        { field: 'age' },
+        { field: 'country', minWidth: 150 },
+      ]
+    },
+    {
+      headerName: 'Olympic Games',
+      children: [
+        { field: 'year' },
+        { field: 'date', minWidth: 150 },
+        { field: 'sport', minWidth: 150 },
+        { field: 'gold' },
+        { field: 'silver', suppressPaste: true },
+        { field: 'bronze' },
+        { field: 'total' },
+      ]
+    }
   ],
 
   defaultColDef: {
@@ -49,8 +59,8 @@ function processGroupHeaderForClipboard(params: ProcessGroupHeaderForExportParam
   const colGroupDef = params.columnGroup.getColGroupDef() || {} as any;
   let headerName = colGroupDef.headerName || '';
 
-  if (headerName !== '') {
-    headerName = headerName.charAt(0).toUpperCase() + headerName.slice(1)
+  if (headerName === '') {
+    return '';
   }
 
   return 'GH-' + headerName

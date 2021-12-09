@@ -614,7 +614,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         this.dispatchFlashCells({ [cellId]: true });
     }
 
-    public copySelectedRowsToClipboard(params: IClipboardCopyRowsParams): void {
+    public copySelectedRowsToClipboard(params: IClipboardCopyRowsParams = {}): void {
         const { columnKeys, includeHeaders, includeGroupHeaders } = params;
 
         this.buildParamsAndExportData({

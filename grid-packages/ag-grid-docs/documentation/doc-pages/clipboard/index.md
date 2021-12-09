@@ -107,13 +107,14 @@ It is possible to process clipboard data before pasting it into the grid. This c
 
 The interfaces and parameters for processing individual cells are as follows:
 
-<api-documentation source='grid-callbacks/callbacks.json' section='clipboard' names='["processCellForClipboard", "processHeaderForClipboard", "processCellFromClipboard"]'  ></api-documentation>
+<api-documentation source='grid-callbacks/callbacks.json' section='clipboard' names='["processCellForClipboard", "processHeaderForClipboard", "processGroupHeaderForClipboard", "processCellFromClipboard"]'  ></api-documentation>
 
 These three callbacks above are demonstrated in the example below. Note the following:
 
 - When cells are copied to the clipboard, values are prefixed with 'C-'. Cells can be copied by dragging a range with the mouse and hitting <kbd>Ctrl</kbd>+<kbd>C</kbd>.
 - When cells are pasted from the clipboard, values are prefixed with 'Z-'. Cells can be pasted by hitting <kbd>Ctrl</kbd>+<kbd>V</kbd>.
 - When headers are copied to the clipboard, values are prefixed with 'H-'. Headers can be copied by using the context menu.
+- When group headers are copied to the clipboard, values are prefixed with 'GH-'. Headers can be copied by using the context menu.
 
 <grid-example title='Example Process' name='process' type='generated' options='{ "enterprise": true }'></grid-example>
 
