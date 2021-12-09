@@ -38,6 +38,7 @@ The following is a list of all the default built in menu items with the rules ab
 - `contractAll`: Collapse all groups. When set, it's only shown if grouping by at least one column. Not shown by default.
 - `copy`: Copy selected value to clipboard. Shown by default.
 - `copyWithHeaders`: Copy selected value to clipboard with headers. Shown by default.
+- `copyWithGroupHeaders`: Copy selected value to clipboard with headers and header groups. Shown by default.
 - `paste`: Always disabled (see note in clipboard section). Always disabled. Shown by default.
 - `resetColumns`: Reset all columns. Not shown by default.
 - `export`: Export sub menu (containing csvExport and excelExport). Shown by default.

@@ -47,6 +47,10 @@
     "description": "/** Set to `true` to also include headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
+  "copyGroupHeadersToClipboard": {
+    "description": "/** Set to `true` to also include group headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */",
+    "type": { "returnType": "boolean" }
+  },
   "clipboardDeliminator": {
     "description": "/** Specify the deliminator to use when copying to clipboard. */",
     "type": { "returnType": "string" }
@@ -967,6 +971,13 @@
     "description": "/** Allows you to process header values for the clipboard. */",
     "type": {
       "arguments": { "params": "ProcessHeaderForExportParams" },
+      "returnType": "any"
+    }
+  },
+  "processGroupHeaderForClipboard": {
+    "description": "/** Allows you to process group header values for the clipboard. */",
+    "type": {
+      "arguments": { "params": "ProcessGroupHeaderForExportParams" },
       "returnType": "any"
     }
   },

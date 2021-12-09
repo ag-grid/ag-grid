@@ -1346,6 +1346,7 @@
       "tooltipMouseTrack?": "boolean",
       "popupParent?": "HTMLElement",
       "copyHeadersToClipboard?": "boolean",
+      "copyGroupHeadersToClipboard?": "boolean",
       "clipboardDeliminator?": "string",
       "suppressCopyRowsToClipboard?": "boolean",
       "suppressLastEmptyLineOnPaste?": "boolean",
@@ -1577,6 +1578,7 @@
       "postProcessPopup?": "(params: PostProcessPopupParams) => void",
       "processCellForClipboard?(params: ProcessCellForExportParams)": "any",
       "processHeaderForClipboard?(params: ProcessHeaderForExportParams)": "any",
+      "processGroupHeaderForClipboard?(params: ProcessGroupHeaderForExportParams)": "any",
       "processCellFromClipboard?(params: ProcessCellForExportParams)": "any",
       "sendToClipboard?": "(params: SendToClipboardParams) => void",
       "processDataFromClipboard?": "(params: ProcessDataFromClipboardParams) => string[][] | null",
@@ -1703,6 +1705,7 @@
       "tooltipMouseTrack?": "/** Set to `true` to have tooltips follow the cursor once they are displayed. Default: `false` */",
       "popupParent?": "/** DOM element to use as the popup parent for grid popups (context menu, column menu etc). */",
       "copyHeadersToClipboard?": "/** Set to `true` to also include headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */",
+      "copyGroupHeadersToClipboard?": "/** Set to `true` to also include group headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */",
       "clipboardDeliminator?": "/** Specify the deliminator to use when copying to clipboard. */",
       "suppressCopyRowsToClipboard?": "/** Set to `true` to only have the range selection, and not row selection, copied to clipboard. Default: `false` */",
       "suppressLastEmptyLineOnPaste?": "/** Set to `true` to work around a bug with Excel (Windows) that adds an extra empty line at the end of ranges copied to the clipboard. Default: `false` */",
@@ -1928,6 +1931,7 @@
       "postProcessPopup?": "/** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup. */",
       "processCellForClipboard?(params: ProcessCellForExportParams)": "/** Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel. */",
       "processHeaderForClipboard?(params: ProcessHeaderForExportParams)": "/** Allows you to process header values for the clipboard. */",
+      "processGroupHeaderForClipboard?(params: ProcessGroupHeaderForExportParams)": "/** Allows you to process group header values for the clipboard. */",
       "processCellFromClipboard?(params: ProcessCellForExportParams)": "/** Allows you to process cells from the clipboard. Handy if for example you have number fields, and want to block non-numbers from getting into the grid. */",
       "sendToClipboard?": "/** Allows you to get the data that would otherwise go to the clipboard. To be used when you want to control the 'copy to clipboard' operation yourself. */",
       "processDataFromClipboard?": "/** Allows complete control of the paste operation, including cancelling the operation (so nothing happens) or replacing the data with other data. */",
@@ -5119,6 +5123,7 @@
     "type": {
       "allColumns?": "boolean",
       "columnKeys?": "(string | Column)[]",
+      "rowNodes?": "RowPosition[]",
       "fileName?": "string",
       "onlySelected?": "boolean",
       "onlySelectedAllPages?": "boolean",
@@ -5152,6 +5157,7 @@
       "getCustomContentBelowRow?": "(params: ProcessRowGroupForExportParams) => T | undefined",
       "allColumns?": "boolean",
       "columnKeys?": "(string | Column)[]",
+      "rowNodes?": "RowPosition[]",
       "fileName?": "string",
       "onlySelected?": "boolean",
       "onlySelectedAllPages?": "boolean",
@@ -5202,6 +5208,7 @@
       "getCustomContentBelowRow?": "(params: ProcessRowGroupForExportParams) => CsvCustomContent | undefined",
       "allColumns?": "boolean",
       "columnKeys?": "(string | Column)[]",
+      "rowNodes?": "RowPosition[]",
       "fileName?": "string",
       "onlySelected?": "boolean",
       "onlySelectedAllPages?": "boolean",
@@ -6620,13 +6627,25 @@
       "afterColumnsChanged?": "boolean"
     }
   },
+  "IClipboardCopyParams": {
+    "meta": {},
+    "type": { "includeHeaders?": "boolean", "includeGroupHeaders?": "boolean" }
+  },
+  "IClipboardCopyRowsParams": {
+    "meta": {},
+    "type": {
+      "columnKeys?": "(string | Column)[]",
+      "includeHeaders?": "boolean",
+      "includeGroupHeaders?": "boolean"
+    }
+  },
   "IClipboardService": {
     "meta": {},
     "type": {
       "pasteFromClipboard()": "void",
-      "copyToClipboard(includeHeader?: boolean)": "void",
-      "copySelectedRowsToClipboard(includeHeader?: boolean, columnKeys?: (string | Column)[])": "void",
-      "copySelectedRangeToClipboard(includeHeader?: boolean)": "void",
+      "copyToClipboard(params?: IClipboardCopyParams)": "void",
+      "copySelectedRowsToClipboard(params?: IClipboardCopyRowsParams)": "void",
+      "copySelectedRangeToClipboard(params?: IClipboardCopyParams)": "void",
       "copyRangeDown()": "void"
     }
   },
@@ -6934,6 +6953,7 @@
       "getCustomContentBelowRow?": "(params: ProcessRowGroupForExportParams) => ExcelCell[][] | undefined",
       "allColumns?": "boolean",
       "columnKeys?": "(string | Column)[]",
+      "rowNodes?": "RowPosition[]",
       "fileName?": "string",
       "onlySelected?": "boolean",
       "onlySelectedAllPages?": "boolean",

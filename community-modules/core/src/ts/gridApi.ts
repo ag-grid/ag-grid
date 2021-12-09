@@ -16,7 +16,7 @@ import { SortController } from "./sortController";
 import { FocusService } from "./focusService";
 import { CellRange, CellRangeParams, IRangeService } from "./interfaces/IRangeService";
 import { CellPosition } from "./entities/cellPosition";
-import { IClipboardService } from "./interfaces/iClipboardService";
+import { IClipboardService, IClipboardCopyRowsParams, IClipboardCopyParams } from "./interfaces/iClipboardService";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 import { IMenuFactory } from "./interfaces/iMenuFactory";
 import { IAggFuncService } from "./interfaces/iAggFuncService";
@@ -1564,20 +1564,16 @@ export class GridApi {
         }
     }
 
-    /**
-     * Copies the selected rows to the clipboard.
-     * Set `includeHeaders = true` to include the headers (default is `false`).
-     * Set `columnKeys` to the list of columns if you want just specific columns.
-     */
-    public copySelectedRowsToClipboard(includeHeader?: boolean, columnKeys?: (string | Column)[]): void {
+    /** Copies the selected rows to the clipboard. */
+    public copySelectedRowsToClipboard(params?: IClipboardCopyRowsParams): void {
         if (!this.clipboardService) { console.warn('AG Grid: clipboard is only available in AG Grid Enterprise'); }
-        this.clipboardService.copySelectedRowsToClipboard(includeHeader, columnKeys);
+        this.clipboardService.copySelectedRowsToClipboard(params);
     }
 
     /** Copies the selected ranges to the clipboard. */
-    public copySelectedRangeToClipboard(includeHeader?: boolean): void {
+    public copySelectedRangeToClipboard(params?: IClipboardCopyParams): void {
         if (!this.clipboardService) { console.warn('AG Grid: clipboard is only available in AG Grid Enterprise'); }
-        this.clipboardService.copySelectedRangeToClipboard(includeHeader);
+        this.clipboardService.copySelectedRangeToClipboard(params);
     }
 
     /** Copies the selected range down, similar to `Ctrl + D` in Excel. */

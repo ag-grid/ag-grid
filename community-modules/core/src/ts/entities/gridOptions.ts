@@ -11,7 +11,12 @@ import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./co
 import { IDatasource } from "../interfaces/iDatasource";
 import { CellPosition } from "./cellPosition";
 import { IServerSideDatasource } from "../interfaces/iServerSideDatasource";
-import { CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "../interfaces/exportParams";
+import {
+    CsvExportParams,
+    ProcessCellForExportParams,
+    ProcessHeaderForExportParams,
+    ProcessGroupHeaderForExportParams
+} from "../interfaces/exportParams";
 import {
     AsyncTransactionsFlushed,
     BodyScrollEvent,
@@ -141,6 +146,8 @@ export interface GridOptions {
     // *** Clipboard *** //
     /** Set to `true` to also include headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */
     copyHeadersToClipboard?: boolean;
+    /** Set to `true` to also include group headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */
+    copyGroupHeadersToClipboard?: boolean;
     /** Specify the deliminator to use when copying to clipboard. */
     clipboardDeliminator?: string;
     /** Set to `true` to only have the range selection, and not row selection, copied to clipboard. Default: `false` */
@@ -753,6 +760,8 @@ export interface GridOptions {
     processCellForClipboard?(params: ProcessCellForExportParams): any;
     /** Allows you to process header values for the clipboard.  */
     processHeaderForClipboard?(params: ProcessHeaderForExportParams): any;
+    /** Allows you to process group header values for the clipboard.  */
+    processGroupHeaderForClipboard?(params: ProcessGroupHeaderForExportParams): any;
     /** Allows you to process cells from the clipboard. Handy if for example you have number fields, and want to block non-numbers from getting into the grid. */
     processCellFromClipboard?(params: ProcessCellForExportParams): any;
     /** Allows you to get the data that would otherwise go to the clipboard. To be used when you want to control the 'copy to clipboard' operation yourself. */
