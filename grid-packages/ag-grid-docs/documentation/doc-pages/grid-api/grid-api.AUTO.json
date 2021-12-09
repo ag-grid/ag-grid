@@ -509,12 +509,6 @@
     "description": "/** Gets the grid to act as if the sort was changed.\n * Useful if you update some values and want to get the grid to reorder them according to the new values. */",
     "type": { "arguments": {} }
   },
-  "setSortModel": {
-    "type": {
-      "arguments": { "sortModel": "any", "source": "ColumnEventType = \"api\"" }
-    }
-  },
-  "getSortModel": { "type": { "arguments": {} } },
   "setFilterModel": {
     "description": "/** Sets the state of all the advanced filters. Provide it with what you get from `getFilterModel()` to restore filter state. */",
     "type": { "arguments": { "model": "any" } }

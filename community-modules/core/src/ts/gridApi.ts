@@ -1032,42 +1032,6 @@ export class GridApi {
         this.sortController.onSortChanged();
     }
 
-    public setSortModel(sortModel: any, source: ColumnEventType = "api") {
-        console.warn('AG Grid: as of version 24.0.0, setSortModel() is deprecated, sort information is now part of Column State. Please use columnApi.applyColumnState() instead.');
-        const columnState: ColumnState[] = [];
-        if (sortModel) {
-            sortModel.forEach((item: any, index: number) => {
-                columnState.push({
-                    colId: item.colId,
-                    sort: item.sort,
-                    sortIndex: index
-                });
-            });
-        }
-        this.columnModel.applyColumnState({ state: columnState, defaultState: { sort: null } });
-    }
-
-    public getSortModel() {
-        console.warn('AG Grid: as of version 24.0.0, getSortModel() is deprecated, sort information is now part of Column State. Please use columnApi.getColumnState() instead.');
-        const columnState = this.columnModel.getColumnState();
-        const filteredStates = columnState.filter(item => item.sort != null);
-
-        const indexes: { [colId: string]: number; } = {};
-        filteredStates.forEach(state => {
-            const id = state.colId as string;
-            const sortIndex = state.sortIndex as number;
-            indexes[id] = sortIndex;
-        });
-
-        const res = filteredStates.map(s => {
-            return { colId: s.colId, sort: s.sort };
-        });
-
-        res.sort((a: any, b: any) => indexes[a.colId] - indexes[b.colId]);
-
-        return res;
-    }
-
     /** Sets the state of all the advanced filters. Provide it with what you get from `getFilterModel()` to restore filter state. */
     public setFilterModel(model: any) {
         this.filterManager.setFilterModel(model);
