@@ -9,7 +9,7 @@ import { GridApi } from "./gridApi";
 import { SortOption } from "./rowNodes/rowNodeSorter";
 
 export interface SortModelItem {
-    /** Id of the column this sort is for. */
+    /** Column Id to apply the sort to. */
     colId: string;
     /** Sort direction */
     sort: 'asc' | 'desc';

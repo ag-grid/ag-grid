@@ -16948,7 +16948,7 @@
   },
   "SortModelItem": {
     "colId": {
-      "description": "/** Id of the column this sort is for. */",
+      "description": "/** Column Id to apply the sort to. */",
       "type": { "returnType": "string", "optional": false }
     },
     "sort": {

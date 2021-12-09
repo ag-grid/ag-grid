@@ -9564,7 +9564,7 @@
     "meta": {},
     "type": { "colId": "string", "sort": "'asc' | 'desc'" },
     "docs": {
-      "colId": "/** Id of the column this sort is for. */",
+      "colId": "/** Column Id to apply the sort to. */",
       "sort": "/** Sort direction */"
     }
   },
