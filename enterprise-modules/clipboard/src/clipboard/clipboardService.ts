@@ -567,7 +567,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
 
         const ranges = this.rangeService.getCellRanges();
         ranges.forEach(range => {
-            columnKeys.push(...range.columns);
+            columnKeys.push(...range.columns.filter(col => columnKeys.indexOf(col) === -1));
             const startRow = this.rangeService.getRangeStartRow(range);
             const lastRow = this.rangeService.getRangeEndRow(range);
 
