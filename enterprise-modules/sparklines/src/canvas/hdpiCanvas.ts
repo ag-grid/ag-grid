@@ -75,26 +75,13 @@ export class HdpiCanvas {
         const dataUrl = this.getDataURL(type);
         const document = this.document;
 
-        if (navigator.msSaveOrOpenBlob) { // IE11
-            const binary = atob(dataUrl.split(',')[1]); // strip the `data:image/png;base64,` part
-            const array = [];
-
-            for (let i = 0, n = binary.length; i < n; i++) {
-                array.push(binary.charCodeAt(i));
-            }
-
-            const blob = new Blob([new Uint8Array(array)], { type });
-
-            navigator.msSaveOrOpenBlob(blob, fileName);
-        } else {
-            const a = document.createElement('a');
-            a.href = dataUrl;
-            a.download = fileName;
-            a.style.display = 'none';
-            document.body.appendChild(a); // required for the `click` to work in Firefox
-            a.click();
-            document.body.removeChild(a);
-        }
+        const a = document.createElement('a');
+        a.href = dataUrl;
+        a.download = fileName;
+        a.style.display = 'none';
+        document.body.appendChild(a); // required for the `click` to work in Firefox
+        a.click();
+        document.body.removeChild(a);
     }
 
     // `NaN` is deliberate here, so that overrides are always applied

@@ -1,13 +1,15 @@
 {
-    "compilerOptions": {
-        "module": "commonjs",
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": false,
-        "target": "ES2015",
-        "types": ["jest"],
-        "lib": [
-            "ES2017",
-            "dom"
-        ]
-    },
+  "compilerOptions": {
+    "module": "commonjs",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": false,
+    "target": "ES2015",
+    "types": [
+      "jest"
+    ],
+    "lib": [
+      "ES2017",
+      "dom"
+    ]
+  }
 }

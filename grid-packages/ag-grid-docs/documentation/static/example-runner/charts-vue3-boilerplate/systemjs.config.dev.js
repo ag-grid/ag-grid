@@ -58,7 +58,7 @@
                 defaultExtension: 'js'
             },
             'ag-charts-community': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
         },

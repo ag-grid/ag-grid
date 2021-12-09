@@ -70,3 +70,5 @@ yarn-error.log
 
 # Algolia debug files
 algolia-*.json
+
+package-lock.json

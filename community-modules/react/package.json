@@ -67,7 +67,7 @@
     "rollup-stream": "^1.24.0",
     "vinyl-source-stream": "^2.0.0",
     "webpack": "^5.64.4",
-    "typescript": "3.7.7"
+    "typescript": "~3.7.7"
   },
   "peerDependencies": {
     "@ag-grid-community/core": "~26.2.0",

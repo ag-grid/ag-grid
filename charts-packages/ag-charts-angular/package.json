@@ -30,17 +30,17 @@
   "module": "./dist/ag-charts-angular/fesm5/ag-charts-angular.js",
   "typings": "./dist/ag-charts-angular/ag-charts-angular.d.ts",
   "dependencies": {
-    "@angular/animations": "~9.1.13",
-    "@angular/common": "~9.1.13",
-    "@angular/compiler": "~9.1.13",
-    "@angular/core": "~9.1.13",
-    "@angular/forms": "~9.1.13",
-    "@angular/platform-browser": "~9.1.13",
-    "@angular/platform-browser-dynamic": "~9.1.13",
-    "@angular/router": "~9.1.13",
-    "rxjs": "~6.6.7",
+    "@angular/animations": "~9.0.0",
+    "@angular/common": "~9.0.0",
+    "@angular/compiler": "~9.0.0",
+    "@angular/core": "~9.0.0",
+    "@angular/forms": "~9.0.0",
+    "@angular/platform-browser": "~9.0.0",
+    "@angular/platform-browser-dynamic": "~9.0.0",
+    "@angular/router": "~9.0.0",
+    "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
-    "zone.js": "~0.10.3",
+    "zone.js": "~0.10.2",
     "ag-charts-community": "~4.2.0"
   },
   "devDependencies": {
@@ -62,9 +62,9 @@
     "karma-jasmine-html-reporter": "^1.7.0",
     "ng-packagr": "^9.1.5",
     "protractor": "~5.4.0",
-    "ts-node": "~7.0.0",
-    "tsickle": "^0.37.0",
+    "ts-node": "~8.3.0",
     "tslint": "~5.15.0",
+    "tsickle": "^0.37.0",
     "typescript": "~3.8.3"
   }
 }

@@ -10,10 +10,6 @@
 	path = examples-grid/ag-grid-vue-example
 	url = https://github.com/ag-grid/ag-grid-vue-example.git
     branch = latest
-[submodule "grid-packages/ag-grid-polymer-example"]
-	path = examples-grid/ag-grid-polymer-example
-	url = https://github.com/ag-grid/ag-grid-polymer-example.git
-    branch = latest
 [submodule "charts-packages/ag-charts-react-example"]
 	path = examples-charts/ag-charts-react-example
 	url = https://github.com/ag-grid/ag-charts-react-example.git

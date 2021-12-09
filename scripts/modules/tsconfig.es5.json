@@ -1,5 +1,5 @@
 {
-  "extends": "../../module-build/tsconfig.json",
+  "extends": "../../module-build/tsconfig.cjs.es5.json",
   "compilerOptions": {
     "outDir": "dist/cjs",
     "rootDir": "src"

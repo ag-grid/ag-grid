@@ -106,7 +106,7 @@
 
                 ts: "npm:plugin-typescript@8.0.0/lib/plugin.js",
                 tslib: "npm:tslib@2.3.1/tslib.js",
-                typescript: "npm:typescript@3.7.5/lib/typescript.js",
+                typescript: "npm:typescript@3.7.7/lib/typescript.js",
 
                 // our app is within the app folder, appLocation comes from index.html
                 app: appLocation + "app",
@@ -132,7 +132,7 @@
                 defaultExtension: 'js'
             },
             'ag-charts-community': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             rxjs: {

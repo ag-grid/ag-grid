@@ -35,8 +35,8 @@ const cleanDist = () => {
         .pipe(clean());
 };
 
-const tscSrcTask = async () => {
-    const tsProject = gulpTypescript.createProject('tsconfig.json', {typescript: typescript});
+const tscSrcCjsEs5Task = async () => {
+    const tsProject = gulpTypescript.createProject('tsconfig.cjs.es5.json', {typescript: typescript});
 
     const tsResult = gulp
         .src(['src/ts/**/*.ts', '!src/ts/**/*.test.ts', '!src/ts/test-utils/mock.ts'])
@@ -46,16 +46,35 @@ const tscSrcTask = async () => {
     return await merge([
         tsResult.dts
             .pipe(header(dtsHeaderTemplate, {pkg: pkg}))
-            .pipe(gulp.dest('dist/cjs')),
+            .pipe(gulp.dest('dist/cjs/es5')),
         tsResult.js
             .pipe(header(headerTemplate, {pkg: pkg}))
             .pipe(sourcemaps.write('.'))
-            .pipe(gulp.dest('dist/cjs'))
+            .pipe(gulp.dest('dist/cjs/es5'))
     ]);
 };
 
-const tscSrcEs6Task = async () => {
-    const tsProject = gulpTypescript.createProject('./tsconfig.es6.json', {typescript: typescript});
+const tscSrcCjsEs6Task = async () => {
+    const tsProject = gulpTypescript.createProject('tsconfig.cjs.es6.json', {typescript: typescript});
+
+    const tsResult = gulp
+        .src(['src/ts/**/*.ts', '!src/ts/**/*.test.ts', '!src/ts/test-utils/mock.ts'])
+        .pipe(sourcemaps.init())
+        .pipe(tsProject());
+
+    return await merge([
+        tsResult.dts
+            .pipe(header(dtsHeaderTemplate, {pkg: pkg}))
+            .pipe(gulp.dest('dist/cjs/es6')),
+        tsResult.js
+            .pipe(header(headerTemplate, {pkg: pkg}))
+            .pipe(sourcemaps.write('.'))
+            .pipe(gulp.dest('dist/cjs/es6'))
+    ]);
+};
+
+const tscSrcEsModulesEs6Task = async () => {
+    const tsProject = gulpTypescript.createProject('tsconfig.esm.es6.json', {typescript: typescript});
 
     const tsResult = gulp
         .src(['src/ts/**/*.ts', '!src/ts/**/*.test.ts', '!src/ts/test-utils/mock.ts'])
@@ -64,19 +83,36 @@ const tscSrcEs6Task = async () => {
     return await merge([
         tsResult.dts
             .pipe(header(dtsHeaderTemplate, {pkg: pkg}))
-            .pipe(gulp.dest('dist/es6')),
+            .pipe(gulp.dest('dist/esm/es6')),
         tsResult.js
             .pipe(header(headerTemplate, {pkg: pkg}))
-            .pipe(gulp.dest('dist/es6'))
+            .pipe(gulp.dest('dist/esm/es6'))
+    ]);
+};
+
+const tscSrcEsModulesEs5Task = async () => {
+    const tsProject = gulpTypescript.createProject('tsconfig.esm.es5.json', {typescript: typescript});
+
+    const tsResult = gulp
+        .src(['src/ts/**/*.ts', '!src/ts/**/*.test.ts', '!src/ts/test-utils/mock.ts'])
+        .pipe(tsProject());
+
+    return await merge([
+        tsResult.dts
+            .pipe(header(dtsHeaderTemplate, {pkg: pkg}))
+            .pipe(gulp.dest('dist/esm/es5')),
+        tsResult.js
+            .pipe(header(headerTemplate, {pkg: pkg}))
+            .pipe(gulp.dest('dist/esm/es5'))
     ]);
 };
 
 const watch = () => {
-    return gulp.watch(['./src/ts/**/*.ts'], tscSrcEs6Task);
+    return gulp.watch(['./src/ts/**/*.ts'], tscSrcEsModulesEs5Task);
 };
 
 const watchAndBuildBoth = () => {
-    return gulp.watch(['./src/ts/**/*.ts'], parallel[tscSrcTask, tscSrcEs6Task]);
+    return gulp.watch(['./src/ts/**/*.ts'], parallel[tscSrcCjsEs5Task, tscSrcEsModulesEs5Task]);
 };
 
 // End of Typescript related tasks
@@ -183,9 +219,9 @@ const copyGridCoreStyles = () => {
 
 // Typescript related tasks
 gulp.task('clean', cleanDist);
-gulp.task('tsc-no-clean-es5', tscSrcTask);
-gulp.task('tsc-no-clean-es6', tscSrcEs6Task);
-gulp.task('tsc-no-clean', parallel('tsc-no-clean-es5', 'tsc-no-clean-es6'));
+gulp.task('tsc-no-clean-cjs', parallel(tscSrcCjsEs5Task, tscSrcCjsEs6Task));
+gulp.task('tsc-no-clean-esm', parallel(tscSrcEsModulesEs5Task, tscSrcEsModulesEs6Task));
+gulp.task('tsc-no-clean', parallel('tsc-no-clean-cjs', 'tsc-no-clean-esm'));
 gulp.task('tsc', series('clean', 'tsc-no-clean'));
 
 // scss/css related tasks
@@ -195,7 +231,7 @@ gulp.task('scss', series('clean', 'scss-no-clean'));
 gulp.task('copy-styles-for-dist', copyGridCoreStyles);
 
 // tsc & scss/css related tasks
-gulp.task('tsc-es6-watch', series('tsc-no-clean-es6', watch));
+gulp.task('tsc-es6-watch', series('tsc-no-clean-esm', watch));
 gulp.task('tsc-watch', series('tsc-no-clean', watchAndBuildBoth));
 gulp.task('tsc-scss-clean', parallel('tsc-no-clean', series('scss-no-clean', 'minify-css')));
 gulp.task('tsc-scss-no-clean', parallel('tsc-no-clean', series('scss-no-clean', 'minify-css')));

@@ -1,5 +1,5 @@
-const { JSDOM } = require('jsdom');
-const { window, document } = new JSDOM('<!DOCTYPE html><html lang="en"></html>');
+const {JSDOM} = require('jsdom');
+const {window, document} = new JSDOM('<!DOCTYPE html><html lang="en"></html>');
 const sucrase = require("sucrase");
 
 window.Date = Date;
@@ -19,7 +19,7 @@ const parsers = {
 };
 
 const useAsyncFileOperations = false;
-const encodingOptions = { encoding: 'utf8' };
+const encodingOptions = {encoding: 'utf8'};
 
 function writeFile(destination, contents) {
     // allow developers to override the example theme with an environment variable
@@ -34,7 +34,8 @@ function writeFile(destination, contents) {
     const formattedContent = format(contents, parser);
 
     if (useAsyncFileOperations) {
-        fs.writeFile(destination, formattedContent, encodingOptions, () => { });
+        fs.writeFile(destination, formattedContent, encodingOptions, () => {
+        });
     } else {
         fs.writeFileSync(destination, formattedContent, encodingOptions);
     }
@@ -82,7 +83,7 @@ function forEachExample(done, name, regex, generateExample, scope = '*', trigger
                 const [example, type, optionsCapture, options] = matches.slice(1);
 
                 if ((type === 'generated' || type === 'mixed' || type === 'typescript') && (!specificExample || example === specificExample)) {
-                    examplesToProcess.push({ file, section, example, options, type });
+                    examplesToProcess.push({file, section, example, options, type});
                 }
             }
         });
@@ -91,11 +92,13 @@ function forEachExample(done, name, regex, generateExample, scope = '*', trigger
 
         let errorInGeneration = false;
 
-        examplesToProcess.forEach(({ file, section, example, options, type }) => {
+        examplesToProcess.forEach(({file, section, example, options, type}) => {
             try {
                 const examplePath = path.join('./documentation/doc-pages', section, 'examples', example);
 
-                if (processedExamples.has(examplePath)) { return; }
+                if (processedExamples.has(examplePath)) {
+                    return;
+                }
 
                 generateExample(examplePath, type, options ? JSON.parse(options) : {});
                 processedExamples.add(examplePath);
@@ -123,7 +126,7 @@ function format(source, parser) {
         return formatted;
     }
 
-    return prettier.format(formatted, { parser, singleQuote: true, trailingComma: 'es5' });
+    return prettier.format(formatted, {parser, singleQuote: true, trailingComma: 'es5'});
 }
 
 function deepCloneObject(object) {
@@ -131,7 +134,7 @@ function deepCloneObject(object) {
 }
 
 function readAsJsFile(tsFile) {
-    let jsFile = sucrase.transform(fs.readFileSync(tsFile, 'utf8'), { transforms: ["typescript"] }).code;
+    let jsFile = sucrase.transform(fs.readFileSync(tsFile, 'utf8'), {transforms: ["typescript"]}).code;
     // Remove empty lines left by sucrase removing the imports 
     jsFile = jsFile.replace(/^\s*[\r\n]/, '');
     return jsFile;
@@ -183,7 +186,7 @@ function createExampleGenerator(prefix, importTypes) {
             }
 
             // get the rest of the scripts
-            rawScripts = getMatchingPaths('*.{js,ts}', { ignore: ['**/main.{js,ts}', '**/*_{angular,react,vanilla,vue}.{js,ts}'] });
+            rawScripts = getMatchingPaths('*.{js,ts}', {ignore: ['**/main.{js,ts}', '**/*_{angular,react,vanilla,vue}.{js,ts}']});
         } else {
             // only one script, which is the main one
             rawScripts = [];
@@ -201,7 +204,7 @@ function createExampleGenerator(prefix, importTypes) {
             const basePath = path.join(createExamplePath(`_gen/${importType}`), framework);
             const scriptsPath = subdirectory ? path.join(basePath, subdirectory) : basePath;
 
-            fs.mkdirSync(scriptsPath, { recursive: true });
+            fs.mkdirSync(scriptsPath, {recursive: true});
 
             Object.keys(files).forEach(name => writeFile(path.join(scriptsPath, name), files[name]));
 
@@ -239,7 +242,7 @@ function createExampleGenerator(prefix, importTypes) {
 
                 try {
                     const getSource = vanillaToReact(deepCloneObject(bindings), extractComponentFileNames(reactScripts, '_react'));
-                    importTypes.forEach(importType => reactConfigs.set(importType, { 'index.jsx': getSource(importType) }));
+                    importTypes.forEach(importType => reactConfigs.set(importType, {'index.jsx': getSource(importType)}));
                 } catch (e) {
                     console.error(`Failed to process React example in ${examplePath}`, e);
                     throw e;
@@ -262,7 +265,7 @@ function createExampleGenerator(prefix, importTypes) {
 
                     try {
                         const getSource = vanillaToReactFunctional(deepCloneObject(bindings), extractComponentFileNames(reactDeclarativeScripts, `_${reactScriptPostfix}`));
-                        importTypes.forEach(importType => reactDeclarativeConfigs.set(importType, { 'index.jsx': getSource(importType) }));
+                        importTypes.forEach(importType => reactDeclarativeConfigs.set(importType, {'index.jsx': getSource(importType)}));
                     } catch (e) {
                         console.error(`Failed to process React example in ${examplePath}`, e);
                         throw e;
@@ -303,7 +306,7 @@ function createExampleGenerator(prefix, importTypes) {
                 try {
                     const getSource = vanillaToVue(deepCloneObject(bindings), extractComponentFileNames(vueScripts, '_vue', 'Vue'));
 
-                    importTypes.forEach(importType => vueConfigs.set(importType, { 'main.js': getSource(importType) }));
+                    importTypes.forEach(importType => vueConfigs.set(importType, {'main.js': getSource(importType)}));
                 } catch (e) {
                     console.error(`Failed to process Vue example in ${examplePath}`, e);
                     throw e;
@@ -323,7 +326,7 @@ function createExampleGenerator(prefix, importTypes) {
                     try {
                         const getSource = vanillaToVue3(bindings, extractComponentFileNames(vueScripts, '_vue', 'Vue'));
 
-                        importTypes.forEach(importType => vueConfigs.set(importType, { 'main.js': getSource(importType) }));
+                        importTypes.forEach(importType => vueConfigs.set(importType, {'main.js': getSource(importType)}));
                     } catch (e) {
                         console.error(`Failed to process Vue 3 example in ${examplePath}`, e);
                         throw e;
@@ -344,14 +347,14 @@ function createExampleGenerator(prefix, importTypes) {
 
             try {
                 let jsFiles = {}
-                const tsScripts = getMatchingPaths('*.ts', { ignore: ['**/*_{angular,react,vue,vue3}.ts'] });
+                const tsScripts = getMatchingPaths('*.ts', {ignore: ['**/*_{angular,react,vue,vue3}.ts']});
                 tsScripts.forEach(tsFile => {
                     jsFile = readAsJsFile(tsFile);
                     const jsFileName = path.parse(tsFile).base.replace('.ts', '.js');
                     jsFiles[jsFileName] = jsFile;
                 });
 
-                const updatedScripts = getMatchingPaths('*.{html,js}', { ignore: ['**/*_{angular,react,vue,vue3}.js'] });
+                const updatedScripts = getMatchingPaths('*.{html,js}', {ignore: ['**/*_{angular,react,vue,vue3}.js']});
                 importTypes.forEach(importType => writeExampleFiles(importType, 'vanilla', 'vanilla', updatedScripts, jsFiles));
 
             } catch (e) {
@@ -377,10 +380,10 @@ function getGeneratorCode(prefix) {
         console.warn("********************************************");
     }
 
-    const { parser } = require(`${prefix}vanilla-src-parser.ts`);
-    const { vanillaToVue } = require(`${prefix}vanilla-to-vue.ts`);
-    const { vanillaToReact } = require(`${prefix}vanilla-to-react${gridExamples && generateReactFire ? '-fire' : ''}.ts`);
-    const { vanillaToVue3 } = require(`${prefix}vanilla-to-vue3.ts`);
+    const {parser} = require(`${prefix}vanilla-src-parser.ts`);
+    const {vanillaToVue} = require(`${prefix}vanilla-to-vue.ts`);
+    const {vanillaToReact} = require(`${prefix}vanilla-to-react${gridExamples && generateReactFire ? '-fire' : ''}.ts`);
+    const {vanillaToVue3} = require(`${prefix}vanilla-to-vue3.ts`);
 
     // spl todo - add charts & vue 3 support in time
     let vanillaToReactFunctional = null;
@@ -388,7 +391,7 @@ function getGeneratorCode(prefix) {
         vanillaToReactFunctional = require(`${prefix}vanilla-to-react${generateReactFire ? '-fire' : ''}-functional.ts`).vanillaToReactFunctional;
     }
 
-    const { vanillaToAngular } = require(`${prefix}vanilla-to-angular.ts`);
+    const {vanillaToAngular} = require(`${prefix}vanilla-to-angular.ts`);
 
     return [parser, vanillaToVue, vanillaToVue3, vanillaToReact, vanillaToReactFunctional, vanillaToAngular];
 }
@@ -400,9 +403,11 @@ function generateExamples(type, importTypes, scope, trigger, done) {
     forEachExample(done, type, regex, exampleGenerator, scope, trigger);
 }
 
-module.exports.generateGridExamples = (scope, trigger, done) => {
+module.exports.generateGridExamples = (scope, trigger, done, tsRegistered = false) => {
     try {
-        require('ts-node').register();
+        if (!tsRegistered) {
+            require('ts-node').register();
+        }
         generateExamples('grid', ['packages', 'modules'], scope, trigger, done);
     } catch (e) {
         console.error('Failed to generate grid examples', e);
@@ -413,9 +418,11 @@ module.exports.generateGridExamples = (scope, trigger, done) => {
     }
 };
 
-module.exports.generateChartExamples = (scope, trigger, done) => {
+module.exports.generateChartExamples = (scope, trigger, done, tsRegistered = false) => {
     try {
-        require('ts-node').register();
+        if (!tsRegistered) {
+            require('ts-node').register();
+        }
         generateExamples('chart', ['packages'], scope, trigger, done);
     } catch (e) {
         console.error('Failed to generate chart examples', e);
@@ -427,6 +434,7 @@ module.exports.generateChartExamples = (scope, trigger, done) => {
 };
 
 module.exports.generateDocumentationExamples = async (scope, trigger) => {
+    require('ts-node').register();
     if (trigger) {
         console.log(`\u270E ${trigger} was changed`);
         console.log(`\u27F3 Re-generating affected documentation examples...`);
@@ -438,7 +446,7 @@ module.exports.generateDocumentationExamples = async (scope, trigger) => {
 
     return new Promise(resolve => {
         module.exports.generateGridExamples(
-            scope, trigger, () => module.exports.generateChartExamples(scope, trigger, () => resolve())
+            scope, trigger, () => module.exports.generateChartExamples(scope, trigger, () => resolve(), true), true
         );
     });
 };

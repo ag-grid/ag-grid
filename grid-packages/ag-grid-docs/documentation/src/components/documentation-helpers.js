@@ -189,7 +189,9 @@ export function formatJsDocString(docString) {
     const newLineReg = /\n \* /g;
     // Default may or may not be on a new line in JsDoc but in both cases we want the default to be on the next line
     const defaultReg = /(\n \*)?(<br>)? Default:/g;
+
     // Turn option list, new line starting with - into bullet points
+    // eslint-disable-next-line
     const optionReg = /\n[\s]*[*]*[\s]*- (.*)/g;
 
     let formatted = docString
@@ -396,3 +398,4 @@ export function getJsonFromFile(nodes, pageName, source) {
 
     throw new Error(`Could not find JSON for source ${source}`);
 };
+

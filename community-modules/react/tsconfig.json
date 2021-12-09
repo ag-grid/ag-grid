@@ -4,7 +4,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "module": "esnext",
-    "target": "es5",
+    "target": "es6",
     "types": [
       "react",
       "react-dom",
