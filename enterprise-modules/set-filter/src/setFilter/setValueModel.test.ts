@@ -22,22 +22,22 @@ const EXAMPLE_DATE_1 = new Date(2021, 0, 1);
 const EXAMPLE_DATE_2 = new Date(2021, 1, 1);
 const VALUE_TEST_CASES: {[key: string]: ValueTestCase<ValueType>} = {
     number: {
-        values: [1, 2, 3, 4, 3, 3, 2, 1],
-        distinctValues: ['1', '2', '3', '4'],
+        values: [1, 2, 3, 4, 3, 3, 2, 1, null, undefined],
+        distinctValues: [null, '1', '2', '3', '4'],
     } as ValueTestCase<number>,
     boolean: {
-        values: [true, false, true, true, false],
-        distinctValues: ['false', 'true'],
+        values: [true, false, true, true, false, null, undefined],
+        distinctValues: [null, 'false', 'true'],
     } as ValueTestCase<boolean>,
     string: {
-        values: ['A', 'B', 'a', 'b', 'C', 'A'],
-        distinctValues: ['A', 'B', 'C', 'a', 'b'],
-        distinctCaseInsensitiveValues: ['A', 'B', 'C'],
+        values: ['A', 'B', 'a', 'b', 'C', 'A', null, undefined, ''],
+        distinctValues: [null, 'A', 'B', 'C', 'a', 'b'],
+        distinctCaseInsensitiveValues: [null, 'A', 'B', 'C'],
     } as ValueTestCase<string>,
     date: {
-        values: [EXAMPLE_DATE_1, EXAMPLE_DATE_1, EXAMPLE_DATE_2],
+        values: [EXAMPLE_DATE_1, EXAMPLE_DATE_1, EXAMPLE_DATE_2, null, undefined],
         // _.toStringOrNull() is used in the implementation, so the expected strings are environment local/TZ specific :P
-        distinctValues: [EXAMPLE_DATE_1.toString(), EXAMPLE_DATE_2.toString()],
+        distinctValues: [null, EXAMPLE_DATE_1.toString(), EXAMPLE_DATE_2.toString()],
     } as ValueTestCase<Date>,
 };
 const VALUE_TEST_CASE_KEYS = Object.keys(VALUE_TEST_CASES);
