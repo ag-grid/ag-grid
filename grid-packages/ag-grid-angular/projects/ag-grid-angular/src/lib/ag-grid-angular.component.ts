@@ -139,6 +139,7 @@ import {
     ProcessRowParams,
     ProcessCellForExportParams,
     ProcessHeaderForExportParams,
+    ProcessGroupHeaderForExportParams,
     RowStyle,
     RowClassRules,
     RowClassParams,
@@ -318,6 +319,8 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public popupParent: HTMLElement | undefined = undefined;
     /** Set to `true` to also include headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false`     */
     @Input() public copyHeadersToClipboard: boolean | undefined = undefined;
+    /** Set to `true` to also include group headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false`     */
+    @Input() public copyGroupHeadersToClipboard: boolean | undefined = undefined;
     /** Specify the deliminator to use when copying to clipboard.     */
     @Input() public clipboardDeliminator: string | undefined = undefined;
     /** Set to `true` to only have the range selection, and not row selection, copied to clipboard. Default: `false`     */
@@ -826,6 +829,8 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public processCellForClipboard: ((params: ProcessCellForExportParams) =>  any) | undefined = undefined;
     /** Allows you to process header values for the clipboard.     */
     @Input() public processHeaderForClipboard: ((params: ProcessHeaderForExportParams) =>  any) | undefined = undefined;
+    /** Allows you to process group header values for the clipboard.     */
+    @Input() public processGroupHeaderForClipboard: ((params: ProcessGroupHeaderForExportParams) =>  any) | undefined = undefined;
     /** Allows you to process cells from the clipboard. Handy if for example you have number fields, and want to block non-numbers from getting into the grid.     */
     @Input() public processCellFromClipboard: ((params: ProcessCellForExportParams) =>  any) | undefined = undefined;
     /** Allows you to get the data that would otherwise go to the clipboard. To be used when you want to control the 'copy to clipboard' operation yourself.     */
@@ -1100,6 +1105,7 @@ hence this property is deprecated as will be removed in the next major release.
     static ngAcceptInputType_suppressPreventDefaultOnMouseWheel: boolean | null | '';
     static ngAcceptInputType_suppressCopyRowsToClipboard: boolean | null | '';
     static ngAcceptInputType_copyHeadersToClipboard: boolean | null | '';
+    static ngAcceptInputType_copyGroupHeadersToClipboard: boolean | null | '';
     static ngAcceptInputType_pivotMode: boolean | null | '';
     static ngAcceptInputType_suppressAggFuncInHeader: boolean | null | '';
     static ngAcceptInputType_suppressColumnVirtualisation: boolean | null | '';

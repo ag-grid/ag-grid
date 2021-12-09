@@ -1036,19 +1036,16 @@
     }
   },
   "copySelectedRowsToClipboard": {
-    "description": "/** Copies the selected rows to the clipboard.\n * Set `includeHeaders = true` to include the headers (default is `false`).\n * Set `columnKeys` to the list of columns if you want just specific columns. */",
+    "description": "/** Copies the selected rows to the clipboard. */",
     "type": {
-      "arguments": {
-        "includeHeader?": "boolean",
-        "columnKeys?": "(string | Column)[]"
-      },
+      "arguments": { "params?": "IClipboardCopyRowsParams" },
       "returnType": "void"
     }
   },
   "copySelectedRangeToClipboard": {
     "description": "/** Copies the selected ranges to the clipboard. */",
     "type": {
-      "arguments": { "includeHeader?": "boolean" },
+      "arguments": { "params?": "IClipboardCopyParams" },
       "returnType": "void"
     }
   },

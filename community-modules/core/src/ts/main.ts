@@ -300,7 +300,7 @@ export { ExpressionService } from "./valueService/expressionService";
 // uncatalogued
 export { IRowModel, RowBounds } from "./interfaces/iRowModel";
 export { IAggFuncService } from "./interfaces/iAggFuncService";
-export { IClipboardService } from "./interfaces/iClipboardService";
+export { IClipboardService, IClipboardCopyParams, IClipboardCopyRowsParams } from "./interfaces/iClipboardService";
 export { IMenuFactory } from "./interfaces/iMenuFactory";
 export { CellPosition, CellPositionUtils } from "./entities/cellPosition";
 export { RowPosition, RowPositionUtils } from "./entities/rowPosition";

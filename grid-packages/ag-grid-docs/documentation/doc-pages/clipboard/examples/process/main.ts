@@ -1,4 +1,4 @@
-import { GridOptions, ProcessCellForExportParams, ProcessHeaderForExportParams } from '@ag-grid-community/core'
+import { GridOptions, ProcessCellForExportParams, ProcessHeaderForExportParams, ProcessGroupHeaderForExportParams } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -26,6 +26,7 @@ const gridOptions: GridOptions = {
 
   processCellForClipboard: processCellForClipboard,
   processHeaderForClipboard: processHeaderForClipboard,
+  processGroupHeaderForClipboard: processGroupHeaderForClipboard,
   processCellFromClipboard: processCellFromClipboard,
 }
 
@@ -37,11 +38,22 @@ function processHeaderForClipboard(params: ProcessHeaderForExportParams) {
   const colDef = params.column.getColDef()
   let headerName = colDef.headerName || colDef.field || '';
 
-  if (colDef.headerName == null) {
+  if (colDef.headerName !== '') {
     headerName = headerName.charAt(0).toUpperCase() + headerName.slice(1)
   }
 
   return 'H-' + headerName
+}
+
+function processGroupHeaderForClipboard(params: ProcessGroupHeaderForExportParams) {
+  const colGroupDef = params.columnGroup.getColGroupDef() || {} as any;
+  let headerName = colGroupDef.headerName || '';
+
+  if (headerName !== '') {
+    headerName = headerName.charAt(0).toUpperCase() + headerName.slice(1)
+  }
+
+  return 'GH-' + headerName
 }
 
 function processCellFromClipboard(params: ProcessCellForExportParams) {

@@ -214,7 +214,7 @@ export { ValueCache } from "ag-grid-community";
 export { ExpressionService } from "ag-grid-community";
 export { IRowModel, RowBounds } from "ag-grid-community";
 export { IAggFuncService } from "ag-grid-community";
-export { IClipboardService } from "ag-grid-community";
+export { IClipboardService, IClipboardCopyParams, IClipboardCopyRowsParams } from "ag-grid-community";
 export { IMenuFactory } from "ag-grid-community";
 export { CellPosition, CellPositionUtils } from "ag-grid-community";
 export { RowPosition, RowPositionUtils } from "ag-grid-community";

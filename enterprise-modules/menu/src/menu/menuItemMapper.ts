@@ -140,7 +140,7 @@ export class MenuItemMapper extends BeanStub {
                         name: localeTextFunc('copy', 'Copy'),
                         shortcut: localeTextFunc('ctrlC', 'Ctrl+C'),
                         icon: _.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null),
-                        action: () => this.clipboardService.copyToClipboard(false)
+                        action: () => this.clipboardService.copyToClipboard()
                     };
                 } else {
                     return null;
@@ -151,7 +151,18 @@ export class MenuItemMapper extends BeanStub {
                         name: localeTextFunc('copyWithHeaders', 'Copy with Headers'),
                         // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
                         icon: _.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null),
-                        action: () => this.clipboardService.copyToClipboard(true)
+                        action: () => this.clipboardService.copyToClipboard({ includeHeaders: true })
+                    };
+                } else {
+                    return null;
+                }
+                case 'copyWithGroupHeaders':
+                if (ModuleRegistry.assertRegistered(ModuleNames.ClipboardModule, 'Copy with Group Headers from Menu')) {
+                    return {
+                        name: localeTextFunc('copyWithGroupHeaders', 'Copy with Group Headers'),
+                        // shortcut: localeTextFunc('ctrlC','Ctrl+C'),
+                        icon: _.createIconNoSpan('clipboardCopy', this.gridOptionsWrapper, null),
+                        action: () => this.clipboardService.copyToClipboard({ includeHeaders: true, includeGroupHeaders: true })
                     };
                 } else {
                     return null;

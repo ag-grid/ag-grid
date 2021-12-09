@@ -2035,6 +2035,10 @@
       "description": "/** Set to `true` to also include headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "copyGroupHeadersToClipboard": {
+      "description": "/** Set to `true` to also include group headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "clipboardDeliminator": {
       "description": "/** Specify the deliminator to use when copying to clipboard. */",
       "type": { "returnType": "string", "optional": true }
@@ -3001,6 +3005,14 @@
       "description": "/** Allows you to process header values for the clipboard. */",
       "type": {
         "arguments": { "params": "ProcessHeaderForExportParams" },
+        "returnType": "any",
+        "optional": true
+      }
+    },
+    "processGroupHeaderForClipboard": {
+      "description": "/** Allows you to process group header values for the clipboard. */",
+      "type": {
+        "arguments": { "params": "ProcessGroupHeaderForExportParams" },
         "returnType": "any",
         "optional": true
       }
@@ -9057,6 +9069,7 @@
     "columnKeys": {
       "type": { "returnType": "(string | Column)[]", "optional": true }
     },
+    "rowNodes": { "type": { "returnType": "RowPosition[]", "optional": true } },
     "fileName": { "type": { "returnType": "string", "optional": true } },
     "onlySelected": { "type": { "returnType": "boolean", "optional": true } },
     "onlySelectedAllPages": {
@@ -9144,6 +9157,7 @@
     "columnKeys": {
       "type": { "returnType": "(string | Column)[]", "optional": true }
     },
+    "rowNodes": { "type": { "returnType": "RowPosition[]", "optional": true } },
     "fileName": { "type": { "returnType": "string", "optional": true } },
     "onlySelected": { "type": { "returnType": "boolean", "optional": true } },
     "onlySelectedAllPages": {
@@ -9245,6 +9259,7 @@
     "columnKeys": {
       "type": { "returnType": "(string | Column)[]", "optional": true }
     },
+    "rowNodes": { "type": { "returnType": "RowPosition[]", "optional": true } },
     "fileName": { "type": { "returnType": "string", "optional": true } },
     "onlySelected": { "type": { "returnType": "boolean", "optional": true } },
     "onlySelectedAllPages": {
@@ -11453,30 +11468,42 @@
       "type": { "returnType": "boolean", "optional": true }
     }
   },
+  "IClipboardCopyParams": {
+    "includeHeaders": { "type": { "returnType": "boolean", "optional": true } },
+    "includeGroupHeaders": {
+      "type": { "returnType": "boolean", "optional": true }
+    }
+  },
+  "IClipboardCopyRowsParams": {
+    "columnKeys": {
+      "type": { "returnType": "(string | Column)[]", "optional": true }
+    },
+    "includeHeaders": { "type": { "returnType": "boolean", "optional": true } },
+    "includeGroupHeaders": {
+      "type": { "returnType": "boolean", "optional": true }
+    }
+  },
   "IClipboardService": {
     "pasteFromClipboard": {
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "copyToClipboard": {
       "type": {
-        "arguments": { "includeHeader?": "boolean" },
+        "arguments": { "params?": "IClipboardCopyParams" },
         "returnType": "void",
         "optional": false
       }
     },
     "copySelectedRowsToClipboard": {
       "type": {
-        "arguments": {
-          "includeHeader?": "boolean",
-          "columnKeys?": "(string | Column)[]"
-        },
+        "arguments": { "params?": "IClipboardCopyRowsParams" },
         "returnType": "void",
         "optional": false
       }
     },
     "copySelectedRangeToClipboard": {
       "type": {
-        "arguments": { "includeHeader?": "boolean" },
+        "arguments": { "params?": "IClipboardCopyParams" },
         "returnType": "void",
         "optional": false
       }
@@ -11991,6 +12018,7 @@
     "columnKeys": {
       "type": { "returnType": "(string | Column)[]", "optional": true }
     },
+    "rowNodes": { "type": { "returnType": "RowPosition[]", "optional": true } },
     "fileName": { "type": { "returnType": "string", "optional": true } },
     "onlySelected": { "type": { "returnType": "boolean", "optional": true } },
     "onlySelectedAllPages": {
