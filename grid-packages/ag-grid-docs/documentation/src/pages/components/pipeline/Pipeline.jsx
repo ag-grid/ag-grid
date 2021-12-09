@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, {useEffect, useState} from "react"
 import styles from "./Pipeline.module.scss"
 import DetailCellRenderer from "../grid/DetailCellRendererComponent"
 import PaddingCellRenderer from "../grid/PaddingCellRenderer"
@@ -94,6 +94,7 @@ const defaultColDef = {
     cellClass: styles["font-class"],
     headerClass: styles["font-class"],
     suppressMenu: true,
+    autoHeight: true,
     suppressKeyboardEvent: params => {
         if (
             params.event.key === "Enter" &&
@@ -102,7 +103,6 @@ const defaultColDef = {
         ) {
             params.api
                 .getCellRendererInstances({ rowNodes: [params.node] })[0]
-                .getFrameworkComponentInstance()
                 .clickHandlerFunc()
             return true
         }
@@ -112,13 +112,8 @@ const defaultColDef = {
 
 const IS_SSR = typeof window === "undefined"
 
-const isRowMaster = row => {
-    if (row) {
-        let hasMoreInfo = row.moreInformation
-        return hasMoreInfo
-    }
-    return false
-}
+const isRowMaster = row => row.moreInformation
+
 
 const detailCellRendererParams = params => {
     let message = params.data.moreInformation
@@ -176,15 +171,20 @@ const Pipeline = () => {
             })
     }, [])
 
+    const gridReady = params => {
+        setGridApi(params.api)
+    }
+
     const onQuickFilterChange = event => {
         gridApi.setQuickFilter(event.target.value)
     }
 
-    const checkboxUnchecked = (event, filterTerm) => {
+
+    const onCheckboxChange = (event, filterTerm) => {
         function setTheFilter(column, filterValue, shouldFilter) {
-            let filterInstance = gridApi.getFilterInstance(column)
-            let currentFilterModel = filterInstance.getModel()
-            let isCurrentFilterModel = !!currentFilterModel
+            const filterInstance = gridApi.getFilterInstance(column)
+            const currentFilterModel = filterInstance.getModel()
+            const isCurrentFilterModel = !!currentFilterModel
             let newValues = undefined
 
             if (!shouldFilter && !isCurrentFilterModel) {
@@ -192,7 +192,7 @@ const Pipeline = () => {
                 newValues.splice(newValues.indexOf(filterValue), 1)
             } else if (!shouldFilter && isCurrentFilterModel) {
                 newValues = [...currentFilterModel.values]
-                let filterIdx = newValues.indexOf(filterValue)
+                const filterIdx = newValues.indexOf(filterValue)
                 if (filterIdx > -1) newValues.splice(filterIdx, 1)
             } else if (shouldFilter && isCurrentFilterModel) {
                 newValues = [...currentFilterModel.values]
@@ -200,13 +200,13 @@ const Pipeline = () => {
             } else {
                 return
             }
-            let newModel = { values: newValues, filterType: "set" }
+            const newModel = { values: newValues, filterType: "set" }
             filterInstance.setModel(newModel)
             gridApi.onFilterChanged()
         }
 
         switch (filterTerm) {
-            case "bug":
+            case "defect":
                 setTheFilter("issueType", "Bug", event.target.checked)
                 break
             case "featureRequest":
@@ -220,14 +220,39 @@ const Pipeline = () => {
         }
     }
 
-    const gridReady = params => {
-        setGridApi(params.api)
+    const checkboxes = [
+        {id: 'featureRequest', label: 'Feature Requests', checked: true},
+        {id: 'defect', label: 'Defects', checked: true},
+        {id: 'nextRelease', label: 'Next Release', checked: false}
+    ]
+
+    const createLabeledCheckbox = (checkboxConfig) =>{
+        const {id, label, checked} = checkboxConfig;
+        const key = `${id}-checkbox`
+        return (
+            <div className={styles["single-checkbox-label-container"]}>
+                <label className={styles["label-for-checkboxes"]}>
+                    <input
+                        id={key}
+                        type="checkbox"
+                        className={styles["checkbox-class"]}
+                        defaultChecked={checked}
+                        onChange={event=> onCheckboxChange(event,id)}
+                        >
+                    </input>
+                    {label}
+                </label>
+            </div>
+        )
     }
+
+
+
 
     return (
         <>
             {!IS_SSR && (
-                <div style={{ height: "100%", width: "99%%", marginLeft: "1rem", marginRight: "5rem" }}>
+                <div style={{ height: "100%", width: "99%%", marginLeft: "1rem", marginRight: "5rem", paddingBottom: "5rem" }}>
                     <div style={{ fontWeight: 400, fontSize: "2.5rem", lineHeight: 1.2, marginTop: "20px", marginBottom: "20px" }}>AG Grid Pipeline
                     </div>
                     <div className={styles["note"]}>
@@ -244,76 +269,18 @@ const Pipeline = () => {
                         <div className={styles["search-bar-container"]}>
                             <input
                                 type="text"
-                                placeholder={"Search pipeline… (e.g. AG-1280 or filtering)"}
+                                placeholder={"Search pipeline…"}
                                 className={styles["search-bar"]}
                                 onChange={onQuickFilterChange}
                             ></input>
                         </div>
                         <div className={styles["all-checkboxes-container"]}>
-                            <div className={styles["single-checkbox-label-container"]}>
-                                <div>
-                                    <input
-                                        id="featureRequest-checkbox"
-                                        type="checkbox"
-                                        className={styles["checkbox-class"]}
-                                        defaultChecked={true}
-                                        onChange={event =>
-                                            checkboxUnchecked(event, "featureRequest")
-                                        }
-                                    ></input>
-                                </div>
-                                <div>
-                                    <label
-                                        htmlFor="featureRequest-checkbox"
-                                        className={styles["label-for-checkboxes"]}
-                                    >
-                                        Feature Requests
-                                    </label>
-                                </div>
-                            </div>
-                            <div className={styles["single-checkbox-label-container"]}>
-                                <div>
-                                    <input
-                                        id="bug-checkbox"
-                                        onChange={event => checkboxUnchecked(event, "bug")}
-                                        className={styles["checkbox-class"]}
-                                        type="checkbox"
-                                        defaultChecked
-                                    ></input>
-                                </div>
-                                <div>
-                                    <label
-                                        htmlFor="bug-checkbox"
-                                        className={styles["label-for-checkboxes"]}
-                                    >
-                                        Defects
-                                    </label>
-                                </div>
-                            </div>
-                            <div className={styles["single-checkbox-label-container"]}>
-                                <div>
-                                    <input
-                                        className={styles["checkbox-class"]}
-                                        id="nextRelease-checkbox"
-                                        onChange={event => checkboxUnchecked(event, "nextRelease")}
-                                        type="checkbox"
-                                    ></input>
-                                </div>
-                                <div>
-                                    <label
-                                        htmlFor="nextRelease-checkbox"
-                                        className={styles["label-for-checkboxes"]}
-                                    >
-                                        Next Release
-                                    </label>
-                                </div>
-                            </div>
+                            {checkboxes.map(checkboxConfig => createLabeledCheckbox(checkboxConfig))}
                         </div>
                     </div>
 
                     <Grid
                         gridHeight={"63vh"}
-                        domLayout={'autoHeight'}
                         columnDefs={COLUMN_DEFS}
                         isRowMaster={isRowMaster}
                         detailRowAutoHeight={true}
@@ -323,7 +290,9 @@ const Pipeline = () => {
                             chevronButtonRenderer: ChevronButtonCellRenderer,
                             issueTypeCellRenderer: IssueTypeCellRenderer
                         }}
+                        suppressReactUi={true}
                         defaultColDef={defaultColDef}
+                        reactUi={false}
                         enableCellTextSelection={true}
                         detailCellRendererParams={detailCellRendererParams}
                         detailCellRenderer={"myDetailCellRenderer"}

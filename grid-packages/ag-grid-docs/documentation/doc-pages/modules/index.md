@@ -123,7 +123,6 @@ The steps required are:
 
 - Specify Modules Dependencies
 - Import Modules
-- Provide Modules To Each Grid
 
 Using the same real-world example above let us assume that we wish to use the `Client Side Row Model` (the default row model) together with the `CSV`, `Excel` and `Master/Detail` features. Additionally we're writing a React application so we need to specify the `@ag-grid-community/react` dependency:
 
@@ -208,6 +207,10 @@ export default class GridExample extends Component {
 |     :modules="modules">
 | </ag-grid-vue>
 | ```
+
+[[note]]
+| It's important to note that when a module is added via the `modules` property, this module will be available to all other instances of the Grid created afterwards. This will produce the same behaviour as calling `ModuleRegistry.registerModules()`.
+| This means that you can't limit the functionality of specific grid instances based on whether or not you've registered a particular module for that specific grid. If a module was already registered by any one AG Grid instance, it is available to all AG Grid instances created subsequently.
 
 ## Core Modules
 
