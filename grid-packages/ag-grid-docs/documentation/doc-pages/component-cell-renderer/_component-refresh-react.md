@@ -4,7 +4,7 @@
 |When the grid can refresh a cell (instead of replacing it altogether) then the update will occur as follows:
 |
 |- For class components, `componentWillReceiveProps`, `getDerivedStateFromProps` will get called and the function re-rendered.
-|- For functional components, the function will get called gain with new props.
+|- For functional components, the function will get called again with new props.
 |
 |The grid can refresh the data in the browser, but not every refresh / redraw of the grid results in the refresh of your cell renderer.
 |
