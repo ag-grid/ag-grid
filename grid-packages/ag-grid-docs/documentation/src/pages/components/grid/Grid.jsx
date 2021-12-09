@@ -13,7 +13,7 @@ const Grid = forwardRef((props, ref) => {
     return (
         <div
             className="ag-theme-alpine"
-            style={{ width: "100%" }}
+            style={{ width: "100%", height: props.gridHeight }}
         >
             <AgGridReact
                 ref={ref}

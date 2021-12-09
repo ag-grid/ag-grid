@@ -348,6 +348,7 @@ const Changelog = ({ location }) => {
                         gridHeight={"66vh"}
                         columnDefs={COLUMN_DEFS}
                         rowData={rowData}
+                        suppressReactUi={true}
                         frameworkComponents={{
                             myDetailCellRenderer: DetailCellRenderer,
                             paddingCellRenderer: PaddingCellRenderer,
@@ -356,7 +357,6 @@ const Changelog = ({ location }) => {
                             issueTypeCellRenderer: IssueTypeCellRenderer
                         }}
                         defaultColDef={defaultColDef}
-                        domLayout={'autoHeight'}
                         detailRowAutoHeight={true}
                         enableCellTextSelection={true}
                         detailCellRendererParams={detailCellRendererParams}
