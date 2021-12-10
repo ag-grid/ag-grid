@@ -197,6 +197,14 @@ function createExampleGenerator(prefix, importTypes) {
         const indexHtml = getFileContents(document);
         const bindings = parser(jsFile, indexHtml, options, type, providedExamples);
 
+
+        // ********************* TEST CODE DONT COMMIT TO LATEST **********************************????????????????????????/
+        const dumpPath = "/Users/stephencooper/Workspace/ag-grid/grid-packages/ag-grid-docs/OUTPUT/";
+        const folder = "original";
+        fs.mkdirSync(dumpPath + folder, { recursive: true });
+        fs.writeFileSync(dumpPath + folder + "/" + mainScript.replace(/\//g, '_').replace('.ts', '.json'), JSON.stringify(bindings))
+        // ********************* TEST CODE DONT COMMIT TO LATESTS **********************************????????????????????????/
+
         const writeExampleFiles = (importType, framework, tokenToReplace, frameworkScripts, files, subdirectory, componentPostfix = '') => {
             const basePath = path.join(createExamplePath(`_gen/${importType}`), framework);
             const scriptsPath = subdirectory ? path.join(basePath, subdirectory) : basePath;
