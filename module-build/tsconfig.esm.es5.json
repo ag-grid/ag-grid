@@ -2,6 +2,7 @@
   "compilerOptions": {
     "module": "ES6",
     "strictNullChecks": true,
+    "downlevelIteration": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": false,
     "declaration": true,

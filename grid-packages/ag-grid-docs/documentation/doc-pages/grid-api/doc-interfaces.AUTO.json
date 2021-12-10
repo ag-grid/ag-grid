@@ -12991,6 +12991,9 @@
     "isMoreThanOneCell": {
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
+    "areAllRangesAbleToMerge": {
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
     "onDragStart": {
       "type": {
         "arguments": { "mouseEvent": "MouseEvent" },

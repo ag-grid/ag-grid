@@ -410,12 +410,11 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     public isMoreThanOneCell(): boolean {
-        if (this.cellRanges.length === 0) {
-            // no ranges, so not more than one cell
-            return false;
-        } else if (this.cellRanges.length > 1) {
-            // many ranges, so more than one cell
-            return true;
+        const len = this.cellRanges.length;
+
+        if (len !== 1) {
+            // if range is not zero and not one, means more than one cell
+            return len !== 0;
         }
 
         // only one range, return true if range has more than one
@@ -426,6 +425,47 @@ export class RangeService extends BeanStub implements IRangeService {
         return startRow.rowPinned !== endRow.rowPinned ||
             startRow.rowIndex !== endRow.rowIndex ||
             range.columns.length !== 1;
+    }
+
+    public areAllRangesAbleToMerge(): boolean {
+        const rowToColumnMap: Map<string, string[]> = new Map();
+        const len = this.cellRanges.length;
+
+        if (len <= 1) return true;
+
+        this.cellRanges.forEach(range => {
+            const topRow = this.getRangeStartRow(range);
+            const bottomRow = this.getRangeEndRow(range);
+            let currentRow: RowPosition | null = topRow;
+            
+            while (currentRow) {
+                const rowName = `${currentRow.rowPinned || 'normal'}_${currentRow.rowIndex}`;
+                const columns = rowToColumnMap.get(rowName);
+                const currentRangeColIds = range.columns.map(col => col.getId());
+                if (columns) {
+                    const filteredColumns = currentRangeColIds.filter(col => columns.indexOf(col) === -1);
+                    columns.push(...filteredColumns)
+                } else {
+                    rowToColumnMap.set(rowName, currentRangeColIds);
+                }
+
+                if (this.rowPositionUtils.sameRow(currentRow, bottomRow)) { break; }
+                currentRow = this.cellNavigationService.getRowBelow(currentRow);
+            }
+        });
+
+        let columnsString: string | undefined;
+
+        for (const val of rowToColumnMap.values()) {
+            const currentValString = val.join();
+            if (columnsString === undefined) {
+                columnsString = currentValString;
+                continue;
+            }
+            if (columnsString !== currentValString) { return false; }
+        }
+
+        return true;
     }
 
     public removeAllCellRanges(silent?: boolean): void {
