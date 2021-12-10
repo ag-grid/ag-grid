@@ -1,0 +1,59 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            headerName: \"Core\",\n            children: [\n                {\n                    headerName: \"ID\",\n                    field: \"id\"\n                },\n                { field: \"make\" },\n                {\n                    field: \"price\",\n                    filter: \"agNumberColumnFilter\"\n                }\n            ]\n        },\n        {\n            headerName: \"Extra\",\n            children: [\n                {\n                    field: \"val1\",\n                    filter: \"agNumberColumnFilter\"\n                },\n                {\n                    field: \"val2\",\n                    filter: \"agNumberColumnFilter\"\n                },\n                {\n                    field: \"val3\",\n                    filter: \"agNumberColumnFilter\"\n                },\n                {\n                    field: \"val4\",\n                    filter: \"agNumberColumnFilter\"\n                },\n                {\n                    field: \"val5\",\n                    filter: \"agNumberColumnFilter\"\n                },\n                {\n                    field: \"val6\",\n                    filter: \"agNumberColumnFilter\"\n                },\n                {\n                    field: \"val7\",\n                    filter: \"agNumberColumnFilter\"\n                },\n                {\n                    field: \"val8\",\n                    filter: \"agNumberColumnFilter\"\n                },\n                {\n                    field: \"val9\",\n                    filter: \"agNumberColumnFilter\"\n                },\n                {\n                    field: \"val10\",\n                    filter: \"agNumberColumnFilter\"\n                }\n            ]\n        }\n    ]"
+        },
+        {
+            "name": "defaultColDef",
+            "value": "{\n        enableRowGroup: true,\n        enablePivot: true,\n        enableValue: true,\n        sortable: true,\n        filter: true,\n        resizable: true\n    }"
+        },
+        { "name": "rowData", "value": "getData(5)" },
+        { "name": "domLayout", "value": "\"autoHeight\"" },
+        { "name": "animateRows", "value": "true" },
+        { "name": "popupParent", "value": "document.body" }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    enableRowGroup: true,\n    enablePivot: true,\n    enableValue: true,\n    sortable: true,\n    filter: true,\n    resizable: true\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            headerName: \"Core\",\n            children: [\n                {\n                    headerName: \"ID\",\n                    field: \"id\"\n                },\n                { field: \"make\" },\n                {\n                    field: \"price\",\n                    filter: \"agNumberColumnFilter\"\n                }\n            ]\n        },\n        {\n            headerName: \"Extra\",\n            children: [\n                {\n                    field: \"val1\",\n                    filter: \"agNumberColumnFilter\"\n                },\n                {\n                    field: \"val2\",\n                    filter: \"agNumberColumnFilter\"\n                },\n                {\n                    field: \"val3\",\n                    filter: \"agNumberColumnFilter\"\n                },\n                {\n                    field: \"val4\",\n                    filter: \"agNumberColumnFilter\"\n                },\n                {\n                    field: \"val5\",\n                    filter: \"agNumberColumnFilter\"\n                },\n                {\n                    field: \"val6\",\n                    filter: \"agNumberColumnFilter\"\n                },\n                {\n                    field: \"val7\",\n                    filter: \"agNumberColumnFilter\"\n                },\n                {\n                    field: \"val8\",\n                    filter: \"agNumberColumnFilter\"\n                },\n                {\n                    field: \"val9\",\n                    filter: \"agNumberColumnFilter\"\n                },\n                {\n                    field: \"val10\",\n                    filter: \"agNumberColumnFilter\"\n                }\n            ]\n        }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [
+        {
+            "name": "setRowData",
+            "params": "0",
+            "body": "function setRowData(rowCount) {\n    this.gridApi.setRowData(getData(rowCount));\n    document.querySelector('#currentRowCount').innerHTML = `${ rowCount }`;\n}"
+        },
+        {
+            "name": "cbFloatingRows",
+            "params": "",
+            "body": "function cbFloatingRows() {\n    var show = document.getElementById('floating-rows').checked;\n    if (show) {\n        this.gridApi.setPinnedTopRowData([\n            createRow(999),\n            createRow(998)\n        ]);\n        this.gridApi.setPinnedBottomRowData([\n            createRow(997),\n            createRow(996)\n        ]);\n    } else {\n        this.gridApi.setPinnedTopRowData();\n        this.gridApi.setPinnedBottomRowData();\n    }\n}"
+        },
+        {
+            "name": "setAutoHeight",
+            "params": "",
+            "body": "function setAutoHeight() {\n    this.gridApi.setDomLayout('autoHeight');\n    document.querySelector('#myGrid').style.height = '';\n}"
+        },
+        {
+            "name": "setFixedHeight",
+            "params": "",
+            "body": "function setFixedHeight() {\n    this.gridApi.setDomLayout('normal');\n    document.querySelector('#myGrid').style.height = '400px';\n}"
+        }
+    ],
+    "utils": [
+        "function createRow(index) {\n    var makes = [\n        'Toyota',\n        'Ford',\n        'BMW',\n        'Phantom',\n        'Porsche'\n    ];\n    return {\n        id: 'D' + (1000 + index),\n        make: makes[Math.floor(Math.random() * makes.length)],\n        price: Math.floor(Math.random() * 100000),\n        val1: Math.floor(Math.random() * 1000),\n        val2: Math.floor(Math.random() * 1000),\n        val3: Math.floor(Math.random() * 1000),\n        val4: Math.floor(Math.random() * 1000),\n        val5: Math.floor(Math.random() * 1000),\n        val6: Math.floor(Math.random() * 1000),\n        val7: Math.floor(Math.random() * 1000),\n        val8: Math.floor(Math.random() * 1000),\n        val9: Math.floor(Math.random() * 1000),\n        val10: Math.floor(Math.random() * 1000)\n    };\n}",
+        "function getData(count) {\n    var rowData = [];\n    for (var i = 0; i < count; i++) {\n        rowData.push(createRow(i));\n    }\n    return rowData;\n}"
+    ],
+    "onGridReady": "{\n    document.querySelector('#currentRowCount').innerHTML = '5';\n}",
+    "template": "<div class=\"test-header\" style=\"padding: 5px; justify-content: space-between\">\n    <div style=\"align-items: start;\">\n        <button onclick=\"setRowData(0)\">0 Rows</button>\n        <button onclick=\"setRowData(5)\">5 Rows</button>\n        <button onclick=\"setRowData(50)\">50 Rows</button>\n    </div>\n    <div style=\"align-items: center;\">\n        <label>\n            <input type=\"checkbox\" id=\"floating-rows\" onclick=\"cbFloatingRows()\" style=\"vertical-align: text-top;\">\n            <span style=\"background-color: #00e5ff; width: 15px; height: 15px; border: 1px solid #888; display: inline-block; vertical-align: text-top;\"></span>\n            Pinned Rows\n        </label>\n\n        <button onclick=\"setAutoHeight()\">Auto Height</button>\n        <button onclick=\"setFixedHeight()\">Fixed Height</button>\n    </div>\n    <div style=\"align-items: end;\">\n        Row Count = <span id=\"currentRowCount\"></span>\n    </div>\n</div>\n\nGRID_TEMPLATE_PLACEHOLDER\n\n<div style=\"border: 10px solid #eee; padding: 10px; margin-top: 20px;\">\n    <p style=\"color: #333; text-align: center;\">\n        This text is under the grid and should move up and down as the height of the grid changes.\n    </p>\n\n    <p style=\"color: #777;\">\n        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore\n        magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo\n        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla\n        pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est\n        laborum.\n    </p>\n\n    <p style=\"color: #777;\">\n        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore\n        magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo\n        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla\n        pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est\n        laborum.\n    </p>\n\n    <p style=\"color: #777;\">\n        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore\n        magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo\n        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla\n        pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est\n        laborum.\n    </p>\n</div>\n",
+    "gridSettings": {
+        "width": "100%",
+        "height": "100%",
+        "theme": "ag-theme-alpine",
+        "enterprise": true,
+        "exampleHeight": 660,
+        "noStyle": 1,
+        "modules": ["clientside", "rowgrouping", "menu", "columnpanel"]
+    }
+}

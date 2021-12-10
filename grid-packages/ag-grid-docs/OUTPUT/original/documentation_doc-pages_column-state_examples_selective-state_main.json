@@ -1,0 +1,52 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        { field: \"athlete\" },\n        { field: \"age\" },\n        { field: \"country\" },\n        { field: \"sport\" },\n        { field: \"year\" },\n        { field: \"date\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]"
+        },
+        {
+            "name": "defaultColDef",
+            "value": "{\n        sortable: true,\n        resizable: true,\n        width: 100,\n        enableRowGroup: true,\n        enablePivot: true,\n        enableValue: true\n    }"
+        },
+        { "name": "sideBar", "value": "{ toolPanels: [\"columns\"] }" },
+        { "name": "rowGroupPanelShow", "value": "\"always\"" },
+        { "name": "pivotPanelShow", "value": "\"always\"" },
+        { "name": "debug", "value": "true" },
+        { "name": "rowData", "value": "null" }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    sortable: true,\n    resizable: true,\n    width: 100,\n    enableRowGroup: true,\n    enablePivot: true,\n    enableValue: true\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        { field: \"athlete\" },\n        { field: \"age\" },\n        { field: \"country\" },\n        { field: \"sport\" },\n        { field: \"year\" },\n        { field: \"date\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [
+        {
+            "name": "onBtSaveSortState",
+            "params": "",
+            "body": "function onBtSaveSortState() {\n    const allState = this.gridColumnApi.getColumnState();\n    const sortState = allState.map(state => ({\n        colId: state.colId,\n        sort: state.sort,\n        sortIndex: state.sortIndex\n    }));\n    window.sortState = sortState;\n    console.log('sort state saved', sortState);\n}"
+        },
+        {
+            "name": "onBtRestoreSortState",
+            "params": "",
+            "body": "function onBtRestoreSortState() {\n    if (!window.sortState) {\n        console.log('no sort state to restore, you must save sort state first');\n        return;\n    }\n    this.gridColumnApi.applyColumnState({ state: window.sortState });\n    console.log('sort state restored');\n}"
+        },
+        {
+            "name": "onBtSaveOrderAndVisibilityState",
+            "params": "",
+            "body": "function onBtSaveOrderAndVisibilityState() {\n    const allState = this.gridColumnApi.getColumnState();\n    const orderAndVisibilityState = allState.map(state => ({\n        colId: state.colId,\n        hide: state.hide\n    }));\n    window.orderAndVisibilityState = orderAndVisibilityState;\n    console.log('order and visibility state saved', orderAndVisibilityState);\n}"
+        },
+        {
+            "name": "onBtRestoreOrderAndVisibilityState",
+            "params": "",
+            "body": "function onBtRestoreOrderAndVisibilityState() {\n    if (!window.orderAndVisibilityState) {\n        console.log('no order and visibility state to restore by, you must save order and visibility state first');\n        return;\n    }\n    this.gridColumnApi.applyColumnState({\n        state: window.orderAndVisibilityState,\n        applyOrder: true\n    });\n    console.log('column state restored');\n}"
+        }
+    ],
+    "utils": [],
+    "data": {
+        "url": "'https://www.ag-grid.com/example-assets/olympic-winners.json'",
+        "callback": "params.api.setRowData(data)"
+    },
+    "template": "<div class=\"test-container\">\n    <div class=\"test-header\">\n        <div class=\"example-section\">\n            <button onclick=\"onBtSaveSortState()\">Save Sort</button>\n            <button onclick=\"onBtRestoreSortState()\">Restore Sort</button>\n            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n            <button onclick=\"onBtSaveOrderAndVisibilityState()\">Save Order &amp; Visibility</button>\n            <button onclick=\"onBtRestoreOrderAndVisibilityState()\">Restore Order &amp; Visibility</button>\n        </div>\n    </div>\n    GRID_TEMPLATE_PLACEHOLDER\n</div>",
+    "gridSettings": { "width": "100%", "height": "100%", "theme": "ag-theme-alpine", "enterprise": true }
+}

@@ -1,0 +1,34 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            field: \"athlete\",\n            minWidth: 170,\n            suppressKeyboardEvent: function (params) {\n                return suppressEnter(params) || suppressNavigation(params);\n            }\n        },\n        { field: \"age\" },\n        {\n            field: \"country\",\n            minWidth: 130,\n            suppressHeaderKeyboardEvent: function (params) {\n                var key = params.event.key;\n                return key === \"ArrowLeft\" || key === \"ArrowRight\" || key === \"Enter\";\n            }\n        },\n        { field: \"year\" },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]"
+        },
+        { "name": "rowData", "value": "null" },
+        {
+            "name": "defaultColDef",
+            "value": "{\n        editable: true,\n        sortable: true,\n        flex: 1,\n        minWidth: 100,\n        filter: true,\n        resizable: true,\n        suppressKeyboardEvent: suppressNavigation,\n        suppressHeaderKeyboardEvent: suppressUpDownNavigation\n    }"
+        },
+        { "name": "enableRangeSelection", "value": "true" },
+        { "name": "rowSelection", "value": "\"multiple\"" },
+        { "name": "suppressRowClickSelection", "value": "true" }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    editable: true,\n    sortable: true,\n    flex: 1,\n    minWidth: 100,\n    filter: true,\n    resizable: true,\n    suppressKeyboardEvent: suppressNavigation,\n    suppressHeaderKeyboardEvent: suppressUpDownNavigation\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            minWidth: 170,\n            suppressKeyboardEvent: \"AG_FUNCTION_function (params) {\\n    return suppressEnter(params) || suppressNavigation(params);\\n}\"\n        },\n        { field: \"age\" },\n        {\n            field: \"country\",\n            minWidth: 130,\n            suppressHeaderKeyboardEvent: \"AG_FUNCTION_function (params) {\\n    var key = params.event.key;\\n    return key === 'ArrowLeft' || key === 'ArrowRight' || key === 'Enter';\\n}\"\n        },\n        { field: \"year\" },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [],
+    "utils": [
+        "function suppressEnter(params) {\n    var KEY_ENTER = 'Enter';\n    var event = params.event;\n    var key = event.key;\n    var suppress = key === KEY_ENTER;\n    return suppress;\n}",
+        "function suppressNavigation(params) {\n    var KEY_A = 'A';\n    var KEY_C = 'C';\n    var KEY_V = 'V';\n    var KEY_D = 'D';\n    var KEY_PAGE_UP = 'PageUp';\n    var KEY_PAGE_DOWN = 'PageDown';\n    var KEY_TAB = 'Tab';\n    var KEY_LEFT = 'ArrowLeft';\n    var KEY_UP = 'ArrowUp';\n    var KEY_RIGHT = 'ArrowRight';\n    var KEY_DOWN = 'ArrowDown';\n    var KEY_F2 = 'F2';\n    var KEY_BACKSPACE = 'Backspace';\n    var KEY_ESCAPE = 'Escape';\n    var KEY_SPACE = ' ';\n    var KEY_DELETE = 'Delete';\n    var KEY_PAGE_HOME = 'Home';\n    var KEY_PAGE_END = 'End';\n    var event = params.event;\n    var key = event.key;\n    var keysToSuppress = [\n        KEY_PAGE_UP,\n        KEY_PAGE_DOWN,\n        KEY_TAB,\n        KEY_F2,\n        KEY_ESCAPE\n    ];\n    var editingKeys = [\n        KEY_LEFT,\n        KEY_RIGHT,\n        KEY_UP,\n        KEY_DOWN,\n        KEY_BACKSPACE,\n        KEY_DELETE,\n        KEY_SPACE,\n        KEY_PAGE_HOME,\n        KEY_PAGE_END\n    ];\n    if (event.ctrlKey || event.metaKey) {\n        keysToSuppress.push(KEY_A);\n        keysToSuppress.push(KEY_V);\n        keysToSuppress.push(KEY_C);\n        keysToSuppress.push(KEY_D);\n    }\n    if (!params.editing) {\n        keysToSuppress = keysToSuppress.concat(editingKeys);\n    }\n    if (params.column.getId() === 'country' && (key === KEY_UP || key === KEY_DOWN)) {\n        return false;\n    }\n    var suppress = keysToSuppress.some(function (suppressedKey) {\n        return suppressedKey === key || key.toUpperCase() === suppressedKey;\n    });\n    return suppress;\n}",
+        "function suppressUpDownNavigation(params) {\n    var key = params.event.key;\n    return key === 'ArrowUp' || key === 'ArrowDown';\n}"
+    ],
+    "data": {
+        "url": "'https://www.ag-grid.com/example-assets/olympic-winners.json'",
+        "callback": "params.api.setRowData(data)"
+    },
+    "template": "GRID_TEMPLATE_PLACEHOLDER",
+    "gridSettings": { "width": "100%", "height": "100%", "theme": "ag-theme-alpine", "enterprise": true }
+}

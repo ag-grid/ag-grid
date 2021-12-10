@@ -1,0 +1,45 @@
+{
+    "eventHandlers": [
+        {
+            "name": "firstDataRendered",
+            "handlerName": "onFirstDataRendered",
+            "handler": "function onFirstDataRendered(params) {\n    createQuarterlySalesChart(params.api);\n    createSalesByRefChart(params.api);\n    createHandsetSalesChart(params.api);\n}"
+        }
+    ],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            field: \"salesRep\",\n            chartDataType: \"category\"\n        },\n        {\n            field: \"handset\",\n            chartDataType: \"category\"\n        },\n        {\n            headerName: \"Sale Price\",\n            field: \"sale\",\n            maxWidth: 160,\n            aggFunc: \"sum\",\n            chartDataType: \"series\"\n        },\n        {\n            field: \"saleDate\",\n            chartDataType: \"category\"\n        },\n        {\n            field: \"quarter\",\n            maxWidth: 160,\n            filter: \"agSetColumnFilter\",\n            chartDataType: \"category\"\n        }\n    ]"
+        },
+        {
+            "name": "defaultColDef",
+            "value": "{\n        flex: 1,\n        editable: true,\n        sortable: true,\n        filter: \"agMultiColumnFilter\",\n        floatingFilter: true,\n        resizable: true\n    }"
+        },
+        { "name": "rowData", "value": "getData()" },
+        { "name": "enableCharts", "value": "true" },
+        { "name": "chartThemes", "value": "[\"ag-default-dark\"]" },
+        {
+            "name": "chartThemeOverrides",
+            "value": "{\n        common: {\n            padding: {\n                top: 20,\n                right: 40,\n                bottom: 20,\n                left: 30\n            }\n        },\n        cartesian: { axes: { category: { label: { rotation: 0 } } } }\n    }"
+        }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    flex: 1,\n    editable: true,\n    sortable: true,\n    filter: 'agMultiColumnFilter',\n    floatingFilter: true,\n    resizable: true\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            field: \"salesRep\",\n            chartDataType: \"category\"\n        },\n        {\n            field: \"handset\",\n            chartDataType: \"category\"\n        },\n        {\n            headerName: \"Sale Price\",\n            field: \"sale\",\n            maxWidth: 160,\n            aggFunc: \"sum\",\n            chartDataType: \"series\"\n        },\n        {\n            field: \"saleDate\",\n            chartDataType: \"category\"\n        },\n        {\n            field: \"quarter\",\n            maxWidth: 160,\n            filter: \"agSetColumnFilter\",\n            chartDataType: \"category\"\n        }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [],
+    "utils": [
+        "function createQuarterlySalesChart(gridApi) {\n    gridApi.createCrossFilterChart({\n        chartType: 'column',\n        cellRange: {\n            columns: [\n                'quarter',\n                'sale'\n            ]\n        },\n        aggFunc: 'sum',\n        chartThemeOverrides: {\n            common: {\n                title: {\n                    enabled: true,\n                    text: 'Quarterly Sales ($)'\n                },\n                legend: { enabled: false },\n                axes: {\n                    category: { label: { rotation: 0 } },\n                    number: {\n                        label: {\n                            formatter: function (params) {\n                                return params.value / 1000 + 'k';\n                            }\n                        }\n                    }\n                }\n            }\n        },\n        chartContainer: document.querySelector('#columnChart')\n    });\n}",
+        "function createSalesByRefChart(gridApi) {\n    gridApi.createCrossFilterChart({\n        chartType: 'pie',\n        cellRange: {\n            columns: [\n                'salesRep',\n                'sale'\n            ]\n        },\n        aggFunc: 'sum',\n        chartThemeOverrides: {\n            common: {\n                title: {\n                    enabled: true,\n                    text: 'Sales by Representative ($)'\n                }\n            },\n            pie: {\n                series: {\n                    title: { enabled: false },\n                    label: { enabled: false }\n                }\n            }\n        },\n        chartContainer: document.querySelector('#pieChart')\n    });\n}",
+        "function createHandsetSalesChart(gridApi) {\n    gridApi.createCrossFilterChart({\n        chartType: 'bar',\n        cellRange: {\n            columns: [\n                'handset',\n                'sale'\n            ]\n        },\n        aggFunc: 'count',\n        chartThemeOverrides: {\n            common: {\n                title: {\n                    enabled: true,\n                    text: 'Handsets Sold (Units)'\n                },\n                legend: { enabled: false }\n            }\n        },\n        chartContainer: document.querySelector('#barChart')\n    });\n}"
+    ],
+    "template": "<div id=\"wrapper\">\n    <div id=\"top\">\n        <div id=\"columnChart\" class=\"ag-theme-alpine-dark\"></div>\n        <div id=\"pieChart\" class=\"ag-theme-alpine-dark\"></div>\n    </div>\n    <div id=\"barChart\" class=\"ag-theme-alpine-dark\"></div>\n    GRID_TEMPLATE_PLACEHOLDER\n</div>",
+    "gridSettings": {
+        "width": "100%",
+        "height": "100%",
+        "theme": "ag-theme-alpine-dark",
+        "exampleHeight": 1000,
+        "enterprise": true
+    }
+}

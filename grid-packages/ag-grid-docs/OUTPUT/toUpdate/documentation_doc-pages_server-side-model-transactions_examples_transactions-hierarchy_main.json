@@ -1,0 +1,67 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            field: \"productName\",\n            rowGroup: true,\n            hide: true\n        },\n        { field: \"tradeName\" },\n        { field: \"value\" }\n    ]"
+        },
+        { "name": "defaultColDef", "value": "{\n        width: 250,\n        resizable: true\n    }" },
+        { "name": "getRowNodeId", "value": "function (data) {\n        return data.id;\n    }" },
+        { "name": "rowModelType", "value": "\"serverSide\"" },
+        { "name": "serverSideStoreType", "value": "\"full\"" },
+        { "name": "animateRows", "value": "true" },
+        { "name": "purgeClosedRowNodes", "value": "true" },
+        {
+            "name": "getServerSideStoreParams",
+            "value": "function (params) {\n        const type = params.level == 0 ? \"partial\" : \"full\";\n        return { storeType: type };\n    }"
+        }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    width: 250,\n    resizable: true\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            field: \"productName\",\n            rowGroup: true,\n            hide: true\n        },\n        { field: \"tradeName\" },\n        { field: \"value\" }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [
+        {
+            "name": "onBtNewPalmOil",
+            "params": "",
+            "body": "function onBtNewPalmOil() {\n    const transaction = {\n        route: ['Palm Oil'],\n        add: [createOneTrade()]\n    };\n    const res = this.gridApi.applyServerSideTransaction(transaction);\n    console.log('New Palm Oil, result = ' + (res && res.status));\n}"
+        },
+        {
+            "name": "onBtNewRubber",
+            "params": "",
+            "body": "function onBtNewRubber() {\n    const transaction = {\n        route: ['Rubber'],\n        add: [createOneTrade()]\n    };\n    const res = this.gridApi.applyServerSideTransaction(transaction);\n    console.log('New Rubber, result = ' + (res && res.status));\n}"
+        },
+        {
+            "name": "onBtNewWoolAmber",
+            "params": "",
+            "body": "function onBtNewWoolAmber() {\n    const transactions = [];\n    transactions.push({\n        route: ['Wool'],\n        add: [createOneTrade()]\n    });\n    transactions.push({\n        route: ['Amber'],\n        add: [createOneTrade()]\n    });\n    const api = this.gridApi;\n    transactions.forEach(function (tx) {\n        const res = api.applyServerSideTransaction(tx);\n        console.log('New ' + tx.route[0] + ', result = ' + (res && res.status));\n    });\n}"
+        },
+        {
+            "name": "onBtNewProduct",
+            "params": "",
+            "body": "function onBtNewProduct() {\n    const transaction = {\n        route: [],\n        add: [{\n                id: idSequence++,\n                productName: 'Rice',\n                trades: []\n            }]\n    };\n    const res = this.gridApi.applyServerSideTransaction(transaction);\n    console.log('New Product, result = ' + (res && res.status));\n}"
+        },
+        {
+            "name": "onBtStoreState",
+            "params": "",
+            "body": "function onBtStoreState() {\n    const storeState = this.gridApi.getServerSideStoreState();\n    console.log('Store States:');\n    storeState.forEach(function (state, index) {\n        console.log(index + ' - ' + JSON.stringify(state).replace(/\"/g, '').replace(/,/g, ', '));\n    });\n}"
+        }
+    ],
+    "utils": [
+        "const productsNames = [\n    'Palm Oil',\n    'Rubber',\n    'Wool',\n    'Amber',\n    'Copper'\n];",
+        "let products = [];",
+        "let idSequence = 0;",
+        "function createOneTrade() {\n    return {\n        id: idSequence++,\n        tradeName: 'TRD-' + Math.floor(Math.random() * 20000),\n        value: Math.floor(Math.random() * 20000)\n    };\n}",
+        "function setupData() {\n    productsNames.forEach(function (productName) {\n        const product = {\n            id: idSequence++,\n            productName: productName,\n            trades: []\n        };\n        products.push(product);\n        for (let i = 0; i < 2; i++) {\n            product.trades.push(createOneTrade());\n        }\n    });\n}"
+    ],
+    "onGridReady": "{\n    setupData();\n    const dataSource = {\n        getRows: function (params2) {\n            setTimeout(function () {\n                const doingTopLevel = params2.request.groupKeys.length == 0;\n                if (doingTopLevel) {\n                    params2.success({\n                        rowData: products.slice(),\n                        rowCount: products.length\n                    });\n                } else {\n                    const key = params2.request.groupKeys[0];\n                    let foundProduct = undefined;\n                    products.forEach(function (product) {\n                        if (product.productName == key) {\n                            foundProduct = product;\n                        }\n                    });\n                    if (foundProduct) {\n                        params2.success({ rowData: foundProduct.trades });\n                    } else {\n                        params2.fail();\n                    }\n                }\n            }, 2000);\n        }\n    };\n    params.api.setServerSideDatasource(dataSource);\n}",
+    "template": "<div class=\"example-wrapper\">\n    <div style=\"margin-bottom: 5px;\">\n        <button onclick=\"onBtNewPalmOil()\">New Palm Oil</button>\n        <button onclick=\"onBtNewRubber()\">New Rubber</button>\n        <button onclick=\"onBtNewWoolAmber()\">New Wool &amp; Amber</button>\n        &nbsp;&nbsp;&nbsp;&nbsp;\n        <button onclick=\"onBtNewProduct()\">New Product (will fail)</button>\n        <button onclick=\"onBtStoreState()\">Store State</button>\n    </div>\n    GRID_TEMPLATE_PLACEHOLDER\n</div>",
+    "gridSettings": {
+        "width": "100%",
+        "height": "100%",
+        "theme": "ag-theme-alpine-dark",
+        "enterprise": true,
+        "modules": ["serverside", "rowgrouping"]
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "properties": [
+        {
+            "name": "options",
+            "value": "{\n        \n        autoSize: true,\n        data: data,\n        title: {\n            text: 'Average Station Entries: Victoria Line (2010)',\n            fontSize: 18\n        },\n        subtitle: { text: 'Source: Transport for London' },\n        series: [{\n                type: 'column',\n                xKey: 'station',\n                yKeys: [\n                    'early',\n                    'morningPeak',\n                    'interPeak',\n                    'afternoonPeak',\n                    'evening'\n                ],\n                yNames: [\n                    'Early',\n                    'Morning peak',\n                    'Between peak',\n                    'Afternoon peak',\n                    'Evening'\n                ],\n                fills: [\n                    '#5BC0EB',\n                    '#FDE74C',\n                    '#9BC53D',\n                    '#E55934',\n                    '#FA7921'\n                ],\n                strokes: [\n                    '#4086a4',\n                    '#b1a235',\n                    '#6c8a2b',\n                    '#a03e24',\n                    '#af5517'\n                ]\n            }],\n        axes: [\n            {\n                type: 'category',\n                position: 'bottom',\n                label: { rotation: 30 }\n            },\n            {\n                type: 'number',\n                position: 'left',\n                label: {\n                    formatter: function (params) {\n                        return params.value / 1000 + 'k';\n                    }\n                }\n            }\n        ],\n        legend: {\n            spacing: 40,\n            position: 'bottom'\n        }\n    }"
+        }
+    ],
+    "externalEventHandlers": [],
+    "instanceMethods": [],
+    "globals": [],
+    "init": [],
+    "template": "$$CHART$$\n"
+}

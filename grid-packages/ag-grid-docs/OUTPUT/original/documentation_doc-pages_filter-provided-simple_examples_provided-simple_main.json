@@ -1,0 +1,25 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        { field: \"athlete\" },\n        {\n            field: \"age\",\n            filter: \"agNumberColumnFilter\",\n            maxWidth: 100\n        },\n        {\n            field: \"date\",\n            filter: \"agDateColumnFilter\",\n            filterParams: filterParams\n        },\n        {\n            field: \"total\",\n            filter: false\n        }\n    ]"
+        },
+        { "name": "defaultColDef", "value": "{\n        flex: 1,\n        minWidth: 150,\n        filter: true\n    }" }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    flex: 1,\n    minWidth: 150,\n    filter: true\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        { field: \"athlete\" },\n        {\n            field: \"age\",\n            filter: \"agNumberColumnFilter\",\n            maxWidth: 100\n        },\n        {\n            field: \"date\",\n            filter: \"agDateColumnFilter\",\n            filterParams: \"AG_LITERAL_filterParams\"\n        },\n        {\n            field: \"total\",\n            filter: false\n        }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [],
+    "utils": [
+        "var filterParams = {\n    comparator: function (filterLocalDateAtMidnight, cellValue) {\n        var dateAsString = cellValue;\n        if (dateAsString == null)\n            return -1;\n        var dateParts = dateAsString.split('/');\n        var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));\n        if (filterLocalDateAtMidnight.getTime() === cellDate.getTime()) {\n            return 0;\n        }\n        if (cellDate < filterLocalDateAtMidnight) {\n            return -1;\n        }\n        if (cellDate > filterLocalDateAtMidnight) {\n            return 1;\n        }\n    },\n    browserDatePicker: true\n};"
+    ],
+    "data": {
+        "url": "'https://www.ag-grid.com/example-assets/olympic-winners.json'",
+        "callback": "params.api.setRowData(data)"
+    },
+    "template": "GRID_TEMPLATE_PLACEHOLDER\n",
+    "gridSettings": { "width": "100%", "height": "100%", "theme": "ag-theme-alpine", "exampleHeight": 560 }
+}

@@ -1,0 +1,27 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            headerName: \"Athlete\",\n            field: \"athlete\"\n        },\n        {\n            headerName: \"Sport\",\n            field: \"sport\"\n        },\n        {\n            headerName: \"Age\",\n            field: \"age\",\n            type: \"numberColumn\"\n        },\n        {\n            headerName: \"Year\",\n            field: \"year\",\n            type: \"numberColumn\"\n        },\n        {\n            headerName: \"Date\",\n            field: \"date\",\n            width: 200\n        }\n    ]"
+        },
+        { "name": "defaultColDef", "value": "{ width: 150 }" },
+        { "name": "defaultColGroupDef", "value": "{ marryChildren: true }" },
+        { "name": "columnTypes", "value": "{ numberColumn: { width: 83 } }" },
+        { "name": "rowData", "value": "null" }
+    ],
+    "components": [],
+    "defaultColDef": null,
+    "globalComponents": [],
+    "parsedColDefs": "",
+    "instanceMethods": [],
+    "externalEventHandlers": [],
+    "utils": [],
+    "onGridReady": "{\n    params.api.sizeColumnsToFit();\n}",
+    "data": {
+        "url": "'https://www.ag-grid.com/example-assets/olympic-winners.json'",
+        "callback": "params.api.setRowData(data)"
+    },
+    "template": "<div style=\"height: 100%; box-sizing: border-box;\">\n    GRID_TEMPLATE_PLACEHOLDER\n</div>\n    ",
+    "gridSettings": { "width": "100%", "height": "100%", "theme": "ag-theme-alpine", "enterprise": true }
+}

@@ -1,0 +1,31 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            field: \"athlete\",\n            minWidth: 150\n        },\n        {\n            field: \"age\",\n            maxWidth: 90\n        },\n        {\n            field: \"country\",\n            minWidth: 150\n        },\n        {\n            field: \"year\",\n            maxWidth: 90\n        },\n        {\n            field: \"date\",\n            minWidth: 150\n        },\n        {\n            field: \"sport\",\n            minWidth: 150\n        },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]"
+        },
+        { "name": "defaultColDef", "value": "{\n        flex: 1,\n        minWidth: 100\n    }" },
+        { "name": "rowSelection", "value": "\"multiple\"" },
+        { "name": "rowData", "value": "null" }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    flex: 1,\n    minWidth: 100\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            minWidth: 150\n        },\n        {\n            field: \"age\",\n            maxWidth: 90\n        },\n        {\n            field: \"country\",\n            minWidth: 150\n        },\n        {\n            field: \"year\",\n            maxWidth: 90\n        },\n        {\n            field: \"date\",\n            minWidth: 150\n        },\n        {\n            field: \"sport\",\n            minWidth: 150\n        },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [
+        {
+            "name": "selectAllAmerican",
+            "params": "",
+            "body": "function selectAllAmerican() {\n    this.gridApi.forEachNode(function (node) {\n        node.setSelected(node.data.country === 'United States');\n    });\n}"
+        }
+    ],
+    "utils": [],
+    "data": {
+        "url": "'https://www.ag-grid.com/example-assets/olympic-winners.json'",
+        "callback": "params.api.setRowData(data)"
+    },
+    "template": "<div class=\"example-wrapper\">\n    <div style=\"margin-bottom: 5px;\">\n        <button onclick=\"selectAllAmerican()\">Select All American</button>\n    </div>\n    GRID_TEMPLATE_PLACEHOLDER\n</div>\n",
+    "gridSettings": { "width": "100%", "height": "100%", "theme": "ag-theme-alpine", "exampleHeight": 590 }
+}

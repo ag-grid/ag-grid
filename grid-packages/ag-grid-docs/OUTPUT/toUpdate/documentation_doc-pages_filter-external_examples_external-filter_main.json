@@ -1,0 +1,49 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            field: \"athlete\",\n            minWidth: 180\n        },\n        {\n            field: \"age\",\n            filter: \"agNumberColumnFilter\",\n            maxWidth: 80\n        },\n        { field: \"country\" },\n        {\n            field: \"year\",\n            maxWidth: 90\n        },\n        {\n            field: \"date\",\n            filter: \"agDateColumnFilter\",\n            filterParams: dateFilterParams\n        },\n        {\n            field: \"gold\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"silver\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"bronze\",\n            filter: \"agNumberColumnFilter\"\n        }\n    ]"
+        },
+        {
+            "name": "defaultColDef",
+            "value": "{\n        flex: 1,\n        minWidth: 120,\n        filter: true\n    }"
+        },
+        { "name": "animateRows", "value": "true" },
+        { "name": "isExternalFilterPresent", "value": null },
+        { "name": "doesExternalFilterPass", "value": null }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    flex: 1,\n    minWidth: 120,\n    filter: true\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            minWidth: 180\n        },\n        {\n            field: \"age\",\n            filter: \"agNumberColumnFilter\",\n            maxWidth: 80\n        },\n        { field: \"country\" },\n        {\n            field: \"year\",\n            maxWidth: 90\n        },\n        {\n            field: \"date\",\n            filter: \"agDateColumnFilter\",\n            filterParams: \"AG_LITERAL_dateFilterParams\"\n        },\n        {\n            field: \"gold\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"silver\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"bronze\",\n            filter: \"agNumberColumnFilter\"\n        }\n    ]",
+    "instanceMethods": [
+        "function isExternalFilterPresent() {\n        return ageType !== \"everyone\";\n    }",
+        "function doesExternalFilterPass(node) {\n        switch (ageType) {\n        case \"below25\":\n            return node.data.age < 25;\n        case \"between25and50\":\n            return node.data.age >= 25 && node.data.age <= 50;\n        case \"above50\":\n            return node.data.age > 50;\n        case \"dateAfter2008\":\n            return asDate(node.data.date) > new Date(2008, 1, 1);\n        default:\n            return true;\n        }\n    }"
+    ],
+    "externalEventHandlers": [
+        {
+            "name": "externalFilterChanged",
+            "params": "'everyone'",
+            "body": "function externalFilterChanged(newValue) {\n    ageType = newValue;\n    this.gridApi.onFilterChanged();\n}"
+        }
+    ],
+    "utils": [
+        "var dateFilterParams = {\n    comparator: function (filterLocalDateAtMidnight, cellValue) {\n        var cellDate = asDate(cellValue);\n        if (filterLocalDateAtMidnight.getTime() === cellDate.getTime()) {\n            return 0;\n        }\n        if (cellDate < filterLocalDateAtMidnight) {\n            return -1;\n        }\n        if (cellDate > filterLocalDateAtMidnight) {\n            return 1;\n        }\n    }\n};",
+        "var ageType = 'everyone';",
+        "function asDate(dateAsString) {\n    var splitFields = dateAsString.split('/');\n    return new Date(Number.parseInt(splitFields[2]), Number.parseInt(splitFields[1]) - 1, Number.parseInt(splitFields[0]));\n}"
+    ],
+    "data": {
+        "url": "'https://www.ag-grid.com/example-assets/olympic-winners.json'",
+        "callback": "{\n    document.querySelector('#everyone').checked = true;\n    params.api.setRowData(data);\n}"
+    },
+    "template": "<div class=\"test-container\">\n    <div class=\"test-header\">\n        <label>\n            <input type=\"radio\" name=\"filter\" id=\"everyone\" onchange=\"externalFilterChanged('everyone')\">\n            Everyone\n        </label>\n        <label>\n            <input type=\"radio\" name=\"filter\" id=\"below25\" onchange=\"externalFilterChanged('below25')\">\n            Below 25\n        </label>\n        <label>\n            <input type=\"radio\" name=\"filter\" id=\"between25and50\" onchange=\"externalFilterChanged('between25and50')\">\n            Between 25 and 50\n        </label>\n        <label>\n            <input type=\"radio\" name=\"filter\" id=\"above50\" onchange=\"externalFilterChanged('above50')\">\n            Above 50\n        </label>\n        <label>\n            <input type=\"radio\" name=\"filter\" id=\"dateAfter2008\" onchange=\"externalFilterChanged('dateAfter2008')\">\n            After 01/01/2008\n        </label>\n    </div>\n    GRID_TEMPLATE_PLACEHOLDER\n</div>\n",
+    "gridSettings": {
+        "width": "100%",
+        "height": "100%",
+        "theme": "ag-theme-alpine",
+        "enterprise": true,
+        "exampleHeight": 565,
+        "modules": ["clientside", "setfilter", "menu", "columnpanel"]
+    }
+}

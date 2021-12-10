@@ -1,0 +1,13 @@
+{
+    "properties": [
+        {
+            "name": "options",
+            "value": "{\n        \n        autoSize: true,\n        data: data,\n        title: {\n            text: 'Changes in UK Energy Stock (2018)',\n            fontSize: 18\n        },\n        subtitle: { text: 'Source: Department for Business, Energy & Industrial Strategy' },\n        series: [\n            {\n                type: 'area',\n                xKey: 'quarter',\n                yKeys: ['naturalGas'],\n                yNames: ['Natural gas'],\n                fills: ['#FA7921'],\n                strokes: ['#af5517'],\n                fillOpacity: 0.6\n            },\n            {\n                type: 'area',\n                xKey: 'quarter',\n                yKeys: ['coal'],\n                yNames: ['Coal'],\n                fills: ['#5BC0EB'],\n                strokes: ['#4086a4'],\n                fillOpacity: 0.6\n            },\n            {\n                type: 'area',\n                xKey: 'quarter',\n                yKeys: ['primaryOil'],\n                yNames: ['Primary oil'],\n                fills: ['#9BC53D'],\n                strokes: ['#6c8a2b'],\n                fillOpacity: 0.6\n            },\n            {\n                type: 'area',\n                xKey: 'quarter',\n                yKeys: ['petroleum'],\n                yNames: ['Petroleum'],\n                fills: ['#E55934'],\n                strokes: ['#a03e24'],\n                fillOpacity: 0.6\n            },\n            {\n                type: 'area',\n                xKey: 'quarter',\n                yKeys: ['manufacturedFuels'],\n                yNames: ['Manufactured fuels'],\n                fills: ['#FDE74C'],\n                strokes: ['#b1a235'],\n                fillOpacity: 0.6\n            }\n        ],\n        axes: [\n            {\n                type: 'category',\n                position: 'bottom'\n            },\n            {\n                type: 'number',\n                position: 'left',\n                title: { text: 'Thousand tonnes of oil equivalent' }\n            }\n        ],\n        legend: { position: 'bottom' }\n    }"
+        }
+    ],
+    "externalEventHandlers": [],
+    "instanceMethods": [],
+    "globals": [],
+    "init": [],
+    "template": "$$CHART$$\n"
+}

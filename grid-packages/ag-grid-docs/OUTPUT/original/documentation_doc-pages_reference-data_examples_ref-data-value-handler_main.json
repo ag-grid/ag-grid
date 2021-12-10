@@ -1,0 +1,47 @@
+{
+    "eventHandlers": [
+        {
+            "name": "cellValueChanged",
+            "handlerName": "onCellValueChanged",
+            "handler": "function onCellValueChanged(params) {\n    console.log('onCellValueChanged: ', params);\n}"
+        }
+    ],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            field: \"make\",\n            cellEditor: \"agSelectCellEditor\",\n            cellEditorParams: { values: carBrands },\n            filterParams: {\n                valueFormatter: function (params) {\n                    return lookupValue(carMappings, params.value);\n                }\n            },\n            valueFormatter: function (params) {\n                return lookupValue(carMappings, params.value);\n            }\n        },\n        {\n            field: \"exteriorColour\",\n            minWidth: 150,\n            cellEditor: \"agRichSelectCellEditor\",\n            cellEditorPopup: true,\n            cellEditorParams: {\n                values: colours,\n                cellRenderer: colourCellRenderer\n            },\n            filter: \"agSetColumnFilter\",\n            filterParams: {\n                values: colours,\n                valueFormatter: function (params) {\n                    return lookupValue(colourMappings, params.value);\n                },\n                cellRenderer: colourCellRenderer\n            },\n            valueFormatter: function (params) {\n                return lookupValue(colourMappings, params.value);\n            },\n            valueParser: function (params) {\n                return lookupKey(colourMappings, params.newValue);\n            },\n            cellRenderer: colourCellRenderer\n        },\n        {\n            field: \"interiorColour\",\n            minWidth: 150,\n            cellEditor: \"agTextCellEditor\",\n            cellEditorParams: { useFormatter: true },\n            filter: \"agSetColumnFilter\",\n            filterParams: {\n                values: colours,\n                valueFormatter: function (params) {\n                    return lookupValue(colourMappings, params.value);\n                },\n                cellRenderer: colourCellRenderer\n            },\n            valueFormatter: function (params) {\n                return lookupValue(colourMappings, params.value);\n            },\n            valueParser: function (params) {\n                return lookupKey(colourMappings, params.newValue);\n            },\n            cellRenderer: colourCellRenderer\n        },\n        {\n            headerName: \"Retail Price\",\n            field: \"price\",\n            minWidth: 140,\n            colId: \"retailPrice\",\n            valueGetter: function (params) {\n                return params.data.price;\n            },\n            valueFormatter: currencyFormatter,\n            valueSetter: numberValueSetter\n        },\n        {\n            headerName: \"Retail Price (incl Taxes)\",\n            minWidth: 205,\n            editable: false,\n            valueGetter: function (params) {\n                return params.getValue(\"retailPrice\") * 1.2;\n            },\n            valueFormatter: currencyFormatter\n        }\n    ]"
+        },
+        {
+            "name": "defaultColDef",
+            "value": "{\n        flex: 1,\n        filter: true,\n        editable: true\n    }"
+        },
+        { "name": "rowData", "value": "getData()" }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    flex: 1,\n    filter: true,\n    editable: true\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            field: \"make\",\n            cellEditor: \"agSelectCellEditor\",\n            cellEditorParams: { values: \"AG_LITERAL_carBrands\" },\n            filterParams: { valueFormatter: \"AG_FUNCTION_function (params) {\\n    return lookupValue(carMappings, params.value);\\n}\" },\n            valueFormatter: \"AG_FUNCTION_function (params) {\\n    return lookupValue(carMappings, params.value);\\n}\"\n        },\n        {\n            field: \"exteriorColour\",\n            minWidth: 150,\n            cellEditor: \"agRichSelectCellEditor\",\n            cellEditorPopup: true,\n            cellEditorParams: {\n                values: \"AG_LITERAL_colours\",\n                cellRenderer: \"AG_LITERAL_colourCellRenderer\"\n            },\n            filter: \"agSetColumnFilter\",\n            filterParams: {\n                values: \"AG_LITERAL_colours\",\n                valueFormatter: \"AG_FUNCTION_function (params) {\\n    return lookupValue(colourMappings, params.value);\\n}\",\n                cellRenderer: \"AG_LITERAL_colourCellRenderer\"\n            },\n            valueFormatter: \"AG_FUNCTION_function (params) {\\n    return lookupValue(colourMappings, params.value);\\n}\",\n            valueParser: \"AG_FUNCTION_function (params) {\\n    return lookupKey(colourMappings, params.newValue);\\n}\",\n            cellRenderer: \"AG_LITERAL_colourCellRenderer\"\n        },\n        {\n            field: \"interiorColour\",\n            minWidth: 150,\n            cellEditor: \"agTextCellEditor\",\n            cellEditorParams: { useFormatter: true },\n            filter: \"agSetColumnFilter\",\n            filterParams: {\n                values: \"AG_LITERAL_colours\",\n                valueFormatter: \"AG_FUNCTION_function (params) {\\n    return lookupValue(colourMappings, params.value);\\n}\",\n                cellRenderer: \"AG_LITERAL_colourCellRenderer\"\n            },\n            valueFormatter: \"AG_FUNCTION_function (params) {\\n    return lookupValue(colourMappings, params.value);\\n}\",\n            valueParser: \"AG_FUNCTION_function (params) {\\n    return lookupKey(colourMappings, params.newValue);\\n}\",\n            cellRenderer: \"AG_LITERAL_colourCellRenderer\"\n        },\n        {\n            headerName: \"Retail Price\",\n            field: \"price\",\n            minWidth: 140,\n            colId: \"retailPrice\",\n            valueGetter: \"AG_FUNCTION_function (params) {\\n    return params.data.price;\\n}\",\n            valueFormatter: \"AG_LITERAL_currencyFormatter\",\n            valueSetter: \"AG_LITERAL_numberValueSetter\"\n        },\n        {\n            headerName: \"Retail Price (incl Taxes)\",\n            minWidth: 205,\n            editable: false,\n            valueGetter: \"AG_FUNCTION_function (params) {\\n    return params.getValue('retailPrice') * 1.2;\\n}\",\n            valueFormatter: \"AG_LITERAL_currencyFormatter\"\n        }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [],
+    "utils": [
+        "var carMappings = {\n    tyt: 'Toyota',\n    frd: 'Ford',\n    prs: 'Porsche',\n    nss: 'Nissan'\n};",
+        "var colourMappings = {\n    cb: 'Cadet Blue',\n    bw: 'Burlywood',\n    fg: 'Forest Green'\n};",
+        "var carBrands = extractValues(carMappings);",
+        "var colours = extractValues(colourMappings);",
+        "function extractValues(mappings) {\n    return Object.keys(mappings);\n}",
+        "function lookupValue(mappings, key) {\n    return mappings[key];\n}",
+        "function lookupKey(mappings, name) {\n    var keys = Object.keys(mappings);\n    for (var i = 0; i < keys.length; i++) {\n        var key = keys[i];\n        if (mappings[key] === name) {\n            return key;\n        }\n    }\n}",
+        "function colourCellRenderer(params) {\n    if (params.value === '(Select All)') {\n        return params.value;\n    }\n    return '<span style=\"color: ' + removeSpaces(params.valueFormatted) + '\">' + params.valueFormatted + '</span>';\n}",
+        "function currencyFormatter(params) {\n    var value = Math.floor(params.value);\n    if (isNaN(value)) {\n        return '';\n    }\n    return '\\xA3' + value.toString().replace(/(\\d)(?=(\\d{3})+(?!\\d))/g, '$1,');\n}",
+        "function numberValueSetter(params) {\n    if (isNaN(parseFloat(params.newValue)) || !isFinite(params.newValue)) {\n        return false;\n    }\n    params.data.price = params.newValue;\n    return true;\n}",
+        "function removeSpaces(str) {\n    return str ? str.replace(/\\s/g, '') : str;\n}"
+    ],
+    "template": "GRID_TEMPLATE_PLACEHOLDER",
+    "gridSettings": {
+        "width": "100%",
+        "height": "100%",
+        "theme": "ag-theme-alpine-dark",
+        "enterprise": true,
+        "modules": ["clientside", "richselect", "setfilter", "menu", "columnpanel"]
+    }
+}

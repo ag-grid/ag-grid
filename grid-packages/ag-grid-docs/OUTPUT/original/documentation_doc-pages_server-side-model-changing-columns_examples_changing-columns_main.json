@@ -1,0 +1,59 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        colDefAthlete,\n        colDefAge,\n        colDefCountry,\n        colDefYear,\n        colDefSport,\n        colDefGold,\n        colDefSilver,\n        colDefBronze\n    ]"
+        },
+        {
+            "name": "defaultColDef",
+            "value": "{\n        flex: 1,\n        minWidth: 120,\n        resizable: true,\n        sortable: true\n    }"
+        },
+        { "name": "autoGroupColumnDef", "value": "{ minWidth: 200 }" },
+        { "name": "rowModelType", "value": "\"serverSide\"" },
+        { "name": "serverSideStoreType", "value": "\"partial\"" },
+        { "name": "animateRows", "value": "true" },
+        { "name": "suppressAggFuncInHeader", "value": "true" }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    flex: 1,\n    minWidth: 120,\n    resizable: true,\n    sortable: true\n}",
+    "globalComponents": [],
+    "parsedColDefs": "",
+    "instanceMethods": [],
+    "externalEventHandlers": [
+        {
+            "name": "onBtApply",
+            "params": "",
+            "body": "function onBtApply() {\n    var cols = [];\n    if (getBooleanValue('#athlete')) {\n        cols.push(colDefAthlete);\n    }\n    if (getBooleanValue('#age')) {\n        cols.push(colDefAge);\n    }\n    if (getBooleanValue('#country')) {\n        cols.push(colDefCountry);\n    }\n    if (getBooleanValue('#year')) {\n        cols.push(colDefYear);\n    }\n    if (getBooleanValue('#sport')) {\n        cols.push(colDefSport);\n    }\n    if (getBooleanValue('#gold')) {\n        cols.push(colDefGold);\n    }\n    if (getBooleanValue('#silver')) {\n        cols.push(colDefSilver);\n    }\n    if (getBooleanValue('#bronze')) {\n        cols.push(colDefBronze);\n    }\n    this.gridApi.setColumnDefs(cols);\n}"
+        }
+    ],
+    "utils": [
+        "var colDefCountry = {\n    field: 'country',\n    rowGroup: true\n};",
+        "var colDefYear = {\n    field: 'year',\n    rowGroup: true\n};",
+        "var colDefAthlete = {\n    field: 'athlete',\n    filter: 'agSetColumnFilter',\n    filterParams: { values: getAthletesAsync },\n    menuTabs: ['filterMenuTab']\n};",
+        "var colDefAge = { field: 'age' };",
+        "var colDefSport = { field: 'sport' };",
+        "var colDefGold = {\n    field: 'gold',\n    aggFunc: 'sum'\n};",
+        "var colDefSilver = {\n    field: 'silver',\n    aggFunc: 'sum'\n};",
+        "var colDefBronze = {\n    field: 'bronze',\n    aggFunc: 'sum'\n};",
+        "function getAthletesAsync(params) {\n    var countries = fakeServer.getAthletes();\n    setTimeout(function () {\n        params.success(countries);\n    }, 500);\n}",
+        "function getBooleanValue(cssSelector) {\n    return document.querySelector(cssSelector).checked === true;\n}",
+        "function getServerSideDatasource(server) {\n    return {\n        getRows: function (params) {\n            console.log('[Datasource] - rows requested by grid: ', params.request);\n            var response = server.getData(params.request);\n            setTimeout(function () {\n                if (response.success) {\n                    params.success({\n                        rowData: response.rows,\n                        rowCount: response.lastRow\n                    });\n                } else {\n                    params.fail();\n                }\n            }, 200);\n        }\n    };\n}",
+        "var fakeServer = undefined;"
+    ],
+    "onGridReady": "{\n    document.getElementById('athlete').checked = true;\n    document.getElementById('age').checked = true;\n    document.getElementById('country').checked = true;\n    document.getElementById('year').checked = true;\n    document.getElementById('sport').checked = true;\n    document.getElementById('gold').checked = true;\n    document.getElementById('silver').checked = true;\n    document.getElementById('bronze').checked = true;\n}",
+    "data": {
+        "url": "'https://www.ag-grid.com/example-assets/olympic-winners.json'",
+        "callback": "{\n    fakeServer = new FakeServer(data);\n    var datasource = getServerSideDatasource(fakeServer);\n    params.api.setServerSideDatasource(datasource);\n}"
+    },
+    "template": "<div class=\"test-container\">\n\n    <div class=\"test-header\">\n        Select columns to show then hit 'Apply'\n    </div>\n\n    <div class=\"test-header\">\n        <label><input type=\"checkbox\" id=\"athlete\">Athlete</label>\n        <label><input type=\"checkbox\" id=\"age\">Age</label>\n        <label><input type=\"checkbox\" id=\"country\">Country</label>\n        <label><input type=\"checkbox\" id=\"year\">Year</label>\n        <label><input type=\"checkbox\" id=\"sport\">Sport</label>\n\n        <label><input type=\"checkbox\" id=\"gold\">Gold</label>\n        <label><input type=\"checkbox\" id=\"silver\">Silver</label>\n        <label><input type=\"checkbox\" id=\"bronze\">Bronze</label>\n\n        <button onclick=\"onBtApply()\">Apply</button>\n    </div>\n\n    GRID_TEMPLATE_PLACEHOLDER\n\n</div>\n",
+    "gridSettings": {
+        "width": "100%",
+        "height": "100%",
+        "theme": "ag-theme-alpine-dark",
+        "enterprise": true,
+        "exampleHeight": 605,
+        "extras": ["alasql"],
+        "modules": ["serverside", "rowgrouping", "menu", "columnpanel"]
+    }
+}

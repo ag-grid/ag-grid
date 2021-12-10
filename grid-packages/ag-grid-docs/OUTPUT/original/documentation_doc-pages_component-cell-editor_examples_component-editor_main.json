@@ -1,0 +1,30 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            headerName: \"Doubling\",\n            field: \"number\",\n            cellEditor: \"doublingEditor\",\n            editable: true,\n            width: 300\n        },\n        {\n            field: \"mood\",\n            cellRenderer: \"moodRenderer\",\n            cellEditor: \"moodEditor\",\n            editable: true,\n            width: 300\n        },\n        {\n            headerName: \"Numeric\",\n            field: \"number\",\n            cellEditor: \"numericEditor\",\n            editable: true,\n            width: 280\n        }\n    ]"
+        },
+        {
+            "name": "rowData",
+            "value": "[\n        {\n            name: \"Bob\",\n            mood: \"Happy\",\n            number: 10\n        },\n        {\n            name: \"Harry\",\n            mood: \"Sad\",\n            number: 3\n        },\n        {\n            name: \"Sally\",\n            mood: \"Happy\",\n            number: 20\n        },\n        {\n            name: \"Mary\",\n            mood: \"Sad\",\n            number: 5\n        },\n        {\n            name: \"John\",\n            mood: \"Happy\",\n            number: 15\n        },\n        {\n            name: \"Jack\",\n            mood: \"Happy\",\n            number: 25\n        },\n        {\n            name: \"Sue\",\n            mood: \"Sad\",\n            number: 43\n        },\n        {\n            name: \"Sean\",\n            mood: \"Sad\",\n            number: 1335\n        },\n        {\n            name: \"Niall\",\n            mood: \"Happy\",\n            number: 2\n        },\n        {\n            name: \"Alberto\",\n            mood: \"Happy\",\n            number: 123\n        },\n        {\n            name: \"Fred\",\n            mood: \"Sad\",\n            number: 532\n        },\n        {\n            name: \"Jenny\",\n            mood: \"Happy\",\n            number: 34\n        },\n        {\n            name: \"Larry\",\n            mood: \"Happy\",\n            number: 13\n        }\n    ]"
+        },
+        {
+            "name": "components",
+            "value": "{\n        doublingEditor: DoublingEditor,\n        moodRenderer: MoodRenderer,\n        moodEditor: MoodEditor,\n        numericEditor: NumericEditor\n    }"
+        },
+        {
+            "name": "defaultColDef",
+            "value": "{\n        editable: true,\n        sortable: true,\n        flex: 1,\n        minWidth: 100,\n        filter: true,\n        resizable: true\n    }"
+        }
+    ],
+    "components": [],
+    "defaultColDef": null,
+    "globalComponents": [],
+    "parsedColDefs": "",
+    "instanceMethods": [],
+    "externalEventHandlers": [],
+    "utils": [],
+    "template": "<div style=\"height: 100%; box-sizing: border-box;\">\n    GRID_TEMPLATE_PLACEHOLDER\n</div>\n",
+    "gridSettings": { "width": "100%", "height": "100%", "theme": "ag-theme-alpine", "exampleHeight": 370 }
+}

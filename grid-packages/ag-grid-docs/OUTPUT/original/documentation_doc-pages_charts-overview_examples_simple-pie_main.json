@@ -1,0 +1,13 @@
+{
+    "properties": [
+        {
+            "name": "options",
+            "value": "{\n        \n        autoSize: true,\n        title: {\n            text: 'Religions of London Population (2016)',\n            fontSize: 18\n        },\n        subtitle: { text: 'Source: Office for National Statistics' },\n        series: [{\n                data: data,\n                type: 'pie',\n                labelKey: 'religion',\n                angleKey: 'population',\n                label: { minAngle: 0 },\n                callout: { strokeWidth: 2 },\n                fills: [\n                    '#febe76',\n                    '#ff7979',\n                    '#badc58',\n                    '#f9ca23',\n                    '#f0932b',\n                    '#eb4c4b',\n                    '#6ab04c',\n                    '#7ed6df'\n                ],\n                strokes: [\n                    '#b28553',\n                    '#b35555',\n                    '#829a3e',\n                    '#ae8d19',\n                    '#a8671e',\n                    '#a43535',\n                    '#4a7b35',\n                    '#58969c'\n                ]\n            }],\n        legend: { enabled: false }\n    }"
+        }
+    ],
+    "externalEventHandlers": [],
+    "instanceMethods": [],
+    "globals": [],
+    "init": [],
+    "template": "$$CHART$$\n"
+}

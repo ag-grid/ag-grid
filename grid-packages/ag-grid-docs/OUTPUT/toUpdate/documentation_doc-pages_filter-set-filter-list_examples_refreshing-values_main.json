@@ -1,0 +1,56 @@
+{
+    "eventHandlers": [
+        {
+            "name": "firstDataRendered",
+            "handlerName": "onFirstDataRendered",
+            "handler": "function onFirstDataRendered(params) {\n    ;\n    params.api.getToolPanelInstance('filters').expandFilters();\n}"
+        }
+    ],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            colId: \"array\",\n            headerName: \"Values Array\",\n            field: \"animal\",\n            filter: \"agSetColumnFilter\",\n            filterParams: arrayFilterParams\n        },\n        {\n            colId: \"callback\",\n            headerName: \"Values Callback\",\n            field: \"animal\",\n            filter: \"agSetColumnFilter\",\n            filterParams: callbackFilterParams\n        }\n    ]"
+        },
+        {
+            "name": "defaultColDef",
+            "value": "{\n        flex: 1,\n        filter: true,\n        resizable: true\n    }"
+        },
+        { "name": "sideBar", "value": "\"filters\"" },
+        { "name": "rowData", "value": "getData()" }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    flex: 1,\n    filter: true,\n    resizable: true\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            colId: \"array\",\n            headerName: \"Values Array\",\n            field: \"animal\",\n            filter: \"agSetColumnFilter\",\n            filterParams: \"AG_LITERAL_arrayFilterParams\"\n        },\n        {\n            colId: \"callback\",\n            headerName: \"Values Callback\",\n            field: \"animal\",\n            filter: \"agSetColumnFilter\",\n            filterParams: \"AG_LITERAL_callbackFilterParams\"\n        }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [
+        {
+            "name": "useList1",
+            "params": "",
+            "body": "function useList1() {\n    console.log('Updating values to ' + list1);\n    valuesArray.length = 0;\n    list1.forEach(function (value) {\n        valuesArray.push(value);\n    });\n    var filter = this.gridApi.getFilterInstance('array');\n    filter.refreshFilterValues();\n    valuesCallbackList = list1;\n}"
+        },
+        {
+            "name": "useList2",
+            "params": "",
+            "body": "function useList2() {\n    console.log('Updating values to ' + list2);\n    valuesArray.length = 0;\n    list2.forEach(function (value) {\n        valuesArray.push(value);\n    });\n    var filter = this.gridApi.getFilterInstance('array');\n    filter.refreshFilterValues();\n    valuesCallbackList = list2;\n}"
+        }
+    ],
+    "utils": [
+        "var list1 = [\n    'Elephant',\n    'Lion',\n    'Monkey'\n];",
+        "var list2 = [\n    'Elephant',\n    'Giraffe',\n    'Tiger'\n];",
+        "var valuesArray = list1.slice();",
+        "var valuesCallbackList = list1;",
+        "function valuesCallback(params) {\n    setTimeout(function () {\n        params.success(valuesCallbackList);\n    }, 1000);\n}",
+        "var arrayFilterParams = { values: valuesArray };",
+        "var callbackFilterParams = {\n    values: valuesCallback,\n    refreshValuesOnOpen: true\n};"
+    ],
+    "template": "<div id=\"container\">\n    <div id=\"header\">\n        <button onclick=\"useList1()\">Use <code>['Elephant', 'Lion', 'Monkey']</code></button>\n        <button onclick=\"useList2()\">Use <code>['Elephant', 'Giraffe', 'Tiger']</code></button>\n    </div>\n    GRID_TEMPLATE_PLACEHOLDER\n</div>",
+    "gridSettings": {
+        "width": "100%",
+        "height": "100%",
+        "theme": "ag-theme-alpine",
+        "enterprise": true,
+        "exampleHeight": 755,
+        "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"]
+    }
+}

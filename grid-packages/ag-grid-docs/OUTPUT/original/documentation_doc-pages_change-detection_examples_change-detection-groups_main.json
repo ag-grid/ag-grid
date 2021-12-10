@@ -1,0 +1,36 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            field: \"group\",\n            rowGroup: true,\n            editable: true\n        },\n        {\n            field: \"a\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"b\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"c\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"d\",\n            type: \"valueColumn\"\n        },\n        {\n            headerName: \"Total\",\n            type: \"totalColumn\",\n            valueGetter: \"getValue(\\\"a\\\") + getValue(\\\"b\\\") + getValue(\\\"c\\\") + getValue(\\\"d\\\")\"\n        }\n    ]"
+        },
+        { "name": "defaultColDef", "value": "{\n        flex: 1,\n        sortable: true\n    }" },
+        { "name": "autoGroupColumnDef", "value": "{ minWidth: 100 }" },
+        {
+            "name": "columnTypes",
+            "value": "{\n        valueColumn: {\n            editable: true,\n            aggFunc: \"sum\",\n            valueParser: \"Number(newValue)\",\n            cellClass: \"number-cell\",\n            cellRenderer: \"agAnimateShowChangeCellRenderer\",\n            filter: \"agNumberColumnFilter\"\n        },\n        totalColumn: {\n            cellRenderer: \"agAnimateShowChangeCellRenderer\",\n            cellClass: \"number-cell\"\n        }\n    }"
+        },
+        { "name": "rowData", "value": "getRowData()" },
+        { "name": "groupDefaultExpanded", "value": "1" },
+        { "name": "suppressAggFuncInHeader", "value": "true" },
+        { "name": "animateRows", "value": "true" }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    flex: 1,\n    sortable: true\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            field: \"group\",\n            rowGroup: true,\n            editable: true\n        },\n        {\n            field: \"a\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"b\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"c\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"d\",\n            type: \"valueColumn\"\n        },\n        {\n            headerName: \"Total\",\n            type: \"totalColumn\",\n            valueGetter: \"getValue(\\\"a\\\") + getValue(\\\"b\\\") + getValue(\\\"c\\\") + getValue(\\\"d\\\")\"\n        }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [],
+    "utils": [
+        "function getRowData() {\n    var rowData = [];\n    for (var i = 1; i <= 16; i++) {\n        rowData.push({\n            group: i < 8 ? 'A' : 'B',\n            a: i * 863 % 100,\n            b: i * 811 % 100,\n            c: i * 743 % 100,\n            d: i * 677 % 100\n        });\n    }\n    return rowData;\n}"
+    ],
+    "template": "\n\nGRID_TEMPLATE_PLACEHOLDER",
+    "gridSettings": {
+        "width": "100%",
+        "height": "100%",
+        "theme": "ag-theme-alpine-dark",
+        "enterprise": true,
+        "exampleHeight": 590
+    }
+}

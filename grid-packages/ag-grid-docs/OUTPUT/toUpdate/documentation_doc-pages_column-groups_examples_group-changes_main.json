@@ -1,0 +1,48 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            field: \"athlete\",\n            colId: \"athlete\"\n        },\n        {\n            field: \"age\",\n            colId: \"age\"\n        },\n        {\n            field: \"country\",\n            colId: \"country\"\n        },\n        {\n            field: \"year\",\n            colId: \"year\"\n        },\n        {\n            field: \"date\",\n            colId: \"date\"\n        },\n        {\n            field: \"total\",\n            colId: \"total\"\n        },\n        {\n            field: \"gold\",\n            colId: \"gold\"\n        },\n        {\n            field: \"silver\",\n            colId: \"silver\"\n        },\n        {\n            field: \"bronze\",\n            colId: \"bronze\"\n        }\n    ]"
+        },
+        {
+            "name": "defaultColDef",
+            "value": "{\n        initialWidth: 150,\n        sortable: true,\n        resizable: true,\n        filter: true\n    }"
+        },
+        { "name": "maintainColumnOrder", "value": "true" }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    initialWidth: 150,\n    sortable: true,\n    resizable: true,\n    filter: true\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            colId: \"athlete\"\n        },\n        {\n            field: \"age\",\n            colId: \"age\"\n        },\n        {\n            field: \"country\",\n            colId: \"country\"\n        },\n        {\n            field: \"year\",\n            colId: \"year\"\n        },\n        {\n            field: \"date\",\n            colId: \"date\"\n        },\n        {\n            field: \"total\",\n            colId: \"total\"\n        },\n        {\n            field: \"gold\",\n            colId: \"gold\"\n        },\n        {\n            field: \"silver\",\n            colId: \"silver\"\n        },\n        {\n            field: \"bronze\",\n            colId: \"bronze\"\n        }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [
+        {
+            "name": "onBtNoGroups",
+            "params": "",
+            "body": "function onBtNoGroups() {\n    const columnDefs = [\n        {\n            field: 'athlete',\n            colId: 'athlete'\n        },\n        {\n            field: 'age',\n            colId: 'age'\n        },\n        {\n            field: 'country',\n            colId: 'country'\n        },\n        {\n            field: 'year',\n            colId: 'year'\n        },\n        {\n            field: 'date',\n            colId: 'date'\n        },\n        {\n            field: 'total',\n            colId: 'total'\n        },\n        {\n            field: 'gold',\n            colId: 'gold'\n        },\n        {\n            field: 'silver',\n            colId: 'silver'\n        },\n        {\n            field: 'bronze',\n            colId: 'bronze'\n        }\n    ];\n    this.gridApi.setColumnDefs(columnDefs);\n}"
+        },
+        {
+            "name": "onMedalsInGroupOnly",
+            "params": "",
+            "body": "function onMedalsInGroupOnly() {\n    const columnDefs = [\n        {\n            field: 'athlete',\n            colId: 'athlete'\n        },\n        {\n            field: 'age',\n            colId: 'age'\n        },\n        {\n            field: 'country',\n            colId: 'country'\n        },\n        {\n            field: 'year',\n            colId: 'year'\n        },\n        {\n            field: 'date',\n            colId: 'date'\n        },\n        {\n            headerName: 'Medals',\n            headerClass: 'medals-group',\n            children: [\n                {\n                    field: 'total',\n                    colId: 'total'\n                },\n                {\n                    field: 'gold',\n                    colId: 'gold'\n                },\n                {\n                    field: 'silver',\n                    colId: 'silver'\n                },\n                {\n                    field: 'bronze',\n                    colId: 'bronze'\n                }\n            ]\n        }\n    ];\n    this.gridApi.setColumnDefs(columnDefs);\n}"
+        },
+        {
+            "name": "onParticipantInGroupOnly",
+            "params": "",
+            "body": "function onParticipantInGroupOnly() {\n    const columnDefs = [\n        {\n            headerName: 'Participant',\n            headerClass: 'participant-group',\n            children: [\n                {\n                    field: 'athlete',\n                    colId: 'athlete'\n                },\n                {\n                    field: 'age',\n                    colId: 'age'\n                },\n                {\n                    field: 'country',\n                    colId: 'country'\n                },\n                {\n                    field: 'year',\n                    colId: 'year'\n                },\n                {\n                    field: 'date',\n                    colId: 'date'\n                }\n            ]\n        },\n        {\n            field: 'total',\n            colId: 'total'\n        },\n        {\n            field: 'gold',\n            colId: 'gold'\n        },\n        {\n            field: 'silver',\n            colId: 'silver'\n        },\n        {\n            field: 'bronze',\n            colId: 'bronze'\n        }\n    ];\n    this.gridApi.setColumnDefs(columnDefs);\n}"
+        },
+        {
+            "name": "onParticipantAndMedalsInGroups",
+            "params": "",
+            "body": "function onParticipantAndMedalsInGroups() {\n    const columnDefs = [\n        {\n            headerName: 'Participant',\n            headerClass: 'participant-group',\n            children: [\n                {\n                    field: 'athlete',\n                    colId: 'athlete'\n                },\n                {\n                    field: 'age',\n                    colId: 'age'\n                },\n                {\n                    field: 'country',\n                    colId: 'country'\n                },\n                {\n                    field: 'year',\n                    colId: 'year'\n                },\n                {\n                    field: 'date',\n                    colId: 'date'\n                }\n            ]\n        },\n        {\n            headerName: 'Medals',\n            headerClass: 'medals-group',\n            children: [\n                {\n                    field: 'total',\n                    colId: 'total'\n                },\n                {\n                    field: 'gold',\n                    colId: 'gold'\n                },\n                {\n                    field: 'silver',\n                    colId: 'silver'\n                },\n                {\n                    field: 'bronze',\n                    colId: 'bronze'\n                }\n            ]\n        }\n    ];\n    this.gridApi.setColumnDefs(columnDefs);\n}"
+        }
+    ],
+    "utils": [],
+    "data": {
+        "url": "'https://www.ag-grid.com/example-assets/olympic-winners.json'",
+        "callback": "params.api.setRowData(data)"
+    },
+    "template": "<div class=\"test-container\">\n    <div class=\"test-header\">\n        <label>\n            <button onclick=\"onBtNoGroups()\">No Groups</button>\n        </label>\n        <label>\n            <div class=\"participant-group legend-box\"></div>\n            <button onclick=\"onParticipantInGroupOnly()\">Participant in Group</button>\n        </label>\n        <label>\n            <div class=\"medals-group legend-box\"></div>\n            <button onclick=\"onMedalsInGroupOnly()\">Medals in Group</button>\n        </label>\n        <label>\n            <div class=\"participant-group legend-box\"></div>\n            <div class=\"medals-group legend-box\"></div>\n            <button onclick=\"onParticipantAndMedalsInGroups()\">Participant and Medals in Group</button>\n        </label>\n    </div>\n    GRID_TEMPLATE_PLACEHOLDER\n</div>",
+    "gridSettings": { "width": "100%", "height": "100%", "theme": "ag-theme-alpine" }
+}

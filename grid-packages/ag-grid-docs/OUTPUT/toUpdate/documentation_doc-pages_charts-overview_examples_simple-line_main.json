@@ -1,0 +1,13 @@
+{
+    "properties": [
+        {
+            "name": "options",
+            "value": "{\n        \n        autoSize: true,\n        data: data,\n        title: {\n            text: 'Road fuel prices (2019)',\n            fontSize: 18\n        },\n        subtitle: { text: 'Source: Department for Business, Energy & Industrial Strategy' },\n        series: [\n            {\n                type: 'line',\n                xKey: 'date',\n                yKey: 'petrol',\n                stroke: '#01c185',\n                marker: {\n                    stroke: '#01c185',\n                    fill: '#01c185'\n                }\n            },\n            {\n                type: 'line',\n                xKey: 'date',\n                yKey: 'diesel',\n                stroke: '#000000',\n                marker: {\n                    stroke: '#000000',\n                    fill: '#000000'\n                }\n            }\n        ],\n        axes: [\n            {\n                position: 'bottom',\n                type: 'time',\n                tick: { count: agCharts.time.month.every(2) },\n                title: { text: 'Date' }\n            },\n            {\n                position: 'left',\n                type: 'number',\n                title: { text: 'Price in pence' }\n            }\n        ]\n    }"
+        }
+    ],
+    "externalEventHandlers": [],
+    "instanceMethods": [],
+    "globals": [],
+    "init": [],
+    "template": "$$CHART$$\n"
+}

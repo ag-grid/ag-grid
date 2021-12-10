@@ -1,0 +1,13 @@
+{
+    "properties": [
+        {
+            "name": "options",
+            "value": "{\n        \n        autoSize: true,\n        data: data,\n        title: {\n            text: 'Vehicle fuel efficiency by engine size (USA 1987)',\n            fontSize: 18\n        },\n        subtitle: { text: 'Source: UCI' },\n        series: [\n            {\n                type: 'histogram',\n                xKey: 'engine-size',\n                xName: 'Engine Size',\n                yKey: 'highway-mpg',\n                yName: 'Highway MPG',\n                fill: '#41874b',\n                stroke: '#41874b',\n                fillOpacity: 0.5,\n                aggregation: 'mean'\n            },\n            {\n                type: 'scatter',\n                xKey: 'engine-size',\n                xName: 'Engine Size',\n                yKey: 'highway-mpg',\n                yName: 'Highway MPG',\n                fill: '#333',\n                stroke: '#333',\n                fillOpacity: 0.5\n            }\n        ],\n        axes: [\n            {\n                position: 'bottom',\n                type: 'number',\n                title: { text: 'Engine Size (Cubic inches)' }\n            },\n            {\n                position: 'left',\n                type: 'number',\n                title: { text: 'Highway MPG' }\n            }\n        ],\n        legend: { enabled: false }\n    }"
+        }
+    ],
+    "externalEventHandlers": [],
+    "instanceMethods": [],
+    "globals": [],
+    "init": [],
+    "template": "$$CHART$$\n"
+}

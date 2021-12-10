@@ -1,0 +1,13 @@
+{
+    "properties": [
+        {
+            "name": "options",
+            "value": "{\n        \n        autoSize: true,\n        data: data,\n        title: {\n            text: 'Engine size distribution (USA 1987)',\n            fontSize: 18\n        },\n        subtitle: { text: 'Source: UCI' },\n        series: [{\n                type: 'histogram',\n                xKey: 'engine-size',\n                xName: 'Engine Size',\n                fillOpacity: 0.5\n            }],\n        axes: [\n            {\n                position: 'bottom',\n                type: 'number',\n                title: { text: 'Engine Size (Cubic inches)' }\n            },\n            {\n                position: 'left',\n                type: 'number',\n                title: { text: 'Frequency' }\n            }\n        ],\n        legend: { enabled: false }\n    }"
+        }
+    ],
+    "externalEventHandlers": [],
+    "instanceMethods": [],
+    "globals": [],
+    "init": [],
+    "template": "$$CHART$$\n"
+}

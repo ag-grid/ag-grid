@@ -1,0 +1,63 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            field: \"category\",\n            rowGroupIndex: 1,\n            hide: true\n        },\n        {\n            field: \"price\",\n            aggFunc: \"sum\",\n            valueFormatter: poundFormatter\n        },\n        { field: \"zombies\" },\n        { field: \"style\" },\n        { field: \"clothes\" }\n    ]"
+        },
+        { "name": "defaultColDef", "value": "{\n        flex: 1,\n        width: 100,\n        sortable: true\n    }" },
+        {
+            "name": "autoGroupColumnDef",
+            "value": "{\n        headerName: \"Group\",\n        minWidth: 250,\n        field: \"model\",\n        rowGroupIndex: 1,\n        cellRenderer: \"agGroupCellRenderer\",\n        cellRendererParams: { checkbox: true }\n    }"
+        },
+        { "name": "groupDefaultExpanded", "value": "1" },
+        { "name": "rowData", "value": "getData()" },
+        { "name": "suppressRowClickSelection", "value": "true" },
+        { "name": "rowSelection", "value": "\"multiple\"" },
+        { "name": "animateRows", "value": "true" },
+        { "name": "groupSelectsChildren", "value": "true" },
+        { "name": "suppressAggFuncInHeader", "value": "true" },
+        {
+            "name": "getRowClass",
+            "value": "function (params) {\n        var rowNode = params.node;\n        if (rowNode.group) {\n            switch (rowNode.key) {\n            case \"In Workshop\":\n                return \"category-in-workshop\";\n            case \"Sold\":\n                return \"category-sold\";\n            case \"For Sale\":\n                return \"category-for-sale\";\n            default:\n                return undefined;\n            }\n        } else {\n            return undefined;\n        }\n    }"
+        }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    flex: 1,\n    width: 100,\n    sortable: true\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            field: \"category\",\n            rowGroupIndex: 1,\n            hide: true\n        },\n        {\n            field: \"price\",\n            aggFunc: \"sum\",\n            valueFormatter: \"AG_LITERAL_poundFormatter\"\n        },\n        { field: \"zombies\" },\n        { field: \"style\" },\n        { field: \"clothes\" }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [
+        {
+            "name": "getRowData",
+            "params": "",
+            "body": "function getRowData() {\n    var rowData = [];\n    this.gridApi.forEachNode(function (node) {\n        rowData.push(node.data);\n    });\n    console.log('Row Data:');\n    console.log(rowData);\n}"
+        },
+        {
+            "name": "onAddRow",
+            "params": "'For Sale'",
+            "body": "function onAddRow(category) {\n    var rowDataItem = createNewRowData(category);\n    this.gridApi.applyTransaction({ add: [rowDataItem] });\n}"
+        },
+        {
+            "name": "onMoveToGroup",
+            "params": "'For Sale'",
+            "body": "function onMoveToGroup(category) {\n    var selectedRowData = this.gridApi.getSelectedRows();\n    selectedRowData.forEach(function (dataItem) {\n        dataItem.category = category;\n    });\n    this.gridApi.applyTransaction({ update: selectedRowData });\n}"
+        },
+        {
+            "name": "onRemoveSelected",
+            "params": "",
+            "body": "function onRemoveSelected() {\n    var selectedRowData = this.gridApi.getSelectedRows();\n    this.gridApi.applyTransaction({ remove: selectedRowData });\n}"
+        }
+    ],
+    "utils": [
+        "function poundFormatter(params) {\n    return '\\xA3' + Math.floor(params.value).toString().replace(/(\\d)(?=(\\d{3})+(?!\\d))/g, '$1,');\n}"
+    ],
+    "template": "<div class=\"example-wrapper\">\n    <div style=\"margin-bottom: 5px;\">\n        <div>\n            <button class=\"bt-action\" onclick=\"onAddRow('For Sale')\">Add For Sale</button>\n            <button class=\"bt-action\" onclick=\"onAddRow('In Workshop')\">Add In Workshop</button>\n            <button class=\"bt-action\" onclick=\"onRemoveSelected()\">Remove Selected</button>\n            <button class=\"bt-action\" onclick=\"getRowData()\">Get Row Data</button>\n        </div>\n        <div style=\"margin-top: 5px;\">\n            <button class=\"bt-action\" onclick=\"onMoveToGroup('For Sale')\">Move to For Sale</button>\n            <button class=\"bt-action\" onclick=\"onMoveToGroup('In Workshop')\">Move to In Workshop</button>\n            <button class=\"bt-action\" onclick=\"onMoveToGroup('Sold')\">Move to Sold</button>\n        </div>\n    </div>\n\n    GRID_TEMPLATE_PLACEHOLDER\n</div>\n",
+    "gridSettings": {
+        "width": "100%",
+        "height": "100%",
+        "theme": "ag-theme-alpine",
+        "enterprise": true,
+        "modules": ["clientside", "rowgrouping"]
+    }
+}

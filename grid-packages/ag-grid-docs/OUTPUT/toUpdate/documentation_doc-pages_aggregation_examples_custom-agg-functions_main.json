@@ -1,0 +1,53 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            field: \"country\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            field: \"year\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            headerName: \"minMax(age)\",\n            field: \"age\",\n            aggFunc: minAndMaxAggFunction\n        },\n        {\n            headerName: \"avg(age)\",\n            field: \"age\",\n            aggFunc: avgAggFunction,\n            enableValue: true,\n            minWidth: 200\n        },\n        {\n            headerName: \"roundedAvg(age)\",\n            field: \"age\",\n            aggFunc: roundedAvgAggFunction,\n            enableValue: true,\n            minWidth: 200\n        },\n        {\n            headerName: \"sum(gold)\",\n            field: \"gold\",\n            aggFunc: \"sum\",\n            enableValue: true\n        },\n        {\n            headerName: \"abc(silver)\",\n            field: \"silver\",\n            aggFunc: \"123\",\n            enableValue: true\n        },\n        {\n            headerName: \"xyz(bronze)\",\n            field: \"bronze\",\n            aggFunc: \"xyz\",\n            enableValue: true\n        }\n    ]"
+        },
+        {
+            "name": "defaultColDef",
+            "value": "{\n        flex: 1,\n        minWidth: 150,\n        filter: true,\n        sortable: true,\n        resizable: true\n    }"
+        },
+        {
+            "name": "autoGroupColumnDef",
+            "value": "{\n        headerName: \"Athlete\",\n        field: \"athlete\",\n        minWidth: 250\n    }"
+        },
+        { "name": "enableRangeSelection", "value": "true" },
+        { "name": "suppressAggFuncInHeader", "value": "true" },
+        {
+            "name": "aggFuncs",
+            "value": "{\n        sum: sumFunction,\n        \"123\": oneTwoThreeFunc,\n        xyz: xyzFunc\n    }"
+        },
+        { "name": "sideBar", "value": "true" }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    flex: 1,\n    minWidth: 150,\n    filter: true,\n    sortable: true,\n    resizable: true\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            field: \"country\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            field: \"year\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            headerName: \"minMax(age)\",\n            field: \"age\",\n            aggFunc: \"AG_LITERAL_minAndMaxAggFunction\"\n        },\n        {\n            headerName: \"avg(age)\",\n            field: \"age\",\n            aggFunc: \"AG_LITERAL_avgAggFunction\",\n            enableValue: true,\n            minWidth: 200\n        },\n        {\n            headerName: \"roundedAvg(age)\",\n            field: \"age\",\n            aggFunc: \"AG_LITERAL_roundedAvgAggFunction\",\n            enableValue: true,\n            minWidth: 200\n        },\n        {\n            headerName: \"sum(gold)\",\n            field: \"gold\",\n            aggFunc: \"sum\",\n            enableValue: true\n        },\n        {\n            headerName: \"abc(silver)\",\n            field: \"silver\",\n            aggFunc: \"123\",\n            enableValue: true\n        },\n        {\n            headerName: \"xyz(bronze)\",\n            field: \"bronze\",\n            aggFunc: \"xyz\",\n            enableValue: true\n        }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [],
+    "utils": [
+        "function oneTwoThreeFunc(params) {\n    return 123;\n}",
+        "function xyzFunc(params) {\n    return 'xyz';\n}",
+        "function sumFunction(params) {\n    let result = 0;\n    params.values.forEach(value => {\n        if (typeof value === 'number') {\n            result += value;\n        }\n    });\n    return result;\n}",
+        "function minAndMaxAggFunction(params) {\n    const result = {\n        min: null,\n        max: null,\n        toString: function () {\n            return '(' + this.min + '..' + this.max + ')';\n        }\n    };\n    params.values.forEach(value => {\n        const groupNode = value !== null && value !== undefined && typeof value === 'object';\n        const minValue = groupNode ? value.min : value;\n        const maxValue = groupNode ? value.max : value;\n        result.min = min(minValue, result.min);\n        result.max = max(maxValue, result.max);\n    });\n    return result;\n}",
+        "function avgAggFunction(params) {\n    let sum = 0;\n    let count = 0;\n    params.values.forEach(value => {\n        const groupNode = value !== null && value !== undefined && typeof value === 'object';\n        if (groupNode) {\n            sum += value.avg * value.count;\n            count += value.count;\n        } else {\n            if (typeof value === 'number') {\n                sum += value;\n                count++;\n            }\n        }\n    });\n    let avg = null;\n    if (count !== 0) {\n        avg = sum / count;\n    }\n    const result = {\n        count: count,\n        avg: avg,\n        toString: function () {\n            return this.avg;\n        }\n    };\n    return result;\n}",
+        "function roundedAvgAggFunction(params) {\n    const result = avgAggFunction(params);\n    if (result.avg) {\n        result.avg = Math.round(result.avg * 100) / 100;\n    }\n    return result;\n}",
+        "function min(a, b) {\n    const aMissing = typeof a !== 'number';\n    const bMissing = typeof b !== 'number';\n    if (aMissing && bMissing) {\n        return null;\n    } else if (aMissing) {\n        return b;\n    } else if (bMissing) {\n        return a;\n    } else if (a > b) {\n        return b;\n    } else {\n        return a;\n    }\n}",
+        "function max(a, b) {\n    const aMissing = typeof a !== 'number';\n    const bMissing = typeof b !== 'number';\n    if (aMissing && bMissing) {\n        return null;\n    } else if (aMissing) {\n        return b;\n    } else if (bMissing) {\n        return a;\n    } else if (a < b) {\n        return b;\n    } else {\n        return a;\n    }\n}"
+    ],
+    "onGridReady": "{\n    params.api.addAggFunc('xyz', xyzFunc);\n}",
+    "data": {
+        "url": "'https://www.ag-grid.com/example-assets/olympic-winners.json'",
+        "callback": "params.api.setRowData(data)"
+    },
+    "template": "GRID_TEMPLATE_PLACEHOLDER",
+    "gridSettings": {
+        "width": "100%",
+        "height": "100%",
+        "theme": "ag-theme-alpine",
+        "enterprise": true,
+        "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel", "setfilter"]
+    }
+}

@@ -1,0 +1,37 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            field: \"athlete\",\n            minWidth: 200,\n            enableRowGroup: true,\n            enablePivot: true\n        },\n        {\n            field: \"age\",\n            enableValue: true\n        },\n        {\n            field: \"country\",\n            minWidth: 200,\n            enableRowGroup: true,\n            enablePivot: true,\n            headerValueGetter: countryHeaderValueGetter\n        },\n        {\n            field: \"year\",\n            enableRowGroup: true,\n            enablePivot: true\n        },\n        {\n            field: \"date\",\n            minWidth: 180,\n            enableRowGroup: true,\n            enablePivot: true\n        },\n        {\n            field: \"sport\",\n            minWidth: 200,\n            enableRowGroup: true,\n            enablePivot: true\n        },\n        {\n            field: \"gold\",\n            hide: true,\n            enableValue: true,\n            toolPanelClass: \"tp-gold\"\n        },\n        {\n            field: \"silver\",\n            hide: true,\n            enableValue: true,\n            toolPanelClass: [\"tp-silver\"]\n        },\n        {\n            field: \"bronze\",\n            hide: true,\n            enableValue: true,\n            toolPanelClass: function (params) {\n                return \"tp-bronze\";\n            }\n        },\n        {\n            headerName: \"Total\",\n            field: \"totalAgg\",\n            valueGetter: \"node.group ? data.totalAgg : data.gold + data.silver + data.bronze\"\n        }\n    ]"
+        },
+        {
+            "name": "defaultColDef",
+            "value": "{\n        flex: 1,\n        minWidth: 100,\n        sortable: true,\n        filter: true\n    }"
+        },
+        { "name": "sideBar", "value": "\"columns\"" },
+        { "name": "rowGroupPanelShow", "value": "\"always\"" }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    flex: 1,\n    minWidth: 100,\n    sortable: true,\n    filter: true\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            minWidth: 200,\n            enableRowGroup: true,\n            enablePivot: true\n        },\n        {\n            field: \"age\",\n            enableValue: true\n        },\n        {\n            field: \"country\",\n            minWidth: 200,\n            enableRowGroup: true,\n            enablePivot: true,\n            headerValueGetter: \"AG_LITERAL_countryHeaderValueGetter\"\n        },\n        {\n            field: \"year\",\n            enableRowGroup: true,\n            enablePivot: true\n        },\n        {\n            field: \"date\",\n            minWidth: 180,\n            enableRowGroup: true,\n            enablePivot: true\n        },\n        {\n            field: \"sport\",\n            minWidth: 200,\n            enableRowGroup: true,\n            enablePivot: true\n        },\n        {\n            field: \"gold\",\n            hide: true,\n            enableValue: true,\n            toolPanelClass: \"tp-gold\"\n        },\n        {\n            field: \"silver\",\n            hide: true,\n            enableValue: true,\n            toolPanelClass: [\"tp-silver\"]\n        },\n        {\n            field: \"bronze\",\n            hide: true,\n            enableValue: true,\n            toolPanelClass: \"AG_FUNCTION_function (params) {\\n    return 'tp-bronze';\\n}\"\n        },\n        {\n            headerName: \"Total\",\n            field: \"totalAgg\",\n            valueGetter: \"node.group ? data.totalAgg : data.gold + data.silver + data.bronze\"\n        }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [],
+    "utils": [
+        "function countryHeaderValueGetter(params) {\n    switch (params.location) {\n    case 'csv':\n        return 'CSV Country';\n    case 'clipboard':\n        return 'CLIP Country';\n    case 'toolPanel':\n        return 'TP Country';\n    case 'columnDrop':\n        return 'CD Country';\n    case 'header':\n        return 'H Country';\n    default:\n        return 'Should never happen!';\n    }\n}"
+    ],
+    "data": {
+        "url": "'https://www.ag-grid.com/example-assets/olympic-winners.json'",
+        "callback": "params.api.setRowData(data)"
+    },
+    "template": "\nGRID_TEMPLATE_PLACEHOLDER\n",
+    "gridSettings": {
+        "width": "100%",
+        "height": "100%",
+        "theme": "ag-theme-alpine",
+        "enterprise": true,
+        "exampleHeight": 610,
+        "modules": ["clientside", "menu", "setfilter", "columnpanel"]
+    }
+}

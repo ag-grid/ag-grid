@@ -1,0 +1,13 @@
+{
+    "properties": [
+        {
+            "name": "options",
+            "value": "{\n        \n        data: [\n            {\n                os: 'Android',\n                share: 56.9,\n                satisfaction: 10\n            },\n            {\n                os: 'iOS',\n                share: 22.5,\n                satisfaction: 15\n            },\n            {\n                os: 'BlackBerry',\n                share: 6.8,\n                satisfaction: 5\n            },\n            {\n                os: 'Symbian',\n                share: 8.5,\n                satisfaction: 1\n            },\n            {\n                os: 'Bada',\n                share: 2.6,\n                satisfaction: 2\n            },\n            {\n                os: 'Windows',\n                share: 1.9,\n                satisfaction: 12\n            }\n        ],\n        series: [\n            {\n                type: 'pie',\n                title: { text: 'Market Share' },\n                labelKey: 'os',\n                angleKey: 'share',\n                innerRadiusOffset: -40\n            },\n            {\n                type: 'pie',\n                title: { text: 'Satisfaction' },\n                labelKey: 'os',\n                angleKey: 'satisfaction',\n                outerRadiusOffset: -100,\n                innerRadiusOffset: -140\n            }\n        ]\n    }"
+        }
+    ],
+    "externalEventHandlers": [],
+    "instanceMethods": [],
+    "globals": [],
+    "init": [],
+    "template": "$$CHART$$\n"
+}

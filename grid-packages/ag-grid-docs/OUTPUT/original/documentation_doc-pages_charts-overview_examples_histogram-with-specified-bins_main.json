@@ -1,0 +1,13 @@
+{
+    "properties": [
+        {
+            "name": "options",
+            "value": "{\n        \n        autoSize: true,\n        data: data,\n        title: {\n            text: 'Vehicle weight distribution (USA 1987)',\n            fontSize: 18\n        },\n        subtitle: { text: 'Source: UCI' },\n        series: [{\n                type: 'histogram',\n                xKey: 'curb-weight',\n                xName: 'Curb weight',\n                fillOpacity: 0.5,\n                fill: '#8888ff',\n                stroke: '#000',\n                bins: [\n                    [\n                        0,\n                        2000\n                    ],\n                    [\n                        2000,\n                        3000\n                    ],\n                    [\n                        3000,\n                        4500\n                    ]\n                ],\n                areaPlot: true,\n                tooltip: {\n                    renderer: function (params) {\n                        var paramsMax = params.datum.domain[1];\n                        var sizeName = paramsMax === 2000 ? 'small' : paramsMax === 3000 ? 'medium' : 'large';\n                        return { content: '<b>' + params.datum.frequency + '</b> vehicles in the <b>' + sizeName + '</b> category by <b>' + params.xName.toLowerCase() + '</b>' };\n                    }\n                }\n            }],\n        axes: [\n            {\n                position: 'bottom',\n                type: 'number',\n                title: { text: 'Curb weight (pounds)' }\n            },\n            {\n                position: 'left',\n                type: 'number',\n                label: {\n                    formatter: function () {\n                        return '';\n                    }\n                }\n            }\n        ],\n        legend: { enabled: false }\n    }"
+        }
+    ],
+    "externalEventHandlers": [],
+    "instanceMethods": [],
+    "globals": [],
+    "init": [],
+    "template": "$$CHART$$\n"
+}

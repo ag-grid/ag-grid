@@ -1,0 +1,13 @@
+{
+    "properties": [
+        {
+            "name": "options",
+            "value": "{\n        \n        autoSize: true,\n        title: { text: 'Average expenditure on coffee' },\n        subtitle: { text: 'per person per week in Krakozhia' },\n        data: [\n            {\n                year: '2015',\n                spending: 35\n            },\n            {\n                year: '2016',\n                spending: 40\n            },\n            {\n                year: '2017',\n                spending: 43\n            },\n            {\n                year: '2018',\n                spending: 44\n            }\n        ],\n        series: [{\n                xKey: 'year',\n                yKey: 'spending'\n            }]\n    }"
+        }
+    ],
+    "externalEventHandlers": [],
+    "instanceMethods": [],
+    "globals": [],
+    "init": [],
+    "template": "$$CHART$$\n"
+}

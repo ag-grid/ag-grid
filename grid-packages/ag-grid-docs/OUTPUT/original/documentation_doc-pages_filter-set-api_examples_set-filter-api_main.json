@@ -1,0 +1,64 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            field: \"athlete\",\n            filter: \"agSetColumnFilter\",\n            filterParams: { cellHeight: 20 }\n        },\n        {\n            field: \"age\",\n            maxWidth: 120,\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"country\",\n            cellRenderer: \"countryCellRenderer\",\n            keyCreator: countryKeyCreator\n        },\n        {\n            field: \"year\",\n            maxWidth: 120\n        },\n        { field: \"date\" },\n        { field: \"sport\" },\n        {\n            field: \"gold\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"silver\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"bronze\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"total\",\n            filter: \"agNumberColumnFilter\"\n        }\n    ]"
+        },
+        {
+            "name": "defaultColDef",
+            "value": "{\n        flex: 1,\n        minWidth: 160,\n        filter: true,\n        resizable: true\n    }"
+        },
+        { "name": "components", "value": "{ countryCellRenderer: countryCellRenderer }" }
+    ],
+    "components": [],
+    "defaultColDef": null,
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            filter: \"agSetColumnFilter\",\n            filterParams: { cellHeight: 20 }\n        },\n        {\n            field: \"age\",\n            maxWidth: 120,\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"country\",\n            cellRenderer: \"countryCellRenderer\",\n            keyCreator: \"AG_LITERAL_countryKeyCreator\"\n        },\n        {\n            field: \"year\",\n            maxWidth: 120\n        },\n        { field: \"date\" },\n        { field: \"sport\" },\n        {\n            field: \"gold\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"silver\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"bronze\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"total\",\n            filter: \"agNumberColumnFilter\"\n        }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [
+        {
+            "name": "selectJohnAndKenny",
+            "params": "",
+            "body": "function selectJohnAndKenny() {\n    const instance = this.gridApi.getFilterInstance('athlete');\n    instance.setModel({\n        values: [\n            'John Joe Nevin',\n            'Kenny Egan'\n        ]\n    });\n    this.gridApi.onFilterChanged();\n}"
+        },
+        {
+            "name": "selectEverything",
+            "params": "",
+            "body": "function selectEverything() {\n    const instance = this.gridApi.getFilterInstance('athlete');\n    instance.setModel(null);\n    this.gridApi.onFilterChanged();\n}"
+        },
+        {
+            "name": "selectNothing",
+            "params": "",
+            "body": "function selectNothing() {\n    const instance = this.gridApi.getFilterInstance('athlete');\n    instance.setModel({ values: [] });\n    this.gridApi.onFilterChanged();\n}"
+        },
+        {
+            "name": "setCountriesToFranceAustralia",
+            "params": "",
+            "body": "function setCountriesToFranceAustralia() {\n    const instance = this.gridApi.getFilterInstance('country');\n    instance.setFilterValues([\n        'France',\n        'Australia'\n    ]);\n    instance.applyModel();\n    this.gridApi.onFilterChanged();\n}"
+        },
+        {
+            "name": "setCountriesToAll",
+            "params": "",
+            "body": "function setCountriesToAll() {\n    const instance = this.gridApi.getFilterInstance('country');\n    instance.resetFilterValues();\n    instance.applyModel();\n    this.gridApi.onFilterChanged();\n}"
+        }
+    ],
+    "utils": [
+        "function countryCellRenderer(params) {\n    return params.value.name + ' (' + params.value.code + ')';\n}",
+        "function countryKeyCreator(params) {\n    return params.value.name;\n}",
+        "function patchData(data) {\n    data.forEach(function (row) {\n        const countryName = row.country;\n        const countryCode = countryName.substring(0, 2).toUpperCase();\n        row.country = {\n            name: countryName,\n            code: countryCode\n        };\n    });\n}"
+    ],
+    "data": {
+        "url": "'https://www.ag-grid.com/example-assets/olympic-winners.json'",
+        "callback": "{\n    patchData(data);\n    params.api.setRowData(data);\n}"
+    },
+    "template": "<div class=\"example-wrapper\">\n    <div class=\"example-header\">\n        <div>\n            Athlete:\n            <button onclick=\"selectNothing()\">API: Filter empty set</button>\n            <button onclick=\"selectJohnAndKenny()\">API: Filter only John Joe Nevin and Kenny Egan</button>\n            <button onclick=\"selectEverything()\">API: Remove filter</button>\n        </div>\n        <div style=\"padding-top: 10px;\">\n            Country - available filter values\n            <button onclick=\"setCountriesToFranceAustralia()\">Filter values restricted to France and Australia</button>\n            <button onclick=\"setCountriesToAll()\">Make all countries available</button>\n        </div>\n    </div>\n    GRID_TEMPLATE_PLACEHOLDER\n</div>",
+    "gridSettings": {
+        "width": "100%",
+        "height": "100%",
+        "theme": "ag-theme-alpine",
+        "enterprise": true,
+        "exampleHeight": 570,
+        "modules": ["clientside", "setfilter", "menu", "filterpanel"]
+    }
+}

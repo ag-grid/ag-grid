@@ -1,0 +1,33 @@
+{
+    "eventHandlers": [
+        {
+            "name": "firstDataRendered",
+            "handlerName": "onFirstDataRendered",
+            "handler": "function onFirstDataRendered(params) {\n    var myInput = document.getElementById('my-input');\n    myInput.addEventListener('keydown', function (event) {\n        if (event.key !== 'Tab')\n            return;\n        event.preventDefault();\n        params.api.ensureIndexVisible(0);\n        var firstCol = params.columnApi.getAllDisplayedColumns()[0];\n        params.api.ensureColumnVisible(firstCol);\n        params.api.setFocusedCell(0, firstCol);\n    }, true);\n}"
+        }
+    ],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            headerName: \"#\",\n            colId: \"rowNum\",\n            valueGetter: \"node.id\"\n        },\n        {\n            field: \"athlete\",\n            minWidth: 170\n        },\n        { field: \"age\" },\n        { field: \"country\" },\n        { field: \"year\" },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]"
+        },
+        { "name": "rowData", "value": "null" },
+        {
+            "name": "defaultColDef",
+            "value": "{\n        editable: true,\n        sortable: true,\n        flex: 1,\n        minWidth: 100,\n        filter: true,\n        resizable: true\n    }"
+        }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    editable: true,\n    sortable: true,\n    flex: 1,\n    minWidth: 100,\n    filter: true,\n    resizable: true\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            headerName: \"#\",\n            colId: \"rowNum\",\n            valueGetter: \"node.id\"\n        },\n        {\n            field: \"athlete\",\n            minWidth: 170\n        },\n        { field: \"age\" },\n        { field: \"country\" },\n        { field: \"year\" },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [],
+    "utils": [],
+    "data": {
+        "url": "'https://www.ag-grid.com/example-assets/olympic-winners.json'",
+        "callback": "params.api.setRowData(data)"
+    },
+    "template": "<div class=\"test-container\">\n    <div>\n        <div class=\"form-container\">\n            <label>\n                Tab into Grid (Focus the First Cell)\n                <input id=\"my-input\">\n            </label>\n        </div>\n        <div class=\"form-container\">\n            <label>\n                Tab into the Grid (Default Behavior)\n                <input>\n            </label>\n        </div>\n    </div>\n    GRID_TEMPLATE_PLACEHOLDER\n    <div class=\"form-container\">\n        <label>\n            Tab into the grid with Shift-Tab (Default Behavior)\n            <input>\n        </label>\n    </div>\n</div>\n",
+    "gridSettings": { "width": "100%", "height": "100%", "theme": "ag-theme-alpine" }
+}

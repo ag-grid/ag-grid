@@ -1,0 +1,13 @@
+{
+    "properties": [
+        {
+            "name": "options",
+            "value": "{\n        \n        autoSize: true,\n        data: data,\n        title: {\n            text: 'Regular Internet Users',\n            fontSize: 18\n        },\n        subtitle: { text: 'Source: Office for National Statistics' },\n        series: [{\n                type: 'column',\n                xKey: 'year',\n                yKeys: [\n                    '16-24',\n                    '25-34',\n                    '35-44',\n                    '45-54',\n                    '55-64',\n                    '65-74',\n                    '75+'\n                ],\n                grouped: true\n            }],\n        axes: [\n            {\n                type: 'category',\n                position: 'bottom'\n            },\n            {\n                type: 'number',\n                position: 'left',\n                label: {\n                    formatter: function (params) {\n                        return params.value / 1000 + 'M';\n                    }\n                }\n            }\n        ]\n    }"
+        }
+    ],
+    "externalEventHandlers": [],
+    "instanceMethods": [],
+    "globals": [],
+    "init": [],
+    "template": "$$CHART$$\n"
+}

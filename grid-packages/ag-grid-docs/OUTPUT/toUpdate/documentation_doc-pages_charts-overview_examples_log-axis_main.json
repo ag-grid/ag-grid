@@ -1,0 +1,24 @@
+{
+    "properties": [
+        {
+            "name": "options",
+            "value": "{\n        \n        data: data,\n        title: { text: 'World Population Over Time' },\n        subtitle: { text: 'log scale' },\n        series: [{\n                type: 'line',\n                xKey: 'year',\n                yKey: 'population'\n            }],\n        axes: [\n            {\n                type: 'log',\n                position: 'left',\n                title: {\n                    enabled: true,\n                    text: 'Population'\n                },\n                label: {\n                    format: ',.0f',\n                    fontSize: 10\n                }\n            },\n            {\n                type: 'number',\n                position: 'bottom',\n                title: {\n                    enabled: true,\n                    text: 'Year'\n                },\n                label: { fontSize: 10 }\n            }\n        ],\n        legend: { enabled: false }\n    }"
+        }
+    ],
+    "externalEventHandlers": [
+        {
+            "name": "useNumberAxis",
+            "params": "",
+            "body": "function useNumberAxis() {\n    options.subtitle = { text: 'linear scale' };\n    options.axes[0] = {\n        type: 'number',\n        position: 'left',\n        title: {\n            enabled: true,\n            text: 'Population'\n        },\n        label: {\n            format: ',.0f',\n            fontSize: 10\n        }\n    };\n    \n}"
+        },
+        {
+            "name": "useLogAxis",
+            "params": "",
+            "body": "function useLogAxis() {\n    options.subtitle = { text: 'log scale' };\n    options.axes[0] = {\n        type: 'log',\n        position: 'left',\n        title: {\n            enabled: true,\n            text: 'Population'\n        },\n        label: {\n            format: ',.0f',\n            fontSize: 10\n        }\n    };\n    \n}"
+        }
+    ],
+    "instanceMethods": [],
+    "globals": [],
+    "init": [],
+    "template": "<div class=\"wrapper\">\n    <div id=\"toolPanel\">\n        <button onclick=\"useNumberAxis()\">Number axis</button>\n        <span class=\"spacer\"></span>\n        <button onclick=\"useLogAxis()\">Log axis</button>\n    </div>\n    $$CHART$$\n</div>"
+}

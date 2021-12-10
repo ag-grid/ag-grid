@@ -1,0 +1,47 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        { field: \"a\" },\n        { field: \"b\" },\n        { field: \"c\" },\n        { field: \"d\" },\n        { field: \"e\" },\n        { field: \"f\" }\n    ]"
+        },
+        {
+            "name": "defaultColDef",
+            "value": "{\n        flex: 1,\n        cellClass: \"align-right\",\n        enableCellChangeFlash: true,\n        resizable: true,\n        valueFormatter: function (params) {\n            return formatNumber(params.value);\n        }\n    }"
+        },
+        { "name": "rowData", "value": "createRowData()" }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    flex: 1,\n    cellClass: 'align-right',\n    enableCellChangeFlash: true,\n    resizable: true,\n    valueFormatter: function (params) {\n        return formatNumber(params.value);\n    }\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        { field: \"a\" },\n        { field: \"b\" },\n        { field: \"c\" },\n        { field: \"d\" },\n        { field: \"e\" },\n        { field: \"f\" }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [
+        {
+            "name": "onUpdateSomeValues",
+            "params": "",
+            "body": "function onUpdateSomeValues() {\n    var rowCount = this.gridApi.getDisplayedRowCount();\n    for (var i = 0; i < 20; i++) {\n        var row = Math.floor(Math.random() * rowCount);\n        var rowNode = this.gridApi.getDisplayedRowAtIndex(row);\n        var col = [\n            'a',\n            'b',\n            'c',\n            'd',\n            'e',\n            'f'\n        ][i % 6];\n        rowNode.setDataValue(col, Math.floor(Math.random() * 10000));\n    }\n}"
+        },
+        {
+            "name": "onFlashOneCell",
+            "params": "",
+            "body": "function onFlashOneCell() {\n    var rowNode = this.gridApi.getDisplayedRowAtIndex(4);\n    this.gridApi.flashCells({\n        rowNodes: [rowNode],\n        columns: ['c']\n    });\n}"
+        },
+        {
+            "name": "onFlashTwoColumns",
+            "params": "",
+            "body": "function onFlashTwoColumns() {\n    this.gridApi.flashCells({\n        columns: [\n            'c',\n            'd'\n        ]\n    });\n}"
+        },
+        {
+            "name": "onFlashTwoRows",
+            "params": "",
+            "body": "function onFlashTwoRows() {\n    var rowNode1 = this.gridApi.getDisplayedRowAtIndex(4);\n    var rowNode2 = this.gridApi.getDisplayedRowAtIndex(5);\n    this.gridApi.flashCells({\n        rowNodes: [\n            rowNode1,\n            rowNode2\n        ]\n    });\n}"
+        }
+    ],
+    "utils": [
+        "function formatNumber(number) {\n    return Math.floor(number).toString().replace(/(\\d)(?=(\\d{3})+(?!\\d))/g, '$1,');\n}",
+        "function createRowData() {\n    var rowData = [];\n    for (var i = 0; i < 20; i++) {\n        rowData.push({\n            a: Math.floor((i + 323) * 25435 % 10000),\n            b: Math.floor((i + 323) * 23221 % 10000),\n            c: Math.floor((i + 323) * 468276 % 10000),\n            d: 0,\n            e: 0,\n            f: 0\n        });\n    }\n    return rowData;\n}"
+    ],
+    "template": "<div style=\"height: 100%; display: flex; flex-direction: column;\">\n    <div style=\"margin-bottom: 4px;\">\n        <button onclick=\"onUpdateSomeValues()\">Update Some Data</button>\n        <button onclick=\"onFlashOneCell()\" style=\"margin-left: 15px;\">Flash One Cell</button>\n        <button onclick=\"onFlashTwoRows()\">Flash Two Rows</button>\n        <button onclick=\"onFlashTwoColumns()\">Flash Two Columns</button>\n    </div>\n    <div style=\"flex-grow: 1;\">\n        GRID_TEMPLATE_PLACEHOLDER\n    </div>\n</div>\n",
+    "gridSettings": { "width": "100%", "height": "100%", "theme": "ag-theme-alpine", "enterprise": true }
+}

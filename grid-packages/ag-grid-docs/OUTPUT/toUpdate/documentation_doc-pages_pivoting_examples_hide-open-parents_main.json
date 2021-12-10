@@ -1,0 +1,40 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            field: \"country\",\n            rowGroup: true\n        },\n        {\n            field: \"athlete\",\n            rowGroup: true\n        },\n        {\n            headerName: \"Year\",\n            valueGetter: \"data.year\",\n            pivot: true\n        },\n        {\n            field: \"gold\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"silver\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"bronze\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"total\",\n            aggFunc: \"sum\"\n        }\n    ]"
+        },
+        {
+            "name": "defaultColDef",
+            "value": "{\n        flex: 1,\n        minWidth: 150,\n        enableRowGroup: true,\n        enablePivot: true,\n        enableValue: true,\n        filter: true,\n        resizable: true,\n        sortable: true\n    }"
+        },
+        { "name": "autoGroupColumnDef", "value": "{ minWidth: 250 }" },
+        { "name": "pivotMode", "value": "true" },
+        { "name": "groupDefaultExpanded", "value": "9" },
+        { "name": "groupHideOpenParents", "value": "true" },
+        { "name": "groupDisplayType", "value": "\"multipleColumns\"" },
+        { "name": "animateRows", "value": "true" },
+        { "name": "sideBar", "value": "true" }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    flex: 1,\n    minWidth: 150,\n    enableRowGroup: true,\n    enablePivot: true,\n    enableValue: true,\n    filter: true,\n    resizable: true,\n    sortable: true\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            field: \"country\",\n            rowGroup: true\n        },\n        {\n            field: \"athlete\",\n            rowGroup: true\n        },\n        {\n            headerName: \"Year\",\n            valueGetter: \"data.year\",\n            pivot: true\n        },\n        {\n            field: \"gold\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"silver\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"bronze\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"total\",\n            aggFunc: \"sum\"\n        }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [],
+    "utils": [],
+    "data": {
+        "url": "'https://www.ag-grid.com/example-assets/olympic-winners.json'",
+        "callback": "{\n    params.api.setRowData(data);\n}"
+    },
+    "template": "<div class=\"test-container\">\n    <div class=\"test-header\">\n        <span class=\"legend-item ag-row-level-0\"></span>\n        <span class=\"legend-label\">Top Level Group (After collapsing)</span>\n        <span class=\"legend-item ag-row-level-1\"></span>\n        <span class=\"legend-label\">Second Level Group</span>\n    </div>\n    GRID_TEMPLATE_PLACEHOLDER\n</div>",
+    "gridSettings": {
+        "width": "100%",
+        "height": "100%",
+        "theme": "ag-theme-alpine",
+        "enterprise": true,
+        "exampleHeight": 650,
+        "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel"]
+    }
+}

@@ -1,0 +1,34 @@
+{
+    "eventHandlers": [
+        {
+            "name": "firstDataRendered",
+            "handlerName": "onFirstDataRendered",
+            "handler": "function onFirstDataRendered(params) {\n    params.api.sizeColumnsToFit();\n}"
+        },
+        {
+            "name": "gridSizeChanged",
+            "handlerName": "onGridSizeChanged",
+            "handler": "function onGridSizeChanged(params) {\n    var gridWidth = document.getElementById('grid-wrapper').offsetWidth;\n    var columnsToShow = [];\n    var columnsToHide = [];\n    var totalColsWidth = 0;\n    var allColumns = params.columnApi.getAllColumns();\n    if (allColumns && allColumns.length > 0) {\n        for (var i = 0; i < allColumns.length; i++) {\n            var column = allColumns[i];\n            totalColsWidth += column.getMinWidth() || 0;\n            if (totalColsWidth > gridWidth) {\n                columnsToHide.push(column.getColId());\n            } else {\n                columnsToShow.push(column.getColId());\n            }\n        }\n    }\n    params.columnApi.setColumnsVisible(columnsToShow, true);\n    params.columnApi.setColumnsVisible(columnsToHide, false);\n    params.api.sizeColumnsToFit();\n}"
+        }
+    ],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            field: \"athlete\",\n            minWidth: 150\n        },\n        {\n            field: \"age\",\n            minWidth: 70,\n            maxWidth: 90\n        },\n        {\n            field: \"country\",\n            minWidth: 130\n        },\n        {\n            field: \"year\",\n            minWidth: 70,\n            maxWidth: 90\n        },\n        {\n            field: \"date\",\n            minWidth: 120\n        },\n        {\n            field: \"sport\",\n            minWidth: 120\n        },\n        {\n            field: \"gold\",\n            minWidth: 80\n        },\n        {\n            field: \"silver\",\n            minWidth: 80\n        },\n        {\n            field: \"bronze\",\n            minWidth: 80\n        },\n        {\n            field: \"total\",\n            minWidth: 80\n        }\n    ]"
+        },
+        { "name": "defaultColDef", "value": "{ resizable: true }" }
+    ],
+    "components": [],
+    "defaultColDef": "{ resizable: true }",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            minWidth: 150\n        },\n        {\n            field: \"age\",\n            minWidth: 70,\n            maxWidth: 90\n        },\n        {\n            field: \"country\",\n            minWidth: 130\n        },\n        {\n            field: \"year\",\n            minWidth: 70,\n            maxWidth: 90\n        },\n        {\n            field: \"date\",\n            minWidth: 120\n        },\n        {\n            field: \"sport\",\n            minWidth: 120\n        },\n        {\n            field: \"gold\",\n            minWidth: 80\n        },\n        {\n            field: \"silver\",\n            minWidth: 80\n        },\n        {\n            field: \"bronze\",\n            minWidth: 80\n        },\n        {\n            field: \"total\",\n            minWidth: 80\n        }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [],
+    "utils": [],
+    "data": {
+        "url": "'https://www.ag-grid.com/example-assets/olympic-winners.json'",
+        "callback": "params.api.setRowData(data)"
+    },
+    "template": "<div id=\"grid-wrapper\" style=\"width:100%; height: 100%\">\n    GRID_TEMPLATE_PLACEHOLDER\n</div>",
+    "gridSettings": { "width": "100%", "height": "100%", "theme": "ag-theme-alpine" }
+}

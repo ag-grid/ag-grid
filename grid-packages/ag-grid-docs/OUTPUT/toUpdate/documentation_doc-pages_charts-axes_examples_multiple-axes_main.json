@@ -1,0 +1,13 @@
+{
+    "properties": [
+        {
+            "name": "options",
+            "value": "{\n        \n        autoSize: true,\n        data: data,\n        title: {\n            text: 'Cattle Holdings and Beef Exports (UK)',\n            fontSize: 18\n        },\n        subtitle: { text: 'Source: Department for Environment, Food & Rural Affairs' },\n        series: [\n            {\n                type: 'column',\n                xKey: 'year',\n                yKeys: [\n                    'male',\n                    'female'\n                ],\n                yNames: [\n                    'Male cattle',\n                    'Female cattle'\n                ],\n                grouped: true,\n                fills: [\n                    '#c16068',\n                    '#a2bf8a'\n                ],\n                strokeWidth: 0\n            },\n            {\n                type: 'line',\n                xKey: 'year',\n                yKey: 'exportedTonnes',\n                yName: 'Beef exports',\n                stroke: '#80a0c3',\n                strokeWidth: 5,\n                marker: {\n                    enabled: false,\n                    fill: '#80a0c3'\n                }\n            }\n        ],\n        axes: [\n            {\n                type: 'category',\n                position: 'bottom'\n            },\n            {\n                type: 'number',\n                position: 'left',\n                keys: [\n                    'male',\n                    'female'\n                ],\n                title: {\n                    enabled: true,\n                    text: 'Number of cattle'\n                },\n                label: {\n                    formatter: function (params) {\n                        return params.value / 1000 + 'M';\n                    }\n                }\n            },\n            {\n                type: 'number',\n                position: 'right',\n                keys: ['exportedTonnes'],\n                title: {\n                    enabled: true,\n                    text: 'Exports (tonnes)'\n                },\n                label: {\n                    formatter: function (params) {\n                        return params.value / 1000 + 'k';\n                    }\n                }\n            }\n        ],\n        legend: {\n            position: 'bottom',\n            markerShape: 'square',\n            strokeWidth: 0\n        }\n    }"
+        }
+    ],
+    "externalEventHandlers": [],
+    "instanceMethods": [],
+    "globals": [],
+    "init": [],
+    "template": "$$CHART$$\n"
+}

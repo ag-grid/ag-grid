@@ -1,0 +1,36 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "defaultColDef",
+            "value": "{\n        sortable: true,\n        filter: true,\n        resizable: true,\n        minWidth: 100,\n        flex: 1\n    }"
+        },
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            field: \"athlete\",\n            minWidth: 200\n        },\n        {\n            field: \"country\",\n            minWidth: 200\n        },\n        {\n            field: \"sport\",\n            minWidth: 150\n        },\n        {\n            field: \"gold\",\n            hide: true\n        },\n        {\n            field: \"silver\",\n            hide: true\n        },\n        {\n            field: \"bronze\",\n            hide: true\n        },\n        {\n            field: \"total\",\n            hide: true\n        }\n    ]"
+        },
+        {
+            "name": "excelStyles",
+            "value": "[\n        {\n            id: \"coverHeading\",\n            font: {\n                size: 26,\n                bold: true\n            }\n        },\n        {\n            id: \"coverText\",\n            font: { size: 14 }\n        }\n    ]"
+        }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    sortable: true,\n    filter: true,\n    resizable: true,\n    minWidth: 100,\n    flex: 1\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            minWidth: 200\n        },\n        {\n            field: \"country\",\n            minWidth: 200\n        },\n        {\n            field: \"sport\",\n            minWidth: 150\n        },\n        {\n            field: \"gold\",\n            hide: true\n        },\n        {\n            field: \"silver\",\n            hide: true\n        },\n        {\n            field: \"bronze\",\n            hide: true\n        },\n        {\n            field: \"total\",\n            hide: true\n        }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [
+        {
+            "name": "onBtExport",
+            "params": "",
+            "body": "function onBtExport() {\n    const spreadsheets = [];\n    const filterInstance = this.gridApi.getFilterInstance('athlete');\n    filterInstance.setModel({ values: [] });\n    this.gridApi.onFilterChanged();\n    spreadsheets.push(this.gridApi.getSheetDataForExcel({\n        prependContent: [\n            [{\n                    styleId: 'coverHeading',\n                    mergeAcross: 3,\n                    data: {\n                        value: 'AG Grid',\n                        type: 'String'\n                    }\n                }],\n            [{\n                    styleId: 'coverHeading',\n                    mergeAcross: 3,\n                    data: {\n                        value: '',\n                        type: 'String'\n                    }\n                }],\n            [{\n                    styleId: 'coverText',\n                    mergeAcross: 3,\n                    data: {\n                        value: 'Data shown lists Olympic medal winners for years 2000-2012',\n                        type: 'String'\n                    }\n                }],\n            [{\n                    styleId: 'coverText',\n                    data: {\n                        value: 'This data includes a row for each participation record - athlete name, country, year, sport, count of gold, silver, bronze medals won during the sports event',\n                        type: 'String'\n                    }\n                }]\n        ],\n        processHeaderCallback: () => '',\n        sheetName: 'cover'\n    }));\n    filterInstance.setModel(null);\n    this.gridApi.onFilterChanged();\n    spreadsheets.push(this.gridApi.getSheetDataForExcel());\n    this.gridApi.exportMultipleSheetsAsExcel({\n        data: spreadsheets,\n        fileName: 'ag-grid.xlsx'\n    });\n}"
+        }
+    ],
+    "utils": [],
+    "data": {
+        "url": "'https://www.ag-grid.com/example-assets/small-olympic-winners.json'",
+        "callback": "params.api.setRowData(data.filter(rec => rec.country != null))"
+    },
+    "template": "<div class=\"container\">\n    <div class=\"columns\">\n        <div>\n            <button onclick=\"onBtExport()\" style=\"font-weight: bold; margin-bottom: 5px;\">Export to Excel</button>\n        </div>\n    </div>\n    <div class=\"grid-wrapper\">\n        GRID_TEMPLATE_PLACEHOLDER\n    </div>\n</div>",
+    "gridSettings": { "width": "100%", "height": "100%", "theme": "ag-theme-alpine", "enterprise": true }
+}

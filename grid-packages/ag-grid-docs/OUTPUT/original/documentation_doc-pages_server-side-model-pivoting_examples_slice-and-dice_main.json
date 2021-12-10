@@ -1,0 +1,57 @@
+{
+    "eventHandlers": [
+        {
+            "name": "firstDataRendered",
+            "handlerName": "onFirstDataRendered",
+            "handler": "function onFirstDataRendered(params) {\n    params.api.sizeColumnsToFit();\n}"
+        }
+    ],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            field: \"athlete\",\n            enableRowGroup: true,\n            enablePivot: true,\n            filter: false\n        },\n        {\n            field: \"age\",\n            enableRowGroup: true,\n            filter: \"customAgeFilter\"\n        },\n        {\n            field: \"country\",\n            enableRowGroup: true,\n            enablePivot: true,\n            rowGroup: true,\n            hide: true,\n            filter: \"agSetColumnFilter\",\n            filterParams: { values: countries }\n        },\n        {\n            field: \"year\",\n            enableRowGroup: true,\n            enablePivot: true,\n            rowGroup: true,\n            hide: true,\n            filter: \"agSetColumnFilter\",\n            filterParams: {\n                values: [\n                    \"2000\",\n                    \"2002\",\n                    \"2004\",\n                    \"2006\",\n                    \"2008\",\n                    \"2010\",\n                    \"2012\"\n                ]\n            }\n        },\n        {\n            field: \"sport\",\n            enableRowGroup: true,\n            enablePivot: true,\n            filter: false\n        },\n        {\n            field: \"gold\",\n            aggFunc: \"sum\",\n            filter: false,\n            enableValue: true\n        },\n        {\n            field: \"silver\",\n            aggFunc: \"sum\",\n            filter: false,\n            enableValue: true\n        },\n        {\n            field: \"bronze\",\n            aggFunc: \"sum\",\n            filter: false,\n            enableValue: true\n        }\n    ]"
+        },
+        {
+            "name": "defaultColDef",
+            "value": "{\n        flex: 1,\n        minWidth: 150,\n        allowedAggFuncs: [\n            \"sum\",\n            \"min\",\n            \"max\",\n            \"random\"\n        ],\n        sortable: true,\n        resizable: true,\n        filter: true\n    }"
+        },
+        { "name": "autoGroupColumnDef", "value": "{ width: 180 }" },
+        { "name": "components", "value": "{ customAgeFilter: createCustomAgeFilter() }" },
+        { "name": "rowModelType", "value": "\"serverSide\"" },
+        { "name": "serverSideStoreType", "value": "\"partial\"" },
+        { "name": "rowGroupPanelShow", "value": "\"always\"" },
+        { "name": "pivotPanelShow", "value": "\"always\"" },
+        { "name": "animateRows", "value": "true" },
+        { "name": "debug", "value": "true" },
+        { "name": "enableRangeSelection", "value": "true" },
+        { "name": "sideBar", "value": "true" },
+        { "name": "suppressAggFuncInHeader", "value": "true" },
+        { "name": "maxConcurrentDatasourceRequests", "value": "1" },
+        { "name": "cacheBlockSize", "value": "100" },
+        { "name": "maxBlocksInCache", "value": "2" },
+        { "name": "purgeClosedRowNodes", "value": "true" }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    flex: 1,\n    minWidth: 150,\n    allowedAggFuncs: [\n        'sum',\n        'min',\n        'max',\n        'random'\n    ],\n    sortable: true,\n    resizable: true,\n    filter: true\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            enableRowGroup: true,\n            enablePivot: true,\n            filter: false\n        },\n        {\n            field: \"age\",\n            enableRowGroup: true,\n            filter: \"customAgeFilter\"\n        },\n        {\n            field: \"country\",\n            enableRowGroup: true,\n            enablePivot: true,\n            rowGroup: true,\n            hide: true,\n            filter: \"agSetColumnFilter\",\n            filterParams: { values: \"AG_LITERAL_countries\" }\n        },\n        {\n            field: \"year\",\n            enableRowGroup: true,\n            enablePivot: true,\n            rowGroup: true,\n            hide: true,\n            filter: \"agSetColumnFilter\",\n            filterParams: {\n                values: [\n                    \"2000\",\n                    \"2002\",\n                    \"2004\",\n                    \"2006\",\n                    \"2008\",\n                    \"2010\",\n                    \"2012\"\n                ]\n            }\n        },\n        {\n            field: \"sport\",\n            enableRowGroup: true,\n            enablePivot: true,\n            filter: false\n        },\n        {\n            field: \"gold\",\n            aggFunc: \"sum\",\n            filter: false,\n            enableValue: true\n        },\n        {\n            field: \"silver\",\n            aggFunc: \"sum\",\n            filter: false,\n            enableValue: true\n        },\n        {\n            field: \"bronze\",\n            aggFunc: \"sum\",\n            filter: false,\n            enableValue: true\n        }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [],
+    "utils": [
+        "const countries = getCountries();",
+        "function createCustomAgeFilter() {\n    var CUSTOM_AGE_FILTER_TEMPLATE = '<div>' + '  <label>' + '    <input type=\"radio\" name=\"ageFilterValue\" ref=\"btAll\" checked/> All' + '  </label>' + '  <label>' + '    <input type=\"radio\" name=\"ageFilterValue\" ref=\"bt20\"/> 20' + '  </label>' + '  <label>' + '    <input type=\"radio\" name=\"ageFilterValue\" ref=\"bt22\"/> 22' + '  </label>' + '</div>' + '' + '';\n    class CustomAgeFilter {\n        constructor() {\n            CustomAgeFilter.prototype.__init.call(this);\n        }\n        __init() {\n            this.filterValue = null;\n        }\n        init(params) {\n            this.eGui = document.createElement('div');\n            this.eGui.innerHTML = CUSTOM_AGE_FILTER_TEMPLATE;\n            this.filterValue = null;\n            this.params = params;\n            this.eGui.querySelector('[ref=\"btAll\"]').addEventListener('change', this.onSelection.bind(this, null));\n            this.eGui.querySelector('[ref=\"bt20\"]').addEventListener('change', this.onSelection.bind(this, 20));\n            this.eGui.querySelector('[ref=\"bt22\"]').addEventListener('change', this.onSelection.bind(this, 22));\n        }\n        onSelection(value) {\n            this.filterValue = value;\n            this.params.filterChangedCallback();\n        }\n        getGui() {\n            return this.eGui;\n        }\n        isFilterActive() {\n            return this.filterValue !== null;\n        }\n        doesFilterPass(params) {\n            const {api, colDef, column, columnApi, context} = this.params;\n            const {node} = params;\n            const value = this.params.valueGetter({\n                api,\n                colDef,\n                column,\n                columnApi,\n                context,\n                data: node.data,\n                getValue: field => node.data[field],\n                node\n            });\n            return value == this.filterValue;\n        }\n        getModel() {\n            if (this.filterValue === null) {\n                return null;\n            } else {\n                return {\n                    filter: this.filterValue,\n                    type: 'equals'\n                };\n            }\n        }\n        setModel(model) {\n            if (model && model.filter === 20) {\n                this.eGui.querySelector('[ref=\"bt20\"]').checked = true;\n                this.filterValue = 20;\n            } else if (model && model.filter === 22) {\n                this.eGui.querySelector('[ref=\"bt22\"]').checked = true;\n                this.filterValue = 22;\n            } else {\n                this.eGui.querySelector('[ref=\"btAll\"]').checked = true;\n                this.filterValue = null;\n            }\n        }\n    }\n    return CustomAgeFilter;\n}"
+    ],
+    "data": {
+        "url": "'https://www.ag-grid.com/example-assets/olympic-winners.json'",
+        "callback": "{\n    var fakeServer = createFakeServer(data);\n    var datasource = createServerSideDatasource(fakeServer, params);\n    params.api.setServerSideDatasource(datasource);\n}"
+    },
+    "template": "GRID_TEMPLATE_PLACEHOLDER\n",
+    "gridSettings": {
+        "width": "100%",
+        "height": "100%",
+        "theme": "ag-theme-alpine-dark",
+        "enterprise": true,
+        "exampleHeight": 605,
+        "modules": ["serverside", "rowgrouping", "menu", "columnpanel", "filterpanel", "setfilter"]
+    }
+}

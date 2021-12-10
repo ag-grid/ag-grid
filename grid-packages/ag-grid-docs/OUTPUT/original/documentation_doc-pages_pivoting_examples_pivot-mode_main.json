@@ -1,0 +1,51 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            field: \"country\",\n            rowGroup: true,\n            enableRowGroup: true\n        },\n        {\n            field: \"year\",\n            rowGroup: true,\n            enableRowGroup: true,\n            enablePivot: true\n        },\n        { field: \"date\" },\n        { field: \"sport\" },\n        {\n            field: \"gold\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"silver\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"bronze\",\n            aggFunc: \"sum\"\n        }\n    ]"
+        },
+        {
+            "name": "defaultColDef",
+            "value": "{\n        flex: 1,\n        minWidth: 150,\n        sortable: true,\n        resizable: true\n    }"
+        },
+        { "name": "autoGroupColumnDef", "value": "{ minWidth: 250 }" },
+        { "name": "sideBar", "value": "\"columns\"" }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    flex: 1,\n    minWidth: 150,\n    sortable: true,\n    resizable: true\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            field: \"country\",\n            rowGroup: true,\n            enableRowGroup: true\n        },\n        {\n            field: \"year\",\n            rowGroup: true,\n            enableRowGroup: true,\n            enablePivot: true\n        },\n        { field: \"date\" },\n        { field: \"sport\" },\n        {\n            field: \"gold\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"silver\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"bronze\",\n            aggFunc: \"sum\"\n        }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [
+        {
+            "name": "onBtNormal",
+            "params": "",
+            "body": "function onBtNormal() {\n    this.gridColumnApi.setPivotMode(false);\n    this.gridColumnApi.applyColumnState({\n        state: [\n            {\n                colId: 'country',\n                rowGroup: true\n            },\n            {\n                colId: 'year',\n                rowGroup: true\n            }\n        ],\n        defaultState: {\n            pivot: false,\n            rowGroup: false\n        }\n    });\n}"
+        },
+        {
+            "name": "onBtPivotMode",
+            "params": "",
+            "body": "function onBtPivotMode() {\n    this.gridColumnApi.setPivotMode(true);\n    this.gridColumnApi.applyColumnState({\n        state: [\n            {\n                colId: 'country',\n                rowGroup: true\n            },\n            {\n                colId: 'year',\n                rowGroup: true\n            }\n        ],\n        defaultState: {\n            pivot: false,\n            rowGroup: false\n        }\n    });\n}"
+        },
+        {
+            "name": "onBtFullPivot",
+            "params": "",
+            "body": "function onBtFullPivot() {\n    this.gridColumnApi.setPivotMode(true);\n    this.gridColumnApi.applyColumnState({\n        state: [\n            {\n                colId: 'country',\n                rowGroup: true\n            },\n            {\n                colId: 'year',\n                pivot: true\n            }\n        ],\n        defaultState: {\n            pivot: false,\n            rowGroup: false\n        }\n    });\n}"
+        }
+    ],
+    "utils": [],
+    "data": {
+        "url": "'https://www.ag-grid.com/example-assets/olympic-winners.json'",
+        "callback": "params.api.setRowData(data)"
+    },
+    "template": "<div class=\"example-wrapper\">\n    <div style=\"margin-bottom: 5px;\">\n        <button onclick=\"onBtNormal()\">1 - Grouping Active</button>\n        <button onclick=\"onBtPivotMode()\">2 - Grouping Active with Pivot Mode</button>\n        <button onclick=\"onBtFullPivot()\">3 - Grouping Active with Pivot Mode and Pivot Active</button>\n    </div>\n\n    GRID_TEMPLATE_PLACEHOLDER\n</div>\n",
+    "gridSettings": {
+        "width": "100%",
+        "height": "100%",
+        "theme": "ag-theme-alpine",
+        "enterprise": true,
+        "exampleHeight": 630,
+        "modules": ["clientside", "rowgrouping", "menu", "columnpanel"]
+    }
+}

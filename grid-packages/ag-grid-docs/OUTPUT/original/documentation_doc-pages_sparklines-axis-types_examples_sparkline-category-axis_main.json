@@ -1,0 +1,31 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            field: \"symbol\",\n            maxWidth: 110\n        },\n        {\n            field: \"name\",\n            minWidth: 250\n        },\n        {\n            field: \"change\",\n            cellRenderer: \"agSparklineCellRenderer\",\n            cellRendererParams: {\n                sparklineOptions: {\n                    type: \"area\",\n                    axis: { type: \"category\" }\n                }\n            }\n        },\n        {\n            field: \"volume\",\n            type: \"numericColumn\",\n            maxWidth: 140\n        }\n    ]"
+        },
+        {
+            "name": "defaultColDef",
+            "value": "{\n        flex: 1,\n        minWidth: 100,\n        resizable: true\n    }"
+        },
+        { "name": "rowData", "value": "getData()" },
+        { "name": "rowHeight", "value": "50" }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    flex: 1,\n    minWidth: 100,\n    resizable: true\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            field: \"symbol\",\n            maxWidth: 110\n        },\n        {\n            field: \"name\",\n            minWidth: 250\n        },\n        {\n            field: \"change\",\n            cellRenderer: \"agSparklineCellRenderer\",\n            cellRendererParams: {\n                sparklineOptions: {\n                    type: \"area\",\n                    axis: { type: \"category\" }\n                }\n            }\n        },\n        {\n            field: \"volume\",\n            type: \"numericColumn\",\n            maxWidth: 140\n        }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [],
+    "utils": [],
+    "template": "GRID_TEMPLATE_PLACEHOLDER",
+    "gridSettings": {
+        "width": "100%",
+        "height": "100%",
+        "theme": "ag-theme-alpine",
+        "enterprise": true,
+        "exampleHeight": 585,
+        "modules": ["clientside", "sparklines"]
+    }
+}

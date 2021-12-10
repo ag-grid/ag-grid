@@ -1,0 +1,38 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            headerName: \"Group A\",\n            children: [\n                {\n                    field: \"athlete\",\n                    minWidth: 200\n                },\n                {\n                    field: \"country\",\n                    minWidth: 200\n                }\n            ]\n        },\n        {\n            headerName: \"Group B\",\n            children: [\n                {\n                    field: \"sport\",\n                    minWidth: 150\n                },\n                { field: \"gold\" },\n                { field: \"silver\" },\n                { field: \"bronze\" },\n                { field: \"total\" }\n            ]\n        }\n    ]"
+        },
+        {
+            "name": "defaultColDef",
+            "value": "{\n        sortable: true,\n        filter: true,\n        resizable: true,\n        minWidth: 100,\n        flex: 1\n    }"
+        }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    sortable: true,\n    filter: true,\n    resizable: true,\n    minWidth: 100,\n    flex: 1\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            headerName: \"Group A\",\n            children: [\n                {\n                    field: \"athlete\",\n                    minWidth: 200\n                },\n                {\n                    field: \"country\",\n                    minWidth: 200\n                }\n            ]\n        },\n        {\n            headerName: \"Group B\",\n            children: [\n                {\n                    field: \"sport\",\n                    minWidth: 150\n                },\n                { field: \"gold\" },\n                { field: \"silver\" },\n                { field: \"bronze\" },\n                { field: \"total\" }\n            ]\n        }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [
+        {
+            "name": "onBtExport",
+            "params": "",
+            "body": "function onBtExport() {\n    this.gridApi.exportDataAsExcel();\n}"
+        }
+    ],
+    "utils": [],
+    "data": {
+        "url": "'https://www.ag-grid.com/example-assets/small-olympic-winners.json'",
+        "callback": "{\n    params.api.setRowData(data);\n}"
+    },
+    "template": "<div class=\"container\">\n    <div>\n        <button onclick=\"onBtExport()\" style=\"margin-bottom: 5px; font-weight: bold;\">Export to Excel</button>\n    </div>\n    <div class=\"grid-wrapper\">\n        GRID_TEMPLATE_PLACEHOLDER\n    </div>\n</div>",
+    "gridSettings": {
+        "width": "100%",
+        "height": "100%",
+        "theme": "ag-theme-alpine",
+        "enterprise": true,
+        "exampleHeight": 600
+    }
+}

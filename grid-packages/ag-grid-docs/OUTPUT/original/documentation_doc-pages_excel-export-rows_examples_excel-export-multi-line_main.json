@@ -1,0 +1,36 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        { field: \"address\" },\n        {\n            headerName: \"Custom column\",\n            autoHeight: true,\n            valueGetter: function (param) {\n                return param.data.col1 + \"\\n\" + param.data.col2;\n            },\n            cellRenderer: function (param) {\n                return param.value.replace(\"\\n\", \"<br/>\");\n            }\n        }\n    ]"
+        },
+        {
+            "name": "defaultColDef",
+            "value": "{\n        sortable: true,\n        cellClass: \"multiline\",\n        filter: true,\n        resizable: true,\n        minWidth: 100,\n        flex: 1\n    }"
+        },
+        {
+            "name": "rowData",
+            "value": "[\n        {\n            address: \"1197 Thunder Wagon Common,\\nCataract, RI, \\n02987-1016, US, \\n(401) 747-0763\",\n            col1: \"abc\",\n            col2: \"xyz\"\n        },\n        {\n            address: \"3685 Rocky Glade, Showtucket, NU, \\nX1E-9I0, CA, \\n(867) 371-4215\",\n            col1: \"abc\",\n            col2: \"xyz\"\n        },\n        {\n            address: \"3235 High Forest, Glen Campbell, MS, \\n39035-6845, US, \\n(601) 638-8186\",\n            col1: \"abc\",\n            col2: \"xyz\"\n        },\n        {\n            address: \"2234 Sleepy Pony Mall , Drain, DC, \\n20078-4243, US, \\n(202) 948-3634\",\n            col1: \"abc\",\n            col2: \"xyz\"\n        }\n    ]"
+        },
+        {
+            "name": "excelStyles",
+            "value": "[{\n            id: \"multiline\",\n            alignment: { wrapText: true }\n        }]"
+        }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    sortable: true,\n    cellClass: 'multiline',\n    filter: true,\n    resizable: true,\n    minWidth: 100,\n    flex: 1\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        { field: \"address\" },\n        {\n            headerName: \"Custom column\",\n            autoHeight: true,\n            valueGetter: \"AG_FUNCTION_function (param) {\\n    return param.data.col1 + '\\\\n' + param.data.col2;\\n}\",\n            cellRenderer: \"AG_FUNCTION_function (param) {\\n    return param.value.replace('\\\\n', '<br/>');\\n}\"\n        }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [
+        {
+            "name": "onBtExport",
+            "params": "",
+            "body": "function onBtExport() {\n    this.gridApi.exportDataAsExcel();\n}"
+        }
+    ],
+    "utils": [],
+    "template": "<div class=\"container\">\n    <div>\n        <button onclick=\"onBtExport()\" style=\"margin: 5px 0px; font-weight: bold;\">Export to Excel</button>\n    </div>\n    <div class=\"grid-wrapper\">\n        GRID_TEMPLATE_PLACEHOLDER\n    </div>\n</div>",
+    "gridSettings": { "width": "100%", "height": "100%", "theme": "ag-theme-alpine", "enterprise": true }
+}

@@ -1,0 +1,45 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            field: \"country\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            field: \"year\",\n            rowGroup: true,\n            hide: true\n        },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        {\n            headerName: \"Gold*pi\",\n            field: \"goldPi\",\n            minWidth: 200\n        },\n        {\n            headerName: \"Silver*pi\",\n            field: \"silverPi\",\n            minWidth: 200\n        },\n        {\n            headerName: \"Bronze*pi\",\n            field: \"bronzePi\",\n            minWidth: 200\n        }\n    ]"
+        },
+        {
+            "name": "defaultColDef",
+            "value": "{\n        flex: 1,\n        minWidth: 150,\n        filter: true,\n        sortable: true\n    }"
+        },
+        {
+            "name": "autoGroupColumnDef",
+            "value": "{\n        headerName: \"Athlete\",\n        field: \"athlete\",\n        minWidth: 250\n    }"
+        },
+        { "name": "sideBar", "value": "true" },
+        { "name": "enableRangeSelection", "value": "true" },
+        { "name": "groupRowAggNodes", "value": null }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    flex: 1,\n    minWidth: 150,\n    filter: true,\n    sortable: true\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            field: \"country\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            field: \"year\",\n            rowGroup: true,\n            hide: true\n        },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        {\n            headerName: \"Gold*pi\",\n            field: \"goldPi\",\n            minWidth: 200\n        },\n        {\n            headerName: \"Silver*pi\",\n            field: \"silverPi\",\n            minWidth: 200\n        },\n        {\n            headerName: \"Bronze*pi\",\n            field: \"bronzePi\",\n            minWidth: 200\n        }\n    ]",
+    "instanceMethods": [
+        "function groupRowAggNodes(nodes) {\n        const result = {\n            gold: 0,\n            silver: 0,\n            bronze: 0,\n            goldPi: 0,\n            silverPi: 0,\n            bronzePi: 0\n        };\n        nodes.forEach(node => {\n            const data = node.group ? node.aggData : node.data;\n            if (typeof data.gold === \"number\") {\n                result.gold += data.gold;\n                result.goldPi += data.gold * Math.PI;\n            }\n            if (typeof data.silver === \"number\") {\n                result.silver += data.silver;\n                result.silverPi += data.silver * Math.PI;\n            }\n            if (typeof data.bronze === \"number\") {\n                result.bronze += data.bronze;\n                result.bronzePi += data.bronze * Math.PI;\n            }\n        });\n        return result;\n    }"
+    ],
+    "externalEventHandlers": [
+        { "name": "expandAll", "params": "", "body": "function expandAll() {\n    this.gridApi.expandAll();\n}" },
+        { "name": "collapseAll", "params": "", "body": "function collapseAll() {\n    this.gridApi.collapseAll();\n}" }
+    ],
+    "utils": [],
+    "data": {
+        "url": "'https://www.ag-grid.com/example-assets/olympic-winners.json'",
+        "callback": "params.api.setRowData(data)"
+    },
+    "template": "<div class=\"example-wrapper\">\n    <div style=\"margin-bottom: 5px\">\n        <button onclick=\"expandAll()\">Expand All</button>\n        <button onclick=\"collapseAll()\">Collapse All</button>\n    </div>\n\n    GRID_TEMPLATE_PLACEHOLDER\n</div>",
+    "gridSettings": {
+        "width": "100%",
+        "height": "100%",
+        "theme": "ag-theme-alpine",
+        "enterprise": true,
+        "exampleHeight": 620,
+        "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel", "setfilter"]
+    }
+}

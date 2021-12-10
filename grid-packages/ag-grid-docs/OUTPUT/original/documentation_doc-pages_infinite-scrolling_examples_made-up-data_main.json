@@ -1,0 +1,26 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        { "name": "columnDefs", "value": "getColumnDefs()" },
+        { "name": "defaultColDef", "value": "{ resizable: true }" },
+        { "name": "rowModelType", "value": "\"infinite\"" },
+        { "name": "rowSelection", "value": "\"multiple\"" },
+        { "name": "maxBlocksInCache", "value": "2" },
+        { "name": "suppressRowClickSelection", "value": "true" },
+        { "name": "getRowNodeId", "value": "function (item) {\n        return item.a;\n    }" },
+        { "name": "datasource", "value": "getDataSource(100)" }
+    ],
+    "components": [],
+    "defaultColDef": "{ resizable: true }",
+    "globalComponents": [],
+    "parsedColDefs": "",
+    "instanceMethods": [],
+    "externalEventHandlers": [],
+    "utils": [
+        "var ALPHABET = 'abcdefghijklmnopqrstuvwxyz'.split('');",
+        "function getColumnDefs() {\n    const columnDefs = [\n        {\n            checkboxSelection: true,\n            headerName: '',\n            width: 60\n        },\n        {\n            headerName: '#',\n            width: 80,\n            valueGetter: 'node.rowIndex'\n        }\n    ];\n    ALPHABET.forEach(function (letter) {\n        columnDefs.push({\n            headerName: letter.toUpperCase(),\n            field: letter,\n            width: 150\n        });\n    });\n    return columnDefs;\n}",
+        "function getDataSource(count) {\n    const dataSource = {\n        rowCount: count,\n        getRows: function (params) {\n            var rowsThisPage = [];\n            for (var rowIndex = params.startRow; rowIndex < params.endRow; rowIndex++) {\n                var record = {};\n                ALPHABET.forEach(function (letter, colIndex) {\n                    var randomNumber = 17 + rowIndex + colIndex;\n                    var cellKey = letter.toUpperCase() + (rowIndex + 1);\n                    record[letter] = cellKey + ' = ' + randomNumber;\n                });\n                rowsThisPage.push(record);\n            }\n            setTimeout(function () {\n                params.successCallback(rowsThisPage);\n            }, 100);\n        }\n    };\n    return dataSource;\n}"
+    ],
+    "template": "GRID_TEMPLATE_PLACEHOLDER\n",
+    "gridSettings": { "width": "100%", "height": "100%", "theme": "ag-theme-alpine", "modules": ["infinite"] }
+}

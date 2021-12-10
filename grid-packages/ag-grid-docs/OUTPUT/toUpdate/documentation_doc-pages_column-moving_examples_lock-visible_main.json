@@ -1,0 +1,33 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            headerName: \"Athlete\",\n            children: [\n                {\n                    field: \"athlete\",\n                    width: 150\n                },\n                {\n                    field: \"age\",\n                    lockVisible: true,\n                    cellClass: \"locked-visible\"\n                },\n                {\n                    field: \"country\",\n                    width: 150\n                },\n                { field: \"year\" },\n                { field: \"date\" },\n                { field: \"sport\" }\n            ]\n        },\n        {\n            headerName: \"Medals\",\n            children: [\n                {\n                    field: \"gold\",\n                    lockVisible: true,\n                    cellClass: \"locked-visible\"\n                },\n                {\n                    field: \"silver\",\n                    lockVisible: true,\n                    cellClass: \"locked-visible\"\n                },\n                {\n                    field: \"bronze\",\n                    lockVisible: true,\n                    cellClass: \"locked-visible\"\n                },\n                {\n                    field: \"total\",\n                    lockVisible: true,\n                    cellClass: \"locked-visible\",\n                    hide: true\n                }\n            ]\n        }\n    ]"
+        },
+        {
+            "name": "sideBar",
+            "value": "{\n        toolPanels: [{\n                id: \"columns\",\n                labelDefault: \"Columns\",\n                labelKey: \"columns\",\n                iconKey: \"columns\",\n                toolPanel: \"agColumnsToolPanel\",\n                toolPanelParams: {\n                    suppressRowGroups: true,\n                    suppressValues: true,\n                    suppressPivots: true,\n                    suppressPivotMode: true\n                }\n            }]\n    }"
+        },
+        { "name": "defaultColDef", "value": "{ width: 100 }" }
+    ],
+    "components": [],
+    "defaultColDef": "{ width: 100 }",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            headerName: \"Athlete\",\n            children: [\n                {\n                    field: \"athlete\",\n                    width: 150\n                },\n                {\n                    field: \"age\",\n                    lockVisible: true,\n                    cellClass: \"locked-visible\"\n                },\n                {\n                    field: \"country\",\n                    width: 150\n                },\n                { field: \"year\" },\n                { field: \"date\" },\n                { field: \"sport\" }\n            ]\n        },\n        {\n            headerName: \"Medals\",\n            children: [\n                {\n                    field: \"gold\",\n                    lockVisible: true,\n                    cellClass: \"locked-visible\"\n                },\n                {\n                    field: \"silver\",\n                    lockVisible: true,\n                    cellClass: \"locked-visible\"\n                },\n                {\n                    field: \"bronze\",\n                    lockVisible: true,\n                    cellClass: \"locked-visible\"\n                },\n                {\n                    field: \"total\",\n                    lockVisible: true,\n                    cellClass: \"locked-visible\",\n                    hide: true\n                }\n            ]\n        }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [],
+    "utils": [],
+    "data": {
+        "url": "'https://www.ag-grid.com/example-assets/olympic-winners.json'",
+        "callback": "params.api.setRowData(data)"
+    },
+    "template": "<div class=\"example-wrapper\">\n    <div class=\"legend-bar\">\n        <span class=\"legend-box locked-visible\"></span> Locked Visible Column\n    </div>\n    GRID_TEMPLATE_PLACEHOLDER\n</div>\n",
+    "gridSettings": {
+        "width": "100%",
+        "height": "100%",
+        "theme": "ag-theme-alpine",
+        "enterprise": true,
+        "exampleHeight": 550
+    }
+}
