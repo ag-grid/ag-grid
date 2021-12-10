@@ -20,7 +20,11 @@ import {
     AgPolarChartOptions,
     AgChartTheme,
     AgChartThemeName,
-    AgHierarchyChartOptions
+    AgHierarchyChartOptions,
+    AgCartesianSeriesOptions,
+    AgPolarSeriesOptions,
+    AgHierarchySeriesOptions,
+    AgLineSeriesOptions
 } from "./agChartOptions";
 import { CartesianChart } from "./cartesianChart";
 import { PolarChart } from "./polarChart";
@@ -102,6 +106,9 @@ export abstract class AgChart {
         if (data) {
             options.data = data;
         }
+        if (options.series && options.series.length > 0) {
+            options.series = processSeriesOptions(options.series);
+        }
         // special handling when both `autoSize` and `width` / `height` are present in the options
         const autoSize = options && options.autoSize !== false;
         const theme = getChartTheme(options.theme);
@@ -125,6 +132,9 @@ export abstract class AgChart {
         }
         if (data) {
             options.data = data;
+        }
+        if (options.series && options.series.length > 0) {
+            options.series = processSeriesOptions(options.series);
         }
         const autoSize = options && options.autoSize !== false;
         const theme = getChartTheme(options.theme);
@@ -494,4 +504,104 @@ function provideDefaultOptions(path: string, options: any, mapping: any, theme?:
     }
 
     return options;
+}
+
+/**
+ * Groups the series options objects if they are of type `column` or `bar` and places them in an array at the index where the first instance of this series type was found.
+ * Returns an array of arrays containing the ordered and grouped series options objects.
+ */
+export function getSeriesOrder(
+    seriesOptions: AgCartesianSeriesOptions[] | AgPolarSeriesOptions[] | AgHierarchySeriesOptions[]
+) {
+    const indexMap: Map<string, number> = new Map([
+        ['column', -1],
+        ['bar', -1],
+        ['line', -1],
+        ['scatter', -1],
+        ['area', -1],
+        ['histogram', -1],
+        ['area', -1],
+        ['ohlc', -1],
+    ]);
+
+    const result = [];
+
+    for (let i = 0; i < seriesOptions.length; i++) {
+        const s = seriesOptions[i];
+        const seriesType = s.type;
+        if (seriesType === 'column' || seriesType === 'bar') {
+            if (indexMap.get(seriesType)! < 0) {
+                indexMap.set(seriesType, i);
+                result.push([]);
+            }
+            result[indexMap.get(seriesType)!].push(s);
+        } else {
+            result.push([s]);
+        }
+    }
+    return result;
+}
+
+/**
+ * Takes an array of column series options objects and returns a single object with the combined column series options.
+ */
+export function processColumnSeriesOptions(columnSeriesGroup: any) {
+    let columnSeriesOptions: any = {};
+
+    const iterablePoperties = ['yKeys', 'fills', 'strokes', 'yNames', 'hideInChart', 'hideInLegend'];
+    const propertiesToPush = ['yKey', 'fill', 'stroke', 'yName'];
+
+    for (let i = 0; i < columnSeriesGroup.length; i++) {
+        const s = columnSeriesGroup[i];
+        for (const property in s) {
+            if (iterablePoperties.indexOf(property) > -1 && s[property].length > 0) {
+                columnSeriesOptions[property] = [...(columnSeriesOptions[property] || []), ...s[property]];
+            } else if (propertiesToPush.indexOf(property) > -1) {
+                columnSeriesOptions[`${property}s`] = [...(columnSeriesOptions[`${property}s`] || []), s[property]];
+            } else if (property === 'visible') {
+                if (s[property] === false) {
+                    columnSeriesOptions.hideInChart = [...(columnSeriesOptions.hideInChart || []), s.yKey];
+                }
+            } else if (property === 'showInLegend') {
+                if (s[property] === false) {
+                    columnSeriesOptions.hideInLegend = [...(columnSeriesOptions.hideInLegend || []), s.yKey];
+                }
+            } else if (property === 'grouped' && s[property] === true) {
+                columnSeriesOptions[property] = s[property];
+            } else {
+                columnSeriesOptions[property] = s[property];
+            }
+        }
+    }
+    return columnSeriesOptions;
+}
+
+/**
+ * Takes an array of line series options objects and returns a single object with the combined line series options.
+ */
+export function processLineSeriesOptions(lineSeriesGroup: any) {
+    let lineSeriesOptions: AgLineSeriesOptions = {};
+
+    lineSeriesOptions = { ...lineSeriesGroup[0] };
+
+    return lineSeriesOptions;
+}
+
+/**
+ * Transforms provided series options array into an array containing series options which are compatible with standalone charts series options.
+ */
+export function processSeriesOptions(
+    seriesOptions: AgCartesianSeriesOptions[] | AgPolarSeriesOptions[] | AgHierarchySeriesOptions[]
+) {
+    return (getSeriesOrder(seriesOptions) as any).flatMap(
+        (series: [AgCartesianSeriesOptions, AgPolarSeriesOptions]) => {
+            switch (series[0].type) {
+                case 'column':
+                    return processColumnSeriesOptions(series);
+                case 'line':
+                default:
+                    return processLineSeriesOptions(series);
+            }
+        }
+    );
 }
