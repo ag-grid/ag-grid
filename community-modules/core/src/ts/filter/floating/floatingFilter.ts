@@ -1,11 +1,22 @@
 import { IComponent } from '../../interfaces/iComponent';
 import { Column } from '../../entities/column';
 import { GridApi } from '../../gridApi';
-import { ProvidedFilterModel, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
+import { ProvidedFilterModel, IFilterParams, IFilter } from '../../interfaces/iFilter';
 import { FilterChangedEvent } from '../../events';
-import { ISimpleFilter } from '../provided/simpleFilter';
 
-export interface IFloatingFilterParams {
+export interface IFloatingFilterParent {
+    /**
+     * Notification that a new floating-filter value was input by the user.
+     * 
+     * @param type operation type selected.
+     * @param value model-typed value entered.
+     */
+     onFloatingFilterChanged(type: string | null, value: any): void;
+}
+type InbuiltParentType = IFloatingFilterParent & IFilter;
+export type IFloatingFilterParentCallback<P = InbuiltParentType> = (parentFilterInstance: P) => void;
+
+export interface IFloatingFilterParams<P = InbuiltParentType> {
     /** The column this filter is for. */
     column: Column;
     /**
@@ -40,7 +51,7 @@ export interface IFloatingFilterParams {
      * it should have a method your floating A can call to set the state
      * when the user updates via the floating filter.
      */
-    parentFilterInstance: (callback: (filterInstance: ISimpleFilter) => void) => void;
+    parentFilterInstance: (callback: IFloatingFilterParentCallback<P>) => void;
     /**
      * Shows the parent filter popup.
      */

@@ -13,18 +13,12 @@ import { Component } from '../../widgets/component';
 import { AgAbstractInputField } from '../../widgets/agAbstractInputField';
 import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
 import { ListOption } from '../../widgets/agList';
+import { IFloatingFilterParent } from '../floating/floatingFilter';
 
 export type JoinOperator = 'AND' | 'OR';
 
 /** Interface contract for the public aspects of the SimpleFilter implementation(s). */
-export interface ISimpleFilter extends IProvidedFilter {
-    /**
-     * Notification that a new floating-filter value was input by the user.
-     * 
-     * @param type operation type selected.
-     * @param value model-typed value entered.
-     */
-    onFloatingFilterChanged(type: string | null, value: any): void;
+export interface ISimpleFilter extends IProvidedFilter, IFloatingFilterParent {
 }
 
 export interface ISimpleFilterParams extends IProvidedFilterParams {

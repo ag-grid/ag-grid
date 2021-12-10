@@ -124,7 +124,7 @@ export class UserComponentFactory extends BeanStub {
         return this.getCompDetails(def, CellRendererComponent, null, params);
     }
 
-    public getFloatingFilterCompDetails(def: IFilterDef, params: IFloatingFilterParams, defaultFloatingFilter: string | null):  UserCompDetails | undefined {
+    public getFloatingFilterCompDetails(def: IFilterDef, params: IFloatingFilterParams<any>, defaultFloatingFilter: string | null):  UserCompDetails | undefined {
         return this.getCompDetails(def, FloatingFilterComponent, defaultFloatingFilter, params);
     }
 

@@ -4068,15 +4068,32 @@
       "guiPromise": "AgPromise<HTMLElement | null>"
     }
   },
-  "IFloatingFilterParams": {
+  "IFloatingFilterParent": {
     "meta": {},
+    "type": {
+      "onFloatingFilterChanged(type: string | null, value: any)": "void"
+    },
+    "docs": {
+      "onFloatingFilterChanged(type: string | null, value: any)": "/** Notification that a new floating-filter value was input by the user.\n * @param type operation type selected.\n * @param value model-typed value entered.\n */"
+    }
+  },
+  "InbuiltParentType": {
+    "meta": { "isTypeAlias": true },
+    "type": "IFloatingFilterParent & IFilter"
+  },
+  "IFloatingFilterParentCallback": {
+    "meta": { "isTypeAlias": true, "typeParams": ["P"] },
+    "type": "(parentFilterInstance: P) => void"
+  },
+  "IFloatingFilterParams": {
+    "meta": { "typeParams": ["P"] },
     "type": {
       "column": "Column",
       "filterParams": "IFilterParams",
       "suppressFilterButton": "boolean",
       "api": "GridApi",
       "currentParentModel": "() => any",
-      "parentFilterInstance": "(callback: (filterInstance: ISimpleFilter) => void) => void",
+      "parentFilterInstance": "(callback: IFloatingFilterParentCallback<P>) => void",
       "showParentFilter": "() => void"
     },
     "docs": {
@@ -4391,7 +4408,6 @@
       "doc": "/** Interface contract for the public aspects of the SimpleFilter implementation(s). */"
     },
     "type": {
-      "onFloatingFilterChanged(type: string | null, value: any)": "void",
       "applyModel()": "boolean",
       "getModelFromUi()": "any",
       "isFilterActive()": "boolean",
@@ -4400,10 +4416,10 @@
       "setModel(model: any)": "void | AgPromise<void>",
       "onNewRowsLoaded?()": "void",
       "onAnyFilterChanged?()": "void",
-      "getModelAsString?(model: any)": "string"
+      "getModelAsString?(model: any)": "string",
+      "onFloatingFilterChanged(type: string | null, value: any)": "void"
     },
     "docs": {
-      "onFloatingFilterChanged(type: string | null, value: any)": "/** Notification that a new floating-filter value was input by the user.\n * @param type operation type selected.\n * @param value model-typed value entered.\n */",
       "applyModel()": "/** Apply the current UI state to the filter model.\n * @returns true if the model was changed.\n */",
       "getModelFromUi()": "/** Get the current UI state as a filter model. */",
       "isFilterActive()": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
@@ -4412,7 +4428,8 @@
       "setModel(model: any)": "/** Restores the filter state. */",
       "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
       "onAnyFilterChanged?()": "/** Called whenever any filter is changed. */",
-      "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */"
+      "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */",
+      "onFloatingFilterChanged(type: string | null, value: any)": "/** Notification that a new floating-filter value was input by the user.\n * @param type operation type selected.\n * @param value model-typed value entered.\n */"
     }
   },
   "ISimpleFilterParams": {

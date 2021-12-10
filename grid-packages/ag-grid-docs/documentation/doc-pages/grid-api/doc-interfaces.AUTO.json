@@ -7101,6 +7101,18 @@
       }
     }
   },
+  "IFloatingFilterParent": {
+    "onFloatingFilterChanged": {
+      "description": "/** Notification that a new floating-filter value was input by the user.\n * @param type operation type selected.\n * @param value model-typed value entered.\n */",
+      "type": {
+        "arguments": { "type": "string | null", "value": "any" },
+        "returnType": "void",
+        "optional": false
+      }
+    }
+  },
+  "InbuiltParentType": {},
+  "IFloatingFilterParentCallback": { "meta": { "typeParams": ["P"] } },
   "IFloatingFilterParams": {
     "column": {
       "description": "/** The column this filter is for. */",
@@ -7122,7 +7134,7 @@
     "parentFilterInstance": {
       "description": "/** Gets a reference to the parent filter. The result is returned asynchronously\n * via a callback as the parent filter may not exist yet. If it does\n * not exist, it is created and asynchronously returned (AG Grid itself\n * does not create components asynchronously, however if providing a framework\n * provided filter e.g. React, it might be).\n * \n * The floating filter can then call any method it likes on the parent filter.\n * The parent filter will typically provide its own method for the floating\n * filter to call to set the filter. For example, if creating custom filter A,\n * it should have a method your floating A can call to set the state\n * when the user updates via the floating filter. */",
       "type": {
-        "arguments": { "callback": "(filterInstance: ISimpleFilter) => void" },
+        "arguments": { "callback": "IFloatingFilterParentCallback<P>" },
         "returnType": "void",
         "optional": false
       }
@@ -7130,7 +7142,8 @@
     "showParentFilter": {
       "description": "/** Shows the parent filter popup. */",
       "type": { "arguments": {}, "returnType": "void", "optional": false }
-    }
+    },
+    "meta": { "typeParams": ["P"] }
   },
   "IFloatingFilter": {
     "onParentModelChanged": {
@@ -7657,14 +7670,6 @@
   "Comparator": { "meta": { "typeParams": ["T"] } },
   "JoinOperator": {},
   "ISimpleFilter": {
-    "onFloatingFilterChanged": {
-      "description": "/** Notification that a new floating-filter value was input by the user.\n * @param type operation type selected.\n * @param value model-typed value entered.\n */",
-      "type": {
-        "arguments": { "type": "string | null", "value": "any" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
     "applyModel": {
       "description": "/** Apply the current UI state to the filter model.\n * @returns true if the model was changed.\n */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
@@ -7711,6 +7716,14 @@
         "arguments": { "model": "any" },
         "returnType": "string",
         "optional": true
+      }
+    },
+    "onFloatingFilterChanged": {
+      "description": "/** Notification that a new floating-filter value was input by the user.\n * @param type operation type selected.\n * @param value model-typed value entered.\n */",
+      "type": {
+        "arguments": { "type": "string | null", "value": "any" },
+        "returnType": "void",
+        "optional": false
       }
     }
   },

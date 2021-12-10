@@ -89,6 +89,7 @@
   "isSuppressFillHandle": {
     "type": { "arguments": {}, "returnType": "boolean" }
   },
+  "isAutoHeight": { "type": { "arguments": {}, "returnType": "boolean" } },
   "isRowDrag": {
     "type": { "arguments": { "rowNode": "RowNode" }, "returnType": "boolean" }
   },
