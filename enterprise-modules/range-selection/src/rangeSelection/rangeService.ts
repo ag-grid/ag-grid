@@ -457,7 +457,7 @@ export class RangeService extends BeanStub implements IRangeService {
         let columnsString: string | undefined;
 
         for (const val of rowToColumnMap.values()) {
-            const currentValString = val.join();
+            const currentValString = val.sort().join();
             if (columnsString === undefined) {
                 columnsString = currentValString;
                 continue;
