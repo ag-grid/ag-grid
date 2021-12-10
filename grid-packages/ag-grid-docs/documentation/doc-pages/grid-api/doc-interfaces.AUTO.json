@@ -5411,7 +5411,7 @@
   },
   "FilterModifiedEvent": {
     "filterInstance": {
-      "type": { "returnType": "IFilter", "optional": false }
+      "type": { "returnType": "IFilterComp", "optional": false }
     },
     "column": { "type": { "returnType": "Column", "optional": false } },
     "api": { "type": { "returnType": "GridApi", "optional": false } },

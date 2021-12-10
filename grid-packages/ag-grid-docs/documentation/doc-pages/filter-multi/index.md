@@ -126,7 +126,7 @@ The Multi Filter acts as a wrapper around a list of child filters inside it. The
 
 The example below shows how you can access child filter instances and call methods on them:
 
-- Clicking the **Print Text Filter model** button will access the Text Filter inside the Multi Filter and print the model for the current UI to the console.
+- Clicking the **Print Text Filter model** button will access the Text Filter inside the Multi Filter and print the current model to the console.
 - Clicking the **Print Set Filter search text** button will access the Set Filter inside the Multi Filter and print the current search text to the console.
 
 <grid-example title='Accessing Child Filters' name='accessing-child-filters' type='generated' options='{ "enterprise": true, "exampleHeight": 624, "modules": ["clientside", "multifilter", "setfilter", "menu", "clipboard"] }'></grid-example>

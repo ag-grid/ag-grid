@@ -66,7 +66,7 @@ function onFilterModified(e: FilterModifiedEvent) {
   console.log('filterInstance.getModel() =>', e.filterInstance.getModel())
   console.log(
     'filterInstance.getModelFromUi() =>',
-    (e.filterInstance as IProvidedFilter).getModelFromUi()
+    (e.filterInstance as unknown as IProvidedFilter).getModelFromUi()
   )
 }
 

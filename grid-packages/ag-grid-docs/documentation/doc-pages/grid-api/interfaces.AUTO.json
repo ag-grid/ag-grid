@@ -2713,7 +2713,7 @@
   "FilterModifiedEvent": {
     "meta": {},
     "type": {
-      "filterInstance": "IFilter",
+      "filterInstance": "IFilterComp",
       "column": "Column",
       "api": "GridApi",
       "columnApi": "ColumnApi",
