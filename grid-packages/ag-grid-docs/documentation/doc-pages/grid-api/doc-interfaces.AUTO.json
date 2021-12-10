@@ -7845,7 +7845,7 @@
     }
   },
   "TextMatcherParams": {
-    "filter": {
+    "filterOption": {
       "type": { "returnType": "string | null | undefined", "optional": false }
     },
     "value": { "type": { "returnType": "any", "optional": false } },
