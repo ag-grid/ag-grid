@@ -37,7 +37,7 @@ export interface IFilterDef {
 
 export interface IFilter {
 
-    /** This is used to let the grid know if the filter is active or not */
+    /** Returns `true` if the filter is currently active, otherwise `false`. */
     isFilterActive(): boolean;
 
     // mandatory methods

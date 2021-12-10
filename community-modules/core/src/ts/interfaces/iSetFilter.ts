@@ -5,6 +5,7 @@ import { Column } from '../entities/column';
 import { GridApi } from '../gridApi';
 import { ColumnApi } from '../columns/columnApi';
 import { ProvidedFilterModel } from './iFilter';
+import { AgPromise } from '../utils/promise';
 
 export type SetFilterModelValue = (string | null)[];
 export interface SetFilterModel extends ProvidedFilterModel {
@@ -14,22 +15,48 @@ export interface SetFilterModel extends ProvidedFilterModel {
 
 /** Interface contract for the public aspects of the SetFilter implementation. */
 export interface ISetFilter extends IProvidedFilter {
-    /** @returns the currently selected values. */
+    /**
+     * Returns a model representing the current state of the filter, or `null` if the filter is
+     * not active.
+     */
+    getModel(): SetFilterModel | null;
+
+    /**
+     * Sets the state of the filter using the supplied model. Providing `null` as the model will
+     * de-activate the filter.
+     * 
+     * **Note:** if you are [providing values asynchronously](/filter-set-filter-list/#asynchronous-values)
+     * to the Set Filter, you need to wait for these changes to be applied before performing any further
+     * actions by waiting on the returned grid promise, e.g. 
+     * `filter.setModel({ values: ['a', 'b'] }).then(function() { gridApi.onFilterChanged(); });`
+     */
+    setModel(model: SetFilterModel | null): void | AgPromise<void>;
+
+    /** Returns the full list of unique values used by the Set Filter. */
     getValues(): SetFilterModelValue;
 
-    /** Manually set the super-set of filterable values. */
+    /** Sets the values used in the Set Filter on the fly. */
     setFilterValues(values: SetFilterModelValue): void;
-    /** Triggers a recalculation of displayed super-set of values. */
+    /**
+     * Refreshes the values shown in the filter from the original source. For example, if a
+     * callback was provided, the callback will be executed again and the filter will refresh using
+     * the values returned.
+     * 
+     * See [Refreshing Values](/filter-set-filter-list/#refreshing-values).
+     */
     refreshFilterValues(): void;
-    /** Resets the source of filter values to be grid-data derived and triggers a refresh of displayed values. */
+    /**
+     * Resets the Set Filter to use values from the grid, rather than any values that have been
+     * provided directly.
+     */
     resetFilterValues(): void;
 
-    /** @returns the current mini-filter text. */
+    /** Returns the current mini-filter text. */
     getMiniFilter(): string | null;
-    /** Change the current mini-filter text. */
-    setMiniFilter(text: string | null): void;
+    /** Sets the text in the Mini Filter at the top of the filter (the 'quick search' in the popup). */
+    setMiniFilter(newMiniFilter: string | null): void;
 
-    /** @returns the current UI state (potentially un-applied). */
+    /** Returns the current UI state (potentially un-applied). */
     getModelFromUi(): SetFilterModel | null;
 }
 

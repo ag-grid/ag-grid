@@ -7518,7 +7518,7 @@
       "type": { "arguments": {}, "returnType": "any", "optional": false }
     },
     "isFilterActive": {
-      "description": "/** This is used to let the grid know if the filter is active or not */",
+      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "doesFilterPass": {
@@ -7674,7 +7674,7 @@
       "type": { "arguments": {}, "returnType": "any", "optional": false }
     },
     "isFilterActive": {
-      "description": "/** This is used to let the grid know if the filter is active or not */",
+      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "doesFilterPass": {
@@ -12215,7 +12215,7 @@
   },
   "IFilter": {
     "isFilterActive": {
-      "description": "/** This is used to let the grid know if the filter is active or not */",
+      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "doesFilterPass": {
@@ -12260,7 +12260,7 @@
   },
   "IFilterComp": {
     "isFilterActive": {
-      "description": "/** This is used to let the grid know if the filter is active or not */",
+      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "doesFilterPass": {
@@ -12721,7 +12721,7 @@
       "type": { "arguments": {}, "returnType": "any", "optional": false }
     },
     "isFilterActive": {
-      "description": "/** This is used to let the grid know if the filter is active or not */",
+      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "doesFilterPass": {
@@ -13951,8 +13951,24 @@
     }
   },
   "ISetFilter": {
+    "getModel": {
+      "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. */",
+      "type": {
+        "arguments": {},
+        "returnType": "SetFilterModel | null",
+        "optional": false
+      }
+    },
+    "setModel": {
+      "description": "/** Sets the state of the filter using the supplied model. Providing `null` as the model will\n * de-activate the filter.\n * \n * **Note:** if you are [providing values asynchronously](/filter-set-filter-list/#asynchronous-values)\n * to the Set Filter, you need to wait for these changes to be applied before performing any further\n * actions by waiting on the returned grid promise, e.g. \n * `filter.setModel({ values: ['a', 'b'] }).then(function() { gridApi.onFilterChanged(); });` */",
+      "type": {
+        "arguments": { "model": "SetFilterModel | null" },
+        "returnType": "void | AgPromise<void>",
+        "optional": false
+      }
+    },
     "getValues": {
-      "description": "/** @returns the currently selected values.\n */",
+      "description": "/** Returns the full list of unique values used by the Set Filter. */",
       "type": {
         "arguments": {},
         "returnType": "SetFilterModelValue",
@@ -13960,7 +13976,7 @@
       }
     },
     "setFilterValues": {
-      "description": "/** Manually set the super-set of filterable values. */",
+      "description": "/** Sets the values used in the Set Filter on the fly. */",
       "type": {
         "arguments": { "values": "SetFilterModelValue" },
         "returnType": "void",
@@ -13968,15 +13984,15 @@
       }
     },
     "refreshFilterValues": {
-      "description": "/** Triggers a recalculation of displayed super-set of values. */",
+      "description": "/** Refreshes the values shown in the filter from the original source. For example, if a\n * callback was provided, the callback will be executed again and the filter will refresh using\n * the values returned.\n * \n * See [Refreshing Values](/filter-set-filter-list/#refreshing-values). */",
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "resetFilterValues": {
-      "description": "/** Resets the source of filter values to be grid-data derived and triggers a refresh of displayed values. */",
+      "description": "/** Resets the Set Filter to use values from the grid, rather than any values that have been\n * provided directly. */",
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "getMiniFilter": {
-      "description": "/** @returns the current mini-filter text.\n */",
+      "description": "/** Returns the current mini-filter text. */",
       "type": {
         "arguments": {},
         "returnType": "string | null",
@@ -13984,15 +14000,15 @@
       }
     },
     "setMiniFilter": {
-      "description": "/** Change the current mini-filter text. */",
+      "description": "/** Sets the text in the Mini Filter at the top of the filter (the 'quick search' in the popup). */",
       "type": {
-        "arguments": { "text": "string | null" },
+        "arguments": { "newMiniFilter": "string | null" },
         "returnType": "void",
         "optional": false
       }
     },
     "getModelFromUi": {
-      "description": "/** @returns the current UI state (potentially un-applied).\n */",
+      "description": "/** Returns the current UI state (potentially un-applied). */",
       "type": {
         "arguments": {},
         "returnType": "SetFilterModel | null",
@@ -14004,7 +14020,7 @@
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "isFilterActive": {
-      "description": "/** This is used to let the grid know if the filter is active or not */",
+      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "doesFilterPass": {
@@ -14012,18 +14028,6 @@
       "type": {
         "arguments": { "params": "IDoesFilterPassParams" },
         "returnType": "boolean",
-        "optional": false
-      }
-    },
-    "getModel": {
-      "description": "/** Gets the filter state for storing */",
-      "type": { "arguments": {}, "returnType": "any", "optional": false }
-    },
-    "setModel": {
-      "description": "/** Restores the filter state. */",
-      "type": {
-        "arguments": { "model": "any" },
-        "returnType": "void | AgPromise<void>",
         "optional": false
       }
     },
