@@ -1,0 +1,19 @@
+{
+    "properties": [
+        {
+            "name": "options",
+            "value": "{\n        \n        title: { text: 'Try dragging the Navigator\\'s handles to zoom in' },\n        subtitle: { text: 'or the area between them to pan around' },\n        data: [\n            {\n                label: 'Android',\n                value: 56.9\n            },\n            {\n                label: 'iOS',\n                value: 22.5\n            },\n            {\n                label: 'BlackBerry',\n                value: 6.8\n            },\n            {\n                label: 'Symbian',\n                value: 8.5\n            },\n            {\n                label: 'Bada',\n                value: 2.6\n            },\n            {\n                label: 'Windows',\n                value: 1.9\n            }\n        ],\n        series: [{\n                type: 'column',\n                xKey: 'label',\n                yKeys: ['value']\n            }],\n        axes: [\n            {\n                type: 'number',\n                position: 'left'\n            },\n            {\n                type: 'category',\n                position: 'bottom'\n            }\n        ],\n        legend: { enabled: false },\n        navigator: { enabled: true }\n    }"
+        }
+    ],
+    "externalEventHandlers": [
+        {
+            "name": "toggleEnabled",
+            "params": "true",
+            "body": "function toggleEnabled(value) {\n    options.navigator.enabled = value;\n    \n}"
+        }
+    ],
+    "instanceMethods": [],
+    "globals": [],
+    "init": [],
+    "template": "<div class=\"wrapper\">\n    <div class=\"toolPanel\">\n        <button onclick=\"toggleEnabled(true)\">Show Navigator</button>\n        <button onclick=\"toggleEnabled(false)\">Hide Navigator</button>\n    </div>\n    $$CHART$$\n</div>"
+}

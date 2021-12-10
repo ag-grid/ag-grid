@@ -1,0 +1,38 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "defaultColDef",
+            "value": "{\n        initialWidth: 100,\n        sortable: true,\n        resizable: true\n    }"
+        },
+        { "name": "columnDefs", "value": "getColDefsMedalsIncluded()" }
+    ],
+    "components": [],
+    "defaultColDef": null,
+    "globalComponents": [],
+    "parsedColDefs": "",
+    "instanceMethods": [],
+    "externalEventHandlers": [
+        {
+            "name": "onBtExcludeMedalColumns",
+            "params": "",
+            "body": "function onBtExcludeMedalColumns() {\n    this.gridApi.setColumnDefs(getColDefsMedalsExcluded());\n}"
+        },
+        {
+            "name": "onBtIncludeMedalColumns",
+            "params": "",
+            "body": "function onBtIncludeMedalColumns() {\n    this.gridApi.setColumnDefs(getColDefsMedalsIncluded());\n}"
+        }
+    ],
+    "utils": [
+        "const athleteColumn = {\n    headerName: 'Athlete',\n    valueGetter: function (params) {\n        return params.data.athlete;\n    }\n};",
+        "function getColDefsMedalsIncluded() {\n    return [\n        athleteColumn,\n        {\n            colId: 'myAgeCol',\n            headerName: 'Age',\n            valueGetter: function (params) {\n                return params.data.age;\n            }\n        },\n        {\n            headerName: 'Country',\n            headerClass: 'country-header',\n            valueGetter: function (params) {\n                return params.data.country;\n            }\n        },\n        { field: 'sport' },\n        { field: 'year' },\n        { field: 'date' },\n        { field: 'gold' },\n        { field: 'silver' },\n        { field: 'bronze' },\n        { field: 'total' }\n    ];\n}",
+        "function getColDefsMedalsExcluded() {\n    return [\n        athleteColumn,\n        {\n            colId: 'myAgeCol',\n            headerName: 'Age',\n            valueGetter: function (params) {\n                return params.data.age;\n            }\n        },\n        {\n            headerName: 'Country',\n            headerClass: 'country-header',\n            valueGetter: function (params) {\n                return params.data.country;\n            }\n        },\n        { field: 'sport' },\n        { field: 'year' },\n        { field: 'date' }\n    ];\n}"
+    ],
+    "data": {
+        "url": "'https://www.ag-grid.com/example-assets/olympic-winners.json'",
+        "callback": "params.api.setRowData(data)"
+    },
+    "template": "<div class=\"test-container\">\n    <div class=\"test-header\">\n        <button onclick=\"onBtIncludeMedalColumns()\">Include Medal Columns</button>\n        <button onclick=\"onBtExcludeMedalColumns()\">Exclude Medal Columns</button>\n    </div>\n    GRID_TEMPLATE_PLACEHOLDER\n</div>\n",
+    "gridSettings": { "width": "100%", "height": "100%", "theme": "ag-theme-alpine", "modules": true }
+}

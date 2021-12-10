@@ -1,0 +1,15 @@
+{
+    "properties": [
+        {
+            "name": "options",
+            "value": "{\n        \n        title: { text: 'Average low/high temperatures in London' },\n        subtitle: { text: '(click a data point for details)' },\n        data: [\n            {\n                month: 'March',\n                low: 3.9,\n                high: 11.3\n            },\n            {\n                month: 'April',\n                low: 5.5,\n                high: 14.2\n            },\n            {\n                month: 'May',\n                low: 8.7,\n                high: 17.9\n            }\n        ],\n        series: [\n            {\n                type: 'line',\n                xKey: 'month',\n                yKey: 'high'\n            },\n            {\n                type: 'column',\n                xKey: 'month',\n                yKeys: ['low']\n            }\n        ],\n        axes: [\n            {\n                type: 'category',\n                position: 'bottom'\n            },\n            {\n                type: 'number',\n                position: 'left'\n            }\n        ],\n        legend: { enabled: false },\n        tooltipTracking: false,\n        listeners: {\n            seriesNodeClick: function (event) {\n                var datum = event.datum;\n                window.alert('Temperature in ' + datum[event.xKey] + ': ' + String(datum[event.yKey]) + '\\xB0C' + '\\nSeries: ' + event.series.id);\n            }\n        }\n    }"
+        }
+    ],
+    "externalEventHandlers": [],
+    "instanceMethods": [],
+    "globals": [
+        "function listUnitsSoldByBrand(brands) {\n    var result = '';\n    for (var key in brands) {\n        result += key + ': ' + brands[key] + '\\n';\n    }\n    return result;\n}"
+    ],
+    "init": [],
+    "template": "<div class=\"wrapper\">\n    $$CHART$$\n</div>"
+}

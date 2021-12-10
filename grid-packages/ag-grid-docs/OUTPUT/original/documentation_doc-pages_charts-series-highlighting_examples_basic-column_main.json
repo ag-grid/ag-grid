@@ -1,0 +1,15 @@
+{
+    "properties": [
+        {
+            "name": "options",
+            "value": "{\n        data: data,\n        \n        title: { text: 'Beverage Expenses' },\n        subtitle: { text: 'per quarter' },\n        series: [{\n                type: 'column',\n                xKey: 'beverage',\n                yKeys: [\n                    'Q1',\n                    'Q2',\n                    'Q3',\n                    'Q4'\n                ],\n                highlightStyle: {\n                    item: {\n                        fill: 'red',\n                        stroke: 'maroon',\n                        strokeWidth: 4\n                    },\n                    series: {\n                        dimOpacity: 0.2,\n                        strokeWidth: 2\n                    }\n                }\n            }]\n    }"
+        }
+    ],
+    "externalEventHandlers": [],
+    "instanceMethods": [],
+    "globals": [
+        "var data = [\n    {\n        beverage: 'Coffee',\n        Q1: 450,\n        Q2: 560,\n        Q3: 600,\n        Q4: 700\n    },\n    {\n        beverage: 'Tea',\n        Q1: 270,\n        Q2: 380,\n        Q3: 450,\n        Q4: 520\n    },\n    {\n        beverage: 'Milk',\n        Q1: 180,\n        Q2: 170,\n        Q3: 190,\n        Q4: 200\n    }\n];"
+    ],
+    "init": [],
+    "template": ""
+}

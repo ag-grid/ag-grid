@@ -1,0 +1,13 @@
+{
+    "properties": [
+        {
+            "name": "options",
+            "value": "{\n        \n        autoSize: true,\n        data: data,\n        title: {\n            text: 'UK Energy Sources (2018)',\n            fontSize: 18\n        },\n        subtitle: { text: 'Source: Department for Business, Energy & Industrial Strategy' },\n        series: [{\n                type: 'area',\n                xKey: 'month',\n                yKeys: [\n                    'coal',\n                    'petroleum',\n                    'naturalGas',\n                    'bioenergyWaste',\n                    'nuclear',\n                    'windSolarHydro',\n                    'imported'\n                ],\n                yNames: [\n                    'Coal',\n                    'Petroleum',\n                    'Natural gas',\n                    'Bioenergy & waste',\n                    'Nuclear',\n                    'Wind, solar & hydro',\n                    'Imported'\n                ],\n                normalizedTo: 100,\n                highlightStyle: {\n                    series: {\n                        strokeWidth: 4,\n                        dimOpacity: 0.3\n                    }\n                }\n            }],\n        axes: [\n            {\n                type: 'category',\n                position: 'bottom'\n            },\n            {\n                type: 'number',\n                position: 'left',\n                label: { format: '#{.0f}%' }\n            }\n        ],\n        legend: { position: 'top' }\n    }"
+        }
+    ],
+    "externalEventHandlers": [],
+    "instanceMethods": [],
+    "globals": [],
+    "init": [],
+    "template": "$$CHART$$\n"
+}

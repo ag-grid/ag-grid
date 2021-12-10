@@ -1,0 +1,29 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            headerName: \"#\",\n            maxWidth: 100,\n            valueGetter: hashValueGetter\n        },\n        { field: \"a\" },\n        { field: \"b\" },\n        {\n            headerName: \"A + B\",\n            colId: \"a&b\",\n            valueGetter: abValueGetter\n        },\n        {\n            headerName: \"A * 1000\",\n            minWidth: 95,\n            valueGetter: a1000ValueGetter\n        },\n        {\n            headerName: \"B * 137\",\n            minWidth: 90,\n            valueGetter: b137ValueGetter\n        },\n        {\n            headerName: \"Random\",\n            minWidth: 90,\n            valueGetter: randomValueGetter\n        },\n        {\n            headerName: \"Chain\",\n            valueGetter: chainValueGetter\n        },\n        {\n            headerName: \"Const\",\n            minWidth: 85,\n            valueGetter: constValueGetter\n        }\n    ]"
+        },
+        { "name": "defaultColDef", "value": "{\n        flex: 1,\n        minWidth: 75\n    }" },
+        { "name": "rowData", "value": "createRowData()" }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    flex: 1,\n    minWidth: 75\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            headerName: \"#\",\n            maxWidth: 100,\n            valueGetter: \"AG_LITERAL_hashValueGetter\"\n        },\n        { field: \"a\" },\n        { field: \"b\" },\n        {\n            headerName: \"A + B\",\n            colId: \"a&b\",\n            valueGetter: \"AG_LITERAL_abValueGetter\"\n        },\n        {\n            headerName: \"A * 1000\",\n            minWidth: 95,\n            valueGetter: \"AG_LITERAL_a1000ValueGetter\"\n        },\n        {\n            headerName: \"B * 137\",\n            minWidth: 90,\n            valueGetter: \"AG_LITERAL_b137ValueGetter\"\n        },\n        {\n            headerName: \"Random\",\n            minWidth: 90,\n            valueGetter: \"AG_LITERAL_randomValueGetter\"\n        },\n        {\n            headerName: \"Chain\",\n            valueGetter: \"AG_LITERAL_chainValueGetter\"\n        },\n        {\n            headerName: \"Const\",\n            minWidth: 85,\n            valueGetter: \"AG_LITERAL_constValueGetter\"\n        }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [],
+    "utils": [
+        "var hashValueGetter = function (params) {\n    return params.node ? params.node.rowIndex : null;\n};",
+        "function abValueGetter(params) {\n    return params.data.a + params.data.b;\n}",
+        "var a1000ValueGetter = function (params) {\n    return params.data.a * 1000;\n};",
+        "var b137ValueGetter = function (params) {\n    return params.data.b * 137;\n};",
+        "var randomValueGetter = function () {\n    return Math.floor(Math.random() * 1000);\n};",
+        "var chainValueGetter = function (params) {\n    return params.getValue('a&b') * 1000;\n};",
+        "var constValueGetter = function () {\n    return 99999;\n};",
+        "function createRowData() {\n    var rowData = [];\n    for (var i = 0; i < 100; i++) {\n        rowData.push({\n            a: Math.floor(i % 4),\n            b: Math.floor(i % 7)\n        });\n    }\n    return rowData;\n}"
+    ],
+    "template": "GRID_TEMPLATE_PLACEHOLDER\n",
+    "gridSettings": { "width": "100%", "height": "100%", "theme": "ag-theme-alpine-dark" }
+}

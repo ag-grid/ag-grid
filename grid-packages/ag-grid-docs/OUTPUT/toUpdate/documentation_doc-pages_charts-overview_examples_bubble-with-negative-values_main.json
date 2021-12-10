@@ -1,0 +1,13 @@
+{
+    "properties": [
+        {
+            "name": "options",
+            "value": "{\n        \n        autoSize: true,\n        data: data,\n        title: {\n            text: 'Most Populous Cities (2019)',\n            fontSize: 18\n        },\n        subtitle: { text: 'Source: Simple Maps' },\n        series: [{\n                type: 'scatter',\n                title: 'Most populous cities',\n                xKey: 'lon',\n                xName: 'Longitude',\n                yKey: 'lat',\n                yName: 'Latitude',\n                sizeKey: 'population',\n                sizeName: 'Population',\n                labelKey: 'city',\n                labelName: 'City',\n                marker: {\n                    size: 5,\n                    maxSize: 100\n                },\n                fillOpacity: 0.5\n            }],\n        axes: [\n            {\n                position: 'bottom',\n                type: 'number',\n                title: { text: 'Longitude' },\n                min: -180,\n                max: 180,\n                nice: false\n            },\n            {\n                position: 'left',\n                type: 'number',\n                title: { text: 'Latitude' },\n                min: -90,\n                max: 90,\n                nice: false\n            }\n        ],\n        legend: { enabled: false }\n    }"
+        }
+    ],
+    "externalEventHandlers": [],
+    "instanceMethods": [],
+    "globals": [],
+    "init": [],
+    "template": "$$CHART$$\n"
+}

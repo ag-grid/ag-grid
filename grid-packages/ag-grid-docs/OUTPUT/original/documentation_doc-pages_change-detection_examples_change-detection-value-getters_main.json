@@ -1,0 +1,36 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            field: \"a\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"b\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"c\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"d\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"e\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"f\",\n            type: \"valueColumn\"\n        },\n        {\n            headerName: \"Total\",\n            valueGetter: \"data.a + data.b + data.c + data.d + data.e + data.f\",\n            editable: false,\n            aggFunc: \"sum\",\n            cellClass: \"total-col\"\n        }\n    ]"
+        },
+        { "name": "defaultColDef", "value": "{\n        flex: 1,\n        sortable: true\n    }" },
+        {
+            "name": "columnTypes",
+            "value": "{\n        valueColumn: {\n            editable: true,\n            aggFunc: \"sum\",\n            valueParser: \"Number(newValue)\",\n            filter: \"agNumberColumnFilter\"\n        }\n    }"
+        },
+        { "name": "rowData", "value": "getRowData()" },
+        { "name": "groupDefaultExpanded", "value": "1" },
+        { "name": "suppressAggFuncInHeader", "value": "true" },
+        { "name": "enableCellChangeFlash", "value": "true" },
+        { "name": "animateRows", "value": "true" }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    flex: 1,\n    sortable: true\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            field: \"a\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"b\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"c\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"d\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"e\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"f\",\n            type: \"valueColumn\"\n        },\n        {\n            headerName: \"Total\",\n            valueGetter: \"data.a + data.b + data.c + data.d + data.e + data.f\",\n            editable: false,\n            aggFunc: \"sum\",\n            cellClass: \"total-col\"\n        }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [],
+    "utils": [
+        "function getRowData() {\n    var rowData = [];\n    for (var i = 1; i <= 20; i++) {\n        rowData.push({\n            group: i < 5 ? 'A' : 'B',\n            a: i * 863 % 100,\n            b: i * 811 % 100,\n            c: i * 743 % 100,\n            d: i * 677 % 100,\n            e: i * 619 % 100,\n            f: i * 571 % 100\n        });\n    }\n    return rowData;\n}"
+    ],
+    "template": "\n\nGRID_TEMPLATE_PLACEHOLDER",
+    "gridSettings": {
+        "width": "100%",
+        "height": "100%",
+        "theme": "ag-theme-alpine-dark",
+        "enterprise": true,
+        "exampleHeight": 550
+    }
+}

@@ -1,0 +1,19 @@
+{
+    "properties": [
+        {
+            "name": "options",
+            "value": "{\n        \n        autoSize: false,\n        width: 750,\n        height: 430,\n        data: [\n            {\n                label: 'USA',\n                value: 56.9\n            },\n            {\n                label: 'UK',\n                value: 22.5\n            },\n            {\n                label: 'China',\n                value: 6.8\n            },\n            {\n                label: 'Russia',\n                value: 8.5\n            },\n            {\n                label: 'India',\n                value: 2.6\n            },\n            {\n                label: 'Germany',\n                value: 18.2\n            },\n            {\n                label: 'France',\n                value: 12.5\n            },\n            {\n                label: 'Canada',\n                value: 3.9\n            },\n            {\n                label: 'Spain',\n                value: 7.9\n            },\n            {\n                label: 'South Africa',\n                value: 21.9\n            },\n            {\n                label: 'Portugal',\n                value: 7.4\n            },\n            {\n                label: 'Netherlands',\n                value: 4.7\n            },\n            {\n                label: 'Finland',\n                value: 3.9\n            },\n            {\n                label: 'Sweden',\n                value: 3.3\n            },\n            {\n                label: 'Norway',\n                value: 3.2\n            },\n            {\n                label: 'Greece',\n                value: 1.9\n            },\n            {\n                label: 'Italy',\n                value: 2.5\n            }\n        ],\n        series: [{\n                type: 'pie',\n                angleKey: 'value',\n                labelKey: 'label',\n                strokeWidth: 3\n            }],\n        legend: { position: 'bottom' }\n    }"
+        }
+    ],
+    "externalEventHandlers": [
+        {
+            "name": "updateWidth",
+            "params": "event",
+            "body": "function updateWidth(event) {\n    var value = +event.target.value;\n    options.width = value;\n    \n    document.getElementById('sliderValue').innerHTML = String(value);\n}"
+        }
+    ],
+    "instanceMethods": [],
+    "globals": [],
+    "init": [],
+    "template": "<div class=\"wrapper\">\n    <div id=\"toolPanel\">\n        <div class=\"slider\">\n            <label for=\"sliderInput\"><strong>Width:</strong></label>\n            <span id=\"sliderValue\">750</span>\n            <input type=\"range\" id=\"sliderInput\" min=\"350\" max=\"750\" value=\"750\" oninput=\"updateWidth(event)\" onchange=\"updateWidth(event)\">\n        </div>\n    </div>\n    $$CHART$$\n</div>"
+}

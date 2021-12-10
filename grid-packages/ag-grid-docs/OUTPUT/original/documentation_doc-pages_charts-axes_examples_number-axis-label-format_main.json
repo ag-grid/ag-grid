@@ -1,0 +1,13 @@
+{
+    "properties": [
+        {
+            "name": "options",
+            "value": "{\n        \n        title: { text: 'Monthly average daily temperatures in the UK' },\n        series: [{\n                type: 'line',\n                xKey: 'date',\n                yKey: 'temp'\n            }],\n        axes: [\n            {\n                type: 'number',\n                position: 'left',\n                label: { format: '\\uD83C\\uDF27️ #{0>2.0f} \\xB0C' }\n            },\n            {\n                type: 'time',\n                nice: false,\n                position: 'bottom',\n                tick: { count: agCharts.time.month },\n                label: { format: '%b %Y' }\n            }\n        ],\n        padding: {\n            top: 20,\n            right: 40,\n            bottom: 20,\n            left: 20\n        },\n        legend: { enabled: false },\n        data: [\n            {\n                date: new Date('01 Jan 2019 00:00:00 GMT'),\n                temp: 4.2\n            },\n            {\n                date: new Date('01 Feb 2019 00:00:00 GMT'),\n                temp: 6.9\n            },\n            {\n                date: new Date('01 Mar 2019 00:00:00 GMT'),\n                temp: 7.9\n            },\n            {\n                date: new Date('01 Apr 2019 00:00:00 GMT'),\n                temp: 9.1\n            },\n            {\n                date: new Date('01 May 2019 00:00:00 GMT'),\n                temp: 11.2\n            }\n        ]\n    }"
+        }
+    ],
+    "externalEventHandlers": [],
+    "instanceMethods": [],
+    "globals": [],
+    "init": [],
+    "template": "$$CHART$$\n"
+}

@@ -1,0 +1,13 @@
+{
+    "properties": [
+        {
+            "name": "options",
+            "value": "{\n        \n        autoSize: true,\n        data: data,\n        title: {\n            text: 'Total Visitors to Museums and Galleries',\n            fontSize: 18\n        },\n        subtitle: { text: 'Source: Department for Digital, Culture, Media & Sport' },\n        series: [{\n                type: 'column',\n                xKey: 'year',\n                yKeys: ['visitors'],\n                fills: ['#0084e7'],\n                strokes: ['#00407f'],\n                shadow: {\n                    enabled: true,\n                    xOffset: 3\n                }\n            }],\n        axes: [\n            {\n                type: 'category',\n                position: 'bottom',\n                title: { text: 'Year' }\n            },\n            {\n                type: 'number',\n                position: 'left',\n                title: { text: 'Total visitors' },\n                label: {\n                    formatter: function (params) {\n                        return params.value / 1000000 + 'M';\n                    }\n                }\n            }\n        ],\n        legend: { enabled: false }\n    }"
+        }
+    ],
+    "externalEventHandlers": [],
+    "instanceMethods": [],
+    "globals": [],
+    "init": [],
+    "template": "$$CHART$$\n"
+}

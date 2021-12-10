@@ -1,0 +1,48 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        { field: \"make\" },\n        { field: \"model\" },\n        { field: \"price\" },\n        { field: \"zombies\" },\n        { field: \"style\" },\n        { field: \"clothes\" }\n    ]"
+        },
+        { "name": "defaultColDef", "value": "{ flex: 1 }" },
+        { "name": "rowData", "value": "getData()" },
+        { "name": "rowSelection", "value": "\"multiple\"" },
+        { "name": "animateRows", "value": "true" }
+    ],
+    "components": [],
+    "defaultColDef": "{ flex: 1 }",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        { field: \"make\" },\n        { field: \"model\" },\n        { field: \"price\" },\n        { field: \"zombies\" },\n        { field: \"style\" },\n        { field: \"clothes\" }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [
+        {
+            "name": "getRowData",
+            "params": "",
+            "body": "function getRowData() {\n    const rowData = [];\n    this.gridApi.forEachNode(function (node) {\n        rowData.push(node.data);\n    });\n    console.log('Row Data:');\n    console.log(rowData);\n}"
+        },
+        { "name": "clearData", "params": "", "body": "function clearData() {\n    this.gridApi.setRowData([]);\n}" },
+        {
+            "name": "addItems",
+            "params": "",
+            "body": "function addItems(addIndex) {\n    const newItems = [\n        createNewRowData(),\n        createNewRowData(),\n        createNewRowData()\n    ];\n    const res = this.gridApi.applyTransaction({\n        add: newItems,\n        addIndex: addIndex\n    });\n    printResult(res);\n}"
+        },
+        {
+            "name": "updateItems",
+            "params": "",
+            "body": "function updateItems() {\n    const itemsToUpdate = [];\n    this.gridApi.forEachNodeAfterFilterAndSort(function (rowNode, index) {\n        if (index >= 2) {\n            return;\n        }\n        const data = rowNode.data;\n        data.price = Math.floor(Math.random() * 20000 + 20000);\n        itemsToUpdate.push(data);\n    });\n    const res = this.gridApi.applyTransaction({ update: itemsToUpdate });\n    printResult(res);\n}"
+        },
+        {
+            "name": "onRemoveSelected",
+            "params": "",
+            "body": "function onRemoveSelected() {\n    const selectedData = this.gridApi.getSelectedRows();\n    const res = this.gridApi.applyTransaction({ remove: selectedData });\n    printResult(res);\n}"
+        }
+    ],
+    "utils": [
+        "let newCount = 1;",
+        "function createNewRowData() {\n    const newData = {\n        make: 'Toyota ' + newCount,\n        model: 'Celica ' + newCount,\n        price: 35000 + newCount * 17,\n        zombies: 'Headless',\n        style: 'Little',\n        clothes: 'Airbag'\n    };\n    newCount++;\n    return newData;\n}",
+        "function printResult(res) {\n    console.log('---------------------------------------');\n    if (res.add) {\n        res.add.forEach(function (rowNode) {\n            console.log('Added Row Node', rowNode);\n        });\n    }\n    if (res.remove) {\n        res.remove.forEach(function (rowNode) {\n            console.log('Removed Row Node', rowNode);\n        });\n    }\n    if (res.update) {\n        res.update.forEach(function (rowNode) {\n            console.log('Updated Row Node', rowNode);\n        });\n    }\n}"
+    ],
+    "template": "<div style=\"height: 100%; display: flex; flex-direction: column;\">\n    <div style=\"margin-bottom: 4px;\">\n        <button onclick=\"addItems()\">Add Items</button>\n        <button onclick=\"addItems(2)\">Add Items addIndex=2</button>\n        <button onclick=\"updateItems()\">Update Top 2</button>\n        <button onclick=\"onRemoveSelected()\">Remove Selected</button>\n        <button onclick=\"getRowData()\">Get Row Data</button>\n        <button onclick=\"clearData()\">Clear Data</button>\n    </div>\n    <div style=\"flex-grow: 1;\">\n        GRID_TEMPLATE_PLACEHOLDER\n    </div>\n</div>\n",
+    "gridSettings": { "width": "100%", "height": "100%", "theme": "ag-theme-alpine" }
+}

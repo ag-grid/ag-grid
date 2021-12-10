@@ -1,0 +1,65 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            field: \"dateModified\",\n            minWidth: 250,\n            comparator: function (d1, d2) {\n                return new Date(d1).getTime() < new Date(d2).getTime() ? -1 : 1;\n            }\n        },\n        {\n            field: \"size\",\n            aggFunc: \"sum\",\n            valueFormatter: function (params) {\n                return params.value ? Math.round(params.value * 10) / 10 + \" MB\" : \"0 MB\";\n            }\n        }\n    ]"
+        },
+        {
+            "name": "defaultColDef",
+            "value": "{\n        flex: 1,\n        filter: true,\n        sortable: true,\n        resizable: true\n    }"
+        },
+        {
+            "name": "autoGroupColumnDef",
+            "value": "{\n        headerName: \"Files\",\n        minWidth: 330,\n        cellRendererParams: {\n            checkbox: true,\n            suppressCount: true,\n            innerRenderer: \"fileCellRenderer\"\n        }\n    }"
+        },
+        { "name": "components", "value": "{ fileCellRenderer: getFileCellRenderer() }" },
+        { "name": "rowData", "value": "getData()" },
+        { "name": "treeData", "value": "true" },
+        { "name": "animateRows", "value": "true" },
+        { "name": "groupDefaultExpanded", "value": "-1" },
+        { "name": "getDataPath", "value": "function (data) {\n        return data.filePath;\n    }" },
+        { "name": "getRowNodeId", "value": "function (data) {\n        return data.id;\n    }" }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    flex: 1,\n    filter: true,\n    sortable: true,\n    resizable: true\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            field: \"dateModified\",\n            minWidth: 250,\n            comparator: \"AG_FUNCTION_function (d1, d2) {\\n    return new Date(d1).getTime() < new Date(d2).getTime() ? -1 : 1;\\n}\"\n        },\n        {\n            field: \"size\",\n            aggFunc: \"sum\",\n            valueFormatter: \"AG_FUNCTION_function (params) {\\n    return params.value ? Math.round(params.value * 10) / 10 + ' MB' : '0 MB';\\n}\"\n        }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [
+        {
+            "name": "addNewGroup",
+            "params": "",
+            "body": "function addNewGroup() {\n    var newGroupData = [{\n            id: getNextId(),\n            filePath: [\n                'Music',\n                'wav',\n                'hit_' + new Date().getTime() + '.wav'\n            ],\n            dateModified: 'Aug 23 2017 11:52:00 PM',\n            size: 58.9\n        }];\n    this.gridApi.applyTransaction({ add: newGroupData });\n}"
+        },
+        {
+            "name": "removeSelected",
+            "params": "",
+            "body": "function removeSelected() {\n    var selectedNode = this.gridApi.getSelectedNodes()[0];\n    if (!selectedNode) {\n        console.warn('No nodes selected!');\n        return;\n    }\n    this.gridApi.applyTransaction({ remove: getRowsToRemove(selectedNode) });\n}"
+        },
+        {
+            "name": "moveSelectedNodeToTarget",
+            "params": "9",
+            "body": "function moveSelectedNodeToTarget(targetRowId) {\n    var selectedNode = this.gridApi.getSelectedNodes()[0];\n    if (!selectedNode) {\n        console.warn('No nodes selected!');\n        return;\n    }\n    var targetNode = this.gridApi.getRowNode(targetRowId);\n    var invalidMove = selectedNode.key === targetNode.key || isSelectionParentOfTarget(selectedNode, targetNode);\n    if (invalidMove) {\n        console.warn('Invalid selection - must not be parent or same as target!');\n        return;\n    }\n    var rowsToUpdate = getRowsToUpdate(selectedNode, targetNode.data.filePath);\n    this.gridApi.applyTransaction({ update: rowsToUpdate });\n}"
+        }
+    ],
+    "utils": [
+        "function getNextId() {\n    if (!window.nextId) {\n        window.nextId = 15;\n    } else {\n        window.nextId++;\n    }\n    return window.nextId;\n}",
+        "function getFileCellRenderer() {\n    class FileCellRenderer {\n        init(params) {\n            var tempDiv = document.createElement('div');\n            var value = params.value;\n            var icon = getFileIcon(params.value);\n            tempDiv.innerHTML = icon ? '<span><i class=\"' + icon + '\"></i>' + '<span class=\"filename\"></span>' + value + '</span>' : value;\n            this.eGui = tempDiv.firstChild;\n        }\n        getGui() {\n            return this.eGui;\n        }\n        refresh() {\n            return false;\n        }\n    }\n    return FileCellRenderer;\n}",
+        "function getRowsToRemove(node) {\n    var res = [];\n    const children = node.childrenAfterGroup || [];\n    for (var i = 0; i < children.length; i++) {\n        res = res.concat(getRowsToRemove(children[i]));\n    }\n    return node.data ? res.concat([node.data]) : res;\n}",
+        "function isSelectionParentOfTarget(selectedNode, targetNode) {\n    var children = selectedNode.childrenAfterGroup || [];\n    for (var i = 0; i < children.length; i++) {\n        if (targetNode && children[i].key === targetNode.key)\n            return true;\n        isSelectionParentOfTarget(children[i], targetNode);\n    }\n    return false;\n}",
+        "function getRowsToUpdate(node, parentPath) {\n    var res = [];\n    var newPath = parentPath.concat([node.key]);\n    if (node.data) {\n        node.data.filePath = newPath;\n    }\n    var children = node.childrenAfterGroup || [];\n    for (var i = 0; i < children.length; i++) {\n        var updatedChildRowData = getRowsToUpdate(children[i], newPath);\n        res = res.concat(updatedChildRowData);\n    }\n    return node.data ? res.concat([node.data]) : res;\n}",
+        "function getFileIcon(name) {\n    return endsWith(name, '.mp3') || endsWith(name, '.wav') ? 'far fa-file-audio' : endsWith(name, '.xls') ? 'far fa-file-excel' : endsWith(name, '.txt') ? 'far fa-file' : endsWith(name, '.pdf') ? 'far fa-file-pdf' : 'far fa-folder';\n}",
+        "function endsWith(str, match) {\n    var len;\n    if (str == null || !str.length || match == null || !match.length) {\n        return false;\n    }\n    len = str.length;\n    return str.substring(len - match.length, len) === match;\n}"
+    ],
+    "template": "<div class=\"example-wrapper\">\n    <div style=\"margin-bottom: 5px;\">\n        <button onclick=\"addNewGroup()\">Add New Group</button>\n        <button onclick=\"moveSelectedNodeToTarget(9)\">Move Selected to 'stuff'</button>\n        <button onclick=\"removeSelected()\">Remove Selected</button>\n    </div>\n    GRID_TEMPLATE_PLACEHOLDER\n</div>",
+    "gridSettings": {
+        "width": "100%",
+        "height": "100%",
+        "theme": "ag-theme-alpine",
+        "enterprise": true,
+        "exampleHeight": 570,
+        "extras": ["fontawesome"],
+        "modules": ["clientside", "rowgrouping"]
+    }
+}

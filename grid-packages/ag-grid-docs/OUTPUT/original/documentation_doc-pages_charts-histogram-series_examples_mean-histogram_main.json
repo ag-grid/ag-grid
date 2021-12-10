@@ -1,0 +1,13 @@
+{
+    "properties": [
+        {
+            "name": "options",
+            "value": "{\n        \n        title: { text: 'Race results' },\n        data: histogramData,\n        series: [{\n                type: 'histogram',\n                aggregation: 'mean',\n                xKey: 'age',\n                xName: 'Participant Age',\n                yKey: 'time',\n                yName: 'Race time'\n            }],\n        legend: { enabled: false },\n        axes: [\n            {\n                type: 'number',\n                position: 'bottom',\n                title: { text: 'Age band (years)' }\n            },\n            {\n                type: 'number',\n                position: 'left',\n                title: { text: 'Mean race time (seconds)' }\n            }\n        ]\n    }"
+        }
+    ],
+    "externalEventHandlers": [],
+    "instanceMethods": [],
+    "globals": [],
+    "init": [],
+    "template": "$$CHART$$\n"
+}

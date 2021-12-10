@@ -1,0 +1,13 @@
+{
+    "properties": [
+        {
+            "name": "options",
+            "value": "{\n        \n        title: { text: 'Navigator Styling' },\n        data: [\n            {\n                label: 'Android',\n                value: 56.9\n            },\n            {\n                label: 'iOS',\n                value: 22.5\n            },\n            {\n                label: 'BlackBerry',\n                value: 6.8\n            },\n            {\n                label: 'Symbian',\n                value: 8.5\n            },\n            {\n                label: 'Bada',\n                value: 2.6\n            },\n            {\n                label: 'Windows',\n                value: 1.9\n            }\n        ],\n        series: [{\n                type: 'column',\n                xKey: 'label',\n                yKeys: ['value']\n            }],\n        axes: [\n            {\n                type: 'number',\n                position: 'left'\n            },\n            {\n                type: 'category',\n                position: 'bottom'\n            }\n        ],\n        legend: { enabled: false },\n        navigator: {\n            enabled: true,\n            height: 50,\n            min: 0.2,\n            max: 0.7,\n            mask: {\n                fill: 'red',\n                strokeWidth: 2,\n                fillOpacity: 0.3\n            },\n            minHandle: {\n                fill: 'yellow',\n                stroke: 'blue',\n                width: 16,\n                height: 30,\n                gripLineGap: 4,\n                gripLineLength: 12,\n                strokeWidth: 2\n            },\n            maxHandle: {\n                fill: 'lime',\n                stroke: 'black'\n            }\n        }\n    }"
+        }
+    ],
+    "externalEventHandlers": [],
+    "instanceMethods": [],
+    "globals": [],
+    "init": [],
+    "template": "<div class=\"wrapper\">\n    $$CHART$$\n</div>"
+}

@@ -1,0 +1,13 @@
+{
+    "properties": [
+        {
+            "name": "options",
+            "value": "{\n        \n        autoSize: true,\n        data: data.filter(function (d) {\n            return d.magnitude > 4;\n        }),\n        title: {\n            text: 'Worldwide Earthquakes (first week of February 2020)',\n            fontSize: 18\n        },\n        subtitle: { text: 'Source: US Geological Survey' },\n        series: [{\n                type: 'scatter',\n                xKey: 'depth',\n                xName: 'Depth',\n                yKey: 'magnitude',\n                yName: 'Magnitude',\n                sizeKey: 'minDistance',\n                sizeName: 'Minimum Distance',\n                marker: {\n                    size: 5,\n                    maxSize: 100,\n                    fill: '#41874b',\n                    stroke: '#41874b'\n                },\n                fillOpacity: 0.5\n            }],\n        axes: [\n            {\n                position: 'bottom',\n                type: 'number',\n                title: { text: 'Depth (m)' }\n            },\n            {\n                position: 'left',\n                type: 'number',\n                title: { text: 'Magnitude' }\n            }\n        ],\n        legend: { enabled: false }\n    }"
+        }
+    ],
+    "externalEventHandlers": [],
+    "instanceMethods": [],
+    "globals": [],
+    "init": [],
+    "template": "$$CHART$$\n"
+}

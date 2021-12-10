@@ -1,0 +1,17 @@
+{
+    "properties": [
+        {
+            "name": "options",
+            "value": "{\n        \n        autoSize: true,\n        title: {\n            text: 'Earthquake Magnitudes by Source (January 2020)',\n            fontSize: 18\n        },\n        subtitle: { text: 'Source: US Geological Survey' },\n        padding: {\n            left: 40,\n            right: 40\n        },\n        series: [\n            {\n                data: data.ci,\n                type: 'line',\n                title: 'Southern California Seismic Network',\n                xKey: 'time',\n                yKey: 'magnitude',\n                stroke: strokes[strokeIndex++],\n                strokeWidth: strokeWidth,\n                marker: {\n                    enabled: false,\n                    fill: strokes[strokeIndex - 1]\n                }\n            },\n            {\n                data: data.hv,\n                type: 'line',\n                title: 'Hawaiian Volcano Observatory Network',\n                xKey: 'time',\n                yKey: 'magnitude',\n                stroke: strokes[strokeIndex++],\n                strokeWidth: strokeWidth,\n                marker: {\n                    enabled: false,\n                    fill: strokes[strokeIndex - 1]\n                }\n            },\n            {\n                data: data.nc,\n                type: 'line',\n                title: 'USGS Northern California Network',\n                xKey: 'time',\n                yKey: 'magnitude',\n                stroke: strokes[strokeIndex++],\n                strokeWidth: strokeWidth,\n                marker: {\n                    enabled: false,\n                    fill: strokes[strokeIndex - 1]\n                }\n            },\n            {\n                data: data.ok,\n                type: 'line',\n                title: 'Oklahoma Seismic Network',\n                xKey: 'time',\n                yKey: 'magnitude',\n                stroke: strokes[strokeIndex++],\n                strokeWidth: strokeWidth,\n                marker: {\n                    enabled: false,\n                    fill: strokes[strokeIndex - 1]\n                }\n            }\n        ],\n        axes: [\n            {\n                position: 'bottom',\n                type: 'time',\n                label: {\n                    format: '%d/%m',\n                    rotation: 30\n                }\n            },\n            {\n                position: 'left',\n                type: 'number',\n                title: { text: 'Magnitude' }\n            }\n        ],\n        legend: {\n            position: 'bottom',\n            strokeWidth: 0\n        }\n    }"
+        }
+    ],
+    "externalEventHandlers": [],
+    "instanceMethods": [],
+    "globals": [
+        "var strokes = [\n    '#5BC0EB',\n    '#FDE74C',\n    '#9BC53D',\n    '#E55934',\n    '#FA7921',\n    '#fa3081'\n];",
+        "var strokeIndex = 0;",
+        "var strokeWidth = 3;"
+    ],
+    "init": [],
+    "template": "$$CHART$$\n"
+}

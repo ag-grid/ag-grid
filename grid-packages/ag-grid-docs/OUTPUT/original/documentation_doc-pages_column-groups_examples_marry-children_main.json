@@ -1,0 +1,25 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            headerName: \"Athlete Details\",\n            marryChildren: true,\n            children: [\n                {\n                    field: \"athlete\",\n                    colId: \"athlete\"\n                },\n                {\n                    field: \"country\",\n                    colId: \"country\"\n                }\n            ]\n        },\n        {\n            field: \"age\",\n            colId: \"age\"\n        },\n        {\n            headerName: \"Sports Results\",\n            marryChildren: true,\n            children: [\n                {\n                    field: \"sport\",\n                    colId: \"sport\"\n                },\n                {\n                    field: \"total\",\n                    colId: \"total\"\n                },\n                {\n                    field: \"gold\",\n                    colId: \"gold\"\n                },\n                {\n                    field: \"silver\",\n                    colId: \"silver\"\n                },\n                {\n                    field: \"bronze\",\n                    colId: \"bronze\"\n                }\n            ]\n        }\n    ]"
+        },
+        { "name": "defaultColDef", "value": "{\n        resizable: true,\n        width: 160\n    }" },
+        { "name": "debug", "value": "true" },
+        { "name": "rowData", "value": "null" }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    resizable: true,\n    width: 160\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            headerName: \"Athlete Details\",\n            marryChildren: true,\n            children: [\n                {\n                    field: \"athlete\",\n                    colId: \"athlete\"\n                },\n                {\n                    field: \"country\",\n                    colId: \"country\"\n                }\n            ]\n        },\n        {\n            field: \"age\",\n            colId: \"age\"\n        },\n        {\n            headerName: \"Sports Results\",\n            marryChildren: true,\n            children: [\n                {\n                    field: \"sport\",\n                    colId: \"sport\"\n                },\n                {\n                    field: \"total\",\n                    colId: \"total\"\n                },\n                {\n                    field: \"gold\",\n                    colId: \"gold\"\n                },\n                {\n                    field: \"silver\",\n                    colId: \"silver\"\n                },\n                {\n                    field: \"bronze\",\n                    colId: \"bronze\"\n                }\n            ]\n        }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [],
+    "utils": [],
+    "data": {
+        "url": "'https://www.ag-grid.com/example-assets/olympic-winners.json'",
+        "callback": "params.api.setRowData(data)"
+    },
+    "template": "GRID_TEMPLATE_PLACEHOLDER",
+    "gridSettings": { "width": "100%", "height": "100%", "theme": "ag-theme-alpine", "exampleHeight": 560 }
+}

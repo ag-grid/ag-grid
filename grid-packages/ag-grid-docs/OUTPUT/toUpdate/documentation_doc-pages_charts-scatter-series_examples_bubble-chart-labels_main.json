@@ -1,0 +1,19 @@
+{
+    "properties": [
+        {
+            "name": "options",
+            "value": "{\n        \n        autoSize: true,\n        title: { text: 'Weight vs Height (by gender)' },\n        subtitle: { text: 'with name labels' },\n        series: [\n            {\n                type: 'scatter',\n                title: 'Male',\n                data: maleHeightWeight,\n                xKey: 'height',\n                xName: 'Height',\n                yKey: 'weight',\n                yName: 'Weight',\n                sizeKey: 'age',\n                sizeName: 'Age',\n                labelKey: 'name',\n                marker: {\n                    shape: 'square',\n                    size: 6,\n                    maxSize: 30,\n                    fill: 'rgba(227,111,106,0.71)',\n                    stroke: '#9f4e4a'\n                },\n                label: { enabled: true }\n            },\n            {\n                type: 'scatter',\n                title: 'Female',\n                data: femaleHeightWeight,\n                xKey: 'height',\n                xName: 'Height',\n                yKey: 'weight',\n                yName: 'Weight',\n                sizeKey: 'age',\n                sizeName: 'Age',\n                labelKey: 'name',\n                marker: {\n                    size: 6,\n                    maxSize: 30,\n                    fill: 'rgba(123,145,222,0.71)',\n                    stroke: '#56659b'\n                },\n                label: { enabled: true }\n            }\n        ],\n        axes: [\n            {\n                type: 'number',\n                position: 'bottom',\n                title: { text: 'Height' },\n                label: {\n                    rotation: 45,\n                    formatter: function (params) {\n                        return params.value + 'cm';\n                    }\n                }\n            },\n            {\n                type: 'number',\n                position: 'left',\n                title: { text: 'Weight' },\n                label: {\n                    formatter: function (params) {\n                        return params.value + 'kg';\n                    }\n                }\n            }\n        ]\n    }"
+        }
+    ],
+    "externalEventHandlers": [
+        {
+            "name": "updateFontSize",
+            "params": "event",
+            "body": "function updateFontSize(event) {\n    var value = +event.target.value;\n    options.series[0].label.fontSize = value;\n    options.series[1].label.fontSize = value;\n    \n    document.getElementById('fontSizeSliderValue').innerHTML = String(value);\n}"
+        }
+    ],
+    "instanceMethods": [],
+    "globals": [],
+    "init": [],
+    "template": "<div class=\"wrapper\">\n    <div id=\"toolPanel\">\n        <div class=\"slider\">\n            <label for=\"sliderInput\"><strong>Label font size:&nbsp;</strong></label>\n            <span id=\"fontSizeSliderValue\">12</span>\n            <input type=\"range\" id=\"sliderInput\" min=\"8\" max=\"30\" value=\"12\" step=\"1\" oninput=\"updateFontSize(event)\" onchange=\"updateFontSize(event)\">\n        </div>\n    </div>\n    $$CHART$$\n</div>"
+}

@@ -1,0 +1,68 @@
+{
+    "eventHandlers": [
+        {
+            "name": "firstDataRendered",
+            "handlerName": "onFirstDataRendered",
+            "handler": "function onFirstDataRendered(params) {\n    this.gridApi.getToolPanelInstance('filters').expandFilters();\n}"
+        }
+    ],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            headerName: \"Case Insensitive (default)\",\n            field: \"colour\",\n            filter: \"agSetColumnFilter\",\n            filterParams: {\n                caseSensitive: false,\n                cellRenderer: colourCellRenderer\n            }\n        },\n        {\n            headerName: \"Case Sensitive\",\n            field: \"colour\",\n            filter: \"agSetColumnFilter\",\n            filterParams: {\n                caseSensitive: true,\n                cellRenderer: colourCellRenderer\n            }\n        }\n    ]"
+        },
+        {
+            "name": "defaultColDef",
+            "value": "{\n        flex: 1,\n        minWidth: 225,\n        cellRenderer: colourCellRenderer,\n        resizable: true,\n        floatingFilter: true\n    }"
+        },
+        { "name": "sideBar", "value": "\"filters\"" },
+        { "name": "rowData", "value": "getData()" }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    flex: 1,\n    minWidth: 225,\n    cellRenderer: colourCellRenderer,\n    resizable: true,\n    floatingFilter: true\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            headerName: \"Case Insensitive (default)\",\n            field: \"colour\",\n            filter: \"agSetColumnFilter\",\n            filterParams: {\n                caseSensitive: false,\n                cellRenderer: \"AG_LITERAL_colourCellRenderer\"\n            }\n        },\n        {\n            headerName: \"Case Sensitive\",\n            field: \"colour\",\n            filter: \"agSetColumnFilter\",\n            filterParams: {\n                caseSensitive: true,\n                cellRenderer: \"AG_LITERAL_colourCellRenderer\"\n            }\n        }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [
+        {
+            "name": "setModel",
+            "params": "'insensitive'",
+            "body": "function setModel(type) {\n    const instance = this.gridApi.getFilterInstance(FILTER_TYPES[type]);\n    instance.setModel({ values: MANGLED_COLOURS });\n    this.gridApi.onFilterChanged();\n}"
+        },
+        {
+            "name": "getModel",
+            "params": "'insensitive'",
+            "body": "function getModel(type) {\n    const instance = this.gridApi.getFilterInstance(FILTER_TYPES[type]);\n    alert(JSON.stringify(instance.getModel(), null, 2));\n}"
+        },
+        {
+            "name": "setFilterValues",
+            "params": "'insensitive'",
+            "body": "function setFilterValues(type) {\n    const instance = this.gridApi.getFilterInstance(FILTER_TYPES[type]);\n    instance.setFilterValues(MANGLED_COLOURS);\n    instance.applyModel();\n    this.gridApi.onFilterChanged();\n}"
+        },
+        {
+            "name": "getValues",
+            "params": "'insensitive'",
+            "body": "function getValues(type) {\n    const instance = this.gridApi.getFilterInstance(FILTER_TYPES[type]);\n    alert(JSON.stringify(instance.getValues(), null, 2));\n}"
+        },
+        {
+            "name": "reset",
+            "params": "'insensitive'",
+            "body": "function reset(type) {\n    const instance = this.gridApi.getFilterInstance(FILTER_TYPES[type]);\n    instance.resetFilterValues();\n    instance.setModel(null);\n    this.gridApi.onFilterChanged();\n}"
+        }
+    ],
+    "utils": [
+        "var FIXED_STYLES = 'vertical-align: middle; border: 1px solid black; margin: 3px; display: inline-block; width: 10px; height: 10px';",
+        "var FILTER_TYPES = {\n    insensitive: 'colour',\n    sensitive: 'colour_1'\n};",
+        "function colourCellRenderer(params) {\n    if (!params.value || params.value === '(Select All)') {\n        return params.value;\n    }\n    return `<div style=\"background-color: ${ params.value.toLowerCase() }; ${ FIXED_STYLES }\"></div>${ params.value }`;\n}",
+        "var MANGLED_COLOURS = [\n    'ReD',\n    'OrAnGe',\n    'WhItE',\n    'YeLlOw'\n];"
+    ],
+    "template": "<div class=\"example-wrapper\">\n    <div class=\"example-header\">\n        <div>\n            Case Insensitive:\n            <button onclick=\"setModel('insensitive')\">API: setModel() - mismatching case</button>\n            <button onclick=\"getModel('insensitive')\">API: getModel()</button>\n            <button onclick=\"setFilterValues('insensitive')\">API: setFilterValues() - mismatching case </button>\n            <button onclick=\"getValues('insensitive')\">API: getValues()</button>\n            <button onclick=\"reset('insensitive')\">Reset</button>\n        </div>\n        <div style=\"padding-top: 10px;\">\n            Case Sensitive:\n            <button onclick=\"setModel('sensitive')\">API: setModel() - mismatching case</button>\n            <button onclick=\"getModel('sensitive')\">API: getModel()</button>\n            <button onclick=\"setFilterValues('sensitive')\">API: setFilterValues() - mismatching case </button>\n            <button onclick=\"getValues('sensitive')\">API: getValues()</button>\n            <button onclick=\"reset('sensitive')\">Reset</button>\n        </div>\n    </div>\n    GRID_TEMPLATE_PLACEHOLDER\n</div>",
+    "gridSettings": {
+        "width": "100%",
+        "height": "100%",
+        "theme": "ag-theme-alpine",
+        "enterprise": true,
+        "exampleHeight": 570,
+        "modules": ["clientside", "setfilter", "menu", "filterpanel"]
+    }
+}

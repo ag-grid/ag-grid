@@ -1,0 +1,25 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            headerName: \"Athlete Details\",\n            headerGroupComponent: \"customHeaderGroupComponent\",\n            children: [\n                {\n                    field: \"athlete\",\n                    width: 150\n                },\n                {\n                    field: \"age\",\n                    width: 90,\n                    columnGroupShow: \"open\"\n                },\n                {\n                    field: \"country\",\n                    width: 120,\n                    columnGroupShow: \"open\"\n                }\n            ]\n        },\n        {\n            headerName: \"Medal details\",\n            headerGroupComponent: \"customHeaderGroupComponent\",\n            children: [\n                {\n                    field: \"year\",\n                    width: 90\n                },\n                {\n                    field: \"date\",\n                    width: 110\n                },\n                {\n                    field: \"sport\",\n                    width: 110,\n                    columnGroupShow: \"open\"\n                },\n                {\n                    field: \"gold\",\n                    width: 100,\n                    columnGroupShow: \"open\"\n                },\n                {\n                    field: \"silver\",\n                    width: 100,\n                    columnGroupShow: \"open\"\n                },\n                {\n                    field: \"bronze\",\n                    width: 100,\n                    columnGroupShow: \"open\"\n                },\n                {\n                    field: \"total\",\n                    width: 100,\n                    columnGroupShow: \"open\"\n                }\n            ]\n        }\n    ]"
+        },
+        { "name": "components", "value": "{ customHeaderGroupComponent: CustomHeaderGroup }" },
+        { "name": "rowData", "value": "null" },
+        { "name": "defaultColDef", "value": "{\n        width: 100,\n        resizable: true\n    }" }
+    ],
+    "components": [{ "name": "customHeaderGroupComponent", "value": "CustomHeaderGroup" }],
+    "defaultColDef": "{\n    width: 100,\n    resizable: true\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            headerName: \"Athlete Details\",\n            headerGroupComponent: \"customHeaderGroupComponent\",\n            children: [\n                {\n                    field: \"athlete\",\n                    width: 150\n                },\n                {\n                    field: \"age\",\n                    width: 90,\n                    columnGroupShow: \"open\"\n                },\n                {\n                    field: \"country\",\n                    width: 120,\n                    columnGroupShow: \"open\"\n                }\n            ]\n        },\n        {\n            headerName: \"Medal details\",\n            headerGroupComponent: \"customHeaderGroupComponent\",\n            children: [\n                {\n                    field: \"year\",\n                    width: 90\n                },\n                {\n                    field: \"date\",\n                    width: 110\n                },\n                {\n                    field: \"sport\",\n                    width: 110,\n                    columnGroupShow: \"open\"\n                },\n                {\n                    field: \"gold\",\n                    width: 100,\n                    columnGroupShow: \"open\"\n                },\n                {\n                    field: \"silver\",\n                    width: 100,\n                    columnGroupShow: \"open\"\n                },\n                {\n                    field: \"bronze\",\n                    width: 100,\n                    columnGroupShow: \"open\"\n                },\n                {\n                    field: \"total\",\n                    width: 100,\n                    columnGroupShow: \"open\"\n                }\n            ]\n        }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [],
+    "utils": [],
+    "data": {
+        "url": "'https://www.ag-grid.com/example-assets/olympic-winners.json'",
+        "callback": "params.api.setRowData(data)"
+    },
+    "template": "\n\n    \n\n\n\n\nGRID_TEMPLATE_PLACEHOLDER\n\n\n",
+    "gridSettings": { "width": "100%", "height": "100%", "theme": "ag-theme-alpine", "extras": ["fontawesome"] }
+}

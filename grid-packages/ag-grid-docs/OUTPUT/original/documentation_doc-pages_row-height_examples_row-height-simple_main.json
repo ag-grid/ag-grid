@@ -1,0 +1,27 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        { field: \"rowHeight\" },\n        { field: \"athlete\" },\n        {\n            field: \"age\",\n            width: 80\n        },\n        { field: \"country\" },\n        {\n            field: \"year\",\n            width: 90\n        },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]"
+        },
+        {
+            "name": "defaultColDef",
+            "value": "{\n        width: 150,\n        sortable: true,\n        resizable: true,\n        filter: true\n    }"
+        },
+        { "name": "getRowHeight", "value": null }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    width: 150,\n    sortable: true,\n    resizable: true,\n    filter: true\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        { field: \"rowHeight\" },\n        { field: \"athlete\" },\n        {\n            field: \"age\",\n            width: 80\n        },\n        { field: \"country\" },\n        {\n            field: \"year\",\n            width: 90\n        },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]",
+    "instanceMethods": ["function getRowHeight(params) {\n        return params.data.rowHeight;\n    }"],
+    "externalEventHandlers": [],
+    "utils": [],
+    "data": {
+        "url": "'https://www.ag-grid.com/example-assets/olympic-winners.json'",
+        "callback": "{\n    var differentHeights = [\n        40,\n        80,\n        120,\n        200\n    ];\n    data.forEach(function (dataItem, index) {\n        dataItem.rowHeight = differentHeights[index % 4];\n    });\n    params.api.setRowData(data);\n}"
+    },
+    "template": "GRID_TEMPLATE_PLACEHOLDER",
+    "gridSettings": { "width": "100%", "height": "100%", "theme": "ag-theme-alpine" }
+}

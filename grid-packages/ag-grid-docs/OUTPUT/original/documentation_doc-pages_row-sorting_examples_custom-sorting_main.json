@@ -1,0 +1,26 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            field: \"athlete\",\n            sort: \"desc\"\n        },\n        {\n            field: \"age\",\n            width: 90\n        },\n        { field: \"country\" },\n        {\n            field: \"year\",\n            width: 90,\n            unSortIcon: true\n        },\n        {\n            field: \"date\",\n            comparator: dateComparator\n        },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]"
+        },
+        { "name": "defaultColDef", "value": "{\n        width: 170,\n        sortable: true\n    }" }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    width: 170,\n    sortable: true\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            sort: \"desc\"\n        },\n        {\n            field: \"age\",\n            width: 90\n        },\n        { field: \"country\" },\n        {\n            field: \"year\",\n            width: 90,\n            unSortIcon: true\n        },\n        {\n            field: \"date\",\n            comparator: \"AG_LITERAL_dateComparator\"\n        },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [],
+    "utils": [
+        "function dateComparator(date1, date2) {\n    var date1Number = monthToComparableNumber(date1);\n    var date2Number = monthToComparableNumber(date2);\n    if (date1Number === null && date2Number === null) {\n        return 0;\n    }\n    if (date1Number === null) {\n        return -1;\n    }\n    if (date2Number === null) {\n        return 1;\n    }\n    return date1Number - date2Number;\n}",
+        "function monthToComparableNumber(date) {\n    if (date === undefined || date === null || date.length !== 10) {\n        return null;\n    }\n    var yearNumber = Number.parseInt(date.substring(6, 10));\n    var monthNumber = Number.parseInt(date.substring(3, 5));\n    var dayNumber = Number.parseInt(date.substring(0, 2));\n    var result = yearNumber * 10000 + monthNumber * 100 + dayNumber;\n    return result;\n}"
+    ],
+    "data": {
+        "url": "'https://www.ag-grid.com/example-assets/olympic-winners.json'",
+        "callback": "params.api.setRowData(data)"
+    },
+    "template": "GRID_TEMPLATE_PLACEHOLDER",
+    "gridSettings": { "width": "100%", "height": "100%", "theme": "ag-theme-alpine" }
+}

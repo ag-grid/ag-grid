@@ -1,0 +1,45 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            field: \"country\",\n            rowGroup: true,\n            hide: true\n        },\n        { field: \"athlete\" },\n        {\n            field: \"gold\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"silver\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"bronze\",\n            aggFunc: \"sum\"\n        }\n    ]"
+        },
+        {
+            "name": "defaultColDef",
+            "value": "{\n        flex: 1,\n        minWidth: 100,\n        resizable: true,\n        sortable: true\n    }"
+        },
+        { "name": "autoGroupColumnDef", "value": "{\n        flex: 1,\n        minWidth: 180\n    }" },
+        { "name": "rowModelType", "value": "\"serverSide\"" },
+        { "name": "serverSideStoreType", "value": "\"partial\"" },
+        { "name": "cacheBlockSize", "value": "100" },
+        { "name": "pagination", "value": "true" },
+        { "name": "paginationAutoPageSize", "value": "true" },
+        { "name": "paginateChildRows", "value": "true" },
+        { "name": "animateRows", "value": "true" },
+        { "name": "suppressAggFuncInHeader", "value": "true" }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    flex: 1,\n    minWidth: 100,\n    resizable: true,\n    sortable: true\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            field: \"country\",\n            rowGroup: true,\n            hide: true\n        },\n        { field: \"athlete\" },\n        {\n            field: \"gold\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"silver\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"bronze\",\n            aggFunc: \"sum\"\n        }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [],
+    "utils": [
+        "function getServerSideDatasource(server) {\n    return {\n        getRows: function (params) {\n            console.log('[Datasource] - rows requested by grid: ', params.request);\n            var response = server.getData(params.request);\n            setTimeout(function () {\n                if (response.success) {\n                    params.success({\n                        rowData: response.rows,\n                        rowCount: response.lastRow\n                    });\n                } else {\n                    params.fail();\n                }\n            }, 200);\n        }\n    };\n}"
+    ],
+    "data": {
+        "url": "'https://www.ag-grid.com/example-assets/olympic-winners.json'",
+        "callback": "{\n    var fakeServer = new FakeServer(data);\n    var datasource = getServerSideDatasource(fakeServer);\n    params.api.setServerSideDatasource(datasource);\n}"
+    },
+    "template": "GRID_TEMPLATE_PLACEHOLDER\n",
+    "gridSettings": {
+        "width": "100%",
+        "height": "100%",
+        "theme": "ag-theme-alpine-dark",
+        "enterprise": true,
+        "exampleHeight": 551,
+        "extras": ["alasql"],
+        "modules": ["serverside", "rowgrouping", "menu", "columnpanel"]
+    }
+}

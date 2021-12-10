@@ -1,0 +1,13 @@
+{
+    "properties": [
+        {
+            "name": "options",
+            "value": "{\n        \n        autoSize: true,\n        data: data,\n        title: {\n            text: 'Changes in Prison Population (2019)',\n            fontSize: 18\n        },\n        subtitle: { text: 'Source: Ministry of Justice, HM Prison Service, and Her Majesty\\u2019s Prison and Probation Service' },\n        series: [{\n                type: 'column',\n                xKey: 'month',\n                yKeys: [\n                    'menDelta',\n                    'womenDelta'\n                ],\n                yNames: [\n                    'Male',\n                    'Female'\n                ],\n                grouped: true,\n                fills: [\n                    '#19A0AA',\n                    '#F15F36'\n                ],\n                strokes: [\n                    '#19A0AA',\n                    '#F15F36'\n                ]\n            }],\n        axes: [\n            {\n                type: 'category',\n                position: 'bottom'\n            },\n            {\n                type: 'number',\n                position: 'left'\n            }\n        ]\n    }"
+        }
+    ],
+    "externalEventHandlers": [],
+    "instanceMethods": [],
+    "globals": [],
+    "init": [],
+    "template": "$$CHART$$\n"
+}

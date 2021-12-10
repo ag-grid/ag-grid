@@ -1,0 +1,13 @@
+{
+    "properties": [
+        {
+            "name": "options",
+            "value": "{\n        \n        title: { text: 'Race demographics' },\n        subtitle: { text: 'Number of participants by age category' },\n        data: histogramData,\n        series: [{\n                type: 'histogram',\n                xKey: 'age',\n                xName: 'Participant Age',\n                areaPlot: true,\n                bins: [\n                    [\n                        16,\n                        18\n                    ],\n                    [\n                        18,\n                        21\n                    ],\n                    [\n                        21,\n                        25\n                    ],\n                    [\n                        25,\n                        40\n                    ]\n                ]\n            }],\n        legend: { enabled: false },\n        axes: [\n            {\n                type: 'number',\n                position: 'bottom',\n                title: { text: 'Age category (years)' }\n            },\n            {\n                type: 'number',\n                position: 'left',\n                title: { text: 'Number of participants' }\n            }\n        ]\n    }"
+        }
+    ],
+    "externalEventHandlers": [],
+    "instanceMethods": [],
+    "globals": [],
+    "init": [],
+    "template": "$$CHART$$\n"
+}

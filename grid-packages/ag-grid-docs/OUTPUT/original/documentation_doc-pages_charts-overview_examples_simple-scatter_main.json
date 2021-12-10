@@ -1,0 +1,13 @@
+{
+    "properties": [
+        {
+            "name": "options",
+            "value": "{\n        \n        autoSize: true,\n        data: data,\n        title: {\n            text: 'Height vs Weight for Major League Baseball Players',\n            fontSize: 18\n        },\n        subtitle: { text: 'Source: Statistics Online Computational Resource' },\n        series: [{\n                type: 'scatter',\n                xKey: 'weight',\n                yKey: 'height',\n                fillOpacity: 0.5,\n                strokeOpacity: 0,\n                marker: {\n                    size: 12,\n                    fill: '#002D72'\n                }\n            }],\n        axes: [\n            {\n                position: 'bottom',\n                type: 'number',\n                title: { text: 'Weight (pounds)' }\n            },\n            {\n                position: 'left',\n                type: 'number',\n                title: { text: 'Height (inches)' }\n            }\n        ],\n        legend: { enabled: false }\n    }"
+        }
+    ],
+    "externalEventHandlers": [],
+    "instanceMethods": [],
+    "globals": [],
+    "init": [],
+    "template": "$$CHART$$\n"
+}

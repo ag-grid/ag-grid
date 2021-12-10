@@ -1,0 +1,47 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        { field: \"athlete\" },\n        { field: \"age\" },\n        { field: \"country\" },\n        { field: \"sport\" },\n        { field: \"year\" },\n        { field: \"date\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]"
+        },
+        {
+            "name": "defaultColDef",
+            "value": "{\n        sortable: true,\n        resizable: true,\n        width: 100,\n        enableRowGroup: true,\n        enablePivot: true,\n        enableValue: true\n    }"
+        },
+        { "name": "sideBar", "value": "{ toolPanels: [\"columns\"] }" },
+        { "name": "rowGroupPanelShow", "value": "\"always\"" },
+        { "name": "pivotPanelShow", "value": "\"always\"" },
+        { "name": "debug", "value": "true" },
+        { "name": "rowData", "value": "null" }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    sortable: true,\n    resizable: true,\n    width: 100,\n    enableRowGroup: true,\n    enablePivot: true,\n    enableValue: true\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        { field: \"athlete\" },\n        { field: \"age\" },\n        { field: \"country\" },\n        { field: \"sport\" },\n        { field: \"year\" },\n        { field: \"date\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [
+        {
+            "name": "saveState",
+            "params": "",
+            "body": "function saveState() {\n    window.colState = this.gridColumnApi.getColumnState();\n    console.log('column state saved');\n}"
+        },
+        {
+            "name": "restoreState",
+            "params": "",
+            "body": "function restoreState() {\n    if (!window.colState) {\n        console.log('no columns state to restore by, you must save state first');\n        return;\n    }\n    this.gridColumnApi.applyColumnState({\n        state: window.colState,\n        applyOrder: true\n    });\n    console.log('column state restored');\n}"
+        },
+        {
+            "name": "resetState",
+            "params": "",
+            "body": "function resetState() {\n    this.gridColumnApi.resetColumnState();\n    console.log('column state reset');\n}"
+        }
+    ],
+    "utils": [],
+    "data": {
+        "url": "'https://www.ag-grid.com/example-assets/olympic-winners.json'",
+        "callback": "params.api.setRowData(data)"
+    },
+    "template": "<div class=\"test-container\">\n    <div class=\"test-header\">\n        <div class=\"example-section\">\n            <button onclick=\"saveState()\">Save State</button>\n            <button onclick=\"restoreState()\">Restore State</button>\n            <button onclick=\"resetState()\">Reset State</button>\n        </div>\n    </div>\n    GRID_TEMPLATE_PLACEHOLDER\n</div>",
+    "gridSettings": { "width": "100%", "height": "100%", "theme": "ag-theme-alpine", "enterprise": true }
+}

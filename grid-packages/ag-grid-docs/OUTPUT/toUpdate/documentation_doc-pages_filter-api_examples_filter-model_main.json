@@ -1,0 +1,62 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            field: \"athlete\",\n            filter: \"agTextColumnFilter\"\n        },\n        {\n            field: \"age\",\n            filter: \"agNumberColumnFilter\",\n            maxWidth: 100\n        },\n        { field: \"country\" },\n        {\n            field: \"year\",\n            maxWidth: 100\n        },\n        {\n            field: \"date\",\n            filter: \"agDateColumnFilter\",\n            filterParams: filterParams\n        },\n        { field: \"sport\" },\n        {\n            field: \"gold\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"silver\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"bronze\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"total\",\n            filter: \"agNumberColumnFilter\"\n        }\n    ]"
+        },
+        {
+            "name": "defaultColDef",
+            "value": "{\n        flex: 1,\n        minWidth: 150,\n        filter: true,\n        sortable: true\n    }"
+        }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    flex: 1,\n    minWidth: 150,\n    filter: true,\n    sortable: true\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            filter: \"agTextColumnFilter\"\n        },\n        {\n            field: \"age\",\n            filter: \"agNumberColumnFilter\",\n            maxWidth: 100\n        },\n        { field: \"country\" },\n        {\n            field: \"year\",\n            maxWidth: 100\n        },\n        {\n            field: \"date\",\n            filter: \"agDateColumnFilter\",\n            filterParams: \"AG_LITERAL_filterParams\"\n        },\n        { field: \"sport\" },\n        {\n            field: \"gold\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"silver\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"bronze\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"total\",\n            filter: \"agNumberColumnFilter\"\n        }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [
+        {
+            "name": "clearFilters",
+            "params": "",
+            "body": "function clearFilters() {\n    this.gridApi.setFilterModel(null);\n}"
+        },
+        {
+            "name": "saveFilterModel",
+            "params": "",
+            "body": "function saveFilterModel() {\n    savedFilterModel = this.gridApi.getFilterModel();\n    var keys = Object.keys(savedFilterModel);\n    var savedFilters = keys.length > 0 ? keys.join(', ') : '(none)';\n    document.querySelector('#savedFilters').innerHTML = savedFilters;\n}"
+        },
+        {
+            "name": "restoreFilterModel",
+            "params": "",
+            "body": "function restoreFilterModel() {\n    this.gridApi.setFilterModel(savedFilterModel);\n}"
+        },
+        {
+            "name": "restoreFromHardCoded",
+            "params": "",
+            "body": "function restoreFromHardCoded() {\n    var hardcodedFilter = {\n        country: {\n            type: 'set',\n            values: [\n                'Ireland',\n                'United States'\n            ]\n        },\n        age: {\n            type: 'lessThan',\n            filter: '30'\n        },\n        athlete: {\n            type: 'startsWith',\n            filter: 'Mich'\n        },\n        date: {\n            type: 'lessThan',\n            dateFrom: '2010-01-01'\n        }\n    };\n    this.gridApi.setFilterModel(hardcodedFilter);\n}"
+        },
+        {
+            "name": "destroyFilter",
+            "params": "",
+            "body": "function destroyFilter() {\n    this.gridApi.destroyFilter('athlete');\n}"
+        }
+    ],
+    "utils": [
+        "var filterParams = {\n    comparator: function (filterLocalDateAtMidnight, cellValue) {\n        var dateAsString = cellValue;\n        if (dateAsString == null)\n            return -1;\n        var dateParts = dateAsString.split('/');\n        var cellDate = new Date(Number(dateParts[2]), Number(dateParts[1]) - 1, Number(dateParts[0]));\n        if (filterLocalDateAtMidnight.getTime() === cellDate.getTime()) {\n            return 0;\n        }\n        if (cellDate < filterLocalDateAtMidnight) {\n            return -1;\n        }\n        if (cellDate > filterLocalDateAtMidnight) {\n            return 1;\n        }\n    }\n};",
+        "var savedFilterModel = null;"
+    ],
+    "data": {
+        "url": "'https://www.ag-grid.com/example-assets/olympic-winners.json'",
+        "callback": "params.api.setRowData(data)"
+    },
+    "template": "<div class=\"example-wrapper\">\n    <div>\n        <div class=\"button-group\">\n            <button onclick=\"saveFilterModel()\">Save Filter Model</button>\n            <button onclick=\"restoreFilterModel()\">Restore Saved Filter Model</button>\n            <button onclick=\"restoreFromHardCoded()\" title=\"Name = 'Mich%', Country = ['Ireland', 'United States'], Age < 30, Date < 01/01/2010\">\n                Set Custom Filter Model\n            </button>\n            <button onclick=\"clearFilters()\">Reset Filters</button>\n            <button onclick=\"destroyFilter()\">Destroy Filter</button>\n        </div>\n    </div>\n    <div>\n        <div class=\"button-group\">\n            Saved Filters: <span id=\"savedFilters\">(none)</span>\n        </div>\n    </div>\n\n    GRID_TEMPLATE_PLACEHOLDER\n</div>",
+    "gridSettings": {
+        "width": "100%",
+        "height": "100%",
+        "theme": "ag-theme-alpine",
+        "enterprise": true,
+        "exampleHeight": 587,
+        "modules": ["clientside", "menu", "filterpanel", "columnpanel", "setfilter"]
+    }
+}

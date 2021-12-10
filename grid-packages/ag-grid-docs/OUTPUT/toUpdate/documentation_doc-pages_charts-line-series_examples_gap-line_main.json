@@ -1,0 +1,13 @@
+{
+    "properties": [
+        {
+            "name": "options",
+            "value": "{\n        \n        autoSize: true,\n        data: [\n            {\n                year: '2008',\n                visitors: 191000\n            },\n            {\n                year: '2009',\n                visitors: 45000\n            },\n            {\n                year: '2010',\n                visitors: 100000\n            },\n            {\n                year: '2011',\n                visitors: null\n            },\n            {\n                year: '2012',\n                visitors: 78000\n            },\n            {\n                year: '2013',\n                visitors: 136000\n            },\n            {\n                year: '2014',\n                visitors: undefined\n            },\n            {\n                year: '2015',\n                visitors: NaN\n            },\n            {\n                year: '2016',\n                visitors: 67000\n            },\n            {\n                year: '2017',\n                visitors: Infinity\n            },\n            {\n                year: '2018',\n                visitors: 174000\n            },\n            {\n                year: '2019',\n                visitors: 76000\n            },\n            {\n                year: '2020',\n                visitors: 56000\n            }\n        ],\n        title: { text: 'People Born' },\n        subtitle: { text: '2008-2020' },\n        series: [{\n                xKey: 'year',\n                yKey: 'visitors'\n            }],\n        legend: { enabled: false }\n    }"
+        }
+    ],
+    "externalEventHandlers": [],
+    "instanceMethods": [],
+    "globals": [],
+    "init": [],
+    "template": "$$CHART$$\n"
+}

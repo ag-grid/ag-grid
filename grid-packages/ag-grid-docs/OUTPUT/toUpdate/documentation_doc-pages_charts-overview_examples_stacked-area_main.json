@@ -1,0 +1,13 @@
+{
+    "properties": [
+        {
+            "name": "options",
+            "value": "{\n        \n        autoSize: true,\n        data: data,\n        title: {\n            text: 'Total Visitors to Science Museums (2019)',\n            fontSize: 18\n        },\n        subtitle: { text: 'Source: Department for Digital, Culture, Media & Sport' },\n        series: [{\n                type: 'area',\n                xKey: 'date',\n                yKeys: [\n                    'Science Museum',\n                    'National Media Museum',\n                    'National Railway Museum',\n                    'Locomotion',\n                    'Museum of Science and Industry, Manchester',\n                    'National Coal Mining Museum for England'\n                ],\n                fills: [\n                    '#5BC0EB',\n                    '#FDE74C',\n                    '#9BC53D',\n                    '#E55934',\n                    '#FA7921',\n                    '#fa3081'\n                ],\n                strokes: [\n                    '#4086a4',\n                    '#b1a235',\n                    '#6c8a2b',\n                    '#a03e24',\n                    '#af5517',\n                    '#af225a'\n                ],\n                marker: { enabled: true }\n            }],\n        axes: [\n            {\n                type: 'time',\n                position: 'bottom',\n                label: { format: '%b' }\n            },\n            {\n                type: 'number',\n                position: 'left',\n                title: { text: 'Total visitors' },\n                label: {\n                    formatter: function (params) {\n                        return params.value / 1000 + 'k';\n                    }\n                }\n            }\n        ],\n        legend: { position: 'bottom' }\n    }"
+        }
+    ],
+    "externalEventHandlers": [],
+    "instanceMethods": [],
+    "globals": [],
+    "init": [],
+    "template": "$$CHART$$\n"
+}

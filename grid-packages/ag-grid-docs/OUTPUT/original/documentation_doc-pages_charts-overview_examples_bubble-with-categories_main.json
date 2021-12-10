@@ -1,0 +1,13 @@
+{
+    "properties": [
+        {
+            "name": "options",
+            "value": "{\n        \n        autoSize: true,\n        data: data,\n        title: {\n            text: 'Punch Card of Github',\n            fontSize: 18\n        },\n        subtitle: { text: 'time distribution of commits' },\n        series: [{\n                type: 'scatter',\n                xKey: 'hour',\n                xName: 'Time',\n                yKey: 'day',\n                yName: 'Day',\n                sizeKey: 'size',\n                sizeName: 'Commits',\n                title: 'Punch Card',\n                marker: {\n                    size: 0,\n                    maxSize: 30,\n                    fill: '#cc5b58'\n                },\n                fillOpacity: 0.85\n            }],\n        axes: [\n            {\n                position: 'bottom',\n                type: 'category',\n                gridStyle: [{\n                        stroke: 'rgba(0,0,0,0.2)',\n                        lineDash: [\n                            0,\n                            5,\n                            0\n                        ]\n                    }],\n                tick: { color: 'black' },\n                line: { color: undefined }\n            },\n            {\n                position: 'left',\n                type: 'category',\n                gridStyle: [],\n                tick: { color: 'black' },\n                line: { color: undefined }\n            }\n        ],\n        legend: { enabled: false }\n    }"
+        }
+    ],
+    "externalEventHandlers": [],
+    "instanceMethods": [],
+    "globals": [],
+    "init": [],
+    "template": "$$CHART$$\n"
+}

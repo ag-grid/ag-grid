@@ -1,0 +1,17 @@
+{
+    "properties": [
+        {
+            "name": "options",
+            "value": "{\n        \n        title: { text: 'Fuel Spending (2019)' },\n        data: data,\n        series: [{\n                xKey: 'quarter',\n                yKey: 'electric',\n                title: 'Electric',\n                marker: {\n                    shape: createMarker(),\n                    size: 16\n                }\n            }],\n        legend: { position: 'bottom' }\n    }"
+        }
+    ],
+    "externalEventHandlers": [],
+    "instanceMethods": [],
+    "globals": [
+        "var data = [\n    {\n        quarter: 'Q1',\n        electric: 50\n    },\n    {\n        quarter: 'Q2',\n        electric: 70\n    },\n    {\n        quarter: 'Q3',\n        electric: 60\n    },\n    {\n        quarter: 'Q4',\n        electric: 40\n    }\n];",
+        "function createMarker() {\n    function Heart() {\n        agCharts.Marker.call(this);\n    }\n    Heart.className = 'Heart';\n    Heart.prototype = Object.create(agCharts.Marker.prototype);\n    Heart.prototype.constructor = Heart;\n    Heart.prototype.updatePath = function updatePath() {\n        var path = this.path;\n        var x = this.x;\n        var r = this.size / 4;\n        var y = this.y + r / 2;\n        path.clear();\n        path.cubicArc(x - r, y - r, r, r, 0, rad(130), rad(330), 0);\n        path.cubicArc(x + r, y - r, r, r, 0, rad(220), rad(50), 0);\n        path.lineTo(x, y + r);\n        path.closePath();\n    };\n    return Heart;\n}",
+        "function rad(degree) {\n    return degree / 180 * Math.PI;\n}"
+    ],
+    "init": [],
+    "template": "$$CHART$$\n"
+}

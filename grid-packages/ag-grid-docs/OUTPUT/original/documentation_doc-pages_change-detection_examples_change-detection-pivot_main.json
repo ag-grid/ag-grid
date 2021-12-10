@@ -1,0 +1,81 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            headerName: \"Student ID\",\n            field: \"student\"\n        },\n        {\n            headerName: \"Year Group\",\n            field: \"yearGroup\",\n            rowGroup: true\n        },\n        {\n            headerName: \"Age\",\n            field: \"age\"\n        },\n        {\n            headerName: \"Course\",\n            field: \"course\",\n            pivot: true\n        },\n        {\n            headerName: \"Age Range\",\n            valueGetter: ageRangeValueGetter,\n            pivot: true\n        },\n        {\n            headerName: \"Points\",\n            field: \"points\",\n            aggFunc: \"sum\"\n        }\n    ]"
+        },
+        {
+            "name": "defaultColDef",
+            "value": "{\n        flex: 1,\n        minWidth: 150,\n        sortable: true,\n        resizable: true,\n        cellRenderer: \"agAnimateShowChangeCellRenderer\"\n    }"
+        },
+        { "name": "rowData", "value": "getRowData()" },
+        { "name": "pivotMode", "value": "true" },
+        { "name": "groupDefaultExpanded", "value": "1" },
+        { "name": "animateRows", "value": "true" },
+        { "name": "getRowNodeId", "value": "function (data) {\n        return data.student;\n    }" }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    flex: 1,\n    minWidth: 150,\n    sortable: true,\n    resizable: true,\n    cellRenderer: 'agAnimateShowChangeCellRenderer'\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            headerName: \"Student ID\",\n            field: \"student\"\n        },\n        {\n            headerName: \"Year Group\",\n            field: \"yearGroup\",\n            rowGroup: true\n        },\n        {\n            headerName: \"Age\",\n            field: \"age\"\n        },\n        {\n            headerName: \"Course\",\n            field: \"course\",\n            pivot: true\n        },\n        {\n            headerName: \"Age Range\",\n            valueGetter: \"AG_LITERAL_ageRangeValueGetter\",\n            pivot: true\n        },\n        {\n            headerName: \"Points\",\n            field: \"points\",\n            aggFunc: \"sum\"\n        }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [
+        {
+            "name": "pivotMode",
+            "params": "",
+            "body": "function pivotMode() {\n    var pivotModeOn = document.getElementById('pivot-mode').checked;\n    this.gridColumnApi.setPivotMode(pivotModeOn);\n    this.gridColumnApi.applyColumnState({\n        state: [\n            {\n                colId: 'yearGroup',\n                rowGroup: pivotModeOn\n            },\n            {\n                colId: 'course',\n                pivot: pivotModeOn\n            },\n            {\n                colId: 'ageRange',\n                pivot: pivotModeOn\n            }\n        ]\n    });\n}"
+        },
+        {
+            "name": "updateOneRecord",
+            "params": "",
+            "body": "function updateOneRecord() {\n    var rowNodeToUpdate = pickExistingRowNodeAtRandom(this.gridApi);\n    if (!rowNodeToUpdate)\n        return;\n    var randomValue = createNewRandomScore(rowNodeToUpdate.data);\n    console.log('updating points to ' + randomValue + ' on ', rowNodeToUpdate.data);\n    rowNodeToUpdate.setDataValue('points', randomValue);\n}"
+        },
+        {
+            "name": "updateUsingTransaction",
+            "params": "",
+            "body": "function updateUsingTransaction() {\n    var itemToUpdate = pickExistingRowItemAtRandom(this.gridApi);\n    if (!itemToUpdate) {\n        return;\n    }\n    console.log('updating - before', itemToUpdate);\n    itemToUpdate.points = createNewRandomScore(itemToUpdate);\n    var transaction = { update: [itemToUpdate] };\n    console.log('updating - after', itemToUpdate);\n    this.gridApi.applyTransaction(transaction);\n}"
+        },
+        {
+            "name": "addNewGroupUsingTransaction",
+            "params": "",
+            "body": "function addNewGroupUsingTransaction() {\n    var item1 = createRow();\n    var item2 = createRow();\n    item1.yearGroup = 'Year 5';\n    item2.yearGroup = 'Year 5';\n    var transaction = {\n        add: [\n            item1,\n            item2\n        ]\n    };\n    console.log('add - ', item1);\n    console.log('add - ', item2);\n    this.gridApi.applyTransaction(transaction);\n}"
+        },
+        {
+            "name": "addNewCourse",
+            "params": "",
+            "body": "function addNewCourse() {\n    var item1 = createRow();\n    item1.course = 'Physics';\n    var transaction = { add: [item1] };\n    console.log('add - ', item1);\n    this.gridApi.applyTransaction(transaction);\n}"
+        },
+        {
+            "name": "removePhysics",
+            "params": "",
+            "body": "function removePhysics() {\n    var allPhysics = [];\n    this.gridApi.forEachLeafNode(function (rowNode) {\n        if (rowNode.data.course === 'Physics') {\n            allPhysics.push(rowNode.data);\n        }\n    });\n    var transaction = { remove: allPhysics };\n    console.log('removing ' + allPhysics.length + ' physics items.');\n    this.gridApi.applyTransaction(transaction);\n}"
+        },
+        {
+            "name": "moveCourse",
+            "params": "",
+            "body": "function moveCourse() {\n    var item = pickExistingRowItemAtRandom(this.gridApi);\n    if (!item) {\n        return;\n    }\n    item.course = item.course === 'History' ? 'Science' : 'History';\n    var transaction = { update: [item] };\n    console.log('moving ' + item);\n    this.gridApi.applyTransaction(transaction);\n}"
+        }
+    ],
+    "utils": [
+        "function ageRangeValueGetter(params) {\n    var age = params.getValue('age');\n    if (age === undefined) {\n        return null;\n    }\n    if (age < 20) {\n        return '< 20';\n    } else if (age > 30) {\n        return '> 30';\n    } else {\n        return '20 to 30';\n    }\n}",
+        "var studentIdSequence = 10023;",
+        "var seed;",
+        "function random() {\n    seed = (seed || 1) * 16807 % 2147483647;\n    return seed;\n}",
+        "function getRowData() {\n    var rowData = [];\n    for (var i = 1; i <= 100; i++) {\n        var row = createRow();\n        rowData.push(row);\n    }\n    return rowData;\n}",
+        "function createRow() {\n    var randomNumber = random();\n    var result = {\n        student: studentIdSequence++,\n        points: randomNumber % 60 + 40,\n        course: [\n            'Science',\n            'History'\n        ][randomNumber % 3 === 0 ? 0 : 1],\n        yearGroup: 'Year ' + (randomNumber % 4 + 1),\n        age: randomNumber % 25 + 15\n    };\n    return result;\n}",
+        "function createNewRandomScore(data) {\n    var randomValue = createRandomNumber();\n    while (randomValue === data.points) {\n        randomValue = createRandomNumber();\n    }\n    return randomValue;\n}",
+        "function createRandomNumber() {\n    return Math.floor(Math.random() * 100);\n}",
+        "function pickExistingRowNodeAtRandom(gridApi) {\n    var allItems = [];\n    gridApi.forEachLeafNode(function (rowNode) {\n        allItems.push(rowNode);\n    });\n    if (allItems.length === 0) {\n        return;\n    }\n    var result = allItems[Math.floor(Math.random() * allItems.length)];\n    return result;\n}",
+        "function pickExistingRowItemAtRandom(gridApi) {\n    var rowNode = pickExistingRowNodeAtRandom(gridApi);\n    return rowNode ? rowNode.data : null;\n}"
+    ],
+    "onGridReady": "{\n    document.getElementById('pivot-mode').checked = true;\n}",
+    "template": "<div class=\"example-wrapper\">\n    <div class=\"example-header\">\n        <div>\n            <label>\n                <input type=\"checkbox\" id=\"pivot-mode\" onclick=\"pivotMode()\">\n                Group &amp; Pivot\n            </label>\n        </div>\n    \n        <div style=\"margin-top: 6px;\">\n            <button onclick=\"updateOneRecord()\">Set One Value</button>\n            <button onclick=\"updateUsingTransaction()\">Update Points</button>\n            <button onclick=\"addNewGroupUsingTransaction()\">Add New Group</button>\n            <button onclick=\"addNewCourse()\">Add Physics Row</button>\n            <button onclick=\"removePhysics()\">Remove All Physics</button>\n            <button onclick=\"moveCourse()\">Move Course</button>\n        </div>\n    </div>\n    GRID_TEMPLATE_PLACEHOLDER\n</div>\n",
+    "gridSettings": {
+        "width": "100%",
+        "height": "100%",
+        "theme": "ag-theme-alpine-dark",
+        "enterprise": true,
+        "exampleHeight": 590
+    }
+}

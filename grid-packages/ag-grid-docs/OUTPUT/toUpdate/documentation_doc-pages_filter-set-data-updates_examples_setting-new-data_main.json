@@ -1,0 +1,46 @@
+{
+    "eventHandlers": [
+        {
+            "name": "firstDataRendered",
+            "handlerName": "onFirstDataRendered",
+            "handler": "function onFirstDataRendered(params) {\n    ;\n    params.api.getToolPanelInstance('filters').expandFilters();\n}"
+        }
+    ],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[{\n            headerName: \"Set Filter Column\",\n            field: \"col1\",\n            filter: \"agSetColumnFilter\",\n            flex: 1,\n            editable: true\n        }]"
+        },
+        { "name": "sideBar", "value": "\"filters\"" },
+        { "name": "rowData", "value": "getRowData()" }
+    ],
+    "components": [],
+    "defaultColDef": null,
+    "globalComponents": [],
+    "parsedColDefs": "[{\n            headerName: \"Set Filter Column\",\n            field: \"col1\",\n            filter: \"agSetColumnFilter\",\n            flex: 1,\n            editable: true\n        }]",
+    "instanceMethods": [],
+    "externalEventHandlers": [
+        {
+            "name": "setNewData",
+            "params": "",
+            "body": "function setNewData() {\n    var newData = [\n        { col1: 'A' },\n        { col1: 'A' },\n        { col1: 'B' },\n        { col1: 'C' },\n        { col1: 'D' },\n        { col1: 'E' }\n    ];\n    this.gridApi.setRowData(newData);\n}"
+        },
+        {
+            "name": "reset",
+            "params": "",
+            "body": "function reset() {\n    this.gridApi.setFilterModel([]);\n    this.gridApi.setRowData(getRowData());\n}"
+        }
+    ],
+    "utils": [
+        "function getRowData() {\n    return [\n        { col1: 'A' },\n        { col1: 'A' },\n        { col1: 'B' },\n        { col1: 'C' }\n    ];\n}"
+    ],
+    "template": "<div class=\"example-wrapper\">\n    <div style=\"margin-bottom: 5px;\">\n        <button onclick=\"setNewData()\">Set New Data</button>\n        <button onclick=\"reset()\" style=\"margin-left: 5px\">Reset</button>\n    </div>\n    \n    GRID_TEMPLATE_PLACEHOLDER\n</div>",
+    "gridSettings": {
+        "width": "100%",
+        "height": "100%",
+        "theme": "ag-theme-alpine",
+        "enterprise": true,
+        "exampleHeight": 500,
+        "modules": ["clientside", "setfilter", "menu", "columnpanel", "filterpanel"]
+    }
+}

@@ -1,0 +1,13 @@
+{
+    "properties": [
+        {
+            "name": "options",
+            "value": "{\n        \n        title: { text: 'Apple\\'s revenue by product category' },\n        subtitle: { text: 'in billion U.S. dollars' },\n        data: revenueData,\n        series: [{\n                type: 'column',\n                xKey: 'quarter',\n                yKeys: [\n                    'iphone',\n                    'mac',\n                    'ipad',\n                    'wearables',\n                    'services'\n                ],\n                yNames: [\n                    'iPhone',\n                    'Mac',\n                    'iPad',\n                    'Wearables',\n                    'Services'\n                ],\n                label: {\n                    formatter: function (params) {\n                        return params.value === undefined ? '' : params.value.toFixed(0);\n                    }\n                }\n            }]\n    }"
+        }
+    ],
+    "externalEventHandlers": [],
+    "instanceMethods": [],
+    "globals": [],
+    "init": [],
+    "template": "$$CHART$$\n"
+}

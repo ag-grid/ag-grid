@@ -1,0 +1,31 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "rowData",
+            "value": "[\n        { value: \"value 1\" },\n        { value: \"value 1\" },\n        { value: \"value 1\" },\n        { value: \"value 1\" },\n        { value: \"value 2\" },\n        { value: \"value 2\" },\n        { value: \"value 2\" },\n        { value: \"value 2\" },\n        { value: \"value 2\" }\n    ]"
+        },
+        {
+            "name": "columnDefs",
+            "value": "[{\n            headerName: \"Set filter column\",\n            field: \"value\",\n            flex: 1,\n            filter: \"agSetColumnFilter\",\n            floatingFilter: true,\n            filterParams: filterParams\n        }]"
+        }
+    ],
+    "components": [],
+    "defaultColDef": null,
+    "globalComponents": [],
+    "parsedColDefs": "[{\n            headerName: \"Set filter column\",\n            field: \"value\",\n            flex: 1,\n            filter: \"agSetColumnFilter\",\n            floatingFilter: true,\n            filterParams: \"AG_LITERAL_filterParams\"\n        }]",
+    "instanceMethods": [],
+    "externalEventHandlers": [],
+    "utils": [
+        "var filterParams = {\n    values: function (params) {\n        setTimeout(function () {\n            params.success([\n                'value 1',\n                'value 2'\n            ]);\n        }, 3000);\n    }\n};"
+    ],
+    "template": "GRID_TEMPLATE_PLACEHOLDER",
+    "gridSettings": {
+        "width": "100%",
+        "height": "100%",
+        "theme": "ag-theme-alpine",
+        "enterprise": true,
+        "exampleHeight": 510,
+        "modules": ["clientside", "setfilter", "menu", "columnpanel"]
+    }
+}

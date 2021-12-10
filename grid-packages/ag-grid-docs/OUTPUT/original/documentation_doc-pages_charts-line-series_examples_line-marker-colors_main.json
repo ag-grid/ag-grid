@@ -1,0 +1,13 @@
+{
+    "properties": [
+        {
+            "name": "options",
+            "value": "{\n        \n        autoSize: true,\n        title: { text: 'Fuel Spending (2019)' },\n        data: [\n            {\n                quarter: 'Q1',\n                petrol: 200,\n                diesel: 100\n            },\n            {\n                quarter: 'Q2',\n                petrol: 300,\n                diesel: 130\n            },\n            {\n                quarter: 'Q3',\n                petrol: 350,\n                diesel: 160\n            },\n            {\n                quarter: 'Q4',\n                petrol: 400,\n                diesel: 200\n            }\n        ],\n        series: [\n            {\n                xKey: 'quarter',\n                yKey: 'petrol',\n                yName: 'Petrol'\n            },\n            {\n                xKey: 'quarter',\n                yKey: 'diesel',\n                yName: 'Diesel',\n                stroke: 'black',\n                marker: {\n                    fill: 'gray',\n                    stroke: 'black'\n                }\n            }\n        ]\n    }"
+        }
+    ],
+    "externalEventHandlers": [],
+    "instanceMethods": [],
+    "globals": [],
+    "init": [],
+    "template": "$$CHART$$\n"
+}

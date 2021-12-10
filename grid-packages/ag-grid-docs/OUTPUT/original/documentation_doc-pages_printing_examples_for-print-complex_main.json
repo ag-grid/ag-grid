@@ -1,0 +1,43 @@
+{
+    "eventHandlers": [
+        {
+            "name": "firstDataRendered",
+            "handlerName": "onFirstDataRendered",
+            "handler": "function onFirstDataRendered(params) {\n    params.api.expandAll();\n}"
+        }
+    ],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            field: \"group\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            field: \"id\",\n            pinned: \"left\",\n            width: 70\n        },\n        {\n            field: \"model\",\n            width: 180\n        },\n        {\n            field: \"color\",\n            width: 100\n        },\n        {\n            field: \"price\",\n            valueFormatter: \"'$' + value.toLocaleString()\",\n            width: 100\n        },\n        {\n            field: \"year\",\n            width: 100\n        },\n        {\n            field: \"country\",\n            width: 120\n        }\n    ]"
+        },
+        { "name": "defaultColDef", "value": "{ sortable: true }" },
+        { "name": "rowData", "value": "getData()" },
+        { "name": "animateRows", "value": "true" },
+        { "name": "groupDisplayType", "value": "\"groupRows\"" }
+    ],
+    "components": [],
+    "defaultColDef": "{ sortable: true }",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            field: \"group\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            field: \"id\",\n            pinned: \"left\",\n            width: 70\n        },\n        {\n            field: \"model\",\n            width: 180\n        },\n        {\n            field: \"color\",\n            width: 100\n        },\n        {\n            field: \"price\",\n            valueFormatter: \"'$' + value.toLocaleString()\",\n            width: 100\n        },\n        {\n            field: \"year\",\n            width: 100\n        },\n        {\n            field: \"country\",\n            width: 120\n        }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [
+        {
+            "name": "onBtPrint",
+            "params": "",
+            "body": "function onBtPrint() {\n    const api = this.gridApi;\n    setPrinterFriendly(api);\n    setTimeout(function () {\n        print();\n        setNormal(api);\n    }, 2000);\n}"
+        }
+    ],
+    "utils": [
+        "function setPrinterFriendly(api) {\n    const eGridDiv = document.querySelector('#myGrid');\n    eGridDiv.style.height = '';\n    api.setDomLayout('print');\n}",
+        "function setNormal(api) {\n    const eGridDiv = document.querySelector('#myGrid');\n    eGridDiv.style.width = '700px';\n    eGridDiv.style.height = '200px';\n    api.setDomLayout();\n}"
+    ],
+    "template": "\n\n<button onclick=\"onBtPrint()\">Print</button>\n\n<h3>\n    Latin Text\n</h3>\n\n<p>\n    Lorem ipsum dolor sit amet, ne cum repudiare abhorreant. Atqui molestiae neglegentur ad nam, mei amet eros ea, populo deleniti scaevola et pri. Pro no ubique explicari, his reque nulla consequuntur in. His soleat doctus constituam te, sed at alterum repudiandae. Suas ludus electram te ius.\n</p>\n\nGRID_TEMPLATE_PLACEHOLDER\n\n<h3>\n    More Latin Text\n</h3>\n\n<p>\n    Lorem ipsum dolor sit amet, ne cum repudiare abhorreant. Atqui molestiae neglegentur ad nam, mei amet eros ea, populo deleniti scaevola et pri. Pro no ubique explicari, his reque nulla consequuntur in. His soleat doctus constituam te, sed at alterum repudiandae. Suas ludus electram te ius.\n</p>\n",
+    "gridSettings": {
+        "width": "700px",
+        "height": "200px",
+        "theme": "ag-theme-alpine",
+        "enterprise": true,
+        "modules": ["clientside", "rowgrouping"]
+    }
+}

@@ -1,0 +1,30 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        { field: \"athlete\" },\n        { field: \"year\" },\n        {\n            field: \"gold\",\n            cellRenderer: \"medalCellRenderer\"\n        },\n        {\n            field: \"silver\",\n            cellRenderer: \"medalCellRenderer\"\n        },\n        {\n            field: \"bronze\",\n            cellRenderer: \"medalCellRenderer\"\n        },\n        {\n            field: \"total\",\n            minWidth: 175,\n            cellRenderer: \"totalValueRenderer\"\n        }\n    ]"
+        },
+        {
+            "name": "components",
+            "value": "{\n        medalCellRenderer: MedalCellRenderer,\n        totalValueRenderer: TotalValueRenderer\n    }"
+        },
+        {
+            "name": "defaultColDef",
+            "value": "{\n        editable: true,\n        sortable: true,\n        flex: 1,\n        minWidth: 100,\n        filter: true,\n        resizable: true\n    }"
+        }
+    ],
+    "components": [],
+    "defaultColDef": null,
+    "globalComponents": [],
+    "parsedColDefs": "[\n        { field: \"athlete\" },\n        { field: \"year\" },\n        {\n            field: \"gold\",\n            cellRenderer: \"medalCellRenderer\"\n        },\n        {\n            field: \"silver\",\n            cellRenderer: \"medalCellRenderer\"\n        },\n        {\n            field: \"bronze\",\n            cellRenderer: \"medalCellRenderer\"\n        },\n        {\n            field: \"total\",\n            minWidth: 175,\n            cellRenderer: \"totalValueRenderer\"\n        }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [],
+    "utils": [],
+    "data": {
+        "url": "'https://www.ag-grid.com/example-assets/olympic-winners.json'",
+        "callback": "{\n    params.api.setRowData(data);\n}"
+    },
+    "template": "GRID_TEMPLATE_PLACEHOLDER\n",
+    "gridSettings": { "width": "100%", "height": "100%", "theme": "ag-theme-alpine", "exampleHeight": 460 }
+}

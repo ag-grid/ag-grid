@@ -1,0 +1,58 @@
+{
+    "eventHandlers": [
+        {
+            "name": "firstDataRendered",
+            "handlerName": "onFirstDataRendered",
+            "handler": "function onFirstDataRendered(params) {\n    const createRangeChartParams = {\n        cellRange: {\n            columns: [\n                'country',\n                'sugar',\n                'fat',\n                'weight'\n            ]\n        },\n        chartType: 'groupedColumn',\n        chartContainer: document.querySelector('#myChart')\n    };\n    params.api.createRangeChart(createRangeChartParams);\n}"
+        },
+        {
+            "name": "chartCreated",
+            "handlerName": "onChartCreated",
+            "handler": "function onChartCreated(event) {\n    chartId = event.chartId;\n}"
+        }
+    ],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            field: \"country\",\n            chartDataType: \"category\"\n        },\n        {\n            field: \"sugar\",\n            chartDataType: \"series\"\n        },\n        {\n            field: \"fat\",\n            chartDataType: \"series\"\n        },\n        {\n            field: \"weight\",\n            chartDataType: \"series\"\n        }\n    ]"
+        },
+        {
+            "name": "defaultColDef",
+            "value": "{\n        editable: true,\n        sortable: true,\n        flex: 1,\n        minWidth: 100,\n        filter: true,\n        resizable: true\n    }"
+        },
+        { "name": "rowData", "value": "getData()" },
+        { "name": "enableRangeSelection", "value": "true" },
+        { "name": "popupParent", "value": "document.body" },
+        { "name": "enableCharts", "value": "true" },
+        {
+            "name": "chartThemeOverrides",
+            "value": "{ cartesian: { axes: { category: { label: { rotation: 335 } } } } }"
+        }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    editable: true,\n    sortable: true,\n    flex: 1,\n    minWidth: 100,\n    filter: true,\n    resizable: true\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            field: \"country\",\n            chartDataType: \"category\"\n        },\n        {\n            field: \"sugar\",\n            chartDataType: \"series\"\n        },\n        {\n            field: \"fat\",\n            chartDataType: \"series\"\n        },\n        {\n            field: \"weight\",\n            chartDataType: \"series\"\n        }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [
+        {
+            "name": "downloadChartImage",
+            "params": "'image/png'",
+            "body": "function downloadChartImage(fileFormat) {\n    if (!chartId) {\n        return;\n    }\n    const params = {\n        fileFormat,\n        chartId\n    };\n    const imageDataURL = this.gridApi.getChartImageDataURL(params);\n    if (imageDataURL) {\n        const a = document.createElement('a');\n        a.href = imageDataURL;\n        a.download = 'image';\n        a.style.display = 'none';\n        document.body.appendChild(a);\n        a.click();\n        document.body.removeChild(a);\n    }\n}"
+        },
+        {
+            "name": "openChartImage",
+            "params": "'image/png'",
+            "body": "function openChartImage(fileFormat) {\n    if (!chartId) {\n        return;\n    }\n    const params = {\n        fileFormat,\n        chartId\n    };\n    const imageDataURL = this.gridApi.getChartImageDataURL(params);\n    if (imageDataURL) {\n        const image = new Image();\n        image.src = imageDataURL;\n        const w = window.open('');\n        w.document.write(image.outerHTML);\n        w.document.close();\n    }\n}"
+        }
+    ],
+    "utils": ["var chartId;"],
+    "template": "<div class=\"wrapper\">\n    <div id=\"buttons\">\n        <button onclick=\"downloadChartImage('image/png')\">Download chart PNG</button>\n        <button onclick=\"downloadChartImage('image/jpeg')\">Download chart JPEG</button>\n        <button onclick=\"openChartImage('image/png')\">Open PNG</button>\n        <button onclick=\"openChartImage('image/jpeg')\">Open JPEG</button>\n    </div>\n    GRID_TEMPLATE_PLACEHOLDER\n    <div id=\"myChart\" class=\"ag-theme-alpine my-chart\">\n</div></div>",
+    "gridSettings": {
+        "width": "100%",
+        "height": "100%",
+        "theme": "ag-theme-alpine",
+        " exampleHeight": 800,
+        "enterprise": true
+    }
+}

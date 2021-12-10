@@ -1,0 +1,30 @@
+{
+    "eventHandlers": [
+        {
+            "name": "firstDataRendered",
+            "handlerName": "onFirstDataRendered",
+            "handler": "function onFirstDataRendered(params) {\n    params.api.sizeColumnsToFit();\n}"
+        }
+    ],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            field: \"athlete\",\n            width: 150,\n            suppressSizeToFit: true\n        },\n        {\n            field: \"age\",\n            width: 90,\n            minWidth: 50,\n            maxWidth: 100\n        },\n        {\n            field: \"country\",\n            width: 120\n        },\n        {\n            field: \"year\",\n            width: 90\n        },\n        {\n            field: \"date\",\n            width: 110\n        },\n        {\n            field: \"sport\",\n            width: 110\n        },\n        {\n            field: \"gold\",\n            width: 100\n        },\n        {\n            field: \"silver\",\n            width: 100\n        },\n        {\n            field: \"bronze\",\n            width: 100\n        },\n        {\n            field: \"total\",\n            width: 100\n        }\n    ]"
+        },
+        { "name": "defaultColDef", "value": "{ resizable: true }" },
+        { "name": "rowData", "value": "null" }
+    ],
+    "components": [],
+    "defaultColDef": "{ resizable: true }",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            width: 150,\n            suppressSizeToFit: true\n        },\n        {\n            field: \"age\",\n            width: 90,\n            minWidth: 50,\n            maxWidth: 100\n        },\n        {\n            field: \"country\",\n            width: 120\n        },\n        {\n            field: \"year\",\n            width: 90\n        },\n        {\n            field: \"date\",\n            width: 110\n        },\n        {\n            field: \"sport\",\n            width: 110\n        },\n        {\n            field: \"gold\",\n            width: 100\n        },\n        {\n            field: \"silver\",\n            width: 100\n        },\n        {\n            field: \"bronze\",\n            width: 100\n        },\n        {\n            field: \"total\",\n            width: 100\n        }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [],
+    "utils": [],
+    "data": {
+        "url": "'https://www.ag-grid.com/example-assets/olympic-winners.json'",
+        "callback": "params.api.setRowData(data)"
+    },
+    "template": "GRID_TEMPLATE_PLACEHOLDER\n",
+    "gridSettings": { "width": "100%", "height": "100%", "theme": "ag-theme-alpine" }
+}

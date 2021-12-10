@@ -1,0 +1,13 @@
+{
+    "properties": [
+        {
+            "name": "options",
+            "value": "{\n        \n        series: [{\n                type: 'line',\n                xKey: 'date',\n                yKey: 'temp'\n            }],\n        axes: [\n            {\n                type: 'number',\n                position: 'left',\n                label: {\n                    format: '$~s',\n                    formatter: params => params.formatter(params.value).replace('k', 'K').replace('G', 'B')\n                }\n            },\n            {\n                type: 'time',\n                nice: false,\n                position: 'bottom',\n                tick: { count: agCharts.time.month },\n                label: { format: '%b %Y' }\n            }\n        ],\n        padding: {\n            top: 20,\n            right: 40,\n            bottom: 20,\n            left: 20\n        },\n        legend: { enabled: false },\n        data: [\n            {\n                date: new Date('01 Jan 2019 00:00:00 GMT'),\n                temp: 2253707135\n            },\n            {\n                date: new Date('01 Feb 2019 00:00:00 GMT'),\n                temp: 3159723083\n            },\n            {\n                date: new Date('01 Mar 2019 00:00:00 GMT'),\n                temp: 2725102372\n            },\n            {\n                date: new Date('01 Apr 2019 00:00:00 GMT'),\n                temp: 1725002378\n            },\n            {\n                date: new Date('01 May 2019 00:00:00 GMT'),\n                temp: 4725823927\n            }\n        ]\n    }"
+        }
+    ],
+    "externalEventHandlers": [],
+    "instanceMethods": [],
+    "globals": [],
+    "init": [],
+    "template": "$$CHART$$\n"
+}

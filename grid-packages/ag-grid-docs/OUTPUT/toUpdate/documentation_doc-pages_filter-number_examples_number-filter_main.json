@@ -1,0 +1,24 @@
+{
+    "eventHandlers": [],
+    "properties": [
+        {
+            "name": "columnDefs",
+            "value": "[\n        {\n            field: \"sale\",\n            headerName: \"Sale ($)\",\n            filter: \"agNumberColumnFilter\",\n            valueFormatter: numberValueFormatter\n        },\n        {\n            field: \"sale\",\n            headerName: \"Sale\",\n            filter: \"agNumberColumnFilter\",\n            filterParams: saleFilterParams,\n            valueFormatter: saleValueFormatter\n        }\n    ]"
+        },
+        { "name": "defaultColDef", "value": "{\n        flex: 1,\n        minWidth: 150\n    }" },
+        { "name": "rowData", "value": "getData()" }
+    ],
+    "components": [],
+    "defaultColDef": "{\n    flex: 1,\n    minWidth: 150\n}",
+    "globalComponents": [],
+    "parsedColDefs": "[\n        {\n            field: \"sale\",\n            headerName: \"Sale ($)\",\n            filter: \"agNumberColumnFilter\",\n            valueFormatter: \"AG_LITERAL_numberValueFormatter\"\n        },\n        {\n            field: \"sale\",\n            headerName: \"Sale\",\n            filter: \"agNumberColumnFilter\",\n            filterParams: \"AG_LITERAL_saleFilterParams\",\n            valueFormatter: \"AG_LITERAL_saleValueFormatter\"\n        }\n    ]",
+    "instanceMethods": [],
+    "externalEventHandlers": [],
+    "utils": [
+        "var numberValueFormatter = function (params) {\n    return params.value.toFixed(2);\n};",
+        "var saleFilterParams = {\n    allowedCharPattern: '\\\\d\\\\-\\\\,\\\\$',\n    numberParser: function (text) {\n        return text == null ? null : parseFloat(text.replace(',', '.').replace('$', ''));\n    }\n};",
+        "var saleValueFormatter = function (params) {\n    var formatted = params.value.toFixed(2).replace('.', ',');\n    if (formatted.indexOf('-') === 0) {\n        return '-$' + formatted.slice(1);\n    }\n    return '$' + formatted;\n};"
+    ],
+    "template": "GRID_TEMPLATE_PLACEHOLDER\n",
+    "gridSettings": { "width": "100%", "height": "100%", "theme": "ag-theme-alpine" }
+}
