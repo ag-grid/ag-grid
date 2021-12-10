@@ -1961,7 +1961,7 @@
       "isServerSideGroup?": "/** SSRM Tree Data: Allows specifying which rows are expandable. */",
       "getServerSideGroupKey?": "/** SSRM Tree Data: Allows specifying group keys. */",
       "getBusinessKeyForNode?(node: RowNode)": "/** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.\n * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys. */",
-      "getRowNodeId?": "/** Allows you to set the ID for a particular row node based on the data. Useful for selection and server side sorting and filtering for paging and virtual pagination. */",
+      "getRowNodeId?": "/** Allows you to set the ID for a particular row node based on the data. */",
       "processRowPostCreate?(params: ProcessRowParams)": "/** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */",
       "isRowSelectable?": "/** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable. */",
       "isRowMaster?": "/** Callback to be used with Master Detail to determine if a row should be a master row. If `false` is returned no detail row will exist for this row. */",

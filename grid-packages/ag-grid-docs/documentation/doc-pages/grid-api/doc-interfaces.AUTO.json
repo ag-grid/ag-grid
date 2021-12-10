@@ -3222,7 +3222,7 @@
       }
     },
     "getRowNodeId": {
-      "description": "/** Allows you to set the ID for a particular row node based on the data. Useful for selection and server side sorting and filtering for paging and virtual pagination. */",
+      "description": "/** Allows you to set the ID for a particular row node based on the data. */",
       "type": { "returnType": "GetRowNodeIdFunc", "optional": true }
     },
     "processRowPostCreate": {

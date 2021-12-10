@@ -254,7 +254,7 @@ export class CellCtrl extends BeanStub {
     }
 
     private setupAutoHeight(): void {
-        if (!this.column.getColDef().autoHeight) { return; }
+        if (!this.column.isAutoHeight()) { return; }
 
         const measureHeight = (timesCalled: number) => {
             // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
@@ -302,7 +302,7 @@ export class CellCtrl extends BeanStub {
         this.includeDndSource = this.isIncludeControl(colDef.dndSource);
 
         // text selection requires the value to be wrapped in another element
-        const forceWrapper = this.beans.gridOptionsWrapper.isEnableCellTextSelection() || this.column.getColDef().autoHeight == true;
+        const forceWrapper = this.beans.gridOptionsWrapper.isEnableCellTextSelection() || this.column.isAutoHeight();
 
         this.cellComp.setIncludeSelection(this.includeSelection);
         this.cellComp.setIncludeDndSource(this.includeDndSource);
@@ -1022,7 +1022,7 @@ export class CellCtrl extends BeanStub {
         // normal cells fill the height of the row. autoHeight cells have no height to let them
         // fit the height of content.
 
-        const autoHeight = this.column.getColDef().autoHeight == true;
+        const autoHeight = this.column.isAutoHeight() == true;
         this.cellComp.addOrRemoveCssClass(CSS_AUTO_HEIGHT, autoHeight);
         this.cellComp.addOrRemoveCssClass(CSS_NORMAL_HEIGHT, !autoHeight);
     }
