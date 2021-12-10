@@ -229,17 +229,15 @@ export class CellCtrl extends BeanStub {
         this.setupControlComps();
         this.setupAriaExpanded();
         this.setupAutoHeight();
-
-        const colIdSanitised = escapeString(this.column.getId());
-        const ariaColIndex = this.beans.columnModel.getAriaColumnIndex(this.column);
+        this.setAriaColIndex();
 
         if (!this.gow.isSuppressCellSelection()) {
             this.cellComp.setTabIndex(-1);
         }
 
-        this.cellComp.setRole('gridcell');
-        this.cellComp.setAriaColIndex(ariaColIndex);
+        const colIdSanitised = escapeString(this.column.getId());
         this.cellComp.setColId(colIdSanitised!);
+        this.cellComp.setRole('gridcell');
 
         this.cellPositionFeature.setComp(eGui);
         this.cellCustomStyleFeature.setComp(comp, scope);
@@ -728,6 +726,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public onFlashCells(event: FlashCellsEvent): void {
+        if (!this.cellComp) { return; }
         const cellId = this.beans.cellPositionUtils.createId(this.getCellPosition());
         const shouldFlash = event.cells[cellId];
         if (shouldFlash) {
@@ -863,11 +862,16 @@ export class CellCtrl extends BeanStub {
     }
 
     public onLeftChanged(): void {
+        if (!this.cellComp) { return; }
         this.cellPositionFeature.onLeftChanged();
-        // this.refreshAriaIndex(); // should change this to listen for when column order changes
     }
 
-    private refreshAriaIndex(): void {
+    public onDisplayedColumnsChanged(): void {
+        if (!this.eGui) { return; }
+        this.setAriaColIndex();
+    }
+
+    private setAriaColIndex(): void {
         const colIdx = this.beans.columnModel.getAriaColumnIndex(this.column);
         this.cellComp.setAriaColIndex(colIdx);
     }
@@ -936,12 +940,14 @@ export class CellCtrl extends BeanStub {
     }
 
     public updateRangeBordersIfRangeCount(): void {
+        if (!this.cellComp) { return; }
         if (this.cellRangeFeature) {
             this.cellRangeFeature.updateRangeBordersIfRangeCount();
         }
     }
 
     public onRangeSelectionChanged(): void {
+        if (!this.cellComp) { return; }
         if (this.cellRangeFeature) {
             this.cellRangeFeature.onRangeSelectionChanged();
         }
