@@ -671,12 +671,12 @@ export class GridApi {
             console.error(`AG Grid: invalid step ${step}, available steps are ${Object.keys(stepsMapped).join(', ')}`);
             return;
         }
-
+        const animate = !this.gridOptionsWrapper.isSuppressAnimationFrame();
         const modelParams: RefreshModelParams = {
             step: paramsStep,
             keepRenderedRows: true,
-            animate: true,
-            keepEditingRows: true
+            keepEditingRows: true,
+            animate
         };
 
         this.clientSideRowModel.refreshModel(modelParams);

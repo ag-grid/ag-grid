@@ -77,14 +77,13 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
 
     @PostConstruct
     public init(): void {
-
         const refreshEverythingFunc = this.refreshModel.bind(this, { step: ClientSideRowModelSteps.EVERYTHING });
-
+        const animate = !this.gridOptionsWrapper.isSuppressAnimationFrame();
         const refreshEverythingAfterColsChangedFunc = this.refreshModel.bind(this, {
                 step: ClientSideRowModelSteps.EVERYTHING, // after cols change, row grouping (the first stage) could of changed
                 afterColumnsChanged: true,
                 keepRenderedRows: true, // we want animations cos sorting or filtering could be applied
-                animate: true
+                animate
             });
 
         this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, refreshEverythingAfterColsChangedFunc);
@@ -98,7 +97,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         const refreshMapListener = this.refreshModel.bind(this, {
             step: ClientSideRowModelSteps.MAP,
             keepRenderedRows: true,
-            animate: true
+            animate
         });
 
         this.addManagedListener(this.gridOptionsWrapper, GridOptionsWrapper.PROP_GROUP_REMOVE_SINGLE_CHILDREN, refreshMapListener);
@@ -229,6 +228,7 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     public ensureRowsAtPixel(rowNodes: RowNode[], pixel: number, increment: number = 0): boolean {
         const indexAtPixelNow = this.getRowIndexAtPixel(pixel);
         const rowNodeAtPixelNow = this.getRow(indexAtPixelNow);
+        const animate = !this.gridOptionsWrapper.isSuppressAnimationFrame();
 
         if (rowNodeAtPixelNow === rowNodes[0]) {
             return false;
@@ -245,8 +245,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
         this.refreshModel({
             step: ClientSideRowModelSteps.EVERYTHING,
             keepRenderedRows: true,
-            animate: true,
-            keepEditingRows: true
+            keepEditingRows: true,
+            animate
         });
 
         return true;
@@ -915,9 +915,12 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
     }
 
     // common to updateRowData and batchUpdateRowData
-    private commonUpdateRowData(rowNodeTrans: RowNodeTransaction[],
-                                rowNodeOrder: { [id: string]: number; } | undefined,
-                                forceRowNodeOrder: boolean): void {
+    private commonUpdateRowData(
+        rowNodeTrans: RowNodeTransaction[],
+        rowNodeOrder: { [id: string]: number; } | undefined,
+        forceRowNodeOrder: boolean
+    ): void {
+        const animate = !this.gridOptionsWrapper.isSuppressAnimationFrame();
 
         if (forceRowNodeOrder) {
             rowNodeOrder = this.createRowNodeOrder();
@@ -928,8 +931,8 @@ export class ClientSideRowModel extends BeanStub implements IClientSideRowModel 
             rowNodeTransactions: rowNodeTrans,
             rowNodeOrder: rowNodeOrder,
             keepRenderedRows: true,
-            animate: true,
-            keepEditingRows: true
+            keepEditingRows: true,
+            animate
         });
         
         const event: RowDataUpdatedEvent = {

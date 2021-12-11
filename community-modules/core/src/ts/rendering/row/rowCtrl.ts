@@ -281,17 +281,18 @@ export class RowCtrl extends BeanStub {
                 this.addRowDraggerToRow(gui);
             }
 
-            // the height animation we only want active after the row is alive for 1 second.
-            // this stops the row animation working when rows are initially crated. otherwise
-            // auto-height rows get inserted into the dom and resized immediately, which gives
-            // very bad UX (eg 10 rows get inserted, then all 10 expand, look particularly bad
-            // when scrolling). so this makes sure when rows are shown for the first time, they
-            // are resized immediately without animation.
-            this.beans.animationFrameService.addDestroyTask(() => {
-                if (this.isAlive()) {
+            if (this.useAnimationFrameForCreate) {
+                // the height animation we only want active after the row is alive for 1 second.
+                // this stops the row animation working when rows are initially crated. otherwise
+                // auto-height rows get inserted into the dom and resized immediately, which gives
+                // very bad UX (eg 10 rows get inserted, then all 10 expand, look particularly bad
+                // when scrolling). so this makes sure when rows are shown for the first time, they
+                // are resized immediately without animation.
+                this.beans.animationFrameService.addDestroyTask(() => {
+                    if (!this.isAlive()) { return; }
                     gui.rowComp.addOrRemoveCssClass('ag-after-created', true);
-                }
-            });
+                });
+            }
         });
 
         this.executeProcessRowPostCreateFunc();

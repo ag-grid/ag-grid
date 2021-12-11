@@ -42,14 +42,7 @@ export const isEventSupported = (() => {
         const el = document.createElement(tags[eventName] || 'div');
         eventName = 'on' + eventName;
 
-        let isSupported = (eventName in el);
-
-        if (!isSupported) {
-            el.setAttribute(eventName, 'return;');
-            isSupported = typeof el[eventName] == 'function';
-        }
-
-        return supports[eventName] = isSupported;
+        return supports[eventName] = (eventName in el);
     };
 
     return eventChecker;
