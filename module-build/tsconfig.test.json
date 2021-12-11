@@ -6,7 +6,8 @@
     "emitDecoratorMetadata": false,
     "target": "ES2015",
     "types": [
-      "jest"
+      "jest",
+      "node"
     ],
     "lib": [
       "ES2017",
