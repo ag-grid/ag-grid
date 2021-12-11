@@ -322,37 +322,41 @@ export class GridApi {
         }
     }
 
+    private getExcelExportMode(params?: ExcelExportParams): 'xlsx' | 'xml' {
+        const baseParams = this.gridOptionsWrapper.getDefaultExportParams('excel');
+        const mergedParams = Object.assign({ exportMode: 'xlsx' }, baseParams, params);
+        return mergedParams.exportMode;
+    }
+
     /** Similar to `exportDataAsExcel`, except instead of downloading a file, it will return a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) to be processed by the user. */
     public getDataAsExcel(params?: ExcelExportParams): string | Blob | undefined {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.getDataAsExcel')) {
-            const exportMode: 'xml' | 'xlsx' = (params && params.exportMode) || 'xlsx';
-            if (this.excelCreator.getFactoryMode(exportMode) === ExcelFactoryMode.MULTI_SHEET) {
-                console.warn('AG Grid: The Excel Exporter is currently on Multi Sheet mode. End that operation by calling `api.getMultipleSheetAsExcel()` or `api.exportMultipleSheetsAsExcel()`');
-                return;
-            }
-            return this.excelCreator.getDataAsExcel(params);
+        if (!ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.getDataAsExcel')) { return; }
+        const exportMode = this.getExcelExportMode(params);
+        if (this.excelCreator.getFactoryMode(exportMode) === ExcelFactoryMode.MULTI_SHEET) {
+            console.warn('AG Grid: The Excel Exporter is currently on Multi Sheet mode. End that operation by calling `api.getMultipleSheetAsExcel()` or `api.exportMultipleSheetsAsExcel()`');
+            return;
         }
+        return this.excelCreator.getDataAsExcel(params);
     }
 
     /** Downloads an Excel export of the grid's data. */
     public exportDataAsExcel(params?: ExcelExportParams): void {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.exportDataAsExcel')) {
-            const exportMode: 'xml' | 'xlsx' = (params && params.exportMode) || 'xlsx';
-            if (this.excelCreator.getFactoryMode(exportMode) === ExcelFactoryMode.MULTI_SHEET) {
-                console.warn('AG Grid: The Excel Exporter is currently on Multi Sheet mode. End that operation by calling `api.getMultipleSheetAsExcel()` or `api.exportMultipleSheetsAsExcel()`');
-                return;
-            }
-            this.excelCreator.exportDataAsExcel(params);
+        if (!ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.exportDataAsExcel')) { return; }
+        const exportMode = this.getExcelExportMode(params);
+        if (this.excelCreator.getFactoryMode(exportMode) === ExcelFactoryMode.MULTI_SHEET) {
+            console.warn('AG Grid: The Excel Exporter is currently on Multi Sheet mode. End that operation by calling `api.getMultipleSheetAsExcel()` or `api.exportMultipleSheetsAsExcel()`');
+            return;
         }
+        this.excelCreator.exportDataAsExcel(params);
     }
 
     /** This is method to be used to get the grid's data as a sheet, that will later be exported either by `getMultipleSheetsAsExcel()` or `exportMultipleSheetsAsExcel()`. */
     public getSheetDataForExcel(params?: ExcelExportParams): string | undefined {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.getSheetDataForExcel')) {
-            const exportMode: 'xml' | 'xlsx' = (params && params.exportMode) || 'xlsx';
-            this.excelCreator.setFactoryMode(ExcelFactoryMode.MULTI_SHEET, exportMode);
-            return this.excelCreator.getSheetDataForExcel(params);
-        }
+        if (!ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.getSheetDataForExcel')) { return; }
+        const exportMode = this.getExcelExportMode(params);
+        this.excelCreator.setFactoryMode(ExcelFactoryMode.MULTI_SHEET, exportMode);
+
+        return this.excelCreator.getSheetDataForExcel(params);
     }
 
     /** Similar to `exportMultipleSheetsAsExcel`, except instead of downloading a file, it will return a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) to be processed by the user. */
