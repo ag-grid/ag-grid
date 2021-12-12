@@ -12,7 +12,7 @@ const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   rowData: null,
   animateRows: false,
-  groupUseEntireRow: true,
+  groupDisplayType: 'groupRows',
   onRowGroupOpened: onRowGroupOpened,
   defaultColDef: {
     editable: true,
