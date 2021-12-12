@@ -572,20 +572,30 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     }
 
     private buildDataFromMergedRanges(params: IClipboardCopyParams): DataForCellRangesType {
-        const columnKeys: Column[] = [];
+        const columnsSet: Set<Column> = new Set();
         const ranges = this.rangeService.getCellRanges();
         const allRowPositions: RowPosition[] = [];
         const allCellsToFlash: CellsToFlashType = {};
 
         ranges.forEach(range => {
-            columnKeys.push(...range.columns.filter(col => columnKeys.indexOf(col) === -1));
+            range.columns.forEach(col => columnsSet.add(col));
             const { rowPositions, cellsToFlash } = this.getRangeRowPositionsAndCellsToFlash(range);
             allRowPositions.push(...rowPositions);
             Object.assign(allCellsToFlash, cellsToFlash);
         });
 
+        const allColumns = this.columnModel.getAllDisplayedColumns();
+        const exportedColumns = Array.from(columnsSet);
+
+        exportedColumns.sort((a, b) => {
+            const posA = allColumns.indexOf(a);
+            const posB = allColumns.indexOf(b);
+
+            return posA - posB;
+        });
+
         const data = this.buildExportParams({
-            columns: columnKeys,
+            columns: exportedColumns,
             rowPositions: allRowPositions,
             includeHeaders: params.includeHeaders,
             includeGroupHeaders: params.includeGroupHeaders,
