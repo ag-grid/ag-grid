@@ -315,10 +315,11 @@ export class PartialStoreBlock extends RowNodeBlock {
         this.touchLastAccessed();
 
         let res: RowBounds | undefined;
-        this.rowNodes.find(rowNode => {
+
+        for (const rowNode of this.rowNodes) {
             res = this.blockUtils.extractRowBounds(rowNode, index);
-            return res != null;
-        });
+            if (res != null) { break; }
+        }
 
         return res;
     }
@@ -328,10 +329,10 @@ export class PartialStoreBlock extends RowNodeBlock {
 
         let res: number | null = null;
 
-        this.rowNodes.find(rowNode => {
+        for (const rowNode of this.rowNodes) {
             res = this.blockUtils.getIndexAtPixel(rowNode, pixel);
-            return res != null;
-        });
+            if (res != null) { break; }
+        }
 
         return res;
     }
