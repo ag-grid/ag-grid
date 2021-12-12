@@ -1,9 +1,10 @@
-import { MiniChartWithAxes } from "./miniChartWithAxes";
+import { MiniChartWithAxes } from "../miniChartWithAxes";
 import { Arc, ClipRect, LinearScale, Shape } from "ag-charts-community";
+import { ChartType } from "@ag-grid-community/core";
 
 export class MiniScatter extends MiniChartWithAxes {
 
-    static chartType = 'scatter';
+    static chartType: ChartType = 'scatter';
     private readonly points: Shape[];
 
     constructor(container: HTMLElement, fills: string[], strokes: string[]) {

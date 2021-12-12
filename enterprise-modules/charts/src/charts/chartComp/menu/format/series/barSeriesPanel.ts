@@ -53,7 +53,7 @@ export class BarSeriesPanel extends Component {
         this.setTemplate(BarSeriesPanel.TEMPLATE, {seriesGroup: groupParams});
 
         this.seriesGroup
-            .setTitle(this.chartTranslator.translate("series"))
+            .setTitle(this.getTitle())
             .toggleGroupExpand(false)
             .hideEnabledCheckbox(true);
 
@@ -111,6 +111,15 @@ export class BarSeriesPanel extends Component {
         const shadowPanelComp = this.createBean(new ShadowPanel(this.chartOptionsService));
         this.seriesGroup.addItem(shadowPanelComp);
         this.activePanels.push(shadowPanelComp);
+    }
+
+    private getTitle() {
+        let seriesTitle = this.chartTranslator.translate("series");
+        if (['groupedColumnLine', 'stackedColumnLine'].includes(this.chartOptionsService.getChartType())) {
+            const columnTitle = this.chartTranslator.translate("columnGroup");
+            return  `${seriesTitle} (${columnTitle})`;
+        }
+        return seriesTitle;
     }
 
     private destroyActivePanels(): void {

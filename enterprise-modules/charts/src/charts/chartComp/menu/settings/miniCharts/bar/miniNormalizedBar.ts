@@ -1,8 +1,9 @@
 import { MiniStackedBar } from "./miniStackedBar";
+import { ChartType } from "@ag-grid-community/core";
 
 export class MiniNormalizedBar extends MiniStackedBar {
 
-    static chartType = 'normalizedBar';
+    static chartType: ChartType = 'normalizedBar';
     static data = [
         [10, 10, 10],
         [6, 7, 8],

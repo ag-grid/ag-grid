@@ -1,21 +1,24 @@
-export * from "./miniColumn";
-export * from "./miniStackedColumn";
-export * from "./miniNormalizedColumn";
+export * from "./column/miniColumn";
+export * from "./column/miniStackedColumn";
+export * from "./column/miniNormalizedColumn";
 
-export * from "./miniBar";
-export * from "./miniStackedBar";
-export * from "./miniNormalizedBar";
+export * from "./bar/miniBar";
+export * from "./bar/miniStackedBar";
+export * from "./bar/miniNormalizedBar";
 
-export * from "./miniPie";
-export * from "./miniDoughnut";
+export * from "./pie/miniPie";
+export * from "./pie/miniDoughnut";
 
-export * from "./miniLine";
+export * from "./line/miniLine";
 
-export * from "./miniScatter";
-export * from "./miniBubble";
+export * from "./scatter/miniScatter";
+export * from "./scatter/miniBubble";
 
-export * from "./miniArea";
-export * from "./miniStackedArea";
-export * from "./miniNormalizedArea";
+export * from "./area/miniArea";
+export * from "./area/miniStackedArea";
+export * from "./area/miniNormalizedArea";
 
-export * from "./miniHistogram";
+export * from "./histogram/miniHistogram";
+
+export * from "./combo/miniGroupedColumnLine";
+export * from "./combo/miniStackedColumnLine";

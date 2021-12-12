@@ -1,9 +1,10 @@
-import { MiniChart } from "./miniChart";
+import { MiniChart } from "../miniChart";
 import { Sector, toRadians } from "ag-charts-community";
+import { ChartType } from "@ag-grid-community/core";
 
 export class MiniDoughnut extends MiniChart {
 
-    static chartType = 'doughnut';
+    static chartType: ChartType = 'doughnut';
     private readonly sectors: Sector[];
 
     constructor(container: HTMLElement, fills: string[], strokes: string[], centerRadiusScaler = 0.6, tooltipName = "doughnutTooltip") {

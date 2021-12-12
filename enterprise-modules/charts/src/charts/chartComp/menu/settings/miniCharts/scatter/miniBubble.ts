@@ -1,9 +1,10 @@
-import { MiniChartWithAxes } from "./miniChartWithAxes";
+import { MiniChartWithAxes } from "../miniChartWithAxes";
 import { Arc, ClipRect, LinearScale, Shape } from "ag-charts-community";
+import { ChartType } from "@ag-grid-community/core";
 
 export class MiniBubble extends MiniChartWithAxes {
 
-    static chartType = 'bubble';
+    static chartType: ChartType = 'bubble';
     private readonly points: Shape[];
 
     constructor(container: HTMLElement, fills: string[], strokes: string[]) {

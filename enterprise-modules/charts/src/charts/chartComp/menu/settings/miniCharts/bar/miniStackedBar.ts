@@ -1,9 +1,10 @@
-import { MiniChartWithAxes } from "./miniChartWithAxes";
+import { MiniChartWithAxes } from "../miniChartWithAxes";
 import { BandScale, LinearScale, Rect } from "ag-charts-community";
+import { ChartType } from "@ag-grid-community/core";
 
 export class MiniStackedBar extends MiniChartWithAxes {
 
-    static chartType = 'stackedBar';
+    static chartType: ChartType = 'stackedBar';
     static data = [
         [8, 12, 16],
         [6, 9, 12],

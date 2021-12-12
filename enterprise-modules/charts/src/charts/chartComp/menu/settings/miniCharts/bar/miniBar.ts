@@ -1,8 +1,9 @@
 import { BandScale, LinearScale, Rect } from "ag-charts-community";
-import { MiniChartWithAxes } from "./miniChartWithAxes";
+import { MiniChartWithAxes } from "../miniChartWithAxes";
+import { ChartType } from "@ag-grid-community/core";
 
 export class MiniBar extends MiniChartWithAxes {
-    static chartType = 'groupedBar';
+    static chartType: ChartType = 'groupedBar';
     private readonly bars: Rect[];
 
     constructor(container: HTMLElement, fills: string[], strokes: string[]) {

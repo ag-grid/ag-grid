@@ -4,9 +4,9 @@ import { Group, Scene } from "ag-charts-community";
 
 export abstract class MiniChart extends Component {
 
-    protected tooltipName: string;
-
     @Autowired('chartTranslator') protected chartTranslator: ChartTranslator;
+
+    protected tooltipName: string;
     protected readonly size = 58;
     protected readonly padding = 5;
     protected readonly root = new Group();
