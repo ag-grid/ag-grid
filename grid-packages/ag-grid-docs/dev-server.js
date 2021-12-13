@@ -503,7 +503,7 @@ const rebuildPackagesBasedOnChangeState = async (skipSelf = true, skipFrameworks
 const watchCoreModules = async (skipFrameworks) => {
     console.log("Watching TS files only...");
     const tsc = getTscPath();
-    const tsWatch = cp.spawn(tsc, ["--build", "--preserveWatchOutput", '--watch'], {
+    const tsWatch = cp.spawn(tsc, ["--build", "--preserveWatchOutput", '--watch', 'tsconfig.modules.json'], {
         cwd: WINDOWS ? '..\\..\\' : '../../'
     });
 
@@ -513,7 +513,7 @@ const watchCoreModules = async (skipFrameworks) => {
         if (output.includes("Found 0 errors. Watching for file changes.")) {
             await rebuildPackagesBasedOnChangeState(false, skipFrameworks);
 
-            // because we use TSC to build the core modules (and not npm) we need to manuall update the changed
+            // because we use TSC to build the core modules (and not npm) we need to manually update the changed
             // hashes on build
             updateCoreModuleHashes();
         }
@@ -547,7 +547,7 @@ const updateCoreModuleHashes = () => {
 const buildCoreModules = async (exitOnError) => {
     console.log("Building Core Modules...");
     const tsc = getTscPath();
-    const result = cp.spawnSync(tsc, ['--build'], {
+    const result = cp.spawnSync(tsc, ['--build', 'tsconfig.modules.json'], {
         stdio: 'inherit',
         cwd: WINDOWS ? '..\\..\\' : '../../'
     });

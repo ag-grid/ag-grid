@@ -6,7 +6,6 @@ const gulpTypescript = require('gulp-typescript');
 const header = require('gulp-header');
 const merge = require('merge2');
 const pkg = require('./package.json');
-const tsConfig = 'tsconfig.build.json';
 const typescript = require('rollup-plugin-typescript');
 const commonjs = require('rollup-plugin-commonjs');
 const uglify = require('rollup-plugin-uglify').uglify;
@@ -28,7 +27,7 @@ const cleanLib = () => {
 };
 
 function tscTask() {
-    const tscProject = gulpTypescript.createProject(tsConfig);
+    const tscProject = gulpTypescript.createProject('tsconfig.build.json');
     const tsResult = gulp.src(
         [
             'src/**/*.ts*',
@@ -70,7 +69,11 @@ const umd = () => {
                 '@ag-grid-community/core': 'agGrid'
             },
         },
-        plugins: [typescript(), commonjs(), uglify()]
+        plugins: [
+            typescript({
+                tsconfig: "tsconfig.rollup.json"
+            })
+            , commonjs(), uglify()]
     })
         .pipe(source('ag-grid-react.min.js'))
         .pipe(gulp.dest('./bundles'))
@@ -85,7 +88,11 @@ const amd = () => {
             file: 'my-file.amd.js',
             format: 'amd',
         },
-        plugins: [typescript(), commonjs(), uglify()        ]
+        plugins: [
+            typescript({
+                tsconfig: "tsconfig.rollup.json"
+            })
+            , commonjs(), uglify()]
     })
         .pipe(source('ag-grid-react.amd.min.js'))
         .pipe(replace('@ag-grid-community/core', 'agGrid')) // the alias plugin should do this for us, but the mix of ts, cjs and alias just didn't get on
@@ -106,14 +113,14 @@ const linkUmdForE2E = (done) => {
         linkType = 'junction';
     }
 
-    if(!fs.existsSync('./cypress/integration/ag-grid-react.min.js')) {
-        link('./bundles/ag-grid-react.min.js', './cypress/integration/',{
+    if (!fs.existsSync('./cypress/integration/ag-grid-react.min.js')) {
+        link('./bundles/ag-grid-react.min.js', './cypress/integration/', {
             force: true,
             type: linkType
         })
     }
-    if(!fs.existsSync('./cypress/integration/ag-grid-community.min.js')) {
-        link('../../community-modules/all-modules/dist/ag-grid-community.min.js', './cypress/integration/',{
+    if (!fs.existsSync('./cypress/integration/ag-grid-community.min.js')) {
+        link('../../community-modules/all-modules/dist/ag-grid-community.min.js', './cypress/integration/', {
             force: true,
             type: linkType
         })
