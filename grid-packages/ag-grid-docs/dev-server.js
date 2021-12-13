@@ -503,7 +503,7 @@ const rebuildPackagesBasedOnChangeState = async (skipSelf = true, skipFrameworks
 const watchCoreModules = async (skipFrameworks) => {
     console.log("Watching TS files only...");
     const tsc = getTscPath();
-    const tsWatch = cp.spawn(tsc, ["--build", "--preserveWatchOutput", '--watch', 'tsconfig.modules.json'], {
+    const tsWatch = cp.spawn(tsc, ["--build", "--preserveWatchOutput", '--watch'], {
         cwd: WINDOWS ? '..\\..\\' : '../../'
     });
 
@@ -547,7 +547,7 @@ const updateCoreModuleHashes = () => {
 const buildCoreModules = async (exitOnError) => {
     console.log("Building Core Modules...");
     const tsc = getTscPath();
-    const result = cp.spawnSync(tsc, ['--build', 'tsconfig.modules.json'], {
+    const result = cp.spawnSync(tsc, ['--build'], {
         stdio: 'inherit',
         cwd: WINDOWS ? '..\\..\\' : '../../'
     });

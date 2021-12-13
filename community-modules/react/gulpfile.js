@@ -69,11 +69,7 @@ const umd = () => {
                 '@ag-grid-community/core': 'agGrid'
             },
         },
-        plugins: [
-            typescript({
-                tsconfig: "tsconfig.rollup.json"
-            })
-            , commonjs(), uglify()]
+        plugins: [typescript(), commonjs(), uglify()]
     })
         .pipe(source('ag-grid-react.min.js'))
         .pipe(gulp.dest('./bundles'))
@@ -88,11 +84,7 @@ const amd = () => {
             file: 'my-file.amd.js',
             format: 'amd',
         },
-        plugins: [
-            typescript({
-                tsconfig: "tsconfig.rollup.json"
-            })
-            , commonjs(), uglify()]
+        plugins: [typescript(), commonjs(), uglify()]
     })
         .pipe(source('ag-grid-react.amd.min.js'))
         .pipe(replace('@ag-grid-community/core', 'agGrid')) // the alias plugin should do this for us, but the mix of ts, cjs and alias just didn't get on
