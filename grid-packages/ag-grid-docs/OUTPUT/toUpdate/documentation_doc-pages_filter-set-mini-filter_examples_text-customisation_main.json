@@ -3,21 +3,21 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"athlete\",\n            filter: \"agSetColumnFilter\"\n        },\n        {\n            field: \"country\",\n            filter: \"agSetColumnFilter\"\n        },\n        {\n            field: \"gold\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"silver\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"bronze\",\n            filter: \"agNumberColumnFilter\"\n        }\n    ]"
+            "value": "[\n    {\n        field: 'athlete',\n        filter: 'agSetColumnFilter'\n    },\n    {\n        field: 'country',\n        filter: 'agSetColumnFilter'\n    },\n    {\n        field: 'gold',\n        filter: 'agNumberColumnFilter'\n    },\n    {\n        field: 'silver',\n        filter: 'agNumberColumnFilter'\n    },\n    {\n        field: 'bronze',\n        filter: 'agNumberColumnFilter'\n    }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        minWidth: 200,\n        resizable: true,\n        floatingFilter: true\n    }"
+            "value": "{\n    flex: 1,\n    minWidth: 200,\n    resizable: true,\n    floatingFilter: true\n}"
         },
         {
             "name": "localeText",
-            "value": "{\n        searchOoo: \"Search values...\",\n        noMatches: \"No matches could be found.\"\n    }"
+            "value": "{\n    searchOoo: 'Search values...',\n    noMatches: 'No matches could be found.'\n}"
         }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    minWidth: 200,\n    resizable: true,\n    floatingFilter: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            filter: \"agSetColumnFilter\"\n        },\n        {\n            field: \"country\",\n            filter: \"agSetColumnFilter\"\n        },\n        {\n            field: \"gold\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"silver\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"bronze\",\n            filter: \"agNumberColumnFilter\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'athlete',\n        filter: 'agSetColumnFilter'\n    },\n    {\n        field: 'country',\n        filter: 'agSetColumnFilter'\n    },\n    {\n        field: 'gold',\n        filter: 'agNumberColumnFilter'\n    },\n    {\n        field: 'silver',\n        filter: 'agNumberColumnFilter'\n    },\n    {\n        field: 'bronze',\n        filter: 'agNumberColumnFilter'\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [],

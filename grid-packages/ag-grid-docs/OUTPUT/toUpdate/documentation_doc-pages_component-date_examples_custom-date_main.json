@@ -3,11 +3,11 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        { field: \"athlete\" },\n        {\n            field: \"age\",\n            filter: \"agNumberColumnFilter\"\n        },\n        { field: \"country\" },\n        { field: \"year\" },\n        {\n            field: \"date\",\n            minWidth: 190,\n            filter: \"agDateColumnFilter\",\n            filterParams: filterParams\n        },\n        { field: \"sport\" },\n        {\n            field: \"gold\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"silver\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"bronze\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"total\",\n            filter: false\n        }\n    ]"
+            "value": "[\n    { field: 'athlete' },\n    {\n        field: 'age',\n        filter: 'agNumberColumnFilter'\n    },\n    { field: 'country' },\n    { field: 'year' },\n    {\n        field: 'date',\n        minWidth: 190,\n        filter: 'agDateColumnFilter',\n        filterParams: filterParams\n    },\n    { field: 'sport' },\n    {\n        field: 'gold',\n        filter: 'agNumberColumnFilter'\n    },\n    {\n        field: 'silver',\n        filter: 'agNumberColumnFilter'\n    },\n    {\n        field: 'bronze',\n        filter: 'agNumberColumnFilter'\n    },\n    {\n        field: 'total',\n        filter: false\n    }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        editable: true,\n        sortable: true,\n        flex: 1,\n        minWidth: 100,\n        filter: true,\n        floatingFilter: true,\n        resizable: true\n    }"
+            "value": "{\n    editable: true,\n    sortable: true,\n    flex: 1,\n    minWidth: 100,\n    filter: true,\n    floatingFilter: true,\n    resizable: true\n}"
         },
         { "name": "rowData", "value": "null" },
         { "name": "components", "value": "{ agDateInput: CustomDateComponent }" }
@@ -15,7 +15,7 @@
     "components": [{ "name": "agDateInput", "value": "CustomDateComponent" }],
     "defaultColDef": "{\n    editable: true,\n    sortable: true,\n    flex: 1,\n    minWidth: 100,\n    filter: true,\n    floatingFilter: true,\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        { field: \"athlete\" },\n        {\n            field: \"age\",\n            filter: \"agNumberColumnFilter\"\n        },\n        { field: \"country\" },\n        { field: \"year\" },\n        {\n            field: \"date\",\n            minWidth: 190,\n            filter: \"agDateColumnFilter\",\n            filterParams: \"AG_LITERAL_filterParams\"\n        },\n        { field: \"sport\" },\n        {\n            field: \"gold\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"silver\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"bronze\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"total\",\n            filter: false\n        }\n    ]",
+    "parsedColDefs": "[\n    { field: 'athlete' },\n    {\n        field: 'age',\n        filter: 'agNumberColumnFilter'\n    },\n    { field: 'country' },\n    { field: 'year' },\n    {\n        field: 'date',\n        minWidth: 190,\n        filter: 'agDateColumnFilter',\n        filterParams: 'AG_LITERAL_filterParams'\n    },\n    { field: 'sport' },\n    {\n        field: 'gold',\n        filter: 'agNumberColumnFilter'\n    },\n    {\n        field: 'silver',\n        filter: 'agNumberColumnFilter'\n    },\n    {\n        field: 'bronze',\n        filter: 'agNumberColumnFilter'\n    },\n    {\n        field: 'total',\n        filter: false\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [

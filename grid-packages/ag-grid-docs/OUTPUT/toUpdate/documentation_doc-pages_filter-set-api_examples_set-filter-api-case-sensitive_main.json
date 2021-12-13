@@ -9,19 +9,19 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            headerName: \"Case Insensitive (default)\",\n            field: \"colour\",\n            filter: \"agSetColumnFilter\",\n            filterParams: {\n                caseSensitive: false,\n                cellRenderer: colourCellRenderer\n            }\n        },\n        {\n            headerName: \"Case Sensitive\",\n            field: \"colour\",\n            filter: \"agSetColumnFilter\",\n            filterParams: {\n                caseSensitive: true,\n                cellRenderer: colourCellRenderer\n            }\n        }\n    ]"
+            "value": "[\n    {\n        headerName: 'Case Insensitive (default)',\n        field: 'colour',\n        filter: 'agSetColumnFilter',\n        filterParams: {\n            caseSensitive: false,\n            cellRenderer: colourCellRenderer\n        }\n    },\n    {\n        headerName: 'Case Sensitive',\n        field: 'colour',\n        filter: 'agSetColumnFilter',\n        filterParams: {\n            caseSensitive: true,\n            cellRenderer: colourCellRenderer\n        }\n    }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        minWidth: 225,\n        cellRenderer: colourCellRenderer,\n        resizable: true,\n        floatingFilter: true\n    }"
+            "value": "{\n    flex: 1,\n    minWidth: 225,\n    cellRenderer: colourCellRenderer,\n    resizable: true,\n    floatingFilter: true\n}"
         },
-        { "name": "sideBar", "value": "\"filters\"" },
+        { "name": "sideBar", "value": "'filters'" },
         { "name": "rowData", "value": "getData()" }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    minWidth: 225,\n    cellRenderer: colourCellRenderer,\n    resizable: true,\n    floatingFilter: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            headerName: \"Case Insensitive (default)\",\n            field: \"colour\",\n            filter: \"agSetColumnFilter\",\n            filterParams: {\n                caseSensitive: false,\n                cellRenderer: \"AG_LITERAL_colourCellRenderer\"\n            }\n        },\n        {\n            headerName: \"Case Sensitive\",\n            field: \"colour\",\n            filter: \"agSetColumnFilter\",\n            filterParams: {\n                caseSensitive: true,\n                cellRenderer: \"AG_LITERAL_colourCellRenderer\"\n            }\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        headerName: 'Case Insensitive (default)',\n        field: 'colour',\n        filter: 'agSetColumnFilter',\n        filterParams: {\n            caseSensitive: false,\n            cellRenderer: 'AG_LITERAL_colourCellRenderer'\n        }\n    },\n    {\n        headerName: 'Case Sensitive',\n        field: 'colour',\n        filter: 'agSetColumnFilter',\n        filterParams: {\n            caseSensitive: true,\n            cellRenderer: 'AG_LITERAL_colourCellRenderer'\n        }\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

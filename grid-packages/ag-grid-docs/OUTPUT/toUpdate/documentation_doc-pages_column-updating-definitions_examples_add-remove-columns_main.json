@@ -3,12 +3,9 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        { field: \"athlete\" },\n        { field: \"age\" },\n        { field: \"country\" },\n        { field: \"sport\" },\n        { field: \"year\" },\n        { field: \"date\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]"
+            "value": "[\n    { field: 'athlete' },\n    { field: 'age' },\n    { field: 'country' },\n    { field: 'sport' },\n    { field: 'year' },\n    { field: 'date' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]"
         },
-        {
-            "name": "defaultColDef",
-            "value": "{\n        initialWidth: 100,\n        sortable: true,\n        resizable: true\n    }"
-        }
+        { "name": "defaultColDef", "value": "{\n    initialWidth: 100,\n    sortable: true,\n    resizable: true\n}" }
     ],
     "components": [],
     "defaultColDef": null,

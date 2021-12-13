@@ -9,15 +9,15 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[{\n            headerName: \"Country (Complex Object)\",\n            field: \"country\",\n            keyCreator: countryKeyCreator,\n            valueFormatter: countryValueFormatter,\n            filter: \"agSetColumnFilter\"\n        }]"
+            "value": "[{\n        headerName: 'Country (Complex Object)',\n        field: 'country',\n        keyCreator: countryKeyCreator,\n        valueFormatter: countryValueFormatter,\n        filter: 'agSetColumnFilter'\n    }]"
         },
-        { "name": "defaultColDef", "value": "{\n        flex: 1,\n        floatingFilter: true\n    }" },
-        { "name": "sideBar", "value": "\"filters\"" }
+        { "name": "defaultColDef", "value": "{\n    flex: 1,\n    floatingFilter: true\n}" },
+        { "name": "sideBar", "value": "'filters'" }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    floatingFilter: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[{\n            headerName: \"Country (Complex Object)\",\n            field: \"country\",\n            keyCreator: \"AG_LITERAL_countryKeyCreator\",\n            valueFormatter: \"AG_LITERAL_countryValueFormatter\",\n            filter: \"agSetColumnFilter\"\n        }]",
+    "parsedColDefs": "[{\n        headerName: 'Country (Complex Object)',\n        field: 'country',\n        keyCreator: 'AG_LITERAL_countryKeyCreator',\n        valueFormatter: 'AG_LITERAL_countryValueFormatter',\n        filter: 'agSetColumnFilter'\n    }]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

@@ -3,17 +3,17 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"athlete\",\n            minWidth: 220,\n            filter: \"agTextColumnFilter\"\n        },\n        {\n            field: \"country\",\n            minWidth: 200,\n            filter: \"agSetColumnFilter\",\n            filterParams: {\n                values: [\n                    \"United States\",\n                    \"Ireland\",\n                    \"United Kingdom\",\n                    \"Russia\",\n                    \"Australia\",\n                    \"Canada\",\n                    \"Norway\"\n                ]\n            }\n        },\n        {\n            field: \"year\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"sport\",\n            minWidth: 200\n        },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" }\n    ]"
+            "value": "[\n    {\n        field: 'athlete',\n        minWidth: 220,\n        filter: 'agTextColumnFilter'\n    },\n    {\n        field: 'country',\n        minWidth: 200,\n        filter: 'agSetColumnFilter',\n        filterParams: {\n            values: [\n                'United States',\n                'Ireland',\n                'United Kingdom',\n                'Russia',\n                'Australia',\n                'Canada',\n                'Norway'\n            ]\n        }\n    },\n    {\n        field: 'year',\n        filter: 'agNumberColumnFilter'\n    },\n    {\n        field: 'sport',\n        minWidth: 200\n    },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' }\n]"
         },
-        { "name": "defaultColDef", "value": "{\n        flex: 1,\n        minWidth: 100\n    }" },
+        { "name": "defaultColDef", "value": "{\n    flex: 1,\n    minWidth: 100\n}" },
         { "name": "animateRows", "value": "true" },
-        { "name": "rowModelType", "value": "\"serverSide\"" },
-        { "name": "serverSideStoreType", "value": "\"full\"" }
+        { "name": "rowModelType", "value": "'serverSide'" },
+        { "name": "serverSideStoreType", "value": "'full'" }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    minWidth: 100\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            minWidth: 220,\n            filter: \"agTextColumnFilter\"\n        },\n        {\n            field: \"country\",\n            minWidth: 200,\n            filter: \"agSetColumnFilter\",\n            filterParams: {\n                values: [\n                    \"United States\",\n                    \"Ireland\",\n                    \"United Kingdom\",\n                    \"Russia\",\n                    \"Australia\",\n                    \"Canada\",\n                    \"Norway\"\n                ]\n            }\n        },\n        {\n            field: \"year\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"sport\",\n            minWidth: 200\n        },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'athlete',\n        minWidth: 220,\n        filter: 'agTextColumnFilter'\n    },\n    {\n        field: 'country',\n        minWidth: 200,\n        filter: 'agSetColumnFilter',\n        filterParams: {\n            values: [\n                'United States',\n                'Ireland',\n                'United Kingdom',\n                'Russia',\n                'Australia',\n                'Canada',\n                'Norway'\n            ]\n        }\n    },\n    {\n        field: 'year',\n        filter: 'agNumberColumnFilter'\n    },\n    {\n        field: 'sport',\n        minWidth: 200\n    },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [

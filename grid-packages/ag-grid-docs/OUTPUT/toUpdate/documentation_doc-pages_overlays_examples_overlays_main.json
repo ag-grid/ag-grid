@@ -3,25 +3,25 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"athlete\",\n            minWidth: 200\n        },\n        { field: \"age\" },\n        {\n            field: \"country\",\n            minWidth: 200\n        },\n        { field: \"year\" },\n        {\n            field: \"date\",\n            minWidth: 180\n        },\n        {\n            field: \"sport\",\n            minWidth: 200\n        },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]"
+            "value": "[\n    {\n        field: 'athlete',\n        minWidth: 200\n    },\n    { field: 'age' },\n    {\n        field: 'country',\n        minWidth: 200\n    },\n    { field: 'year' },\n    {\n        field: 'date',\n        minWidth: 180\n    },\n    {\n        field: 'sport',\n        minWidth: 200\n    },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        minWidth: 100,\n        filter: true,\n        sortable: true,\n        resizable: true\n    }"
+            "value": "{\n    flex: 1,\n    minWidth: 100,\n    filter: true,\n    sortable: true,\n    resizable: true\n}"
         },
         {
             "name": "overlayLoadingTemplate",
-            "value": "\"<span class=\\\"ag-overlay-loading-center\\\">Please wait while your rows are loading</span>\""
+            "value": "'<span class=\"ag-overlay-loading-center\">Please wait while your rows are loading</span>'"
         },
         {
             "name": "overlayNoRowsTemplate",
-            "value": "\"<span style=\\\"padding: 10px; border: 2px solid #444; background: lightgoldenrodyellow;\\\">This is a custom 'no rows' overlay</span>\""
+            "value": "'<span style=\"padding: 10px; border: 2px solid #444; background: lightgoldenrodyellow;\">This is a custom \\'no rows\\' overlay</span>'"
         }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    minWidth: 100,\n    filter: true,\n    sortable: true,\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            minWidth: 200\n        },\n        { field: \"age\" },\n        {\n            field: \"country\",\n            minWidth: 200\n        },\n        { field: \"year\" },\n        {\n            field: \"date\",\n            minWidth: 180\n        },\n        {\n            field: \"sport\",\n            minWidth: 200\n        },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'athlete',\n        minWidth: 200\n    },\n    { field: 'age' },\n    {\n        field: 'country',\n        minWidth: 200\n    },\n    { field: 'year' },\n    {\n        field: 'date',\n        minWidth: 180\n    },\n    {\n        field: 'sport',\n        minWidth: 200\n    },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

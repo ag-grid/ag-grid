@@ -3,16 +3,16 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        { field: \"athlete\" },\n        { field: \"age\" },\n        { field: \"country\" },\n        { field: \"year\" },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]"
+            "value": "[\n    { field: 'athlete' },\n    { field: 'age' },\n    { field: 'country' },\n    { field: 'year' },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]"
         },
         { "name": "rowData", "value": "null" },
         { "name": "components", "value": "{ CustomHeader: CustomHeader }" },
-        { "name": "defaultColDef", "value": "{ headerComponent: \"CustomHeader\" }" }
+        { "name": "defaultColDef", "value": "{ headerComponent: 'CustomHeader' }" }
     ],
     "components": [{ "name": "CustomHeader", "value": "CustomHeader" }],
     "defaultColDef": "{ headerComponent: 'CustomHeader' }",
     "globalComponents": [],
-    "parsedColDefs": "[\n        { field: \"athlete\" },\n        { field: \"age\" },\n        { field: \"country\" },\n        { field: \"year\" },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]",
+    "parsedColDefs": "[\n    { field: 'athlete' },\n    { field: 'age' },\n    { field: 'country' },\n    { field: 'year' },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

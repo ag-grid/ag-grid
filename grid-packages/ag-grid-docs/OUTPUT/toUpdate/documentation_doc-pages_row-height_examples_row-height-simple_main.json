@@ -3,19 +3,19 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        { field: \"rowHeight\" },\n        { field: \"athlete\" },\n        {\n            field: \"age\",\n            width: 80\n        },\n        { field: \"country\" },\n        {\n            field: \"year\",\n            width: 90\n        },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]"
+            "value": "[\n    { field: 'rowHeight' },\n    { field: 'athlete' },\n    {\n        field: 'age',\n        width: 80\n    },\n    { field: 'country' },\n    {\n        field: 'year',\n        width: 90\n    },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        width: 150,\n        sortable: true,\n        resizable: true,\n        filter: true\n    }"
+            "value": "{\n    width: 150,\n    sortable: true,\n    resizable: true,\n    filter: true\n}"
         },
         { "name": "getRowHeight", "value": null }
     ],
     "components": [],
     "defaultColDef": "{\n    width: 150,\n    sortable: true,\n    resizable: true,\n    filter: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        { field: \"rowHeight\" },\n        { field: \"athlete\" },\n        {\n            field: \"age\",\n            width: 80\n        },\n        { field: \"country\" },\n        {\n            field: \"year\",\n            width: 90\n        },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]",
-    "instanceMethods": ["function getRowHeight(params) {\n        return params.data.rowHeight;\n    }"],
+    "parsedColDefs": "[\n    { field: 'rowHeight' },\n    { field: 'athlete' },\n    {\n        field: 'age',\n        width: 80\n    },\n    { field: 'country' },\n    {\n        field: 'year',\n        width: 90\n    },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]",
+    "instanceMethods": ["function getRowHeight(params) {\n    return params.data.rowHeight;\n}"],
     "externalEventHandlers": [],
     "utils": [],
     "data": {

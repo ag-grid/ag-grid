@@ -3,11 +3,11 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        { field: \"a\" },\n        { field: \"b\" },\n        { field: \"c\" },\n        { field: \"d\" },\n        { field: \"e\" },\n        { field: \"f\" }\n    ]"
+            "value": "[\n    { field: 'a' },\n    { field: 'b' },\n    { field: 'c' },\n    { field: 'd' },\n    { field: 'e' },\n    { field: 'f' }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        cellClass: \"align-right\",\n        enableCellChangeFlash: true,\n        resizable: true,\n        valueFormatter: function (params) {\n            return formatNumber(params.value);\n        }\n    }"
+            "value": "{\n    flex: 1,\n    cellClass: 'align-right',\n    enableCellChangeFlash: true,\n    resizable: true,\n    valueFormatter: function (params) {\n        return formatNumber(params.value);\n    }\n}"
         },
         { "name": "rowData", "value": "createRowData()" },
         { "name": "cellFlashDelay", "value": "2000" },
@@ -16,7 +16,7 @@
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    cellClass: 'align-right',\n    enableCellChangeFlash: true,\n    resizable: true,\n    valueFormatter: function (params) {\n        return formatNumber(params.value);\n    }\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        { field: \"a\" },\n        { field: \"b\" },\n        { field: \"c\" },\n        { field: \"d\" },\n        { field: \"e\" },\n        { field: \"f\" }\n    ]",
+    "parsedColDefs": "[\n    { field: 'a' },\n    { field: 'b' },\n    { field: 'c' },\n    { field: 'd' },\n    { field: 'e' },\n    { field: 'f' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

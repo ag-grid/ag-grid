@@ -9,20 +9,20 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"name\",\n            cellRenderer: \"agGroupCellRenderer\"\n        },\n        { field: \"account\" },\n        { field: \"calls\" },\n        {\n            field: \"minutes\",\n            valueFormatter: \"x.toLocaleString() + 'm'\"\n        }\n    ]"
+            "value": "[\n    {\n        field: 'name',\n        cellRenderer: 'agGroupCellRenderer'\n    },\n    { field: 'account' },\n    { field: 'calls' },\n    {\n        field: 'minutes',\n        valueFormatter: 'x.toLocaleString() + \\'m\\''\n    }\n]"
         },
         { "name": "defaultColDef", "value": "{ flex: 1 }" },
         { "name": "masterDetail", "value": "true" },
         { "name": "detailRowHeight", "value": "195" },
         {
             "name": "detailCellRendererParams",
-            "value": "function (params) {\n        var res = {};\n        res.getDetailRowData = function (params) {\n            params.successCallback(params.data.callRecords);\n        };\n        var nameMatch = params.data.name === \"Mila Smith\" || params.data.name === \"Harper Johnson\";\n        if (nameMatch) {\n            res.detailGridOptions = {\n                columnDefs: [\n                    { field: \"callId\" },\n                    { field: \"number\" }\n                ],\n                defaultColDef: { flex: 1 }\n            };\n        } else {\n            res.detailGridOptions = {\n                columnDefs: [\n                    { field: \"callId\" },\n                    { field: \"direction\" },\n                    {\n                        field: \"duration\",\n                        valueFormatter: \"x.toLocaleString() + 's'\"\n                    },\n                    { field: \"switchCode\" }\n                ],\n                defaultColDef: { flex: 1 }\n            };\n        }\n        return res;\n    }"
+            "value": "function (params) {\n    var res = {};\n    res.getDetailRowData = function (params) {\n        params.successCallback(params.data.callRecords);\n    };\n    var nameMatch = params.data.name === 'Mila Smith' || params.data.name === 'Harper Johnson';\n    if (nameMatch) {\n        res.detailGridOptions = {\n            columnDefs: [\n                { field: 'callId' },\n                { field: 'number' }\n            ],\n            defaultColDef: { flex: 1 }\n        };\n    } else {\n        res.detailGridOptions = {\n            columnDefs: [\n                { field: 'callId' },\n                { field: 'direction' },\n                {\n                    field: 'duration',\n                    valueFormatter: 'x.toLocaleString() + \\'s\\''\n                },\n                { field: 'switchCode' }\n            ],\n            defaultColDef: { flex: 1 }\n        };\n    }\n    return res;\n}"
         }
     ],
     "components": [],
     "defaultColDef": "{ flex: 1 }",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"name\",\n            cellRenderer: \"agGroupCellRenderer\"\n        },\n        { field: \"account\" },\n        { field: \"calls\" },\n        {\n            field: \"minutes\",\n            valueFormatter: \"x.toLocaleString() + 'm'\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'name',\n        cellRenderer: 'agGroupCellRenderer'\n    },\n    { field: 'account' },\n    { field: 'calls' },\n    {\n        field: 'minutes',\n        valueFormatter: 'x.toLocaleString() + \\'m\\''\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [],

@@ -3,20 +3,17 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"athlete\",\n            minWidth: 220\n        },\n        {\n            field: \"country\",\n            minWidth: 200\n        },\n        { field: \"year\" },\n        {\n            field: \"sport\",\n            minWidth: 200\n        },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" }\n    ]"
+            "value": "[\n    {\n        field: 'athlete',\n        minWidth: 220\n    },\n    {\n        field: 'country',\n        minWidth: 200\n    },\n    { field: 'year' },\n    {\n        field: 'sport',\n        minWidth: 200\n    },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' }\n]"
         },
-        {
-            "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        minWidth: 100,\n        sortable: true\n    }"
-        },
-        { "name": "rowModelType", "value": "\"serverSide\"" },
-        { "name": "serverSideStoreType", "value": "\"full\"" },
+        { "name": "defaultColDef", "value": "{\n    flex: 1,\n    minWidth: 100,\n    sortable: true\n}" },
+        { "name": "rowModelType", "value": "'serverSide'" },
+        { "name": "serverSideStoreType", "value": "'full'" },
         { "name": "animateRows", "value": "true" }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    minWidth: 100,\n    sortable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            minWidth: 220\n        },\n        {\n            field: \"country\",\n            minWidth: 200\n        },\n        { field: \"year\" },\n        {\n            field: \"sport\",\n            minWidth: 200\n        },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'athlete',\n        minWidth: 220\n    },\n    {\n        field: 'country',\n        minWidth: 200\n    },\n    { field: 'year' },\n    {\n        field: 'sport',\n        minWidth: 200\n    },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [

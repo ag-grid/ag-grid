@@ -3,26 +3,26 @@
     "properties": [
         {
             "name": "defaultColDef",
-            "value": "{\n        width: 80,\n        sortable: true,\n        filter: true,\n        resizable: true\n    }"
+            "value": "{\n    width: 80,\n    sortable: true,\n    filter: true,\n    resizable: true\n}"
         },
-        { "name": "rowSelection", "value": "\"multiple\"" },
+        { "name": "rowSelection", "value": "'multiple'" },
         { "name": "suppressRowClickSelection", "value": "true" },
         {
             "name": "rowClassRules",
-            "value": "{\n        \"red-row\": \"data.color == \\\"Red\\\"\",\n        \"green-row\": \"data.color == \\\"Green\\\"\",\n        \"blue-row\": \"data.color == \\\"Blue\\\"\"\n    }"
+            "value": "{\n    'red-row': 'data.color == \"Red\"',\n    'green-row': 'data.color == \"Green\"',\n    'blue-row': 'data.color == \"Blue\"'\n}"
         },
         { "name": "rowData", "value": "getData()" },
         { "name": "rowDragManaged", "value": "true" },
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            valueGetter: \"'Drag'\",\n            dndSource: true,\n            dndSourceOnRowDrag: onRowDrag,\n            checkboxSelection: true\n        },\n        { field: \"id\" },\n        { field: \"color\" },\n        { field: \"value1\" },\n        { field: \"value2\" }\n    ]"
+            "value": "[\n    {\n        valueGetter: '\\'Drag\\'',\n        dndSource: true,\n        dndSourceOnRowDrag: onRowDrag,\n        checkboxSelection: true\n    },\n    { field: 'id' },\n    { field: 'color' },\n    { field: 'value1' },\n    { field: 'value2' }\n]"
         },
         { "name": "animateRows", "value": "true" }
     ],
     "components": [],
     "defaultColDef": "{\n    width: 80,\n    sortable: true,\n    filter: true,\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            valueGetter: \"'Drag'\",\n            dndSource: true,\n            dndSourceOnRowDrag: \"AG_LITERAL_onRowDrag\",\n            checkboxSelection: true\n        },\n        { field: \"id\" },\n        { field: \"color\" },\n        { field: \"value1\" },\n        { field: \"value2\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        valueGetter: '\\'Drag\\'',\n        dndSource: true,\n        dndSourceOnRowDrag: 'AG_LITERAL_onRowDrag',\n        checkboxSelection: true\n    },\n    { field: 'id' },\n    { field: 'color' },\n    { field: 'value1' },\n    { field: 'value2' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

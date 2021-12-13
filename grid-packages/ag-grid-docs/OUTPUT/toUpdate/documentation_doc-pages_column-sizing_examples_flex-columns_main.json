@@ -3,15 +3,15 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            headerName: \"A\",\n            field: \"author\",\n            width: 300,\n            colSpan: colSpan\n        },\n        {\n            headerName: \"Flexed Columns\",\n            children: [\n                {\n                    headerName: \"B\",\n                    minWidth: 200,\n                    maxWidth: 350,\n                    flex: 2\n                },\n                {\n                    headerName: \"C\",\n                    flex: 1\n                }\n            ]\n        }\n    ]"
+            "value": "[\n    {\n        headerName: 'A',\n        field: 'author',\n        width: 300,\n        colSpan: colSpan\n    },\n    {\n        headerName: 'Flexed Columns',\n        children: [\n            {\n                headerName: 'B',\n                minWidth: 200,\n                maxWidth: 350,\n                flex: 2\n            },\n            {\n                headerName: 'C',\n                flex: 1\n            }\n        ]\n    }\n]"
         },
         { "name": "defaultColDef", "value": "{ resizable: true }" },
-        { "name": "rowData", "value": "[\n        1,\n        2\n    ]" }
+        { "name": "rowData", "value": "[\n    1,\n    2\n]" }
     ],
     "components": [],
     "defaultColDef": "{ resizable: true }",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            headerName: \"A\",\n            field: \"author\",\n            width: 300,\n            colSpan: \"AG_LITERAL_colSpan\"\n        },\n        {\n            headerName: \"Flexed Columns\",\n            children: [\n                {\n                    headerName: \"B\",\n                    minWidth: 200,\n                    maxWidth: 350,\n                    flex: 2\n                },\n                {\n                    headerName: \"C\",\n                    flex: 1\n                }\n            ]\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        headerName: 'A',\n        field: 'author',\n        width: 300,\n        colSpan: 'AG_LITERAL_colSpan'\n    },\n    {\n        headerName: 'Flexed Columns',\n        children: [\n            {\n                headerName: 'B',\n                minWidth: 200,\n                maxWidth: 350,\n                flex: 2\n            },\n            {\n                headerName: 'C',\n                flex: 1\n            }\n        ]\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [

@@ -3,25 +3,25 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"athlete\",\n            cellRendererSelector: function (params) {\n                if (params.node.rowPinned) {\n                    return {\n                        component: \"customPinnedRowRenderer\",\n                        params: { style: { color: \"blue\" } }\n                    };\n                } else {\n                    return undefined;\n                }\n            }\n        },\n        {\n            field: \"age\",\n            cellRendererSelector: function (params) {\n                if (params.node.rowPinned) {\n                    return {\n                        component: \"customPinnedRowRenderer\",\n                        params: { style: { \"font-style\": \"italic\" } }\n                    };\n                } else {\n                    return undefined;\n                }\n            }\n        },\n        { field: \"country\" },\n        { field: \"year\" },\n        { field: \"date\" },\n        { field: \"sport\" }\n    ]"
+            "value": "[\n    {\n        field: 'athlete',\n        cellRendererSelector: function (params) {\n            if (params.node.rowPinned) {\n                return {\n                    component: 'customPinnedRowRenderer',\n                    params: { style: { color: 'blue' } }\n                };\n            } else {\n                return undefined;\n            }\n        }\n    },\n    {\n        field: 'age',\n        cellRendererSelector: function (params) {\n            if (params.node.rowPinned) {\n                return {\n                    component: 'customPinnedRowRenderer',\n                    params: { style: { 'font-style': 'italic' } }\n                };\n            } else {\n                return undefined;\n            }\n        }\n    },\n    { field: 'country' },\n    { field: 'year' },\n    { field: 'date' },\n    { field: 'sport' }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        width: 200,\n        sortable: true,\n        filter: true,\n        resizable: true\n    }"
+            "value": "{\n    width: 200,\n    sortable: true,\n    filter: true,\n    resizable: true\n}"
         },
         { "name": "rowData", "value": "null" },
         {
             "name": "getRowStyle",
-            "value": "function (params) {\n        if (params.node.rowPinned) {\n            return { \"font-weight\": \"bold\" };\n        }\n    }"
+            "value": "function (params) {\n    if (params.node.rowPinned) {\n        return { 'font-weight': 'bold' };\n    }\n}"
         },
-        { "name": "pinnedTopRowData", "value": "createData(1, \"Top\")" },
-        { "name": "pinnedBottomRowData", "value": "createData(1, \"Bottom\")" },
+        { "name": "pinnedTopRowData", "value": "createData(1, 'Top')" },
+        { "name": "pinnedBottomRowData", "value": "createData(1, 'Bottom')" },
         { "name": "components", "value": "{ customPinnedRowRenderer: CustomPinnedRowRenderer }" }
     ],
     "components": [{ "name": "customPinnedRowRenderer", "value": "CustomPinnedRowRenderer" }],
     "defaultColDef": "{\n    width: 200,\n    sortable: true,\n    filter: true,\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            cellRendererSelector: \"AG_FUNCTION_function (params) {\\n    if (params.node.rowPinned) {\\n        return {\\n            component: 'customPinnedRowRenderer',\\n            params: { style: { color: 'blue' } }\\n        };\\n    } else {\\n        return undefined;\\n    }\\n}\"\n        },\n        {\n            field: \"age\",\n            cellRendererSelector: \"AG_FUNCTION_function (params) {\\n    if (params.node.rowPinned) {\\n        return {\\n            component: 'customPinnedRowRenderer',\\n            params: { style: { 'font-style': 'italic' } }\\n        };\\n    } else {\\n        return undefined;\\n    }\\n}\"\n        },\n        { field: \"country\" },\n        { field: \"year\" },\n        { field: \"date\" },\n        { field: \"sport\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'athlete',\n        cellRendererSelector: 'AG_FUNCTION_function (params) {\\n    if (params.node.rowPinned) {\\n        return {\\n            component: \\'customPinnedRowRenderer\\',\\n            params: { style: { color: \\'blue\\' } }\\n        };\\n    } else {\\n        return undefined;\\n    }\\n}'\n    },\n    {\n        field: 'age',\n        cellRendererSelector: 'AG_FUNCTION_function (params) {\\n    if (params.node.rowPinned) {\\n        return {\\n            component: \\'customPinnedRowRenderer\\',\\n            params: { style: { \\'font-style\\': \\'italic\\' } }\\n        };\\n    } else {\\n        return undefined;\\n    }\\n}'\n    },\n    { field: 'country' },\n    { field: 'year' },\n    { field: 'date' },\n    { field: 'sport' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

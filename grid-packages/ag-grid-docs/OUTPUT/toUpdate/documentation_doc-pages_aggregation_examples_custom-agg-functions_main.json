@@ -3,28 +3,25 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"country\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            field: \"year\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            headerName: \"minMax(age)\",\n            field: \"age\",\n            aggFunc: minAndMaxAggFunction\n        },\n        {\n            headerName: \"avg(age)\",\n            field: \"age\",\n            aggFunc: avgAggFunction,\n            enableValue: true,\n            minWidth: 200\n        },\n        {\n            headerName: \"roundedAvg(age)\",\n            field: \"age\",\n            aggFunc: roundedAvgAggFunction,\n            enableValue: true,\n            minWidth: 200\n        },\n        {\n            headerName: \"sum(gold)\",\n            field: \"gold\",\n            aggFunc: \"sum\",\n            enableValue: true\n        },\n        {\n            headerName: \"abc(silver)\",\n            field: \"silver\",\n            aggFunc: \"123\",\n            enableValue: true\n        },\n        {\n            headerName: \"xyz(bronze)\",\n            field: \"bronze\",\n            aggFunc: \"xyz\",\n            enableValue: true\n        }\n    ]"
+            "value": "[\n    {\n        field: 'country',\n        rowGroup: true,\n        hide: true\n    },\n    {\n        field: 'year',\n        rowGroup: true,\n        hide: true\n    },\n    {\n        headerName: 'minMax(age)',\n        field: 'age',\n        aggFunc: minAndMaxAggFunction\n    },\n    {\n        headerName: 'avg(age)',\n        field: 'age',\n        aggFunc: avgAggFunction,\n        enableValue: true,\n        minWidth: 200\n    },\n    {\n        headerName: 'roundedAvg(age)',\n        field: 'age',\n        aggFunc: roundedAvgAggFunction,\n        enableValue: true,\n        minWidth: 200\n    },\n    {\n        headerName: 'sum(gold)',\n        field: 'gold',\n        aggFunc: 'sum',\n        enableValue: true\n    },\n    {\n        headerName: 'abc(silver)',\n        field: 'silver',\n        aggFunc: '123',\n        enableValue: true\n    },\n    {\n        headerName: 'xyz(bronze)',\n        field: 'bronze',\n        aggFunc: 'xyz',\n        enableValue: true\n    }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        minWidth: 150,\n        filter: true,\n        sortable: true,\n        resizable: true\n    }"
+            "value": "{\n    flex: 1,\n    minWidth: 150,\n    filter: true,\n    sortable: true,\n    resizable: true\n}"
         },
         {
             "name": "autoGroupColumnDef",
-            "value": "{\n        headerName: \"Athlete\",\n        field: \"athlete\",\n        minWidth: 250\n    }"
+            "value": "{\n    headerName: 'Athlete',\n    field: 'athlete',\n    minWidth: 250\n}"
         },
         { "name": "enableRangeSelection", "value": "true" },
         { "name": "suppressAggFuncInHeader", "value": "true" },
-        {
-            "name": "aggFuncs",
-            "value": "{\n        sum: sumFunction,\n        \"123\": oneTwoThreeFunc,\n        xyz: xyzFunc\n    }"
-        },
+        { "name": "aggFuncs", "value": "{\n    sum: sumFunction,\n    '123': oneTwoThreeFunc,\n    xyz: xyzFunc\n}" },
         { "name": "sideBar", "value": "true" }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    minWidth: 150,\n    filter: true,\n    sortable: true,\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"country\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            field: \"year\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            headerName: \"minMax(age)\",\n            field: \"age\",\n            aggFunc: \"AG_LITERAL_minAndMaxAggFunction\"\n        },\n        {\n            headerName: \"avg(age)\",\n            field: \"age\",\n            aggFunc: \"AG_LITERAL_avgAggFunction\",\n            enableValue: true,\n            minWidth: 200\n        },\n        {\n            headerName: \"roundedAvg(age)\",\n            field: \"age\",\n            aggFunc: \"AG_LITERAL_roundedAvgAggFunction\",\n            enableValue: true,\n            minWidth: 200\n        },\n        {\n            headerName: \"sum(gold)\",\n            field: \"gold\",\n            aggFunc: \"sum\",\n            enableValue: true\n        },\n        {\n            headerName: \"abc(silver)\",\n            field: \"silver\",\n            aggFunc: \"123\",\n            enableValue: true\n        },\n        {\n            headerName: \"xyz(bronze)\",\n            field: \"bronze\",\n            aggFunc: \"xyz\",\n            enableValue: true\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'country',\n        rowGroup: true,\n        hide: true\n    },\n    {\n        field: 'year',\n        rowGroup: true,\n        hide: true\n    },\n    {\n        headerName: 'minMax(age)',\n        field: 'age',\n        aggFunc: 'AG_LITERAL_minAndMaxAggFunction'\n    },\n    {\n        headerName: 'avg(age)',\n        field: 'age',\n        aggFunc: 'AG_LITERAL_avgAggFunction',\n        enableValue: true,\n        minWidth: 200\n    },\n    {\n        headerName: 'roundedAvg(age)',\n        field: 'age',\n        aggFunc: 'AG_LITERAL_roundedAvgAggFunction',\n        enableValue: true,\n        minWidth: 200\n    },\n    {\n        headerName: 'sum(gold)',\n        field: 'gold',\n        aggFunc: 'sum',\n        enableValue: true\n    },\n    {\n        headerName: 'abc(silver)',\n        field: 'silver',\n        aggFunc: '123',\n        enableValue: true\n    },\n    {\n        headerName: 'xyz(bronze)',\n        field: 'bronze',\n        aggFunc: 'xyz',\n        enableValue: true\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [

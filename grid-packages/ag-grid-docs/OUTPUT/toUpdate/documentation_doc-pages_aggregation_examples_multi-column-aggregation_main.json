@@ -3,11 +3,11 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"country\",\n            rowGroup: true,\n            hide: true,\n            suppressColumnsToolPanel: true\n        },\n        {\n            field: \"sport\",\n            rowGroup: true,\n            hide: true,\n            suppressColumnsToolPanel: true\n        },\n        {\n            field: \"year\",\n            pivot: true,\n            hide: true,\n            suppressColumnsToolPanel: true\n        },\n        {\n            field: \"gold\",\n            aggFunc: \"sum\",\n            valueFormatter: numberFormatter\n        },\n        {\n            field: \"silver\",\n            aggFunc: \"sum\",\n            valueFormatter: numberFormatter\n        },\n        {\n            headerName: \"Ratio\",\n            colId: \"goldSilverRatio\",\n            aggFunc: ratioAggFunc,\n            valueGetter: ratioValueGetter,\n            valueFormatter: ratioFormatter\n        }\n    ]"
+            "value": "[\n    {\n        field: 'country',\n        rowGroup: true,\n        hide: true,\n        suppressColumnsToolPanel: true\n    },\n    {\n        field: 'sport',\n        rowGroup: true,\n        hide: true,\n        suppressColumnsToolPanel: true\n    },\n    {\n        field: 'year',\n        pivot: true,\n        hide: true,\n        suppressColumnsToolPanel: true\n    },\n    {\n        field: 'gold',\n        aggFunc: 'sum',\n        valueFormatter: numberFormatter\n    },\n    {\n        field: 'silver',\n        aggFunc: 'sum',\n        valueFormatter: numberFormatter\n    },\n    {\n        headerName: 'Ratio',\n        colId: 'goldSilverRatio',\n        aggFunc: ratioAggFunc,\n        valueGetter: ratioValueGetter,\n        valueFormatter: ratioFormatter\n    }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        minWidth: 150,\n        sortable: true,\n        filter: true\n    }"
+            "value": "{\n    flex: 1,\n    minWidth: 150,\n    sortable: true,\n    filter: true\n}"
         },
         { "name": "autoGroupColumnDef", "value": "{ minWidth: 220 }" },
         { "name": "suppressAggFuncInHeader", "value": "true" }
@@ -15,7 +15,7 @@
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    minWidth: 150,\n    sortable: true,\n    filter: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"country\",\n            rowGroup: true,\n            hide: true,\n            suppressColumnsToolPanel: true\n        },\n        {\n            field: \"sport\",\n            rowGroup: true,\n            hide: true,\n            suppressColumnsToolPanel: true\n        },\n        {\n            field: \"year\",\n            pivot: true,\n            hide: true,\n            suppressColumnsToolPanel: true\n        },\n        {\n            field: \"gold\",\n            aggFunc: \"sum\",\n            valueFormatter: \"AG_LITERAL_numberFormatter\"\n        },\n        {\n            field: \"silver\",\n            aggFunc: \"sum\",\n            valueFormatter: \"AG_LITERAL_numberFormatter\"\n        },\n        {\n            headerName: \"Ratio\",\n            colId: \"goldSilverRatio\",\n            aggFunc: \"AG_LITERAL_ratioAggFunc\",\n            valueGetter: \"AG_LITERAL_ratioValueGetter\",\n            valueFormatter: \"AG_LITERAL_ratioFormatter\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'country',\n        rowGroup: true,\n        hide: true,\n        suppressColumnsToolPanel: true\n    },\n    {\n        field: 'sport',\n        rowGroup: true,\n        hide: true,\n        suppressColumnsToolPanel: true\n    },\n    {\n        field: 'year',\n        pivot: true,\n        hide: true,\n        suppressColumnsToolPanel: true\n    },\n    {\n        field: 'gold',\n        aggFunc: 'sum',\n        valueFormatter: 'AG_LITERAL_numberFormatter'\n    },\n    {\n        field: 'silver',\n        aggFunc: 'sum',\n        valueFormatter: 'AG_LITERAL_numberFormatter'\n    },\n    {\n        headerName: 'Ratio',\n        colId: 'goldSilverRatio',\n        aggFunc: 'AG_LITERAL_ratioAggFunc',\n        valueGetter: 'AG_LITERAL_ratioValueGetter',\n        valueFormatter: 'AG_LITERAL_ratioFormatter'\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [

@@ -3,15 +3,15 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"athlete\",\n            filter: \"agTextColumnFilter\"\n        },\n        {\n            field: \"gold\",\n            floatingFilterComponent: \"customNumberFloatingFilter\",\n            floatingFilterComponentParams: { suppressFilterButton: true },\n            filter: \"customNumberFilter\"\n        },\n        {\n            field: \"silver\",\n            floatingFilterComponent: \"customNumberFloatingFilter\",\n            floatingFilterComponentParams: { suppressFilterButton: true },\n            filter: \"customNumberFilter\"\n        },\n        {\n            field: \"bronze\",\n            floatingFilterComponent: \"customNumberFloatingFilter\",\n            floatingFilterComponentParams: { suppressFilterButton: true },\n            filter: \"customNumberFilter\"\n        },\n        {\n            field: \"total\",\n            floatingFilterComponent: \"customNumberFloatingFilter\",\n            floatingFilterComponentParams: { suppressFilterButton: true },\n            filter: \"customNumberFilter\"\n        }\n    ]"
+            "value": "[\n    {\n        field: 'athlete',\n        filter: 'agTextColumnFilter'\n    },\n    {\n        field: 'gold',\n        floatingFilterComponent: 'customNumberFloatingFilter',\n        floatingFilterComponentParams: { suppressFilterButton: true },\n        filter: 'customNumberFilter'\n    },\n    {\n        field: 'silver',\n        floatingFilterComponent: 'customNumberFloatingFilter',\n        floatingFilterComponentParams: { suppressFilterButton: true },\n        filter: 'customNumberFilter'\n    },\n    {\n        field: 'bronze',\n        floatingFilterComponent: 'customNumberFloatingFilter',\n        floatingFilterComponentParams: { suppressFilterButton: true },\n        filter: 'customNumberFilter'\n    },\n    {\n        field: 'total',\n        floatingFilterComponent: 'customNumberFloatingFilter',\n        floatingFilterComponentParams: { suppressFilterButton: true },\n        filter: 'customNumberFilter'\n    }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        editable: true,\n        sortable: true,\n        flex: 1,\n        minWidth: 100,\n        filter: true,\n        floatingFilter: true,\n        resizable: true\n    }"
+            "value": "{\n    editable: true,\n    sortable: true,\n    flex: 1,\n    minWidth: 100,\n    filter: true,\n    floatingFilter: true,\n    resizable: true\n}"
         },
         {
             "name": "components",
-            "value": "{\n        customNumberFloatingFilter: NumberFloatingFilterComponent,\n        customNumberFilter: NumberFilterComponent\n    }"
+            "value": "{\n    customNumberFloatingFilter: NumberFloatingFilterComponent,\n    customNumberFilter: NumberFilterComponent\n}"
         },
         { "name": "rowData", "value": "null" }
     ],
@@ -21,7 +21,7 @@
     ],
     "defaultColDef": "{\n    editable: true,\n    sortable: true,\n    flex: 1,\n    minWidth: 100,\n    filter: true,\n    floatingFilter: true,\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            filter: \"agTextColumnFilter\"\n        },\n        {\n            field: \"gold\",\n            floatingFilterComponent: \"customNumberFloatingFilter\",\n            floatingFilterComponentParams: { suppressFilterButton: true },\n            filter: \"customNumberFilter\"\n        },\n        {\n            field: \"silver\",\n            floatingFilterComponent: \"customNumberFloatingFilter\",\n            floatingFilterComponentParams: { suppressFilterButton: true },\n            filter: \"customNumberFilter\"\n        },\n        {\n            field: \"bronze\",\n            floatingFilterComponent: \"customNumberFloatingFilter\",\n            floatingFilterComponentParams: { suppressFilterButton: true },\n            filter: \"customNumberFilter\"\n        },\n        {\n            field: \"total\",\n            floatingFilterComponent: \"customNumberFloatingFilter\",\n            floatingFilterComponentParams: { suppressFilterButton: true },\n            filter: \"customNumberFilter\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'athlete',\n        filter: 'agTextColumnFilter'\n    },\n    {\n        field: 'gold',\n        floatingFilterComponent: 'customNumberFloatingFilter',\n        floatingFilterComponentParams: { suppressFilterButton: true },\n        filter: 'customNumberFilter'\n    },\n    {\n        field: 'silver',\n        floatingFilterComponent: 'customNumberFloatingFilter',\n        floatingFilterComponentParams: { suppressFilterButton: true },\n        filter: 'customNumberFilter'\n    },\n    {\n        field: 'bronze',\n        floatingFilterComponent: 'customNumberFloatingFilter',\n        floatingFilterComponentParams: { suppressFilterButton: true },\n        filter: 'customNumberFilter'\n    },\n    {\n        field: 'total',\n        floatingFilterComponent: 'customNumberFloatingFilter',\n        floatingFilterComponentParams: { suppressFilterButton: true },\n        filter: 'customNumberFilter'\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [],

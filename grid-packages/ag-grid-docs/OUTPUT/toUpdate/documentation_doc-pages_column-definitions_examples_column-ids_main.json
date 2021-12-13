@@ -3,14 +3,14 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            headerName: \"Col 1\",\n            colId: \"firstCol\",\n            field: \"height\"\n        },\n        {\n            headerName: \"Col 2\",\n            colId: \"firstCol\",\n            field: \"height\"\n        },\n        {\n            headerName: \"Col 3\",\n            field: \"height\"\n        },\n        {\n            headerName: \"Col 4\",\n            field: \"height\"\n        },\n        {\n            headerName: \"Col 5\",\n            valueGetter: \"data.width\"\n        },\n        {\n            headerName: \"Col 6\",\n            valueGetter: \"data.width\"\n        }\n    ]"
+            "value": "[\n    {\n        headerName: 'Col 1',\n        colId: 'firstCol',\n        field: 'height'\n    },\n    {\n        headerName: 'Col 2',\n        colId: 'firstCol',\n        field: 'height'\n    },\n    {\n        headerName: 'Col 3',\n        field: 'height'\n    },\n    {\n        headerName: 'Col 4',\n        field: 'height'\n    },\n    {\n        headerName: 'Col 5',\n        valueGetter: 'data.width'\n    },\n    {\n        headerName: 'Col 6',\n        valueGetter: 'data.width'\n    }\n]"
         },
         { "name": "rowData", "value": "createRowData()" }
     ],
     "components": [],
     "defaultColDef": null,
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            headerName: \"Col 1\",\n            colId: \"firstCol\",\n            field: \"height\"\n        },\n        {\n            headerName: \"Col 2\",\n            colId: \"firstCol\",\n            field: \"height\"\n        },\n        {\n            headerName: \"Col 3\",\n            field: \"height\"\n        },\n        {\n            headerName: \"Col 4\",\n            field: \"height\"\n        },\n        {\n            headerName: \"Col 5\",\n            valueGetter: \"data.width\"\n        },\n        {\n            headerName: \"Col 6\",\n            valueGetter: \"data.width\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        headerName: 'Col 1',\n        colId: 'firstCol',\n        field: 'height'\n    },\n    {\n        headerName: 'Col 2',\n        colId: 'firstCol',\n        field: 'height'\n    },\n    {\n        headerName: 'Col 3',\n        field: 'height'\n    },\n    {\n        headerName: 'Col 4',\n        field: 'height'\n    },\n    {\n        headerName: 'Col 5',\n        valueGetter: 'data.width'\n    },\n    {\n        headerName: 'Col 6',\n        valueGetter: 'data.width'\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [

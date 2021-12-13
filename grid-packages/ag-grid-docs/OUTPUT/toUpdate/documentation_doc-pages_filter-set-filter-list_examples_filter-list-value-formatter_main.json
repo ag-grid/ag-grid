@@ -9,18 +9,18 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            headerName: \"No Value Formatter\",\n            field: \"country\",\n            valueFormatter: countryValueFormatter,\n            filter: \"agSetColumnFilter\",\n            filterParams: {}\n        },\n        {\n            headerName: \"With Value Formatter\",\n            field: \"country\",\n            valueFormatter: countryValueFormatter,\n            filter: \"agSetColumnFilter\",\n            filterParams: countryFilterParams\n        }\n    ]"
+            "value": "[\n    {\n        headerName: 'No Value Formatter',\n        field: 'country',\n        valueFormatter: countryValueFormatter,\n        filter: 'agSetColumnFilter',\n        filterParams: {}\n    },\n    {\n        headerName: 'With Value Formatter',\n        field: 'country',\n        valueFormatter: countryValueFormatter,\n        filter: 'agSetColumnFilter',\n        filterParams: countryFilterParams\n    }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        minWidth: 225,\n        resizable: true,\n        floatingFilter: true\n    }"
+            "value": "{\n    flex: 1,\n    minWidth: 225,\n    resizable: true,\n    floatingFilter: true\n}"
         },
-        { "name": "sideBar", "value": "\"filters\"" }
+        { "name": "sideBar", "value": "'filters'" }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    minWidth: 225,\n    resizable: true,\n    floatingFilter: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            headerName: \"No Value Formatter\",\n            field: \"country\",\n            valueFormatter: \"AG_LITERAL_countryValueFormatter\",\n            filter: \"agSetColumnFilter\",\n            filterParams: {}\n        },\n        {\n            headerName: \"With Value Formatter\",\n            field: \"country\",\n            valueFormatter: \"AG_LITERAL_countryValueFormatter\",\n            filter: \"agSetColumnFilter\",\n            filterParams: \"AG_LITERAL_countryFilterParams\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        headerName: 'No Value Formatter',\n        field: 'country',\n        valueFormatter: 'AG_LITERAL_countryValueFormatter',\n        filter: 'agSetColumnFilter',\n        filterParams: {}\n    },\n    {\n        headerName: 'With Value Formatter',\n        field: 'country',\n        valueFormatter: 'AG_LITERAL_countryValueFormatter',\n        filter: 'agSetColumnFilter',\n        filterParams: 'AG_LITERAL_countryFilterParams'\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

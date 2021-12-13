@@ -3,34 +3,28 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"employeeId\",\n            hide: true\n        },\n        {\n            field: \"employeeName\",\n            hide: true\n        },\n        { field: \"jobTitle\" },\n        { field: \"employmentType\" }\n    ]"
+            "value": "[\n    {\n        field: 'employeeId',\n        hide: true\n    },\n    {\n        field: 'employeeName',\n        hide: true\n    },\n    { field: 'jobTitle' },\n    { field: 'employmentType' }\n]"
         },
-        {
-            "name": "defaultColDef",
-            "value": "{\n        width: 240,\n        filter: \"agTextColumnFilter\",\n        flex: 1\n    }"
-        },
+        { "name": "defaultColDef", "value": "{\n    width: 240,\n    filter: 'agTextColumnFilter',\n    flex: 1\n}" },
         {
             "name": "autoGroupColumnDef",
-            "value": "{\n        field: \"employeeName\",\n        cellRendererParams: {\n            innerRenderer: function (params) {\n                return params.data.employeeName;\n            }\n        }\n    }"
+            "value": "{\n    field: 'employeeName',\n    cellRendererParams: {\n        innerRenderer: function (params) {\n            return params.data.employeeName;\n        }\n    }\n}"
         },
-        { "name": "rowModelType", "value": "\"serverSide\"" },
-        { "name": "serverSideStoreType", "value": "\"partial\"" },
+        { "name": "rowModelType", "value": "'serverSide'" },
+        { "name": "serverSideStoreType", "value": "'partial'" },
         { "name": "treeData", "value": "true" },
         { "name": "animateRows", "value": "true" },
         {
             "name": "isServerSideGroupOpenByDefault",
-            "value": "function (params) {\n        return params.rowNode.level < 2;\n    }"
+            "value": "function (params) {\n    return params.rowNode.level < 2;\n}"
         },
-        { "name": "isServerSideGroup", "value": "function (dataItem) {\n        return dataItem.group;\n    }" },
-        {
-            "name": "getServerSideGroupKey",
-            "value": "function (dataItem) {\n        return dataItem.employeeId;\n    }"
-        }
+        { "name": "isServerSideGroup", "value": "function (dataItem) {\n    return dataItem.group;\n}" },
+        { "name": "getServerSideGroupKey", "value": "function (dataItem) {\n    return dataItem.employeeId;\n}" }
     ],
     "components": [],
     "defaultColDef": "{\n    width: 240,\n    filter: 'agTextColumnFilter',\n    flex: 1\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"employeeId\",\n            hide: true\n        },\n        {\n            field: \"employeeName\",\n            hide: true\n        },\n        { field: \"jobTitle\" },\n        { field: \"employmentType\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'employeeId',\n        hide: true\n    },\n    {\n        field: 'employeeName',\n        hide: true\n    },\n    { field: 'jobTitle' },\n    { field: 'employmentType' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [

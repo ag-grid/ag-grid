@@ -3,19 +3,19 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"athlete\",\n            minWidth: 180\n        },\n        { field: \"age\" },\n        {\n            field: \"country\",\n            minWidth: 150\n        },\n        { field: \"year\" },\n        {\n            field: \"date\",\n            minWidth: 150\n        },\n        {\n            field: \"sport\",\n            minWidth: 150\n        },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]"
+            "value": "[\n    {\n        field: 'athlete',\n        minWidth: 180\n    },\n    { field: 'age' },\n    {\n        field: 'country',\n        minWidth: 150\n    },\n    { field: 'year' },\n    {\n        field: 'date',\n        minWidth: 150\n    },\n    {\n        field: 'sport',\n        minWidth: 150\n    },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        minWidth: 100,\n        resizable: true,\n        headerCheckboxSelection: isFirstColumn,\n        checkboxSelection: isFirstColumn\n    }"
+            "value": "{\n    flex: 1,\n    minWidth: 100,\n    resizable: true,\n    headerCheckboxSelection: isFirstColumn,\n    checkboxSelection: isFirstColumn\n}"
         },
         { "name": "suppressRowClickSelection", "value": "true" },
-        { "name": "rowSelection", "value": "\"multiple\"" }
+        { "name": "rowSelection", "value": "'multiple'" }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    minWidth: 100,\n    resizable: true,\n    headerCheckboxSelection: isFirstColumn,\n    checkboxSelection: isFirstColumn\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            minWidth: 180\n        },\n        { field: \"age\" },\n        {\n            field: \"country\",\n            minWidth: 150\n        },\n        { field: \"year\" },\n        {\n            field: \"date\",\n            minWidth: 150\n        },\n        {\n            field: \"sport\",\n            minWidth: 150\n        },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'athlete',\n        minWidth: 180\n    },\n    { field: 'age' },\n    {\n        field: 'country',\n        minWidth: 150\n    },\n    { field: 'year' },\n    {\n        field: 'date',\n        minWidth: 150\n    },\n    {\n        field: 'sport',\n        minWidth: 150\n    },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

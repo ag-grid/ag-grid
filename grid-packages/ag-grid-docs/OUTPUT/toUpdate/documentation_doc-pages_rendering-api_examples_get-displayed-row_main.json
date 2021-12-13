@@ -3,11 +3,11 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"athlete\",\n            minWidth: 180\n        },\n        { field: \"age\" },\n        {\n            field: \"country\",\n            minWidth: 150\n        },\n        {\n            headerName: \"Group\",\n            valueGetter: \"data.country.charAt(0)\"\n        },\n        { field: \"year\" },\n        {\n            field: \"date\",\n            minWidth: 150\n        },\n        {\n            field: \"sport\",\n            minWidth: 180\n        },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]"
+            "value": "[\n    {\n        field: 'athlete',\n        minWidth: 180\n    },\n    { field: 'age' },\n    {\n        field: 'country',\n        minWidth: 150\n    },\n    {\n        headerName: 'Group',\n        valueGetter: 'data.country.charAt(0)'\n    },\n    { field: 'year' },\n    {\n        field: 'date',\n        minWidth: 150\n    },\n    {\n        field: 'sport',\n        minWidth: 180\n    },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        minWidth: 100,\n        sortable: true,\n        filter: true\n    }"
+            "value": "{\n    flex: 1,\n    minWidth: 100,\n    sortable: true,\n    filter: true\n}"
         },
         { "name": "pagination", "value": "true" },
         { "name": "paginationAutoPageSize", "value": "true" }
@@ -15,7 +15,7 @@
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    minWidth: 100,\n    sortable: true,\n    filter: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            minWidth: 180\n        },\n        { field: \"age\" },\n        {\n            field: \"country\",\n            minWidth: 150\n        },\n        {\n            headerName: \"Group\",\n            valueGetter: \"data.country.charAt(0)\"\n        },\n        { field: \"year\" },\n        {\n            field: \"date\",\n            minWidth: 150\n        },\n        {\n            field: \"sport\",\n            minWidth: 180\n        },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'athlete',\n        minWidth: 180\n    },\n    { field: 'age' },\n    {\n        field: 'country',\n        minWidth: 150\n    },\n    {\n        headerName: 'Group',\n        valueGetter: 'data.country.charAt(0)'\n    },\n    { field: 'year' },\n    {\n        field: 'date',\n        minWidth: 150\n    },\n    {\n        field: 'sport',\n        minWidth: 180\n    },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

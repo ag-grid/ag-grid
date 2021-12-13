@@ -3,18 +3,15 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            colId: \"country\",\n            valueGetter: \"data.country\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            field: \"sport\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            field: \"year\",\n            minWidth: 100\n        },\n        {\n            field: \"gold\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"silver\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"bronze\",\n            aggFunc: \"sum\"\n        }\n    ]"
+            "value": "[\n    {\n        colId: 'country',\n        valueGetter: 'data.country',\n        rowGroup: true,\n        hide: true\n    },\n    {\n        field: 'sport',\n        rowGroup: true,\n        hide: true\n    },\n    {\n        field: 'year',\n        minWidth: 100\n    },\n    {\n        field: 'gold',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'silver',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'bronze',\n        aggFunc: 'sum'\n    }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        minWidth: 120,\n        resizable: true,\n        sortable: true\n    }"
+            "value": "{\n    flex: 1,\n    minWidth: 120,\n    resizable: true,\n    sortable: true\n}"
         },
-        {
-            "name": "autoGroupColumnDef",
-            "value": "{\n        flex: 1,\n        minWidth: 280,\n        field: \"athlete\"\n    }"
-        },
-        { "name": "rowModelType", "value": "\"serverSide\"" },
-        { "name": "serverSideStoreType", "value": "\"partial\"" },
+        { "name": "autoGroupColumnDef", "value": "{\n    flex: 1,\n    minWidth: 280,\n    field: 'athlete'\n}" },
+        { "name": "rowModelType", "value": "'serverSide'" },
+        { "name": "serverSideStoreType", "value": "'partial'" },
         { "name": "suppressAggFuncInHeader", "value": "true" },
         { "name": "cacheBlockSize", "value": "5" },
         { "name": "animateRows", "value": "true" }
@@ -22,7 +19,7 @@
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    minWidth: 120,\n    resizable: true,\n    sortable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            colId: \"country\",\n            valueGetter: \"data.country\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            field: \"sport\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            field: \"year\",\n            minWidth: 100\n        },\n        {\n            field: \"gold\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"silver\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"bronze\",\n            aggFunc: \"sum\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        colId: 'country',\n        valueGetter: 'data.country',\n        rowGroup: true,\n        hide: true\n    },\n    {\n        field: 'sport',\n        rowGroup: true,\n        hide: true\n    },\n    {\n        field: 'year',\n        minWidth: 100\n    },\n    {\n        field: 'gold',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'silver',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'bronze',\n        aggFunc: 'sum'\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [

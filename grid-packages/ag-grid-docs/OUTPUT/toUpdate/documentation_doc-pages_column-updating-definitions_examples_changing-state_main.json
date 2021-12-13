@@ -3,7 +3,7 @@
     "properties": [
         {
             "name": "defaultColDef",
-            "value": "{\n        initialWidth: 100,\n        sortable: true,\n        resizable: true,\n        pinned: null,\n        sort: null\n    }"
+            "value": "{\n    initialWidth: 100,\n    sortable: true,\n    resizable: true,\n    pinned: null,\n    sort: null\n}"
         },
         { "name": "columnDefs", "value": "getColumnDefs()" }
     ],

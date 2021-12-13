@@ -3,15 +3,15 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"country\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            field: \"year\",\n            rowGroup: true,\n            hide: true\n        },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        {\n            headerName: \"Gold*pi\",\n            field: \"goldPi\",\n            minWidth: 200\n        },\n        {\n            headerName: \"Silver*pi\",\n            field: \"silverPi\",\n            minWidth: 200\n        },\n        {\n            headerName: \"Bronze*pi\",\n            field: \"bronzePi\",\n            minWidth: 200\n        }\n    ]"
+            "value": "[\n    {\n        field: 'country',\n        rowGroup: true,\n        hide: true\n    },\n    {\n        field: 'year',\n        rowGroup: true,\n        hide: true\n    },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    {\n        headerName: 'Gold*pi',\n        field: 'goldPi',\n        minWidth: 200\n    },\n    {\n        headerName: 'Silver*pi',\n        field: 'silverPi',\n        minWidth: 200\n    },\n    {\n        headerName: 'Bronze*pi',\n        field: 'bronzePi',\n        minWidth: 200\n    }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        minWidth: 150,\n        filter: true,\n        sortable: true\n    }"
+            "value": "{\n    flex: 1,\n    minWidth: 150,\n    filter: true,\n    sortable: true\n}"
         },
         {
             "name": "autoGroupColumnDef",
-            "value": "{\n        headerName: \"Athlete\",\n        field: \"athlete\",\n        minWidth: 250\n    }"
+            "value": "{\n    headerName: 'Athlete',\n    field: 'athlete',\n    minWidth: 250\n}"
         },
         { "name": "sideBar", "value": "true" },
         { "name": "enableRangeSelection", "value": "true" },
@@ -20,9 +20,9 @@
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    minWidth: 150,\n    filter: true,\n    sortable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"country\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            field: \"year\",\n            rowGroup: true,\n            hide: true\n        },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        {\n            headerName: \"Gold*pi\",\n            field: \"goldPi\",\n            minWidth: 200\n        },\n        {\n            headerName: \"Silver*pi\",\n            field: \"silverPi\",\n            minWidth: 200\n        },\n        {\n            headerName: \"Bronze*pi\",\n            field: \"bronzePi\",\n            minWidth: 200\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'country',\n        rowGroup: true,\n        hide: true\n    },\n    {\n        field: 'year',\n        rowGroup: true,\n        hide: true\n    },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    {\n        headerName: 'Gold*pi',\n        field: 'goldPi',\n        minWidth: 200\n    },\n    {\n        headerName: 'Silver*pi',\n        field: 'silverPi',\n        minWidth: 200\n    },\n    {\n        headerName: 'Bronze*pi',\n        field: 'bronzePi',\n        minWidth: 200\n    }\n]",
     "instanceMethods": [
-        "function groupRowAggNodes(nodes) {\n        const result = {\n            gold: 0,\n            silver: 0,\n            bronze: 0,\n            goldPi: 0,\n            silverPi: 0,\n            bronzePi: 0\n        };\n        nodes.forEach(node => {\n            const data = node.group ? node.aggData : node.data;\n            if (typeof data.gold === \"number\") {\n                result.gold += data.gold;\n                result.goldPi += data.gold * Math.PI;\n            }\n            if (typeof data.silver === \"number\") {\n                result.silver += data.silver;\n                result.silverPi += data.silver * Math.PI;\n            }\n            if (typeof data.bronze === \"number\") {\n                result.bronze += data.bronze;\n                result.bronzePi += data.bronze * Math.PI;\n            }\n        });\n        return result;\n    }"
+        "function groupRowAggNodes(nodes) {\n    const result = {\n        gold: 0,\n        silver: 0,\n        bronze: 0,\n        goldPi: 0,\n        silverPi: 0,\n        bronzePi: 0\n    };\n    nodes.forEach(node => {\n        const data = node.group ? node.aggData : node.data;\n        if (typeof data.gold === 'number') {\n            result.gold += data.gold;\n            result.goldPi += data.gold * Math.PI;\n        }\n        if (typeof data.silver === 'number') {\n            result.silver += data.silver;\n            result.silverPi += data.silver * Math.PI;\n        }\n        if (typeof data.bronze === 'number') {\n            result.bronze += data.bronze;\n            result.bronzePi += data.bronze * Math.PI;\n        }\n    });\n    return result;\n}"
     ],
     "externalEventHandlers": [
         { "name": "expandAll", "params": "", "body": "function expandAll() {\n    this.gridApi.expandAll();\n}" },

@@ -3,17 +3,17 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            headerName: \"ID\",\n            field: \"id\"\n        },\n        {\n            headerName: \"Expected Position\",\n            valueGetter: \"\\\"translateY(\\\" + node.rowIndex * 100 + \\\"px)\\\"\"\n        },\n        { field: \"a\" },\n        { field: \"b\" },\n        { field: \"c\" }\n    ]"
+            "value": "[\n    {\n        headerName: 'ID',\n        field: 'id'\n    },\n    {\n        headerName: 'Expected Position',\n        valueGetter: '\"translateY(\" + node.rowIndex * 100 + \"px)\"'\n    },\n    { field: 'a' },\n    { field: 'b' },\n    { field: 'c' }\n]"
         },
         { "name": "debug", "value": "true" },
         { "name": "rowHeight", "value": "100" },
-        { "name": "rowModelType", "value": "\"viewport\"" },
+        { "name": "rowModelType", "value": "'viewport'" },
         { "name": "viewportDatasource", "value": "createViewportDatasource()" }
     ],
     "components": [],
     "defaultColDef": null,
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            headerName: \"ID\",\n            field: \"id\"\n        },\n        {\n            headerName: \"Expected Position\",\n            valueGetter: \"\\\"translateY(\\\" + node.rowIndex * 100 + \\\"px)\\\"\"\n        },\n        { field: \"a\" },\n        { field: \"b\" },\n        { field: \"c\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        headerName: 'ID',\n        field: 'id'\n    },\n    {\n        headerName: 'Expected Position',\n        valueGetter: '\"translateY(\" + node.rowIndex * 100 + \"px)\"'\n    },\n    { field: 'a' },\n    { field: 'b' },\n    { field: 'c' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [

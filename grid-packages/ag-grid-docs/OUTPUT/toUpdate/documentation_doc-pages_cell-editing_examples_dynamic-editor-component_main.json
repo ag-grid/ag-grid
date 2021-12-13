@@ -24,14 +24,11 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"value\",\n            editable: true,\n            cellEditorSelector: cellEditorSelector\n        },\n        { field: \"type\" }\n    ]"
+            "value": "[\n    {\n        field: 'value',\n        editable: true,\n        cellEditorSelector: cellEditorSelector\n    },\n    { field: 'type' }\n]"
         },
         { "name": "defaultColDef", "value": "{ flex: 1 }" },
         { "name": "rowData", "value": "getData()" },
-        {
-            "name": "components",
-            "value": "{\n        numericCellEditor: NumericCellEditor,\n        moodEditor: MoodEditor\n    }"
-        }
+        { "name": "components", "value": "{\n    numericCellEditor: NumericCellEditor,\n    moodEditor: MoodEditor\n}" }
     ],
     "components": [
         { "name": "numericCellEditor", "value": "NumericCellEditor" },
@@ -39,7 +36,7 @@
     ],
     "defaultColDef": "{ flex: 1 }",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"value\",\n            editable: true,\n            cellEditorSelector: \"AG_LITERAL_cellEditorSelector\"\n        },\n        { field: \"type\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'value',\n        editable: true,\n        cellEditorSelector: 'AG_LITERAL_cellEditorSelector'\n    },\n    { field: 'type' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [

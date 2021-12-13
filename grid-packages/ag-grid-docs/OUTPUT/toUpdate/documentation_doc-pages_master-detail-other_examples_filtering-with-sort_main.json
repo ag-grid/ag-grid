@@ -9,22 +9,19 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"name\",\n            cellRenderer: \"agGroupCellRenderer\"\n        },\n        { field: \"account\" },\n        { field: \"calls\" },\n        {\n            field: \"minutes\",\n            valueFormatter: \"x.toLocaleString() + 'm'\"\n        }\n    ]"
+            "value": "[\n    {\n        field: 'name',\n        cellRenderer: 'agGroupCellRenderer'\n    },\n    { field: 'account' },\n    { field: 'calls' },\n    {\n        field: 'minutes',\n        valueFormatter: 'x.toLocaleString() + \\'m\\''\n    }\n]"
         },
-        {
-            "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        sortable: true,\n        filter: true\n    }"
-        },
+        { "name": "defaultColDef", "value": "{\n    flex: 1,\n    sortable: true,\n    filter: true\n}" },
         { "name": "masterDetail", "value": "true" },
         {
             "name": "detailCellRendererParams",
-            "value": "{\n        detailGridOptions: {\n            columnDefs: [\n                { field: \"callId\" },\n                { field: \"direction\" },\n                {\n                    field: \"number\",\n                    minWidth: 150\n                },\n                {\n                    field: \"duration\",\n                    valueFormatter: \"x.toLocaleString() + 's'\"\n                },\n                {\n                    field: \"switchCode\",\n                    minWidth: 150\n                }\n            ],\n            defaultColDef: {\n                flex: 1,\n                filter: true,\n                sortable: true\n            }\n        },\n        getDetailRowData: function (params) {\n            params.successCallback(params.data.callRecords);\n        }\n    }"
+            "value": "{\n    detailGridOptions: {\n        columnDefs: [\n            { field: 'callId' },\n            { field: 'direction' },\n            {\n                field: 'number',\n                minWidth: 150\n            },\n            {\n                field: 'duration',\n                valueFormatter: 'x.toLocaleString() + \\'s\\''\n            },\n            {\n                field: 'switchCode',\n                minWidth: 150\n            }\n        ],\n        defaultColDef: {\n            flex: 1,\n            filter: true,\n            sortable: true\n        }\n    },\n    getDetailRowData: function (params) {\n        params.successCallback(params.data.callRecords);\n    }\n}"
         }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    sortable: true,\n    filter: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"name\",\n            cellRenderer: \"agGroupCellRenderer\"\n        },\n        { field: \"account\" },\n        { field: \"calls\" },\n        {\n            field: \"minutes\",\n            valueFormatter: \"x.toLocaleString() + 'm'\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'name',\n        cellRenderer: 'agGroupCellRenderer'\n    },\n    { field: 'account' },\n    { field: 'calls' },\n    {\n        field: 'minutes',\n        valueFormatter: 'x.toLocaleString() + \\'m\\''\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [],

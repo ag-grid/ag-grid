@@ -9,21 +9,21 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"name\",\n            cellRenderer: \"agGroupCellRenderer\"\n        },\n        { field: \"account\" },\n        { field: \"calls\" },\n        {\n            field: \"minutes\",\n            valueFormatter: \"x.toLocaleString() + 'm'\"\n        }\n    ]"
+            "value": "[\n    {\n        field: 'name',\n        cellRenderer: 'agGroupCellRenderer'\n    },\n    { field: 'account' },\n    { field: 'calls' },\n    {\n        field: 'minutes',\n        valueFormatter: 'x.toLocaleString() + \\'m\\''\n    }\n]"
         },
         { "name": "defaultColDef", "value": "{ flex: 1 }" },
-        { "name": "getRowNodeId", "value": "function (data) {\n        return data.account;\n    }" },
+        { "name": "getRowNodeId", "value": "function (data) {\n    return data.account;\n}" },
         { "name": "masterDetail", "value": "true" },
         { "name": "enableCellChangeFlash", "value": "true" },
         {
             "name": "detailCellRendererParams",
-            "value": "{\n        refreshStrategy: \"everything\",\n        template: function (params) {\n            return \"<div class=\\\"ag-details-row ag-details-row-fixed-height\\\">\" + \"<div style=\\\"padding: 4px; font-weight: bold;\\\">\" + params.data.name + \" \" + params.data.calls + \" calls</div>\" + \"<div ref=\\\"eDetailGrid\\\" class=\\\"ag-details-grid ag-details-grid-fixed-height\\\"/>\" + \"</div>\";\n        },\n        detailGridOptions: {\n            rowSelection: \"multiple\",\n            enableCellChangeFlash: true,\n            immutableData: true,\n            getRowNodeId: function (data) {\n                return data.callId;\n            },\n            columnDefs: [\n                {\n                    field: \"callId\",\n                    checkboxSelection: true\n                },\n                { field: \"direction\" },\n                {\n                    field: \"number\",\n                    minWidth: 150\n                },\n                {\n                    field: \"duration\",\n                    valueFormatter: \"x.toLocaleString() + 's'\"\n                },\n                {\n                    field: \"switchCode\",\n                    minWidth: 150\n                }\n            ],\n            defaultColDef: {\n                flex: 1,\n                sortable: true\n            }\n        },\n        getDetailRowData: function (params) {\n            params.successCallback(params.data.callRecords);\n        }\n    }"
+            "value": "{\n    refreshStrategy: 'everything',\n    template: function (params) {\n        return '<div class=\"ag-details-row ag-details-row-fixed-height\">' + '<div style=\"padding: 4px; font-weight: bold;\">' + params.data.name + ' ' + params.data.calls + ' calls</div>' + '<div ref=\"eDetailGrid\" class=\"ag-details-grid ag-details-grid-fixed-height\"/>' + '</div>';\n    },\n    detailGridOptions: {\n        rowSelection: 'multiple',\n        enableCellChangeFlash: true,\n        immutableData: true,\n        getRowNodeId: function (data) {\n            return data.callId;\n        },\n        columnDefs: [\n            {\n                field: 'callId',\n                checkboxSelection: true\n            },\n            { field: 'direction' },\n            {\n                field: 'number',\n                minWidth: 150\n            },\n            {\n                field: 'duration',\n                valueFormatter: 'x.toLocaleString() + \\'s\\''\n            },\n            {\n                field: 'switchCode',\n                minWidth: 150\n            }\n        ],\n        defaultColDef: {\n            flex: 1,\n            sortable: true\n        }\n    },\n    getDetailRowData: function (params) {\n        params.successCallback(params.data.callRecords);\n    }\n}"
         }
     ],
     "components": [],
     "defaultColDef": "{ flex: 1 }",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"name\",\n            cellRenderer: \"agGroupCellRenderer\"\n        },\n        { field: \"account\" },\n        { field: \"calls\" },\n        {\n            field: \"minutes\",\n            valueFormatter: \"x.toLocaleString() + 'm'\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'name',\n        cellRenderer: 'agGroupCellRenderer'\n    },\n    { field: 'account' },\n    { field: 'calls' },\n    {\n        field: 'minutes',\n        valueFormatter: 'x.toLocaleString() + \\'m\\''\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": ["let allRowData;"],

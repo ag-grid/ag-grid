@@ -3,7 +3,7 @@
     "properties": [
         {
             "name": "defaultColDef",
-            "value": "{\n        initialWidth: 100,\n        sortable: true,\n        resizable: true,\n        filter: true\n    }"
+            "value": "{\n    initialWidth: 100,\n    sortable: true,\n    resizable: true,\n    filter: true\n}"
         },
         { "name": "maintainColumnOrder", "value": "true" },
         { "name": "columnDefs", "value": "getColumnDefsA()" }

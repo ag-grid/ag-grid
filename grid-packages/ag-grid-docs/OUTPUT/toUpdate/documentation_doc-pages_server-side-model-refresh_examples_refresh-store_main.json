@@ -3,27 +3,24 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"country\",\n            rowGroup: true,\n            enableRowGroup: true,\n            hide: true\n        },\n        {\n            field: \"year\",\n            rowGroup: true,\n            enableRowGroup: true,\n            hide: true\n        },\n        { field: \"version\" },\n        {\n            field: \"gold\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"silver\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"bronze\",\n            aggFunc: \"sum\"\n        }\n    ]"
+            "value": "[\n    {\n        field: 'country',\n        rowGroup: true,\n        enableRowGroup: true,\n        hide: true\n    },\n    {\n        field: 'year',\n        rowGroup: true,\n        enableRowGroup: true,\n        hide: true\n    },\n    { field: 'version' },\n    {\n        field: 'gold',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'silver',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'bronze',\n        aggFunc: 'sum'\n    }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        minWidth: 150,\n        resizable: true,\n        sortable: true\n    }"
+            "value": "{\n    flex: 1,\n    minWidth: 150,\n    resizable: true,\n    sortable: true\n}"
         },
-        {
-            "name": "autoGroupColumnDef",
-            "value": "{\n        flex: 1,\n        minWidth: 280,\n        field: \"athlete\"\n    }"
-        },
-        { "name": "rowModelType", "value": "\"serverSide\"" },
-        { "name": "serverSideStoreType", "value": "\"full\"" },
+        { "name": "autoGroupColumnDef", "value": "{\n    flex: 1,\n    minWidth: 280,\n    field: 'athlete'\n}" },
+        { "name": "rowModelType", "value": "'serverSide'" },
+        { "name": "serverSideStoreType", "value": "'full'" },
         { "name": "suppressAggFuncInHeader", "value": "true" },
-        { "name": "rowGroupPanelShow", "value": "\"always\"" },
+        { "name": "rowGroupPanelShow", "value": "'always'" },
         { "name": "animateRows", "value": "true" },
         { "name": "debug", "value": "true" }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    minWidth: 150,\n    resizable: true,\n    sortable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"country\",\n            rowGroup: true,\n            enableRowGroup: true,\n            hide: true\n        },\n        {\n            field: \"year\",\n            rowGroup: true,\n            enableRowGroup: true,\n            hide: true\n        },\n        { field: \"version\" },\n        {\n            field: \"gold\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"silver\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"bronze\",\n            aggFunc: \"sum\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'country',\n        rowGroup: true,\n        enableRowGroup: true,\n        hide: true\n    },\n    {\n        field: 'year',\n        rowGroup: true,\n        enableRowGroup: true,\n        hide: true\n    },\n    { field: 'version' },\n    {\n        field: 'gold',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'silver',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'bronze',\n        aggFunc: 'sum'\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

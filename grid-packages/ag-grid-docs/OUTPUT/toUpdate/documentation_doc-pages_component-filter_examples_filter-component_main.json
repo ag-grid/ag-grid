@@ -3,11 +3,11 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        { field: \"row\" },\n        {\n            field: \"name\",\n            filter: \"partialMatchFilter\",\n            menuTabs: [\"filterMenuTab\"]\n        }\n    ]"
+            "value": "[\n    { field: 'row' },\n    {\n        field: 'name',\n        filter: 'partialMatchFilter',\n        menuTabs: ['filterMenuTab']\n    }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        editable: true,\n        sortable: true,\n        flex: 1,\n        minWidth: 100,\n        filter: true,\n        resizable: true\n    }"
+            "value": "{\n    editable: true,\n    sortable: true,\n    flex: 1,\n    minWidth: 100,\n    filter: true,\n    resizable: true\n}"
         },
         { "name": "rowData", "value": "getData()" },
         { "name": "components", "value": "{ partialMatchFilter: PartialMatchFilter }" }
@@ -15,7 +15,7 @@
     "components": [{ "name": "partialMatchFilter", "value": "PartialMatchFilter" }],
     "defaultColDef": "{\n    editable: true,\n    sortable: true,\n    flex: 1,\n    minWidth: 100,\n    filter: true,\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        { field: \"row\" },\n        {\n            field: \"name\",\n            filter: \"partialMatchFilter\",\n            menuTabs: [\"filterMenuTab\"]\n        }\n    ]",
+    "parsedColDefs": "[\n    { field: 'row' },\n    {\n        field: 'name',\n        filter: 'partialMatchFilter',\n        menuTabs: ['filterMenuTab']\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

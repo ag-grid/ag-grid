@@ -3,14 +3,14 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"athlete\",\n            sort: \"desc\"\n        },\n        {\n            field: \"age\",\n            width: 90\n        },\n        { field: \"country\" },\n        {\n            field: \"year\",\n            width: 90,\n            unSortIcon: true\n        },\n        {\n            field: \"date\",\n            comparator: dateComparator\n        },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]"
+            "value": "[\n    {\n        field: 'athlete',\n        sort: 'desc'\n    },\n    {\n        field: 'age',\n        width: 90\n    },\n    { field: 'country' },\n    {\n        field: 'year',\n        width: 90,\n        unSortIcon: true\n    },\n    {\n        field: 'date',\n        comparator: dateComparator\n    },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]"
         },
-        { "name": "defaultColDef", "value": "{\n        width: 170,\n        sortable: true\n    }" }
+        { "name": "defaultColDef", "value": "{\n    width: 170,\n    sortable: true\n}" }
     ],
     "components": [],
     "defaultColDef": "{\n    width: 170,\n    sortable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            sort: \"desc\"\n        },\n        {\n            field: \"age\",\n            width: 90\n        },\n        { field: \"country\" },\n        {\n            field: \"year\",\n            width: 90,\n            unSortIcon: true\n        },\n        {\n            field: \"date\",\n            comparator: \"AG_LITERAL_dateComparator\"\n        },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'athlete',\n        sort: 'desc'\n    },\n    {\n        field: 'age',\n        width: 90\n    },\n    { field: 'country' },\n    {\n        field: 'year',\n        width: 90,\n        unSortIcon: true\n    },\n    {\n        field: 'date',\n        comparator: 'AG_LITERAL_dateComparator'\n    },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [

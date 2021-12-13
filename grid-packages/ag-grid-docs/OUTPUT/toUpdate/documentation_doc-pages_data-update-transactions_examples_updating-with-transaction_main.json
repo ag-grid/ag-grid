@@ -3,17 +3,17 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        { field: \"make\" },\n        { field: \"model\" },\n        { field: \"price\" },\n        { field: \"zombies\" },\n        { field: \"style\" },\n        { field: \"clothes\" }\n    ]"
+            "value": "[\n    { field: 'make' },\n    { field: 'model' },\n    { field: 'price' },\n    { field: 'zombies' },\n    { field: 'style' },\n    { field: 'clothes' }\n]"
         },
         { "name": "defaultColDef", "value": "{ flex: 1 }" },
         { "name": "rowData", "value": "getData()" },
-        { "name": "rowSelection", "value": "\"multiple\"" },
+        { "name": "rowSelection", "value": "'multiple'" },
         { "name": "animateRows", "value": "true" }
     ],
     "components": [],
     "defaultColDef": "{ flex: 1 }",
     "globalComponents": [],
-    "parsedColDefs": "[\n        { field: \"make\" },\n        { field: \"model\" },\n        { field: \"price\" },\n        { field: \"zombies\" },\n        { field: \"style\" },\n        { field: \"clothes\" }\n    ]",
+    "parsedColDefs": "[\n    { field: 'make' },\n    { field: 'model' },\n    { field: 'price' },\n    { field: 'zombies' },\n    { field: 'style' },\n    { field: 'clothes' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

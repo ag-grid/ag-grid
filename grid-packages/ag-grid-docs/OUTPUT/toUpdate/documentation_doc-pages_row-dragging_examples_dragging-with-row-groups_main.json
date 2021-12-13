@@ -9,19 +9,16 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"athlete\",\n            rowDrag: rowDrag\n        },\n        {\n            field: \"country\",\n            rowGroup: true\n        },\n        {\n            field: \"year\",\n            width: 100\n        },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" }\n    ]"
+            "value": "[\n    {\n        field: 'athlete',\n        rowDrag: rowDrag\n    },\n    {\n        field: 'country',\n        rowGroup: true\n    },\n    {\n        field: 'year',\n        width: 100\n    },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' }\n]"
         },
-        {
-            "name": "defaultColDef",
-            "value": "{\n        width: 170,\n        sortable: true,\n        filter: true\n    }"
-        },
+        { "name": "defaultColDef", "value": "{\n    width: 170,\n    sortable: true,\n    filter: true\n}" },
         { "name": "animateRows", "value": "true" },
         { "name": "groupDefaultExpanded", "value": "1" }
     ],
     "components": [],
     "defaultColDef": "{\n    width: 170,\n    sortable: true,\n    filter: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            rowDrag: \"AG_LITERAL_rowDrag\"\n        },\n        {\n            field: \"country\",\n            rowGroup: true\n        },\n        {\n            field: \"year\",\n            width: 100\n        },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'athlete',\n        rowDrag: 'AG_LITERAL_rowDrag'\n    },\n    {\n        field: 'country',\n        rowGroup: true\n    },\n    {\n        field: 'year',\n        width: 100\n    },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": ["var rowDrag = function (params) {\n    return !params.node.group;\n};"],

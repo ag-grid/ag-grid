@@ -3,17 +3,17 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[{\n            field: \"athlete\",\n            filter: \"agMultiColumnFilter\",\n            filterParams: {\n                filters: [\n                    {\n                        filter: \"agTextColumnFilter\",\n                        filterParams: {\n                            buttons: [\n                                \"apply\",\n                                \"clear\"\n                            ]\n                        }\n                    },\n                    { filter: \"agSetColumnFilter\" }\n                ]\n            }\n        }]"
+            "value": "[{\n        field: 'athlete',\n        filter: 'agMultiColumnFilter',\n        filterParams: {\n            filters: [\n                {\n                    filter: 'agTextColumnFilter',\n                    filterParams: {\n                        buttons: [\n                            'apply',\n                            'clear'\n                        ]\n                    }\n                },\n                { filter: 'agSetColumnFilter' }\n            ]\n        }\n    }]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        minWidth: 200,\n        resizable: true,\n        menuTabs: [\"filterMenuTab\"]\n    }"
+            "value": "{\n    flex: 1,\n    minWidth: 200,\n    resizable: true,\n    menuTabs: ['filterMenuTab']\n}"
         }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    minWidth: 200,\n    resizable: true,\n    menuTabs: ['filterMenuTab']\n}",
     "globalComponents": [],
-    "parsedColDefs": "[{\n            field: \"athlete\",\n            filter: \"agMultiColumnFilter\",\n            filterParams: {\n                filters: [\n                    {\n                        filter: \"agTextColumnFilter\",\n                        filterParams: {\n                            buttons: [\n                                \"apply\",\n                                \"clear\"\n                            ]\n                        }\n                    },\n                    { filter: \"agSetColumnFilter\" }\n                ]\n            }\n        }]",
+    "parsedColDefs": "[{\n        field: 'athlete',\n        filter: 'agMultiColumnFilter',\n        filterParams: {\n            filters: [\n                {\n                    filter: 'agTextColumnFilter',\n                    filterParams: {\n                        buttons: [\n                            'apply',\n                            'clear'\n                        ]\n                    }\n                },\n                { filter: 'agSetColumnFilter' }\n            ]\n        }\n    }]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

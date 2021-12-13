@@ -8,18 +8,18 @@
     ],
     "properties": [
         { "name": "masterDetail", "value": "true" },
-        { "name": "detailCellRenderer", "value": "\"myDetailCellRenderer\"" },
+        { "name": "detailCellRenderer", "value": "'myDetailCellRenderer'" },
         { "name": "components", "value": "{ myDetailCellRenderer: DetailCellRenderer }" },
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"name\",\n            cellRenderer: \"agGroupCellRenderer\"\n        },\n        { field: \"account\" },\n        { field: \"calls\" },\n        {\n            field: \"minutes\",\n            valueFormatter: \"x.toLocaleString() + 'm'\"\n        }\n    ]"
+            "value": "[\n    {\n        field: 'name',\n        cellRenderer: 'agGroupCellRenderer'\n    },\n    { field: 'account' },\n    { field: 'calls' },\n    {\n        field: 'minutes',\n        valueFormatter: 'x.toLocaleString() + \\'m\\''\n    }\n]"
         },
         { "name": "defaultColDef", "value": "{ flex: 1 }" }
     ],
     "components": [{ "name": "myDetailCellRenderer", "value": "DetailCellRenderer" }],
     "defaultColDef": "{ flex: 1 }",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"name\",\n            cellRenderer: \"agGroupCellRenderer\"\n        },\n        { field: \"account\" },\n        { field: \"calls\" },\n        {\n            field: \"minutes\",\n            valueFormatter: \"x.toLocaleString() + 'm'\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'name',\n        cellRenderer: 'agGroupCellRenderer'\n    },\n    { field: 'account' },\n    { field: 'calls' },\n    {\n        field: 'minutes',\n        valueFormatter: 'x.toLocaleString() + \\'m\\''\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [],

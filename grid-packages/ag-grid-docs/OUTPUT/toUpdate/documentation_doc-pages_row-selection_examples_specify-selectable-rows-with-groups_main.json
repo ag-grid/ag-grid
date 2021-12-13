@@ -3,30 +3,30 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"country\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            field: \"year\",\n            maxWidth: 100\n        },\n        {\n            field: \"gold\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"silver\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"bronze\",\n            aggFunc: \"sum\"\n        },\n        { field: \"date\" },\n        { field: \"sport\" }\n    ]"
+            "value": "[\n    {\n        field: 'country',\n        rowGroup: true,\n        hide: true\n    },\n    {\n        field: 'year',\n        maxWidth: 100\n    },\n    {\n        field: 'gold',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'silver',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'bronze',\n        aggFunc: 'sum'\n    },\n    { field: 'date' },\n    { field: 'sport' }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        minWidth: 150,\n        sortable: true,\n        filter: true\n    }"
+            "value": "{\n    flex: 1,\n    minWidth: 150,\n    sortable: true,\n    filter: true\n}"
         },
         {
             "name": "autoGroupColumnDef",
-            "value": "{\n        headerName: \"Athlete\",\n        field: \"athlete\",\n        minWidth: 250,\n        cellRenderer: \"agGroupCellRenderer\",\n        cellRendererParams: { checkbox: true }\n    }"
+            "value": "{\n    headerName: 'Athlete',\n    field: 'athlete',\n    minWidth: 250,\n    cellRenderer: 'agGroupCellRenderer',\n    cellRendererParams: { checkbox: true }\n}"
         },
-        { "name": "rowSelection", "value": "\"multiple\"" },
+        { "name": "rowSelection", "value": "'multiple'" },
         { "name": "groupSelectsChildren", "value": "true" },
         { "name": "groupSelectsFiltered", "value": "true" },
         { "name": "suppressRowClickSelection", "value": "true" },
         { "name": "groupDefaultExpanded", "value": "-1" },
         {
             "name": "isRowSelectable",
-            "value": "function (node) {\n        return node.data ? node.data.year === 2008 || node.data.year === 2004 : false;\n    }"
+            "value": "function (node) {\n    return node.data ? node.data.year === 2008 || node.data.year === 2004 : false;\n}"
         }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    minWidth: 150,\n    sortable: true,\n    filter: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"country\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            field: \"year\",\n            maxWidth: 100\n        },\n        {\n            field: \"gold\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"silver\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"bronze\",\n            aggFunc: \"sum\"\n        },\n        { field: \"date\" },\n        { field: \"sport\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'country',\n        rowGroup: true,\n        hide: true\n    },\n    {\n        field: 'year',\n        maxWidth: 100\n    },\n    {\n        field: 'gold',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'silver',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'bronze',\n        aggFunc: 'sum'\n    },\n    { field: 'date' },\n    { field: 'sport' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

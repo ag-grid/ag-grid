@@ -3,17 +3,17 @@
     "properties": [
         {
             "name": "rowData",
-            "value": "[\n        {\n            make: \"Toyota\",\n            model: \"Celica\",\n            price: 35000\n        },\n        {\n            make: \"Ford\",\n            model: \"Mondeo\",\n            price: 32000\n        },\n        {\n            make: \"Porsche\",\n            model: \"Boxter\",\n            price: 72000\n        }\n    ]"
+            "value": "[\n    {\n        make: 'Toyota',\n        model: 'Celica',\n        price: 35000\n    },\n    {\n        make: 'Ford',\n        model: 'Mondeo',\n        price: 32000\n    },\n    {\n        make: 'Porsche',\n        model: 'Boxter',\n        price: 72000\n    }\n]"
         },
         {
             "name": "columnDefs",
-            "value": "[\n        { field: \"make\" },\n        { field: \"model\" },\n        { field: \"price\" }\n    ]"
+            "value": "[\n    { field: 'make' },\n    { field: 'model' },\n    { field: 'price' }\n]"
         }
     ],
     "components": [],
     "defaultColDef": null,
     "globalComponents": [],
-    "parsedColDefs": "[\n        { field: \"make\" },\n        { field: \"model\" },\n        { field: \"price\" }\n    ]",
+    "parsedColDefs": "[\n    { field: 'make' },\n    { field: 'model' },\n    { field: 'price' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [],

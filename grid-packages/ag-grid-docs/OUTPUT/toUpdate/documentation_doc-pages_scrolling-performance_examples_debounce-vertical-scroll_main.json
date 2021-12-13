@@ -3,7 +3,7 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        { field: \"athlete\" },\n        { field: \"age\" },\n        { field: \"country\" },\n        { field: \"year\" },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]"
+            "value": "[\n    { field: 'athlete' },\n    { field: 'age' },\n    { field: 'country' },\n    { field: 'year' },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]"
         },
         { "name": "debounceVerticalScrollbar", "value": "true" },
         { "name": "defaultColDef", "value": "{ resizable: true }" },
@@ -12,7 +12,7 @@
     "components": [],
     "defaultColDef": "{ resizable: true }",
     "globalComponents": [],
-    "parsedColDefs": "[\n        { field: \"athlete\" },\n        { field: \"age\" },\n        { field: \"country\" },\n        { field: \"year\" },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]",
+    "parsedColDefs": "[\n    { field: 'athlete' },\n    { field: 'age' },\n    { field: 'country' },\n    { field: 'year' },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [],

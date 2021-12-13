@@ -14,17 +14,17 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"make\",\n            cellEditor: \"agSelectCellEditor\",\n            cellEditorParams: {\n                values: [\n                    \"Porsche\",\n                    \"Toyota\",\n                    \"Ford\",\n                    \"AAA\",\n                    \"BBB\",\n                    \"CCC\"\n                ]\n            }\n        },\n        { field: \"model\" },\n        {\n            field: \"field4\",\n            headerName: \"Read Only\",\n            editable: false\n        },\n        {\n            field: \"price\",\n            cellEditor: \"numericCellEditor\"\n        },\n        {\n            headerName: \"Suppress Navigable\",\n            field: \"field5\",\n            suppressNavigable: true,\n            minWidth: 200\n        },\n        {\n            headerName: \"Read Only\",\n            field: \"field6\",\n            editable: false\n        }\n    ]"
+            "value": "[\n    {\n        field: 'make',\n        cellEditor: 'agSelectCellEditor',\n        cellEditorParams: {\n            values: [\n                'Porsche',\n                'Toyota',\n                'Ford',\n                'AAA',\n                'BBB',\n                'CCC'\n            ]\n        }\n    },\n    { field: 'model' },\n    {\n        field: 'field4',\n        headerName: 'Read Only',\n        editable: false\n    },\n    {\n        field: 'price',\n        cellEditor: 'numericCellEditor'\n    },\n    {\n        headerName: 'Suppress Navigable',\n        field: 'field5',\n        suppressNavigable: true,\n        minWidth: 200\n    },\n    {\n        headerName: 'Read Only',\n        field: 'field6',\n        editable: false\n    }\n]"
         },
-        { "name": "defaultColDef", "value": "{\n        flex: 1,\n        editable: true\n    }" },
+        { "name": "defaultColDef", "value": "{\n    flex: 1,\n    editable: true\n}" },
         { "name": "components", "value": "{ numericCellEditor: getNumericCellEditor() }" },
-        { "name": "editType", "value": "\"fullRow\"" },
+        { "name": "editType", "value": "'fullRow'" },
         { "name": "rowData", "value": "getRowData()" }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    editable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"make\",\n            cellEditor: \"agSelectCellEditor\",\n            cellEditorParams: {\n                values: [\n                    \"Porsche\",\n                    \"Toyota\",\n                    \"Ford\",\n                    \"AAA\",\n                    \"BBB\",\n                    \"CCC\"\n                ]\n            }\n        },\n        { field: \"model\" },\n        {\n            field: \"field4\",\n            headerName: \"Read Only\",\n            editable: false\n        },\n        {\n            field: \"price\",\n            cellEditor: \"numericCellEditor\"\n        },\n        {\n            headerName: \"Suppress Navigable\",\n            field: \"field5\",\n            suppressNavigable: true,\n            minWidth: 200\n        },\n        {\n            headerName: \"Read Only\",\n            field: \"field6\",\n            editable: false\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'make',\n        cellEditor: 'agSelectCellEditor',\n        cellEditorParams: {\n            values: [\n                'Porsche',\n                'Toyota',\n                'Ford',\n                'AAA',\n                'BBB',\n                'CCC'\n            ]\n        }\n    },\n    { field: 'model' },\n    {\n        field: 'field4',\n        headerName: 'Read Only',\n        editable: false\n    },\n    {\n        field: 'price',\n        cellEditor: 'numericCellEditor'\n    },\n    {\n        headerName: 'Suppress Navigable',\n        field: 'field5',\n        suppressNavigable: true,\n        minWidth: 200\n    },\n    {\n        headerName: 'Read Only',\n        field: 'field6',\n        editable: false\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

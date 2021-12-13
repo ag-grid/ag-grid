@@ -3,22 +3,22 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"athlete\",\n            width: 200\n        },\n        {\n            field: \"country\",\n            cellClass: \"countryCell\",\n            cellRenderer: countryCellRenderer\n        },\n        { field: \"age\" },\n        { field: \"year\" },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]"
+            "value": "[\n    {\n        field: 'athlete',\n        width: 200\n    },\n    {\n        field: 'country',\n        cellClass: 'countryCell',\n        cellRenderer: countryCellRenderer\n    },\n    { field: 'age' },\n    { field: 'year' },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]"
         },
-        { "name": "defaultColDef", "value": "{\n        width: 150,\n        resizable: true\n    }" },
+        { "name": "defaultColDef", "value": "{\n    width: 150,\n    resizable: true\n}" },
         {
             "name": "excelStyles",
-            "value": "[{\n            id: \"countryCell\",\n            alignment: {\n                vertical: \"Center\",\n                indent: 4\n            }\n        }]"
+            "value": "[{\n        id: 'countryCell',\n        alignment: {\n            vertical: 'Center',\n            indent: 4\n        }\n    }]"
         },
         {
             "name": "defaultExcelExportParams",
-            "value": "{\n        addImageToCell: function (rowIndex, col, value) {\n            if (col.getColId() !== \"country\") {\n                return;\n            }\n            var countryCode = countryCodes[value];\n            return {\n                image: {\n                    id: countryCode,\n                    base64: base64flags[countryCode],\n                    imageType: \"png\",\n                    width: 20,\n                    height: 11,\n                    position: {\n                        offsetX: 10,\n                        offsetY: 5.5\n                    }\n                },\n                value\n            };\n        }\n    }"
+            "value": "{\n    addImageToCell: function (rowIndex, col, value) {\n        if (col.getColId() !== 'country') {\n            return;\n        }\n        var countryCode = countryCodes[value];\n        return {\n            image: {\n                id: countryCode,\n                base64: base64flags[countryCode],\n                imageType: 'png',\n                width: 20,\n                height: 11,\n                position: {\n                    offsetX: 10,\n                    offsetY: 5.5\n                }\n            },\n            value\n        };\n    }\n}"
         }
     ],
     "components": [],
     "defaultColDef": "{\n    width: 150,\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            width: 200\n        },\n        {\n            field: \"country\",\n            cellClass: \"countryCell\",\n            cellRenderer: \"AG_LITERAL_countryCellRenderer\"\n        },\n        { field: \"age\" },\n        { field: \"year\" },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'athlete',\n        width: 200\n    },\n    {\n        field: 'country',\n        cellClass: 'countryCell',\n        cellRenderer: 'AG_LITERAL_countryCellRenderer'\n    },\n    { field: 'age' },\n    { field: 'year' },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

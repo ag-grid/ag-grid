@@ -3,18 +3,18 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"athlete\",\n            width: 150\n        },\n        {\n            field: \"country\",\n            width: 150\n        },\n        {\n            field: \"year\",\n            width: 100\n        },\n        {\n            field: \"gold\",\n            width: 100,\n            cellRenderer: \"medalCellRenderer\"\n        },\n        {\n            field: \"silver\",\n            width: 100,\n            cellRenderer: \"medalCellRenderer\"\n        },\n        {\n            field: \"bronze\",\n            width: 100,\n            cellRenderer: \"medalCellRenderer\"\n        },\n        {\n            field: \"total\",\n            width: 100\n        }\n    ]"
+            "value": "[\n    {\n        field: 'athlete',\n        width: 150\n    },\n    {\n        field: 'country',\n        width: 150\n    },\n    {\n        field: 'year',\n        width: 100\n    },\n    {\n        field: 'gold',\n        width: 100,\n        cellRenderer: 'medalCellRenderer'\n    },\n    {\n        field: 'silver',\n        width: 100,\n        cellRenderer: 'medalCellRenderer'\n    },\n    {\n        field: 'bronze',\n        width: 100,\n        cellRenderer: 'medalCellRenderer'\n    },\n    {\n        field: 'total',\n        width: 100\n    }\n]"
         },
         { "name": "components", "value": "{ medalCellRenderer: MedalCellRenderer }" },
         {
             "name": "defaultColDef",
-            "value": "{\n        editable: true,\n        sortable: true,\n        flex: 1,\n        minWidth: 100,\n        filter: true,\n        resizable: true\n    }"
+            "value": "{\n    editable: true,\n    sortable: true,\n    flex: 1,\n    minWidth: 100,\n    filter: true,\n    resizable: true\n}"
         }
     ],
     "components": [{ "name": "medalCellRenderer", "value": "MedalCellRenderer" }],
     "defaultColDef": "{\n    editable: true,\n    sortable: true,\n    flex: 1,\n    minWidth: 100,\n    filter: true,\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            width: 150\n        },\n        {\n            field: \"country\",\n            width: 150\n        },\n        {\n            field: \"year\",\n            width: 100\n        },\n        {\n            field: \"gold\",\n            width: 100,\n            cellRenderer: \"medalCellRenderer\"\n        },\n        {\n            field: \"silver\",\n            width: 100,\n            cellRenderer: \"medalCellRenderer\"\n        },\n        {\n            field: \"bronze\",\n            width: 100,\n            cellRenderer: \"medalCellRenderer\"\n        },\n        {\n            field: \"total\",\n            width: 100\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'athlete',\n        width: 150\n    },\n    {\n        field: 'country',\n        width: 150\n    },\n    {\n        field: 'year',\n        width: 100\n    },\n    {\n        field: 'gold',\n        width: 100,\n        cellRenderer: 'medalCellRenderer'\n    },\n    {\n        field: 'silver',\n        width: 100,\n        cellRenderer: 'medalCellRenderer'\n    },\n    {\n        field: 'bronze',\n        width: 100,\n        cellRenderer: 'medalCellRenderer'\n    },\n    {\n        field: 'total',\n        width: 100\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

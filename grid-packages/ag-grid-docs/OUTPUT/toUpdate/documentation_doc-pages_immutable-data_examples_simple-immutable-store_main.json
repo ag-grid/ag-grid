@@ -3,30 +3,27 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            headerName: \"Symbol\",\n            field: \"symbol\"\n        },\n        {\n            headerName: \"Price\",\n            field: \"price\"\n        },\n        {\n            headerName: \"Group\",\n            field: \"group\"\n        }\n    ]"
+            "value": "[\n    {\n        headerName: 'Symbol',\n        field: 'symbol'\n    },\n    {\n        headerName: 'Price',\n        field: 'price'\n    },\n    {\n        headerName: 'Group',\n        field: 'group'\n    }\n]"
         },
-        {
-            "name": "defaultColDef",
-            "value": "{\n        width: 250,\n        sortable: true,\n        resizable: true\n    }"
-        },
+        { "name": "defaultColDef", "value": "{\n    width: 250,\n    sortable: true,\n    resizable: true\n}" },
         { "name": "immutableData", "value": "true" },
         { "name": "animateRows", "value": "true" },
-        { "name": "rowSelection", "value": "\"multiple\"" },
+        { "name": "rowSelection", "value": "'multiple'" },
         {
             "name": "autoGroupColumnDef",
-            "value": "{\n        headerName: \"Symbol\",\n        cellRenderer: \"agGroupCellRenderer\",\n        field: \"symbol\"\n    }"
+            "value": "{\n    headerName: 'Symbol',\n    cellRenderer: 'agGroupCellRenderer',\n    field: 'symbol'\n}"
         },
         {
             "name": "statusBar",
-            "value": "{\n        statusPanels: [{\n                statusPanel: \"agAggregationComponent\",\n                align: \"right\"\n            }]\n    }"
+            "value": "{\n    statusPanels: [{\n            statusPanel: 'agAggregationComponent',\n            align: 'right'\n        }]\n}"
         },
         { "name": "groupDefaultExpanded", "value": "1" },
-        { "name": "getRowNodeId", "value": "function (data) {\n        return data.symbol;\n    }" }
+        { "name": "getRowNodeId", "value": "function (data) {\n    return data.symbol;\n}" }
     ],
     "components": [],
     "defaultColDef": "{\n    width: 250,\n    sortable: true,\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            headerName: \"Symbol\",\n            field: \"symbol\"\n        },\n        {\n            headerName: \"Price\",\n            field: \"price\"\n        },\n        {\n            headerName: \"Group\",\n            field: \"group\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        headerName: 'Symbol',\n        field: 'symbol'\n    },\n    {\n        headerName: 'Price',\n        field: 'price'\n    },\n    {\n        headerName: 'Group',\n        field: 'group'\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

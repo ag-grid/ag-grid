@@ -9,20 +9,20 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"name\",\n            cellRenderer: \"agGroupCellRenderer\"\n        },\n        { field: \"account\" },\n        { field: \"calls\" },\n        {\n            field: \"minutes\",\n            valueFormatter: \"x.toLocaleString() + 'm'\"\n        }\n    ]"
+            "value": "[\n    {\n        field: 'name',\n        cellRenderer: 'agGroupCellRenderer'\n    },\n    { field: 'account' },\n    { field: 'calls' },\n    {\n        field: 'minutes',\n        valueFormatter: 'x.toLocaleString() + \\'m\\''\n    }\n]"
         },
         { "name": "defaultColDef", "value": "{ width: 300 }" },
         { "name": "masterDetail", "value": "true" },
         { "name": "embedFullWidthRows", "value": "true" },
         {
             "name": "detailCellRendererParams",
-            "value": "{\n        detailGridOptions: {\n            columnDefs: [\n                { field: \"callId\" },\n                { field: \"direction\" },\n                { field: \"number\" },\n                {\n                    field: \"duration\",\n                    valueFormatter: \"x.toLocaleString() + 's'\"\n                },\n                { field: \"switchCode\" }\n            ]\n        },\n        getDetailRowData: function (params) {\n            params.successCallback(params.data.callRecords);\n        }\n    }"
+            "value": "{\n    detailGridOptions: {\n        columnDefs: [\n            { field: 'callId' },\n            { field: 'direction' },\n            { field: 'number' },\n            {\n                field: 'duration',\n                valueFormatter: 'x.toLocaleString() + \\'s\\''\n            },\n            { field: 'switchCode' }\n        ]\n    },\n    getDetailRowData: function (params) {\n        params.successCallback(params.data.callRecords);\n    }\n}"
         }
     ],
     "components": [],
     "defaultColDef": "{ width: 300 }",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"name\",\n            cellRenderer: \"agGroupCellRenderer\"\n        },\n        { field: \"account\" },\n        { field: \"calls\" },\n        {\n            field: \"minutes\",\n            valueFormatter: \"x.toLocaleString() + 'm'\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'name',\n        cellRenderer: 'agGroupCellRenderer'\n    },\n    { field: 'account' },\n    { field: 'calls' },\n    {\n        field: 'minutes',\n        valueFormatter: 'x.toLocaleString() + \\'m\\''\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [],

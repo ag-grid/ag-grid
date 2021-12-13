@@ -3,18 +3,18 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"latinText\",\n            width: 350,\n            wrapText: true\n        },\n        { field: \"athlete\" },\n        { field: \"country\" },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]"
+            "value": "[\n    {\n        field: 'latinText',\n        width: 350,\n        wrapText: true\n    },\n    { field: 'athlete' },\n    { field: 'country' },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]"
         },
         { "name": "rowHeight", "value": "120" },
         {
             "name": "defaultColDef",
-            "value": "{\n        width: 170,\n        sortable: true,\n        editable: true,\n        resizable: true,\n        filter: true\n    }"
+            "value": "{\n    width: 170,\n    sortable: true,\n    editable: true,\n    resizable: true,\n    filter: true\n}"
         }
     ],
     "components": [],
     "defaultColDef": "{\n    width: 170,\n    sortable: true,\n    editable: true,\n    resizable: true,\n    filter: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"latinText\",\n            width: 350,\n            wrapText: true\n        },\n        { field: \"athlete\" },\n        { field: \"country\" },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'latinText',\n        width: 350,\n        wrapText: true\n    },\n    { field: 'athlete' },\n    { field: 'country' },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [

@@ -3,18 +3,15 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"athlete\",\n            filterParams: athleteFilterParams\n        },\n        {\n            field: \"country\",\n            filter: \"agTextColumnFilter\",\n            filterParams: countryFilterParams\n        },\n        {\n            field: \"sport\",\n            filter: \"agTextColumnFilter\",\n            filterParams: {\n                caseSensitive: true,\n                defaultOption: \"startsWith\"\n            }\n        }\n    ]"
+            "value": "[\n    {\n        field: 'athlete',\n        filterParams: athleteFilterParams\n    },\n    {\n        field: 'country',\n        filter: 'agTextColumnFilter',\n        filterParams: countryFilterParams\n    },\n    {\n        field: 'sport',\n        filter: 'agTextColumnFilter',\n        filterParams: {\n            caseSensitive: true,\n            defaultOption: 'startsWith'\n        }\n    }\n]"
         },
-        {
-            "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        sortable: true,\n        filter: true\n    }"
-        },
+        { "name": "defaultColDef", "value": "{\n    flex: 1,\n    sortable: true,\n    filter: true\n}" },
         { "name": "rowData", "value": "null" }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    sortable: true,\n    filter: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            filterParams: \"AG_LITERAL_athleteFilterParams\"\n        },\n        {\n            field: \"country\",\n            filter: \"agTextColumnFilter\",\n            filterParams: \"AG_LITERAL_countryFilterParams\"\n        },\n        {\n            field: \"sport\",\n            filter: \"agTextColumnFilter\",\n            filterParams: {\n                caseSensitive: true,\n                defaultOption: \"startsWith\"\n            }\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'athlete',\n        filterParams: 'AG_LITERAL_athleteFilterParams'\n    },\n    {\n        field: 'country',\n        filter: 'agTextColumnFilter',\n        filterParams: 'AG_LITERAL_countryFilterParams'\n    },\n    {\n        field: 'sport',\n        filter: 'agTextColumnFilter',\n        filterParams: {\n            caseSensitive: true,\n            defaultOption: 'startsWith'\n        }\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [

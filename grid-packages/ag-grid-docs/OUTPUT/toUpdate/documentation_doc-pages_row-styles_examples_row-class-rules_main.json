@@ -4,17 +4,17 @@
         { "name": "rowData", "value": "getData()" },
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            headerName: \"Employee\",\n            field: \"employee\"\n        },\n        {\n            headerName: \"Number Sick Days\",\n            field: \"sickDays\",\n            editable: true\n        }\n    ]"
+            "value": "[\n    {\n        headerName: 'Employee',\n        field: 'employee'\n    },\n    {\n        headerName: 'Number Sick Days',\n        field: 'sickDays',\n        editable: true\n    }\n]"
         },
         {
             "name": "rowClassRules",
-            "value": "{\n        \"sick-days-warning\": function (params) {\n            var numSickDays = params.data.sickDays;\n            return numSickDays > 5 && numSickDays <= 7;\n        },\n        \"sick-days-breach\": \"data.sickDays >= 8\"\n    }"
+            "value": "{\n    'sick-days-warning': function (params) {\n        var numSickDays = params.data.sickDays;\n        return numSickDays > 5 && numSickDays <= 7;\n    },\n    'sick-days-breach': 'data.sickDays >= 8'\n}"
         }
     ],
     "components": [],
     "defaultColDef": null,
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            headerName: \"Employee\",\n            field: \"employee\"\n        },\n        {\n            headerName: \"Number Sick Days\",\n            field: \"sickDays\",\n            editable: true\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        headerName: 'Employee',\n        field: 'employee'\n    },\n    {\n        headerName: 'Number Sick Days',\n        field: 'sickDays',\n        editable: true\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

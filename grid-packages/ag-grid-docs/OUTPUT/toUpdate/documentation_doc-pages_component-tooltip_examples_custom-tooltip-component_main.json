@@ -3,11 +3,11 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"athlete\",\n            minWidth: 150,\n            tooltipField: \"athlete\",\n            tooltipComponentParams: { color: \"#ececec\" }\n        },\n        { field: \"age\" },\n        {\n            field: \"country\",\n            minWidth: 130,\n            tooltipField: \"country\"\n        },\n        { field: \"year\" },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]"
+            "value": "[\n    {\n        field: 'athlete',\n        minWidth: 150,\n        tooltipField: 'athlete',\n        tooltipComponentParams: { color: '#ececec' }\n    },\n    { field: 'age' },\n    {\n        field: 'country',\n        minWidth: 130,\n        tooltipField: 'country'\n    },\n    { field: 'year' },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        editable: true,\n        sortable: true,\n        flex: 1,\n        minWidth: 100,\n        filter: true,\n        resizable: true,\n        tooltipComponent: \"customTooltip\"\n    }"
+            "value": "{\n    editable: true,\n    sortable: true,\n    flex: 1,\n    minWidth: 100,\n    filter: true,\n    resizable: true,\n    tooltipComponent: 'customTooltip'\n}"
         },
         { "name": "tooltipShowDelay", "value": "0" },
         { "name": "tooltipHideDelay", "value": "2000" },
@@ -17,7 +17,7 @@
     "components": [{ "name": "customTooltip", "value": "CustomTooltip" }],
     "defaultColDef": "{\n    editable: true,\n    sortable: true,\n    flex: 1,\n    minWidth: 100,\n    filter: true,\n    resizable: true,\n    tooltipComponent: 'customTooltip'\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            minWidth: 150,\n            tooltipField: \"athlete\",\n            tooltipComponentParams: { color: \"#ececec\" }\n        },\n        { field: \"age\" },\n        {\n            field: \"country\",\n            minWidth: 130,\n            tooltipField: \"country\"\n        },\n        { field: \"year\" },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'athlete',\n        minWidth: 150,\n        tooltipField: 'athlete',\n        tooltipComponentParams: { color: '#ececec' }\n    },\n    { field: 'age' },\n    {\n        field: 'country',\n        minWidth: 130,\n        tooltipField: 'country'\n    },\n    { field: 'year' },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [],

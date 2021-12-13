@@ -3,32 +3,32 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            headerName: \"Item ID\",\n            field: \"id\",\n            valueGetter: \"node.id\",\n            cellRenderer: \"loadingRenderer\"\n        },\n        { field: \"make\" },\n        { field: \"model\" },\n        {\n            field: \"price\",\n            valueFormatter: valueFormatter\n        }\n    ]"
+            "value": "[\n    {\n        headerName: 'Item ID',\n        field: 'id',\n        valueGetter: 'node.id',\n        cellRenderer: 'loadingRenderer'\n    },\n    { field: 'make' },\n    { field: 'model' },\n    {\n        field: 'price',\n        valueFormatter: valueFormatter\n    }\n]"
         },
         {
             "name": "datasource",
-            "value": "{\n        rowCount: undefined,\n        getRows: function (params) {\n            console.log(\"asking for \" + params.startRow + \" to \" + params.endRow);\n            setTimeout(function () {\n                var rowsThisPage = allOfTheData.slice(params.startRow, params.endRow);\n                for (var i = 0; i < rowsThisPage.length; i++) {\n                    var item = rowsThisPage[i];\n                    var itemCopy = JSON.parse(JSON.stringify(item));\n                    rowsThisPage[i] = itemCopy;\n                }\n                var lastRow = -1;\n                if (allOfTheData.length <= params.endRow) {\n                    lastRow = allOfTheData.length;\n                }\n                params.successCallback(rowsThisPage, lastRow);\n            }, 500);\n        }\n    }"
+            "value": "{\n    rowCount: undefined,\n    getRows: function (params) {\n        console.log('asking for ' + params.startRow + ' to ' + params.endRow);\n        setTimeout(function () {\n            var rowsThisPage = allOfTheData.slice(params.startRow, params.endRow);\n            for (var i = 0; i < rowsThisPage.length; i++) {\n                var item = rowsThisPage[i];\n                var itemCopy = JSON.parse(JSON.stringify(item));\n                rowsThisPage[i] = itemCopy;\n            }\n            var lastRow = -1;\n            if (allOfTheData.length <= params.endRow) {\n                lastRow = allOfTheData.length;\n            }\n            params.successCallback(rowsThisPage, lastRow);\n        }, 500);\n    }\n}"
         },
         {
             "name": "components",
-            "value": "{\n        loadingRenderer: function (params) {\n            if (params.value !== undefined) {\n                return params.value;\n            } else {\n                return \"<img src=\\\"https://www.ag-grid.com/example-assets/loading.gif\\\">\";\n            }\n        }\n    }"
+            "value": "{\n    loadingRenderer: function (params) {\n        if (params.value !== undefined) {\n            return params.value;\n        } else {\n            return '<img src=\"https://www.ag-grid.com/example-assets/loading.gif\">';\n        }\n    }\n}"
         },
         { "name": "defaultColDef", "value": "{ resizable: true }" },
-        { "name": "rowSelection", "value": "\"multiple\"" },
-        { "name": "rowModelType", "value": "\"infinite\"" },
+        { "name": "rowSelection", "value": "'multiple'" },
+        { "name": "rowModelType", "value": "'infinite'" },
         { "name": "maxBlocksInCache", "value": "2" },
         { "name": "infiniteInitialRowCount", "value": "500" },
         { "name": "maxConcurrentDatasourceRequests", "value": "2" },
-        { "name": "getRowNodeId", "value": "function (item) {\n        return item.id.toString();\n    }" },
+        { "name": "getRowNodeId", "value": "function (item) {\n    return item.id.toString();\n}" },
         {
             "name": "getRowStyle",
-            "value": "function (params) {\n        if (params.data && params.data.make === \"Honda\") {\n            return { fontWeight: \"bold\" };\n        } else {\n            return undefined;\n        }\n    }"
+            "value": "function (params) {\n    if (params.data && params.data.make === 'Honda') {\n        return { fontWeight: 'bold' };\n    } else {\n        return undefined;\n    }\n}"
         }
     ],
     "components": [],
     "defaultColDef": "{ resizable: true }",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            headerName: \"Item ID\",\n            field: \"id\",\n            valueGetter: \"node.id\",\n            cellRenderer: \"loadingRenderer\"\n        },\n        { field: \"make\" },\n        { field: \"model\" },\n        {\n            field: \"price\",\n            valueFormatter: \"AG_LITERAL_valueFormatter\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        headerName: 'Item ID',\n        field: 'id',\n        valueGetter: 'node.id',\n        cellRenderer: 'loadingRenderer'\n    },\n    { field: 'make' },\n    { field: 'model' },\n    {\n        field: 'price',\n        valueFormatter: 'AG_LITERAL_valueFormatter'\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

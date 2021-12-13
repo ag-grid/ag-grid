@@ -3,18 +3,18 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"athlete\",\n            filter: \"agSetColumnFilter\",\n            filterParams: { cellHeight: 20 }\n        },\n        {\n            field: \"age\",\n            maxWidth: 120,\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"country\",\n            cellRenderer: \"countryCellRenderer\",\n            keyCreator: countryKeyCreator\n        },\n        {\n            field: \"year\",\n            maxWidth: 120\n        },\n        { field: \"date\" },\n        { field: \"sport\" },\n        {\n            field: \"gold\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"silver\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"bronze\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"total\",\n            filter: \"agNumberColumnFilter\"\n        }\n    ]"
+            "value": "[\n    {\n        field: 'athlete',\n        filter: 'agSetColumnFilter',\n        filterParams: { cellHeight: 20 }\n    },\n    {\n        field: 'age',\n        maxWidth: 120,\n        filter: 'agNumberColumnFilter'\n    },\n    {\n        field: 'country',\n        cellRenderer: 'countryCellRenderer',\n        keyCreator: countryKeyCreator\n    },\n    {\n        field: 'year',\n        maxWidth: 120\n    },\n    { field: 'date' },\n    { field: 'sport' },\n    {\n        field: 'gold',\n        filter: 'agNumberColumnFilter'\n    },\n    {\n        field: 'silver',\n        filter: 'agNumberColumnFilter'\n    },\n    {\n        field: 'bronze',\n        filter: 'agNumberColumnFilter'\n    },\n    {\n        field: 'total',\n        filter: 'agNumberColumnFilter'\n    }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        minWidth: 160,\n        filter: true,\n        resizable: true\n    }"
+            "value": "{\n    flex: 1,\n    minWidth: 160,\n    filter: true,\n    resizable: true\n}"
         },
         { "name": "components", "value": "{ countryCellRenderer: countryCellRenderer }" }
     ],
     "components": [],
     "defaultColDef": null,
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            filter: \"agSetColumnFilter\",\n            filterParams: { cellHeight: 20 }\n        },\n        {\n            field: \"age\",\n            maxWidth: 120,\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"country\",\n            cellRenderer: \"countryCellRenderer\",\n            keyCreator: \"AG_LITERAL_countryKeyCreator\"\n        },\n        {\n            field: \"year\",\n            maxWidth: 120\n        },\n        { field: \"date\" },\n        { field: \"sport\" },\n        {\n            field: \"gold\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"silver\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"bronze\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"total\",\n            filter: \"agNumberColumnFilter\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'athlete',\n        filter: 'agSetColumnFilter',\n        filterParams: { cellHeight: 20 }\n    },\n    {\n        field: 'age',\n        maxWidth: 120,\n        filter: 'agNumberColumnFilter'\n    },\n    {\n        field: 'country',\n        cellRenderer: 'countryCellRenderer',\n        keyCreator: 'AG_LITERAL_countryKeyCreator'\n    },\n    {\n        field: 'year',\n        maxWidth: 120\n    },\n    { field: 'date' },\n    { field: 'sport' },\n    {\n        field: 'gold',\n        filter: 'agNumberColumnFilter'\n    },\n    {\n        field: 'silver',\n        filter: 'agNumberColumnFilter'\n    },\n    {\n        field: 'bronze',\n        filter: 'agNumberColumnFilter'\n    },\n    {\n        field: 'total',\n        filter: 'agNumberColumnFilter'\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

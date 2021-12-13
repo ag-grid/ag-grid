@@ -3,17 +3,17 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"athlete\",\n            sortingOrder: [\n                \"asc\",\n                \"desc\"\n            ]\n        },\n        {\n            field: \"age\",\n            width: 90,\n            sortingOrder: [\n                \"desc\",\n                \"asc\"\n            ]\n        },\n        {\n            field: \"country\",\n            sortingOrder: [\n                \"desc\",\n                null\n            ]\n        },\n        {\n            field: \"year\",\n            width: 90,\n            sortingOrder: [\"asc\"]\n        },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]"
+            "value": "[\n    {\n        field: 'athlete',\n        sortingOrder: [\n            'asc',\n            'desc'\n        ]\n    },\n    {\n        field: 'age',\n        width: 90,\n        sortingOrder: [\n            'desc',\n            'asc'\n        ]\n    },\n    {\n        field: 'country',\n        sortingOrder: [\n            'desc',\n            null\n        ]\n    },\n    {\n        field: 'year',\n        width: 90,\n        sortingOrder: ['asc']\n    },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]"
         },
-        { "name": "defaultColDef", "value": "{\n        width: 170,\n        sortable: true\n    }" },
+        { "name": "defaultColDef", "value": "{\n    width: 170,\n    sortable: true\n}" },
         { "name": "rowData", "value": "null" },
         { "name": "animateRows", "value": "true" },
-        { "name": "sortingOrder", "value": "[\n        \"desc\",\n        \"asc\",\n        null\n    ]" }
+        { "name": "sortingOrder", "value": "[\n    'desc',\n    'asc',\n    null\n]" }
     ],
     "components": [],
     "defaultColDef": "{\n    width: 170,\n    sortable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            sortingOrder: [\n                \"asc\",\n                \"desc\"\n            ]\n        },\n        {\n            field: \"age\",\n            width: 90,\n            sortingOrder: [\n                \"desc\",\n                \"asc\"\n            ]\n        },\n        {\n            field: \"country\",\n            sortingOrder: [\n                \"desc\",\n                null\n            ]\n        },\n        {\n            field: \"year\",\n            width: 90,\n            sortingOrder: [\"asc\"]\n        },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'athlete',\n        sortingOrder: [\n            'asc',\n            'desc'\n        ]\n    },\n    {\n        field: 'age',\n        width: 90,\n        sortingOrder: [\n            'desc',\n            'asc'\n        ]\n    },\n    {\n        field: 'country',\n        sortingOrder: [\n            'desc',\n            null\n        ]\n    },\n    {\n        field: 'year',\n        width: 90,\n        sortingOrder: ['asc']\n    },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [],

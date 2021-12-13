@@ -3,25 +3,25 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"country\",\n            minWidth: 120,\n            rowGroup: true\n        },\n        {\n            field: \"year\",\n            rowGroup: true\n        },\n        {\n            headerName: \"Name\",\n            field: \"athlete\",\n            minWidth: 150\n        },\n        {\n            headerName: \"Name Length\",\n            valueGetter: \"data ? data.athlete.length : \\\"\\\"\"\n        },\n        {\n            field: \"sport\",\n            minWidth: 120,\n            rowGroup: true\n        },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]"
+            "value": "[\n    {\n        field: 'country',\n        minWidth: 120,\n        rowGroup: true\n    },\n    {\n        field: 'year',\n        rowGroup: true\n    },\n    {\n        headerName: 'Name',\n        field: 'athlete',\n        minWidth: 150\n    },\n    {\n        headerName: 'Name Length',\n        valueGetter: 'data ? data.athlete.length : \"\"'\n    },\n    {\n        field: 'sport',\n        minWidth: 120,\n        rowGroup: true\n    },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        sortable: true,\n        filter: true,\n        resizable: true,\n        minWidth: 100,\n        flex: 1\n    }"
+            "value": "{\n    sortable: true,\n    filter: true,\n    resizable: true,\n    minWidth: 100,\n    flex: 1\n}"
         },
         {
             "name": "autoGroupColumnDef",
-            "value": "{\n        cellClass: getIndentClass,\n        minWidth: 250,\n        flex: 1\n    }"
+            "value": "{\n    cellClass: getIndentClass,\n    minWidth: 250,\n    flex: 1\n}"
         },
         {
             "name": "excelStyles",
-            "value": "[\n        {\n            id: \"indent-1\",\n            alignment: { indent: 1 },\n            dataType: \"String\"\n        },\n        {\n            id: \"indent-2\",\n            alignment: { indent: 2 },\n            dataType: \"String\"\n        },\n        {\n            id: \"indent-3\",\n            alignment: { indent: 3 },\n            dataType: \"String\"\n        }\n    ]"
+            "value": "[\n    {\n        id: 'indent-1',\n        alignment: { indent: 1 },\n        dataType: 'String'\n    },\n    {\n        id: 'indent-2',\n        alignment: { indent: 2 },\n        dataType: 'String'\n    },\n    {\n        id: 'indent-3',\n        alignment: { indent: 3 },\n        dataType: 'String'\n    }\n]"
         }
     ],
     "components": [],
     "defaultColDef": "{\n    sortable: true,\n    filter: true,\n    resizable: true,\n    minWidth: 100,\n    flex: 1\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"country\",\n            minWidth: 120,\n            rowGroup: true\n        },\n        {\n            field: \"year\",\n            rowGroup: true\n        },\n        {\n            headerName: \"Name\",\n            field: \"athlete\",\n            minWidth: 150\n        },\n        {\n            headerName: \"Name Length\",\n            valueGetter: \"data ? data.athlete.length : \\\"\\\"\"\n        },\n        {\n            field: \"sport\",\n            minWidth: 120,\n            rowGroup: true\n        },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'country',\n        minWidth: 120,\n        rowGroup: true\n    },\n    {\n        field: 'year',\n        rowGroup: true\n    },\n    {\n        headerName: 'Name',\n        field: 'athlete',\n        minWidth: 150\n    },\n    {\n        headerName: 'Name Length',\n        valueGetter: 'data ? data.athlete.length : \"\"'\n    },\n    {\n        field: 'sport',\n        minWidth: 120,\n        rowGroup: true\n    },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

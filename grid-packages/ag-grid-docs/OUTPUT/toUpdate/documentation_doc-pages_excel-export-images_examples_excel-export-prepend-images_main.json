@@ -3,18 +3,18 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        { field: \"athlete\" },\n        { field: \"country\" },\n        { field: \"age\" },\n        { field: \"year\" },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]"
+            "value": "[\n    { field: 'athlete' },\n    { field: 'country' },\n    { field: 'age' },\n    { field: 'year' },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]"
         },
-        { "name": "defaultColDef", "value": "{\n        width: 150,\n        resizable: true\n    }" },
+        { "name": "defaultColDef", "value": "{\n    width: 150,\n    resizable: true\n}" },
         {
             "name": "defaultExcelExportParams",
-            "value": "{\n        prependContent: [[{\n                    data: {\n                        type: \"String\",\n                        value: logos.AgGrid\n                    },\n                    mergeAcross: 1\n                }]],\n        rowHeight: params => params.rowIndex === 1 ? 82 : 20,\n        addImageToCell: (rowIndex, col, value) => {\n            if (rowIndex !== 1 || col.getColId() !== \"athlete\") {\n                return;\n            }\n            return {\n                image: {\n                    id: \"logo\",\n                    base64: value,\n                    imageType: \"png\",\n                    width: 295,\n                    height: 100,\n                    position: { colSpan: 2 }\n                }\n            };\n        }\n    }"
+            "value": "{\n    prependContent: [[{\n                data: {\n                    type: 'String',\n                    value: logos.AgGrid\n                },\n                mergeAcross: 1\n            }]],\n    rowHeight: params => params.rowIndex === 1 ? 82 : 20,\n    addImageToCell: (rowIndex, col, value) => {\n        if (rowIndex !== 1 || col.getColId() !== 'athlete') {\n            return;\n        }\n        return {\n            image: {\n                id: 'logo',\n                base64: value,\n                imageType: 'png',\n                width: 295,\n                height: 100,\n                position: { colSpan: 2 }\n            }\n        };\n    }\n}"
         }
     ],
     "components": [],
     "defaultColDef": "{\n    width: 150,\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        { field: \"athlete\" },\n        { field: \"country\" },\n        { field: \"age\" },\n        { field: \"year\" },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]",
+    "parsedColDefs": "[\n    { field: 'athlete' },\n    { field: 'country' },\n    { field: 'age' },\n    { field: 'year' },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

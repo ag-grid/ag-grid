@@ -3,23 +3,23 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        { field: \"athlete\" },\n        {\n            field: \"age\",\n            maxWidth: 100\n        },\n        {\n            field: \"country\",\n            minWidth: 180,\n            headerCheckboxSelection: true,\n            checkboxSelection: true\n        },\n        {\n            field: \"year\",\n            maxWidth: 120\n        },\n        {\n            field: \"date\",\n            minWidth: 150\n        },\n        { field: \"sport\" },\n        {\n            field: \"gold\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"silver\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"bronze\",\n            aggFunc: \"sum\"\n        }\n    ]"
+            "value": "[\n    { field: 'athlete' },\n    {\n        field: 'age',\n        maxWidth: 100\n    },\n    {\n        field: 'country',\n        minWidth: 180,\n        headerCheckboxSelection: true,\n        checkboxSelection: true\n    },\n    {\n        field: 'year',\n        maxWidth: 120\n    },\n    {\n        field: 'date',\n        minWidth: 150\n    },\n    { field: 'sport' },\n    {\n        field: 'gold',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'silver',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'bronze',\n        aggFunc: 'sum'\n    }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        minWidth: 150,\n        sortable: true,\n        resizable: true,\n        filter: true\n    }"
+            "value": "{\n    flex: 1,\n    minWidth: 150,\n    sortable: true,\n    resizable: true,\n    filter: true\n}"
         },
-        { "name": "rowSelection", "value": "\"multiple\"" },
+        { "name": "rowSelection", "value": "'multiple'" },
         { "name": "suppressMenuHide", "value": "true" },
         {
             "name": "isRowSelectable",
-            "value": "function (rowNode) {\n        return rowNode.data ? rowNode.data.year < 2007 : false;\n    }"
+            "value": "function (rowNode) {\n    return rowNode.data ? rowNode.data.year < 2007 : false;\n}"
         }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    minWidth: 150,\n    sortable: true,\n    resizable: true,\n    filter: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        { field: \"athlete\" },\n        {\n            field: \"age\",\n            maxWidth: 100\n        },\n        {\n            field: \"country\",\n            minWidth: 180,\n            headerCheckboxSelection: true,\n            checkboxSelection: true\n        },\n        {\n            field: \"year\",\n            maxWidth: 120\n        },\n        {\n            field: \"date\",\n            minWidth: 150\n        },\n        { field: \"sport\" },\n        {\n            field: \"gold\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"silver\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"bronze\",\n            aggFunc: \"sum\"\n        }\n    ]",
+    "parsedColDefs": "[\n    { field: 'athlete' },\n    {\n        field: 'age',\n        maxWidth: 100\n    },\n    {\n        field: 'country',\n        minWidth: 180,\n        headerCheckboxSelection: true,\n        checkboxSelection: true\n    },\n    {\n        field: 'year',\n        maxWidth: 120\n    },\n    {\n        field: 'date',\n        minWidth: 150\n    },\n    { field: 'sport' },\n    {\n        field: 'gold',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'silver',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'bronze',\n        aggFunc: 'sum'\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [],

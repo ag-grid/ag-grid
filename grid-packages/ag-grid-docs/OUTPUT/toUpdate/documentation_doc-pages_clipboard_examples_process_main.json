@@ -3,14 +3,14 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            headerName: \"Participants\",\n            children: [\n                {\n                    field: \"athlete\",\n                    headerName: \"Athlete Name\",\n                    minWidth: 200\n                },\n                { field: \"age\" },\n                {\n                    field: \"country\",\n                    minWidth: 150\n                }\n            ]\n        },\n        {\n            headerName: \"Olympic Games\",\n            children: [\n                { field: \"year\" },\n                {\n                    field: \"date\",\n                    minWidth: 150\n                },\n                {\n                    field: \"sport\",\n                    minWidth: 150\n                },\n                { field: \"gold\" },\n                {\n                    field: \"silver\",\n                    suppressPaste: true\n                },\n                { field: \"bronze\" },\n                { field: \"total\" }\n            ]\n        }\n    ]"
+            "value": "[\n    {\n        headerName: 'Participants',\n        children: [\n            {\n                field: 'athlete',\n                headerName: 'Athlete Name',\n                minWidth: 200\n            },\n            { field: 'age' },\n            {\n                field: 'country',\n                minWidth: 150\n            }\n        ]\n    },\n    {\n        headerName: 'Olympic Games',\n        children: [\n            { field: 'year' },\n            {\n                field: 'date',\n                minWidth: 150\n            },\n            {\n                field: 'sport',\n                minWidth: 150\n            },\n            { field: 'gold' },\n            {\n                field: 'silver',\n                suppressPaste: true\n            },\n            { field: 'bronze' },\n            { field: 'total' }\n        ]\n    }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        editable: true,\n        flex: 1,\n        minWidth: 100,\n        resizable: true\n    }"
+            "value": "{\n    editable: true,\n    flex: 1,\n    minWidth: 100,\n    resizable: true\n}"
         },
         { "name": "enableRangeSelection", "value": "true" },
-        { "name": "rowSelection", "value": "\"multiple\"" },
+        { "name": "rowSelection", "value": "'multiple'" },
         { "name": "processCellForClipboard", "value": null },
         { "name": "processHeaderForClipboard", "value": null },
         { "name": "processGroupHeaderForClipboard", "value": null },
@@ -19,12 +19,12 @@
     "components": [],
     "defaultColDef": "{\n    editable: true,\n    flex: 1,\n    minWidth: 100,\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            headerName: \"Participants\",\n            children: [\n                {\n                    field: \"athlete\",\n                    headerName: \"Athlete Name\",\n                    minWidth: 200\n                },\n                { field: \"age\" },\n                {\n                    field: \"country\",\n                    minWidth: 150\n                }\n            ]\n        },\n        {\n            headerName: \"Olympic Games\",\n            children: [\n                { field: \"year\" },\n                {\n                    field: \"date\",\n                    minWidth: 150\n                },\n                {\n                    field: \"sport\",\n                    minWidth: 150\n                },\n                { field: \"gold\" },\n                {\n                    field: \"silver\",\n                    suppressPaste: true\n                },\n                { field: \"bronze\" },\n                { field: \"total\" }\n            ]\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        headerName: 'Participants',\n        children: [\n            {\n                field: 'athlete',\n                headerName: 'Athlete Name',\n                minWidth: 200\n            },\n            { field: 'age' },\n            {\n                field: 'country',\n                minWidth: 150\n            }\n        ]\n    },\n    {\n        headerName: 'Olympic Games',\n        children: [\n            { field: 'year' },\n            {\n                field: 'date',\n                minWidth: 150\n            },\n            {\n                field: 'sport',\n                minWidth: 150\n            },\n            { field: 'gold' },\n            {\n                field: 'silver',\n                suppressPaste: true\n            },\n            { field: 'bronze' },\n            { field: 'total' }\n        ]\n    }\n]",
     "instanceMethods": [
-        "function processCellForClipboard(params) {\n        return \"C-\" + params.value;\n    }",
-        "function processHeaderForClipboard(params) {\n        const colDef = params.column.getColDef();\n        let headerName = colDef.headerName || colDef.field || \"\";\n        if (colDef.headerName !== \"\") {\n            headerName = headerName.charAt(0).toUpperCase() + headerName.slice(1);\n        }\n        return \"H-\" + headerName;\n    }",
-        "function processGroupHeaderForClipboard(params) {\n        const colGroupDef = params.columnGroup.getColGroupDef() || {};\n        let headerName = colGroupDef.headerName || \"\";\n        if (headerName === \"\") {\n            return \"\";\n        }\n        return \"GH-\" + headerName;\n    }",
-        "function processCellFromClipboard(params) {\n        return \"Z-\" + params.value;\n    }"
+        "function processCellForClipboard(params) {\n    return 'C-' + params.value;\n}",
+        "function processHeaderForClipboard(params) {\n    const colDef = params.column.getColDef();\n    let headerName = colDef.headerName || colDef.field || '';\n    if (colDef.headerName !== '') {\n        headerName = headerName.charAt(0).toUpperCase() + headerName.slice(1);\n    }\n    return 'H-' + headerName;\n}",
+        "function processGroupHeaderForClipboard(params) {\n    const colGroupDef = params.columnGroup.getColGroupDef() || {};\n    let headerName = colGroupDef.headerName || '';\n    if (headerName === '') {\n        return '';\n    }\n    return 'GH-' + headerName;\n}",
+        "function processCellFromClipboard(params) {\n    return 'Z-' + params.value;\n}"
     ],
     "externalEventHandlers": [],
     "utils": [],

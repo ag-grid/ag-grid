@@ -3,18 +3,15 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            headerName: \"A\",\n            field: \"a\"\n        },\n        {\n            headerName: \"B\",\n            field: \"b\"\n        },\n        {\n            headerName: \"\\xA3A\",\n            field: \"a\",\n            valueFormatter: currencyFormatter\n        },\n        {\n            headerName: \"\\xA3B\",\n            field: \"b\",\n            valueFormatter: currencyFormatter\n        },\n        {\n            headerName: \"(A)\",\n            field: \"a\",\n            valueFormatter: bracketsFormatter\n        },\n        {\n            headerName: \"(B)\",\n            field: \"b\",\n            valueFormatter: bracketsFormatter\n        }\n    ]"
+            "value": "[\n    {\n        headerName: 'A',\n        field: 'a'\n    },\n    {\n        headerName: 'B',\n        field: 'b'\n    },\n    {\n        headerName: '\\xA3A',\n        field: 'a',\n        valueFormatter: currencyFormatter\n    },\n    {\n        headerName: '\\xA3B',\n        field: 'b',\n        valueFormatter: currencyFormatter\n    },\n    {\n        headerName: '(A)',\n        field: 'a',\n        valueFormatter: bracketsFormatter\n    },\n    {\n        headerName: '(B)',\n        field: 'b',\n        valueFormatter: bracketsFormatter\n    }\n]"
         },
-        {
-            "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        cellClass: \"number-cell\",\n        resizable: true\n    }"
-        },
+        { "name": "defaultColDef", "value": "{\n    flex: 1,\n    cellClass: 'number-cell',\n    resizable: true\n}" },
         { "name": "rowData", "value": "createRowData()" }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    cellClass: 'number-cell',\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            headerName: \"A\",\n            field: \"a\"\n        },\n        {\n            headerName: \"B\",\n            field: \"b\"\n        },\n        {\n            headerName: \"\\xA3A\",\n            field: \"a\",\n            valueFormatter: \"AG_LITERAL_currencyFormatter\"\n        },\n        {\n            headerName: \"\\xA3B\",\n            field: \"b\",\n            valueFormatter: \"AG_LITERAL_currencyFormatter\"\n        },\n        {\n            headerName: \"(A)\",\n            field: \"a\",\n            valueFormatter: \"AG_LITERAL_bracketsFormatter\"\n        },\n        {\n            headerName: \"(B)\",\n            field: \"b\",\n            valueFormatter: \"AG_LITERAL_bracketsFormatter\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        headerName: 'A',\n        field: 'a'\n    },\n    {\n        headerName: 'B',\n        field: 'b'\n    },\n    {\n        headerName: '\\xA3A',\n        field: 'a',\n        valueFormatter: 'AG_LITERAL_currencyFormatter'\n    },\n    {\n        headerName: '\\xA3B',\n        field: 'b',\n        valueFormatter: 'AG_LITERAL_currencyFormatter'\n    },\n    {\n        headerName: '(A)',\n        field: 'a',\n        valueFormatter: 'AG_LITERAL_bracketsFormatter'\n    },\n    {\n        headerName: '(B)',\n        field: 'b',\n        valueFormatter: 'AG_LITERAL_bracketsFormatter'\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [

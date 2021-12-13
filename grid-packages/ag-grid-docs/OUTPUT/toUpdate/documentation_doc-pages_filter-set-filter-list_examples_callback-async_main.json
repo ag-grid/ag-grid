@@ -3,17 +3,17 @@
     "properties": [
         {
             "name": "rowData",
-            "value": "[\n        { value: \"value 1\" },\n        { value: \"value 1\" },\n        { value: \"value 1\" },\n        { value: \"value 1\" },\n        { value: \"value 2\" },\n        { value: \"value 2\" },\n        { value: \"value 2\" },\n        { value: \"value 2\" },\n        { value: \"value 2\" }\n    ]"
+            "value": "[\n    { value: 'value 1' },\n    { value: 'value 1' },\n    { value: 'value 1' },\n    { value: 'value 1' },\n    { value: 'value 2' },\n    { value: 'value 2' },\n    { value: 'value 2' },\n    { value: 'value 2' },\n    { value: 'value 2' }\n]"
         },
         {
             "name": "columnDefs",
-            "value": "[{\n            headerName: \"Set filter column\",\n            field: \"value\",\n            flex: 1,\n            filter: \"agSetColumnFilter\",\n            floatingFilter: true,\n            filterParams: filterParams\n        }]"
+            "value": "[{\n        headerName: 'Set filter column',\n        field: 'value',\n        flex: 1,\n        filter: 'agSetColumnFilter',\n        floatingFilter: true,\n        filterParams: filterParams\n    }]"
         }
     ],
     "components": [],
     "defaultColDef": null,
     "globalComponents": [],
-    "parsedColDefs": "[{\n            headerName: \"Set filter column\",\n            field: \"value\",\n            flex: 1,\n            filter: \"agSetColumnFilter\",\n            floatingFilter: true,\n            filterParams: \"AG_LITERAL_filterParams\"\n        }]",
+    "parsedColDefs": "[{\n        headerName: 'Set filter column',\n        field: 'value',\n        flex: 1,\n        filter: 'agSetColumnFilter',\n        floatingFilter: true,\n        filterParams: 'AG_LITERAL_filterParams'\n    }]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [

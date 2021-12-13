@@ -9,22 +9,19 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"athlete\",\n            minWidth: 200\n        },\n        { field: \"age\" },\n        {\n            field: \"country\",\n            minWidth: 200\n        },\n        { field: \"year\" },\n        {\n            field: \"date\",\n            minWidth: 180\n        },\n        {\n            field: \"sport\",\n            minWidth: 200\n        },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]"
+            "value": "[\n    {\n        field: 'athlete',\n        minWidth: 200\n    },\n    { field: 'age' },\n    {\n        field: 'country',\n        minWidth: 200\n    },\n    { field: 'year' },\n    {\n        field: 'date',\n        minWidth: 180\n    },\n    {\n        field: 'sport',\n        minWidth: 200\n    },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]"
         },
-        {
-            "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        minWidth: 100,\n        resizable: true\n    }"
-        },
+        { "name": "defaultColDef", "value": "{\n    flex: 1,\n    minWidth: 100,\n    resizable: true\n}" },
         { "name": "enableRangeSelection", "value": "true" },
         {
             "name": "statusBar",
-            "value": "{\n        statusPanels: [{\n                statusPanel: \"agAggregationComponent\",\n                statusPanelParams: {\n                    aggFuncs: [\n                        \"sum\",\n                        \"avg\"\n                    ]\n                }\n            }]\n    }"
+            "value": "{\n    statusPanels: [{\n            statusPanel: 'agAggregationComponent',\n            statusPanelParams: {\n                aggFuncs: [\n                    'sum',\n                    'avg'\n                ]\n            }\n        }]\n}"
         }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    minWidth: 100,\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            minWidth: 200\n        },\n        { field: \"age\" },\n        {\n            field: \"country\",\n            minWidth: 200\n        },\n        { field: \"year\" },\n        {\n            field: \"date\",\n            minWidth: 180\n        },\n        {\n            field: \"sport\",\n            minWidth: 200\n        },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'athlete',\n        minWidth: 200\n    },\n    { field: 'age' },\n    {\n        field: 'country',\n        minWidth: 200\n    },\n    { field: 'year' },\n    {\n        field: 'date',\n        minWidth: 180\n    },\n    {\n        field: 'sport',\n        minWidth: 200\n    },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [],

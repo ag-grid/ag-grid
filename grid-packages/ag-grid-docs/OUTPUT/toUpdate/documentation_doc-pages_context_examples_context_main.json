@@ -3,11 +3,11 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            headerName: \"Product\",\n            field: \"product\"\n        },\n        {\n            headerName: \"Currency\",\n            field: \"price.currency\"\n        },\n        {\n            headerName: \"Price Local\",\n            field: \"price\",\n            cellStyle: { \"text-align\": \"right\" },\n            cellRenderer: \"currencyCellRenderer\"\n        },\n        {\n            headerName: \"Report Price\",\n            field: \"price\",\n            cellStyle: { \"text-align\": \"right\" },\n            cellRenderer: \"currencyCellRenderer\",\n            valueGetter: reportingCurrencyValueGetter,\n            headerValueGetter: \"ctx.reportingCurrency\"\n        }\n    ]"
+            "value": "[\n    {\n        headerName: 'Product',\n        field: 'product'\n    },\n    {\n        headerName: 'Currency',\n        field: 'price.currency'\n    },\n    {\n        headerName: 'Price Local',\n        field: 'price',\n        cellStyle: { 'text-align': 'right' },\n        cellRenderer: 'currencyCellRenderer'\n    },\n    {\n        headerName: 'Report Price',\n        field: 'price',\n        cellStyle: { 'text-align': 'right' },\n        cellRenderer: 'currencyCellRenderer',\n        valueGetter: reportingCurrencyValueGetter,\n        headerValueGetter: 'ctx.reportingCurrency'\n    }\n]"
         },
-        { "name": "defaultColDef", "value": "{\n        flex: 1,\n        resizable: true\n    }" },
+        { "name": "defaultColDef", "value": "{\n    flex: 1,\n    resizable: true\n}" },
         { "name": "rowData", "value": "getData()" },
-        { "name": "context", "value": "{ reportingCurrency: \"EUR\" }" },
+        { "name": "context", "value": "{ reportingCurrency: 'EUR' }" },
         { "name": "components", "value": "{ currencyCellRenderer: getCurrencyCellRenderer() }" }
     ],
     "components": [],

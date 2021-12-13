@@ -3,15 +3,15 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"sale\",\n            headerName: \"Sale ($)\",\n            filter: \"agNumberColumnFilter\",\n            valueFormatter: numberValueFormatter\n        },\n        {\n            field: \"sale\",\n            headerName: \"Sale\",\n            filter: \"agNumberColumnFilter\",\n            filterParams: saleFilterParams,\n            valueFormatter: saleValueFormatter\n        }\n    ]"
+            "value": "[\n    {\n        field: 'sale',\n        headerName: 'Sale ($)',\n        filter: 'agNumberColumnFilter',\n        valueFormatter: numberValueFormatter\n    },\n    {\n        field: 'sale',\n        headerName: 'Sale',\n        filter: 'agNumberColumnFilter',\n        filterParams: saleFilterParams,\n        valueFormatter: saleValueFormatter\n    }\n]"
         },
-        { "name": "defaultColDef", "value": "{\n        flex: 1,\n        minWidth: 150\n    }" },
+        { "name": "defaultColDef", "value": "{\n    flex: 1,\n    minWidth: 150\n}" },
         { "name": "rowData", "value": "getData()" }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    minWidth: 150\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"sale\",\n            headerName: \"Sale ($)\",\n            filter: \"agNumberColumnFilter\",\n            valueFormatter: \"AG_LITERAL_numberValueFormatter\"\n        },\n        {\n            field: \"sale\",\n            headerName: \"Sale\",\n            filter: \"agNumberColumnFilter\",\n            filterParams: \"AG_LITERAL_saleFilterParams\",\n            valueFormatter: \"AG_LITERAL_saleValueFormatter\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'sale',\n        headerName: 'Sale ($)',\n        filter: 'agNumberColumnFilter',\n        valueFormatter: 'AG_LITERAL_numberValueFormatter'\n    },\n    {\n        field: 'sale',\n        headerName: 'Sale',\n        filter: 'agNumberColumnFilter',\n        filterParams: 'AG_LITERAL_saleFilterParams',\n        valueFormatter: 'AG_LITERAL_saleValueFormatter'\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [

@@ -3,22 +3,19 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"country\",\n            rowGroup: true\n        },\n        {\n            field: \"year\",\n            pivot: true\n        },\n        {\n            field: \"total\",\n            aggFunc: \"sum\"\n        }\n    ]"
+            "value": "[\n    {\n        field: 'country',\n        rowGroup: true\n    },\n    {\n        field: 'year',\n        pivot: true\n    },\n    {\n        field: 'total',\n        aggFunc: 'sum'\n    }\n]"
         },
-        {
-            "name": "defaultColDef",
-            "value": "{\n        flex: 4,\n        minWidth: 100,\n        resizable: true\n    }"
-        },
-        { "name": "autoGroupColumnDef", "value": "{\n        flex: 5,\n        minWidth: 200\n    }" },
-        { "name": "rowModelType", "value": "\"serverSide\"" },
-        { "name": "serverSideStoreType", "value": "\"partial\"" },
+        { "name": "defaultColDef", "value": "{\n    flex: 4,\n    minWidth: 100,\n    resizable: true\n}" },
+        { "name": "autoGroupColumnDef", "value": "{\n    flex: 5,\n    minWidth: 200\n}" },
+        { "name": "rowModelType", "value": "'serverSide'" },
+        { "name": "serverSideStoreType", "value": "'partial'" },
         { "name": "pivotMode", "value": "true" },
         { "name": "animateRows", "value": "true" }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 4,\n    minWidth: 100,\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"country\",\n            rowGroup: true\n        },\n        {\n            field: \"year\",\n            pivot: true\n        },\n        {\n            field: \"total\",\n            aggFunc: \"sum\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'country',\n        rowGroup: true\n    },\n    {\n        field: 'year',\n        pivot: true\n    },\n    {\n        field: 'total',\n        aggFunc: 'sum'\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [

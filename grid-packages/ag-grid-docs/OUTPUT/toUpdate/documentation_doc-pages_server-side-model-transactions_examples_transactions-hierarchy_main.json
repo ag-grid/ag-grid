@@ -3,23 +3,23 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"productName\",\n            rowGroup: true,\n            hide: true\n        },\n        { field: \"tradeName\" },\n        { field: \"value\" }\n    ]"
+            "value": "[\n    {\n        field: 'productName',\n        rowGroup: true,\n        hide: true\n    },\n    { field: 'tradeName' },\n    { field: 'value' }\n]"
         },
-        { "name": "defaultColDef", "value": "{\n        width: 250,\n        resizable: true\n    }" },
-        { "name": "getRowNodeId", "value": "function (data) {\n        return data.id;\n    }" },
-        { "name": "rowModelType", "value": "\"serverSide\"" },
-        { "name": "serverSideStoreType", "value": "\"full\"" },
+        { "name": "defaultColDef", "value": "{\n    width: 250,\n    resizable: true\n}" },
+        { "name": "getRowNodeId", "value": "function (data) {\n    return data.id;\n}" },
+        { "name": "rowModelType", "value": "'serverSide'" },
+        { "name": "serverSideStoreType", "value": "'full'" },
         { "name": "animateRows", "value": "true" },
         { "name": "purgeClosedRowNodes", "value": "true" },
         {
             "name": "getServerSideStoreParams",
-            "value": "function (params) {\n        const type = params.level == 0 ? \"partial\" : \"full\";\n        return { storeType: type };\n    }"
+            "value": "function (params) {\n    const type = params.level == 0 ? 'partial' : 'full';\n    return { storeType: type };\n}"
         }
     ],
     "components": [],
     "defaultColDef": "{\n    width: 250,\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"productName\",\n            rowGroup: true,\n            hide: true\n        },\n        { field: \"tradeName\" },\n        { field: \"value\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'productName',\n        rowGroup: true,\n        hide: true\n    },\n    { field: 'tradeName' },\n    { field: 'value' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

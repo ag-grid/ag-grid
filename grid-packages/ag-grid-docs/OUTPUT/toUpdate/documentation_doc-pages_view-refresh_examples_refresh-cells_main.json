@@ -3,7 +3,7 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"a\",\n            suppressCellFlash: true\n        },\n        { field: \"b\" },\n        { field: \"c\" },\n        { field: \"d\" },\n        { field: \"e\" },\n        { field: \"f\" }\n    ]"
+            "value": "[\n    {\n        field: 'a',\n        suppressCellFlash: true\n    },\n    { field: 'b' },\n    { field: 'c' },\n    { field: 'd' },\n    { field: 'e' },\n    { field: 'f' }\n]"
         },
         { "name": "defaultColDef", "value": "{ flex: 1 }" },
         { "name": "rowData", "value": "[]" },
@@ -14,7 +14,7 @@
     "components": [],
     "defaultColDef": "{ flex: 1 }",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"a\",\n            suppressCellFlash: true\n        },\n        { field: \"b\" },\n        { field: \"c\" },\n        { field: \"d\" },\n        { field: \"e\" },\n        { field: \"f\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'a',\n        suppressCellFlash: true\n    },\n    { field: 'b' },\n    { field: 'c' },\n    { field: 'd' },\n    { field: 'e' },\n    { field: 'f' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

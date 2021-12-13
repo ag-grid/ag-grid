@@ -3,7 +3,7 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"athlete\",\n            suppressMovable: true,\n            width: 150,\n            cellClass: \"suppress-movable-col\"\n        },\n        {\n            field: \"age\",\n            lockPosition: true,\n            cellClass: \"locked-col\"\n        },\n        {\n            field: \"country\",\n            width: 150\n        },\n        { field: \"year\" },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]"
+            "value": "[\n    {\n        field: 'athlete',\n        suppressMovable: true,\n        width: 150,\n        cellClass: 'suppress-movable-col'\n    },\n    {\n        field: 'age',\n        lockPosition: true,\n        cellClass: 'locked-col'\n    },\n    {\n        field: 'country',\n        width: 150\n    },\n    { field: 'year' },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]"
         },
         { "name": "defaultColDef", "value": "{ width: 150 }" },
         { "name": "suppressDragLeaveHidesColumns", "value": "true" }
@@ -11,7 +11,7 @@
     "components": [],
     "defaultColDef": "{ width: 150 }",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            suppressMovable: true,\n            width: 150,\n            cellClass: \"suppress-movable-col\"\n        },\n        {\n            field: \"age\",\n            lockPosition: true,\n            cellClass: \"locked-col\"\n        },\n        {\n            field: \"country\",\n            width: 150\n        },\n        { field: \"year\" },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'athlete',\n        suppressMovable: true,\n        width: 150,\n        cellClass: 'suppress-movable-col'\n    },\n    {\n        field: 'age',\n        lockPosition: true,\n        cellClass: 'locked-col'\n    },\n    {\n        field: 'country',\n        width: 150\n    },\n    { field: 'year' },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [],

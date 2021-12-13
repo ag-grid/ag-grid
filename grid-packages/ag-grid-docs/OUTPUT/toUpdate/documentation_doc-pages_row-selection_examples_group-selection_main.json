@@ -3,14 +3,14 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"country\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            field: \"sport\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            field: \"gold\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"silver\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"bronze\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"age\",\n            minWidth: 120,\n            checkboxSelection: true,\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"year\",\n            maxWidth: 120\n        },\n        {\n            field: \"date\",\n            minWidth: 150\n        }\n    ]"
+            "value": "[\n    {\n        field: 'country',\n        rowGroup: true,\n        hide: true\n    },\n    {\n        field: 'sport',\n        rowGroup: true,\n        hide: true\n    },\n    {\n        field: 'gold',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'silver',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'bronze',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'age',\n        minWidth: 120,\n        checkboxSelection: true,\n        aggFunc: 'sum'\n    },\n    {\n        field: 'year',\n        maxWidth: 120\n    },\n    {\n        field: 'date',\n        minWidth: 150\n    }\n]"
         },
-        { "name": "defaultColDef", "value": "{\n        flex: 1,\n        minWidth: 100\n    }" },
+        { "name": "defaultColDef", "value": "{\n    flex: 1,\n    minWidth: 100\n}" },
         {
             "name": "autoGroupColumnDef",
-            "value": "{\n        headerName: \"Athlete\",\n        field: \"athlete\",\n        minWidth: 250,\n        cellRenderer: \"agGroupCellRenderer\",\n        cellRendererParams: { checkbox: true }\n    }"
+            "value": "{\n    headerName: 'Athlete',\n    field: 'athlete',\n    minWidth: 250,\n    cellRenderer: 'agGroupCellRenderer',\n    cellRendererParams: { checkbox: true }\n}"
         },
-        { "name": "rowSelection", "value": "\"multiple\"" },
+        { "name": "rowSelection", "value": "'multiple'" },
         { "name": "groupSelectsChildren", "value": "true" },
         { "name": "suppressRowClickSelection", "value": "true" },
         { "name": "suppressAggFuncInHeader", "value": "true" }
@@ -18,7 +18,7 @@
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    minWidth: 100\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"country\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            field: \"sport\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            field: \"gold\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"silver\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"bronze\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"age\",\n            minWidth: 120,\n            checkboxSelection: true,\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"year\",\n            maxWidth: 120\n        },\n        {\n            field: \"date\",\n            minWidth: 150\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'country',\n        rowGroup: true,\n        hide: true\n    },\n    {\n        field: 'sport',\n        rowGroup: true,\n        hide: true\n    },\n    {\n        field: 'gold',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'silver',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'bronze',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'age',\n        minWidth: 120,\n        checkboxSelection: true,\n        aggFunc: 'sum'\n    },\n    {\n        field: 'year',\n        maxWidth: 120\n    },\n    {\n        field: 'date',\n        minWidth: 150\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [],
