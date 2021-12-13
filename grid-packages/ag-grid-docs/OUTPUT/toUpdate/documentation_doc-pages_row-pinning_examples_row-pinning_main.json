@@ -3,11 +3,11 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n    {\n        field: 'athlete',\n        cellRendererSelector: function (params) {\n            if (params.node.rowPinned) {\n                return {\n                    component: 'customPinnedRowRenderer',\n                    params: { style: { color: 'blue' } }\n                };\n            } else {\n                return undefined;\n            }\n        }\n    },\n    {\n        field: 'age',\n        cellRendererSelector: function (params) {\n            if (params.node.rowPinned) {\n                return {\n                    component: 'customPinnedRowRenderer',\n                    params: { style: { 'font-style': 'italic' } }\n                };\n            } else {\n                return undefined;\n            }\n        }\n    },\n    { field: 'country' },\n    { field: 'year' },\n    { field: 'date' },\n    { field: 'sport' }\n]"
+            "value": "[\n    {\n        field: 'athlete',\n        cellRendererSelector: function (params) {\n            if (params.node.rowPinned) {\n                return {\n                    component: 'customPinnedRowRenderer',\n                    params: {\n                        style: { color: 'blue' },\n                    },\n                };\n            }\n            else {\n                // rows that are not pinned don't use any cell renderer\n                return undefined;\n            }\n        },\n    },\n    {\n        field: 'age',\n        cellRendererSelector: function (params) {\n            if (params.node.rowPinned) {\n                return {\n                    component: 'customPinnedRowRenderer',\n                    params: {\n                        style: { 'font-style': 'italic' },\n                    },\n                };\n            }\n            else {\n                // rows that are not pinned don't use any cell renderer\n                return undefined;\n            }\n        },\n    },\n    { field: 'country' },\n    { field: 'year' },\n    { field: 'date' },\n    { field: 'sport' },\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n    width: 200,\n    sortable: true,\n    filter: true,\n    resizable: true\n}"
+            "value": "{\n    width: 200,\n    sortable: true,\n    filter: true,\n    resizable: true,\n}"
         },
         { "name": "rowData", "value": "null" },
         {
@@ -16,27 +16,27 @@
         },
         { "name": "pinnedTopRowData", "value": "createData(1, 'Top')" },
         { "name": "pinnedBottomRowData", "value": "createData(1, 'Bottom')" },
-        { "name": "components", "value": "{ customPinnedRowRenderer: CustomPinnedRowRenderer }" }
+        { "name": "components", "value": "{\n    customPinnedRowRenderer: CustomPinnedRowRenderer,\n}" }
     ],
     "components": [{ "name": "customPinnedRowRenderer", "value": "CustomPinnedRowRenderer" }],
-    "defaultColDef": "{\n    width: 200,\n    sortable: true,\n    filter: true,\n    resizable: true\n}",
+    "defaultColDef": "{\n    width: 200,\n    sortable: true,\n    filter: true,\n    resizable: true,\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n    {\n        field: 'athlete',\n        cellRendererSelector: 'AG_FUNCTION_function (params) {\\n    if (params.node.rowPinned) {\\n        return {\\n            component: \\'customPinnedRowRenderer\\',\\n            params: { style: { color: \\'blue\\' } }\\n        };\\n    } else {\\n        return undefined;\\n    }\\n}'\n    },\n    {\n        field: 'age',\n        cellRendererSelector: 'AG_FUNCTION_function (params) {\\n    if (params.node.rowPinned) {\\n        return {\\n            component: \\'customPinnedRowRenderer\\',\\n            params: { style: { \\'font-style\\': \\'italic\\' } }\\n        };\\n    } else {\\n        return undefined;\\n    }\\n}'\n    },\n    { field: 'country' },\n    { field: 'year' },\n    { field: 'date' },\n    { field: 'sport' }\n]",
+    "parsedColDefs": "[{ field: 'athlete',cellRendererSelector: \"AG_FUNCTION_function (params) {\\n    if (params.node.rowPinned) {\\n        return {\\n            component: 'customPinnedRowRenderer',\\n            params: {\\n                style: { color: 'blue' },\\n            },\\n        };\\n    }\\n    else {\\n        // rows that are not pinned don't use any cell renderer\\n        return undefined;\\n    }\\n}\" },{ field: 'age',cellRendererSelector: \"AG_FUNCTION_function (params) {\\n    if (params.node.rowPinned) {\\n        return {\\n            component: 'customPinnedRowRenderer',\\n            params: {\\n                style: { 'font-style': 'italic' },\\n            },\\n        };\\n    }\\n    else {\\n        // rows that are not pinned don't use any cell renderer\\n        return undefined;\\n    }\\n}\" },{ field: 'country' },{ field: 'year' },{ field: 'date' },{ field: 'sport' },]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {
             "name": "onPinnedRowTopCount",
             "params": "",
-            "body": "function onPinnedRowTopCount() {\n    var headerRowsToFloat = document.getElementById('top-row-count').value;\n    var count = Number(headerRowsToFloat);\n    var rows = createData(count, 'Top');\n    this.gridApi.setPinnedTopRowData(rows);\n}"
+            "body": "function onPinnedRowTopCount() {\n    var headerRowsToFloat = (document.getElementById('top-row-count')).value;\n    var count = Number(headerRowsToFloat);\n    var rows = createData(count, 'Top');\n    this.gridApi.setPinnedTopRowData(rows);\n}"
         },
         {
             "name": "onPinnedRowBottomCount",
             "params": "",
-            "body": "function onPinnedRowBottomCount() {\n    var footerRowsToFloat = document.getElementById('bottom-row-count').value;\n    var count = Number(footerRowsToFloat);\n    var rows = createData(count, 'Bottom');\n    this.gridApi.setPinnedBottomRowData(rows);\n}"
+            "body": "function onPinnedRowBottomCount() {\n    var footerRowsToFloat = (document.getElementById('bottom-row-count')).value;\n    var count = Number(footerRowsToFloat);\n    var rows = createData(count, 'Bottom');\n    this.gridApi.setPinnedBottomRowData(rows);\n}"
         }
     ],
     "utils": [
-        "function createData(count, prefix) {\n    var result = [];\n    for (var i = 0; i < count; i++) {\n        result.push({\n            athlete: prefix + ' Athlete ' + i,\n            age: prefix + ' Age ' + i,\n            country: prefix + ' Country ' + i,\n            year: prefix + ' Year ' + i,\n            date: prefix + ' Date ' + i,\n            sport: prefix + ' Sport ' + i\n        });\n    }\n    return result;\n}"
+        "function createData(count, prefix) {\n    var result = [];\n    for (var i = 0; i < count; i++) {\n        result.push({\n            athlete: prefix + ' Athlete ' + i,\n            age: prefix + ' Age ' + i,\n            country: prefix + ' Country ' + i,\n            year: prefix + ' Year ' + i,\n            date: prefix + ' Date ' + i,\n            sport: prefix + ' Sport ' + i,\n        });\n    }\n    return result;\n}"
     ],
     "data": {
         "url": "'https://www.ag-grid.com/example-assets/olympic-winners.json'",

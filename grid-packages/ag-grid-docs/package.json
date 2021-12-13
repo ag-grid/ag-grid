@@ -14,7 +14,8 @@
     "dev-server": "node dev-server.js",
     "validate-examples": "node example-validator.js validate",
     "validate-examples-watch": "node example-validator.js watch",
-    "format-dump": "prettier --write \"**/OUTPUT/*.{json}\""
+    "format-dump": "prettier --write \"OUTPUT/toUpdate/**/*\"",
+    "format-dump-all": "prettier --write \"OUTPUT/toUpdate/**/*\""
   },
   "repository": {
     "type": "git",

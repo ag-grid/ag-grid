@@ -1,5 +1,6 @@
 import { generate } from 'escodegen';
 import * as esprima from 'esprima';
+import * as ts from 'typescript'
 import { Events } from '../../../../community-modules/core/src/ts/eventKeys';
 import { PropertyKeys } from '../../../../community-modules/core/src/ts/propertyKeys';
 import * as $ from 'jquery';
@@ -15,6 +16,12 @@ import {
     nodeIsVarWithName,
     NodeType,
     recognizedDomEvents,
+    tsCollect,
+    tsNodeIsFunctionCall,
+    tsNodeIsFunctionWithName,
+    tsNodeIsPropertyWithName,
+    tsNodeIsUnusedFunction,
+    tsNodeIsVarWithName,
 } from './parser-utils';
 
 export const templatePlaceholder = 'GRID_TEMPLATE_PLACEHOLDER';
@@ -33,6 +40,17 @@ function nodeIsDocumentContentLoaded(node) {
         console.error('We found something which we do not understand', node);
     }
 }
+function tsNodeIsDocumentContentLoaded(node) {
+    try {
+        if (tsNodeIsFunctionCall(node)) {
+            return node.expression.arguments.length > 0 &&
+                ts.isStringLiteral(node.expression.arguments[0]) &&
+                node.expression.arguments[0].text === 'DOMContentLoaded';
+        }
+    } catch (e) {
+        console.error('We found something which we do not understand', node);
+    }
+}
 
 function nodeIsHttpOpen(node) {
     const callee = node.expression && node.expression.callee;
@@ -43,15 +61,58 @@ function nodeIsHttpOpen(node) {
         calleeObject.name === 'httpRequest' &&
         callee.property.name === 'open';
 }
+function tsNodeIsHttpOpen(node) {
+    const callee = node.expression && node.expression.callee;
+    const calleeObject = callee && callee.object;
+
+    return ts.isExpressionStatement(node) &&
+        calleeObject &&
+        calleeObject.name === 'httpRequest' &&
+        callee.property.name === 'open';
+}
 
 function nodeIsSimpleFetchRequest(node) {
     const calleeObject = node.expression && node.expression.callee && node.expression.callee.object;
     const calleeName = calleeObject && calleeObject.callee && calleeObject.callee.object && calleeObject.callee.object.callee && calleeObject.callee.object.callee.name;
     return calleeName && calleeName === 'fetch';
 }
+function tsNodeIsSimpleFetchRequest(node) {
+    if (ts.isCallExpression(node)) {
+        node = node as any;
+        const isFetch = ts.isCallExpression(node) && node.expression.getText() === 'fetch';
+        return isFetch;
+
+    }
+}
 
 function generateWithReplacedGridOptions(node, options?) {
     return generate(node, options)
+        .replace(/gridOptions\.api/g, 'this.gridApi')
+        .replace(/gridOptions\.columnApi/g, 'this.gridColumnApi');
+}
+
+// export interface PrinterOptions {
+//     removeComments?: boolean;
+//     newLine?: NewLineKind;
+//     omitTrailingSemicolon?: boolean;
+//     noEmitHelpers?: boolean;
+// }
+const printer = ts.createPrinter({ removeComments: false, omitTrailingSemicolon: false });
+
+function tsGenerate(node, srcFile) {
+    try {
+        if (!node) {
+            return ''
+        }
+        return printer.printNode(ts.EmitHint.Unspecified, node, srcFile);
+    } catch (error) {
+        console.error(error);
+    }
+    return "ERROR - Printing";
+}
+
+function tsGenerateWithReplacedGridOptions(node, srcFile) {
+    return tsGenerate(node, srcFile)
         .replace(/gridOptions\.api/g, 'this.gridApi')
         .replace(/gridOptions\.columnApi/g, 'this.gridColumnApi');
 }
@@ -91,17 +152,25 @@ function processGlobalComponentsForVue(propertyName: string, exampleType, provid
     return false;
 }
 
+function parseFile(src) {
+    return ts.createSourceFile('tempFile.ts', src, ts.ScriptTarget.Latest, true);
+}
+
 export function parser(js, html, exampleSettings, exampleType, providedExamples) {
     const domTree = $(`<div>${html}</div>`);
 
     domTree.find('style').remove();
 
     const domEventHandlers = extractEventHandlers(domTree, recognizedDomEvents);
+    const tsTree = parseFile(js);
     const tree = esprima.parseScript(js, { comment: true });
     const collectors = [];
+    const tsCollectors = [];
     const gridOptionsCollectors = [];
+    const tsGridOptionsCollectors = [];
     const onReadyCollectors = [];
-    const indentOne = { format: { indent: { base: 1 }, quotes: 'double' } };
+    const tsOnReadyCollectors = [];
+    const indentOne = { format: {} };
     const registered = ['gridOptions'];
 
     // handler is the function name, params are any function parameters
@@ -124,6 +193,16 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
                 });
             }
         });
+        tsCollectors.push({
+            matches: node => tsNodeIsFunctionWithName(node, handler),
+            apply: (bindings, node) => {
+                bindings.externalEventHandlers.push({
+                    name: handler,
+                    params: params,
+                    body: tsGenerateWithReplacedGridOptions(node, tsTree)
+                });
+            }
+        });
     });
 
     // functions marked as "inScope" will be added to "instance" methods, as opposed to (global/unused) "util" ones
@@ -138,16 +217,39 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
         matches: node => nodeIsUnusedFunction(node, registered, unboundInstanceMethods),
         apply: (bindings, node) => bindings.utils.push(generate(node).replace(/gridOptions/g, 'gridInstance'))
     });
+    tsCollectors.push({
+        matches: node => tsNodeIsUnusedFunction(node, registered, unboundInstanceMethods),
+        apply: (bindings, node) => bindings.utils.push(tsGenerate(node, tsTree).replace(/gridOptions/g, 'gridInstance'))
+    });
 
     // anything vars not handled above in the eventHandlers is considered an unused/util method
     collectors.push({
         matches: node => node.type === NodeType.Variable && registered.indexOf(node.declarations[0].id.name) < 0,
         apply: (bindings, node) => bindings.utils.push(generate(node))
     });
+    tsCollectors.push({
+        matches: node => {
+            if (ts.isVariableDeclarationList(node)) {
+                // Not registered already and are a top level variable declaration so that we do not match
+                // variables within function scopes
+                return registered.indexOf(node.declarations[0].name.getText()) < 0 && ts.isSourceFile(node.parent.parent);
+            }
+        },
+        apply: (bindings, node) => bindings.utils.push(tsGenerate(node.parent, tsTree))
+    });
 
     // extract the xmlhttpreq call
     onReadyCollectors.push({
         matches: nodeIsHttpOpen,
+        apply: (bindings, node) => {
+            const url = node.expression.arguments[1].raw;
+            const callback = '{ params.api.setRowData(data); }';
+
+            bindings.data = { url, callback };
+        }
+    });
+    tsOnReadyCollectors.push({
+        matches: tsNodeIsHttpOpen,
         apply: (bindings, node) => {
             const url = node.expression.arguments[1].raw;
             const callback = '{ params.api.setRowData(data); }';
@@ -166,9 +268,27 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
             bindings.data = { url, callback };
         }
     });
+    tsOnReadyCollectors.push({
+        matches: tsNodeIsSimpleFetchRequest,
+        apply: (bindings, node) => {
+            const url = node.arguments[0].getText();
+            const callback = tsGenerate(node.parent.parent.parent.parent.arguments[0].body, tsTree).replace(/gridOptions/g, 'params');
+
+            bindings.data = { url, callback };
+        }
+    });
 
     // extract the resizeColumnsToFit
     onReadyCollectors.push({
+        matches: node => node.expression &&
+            node.expression.callee &&
+            node.expression.callee.property &&
+            node.expression.callee.property.name == 'sizeColumnsToFit',
+        apply: bindings => {
+            bindings.resizeToFit = true;
+        }
+    });
+    tsOnReadyCollectors.push({
         matches: node => node.expression &&
             node.expression.callee &&
             node.expression.callee.property &&
@@ -182,6 +302,13 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
     collectors.push({
         matches: nodeIsDocumentContentLoaded,
         apply: (bindings, node) => collect(node.expression.arguments[1].body.body, bindings, onReadyCollectors)
+    });
+    tsCollectors.push({
+        matches: tsNodeIsDocumentContentLoaded,
+        apply: (bindings, node) => {
+            return tsCollect(node.expression.arguments[1].body, bindings, tsOnReadyCollectors)
+        }
+
     });
 
     // all onXXX will be handled here
@@ -211,6 +338,15 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
             matches: node => nodeIsFunctionWithName(node, functionName),
             apply: (bindings, node) => {
                 bindings.instanceMethods.push(generateWithReplacedGridOptions(node, indentOne));
+                bindings.properties.push({ name: functionName, value: null });
+            }
+        });
+
+        tsCollectors.push({
+            matches: (node: ts.Node) => tsNodeIsFunctionWithName(node, functionName),
+            apply: (bindings, node: ts.NamedDeclaration) => {
+                const methodText = tsGenerateWithReplacedGridOptions(node, tsTree);
+                bindings.instanceMethods.push(methodText);
                 bindings.properties.push({ name: functionName, value: null });
             }
         });
@@ -245,6 +381,72 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
         return copyOfColDefs;
     };
 
+    const tsExtractColDefs1 = (node: ts.Node) => {
+        const copyOfColDefs: any = node; // JSON.parse(JSON.stringify(node));
+
+        // for each column def
+        for (let columnDefIndex = 0; columnDefIndex < copyOfColDefs.elements.length; columnDefIndex++) {
+            const columnDef = copyOfColDefs.elements[columnDefIndex];
+
+            if (!ts.isObjectLiteralExpression(columnDef)) {
+                // if we find any column defs that aren't objects (e.g. are references to objects instead), give up
+                return null;
+            }
+
+            // for each col def property
+            for (let colDefPropertyIndex = 0; colDefPropertyIndex < columnDef.properties.length; colDefPropertyIndex++) {
+                const columnDefProperty: any = columnDef.properties[colDefPropertyIndex];
+
+                if (columnDefProperty.name.getText() === 'children') {
+                    const children = tsExtractColDefs1(columnDefProperty.initializer);
+                    // To do: Why is this copied back??
+                    columnDefProperty.initializer = children;
+                } else {
+                    tsConvertFunctionsIntoStrings1(columnDefProperty);
+                }
+            }
+        }
+
+        return copyOfColDefs;
+    };
+    const tsExtractColDefsStr = (node: any): string => {
+        let copyOfColDefs = '[';
+
+        // for each column def
+        for (let columnDefIndex = 0; columnDefIndex < node.elements.length; columnDefIndex++) {
+            const columnDef = node.elements[columnDefIndex];
+
+            if (!ts.isObjectLiteralExpression(columnDef)) {
+                // if we find any column defs that aren't objects (e.g. are references to objects instead), give up
+                copyOfColDefs += 'PLACEHOLDER,'
+                return null;
+            }
+
+            // for each col def property
+            let props = [];
+            for (let colDefPropertyIndex = 0; colDefPropertyIndex < columnDef.properties.length; colDefPropertyIndex++) {
+                const columnDefProperty: any = columnDef.properties[colDefPropertyIndex];
+
+                if (columnDefProperty.name.getText() === 'children') {
+
+                    const children = tsExtractColDefsStr(columnDefProperty.initializer);
+                    props.push(`children: [${children}]`)
+
+                } else {
+                    props.push(`${tsConvertFunctionsIntoStringsStr(columnDefProperty)}`);
+                }
+            }
+            if (props.length > 0) {
+                copyOfColDefs += `{ ${props.join()} },`
+
+            }
+
+        }
+        copyOfColDefs += ']'
+
+        return copyOfColDefs;
+    };
+
     const convertFunctionsIntoStrings = property => {
         if (property.value.type === 'Identifier') {
             property.value.type = 'Literal';
@@ -258,10 +460,52 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
             property.value.properties.forEach(p => convertFunctionsIntoStrings(p));
         }
     };
+    const tsConvertFunctionsIntoStrings1 = (property: any) => {
+        if (ts.isIdentifier(property.initializer)) {
+            //property.value.type = 'Literal';
+            property.initializer.escapedText = `AG_LITERAL_${property.initializer.escapedText}`;
+        } else if (ts.isFunctionExpression(property.initializer)) {
+            const func = tsGenerate(property.initializer, tsTree);
+
+            //property.value.type = 'Literal';
+            property.name.escapedText = `AG_FUNCTION_${property.name.escapedText}`;
+        } else if (ts.isObjectLiteralExpression(property.initializer)) {
+
+            property.initializer.properties.forEach(p => tsConvertFunctionsIntoStrings1(p));
+        }
+    };
+    const tsConvertFunctionsIntoStringsStr = (property: any): string => {
+        if (ts.isIdentifier(property.initializer)) {
+
+            property.initializer.escapedText = `AG_LITERAL_${property.initializer.escapedText}`;
+            //return `${property.name.text}: AG_LITERAL_${property.initializer.escapedText},`
+            return tsGenerate(property, tsTree);
+        } else if (ts.isFunctionExpression(property.initializer)) {
+            let func = tsGenerate(property.initializer, tsTree);
+            const replaced = `${property.name.text}: "AG_FUNCTION_${func.replace(/'/g, "\'").replace(/\n/g, "\\n")}"`
+
+            return replaced;
+
+        } else if (ts.isObjectLiteralExpression(property.initializer)) {
+
+            let objProps = '{'
+            property.initializer.properties.forEach(p => {
+                objProps += tsConvertFunctionsIntoStringsStr(p)
+            });
+            objProps += '}'
+            return objProps;
+        }
+        return tsGenerate(property, tsTree);
+    };
 
     const extractAndParseColDefs = (node) => {
         const colDefs = extractColDefs(node);
         return colDefs ? generate(colDefs, indentOne) : '';
+    };
+    const tsExtractAndParseColDefs = (node) => {
+        const colDefs = tsExtractColDefsStr(node);
+        return colDefs;
+        //return colDefs ? tsGenerate(colDefs, tsTree) : '';
     };
 
     PROPERTIES.forEach(propertyName => {
@@ -277,6 +521,24 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
                         bindings.parsedColDefs = extractAndParseColDefs(node.declarations[0].init);
                     }
                     const code = generate(node.declarations[0].init, indentOne);
+                    bindings.properties.push({ name: propertyName, value: code });
+                } catch (e) {
+                    console.error('We failed generating', node, node.declarations[0].id);
+                    throw e;
+                }
+            }
+        });
+        // grab global variables named as grid properties
+        tsCollectors.push({
+            matches: node => tsNodeIsVarWithName(node, propertyName),
+            apply: (bindings, node) => {
+                try {
+                    if (processColDefsForFunctionalReactOrVue(propertyName, exampleType, exampleSettings, providedExamples)) {
+                        if (ts.isVariableDeclaration(node) && ts.isArrayLiteralExpression(node.initializer)) {
+                            bindings.parsedColDefs = tsExtractAndParseColDefs(node.initializer);
+                        }
+                    }
+                    const code = tsGenerate(node.initializer, tsTree);
                     bindings.properties.push({ name: propertyName, value: code });
                 } catch (e) {
                     console.error('We failed generating', node, node.declarations[0].id);
@@ -315,6 +577,51 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
                 });
             }
         });
+
+        tsGridOptionsCollectors.push({
+            matches: (node: ts.Node) => tsNodeIsPropertyWithName(node, propertyName),
+            apply: (bindings, node: ts.Node) => {
+                if (processColDefsForFunctionalReactOrVue(propertyName, exampleType, exampleSettings, providedExamples)) {
+                    const parent = node.parent;
+                    if (ts.isPropertyAssignment(parent) && parent.initializer) {
+                        const initializer = parent.initializer
+                        if (ts.isArrayLiteralExpression(initializer)) {
+                            bindings.parsedColDefs = tsExtractAndParseColDefs(initializer);
+                        }
+                    }
+                }
+                if (processComponentsForVue(propertyName, exampleType, providedExamples) && node.parent) {
+
+                    const compsNode = (node.parent as any).initializer;
+                    if (ts.isObjectLiteralExpression(compsNode)) {
+                        for (const componentDefinition of compsNode.properties) {
+                            if (!ts.isCallExpression(componentDefinition) && !ts.isFunctionExpression(componentDefinition)) {
+                                const comp = componentDefinition as any;
+                                bindings.components.push({
+                                    name: comp.name.getText(),
+                                    value: comp.initializer.getText()
+                                });
+                            }
+                        }
+                    }
+                }
+
+                if (processDefaultColumnDefForVue(propertyName, exampleType, providedExamples)
+                    && node.parent && (node.parent as any).initializer
+                    && ts.isObjectLiteralExpression((node.parent as any).initializer)) {
+                    bindings.defaultColDef = tsGenerate((node.parent as any).initializer, tsTree);
+                }
+
+                if (processGlobalComponentsForVue(propertyName, exampleType, providedExamples) && ts.isLiteralExpression(node)) {
+                    bindings.globalComponents.push(generate(node));
+                }
+
+                bindings.properties.push({
+                    name: propertyName,
+                    value: tsGenerate((node.parent as any).initializer, tsTree)
+                });
+            }
+        });
     });
 
     gridOptionsCollectors.push({
@@ -323,11 +630,23 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
             bindings.onGridReady = generate(node.value.body).replace(/gridOptions/g, 'params');
         }
     });
+    tsGridOptionsCollectors.push({
+        matches: node => tsNodeIsPropertyWithName(node, 'onGridReady'),
+        apply: (bindings, node) => {
+            bindings.onGridReady = tsGenerate((node.parent as any).initializer.body, tsTree).replace(/gridOptions/g, 'params');
+        }
+    });
 
     // gridOptionsCollectors captures all events, properties etc that are related to gridOptions
     collectors.push({
         matches: node => nodeIsVarWithName(node, 'gridOptions'),
         apply: (bindings, node) => collect(node.declarations[0].init.properties, bindings, gridOptionsCollectors)
+    });
+    tsCollectors.push({
+        matches: node => tsNodeIsVarWithName(node, 'gridOptions'),
+        apply: (bindings, node) => {
+            return tsCollect(node.initializer, bindings, tsGridOptionsCollectors);
+        }
     });
 
     /*
@@ -357,6 +676,21 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
         },
         collectors
     );
+    const tsBindings = tsCollect(
+        tsTree,
+        {
+            eventHandlers: [],
+            properties: [],
+            components: [],
+            defaultColDef: null,
+            globalComponents: [],
+            parsedColDefs: '',
+            instanceMethods: [],
+            externalEventHandlers: [],
+            utils: []
+        },
+        tsCollectors
+    );
 
     const gridElement = domTree.find('#myGrid').replaceWith(templatePlaceholder);
     const inlineClass = gridElement.attr('class');
@@ -376,7 +710,14 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
         exampleSettings.width = inlineWidth;
     }
 
-    bindings.template = domTree.html().replace(/<br>/g, '<br />');
+    tsBindings.template = domTree.html().replace(/<br>/g, '<br />');
+
+    tsBindings.gridSettings = {
+        width: '100%',
+        height: '100%',
+        theme: 'ag-theme-alpine',
+        ...exampleSettings
+    }; bindings.template = domTree.html().replace(/<br>/g, '<br />');
 
     bindings.gridSettings = {
         width: '100%',
@@ -385,7 +726,8 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
         ...exampleSettings
     };
 
-    return bindings;
+    //return bindings;
+    return tsBindings;
 }
 
 export default parser;
