@@ -1,3 +1,4 @@
+import ts = require("typescript");
 export type ImportType = 'packages' | 'modules';
 
 const moduleMapping = require('../../documentation/doc-pages/modules/modules.json');
@@ -53,28 +54,78 @@ export const enum NodeType {
     Expression = 'ExpressionStatement',
 };
 
+export function tsCollect(tsTree, tsBindings, collectors) {
+    ts.forEachChild(tsTree, (node: ts.Node) => {
+
+        collectors.filter(c => {
+            let res = false;
+            try {
+                res = c.matches(node)
+            } catch (error) {
+                return false;
+            }
+            return res;
+        }
+        ).forEach(c => {
+            try {
+                c.apply(tsBindings, node)
+            } catch (error) {
+                console.error(error)
+            }
+        });
+        tsCollect(node, tsBindings, collectors)
+    });
+    return tsBindings;
+}
+
 export function collect(iterable: any[], initialBindings: any, collectors: any[]): any {
-    return iterable.reduce((bindings, value) => {
+
+    const original = iterable.reduce((bindings, value) => {
         collectors.filter(c => c.matches(value)).forEach(c => c.apply(bindings, value));
 
         return bindings;
     }, initialBindings);
+
+    return original;
 }
 
 export function nodeIsVarWithName(node: any, name: string): boolean {
     // eg: var currentRowHeight = 10;
     return node.type === NodeType.Variable && node.declarations[0].id.name === name;
 }
+export function tsNodeIsVarWithName(node: any, name: string): boolean {
+    // eg: var currentRowHeight = 10;
+    if (ts.isVariableDeclaration(node)) {
+        return node.name.getText() === name;
+    }
+    return false;
+}
+
 
 export function nodeIsPropertyWithName(node: any, name: string) {
     // we skip { property: variable } - SPL why??
     // and get only inline property assignments
     return node.key.name == name && node.value.type != 'Identifier';
 }
+export function tsNodeIsPropertyWithName(node: ts.Node, name: string) {
+    // we skip { property: variable } - SPL why??
+    // and get only inline property assignments
+    if (node.getText() === name) {
+        return !ts.isIdentifier((node.parent as any).initializer);
+    }
+}
 
 export function nodeIsFunctionWithName(node: any, name: string): boolean {
     // eg: function someFunction() { }
     return node.type === NodeType.Function && node.id.name === name;
+}
+export function tsNodeIsFunctionWithName(node: ts.Node, name: string): boolean {
+    // eg: function someFunction() { }
+    if (ts.isFunctionDeclaration(node)) {
+        const isMatch = node.name.getText() === name;
+        return isMatch
+    }
+    return false;
 }
 
 export function nodeIsInScope(node: any, unboundInstanceMethods: string[]): boolean {
@@ -82,15 +133,28 @@ export function nodeIsInScope(node: any, unboundInstanceMethods: string[]): bool
         node.type === NodeType.Function &&
         unboundInstanceMethods.indexOf(node.id.name) >= 0;
 }
+export function tsNodeIsInScope(node: any, unboundInstanceMethods: string[]): boolean {
+    return unboundInstanceMethods &&
+        ts.isFunctionDeclaration(node) &&
+        unboundInstanceMethods.indexOf(node.name.getText()) >= 0;
+}
 
 export function nodeIsUnusedFunction(node: any, used: string[], unboundInstanceMethods: string[]): boolean {
     return !nodeIsInScope(node, unboundInstanceMethods) &&
         node.type === NodeType.Function &&
         used.indexOf(node.id.name) < 0;
 }
+export function tsNodeIsUnusedFunction(node: any, used: string[], unboundInstanceMethods: string[]): boolean {
+    return !tsNodeIsInScope(node, unboundInstanceMethods) &&
+        ts.isFunctionLike(node)
+        && used.indexOf(node.name.getText()) < 0;
+}
 
 export function nodeIsFunctionCall(node: any): boolean {
     return node.type === NodeType.Expression && node.expression.type === 'CallExpression';
+}
+export function tsNodeIsFunctionCall(node: any): boolean {
+    return ts.isExpressionStatement(node) && ts.isCallExpression(node.expression);
 }
 
 export function nodeIsGlobalFunctionCall(node: any): boolean {
