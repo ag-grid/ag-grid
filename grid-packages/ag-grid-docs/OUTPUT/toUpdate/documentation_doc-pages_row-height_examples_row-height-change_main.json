@@ -3,7 +3,7 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n    {\n        field: 'country',\n        rowGroup: true\n    },\n    { field: 'athlete' },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]"
+            "value": "[\n    { field: 'country', rowGroup: true },\n    { field: 'athlete' },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' },\n]"
         },
         { "name": "animateRows", "value": "true" },
         { "name": "getRowHeight", "value": null }
@@ -11,9 +11,9 @@
     "components": [],
     "defaultColDef": null,
     "globalComponents": [],
-    "parsedColDefs": "[\n    {\n        field: 'country',\n        rowGroup: true\n    },\n    { field: 'athlete' },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]",
+    "parsedColDefs": "[\n    { field: 'country', rowGroup: true },\n    { field: 'athlete' },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' },\n]",
     "instanceMethods": [
-        "function getRowHeight(params) {\n    if (params.node.group && groupHeight != null) {\n        return groupHeight;\n    } else if (params.data && params.data.country === 'Russia' && russiaHeight != null) {\n        return russiaHeight;\n    } else if (params.data && params.data.sport === 'Swimming' && swimmingHeight != null) {\n        return swimmingHeight;\n    }\n}"
+        "function getRowHeight(params) {\n    if (params.node.group && groupHeight != null) {\n        return groupHeight;\n    }\n    else if (params.data &&\n        params.data.country === 'Russia' &&\n        russiaHeight != null) {\n        return russiaHeight;\n    }\n    else if (params.data &&\n        params.data.sport === 'Swimming' &&\n        swimmingHeight != null) {\n        return swimmingHeight;\n    }\n}"
     ],
     "externalEventHandlers": [
         {
@@ -29,7 +29,7 @@
         {
             "name": "setRussiaHeight",
             "params": "42",
-            "body": "function setRussiaHeight(height) {\n    russiaHeight = height;\n    this.gridApi.forEachNode(function (rowNode) {\n        if (rowNode.data && rowNode.data.country === 'Russia') {\n            rowNode.setRowHeight(height);\n        }\n    });\n    this.gridApi.onRowHeightChanged();\n}"
+            "body": "function setRussiaHeight(height) {\n    // this is used next time resetRowHeights is called\n    russiaHeight = height;\n    this.gridApi.forEachNode(function (rowNode) {\n        if (rowNode.data && rowNode.data.country === 'Russia') {\n            rowNode.setRowHeight(height);\n        }\n    });\n    this.gridApi.onRowHeightChanged();\n}"
         }
     ],
     "utils": ["var swimmingHeight;", "var groupHeight;", "var russiaHeight;"],
