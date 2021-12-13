@@ -113,8 +113,8 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             _.doOnce(() => console.warn(message), 'SSRM.DefaultGroupOrderComparator');
         }
         if (this.gridOptionsWrapper.isRowSelection() && this.gridOptionsWrapper.getRowNodeIdFunc()==null) {
-            const message = `AG Grid: rowNodeIdFunc must be provided for Server Side Row Model selection to work correctly.`;
-            _.doOnce(() => console.warn(message), 'SSRM.SelectionNeedsRowNodeIdFunc');
+            const message = `AG Grid: getRowNodeId callback must be provided for Server Side Row Model selection to work correctly.`;
+            _.doOnce(() => console.warn(message), 'SSRM.SelectionNeedsRowNodeIdFunc');  
         }
     }
 
