@@ -70,8 +70,7 @@ const jsxShowValue = (
     cellRendererRef: MutableRefObject<any>,
     showTools: boolean,
     reactCellRendererStateless: boolean,
-    toolsRefCallback: (ref:any) => void,
-    toolsValueRefCallback: (ref:any) => void
+    setECellValue: (ref:any) => void
 ) => {
     const {compDetails, value} = showDetails;
 
@@ -96,11 +95,10 @@ const jsxShowValue = (
     return (
         <>
             { showTools ?
-                <div className="ag-cell-wrapper" role="presentation" ref={ toolsRefCallback }>
-                    <span role="presentation" id={`cell-${parentId}`} className="ag-cell-value" ref={ toolsValueRefCallback }>
+                    <span role="presentation" id={`cell-${parentId}`} className="ag-cell-value" ref={ setECellValue }>
                         { bodyJsxFunc() }
                     </span>
-                </div> :
+                :
                 bodyJsxFunc()
             }
         </>
@@ -145,19 +143,33 @@ const CellComp = (props: {
     const [includeSelection, setIncludeSelection] = useState<boolean>(false);
     const [includeRowDrag, setIncludeRowDrag] = useState<boolean>(false);
     const [includeDndSource, setIncludeDndSource] = useState<boolean>(false);
-    const [forceWrapper, setForceWrapper] = useState<boolean>(false);
 
     const [jsEditorComp, setJsEditorComp] = useState<ICellEditorComp>();
 
+    const forceWrapper = useMemo( ()=> cellCtrl.isForceWrapper(), [] );
     const eGui = useRef<HTMLDivElement>(null);
     const cellRendererRef = useRef<any>(null);
     const jsCellRendererRef = useRef<ICellRendererComp>();
     const cellEditorRef = useRef<ICellEditor>();
 
-    const [toolsSpan, setToolsSpan] = useState<HTMLElement>();
-    const [toolsValueSpan, setToolsValueSpan] = useState<HTMLElement>();
+    // when setting the ref, we also update the state item to force a re-render
+    const eCellWrapper = useRef<HTMLDivElement>();
+    const [cellWrapperVersion, setCellWrapperVersion] = useState(0);
+    const setCellWrapperRef = useCallback(ref => {
+        eCellWrapper.current = ref;
+        setCellWrapperVersion( v => v+1 );
+    }, []);
+
+    // when setting the ref, we also update the state item to force a re-render
+    const eCellValue = useRef<HTMLDivElement>();
+    const [cellValueVersion, setCellValueVersion] = useState(0);
+    const setCellValueRef = useCallback(ref => {
+        eCellValue.current = ref;
+        setCellValueVersion( v => v+1 );
+    }, []);
     
-    const showTools = renderDetails!=null && (includeSelection || includeDndSource || includeRowDrag || forceWrapper);
+    const showTools = renderDetails!=null && (includeSelection || includeDndSource || includeRowDrag);
+    const showCellWrapper = forceWrapper || showTools;
 
     const setCellEditorRef = useCallback( (popup: boolean, cellEditor: ICellEditor | undefined) => {
         cellEditorRef.current = cellEditor;
@@ -181,7 +193,7 @@ const CellComp = (props: {
         []
     );
 
-    useJsCellRenderer(renderDetails, showTools, toolsValueSpan, jsCellRendererRef, eGui);
+    useJsCellRenderer(renderDetails, showTools, eCellValue.current, cellValueVersion, jsCellRendererRef, eGui);
 
     useEffect(() => {
         const doingJsEditor = editDetails && !editDetails.compDetails.componentFromFramework;
@@ -218,16 +230,20 @@ const CellComp = (props: {
     useEffect(() => {
         if (!cellCtrl || !context) { return; }
 
-        setAriaDescribedBy(!!toolsSpan ? `cell-${cellCtrl.getInstanceId()}` : undefined);
+        setAriaDescribedBy(!!eCellWrapper.current ? `cell-${cellCtrl.getInstanceId()}` : undefined);
 
-        if (!toolsSpan) { return; }
+        if (!eCellWrapper.current || !showTools) { return; }
 
-        const beansToDestroy: any[] = [];
+        const destroyFuncs: (()=>void)[] = [];
 
         const addComp = (comp: Component | undefined) => {
             if (comp) {
-                toolsSpan.insertAdjacentElement('afterbegin', comp.getGui());
-                beansToDestroy.push(comp);
+                const eGui = comp.getGui();
+                eCellWrapper.current!.insertAdjacentElement('afterbegin', eGui);
+                destroyFuncs.push( ()=> {
+                    context.destroyBean(comp);
+                    _.removeFromParent(eGui);
+                });
             }
             return comp;
         }
@@ -245,16 +261,12 @@ const CellComp = (props: {
         }
 
         return () => {
-            context.destroyBeans(beansToDestroy);
+            destroyFuncs.forEach(f => {
+                f();
+            })
         };
 
-    }, [includeDndSource, includeRowDrag, includeSelection, toolsSpan]);
-
-    // attaching the ref to state makes sure we render again when state is set. this is
-    // how we make sure the tools are added, as it's not possible to have an effect depend
-    // on a reference, as reference is not state, it doesn't create another render cycle.
-    const toolsRefCallback = useCallback(ref => setToolsSpan(ref), []);
-    const toolsValueRefCallback = useCallback(ref => setToolsValueSpan(ref), []);
+    }, [showTools, includeDndSource, includeRowDrag, includeSelection, cellWrapperVersion]);
 
     useEffect(() => {
         if (!cellCtrl) { return; }
@@ -273,11 +285,10 @@ const CellComp = (props: {
             setIncludeSelection: include => setIncludeSelection(include),
             setIncludeRowDrag: include => setIncludeRowDrag(include),
             setIncludeDndSource: include => setIncludeDndSource(include),
-            setForceWrapper: force => setForceWrapper(force),
             
             getCellEditor: () => cellEditorRef.current || null,
             getCellRenderer: () => cellRendererRef.current ? cellRendererRef.current : jsCellRendererRef.current,
-            getParentOfValue: () => toolsValueSpan ? toolsValueSpan : eGui.current,
+            getParentOfValue: () => eCellValue.current ? eCellValue.current : eCellWrapper.current ? eCellWrapper.current : eGui.current,
 
             setRenderDetails: (compDetails, value, force) => {
                 setRenderDetails({
@@ -305,7 +316,9 @@ const CellComp = (props: {
             }
         };
 
-        cellCtrl.setComp(compProxy, null, eGui.current!, printLayout, editingRow);
+        const cellWrapperOrUndefined = eCellWrapper.current || undefined;
+
+        cellCtrl.setComp(compProxy, null, eGui.current!, cellWrapperOrUndefined, printLayout, editingRow);
 
     }, []);
 
@@ -318,7 +331,7 @@ const CellComp = (props: {
 
     const className = useMemo( ()=> {
         let res = cssClasses.toString();
-        if (!showTools) {
+        if (!showCellWrapper) {
             res += ' ag-cell-value';
         }
         return res;
@@ -326,16 +339,26 @@ const CellComp = (props: {
 
     const cellInstanceId = useMemo( ()=> cellCtrl.getInstanceId(), []);
 
+    const showContents = ()=> <>
+            { renderDetails != null && jsxShowValue(renderDetails, cellInstanceId, cellRendererRef, 
+                                                showTools, reactCellRendererStateless,
+                                                setCellValueRef) }
+            { editDetails != null && jsxEditValue(editDetails, setInlineCellEditorRef, setPopupCellEditorRef, eGui.current!, cellCtrl, jsEditorComp) }
+                            </>;
+
     return (
         <div ref={ eGui } className={ className } style={ userStyles } tabIndex={ tabIndex }
              aria-selected={ ariaSelected } aria-colindex={ ariaColIndex } role={ role }
              aria-expanded={ ariaExpanded } col-id={ colId } title={ title } 
              aria-describedby={ ariaDescribedBy }>
 
-            { renderDetails != null && jsxShowValue(renderDetails, cellInstanceId, cellRendererRef, 
-                                                showTools, reactCellRendererStateless,
-                                                toolsRefCallback, toolsValueRefCallback) }
-            { editDetails != null && jsxEditValue(editDetails, setInlineCellEditorRef, setPopupCellEditorRef, eGui.current!, cellCtrl, jsEditorComp) }
+            { showCellWrapper ?
+                <div className="ag-cell-wrapper" role="presentation" ref={ setCellWrapperRef }>
+                    { showContents() }
+                </div>
+                :
+                showContents()
+            }
 
         </div>
     );

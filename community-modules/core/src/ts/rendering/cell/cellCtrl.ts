@@ -61,7 +61,6 @@ export interface ICellComp {
     setIncludeSelection(include: boolean): void;
     setIncludeRowDrag(include: boolean): void;
     setIncludeDndSource(include: boolean): void;
-    setForceWrapper(force: boolean): void;
 
     getCellEditor(): ICellEditor | null;
     getCellRenderer(): ICellRenderer | null;
@@ -80,6 +79,7 @@ export class CellCtrl extends BeanStub {
     private instanceId: string;
 
     private eGui: HTMLElement;
+    private eCellWrapper: HTMLElement | undefined;
     private cellComp: ICellComp;
     private beans: Beans;
     private gow: GridOptionsWrapper;
@@ -203,13 +203,15 @@ export class CellCtrl extends BeanStub {
         comp: ICellComp,
         scope: any,
         eGui: HTMLElement,
+        eCellWrapper: HTMLElement | undefined,
         printLayout: boolean,
         startEditing: boolean
     ): void {
         this.cellComp = comp;
         this.gow = this.beans.gridOptionsWrapper;
-        this.scope = scope;
+        this.scope = scope;        
         this.eGui = eGui;
+        this.eCellWrapper = eCellWrapper;
         this.printLayout = printLayout;
 
         // we force to make sure formatter gets called at least once,
@@ -256,17 +258,19 @@ export class CellCtrl extends BeanStub {
     private setupAutoHeight(): void {
         if (!this.column.isAutoHeight()) { return; }
 
+        const eAutoHeightContainer = this.eCellWrapper!;
+
         const measureHeight = (timesCalled: number) => {
             // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
             // maybe it will be ready next VM turn
             const doc = this.beans.gridOptionsWrapper.getDocument();
 
-            if ((!doc || !doc.contains(this.eGui)) && timesCalled < 5) {
+            if ((!doc || !doc.contains(eAutoHeightContainer)) && timesCalled < 5) {
                 this.beans.frameworkOverrides.setTimeout(() => measureHeight(timesCalled++), 0);
                 return;
             }
 
-            const newHeight = this.eGui.offsetHeight;
+            const newHeight = eAutoHeightContainer.offsetHeight;
             this.rowNode.setRowAutoHeight(newHeight, this.column);
         };
 
@@ -275,7 +279,7 @@ export class CellCtrl extends BeanStub {
         // do once to set size in case size doesn't change, common when cell is blank
         listener();
 
-        const destroyResizeObserver = this.beans.resizeObserverService.observeResize(this.eGui, listener);
+        const destroyResizeObserver = this.beans.resizeObserverService.observeResize(eAutoHeightContainer, listener);
 
         this.addDestroyFunc(() => {
             destroyResizeObserver();
@@ -301,13 +305,15 @@ export class CellCtrl extends BeanStub {
         this.includeRowDrag = this.isIncludeControl(colDef.rowDrag);
         this.includeDndSource = this.isIncludeControl(colDef.dndSource);
 
-        // text selection requires the value to be wrapped in another element
-        const forceWrapper = this.beans.gridOptionsWrapper.isEnableCellTextSelection() || this.column.isAutoHeight();
-
         this.cellComp.setIncludeSelection(this.includeSelection);
         this.cellComp.setIncludeDndSource(this.includeDndSource);
         this.cellComp.setIncludeRowDrag(this.includeRowDrag);
-        this.cellComp.setForceWrapper(forceWrapper);
+    }
+
+    public isForceWrapper(): boolean {
+        // text selection requires the value to be wrapped in another element
+        const forceWrapper = this.beans.gridOptionsWrapper.isEnableCellTextSelection() || this.column.isAutoHeight();
+        return forceWrapper;
     }
 
     private isIncludeControl(value: boolean | Function | undefined): boolean {
@@ -1023,8 +1029,8 @@ export class CellCtrl extends BeanStub {
         // fit the height of content.
 
         const autoHeight = this.column.isAutoHeight() == true;
-        this.cellComp.addOrRemoveCssClass(CSS_AUTO_HEIGHT, autoHeight);
-        this.cellComp.addOrRemoveCssClass(CSS_NORMAL_HEIGHT, !autoHeight);
+        // this.cellComp.addOrRemoveCssClass(CSS_AUTO_HEIGHT, autoHeight);
+        this.cellComp.addOrRemoveCssClass(CSS_NORMAL_HEIGHT, true);
     }
 
     public onColumnHover(): void {

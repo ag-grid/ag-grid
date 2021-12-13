@@ -13,15 +13,15 @@ import { TooltipParentComp } from "../../widgets/customTooltipFeature";
 import { setAriaColIndex, setAriaDescribedBy, setAriaSelected, setAriaExpanded, setAriaRole } from "../../utils/aria";
 import { escapeString } from "../../utils/string";
 import { missing } from "../../utils/generic";
-import { addStylesToElement, clearElement, removeFromParent } from "../../utils/dom";
+import { addStylesToElement, clearElement, loadTemplate, removeFromParent } from "../../utils/dom";
 import { CellCtrl, ICellComp } from "./cellCtrl";
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
 import { _ } from "../../utils";
 
 export class CellComp extends Component implements TooltipParentComp {
 
-    private eCellWrapper: HTMLElement | null;
-    private eCellValue: HTMLElement;
+    private eCellWrapper: HTMLElement | undefined;
+    private eCellValue: HTMLElement | undefined;
 
     private beans: Beans;
     private column: Column;
@@ -47,8 +47,6 @@ export class CellComp extends Component implements TooltipParentComp {
     private cellRendererGui: HTMLElement | null;
     private cellRendererClass: any;
 
-    private autoHeightCell: boolean;
-
     private rowCtrl: RowCtrl | null;
 
     private scope: any = null;
@@ -70,22 +68,22 @@ export class CellComp extends Component implements TooltipParentComp {
     private editorVersion = 0;
 
     constructor(scope: any, beans: Beans, cellCtrl: CellCtrl,
-        autoHeightCell: boolean, printLayout: boolean, eRow: HTMLElement, editingRow: boolean) {
+        printLayout: boolean, eRow: HTMLElement, editingRow: boolean) {
         super();
         this.scope = scope;
         this.beans = beans;
         this.column = cellCtrl.getColumn();
         this.rowNode = cellCtrl.getRowNode();
         this.rowCtrl = cellCtrl.getRowCtrl();
-        this.autoHeightCell = autoHeightCell;
         this.eRow = eRow;
 
         this.setTemplate(/* html */`<div comp-id="${this.getCompId()}"/>`);
 
         const eGui = this.getGui();
-        const style = eGui.style;
 
-        this.eCellValue = eGui;
+        this.forceWrapper = cellCtrl.isForceWrapper();
+
+        this.refreshWrapper(false);
 
         const setAttribute = (name: string, value: string | null | undefined, element?: HTMLElement) => {
             const actualElement = element ? element : eGui;
@@ -111,8 +109,7 @@ export class CellComp extends Component implements TooltipParentComp {
             setIncludeSelection: include => this.includeSelection = include,
             setIncludeRowDrag: include => this.includeRowDrag = include,
             setIncludeDndSource: include => this.includeDndSource = include,
-            setForceWrapper: force => this.forceWrapper = force,
-
+ 
             setRenderDetails: (compDetails, valueToDisplay, force) =>
                 this.setRenderDetails(compDetails, valueToDisplay, force),
             setEditDetails: (compDetails, popup, position) =>
@@ -120,11 +117,24 @@ export class CellComp extends Component implements TooltipParentComp {
 
             getCellEditor: () => this.cellEditor || null,
             getCellRenderer: () => this.cellRenderer || null,
-            getParentOfValue: () => this.eCellValue
+            getParentOfValue: () => this.getParentOfValue()
         };
 
         this.cellCtrl = cellCtrl;
-        cellCtrl.setComp(compProxy, this.scope, this.getGui(), printLayout, editingRow);
+        cellCtrl.setComp(compProxy, this.scope, this.getGui(), this.eCellWrapper, printLayout, editingRow);
+    }
+
+    private getParentOfValue(): HTMLElement {
+        if (this.eCellValue) {
+            // if not editing, and using wrapper, then value goes in eCellValue
+            return this.eCellValue;
+        } else if (this.eCellWrapper) {
+            // if editing, and using wrapper, value (cell editor) goes in eCellWrapper
+            return this.eCellWrapper;
+        } else {
+            // if editing or rendering, and not using wrapper, value (or comp) is directly inside cell
+            return this.getGui();
+        }
     }
 
     private setRenderDetails(compDetails: UserCompDetails | undefined, valueToDisplay: any, forceNewCellRendererInstance: boolean): void {
@@ -138,7 +148,7 @@ export class CellComp extends Component implements TooltipParentComp {
         const usingAngular1Template = this.isUsingAngular1Template();
 
         // if display template has changed, means any previous Cell Renderer is in the wrong location
-        const controlWrapperChanged = this.setupControlsWrapper();
+        const controlWrapperChanged = this.refreshWrapper(false);
 
         // all of these have dependencies on the eGui, so only do them after eGui is set
         if (compDetails) {
@@ -166,70 +176,76 @@ export class CellComp extends Component implements TooltipParentComp {
         }
     }
 
-    private removeControlsWrapper(): void {
-        this.eCellValue = this.getGui();
-        this.eCellWrapper = null;
-
+    private removeControls(): void {
         this.checkboxSelectionComp = this.beans.context.destroyBean(this.checkboxSelectionComp);
         this.dndSourceComp = this.beans.context.destroyBean(this.dndSourceComp);
         this.rowDraggingComp = this.beans.context.destroyBean(this.rowDraggingComp);
     }
 
     // returns true if wrapper was changed
-    private setupControlsWrapper(): boolean {
-        const usingWrapper = this.includeRowDrag || this.includeDndSource || this.includeSelection || this.forceWrapper;
+    private refreshWrapper(editing: boolean): boolean {
+        const providingControls = this.includeRowDrag || this.includeDndSource || this.includeSelection;
+        const usingWrapper = providingControls || this.forceWrapper;
 
-        const changed = true;
-        const notChanged = false;
+        const putWrapperIn = usingWrapper && this.eCellWrapper==null;
+        if (putWrapperIn) {
+            this.eCellWrapper = loadTemplate(`<div class="ag-cell-wrapper" role="presentation"></div>`);
+            this.getGui().appendChild(this.eCellWrapper);
+        }
+        const takeWrapperOut = !usingWrapper && this.eCellWrapper!=null;
+        if (takeWrapperOut) {
+            removeFromParent(this.eCellWrapper!);
+            this.eCellWrapper = undefined;
+        }
 
         this.addOrRemoveCssClass('ag-cell-value', !usingWrapper);
 
-        // turn wrapper on
-        if (usingWrapper && !this.eCellWrapper) {
-            this.addControlsWrapper();
-            return changed;
+        const usingCellValue = !editing && usingWrapper;
+        const putCellValueIn = usingCellValue && this.eCellValue==null;
+        if (putCellValueIn) {
+            this.eCellValue = loadTemplate(`<span class="ag-cell-value" role="presentation"></span>`);
+            this.eCellWrapper!.appendChild(this.eCellValue);
+        }
+        const takeCellValueOut = !usingCellValue && this.eCellValue!=null;
+        if (takeCellValueOut) {
+            removeFromParent(this.eCellValue!);
+            this.eCellValue = undefined;
         }
 
-        // turn wrapper off
-        if (!usingWrapper && this.eCellWrapper) {
-            this.removeControlsWrapper();
-            return changed;
+        const templateChanged = putWrapperIn || takeWrapperOut || putCellValueIn || takeCellValueOut;
+
+        if (templateChanged) {
+            this.removeControls();
         }
 
-        return notChanged;
+        if (!editing && providingControls) {
+            this.addControls();
+        }
+
+        return templateChanged;
     }
 
-    private addControlsWrapper(): void {
-        const eGui = this.getGui();
-
-        eGui.innerHTML = /* html */
-            `<div ref="eCellWrapper" class="ag-cell-wrapper" role="presentation">
-                <span ref="eCellValue" class="ag-cell-value" role="presentation"></span>
-            </div>`;
-
-        this.eCellValue = this.getRefElement('eCellValue');
-        this.eCellWrapper = this.getRefElement('eCellWrapper');
-
-        const id = this.eCellValue.id = `cell-${this.getCompId()}`;
+    private addControls(): void {
+        const id = this.eCellValue!.id = `cell-${this.getCompId()}`;
         const describedByIds: string[] = [];
 
         if (this.includeRowDrag) {
             this.rowDraggingComp = this.cellCtrl.createRowDragComp();
             if (this.rowDraggingComp) {
                 // put the checkbox in before the value
-                this.eCellWrapper!.insertBefore(this.rowDraggingComp.getGui(), this.eCellValue);
+                this.eCellWrapper!.insertBefore(this.rowDraggingComp.getGui(), this.eCellValue!);
             }
         }
 
         if (this.includeDndSource) {
             this.dndSourceComp = this.cellCtrl.createDndSource();
             // put the checkbox in before the value
-            this.eCellWrapper!.insertBefore(this.dndSourceComp.getGui(), this.eCellValue);
+            this.eCellWrapper!.insertBefore(this.dndSourceComp.getGui(), this.eCellValue!);
         }
 
         if (this.includeSelection) {
             this.checkboxSelectionComp = this.cellCtrl.createSelectionCheckbox();
-            this.eCellWrapper!.insertBefore(this.checkboxSelectionComp.getGui(), this.eCellValue);
+            this.eCellWrapper!.insertBefore(this.checkboxSelectionComp.getGui(), this.eCellValue!);
             describedByIds.push(this.checkboxSelectionComp.getCheckboxId());
         }
 
@@ -257,11 +273,12 @@ export class CellComp extends Component implements TooltipParentComp {
     }
 
     private insertValueWithoutCellRenderer(valueToDisplay: any): void {
+        const eParent = this.getParentOfValue();
+        clearElement(eParent);
+
         const escapedValue = valueToDisplay != null ? escapeString(valueToDisplay) : null;
         if (escapedValue != null) {
-            this.eCellValue.innerHTML = escapedValue;
-        } else {
-            clearElement(this.eCellValue);
+            eParent.innerHTML = escapedValue;
         }
     }
 
@@ -283,7 +300,8 @@ export class CellComp extends Component implements TooltipParentComp {
         }
 
         if (templateToInsert != null) {
-            this.eCellValue.innerHTML = templateToInsert;
+            const eParent = this.getParentOfValue();
+            eParent.innerHTML = templateToInsert;
             this.updateAngular1ScopeAndCompile();
         }
     }
@@ -341,7 +359,7 @@ export class CellComp extends Component implements TooltipParentComp {
         // row height directly after the cell is created, it doesn't wait around for the tasks to complete
         const angularCompileRows = this.beans.gridOptionsWrapper.isAngularCompileRows();
         const suppressAnimationFrame = this.beans.gridOptionsWrapper.isSuppressAnimationFrame();
-        const useTaskService = !angularCompileRows && !suppressAnimationFrame && !this.autoHeightCell;
+        const useTaskService = !angularCompileRows && !suppressAnimationFrame;
 
         const displayComponentVersionCopy = this.rendererVersion;
 
@@ -405,8 +423,9 @@ export class CellComp extends Component implements TooltipParentComp {
         this.cellRendererGui = this.cellRenderer.getGui();
 
         if (this.cellRendererGui != null) {
-            clearElement(this.eCellValue);
-            this.eCellValue.appendChild(this.cellRendererGui);
+            const eParent = this.getParentOfValue();
+            clearElement(eParent);
+            eParent.appendChild(this.cellRendererGui);
             this.updateAngular1ScopeAndCompile();
         }
     }
@@ -464,10 +483,11 @@ export class CellComp extends Component implements TooltipParentComp {
         }
 
         this.destroyRenderer();
-        this.removeControlsWrapper();
-        this.clearCellElement();
+        this.refreshWrapper(true);
+        this.clearParentOfValue();
         if (this.cellEditorGui) {
-            eGui.appendChild(this.cellEditorGui);
+            const eParent = this.getParentOfValue();
+            eParent.appendChild(this.cellEditorGui);
         }
     }
 
@@ -536,7 +556,7 @@ export class CellComp extends Component implements TooltipParentComp {
         this.cellCtrl.stopEditing();
 
         this.destroyEditorAndRenderer();
-        this.removeControlsWrapper();
+        this.removeControls();
 
         if (this.angularCompiledElement) {
             this.angularCompiledElement.remove();
@@ -546,7 +566,7 @@ export class CellComp extends Component implements TooltipParentComp {
         super.destroy();
     }
 
-    private clearCellElement(): void {
+    private clearParentOfValue(): void {
         const eGui = this.getGui();
 
         // if focus is inside the cell, we move focus to the cell itself
@@ -557,7 +577,7 @@ export class CellComp extends Component implements TooltipParentComp {
             });
         }
 
-        clearElement(eGui);
+        clearElement(this.getParentOfValue());
     }
 
     private updateAngular1ScopeAndCompile() {
@@ -568,7 +588,8 @@ export class CellComp extends Component implements TooltipParentComp {
                 this.angularCompiledElement.remove();
             }
 
-            this.angularCompiledElement = this.beans.$compile(this.eCellValue.children)(this.scope);
+            const eParent = this.getParentOfValue();
+            this.angularCompiledElement = this.beans.$compile(eParent.children)(this.scope);
 
             // because this.scope is set, we are guaranteed GridBodyComp is vanilla JS, ie it's GridBodyComp.ts from AG Stack and and not react
             this.beans.ctrlsService.getGridBodyCtrl().requestAngularApply();

@@ -8955,7 +8955,6 @@
       "setIncludeSelection(include: boolean)": "void",
       "setIncludeRowDrag(include: boolean)": "void",
       "setIncludeDndSource(include: boolean)": "void",
-      "setForceWrapper(force: boolean)": "void",
       "getCellEditor()": "ICellEditor | null",
       "getCellRenderer()": "ICellRenderer | null",
       "getParentOfValue()": "HTMLElement | null",

@@ -15730,13 +15730,6 @@
         "optional": false
       }
     },
-    "setForceWrapper": {
-      "type": {
-        "arguments": { "force": "boolean" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
     "getCellEditor": {
       "type": {
         "arguments": {},

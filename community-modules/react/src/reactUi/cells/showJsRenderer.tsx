@@ -6,7 +6,8 @@ import { RenderDetails } from './cellComp';
 const useJsCellRenderer = (
     showDetails: RenderDetails | undefined,
     showTools: boolean,
-    toolsValueSpan: HTMLElement | undefined,
+    eCellValue: HTMLElement | undefined,
+    cellValueVersion: number,
     jsCellRendererRef: MutableRefObject<ICellRendererComp|undefined>,
     eGui: MutableRefObject<any>) => {
 
@@ -30,7 +31,7 @@ const useJsCellRenderer = (
         useEffect(() => {
             const showValue = showDetails != null;
             const jsCompDetails = showDetails && showDetails.compDetails && !showDetails.compDetails.componentFromFramework;
-            const waitingForToolsSetup = showTools && toolsValueSpan == null;
+            const waitingForToolsSetup = showTools && eCellValue == null;
             const showComp = showValue && jsCompDetails && !waitingForToolsSetup;
 
             // if not showing comp, destroy any existing one and return
@@ -64,12 +65,12 @@ const useJsCellRenderer = (
             const compGui = comp.getGui();
             if (!compGui) { return; }
 
-            const parent = showTools ? toolsValueSpan! : eGui.current!;
+            const parent = showTools ? eCellValue! : eGui.current!;
             parent.appendChild(compGui);
 
             jsCellRendererRef.current = comp;
 
-        }, [showDetails, showTools, toolsValueSpan]);
+        }, [showDetails, showTools, cellValueVersion]);
 
         // this effect makes sure destroyCellRenderer gets called when the
         // component is destroyed. as the other effect only updates when there
