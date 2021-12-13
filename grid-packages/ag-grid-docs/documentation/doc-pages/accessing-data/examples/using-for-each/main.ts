@@ -45,7 +45,6 @@ function onBtForEachLeafNode() {
   gridOptions.api!.forEachLeafNode(printNode)
 }
 
-// inScope[printNode]
 const printNode = (node: RowNode, index?: number) => {
   if (node.group) {
     console.log(index + ' -> group: ' + node.key)
