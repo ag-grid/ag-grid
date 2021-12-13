@@ -9,6 +9,7 @@
     "target": "ES6",
     "noImplicitAny": true,
     "moduleResolution": "node",
+    "sourceMap": true,
     "types": [],
     /* to prevent inclusion of node types etc, amongst others - sub modules need to specify types they require */
     "lib": [
