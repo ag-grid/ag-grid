@@ -3,18 +3,18 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n    {\n        field: 'latinText',\n        width: 350,\n        wrapText: true\n    },\n    { field: 'athlete' },\n    { field: 'country' },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]"
+            "value": "[\n    { field: 'latinText', width: 350, wrapText: true },\n    { field: 'athlete' },\n    { field: 'country' },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' },\n]"
         },
         { "name": "rowHeight", "value": "120" },
         {
             "name": "defaultColDef",
-            "value": "{\n    width: 170,\n    sortable: true,\n    editable: true,\n    resizable: true,\n    filter: true\n}"
+            "value": "{\n    width: 170,\n    sortable: true,\n    editable: true,\n    resizable: true,\n    filter: true,\n}"
         }
     ],
     "components": [],
-    "defaultColDef": "{\n    width: 170,\n    sortable: true,\n    editable: true,\n    resizable: true,\n    filter: true\n}",
+    "defaultColDef": "{\n    width: 170,\n    sortable: true,\n    editable: true,\n    resizable: true,\n    filter: true,\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n    {\n        field: 'latinText',\n        width: 350,\n        wrapText: true\n    },\n    { field: 'athlete' },\n    { field: 'country' },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]",
+    "parsedColDefs": "[\n    { field: 'latinText', width: 350, wrapText: true },\n    { field: 'athlete' },\n    { field: 'country' },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' },\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [
@@ -22,7 +22,7 @@
     ],
     "data": {
         "url": "'https://www.ag-grid.com/example-assets/olympic-winners.json'",
-        "callback": "{\n    data.forEach(function (dataItem) {\n        dataItem.latinText = latinText;\n    });\n    params.api.setRowData(data);\n}"
+        "callback": "{\n    data.forEach(function (dataItem) {\n        dataItem.latinText = latinText;\n    });\n    // now set the data into the grid\n    params.api.setRowData(data);\n}"
     },
     "template": "GRID_TEMPLATE_PLACEHOLDER",
     "gridSettings": { "width": "100%", "height": "100%", "theme": "ag-theme-alpine" }
