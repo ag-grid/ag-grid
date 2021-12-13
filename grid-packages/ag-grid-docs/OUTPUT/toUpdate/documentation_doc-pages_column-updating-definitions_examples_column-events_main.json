@@ -44,7 +44,7 @@
     "properties": [
         {
             "name": "defaultColDef",
-            "value": "{\n        sortable: true,\n        resizable: true,\n        width: 150,\n        enableRowGroup: true,\n        enablePivot: true,\n        enableValue: true\n    }"
+            "value": "{\n    sortable: true,\n    resizable: true,\n    width: 150,\n    enableRowGroup: true,\n    enablePivot: true,\n    enableValue: true\n}"
         },
         { "name": "columnDefs", "value": "getColumnDefs()" },
         { "name": "rowData", "value": "null" }

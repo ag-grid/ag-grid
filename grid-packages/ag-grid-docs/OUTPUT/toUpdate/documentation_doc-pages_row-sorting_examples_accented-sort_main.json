@@ -1,20 +1,20 @@
 {
     "eventHandlers": [],
     "properties": [
-        { "name": "columnDefs", "value": "[{\n            field: \"accented\",\n            width: 150\n        }]" },
+        { "name": "columnDefs", "value": "[{\n        field: 'accented',\n        width: 150\n    }]" },
         { "name": "defaultColDef", "value": "{ sortable: true }" },
         { "name": "animateRows", "value": "true" },
-        { "name": "sortingOrder", "value": "[\n        \"desc\",\n        \"asc\",\n        null\n    ]" },
+        { "name": "sortingOrder", "value": "[\n    'desc',\n    'asc',\n    null\n]" },
         { "name": "accentedSort", "value": "true" },
         {
             "name": "rowData",
-            "value": "[\n        { accented: \"aáàä\" },\n        { accented: \"aàáä\" },\n        { accented: \"aäàá\" }\n    ]"
+            "value": "[\n    { accented: 'aáàä' },\n    { accented: 'aàáä' },\n    { accented: 'aäàá' }\n]"
         }
     ],
     "components": [],
     "defaultColDef": "{ sortable: true }",
     "globalComponents": [],
-    "parsedColDefs": "[{\n            field: \"accented\",\n            width: 150\n        }]",
+    "parsedColDefs": "[{\n        field: 'accented',\n        width: 150\n    }]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [],

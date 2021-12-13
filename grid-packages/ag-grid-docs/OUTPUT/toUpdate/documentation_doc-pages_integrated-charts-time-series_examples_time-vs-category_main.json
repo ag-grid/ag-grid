@@ -8,14 +8,14 @@
     ],
     "properties": [
         { "name": "columnDefs", "value": "getColumnDefs()" },
-        { "name": "defaultColDef", "value": "{\n        flex: 1,\n        resizable: true\n    }" },
+        { "name": "defaultColDef", "value": "{\n    flex: 1,\n    resizable: true\n}" },
         { "name": "popupParent", "value": "document.body" },
         { "name": "rowData", "value": "getRowData()" },
         { "name": "enableRangeSelection", "value": "true" },
         { "name": "enableCharts", "value": "true" },
         {
             "name": "chartThemeOverrides",
-            "value": "{\n        line: {\n            title: {\n                enabled: true,\n                text: \"Average Daily Temperatures\"\n            },\n            legend: { enabled: false },\n            padding: {\n                top: 15,\n                bottom: 25\n            },\n            navigator: {\n                enabled: true,\n                height: 20,\n                margin: 25\n            },\n            axes: {\n                time: {\n                    label: {\n                        rotation: 0,\n                        format: \"%d %b\"\n                    }\n                },\n                category: {\n                    label: {\n                        rotation: 0,\n                        formatter: function (params) {\n                            return moment(new Date(params.value)).format(\"DD MMM\");\n                        }\n                    }\n                },\n                number: {\n                    label: {\n                        formatter: function (params) {\n                            return params.value + \"\\xB0C\";\n                        }\n                    }\n                }\n            }\n        }\n    }"
+            "value": "{\n    line: {\n        title: {\n            enabled: true,\n            text: 'Average Daily Temperatures'\n        },\n        legend: { enabled: false },\n        padding: {\n            top: 15,\n            bottom: 25\n        },\n        navigator: {\n            enabled: true,\n            height: 20,\n            margin: 25\n        },\n        axes: {\n            time: {\n                label: {\n                    rotation: 0,\n                    format: '%d %b'\n                }\n            },\n            category: {\n                label: {\n                    rotation: 0,\n                    formatter: function (params) {\n                        return moment(new Date(params.value)).format('DD MMM');\n                    }\n                }\n            },\n            number: {\n                label: {\n                    formatter: function (params) {\n                        return params.value + '\\xB0C';\n                    }\n                }\n            }\n        }\n    }\n}"
         },
         { "name": "getChartToolbarItems", "value": null }
     ],
@@ -24,7 +24,7 @@
     "globalComponents": [],
     "parsedColDefs": "",
     "instanceMethods": [
-        "function getChartToolbarItems() {\n        return [\n            \"chartData\",\n            \"chartFormat\"\n        ];\n    }"
+        "function getChartToolbarItems() {\n    return [\n        'chartData',\n        'chartFormat'\n    ];\n}"
     ],
     "externalEventHandlers": [
         {

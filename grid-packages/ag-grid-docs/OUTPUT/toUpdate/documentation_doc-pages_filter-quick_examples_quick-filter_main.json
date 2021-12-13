@@ -3,13 +3,13 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            headerName: \"A\",\n            field: \"a\"\n        },\n        {\n            headerName: \"B\",\n            field: \"b.name\"\n        },\n        {\n            headerName: \"C\",\n            valueGetter: \"'zz' + data.c.name\"\n        },\n        {\n            headerName: \"D\",\n            field: \"d\",\n            cellRenderer: \"boldRenderer\",\n            getQuickFilterText: function (params) {\n                return params.value.name;\n            }\n        },\n        {\n            headerName: \"E\",\n            field: \"e\",\n            cellRenderer: \"boldRenderer\"\n        }\n    ]"
+            "value": "[\n    {\n        headerName: 'A',\n        field: 'a'\n    },\n    {\n        headerName: 'B',\n        field: 'b.name'\n    },\n    {\n        headerName: 'C',\n        valueGetter: '\\'zz\\' + data.c.name'\n    },\n    {\n        headerName: 'D',\n        field: 'd',\n        cellRenderer: 'boldRenderer',\n        getQuickFilterText: function (params) {\n            return params.value.name;\n        }\n    },\n    {\n        headerName: 'E',\n        field: 'e',\n        cellRenderer: 'boldRenderer'\n    }\n]"
         },
-        { "name": "defaultColDef", "value": "{\n        flex: 1,\n        editable: true\n    }" },
+        { "name": "defaultColDef", "value": "{\n    flex: 1,\n    editable: true\n}" },
         { "name": "rowData", "value": "getData()" },
         {
             "name": "components",
-            "value": "{\n        boldRenderer: function (params) {\n            return \"<b>\" + params.value.name + \"</b>\";\n        }\n    }"
+            "value": "{\n    boldRenderer: function (params) {\n        return '<b>' + params.value.name + '</b>';\n    }\n}"
         }
     ],
     "components": [],

@@ -3,19 +3,19 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        { field: \"athlete\" },\n        { field: \"age\" },\n        {\n            field: \"country\",\n            rowGroup: true\n        },\n        {\n            field: \"year\",\n            rowGroup: true\n        },\n        { field: \"date\" },\n        {\n            field: \"sport\",\n            rowGroup: true\n        },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]"
+            "value": "[\n    { field: 'athlete' },\n    { field: 'age' },\n    {\n        field: 'country',\n        rowGroup: true\n    },\n    {\n        field: 'year',\n        rowGroup: true\n    },\n    { field: 'date' },\n    {\n        field: 'sport',\n        rowGroup: true\n    },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]"
         },
         { "name": "pagination", "value": "true" },
         { "name": "paginationPageSize", "value": "10" },
         {
             "name": "defaultColDef",
-            "value": "{\n        editable: true,\n        sortable: true,\n        resizable: true,\n        filter: true,\n        flex: 1,\n        minWidth: 190\n    }"
+            "value": "{\n    editable: true,\n    sortable: true,\n    resizable: true,\n    filter: true,\n    flex: 1,\n    minWidth: 190\n}"
         }
     ],
     "components": [],
     "defaultColDef": "{\n    editable: true,\n    sortable: true,\n    resizable: true,\n    filter: true,\n    flex: 1,\n    minWidth: 190\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        { field: \"athlete\" },\n        { field: \"age\" },\n        {\n            field: \"country\",\n            rowGroup: true\n        },\n        {\n            field: \"year\",\n            rowGroup: true\n        },\n        { field: \"date\" },\n        {\n            field: \"sport\",\n            rowGroup: true\n        },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]",
+    "parsedColDefs": "[\n    { field: 'athlete' },\n    { field: 'age' },\n    {\n        field: 'country',\n        rowGroup: true\n    },\n    {\n        field: 'year',\n        rowGroup: true\n    },\n    { field: 'date' },\n    {\n        field: 'sport',\n        rowGroup: true\n    },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [],

@@ -3,26 +3,26 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"product\",\n            chartDataType: \"category\"\n        },\n        {\n            field: \"book\",\n            chartDataType: \"category\"\n        },\n        {\n            field: \"current\",\n            type: \"measure\"\n        },\n        {\n            field: \"previous\",\n            type: \"measure\"\n        },\n        {\n            headerName: \"PL 1\",\n            field: \"pl1\",\n            type: \"measure\"\n        },\n        {\n            headerName: \"PL 2\",\n            field: \"pl2\",\n            type: \"measure\"\n        },\n        {\n            headerName: \"Gain-DX\",\n            field: \"gainDx\",\n            type: \"measure\"\n        },\n        {\n            headerName: \"SX / PX\",\n            field: \"sxPx\",\n            type: \"measure\"\n        },\n        {\n            field: \"trade\",\n            type: \"measure\"\n        },\n        {\n            field: \"submitterID\",\n            type: \"measure\"\n        },\n        {\n            field: \"submitterDealID\",\n            type: \"measure\",\n            minWidth: 170\n        },\n        { field: \"portfolio\" },\n        { field: \"dealType\" },\n        {\n            headerName: \"Bid\",\n            field: \"bidFlag\"\n        }\n    ]"
+            "value": "[\n    {\n        field: 'product',\n        chartDataType: 'category'\n    },\n    {\n        field: 'book',\n        chartDataType: 'category'\n    },\n    {\n        field: 'current',\n        type: 'measure'\n    },\n    {\n        field: 'previous',\n        type: 'measure'\n    },\n    {\n        headerName: 'PL 1',\n        field: 'pl1',\n        type: 'measure'\n    },\n    {\n        headerName: 'PL 2',\n        field: 'pl2',\n        type: 'measure'\n    },\n    {\n        headerName: 'Gain-DX',\n        field: 'gainDx',\n        type: 'measure'\n    },\n    {\n        headerName: 'SX / PX',\n        field: 'sxPx',\n        type: 'measure'\n    },\n    {\n        field: 'trade',\n        type: 'measure'\n    },\n    {\n        field: 'submitterID',\n        type: 'measure'\n    },\n    {\n        field: 'submitterDealID',\n        type: 'measure',\n        minWidth: 170\n    },\n    { field: 'portfolio' },\n    { field: 'dealType' },\n    {\n        headerName: 'Bid',\n        field: 'bidFlag'\n    }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        editable: true,\n        sortable: true,\n        flex: 1,\n        minWidth: 150,\n        filter: true,\n        resizable: true\n    }"
+            "value": "{\n    editable: true,\n    sortable: true,\n    flex: 1,\n    minWidth: 150,\n    filter: true,\n    resizable: true\n}"
         },
         {
             "name": "columnTypes",
-            "value": "{\n        measure: {\n            chartDataType: \"series\",\n            cellClass: \"number\",\n            valueFormatter: numberCellFormatter,\n            cellRenderer: \"agAnimateShowChangeCellRenderer\"\n        }\n    }"
+            "value": "{\n    measure: {\n        chartDataType: 'series',\n        cellClass: 'number',\n        valueFormatter: numberCellFormatter,\n        cellRenderer: 'agAnimateShowChangeCellRenderer'\n    }\n}"
         },
         { "name": "animateRows", "value": "true" },
         { "name": "enableCharts", "value": "true" },
         { "name": "suppressAggFuncInHeader", "value": "true" },
-        { "name": "getRowNodeId", "value": "function (data) {\n        return data.trade;\n    }" },
-        { "name": "chartThemes", "value": "[\"ag-pastel-dark\"]" },
+        { "name": "getRowNodeId", "value": "function (data) {\n    return data.trade;\n}" },
+        { "name": "chartThemes", "value": "['ag-pastel-dark']" },
         {
             "name": "chartThemeOverrides",
-            "value": "{\n        common: { legend: { position: \"bottom\" } },\n        column: {\n            axes: {\n                number: { label: { formatter: yAxisLabelFormatter } },\n                category: { label: { rotation: 0 } }\n            },\n            series: { tooltip: { renderer: tooltipRenderer } }\n        },\n        line: { series: { tooltip: { renderer: tooltipRenderer } } }\n    }"
+            "value": "{\n    common: { legend: { position: 'bottom' } },\n    column: {\n        axes: {\n            number: { label: { formatter: yAxisLabelFormatter } },\n            category: { label: { rotation: 0 } }\n        },\n        series: { tooltip: { renderer: tooltipRenderer } }\n    },\n    line: { series: { tooltip: { renderer: tooltipRenderer } } }\n}"
         },
-        { "name": "getChartToolbarItems", "value": "function () {\n        return [];\n    }" }
+        { "name": "getChartToolbarItems", "value": "function () {\n    return [];\n}" }
     ],
     "components": [],
     "defaultColDef": null,

@@ -9,15 +9,15 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            lockPosition: true,\n            valueGetter: \"node.rowIndex\",\n            cellClass: \"locked-col\",\n            width: 60,\n            suppressNavigable: true\n        },\n        {\n            lockPosition: true,\n            cellRenderer: controlsCellRenderer,\n            cellClass: \"locked-col\",\n            width: 120,\n            suppressNavigable: true\n        },\n        { field: \"athlete\" },\n        { field: \"age\" },\n        { field: \"country\" },\n        { field: \"year\" },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]"
+            "value": "[\n    {\n        lockPosition: true,\n        valueGetter: 'node.rowIndex',\n        cellClass: 'locked-col',\n        width: 60,\n        suppressNavigable: true\n    },\n    {\n        lockPosition: true,\n        cellRenderer: controlsCellRenderer,\n        cellClass: 'locked-col',\n        width: 120,\n        suppressNavigable: true\n    },\n    { field: 'athlete' },\n    { field: 'age' },\n    { field: 'country' },\n    { field: 'year' },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]"
         },
-        { "name": "defaultColDef", "value": "{\n        width: 150,\n        resizable: true\n    }" },
+        { "name": "defaultColDef", "value": "{\n    width: 150,\n    resizable: true\n}" },
         { "name": "suppressDragLeaveHidesColumns", "value": "true" }
     ],
     "components": [],
     "defaultColDef": "{\n    width: 150,\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            lockPosition: true,\n            valueGetter: \"node.rowIndex\",\n            cellClass: \"locked-col\",\n            width: 60,\n            suppressNavigable: true\n        },\n        {\n            lockPosition: true,\n            cellRenderer: \"AG_LITERAL_controlsCellRenderer\",\n            cellClass: \"locked-col\",\n            width: 120,\n            suppressNavigable: true\n        },\n        { field: \"athlete\" },\n        { field: \"age\" },\n        { field: \"country\" },\n        { field: \"year\" },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        lockPosition: true,\n        valueGetter: 'node.rowIndex',\n        cellClass: 'locked-col',\n        width: 60,\n        suppressNavigable: true\n    },\n    {\n        lockPosition: true,\n        cellRenderer: 'AG_LITERAL_controlsCellRenderer',\n        cellClass: 'locked-col',\n        width: 120,\n        suppressNavigable: true\n    },\n    { field: 'athlete' },\n    { field: 'age' },\n    { field: 'country' },\n    { field: 'year' },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

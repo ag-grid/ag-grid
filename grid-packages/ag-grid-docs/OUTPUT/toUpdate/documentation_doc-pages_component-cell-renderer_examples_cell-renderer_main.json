@@ -3,16 +3,16 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            headerName: \"Month\",\n            field: \"Month\",\n            width: 75,\n            cellStyle: { color: \"darkred\" }\n        },\n        {\n            headerName: \"Max Temp (\\u02DAC)\",\n            field: \"Max temp (C)\",\n            width: 120,\n            cellRenderer: \"deltaIndicator\"\n        },\n        {\n            headerName: \"Min Temp (\\u02DAC)\",\n            field: \"Min temp (C)\",\n            width: 120,\n            cellRenderer: \"deltaIndicator\"\n        },\n        {\n            headerName: \"Days of Air Frost\",\n            field: \"Days of air frost (days)\",\n            width: 233,\n            cellRenderer: \"daysFrostRenderer\",\n            cellRendererParams: { rendererImage: \"frost.png\" }\n        },\n        {\n            headerName: \"Days Sunshine\",\n            field: \"Sunshine (hours)\",\n            width: 190,\n            cellRenderer: \"daysSunshineRenderer\",\n            cellRendererParams: { rendererImage: \"sun.png\" }\n        },\n        {\n            headerName: \"Rainfall (10mm)\",\n            field: \"Rainfall (mm)\",\n            width: 180,\n            cellRenderer: \"rainPerTenMmRenderer\",\n            cellRendererParams: { rendererImage: \"rain.png\" }\n        }\n    ]"
+            "value": "[\n    {\n        headerName: 'Month',\n        field: 'Month',\n        width: 75,\n        cellStyle: { color: 'darkred' }\n    },\n    {\n        headerName: 'Max Temp (\\u02DAC)',\n        field: 'Max temp (C)',\n        width: 120,\n        cellRenderer: 'deltaIndicator'\n    },\n    {\n        headerName: 'Min Temp (\\u02DAC)',\n        field: 'Min temp (C)',\n        width: 120,\n        cellRenderer: 'deltaIndicator'\n    },\n    {\n        headerName: 'Days of Air Frost',\n        field: 'Days of air frost (days)',\n        width: 233,\n        cellRenderer: 'daysFrostRenderer',\n        cellRendererParams: { rendererImage: 'frost.png' }\n    },\n    {\n        headerName: 'Days Sunshine',\n        field: 'Sunshine (hours)',\n        width: 190,\n        cellRenderer: 'daysSunshineRenderer',\n        cellRendererParams: { rendererImage: 'sun.png' }\n    },\n    {\n        headerName: 'Rainfall (10mm)',\n        field: 'Rainfall (mm)',\n        width: 180,\n        cellRenderer: 'rainPerTenMmRenderer',\n        cellRendererParams: { rendererImage: 'rain.png' }\n    }\n]"
         },
         { "name": "rowData", "value": "null" },
         {
             "name": "components",
-            "value": "{\n        deltaIndicator: deltaIndicator,\n        daysFrostRenderer: DaysFrostRenderer,\n        daysSunshineRenderer: daysSunshineRenderer,\n        rainPerTenMmRenderer: rainPerTenMmRenderer\n    }"
+            "value": "{\n    deltaIndicator: deltaIndicator,\n    daysFrostRenderer: DaysFrostRenderer,\n    daysSunshineRenderer: daysSunshineRenderer,\n    rainPerTenMmRenderer: rainPerTenMmRenderer\n}"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        editable: true,\n        sortable: true,\n        flex: 1,\n        minWidth: 100,\n        filter: true,\n        resizable: true\n    }"
+            "value": "{\n    editable: true,\n    sortable: true,\n    flex: 1,\n    minWidth: 100,\n    filter: true,\n    resizable: true\n}"
         }
     ],
     "components": [],

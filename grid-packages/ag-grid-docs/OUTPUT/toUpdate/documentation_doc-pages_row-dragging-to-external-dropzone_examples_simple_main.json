@@ -3,15 +3,15 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"id\",\n            rowDrag: true\n        },\n        { field: \"color\" },\n        { field: \"value1\" },\n        { field: \"value2\" }\n    ]"
+            "value": "[\n    {\n        field: 'id',\n        rowDrag: true\n    },\n    { field: 'color' },\n    { field: 'value1' },\n    { field: 'value2' }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        sortable: true,\n        filter: true,\n        resizable: true,\n        flex: 1\n    }"
+            "value": "{\n    sortable: true,\n    filter: true,\n    resizable: true,\n    flex: 1\n}"
         },
         {
             "name": "rowClassRules",
-            "value": "{\n        \"red-row\": \"data.color == \\\"Red\\\"\",\n        \"green-row\": \"data.color == \\\"Green\\\"\",\n        \"blue-row\": \"data.color == \\\"Blue\\\"\"\n    }"
+            "value": "{\n    'red-row': 'data.color == \"Red\"',\n    'green-row': 'data.color == \"Green\"',\n    'blue-row': 'data.color == \"Blue\"'\n}"
         },
         { "name": "rowData", "value": "createRowData()" },
         { "name": "rowDragManaged", "value": "true" },
@@ -20,7 +20,7 @@
     "components": [],
     "defaultColDef": "{\n    sortable: true,\n    filter: true,\n    resizable: true,\n    flex: 1\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"id\",\n            rowDrag: true\n        },\n        { field: \"color\" },\n        { field: \"value1\" },\n        { field: \"value2\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'id',\n        rowDrag: true\n    },\n    { field: 'color' },\n    { field: 'value1' },\n    { field: 'value2' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [

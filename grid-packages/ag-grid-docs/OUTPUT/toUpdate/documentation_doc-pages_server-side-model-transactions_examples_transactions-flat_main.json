@@ -1,19 +1,19 @@
 {
     "eventHandlers": [],
     "properties": [
-        { "name": "columnDefs", "value": "[\n        { field: \"product\" },\n        { field: \"value\" }\n    ]" },
-        { "name": "defaultColDef", "value": "{\n        width: 250,\n        resizable: true\n    }" },
-        { "name": "getRowNodeId", "value": "function (data) {\n        return data.product;\n    }" },
-        { "name": "rowSelection", "value": "\"multiple\"" },
-        { "name": "serverSideStoreType", "value": "\"full\"" },
+        { "name": "columnDefs", "value": "[\n    { field: 'product' },\n    { field: 'value' }\n]" },
+        { "name": "defaultColDef", "value": "{\n    width: 250,\n    resizable: true\n}" },
+        { "name": "getRowNodeId", "value": "function (data) {\n    return data.product;\n}" },
+        { "name": "rowSelection", "value": "'multiple'" },
+        { "name": "serverSideStoreType", "value": "'full'" },
         { "name": "enableCellChangeFlash", "value": "true" },
-        { "name": "rowModelType", "value": "\"serverSide\"" },
+        { "name": "rowModelType", "value": "'serverSide'" },
         { "name": "animateRows", "value": "true" }
     ],
     "components": [],
     "defaultColDef": "{\n    width: 250,\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        { field: \"product\" },\n        { field: \"value\" }\n    ]",
+    "parsedColDefs": "[\n    { field: 'product' },\n    { field: 'value' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

@@ -3,20 +3,20 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"q1\",\n            type: \"quarterFigure\"\n        },\n        {\n            field: \"q2\",\n            type: \"quarterFigure\"\n        },\n        {\n            field: \"q3\",\n            type: \"quarterFigure\"\n        },\n        {\n            field: \"q4\",\n            type: \"quarterFigure\"\n        },\n        {\n            field: \"year\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            headerName: \"Total\",\n            colId: \"total\",\n            cellClass: \"number-cell total-col\",\n            aggFunc: \"sum\",\n            valueFormatter: formatNumber,\n            valueGetter: function (params) {\n                var q1 = params.getValue(\"q1\");\n                var q2 = params.getValue(\"q2\");\n                var q3 = params.getValue(\"q3\");\n                var q4 = params.getValue(\"q4\");\n                var result = q1 + q2 + q3 + q4;\n                console.log(`Total Value Getter (${ callCount }, ${ params.column.getId() }): ${ [\n                    q1,\n                    q2,\n                    q3,\n                    q4\n                ].join(\", \") } =  ${ result }`);\n                callCount++;\n                return result;\n            }\n        }\n    ]"
+            "value": "[\n    {\n        field: 'q1',\n        type: 'quarterFigure'\n    },\n    {\n        field: 'q2',\n        type: 'quarterFigure'\n    },\n    {\n        field: 'q3',\n        type: 'quarterFigure'\n    },\n    {\n        field: 'q4',\n        type: 'quarterFigure'\n    },\n    {\n        field: 'year',\n        rowGroup: true,\n        hide: true\n    },\n    {\n        headerName: 'Total',\n        colId: 'total',\n        cellClass: 'number-cell total-col',\n        aggFunc: 'sum',\n        valueFormatter: formatNumber,\n        valueGetter: function (params) {\n            var q1 = params.getValue('q1');\n            var q2 = params.getValue('q2');\n            var q3 = params.getValue('q3');\n            var q4 = params.getValue('q4');\n            var result = q1 + q2 + q3 + q4;\n            console.log(`Total Value Getter (${ callCount }, ${ params.column.getId() }): ${ [\n                q1,\n                q2,\n                q3,\n                q4\n            ].join(', ') } =  ${ result }`);\n            callCount++;\n            return result;\n        }\n    }\n]"
         },
-        { "name": "defaultColDef", "value": "{\n        flex: 1,\n        resizable: true\n    }" },
+        { "name": "defaultColDef", "value": "{\n    flex: 1,\n    resizable: true\n}" },
         { "name": "autoGroupColumnDef", "value": "{ minWidth: 140 }" },
         {
             "name": "columnTypes",
-            "value": "{\n        quarterFigure: {\n            cellClass: \"number-cell\",\n            aggFunc: \"sum\",\n            valueFormatter: formatNumber,\n            valueParser: function numberParser(params) {\n                return Number(params.newValue);\n            }\n        }\n    }"
+            "value": "{\n    quarterFigure: {\n        cellClass: 'number-cell',\n        aggFunc: 'sum',\n        valueFormatter: formatNumber,\n        valueParser: function numberParser(params) {\n            return Number(params.newValue);\n        }\n    }\n}"
         },
         { "name": "rowData", "value": "getData()" },
         { "name": "suppressAggFuncInHeader", "value": "true" },
         { "name": "enableCellChangeFlash", "value": "true" },
         { "name": "enableRangeSelection", "value": "true" },
         { "name": "groupDefaultExpanded", "value": "1" },
-        { "name": "getRowNodeId", "value": "function (data) {\n        return data.id;\n    }" }
+        { "name": "getRowNodeId", "value": "function (data) {\n    return data.id;\n}" }
     ],
     "components": [],
     "defaultColDef": null,

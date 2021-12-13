@@ -3,7 +3,7 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            headerName: \"ID\",\n            valueGetter: \"node.rowIndex + 1\",\n            width: 70\n        },\n        {\n            field: \"model\",\n            width: 150\n        },\n        { field: \"color\" },\n        {\n            field: \"price\",\n            valueFormatter: \"\\\"$\\\" + value.toLocaleString()\"\n        },\n        { field: \"year\" },\n        { field: \"country\" }\n    ]"
+            "value": "[\n    {\n        headerName: 'ID',\n        valueGetter: 'node.rowIndex + 1',\n        width: 70\n    },\n    {\n        field: 'model',\n        width: 150\n    },\n    { field: 'color' },\n    {\n        field: 'price',\n        valueFormatter: '\"$\" + value.toLocaleString()'\n    },\n    { field: 'year' },\n    { field: 'country' }\n]"
         },
         { "name": "rowData", "value": "getData()" },
         { "name": "defaultColDef", "value": "{ width: 100 }" }
@@ -11,7 +11,7 @@
     "components": [],
     "defaultColDef": "{ width: 100 }",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            headerName: \"ID\",\n            valueGetter: \"node.rowIndex + 1\",\n            width: 70\n        },\n        {\n            field: \"model\",\n            width: 150\n        },\n        { field: \"color\" },\n        {\n            field: \"price\",\n            valueFormatter: \"\\\"$\\\" + value.toLocaleString()\"\n        },\n        { field: \"year\" },\n        { field: \"country\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        headerName: 'ID',\n        valueGetter: 'node.rowIndex + 1',\n        width: 70\n    },\n    {\n        field: 'model',\n        width: 150\n    },\n    { field: 'color' },\n    {\n        field: 'price',\n        valueFormatter: '\"$\" + value.toLocaleString()'\n    },\n    { field: 'year' },\n    { field: 'country' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

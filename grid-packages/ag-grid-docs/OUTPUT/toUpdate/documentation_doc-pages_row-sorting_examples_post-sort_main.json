@@ -3,18 +3,18 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        { field: \"athlete\" },\n        {\n            field: \"age\",\n            width: 100\n        },\n        {\n            field: \"country\",\n            sort: \"asc\"\n        },\n        { field: \"year\" },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]"
+            "value": "[\n    { field: 'athlete' },\n    {\n        field: 'age',\n        width: 100\n    },\n    {\n        field: 'country',\n        sort: 'asc'\n    },\n    { field: 'year' },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]"
         },
-        { "name": "defaultColDef", "value": "{\n        width: 170,\n        sortable: true\n    }" },
+        { "name": "defaultColDef", "value": "{\n    width: 170,\n    sortable: true\n}" },
         {
             "name": "postSort",
-            "value": "rowNodes => {\n        let nextInsertPos = 0;\n        for (let i = 0; i < rowNodes.length; i++) {\n            const country = rowNodes[i].data.country;\n            if (country === \"Ireland\") {\n                rowNodes.splice(nextInsertPos, 0, rowNodes.splice(i, 1)[0]);\n                nextInsertPos++;\n            }\n        }\n    }"
+            "value": "rowNodes => {\n    let nextInsertPos = 0;\n    for (let i = 0; i < rowNodes.length; i++) {\n        const country = rowNodes[i].data.country;\n        if (country === 'Ireland') {\n            rowNodes.splice(nextInsertPos, 0, rowNodes.splice(i, 1)[0]);\n            nextInsertPos++;\n        }\n    }\n}"
         }
     ],
     "components": [],
     "defaultColDef": "{\n    width: 170,\n    sortable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        { field: \"athlete\" },\n        {\n            field: \"age\",\n            width: 100\n        },\n        {\n            field: \"country\",\n            sort: \"asc\"\n        },\n        { field: \"year\" },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]",
+    "parsedColDefs": "[\n    { field: 'athlete' },\n    {\n        field: 'age',\n        width: 100\n    },\n    {\n        field: 'country',\n        sort: 'asc'\n    },\n    { field: 'year' },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [],

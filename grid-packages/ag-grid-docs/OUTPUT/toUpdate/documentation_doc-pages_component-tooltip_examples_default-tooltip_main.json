@@ -3,11 +3,11 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"athlete\",\n            minWidth: 170,\n            tooltipField: \"athlete\"\n        },\n        { field: \"age\" },\n        {\n            field: \"country\",\n            minWidth: 150,\n            tooltipField: \"country\"\n        },\n        { field: \"year\" },\n        {\n            field: \"date\",\n            minWidth: 150\n        },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]"
+            "value": "[\n    {\n        field: 'athlete',\n        minWidth: 170,\n        tooltipField: 'athlete'\n    },\n    { field: 'age' },\n    {\n        field: 'country',\n        minWidth: 150,\n        tooltipField: 'country'\n    },\n    { field: 'year' },\n    {\n        field: 'date',\n        minWidth: 150\n    },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        editable: true,\n        sortable: true,\n        flex: 1,\n        minWidth: 100,\n        filter: true,\n        resizable: true\n    }"
+            "value": "{\n    editable: true,\n    sortable: true,\n    flex: 1,\n    minWidth: 100,\n    filter: true,\n    resizable: true\n}"
         },
         { "name": "enableBrowserTooltips", "value": "true" },
         { "name": "rowData", "value": "null" }
@@ -15,7 +15,7 @@
     "components": [],
     "defaultColDef": "{\n    editable: true,\n    sortable: true,\n    flex: 1,\n    minWidth: 100,\n    filter: true,\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            minWidth: 170,\n            tooltipField: \"athlete\"\n        },\n        { field: \"age\" },\n        {\n            field: \"country\",\n            minWidth: 150,\n            tooltipField: \"country\"\n        },\n        { field: \"year\" },\n        {\n            field: \"date\",\n            minWidth: 150\n        },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'athlete',\n        minWidth: 170,\n        tooltipField: 'athlete'\n    },\n    { field: 'age' },\n    {\n        field: 'country',\n        minWidth: 150,\n        tooltipField: 'country'\n    },\n    { field: 'year' },\n    {\n        field: 'date',\n        minWidth: 150\n    },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [],

@@ -1,10 +1,7 @@
 {
     "eventHandlers": [],
     "properties": [
-        {
-            "name": "defaultColDef",
-            "value": "{\n        initialWidth: 100,\n        sortable: true,\n        resizable: true\n    }"
-        },
+        { "name": "defaultColDef", "value": "{\n    initialWidth: 100,\n    sortable: true,\n    resizable: true\n}" },
         { "name": "columnDefs", "value": "getColDefsMedalsIncluded()" }
     ],
     "components": [],

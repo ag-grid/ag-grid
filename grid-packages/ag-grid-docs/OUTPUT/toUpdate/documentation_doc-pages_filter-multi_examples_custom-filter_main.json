@@ -3,15 +3,15 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"athlete\",\n            filter: \"agMultiColumnFilter\"\n        },\n        {\n            field: \"sport\",\n            filter: \"agMultiColumnFilter\"\n        },\n        {\n            field: \"year\",\n            filter: \"agMultiColumnFilter\",\n            filterParams: {\n                filters: [\n                    {\n                        filter: \"yearFilter\",\n                        floatingFilterComponent: \"yearFloatingFilter\"\n                    },\n                    { filter: \"agNumberColumnFilter\" }\n                ]\n            }\n        }\n    ]"
+            "value": "[\n    {\n        field: 'athlete',\n        filter: 'agMultiColumnFilter'\n    },\n    {\n        field: 'sport',\n        filter: 'agMultiColumnFilter'\n    },\n    {\n        field: 'year',\n        filter: 'agMultiColumnFilter',\n        filterParams: {\n            filters: [\n                {\n                    filter: 'yearFilter',\n                    floatingFilterComponent: 'yearFloatingFilter'\n                },\n                { filter: 'agNumberColumnFilter' }\n            ]\n        }\n    }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        minWidth: 200,\n        resizable: true,\n        floatingFilter: true,\n        menuTabs: [\"filterMenuTab\"]\n    }"
+            "value": "{\n    flex: 1,\n    minWidth: 200,\n    resizable: true,\n    floatingFilter: true,\n    menuTabs: ['filterMenuTab']\n}"
         },
         {
             "name": "components",
-            "value": "{\n        yearFilter: YearFilter,\n        yearFloatingFilter: YearFloatingFilter\n    }"
+            "value": "{\n    yearFilter: YearFilter,\n    yearFloatingFilter: YearFloatingFilter\n}"
         }
     ],
     "components": [
@@ -20,7 +20,7 @@
     ],
     "defaultColDef": "{\n    flex: 1,\n    minWidth: 200,\n    resizable: true,\n    floatingFilter: true,\n    menuTabs: ['filterMenuTab']\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            filter: \"agMultiColumnFilter\"\n        },\n        {\n            field: \"sport\",\n            filter: \"agMultiColumnFilter\"\n        },\n        {\n            field: \"year\",\n            filter: \"agMultiColumnFilter\",\n            filterParams: {\n                filters: [\n                    {\n                        filter: \"yearFilter\",\n                        floatingFilterComponent: \"yearFloatingFilter\"\n                    },\n                    { filter: \"agNumberColumnFilter\" }\n                ]\n            }\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'athlete',\n        filter: 'agMultiColumnFilter'\n    },\n    {\n        field: 'sport',\n        filter: 'agMultiColumnFilter'\n    },\n    {\n        field: 'year',\n        filter: 'agMultiColumnFilter',\n        filterParams: {\n            filters: [\n                {\n                    filter: 'yearFilter',\n                    floatingFilterComponent: 'yearFloatingFilter'\n                },\n                { filter: 'agNumberColumnFilter' }\n            ]\n        }\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [],

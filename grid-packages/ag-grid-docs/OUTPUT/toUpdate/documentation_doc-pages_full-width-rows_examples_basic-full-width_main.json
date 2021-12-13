@@ -1,18 +1,18 @@
 {
     "eventHandlers": [],
     "properties": [
-        { "name": "rowData", "value": "createData(100, \"body\")" },
-        { "name": "pinnedTopRowData", "value": "createData(3, \"pinned\")" },
-        { "name": "pinnedBottomRowData", "value": "createData(3, \"pinned\")" },
+        { "name": "rowData", "value": "createData(100, 'body')" },
+        { "name": "pinnedTopRowData", "value": "createData(3, 'pinned')" },
+        { "name": "pinnedBottomRowData", "value": "createData(3, 'pinned')" },
         { "name": "columnDefs", "value": "getColumnDefs()" },
-        { "name": "isFullWidthCell", "value": "function (rowNode) {\n        return rowNode.data.fullWidth;\n    }" },
+        { "name": "isFullWidthCell", "value": "function (rowNode) {\n    return rowNode.data.fullWidth;\n}" },
         {
             "name": "fullWidthCellRenderer",
-            "value": "function (params) {\n        let cssClass;\n        let message;\n        if (params.node.rowPinned) {\n            cssClass = \"example-full-width-pinned-row\";\n            message = \"Pinned full width row at index \" + params.rowIndex;\n        } else {\n            cssClass = \"example-full-width-row\";\n            message = \"Normal full width row at index\" + params.rowIndex;\n        }\n        const eDiv = document.createElement(\"div\");\n        eDiv.innerHTML = \"<div class=\\\"\" + cssClass + \"\\\"><button>Click</button> \" + message + \"</div>\";\n        const eButton = eDiv.querySelector(\"button\");\n        eButton.addEventListener(\"click\", function () {\n            alert(\"button clicked\");\n        });\n        return eDiv.firstChild;\n    }"
+            "value": "function (params) {\n    let cssClass;\n    let message;\n    if (params.node.rowPinned) {\n        cssClass = 'example-full-width-pinned-row';\n        message = 'Pinned full width row at index ' + params.rowIndex;\n    } else {\n        cssClass = 'example-full-width-row';\n        message = 'Normal full width row at index' + params.rowIndex;\n    }\n    const eDiv = document.createElement('div');\n    eDiv.innerHTML = '<div class=\"' + cssClass + '\"><button>Click</button> ' + message + '</div>';\n    const eButton = eDiv.querySelector('button');\n    eButton.addEventListener('click', function () {\n        alert('button clicked');\n    });\n    return eDiv.firstChild;\n}"
         },
         {
             "name": "getRowHeight",
-            "value": "function (params) {\n        const isBodyRow = params.node.rowPinned === undefined;\n        const isFullWidth = params.node.data.fullWidth;\n        if (isBodyRow && isFullWidth) {\n            return 75;\n        }\n    }"
+            "value": "function (params) {\n    const isBodyRow = params.node.rowPinned === undefined;\n    const isFullWidth = params.node.data.fullWidth;\n    if (isBodyRow && isFullWidth) {\n        return 75;\n    }\n}"
         }
     ],
     "components": [],

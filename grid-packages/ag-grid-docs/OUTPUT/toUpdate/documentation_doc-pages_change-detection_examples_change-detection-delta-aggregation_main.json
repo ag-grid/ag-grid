@@ -3,31 +3,28 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"topGroup\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            field: \"group\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            headerName: \"ID\",\n            field: \"id\",\n            cellClass: \"number-cell\",\n            maxWidth: 70\n        },\n        {\n            field: \"a\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"b\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"c\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"d\",\n            type: \"valueColumn\"\n        },\n        {\n            headerName: \"Total\",\n            type: \"totalColumn\",\n            minWidth: 120,\n            valueGetter: \"getValue(\\\"a\\\") + getValue(\\\"b\\\") + getValue(\\\"c\\\") + getValue(\\\"d\\\")\"\n        }\n    ]"
+            "value": "[\n    {\n        field: 'topGroup',\n        rowGroup: true,\n        hide: true\n    },\n    {\n        field: 'group',\n        rowGroup: true,\n        hide: true\n    },\n    {\n        headerName: 'ID',\n        field: 'id',\n        cellClass: 'number-cell',\n        maxWidth: 70\n    },\n    {\n        field: 'a',\n        type: 'valueColumn'\n    },\n    {\n        field: 'b',\n        type: 'valueColumn'\n    },\n    {\n        field: 'c',\n        type: 'valueColumn'\n    },\n    {\n        field: 'd',\n        type: 'valueColumn'\n    },\n    {\n        headerName: 'Total',\n        type: 'totalColumn',\n        minWidth: 120,\n        valueGetter: 'getValue(\"a\") + getValue(\"b\") + getValue(\"c\") + getValue(\"d\")'\n    }\n]"
         },
-        {
-            "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        sortable: true,\n        resizable: true\n    }"
-        },
+        { "name": "defaultColDef", "value": "{\n    flex: 1,\n    sortable: true,\n    resizable: true\n}" },
         { "name": "autoGroupColumnDef", "value": "{ minWidth: 180 }" },
         {
             "name": "columnTypes",
-            "value": "{\n        valueColumn: {\n            editable: true,\n            aggFunc: \"sum\",\n            cellClass: \"number-cell\",\n            cellRenderer: \"agAnimateShowChangeCellRenderer\",\n            filter: \"agNumberColumnFilter\",\n            valueParser: numberValueParser\n        },\n        totalColumn: {\n            cellRenderer: \"agAnimateShowChangeCellRenderer\",\n            cellClass: \"number-cell\"\n        }\n    }"
+            "value": "{\n    valueColumn: {\n        editable: true,\n        aggFunc: 'sum',\n        cellClass: 'number-cell',\n        cellRenderer: 'agAnimateShowChangeCellRenderer',\n        filter: 'agNumberColumnFilter',\n        valueParser: numberValueParser\n    },\n    totalColumn: {\n        cellRenderer: 'agAnimateShowChangeCellRenderer',\n        cellClass: 'number-cell'\n    }\n}"
         },
         { "name": "aggregateOnlyChangedColumns", "value": "true" },
         {
             "name": "aggFuncs",
-            "value": "{\n        sum: function (params) {\n            var values = params && params.values ? params.values : [];\n            var result = 0;\n            if (values) {\n                values.forEach(function (value) {\n                    if (typeof value === \"number\") {\n                        result += value;\n                    }\n                });\n            }\n            callCount++;\n            console.log(callCount + \" aggregation: sum([\" + values.join(\",\") + \"]) = \" + result);\n            return result;\n        }\n    }"
+            "value": "{\n    sum: function (params) {\n        var values = params && params.values ? params.values : [];\n        var result = 0;\n        if (values) {\n            values.forEach(function (value) {\n                if (typeof value === 'number') {\n                    result += value;\n                }\n            });\n        }\n        callCount++;\n        console.log(callCount + ' aggregation: sum([' + values.join(',') + ']) = ' + result);\n        return result;\n    }\n}"
         },
         { "name": "groupDefaultExpanded", "value": "1" },
         { "name": "suppressAggFuncInHeader", "value": "true" },
         { "name": "animateRows", "value": "true" },
-        { "name": "getRowNodeId", "value": "function (rowData) {\n        return rowData.id;\n    }" }
+        { "name": "getRowNodeId", "value": "function (rowData) {\n    return rowData.id;\n}" }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    sortable: true,\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"topGroup\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            field: \"group\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            headerName: \"ID\",\n            field: \"id\",\n            cellClass: \"number-cell\",\n            maxWidth: 70\n        },\n        {\n            field: \"a\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"b\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"c\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"d\",\n            type: \"valueColumn\"\n        },\n        {\n            headerName: \"Total\",\n            type: \"totalColumn\",\n            minWidth: 120,\n            valueGetter: \"getValue(\\\"a\\\") + getValue(\\\"b\\\") + getValue(\\\"c\\\") + getValue(\\\"d\\\")\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'topGroup',\n        rowGroup: true,\n        hide: true\n    },\n    {\n        field: 'group',\n        rowGroup: true,\n        hide: true\n    },\n    {\n        headerName: 'ID',\n        field: 'id',\n        cellClass: 'number-cell',\n        maxWidth: 70\n    },\n    {\n        field: 'a',\n        type: 'valueColumn'\n    },\n    {\n        field: 'b',\n        type: 'valueColumn'\n    },\n    {\n        field: 'c',\n        type: 'valueColumn'\n    },\n    {\n        field: 'd',\n        type: 'valueColumn'\n    },\n    {\n        headerName: 'Total',\n        type: 'totalColumn',\n        minWidth: 120,\n        valueGetter: 'getValue(\"a\") + getValue(\"b\") + getValue(\"c\") + getValue(\"d\")'\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

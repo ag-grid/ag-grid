@@ -3,9 +3,9 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        { field: \"localTime\" },\n        {\n            field: \"show\",\n            cellRenderer: \"showCellRenderer\",\n            rowSpan: rowSpan,\n            cellClassRules: { \"show-cell\": \"value !== undefined\" },\n            width: 200\n        },\n        { field: \"a\" },\n        { field: \"b\" },\n        { field: \"c\" },\n        { field: \"d\" },\n        { field: \"e\" }\n    ]"
+            "value": "[\n    { field: 'localTime' },\n    {\n        field: 'show',\n        cellRenderer: 'showCellRenderer',\n        rowSpan: rowSpan,\n        cellClassRules: { 'show-cell': 'value !== undefined' },\n        width: 200\n    },\n    { field: 'a' },\n    { field: 'b' },\n    { field: 'c' },\n    { field: 'd' },\n    { field: 'e' }\n]"
         },
-        { "name": "defaultColDef", "value": "{\n        resizable: true,\n        width: 170\n    }" },
+        { "name": "defaultColDef", "value": "{\n    resizable: true,\n    width: 170\n}" },
         { "name": "rowData", "value": "getData()" },
         { "name": "components", "value": "{ showCellRenderer: createShowCellRenderer() }" },
         { "name": "suppressRowTransform", "value": "true" }
@@ -13,7 +13,7 @@
     "components": [],
     "defaultColDef": "{\n    resizable: true,\n    width: 170\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        { field: \"localTime\" },\n        {\n            field: \"show\",\n            cellRenderer: \"showCellRenderer\",\n            rowSpan: \"AG_LITERAL_rowSpan\",\n            cellClassRules: { \"show-cell\": \"value !== undefined\" },\n            width: 200\n        },\n        { field: \"a\" },\n        { field: \"b\" },\n        { field: \"c\" },\n        { field: \"d\" },\n        { field: \"e\" }\n    ]",
+    "parsedColDefs": "[\n    { field: 'localTime' },\n    {\n        field: 'show',\n        cellRenderer: 'showCellRenderer',\n        rowSpan: 'AG_LITERAL_rowSpan',\n        cellClassRules: { 'show-cell': 'value !== undefined' },\n        width: 200\n    },\n    { field: 'a' },\n    { field: 'b' },\n    { field: 'c' },\n    { field: 'd' },\n    { field: 'e' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [

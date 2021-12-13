@@ -3,18 +3,18 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"athlete\",\n            minWidth: 200\n        },\n        {\n            field: \"country\",\n            minWidth: 200\n        },\n        {\n            field: \"sport\",\n            minWidth: 150\n        },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]"
+            "value": "[\n    {\n        field: 'athlete',\n        minWidth: 200\n    },\n    {\n        field: 'country',\n        minWidth: 200\n    },\n    {\n        field: 'sport',\n        minWidth: 150\n    },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        sortable: true,\n        filter: true,\n        resizable: true,\n        minWidth: 100,\n        flex: 1\n    }"
+            "value": "{\n    sortable: true,\n    filter: true,\n    resizable: true,\n    minWidth: 100,\n    flex: 1\n}"
         },
         { "name": "popupParent", "value": "document.body" }
     ],
     "components": [],
     "defaultColDef": "{\n    sortable: true,\n    filter: true,\n    resizable: true,\n    minWidth: 100,\n    flex: 1\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            minWidth: 200\n        },\n        {\n            field: \"country\",\n            minWidth: 200\n        },\n        {\n            field: \"sport\",\n            minWidth: 150\n        },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'athlete',\n        minWidth: 200\n    },\n    {\n        field: 'country',\n        minWidth: 200\n    },\n    {\n        field: 'sport',\n        minWidth: 150\n    },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

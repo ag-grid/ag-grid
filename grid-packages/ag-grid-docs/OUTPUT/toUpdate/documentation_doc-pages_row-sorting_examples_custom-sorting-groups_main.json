@@ -3,18 +3,18 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"athlete\",\n            hide: true\n        },\n        { field: \"age\" },\n        {\n            field: \"country\",\n            rowGroup: true\n        },\n        { field: \"year\" },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]"
+            "value": "[\n    {\n        field: 'athlete',\n        hide: true\n    },\n    { field: 'age' },\n    {\n        field: 'country',\n        rowGroup: true\n    },\n    { field: 'year' },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]"
         },
         { "name": "defaultColDef", "value": "{ sortable: true }" },
         {
             "name": "autoGroupColumnDef",
-            "value": "{\n        comparator: function (valueA, valueB, nodeA, nodeB, isInverted) {\n            var res = valueA == valueB ? 0 : valueA > valueB ? 1 : -1;\n            return res;\n        },\n        field: \"athlete\",\n        sort: \"asc\"\n    }"
+            "value": "{\n    comparator: function (valueA, valueB, nodeA, nodeB, isInverted) {\n        var res = valueA == valueB ? 0 : valueA > valueB ? 1 : -1;\n        return res;\n    },\n    field: 'athlete',\n    sort: 'asc'\n}"
         }
     ],
     "components": [],
     "defaultColDef": "{ sortable: true }",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            hide: true\n        },\n        { field: \"age\" },\n        {\n            field: \"country\",\n            rowGroup: true\n        },\n        { field: \"year\" },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'athlete',\n        hide: true\n    },\n    { field: 'age' },\n    {\n        field: 'country',\n        rowGroup: true\n    },\n    { field: 'year' },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [],

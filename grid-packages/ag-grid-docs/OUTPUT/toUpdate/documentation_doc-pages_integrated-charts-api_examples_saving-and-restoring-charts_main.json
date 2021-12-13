@@ -3,11 +3,11 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"country\",\n            chartDataType: \"category\"\n        },\n        {\n            field: \"sugar\",\n            chartDataType: \"series\"\n        },\n        {\n            field: \"fat\",\n            chartDataType: \"series\"\n        },\n        {\n            field: \"weight\",\n            chartDataType: \"series\"\n        }\n    ]"
+            "value": "[\n    {\n        field: 'country',\n        chartDataType: 'category'\n    },\n    {\n        field: 'sugar',\n        chartDataType: 'series'\n    },\n    {\n        field: 'fat',\n        chartDataType: 'series'\n    },\n    {\n        field: 'weight',\n        chartDataType: 'series'\n    }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        editable: true,\n        sortable: true,\n        flex: 1,\n        minWidth: 100,\n        filter: true,\n        resizable: true\n    }"
+            "value": "{\n    editable: true,\n    sortable: true,\n    flex: 1,\n    minWidth: 100,\n    filter: true,\n    resizable: true\n}"
         },
         { "name": "rowData", "value": "getData()" },
         { "name": "enableRangeSelection", "value": "true" },
@@ -18,9 +18,9 @@
     "components": [],
     "defaultColDef": "{\n    editable: true,\n    sortable: true,\n    flex: 1,\n    minWidth: 100,\n    filter: true,\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"country\",\n            chartDataType: \"category\"\n        },\n        {\n            field: \"sugar\",\n            chartDataType: \"series\"\n        },\n        {\n            field: \"fat\",\n            chartDataType: \"series\"\n        },\n        {\n            field: \"weight\",\n            chartDataType: \"series\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'country',\n        chartDataType: 'category'\n    },\n    {\n        field: 'sugar',\n        chartDataType: 'series'\n    },\n    {\n        field: 'fat',\n        chartDataType: 'series'\n    },\n    {\n        field: 'weight',\n        chartDataType: 'series'\n    }\n]",
     "instanceMethods": [
-        "function createChartContainer(chartRef) {\n        if (currentChartRef) {\n            currentChartRef.destroyChart();\n        }\n        var eChart = chartRef.chartElement;\n        var eParent = document.querySelector(\"#myChart\");\n        eParent.appendChild(eChart);\n        currentChartRef = chartRef;\n    }"
+        "function createChartContainer(chartRef) {\n    if (currentChartRef) {\n        currentChartRef.destroyChart();\n    }\n    var eChart = chartRef.chartElement;\n    var eParent = document.querySelector('#myChart');\n    eParent.appendChild(eChart);\n    currentChartRef = chartRef;\n}"
     ],
     "externalEventHandlers": [
         {

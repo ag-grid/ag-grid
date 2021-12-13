@@ -3,19 +3,19 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            checkboxSelection: true,\n            field: \"athlete\",\n            minWidth: 200\n        },\n        {\n            field: \"country\",\n            minWidth: 200\n        },\n        {\n            headerName: \"Group\",\n            valueGetter: \"data.country.charAt(0)\"\n        },\n        {\n            field: \"sport\",\n            minWidth: 150\n        },\n        {\n            field: \"gold\",\n            hide: true\n        },\n        {\n            field: \"silver\",\n            hide: true\n        },\n        {\n            field: \"bronze\",\n            hide: true\n        },\n        {\n            field: \"total\",\n            hide: true\n        }\n    ]"
+            "value": "[\n    {\n        checkboxSelection: true,\n        field: 'athlete',\n        minWidth: 200\n    },\n    {\n        field: 'country',\n        minWidth: 200\n    },\n    {\n        headerName: 'Group',\n        valueGetter: 'data.country.charAt(0)'\n    },\n    {\n        field: 'sport',\n        minWidth: 150\n    },\n    {\n        field: 'gold',\n        hide: true\n    },\n    {\n        field: 'silver',\n        hide: true\n    },\n    {\n        field: 'bronze',\n        hide: true\n    },\n    {\n        field: 'total',\n        hide: true\n    }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        sortable: true,\n        filter: true,\n        resizable: true,\n        minWidth: 100,\n        flex: 1\n    }"
+            "value": "{\n    sortable: true,\n    filter: true,\n    resizable: true,\n    minWidth: 100,\n    flex: 1\n}"
         },
         { "name": "suppressRowClickSelection", "value": "true" },
-        { "name": "rowSelection", "value": "\"multiple\"" }
+        { "name": "rowSelection", "value": "'multiple'" }
     ],
     "components": [],
     "defaultColDef": "{\n    sortable: true,\n    filter: true,\n    resizable: true,\n    minWidth: 100,\n    flex: 1\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            checkboxSelection: true,\n            field: \"athlete\",\n            minWidth: 200\n        },\n        {\n            field: \"country\",\n            minWidth: 200\n        },\n        {\n            headerName: \"Group\",\n            valueGetter: \"data.country.charAt(0)\"\n        },\n        {\n            field: \"sport\",\n            minWidth: 150\n        },\n        {\n            field: \"gold\",\n            hide: true\n        },\n        {\n            field: \"silver\",\n            hide: true\n        },\n        {\n            field: \"bronze\",\n            hide: true\n        },\n        {\n            field: \"total\",\n            hide: true\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        checkboxSelection: true,\n        field: 'athlete',\n        minWidth: 200\n    },\n    {\n        field: 'country',\n        minWidth: 200\n    },\n    {\n        headerName: 'Group',\n        valueGetter: 'data.country.charAt(0)'\n    },\n    {\n        field: 'sport',\n        minWidth: 150\n    },\n    {\n        field: 'gold',\n        hide: true\n    },\n    {\n        field: 'silver',\n        hide: true\n    },\n    {\n        field: 'bronze',\n        hide: true\n    },\n    {\n        field: 'total',\n        hide: true\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

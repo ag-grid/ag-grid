@@ -3,7 +3,7 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            headerName: \"Animals (array)\",\n            field: \"animalsArray\",\n            filter: \"agSetColumnFilter\"\n        },\n        {\n            headerName: \"Animals (string)\",\n            filter: \"agSetColumnFilter\",\n            valueGetter: valueGetter\n        },\n        {\n            headerName: \"Animals (objects)\",\n            field: \"animalsObjects\",\n            filter: \"agSetColumnFilter\",\n            valueFormatter: valueFormatter,\n            keyCreator: keyCreator\n        }\n    ]"
+            "value": "[\n    {\n        headerName: 'Animals (array)',\n        field: 'animalsArray',\n        filter: 'agSetColumnFilter'\n    },\n    {\n        headerName: 'Animals (string)',\n        filter: 'agSetColumnFilter',\n        valueGetter: valueGetter\n    },\n    {\n        headerName: 'Animals (objects)',\n        field: 'animalsObjects',\n        filter: 'agSetColumnFilter',\n        valueFormatter: valueFormatter,\n        keyCreator: keyCreator\n    }\n]"
         },
         { "name": "defaultColDef", "value": "{ flex: 1 }" },
         { "name": "rowData", "value": "getData()" }
@@ -11,7 +11,7 @@
     "components": [],
     "defaultColDef": "{ flex: 1 }",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            headerName: \"Animals (array)\",\n            field: \"animalsArray\",\n            filter: \"agSetColumnFilter\"\n        },\n        {\n            headerName: \"Animals (string)\",\n            filter: \"agSetColumnFilter\",\n            valueGetter: \"AG_LITERAL_valueGetter\"\n        },\n        {\n            headerName: \"Animals (objects)\",\n            field: \"animalsObjects\",\n            filter: \"agSetColumnFilter\",\n            valueFormatter: \"AG_LITERAL_valueFormatter\",\n            keyCreator: \"AG_LITERAL_keyCreator\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        headerName: 'Animals (array)',\n        field: 'animalsArray',\n        filter: 'agSetColumnFilter'\n    },\n    {\n        headerName: 'Animals (string)',\n        filter: 'agSetColumnFilter',\n        valueGetter: 'AG_LITERAL_valueGetter'\n    },\n    {\n        headerName: 'Animals (objects)',\n        field: 'animalsObjects',\n        filter: 'agSetColumnFilter',\n        valueFormatter: 'AG_LITERAL_valueFormatter',\n        keyCreator: 'AG_LITERAL_keyCreator'\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [

@@ -3,12 +3,12 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"a\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"b\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"c\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"d\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"e\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"f\",\n            type: \"valueColumn\"\n        },\n        {\n            headerName: \"Total\",\n            valueGetter: \"data.a + data.b + data.c + data.d + data.e + data.f\",\n            editable: false,\n            aggFunc: \"sum\",\n            cellClass: \"total-col\"\n        }\n    ]"
+            "value": "[\n    {\n        field: 'a',\n        type: 'valueColumn'\n    },\n    {\n        field: 'b',\n        type: 'valueColumn'\n    },\n    {\n        field: 'c',\n        type: 'valueColumn'\n    },\n    {\n        field: 'd',\n        type: 'valueColumn'\n    },\n    {\n        field: 'e',\n        type: 'valueColumn'\n    },\n    {\n        field: 'f',\n        type: 'valueColumn'\n    },\n    {\n        headerName: 'Total',\n        valueGetter: 'data.a + data.b + data.c + data.d + data.e + data.f',\n        editable: false,\n        aggFunc: 'sum',\n        cellClass: 'total-col'\n    }\n]"
         },
-        { "name": "defaultColDef", "value": "{\n        flex: 1,\n        sortable: true\n    }" },
+        { "name": "defaultColDef", "value": "{\n    flex: 1,\n    sortable: true\n}" },
         {
             "name": "columnTypes",
-            "value": "{\n        valueColumn: {\n            editable: true,\n            aggFunc: \"sum\",\n            valueParser: \"Number(newValue)\",\n            filter: \"agNumberColumnFilter\"\n        }\n    }"
+            "value": "{\n    valueColumn: {\n        editable: true,\n        aggFunc: 'sum',\n        valueParser: 'Number(newValue)',\n        filter: 'agNumberColumnFilter'\n    }\n}"
         },
         { "name": "rowData", "value": "getRowData()" },
         { "name": "groupDefaultExpanded", "value": "1" },
@@ -19,7 +19,7 @@
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    sortable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"a\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"b\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"c\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"d\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"e\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"f\",\n            type: \"valueColumn\"\n        },\n        {\n            headerName: \"Total\",\n            valueGetter: \"data.a + data.b + data.c + data.d + data.e + data.f\",\n            editable: false,\n            aggFunc: \"sum\",\n            cellClass: \"total-col\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'a',\n        type: 'valueColumn'\n    },\n    {\n        field: 'b',\n        type: 'valueColumn'\n    },\n    {\n        field: 'c',\n        type: 'valueColumn'\n    },\n    {\n        field: 'd',\n        type: 'valueColumn'\n    },\n    {\n        field: 'e',\n        type: 'valueColumn'\n    },\n    {\n        field: 'f',\n        type: 'valueColumn'\n    },\n    {\n        headerName: 'Total',\n        valueGetter: 'data.a + data.b + data.c + data.d + data.e + data.f',\n        editable: false,\n        aggFunc: 'sum',\n        cellClass: 'total-col'\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [

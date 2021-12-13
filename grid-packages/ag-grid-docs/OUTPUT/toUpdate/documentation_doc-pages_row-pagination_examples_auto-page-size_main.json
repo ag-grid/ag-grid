@@ -3,22 +3,22 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"athlete\",\n            minWidth: 170,\n            checkboxSelection: checkboxSelection,\n            headerCheckboxSelection: headerCheckboxSelection\n        },\n        { field: \"age\" },\n        { field: \"country\" },\n        { field: \"year\" },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]"
+            "value": "[\n    {\n        field: 'athlete',\n        minWidth: 170,\n        checkboxSelection: checkboxSelection,\n        headerCheckboxSelection: headerCheckboxSelection\n    },\n    { field: 'age' },\n    { field: 'country' },\n    { field: 'year' },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]"
         },
         {
             "name": "autoGroupColumnDef",
-            "value": "{\n        headerName: \"Group\",\n        minWidth: 170,\n        field: \"athlete\",\n        valueGetter: function (params) {\n            if (params.node.group) {\n                return params.node.key;\n            } else {\n                return params.data[params.colDef.field];\n            }\n        },\n        headerCheckboxSelection: true,\n        cellRenderer: \"agGroupCellRenderer\",\n        cellRendererParams: { checkbox: true }\n    }"
+            "value": "{\n    headerName: 'Group',\n    minWidth: 170,\n    field: 'athlete',\n    valueGetter: function (params) {\n        if (params.node.group) {\n            return params.node.key;\n        } else {\n            return params.data[params.colDef.field];\n        }\n    },\n    headerCheckboxSelection: true,\n    cellRenderer: 'agGroupCellRenderer',\n    cellRendererParams: { checkbox: true }\n}"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        editable: true,\n        enableRowGroup: true,\n        enablePivot: true,\n        enableValue: true,\n        sortable: true,\n        resizable: true,\n        filter: true,\n        flex: 1,\n        minWidth: 100\n    }"
+            "value": "{\n    editable: true,\n    enableRowGroup: true,\n    enablePivot: true,\n    enableValue: true,\n    sortable: true,\n    resizable: true,\n    filter: true,\n    flex: 1,\n    minWidth: 100\n}"
         },
         { "name": "suppressRowClickSelection", "value": "true" },
         { "name": "groupSelectsChildren", "value": "true" },
         { "name": "debug", "value": "true" },
-        { "name": "rowSelection", "value": "\"multiple\"" },
-        { "name": "rowGroupPanelShow", "value": "\"always\"" },
-        { "name": "pivotPanelShow", "value": "\"always\"" },
+        { "name": "rowSelection", "value": "'multiple'" },
+        { "name": "rowGroupPanelShow", "value": "'always'" },
+        { "name": "pivotPanelShow", "value": "'always'" },
         { "name": "enableRangeSelection", "value": "true" },
         { "name": "paginationAutoPageSize", "value": "true" },
         { "name": "pagination", "value": "true" }
@@ -26,7 +26,7 @@
     "components": [],
     "defaultColDef": "{\n    editable: true,\n    enableRowGroup: true,\n    enablePivot: true,\n    enableValue: true,\n    sortable: true,\n    resizable: true,\n    filter: true,\n    flex: 1,\n    minWidth: 100\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            minWidth: 170,\n            checkboxSelection: \"AG_LITERAL_checkboxSelection\",\n            headerCheckboxSelection: \"AG_LITERAL_headerCheckboxSelection\"\n        },\n        { field: \"age\" },\n        { field: \"country\" },\n        { field: \"year\" },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'athlete',\n        minWidth: 170,\n        checkboxSelection: 'AG_LITERAL_checkboxSelection',\n        headerCheckboxSelection: 'AG_LITERAL_headerCheckboxSelection'\n    },\n    { field: 'age' },\n    { field: 'country' },\n    { field: 'year' },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [

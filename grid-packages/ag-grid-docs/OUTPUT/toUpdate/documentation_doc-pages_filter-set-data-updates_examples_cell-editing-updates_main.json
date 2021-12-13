@@ -10,14 +10,14 @@
         { "name": "rowData", "value": "getRowData()" },
         {
             "name": "columnDefs",
-            "value": "[{\n            headerName: \"Set Filter Column\",\n            field: \"col1\",\n            filter: \"agSetColumnFilter\",\n            flex: 1,\n            editable: true\n        }]"
+            "value": "[{\n        headerName: 'Set Filter Column',\n        field: 'col1',\n        filter: 'agSetColumnFilter',\n        flex: 1,\n        editable: true\n    }]"
         },
-        { "name": "sideBar", "value": "\"filters\"" }
+        { "name": "sideBar", "value": "'filters'" }
     ],
     "components": [],
     "defaultColDef": null,
     "globalComponents": [],
-    "parsedColDefs": "[{\n            headerName: \"Set Filter Column\",\n            field: \"col1\",\n            filter: \"agSetColumnFilter\",\n            flex: 1,\n            editable: true\n        }]",
+    "parsedColDefs": "[{\n        headerName: 'Set Filter Column',\n        field: 'col1',\n        filter: 'agSetColumnFilter',\n        flex: 1,\n        editable: true\n    }]",
     "instanceMethods": [],
     "externalEventHandlers": [
         { "name": "reset", "params": "", "body": "function reset() {\n    this.gridApi.setRowData(getRowData());\n}" }

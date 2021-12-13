@@ -9,18 +9,18 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"country\",\n            width: 150\n        },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" }\n    ]"
+            "value": "[\n    {\n        field: 'country',\n        width: 150\n    },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        editable: true,\n        sortable: true,\n        flex: 1,\n        minWidth: 100,\n        filter: true,\n        resizable: true\n    }"
+            "value": "{\n    editable: true,\n    sortable: true,\n    flex: 1,\n    minWidth: 100,\n    filter: true,\n    resizable: true\n}"
         },
         { "name": "popupParent", "value": "document.body" },
         { "name": "enableRangeSelection", "value": "true" },
         { "name": "enableCharts", "value": "true" },
         {
             "name": "chartThemes",
-            "value": "[\n        \"ag-pastel\",\n        \"ag-material-dark\",\n        \"ag-vivid-dark\",\n        \"ag-solar\"\n    ]"
+            "value": "[\n    'ag-pastel',\n    'ag-material-dark',\n    'ag-vivid-dark',\n    'ag-solar'\n]"
         },
         {
             "name": "chartThemeOverrides",
@@ -31,7 +31,7 @@
     "components": [],
     "defaultColDef": "{\n    editable: true,\n    sortable: true,\n    flex: 1,\n    minWidth: 100,\n    filter: true,\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"country\",\n            width: 150\n        },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'country',\n        width: 150\n    },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [],

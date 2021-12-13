@@ -9,19 +9,16 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            colId: \"array\",\n            headerName: \"Values Array\",\n            field: \"animal\",\n            filter: \"agSetColumnFilter\",\n            filterParams: arrayFilterParams\n        },\n        {\n            colId: \"callback\",\n            headerName: \"Values Callback\",\n            field: \"animal\",\n            filter: \"agSetColumnFilter\",\n            filterParams: callbackFilterParams\n        }\n    ]"
+            "value": "[\n    {\n        colId: 'array',\n        headerName: 'Values Array',\n        field: 'animal',\n        filter: 'agSetColumnFilter',\n        filterParams: arrayFilterParams\n    },\n    {\n        colId: 'callback',\n        headerName: 'Values Callback',\n        field: 'animal',\n        filter: 'agSetColumnFilter',\n        filterParams: callbackFilterParams\n    }\n]"
         },
-        {
-            "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        filter: true,\n        resizable: true\n    }"
-        },
-        { "name": "sideBar", "value": "\"filters\"" },
+        { "name": "defaultColDef", "value": "{\n    flex: 1,\n    filter: true,\n    resizable: true\n}" },
+        { "name": "sideBar", "value": "'filters'" },
         { "name": "rowData", "value": "getData()" }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    filter: true,\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            colId: \"array\",\n            headerName: \"Values Array\",\n            field: \"animal\",\n            filter: \"agSetColumnFilter\",\n            filterParams: \"AG_LITERAL_arrayFilterParams\"\n        },\n        {\n            colId: \"callback\",\n            headerName: \"Values Callback\",\n            field: \"animal\",\n            filter: \"agSetColumnFilter\",\n            filterParams: \"AG_LITERAL_callbackFilterParams\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        colId: 'array',\n        headerName: 'Values Array',\n        field: 'animal',\n        filter: 'agSetColumnFilter',\n        filterParams: 'AG_LITERAL_arrayFilterParams'\n    },\n    {\n        colId: 'callback',\n        headerName: 'Values Callback',\n        field: 'animal',\n        filter: 'agSetColumnFilter',\n        filterParams: 'AG_LITERAL_callbackFilterParams'\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

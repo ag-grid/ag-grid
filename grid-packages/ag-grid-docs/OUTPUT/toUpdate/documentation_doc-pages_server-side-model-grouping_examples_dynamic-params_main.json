@@ -3,20 +3,20 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"country\",\n            enableRowGroup: true,\n            rowGroup: true\n        },\n        {\n            field: \"sport\",\n            enableRowGroup: true,\n            rowGroup: true\n        },\n        {\n            field: \"year\",\n            minWidth: 100\n        },\n        {\n            field: \"gold\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"silver\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"bronze\",\n            aggFunc: \"sum\"\n        }\n    ]"
+            "value": "[\n    {\n        field: 'country',\n        enableRowGroup: true,\n        rowGroup: true\n    },\n    {\n        field: 'sport',\n        enableRowGroup: true,\n        rowGroup: true\n    },\n    {\n        field: 'year',\n        minWidth: 100\n    },\n    {\n        field: 'gold',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'silver',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'bronze',\n        aggFunc: 'sum'\n    }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        minWidth: 120,\n        resizable: true,\n        sortable: true\n    }"
+            "value": "{\n    flex: 1,\n    minWidth: 120,\n    resizable: true,\n    sortable: true\n}"
         },
-        { "name": "rowGroupPanelShow", "value": "\"always\"" },
-        { "name": "autoGroupColumnDef", "value": "{\n        flex: 1,\n        minWidth: 280\n    }" },
+        { "name": "rowGroupPanelShow", "value": "'always'" },
+        { "name": "autoGroupColumnDef", "value": "{\n    flex: 1,\n    minWidth: 280\n}" },
         { "name": "cacheBlockSize", "value": "4" },
-        { "name": "rowModelType", "value": "\"serverSide\"" },
-        { "name": "serverSideStoreType", "value": "\"partial\"" },
+        { "name": "rowModelType", "value": "'serverSide'" },
+        { "name": "serverSideStoreType", "value": "'partial'" },
         {
             "name": "getServerSideStoreParams",
-            "value": "function (params) {\n        var noGroupingActive = params.rowGroupColumns.length == 0;\n        var res;\n        if (noGroupingActive) {\n            res = {\n                storeType: \"partial\",\n                cacheBlockSize: 100,\n                maxBlocksInCache: 2\n            };\n        } else {\n            var topLevelRows = params.level == 0;\n            res = {\n                storeType: topLevelRows ? \"full\" : \"partial\",\n                cacheBlockSize: params.level == 1 ? 5 : 2,\n                maxBlocksInCache: -1\n            };\n        }\n        console.log(\"############## NEW STORE ##############\");\n        console.log(\"getServerSideStoreParams, level = \" + params.level + \", result = \" + JSON.stringify(res));\n        return res;\n    }"
+            "value": "function (params) {\n    var noGroupingActive = params.rowGroupColumns.length == 0;\n    var res;\n    if (noGroupingActive) {\n        res = {\n            storeType: 'partial',\n            cacheBlockSize: 100,\n            maxBlocksInCache: 2\n        };\n    } else {\n        var topLevelRows = params.level == 0;\n        res = {\n            storeType: topLevelRows ? 'full' : 'partial',\n            cacheBlockSize: params.level == 1 ? 5 : 2,\n            maxBlocksInCache: -1\n        };\n    }\n    console.log('############## NEW STORE ##############');\n    console.log('getServerSideStoreParams, level = ' + params.level + ', result = ' + JSON.stringify(res));\n    return res;\n}"
         },
         { "name": "suppressAggFuncInHeader", "value": "true" },
         { "name": "animateRows", "value": "true" }
@@ -24,7 +24,7 @@
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    minWidth: 120,\n    resizable: true,\n    sortable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"country\",\n            enableRowGroup: true,\n            rowGroup: true\n        },\n        {\n            field: \"sport\",\n            enableRowGroup: true,\n            rowGroup: true\n        },\n        {\n            field: \"year\",\n            minWidth: 100\n        },\n        {\n            field: \"gold\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"silver\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"bronze\",\n            aggFunc: \"sum\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'country',\n        enableRowGroup: true,\n        rowGroup: true\n    },\n    {\n        field: 'sport',\n        enableRowGroup: true,\n        rowGroup: true\n    },\n    {\n        field: 'year',\n        minWidth: 100\n    },\n    {\n        field: 'gold',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'silver',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'bronze',\n        aggFunc: 'sum'\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [

@@ -3,21 +3,21 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"athlete\",\n            filterParams: containsFilterParams\n        },\n        {\n            field: \"age\",\n            minWidth: 120,\n            filter: \"agNumberColumnFilter\",\n            filterParams: filterParams\n        },\n        {\n            field: \"date\",\n            filter: \"agDateColumnFilter\",\n            filterParams: equalsFilterParams\n        },\n        {\n            field: \"country\",\n            filterParams: notEqualsFilterParams\n        },\n        {\n            field: \"gold\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"silver\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"bronze\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"total\",\n            filter: false\n        }\n    ]"
+            "value": "[\n    {\n        field: 'athlete',\n        filterParams: containsFilterParams\n    },\n    {\n        field: 'age',\n        minWidth: 120,\n        filter: 'agNumberColumnFilter',\n        filterParams: filterParams\n    },\n    {\n        field: 'date',\n        filter: 'agDateColumnFilter',\n        filterParams: equalsFilterParams\n    },\n    {\n        field: 'country',\n        filterParams: notEqualsFilterParams\n    },\n    {\n        field: 'gold',\n        filter: 'agNumberColumnFilter'\n    },\n    {\n        field: 'silver',\n        filter: 'agNumberColumnFilter'\n    },\n    {\n        field: 'bronze',\n        filter: 'agNumberColumnFilter'\n    },\n    {\n        field: 'total',\n        filter: false\n    }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        minWidth: 150,\n        sortable: true,\n        filter: true\n    }"
+            "value": "{\n    flex: 1,\n    minWidth: 150,\n    sortable: true,\n    filter: true\n}"
         },
         {
             "name": "localeTextFunc",
-            "value": "(key, defaultValue) => {\n        if (key === \"notEqualNoNulls\") {\n            return \"* Not Equals (No Nulls) *\";\n        }\n        return defaultValue;\n    }"
+            "value": "(key, defaultValue) => {\n    if (key === 'notEqualNoNulls') {\n        return '* Not Equals (No Nulls) *';\n    }\n    return defaultValue;\n}"
         }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    minWidth: 150,\n    sortable: true,\n    filter: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            filterParams: \"AG_LITERAL_containsFilterParams\"\n        },\n        {\n            field: \"age\",\n            minWidth: 120,\n            filter: \"agNumberColumnFilter\",\n            filterParams: \"AG_LITERAL_filterParams\"\n        },\n        {\n            field: \"date\",\n            filter: \"agDateColumnFilter\",\n            filterParams: \"AG_LITERAL_equalsFilterParams\"\n        },\n        {\n            field: \"country\",\n            filterParams: \"AG_LITERAL_notEqualsFilterParams\"\n        },\n        {\n            field: \"gold\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"silver\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"bronze\",\n            filter: \"agNumberColumnFilter\"\n        },\n        {\n            field: \"total\",\n            filter: false\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'athlete',\n        filterParams: 'AG_LITERAL_containsFilterParams'\n    },\n    {\n        field: 'age',\n        minWidth: 120,\n        filter: 'agNumberColumnFilter',\n        filterParams: 'AG_LITERAL_filterParams'\n    },\n    {\n        field: 'date',\n        filter: 'agDateColumnFilter',\n        filterParams: 'AG_LITERAL_equalsFilterParams'\n    },\n    {\n        field: 'country',\n        filterParams: 'AG_LITERAL_notEqualsFilterParams'\n    },\n    {\n        field: 'gold',\n        filter: 'agNumberColumnFilter'\n    },\n    {\n        field: 'silver',\n        filter: 'agNumberColumnFilter'\n    },\n    {\n        field: 'bronze',\n        filter: 'agNumberColumnFilter'\n    },\n    {\n        field: 'total',\n        filter: false\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

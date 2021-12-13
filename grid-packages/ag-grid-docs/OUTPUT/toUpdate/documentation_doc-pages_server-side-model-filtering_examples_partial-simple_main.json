@@ -3,21 +3,21 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"athlete\",\n            filter: \"agTextColumnFilter\",\n            minWidth: 220\n        },\n        {\n            field: \"year\",\n            filter: \"agNumberColumnFilter\",\n            filterParams: {\n                buttons: [\"reset\"],\n                debounceMs: 1000,\n                suppressAndOrCondition: true\n            }\n        },\n        {\n            field: \"gold\",\n            type: \"number\"\n        },\n        {\n            field: \"silver\",\n            type: \"number\"\n        },\n        {\n            field: \"bronze\",\n            type: \"number\"\n        }\n    ]"
+            "value": "[\n    {\n        field: 'athlete',\n        filter: 'agTextColumnFilter',\n        minWidth: 220\n    },\n    {\n        field: 'year',\n        filter: 'agNumberColumnFilter',\n        filterParams: {\n            buttons: ['reset'],\n            debounceMs: 1000,\n            suppressAndOrCondition: true\n        }\n    },\n    {\n        field: 'gold',\n        type: 'number'\n    },\n    {\n        field: 'silver',\n        type: 'number'\n    },\n    {\n        field: 'bronze',\n        type: 'number'\n    }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        minWidth: 100,\n        sortable: true,\n        resizable: true,\n        menuTabs: [\"filterMenuTab\"]\n    }"
+            "value": "{\n    flex: 1,\n    minWidth: 100,\n    sortable: true,\n    resizable: true,\n    menuTabs: ['filterMenuTab']\n}"
         },
-        { "name": "columnTypes", "value": "{ number: { filter: \"agNumberColumnFilter\" } }" },
-        { "name": "rowModelType", "value": "\"serverSide\"" },
-        { "name": "serverSideStoreType", "value": "\"partial\"" },
+        { "name": "columnTypes", "value": "{ number: { filter: 'agNumberColumnFilter' } }" },
+        { "name": "rowModelType", "value": "'serverSide'" },
+        { "name": "serverSideStoreType", "value": "'partial'" },
         { "name": "animateRows", "value": "true" }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    minWidth: 100,\n    sortable: true,\n    resizable: true,\n    menuTabs: ['filterMenuTab']\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            filter: \"agTextColumnFilter\",\n            minWidth: 220\n        },\n        {\n            field: \"year\",\n            filter: \"agNumberColumnFilter\",\n            filterParams: {\n                buttons: [\"reset\"],\n                debounceMs: 1000,\n                suppressAndOrCondition: true\n            }\n        },\n        {\n            field: \"gold\",\n            type: \"number\"\n        },\n        {\n            field: \"silver\",\n            type: \"number\"\n        },\n        {\n            field: \"bronze\",\n            type: \"number\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'athlete',\n        filter: 'agTextColumnFilter',\n        minWidth: 220\n    },\n    {\n        field: 'year',\n        filter: 'agNumberColumnFilter',\n        filterParams: {\n            buttons: ['reset'],\n            debounceMs: 1000,\n            suppressAndOrCondition: true\n        }\n    },\n    {\n        field: 'gold',\n        type: 'number'\n    },\n    {\n        field: 'silver',\n        type: 'number'\n    },\n    {\n        field: 'bronze',\n        type: 'number'\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [

@@ -9,11 +9,11 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            headerName: \"Athlete Col 1\",\n            field: \"athlete\",\n            width: 150,\n            tooltipField: \"athlete\"\n        },\n        {\n            headerName: \"Athlete Col 2\",\n            field: \"athlete\",\n            width: 150,\n            tooltipComponent: \"customTooltip\",\n            tooltipValueGetter: toolTipValueGetter\n        },\n        {\n            field: \"sport\",\n            width: 110\n        },\n        {\n            field: \"gold\",\n            width: 100\n        },\n        {\n            field: \"silver\",\n            width: 100\n        },\n        {\n            field: \"bronze\",\n            width: 100\n        },\n        {\n            field: \"total\",\n            width: 100\n        }\n    ]"
+            "value": "[\n    {\n        headerName: 'Athlete Col 1',\n        field: 'athlete',\n        width: 150,\n        tooltipField: 'athlete'\n    },\n    {\n        headerName: 'Athlete Col 2',\n        field: 'athlete',\n        width: 150,\n        tooltipComponent: 'customTooltip',\n        tooltipValueGetter: toolTipValueGetter\n    },\n    {\n        field: 'sport',\n        width: 110\n    },\n    {\n        field: 'gold',\n        width: 100\n    },\n    {\n        field: 'silver',\n        width: 100\n    },\n    {\n        field: 'bronze',\n        width: 100\n    },\n    {\n        field: 'total',\n        width: 100\n    }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        editable: true,\n        sortable: true,\n        flex: 1,\n        minWidth: 100,\n        filter: true,\n        resizable: true\n    }"
+            "value": "{\n    editable: true,\n    sortable: true,\n    flex: 1,\n    minWidth: 100,\n    filter: true,\n    resizable: true\n}"
         },
         { "name": "rowData", "value": "null" },
         { "name": "components", "value": "{ customTooltip: CustomTooltip }" }
@@ -21,7 +21,7 @@
     "components": [{ "name": "customTooltip", "value": "CustomTooltip" }],
     "defaultColDef": "{\n    editable: true,\n    sortable: true,\n    flex: 1,\n    minWidth: 100,\n    filter: true,\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            headerName: \"Athlete Col 1\",\n            field: \"athlete\",\n            width: 150,\n            tooltipField: \"athlete\"\n        },\n        {\n            headerName: \"Athlete Col 2\",\n            field: \"athlete\",\n            width: 150,\n            tooltipComponent: \"customTooltip\",\n            tooltipValueGetter: \"AG_LITERAL_toolTipValueGetter\"\n        },\n        {\n            field: \"sport\",\n            width: 110\n        },\n        {\n            field: \"gold\",\n            width: 100\n        },\n        {\n            field: \"silver\",\n            width: 100\n        },\n        {\n            field: \"bronze\",\n            width: 100\n        },\n        {\n            field: \"total\",\n            width: 100\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        headerName: 'Athlete Col 1',\n        field: 'athlete',\n        width: 150,\n        tooltipField: 'athlete'\n    },\n    {\n        headerName: 'Athlete Col 2',\n        field: 'athlete',\n        width: 150,\n        tooltipComponent: 'customTooltip',\n        tooltipValueGetter: 'AG_LITERAL_toolTipValueGetter'\n    },\n    {\n        field: 'sport',\n        width: 110\n    },\n    {\n        field: 'gold',\n        width: 100\n    },\n    {\n        field: 'silver',\n        width: 100\n    },\n    {\n        field: 'bronze',\n        width: 100\n    },\n    {\n        field: 'total',\n        width: 100\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": ["const toolTipValueGetter = params => ({ value: params.value });"],

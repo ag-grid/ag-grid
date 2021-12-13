@@ -10,14 +10,14 @@
         { "name": "rowData", "value": "getRowData()" },
         {
             "name": "columnDefs",
-            "value": "[{\n            headerName: \"Set Filter Column\",\n            field: \"col1\",\n            filter: \"agSetColumnFilter\",\n            editable: true,\n            flex: 1\n        }]"
+            "value": "[{\n        headerName: 'Set Filter Column',\n        field: 'col1',\n        filter: 'agSetColumnFilter',\n        editable: true,\n        flex: 1\n    }]"
         },
-        { "name": "sideBar", "value": "\"filters\"" }
+        { "name": "sideBar", "value": "'filters'" }
     ],
     "components": [],
     "defaultColDef": null,
     "globalComponents": [],
-    "parsedColDefs": "[{\n            headerName: \"Set Filter Column\",\n            field: \"col1\",\n            filter: \"agSetColumnFilter\",\n            editable: true,\n            flex: 1\n        }]",
+    "parsedColDefs": "[{\n        headerName: 'Set Filter Column',\n        field: 'col1',\n        filter: 'agSetColumnFilter',\n        editable: true,\n        flex: 1\n    }]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

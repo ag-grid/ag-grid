@@ -9,19 +9,19 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"name\",\n            cellRenderer: \"agGroupCellRenderer\"\n        },\n        { field: \"account\" },\n        { field: \"calls\" },\n        {\n            field: \"minutes\",\n            valueFormatter: \"x.toLocaleString() + 'm'\"\n        }\n    ]"
+            "value": "[\n    {\n        field: 'name',\n        cellRenderer: 'agGroupCellRenderer'\n    },\n    { field: 'account' },\n    { field: 'calls' },\n    {\n        field: 'minutes',\n        valueFormatter: 'x.toLocaleString() + \\'m\\''\n    }\n]"
         },
         { "name": "defaultColDef", "value": "{ flex: 1 }" },
         { "name": "masterDetail", "value": "true" },
         {
             "name": "detailCellRendererParams",
-            "value": "{\n        detailGridOptions: {\n            rowSelection: \"multiple\",\n            suppressRowClickSelection: true,\n            enableRangeSelection: true,\n            pagination: true,\n            paginationAutoPageSize: true,\n            columnDefs: [\n                {\n                    field: \"callId\",\n                    checkboxSelection: true\n                },\n                { field: \"direction\" },\n                {\n                    field: \"number\",\n                    minWidth: 150\n                },\n                {\n                    field: \"duration\",\n                    valueFormatter: \"x.toLocaleString() + 's'\"\n                },\n                {\n                    field: \"switchCode\",\n                    minWidth: 150\n                }\n            ],\n            defaultColDef: {\n                sortable: true,\n                flex: 1\n            }\n        },\n        getDetailRowData: function (params) {\n            params.successCallback(params.data.callRecords);\n        }\n    }"
+            "value": "{\n    detailGridOptions: {\n        rowSelection: 'multiple',\n        suppressRowClickSelection: true,\n        enableRangeSelection: true,\n        pagination: true,\n        paginationAutoPageSize: true,\n        columnDefs: [\n            {\n                field: 'callId',\n                checkboxSelection: true\n            },\n            { field: 'direction' },\n            {\n                field: 'number',\n                minWidth: 150\n            },\n            {\n                field: 'duration',\n                valueFormatter: 'x.toLocaleString() + \\'s\\''\n            },\n            {\n                field: 'switchCode',\n                minWidth: 150\n            }\n        ],\n        defaultColDef: {\n            sortable: true,\n            flex: 1\n        }\n    },\n    getDetailRowData: function (params) {\n        params.successCallback(params.data.callRecords);\n    }\n}"
         }
     ],
     "components": [],
     "defaultColDef": "{ flex: 1 }",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"name\",\n            cellRenderer: \"agGroupCellRenderer\"\n        },\n        { field: \"account\" },\n        { field: \"calls\" },\n        {\n            field: \"minutes\",\n            valueFormatter: \"x.toLocaleString() + 'm'\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'name',\n        cellRenderer: 'agGroupCellRenderer'\n    },\n    { field: 'account' },\n    { field: 'calls' },\n    {\n        field: 'minutes',\n        valueFormatter: 'x.toLocaleString() + \\'m\\''\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [],

@@ -3,15 +3,15 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        colDefAthlete,\n        colDefAge,\n        colDefCountry,\n        colDefYear,\n        colDefSport,\n        colDefGold,\n        colDefSilver,\n        colDefBronze\n    ]"
+            "value": "[\n    colDefAthlete,\n    colDefAge,\n    colDefCountry,\n    colDefYear,\n    colDefSport,\n    colDefGold,\n    colDefSilver,\n    colDefBronze\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        minWidth: 120,\n        resizable: true,\n        sortable: true\n    }"
+            "value": "{\n    flex: 1,\n    minWidth: 120,\n    resizable: true,\n    sortable: true\n}"
         },
         { "name": "autoGroupColumnDef", "value": "{ minWidth: 200 }" },
-        { "name": "rowModelType", "value": "\"serverSide\"" },
-        { "name": "serverSideStoreType", "value": "\"partial\"" },
+        { "name": "rowModelType", "value": "'serverSide'" },
+        { "name": "serverSideStoreType", "value": "'partial'" },
         { "name": "animateRows", "value": "true" },
         { "name": "suppressAggFuncInHeader", "value": "true" }
     ],

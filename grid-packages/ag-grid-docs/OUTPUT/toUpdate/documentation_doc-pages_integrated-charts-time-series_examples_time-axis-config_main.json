@@ -9,25 +9,25 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"timestamp\",\n            chartDataType: \"time\"\n        },\n        { field: \"cpuUsage\" }\n    ]"
+            "value": "[\n    {\n        field: 'timestamp',\n        chartDataType: 'time'\n    },\n    { field: 'cpuUsage' }\n]"
         },
-        { "name": "defaultColDef", "value": "{\n        flex: 1,\n        resizable: true\n    }" },
+        { "name": "defaultColDef", "value": "{\n    flex: 1,\n    resizable: true\n}" },
         { "name": "popupParent", "value": "document.body" },
         { "name": "rowData", "value": "getRowData()" },
         { "name": "enableRangeSelection", "value": "true" },
         { "name": "enableCharts", "value": "true" },
         {
             "name": "chartThemeOverrides",
-            "value": "{\n        area: {\n            title: {\n                enabled: true,\n                text: \"CPU Usage\"\n            },\n            legend: { enabled: false },\n            padding: {\n                top: 15,\n                bottom: 25\n            },\n            navigator: {\n                enabled: true,\n                height: 20,\n                margin: 25\n            },\n            axes: {\n                time: {\n                    label: {\n                        rotation: 45,\n                        format: \"%H:%M\"\n                    }\n                },\n                category: {\n                    label: {\n                        rotation: 0,\n                        formatter: function (params) {\n                            return moment(new Date(params.value)).format(\"DD MMM\");\n                        }\n                    }\n                },\n                number: {\n                    label: {\n                        formatter: function (params) {\n                            return params.value + \"%\";\n                        }\n                    }\n                }\n            }\n        }\n    }"
+            "value": "{\n    area: {\n        title: {\n            enabled: true,\n            text: 'CPU Usage'\n        },\n        legend: { enabled: false },\n        padding: {\n            top: 15,\n            bottom: 25\n        },\n        navigator: {\n            enabled: true,\n            height: 20,\n            margin: 25\n        },\n        axes: {\n            time: {\n                label: {\n                    rotation: 45,\n                    format: '%H:%M'\n                }\n            },\n            category: {\n                label: {\n                    rotation: 0,\n                    formatter: function (params) {\n                        return moment(new Date(params.value)).format('DD MMM');\n                    }\n                }\n            },\n            number: {\n                label: {\n                    formatter: function (params) {\n                        return params.value + '%';\n                    }\n                }\n            }\n        }\n    }\n}"
         },
         { "name": "getChartToolbarItems", "value": null }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"timestamp\",\n            chartDataType: \"time\"\n        },\n        { field: \"cpuUsage\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'timestamp',\n        chartDataType: 'time'\n    },\n    { field: 'cpuUsage' }\n]",
     "instanceMethods": [
-        "function getChartToolbarItems() {\n        return [\n            \"chartData\",\n            \"chartFormat\"\n        ];\n    }"
+        "function getChartToolbarItems() {\n    return [\n        'chartData',\n        'chartFormat'\n    ];\n}"
     ],
     "externalEventHandlers": [],
     "utils": [

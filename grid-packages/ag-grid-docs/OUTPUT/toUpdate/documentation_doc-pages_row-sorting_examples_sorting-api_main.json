@@ -3,14 +3,14 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        { field: \"athlete\" },\n        {\n            field: \"age\",\n            width: 90\n        },\n        { field: \"country\" },\n        {\n            field: \"year\",\n            width: 90\n        },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]"
+            "value": "[\n    { field: 'athlete' },\n    {\n        field: 'age',\n        width: 90\n    },\n    { field: 'country' },\n    {\n        field: 'year',\n        width: 90\n    },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]"
         },
         { "name": "defaultColDef", "value": "{ sortable: true }" }
     ],
     "components": [],
     "defaultColDef": "{ sortable: true }",
     "globalComponents": [],
-    "parsedColDefs": "[\n        { field: \"athlete\" },\n        {\n            field: \"age\",\n            width: 90\n        },\n        { field: \"country\" },\n        {\n            field: \"year\",\n            width: 90\n        },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]",
+    "parsedColDefs": "[\n    { field: 'athlete' },\n    {\n        field: 'age',\n        width: 90\n    },\n    { field: 'country' },\n    {\n        field: 'year',\n        width: 90\n    },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

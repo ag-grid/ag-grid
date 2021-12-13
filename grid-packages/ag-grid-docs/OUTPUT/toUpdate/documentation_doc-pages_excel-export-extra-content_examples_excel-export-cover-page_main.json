@@ -3,21 +3,21 @@
     "properties": [
         {
             "name": "defaultColDef",
-            "value": "{\n        sortable: true,\n        filter: true,\n        resizable: true,\n        minWidth: 100,\n        flex: 1\n    }"
+            "value": "{\n    sortable: true,\n    filter: true,\n    resizable: true,\n    minWidth: 100,\n    flex: 1\n}"
         },
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"athlete\",\n            minWidth: 200\n        },\n        {\n            field: \"country\",\n            minWidth: 200\n        },\n        {\n            field: \"sport\",\n            minWidth: 150\n        },\n        {\n            field: \"gold\",\n            hide: true\n        },\n        {\n            field: \"silver\",\n            hide: true\n        },\n        {\n            field: \"bronze\",\n            hide: true\n        },\n        {\n            field: \"total\",\n            hide: true\n        }\n    ]"
+            "value": "[\n    {\n        field: 'athlete',\n        minWidth: 200\n    },\n    {\n        field: 'country',\n        minWidth: 200\n    },\n    {\n        field: 'sport',\n        minWidth: 150\n    },\n    {\n        field: 'gold',\n        hide: true\n    },\n    {\n        field: 'silver',\n        hide: true\n    },\n    {\n        field: 'bronze',\n        hide: true\n    },\n    {\n        field: 'total',\n        hide: true\n    }\n]"
         },
         {
             "name": "excelStyles",
-            "value": "[\n        {\n            id: \"coverHeading\",\n            font: {\n                size: 26,\n                bold: true\n            }\n        },\n        {\n            id: \"coverText\",\n            font: { size: 14 }\n        }\n    ]"
+            "value": "[\n    {\n        id: 'coverHeading',\n        font: {\n            size: 26,\n            bold: true\n        }\n    },\n    {\n        id: 'coverText',\n        font: { size: 14 }\n    }\n]"
         }
     ],
     "components": [],
     "defaultColDef": "{\n    sortable: true,\n    filter: true,\n    resizable: true,\n    minWidth: 100,\n    flex: 1\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            minWidth: 200\n        },\n        {\n            field: \"country\",\n            minWidth: 200\n        },\n        {\n            field: \"sport\",\n            minWidth: 150\n        },\n        {\n            field: \"gold\",\n            hide: true\n        },\n        {\n            field: \"silver\",\n            hide: true\n        },\n        {\n            field: \"bronze\",\n            hide: true\n        },\n        {\n            field: \"total\",\n            hide: true\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'athlete',\n        minWidth: 200\n    },\n    {\n        field: 'country',\n        minWidth: 200\n    },\n    {\n        field: 'sport',\n        minWidth: 150\n    },\n    {\n        field: 'gold',\n        hide: true\n    },\n    {\n        field: 'silver',\n        hide: true\n    },\n    {\n        field: 'bronze',\n        hide: true\n    },\n    {\n        field: 'total',\n        hide: true\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

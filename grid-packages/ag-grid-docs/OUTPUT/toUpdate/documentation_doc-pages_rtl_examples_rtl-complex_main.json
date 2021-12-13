@@ -3,22 +3,22 @@
     "properties": [
         {
             "name": "defaultColDef",
-            "value": "{\n        editable: true,\n        sortable: true,\n        minWidth: 100,\n        filter: true,\n        floatingFilter: true,\n        resizable: true\n    }"
+            "value": "{\n    editable: true,\n    sortable: true,\n    minWidth: 100,\n    filter: true,\n    floatingFilter: true,\n    resizable: true\n}"
         },
         { "name": "components", "value": "{ personFilter: getPersonFilter() }" },
         { "name": "sideBar", "value": "true" },
-        { "name": "rowGroupPanelShow", "value": "\"always\"" },
-        { "name": "pivotPanelShow", "value": "\"always\"" },
+        { "name": "rowGroupPanelShow", "value": "'always'" },
+        { "name": "pivotPanelShow", "value": "'always'" },
         { "name": "enableRtl", "value": "true" },
         { "name": "animateRows", "value": "true" },
-        { "name": "statusBar", "value": "{ statusPanels: [{ statusPanel: \"agAggregationComponent\" }] }" },
+        { "name": "statusBar", "value": "{ statusPanels: [{ statusPanel: 'agAggregationComponent' }] }" },
         { "name": "enableRangeSelection", "value": "true" },
-        { "name": "rowSelection", "value": "\"multiple\"" },
+        { "name": "rowSelection", "value": "'multiple'" },
         { "name": "groupSelectsChildren", "value": "true" },
         { "name": "suppressRowClickSelection", "value": "true" },
         {
             "name": "getBusinessKeyForNode",
-            "value": "function (node) {\n        if (node.data) {\n            return node.data.name;\n        } else {\n            return \"\";\n        }\n    }"
+            "value": "function (node) {\n    if (node.data) {\n        return node.data.name;\n    } else {\n        return '';\n    }\n}"
         },
         { "name": "getContextMenuItems", "value": null }
     ],
@@ -27,7 +27,7 @@
     "globalComponents": [],
     "parsedColDefs": "",
     "instanceMethods": [
-        "function getContextMenuItems(params) {\n        var result = params.defaultItems.splice(0);\n        result.push({\n            name: \"Custom Menu Item\",\n            icon: \"<img src=\\\"https://www.ag-grid.com/examples-assets/lab.png\\\" style=\\\"width: 14px;\\\" />\",\n            action: function () {\n                var value = params.value ? params.value : \"<empty>\";\n                window.alert(\"You clicked a custom menu item on cell \" + value);\n            }\n        });\n        return result;\n    }"
+        "function getContextMenuItems(params) {\n    var result = params.defaultItems.splice(0);\n    result.push({\n        name: 'Custom Menu Item',\n        icon: '<img src=\"https://www.ag-grid.com/examples-assets/lab.png\" style=\"width: 14px;\" />',\n        action: function () {\n            var value = params.value ? params.value : '<empty>';\n            window.alert('You clicked a custom menu item on cell ' + value);\n        }\n    });\n    return result;\n}"
     ],
     "externalEventHandlers": [],
     "utils": [

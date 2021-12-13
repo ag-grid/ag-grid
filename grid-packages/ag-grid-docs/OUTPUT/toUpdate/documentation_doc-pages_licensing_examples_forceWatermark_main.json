@@ -3,7 +3,7 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            headerName: \"Athlete\",\n            field: \"athlete\"\n        },\n        {\n            headerName: \"Sport\",\n            field: \"sport\"\n        },\n        {\n            headerName: \"Age\",\n            field: \"age\",\n            type: \"numberColumn\"\n        },\n        {\n            headerName: \"Year\",\n            field: \"year\",\n            type: \"numberColumn\"\n        },\n        {\n            headerName: \"Date\",\n            field: \"date\",\n            width: 200\n        }\n    ]"
+            "value": "[\n    {\n        headerName: 'Athlete',\n        field: 'athlete'\n    },\n    {\n        headerName: 'Sport',\n        field: 'sport'\n    },\n    {\n        headerName: 'Age',\n        field: 'age',\n        type: 'numberColumn'\n    },\n    {\n        headerName: 'Year',\n        field: 'year',\n        type: 'numberColumn'\n    },\n    {\n        headerName: 'Date',\n        field: 'date',\n        width: 200\n    }\n]"
         },
         { "name": "defaultColDef", "value": "{ width: 150 }" },
         { "name": "defaultColGroupDef", "value": "{ marryChildren: true }" },

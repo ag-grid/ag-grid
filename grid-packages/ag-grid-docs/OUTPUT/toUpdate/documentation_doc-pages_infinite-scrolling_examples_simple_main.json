@@ -3,19 +3,16 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            headerName: \"ID\",\n            maxWidth: 100,\n            valueGetter: \"node.id\",\n            cellRenderer: \"loadingRenderer\"\n        },\n        {\n            field: \"athlete\",\n            minWidth: 150\n        },\n        { field: \"age\" },\n        {\n            field: \"country\",\n            minWidth: 150\n        },\n        { field: \"year\" },\n        {\n            field: \"date\",\n            minWidth: 150\n        },\n        {\n            field: \"sport\",\n            minWidth: 150\n        },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]"
+            "value": "[\n    {\n        headerName: 'ID',\n        maxWidth: 100,\n        valueGetter: 'node.id',\n        cellRenderer: 'loadingRenderer'\n    },\n    {\n        field: 'athlete',\n        minWidth: 150\n    },\n    { field: 'age' },\n    {\n        field: 'country',\n        minWidth: 150\n    },\n    { field: 'year' },\n    {\n        field: 'date',\n        minWidth: 150\n    },\n    {\n        field: 'sport',\n        minWidth: 150\n    },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]"
         },
-        {
-            "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        resizable: true,\n        minWidth: 100\n    }"
-        },
+        { "name": "defaultColDef", "value": "{\n    flex: 1,\n    resizable: true,\n    minWidth: 100\n}" },
         {
             "name": "components",
-            "value": "{\n        loadingRenderer: function (params) {\n            if (params.value !== undefined) {\n                return params.value;\n            } else {\n                return \"<img src=\\\"https://www.ag-grid.com/example-assets/loading.gif\\\">\";\n            }\n        }\n    }"
+            "value": "{\n    loadingRenderer: function (params) {\n        if (params.value !== undefined) {\n            return params.value;\n        } else {\n            return '<img src=\"https://www.ag-grid.com/example-assets/loading.gif\">';\n        }\n    }\n}"
         },
         { "name": "rowBuffer", "value": "0" },
-        { "name": "rowSelection", "value": "\"multiple\"" },
-        { "name": "rowModelType", "value": "\"infinite\"" },
+        { "name": "rowSelection", "value": "'multiple'" },
+        { "name": "rowModelType", "value": "'infinite'" },
         { "name": "cacheBlockSize", "value": "100" },
         { "name": "cacheOverflowSize", "value": "2" },
         { "name": "maxConcurrentDatasourceRequests", "value": "1" },
@@ -25,7 +22,7 @@
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    resizable: true,\n    minWidth: 100\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            headerName: \"ID\",\n            maxWidth: 100,\n            valueGetter: \"node.id\",\n            cellRenderer: \"loadingRenderer\"\n        },\n        {\n            field: \"athlete\",\n            minWidth: 150\n        },\n        { field: \"age\" },\n        {\n            field: \"country\",\n            minWidth: 150\n        },\n        { field: \"year\" },\n        {\n            field: \"date\",\n            minWidth: 150\n        },\n        {\n            field: \"sport\",\n            minWidth: 150\n        },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        headerName: 'ID',\n        maxWidth: 100,\n        valueGetter: 'node.id',\n        cellRenderer: 'loadingRenderer'\n    },\n    {\n        field: 'athlete',\n        minWidth: 150\n    },\n    { field: 'age' },\n    {\n        field: 'country',\n        minWidth: 150\n    },\n    { field: 'year' },\n    {\n        field: 'date',\n        minWidth: 150\n    },\n    {\n        field: 'sport',\n        minWidth: 150\n    },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [],

@@ -3,11 +3,11 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"first_name\",\n            headerName: \"First Name\",\n            width: 120,\n            editable: true\n        },\n        {\n            field: \"last_name\",\n            headerName: \"Last Name\",\n            width: 120,\n            editable: true\n        },\n        {\n            field: \"gender\",\n            width: 100,\n            cellEditor: \"mySimpleEditor\"\n        },\n        {\n            field: \"age\",\n            width: 80,\n            cellEditor: \"mySimpleEditor\"\n        },\n        {\n            field: \"mood\",\n            width: 90,\n            cellEditor: \"mySimpleEditor\"\n        },\n        {\n            field: \"country\",\n            width: 110,\n            cellEditor: \"mySimpleEditor\"\n        },\n        {\n            field: \"address\",\n            width: 502,\n            cellEditor: \"mySimpleEditor\"\n        }\n    ]"
+            "value": "[\n    {\n        field: 'first_name',\n        headerName: 'First Name',\n        width: 120,\n        editable: true\n    },\n    {\n        field: 'last_name',\n        headerName: 'Last Name',\n        width: 120,\n        editable: true\n    },\n    {\n        field: 'gender',\n        width: 100,\n        cellEditor: 'mySimpleEditor'\n    },\n    {\n        field: 'age',\n        width: 80,\n        cellEditor: 'mySimpleEditor'\n    },\n    {\n        field: 'mood',\n        width: 90,\n        cellEditor: 'mySimpleEditor'\n    },\n    {\n        field: 'country',\n        width: 110,\n        cellEditor: 'mySimpleEditor'\n    },\n    {\n        field: 'address',\n        width: 502,\n        cellEditor: 'mySimpleEditor'\n    }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        editable: true,\n        sortable: true,\n        flex: 1,\n        minWidth: 100,\n        filter: true,\n        resizable: true\n    }"
+            "value": "{\n    editable: true,\n    sortable: true,\n    flex: 1,\n    minWidth: 100,\n    filter: true,\n    resizable: true\n}"
         },
         { "name": "rowData", "value": "getData()" },
         { "name": "components", "value": "{ mySimpleEditor: MySimpleEditor }" }

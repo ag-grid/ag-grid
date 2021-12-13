@@ -3,15 +3,15 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        { field: \"athlete\" },\n        {\n            field: \"age\",\n            width: 100\n        },\n        { field: \"country\" },\n        {\n            field: \"year\",\n            width: 100\n        },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]"
+            "value": "[\n    { field: 'athlete' },\n    {\n        field: 'age',\n        width: 100\n    },\n    { field: 'country' },\n    {\n        field: 'year',\n        width: 100\n    },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]"
         },
-        { "name": "defaultColDef", "value": "{\n        width: 170,\n        sortable: true\n    }" },
-        { "name": "multiSortKey", "value": "\"ctrl\"" }
+        { "name": "defaultColDef", "value": "{\n    width: 170,\n    sortable: true\n}" },
+        { "name": "multiSortKey", "value": "'ctrl'" }
     ],
     "components": [],
     "defaultColDef": "{\n    width: 170,\n    sortable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        { field: \"athlete\" },\n        {\n            field: \"age\",\n            width: 100\n        },\n        { field: \"country\" },\n        {\n            field: \"year\",\n            width: 100\n        },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]",
+    "parsedColDefs": "[\n    { field: 'athlete' },\n    {\n        field: 'age',\n        width: 100\n    },\n    { field: 'country' },\n    {\n        field: 'year',\n        width: 100\n    },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [],

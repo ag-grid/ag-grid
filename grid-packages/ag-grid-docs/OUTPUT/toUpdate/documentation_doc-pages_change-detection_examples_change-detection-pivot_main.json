@@ -3,22 +3,22 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            headerName: \"Student ID\",\n            field: \"student\"\n        },\n        {\n            headerName: \"Year Group\",\n            field: \"yearGroup\",\n            rowGroup: true\n        },\n        {\n            headerName: \"Age\",\n            field: \"age\"\n        },\n        {\n            headerName: \"Course\",\n            field: \"course\",\n            pivot: true\n        },\n        {\n            headerName: \"Age Range\",\n            valueGetter: ageRangeValueGetter,\n            pivot: true\n        },\n        {\n            headerName: \"Points\",\n            field: \"points\",\n            aggFunc: \"sum\"\n        }\n    ]"
+            "value": "[\n    {\n        headerName: 'Student ID',\n        field: 'student'\n    },\n    {\n        headerName: 'Year Group',\n        field: 'yearGroup',\n        rowGroup: true\n    },\n    {\n        headerName: 'Age',\n        field: 'age'\n    },\n    {\n        headerName: 'Course',\n        field: 'course',\n        pivot: true\n    },\n    {\n        headerName: 'Age Range',\n        valueGetter: ageRangeValueGetter,\n        pivot: true\n    },\n    {\n        headerName: 'Points',\n        field: 'points',\n        aggFunc: 'sum'\n    }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        minWidth: 150,\n        sortable: true,\n        resizable: true,\n        cellRenderer: \"agAnimateShowChangeCellRenderer\"\n    }"
+            "value": "{\n    flex: 1,\n    minWidth: 150,\n    sortable: true,\n    resizable: true,\n    cellRenderer: 'agAnimateShowChangeCellRenderer'\n}"
         },
         { "name": "rowData", "value": "getRowData()" },
         { "name": "pivotMode", "value": "true" },
         { "name": "groupDefaultExpanded", "value": "1" },
         { "name": "animateRows", "value": "true" },
-        { "name": "getRowNodeId", "value": "function (data) {\n        return data.student;\n    }" }
+        { "name": "getRowNodeId", "value": "function (data) {\n    return data.student;\n}" }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    minWidth: 150,\n    sortable: true,\n    resizable: true,\n    cellRenderer: 'agAnimateShowChangeCellRenderer'\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            headerName: \"Student ID\",\n            field: \"student\"\n        },\n        {\n            headerName: \"Year Group\",\n            field: \"yearGroup\",\n            rowGroup: true\n        },\n        {\n            headerName: \"Age\",\n            field: \"age\"\n        },\n        {\n            headerName: \"Course\",\n            field: \"course\",\n            pivot: true\n        },\n        {\n            headerName: \"Age Range\",\n            valueGetter: \"AG_LITERAL_ageRangeValueGetter\",\n            pivot: true\n        },\n        {\n            headerName: \"Points\",\n            field: \"points\",\n            aggFunc: \"sum\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        headerName: 'Student ID',\n        field: 'student'\n    },\n    {\n        headerName: 'Year Group',\n        field: 'yearGroup',\n        rowGroup: true\n    },\n    {\n        headerName: 'Age',\n        field: 'age'\n    },\n    {\n        headerName: 'Course',\n        field: 'course',\n        pivot: true\n    },\n    {\n        headerName: 'Age Range',\n        valueGetter: 'AG_LITERAL_ageRangeValueGetter',\n        pivot: true\n    },\n    {\n        headerName: 'Points',\n        field: 'points',\n        aggFunc: 'sum'\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

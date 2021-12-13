@@ -3,22 +3,22 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            colId: \"country\",\n            valueGetter: \"data.country.name\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            field: \"gold\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"silver\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"bronze\",\n            aggFunc: \"sum\"\n        }\n    ]"
+            "value": "[\n    {\n        colId: 'country',\n        valueGetter: 'data.country.name',\n        rowGroup: true,\n        hide: true\n    },\n    {\n        field: 'gold',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'silver',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'bronze',\n        aggFunc: 'sum'\n    }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        minWidth: 150,\n        resizable: true,\n        sortable: true\n    }"
+            "value": "{\n    flex: 1,\n    minWidth: 150,\n    resizable: true,\n    sortable: true\n}"
         },
-        { "name": "autoGroupColumnDef", "value": "{\n        flex: 1,\n        minWidth: 280\n    }" },
-        { "name": "rowModelType", "value": "\"serverSide\"" },
-        { "name": "serverSideStoreType", "value": "\"partial\"" },
+        { "name": "autoGroupColumnDef", "value": "{\n    flex: 1,\n    minWidth: 280\n}" },
+        { "name": "rowModelType", "value": "'serverSide'" },
+        { "name": "serverSideStoreType", "value": "'partial'" },
         { "name": "animateRows", "value": "true" },
         { "name": "suppressAggFuncInHeader", "value": "true" }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    minWidth: 150,\n    resizable: true,\n    sortable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            colId: \"country\",\n            valueGetter: \"data.country.name\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            field: \"gold\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"silver\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"bronze\",\n            aggFunc: \"sum\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        colId: 'country',\n        valueGetter: 'data.country.name',\n        rowGroup: true,\n        hide: true\n    },\n    {\n        field: 'gold',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'silver',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'bronze',\n        aggFunc: 'sum'\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [

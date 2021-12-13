@@ -3,11 +3,11 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"country\",\n            rowGroup: true,\n            enableRowGroup: true\n        },\n        {\n            field: \"year\",\n            pivot: true,\n            enablePivot: true,\n            pivotComparator: MyYearPivotComparator\n        },\n        { field: \"date\" },\n        { field: \"sport\" },\n        {\n            field: \"gold\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"silver\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"bronze\",\n            aggFunc: \"sum\"\n        }\n    ]"
+            "value": "[\n    {\n        field: 'country',\n        rowGroup: true,\n        enableRowGroup: true\n    },\n    {\n        field: 'year',\n        pivot: true,\n        enablePivot: true,\n        pivotComparator: MyYearPivotComparator\n    },\n    { field: 'date' },\n    { field: 'sport' },\n    {\n        field: 'gold',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'silver',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'bronze',\n        aggFunc: 'sum'\n    }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        minWidth: 150,\n        filter: true,\n        resizable: true\n    }"
+            "value": "{\n    flex: 1,\n    minWidth: 150,\n    filter: true,\n    resizable: true\n}"
         },
         { "name": "autoGroupColumnDef", "value": "{ minWidth: 250 }" },
         { "name": "sideBar", "value": "true" },
@@ -15,17 +15,17 @@
         { "name": "suppressAggFuncInHeader", "value": "true" },
         {
             "name": "processSecondaryColDef",
-            "value": "function (colDef) {\n        colDef.headerName = colDef.headerName.toUpperCase();\n    }"
+            "value": "function (colDef) {\n    colDef.headerName = colDef.headerName.toUpperCase();\n}"
         },
         {
             "name": "processSecondaryColGroupDef",
-            "value": "function (colGroupDef) {\n        if (colGroupDef.pivotKeys[0] === \"2002\") {\n            colGroupDef.headerClass = \"color-background\";\n        }\n        colGroupDef.headerName = \"Year \" + colGroupDef.headerName;\n    }"
+            "value": "function (colGroupDef) {\n    if (colGroupDef.pivotKeys[0] === '2002') {\n        colGroupDef.headerClass = 'color-background';\n    }\n    colGroupDef.headerName = 'Year ' + colGroupDef.headerName;\n}"
         }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    minWidth: 150,\n    filter: true,\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"country\",\n            rowGroup: true,\n            enableRowGroup: true\n        },\n        {\n            field: \"year\",\n            pivot: true,\n            enablePivot: true,\n            pivotComparator: \"AG_LITERAL_MyYearPivotComparator\"\n        },\n        { field: \"date\" },\n        { field: \"sport\" },\n        {\n            field: \"gold\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"silver\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"bronze\",\n            aggFunc: \"sum\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'country',\n        rowGroup: true,\n        enableRowGroup: true\n    },\n    {\n        field: 'year',\n        pivot: true,\n        enablePivot: true,\n        pivotComparator: 'AG_LITERAL_MyYearPivotComparator'\n    },\n    { field: 'date' },\n    { field: 'sport' },\n    {\n        field: 'gold',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'silver',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'bronze',\n        aggFunc: 'sum'\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [

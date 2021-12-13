@@ -3,13 +3,13 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"q1\",\n            type: \"quarterFigure\"\n        },\n        {\n            field: \"q2\",\n            type: \"quarterFigure\"\n        },\n        {\n            field: \"q3\",\n            type: \"quarterFigure\"\n        },\n        {\n            field: \"q4\",\n            type: \"quarterFigure\"\n        },\n        {\n            field: \"year\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            headerName: \"Total\",\n            colId: \"total\",\n            cellClass: \"number-cell total-col\",\n            aggFunc: \"sum\",\n            valueFormatter: formatNumber,\n            valueGetter: totalValueGetter\n        },\n        {\n            headerName: \"Total x 10\",\n            cellClass: \"number-cell total-col\",\n            aggFunc: \"sum\",\n            minWidth: 120,\n            valueFormatter: formatNumber,\n            valueGetter: total10ValueGetter\n        }\n    ]"
+            "value": "[\n    {\n        field: 'q1',\n        type: 'quarterFigure'\n    },\n    {\n        field: 'q2',\n        type: 'quarterFigure'\n    },\n    {\n        field: 'q3',\n        type: 'quarterFigure'\n    },\n    {\n        field: 'q4',\n        type: 'quarterFigure'\n    },\n    {\n        field: 'year',\n        rowGroup: true,\n        hide: true\n    },\n    {\n        headerName: 'Total',\n        colId: 'total',\n        cellClass: 'number-cell total-col',\n        aggFunc: 'sum',\n        valueFormatter: formatNumber,\n        valueGetter: totalValueGetter\n    },\n    {\n        headerName: 'Total x 10',\n        cellClass: 'number-cell total-col',\n        aggFunc: 'sum',\n        minWidth: 120,\n        valueFormatter: formatNumber,\n        valueGetter: total10ValueGetter\n    }\n]"
         },
-        { "name": "defaultColDef", "value": "{\n        flex: 1,\n        resizable: true\n    }" },
+        { "name": "defaultColDef", "value": "{\n    flex: 1,\n    resizable: true\n}" },
         { "name": "autoGroupColumnDef", "value": "{ minWidth: 130 }" },
         {
             "name": "columnTypes",
-            "value": "{\n        quarterFigure: {\n            editable: true,\n            cellClass: \"number-cell\",\n            aggFunc: \"sum\",\n            valueFormatter: formatNumber,\n            valueParser: function numberParser(params) {\n                return Number(params.newValue);\n            }\n        }\n    }"
+            "value": "{\n    quarterFigure: {\n        editable: true,\n        cellClass: 'number-cell',\n        aggFunc: 'sum',\n        valueFormatter: formatNumber,\n        valueParser: function numberParser(params) {\n            return Number(params.newValue);\n        }\n    }\n}"
         },
         { "name": "valueCache", "value": "true" },
         { "name": "valueCacheNeverExpires", "value": "true" },
@@ -18,12 +18,12 @@
         { "name": "enableCellChangeFlash", "value": "true" },
         { "name": "enableRangeSelection", "value": "true" },
         { "name": "groupDefaultExpanded", "value": "1" },
-        { "name": "getRowNodeId", "value": "function (data) {\n        return data.id;\n    }" }
+        { "name": "getRowNodeId", "value": "function (data) {\n    return data.id;\n}" }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"q1\",\n            type: \"quarterFigure\"\n        },\n        {\n            field: \"q2\",\n            type: \"quarterFigure\"\n        },\n        {\n            field: \"q3\",\n            type: \"quarterFigure\"\n        },\n        {\n            field: \"q4\",\n            type: \"quarterFigure\"\n        },\n        {\n            field: \"year\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            headerName: \"Total\",\n            colId: \"total\",\n            cellClass: \"number-cell total-col\",\n            aggFunc: \"sum\",\n            valueFormatter: \"AG_LITERAL_formatNumber\",\n            valueGetter: \"AG_LITERAL_totalValueGetter\"\n        },\n        {\n            headerName: \"Total x 10\",\n            cellClass: \"number-cell total-col\",\n            aggFunc: \"sum\",\n            minWidth: 120,\n            valueFormatter: \"AG_LITERAL_formatNumber\",\n            valueGetter: \"AG_LITERAL_total10ValueGetter\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'q1',\n        type: 'quarterFigure'\n    },\n    {\n        field: 'q2',\n        type: 'quarterFigure'\n    },\n    {\n        field: 'q3',\n        type: 'quarterFigure'\n    },\n    {\n        field: 'q4',\n        type: 'quarterFigure'\n    },\n    {\n        field: 'year',\n        rowGroup: true,\n        hide: true\n    },\n    {\n        headerName: 'Total',\n        colId: 'total',\n        cellClass: 'number-cell total-col',\n        aggFunc: 'sum',\n        valueFormatter: 'AG_LITERAL_formatNumber',\n        valueGetter: 'AG_LITERAL_totalValueGetter'\n    },\n    {\n        headerName: 'Total x 10',\n        cellClass: 'number-cell total-col',\n        aggFunc: 'sum',\n        minWidth: 120,\n        valueFormatter: 'AG_LITERAL_formatNumber',\n        valueGetter: 'AG_LITERAL_total10ValueGetter'\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

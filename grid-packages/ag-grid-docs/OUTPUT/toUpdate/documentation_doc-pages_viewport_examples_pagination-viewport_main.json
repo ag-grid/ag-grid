@@ -3,25 +3,22 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            headerName: \"#\",\n            maxWidth: 80,\n            cellRenderer: function (params) {\n                return \"\" + params.rowIndex;\n            }\n        },\n        {\n            field: \"code\",\n            maxWidth: 90\n        },\n        {\n            field: \"name\",\n            minWidth: 220\n        },\n        {\n            field: \"bid\",\n            cellClass: \"cell-number\",\n            valueFormatter: numberFormatter,\n            cellRenderer: \"agAnimateShowChangeCellRenderer\"\n        },\n        {\n            field: \"mid\",\n            cellClass: \"cell-number\",\n            valueFormatter: numberFormatter,\n            cellRenderer: \"agAnimateShowChangeCellRenderer\"\n        },\n        {\n            field: \"ask\",\n            cellClass: \"cell-number\",\n            valueFormatter: numberFormatter,\n            cellRenderer: \"agAnimateShowChangeCellRenderer\"\n        },\n        {\n            field: \"volume\",\n            cellClass: \"cell-number\",\n            cellRenderer: \"agAnimateSlideCellRenderer\"\n        }\n    ]"
+            "value": "[\n    {\n        headerName: '#',\n        maxWidth: 80,\n        cellRenderer: function (params) {\n            return '' + params.rowIndex;\n        }\n    },\n    {\n        field: 'code',\n        maxWidth: 90\n    },\n    {\n        field: 'name',\n        minWidth: 220\n    },\n    {\n        field: 'bid',\n        cellClass: 'cell-number',\n        valueFormatter: numberFormatter,\n        cellRenderer: 'agAnimateShowChangeCellRenderer'\n    },\n    {\n        field: 'mid',\n        cellClass: 'cell-number',\n        valueFormatter: numberFormatter,\n        cellRenderer: 'agAnimateShowChangeCellRenderer'\n    },\n    {\n        field: 'ask',\n        cellClass: 'cell-number',\n        valueFormatter: numberFormatter,\n        cellRenderer: 'agAnimateShowChangeCellRenderer'\n    },\n    {\n        field: 'volume',\n        cellClass: 'cell-number',\n        cellRenderer: 'agAnimateSlideCellRenderer'\n    }\n]"
         },
-        {
-            "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        minWidth: 140,\n        resizable: true\n    }"
-        },
+        { "name": "defaultColDef", "value": "{\n    flex: 1,\n    minWidth: 140,\n    resizable: true\n}" },
         { "name": "enableRangeSelection", "value": "true" },
-        { "name": "rowModelType", "value": "\"viewport\"" },
+        { "name": "rowModelType", "value": "'viewport'" },
         { "name": "pagination", "value": "true" },
         { "name": "paginationAutoPageSize", "value": "true" },
         { "name": "viewportRowModelPageSize", "value": "1" },
         { "name": "viewportRowModelBufferSize", "value": "0" },
-        { "name": "getRowNodeId", "value": "function (data) {\n        return data.code;\n    }" },
+        { "name": "getRowNodeId", "value": "function (data) {\n    return data.code;\n}" },
         { "name": "debug", "value": "true" }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    minWidth: 140,\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            headerName: \"#\",\n            maxWidth: 80,\n            cellRenderer: \"AG_FUNCTION_function (params) {\\n    return '' + params.rowIndex;\\n}\"\n        },\n        {\n            field: \"code\",\n            maxWidth: 90\n        },\n        {\n            field: \"name\",\n            minWidth: 220\n        },\n        {\n            field: \"bid\",\n            cellClass: \"cell-number\",\n            valueFormatter: \"AG_LITERAL_numberFormatter\",\n            cellRenderer: \"agAnimateShowChangeCellRenderer\"\n        },\n        {\n            field: \"mid\",\n            cellClass: \"cell-number\",\n            valueFormatter: \"AG_LITERAL_numberFormatter\",\n            cellRenderer: \"agAnimateShowChangeCellRenderer\"\n        },\n        {\n            field: \"ask\",\n            cellClass: \"cell-number\",\n            valueFormatter: \"AG_LITERAL_numberFormatter\",\n            cellRenderer: \"agAnimateShowChangeCellRenderer\"\n        },\n        {\n            field: \"volume\",\n            cellClass: \"cell-number\",\n            cellRenderer: \"agAnimateSlideCellRenderer\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        headerName: '#',\n        maxWidth: 80,\n        cellRenderer: 'AG_FUNCTION_function (params) {\\n    return \\'\\' + params.rowIndex;\\n}'\n    },\n    {\n        field: 'code',\n        maxWidth: 90\n    },\n    {\n        field: 'name',\n        minWidth: 220\n    },\n    {\n        field: 'bid',\n        cellClass: 'cell-number',\n        valueFormatter: 'AG_LITERAL_numberFormatter',\n        cellRenderer: 'agAnimateShowChangeCellRenderer'\n    },\n    {\n        field: 'mid',\n        cellClass: 'cell-number',\n        valueFormatter: 'AG_LITERAL_numberFormatter',\n        cellRenderer: 'agAnimateShowChangeCellRenderer'\n    },\n    {\n        field: 'ask',\n        cellClass: 'cell-number',\n        valueFormatter: 'AG_LITERAL_numberFormatter',\n        cellRenderer: 'agAnimateShowChangeCellRenderer'\n    },\n    {\n        field: 'volume',\n        cellClass: 'cell-number',\n        cellRenderer: 'agAnimateSlideCellRenderer'\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [

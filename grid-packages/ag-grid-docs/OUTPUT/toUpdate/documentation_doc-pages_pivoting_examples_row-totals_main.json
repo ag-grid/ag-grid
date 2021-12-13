@@ -3,20 +3,17 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"country\",\n            rowGroup: true,\n            enableRowGroup: true\n        },\n        { field: \"athlete\" },\n        {\n            field: \"sport\",\n            pivot: true,\n            enablePivot: true\n        },\n        {\n            field: \"year\",\n            pivot: true,\n            enablePivot: true\n        },\n        {\n            field: \"gold\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"silver\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"bronze\",\n            aggFunc: \"sum\"\n        }\n    ]"
+            "value": "[\n    {\n        field: 'country',\n        rowGroup: true,\n        enableRowGroup: true\n    },\n    { field: 'athlete' },\n    {\n        field: 'sport',\n        pivot: true,\n        enablePivot: true\n    },\n    {\n        field: 'year',\n        pivot: true,\n        enablePivot: true\n    },\n    {\n        field: 'gold',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'silver',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'bronze',\n        aggFunc: 'sum'\n    }\n]"
         },
-        {
-            "name": "defaultColDef",
-            "value": "{\n        maxWidth: 140,\n        filter: true,\n        resizable: true\n    }"
-        },
+        { "name": "defaultColDef", "value": "{\n    maxWidth: 140,\n    filter: true,\n    resizable: true\n}" },
         { "name": "autoGroupColumnDef", "value": "{ minWidth: 180 }" },
         { "name": "pivotMode", "value": "true" },
-        { "name": "pivotRowTotals", "value": "\"before\"" }
+        { "name": "pivotRowTotals", "value": "'before'" }
     ],
     "components": [],
     "defaultColDef": "{\n    maxWidth: 140,\n    filter: true,\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"country\",\n            rowGroup: true,\n            enableRowGroup: true\n        },\n        { field: \"athlete\" },\n        {\n            field: \"sport\",\n            pivot: true,\n            enablePivot: true\n        },\n        {\n            field: \"year\",\n            pivot: true,\n            enablePivot: true\n        },\n        {\n            field: \"gold\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"silver\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"bronze\",\n            aggFunc: \"sum\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'country',\n        rowGroup: true,\n        enableRowGroup: true\n    },\n    { field: 'athlete' },\n    {\n        field: 'sport',\n        pivot: true,\n        enablePivot: true\n    },\n    {\n        field: 'year',\n        pivot: true,\n        enablePivot: true\n    },\n    {\n        field: 'gold',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'silver',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'bronze',\n        aggFunc: 'sum'\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [],

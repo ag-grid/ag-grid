@@ -44,11 +44,11 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        { field: \"athlete\" },\n        { field: \"age\" },\n        { field: \"country\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" }\n    ]"
+            "value": "[\n    { field: 'athlete' },\n    { field: 'age' },\n    { field: 'country' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        sortable: true,\n        resizable: true,\n        width: 150,\n        enableRowGroup: true,\n        enablePivot: true,\n        enableValue: true\n    }"
+            "value": "{\n    sortable: true,\n    resizable: true,\n    width: 150,\n    enableRowGroup: true,\n    enablePivot: true,\n    enableValue: true\n}"
         },
         { "name": "debug", "value": "true" },
         { "name": "rowData", "value": "null" }
@@ -56,7 +56,7 @@
     "components": [],
     "defaultColDef": "{\n    sortable: true,\n    resizable: true,\n    width: 150,\n    enableRowGroup: true,\n    enablePivot: true,\n    enableValue: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        { field: \"athlete\" },\n        { field: \"age\" },\n        { field: \"country\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" }\n    ]",
+    "parsedColDefs": "[\n    { field: 'athlete' },\n    { field: 'age' },\n    { field: 'country' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

@@ -8,13 +8,13 @@
     ],
     "properties": [
         { "name": "masterDetail", "value": "true" },
-        { "name": "detailCellRenderer", "value": "\"myDetailCellRenderer\"" },
+        { "name": "detailCellRenderer", "value": "'myDetailCellRenderer'" },
         { "name": "detailRowHeight", "value": "150" },
         { "name": "animateRows", "value": "true" },
         { "name": "components", "value": "{ myDetailCellRenderer: DetailCellRenderer }" },
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"name\",\n            cellRenderer: \"agGroupCellRenderer\",\n            pinned: \"left\"\n        },\n        { field: \"account\" },\n        { field: \"calls\" },\n        {\n            field: \"minutes\",\n            valueFormatter: \"x.toLocaleString() + 'm'\"\n        },\n        {\n            headerName: \"Extra Col 1\",\n            valueGetter: \"\\\"AAA\\\"\"\n        },\n        {\n            headerName: \"Extra Col 2\",\n            valueGetter: \"\\\"BBB\\\"\"\n        },\n        {\n            headerName: \"Extra Col 3\",\n            valueGetter: \"\\\"CCC\\\"\"\n        },\n        {\n            headerName: \"Pinned Right\",\n            pinned: \"right\"\n        }\n    ]"
+            "value": "[\n    {\n        field: 'name',\n        cellRenderer: 'agGroupCellRenderer',\n        pinned: 'left'\n    },\n    { field: 'account' },\n    { field: 'calls' },\n    {\n        field: 'minutes',\n        valueFormatter: 'x.toLocaleString() + \\'m\\''\n    },\n    {\n        headerName: 'Extra Col 1',\n        valueGetter: '\"AAA\"'\n    },\n    {\n        headerName: 'Extra Col 2',\n        valueGetter: '\"BBB\"'\n    },\n    {\n        headerName: 'Extra Col 3',\n        valueGetter: '\"CCC\"'\n    },\n    {\n        headerName: 'Pinned Right',\n        pinned: 'right'\n    }\n]"
         },
         { "name": "defaultColDef", "value": "{}" },
         { "name": "embedFullWidthRows", "value": "true" }
@@ -22,7 +22,7 @@
     "components": [{ "name": "myDetailCellRenderer", "value": "DetailCellRenderer" }],
     "defaultColDef": "{}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"name\",\n            cellRenderer: \"agGroupCellRenderer\",\n            pinned: \"left\"\n        },\n        { field: \"account\" },\n        { field: \"calls\" },\n        {\n            field: \"minutes\",\n            valueFormatter: \"x.toLocaleString() + 'm'\"\n        },\n        {\n            headerName: \"Extra Col 1\",\n            valueGetter: \"\\\"AAA\\\"\"\n        },\n        {\n            headerName: \"Extra Col 2\",\n            valueGetter: \"\\\"BBB\\\"\"\n        },\n        {\n            headerName: \"Extra Col 3\",\n            valueGetter: \"\\\"CCC\\\"\"\n        },\n        {\n            headerName: \"Pinned Right\",\n            pinned: \"right\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'name',\n        cellRenderer: 'agGroupCellRenderer',\n        pinned: 'left'\n    },\n    { field: 'account' },\n    { field: 'calls' },\n    {\n        field: 'minutes',\n        valueFormatter: 'x.toLocaleString() + \\'m\\''\n    },\n    {\n        headerName: 'Extra Col 1',\n        valueGetter: '\"AAA\"'\n    },\n    {\n        headerName: 'Extra Col 2',\n        valueGetter: '\"BBB\"'\n    },\n    {\n        headerName: 'Extra Col 3',\n        valueGetter: '\"CCC\"'\n    },\n    {\n        headerName: 'Pinned Right',\n        pinned: 'right'\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [],

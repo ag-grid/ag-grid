@@ -3,19 +3,19 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"country\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            field: \"year\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            field: \"athlete\",\n            minWidth: 250,\n            cellRenderer: function (params) {\n                return `<span style=\"margin-left: 60px\">${ params.value }</span)`;\n            }\n        },\n        {\n            field: \"sport\",\n            minWidth: 200\n        },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" }\n    ]"
+            "value": "[\n    {\n        field: 'country',\n        rowGroup: true,\n        hide: true\n    },\n    {\n        field: 'year',\n        rowGroup: true,\n        hide: true\n    },\n    {\n        field: 'athlete',\n        minWidth: 250,\n        cellRenderer: function (params) {\n            return `<span style=\"margin-left: 60px\">${ params.value }</span)`;\n        }\n    },\n    {\n        field: 'sport',\n        minWidth: 200\n    },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        minWidth: 100,\n        sortable: true,\n        resizable: true\n    }"
+            "value": "{\n    flex: 1,\n    minWidth: 100,\n    sortable: true,\n    resizable: true\n}"
         },
-        { "name": "groupDisplayType", "value": "\"groupRows\"" },
+        { "name": "groupDisplayType", "value": "'groupRows'" },
         { "name": "animateRows", "value": "true" }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    minWidth: 100,\n    sortable: true,\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"country\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            field: \"year\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            field: \"athlete\",\n            minWidth: 250,\n            cellRenderer: \"AG_FUNCTION_function (params) {\\n    return `<span style=\\\"margin-left: 60px\\\">${ params.value }</span)`;\\n}\"\n        },\n        {\n            field: \"sport\",\n            minWidth: 200\n        },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'country',\n        rowGroup: true,\n        hide: true\n    },\n    {\n        field: 'year',\n        rowGroup: true,\n        hide: true\n    },\n    {\n        field: 'athlete',\n        minWidth: 250,\n        cellRenderer: 'AG_FUNCTION_function (params) {\\n    return `<span style=\"margin-left: 60px\">${ params.value }</span)`;\\n}'\n    },\n    {\n        field: 'sport',\n        minWidth: 200\n    },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [],

@@ -3,18 +3,18 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"athlete\",\n            colId: \"athlete\",\n            minWidth: 180\n        },\n        {\n            field: \"age\",\n            colId: \"age\"\n        },\n        {\n            field: \"country\",\n            colId: \"country\",\n            minWidth: 180\n        },\n        {\n            field: \"year\",\n            colId: \"year\"\n        },\n        {\n            field: \"sport\",\n            colId: \"sport\",\n            minWidth: 180\n        }\n    ]"
+            "value": "[\n    {\n        field: 'athlete',\n        colId: 'athlete',\n        minWidth: 180\n    },\n    {\n        field: 'age',\n        colId: 'age'\n    },\n    {\n        field: 'country',\n        colId: 'country',\n        minWidth: 180\n    },\n    {\n        field: 'year',\n        colId: 'year'\n    },\n    {\n        field: 'sport',\n        colId: 'sport',\n        minWidth: 180\n    }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        sortable: true,\n        resizable: true,\n        filter: true\n    }"
+            "value": "{\n    flex: 1,\n    sortable: true,\n    resizable: true,\n    filter: true\n}"
         },
-        { "name": "rowModelType", "value": "\"infinite\"" }
+        { "name": "rowModelType", "value": "'infinite'" }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    sortable: true,\n    resizable: true,\n    filter: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            colId: \"athlete\",\n            minWidth: 180\n        },\n        {\n            field: \"age\",\n            colId: \"age\"\n        },\n        {\n            field: \"country\",\n            colId: \"country\",\n            minWidth: 180\n        },\n        {\n            field: \"year\",\n            colId: \"year\"\n        },\n        {\n            field: \"sport\",\n            colId: \"sport\",\n            minWidth: 180\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'athlete',\n        colId: 'athlete',\n        minWidth: 180\n    },\n    {\n        field: 'age',\n        colId: 'age'\n    },\n    {\n        field: 'country',\n        colId: 'country',\n        minWidth: 180\n    },\n    {\n        field: 'year',\n        colId: 'year'\n    },\n    {\n        field: 'sport',\n        colId: 'sport',\n        minWidth: 180\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

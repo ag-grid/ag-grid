@@ -1,19 +1,16 @@
 {
     "eventHandlers": [],
     "properties": [
-        {
-            "name": "columnDefs",
-            "value": "[{\n            field: \"athlete\",\n            filter: \"agSetColumnFilter\"\n        }]"
-        },
+        { "name": "columnDefs", "value": "[{\n        field: 'athlete',\n        filter: 'agSetColumnFilter'\n    }]" },
         {
             "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        minWidth: 150,\n        filter: true,\n        sortable: true\n    }"
+            "value": "{\n    flex: 1,\n    minWidth: 150,\n    filter: true,\n    sortable: true\n}"
         }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    minWidth: 150,\n    filter: true,\n    sortable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[{\n            field: \"athlete\",\n            filter: \"agSetColumnFilter\"\n        }]",
+    "parsedColDefs": "[{\n        field: 'athlete',\n        filter: 'agSetColumnFilter'\n    }]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

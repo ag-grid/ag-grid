@@ -3,23 +3,23 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"athlete\",\n            width: 150\n        },\n        {\n            field: \"age\",\n            width: 90\n        },\n        {\n            field: \"country\",\n            width: 120\n        },\n        {\n            field: \"year\",\n            width: 90\n        },\n        {\n            field: \"date\",\n            width: 110\n        },\n        {\n            field: \"sport\",\n            width: 110\n        },\n        {\n            field: \"gold\",\n            width: 100\n        },\n        {\n            field: \"silver\",\n            width: 100\n        },\n        {\n            field: \"bronze\",\n            width: 100\n        },\n        {\n            field: \"total\",\n            width: 100\n        }\n    ]"
+            "value": "[\n    {\n        field: 'athlete',\n        width: 150\n    },\n    {\n        field: 'age',\n        width: 90\n    },\n    {\n        field: 'country',\n        width: 120\n    },\n    {\n        field: 'year',\n        width: 90\n    },\n    {\n        field: 'date',\n        width: 110\n    },\n    {\n        field: 'sport',\n        width: 110\n    },\n    {\n        field: 'gold',\n        width: 100\n    },\n    {\n        field: 'silver',\n        width: 100\n    },\n    {\n        field: 'bronze',\n        width: 100\n    },\n    {\n        field: 'total',\n        width: 100\n    }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        editable: true,\n        sortable: true,\n        flex: 1,\n        minWidth: 100,\n        filter: true,\n        resizable: true\n    }"
+            "value": "{\n    editable: true,\n    sortable: true,\n    flex: 1,\n    minWidth: 100,\n    filter: true,\n    resizable: true\n}"
         },
         { "name": "rowData", "value": "null" },
         {
             "name": "components",
-            "value": "{\n        customLoadingOverlay: CustomLoadingOverlay,\n        customNoRowsOverlay: CustomNoRowsOverlay\n    }"
+            "value": "{\n    customLoadingOverlay: CustomLoadingOverlay,\n    customNoRowsOverlay: CustomNoRowsOverlay\n}"
         },
-        { "name": "loadingOverlayComponent", "value": "\"customLoadingOverlay\"" },
-        { "name": "loadingOverlayComponentParams", "value": "{ loadingMessage: \"One moment please...\" }" },
-        { "name": "noRowsOverlayComponent", "value": "\"customNoRowsOverlay\"" },
+        { "name": "loadingOverlayComponent", "value": "'customLoadingOverlay'" },
+        { "name": "loadingOverlayComponentParams", "value": "{ loadingMessage: 'One moment please...' }" },
+        { "name": "noRowsOverlayComponent", "value": "'customNoRowsOverlay'" },
         {
             "name": "noRowsOverlayComponentParams",
-            "value": "{ noRowsMessageFunc: () => \"Sorry - no rows! at: \" + new Date() }"
+            "value": "{ noRowsMessageFunc: () => 'Sorry - no rows! at: ' + new Date() }"
         }
     ],
     "components": [
@@ -31,7 +31,7 @@
         "loadingOverlayComponent: 'customLoadingOverlay'",
         "noRowsOverlayComponent: 'customNoRowsOverlay'"
     ],
-    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            width: 150\n        },\n        {\n            field: \"age\",\n            width: 90\n        },\n        {\n            field: \"country\",\n            width: 120\n        },\n        {\n            field: \"year\",\n            width: 90\n        },\n        {\n            field: \"date\",\n            width: 110\n        },\n        {\n            field: \"sport\",\n            width: 110\n        },\n        {\n            field: \"gold\",\n            width: 100\n        },\n        {\n            field: \"silver\",\n            width: 100\n        },\n        {\n            field: \"bronze\",\n            width: 100\n        },\n        {\n            field: \"total\",\n            width: 100\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'athlete',\n        width: 150\n    },\n    {\n        field: 'age',\n        width: 90\n    },\n    {\n        field: 'country',\n        width: 120\n    },\n    {\n        field: 'year',\n        width: 90\n    },\n    {\n        field: 'date',\n        width: 110\n    },\n    {\n        field: 'sport',\n        width: 110\n    },\n    {\n        field: 'gold',\n        width: 100\n    },\n    {\n        field: 'silver',\n        width: 100\n    },\n    {\n        field: 'bronze',\n        width: 100\n    },\n    {\n        field: 'total',\n        width: 100\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

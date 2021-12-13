@@ -3,20 +3,20 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"year\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            field: \"month\",\n            rowGroup: true,\n            hide: true,\n            comparator: function (a, b) {\n                const months = [\n                    \"January\",\n                    \"February\",\n                    \"March\",\n                    \"April\",\n                    \"May\",\n                    \"June\",\n                    \"July\",\n                    \"August\",\n                    \"September\",\n                    \"October\",\n                    \"November\",\n                    \"December\"\n                ];\n                return months.indexOf(a) - months.indexOf(b);\n            }\n        },\n        { field: \"salesRep\" },\n        { field: \"handset\" },\n        { field: \"sale\" }\n    ]"
+            "value": "[\n    {\n        field: 'year',\n        rowGroup: true,\n        hide: true\n    },\n    {\n        field: 'month',\n        rowGroup: true,\n        hide: true,\n        comparator: function (a, b) {\n            const months = [\n                'January',\n                'February',\n                'March',\n                'April',\n                'May',\n                'June',\n                'July',\n                'August',\n                'September',\n                'October',\n                'November',\n                'December'\n            ];\n            return months.indexOf(a) - months.indexOf(b);\n        }\n    },\n    { field: 'salesRep' },\n    { field: 'handset' },\n    { field: 'sale' }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        minWidth: 100,\n        filter: true,\n        sortable: true,\n        resizable: true\n    }"
+            "value": "{\n    flex: 1,\n    minWidth: 100,\n    filter: true,\n    sortable: true,\n    resizable: true\n}"
         },
-        { "name": "autoGroupColumnDef", "value": "{\n        sort: \"asc\",\n        minWidth: 300\n    }" },
+        { "name": "autoGroupColumnDef", "value": "{\n    sort: 'asc',\n    minWidth: 300\n}" },
         { "name": "groupDefaultExpanded", "value": "1" },
         { "name": "rowData", "value": "getData()" }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    minWidth: 100,\n    filter: true,\n    sortable: true,\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"year\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            field: \"month\",\n            rowGroup: true,\n            hide: true,\n            comparator: \"AG_FUNCTION_function (a, b) {\\n    const months = [\\n        'January',\\n        'February',\\n        'March',\\n        'April',\\n        'May',\\n        'June',\\n        'July',\\n        'August',\\n        'September',\\n        'October',\\n        'November',\\n        'December'\\n    ];\\n    return months.indexOf(a) - months.indexOf(b);\\n}\"\n        },\n        { field: \"salesRep\" },\n        { field: \"handset\" },\n        { field: \"sale\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'year',\n        rowGroup: true,\n        hide: true\n    },\n    {\n        field: 'month',\n        rowGroup: true,\n        hide: true,\n        comparator: 'AG_FUNCTION_function (a, b) {\\n    const months = [\\n        \\'January\\',\\n        \\'February\\',\\n        \\'March\\',\\n        \\'April\\',\\n        \\'May\\',\\n        \\'June\\',\\n        \\'July\\',\\n        \\'August\\',\\n        \\'September\\',\\n        \\'October\\',\\n        \\'November\\',\\n        \\'December\\'\\n    ];\\n    return months.indexOf(a) - months.indexOf(b);\\n}'\n    },\n    { field: 'salesRep' },\n    { field: 'handset' },\n    { field: 'sale' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [],

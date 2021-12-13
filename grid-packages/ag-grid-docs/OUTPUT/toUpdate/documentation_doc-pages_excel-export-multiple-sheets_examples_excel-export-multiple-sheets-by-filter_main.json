@@ -3,17 +3,17 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"athlete\",\n            minWidth: 200\n        },\n        { field: \"age\" },\n        {\n            field: \"country\",\n            minWidth: 200\n        },\n        { field: \"year\" },\n        {\n            field: \"date\",\n            minWidth: 150\n        },\n        {\n            field: \"sport\",\n            minWidth: 150\n        },\n        { field: \"gold\" },\n        { field: \"silver\" }\n    ]"
+            "value": "[\n    {\n        field: 'athlete',\n        minWidth: 200\n    },\n    { field: 'age' },\n    {\n        field: 'country',\n        minWidth: 200\n    },\n    { field: 'year' },\n    {\n        field: 'date',\n        minWidth: 150\n    },\n    {\n        field: 'sport',\n        minWidth: 150\n    },\n    { field: 'gold' },\n    { field: 'silver' }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        sortable: true,\n        filter: true,\n        resizable: true,\n        minWidth: 100,\n        flex: 1\n    }"
+            "value": "{\n    sortable: true,\n    filter: true,\n    resizable: true,\n    minWidth: 100,\n    flex: 1\n}"
         }
     ],
     "components": [],
     "defaultColDef": "{\n    sortable: true,\n    filter: true,\n    resizable: true,\n    minWidth: 100,\n    flex: 1\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            minWidth: 200\n        },\n        { field: \"age\" },\n        {\n            field: \"country\",\n            minWidth: 200\n        },\n        { field: \"year\" },\n        {\n            field: \"date\",\n            minWidth: 150\n        },\n        {\n            field: \"sport\",\n            minWidth: 150\n        },\n        { field: \"gold\" },\n        { field: \"silver\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'athlete',\n        minWidth: 200\n    },\n    { field: 'age' },\n    {\n        field: 'country',\n        minWidth: 200\n    },\n    { field: 'year' },\n    {\n        field: 'date',\n        minWidth: 150\n    },\n    {\n        field: 'sport',\n        minWidth: 150\n    },\n    { field: 'gold' },\n    { field: 'silver' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

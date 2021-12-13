@@ -9,16 +9,13 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"group\",\n            rowGroup: true,\n            editable: true\n        },\n        {\n            field: \"a\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"b\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"c\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"d\",\n            type: \"valueColumn\"\n        },\n        {\n            headerName: \"Total\",\n            type: \"totalColumn\",\n            valueGetter: \"getValue(\\\"a\\\") + getValue(\\\"b\\\") + getValue(\\\"c\\\") + getValue(\\\"d\\\")\"\n        }\n    ]"
+            "value": "[\n    {\n        field: 'group',\n        rowGroup: true,\n        editable: true\n    },\n    {\n        field: 'a',\n        type: 'valueColumn'\n    },\n    {\n        field: 'b',\n        type: 'valueColumn'\n    },\n    {\n        field: 'c',\n        type: 'valueColumn'\n    },\n    {\n        field: 'd',\n        type: 'valueColumn'\n    },\n    {\n        headerName: 'Total',\n        type: 'totalColumn',\n        valueGetter: 'getValue(\"a\") + getValue(\"b\") + getValue(\"c\") + getValue(\"d\")'\n    }\n]"
         },
-        {
-            "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        sortable: true,\n        filter: true\n    }"
-        },
+        { "name": "defaultColDef", "value": "{\n    flex: 1,\n    sortable: true,\n    filter: true\n}" },
         { "name": "autoGroupColumnDef", "value": "{ minWidth: 100 }" },
         {
             "name": "columnTypes",
-            "value": "{\n        valueColumn: {\n            editable: true,\n            aggFunc: \"sum\",\n            valueParser: \"Number(newValue)\",\n            cellClass: \"number-cell\",\n            cellRenderer: \"agAnimateShowChangeCellRenderer\",\n            filter: \"agNumberColumnFilter\"\n        },\n        totalColumn: {\n            cellRenderer: \"agAnimateShowChangeCellRenderer\",\n            cellClass: \"number-cell\"\n        }\n    }"
+            "value": "{\n    valueColumn: {\n        editable: true,\n        aggFunc: 'sum',\n        valueParser: 'Number(newValue)',\n        cellClass: 'number-cell',\n        cellRenderer: 'agAnimateShowChangeCellRenderer',\n        filter: 'agNumberColumnFilter'\n    },\n    totalColumn: {\n        cellRenderer: 'agAnimateShowChangeCellRenderer',\n        cellClass: 'number-cell'\n    }\n}"
         },
         { "name": "rowData", "value": "getRowData()" },
         { "name": "groupDefaultExpanded", "value": "1" },
@@ -28,7 +25,7 @@
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    sortable: true,\n    filter: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"group\",\n            rowGroup: true,\n            editable: true\n        },\n        {\n            field: \"a\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"b\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"c\",\n            type: \"valueColumn\"\n        },\n        {\n            field: \"d\",\n            type: \"valueColumn\"\n        },\n        {\n            headerName: \"Total\",\n            type: \"totalColumn\",\n            valueGetter: \"getValue(\\\"a\\\") + getValue(\\\"b\\\") + getValue(\\\"c\\\") + getValue(\\\"d\\\")\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'group',\n        rowGroup: true,\n        editable: true\n    },\n    {\n        field: 'a',\n        type: 'valueColumn'\n    },\n    {\n        field: 'b',\n        type: 'valueColumn'\n    },\n    {\n        field: 'c',\n        type: 'valueColumn'\n    },\n    {\n        field: 'd',\n        type: 'valueColumn'\n    },\n    {\n        headerName: 'Total',\n        type: 'totalColumn',\n        valueGetter: 'getValue(\"a\") + getValue(\"b\") + getValue(\"c\") + getValue(\"d\")'\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [

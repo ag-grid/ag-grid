@@ -3,23 +3,23 @@
     "properties": [
         {
             "name": "defaultColDef",
-            "value": "{\n        editable: true,\n        resizable: true,\n        minWidth: 100,\n        flex: 1\n    }"
+            "value": "{\n    editable: true,\n    resizable: true,\n    minWidth: 100,\n    flex: 1\n}"
         },
         { "name": "suppressExcelExport", "value": "true" },
         { "name": "popupParent", "value": "document.body" },
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            headerName: \"Brand\",\n            children: [\n                { field: \"make\" },\n                { field: \"model\" }\n            ]\n        },\n        {\n            headerName: \"Value\",\n            children: [{ field: \"price\" }]\n        }\n    ]"
+            "value": "[\n    {\n        headerName: 'Brand',\n        children: [\n            { field: 'make' },\n            { field: 'model' }\n        ]\n    },\n    {\n        headerName: 'Value',\n        children: [{ field: 'price' }]\n    }\n]"
         },
         {
             "name": "rowData",
-            "value": "[\n        {\n            make: \"Toyota\",\n            model: \"Celica\",\n            price: 35000\n        },\n        {\n            make: \"Ford\",\n            model: \"Mondeo\",\n            price: 32000\n        },\n        {\n            make: \"Porsche\",\n            model: \"Boxter\",\n            price: 72000\n        }\n    ]"
+            "value": "[\n    {\n        make: 'Toyota',\n        model: 'Celica',\n        price: 35000\n    },\n    {\n        make: 'Ford',\n        model: 'Mondeo',\n        price: 32000\n    },\n    {\n        make: 'Porsche',\n        model: 'Boxter',\n        price: 72000\n    }\n]"
         }
     ],
     "components": [],
     "defaultColDef": "{\n    editable: true,\n    resizable: true,\n    minWidth: 100,\n    flex: 1\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            headerName: \"Brand\",\n            children: [\n                { field: \"make\" },\n                { field: \"model\" }\n            ]\n        },\n        {\n            headerName: \"Value\",\n            children: [{ field: \"price\" }]\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        headerName: 'Brand',\n        children: [\n            { field: 'make' },\n            { field: 'model' }\n        ]\n    },\n    {\n        headerName: 'Value',\n        children: [{ field: 'price' }]\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

@@ -3,7 +3,7 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"country\",\n            rowGroup: true\n        },\n        { field: \"athlete\" },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]"
+            "value": "[\n    {\n        field: 'country',\n        rowGroup: true\n    },\n    { field: 'athlete' },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]"
         },
         { "name": "animateRows", "value": "true" },
         { "name": "getRowHeight", "value": null }
@@ -11,9 +11,9 @@
     "components": [],
     "defaultColDef": null,
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"country\",\n            rowGroup: true\n        },\n        { field: \"athlete\" },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'country',\n        rowGroup: true\n    },\n    { field: 'athlete' },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]",
     "instanceMethods": [
-        "function getRowHeight(params) {\n        if (params.node.group && groupHeight != null) {\n            return groupHeight;\n        } else if (params.data && params.data.country === \"Russia\" && russiaHeight != null) {\n            return russiaHeight;\n        } else if (params.data && params.data.sport === \"Swimming\" && swimmingHeight != null) {\n            return swimmingHeight;\n        }\n    }"
+        "function getRowHeight(params) {\n    if (params.node.group && groupHeight != null) {\n        return groupHeight;\n    } else if (params.data && params.data.country === 'Russia' && russiaHeight != null) {\n        return russiaHeight;\n    } else if (params.data && params.data.sport === 'Swimming' && swimmingHeight != null) {\n        return swimmingHeight;\n    }\n}"
     ],
     "externalEventHandlers": [
         {

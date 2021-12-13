@@ -3,15 +3,15 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"athlete\",\n            rowSpan: rowSpan,\n            cellClassRules: { \"cell-span\": \"value==='Aleksey Nemov' || value==='Ryan Lochte'\" },\n            width: 200\n        },\n        {\n            field: \"age\",\n            width: 100\n        },\n        { field: \"country\" },\n        {\n            field: \"year\",\n            width: 100\n        },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]"
+            "value": "[\n    {\n        field: 'athlete',\n        rowSpan: rowSpan,\n        cellClassRules: { 'cell-span': 'value===\\'Aleksey Nemov\\' || value===\\'Ryan Lochte\\'' },\n        width: 200\n    },\n    {\n        field: 'age',\n        width: 100\n    },\n    { field: 'country' },\n    {\n        field: 'year',\n        width: 100\n    },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]"
         },
-        { "name": "defaultColDef", "value": "{\n        width: 170,\n        resizable: true\n    }" },
+        { "name": "defaultColDef", "value": "{\n    width: 170,\n    resizable: true\n}" },
         { "name": "suppressRowTransform", "value": "true" }
     ],
     "components": [],
     "defaultColDef": "{\n    width: 170,\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            rowSpan: \"AG_LITERAL_rowSpan\",\n            cellClassRules: { \"cell-span\": \"value==='Aleksey Nemov' || value==='Ryan Lochte'\" },\n            width: 200\n        },\n        {\n            field: \"age\",\n            width: 100\n        },\n        { field: \"country\" },\n        {\n            field: \"year\",\n            width: 100\n        },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'athlete',\n        rowSpan: 'AG_LITERAL_rowSpan',\n        cellClassRules: { 'cell-span': 'value===\\'Aleksey Nemov\\' || value===\\'Ryan Lochte\\'' },\n        width: 200\n    },\n    {\n        field: 'age',\n        width: 100\n    },\n    { field: 'country' },\n    {\n        field: 'year',\n        width: 100\n    },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [

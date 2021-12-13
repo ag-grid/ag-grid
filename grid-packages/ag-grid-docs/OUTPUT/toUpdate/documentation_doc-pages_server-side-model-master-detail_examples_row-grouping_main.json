@@ -3,23 +3,23 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"country\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            field: \"accountId\",\n            hide: true\n        },\n        { field: \"name\" },\n        { field: \"calls\" },\n        { field: \"totalDuration\" }\n    ]"
+            "value": "[\n    {\n        field: 'country',\n        rowGroup: true,\n        hide: true\n    },\n    {\n        field: 'accountId',\n        hide: true\n    },\n    { field: 'name' },\n    { field: 'calls' },\n    { field: 'totalDuration' }\n]"
         },
         { "name": "defaultColDef", "value": "{ flex: 1 }" },
-        { "name": "autoGroupColumnDef", "value": "{ field: \"accountId\" }" },
+        { "name": "autoGroupColumnDef", "value": "{ field: 'accountId' }" },
         { "name": "animateRows", "value": "true" },
-        { "name": "rowModelType", "value": "\"serverSide\"" },
-        { "name": "serverSideStoreType", "value": "\"partial\"" },
+        { "name": "rowModelType", "value": "'serverSide'" },
+        { "name": "serverSideStoreType", "value": "'partial'" },
         { "name": "masterDetail", "value": "true" },
         {
             "name": "detailCellRendererParams",
-            "value": "{\n        detailGridOptions: {\n            columnDefs: [\n                { field: \"callId\" },\n                { field: \"direction\" },\n                {\n                    field: \"duration\",\n                    valueFormatter: \"x.toLocaleString() + 's'\"\n                },\n                { field: \"switchCode\" },\n                { field: \"number\" }\n            ],\n            defaultColDef: { flex: 1 }\n        },\n        getDetailRowData: function (params) {\n            params.successCallback(params.data.callRecords);\n        }\n    }"
+            "value": "{\n    detailGridOptions: {\n        columnDefs: [\n            { field: 'callId' },\n            { field: 'direction' },\n            {\n                field: 'duration',\n                valueFormatter: 'x.toLocaleString() + \\'s\\''\n            },\n            { field: 'switchCode' },\n            { field: 'number' }\n        ],\n        defaultColDef: { flex: 1 }\n    },\n    getDetailRowData: function (params) {\n        params.successCallback(params.data.callRecords);\n    }\n}"
         }
     ],
     "components": [],
     "defaultColDef": "{ flex: 1 }",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"country\",\n            rowGroup: true,\n            hide: true\n        },\n        {\n            field: \"accountId\",\n            hide: true\n        },\n        { field: \"name\" },\n        { field: \"calls\" },\n        { field: \"totalDuration\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'country',\n        rowGroup: true,\n        hide: true\n    },\n    {\n        field: 'accountId',\n        hide: true\n    },\n    { field: 'name' },\n    { field: 'calls' },\n    { field: 'totalDuration' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [

@@ -19,11 +19,11 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"Month\",\n            width: 150,\n            chartDataType: \"category\"\n        },\n        {\n            field: \"Sunshine (hours)\",\n            chartDataType: \"series\"\n        },\n        {\n            field: \"Rainfall (mm)\",\n            chartDataType: \"series\"\n        }\n    ]"
+            "value": "[\n    {\n        field: 'Month',\n        width: 150,\n        chartDataType: 'category'\n    },\n    {\n        field: 'Sunshine (hours)',\n        chartDataType: 'series'\n    },\n    {\n        field: 'Rainfall (mm)',\n        chartDataType: 'series'\n    }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        editable: true,\n        sortable: true,\n        flex: 1,\n        minWidth: 100,\n        filter: true,\n        resizable: true\n    }"
+            "value": "{\n    editable: true,\n    sortable: true,\n    flex: 1,\n    minWidth: 100,\n    filter: true,\n    resizable: true\n}"
         },
         { "name": "popupParent", "value": "document.body" },
         { "name": "enableRangeSelection", "value": "true" },
@@ -32,7 +32,7 @@
     "components": [],
     "defaultColDef": "{\n    editable: true,\n    sortable: true,\n    flex: 1,\n    minWidth: 100,\n    filter: true,\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"Month\",\n            width: 150,\n            chartDataType: \"category\"\n        },\n        {\n            field: \"Sunshine (hours)\",\n            chartDataType: \"series\"\n        },\n        {\n            field: \"Rainfall (mm)\",\n            chartDataType: \"series\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'Month',\n        width: 150,\n        chartDataType: 'category'\n    },\n    {\n        field: 'Sunshine (hours)',\n        chartDataType: 'series'\n    },\n    {\n        field: 'Rainfall (mm)',\n        chartDataType: 'series'\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [

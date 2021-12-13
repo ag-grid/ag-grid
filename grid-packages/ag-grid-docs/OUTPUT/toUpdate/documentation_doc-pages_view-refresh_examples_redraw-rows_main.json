@@ -3,19 +3,16 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            headerName: \"A\",\n            field: \"a\"\n        },\n        {\n            headerName: \"B\",\n            field: \"b\"\n        },\n        {\n            headerName: \"C\",\n            field: \"c\"\n        },\n        {\n            headerName: \"D\",\n            field: \"d\"\n        },\n        {\n            headerName: \"E\",\n            field: \"e\"\n        },\n        {\n            headerName: \"F\",\n            field: \"f\"\n        }\n    ]"
+            "value": "[\n    {\n        headerName: 'A',\n        field: 'a'\n    },\n    {\n        headerName: 'B',\n        field: 'b'\n    },\n    {\n        headerName: 'C',\n        field: 'c'\n    },\n    {\n        headerName: 'D',\n        field: 'd'\n    },\n    {\n        headerName: 'E',\n        field: 'e'\n    },\n    {\n        headerName: 'F',\n        field: 'f'\n    }\n]"
         },
         { "name": "defaultColDef", "value": "{ flex: 1 }" },
         { "name": "rowData", "value": "createData(12)" },
-        {
-            "name": "getRowStyle",
-            "value": "function () {\n        return { backgroundColor: colors[colorIndex] };\n    }"
-        }
+        { "name": "getRowStyle", "value": "function () {\n    return { backgroundColor: colors[colorIndex] };\n}" }
     ],
     "components": [],
     "defaultColDef": "{ flex: 1 }",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            headerName: \"A\",\n            field: \"a\"\n        },\n        {\n            headerName: \"B\",\n            field: \"b\"\n        },\n        {\n            headerName: \"C\",\n            field: \"c\"\n        },\n        {\n            headerName: \"D\",\n            field: \"d\"\n        },\n        {\n            headerName: \"E\",\n            field: \"e\"\n        },\n        {\n            headerName: \"F\",\n            field: \"f\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        headerName: 'A',\n        field: 'a'\n    },\n    {\n        headerName: 'B',\n        field: 'b'\n    },\n    {\n        headerName: 'C',\n        field: 'c'\n    },\n    {\n        headerName: 'D',\n        field: 'd'\n    },\n    {\n        headerName: 'E',\n        field: 'e'\n    },\n    {\n        headerName: 'F',\n        field: 'f'\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

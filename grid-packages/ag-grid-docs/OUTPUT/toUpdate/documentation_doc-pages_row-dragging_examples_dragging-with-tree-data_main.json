@@ -9,25 +9,25 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        { field: \"dateModified\" },\n        {\n            field: \"size\",\n            valueFormatter: valueFormatter\n        }\n    ]"
+            "value": "[\n    { field: 'dateModified' },\n    {\n        field: 'size',\n        valueFormatter: valueFormatter\n    }\n]"
         },
-        { "name": "defaultColDef", "value": "{\n        flex: 1,\n        resizable: true\n    }" },
+        { "name": "defaultColDef", "value": "{\n    flex: 1,\n    resizable: true\n}" },
         { "name": "rowData", "value": "getData()" },
         { "name": "components", "value": "{ fileCellRenderer: getFileCellRenderer() }" },
         { "name": "treeData", "value": "true" },
         { "name": "animateRows", "value": "true" },
         { "name": "groupDefaultExpanded", "value": "-1" },
-        { "name": "getDataPath", "value": "function (data) {\n        return data.filePath;\n    }" },
-        { "name": "getRowNodeId", "value": "function (data) {\n        return data.id;\n    }" },
+        { "name": "getDataPath", "value": "function (data) {\n    return data.filePath;\n}" },
+        { "name": "getRowNodeId", "value": "function (data) {\n    return data.id;\n}" },
         {
             "name": "autoGroupColumnDef",
-            "value": "{\n        rowDrag: true,\n        headerName: \"Files\",\n        minWidth: 300,\n        cellRendererParams: {\n            suppressCount: true,\n            innerRenderer: \"fileCellRenderer\"\n        }\n    }"
+            "value": "{\n    rowDrag: true,\n    headerName: 'Files',\n    minWidth: 300,\n    cellRendererParams: {\n        suppressCount: true,\n        innerRenderer: 'fileCellRenderer'\n    }\n}"
         }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        { field: \"dateModified\" },\n        {\n            field: \"size\",\n            valueFormatter: \"AG_LITERAL_valueFormatter\"\n        }\n    ]",
+    "parsedColDefs": "[\n    { field: 'dateModified' },\n    {\n        field: 'size',\n        valueFormatter: 'AG_LITERAL_valueFormatter'\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [

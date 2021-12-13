@@ -1,20 +1,20 @@
 {
     "eventHandlers": [],
     "properties": [
-        { "name": "columnDefs", "value": "[\n        { field: \"product\" },\n        { field: \"value\" }\n    ]" },
-        { "name": "defaultColDef", "value": "{\n        width: 250,\n        resizable: true\n    }" },
+        { "name": "columnDefs", "value": "[\n    { field: 'product' },\n    { field: 'value' }\n]" },
+        { "name": "defaultColDef", "value": "{\n    width: 250,\n    resizable: true\n}" },
         {
             "name": "isApplyServerSideTransaction",
-            "value": "function (params) {\n        var tx = params.transaction;\n        var storeInfo = params.storeInfo;\n        var txCreatedSinceRowDataRead = tx.serverVersion > storeInfo.serverVersion;\n        console.log(\"tx.serverVersion = \" + tx.serverVersion + \", storeInfo.serverVersion = \" + storeInfo.serverVersion);\n        if (txCreatedSinceRowDataRead) {\n            console.log(\"Applying transaction\");\n            return true;\n        } else {\n            console.log(\"Cancelling transaction\");\n            return false;\n        }\n    }"
+            "value": "function (params) {\n    var tx = params.transaction;\n    var storeInfo = params.storeInfo;\n    var txCreatedSinceRowDataRead = tx.serverVersion > storeInfo.serverVersion;\n    console.log('tx.serverVersion = ' + tx.serverVersion + ', storeInfo.serverVersion = ' + storeInfo.serverVersion);\n    if (txCreatedSinceRowDataRead) {\n        console.log('Applying transaction');\n        return true;\n    } else {\n        console.log('Cancelling transaction');\n        return false;\n    }\n}"
         },
-        { "name": "getRowNodeId", "value": "function (data) {\n        return data.product;\n    }" },
-        { "name": "rowModelType", "value": "\"serverSide\"" },
-        { "name": "serverSideStoreType", "value": "\"full\"" }
+        { "name": "getRowNodeId", "value": "function (data) {\n    return data.product;\n}" },
+        { "name": "rowModelType", "value": "'serverSide'" },
+        { "name": "serverSideStoreType", "value": "'full'" }
     ],
     "components": [],
     "defaultColDef": "{\n    width: 250,\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        { field: \"product\" },\n        { field: \"value\" }\n    ]",
+    "parsedColDefs": "[\n    { field: 'product' },\n    { field: 'value' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

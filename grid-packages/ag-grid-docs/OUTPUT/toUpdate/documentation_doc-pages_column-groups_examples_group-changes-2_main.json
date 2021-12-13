@@ -1,7 +1,7 @@
 {
     "eventHandlers": [],
     "properties": [
-        { "name": "defaultColDef", "value": "{\n        resizable: true,\n        width: 150\n    }" },
+        { "name": "defaultColDef", "value": "{\n    resizable: true,\n    width: 150\n}" },
         { "name": "debug", "value": "true" },
         { "name": "columnDefs", "value": "createNormalColDefs()" },
         { "name": "rowData", "value": "null" }

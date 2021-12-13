@@ -3,11 +3,11 @@
     "properties": [
         { "name": "columnDefs", "value": "getColumnDefs()" },
         { "name": "defaultColDef", "value": "{ resizable: true }" },
-        { "name": "rowModelType", "value": "\"infinite\"" },
-        { "name": "rowSelection", "value": "\"multiple\"" },
+        { "name": "rowModelType", "value": "'infinite'" },
+        { "name": "rowSelection", "value": "'multiple'" },
         { "name": "maxBlocksInCache", "value": "2" },
         { "name": "suppressRowClickSelection", "value": "true" },
-        { "name": "getRowNodeId", "value": "function (item) {\n        return item.a;\n    }" },
+        { "name": "getRowNodeId", "value": "function (item) {\n    return item.a;\n}" },
         { "name": "datasource", "value": "getDataSource(100)" }
     ],
     "components": [],

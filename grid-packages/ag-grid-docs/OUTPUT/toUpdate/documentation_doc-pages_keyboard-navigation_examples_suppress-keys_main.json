@@ -3,21 +3,21 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"athlete\",\n            minWidth: 170,\n            suppressKeyboardEvent: function (params) {\n                return suppressEnter(params) || suppressNavigation(params);\n            }\n        },\n        { field: \"age\" },\n        {\n            field: \"country\",\n            minWidth: 130,\n            suppressHeaderKeyboardEvent: function (params) {\n                var key = params.event.key;\n                return key === \"ArrowLeft\" || key === \"ArrowRight\" || key === \"Enter\";\n            }\n        },\n        { field: \"year\" },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]"
+            "value": "[\n    {\n        field: 'athlete',\n        minWidth: 170,\n        suppressKeyboardEvent: function (params) {\n            return suppressEnter(params) || suppressNavigation(params);\n        }\n    },\n    { field: 'age' },\n    {\n        field: 'country',\n        minWidth: 130,\n        suppressHeaderKeyboardEvent: function (params) {\n            var key = params.event.key;\n            return key === 'ArrowLeft' || key === 'ArrowRight' || key === 'Enter';\n        }\n    },\n    { field: 'year' },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]"
         },
         { "name": "rowData", "value": "null" },
         {
             "name": "defaultColDef",
-            "value": "{\n        editable: true,\n        sortable: true,\n        flex: 1,\n        minWidth: 100,\n        filter: true,\n        resizable: true,\n        suppressKeyboardEvent: suppressNavigation,\n        suppressHeaderKeyboardEvent: suppressUpDownNavigation\n    }"
+            "value": "{\n    editable: true,\n    sortable: true,\n    flex: 1,\n    minWidth: 100,\n    filter: true,\n    resizable: true,\n    suppressKeyboardEvent: suppressNavigation,\n    suppressHeaderKeyboardEvent: suppressUpDownNavigation\n}"
         },
         { "name": "enableRangeSelection", "value": "true" },
-        { "name": "rowSelection", "value": "\"multiple\"" },
+        { "name": "rowSelection", "value": "'multiple'" },
         { "name": "suppressRowClickSelection", "value": "true" }
     ],
     "components": [],
     "defaultColDef": "{\n    editable: true,\n    sortable: true,\n    flex: 1,\n    minWidth: 100,\n    filter: true,\n    resizable: true,\n    suppressKeyboardEvent: suppressNavigation,\n    suppressHeaderKeyboardEvent: suppressUpDownNavigation\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            minWidth: 170,\n            suppressKeyboardEvent: \"AG_FUNCTION_function (params) {\\n    return suppressEnter(params) || suppressNavigation(params);\\n}\"\n        },\n        { field: \"age\" },\n        {\n            field: \"country\",\n            minWidth: 130,\n            suppressHeaderKeyboardEvent: \"AG_FUNCTION_function (params) {\\n    var key = params.event.key;\\n    return key === 'ArrowLeft' || key === 'ArrowRight' || key === 'Enter';\\n}\"\n        },\n        { field: \"year\" },\n        { field: \"date\" },\n        { field: \"sport\" },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" },\n        { field: \"total\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'athlete',\n        minWidth: 170,\n        suppressKeyboardEvent: 'AG_FUNCTION_function (params) {\\n    return suppressEnter(params) || suppressNavigation(params);\\n}'\n    },\n    { field: 'age' },\n    {\n        field: 'country',\n        minWidth: 130,\n        suppressHeaderKeyboardEvent: 'AG_FUNCTION_function (params) {\\n    var key = params.event.key;\\n    return key === \\'ArrowLeft\\' || key === \\'ArrowRight\\' || key === \\'Enter\\';\\n}'\n    },\n    { field: 'year' },\n    { field: 'date' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [

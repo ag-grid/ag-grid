@@ -3,29 +3,29 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"category\",\n            rowGroupIndex: 1,\n            hide: true\n        },\n        {\n            field: \"price\",\n            aggFunc: \"sum\",\n            valueFormatter: poundFormatter\n        },\n        { field: \"zombies\" },\n        { field: \"style\" },\n        { field: \"clothes\" }\n    ]"
+            "value": "[\n    {\n        field: 'category',\n        rowGroupIndex: 1,\n        hide: true\n    },\n    {\n        field: 'price',\n        aggFunc: 'sum',\n        valueFormatter: poundFormatter\n    },\n    { field: 'zombies' },\n    { field: 'style' },\n    { field: 'clothes' }\n]"
         },
-        { "name": "defaultColDef", "value": "{\n        flex: 1,\n        width: 100,\n        sortable: true\n    }" },
+        { "name": "defaultColDef", "value": "{\n    flex: 1,\n    width: 100,\n    sortable: true\n}" },
         {
             "name": "autoGroupColumnDef",
-            "value": "{\n        headerName: \"Group\",\n        minWidth: 250,\n        field: \"model\",\n        rowGroupIndex: 1,\n        cellRenderer: \"agGroupCellRenderer\",\n        cellRendererParams: { checkbox: true }\n    }"
+            "value": "{\n    headerName: 'Group',\n    minWidth: 250,\n    field: 'model',\n    rowGroupIndex: 1,\n    cellRenderer: 'agGroupCellRenderer',\n    cellRendererParams: { checkbox: true }\n}"
         },
         { "name": "groupDefaultExpanded", "value": "1" },
         { "name": "rowData", "value": "getData()" },
         { "name": "suppressRowClickSelection", "value": "true" },
-        { "name": "rowSelection", "value": "\"multiple\"" },
+        { "name": "rowSelection", "value": "'multiple'" },
         { "name": "animateRows", "value": "true" },
         { "name": "groupSelectsChildren", "value": "true" },
         { "name": "suppressAggFuncInHeader", "value": "true" },
         {
             "name": "getRowClass",
-            "value": "function (params) {\n        var rowNode = params.node;\n        if (rowNode.group) {\n            switch (rowNode.key) {\n            case \"In Workshop\":\n                return \"category-in-workshop\";\n            case \"Sold\":\n                return \"category-sold\";\n            case \"For Sale\":\n                return \"category-for-sale\";\n            default:\n                return undefined;\n            }\n        } else {\n            return undefined;\n        }\n    }"
+            "value": "function (params) {\n    var rowNode = params.node;\n    if (rowNode.group) {\n        switch (rowNode.key) {\n        case 'In Workshop':\n            return 'category-in-workshop';\n        case 'Sold':\n            return 'category-sold';\n        case 'For Sale':\n            return 'category-for-sale';\n        default:\n            return undefined;\n        }\n    } else {\n        return undefined;\n    }\n}"
         }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    width: 100,\n    sortable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"category\",\n            rowGroupIndex: 1,\n            hide: true\n        },\n        {\n            field: \"price\",\n            aggFunc: \"sum\",\n            valueFormatter: \"AG_LITERAL_poundFormatter\"\n        },\n        { field: \"zombies\" },\n        { field: \"style\" },\n        { field: \"clothes\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'category',\n        rowGroupIndex: 1,\n        hide: true\n    },\n    {\n        field: 'price',\n        aggFunc: 'sum',\n        valueFormatter: 'AG_LITERAL_poundFormatter'\n    },\n    { field: 'zombies' },\n    { field: 'style' },\n    { field: 'clothes' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

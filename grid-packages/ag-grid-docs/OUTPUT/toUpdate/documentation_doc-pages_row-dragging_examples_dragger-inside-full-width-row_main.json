@@ -3,30 +3,27 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"name\",\n            cellRenderer: countryCellRenderer\n        },\n        { field: \"continent\" },\n        { field: \"language\" }\n    ]"
+            "value": "[\n    {\n        field: 'name',\n        cellRenderer: countryCellRenderer\n    },\n    { field: 'continent' },\n    { field: 'language' }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        sortable: true,\n        resizable: true,\n        filter: true\n    }"
+            "value": "{\n    flex: 1,\n    sortable: true,\n    resizable: true,\n    filter: true\n}"
         },
         { "name": "components", "value": "{ fullWidthCellRenderer: FullWidthCellRenderer }" },
         { "name": "rowData", "value": "getData()" },
         { "name": "rowDragManaged", "value": "true" },
         {
             "name": "getRowHeight",
-            "value": "function (params) {\n        if (isFullWidth(params.data)) {\n            return 100;\n        }\n    }"
+            "value": "function (params) {\n    if (isFullWidth(params.data)) {\n        return 100;\n    }\n}"
         },
-        {
-            "name": "isFullWidthCell",
-            "value": "function (rowNode) {\n        return isFullWidth(rowNode.data);\n    }"
-        },
-        { "name": "fullWidthCellRenderer", "value": "\"fullWidthCellRenderer\"" },
+        { "name": "isFullWidthCell", "value": "function (rowNode) {\n    return isFullWidth(rowNode.data);\n}" },
+        { "name": "fullWidthCellRenderer", "value": "'fullWidthCellRenderer'" },
         { "name": "animateRows", "value": "true" }
     ],
     "components": [{ "name": "fullWidthCellRenderer", "value": "FullWidthCellRenderer" }],
     "defaultColDef": "{\n    flex: 1,\n    sortable: true,\n    resizable: true,\n    filter: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"name\",\n            cellRenderer: \"AG_LITERAL_countryCellRenderer\"\n        },\n        { field: \"continent\" },\n        { field: \"language\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'name',\n        cellRenderer: 'AG_LITERAL_countryCellRenderer'\n    },\n    { field: 'continent' },\n    { field: 'language' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [

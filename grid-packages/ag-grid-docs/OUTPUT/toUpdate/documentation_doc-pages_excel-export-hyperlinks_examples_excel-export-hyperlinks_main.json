@@ -3,29 +3,26 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        { field: \"company\" },\n        {\n            field: \"url\",\n            cellClass: \"hyperlinks\"\n        }\n    ]"
+            "value": "[\n    { field: 'company' },\n    {\n        field: 'url',\n        cellClass: 'hyperlinks'\n    }\n]"
         },
-        {
-            "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        minWidth: 100,\n        resizable: true\n    }"
-        },
+        { "name": "defaultColDef", "value": "{\n    flex: 1,\n    minWidth: 100,\n    resizable: true\n}" },
         {
             "name": "defaultExcelExportParams",
-            "value": "{\n        autoConvertFormulas: true,\n        processCellCallback: params => {\n            const field = params.column.getColDef().field;\n            return field === \"url\" ? `=HYPERLINK(\"${ params.value }\")` : params.value;\n        }\n    }"
+            "value": "{\n    autoConvertFormulas: true,\n    processCellCallback: params => {\n        const field = params.column.getColDef().field;\n        return field === 'url' ? `=HYPERLINK(\"${ params.value }\")` : params.value;\n    }\n}"
         },
         {
             "name": "excelStyles",
-            "value": "[{\n            id: \"hyperlinks\",\n            font: {\n                underline: \"Single\",\n                color: \"#358ccb\"\n            }\n        }]"
+            "value": "[{\n        id: 'hyperlinks',\n        font: {\n            underline: 'Single',\n            color: '#358ccb'\n        }\n    }]"
         },
         {
             "name": "rowData",
-            "value": "[\n        {\n            company: \"Google\",\n            url: \"https://www.google.com\"\n        },\n        {\n            company: \"Adobe\",\n            url: \"https://www.adobe.com\"\n        },\n        {\n            company: \"The New York Times\",\n            url: \"https://www.nytimes.com\"\n        },\n        {\n            company: \"Twitter\",\n            url: \"https://www.twitter.com\"\n        },\n        {\n            company: \"StackOverflow\",\n            url: \"https://stackoverflow.com/\"\n        },\n        {\n            company: \"Reddit\",\n            url: \"https://www.reddit.com\"\n        },\n        {\n            company: \"Github\",\n            url: \"https://www.github.com\"\n        },\n        {\n            company: \"Microsoft\",\n            url: \"https://www.microsoft.com\"\n        },\n        {\n            company: \"Gizmodo\",\n            url: \"https://www.gizmodo.com\"\n        },\n        {\n            company: \"LinkedIN\",\n            url: \"https://www.linkedin.com\"\n        }\n    ]"
+            "value": "[\n    {\n        company: 'Google',\n        url: 'https://www.google.com'\n    },\n    {\n        company: 'Adobe',\n        url: 'https://www.adobe.com'\n    },\n    {\n        company: 'The New York Times',\n        url: 'https://www.nytimes.com'\n    },\n    {\n        company: 'Twitter',\n        url: 'https://www.twitter.com'\n    },\n    {\n        company: 'StackOverflow',\n        url: 'https://stackoverflow.com/'\n    },\n    {\n        company: 'Reddit',\n        url: 'https://www.reddit.com'\n    },\n    {\n        company: 'Github',\n        url: 'https://www.github.com'\n    },\n    {\n        company: 'Microsoft',\n        url: 'https://www.microsoft.com'\n    },\n    {\n        company: 'Gizmodo',\n        url: 'https://www.gizmodo.com'\n    },\n    {\n        company: 'LinkedIN',\n        url: 'https://www.linkedin.com'\n    }\n]"
         }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    minWidth: 100,\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        { field: \"company\" },\n        {\n            field: \"url\",\n            cellClass: \"hyperlinks\"\n        }\n    ]",
+    "parsedColDefs": "[\n    { field: 'company' },\n    {\n        field: 'url',\n        cellClass: 'hyperlinks'\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

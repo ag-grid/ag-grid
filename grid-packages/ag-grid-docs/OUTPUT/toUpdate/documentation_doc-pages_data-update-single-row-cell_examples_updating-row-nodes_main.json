@@ -3,23 +3,23 @@
     "properties": [
         {
             "name": "rowData",
-            "value": "[\n        {\n            id: \"aa\",\n            make: \"Toyota\",\n            model: \"Celica\",\n            price: 35000\n        },\n        {\n            id: \"bb\",\n            make: \"Ford\",\n            model: \"Mondeo\",\n            price: 32000\n        },\n        {\n            id: \"cc\",\n            make: \"Porsche\",\n            model: \"Boxter\",\n            price: 72000\n        },\n        {\n            id: \"dd\",\n            make: \"BMW\",\n            model: \"5 Series\",\n            price: 59000\n        },\n        {\n            id: \"ee\",\n            make: \"Dodge\",\n            model: \"Challanger\",\n            price: 35000\n        },\n        {\n            id: \"ff\",\n            make: \"Mazda\",\n            model: \"MX5\",\n            price: 28000\n        },\n        {\n            id: \"gg\",\n            make: \"Horse\",\n            model: \"Outside\",\n            price: 99000\n        }\n    ]"
+            "value": "[\n    {\n        id: 'aa',\n        make: 'Toyota',\n        model: 'Celica',\n        price: 35000\n    },\n    {\n        id: 'bb',\n        make: 'Ford',\n        model: 'Mondeo',\n        price: 32000\n    },\n    {\n        id: 'cc',\n        make: 'Porsche',\n        model: 'Boxter',\n        price: 72000\n    },\n    {\n        id: 'dd',\n        make: 'BMW',\n        model: '5 Series',\n        price: 59000\n    },\n    {\n        id: 'ee',\n        make: 'Dodge',\n        model: 'Challanger',\n        price: 35000\n    },\n    {\n        id: 'ff',\n        make: 'Mazda',\n        model: 'MX5',\n        price: 28000\n    },\n    {\n        id: 'gg',\n        make: 'Horse',\n        model: 'Outside',\n        price: 99000\n    }\n]"
         },
         {
             "name": "columnDefs",
-            "value": "[\n        { field: \"make\" },\n        { field: \"model\" },\n        {\n            field: \"price\",\n            filter: \"agNumberColumnFilter\"\n        }\n    ]"
+            "value": "[\n    { field: 'make' },\n    { field: 'model' },\n    {\n        field: 'price',\n        filter: 'agNumberColumnFilter'\n    }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        editable: true,\n        sortable: true,\n        filter: true\n    }"
+            "value": "{\n    flex: 1,\n    editable: true,\n    sortable: true,\n    filter: true\n}"
         },
         { "name": "animateRows", "value": "true" },
-        { "name": "getRowNodeId", "value": "function (data) {\n        return data.id;\n    }" }
+        { "name": "getRowNodeId", "value": "function (data) {\n    return data.id;\n}" }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    editable: true,\n    sortable: true,\n    filter: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        { field: \"make\" },\n        { field: \"model\" },\n        {\n            field: \"price\",\n            filter: \"agNumberColumnFilter\"\n        }\n    ]",
+    "parsedColDefs": "[\n    { field: 'make' },\n    { field: 'model' },\n    {\n        field: 'price',\n        filter: 'agNumberColumnFilter'\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

@@ -3,23 +3,20 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"athlete\",\n            minWidth: 150\n        },\n        {\n            headerName: \"Day of the Week\",\n            field: \"dayOfTheWeek\",\n            minWidth: 180\n        },\n        {\n            field: \"age\",\n            maxWidth: 90\n        },\n        {\n            field: \"country\",\n            minWidth: 150\n        },\n        {\n            field: \"year\",\n            maxWidth: 90\n        },\n        {\n            field: \"date\",\n            minWidth: 150\n        },\n        {\n            field: \"sport\",\n            minWidth: 150\n        },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" }\n    ]"
+            "value": "[\n    {\n        field: 'athlete',\n        minWidth: 150\n    },\n    {\n        headerName: 'Day of the Week',\n        field: 'dayOfTheWeek',\n        minWidth: 180\n    },\n    {\n        field: 'age',\n        maxWidth: 90\n    },\n    {\n        field: 'country',\n        minWidth: 150\n    },\n    {\n        field: 'year',\n        maxWidth: 90\n    },\n    {\n        field: 'date',\n        minWidth: 150\n    },\n    {\n        field: 'sport',\n        minWidth: 150\n    },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' }\n]"
         },
-        {
-            "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        minWidth: 100,\n        editable: true\n    }"
-        },
+        { "name": "defaultColDef", "value": "{\n    flex: 1,\n    minWidth: 100,\n    editable: true\n}" },
         { "name": "enableRangeSelection", "value": "true" },
         { "name": "enableFillHandle", "value": "true" },
         {
             "name": "fillOperation",
-            "value": "function (params) {\n        var hasNonDayValues = params.initialValues.some(function (val) {\n            return daysList.indexOf(val) === -1;\n        });\n        if (hasNonDayValues) {\n            return false;\n        }\n        var lastValue = params.values[params.values.length - 1];\n        var idxOfLast = daysList.indexOf(lastValue);\n        return daysList[(idxOfLast + 1) % daysList.length];\n    }"
+            "value": "function (params) {\n    var hasNonDayValues = params.initialValues.some(function (val) {\n        return daysList.indexOf(val) === -1;\n    });\n    if (hasNonDayValues) {\n        return false;\n    }\n    var lastValue = params.values[params.values.length - 1];\n    var idxOfLast = daysList.indexOf(lastValue);\n    return daysList[(idxOfLast + 1) % daysList.length];\n}"
         }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    minWidth: 100,\n    editable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            minWidth: 150\n        },\n        {\n            headerName: \"Day of the Week\",\n            field: \"dayOfTheWeek\",\n            minWidth: 180\n        },\n        {\n            field: \"age\",\n            maxWidth: 90\n        },\n        {\n            field: \"country\",\n            minWidth: 150\n        },\n        {\n            field: \"year\",\n            maxWidth: 90\n        },\n        {\n            field: \"date\",\n            minWidth: 150\n        },\n        {\n            field: \"sport\",\n            minWidth: 150\n        },\n        { field: \"gold\" },\n        { field: \"silver\" },\n        { field: \"bronze\" }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'athlete',\n        minWidth: 150\n    },\n    {\n        headerName: 'Day of the Week',\n        field: 'dayOfTheWeek',\n        minWidth: 180\n    },\n    {\n        field: 'age',\n        maxWidth: 90\n    },\n    {\n        field: 'country',\n        minWidth: 150\n    },\n    {\n        field: 'year',\n        maxWidth: 90\n    },\n    {\n        field: 'date',\n        minWidth: 150\n    },\n    {\n        field: 'sport',\n        minWidth: 150\n    },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [

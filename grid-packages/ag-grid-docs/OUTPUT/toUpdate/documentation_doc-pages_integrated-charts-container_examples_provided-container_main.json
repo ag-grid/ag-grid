@@ -3,11 +3,11 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"athlete\",\n            width: 150,\n            chartDataType: \"category\"\n        },\n        {\n            field: \"gold\",\n            chartDataType: \"series\"\n        },\n        {\n            field: \"silver\",\n            chartDataType: \"series\"\n        },\n        {\n            field: \"bronze\",\n            chartDataType: \"series\"\n        },\n        {\n            field: \"total\",\n            chartDataType: \"series\"\n        }\n    ]"
+            "value": "[\n    {\n        field: 'athlete',\n        width: 150,\n        chartDataType: 'category'\n    },\n    {\n        field: 'gold',\n        chartDataType: 'series'\n    },\n    {\n        field: 'silver',\n        chartDataType: 'series'\n    },\n    {\n        field: 'bronze',\n        chartDataType: 'series'\n    },\n    {\n        field: 'total',\n        chartDataType: 'series'\n    }\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n        editable: true,\n        sortable: true,\n        flex: 1,\n        minWidth: 100,\n        filter: true,\n        resizable: true\n    }"
+            "value": "{\n    editable: true,\n    sortable: true,\n    flex: 1,\n    minWidth: 100,\n    filter: true,\n    resizable: true\n}"
         },
         { "name": "enableRangeSelection", "value": "true" },
         { "name": "enableCharts", "value": "true" },
@@ -17,9 +17,9 @@
     "components": [],
     "defaultColDef": "{\n    editable: true,\n    sortable: true,\n    flex: 1,\n    minWidth: 100,\n    filter: true,\n    resizable: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            width: 150,\n            chartDataType: \"category\"\n        },\n        {\n            field: \"gold\",\n            chartDataType: \"series\"\n        },\n        {\n            field: \"silver\",\n            chartDataType: \"series\"\n        },\n        {\n            field: \"bronze\",\n            chartDataType: \"series\"\n        },\n        {\n            field: \"total\",\n            chartDataType: \"series\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'athlete',\n        width: 150,\n        chartDataType: 'category'\n    },\n    {\n        field: 'gold',\n        chartDataType: 'series'\n    },\n    {\n        field: 'silver',\n        chartDataType: 'series'\n    },\n    {\n        field: 'bronze',\n        chartDataType: 'series'\n    },\n    {\n        field: 'total',\n        chartDataType: 'series'\n    }\n]",
     "instanceMethods": [
-        "function createChartContainer(chartRef) {\n        var eChart = chartRef.chartElement;\n        var eTemp = document.createElement(\"div\");\n        eTemp.innerHTML = chartPanelTemplate;\n        var eChartWrapper = eTemp.firstChild;\n        var eParent = document.querySelector(\"#myGrid\").parentElement;\n        eParent.appendChild(eChartWrapper);\n        eChartWrapper.querySelector(\".chart-wrapper-body\").appendChild(eChart);\n        eChartWrapper.querySelector(\".chart-wrapper-title\").innerText = \"Chart Created At \" + new Date();\n        eChartWrapper.querySelector(\".chart-wrapper-close\").addEventListener(\"click\", function () {\n            chartRef.destroyChart();\n            eParent.removeChild(eChartWrapper);\n        });\n    }"
+        "function createChartContainer(chartRef) {\n    var eChart = chartRef.chartElement;\n    var eTemp = document.createElement('div');\n    eTemp.innerHTML = chartPanelTemplate;\n    var eChartWrapper = eTemp.firstChild;\n    var eParent = document.querySelector('#myGrid').parentElement;\n    eParent.appendChild(eChartWrapper);\n    eChartWrapper.querySelector('.chart-wrapper-body').appendChild(eChart);\n    eChartWrapper.querySelector('.chart-wrapper-title').innerText = 'Chart Created At ' + new Date();\n    eChartWrapper.querySelector('.chart-wrapper-close').addEventListener('click', function () {\n        chartRef.destroyChart();\n        eParent.removeChild(eChartWrapper);\n    });\n}"
     ],
     "externalEventHandlers": [],
     "utils": [

@@ -3,20 +3,20 @@
     "properties": [
         {
             "name": "defaultColDef",
-            "value": "{\n        editable: true,\n        resizable: true,\n        minWidth: 100,\n        flex: 1\n    }"
+            "value": "{\n    editable: true,\n    resizable: true,\n    minWidth: 100,\n    flex: 1\n}"
         },
         { "name": "suppressExcelExport", "value": "true" },
         { "name": "popupParent", "value": "document.body" },
         {
             "name": "columnDefs",
-            "value": "[\n        { field: \"athlete\" },\n        { field: \"country\" },\n        { field: \"sport\" },\n        {\n            field: \"gold\",\n            hide: true\n        },\n        {\n            field: \"silver\",\n            hide: true\n        },\n        {\n            field: \"bronze\",\n            hide: true\n        },\n        { field: \"total\" }\n    ]"
+            "value": "[\n    { field: 'athlete' },\n    { field: 'country' },\n    { field: 'sport' },\n    {\n        field: 'gold',\n        hide: true\n    },\n    {\n        field: 'silver',\n        hide: true\n    },\n    {\n        field: 'bronze',\n        hide: true\n    },\n    { field: 'total' }\n]"
         },
         { "name": "rowData", "value": "getData()" }
     ],
     "components": [],
     "defaultColDef": "{\n    editable: true,\n    resizable: true,\n    minWidth: 100,\n    flex: 1\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        { field: \"athlete\" },\n        { field: \"country\" },\n        { field: \"sport\" },\n        {\n            field: \"gold\",\n            hide: true\n        },\n        {\n            field: \"silver\",\n            hide: true\n        },\n        {\n            field: \"bronze\",\n            hide: true\n        },\n        { field: \"total\" }\n    ]",
+    "parsedColDefs": "[\n    { field: 'athlete' },\n    { field: 'country' },\n    { field: 'sport' },\n    {\n        field: 'gold',\n        hide: true\n    },\n    {\n        field: 'silver',\n        hide: true\n    },\n    {\n        field: 'bronze',\n        hide: true\n    },\n    { field: 'total' }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {

@@ -3,24 +3,21 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n        {\n            field: \"athlete\",\n            minWidth: 150\n        },\n        {\n            field: \"country\",\n            minWidth: 150\n        },\n        {\n            field: \"year\",\n            minWidth: 120\n        },\n        {\n            field: \"gold\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"silver\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"bronze\",\n            aggFunc: \"sum\"\n        }\n    ]"
+            "value": "[\n    {\n        field: 'athlete',\n        minWidth: 150\n    },\n    {\n        field: 'country',\n        minWidth: 150\n    },\n    {\n        field: 'year',\n        minWidth: 120\n    },\n    {\n        field: 'gold',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'silver',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'bronze',\n        aggFunc: 'sum'\n    }\n]"
         },
-        {
-            "name": "defaultColDef",
-            "value": "{\n        flex: 1,\n        sortable: true,\n        filter: true\n    }"
-        },
+        { "name": "defaultColDef", "value": "{\n    flex: 1,\n    sortable: true,\n    filter: true\n}" },
         { "name": "enableRangeSelection", "value": "true" },
         { "name": "animateRows", "value": "true" },
         { "name": "suppressAggFuncInHeader", "value": "true" },
         {
             "name": "autoGroupColumnDef",
-            "value": "{\n        cellRenderer: \"agGroupCellRenderer\",\n        headerName: \"Athlete\",\n        minWidth: 200,\n        field: \"athlete\"\n    }"
+            "value": "{\n    cellRenderer: 'agGroupCellRenderer',\n    headerName: 'Athlete',\n    minWidth: 200,\n    field: 'athlete'\n}"
         }
     ],
     "components": [],
     "defaultColDef": "{\n    flex: 1,\n    sortable: true,\n    filter: true\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n        {\n            field: \"athlete\",\n            minWidth: 150\n        },\n        {\n            field: \"country\",\n            minWidth: 150\n        },\n        {\n            field: \"year\",\n            minWidth: 120\n        },\n        {\n            field: \"gold\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"silver\",\n            aggFunc: \"sum\"\n        },\n        {\n            field: \"bronze\",\n            aggFunc: \"sum\"\n        }\n    ]",
+    "parsedColDefs": "[\n    {\n        field: 'athlete',\n        minWidth: 150\n    },\n    {\n        field: 'country',\n        minWidth: 150\n    },\n    {\n        field: 'year',\n        minWidth: 120\n    },\n    {\n        field: 'gold',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'silver',\n        aggFunc: 'sum'\n    },\n    {\n        field: 'bronze',\n        aggFunc: 'sum'\n    }\n]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [
