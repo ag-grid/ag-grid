@@ -14,12 +14,12 @@ import { LegendDatum } from "../../legend";
 import { CartesianSeries } from "./cartesianSeries";
 import { ChartAxis, ChartAxisDirection, flipChartAxisDirection } from "../../chartAxis";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
-import { findMinMax } from "../../../util/array";
+import { extent, findMinMax } from "../../../util/array";
 import { equal } from "../../../util/equal";
 import { reactive, TypedEvent } from "../../../util/observable";
 import { Scale } from "../../../scale/scale";
 import { sanitizeHtml } from "../../../util/sanitize";
-import { isNumber } from "../../../util/value";
+import { isContinuous, isDiscrete, isNumber } from "../../../util/value";
 import { NumberAxis } from "../../axis/numberAxis";
 import { clamper, ContinuousScale } from "../../../scale/continuousScale";
 
@@ -126,6 +126,7 @@ export class BarSeries extends CartesianSeries {
     private xData: string[] = [];
     private yData: number[][][] = [];
     private yDomain: number[] = [];
+    private xDomain: any[] = [];
 
     readonly label = new BarSeriesLabel();
 
@@ -389,8 +390,14 @@ export class BarSeries extends CartesianSeries {
     }
 
     processData(): boolean {
-        const { xKey, yKeys, seriesItemEnabled } = this;
+        const { xKey, yKeys, seriesItemEnabled, xAxis } = this;
         const data = xKey && yKeys.length && this.data ? this.data : [];
+
+        if (!xAxis) {
+            return false;
+        }
+
+        const isContinuousX = xAxis.scale instanceof ContinuousScale;
 
         let keysFound = true; // only warn once
         this.xData = data.map(datum => {
@@ -398,7 +405,13 @@ export class BarSeries extends CartesianSeries {
                 keysFound = false;
                 console.warn(`The key '${xKey}' was not found in the data: `, datum);
             }
-            return datum[xKey];
+
+            if (isContinuousX) {
+                return datum[xKey];
+            } else {
+                return isDiscrete(datum[xKey]) ? datum[xKey] : String(datum[xKey]);
+            }
+
         });
 
         this.yData = data.map(datum => yKeys.map(stack => {
@@ -443,6 +456,7 @@ export class BarSeries extends CartesianSeries {
         }
 
         this.yDomain = this.fixNumericExtent([yMin, yMax], 'y');
+        this.xDomain = isContinuousX ? this.fixNumericExtent(extent(this.xData, isContinuous), 'x') : this.xData;
 
         this.fireEvent({ type: 'dataProcessed' });
 
@@ -472,7 +486,7 @@ export class BarSeries extends CartesianSeries {
             direction = flipChartAxisDirection(direction);
         }
         if (direction === ChartAxisDirection.X) {
-            return this.xData;
+            return this.xDomain;
         } else {
             return this.yDomain;
         }
