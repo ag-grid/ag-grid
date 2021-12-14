@@ -1,5 +1,5 @@
 [[only-react]]
-|Below is a simple example of cell renderer as a Hook:
+|Below is a simple example of Cell Editor as a Hook:
 |
 |```jsx
 |const DoublingEditor = forwardRef((props, ref) => {
@@ -8,7 +8,7 @@
 |
 |    useEffect(() => {
 |        // focus on the input
-|        setTimeout(() => refInput.current.focus());
+|        refInput.current.focus();
 |    }, []);
 |
 |    /* Component Editor Lifecycle methods */
@@ -61,7 +61,7 @@
 |    }
 |
 |    componentDidMount() {
-|        setTimeout(() => this.inputRef.current.focus());
+|         this.inputRef.current.focus();
 |    }
 |
 |    /* Component Editor Lifecycle methods */

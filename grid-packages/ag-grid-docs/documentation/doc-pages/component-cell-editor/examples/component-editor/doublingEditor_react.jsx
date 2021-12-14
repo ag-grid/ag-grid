@@ -12,7 +12,7 @@ export default class DoublingEditor extends Component {
     }
 
     componentDidMount() {
-        setTimeout(() => this.inputRef.current.focus());
+        this.inputRef.current.focus();
     }
 
     /* Component Editor Lifecycle methods */
