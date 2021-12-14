@@ -10,19 +10,10 @@
                 ],
                 "include": []
             }
-        },
-        "readOnly": {
-            "description": "If true, all UI inputs managed by this filter are for display only, and the filter can only be affected by API calls. Does NOT affect child filters, they need to be individually configured with `readOnly` where applicable.",
-            "default": false,
-            "more": {
-                "url": "/filter-api/#read-only-filter-ui",
-                "name": "Read-only Filter UI"
-            }
         }
     },
     "IMultiFilterDef": {
         "filter": {
-            "description": "Child filter component to use inside the Multi Filter.",
             "interfaceHierarchyOverrides": {
                 "exclude": [
                     "IFilterComp"
@@ -30,31 +21,12 @@
                 "include": []
             }
         },
-        "filterFramework": {
-            "description": "Child framework filter component to use inside the Multi Filter."
-        },
-        "filterParams": {
-            "description": "Custom parameters to be passed to the child filter component."
-        },
         "floatingFilterComponent": {
-            "description": "Floating filter component to use for the child filter.",
             "interfaceHierarchyOverrides": {
                 "exclude": [
                     "IFloatingFilterComp"
                 ],
                 "include": []
-            }
-        },
-        "floatingFilterComponentFramework": {
-            "description": "Floating framework filter component to use for the child filter."
-        },
-        "floatingFilterComponentParams": {
-            "description": "Custom parameters to be passed to the floating filter component."
-        },
-        "display": {
-            "more": {
-                "url": "/filter-multi/#display-style",
-                "name": "Display Style"
             }
         }
     },

@@ -12818,7 +12818,7 @@
   },
   "IMultiFilterDef": {
     "display": {
-      "description": "/** Configures how the filter is shown in the Multi Filter.\n * Default: `inline` */",
+      "description": "/** Configures how the filter is shown in the Multi Filter. See\n * [Display Style](https://build.ag-grid.com/javascript-data-grid/filter-multi/#display-style).\n * \n * Default: `inline` */",
       "type": {
         "returnType": "'inline' | 'accordion' | 'subMenu'",
         "optional": true
@@ -12829,27 +12829,27 @@
       "type": { "returnType": "string", "optional": true }
     },
     "filter": {
-      "description": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Set to the name of a provided filter: `set`, `number`, `text`, `date`.\n * - Set to a `IFilterComp`. */",
+      "description": "/** Child filter component to use inside the Multi Filter. */",
       "type": { "returnType": "IFilterType", "optional": true }
     },
     "filterFramework": {
-      "description": "/** Provided a custom framework filter to use for this column. */",
+      "description": "/** Child filter component to use inside the Multi Filter. */",
       "type": { "returnType": "any", "optional": true }
     },
     "filterParams": {
-      "description": "/** Params to be passed to the filter component specified in `filter` or `filterFramework`. */",
+      "description": "/** Custom parameters to be passed to the child filter component. */",
       "type": { "returnType": "any", "optional": true }
     },
     "floatingFilterComponent": {
-      "description": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
+      "description": "/** Floating filter component to use for the child filter. */",
       "type": { "returnType": "IFloatingFilterType", "optional": true }
     },
     "floatingFilterComponentFramework": {
-      "description": "/** Floating filter framework component to use for this column. */",
+      "description": "/** Floating framework filter component to use for the child filter. */",
       "type": { "returnType": "any", "optional": true }
     },
     "floatingFilterComponentParams": {
-      "description": "/** Params to be passed to `floatingFilterComponent` or `floatingFilterComponentFramework`. */",
+      "description": "/** Custom parameters to be passed to the floating filter component. */",
       "type": { "returnType": "any", "optional": true }
     }
   },
@@ -12859,7 +12859,7 @@
       "type": { "returnType": "IMultiFilterDef[]", "optional": true }
     },
     "readOnly": {
-      "description": "/** Defaults to false. If true, all UI inputs managed by this filter are for display only, and\n * the filter can only be affected by API calls. Does NOT affect child filters, they need to be\n * individually configured with `readOnly` where applicable. */",
+      "description": "/** If true, all UI inputs managed by this filter are for display only, and the filter can only\n * be affected by API calls. Does NOT affect child filters, they need to be individually\n * configured with `readOnly` where applicable. See\n * [Read-only Filter UI](/filter-api/#read-only-filter-ui).\n * \n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "column": {

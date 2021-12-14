@@ -7346,14 +7346,14 @@
       "floatingFilterComponentParams?": "any"
     },
     "docs": {
-      "display?": "/** Configures how the filter is shown in the Multi Filter.\n * Default: `inline` */",
+      "display?": "/** Configures how the filter is shown in the Multi Filter. See\n * [Display Style](https://build.ag-grid.com/javascript-data-grid/filter-multi/#display-style).\n * \n * Default: `inline` */",
       "title?": "/** The title to be used when a filter is displayed inside a sub-menu or accordion. */",
-      "filter?": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Set to the name of a provided filter: `set`, `number`, `text`, `date`.\n * - Set to a `IFilterComp`. */",
-      "filterFramework?": "/** Provided a custom framework filter to use for this column. */",
-      "filterParams?": "/** Params to be passed to the filter component specified in `filter` or `filterFramework`. */",
-      "floatingFilterComponent?": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
-      "floatingFilterComponentFramework?": "/** Floating filter framework component to use for this column. */",
-      "floatingFilterComponentParams?": "/** Params to be passed to `floatingFilterComponent` or `floatingFilterComponentFramework`. */"
+      "filter?": "/** Child filter component to use inside the Multi Filter. */",
+      "filterFramework?": "/** Child filter component to use inside the Multi Filter. */",
+      "filterParams?": "/** Custom parameters to be passed to the child filter component. */",
+      "floatingFilterComponent?": "/** Floating filter component to use for the child filter. */",
+      "floatingFilterComponentFramework?": "/** Floating framework filter component to use for the child filter. */",
+      "floatingFilterComponentParams?": "/** Custom parameters to be passed to the floating filter component. */"
     }
   },
   "IMultiFilterParams": {
@@ -7374,7 +7374,7 @@
     },
     "docs": {
       "filters?": "/** An array of filter definition objects. */",
-      "readOnly?": "/** Defaults to false. If true, all UI inputs managed by this filter are for display only, and\n * the filter can only be affected by API calls. Does NOT affect child filters, they need to be\n * individually configured with `readOnly` where applicable. */",
+      "readOnly?": "/** If true, all UI inputs managed by this filter are for display only, and the filter can only\n * be affected by API calls. Does NOT affect child filters, they need to be individually\n * configured with `readOnly` where applicable. See\n * [Read-only Filter UI](/filter-api/#read-only-filter-ui).\n * \n * Default: `false` */",
       "column": "/** The column this filter is for. */",
       "colDef": "/** The column definition for the column. */",
       "rowModel": "/** The row model, helpful for looking up data values if needed.\n * If the filter needs to know which rows are\n * a) in the table,\n * b) currently visible (i.e. not already filtered),\n * c) which groups,\n * d) what order - all of this can be read from the rowModel. */",

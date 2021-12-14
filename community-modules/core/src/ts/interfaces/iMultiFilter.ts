@@ -1,6 +1,6 @@
 import { IProvidedFilter } from "../filter/provided/providedFilter";
 import { AgPromise } from "../utils";
-import { IFilter, IFilterComp, IFilterDef, IFilterParams, ProvidedFilterModel } from "./iFilter";
+import { IFilter, IFilterComp, IFilterDef, IFilterParams, IFilterType, IFloatingFilterType, ProvidedFilterModel } from "./iFilter";
 
 /** Interface contract for the public aspects of the ProvidedFilter implementation(s). */
 export interface IMultiFilter extends IProvidedFilter {
@@ -10,22 +10,40 @@ export interface IMultiFilter extends IProvidedFilter {
 
 export interface IMultiFilterDef extends IFilterDef {
     /**
-     * Configures how the filter is shown in the Multi Filter.
+     * Configures how the filter is shown in the Multi Filter. See
+     * [Display Style](https://build.ag-grid.com/javascript-data-grid/filter-multi/#display-style).
+     * 
      * Default: `inline`
      */
     display?: 'inline' | 'accordion' | 'subMenu';
-    /**
-     * The title to be used when a filter is displayed inside a sub-menu or accordion.
-     */
+    /** The title to be used when a filter is displayed inside a sub-menu or accordion. */
     title?: string;
+
+    /** Child filter component to use inside the Multi Filter. */
+    filter?: IFilterType;
+    /** Child filter component to use inside the Multi Filter. */
+    filterFramework?: any;
+    /** Custom parameters to be passed to the child filter component. */
+    filterParams?: any;
+    /** Floating filter component to use for the child filter. */
+    floatingFilterComponent?: IFloatingFilterType;
+    /** Floating framework filter component to use for the child filter. */
+    floatingFilterComponentFramework?: any;
+    /** Custom parameters to be passed to the floating filter component. */
+    floatingFilterComponentParams?: any;
 }
 
 export interface IMultiFilterParams extends IFilterParams {
     /** An array of filter definition objects. */
     filters?: IMultiFilterDef[];
-    /** Defaults to false. If true, all UI inputs managed by this filter are for display only, and
-     * the filter can only be affected by API calls. Does NOT affect child filters, they need to be
-     * individually configured with `readOnly` where applicable. */
+    /**
+     * If true, all UI inputs managed by this filter are for display only, and the filter can only
+     * be affected by API calls. Does NOT affect child filters, they need to be individually
+     * configured with `readOnly` where applicable. See
+     * [Read-only Filter UI](/filter-api/#read-only-filter-ui).
+     * 
+     * Default: `false`
+     */
     readOnly?: boolean;
 }
 
