@@ -7286,12 +7286,19 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
+      "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * <ul>\n * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li>\n * </ul> */",
       "type": { "returnType": "FilterButtonType[]", "optional": true }
     },
-    "closeOnApply": { "type": { "returnType": "boolean", "optional": true } },
-    "debounceMs": { "type": { "returnType": "number", "optional": true } },
+    "closeOnApply": {
+      "description": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "debounceMs": {
+      "description": "/** By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by\n * 500ms. This is because these filters have text field inputs, so time is given to the user to\n * type items in before the input is formatted and the filtering applied. The\n * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To\n * override these defaults, set `debounceMs` to the number of milliseconds to debounce by. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "readOnly": {
-      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "description": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n * be used in conjunction with the Filter API.\n * \n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "column": {
@@ -7416,12 +7423,19 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
+      "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * <ul>\n * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li>\n * </ul> */",
       "type": { "returnType": "FilterButtonType[]", "optional": true }
     },
-    "closeOnApply": { "type": { "returnType": "boolean", "optional": true } },
-    "debounceMs": { "type": { "returnType": "number", "optional": true } },
+    "closeOnApply": {
+      "description": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "debounceMs": {
+      "description": "/** By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by\n * 500ms. This is because these filters have text field inputs, so time is given to the user to\n * type items in before the input is formatted and the filtering applied. The\n * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To\n * override these defaults, set `debounceMs` to the number of milliseconds to debounce by. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "readOnly": {
-      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "description": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n * be used in conjunction with the Filter API.\n * \n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "column": {
@@ -7470,12 +7484,19 @@
   "FilterButtonType": {},
   "IProvidedFilterParams": {
     "buttons": {
+      "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * <ul>\n * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li>\n * </ul> */",
       "type": { "returnType": "FilterButtonType[]", "optional": true }
     },
-    "closeOnApply": { "type": { "returnType": "boolean", "optional": true } },
-    "debounceMs": { "type": { "returnType": "number", "optional": true } },
+    "closeOnApply": {
+      "description": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "debounceMs": {
+      "description": "/** By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by\n * 500ms. This is because these filters have text field inputs, so time is given to the user to\n * type items in before the input is formatted and the filtering applied. The\n * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To\n * override these defaults, set `debounceMs` to the number of milliseconds to debounce by. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "readOnly": {
-      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "description": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n * be used in conjunction with the Filter API.\n * \n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "column": {
@@ -7523,11 +7544,11 @@
   },
   "IProvidedFilter": {
     "applyModel": {
-      "description": "/** Apply the current UI state to the filter model.\n * @returns true if the model was changed.\n */",
+      "description": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n * when `applyModel()` was called). */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "getModelFromUi": {
-      "description": "/** Get the current UI state as a filter model. */",
+      "description": "/** Returns the filter model from the UI. If changes have been made to the UI but not yet\n * applied, this model will reflect those changes. */",
       "type": { "arguments": {}, "returnType": "any", "optional": false }
     },
     "isFilterActive": {
@@ -7543,11 +7564,11 @@
       }
     },
     "getModel": {
-      "description": "/** Gets the filter state for storing */",
+      "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. */",
       "type": { "arguments": {}, "returnType": "any", "optional": false }
     },
     "setModel": {
-      "description": "/** Restores the filter state. */",
+      "description": "/** Sets the state of the filter using the supplied model. Providing `null` as the model will\n * de-activate the filter. */",
       "type": {
         "arguments": { "model": "any" },
         "returnType": "void | AgPromise<void>",
@@ -7616,12 +7637,19 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
+      "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * <ul>\n * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li>\n * </ul> */",
       "type": { "returnType": "FilterButtonType[]", "optional": true }
     },
-    "closeOnApply": { "type": { "returnType": "boolean", "optional": true } },
-    "debounceMs": { "type": { "returnType": "number", "optional": true } },
+    "closeOnApply": {
+      "description": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "debounceMs": {
+      "description": "/** By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by\n * 500ms. This is because these filters have text field inputs, so time is given to the user to\n * type items in before the input is formatted and the filtering applied. The\n * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To\n * override these defaults, set `debounceMs` to the number of milliseconds to debounce by. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "readOnly": {
-      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "description": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n * be used in conjunction with the Filter API.\n * \n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "column": {
@@ -7671,11 +7699,11 @@
   "JoinOperator": {},
   "ISimpleFilter": {
     "applyModel": {
-      "description": "/** Apply the current UI state to the filter model.\n * @returns true if the model was changed.\n */",
+      "description": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n * when `applyModel()` was called). */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "getModelFromUi": {
-      "description": "/** Get the current UI state as a filter model. */",
+      "description": "/** Returns the filter model from the UI. If changes have been made to the UI but not yet\n * applied, this model will reflect those changes. */",
       "type": { "arguments": {}, "returnType": "any", "optional": false }
     },
     "isFilterActive": {
@@ -7691,11 +7719,11 @@
       }
     },
     "getModel": {
-      "description": "/** Gets the filter state for storing */",
+      "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. */",
       "type": { "arguments": {}, "returnType": "any", "optional": false }
     },
     "setModel": {
-      "description": "/** Restores the filter state. */",
+      "description": "/** Sets the state of the filter using the supplied model. Providing `null` as the model will\n * de-activate the filter. */",
       "type": {
         "arguments": { "model": "any" },
         "returnType": "void | AgPromise<void>",
@@ -7752,12 +7780,19 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
+      "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * <ul>\n * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li>\n * </ul> */",
       "type": { "returnType": "FilterButtonType[]", "optional": true }
     },
-    "closeOnApply": { "type": { "returnType": "boolean", "optional": true } },
-    "debounceMs": { "type": { "returnType": "number", "optional": true } },
+    "closeOnApply": {
+      "description": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "debounceMs": {
+      "description": "/** By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by\n * 500ms. This is because these filters have text field inputs, so time is given to the user to\n * type items in before the input is formatted and the filtering applied. The\n * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To\n * override these defaults, set `debounceMs` to the number of milliseconds to debounce by. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "readOnly": {
-      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "description": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n * be used in conjunction with the Filter API.\n * \n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "column": {
@@ -7925,12 +7960,19 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
+      "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * <ul>\n * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li>\n * </ul> */",
       "type": { "returnType": "FilterButtonType[]", "optional": true }
     },
-    "closeOnApply": { "type": { "returnType": "boolean", "optional": true } },
-    "debounceMs": { "type": { "returnType": "number", "optional": true } },
+    "closeOnApply": {
+      "description": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "debounceMs": {
+      "description": "/** By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by\n * 500ms. This is because these filters have text field inputs, so time is given to the user to\n * type items in before the input is formatted and the filtering applied. The\n * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To\n * override these defaults, set `debounceMs` to the number of milliseconds to debounce by. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "readOnly": {
-      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "description": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n * be used in conjunction with the Filter API.\n * \n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "column": {
@@ -12240,11 +12282,11 @@
       }
     },
     "getModel": {
-      "description": "/** Gets the filter state for storing */",
+      "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. */",
       "type": { "arguments": {}, "returnType": "any", "optional": false }
     },
     "setModel": {
-      "description": "/** Restores the filter state. */",
+      "description": "/** Sets the state of the filter using the supplied model. Providing `null` as the model will\n * de-activate the filter. */",
       "type": {
         "arguments": { "model": "any" },
         "returnType": "void | AgPromise<void>",
@@ -12285,11 +12327,11 @@
       }
     },
     "getModel": {
-      "description": "/** Gets the filter state for storing */",
+      "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. */",
       "type": { "arguments": {}, "returnType": "any", "optional": false }
     },
     "setModel": {
-      "description": "/** Restores the filter state. */",
+      "description": "/** Sets the state of the filter using the supplied model. Providing `null` as the model will\n * de-activate the filter. */",
       "type": {
         "arguments": { "model": "any" },
         "returnType": "void | AgPromise<void>",
@@ -12726,11 +12768,11 @@
       }
     },
     "applyModel": {
-      "description": "/** Apply the current UI state to the filter model.\n * @returns true if the model was changed.\n */",
+      "description": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n * when `applyModel()` was called). */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "getModelFromUi": {
-      "description": "/** Get the current UI state as a filter model. */",
+      "description": "/** Returns the filter model from the UI. If changes have been made to the UI but not yet\n * applied, this model will reflect those changes. */",
       "type": { "arguments": {}, "returnType": "any", "optional": false }
     },
     "isFilterActive": {
@@ -12746,11 +12788,11 @@
       }
     },
     "getModel": {
-      "description": "/** Gets the filter state for storing */",
+      "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. */",
       "type": { "arguments": {}, "returnType": "any", "optional": false }
     },
     "setModel": {
-      "description": "/** Restores the filter state. */",
+      "description": "/** Sets the state of the filter using the supplied model. Providing `null` as the model will\n * de-activate the filter. */",
       "type": {
         "arguments": { "model": "any" },
         "returnType": "void | AgPromise<void>",
@@ -14032,7 +14074,7 @@
       }
     },
     "applyModel": {
-      "description": "/** Apply the current UI state to the filter model.\n * @returns true if the model was changed.\n */",
+      "description": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n * when `applyModel()` was called). */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "isFilterActive": {
@@ -14092,11 +14134,11 @@
   "SetFilterValues": {},
   "ISetFilterParams": {
     "values": {
-      "description": "/** The values to display in the Filter List.\n * If this is not set, the filter will takes its values from what is loaded in the table. */",
+      "description": "/** The values to display in the Filter List. If this is not set, the filter will takes its\n * values from what is loaded in the table. See\n * [Supplying Filter Values](/filter-set-filter-list/#supplying-filter-values). */",
       "type": { "returnType": "SetFilterValues", "optional": true }
     },
     "refreshValuesOnOpen": {
-      "description": "/** Refresh the values every time the Set filter is opened. */",
+      "description": "/** Refresh the values every time the Set filter is opened. See\n * [Refreshing Values](/filter-set-filter-list/#refreshing-values). */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "cellHeight": {
@@ -14104,22 +14146,22 @@
       "type": { "returnType": "number", "optional": true }
     },
     "suppressSorting": {
-      "description": "/** If `true`, the Set Filter values will not be sorted.\n * Use this if you are providing your own values and don't want them sorted as you are providing in the order you want.\n * Default: `false` */",
+      "description": "/** If `true`, the Set Filter values will not be sorted. Use this if you are providing your own\n * values and don't want them sorted as you are providing in the order you want. See\n * [Supplying Filter Values](/filter-set-filter-list/#supplying-filter-values).\n * \n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "cellRenderer": {
-      "description": "/** Similar to the Cell Renderer for the grid.\n * Setting it separately here allows for the value to be rendered differently in the filter. */",
+      "description": "/** Similar to the Cell Renderer for the grid. Setting it separately here allows for the value to\n * be rendered differently in the filter. See\n * [Filter List Cell Renderer](/filter-set-filter-list/#cell-renderer). */",
       "type": {
         "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string",
         "optional": true
       }
     },
     "suppressMiniFilter": {
-      "description": "/** Set to `true` to hide the Mini Filter.\n * Default: `false` */",
+      "description": "/** Set to `true` to hide the Mini Filter. See\n * [Hiding the Mini Filter](/filter-set-mini-filter/#hiding-the-mini-filter).\n * \n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "applyMiniFilterWhileTyping": {
-      "description": "/** Set to `true` to apply the Set Filter immediately when the user is typing in the Mini Filter.\n * Default: `false` */",
+      "description": "/** Set to `true` to apply the Set Filter immediately when the user is typing in the Mini Filter.\n * See [Keyboard Shortcuts](/filter-set-mini-filter/#keyboard-shortcuts).\n * \n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressSelectAll": {
@@ -14127,11 +14169,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "defaultToNothingSelected": {
-      "description": "/** By default, when the Set Filter is opened all values are shown selected. Set this to `true` to instead show all values as de-selected by default. */",
+      "description": "/** By default, when the Set Filter is opened all values are shown selected. Set this to `true`\n * to instead show all values as de-selected by default. See\n * [Default State](/filter-set-filter-list/#default-state). */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "comparator": {
-      "description": "/** Comparator for sorting.\n * If not provided, the Column Definition comparator is used.\n * If Column Definition comparator is also not provided, the default (grid provided) comparator is used. */",
+      "description": "/** Comparator for sorting. If not provided, the Column Definition comparator is used. If Column\n * Definition comparator is also not provided, the default (grid provided) comparator is used.\n * See [Sorting Filter Lists](/filter-set-filter-list/#sorting-filter-lists). */",
       "type": {
         "arguments": { "a": "any", "b": "any" },
         "returnType": "number",
@@ -14139,7 +14181,7 @@
       }
     },
     "textFormatter": {
-      "description": "/** If specified, this formats the text before applying the Mini Filter compare logic, useful for instance to substitute accented characters. */",
+      "description": "/** If specified, this formats the text before applying the Mini Filter compare logic, useful for\n * instance to substitute accented characters. See\n * [Custom Searches](/filter-set-mini-filter/#custom-searches). */",
       "type": {
         "arguments": { "from": "string" },
         "returnType": "string",
@@ -14154,7 +14196,7 @@
       }
     },
     "showTooltips": {
-      "description": "/** If `true`, hovering over a value in the Set Filter will show a tooltip containing the full, untruncated value.\n * Default: `false` */",
+      "description": "/** If `true`, hovering over a value in the Set Filter will show a tooltip containing the full,\n * untruncated value. See\n * [Filter Value Tooltips](/filter-set-filter-list/#filter-value-tooltips).\n * \n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "caseSensitive": {
@@ -14162,16 +14204,23 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "excelMode": {
-      "description": "/** Changes the behaviour of the Set Filter to match that of Excel's AutoFilter. */",
+      "description": "/** Changes the behaviour of the Set Filter to match that of Excel's AutoFilter. See\n * [Excel Mode](/filter-set-excel-mode/). */",
       "type": { "returnType": "'mac' | 'windows'", "optional": true }
     },
     "buttons": {
+      "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * <ul>\n * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li>\n * </ul> */",
       "type": { "returnType": "FilterButtonType[]", "optional": true }
     },
-    "closeOnApply": { "type": { "returnType": "boolean", "optional": true } },
-    "debounceMs": { "type": { "returnType": "number", "optional": true } },
+    "closeOnApply": {
+      "description": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "debounceMs": {
+      "description": "/** By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by\n * 500ms. This is because these filters have text field inputs, so time is given to the user to\n * type items in before the input is formatted and the filtering applied. The\n * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To\n * override these defaults, set `debounceMs` to the number of milliseconds to debounce by. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "readOnly": {
-      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "description": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n * be used in conjunction with the Filter API.\n * \n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "column": {

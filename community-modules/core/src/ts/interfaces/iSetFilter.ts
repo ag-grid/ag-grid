@@ -78,33 +78,43 @@ export type SetFilterValues = SetFilterValuesFunc | any[];
 
 export interface ISetFilterParams extends IProvidedFilterParams {
     /**
-     * The values to display in the Filter List.
-     * If this is not set, the filter will takes its values from what is loaded in the table.
+     * The values to display in the Filter List. If this is not set, the filter will takes its
+     * values from what is loaded in the table. See
+     * [Supplying Filter Values](/filter-set-filter-list/#supplying-filter-values).
      */
     values?: SetFilterValues;
     /**
-     * Refresh the values every time the Set filter is opened.
+     * Refresh the values every time the Set filter is opened. See
+     * [Refreshing Values](/filter-set-filter-list/#refreshing-values).
      */
     refreshValuesOnOpen?: boolean;
     /** The height of values in the Filter List in pixels. */
     cellHeight?: number;
     /**
-     * If `true`, the Set Filter values will not be sorted.
-     * Use this if you are providing your own values and don't want them sorted as you are providing in the order you want.
+     * If `true`, the Set Filter values will not be sorted. Use this if you are providing your own
+     * values and don't want them sorted as you are providing in the order you want. See
+     * [Supplying Filter Values](/filter-set-filter-list/#supplying-filter-values).
+     * 
      * Default: `false`
      */
     suppressSorting?: boolean;
     /**
-     * Similar to the Cell Renderer for the grid.
-     * Setting it separately here allows for the value to be rendered differently in the filter.
+     * Similar to the Cell Renderer for the grid. Setting it separately here allows for the value to
+     * be rendered differently in the filter. See
+     * [Filter List Cell Renderer](/filter-set-filter-list/#cell-renderer).
      */
     cellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
-    /** Set to `true` to hide the Mini Filter.
+    /**
+     * Set to `true` to hide the Mini Filter. See
+     * [Hiding the Mini Filter](/filter-set-mini-filter/#hiding-the-mini-filter).
+     * 
      * Default: `false`
      */
     suppressMiniFilter?: boolean;
     /**
      * Set to `true` to apply the Set Filter immediately when the user is typing in the Mini Filter.
+     * See [Keyboard Shortcuts](/filter-set-mini-filter/#keyboard-shortcuts).
+     * 
      * Default: `false`
      */
     applyMiniFilterWhileTyping?: boolean;
@@ -113,21 +123,30 @@ export interface ISetFilterParams extends IProvidedFilterParams {
      * Default: `false`
      */
     suppressSelectAll?: boolean;
-    /** By default, when the Set Filter is opened all values are shown selected. Set this to `true` to instead show all values as de-selected by default. */
+    /**
+     * By default, when the Set Filter is opened all values are shown selected. Set this to `true`
+     * to instead show all values as de-selected by default. See
+     * [Default State](/filter-set-filter-list/#default-state).
+     */
     defaultToNothingSelected?: boolean;
     /**
-     * Comparator for sorting.
-     * If not provided, the Column Definition comparator is used.
-     * If Column Definition comparator is also not provided, the default (grid provided) comparator is used.
+     * Comparator for sorting. If not provided, the Column Definition comparator is used. If Column
+     * Definition comparator is also not provided, the default (grid provided) comparator is used.
+     * See [Sorting Filter Lists](/filter-set-filter-list/#sorting-filter-lists).
      */
     comparator?: (a: any, b: any) => number;
     /**
-     * If specified, this formats the text before applying the Mini Filter compare logic, useful for instance to substitute accented characters.
+     * If specified, this formats the text before applying the Mini Filter compare logic, useful for
+     * instance to substitute accented characters. See
+     * [Custom Searches](/filter-set-mini-filter/#custom-searches).
      */
     textFormatter?: (from: string) => string;
     valueFormatter?: (params: ValueFormatterParams) => string;
     /**
-     * If `true`, hovering over a value in the Set Filter will show a tooltip containing the full, untruncated value.
+     * If `true`, hovering over a value in the Set Filter will show a tooltip containing the full,
+     * untruncated value. See
+     * [Filter Value Tooltips](/filter-set-filter-list/#filter-value-tooltips).
+     * 
      * Default: `false`
      */
     showTooltips?: boolean;
@@ -136,6 +155,9 @@ export interface ISetFilterParams extends IProvidedFilterParams {
      * Default: `false`.
      */
     caseSensitive?: boolean;
-    /** Changes the behaviour of the Set Filter to match that of Excel's AutoFilter. */
+    /**
+     * Changes the behaviour of the Set Filter to match that of Excel's AutoFilter. See
+     * [Excel Mode](/filter-set-excel-mode/).
+     */
     excelMode?: 'mac' | 'windows';
 }
