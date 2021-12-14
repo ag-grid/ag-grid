@@ -10,6 +10,7 @@
     "lint-fix": "npx tslint -p tsconfig.cjs.es5.json -c tslint-fix.json --fix src/ts/**/*.ts",
     "precheck": "npx tsc -p tsconfig-precheck.json",
     "build": "npm run precheck && npx gulp && npx tsc -p tsconfig.typings.json && npm run hash",
+    "build-css": "npx gulp scss-no-clean",
     "test": "npx jest",
     "package": "node ../../module-build/rollup/build.js",
     "clean": "npx rimraf dist typings",
