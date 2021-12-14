@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { IFilterAngularComp } from "@ag-grid-community/angular";
+import { IDoesFilterPassParams, IFilterParams } from '@ag-grid-community/core';
 
 @Component({
     selector: 'year-filter',
@@ -14,21 +15,21 @@ import { IFilterAngularComp } from "@ag-grid-community/angular";
         </div>`
 })
 export class YearFilter implements IFilterAngularComp {
-    params: any;
-    isActive: boolean;
+    params!: IFilterParams;
+    isActive!: boolean;
 
     // called on init
-    agInit(params: any): void {
+    agInit(params: IFilterParams): void {
         this.params = params;
         this.isActive = false;
     }
 
-    toggleFilter(isFilterActive): void {
+    toggleFilter(isFilterActive: boolean): void {
         this.isActive = isFilterActive;
         this.params.filterChangedCallback();
     }
 
-    doesFilterPass(params): boolean {
+    doesFilterPass(params: IDoesFilterPassParams): boolean {
         return params.data.year > 2004;
     }
 
@@ -40,11 +41,11 @@ export class YearFilter implements IFilterAngularComp {
         return this.isFilterActive() || null;
     }
 
-    setModel(model): void {
+    setModel(model: any): void {
         this.toggleFilter(!!model);
     }
 
-    onFloatingFilterChanged(value): void {
+    onFloatingFilterChanged(value: any): void {
         this.setModel(value);
     }
 }

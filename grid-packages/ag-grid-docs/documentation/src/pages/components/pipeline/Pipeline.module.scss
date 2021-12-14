@@ -63,28 +63,28 @@
 
 .all-checkboxes-container {
   display: flex;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  padding-left: 20px;
-  width: 60%;
   flex-wrap: wrap;
+  padding-top: 0.5rem;
+  column-gap: 1rem;
+  justify-content: space-between;
+  padding-left: 2rem;
 }
 
-.single-checkbox-label-container {
-  padding-left: 15px;
-  display: flex;
-  align-items: center;
-}
 
 .label-for-checkboxes {
-  padding-left: 10px;
-  padding-right: 10px;
-  font-size: 20px;
+  display: flex;
+  align-items: center;
+  font-size: 1.2rem;
   white-space: nowrap;
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
-  -webkit-touch-callout: none; 
+  -webkit-touch-callout: none;
+  .checkbox-class {
+    width: 20px;
+    height: 20px;
+    margin-right: 0.2rem;
+  }
 }
 
 .header-padding-class {
@@ -101,7 +101,4 @@
   margin: 0 3px 0 5px;
 }
 
-.checkbox-class {
-  width: 20px;
-  height: 20px;
-}
+

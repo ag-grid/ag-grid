@@ -25,6 +25,7 @@
     "@ag-grid-community/react": "~26.2.0",
     "@ag-grid-enterprise/column-tool-panel": "~26.2.0",
     "@ag-grid-enterprise/master-detail": "~26.2.0",
+    "@ag-grid-enterprise/multi-filter": "~26.2.0",
     "@ag-grid-enterprise/set-filter": "~26.2.0",
     "@ag-grid-enterprise/status-bar": "~26.2.0",
     "@fortawesome/fontawesome-svg-core": "1.2.34",
@@ -83,7 +84,7 @@
     "react-visibility-sensor": "5.1.1",
     "rehype-react": "6.2.0",
     "sass": "1.32.8",
-    "typescript": "4.5.2",
+    "typescript": "~4.5.2",
     "unist-util-visit": "2.0.3",
     "use-query-params": "1.2.0"
   },

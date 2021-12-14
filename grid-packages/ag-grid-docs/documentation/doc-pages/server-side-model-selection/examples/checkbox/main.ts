@@ -15,6 +15,10 @@ const gridOptions: GridOptions = {
     resizable: true,
     sortable: true,
   },
+  getRowNodeId: function(data: any) { 
+    // use year for group level ids, or the id we assigned for leaf level
+    return data.id || data.year; 
+  },
   autoGroupColumnDef: {
     field: 'athlete',
     flex: 1,
@@ -76,6 +80,11 @@ document.addEventListener('DOMContentLoaded', function () {
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(function (data) {
+      // assign a unique ID to each data item
+      data.forEach( function(item: any, index: number) {
+        item.id = index;
+      } );
+
       // setup the fake server with entire dataset
       var fakeServer = new FakeServer(data)
 

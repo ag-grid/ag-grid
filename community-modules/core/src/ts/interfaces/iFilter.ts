@@ -37,7 +37,7 @@ export interface IFilterDef {
 
 export interface IFilter {
 
-    /** This is used to let the grid know if the filter is active or not */
+    /** Returns `true` if the filter is currently active, otherwise `false`. */
     isFilterActive(): boolean;
 
     // mandatory methods
@@ -47,10 +47,16 @@ export interface IFilter {
      (the data object that you provided to the grid for that row). */
     doesFilterPass(params: IDoesFilterPassParams): boolean;
 
-    /** Gets the filter state for storing */
+    /**
+     * Returns a model representing the current state of the filter, or `null` if the filter is
+     * not active.
+     */
     getModel(): any;
 
-    /** Restores the filter state. */
+    /**
+     * Sets the state of the filter using the supplied model. Providing `null` as the model will
+     * de-activate the filter.
+     */
     setModel(model: any): void | AgPromise<void>;
 
     /** Gets called when new rows are inserted into the grid. If the filter needs to change its

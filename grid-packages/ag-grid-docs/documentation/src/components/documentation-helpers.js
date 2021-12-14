@@ -185,17 +185,24 @@ export function formatJsDocString(docString) {
     if (!docString || docString.length === 0) {
         return;
     }
-    const paramReg = /\* @param/g;
+    const paramReg = /\* @param (\w+) (.*)\n/g;
     const newLineReg = /\n \* /g;
     // Default may or may not be on a new line in JsDoc but in both cases we want the default to be on the next line
     const defaultReg = /(\n \*)?(<br>)? Default:/g;
 
-    return docString
+    // Turn option list, new line starting with - into bullet points
+    // eslint-disable-next-line
+    const optionReg = /\n[\s]*[*]*[\s]*- (.*)/g;
+
+    let formatted = docString
         .replace('/**', '')
         .replace('*/', '')
         .replace(defaultReg, NEWLINE_DEFAULT_STRING)
-        .replace(paramReg, '<br>')
+        .replace(paramReg, '<br> <strong>$1</strong> $2 \n')
+        .replace(optionReg, '<li style="margin-left:1rem"> $1 </li>')
         .replace(newLineReg, ' ');
+
+    return formatted;
 }
 
 export function appendCallSignature(name, interfaceType, framework, allLines) {
@@ -391,3 +398,4 @@ export function getJsonFromFile(nodes, pageName, source) {
 
     throw new Error(`Could not find JSON for source ${source}`);
 };
+

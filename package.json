@@ -18,8 +18,8 @@
     "updateSubModules": "sh ./scripts/updateSubModules.sh",
     "clean": "npx lerna run clean && npx lerna clean --yes",
     "bootstrap": "npx lerna bootstrap --no-ci",
-    "build": "npx lerna run build --ignore 'ag-grid-polymer-example'",
-    "package": "npx lerna run package --parallel --ignore '{ag-grid-polymer-example,ag-grid-documentation}' && npx lerna run package --scope '{ag-grid-community,ag-grid-enterprise,ag-grid-documentation}'",
+    "build": "npx lerna run build",
+    "package": "npx lerna run package --parallel --ignore '{ag-grid-documentation}' && npx lerna run package --scope '{ag-grid-community,ag-grid-enterprise,ag-grid-documentation}'",
     "test": "npx lerna run test --stream --ignore 'ag-grid-documentation'",
     "cleanCoreDependencies": "npx lerna clean --yes --scope '{ag-grid-angular,ag-grid-react,ag-grid-vue,ag-grid-docs}'",
     "bootstrapCoreDependencies": "npx lerna bootstrap --scope '{ag-grid-angular,ag-grid-react,ag-grid-vue,ag-grid-docs}'",
@@ -69,7 +69,7 @@
     "rollup-plugin-node-resolve": "^5.2.0",
     "rollup-plugin-replace": "^2.2.0",
     "terser": "^4.3.9",
-    "typescript": "~3.6.5",
+    "typescript": "~3.7.7",
     "walk": "^2.3.14"
   },
   "dependencies": {}

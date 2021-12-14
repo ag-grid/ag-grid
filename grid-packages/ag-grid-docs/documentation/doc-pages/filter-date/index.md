@@ -8,14 +8,13 @@ Date filters allow you to filter date data. The [Provided Filters](/filter-provi
 
 Date Filters are configured though the `filterParams` attribute of the column definition. All of the parameters from Provided Filters are available:
 
-<api-documentation source='filter-provided/resources/provided-filters.json' section='filterParams'></api-documentation>
+<interface-documentation interfaceName='IProvidedFilterParams' names='["buttons","closeOnApply","debounceMs","readOnly"]' config='{"description":""}'></interface-documentation>
 
 In addition, the following parameters are also available for Date filters:
 
-<interface-documentation interfaceName='IDateFilterParams' names='["alwaysShowBothConditions","filterOptions","defaultOption","defaultJoinOperator","suppressAndOrCondition","caseSensitive","textFormatter","trimInput","inRangeInclusive","includeBlanksInEquals","includeBlanksInLessThan","includeBlanksInGreaterThan","includeBlanksInRange","allowedCharPattern","numberParser","comparator","browserDatePicker","minValidYear", "maxValidYear"]' config='{"description":" "}' ></interface-documentation>
+<interface-documentation interfaceName='IDateFilterParams' names='["alwaysShowBothConditions","filterOptions","defaultOption","defaultJoinOperator","suppressAndOrCondition","caseSensitive","textFormatter","trimInput","inRangeInclusive","includeBlanksInEquals","includeBlanksInLessThan","includeBlanksInGreaterThan","includeBlanksInRange","allowedCharPattern","numberParser","comparator","browserDatePicker","minValidYear", "maxValidYear"]' config='{"description":""}' ></interface-documentation>
 
 ## Date Selection Component
-
 
 By default the grid will use the browser-provided date picker for Chrome and Firefox (as we think it's nice), but for all other browsers it will provide a simple text field. To override this and provide a custom date picker, see [Date Component](/component-date/).
 
@@ -25,7 +24,7 @@ Dates can be represented in your data in many ways e.g. as a JavaScript `Date` o
 
 By default, the date filter assumes you are using JavaScript `Date` objects. If this is the case, the date filter will work out of the box. However, if your date is in any other format you will have to provide your own `comparator` to perform the date comparisons.
 
-<interface-documentation interfaceName='IDateFilterParams' names='["comparator"]' config='{"description":" ", "overrideBottomMargin":"1rem"}'></interface-documentation>
+<interface-documentation interfaceName='IDateFilterParams' names='["comparator"]' config='{"description":"", "overrideBottomMargin":"1rem"}'></interface-documentation>
 
 The `comparator` function takes two parameters. The first parameter is a JavaScript `Date` object for the selected date in the filter (with the time set to midnight). The second parameter is the current value of the cell in the row being evaluated. The function must return:
 

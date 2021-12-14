@@ -125,9 +125,9 @@ export interface SparklineLabelOptions {
     /** Specify the font for the label text. */
     fontFamily: string;
     /** Specify the font style for the label text. */
-    fontStyle?: FontStyle;
+    fontStyle?: 'normal' | 'italic' | 'oblique';
     /** Set how thick or thin characters in label text should be displayed. */
-    fontWeight?: FontWeight;
+    fontWeight?: 'normal' | 'bold' | 'bolder' | 'lighter' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
     /** Set the color of the label text. The color can be specified by a color name, a HEX or an RGB value. */
     color: string;
     /** A callback function to return the text to be displayed as the label, based on the value represented by the column or bar. By default the values are simply stringified. */
@@ -137,9 +137,6 @@ export interface SparklineLabelOptions {
     * */
     placement: BarColumnLabelPlacement;
 }
-
-export type FontStyle = 'normal' | 'italic' | 'oblique';
-export type FontWeight = 'normal' | 'bold' | 'bolder' | 'lighter' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
 
 export enum BarColumnLabelPlacement {
     InsideBase = 'insideBase',

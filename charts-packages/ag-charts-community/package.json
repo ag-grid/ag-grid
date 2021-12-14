@@ -2,15 +2,15 @@
   "name": "ag-charts-community",
   "version": "4.2.0",
   "description": "Advanced Charting / Charts supporting Javascript / React / Angular",
-  "main": "./dist/cjs/main.js",
-  "module": "./dist/es6/main.js",
-  "types": "./dist/cjs/main.d.ts",
+  "main": "./dist/cjs/es5/main.js",
+  "module": "./dist/esm/es5/main.js",
+  "types": "./dist/cjs/es5/main.d.ts",
   "scripts": {
     "jest": "jest",
-    "build-cjs": "npx tsc -p tsconfig.json",
-    "build-es6": "npx tsc -p tsconfig.es6.json",
+    "build-cjs": "npx tsc -p tsconfig.cjs.es5.json && npx tsc -p tsconfig.cjs.es6.json",
+    "build-esm": "npx tsc -p tsconfig.esm.es5.json && npx tsc -p tsconfig.esm.es6.json",
     "package": "node ../../module-build/rollup/build.js --bundlePrefix ag-charts-community --umdModuleName agCharts",
-    "build": "npm run build-cjs && npm run build-es6 && npm run hash",
+    "build": "npm run build-cjs && npm run build-esm && npm run hash",
     "watch": "npx tsc -p tsconfig.json --watch",
     "hash": "sh ../../scripts/hashDirectory.sh > .hash"
   },
@@ -61,7 +61,7 @@
     "jest": "^25.4.0",
     "raf": "3.4.1",
     "ts-jest": "^25.4.0",
-    "typescript": "~3.6.5"
+    "typescript": "~3.7.7"
   },
   "publishConfig": {
     "access": "public"

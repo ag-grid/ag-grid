@@ -139,6 +139,7 @@ import {
     ProcessRowParams,
     ProcessCellForExportParams,
     ProcessHeaderForExportParams,
+    ProcessGroupHeaderForExportParams,
     RowStyle,
     RowClassRules,
     RowClassParams,
@@ -318,6 +319,8 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public popupParent: HTMLElement | undefined = undefined;
     /** Set to `true` to also include headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false`     */
     @Input() public copyHeadersToClipboard: boolean | undefined = undefined;
+    /** Set to `true` to also include group headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false`     */
+    @Input() public copyGroupHeadersToClipboard: boolean | undefined = undefined;
     /** Specify the deliminator to use when copying to clipboard.     */
     @Input() public clipboardDeliminator: string | undefined = undefined;
     /** Set to `true` to only have the range selection, and not row selection, copied to clipboard. Default: `false`     */
@@ -616,10 +619,10 @@ hence this property is deprecated as will be removed in the next major release.
      * 
      *   The options are:
      * 
-     *       `'singleColumn'`: single group column automatically added by the grid.
-     *       `'multipleColumns'`: a group column per row group is added automatically.
-     *       `'groupRows'`: group rows are automatically added instead of group columns.
-     *       `'custom'`: informs the grid that group columns will be provided.     */
+     * - `'singleColumn'`: single group column automatically added by the grid.
+     * - `'multipleColumns'`: a group column per row group is added automatically.
+     * - `'groupRows'`: group rows are automatically added instead of group columns.
+     * - `'custom'`: informs the grid that group columns will be provided.     */
     @Input() public groupDisplayType: RowGroupingDisplayType | undefined = undefined;
     /** If grouping, set to the number of levels to expand by default, e.g. `0` for none, `1` for first level only, etc. Set to `-1` to expand everything. Default: `0`     */
     @Input() public groupDefaultExpanded: number | undefined = undefined;
@@ -783,7 +786,7 @@ hence this property is deprecated as will be removed in the next major release.
     /** Set this to `true` to prevent cell values from being cleared when the Range Selection is reduced by the Fill Handle. Default: `false`     */
     @Input() public suppressClearOnFillReduction: boolean | undefined = undefined;
     /** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`. Default: `[null, 'asc', 'desc']`     */
-    @Input() public sortingOrder: (string | null)[] | undefined = undefined;
+    @Input() public sortingOrder: ('asc' | 'desc' | null)[] | undefined = undefined;
     /** Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower. Default: `false`     */
     @Input() public accentedSort: boolean | undefined = undefined;
     /** Set to `true` to show the 'no sort' icon. Default: `false`     */
@@ -826,6 +829,8 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public processCellForClipboard: ((params: ProcessCellForExportParams) =>  any) | undefined = undefined;
     /** Allows you to process header values for the clipboard.     */
     @Input() public processHeaderForClipboard: ((params: ProcessHeaderForExportParams) =>  any) | undefined = undefined;
+    /** Allows you to process group header values for the clipboard.     */
+    @Input() public processGroupHeaderForClipboard: ((params: ProcessGroupHeaderForExportParams) =>  any) | undefined = undefined;
     /** Allows you to process cells from the clipboard. Handy if for example you have number fields, and want to block non-numbers from getting into the grid.     */
     @Input() public processCellFromClipboard: ((params: ProcessCellForExportParams) =>  any) | undefined = undefined;
     /** Allows you to get the data that would otherwise go to the clipboard. To be used when you want to control the 'copy to clipboard' operation yourself.     */
@@ -886,7 +891,7 @@ hence this property is deprecated as will be removed in the next major release.
     /** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.
      * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.     */
     @Input() public getBusinessKeyForNode: ((node: RowNode) =>  string) | undefined = undefined;
-    /** Allows you to set the ID for a particular row node based on the data. Useful for selection and server side sorting and filtering for paging and virtual pagination.     */
+    /** Allows you to set the ID for a particular row node based on the data.     */
     @Input() public getRowNodeId: GetRowNodeIdFunc | undefined = undefined;
     /** Allows you to process rows after they are created, so you can do final adding of custom attributes etc.     */
     @Input() public processRowPostCreate: ((params: ProcessRowParams) =>  void) | undefined = undefined;
@@ -1100,6 +1105,7 @@ hence this property is deprecated as will be removed in the next major release.
     static ngAcceptInputType_suppressPreventDefaultOnMouseWheel: boolean | null | '';
     static ngAcceptInputType_suppressCopyRowsToClipboard: boolean | null | '';
     static ngAcceptInputType_copyHeadersToClipboard: boolean | null | '';
+    static ngAcceptInputType_copyGroupHeadersToClipboard: boolean | null | '';
     static ngAcceptInputType_pivotMode: boolean | null | '';
     static ngAcceptInputType_suppressAggFuncInHeader: boolean | null | '';
     static ngAcceptInputType_suppressColumnVirtualisation: boolean | null | '';

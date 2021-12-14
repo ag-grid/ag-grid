@@ -16,7 +16,7 @@ import { SortController } from "./sortController";
 import { FocusService } from "./focusService";
 import { CellRange, CellRangeParams, IRangeService } from "./interfaces/IRangeService";
 import { CellPosition } from "./entities/cellPosition";
-import { IClipboardService } from "./interfaces/iClipboardService";
+import { IClipboardService, IClipboardCopyRowsParams, IClipboardCopyParams } from "./interfaces/iClipboardService";
 import { IViewportDatasource } from "./interfaces/iViewportDatasource";
 import { IMenuFactory } from "./interfaces/iMenuFactory";
 import { IAggFuncService } from "./interfaces/iAggFuncService";
@@ -155,7 +155,7 @@ interface CreateChartParams {
     unlinkChart?: boolean;
 }
 
-export type ChartParamsCellRange = Partial<Omit<CellRangeParams, 'rowStartPinned' | 'rowEndPinned'>>
+export type ChartParamsCellRange = Partial<Omit<CellRangeParams, 'rowStartPinned' | 'rowEndPinned'>>;
 export interface CreateRangeChartParams extends CreateChartParams {
     /** The range of cells to be charted. If no rows / rowIndexes are specified all rows will be included. */
     cellRange: ChartParamsCellRange;
@@ -322,37 +322,41 @@ export class GridApi {
         }
     }
 
+    private getExcelExportMode(params?: ExcelExportParams): 'xlsx' | 'xml' {
+        const baseParams = this.gridOptionsWrapper.getDefaultExportParams('excel');
+        const mergedParams = Object.assign({ exportMode: 'xlsx' }, baseParams, params);
+        return mergedParams.exportMode;
+    }
+
     /** Similar to `exportDataAsExcel`, except instead of downloading a file, it will return a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) to be processed by the user. */
     public getDataAsExcel(params?: ExcelExportParams): string | Blob | undefined {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.getDataAsExcel')) {
-            const exportMode: 'xml' | 'xlsx' = (params && params.exportMode) || 'xlsx';
-            if (this.excelCreator.getFactoryMode(exportMode) === ExcelFactoryMode.MULTI_SHEET) {
-                console.warn('AG Grid: The Excel Exporter is currently on Multi Sheet mode. End that operation by calling `api.getMultipleSheetAsExcel()` or `api.exportMultipleSheetsAsExcel()`');
-                return;
-            }
-            return this.excelCreator.getDataAsExcel(params);
+        if (!ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.getDataAsExcel')) { return; }
+        const exportMode = this.getExcelExportMode(params);
+        if (this.excelCreator.getFactoryMode(exportMode) === ExcelFactoryMode.MULTI_SHEET) {
+            console.warn('AG Grid: The Excel Exporter is currently on Multi Sheet mode. End that operation by calling `api.getMultipleSheetAsExcel()` or `api.exportMultipleSheetsAsExcel()`');
+            return;
         }
+        return this.excelCreator.getDataAsExcel(params);
     }
 
     /** Downloads an Excel export of the grid's data. */
     public exportDataAsExcel(params?: ExcelExportParams): void {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.exportDataAsExcel')) {
-            const exportMode: 'xml' | 'xlsx' = (params && params.exportMode) || 'xlsx';
-            if (this.excelCreator.getFactoryMode(exportMode) === ExcelFactoryMode.MULTI_SHEET) {
-                console.warn('AG Grid: The Excel Exporter is currently on Multi Sheet mode. End that operation by calling `api.getMultipleSheetAsExcel()` or `api.exportMultipleSheetsAsExcel()`');
-                return;
-            }
-            this.excelCreator.exportDataAsExcel(params);
+        if (!ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.exportDataAsExcel')) { return; }
+        const exportMode = this.getExcelExportMode(params);
+        if (this.excelCreator.getFactoryMode(exportMode) === ExcelFactoryMode.MULTI_SHEET) {
+            console.warn('AG Grid: The Excel Exporter is currently on Multi Sheet mode. End that operation by calling `api.getMultipleSheetAsExcel()` or `api.exportMultipleSheetsAsExcel()`');
+            return;
         }
+        this.excelCreator.exportDataAsExcel(params);
     }
 
     /** This is method to be used to get the grid's data as a sheet, that will later be exported either by `getMultipleSheetsAsExcel()` or `exportMultipleSheetsAsExcel()`. */
     public getSheetDataForExcel(params?: ExcelExportParams): string | undefined {
-        if (ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.getSheetDataForExcel')) {
-            const exportMode: 'xml' | 'xlsx' = (params && params.exportMode) || 'xlsx';
-            this.excelCreator.setFactoryMode(ExcelFactoryMode.MULTI_SHEET, exportMode);
-            return this.excelCreator.getSheetDataForExcel(params);
-        }
+        if (!ModuleRegistry.assertRegistered(ModuleNames.ExcelExportModule, 'api.getSheetDataForExcel')) { return; }
+        const exportMode = this.getExcelExportMode(params);
+        this.excelCreator.setFactoryMode(ExcelFactoryMode.MULTI_SHEET, exportMode);
+
+        return this.excelCreator.getSheetDataForExcel(params);
     }
 
     /** Similar to `exportMultipleSheetsAsExcel`, except instead of downloading a file, it will return a [Blob](https://developer.mozilla.org/en-US/docs/Web/API/Blob) to be processed by the user. */
@@ -667,12 +671,12 @@ export class GridApi {
             console.error(`AG Grid: invalid step ${step}, available steps are ${Object.keys(stepsMapped).join(', ')}`);
             return;
         }
-
+        const animate = !this.gridOptionsWrapper.isSuppressAnimationFrame();
         const modelParams: RefreshModelParams = {
             step: paramsStep,
             keepRenderedRows: true,
-            animate: true,
-            keepEditingRows: true
+            keepEditingRows: true,
+            animate
         };
 
         this.clientSideRowModel.refreshModel(modelParams);
@@ -886,9 +890,17 @@ export class GridApi {
         console.warn('AG Grid: ensureColIndexVisible(index) no longer supported, use ensureColumnVisible(colKey) instead.');
     }
 
-    /** Ensures the column is visible, scrolling the table if needed. */
-    public ensureColumnVisible(key: string | Column) {
-        this.gridBodyCon.getScrollFeature().ensureColumnVisible(key);
+    /**
+     *  Ensures the column is visible by scrolling the table if needed.
+     * @param key - The column to ensure visible
+     * @param position - Where the column will be positioned.
+     * - `auto` - Scrolls the minimum amount to make sure the column is visible.
+     * - `start` - Scrolls the column to the start of the viewport.
+     * - `middle` - Scrolls the column to the middle of the viewport.
+     * - `end` - Scrolls the column to the end of the viewport.
+    */
+    public ensureColumnVisible(key: string | Column, position: 'auto' | 'start' | 'middle' | 'end' = 'auto') {
+        this.gridBodyCon.getScrollFeature().ensureColumnVisible(key, position);
     }
 
     /**
@@ -1022,42 +1034,6 @@ export class GridApi {
      */
     public onSortChanged() {
         this.sortController.onSortChanged();
-    }
-
-    public setSortModel(sortModel: any, source: ColumnEventType = "api") {
-        console.warn('AG Grid: as of version 24.0.0, setSortModel() is deprecated, sort information is now part of Column State. Please use columnApi.applyColumnState() instead.');
-        const columnState: ColumnState[] = [];
-        if (sortModel) {
-            sortModel.forEach((item: any, index: number) => {
-                columnState.push({
-                    colId: item.colId,
-                    sort: item.sort,
-                    sortIndex: index
-                });
-            });
-        }
-        this.columnModel.applyColumnState({ state: columnState, defaultState: { sort: null } });
-    }
-
-    public getSortModel() {
-        console.warn('AG Grid: as of version 24.0.0, getSortModel() is deprecated, sort information is now part of Column State. Please use columnApi.getColumnState() instead.');
-        const columnState = this.columnModel.getColumnState();
-        const filteredStates = columnState.filter(item => item.sort != null);
-
-        const indexes: { [colId: string]: number; } = {};
-        filteredStates.forEach(state => {
-            const id = state.colId as string;
-            const sortIndex = state.sortIndex as number;
-            indexes[id] = sortIndex;
-        });
-
-        const res = filteredStates.map(s => {
-            return { colId: s.colId, sort: s.sort };
-        });
-
-        res.sort((a: any, b: any) => indexes[a.colId] - indexes[b.colId]);
-
-        return res;
     }
 
     /** Sets the state of all the advanced filters. Provide it with what you get from `getFilterModel()` to restore filter state. */
@@ -1592,20 +1568,16 @@ export class GridApi {
         }
     }
 
-    /**
-     * Copies the selected rows to the clipboard.
-     * Set `includeHeaders = true` to include the headers (default is `false`).
-     * Set `columnKeys` to the list of columns if you want just specific columns.
-     */
-    public copySelectedRowsToClipboard(includeHeader?: boolean, columnKeys?: (string | Column)[]): void {
+    /** Copies the selected rows to the clipboard. */
+    public copySelectedRowsToClipboard(params?: IClipboardCopyRowsParams): void {
         if (!this.clipboardService) { console.warn('AG Grid: clipboard is only available in AG Grid Enterprise'); }
-        this.clipboardService.copySelectedRowsToClipboard(includeHeader, columnKeys);
+        this.clipboardService.copySelectedRowsToClipboard(params);
     }
 
     /** Copies the selected ranges to the clipboard. */
-    public copySelectedRangeToClipboard(includeHeader?: boolean): void {
+    public copySelectedRangeToClipboard(params?: IClipboardCopyParams): void {
         if (!this.clipboardService) { console.warn('AG Grid: clipboard is only available in AG Grid Enterprise'); }
-        this.clipboardService.copySelectedRangeToClipboard(includeHeader);
+        this.clipboardService.copySelectedRangeToClipboard(params);
     }
 
     /** Copies the selected range down, similar to `Ctrl + D` in Excel. */

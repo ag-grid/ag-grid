@@ -31,13 +31,13 @@ Each provided filter is displayed in a UI with optional buttons at the bottom.
 
 All of the provided filters have the following parameters:
 
-<api-documentation source='filter-provided/resources/provided-filters.json' section='filterParams'></api-documentation>
+<interface-documentation interfaceName='IProvidedFilterParams' names='["buttons","closeOnApply","debounceMs","readOnly"]' config='{"description":""}'></interface-documentation>
 
 ## Provided Filter API
 
 Provided Filters provide the following methods:
 
-<api-documentation source='filter-provided/resources/provided-filters.json' section='api'></api-documentation>
+<interface-documentation interfaceName='IProvidedFilter' names='["isFilterActive","getModel","setModel","getModelFromUi","applyModel"]'  config='{"description":""}'></interface-documentation>
 
 ## Apply, Clear, Reset and Cancel Buttons
 

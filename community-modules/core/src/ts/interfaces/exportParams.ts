@@ -3,10 +3,12 @@ import { RowNode } from "../entities/rowNode";
 import { GridApi } from "../gridApi";
 import { ColumnApi } from "../columns/columnApi";
 import { ColumnGroup } from "../entities/columnGroup";
+import { RowPosition } from "../entities/rowPosition";
 
 export interface BaseExportParams {
     allColumns?: boolean;
     columnKeys?: (string | Column)[];
+    rowNodes?: RowPosition[];
     fileName?: string;
     onlySelected?: boolean;
     onlySelectedAllPages?: boolean;

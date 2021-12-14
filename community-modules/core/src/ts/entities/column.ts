@@ -89,7 +89,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     private left: number | null;
     private oldLeft: number | null;
     private aggFunc: string | IAggFunc | null | undefined;
-    private sort: string | null | undefined;
+    private sort: 'asc' | 'desc' | null | undefined;
     private sortIndex: number | null | undefined;
     private moving = false;
     private menuVisible = false;
@@ -397,7 +397,11 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     }
 
     public isSuppressFillHandle(): boolean {
-        return !!this.colDef.suppressFillHandle;
+        return !!attrToBoolean(this.colDef.suppressFillHandle);
+    }
+
+    public isAutoHeight(): boolean {
+        return !!attrToBoolean(this.colDef.autoHeight);
     }
 
     public isRowDrag(rowNode: RowNode): boolean {
@@ -417,7 +421,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     }
 
     public isResizable(): boolean {
-        return this.colDef.resizable === true;
+        return !!attrToBoolean(this.colDef.resizable);
     }
 
     private isColumnFunc(rowNode: RowNode, value?: boolean | ((params: ColumnFunctionCallbackParams) => boolean) | null): boolean {
@@ -457,11 +461,11 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     }
 
     /** If sorting is active, returns the sort direction e.g. `'asc'` or `'desc'`. */
-    public getSort(): string | null | undefined {
+    public getSort(): 'asc' | 'desc' | null | undefined {
         return this.sort;
     }
 
-    public setSort(sort: string | null | undefined, source: ColumnEventType = "api"): void {
+    public setSort(sort: 'asc' | 'desc' | null | undefined, source: ColumnEventType = "api"): void {
         if (this.sort !== sort) {
             this.sort = sort;
             this.eventService.dispatchEvent(this.createColumnEvent(Column.EVENT_SORT_CHANGED, source));

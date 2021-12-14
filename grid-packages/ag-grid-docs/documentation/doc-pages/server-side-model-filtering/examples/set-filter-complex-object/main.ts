@@ -1,4 +1,4 @@
-import { ColDef, GridOptions, IServerSideDatasource, IServerSideGetRowsRequest, SetFilterValuesFuncParams, ValueFormatterParams } from '@ag-grid-community/core'
+import { ColDef, GridOptions, IServerSideDatasource, IServerSideGetRowsRequest, SetFilterValuesFuncParams, SortModelItem, ValueFormatterParams } from '@ag-grid-community/core'
 
 declare function getCountryMap(): Record<string, string>;
 declare function getCountryCodeMap(): Record<string, string>;
@@ -101,7 +101,7 @@ function getFakeServer(allData: any[]) {
     })
   }
 
-  function doSort(data: any[], sortModel: any) {
+  function doSort(data: any[], sortModel: SortModelItem[]) {
     var sortPresent = sortModel && sortModel.length > 0
     if (!sortPresent) return data
 

@@ -1,7 +1,7 @@
 import { IDoesFilterPassParams, IFilterOptionDef, ProvidedFilterModel } from '../../interfaces/iFilter';
 import { RefSelector } from '../../widgets/componentAnnotations';
 import { OptionsFactory } from './optionsFactory';
-import { IProvidedFilterParams, ProvidedFilter } from './providedFilter';
+import { IProvidedFilter, IProvidedFilterParams, ProvidedFilter } from './providedFilter';
 import { AgPromise, _ } from '../../utils';
 import { AgSelect } from '../../widgets/agSelect';
 import { AgRadioButton } from '../../widgets/agRadioButton';
@@ -13,8 +13,13 @@ import { Component } from '../../widgets/component';
 import { AgAbstractInputField } from '../../widgets/agAbstractInputField';
 import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
 import { ListOption } from '../../widgets/agList';
+import { IFloatingFilterParent } from '../floating/floatingFilter';
 
 export type JoinOperator = 'AND' | 'OR';
+
+/** Interface contract for the public aspects of the SimpleFilter implementation(s). */
+export interface ISimpleFilter extends IProvidedFilter, IFloatingFilterParent {
+}
 
 export interface ISimpleFilterParams extends IProvidedFilterParams {
     /**
@@ -78,7 +83,7 @@ export type Tuple<T> = (T | null)[];
  * @param V type of value managed by the concrete sub-class that extends this type
  * @param E type of UI element used for collecting user-input
  */
-export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputTextField> extends ProvidedFilter<M | ICombinedSimpleModel<M>, V> {
+export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputTextField> extends ProvidedFilter<M | ICombinedSimpleModel<M>, V> implements ISimpleFilter {
 
     public static EMPTY = 'empty';
     public static EQUALS = 'equals';

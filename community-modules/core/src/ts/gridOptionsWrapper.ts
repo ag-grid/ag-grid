@@ -36,7 +36,7 @@ import { IViewportDatasource } from './interfaces/iViewportDatasource';
 import { IDatasource } from './interfaces/iDatasource';
 import { CellPosition } from './entities/cellPosition';
 import { IServerSideDatasource } from './interfaces/iServerSideDatasource';
-import { CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from './interfaces/exportParams';
+import { CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams, ProcessGroupHeaderForExportParams } from './interfaces/exportParams';
 import { AgEvent } from './events';
 import { Environment, SASS_PROPERTIES } from './environment';
 import { PropertyKeys } from './propertyKeys';
@@ -978,6 +978,10 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.copyHeadersToClipboard);
     }
 
+    public isCopyGroupHeadersToClipboard() {
+        return isTrue(this.gridOptions.copyGroupHeadersToClipboard);
+    }
+
     public isSuppressClipboardPaste() {
         return isTrue(this.gridOptions.suppressClipboardPaste);
     }
@@ -1090,7 +1094,7 @@ export class GridOptionsWrapper {
         return this.gridOptions.aggFuncs;
     }
 
-    public getSortingOrder(): (string | null)[] | undefined {
+    public getSortingOrder(): ('asc' | 'desc' | null)[] | undefined {
         return this.gridOptions.sortingOrder;
     }
 
@@ -1313,6 +1317,10 @@ export class GridOptionsWrapper {
 
     public getProcessHeaderForClipboardFunc(): ((params: ProcessHeaderForExportParams) => any) | undefined {
         return this.gridOptions.processHeaderForClipboard;
+    }
+
+    public getProcessGroupHeaderForClipboardFunc(): ((params: ProcessGroupHeaderForExportParams) => any) | undefined {
+        return this.gridOptions.processGroupHeaderForClipboard;
     }
 
     public getProcessCellFromClipboardFunc(): ((params: ProcessCellForExportParams) => any) | undefined {
@@ -1780,7 +1788,7 @@ export class GridOptionsWrapper {
 
         if (typeof this.gridOptions.getRowHeight === 'function') {
             if (allowEstimate) {
-                return { height: this.getDefaultRowHeight(), estimated: true };
+                return { height: defaultRowHeight, estimated: true };
             }
             const params: RowHeightParams = {
                 node: rowNode,

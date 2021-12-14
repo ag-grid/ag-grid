@@ -746,7 +746,6 @@
             }
         },
         "groupDisplayType": {
-            "description": "Specifies how the results of row grouping should be displayed. The options are: <ul><li>`'singleColumn'`: single group column automatically added by the grid.</li><li>`'multipleColumns'`: a group column per row group is added automatically.</li><li>`'groupRows'`: group rows are automatically added instead of group columns.</li><li>`'custom'`: informs the grid that group columns will be provided.</li></ul>",
             "more": {
                 "name": "Row Grouping - Display Types",
                 "url": "/grouping-display-types/"

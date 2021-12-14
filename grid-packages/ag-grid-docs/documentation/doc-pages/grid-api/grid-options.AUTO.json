@@ -47,6 +47,10 @@
     "description": "/** Set to `true` to also include headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
+  "copyGroupHeadersToClipboard": {
+    "description": "/** Set to `true` to also include group headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */",
+    "type": { "returnType": "boolean" }
+  },
   "clipboardDeliminator": {
     "description": "/** Specify the deliminator to use when copying to clipboard. */",
     "type": { "returnType": "string" }
@@ -584,7 +588,7 @@
     "type": { "returnType": "boolean" }
   },
   "groupDisplayType": {
-    "description": "/** Specifies how the results of row grouping should be displayed.\n * \n *   The options are:\n * \n *       `'singleColumn'`: single group column automatically added by the grid.\n *       `'multipleColumns'`: a group column per row group is added automatically.\n *       `'groupRows'`: group rows are automatically added instead of group columns.\n *       `'custom'`: informs the grid that group columns will be provided. */",
+    "description": "/** Specifies how the results of row grouping should be displayed.\n * \n *   The options are:\n * \n * - `'singleColumn'`: single group column automatically added by the grid.\n * - `'multipleColumns'`: a group column per row group is added automatically.\n * - `'groupRows'`: group rows are automatically added instead of group columns.\n * - `'custom'`: informs the grid that group columns will be provided. */",
     "type": { "returnType": "RowGroupingDisplayType" }
   },
   "groupDefaultExpanded": {
@@ -881,7 +885,7 @@
   },
   "sortingOrder": {
     "description": "/** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`. Default: `[null, 'asc', 'desc']` */",
-    "type": { "returnType": "(string | null)[]" }
+    "type": { "returnType": "('asc' | 'desc' | null)[]" }
   },
   "accentedSort": {
     "description": "/** Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower. Default: `false` */",
@@ -967,6 +971,13 @@
     "description": "/** Allows you to process header values for the clipboard. */",
     "type": {
       "arguments": { "params": "ProcessHeaderForExportParams" },
+      "returnType": "any"
+    }
+  },
+  "processGroupHeaderForClipboard": {
+    "description": "/** Allows you to process group header values for the clipboard. */",
+    "type": {
+      "arguments": { "params": "ProcessGroupHeaderForExportParams" },
       "returnType": "any"
     }
   },
@@ -1135,7 +1146,7 @@
     "type": { "arguments": { "node": "RowNode" }, "returnType": "string" }
   },
   "getRowNodeId": {
-    "description": "/** Allows you to set the ID for a particular row node based on the data. Useful for selection and server side sorting and filtering for paging and virtual pagination. */",
+    "description": "/** Allows you to set the ID for a particular row node based on the data. */",
     "type": { "returnType": "GetRowNodeIdFunc" }
   },
   "processRowPostCreate": {

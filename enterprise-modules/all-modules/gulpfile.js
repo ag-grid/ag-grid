@@ -10,9 +10,6 @@ const pkg = require('./package.json');
 
 const ts = require('gulp-typescript');
 
-const tsEs6Project = ts.createProject('tsconfig.es6.json');
-const tsEs5Project = ts.createProject('tsconfig.json');
-
 const bundleTemplate = '// <%= pkg.name %> v<%= pkg.version %>\n';
 
 const headerTemplate = ['/**',
@@ -30,18 +27,36 @@ const cleanDist = () => {
         .pipe(clean());
 };
 
-const buildEs6 = () => {
-    const tsResult = tsEs6Project.src()
-        .pipe(tsEs6Project());
+const buildEsmEs5 = () => {
+    const tsProject = ts.createProject('tsconfig.esm.es5.json');
+    const tsResult = tsProject.src()
+        .pipe(tsProject());
 
-    return tsResult.js.pipe(gulp.dest('dist/es6'));
+    return tsResult.js.pipe(gulp.dest('dist/esm/es5'));
 };
 
-const buildEs5 = () => {
-    const tsResult = tsEs5Project.src()
-        .pipe(tsEs5Project());
+const buildEsmEs6 = () => {
+    const tsProject = ts.createProject('tsconfig.esm.es6.json');
+    const tsResult = tsProject.src()
+        .pipe(tsProject());
 
-    return tsResult.js.pipe(gulp.dest('dist/es5'));
+    return tsResult.js.pipe(gulp.dest('dist/esm/es6'));
+};
+
+const buildCjsEs5 = () => {
+    const tsProject = ts.createProject('tsconfig.cjs.es5.json');
+    const tsResult = tsProject.src()
+        .pipe(tsProject());
+
+    return tsResult.js.pipe(gulp.dest('dist/cjs/es5'));
+};
+
+const buildCjsEs6 = () => {
+    const tsProject = ts.createProject('tsconfig.cjs.es6.json');
+    const tsResult = tsProject.src()
+        .pipe(tsProject());
+
+    return tsResult.js.pipe(gulp.dest('dist/cjs/es6'));
 };
 
 // Start of webpack related tasks
@@ -121,9 +136,9 @@ const copyGridCoreStyles = (done) => {
 };
 
 gulp.task('clean', cleanDist);
-gulp.task('buildEs5', buildEs5);
-gulp.task('buildEs6', buildEs6);
-gulp.task('build', parallel('buildEs5', 'buildEs6'));
+gulp.task('buildCjs', parallel(buildCjsEs5, buildCjsEs6));
+gulp.task('buildEsm', parallel(buildEsmEs5, buildEsmEs6));
+gulp.task('build', parallel('buildCjs', 'buildEsm'));
 
 // copy from grid-core tasks
 gulp.task('copy-grid-core-styles', copyGridCoreStyles);

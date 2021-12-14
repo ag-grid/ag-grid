@@ -374,12 +374,8 @@
         "ensureIndexVisible": {},
         "ensureNodeVisible": {},
         "ensureColumnVisible": {},
-        "getHorizontalPixelRange": {
-            "description": "Returns an object with two properties:<ul class='content'><li>`left`: The left pixel position of the current scroll in the grid</li><li>`right`: The right pixel position of the current scroll in the grid</li></ul>"
-        },
-        "getVerticalPixelRange": {
-            "description": "Returns an object with two properties:<ul class='content'><li>`top`: The top pixel position of the current scroll in the grid</li><li>`bottom`: The bottom pixel position of the current scroll in the grid</li></ul>"
-        }
+        "getHorizontalPixelRange": {},
+        "getVerticalPixelRange": {}
     },
     "infiniteScrolling": {
         "meta": {

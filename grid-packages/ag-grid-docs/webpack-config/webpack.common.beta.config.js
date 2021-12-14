@@ -9,13 +9,6 @@ module.exports = {
         react: 'react',
         'react-dom': 'react-dom'
     },
-    // as we're watch the ts files separately (or the FW examples, no need to report TS errors here too)
-    // plugins: [
-    //     new ForkTsCheckerWebpackPlugin({
-    //         eslint: true
-    //     }),
-    //     new ForkTsCheckerNotifierWebpackPlugin({title: 'TypeScript', excludeWarnings: false}),
-    // ],
     resolve: {
         // favour cjs over es6 (docs only rebuilds cjs...)
         mainFields: ["main", "module"],
@@ -42,17 +35,7 @@ module.exports = {
                 test: /\.js$/,
                 use: ["source-map-loader"],
                 enforce: "pre"
-            }/*,
-            {
-                test: /\.css$/,
-                loader: "style-loader!css-loader"
-            },
-            {
-                test: /\.(svg)$/,
-                use: [
-                    {loader: 'url-loader', options: {limit: 20000}}
-                ]
-            }*/
+            }
         ]
     },
     watchOptions: {

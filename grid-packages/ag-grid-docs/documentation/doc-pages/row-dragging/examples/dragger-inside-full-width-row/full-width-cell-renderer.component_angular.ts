@@ -1,10 +1,10 @@
-import { Component, ViewChild, ViewContainerRef } from "@angular/core";
+import { Component } from "@angular/core";
 
-import { IFilterParams } from "@ag-grid-community/all-modules";
-import { IFilterAngularComp } from "@ag-grid-community/angular";
+import { ICellRendererParams } from "@ag-grid-community/core";
+import { ICellRendererAngularComp } from "@ag-grid-community/angular";
 
 @Component({
-    selector: 'filter-cell',
+    selector: 'full-width-cell',
     template: `
         <div class="full-width-panel">
             <div class="full-width-flag">
@@ -71,17 +71,17 @@ import { IFilterAngularComp } from "@ag-grid-community/angular";
         `
     ]
 })
-export class FullWidthCellRenderer implements IFilterAngularComp {
-    private data: any;
-    private flag: string;
+export class FullWidthCellRenderer implements ICellRendererAngularComp {
+    public data: any;
+    public flag!: string;
 
-    agInit(params: IFilterParams): void {
+    agInit(params: ICellRendererParams): void {
         this.data = params.node.data;
         this.flag = `https://www.ag-grid.com/example-assets/large-flags/${this.data.code}.png`;
         params.registerRowDragger(params.eParentOfValue, undefined, params.data.name, true);
     }
 
-    mouseWheelListener(event) {
+    mouseWheelListener(event: Event) {
         event.stopPropagation();
     };
 

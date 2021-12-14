@@ -383,15 +383,15 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     /** Set to `true` to allow sorting on this column. Default: `false` */
     sortable?: boolean;
     /** If sorting by default, set it here. Set to `asc` or `desc`. */
-    sort?: string | null;
+    sort?: 'asc' | 'desc' | null;
     /** Same as `sort`, except only applied when creating a new column. Not applied when updating column definitions. */
-    initialSort?: string;
+    initialSort?: 'asc' | 'desc' | null;
     /** If sorting more than one column by default, specifies order in which the sorting should be applied. */
     sortIndex?: number | null;
     /** Same as `sortIndex`, except only applied when creating a new column. Not applied when updating column definitions. */
     initialSortIndex?: number;
     /**  Array defining the order in which sorting occurs (if sorting is enabled). An array with any of the following in any order `['asc','desc',null]` */
-    sortingOrder?: (string | null)[];
+    sortingOrder?: ('asc' | 'desc' | null)[];
     /** Comparator function for custom sorting. */
     comparator?: (valueA: any, valueB: any, nodeA: RowNode, nodeB: RowNode, isInverted: boolean) => number;
     /** Set to `true` if you want the unsorted icon to be shown when no sort is applied to this column. Default: `false` */

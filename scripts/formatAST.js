@@ -95,7 +95,7 @@ module.exports = {
             throw new Error(`Mismatched Typescript versions when using formatAST.js! Caller is using ${ts1.version} to parse the code while formatAST.js is using ${ts.version} to format it!`)
         }
 
-        if (ts.version !== '3.6.5') {
+        if (ts.version !== '3.7.7') {
             throw new Error(`formatAST.js is written for Typescript version 3.6.5! Caller is using ${ts1.version} to parse the code and formatAST.js is using ${ts.version} to format it! You must validate the outputs for the new version before updating this version.`)
         }
 

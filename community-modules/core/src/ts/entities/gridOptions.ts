@@ -11,7 +11,12 @@ import { ColDef, ColGroupDef, IAggFunc, SuppressKeyboardEventParams } from "./co
 import { IDatasource } from "../interfaces/iDatasource";
 import { CellPosition } from "./cellPosition";
 import { IServerSideDatasource } from "../interfaces/iServerSideDatasource";
-import { CsvExportParams, ProcessCellForExportParams, ProcessHeaderForExportParams } from "../interfaces/exportParams";
+import {
+    CsvExportParams,
+    ProcessCellForExportParams,
+    ProcessHeaderForExportParams,
+    ProcessGroupHeaderForExportParams
+} from "../interfaces/exportParams";
 import {
     AsyncTransactionsFlushed,
     BodyScrollEvent,
@@ -141,6 +146,8 @@ export interface GridOptions {
     // *** Clipboard *** //
     /** Set to `true` to also include headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */
     copyHeadersToClipboard?: boolean;
+    /** Set to `true` to also include group headers when copying to clipboard using `Ctrl + C` clipboard. Default: `false` */
+    copyGroupHeadersToClipboard?: boolean;
     /** Specify the deliminator to use when copying to clipboard. */
     clipboardDeliminator?: string;
     /** Set to `true` to only have the range selection, and not row selection, copied to clipboard. Default: `false` */
@@ -504,10 +511,10 @@ export interface GridOptions {
      *
      *  The options are:
      *
-     *      `'singleColumn'`: single group column automatically added by the grid.
-     *      `'multipleColumns'`: a group column per row group is added automatically.
-     *      `'groupRows'`: group rows are automatically added instead of group columns.
-     *      `'custom'`: informs the grid that group columns will be provided.
+     * - `'singleColumn'`: single group column automatically added by the grid.
+     * - `'multipleColumns'`: a group column per row group is added automatically.
+     * - `'groupRows'`: group rows are automatically added instead of group columns.
+     * - `'custom'`: informs the grid that group columns will be provided.
      */
     groupDisplayType?: RowGroupingDisplayType;
     /** If grouping, set to the number of levels to expand by default, e.g. `0` for none, `1` for first level only, etc. Set to `-1` to expand everything. Default: `0` */
@@ -699,7 +706,7 @@ export interface GridOptions {
 
     // *** Sorting *** //
     /** Array defining the order in which sorting occurs (if sorting is enabled). Values can be `'asc'`, `'desc'` or `null`. For example: `sortingOrder: ['asc', 'desc']`. Default: `[null, 'asc', 'desc']`  */
-    sortingOrder?: (string | null)[];
+    sortingOrder?: ('asc' | 'desc' | null)[];
     /** Set to `true` to specify that the sort should take accented characters into account. If this feature is turned on the sort will be slower. Default: `false` */
     accentedSort?: boolean;
     /** Set to `true` to show the 'no sort' icon. Default: `false` */
@@ -753,6 +760,8 @@ export interface GridOptions {
     processCellForClipboard?(params: ProcessCellForExportParams): any;
     /** Allows you to process header values for the clipboard.  */
     processHeaderForClipboard?(params: ProcessHeaderForExportParams): any;
+    /** Allows you to process group header values for the clipboard.  */
+    processGroupHeaderForClipboard?(params: ProcessGroupHeaderForExportParams): any;
     /** Allows you to process cells from the clipboard. Handy if for example you have number fields, and want to block non-numbers from getting into the grid. */
     processCellFromClipboard?(params: ProcessCellForExportParams): any;
     /** Allows you to get the data that would otherwise go to the clipboard. To be used when you want to control the 'copy to clipboard' operation yourself. */
@@ -832,7 +841,7 @@ export interface GridOptions {
      * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.
      */
     getBusinessKeyForNode?(node: RowNode): string;
-    /** Allows you to set the ID for a particular row node based on the data. Useful for selection and server side sorting and filtering for paging and virtual pagination. */
+    /** Allows you to set the ID for a particular row node based on the data. */
     getRowNodeId?: GetRowNodeIdFunc;
     /** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */
     processRowPostCreate?(params: ProcessRowParams): void;

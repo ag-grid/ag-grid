@@ -1,4 +1,3 @@
-
 import { Autowired, Bean, PostConstruct } from "../context/context";
 import { BeanStub } from "../context/beanStub";
 import { CtrlsService } from "../ctrlsService";
@@ -13,6 +12,7 @@ interface TaskList {
     list: TaskItem[];
     sorted: boolean;
 }
+
 @Bean('animationFrameService')
 export class AnimationFrameService extends BeanStub {
 
@@ -21,8 +21,8 @@ export class AnimationFrameService extends BeanStub {
     // p1 and p2 are create tasks are to do with row and cell creation.
     // for them we want to execute according to row order, so we use
     // TaskItem so we know what index the item is for.
-    private createTasksP1: TaskList = { list: [], sorted: false }; // eg drawing back-ground of rows
-    private createTasksP2: TaskList = { list: [], sorted: false }; // eg cell renderers, adding hover functionality
+    private createTasksP1: TaskList = {list: [], sorted: false}; // eg drawing back-ground of rows
+    private createTasksP2: TaskList = {list: [], sorted: false}; // eg cell renderers, adding hover functionality
 
     // destroy tasks are to do with row removal. they are done after row creation as the user will need to see new
     // rows first (as blank is scrolled into view), when we remove the old rows (no longer in view) is not as
@@ -65,7 +65,7 @@ export class AnimationFrameService extends BeanStub {
 
     public createTask(task: () => void, index: number, list: 'createTasksP1' | 'createTasksP2') {
         this.verifyAnimationFrameOn(list);
-        const taskItem: TaskItem = { task, index, createOrder: ++this.taskCount };
+        const taskItem: TaskItem = {task, index, createOrder: ++this.taskCount};
         this.addTaskToList(this[list], taskItem);
         this.schedule();
     }
@@ -80,7 +80,9 @@ export class AnimationFrameService extends BeanStub {
     }
 
     private sortTaskList(taskList: TaskList) {
-        if (taskList.sorted) { return; }
+        if (taskList.sorted) {
+            return;
+        }
 
         const sortDirection = this.scrollGoingDown ? 1 : -1;
 
@@ -153,12 +155,16 @@ export class AnimationFrameService extends BeanStub {
     }
 
     public flushAllFrames(): void {
-        if (!this.useAnimationFrame) { return; }
+        if (!this.useAnimationFrame) {
+            return;
+        }
         this.executeFrame(-1);
     }
 
     public schedule(): void {
-        if (!this.useAnimationFrame) { return; }
+        if (!this.useAnimationFrame) {
+            return;
+        }
         if (!this.ticking) {
             this.ticking = true;
             this.requestFrame();
@@ -170,14 +176,14 @@ export class AnimationFrameService extends BeanStub {
         // it's missing, then we polyfill it with setTimeout()
         const callback = this.executeFrame.bind(this, 60);
         const eDocument = this.gridOptionsWrapper.getDocument();
-        const win = eDocument.defaultView;
+        const windowAsAny: any = eDocument.defaultView;
 
-        if (win!.requestAnimationFrame) {
-            win!.requestAnimationFrame(callback);
-        } else if (win!.webkitRequestAnimationFrame) {
-            win!.webkitRequestAnimationFrame(callback);
+        if (windowAsAny.requestAnimationFrame) {
+            windowAsAny.requestAnimationFrame(callback);
+        } else if (windowAsAny.webkitRequestAnimationFrame) {
+            windowAsAny.webkitRequestAnimationFrame(callback);
         } else {
-            win!.setTimeout(callback, 0);
+            windowAsAny.setTimeout(callback, 0);
         }
     }
 

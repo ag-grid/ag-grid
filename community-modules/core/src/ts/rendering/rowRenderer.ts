@@ -152,6 +152,10 @@ export class RowRenderer extends BeanStub {
             this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onColumnHover());
         });
 
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, () => {
+            this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onDisplayedColumnsChanged());
+        });
+
         // only for printLayout - because we are rendering all the cells in the same row, regardless of pinned state,
         // then changing the width of the containers will impact left position. eg the center cols all have their
         // left position adjusted by the width of the left pinned column, so if the pinned left column width changes,

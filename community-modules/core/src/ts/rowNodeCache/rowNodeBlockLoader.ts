@@ -85,7 +85,7 @@ export class RowNodeBlockLoader extends BeanStub {
         });
 
         if (blockToLoad) {
-            blockToLoad!.load();
+            (blockToLoad as RowNodeBlock).load();
             this.activeBlockLoadsCount++;
             this.printCacheStatus();
         }

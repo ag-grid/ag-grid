@@ -34,7 +34,6 @@ export class SetValueModel implements IEventEmitter {
     private readonly doesRowPassOtherFilters: (node: RowNode) => boolean;
     private readonly suppressSorting: boolean;
     private readonly comparator: (a: any, b: any) => number;
-    private readonly caseSensitive: boolean;
 
     private valuesType: SetFilterModelValuesType;
     private miniFilterText: string | null = null;
@@ -86,7 +85,6 @@ export class SetValueModel implements IEventEmitter {
         this.doesRowPassOtherFilters = doesRowPassOtherFilter;
         this.suppressSorting = suppressSorting || false;
         this.comparator = comparator || colDef.comparator as (a: any, b: any) => number || _.defaultComparator;
-        this.caseSensitive = caseSensitive || false;
 
         if (rowModel.getType() === Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
             this.clientSideValuesExtractor = new ClientSideValuesExtractor(
@@ -409,7 +407,8 @@ export class SetValueModel implements IEventEmitter {
         // Honour case-sensitivity setting for matching purposes here, preserving original casing
         // in the selectedValues output.
         const uniqueValues: {[key: string]: string | null} = {};
-        (values || []).forEach(value => {
+        (values || []).forEach(rawValue => {
+            const value = _.makeNull(rawValue);
             const key = this.uniqueKey(value);
             if (uniqueValues[key] === undefined) {
                 uniqueValues[key] = value;

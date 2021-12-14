@@ -1,9 +1,13 @@
-import {Component} from '@angular/core';
-import {RowNode} from '@ag-grid-community/all-modules';
-import {ICellRendererAngularComp} from "@ag-grid-community/angular";
+import { Component } from '@angular/core';
+import { ICellRendererAngularComp } from "@ag-grid-community/angular";
+import { GroupCellRendererParams, RowNode } from '@ag-grid-community/core';
+
+interface GroupRowParams extends GroupCellRendererParams {
+    flagCodes: Record<string, string>;
+}
 
 @Component({
-    selector: 'floating-cell',
+    selector: 'group-row-cell',
     template: `
         <div class="row">
             <img *ngIf="flagCode" class="flag" border="0" width="20" height="15" [src]="flagCodeImg" />
@@ -48,13 +52,13 @@ import {ICellRendererAngularComp} from "@ag-grid-community/angular";
 })
 export class GroupRowInnerRenderer implements ICellRendererAngularComp {
 
-    private flagCodeImg: string;
-    private flagCode: any;
-    private node: RowNode;
+    public flagCodeImg!: string;
+    public flagCode!: any;
+    public node!: RowNode;
 
-    agInit(params: any): void {
+    agInit(params: GroupRowParams): void {
         this.node = params.node;
-        this.flagCode = params.flagCodes[params.node.key];
+        this.flagCode = params.flagCodes[params.node.key || ''];
         this.flagCodeImg = `https://flags.fmcdn.net/data/flags/mini/${this.flagCode}.png`;
     }
 

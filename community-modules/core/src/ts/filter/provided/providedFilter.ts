@@ -1,4 +1,4 @@
-import { IDoesFilterPassParams, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
+import { IDoesFilterPassParams, IFilter, IFilterComp, IFilterParams } from '../../interfaces/iFilter';
 import { Autowired, PostConstruct } from '../../context/context';
 import { IRowModel } from '../../interfaces/iRowModel';
 import { IAfterGuiAttachedParams } from '../../interfaces/iAfterGuiAttachedParams';
@@ -16,12 +16,57 @@ import { ValueService } from '../../valueService/valueService';
 type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
 
 export interface IProvidedFilterParams extends IFilterParams {
+    /**
+     * Specifies the buttons to be shown in the filter, in the order they should be displayed in.
+     * The options are:
+     * <ul>
+     * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user
+     *     hits the Apply button.</li>
+     * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing
+     *      any active filters on the column.</li>
+     * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters
+     *     on that column.</li>
+     * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter
+     *     in the UI, restoring the applied model.</li>
+     * </ul>
+     */
     buttons?: FilterButtonType[];
+    /**
+     * If the Apply button is present, the filter popup will be closed immediately when the Apply
+     * or Reset button is clicked if this is set to `true`.
+     * 
+     * Default: `false`
+     */
     closeOnApply?: boolean;
+    /**
+     * By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by
+     * 500ms. This is because these filters have text field inputs, so time is given to the user to
+     * type items in before the input is formatted and the filtering applied. The
+     * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To
+     * override these defaults, set `debounceMs` to the number of milliseconds to debounce by.
+     */
     debounceMs?: number;
-    /** Defaults to false. If true, all UI inputs related to this filter are for display only, and
-     * the filter can only be affected by API calls. */
+    /**
+     * If set to `true`, disables controls in the filter to mutate its state. Normally this would
+     * be used in conjunction with the Filter API.
+     * 
+     * Default: `false`
+     */
     readOnly?: boolean;
+}
+
+/** Interface contract for the public aspects of the ProvidedFilter implementation(s). */
+export interface IProvidedFilter extends IFilter {
+    /**
+     * Applies the model shown in the UI (so that `getModel()` will now return what was in the UI
+     * when `applyModel()` was called).
+     */
+    applyModel(): boolean;
+    /**
+     * Returns the filter model from the UI. If changes have been made to the UI but not yet
+     * applied, this model will reflect those changes.
+     */
+    getModelFromUi(): any;
 }
 
 /**
@@ -32,7 +77,7 @@ export interface IProvidedFilterParams extends IFilterParams {
  * @param M type of filter-model managed by the concrete sub-class that extends this type
  * @param V type of value managed by the concrete sub-class that extends this type
  */
-export abstract class ProvidedFilter<M, V> extends Component implements IFilterComp {
+export abstract class ProvidedFilter<M, V> extends Component implements IProvidedFilter, IFilterComp {
     // each level in the hierarchy will save params with the appropriate type for that level.
     private providedFilterParams: IProvidedFilterParams;
 

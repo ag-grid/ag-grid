@@ -15,7 +15,7 @@ const options = commandLineArgs(optionDefinitions);
 // if supplied the bundlePrefix argument will take priority
 const sourceDirectory = process.cwd();
 let bundlePrefix = sourceDirectory.split(path.sep).pop();
-if(options.bundlePrefix) {
+if (options.bundlePrefix) {
     bundlePrefix = options.bundlePrefix;
 }
 

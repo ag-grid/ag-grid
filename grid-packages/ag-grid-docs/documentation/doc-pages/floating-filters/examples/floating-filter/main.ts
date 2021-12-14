@@ -1,4 +1,4 @@
-import { ColDef, GridOptions } from '@ag-grid-community/core'
+import { ColDef, GridOptions, ISetFilter } from '@ag-grid-community/core'
 
 declare function getPersonFilter(): any;
 
@@ -101,7 +101,7 @@ function destroyCountryFilter() {
 }
 
 function endingStan() {
-  var countryFilterComponent = gridOptions.api!.getFilterInstance('country')! as any
+  var countryFilterComponent = gridOptions.api!.getFilterInstance('country')! as ISetFilter;
   var countriesEndingWithStan = countryFilterComponent
     .getValues()
     .filter(function (value: any) {

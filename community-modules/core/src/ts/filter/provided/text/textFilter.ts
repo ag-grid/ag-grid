@@ -28,7 +28,7 @@ export interface TextFilterModel extends ISimpleFilterModel {
     }
 
 export interface TextMatcherParams extends BaseColDefParams {
-    filter: string | null | undefined;
+    filterOption: string | null | undefined;
     value: any;
     filterText: string | null;
     textFormatter?: TextFormatter;
@@ -81,10 +81,10 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
 
     static DEFAULT_LOWERCASE_FORMATTER: TextFormatter = (from: string) => from == null ? null : from.toString().toLowerCase();
 
-    static DEFAULT_MATCHER: TextMatcher = ({filter, value, filterText}) => {
+    static DEFAULT_MATCHER: TextMatcher = ({filterOption, value, filterText}) => {
         if (filterText == null) { return false; }
 
-        switch (filter) {
+        switch (filterOption) {
             case TextFilter.CONTAINS:
                 return value.indexOf(filterText) >= 0;
             case TextFilter.NOT_CONTAINS:
@@ -142,7 +142,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
         const legacyComparator = (this.textFilterParams as any).textCustomComparator;
         if (legacyComparator) {
             _.doOnce(() => console.warn('AG Grid - textCustomComparator is deprecated, use textMatcher instead.'), 'textCustomComparator.deprecated');
-            return ({ filter, value, filterText }) => legacyComparator(filter, value, filterText);
+            return ({ filterOption, value, filterText }) => legacyComparator(filterOption, value, filterText);
         }
         return this.textFilterParams.textMatcher || TextFilter.DEFAULT_MATCHER
     }
@@ -236,7 +236,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
             context,
             node: params.node,
             data: params.data,
-            filter: filterModel.type,
+            filterOption: filterModel.type,
             value: cellValueFormatted,
             textFormatter,
         };

@@ -126,8 +126,15 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
         });
     }
 
-    protected getDefaultExportParams(): ExcelExportParams | undefined {
-        return this.gridOptionsWrapper.getDefaultExportParams('excel');
+    protected getMergedParams(params?: ExcelExportParams): ExcelExportParams {
+        const baseParams = this.gridOptionsWrapper.getDefaultExportParams('excel');
+        return Object.assign({}, baseParams, params);
+    }
+
+    protected getData(params: ExcelExportParams): string {
+        this.setExportMode(params.exportMode || 'xlsx');
+
+        return super.getData(params);
     }
 
     public export(userParams?: ExcelExportParams): string {
@@ -136,7 +143,8 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
             return '';
         }
 
-        const { mergedParams, data } = this.getMergedParamsAndData(userParams);
+        const mergedParams = this.getMergedParams(userParams);
+        const data = this.getData(mergedParams);
 
         const packageFile = this.packageFile({
             data: [data],
@@ -152,19 +160,12 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
     }
 
     public exportDataAsExcel(params?: ExcelExportParams): string {
-        let exportMode = 'xlsx';
-
-        if (params && params.exportMode) {
-            exportMode = params.exportMode;
-        }
-
-        this.setExportMode(exportMode);
-
         return this.export(params);
     }
 
     public getDataAsExcel(params?: ExcelExportParams): Blob | string | undefined {
-        const { mergedParams, data } =  this.getMergedParamsAndData(params);
+        const mergedParams = this.getMergedParams(params);
+        const data = this.getData(mergedParams);
 
         if (params && params.exportMode === 'xml') { return data; }
 
@@ -186,7 +187,10 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
     }
 
     public getSheetDataForExcel(params: ExcelExportParams): string {
-        return this.getMergedParamsAndData(params).data;
+        const mergedParams = this.getMergedParams(params);
+        const data = this.getData(mergedParams);
+
+        return data;
     }
 
     public getMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams): Blob | undefined {

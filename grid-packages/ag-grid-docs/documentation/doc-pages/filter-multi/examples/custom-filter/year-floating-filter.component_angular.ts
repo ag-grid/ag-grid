@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { IFloatingFilterComp } from "@ag-grid-community/angular";
+import { IFloatingFilterParams } from '@ag-grid-community/core';
 
 @Component({
     selector: 'year-floating-filter',
@@ -14,21 +15,21 @@ import { IFloatingFilterComp } from "@ag-grid-community/angular";
         </div>`
 })
 export class YearFloatingFilter implements IFloatingFilterComp {
-    params: any;
-    isActive: boolean;
+    params!: IFloatingFilterParams;
+    isActive!: boolean;
 
     // called on init
-    agInit(params: any): void {
+    agInit(params: IFloatingFilterParams): void {
         this.params = params;
         this.isActive = false;
     }
 
-    toggleFilter(isFilterActive): void {
+    toggleFilter(isFilterActive: boolean): void {
         this.isActive = isFilterActive;
         this.params.parentFilterInstance(instance => instance.onFloatingFilterChanged(isFilterActive));
     }
 
-    onParentModelChanged(model): void {
+    onParentModelChanged(model: any): void {
         this.isActive = !!model;
     }
 }

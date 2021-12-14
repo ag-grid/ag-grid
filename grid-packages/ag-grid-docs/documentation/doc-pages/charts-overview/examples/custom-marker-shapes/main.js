@@ -151,9 +151,6 @@ var options = {
 var chart = agCharts.AgChart.create(options);
 
 function createMarker() {
-    // Our examples use vanilla ES5, so we have to use the ES5
-    // version of the custom marker class here (please see the
-    // ES6 version in the comment at the bottom):
     function Heart() {
         agCharts.Marker.call(this);
     }

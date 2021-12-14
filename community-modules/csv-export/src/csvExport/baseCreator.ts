@@ -10,7 +10,8 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
     }
 
     public abstract export(userParams?: P): string;
-    protected abstract getDefaultExportParams(): P | undefined;
+
+    protected abstract getMergedParams(params?: P): P;
 
     protected getFileName(fileName?: string): string {
         const extension = this.getDefaultFileExtension();
@@ -22,20 +23,11 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
         return fileName.indexOf('.') === -1 ? `${fileName}.${extension}` : fileName;
     }
 
-    protected getMergedParamsAndData(userParams?: P): { mergedParams: P, data: string } {
-        const mergedParams = this.mergeDefaultParams(userParams);
-        const data = this.beans.gridSerializer.serialize(this.createSerializingSession(mergedParams), mergedParams);
+    protected getData(params: P): string {
+        const serializingSession = this.createSerializingSession(params);
+        const data = this.beans.gridSerializer.serialize(serializingSession, params);
 
-        return { mergedParams, data };
-    }
-
-    private mergeDefaultParams(userParams?: P): P {
-        const baseParams: P | undefined = this.getDefaultExportParams();
-        const params: P = {} as P;
-        Object.assign(params, baseParams);
-        Object.assign(params, userParams);
-
-        return params;
+        return data;
     }
 
     public abstract createSerializingSession(params?: P): S;

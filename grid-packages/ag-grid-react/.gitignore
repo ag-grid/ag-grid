@@ -8,3 +8,5 @@ cypress/integration/ag-grid-react.min.js
 cypress/integration/ag-grid-community.min.js
 .nyc_output
 coverage
+
+package-lock.json

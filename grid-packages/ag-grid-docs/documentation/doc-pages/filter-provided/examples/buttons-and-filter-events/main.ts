@@ -1,4 +1,4 @@
-import { ColDef, FilterChangedEvent, FilterModifiedEvent, FilterOpenedEvent, GridOptions } from '@ag-grid-community/core'
+import { ColDef, FilterChangedEvent, FilterModifiedEvent, FilterOpenedEvent, GridOptions, IProvidedFilter } from '@ag-grid-community/core'
 
 const columnDefs: ColDef[] = [
   {
@@ -66,7 +66,7 @@ function onFilterModified(e: FilterModifiedEvent) {
   console.log('filterInstance.getModel() =>', e.filterInstance.getModel())
   console.log(
     'filterInstance.getModelFromUi() =>',
-    (e.filterInstance as any).getModelFromUi()
+    (e.filterInstance as unknown as IProvidedFilter).getModelFromUi()
   )
 }
 

@@ -9,6 +9,8 @@ import {
     CellRange,
     ChangedPath,
     IClientSideRowModel,
+    IClipboardCopyParams,
+    IClipboardCopyRowsParams,
     Column,
     ColumnApi,
     ColumnModel,
@@ -27,7 +29,6 @@ import {
     PasteStartEvent,
     PostConstruct,
     ProcessCellForExportParams,
-    ProcessHeaderForExportParams,
     RowNode,
     RowPosition,
     RowPositionUtils,
@@ -38,7 +39,7 @@ import {
     ICsvCreator,
     IRangeService,
     Optional,
-    CtrlsService
+    CtrlsService,
 } from "@ag-grid-community/core";
 
 interface RowCallback {
@@ -48,6 +49,9 @@ interface RowCallback {
 interface ColumnCallback {
     (columns: Column[]): void;
 }
+
+type CellsToFlashType = { [key: string]: boolean }
+type DataForCellRangesType = { data: string, cellsToFlash: CellsToFlashType }
 
 @Bean('clipboardService')
 export class ClipboardService extends BeanStub implements IClipboardService {
@@ -483,7 +487,8 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         }
     }
 
-    public copyToClipboard(includeHeaders?: boolean): void {
+    public copyToClipboard(params: IClipboardCopyParams = {}): void {
+        let { includeHeaders, includeGroupHeaders } = params;
         this.logger.log(`copyToClipboard: includeHeaders = ${includeHeaders}`);
 
         // don't override 'includeHeaders' if it has been explicitly set to 'false'
@@ -491,25 +496,31 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             includeHeaders = this.gridOptionsWrapper.isCopyHeadersToClipboard();
         }
 
+        if (includeGroupHeaders == null) {
+            includeGroupHeaders = this.gridOptionsWrapper.isCopyGroupHeadersToClipboard();
+        }
+
+        const copyParams = { includeHeaders, includeGroupHeaders };
+
         const selectedRowsToCopy = !this.selectionService.isEmpty()
             && !this.gridOptionsWrapper.isSuppressCopyRowsToClipboard();
 
         // default is copy range if exists, otherwise rows
         if (this.rangeService && this.rangeService.isMoreThanOneCell()) {
-            this.copySelectedRangeToClipboard(includeHeaders);
+            this.copySelectedRangeToClipboard(copyParams);
         } else if (selectedRowsToCopy) {
             // otherwise copy selected rows if they exist
-            this.copySelectedRowsToClipboard(includeHeaders);
+            this.copySelectedRowsToClipboard(copyParams);
         } else if (this.focusService.isAnyCellFocused()) {
             // if there is a focused cell, copy this
-            this.copyFocusedCellToClipboard(includeHeaders);
+            this.copyFocusedCellToClipboard(copyParams);
         } else {
             // lastly if no focused cell, try range again. this can happen
             // if use has cellSelection turned off (so no focused cell)
             // but has a cell clicked, so there exists a cell range
             // of exactly one cell (hence the first 'if' above didn't
             // get executed).
-            this.copySelectedRangeToClipboard(includeHeaders);
+            this.copySelectedRangeToClipboard(copyParams);
         }
     }
 
@@ -550,85 +561,144 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         }
     }
 
-    public copySelectedRangeToClipboard(includeHeaders = false): void {
+    public copySelectedRangeToClipboard(params: IClipboardCopyParams = {}): void {
         if (!this.rangeService || this.rangeService.isEmpty()) { return; }
 
-        const deliminator = this.gridOptionsWrapper.getClipboardDeliminator();
+        const allRangesMerge = this.rangeService.areAllRangesAbleToMerge();
+        const { data, cellsToFlash } = allRangesMerge ? this.buildDataFromMergedRanges(params) : this.buildDataFromRanges(params);
 
-        let data = '';
-        const cellsToFlash = {} as any;
-
-        // adds columns to the data
-        const columnCallback = (columns: Column[]) => {
-            if (!includeHeaders) { return; }
-
-            const processHeaderForClipboardFunc = this.gridOptionsWrapper.getProcessHeaderForClipboardFunc();
-            const columnNames = columns.map(column => {
-                const name = this.columnModel.getDisplayNameForColumn(column, 'clipboard', true);
-                return this.processHeader(column, name, processHeaderForClipboardFunc) || '';
-            });
-
-            data += columnNames.join(deliminator) + '\r\n';
-        };
-
-        // adds cell values to the data
-        const rowCallback: RowCallback = (currentRow: RowPosition, rowNode: RowNode, columns: Column[], _2: number, isLastRow?: boolean) => {
-            const processCellForClipboardFunc = this.gridOptionsWrapper.getProcessCellForClipboardFunc();
-
-            columns.forEach((column, index) => {
-                const value = this.valueService.getValue(column, rowNode);
-                const processedValue = this.processCell(rowNode, column, value, Constants.EXPORT_TYPE_CLIPBOARD, processCellForClipboardFunc);
-
-                if (index != 0) {
-                    data += deliminator;
-                }
-
-                if (_.exists(processedValue)) {
-                    data += processedValue;
-                }
-
-                const cellId = this.cellPositionUtils.createIdFromValues(currentRow.rowIndex, column, currentRow.rowPinned);
-                cellsToFlash[cellId] = true;
-            });
-
-            if (!isLastRow) {
-                data += '\r\n';
-            }
-        };
-
-        this.iterateActiveRanges(false, rowCallback, columnCallback);
         this.copyDataToClipboard(data);
         this.dispatchFlashCells(cellsToFlash);
     }
 
-    private copyFocusedCellToClipboard(includeHeaders = false): void {
+    private buildDataFromMergedRanges(params: IClipboardCopyParams): DataForCellRangesType {
+        const columnsSet: Set<Column> = new Set();
+        const ranges = this.rangeService.getCellRanges();
+        const allRowPositions: RowPosition[] = [];
+        const allCellsToFlash: CellsToFlashType = {};
+
+        ranges.forEach(range => {
+            range.columns.forEach(col => columnsSet.add(col));
+            const { rowPositions, cellsToFlash } = this.getRangeRowPositionsAndCellsToFlash(range);
+            allRowPositions.push(...rowPositions);
+            Object.assign(allCellsToFlash, cellsToFlash);
+        });
+
+        const allColumns = this.columnModel.getAllDisplayedColumns();
+        const exportedColumns = Array.from(columnsSet);
+
+        exportedColumns.sort((a, b) => {
+            const posA = allColumns.indexOf(a);
+            const posB = allColumns.indexOf(b);
+
+            return posA - posB;
+        });
+
+        const data = this.buildExportParams({
+            columns: exportedColumns,
+            rowPositions: allRowPositions,
+            includeHeaders: params.includeHeaders,
+            includeGroupHeaders: params.includeGroupHeaders,
+        });
+
+        return { data, cellsToFlash: allCellsToFlash };
+    }
+
+    private buildDataFromRanges(params: IClipboardCopyParams): DataForCellRangesType {
+        const ranges = this.rangeService.getCellRanges();
+        const data: string [] = [];
+        const allCellsToFlash: CellsToFlashType = {};
+
+        ranges.forEach(range => {
+            const { rowPositions, cellsToFlash } = this.getRangeRowPositionsAndCellsToFlash(range);
+            Object.assign(allCellsToFlash, cellsToFlash);
+            data.push(this.buildExportParams({
+                columns: range.columns,
+                rowPositions: rowPositions,
+                includeHeaders: params.includeHeaders,
+                includeGroupHeaders: params.includeGroupHeaders,
+            }));
+        });
+
+        return { data: data.join('\n'), cellsToFlash: allCellsToFlash };
+    }
+
+    private getRangeRowPositionsAndCellsToFlash(range: CellRange): { rowPositions: RowPosition[], cellsToFlash: CellsToFlashType } {
+        const rowPositions: RowPosition[] = [];
+        const cellsToFlash: CellsToFlashType = {};
+        const startRow = this.rangeService.getRangeStartRow(range);
+        const lastRow = this.rangeService.getRangeEndRow(range);
+
+        let node: RowPosition | null = startRow;
+
+        while (node) {
+            rowPositions.push(node);
+            range.columns.forEach(column => {
+                const cellId = this.cellPositionUtils.createIdFromValues(node!.rowIndex, column, node!.rowPinned);
+                cellsToFlash[cellId] = true;
+            });
+            if (this.rowPositionUtils.sameRow(node, lastRow)) { break; }
+            node = this.cellNavigationService.getRowBelow(node);
+        }
+
+        return { rowPositions, cellsToFlash }
+    }
+
+    private copyFocusedCellToClipboard(params: IClipboardCopyParams = {}): void {
         const focusedCell = this.focusService.getFocusedCell();
 
         if (focusedCell == null) { return; }
 
         const cellId = this.cellPositionUtils.createId(focusedCell);
         const currentRow: RowPosition = { rowPinned: focusedCell.rowPinned, rowIndex: focusedCell.rowIndex };
-
-        const rowNode = this.rowPositionUtils.getRowNode(currentRow);
         const column = focusedCell.column;
-        const value = this.valueService.getValue(column, rowNode);
 
-        let processedValue = this.processCell(
-            rowNode, column, value, Constants.EXPORT_TYPE_CLIPBOARD, this.gridOptionsWrapper.getProcessCellForClipboardFunc());
-
-        processedValue = _.missing(processedValue) ? '' : processedValue.toString();
-
-        let data: string;
-
-        if (includeHeaders) {
-            const headerValue = this.columnModel.getDisplayNameForColumn(column, 'clipboard', true);
-            data = this.processHeader(column, headerValue, this.gridOptionsWrapper.getProcessHeaderForClipboardFunc()) + '\r\n' + processedValue;
-        } else {
-            data = processedValue;
-        }
+        const data = this.buildExportParams({
+            columns: [column],
+            rowPositions: [currentRow],
+            includeHeaders: params.includeHeaders,
+            includeGroupHeaders: params.includeGroupHeaders
+        });
 
         this.copyDataToClipboard(data);
         this.dispatchFlashCells({ [cellId]: true });
+    }
+
+    public copySelectedRowsToClipboard(params: IClipboardCopyRowsParams = {}): void {
+        const { columnKeys, includeHeaders, includeGroupHeaders } = params;
+
+        const data = this.buildExportParams({
+            columns: columnKeys,
+            includeHeaders,
+            includeGroupHeaders
+
+        });
+
+        this.copyDataToClipboard(data);
+    }
+
+    private buildExportParams(params: {
+        columns?: (string | Column)[],
+        rowPositions?: RowPosition[]
+        includeHeaders?: boolean,
+        includeGroupHeaders?: boolean
+    }): string {
+        const { columns, rowPositions, includeHeaders = false, includeGroupHeaders = false } = params; 
+
+        const exportParams: CsvExportParams = {
+            columnKeys: columns,
+            rowNodes: rowPositions,
+            skipColumnHeaders: !includeHeaders,
+            skipColumnGroupHeaders: !includeGroupHeaders,
+            suppressQuotes: true,
+            columnSeparator: this.gridOptionsWrapper.getClipboardDeliminator(),
+            onlySelected: !rowPositions,
+            processCellCallback: this.gridOptionsWrapper.getProcessCellForClipboardFunc(),
+            processHeaderCallback: this.gridOptionsWrapper.getProcessHeaderForClipboardFunc(),
+            processGroupHeaderCallback: this.gridOptionsWrapper.getProcessGroupHeaderForClipboardFunc()
+        };
+
+        return this.csvCreator.getDataAsCsv(exportParams);
     }
 
     private dispatchFlashCells(cellsToFlash: {}): void {
@@ -665,37 +735,6 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         }
 
         return value;
-    }
-
-    private processHeader<T>(column: Column, value: T, func?: ((params: ProcessHeaderForExportParams) => T)): T {
-        if (func) {
-            const params: ProcessHeaderForExportParams = {
-                column,
-                api: this.gridOptionsWrapper.getApi()!,
-                columnApi: this.gridOptionsWrapper.getColumnApi()!,
-                context: this.gridOptionsWrapper.getContext()
-            };
-
-            return func(params);
-        }
-
-        return value;
-    }
-
-    public copySelectedRowsToClipboard(includeHeaders = false, columnKeys?: (string | Column)[]): void {
-        const params: CsvExportParams = {
-            columnKeys: columnKeys,
-            skipColumnHeaders: !includeHeaders,
-            suppressQuotes: true,
-            columnSeparator: this.gridOptionsWrapper.getClipboardDeliminator(),
-            onlySelected: true,
-            processCellCallback: this.gridOptionsWrapper.getProcessCellForClipboardFunc(),
-            processHeaderCallback: this.gridOptionsWrapper.getProcessHeaderForClipboardFunc()
-        };
-
-        const data = this.csvCreator.getDataAsCsv(params);
-
-        this.copyDataToClipboard(data);
     }
 
     private copyDataToClipboard(data: string): void {

@@ -1,4 +1,4 @@
-import { ColDef, GridOptions } from '@ag-grid-community/core'
+import { ColDef, ColumnState, GridOptions } from '@ag-grid-community/core'
 
 const columnDefs: ColDef[] = [
   { field: 'athlete' },
@@ -21,7 +21,7 @@ const gridOptions: GridOptions = {
   },
   multiSortKey: 'ctrl',
   onGridReady: function (params) {
-    var defaultSortModel = [
+    var defaultSortModel: ColumnState[] = [
       { colId: 'country', sort: 'asc', sortIndex: 0 },
       { colId: 'athlete', sort: 'asc', sortIndex: 1 },
     ]

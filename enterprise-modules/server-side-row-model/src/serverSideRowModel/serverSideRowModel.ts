@@ -14,13 +14,10 @@ import {
     IServerSideDatasource,
     IServerSideRowModel,
     IServerSideStore,
-    Logger,
-    LoggerFactory,
     ModelUpdatedEvent,
     NumberSequence,
     PostConstruct,
     PreDestroy,
-    Qualifier,
     RowBounds,
     RowDataChangedEvent,
     RowNode,
@@ -29,7 +26,8 @@ import {
     StoreRefreshAfterParams,
     RefreshStoreParams,
     ServerSideStoreState,
-    Beans
+    Beans,
+    SortModelItem
 } from "@ag-grid-community/core";
 
 import { NodeManager } from "./nodeManager";
@@ -37,7 +35,7 @@ import { SortListener } from "./listeners/sortListener";
 import { StoreFactory } from "./stores/storeFactory";
 
 export interface SSRMParams {
-    sortModel: any;
+    sortModel: SortModelItem[];
     filterModel: any;
     lastAccessedSequence: NumberSequence;
     dynamicRowHeight: boolean;
@@ -114,6 +112,10 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
             const message = `AG Grid: defaultGroupOrderComparator cannot be used with Server Side Row Model. If using Full Store, then provide the rows to the grid in the desired sort order. If using Partial Store, then sorting is done on the server side, nothing to do with the client.`;
             _.doOnce(() => console.warn(message), 'SSRM.DefaultGroupOrderComparator');
         }
+        if (this.gridOptionsWrapper.isRowSelection() && this.gridOptionsWrapper.getRowNodeIdFunc()==null) {
+            const message = `AG Grid: getRowNodeId callback must be provided for Server Side Row Model selection to work correctly.`;
+            _.doOnce(() => console.warn(message), 'SSRM.SelectionNeedsRowNodeIdFunc');  
+        }
     }
 
     public setDatasource(datasource: IServerSideDatasource): void {
@@ -176,7 +178,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
         this.nodeManager.clear();
     }
 
-    public refreshAfterSort(newSortModel: any, params: StoreRefreshAfterParams): void {
+    public refreshAfterSort(newSortModel: SortModelItem[], params: StoreRefreshAfterParams): void {
         if (this.storeParams) {
             this.storeParams.sortModel = newSortModel;
         }
@@ -287,7 +289,7 @@ export class ServerSideRowModel extends BeanStub implements IServerSideRowModel 
     public updateRowIndexesAndBounds(): void {
         const rootStore = this.getRootStore();
         if (!rootStore) { return; }
-        rootStore.setDisplayIndexes(new NumberSequence(), {value: 0});
+        rootStore.setDisplayIndexes(new NumberSequence(), { value: 0 });
     }
 
     public retryLoads(): void {

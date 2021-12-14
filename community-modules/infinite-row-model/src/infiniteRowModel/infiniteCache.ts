@@ -13,7 +13,8 @@ import {
     RowNodeBlockLoader,
     RowRenderer,
     _,
-    FocusService
+    FocusService,
+    SortModelItem
 } from "@ag-grid-community/core";
 import { InfiniteBlock } from "./infiniteBlock";
 
@@ -22,7 +23,7 @@ export interface InfiniteCacheParams {
     initialRowCount: number;
     blockSize?: number;
     overflowSize: number;
-    sortModel: any;
+    sortModel: SortModelItem[];
     filterModel: any;
     maxBlocksInCache?: number;
     rowHeight: number;

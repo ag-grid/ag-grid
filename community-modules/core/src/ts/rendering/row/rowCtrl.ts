@@ -47,7 +47,6 @@ export const FullWidthKeys: Map<RowType, string> = convertToMap([
 let instanceIdSequence = 0;
 
 export interface IRowComp {
-    setDisplay(value?: string): void;
     setDomOrder(domOrder: boolean): void;
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     setCellCtrls(cellCtrls: CellCtrl[]): void;
@@ -55,7 +54,6 @@ export interface IRowComp {
     getFullWidthCellRenderer(): ICellRenderer | null | undefined;
     setAriaExpanded(on: boolean): void;
     setAriaSelected(selected: boolean | undefined): void;
-    setHeight(height: string): void;
     setTop(top: string): void;
     setTransform(transform: string): void;
     setRowIndex(rowIndex: string): void;
@@ -203,8 +201,8 @@ export class RowCtrl extends BeanStub {
     }
 
     public setCached(cached: boolean): void {
-        const displayValue = cached ? 'none' : undefined;
-        this.allRowGuis.forEach(rg => rg.rowComp.setDisplay(displayValue));
+        const displayValue = cached ? 'none' : '';
+        this.allRowGuis.forEach(rg => rg.element.style.display = displayValue);
     }
 
     private initialiseRowComps(): void {
@@ -253,7 +251,7 @@ export class RowCtrl extends BeanStub {
                 comp.setRowBusinessKey(businessKeySanitised);
             }
 
-            if (this.isFullWidth() && !this.gridOptionsWrapper.isSuppressCellSelection()) {
+            if (this.isFullWidth() && !this.beans.gridOptionsWrapper.isSuppressCellSelection()) {
                 comp.setTabIndex(-1);
             }
 
@@ -283,17 +281,18 @@ export class RowCtrl extends BeanStub {
                 this.addRowDraggerToRow(gui);
             }
 
-            // the height animation we only want active after the row is alive for 1 second.
-            // this stops the row animation working when rows are initially crated. otherwise
-            // auto-height rows get inserted into the dom and resized immediately, which gives
-            // very bad UX (eg 10 rows get inserted, then all 10 expand, look particularly bad
-            // when scrolling). so this makes sure when rows are shown for the first time, they
-            // are resized immediately without animation.
-            this.beans.animationFrameService.addDestroyTask(() => {
-                if (this.isAlive()) {
+            if (this.useAnimationFrameForCreate) {
+                // the height animation we only want active after the row is alive for 1 second.
+                // this stops the row animation working when rows are initially crated. otherwise
+                // auto-height rows get inserted into the dom and resized immediately, which gives
+                // very bad UX (eg 10 rows get inserted, then all 10 expand, look particularly bad
+                // when scrolling). so this makes sure when rows are shown for the first time, they
+                // are resized immediately without animation.
+                this.beans.animationFrameService.addDestroyTask(() => {
+                    if (!this.isAlive()) { return; }
                     gui.rowComp.addOrRemoveCssClass('ag-after-created', true);
-                }
-            });
+                });
+            }
         });
 
         this.executeProcessRowPostCreateFunc();
@@ -1215,7 +1214,7 @@ export class RowCtrl extends BeanStub {
         if (exists(this.rowNode.rowHeight)) {
             const heightPx = `${this.rowNode.rowHeight}px`;
 
-            this.allRowGuis.forEach(gui => gui.rowComp.setHeight(heightPx));
+            this.allRowGuis.forEach(gui => gui.element.style.height = heightPx);
         }
     }
 

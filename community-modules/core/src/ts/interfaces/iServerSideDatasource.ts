@@ -6,6 +6,7 @@ import { ColumnVO } from "./iColumnVO";
 import { ColumnApi } from "../columns/columnApi";
 import { GridApi } from "../gridApi";
 import { LoadSuccessParams } from "../rowNodeCache/rowNodeBlock";
+import { SortModelItem } from "../sortController";
 
 export interface IServerSideGetRowsRequest {
     /** First row requested or undefined for all rows. */
@@ -25,7 +26,7 @@ export interface IServerSideGetRowsRequest {
     /** If filtering, what the filter model is.  */
     filterModel: any;
     /** If sorting, what the sort model is.  */
-    sortModel: any;
+    sortModel: SortModelItem[];
 }
 
 export interface IServerSideGetRowsParams {

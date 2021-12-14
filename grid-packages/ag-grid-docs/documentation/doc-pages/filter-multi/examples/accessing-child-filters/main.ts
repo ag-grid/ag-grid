@@ -1,4 +1,4 @@
-import { GridOptions } from '@ag-grid-community/core'
+import { GridOptions, IMultiFilter, ISetFilter } from '@ag-grid-community/core';
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -28,17 +28,17 @@ const gridOptions: GridOptions = {
   },
 }
 
-function getTextUiModel() {
+function getTextModel() {
   var textFilter = (gridOptions.api!.getFilterInstance(
     'athlete'
-  ) as any).getChildFilterInstance(0)
-  console.log('Current Text Filter model: ', textFilter.getModelFromUi())
+  ) as IMultiFilter).getChildFilterInstance(0)!;
+  console.log('Current Text Filter model: ', textFilter.getModel())
 }
 
 function getSetMiniFilter() {
   var setFilter = (gridOptions.api!.getFilterInstance(
     'athlete'
-  ) as any).getChildFilterInstance(1)
+  ) as IMultiFilter).getChildFilterInstance(1) as ISetFilter;
   console.log('Current Set Filter search text: ', setFilter.getMiniFilter())
 }
 

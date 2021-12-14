@@ -1,5 +1,6 @@
-import {Component} from '@angular/core';
-import {ICellRendererAngularComp} from "@ag-grid-community/angular";
+import { Component } from '@angular/core';
+import { ICellRendererAngularComp } from "@ag-grid-community/angular";
+import { ICellRendererParams } from '@ag-grid-community/core';
 
 @Component({
     selector: 'floating-cell',
@@ -7,14 +8,14 @@ import {ICellRendererAngularComp} from "@ag-grid-community/angular";
 })
 export class CustomPinnedRowRenderer implements ICellRendererAngularComp {
     public params: any;
-    public style: string;
+    public style!: string;
 
     agInit(params: any): void {
         this.params = params;
         this.style = this.params.style;
     }
 
-    refresh():boolean{
+    refresh(): boolean {
         return false;
     }
 }

@@ -35,6 +35,7 @@ import { ChartTranslator } from "./chartTranslator";
 import { ChartCrossFilter } from "./chartCrossFilter";
 import { CrossFilteringContext } from "../chartService";
 import { ChartOptionsService } from "./chartOptionsService";
+import { ComboChartProxy } from "./chartProxies/combo/comboChartProxy";
 
 export interface GridChartParams {
     pivotChart: boolean;
@@ -258,6 +259,9 @@ export class GridChartComp extends Component {
                 return new ScatterChartProxy(chartProxyParams);
             case 'histogram':
                 return new HistogramChartProxy(chartProxyParams);
+            case 'groupedColumnLine':
+            case 'stackedColumnLine':
+                return new ComboChartProxy(chartProxyParams);
         }
     }
 

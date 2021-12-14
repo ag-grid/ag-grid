@@ -424,8 +424,13 @@
   },
   "ensureColIndexVisible": { "type": { "arguments": { "index": "any" } } },
   "ensureColumnVisible": {
-    "description": "/** Ensures the column is visible, scrolling the table if needed. */",
-    "type": { "arguments": { "key": "string | Column" } }
+    "description": "/** Ensures the column is visible by scrolling the table if needed.\n * @param key - The column to ensure visible\n * @param position - Where the column will be positioned.\n- `auto` - Scrolls the minimum amount to make sure the column is visible.\n- `start` - Scrolls the column to the start of the viewport.\n- `middle` - Scrolls the column to the middle of the viewport.\n- `end` - Scrolls the column to the end of the viewport.\n */",
+    "type": {
+      "arguments": {
+        "key": "string | Column",
+        "position": "'auto' | 'start' | 'middle' | 'end' = 'auto'"
+      }
+    }
   },
   "ensureIndexVisible": {
     "description": "/** Ensures the row index is visible by vertically scrolling the grid.\n * If a position of `'top'`, `'middle'` or `'bottom'` is supplied, the grid will scroll the grid to place the row at the top, middle or bottom respectively.\n * Otherwise, the grid will do the minimum scrolling possible to show the row.\n * i.e.\n * - if the grid needs to scroll up then it will scroll so that the row is at the top,\n * - if the grid needs to scroll down then it will scroll so that the row is at the bottom,\n * - if the row is already in view then the grid will do nothing. */",
@@ -504,12 +509,6 @@
     "description": "/** Gets the grid to act as if the sort was changed.\n * Useful if you update some values and want to get the grid to reorder them according to the new values. */",
     "type": { "arguments": {} }
   },
-  "setSortModel": {
-    "type": {
-      "arguments": { "sortModel": "any", "source": "ColumnEventType = \"api\"" }
-    }
-  },
-  "getSortModel": { "type": { "arguments": {} } },
   "setFilterModel": {
     "description": "/** Sets the state of all the advanced filters. Provide it with what you get from `getFilterModel()` to restore filter state. */",
     "type": { "arguments": { "model": "any" } }
@@ -1037,19 +1036,16 @@
     }
   },
   "copySelectedRowsToClipboard": {
-    "description": "/** Copies the selected rows to the clipboard.\n * Set `includeHeaders = true` to include the headers (default is `false`).\n * Set `columnKeys` to the list of columns if you want just specific columns. */",
+    "description": "/** Copies the selected rows to the clipboard. */",
     "type": {
-      "arguments": {
-        "includeHeader?": "boolean",
-        "columnKeys?": "(string | Column)[]"
-      },
+      "arguments": { "params?": "IClipboardCopyRowsParams" },
       "returnType": "void"
     }
   },
   "copySelectedRangeToClipboard": {
     "description": "/** Copies the selected ranges to the clipboard. */",
     "type": {
-      "arguments": { "includeHeader?": "boolean" },
+      "arguments": { "params?": "IClipboardCopyParams" },
       "returnType": "void"
     }
   },

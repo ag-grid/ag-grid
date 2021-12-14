@@ -24,10 +24,10 @@ var SideBarModule = require('../../enterprise-modules/side-bar');
 var SparklinesModule = require('../../enterprise-modules/sparklines');
 var StatusBarModule = require('../../enterprise-modules/status-bar');
 var ViewportRowModelModule = require('../../enterprise-modules/viewport-row-model');
-require('./dist/es6/main');
+require('./dist/esm/es5/main');
 
 // add in exports for AG Grid Enterprise
-var agGridEnterprise = require('./dist/es6/main');
+var agGridEnterprise = require('./dist/esm/es5/main');
 Object.keys(agGridEnterprise).forEach(function(key) {
     exports[key] = agGridEnterprise[key];
 });

@@ -9,7 +9,7 @@ import { IHeaderGroupParams } from "../../headerRendering/cells/columnGroup/head
 import { ICellEditorParams } from "../../interfaces/iCellEditor";
 import { IFilterDef, IFilterParams } from "../../interfaces/iFilter";
 import { IRichCellEditorParams } from "../../interfaces/iRichCellEditorParams";
-import { ISetFilterParams } from "../../interfaces/iSetFilterParams";
+import { ISetFilterParams } from "../../interfaces/iSetFilter";
 import { IStatusPanelParams, StatusPanelDef } from "../../interfaces/iStatusPanel";
 import { IToolPanelParams } from "../../interfaces/iToolPanel";
 import { GroupCellRendererParams } from "../../rendering/cellRenderers/groupCellRendererCtrl";
@@ -124,7 +124,7 @@ export class UserComponentFactory extends BeanStub {
         return this.getCompDetails(def, CellRendererComponent, null, params);
     }
 
-    public getFloatingFilterCompDetails(def: IFilterDef, params: IFloatingFilterParams, defaultFloatingFilter: string | null):  UserCompDetails | undefined {
+    public getFloatingFilterCompDetails(def: IFilterDef, params: IFloatingFilterParams<any>, defaultFloatingFilter: string | null):  UserCompDetails | undefined {
         return this.getCompDetails(def, FloatingFilterComponent, defaultFloatingFilter, params);
     }
 

@@ -391,8 +391,6 @@ export class ChartTheme {
         navigator: {
             enabled: false,
             height: 30,
-            min: 0,
-            max: 1,
             mask: {
                 fill: '#999999',
                 stroke: '#999999',

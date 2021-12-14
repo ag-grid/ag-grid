@@ -18,7 +18,8 @@ import {
     ProcessGroupHeaderForExportParams,
     RowNode,
     SelectionService,
-    ShouldRowBeSkippedParams
+    ShouldRowBeSkippedParams,
+    RowPositionUtils
 } from "@ag-grid-community/core";
 import { GridSerializingSession, RowAccumulator, RowSpanningAccumulator } from "./interfaces";
 
@@ -34,6 +35,7 @@ export class GridSerializer extends BeanStub {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('pinnedRowModel') private pinnedRowModel: PinnedRowModel;
     @Autowired('selectionService') private selectionService: SelectionService;
+    @Autowired('rowPositionUtils') private rowPositionUtils: RowPositionUtils;
 
     public serialize<T>(gridSerializingSession: GridSerializingSession<T>, params: ExportParams<T> = {}): string {
         const columnsToExport = this.getColumnsToExport(params.allColumns, params.columnKeys);
@@ -71,9 +73,11 @@ export class GridSerializer extends BeanStub {
             _.doOnce(() => console.warn('AG Grid: Since v25.2 `skipGroups` has been renamed to `skipRowGroups`.'), 'gridSerializer-skipGroups');
         }
 
+        const rowPosition = { rowIndex: node.rowIndex!, rowPinned: node.rowPinned };
         if (
             (!isLeafNode && (params.skipRowGroups || shouldSkipCurrentGroup || hideOpenParents)) ||
             (params.onlySelected && !node.isSelected()) ||
+            (params.rowNodes && !params.rowNodes.some(position => this.rowPositionUtils.sameRow(position, rowPosition))) ||
             (params.skipPinnedTop && node.rowPinned === 'top') ||
             (params.skipPinnedBottom && node.rowPinned === 'bottom')
         ) {

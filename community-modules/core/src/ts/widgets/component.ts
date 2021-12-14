@@ -21,6 +21,47 @@ export interface VisibleChangedEvent extends AgEvent {
     visible: boolean;
 }
 
+export class CssClassManager {
+
+    private getGui: ()=>HTMLElement;
+
+    // to minimise DOM hits, we only apply CSS classes if they have changed. as addding a CSS class that is already
+    // there, or removing one that wasn't present, all takes CPU.
+    private cssClassStates: {[cssClass: string]: boolean } = {};
+
+    constructor(getGui: ()=>HTMLElement) {
+        this.getGui = getGui;
+    }
+
+    public addCssClass(className: string): void {
+        const updateNeeded = this.cssClassStates[className] !== true;
+        if (updateNeeded) {
+            this.getGui().classList.add(className);
+            this.cssClassStates[className] = true;
+        }
+    }
+
+    public removeCssClass(className: string): void {
+        const updateNeeded = this.cssClassStates[className] !== false;
+        if (updateNeeded) {
+            this.getGui().classList.remove(className);
+            this.cssClassStates[className] = false;
+        }
+    }
+
+    public containsCssClass(className: string): boolean {
+        return this.getGui().classList.contains(className);
+    }
+
+    public addOrRemoveCssClass(className: string, addOrRemove: boolean): void {
+        const updateNeeded = this.cssClassStates[className] !== addOrRemove;
+        if (updateNeeded) {
+            this.getGui().classList.toggle(className, addOrRemove);
+            this.cssClassStates[className] = addOrRemove;
+        }
+    }
+}
+
 export class Component extends BeanStub {
 
     public static elementGettingCreated: any;
@@ -43,9 +84,7 @@ export class Component extends BeanStub {
     // around as we create a new rowComp instance for the same row node).
     private compId = compIdSequence.next();
 
-    // to minimise DOM hits, we only apply CSS classes if they have changed. as addding a CSS class that is already
-    // there, or removing one that wasn't present, all takes CPU.
-    private cssClassStates: {[cssClass: string]: boolean } = {};
+    private cssClassManager: CssClassManager;
 
     protected usingBrowserTooltips: boolean;
     private tooltipText: string | undefined;
@@ -53,6 +92,8 @@ export class Component extends BeanStub {
 
     constructor(template?: string) {
         super();
+
+        this.cssClassManager = new CssClassManager( ()=>this.eGui );
 
         if (template) {
             this.setTemplate(template);
@@ -341,31 +382,19 @@ export class Component extends BeanStub {
     }
 
     public addCssClass(className: string): void {
-        const updateNeeded = this.cssClassStates[className] !== true;
-        if (updateNeeded) {
-            this.eGui.classList.add(className);
-            this.cssClassStates[className] = true;
-        }
+        this.cssClassManager.addCssClass(className);
     }
 
     public removeCssClass(className: string): void {
-        const updateNeeded = this.cssClassStates[className] !== false;
-        if (updateNeeded) {
-            this.eGui.classList.remove(className);
-            this.cssClassStates[className] = false;
-        }
+        this.cssClassManager.removeCssClass(className);
     }
 
     public containsCssClass(className: string): boolean {
-        return this.eGui.classList.contains(className);
+        return this.cssClassManager.containsCssClass(className);
     }
 
     public addOrRemoveCssClass(className: string, addOrRemove: boolean): void {
-        const updateNeeded = this.cssClassStates[className] !== addOrRemove;
-        if (updateNeeded) {
-            this.eGui.classList.toggle(className, addOrRemove);
-            this.cssClassStates[className] = addOrRemove;
-        }
+        this.cssClassManager.addOrRemoveCssClass(className, addOrRemove);
     }
 
     public getAttribute(key: string): string | null {

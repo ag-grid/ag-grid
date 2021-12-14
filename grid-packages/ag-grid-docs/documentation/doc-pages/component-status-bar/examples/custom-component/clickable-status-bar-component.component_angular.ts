@@ -1,6 +1,6 @@
-import {Component} from "@angular/core";
+import { Component } from "@angular/core";
 
-import {IStatusPanelParams} from "@ag-grid-community/all-modules";
+import { IStatusPanelParams } from "@ag-grid-community/core";
 
 @Component({
     selector: 'status-component',

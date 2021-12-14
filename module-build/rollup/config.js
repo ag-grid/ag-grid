@@ -21,21 +21,7 @@ const builds = {
         format: 'cjs',
         env: 'production',
         extension: '.cjs.min.js'
-    },
-    /*
-        'umd-noStyle-dev': {
-            format: 'umd',
-            env: 'development',
-            moduleName: 'agGrid',
-            banner
-        },
-        'umd-noStyle-prod': {
-            format: 'umd',
-            env: 'production',
-            moduleName: 'agGrid',
-            banner
-        }
-    */
+    }
 };
 
 function genConfig(buildsToUse, buildName, sourceDirectory, moduleName) {
@@ -52,7 +38,7 @@ function genConfig(buildsToUse, buildName, sourceDirectory, moduleName) {
     const build = buildsToUse[buildName];
 
     const config = {
-        input: path.resolve(sourceDirectory, `./dist/es6/main.js`),
+        input: path.resolve(sourceDirectory, `./dist/esm/es5/main.js`),
         plugins: [
             node()      // for utils package - defaulting to use index.js
         ].concat(build.plugins || []),
@@ -72,7 +58,7 @@ function genConfig(buildsToUse, buildName, sourceDirectory, moduleName) {
 
     // cjs files are like modules - you need to import them individually
     // esm files are like umd files - they include everything
-    if(!buildName.startsWith('esm')) {
+    if (!buildName.startsWith('esm')) {
         config['external'] = id => /@ag-grid-/.test(id); // all other @ag-grid deps should be treated as externals so as to prevent duplicate modules when using more than one cjs file
     }
 

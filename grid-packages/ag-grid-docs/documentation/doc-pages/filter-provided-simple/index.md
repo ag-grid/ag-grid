@@ -53,7 +53,7 @@ The Join Operator decides how Condition 1 and Condition 2 are joined, using eith
 
 Simple Filters are configured though the `filterParams` attribute of the column definition. All of the parameters from Provided Filters are available:
 
-<api-documentation source='filter-provided/resources/provided-filters.json' section="filterParams"></api-documentation>
+<interface-documentation interfaceName='IProvidedFilterParams' names='["buttons","closeOnApply","debounceMs","readOnly"]' config='{"description":""}'></interface-documentation>
 
 Additional parameters are also available depending on the type of filter being used. See each type for the full list of parameters available: [Text](/filter-text/), [Number](/filter-number/), [Date](/filter-date/).
 

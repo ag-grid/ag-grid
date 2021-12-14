@@ -117,6 +117,11 @@ Column filters are tied to a specific column. Quick filter and external filter a
 
 There are four filters that are provided by the grid. These are as follows:
 
-<api-documentation source='filtering/resources/filtering.json' section="providedFilters"></api-documentation>
+| Provided Filter | Description |
+| --------------- | ----------- |
+| `agNumberColumnFilter` | A filter for number comparisons. |
+| `agTextColumnFilter` | A filter for string comparisons. |
+| `agDateColumnFilter` | A filter for date comparisons. |
+| `agSetColumnFilter` | A filter influenced by how filters work in Microsoft Excel. This is an AG Grid Enterprise feature. |
 
 See the [Provided Filters](/filter-provided/) section for more details on using them.

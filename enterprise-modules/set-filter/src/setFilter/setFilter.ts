@@ -18,13 +18,16 @@ import {
     KeyCreatorParams,
     PositionableFeature,
     ResizableStructure,
-    _
+    _,
+    ISetFilter,
+    SetFilterModel,
+    SetFilterModelValue,
 } from '@ag-grid-community/core';
 import { SetFilterModelValuesType, SetValueModel } from './setValueModel';
 import { SetFilterListItem, SetFilterListItemSelectionChangedEvent } from './setFilterListItem';
-import { SetFilterModel, SetFilterModelValue } from './setFilterModel';
 import { ISetFilterLocaleText, DEFAULT_LOCALE_TEXT } from './localeText';
-export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> {
+
+export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> implements ISetFilter {
     public static SELECT_ALL_VALUE = '__AG_SELECT_ALL__';
 
     @RefSelector('eMiniFilter') private readonly eMiniFilter: AgInputTextField;

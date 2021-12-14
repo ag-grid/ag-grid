@@ -2,16 +2,26 @@ import { GridOptions } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
-    { field: 'athlete', minWidth: 200 },
-    { field: 'age' },
-    { field: 'country', minWidth: 150 },
-    { field: 'year' },
-    { field: 'date', minWidth: 150 },
-    { field: 'sport', minWidth: 150 },
-    { field: 'gold' },
-    { field: 'silver', suppressPaste: true },
-    { field: 'bronze' },
-    { field: 'total' },
+    {
+      headerName: 'Participants',
+      children: [
+        { field: 'athlete', minWidth: 200 },
+        { field: 'age' },
+        { field: 'country', minWidth: 150 },
+      ]
+    },
+    {
+      headerName: 'Olympic Games',
+      children: [
+        { field: 'year' },
+        { field: 'date', minWidth: 150 },
+        { field: 'sport', minWidth: 150 },
+        { field: 'gold' },
+        { field: 'silver', suppressPaste: true },
+        { field: 'bronze' },
+        { field: 'total' },
+      ]
+    }
   ],
 
   defaultColDef: {

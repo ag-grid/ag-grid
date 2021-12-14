@@ -69,7 +69,7 @@ export interface ColumnState {
     /** Column's flex if flex is set */
     flex?: number | null;
     /** Sort applied to the column */
-    sort?: string | null;
+    sort?: 'asc' | 'desc' | null;
     /** The order of the sort, if sorting by many columns */
     sortIndex?: number | null;
     /** The aggregation function applied */
@@ -117,7 +117,7 @@ export class ColumnModel extends BeanStub {
     // all columns provided by the user. basically it's the leaf level nodes of the
     // tree above (originalBalancedTree)
     private primaryColumns: Column[] | undefined; // every column available
-    private primaryColumnsMap: {[id: string]: Column};
+    private primaryColumnsMap: { [id: string]: Column };
 
     // if pivoting, these are the generated columns as a result of the pivot
     private secondaryBalancedTree: IProvidedColumn[] | null;
@@ -132,7 +132,7 @@ export class ColumnModel extends BeanStub {
     // these are all columns that are available to the grid for rendering after pivot
     private gridBalancedTree: IProvidedColumn[];
     private gridColumns: Column[];
-    private gridColumnsMap: {[id: string]: Column};
+    private gridColumnsMap: { [id: string]: Column };
 
     // header row count, either above, or based on pivoting if we are pivoting
     private gridHeaderRowCount = 0;
@@ -158,7 +158,7 @@ export class ColumnModel extends BeanStub {
     private displayedColumns: Column[] = [];
 
     // for fast lookup, to see if a column or group is still displayed
-    private displayedColumnsAndGroupsMap: {[id:string]:IHeaderColumn} = {};
+    private displayedColumnsAndGroupsMap: { [id: string]: IHeaderColumn } = {};
 
     // all columns to be rendered
     private viewportColumns: Column[] = [];
@@ -788,7 +788,7 @@ export class ColumnModel extends BeanStub {
 
     private isColumnInViewport(col: Column): boolean {
         // we never filter out autoHeight columns, as we need them in the DOM for calculating Auto Height
-        if (col.getColDef().autoHeight) { return true; }
+        if (col.isAutoHeight()) { return true; }
 
         const columnLeft = col.getLeft() || 0;
         const columnRight = columnLeft + col.getActualWidth();
@@ -2057,9 +2057,9 @@ export class ColumnModel extends BeanStub {
         if (!this.gridColsArePrimary || !params.applyOrder || !params.state) { return; }
 
         let newOrder: Column[] = [];
-        const processedColIds: {[id: string]:boolean} = {};
+        const processedColIds: { [id: string]: boolean } = {};
 
-        const gridColumnsMap: {[id: string]: Column} = {};
+        const gridColumnsMap: { [id: string]: Column } = {};
         this.gridColumns.forEach(col => gridColumnsMap[col.getId()] = col);
 
         params.state.forEach(item => {
@@ -2098,7 +2098,7 @@ export class ColumnModel extends BeanStub {
         // there should be no events fired to show differences in columns.
         const colsPreviouslyExisted = !!this.columnDefs;
         if (!colsPreviouslyExisted) {
-            return () => {};
+            return () => { };
         }
 
         const startState = {
@@ -2511,7 +2511,7 @@ export class ColumnModel extends BeanStub {
         return this.getColumn(key, this.gridColumns, this.gridColumnsMap);
     }
 
-    private getColumn(key: string | Column, columnList: Column[], columnMap: {[id: string]: Column}): Column | null {
+    private getColumn(key: string | Column, columnList: Column[], columnMap: { [id: string]: Column }): Column | null {
         if (!key) { return null; }
 
         // most of the time this method gets called the key is a string, so we put this shortcut in
@@ -3076,7 +3076,7 @@ export class ColumnModel extends BeanStub {
         if (!columnCallback && !groupCallback) { return undefined; }
 
         const searchForColDefs = (colDefs2: (ColDef | ColGroupDef)[]): void => {
-            colDefs2.forEach(function(abstractColDef: AbstractColDef) {
+            colDefs2.forEach(function (abstractColDef: AbstractColDef) {
                 const isGroup = exists((abstractColDef as any).children);
                 if (isGroup) {
                     const colGroupDef = abstractColDef as ColGroupDef;
@@ -3144,7 +3144,7 @@ export class ColumnModel extends BeanStub {
     }
 
     private setAutoHeightActive(): void {
-        this.autoHeightActive = this.gridColumns.filter(col => col.getColDef().autoHeight).length > 0;
+        this.autoHeightActive = this.gridColumns.filter(col => col.isAutoHeight()).length > 0;
 
         if (this.autoHeightActive) {
             this.autoHeightActiveAtLeastOnce = true;
@@ -3241,7 +3241,7 @@ export class ColumnModel extends BeanStub {
         }
     }
 
-    private putFixedColumnsFirst(cols:Column[]): Column[] {
+    private putFixedColumnsFirst(cols: Column[]): Column[] {
         const locked = cols.filter(c => c.getColDef().lockPosition);
         const unlocked = cols.filter(c => !c.getColDef().lockPosition);
         return locked.concat(unlocked);
@@ -3282,12 +3282,27 @@ export class ColumnModel extends BeanStub {
     }
 
     private updateGroupsAndDisplayedColumns(source: ColumnEventType) {
+
+        const hashDisplayedCols = () => {
+            const toHash = (cols: Column[]) => cols.map(c => c.getInstanceId()).join('|');
+            const lists = [this.displayedColumnsLeft, this.displayedColumnsRight, this.displayedColumnsCenter];
+            const res = lists.map(toHash).join('$');
+            return res;
+        };
+
+        const hashBefore = hashDisplayedCols();
+
         this.updateOpenClosedVisibilityInColumnGroups();
         this.deriveDisplayedColumns(source);
         this.refreshFlexedColumns();
         this.extractViewport();
         this.updateBodyWidths();
         // this event is picked up by the gui, headerRenderer and rowRenderer, to recalculate what columns to display
+
+        const hashAfter = hashDisplayedCols();
+
+        const nothingChanged = hashAfter == hashBefore;
+        if (nothingChanged) { return; }
 
         const event: DisplayedColumnsChangedEvent = {
             type: Events.EVENT_DISPLAYED_COLUMNS_CHANGED,
@@ -3303,7 +3318,7 @@ export class ColumnModel extends BeanStub {
         this.derivedDisplayedColumnsFromDisplayedTree(this.displayedTreeRight, this.displayedColumnsRight);
         this.joinDisplayedColumns();
         this.setLeftValues(source);
-        this.displayedAutoHeightCols = this.displayedColumns.filter(col => col.getColDef().autoHeight);
+        this.displayedAutoHeightCols = this.displayedColumns.filter(col => col.isAutoHeight());
     }
 
     public isAutoRowHeightActive(): boolean {

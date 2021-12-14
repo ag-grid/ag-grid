@@ -1,6 +1,6 @@
-import {Component, ElementRef, ViewChild} from '@angular/core';
-import {IHeaderAngularComp} from '@ag-grid-community/angular'
-import {IHeaderParams} from '@ag-grid-community/core'
+import { Component, ElementRef, ViewChild } from '@angular/core';
+import { IHeaderAngularComp } from '@ag-grid-community/angular'
+import { IHeaderParams } from '@ag-grid-community/core'
 
 @Component({
     selector: 'app-custom-header',
@@ -43,13 +43,13 @@ import {IHeaderParams} from '@ag-grid-community/core'
     ]
 })
 export class CustomHeader implements IHeaderAngularComp {
-    private params: any;
+    public params!: IHeaderParams;
 
-    private ascSort: string;
-    private descSort: string;
-    private noSort: string;
+    public ascSort: string = 'inactive';
+    public descSort: string = 'inactive';
+    public noSort: string = 'inactive';
 
-    @ViewChild('menuButton', {read: ElementRef}) public menuButton;
+    @ViewChild('menuButton', { read: ElementRef }) public menuButton!: ElementRef;
 
     agInit(params: IHeaderParams): void {
         this.params = params;

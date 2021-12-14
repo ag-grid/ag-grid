@@ -100,12 +100,12 @@ export { SideBarDef, ToolPanelDef } from "./entities/sideBar";
 
 // filter
 export { IFilterDef, IFilterParams, IFilterOptionDef, IDoesFilterPassParams, ProvidedFilterModel, IFilter, IFilterComp, IFilterType, IFloatingFilterType } from "./interfaces/iFilter";
-export { ISetFilterParams, SetFilterValues, SetFilterValuesFunc, SetFilterValuesFuncParams } from "./interfaces/iSetFilterParams";
+export { ISetFilter, SetFilterModel, ISetFilterParams, SetFilterValues, SetFilterModelValue, SetFilterValuesFunc, SetFilterValuesFuncParams } from "./interfaces/iSetFilter";
 export { FilterManager, FilterWrapper, FilterRequestSource } from "./filter/filterManager";
-export { IMultiFilterModel, IMultiFilterComp, IMultiFilterParams, IMultiFilterDef } from './interfaces/iMultiFilter';
+export { IMultiFilter, IMultiFilterModel, IMultiFilterComp, IMultiFilterParams, IMultiFilterDef } from './interfaces/iMultiFilter';
 
-export { ProvidedFilter, IProvidedFilterParams } from "./filter/provided/providedFilter";
-export { SimpleFilter, ISimpleFilterParams, ISimpleFilterModel, ICombinedSimpleModel, JoinOperator } from "./filter/provided/simpleFilter";
+export { ProvidedFilter, IProvidedFilter, IProvidedFilterParams } from "./filter/provided/providedFilter";
+export { ISimpleFilter, SimpleFilter, ISimpleFilterParams, ISimpleFilterModel, ICombinedSimpleModel, JoinOperator } from "./filter/provided/simpleFilter";
 export { ScalarFilter, IScalarFilterParams } from "./filter/provided/scalarFilter";
 
 export { NumberFilter, INumberFilterParams, NumberFilterModel } from "./filter/provided/number/numberFilter";
@@ -240,7 +240,7 @@ export { AgColorPicker } from "./widgets/agColorPicker";
 export { AgGroupComponent, AgGroupComponentParams } from "./widgets/agGroupComponent";
 export { AgDialog } from "./widgets/agDialog";
 export { AgPanel } from "./widgets/agPanel";
-export { Component, VisibleChangedEvent } from "./widgets/component";
+export { Component, VisibleChangedEvent, CssClassManager } from "./widgets/component";
 export { ManagedFocusFeature, ManagedFocusCallbacks } from "./widgets/managedFocusFeature";
 export { TabGuardComp } from "./widgets/tabGuardComp";
 export { TabGuardCtrl, ITabGuard } from "./widgets/tabGuardCtrl";
@@ -300,7 +300,7 @@ export { ExpressionService } from "./valueService/expressionService";
 // uncatalogued
 export { IRowModel, RowBounds } from "./interfaces/iRowModel";
 export { IAggFuncService } from "./interfaces/iAggFuncService";
-export { IClipboardService } from "./interfaces/iClipboardService";
+export { IClipboardService, IClipboardCopyParams, IClipboardCopyRowsParams } from "./interfaces/iClipboardService";
 export { IMenuFactory } from "./interfaces/iMenuFactory";
 export { CellPosition, CellPositionUtils } from "./entities/cellPosition";
 export { RowPosition, RowPositionUtils } from "./entities/rowPosition";
@@ -432,30 +432,7 @@ export * from "./interfaces/iChartOptions";
 export * from "./interfaces/iAgChartOptions";
 
 // sparklines
-export {
-    ISparklineCellRendererParams,
-    SparklineOptions,
-    CrosshairLineOptions,
-    SparklineCrosshairsOptions,
-    BaseSparklineOptions,
-    LineSparklineOptions,
-    AreaSparklineOptions,
-    ColumnSparklineOptions,
-    SparklineAxisOptions,
-    HighlightStyleOptions,
-    SparklineColumnFormatter,
-    ColumnFormatterParams,
-    ColumnFormat,
-    SparklineMarkerFormatter,
-    MarkerFormatterParams,
-    MarkerFormat,
-    SparklineMarkerOptions,
-    SparklineLineOptions,
-    PaddingOptions,
-    SparklineTooltipOptions,
-    TooltipRendererResult,
-    TooltipRendererParams
-} from "./interfaces/iSparklineCellRendererParams";
+export * from "./interfaces/iSparklineCellRendererParams";
 
 // modules
 export { Module } from "./interfaces/iModule";

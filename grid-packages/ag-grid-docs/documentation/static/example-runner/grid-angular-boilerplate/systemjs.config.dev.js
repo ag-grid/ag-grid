@@ -4,7 +4,7 @@
  * System configuration for Angular samples
  * Adjust as necessary for your application needs.
  */
-(function(global) {
+(function (global) {
     var ANGULAR_VERSION = "10.0.0";
     var ANGULAR_CDK_VERSION = "10.0.0";
     var ANGULAR_MATERIAL_VERSION = "10.0.0";
@@ -119,9 +119,9 @@
                 // ng2 typeahead
                 "ng2-typeahead": "npm:ng2-typeahead@1.2.0",
 
-                ts: "npm:plugin-typescript@5.2.7/lib/plugin.js",
-                tslib: "npm:tslib@1.7.1/tslib.js",
-                typescript: "npm:typescript@2.3.2/lib/typescript.js",
+                ts: "npm:plugin-typescript@8.0.0/lib/plugin.js",
+                tslib: "npm:tslib@2.3.1/tslib.js",
+                typescript: "npm:typescript@3.7.7/lib/typescript.js",
 
                 // for some of the examples
                 lodash: "npm:lodash@4.17.4/lodash.js",
@@ -161,113 +161,113 @@
                 defaultExtension: "js"
             },
             // these are a little different in that they're in a directory and sjs doesn't default to the index.js inside...
-            '@ag-grid-community/core/dist/cjs/utils': {
+            '@ag-grid-community/core/dist/cjs/es5/utils': {
                 main: './index.js',
                 defaultExtension: 'js'
             },
-            '@ag-grid-enterprise/charts/dist/cjs/charts/chartComp/menu/settings/miniCharts': {
+            '@ag-grid-enterprise/charts/dist/cjs/es5/charts/chartComp/menu/settings/miniCharts': {
                 main: './index.js',
                 defaultExtension: 'js'
             },
             /* START OF MODULES - DO NOT DELETE */
             '@ag-grid-community/all-modules': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-community/client-side-row-model': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-community/core': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-community/csv-export': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-community/infinite-row-model': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             'ag-charts-community': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/all-modules': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/charts': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/clipboard': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/column-tool-panel': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/core': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/excel-export': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/filter-tool-panel': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/master-detail': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/menu': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/multi-filter': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/range-selection': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/rich-select': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/row-grouping': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/server-side-row-model': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/set-filter': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/side-bar': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/sparklines': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/status-bar': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             '@ag-grid-enterprise/viewport-row-model': {
-                main: './dist/cjs/main.js',
+                main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
             /* END OF MODULES - DO NOT DELETE */
