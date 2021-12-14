@@ -438,8 +438,37 @@ export class PartialStore extends BeanStub implements IServerSideStore {
                 nextRowIndex = this.displayIndexStart!;
             }
 
+            // we start at the last loaded block before this block, and go down
+            // block by block, adding in the block sizes (using cached sizes if available)
+            // until we get to a block that does should have the pixel
+
+            const blockSize = this.storeParams.cacheBlockSize!;
+            const defaultBlockHeight = this.defaultRowHeight * blockSize;
+
+            let nextBlockId = previousBlock ? (previousBlock.getId()+1) : 0;
+
+            const getBlockDetails = (id: number) => {
+                let cachedBlockHeight = this.getCachedBlockHeight(id);
+                let blockHeight = cachedBlockHeight != null ? cachedBlockHeight : defaultBlockHeight;
+                let pixelInBlock = pixel <= (blockHeight + nextRowTop);
+                return {
+                    height: blockHeight, pixelInBlock: pixelInBlock
+                };
+            };
+
+            let blockDetails = getBlockDetails(nextBlockId);
+
+            if (!blockDetails.pixelInBlock) {
+                nextRowTop += blockDetails.height;
+                nextRowIndex += blockSize;
+
+                nextBlockId++;
+                blockDetails = getBlockDetails(nextBlockId);
+            }
+
             const pixelsBetween = pixel - nextRowTop;
-            const rowsBetween = (pixelsBetween / this.defaultRowHeight) | 0;
+            const rowHeight = blockDetails.height / blockSize;
+            const rowsBetween = Math.floor(pixelsBetween / rowHeight) | 0;
 
             return nextRowIndex + rowsBetween;
         };
@@ -647,6 +676,10 @@ export class PartialStore extends BeanStub implements IServerSideStore {
             cacheBlockSize: this.storeParams.cacheBlockSize
         });
         this.forEachChildStoreShallow(childStore => childStore.addStoreStates(result));
+    }
+
+    public getCachedBlockHeight(blockNumber: number): number | undefined {
+        return this.blockHeights[blockNumber];
     }
 
     private createBlock(blockNumber: number, displayIndex: number, nextRowTop: { value: number }): PartialStoreBlock {

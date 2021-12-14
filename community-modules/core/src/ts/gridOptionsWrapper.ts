@@ -1788,7 +1788,7 @@ export class GridOptionsWrapper {
 
         if (typeof this.gridOptions.getRowHeight === 'function') {
             if (allowEstimate) {
-                return { height: this.getDefaultRowHeight(), estimated: true };
+                return { height: defaultRowHeight, estimated: true };
             }
             const params: RowHeightParams = {
                 node: rowNode,
