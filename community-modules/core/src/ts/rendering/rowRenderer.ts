@@ -123,7 +123,7 @@ export class RowRenderer extends BeanStub {
 
     private updateAllRowCtrls(): void {
         const liveList = getAllValuesInObject(this.rowCtrlsByRowIndex);
-        if (this.beans.gridOptionsWrapper.isEnsureDomOrder()) {
+        if (this.gridOptionsWrapper.isEnsureDomOrder()) {
             liveList.sort((a, b) => a.getRowNode().rowIndex - b.getRowNode.rowIndex);
         }
         const zombieList = getAllValuesInObject(this.zombieRowCtrls);
