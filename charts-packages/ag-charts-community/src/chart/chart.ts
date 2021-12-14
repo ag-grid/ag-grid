@@ -752,7 +752,7 @@ export abstract class Chart extends Observable {
 
         this.series.forEach(s => s.processData());
 
-        this.updateLegend();
+        this.updateLegend(); // sets legend data which schedules a layout
 
         this.layoutPending = true;
     }
