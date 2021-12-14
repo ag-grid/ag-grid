@@ -259,7 +259,7 @@ function extractInterfaces(srcFile, extension) {
         const name = node && node.name && node.name.escapedText;
         const kind = ts.SyntaxKind[node.kind];
 
-        if (node.heritageClauses && node.heritageClauses) {
+        if (node.heritageClauses) {
             node.heritageClauses.forEach(h => {
                 if (h.types && h.types.length > 0) {
                     extension[name] = h.types.map(h => ({ extends: formatNode(h.expression, srcFile), params: h.typeArguments ? h.typeArguments.map(t => formatNode(t, srcFile)) : undefined }));
@@ -292,10 +292,10 @@ function extractInterfaces(srcFile, extension) {
                     isCallSignature = isCallSignature || ts.SyntaxKind[p.kind] == 'CallSignature';
                     if (isCallSignature) {
 
-                        const arguments = getArgTypes(p.parameters, srcFile);
+                        const argTypes = getArgTypes(p.parameters, srcFile);
 
                         callSignatureMembers = {
-                            arguments,
+                            arguments: argTypes,
                             returnType: formatNode(p.type, srcFile),
                         }
                     } else {
