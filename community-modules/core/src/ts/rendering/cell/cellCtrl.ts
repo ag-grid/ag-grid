@@ -32,6 +32,7 @@ import { DndSourceComp } from "../dndSourceComp";
 import { doOnce } from "../../utils/function";
 import { RowDragComp } from "../row/rowDragComp";
 import { getValueUsingField } from "../../utils/object";
+import { getElementSize } from "../../utils/dom";
 
 const CSS_CELL = 'ag-cell';
 const CSS_AUTO_HEIGHT = 'ag-cell-auto-height';
@@ -209,7 +210,7 @@ export class CellCtrl extends BeanStub {
     ): void {
         this.cellComp = comp;
         this.gow = this.beans.gridOptionsWrapper;
-        this.scope = scope;        
+        this.scope = scope;
         this.eGui = eGui;
         this.eCellWrapper = eCellWrapper;
         this.printLayout = printLayout;
@@ -260,7 +261,6 @@ export class CellCtrl extends BeanStub {
 
         const eAutoHeightContainer = this.eCellWrapper!;
         const eParentCell = eAutoHeightContainer.parentElement!;
-        const win = this.beans.gridOptionsWrapper.getDocument().defaultView as Window;
 
         const measureHeight = (timesCalled: number) => {
             // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
@@ -272,15 +272,9 @@ export class CellCtrl extends BeanStub {
                 return;
             }
 
+            const { paddingTop, paddingBottom } = getElementSize(eParentCell);
             const wrapperHeight = eAutoHeightContainer.offsetHeight;
-
-            const eParentStyles = win.getComputedStyle(eParentCell, null);
-            const cellPaddingTopPx = eParentStyles.getPropertyValue('padding-top');
-            const cellPaddingBottomPx = eParentStyles.getPropertyValue('padding-top');
-            const cellPaddingTop = parseInt(cellPaddingTopPx);
-            const cellPaddingBottom = parseInt(cellPaddingBottomPx);
-
-            const newHeight = wrapperHeight + cellPaddingTop + cellPaddingBottom;
+            const newHeight = wrapperHeight + paddingTop + paddingBottom;
 
             this.rowNode.setRowAutoHeight(newHeight, this.column);
         };
