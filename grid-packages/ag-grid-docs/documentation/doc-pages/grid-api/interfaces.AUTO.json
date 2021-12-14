@@ -4732,6 +4732,7 @@
       "cellRange": "ChartParamsCellRange",
       "suppressChartRanges?": "boolean",
       "aggFunc?": "string | IAggFunc",
+      "seriesChartTypes?": "SeriesChartType",
       "chartType": "ChartType",
       "chartThemeName?": "string",
       "chartContainer?": "HTMLElement",
@@ -4742,6 +4743,7 @@
       "cellRange": "/** The range of cells to be charted. If no rows / rowIndexes are specified all rows will be included. */",
       "suppressChartRanges?": "/** Suppress highlighting the selected range in the grid. */",
       "aggFunc?": "/** The aggregation function that should be applied to all series data. */",
+      "seriesChartTypes?": "/** The series chart type configurations used in combination charts */",
       "chartType": "/** The type of chart to create. */",
       "chartThemeName?": "/** The default theme to use, either a default option or your own custom theme. */",
       "chartContainer?": "/** Provide to display the chart outside of the grid in your own container. */",
@@ -6537,6 +6539,14 @@
   "ChartMenuOptions": {
     "meta": { "isTypeAlias": true },
     "type": "'chartSettings' | 'chartData' | 'chartFormat' | 'chartLink' | 'chartUnlink' | 'chartDownload'"
+  },
+  "SeriesChartType": {
+    "meta": {},
+    "type": {
+      "colId": "string",
+      "chartType": "ChartType",
+      "secondaryAxis?": "boolean"
+    }
   },
   "GetChartImageDataUrlParams": {
     "meta": {},

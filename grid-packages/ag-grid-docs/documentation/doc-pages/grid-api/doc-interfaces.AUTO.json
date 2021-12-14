@@ -8156,6 +8156,10 @@
       "description": "/** The aggregation function that should be applied to all series data. */",
       "type": { "returnType": "string | IAggFunc", "optional": true }
     },
+    "seriesChartTypes": {
+      "description": "/** The series chart type configurations used in combination charts */",
+      "type": { "returnType": "SeriesChartType", "optional": true }
+    },
     "chartType": {
       "description": "/** The type of chart to create. */",
       "type": { "returnType": "ChartType", "optional": false }
@@ -11167,6 +11171,11 @@
   },
   "ChartType": {},
   "ChartMenuOptions": {},
+  "SeriesChartType": {
+    "colId": { "type": { "returnType": "string", "optional": false } },
+    "chartType": { "type": { "returnType": "ChartType", "optional": false } },
+    "secondaryAxis": { "type": { "returnType": "boolean", "optional": true } }
+  },
   "GetChartImageDataUrlParams": {
     "chartId": {
       "description": "/** The id of the created chart. */",

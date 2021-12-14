@@ -15,6 +15,7 @@ import {
     DragSourceType,
     DropTarget,
     PostConstruct,
+    SeriesChartType,
     VerticalDirection
 } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
@@ -38,7 +39,7 @@ export class ChartDataPanel extends Component {
     constructor(
         private readonly chartController: ChartController,
         private readonly chartOptionsService: ChartOptionsService) {
-            super(ChartDataPanel.TEMPLATE);
+        super(ChartDataPanel.TEMPLATE);
     }
 
     @PostConstruct
@@ -185,7 +186,11 @@ export class ChartDataPanel extends Component {
             cssIdentifier: 'charts-data'
         }));
 
+        const seriesChartTypes = this.chartController.getSeriesChartTypes();
+
         columns.forEach(col => {
+            const seriesChartType: SeriesChartType = seriesChartTypes.filter(s => s.colId === col.colId)[0];
+
             const seriesItemGroup = this.seriesChartTypeGroupComp!.createManagedBean(new AgGroupComponent({
                 title: col.displayName!,
                 enabled: true,
@@ -206,7 +211,7 @@ export class ChartDataPanel extends Component {
                     {value: 'stackedColumn', text: 'Stacked Column'},
                     {value: 'line', text: 'Line'},
                 ])
-                .setValue(col.colId === 'total' ? '' : 'groupedColumn');
+                .setValue(seriesChartType.chartType);
 
             seriesItemGroup.addItem(chartTypeComp);
 
@@ -217,6 +222,7 @@ export class ChartDataPanel extends Component {
                 .setLabelAlignment('left')
                 .setLabelWidth("flex")
                 .setInputWidth(35)
+                .setValue(!!seriesChartType.secondaryAxis)
 
             seriesItemGroup.addItem(secondaryAxisComp);
 
