@@ -458,7 +458,7 @@ export class PartialStore extends BeanStub implements IServerSideStore {
 
             let blockDetails = getBlockDetails(nextBlockId);
 
-            if (!blockDetails.pixelInBlock) {
+            while (!blockDetails.pixelInBlock) {
                 nextRowTop += blockDetails.height;
                 nextRowIndex += blockSize;
 
