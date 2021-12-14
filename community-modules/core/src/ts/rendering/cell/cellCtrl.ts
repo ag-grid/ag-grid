@@ -262,12 +262,6 @@ export class CellCtrl extends BeanStub {
         const eParentCell = eAutoHeightContainer.parentElement!;
         const win = this.beans.gridOptionsWrapper.getDocument().defaultView as Window;
 
-        const pxToNumber = (px: string) => {
-            if (px==null || px=='') { return 0; }
-            const resStr = px.substring(0, px.indexOf('px'));
-            return parseInt(resStr);
-        };
-
         const measureHeight = (timesCalled: number) => {
             // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
             // maybe it will be ready next VM turn
@@ -283,8 +277,8 @@ export class CellCtrl extends BeanStub {
             const eParentStyles = win.getComputedStyle(eParentCell, null);
             const cellPaddingTopPx = eParentStyles.getPropertyValue('padding-top');
             const cellPaddingBottomPx = eParentStyles.getPropertyValue('padding-top');
-            const cellPaddingTop = pxToNumber(cellPaddingTopPx);
-            const cellPaddingBottom = pxToNumber(cellPaddingBottomPx);
+            const cellPaddingTop = parseInt(cellPaddingTopPx);
+            const cellPaddingBottom = parseInt(cellPaddingBottomPx);
 
             const newHeight = wrapperHeight + cellPaddingTop + cellPaddingBottom;
 
