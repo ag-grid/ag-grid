@@ -770,13 +770,14 @@ export class ClipboardService extends BeanStub implements IClipboardService {
     private copyDataToClipboardLegacy(data: string): void {
         // method 3 - if all else fails, the old school hack
         this.executeOnTempElement(element => {
-            const focusedElementBefore = this.gridOptionsWrapper.getDocument().activeElement as HTMLElement;
+            const eDocument = this.gridOptionsWrapper.getDocument();
+            const focusedElementBefore = eDocument.activeElement as HTMLElement;
 
             element.value = data || ' '; // has to be non-empty value or execCommand will not do anything
             element.select();
             element.focus({ preventScroll: true });
 
-            const result = document.execCommand('copy');
+            const result = eDocument.execCommand('copy');
 
             if (!result) {
                 console.warn('ag-grid: Browser did not allow document.execCommand(\'copy\'). Ensure ' +

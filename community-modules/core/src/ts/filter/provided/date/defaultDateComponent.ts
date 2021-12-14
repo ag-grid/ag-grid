@@ -24,6 +24,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
     }
 
     public init(params: IDateParams): void {
+        const eDocument = this.gridOptionsWrapper.getDocument();
         const inputElement = this.eDateInput.getInputElement();
 
         if (this.shouldUseBrowserDatePicker(params)) {
@@ -37,7 +38,7 @@ export class DefaultDateComponent extends Component implements IDateComp {
         });
 
         this.addManagedListener(inputElement, 'input', e => {
-            if (e.target !== document.activeElement) { return; }
+            if (e.target !== eDocument.activeElement) { return; }
             if (this.eDateInput.isDisabled()) { return; }
 
             params.onDateChanged();

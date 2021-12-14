@@ -218,7 +218,8 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     protected handleKeyDown(e: KeyboardEvent) {
-        const activeEl = document.activeElement;
+        const eDocument = this.gridOptionsWrapper.getDocument();
+        const activeEl = eDocument.activeElement;
         const wrapperHasFocus = activeEl === this.eGui;
 
         if (!this.expandable || !wrapperHasFocus) { return; }
