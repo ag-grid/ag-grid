@@ -3,16 +3,16 @@
     "properties": [
         {
             "name": "rowData",
-            "value": "[\n    { orgHierarchy: ['A'] },\n    {\n        orgHierarchy: [\n            'A',\n            'B'\n        ]\n    },\n    {\n        orgHierarchy: [\n            'C',\n            'D'\n        ]\n    },\n    {\n        orgHierarchy: [\n            'E',\n            'F',\n            'G',\n            'H'\n        ]\n    }\n]"
+            "value": "[\n    { orgHierarchy: ['A'] },\n    { orgHierarchy: ['A', 'B'] },\n    { orgHierarchy: ['C', 'D'] },\n    { orgHierarchy: ['E', 'F', 'G', 'H'] },\n]"
         },
         {
             "name": "columnDefs",
-            "value": "[{\n        field: 'groupType',\n        valueGetter: function (params) {\n            return params.data ? 'Provided' : 'Filler';\n        }\n    }]"
+            "value": "[\n    // we're using the auto group column by default!\n    {\n        field: 'groupType',\n        valueGetter: function (params) {\n            return params.data ? 'Provided' : 'Filler';\n        },\n    },\n]"
         },
-        { "name": "defaultColDef", "value": "{ flex: 1 }" },
+        { "name": "defaultColDef", "value": "{\n    flex: 1,\n}" },
         {
             "name": "autoGroupColumnDef",
-            "value": "{\n    headerName: 'Organisation Hierarchy',\n    cellRendererParams: { suppressCount: true }\n}"
+            "value": "{\n    headerName: 'Organisation Hierarchy',\n    cellRendererParams: {\n        suppressCount: true,\n    },\n}"
         },
         { "name": "treeData", "value": "true" },
         { "name": "animateRows", "value": "true" },
@@ -20,9 +20,9 @@
         { "name": "getDataPath", "value": "function (data) {\n    return data.orgHierarchy;\n}" }
     ],
     "components": [],
-    "defaultColDef": "{ flex: 1 }",
+    "defaultColDef": "{\n    flex: 1,\n}",
     "globalComponents": [],
-    "parsedColDefs": "[{\n        field: 'groupType',\n        valueGetter: 'AG_FUNCTION_function (params) {\\n    return params.data ? \\'Provided\\' : \\'Filler\\';\\n}'\n    }]",
+    "parsedColDefs": "[{ field: 'groupType',valueGetter: \"AG_FUNCTION_function (params) {\\n    return params.data ? 'Provided' : 'Filler';\\n}\" },]",
     "instanceMethods": [],
     "externalEventHandlers": [],
     "utils": [],

@@ -592,12 +592,11 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
                     }
                 }
                 if (processComponentsForVue(propertyName, exampleType, providedExamples) && node.parent) {
-
                     const compsNode = (node.parent as any).initializer;
                     if (ts.isObjectLiteralExpression(compsNode)) {
                         for (const componentDefinition of compsNode.properties) {
-                            if (!ts.isCallExpression(componentDefinition) && !ts.isFunctionExpression(componentDefinition)) {
-                                const comp = componentDefinition as any;
+                            const comp = componentDefinition as any;
+                            if (!ts.isCallExpression(comp.initializer) && !ts.isFunctionExpression(comp.initializer)) {
                                 bindings.components.push({
                                     name: comp.name.getText(),
                                     value: comp.initializer.getText()
