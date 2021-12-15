@@ -1,11 +1,14 @@
 {
     "eventHandlers": [],
     "properties": [
-        { "name": "columnDefs", "value": "[\n    { field: 'jobTitle' },\n    { field: 'employmentType' }\n]" },
-        { "name": "defaultColDef", "value": "{ flex: 1 }" },
+        {
+            "name": "columnDefs",
+            "value": "[\n    // we're using the auto group column by default!\n    { field: 'jobTitle' },\n    { field: 'employmentType' },\n]"
+        },
+        { "name": "defaultColDef", "value": "{\n    flex: 1,\n}" },
         {
             "name": "autoGroupColumnDef",
-            "value": "{\n    headerName: 'Organisation Hierarchy',\n    minWidth: 300,\n    cellRendererParams: { suppressCount: true }\n}"
+            "value": "{\n    headerName: 'Organisation Hierarchy',\n    minWidth: 300,\n    cellRendererParams: {\n        suppressCount: true,\n    },\n}"
         },
         { "name": "rowData", "value": "getData()" },
         { "name": "treeData", "value": "true" },
@@ -14,15 +17,15 @@
         { "name": "getDataPath", "value": "function (data) {\n    return data.orgHierarchy;\n}" }
     ],
     "components": [],
-    "defaultColDef": "{ flex: 1 }",
+    "defaultColDef": "{\n    flex: 1,\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n    { field: 'jobTitle' },\n    { field: 'employmentType' }\n]",
+    "parsedColDefs": "[{ field: 'jobTitle' },{ field: 'employmentType' },]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {
             "name": "onFilterTextBoxChanged",
             "params": "",
-            "body": "function onFilterTextBoxChanged() {\n    this.gridApi.setQuickFilter(document.getElementById('filter-text-box').value);\n}"
+            "body": "function onFilterTextBoxChanged() {\n    this.gridApi.setQuickFilter((document.getElementById('filter-text-box')).value);\n}"
         }
     ],
     "utils": [],

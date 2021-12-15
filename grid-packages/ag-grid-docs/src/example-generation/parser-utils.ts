@@ -146,7 +146,10 @@ export function nodeIsUnusedFunction(node: any, used: string[], unboundInstanceM
 }
 export function tsNodeIsUnusedFunction(node: any, used: string[], unboundInstanceMethods: string[]): boolean {
     if (!tsNodeIsInScope(node, unboundInstanceMethods)) {
-        return ts.isFunctionLike(node) && used.indexOf(node.name.getText()) < 0;
+        if (ts.isFunctionLike(node) && used.indexOf(node.name.getText()) < 0) {
+            const isTopLevel = ts.isSourceFile(node.parent);
+            return isTopLevel
+        }
     }
     return false;
 }
