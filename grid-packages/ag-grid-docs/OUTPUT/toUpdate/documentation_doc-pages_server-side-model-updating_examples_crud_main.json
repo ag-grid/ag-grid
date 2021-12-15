@@ -3,33 +3,33 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n    {\n        field: 'athlete',\n        width: 150\n    },\n    { field: 'age' },\n    {\n        field: 'country',\n        width: 150\n    },\n    { field: 'year' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' }\n]"
+            "value": "[\n    { field: 'athlete', width: 150 },\n    { field: 'age' },\n    { field: 'country', width: 150 },\n    { field: 'year' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n]"
         },
-        { "name": "defaultColDef", "value": "{\n    width: 100,\n    resizable: true\n}" },
+        { "name": "defaultColDef", "value": "{\n    width: 100,\n    resizable: true,\n}" },
         { "name": "rowSelection", "value": "'single'" },
         { "name": "rowModelType", "value": "'serverSide'" },
         { "name": "serverSideStoreType", "value": "'partial'" }
     ],
     "components": [],
-    "defaultColDef": "{\n    width: 100,\n    resizable: true\n}",
+    "defaultColDef": "{\n    width: 100,\n    resizable: true,\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n    {\n        field: 'athlete',\n        width: 150\n    },\n    { field: 'age' },\n    {\n        field: 'country',\n        width: 150\n    },\n    { field: 'year' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' }\n]",
+    "parsedColDefs": "[\n    {\n        field: 'athlete',\n    width: 150 },\n    { field: 'age' },\n    {\n        field: 'country',\n    width: 150 },\n    { field: 'year' },\n    { field: 'sport' },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' } \n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {
             "name": "onBtRemove",
             "params": "",
-            "body": "function onBtRemove() {\n    var selectedRows = this.gridApi.getSelectedNodes();\n    if (!selectedRows || selectedRows.length === 0) {\n        return;\n    }\n    var selectedRow = selectedRows[0];\n    var indexToRemove = window.rowDataServerSide.indexOf(selectedRow.data);\n    if (indexToRemove >= 0) {\n        window.rowDataServerSide.splice(indexToRemove, 1);\n    }\n    this.gridApi.refreshServerSideStore();\n}"
+            "body": "function onBtRemove() {\n    var selectedRows = this.gridApi.getSelectedNodes();\n    if (!selectedRows || selectedRows.length === 0) {\n        return;\n    }\n    var selectedRow = selectedRows[0];\n    var indexToRemove = window.rowDataServerSide.indexOf(selectedRow.data);\n    // the record could be missing, if the user hit the 'remove' button a few times before refresh happens\n    if (indexToRemove >= 0) {\n        window.rowDataServerSide.splice(indexToRemove, 1);\n    }\n    this.gridApi.refreshServerSideStore();\n}"
         },
         {
             "name": "onBtAdd",
             "params": "",
-            "body": "function onBtAdd() {\n    var selectedRows = this.gridApi.getSelectedNodes();\n    if (!selectedRows || selectedRows.length === 0) {\n        return;\n    }\n    var selectedRow = selectedRows[0];\n    window.rowDataServerSide.splice(selectedRow.rowIndex, 0, { athlete: 'New Item' + newItemCount });\n    newItemCount++;\n    this.gridApi.refreshServerSideStore();\n}"
+            "body": "function onBtAdd() {\n    var selectedRows = this.gridApi.getSelectedNodes();\n    if (!selectedRows || selectedRows.length === 0) {\n        return;\n    }\n    var selectedRow = selectedRows[0];\n    // insert new row in the source data, at the top of the page\n    window.rowDataServerSide.splice(selectedRow.rowIndex, 0, {\n        athlete: 'New Item' + newItemCount,\n    });\n    newItemCount++;\n    this.gridApi.refreshServerSideStore();\n}"
         }
     ],
     "utils": [
         "var newItemCount = 0;",
-        "function createMyDataSource(data) {\n    window.rowDataServerSide = data;\n    const dataSource = {\n        getRows: function (params) {\n            setTimeout(function () {\n                var rowsThisPage = data.slice(params.request.startRow, params.request.endRow);\n                params.success({\n                    rowData: rowsThisPage,\n                    rowCount: window.rowDataServerSide.length\n                });\n            }, 500);\n        }\n    };\n    return dataSource;\n}"
+        "function createMyDataSource(data) {\n    window.rowDataServerSide = data;\n    const dataSource = {\n        getRows: function (params) {\n            setTimeout(function () {\n                // take a slice of the total rows\n                var rowsThisPage = data.slice(params.request.startRow, params.request.endRow);\n                // call the success callback\n                params.success({\n                    rowData: rowsThisPage,\n                    rowCount: window.rowDataServerSide.length,\n                });\n            }, 500);\n        }\n    };\n    return dataSource;\n}"
     ],
     "data": {
         "url": "'https://www.ag-grid.com/example-assets/olympic-winners.json'",
