@@ -545,46 +545,48 @@ export function getSeriesOrder(
 /**
  * Takes an array of column series options objects and returns a single object with the combined column series options.
  */
-export function processColumnSeriesOptions(columnSeriesGroup: any) {
-    let columnSeriesOptions: any = {};
+export function processBarColumnSeriesOptions(series: any) {
+    let options: any = {};
 
-    const iterablePoperties = ['yKeys', 'fills', 'strokes', 'yNames', 'hideInChart', 'hideInLegend'];
-    const propertiesToPush = ['yKey', 'fill', 'stroke', 'yName'];
+    const arrayValueProperties = ['yKeys', 'fills', 'strokes', 'yNames', 'hideInChart', 'hideInLegend'];
+    const stringValueProperties = ['yKey', 'fill', 'stroke', 'yName'];
 
-    for (let i = 0; i < columnSeriesGroup.length; i++) {
-        const s = columnSeriesGroup[i];
+    for (let i = 0; i < series.length; i++) {
+        const s = series[i];
         for (const property in s) {
-            if (iterablePoperties.indexOf(property) > -1 && s[property].length > 0) {
-                columnSeriesOptions[property] = [...(columnSeriesOptions[property] || []), ...s[property]];
-            } else if (propertiesToPush.indexOf(property) > -1) {
-                columnSeriesOptions[`${property}s`] = [...(columnSeriesOptions[`${property}s`] || []), s[property]];
+
+            const arrayValueProperty = arrayValueProperties.indexOf(property) > -1;
+            const stringValueProperty = stringValueProperties.indexOf(property) > -1;
+
+            if (arrayValueProperty && s[property].length > 0) {
+                options[property] = [...(options[property] || []), ...s[property]];
+            } else if (stringValueProperty) {
+                options[`${property}s`] = [...(options[`${property}s`] || []), s[property]];
             } else if (property === 'visible') {
                 if (s[property] === false) {
-                    columnSeriesOptions.hideInChart = [...(columnSeriesOptions.hideInChart || []), s.yKey];
+                    options.hideInChart = [...(options.hideInChart || []), s.yKey];
                 }
             } else if (property === 'showInLegend') {
                 if (s[property] === false) {
-                    columnSeriesOptions.hideInLegend = [...(columnSeriesOptions.hideInLegend || []), s.yKey];
+                    options.hideInLegend = [...(options.hideInLegend || []), s.yKey];
                 }
-            } else if (property === 'grouped' && s[property] === true) {
-                columnSeriesOptions[property] = s[property];
+            } else if (property === 'grouped') {
+                if (s[property] === true) {
+                    options[property] = s[property];
+                }
             } else {
-                columnSeriesOptions[property] = s[property];
+                options[property] = s[property];
             }
         }
     }
-    return columnSeriesOptions;
+    return options;
 }
 
 /**
  * Takes an array of line series options objects and returns a single object with the combined line series options.
  */
-export function processLineSeriesOptions(lineSeriesGroup: any) {
-    let lineSeriesOptions: AgLineSeriesOptions = {};
-
-    lineSeriesOptions = { ...lineSeriesGroup[0] };
-
-    return lineSeriesOptions;
+export function processLineSeriesOptions(series: any) {
+    return { ...series[0] };
 }
 
 /**
@@ -597,7 +599,8 @@ export function processSeriesOptions(
         (series: [AgCartesianSeriesOptions, AgPolarSeriesOptions]) => {
             switch (series[0].type) {
                 case 'column':
-                    return processColumnSeriesOptions(series);
+                case 'bar':
+                    return processBarColumnSeriesOptions(series);
                 case 'line':
                 default:
                     return processLineSeriesOptions(series);
