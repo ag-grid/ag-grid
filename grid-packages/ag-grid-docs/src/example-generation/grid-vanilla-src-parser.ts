@@ -393,7 +393,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
 
             if (!ts.isObjectLiteralExpression(columnDef)) {
                 // if we find any column defs that aren't objects (e.g. are references to objects instead), give up
-                copyOfColDefs.push(columnDef.name.getText())
+                return;
             }
 
             // for each col def property
@@ -414,7 +414,6 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
                 let propStr = props.length === 1 ? `{ ${props.join()} }` : `{\n        ${props.join(',\n    ')} }`;
                 copyOfColDefs.push(propStr);
             }
-
         }
         return `[\n    ${copyOfColDefs.join(',\n    ')} \n]`;
     };
@@ -460,8 +459,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
     };
     const tsExtractAndParseColDefs = (node) => {
         const colDefs = tsExtractColDefsStr(node);
-        return colDefs;
-        //return colDefs ? tsGenerate(colDefs, tsTree) : '';
+        return colDefs || '';
     };
 
     PROPERTIES.forEach(propertyName => {
