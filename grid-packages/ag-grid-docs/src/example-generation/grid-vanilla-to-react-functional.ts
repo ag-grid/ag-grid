@@ -160,7 +160,6 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
         const componentNameExists = (componentName: string) => Object.keys(components).includes(stripQuotes(componentName));
 
         properties.filter(property => property.name !== 'onGridReady').forEach(property => {
-            debugger
             if (property.value === 'true' || property.value === 'false') {
                 componentProps.push(`${property.name}={${property.value}}`);
             } else if (property.value === null) {
@@ -206,7 +205,7 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
 
             if (needsRowDataState) {
                 if (stateProperties.filter(item => item.indexOf('rowData') >= 0).length === 0) {
-                    stateProperties.push('const [rowData, setRowData] = useState(null);');
+                    stateProperties.push('const [rowData, setRowData] = useState();');
                 }
 
                 if (componentProps.filter(item => item.indexOf('rowData') >= 0).length === 0) {
@@ -264,13 +263,16 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
 
 ${imports.join('\n')}
 
+${bindings.utils.map(gridInstanceConverter).map(convertFunctionToConstProperty).join('\n\n')}
+
 const GridExample = () => {
     const gridRef = useRef();
     ${stateProperties.join(';\n    ')}
 
-    ${gridReady}
+${gridReady}
 
 ${[].concat(eventHandlers, externalEventHandlers, instanceMethods).join('\n\n   ')}
+
 
     return  (
             <div ${containerStyle}>
@@ -279,8 +281,6 @@ ${[].concat(eventHandlers, externalEventHandlers, instanceMethods).join('\n\n   
         );
 
 }
-
-${bindings.utils.map(gridInstanceConverter).join('\n')}
 
 render(<GridExample></GridExample>, document.querySelector('#root'))
 `;
