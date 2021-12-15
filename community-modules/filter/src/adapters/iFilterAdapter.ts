@@ -26,7 +26,7 @@ export class IFilterAdapter extends Component implements IFilterComp {
 
         const { column, filterChangedCallback } = params;
         const comp = this.createFilterComponent(column);
-        this.filterManager.initaliseFilterComponent(column, comp);
+        this.filterManager.initialiseFilterComponent(column, comp);
         this.filterRoot.appendChild(comp.getGui());
 
         this.filterManager.addListenerForColumn(column, ({ type }) => {

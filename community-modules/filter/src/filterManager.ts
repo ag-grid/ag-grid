@@ -35,7 +35,7 @@ export class FilterManager extends BeanStub {
         return true;
     }
 
-    public initaliseFilterComponent<T extends ExpressionComponent>(column: Column, comp: T): T {
+    public initialiseFilterComponent<T extends ExpressionComponent>(column: Column, comp: T): T {
         comp.setParameters({
             stateManager: this.filterState.getStateManager(column),
         });
