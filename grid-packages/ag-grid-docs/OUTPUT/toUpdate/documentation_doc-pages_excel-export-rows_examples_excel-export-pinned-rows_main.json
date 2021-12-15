@@ -3,26 +3,26 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[{\n        headerName: 'Top Level Column Group',\n        children: [\n            {\n                headerName: 'Group A',\n                children: [\n                    {\n                        field: 'athlete',\n                        minWidth: 200\n                    },\n                    {\n                        field: 'country',\n                        minWidth: 200\n                    },\n                    {\n                        headerName: 'Group',\n                        valueGetter: 'data.country.charAt(0)'\n                    }\n                ]\n            },\n            {\n                headerName: 'Group B',\n                children: [\n                    {\n                        field: 'date',\n                        minWidth: 150\n                    },\n                    {\n                        field: 'sport',\n                        minWidth: 150\n                    },\n                    { field: 'gold' },\n                    { field: 'silver' },\n                    { field: 'bronze' },\n                    { field: 'total' }\n                ]\n            }\n        ]\n    }]"
+            "value": "[\n    {\n        headerName: 'Top Level Column Group',\n        children: [\n            {\n                headerName: 'Group A',\n                children: [\n                    { field: 'athlete', minWidth: 200 },\n                    { field: 'country', minWidth: 200 },\n                    { headerName: 'Group', valueGetter: 'data.country.charAt(0)' },\n                ],\n            },\n            {\n                headerName: 'Group B',\n                children: [\n                    { field: 'date', minWidth: 150 },\n                    { field: 'sport', minWidth: 150 },\n                    { field: 'gold' },\n                    { field: 'silver' },\n                    { field: 'bronze' },\n                    { field: 'total' },\n                ],\n            },\n        ],\n    },\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n    sortable: true,\n    filter: true,\n    resizable: true,\n    minWidth: 100,\n    flex: 1\n}"
+            "value": "{\n    sortable: true,\n    filter: true,\n    resizable: true,\n    minWidth: 100,\n    flex: 1,\n}"
         },
         { "name": "popupParent", "value": "document.body" },
         {
             "name": "pinnedTopRowData",
-            "value": "[{\n        athlete: 'Floating <Top> Athlete',\n        country: 'Floating <Top> Country',\n        date: '01/08/2020',\n        sport: 'Track & Field',\n        gold: 22,\n        silver: '003',\n        bronze: 44,\n        total: 55\n    }]"
+            "value": "[\n    {\n        athlete: 'Floating <Top> Athlete',\n        country: 'Floating <Top> Country',\n        date: '01/08/2020',\n        sport: 'Track & Field',\n        gold: 22,\n        silver: '003',\n        bronze: 44,\n        total: 55,\n    },\n]"
         },
         {
             "name": "pinnedBottomRowData",
-            "value": "[{\n        athlete: 'Floating <Bottom> Athlete',\n        country: 'Floating <Bottom> Country',\n        date: '01/08/2030',\n        sport: 'Track & Field',\n        gold: 222,\n        silver: '005',\n        bronze: 244,\n        total: 255\n    }]"
+            "value": "[\n    {\n        athlete: 'Floating <Bottom> Athlete',\n        country: 'Floating <Bottom> Country',\n        date: '01/08/2030',\n        sport: 'Track & Field',\n        gold: 222,\n        silver: '005',\n        bronze: 244,\n        total: 255,\n    },\n]"
         }
     ],
     "components": [],
-    "defaultColDef": "{\n    sortable: true,\n    filter: true,\n    resizable: true,\n    minWidth: 100,\n    flex: 1\n}",
+    "defaultColDef": "{\n    sortable: true,\n    filter: true,\n    resizable: true,\n    minWidth: 100,\n    flex: 1,\n}",
     "globalComponents": [],
-    "parsedColDefs": "[{\n        headerName: 'Top Level Column Group',\n        children: [\n            {\n                headerName: 'Group A',\n                children: [\n                    {\n                        field: 'athlete',\n                        minWidth: 200\n                    },\n                    {\n                        field: 'country',\n                        minWidth: 200\n                    },\n                    {\n                        headerName: 'Group',\n                        valueGetter: 'data.country.charAt(0)'\n                    }\n                ]\n            },\n            {\n                headerName: 'Group B',\n                children: [\n                    {\n                        field: 'date',\n                        minWidth: 150\n                    },\n                    {\n                        field: 'sport',\n                        minWidth: 150\n                    },\n                    { field: 'gold' },\n                    { field: 'silver' },\n                    { field: 'bronze' },\n                    { field: 'total' }\n                ]\n            }\n        ]\n    }]",
+    "parsedColDefs": "[{\n        headerName: 'Top Level Column Group',\n    children: [{\n        headerName: 'Group A',\n    children: [{\n        field: 'athlete',\n    minWidth: 200 },\n    {\n        field: 'country',\n    minWidth: 200 },\n    {\n        headerName: 'Group',\n    valueGetter: 'data.country.charAt(0)' }] },\n    {\n        headerName: 'Group B',\n    children: [{\n        field: 'date',\n    minWidth: 150 },\n    {\n        field: 'sport',\n    minWidth: 150 },\n    { field: 'gold' },\n    { field: 'silver' },\n    { field: 'bronze' },\n    { field: 'total' }] }] }]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {
@@ -32,12 +32,12 @@
         }
     ],
     "utils": [
-        "function getBoolean(id) {\n    return !!document.querySelector('#' + id).checked;\n}",
-        "function getParams() {\n    return {\n        skipPinnedTop: getBoolean('skipPinnedTop'),\n        skipPinnedBottom: getBoolean('skipPinnedBottom')\n    };\n}"
+        "function getBoolean(id) {\n    return !!(document.querySelector('#' + id)).checked;\n}",
+        "function getParams() {\n    return {\n        skipPinnedTop: getBoolean('skipPinnedTop'),\n        skipPinnedBottom: getBoolean('skipPinnedBottom'),\n    };\n}"
     ],
     "data": {
         "url": "'https://www.ag-grid.com/example-assets/small-olympic-winners.json'",
-        "callback": "params.api.setRowData(data.filter(rec => rec.country != null))"
+        "callback": "params.api.setRowData(data.filter((rec) => rec.country != null))"
     },
     "template": "<div class=\"container\">\n    <div class=\"columns\">\n        <div class=\"column\">\n            <label for=\"skipPinnedTop\"><input id=\"skipPinnedTop\" type=\"checkbox\">Skip Pinned Top Rows</label>\n        </div>\n        <div class=\"column\">\n            <label for=\"skipPinnedBottom\"><input id=\"skipPinnedBottom\" type=\"checkbox\">Skip Pinned Bottom Rows</label>\n        </div>\n        <div>\n            <button onclick=\"onBtExport()\" style=\"margin: 5px 0px; font-weight: bold;\">Export to Excel</button>\n        </div>\n    </div>\n    <div class=\"grid-wrapper\">\n        GRID_TEMPLATE_PLACEHOLDER\n    </div>\n</div>",
     "gridSettings": {

@@ -97,7 +97,7 @@ function generateWithReplacedGridOptions(node, options?) {
 //     omitTrailingSemicolon?: boolean;
 //     noEmitHelpers?: boolean;
 // }
-const printer = ts.createPrinter({ removeComments: false, omitTrailingSemicolon: false });
+const printer = ts.createPrinter({ removeComments: false, omitTrailingSemicolon: true });
 
 function tsGenerate(node, srcFile) {
     try {
@@ -415,7 +415,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
                 copyOfColDefs.push(propStr);
             }
         }
-        return `[\n    ${copyOfColDefs.join(',\n    ')} \n]`;
+        return `[${copyOfColDefs.join(',\n    ')}]`;
     };
 
     const convertFunctionsIntoStrings = property => {
@@ -438,7 +438,12 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
             return `${property.name.text}: 'AG_LITERAL_${property.initializer.escapedText}'`;
         } else if (ts.isFunctionExpression(property.initializer)) {
             const func = tsGenerate(property.initializer, tsTree);
-            const escaped = func.replace(/'/g, "\'").replace(/"/g, '\\"').replace(/\n/g, "\\n");
+            // https://stackoverflow.com/a/9310752/11953633
+            const escaped = func.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
+            //    .replace(/\\/g, "\\\\")
+            //.replace(/'/g, "\\'")
+            //.replace(/"/g, "\\\"")
+            //.replace(/\n/g, "\\n");
             return `${property.name.text}: "AG_FUNCTION_${escaped}"`;
 
         } else if (ts.isObjectLiteralExpression(property.initializer)) {
@@ -448,7 +453,8 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
                 objProps.push(tsConvertFunctionsIntoStringsStr(p));
             });
 
-            return `${property.name.text} : {\n    ${objProps.join(',\n    ')}\n }`;
+            const props = objProps.length === 1 ? `{ ${objProps.join(',\n    ')} }` : `{\n    ${objProps.join(',\n    ')}\n }`;
+            return `${property.name.text} : ${props}`;
         }
         return tsGenerate(property, tsTree);
     };
