@@ -87,7 +87,7 @@ export { ScrollVisibleService } from "ag-grid-community";
 export { MouseEventService } from "ag-grid-community";
 export { NavigationService } from "ag-grid-community";
 export { RowContainerComp } from "ag-grid-community";
-export { RowContainerName, IRowContainerComp, RowContainerCtrl } from "ag-grid-community";
+export { RowContainerName, IRowContainerComp, RowContainerCtrl, RowContainerType, getRowContainerTypeForName } from "ag-grid-community";
 export { BodyDropPivotTarget } from "ag-grid-community";
 export { BodyDropTarget } from "ag-grid-community";
 export { CssClassApplier } from "ag-grid-community";

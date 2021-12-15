@@ -8440,6 +8440,7 @@
     }
   },
   "RowContainerName": {},
+  "RowContainerType": {},
   "IRowContainerComp": {
     "setViewportHeight": {
       "type": {
@@ -16906,7 +16907,9 @@
   "RowGui": {
     "rowComp": { "type": { "returnType": "IRowComp", "optional": false } },
     "element": { "type": { "returnType": "HTMLElement", "optional": false } },
-    "pinned": { "type": { "returnType": "string | null", "optional": false } }
+    "containerType": {
+      "type": { "returnType": "RowContainerType", "optional": false }
+    }
   },
   "CellCtrlListAndMap": {
     "list": { "type": { "returnType": "CellCtrl[]", "optional": false } },

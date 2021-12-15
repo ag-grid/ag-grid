@@ -139,7 +139,7 @@ const GridBodyComp = () => {
                 RowContainerName.TOP_LEFT,
                 RowContainerName.TOP_CENTER,
                 RowContainerName.TOP_RIGHT,
-                RowContainerName.TOP_FULL_WITH,
+                RowContainerName.TOP_FULL_WIDTH,
             ]}) }
             { createSection({ section: eBodyViewport, className: bodyViewportClasses, children: [
                 RowContainerName.LEFT,
@@ -151,7 +151,7 @@ const GridBodyComp = () => {
                 RowContainerName.BOTTOM_LEFT,
                 RowContainerName.BOTTOM_CENTER,
                 RowContainerName.BOTTOM_RIGHT,
-                RowContainerName.BOTTOM_FULL_WITH,
+                RowContainerName.BOTTOM_FULL_WIDTH,
             ]}) }
         </div>
     );
