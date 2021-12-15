@@ -384,36 +384,8 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
         return copyOfColDefs;
     };
 
-    const tsExtractColDefs1 = (node: ts.Node) => {
-        const copyOfColDefs: any = node; // JSON.parse(JSON.stringify(node));
-
-        // for each column def
-        for (let columnDefIndex = 0; columnDefIndex < copyOfColDefs.elements.length; columnDefIndex++) {
-            const columnDef = copyOfColDefs.elements[columnDefIndex];
-
-            if (!ts.isObjectLiteralExpression(columnDef)) {
-                // if we find any column defs that aren't objects (e.g. are references to objects instead), give up
-                return null;
-            }
-
-            // for each col def property
-            for (let colDefPropertyIndex = 0; colDefPropertyIndex < columnDef.properties.length; colDefPropertyIndex++) {
-                const columnDefProperty: any = columnDef.properties[colDefPropertyIndex];
-
-                if (columnDefProperty.name.getText() === 'children') {
-                    const children = tsExtractColDefs1(columnDefProperty.initializer);
-                    // To do: Why is this copied back??
-                    columnDefProperty.initializer = children;
-                } else {
-                    tsConvertFunctionsIntoStrings1(columnDefProperty);
-                }
-            }
-        }
-
-        return copyOfColDefs;
-    };
     const tsExtractColDefsStr = (node: any): string => {
-        let copyOfColDefs = '[';
+        let copyOfColDefs = [];
 
         // for each column def
         for (let columnDefIndex = 0; columnDefIndex < node.elements.length; columnDefIndex++) {
@@ -421,8 +393,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
 
             if (!ts.isObjectLiteralExpression(columnDef)) {
                 // if we find any column defs that aren't objects (e.g. are references to objects instead), give up
-                copyOfColDefs += 'PLACEHOLDER,'
-                return null;
+                copyOfColDefs.push(columnDef.name.getText())
             }
 
             // for each col def property
@@ -440,14 +411,12 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
                 }
             }
             if (props.length > 0) {
-                copyOfColDefs += `{ ${props.join()} },`
-
+                let propStr = props.length === 1 ? `{ ${props.join()} }` : `{\n        ${props.join(',\n    ')} }`;
+                copyOfColDefs.push(propStr);
             }
 
         }
-        copyOfColDefs += ']'
-
-        return copyOfColDefs;
+        return `[\n    ${copyOfColDefs.join(',\n    ')} \n]`;
     };
 
     const convertFunctionsIntoStrings = property => {
@@ -463,20 +432,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
             property.value.properties.forEach(p => convertFunctionsIntoStrings(p));
         }
     };
-    const tsConvertFunctionsIntoStrings1 = (property: any) => {
-        if (ts.isIdentifier(property.initializer)) {
-            //property.value.type = 'Literal';
-            property.initializer.escapedText = `AG_LITERAL_${property.initializer.escapedText}`;
-        } else if (ts.isFunctionExpression(property.initializer)) {
-            const func = tsGenerate(property.initializer, tsTree);
 
-            //property.value.type = 'Literal';
-            property.name.escapedText = `AG_FUNCTION_${property.name.escapedText}`;
-        } else if (ts.isObjectLiteralExpression(property.initializer)) {
-
-            property.initializer.properties.forEach(p => tsConvertFunctionsIntoStrings1(p));
-        }
-    };
     const tsConvertFunctionsIntoStringsStr = (property: any): string => {
         if (ts.isIdentifier(property.initializer)) {
 
@@ -484,17 +440,16 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
         } else if (ts.isFunctionExpression(property.initializer)) {
             let func = tsGenerate(property.initializer, tsTree);
             const replaced = `${property.name.text}: "AG_FUNCTION_${func.replace(/'/g, "\'").replace(/\n/g, "\\n")}"`
-
             return replaced;
 
         } else if (ts.isObjectLiteralExpression(property.initializer)) {
 
-            let objProps = '{'
+            let objProps = [];
             property.initializer.properties.forEach(p => {
-                objProps += tsConvertFunctionsIntoStringsStr(p)
+                objProps.push(tsConvertFunctionsIntoStringsStr(p));
             });
-            objProps += '}'
-            return objProps;
+
+            return `${property.name.text} : {\n    ${objProps.join(',\n    ')}\n }`;
         }
         return tsGenerate(property, tsTree);
     };
