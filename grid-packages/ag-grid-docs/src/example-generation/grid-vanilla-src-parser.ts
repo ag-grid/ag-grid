@@ -600,7 +600,12 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
     tsCollectors.push({
         matches: node => tsNodeIsGlobalVarWithName(node, 'gridOptions'),
         apply: (bindings, node) => {
-            return tsCollect(node.initializer, bindings, tsGridOptionsCollectors);
+
+            node.initializer.properties.forEach(prop => {
+                bindings = tsCollect(prop, bindings, tsGridOptionsCollectors, false)
+            });
+
+            return bindings;
         }
     });
 
