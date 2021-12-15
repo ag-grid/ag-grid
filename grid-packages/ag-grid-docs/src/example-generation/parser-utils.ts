@@ -93,9 +93,9 @@ export function nodeIsVarWithName(node: any, name: string): boolean {
     // eg: var currentRowHeight = 10;
     return node.type === NodeType.Variable && node.declarations[0].id.name === name;
 }
-export function tsNodeIsVarWithName(node: any, name: string): boolean {
+export function tsNodeIsGlobalVarWithName(node: any, name: string): boolean {
     // eg: var currentRowHeight = 10;
-    if (ts.isVariableDeclaration(node)) {
+    if (ts.isVariableDeclaration(node) && ts.isSourceFile(node.parent.parent.parent)) {
         return node.name.getText() === name;
     }
     return false;

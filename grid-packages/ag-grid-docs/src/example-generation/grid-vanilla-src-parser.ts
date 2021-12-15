@@ -21,7 +21,7 @@ import {
     tsNodeIsFunctionWithName,
     tsNodeIsPropertyWithName,
     tsNodeIsUnusedFunction,
-    tsNodeIsVarWithName,
+    tsNodeIsGlobalVarWithName,
 } from './parser-utils';
 
 export const templatePlaceholder = 'GRID_TEMPLATE_PLACEHOLDER';
@@ -486,7 +486,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
         });
         // grab global variables named as grid properties
         tsCollectors.push({
-            matches: node => tsNodeIsVarWithName(node, propertyName),
+            matches: node => tsNodeIsGlobalVarWithName(node, propertyName),
             apply: (bindings, node) => {
                 try {
                     if (processColDefsForFunctionalReactOrVue(propertyName, exampleType, exampleSettings, providedExamples)) {
@@ -598,7 +598,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
         apply: (bindings, node) => collect(node.declarations[0].init.properties, bindings, gridOptionsCollectors)
     });
     tsCollectors.push({
-        matches: node => tsNodeIsVarWithName(node, 'gridOptions'),
+        matches: node => tsNodeIsGlobalVarWithName(node, 'gridOptions'),
         apply: (bindings, node) => {
             return tsCollect(node.initializer, bindings, tsGridOptionsCollectors);
         }
