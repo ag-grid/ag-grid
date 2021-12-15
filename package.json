@@ -45,7 +45,6 @@
     "buildVue": "npx lerna run build --scope '{@ag-grid-community/core,ag-grid-vue}'",
     "buildReact": "npx lerna run build --scope '{@ag-grid-community/core,ag-grid-react}'",
     "docs": "cd grid-packages/ag-grid-docs && npm start",
-    "docs-react-fire": "cd grid-packages/ag-grid-docs && npm run start-react-fire",
     "docs-core-only": "cd grid-packages/ag-grid-docs && npm run serve-core-only",
     "docs-clean": "cd grid-packages/ag-grid-docs/documentation && npm run clean",
     "docsWithFormatting": "cd grid-packages/ag-grid-docs && npm run serve-with-formatting",

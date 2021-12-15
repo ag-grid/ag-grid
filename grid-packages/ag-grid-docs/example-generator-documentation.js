@@ -372,23 +372,16 @@ function createExampleGenerator(prefix, importTypes) {
 
 function getGeneratorCode(prefix) {
     const gridExamples = prefix === './src/example-generation/grid-' || false;
-    const generateReactFire = process.env.AG_GENERATE_REACT_FIRE || false;
-
-    if (generateReactFire) {
-        console.warn("********************************************");
-        console.warn("************ React Fire Enabled ************");
-        console.warn("********************************************");
-    }
 
     const {parser} = require(`${prefix}vanilla-src-parser.ts`);
     const {vanillaToVue} = require(`${prefix}vanilla-to-vue.ts`);
-    const {vanillaToReact} = require(`${prefix}vanilla-to-react${gridExamples && generateReactFire ? '-fire' : ''}.ts`);
+    const {vanillaToReact} = require(`${prefix}vanilla-to-react.ts`);
     const {vanillaToVue3} = require(`${prefix}vanilla-to-vue3.ts`);
 
     // spl todo - add charts & vue 3 support in time
     let vanillaToReactFunctional = null;
     if (gridExamples) {
-        vanillaToReactFunctional = require(`${prefix}vanilla-to-react${generateReactFire ? '-fire' : ''}-functional.ts`).vanillaToReactFunctional;
+        vanillaToReactFunctional = require(`${prefix}vanilla-to-react-functional.ts`).vanillaToReactFunctional;
     }
 
     const {vanillaToAngular} = require(`${prefix}vanilla-to-angular.ts`);

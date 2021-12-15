@@ -1,4 +1,5 @@
 import { recognizedDomEvents } from './parser-utils';
+import * as JSON5 from "json5";
 
 const toTitleCase = (value: string) => value[0].toUpperCase() + value.slice(1);
 const toCamelCase = (value: string) => value.replace(/(?:-)(\w)/g, (_, c: string) => c ? c.toUpperCase() : '');
@@ -68,3 +69,13 @@ export function convertFunctionalTemplate(template: string) {
 }
 
 export const getImport = (filename: string) => `import ${toTitleCase(filename.split('.')[0])} from './${filename}';`;
+
+export const getValueType = (value: string) => {
+    let type = 'object';
+    try {
+        type = typeof JSON5.parse(value);
+    } catch (_) {
+        // if it's something we can't parse we'll assume an object
+    }
+    return type;
+};

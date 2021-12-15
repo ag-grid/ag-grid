@@ -268,53 +268,6 @@ async function watchAndGenerateExamples() {
         .on('add', regenerateDocumentationExamplesForFileChange);
 }
 
-const updateLegacyWebpackSourceFiles = (gridCommunityModules, gridEnterpriseModules) => {
-    const getImport = module => [
-        `require("../../../${module.fullJsPath.replace('.ts', '')}");`,
-        `const ${module.moduleName} = require("../../../${module.fullJsPath.replace('.ts', '')}").${module.moduleName};`,
-        ''
-    ].join(EOL);
-
-    const getFilteredModules = modules =>
-        modules.filter(module => module.moduleDirName !== 'core' && module.moduleDirName !== 'all-modules');
-
-    const communityModulesEntries = getFilteredModules(gridCommunityModules).map(getImport);
-
-    const communityRegisterModuleLines = getFilteredModules(gridCommunityModules)
-        .map(module => `ModuleRegistry.ModuleRegistry.register(${module.moduleName});`);
-
-    const enterpriseModulesEntries = getFilteredModules(gridEnterpriseModules).map(getImport);
-
-    const enterpriseRegisterModuleLines = getFilteredModules(gridEnterpriseModules)
-        .map(module => `ModuleRegistry.ModuleRegistry.register(${module.moduleName});`);
-
-    const enterpriseBundleFilename = './src/_assets/ts/enterprise-grid-all-modules-umd.js';
-    const communityFilename = 'src/_assets/ts/community-grid-all-modules-umd.js';
-
-    const existingEnterpriseBundleLines = fs.readFileSync(enterpriseBundleFilename, 'UTF-8').split(EOL);
-    let modulesLineFound = false;
-    const newEnterpriseBundleLines = [];
-    existingEnterpriseBundleLines.forEach(line => {
-        if (!modulesLineFound) {
-            modulesLineFound = line.indexOf("/* MODULES - Don't delete this line */") !== -1;
-            newEnterpriseBundleLines.push(line);
-        }
-    });
-    const newEnterpriseBundleContent = newEnterpriseBundleLines.concat(enterpriseModulesEntries).concat(communityModulesEntries);
-    fs.writeFileSync(enterpriseBundleFilename, newEnterpriseBundleContent.concat(enterpriseRegisterModuleLines).concat(communityRegisterModuleLines).join(EOL), 'UTF-8');
-
-    const existingCommunityLines = fs.readFileSync(communityFilename).toString().split(EOL);
-    modulesLineFound = false;
-    const newCommunityLines = [];
-    existingCommunityLines.forEach(line => {
-        if (!modulesLineFound) {
-            modulesLineFound = line.indexOf("/* MODULES - Don't delete this line */") !== -1;
-            newCommunityLines.push(line);
-        }
-    });
-    fs.writeFileSync(communityFilename, newCommunityLines.concat(communityModulesEntries).concat(communityRegisterModuleLines).join(EOL), 'UTF-8');
-};
-
 const updateWebpackSourceFiles = (gridCommunityModules, gridEnterpriseModules) => {
     const communityModulesEntries = gridCommunityModules
         .filter(module => module.moduleDirName !== 'core')
@@ -365,7 +318,6 @@ const updateWebpackSourceFiles = (gridCommunityModules, gridEnterpriseModules) =
 
 function updateWebpackConfigWithBundles(gridCommunityModules, gridEnterpriseModules) {
     console.log("Updating webpack config with modules...");
-    updateLegacyWebpackSourceFiles(gridCommunityModules, gridEnterpriseModules);
     updateWebpackSourceFiles(gridCommunityModules, gridEnterpriseModules);
 }
 

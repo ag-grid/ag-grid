@@ -4,7 +4,6 @@
   "description": "Documentation for AG Grid",
   "scripts": {
     "build": "npm run hash",
-    "start-react-fire": "AG_GENERATE_REACT_FIRE=true npm run start",
     "start": "npx gulp serve --max_old_space_size=6144",
     "serve-core-only": "npx gulp --max_old_space_size=6144 serve-core-only",
     "serve-with-formatting": "npx gulp serve-with-formatting",
