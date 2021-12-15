@@ -31,7 +31,7 @@ export function modulesProcessor(modules: string[]) {
 
 export function removeFunctionKeyword(code: string): string {
     return code.replace(/^function /, '')
-        .replace(/\n\s*function /, '\n ');
+        .replace(/\n\s?function /, '\n ');
 }
 
 export function getFunctionName(code: string): string {
@@ -55,7 +55,7 @@ export const enum NodeType {
     Expression = 'ExpressionStatement',
 };
 
-export function tsCollect(tsTree, tsBindings, collectors) {
+export function tsCollect(tsTree, tsBindings, collectors, recurse = true) {
     ts.forEachChild(tsTree, (node: ts.Node) => {
 
         collectors.filter(c => {
@@ -74,7 +74,9 @@ export function tsCollect(tsTree, tsBindings, collectors) {
                 console.error(error)
             }
         });
-        tsCollect(node, tsBindings, collectors)
+        if (recurse) {
+            tsCollect(node, tsBindings, collectors, recurse);
+        }
     });
     return tsBindings;
 }

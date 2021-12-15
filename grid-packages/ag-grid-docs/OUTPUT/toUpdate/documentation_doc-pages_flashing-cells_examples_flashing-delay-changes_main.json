@@ -3,36 +3,36 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n    { field: 'a' },\n    { field: 'b' },\n    { field: 'c' },\n    { field: 'd' },\n    { field: 'e' },\n    { field: 'f' }\n]"
+            "value": "[\n    { field: 'a' },\n    { field: 'b' },\n    { field: 'c' },\n    { field: 'd' },\n    { field: 'e' },\n    { field: 'f' },\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n    flex: 1,\n    cellClass: 'align-right',\n    enableCellChangeFlash: true,\n    resizable: true,\n    valueFormatter: function (params) {\n        return formatNumber(params.value);\n    }\n}"
+            "value": "{\n    flex: 1,\n    cellClass: 'align-right',\n    enableCellChangeFlash: true,\n    resizable: true,\n    valueFormatter: function (params) {\n        return formatNumber(params.value);\n    },\n}"
         },
         { "name": "rowData", "value": "createRowData()" },
         { "name": "cellFlashDelay", "value": "2000" },
         { "name": "cellFadeDelay", "value": "500" }
     ],
     "components": [],
-    "defaultColDef": "{\n    flex: 1,\n    cellClass: 'align-right',\n    enableCellChangeFlash: true,\n    resizable: true,\n    valueFormatter: function (params) {\n        return formatNumber(params.value);\n    }\n}",
+    "defaultColDef": "{\n    flex: 1,\n    cellClass: 'align-right',\n    enableCellChangeFlash: true,\n    resizable: true,\n    valueFormatter: function (params) {\n        return formatNumber(params.value);\n    },\n}",
     "globalComponents": [],
-    "parsedColDefs": "[\n    { field: 'a' },\n    { field: 'b' },\n    { field: 'c' },\n    { field: 'd' },\n    { field: 'e' },\n    { field: 'f' }\n]",
+    "parsedColDefs": "[\n    { field: 'a' },\n    { field: 'b' },\n    { field: 'c' },\n    { field: 'd' },\n    { field: 'e' },\n    { field: 'f' } \n]",
     "instanceMethods": [],
     "externalEventHandlers": [
         {
             "name": "onUpdateSomeValues",
             "params": "",
-            "body": "function onUpdateSomeValues() {\n    var rowCount = this.gridApi.getDisplayedRowCount();\n    for (var i = 0; i < 20; i++) {\n        var row = Math.floor(Math.random() * rowCount);\n        var rowNode = this.gridApi.getDisplayedRowAtIndex(row);\n        var col = [\n            'a',\n            'b',\n            'c',\n            'd',\n            'e',\n            'f'\n        ][i % 6];\n        rowNode.setDataValue(col, Math.floor(Math.random() * 10000));\n    }\n}"
+            "body": "function onUpdateSomeValues() {\n    var rowCount = this.gridApi.getDisplayedRowCount();\n    // pick 20 cells at random to update\n    for (var i = 0; i < 20; i++) {\n        var row = Math.floor(Math.random() * rowCount);\n        var rowNode = this.gridApi.getDisplayedRowAtIndex(row);\n        var col = ['a', 'b', 'c', 'd', 'e', 'f'][i % 6];\n        rowNode.setDataValue(col, Math.floor(Math.random() * 10000));\n    }\n}"
         },
         {
             "name": "onFlashTwoRows",
             "params": "",
-            "body": "function onFlashTwoRows() {\n    var rowNode1 = this.gridApi.getDisplayedRowAtIndex(4);\n    var rowNode2 = this.gridApi.getDisplayedRowAtIndex(5);\n    this.gridApi.flashCells({\n        rowNodes: [\n            rowNode1,\n            rowNode2\n        ],\n        flashDelay: 3000,\n        fadeDelay: 2000\n    });\n}"
+            "body": "function onFlashTwoRows() {\n    // pick fourth and fifth row at random\n    var rowNode1 = this.gridApi.getDisplayedRowAtIndex(4);\n    var rowNode2 = this.gridApi.getDisplayedRowAtIndex(5);\n    // flash whole row, so leave column selection out\n    this.gridApi.flashCells({\n        rowNodes: [rowNode1, rowNode2],\n        flashDelay: 3000,\n        fadeDelay: 2000,\n    });\n}"
         }
     ],
     "utils": [
-        "function formatNumber(number) {\n    return Math.floor(number).toString().replace(/(\\d)(?=(\\d{3})+(?!\\d))/g, '$1,');\n}",
-        "function createRowData() {\n    var rowData = [];\n    for (var i = 0; i < 20; i++) {\n        rowData.push({\n            a: Math.floor((i + 323) * 25435 % 10000),\n            b: Math.floor((i + 323) * 23221 % 10000),\n            c: Math.floor((i + 323) * 468276 % 10000),\n            d: 0,\n            e: 0,\n            f: 0\n        });\n    }\n    return rowData;\n}"
+        "function formatNumber(number) {\n    // this puts commas into the number eg 1000 goes to 1,000,\n    // i pulled this from stack overflow, i have no idea how it works\n    return Math.floor(number)\n        .toString()\n        .replace(/(\\d)(?=(\\d{3})+(?!\\d))/g, '$1,');\n}",
+        "function createRowData() {\n    var rowData = [];\n    for (var i = 0; i < 20; i++) {\n        rowData.push({\n            a: Math.floor(((i + 323) * 25435) % 10000),\n            b: Math.floor(((i + 323) * 23221) % 10000),\n            c: Math.floor(((i + 323) * 468276) % 10000),\n            d: 0,\n            e: 0,\n            f: 0,\n        });\n    }\n    return rowData;\n}"
     ],
     "template": "<div style=\"height: 100%; display: flex; flex-direction: column;\">\n    <div style=\"margin-bottom: 4px;\">\n        <button onclick=\"onUpdateSomeValues()\">Update Some Data</button>\n        <button onclick=\"onFlashTwoRows()\">Flash Two Rows</button>\n    </div>\n    <div style=\"flex-grow: 1;\">\n        GRID_TEMPLATE_PLACEHOLDER\n    </div>\n</div>\n",
     "gridSettings": { "width": "100%", "height": "100%", "theme": "ag-theme-alpine", "enterprise": true }
