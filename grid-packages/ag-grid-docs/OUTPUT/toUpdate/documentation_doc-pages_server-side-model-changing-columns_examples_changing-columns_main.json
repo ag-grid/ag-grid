@@ -3,20 +3,20 @@
     "properties": [
         {
             "name": "columnDefs",
-            "value": "[\n    colDefAthlete,\n    colDefAge,\n    colDefCountry,\n    colDefYear,\n    colDefSport,\n    colDefGold,\n    colDefSilver,\n    colDefBronze\n]"
+            "value": "[\n    colDefAthlete,\n    colDefAge,\n    colDefCountry,\n    colDefYear,\n    colDefSport,\n    colDefGold,\n    colDefSilver,\n    colDefBronze,\n]"
         },
         {
             "name": "defaultColDef",
-            "value": "{\n    flex: 1,\n    minWidth: 120,\n    resizable: true,\n    sortable: true\n}"
+            "value": "{\n    flex: 1,\n    minWidth: 120,\n    resizable: true,\n    sortable: true,\n}"
         },
-        { "name": "autoGroupColumnDef", "value": "{ minWidth: 200 }" },
+        { "name": "autoGroupColumnDef", "value": "{\n    minWidth: 200,\n}" },
         { "name": "rowModelType", "value": "'serverSide'" },
         { "name": "serverSideStoreType", "value": "'partial'" },
         { "name": "animateRows", "value": "true" },
         { "name": "suppressAggFuncInHeader", "value": "true" }
     ],
     "components": [],
-    "defaultColDef": "{\n    flex: 1,\n    minWidth: 120,\n    resizable: true,\n    sortable: true\n}",
+    "defaultColDef": "{\n    flex: 1,\n    minWidth: 120,\n    resizable: true,\n    sortable: true,\n}",
     "globalComponents": [],
     "parsedColDefs": "",
     "instanceMethods": [],
@@ -28,23 +28,23 @@
         }
     ],
     "utils": [
-        "var colDefCountry = {\n    field: 'country',\n    rowGroup: true\n};",
-        "var colDefYear = {\n    field: 'year',\n    rowGroup: true\n};",
-        "var colDefAthlete = {\n    field: 'athlete',\n    filter: 'agSetColumnFilter',\n    filterParams: { values: getAthletesAsync },\n    menuTabs: ['filterMenuTab']\n};",
+        "var colDefCountry = { field: 'country', rowGroup: true };",
+        "var colDefYear = { field: 'year', rowGroup: true };",
+        "var colDefAthlete = {\n    field: 'athlete',\n    filter: 'agSetColumnFilter',\n    filterParams: {\n        values: getAthletesAsync,\n    },\n    menuTabs: ['filterMenuTab'],\n};",
         "var colDefAge = { field: 'age' };",
         "var colDefSport = { field: 'sport' };",
-        "var colDefGold = {\n    field: 'gold',\n    aggFunc: 'sum'\n};",
-        "var colDefSilver = {\n    field: 'silver',\n    aggFunc: 'sum'\n};",
-        "var colDefBronze = {\n    field: 'bronze',\n    aggFunc: 'sum'\n};",
-        "function getAthletesAsync(params) {\n    var countries = fakeServer.getAthletes();\n    setTimeout(function () {\n        params.success(countries);\n    }, 500);\n}",
-        "function getBooleanValue(cssSelector) {\n    return document.querySelector(cssSelector).checked === true;\n}",
-        "function getServerSideDatasource(server) {\n    return {\n        getRows: function (params) {\n            console.log('[Datasource] - rows requested by grid: ', params.request);\n            var response = server.getData(params.request);\n            setTimeout(function () {\n                if (response.success) {\n                    params.success({\n                        rowData: response.rows,\n                        rowCount: response.lastRow\n                    });\n                } else {\n                    params.fail();\n                }\n            }, 200);\n        }\n    };\n}",
+        "var colDefGold = { field: 'gold', aggFunc: 'sum' };",
+        "var colDefSilver = { field: 'silver', aggFunc: 'sum' };",
+        "var colDefBronze = { field: 'bronze', aggFunc: 'sum' };",
+        "function getAthletesAsync(params) {\n    var countries = fakeServer.getAthletes();\n    // simulating real server call with a 500ms delay\n    setTimeout(function () {\n        params.success(countries);\n    }, 500);\n}",
+        "function getBooleanValue(cssSelector) {\n    return (document.querySelector(cssSelector)).checked === true;\n}",
+        "function getServerSideDatasource(server) {\n    return {\n        getRows: function (params) {\n            console.log('[Datasource] - rows requested by grid: ', params.request);\n            var response = server.getData(params.request);\n            // adding delay to simulate real server call\n            setTimeout(function () {\n                if (response.success) {\n                    // call the success callback\n                    params.success({ rowData: response.rows, rowCount: response.lastRow });\n                }\n                else {\n                    // inform the grid request failed\n                    params.fail();\n                }\n            }, 200);\n        },\n    };\n}",
         "var fakeServer = undefined;"
     ],
-    "onGridReady": "{\n    document.getElementById('athlete').checked = true;\n    document.getElementById('age').checked = true;\n    document.getElementById('country').checked = true;\n    document.getElementById('year').checked = true;\n    document.getElementById('sport').checked = true;\n    document.getElementById('gold').checked = true;\n    document.getElementById('silver').checked = true;\n    document.getElementById('bronze').checked = true;\n}",
+    "onGridReady": "{\n    (document.getElementById('athlete')).checked = true;\n    (document.getElementById('age')).checked = true;\n    (document.getElementById('country')).checked = true;\n    (document.getElementById('year')).checked = true;\n    (document.getElementById('sport')).checked = true;\n    (document.getElementById('gold')).checked = true;\n    (document.getElementById('silver')).checked = true;\n    (document.getElementById('bronze')).checked = true;\n}",
     "data": {
         "url": "'https://www.ag-grid.com/example-assets/olympic-winners.json'",
-        "callback": "{\n    fakeServer = new FakeServer(data);\n    var datasource = getServerSideDatasource(fakeServer);\n    params.api.setServerSideDatasource(datasource);\n}"
+        "callback": "{\n    // setup the fake server with entire dataset\n    fakeServer = new FakeServer(data);\n    // create datasource with a reference to the fake server\n    var datasource = getServerSideDatasource(fakeServer);\n    // register the datasource with the grid\n    params.api.setServerSideDatasource(datasource);\n}"
     },
     "template": "<div class=\"test-container\">\n\n    <div class=\"test-header\">\n        Select columns to show then hit 'Apply'\n    </div>\n\n    <div class=\"test-header\">\n        <label><input type=\"checkbox\" id=\"athlete\">Athlete</label>\n        <label><input type=\"checkbox\" id=\"age\">Age</label>\n        <label><input type=\"checkbox\" id=\"country\">Country</label>\n        <label><input type=\"checkbox\" id=\"year\">Year</label>\n        <label><input type=\"checkbox\" id=\"sport\">Sport</label>\n\n        <label><input type=\"checkbox\" id=\"gold\">Gold</label>\n        <label><input type=\"checkbox\" id=\"silver\">Silver</label>\n        <label><input type=\"checkbox\" id=\"bronze\">Bronze</label>\n\n        <button onclick=\"onBtApply()\">Apply</button>\n    </div>\n\n    GRID_TEMPLATE_PLACEHOLDER\n\n</div>\n",
     "gridSettings": {
