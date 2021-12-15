@@ -1355,6 +1355,10 @@ export class GridApi {
     /** Tells the grid to recalculate the row heights. */
     public resetRowHeights() {
         if (exists(this.clientSideRowModel)) {
+            if (this.columnModel.isAutoRowHeightActive()) {
+                console.warn('AG Grid: calling gridApi.resetRowHeights() makes no sense when using Auto Row Height.');
+                return;
+            }
             this.clientSideRowModel.resetRowHeights();
         }
     }
