@@ -30,7 +30,8 @@ export function modulesProcessor(modules: string[]) {
 }
 
 export function removeFunctionKeyword(code: string): string {
-    return code.replace(/^function /, '');
+    return code.replace(/^function /, '')
+        .replace(/\n\s*function /, '\n ');
 }
 
 export function getFunctionName(code: string): string {
@@ -39,10 +40,10 @@ export function getFunctionName(code: string): string {
 }
 
 export const convertFunctionToProperty = (code: string) =>
-    code.replace(/^function\s+([^\(\s]+)\s*\(([^\)]*)\)/, '$1 = ($2) =>');
+    code.replace(/function\s+([^\(\s]+)\s*\(([^\)]*)\)/, '$1 = ($2) =>');
 
 export const convertFunctionToConstProperty = (code: string) =>
-    code.replace(/^function\s+([^\(\s]+)\s*\(([^\)]*)\)/, 'const $1 = ($2) =>');
+    code.replace(/function\s+([^\(\s]+)\s*\(([^\)]*)\)/, 'const $1 = ($2) =>');
 
 export function isInstanceMethod(methods: string[], property: any): boolean {
     return methods.map(getFunctionName).filter(name => name === property.name).length > 0;
