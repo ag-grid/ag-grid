@@ -404,7 +404,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
                 if (columnDefProperty.name.getText() === 'children') {
 
                     const children = tsExtractColDefsStr(columnDefProperty.initializer);
-                    props.push(`children: [${children}]`)
+                    props.push(`children: ${children}`)
 
                 } else {
                     props.push(`${tsConvertFunctionsIntoStringsStr(columnDefProperty)}`);
