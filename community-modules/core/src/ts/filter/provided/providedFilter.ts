@@ -14,7 +14,7 @@ import { RowNode } from '../../entities/rowNode';
 import { ValueService } from '../../valueService/valueService';
 import { _ } from '../../utils';
 
-type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
+export type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
 
 export interface IProvidedFilterParams extends IFilterParams {
     /**

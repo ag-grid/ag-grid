@@ -1,0 +1,64 @@
+@startuml
+
+!include ./overview-core-filters.puml
+
+!if ($overview != true)
+remove GridApi
+remove IFilter
+remove ProvidedFilter
+remove SimpleFilter
+remove ScalarFilter
+remove TextFilter
+remove DateFilter
+remove NumberFilter
+remove FilterLocaleText
+remove IDateComp
+remove DefaultDateComponent
+remove CustomDateComponent
+remove OptionsFactory
+!endif
+
+package Key <<rectangle>> {
+    hide circle
+    class "Floating Filters" #violet ##blue
+}
+
+class HeaderFilterCellCtrl #pink ##red
+
+class Component #yellow ##orange
+
+package core/filters {
+    HeaderFilterCellCtrl *-- FilterManager
+
+    interface FloatingFilter #violet ##blue
+    HeaderFilterCellCtrl o-- FloatingFilter
+
+    class ReadOnlyFloatingFilter  #violet ##blue extends Component implements FloatingFilter
+    abstract class SimpleFloatingFilter #violet ##blue extends Component implements FloatingFilter
+    SimpleFloatingFilter *-- OptionsFactory
+
+    abstract class TextInputFloatingFilter #violet ##blue extends SimpleFloatingFilter
+
+    class NumberFloatingFilter #violet ##blue extends TextInputFloatingFilter
+    class TextFloatingFilter #violet ##blue extends TextInputFloatingFilter
+    class DateFloatingFilter #violet ##blue extends SimpleFloatingFilter
+
+    class FloatingFilterMapper #lightgrey ##black
+    HeaderFilterCellCtrl *-- FloatingFilterMapper
+
+    class DateCompWrapper #yellow ##orange
+    DateFloatingFilter *-- DateCompWrapper
+}
+
+package multi-filter {
+    class MultiFloatingFilter #violet ##blue implements FloatingFilter
+}
+
+package set-filter {
+    class SetFloatingFilter #violet ##blue implements FloatingFilter
+
+    interface ISetFilterLocaleText #lightgrey ##black
+    SetFloatingFilter *-- ISetFilterLocaleText
+}
+
+@enduml

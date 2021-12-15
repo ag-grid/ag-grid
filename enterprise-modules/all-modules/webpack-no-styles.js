@@ -5,6 +5,7 @@
 var ClientSideRowModelModule = require('../../community-modules/client-side-row-model');
 var GridCoreModule = require('../../community-modules/core');
 var CsvExportModule = require('../../community-modules/csv-export');
+var FilterModule = require('../../community-modules/filter');
 var InfiniteRowModelModule = require('../../community-modules/infinite-row-model');
 var GridChartsModule = require('../../enterprise-modules/charts');
 var ClipboardModule = require('../../enterprise-modules/clipboard');
@@ -39,6 +40,7 @@ Object.keys(agGrid).forEach(function(key) {
 });
 agGrid.ModuleRegistry.register(ClientSideRowModelModule.ClientSideRowModelModule);
 agGrid.ModuleRegistry.register(CsvExportModule.CsvExportModule);
+agGrid.ModuleRegistry.register(FilterModule.FilterModule);
 agGrid.ModuleRegistry.register(InfiniteRowModelModule.InfiniteRowModelModule);
 agGrid.ModuleRegistry.register(GridChartsModule.GridChartsModule);
 agGrid.ModuleRegistry.register(ClipboardModule.ClipboardModule);

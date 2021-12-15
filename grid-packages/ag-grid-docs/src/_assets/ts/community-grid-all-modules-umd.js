@@ -10,9 +10,13 @@ const ClientSideRowModelModule = require("../../../../../community-modules/clien
 require("../../../../../community-modules/csv-export/dist/cjs/es5/csvExportModule");
 const CsvExportModule = require("../../../../../community-modules/csv-export/dist/cjs/es5/csvExportModule").CsvExportModule;
 
+require("../../../../../community-modules/filter/dist/cjs/es5/filterModule");
+const FilterModule = require("../../../../../community-modules/filter/dist/cjs/es5/filterModule").FilterModule;
+
 require("../../../../../community-modules/infinite-row-model/dist/cjs/es5/infiniteRowModelModule");
 const InfiniteRowModelModule = require("../../../../../community-modules/infinite-row-model/dist/cjs/es5/infiniteRowModelModule").InfiniteRowModelModule;
 
 ModuleRegistry.ModuleRegistry.register(ClientSideRowModelModule);
 ModuleRegistry.ModuleRegistry.register(CsvExportModule);
+ModuleRegistry.ModuleRegistry.register(FilterModule);
 ModuleRegistry.ModuleRegistry.register(InfiniteRowModelModule);

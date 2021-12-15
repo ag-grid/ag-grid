@@ -9,6 +9,7 @@ export enum ModuleNames {
     InfiniteRowModelModule = "@ag-grid-community/infinite-row-model",
     ClientSideRowModelModule = "@ag-grid-community/client-side-row-model",
     CsvExportModule = "@ag-grid-community/csv-export",
+    FilterModule = "@ag-grid-community/filter",
 
     // enterprise core - users never import on this, but other enterprise modules do
     EnterpriseCoreModule = "@ag-grid-enterprise/core", // should this be grid-enterprise-core?

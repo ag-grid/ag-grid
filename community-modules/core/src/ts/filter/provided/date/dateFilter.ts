@@ -6,7 +6,6 @@ import { ConditionPosition, ISimpleFilterModel, SimpleFilter, Tuple } from '../s
 import { Comparator, IScalarFilterParams, ScalarFilter } from '../scalarFilter';
 import { serialiseDate, parseDateTimeFromString } from '../../../utils/date';
 import { IAfterGuiAttachedParams } from '../../../interfaces/iAfterGuiAttachedParams';
-import { setDisplayed } from '../../../utils/dom';
 
 // The date filter model takes strings, although the filter actually works with dates. This is because a Date object
 // won't convert easily to JSON. When the model is used for doing the filtering, it's converted to a Date object.

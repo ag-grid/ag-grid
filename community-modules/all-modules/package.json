@@ -56,6 +56,7 @@
     "@ag-grid-community/client-side-row-model": "~26.2.0",
     "@ag-grid-community/core": "~26.2.0",
     "@ag-grid-community/csv-export": "~26.2.0",
+    "@ag-grid-community/filter": "~26.2.0",
     "@ag-grid-community/infinite-row-model": "~26.2.0"
   },
   "devDependencies": {

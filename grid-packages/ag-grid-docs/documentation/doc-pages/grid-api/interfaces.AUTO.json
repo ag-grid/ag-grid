@@ -1460,6 +1460,7 @@
       "quickFilterText?": "string",
       "cacheQuickFilter?": "boolean",
       "excludeChildrenWhenTreeDataFiltering?": "boolean",
+      "customFilterEvaluationModel?": "{ [operation: string]: CustomFilterEvaluationModelBuilder; }",
       "enableCharts?": "boolean",
       "chartThemes?": "string[]",
       "customChartThemes?": "{ [name: string]: AgChartTheme; }",
@@ -1833,6 +1834,7 @@
       "quickFilterText?": "/** Rows are filtered using this text as a quick filter. */",
       "cacheQuickFilter?": "/** Set to `true` to turn on the quick filter cache, used to improve performance when using the quick filter. Default: `false` */",
       "excludeChildrenWhenTreeDataFiltering?": "/** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. Default: `false` */",
+      "customFilterEvaluationModel?": "/** Definition of custom filter expression evaluators. */",
       "enableCharts?": "/** Set to `true` to Enable Charts. Default: `false` */",
       "chartThemes?": "/** The list of chart themes to be used. */",
       "customChartThemes?": "/** A map containing custom chart themes. */",
@@ -5438,6 +5440,126 @@
     "docs": {
       "context": "/** The context as provided on `gridOptions.context` */"
     }
+  },
+  "ScalarComparisonOperation": {
+    "meta": { "isTypeAlias": true },
+    "type": "keyof typeof SCALAR_COMPARISON_OPERATION_METADATA"
+  },
+  "TextComparisonOperation": {
+    "meta": { "isTypeAlias": true },
+    "type": "keyof typeof TEXT_COMPARISON_OPERATION_METADATA"
+  },
+  "Cardinality": {
+    "meta": { "isTypeAlias": true },
+    "type": "0 | 1 | 2 | typeof Infinity"
+  },
+  "OperationExpression": {
+    "meta": { "typeParams": ["T", "N", "O", "C extends Cardinality = 1"] },
+    "type": {
+      "type": "T",
+      "operation": "O",
+      "operands": "C extends 0 ? [] : C extends 1 ? [N] : C extends 2 ? [N, N] : N[]"
+    }
+  },
+  "OperandArray": {
+    "meta": { "isTypeAlias": true, "typeParams": ["T"] },
+    "type": "[T] | [T, T]"
+  },
+  "ScalarComparisonOperationExpression": {
+    "meta": { "isTypeAlias": true, "typeParams": ["T", "N"] },
+    "type": "OperationExpression<T, N, Exclude<ScalarComparisonOperation, 'in-range'>, 1> | OperationExpression<T, N, 'in-range', 2>"
+  },
+  "TextComparisonOperationExpression": {
+    "meta": { "isTypeAlias": true, "typeParams": ["T", "N"] },
+    "type": "OperationExpression<T, N, TextComparisonOperation, 1>"
+  },
+  "CustomExpression": {
+    "meta": { "isTypeAlias": true, "typeParams": ["T"] },
+    "type": "OperationExpression<'custom', string, T, typeof Infinity>"
+  },
+  "LogicOperation": {
+    "meta": { "isTypeAlias": true },
+    "type": "'and' | 'or' | 'not'"
+  },
+  "NumberComparisonOperationExpression": {
+    "meta": { "isTypeAlias": true },
+    "type": "ScalarComparisonOperationExpression<'number-op', number>"
+  },
+  "DateComparisonOperationExpression": {
+    "meta": { "isTypeAlias": true },
+    "type": "ScalarComparisonOperationExpression<'date-op', string>"
+  },
+  "ScalarOperationExpression": {
+    "meta": { "isTypeAlias": true },
+    "type": "NumberComparisonOperationExpression | DateComparisonOperationExpression"
+  },
+  "TextOperationExpression": {
+    "meta": { "isTypeAlias": true },
+    "type": "TextComparisonOperationExpression<'text-op'>"
+  },
+  "LogicalOperationExpression": {
+    "meta": { "isTypeAlias": true, "typeParams": ["M"] },
+    "type": "OperationExpression<'logic', M, Exclude<LogicOperation, 'not'>, typeof Infinity> | OperationExpression<'logic', M, 'not', 1>"
+  },
+  "InbuiltExpression": {
+    "meta": { "isTypeAlias": true },
+    "type": "TextOperationExpression | ScalarOperationExpression"
+  },
+  "ConcreteExpression": {
+    "meta": { "isTypeAlias": true },
+    "type": "InbuiltExpression | CustomExpression<unknown>"
+  },
+  "FilterExpression": {
+    "meta": { "isTypeAlias": true },
+    "type": "ConcreteExpression | LogicalOperationExpression<ConcreteExpression>"
+  },
+  "FilterEvaluationModel": {
+    "meta": { "typeParams": ["T"], "doc": "/** EVALUATION MODEL * */" },
+    "type": {
+      "evaluate(input: T)": "boolean",
+      "isValid()": "boolean",
+      "isNull()": "boolean",
+      "toFilterExpression()": "FilterExpression | null"
+    }
+  },
+  "CustomFilterEvaluationModelBuilder": {
+    "meta": {},
+    "type": {
+      "new (expr: CustomExpression<any> | PartialStateType<CustomExpression<any>>): FilterEvaluationModel<unknown>": "FilterEvaluationModel<unknown>"
+    }
+  },
+  "StateType": {
+    "meta": { "isTypeAlias": true },
+    "type": "FilterExpression | string | number | Date"
+  },
+  "PartialTuple": {
+    "meta": { "isTypeAlias": true, "typeParams": ["T"] },
+    "type": "T extends [] ? [] : T extends [any] ? [T[0] | null] : T extends [any, any] ? [T[0] | null, T[1] | null] : T extends any[] ? (T[number] | null)[] : T"
+  },
+  "PartialStateType": {
+    "meta": { "isTypeAlias": true, "typeParams": ["S"] },
+    "type": "S extends string | number | Date ? S : { [K in keyof S]?: PartialTuple<S[K]>; }"
+  },
+  "StateManager": {
+    "meta": { "typeParams": ["T extends StateType"] },
+    "type": {
+      "addUpdateListener(cb: (newState: T | null) => void)": "void",
+      "addTransientUpdateListener(cb: (newTransientState: PartialStateType<T> | T | null) => void)": "void",
+      "getTransientExpression()": "PartialStateType<T> | null",
+      "mutateTransientExpression(change: PartialStateType<T> | null)": "void",
+      "isTransientExpressionValid()": "boolean",
+      "isTransientExpressionNull()": "boolean",
+      "applyExpression()": "void",
+      "revertToAppliedExpression()": "void"
+    }
+  },
+  "ExpressionComponentParams": {
+    "meta": {
+      "typeParams": [
+        "F extends FilterExpression | string | number | Date = FilterExpression"
+      ]
+    },
+    "type": { "stateManager": "StateManager<F>" }
   },
   "ContainerType": {
     "meta": { "isTypeAlias": true },
@@ -9075,6 +9197,7 @@
       "InfiniteRowModelModule = \"@ag-grid-community/infinite-row-model\"",
       "ClientSideRowModelModule = \"@ag-grid-community/client-side-row-model\"",
       "CsvExportModule = \"@ag-grid-community/csv-export\"",
+      "FilterModule = \"@ag-grid-community/filter\"",
       "EnterpriseCoreModule = \"@ag-grid-enterprise/core\"",
       "EnterpriseAllModules = \"@ag-grid-enterprise/all\"",
       "RowGroupingModule = \"@ag-grid-enterprise/row-grouping\"",
@@ -9100,6 +9223,7 @@
       "PolymerModule = \"@ag-grid-community/polymer\""
     ],
     "docs": [
+      null,
       null,
       null,
       null,

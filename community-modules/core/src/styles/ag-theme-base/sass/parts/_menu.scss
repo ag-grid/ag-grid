@@ -163,6 +163,10 @@
         @include ag-vertical-widget-container();
     }
 
+    .ag-root-filter-body-wrapper {
+        @include ag-vertical-widget-container();
+    }
+
     .ag-filter-no-matches {
         padding: ag-param(widget-container-vertical-padding) ag-param(widget-container-horizontal-padding);
     }

@@ -83,6 +83,7 @@ grid-packages/ag-grid-community/src/styles
 
 community-modules/core/typings
 community-modules/csv-export/typings
+community-modules/filter/typings
 enterprise-modules/core/typings
 enterprise-modules/set-filter/typings
 enterprise-modules/excel-export/typings

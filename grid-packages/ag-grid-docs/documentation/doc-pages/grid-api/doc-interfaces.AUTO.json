@@ -2340,6 +2340,13 @@
       "description": "/** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "customFilterEvaluationModel": {
+      "description": "/** Definition of custom filter expression evaluators. */",
+      "type": {
+        "returnType": "{ [operation: string]: CustomFilterEvaluationModelBuilder }",
+        "optional": true
+      }
+    },
     "enableCharts": {
       "description": "/** Set to `true` to Enable Charts. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
@@ -9576,6 +9583,117 @@
     "context": {
       "description": "/** The context as provided on `gridOptions.context` */",
       "type": { "returnType": "any", "optional": false }
+    }
+  },
+  "ScalarComparisonOperation": {},
+  "TextComparisonOperation": {},
+  "Cardinality": {},
+  "OperationExpression": {
+    "type": { "type": { "returnType": "T", "optional": false } },
+    "operation": { "type": { "returnType": "O", "optional": false } },
+    "operands": {
+      "type": {
+        "returnType": "C extends 0 ? [] :\n        C extends 1 ? [ N ] :\n        C extends 2 ? [ N, N ] :\n        N[]",
+        "optional": false
+      }
+    },
+    "meta": { "typeParams": ["T", "N", "O", "C extends Cardinality = 1"] }
+  },
+  "OperandArray": { "meta": { "typeParams": ["T"] } },
+  "ScalarComparisonOperationExpression": {
+    "meta": { "typeParams": ["T", "N"] }
+  },
+  "TextComparisonOperationExpression": { "meta": { "typeParams": ["T", "N"] } },
+  "CustomExpression": { "meta": { "typeParams": ["T"] } },
+  "LogicOperation": {},
+  "NumberComparisonOperationExpression": {},
+  "DateComparisonOperationExpression": {},
+  "ScalarOperationExpression": {},
+  "TextOperationExpression": {},
+  "LogicalOperationExpression": { "meta": { "typeParams": ["M"] } },
+  "InbuiltExpression": {},
+  "ConcreteExpression": {},
+  "FilterExpression": {},
+  "FilterEvaluationModel": {
+    "evaluate": {
+      "type": {
+        "arguments": { "input": "T" },
+        "returnType": "boolean",
+        "optional": false
+      }
+    },
+    "isValid": {
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
+    "isNull": {
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
+    "toFilterExpression": {
+      "type": {
+        "arguments": {},
+        "returnType": "FilterExpression | null",
+        "optional": false
+      }
+    },
+    "meta": { "typeParams": ["T"] }
+  },
+  "CustomFilterEvaluationModelBuilder": {},
+  "StateType": {},
+  "PartialTuple": { "meta": { "typeParams": ["T"] } },
+  "PartialStateType": { "meta": { "typeParams": ["S"] } },
+  "StateManager": {
+    "addUpdateListener": {
+      "type": {
+        "arguments": { "cb": "(newState: T | null) => void" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "addTransientUpdateListener": {
+      "type": {
+        "arguments": {
+          "cb": "(newTransientState: PartialStateType<T> | T | null) => void"
+        },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "getTransientExpression": {
+      "type": {
+        "arguments": {},
+        "returnType": "PartialStateType<T> | null",
+        "optional": false
+      }
+    },
+    "mutateTransientExpression": {
+      "type": {
+        "arguments": { "change": "PartialStateType<T> | null" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "isTransientExpressionValid": {
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
+    "isTransientExpressionNull": {
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
+    "applyExpression": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
+    "revertToAppliedExpression": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false }
+    },
+    "meta": { "typeParams": ["T extends StateType"] }
+  },
+  "ExpressionComponentParams": {
+    "stateManager": {
+      "type": { "returnType": "StateManager<F>", "optional": false }
+    },
+    "meta": {
+      "typeParams": [
+        "F extends FilterExpression | string | number | Date = FilterExpression"
+      ]
     }
   },
   "ContainerType": {},

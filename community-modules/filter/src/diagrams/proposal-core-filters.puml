@@ -1,0 +1,82 @@
+@startuml
+
+hide empty members
+' skinparam groupInheritance 2
+
+package Key <<rectangle>> {
+    hide circle
+    class "UI Component" #yellow ##orange
+    class "Core Grid" #pink ##red
+    class "Utility" #lightgrey ##black
+    class "Cloumn Filters" #orange ##red
+}
+
+together {
+    class FocusService #pink ##red
+    class StandardMenuFactory #pink ##red
+
+    class GridApi #pink ##red
+
+    class Component #yellow ##orange
+}
+
+package core/filters {
+    class FilterManager #orange ##red
+    GridApi *-- FilterManager
+    StandardMenuFactory *-- FilterManager
+
+    interface IFilter #orange ##red
+    FilterManager o-- IFilter
+
+    interface FilterUIController #orange ##red {
+        +apply()
+        +cancel()
+        +reset()
+    }
+
+    interface FilterUIComponent #orange ##red {
+        +setParams(params)
+
+        +init(): void;
+        +destroy(): void;
+
+        +getModelFromUi(): M | null;
+        +setModelIntoUi(model: M): Promise<void>;
+        +resetUiToDefaults(): Promise<void>;
+    }
+
+    FilterUIComponent *-- FilterUIController
+    
+    interface FilterLogic #orange ##red {
+        +setParams(params): void;
+
+        +areModelsEqual(a: M | null, b: M | null): boolean;
+        +isModelValid(model: M | null): boolean;   
+
+        +doesPassFilter(params, appliedModel: M | null): boolean;
+    }
+
+    interface Comparator #orange ##red
+
+    interface Serialiser<V> #orange ##red
+
+    class CompositeProvidedFilter #orange ##red extends Component implements IFilter, FilterUIController
+    CompositeProvidedFilter *-- FilterUIComponent
+    CompositeProvidedFilter *-- FilterLogic
+
+    class TopLevelFilterUI implements FilterUIComponent
+    TopLevelFilterUI *-- FocusService
+    class JoinFilterUI implements FilterUIComponent
+    class OperatorFilterUI implements FilterUIComponent
+    class MultiInputFilterUI implements FilterUIComponent
+    class TextFilterUI implements FilterUIComponent
+    TextFilterUI *-- Serialiser
+    class DateFilterUI implements FilterUIComponent
+
+    class JoinFilterLogic implements FilterLogic
+    class TextFilterLogic implements FilterLogic
+    TextFilterLogic *-- Comparator
+    class DateFilterLogic implements FilterLogic
+}
+
+@enduml

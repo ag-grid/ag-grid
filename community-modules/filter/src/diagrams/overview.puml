@@ -1,0 +1,11 @@
+@startuml
+
+hide empty members
+
+!$overview = true
+
+!include ./overview-core-filters.puml
+!include ./overview-enterprise-filters.puml
+!include ./overview-floating-filters.puml
+
+@enduml

@@ -6,6 +6,7 @@ import { ToolPanelDef } from "../../entities/sideBar";
 import { IFloatingFilterParams } from "../../filter/floating/floatingFilter";
 import { IHeaderParams } from "../../headerRendering/cells/column/headerComp";
 import { IHeaderGroupParams } from "../../headerRendering/cells/columnGroup/headerGroupComp";
+import { ExpressionComponentParams } from "../../interfaces/filtersV2";
 import { ICellEditorParams } from "../../interfaces/iCellEditor";
 import { IFilterDef, IFilterParams } from "../../interfaces/iFilter";
 import { IRichCellEditorParams } from "../../interfaces/iRichCellEditorParams";
@@ -118,6 +119,10 @@ export class UserComponentFactory extends BeanStub {
     // FILTER
     public getFilterDetails(def: IFilterDef, params: IFilterParams, defaultFilter: string): UserCompDetails | undefined {
         return this.getCompDetails(def, FilterComponent, defaultFilter, params, true);
+    }
+
+    public getFilterV2Details(def: { filter: string }, params: ExpressionComponentParams): UserCompDetails | undefined {
+        return this.getCompDetails(def, FilterComponent, null, params, true);
     }
 
     public getDateCompDetails(params: IDateParams): UserCompDetails {

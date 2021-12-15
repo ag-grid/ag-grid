@@ -18,6 +18,7 @@ import { convertToSet } from '../utils/set';
 import { exists } from '../utils/generic';
 import { mergeDeep, cloneObject } from '../utils/object';
 import { loadTemplate } from '../utils/dom';
+import { GridOptions } from '../entities/gridOptions';
 
 export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
 
@@ -31,6 +32,7 @@ export class FilterManager extends BeanStub {
     @Autowired('rowModel') private rowModel: IRowModel;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('gridApi') private gridApi: GridApi;
+    @Autowired('gridOptions') protected readonly gridOptions: GridOptions;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
     public static QUICK_FILTER_SEPARATOR = '\n';
@@ -431,10 +433,16 @@ export class FilterManager extends BeanStub {
     }
 
     private createFilterInstance(column: Column, $scope: any): AgPromise<IFilterComp> | null {
-        const defaultFilter =
-            ModuleRegistry.isRegistered(ModuleNames.SetFilterModule) ? 'agSetColumnFilter' : 'agTextColumnFilter';
-
         const colDef = column.getColDef();
+
+        let customFilterV2 = false;
+        if (typeof colDef.filter === 'string') {
+            const { customFilterEvaluationModel } = this.gridOptions;
+            customFilterV2 = customFilterEvaluationModel && customFilterEvaluationModel[colDef.filter] != null || false;
+        }
+
+        const defaultFilter = customFilterV2 ? 'agCustomColumnFilterV2' :
+            ModuleRegistry.isRegistered(ModuleNames.SetFilterModule) ? 'agSetColumnFilter' : 'agTextColumnFilter';
 
         let filterInstance: IFilterComp;
 
@@ -456,7 +464,11 @@ export class FilterManager extends BeanStub {
             doesRowPassOtherFilter: node => this.doesRowPassOtherFilters(filterInstance, node),
         };
 
-        const compDetails = this.userComponentFactory.getFilterDetails(colDef, params, defaultFilter);
+        const colDefCopy = { ...colDef };
+        if (customFilterV2) {
+            colDefCopy.filter = true;
+        }
+        const compDetails = this.userComponentFactory.getFilterDetails(colDefCopy, params, defaultFilter);
         if (!compDetails) { return null; }
         const componentPromise = compDetails.newAgStackInstance();
 

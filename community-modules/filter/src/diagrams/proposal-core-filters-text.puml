@@ -1,0 +1,45 @@
+@startuml
+
+hide empty members
+' skinparam groupInheritance 2
+
+package Key <<rectangle>> {
+    hide circle
+    class "UI Component" #yellow ##orange
+    class "Filter Logic" #orange ##red
+}
+
+class CompositeProvidedFilter #yellow|orange ##red
+CompositeProvidedFilter *-- TopLevelFilterUI
+class TopLevelFilterUI #yellow ##orange
+TopLevelFilterUI *-- JoinFilterUI
+class JoinFilterUI #yellow ##orange
+JoinFilterUI *-- "OperatorFilterUI #1"
+class "OperatorFilterUI #1" #yellow ##orange
+"OperatorFilterUI #1" *-- MultiInputFilterUI
+class MultiInputFilterUI #yellow ##orange
+MultiInputFilterUI *-- "TextFilterUI #1"
+class MultiInputFilterUI #yellow ##orange
+MultiInputFilterUI *-- "TextFilterUI #2"
+class JoinFilterUI #yellow ##orange
+JoinFilterUI *-- "OperatorFilterUI #2"
+class "OperatorFilterUI #2" #yellow ##orange
+"OperatorFilterUI #2" *-- "TextFilterUI #3"
+class "TextFilterUI #1" #yellow ##orange
+"TextFilterUI #1" *-- NoOpSerialiser
+class "TextFilterUI #2" #yellow ##orange
+"TextFilterUI #2" *-- NoOpSerialiser
+class "TextFilterUI #3" #yellow ##orange
+class NoOpSerialiser #orange ##red
+
+CompositeProvidedFilter *-- JoinFilterLogic
+class JoinFilterLogic #orange ##red
+JoinFilterLogic *-- "TextFilterLogic #1"
+JoinFilterLogic *-- "TextFilterLogic #2"
+class "TextFilterLogic #1" #orange ##red
+"TextFilterLogic #1" *-- DefaultTextComparator
+class "TextFilterLogic #2" #orange ##red
+"TextFilterLogic #2" *-- DefaultTextComparator
+class DefaultTextComparator #orange ##red
+
+@enduml

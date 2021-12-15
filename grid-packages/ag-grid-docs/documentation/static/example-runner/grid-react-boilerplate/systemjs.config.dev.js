@@ -106,6 +106,10 @@
                 main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'
             },
+            '@ag-grid-community/filter': {
+                main: './dist/cjs/es5/main.js',
+                defaultExtension: 'js'
+            },
             '@ag-grid-community/infinite-row-model': {
                 main: './dist/cjs/es5/main.js',
                 defaultExtension: 'js'

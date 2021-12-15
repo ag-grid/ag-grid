@@ -1,0 +1,1 @@
+export { FilterModule } from './filterModule';

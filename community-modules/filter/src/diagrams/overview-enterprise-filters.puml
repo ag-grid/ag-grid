@@ -1,0 +1,50 @@
+@startuml
+
+!include ./overview-core-filters.puml
+
+!if ($overview != true)
+remove GridApi
+remove SimpleFilter
+remove ScalarFilter
+remove TextFilter
+remove DateFilter
+remove NumberFilter
+remove FilterLocaleText
+remove DateCompWrapper
+remove IDateComp
+remove DefaultDateComponent
+remove CustomDateComponent
+remove OptionsFactory
+!endif
+
+class TabGuardComp #yellow ##orange
+class VirtualList #yellow ##orange
+TabGuardComp <|-- VirtualList
+class MenuItemComponent #yellow ##orange
+
+package multi-filter {
+    class MultiFilter #orange ##red extends TabGuardComp implements IFilter
+    MultiFilter o-- IFilter
+    MultiFilter *-- FilterManager
+}
+
+package set-filter {
+    class SetFilter #orange ##red extends ProvidedFilter
+    SetFilter *-- VirtualList
+    SetFilter o-- MenuItemComponent
+
+    class SetValueModel #orange ##red
+    SetFilter *-- SetValueModel
+
+    class ClientSideValueExtractor #orange ##red
+    SetValueModel *-- ClientSideValueExtractor
+
+    class SetFilterListItem #yellow ##orange
+    ' VirtualList o-- SetFilterListItem
+    SetFilter ...> SetFilterListItem : creates
+
+    interface ISetFilterLocaleText #lightgrey ##black
+    SetFilter *-- ISetFilterLocaleText
+}
+
+@enduml

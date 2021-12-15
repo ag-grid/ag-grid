@@ -1,0 +1,25 @@
+@startuml
+
+hide empty members
+' skinparam groupInheritance 2
+
+package Key <<rectangle>> {
+    hide circle
+    class "UI Component" #yellow ##orange
+    class "Filter Logic" #orange ##red
+}
+
+class CompositeProvidedFilter #yellow|orange ##red
+CompositeProvidedFilter *-- TopLevelFilterUI
+class TopLevelFilterUI #yellow ##orange
+TopLevelFilterUI *-- TextFilterUI
+class "TextFilterUI" #yellow ##orange
+"TextFilterUI" *-- DateSerialiser
+class DateSerialiser #orange ##red
+
+CompositeProvidedFilter *-- DateFilterLogic
+class DateFilterLogic #orange ##red
+DateFilterLogic *-- DefaultDateComparator
+class DefaultDateComparator #orange ##red
+
+@enduml

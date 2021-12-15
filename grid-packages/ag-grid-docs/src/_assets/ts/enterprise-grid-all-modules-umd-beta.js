@@ -25,6 +25,7 @@ const StatusBarModule = require("../../../../../enterprise-modules/status-bar/di
 const ViewportRowModelModule = require("../../../../../enterprise-modules/viewport-row-model/dist/cjs/es5/viewportRowModelModule").ViewportRowModelModule;
 const ClientSideRowModelModule = require("../../../../../community-modules/client-side-row-model/dist/cjs/es5/clientSideRowModelModule").ClientSideRowModelModule;
 const CsvExportModule = require("../../../../../community-modules/csv-export/dist/cjs/es5/csvExportModule").CsvExportModule;
+const FilterModule = require("../../../../../community-modules/filter/dist/cjs/es5/filterModule").FilterModule;
 const InfiniteRowModelModule = require("../../../../../community-modules/infinite-row-model/dist/cjs/es5/infiniteRowModelModule").InfiniteRowModelModule;
 ModuleRegistry.register(GridChartsModule);
 ModuleRegistry.register(ClipboardModule);
@@ -45,4 +46,5 @@ ModuleRegistry.register(StatusBarModule);
 ModuleRegistry.register(ViewportRowModelModule);
 ModuleRegistry.register(ClientSideRowModelModule);
 ModuleRegistry.register(CsvExportModule);
+ModuleRegistry.register(FilterModule);
 ModuleRegistry.register(InfiniteRowModelModule);

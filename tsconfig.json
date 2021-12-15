@@ -4,6 +4,7 @@
     { "path" :  "community-modules/core/tsconfig.cjs.es5.json" },
     { "path" :  "community-modules/client-side-row-model/tsconfig.cjs.es5.json" },
     { "path" :  "community-modules/csv-export/tsconfig.cjs.es5.json" },
+    { "path" :  "community-modules/filter/tsconfig.cjs.es5.json" },
     { "path" :  "community-modules/infinite-row-model/tsconfig.cjs.es5.json" },
     { "path" :  "community-modules/all-modules/tsconfig.cjs.es5.json" },
     { "path" :  "charts-packages/ag-charts-community/tsconfig.cjs.es5.json" },

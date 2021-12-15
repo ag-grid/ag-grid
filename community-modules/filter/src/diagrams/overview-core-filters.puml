@@ -1,0 +1,59 @@
+@startuml
+
+hide empty members
+' skinparam groupInheritance 2
+
+package Key <<rectangle>> {
+    hide circle
+    class "UI Component" #yellow ##orange
+    class "Core Grid" #pink ##red
+    class "Utility" #lightgrey ##black
+    class "Cloumn Filters" #orange ##red
+}
+
+together {
+    class StandardMenuFactory #pink ##red
+
+    class GridApi #pink ##red
+
+    class Component #yellow ##orange
+}
+
+package core/filters {
+    class FilterManager #orange ##red
+    GridApi *-- FilterManager
+    StandardMenuFactory *-- FilterManager
+
+    interface IFilter #orange ##red
+    FilterManager o-- IFilter
+
+    abstract class ProvidedFilter #orange ##red extends Component implements IFilter
+    abstract class SimpleFilter #orange ##red extends ProvidedFilter
+
+    class OptionsFactory #lightgrey ##black
+    SimpleFilter *-- OptionsFactory
+
+    abstract class ScalarFilter #orange ##red extends SimpleFilter
+
+    together {
+        class NumberFilter #orange ##red extends ScalarFilter
+        class DateFilter #orange ##red extends ScalarFilter
+        class TextFilter #orange ##red extends SimpleFilter
+    }
+
+    interface FilterLocaleText #lightgrey ##black
+    ProvidedFilter *-- FilterLocaleText
+
+    together {
+        class DateCompWrapper #yellow ##orange
+        DateFilter *-- DateCompWrapper
+
+        interface IDateComp #yellow ##orange
+        DateCompWrapper o-- IDateComp
+
+        class DefaultDateComponent #yellow ##orange implements IDateComp
+        class CustomDateComponent #yellow ##orange implements IDateComp
+    }
+}
+
+@enduml

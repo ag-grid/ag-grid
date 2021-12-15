@@ -1,0 +1,14 @@
+TODO:
+- Skeleton versions of:
+  - `SetFilter`.
+  - Custom components.
+  - Custom filter options.
+- [ ] Improving naming of entities to improve clarity / digestibility.
+- [ ] Break FilterStateManager up.
+- [ ] Support all V1 behaviours.
+    - [ ] AND/OR combinations.
+    - [ ] L10n support.
+    - [ ] Floating filters.
+    - [ ] Excel mode (mostly SetFilter?).
+    - [ ] ....List TBC....
+- [ ] Move diagrams to Confluence / elsewhere.

@@ -101,6 +101,7 @@ import { HeaderPosition } from "../headerRendering/common/headerPosition";
 import { ExcelExportParams, ExcelStyle } from "../interfaces/iExcelCreator";
 import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCellRenderer";
 import { CompSelectorResult } from "../main";
+import { CustomFilterEvaluationModelBuilder } from "../interfaces/filtersV2";
 
 export interface GridOptions {
 
@@ -298,6 +299,10 @@ export interface GridOptions {
     cacheQuickFilter?: boolean;
     /** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. Default: `false` */
     excludeChildrenWhenTreeDataFiltering?: boolean;
+
+    // *** Filters V2 *** //
+    /** Definition of custom filter expression evaluators. */
+    customFilterEvaluationModel?: { [operation: string]: CustomFilterEvaluationModelBuilder };
 
     // *** Integrated Charts *** //
     /** Set to `true` to Enable Charts. Default: `false` */
