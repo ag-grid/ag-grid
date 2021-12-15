@@ -126,7 +126,6 @@ export class BarSeries extends CartesianSeries {
     private xData: string[] = [];
     private yData: number[][][] = [];
     private yDomain: number[] = [];
-    private xDomain: any[] = [];
 
     readonly label = new BarSeriesLabel();
 
@@ -397,8 +396,6 @@ export class BarSeries extends CartesianSeries {
             return false;
         }
 
-        const isContinuousX = xAxis.scale instanceof ContinuousScale;
-
         let keysFound = true; // only warn once
         this.xData = data.map(datum => {
             if (keysFound && !(xKey in datum)) {
@@ -406,12 +403,7 @@ export class BarSeries extends CartesianSeries {
                 console.warn(`The key '${xKey}' was not found in the data: `, datum);
             }
 
-            if (isContinuousX) {
-                return datum[xKey];
-            } else {
-                return isDiscrete(datum[xKey]) ? datum[xKey] : String(datum[xKey]);
-            }
-
+            return isDiscrete(datum[xKey]) ? datum[xKey] : String(datum[xKey]);
         });
 
         this.yData = data.map(datum => yKeys.map(stack => {
@@ -456,7 +448,6 @@ export class BarSeries extends CartesianSeries {
         }
 
         this.yDomain = this.fixNumericExtent([yMin, yMax], 'y');
-        this.xDomain = isContinuousX ? this.fixNumericExtent(extent(this.xData, isContinuous), 'x') : this.xData;
 
         this.fireEvent({ type: 'dataProcessed' });
 
@@ -486,7 +477,7 @@ export class BarSeries extends CartesianSeries {
             direction = flipChartAxisDirection(direction);
         }
         if (direction === ChartAxisDirection.X) {
-            return this.xDomain;
+            return this.xData;
         } else {
             return this.yDomain;
         }
