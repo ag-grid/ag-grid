@@ -97,7 +97,7 @@ function generateWithReplacedGridOptions(node, options?) {
 //     omitTrailingSemicolon?: boolean;
 //     noEmitHelpers?: boolean;
 // }
-const printer = ts.createPrinter({ removeComments: false, omitTrailingSemicolon: true });
+const printer = ts.createPrinter({ removeComments: false, omitTrailingSemicolon: false });
 
 function tsGenerate(node, srcFile) {
     try {
