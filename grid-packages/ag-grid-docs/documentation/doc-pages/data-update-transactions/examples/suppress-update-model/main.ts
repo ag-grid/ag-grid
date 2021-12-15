@@ -55,11 +55,13 @@ function getMyFilter(): IFilterType {
     }
 
     setModel(model: any) {
-      this.eInput.value = model.value
+      this.eInput.value = model == null ? null : model.value;
       this.getValueFromInput()
     }
 
     getModel() {
+      if (!this.isFilterActive()) { return null; }
+
       return { value: this.eInput.value }
     }
 

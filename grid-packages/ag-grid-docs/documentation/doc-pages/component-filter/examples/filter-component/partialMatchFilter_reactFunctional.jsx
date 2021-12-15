@@ -35,6 +35,8 @@ export default forwardRef((props, ref) => {
             },
 
             getModel() {
+                if (!this.isFilterActive()) { return null; }
+
                 return {value: text};
             },
 

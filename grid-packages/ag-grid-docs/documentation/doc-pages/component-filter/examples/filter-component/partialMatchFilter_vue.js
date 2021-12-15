@@ -38,13 +38,13 @@ export default {
         },
 
         getModel() {
+            if (!this.isFilterActive()) { return null; }
+
             return {value: this.text};
         },
 
         setModel(model) {
-            if (model) {
-                this.text = model.value;
-            }
+            this.text = model == null ? null : model.value;
         },
 
         afterGuiAttached() {

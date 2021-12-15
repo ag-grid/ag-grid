@@ -58,6 +58,8 @@ export class PartialMatchFilter implements IFilterAngularComp {
     }
 
     getModel(): any {
+        if (!this.isFilterActive()) { return null; }
+
         return { value: this.text };
     }
 

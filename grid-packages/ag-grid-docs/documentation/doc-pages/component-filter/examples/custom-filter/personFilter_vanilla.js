@@ -68,11 +68,13 @@ class PersonFilter {
     }
 
     getModel() {
+        if (!this.isFilterActive()) { return null; }
+
         return {value: this.filterText.value};
     }
 
     setModel(model) {
-        this.eFilterText.value = model.value;
+        this.eFilterText.value = model == null ? null : model.value;
     }
 }
 
