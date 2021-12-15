@@ -12,6 +12,7 @@ import { convertToSet } from '../../utils/set';
 import { Component } from '../../widgets/component';
 import { RowNode } from '../../entities/rowNode';
 import { ValueService } from '../../valueService/valueService';
+import { _ } from '../../utils';
 
 type FilterButtonType = 'apply' | 'clear' | 'reset' | 'cancel';
 
@@ -239,7 +240,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     }
 
     public getModel(): M | null {
-        return this.appliedModel;
+        return this.appliedModel ? _.deepCloneObject(this.appliedModel) : null;
     }
 
     public setModel(model: M | null): AgPromise<void> {

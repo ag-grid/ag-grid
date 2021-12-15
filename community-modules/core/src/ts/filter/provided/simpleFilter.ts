@@ -60,7 +60,9 @@ export type ISimpleFilterModelType =
     | 'contains'
     | 'notContains'
     | 'startsWith'
-    | 'endsWith';
+    | 'endsWith'
+    | 'blank'
+    | 'notBlank';
 export interface ISimpleFilterModel extends ProvidedFilterModel {
     /** One of the filter options, e.g. `'equals'` */
     type?: ISimpleFilterModelType | null;
@@ -85,18 +87,20 @@ export type Tuple<T> = (T | null)[];
  */
 export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputTextField> extends ProvidedFilter<M | ICombinedSimpleModel<M>, V> implements ISimpleFilter {
 
-    public static EMPTY = 'empty';
-    public static EQUALS = 'equals';
-    public static NOT_EQUAL = 'notEqual';
-    public static LESS_THAN = 'lessThan';
-    public static LESS_THAN_OR_EQUAL = 'lessThanOrEqual';
-    public static GREATER_THAN = 'greaterThan';
-    public static GREATER_THAN_OR_EQUAL = 'greaterThanOrEqual';
-    public static IN_RANGE = 'inRange';
-    public static CONTAINS = 'contains';
-    public static NOT_CONTAINS = 'notContains';
-    public static STARTS_WITH = 'startsWith';
-    public static ENDS_WITH = 'endsWith';
+    public static EMPTY: ISimpleFilterModelType = 'empty';
+    public static BLANK: ISimpleFilterModelType = 'blank';
+    public static NOT_BLANK: ISimpleFilterModelType = 'notBlank';
+    public static EQUALS: ISimpleFilterModelType = 'equals';
+    public static NOT_EQUAL: ISimpleFilterModelType = 'notEqual';
+    public static LESS_THAN: ISimpleFilterModelType = 'lessThan';
+    public static LESS_THAN_OR_EQUAL: ISimpleFilterModelType = 'lessThanOrEqual';
+    public static GREATER_THAN: ISimpleFilterModelType = 'greaterThan';
+    public static GREATER_THAN_OR_EQUAL: ISimpleFilterModelType = 'greaterThanOrEqual';
+    public static IN_RANGE: ISimpleFilterModelType = 'inRange';
+    public static CONTAINS: ISimpleFilterModelType = 'contains';
+    public static NOT_CONTAINS: ISimpleFilterModelType = 'notContains';
+    public static STARTS_WITH: ISimpleFilterModelType = 'startsWith';
+    public static ENDS_WITH: ISimpleFilterModelType = 'endsWith';
 
     @RefSelector('eOptions1') protected readonly eType1: AgSelect;
     @RefSelector('eOptions2') protected readonly eType2: AgSelect;
@@ -139,14 +143,18 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
     // allow retrieval of all condition input values.
     protected abstract getValues(position: ConditionPosition): Tuple<V>;
 
-    protected getNumberOfInputs(type?: string | null): number {
+    protected getNumberOfInputs(type?: ISimpleFilterModelType | null): number {
         const customOpts = this.optionsFactory.getCustomOption(type);
         if (customOpts) {
             const { numberOfInputs } = customOpts;
             return numberOfInputs != null ? numberOfInputs : 1;
         }
 
-        if (type === SimpleFilter.EMPTY) {
+        const zeroInputTypes = [
+            SimpleFilter.EMPTY, SimpleFilter.NOT_BLANK, SimpleFilter.BLANK,
+        ];
+
+        if (type && zeroInputTypes.indexOf(type) >= 0) {
             return 0;
         } else if (type === SimpleFilter.IN_RANGE) {
             return 2;
@@ -617,5 +625,10 @@ export abstract class SimpleFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
         // No custom filter invocation, indicate that to the caller.
         return;
+    }
+
+    protected isBlank(cellValue: V) {
+        return cellValue == null ||
+            (typeof cellValue === 'string' && cellValue.trim().length === 0);
     }
 }

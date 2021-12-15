@@ -1,3 +1,4 @@
+import { _ } from "src/ts/utils";
 import { AgInputTextField } from "../../widgets/agInputTextField";
 import { SimpleFilter, ISimpleFilterParams, ISimpleFilterModel, ISimpleFilterModelType, Tuple } from "./simpleFilter";
 
@@ -55,6 +56,10 @@ export abstract class ScalarFilter<M extends ISimpleFilterModel, V, E = AgInputT
                     return true;
                 }
                 break;
+            case ScalarFilter.BLANK:
+                return true;
+            case ScalarFilter.NOT_BLANK:
+                return false;
         }
 
         return false;
@@ -62,7 +67,7 @@ export abstract class ScalarFilter<M extends ISimpleFilterModel, V, E = AgInputT
 
     protected evaluateNonNullValue(values: Tuple<V>, cellValue: V, filterModel: M): boolean {
         const comparator = this.comparator();
-        const compareResult = comparator(values[0]!, cellValue);
+        const compareResult = values[0] != null ? comparator(values[0]!, cellValue) : 0;
 
         switch (filterModel.type) {
             case ScalarFilter.EQUALS:
@@ -90,6 +95,12 @@ export abstract class ScalarFilter<M extends ISimpleFilterModel, V, E = AgInputT
                     compareResult >= 0 && compareToResult <= 0 :
                     compareResult > 0 && compareToResult < 0;
             }
+
+            case ScalarFilter.BLANK:
+                return this.isBlank(cellValue);
+
+            case ScalarFilter.NOT_BLANK:
+                return !this.isBlank(cellValue);
 
             default:
                 console.warn('AG Grid: Unexpected type of filter "' + filterModel.type + '", it looks like the filter was configured with incorrect Filter Options');

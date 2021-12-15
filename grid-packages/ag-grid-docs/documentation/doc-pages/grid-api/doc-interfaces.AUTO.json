@@ -7073,6 +7073,8 @@
     "notContains": { "type": { "returnType": "string", "optional": false } },
     "startsWith": { "type": { "returnType": "string", "optional": false } },
     "endsWith": { "type": { "returnType": "string", "optional": false } },
+    "blank": { "type": { "returnType": "string", "optional": false } },
+    "notBlank": { "type": { "returnType": "string", "optional": false } },
     "andCondition": { "type": { "returnType": "string", "optional": false } },
     "orCondition": { "type": { "returnType": "string", "optional": false } },
     "dateFormatOoo": { "type": { "returnType": "string", "optional": false } }

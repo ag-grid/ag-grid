@@ -74,7 +74,9 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
         SimpleFilter.EQUALS,
         SimpleFilter.NOT_EQUAL,
         SimpleFilter.STARTS_WITH,
-        SimpleFilter.ENDS_WITH
+        SimpleFilter.ENDS_WITH,
+        SimpleFilter.BLANK,
+        SimpleFilter.NOT_BLANK,
     ];
 
     static DEFAULT_FORMATTER: TextFormatter = (from: string) => from;
@@ -220,13 +222,23 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
     }
 
     protected evaluateNullValue(filterType: ISimpleFilterModelType | null) {
-        return filterType === SimpleFilter.NOT_EQUAL || filterType === SimpleFilter.NOT_CONTAINS;
+        const filterTypesAllowNulls = [
+            SimpleFilter.NOT_EQUAL, SimpleFilter.NOT_CONTAINS, SimpleFilter.BLANK,
+        ];
+
+        return filterType ? filterTypesAllowNulls.indexOf(filterType) >= 0 : false;
     }
 
     protected evaluateNonNullValue(values: Tuple<string>, cellValue: string, filterModel: TextFilterModel, params: IDoesFilterPassParams): boolean {
         const formattedValues = values.map(v => this.formatter(v)) || [];
         const cellValueFormatted = this.formatter(cellValue);
         const {api, colDef, column, columnApi, context, textFormatter} = this.textFilterParams;
+
+        if (filterModel.type === SimpleFilter.BLANK) {
+            return this.isBlank(cellValue);
+        } else if (filterModel.type === SimpleFilter.NOT_BLANK) {
+            return !this.isBlank(cellValue);
+        }
 
         const matcherParams = {
             api,

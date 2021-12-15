@@ -55,7 +55,9 @@ export class DateFilter extends ScalarFilter<DateFilterModel, Date, DateCompWrap
         ScalarFilter.GREATER_THAN,
         ScalarFilter.LESS_THAN,
         ScalarFilter.NOT_EQUAL,
-        ScalarFilter.IN_RANGE
+        ScalarFilter.IN_RANGE,
+        ScalarFilter.BLANK,
+        ScalarFilter.NOT_BLANK,
     ];
 
     @RefSelector('eCondition1PanelFrom') private readonly eCondition1PanelFrom: HTMLElement;

@@ -4040,6 +4040,8 @@
       "notContains": "string",
       "startsWith": "string",
       "endsWith": "string",
+      "blank": "string",
+      "notBlank": "string",
       "andCondition": "string",
       "orCondition": "string",
       "dateFormatOoo": "string"
@@ -4489,7 +4491,7 @@
   },
   "ISimpleFilterModelType": {
     "meta": { "isTypeAlias": true },
-    "type": "'empty' | 'equals' | 'notEqual' | 'lessThan' | 'lessThanOrEqual' | 'greaterThan' | 'greaterThanOrEqual' | 'inRange' | 'contains' | 'notContains' | 'startsWith' | 'endsWith'"
+    "type": "'empty' | 'equals' | 'notEqual' | 'lessThan' | 'lessThanOrEqual' | 'greaterThan' | 'greaterThanOrEqual' | 'inRange' | 'contains' | 'notContains' | 'startsWith' | 'endsWith' | 'blank' | 'notBlank'"
   },
   "ISimpleFilterModel": {
     "meta": {},

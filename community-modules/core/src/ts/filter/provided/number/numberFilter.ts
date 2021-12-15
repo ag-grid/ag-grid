@@ -42,7 +42,9 @@ export class NumberFilter extends ScalarFilter<NumberFilterModel, number> {
         ScalarFilter.LESS_THAN_OR_EQUAL,
         ScalarFilter.GREATER_THAN,
         ScalarFilter.GREATER_THAN_OR_EQUAL,
-        ScalarFilter.IN_RANGE
+        ScalarFilter.IN_RANGE,
+        ScalarFilter.BLANK,
+        ScalarFilter.NOT_BLANK,
     ];
 
     @RefSelector('eValue-index0-1') private readonly eValueFrom1: AgInputTextField;
