@@ -438,9 +438,9 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
 
             return `${property.name.text}: 'AG_LITERAL_${property.initializer.escapedText}'`;
         } else if (ts.isFunctionExpression(property.initializer)) {
-            let func = tsGenerate(property.initializer, tsTree);
-            const replaced = `${property.name.text}: "AG_FUNCTION_${func.replace(/'/g, "\'").replace(/\n/g, "\\n")}"`
-            return replaced;
+            const func = tsGenerate(property.initializer, tsTree);
+            const escaped = func.replace(/'/g, "\'").replace(/"/g, '\\"').replace(/\n/g, "\\n");
+            return `${property.name.text}: "AG_FUNCTION_${escaped}"`;
 
         } else if (ts.isObjectLiteralExpression(property.initializer)) {
 
