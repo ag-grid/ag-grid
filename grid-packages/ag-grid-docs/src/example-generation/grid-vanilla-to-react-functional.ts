@@ -7,7 +7,7 @@ function getModuleImports(bindings: any, componentFilenames: string[], stateProp
     const {modules} = gridSettings;
 
     const imports = [
-        "import React, { useRef, useMemo, useState } from 'react';",
+        "import React, { useCallback, useMemo, useRef, useState } from 'react';",
         "import { render } from 'react-dom';",
         "import { AgGridReact } from '@ag-grid-community/react';"
     ];
@@ -57,7 +57,7 @@ function getPackageImports(bindings: any, componentFilenames: string[]): string[
     const {gridSettings} = bindings;
 
     const imports = [
-        "import React, { useRef, useMemo, useState } from 'react';",
+        "import React, { useCallback, useMemo, useRef, useState } from 'react';",
         "import { render } from 'react-dom';",
         "import { AgGridReact } from 'ag-grid-react';"
     ];
@@ -155,7 +155,10 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
 
         const components: { [componentName: string]: string } = extractComponentInformation(properties, componentFilenames);
 
-        const containsQuotes = (data: string) => data.includes('"') || data.includes("'");
+        const containsQuotes = (data: string) => {
+            const withoutBoundaryQuotes = data.replace(/^"|"$/g, '');
+            return withoutBoundaryQuotes.includes('"') || withoutBoundaryQuotes.includes("'");
+        };
         const stripQuotes = (data: string) => data.replace(/"/g, '').replace(/'/g, '');
         const componentNameExists = (componentName: string) => Object.keys(components).includes(stripQuotes(componentName));
 
@@ -244,7 +247,14 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
         // no real need for "this" in hooks
         const thisReferenceConverter = content => content.replace(/this\./g, "");
 
-        const gridInstanceConverter = content => content.replace(/gridInstance\.api/g, "gridRef.current.api").replace(/gridInstance\.columnApi/g, "gridRef.current.columnApi");
+        const gridInstanceConverter = content => content
+            .replace(/gridInstance\.api\./g, "gridRef.current.api.")
+            .replace(/gridInstance\.columnApi\./g, "gridRef.current.columnApi.")
+            .replace(/gridApi\./g, "gridRef.current.api.")
+            .replace(/columnApi\./g, "gridRef.current.columnApi.")
+            .replace(/gridApi;/g, "gridRef.current.api;")
+            .replace(/columnApi;/g, "gridRef.current.columnApi;")
+            .replace(/gridColumnApi\./g, "gridRef.current.columnApi.")
 
         const template = getTemplate(bindings, componentProps.map(thisReferenceConverter));
         const eventHandlers = bindings.eventHandlers.map(event => convertFunctionToConstProperty(event.handler)).map(thisReferenceConverter).map(gridInstanceConverter);
@@ -253,9 +263,9 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
         const containerStyle = gridSettings.noStyle ? '' : `style={containerStyle}`;
 
         const gridReady = additionalInReady.length > 0 ? `
-            const onGridReady = (params) => {
+            const onGridReady = useCallback((params) => {
                 ${additionalInReady.join('\n')}
-            }` : '';
+            }, []);` : '';
 
 
         let generatedOutput = `
@@ -290,6 +300,12 @@ render(<GridExample></GridExample>, document.querySelector('#root'))
             generatedOutput = generatedOutput.replace(regex, component);
             regex = new RegExp(`"${componentName}"`, "g");
             generatedOutput = generatedOutput.replace(regex, component);
+        }
+
+        // SPL Revisit this
+        if((generatedOutput.match(/gridRef\.current/g) || []).length === 0) {
+            generatedOutput = generatedOutput.replace("const gridRef = useRef();", "")
+            generatedOutput = generatedOutput.replace("ref={gridRef}", "")
         }
 
         return generatedOutput;
