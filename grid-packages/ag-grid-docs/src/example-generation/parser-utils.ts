@@ -34,7 +34,7 @@ export function removeFunctionKeyword(code: string): string {
 }
 
 export function getFunctionName(code: string): string {
-    let matches = /function\s+([^\(]+)/.exec(code);
+    let matches = /function\s+([^\(\s]+)\(/.exec(code);
     return matches && matches.length === 2 ? matches[1].trim() : null;
 }
 
@@ -145,9 +145,10 @@ export function nodeIsUnusedFunction(node: any, used: string[], unboundInstanceM
         used.indexOf(node.id.name) < 0;
 }
 export function tsNodeIsUnusedFunction(node: any, used: string[], unboundInstanceMethods: string[]): boolean {
-    return !tsNodeIsInScope(node, unboundInstanceMethods) &&
-        ts.isFunctionLike(node)
-        && used.indexOf(node.name.getText()) < 0;
+    if (!tsNodeIsInScope(node, unboundInstanceMethods)) {
+        return ts.isFunctionLike(node) && used.indexOf(node.name.getText()) < 0;
+    }
+    return false;
 }
 
 export function nodeIsFunctionCall(node: any): boolean {

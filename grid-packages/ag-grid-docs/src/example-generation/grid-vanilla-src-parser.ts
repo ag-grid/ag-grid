@@ -219,7 +219,10 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
     });
     tsCollectors.push({
         matches: node => tsNodeIsUnusedFunction(node, registered, unboundInstanceMethods),
-        apply: (bindings, node) => bindings.utils.push(tsGenerate(node, tsTree).replace(/gridOptions/g, 'gridInstance'))
+        apply: (bindings, node) => {
+            const util = tsGenerate(node, tsTree).replace(/gridOptions/g, 'gridInstance');
+            bindings.utils.push(util)
+        }
     });
 
     // anything vars not handled above in the eventHandlers is considered an unused/util method
@@ -477,9 +480,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
     const tsConvertFunctionsIntoStringsStr = (property: any): string => {
         if (ts.isIdentifier(property.initializer)) {
 
-            property.initializer.escapedText = `AG_LITERAL_${property.initializer.escapedText}`;
-            //return `${property.name.text}: AG_LITERAL_${property.initializer.escapedText},`
-            return tsGenerate(property, tsTree);
+            return `${property.name.text}: 'AG_LITERAL_${property.initializer.escapedText}'`;
         } else if (ts.isFunctionExpression(property.initializer)) {
             let func = tsGenerate(property.initializer, tsTree);
             const replaced = `${property.name.text}: "AG_FUNCTION_${func.replace(/'/g, "\'").replace(/\n/g, "\\n")}"`
