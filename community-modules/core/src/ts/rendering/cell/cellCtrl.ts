@@ -261,6 +261,7 @@ export class CellCtrl extends BeanStub {
 
         const eAutoHeightContainer = this.eCellWrapper!;
         const eParentCell = eAutoHeightContainer.parentElement!;
+        const minRowHeight = this.beans.gridOptionsWrapper.getRowHeightAsNumber();
 
         const measureHeight = (timesCalled: number) => {
             // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
@@ -274,7 +275,8 @@ export class CellCtrl extends BeanStub {
 
             const { paddingTop, paddingBottom } = getElementSize(eParentCell);
             const wrapperHeight = eAutoHeightContainer.offsetHeight;
-            const newHeight = wrapperHeight + paddingTop + paddingBottom;
+            const autoHeight = wrapperHeight + paddingTop + paddingBottom;
+            const newHeight = Math.max(autoHeight, minRowHeight);
 
             this.rowNode.setRowAutoHeight(newHeight, this.column);
         };
