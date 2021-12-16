@@ -238,15 +238,15 @@ export function isVisible(element: HTMLElement) {
  */
 export function loadTemplate(template: string): HTMLElement {
     // we try the DOMParser first, as SalesForce doesn't like using innerHTML on a div
-    if (DOMParser!==null) {
+    if (DOMParser !== null) {
         const parser = new DOMParser();
         const doc = parser.parseFromString(template, "text/html");
         return doc.body.firstChild as HTMLElement;
-    } else {
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = (template || '').trim();
-        return tempDiv.firstChild as HTMLElement;
     }
+
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = (template || '').trim();
+    return tempDiv.firstChild as HTMLElement;
 }
 
 export function appendHtml(eContainer: HTMLElement, htmlTemplate: string) {
