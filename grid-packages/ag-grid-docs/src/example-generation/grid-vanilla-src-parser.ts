@@ -87,8 +87,11 @@ function tsNodeIsSimpleFetchRequest(node) {
 
 function generateWithReplacedGridOptions(node, options?) {
     return generate(node, options)
-        .replace(/gridOptions\.api/g, 'this.gridApi')
-        .replace(/gridOptions\.columnApi/g, 'this.gridColumnApi');
+        // also handle case where method is split over two lines
+        //  gridOptions
+        //      .api.setRow()
+        .replace(/gridOptions\s*\n?\s*\.api/g, 'this.gridApi')
+        .replace(/gridOptions\s*\n?\s*\.columnApi/g, 'this.gridColumnApi');
 }
 
 // export interface PrinterOptions {
@@ -113,8 +116,10 @@ function tsGenerate(node, srcFile) {
 
 function tsGenerateWithReplacedGridOptions(node, srcFile) {
     return tsGenerate(node, srcFile)
-        .replace(/gridOptions\.api/g, 'this.gridApi')
-        .replace(/gridOptions\.columnApi/g, 'this.gridColumnApi');
+        //  gridOptions
+        //      .api.setRow()
+        .replace(/gridOptions\s*\n?\s*\.api/g, 'this.gridApi')
+        .replace(/gridOptions\s*\n?\s*\.columnApi/g, 'this.gridColumnApi')
 }
 
 function processColDefsForFunctionalReactOrVue(propertyName: string, exampleType, exampleSettings, providedExamples) {
@@ -292,10 +297,18 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
         }
     });
     tsOnReadyCollectors.push({
-        matches: node => node.expression &&
-            node.expression.callee &&
-            node.expression.callee.property &&
-            node.expression.callee.property.name == 'sizeColumnsToFit',
+        matches: node => {
+            if (ts.isExpressionStatement(node) && ts.isCallExpression(node.expression) && ts.isPropertyAccessExpression(node.expression.expression)) {
+                //
+                if (node.expression.expression.name.getText() === 'sizeColumnsToFit') {
+                    const domContentLoaded = node.parent?.parent?.parent as any;
+                    // Make sure its a top level call to sizeColumnsToFit and not part of a setTimeout of the fetch body
+                    if (ts.isCallExpression(domContentLoaded) && domContentLoaded.arguments.length > 0) {
+                        return domContentLoaded.arguments[0].getText() === "'DOMContentLoaded'";
+                    }
+                }
+            };
+        },
         apply: bindings => {
             bindings.resizeToFit = true;
         }
@@ -330,6 +343,17 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
                     name: eventName,
                     handlerName: onEventName,
                     handler: generateWithReplacedGridOptions(node)
+                });
+            }
+        });
+
+        tsCollectors.push({
+            matches: node => tsNodeIsFunctionWithName(node, onEventName),
+            apply: (bindings, node) => {
+                bindings.eventHandlers.push({
+                    name: eventName,
+                    handlerName: onEventName,
+                    handler: tsGenerateWithReplacedGridOptions(node, tsTree)
                 });
             }
         });
@@ -438,12 +462,11 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
             return `${property.name.text}: 'AG_LITERAL_${property.initializer.escapedText}'`;
         } else if (ts.isFunctionExpression(property.initializer)) {
             const func = tsGenerate(property.initializer, tsTree);
-            // https://stackoverflow.com/a/9310752/11953633
-            const escaped = func.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, '\\$&')
-            //    .replace(/\\/g, "\\\\")
-            //.replace(/'/g, "\\'")
-            //.replace(/"/g, "\\\"")
-            //.replace(/\n/g, "\\n");
+            const escaped = func
+                .replace(/\\/g, "\\\\")
+                .replace(/'/g, "\\'")
+                .replace(/"/g, "\\\"")
+                .replace(/\n/g, "\\n");
             return `${property.name.text}: "AG_FUNCTION_${escaped}"`;
 
         } else if (ts.isObjectLiteralExpression(property.initializer)) {
@@ -571,8 +594,8 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
                     bindings.defaultColDef = tsGenerate((node.parent as any).initializer, tsTree);
                 }
 
-                if (processGlobalComponentsForVue(propertyName, exampleType, providedExamples) && ts.isLiteralExpression(node)) {
-                    bindings.globalComponents.push(generate(node));
+                if (processGlobalComponentsForVue(propertyName, exampleType, providedExamples) && ts.isIdentifier(node)) {
+                    bindings.globalComponents.push(tsGenerate(node.parent, tsTree));
                 }
 
                 bindings.properties.push({
