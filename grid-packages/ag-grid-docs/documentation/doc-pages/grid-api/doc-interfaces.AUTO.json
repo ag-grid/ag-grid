@@ -7328,7 +7328,7 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "valueGetter": {
-      "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
+      "description": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "type": { "returnType": "ValueGetterFunc", "optional": false }
     },
     "doesRowPassOtherFilter": {
@@ -7465,7 +7465,7 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "valueGetter": {
-      "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
+      "description": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "type": { "returnType": "ValueGetterFunc", "optional": false }
     },
     "doesRowPassOtherFilter": {
@@ -7526,7 +7526,7 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "valueGetter": {
-      "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
+      "description": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "type": { "returnType": "ValueGetterFunc", "optional": false }
     },
     "doesRowPassOtherFilter": {
@@ -7679,7 +7679,7 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "valueGetter": {
-      "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
+      "description": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "type": { "returnType": "ValueGetterFunc", "optional": false }
     },
     "doesRowPassOtherFilter": {
@@ -7822,7 +7822,7 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "valueGetter": {
-      "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
+      "description": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "type": { "returnType": "ValueGetterFunc", "optional": false }
     },
     "doesRowPassOtherFilter": {
@@ -8002,7 +8002,7 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "valueGetter": {
-      "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
+      "description": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "type": { "returnType": "ValueGetterFunc", "optional": false }
     },
     "doesRowPassOtherFilter": {
@@ -12465,7 +12465,7 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "valueGetter": {
-      "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
+      "description": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "type": { "returnType": "ValueGetterFunc", "optional": false }
     },
     "doesRowPassOtherFilter": {
@@ -12899,7 +12899,7 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "valueGetter": {
-      "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
+      "description": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "type": { "returnType": "ValueGetterFunc", "optional": false }
     },
     "doesRowPassOtherFilter": {
@@ -14260,7 +14260,7 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "valueGetter": {
-      "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
+      "description": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "type": { "returnType": "ValueGetterFunc", "optional": false }
     },
     "doesRowPassOtherFilter": {

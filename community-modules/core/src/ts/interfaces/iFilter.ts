@@ -139,11 +139,11 @@ export interface IFilterParams {
     filterModifiedCallback: () => void;
 
     /**
-     * A function callback for the filter to get cell values from the row data.
-     * Call with a node to be given the value for that filter's column for that node.
-     * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.
-     * This is useful in, for example, creating an Excel style filter,
-     * where the filter needs to lookup available values to allow the user to select from.
+     * A function callback for the filter to get cell values from provided row data. Called with a
+     * `ValueGetterParams` to get the value for this filter's column for the provided row data.
+     * 
+     * The callback takes care of selecting the right column definition and deciding whether to use
+     * the column `valueGetter` or raw field etc.
      */
     valueGetter: ValueGetterFunc;
 
