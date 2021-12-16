@@ -4,6 +4,8 @@ import {
     AgEvent,
     Autowired,
     BeanStub,
+    CellRange,
+    CellRangeParams,
     ChartModel,
     ChartModelType,
     ChartOptionsChanged,
@@ -14,6 +16,7 @@ import {
     GridApi,
     IRangeService,
     PostConstruct,
+    SeriesChartType
 } from "@ag-grid-community/core";
 import { ChartDataModel, ColState } from "./chartDataModel";
 import { ChartProxy } from "./chartProxies/chartProxy";
@@ -41,12 +44,12 @@ export class ChartController extends BeanStub {
         this.setChartRange();
 
         this.addManagedListener(this.eventService, Events.EVENT_RANGE_SELECTION_CHANGED, event => {
-            if (event.id && event.id === this.model.getChartId()) {
+            if (event.id && event.id === this.model.chartId) {
                 this.updateForRangeChange();
             }
         });
 
-        if (this.model.isUnlinked()) {
+        if (this.model.unlinked) {
             if (this.rangeService) {
                 this.rangeService.setCellRanges([]);
             }
@@ -62,14 +65,14 @@ export class ChartController extends BeanStub {
     }
 
     public updateForGridChange(): void {
-        if (this.model.isUnlinked()) { return; }
+        if (this.model.unlinked) { return; }
 
         this.model.updateCellRanges();
         this.setChartRange();
     }
 
     public updateForDataChange(): void {
-        if (this.model.isUnlinked()) { return; }
+        if (this.model.unlinked) { return; }
 
         this.model.updateData();
         this.raiseChartUpdatedEvent();
@@ -87,35 +90,59 @@ export class ChartController extends BeanStub {
     }
 
     public getChartModel(): ChartModel {
-        const modelType: ChartModelType = this.model.isPivotChart() ? 'pivot' : 'range';
+        const modelType: ChartModelType = this.model.chartId ? 'pivot' : 'range';
 
         return {
             modelType,
-            chartId: this.model.getChartId(),
-            chartType: this.model.getChartType(),
-            chartThemeName: this.getThemeName(),
+            chartId: this.model.chartId,
+            chartType: this.model.chartType,
+            chartThemeName: this.model.chartThemeName,
             chartOptions: this.chartProxy.getChartOptions(),
-            cellRange: this.model.getCellRangeParams(),
-            suppressChartRanges: this.model.isSuppressChartRanges(),
-            aggFunc: this.model.getAggFunc(),
-            unlinkChart: this.model.isUnlinked(),
+            cellRange: this.getCellRangeParams(),
+            suppressChartRanges: this.model.suppressChartRanges,
+            aggFunc: this.model.aggFunc,
+            unlinkChart: this.model.unlinked,
         };
     }
 
+    public getChartId(): string {
+        return this.model.chartId;
+    }
+
+    public getChartData(): any[] {
+        return this.model.chartData;
+    }
+
     public getChartType(): ChartType {
-        return this.model.getChartType();
+        return this.model.chartType;
+    }
+
+    public setChartType(chartType: ChartType): void {
+        this.model.chartType = chartType;
+        this.raiseChartUpdatedEvent();
+        this.raiseChartOptionsChangedEvent();
+    }
+
+    public setChartThemeName(chartThemeName: string): void {
+        this.model.chartThemeName = chartThemeName;
+        this.raiseChartUpdatedEvent();
+        this.raiseChartOptionsChangedEvent();
+    }
+
+    public getChartThemeName(): string {
+        return this.model.chartThemeName;
     }
 
     public isPivotChart(): boolean {
-        return this.model.isPivotChart();
+        return this.model.pivotChart;
+    }
+
+    public isPivotMode(): boolean {
+        return this.model.isPivotMode();
     }
 
     public isGrouping(): boolean {
         return this.model.isGrouping();
-    }
-
-    public getThemeName(): string {
-        return this.model.getChartThemeName();
     }
 
     public getThemes(): string[] {
@@ -132,20 +159,30 @@ export class ChartController extends BeanStub {
         });
     }
 
-    public setChartType(chartType: ChartType): void {
-        this.model.setChartType(chartType);
-        this.raiseChartUpdatedEvent();
-        this.raiseChartOptionsChangedEvent();
+    public getValueColState(): ColState[] {
+        return this.model.valueColState.map(this.displayNameMapper.bind(this));
     }
 
-    public setChartThemeName(chartThemeName: string): void {
-        this.model.setChartThemeName(chartThemeName);
-        this.raiseChartUpdatedEvent();
-        this.raiseChartOptionsChangedEvent();
+    public getSelectedValueColState(): { colId: string; displayName: string | null; }[] {
+        return this.getValueColState().filter(cs => cs.selected);
+    }
+
+    public getDimensionColState(): ColState[] {
+        return this.model.dimensionColState;
+    }
+
+    public getSelectedDimension(): ColState {
+        return this.model.getSelectedDimension();
+    }
+
+    private displayNameMapper(col: ColState): ColState {
+        const columnNames = this.model.columnNames[col.colId];
+        col.displayName = columnNames ? columnNames.join(' - ') : this.model.getColDisplayName(col.column!);
+        return col;
     }
 
     public getColStateForMenu(): { dimensionCols: ColState[]; valueCols: ColState[]; } {
-        return { dimensionCols: this.model.getDimensionColState(), valueCols: this.model.getValueColState() };
+        return { dimensionCols: this.model.dimensionColState, valueCols: this.getValueColState() };
     }
 
     public isDefaultCategorySelected(): boolean {
@@ -153,8 +190,8 @@ export class ChartController extends BeanStub {
     }
 
     public setChartRange(silent = false): void {
-        if (this.rangeService && !this.model.isSuppressChartRanges() && !this.model.isUnlinked()) {
-            this.rangeService.setCellRanges(this.model.getCellRanges());
+        if (this.rangeService && !this.model.suppressChartRanges && !this.model.unlinked) {
+            this.rangeService.setCellRanges(this.getCellRanges());
         }
 
         if (!silent) {
@@ -164,9 +201,9 @@ export class ChartController extends BeanStub {
 
     public detachChartRange(): void {
         // when chart is detached it won't listen to changes from the grid
-        this.model.toggleUnlinked();
+        this.model.unlinked = !this.model.unlinked;
 
-        if (this.model.isUnlinked()) {
+        if (this.model.unlinked) {
             // remove range from grid
             if (this.rangeService) {
                 this.rangeService.setCellRanges([]);
@@ -190,7 +227,30 @@ export class ChartController extends BeanStub {
     }
 
     public isChartLinked(): boolean {
-        return !this.model.isUnlinked();
+        return !this.model.unlinked;
+    }
+
+    public getSeriesChartTypes(): SeriesChartType[] {
+        return this.model.seriesChartTypes;
+    }
+
+    private getCellRanges(): CellRange[] {
+        return [this.model.dimensionCellRange!, this.model.valueCellRange!].filter(r => r);
+    }
+
+    private getCellRangeParams(): CellRangeParams {
+        const cellRanges = this.getCellRanges();
+        const firstCellRange = cellRanges[0];
+        const startRow = (firstCellRange && firstCellRange.startRow) || null;
+        const endRow = (firstCellRange && firstCellRange.endRow) || null;
+
+        return {
+            rowStartIndex: startRow && startRow.rowIndex,
+            rowStartPinned: startRow && startRow.rowPinned,
+            rowEndIndex: endRow && endRow.rowIndex,
+            rowEndPinned: endRow && endRow.rowPinned,
+            columns: cellRanges.reduce((columns, value) => columns.concat(value.columns.map(c => c.getId())), [] as string[])
+        };
     }
 
     private raiseChartUpdatedEvent(): void {
@@ -207,7 +267,7 @@ export class ChartController extends BeanStub {
             type: Events.EVENT_CHART_OPTIONS_CHANGED,
             chartId,
             chartType,
-            chartThemeName: this.getThemeName(),
+            chartThemeName: this.model.chartThemeName,
             chartOptions: this.chartProxy.getChartOptions(),
             api: this.gridApi,
             columnApi: this.columnApi,
@@ -219,9 +279,9 @@ export class ChartController extends BeanStub {
     private raiseChartRangeSelectionChangedEvent(): void {
         const event: ChartRangeSelectionChanged = Object.freeze({
             type: Events.EVENT_CHART_RANGE_SELECTION_CHANGED,
-            id: this.model.getChartId(),
-            chartId: this.model.getChartId(),
-            cellRange: this.model.getCellRangeParams(),
+            id: this.model.chartId,
+            chartId: this.model.chartId,
+            cellRange: this.getCellRangeParams(),
             api: this.gridApi,
             columnApi: this.columnApi,
         });
@@ -236,5 +296,4 @@ export class ChartController extends BeanStub {
             this.rangeService.setCellRanges([]);
         }
     }
-
 }

@@ -8,6 +8,7 @@ import { getAllValuesInObject } from "../../utils/object";
 import { setAriaExpanded, setAriaLabel, setAriaRole, setAriaRowIndex, setAriaSelected } from "../../utils/aria";
 import { CellCtrl } from "../cell/cellCtrl";
 import { UserCompDetails } from "../../components/framework/userComponentFactory";
+import { RowContainerType } from "../../gridBodyComp/rowContainer/rowContainerCtrl";
 
 export class RowComp extends Component {
 
@@ -20,7 +21,7 @@ export class RowComp extends Component {
     private domOrder: boolean;
     private cellComps: { [key: string]: CellComp | null; } = {};
 
-    constructor(ctrl: RowCtrl, beans: Beans, pinned: string | null) {
+    constructor(ctrl: RowCtrl, beans: Beans, containerType: RowContainerType) {
         super();
 
         this.beans = beans;
@@ -53,7 +54,7 @@ export class RowComp extends Component {
             setTabIndex: tabIndex => eGui.setAttribute('tabindex', tabIndex.toString())
         };
 
-        ctrl.setComp(compProxy, this.getGui(), pinned);
+        ctrl.setComp(compProxy, this.getGui(), containerType);
     }
 
     private getInitialStyle(): string {

@@ -22,6 +22,7 @@ import { ICellRenderer, ICellRendererParams } from "../cellRenderers/iCellRender
 import { AngularRowUtils } from "./angularRowUtils";
 import { RowCssClassCalculatorParams } from "./rowCssClassCalculator";
 import { RowDragComp } from "./rowDragComp";
+import { RowContainerType } from "../../gridBodyComp/rowContainer/rowContainerCtrl";
 
 export enum RowType {
     Normal = 'Normal',
@@ -69,7 +70,7 @@ export interface IRowComp {
 interface RowGui {
     rowComp: IRowComp;
     element: HTMLElement;
-    pinned: string | null;
+    containerType: RowContainerType;
 }
 
 interface CellCtrlListAndMap {
@@ -174,15 +175,15 @@ export class RowCtrl extends BeanStub {
         return this.instanceId;
     }
 
-    public setComp(rowComp: IRowComp, element: HTMLElement, pinned: string | null): void {
-        const gui: RowGui = {rowComp: rowComp, element: element, pinned: pinned};
+    public setComp(rowComp: IRowComp, element: HTMLElement, containerType: RowContainerType): void {
+        const gui: RowGui = {rowComp, element, containerType};
         this.allRowGuis.push(gui);
 
-        if (pinned === Constants.PINNED_LEFT) {
+        if (containerType === RowContainerType.LEFT) {
             this.leftGui = gui;
-        } else if (pinned === Constants.PINNED_RIGHT) {
+        } else if (containerType === RowContainerType.RIGHT) {
             this.rightGui = gui;
-        } else if (this.isFullWidth() && !this.beans.gridOptionsWrapper.isEmbedFullWidthRows()) {
+        } else if (containerType === RowContainerType.FULL_WIDTH) {
             this.fullWidthGui = gui;
         } else {
             this.centerGui = gui;
@@ -237,7 +238,7 @@ export class RowCtrl extends BeanStub {
 
             comp.setRole('row');
 
-            const initialRowClasses = this.getInitialRowClasses(gui.pinned);
+            const initialRowClasses = this.getInitialRowClasses(gui.containerType);
             initialRowClasses.forEach(name => comp.addOrRemoveCssClass(name, true));
 
             if (this.rowNode.group) {
@@ -322,7 +323,8 @@ export class RowCtrl extends BeanStub {
 
     private setupFullWidth(gui: RowGui): void {
 
-        const params = this.createFullWidthParams(gui.element, gui.pinned);
+        const pinned = this.getPinnedForContainer(gui.containerType);
+        const params = this.createFullWidthParams(gui.element, pinned);
         const cellRendererType = this.getFullWidthCellRendererType();
         const cellRendererName = this.getFullWidthCellRendererName();
         const compDetails = this.beans.userComponentFactory.getFullWidthCellRendererDetails(params, cellRendererType, cellRendererName);
@@ -487,8 +489,8 @@ export class RowCtrl extends BeanStub {
         }
 
         this.allRowGuis.forEach(item => {
-            const cellControls = item.pinned === Constants.PINNED_LEFT ? this.leftCellCtrls :
-                        item.pinned === Constants.PINNED_RIGHT ? this.rightCellCtrls : this.centerCellCtrls;
+            const cellControls = item.containerType === RowContainerType.LEFT ? this.leftCellCtrls :
+                                 item.containerType === RowContainerType.RIGHT ? this.rightCellCtrls : this.centerCellCtrls;
             item.rowComp.setCellCtrls(cellControls.list);
         });
     }
@@ -1083,7 +1085,15 @@ export class RowCtrl extends BeanStub {
         return businessKeyForNodeFunc(this.rowNode);
     }
 
-    public getInitialRowClasses(pinned: string | null): string[] {
+    private getPinnedForContainer(rowContainerType: RowContainerType): string | null {
+        const pinned = rowContainerType===RowContainerType.LEFT ? Constants.PINNED_LEFT :
+                        rowContainerType===RowContainerType.RIGHT ? Constants.PINNED_RIGHT : null;
+        return pinned;
+    }
+
+    public getInitialRowClasses(rowContainerType: RowContainerType): string[] {
+        const pinned = this.getPinnedForContainer(rowContainerType);
+
         const params: RowCssClassCalculatorParams = {
             rowNode: this.rowNode,
             rowFocused: this.rowFocused,

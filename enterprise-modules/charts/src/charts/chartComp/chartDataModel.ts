@@ -14,6 +14,7 @@ import {
     PostConstruct,
     RowNode,
     RowRenderer,
+    SeriesChartType,
     ValueService
 } from "@ag-grid-community/core";
 import { ChartDatasource, ChartDatasourceParams } from "./chartDatasource";
@@ -28,6 +29,7 @@ export interface ColState {
 }
 
 export interface ChartModelParams {
+    chartId: string;
     pivotChart: boolean;
     chartType: ChartType;
     chartThemeName: string;
@@ -48,32 +50,36 @@ export class ChartDataModel extends BeanStub {
     @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
     @Autowired('chartTranslator') private readonly chartTranslator: ChartTranslator;
 
-    private readonly chartId: string;
-    private readonly pivotChart: boolean;
-    private readonly aggFunc?: string | IAggFunc;
-    private readonly suppressChartRanges: boolean;
+    // this is used to associate chart ranges with charts
+    public readonly chartId: string;
+
+    public readonly suppressChartRanges: boolean;
+    public readonly aggFunc?: string | IAggFunc;
+    public readonly pivotChart: boolean;
+    public chartType: ChartType;
+    public chartThemeName: string;
+    public unlinked = false;
+    public chartData: any[] = [];
+    public seriesChartTypes: SeriesChartType[] = [];
+    public valueColState: ColState[] = [];
+    public dimensionColState: ColState[] = [];
+    public columnNames: { [p: string]: string[]; } = {};
+
+    public valueCellRange?: CellRange;
+    public dimensionCellRange?: CellRange;
 
     private referenceCellRange: CellRange;
     private suppliedCellRange: CellRange;
 
-    private dimensionCellRange?: CellRange;
-    private valueCellRange?: CellRange;
-    private dimensionColState: ColState[] = [];
-    private valueColState: ColState[] = [];
-    private chartData: any[];
-
-    private chartType: ChartType;
-    private chartThemeName: string;
     private datasource: ChartDatasource;
 
-    private unlinked = false;
     private grouping = false;
     private crossFiltering = false;
-    private columnNames: { [p: string]: string[]; } = {};
 
     public constructor(params: ChartModelParams) {
         super();
 
+        this.chartId = params.chartId;
         this.pivotChart = params.pivotChart;
         this.chartType = params.chartType;
         this.chartThemeName = params.chartThemeName;
@@ -83,15 +89,13 @@ export class ChartDataModel extends BeanStub {
         this.suppressChartRanges = params.suppressChartRanges;
         this.unlinked = !!params.unlinkChart;
         this.crossFiltering = !!params.crossFiltering;
-
-        // this is used to associate chart ranges with charts
-        this.chartId = this.generateId();
     }
 
     @PostConstruct
     private init(): void {
         this.datasource = this.createManagedBean(new ChartDatasource());
         this.updateCellRanges();
+        this.updateSeriesChartTypes();
     }
 
     public updateCellRanges(updatedColState?: ColState): void {
@@ -118,101 +122,43 @@ export class ChartDataModel extends BeanStub {
         this.updateData();
     }
 
-    public getData(): any[] {
-        return this.chartData;
-    }
+    public updateData(): void {
+        const { startRow, endRow } = this.getRowIndexes();
 
-    private isGroupActive() {
-        const usingTreeData = this.gridOptionsWrapper.isTreeData();
-        const groupedCols = usingTreeData ? null : this.columnModel.getRowGroupColumns();
-        return usingTreeData || (groupedCols && groupedCols.length > 0);
+        if (this.pivotChart) {
+            this.resetColumnState();
+        }
+
+        this.grouping = this.isGrouping();
+
+        const params: ChartDatasourceParams = {
+            aggFunc: this.aggFunc,
+            dimensionCols: [this.getSelectedDimension()],
+            grouping: this.grouping,
+            pivoting: this.isPivotActive(),
+            crossFiltering: this.crossFiltering,
+            valueCols: this.getSelectedValueCols(),
+            startRow,
+            endRow,
+            isScatter: _.includes(['scatter', 'bubble'], this.chartType)
+        };
+
+        const { chartData, columnNames } = this.datasource.getData(params);
+
+        this.chartData = chartData;
+        this.columnNames = columnNames;
     }
 
     public isGrouping(): boolean {
+        const usingTreeData = this.gridOptionsWrapper.isTreeData();
+        const groupedCols = usingTreeData ? null : this.columnModel.getRowGroupColumns();
+        const isGroupActive = usingTreeData || (groupedCols && groupedCols.length > 0);
+
         // charts only group when the selected category is a group column
         const colId = this.getSelectedDimension().colId;
         const displayedGroupCols = this.columnModel.getGroupDisplayColumns();
         const groupDimensionSelected = displayedGroupCols.map(col => col.getColId()).some(id => id === colId);
-        return !!this.isGroupActive() && groupDimensionSelected;
-    }
-
-    public isPivotActive(): boolean {
-        return this.columnModel.isPivotActive();
-    }
-
-    public isPivotMode(): boolean {
-        return this.columnModel.isPivotMode();
-    }
-
-    public isPivotChart(): boolean {
-        return this.pivotChart;
-    }
-
-    public getChartId(): string {
-        return this.chartId;
-    }
-
-    public getValueColState(): ColState[] {
-        return this.valueColState.map(this.displayNameMapper.bind(this));
-    }
-
-    public getDimensionColState(): ColState[] {
-        return this.dimensionColState;
-    }
-
-    public getCellRanges(): CellRange[] {
-        return [this.dimensionCellRange!, this.valueCellRange!].filter(r => r);
-    }
-
-    public getCellRangeParams(): CellRangeParams {
-        const cellRanges = this.getCellRanges();
-        const firstCellRange = cellRanges[0];
-        const startRow = (firstCellRange && firstCellRange.startRow) || null;
-        const endRow = (firstCellRange && firstCellRange.endRow) || null;
-
-        return {
-            rowStartIndex: startRow && startRow.rowIndex,
-            rowStartPinned: startRow && startRow.rowPinned,
-            rowEndIndex: endRow && endRow.rowIndex,
-            rowEndPinned: endRow && endRow.rowPinned,
-            columns: cellRanges.reduce((columns, value) => columns.concat(value.columns.map(c => c.getId())), [] as string[])
-        };
-    }
-
-    public setChartType(chartType: ChartType): void {
-        this.chartType = chartType;
-    }
-
-    public getChartType(): ChartType {
-        return this.chartType;
-    }
-
-    public setChartThemeName(chartThemeName: string): void {
-        this.chartThemeName = chartThemeName;
-    }
-
-    public getChartThemeName(): string {
-        return this.chartThemeName;
-    }
-
-    public isSuppressChartRanges(): boolean {
-        return this.suppressChartRanges;
-    }
-
-    public isUnlinked(): boolean {
-        return this.unlinked;
-    }
-
-    public toggleUnlinked(): void {
-        this.unlinked = !this.unlinked;
-    }
-
-    public getAggFunc(): string | IAggFunc | undefined {
-        return this.aggFunc;
-    }
-
-    public getSelectedValueColState(): { colId: string; displayName: string | null; }[] {
-        return this.getValueColState().filter(cs => cs.selected);
+        return !!isGroupActive && groupDimensionSelected;
     }
 
     public getSelectedValueCols(): Column[] {
@@ -221,6 +167,18 @@ export class ChartDataModel extends BeanStub {
 
     public getSelectedDimension(): ColState {
         return this.dimensionColState.filter(cs => cs.selected)[0];
+    }
+
+    public getColDisplayName(col: Column): string | null {
+        return this.columnModel.getDisplayNameForColumn(col, 'chart');
+    }
+
+    public isPivotMode(): boolean {
+        return this.columnModel.isPivotMode();
+    }
+
+    private isPivotActive(): boolean {
+        return this.columnModel.isPivotActive();
     }
 
     private createCellRange(type: CellRangeType, ...columns: Column[]): CellRange {
@@ -250,10 +208,6 @@ export class ChartDataModel extends BeanStub {
         }
 
         return _.convertToSet(columns);
-    }
-
-    private getColDisplayName(col: Column): string | null {
-        return this.columnModel.getDisplayNameForColumn(col, 'chart');
     }
 
     private getRowIndexes(): { startRow: number; endRow: number; } {
@@ -355,43 +309,6 @@ export class ChartDataModel extends BeanStub {
         return null;
     }
 
-    private displayNameMapper(col: ColState): ColState {
-        const columnNames = this.columnNames[col.colId];
-        col.displayName = columnNames ? columnNames.join(' - ') : this.getColDisplayName(col.column!);
-        return col;
-    }
-
-    private generateId(): string {
-        return 'id-' + Math.random().toString(36).substr(2, 16);
-    }
-
-    public updateData(): void {
-        const { startRow, endRow } = this.getRowIndexes();
-
-        if (this.pivotChart) {
-            this.resetColumnState();
-        }
-
-        this.grouping = this.isGrouping();
-
-        const params: ChartDatasourceParams = {
-            aggFunc: this.aggFunc,
-            dimensionCols: [this.getSelectedDimension()],
-            grouping: this.grouping,
-            pivoting: this.isPivotActive(),
-            crossFiltering: this.crossFiltering,
-            valueCols: this.getSelectedValueCols(),
-            startRow,
-            endRow,
-            isScatter: _.includes(['scatter', 'bubble'], this.chartType)
-        };
-
-        const result = this.datasource.getData(params);
-
-        this.chartData = result.data;
-        this.columnNames = result.columnNames;
-    }
-
     private resetColumnState(): void {
         const { dimensionCols, valueCols } = this.getAllChartColumns();
         const allCols = this.getAllColumnsFromRanges();
@@ -491,6 +408,7 @@ export class ChartDataModel extends BeanStub {
         });
 
         this.reorderColState();
+        this.updateSeriesChartTypes();
     }
 
     private reorderColState(): void {
@@ -498,6 +416,14 @@ export class ChartDataModel extends BeanStub {
 
         dimensionColState.sort((a, b) => a.order - b.order);
         valueColState.sort((a, b) => a.order - b.order);
+    }
+
+    private updateSeriesChartTypes() {
+        const { valueColState } = this;
+
+        this.seriesChartTypes = valueColState.map(valueCol => {
+            return { colId: valueCol.colId, chartType: 'groupedColumn', secondaryAxis: false };
+        })
     }
 
     private setDimensionCellRange(dimensionCols: Set<Column>, colsInRange: Set<Column>, updatedColState?: ColState): void {

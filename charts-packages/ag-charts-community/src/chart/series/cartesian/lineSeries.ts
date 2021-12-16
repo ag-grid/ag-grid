@@ -14,14 +14,13 @@ import { LegendDatum } from "../../legend";
 import { CartesianSeries, CartesianSeriesMarker, CartesianSeriesMarkerFormat } from "./cartesianSeries";
 import { ChartAxisDirection } from "../../chartAxis";
 import { getMarker } from "../../marker/util";
-import { reactive, PropertyChangeEvent, TypedEvent } from "../../../util/observable";
+import { reactive, TypedEvent } from "../../../util/observable";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
 import { interpolate } from "../../../util/string";
 import { FontStyle, FontWeight } from "../../../scene/shape/text";
 import { Label } from "../../label";
 import { sanitizeHtml } from "../../../util/sanitize";
 import { isContinuous, isDiscrete } from "../../../util/value";
-import { Scale } from "../../../scale/scale";
 
 interface LineNodeDatum extends SeriesNodeDatum {
     readonly point: {
@@ -181,7 +180,11 @@ export class LineSeries extends CartesianSeries {
                 xData.push(isDiscrete(x) ? x : String(x));
             }
 
-            yData.push(y);
+            if (isContinuousY) {
+                yData.push(y);
+            } else {
+                yData.push(isDiscrete(y) ? y : String(y));
+            }
         }
 
         this.xDomain = isContinuousX ? this.fixNumericExtent(extent(xData, isContinuous), 'x') : xData;

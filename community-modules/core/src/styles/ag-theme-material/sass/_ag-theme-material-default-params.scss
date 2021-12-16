@@ -36,6 +36,7 @@ $ag-theme-material-default-params: (
     icon-size: 18px,
     header-height: ag-derived(grid-size, $times: 7),
     row-height: ag-derived(grid-size, $times: 6),
+    cell-vertical-padding: ag-derived(grid-size, $times: 1.5),
     cell-horizontal-padding: ag-derived(grid-size, $times: 3),
     list-item-height: ag-derived(grid-size, $times: 4),
     row-group-indent-size: ag-derived(grid-size, $times: 3, $plus: icon-size),

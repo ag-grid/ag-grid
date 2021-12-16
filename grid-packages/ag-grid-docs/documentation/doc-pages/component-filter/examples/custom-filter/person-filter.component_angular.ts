@@ -59,11 +59,13 @@ export class PersonFilter implements AgFilterComponent {
     }
 
     getModel() {
+        if (!this.isFilterActive()) { return null; }
+
         return {value: this.filterText};
     }
 
     setModel(model: any) {
-        this.filterText = model.value;
+        this.filterText = model == null ? null : model.value;
     }
 
     onInputChanged() {

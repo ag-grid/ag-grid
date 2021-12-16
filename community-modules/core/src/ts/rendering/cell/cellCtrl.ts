@@ -32,6 +32,7 @@ import { DndSourceComp } from "../dndSourceComp";
 import { doOnce } from "../../utils/function";
 import { RowDragComp } from "../row/rowDragComp";
 import { getValueUsingField } from "../../utils/object";
+import { getElementSize } from "../../utils/dom";
 
 const CSS_CELL = 'ag-cell';
 const CSS_AUTO_HEIGHT = 'ag-cell-auto-height';
@@ -209,7 +210,7 @@ export class CellCtrl extends BeanStub {
     ): void {
         this.cellComp = comp;
         this.gow = this.beans.gridOptionsWrapper;
-        this.scope = scope;        
+        this.scope = scope;
         this.eGui = eGui;
         this.eCellWrapper = eCellWrapper;
         this.printLayout = printLayout;
@@ -259,6 +260,8 @@ export class CellCtrl extends BeanStub {
         if (!this.column.isAutoHeight()) { return; }
 
         const eAutoHeightContainer = this.eCellWrapper!;
+        const eParentCell = eAutoHeightContainer.parentElement!;
+        const minRowHeight = this.beans.gridOptionsWrapper.getRowHeightAsNumber();
 
         const measureHeight = (timesCalled: number) => {
             // if not in doc yet, means framework not yet inserted, so wait for next VM turn,
@@ -270,7 +273,11 @@ export class CellCtrl extends BeanStub {
                 return;
             }
 
-            const newHeight = eAutoHeightContainer.offsetHeight;
+            const { paddingTop, paddingBottom } = getElementSize(eParentCell);
+            const wrapperHeight = eAutoHeightContainer.offsetHeight;
+            const autoHeight = wrapperHeight + paddingTop + paddingBottom;
+            const newHeight = Math.max(autoHeight, minRowHeight);
+
             this.rowNode.setRowAutoHeight(newHeight, this.column);
         };
 
@@ -1029,8 +1036,8 @@ export class CellCtrl extends BeanStub {
         // fit the height of content.
 
         const autoHeight = this.column.isAutoHeight() == true;
-        // this.cellComp.addOrRemoveCssClass(CSS_AUTO_HEIGHT, autoHeight);
-        this.cellComp.addOrRemoveCssClass(CSS_NORMAL_HEIGHT, true);
+        this.cellComp.addOrRemoveCssClass(CSS_AUTO_HEIGHT, autoHeight);
+        this.cellComp.addOrRemoveCssClass(CSS_NORMAL_HEIGHT, !autoHeight);
     }
 
     public onColumnHover(): void {

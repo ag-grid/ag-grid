@@ -1,7 +1,9 @@
 import { AgChart, CartesianChart, ChartAxisPosition } from "ag-charts-community";
-import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
+import { ChartType, SeriesChartType } from "@ag-grid-community/core";
+import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "../cartesian/cartesianChartProxy";
 import { deepMerge } from "../../object";
+import { getChartThemeOverridesObjectName } from "../../chartThemeOverridesMapper";
 
 export class ComboChartProxy extends CartesianChartProxy {
 
@@ -23,43 +25,33 @@ export class ComboChartProxy extends CartesianChartProxy {
     }
 
     public update(params: UpdateChartParams): void {
-        const chart = this.chart as CartesianChart;
+        // this.updateAxes(params);
 
-        const updatedOptions = {
+        const options = {
             container: this.chartProxyParams.parentElement,
             theme: this.chartTheme,
             axes: this.getAxes(),
             data: this.transformData(params.data, params.category.id),
             series: this.getSeriesOptions(params)
-        };
+        }
 
-        AgChart.update(chart, updatedOptions);
+        AgChart.update(this.chart as CartesianChart, options);
 
-        this.updateAxes(params);
-        this.updateLabelRotation(params.category.id);
+        // this.updateLabelRotation(params.category.id);
     }
 
-    private getSeriesOptions(params: UpdateChartParams) {
-        const lineIndex = Math.ceil(params.fields.length / 2);
+    private getSeriesOptions(params: UpdateChartParams): any {
+        return params.fields.map(f => {
+            const chartType: ChartType = params.seriesChartTypes
+                .filter((s: SeriesChartType) => s.colId === f.colId)[0].chartType;
 
-        return params.fields.map((f: FieldDefinition, i: number) => {
-            const seriesType = (i >= lineIndex) ? 'line' : 'column';
-            let options: any = {
-                type: seriesType,
+            return {
+                type: getChartThemeOverridesObjectName(chartType),
                 xKey: params.category.id,
                 yKey: f.colId,
                 yName: f.displayName,
+                grouped: chartType === 'groupedColumn' || 'groupedBar',
             }
-
-            if (seriesType === 'column') {
-                options.grouped = this.chartType === 'groupedColumnLine';
-            }
-
-            if (seriesType === 'line') {
-                options.marker = {size: 3};
-            }
-
-            return options;
         });
     }
 

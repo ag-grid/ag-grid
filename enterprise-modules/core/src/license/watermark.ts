@@ -27,9 +27,14 @@ export class WatermarkComp extends Component {
     }
 
     private shouldDisplayWatermark(): boolean {
+        const eDocument = this.gridOptionsWrapper.getDocument();
+        const win = eDocument.defaultView;
+        const loc = win!.location;
+        const { hostname = '', pathname } = loc;
+
         const isDisplayWatermark = this.licenseManager.isDisplayWatermark();
-        const isWhiteListURL = location.hostname.match('^(?:127\.0\.0\.1|localhost|(?:\w+\.)?ag-grid\.com)$') != null;
-        const isForceWatermark = location.pathname ? location.pathname.indexOf('forceWatermark') !== -1 : false;
+        const isWhiteListURL = hostname.match('^(?:127\.0\.0\.1|localhost|(?:\w+\.)?ag-grid\.com)$') != null;
+        const isForceWatermark = pathname ? pathname.indexOf('forceWatermark') !== -1 : false;
 
         return isForceWatermark || (isDisplayWatermark && !isWhiteListURL);
     }

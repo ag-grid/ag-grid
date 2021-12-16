@@ -1,4 +1,4 @@
-import { IRowContainerComp, RowContainerCtrl, RowContainerName, RowCtrl } from '@ag-grid-community/core';
+import { getRowContainerTypeForName, IRowContainerComp, RowContainerCtrl, RowContainerName, RowCtrl } from '@ag-grid-community/core';
 import React, { useEffect, useMemo, useRef, useState, memo, useContext } from 'react';
 import { classesList } from '../utils';
 import useReactCommentEffect from '../reactComment';
@@ -15,8 +15,7 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
     const [containerWidth, setContainerWidth] = useState<string>('');
 
     const { name } = params;
-
-    const pinned = useMemo(() => RowContainerCtrl.getPinned(name), [name]);
+    const containerType = useMemo(() => getRowContainerTypeForName(name), [name]);
 
     const eWrapper = useRef<HTMLDivElement>(null);
     const eViewport = useRef<HTMLDivElement>(null);
@@ -83,7 +82,7 @@ const RowContainerComp = (params: {name: RowContainerName}) => {
             role="rowgroup" 
             style={ containerStyle }>
             {
-                rowCtrls.map(rowCtrl => <RowComp rowCtrl={ rowCtrl } pinned={ pinned } key={ rowCtrl.getInstanceId() }></RowComp>)
+                rowCtrls.map(rowCtrl => <RowComp rowCtrl={ rowCtrl } containerType={ containerType } key={ rowCtrl.getInstanceId() }></RowComp>)
             }
         </div>
     );

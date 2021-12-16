@@ -88,6 +88,8 @@ Each simple filter presents a list of options to the user. The list of options f
 | Greater Than            | `greaterThan`         | Number, Date        |
 | Greater Than or Equal   | `greaterThanOrEqual`  | Number              |
 | In Range                | `inRange`             | Number, Date        |
+| Blank                   | `blank`               | Text, Number, Date  |
+| Not blank               | `notBlank`            | Text, Number, Date  |
 | Choose One              | `empty`               | Text, Number, Date  |
 
 Note that the `empty` filter option is primarily used when creating [Custom Filter Options](/filter-provided-simple/#custom-filter-options). When 'Choose One' is displayed, the filter is not active.

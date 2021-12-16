@@ -4040,6 +4040,8 @@
       "notContains": "string",
       "startsWith": "string",
       "endsWith": "string",
+      "blank": "string",
+      "notBlank": "string",
       "andCondition": "string",
       "orCondition": "string",
       "dateFormatOoo": "string"
@@ -4489,7 +4491,7 @@
   },
   "ISimpleFilterModelType": {
     "meta": { "isTypeAlias": true },
-    "type": "'empty' | 'equals' | 'notEqual' | 'lessThan' | 'lessThanOrEqual' | 'greaterThan' | 'greaterThanOrEqual' | 'inRange' | 'contains' | 'notContains' | 'startsWith' | 'endsWith'"
+    "type": "'empty' | 'equals' | 'notEqual' | 'lessThan' | 'lessThanOrEqual' | 'greaterThan' | 'greaterThanOrEqual' | 'inRange' | 'contains' | 'notContains' | 'startsWith' | 'endsWith' | 'blank' | 'notBlank'"
   },
   "ISimpleFilterModel": {
     "meta": {},
@@ -4732,6 +4734,7 @@
       "cellRange": "ChartParamsCellRange",
       "suppressChartRanges?": "boolean",
       "aggFunc?": "string | IAggFunc",
+      "seriesChartTypes?": "SeriesChartType",
       "chartType": "ChartType",
       "chartThemeName?": "string",
       "chartContainer?": "HTMLElement",
@@ -4742,6 +4745,7 @@
       "cellRange": "/** The range of cells to be charted. If no rows / rowIndexes are specified all rows will be included. */",
       "suppressChartRanges?": "/** Suppress highlighting the selected range in the grid. */",
       "aggFunc?": "/** The aggregation function that should be applied to all series data. */",
+      "seriesChartTypes?": "/** The series chart type configurations used in combination charts */",
       "chartType": "/** The type of chart to create. */",
       "chartThemeName?": "/** The default theme to use, either a default option or your own custom theme. */",
       "chartContainer?": "/** Provide to display the chart outside of the grid in your own container. */",
@@ -4868,11 +4872,11 @@
       "TOP_LEFT = 'topLeft'",
       "TOP_RIGHT = 'topRight'",
       "TOP_CENTER = 'topCenter'",
-      "TOP_FULL_WITH = 'topFullWidth'",
+      "TOP_FULL_WIDTH = 'topFullWidth'",
       "BOTTOM_LEFT = 'bottomLeft'",
       "BOTTOM_RIGHT = 'bottomRight'",
       "BOTTOM_CENTER = 'bottomCenter'",
-      "BOTTOM_FULL_WITH = 'bottomFullWidth'"
+      "BOTTOM_FULL_WIDTH = 'bottomFullWidth'"
     ],
     "docs": [
       null,
@@ -4888,6 +4892,16 @@
       null,
       null
     ]
+  },
+  "RowContainerType": {
+    "meta": { "isEnum": true },
+    "type": [
+      "LEFT = 'left'",
+      "RIGHT = 'right'",
+      "CENTER = 'center'",
+      "FULL_WIDTH = 'fullWidth'"
+    ],
+    "docs": [null, null, null, null]
   },
   "IRowContainerComp": {
     "meta": {},
@@ -6537,6 +6551,14 @@
   "ChartMenuOptions": {
     "meta": { "isTypeAlias": true },
     "type": "'chartSettings' | 'chartData' | 'chartFormat' | 'chartLink' | 'chartUnlink' | 'chartDownload'"
+  },
+  "SeriesChartType": {
+    "meta": {},
+    "type": {
+      "colId": "string",
+      "chartType": "ChartType",
+      "secondaryAxis?": "boolean"
+    }
   },
   "GetChartImageDataUrlParams": {
     "meta": {},
@@ -9520,7 +9542,7 @@
     "type": {
       "rowComp": "IRowComp",
       "element": "HTMLElement",
-      "pinned": "string | null"
+      "containerType": "RowContainerType"
     }
   },
   "CellCtrlListAndMap": {

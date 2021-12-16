@@ -652,7 +652,7 @@ export class ChartTheme {
         const { palette } = this;
         const colorCount = this.getSeriesColorCount(seriesOptions);
 
-        if (colorCount === Infinity) {
+        if (colorCount === Infinity || colorCount === 0) {
             series.setColors(palette.fills, palette.strokes);
         } else {
             const fills = copy(palette.fills, firstColorIndex, colorCount);

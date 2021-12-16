@@ -143,10 +143,12 @@ export abstract class SimpleFloatingFilter extends Component implements IFloatin
     }
 
     private isTypeEditable(type?: string | null): boolean {
+        const uneditableTypes: string[] = [
+            SimpleFilter.IN_RANGE, SimpleFilter.EMPTY, SimpleFilter.BLANK, SimpleFilter.NOT_BLANK,
+        ];
         return !!type &&
             !this.isReadOnly() &&
             this.doesFilterHaveSingleInput(type) &&
-            type !== SimpleFilter.IN_RANGE &&
-            type !== SimpleFilter.EMPTY;
+            uneditableTypes.indexOf(type) < 0;
     }
 }

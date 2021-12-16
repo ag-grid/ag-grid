@@ -72,8 +72,7 @@ export class FilterManager extends BeanStub {
             // mark the filters as we set them, so any active filters left over we stop
             const modelKeys = convertToSet(Object.keys(model));
 
-            this.allAdvancedFilters.forEach((filterWrapper) => {
-                const colId = filterWrapper.column.getColId();
+            this.allAdvancedFilters.forEach((filterWrapper, colId) => {
                 const newModel = model[colId];
 
                 allPromises.push(this.setModelOnFilterWrapper(filterWrapper.filterPromise!, newModel));
@@ -556,8 +555,8 @@ export class FilterManager extends BeanStub {
     private onColumnsChanged(): void {
         const columns: Column[] = [];
 
-        this.allAdvancedFilters.forEach((wrapper) => {
-            const currentColumn = this.columnModel.getGridColumn(wrapper.column.getColId());
+        this.allAdvancedFilters.forEach((wrapper, colId) => {
+            const currentColumn = this.columnModel.getPrimaryColumn(colId);
             if (currentColumn) { return; }
 
             columns.push(wrapper.column);

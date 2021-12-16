@@ -3110,7 +3110,7 @@
     "nodePadding": {
       "type": "number",
       "default": 2,
-      "description": "The amount "
+      "description": "The amount of padding in pixels inside of each treemap tile. Increasing `nodePadding` will reserve more space for parent labels."
     },
     "gradient": {
       "type": "boolean",

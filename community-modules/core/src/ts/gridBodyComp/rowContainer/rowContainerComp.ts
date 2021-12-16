@@ -1,7 +1,7 @@
 import { Component } from "../../widgets/component";
 import { RefSelector } from "../../widgets/componentAnnotations";
 import { Autowired, PostConstruct, PreDestroy } from "../../context/context";
-import { IRowContainerComp, RowContainerCtrl, RowContainerName } from "./rowContainerCtrl";
+import { getRowContainerTypeForName, IRowContainerComp, RowContainerCtrl, RowContainerName, RowContainerType } from "./rowContainerCtrl";
 import { ensureDomOrder, insertWithDomOrder } from "../../utils/dom";
 import { RowComp } from "../../rendering/row/rowComp";
 import { RowCtrl } from "../../rendering/row/rowCtrl";
@@ -47,6 +47,7 @@ export class RowContainerComp extends Component {
     @RefSelector('eWrapper') private eWrapper: HTMLElement;
 
     private readonly name: RowContainerName;
+    private readonly type: RowContainerType;
 
     private rowComps: {[id: string]: RowComp} = {};
 
@@ -58,6 +59,7 @@ export class RowContainerComp extends Component {
     constructor() {
         super(templateFactory());
         this.name = Component.elementGettingCreated.getAttribute('name') as RowContainerName;
+        this.type = getRowContainerTypeForName(this.name);
     }
 
     @PostConstruct
@@ -126,7 +128,7 @@ export class RowContainerComp extends Component {
 
     private newRowComp(rowCtrl: RowCtrl): RowComp {
         const pinned = RowContainerCtrl.getPinned(this.name);
-        const res = new RowComp(rowCtrl, this.beans, pinned);
+        const res = new RowComp(rowCtrl, this.beans, this.type);
         return res;
     }
 

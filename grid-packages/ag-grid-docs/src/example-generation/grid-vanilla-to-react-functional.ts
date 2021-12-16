@@ -125,8 +125,16 @@ function extractComponentInformation(properties, componentFilenames: string[]) :
     return components;
 }
 
+function getCallbackNames() {
+    const callbackJson = require('../../documentation/doc-pages/grid-callbacks/callbacks.json');
+    const callbacks = Object.keys(callbackJson).map(topLevel => Object.keys(callbackJson[topLevel]));
+    return [].concat.apply([], callbacks).filter(callback => callback !== 'meta')
+}
+
 export function vanillaToReactFunctional(bindings: any, componentFilenames: string[]): (importType: ImportType) => string {
     const {properties, data, gridSettings, onGridReady, resizeToFit} = bindings;
+
+    const callbackNames = getCallbackNames();
 
     return importType => {
         // instance values
@@ -152,6 +160,39 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
 
         // is the row data loaded asynchronously?
         const needsRowDataState = data && data.callback.indexOf('api.setRowData') >= 0;
+        const additionalInReady = [];
+        if (data) {
+            let setRowDataBlock = data.callback;
+
+            if (needsRowDataState) {
+                if (stateProperties.filter(item => item.indexOf('rowData') >= 0).length === 0) {
+                    stateProperties.push('const [rowData, setRowData] = useState();');
+                }
+
+                if (componentProps.filter(item => item.indexOf('rowData') >= 0).length === 0) {
+                    componentProps.push('rowData={rowData}');
+                }
+
+                setRowDataBlock = data.callback.replace('params.api.setRowData(data);', 'setRowData(data);');
+            }
+
+            additionalInReady.push(`
+                const updateData = (data) => ${setRowDataBlock};
+                
+                fetch(${data.url})
+                .then(resp => resp.json())
+                .then(data => updateData(data));`
+            );
+        }
+
+        if (onGridReady) {
+            const hackedHandler = onGridReady.replace(/^{|}$/g, '');
+            additionalInReady.push(hackedHandler);
+        }
+
+        if (resizeToFit) {
+            additionalInReady.push('params.api.sizeColumnsToFit();');
+        }
 
         const components: { [componentName: string]: string } = extractComponentInformation(properties, componentFilenames);
 
@@ -193,48 +234,18 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
                         } else if (valueType === 'boolean') {
                             componentProps.push(`${property.name}={${property.value}}`);
                         } else {
-                            stateProperties.push(`const ${property.name} = useMemo(() => { return ${property.value} }, [])`);
+                            if(callbackNames.includes(property.name)) {
+                                // SPL fill in deps here once available
+                                stateProperties.push(`const ${property.name} = useCallback(() => { return ${property.value} }, [])`);
+                            } else {
+                                stateProperties.push(`const ${property.name} = useMemo(() => { return ${property.value} }, [])`);
+                            }
                             componentProps.push(`${property.name}={${property.name}}`);
                         }
                     }
                 }
             }
         });
-
-        const additionalInReady = [];
-
-        if (data) {
-            let setRowDataBlock = data.callback;
-
-            if (needsRowDataState) {
-                if (stateProperties.filter(item => item.indexOf('rowData') >= 0).length === 0) {
-                    stateProperties.push('const [rowData, setRowData] = useState();');
-                }
-
-                if (componentProps.filter(item => item.indexOf('rowData') >= 0).length === 0) {
-                    componentProps.push('rowData={rowData}');
-                }
-
-                setRowDataBlock = data.callback.replace('params.api.setRowData(data);', 'setRowData(data);');
-            }
-
-            additionalInReady.push(`
-                const updateData = (data) => ${setRowDataBlock};
-                
-                fetch(${data.url})
-                .then(resp => resp.json())
-                .then(data => updateData(data));`
-            );
-        }
-
-        if (onGridReady) {
-            const hackedHandler = onGridReady.replace(/^{|}$/g, '');
-            additionalInReady.push(hackedHandler);
-        }
-
-        if (resizeToFit) {
-            additionalInReady.push('params.api.sizeColumnsToFit();');
-        }
 
         const componentEventAttributes = bindings.eventHandlers.map(event => `${event.handlerName}={${event.handlerName}}`);
         if (additionalInReady.length > 0) {

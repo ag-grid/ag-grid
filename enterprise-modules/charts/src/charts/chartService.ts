@@ -250,6 +250,7 @@ export class ChartService extends BeanStub implements IChartService {
         const createChartContainerFunc = this.gridOptionsWrapper.getCreateChartContainerFunc();
 
         const params: GridChartParams = {
+            chartId: this.generateId(),
             pivotChart,
             cellRange,
             chartType,
@@ -321,6 +322,10 @@ export class ChartService extends BeanStub implements IChartService {
     private getSelectedRange(): CellRange {
         const ranges = this.rangeService.getCellRanges();
         return ranges.length > 0 ? ranges[0] : {} as CellRange;
+    }
+
+    private generateId(): string {
+        return 'id-' + Math.random().toString(36).substr(2, 16);
     }
 
     @PreDestroy

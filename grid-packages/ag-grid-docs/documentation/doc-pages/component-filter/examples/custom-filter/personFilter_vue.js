@@ -54,11 +54,13 @@ export default {
         },
 
         getModel() {
+            if (!this.isFilterActive()) { return null; }
+
             return {value: this.filterText};
         },
 
         setModel(model) {
-            this.filterText = model.value;
+            this.filterText = model == null ? null : model.value;
         }
     }
 };

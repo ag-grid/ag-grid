@@ -40,11 +40,13 @@ export default class PersonFilter extends Component {
     }
 
     getModel() {
+        if (!this.isFilterActive()) { return null; }
+
         return {value: this.state.filterText};
     }
 
     setModel(model) {
-        this.ref.current.value = model.value;
+        this.ref.current.value = model == null ? null : model.value;
     }
 
     onChange(event) {
