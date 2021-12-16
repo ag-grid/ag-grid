@@ -7,7 +7,7 @@
   "scripts": {
     "build": "npx gulp && npm run hash",
     "umd": "npx rollup -c",
-    "test": "npx jest",
+    "testx": "npx jest",
     "test:e2ex": "npx gulp link-umd-e2e && npm run cypress:e2e && npm run cypress:components",
     "test:debug": "node --inspect-brk node_modules/.bin/jest --runInBand",
     "cypress:open": "npx cross-env NODE_ENV=test cypress open",
