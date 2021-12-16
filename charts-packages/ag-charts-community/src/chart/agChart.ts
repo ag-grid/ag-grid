@@ -529,7 +529,12 @@ export function getSeriesOrder(
     for (let i = 0; i < seriesOptions.length; i++) {
         const s = seriesOptions[i];
         const seriesType = s.type;
-        if (seriesType === 'column' || seriesType === 'bar') {
+
+        const isColumn = seriesType === 'column';
+        const isBar = seriesType === 'bar';
+        const isStackedArea = seriesType === 'area' && (s as any).stacked === true;
+
+        if (isColumn || isBar || isStackedArea) {
             if (indexMap.get(seriesType)! < 0) {
                 indexMap.set(seriesType, i);
                 result.push([]);
@@ -583,6 +588,34 @@ export function processBarColumnSeriesOptions(series: any) {
 }
 
 /**
+ * Takes an array of area series options objects and returns a single object with the combined area series options.
+ */
+export function processAreaSeriesOptions(series: any) {
+    let options: any = {};
+
+    const arrayValueProperties = ['yKeys', 'fills', 'strokes', 'yNames', 'hideInChart', 'hideInLegend'];
+    const stringValueProperties = ['yKey', 'fill', 'stroke', 'yName'];
+
+    for (let i = 0; i < series.length; i++) {
+        const s = series[i];
+        for (const property in s) {
+
+            const arrayValueProperty = arrayValueProperties.indexOf(property) > -1;
+            const stringValueProperty = stringValueProperties.indexOf(property) > -1;
+
+            if (arrayValueProperty && s[property].length > 0) {
+                options[property] = [...(options[property] || []), ...s[property]];
+            } else if (stringValueProperty) {
+                options[`${property}s`] = [...(options[`${property}s`] || []), s[property]];
+            } else {
+                options[property] = s[property];
+            }
+        }
+    }
+    return options;
+}
+
+/**
  * Takes an array of line series options objects and returns a single object with the combined line series options.
  */
 export function processLineSeriesOptions(series: any) {
@@ -601,6 +634,8 @@ export function processSeriesOptions(
                 case 'column':
                 case 'bar':
                     return processBarColumnSeriesOptions(series);
+                case 'area':
+                    return processAreaSeriesOptions(series);
                 case 'line':
                 default:
                     return processLineSeriesOptions(series);
