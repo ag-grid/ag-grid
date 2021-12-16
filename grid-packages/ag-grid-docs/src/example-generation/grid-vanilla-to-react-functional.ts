@@ -1,5 +1,5 @@
 import {convertFunctionToConstProperty, ImportType, isInstanceMethod, modulesProcessor} from './parser-utils';
-import {convertFunctionalTemplate, getImport, getValueType} from './react-utils';
+import {convertFunctionalTemplate, convertFunctionToConstCallback, getImport, getValueType} from './react-utils';
 import {templatePlaceholder} from "./grid-vanilla-src-parser";
 
 function getModuleImports(bindings: any, componentFilenames: string[], stateProperties: string[]): string[] {
@@ -269,7 +269,7 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
 
         const template = getTemplate(bindings, componentProps.map(thisReferenceConverter));
         const eventHandlers = bindings.eventHandlers.map(event => convertFunctionToConstProperty(event.handler)).map(thisReferenceConverter).map(gridInstanceConverter);
-        const externalEventHandlers = bindings.externalEventHandlers.map(handler => convertFunctionToConstProperty(handler.body)).map(thisReferenceConverter).map(gridInstanceConverter);
+        const externalEventHandlers = bindings.externalEventHandlers.map(handler => convertFunctionToConstCallback(handler.body)).map(thisReferenceConverter).map(gridInstanceConverter);
         const instanceMethods = bindings.instanceMethods.map(convertFunctionToConstProperty).map(thisReferenceConverter).map(gridInstanceConverter);
         const containerStyle = gridSettings.noStyle ? '' : `style={containerStyle}`;
 
