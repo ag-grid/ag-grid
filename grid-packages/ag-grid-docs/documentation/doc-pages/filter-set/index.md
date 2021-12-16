@@ -45,7 +45,7 @@ The following example demonstrates how the Set Filter can be enabled. Note the f
 
 Parameters that are common to all [Provided Filters](/filter-provided/):
 
-<interface-documentation interfaceName='IProvidedFilterParams' names='["buttons","closeOnApply","debounceMs","readOnly"]' config='{"description":""}'></interface-documentation>
+<interface-documentation interfaceName='IProvidedFilterParams' names='["buttons","closeOnApply","debounceMs","readOnly","valueGetter"]' config='{"description":""}'></interface-documentation>
 
 Parameters that are specific to the Set Filter:
 
