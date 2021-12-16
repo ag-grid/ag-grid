@@ -694,6 +694,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             columnSeparator: this.gridOptionsWrapper.getClipboardDeliminator(),
             onlySelected: !rowPositions,
             processCellCallback: this.gridOptionsWrapper.getProcessCellForClipboardFunc(),
+            processRowGroupCallback: (params) => params.node.key!,
             processHeaderCallback: this.gridOptionsWrapper.getProcessHeaderForClipboardFunc(),
             processGroupHeaderCallback: this.gridOptionsWrapper.getProcessGroupHeaderForClipboardFunc()
         };
