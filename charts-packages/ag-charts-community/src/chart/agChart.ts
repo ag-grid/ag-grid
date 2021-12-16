@@ -528,7 +528,7 @@ export function getSeriesOrder(
 
     for (let i = 0; i < seriesOptions.length; i++) {
         const s = seriesOptions[i];
-        const seriesType = s.type;
+        const seriesType = s.type || 'line';
 
         const isColumn = seriesType === 'column';
         const isBar = seriesType === 'bar';
