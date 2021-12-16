@@ -199,20 +199,7 @@ function createExampleGenerator(prefix, importTypes) {
         let jsFile = mainScript.endsWith('.ts') ? readAsJsFile(mainScript) : getFileContents(mainScript);
         const indexHtml = getFileContents(document);
 
-        // ********************* TEST CODE DONT COMMIT TO LATEST **********************************????????????????????????/
-        const dumpPath = "/Users/stephencooper/Workspace/doc-branch/grid-packages/ag-grid-docs/OUTPUT/";
-        const folder = "toUpdate";
-        fs.mkdirSync(dumpPath + folder, { recursive: true });
-        fs.writeFileSync(dumpPath + folder + "/" + mainScript.replace(/\//g, '_').replace('.js', '.json').replace('.ts', '.json'), "")
-        // ********************* TEST CODE DONT COMMIT TO LATESTS **********************************????????????????????????/
-
-
         const bindings = parser(jsFile, indexHtml, options, type, providedExamples);
-
-
-        // ********************* TEST CODE DONT COMMIT TO LATEST **********************************????????????????????????/        
-        fs.writeFileSync(dumpPath + folder + "/" + mainScript.replace(/\//g, '_').replace('.js', '.json').replace('.ts', '.json'), JSON.stringify(bindings))
-        // ********************* TEST CODE DONT COMMIT TO LATESTS **********************************????????????????????????/
 
         const writeExampleFiles = (importType, framework, tokenToReplace, frameworkScripts, files, subdirectory, componentPostfix = '') => {
             const basePath = path.join(createExamplePath(`_gen/${importType}`), framework);
