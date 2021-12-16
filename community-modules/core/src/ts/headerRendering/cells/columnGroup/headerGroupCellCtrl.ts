@@ -88,9 +88,9 @@ export class HeaderGroupCellCtrl extends AbstractHeaderCellCtrl {
         ));
     }
 
-    public resizeLeafColumnsToFit(onlyGrow: Column[]): Column[] {
+    public resizeLeafColumnsToFit(): void {
         this.groupResizeFeature.onResizeStart(false);
-        return this.groupResizeFeature.resizeLeafColumnsToFit(onlyGrow);
+        this.groupResizeFeature.resizeLeafColumnsToFit();
     }
 
     private setupUserComp(): void {
