@@ -73,12 +73,15 @@ export const InterfaceDocumentation: React.FC<any> = ({ interfacename, framework
 
     ordered.map(([k, v]) => orderedProps[k] = v);
 
+    const description = config.description != null ?
+        config.description :
+        `Properties available on the \`${interfacename}\` interface.`;
     let properties: DocEntryMap = {
         [interfacename]: {
             ...orderedProps,
             "meta": {
                 "displayName": interfacename,
-                "description": config.description || `Properties available on the \`${interfacename}\` interface.`,
+                description,
                 ...interfaceOverrides.meta
             }
         }

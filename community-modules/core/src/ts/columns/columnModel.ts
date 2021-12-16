@@ -788,7 +788,7 @@ export class ColumnModel extends BeanStub {
 
     private isColumnInViewport(col: Column): boolean {
         // we never filter out autoHeight columns, as we need them in the DOM for calculating Auto Height
-        if (col.getColDef().autoHeight) { return true; }
+        if (col.isAutoHeight()) { return true; }
 
         const columnLeft = col.getLeft() || 0;
         const columnRight = columnLeft + col.getActualWidth();
@@ -3144,7 +3144,7 @@ export class ColumnModel extends BeanStub {
     }
 
     private setAutoHeightActive(): void {
-        this.autoHeightActive = this.gridColumns.filter(col => col.getColDef().autoHeight).length > 0;
+        this.autoHeightActive = this.gridColumns.filter(col => col.isAutoHeight()).length > 0;
 
         if (this.autoHeightActive) {
             this.autoHeightActiveAtLeastOnce = true;
@@ -3318,7 +3318,7 @@ export class ColumnModel extends BeanStub {
         this.derivedDisplayedColumnsFromDisplayedTree(this.displayedTreeRight, this.displayedColumnsRight);
         this.joinDisplayedColumns();
         this.setLeftValues(source);
-        this.displayedAutoHeightCols = this.displayedColumns.filter(col => col.getColDef().autoHeight);
+        this.displayedAutoHeightCols = this.displayedColumns.filter(col => col.isAutoHeight());
     }
 
     public isAutoRowHeightActive(): boolean {

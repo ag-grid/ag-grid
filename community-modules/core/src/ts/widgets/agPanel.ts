@@ -81,9 +81,10 @@ export class AgPanel extends Component {
         }
 
         this.addManagedListener(this.eTitleBar, 'mousedown', (e: MouseEvent) => {
+            const eDocument = this.gridOptionsWrapper.getDocument();
             if (
                 eGui.contains(e.relatedTarget as HTMLElement) ||
-                eGui.contains(document.activeElement) ||
+                eGui.contains(eDocument.activeElement) ||
                 this.eTitleBarButtons.contains(e.target as HTMLElement)
             ) {
                 e.preventDefault();

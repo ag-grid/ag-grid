@@ -263,7 +263,8 @@ export class MenuItemMapper extends BeanStub {
                         'rangeLineChart',
                         'rangeXYChart',
                         'rangeAreaChart',
-                        'rangeHistogramChart'
+                        'rangeHistogramChart',
+                        'rangeCombinationChart'
                     ],
                     icon: _.createIconNoSpan('chart', this.gridOptionsWrapper, null),
                 };
@@ -407,6 +408,18 @@ export class MenuItemMapper extends BeanStub {
 
             case 'rangeHistogramChart':
                 return rangeChartMenuItem('histogramChart', 'Histogram&lrm;', 'histogram');
+
+            case 'rangeGroupedColumnLine':
+                return rangeChartMenuItem('groupedColumnLine', 'Grouped Column & Line&lrm;', 'groupedColumnLine');
+
+            case 'rangeStackedColumnLine':
+                return rangeChartMenuItem('stackedColumnLine', 'Stacked Column & Line&lrm;', 'stackedColumnLine');
+
+            case 'rangeCombinationChart':
+                return {
+                    name: localeTextFunc('combinationChart', 'Combination'),
+                    subMenu: ['rangeGroupedColumnLine', 'rangeStackedColumnLine']
+                };
 
             default:
                 return null;

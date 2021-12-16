@@ -2,10 +2,12 @@
   "compilerOptions": {
     "module": "commonjs",
     "experimentalDecorators": true,
+    "downlevelIteration": true,
     "emitDecoratorMetadata": false,
     "target": "ES2015",
     "types": [
-      "jest"
+      "jest",
+      "node"
     ],
     "lib": [
       "ES2017",

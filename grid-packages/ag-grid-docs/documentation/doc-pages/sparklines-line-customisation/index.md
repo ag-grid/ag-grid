@@ -111,7 +111,7 @@ The horizontal and vertical crosshair lines can be enabled or disabled independe
 sparklineOptions: {
     crosshairs: {
         xLine: {
-            enabled: false // enabled by default, set to false to remove the default vertical corsshair line
+            enabled: false // enabled by default, set to false to remove the default vertical crosshair line
         },
         yLine: {
             enabled: false // disabled by default, set to true to enable the horizontal crosshair line
@@ -120,7 +120,7 @@ sparklineOptions: {
 }
 ```
 
-The style of the crosshair line, including `stroke`, `strokeWidth`, `lineDash` and `lineCap`, can be customised via the `xline` and `yline` options:
+The style of the crosshair line, including `stroke`, `strokeWidth`, `lineDash` and `lineCap`, can be customised via the `xLine` and `yLine` options:
 
 ```js
 sparklineOptions: {

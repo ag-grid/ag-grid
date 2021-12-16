@@ -87,7 +87,15 @@ export class FormatPanel extends Component {
                 this.addComponent(new HistogramSeriesPanel(this.chartOptionsService));
                 this.addComponent(new NavigatorPanel(this.chartOptionsService));
                 break;
+            case 'groupedColumnLine':
+            case 'stackedColumnLine':
+                this.addComponent(new AxisPanel(this.chartController, this.chartOptionsService));
+                this.addComponent(new BarSeriesPanel(this.chartOptionsService));
+                this.addComponent(new LineSeriesPanel(this.chartOptionsService));
+                this.addComponent(new NavigatorPanel(this.chartOptionsService));
+                break;
             default:
+                // warn vanilla javascript users when they supply invalid chart type
                 console.warn(`AG Grid: ChartFormattingPanel - unexpected chart type index: ${chartType} supplied`);
         }
 

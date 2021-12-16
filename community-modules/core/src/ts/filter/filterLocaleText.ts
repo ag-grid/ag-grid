@@ -18,6 +18,8 @@ export interface IFilterLocaleText {
     notContains: string;
     startsWith: string;
     endsWith: string;
+    blank: string;
+    notBlank: string;
     andCondition: string;
     orCondition: string;
     dateFormatOoo: string;
@@ -54,6 +56,8 @@ export const DEFAULT_FILTER_LOCALE_TEXT: IFilterLocaleText & IFilterTitleLocaleT
     notContains: 'Not contains',
     startsWith: 'Starts with',
     endsWith: 'Ends with',
+    blank: 'Blank',
+    notBlank: 'Not blank',
     andCondition: 'AND',
     orCondition: 'OR',
     dateFormatOoo: 'yyyy-mm-dd',

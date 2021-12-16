@@ -1961,7 +1961,7 @@
       "isServerSideGroup?": "/** SSRM Tree Data: Allows specifying which rows are expandable. */",
       "getServerSideGroupKey?": "/** SSRM Tree Data: Allows specifying group keys. */",
       "getBusinessKeyForNode?(node: RowNode)": "/** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.\n * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys. */",
-      "getRowNodeId?": "/** Allows you to set the ID for a particular row node based on the data. Useful for selection and server side sorting and filtering for paging and virtual pagination. */",
+      "getRowNodeId?": "/** Allows you to set the ID for a particular row node based on the data. */",
       "processRowPostCreate?(params: ProcessRowParams)": "/** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */",
       "isRowSelectable?": "/** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable. */",
       "isRowMaster?": "/** Callback to be used with Master Detail to determine if a row should be a master row. If `false` is returned no detail row will exist for this row. */",
@@ -2713,7 +2713,7 @@
   "FilterModifiedEvent": {
     "meta": {},
     "type": {
-      "filterInstance": "IFilter",
+      "filterInstance": "IFilterComp",
       "column": "Column",
       "api": "GridApi",
       "columnApi": "ColumnApi",
@@ -4040,6 +4040,8 @@
       "notContains": "string",
       "startsWith": "string",
       "endsWith": "string",
+      "blank": "string",
+      "notBlank": "string",
       "andCondition": "string",
       "orCondition": "string",
       "dateFormatOoo": "string"
@@ -4068,15 +4070,32 @@
       "guiPromise": "AgPromise<HTMLElement | null>"
     }
   },
-  "IFloatingFilterParams": {
+  "IFloatingFilterParent": {
     "meta": {},
+    "type": {
+      "onFloatingFilterChanged(type: string | null, value: any)": "void"
+    },
+    "docs": {
+      "onFloatingFilterChanged(type: string | null, value: any)": "/** Notification that a new floating-filter value was input by the user.\n * @param type operation type selected.\n * @param value model-typed value entered.\n */"
+    }
+  },
+  "InbuiltParentType": {
+    "meta": { "isTypeAlias": true },
+    "type": "IFloatingFilterParent & IFilter"
+  },
+  "IFloatingFilterParentCallback": {
+    "meta": { "isTypeAlias": true, "typeParams": ["P"] },
+    "type": "(parentFilterInstance: P) => void"
+  },
+  "IFloatingFilterParams": {
+    "meta": { "typeParams": ["P"] },
     "type": {
       "column": "Column",
       "filterParams": "IFilterParams",
       "suppressFilterButton": "boolean",
       "api": "GridApi",
       "currentParentModel": "() => any",
-      "parentFilterInstance": "(callback: (filterInstance: ISimpleFilter) => void) => void",
+      "parentFilterInstance": "(callback: IFloatingFilterParentCallback<P>) => void",
       "showParentFilter": "() => void"
     },
     "docs": {
@@ -4180,13 +4199,16 @@
       "defaultJoinOperator?": "/** By default, the two conditions are combined using `AND`.\n * You can change this default by setting this property.\n * Options: `AND`, `OR` */",
       "suppressAndOrCondition?": "/** If `true`, the filter will only allow one condition.\n * Default: `false` */",
       "alwaysShowBothConditions?": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
-      "readOnly?": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "buttons?": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * <ul>\n * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li>\n * </ul> */",
+      "closeOnApply?": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
+      "debounceMs?": "/** By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by\n * 500ms. This is because these filters have text field inputs, so time is given to the user to\n * type items in before the input is formatted and the filtering applied. The\n * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To\n * override these defaults, set `debounceMs` to the number of milliseconds to debounce by. */",
+      "readOnly?": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n * be used in conjunction with the Filter API.\n * \n * Default: `false` */",
       "column": "/** The column this filter is for. */",
       "colDef": "/** The column definition for the column. */",
       "rowModel": "/** The row model, helpful for looking up data values if needed.\n * If the filter needs to know which rows are\n * a) in the table,\n * b) currently visible (i.e. not already filtered),\n * c) which groups,\n * d) what order - all of this can be read from the rowModel. */",
       "filterChangedCallback": "/** A function callback to be called when the filter changes. The\n * grid will then respond by filtering the grid data. The callback\n * takes one optional parameter which, if included, will get merged\n * to the FilterChangedEvent object (useful for passing additional\n * information to anyone listening to this event, however such extra\n * attributes are not used by the grid). */",
       "filterModifiedCallback": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
-      "valueGetter": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
+      "valueGetter": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "doesRowPassOtherFilter": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
       "context": "/** The context as provided on `gridOptions.context` */"
     }
@@ -4256,13 +4278,16 @@
       "defaultJoinOperator?": "/** By default, the two conditions are combined using `AND`.\n * You can change this default by setting this property.\n * Options: `AND`, `OR` */",
       "suppressAndOrCondition?": "/** If `true`, the filter will only allow one condition.\n * Default: `false` */",
       "alwaysShowBothConditions?": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
-      "readOnly?": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "buttons?": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * <ul>\n * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li>\n * </ul> */",
+      "closeOnApply?": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
+      "debounceMs?": "/** By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by\n * 500ms. This is because these filters have text field inputs, so time is given to the user to\n * type items in before the input is formatted and the filtering applied. The\n * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To\n * override these defaults, set `debounceMs` to the number of milliseconds to debounce by. */",
+      "readOnly?": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n * be used in conjunction with the Filter API.\n * \n * Default: `false` */",
       "column": "/** The column this filter is for. */",
       "colDef": "/** The column definition for the column. */",
       "rowModel": "/** The row model, helpful for looking up data values if needed.\n * If the filter needs to know which rows are\n * a) in the table,\n * b) currently visible (i.e. not already filtered),\n * c) which groups,\n * d) what order - all of this can be read from the rowModel. */",
       "filterChangedCallback": "/** A function callback to be called when the filter changes. The\n * grid will then respond by filtering the grid data. The callback\n * takes one optional parameter which, if included, will get merged\n * to the FilterChangedEvent object (useful for passing additional\n * information to anyone listening to this event, however such extra\n * attributes are not used by the grid). */",
       "filterModifiedCallback": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
-      "valueGetter": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
+      "valueGetter": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "doesRowPassOtherFilter": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
       "context": "/** The context as provided on `gridOptions.context` */"
     }
@@ -4290,13 +4315,16 @@
       "context": "any"
     },
     "docs": {
-      "readOnly?": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "buttons?": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * <ul>\n * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li>\n * </ul> */",
+      "closeOnApply?": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
+      "debounceMs?": "/** By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by\n * 500ms. This is because these filters have text field inputs, so time is given to the user to\n * type items in before the input is formatted and the filtering applied. The\n * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To\n * override these defaults, set `debounceMs` to the number of milliseconds to debounce by. */",
+      "readOnly?": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n * be used in conjunction with the Filter API.\n * \n * Default: `false` */",
       "column": "/** The column this filter is for. */",
       "colDef": "/** The column definition for the column. */",
       "rowModel": "/** The row model, helpful for looking up data values if needed.\n * If the filter needs to know which rows are\n * a) in the table,\n * b) currently visible (i.e. not already filtered),\n * c) which groups,\n * d) what order - all of this can be read from the rowModel. */",
       "filterChangedCallback": "/** A function callback to be called when the filter changes. The\n * grid will then respond by filtering the grid data. The callback\n * takes one optional parameter which, if included, will get merged\n * to the FilterChangedEvent object (useful for passing additional\n * information to anyone listening to this event, however such extra\n * attributes are not used by the grid). */",
       "filterModifiedCallback": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
-      "valueGetter": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
+      "valueGetter": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "doesRowPassOtherFilter": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
       "context": "/** The context as provided on `gridOptions.context` */"
     }
@@ -4317,12 +4345,12 @@
       "getModelAsString?(model: any)": "string"
     },
     "docs": {
-      "applyModel()": "/** Apply the current UI state to the filter model.\n * @returns true if the model was changed.\n */",
-      "getModelFromUi()": "/** Get the current UI state as a filter model. */",
-      "isFilterActive()": "/** This is used to let the grid know if the filter is active or not */",
+      "applyModel()": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n * when `applyModel()` was called). */",
+      "getModelFromUi()": "/** Returns the filter model from the UI. If changes have been made to the UI but not yet\n * applied, this model will reflect those changes. */",
+      "isFilterActive()": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
       "doesFilterPass(params: IDoesFilterPassParams)": "/** The grid will ask each active filter, in turn, whether each row in the grid passes. If any\n * filter fails, then the row will be excluded from the final set. The method is provided a\n * params object with attributes node (the rodNode the grid creates that wraps the data) and data\n * (the data object that you provided to the grid for that row). */",
-      "getModel()": "/** Gets the filter state for storing */",
-      "setModel(model: any)": "/** Restores the filter state. */",
+      "getModel()": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. */",
+      "setModel(model: any)": "/** Sets the state of the filter using the supplied model. Providing `null` as the model will\n * de-activate the filter. */",
       "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
       "onAnyFilterChanged?()": "/** Called whenever any filter is changed. */",
       "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */"
@@ -4367,13 +4395,16 @@
       "defaultJoinOperator?": "/** By default, the two conditions are combined using `AND`.\n * You can change this default by setting this property.\n * Options: `AND`, `OR` */",
       "suppressAndOrCondition?": "/** If `true`, the filter will only allow one condition.\n * Default: `false` */",
       "alwaysShowBothConditions?": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
-      "readOnly?": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "buttons?": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * <ul>\n * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li>\n * </ul> */",
+      "closeOnApply?": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
+      "debounceMs?": "/** By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by\n * 500ms. This is because these filters have text field inputs, so time is given to the user to\n * type items in before the input is formatted and the filtering applied. The\n * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To\n * override these defaults, set `debounceMs` to the number of milliseconds to debounce by. */",
+      "readOnly?": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n * be used in conjunction with the Filter API.\n * \n * Default: `false` */",
       "column": "/** The column this filter is for. */",
       "colDef": "/** The column definition for the column. */",
       "rowModel": "/** The row model, helpful for looking up data values if needed.\n * If the filter needs to know which rows are\n * a) in the table,\n * b) currently visible (i.e. not already filtered),\n * c) which groups,\n * d) what order - all of this can be read from the rowModel. */",
       "filterChangedCallback": "/** A function callback to be called when the filter changes. The\n * grid will then respond by filtering the grid data. The callback\n * takes one optional parameter which, if included, will get merged\n * to the FilterChangedEvent object (useful for passing additional\n * information to anyone listening to this event, however such extra\n * attributes are not used by the grid). */",
       "filterModifiedCallback": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
-      "valueGetter": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
+      "valueGetter": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "doesRowPassOtherFilter": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
       "context": "/** The context as provided on `gridOptions.context` */"
     }
@@ -4391,7 +4422,6 @@
       "doc": "/** Interface contract for the public aspects of the SimpleFilter implementation(s). */"
     },
     "type": {
-      "onFloatingFilterChanged(type: string | null, value: any)": "void",
       "applyModel()": "boolean",
       "getModelFromUi()": "any",
       "isFilterActive()": "boolean",
@@ -4400,19 +4430,20 @@
       "setModel(model: any)": "void | AgPromise<void>",
       "onNewRowsLoaded?()": "void",
       "onAnyFilterChanged?()": "void",
-      "getModelAsString?(model: any)": "string"
+      "getModelAsString?(model: any)": "string",
+      "onFloatingFilterChanged(type: string | null, value: any)": "void"
     },
     "docs": {
-      "onFloatingFilterChanged(type: string | null, value: any)": "/** Notification that a new floating-filter value was input by the user.\n * @param type operation type selected.\n * @param value model-typed value entered.\n */",
-      "applyModel()": "/** Apply the current UI state to the filter model.\n * @returns true if the model was changed.\n */",
-      "getModelFromUi()": "/** Get the current UI state as a filter model. */",
-      "isFilterActive()": "/** This is used to let the grid know if the filter is active or not */",
+      "applyModel()": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n * when `applyModel()` was called). */",
+      "getModelFromUi()": "/** Returns the filter model from the UI. If changes have been made to the UI but not yet\n * applied, this model will reflect those changes. */",
+      "isFilterActive()": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
       "doesFilterPass(params: IDoesFilterPassParams)": "/** The grid will ask each active filter, in turn, whether each row in the grid passes. If any\n * filter fails, then the row will be excluded from the final set. The method is provided a\n * params object with attributes node (the rodNode the grid creates that wraps the data) and data\n * (the data object that you provided to the grid for that row). */",
-      "getModel()": "/** Gets the filter state for storing */",
-      "setModel(model: any)": "/** Restores the filter state. */",
+      "getModel()": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. */",
+      "setModel(model: any)": "/** Sets the state of the filter using the supplied model. Providing `null` as the model will\n * de-activate the filter. */",
       "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
       "onAnyFilterChanged?()": "/** Called whenever any filter is changed. */",
-      "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */"
+      "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */",
+      "onFloatingFilterChanged(type: string | null, value: any)": "/** Notification that a new floating-filter value was input by the user.\n * @param type operation type selected.\n * @param value model-typed value entered.\n */"
     }
   },
   "ISimpleFilterParams": {
@@ -4444,20 +4475,23 @@
       "defaultJoinOperator?": "/** By default, the two conditions are combined using `AND`.\n * You can change this default by setting this property.\n * Options: `AND`, `OR` */",
       "suppressAndOrCondition?": "/** If `true`, the filter will only allow one condition.\n * Default: `false` */",
       "alwaysShowBothConditions?": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
-      "readOnly?": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "buttons?": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * <ul>\n * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li>\n * </ul> */",
+      "closeOnApply?": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
+      "debounceMs?": "/** By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by\n * 500ms. This is because these filters have text field inputs, so time is given to the user to\n * type items in before the input is formatted and the filtering applied. The\n * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To\n * override these defaults, set `debounceMs` to the number of milliseconds to debounce by. */",
+      "readOnly?": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n * be used in conjunction with the Filter API.\n * \n * Default: `false` */",
       "column": "/** The column this filter is for. */",
       "colDef": "/** The column definition for the column. */",
       "rowModel": "/** The row model, helpful for looking up data values if needed.\n * If the filter needs to know which rows are\n * a) in the table,\n * b) currently visible (i.e. not already filtered),\n * c) which groups,\n * d) what order - all of this can be read from the rowModel. */",
       "filterChangedCallback": "/** A function callback to be called when the filter changes. The\n * grid will then respond by filtering the grid data. The callback\n * takes one optional parameter which, if included, will get merged\n * to the FilterChangedEvent object (useful for passing additional\n * information to anyone listening to this event, however such extra\n * attributes are not used by the grid). */",
       "filterModifiedCallback": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
-      "valueGetter": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
+      "valueGetter": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "doesRowPassOtherFilter": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
       "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
   "ISimpleFilterModelType": {
     "meta": { "isTypeAlias": true },
-    "type": "'empty' | 'equals' | 'notEqual' | 'lessThan' | 'lessThanOrEqual' | 'greaterThan' | 'greaterThanOrEqual' | 'inRange' | 'contains' | 'notContains' | 'startsWith' | 'endsWith'"
+    "type": "'empty' | 'equals' | 'notEqual' | 'lessThan' | 'lessThanOrEqual' | 'greaterThan' | 'greaterThanOrEqual' | 'inRange' | 'contains' | 'notContains' | 'startsWith' | 'endsWith' | 'blank' | 'notBlank'"
   },
   "ISimpleFilterModel": {
     "meta": {},
@@ -4503,7 +4537,7 @@
   "TextMatcherParams": {
     "meta": {},
     "type": {
-      "filter": "string | null | undefined",
+      "filterOption": "string | null | undefined",
       "value": "any",
       "filterText": "string | null",
       "textFormatter?": "TextFormatter",
@@ -4574,13 +4608,16 @@
       "defaultJoinOperator?": "/** By default, the two conditions are combined using `AND`.\n * You can change this default by setting this property.\n * Options: `AND`, `OR` */",
       "suppressAndOrCondition?": "/** If `true`, the filter will only allow one condition.\n * Default: `false` */",
       "alwaysShowBothConditions?": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
-      "readOnly?": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "buttons?": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * <ul>\n * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li>\n * </ul> */",
+      "closeOnApply?": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
+      "debounceMs?": "/** By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by\n * 500ms. This is because these filters have text field inputs, so time is given to the user to\n * type items in before the input is formatted and the filtering applied. The\n * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To\n * override these defaults, set `debounceMs` to the number of milliseconds to debounce by. */",
+      "readOnly?": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n * be used in conjunction with the Filter API.\n * \n * Default: `false` */",
       "column": "/** The column this filter is for. */",
       "colDef": "/** The column definition for the column. */",
       "rowModel": "/** The row model, helpful for looking up data values if needed.\n * If the filter needs to know which rows are\n * a) in the table,\n * b) currently visible (i.e. not already filtered),\n * c) which groups,\n * d) what order - all of this can be read from the rowModel. */",
       "filterChangedCallback": "/** A function callback to be called when the filter changes. The\n * grid will then respond by filtering the grid data. The callback\n * takes one optional parameter which, if included, will get merged\n * to the FilterChangedEvent object (useful for passing additional\n * information to anyone listening to this event, however such extra\n * attributes are not used by the grid). */",
       "filterModifiedCallback": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
-      "valueGetter": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
+      "valueGetter": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "doesRowPassOtherFilter": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
       "context": "/** The context as provided on `gridOptions.context` */"
     }
@@ -4697,6 +4734,7 @@
       "cellRange": "ChartParamsCellRange",
       "suppressChartRanges?": "boolean",
       "aggFunc?": "string | IAggFunc",
+      "seriesChartTypes?": "SeriesChartType",
       "chartType": "ChartType",
       "chartThemeName?": "string",
       "chartContainer?": "HTMLElement",
@@ -4707,6 +4745,7 @@
       "cellRange": "/** The range of cells to be charted. If no rows / rowIndexes are specified all rows will be included. */",
       "suppressChartRanges?": "/** Suppress highlighting the selected range in the grid. */",
       "aggFunc?": "/** The aggregation function that should be applied to all series data. */",
+      "seriesChartTypes?": "/** The series chart type configurations used in combination charts */",
       "chartType": "/** The type of chart to create. */",
       "chartThemeName?": "/** The default theme to use, either a default option or your own custom theme. */",
       "chartContainer?": "/** Provide to display the chart outside of the grid in your own container. */",
@@ -4833,11 +4872,11 @@
       "TOP_LEFT = 'topLeft'",
       "TOP_RIGHT = 'topRight'",
       "TOP_CENTER = 'topCenter'",
-      "TOP_FULL_WITH = 'topFullWidth'",
+      "TOP_FULL_WIDTH = 'topFullWidth'",
       "BOTTOM_LEFT = 'bottomLeft'",
       "BOTTOM_RIGHT = 'bottomRight'",
       "BOTTOM_CENTER = 'bottomCenter'",
-      "BOTTOM_FULL_WITH = 'bottomFullWidth'"
+      "BOTTOM_FULL_WIDTH = 'bottomFullWidth'"
     ],
     "docs": [
       null,
@@ -4853,6 +4892,16 @@
       null,
       null
     ]
+  },
+  "RowContainerType": {
+    "meta": { "isEnum": true },
+    "type": [
+      "LEFT = 'left'",
+      "RIGHT = 'right'",
+      "CENTER = 'center'",
+      "FULL_WIDTH = 'fullWidth'"
+    ],
+    "docs": [null, null, null, null]
   },
   "IRowContainerComp": {
     "meta": {},
@@ -6497,11 +6546,19 @@
   },
   "ChartType": {
     "meta": { "isTypeAlias": true },
-    "type": "'column' | 'groupedColumn' | 'stackedColumn' | 'normalizedColumn' | 'bar' | 'groupedBar' | 'stackedBar' | 'normalizedBar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'area' | 'stackedArea' | 'normalizedArea' | 'histogram'"
+    "type": "'column' | 'groupedColumn' | 'stackedColumn' | 'normalizedColumn' | 'bar' | 'groupedBar' | 'stackedBar' | 'normalizedBar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'area' | 'stackedArea' | 'normalizedArea' | 'histogram' | 'groupedColumnLine' | 'stackedColumnLine'"
   },
   "ChartMenuOptions": {
     "meta": { "isTypeAlias": true },
     "type": "'chartSettings' | 'chartData' | 'chartFormat' | 'chartLink' | 'chartUnlink' | 'chartDownload'"
+  },
+  "SeriesChartType": {
+    "meta": {},
+    "type": {
+      "colId": "string",
+      "chartType": "ChartType",
+      "secondaryAxis?": "boolean"
+    }
   },
   "GetChartImageDataUrlParams": {
     "meta": {},
@@ -7084,10 +7141,10 @@
       "getModelAsString?(model: any)": "string"
     },
     "docs": {
-      "isFilterActive()": "/** This is used to let the grid know if the filter is active or not */",
+      "isFilterActive()": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
       "doesFilterPass(params: IDoesFilterPassParams)": "/** The grid will ask each active filter, in turn, whether each row in the grid passes. If any\n * filter fails, then the row will be excluded from the final set. The method is provided a\n * params object with attributes node (the rodNode the grid creates that wraps the data) and data\n * (the data object that you provided to the grid for that row). */",
-      "getModel()": "/** Gets the filter state for storing */",
-      "setModel(model: any)": "/** Restores the filter state. */",
+      "getModel()": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. */",
+      "setModel(model: any)": "/** Sets the state of the filter using the supplied model. Providing `null` as the model will\n * de-activate the filter. */",
       "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
       "onAnyFilterChanged?()": "/** Called whenever any filter is changed. */",
       "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */"
@@ -7110,10 +7167,10 @@
       "init?(params: IFilterParams)": "AgPromise<void> | void"
     },
     "docs": {
-      "isFilterActive()": "/** This is used to let the grid know if the filter is active or not */",
+      "isFilterActive()": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
       "doesFilterPass(params: IDoesFilterPassParams)": "/** The grid will ask each active filter, in turn, whether each row in the grid passes. If any\n * filter fails, then the row will be excluded from the final set. The method is provided a\n * params object with attributes node (the rodNode the grid creates that wraps the data) and data\n * (the data object that you provided to the grid for that row). */",
-      "getModel()": "/** Gets the filter state for storing */",
-      "setModel(model: any)": "/** Restores the filter state. */",
+      "getModel()": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. */",
+      "setModel(model: any)": "/** Sets the state of the filter using the supplied model. Providing `null` as the model will\n * de-activate the filter. */",
       "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
       "onAnyFilterChanged?()": "/** Called whenever any filter is changed. */",
       "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */",
@@ -7170,7 +7227,7 @@
       "rowModel": "/** The row model, helpful for looking up data values if needed.\n * If the filter needs to know which rows are\n * a) in the table,\n * b) currently visible (i.e. not already filtered),\n * c) which groups,\n * d) what order - all of this can be read from the rowModel. */",
       "filterChangedCallback": "/** A function callback to be called when the filter changes. The\n * grid will then respond by filtering the grid data. The callback\n * takes one optional parameter which, if included, will get merged\n * to the FilterChangedEvent object (useful for passing additional\n * information to anyone listening to this event, however such extra\n * attributes are not used by the grid). */",
       "filterModifiedCallback": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
-      "valueGetter": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
+      "valueGetter": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "doesRowPassOtherFilter": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
       "context": "/** The context as provided on `gridOptions.context` */"
     }
@@ -7287,12 +7344,12 @@
     },
     "docs": {
       "getChildFilterInstance(index: number)": "/** @returns the child filter instance at the given index.\n */",
-      "applyModel()": "/** Apply the current UI state to the filter model.\n * @returns true if the model was changed.\n */",
-      "getModelFromUi()": "/** Get the current UI state as a filter model. */",
-      "isFilterActive()": "/** This is used to let the grid know if the filter is active or not */",
+      "applyModel()": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n * when `applyModel()` was called). */",
+      "getModelFromUi()": "/** Returns the filter model from the UI. If changes have been made to the UI but not yet\n * applied, this model will reflect those changes. */",
+      "isFilterActive()": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
       "doesFilterPass(params: IDoesFilterPassParams)": "/** The grid will ask each active filter, in turn, whether each row in the grid passes. If any\n * filter fails, then the row will be excluded from the final set. The method is provided a\n * params object with attributes node (the rodNode the grid creates that wraps the data) and data\n * (the data object that you provided to the grid for that row). */",
-      "getModel()": "/** Gets the filter state for storing */",
-      "setModel(model: any)": "/** Restores the filter state. */",
+      "getModel()": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. */",
+      "setModel(model: any)": "/** Sets the state of the filter using the supplied model. Providing `null` as the model will\n * de-activate the filter. */",
       "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
       "onAnyFilterChanged?()": "/** Called whenever any filter is changed. */",
       "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */"
@@ -7311,14 +7368,14 @@
       "floatingFilterComponentParams?": "any"
     },
     "docs": {
-      "display?": "/** Configures how the filter is shown in the Multi Filter.\n * Default: `inline` */",
+      "display?": "/** Configures how the filter is shown in the Multi Filter. See\n * [Display Style](https://build.ag-grid.com/javascript-data-grid/filter-multi/#display-style).\n * \n * Default: `inline` */",
       "title?": "/** The title to be used when a filter is displayed inside a sub-menu or accordion. */",
-      "filter?": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Set to the name of a provided filter: `set`, `number`, `text`, `date`.\n * - Set to a `IFilterComp`. */",
-      "filterFramework?": "/** Provided a custom framework filter to use for this column. */",
-      "filterParams?": "/** Params to be passed to the filter component specified in `filter` or `filterFramework`. */",
-      "floatingFilterComponent?": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
-      "floatingFilterComponentFramework?": "/** Floating filter framework component to use for this column. */",
-      "floatingFilterComponentParams?": "/** Params to be passed to `floatingFilterComponent` or `floatingFilterComponentFramework`. */"
+      "filter?": "/** Child filter component to use inside the Multi Filter. */",
+      "filterFramework?": "/** Child filter component to use inside the Multi Filter. */",
+      "filterParams?": "/** Custom parameters to be passed to the child filter component. */",
+      "floatingFilterComponent?": "/** Floating filter component to use for the child filter. */",
+      "floatingFilterComponentFramework?": "/** Floating framework filter component to use for the child filter. */",
+      "floatingFilterComponentParams?": "/** Custom parameters to be passed to the floating filter component. */"
     }
   },
   "IMultiFilterParams": {
@@ -7339,13 +7396,13 @@
     },
     "docs": {
       "filters?": "/** An array of filter definition objects. */",
-      "readOnly?": "/** Defaults to false. If true, all UI inputs managed by this filter are for display only, and\n * the filter can only be affected by API calls. Does NOT affect child filters, they need to be\n * individually configured with `readOnly` where applicable. */",
+      "readOnly?": "/** If true, all UI inputs managed by this filter are for display only, and the filter can only\n * be affected by API calls. Does NOT affect child filters, they need to be individually\n * configured with `readOnly` where applicable. See\n * [Read-only Filter UI](/filter-api/#read-only-filter-ui).\n * \n * Default: `false` */",
       "column": "/** The column this filter is for. */",
       "colDef": "/** The column definition for the column. */",
       "rowModel": "/** The row model, helpful for looking up data values if needed.\n * If the filter needs to know which rows are\n * a) in the table,\n * b) currently visible (i.e. not already filtered),\n * c) which groups,\n * d) what order - all of this can be read from the rowModel. */",
       "filterChangedCallback": "/** A function callback to be called when the filter changes. The\n * grid will then respond by filtering the grid data. The callback\n * takes one optional parameter which, if included, will get merged\n * to the FilterChangedEvent object (useful for passing additional\n * information to anyone listening to this event, however such extra\n * attributes are not used by the grid). */",
       "filterModifiedCallback": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
-      "valueGetter": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
+      "valueGetter": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "doesRowPassOtherFilter": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
       "context": "/** The context as provided on `gridOptions.context` */"
     }
@@ -7405,6 +7462,7 @@
       "isBottomRightCell(cellRange: CellRange, cell: CellPosition)": "boolean",
       "isContiguousRange(cellRange: CellRange)": "boolean",
       "isMoreThanOneCell()": "boolean",
+      "areAllRangesAbleToMerge()": "boolean",
       "onDragStart(mouseEvent: MouseEvent)": "void",
       "onDragStop()": "void",
       "onDragging(mouseEvent: MouseEvent)": "void",
@@ -7809,35 +7867,37 @@
       "doc": "/** Interface contract for the public aspects of the SetFilter implementation. */"
     },
     "type": {
+      "getModel()": "SetFilterModel | null",
+      "setModel(model: SetFilterModel | null)": "void | AgPromise<void>",
       "getValues()": "SetFilterModelValue",
       "setFilterValues(values: SetFilterModelValue)": "void",
       "refreshFilterValues()": "void",
       "resetFilterValues()": "void",
       "getMiniFilter()": "string | null",
-      "setMiniFilter(text: string | null)": "void",
+      "setMiniFilter(newMiniFilter: string | null)": "void",
       "getModelFromUi()": "SetFilterModel | null",
       "applyModel()": "boolean",
       "isFilterActive()": "boolean",
       "doesFilterPass(params: IDoesFilterPassParams)": "boolean",
-      "getModel()": "any",
       "setModel(model: any)": "void | AgPromise<void>",
       "onNewRowsLoaded?()": "void",
       "onAnyFilterChanged?()": "void",
       "getModelAsString?(model: any)": "string"
     },
     "docs": {
-      "getValues()": "/** @returns the currently selected values.\n */",
-      "setFilterValues(values: SetFilterModelValue)": "/** Manually set the super-set of filterable values. */",
-      "refreshFilterValues()": "/** Triggers a recalculation of displayed super-set of values. */",
-      "resetFilterValues()": "/** Resets the source of filter values to be grid-data derived and triggers a refresh of displayed values. */",
-      "getMiniFilter()": "/** @returns the current mini-filter text.\n */",
-      "setMiniFilter(text: string | null)": "/** Change the current mini-filter text. */",
-      "getModelFromUi()": "/** @returns the current UI state (potentially un-applied).\n */",
-      "applyModel()": "/** Apply the current UI state to the filter model.\n * @returns true if the model was changed.\n */",
-      "isFilterActive()": "/** This is used to let the grid know if the filter is active or not */",
+      "getModel()": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. */",
+      "setModel(model: SetFilterModel | null)": "/** Sets the state of the filter using the supplied model. Providing `null` as the model will\n * de-activate the filter.\n * \n * **Note:** if you are [providing values asynchronously](/filter-set-filter-list/#asynchronous-values)\n * to the Set Filter, you need to wait for these changes to be applied before performing any further\n * actions by waiting on the returned grid promise, e.g. \n * `filter.setModel({ values: ['a', 'b'] }).then(function() { gridApi.onFilterChanged(); });` */",
+      "getValues()": "/** Returns the full list of unique values used by the Set Filter. */",
+      "setFilterValues(values: SetFilterModelValue)": "/** Sets the values used in the Set Filter on the fly. */",
+      "refreshFilterValues()": "/** Refreshes the values shown in the filter from the original source. For example, if a\n * callback was provided, the callback will be executed again and the filter will refresh using\n * the values returned.\n * \n * See [Refreshing Values](/filter-set-filter-list/#refreshing-values). */",
+      "resetFilterValues()": "/** Resets the Set Filter to use values from the grid, rather than any values that have been\n * provided directly. */",
+      "getMiniFilter()": "/** Returns the current mini-filter text. */",
+      "setMiniFilter(newMiniFilter: string | null)": "/** Sets the text in the Mini Filter at the top of the filter (the 'quick search' in the popup). */",
+      "getModelFromUi()": "/** Returns the current UI state (potentially un-applied). */",
+      "applyModel()": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n * when `applyModel()` was called). */",
+      "isFilterActive()": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
       "doesFilterPass(params: IDoesFilterPassParams)": "/** The grid will ask each active filter, in turn, whether each row in the grid passes. If any\n * filter fails, then the row will be excluded from the final set. The method is provided a\n * params object with attributes node (the rodNode the grid creates that wraps the data) and data\n * (the data object that you provided to the grid for that row). */",
-      "getModel()": "/** Gets the filter state for storing */",
-      "setModel(model: any)": "/** Restores the filter state. */",
+      "setModel(model: any)": "/** Sets the state of the filter using the supplied model. Providing `null` as the model will\n * de-activate the filter. */",
       "onNewRowsLoaded?()": "/** Gets called when new rows are inserted into the grid. If the filter needs to change its\n * state after rows are loaded, it can do it here. For example the set filters uses this\n * to update the list of available values to select from (e.g. 'Ireland', 'UK' etc for\n * Country filter). To get the list of available values from within this method from the\n * Client Side Row Model, use gridApi.forEachLeafNode(callback). */",
       "onAnyFilterChanged?()": "/** Called whenever any filter is changed. */",
       "getModelAsString?(model: any)": "/** Optional method used by AG Grid when rendering floating filters and there isn't a floating filter\n * associated for this filter, this will happen if you create a custom filter and NOT a custom floating\n * filter. */"
@@ -7902,27 +7962,30 @@
       "context": "any"
     },
     "docs": {
-      "values?": "/** The values to display in the Filter List.\n * If this is not set, the filter will takes its values from what is loaded in the table. */",
-      "refreshValuesOnOpen?": "/** Refresh the values every time the Set filter is opened. */",
+      "values?": "/** The values to display in the Filter List. If this is not set, the filter will takes its\n * values from what is loaded in the table. See\n * [Supplying Filter Values](/filter-set-filter-list/#supplying-filter-values). */",
+      "refreshValuesOnOpen?": "/** Refresh the values every time the Set filter is opened. See\n * [Refreshing Values](/filter-set-filter-list/#refreshing-values). */",
       "cellHeight?": "/** The height of values in the Filter List in pixels. */",
-      "suppressSorting?": "/** If `true`, the Set Filter values will not be sorted.\n * Use this if you are providing your own values and don't want them sorted as you are providing in the order you want.\n * Default: `false` */",
-      "cellRenderer?": "/** Similar to the Cell Renderer for the grid.\n * Setting it separately here allows for the value to be rendered differently in the filter. */",
-      "suppressMiniFilter?": "/** Set to `true` to hide the Mini Filter.\n * Default: `false` */",
-      "applyMiniFilterWhileTyping?": "/** Set to `true` to apply the Set Filter immediately when the user is typing in the Mini Filter.\n * Default: `false` */",
+      "suppressSorting?": "/** If `true`, the Set Filter values will not be sorted. Use this if you are providing your own\n * values and don't want them sorted as you are providing in the order you want. See\n * [Supplying Filter Values](/filter-set-filter-list/#supplying-filter-values).\n * \n * Default: `false` */",
+      "cellRenderer?": "/** Similar to the Cell Renderer for the grid. Setting it separately here allows for the value to\n * be rendered differently in the filter. See\n * [Filter List Cell Renderer](/filter-set-filter-list/#cell-renderer). */",
+      "suppressMiniFilter?": "/** Set to `true` to hide the Mini Filter. See\n * [Hiding the Mini Filter](/filter-set-mini-filter/#hiding-the-mini-filter).\n * \n * Default: `false` */",
+      "applyMiniFilterWhileTyping?": "/** Set to `true` to apply the Set Filter immediately when the user is typing in the Mini Filter.\n * See [Keyboard Shortcuts](/filter-set-mini-filter/#keyboard-shortcuts).\n * \n * Default: `false` */",
       "suppressSelectAll?": "/** Set to `true` to remove the Select All checkbox.\n * Default: `false` */",
-      "defaultToNothingSelected?": "/** By default, when the Set Filter is opened all values are shown selected. Set this to `true` to instead show all values as de-selected by default. */",
-      "comparator?": "/** Comparator for sorting.\n * If not provided, the Column Definition comparator is used.\n * If Column Definition comparator is also not provided, the default (grid provided) comparator is used. */",
-      "textFormatter?": "/** If specified, this formats the text before applying the Mini Filter compare logic, useful for instance to substitute accented characters. */",
-      "showTooltips?": "/** If `true`, hovering over a value in the Set Filter will show a tooltip containing the full, untruncated value.\n * Default: `false` */",
+      "defaultToNothingSelected?": "/** By default, when the Set Filter is opened all values are shown selected. Set this to `true`\n * to instead show all values as de-selected by default. See\n * [Default State](/filter-set-filter-list/#default-state). */",
+      "comparator?": "/** Comparator for sorting. If not provided, the Column Definition comparator is used. If Column\n * Definition comparator is also not provided, the default (grid provided) comparator is used.\n * See [Sorting Filter Lists](/filter-set-filter-list/#sorting-filter-lists). */",
+      "textFormatter?": "/** If specified, this formats the text before applying the Mini Filter compare logic, useful for\n * instance to substitute accented characters. See\n * [Custom Searches](/filter-set-mini-filter/#custom-searches). */",
+      "showTooltips?": "/** If `true`, hovering over a value in the Set Filter will show a tooltip containing the full,\n * untruncated value. See\n * [Filter Value Tooltips](/filter-set-filter-list/#filter-value-tooltips).\n * \n * Default: `false` */",
       "caseSensitive?": "/** If `true`, enables case-sensitivity in the SetFilter Mini-Filter and Filter List.\n * Default: `false`. */",
-      "excelMode?": "/** Changes the behaviour of the Set Filter to match that of Excel's AutoFilter. */",
-      "readOnly?": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "excelMode?": "/** Changes the behaviour of the Set Filter to match that of Excel's AutoFilter. See\n * [Excel Mode](/filter-set-excel-mode/). */",
+      "buttons?": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * <ul>\n * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li>\n * </ul> */",
+      "closeOnApply?": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
+      "debounceMs?": "/** By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by\n * 500ms. This is because these filters have text field inputs, so time is given to the user to\n * type items in before the input is formatted and the filtering applied. The\n * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To\n * override these defaults, set `debounceMs` to the number of milliseconds to debounce by. */",
+      "readOnly?": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n * be used in conjunction with the Filter API.\n * \n * Default: `false` */",
       "column": "/** The column this filter is for. */",
       "colDef": "/** The column definition for the column. */",
       "rowModel": "/** The row model, helpful for looking up data values if needed.\n * If the filter needs to know which rows are\n * a) in the table,\n * b) currently visible (i.e. not already filtered),\n * c) which groups,\n * d) what order - all of this can be read from the rowModel. */",
       "filterChangedCallback": "/** A function callback to be called when the filter changes. The\n * grid will then respond by filtering the grid data. The callback\n * takes one optional parameter which, if included, will get merged\n * to the FilterChangedEvent object (useful for passing additional\n * information to anyone listening to this event, however such extra\n * attributes are not used by the grid). */",
       "filterModifiedCallback": "/** A function callback, to be optionally called, when the filter UI changes.\n * The grid will respond with emitting a FilterModifiedEvent.\n * Apart from emitting the event, the grid takes no further action. */",
-      "valueGetter": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
+      "valueGetter": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "doesRowPassOtherFilter": "/** A function callback, call with a node to be told whether the node passes all filters except the current filter.\n * This is useful if you want to only present to the user values that this filter can filter given the status of the other filters.\n * The set filter uses this to remove from the list,\n * items that are no longer available due to the state of other filters (like Excel type filtering). */",
       "context": "/** The context as provided on `gridOptions.context` */"
     }
@@ -8935,7 +8998,6 @@
       "setIncludeSelection(include: boolean)": "void",
       "setIncludeRowDrag(include: boolean)": "void",
       "setIncludeDndSource(include: boolean)": "void",
-      "setForceWrapper(force: boolean)": "void",
       "getCellEditor()": "ICellEditor | null",
       "getCellRenderer()": "ICellRenderer | null",
       "getParentOfValue()": "HTMLElement | null",
@@ -9480,7 +9542,7 @@
     "type": {
       "rowComp": "IRowComp",
       "element": "HTMLElement",
-      "pinned": "string | null"
+      "containerType": "RowContainerType"
     }
   },
   "CellCtrlListAndMap": {

@@ -200,7 +200,10 @@ $ag-theme-base-default-params: (
     widget-horizontal-spacing: ag-derived(grid-size, $times: 1.5),
     widget-vertical-spacing: ag-derived(grid-size),
 
-    // Horizontal padding for grid and header cells (vertical padding is not set explicitly, but inferred from row-height / header-height
+    // Vertical padding for grid and header cells
+    cell-vertical-padding: ag-derived(grid-size, $times: 1.5),
+
+    // Horizontal padding for grid and header cells
     cell-horizontal-padding: ag-derived(grid-size, $times: 3),
 
     // Horizontal spacing between widgets inside cells (e.g. row group expand buttons and row selection checkboxes)

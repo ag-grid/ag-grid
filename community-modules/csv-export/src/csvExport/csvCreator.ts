@@ -30,8 +30,9 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
         });
     }
 
-    protected getDefaultExportParams(): CsvExportParams | undefined {
-        return this.gridOptionsWrapper.getDefaultExportParams('csv');
+    protected getMergedParams(params?: CsvExportParams): CsvExportParams {
+        const baseParams = this.gridOptionsWrapper.getDefaultExportParams('csv');
+        return Object.assign({}, baseParams, params);
     }
 
     public export(userParams?: CsvExportParams): string {
@@ -40,7 +41,8 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
             return '';
         }
 
-        const { mergedParams, data } = this.getMergedParamsAndData(userParams);
+        const mergedParams = this.getMergedParams(userParams);
+        const data = this.getData(mergedParams);
 
         const packagedFile = new Blob(["\ufeff", data], {
             // @ts-ignore
@@ -57,7 +59,8 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
     }
 
     public getDataAsCsv(params?: CsvExportParams): string {
-        return this.getMergedParamsAndData(params).data;
+        const mergedParams = this.getMergedParams(params);
+        return this.getData(mergedParams);
     }
 
     public getMimeType(): string {

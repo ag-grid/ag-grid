@@ -418,9 +418,10 @@ export class DragAndDropService extends BeanStub {
         let top = event.pageY - (ghostHeight / 2);
         let left = event.pageX - 10;
 
-        const usrDocument = this.gridOptionsWrapper.getDocument();
-        const windowScrollY = window.pageYOffset || usrDocument.documentElement.scrollTop;
-        const windowScrollX = window.pageXOffset || usrDocument.documentElement.scrollLeft;
+        const eDocument = this.gridOptionsWrapper.getDocument();
+        const win = eDocument.defaultView;
+        const windowScrollY = win!.pageYOffset || eDocument.documentElement.scrollTop;
+        const windowScrollX = win!.pageXOffset || eDocument.documentElement.scrollLeft;
 
         // check ghost is not positioned outside of the browser
         if (browserWidth > 0 && ((left + ghost.clientWidth) > (browserWidth + windowScrollX))) {
@@ -476,8 +477,20 @@ export class DragAndDropService extends BeanStub {
         this.eGhost.style.top = '20px';
         this.eGhost.style.left = '20px';
 
-        const usrDocument = this.gridOptionsWrapper.getDocument();
-        const targetEl = usrDocument.fullscreenElement || usrDocument.querySelector('body');
+        const eDocument = this.gridOptionsWrapper.getDocument();
+        let targetEl: HTMLElement | null = null;
+
+        try {
+            targetEl = eDocument.fullscreenElement as HTMLElement | null;
+        } catch (e) {
+            // some environments like SalesForce will throw errors
+            // simply by trying to read the fullscreenElement property
+        } finally {
+            if (!targetEl) {
+                targetEl = eDocument.querySelector('body');
+            }
+        }
+
         this.eGhostParent = targetEl as HTMLElement;
 
         if (!this.eGhostParent) {

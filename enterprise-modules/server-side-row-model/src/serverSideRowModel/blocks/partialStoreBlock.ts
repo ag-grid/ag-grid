@@ -221,21 +221,32 @@ export class PartialStoreBlock extends RowNodeBlock {
 
         this.destroyRowNodes();
 
+
         const storeRowCount = this.parentStore.getRowCount();
         const startRow = this.getId() * this.storeParams.cacheBlockSize!;
         const endRow = Math.min(startRow + this.storeParams.cacheBlockSize!, storeRowCount);
         const rowsToCreate = endRow - startRow;
 
+        const cachedBlockHeight = this.parentStore.getCachedBlockHeight(this.getId());
+        const cachedRowHeight = cachedBlockHeight ? Math.round(cachedBlockHeight / rowsToCreate) : undefined;
+
         for (let i = 0; i < rowsToCreate; i++) {
             const rowNode = this.blockUtils.createRowNode(
-                {field: this.groupField, group: this.groupLevel!, leafGroup: this.leafGroup,
-                    level: this.level, parent: this.parentRowNode, rowGroupColumn: this.rowGroupColumn}
+                {
+                    field: this.groupField, 
+                    group: this.groupLevel!, 
+                    leafGroup: this.leafGroup,
+                    level: this.level, 
+                    parent: this.parentRowNode, 
+                    rowGroupColumn: this.rowGroupColumn,
+                    rowHeight: cachedRowHeight
+                }
             );
             const dataLoadedForThisRow = i < rows.length;
             if (dataLoadedForThisRow) {
                 const data = rows[i];
                 const defaultId = this.prefixId(this.startRow + i);
-                this.blockUtils.setDataIntoRowNode(rowNode, data, defaultId);
+                this.blockUtils.setDataIntoRowNode(rowNode, data, defaultId, cachedRowHeight);
                 const newId = rowNode.id;
                 this.parentStore.removeDuplicateNode(newId!);
                 this.nodeManager.addRowNode(rowNode);
@@ -315,10 +326,11 @@ export class PartialStoreBlock extends RowNodeBlock {
         this.touchLastAccessed();
 
         let res: RowBounds | undefined;
-        this.rowNodes.find(rowNode => {
+
+        for (const rowNode of this.rowNodes) {
             res = this.blockUtils.extractRowBounds(rowNode, index);
-            return res != null;
-        });
+            if (res != null) { break; }
+        }
 
         return res;
     }
@@ -328,10 +340,10 @@ export class PartialStoreBlock extends RowNodeBlock {
 
         let res: number | null = null;
 
-        this.rowNodes.find(rowNode => {
+        for (const rowNode of this.rowNodes) {
             res = this.blockUtils.getIndexAtPixel(rowNode, pixel);
-            return res != null;
-        });
+            if (res != null) { break; }
+        }
 
         return res;
     }

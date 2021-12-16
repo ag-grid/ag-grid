@@ -35,8 +35,10 @@ import { ChartTranslator } from "./chartTranslator";
 import { ChartCrossFilter } from "./chartCrossFilter";
 import { CrossFilteringContext } from "../chartService";
 import { ChartOptionsService } from "./chartOptionsService";
+import { ComboChartProxy } from "./chartProxies/combo/comboChartProxy";
 
 export interface GridChartParams {
+    chartId: string;
     pivotChart: boolean;
     cellRange: CellRange;
     chartType: ChartType;
@@ -81,7 +83,6 @@ export class GridChartComp extends Component {
     private titleEdit: TitleEdit;
     private chartDialog: AgDialog;
 
-    private model: ChartDataModel;
     private chartController: ChartController;
     private chartOptionsService: ChartOptionsService;
 
@@ -111,6 +112,7 @@ export class GridChartComp extends Component {
         }
 
         const modelParams: ChartModelParams = {
+            chartId: this.params.chartId,
             pivotChart: this.params.pivotChart,
             chartType: this.params.chartType,
             chartThemeName: chartThemeName!,
@@ -125,8 +127,9 @@ export class GridChartComp extends Component {
 
         this.addCssClass(isRtl ? 'ag-rtl' : 'ag-ltr');
 
-        this.model = this.createBean(new ChartDataModel(modelParams));
-        this.chartController = this.createManagedBean(new ChartController(this.model));
+        // only the chart controller interacts with the chart model
+        const model = this.createBean(new ChartDataModel(modelParams));
+        this.chartController = this.createManagedBean(new ChartController(model));
 
         this.validateCustomThemes();
 
@@ -171,29 +174,25 @@ export class GridChartComp extends Component {
             this.chartProxy.destroy();
         }
 
-        const customChartThemes = this.gridOptionsWrapper.getCustomChartThemes();
-
-        const chartType = this.model.getChartType();
-        const isGrouping = this.model.isGrouping();
-
         const crossFilterCallback = (event: any, reset: boolean) => {
             const ctx = this.params.crossFilteringContext;
-            ctx.lastSelectedChartId = reset ? '' : this.getChartId();
+            ctx.lastSelectedChartId = reset ? '' : this.chartController.getChartId();
             this.crossFilter.filter(event, reset);
         }
 
+        const chartType = this.chartController.getChartType();
         const chartProxyParams: ChartProxyParams = {
             chartType,
             getChartThemeName: this.getChartThemeName.bind(this),
             getChartThemes: this.getChartThemes.bind(this),
-            customChartThemes: customChartThemes,
+            customChartThemes: this.gridOptionsWrapper.getCustomChartThemes(),
             getGridOptionsChartThemeOverrides: this.getGridOptionsChartThemeOverrides.bind(this),
             apiChartThemeOverrides: this.params.chartThemeOverrides,
             crossFiltering: this.params.crossFiltering,
             crossFilterCallback,
             parentElement: this.eChart,
-            grouping: isGrouping,
-            chartOptionsToRestore: this.params.chartOptionsToRestore
+            grouping: this.chartController.isGrouping(),
+            chartOptionsToRestore: this.params.chartOptionsToRestore,
         };
 
         // ensure 'restoring' options are not reused when switching chart types
@@ -201,7 +200,7 @@ export class GridChartComp extends Component {
 
         // set local state used to detect when chart changes
         this.chartType = chartType;
-        this.chartThemeName = this.model.getChartThemeName();
+        this.chartThemeName = this.chartController.getChartThemeName();
 
         this.chartProxy = GridChartComp.createChartProxy(chartProxyParams);
         if (!this.chartProxy) {
@@ -221,7 +220,7 @@ export class GridChartComp extends Component {
     }
 
     private getChartThemeName(): string {
-        return this.chartController.getThemeName();
+        return this.chartController.getChartThemeName();
     }
 
     private getChartThemes(): string[] {
@@ -258,6 +257,9 @@ export class GridChartComp extends Component {
                 return new ScatterChartProxy(chartProxyParams);
             case 'histogram':
                 return new HistogramChartProxy(chartProxyParams);
+            case 'groupedColumnLine':
+            case 'stackedColumnLine':
+                return new ComboChartProxy(chartProxyParams);
         }
     }
 
@@ -330,7 +332,7 @@ export class GridChartComp extends Component {
     }
 
     private shouldRecreateChart(): boolean {
-        return this.chartType !== this.model.getChartType() || this.chartThemeName !== this.model.getChartThemeName();
+        return this.chartType !== this.chartController.getChartType() || this.chartThemeName !== this.chartController.getChartThemeName();
     }
 
     public getCurrentChartType(): ChartType {
@@ -341,39 +343,36 @@ export class GridChartComp extends Component {
         return this.chartController.getChartModel();
     }
 
-    public getChartId(): string {
-        return this.model.getChartId();
-    }
-
     public getChartImageDataURL(fileFormat?: string): string {
         return this.chartProxy.getChartImageDataURL(fileFormat);
     }
 
     public updateChart(): void {
-        const { model, chartProxy } = this;
+        const { chartProxy } = this;
 
-        const selectedCols = model.getSelectedValueColState();
+        const selectedCols = this.chartController.getSelectedValueColState();
         const fields = selectedCols.map(c => ({ colId: c.colId, displayName: c.displayName }));
-        const data = model.getData();
+        const data = this.chartController.getChartData();
         const chartEmpty = this.handleEmptyChart(data, fields);
 
         if (chartEmpty) {
             return;
         }
 
-        const selectedDimension = model.getSelectedDimension();
+        const selectedDimension = this.chartController.getSelectedDimension();
 
         const chartUpdateParams: UpdateChartParams = {
             data,
-            grouping: model.isGrouping(),
+            grouping: this.chartController.isGrouping(),
             category: {
                 id: selectedDimension.colId,
                 name: selectedDimension.displayName!,
                 chartDataType: this.getChartDataType(selectedDimension.colId)
             },
             fields,
-            chartId: this.getChartId(),
+            chartId: this.chartController.getChartId(),
             getCrossFilteringContext: () => this.params.crossFilteringContext,
+            seriesChartTypes: this.chartController.getSeriesChartTypes()
         };
 
         chartProxy.update(chartUpdateParams);
@@ -387,11 +386,11 @@ export class GridChartComp extends Component {
 
     private handleEmptyChart(data: any[], fields: any[]): boolean {
         const container = this.chartProxy.getChart().container;
-        const pivotModeDisabled = this.model.isPivotChart() && !this.model.isPivotMode();
+        const pivotModeDisabled = this.chartController.isPivotChart() && !this.chartController.isPivotMode();
         let minFieldsRequired = 1;
 
         if (this.chartController.isActiveXYChart()) {
-            minFieldsRequired = this.model.getChartType() === 'bubble' ? 3 : 2;
+            minFieldsRequired = this.chartController.getChartType() === 'bubble' ? 3 : 2;
         }
 
         const isEmptyChart = fields.length < minFieldsRequired || data.length === 0;
@@ -417,6 +416,10 @@ export class GridChartComp extends Component {
 
     private downloadChart(): void {
         this.chartProxy.downloadChart();
+    }
+
+    public getChartId(): string {
+        return this.chartController.getChartId();
     }
 
     public getUnderlyingChart(): any {
@@ -450,7 +453,7 @@ export class GridChartComp extends Component {
     private raiseChartCreatedEvent(): void {
         const event: ChartCreated = Object.freeze({
             type: Events.EVENT_CHART_CREATED,
-            chartId: this.getChartId(),
+            chartId: this.chartController.getChartId(),
             api: this.gridApi,
             columnApi: this.columnApi,
         });
@@ -461,7 +464,7 @@ export class GridChartComp extends Component {
     private raiseChartDestroyedEvent(): void {
         const event: ChartDestroyed = Object.freeze({
             type: Events.EVENT_CHART_DESTROYED,
-            chartId: this.getChartId(),
+            chartId: this.chartController.getChartId(),
             api: this.gridApi,
             columnApi: this.columnApi,
         });

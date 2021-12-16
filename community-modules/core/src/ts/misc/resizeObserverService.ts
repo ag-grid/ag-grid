@@ -11,11 +11,14 @@ export class ResizeObserverService extends BeanStub {
     private polyfillScheduled: boolean;
 
     public observeResize(element: HTMLElement, callback: () => void): () => void {
+        const eDocument = this.gridOptionsWrapper.getDocument();
+        const win = eDocument.defaultView as any;
         // this gets fired too often and might cause some relayout issues
         // so we add a debounce to the callback here to avoid the flashing effect.
         const debouncedCallback = debounce(callback, DEBOUNCE_DELAY);
         const useBrowserResizeObserver = () => {
-            const resizeObserver = new (window as any).ResizeObserver(debouncedCallback);
+
+            const resizeObserver = new win.ResizeObserver(debouncedCallback);
             resizeObserver.observe(element);
             return () => resizeObserver.disconnect();
         };
@@ -53,13 +56,13 @@ export class ResizeObserverService extends BeanStub {
         };
 
         const suppressResize = this.gridOptionsWrapper.isSuppressBrowserResizeObserver();
-        const resizeObserverExists = !!(window as any).ResizeObserver;
+        const resizeObserverExists = !!win.ResizeObserver;
 
         if (resizeObserverExists && !suppressResize) {
             return useBrowserResizeObserver();
-        } else {
-            return usePolyfill();
         }
+
+        return usePolyfill();
     }
 
     private doNextPolyfillTurn(func: () => void): void {

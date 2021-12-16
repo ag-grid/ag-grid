@@ -380,7 +380,7 @@ export abstract class BaseDropZonePanel extends Component {
             });
         }
 
-        this.getGui().appendChild(this.eColumnDropList);
+        this.appendChild(this.eColumnDropList);
 
         itemsToAddToGui.forEach((columnComponent, index) => {
             if (index > 0) {
@@ -423,7 +423,7 @@ export abstract class BaseDropZonePanel extends Component {
             eTitleBar.appendChild(eTitle);
         }
 
-        this.getGui().appendChild(eTitleBar);
+        this.appendChild(eTitleBar);
     }
 
     private isExistingColumnsEmpty(): boolean {

@@ -28,7 +28,7 @@ export interface TextFilterModel extends ISimpleFilterModel {
     }
 
 export interface TextMatcherParams extends BaseColDefParams {
-    filter: string | null | undefined;
+    filterOption: string | null | undefined;
     value: any;
     filterText: string | null;
     textFormatter?: TextFormatter;
@@ -74,17 +74,19 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
         SimpleFilter.EQUALS,
         SimpleFilter.NOT_EQUAL,
         SimpleFilter.STARTS_WITH,
-        SimpleFilter.ENDS_WITH
+        SimpleFilter.ENDS_WITH,
+        SimpleFilter.BLANK,
+        SimpleFilter.NOT_BLANK,
     ];
 
     static DEFAULT_FORMATTER: TextFormatter = (from: string) => from;
 
     static DEFAULT_LOWERCASE_FORMATTER: TextFormatter = (from: string) => from == null ? null : from.toString().toLowerCase();
 
-    static DEFAULT_MATCHER: TextMatcher = ({filter, value, filterText}) => {
+    static DEFAULT_MATCHER: TextMatcher = ({filterOption, value, filterText}) => {
         if (filterText == null) { return false; }
 
-        switch (filter) {
+        switch (filterOption) {
             case TextFilter.CONTAINS:
                 return value.indexOf(filterText) >= 0;
             case TextFilter.NOT_CONTAINS:
@@ -142,7 +144,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
         const legacyComparator = (this.textFilterParams as any).textCustomComparator;
         if (legacyComparator) {
             _.doOnce(() => console.warn('AG Grid - textCustomComparator is deprecated, use textMatcher instead.'), 'textCustomComparator.deprecated');
-            return ({ filter, value, filterText }) => legacyComparator(filter, value, filterText);
+            return ({ filterOption, value, filterText }) => legacyComparator(filterOption, value, filterText);
         }
         return this.textFilterParams.textMatcher || TextFilter.DEFAULT_MATCHER
     }
@@ -220,13 +222,23 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
     }
 
     protected evaluateNullValue(filterType: ISimpleFilterModelType | null) {
-        return filterType === SimpleFilter.NOT_EQUAL || filterType === SimpleFilter.NOT_CONTAINS;
+        const filterTypesAllowNulls = [
+            SimpleFilter.NOT_EQUAL, SimpleFilter.NOT_CONTAINS, SimpleFilter.BLANK,
+        ];
+
+        return filterType ? filterTypesAllowNulls.indexOf(filterType) >= 0 : false;
     }
 
     protected evaluateNonNullValue(values: Tuple<string>, cellValue: string, filterModel: TextFilterModel, params: IDoesFilterPassParams): boolean {
         const formattedValues = values.map(v => this.formatter(v)) || [];
         const cellValueFormatted = this.formatter(cellValue);
         const {api, colDef, column, columnApi, context, textFormatter} = this.textFilterParams;
+
+        if (filterModel.type === SimpleFilter.BLANK) {
+            return this.isBlank(cellValue);
+        } else if (filterModel.type === SimpleFilter.NOT_BLANK) {
+            return !this.isBlank(cellValue);
+        }
 
         const matcherParams = {
             api,
@@ -236,7 +248,7 @@ export class TextFilter extends SimpleFilter<TextFilterModel, string> {
             context,
             node: params.node,
             data: params.data,
-            filter: filterModel.type,
+            filterOption: filterModel.type,
             value: cellValueFormatted,
             textFormatter,
         };

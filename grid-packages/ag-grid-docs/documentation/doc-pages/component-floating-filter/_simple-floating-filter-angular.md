@@ -35,14 +35,14 @@
 |    onInputBoxChanged() {
 |        if (!!!this.currentValue) {
 |            // clear the filter
-|            this.params.parentFilterInstance((instance: any) => {
+|            this.params.parentFilterInstance((instance) => {
 |                instance.onFloatingFilterChanged(null, null);
 |            });
 |            return;
 |        }
 |
 |        this.currentValue = Number(this.currentValue);
-|        this.params.parentFilterInstance((instance: any) => {
+|        this.params.parentFilterInstance((instance) => {
 |            instance.onFloatingFilterChanged('greaterThan', this.currentValue);
 |        });
 |    }

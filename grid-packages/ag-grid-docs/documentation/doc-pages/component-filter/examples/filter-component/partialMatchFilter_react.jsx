@@ -36,6 +36,8 @@ export default class PartialMatchFilter extends Component {
     }
 
     getModel() {
+        if (!this.isFilterActive()) { return null; }
+
         return { value: this.state.text };
     }
 

@@ -27,10 +27,10 @@ The filter model contains an array of string values where each item in the array
 
 ## Set Filter API
 
-The Set Filter has the following API:
+The `ISetFilter` interface defines the public API for the Set Filter.
 
-<api-documentation source='filter-set-api/resources/set-filter-api.json' section='api'></api-documentation>
-
+<interface-documentation interfaceName='ISetFilter' exclude='["getModelFromUi", "applyModel", "doesFilterPass", "onNewRowsLoaded", "onAnyFilterChanged", "getModelAsString"]' overrideSrc='filter-set-api/resources/iSetFilter.json'></interface-documentation>
+ 
 It is important to note that when updating the Set Filter through the API, it is up to the developer to call `filterInstance.applyModel()` to apply the changes that have been made to the model and then `gridOptions.api.onFilterChanged()` at the end of the interaction with the filter.
 
 

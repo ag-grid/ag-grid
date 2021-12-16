@@ -34,6 +34,7 @@ export interface UpdateChartParams {
     fields: FieldDefinition[];
     chartId?: string;
     getCrossFilteringContext: () => CrossFilteringContext,
+    seriesChartTypes: any; //TODO
 }
 
 export abstract class ChartProxy {

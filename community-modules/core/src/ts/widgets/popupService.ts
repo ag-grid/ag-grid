@@ -490,7 +490,7 @@ export class PopupService extends BeanStub {
         let popupHidden = false;
 
         const hidePopupOnKeyboardEvent = (event: KeyboardEvent) => {
-            if (!eWrapper.contains(document.activeElement)) {
+            if (!eWrapper.contains(eDocument.activeElement)) {
                 return;
             }
 
@@ -616,7 +616,8 @@ export class PopupService extends BeanStub {
     }
 
     public isElementWithinCustomPopup(el: HTMLElement): boolean {
-        while (el && el !== document.body) {
+        const eDocument = this.gridOptionsWrapper.getDocument();
+        while (el && el !== eDocument.body) {
             if (el.classList.contains('ag-custom-component-popup') || el.parentElement === null) {
                 return true;
             }

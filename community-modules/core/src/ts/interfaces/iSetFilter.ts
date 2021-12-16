@@ -5,6 +5,7 @@ import { Column } from '../entities/column';
 import { GridApi } from '../gridApi';
 import { ColumnApi } from '../columns/columnApi';
 import { ProvidedFilterModel } from './iFilter';
+import { AgPromise } from '../utils/promise';
 
 export type SetFilterModelValue = (string | null)[];
 export interface SetFilterModel extends ProvidedFilterModel {
@@ -14,22 +15,48 @@ export interface SetFilterModel extends ProvidedFilterModel {
 
 /** Interface contract for the public aspects of the SetFilter implementation. */
 export interface ISetFilter extends IProvidedFilter {
-    /** @returns the currently selected values. */
+    /**
+     * Returns a model representing the current state of the filter, or `null` if the filter is
+     * not active.
+     */
+    getModel(): SetFilterModel | null;
+
+    /**
+     * Sets the state of the filter using the supplied model. Providing `null` as the model will
+     * de-activate the filter.
+     * 
+     * **Note:** if you are [providing values asynchronously](/filter-set-filter-list/#asynchronous-values)
+     * to the Set Filter, you need to wait for these changes to be applied before performing any further
+     * actions by waiting on the returned grid promise, e.g. 
+     * `filter.setModel({ values: ['a', 'b'] }).then(function() { gridApi.onFilterChanged(); });`
+     */
+    setModel(model: SetFilterModel | null): void | AgPromise<void>;
+
+    /** Returns the full list of unique values used by the Set Filter. */
     getValues(): SetFilterModelValue;
 
-    /** Manually set the super-set of filterable values. */
+    /** Sets the values used in the Set Filter on the fly. */
     setFilterValues(values: SetFilterModelValue): void;
-    /** Triggers a recalculation of displayed super-set of values. */
+    /**
+     * Refreshes the values shown in the filter from the original source. For example, if a
+     * callback was provided, the callback will be executed again and the filter will refresh using
+     * the values returned.
+     * 
+     * See [Refreshing Values](/filter-set-filter-list/#refreshing-values).
+     */
     refreshFilterValues(): void;
-    /** Resets the source of filter values to be grid-data derived and triggers a refresh of displayed values. */
+    /**
+     * Resets the Set Filter to use values from the grid, rather than any values that have been
+     * provided directly.
+     */
     resetFilterValues(): void;
 
-    /** @returns the current mini-filter text. */
+    /** Returns the current mini-filter text. */
     getMiniFilter(): string | null;
-    /** Change the current mini-filter text. */
-    setMiniFilter(text: string | null): void;
+    /** Sets the text in the Mini Filter at the top of the filter (the 'quick search' in the popup). */
+    setMiniFilter(newMiniFilter: string | null): void;
 
-    /** @returns the current UI state (potentially un-applied). */
+    /** Returns the current UI state (potentially un-applied). */
     getModelFromUi(): SetFilterModel | null;
 }
 
@@ -51,33 +78,43 @@ export type SetFilterValues = SetFilterValuesFunc | any[];
 
 export interface ISetFilterParams extends IProvidedFilterParams {
     /**
-     * The values to display in the Filter List.
-     * If this is not set, the filter will takes its values from what is loaded in the table.
+     * The values to display in the Filter List. If this is not set, the filter will takes its
+     * values from what is loaded in the table. See
+     * [Supplying Filter Values](/filter-set-filter-list/#supplying-filter-values).
      */
     values?: SetFilterValues;
     /**
-     * Refresh the values every time the Set filter is opened.
+     * Refresh the values every time the Set filter is opened. See
+     * [Refreshing Values](/filter-set-filter-list/#refreshing-values).
      */
     refreshValuesOnOpen?: boolean;
     /** The height of values in the Filter List in pixels. */
     cellHeight?: number;
     /**
-     * If `true`, the Set Filter values will not be sorted.
-     * Use this if you are providing your own values and don't want them sorted as you are providing in the order you want.
+     * If `true`, the Set Filter values will not be sorted. Use this if you are providing your own
+     * values and don't want them sorted as you are providing in the order you want. See
+     * [Supplying Filter Values](/filter-set-filter-list/#supplying-filter-values).
+     * 
      * Default: `false`
      */
     suppressSorting?: boolean;
     /**
-     * Similar to the Cell Renderer for the grid.
-     * Setting it separately here allows for the value to be rendered differently in the filter.
+     * Similar to the Cell Renderer for the grid. Setting it separately here allows for the value to
+     * be rendered differently in the filter. See
+     * [Filter List Cell Renderer](/filter-set-filter-list/#cell-renderer).
      */
     cellRenderer?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
-    /** Set to `true` to hide the Mini Filter.
+    /**
+     * Set to `true` to hide the Mini Filter. See
+     * [Hiding the Mini Filter](/filter-set-mini-filter/#hiding-the-mini-filter).
+     * 
      * Default: `false`
      */
     suppressMiniFilter?: boolean;
     /**
      * Set to `true` to apply the Set Filter immediately when the user is typing in the Mini Filter.
+     * See [Keyboard Shortcuts](/filter-set-mini-filter/#keyboard-shortcuts).
+     * 
      * Default: `false`
      */
     applyMiniFilterWhileTyping?: boolean;
@@ -86,21 +123,30 @@ export interface ISetFilterParams extends IProvidedFilterParams {
      * Default: `false`
      */
     suppressSelectAll?: boolean;
-    /** By default, when the Set Filter is opened all values are shown selected. Set this to `true` to instead show all values as de-selected by default. */
+    /**
+     * By default, when the Set Filter is opened all values are shown selected. Set this to `true`
+     * to instead show all values as de-selected by default. See
+     * [Default State](/filter-set-filter-list/#default-state).
+     */
     defaultToNothingSelected?: boolean;
     /**
-     * Comparator for sorting.
-     * If not provided, the Column Definition comparator is used.
-     * If Column Definition comparator is also not provided, the default (grid provided) comparator is used.
+     * Comparator for sorting. If not provided, the Column Definition comparator is used. If Column
+     * Definition comparator is also not provided, the default (grid provided) comparator is used.
+     * See [Sorting Filter Lists](/filter-set-filter-list/#sorting-filter-lists).
      */
     comparator?: (a: any, b: any) => number;
     /**
-     * If specified, this formats the text before applying the Mini Filter compare logic, useful for instance to substitute accented characters.
+     * If specified, this formats the text before applying the Mini Filter compare logic, useful for
+     * instance to substitute accented characters. See
+     * [Custom Searches](/filter-set-mini-filter/#custom-searches).
      */
     textFormatter?: (from: string) => string;
     valueFormatter?: (params: ValueFormatterParams) => string;
     /**
-     * If `true`, hovering over a value in the Set Filter will show a tooltip containing the full, untruncated value.
+     * If `true`, hovering over a value in the Set Filter will show a tooltip containing the full,
+     * untruncated value. See
+     * [Filter Value Tooltips](/filter-set-filter-list/#filter-value-tooltips).
+     * 
      * Default: `false`
      */
     showTooltips?: boolean;
@@ -109,6 +155,9 @@ export interface ISetFilterParams extends IProvidedFilterParams {
      * Default: `false`.
      */
     caseSensitive?: boolean;
-    /** Changes the behaviour of the Set Filter to match that of Excel's AutoFilter. */
+    /**
+     * Changes the behaviour of the Set Filter to match that of Excel's AutoFilter. See
+     * [Excel Mode](/filter-set-excel-mode/).
+     */
     excelMode?: 'mac' | 'windows';
 }

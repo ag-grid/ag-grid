@@ -20,7 +20,7 @@ const DoublingEditor = forwardRef((props, ref) => {
 
     useEffect(() => {
         // focus on the input
-        setTimeout(() => refInput.current.focus());
+        refInput.current.focus();
     }, []);
 
     /* Component Editor Lifecycle methods */

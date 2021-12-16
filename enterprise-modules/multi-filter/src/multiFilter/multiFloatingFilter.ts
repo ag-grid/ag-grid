@@ -11,8 +11,7 @@ import {
     AgPromise,
     IMultiFilterParams,
     IMultiFilterModel,
-    ISimpleFilter,
-    SimpleFilter,
+    IFilter,
 } from '@ag-grid-community/core';
 import { MultiFilter } from './multiFilter';
 
@@ -32,17 +31,16 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         const filterParams = params.filterParams as IMultiFilterParams;
         const floatingFilterPromises: AgPromise<IFloatingFilterComp>[] = [];
 
-        const parentFilterInstance = 
-
         MultiFilter.getFilterDefs(filterParams).forEach((filterDef, index) => {
-            const floatingFilterParams: IFloatingFilterParams = {
+            const floatingFilterParams: IFloatingFilterParams<IFilter> = {
                 ...params,
                 // set the parent filter instance for each floating filter to the relevant child filter instance
                 parentFilterInstance: (callback) => {
                     this.parentMultiFilterInstance((parent) => {
-                        // We expect a SimpleFilter, but there is a risk if we strictly enforce the type custom filter implementations
-                        // may break in unexpected ways.
-                        callback(parent.getChildFilterInstance(index) as unknown as ISimpleFilter);
+                        const child = parent.getChildFilterInstance(index);
+                        if (child == null) { return; }
+
+                        callback(child);
                     });
                 }
             };
@@ -104,7 +102,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
         super.destroy();
     }
 
-    private createFloatingFilter(filterDef: IFilterDef, params: IFloatingFilterParams): AgPromise<IFloatingFilterComp> | null {
+    private createFloatingFilter(filterDef: IFilterDef, params: IFloatingFilterParams<IFilter>): AgPromise<IFloatingFilterComp> | null {
         const defaultComponentName =
             HeaderFilterCellCtrl.getDefaultFloatingFilterType(filterDef) || 'agTextColumnFloatingFilter';
 

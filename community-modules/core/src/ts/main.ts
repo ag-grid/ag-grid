@@ -126,7 +126,7 @@ export { NavigationService } from "./gridBodyComp/navigationService";
 
 // rowContainer
 export { RowContainerComp } from "./gridBodyComp/rowContainer/rowContainerComp";
-export { RowContainerName, IRowContainerComp, RowContainerCtrl } from "./gridBodyComp/rowContainer/rowContainerCtrl";
+export { RowContainerName, IRowContainerComp, RowContainerCtrl, RowContainerType, getRowContainerTypeForName } from "./gridBodyComp/rowContainer/rowContainerCtrl";
 
 // headerRendering
 export { BodyDropPivotTarget } from "./headerRendering/columnDrag/bodyDropPivotTarget";

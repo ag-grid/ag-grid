@@ -10,7 +10,7 @@ Excel Export allows including images in the Excel export file. For example, you 
 
 You can export an image for any grid cell using the addImageToCell callback in the [export parameters](../excel-export-api/#excelexportparams) shown below:
 
-<interface-documentation interfaceName='ExcelExportParams' names='["addImageToCell"]' config='{"description": " "}' ></interface-documentation>
+<interface-documentation interfaceName='ExcelExportParams' names='["addImageToCell"]' config='{"description":""}' ></interface-documentation>
 
 <snippet>
 const gridOptions = {

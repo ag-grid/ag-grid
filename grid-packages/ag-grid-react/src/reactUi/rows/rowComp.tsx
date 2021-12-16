@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useMemo, memo, useContext } from 'react';
-import { CellCtrl, IRowComp, RowCtrl, UserCompDetails, ICellRenderer, CssClassManager } from 'ag-grid-community';
+import { CellCtrl, RowContainerType, IRowComp, RowCtrl, UserCompDetails, ICellRenderer, CssClassManager } from 'ag-grid-community';
 import { showJsComp } from '../jsComp';
 import { isComponentStateless } from '../utils';
 import { BeansContext } from '../beansContext';
@@ -51,11 +51,11 @@ const maintainOrderOnColumns = (prev: CellCtrls, next: CellCtrl[], domOrder: boo
     return res;
 }
 
-const RowComp = (params: {rowCtrl: RowCtrl, pinned: string | null}) => {
+const RowComp = (params: {rowCtrl: RowCtrl, containerType: RowContainerType}) => {
 
     const {context} = useContext(BeansContext);
 
-    const { rowCtrl, pinned } = params;
+    const { rowCtrl, containerType } = params;
 
     const [rowIndex, setRowIndex] = useState<string>();
     const [rowId, setRowId] = useState<string>();
@@ -109,7 +109,7 @@ const RowComp = (params: {rowCtrl: RowCtrl, pinned: string | null}) => {
             showFullWidth: compDetails => setFullWidthCompDetails(compDetails),
             getFullWidthCellRenderer: ()=> fullWidthCompRef.current,
         };
-        rowCtrl.setComp(compProxy, eGui.current!, pinned);
+        rowCtrl.setComp(compProxy, eGui.current!, containerType);
     }, []);
 
     useEffect(() => {

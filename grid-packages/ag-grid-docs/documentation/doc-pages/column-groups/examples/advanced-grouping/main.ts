@@ -172,7 +172,6 @@ function headerClassFunc(params: HeaderClassParams) {
 }
 
 function expandAll(expand: boolean) {
-  const columnApi = gridOptions.columnApi!
   const groupNames = [
     'GroupA',
     'GroupB',
@@ -184,7 +183,7 @@ function expandAll(expand: boolean) {
   ]
 
   groupNames.forEach(groupId => {
-    columnApi.setColumnGroupOpened(groupId, expand)
+    gridOptions.columnApi!.setColumnGroupOpened(groupId, expand)
   })
 }
 

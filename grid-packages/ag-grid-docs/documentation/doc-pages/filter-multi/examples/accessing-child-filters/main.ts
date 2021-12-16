@@ -28,7 +28,7 @@ const gridOptions: GridOptions = {
   },
 }
 
-function getTextUiModel() {
+function getTextModel() {
   var textFilter = (gridOptions.api!.getFilterInstance(
     'athlete'
   ) as IMultiFilter).getChildFilterInstance(0)!;

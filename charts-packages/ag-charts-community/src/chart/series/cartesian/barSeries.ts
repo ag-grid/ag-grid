@@ -14,12 +14,12 @@ import { LegendDatum } from "../../legend";
 import { CartesianSeries } from "./cartesianSeries";
 import { ChartAxis, ChartAxisDirection, flipChartAxisDirection } from "../../chartAxis";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
-import { findMinMax } from "../../../util/array";
+import { extent, findMinMax } from "../../../util/array";
 import { equal } from "../../../util/equal";
 import { reactive, TypedEvent } from "../../../util/observable";
 import { Scale } from "../../../scale/scale";
 import { sanitizeHtml } from "../../../util/sanitize";
-import { isNumber } from "../../../util/value";
+import { isContinuous, isDiscrete, isNumber } from "../../../util/value";
 import { NumberAxis } from "../../axis/numberAxis";
 import { clamper, ContinuousScale } from "../../../scale/continuousScale";
 
@@ -389,8 +389,12 @@ export class BarSeries extends CartesianSeries {
     }
 
     processData(): boolean {
-        const { xKey, yKeys, seriesItemEnabled } = this;
+        const { xKey, yKeys, seriesItemEnabled, xAxis } = this;
         const data = xKey && yKeys.length && this.data ? this.data : [];
+
+        if (!xAxis) {
+            return false;
+        }
 
         let keysFound = true; // only warn once
         this.xData = data.map(datum => {
@@ -398,7 +402,8 @@ export class BarSeries extends CartesianSeries {
                 keysFound = false;
                 console.warn(`The key '${xKey}' was not found in the data: `, datum);
             }
-            return datum[xKey];
+
+            return isDiscrete(datum[xKey]) ? datum[xKey] : String(datum[xKey]);
         });
 
         this.yData = data.map(datum => yKeys.map(stack => {

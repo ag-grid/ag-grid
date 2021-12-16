@@ -123,7 +123,7 @@ export class RowRenderer extends BeanStub {
 
     private updateAllRowCtrls(): void {
         const liveList = getAllValuesInObject(this.rowCtrlsByRowIndex);
-        if (this.beans.gridOptionsWrapper.isEnsureDomOrder()) {
+        if (this.gridOptionsWrapper.isEnsureDomOrder()) {
             liveList.sort((a, b) => a.getRowNode().rowIndex - b.getRowNode.rowIndex);
         }
         const zombieList = getAllValuesInObject(this.zombieRowCtrls);
@@ -150,6 +150,10 @@ export class RowRenderer extends BeanStub {
 
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_HOVER_CHANGED, () => {
             this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onColumnHover());
+        });
+
+        this.addManagedListener(this.eventService, Events.EVENT_DISPLAYED_COLUMNS_CHANGED, () => {
+            this.getAllCellCtrls().forEach(cellCtrl => cellCtrl.onDisplayedColumnsChanged());
         });
 
         // only for printLayout - because we are rendering all the cells in the same row, regardless of pinned state,
@@ -390,7 +394,8 @@ export class RowRenderer extends BeanStub {
         // has the focus and not the cell div. therefore, when the refresh is finished, the grid will focus
         // the cell, and not the textfield. that means if the user is in a text field, and the grid refreshes,
         // the focus is lost from the text field. we do not want this.
-        const activeElement = document.activeElement;
+        const eDocument = this.gridOptionsWrapper.getDocument();
+        const activeElement = eDocument.activeElement;
         const cellDomData = this.gridOptionsWrapper.getDomData(activeElement, CellCtrl.DOM_DATA_KEY_CELL_CTRL);
         const rowDomData = this.gridOptionsWrapper.getDomData(activeElement, RowCtrl.DOM_DATA_KEY_ROW_CTRL);
 

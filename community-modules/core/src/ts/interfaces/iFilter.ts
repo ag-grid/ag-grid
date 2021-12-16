@@ -37,7 +37,7 @@ export interface IFilterDef {
 
 export interface IFilter {
 
-    /** This is used to let the grid know if the filter is active or not */
+    /** Returns `true` if the filter is currently active, otherwise `false`. */
     isFilterActive(): boolean;
 
     // mandatory methods
@@ -47,10 +47,16 @@ export interface IFilter {
      (the data object that you provided to the grid for that row). */
     doesFilterPass(params: IDoesFilterPassParams): boolean;
 
-    /** Gets the filter state for storing */
+    /**
+     * Returns a model representing the current state of the filter, or `null` if the filter is
+     * not active.
+     */
     getModel(): any;
 
-    /** Restores the filter state. */
+    /**
+     * Sets the state of the filter using the supplied model. Providing `null` as the model will
+     * de-activate the filter.
+     */
     setModel(model: any): void | AgPromise<void>;
 
     /** Gets called when new rows are inserted into the grid. If the filter needs to change its
@@ -133,11 +139,11 @@ export interface IFilterParams {
     filterModifiedCallback: () => void;
 
     /**
-     * A function callback for the filter to get cell values from the row data.
-     * Call with a node to be given the value for that filter's column for that node.
-     * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.
-     * This is useful in, for example, creating an Excel style filter,
-     * where the filter needs to lookup available values to allow the user to select from.
+     * A function callback for the filter to get cell values from provided row data. Called with a
+     * `ValueGetterParams` to get the value for this filter's column for the provided row data.
+     * 
+     * The callback takes care of selecting the right column definition and deciding whether to use
+     * the column `valueGetter` or raw field etc.
      */
     valueGetter: ValueGetterFunc;
 

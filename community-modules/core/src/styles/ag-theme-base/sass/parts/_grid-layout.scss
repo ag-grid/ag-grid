@@ -143,17 +143,14 @@
         // draw a transparent border so that the cell size doesn't change when we add a range border
         border: 1px solid transparent;
         // adjust for transparent border
-        line-height: ag-param(row-height) - 2px;
-        padding-left: ag-param(cell-horizontal-padding) - 1px;
-        padding-right: ag-param(cell-horizontal-padding) - 1px;
+        padding: ag-param(cell-vertical-padding) ag-param(cell-horizontal-padding) - 1px;
         -webkit-font-smoothing: subpixel-antialiased;
     }
 
     // in full width rows, a cell renderer is rendered directly into a row with no cell in between,
     // in which case we need to apply the padding to the cell renderer's wrapper.
     .ag-row > .ag-cell-wrapper {
-        padding-left: ag-param(cell-horizontal-padding) - 1px;
-        padding-right: ag-param(cell-horizontal-padding) - 1px;
+        padding: ag-param(cell-vertical-padding) ag-param(cell-horizontal-padding) - 1px;
     }
 
     .ag-row-dragging {

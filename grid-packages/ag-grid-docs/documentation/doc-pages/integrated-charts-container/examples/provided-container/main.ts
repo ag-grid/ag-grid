@@ -40,7 +40,7 @@ function createChartContainer(chartRef: ChartRef) {
   eTemp.innerHTML = chartPanelTemplate
   var eChartWrapper = eTemp.firstChild as any;
 
-  var eParent = (document.querySelector('#myGrid') as any).parentElement
+  var eParent = document.querySelector('#container') as HTMLElement;
 
   eParent.appendChild(eChartWrapper)
 

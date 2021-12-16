@@ -164,12 +164,10 @@ export class CartesianChart extends Chart {
 
     protected initSeries(series: Series) {
         super.initSeries(series);
-        series.addEventListener('dataProcessed', this.updateAxes, this);
     }
 
     protected freeSeries(series: Series) {
         super.freeSeries(series);
-        series.removeEventListener('dataProcessed', this.updateAxes, this);
     }
 
     private _onTouchStart: any;

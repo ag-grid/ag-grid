@@ -37,11 +37,13 @@ export default forwardRef((props, ref) => {
             },
 
             getModel() {
+                if (!this.isFilterActive()) { return null; }
+
                 return {value: filterText};
             },
 
             setModel(model) {
-                setFilterText(model.value);
+                setFilterText(model == null ? null : model.value);
             }
         }
     });

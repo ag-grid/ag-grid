@@ -29,12 +29,42 @@ export enum RowContainerName {
     TOP_LEFT = 'topLeft',
     TOP_RIGHT = 'topRight',
     TOP_CENTER = 'topCenter',
-    TOP_FULL_WITH = 'topFullWidth',
+    TOP_FULL_WIDTH = 'topFullWidth',
 
     BOTTOM_LEFT = 'bottomLeft',
     BOTTOM_RIGHT = 'bottomRight',
     BOTTOM_CENTER = 'bottomCenter',
-    BOTTOM_FULL_WITH = 'bottomFullWidth'
+    BOTTOM_FULL_WIDTH = 'bottomFullWidth'
+}
+
+export enum RowContainerType {
+    LEFT = 'left',
+    RIGHT = 'right',
+    CENTER = 'center',
+    FULL_WIDTH = 'fullWidth'
+}
+
+export function getRowContainerTypeForName(name: RowContainerName): RowContainerType {
+    switch (name) {
+        case RowContainerName.CENTER:
+        case RowContainerName.TOP_CENTER:
+        case RowContainerName.BOTTOM_CENTER:
+            return RowContainerType.CENTER;
+        case RowContainerName.LEFT:
+        case RowContainerName.TOP_LEFT:
+        case RowContainerName.BOTTOM_LEFT:
+            return RowContainerType.LEFT;
+        case RowContainerName.RIGHT:
+        case RowContainerName.TOP_RIGHT:
+        case RowContainerName.BOTTOM_RIGHT:
+            return RowContainerType.RIGHT;
+        case RowContainerName.FULL_WIDTH:
+        case RowContainerName.TOP_FULL_WIDTH:
+        case RowContainerName.BOTTOM_FULL_WIDTH:
+            return RowContainerType.FULL_WIDTH;
+        default :
+            throw 'Invalid Row Container Type';
+    }
 }
 
 const ContainerCssClasses: Map<RowContainerName, string> = convertToMap([
@@ -46,12 +76,12 @@ const ContainerCssClasses: Map<RowContainerName, string> = convertToMap([
     [RowContainerName.TOP_CENTER, 'ag-floating-top-container'],
     [RowContainerName.TOP_LEFT, 'ag-pinned-left-floating-top'],
     [RowContainerName.TOP_RIGHT, 'ag-pinned-right-floating-top'],
-    [RowContainerName.TOP_FULL_WITH, 'ag-floating-top-full-width-container'],
+    [RowContainerName.TOP_FULL_WIDTH, 'ag-floating-top-full-width-container'],
 
     [RowContainerName.BOTTOM_CENTER, 'ag-floating-bottom-container'],
     [RowContainerName.BOTTOM_LEFT, 'ag-pinned-left-floating-bottom'],
     [RowContainerName.BOTTOM_RIGHT, 'ag-pinned-right-floating-bottom'],
-    [RowContainerName.BOTTOM_FULL_WITH, 'ag-floating-bottom-full-width-container'],
+    [RowContainerName.BOTTOM_FULL_WIDTH, 'ag-floating-bottom-full-width-container'],
 ]);
 
 const ViewportCssClasses: Map<RowContainerName, string> = convertToMap([
@@ -306,8 +336,8 @@ export class RowContainerCtrl extends BeanStub {
 
     private onDisplayedRowsChanged(): void {
         const fullWithContainer =
-            this.name === RowContainerName.TOP_FULL_WITH
-            || this.name === RowContainerName.BOTTOM_FULL_WITH
+            this.name === RowContainerName.TOP_FULL_WIDTH
+            || this.name === RowContainerName.BOTTOM_FULL_WIDTH
             || this.name === RowContainerName.FULL_WIDTH;
 
         const doesRowMatch = (rowCtrl: RowCtrl) => {
@@ -337,13 +367,13 @@ export class RowContainerCtrl extends BeanStub {
             case RowContainerName.TOP_CENTER:
             case RowContainerName.TOP_LEFT:
             case RowContainerName.TOP_RIGHT:
-            case RowContainerName.TOP_FULL_WITH:
+            case RowContainerName.TOP_FULL_WIDTH:
                 return this.rowRenderer.getTopRowCtrls();
 
             case RowContainerName.BOTTOM_CENTER:
             case RowContainerName.BOTTOM_LEFT:
             case RowContainerName.BOTTOM_RIGHT:
-            case RowContainerName.BOTTOM_FULL_WITH:
+            case RowContainerName.BOTTOM_FULL_WIDTH:
                 return this.rowRenderer.getBottomRowCtrls();
 
             default:

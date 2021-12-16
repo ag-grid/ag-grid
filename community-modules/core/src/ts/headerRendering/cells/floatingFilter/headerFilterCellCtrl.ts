@@ -3,14 +3,14 @@ import { HeaderRowCtrl } from "../../row/headerRowCtrl";
 import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellCtrl";
 import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import { KeyCode } from '../../../constants/keyCode';
-import { Autowired, Optional } from '../../../context/context';
+import { Autowired } from '../../../context/context';
 import { Column } from '../../../entities/column';
 import { Events, FilterChangedEvent } from '../../../events';
 import { FilterManager } from '../../../filter/filterManager';
-import { IFloatingFilter, IFloatingFilterParams } from '../../../filter/floating/floatingFilter';
+import { IFloatingFilter, IFloatingFilterParams, IFloatingFilterParentCallback } from '../../../filter/floating/floatingFilter';
 import { FloatingFilterMapper } from '../../../filter/floating/floatingFilterMapper';
 import { GridApi, unwrapUserComp } from '../../../gridApi';
-import { IFilterComp, IFilterDef } from '../../../interfaces/iFilter';
+import { IFilter, IFilterComp, IFilterDef } from '../../../interfaces/iFilter';
 import { IMenuFactory } from '../../../interfaces/iMenuFactory';
 import { ModuleNames } from '../../../modules/moduleNames';
 import { ModuleRegistry } from '../../../modules/moduleRegistry';
@@ -23,7 +23,6 @@ import { createIconNoSpan } from '../../../utils/icon';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import { HoverFeature } from '../hoverFeature';
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
-import { FrameworkComponentWrapper } from "../../../components/framework/frameworkComponentWrapper";
 
 export interface IHeaderFilterCellComp extends IAbstractHeaderCellComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
@@ -109,7 +108,8 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     protected onTabKeyDown(e: KeyboardEvent) {
-        const activeEl = document.activeElement as HTMLElement;
+        const eDocument = this.gridOptionsWrapper.getDocument();
+        const activeEl = eDocument.activeElement as HTMLElement;
         const wrapperHasFocus = activeEl === this.eGui;
 
         if (wrapperHasFocus) { return; }
@@ -154,7 +154,8 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     protected handleKeyDown(e: KeyboardEvent) {
-        const activeEl = document.activeElement;
+        const eDocument = this.gridOptionsWrapper.getDocument();
+        const activeEl = eDocument.activeElement;
         const wrapperHasFocus = activeEl === this.eGui;
 
         switch (e.key) {
@@ -242,9 +243,9 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
             api: this.gridApi,
             column: this.column,
             filterParams: finalFilterParams,
-            currentParentModel: this.currentParentModel.bind(this),
-            parentFilterInstance: this.parentFilterInstance.bind(this),
-            showParentFilter: this.showParentFilter.bind(this),
+            currentParentModel: () => this.currentParentModel(),
+            parentFilterInstance: (cb) => this.parentFilterInstance(cb),
+            showParentFilter: () => this.showParentFilter(),
             suppressFilterButton: false // This one might be overridden from the colDef
         };
 
@@ -288,15 +289,14 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
         return this.filterManager.getFilterComponent(this.column, 'NO_UI', createIfDoesNotExist);
     }
 
-    private parentFilterInstance(callback: (filterInstance: IFilterComp) => void): void {
+    private parentFilterInstance(callback: IFloatingFilterParentCallback<IFilter>): void {
         const filterComponent = this.getFilterComponent();
 
-        if (filterComponent) {
-            filterComponent.then(instance => {
-                const instanceUnwrapped = unwrapUserComp(instance!);
-                callback(instanceUnwrapped);
-            });
-        }
+        if (filterComponent == null) { return; }
+
+        filterComponent.then(instance => {
+            callback(unwrapUserComp(instance!));
+        });
     }
 
     private showParentFilter() {

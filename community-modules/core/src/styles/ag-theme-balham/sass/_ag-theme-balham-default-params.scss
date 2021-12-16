@@ -51,6 +51,7 @@ $ag-theme-balham-default-params: (
     header-height: ag-derived(grid-size, $times: 8),
     list-item-height: ag-derived(grid-size, $times: 6),
     row-group-indent-size: ag-derived(grid-size, $times: 3, $plus: icon-size),
+    cell-vertical-padding: ag-derived(grid-size, $times: 1.5),
     cell-horizontal-padding: ag-derived(grid-size, $times: 3),
     input-height: ag-derived(grid-size, $times: 4),
 

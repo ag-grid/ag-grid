@@ -34,7 +34,7 @@ export interface ChartDatasourceParams {
 }
 
 interface IData {
-    data: any[];
+    chartData: any[];
     columnNames: { [key: string]: string[]; };
 }
 
@@ -50,12 +50,12 @@ export class ChartDatasource extends BeanStub {
         if (params.crossFiltering) {
             if (params.grouping) {
                 console.warn("ag-grid: crossing filtering with row grouping is not supported.");
-                return {data: [], columnNames: {}};
+                return {chartData: [], columnNames: {}};
             }
 
             if (!this.gridOptionsWrapper.isRowModelDefault()) {
                 console.warn("ag-grid: crossing filtering is only supported in the client side row model.");
-                return {data: [], columnNames: {}};
+                return {chartData: [], columnNames: {}};
             }
         }
 
@@ -65,7 +65,7 @@ export class ChartDatasource extends BeanStub {
         }
 
         const result = this.extractRowsFromGridRowModel(params);
-        result.data = this.aggregateRowsByDimension(params, result.data);
+        result.chartData = this.aggregateRowsByDimension(params, result.chartData);
         return result;
     }
 
@@ -202,7 +202,7 @@ export class ChartDatasource extends BeanStub {
             extractedRowData = extractedRowData.filter(filterFunc);
         }
 
-        return { data: extractedRowData, columnNames };
+        return { chartData: extractedRowData, columnNames };
     }
 
     private aggregateRowsByDimension(params: ChartDatasourceParams, dataFromGrid: any[]): any[] {

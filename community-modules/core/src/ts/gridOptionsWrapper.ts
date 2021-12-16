@@ -171,6 +171,7 @@ export class GridOptionsWrapper {
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;
     @Autowired('eventService') private readonly eventService: EventService;
     @Autowired('environment') private readonly environment: Environment;
+    @Autowired('eGridDiv') private eGridDiv: HTMLElement;
 
     private propertyEventService: EventService = new EventService();
 
@@ -1487,7 +1488,10 @@ export class GridOptionsWrapper {
         let result: Document | null = null;
         if (this.gridOptions.getDocument && exists(this.gridOptions.getDocument)) {
             result = this.gridOptions.getDocument();
+        } else if (this.eGridDiv) {
+            result = this.eGridDiv.ownerDocument;
         }
+
         if (result && exists(result)) {
             return result;
         }
@@ -1788,7 +1792,7 @@ export class GridOptionsWrapper {
 
         if (typeof this.gridOptions.getRowHeight === 'function') {
             if (allowEstimate) {
-                return { height: this.getDefaultRowHeight(), estimated: true };
+                return { height: defaultRowHeight, estimated: true };
             }
             const params: RowHeightParams = {
                 node: rowNode,

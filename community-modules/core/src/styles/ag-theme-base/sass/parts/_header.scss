@@ -28,8 +28,7 @@
 
     .ag-header-cell,
     .ag-header-group-cell {
-        padding-left: ag-param(cell-horizontal-padding);
-        padding-right: ag-param(cell-horizontal-padding);
+        padding: ag-param(cell-vertical-padding) ag-param(cell-horizontal-padding);
 
         &.ag-header-cell-moving {
             @include ag-color-property(background-color, header-cell-moving-background-color);

@@ -397,7 +397,11 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     }
 
     public isSuppressFillHandle(): boolean {
-        return !!this.colDef.suppressFillHandle;
+        return !!attrToBoolean(this.colDef.suppressFillHandle);
+    }
+
+    public isAutoHeight(): boolean {
+        return !!attrToBoolean(this.colDef.autoHeight);
     }
 
     public isRowDrag(rowNode: RowNode): boolean {
@@ -417,7 +421,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     }
 
     public isResizable(): boolean {
-        return this.colDef.resizable === true;
+        return !!attrToBoolean(this.colDef.resizable);
     }
 
     private isColumnFunc(rowNode: RowNode, value?: boolean | ((params: ColumnFunctionCallbackParams) => boolean) | null): boolean {

@@ -1,6 +1,6 @@
-import {Autowired, Bean, PostConstruct} from "../context/context";
-import {BeanStub} from "../context/beanStub";
-import {CtrlsService} from "../ctrlsService";
+import { Autowired, Bean, PostConstruct } from "../context/context";
+import { BeanStub } from "../context/beanStub";
+import { CtrlsService } from "../ctrlsService";
 
 interface TaskItem {
     task: () => void;
@@ -172,10 +172,12 @@ export class AnimationFrameService extends BeanStub {
     }
 
     private requestFrame(): void {
-        const windowAsAny: any = window;
         // check for the existence of requestAnimationFrame, and if
         // it's missing, then we polyfill it with setTimeout()
         const callback = this.executeFrame.bind(this, 60);
+        const eDocument = this.gridOptionsWrapper.getDocument();
+        const windowAsAny: any = eDocument.defaultView;
+
         if (windowAsAny.requestAnimationFrame) {
             windowAsAny.requestAnimationFrame(callback);
         } else if (windowAsAny.webkitRequestAnimationFrame) {

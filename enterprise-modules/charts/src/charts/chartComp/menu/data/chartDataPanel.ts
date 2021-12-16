@@ -4,6 +4,7 @@ import {
     AgCheckbox,
     AgGroupComponent,
     AgRadioButton,
+    AgSelect,
     AgToggleButton,
     Autowired,
     ChartType,
@@ -14,6 +15,7 @@ import {
     DragSourceType,
     DropTarget,
     PostConstruct,
+    SeriesChartType,
     VerticalDirection
 } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
@@ -29,6 +31,7 @@ export class ChartDataPanel extends Component {
 
     private categoriesGroupComp?: AgGroupComponent;
     private seriesGroupComp?: AgGroupComponent;
+    private seriesChartTypeGroupComp?: AgGroupComponent;
     private columnComps: Map<string, AgRadioButton | AgCheckbox> = new Map<string, AgRadioButton | AgCheckbox>();
     private chartType?: ChartType;
     private insertIndex?: number;
@@ -36,7 +39,7 @@ export class ChartDataPanel extends Component {
     constructor(
         private readonly chartController: ChartController,
         private readonly chartOptionsService: ChartOptionsService) {
-            super(ChartDataPanel.TEMPLATE);
+        super(ChartDataPanel.TEMPLATE);
     }
 
     @PostConstruct
@@ -74,8 +77,9 @@ export class ChartDataPanel extends Component {
             // otherwise we re-create everything
             this.clearComponents();
 
-            this.createCategoriesGroupComponent(dimensionCols);
-            this.createSeriesGroupComponent(valueCols);
+            this.createCategoriesGroup(dimensionCols);
+            this.createSeriesGroup(valueCols);
+            this.createSeriesChartTypeGroup(valueCols);
         }
     }
 
@@ -93,7 +97,7 @@ export class ChartDataPanel extends Component {
         });
     }
 
-    private createCategoriesGroupComponent(columns: ColState[]): void {
+    private createCategoriesGroup(columns: ColState[]): void {
         this.categoriesGroupComp = this.createBean(new AgGroupComponent({
             title: this.getCategoryGroupTitle(),
             enabled: true,
@@ -119,7 +123,7 @@ export class ChartDataPanel extends Component {
         this.addComponent(this.getGui(), this.categoriesGroupComp);
     }
 
-    private createSeriesGroupComponent(columns: ColState[]): void {
+    private createSeriesGroup(columns: ColState[]): void {
         this.seriesGroupComp = this.createManagedBean(new AgGroupComponent({
             title: this.getSeriesGroupTitle(),
             enabled: true,
@@ -171,6 +175,61 @@ export class ChartDataPanel extends Component {
         };
 
         this.dragAndDropService.addDropTarget(dropTarget);
+    }
+
+    private createSeriesChartTypeGroup(columns: ColState[]): void {
+        this.seriesChartTypeGroupComp = this.createManagedBean(new AgGroupComponent({
+            title: 'Series Chart Type', //TODO
+            enabled: true,
+            suppressEnabledCheckbox: true,
+            suppressOpenCloseIcons: false,
+            cssIdentifier: 'charts-data'
+        }));
+
+        const seriesChartTypes = this.chartController.getSeriesChartTypes();
+
+        columns.forEach(col => {
+            const seriesChartType: SeriesChartType = seriesChartTypes.filter(s => s.colId === col.colId)[0];
+
+            const seriesItemGroup = this.seriesChartTypeGroupComp!.createManagedBean(new AgGroupComponent({
+                title: col.displayName!,
+                enabled: true,
+                suppressEnabledCheckbox: true,
+                suppressOpenCloseIcons: true,
+                cssIdentifier: 'charts-format-sub-level'
+            }));
+
+            //TODO: remove hardcoded values once backing model exits
+            const chartTypeComp = seriesItemGroup.createManagedBean(new AgSelect());
+            chartTypeComp
+                .setLabel('Type')
+                .setLabelAlignment('left')
+                .setLabelWidth("flex")
+                .setInputWidth(140)
+                .addOptions([
+                    {value: 'groupedColumn', text: 'Grouped Column'},
+                    {value: 'stackedColumn', text: 'Stacked Column'},
+                    {value: 'line', text: 'Line'},
+                ])
+                .setValue(seriesChartType.chartType);
+
+            seriesItemGroup.addItem(chartTypeComp);
+
+            const secondaryAxisComp = this.seriesGroupComp!.createManagedBean(new AgToggleButton());
+
+            secondaryAxisComp
+                .setLabel('Secondary Axis') //TODO
+                .setLabelAlignment('left')
+                .setLabelWidth("flex")
+                .setInputWidth(35)
+                .setValue(!!seriesChartType.secondaryAxis)
+
+            seriesItemGroup.addItem(secondaryAxisComp);
+
+            this.seriesChartTypeGroupComp!.addItem(seriesItemGroup);
+        });
+
+        this.addComponent(this.getGui(), this.seriesChartTypeGroupComp);
     }
 
     private addDragHandle(comp: AgCheckbox, col: ColState): void {
@@ -248,6 +307,7 @@ export class ChartDataPanel extends Component {
         _.clearElement(this.getGui());
         this.categoriesGroupComp = this.destroyBean(this.categoriesGroupComp);
         this.seriesGroupComp = this.destroyBean(this.seriesGroupComp);
+        this.seriesChartTypeGroupComp = this.destroyBean(this.seriesChartTypeGroupComp);
         this.columnComps.clear();
     }
 

@@ -10,11 +10,11 @@ The [Provided Filters](/filter-provided/) and [Simple Filters](/filter-provided-
 
 Text Filters are configured though the `filterParams` attribute of the column definition. All of the parameters from Provided Filters are available:
 
-<api-documentation source='filter-provided/resources/provided-filters.json' section='filterParams'></api-documentation>
+<interface-documentation interfaceName='IProvidedFilterParams' names='["buttons","closeOnApply","debounceMs","readOnly"]' config='{"description":""}'></interface-documentation>
 
 In addition, the following parameters are also available for Text filters:
 
-<interface-documentation interfaceName='ITextFilterParams' names='["alwaysShowBothConditions","filterOptions","defaultOption","defaultJoinOperator","suppressAndOrCondition","textMatcher","caseSensitive","textFormatter","trimInput","inRangeInclusive","includeBlanksInEquals","includeBlanksInLessThan","includeBlanksInGreaterThan","includeBlanksInRange","allowedCharPattern","numberParser","comparator","browserDatePicker"]' config='{"description":" "}' ></interface-documentation>
+<interface-documentation interfaceName='ITextFilterParams' names='["alwaysShowBothConditions","filterOptions","defaultOption","defaultJoinOperator","suppressAndOrCondition","textMatcher","caseSensitive","textFormatter","trimInput","inRangeInclusive","includeBlanksInEquals","includeBlanksInLessThan","includeBlanksInGreaterThan","includeBlanksInRange","allowedCharPattern","numberParser","comparator","browserDatePicker"]' config='{"description":""}' ></interface-documentation>
 
 ## Text Custom Matcher
 
@@ -27,7 +27,7 @@ By default the text filter performs strict case-insensitive text filtering, i.e.
 
 You can change the default behaviour by providing your own `textMatcher`, which allows you to provide your own logic to decide when to include a row in the filtered results.
 
-<interface-documentation interfaceName='ITextFilterParams' names='["textMatcher"]' config='{"description":" ", "overrideBottomMargin":"1rem"}' ></interface-documentation>
+<interface-documentation interfaceName='ITextFilterParams' names='["textMatcher"]' config='{"description":"", "overrideBottomMargin":"1rem"}' ></interface-documentation>
 
 - `filter` The applicable filter type being tested. One of: `equals`, `notEqual`, `contains`, `notContains`, `startsWith`, `endsWith`
 - `value` The value about to be filtered. If this column has a value getter, this value will be coming from the value getter, otherwise it is the raw value injected into the grid.
@@ -78,7 +78,7 @@ By default, the grid compares the text filter with the values in a case-insensit
 
 You might have more advanced requirements, for example to ignore accented characters. In this case, you can provide your own `textFormatter`, which is a function with the following signature:
 
-<interface-documentation interfaceName='ITextFilterParams' names='["textFormatter"]' config='{"description":" ", "overrideBottomMargin":"1rem"}' ></interface-documentation>
+<interface-documentation interfaceName='ITextFilterParams' names='["textFormatter"]' config='{"description":"", "overrideBottomMargin":"1rem"}' ></interface-documentation>
 
 `from` is the value coming from the grid. This can be from the `valueGetter` if there is any for the column, or the value as originally provided in the `rowData`. The function should return a string to be used for the purpose of filtering.
 

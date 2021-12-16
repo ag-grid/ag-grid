@@ -174,6 +174,7 @@ export class FocusService extends BeanStub {
     // grid cell will still be focused as far as the grid is concerned,
     // however the browser focus will have moved somewhere else.
     public getFocusCellToUseAfterRefresh(): CellPosition | null {
+        const eDocument = this.gridOptionsWrapper.getDocument();
         if (this.gridOptionsWrapper.isSuppressFocusAfterRefresh() || !this.focusedCellPosition) {
             return null;
         }
@@ -181,7 +182,7 @@ export class FocusService extends BeanStub {
         // we check that the browser is actually focusing on the grid, if it is not, then
         // we have nothing to worry about. we check for ROW data, as this covers both focused Rows (for Full Width Rows)
         // and Cells (covers cells as cells live in rows)
-        if (this.isDomDataMissingInHierarchy(document.activeElement, RowCtrl.DOM_DATA_KEY_ROW_CTRL)) {
+        if (this.isDomDataMissingInHierarchy(eDocument.activeElement, RowCtrl.DOM_DATA_KEY_ROW_CTRL)) {
             return null;
         }
 
@@ -189,13 +190,14 @@ export class FocusService extends BeanStub {
     }
 
     public getFocusHeaderToUseAfterRefresh(): HeaderPosition | null {
+        const eDocument = this.gridOptionsWrapper.getDocument();
         if (this.gridOptionsWrapper.isSuppressFocusAfterRefresh() || !this.focusedHeaderPosition) {
             return null;
         }
 
         // we check that the browser is actually focusing on the grid, if it is not, then
         // we have nothing to worry about
-        if (this.isDomDataMissingInHierarchy(document.activeElement, AbstractHeaderCellCtrl.DOM_DATA_KEY_HEADER_CTRL)) {
+        if (this.isDomDataMissingInHierarchy(eDocument.activeElement, AbstractHeaderCellCtrl.DOM_DATA_KEY_HEADER_CTRL)) {
             return null;
         }
 
@@ -410,12 +412,14 @@ export class FocusService extends BeanStub {
 
     public findNextFocusableElement(rootNode: HTMLElement, onlyManaged?: boolean | null, backwards?: boolean): HTMLElement | null {
         const focusable = this.findFocusableElements(rootNode, onlyManaged ? ':not([tabindex="-1"])' : null);
+        const eDocument = this.gridOptionsWrapper.getDocument();
+        const activeEl = eDocument.activeElement as HTMLElement;
         let currentIndex: number;
 
         if (onlyManaged) {
-            currentIndex = focusable.findIndex(el => el.contains(document.activeElement));
+            currentIndex = focusable.findIndex(el => el.contains(activeEl));
         } else {
-            currentIndex = focusable.indexOf(document.activeElement as HTMLElement);
+            currentIndex = focusable.indexOf(activeEl);
         }
 
         const nextIndex = currentIndex + (backwards ? -1 : 1);
@@ -428,12 +432,13 @@ export class FocusService extends BeanStub {
     }
 
     public isFocusUnderManagedComponent(rootNode: HTMLElement): boolean {
+        const eDocument = this.gridOptionsWrapper.getDocument();
         const managedContainers = rootNode.querySelectorAll(`.${ManagedFocusFeature.FOCUS_MANAGED_CLASS}`);
 
         if (!managedContainers.length) { return false; }
 
         for (let i = 0; i < managedContainers.length; i++) {
-            if (managedContainers[i].contains(document.activeElement)) {
+            if (managedContainers[i].contains(eDocument.activeElement)) {
                 return true;
             }
         }

@@ -259,7 +259,7 @@ function extractInterfaces(srcFile, extension) {
         const name = node && node.name && node.name.escapedText;
         const kind = ts.SyntaxKind[node.kind];
 
-        if (node.heritageClauses && node.heritageClauses) {
+        if (node.heritageClauses) {
             node.heritageClauses.forEach(h => {
                 if (h.types && h.types.length > 0) {
                     extension[name] = h.types.map(h => ({ extends: formatNode(h.expression, srcFile), params: h.typeArguments ? h.typeArguments.map(t => formatNode(t, srcFile)) : undefined }));
@@ -292,10 +292,10 @@ function extractInterfaces(srcFile, extension) {
                     isCallSignature = isCallSignature || ts.SyntaxKind[p.kind] == 'CallSignature';
                     if (isCallSignature) {
 
-                        const arguments = getArgTypes(p.parameters, srcFile);
+                        const argTypes = getArgTypes(p.parameters, srcFile);
 
                         callSignatureMembers = {
-                            arguments,
+                            arguments: argTypes,
                             returnType: formatNode(p.type, srcFile),
                         }
                     } else {
@@ -487,10 +487,6 @@ function getColumn() {
     const file = "../core/src/ts/entities/column.ts";
     return getClassProperties(file, 'Column');
 }
-function getSetFilter() {
-    const file = "../../enterprise-modules/set-filter/src/setFilter/setFilter.ts";
-    return getClassProperties(file, 'SetFilter');
-}
 
 const generateMetaFiles = () => {
     writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/grid-api/', 'grid-options.AUTO.json', getGridOptions());
@@ -500,7 +496,6 @@ const generateMetaFiles = () => {
     writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/column-properties/', 'column-options.AUTO.json', getColumnOptions());
     writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/column-api/', 'column-api.AUTO.json', getColumnApi());
     writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/column-object/', 'column.AUTO.json', getColumn());
-    writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/filter-set-api/resources/', 'setFilter.AUTO.json', getSetFilter());
     writeFormattedFile('../../grid-packages/ag-grid-docs/documentation/doc-pages/grid-api/', 'doc-interfaces.AUTO.json', buildInterfaceProps());
 };
 

@@ -36,7 +36,7 @@
             "viewport": false
         },
         {
-            "feature": "[Floating Filters(/floating-filters/)",
+            "feature": "[Floating Filters](/floating-filters/)",
             "clientSide": true,
             "infinite": true,
             "serverSide": true,

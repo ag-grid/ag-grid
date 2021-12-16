@@ -3222,7 +3222,7 @@
       }
     },
     "getRowNodeId": {
-      "description": "/** Allows you to set the ID for a particular row node based on the data. Useful for selection and server side sorting and filtering for paging and virtual pagination. */",
+      "description": "/** Allows you to set the ID for a particular row node based on the data. */",
       "type": { "returnType": "GetRowNodeIdFunc", "optional": true }
     },
     "processRowPostCreate": {
@@ -5411,7 +5411,7 @@
   },
   "FilterModifiedEvent": {
     "filterInstance": {
-      "type": { "returnType": "IFilter", "optional": false }
+      "type": { "returnType": "IFilterComp", "optional": false }
     },
     "column": { "type": { "returnType": "Column", "optional": false } },
     "api": { "type": { "returnType": "GridApi", "optional": false } },
@@ -7073,6 +7073,8 @@
     "notContains": { "type": { "returnType": "string", "optional": false } },
     "startsWith": { "type": { "returnType": "string", "optional": false } },
     "endsWith": { "type": { "returnType": "string", "optional": false } },
+    "blank": { "type": { "returnType": "string", "optional": false } },
+    "notBlank": { "type": { "returnType": "string", "optional": false } },
     "andCondition": { "type": { "returnType": "string", "optional": false } },
     "orCondition": { "type": { "returnType": "string", "optional": false } },
     "dateFormatOoo": { "type": { "returnType": "string", "optional": false } }
@@ -7101,6 +7103,18 @@
       }
     }
   },
+  "IFloatingFilterParent": {
+    "onFloatingFilterChanged": {
+      "description": "/** Notification that a new floating-filter value was input by the user.\n * @param type operation type selected.\n * @param value model-typed value entered.\n */",
+      "type": {
+        "arguments": { "type": "string | null", "value": "any" },
+        "returnType": "void",
+        "optional": false
+      }
+    }
+  },
+  "InbuiltParentType": {},
+  "IFloatingFilterParentCallback": { "meta": { "typeParams": ["P"] } },
   "IFloatingFilterParams": {
     "column": {
       "description": "/** The column this filter is for. */",
@@ -7122,7 +7136,7 @@
     "parentFilterInstance": {
       "description": "/** Gets a reference to the parent filter. The result is returned asynchronously\n * via a callback as the parent filter may not exist yet. If it does\n * not exist, it is created and asynchronously returned (AG Grid itself\n * does not create components asynchronously, however if providing a framework\n * provided filter e.g. React, it might be).\n * \n * The floating filter can then call any method it likes on the parent filter.\n * The parent filter will typically provide its own method for the floating\n * filter to call to set the filter. For example, if creating custom filter A,\n * it should have a method your floating A can call to set the state\n * when the user updates via the floating filter. */",
       "type": {
-        "arguments": { "callback": "(filterInstance: ISimpleFilter) => void" },
+        "arguments": { "callback": "IFloatingFilterParentCallback<P>" },
         "returnType": "void",
         "optional": false
       }
@@ -7130,7 +7144,8 @@
     "showParentFilter": {
       "description": "/** Shows the parent filter popup. */",
       "type": { "arguments": {}, "returnType": "void", "optional": false }
-    }
+    },
+    "meta": { "typeParams": ["P"] }
   },
   "IFloatingFilter": {
     "onParentModelChanged": {
@@ -7273,12 +7288,19 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
+      "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * <ul>\n * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li>\n * </ul> */",
       "type": { "returnType": "FilterButtonType[]", "optional": true }
     },
-    "closeOnApply": { "type": { "returnType": "boolean", "optional": true } },
-    "debounceMs": { "type": { "returnType": "number", "optional": true } },
+    "closeOnApply": {
+      "description": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "debounceMs": {
+      "description": "/** By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by\n * 500ms. This is because these filters have text field inputs, so time is given to the user to\n * type items in before the input is formatted and the filtering applied. The\n * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To\n * override these defaults, set `debounceMs` to the number of milliseconds to debounce by. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "readOnly": {
-      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "description": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n * be used in conjunction with the Filter API.\n * \n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "column": {
@@ -7306,7 +7328,7 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "valueGetter": {
-      "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
+      "description": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "type": { "returnType": "ValueGetterFunc", "optional": false }
     },
     "doesRowPassOtherFilter": {
@@ -7403,12 +7425,19 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
+      "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * <ul>\n * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li>\n * </ul> */",
       "type": { "returnType": "FilterButtonType[]", "optional": true }
     },
-    "closeOnApply": { "type": { "returnType": "boolean", "optional": true } },
-    "debounceMs": { "type": { "returnType": "number", "optional": true } },
+    "closeOnApply": {
+      "description": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "debounceMs": {
+      "description": "/** By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by\n * 500ms. This is because these filters have text field inputs, so time is given to the user to\n * type items in before the input is formatted and the filtering applied. The\n * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To\n * override these defaults, set `debounceMs` to the number of milliseconds to debounce by. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "readOnly": {
-      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "description": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n * be used in conjunction with the Filter API.\n * \n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "column": {
@@ -7436,7 +7465,7 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "valueGetter": {
-      "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
+      "description": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "type": { "returnType": "ValueGetterFunc", "optional": false }
     },
     "doesRowPassOtherFilter": {
@@ -7457,12 +7486,19 @@
   "FilterButtonType": {},
   "IProvidedFilterParams": {
     "buttons": {
+      "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * <ul>\n * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li>\n * </ul> */",
       "type": { "returnType": "FilterButtonType[]", "optional": true }
     },
-    "closeOnApply": { "type": { "returnType": "boolean", "optional": true } },
-    "debounceMs": { "type": { "returnType": "number", "optional": true } },
+    "closeOnApply": {
+      "description": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "debounceMs": {
+      "description": "/** By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by\n * 500ms. This is because these filters have text field inputs, so time is given to the user to\n * type items in before the input is formatted and the filtering applied. The\n * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To\n * override these defaults, set `debounceMs` to the number of milliseconds to debounce by. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "readOnly": {
-      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "description": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n * be used in conjunction with the Filter API.\n * \n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "column": {
@@ -7490,7 +7526,7 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "valueGetter": {
-      "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
+      "description": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "type": { "returnType": "ValueGetterFunc", "optional": false }
     },
     "doesRowPassOtherFilter": {
@@ -7510,15 +7546,15 @@
   },
   "IProvidedFilter": {
     "applyModel": {
-      "description": "/** Apply the current UI state to the filter model.\n * @returns true if the model was changed.\n */",
+      "description": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n * when `applyModel()` was called). */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "getModelFromUi": {
-      "description": "/** Get the current UI state as a filter model. */",
+      "description": "/** Returns the filter model from the UI. If changes have been made to the UI but not yet\n * applied, this model will reflect those changes. */",
       "type": { "arguments": {}, "returnType": "any", "optional": false }
     },
     "isFilterActive": {
-      "description": "/** This is used to let the grid know if the filter is active or not */",
+      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "doesFilterPass": {
@@ -7530,11 +7566,11 @@
       }
     },
     "getModel": {
-      "description": "/** Gets the filter state for storing */",
+      "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. */",
       "type": { "arguments": {}, "returnType": "any", "optional": false }
     },
     "setModel": {
-      "description": "/** Restores the filter state. */",
+      "description": "/** Sets the state of the filter using the supplied model. Providing `null` as the model will\n * de-activate the filter. */",
       "type": {
         "arguments": { "model": "any" },
         "returnType": "void | AgPromise<void>",
@@ -7603,12 +7639,19 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
+      "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * <ul>\n * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li>\n * </ul> */",
       "type": { "returnType": "FilterButtonType[]", "optional": true }
     },
-    "closeOnApply": { "type": { "returnType": "boolean", "optional": true } },
-    "debounceMs": { "type": { "returnType": "number", "optional": true } },
+    "closeOnApply": {
+      "description": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "debounceMs": {
+      "description": "/** By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by\n * 500ms. This is because these filters have text field inputs, so time is given to the user to\n * type items in before the input is formatted and the filtering applied. The\n * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To\n * override these defaults, set `debounceMs` to the number of milliseconds to debounce by. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "readOnly": {
-      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "description": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n * be used in conjunction with the Filter API.\n * \n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "column": {
@@ -7636,7 +7679,7 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "valueGetter": {
-      "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
+      "description": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "type": { "returnType": "ValueGetterFunc", "optional": false }
     },
     "doesRowPassOtherFilter": {
@@ -7657,24 +7700,16 @@
   "Comparator": { "meta": { "typeParams": ["T"] } },
   "JoinOperator": {},
   "ISimpleFilter": {
-    "onFloatingFilterChanged": {
-      "description": "/** Notification that a new floating-filter value was input by the user.\n * @param type operation type selected.\n * @param value model-typed value entered.\n */",
-      "type": {
-        "arguments": { "type": "string | null", "value": "any" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
     "applyModel": {
-      "description": "/** Apply the current UI state to the filter model.\n * @returns true if the model was changed.\n */",
+      "description": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n * when `applyModel()` was called). */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "getModelFromUi": {
-      "description": "/** Get the current UI state as a filter model. */",
+      "description": "/** Returns the filter model from the UI. If changes have been made to the UI but not yet\n * applied, this model will reflect those changes. */",
       "type": { "arguments": {}, "returnType": "any", "optional": false }
     },
     "isFilterActive": {
-      "description": "/** This is used to let the grid know if the filter is active or not */",
+      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "doesFilterPass": {
@@ -7686,11 +7721,11 @@
       }
     },
     "getModel": {
-      "description": "/** Gets the filter state for storing */",
+      "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. */",
       "type": { "arguments": {}, "returnType": "any", "optional": false }
     },
     "setModel": {
-      "description": "/** Restores the filter state. */",
+      "description": "/** Sets the state of the filter using the supplied model. Providing `null` as the model will\n * de-activate the filter. */",
       "type": {
         "arguments": { "model": "any" },
         "returnType": "void | AgPromise<void>",
@@ -7711,6 +7746,14 @@
         "arguments": { "model": "any" },
         "returnType": "string",
         "optional": true
+      }
+    },
+    "onFloatingFilterChanged": {
+      "description": "/** Notification that a new floating-filter value was input by the user.\n * @param type operation type selected.\n * @param value model-typed value entered.\n */",
+      "type": {
+        "arguments": { "type": "string | null", "value": "any" },
+        "returnType": "void",
+        "optional": false
       }
     }
   },
@@ -7739,12 +7782,19 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
+      "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * <ul>\n * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li>\n * </ul> */",
       "type": { "returnType": "FilterButtonType[]", "optional": true }
     },
-    "closeOnApply": { "type": { "returnType": "boolean", "optional": true } },
-    "debounceMs": { "type": { "returnType": "number", "optional": true } },
+    "closeOnApply": {
+      "description": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "debounceMs": {
+      "description": "/** By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by\n * 500ms. This is because these filters have text field inputs, so time is given to the user to\n * type items in before the input is formatted and the filtering applied. The\n * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To\n * override these defaults, set `debounceMs` to the number of milliseconds to debounce by. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "readOnly": {
-      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "description": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n * be used in conjunction with the Filter API.\n * \n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "column": {
@@ -7772,7 +7822,7 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "valueGetter": {
-      "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
+      "description": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "type": { "returnType": "ValueGetterFunc", "optional": false }
     },
     "doesRowPassOtherFilter": {
@@ -7832,7 +7882,7 @@
     }
   },
   "TextMatcherParams": {
-    "filter": {
+    "filterOption": {
       "type": { "returnType": "string | null | undefined", "optional": false }
     },
     "value": { "type": { "returnType": "any", "optional": false } },
@@ -7912,12 +7962,19 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
+      "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * <ul>\n * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li>\n * </ul> */",
       "type": { "returnType": "FilterButtonType[]", "optional": true }
     },
-    "closeOnApply": { "type": { "returnType": "boolean", "optional": true } },
-    "debounceMs": { "type": { "returnType": "number", "optional": true } },
+    "closeOnApply": {
+      "description": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "debounceMs": {
+      "description": "/** By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by\n * 500ms. This is because these filters have text field inputs, so time is given to the user to\n * type items in before the input is formatted and the filtering applied. The\n * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To\n * override these defaults, set `debounceMs` to the number of milliseconds to debounce by. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "readOnly": {
-      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "description": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n * be used in conjunction with the Filter API.\n * \n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "column": {
@@ -7945,7 +8002,7 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "valueGetter": {
-      "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
+      "description": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "type": { "returnType": "ValueGetterFunc", "optional": false }
     },
     "doesRowPassOtherFilter": {
@@ -8100,6 +8157,10 @@
     "aggFunc": {
       "description": "/** The aggregation function that should be applied to all series data. */",
       "type": { "returnType": "string | IAggFunc", "optional": true }
+    },
+    "seriesChartTypes": {
+      "description": "/** The series chart type configurations used in combination charts */",
+      "type": { "returnType": "SeriesChartType", "optional": true }
     },
     "chartType": {
       "description": "/** The type of chart to create. */",
@@ -8379,6 +8440,7 @@
     }
   },
   "RowContainerName": {},
+  "RowContainerType": {},
   "IRowContainerComp": {
     "setViewportHeight": {
       "type": {
@@ -11112,6 +11174,11 @@
   },
   "ChartType": {},
   "ChartMenuOptions": {},
+  "SeriesChartType": {
+    "colId": { "type": { "returnType": "string", "optional": false } },
+    "chartType": { "type": { "returnType": "ChartType", "optional": false } },
+    "secondaryAxis": { "type": { "returnType": "boolean", "optional": true } }
+  },
   "GetChartImageDataUrlParams": {
     "chartId": {
       "description": "/** The id of the created chart. */",
@@ -12215,7 +12282,7 @@
   },
   "IFilter": {
     "isFilterActive": {
-      "description": "/** This is used to let the grid know if the filter is active or not */",
+      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "doesFilterPass": {
@@ -12227,11 +12294,11 @@
       }
     },
     "getModel": {
-      "description": "/** Gets the filter state for storing */",
+      "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. */",
       "type": { "arguments": {}, "returnType": "any", "optional": false }
     },
     "setModel": {
-      "description": "/** Restores the filter state. */",
+      "description": "/** Sets the state of the filter using the supplied model. Providing `null` as the model will\n * de-activate the filter. */",
       "type": {
         "arguments": { "model": "any" },
         "returnType": "void | AgPromise<void>",
@@ -12260,7 +12327,7 @@
   },
   "IFilterComp": {
     "isFilterActive": {
-      "description": "/** This is used to let the grid know if the filter is active or not */",
+      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "doesFilterPass": {
@@ -12272,11 +12339,11 @@
       }
     },
     "getModel": {
-      "description": "/** Gets the filter state for storing */",
+      "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. */",
       "type": { "arguments": {}, "returnType": "any", "optional": false }
     },
     "setModel": {
-      "description": "/** Restores the filter state. */",
+      "description": "/** Sets the state of the filter using the supplied model. Providing `null` as the model will\n * de-activate the filter. */",
       "type": {
         "arguments": { "model": "any" },
         "returnType": "void | AgPromise<void>",
@@ -12398,7 +12465,7 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "valueGetter": {
-      "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
+      "description": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "type": { "returnType": "ValueGetterFunc", "optional": false }
     },
     "doesRowPassOtherFilter": {
@@ -12713,15 +12780,15 @@
       }
     },
     "applyModel": {
-      "description": "/** Apply the current UI state to the filter model.\n * @returns true if the model was changed.\n */",
+      "description": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n * when `applyModel()` was called). */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "getModelFromUi": {
-      "description": "/** Get the current UI state as a filter model. */",
+      "description": "/** Returns the filter model from the UI. If changes have been made to the UI but not yet\n * applied, this model will reflect those changes. */",
       "type": { "arguments": {}, "returnType": "any", "optional": false }
     },
     "isFilterActive": {
-      "description": "/** This is used to let the grid know if the filter is active or not */",
+      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "doesFilterPass": {
@@ -12733,11 +12800,11 @@
       }
     },
     "getModel": {
-      "description": "/** Gets the filter state for storing */",
+      "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. */",
       "type": { "arguments": {}, "returnType": "any", "optional": false }
     },
     "setModel": {
-      "description": "/** Restores the filter state. */",
+      "description": "/** Sets the state of the filter using the supplied model. Providing `null` as the model will\n * de-activate the filter. */",
       "type": {
         "arguments": { "model": "any" },
         "returnType": "void | AgPromise<void>",
@@ -12763,7 +12830,7 @@
   },
   "IMultiFilterDef": {
     "display": {
-      "description": "/** Configures how the filter is shown in the Multi Filter.\n * Default: `inline` */",
+      "description": "/** Configures how the filter is shown in the Multi Filter. See\n * [Display Style](https://build.ag-grid.com/javascript-data-grid/filter-multi/#display-style).\n * \n * Default: `inline` */",
       "type": {
         "returnType": "'inline' | 'accordion' | 'subMenu'",
         "optional": true
@@ -12774,27 +12841,27 @@
       "type": { "returnType": "string", "optional": true }
     },
     "filter": {
-      "description": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Set to the name of a provided filter: `set`, `number`, `text`, `date`.\n * - Set to a `IFilterComp`. */",
+      "description": "/** Child filter component to use inside the Multi Filter. */",
       "type": { "returnType": "IFilterType", "optional": true }
     },
     "filterFramework": {
-      "description": "/** Provided a custom framework filter to use for this column. */",
+      "description": "/** Child filter component to use inside the Multi Filter. */",
       "type": { "returnType": "any", "optional": true }
     },
     "filterParams": {
-      "description": "/** Params to be passed to the filter component specified in `filter` or `filterFramework`. */",
+      "description": "/** Custom parameters to be passed to the child filter component. */",
       "type": { "returnType": "any", "optional": true }
     },
     "floatingFilterComponent": {
-      "description": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
+      "description": "/** Floating filter component to use for the child filter. */",
       "type": { "returnType": "IFloatingFilterType", "optional": true }
     },
     "floatingFilterComponentFramework": {
-      "description": "/** Floating filter framework component to use for this column. */",
+      "description": "/** Floating framework filter component to use for the child filter. */",
       "type": { "returnType": "any", "optional": true }
     },
     "floatingFilterComponentParams": {
-      "description": "/** Params to be passed to `floatingFilterComponent` or `floatingFilterComponentFramework`. */",
+      "description": "/** Custom parameters to be passed to the floating filter component. */",
       "type": { "returnType": "any", "optional": true }
     }
   },
@@ -12804,7 +12871,7 @@
       "type": { "returnType": "IMultiFilterDef[]", "optional": true }
     },
     "readOnly": {
-      "description": "/** Defaults to false. If true, all UI inputs managed by this filter are for display only, and\n * the filter can only be affected by API calls. Does NOT affect child filters, they need to be\n * individually configured with `readOnly` where applicable. */",
+      "description": "/** If true, all UI inputs managed by this filter are for display only, and the filter can only\n * be affected by API calls. Does NOT affect child filters, they need to be individually\n * configured with `readOnly` where applicable. See\n * [Read-only Filter UI](/filter-api/#read-only-filter-ui).\n * \n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "column": {
@@ -12832,7 +12899,7 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "valueGetter": {
-      "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
+      "description": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "type": { "returnType": "ValueGetterFunc", "optional": false }
     },
     "doesRowPassOtherFilter": {
@@ -12976,6 +13043,9 @@
       }
     },
     "isMoreThanOneCell": {
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
+    "areAllRangesAbleToMerge": {
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "onDragStart": {
@@ -13951,8 +14021,24 @@
     }
   },
   "ISetFilter": {
+    "getModel": {
+      "description": "/** Returns a model representing the current state of the filter, or `null` if the filter is\n * not active. */",
+      "type": {
+        "arguments": {},
+        "returnType": "SetFilterModel | null",
+        "optional": false
+      }
+    },
+    "setModel": {
+      "description": "/** Sets the state of the filter using the supplied model. Providing `null` as the model will\n * de-activate the filter.\n * \n * **Note:** if you are [providing values asynchronously](/filter-set-filter-list/#asynchronous-values)\n * to the Set Filter, you need to wait for these changes to be applied before performing any further\n * actions by waiting on the returned grid promise, e.g. \n * `filter.setModel({ values: ['a', 'b'] }).then(function() { gridApi.onFilterChanged(); });` */",
+      "type": {
+        "arguments": { "model": "SetFilterModel | null" },
+        "returnType": "void | AgPromise<void>",
+        "optional": false
+      }
+    },
     "getValues": {
-      "description": "/** @returns the currently selected values.\n */",
+      "description": "/** Returns the full list of unique values used by the Set Filter. */",
       "type": {
         "arguments": {},
         "returnType": "SetFilterModelValue",
@@ -13960,7 +14046,7 @@
       }
     },
     "setFilterValues": {
-      "description": "/** Manually set the super-set of filterable values. */",
+      "description": "/** Sets the values used in the Set Filter on the fly. */",
       "type": {
         "arguments": { "values": "SetFilterModelValue" },
         "returnType": "void",
@@ -13968,15 +14054,15 @@
       }
     },
     "refreshFilterValues": {
-      "description": "/** Triggers a recalculation of displayed super-set of values. */",
+      "description": "/** Refreshes the values shown in the filter from the original source. For example, if a\n * callback was provided, the callback will be executed again and the filter will refresh using\n * the values returned.\n * \n * See [Refreshing Values](/filter-set-filter-list/#refreshing-values). */",
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "resetFilterValues": {
-      "description": "/** Resets the source of filter values to be grid-data derived and triggers a refresh of displayed values. */",
+      "description": "/** Resets the Set Filter to use values from the grid, rather than any values that have been\n * provided directly. */",
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "getMiniFilter": {
-      "description": "/** @returns the current mini-filter text.\n */",
+      "description": "/** Returns the current mini-filter text. */",
       "type": {
         "arguments": {},
         "returnType": "string | null",
@@ -13984,15 +14070,15 @@
       }
     },
     "setMiniFilter": {
-      "description": "/** Change the current mini-filter text. */",
+      "description": "/** Sets the text in the Mini Filter at the top of the filter (the 'quick search' in the popup). */",
       "type": {
-        "arguments": { "text": "string | null" },
+        "arguments": { "newMiniFilter": "string | null" },
         "returnType": "void",
         "optional": false
       }
     },
     "getModelFromUi": {
-      "description": "/** @returns the current UI state (potentially un-applied).\n */",
+      "description": "/** Returns the current UI state (potentially un-applied). */",
       "type": {
         "arguments": {},
         "returnType": "SetFilterModel | null",
@@ -14000,11 +14086,11 @@
       }
     },
     "applyModel": {
-      "description": "/** Apply the current UI state to the filter model.\n * @returns true if the model was changed.\n */",
+      "description": "/** Applies the model shown in the UI (so that `getModel()` will now return what was in the UI\n * when `applyModel()` was called). */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "isFilterActive": {
-      "description": "/** This is used to let the grid know if the filter is active or not */",
+      "description": "/** Returns `true` if the filter is currently active, otherwise `false`. */",
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "doesFilterPass": {
@@ -14012,18 +14098,6 @@
       "type": {
         "arguments": { "params": "IDoesFilterPassParams" },
         "returnType": "boolean",
-        "optional": false
-      }
-    },
-    "getModel": {
-      "description": "/** Gets the filter state for storing */",
-      "type": { "arguments": {}, "returnType": "any", "optional": false }
-    },
-    "setModel": {
-      "description": "/** Restores the filter state. */",
-      "type": {
-        "arguments": { "model": "any" },
-        "returnType": "void | AgPromise<void>",
         "optional": false
       }
     },
@@ -14072,11 +14146,11 @@
   "SetFilterValues": {},
   "ISetFilterParams": {
     "values": {
-      "description": "/** The values to display in the Filter List.\n * If this is not set, the filter will takes its values from what is loaded in the table. */",
+      "description": "/** The values to display in the Filter List. If this is not set, the filter will takes its\n * values from what is loaded in the table. See\n * [Supplying Filter Values](/filter-set-filter-list/#supplying-filter-values). */",
       "type": { "returnType": "SetFilterValues", "optional": true }
     },
     "refreshValuesOnOpen": {
-      "description": "/** Refresh the values every time the Set filter is opened. */",
+      "description": "/** Refresh the values every time the Set filter is opened. See\n * [Refreshing Values](/filter-set-filter-list/#refreshing-values). */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "cellHeight": {
@@ -14084,22 +14158,22 @@
       "type": { "returnType": "number", "optional": true }
     },
     "suppressSorting": {
-      "description": "/** If `true`, the Set Filter values will not be sorted.\n * Use this if you are providing your own values and don't want them sorted as you are providing in the order you want.\n * Default: `false` */",
+      "description": "/** If `true`, the Set Filter values will not be sorted. Use this if you are providing your own\n * values and don't want them sorted as you are providing in the order you want. See\n * [Supplying Filter Values](/filter-set-filter-list/#supplying-filter-values).\n * \n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "cellRenderer": {
-      "description": "/** Similar to the Cell Renderer for the grid.\n * Setting it separately here allows for the value to be rendered differently in the filter. */",
+      "description": "/** Similar to the Cell Renderer for the grid. Setting it separately here allows for the value to\n * be rendered differently in the filter. See\n * [Filter List Cell Renderer](/filter-set-filter-list/#cell-renderer). */",
       "type": {
         "returnType": "{ new(): ICellRendererComp; } | ICellRendererFunc | string",
         "optional": true
       }
     },
     "suppressMiniFilter": {
-      "description": "/** Set to `true` to hide the Mini Filter.\n * Default: `false` */",
+      "description": "/** Set to `true` to hide the Mini Filter. See\n * [Hiding the Mini Filter](/filter-set-mini-filter/#hiding-the-mini-filter).\n * \n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "applyMiniFilterWhileTyping": {
-      "description": "/** Set to `true` to apply the Set Filter immediately when the user is typing in the Mini Filter.\n * Default: `false` */",
+      "description": "/** Set to `true` to apply the Set Filter immediately when the user is typing in the Mini Filter.\n * See [Keyboard Shortcuts](/filter-set-mini-filter/#keyboard-shortcuts).\n * \n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressSelectAll": {
@@ -14107,11 +14181,11 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "defaultToNothingSelected": {
-      "description": "/** By default, when the Set Filter is opened all values are shown selected. Set this to `true` to instead show all values as de-selected by default. */",
+      "description": "/** By default, when the Set Filter is opened all values are shown selected. Set this to `true`\n * to instead show all values as de-selected by default. See\n * [Default State](/filter-set-filter-list/#default-state). */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "comparator": {
-      "description": "/** Comparator for sorting.\n * If not provided, the Column Definition comparator is used.\n * If Column Definition comparator is also not provided, the default (grid provided) comparator is used. */",
+      "description": "/** Comparator for sorting. If not provided, the Column Definition comparator is used. If Column\n * Definition comparator is also not provided, the default (grid provided) comparator is used.\n * See [Sorting Filter Lists](/filter-set-filter-list/#sorting-filter-lists). */",
       "type": {
         "arguments": { "a": "any", "b": "any" },
         "returnType": "number",
@@ -14119,7 +14193,7 @@
       }
     },
     "textFormatter": {
-      "description": "/** If specified, this formats the text before applying the Mini Filter compare logic, useful for instance to substitute accented characters. */",
+      "description": "/** If specified, this formats the text before applying the Mini Filter compare logic, useful for\n * instance to substitute accented characters. See\n * [Custom Searches](/filter-set-mini-filter/#custom-searches). */",
       "type": {
         "arguments": { "from": "string" },
         "returnType": "string",
@@ -14134,7 +14208,7 @@
       }
     },
     "showTooltips": {
-      "description": "/** If `true`, hovering over a value in the Set Filter will show a tooltip containing the full, untruncated value.\n * Default: `false` */",
+      "description": "/** If `true`, hovering over a value in the Set Filter will show a tooltip containing the full,\n * untruncated value. See\n * [Filter Value Tooltips](/filter-set-filter-list/#filter-value-tooltips).\n * \n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "caseSensitive": {
@@ -14142,16 +14216,23 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "excelMode": {
-      "description": "/** Changes the behaviour of the Set Filter to match that of Excel's AutoFilter. */",
+      "description": "/** Changes the behaviour of the Set Filter to match that of Excel's AutoFilter. See\n * [Excel Mode](/filter-set-excel-mode/). */",
       "type": { "returnType": "'mac' | 'windows'", "optional": true }
     },
     "buttons": {
+      "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * <ul>\n * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li>\n * </ul> */",
       "type": { "returnType": "FilterButtonType[]", "optional": true }
     },
-    "closeOnApply": { "type": { "returnType": "boolean", "optional": true } },
-    "debounceMs": { "type": { "returnType": "number", "optional": true } },
+    "closeOnApply": {
+      "description": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
+      "type": { "returnType": "boolean", "optional": true }
+    },
+    "debounceMs": {
+      "description": "/** By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by\n * 500ms. This is because these filters have text field inputs, so time is given to the user to\n * type items in before the input is formatted and the filtering applied. The\n * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To\n * override these defaults, set `debounceMs` to the number of milliseconds to debounce by. */",
+      "type": { "returnType": "number", "optional": true }
+    },
     "readOnly": {
-      "description": "/** Defaults to false. If true, all UI inputs related to this filter are for display only, and\n * the filter can only be affected by API calls. */",
+      "description": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n * be used in conjunction with the Filter API.\n * \n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "column": {
@@ -14179,7 +14260,7 @@
       "type": { "arguments": {}, "returnType": "void", "optional": false }
     },
     "valueGetter": {
-      "description": "/** A function callback for the filter to get cell values from the row data.\n * Call with a node to be given the value for that filter's column for that node.\n * The callback takes care of selecting the right column definition and deciding whether to use valueGetter or field etc.\n * This is useful in, for example, creating an Excel style filter,\n * where the filter needs to lookup available values to allow the user to select from. */",
+      "description": "/** A function callback for the filter to get cell values from provided row data. Called with a\n * `ValueGetterParams` to get the value for this filter's column for the provided row data.\n * \n * The callback takes care of selecting the right column definition and deciding whether to use\n * the column `valueGetter` or raw field etc. */",
       "type": { "returnType": "ValueGetterFunc", "optional": false }
     },
     "doesRowPassOtherFilter": {
@@ -15710,13 +15791,6 @@
         "optional": false
       }
     },
-    "setForceWrapper": {
-      "type": {
-        "arguments": { "force": "boolean" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
     "getCellEditor": {
       "type": {
         "arguments": {},
@@ -16833,7 +16907,9 @@
   "RowGui": {
     "rowComp": { "type": { "returnType": "IRowComp", "optional": false } },
     "element": { "type": { "returnType": "HTMLElement", "optional": false } },
-    "pinned": { "type": { "returnType": "string | null", "optional": false } }
+    "containerType": {
+      "type": { "returnType": "RowContainerType", "optional": false }
+    }
   },
   "CellCtrlListAndMap": {
     "list": { "type": { "returnType": "CellCtrl[]", "optional": false } },

@@ -7,6 +7,8 @@ import {
     MiniBubble,
     MiniColumn,
     MiniDoughnut,
+    MiniGroupedColumnLine,
+    MiniStackedColumnLine,
     MiniHistogram,
     MiniLine,
     MiniNormalizedArea,
@@ -19,7 +21,15 @@ import {
     MiniStackedColumn
 } from "./miniCharts";
 
-type ChartGroupsType = 'barGroup' | 'columnGroup' | 'pieGroup' | 'lineGroup' | 'scatterGroup' | 'areaGroup' | 'histogramGroup';
+type ChartGroupsType =
+      'barGroup'
+    | 'columnGroup'
+    | 'pieGroup'
+    | 'lineGroup'
+    | 'scatterGroup'
+    | 'areaGroup'
+    | 'histogramGroup'
+    | 'combinationGroup';
 
 type ChartGroups = {
     [key in ChartGroupsType]: any[];
@@ -75,6 +85,10 @@ export class MiniChartsContainer extends Component {
             ],
             histogramGroup: [
                 MiniHistogram
+            ],
+            combinationGroup: [
+                MiniGroupedColumnLine,
+                MiniStackedColumnLine
             ]
         };
 

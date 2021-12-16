@@ -891,7 +891,7 @@ hence this property is deprecated as will be removed in the next major release.
     /** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.
      * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.     */
     @Input() public getBusinessKeyForNode: ((node: RowNode) =>  string) | undefined = undefined;
-    /** Allows you to set the ID for a particular row node based on the data. Useful for selection and server side sorting and filtering for paging and virtual pagination.     */
+    /** Allows you to set the ID for a particular row node based on the data.     */
     @Input() public getRowNodeId: GetRowNodeIdFunc | undefined = undefined;
     /** Allows you to process rows after they are created, so you can do final adding of custom attributes etc.     */
     @Input() public processRowPostCreate: ((params: ProcessRowParams) =>  void) | undefined = undefined;
