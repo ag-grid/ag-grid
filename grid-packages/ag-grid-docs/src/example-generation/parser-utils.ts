@@ -51,7 +51,7 @@ export const enum NodeType {
     Variable = 'VariableDeclaration',
     Function = 'FunctionDeclaration',
     Expression = 'ExpressionStatement',
-};
+}
 
 export function collect(iterable: any[], initialBindings: any, collectors: any[]): any {
     return iterable.reduce((bindings, value) => {
@@ -107,7 +107,7 @@ export const recognizedDomEvents = ['click', 'change', 'input', 'dragover', 'dra
 
 function flatMap<T>(array: T[], callback: (value: T) => T): T[] {
     return Array.prototype.concat.apply([], array.map(callback));
-};
+}
 
 const extractEventHandlerBody = (code: string) => code.match(/^(\w+)\((.*)\)/);
 
@@ -138,4 +138,4 @@ export function extractUnboundInstanceMethods(tree) {
 
             return result && result.length > 0 ? result[1] : '';
         });
-};
+}

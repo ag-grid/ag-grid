@@ -1,16 +1,15 @@
-import { convertFunctionToConstProperty, ImportType, isInstanceMethod, modulesProcessor } from './parser-utils';
-import { convertFunctionalTemplate, getImport } from './react-utils';
-import { templatePlaceholder } from "./grid-vanilla-src-parser";
-import * as JSON5 from "json5";
+import {convertFunctionToConstProperty, ImportType, isInstanceMethod, modulesProcessor} from './parser-utils';
+import {convertFunctionalTemplate, convertFunctionToConstCallback, getImport, getValueType} from './react-utils';
+import {templatePlaceholder} from "./grid-vanilla-src-parser";
 
-function getModuleImports(bindings: any, componentFilenames: string[]): string[] {
-    const { gridSettings } = bindings;
-    const { modules } = gridSettings;
+function getModuleImports(bindings: any, componentFilenames: string[], stateProperties: string[]): string[] {
+    const {gridSettings} = bindings;
+    const {modules} = gridSettings;
 
     const imports = [
-        "import React, { useState } from 'react';",
+        "import React, { useCallback, useMemo, useRef, useState } from 'react';",
         "import { render } from 'react-dom';",
-        "import { AgGridReact, AgGridColumn } from '@ag-grid-community/react';"
+        "import { AgGridReact } from '@ag-grid-community/react';"
     ];
 
     if (modules) {
@@ -20,10 +19,11 @@ function getModuleImports(bindings: any, componentFilenames: string[]): string[]
             exampleModules = ['clientside'];
         }
 
-        const { moduleImports, suppliedModules } = modulesProcessor(exampleModules);
+        const {moduleImports, suppliedModules} = modulesProcessor(exampleModules);
 
         imports.push(...moduleImports);
-        bindings.gridSuppliedModules = `[${suppliedModules.join(', ')}]`;
+        bindings.gridSuppliedModules = `modules`;
+        stateProperties.push(`const modules = useMemo(() => [${suppliedModules.join(', ')}], []);`)
 
         imports.push("import '@ag-grid-community/core/dist/styles/ag-grid.css';");
 
@@ -54,12 +54,12 @@ function getModuleImports(bindings: any, componentFilenames: string[]): string[]
 }
 
 function getPackageImports(bindings: any, componentFilenames: string[]): string[] {
-    const { gridSettings } = bindings;
+    const {gridSettings} = bindings;
 
     const imports = [
-        "import React, { useState } from 'react';",
+        "import React, { useCallback, useMemo, useRef, useState } from 'react';",
         "import { render } from 'react-dom';",
-        "import { AgGridReact, AgGridColumn } from 'ag-grid-react';"
+        "import { AgGridReact } from 'ag-grid-react';"
     ];
 
     if (gridSettings.enterprise) {
@@ -79,93 +79,71 @@ function getPackageImports(bindings: any, componentFilenames: string[]): string[
     return imports;
 }
 
-function getImports(bindings: any, componentFileNames: string[], importType: ImportType): string[] {
+function getImports(bindings: any, componentFileNames: string[], importType: ImportType, stateProperties: string[]): string[] {
     if (importType === 'packages') {
         return getPackageImports(bindings, componentFileNames);
     } else {
-        return getModuleImports(bindings, componentFileNames);
+        return getModuleImports(bindings, componentFileNames, stateProperties);
     }
 }
 
-function getTemplate(bindings: any, componentAttributes: string[], columnDefs: string[]): string {
-    const { gridSettings } = bindings;
-    const agGridTag = `<div
-                id="myGrid"
-                style={{
-                    height: '${gridSettings.height}',
-                    width: '${gridSettings.width}'}}
-                    className="${gridSettings.theme}">
+function getTemplate(bindings: any, componentAttributes: string[]): string {
+    const {gridSettings} = bindings;
+    const agGridTag = `
+        <div style={gridStyle} className="${gridSettings.theme}">
             <AgGridReact
+                ref={gridRef}
                 ${componentAttributes.join('\n')}
             >
-                ${columnDefs.join("")}
             </AgGridReact>
-            </div>`;
+        </div>`;
 
     const template = bindings.template ? bindings.template.replace(templatePlaceholder, agGridTag.replace('$', '$$$$')) : agGridTag;
 
     return convertFunctionalTemplate(template);
 }
 
-function convertColumnDefs(rawColumnDefs): string[] {
-    const columnDefs = [];
-    const parseFunction = value => value.replace('AG_FUNCTION_', '').replace(/^function\s*\((.*?)\)/, '($1) => ');
+function extractComponentInformation(properties, componentFilenames: string[]) : { [key: string]: string } {
+    const components: { [key: string]: string } = {};
+    if(componentFilenames.length <= 0) {
+        return components;
+    }
 
-    const processObject = obj => {
-        const output = JSON.stringify(obj);
-
-        return output
-            .replace(/"AG_LITERAL_(.*?)"/g, '$1')
-            .replace(/"AG_FUNCTION_(.*?)"/g, match => parseFunction(JSON.parse(match)));
-    };
-
-    rawColumnDefs.forEach(rawColumnDef => {
-        const columnProperties = [];
-        let children = [];
-
-        Object.keys(rawColumnDef).forEach(columnProperty => {
-            if (columnProperty === 'children') {
-                children = convertColumnDefs(rawColumnDef[columnProperty]);
-            } else {
-                let value = rawColumnDef[columnProperty];
-
-                if (typeof value === "string") {
-                    if (value.startsWith('AG_LITERAL_')) {
-                        // values starting with AG_LITERAL_ are actually function references
-                        // grid-vanilla-src-parser converts the original values to a string that we can convert back to the function reference here
-                        // ...all of this is necessary so that we can parse the json string
-                        columnProperties.push(`${columnProperty}={${value.replace('AG_LITERAL_', '')}}`);
-                    } else if (value.startsWith('AG_FUNCTION_')) {
-                        // values starting with AG_FUNCTION_ are actually function definitions, which we extract and
-                        // turn into lambda functions here
-                        columnProperties.push(`${columnProperty}={${parseFunction(value)}}`);
-                    } else {
-                        // ensure any double quotes inside the string are replaced with single quotes
-                        columnProperties.push(`${columnProperty}="${value.replace(/(?<!\\)"/g, '\'')}"`);
-                    }
-                } else if (typeof value === 'object') {
-                    columnProperties.push(`${columnProperty}={${processObject(value)}}`);
-                } else {
-                    columnProperties.push(`${columnProperty}={${value}}`);
-                }
-            }
-        });
-
-        if (children.length === 0) {
-            columnDefs.push(`<AgGridColumn ${columnProperties.join(' ')} />`);
-        } else {
-            columnDefs.push(`<AgGridColumn ${columnProperties.join(' ')}>${children.join('\n')}</AgGridColumn>`);
+    properties.forEach(property => {
+        if (property.name === 'components') {
+            property.value.split(`\n`).filter(keyValue => keyValue.includes(":"))
+                .map(keyValue => keyValue.replace(/\s/g, ''))
+                .map(keyValue => keyValue.replace(/,/g, ''))
+                .map(keyValue => keyValue.split(':'))
+                .reduce((accumulator, keyValue) => {
+                    accumulator[keyValue[0]] = keyValue[1]
+                    return accumulator
+                }, components);
         }
     });
 
-    return columnDefs;
+    return components;
+}
+
+function getCallbackNames() {
+    const callbackJson = require('../../documentation/doc-pages/grid-callbacks/callbacks.json');
+    const callbacks = Object.keys(callbackJson).map(topLevel => Object.keys(callbackJson[topLevel]));
+    return [].concat.apply([], callbacks).filter(callback => callback !== 'meta')
 }
 
 export function vanillaToReactFunctional(bindings: any, componentFilenames: string[]): (importType: ImportType) => string {
-    const { properties, data, gridSettings, onGridReady, resizeToFit } = bindings;
+    const {properties, data, gridSettings, onGridReady, resizeToFit} = bindings;
+
+    const callbackNames = getCallbackNames();
 
     return importType => {
-        const imports = getImports(bindings, componentFilenames, importType);
+        // instance values
+        const stateProperties = [
+            `const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);`,
+            `const gridStyle = useMemo(() => ({height: '${gridSettings.height}', width: '${gridSettings.width}'}), []);`
+        ];
+
+        const imports = getImports(bindings, componentFilenames, importType, stateProperties);
 
         // for when binding a method
         // see javascript-grid-keyboard-navigation for an example
@@ -173,56 +151,26 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
         // rarely used (one example only - can be improved and this be removed)
         const instanceBindings = [];
 
-        // this.state values
-        const stateProperties = [];
-
-        // ie 'modules={this.state.modules}',
-        const componentAttributes = [];
+        // ie 'modules={modules}',
+        const componentProps = [];
 
         if (importType === 'modules') {
-            componentAttributes.push(`modules={${bindings.gridSuppliedModules}}`);
+            componentProps.push(`modules={${bindings.gridSuppliedModules}}`);
         }
 
-        const columnDefs = bindings.parsedColDefs ? convertColumnDefs(JSON5.parse(bindings.parsedColDefs)) : [];
-
-        properties.filter(property => property.name !== 'onGridReady').forEach(property => {
-            if (componentFilenames.length > 0 && property.name === 'components') {
-                property.name = 'frameworkComponents';
-            }
-
-            if (property.value === 'true' || property.value === 'false') {
-                componentAttributes.push(`${property.name}={${property.value}}`);
-            } else if (property.value === null || property.value === 'null') {
-                componentAttributes.push(`${property.name}={${property.name}}`);
-            } else {
-                // for when binding a method
-                // see javascript-grid-keyboard-navigation for an example
-                // tabToNextCell needs to be bound to the react component
-                if (isInstanceMethod(bindings.instanceMethods, property)) {
-                    instanceBindings.push(`${property.name}=${property.value}`);
-                } else if (property.name !== 'columnDefs' || columnDefs.length === 0) {
-                    componentAttributes.push(`${property.name}={${property.value}}`);
-                }
-            }
-        });
-
-        const componentEventAttributes = bindings.eventHandlers.map(event => `${event.handlerName}={${event.handlerName}}`);
-
-        componentAttributes.push('onGridReady={onGridReady}');
-        componentAttributes.push.apply(componentAttributes, componentEventAttributes);
-
+        // is the row data loaded asynchronously?
+        const needsRowDataState = data && data.callback.indexOf('api.setRowData') >= 0;
         const additionalInReady = [];
-
         if (data) {
             let setRowDataBlock = data.callback;
 
-            if (data.callback.indexOf('api.setRowData') >= 0) {
+            if (needsRowDataState) {
                 if (stateProperties.filter(item => item.indexOf('rowData') >= 0).length === 0) {
-                    stateProperties.push('const [rowData, setRowData] = useState(null);');
+                    stateProperties.push('const [rowData, setRowData] = useState();');
                 }
 
-                if (componentAttributes.filter(item => item.indexOf('rowData') >= 0).length === 0) {
-                    componentAttributes.push('rowData={rowData}');
+                if (componentProps.filter(item => item.indexOf('rowData') >= 0).length === 0) {
+                    componentProps.push('rowData={rowData}');
                 }
 
                 setRowDataBlock = data.callback.replace('params.api.setRowData(data);', 'setRowData(data);');
@@ -246,50 +194,132 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
             additionalInReady.push('params.api.sizeColumnsToFit();');
         }
 
+        const components: { [componentName: string]: string } = extractComponentInformation(properties, componentFilenames);
+
+        const containsQuotes = (data: string) => {
+            const withoutBoundaryQuotes = data.replace(/^"|"$/g, '');
+            return withoutBoundaryQuotes.includes('"') || withoutBoundaryQuotes.includes("'");
+        };
+        const stripQuotes = (data: string) => data.replace(/"/g, '').replace(/'/g, '');
+        const componentNameExists = (componentName: string) => Object.keys(components).includes(stripQuotes(componentName));
+
+        properties.filter(property => property.name !== 'onGridReady').forEach(property => {
+            if (property.value === 'true' || property.value === 'false') {
+                componentProps.push(`${property.name}={${property.value}}`);
+            } else if (property.value === null) {
+                componentProps.push(`${property.name}={${property.name}}`);
+            } else {
+                // for when binding a method
+                // see javascript-grid-keyboard-navigation for an example
+                // tabToNextCell needs to be bound to the react component
+                if (isInstanceMethod(bindings.instanceMethods, property)) {
+                    instanceBindings.push(`${property.name}=${property.value}`);
+                } else {
+                    if (property.name === 'columnDefs') {
+                        stateProperties.push(`const [${property.name}, setColumnDefs] = useState(${property.value})`);
+                        componentProps.push(`${property.name}={${property.name}}`);
+                    } else {
+                        // for values like booleans or strings just inline the prop - no need for a separate variable for it
+                        const valueType = getValueType(property.value);
+                        if (valueType === 'string') {
+                            if(componentNameExists(property.value)) {
+                                componentProps.push(`${property.name}={${components[stripQuotes(property.value)]}}`);
+                            } else {
+                                if(containsQuotes(property.value)) {
+                                    componentProps.push(`${property.name}={${property.value}}`);
+                                } else {
+                                    componentProps.push(`${property.name}=${property.value}`);
+                                }
+                            }
+                        } else if (valueType === 'boolean') {
+                            componentProps.push(`${property.name}={${property.value}}`);
+                        } else {
+                            if(callbackNames.includes(property.name)) {
+                                // SPL fill in deps here once available
+                                stateProperties.push(`const ${property.name} = useCallback(() => { return ${property.value} }, [])`);
+                            } else {
+                                stateProperties.push(`const ${property.name} = useMemo(() => { return ${property.value} }, [])`);
+                            }
+                            componentProps.push(`${property.name}={${property.name}}`);
+                        }
+                    }
+                }
+            }
+        });
+
+        const componentEventAttributes = bindings.eventHandlers.map(event => `${event.handlerName}={${event.handlerName}}`);
+        if (additionalInReady.length > 0) {
+            componentProps.push('onGridReady={onGridReady}');
+        }
+        componentProps.push.apply(componentProps, componentEventAttributes);
+
+
         // convert this.xxx to just xxx
-        // no real need for  "this" in hooks
+        // no real need for "this" in hooks
         const thisReferenceConverter = content => content.replace(/this\./g, "");
 
-        const gridInstanceConverter = content => content.replace(/gridInstance\.api/g, "gridApi").replace(/gridInstance\.columnApi/g, "gridColumnApi");
+        const gridInstanceConverter = content => content
+            .replace(/gridInstance\.api\./g, "gridRef.current.api.")
+            .replace(/gridInstance\.columnApi\./g, "gridRef.current.columnApi.")
+            .replace(/gridApi\./g, "gridRef.current.api.")
+            .replace(/columnApi\./g, "gridRef.current.columnApi.")
+            .replace(/gridApi;/g, "gridRef.current.api;")
+            .replace(/columnApi;/g, "gridRef.current.columnApi;")
+            .replace(/gridColumnApi\./g, "gridRef.current.columnApi.")
 
-        const template = getTemplate(bindings, componentAttributes.map(thisReferenceConverter), columnDefs);
+        const template = getTemplate(bindings, componentProps.map(thisReferenceConverter));
         const eventHandlers = bindings.eventHandlers.map(event => convertFunctionToConstProperty(event.handler)).map(thisReferenceConverter).map(gridInstanceConverter);
-        const externalEventHandlers = bindings.externalEventHandlers.map(handler => convertFunctionToConstProperty(handler.body)).map(thisReferenceConverter).map(gridInstanceConverter);
+        const externalEventHandlers = bindings.externalEventHandlers.map(handler => convertFunctionToConstCallback(handler.body)).map(thisReferenceConverter).map(gridInstanceConverter);
         const instanceMethods = bindings.instanceMethods.map(convertFunctionToConstProperty).map(thisReferenceConverter).map(gridInstanceConverter);
-        const style = gridSettings.noStyle ? '' : `style={{ width: '100%', height: '100%' }}`;
+        const containerStyle = gridSettings.noStyle ? '' : `style={containerStyle}`;
+
+        const gridReady = additionalInReady.length > 0 ? `
+            const onGridReady = useCallback((params) => {
+                ${additionalInReady.join('\n')}
+            }, []);` : '';
 
 
-        return `
+        let generatedOutput = `
 'use strict'
 
 ${imports.join('\n')}
 
+${bindings.utils.map(gridInstanceConverter).map(convertFunctionToConstProperty).join('\n\n')}
+
 const GridExample = () => {
-    const [gridApi, setGridApi] = useState(null);
-    const [gridColumnApi, setGridColumnApi] = useState(null);
-    ${stateProperties.join(',\n    ')}
+    const gridRef = useRef();
+    ${stateProperties.join(';\n    ')}
 
-    const onGridReady = (params) => {
-        setGridApi(params.api);
-        setGridColumnApi(params.columnApi);
-
-        ${additionalInReady.join('\n')}
-    }
+${gridReady}
 
 ${[].concat(eventHandlers, externalEventHandlers, instanceMethods).join('\n\n   ')}
 
+
     return  (
-            <div ${style}>
+            <div ${containerStyle}>
                 ${template}
             </div>
         );
 
 }
 
-${bindings.utils.map(gridInstanceConverter).join('\n')}
-
 render(<GridExample></GridExample>, document.querySelector('#root'))
 `;
+
+        for (const [componentName, component] of Object.entries(components)) {
+            let regex = new RegExp(`'${componentName}'`, "g");
+            generatedOutput = generatedOutput.replace(regex, component);
+            regex = new RegExp(`"${componentName}"`, "g");
+            generatedOutput = generatedOutput.replace(regex, component);
+        }
+
+        // SPL Revisit this
+        if((generatedOutput.match(/gridRef\.current/g) || []).length === 0) {
+            generatedOutput = generatedOutput.replace("const gridRef = useRef();", "")
+            generatedOutput = generatedOutput.replace("ref={gridRef}", "")
+        }
+
+        return generatedOutput;
     };
 }
 
