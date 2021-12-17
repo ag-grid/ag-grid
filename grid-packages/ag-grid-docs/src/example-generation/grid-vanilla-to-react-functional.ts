@@ -1,4 +1,4 @@
-import {convertFunctionToConstProperty, ImportType, isInstanceMethod, modulesProcessor} from './parser-utils';
+import {convertFunctionToConstProperty, ImportType, isInstanceMethod, modulesProcessor, getFunctionName} from './parser-utils';
 import {convertFunctionalTemplate, convertFunctionToConstCallback, getImport, getValueType} from './react-utils';
 import {templatePlaceholder} from "./grid-vanilla-src-parser";
 
@@ -136,6 +136,12 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
 
     const callbackNames = getCallbackNames();
 
+    const utilMethodNames = bindings.utils.map(getFunctionName);
+    const callbackDependencies = Object.keys(bindings.callbackDependencies).reduce((acc, callbackName) => {
+        acc[callbackName] = bindings.callbackDependencies[callbackName].filter(dependency => !utilMethodNames.includes(dependency)).map(dependency => dependency === 'gridOptions' ? 'gridRef.current' : dependency);
+        return acc;
+    }, {})
+
     return importType => {
         // instance values
         const stateProperties = [
@@ -216,7 +222,7 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
                     instanceBindings.push(`${property.name}=${property.value}`);
                 } else {
                     if (property.name === 'columnDefs') {
-                        stateProperties.push(`const [${property.name}, setColumnDefs] = useState(${property.value})`);
+                        stateProperties.push(`const [${property.name}, setColumnDefs] = useState(${property.value});`);
                         componentProps.push(`${property.name}={${property.name}}`);
                     } else {
                         // for values like booleans or strings just inline the prop - no need for a separate variable for it
@@ -235,10 +241,9 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
                             componentProps.push(`${property.name}={${property.value}}`);
                         } else {
                             if(callbackNames.includes(property.name)) {
-                                // SPL fill in deps here once available
-                                stateProperties.push(`const ${property.name} = useCallback(() => { return ${property.value} }, [])`);
+                                stateProperties.push(`const ${property.name} = useCallback(() => { return ${property.value} }, [${callbackDependencies[property.name]}]);`);
                             } else {
-                                stateProperties.push(`const ${property.name} = useMemo(() => { return ${property.value} }, [])`);
+                                stateProperties.push(`const ${property.name} = useMemo(() => { return ${property.value} }, []);`);
                             }
                             componentProps.push(`${property.name}={${property.name}}`);
                         }
@@ -269,9 +274,11 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
 
         const template = getTemplate(bindings, componentProps.map(thisReferenceConverter));
         const eventHandlers = bindings.eventHandlers.map(event => convertFunctionToConstProperty(event.handler)).map(thisReferenceConverter).map(gridInstanceConverter);
-        const externalEventHandlers = bindings.externalEventHandlers.map(handler => convertFunctionToConstCallback(handler.body)).map(thisReferenceConverter).map(gridInstanceConverter);
-        const instanceMethods = bindings.instanceMethods.map(convertFunctionToConstProperty).map(thisReferenceConverter).map(gridInstanceConverter);
+        const externalEventHandlers = bindings.externalEventHandlers.map(handler => convertFunctionToConstCallback(handler.body, callbackDependencies)).map(thisReferenceConverter).map(gridInstanceConverter);
+        const instanceMethods = bindings.instanceMethods.map(instance => convertFunctionToConstCallback(instance, callbackDependencies)).map(thisReferenceConverter).map(gridInstanceConverter);
         const containerStyle = gridSettings.noStyle ? '' : `style={containerStyle}`;
+
+        debugger
 
         const gridReady = additionalInReady.length > 0 ? `
             const onGridReady = useCallback((params) => {
@@ -288,7 +295,7 @@ ${bindings.utils.map(gridInstanceConverter).map(convertFunctionToConstProperty).
 
 const GridExample = () => {
     const gridRef = useRef();
-    ${stateProperties.join(';\n    ')}
+    ${stateProperties.join('\n    ')}
 
 ${gridReady}
 
