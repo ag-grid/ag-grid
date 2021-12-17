@@ -51,7 +51,6 @@ export class FilterManager extends BeanStub {
     @PostConstruct
     public init(): void {
         this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, (source) => this.onNewRowsLoaded(source));
-        this.addManagedListener(this.eventService, Events.EVENT_NEW_COLUMNS_LOADED, () => this.onColumnsChanged());
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, () => this.onColumnsChanged());
 
         this.quickFilter = this.parseQuickFilter(this.gridOptionsWrapper.getQuickFilterText());
