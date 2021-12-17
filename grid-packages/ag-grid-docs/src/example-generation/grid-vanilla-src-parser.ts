@@ -1,30 +1,12 @@
-import { generate } from 'escodegen';
-import * as esprima from 'esprima';
-import * as ts from 'typescript'
+import * as $ from 'jquery';
+import * as ts from 'typescript';
 import { Events } from '../../../../community-modules/core/src/ts/eventKeys';
 import { PropertyKeys } from '../../../../community-modules/core/src/ts/propertyKeys';
-import * as $ from 'jquery';
 import {
-    collect,
-    extractEventHandlers,
-    extractUnboundInstanceMethods,
-    nodeIsFunctionCall,
-    nodeIsFunctionWithName,
-    nodeIsInScope,
-    nodeIsPropertyWithName,
-    nodeIsUnusedFunction,
-    nodeIsVarWithName,
-    NodeType,
-    recognizedDomEvents,
+    extractEventHandlers, findAllAccessedProperties, findAllVariables, recognizedDomEvents,
     tsCollect,
     tsNodeIsFunctionCall,
-    tsNodeIsFunctionWithName,
-    tsNodeIsPropertyWithName,
-    tsNodeIsUnusedFunction,
-    tsNodeIsGlobalVarWithName,
-    tsNodeIsTopLevelFunction,
-    findAllVariables,
-    findAllAccessedProperties,
+    tsNodeIsFunctionWithName, tsNodeIsGlobalVarWithName, tsNodeIsPropertyWithName, tsNodeIsTopLevelFunction, tsNodeIsUnusedFunction
 } from './parser-utils';
 
 export const templatePlaceholder = 'GRID_TEMPLATE_PLACEHOLDER';
@@ -33,16 +15,6 @@ const EVENTS = (<any>Object).values(Events);
 const PROPERTIES = PropertyKeys.ALL_PROPERTIES;
 const FUNCTION_PROPERTIES = PropertyKeys.FUNCTION_PROPERTIES;
 
-function nodeIsDocumentContentLoaded(node) {
-    try {
-        return nodeIsFunctionCall(node) &&
-            node.expression.arguments.length > 0 &&
-            node.expression.arguments[0].type === 'Literal' &&
-            node.expression.arguments[0].value === 'DOMContentLoaded';
-    } catch (e) {
-        console.error('We found something which we do not understand', node);
-    }
-}
 function tsNodeIsDocumentContentLoaded(node) {
     try {
         if (tsNodeIsFunctionCall(node)) {
@@ -55,15 +27,6 @@ function tsNodeIsDocumentContentLoaded(node) {
     }
 }
 
-function nodeIsHttpOpen(node) {
-    const callee = node.expression && node.expression.callee;
-    const calleeObject = callee && callee.object;
-
-    return node.type === NodeType.Expression &&
-        calleeObject &&
-        calleeObject.name === 'httpRequest' &&
-        callee.property.name === 'open';
-}
 function tsNodeIsHttpOpen(node) {
     const callee = node.expression && node.expression.callee;
     const calleeObject = callee && callee.object;
@@ -74,11 +37,6 @@ function tsNodeIsHttpOpen(node) {
         callee.property.name === 'open';
 }
 
-function nodeIsSimpleFetchRequest(node) {
-    const calleeObject = node.expression && node.expression.callee && node.expression.callee.object;
-    const calleeName = calleeObject && calleeObject.callee && calleeObject.callee.object && calleeObject.callee.object.callee && calleeObject.callee.object.callee.name;
-    return calleeName && calleeName === 'fetch';
-}
 function tsNodeIsSimpleFetchRequest(node) {
     if (ts.isCallExpression(node)) {
         node = node as any;
@@ -86,15 +44,6 @@ function tsNodeIsSimpleFetchRequest(node) {
         return isFetch;
 
     }
-}
-
-function generateWithReplacedGridOptions(node, options?) {
-    return generate(node, options)
-        // also handle case where method is split over two lines
-        //  gridOptions
-        //      .api.setRow()
-        .replace(/gridOptions\s*\n?\s*\.api/g, 'this.gridApi')
-        .replace(/gridOptions\s*\n?\s*\.columnApi/g, 'this.gridColumnApi');
 }
 
 // export interface PrinterOptions {
@@ -119,6 +68,7 @@ function tsGenerate(node, srcFile) {
 
 function tsGenerateWithReplacedGridOptions(node, srcFile) {
     return tsGenerate(node, srcFile)
+        // Handle case when api is on a new line 
         //  gridOptions
         //      .api.setRow()
         .replace(/gridOptions\s*\n?\s*\.api/g, 'this.gridApi')
@@ -171,14 +121,9 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
 
     const domEventHandlers = extractEventHandlers(domTree, recognizedDomEvents);
     const tsTree = parseFile(js);
-    const tree = esprima.parseScript(js, { comment: true });
-    const collectors = [];
     const tsCollectors = [];
-    const gridOptionsCollectors = [];
     const tsGridOptionsCollectors = [];
-    const onReadyCollectors = [];
     const tsOnReadyCollectors = [];
-    const indentOne = { format: {} };
     const registered = ['gridOptions'];
 
     // handler is the function name, params are any function parameters
@@ -191,16 +136,6 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
 
         // one of the event handlers extracted earlier (onclick, onchange etc)
         // body replaces gridOptions.api/columnApi with this.gridApi/columnApi
-        collectors.push({
-            matches: node => nodeIsFunctionWithName(node, handler),
-            apply: (bindings, node) => {
-                bindings.externalEventHandlers.push({
-                    name: handler,
-                    params: params,
-                    body: generateWithReplacedGridOptions(node)
-                });
-            }
-        });
         tsCollectors.push({
             matches: node => tsNodeIsFunctionWithName(node, handler),
             apply: (bindings, node) => {
@@ -213,20 +148,9 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
         });
     });
 
-    // functions marked as "inScope" will be added to "instance" methods, as opposed to (global/unused) "util" ones
-    const unboundInstanceMethods = extractUnboundInstanceMethods(tree);
-    collectors.push({
-        matches: node => nodeIsInScope(node, unboundInstanceMethods),
-        apply: (bindings, node) => bindings.instanceMethods.push(generateWithReplacedGridOptions(node, indentOne))
-    });
-
-    // anything not marked as "inScope" and not handled above in the eventHandlers is considered an unused/util method
-    collectors.push({
-        matches: node => nodeIsUnusedFunction(node, registered, unboundInstanceMethods),
-        apply: (bindings, node) => bindings.utils.push(generate(node).replace(/gridOptions/g, 'gridInstance'))
-    });
+    // anything not handled above in the eventHandlers is considered an unused/util method
     tsCollectors.push({
-        matches: node => tsNodeIsUnusedFunction(node, registered, unboundInstanceMethods),
+        matches: node => tsNodeIsUnusedFunction(node, registered, []),
         apply: (bindings, node) => {
             const util = tsGenerate(node, tsTree).replace(/gridOptions/g, 'gridInstance');
             bindings.utils.push(util)
@@ -260,11 +184,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
         }
     });
 
-    // anything vars not handled above in the eventHandlers is considered an unused/util method
-    collectors.push({
-        matches: node => node.type === NodeType.Variable && registered.indexOf(node.declarations[0].id.name) < 0,
-        apply: (bindings, node) => bindings.utils.push(generate(node))
-    });
+    // anything vars not handled above in the eventHandlers is considered an unused/util method    
     tsCollectors.push({
         matches: node => {
             if (ts.isVariableDeclarationList(node)) {
@@ -277,15 +197,6 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
     });
 
     // extract the xmlhttpreq call
-    onReadyCollectors.push({
-        matches: nodeIsHttpOpen,
-        apply: (bindings, node) => {
-            const url = node.expression.arguments[1].raw;
-            const callback = '{ params.api.setRowData(data); }';
-
-            bindings.data = { url, callback };
-        }
-    });
     tsOnReadyCollectors.push({
         matches: tsNodeIsHttpOpen,
         apply: (bindings, node) => {
@@ -297,15 +208,6 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
     });
 
     // extract the simpleHttpRequest call
-    onReadyCollectors.push({
-        matches: nodeIsSimpleFetchRequest,
-        apply: (bindings, node) => {
-            const url = node.expression.callee.object.callee.object.arguments[0].raw;
-            const callback = generate(node.expression.arguments[0].body).replace(/gridOptions/g, 'params');
-
-            bindings.data = { url, callback };
-        }
-    });
     tsOnReadyCollectors.push({
         matches: tsNodeIsSimpleFetchRequest,
         apply: (bindings, node) => {
@@ -317,15 +219,6 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
     });
 
     // extract the resizeColumnsToFit
-    onReadyCollectors.push({
-        matches: node => node.expression &&
-            node.expression.callee &&
-            node.expression.callee.property &&
-            node.expression.callee.property.name == 'sizeColumnsToFit',
-        apply: bindings => {
-            bindings.resizeToFit = true;
-        }
-    });
     tsOnReadyCollectors.push({
         matches: node => {
             if (ts.isExpressionStatement(node) && ts.isCallExpression(node.expression) && ts.isPropertyAccessExpression(node.expression.expression)) {
@@ -345,10 +238,6 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
     });
 
     // extract onready
-    collectors.push({
-        matches: nodeIsDocumentContentLoaded,
-        apply: (bindings, node) => collect(node.expression.arguments[1].body.body, bindings, onReadyCollectors)
-    });
     tsCollectors.push({
         matches: tsNodeIsDocumentContentLoaded,
         apply: (bindings, node) => {
@@ -366,17 +255,6 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
 
         registered.push(onEventName);
 
-        collectors.push({
-            matches: node => nodeIsFunctionWithName(node, onEventName),
-            apply: (bindings, node) => {
-                bindings.eventHandlers.push({
-                    name: eventName,
-                    handlerName: onEventName,
-                    handler: generateWithReplacedGridOptions(node)
-                });
-            }
-        });
-
         tsCollectors.push({
             matches: node => tsNodeIsFunctionWithName(node, onEventName),
             apply: (bindings, node) => {
@@ -391,13 +269,6 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
 
     FUNCTION_PROPERTIES.forEach(functionName => {
         registered.push(functionName);
-        collectors.push({
-            matches: node => nodeIsFunctionWithName(node, functionName),
-            apply: (bindings, node) => {
-                bindings.instanceMethods.push(generateWithReplacedGridOptions(node, indentOne));
-                bindings.properties.push({ name: functionName, value: null });
-            }
-        });
 
         tsCollectors.push({
             matches: (node: ts.Node) => tsNodeIsFunctionWithName(node, functionName),
@@ -408,35 +279,6 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
             }
         });
     });
-
-
-    const extractColDefs = (node) => {
-        const copyOfColDefs = JSON.parse(JSON.stringify(node));
-
-        // for each column def
-        for (let columnDefIndex = 0; columnDefIndex < copyOfColDefs.elements.length; columnDefIndex++) {
-            const columnDef = copyOfColDefs.elements[columnDefIndex];
-
-            if (columnDef.type !== 'ObjectExpression') {
-                // if we find any column defs that aren't objects (e.g. are references to objects instead), give up
-                return null;
-            }
-
-            // for each col def property
-            for (let colDefPropertyIndex = 0; colDefPropertyIndex < columnDef.properties.length; colDefPropertyIndex++) {
-                const columnDefProperty = columnDef.properties[colDefPropertyIndex];
-
-                if (columnDefProperty.key.name === 'children') {
-                    const children = extractColDefs(columnDefProperty.value);
-                    columnDefProperty.value = children;
-                } else {
-                    convertFunctionsIntoStrings(columnDefProperty);
-                }
-            }
-        }
-
-        return copyOfColDefs;
-    };
 
     const tsExtractColDefsStr = (node: any): string => {
         let copyOfColDefs = [];
@@ -472,20 +314,6 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
         return `[${copyOfColDefs.join(',\n    ')}]`;
     };
 
-    const convertFunctionsIntoStrings = property => {
-        if (property.value.type === 'Identifier') {
-            property.value.type = 'Literal';
-            property.value.value = `AG_LITERAL_${property.value.name}`;
-        } else if (property.value.type === 'FunctionExpression') {
-            const func = generate(property.value);
-
-            property.value.type = 'Literal';
-            property.value.value = `AG_FUNCTION_${func}`;
-        } else if (property.value.type === 'ObjectExpression') {
-            property.value.properties.forEach(p => convertFunctionsIntoStrings(p));
-        }
-    };
-
     const tsConvertFunctionsIntoStringsStr = (property: any): string => {
         if (ts.isIdentifier(property.initializer)) {
 
@@ -512,10 +340,6 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
         return tsGenerate(property, tsTree);
     };
 
-    const extractAndParseColDefs = (node) => {
-        const colDefs = extractColDefs(node);
-        return colDefs ? generate(colDefs, indentOne) : '';
-    };
     const tsExtractAndParseColDefs = (node) => {
         const colDefs = tsExtractColDefsStr(node);
         return colDefs || '';
@@ -524,23 +348,6 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
     PROPERTIES.forEach(propertyName => {
         registered.push(propertyName);
 
-        // grab global variables named as grid properties
-        collectors.push({
-            matches: node => nodeIsVarWithName(node, propertyName),
-            apply: (bindings, node) => {
-                try {
-                    if (processColDefsForFunctionalReactOrVue(propertyName, exampleType, exampleSettings, providedExamples) &&
-                        node.declarations[0].init.type === 'ArrayExpression') {
-                        bindings.parsedColDefs = extractAndParseColDefs(node.declarations[0].init);
-                    }
-                    const code = generate(node.declarations[0].init, indentOne);
-                    bindings.properties.push({ name: propertyName, value: code });
-                } catch (e) {
-                    console.error('We failed generating', node, node.declarations[0].id);
-                    throw e;
-                }
-            }
-        });
         // grab global variables named as grid properties
         tsCollectors.push({
             matches: node => tsNodeIsGlobalVarWithName(node, propertyName),
@@ -557,37 +364,6 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
                     console.error('We failed generating', node, node.declarations[0].id);
                     throw e;
                 }
-            }
-        });
-
-        gridOptionsCollectors.push({
-            matches: node => nodeIsPropertyWithName(node, propertyName),
-            apply: (bindings, node) => {
-                if (processColDefsForFunctionalReactOrVue(propertyName, exampleType, exampleSettings, providedExamples) &&
-                    node.value.type === 'ArrayExpression') {
-                    bindings.parsedColDefs = extractAndParseColDefs(node.value);
-                }
-                if (processComponentsForVue(propertyName, exampleType, providedExamples) && node.value.type === 'ObjectExpression') {
-                    for (const componentDefinition of node.value.properties) {
-                        if (componentDefinition.value.type !== 'CallExpression' && componentDefinition.value.type !== 'FunctionExpression') {
-                            bindings.components.push({
-                                name: componentDefinition.key.type === 'Identifier' ? componentDefinition.key.name : componentDefinition.key.value,
-                                value: componentDefinition.value.name
-                            });
-                        }
-                    }
-                }
-                if (processDefaultColumnDefForVue(propertyName, exampleType, providedExamples) && node.value.type === 'ObjectExpression') {
-                    bindings.defaultColDef = generate(node.value);
-                }
-                if (processGlobalComponentsForVue(propertyName, exampleType, providedExamples) && node.value.type === 'Literal') {
-                    bindings.globalComponents.push(generate(node));
-                }
-
-                bindings.properties.push({
-                    name: propertyName,
-                    value: generate(node.value, indentOne)
-                });
             }
         });
 
@@ -636,12 +412,6 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
         });
     });
 
-    gridOptionsCollectors.push({
-        matches: node => nodeIsPropertyWithName(node, 'onGridReady'),
-        apply: (bindings, node) => {
-            bindings.onGridReady = generate(node.value.body).replace(/gridOptions/g, 'params');
-        }
-    });
     tsGridOptionsCollectors.push({
         matches: node => tsNodeIsPropertyWithName(node, 'onGridReady'),
         apply: (bindings, node) => {
@@ -650,10 +420,6 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
     });
 
     // gridOptionsCollectors captures all events, properties etc that are related to gridOptions
-    collectors.push({
-        matches: node => nodeIsVarWithName(node, 'gridOptions'),
-        apply: (bindings, node) => collect(node.declarations[0].init.properties, bindings, gridOptionsCollectors)
-    });
     tsCollectors.push({
         matches: node => tsNodeIsGlobalVarWithName(node, 'gridOptions'),
         apply: (bindings, node) => {
@@ -677,22 +443,8 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
      * onGridReady -> any matching onGridReady method
      * data -> url: dataUrl, callback: callback, http calls etc
      * resizeToFit -> true if sizeColumnsToFit is used
+     * callbackDependencies -> lookup of function name to function external deps for react useCallback
      */
-    const bindings = collect(
-        tree.body,
-        {
-            eventHandlers: [],
-            properties: [],
-            components: [],
-            defaultColDef: null,
-            globalComponents: [],
-            parsedColDefs: '',
-            instanceMethods: [],
-            externalEventHandlers: [],
-            utils: []
-        },
-        collectors
-    );
     const tsBindings = tsCollect(
         tsTree,
         {
@@ -735,16 +487,8 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
         height: '100%',
         theme: 'ag-theme-alpine',
         ...exampleSettings
-    }; bindings.template = domTree.html().replace(/<br>/g, '<br />');
-
-    bindings.gridSettings = {
-        width: '100%',
-        height: '100%',
-        theme: 'ag-theme-alpine',
-        ...exampleSettings
     };
 
-    //return bindings;
     return tsBindings;
 }
 
