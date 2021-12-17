@@ -230,22 +230,28 @@ export class CellComp extends Component implements TooltipParentComp {
         const describedByIds: string[] = [];
 
         if (this.includeRowDrag) {
-            this.rowDraggingComp = this.cellCtrl.createRowDragComp();
-            if (this.rowDraggingComp) {
-                // put the checkbox in before the value
-                this.eCellWrapper!.insertBefore(this.rowDraggingComp.getGui(), this.eCellValue!);
+            if (this.rowDraggingComp==null) {
+                this.rowDraggingComp = this.cellCtrl.createRowDragComp();
+                if (this.rowDraggingComp) {
+                    // put the checkbox in before the value
+                    this.eCellWrapper!.insertBefore(this.rowDraggingComp.getGui(), this.eCellValue!);
+                }    
             }
         }
 
         if (this.includeDndSource) {
-            this.dndSourceComp = this.cellCtrl.createDndSource();
-            // put the checkbox in before the value
-            this.eCellWrapper!.insertBefore(this.dndSourceComp.getGui(), this.eCellValue!);
+            if (this.dndSourceComp==null) {
+                this.dndSourceComp = this.cellCtrl.createDndSource();
+                // put the checkbox in before the value
+                this.eCellWrapper!.insertBefore(this.dndSourceComp.getGui(), this.eCellValue!);    
+            }
         }
 
         if (this.includeSelection) {
-            this.checkboxSelectionComp = this.cellCtrl.createSelectionCheckbox();
-            this.eCellWrapper!.insertBefore(this.checkboxSelectionComp.getGui(), this.eCellValue!);
+            if (this.checkboxSelectionComp==null) {
+                this.checkboxSelectionComp = this.cellCtrl.createSelectionCheckbox();
+                this.eCellWrapper!.insertBefore(this.checkboxSelectionComp.getGui(), this.eCellValue!);
+            }
             describedByIds.push(this.checkboxSelectionComp.getCheckboxId());
         }
 
