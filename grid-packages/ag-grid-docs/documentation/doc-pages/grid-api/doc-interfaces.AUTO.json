@@ -7265,9 +7265,9 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "filterOptions": {
-      "description": "/** Array of filter options to present to the user. See [Filter Options](/filter-provided-simple/#simple-filter-options) for all options available to each filter type. */",
+      "description": "/** Array of filter options to present to the user. */",
       "type": {
-        "returnType": "(IFilterOptionDef | string)[]",
+        "returnType": "(IFilterOptionDef | ISimpleFilterModelType)[]",
         "optional": true
       }
     },
@@ -7296,7 +7296,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "debounceMs": {
-      "description": "/** By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by\n * 500ms. This is because these filters have text field inputs, so time is given to the user to\n * type items in before the input is formatted and the filtering applied. The\n * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To\n * override these defaults, set `debounceMs` to the number of milliseconds to debounce by. */",
+      "description": "/** Overrides the default debounce time in milliseconds for the filter. Defaults are:\n * - `TextFilter` and `NumberFilter`: 500ms.\n *    - These filters have text field inputs, so a short delay before the input is formatted and\n *      the filtering applied is usually appropriate.\n * - `DateFilter` and `SetFilter`: 0ms */",
       "type": { "returnType": "number", "optional": true }
     },
     "readOnly": {
@@ -7402,9 +7402,9 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "filterOptions": {
-      "description": "/** Array of filter options to present to the user. See [Filter Options](/filter-provided-simple/#simple-filter-options) for all options available to each filter type. */",
+      "description": "/** Array of filter options to present to the user. */",
       "type": {
-        "returnType": "(IFilterOptionDef | string)[]",
+        "returnType": "(IFilterOptionDef | ISimpleFilterModelType)[]",
         "optional": true
       }
     },
@@ -7433,7 +7433,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "debounceMs": {
-      "description": "/** By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by\n * 500ms. This is because these filters have text field inputs, so time is given to the user to\n * type items in before the input is formatted and the filtering applied. The\n * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To\n * override these defaults, set `debounceMs` to the number of milliseconds to debounce by. */",
+      "description": "/** Overrides the default debounce time in milliseconds for the filter. Defaults are:\n * - `TextFilter` and `NumberFilter`: 500ms.\n *    - These filters have text field inputs, so a short delay before the input is formatted and\n *      the filtering applied is usually appropriate.\n * - `DateFilter` and `SetFilter`: 0ms */",
       "type": { "returnType": "number", "optional": true }
     },
     "readOnly": {
@@ -7494,7 +7494,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "debounceMs": {
-      "description": "/** By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by\n * 500ms. This is because these filters have text field inputs, so time is given to the user to\n * type items in before the input is formatted and the filtering applied. The\n * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To\n * override these defaults, set `debounceMs` to the number of milliseconds to debounce by. */",
+      "description": "/** Overrides the default debounce time in milliseconds for the filter. Defaults are:\n * - `TextFilter` and `NumberFilter`: 500ms.\n *    - These filters have text field inputs, so a short delay before the input is formatted and\n *      the filtering applied is usually appropriate.\n * - `DateFilter` and `SetFilter`: 0ms */",
       "type": { "returnType": "number", "optional": true }
     },
     "readOnly": {
@@ -7616,9 +7616,9 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "filterOptions": {
-      "description": "/** Array of filter options to present to the user. See [Filter Options](/filter-provided-simple/#simple-filter-options) for all options available to each filter type. */",
+      "description": "/** Array of filter options to present to the user. */",
       "type": {
-        "returnType": "(IFilterOptionDef | string)[]",
+        "returnType": "(IFilterOptionDef | ISimpleFilterModelType)[]",
         "optional": true
       }
     },
@@ -7647,7 +7647,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "debounceMs": {
-      "description": "/** By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by\n * 500ms. This is because these filters have text field inputs, so time is given to the user to\n * type items in before the input is formatted and the filtering applied. The\n * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To\n * override these defaults, set `debounceMs` to the number of milliseconds to debounce by. */",
+      "description": "/** Overrides the default debounce time in milliseconds for the filter. Defaults are:\n * - `TextFilter` and `NumberFilter`: 500ms.\n *    - These filters have text field inputs, so a short delay before the input is formatted and\n *      the filtering applied is usually appropriate.\n * - `DateFilter` and `SetFilter`: 0ms */",
       "type": { "returnType": "number", "optional": true }
     },
     "readOnly": {
@@ -7759,9 +7759,9 @@
   },
   "ISimpleFilterParams": {
     "filterOptions": {
-      "description": "/** Array of filter options to present to the user. See [Filter Options](/filter-provided-simple/#simple-filter-options) for all options available to each filter type. */",
+      "description": "/** Array of filter options to present to the user. */",
       "type": {
-        "returnType": "(IFilterOptionDef | string)[]",
+        "returnType": "(IFilterOptionDef | ISimpleFilterModelType)[]",
         "optional": true
       }
     },
@@ -7790,7 +7790,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "debounceMs": {
-      "description": "/** By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by\n * 500ms. This is because these filters have text field inputs, so time is given to the user to\n * type items in before the input is formatted and the filtering applied. The\n * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To\n * override these defaults, set `debounceMs` to the number of milliseconds to debounce by. */",
+      "description": "/** Overrides the default debounce time in milliseconds for the filter. Defaults are:\n * - `TextFilter` and `NumberFilter`: 500ms.\n *    - These filters have text field inputs, so a short delay before the input is formatted and\n *      the filtering applied is usually appropriate.\n * - `DateFilter` and `SetFilter`: 0ms */",
       "type": { "returnType": "number", "optional": true }
     },
     "readOnly": {
@@ -7939,9 +7939,9 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "filterOptions": {
-      "description": "/** Array of filter options to present to the user. See [Filter Options](/filter-provided-simple/#simple-filter-options) for all options available to each filter type. */",
+      "description": "/** Array of filter options to present to the user. */",
       "type": {
-        "returnType": "(IFilterOptionDef | string)[]",
+        "returnType": "(IFilterOptionDef | ISimpleFilterModelType)[]",
         "optional": true
       }
     },
@@ -7970,7 +7970,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "debounceMs": {
-      "description": "/** By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by\n * 500ms. This is because these filters have text field inputs, so time is given to the user to\n * type items in before the input is formatted and the filtering applied. The\n * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To\n * override these defaults, set `debounceMs` to the number of milliseconds to debounce by. */",
+      "description": "/** Overrides the default debounce time in milliseconds for the filter. Defaults are:\n * - `TextFilter` and `NumberFilter`: 500ms.\n *    - These filters have text field inputs, so a short delay before the input is formatted and\n *      the filtering applied is usually appropriate.\n * - `DateFilter` and `SetFilter`: 0ms */",
       "type": { "returnType": "number", "optional": true }
     },
     "readOnly": {
@@ -14228,7 +14228,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "debounceMs": {
-      "description": "/** By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by\n * 500ms. This is because these filters have text field inputs, so time is given to the user to\n * type items in before the input is formatted and the filtering applied. The\n * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To\n * override these defaults, set `debounceMs` to the number of milliseconds to debounce by. */",
+      "description": "/** Overrides the default debounce time in milliseconds for the filter. Defaults are:\n * - `TextFilter` and `NumberFilter`: 500ms.\n *    - These filters have text field inputs, so a short delay before the input is formatted and\n *      the filtering applied is usually appropriate.\n * - `DateFilter` and `SetFilter`: 0ms */",
       "type": { "returnType": "number", "optional": true }
     },
     "readOnly": {

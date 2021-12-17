@@ -35,11 +35,11 @@ export interface IProvidedFilterParams extends IFilterParams {
      */
     closeOnApply?: boolean;
     /**
-     * By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by
-     * 500ms. This is because these filters have text field inputs, so time is given to the user to
-     * type items in before the input is formatted and the filtering applied. The
-     * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To
-     * override these defaults, set `debounceMs` to the number of milliseconds to debounce by.
+     * Overrides the default debounce time in milliseconds for the filter. Defaults are:
+     * - `TextFilter` and `NumberFilter`: 500ms.
+     *   - These filters have text field inputs, so a short delay before the input is formatted and
+     *     the filtering applied is usually appropriate.
+     * - `DateFilter` and `SetFilter`: 0ms
      */
     debounceMs?: number;
     /**
