@@ -22,6 +22,9 @@ import {
     tsNodeIsPropertyWithName,
     tsNodeIsUnusedFunction,
     tsNodeIsGlobalVarWithName,
+    tsNodeIsTopLevelFunction,
+    findAllVariables,
+    findAllAccessedProperties,
 } from './parser-utils';
 
 export const templatePlaceholder = 'GRID_TEMPLATE_PLACEHOLDER';
@@ -227,6 +230,30 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
         apply: (bindings, node) => {
             const util = tsGenerate(node, tsTree).replace(/gridOptions/g, 'gridInstance');
             bindings.utils.push(util)
+        }
+    });
+
+    // For React we need to identify the external dependencies for callbacks to prevent stale closures
+    tsCollectors.push({
+        matches: node => tsNodeIsTopLevelFunction(node),
+        apply: (bindings, node: ts.SignatureDeclaration) => {
+
+            let allVariables = new Set(findAllVariables((node as any).body));
+            if (node.parameters && node.parameters.length > 0) {
+                node.parameters.forEach(p => {
+                    allVariables.add(p.name.getText())
+                })
+            }
+
+            const allDeps = findAllAccessedProperties((node as any).body).filter((id: string) => {
+                // Ignore locally defined variables
+                const isVariable = allVariables.has(id);
+                // Let's assume that all caps are constants so should be ignored, i.e KEY_UP
+                const isCapsConst = id === id.toUpperCase();
+                return !isVariable && !isCapsConst;
+            });
+            bindings.callbackDependencies.push({ name: node.name.getText(), deps: allDeps })
+            //console.log(bindings.callbackDependencies)
         }
     });
 
@@ -674,7 +701,8 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
             parsedColDefs: '',
             instanceMethods: [],
             externalEventHandlers: [],
-            utils: []
+            utils: [],
+            callbackDependencies: []
         },
         tsCollectors
     );

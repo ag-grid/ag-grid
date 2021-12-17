@@ -210,3 +210,88 @@ export function extractUnboundInstanceMethods(tree) {
             return result && result.length > 0 ? result[1] : '';
         });
 }
+
+export function tsNodeIsTopLevelFunction(node: any): boolean {
+    if (ts.isFunctionLike(node)) {
+        const isTopLevel = ts.isSourceFile(node.parent);
+        return isTopLevel
+    }
+    return false;
+}
+
+/**
+ * Find all the variables defined in this node tree recursively
+ */
+export function findAllVariables(node) {
+    let allVariables = [];
+    if (ts.isVariableDeclaration(node)) {
+        allVariables.push(node.name.getText());
+    }
+    ts.forEachChild(node, n => {
+        const variables = findAllVariables(n);
+        if (variables.length > 0) {
+            allVariables = [...allVariables, ...variables];
+        }
+    });
+    return allVariables;
+}
+
+/**
+ * Find all the properties accessed in this node. 
+ */
+export function findAllAccessedProperties(node) {
+
+    let properties = [];
+    if (ts.isIdentifier(node)) {
+        properties.push(node.getText());
+    } else if (ts.isCallExpression(node) || ts.isPropertyAccessExpression(node)) {
+        // When there are chained accesses we need to recurse to the lowest identifier as this is the first in the statement,
+        // and will be the true accessed variable.
+        // i.e gridOptions.api!.getModel().getRowCount() we need to recurse down the tree to extract gridOptions
+        let exp = node.expression as any;
+        let hasExpression = true;
+        while (!!exp) {
+            hasExpression = exp.expression;
+            if (hasExpression) {
+                exp = exp.expression as any;
+            }
+        }
+        properties.push(exp.getText())
+    }
+    else if (ts.isVariableDeclaration(node)) {
+        // get lowest identifier as this is the first in the statement
+        // i.e var nextHeader = params.nextHeaderPosition 
+        // we need to recurse down the initializer tree to extract params and not nextHeaderPosition
+        let exp = node.initializer as any;
+        let hasExpression = !!exp;
+        while (hasExpression) {
+            hasExpression = exp.expression;
+            if (hasExpression) {
+                exp = exp.expression as any;
+            }
+        }
+        if (exp) {
+            properties = [...properties, ...findAllAccessedProperties(exp)];
+        }
+    }
+    else if (ts.isPropertyAssignment(node)) {
+        // Ignore the name of rowIndex just check what is being assigned
+        //  {
+        //      rowIndex: nextRowIndex,
+        //  }
+        if (node.initializer) {
+            properties = [...properties, ...findAllAccessedProperties(node.initializer)];
+        }
+    }
+    else {
+        // Recurse down the tree looking for more accessed properties
+        ts.forEachChild(node, n => {
+            const props = findAllAccessedProperties(n);
+            if (props.length > 0) {
+                properties = [...properties, ...props];
+            }
+        });
+    }
+
+    return properties;
+}
