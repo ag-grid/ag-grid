@@ -273,7 +273,7 @@ export class CartesianChart extends Chart {
                 axis.domain = axis.linkedTo.domain;
             } else {
                 const domains: any[][] = [];
-                boundSeries.filter(s => s.visible).forEach(series => {
+                boundSeries.forEach(series => {
                     domains.push(series.getDomain(direction));
                 });
 
