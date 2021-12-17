@@ -7288,7 +7288,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
-      "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * <ul>\n * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li>\n * </ul> */",
+      "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * \n *   - `'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n *   - `'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n *   - `'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n *   -`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li> */",
       "type": { "returnType": "FilterButtonType[]", "optional": true }
     },
     "closeOnApply": {
@@ -7425,7 +7425,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
-      "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * <ul>\n * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li>\n * </ul> */",
+      "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * \n *   - `'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n *   - `'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n *   - `'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n *   -`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li> */",
       "type": { "returnType": "FilterButtonType[]", "optional": true }
     },
     "closeOnApply": {
@@ -7486,7 +7486,7 @@
   "FilterButtonType": {},
   "IProvidedFilterParams": {
     "buttons": {
-      "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * <ul>\n * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li>\n * </ul> */",
+      "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * \n *   - `'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n *   - `'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n *   - `'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n *   -`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li> */",
       "type": { "returnType": "FilterButtonType[]", "optional": true }
     },
     "closeOnApply": {
@@ -7639,7 +7639,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
-      "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * <ul>\n * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li>\n * </ul> */",
+      "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * \n *   - `'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n *   - `'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n *   - `'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n *   -`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li> */",
       "type": { "returnType": "FilterButtonType[]", "optional": true }
     },
     "closeOnApply": {
@@ -7782,7 +7782,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
-      "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * <ul>\n * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li>\n * </ul> */",
+      "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * \n *   - `'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n *   - `'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n *   - `'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n *   -`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li> */",
       "type": { "returnType": "FilterButtonType[]", "optional": true }
     },
     "closeOnApply": {
@@ -7962,7 +7962,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "buttons": {
-      "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * <ul>\n * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li>\n * </ul> */",
+      "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * \n *   - `'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n *   - `'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n *   - `'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n *   -`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li> */",
       "type": { "returnType": "FilterButtonType[]", "optional": true }
     },
     "closeOnApply": {
@@ -14220,7 +14220,7 @@
       "type": { "returnType": "'mac' | 'windows'", "optional": true }
     },
     "buttons": {
-      "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * <ul>\n * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li>\n * </ul> */",
+      "description": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * \n *   - `'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n *   - `'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n *   - `'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n *   -`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li> */",
       "type": { "returnType": "FilterButtonType[]", "optional": true }
     },
     "closeOnApply": {
