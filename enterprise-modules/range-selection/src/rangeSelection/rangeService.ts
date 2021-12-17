@@ -572,11 +572,17 @@ export class RangeService extends BeanStub implements IRangeService {
             this.removeAllCellRanges(true);
         }
 
+        // The DragService used by the this service (RangeService), automatically adds a `mousemove`
+        // listener the document of the page that will then call `onDragging`. If you are in a shadow DOM
+        // DOM elements outside your component's wrapper will be inaccessible to you, so here, we add a 
+        // temporary `mousemove` listener to the gridPanel to be able to update the last hovered cell.
         this.cellHoverListener = this.addManagedListener(
             this.ctrlsService.getGridCtrl().getGui(),
             'mousemove',
             this.updateValuesOnMove.bind(this)
         );
+        // This is the mouse start event, so we need to call `updateValuesOnMove` 
+        // manually once to get the necessary variables initiated.
         this.updateValuesOnMove(mouseEvent);
 
         if (!this.lastCellHovered) { return; }
