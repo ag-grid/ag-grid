@@ -10,7 +10,7 @@ The [Provided Filters](/filter-provided/) and [Simple Filters](/filter-provided-
 
 Number Filters are configured though the `filterParams` attribute of the column definition. All of the parameters from Provided Filters are available:
 
-<interface-documentation interfaceName='IProvidedFilterParams' names='["buttons","closeOnApply","debounceMs","readOnly"]' config='{"description":""}'></interface-documentation>
+<interface-documentation interfaceName='IProvidedFilterParams' names='["buttons","closeOnApply","debounceMs","readOnly"]' config='{"description":""}' overrideSrc="filter-provided/resources/provided-filters.json"></interface-documentation>
 
 In addition, the following parameters are also available for number filters:
 
