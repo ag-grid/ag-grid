@@ -234,6 +234,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
     });
 
     // For React we need to identify the external dependencies for callbacks to prevent stale closures
+    const GLOBAL_DEPS = new Set(['console', 'document'])
     tsCollectors.push({
         matches: node => tsNodeIsTopLevelFunction(node),
         apply: (bindings, node: ts.SignatureDeclaration) => {
@@ -250,10 +251,12 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
                 const isVariable = allVariables.has(id);
                 // Let's assume that all caps are constants so should be ignored, i.e KEY_UP
                 const isCapsConst = id === id.toUpperCase();
-                return !isVariable && !isCapsConst;
+                return !isVariable && !isCapsConst && !GLOBAL_DEPS.has(id);
             });
-            bindings.callbackDependencies[node.name.getText()] = allDeps;
-            // console.log(bindings.callbackDependencies)
+            if (allDeps.length > 0) {
+                bindings.callbackDependencies[node.name.getText()] = [...new Set(allDeps)];
+                console.log(bindings.callbackDependencies)
+            }
         }
     });
 
