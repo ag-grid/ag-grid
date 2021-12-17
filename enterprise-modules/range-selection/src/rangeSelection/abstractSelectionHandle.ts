@@ -16,7 +16,8 @@ import {
     _,
     SelectionHandleType,
     NavigationService,
-    CtrlsService
+    CtrlsService,
+    CellPositionUtils
 } from "@ag-grid-community/core";
 import { RangeService } from "./rangeService";
 
@@ -30,6 +31,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
     @Autowired("cellNavigationService") protected cellNavigationService: CellNavigationService;
     @Autowired("navigationService") protected navigationService: NavigationService;
     @Autowired('rowPositionUtils') protected rowPositionUtils: RowPositionUtils;
+    @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;
     @Autowired('ctrlsService') protected ctrlsService: CtrlsService;
 
     private cellCtrl: CellCtrl;
@@ -149,7 +151,7 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
     protected updateValuesOnMove(e: MouseEvent) {
         const cell = this.mouseEventService.getCellPositionForEvent(e);
 
-        if (cell === this.lastCellHovered) { return; }
+        if (!cell || (this.lastCellHovered && this.cellPositionUtils.equals(cell, this.lastCellHovered))) { return; }
 
         this.lastCellHovered = cell;
         this.changedCalculatedValues = true;
