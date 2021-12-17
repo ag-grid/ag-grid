@@ -224,7 +224,7 @@ export function tsNodeIsTopLevelFunction(node: any): boolean {
  */
 export function findAllVariables(node) {
     let allVariables = [];
-    if (ts.isVariableDeclaration(node)) {
+    if (ts.isVariableDeclaration(node) || ts.isClassDeclaration(node)) {
         allVariables.push(node.name.getText());
     }
     ts.forEachChild(node, n => {
@@ -251,10 +251,12 @@ function getLowestExpression(exp: any) {
  * Find all the properties accessed in this node. 
  */
 export function findAllAccessedProperties(node) {
-
     let properties = [];
     if (ts.isIdentifier(node)) {
-        properties.push(node.getText());
+        const property = node.getText();
+        if (property !== 'undefined' && property !== 'null') {
+            properties.push(node.getText());
+        }
     } else if (ts.isCallExpression(node) || ts.isPropertyAccessExpression(node)) {
         // When there are chained accesses we need to recurse to the lowest identifier as this is the first in the statement,
         // and will be the true accessed variable.
@@ -280,6 +282,9 @@ export function findAllAccessedProperties(node) {
         if (node.initializer) {
             properties = [...properties, ...findAllAccessedProperties(node.initializer)];
         }
+    }
+    else if (ts.isClassDeclaration(node)) {
+        // Do nothing for Class declarations as this is likely a cell renderer setup
     }
     else {
         // Recurse down the tree looking for more accessed properties

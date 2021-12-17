@@ -255,7 +255,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
             });
             if (allDeps.length > 0) {
                 bindings.callbackDependencies[node.name.getText()] = [...new Set(allDeps)];
-                console.log(bindings.callbackDependencies)
+                //console.log(bindings.callbackDependencies)
             }
         }
     });
