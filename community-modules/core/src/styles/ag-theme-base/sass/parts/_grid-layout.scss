@@ -153,6 +153,10 @@
         padding: ag-param(cell-vertical-padding) ag-param(cell-horizontal-padding) - 1px;
     }
 
+    .ag-cell-inline-editing > .ag-cell-wrapper {
+        height: 100%;
+    }
+
     .ag-row-dragging {
         cursor: move;
         opacity: 0.5;
