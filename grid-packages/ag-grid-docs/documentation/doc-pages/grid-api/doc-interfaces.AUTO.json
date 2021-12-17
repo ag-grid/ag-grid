@@ -12830,7 +12830,7 @@
   },
   "IMultiFilterDef": {
     "display": {
-      "description": "/** Configures how the filter is shown in the Multi Filter. See\n * [Display Style](https://build.ag-grid.com/javascript-data-grid/filter-multi/#display-style).\n * \n * Default: `inline` */",
+      "description": "/** Configures how the filter is shown in the Multi Filter.\n * Default: `inline` */",
       "type": {
         "returnType": "'inline' | 'accordion' | 'subMenu'",
         "optional": true
@@ -12871,7 +12871,7 @@
       "type": { "returnType": "IMultiFilterDef[]", "optional": true }
     },
     "readOnly": {
-      "description": "/** If true, all UI inputs managed by this filter are for display only, and the filter can only\n * be affected by API calls. Does NOT affect child filters, they need to be individually\n * configured with `readOnly` where applicable. See\n * [Read-only Filter UI](/filter-api/#read-only-filter-ui).\n * \n * Default: `false` */",
+      "description": "/** If true, all UI inputs managed by this filter are for display only, and the filter can only\n * be affected by API calls. Does NOT affect child filters, they need to be individually\n * configured with `readOnly` where applicable.\n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "column": {

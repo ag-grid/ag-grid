@@ -7368,7 +7368,7 @@
       "floatingFilterComponentParams?": "any"
     },
     "docs": {
-      "display?": "/** Configures how the filter is shown in the Multi Filter. See\n * [Display Style](https://build.ag-grid.com/javascript-data-grid/filter-multi/#display-style).\n * \n * Default: `inline` */",
+      "display?": "/** Configures how the filter is shown in the Multi Filter.\n * Default: `inline` */",
       "title?": "/** The title to be used when a filter is displayed inside a sub-menu or accordion. */",
       "filter?": "/** Child filter component to use inside the Multi Filter. */",
       "filterFramework?": "/** Child filter component to use inside the Multi Filter. */",
@@ -7396,7 +7396,7 @@
     },
     "docs": {
       "filters?": "/** An array of filter definition objects. */",
-      "readOnly?": "/** If true, all UI inputs managed by this filter are for display only, and the filter can only\n * be affected by API calls. Does NOT affect child filters, they need to be individually\n * configured with `readOnly` where applicable. See\n * [Read-only Filter UI](/filter-api/#read-only-filter-ui).\n * \n * Default: `false` */",
+      "readOnly?": "/** If true, all UI inputs managed by this filter are for display only, and the filter can only\n * be affected by API calls. Does NOT affect child filters, they need to be individually\n * configured with `readOnly` where applicable.\n * Default: `false` */",
       "column": "/** The column this filter is for. */",
       "colDef": "/** The column definition for the column. */",
       "rowModel": "/** The row model, helpful for looking up data values if needed.\n * If the filter needs to know which rows are\n * a) in the table,\n * b) currently visible (i.e. not already filtered),\n * c) which groups,\n * d) what order - all of this can be read from the rowModel. */",

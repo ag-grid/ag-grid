@@ -10,6 +10,12 @@
                 ],
                 "include": []
             }
+        },
+        "readOnly": {
+            "more": {
+                "url": "/filter-api/#read-only-filter-ui",
+                "name": "Read-only Filter UI"
+            }
         }
     },
     "IMultiFilterDef": {
@@ -27,6 +33,12 @@
                     "IFloatingFilterComp"
                 ],
                 "include": []
+            }
+        },
+        "display": {
+            "more": {
+                "url": "/filter-multi/#display-style",
+                "name": "Display Style"
             }
         }
     },

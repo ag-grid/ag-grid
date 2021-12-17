@@ -20,16 +20,15 @@ export interface IProvidedFilterParams extends IFilterParams {
     /**
      * Specifies the buttons to be shown in the filter, in the order they should be displayed in.
      * The options are:
-     * <ul>
-     * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user
+     * 
+     *  - `'apply'`: If the Apply button is present, the filter is only applied after the user
      *     hits the Apply button.</li>
-     * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing
+     *  - `'clear'`: The Clear button will clear the (form) details of the filter without removing
      *      any active filters on the column.</li>
-     * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters
+     *  - `'reset'`: The Reset button will clear the details of the filter and any active filters
      *     on that column.</li>
-     * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter
+     *  -`'cancel'`: The Cancel button will discard any changes that have been made to the filter
      *     in the UI, restoring the applied model.</li>
-     * </ul>
      */
     buttons?: FilterButtonType[];
     /**
@@ -128,7 +127,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     }
 
     // override
-    protected handleKeyDown(e: KeyboardEvent): void {}
+    protected handleKeyDown(e: KeyboardEvent): void { }
 
     public abstract getModelFromUi(): M | null;
 
@@ -397,7 +396,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     }
 
     protected getCellValue(rowNode: RowNode): V {
-        const {api, colDef, column, columnApi, context} = this.providedFilterParams;
+        const { api, colDef, column, columnApi, context } = this.providedFilterParams;
         return this.providedFilterParams.valueGetter({
             api,
             colDef,
