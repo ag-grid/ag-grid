@@ -236,6 +236,17 @@ export function findAllVariables(node) {
     return allVariables;
 }
 
+function getLowestExpression(exp: any) {
+    let hasExpression = true;
+    while (hasExpression) {
+        hasExpression = exp.expression;
+        if (hasExpression) {
+            exp = exp.expression as any;
+        }
+    }
+    return exp;
+}
+
 /**
  * Find all the properties accessed in this node. 
  */
@@ -248,29 +259,16 @@ export function findAllAccessedProperties(node) {
         // When there are chained accesses we need to recurse to the lowest identifier as this is the first in the statement,
         // and will be the true accessed variable.
         // i.e gridOptions.api!.getModel().getRowCount() we need to recurse down the tree to extract gridOptions
-        let exp = node.expression as any;
-        let hasExpression = true;
-        while (!!exp) {
-            hasExpression = exp.expression;
-            if (hasExpression) {
-                exp = exp.expression as any;
-            }
-        }
+        const exp = getLowestExpression(node.expression);
         properties.push(exp.getText())
     }
     else if (ts.isVariableDeclaration(node)) {
         // get lowest identifier as this is the first in the statement
         // i.e var nextHeader = params.nextHeaderPosition 
         // we need to recurse down the initializer tree to extract params and not nextHeaderPosition
-        let exp = node.initializer as any;
-        let hasExpression = !!exp;
-        while (hasExpression) {
-            hasExpression = exp.expression;
-            if (hasExpression) {
-                exp = exp.expression as any;
-            }
-        }
-        if (exp) {
+        let init = node.initializer as any;
+        if (init) {
+            const exp = getLowestExpression(init);
             properties = [...properties, ...findAllAccessedProperties(exp)];
         }
     }

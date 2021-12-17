@@ -244,16 +244,16 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
                     allVariables.add(p.name.getText())
                 })
             }
-
-            const allDeps = findAllAccessedProperties((node as any).body).filter((id: string) => {
+            const deps = findAllAccessedProperties((node as any).body);
+            const allDeps = deps.filter((id: string) => {
                 // Ignore locally defined variables
                 const isVariable = allVariables.has(id);
                 // Let's assume that all caps are constants so should be ignored, i.e KEY_UP
                 const isCapsConst = id === id.toUpperCase();
                 return !isVariable && !isCapsConst;
             });
-            bindings.callbackDependencies.push({ name: node.name.getText(), deps: allDeps })
-            //console.log(bindings.callbackDependencies)
+            bindings.callbackDependencies[node.name.getText()] = allDeps;
+            // console.log(bindings.callbackDependencies)
         }
     });
 
@@ -702,7 +702,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
             instanceMethods: [],
             externalEventHandlers: [],
             utils: [],
-            callbackDependencies: []
+            callbackDependencies: {}
         },
         tsCollectors
     );
