@@ -97,5 +97,5 @@ export const getValueType = (value: string) => {
 
 export const convertFunctionToConstCallback = (code: string, callbackDependencies: {}) => {
     const functionName = getFunctionName(code);
-    return `${code.replace(/^function\s+([^\(\s]+)\s*\(([^\)]*)\)/, 'const $1 = useCallback(($2) =>')}, [${callbackDependencies[functionName]}])`;
+    return `${code.replace(/function\s+([^\(\s]+)\s*\(([^\)]*)\)/, 'const $1 = useCallback(($2) =>')}, [${callbackDependencies[functionName]}])`;
 }
