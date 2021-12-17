@@ -27,7 +27,7 @@ export interface IProvidedFilterParams extends IFilterParams {
      *      any active filters on the column.</li>
      *  - `'reset'`: The Reset button will clear the details of the filter and any active filters
      *     on that column.</li>
-     *  -`'cancel'`: The Cancel button will discard any changes that have been made to the filter
+     *  - `'cancel'`: The Cancel button will discard any changes that have been made to the filter
      *     in the UI, restoring the applied model.</li>
      */
     buttons?: FilterButtonType[];
