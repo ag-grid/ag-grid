@@ -262,7 +262,7 @@ var LicenseManager = /** @class */ (function (_super) {
         this.watermarkMessage = "License Expired";
     };
     var LicenseManager_1;
-    LicenseManager.RELEASE_INFORMATION = 'MTYzNjkxNzQ5MjczNA==';
+    LicenseManager.RELEASE_INFORMATION = 'MTYzOTc0ODU2MzM4MA==';
     __decorate([
         core_1.Autowired('md5')
     ], LicenseManager.prototype, "md5", void 0);
