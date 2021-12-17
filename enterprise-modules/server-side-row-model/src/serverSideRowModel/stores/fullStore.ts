@@ -167,7 +167,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
         }
 
         const defaultId = this.prefixId(this.nodeIdSequence.next());
-        this.blockUtils.setDataIntoRowNode(rowNode, data, defaultId);
+        this.blockUtils.setDataIntoRowNode(rowNode, data, defaultId, undefined);
         this.nodeManager.addRowNode(rowNode);
 
         this.blockUtils.checkOpenByDefault(rowNode);

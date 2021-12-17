@@ -357,8 +357,30 @@ var PartialStore = /** @class */ (function (_super) {
                 nextRowTop = _this.cacheTopPixel;
                 nextRowIndex = _this.displayIndexStart;
             }
+            // we start at the last loaded block before this block, and go down
+            // block by block, adding in the block sizes (using cached sizes if available)
+            // until we get to a block that does should have the pixel
+            var blockSize = _this.storeParams.cacheBlockSize;
+            var defaultBlockHeight = _this.defaultRowHeight * blockSize;
+            var nextBlockId = previousBlock ? (previousBlock.getId() + 1) : 0;
+            var getBlockDetails = function (id) {
+                var cachedBlockHeight = _this.getCachedBlockHeight(id);
+                var blockHeight = cachedBlockHeight != null ? cachedBlockHeight : defaultBlockHeight;
+                var pixelInBlock = pixel <= (blockHeight + nextRowTop);
+                return {
+                    height: blockHeight, pixelInBlock: pixelInBlock
+                };
+            };
+            var blockDetails = getBlockDetails(nextBlockId);
+            while (!blockDetails.pixelInBlock) {
+                nextRowTop += blockDetails.height;
+                nextRowIndex += blockSize;
+                nextBlockId++;
+                blockDetails = getBlockDetails(nextBlockId);
+            }
             var pixelsBetween = pixel - nextRowTop;
-            var rowsBetween = (pixelsBetween / _this.defaultRowHeight) | 0;
+            var rowHeight = blockDetails.height / blockSize;
+            var rowsBetween = Math.floor(pixelsBetween / rowHeight) | 0;
             return nextRowIndex + rowsBetween;
         };
         var result = this.findBlockAndExecute(matchBlockFunc, blockFoundFunc, blockNotFoundFunc);
@@ -534,6 +556,9 @@ var PartialStore = /** @class */ (function (_super) {
             cacheBlockSize: this.storeParams.cacheBlockSize
         });
         this.forEachChildStoreShallow(function (childStore) { return childStore.addStoreStates(result); });
+    };
+    PartialStore.prototype.getCachedBlockHeight = function (blockNumber) {
+        return this.blockHeights[blockNumber];
     };
     PartialStore.prototype.createBlock = function (blockNumber, displayIndex, nextRowTop) {
         var block = this.createBean(new partialStoreBlock_1.PartialStoreBlock(blockNumber, this.parentRowNode, this.ssrmParams, this.storeParams, this));

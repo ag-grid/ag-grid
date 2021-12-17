@@ -156,14 +156,23 @@ var PartialStoreBlock = /** @class */ (function (_super) {
         var startRow = this.getId() * this.storeParams.cacheBlockSize;
         var endRow = Math.min(startRow + this.storeParams.cacheBlockSize, storeRowCount);
         var rowsToCreate = endRow - startRow;
+        var cachedBlockHeight = this.parentStore.getCachedBlockHeight(this.getId());
+        var cachedRowHeight = cachedBlockHeight ? Math.round(cachedBlockHeight / rowsToCreate) : undefined;
         for (var i = 0; i < rowsToCreate; i++) {
-            var rowNode = this.blockUtils.createRowNode({ field: this.groupField, group: this.groupLevel, leafGroup: this.leafGroup,
-                level: this.level, parent: this.parentRowNode, rowGroupColumn: this.rowGroupColumn });
+            var rowNode = this.blockUtils.createRowNode({
+                field: this.groupField,
+                group: this.groupLevel,
+                leafGroup: this.leafGroup,
+                level: this.level,
+                parent: this.parentRowNode,
+                rowGroupColumn: this.rowGroupColumn,
+                rowHeight: cachedRowHeight
+            });
             var dataLoadedForThisRow = i < rows.length;
             if (dataLoadedForThisRow) {
                 var data = rows[i];
                 var defaultId = this.prefixId(this.startRow + i);
-                this.blockUtils.setDataIntoRowNode(rowNode, data, defaultId);
+                this.blockUtils.setDataIntoRowNode(rowNode, data, defaultId, cachedRowHeight);
                 var newId = rowNode.id;
                 this.parentStore.removeDuplicateNode(newId);
                 this.nodeManager.addRowNode(rowNode);

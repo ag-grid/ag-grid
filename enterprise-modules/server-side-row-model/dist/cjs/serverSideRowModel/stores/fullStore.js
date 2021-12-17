@@ -104,7 +104,7 @@ var FullStore = /** @class */ (function (_super) {
             this.allRowNodes.push(rowNode);
         }
         var defaultId = this.prefixId(this.nodeIdSequence.next());
-        this.blockUtils.setDataIntoRowNode(rowNode, data, defaultId);
+        this.blockUtils.setDataIntoRowNode(rowNode, data, defaultId, undefined);
         this.nodeManager.addRowNode(rowNode);
         this.blockUtils.checkOpenByDefault(rowNode);
         this.allNodesMap[rowNode.id] = rowNode;

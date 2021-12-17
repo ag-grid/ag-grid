@@ -35,11 +35,12 @@ export class BlockUtils extends BeanStub {
     }
 
     public createRowNode(params: {group: boolean, leafGroup: boolean, level: number,
-        parent: RowNode, field: string, rowGroupColumn: Column}): RowNode {
+        parent: RowNode, field: string, rowGroupColumn: Column, rowHeight?: number}): RowNode {
 
         const rowNode = new RowNode(this.beans);
 
-        rowNode.setRowHeight(this.rowHeight);
+        const rowHeight = params.rowHeight!=null ? params.rowHeight : this.rowHeight;
+        rowNode.setRowHeight(rowHeight);
 
         rowNode.group = params.group;
         rowNode.leafGroup = params.leafGroup;
@@ -79,7 +80,7 @@ export class BlockUtils extends BeanStub {
         }
     }
 
-    public setDataIntoRowNode(rowNode: RowNode, data: any,  defaultId: string): void {
+    public setDataIntoRowNode(rowNode: RowNode, data: any,  defaultId: string, cachedRowHeight: number | undefined): void {
         rowNode.stub = false;
 
         if (_.exists(data)) {
@@ -129,7 +130,7 @@ export class BlockUtils extends BeanStub {
         // this needs to be done AFTER setGroupDataIntoRowNode(), as the height can depend on the group data
         // getting set, if it's a group node and colDef.autoHeight=true
         if (_.exists(data)) {
-            rowNode.setRowHeight(this.gridOptionsWrapper.getRowHeightForNode(rowNode).height);
+            rowNode.setRowHeight(this.gridOptionsWrapper.getRowHeightForNode(rowNode, false, cachedRowHeight).height);
         }
     }
 

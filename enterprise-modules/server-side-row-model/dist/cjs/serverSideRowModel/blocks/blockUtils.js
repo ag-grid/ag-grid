@@ -32,7 +32,8 @@ var BlockUtils = /** @class */ (function (_super) {
     };
     BlockUtils.prototype.createRowNode = function (params) {
         var rowNode = new core_1.RowNode(this.beans);
-        rowNode.setRowHeight(this.rowHeight);
+        var rowHeight = params.rowHeight != null ? params.rowHeight : this.rowHeight;
+        rowNode.setRowHeight(rowHeight);
         rowNode.group = params.group;
         rowNode.leafGroup = params.leafGroup;
         rowNode.level = params.level;
@@ -65,7 +66,7 @@ var BlockUtils = /** @class */ (function (_super) {
             this.nodeManager.removeNode(rowNode);
         }
     };
-    BlockUtils.prototype.setDataIntoRowNode = function (rowNode, data, defaultId) {
+    BlockUtils.prototype.setDataIntoRowNode = function (rowNode, data, defaultId, cachedRowHeight) {
         rowNode.stub = false;
         if (core_1._.exists(data)) {
             rowNode.setDataAndId(data, defaultId);
@@ -112,7 +113,7 @@ var BlockUtils = /** @class */ (function (_super) {
         // this needs to be done AFTER setGroupDataIntoRowNode(), as the height can depend on the group data
         // getting set, if it's a group node and colDef.autoHeight=true
         if (core_1._.exists(data)) {
-            rowNode.setRowHeight(this.gridOptionsWrapper.getRowHeightForNode(rowNode).height);
+            rowNode.setRowHeight(this.gridOptionsWrapper.getRowHeightForNode(rowNode, false, cachedRowHeight).height);
         }
     };
     BlockUtils.prototype.setChildCountIntoRowNode = function (rowNode) {

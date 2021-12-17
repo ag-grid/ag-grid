@@ -15,10 +15,11 @@ export declare class BlockUtils extends BeanStub {
         parent: RowNode;
         field: string;
         rowGroupColumn: Column;
+        rowHeight?: number;
     }): RowNode;
     destroyRowNodes(rowNodes: RowNode[]): void;
     destroyRowNode(rowNode: RowNode): void;
-    setDataIntoRowNode(rowNode: RowNode, data: any, defaultId: string): void;
+    setDataIntoRowNode(rowNode: RowNode, data: any, defaultId: string, cachedRowHeight: number | undefined): void;
     private setChildCountIntoRowNode;
     private setGroupDataIntoRowNode;
     clearDisplayIndex(rowNode: RowNode): void;

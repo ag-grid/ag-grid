@@ -58,6 +58,7 @@ export declare class PartialStore extends BeanStub implements IServerSideStore {
     getRowUsingDisplayIndex(displayRowIndex: number, dontCreateBlock?: boolean): RowNode | undefined;
     getTopLevelRowDisplayedIndex(topLevelIndex: number): number;
     addStoreStates(result: ServerSideStoreState[]): void;
+    getCachedBlockHeight(blockNumber: number): number | undefined;
     private createBlock;
     getDisplayIndexEnd(): number | undefined;
     isDisplayIndexInStore(displayIndex: number): boolean;

@@ -562,7 +562,8 @@ var BlockUtils = /** @class */ (function (_super) {
     };
     BlockUtils.prototype.createRowNode = function (params) {
         var rowNode = new core.RowNode(this.beans);
-        rowNode.setRowHeight(this.rowHeight);
+        var rowHeight = params.rowHeight != null ? params.rowHeight : this.rowHeight;
+        rowNode.setRowHeight(rowHeight);
         rowNode.group = params.group;
         rowNode.leafGroup = params.leafGroup;
         rowNode.level = params.level;
@@ -595,7 +596,7 @@ var BlockUtils = /** @class */ (function (_super) {
             this.nodeManager.removeNode(rowNode);
         }
     };
-    BlockUtils.prototype.setDataIntoRowNode = function (rowNode, data, defaultId) {
+    BlockUtils.prototype.setDataIntoRowNode = function (rowNode, data, defaultId, cachedRowHeight) {
         rowNode.stub = false;
         if (core._.exists(data)) {
             rowNode.setDataAndId(data, defaultId);
@@ -642,7 +643,7 @@ var BlockUtils = /** @class */ (function (_super) {
         // this needs to be done AFTER setGroupDataIntoRowNode(), as the height can depend on the group data
         // getting set, if it's a group node and colDef.autoHeight=true
         if (core._.exists(data)) {
-            rowNode.setRowHeight(this.gridOptionsWrapper.getRowHeightForNode(rowNode).height);
+            rowNode.setRowHeight(this.gridOptionsWrapper.getRowHeightForNode(rowNode, false, cachedRowHeight).height);
         }
     };
     BlockUtils.prototype.setChildCountIntoRowNode = function (rowNode) {
@@ -1483,14 +1484,23 @@ var PartialStoreBlock = /** @class */ (function (_super) {
         var startRow = this.getId() * this.storeParams.cacheBlockSize;
         var endRow = Math.min(startRow + this.storeParams.cacheBlockSize, storeRowCount);
         var rowsToCreate = endRow - startRow;
+        var cachedBlockHeight = this.parentStore.getCachedBlockHeight(this.getId());
+        var cachedRowHeight = cachedBlockHeight ? Math.round(cachedBlockHeight / rowsToCreate) : undefined;
         for (var i = 0; i < rowsToCreate; i++) {
-            var rowNode = this.blockUtils.createRowNode({ field: this.groupField, group: this.groupLevel, leafGroup: this.leafGroup,
-                level: this.level, parent: this.parentRowNode, rowGroupColumn: this.rowGroupColumn });
+            var rowNode = this.blockUtils.createRowNode({
+                field: this.groupField,
+                group: this.groupLevel,
+                leafGroup: this.leafGroup,
+                level: this.level,
+                parent: this.parentRowNode,
+                rowGroupColumn: this.rowGroupColumn,
+                rowHeight: cachedRowHeight
+            });
             var dataLoadedForThisRow = i < rows.length;
             if (dataLoadedForThisRow) {
                 var data = rows[i];
                 var defaultId = this.prefixId(this.startRow + i);
-                this.blockUtils.setDataIntoRowNode(rowNode, data, defaultId);
+                this.blockUtils.setDataIntoRowNode(rowNode, data, defaultId, cachedRowHeight);
                 var newId = rowNode.id;
                 this.parentStore.removeDuplicateNode(newId);
                 this.nodeManager.addRowNode(rowNode);
@@ -1968,8 +1978,30 @@ var PartialStore = /** @class */ (function (_super) {
                 nextRowTop = _this.cacheTopPixel;
                 nextRowIndex = _this.displayIndexStart;
             }
+            // we start at the last loaded block before this block, and go down
+            // block by block, adding in the block sizes (using cached sizes if available)
+            // until we get to a block that does should have the pixel
+            var blockSize = _this.storeParams.cacheBlockSize;
+            var defaultBlockHeight = _this.defaultRowHeight * blockSize;
+            var nextBlockId = previousBlock ? (previousBlock.getId() + 1) : 0;
+            var getBlockDetails = function (id) {
+                var cachedBlockHeight = _this.getCachedBlockHeight(id);
+                var blockHeight = cachedBlockHeight != null ? cachedBlockHeight : defaultBlockHeight;
+                var pixelInBlock = pixel <= (blockHeight + nextRowTop);
+                return {
+                    height: blockHeight, pixelInBlock: pixelInBlock
+                };
+            };
+            var blockDetails = getBlockDetails(nextBlockId);
+            while (!blockDetails.pixelInBlock) {
+                nextRowTop += blockDetails.height;
+                nextRowIndex += blockSize;
+                nextBlockId++;
+                blockDetails = getBlockDetails(nextBlockId);
+            }
             var pixelsBetween = pixel - nextRowTop;
-            var rowsBetween = (pixelsBetween / _this.defaultRowHeight) | 0;
+            var rowHeight = blockDetails.height / blockSize;
+            var rowsBetween = Math.floor(pixelsBetween / rowHeight) | 0;
             return nextRowIndex + rowsBetween;
         };
         var result = this.findBlockAndExecute(matchBlockFunc, blockFoundFunc, blockNotFoundFunc);
@@ -2145,6 +2177,9 @@ var PartialStore = /** @class */ (function (_super) {
             cacheBlockSize: this.storeParams.cacheBlockSize
         });
         this.forEachChildStoreShallow(function (childStore) { return childStore.addStoreStates(result); });
+    };
+    PartialStore.prototype.getCachedBlockHeight = function (blockNumber) {
+        return this.blockHeights[blockNumber];
     };
     PartialStore.prototype.createBlock = function (blockNumber, displayIndex, nextRowTop) {
         var block = this.createBean(new PartialStoreBlock(blockNumber, this.parentRowNode, this.ssrmParams, this.storeParams, this));
@@ -2348,7 +2383,7 @@ var FullStore = /** @class */ (function (_super) {
             this.allRowNodes.push(rowNode);
         }
         var defaultId = this.prefixId(this.nodeIdSequence.next());
-        this.blockUtils.setDataIntoRowNode(rowNode, data, defaultId);
+        this.blockUtils.setDataIntoRowNode(rowNode, data, defaultId, undefined);
         this.nodeManager.addRowNode(rowNode);
         this.blockUtils.checkOpenByDefault(rowNode);
         this.allNodesMap[rowNode.id] = rowNode;

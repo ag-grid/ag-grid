@@ -22309,7 +22309,7 @@ var GridOptionsWrapper = /** @class */ (function () {
         // used for pinned rows and the number for the body rows.
         if (typeof this.gridOptions.getRowHeight === 'function') {
             if (allowEstimate) {
-                return { height: this.getDefaultRowHeight(), estimated: true };
+                return { height: defaultRowHeight, estimated: true };
             }
             var params = {
                 node: rowNode,
