@@ -21,14 +21,10 @@ export interface IProvidedFilterParams extends IFilterParams {
      * Specifies the buttons to be shown in the filter, in the order they should be displayed in.
      * The options are:
      * 
-     *  - `'apply'`: If the Apply button is present, the filter is only applied after the user
-     *     hits the Apply button.</li>
-     *  - `'clear'`: The Clear button will clear the (form) details of the filter without removing
-     *      any active filters on the column.</li>
-     *  - `'reset'`: The Reset button will clear the details of the filter and any active filters
-     *     on that column.</li>
-     *  - `'cancel'`: The Cancel button will discard any changes that have been made to the filter
-     *     in the UI, restoring the applied model.</li>
+     *  - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.
+     *  - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.
+     *  - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.
+     *  - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model.
      */
     buttons?: FilterButtonType[];
     /**
