@@ -57,6 +57,7 @@ While navigation the floating filters header with the keyboard pressing left/rig
 
 The example below has grouped headers, headers and floating filters to demonstrate the features mentioned above:
 
+<grid-example title='Keyboard Navigation' name='grid-keyboard-navigation' type='generated' options='{ "enterprise": true }'></grid-example>
 
 ## Custom Navigation
 
@@ -165,6 +166,7 @@ In the following example there is an input box provided to test tabbing into the
 - When the first header is out of view due to horizontal scroll, tabbing into the grid will cause the grid to scroll to focus the first header.
 - Shift-Tabbing out third input (below the grid) will have the default focus behaviour, which is to focus the last element of the grid. This element will vary depending on how many features have been enabled (eg. Row Pagination, Tool Panels, etc...).
 
+<grid-example title='Tabbing into the Grid' name='tabbing-into-grid' type='mixed'></grid-example>
 
 ## Keyboard Events
 
@@ -182,6 +184,7 @@ The example below shows processing grid cell keyboard events. The following can 
 - Each time a `cellKeyPress` or `cellKeyDown` is fired, the details of the event are logged to the console.
 - When the user hits <kbd>S</kbd> on a row, the row selection is toggled. This is achieved through the `cellKeyPress` listener.
 
+<grid-example title='Keyboard Events' name='keyboard-events' type='generated' options='{ "enterprise": true }'></grid-example>
 
 ## Suppress Keyboard Events
 
@@ -227,3 +230,4 @@ The example below demonstrates suppressing the following keyboard events:
 - On all headers (excluding country):
     - Navigation is blocked up and down, but navigation left / right is allowed using arrows and <kbd>Tab</kbd>.
 
+<grid-example title='Suppress Keys' name='suppress-keys' type='generated' options='{ "enterprise": true }'></grid-example>
