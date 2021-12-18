@@ -636,7 +636,7 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     public onDragging(mouseEvent: MouseEvent | null): void {
-        if (!this.dragging || !mouseEvent || !this.cellHasChanged) {
+        if (!this.dragging || !mouseEvent) {
             return;
         }
 
@@ -648,6 +648,8 @@ export class RangeService extends BeanStub implements IRangeService {
         const skipVerticalScroll = isMouseAndStartInPinned('top') || isMouseAndStartInPinned('bottom');
 
         this.autoScrollService.check(mouseEvent, skipVerticalScroll!);
+
+        if (!this.cellHasChanged) { return; }
 
         const columns = this.calculateColumnsBetween(this.newestRangeStartCell!.column, cellPosition.column);
 
