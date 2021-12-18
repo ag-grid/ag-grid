@@ -151,12 +151,9 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
         const exportParams: ExcelExportMultipleSheetParams = {
             data: [data],
             fontSize: mergedParams.fontSize,
-            author: mergedParams.author
+            author: mergedParams.author,
+            mimeType: mergedParams.mimeType
         };
-
-        if (mergedParams.mimeType) {
-            exportParams.mimeType = mergedParams.mimeType;
-        }
 
         const packageFile = this.packageFile(exportParams);
 
@@ -177,11 +174,14 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
 
         if (params && params.exportMode === 'xml') { return data; }
 
-        return this.packageFile({
+        const exportParams: ExcelExportMultipleSheetParams = {
             data: [data],
             fontSize: mergedParams.fontSize,
-            author: mergedParams.author
-        });
+            author: mergedParams.author,
+            mimeType: mergedParams.mimeType
+        };
+
+        return this.packageFile(exportParams);
     }
 
     public setFactoryMode(factoryMode: ExcelFactoryMode, exportMode: 'xml' | 'xlsx' = 'xlsx'): void {
