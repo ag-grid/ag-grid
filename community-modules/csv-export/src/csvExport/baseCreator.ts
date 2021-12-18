@@ -31,7 +31,6 @@ export abstract class BaseCreator<T, S extends GridSerializingSession<T>, P exte
     }
 
     public abstract createSerializingSession(params?: P): S;
-    public abstract getMimeType(): string;
     public abstract getDefaultFileName(): string;
     public abstract getDefaultFileExtension(): string;
     public abstract isExportSuppressed(): boolean;

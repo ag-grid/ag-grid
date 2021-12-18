@@ -203,6 +203,7 @@ export interface ExcelExportParams extends ExportParams<ExcelCell[][]> {
     pageSetup?: ExcelSheetPageSetup;
     headerFooterConfig?: ExcelHeaderFooterConfig;
     suppressTextAsCDATA?: boolean;
+    mimeType?: string;
     /** Use to export an image for the gridCell in question. */
     addImageToCell?: (rowIndex: number, column: Column, value: string) => { image: ExcelImage, value?: string } | undefined;
 }
@@ -212,6 +213,7 @@ export interface ExcelExportMultipleSheetParams {
     data: string[];
     fileName?: string;
     fontSize?: number;
+    mimeType?: string;
 }
 
 export interface ExcelHeaderFooterConfig {

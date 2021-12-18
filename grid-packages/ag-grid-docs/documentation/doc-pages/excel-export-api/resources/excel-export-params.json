@@ -78,6 +78,11 @@
             "description": "The Excel document page margins. Relevant for printing.",
             "type": "ExcelSheetMargin"
         },
+        "mimeType": {
+            "default": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "description": "The mimeType of the Excel file. Note that this defaults to `application/vnd.ms-excel` if exportMode is `xml`.",
+            "type": "string"
+        },
         "pageSetup": {
             "description": "Allows you to setup the page orientation and size.",
             "type": "ExcelSheetPageSetup"
@@ -241,6 +246,11 @@
             "default": 11,
             "description": "The default value for the font size of the Excel document.",
             "type": "number"
+        },
+        "mimeType": {
+            "default": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "description": "The mimeType of the Excel file",
+            "type": "string"
         }
     },
     "excelCell": {

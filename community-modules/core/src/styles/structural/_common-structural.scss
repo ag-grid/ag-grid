@@ -662,6 +662,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 
 .ag-cell-inline-editing {
     z-index: 1;
+
+    .ag-cell-wrapper,
     .ag-cell-edit-wrapper,
     .ag-cell-editor,
     .ag-cell-editor .ag-wrapper,

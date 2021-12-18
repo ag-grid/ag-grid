@@ -7002,6 +7002,7 @@
       "pageSetup?": "ExcelSheetPageSetup",
       "headerFooterConfig?": "ExcelHeaderFooterConfig",
       "suppressTextAsCDATA?": "boolean",
+      "mimeType?": "string",
       "addImageToCell?": "(rowIndex: number, column: Column, value: string) => { image: ExcelImage; value?: string; } | undefined",
       "prependContent?": "ExcelCell[][]",
       "appendContent?": "ExcelCell[][]",
@@ -7043,7 +7044,8 @@
       "author?": "string",
       "data": "string[]",
       "fileName?": "string",
-      "fontSize?": "number"
+      "fontSize?": "number",
+      "mimeType?": "string"
     }
   },
   "ExcelHeaderFooterConfig": {

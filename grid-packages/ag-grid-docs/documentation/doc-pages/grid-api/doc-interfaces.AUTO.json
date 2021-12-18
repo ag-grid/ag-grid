@@ -12048,6 +12048,7 @@
     "suppressTextAsCDATA": {
       "type": { "returnType": "boolean", "optional": true }
     },
+    "mimeType": { "type": { "returnType": "string", "optional": true } },
     "addImageToCell": {
       "description": "/** Use to export an image for the gridCell in question. */",
       "type": {
@@ -12154,7 +12155,8 @@
     "author": { "type": { "returnType": "string", "optional": true } },
     "data": { "type": { "returnType": "string[]", "optional": false } },
     "fileName": { "type": { "returnType": "string", "optional": true } },
-    "fontSize": { "type": { "returnType": "number", "optional": true } }
+    "fontSize": { "type": { "returnType": "number", "optional": true } },
+    "mimeType": { "type": { "returnType": "string", "optional": true } }
   },
   "ExcelHeaderFooterConfig": {
     "all": { "type": { "returnType": "ExcelHeaderFooter", "optional": true } },
