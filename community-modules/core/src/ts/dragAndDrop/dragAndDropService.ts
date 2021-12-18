@@ -419,9 +419,9 @@ export class DragAndDropService extends BeanStub {
         let left = event.pageX - 10;
 
         const eDocument = this.gridOptionsWrapper.getDocument();
-        const win = eDocument.defaultView;
-        const windowScrollY = win!.pageYOffset || eDocument.documentElement.scrollTop;
-        const windowScrollX = win!.pageXOffset || eDocument.documentElement.scrollLeft;
+        const win = (eDocument.defaultView || window);
+        const windowScrollY = win.pageYOffset || eDocument.documentElement.scrollTop;
+        const windowScrollX = win.pageXOffset || eDocument.documentElement.scrollLeft;
 
         // check ghost is not positioned outside of the browser
         if (browserWidth > 0 && ((left + ghost.clientWidth) > (browserWidth + windowScrollX))) {

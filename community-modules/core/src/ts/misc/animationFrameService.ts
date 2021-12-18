@@ -176,14 +176,14 @@ export class AnimationFrameService extends BeanStub {
         // it's missing, then we polyfill it with setTimeout()
         const callback = this.executeFrame.bind(this, 60);
         const eDocument = this.gridOptionsWrapper.getDocument();
-        const windowAsAny: any = eDocument.defaultView;
+        const win = (eDocument.defaultView || window) as any;
 
-        if (windowAsAny.requestAnimationFrame) {
-            windowAsAny.requestAnimationFrame(callback);
-        } else if (windowAsAny.webkitRequestAnimationFrame) {
-            windowAsAny.webkitRequestAnimationFrame(callback);
+        if (win.requestAnimationFrame) {
+            win.requestAnimationFrame(callback);
+        } else if (win.webkitRequestAnimationFrame) {
+            win.webkitRequestAnimationFrame(callback);
         } else {
-            windowAsAny.setTimeout(callback, 0);
+            win.setTimeout(callback, 0);
         }
     }
 

@@ -28,8 +28,8 @@ export class WatermarkComp extends Component {
 
     private shouldDisplayWatermark(): boolean {
         const eDocument = this.gridOptionsWrapper.getDocument();
-        const win = eDocument.defaultView;
-        const loc = win!.location;
+        const win = (eDocument.defaultView || window);
+        const loc = win.location;
         const { hostname = '', pathname } = loc;
 
         const isDisplayWatermark = this.licenseManager.isDisplayWatermark();
