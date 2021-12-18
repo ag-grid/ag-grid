@@ -184,14 +184,10 @@ export abstract class AbstractSelectionHandle extends Component implements ISele
 
         if (oldCellComp !== cellCtrl || !_.isVisible(eGui)) {
             this.setCellCtrl(cellCtrl);
-            window.setTimeout(() => {
-                if (this.isAlive()) {
-                    const eParentOfValue = cellCtrl.getComp().getParentOfValue();
-                    if (eParentOfValue) {
-                        eParentOfValue.appendChild(eGui);
-                    }
-                }
-            }, 1);
+            const eParentOfValue = cellCtrl.getComp().getParentOfValue();
+            if (eParentOfValue) {
+                eParentOfValue.appendChild(eGui);
+            }
         }
 
         this.setCellRange(cellRange);
