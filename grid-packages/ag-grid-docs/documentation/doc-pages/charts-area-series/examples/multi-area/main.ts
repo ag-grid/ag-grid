@@ -9,7 +9,7 @@ const options: AgChartOptions = {
   subtitle: {
     text: '2009-2019',
   },
-  data: browserData,
+  data: getData(),
   series: [
     {
       type: 'area',

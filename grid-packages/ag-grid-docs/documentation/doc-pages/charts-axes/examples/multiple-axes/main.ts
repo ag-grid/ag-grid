@@ -4,7 +4,7 @@ import * as agCharts from 'ag-charts-community'
 const options: AgChartOptions = {
   container: document.querySelector('#myChart') as HTMLElement,
   autoSize: true,
-  data: data,
+  data: getData(),
   title: {
     text: 'Cattle Holdings and Beef Exports (UK)',
     fontSize: 18,

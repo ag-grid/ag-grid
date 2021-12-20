@@ -4,22 +4,19 @@ import * as agCharts from 'ag-charts-community'
 const options: AgChartOptions = {
   container: document.getElementById('myChart'),
   title: {
-    text: 'Browser Wars',
+    text: "Apple's revenue by product category",
   },
   subtitle: {
-    text: '2009-2019',
+    text: 'in billion U.S. dollars',
   },
   data: getData(),
   series: [
     {
-      type: 'area',
-      xKey: 'year',
-      yKeys: ['ie', 'firefox', 'safari', 'chrome'],
-      yNames: ['IE', 'Firefox', 'Safari', 'Chrome'],
-      normalizedTo: 1,
-      marker: {
-        enabled: true,
-      },
+      type: 'column',
+      xKey: 'quarter',
+      yKeys: ['iphone', 'mac', 'ipad', 'wearables', 'services'],
+      yNames: ['iPhone', 'Mac', 'iPad', 'Wearables', 'Services'],
+      normalizedTo: 100,
     },
   ],
   axes: [
@@ -27,7 +24,9 @@ const options: AgChartOptions = {
       type: 'number',
       position: 'left',
       label: {
-        format: '.0%',
+        formatter: function (params) {
+          return Math.round(params.value) + '%'
+        },
       },
     },
     {
