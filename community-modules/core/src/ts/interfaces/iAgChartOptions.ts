@@ -511,6 +511,7 @@ export interface AgAreaSeriesLabelOptions extends AgChartLabelOptions {
 export interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
     type?: 'area';
     marker?: AgCartesianSeriesMarker;
+    normalizedTo?: number;
     xKey?: string;
     yKeys?: string[];
     xName?: string;
