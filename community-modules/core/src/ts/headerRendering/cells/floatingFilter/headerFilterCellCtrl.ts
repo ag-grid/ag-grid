@@ -67,7 +67,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
 
         const colDef = this.column.getColDef();
         // const active = !(!(colDef.filter && colDef.floatingFilter) && !(colDef.filterFramework && colDef.floatingFilterComponentFramework));
-        this.active = (!!colDef.filter || !!colDef.filterFramework) && !!colDef.floatingFilter;
+        this.active = (!!colDef.filter || !!colDef.filterFramework || !!colDef.filterComp) && !!colDef.floatingFilter;
 
         this.setupWidth();
         this.setupLeft();
@@ -265,13 +265,10 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
 
         let defaultFloatingFilterType: string | null = null;
 
-        if (typeof def.filter === 'string') {
+        const filter = def.filter!=null ? def.filter : def.filterComp;
+        if (typeof filter === 'string') {
             // will be undefined if not in the map
-            defaultFloatingFilterType = FloatingFilterMapper.getFloatingFilterType(def.filter);
-        } else if (def.filterFramework) {
-            // If filterFramework, then grid is NOT using one of the provided filters, hence no default.
-            // Note: We could combine this with another part of the 'if' statement, however explicitly
-            // having this section makes the code easier to read.
+            defaultFloatingFilterType = FloatingFilterMapper.getFloatingFilterType(filter);
         } else if (def.filter === true) {
             const setFilterModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.SetFilterModule);
             defaultFloatingFilterType = setFilterModuleLoaded ? 'agSetColumnFloatingFilter' : 'agTextColumnFloatingFilter';

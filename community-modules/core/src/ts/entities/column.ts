@@ -270,7 +270,7 @@ export class Column implements IHeaderColumn, IProvidedColumn, IEventEmitter {
     public isFilterAllowed(): boolean {
         // filter defined means it's a string, class or true.
         // if its false, null or undefined then it's false.
-        const filterDefined = !!this.colDef.filter || !!this.colDef.filterFramework;
+        const filterDefined = !!this.colDef.filter || !!this.colDef.filterFramework || this.colDef.filterComp;
         return this.primary && filterDefined;
     }
 
