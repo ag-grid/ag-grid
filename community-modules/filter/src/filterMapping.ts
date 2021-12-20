@@ -18,7 +18,7 @@ export const FILTER_TO_EXPRESSION_TYPE_MAPPING: {[key: string]: Mapping<any>} = 
     agCustomColumnFilterV2: CUSTOM_MAPPING,
 };
 
-function resolveMapping(colDef: ColDef, gridOptions: GridOptions): Mapping<any> {
+function resolveMapping(colDef: ColDef, gridOptions: GridOptions): Mapping<any> | null {
     const filterType =  colDef.filter;
 
     if (typeof filterType !== 'string') { return DEFAULT_MAPPING };
@@ -26,8 +26,9 @@ function resolveMapping(colDef: ColDef, gridOptions: GridOptions): Mapping<any> 
     const mapping = FILTER_TO_EXPRESSION_TYPE_MAPPING[filterType];
     if (mapping) { return mapping; }
 
-    if (gridOptions.customFilterEvaluationModel && gridOptions.customFilterEvaluationModel[filterType]) {
-        return CUSTOM_MAPPING;
+    const customComponents = gridOptions.components || {};
+    if (customComponents[filterType] != null) {
+        return null;
     }
 
     _.doOnce(
@@ -38,9 +39,9 @@ function resolveMapping(colDef: ColDef, gridOptions: GridOptions): Mapping<any> 
 }
 
 export function expressionType(colDef: ColDef, gridOptions: GridOptions): FilterExpression['type'] {
-    return resolveMapping(colDef, gridOptions).type;
+    return resolveMapping(colDef, gridOptions)?.type || 'custom';
 }
 
-export function createComponent(colDef: ColDef, gridOptions: GridOptions): CompType {
-    return resolveMapping(colDef, gridOptions).newComp();
+export function createComponent(colDef: ColDef, gridOptions: GridOptions): CompType | null {
+    return resolveMapping(colDef, gridOptions)?.newComp() || null;
 }

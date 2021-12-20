@@ -433,21 +433,10 @@ export class FilterManager extends BeanStub {
     }
 
     private createFilterInstance(column: Column, $scope: any): AgPromise<IFilterComp> | null {
-        const colDef = column.getColDef();
-
-        let customFilterV2 = false;
-        if (typeof colDef.filter === 'string') {
-            const { customFilterEvaluationModel } = this.gridOptions;
-            customFilterV2 = customFilterEvaluationModel && customFilterEvaluationModel[colDef.filter] != null || false;
-        }
-
-        const defaultFilter = customFilterV2 ? 'agCustomColumnFilterV2' :
-            ModuleRegistry.isRegistered(ModuleNames.SetFilterModule) ? 'agSetColumnFilter' : 'agTextColumnFilter';
-
         let filterInstance: IFilterComp;
 
         const params: IFilterParams = {
-            ...this.createFilterParams(column, colDef, $scope),
+            ...this.createFilterParams(column, column.getColDef(), $scope),
             filterModifiedCallback: () => {
                 const event: FilterModifiedEvent = {
                     type: Events.EVENT_FILTER_MODIFIED,
@@ -464,11 +453,11 @@ export class FilterManager extends BeanStub {
             doesRowPassOtherFilter: node => this.doesRowPassOtherFilters(filterInstance, node),
         };
 
-        const colDefCopy = { ...colDef };
-        if (customFilterV2) {
-            colDefCopy.filter = true;
-        }
-        const compDetails = this.userComponentFactory.getFilterDetails(colDefCopy, params, defaultFilter);
+        const defaultFilter = 'agCustomColumnFilterV2';
+        const colDef = cloneObject(column.getColDef());
+        colDef.filter = defaultFilter;
+        const compDetails = this.userComponentFactory.getFilterDetails(colDef, params, defaultFilter);
+
         if (!compDetails) { return null; }
         const componentPromise = compDetails.newAgStackInstance();
 
