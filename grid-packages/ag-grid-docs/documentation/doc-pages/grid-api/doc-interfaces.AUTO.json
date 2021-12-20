@@ -10254,7 +10254,9 @@
   },
   "AgSeriesMarker": {
     "enabled": { "type": { "returnType": "boolean", "optional": true } },
-    "shape": { "type": { "returnType": "string", "optional": true } },
+    "shape": {
+      "type": { "returnType": "string | (new () => any)", "optional": true }
+    },
     "size": { "type": { "returnType": "number", "optional": true } },
     "maxSize": { "type": { "returnType": "number", "optional": true } },
     "fill": { "type": { "returnType": "string", "optional": true } },
@@ -10296,7 +10298,9 @@
       }
     },
     "enabled": { "type": { "returnType": "boolean", "optional": true } },
-    "shape": { "type": { "returnType": "string", "optional": true } },
+    "shape": {
+      "type": { "returnType": "string | (new () => any)", "optional": true }
+    },
     "size": { "type": { "returnType": "number", "optional": true } },
     "maxSize": { "type": { "returnType": "number", "optional": true } },
     "fill": { "type": { "returnType": "string", "optional": true } },

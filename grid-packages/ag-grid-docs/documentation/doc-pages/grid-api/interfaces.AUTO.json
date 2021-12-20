@@ -5938,7 +5938,7 @@
     "meta": {},
     "type": {
       "enabled?": "boolean",
-      "shape?": "string",
+      "shape?": "string | (new () => any)",
       "size?": "number",
       "maxSize?": "number",
       "fill?": "string",
@@ -5990,7 +5990,7 @@
     "type": {
       "formatter?": "AgCartesianSeriesMarkerFormatter",
       "enabled?": "boolean",
-      "shape?": "string",
+      "shape?": "string | (new () => any)",
       "size?": "number",
       "maxSize?": "number",
       "fill?": "string",

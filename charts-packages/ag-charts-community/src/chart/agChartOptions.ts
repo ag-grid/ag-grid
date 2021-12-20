@@ -371,7 +371,7 @@ export interface AgScatterSeriesTooltipRendererParams extends AgCartesianSeriesT
 
 export interface AgSeriesMarker {
     enabled?: boolean;
-    shape?: string;
+    shape?: string | (new () => any);
     size?: number;
     maxSize?: number;
     fill?: string;
