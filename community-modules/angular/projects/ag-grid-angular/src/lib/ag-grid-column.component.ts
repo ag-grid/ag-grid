@@ -158,8 +158,6 @@ export class AgGridColumn {
     @Input() public editorComp: any;
     /** Params to be passed to the Editor Component     */
     @Input() public editorCompParams: any;
-    /** Callback to select which Cell Editor and Params to use for this column.     */
-    @Input() public editorCompSelector: EditorCompSelectorFunc | undefined;
     /** Set to `true` to have cells under this column enter edit mode after single click. Default: `false`     */
     @Input() public singleClickEdit: boolean | undefined;
     /** @deprecated use `valueSetter` instead
@@ -261,8 +259,6 @@ export class AgGridColumn {
     @Input() public cellComp: any;
     /** Params to be passed to the Cell Component.     */
     @Input() public cellCompParams: any;
-    /** Callback to select which Cell Component and Params to use for this column.     */
-    @Input() public cellCompSelector: CellCompSelectorFunc | undefined;
     /** Set to `true` to have the grid calculate the height of a row based on contents of this column. Default: `false`     */
     @Input() public autoHeight: boolean | undefined;
     /** Set to `true` to have the text wrap inside the cell - typically used with `autoHeight`. Default: `false`     */

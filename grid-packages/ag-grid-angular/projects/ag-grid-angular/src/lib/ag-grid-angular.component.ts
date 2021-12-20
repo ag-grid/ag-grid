@@ -464,6 +464,10 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public loadingCellRendererParams: any = undefined;
     /** Callback to select which loading cell renderer to be used when data is loading via a DataSource.     */
     @Input() public loadingCellRendererSelector: LoadingCellRendererSelectorFunc | undefined = undefined;
+    /** Cell Comp to use when data is loading via a DataSource.     */
+    @Input() public loadingRowCellComp: any = undefined;
+    /** Params for Loading Cell Comp.     */
+    @Input() public loadingRowCellCompParams: any = undefined;
     /** A map of key->value pairs for localising text within the grid.     */
     @Input() public localeText: { [key: string]: string } | undefined = undefined;
     /** Set to `true` to enable Master Detail. Default: `false`     */
@@ -478,6 +482,10 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public detailCellRendererFramework: any = undefined;
     /** Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params.     */
     @Input() public detailCellRendererParams: any = undefined;
+    /** Provide a custom Detail Cell Component to use when a master row is expanded.     */
+    @Input() public detailRowCellComp: any = undefined;
+    /** Params for Detail Cell Component     */
+    @Input() public detailRowCellCompParams: any = undefined;
     /** Set fixed height in pixels for each detail row.     */
     @Input() public detailRowHeight: number | undefined = undefined;
     /** Set to `true` to have the detail grid dynamically change it's height to fit it's rows.     */
@@ -525,6 +533,10 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public loadingOverlayComponentFramework: any = undefined;
     /** Customise the parameters provided to the loading overlay component.     */
     @Input() public loadingOverlayComponentParams: any = undefined;
+    /** Loading Overlay Component.     */
+    @Input() public loadingOverlayComp: any = undefined;
+    /** Params for Loading Overlay Component     */
+    @Input() public loadingOverlayCompParams: any = undefined;
     /** Disables the 'loading' overlay. Default: `false`     */
     @Input() public suppressLoadingOverlay: boolean | undefined = undefined;
     /** Provide a template for 'no rows' overlay.     */
@@ -535,6 +547,10 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public noRowsOverlayComponentFramework: any = undefined;
     /** Customise the parameters provided to the no rows overlay component.     */
     @Input() public noRowsOverlayComponentParams: any = undefined;
+    /** Provide a custom no rows overlay component     */
+    @Input() public noRowsOverlayComp: any = undefined;
+    /** Customise the parameters provided to the no rows overlay component.     */
+    @Input() public noRowsOverlayCompParams: any = undefined;
     /** Disables the 'no rows' overlay. Default: `false`     */
     @Input() public suppressNoRowsOverlay: boolean | undefined = undefined;
     /** Set whether pagination is enabled. Default: `false`     */
@@ -613,6 +629,10 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public fullWidthCellRendererFramework: any = undefined;
     /** Customise the parameters provided to the `fullWidthCellRenderer` component.     */
     @Input() public fullWidthCellRendererParams: any = undefined;
+    /** Sets the Cell Comp to use for full width rows.     */
+    @Input() public fullWidthCellComp: any = undefined;
+    /** Customise the parameters provided to Full Width Cell Comp.     */
+    @Input() public fullWidthCellCompParams: any = undefined;
     /** Set to `true` to have the detail grid embedded in the master grid's container and so link their horizontal scrolling.     */
     @Input() public embedFullWidthRows: boolean | undefined = undefined;
     /** @deprecated     */
@@ -662,6 +682,10 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public groupRowRendererFramework: any = undefined;
     /** Customise the parameters provided to the `groupRowRenderer` component.     */
     @Input() public groupRowRendererParams: any = undefined;
+    /** Sets the Cell Comp to use when `groupDisplayType = 'groupRows'`.     */
+    @Input() public groupRowCellComp: any = undefined;
+    /** Customise the parameters provided to the Group Row Comp component.     */
+    @Input() public groupRowCellCompParams: any = undefined;
     /** By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping. Default: `false`     */
     @Input() public suppressMakeColumnVisibleAfterUnGroup: boolean | undefined = undefined;
     /** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback.     */
