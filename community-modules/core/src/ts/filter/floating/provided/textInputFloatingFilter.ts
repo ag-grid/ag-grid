@@ -5,13 +5,13 @@ import { debounce } from '../../../utils/function';
 import { ProvidedFilter } from '../../provided/providedFilter';
 import { PostConstruct, Autowired } from '../../../context/context';
 import { SimpleFloatingFilter } from './simpleFloatingFilter';
-import { ISimpleFilterModel, SimpleFilter } from '../../provided/simpleFilter';
+import { SimpleFilter } from '../../provided/simpleFilter';
 import { FilterChangedEvent } from '../../../events';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { ColumnModel } from '../../../columns/columnModel';
 import { KeyCode } from '../../../constants/keyCode';
 import { ITextFilterParams, TextFilter, TextFilterModel } from '../../provided/text/textFilter';
-import { NumberFilterModel } from '../../../main';
+import { NumberFilterModel } from '../../provided/number/numberFilter';
 
 type ModelUnion = TextFilterModel | NumberFilterModel;
 export abstract class TextInputFloatingFilter<M extends ModelUnion> extends SimpleFloatingFilter {
