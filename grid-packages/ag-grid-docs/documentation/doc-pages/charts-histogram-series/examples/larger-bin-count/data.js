@@ -1,5 +1,5 @@
-var histogramData = [
-    {
+function getData() {
+    return [{
         "age": 20,
     },
     {
@@ -599,4 +599,5 @@ var histogramData = [
     {
         "age": 22,
     }
-];
+    ];
+}

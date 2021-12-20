@@ -1,0 +1,37 @@
+import { AgChartOptions } from '@ag-grid-community/core'
+import * as agCharts from 'ag-charts-community'
+
+const options: AgChartOptions = {
+  container: document.getElementById('myChart'),
+  title: {
+    text: 'Race results',
+  },
+  data: getData(),
+  series: [
+    {
+      type: 'histogram',
+      aggregation: 'mean',
+      xKey: 'age',
+      xName: 'Participant Age',
+      yKey: 'time',
+      yName: 'Race time',
+    },
+  ],
+  legend: {
+    enabled: false,
+  },
+  axes: [
+    {
+      type: 'number',
+      position: 'bottom',
+      title: { text: 'Age band (years)' },
+    },
+    {
+      type: 'number',
+      position: 'left',
+      title: { text: 'Mean race time (seconds)' },
+    },
+  ],
+}
+
+agCharts.AgChart.create(options)
