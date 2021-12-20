@@ -29,6 +29,10 @@ import {
     DateComponent,
     FilterComponent,
     FloatingFilterComponent,
+    FullWidth,
+    FullWidthDetail,
+    FullWidthGroup,
+    FullWidthLoading,
     HeaderComponent,
     HeaderGroupComponent,
     InnerRendererComponent,
@@ -56,7 +60,7 @@ export interface UserCompDetails {
     componentFromFramework: boolean;
     params: any;
     type: ComponentType;
-    newAgStackInstance: (defaultComponentName?: string | null) => AgPromise<any>;
+    newAgStackInstance: () => AgPromise<any>;
 }
 
 @Bean('userComponentFactory')
@@ -79,8 +83,20 @@ export class UserComponentFactory extends BeanStub {
 
     // this one is unusual, as it can be LoadingCellRenderer, DetailCellRenderer, FullWidthCellRenderer or GroupRowRenderer.
     // so we have to pass the type in.
-    public getFullWidthCellRendererDetails(params: ICellRendererParams, cellRendererType: string, cellRendererName: string): UserCompDetails | undefined {
-        return this.getCompDetails(this.gridOptions, { propertyName: cellRendererType, isCellRenderer: () => true }, cellRendererName, params);
+    public getFullWidthCellRendererDetails(params: ICellRendererParams): UserCompDetails {
+        return this.getCompDetails(this.gridOptions, FullWidth, null, params, true)!;
+    }
+
+    public getFullWidthLoadingCellRendererDetails(params: ICellRendererParams): UserCompDetails {
+        return this.getCompDetails(this.gridOptions, FullWidthLoading, 'agLoadingCellRenderer', params, true)!;
+    }
+
+    public getFullWidthGroupCellRendererDetails(params: ICellRendererParams): UserCompDetails {
+        return this.getCompDetails(this.gridOptions, FullWidthGroup, 'agGroupRowRenderer', params, true)!;
+    }
+
+    public getFullWidthDetailCellRendererDetails(params: ICellRendererParams): UserCompDetails {
+        return this.getCompDetails(this.gridOptions, FullWidthDetail, 'agDetailCellRenderer', params, true)!;
     }
 
     // CELL RENDERER
@@ -138,7 +154,7 @@ export class UserComponentFactory extends BeanStub {
 
     private getCompDetails(defObject: DefinitionObject, type: ComponentType, defaultName: string | null | undefined, params: any, mandatory = false): UserCompDetails | undefined {
 
-        const propertyName = type.propertyName;
+        const {propertyName, newPropName, cellRenderer} = type;
 
         let comp: any;
         let frameworkComp: any;
@@ -189,7 +205,7 @@ export class UserComponentFactory extends BeanStub {
         }
 
         // if we have a comp option, and it's a function, replace it with an object equivalent adaptor
-        if (comp && !this.agComponentUtils.doesImplementIComponent(comp)) {
+        if (comp && cellRenderer && !this.agComponentUtils.doesImplementIComponent(comp)) {
             comp = this.agComponentUtils.adaptFunction(propertyName, comp);
         }
 
@@ -212,7 +228,7 @@ export class UserComponentFactory extends BeanStub {
             componentClass,
             params: paramsMerged,
             type: type,
-            newAgStackInstance: (defaultCompName?: string) => this.newAgStackInstance(componentClass, componentFromFramework, paramsMerged, type, defaultCompName)
+            newAgStackInstance: () => this.newAgStackInstance(componentClass, componentFromFramework, paramsMerged, type)
         };
     }
 
@@ -220,8 +236,7 @@ export class UserComponentFactory extends BeanStub {
         ComponentClass: any,
         componentFromFramework: boolean,
         params: any,
-        type: ComponentType,
-        defaultComponentName: string | null | undefined
+        type: ComponentType
     ): AgPromise<any> {
         const propertyName = type.propertyName;
         const jsComponent = !componentFromFramework;
@@ -237,8 +252,7 @@ export class UserComponentFactory extends BeanStub {
                 ComponentClass,
                 thisComponentConfig.mandatoryMethodList,
                 thisComponentConfig.optionalMethodList,
-                type,
-                defaultComponentName
+                type
             );
         }
 

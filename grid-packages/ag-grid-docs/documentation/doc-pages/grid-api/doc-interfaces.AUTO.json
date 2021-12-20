@@ -88,9 +88,7 @@
   },
   "ComponentType": {
     "propertyName": { "type": { "returnType": "string", "optional": false } },
-    "isCellRenderer": {
-      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
-    }
+    "cellRenderer": { "type": { "returnType": "boolean", "optional": false } }
   },
   "FrameworkComponentWrapper": {
     "wrap": {
@@ -99,8 +97,7 @@
           "frameworkComponent": "{ new (): any; } | null",
           "methodList": "string[]",
           "optionalMethodList": "string[]",
-          "componentType": "ComponentType",
-          "componentName?": "string | null"
+          "componentType": "ComponentType"
         },
         "returnType": "A",
         "optional": false
@@ -140,7 +137,7 @@
     "type": { "type": { "returnType": "ComponentType", "optional": false } },
     "newAgStackInstance": {
       "type": {
-        "arguments": { "defaultComponentName?": "string | null" },
+        "arguments": {},
         "returnType": "AgPromise<any>",
         "optional": false
       }
