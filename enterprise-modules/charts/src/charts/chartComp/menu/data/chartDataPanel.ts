@@ -178,6 +178,10 @@ export class ChartDataPanel extends Component {
     }
 
     private createSeriesChartTypeGroup(columns: ColState[]): void {
+        // only display series chart types for combo charts
+        const comboChart = ['groupedColumnLine', 'stackedColumnLine'].includes(this.chartController.getChartType());
+        if (!comboChart) { return; }
+
         this.seriesChartTypeGroupComp = this.createManagedBean(new AgGroupComponent({
             title: 'Series Chart Type', //TODO
             enabled: true,
@@ -199,32 +203,36 @@ export class ChartDataPanel extends Component {
                 cssIdentifier: 'charts-format-sub-level'
             }));
 
-            //TODO: remove hardcoded values once backing model exits
-            const chartTypeComp = seriesItemGroup.createManagedBean(new AgSelect());
-            chartTypeComp
-                .setLabel('Type')
-                .setLabelAlignment('left')
-                .setLabelWidth("flex")
-                .setInputWidth(140)
-                .addOptions([
-                    {value: 'groupedColumn', text: 'Grouped Column'},
-                    {value: 'stackedColumn', text: 'Stacked Column'},
-                    {value: 'line', text: 'Line'},
-                ])
-                .setValue(seriesChartType.chartType);
-
-            seriesItemGroup.addItem(chartTypeComp);
-
-            const secondaryAxisComp = this.seriesGroupComp!.createManagedBean(new AgToggleButton());
-
-            secondaryAxisComp
+            const secondaryAxisComp = this.seriesGroupComp!
+                .createManagedBean(new AgCheckbox())
                 .setLabel('Secondary Axis') //TODO
-                .setLabelAlignment('left')
                 .setLabelWidth("flex")
-                .setInputWidth(35)
-                .setValue(!!seriesChartType.secondaryAxis)
+                .setValue(!!seriesChartType.secondaryAxis);
 
             seriesItemGroup.addItem(secondaryAxisComp);
+
+            const availableChartTypes = [
+                {value: 'groupedColumn', text: 'Grouped Column'},
+                {value: 'stackedColumn', text: 'Stacked Column'},
+                {value: 'normalizedColumn', text: 'Normalized Column'},
+                {value: 'groupedBar', text: 'Grouped Bar'},
+                {value: 'stackedBar', text: 'Stacked Bar'},
+                {value: 'normalizedBar', text: 'Normalized Bar'},
+                {value: 'line', text: 'Line'},
+                {value: 'area', text: 'Area'},
+                {value: 'stackedArea', text: 'Stacked Area'},
+                {value: 'normalizedArea', text: 'Normalized Area'},
+            ];
+
+            const chartTypeComp = seriesItemGroup.createManagedBean(new AgSelect());
+            chartTypeComp
+                .setLabelAlignment('left')
+                .setLabelWidth("flex")
+                .addOptions(availableChartTypes)
+                .setValue(seriesChartType.chartType)
+                .onValueChange((chartType: ChartType) => this.chartController.updateSeriesChartType(col.colId, chartType));
+
+            seriesItemGroup.addItem(chartTypeComp);
 
             this.seriesChartTypeGroupComp!.addItem(seriesItemGroup);
         });

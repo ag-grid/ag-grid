@@ -1,6 +1,6 @@
 import { AgChart, CartesianChart, ChartAxisPosition } from "ag-charts-community";
 import { ChartType, SeriesChartType } from "@ag-grid-community/core";
-import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
+import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "../cartesian/cartesianChartProxy";
 import { deepMerge } from "../../object";
 import { getChartThemeOverridesObjectName } from "../../chartThemeOverridesMapper";
@@ -37,20 +37,21 @@ export class ComboChartProxy extends CartesianChartProxy {
 
         AgChart.update(this.chart as CartesianChart, options);
 
-        // this.updateLabelRotation(params.category.id);
+        this.updateLabelRotation(params.category.id);
     }
 
     private getSeriesOptions(params: UpdateChartParams): any {
-        return params.fields.map(f => {
-            const chartType: ChartType = params.seriesChartTypes
-                .filter((s: SeriesChartType) => s.colId === f.colId)[0].chartType;
-
-            return {
-                type: getChartThemeOverridesObjectName(chartType),
-                xKey: params.category.id,
-                yKey: f.colId,
-                yName: f.displayName,
-                grouped: chartType === 'groupedColumn' || 'groupedBar',
+        return params.fields.map(field => {
+            const seriesChartType = params.seriesChartTypes.find(s => s.colId === field.colId);
+            if (seriesChartType) {
+                const chartType: ChartType = seriesChartType.chartType;
+                return {
+                    type: getChartThemeOverridesObjectName(chartType),
+                    xKey: params.category.id,
+                    yKey: field.colId,
+                    yName: field.displayName,
+                    grouped: chartType === 'groupedColumn' || 'groupedBar',
+                }
             }
         });
     }
