@@ -5862,9 +5862,29 @@
       "strokeOpacity?": "number"
     }
   },
+  "AgSeriesMarkerFormatterParams": {
+    "meta": {},
+    "type": {
+      "datum": "any",
+      "fill?": "string",
+      "stroke?": "string",
+      "strokeWidth": "number",
+      "size": "number",
+      "highlighted": "boolean"
+    }
+  },
   "AgCartesianSeriesMarkerFormatterParams": {
     "meta": {},
-    "type": { "xKey": "string", "yKey": "string" }
+    "type": {
+      "xKey": "string",
+      "yKey": "string",
+      "datum": "any",
+      "fill?": "string",
+      "stroke?": "string",
+      "strokeWidth": "number",
+      "size": "number",
+      "highlighted": "boolean"
+    }
   },
   "AgCartesianSeriesMarkerFormat": {
     "meta": {},
@@ -5877,7 +5897,7 @@
   },
   "AgCartesianSeriesMarkerFormatter": {
     "meta": { "isTypeAlias": true },
-    "type": "(params: AgCartesianSeriesMarkerFormatterParams) => AgCartesianSeriesMarkerFormat"
+    "type": "(params: AgCartesianSeriesMarkerFormatterParams) => (AgCartesianSeriesMarkerFormat | undefined)"
   },
   "AgCartesianSeriesMarker": {
     "meta": {},

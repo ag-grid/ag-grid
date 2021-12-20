@@ -10137,9 +10137,23 @@
     "fillOpacity": { "type": { "returnType": "number", "optional": true } },
     "strokeOpacity": { "type": { "returnType": "number", "optional": true } }
   },
+  "AgSeriesMarkerFormatterParams": {
+    "datum": { "type": { "returnType": "any", "optional": false } },
+    "fill": { "type": { "returnType": "string", "optional": true } },
+    "stroke": { "type": { "returnType": "string", "optional": true } },
+    "strokeWidth": { "type": { "returnType": "number", "optional": false } },
+    "size": { "type": { "returnType": "number", "optional": false } },
+    "highlighted": { "type": { "returnType": "boolean", "optional": false } }
+  },
   "AgCartesianSeriesMarkerFormatterParams": {
     "xKey": { "type": { "returnType": "string", "optional": false } },
-    "yKey": { "type": { "returnType": "string", "optional": false } }
+    "yKey": { "type": { "returnType": "string", "optional": false } },
+    "datum": { "type": { "returnType": "any", "optional": false } },
+    "fill": { "type": { "returnType": "string", "optional": true } },
+    "stroke": { "type": { "returnType": "string", "optional": true } },
+    "strokeWidth": { "type": { "returnType": "number", "optional": false } },
+    "size": { "type": { "returnType": "number", "optional": false } },
+    "highlighted": { "type": { "returnType": "boolean", "optional": false } }
   },
   "AgCartesianSeriesMarkerFormat": {
     "fill": { "type": { "returnType": "string", "optional": true } },

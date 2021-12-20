@@ -381,7 +381,16 @@ export interface AgSeriesMarker {
     strokeOpacity?: number;
 }
 
-export interface AgCartesianSeriesMarkerFormatterParams {
+export interface AgSeriesMarkerFormatterParams {
+    datum: any;
+    fill?: string;
+    stroke?: string;
+    strokeWidth: number;
+    size: number;
+    highlighted: boolean;
+}
+
+export interface AgCartesianSeriesMarkerFormatterParams extends AgSeriesMarkerFormatterParams {
     xKey: string;
     yKey: string;
 }
@@ -393,7 +402,7 @@ export interface AgCartesianSeriesMarkerFormat {
     size?: number;
 }
 
-export type AgCartesianSeriesMarkerFormatter = (params: AgCartesianSeriesMarkerFormatterParams) => AgCartesianSeriesMarkerFormat;
+export type AgCartesianSeriesMarkerFormatter = (params: AgCartesianSeriesMarkerFormatterParams) => (AgCartesianSeriesMarkerFormat | undefined);
 
 export interface AgCartesianSeriesMarker extends AgSeriesMarker {
     formatter?: AgCartesianSeriesMarkerFormatter;
