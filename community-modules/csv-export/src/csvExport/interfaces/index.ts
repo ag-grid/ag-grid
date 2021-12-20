@@ -21,7 +21,7 @@ export interface RowAccumulator {
 }
 
 export interface RowSpanningAccumulator {
-    onColumn(header: string, index: number, span: number): void;
+    onColumn(header: string, index: number, span: number, collapsibleGroupRanges: number[][]): void;
 }
 
 export interface GridSerializingParams {

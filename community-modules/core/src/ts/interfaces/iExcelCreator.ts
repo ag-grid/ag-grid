@@ -92,6 +92,7 @@ export interface ExcelTable {
 export interface ExcelColumn {
     min?: number;
     max?: number;
+    outlineLevel?: number;
     width?: number;
     s?: number;
     hidden?: boolean;
@@ -113,6 +114,7 @@ export interface ExcelCell {
     styleId?: string;
     data: ExcelData;
     mergeAcross?: number;
+    collapsibleRanges?: number[][];
 }
 
 export interface ExcelImage {

@@ -6893,6 +6893,7 @@
     "type": {
       "min?": "number",
       "max?": "number",
+      "outlineLevel?": "number",
       "width?": "number",
       "s?": "number",
       "hidden?": "boolean",
@@ -6917,7 +6918,8 @@
       "ref?": "string",
       "styleId?": "string",
       "data": "ExcelData",
-      "mergeAcross?": "number"
+      "mergeAcross?": "number",
+      "collapsibleRanges?": "number[][]"
     }
   },
   "ExcelImage": {

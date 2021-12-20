@@ -109,9 +109,12 @@ export abstract class BaseExcelSerializingSession<T> extends BaseGridSerializing
             height: getHeightFromProperty(this.rows.length + 1, this.config.headerRowHeight)
         });
         return {
-            onColumn: (header: string, index: number, span: number) => {
+            onColumn: (header: string, index: number, span: number, collapsibleRanges: number[][]) => {
                 const styleIds: string[] = this.config.styleLinker(RowType.HEADER_GROUPING, 1, `grouping-${header}`, undefined, undefined);
-                currentCells.push(this.createMergedCell(this.getStyleId(styleIds), this.getDataTypeForValue('string'), header, span));
+                currentCells.push({
+                    ...this.createMergedCell(this.getStyleId(styleIds), this.getDataTypeForValue('string'), header, span),
+                    collapsibleRanges
+                });
             }
         };
     }

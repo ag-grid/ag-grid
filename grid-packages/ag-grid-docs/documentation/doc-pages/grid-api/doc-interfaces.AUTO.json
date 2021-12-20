@@ -11900,6 +11900,7 @@
   "ExcelColumn": {
     "min": { "type": { "returnType": "number", "optional": true } },
     "max": { "type": { "returnType": "number", "optional": true } },
+    "outlineLevel": { "type": { "returnType": "number", "optional": true } },
     "width": { "type": { "returnType": "number", "optional": true } },
     "s": { "type": { "returnType": "number", "optional": true } },
     "hidden": { "type": { "returnType": "boolean", "optional": true } },
@@ -11918,7 +11919,10 @@
     "ref": { "type": { "returnType": "string", "optional": true } },
     "styleId": { "type": { "returnType": "string", "optional": true } },
     "data": { "type": { "returnType": "ExcelData", "optional": false } },
-    "mergeAcross": { "type": { "returnType": "number", "optional": true } }
+    "mergeAcross": { "type": { "returnType": "number", "optional": true } },
+    "collapsibleRanges": {
+      "type": { "returnType": "number[][]", "optional": true }
+    }
   },
   "ExcelImage": {
     "id": { "type": { "returnType": "string", "optional": false } },
