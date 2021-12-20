@@ -6058,6 +6058,7 @@
     "type": {
       "type?": "'area'",
       "marker?": "AgCartesianSeriesMarker",
+      "normalizedTo?": "number",
       "xKey?": "string",
       "yKeys?": "string[]",
       "xName?": "string",

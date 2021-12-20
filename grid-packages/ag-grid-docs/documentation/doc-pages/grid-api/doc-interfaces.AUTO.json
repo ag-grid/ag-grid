@@ -10386,6 +10386,7 @@
     "marker": {
       "type": { "returnType": "AgCartesianSeriesMarker", "optional": true }
     },
+    "normalizedTo": { "type": { "returnType": "number", "optional": true } },
     "xKey": { "type": { "returnType": "string", "optional": true } },
     "yKeys": { "type": { "returnType": "string[]", "optional": true } },
     "xName": { "type": { "returnType": "string", "optional": true } },
