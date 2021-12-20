@@ -85,25 +85,25 @@ export const StatusPanelComponent: ComponentType = {
 export const FullWidth: ComponentType = {
     propertyName: 'fullWidthCellRenderer',
     cellRenderer: true,
-    newPropName: 'fullWidthComp'
+    newPropName: 'fullWidthCellComp'
 };
 
 export const FullWidthLoading: ComponentType = {
     propertyName: 'loadingCellRenderer',
     cellRenderer: true,
-    newPropName: 'loadingRowComp'
+    newPropName: 'loadingRowCellComp'
 };
 
 export const FullWidthGroup: ComponentType = {
     propertyName: 'groupRowRenderer',
     cellRenderer: true,
-    newPropName: 'groupRowComp'
+    newPropName: 'groupRowCellComp'
 };
 
 export const FullWidthDetail: ComponentType = {
     propertyName: 'detailCellRenderer',
     cellRenderer: true,
-    newPropName: 'detailRowComp'
+    newPropName: 'detailRowCellComp'
 };
 
 

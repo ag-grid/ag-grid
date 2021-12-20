@@ -82,6 +82,10 @@ export class AgGridColumn {
     @Input() public headerGroupComponentFramework: any;
     /** The params used to configure the header group component.     */
     @Input() public headerGroupComponentParams: any;
+    /** The custom header group component to be used for rendering the component header.     */
+    @Input() public headerGroupComp: any;
+    /** The params used to configure the header group component.     */
+    @Input() public headerGroupCompParams: any;
     /** The unique ID to give the column. This is optional. If missing, the ID will default to the field.
      * If both field and colId are missing, a unique ID will be generated.
      * This ID is used to identify the column in the API for sorting, filtering etc.     */
@@ -181,6 +185,10 @@ export class AgGridColumn {
     @Input() public headerComponentFramework: any;
     /** The parameters to be passed to the header component.     */
     @Input() public headerComponentParams: any;
+    /** The custom header component to be used for rendering the component header.     */
+    @Input() public headerComp: any;
+    /** The parameters to be passed to the header component.     */
+    @Input() public headerCompParams: any;
     /** Set to an array containing zero, one or many of the following options: `'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab'`.
      * This is used to figure out which menu tabs are present and in which order the tabs are shown.     */
     @Input() public menuTabs: string[] | undefined;
