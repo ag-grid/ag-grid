@@ -232,6 +232,8 @@ export interface GridOptions {
     components?: { [p: string]: any; };
     /** A map of component names to framework (Angular, React, Vue etc.) components. */
     frameworkComponents?: { [p: string]: { new(): any; }; } | any;
+    /** A map of component names to components (can be JavaScript OR Framework components). */
+    comps?: { [p: string]: any; };
 
     /** @deprecated React UI is enabled by default. Use suppressReactUi=true to turn it off. */
     reactUi?: boolean;

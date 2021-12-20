@@ -57,7 +57,11 @@
   },
   "ComponentType": {
     "meta": {},
-    "type": { "propertyName": "string", "cellRenderer": "boolean" }
+    "type": {
+      "propertyName": "string",
+      "cellRenderer": "boolean",
+      "newPropName": "string"
+    }
   },
   "FrameworkComponentWrapper": {
     "meta": {
@@ -1331,6 +1335,24 @@
       "params?": "/** Equivalent of setting `colDef.cellEditorParams` */"
     }
   },
+  "CellCompSelectorFunc": {
+    "meta": { "isCallSignature": true },
+    "type": {
+      "arguments": { "params": "ICellRendererParams" },
+      "returnType": "CompSelectorResult | undefined"
+    }
+  },
+  "EditorCompSelectorFunc": {
+    "meta": { "isCallSignature": true },
+    "type": {
+      "arguments": { "params": "ICellEditorParams" },
+      "returnType": "CompSelectorResult | undefined"
+    }
+  },
+  "CompSelectorResult": {
+    "meta": {},
+    "type": { "comp": "any", "compParams": "any" }
+  },
   "GridOptions": {
     "meta": {},
     "type": {
@@ -1381,6 +1403,7 @@
       "skipHeaderOnAutoSize?": "boolean",
       "components?": "{ [p: string]: any; }",
       "frameworkComponents?": "{ [p: string]: { new (): any; }; } | any",
+      "comps?": "{ [p: string]: any; }",
       "reactUi?": "boolean",
       "suppressReactUi?": "boolean",
       "editType?": "string",
@@ -1740,6 +1763,7 @@
       "skipHeaderOnAutoSize?": "/** Set this to `true` to skip the `headerName` when `autoSize` is called by default. Default: `false` */",
       "components?": "/** A map of component names to plain JavaScript components. */",
       "frameworkComponents?": "/** A map of component names to framework (Angular, React, Vue etc.) components. */",
+      "comps?": "/** A map of component names to components (can be JavaScript OR Framework components). */",
       "reactUi?": "/** @deprecated React UI is enabled by default. Use suppressReactUi=true to turn it off.\n */",
       "suppressReactUi?": "/** @deprecated Set to true to enable the experimental React UI. Works with React framework only.\nIt is planned the next major release of the grid will drop support of the legacy React engine,\nhence this property is deprecated as will be removed in the next major release.\n */",
       "editType?": "/** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time. */",

@@ -394,6 +394,8 @@ export class AgGridAngular implements AfterViewInit {
     @Input() public components: { [p: string]: any; } | undefined = undefined;
     /** A map of component names to framework (Angular, React, Vue etc.) components.     */
     @Input() public frameworkComponents: { [p: string]: { new(): any; }; } | any | undefined = undefined;
+    /** A map of component names to components (can be JavaScript OR Framework components).     */
+    @Input() public comps: { [p: string]: any; } | undefined = undefined;
     /** @deprecated React UI is enabled by default. Use suppressReactUi=true to turn it off.
      */
     @Input() public reactUi: boolean | undefined = undefined;

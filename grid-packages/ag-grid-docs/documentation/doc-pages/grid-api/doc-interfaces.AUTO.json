@@ -88,7 +88,8 @@
   },
   "ComponentType": {
     "propertyName": { "type": { "returnType": "string", "optional": false } },
-    "cellRenderer": { "type": { "returnType": "boolean", "optional": false } }
+    "cellRenderer": { "type": { "returnType": "boolean", "optional": false } },
+    "newPropName": { "type": { "returnType": "string", "optional": false } }
   },
   "FrameworkComponentWrapper": {
     "wrap": {
@@ -1977,6 +1978,12 @@
       "type": { "returnType": "any", "optional": true }
     }
   },
+  "CellCompSelectorFunc": {},
+  "EditorCompSelectorFunc": {},
+  "CompSelectorResult": {
+    "comp": { "type": { "returnType": "any", "optional": false } },
+    "compParams": { "type": { "returnType": "any", "optional": false } }
+  },
   "GridOptions": {
     "statusBar": {
       "description": "/** Specifies the status bar components to use in the status bar. */",
@@ -2177,6 +2184,10 @@
         "returnType": "{ [p: string]: { new(): any; }; } | any",
         "optional": true
       }
+    },
+    "comps": {
+      "description": "/** A map of component names to components (can be JavaScript OR Framework components). */",
+      "type": { "returnType": "{ [p: string]: any; }", "optional": true }
     },
     "reactUi": {
       "description": "/** @deprecated React UI is enabled by default. Use suppressReactUi=true to turn it off.\n */",

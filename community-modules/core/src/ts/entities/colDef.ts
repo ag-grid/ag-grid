@@ -661,7 +661,6 @@ export interface CellRendererSelectorFunc {
 export interface CellEditorSelectorFunc {
     (params: ICellEditorParams): CellEditorSelectorResult | undefined;
 }
-
 export interface CellRendererSelectorResult {
     /** Equivalent of setting `colDef.cellRenderer` */
     component?: { new(): ICellRendererComp; } | ICellRendererFunc | string;
@@ -678,4 +677,17 @@ export interface CellEditorSelectorResult {
     frameworkComponent?: any;
     /** Equivalent of setting `colDef.cellEditorParams` */
     params?: any;
+}
+
+export interface CellCompSelectorFunc {
+    (params: ICellRendererParams): CompSelectorResult | undefined;
+}
+
+export interface EditorCompSelectorFunc {
+    (params: ICellEditorParams): CompSelectorResult | undefined;
+}
+
+export interface CompSelectorResult {
+    comp: any;
+    params: any;
 }
