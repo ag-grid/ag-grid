@@ -24,6 +24,25 @@ export enum SetFilterModelValuesType {
 
 const NULL_SUBSTITUTE = '__<ag-grid-pseudo-null>__';
 
+type FilterParams = Pick<
+    ISetFilterParams,
+    'api' |
+    'colDef' |
+    'column' |
+    'columnApi' |
+    'context' |
+    'valueGetter' |
+    'textFormatter' |
+    'doesRowPassOtherFilter' |
+    'suppressSorting' |
+    'comparator' |
+    'rowModel' |
+    'values' |
+    'excelMode' |
+    'valueFormatter' |
+    'defaultToNothingSelected'
+>;
+
 export class SetValueModel implements IEventEmitter {
     public static EVENT_AVAILABLE_VALUES_CHANGED = 'availableValuesChanged';
 
@@ -62,7 +81,7 @@ export class SetValueModel implements IEventEmitter {
     private initialised: boolean = false;
 
     constructor(
-        private readonly filterParams: ISetFilterParams,
+        private readonly filterParams: FilterParams,
         private readonly setIsLoading: (loading: boolean) => void,
         private readonly valueFormatterService: ValueFormatterService,
         private readonly translate: (key: keyof ISetFilterLocaleText) => string,
@@ -77,7 +96,6 @@ export class SetValueModel implements IEventEmitter {
             comparator,
             rowModel,
             values,
-            caseSensitive
         } = filterParams;
 
         this.column = column;

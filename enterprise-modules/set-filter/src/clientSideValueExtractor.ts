@@ -1,12 +1,15 @@
 import { IClientSideRowModel, ISetFilterParams, KeyCreatorParams, RowNode, _ } from '@ag-grid-community/core';
 
 const NULL_SUBSTITUTE = '__<ag-grid-pseudo-null>__';
+
+type FilterParams = Pick<ISetFilterParams, 'api'|'colDef'|'column'|'columnApi'|'context'|'valueGetter'>;
+
 export class ClientSideValuesExtractor {
     private readonly caseSensitive: boolean;
 
     constructor(
         private readonly rowModel: IClientSideRowModel,
-        private readonly filterParams: ISetFilterParams,
+        private readonly filterParams: FilterParams,
         private readonly caseFormat: <T extends string | null>(valueToFormat: T) => typeof valueToFormat,
     ) {
     }

@@ -1,10 +1,10 @@
-import { AgSelect, Component, PostConstruct, RefSelector, InbuiltExpression, _, StateManager, PartialStateType, ExpressionComponentParams } from "@ag-grid-community/core";
-import { comparisonOperationOperandCardinality, TextComparisonOperation, ConcreteExpression, ScalarComparisonOperation } from "@ag-grid-community/core";
+import { AgSelect, Component, PostConstruct, RefSelector, InbuiltExpression, _, StateManager, PartialStateType, ExpressionComponentParams, TextOperationExpression, ScalarOperationExpression } from "@ag-grid-community/core";
+import { comparisonOperationOperandCardinality, TextComparisonOperation, ScalarComparisonOperation } from "@ag-grid-community/core";
 import { ExpressionComponent, OperandComponent } from "./interfaces";
 import { initialiseAndAttachChildren } from "./filterComponentUtils";
 import { OperandStateManagerAdapter } from "../state/operandStateManager";
 
-export class ComparisonOperationComponent<E extends InbuiltExpression, O extends E['operands'][number]> extends Component implements ExpressionComponent<InbuiltExpression> {
+export class ComparisonOperationComponent<E extends TextOperationExpression | ScalarOperationExpression, O extends E['operands'][number]> extends Component implements ExpressionComponent<InbuiltExpression> {
     private readonly childComponents: (OperandComponent<O> & Component)[];
     private readonly operationMetadata: {[key in E['operation']]: { operands: number }};
 

@@ -47,12 +47,13 @@ export type DateComparisonOperationExpression = ScalarComparisonOperationExpress
 
 export type ScalarOperationExpression = NumberComparisonOperationExpression | DateComparisonOperationExpression;
 export type TextOperationExpression = TextComparisonOperationExpression<'text-op'>;
+export type SetExpression = OperationExpression<'set-op', string | number, 'in', typeof Infinity>;
 
 export type LogicalOperationExpression<M> =
     OperationExpression<'logic', M, Exclude<LogicOperation, 'not'>, typeof Infinity> |
     OperationExpression<'logic', M, 'not', 1>;
 
-export type InbuiltExpression = TextOperationExpression | ScalarOperationExpression;
+export type InbuiltExpression = TextOperationExpression | ScalarOperationExpression | SetExpression;
 
 export type ConcreteExpression = InbuiltExpression | CustomExpression<unknown>;
 
@@ -125,6 +126,12 @@ const EXAMPLE_EXPRESSION_4: FilterExpression = {
     type: 'custom',
     operation: 'my-custom-operation',
     operands: [],
+};
+
+const EXAMPLE_EXPRESSION_5: FilterExpression = {
+    type: 'set-op',
+    operation: 'in',
+    operands: ['abc', 'ABC', '123', 'xzy', '123', 123],
 };
 
 /** EVALUATION MODEL **/

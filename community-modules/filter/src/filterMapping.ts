@@ -4,6 +4,7 @@ import { NumberFilter } from "./components/filters/numberFilter";
 import { TextFilter } from "./components/filters/textFilter";
 import { ExpressionComponent } from "./components/interfaces";
 import { CustomFilter } from "./components/filters/customFilter";
+import { SetFilter } from "./components/filters/setFilter";
 
 type CompType = ExpressionComponent & Component;
 type Mapping<T extends FilterExpression['type']> = { type: T, newComp(): CompType };
@@ -15,6 +16,7 @@ export const FILTER_TO_EXPRESSION_TYPE_MAPPING: {[key: string]: Mapping<any>} = 
     agTextColumnFilterV2: DEFAULT_MAPPING,
     agNumberColumnFilterV2: { type: 'number-op', newComp: () => new NumberFilter() },
     agDateColumnFilterV2: { type: 'date-op', newComp: () => new DateFilter() },
+    agSetColumnFilterV2: { type: 'set-op', newComp: () => new SetFilter() },
     agCustomColumnFilterV2: CUSTOM_MAPPING,
 };
 

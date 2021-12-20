@@ -21,6 +21,11 @@ const DEFAULT_EXPRESSIONS: {[k in FilterExpression['type']]: PartialFilterExpres
         operation: 'equals',
         operands: [null],
     },
+    'set-op': {
+        type: 'set-op',
+        operation: 'in',
+        operands: [],
+    },
     'logic': {
         type: 'logic',
         operation: 'and',
