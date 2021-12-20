@@ -21,7 +21,6 @@ export class BarChartProxy extends CartesianChartProxy {
         const [isBar, isNormalised] = [this.standaloneChartType === 'bar', this.isNormalised()];
 
         return AgChart.create({
-            type: isBar ? 'bar' : 'column',
             container: this.chartProxyParams.parentElement,
             theme: this.chartTheme,
             axes: this.getAxes(isBar, isNormalised),
@@ -111,7 +110,6 @@ export class BarChartProxy extends CartesianChartProxy {
         // special handling to add a default label formatter to show '%' for normalized charts if none is provided
         if (normalised) {
             const numberAxis = axes[1];
-            // FIXME: only update labels when no formatter is supplied
             numberAxis.label = {...numberAxis.label, formatter: (params: any) => Math.round(params.value) + '%'};
         }
         return axes;

@@ -66,7 +66,7 @@ export class NewReactComponent extends ReactComponent {
 
     private valueRenderedIsNull(params: any): boolean {
         // we only do this for cellRenderers
-        if (this.componentType.isCellRenderer && !this.componentType.isCellRenderer()) {
+        if (!this.componentType.cellRenderer) {
             return false;
         }
 

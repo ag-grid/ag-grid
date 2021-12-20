@@ -9,8 +9,7 @@ export interface FrameworkComponentWrapper {
     wrap<A extends IComponent<any>>(frameworkComponent: { new(): any } | null,
                                     methodList: string[],
                                     optionalMethodList: string[],
-                                    componentType: ComponentType,
-                                    componentName?: string | null
+                                    componentType: ComponentType
     ): A;
 }
 
@@ -26,9 +25,8 @@ export abstract class BaseComponentWrapper<F extends WrappableInterface> impleme
     public wrap<A extends IComponent<any>>(OriginalConstructor: { new(): any },
                                     mandatoryMethodList: string[],
                                     optionalMethodList: string[] = [],
-                                    componentType: ComponentType,
-                                    componentName?: string): A {
-        const wrapper: F = this.createWrapper(OriginalConstructor, componentType, componentName);
+                                    componentType: ComponentType): A {
+        const wrapper: F = this.createWrapper(OriginalConstructor, componentType);
 
         mandatoryMethodList.forEach((methodName => {
             this.createMethod(wrapper, methodName, true);
@@ -46,7 +44,7 @@ export abstract class BaseComponentWrapper<F extends WrappableInterface> impleme
         return comp;
     }
 
-    abstract createWrapper(OriginalConstructor: { new(): any }, componentType: ComponentType, componentName?: string): F;
+    abstract createWrapper(OriginalConstructor: { new(): any }, componentType: ComponentType): F;
 
     private createMethod(wrapper: F, methodName: string, mandatory: boolean): void {
         wrapper.addMethod(methodName, this.createMethodProxy(wrapper, methodName, mandatory));

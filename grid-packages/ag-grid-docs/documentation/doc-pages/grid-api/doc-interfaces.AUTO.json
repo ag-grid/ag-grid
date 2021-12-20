@@ -88,9 +88,8 @@
   },
   "ComponentType": {
     "propertyName": { "type": { "returnType": "string", "optional": false } },
-    "isCellRenderer": {
-      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
-    }
+    "cellRenderer": { "type": { "returnType": "boolean", "optional": false } },
+    "newPropName": { "type": { "returnType": "string", "optional": false } }
   },
   "FrameworkComponentWrapper": {
     "wrap": {
@@ -99,8 +98,7 @@
           "frameworkComponent": "{ new (): any; } | null",
           "methodList": "string[]",
           "optionalMethodList": "string[]",
-          "componentType": "ComponentType",
-          "componentName?": "string | null"
+          "componentType": "ComponentType"
         },
         "returnType": "A",
         "optional": false
@@ -140,7 +138,7 @@
     "type": { "type": { "returnType": "ComponentType", "optional": false } },
     "newAgStackInstance": {
       "type": {
-        "arguments": { "defaultComponentName?": "string | null" },
+        "arguments": {},
         "returnType": "AgPromise<any>",
         "optional": false
       }
@@ -512,6 +510,8 @@
     "tooltipComponentParams": {
       "type": { "returnType": "any", "optional": true }
     },
+    "tooltipComp": { "type": { "returnType": "any", "optional": true } },
+    "tooltipCompParams": { "type": { "returnType": "any", "optional": true } },
     "pivotKeys": {
       "description": "/** Never set this, it is used internally by grid when doing in-grid pivoting */",
       "type": { "returnType": "string[]", "optional": true }
@@ -546,6 +546,14 @@
       "type": { "returnType": "any", "optional": true }
     },
     "headerGroupComponentParams": {
+      "description": "/** The params used to configure the header group component. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "headerGroupComp": {
+      "description": "/** The custom header group component to be used for rendering the component header. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "headerGroupCompParams": {
       "description": "/** The params used to configure the header group component. */",
       "type": { "returnType": "any", "optional": true }
     },
@@ -604,6 +612,8 @@
     "tooltipComponentParams": {
       "type": { "returnType": "any", "optional": true }
     },
+    "tooltipComp": { "type": { "returnType": "any", "optional": true } },
+    "tooltipCompParams": { "type": { "returnType": "any", "optional": true } },
     "pivotKeys": {
       "description": "/** Never set this, it is used internally by grid when doing in-grid pivoting */",
       "type": { "returnType": "string[]", "optional": true }
@@ -808,6 +818,18 @@
       "description": "/** Callback to select which cell editor to be used for a given row within the same column. */",
       "type": { "returnType": "CellEditorSelectorFunc", "optional": true }
     },
+    "editorComp": {
+      "description": "/** A Editor Component to use for this column. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "editorCompParams": {
+      "description": "/** Params to be passed to the Editor Component */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "editorCompSelector": {
+      "description": "/** Callback to select which Cell Editor and Params to use for this column. */",
+      "type": { "returnType": "EditorCompSelectorFunc", "optional": true }
+    },
     "singleClickEdit": {
       "description": "/** Set to `true` to have cells under this column enter edit mode after single click. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
@@ -885,6 +907,14 @@
       "type": { "returnType": "any", "optional": true }
     },
     "headerComponentParams": {
+      "description": "/** The parameters to be passed to the header component. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "headerComp": {
+      "description": "/** The custom header component to be used for rendering the component header. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "headerCompParams": {
       "description": "/** The parameters to be passed to the header component. */",
       "type": { "returnType": "any", "optional": true }
     },
@@ -1010,6 +1040,18 @@
     "cellRendererSelector": {
       "description": "/** Callback to select which cell renderer to be used for a given row within the same column. */",
       "type": { "returnType": "CellRendererSelectorFunc", "optional": true }
+    },
+    "cellComp": {
+      "description": "/** A Cell Component to use for this column. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "cellCompParams": {
+      "description": "/** Params to be passed to the Cell Component. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "cellCompSelector": {
+      "description": "/** Callback to select which Cell Component and Params to use for this column. */",
+      "type": { "returnType": "CellCompSelectorFunc", "optional": true }
     },
     "autoHeight": {
       "description": "/** Set to `true` to have the grid calculate the height of a row based on contents of this column. Default: `false` */",
@@ -1260,6 +1302,8 @@
     "tooltipComponentParams": {
       "type": { "returnType": "any", "optional": true }
     },
+    "tooltipComp": { "type": { "returnType": "any", "optional": true } },
+    "tooltipCompParams": { "type": { "returnType": "any", "optional": true } },
     "pivotKeys": {
       "description": "/** Never set this, it is used internally by grid when doing in-grid pivoting */",
       "type": { "returnType": "string[]", "optional": true }
@@ -1276,6 +1320,14 @@
       "description": "/** Params to be passed to the filter component specified in `filter` or `filterFramework`. */",
       "type": { "returnType": "any", "optional": true }
     },
+    "filterComp": {
+      "description": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Provide name (string) to use registered filter.\n * - Provide User Component to provide custom filter. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "filterCompParams": {
+      "description": "/** Params to be passed to the filter component. */",
+      "type": { "returnType": "any", "optional": true }
+    },
     "floatingFilterComponent": {
       "description": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
       "type": { "returnType": "IFloatingFilterType", "optional": true }
@@ -1286,6 +1338,14 @@
     },
     "floatingFilterComponentParams": {
       "description": "/** Params to be passed to `floatingFilterComponent` or `floatingFilterComponentFramework`. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "floatingFilterComp": {
+      "description": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "floatingFilterCompParams": {
+      "description": "/** Params to be passed to Floating Filter Component. */",
       "type": { "returnType": "any", "optional": true }
     }
   },
@@ -1980,6 +2040,12 @@
       "type": { "returnType": "any", "optional": true }
     }
   },
+  "CellCompSelectorFunc": {},
+  "EditorCompSelectorFunc": {},
+  "CompSelectorResult": {
+    "comp": { "type": { "returnType": "any", "optional": false } },
+    "params": { "type": { "returnType": "any", "optional": false } }
+  },
   "GridOptions": {
     "statusBar": {
       "description": "/** Specifies the status bar components to use in the status bar. */",
@@ -2181,6 +2247,10 @@
         "optional": true
       }
     },
+    "comps": {
+      "description": "/** A map of component names to components (can be JavaScript OR Framework components). */",
+      "type": { "returnType": "{ [p: string]: any; }", "optional": true }
+    },
     "reactUi": {
       "description": "/** @deprecated React UI is enabled by default. Use suppressReactUi=true to turn it off.\n */",
       "type": { "returnType": "boolean", "optional": true }
@@ -2305,6 +2375,14 @@
         "optional": true
       }
     },
+    "loadingRowCellComp": {
+      "description": "/** Cell Comp to use when data is loading via a DataSource. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "loadingRowCellCompParams": {
+      "description": "/** Params for Loading Cell Comp. */",
+      "type": { "returnType": "any", "optional": true }
+    },
     "localeText": {
       "description": "/** A map of key->value pairs for localising text within the grid. */",
       "type": { "returnType": "{ [key: string]: string }", "optional": true }
@@ -2334,6 +2412,14 @@
     },
     "detailCellRendererParams": {
       "description": "/** Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "detailRowCellComp": {
+      "description": "/** Provide a custom Detail Cell Component to use when a master row is expanded. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "detailRowCellCompParams": {
+      "description": "/** Params for Detail Cell Component */",
       "type": { "returnType": "any", "optional": true }
     },
     "detailRowHeight": {
@@ -2423,6 +2509,14 @@
       "description": "/** Customise the parameters provided to the loading overlay component. */",
       "type": { "returnType": "any", "optional": true }
     },
+    "loadingOverlayComp": {
+      "description": "/** Loading Overlay Component. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "loadingOverlayCompParams": {
+      "description": "/** Params for Loading Overlay Component */",
+      "type": { "returnType": "any", "optional": true }
+    },
     "suppressLoadingOverlay": {
       "description": "/** Disables the 'loading' overlay. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
@@ -2443,6 +2537,14 @@
       "type": { "returnType": "any", "optional": true }
     },
     "noRowsOverlayComponentParams": {
+      "description": "/** Customise the parameters provided to the no rows overlay component. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "noRowsOverlayComp": {
+      "description": "/** Provide a custom no rows overlay component */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "noRowsOverlayCompParams": {
       "description": "/** Customise the parameters provided to the no rows overlay component. */",
       "type": { "returnType": "any", "optional": true }
     },
@@ -2596,6 +2698,14 @@
       "description": "/** Customise the parameters provided to the `fullWidthCellRenderer` component. */",
       "type": { "returnType": "any", "optional": true }
     },
+    "fullWidthCellComp": {
+      "description": "/** Sets the Cell Comp to use for full width rows. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "fullWidthCellCompParams": {
+      "description": "/** Customise the parameters provided to Full Width Cell Comp. */",
+      "type": { "returnType": "any", "optional": true }
+    },
     "embedFullWidthRows": {
       "description": "/** Set to `true` to have the detail grid embedded in the master grid's container and so link their horizontal scrolling. */",
       "type": { "returnType": "boolean", "optional": true }
@@ -2673,6 +2783,14 @@
     },
     "groupRowRendererParams": {
       "description": "/** Customise the parameters provided to the `groupRowRenderer` component. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "groupRowCellComp": {
+      "description": "/** Sets the Cell Comp to use when `groupDisplayType = 'groupRows'`. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "groupRowCellCompParams": {
+      "description": "/** Customise the parameters provided to the Group Row Comp component. */",
       "type": { "returnType": "any", "optional": true }
     },
     "suppressMakeColumnVisibleAfterUnGroup": {
@@ -5211,6 +5329,14 @@
       "type": { "returnType": "any", "optional": true }
     },
     "toolPanelParams": {
+      "description": "/** Customise the parameters provided to the `toolPanel` component. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "toolPanelComp": {
+      "description": "/** The tool panel component to use as the panel.\n * The provided panels use components `agColumnsToolPanel` and `agFiltersToolPanel`.\n * To provide your own custom panel component, you reference it here. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "toolPanelCompParams": {
       "description": "/** Customise the parameters provided to the `toolPanel` component. */",
       "type": { "returnType": "any", "optional": true }
     }
@@ -8160,7 +8286,7 @@
     },
     "seriesChartTypes": {
       "description": "/** The series chart type configurations used in combination charts */",
-      "type": { "returnType": "SeriesChartType", "optional": true }
+      "type": { "returnType": "SeriesChartType[]", "optional": true }
     },
     "chartType": {
       "description": "/** The type of chart to create. */",
@@ -12288,6 +12414,14 @@
       "description": "/** Params to be passed to the filter component specified in `filter` or `filterFramework`. */",
       "type": { "returnType": "any", "optional": true }
     },
+    "filterComp": {
+      "description": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Provide name (string) to use registered filter.\n * - Provide User Component to provide custom filter. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "filterCompParams": {
+      "description": "/** Params to be passed to the filter component. */",
+      "type": { "returnType": "any", "optional": true }
+    },
     "floatingFilterComponent": {
       "description": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
       "type": { "returnType": "IFloatingFilterType", "optional": true }
@@ -12298,6 +12432,14 @@
     },
     "floatingFilterComponentParams": {
       "description": "/** Params to be passed to `floatingFilterComponent` or `floatingFilterComponentFramework`. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "floatingFilterComp": {
+      "description": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "floatingFilterCompParams": {
+      "description": "/** Params to be passed to Floating Filter Component. */",
       "type": { "returnType": "any", "optional": true }
     }
   },
@@ -12883,6 +13025,22 @@
     },
     "floatingFilterComponentParams": {
       "description": "/** Custom parameters to be passed to the floating filter component. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "filterComp": {
+      "description": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Provide name (string) to use registered filter.\n * - Provide User Component to provide custom filter. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "filterCompParams": {
+      "description": "/** Params to be passed to the filter component. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "floatingFilterComp": {
+      "description": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "floatingFilterCompParams": {
+      "description": "/** Params to be passed to Floating Filter Component. */",
       "type": { "returnType": "any", "optional": true }
     }
   },
@@ -15156,6 +15314,10 @@
     "statusPanelFramework": {
       "type": { "returnType": "any", "optional": true }
     },
+    "statusPanelComp": { "type": { "returnType": "any", "optional": true } },
+    "statusPanelCompParams": {
+      "type": { "returnType": "any", "optional": true }
+    },
     "align": { "type": { "returnType": "string", "optional": true } },
     "key": { "type": { "returnType": "string", "optional": true } },
     "statusPanelParams": { "type": { "returnType": "any", "optional": true } }
@@ -16216,6 +16378,18 @@
     "innerRendererSelector": {
       "description": "/** Callback to enable different innerRenderers to be used based of value of params. */",
       "type": { "returnType": "CellRendererSelectorFunc", "optional": true }
+    },
+    "innerCellComp": {
+      "description": "/** Cell Component to use for inside the Group Cell */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "innerCellCompParams": {
+      "description": "/** Params for Cell Component */",
+      "type": { "returnType": "any", "optional": true }
+    },
+    "innerCellCompSelector": {
+      "description": "/** Callback to select Cell Component for inside the Group Cell */",
+      "type": { "returnType": "CellCompSelectorFunc", "optional": true }
     },
     "scope": { "type": { "returnType": "any", "optional": false } },
     "padding": {

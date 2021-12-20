@@ -1,6 +1,6 @@
 import { BeanStub } from "../../context/beanStub";
 import { Autowired, Bean, Optional } from "../../context/context";
-import { CellEditorSelectorFunc, CellRendererSelectorFunc, ColDef, ColGroupDef } from "../../entities/colDef";
+import { CellCompSelectorFunc, EditorCompSelectorFunc, CompSelectorResult, CellEditorSelectorFunc, CellRendererSelectorFunc, ColDef, ColGroupDef } from "../../entities/colDef";
 import { GridOptions } from "../../entities/gridOptions";
 import { ToolPanelDef } from "../../entities/sideBar";
 import { IFloatingFilterParams } from "../../filter/floating/floatingFilter";
@@ -29,6 +29,10 @@ import {
     DateComponent,
     FilterComponent,
     FloatingFilterComponent,
+    FullWidth,
+    FullWidthDetail,
+    FullWidthGroup,
+    FullWidthLoading,
     HeaderComponent,
     HeaderGroupComponent,
     InnerRendererComponent,
@@ -56,7 +60,7 @@ export interface UserCompDetails {
     componentFromFramework: boolean;
     params: any;
     type: ComponentType;
-    newAgStackInstance: (defaultComponentName?: string | null) => AgPromise<any>;
+    newAgStackInstance: () => AgPromise<any>;
 }
 
 @Bean('userComponentFactory')
@@ -79,8 +83,20 @@ export class UserComponentFactory extends BeanStub {
 
     // this one is unusual, as it can be LoadingCellRenderer, DetailCellRenderer, FullWidthCellRenderer or GroupRowRenderer.
     // so we have to pass the type in.
-    public getFullWidthCellRendererDetails(params: ICellRendererParams, cellRendererType: string, cellRendererName: string): UserCompDetails | undefined {
-        return this.getCompDetails(this.gridOptions, { propertyName: cellRendererType, isCellRenderer: () => true }, cellRendererName, params);
+    public getFullWidthCellRendererDetails(params: ICellRendererParams): UserCompDetails {
+        return this.getCompDetails(this.gridOptions, FullWidth, null, params, true)!;
+    }
+
+    public getFullWidthLoadingCellRendererDetails(params: ICellRendererParams): UserCompDetails {
+        return this.getCompDetails(this.gridOptions, FullWidthLoading, 'agLoadingCellRenderer', params, true)!;
+    }
+
+    public getFullWidthGroupCellRendererDetails(params: ICellRendererParams): UserCompDetails {
+        return this.getCompDetails(this.gridOptions, FullWidthGroup, 'agGroupRowRenderer', params, true)!;
+    }
+
+    public getFullWidthDetailCellRendererDetails(params: ICellRendererParams): UserCompDetails {
+        return this.getCompDetails(this.gridOptions, FullWidthDetail, 'agDetailCellRenderer', params, true)!;
     }
 
     // CELL RENDERER
@@ -138,81 +154,122 @@ export class UserComponentFactory extends BeanStub {
 
     private getCompDetails(defObject: DefinitionObject, type: ComponentType, defaultName: string | null | undefined, params: any, mandatory = false): UserCompDetails | undefined {
 
-        const propertyName = type.propertyName;
+        const {propertyName, newPropName, cellRenderer} = type;
 
-        let comp: any;
-        let frameworkComp: any;
+        let compName: string | undefined;
+        let jsComp: any;
+        let fwComp: any;
+
         let paramsFromSelector: any;
+
+        // there are two types of js comps, class based and func based. we can only check for
+        // class based, by checking if getGui() exists. no way to differentiate js func based vs eg react func based
+        const isJsClassComp = (comp: any) => this.agComponentUtils.doesImplementIComponent(comp);
+        const fwActive = this.frameworkComponentWrapper != null;
 
         // pull from defObject if available
         if (defObject) {
             const defObjectAny = defObject as any;
 
-            // if selector, use this
-            const selectorFunc: CellEditorSelectorFunc | CellRendererSelectorFunc = defObjectAny[propertyName + 'Selector'];
-            const selectorRes = selectorFunc ? selectorFunc(params) : null;
-            if (selectorRes) {
-                comp = selectorRes.component;
-                frameworkComp = selectorRes.frameworkComponent;
-                paramsFromSelector = selectorRes.params;
-            } else {
-                // if no selector, or result of selector is empty, take from defObject
-                comp = defObjectAny[propertyName];
-                frameworkComp = defObjectAny[propertyName + 'Framework'];
-            }
+            const pullUsingNewCompAttribute = () => {
+                const selectorFunc: CellCompSelectorFunc | EditorCompSelectorFunc = defObjectAny[newPropName + 'Selector'];
+                const selectorRes = selectorFunc ? selectorFunc(params) : null;
 
-            // for filters only, we allow 'true' for the component, which means default filter to be used
-            if (comp === true) {
-                comp = undefined;
+                const assignComp = (comp: any) => {
+                    // comp===true for filters, which means use the default comp
+                    if (comp==null || comp===true) { return; }
+                    if (typeof comp === 'string') {
+                        compName = comp as string;
+                    // we allow functional JS comps when FW is not active
+                    } else if (fwActive && !isJsClassComp(comp)) {
+                        fwComp = comp;
+                    } else {
+                        jsComp = comp;
+                    }
+                };
+
+                if (selectorRes) {
+                    assignComp(selectorRes.comp);
+                    paramsFromSelector = selectorRes.params;
+                } else {
+                    assignComp(defObjectAny[newPropName]);
+                }
+            };
+
+            const pullUsingOldCompAttribute = () => {
+                // if selector, use this
+                const selectorFunc: CellEditorSelectorFunc | CellRendererSelectorFunc = defObjectAny[propertyName + 'Selector'];
+                const selectorRes = selectorFunc ? selectorFunc(params) : null;
+
+                const assignComp = (providedJsComp: any, providedFwComp: any) => {
+                    // comp===true for filters, which means use the default comp
+                    if ( (providedJsComp==null && providedFwComp==null) || providedJsComp===true) { return; }
+                    if (typeof providedJsComp === 'string') {
+                        compName = providedJsComp as string;
+                    } else if (providedJsComp!=null) {
+                        jsComp = providedJsComp;
+                    } else {
+                        fwComp = providedFwComp;
+                    }
+                };
+                
+                if (selectorRes) {
+                    assignComp(selectorRes.component, selectorRes.frameworkComponent);
+                    paramsFromSelector = selectorRes.params;
+                } else {
+                    // if no selector, or result of selector is empty, take from defObject
+                    assignComp(defObjectAny[propertyName], defObjectAny[propertyName + 'Framework']);
+                }
+            };
+
+            pullUsingNewCompAttribute();
+            const compNotAssigned = compName==null && jsComp==null && fwComp==null;
+            if (compNotAssigned) {
+                pullUsingOldCompAttribute();
             }
         }
 
         const lookupFromRegistry = (key: string) => {
             const item = this.userComponentRegistry.retrieve(key);
             if (item) {
-                comp = !item.componentFromFramework ? item.component : undefined;
-                frameworkComp = item.componentFromFramework ? item.component : undefined;
-            } else {
-                comp = undefined;
-                frameworkComp = undefined;
+                jsComp = !item.componentFromFramework ? item.component : undefined;
+                fwComp = item.componentFromFramework ? item.component : undefined;
             }
         };
 
         // if compOption is a string, means we need to look the item up
-        if (typeof comp === 'string') {
-            lookupFromRegistry(comp);
+        if (compName != null) {
+            lookupFromRegistry(compName);
         }
 
         // if lookup brought nothing back, and we have a default, lookup the default
-        if (comp == null && frameworkComp == null && defaultName != null) {
+        if (jsComp == null && fwComp == null && defaultName != null) {
             lookupFromRegistry(defaultName);
         }
 
         // if we have a comp option, and it's a function, replace it with an object equivalent adaptor
-        if (comp && !this.agComponentUtils.doesImplementIComponent(comp)) {
-            comp = this.agComponentUtils.adaptFunction(propertyName, comp);
+        if (jsComp && cellRenderer && !this.agComponentUtils.doesImplementIComponent(jsComp)) {
+            jsComp = this.agComponentUtils.adaptFunction(propertyName, jsComp);
         }
 
-        if (!comp && !frameworkComp) {
+        if (!jsComp && !fwComp) {
             if (mandatory) {
-                const overrideName = defObject ? (defObject as any)[propertyName] : defaultName;
-                const nameToReport = overrideName ? overrideName : defaultName;
-                console.error(`Could not find component ${nameToReport}, did you forget to configure this component?`);
+                console.error(`Could not find component ${compName}, did you forget to configure this component?`);
             }
             return;
         }
 
-        const paramsMerged = this.mergeParamsWithApplicationProvidedParams(defObject, propertyName, params, paramsFromSelector);
+        const paramsMerged = this.mergeParamsWithApplicationProvidedParams(defObject, type, params, paramsFromSelector);
 
-        const componentFromFramework = comp == null;
-        const componentClass = comp ? comp : frameworkComp;
+        const componentFromFramework = jsComp == null;
+        const componentClass = jsComp ? jsComp : fwComp;
 
         return {
             componentFromFramework,
             componentClass,
             params: paramsMerged,
             type: type,
-            newAgStackInstance: (defaultCompName?: string) => this.newAgStackInstance(componentClass, componentFromFramework, paramsMerged, type, defaultCompName)
+            newAgStackInstance: () => this.newAgStackInstance(componentClass, componentFromFramework, paramsMerged, type)
         };
     }
 
@@ -220,8 +277,7 @@ export class UserComponentFactory extends BeanStub {
         ComponentClass: any,
         componentFromFramework: boolean,
         params: any,
-        type: ComponentType,
-        defaultComponentName: string | null | undefined
+        type: ComponentType
     ): AgPromise<any> {
         const propertyName = type.propertyName;
         const jsComponent = !componentFromFramework;
@@ -237,8 +293,7 @@ export class UserComponentFactory extends BeanStub {
                 ComponentClass,
                 thisComponentConfig.mandatoryMethodList,
                 thisComponentConfig.optionalMethodList,
-                type,
-                defaultComponentName
+                type
             );
         }
 
@@ -253,7 +308,7 @@ export class UserComponentFactory extends BeanStub {
     // used by Floating Filter
     public mergeParamsWithApplicationProvidedParams(
         defObject: DefinitionObject,
-        propertyName: string,
+        type: ComponentType,
         paramsFromGrid: any,
         paramsFromSelector: any = null
     ): any {
@@ -261,7 +316,17 @@ export class UserComponentFactory extends BeanStub {
 
         mergeDeep(params, paramsFromGrid);
 
-        const userParams = defObject ? (defObject as any)[propertyName + "Params"] : null;
+        // pull user params from either the old prop name or new prop name, whichever present
+        // (but not both, providing both doesn't make sense so we ignore the second one)
+        // eg either cellRendererParams or cellCompParams
+        const defObjectAny = defObject as any;
+        let userParams: any;
+        const keys = [type.newPropName + 'Params', type.propertyName + 'Params'];
+        keys.forEach( key => {
+            if (defObject && defObjectAny[key]) {
+                userParams = defObjectAny[key];
+            }
+        });
 
         if (userParams != null) {
             if (typeof userParams === 'function') {

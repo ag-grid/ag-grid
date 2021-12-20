@@ -232,6 +232,8 @@ export interface GridOptions {
     components?: { [p: string]: any; };
     /** A map of component names to framework (Angular, React, Vue etc.) components. */
     frameworkComponents?: { [p: string]: { new(): any; }; } | any;
+    /** A map of component names to components (can be JavaScript OR Framework components). */
+    comps?: { [p: string]: any; };
 
     /** @deprecated React UI is enabled by default. Use suppressReactUi=true to turn it off. */
     reactUi?: boolean;
@@ -316,6 +318,11 @@ export interface GridOptions {
     /** Callback to select which loading cell renderer to be used when data is loading via a DataSource. */
     loadingCellRendererSelector?: LoadingCellRendererSelectorFunc;
 
+    /** Cell Comp to use when data is loading via a DataSource. */
+    loadingRowCellComp?: any;
+    /** Params for Loading Cell Comp. */
+    loadingRowCellCompParams?: any;
+
     // *** Localisation *** //
     // just set once
     /** A map of key->value pairs for localising text within the grid. */
@@ -334,6 +341,12 @@ export interface GridOptions {
     detailCellRendererFramework?: any;
     /** Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params. */
     detailCellRendererParams?: any;
+
+    /** Provide a custom Detail Cell Component to use when a master row is expanded. */
+    detailRowCellComp?: any;
+    /** Params for Detail Cell Component */
+    detailRowCellCompParams?: any;
+
     /** Set fixed height in pixels for each detail row. */
     detailRowHeight?: number;
     /** Set to `true` to have the detail grid dynamically change it's height to fit it's rows. */
@@ -390,6 +403,12 @@ export interface GridOptions {
     loadingOverlayComponentFramework?: any;
     /** Customise the parameters provided to the loading overlay component. */
     loadingOverlayComponentParams?: any;
+
+    /** Loading Overlay Component. */
+    loadingOverlayComp?: any;
+    /** Params for Loading Overlay Component */
+    loadingOverlayCompParams?: any;
+
     /** Disables the 'loading' overlay. Default: `false` */
     suppressLoadingOverlay?: boolean;
 
@@ -401,6 +420,12 @@ export interface GridOptions {
     noRowsOverlayComponentFramework?: any;
     /** Customise the parameters provided to the no rows overlay component. */
     noRowsOverlayComponentParams?: any;
+
+    /** Provide a custom no rows overlay component */
+    noRowsOverlayComp?: any;
+    /** Customise the parameters provided to the no rows overlay component. */
+    noRowsOverlayCompParams?: any;
+
     /** Disables the 'no rows' overlay. Default: `false` */
     suppressNoRowsOverlay?: boolean;
 
@@ -500,6 +525,12 @@ export interface GridOptions {
     fullWidthCellRendererFramework?: any;
     /** Customise the parameters provided to the `fullWidthCellRenderer` component. */
     fullWidthCellRendererParams?: any;
+
+    /** Sets the Cell Comp to use for full width rows. */
+    fullWidthCellComp?: any;
+    /** Customise the parameters provided to Full Width Cell Comp. */
+    fullWidthCellCompParams?: any;
+
     /** Set to `true` to have the detail grid embedded in the master grid's container and so link their horizontal scrolling. */
     embedFullWidthRows?: boolean;
     /** @deprecated */
@@ -555,6 +586,12 @@ export interface GridOptions {
     groupRowRendererFramework?: any;
     /** Customise the parameters provided to the `groupRowRenderer` component. */
     groupRowRendererParams?: any;
+
+    /** Sets the Cell Comp to use when `groupDisplayType = 'groupRows'`. */
+    groupRowCellComp?: any;
+    /** Customise the parameters provided to the Group Row Comp component. */
+    groupRowCellCompParams?: any;
+
     /** By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping. Default: `false` */
     suppressMakeColumnVisibleAfterUnGroup?: boolean;
     /** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback. */
