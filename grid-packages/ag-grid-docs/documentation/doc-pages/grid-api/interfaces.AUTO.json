@@ -4734,7 +4734,7 @@
       "cellRange": "ChartParamsCellRange",
       "suppressChartRanges?": "boolean",
       "aggFunc?": "string | IAggFunc",
-      "seriesChartTypes?": "SeriesChartType",
+      "seriesChartTypes?": "SeriesChartType[]",
       "chartType": "ChartType",
       "chartThemeName?": "string",
       "chartContainer?": "HTMLElement",

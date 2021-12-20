@@ -3,7 +3,6 @@ import {
     Autowired,
     BeanStub,
     CellRange,
-    CellRangeParams,
     CellRangeType,
     ChartType,
     Column,
@@ -38,6 +37,7 @@ export interface ChartModelParams {
     suppressChartRanges: boolean;
     unlinkChart?: boolean;
     crossFiltering?: boolean;
+    seriesChartTypes?: SeriesChartType[];
 }
 
 export class ChartDataModel extends BeanStub {
@@ -60,7 +60,7 @@ export class ChartDataModel extends BeanStub {
     public chartThemeName: string;
     public unlinked = false;
     public chartData: any[] = [];
-    public seriesChartTypes: SeriesChartType[] = [];
+    public seriesChartTypes: SeriesChartType[];
     public valueColState: ColState[] = [];
     public dimensionColState: ColState[] = [];
     public columnNames: { [p: string]: string[]; } = {};
@@ -89,6 +89,7 @@ export class ChartDataModel extends BeanStub {
         this.suppressChartRanges = params.suppressChartRanges;
         this.unlinked = !!params.unlinkChart;
         this.crossFiltering = !!params.crossFiltering;
+        this.seriesChartTypes = params.seriesChartTypes || [];
     }
 
     @PostConstruct
@@ -420,6 +421,10 @@ export class ChartDataModel extends BeanStub {
         const { valueColState } = this;
 
         if (this.seriesChartTypes.length === 0) { //TODO
+
+
+
+
             this.seriesChartTypes = valueColState.map(valueCol => {
                 return { colId: valueCol.colId, chartType: 'groupedColumn', secondaryAxis: false };
             });
