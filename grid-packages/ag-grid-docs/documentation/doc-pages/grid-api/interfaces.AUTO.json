@@ -460,13 +460,15 @@
       "cellEditorFramework?": "any",
       "cellEditorParams?": "any",
       "cellEditorSelector?": "CellEditorSelectorFunc",
-      "editorComp?": "any",
-      "editorCompParams?": "any",
-      "editorCompSelector?": "EditorCompSelectorFunc",
+      "cellEditorComp?": "any",
+      "cellEditorCompParams?": "any",
+      "cellEditorCompSelector?": "CellEditorCompSelectorFunc",
       "singleClickEdit?": "boolean",
       "newValueHandler?": "(params: NewValueParams) => boolean",
       "cellEditorPopup?": "boolean",
+      "cellEditorCompPopup?": "boolean",
       "cellEditorPopupPosition?": "string",
+      "cellEditorCompPopupPosition?": "string",
       "onCellValueChanged?": "(event: NewValueParams) => void",
       "onCellClicked?": "(event: CellClickedEvent) => void",
       "onCellDoubleClicked?": "(event: CellDoubleClickedEvent) => void",
@@ -505,9 +507,9 @@
       "cellRendererFramework?": "any",
       "cellRendererParams?": "any",
       "cellRendererSelector?": "CellRendererSelectorFunc",
-      "cellComp?": "any",
-      "cellCompParams?": "any",
-      "cellCompSelector?": "CellCompSelectorFunc",
+      "cellRendererComp?": "any",
+      "cellRendererCompParams?": "any",
+      "cellRendererCompSelector?": "CellRendererCompSelectorFunc",
       "autoHeight?": "boolean",
       "wrapText?": "boolean",
       "enableCellChangeFlash?": "boolean",
@@ -605,9 +607,9 @@
       "cellEditorFramework?": "/** Framework `cellEditor` to use for this column. */",
       "cellEditorParams?": "/** Params to be passed to the cell editor component. */",
       "cellEditorSelector?": "/** Callback to select which cell editor to be used for a given row within the same column. */",
-      "editorComp?": "/** A Editor Component to use for this column. */",
-      "editorCompParams?": "/** Params to be passed to the Editor Component */",
-      "editorCompSelector?": "/** Callback to select which Cell Editor and Params to use for this column. */",
+      "cellEditorComp?": "/** A Editor Component to use for this column. */",
+      "cellEditorCompParams?": "/** Params to be passed to the Editor Component */",
+      "cellEditorCompSelector?": "/** Callback to select which Cell Editor and Params to use for this column. */",
       "singleClickEdit?": "/** Set to `true` to have cells under this column enter edit mode after single click. Default: `false` */",
       "newValueHandler?": "/** @deprecated use `valueSetter` instead\n */",
       "cellEditorPopup?": "/** Set to `true`, to have the cell editor appear in a popup. */",
@@ -650,9 +652,9 @@
       "cellRendererFramework?": "/** Framework `cellRenderer` to use for this column. */",
       "cellRendererParams?": "/** Params to be passed to the cell renderer component. */",
       "cellRendererSelector?": "/** Callback to select which cell renderer to be used for a given row within the same column. */",
-      "cellComp?": "/** A Cell Component to use for this column. */",
-      "cellCompParams?": "/** Params to be passed to the Cell Component. */",
-      "cellCompSelector?": "/** Callback to select which Cell Component and Params to use for this column. */",
+      "cellRendererComp?": "/** A Cell Component to use for this column. */",
+      "cellRendererCompParams?": "/** Params to be passed to the Cell Component. */",
+      "cellRendererCompSelector?": "/** Callback to select which Cell Component and Params to use for this column. */",
       "autoHeight?": "/** Set to `true` to have the grid calculate the height of a row based on contents of this column. Default: `false` */",
       "wrapText?": "/** Set to `true` to have the text wrap inside the cell - typically used with `autoHeight`. Default: `false` */",
       "enableCellChangeFlash?": "/** Set to `true` to flash a cell when it's refreshed. Default: `false` */",
@@ -1369,14 +1371,14 @@
       "params?": "/** Equivalent of setting `colDef.cellEditorParams` */"
     }
   },
-  "CellCompSelectorFunc": {
+  "CellRendererCompSelectorFunc": {
     "meta": { "isCallSignature": true },
     "type": {
       "arguments": { "params": "ICellRendererParams" },
       "returnType": "CompSelectorResult | undefined"
     }
   },
-  "EditorCompSelectorFunc": {
+  "CellEditorCompSelectorFunc": {
     "meta": { "isCallSignature": true },
     "type": {
       "arguments": { "params": "ICellEditorParams" },
@@ -9300,7 +9302,7 @@
       "innerRendererSelector?": "CellRendererSelectorFunc",
       "innerCellComp?": "any",
       "innerCellCompParams?": "any",
-      "innerCellCompSelector?": "CellCompSelectorFunc",
+      "innerCellCompSelector?": "CellRendererCompSelectorFunc",
       "scope": "any",
       "padding": "number",
       "value": "any",

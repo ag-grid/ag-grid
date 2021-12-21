@@ -1,6 +1,6 @@
 import { BeanStub } from "../../context/beanStub";
 import { Autowired, Bean, Optional } from "../../context/context";
-import { CellCompSelectorFunc, EditorCompSelectorFunc, CompSelectorResult, CellEditorSelectorFunc, CellRendererSelectorFunc, ColDef, ColGroupDef } from "../../entities/colDef";
+import { CellRendererCompSelectorFunc, CellEditorCompSelectorFunc, CellEditorSelectorFunc, CellRendererSelectorFunc, ColDef, ColGroupDef } from "../../entities/colDef";
 import { GridOptions } from "../../entities/gridOptions";
 import { ToolPanelDef } from "../../entities/sideBar";
 import { IFloatingFilterParams } from "../../filter/floating/floatingFilter";
@@ -172,7 +172,7 @@ export class UserComponentFactory extends BeanStub {
             const defObjectAny = defObject as any;
 
             const pullUsingNewCompAttribute = () => {
-                const selectorFunc: CellCompSelectorFunc | EditorCompSelectorFunc = defObjectAny[newPropName + 'Selector'];
+                const selectorFunc: CellRendererCompSelectorFunc | CellEditorCompSelectorFunc = defObjectAny[newPropName + 'Selector'];
                 const selectorRes = selectorFunc ? selectorFunc(params) : null;
 
                 const assignComp = (comp: any) => {

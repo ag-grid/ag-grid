@@ -205,11 +205,11 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     cellEditorSelector?: CellEditorSelectorFunc;
 
     /** A Editor Component to use for this column. */
-    editorComp?: any;
+    cellEditorComp?: any;
     /** Params to be passed to the Editor Component */
-    editorCompParams?: any;
+    cellEditorCompParams?: any;
     /** Callback to select which Cell Editor and Params to use for this column. */
-    editorCompSelector?: EditorCompSelectorFunc;
+    cellEditorCompSelector?: CellEditorCompSelectorFunc;
 
     /** Set to `true` to have cells under this column enter edit mode after single click. Default: `false` */
     singleClickEdit?: boolean;
@@ -220,6 +220,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
      * Set to `true`, to have the cell editor appear in a popup.
      */
     cellEditorPopup?: boolean;
+    cellEditorCompPopup?: boolean;
     /**
      * Set the position for the popup cell editor. Possible values are
      *  - `over` Popup will be positioned over the cell
@@ -227,6 +228,7 @@ export interface ColDef extends AbstractColDef, IFilterDef {
      *
      * Default: `over`. */
     cellEditorPopupPosition?: string;
+    cellEditorCompPopupPosition?: string;
 
     // *** Columns: Events *** //
 
@@ -339,11 +341,11 @@ export interface ColDef extends AbstractColDef, IFilterDef {
     cellRendererSelector?: CellRendererSelectorFunc;
 
     /** A Cell Component to use for this column. */
-    cellComp?: any;
+    cellRendererComp?: any;
     /** Params to be passed to the Cell Component. */
-    cellCompParams?: any;
+    cellRendererCompParams?: any;
     /** Callback to select which Cell Component and Params to use for this column. */
-    cellCompSelector?: CellCompSelectorFunc;
+    cellRendererCompSelector?: CellRendererCompSelectorFunc;
 
     /** Set to `true` to have the grid calculate the height of a row based on contents of this column. Default: `false` */
     autoHeight?: boolean;
@@ -708,11 +710,11 @@ export interface CellEditorSelectorResult {
     params?: any;
 }
 
-export interface CellCompSelectorFunc {
+export interface CellRendererCompSelectorFunc {
     (params: ICellRendererParams): CompSelectorResult | undefined;
 }
 
-export interface EditorCompSelectorFunc {
+export interface CellEditorCompSelectorFunc {
     (params: ICellEditorParams): CompSelectorResult | undefined;
 }
 

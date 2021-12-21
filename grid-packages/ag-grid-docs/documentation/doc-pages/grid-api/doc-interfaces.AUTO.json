@@ -818,17 +818,17 @@
       "description": "/** Callback to select which cell editor to be used for a given row within the same column. */",
       "type": { "returnType": "CellEditorSelectorFunc", "optional": true }
     },
-    "editorComp": {
+    "cellEditorComp": {
       "description": "/** A Editor Component to use for this column. */",
       "type": { "returnType": "any", "optional": true }
     },
-    "editorCompParams": {
+    "cellEditorCompParams": {
       "description": "/** Params to be passed to the Editor Component */",
       "type": { "returnType": "any", "optional": true }
     },
-    "editorCompSelector": {
+    "cellEditorCompSelector": {
       "description": "/** Callback to select which Cell Editor and Params to use for this column. */",
-      "type": { "returnType": "EditorCompSelectorFunc", "optional": true }
+      "type": { "returnType": "CellEditorCompSelectorFunc", "optional": true }
     },
     "singleClickEdit": {
       "description": "/** Set to `true` to have cells under this column enter edit mode after single click. Default: `false` */",
@@ -846,8 +846,14 @@
       "description": "/** Set to `true`, to have the cell editor appear in a popup. */",
       "type": { "returnType": "boolean", "optional": true }
     },
+    "cellEditorCompPopup": {
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "cellEditorPopupPosition": {
       "description": "/** Set the position for the popup cell editor. Possible values are\n *   - `over` Popup will be positioned over the cell\n *   - `under` Popup will be positioned below the cell leaving the cell value visible.\n * \n * Default: `over`. */",
+      "type": { "returnType": "string", "optional": true }
+    },
+    "cellEditorCompPopupPosition": {
       "type": { "returnType": "string", "optional": true }
     },
     "onCellValueChanged": {
@@ -1041,17 +1047,17 @@
       "description": "/** Callback to select which cell renderer to be used for a given row within the same column. */",
       "type": { "returnType": "CellRendererSelectorFunc", "optional": true }
     },
-    "cellComp": {
+    "cellRendererComp": {
       "description": "/** A Cell Component to use for this column. */",
       "type": { "returnType": "any", "optional": true }
     },
-    "cellCompParams": {
+    "cellRendererCompParams": {
       "description": "/** Params to be passed to the Cell Component. */",
       "type": { "returnType": "any", "optional": true }
     },
-    "cellCompSelector": {
+    "cellRendererCompSelector": {
       "description": "/** Callback to select which Cell Component and Params to use for this column. */",
-      "type": { "returnType": "CellCompSelectorFunc", "optional": true }
+      "type": { "returnType": "CellRendererCompSelectorFunc", "optional": true }
     },
     "autoHeight": {
       "description": "/** Set to `true` to have the grid calculate the height of a row based on contents of this column. Default: `false` */",
@@ -2040,8 +2046,8 @@
       "type": { "returnType": "any", "optional": true }
     }
   },
-  "CellCompSelectorFunc": {},
-  "EditorCompSelectorFunc": {},
+  "CellRendererCompSelectorFunc": {},
+  "CellEditorCompSelectorFunc": {},
   "CompSelectorResult": {
     "comp": { "type": { "returnType": "any", "optional": false } },
     "params": { "type": { "returnType": "any", "optional": false } }
@@ -16393,7 +16399,7 @@
     },
     "innerCellCompSelector": {
       "description": "/** Callback to select Cell Component for inside the Group Cell */",
-      "type": { "returnType": "CellCompSelectorFunc", "optional": true }
+      "type": { "returnType": "CellRendererCompSelectorFunc", "optional": true }
     },
     "scope": { "type": { "returnType": "any", "optional": false } },
     "padding": {

@@ -25,13 +25,13 @@ export const HeaderGroupComponent: ComponentType = {
 export const CellRendererComponent: ComponentType = {
     propertyName: 'cellRenderer',
     cellRenderer: true,
-    newPropName: 'cellComp'
+    newPropName: 'cellRendererComp'
 };
 
 export const CellEditorComponent: ComponentType = {
     propertyName: 'cellEditor',
     cellRenderer: false,
-    newPropName: 'editorComp'
+    newPropName: 'cellEditorComp'
 };
 
 export const InnerRendererComponent: ComponentType = {

@@ -209,17 +209,17 @@
     "description": "/** Callback to select which cell editor to be used for a given row within the same column. */",
     "type": { "returnType": "CellEditorSelectorFunc" }
   },
-  "editorComp": {
+  "cellEditorComp": {
     "description": "/** A Editor Component to use for this column. */",
     "type": { "returnType": "any" }
   },
-  "editorCompParams": {
+  "cellEditorCompParams": {
     "description": "/** Params to be passed to the Editor Component */",
     "type": { "returnType": "any" }
   },
-  "editorCompSelector": {
+  "cellEditorCompSelector": {
     "description": "/** Callback to select which Cell Editor and Params to use for this column. */",
-    "type": { "returnType": "EditorCompSelectorFunc" }
+    "type": { "returnType": "CellEditorCompSelectorFunc" }
   },
   "singleClickEdit": {
     "description": "/** Set to `true` to have cells under this column enter edit mode after single click. Default: `false` */",
@@ -236,10 +236,12 @@
     "description": "/** Set to `true`, to have the cell editor appear in a popup. */",
     "type": { "returnType": "boolean" }
   },
+  "cellEditorCompPopup": { "type": { "returnType": "boolean" } },
   "cellEditorPopupPosition": {
     "description": "/** Set the position for the popup cell editor. Possible values are\n *   - `over` Popup will be positioned over the cell\n *   - `under` Popup will be positioned below the cell leaving the cell value visible.\n * \n * Default: `over`. */",
     "type": { "returnType": "string" }
   },
+  "cellEditorCompPopupPosition": { "type": { "returnType": "string" } },
   "onCellValueChanged": {
     "description": "/** Callback for after the value of a cell has changed, either due to editing or the application calling `api.setValue()`. */",
     "type": { "arguments": { "event": "NewValueParams" }, "returnType": "void" }
@@ -411,17 +413,17 @@
     "description": "/** Callback to select which cell renderer to be used for a given row within the same column. */",
     "type": { "returnType": "CellRendererSelectorFunc" }
   },
-  "cellComp": {
+  "cellRendererComp": {
     "description": "/** A Cell Component to use for this column. */",
     "type": { "returnType": "any" }
   },
-  "cellCompParams": {
+  "cellRendererCompParams": {
     "description": "/** Params to be passed to the Cell Component. */",
     "type": { "returnType": "any" }
   },
-  "cellCompSelector": {
+  "cellRendererCompSelector": {
     "description": "/** Callback to select which Cell Component and Params to use for this column. */",
-    "type": { "returnType": "CellCompSelectorFunc" }
+    "type": { "returnType": "CellRendererCompSelectorFunc" }
   },
   "autoHeight": {
     "description": "/** Set to `true` to have the grid calculate the height of a row based on contents of this column. Default: `false` */",

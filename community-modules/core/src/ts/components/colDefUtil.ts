@@ -25,7 +25,8 @@ export class ColDefUtil {
         'pinned',
         'initialPinned',
         'chartDataType',
-        'cellEditorPopupPosition'
+        'cellEditorPopupPosition',
+        'cellEditorCompPopupPosition'
     ];
 
     public static OBJECT_PROPERTIES = [
@@ -38,13 +39,13 @@ export class ColDefUtil {
         'cellRenderer',
         'cellRendererParams',
         'cellRendererFramework',
-        'cellComp',
-        'cellCompParams',
+        'cellRendererComp',
+        'cellRendererCompParams',
         'cellEditor',
         'cellEditorFramework',
         'cellEditorParams',
-        'editorComp',
-        'editorCompParams',
+        'cellEditorComp',
+        'cellEditorCompParams',
         'pinnedRowCellRendererFramework',
         'pinnedRowCellRendererParams',
         'filterFramework',
@@ -130,6 +131,7 @@ export class ColDefUtil {
         'singleClickEdit',
         'floatingFilter',
         'cellEditorPopup',
+        'cellEditorCompPopup',
         'suppressFillHandle'
     ];
 
@@ -162,6 +164,8 @@ export class ColDefUtil {
         'tooltipComponentFramework',
         'cellRendererSelector',
         'cellEditorSelector',
+        // 'cellCompSelector',
+        // 'cellEditorCompSelector',
     ];
 
     public static ALL_PROPERTIES = [

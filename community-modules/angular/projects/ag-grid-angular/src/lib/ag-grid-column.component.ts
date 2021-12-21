@@ -155,9 +155,9 @@ export class AgGridColumn {
     /** Callback to select which cell editor to be used for a given row within the same column.     */
     @Input() public cellEditorSelector: CellEditorSelectorFunc | undefined;
     /** A Editor Component to use for this column.     */
-    @Input() public editorComp: any;
+    @Input() public cellEditorComp: any;
     /** Params to be passed to the Editor Component     */
-    @Input() public editorCompParams: any;
+    @Input() public cellEditorCompParams: any;
     /** Set to `true` to have cells under this column enter edit mode after single click. Default: `false`     */
     @Input() public singleClickEdit: boolean | undefined;
     /** @deprecated use `valueSetter` instead
@@ -165,12 +165,14 @@ export class AgGridColumn {
     @Input() public newValueHandler: ((params: NewValueParams) => boolean) | undefined;
     /** Set to `true`, to have the cell editor appear in a popup.     */
     @Input() public cellEditorPopup: boolean | undefined;
+    @Input() public cellEditorCompPopup: boolean | undefined;
     /** Set the position for the popup cell editor. Possible values are
      *   - `over` Popup will be positioned over the cell
      *   - `under` Popup will be positioned below the cell leaving the cell value visible.
      * 
      * Default: `over`.     */
     @Input() public cellEditorPopupPosition: string | undefined;
+    @Input() public cellEditorCompPopupPosition: string | undefined;
     /** Callback for after the value of a cell has changed, either due to editing or the application calling `api.setValue()`.     */
     @Input() public onCellValueChanged: ((event: NewValueParams) => void) | undefined;
     /** Callback called when a cell is clicked.     */
@@ -256,9 +258,9 @@ export class AgGridColumn {
     /** Callback to select which cell renderer to be used for a given row within the same column.     */
     @Input() public cellRendererSelector: CellRendererSelectorFunc | undefined;
     /** A Cell Component to use for this column.     */
-    @Input() public cellComp: any;
+    @Input() public cellRendererComp: any;
     /** Params to be passed to the Cell Component.     */
-    @Input() public cellCompParams: any;
+    @Input() public cellRendererCompParams: any;
     /** Set to `true` to have the grid calculate the height of a row based on contents of this column. Default: `false`     */
     @Input() public autoHeight: boolean | undefined;
     /** Set to `true` to have the text wrap inside the cell - typically used with `autoHeight`. Default: `false`     */
@@ -387,6 +389,7 @@ export class AgGridColumn {
     static ngAcceptInputType_singleClickEdit: boolean | null | '';
     static ngAcceptInputType_floatingFilter: boolean | null | '';
     static ngAcceptInputType_cellEditorPopup: boolean | null | '';
+    static ngAcceptInputType_cellEditorCompPopup: boolean | null | '';
     static ngAcceptInputType_suppressFillHandle: boolean | null | '';
     // @END@
 
