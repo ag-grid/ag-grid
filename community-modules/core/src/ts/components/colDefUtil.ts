@@ -164,8 +164,8 @@ export class ColDefUtil {
         'tooltipComponentFramework',
         'cellRendererSelector',
         'cellEditorSelector',
-        // 'cellCompSelector',
-        // 'cellEditorCompSelector',
+        'cellRendererCompSelector',
+        'cellEditorCompSelector',
     ];
 
     public static ALL_PROPERTIES = [

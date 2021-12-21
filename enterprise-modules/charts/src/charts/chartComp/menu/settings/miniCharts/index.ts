@@ -21,4 +21,5 @@ export * from "./area/miniNormalizedArea";
 export * from "./histogram/miniHistogram";
 
 export * from "./combo/miniGroupedColumnLine";
-export * from "./combo/miniStackedColumnLine";
+export * from "./combo/miniSecondaryAxisCombo";
+export * from "./combo/miniCustomCombo";

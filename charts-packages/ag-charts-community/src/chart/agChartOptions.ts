@@ -484,6 +484,10 @@ export interface AgScatterSeriesOptions extends AgBaseSeriesOptions {
     yKey?: string;
     xName?: string;
     yName?: string;
+    sizeKey?: string;
+    sizeName?: string;
+    labelKey?: string;
+    labelName?: string;
     title?: string;
     /**
      * @deprecated Use {@link marker.fill} instead.
@@ -686,6 +690,10 @@ export interface AgTreemapNodeDatum {
     parent?: AgTreemapNodeDatum;
     children?: AgTreemapNodeDatum[];
     depth: number;
+    colorValue: number;
+    fill: string;
+    label: string;
+    hasTitle: boolean;
 }
 
 export interface AgTreemapSeriesTooltipRendererParams {

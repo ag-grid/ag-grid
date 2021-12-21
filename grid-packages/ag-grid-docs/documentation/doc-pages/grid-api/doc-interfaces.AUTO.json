@@ -2389,6 +2389,13 @@
       "description": "/** Params for Loading Cell Comp. */",
       "type": { "returnType": "any", "optional": true }
     },
+    "loadingRowCellCompSelector": {
+      "description": "/** Selector for the loading component. */",
+      "type": {
+        "returnType": "LoadingRowCellCompSelectorFunc",
+        "optional": true
+      }
+    },
     "localeText": {
       "description": "/** A map of key->value pairs for localising text within the grid. */",
       "type": { "returnType": "{ [key: string]: string }", "optional": true }
@@ -5126,6 +5133,7 @@
       "type": { "returnType": "any", "optional": true }
     }
   },
+  "LoadingRowCellCompSelectorFunc": {},
   "IHeaderColumn": {
     "getUniqueId": {
       "type": { "arguments": {}, "returnType": "string", "optional": false }
@@ -10464,6 +10472,10 @@
     "yKey": { "type": { "returnType": "string", "optional": true } },
     "xName": { "type": { "returnType": "string", "optional": true } },
     "yName": { "type": { "returnType": "string", "optional": true } },
+    "sizeKey": { "type": { "returnType": "string", "optional": true } },
+    "sizeName": { "type": { "returnType": "string", "optional": true } },
+    "labelKey": { "type": { "returnType": "string", "optional": true } },
+    "labelName": { "type": { "returnType": "string", "optional": true } },
     "title": { "type": { "returnType": "string", "optional": true } },
     "fill": {
       "description": "/** @deprecated Use {@link marker.fill} instead.\n */",
@@ -10887,7 +10899,11 @@
     "children": {
       "type": { "returnType": "AgTreemapNodeDatum[]", "optional": true }
     },
-    "depth": { "type": { "returnType": "number", "optional": false } }
+    "depth": { "type": { "returnType": "number", "optional": false } },
+    "colorValue": { "type": { "returnType": "number", "optional": false } },
+    "fill": { "type": { "returnType": "string", "optional": false } },
+    "label": { "type": { "returnType": "string", "optional": false } },
+    "hasTitle": { "type": { "returnType": "boolean", "optional": false } }
   },
   "AgTreemapSeriesTooltipRendererParams": {
     "datum": {

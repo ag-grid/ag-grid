@@ -1,4 +1,4 @@
-import { CellClassFunc, CellClassRules, CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditorSelectorFunc, CellRendererSelectorFunc, CellStyle, CellStyleFunc, CheckboxSelectionCallback, ColDef, ColGroupDef, ColSpanParams, ColumnsMenuParams, DndSourceCallback, DndSourceOnRowDragParams, EditableCallback, GetQuickFilterTextParams, HeaderCheckboxSelectionCallback, HeaderClass, HeaderValueGetterFunc, IAggFunc, ICellEditorComp, ICellRendererComp, ICellRendererFunc, IHeaderGroupComp, IRowDragItem, ITooltipComp, ITooltipParams, KeyCreatorParams, NewValueParams, RowDragCallback, RowNode, RowSpanParams, SuppressHeaderKeyboardEventParams, SuppressKeyboardEventParams, SuppressNavigableCallback, SuppressPasteCallback, ToolPanelClass, ValueFormatterFunc, ValueGetterFunc, ValueParserFunc, ValueSetterFunc } from "ag-grid-community";
+import { CellRendererCompSelectorFunc, CellEditorCompSelectorFunc, CellClassFunc, CellClassRules, CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditorSelectorFunc, CellRendererSelectorFunc, CellStyle, CellStyleFunc, CheckboxSelectionCallback, ColDef, ColGroupDef, ColSpanParams, ColumnsMenuParams, DndSourceCallback, DndSourceOnRowDragParams, EditableCallback, GetQuickFilterTextParams, HeaderCheckboxSelectionCallback, HeaderClass, HeaderValueGetterFunc, IAggFunc, ICellEditorComp, ICellRendererComp, ICellRendererFunc, IHeaderGroupComp, IRowDragItem, ITooltipComp, ITooltipParams, KeyCreatorParams, NewValueParams, RowDragCallback, RowNode, RowSpanParams, SuppressHeaderKeyboardEventParams, SuppressKeyboardEventParams, SuppressNavigableCallback, SuppressPasteCallback, ToolPanelClass, ValueFormatterFunc, ValueGetterFunc, ValueParserFunc, ValueSetterFunc } from "ag-grid-community";
 import { Component, ContentChildren, Input, QueryList } from "@angular/core";
 
 @Component({
@@ -38,7 +38,7 @@ export class AgGridColumn {
         let { childColumns, ...colDef } = from;
         return colDef;
     }
-
+ı
     // inputs - pretty much most of ColDef, with the exception of template, templateUrl and internal only properties
     // @START@
     @Input() public filterFramework: any;
@@ -158,6 +158,8 @@ export class AgGridColumn {
     @Input() public cellEditorComp: any;
     /** Params to be passed to the Editor Component     */
     @Input() public cellEditorCompParams: any;
+    /** Callback to select which Cell Editor and Params to use for this column.     */
+    @Input() public cellEditorCompSelector: CellEditorCompSelectorFunc | undefined;
     /** Set to `true` to have cells under this column enter edit mode after single click. Default: `false`     */
     @Input() public singleClickEdit: boolean | undefined;
     /** @deprecated use `valueSetter` instead
@@ -261,6 +263,8 @@ export class AgGridColumn {
     @Input() public cellRendererComp: any;
     /** Params to be passed to the Cell Component.     */
     @Input() public cellRendererCompParams: any;
+    /** Callback to select which Cell Component and Params to use for this column.     */
+    @Input() public cellRendererCompSelector: CellRendererCompSelectorFunc | undefined;
     /** Set to `true` to have the grid calculate the height of a row based on contents of this column. Default: `false`     */
     @Input() public autoHeight: boolean | undefined;
     /** Set to `true` to have the text wrap inside the cell - typically used with `autoHeight`. Default: `false`     */

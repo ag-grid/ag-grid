@@ -311,6 +311,10 @@
     "description": "/** Params for Loading Cell Comp. */",
     "type": { "returnType": "any" }
   },
+  "loadingRowCellCompSelector": {
+    "description": "/** Selector for the loading component. */",
+    "type": { "returnType": "LoadingRowCellCompSelectorFunc" }
+  },
   "localeText": {
     "description": "/** A map of key->value pairs for localising text within the grid. */",
     "type": { "returnType": "{ [key: string]: string }" }
