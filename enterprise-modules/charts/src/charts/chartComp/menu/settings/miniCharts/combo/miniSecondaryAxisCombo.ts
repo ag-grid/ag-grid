@@ -1,9 +1,10 @@
 import { MiniChartWithAxes } from "../miniChartWithAxes";
-import { Path, Rect } from "ag-charts-community";
+import { Line, Path, Rect } from "ag-charts-community";
 import { ChartType } from "@ag-grid-community/core";
 import { createColumnRects, CreateColumnRectsParams, createLinePaths } from "../miniChartHelpers";
 
-export class MiniStackedColumnLine extends MiniChartWithAxes {
+export class MiniSecondaryAxisCombo extends MiniChartWithAxes {
+    // TODO: update chart type
     static chartType: ChartType = 'stackedColumnLine';
 
     private stackedColumns: Rect[][];
@@ -19,7 +20,7 @@ export class MiniStackedColumnLine extends MiniChartWithAxes {
     ];
 
     constructor(container: HTMLElement, fills: string[], strokes: string[]) {
-        super(container, "stackedColumnLineTooltip");
+        super(container, "secondaryAxisComboTooltip");
 
         const { root, columnData, lineData, size, padding } = this;
 
@@ -36,7 +37,19 @@ export class MiniStackedColumnLine extends MiniChartWithAxes {
 
         root.append(([] as Rect[]).concat.apply([], this.stackedColumns));
 
-        this.lines = createLinePaths(root, lineData, size, padding);
+        const axisStroke = 'gray';
+        const axisOvershoot = 3;
+
+        this.lines = createLinePaths(root, lineData, size - axisOvershoot, padding);
+
+        const rightAxis = new Line();
+        rightAxis.x1 = size - padding - axisOvershoot;
+        rightAxis.y1 = padding;
+        rightAxis.x2 = size - padding - axisOvershoot;
+        rightAxis.y2 = size - padding + axisOvershoot;
+        rightAxis.stroke = axisStroke;
+
+        root.append(rightAxis);
 
         this.updateColors(fills, strokes);
     }
