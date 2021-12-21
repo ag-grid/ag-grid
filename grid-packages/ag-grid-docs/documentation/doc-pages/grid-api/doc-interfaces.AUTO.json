@@ -10458,6 +10458,10 @@
     "yKey": { "type": { "returnType": "string", "optional": true } },
     "xName": { "type": { "returnType": "string", "optional": true } },
     "yName": { "type": { "returnType": "string", "optional": true } },
+    "sizeKey": { "type": { "returnType": "string", "optional": true } },
+    "sizeName": { "type": { "returnType": "string", "optional": true } },
+    "labelKey": { "type": { "returnType": "string", "optional": true } },
+    "labelName": { "type": { "returnType": "string", "optional": true } },
     "title": { "type": { "returnType": "string", "optional": true } },
     "fill": {
       "description": "/** @deprecated Use {@link marker.fill} instead.\n */",

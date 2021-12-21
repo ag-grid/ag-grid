@@ -484,6 +484,10 @@ export interface AgScatterSeriesOptions extends AgBaseSeriesOptions {
     yKey?: string;
     xName?: string;
     yName?: string;
+    sizeKey?: string;
+    sizeName?: string;
+    labelKey?: string;
+    labelName?: string;
     title?: string;
     /**
      * @deprecated Use {@link marker.fill} instead.
