@@ -17,7 +17,8 @@ import {
     IAggFunc,
     PopupService,
     PostConstruct,
-    RefSelector
+    RefSelector,
+    SeriesChartType
 } from "@ag-grid-community/core";
 import { ChartMenu } from "./menu/chartMenu";
 import { TitleEdit } from "./titleEdit";
@@ -51,6 +52,7 @@ export interface GridChartParams {
     crossFiltering: boolean;
     crossFilteringContext: CrossFilteringContext;
     chartOptionsToRestore?: AgChartThemeOverrides;
+    seriesChartTypes?: SeriesChartType[];
 }
 
 export class GridChartComp extends Component {
@@ -121,6 +123,7 @@ export class GridChartComp extends Component {
             suppressChartRanges: this.params.suppressChartRanges,
             unlinkChart: this.params.unlinkChart,
             crossFiltering: this.params.crossFiltering,
+            seriesChartTypes: this.params.seriesChartTypes,
         };
 
         const isRtl = this.gridOptionsWrapper.isEnableRtl();

@@ -1,0 +1,11 @@
+{
+    "_config_": {},
+    "INumberFilterParams": {
+        "filterOptions": {
+            "more": {
+                "url": "/filter-provided-simple/#simple-filter-options",
+                "name": "Filter Options"
+            }
+        }
+    }
+}

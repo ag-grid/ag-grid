@@ -108,7 +108,7 @@ const initInBrowser = (theme: string) => {
         Math.random = () => {
             return (seed = (seed * 16807) % limit) / limit;
         };
-    } catch (e) {
+    } catch (e: any) {
         (window as any).initInBrowserError = e.stack || e.message;
     }
 };
@@ -186,7 +186,7 @@ export const runSpec = async (spec: Spec, context: RunContext) => {
                 await context.handler(screenshot, testCaseName);
             }
         }
-    } catch (e) {
+    } catch (e: any) {
         addErrorMessage(e, `Error in spec ${spec.name}`);
         if (page) {
             const message = await saveErrorFile(page);
@@ -212,7 +212,7 @@ const ensureEmptyFolder = async (folder: string, deleteImages: boolean) => {
     await fs.mkdir(folder, { recursive: true });
     if (deleteImages) {
         const existing = await glob(path.join(folder, '*.png'));
-        await Promise.all(existing.map(file => fs.unlink(file)));
+        await Promise.all(existing.map((file: any) => fs.unlink(file)));
     }
 };
 

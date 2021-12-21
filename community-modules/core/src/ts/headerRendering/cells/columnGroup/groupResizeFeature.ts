@@ -57,7 +57,6 @@ export class GroupResizeFeature extends BeanStub {
             const skipHeaderOnAutoSize = this.gridOptionsWrapper.isSkipHeaderOnAutoSize();
 
             this.eResize.addEventListener('dblclick', () => {
-                this.resizeLeafColumnsToFit();
                 // get list of all the column keys we are responsible for
                 const keys: string[] = [];
                 const leafCols = this.columnGroup.getDisplayedLeafColumns();
@@ -73,22 +72,18 @@ export class GroupResizeFeature extends BeanStub {
                     this.columnModel.autoSizeColumns({
                         columns: keys,
                         skipHeader: skipHeaderOnAutoSize,
-                        skipHeaderGroups: true,
-                        onlyGrow: leafCols,
+                        stopAtGroup: this.columnGroup,
                         source: 'uiColumnResized'
                     });
                 }
+
+                this.resizeLeafColumnsToFit();
             });
         }
     }
 
     public onResizeStart(shiftKey: boolean): void {
-        const leafCols = this.columnGroup.getDisplayedLeafColumns();
-        this.resizeCols = leafCols.filter(col => col.isResizable());
-        this.resizeStartWidth = 0;
-        this.resizeCols.forEach(col => this.resizeStartWidth += col.getActualWidth());
-        this.resizeRatios = [];
-        this.resizeCols.forEach(col => this.resizeRatios.push(col.getActualWidth() / this.resizeStartWidth));
+        this.calculateInitialValues();
 
         let takeFromGroup: ColumnGroup | null = null;
 
@@ -122,17 +117,16 @@ export class GroupResizeFeature extends BeanStub {
         this.resizeColumns(width, finished);
     }
 
-    public resizeLeafColumnsToFit(onlyGrow: Column[] = []): Column[] {
+    public resizeLeafColumnsToFit(): void {
         const preferredSize = this.autoWidthCalculator.getPreferredWidthForColumnGroup(this.columnGroup);
+        this.calculateInitialValues();
 
-        if (preferredSize > 0) {
-            return this.resizeColumns(preferredSize, true, onlyGrow);
+        if (preferredSize > this.resizeStartWidth) {
+            this.resizeColumns(preferredSize, true);
         }
-
-        return [];
     }
 
-    public resizeColumns(totalWidth: number, finished: boolean = true, onlyGrow: Column[] = []): Column[] {
+    public resizeColumns(totalWidth: number, finished: boolean = true): void {
         const resizeSets: ColumnResizeSet[] = [];
 
         resizeSets.push({
@@ -150,18 +144,24 @@ export class GroupResizeFeature extends BeanStub {
             });
         }
 
-        const cols = this.columnModel.resizeColumnSets({
+        this.columnModel.resizeColumnSets({
             resizeSets,
             finished,
-            onlyGrow,
             source: 'uiColumnDragged'
         });
 
         if (finished) {
             this.comp.addOrRemoveCssClass('ag-column-resizing', false);
         }
+    }
 
-        return cols;
+    private calculateInitialValues(): void {
+        const leafCols = this.columnGroup.getDisplayedLeafColumns();
+        this.resizeCols = leafCols.filter(col => col.isResizable());
+        this.resizeStartWidth = 0;
+        this.resizeCols.forEach(col => this.resizeStartWidth += col.getActualWidth());
+        this.resizeRatios = [];
+        this.resizeCols.forEach(col => this.resizeRatios.push(col.getActualWidth() / this.resizeStartWidth));
     }
 
     // optionally inverts the drag, depending on pinned and RTL

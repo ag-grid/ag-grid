@@ -137,6 +137,9 @@ function readAsJsFile(tsFile) {
     let jsFile = sucrase.transform(fs.readFileSync(tsFile, 'utf8'), {transforms: ["typescript"]}).code;
     // Remove empty lines left by sucrase removing the imports 
     jsFile = jsFile.replace(/^\s*[\r\n]/, '');
+    // Temporary hack to remove import that does not get removed by
+    jsFile = jsFile.replace("import * as agCharts from 'ag-charts-community'", '');
+
     return jsFile;
 }
 

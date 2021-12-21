@@ -1,12 +1,76 @@
 {
     "_config_": {},
     "ISetFilterParams": {
+        "applyMiniFilterWhileTyping": {
+            "more": {
+                "name": "Keyboard Shortcuts",
+                "url": "/filter-set-mini-filter/#keyboard-shortcuts"
+            }
+        },
         "cellRenderer": {
+            "more": {
+                "name": "Filter List Cell Renderer",
+                "url": "/filter-set-filter-list/#cell-renderer"
+            },
             "interfaceHierarchyOverrides": {
                 "exclude": [
                     "ICellRendererComp"
                 ],
                 "include": []
+            }
+        },
+        "comparator": {
+            "more": {
+                "name": "Sorting Filter Lists",
+                "url": "/filter-set-filter-list/#sorting-filter-lists"
+            }
+        },
+        "defaultToNothingSelected": {
+            "more": {
+                "name": "Default State",
+                "url": "/filter-set-filter-list/#default-state"
+            }
+        },
+        "excelMode": {
+            "more": {
+                "name": "Excel Mode",
+                "url": "/filter-set-excel-mode/"
+            }
+        },
+        "showTooltips": {
+            "more": {
+                "name": "Filter Value Tooltips",
+                "url": "/filter-set-filter-list/#filter-value-tooltips"
+            }
+        },
+        "suppressMiniFilter": {
+            "more": {
+                "name": "Hiding the Mini Filter",
+                "url": "/filter-set-mini-filter/#hiding-the-mini-filter"
+            }
+        },
+        "suppressSorting": {
+            "more": {
+                "name": "Supplying Filter Values",
+                "url": "/filter-set-filter-list/#supplying-filter-values"
+            }
+        },
+        "textFormatter": {
+            "more": {
+                "name": "Custom Searches",
+                "url": "/filter-set-mini-filter/#custom-searches"
+            }
+        },
+        "values": {
+            "more": {
+                "name": "Supplying Filter Values",
+                "url": "/filter-set-filter-list/#supplying-filter-values"
+            }
+        },
+        "refreshValuesOnOpen": {
+            "more": {
+                "name": "Refreshing Values",
+                "url": "/filter-set-filter-list/#refreshing-values"
             }
         }
     }

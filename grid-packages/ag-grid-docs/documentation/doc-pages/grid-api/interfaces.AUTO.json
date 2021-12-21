@@ -57,14 +57,18 @@
   },
   "ComponentType": {
     "meta": {},
-    "type": { "propertyName": "string", "isCellRenderer()": "boolean" }
+    "type": {
+      "propertyName": "string",
+      "cellRenderer": "boolean",
+      "newPropName": "string"
+    }
   },
   "FrameworkComponentWrapper": {
     "meta": {
       "doc": "/** B the business interface (ie IHeader)\n * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid */"
     },
     "type": {
-      "wrap(frameworkComponent: { new (): any; } | null, methodList: string[], optionalMethodList: string[], componentType: ComponentType, componentName?: string | null)": "A"
+      "wrap(frameworkComponent: { new (): any; } | null, methodList: string[], optionalMethodList: string[], componentType: ComponentType)": "A"
     }
   },
   "WrappableInterface": {
@@ -86,7 +90,7 @@
       "componentFromFramework": "boolean",
       "params": "any",
       "type": "ComponentType",
-      "newAgStackInstance": "(defaultComponentName?: string | null) => AgPromise<any>"
+      "newAgStackInstance": "() => AgPromise<any>"
     }
   },
   "RegisteredComponent": {
@@ -297,6 +301,8 @@
       "tooltipComponent?": "{ new (): ITooltipComp; } | string",
       "tooltipComponentFramework?": "any",
       "tooltipComponentParams?": "any",
+      "tooltipComp?": "any",
+      "tooltipCompParams?": "any",
       "pivotKeys?": "string[]"
     },
     "docs": {
@@ -322,6 +328,8 @@
       "headerGroupComponent?": "string | { new (): IHeaderGroupComp; }",
       "headerGroupComponentFramework?": "any",
       "headerGroupComponentParams?": "any",
+      "headerGroupComp?": "any",
+      "headerGroupCompParams?": "any",
       "headerName?": "string",
       "headerValueGetter?": "string | HeaderValueGetterFunc",
       "headerTooltip?": "string",
@@ -334,6 +342,8 @@
       "tooltipComponent?": "{ new (): ITooltipComp; } | string",
       "tooltipComponentFramework?": "any",
       "tooltipComponentParams?": "any",
+      "tooltipComp?": "any",
+      "tooltipCompParams?": "any",
       "pivotKeys?": "string[]"
     },
     "docs": {
@@ -344,6 +354,8 @@
       "headerGroupComponent?": "/** The custom header group component to be used for rendering the component header. If none specified the default AG Grid is used. */",
       "headerGroupComponentFramework?": "/** The custom header group component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid is used. */",
       "headerGroupComponentParams?": "/** The params used to configure the header group component. */",
+      "headerGroupComp?": "/** The custom header group component to be used for rendering the component header. */",
+      "headerGroupCompParams?": "/** The params used to configure the header group component. */",
       "headerName?": "/** The name to render in the column header. If not specified and field is specified, the field name will be used as the header name. */",
       "headerValueGetter?": "/** Function or expression. Gets the value for display in the header. */",
       "headerTooltip?": "/** Tooltip for the column header */",
@@ -448,10 +460,15 @@
       "cellEditorFramework?": "any",
       "cellEditorParams?": "any",
       "cellEditorSelector?": "CellEditorSelectorFunc",
+      "cellEditorComp?": "any",
+      "cellEditorCompParams?": "any",
+      "cellEditorCompSelector?": "CellEditorCompSelectorFunc",
       "singleClickEdit?": "boolean",
       "newValueHandler?": "(params: NewValueParams) => boolean",
       "cellEditorPopup?": "boolean",
+      "cellEditorCompPopup?": "boolean",
       "cellEditorPopupPosition?": "string",
+      "cellEditorCompPopupPosition?": "string",
       "onCellValueChanged?": "(event: NewValueParams) => void",
       "onCellClicked?": "(event: CellClickedEvent) => void",
       "onCellDoubleClicked?": "(event: CellDoubleClickedEvent) => void",
@@ -462,6 +479,8 @@
       "headerComponent?": "string | { new (): any; }",
       "headerComponentFramework?": "any",
       "headerComponentParams?": "any",
+      "headerComp?": "any",
+      "headerCompParams?": "any",
       "menuTabs?": "string[]",
       "columnsMenuParams?": "ColumnsMenuParams",
       "suppressMenu?": "boolean",
@@ -488,6 +507,9 @@
       "cellRendererFramework?": "any",
       "cellRendererParams?": "any",
       "cellRendererSelector?": "CellRendererSelectorFunc",
+      "cellRendererComp?": "any",
+      "cellRendererCompParams?": "any",
+      "cellRendererCompSelector?": "CellRendererCompSelectorFunc",
       "autoHeight?": "boolean",
       "wrapText?": "boolean",
       "enableCellChangeFlash?": "boolean",
@@ -542,13 +564,19 @@
       "tooltipComponent?": "{ new (): ITooltipComp; } | string",
       "tooltipComponentFramework?": "any",
       "tooltipComponentParams?": "any",
+      "tooltipComp?": "any",
+      "tooltipCompParams?": "any",
       "pivotKeys?": "string[]",
       "filter?": "IFilterType",
       "filterFramework?": "any",
       "filterParams?": "any",
+      "filterComp?": "any",
+      "filterCompParams?": "any",
       "floatingFilterComponent?": "IFloatingFilterType",
       "floatingFilterComponentFramework?": "any",
-      "floatingFilterComponentParams?": "any"
+      "floatingFilterComponentParams?": "any",
+      "floatingFilterComp?": "any",
+      "floatingFilterCompParams?": "any"
     },
     "docs": {
       "colId?": "/** The unique ID to give the column. This is optional. If missing, the ID will default to the field.\n * If both field and colId are missing, a unique ID will be generated.\n * This ID is used to identify the column in the API for sorting, filtering etc. */",
@@ -579,6 +607,9 @@
       "cellEditorFramework?": "/** Framework `cellEditor` to use for this column. */",
       "cellEditorParams?": "/** Params to be passed to the cell editor component. */",
       "cellEditorSelector?": "/** Callback to select which cell editor to be used for a given row within the same column. */",
+      "cellEditorComp?": "/** A Editor Component to use for this column. */",
+      "cellEditorCompParams?": "/** Params to be passed to the Editor Component */",
+      "cellEditorCompSelector?": "/** Callback to select which Cell Editor and Params to use for this column. */",
       "singleClickEdit?": "/** Set to `true` to have cells under this column enter edit mode after single click. Default: `false` */",
       "newValueHandler?": "/** @deprecated use `valueSetter` instead\n */",
       "cellEditorPopup?": "/** Set to `true`, to have the cell editor appear in a popup. */",
@@ -593,6 +624,8 @@
       "headerComponent?": "/** The custom header component to be used for rendering the component header. If none specified the default AG Grid header component is used. */",
       "headerComponentFramework?": "/** The custom header component to be used for rendering the component header in the hosting framework (ie: Angular/React/VueJs). If none specified the default AG Grid header component is used. */",
       "headerComponentParams?": "/** The parameters to be passed to the header component. */",
+      "headerComp?": "/** The custom header component to be used for rendering the component header. */",
+      "headerCompParams?": "/** The parameters to be passed to the header component. */",
       "menuTabs?": "/** Set to an array containing zero, one or many of the following options: `'filterMenuTab' | 'generalMenuTab' | 'columnsMenuTab'`.\n * This is used to figure out which menu tabs are present and in which order the tabs are shown. */",
       "columnsMenuParams?": "/** Params used to change the behaviour and appearance of the Columns Menu tab. */",
       "suppressMenu?": "/** Set to `true` if no menu should be shown for this column header. Default: `false` */",
@@ -619,6 +652,9 @@
       "cellRendererFramework?": "/** Framework `cellRenderer` to use for this column. */",
       "cellRendererParams?": "/** Params to be passed to the cell renderer component. */",
       "cellRendererSelector?": "/** Callback to select which cell renderer to be used for a given row within the same column. */",
+      "cellRendererComp?": "/** A Cell Component to use for this column. */",
+      "cellRendererCompParams?": "/** Params to be passed to the Cell Component. */",
+      "cellRendererCompSelector?": "/** Callback to select which Cell Component and Params to use for this column. */",
       "autoHeight?": "/** Set to `true` to have the grid calculate the height of a row based on contents of this column. Default: `false` */",
       "wrapText?": "/** Set to `true` to have the text wrap inside the cell - typically used with `autoHeight`. Default: `false` */",
       "enableCellChangeFlash?": "/** Set to `true` to flash a cell when it's refreshed. Default: `false` */",
@@ -674,9 +710,13 @@
       "filter?": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Set to the name of a provided filter: `set`, `number`, `text`, `date`.\n * - Set to a `IFilterComp`. */",
       "filterFramework?": "/** Provided a custom framework filter to use for this column. */",
       "filterParams?": "/** Params to be passed to the filter component specified in `filter` or `filterFramework`. */",
+      "filterComp?": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Provide name (string) to use registered filter.\n * - Provide User Component to provide custom filter. */",
+      "filterCompParams?": "/** Params to be passed to the filter component. */",
       "floatingFilterComponent?": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
       "floatingFilterComponentFramework?": "/** Floating filter framework component to use for this column. */",
-      "floatingFilterComponentParams?": "/** Params to be passed to `floatingFilterComponent` or `floatingFilterComponentFramework`. */"
+      "floatingFilterComponentParams?": "/** Params to be passed to `floatingFilterComponent` or `floatingFilterComponentFramework`. */",
+      "floatingFilterComp?": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
+      "floatingFilterCompParams?": "/** Params to be passed to Floating Filter Component. */"
     }
   },
   "ColumnFunctionCallbackParams": {
@@ -1331,6 +1371,24 @@
       "params?": "/** Equivalent of setting `colDef.cellEditorParams` */"
     }
   },
+  "CellRendererCompSelectorFunc": {
+    "meta": { "isCallSignature": true },
+    "type": {
+      "arguments": { "params": "ICellRendererParams" },
+      "returnType": "CompSelectorResult | undefined"
+    }
+  },
+  "CellEditorCompSelectorFunc": {
+    "meta": { "isCallSignature": true },
+    "type": {
+      "arguments": { "params": "ICellEditorParams" },
+      "returnType": "CompSelectorResult | undefined"
+    }
+  },
+  "CompSelectorResult": {
+    "meta": {},
+    "type": { "comp": "any", "params": "any" }
+  },
   "GridOptions": {
     "meta": {},
     "type": {
@@ -1381,6 +1439,7 @@
       "skipHeaderOnAutoSize?": "boolean",
       "components?": "{ [p: string]: any; }",
       "frameworkComponents?": "{ [p: string]: { new (): any; }; } | any",
+      "comps?": "{ [p: string]: any; }",
       "reactUi?": "boolean",
       "suppressReactUi?": "boolean",
       "editType?": "string",
@@ -1409,6 +1468,8 @@
       "loadingCellRendererFramework?": "any",
       "loadingCellRendererParams?": "any",
       "loadingCellRendererSelector?": "LoadingCellRendererSelectorFunc",
+      "loadingRowCellComp?": "any",
+      "loadingRowCellCompParams?": "any",
       "localeText?": "{ [key: string]: string; }",
       "masterDetail?": "boolean",
       "keepDetailRows?": "boolean",
@@ -1416,6 +1477,8 @@
       "detailCellRenderer?": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
       "detailCellRendererFramework?": "any",
       "detailCellRendererParams?": "any",
+      "detailRowCellComp?": "any",
+      "detailRowCellCompParams?": "any",
       "detailRowHeight?": "number",
       "detailRowAutoHeight?": "boolean",
       "context?": "any",
@@ -1437,11 +1500,15 @@
       "loadingOverlayComponent?": "{ new (): ILoadingOverlayComp; } | string",
       "loadingOverlayComponentFramework?": "any",
       "loadingOverlayComponentParams?": "any",
+      "loadingOverlayComp?": "any",
+      "loadingOverlayCompParams?": "any",
       "suppressLoadingOverlay?": "boolean",
       "overlayNoRowsTemplate?": "string",
       "noRowsOverlayComponent?": "{ new (): INoRowsOverlayComp; } | string",
       "noRowsOverlayComponentFramework?": "any",
       "noRowsOverlayComponentParams?": "any",
+      "noRowsOverlayComp?": "any",
+      "noRowsOverlayCompParams?": "any",
       "suppressNoRowsOverlay?": "boolean",
       "pagination?": "boolean",
       "paginationPageSize?": "number",
@@ -1478,6 +1545,8 @@
       "fullWidthCellRenderer?": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
       "fullWidthCellRendererFramework?": "any",
       "fullWidthCellRendererParams?": "any",
+      "fullWidthCellComp?": "any",
+      "fullWidthCellCompParams?": "any",
       "embedFullWidthRows?": "boolean",
       "deprecatedEmbedFullWidthRows?": "boolean",
       "groupDisplayType?": "RowGroupingDisplayType",
@@ -1497,6 +1566,8 @@
       "groupRowRenderer?": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
       "groupRowRendererFramework?": "any",
       "groupRowRendererParams?": "any",
+      "groupRowCellComp?": "any",
+      "groupRowCellCompParams?": "any",
       "suppressMakeColumnVisibleAfterUnGroup?": "boolean",
       "treeData?": "boolean",
       "groupRowInnerRenderer?": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
@@ -1740,6 +1811,7 @@
       "skipHeaderOnAutoSize?": "/** Set this to `true` to skip the `headerName` when `autoSize` is called by default. Default: `false` */",
       "components?": "/** A map of component names to plain JavaScript components. */",
       "frameworkComponents?": "/** A map of component names to framework (Angular, React, Vue etc.) components. */",
+      "comps?": "/** A map of component names to components (can be JavaScript OR Framework components). */",
       "reactUi?": "/** @deprecated React UI is enabled by default. Use suppressReactUi=true to turn it off.\n */",
       "suppressReactUi?": "/** @deprecated Set to true to enable the experimental React UI. Works with React framework only.\nIt is planned the next major release of the grid will drop support of the legacy React engine,\nhence this property is deprecated as will be removed in the next major release.\n */",
       "editType?": "/** Set to `'fullRow'` to enable Full Row Editing. Otherwise leave blank to edit one cell at a time. */",
@@ -1768,6 +1840,8 @@
       "loadingCellRendererFramework?": "/** Framework `cellRenderer` to use when data is loading via a DataSource. */",
       "loadingCellRendererParams?": "/** Params to be passed to loading cell renderer component. */",
       "loadingCellRendererSelector?": "/** Callback to select which loading cell renderer to be used when data is loading via a DataSource. */",
+      "loadingRowCellComp?": "/** Cell Comp to use when data is loading via a DataSource. */",
+      "loadingRowCellCompParams?": "/** Params for Loading Cell Comp. */",
       "localeText?": "/** A map of key->value pairs for localising text within the grid. */",
       "masterDetail?": "/** Set to `true` to enable Master Detail. Default: `false` */",
       "keepDetailRows?": "/** Set to `true` to keep detail rows for when they are displayed again. Default: `false` */",
@@ -1775,6 +1849,8 @@
       "detailCellRenderer?": "/** Provide a custom `detailCellRenderer` to use when a master row is expanded. */",
       "detailCellRendererFramework?": "/** Framework `detailCellRenderer` to use when a master row is expanded. */",
       "detailCellRendererParams?": "/** Specifies the params to be used by the Detail Cell Renderer. Can also be a function that provides the params to enable dynamic definitions of the params. */",
+      "detailRowCellComp?": "/** Provide a custom Detail Cell Component to use when a master row is expanded. */",
+      "detailRowCellCompParams?": "/** Params for Detail Cell Component */",
       "detailRowHeight?": "/** Set fixed height in pixels for each detail row. */",
       "detailRowAutoHeight?": "/** Set to `true` to have the detail grid dynamically change it's height to fit it's rows. */",
       "context?": "/** Provides a context object that is provided to different callbacks the grid uses. Used for passing additional information to the callbacks by your application. */",
@@ -1796,11 +1872,15 @@
       "loadingOverlayComponent?": "/** Provide a custom loading overlay component. */",
       "loadingOverlayComponentFramework?": "/** Same as `loadingOverlayComponent` but for a framework component. */",
       "loadingOverlayComponentParams?": "/** Customise the parameters provided to the loading overlay component. */",
+      "loadingOverlayComp?": "/** Loading Overlay Component. */",
+      "loadingOverlayCompParams?": "/** Params for Loading Overlay Component */",
       "suppressLoadingOverlay?": "/** Disables the 'loading' overlay. Default: `false` */",
       "overlayNoRowsTemplate?": "/** Provide a template for 'no rows' overlay. */",
       "noRowsOverlayComponent?": "/** Provide a custom no rows overlay component */",
       "noRowsOverlayComponentFramework?": "/** Same as `noRowsOverlayComponent` but for a framework component. */",
       "noRowsOverlayComponentParams?": "/** Customise the parameters provided to the no rows overlay component. */",
+      "noRowsOverlayComp?": "/** Provide a custom no rows overlay component */",
+      "noRowsOverlayCompParams?": "/** Customise the parameters provided to the no rows overlay component. */",
       "suppressNoRowsOverlay?": "/** Disables the 'no rows' overlay. Default: `false` */",
       "pagination?": "/** Set whether pagination is enabled. Default: `false` */",
       "paginationPageSize?": "/** How many rows to load per page. If `paginationAutoPageSize` is specified, this property is ignored. Default: `100` */",
@@ -1837,6 +1917,8 @@
       "fullWidthCellRenderer?": "/** Sets the Cell Renderer to use for full width rows. */",
       "fullWidthCellRendererFramework?": "/** Same as `fullWidthCellRenderer` but for a framework component. */",
       "fullWidthCellRendererParams?": "/** Customise the parameters provided to the `fullWidthCellRenderer` component. */",
+      "fullWidthCellComp?": "/** Sets the Cell Comp to use for full width rows. */",
+      "fullWidthCellCompParams?": "/** Customise the parameters provided to Full Width Cell Comp. */",
       "embedFullWidthRows?": "/** Set to `true` to have the detail grid embedded in the master grid's container and so link their horizontal scrolling. */",
       "deprecatedEmbedFullWidthRows?": "/** @deprecated */",
       "groupDisplayType?": "/** Specifies how the results of row grouping should be displayed.\n * \n *   The options are:\n * \n * - `'singleColumn'`: single group column automatically added by the grid.\n * - `'multipleColumns'`: a group column per row group is added automatically.\n * - `'groupRows'`: group rows are automatically added instead of group columns.\n * - `'custom'`: informs the grid that group columns will be provided. */",
@@ -1856,6 +1938,8 @@
       "groupRowRenderer?": "/** Sets the Cell Renderer to use when `groupDisplayType = 'groupRows'`. */",
       "groupRowRendererFramework?": "/** Same as `groupRowRenderer` but for a framework component. */",
       "groupRowRendererParams?": "/** Customise the parameters provided to the `groupRowRenderer` component. */",
+      "groupRowCellComp?": "/** Sets the Cell Comp to use when `groupDisplayType = 'groupRows'`. */",
+      "groupRowCellCompParams?": "/** Customise the parameters provided to the Group Row Comp component. */",
       "suppressMakeColumnVisibleAfterUnGroup?": "/** By default, when a column is un-grouped, i.e. using the Row Group Panel, it is made visible in the grid. This property stops the column becoming visible again when un-grouping. Default: `false` */",
       "treeData?": "/** Set to `true` to enable the Grid to work with Tree Data. You must also implement the `getDataPath(data)` callback. */",
       "groupRowInnerRenderer?": "/** @deprecated - this is now groupRowRendererParams.innerRenderer\n */",
@@ -2542,7 +2626,9 @@
       "iconKey": "string",
       "toolPanel?": "{ new (): IToolPanelComp; } | string",
       "toolPanelFramework?": "any",
-      "toolPanelParams?": "any"
+      "toolPanelParams?": "any",
+      "toolPanelComp?": "any",
+      "toolPanelCompParams?": "any"
     },
     "docs": {
       "id": "/** The unique ID for this panel. Used in the API and elsewhere to refer to the panel. */",
@@ -2554,7 +2640,9 @@
       "iconKey": "/** The [key of the icon](/custom-icons/) to be used as a graphical aid beside the label in the side bar. */",
       "toolPanel?": "/** The tool panel component to use as the panel.\n * The provided panels use components `agColumnsToolPanel` and `agFiltersToolPanel`.\n * To provide your own custom panel component, you reference it by name here. */",
       "toolPanelFramework?": "/** Same as `toolPanel` but for framework specific components. */",
-      "toolPanelParams?": "/** Customise the parameters provided to the `toolPanel` component. */"
+      "toolPanelParams?": "/** Customise the parameters provided to the `toolPanel` component. */",
+      "toolPanelComp?": "/** The tool panel component to use as the panel.\n * The provided panels use components `agColumnsToolPanel` and `agFiltersToolPanel`.\n * To provide your own custom panel component, you reference it here. */",
+      "toolPanelCompParams?": "/** Customise the parameters provided to the `toolPanel` component. */"
     }
   },
   "SideBarDef": {
@@ -4164,7 +4252,7 @@
       "includeBlanksInLessThan?": "boolean",
       "includeBlanksInGreaterThan?": "boolean",
       "includeBlanksInRange?": "boolean",
-      "filterOptions?": "(IFilterOptionDef | string)[]",
+      "filterOptions?": "(IFilterOptionDef | ISimpleFilterModelType)[]",
       "defaultOption?": "string",
       "defaultJoinOperator?": "JoinOperator",
       "suppressAndOrCondition?": "boolean",
@@ -4194,14 +4282,14 @@
       "includeBlanksInLessThan?": "/** If `true`, blank (`null` or `undefined`) values will pass the `'lessThan'` and `'lessThanOrEqual'` filter options. */",
       "includeBlanksInGreaterThan?": "/** If `true`, blank (`null` or `undefined`) values will pass the `'greaterThan'` and `'greaterThanOrEqual'` filter options. */",
       "includeBlanksInRange?": "/** If `true`, blank (`null` or `undefined`) values will pass the `'inRange'` filter option. */",
-      "filterOptions?": "/** Array of filter options to present to the user. See [Filter Options](/filter-provided-simple/#simple-filter-options) for all options available to each filter type. */",
+      "filterOptions?": "/** Array of filter options to present to the user. */",
       "defaultOption?": "/** The default filter option to be selected. */",
       "defaultJoinOperator?": "/** By default, the two conditions are combined using `AND`.\n * You can change this default by setting this property.\n * Options: `AND`, `OR` */",
       "suppressAndOrCondition?": "/** If `true`, the filter will only allow one condition.\n * Default: `false` */",
       "alwaysShowBothConditions?": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
-      "buttons?": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * <ul>\n * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li>\n * </ul> */",
+      "buttons?": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * \n *   - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.\n *   - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.\n *   - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.\n *   - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model. */",
       "closeOnApply?": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
-      "debounceMs?": "/** By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by\n * 500ms. This is because these filters have text field inputs, so time is given to the user to\n * type items in before the input is formatted and the filtering applied. The\n * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To\n * override these defaults, set `debounceMs` to the number of milliseconds to debounce by. */",
+      "debounceMs?": "/** Overrides the default debounce time in milliseconds for the filter. Defaults are:\n * - `TextFilter` and `NumberFilter`: 500ms. (These filters have text field inputs, so a short delay before the input is formatted and the filtering applied is usually appropriate).\n * - `DateFilter` and `SetFilter`: 0ms */",
       "readOnly?": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n * be used in conjunction with the Filter API.\n * \n * Default: `false` */",
       "column": "/** The column this filter is for. */",
       "colDef": "/** The column definition for the column. */",
@@ -4245,7 +4333,7 @@
       "includeBlanksInLessThan?": "boolean",
       "includeBlanksInGreaterThan?": "boolean",
       "includeBlanksInRange?": "boolean",
-      "filterOptions?": "(IFilterOptionDef | string)[]",
+      "filterOptions?": "(IFilterOptionDef | ISimpleFilterModelType)[]",
       "defaultOption?": "string",
       "defaultJoinOperator?": "JoinOperator",
       "suppressAndOrCondition?": "boolean",
@@ -4273,14 +4361,14 @@
       "includeBlanksInLessThan?": "/** If `true`, blank (`null` or `undefined`) values will pass the `'lessThan'` and `'lessThanOrEqual'` filter options. */",
       "includeBlanksInGreaterThan?": "/** If `true`, blank (`null` or `undefined`) values will pass the `'greaterThan'` and `'greaterThanOrEqual'` filter options. */",
       "includeBlanksInRange?": "/** If `true`, blank (`null` or `undefined`) values will pass the `'inRange'` filter option. */",
-      "filterOptions?": "/** Array of filter options to present to the user. See [Filter Options](/filter-provided-simple/#simple-filter-options) for all options available to each filter type. */",
+      "filterOptions?": "/** Array of filter options to present to the user. */",
       "defaultOption?": "/** The default filter option to be selected. */",
       "defaultJoinOperator?": "/** By default, the two conditions are combined using `AND`.\n * You can change this default by setting this property.\n * Options: `AND`, `OR` */",
       "suppressAndOrCondition?": "/** If `true`, the filter will only allow one condition.\n * Default: `false` */",
       "alwaysShowBothConditions?": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
-      "buttons?": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * <ul>\n * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li>\n * </ul> */",
+      "buttons?": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * \n *   - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.\n *   - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.\n *   - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.\n *   - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model. */",
       "closeOnApply?": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
-      "debounceMs?": "/** By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by\n * 500ms. This is because these filters have text field inputs, so time is given to the user to\n * type items in before the input is formatted and the filtering applied. The\n * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To\n * override these defaults, set `debounceMs` to the number of milliseconds to debounce by. */",
+      "debounceMs?": "/** Overrides the default debounce time in milliseconds for the filter. Defaults are:\n * - `TextFilter` and `NumberFilter`: 500ms. (These filters have text field inputs, so a short delay before the input is formatted and the filtering applied is usually appropriate).\n * - `DateFilter` and `SetFilter`: 0ms */",
       "readOnly?": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n * be used in conjunction with the Filter API.\n * \n * Default: `false` */",
       "column": "/** The column this filter is for. */",
       "colDef": "/** The column definition for the column. */",
@@ -4315,9 +4403,9 @@
       "context": "any"
     },
     "docs": {
-      "buttons?": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * <ul>\n * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li>\n * </ul> */",
+      "buttons?": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * \n *   - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.\n *   - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.\n *   - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.\n *   - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model. */",
       "closeOnApply?": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
-      "debounceMs?": "/** By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by\n * 500ms. This is because these filters have text field inputs, so time is given to the user to\n * type items in before the input is formatted and the filtering applied. The\n * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To\n * override these defaults, set `debounceMs` to the number of milliseconds to debounce by. */",
+      "debounceMs?": "/** Overrides the default debounce time in milliseconds for the filter. Defaults are:\n * - `TextFilter` and `NumberFilter`: 500ms. (These filters have text field inputs, so a short delay before the input is formatted and the filtering applied is usually appropriate).\n * - `DateFilter` and `SetFilter`: 0ms */",
       "readOnly?": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n * be used in conjunction with the Filter API.\n * \n * Default: `false` */",
       "column": "/** The column this filter is for. */",
       "colDef": "/** The column definition for the column. */",
@@ -4364,7 +4452,7 @@
       "includeBlanksInLessThan?": "boolean",
       "includeBlanksInGreaterThan?": "boolean",
       "includeBlanksInRange?": "boolean",
-      "filterOptions?": "(IFilterOptionDef | string)[]",
+      "filterOptions?": "(IFilterOptionDef | ISimpleFilterModelType)[]",
       "defaultOption?": "string",
       "defaultJoinOperator?": "JoinOperator",
       "suppressAndOrCondition?": "boolean",
@@ -4390,14 +4478,14 @@
       "includeBlanksInLessThan?": "/** If `true`, blank (`null` or `undefined`) values will pass the `'lessThan'` and `'lessThanOrEqual'` filter options. */",
       "includeBlanksInGreaterThan?": "/** If `true`, blank (`null` or `undefined`) values will pass the `'greaterThan'` and `'greaterThanOrEqual'` filter options. */",
       "includeBlanksInRange?": "/** If `true`, blank (`null` or `undefined`) values will pass the `'inRange'` filter option. */",
-      "filterOptions?": "/** Array of filter options to present to the user. See [Filter Options](/filter-provided-simple/#simple-filter-options) for all options available to each filter type. */",
+      "filterOptions?": "/** Array of filter options to present to the user. */",
       "defaultOption?": "/** The default filter option to be selected. */",
       "defaultJoinOperator?": "/** By default, the two conditions are combined using `AND`.\n * You can change this default by setting this property.\n * Options: `AND`, `OR` */",
       "suppressAndOrCondition?": "/** If `true`, the filter will only allow one condition.\n * Default: `false` */",
       "alwaysShowBothConditions?": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
-      "buttons?": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * <ul>\n * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li>\n * </ul> */",
+      "buttons?": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * \n *   - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.\n *   - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.\n *   - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.\n *   - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model. */",
       "closeOnApply?": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
-      "debounceMs?": "/** By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by\n * 500ms. This is because these filters have text field inputs, so time is given to the user to\n * type items in before the input is formatted and the filtering applied. The\n * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To\n * override these defaults, set `debounceMs` to the number of milliseconds to debounce by. */",
+      "debounceMs?": "/** Overrides the default debounce time in milliseconds for the filter. Defaults are:\n * - `TextFilter` and `NumberFilter`: 500ms. (These filters have text field inputs, so a short delay before the input is formatted and the filtering applied is usually appropriate).\n * - `DateFilter` and `SetFilter`: 0ms */",
       "readOnly?": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n * be used in conjunction with the Filter API.\n * \n * Default: `false` */",
       "column": "/** The column this filter is for. */",
       "colDef": "/** The column definition for the column. */",
@@ -4449,7 +4537,7 @@
   "ISimpleFilterParams": {
     "meta": {},
     "type": {
-      "filterOptions?": "(IFilterOptionDef | string)[]",
+      "filterOptions?": "(IFilterOptionDef | ISimpleFilterModelType)[]",
       "defaultOption?": "string",
       "defaultJoinOperator?": "JoinOperator",
       "suppressAndOrCondition?": "boolean",
@@ -4470,14 +4558,14 @@
       "context": "any"
     },
     "docs": {
-      "filterOptions?": "/** Array of filter options to present to the user. See [Filter Options](/filter-provided-simple/#simple-filter-options) for all options available to each filter type. */",
+      "filterOptions?": "/** Array of filter options to present to the user. */",
       "defaultOption?": "/** The default filter option to be selected. */",
       "defaultJoinOperator?": "/** By default, the two conditions are combined using `AND`.\n * You can change this default by setting this property.\n * Options: `AND`, `OR` */",
       "suppressAndOrCondition?": "/** If `true`, the filter will only allow one condition.\n * Default: `false` */",
       "alwaysShowBothConditions?": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
-      "buttons?": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * <ul>\n * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li>\n * </ul> */",
+      "buttons?": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * \n *   - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.\n *   - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.\n *   - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.\n *   - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model. */",
       "closeOnApply?": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
-      "debounceMs?": "/** By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by\n * 500ms. This is because these filters have text field inputs, so time is given to the user to\n * type items in before the input is formatted and the filtering applied. The\n * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To\n * override these defaults, set `debounceMs` to the number of milliseconds to debounce by. */",
+      "debounceMs?": "/** Overrides the default debounce time in milliseconds for the filter. Defaults are:\n * - `TextFilter` and `NumberFilter`: 500ms. (These filters have text field inputs, so a short delay before the input is formatted and the filtering applied is usually appropriate).\n * - `DateFilter` and `SetFilter`: 0ms */",
       "readOnly?": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n * be used in conjunction with the Filter API.\n * \n * Default: `false` */",
       "column": "/** The column this filter is for. */",
       "colDef": "/** The column definition for the column. */",
@@ -4578,7 +4666,7 @@
       "caseSensitive?": "boolean",
       "textFormatter?": "(from: string) => string",
       "trimInput?": "boolean",
-      "filterOptions?": "(IFilterOptionDef | string)[]",
+      "filterOptions?": "(IFilterOptionDef | ISimpleFilterModelType)[]",
       "defaultOption?": "string",
       "defaultJoinOperator?": "JoinOperator",
       "suppressAndOrCondition?": "boolean",
@@ -4603,14 +4691,14 @@
       "caseSensitive?": "/** By default, text filtering is case-insensitive. Set this to `true` to make text filtering case-sensitive.\n * Default: `false` */",
       "textFormatter?": "/** Formats the text before applying the filter compare logic.\n * Useful if you want to substitute accented characters, for example. */",
       "trimInput?": "/** If `true`, the input that the user enters will be trimmed when the filter is applied, so any leading or trailing whitespace will be removed.\n * If only whitespace is entered, it will be left as-is.\n * If you enable `trimInput`, it is best to also increase the `debounceMs` to give users more time to enter text.\n * Default: `false` */",
-      "filterOptions?": "/** Array of filter options to present to the user. See [Filter Options](/filter-provided-simple/#simple-filter-options) for all options available to each filter type. */",
+      "filterOptions?": "/** Array of filter options to present to the user. */",
       "defaultOption?": "/** The default filter option to be selected. */",
       "defaultJoinOperator?": "/** By default, the two conditions are combined using `AND`.\n * You can change this default by setting this property.\n * Options: `AND`, `OR` */",
       "suppressAndOrCondition?": "/** If `true`, the filter will only allow one condition.\n * Default: `false` */",
       "alwaysShowBothConditions?": "/** By default, only one condition is shown, and a second is made visible once a first condition has been entered.\n * Set this to `true` to always show both conditions.\n * In this case the second condition will be disabled until a first condition has been entered.\n * Default: `false` */",
-      "buttons?": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * <ul>\n * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li>\n * </ul> */",
+      "buttons?": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * \n *   - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.\n *   - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.\n *   - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.\n *   - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model. */",
       "closeOnApply?": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
-      "debounceMs?": "/** By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by\n * 500ms. This is because these filters have text field inputs, so time is given to the user to\n * type items in before the input is formatted and the filtering applied. The\n * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To\n * override these defaults, set `debounceMs` to the number of milliseconds to debounce by. */",
+      "debounceMs?": "/** Overrides the default debounce time in milliseconds for the filter. Defaults are:\n * - `TextFilter` and `NumberFilter`: 500ms. (These filters have text field inputs, so a short delay before the input is formatted and the filtering applied is usually appropriate).\n * - `DateFilter` and `SetFilter`: 0ms */",
       "readOnly?": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n * be used in conjunction with the Filter API.\n * \n * Default: `false` */",
       "column": "/** The column this filter is for. */",
       "colDef": "/** The column definition for the column. */",
@@ -4734,7 +4822,7 @@
       "cellRange": "ChartParamsCellRange",
       "suppressChartRanges?": "boolean",
       "aggFunc?": "string | IAggFunc",
-      "seriesChartTypes?": "SeriesChartType",
+      "seriesChartTypes?": "SeriesChartType[]",
       "chartType": "ChartType",
       "chartThemeName?": "string",
       "chartContainer?": "HTMLElement",
@@ -5852,7 +5940,7 @@
     "meta": {},
     "type": {
       "enabled?": "boolean",
-      "shape?": "string",
+      "shape?": "string | (new () => any)",
       "size?": "number",
       "maxSize?": "number",
       "fill?": "string",
@@ -5862,9 +5950,29 @@
       "strokeOpacity?": "number"
     }
   },
+  "AgSeriesMarkerFormatterParams": {
+    "meta": {},
+    "type": {
+      "datum": "any",
+      "fill?": "string",
+      "stroke?": "string",
+      "strokeWidth": "number",
+      "size": "number",
+      "highlighted": "boolean"
+    }
+  },
   "AgCartesianSeriesMarkerFormatterParams": {
     "meta": {},
-    "type": { "xKey": "string", "yKey": "string" }
+    "type": {
+      "xKey": "string",
+      "yKey": "string",
+      "datum": "any",
+      "fill?": "string",
+      "stroke?": "string",
+      "strokeWidth": "number",
+      "size": "number",
+      "highlighted": "boolean"
+    }
   },
   "AgCartesianSeriesMarkerFormat": {
     "meta": {},
@@ -5877,14 +5985,14 @@
   },
   "AgCartesianSeriesMarkerFormatter": {
     "meta": { "isTypeAlias": true },
-    "type": "(params: AgCartesianSeriesMarkerFormatterParams) => AgCartesianSeriesMarkerFormat"
+    "type": "(params: AgCartesianSeriesMarkerFormatterParams) => (AgCartesianSeriesMarkerFormat | undefined)"
   },
   "AgCartesianSeriesMarker": {
     "meta": {},
     "type": {
       "formatter?": "AgCartesianSeriesMarkerFormatter",
       "enabled?": "boolean",
-      "shape?": "string",
+      "shape?": "string | (new () => any)",
       "size?": "number",
       "maxSize?": "number",
       "fill?": "string",
@@ -6058,6 +6166,7 @@
     "type": {
       "type?": "'area'",
       "marker?": "AgCartesianSeriesMarker",
+      "normalizedTo?": "number",
       "xKey?": "string",
       "yKeys?": "string[]",
       "xName?": "string",
@@ -6893,6 +7002,7 @@
     "type": {
       "min?": "number",
       "max?": "number",
+      "outlineLevel?": "number",
       "width?": "number",
       "s?": "number",
       "hidden?": "boolean",
@@ -6917,7 +7027,8 @@
       "ref?": "string",
       "styleId?": "string",
       "data": "ExcelData",
-      "mergeAcross?": "number"
+      "mergeAcross?": "number",
+      "collapsibleRanges?": "number[][]"
     }
   },
   "ExcelImage": {
@@ -7002,6 +7113,7 @@
       "pageSetup?": "ExcelSheetPageSetup",
       "headerFooterConfig?": "ExcelHeaderFooterConfig",
       "suppressTextAsCDATA?": "boolean",
+      "mimeType?": "string",
       "addImageToCell?": "(rowIndex: number, column: Column, value: string) => { image: ExcelImage; value?: string; } | undefined",
       "prependContent?": "ExcelCell[][]",
       "appendContent?": "ExcelCell[][]",
@@ -7043,7 +7155,8 @@
       "author?": "string",
       "data": "string[]",
       "fileName?": "string",
-      "fontSize?": "number"
+      "fontSize?": "number",
+      "mimeType?": "string"
     }
   },
   "ExcelHeaderFooterConfig": {
@@ -7116,17 +7229,25 @@
       "filter?": "IFilterType",
       "filterFramework?": "any",
       "filterParams?": "any",
+      "filterComp?": "any",
+      "filterCompParams?": "any",
       "floatingFilterComponent?": "IFloatingFilterType",
       "floatingFilterComponentFramework?": "any",
-      "floatingFilterComponentParams?": "any"
+      "floatingFilterComponentParams?": "any",
+      "floatingFilterComp?": "any",
+      "floatingFilterCompParams?": "any"
     },
     "docs": {
       "filter?": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Set to the name of a provided filter: `set`, `number`, `text`, `date`.\n * - Set to a `IFilterComp`. */",
       "filterFramework?": "/** Provided a custom framework filter to use for this column. */",
       "filterParams?": "/** Params to be passed to the filter component specified in `filter` or `filterFramework`. */",
+      "filterComp?": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Provide name (string) to use registered filter.\n * - Provide User Component to provide custom filter. */",
+      "filterCompParams?": "/** Params to be passed to the filter component. */",
       "floatingFilterComponent?": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
       "floatingFilterComponentFramework?": "/** Floating filter framework component to use for this column. */",
-      "floatingFilterComponentParams?": "/** Params to be passed to `floatingFilterComponent` or `floatingFilterComponentFramework`. */"
+      "floatingFilterComponentParams?": "/** Params to be passed to `floatingFilterComponent` or `floatingFilterComponentFramework`. */",
+      "floatingFilterComp?": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
+      "floatingFilterCompParams?": "/** Params to be passed to Floating Filter Component. */"
     }
   },
   "IFilter": {
@@ -7365,17 +7486,25 @@
       "filterParams?": "any",
       "floatingFilterComponent?": "IFloatingFilterType",
       "floatingFilterComponentFramework?": "any",
-      "floatingFilterComponentParams?": "any"
+      "floatingFilterComponentParams?": "any",
+      "filterComp?": "any",
+      "filterCompParams?": "any",
+      "floatingFilterComp?": "any",
+      "floatingFilterCompParams?": "any"
     },
     "docs": {
-      "display?": "/** Configures how the filter is shown in the Multi Filter. See\n * [Display Style](https://build.ag-grid.com/javascript-data-grid/filter-multi/#display-style).\n * \n * Default: `inline` */",
+      "display?": "/** Configures how the filter is shown in the Multi Filter.\n * Default: `inline` */",
       "title?": "/** The title to be used when a filter is displayed inside a sub-menu or accordion. */",
       "filter?": "/** Child filter component to use inside the Multi Filter. */",
       "filterFramework?": "/** Child filter component to use inside the Multi Filter. */",
       "filterParams?": "/** Custom parameters to be passed to the child filter component. */",
       "floatingFilterComponent?": "/** Floating filter component to use for the child filter. */",
       "floatingFilterComponentFramework?": "/** Floating framework filter component to use for the child filter. */",
-      "floatingFilterComponentParams?": "/** Custom parameters to be passed to the floating filter component. */"
+      "floatingFilterComponentParams?": "/** Custom parameters to be passed to the floating filter component. */",
+      "filterComp?": "/** Filter component to use for this column.\n * - Set to `true` to use the default filter.\n * - Provide name (string) to use registered filter.\n * - Provide User Component to provide custom filter. */",
+      "filterCompParams?": "/** Params to be passed to the filter component. */",
+      "floatingFilterComp?": "/** The custom component to be used for rendering the floating filter.\n * If none is specified the default AG Grid is used. */",
+      "floatingFilterCompParams?": "/** Params to be passed to Floating Filter Component. */"
     }
   },
   "IMultiFilterParams": {
@@ -7396,7 +7525,7 @@
     },
     "docs": {
       "filters?": "/** An array of filter definition objects. */",
-      "readOnly?": "/** If true, all UI inputs managed by this filter are for display only, and the filter can only\n * be affected by API calls. Does NOT affect child filters, they need to be individually\n * configured with `readOnly` where applicable. See\n * [Read-only Filter UI](/filter-api/#read-only-filter-ui).\n * \n * Default: `false` */",
+      "readOnly?": "/** If true, all UI inputs managed by this filter are for display only, and the filter can only\n * be affected by API calls. Does NOT affect child filters, they need to be individually\n * configured with `readOnly` where applicable.\n * Default: `false` */",
       "column": "/** The column this filter is for. */",
       "colDef": "/** The column definition for the column. */",
       "rowModel": "/** The row model, helpful for looking up data values if needed.\n * If the filter needs to know which rows are\n * a) in the table,\n * b) currently visible (i.e. not already filtered),\n * c) which groups,\n * d) what order - all of this can be read from the rowModel. */",
@@ -7889,7 +8018,7 @@
       "setModel(model: SetFilterModel | null)": "/** Sets the state of the filter using the supplied model. Providing `null` as the model will\n * de-activate the filter.\n * \n * **Note:** if you are [providing values asynchronously](/filter-set-filter-list/#asynchronous-values)\n * to the Set Filter, you need to wait for these changes to be applied before performing any further\n * actions by waiting on the returned grid promise, e.g. \n * `filter.setModel({ values: ['a', 'b'] }).then(function() { gridApi.onFilterChanged(); });` */",
       "getValues()": "/** Returns the full list of unique values used by the Set Filter. */",
       "setFilterValues(values: SetFilterModelValue)": "/** Sets the values used in the Set Filter on the fly. */",
-      "refreshFilterValues()": "/** Refreshes the values shown in the filter from the original source. For example, if a\n * callback was provided, the callback will be executed again and the filter will refresh using\n * the values returned.\n * \n * See [Refreshing Values](/filter-set-filter-list/#refreshing-values). */",
+      "refreshFilterValues()": "/** Refreshes the values shown in the filter from the original source. For example, if a\n * callback was provided, the callback will be executed again and the filter will refresh using\n * the values returned. */",
       "resetFilterValues()": "/** Resets the Set Filter to use values from the grid, rather than any values that have been\n * provided directly. */",
       "getMiniFilter()": "/** Returns the current mini-filter text. */",
       "setMiniFilter(newMiniFilter: string | null)": "/** Sets the text in the Mini Filter at the top of the filter (the 'quick search' in the popup). */",
@@ -7962,23 +8091,23 @@
       "context": "any"
     },
     "docs": {
-      "values?": "/** The values to display in the Filter List. If this is not set, the filter will takes its\n * values from what is loaded in the table. See\n * [Supplying Filter Values](/filter-set-filter-list/#supplying-filter-values). */",
-      "refreshValuesOnOpen?": "/** Refresh the values every time the Set filter is opened. See\n * [Refreshing Values](/filter-set-filter-list/#refreshing-values). */",
+      "values?": "/** The values to display in the Filter List. If this is not set, the filter will takes its\n * values from what is loaded in the table. */",
+      "refreshValuesOnOpen?": "/** Refresh the values every time the Set filter is opened. */",
       "cellHeight?": "/** The height of values in the Filter List in pixels. */",
-      "suppressSorting?": "/** If `true`, the Set Filter values will not be sorted. Use this if you are providing your own\n * values and don't want them sorted as you are providing in the order you want. See\n * [Supplying Filter Values](/filter-set-filter-list/#supplying-filter-values).\n * \n * Default: `false` */",
-      "cellRenderer?": "/** Similar to the Cell Renderer for the grid. Setting it separately here allows for the value to\n * be rendered differently in the filter. See\n * [Filter List Cell Renderer](/filter-set-filter-list/#cell-renderer). */",
-      "suppressMiniFilter?": "/** Set to `true` to hide the Mini Filter. See\n * [Hiding the Mini Filter](/filter-set-mini-filter/#hiding-the-mini-filter).\n * \n * Default: `false` */",
-      "applyMiniFilterWhileTyping?": "/** Set to `true` to apply the Set Filter immediately when the user is typing in the Mini Filter.\n * See [Keyboard Shortcuts](/filter-set-mini-filter/#keyboard-shortcuts).\n * \n * Default: `false` */",
+      "suppressSorting?": "/** If `true`, the Set Filter values will not be sorted. Use this if you are providing your own\n * values and don't want them sorted as you are providing in the order you want.\n * \n * Default: `false` */",
+      "cellRenderer?": "/** Similar to the Cell Renderer for the grid. Setting it separately here allows for the value to\n * be rendered differently in the filter. */",
+      "suppressMiniFilter?": "/** Set to `true` to hide the Mini Filter.\n * \n * Default: `false` */",
+      "applyMiniFilterWhileTyping?": "/** Set to `true` to apply the Set Filter immediately when the user is typing in the Mini Filter.\n * \n * Default: `false` */",
       "suppressSelectAll?": "/** Set to `true` to remove the Select All checkbox.\n * Default: `false` */",
-      "defaultToNothingSelected?": "/** By default, when the Set Filter is opened all values are shown selected. Set this to `true`\n * to instead show all values as de-selected by default. See\n * [Default State](/filter-set-filter-list/#default-state). */",
-      "comparator?": "/** Comparator for sorting. If not provided, the Column Definition comparator is used. If Column\n * Definition comparator is also not provided, the default (grid provided) comparator is used.\n * See [Sorting Filter Lists](/filter-set-filter-list/#sorting-filter-lists). */",
-      "textFormatter?": "/** If specified, this formats the text before applying the Mini Filter compare logic, useful for\n * instance to substitute accented characters. See\n * [Custom Searches](/filter-set-mini-filter/#custom-searches). */",
-      "showTooltips?": "/** If `true`, hovering over a value in the Set Filter will show a tooltip containing the full,\n * untruncated value. See\n * [Filter Value Tooltips](/filter-set-filter-list/#filter-value-tooltips).\n * \n * Default: `false` */",
+      "defaultToNothingSelected?": "/** By default, when the Set Filter is opened all values are shown selected. Set this to `true`\n * to instead show all values as de-selected by default. */",
+      "comparator?": "/** Comparator for sorting. If not provided, the Column Definition comparator is used. If Column\n * Definition comparator is also not provided, the default (grid provided) comparator is used. */",
+      "textFormatter?": "/** If specified, this formats the text before applying the Mini Filter compare logic, useful for\n * instance to substitute accented characters. */",
+      "showTooltips?": "/** If `true`, hovering over a value in the Set Filter will show a tooltip containing the full,\n * untruncated value.\n * \n * Default: `false` */",
       "caseSensitive?": "/** If `true`, enables case-sensitivity in the SetFilter Mini-Filter and Filter List.\n * Default: `false`. */",
-      "excelMode?": "/** Changes the behaviour of the Set Filter to match that of Excel's AutoFilter. See\n * [Excel Mode](/filter-set-excel-mode/). */",
-      "buttons?": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * <ul>\n * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user\n *      hits the Apply button.</li>\n * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing\n *       any active filters on the column.</li>\n * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters\n *      on that column.</li>\n * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter\n *      in the UI, restoring the applied model.</li>\n * </ul> */",
+      "excelMode?": "/** Changes the behaviour of the Set Filter to match that of Excel's AutoFilter. */",
+      "buttons?": "/** Specifies the buttons to be shown in the filter, in the order they should be displayed in.\n * The options are:\n * \n *   - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.\n *   - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.\n *   - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.\n *   - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model. */",
       "closeOnApply?": "/** If the Apply button is present, the filter popup will be closed immediately when the Apply\n * or Reset button is clicked if this is set to `true`.\n * \n * Default: `false` */",
-      "debounceMs?": "/** By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by\n * 500ms. This is because these filters have text field inputs, so time is given to the user to\n * type items in before the input is formatted and the filtering applied. The\n * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To\n * override these defaults, set `debounceMs` to the number of milliseconds to debounce by. */",
+      "debounceMs?": "/** Overrides the default debounce time in milliseconds for the filter. Defaults are:\n * - `TextFilter` and `NumberFilter`: 500ms. (These filters have text field inputs, so a short delay before the input is formatted and the filtering applied is usually appropriate).\n * - `DateFilter` and `SetFilter`: 0ms */",
       "readOnly?": "/** If set to `true`, disables controls in the filter to mutate its state. Normally this would\n * be used in conjunction with the Filter API.\n * \n * Default: `false` */",
       "column": "/** The column this filter is for. */",
       "colDef": "/** The column definition for the column. */",
@@ -8555,6 +8684,8 @@
     "type": {
       "statusPanel?": "{ new (): IStatusPanelComp; } | string",
       "statusPanelFramework?": "any",
+      "statusPanelComp?": "any",
+      "statusPanelCompParams?": "any",
       "align?": "string",
       "key?": "string",
       "statusPanelParams?": "any"
@@ -9169,6 +9300,9 @@
       "innerRendererFramework?": "any",
       "innerRendererParams?": "any",
       "innerRendererSelector?": "CellRendererSelectorFunc",
+      "innerCellComp?": "any",
+      "innerCellCompParams?": "any",
+      "innerCellCompSelector?": "CellRendererCompSelectorFunc",
       "scope": "any",
       "padding": "number",
       "value": "any",
@@ -9205,6 +9339,9 @@
       "innerRendererFramework?": "/** Same as `innerRenderer` but for a framework component. */",
       "innerRendererParams?": "/** Additional params to customise to the `innerRenderer`. */",
       "innerRendererSelector?": "/** Callback to enable different innerRenderers to be used based of value of params. */",
+      "innerCellComp?": "/** Cell Component to use for inside the Group Cell */",
+      "innerCellCompParams?": "/** Params for Cell Component */",
+      "innerCellCompSelector?": "/** Callback to select Cell Component for inside the Group Cell */",
       "padding": "/** @deprecated */",
       "value": "/** Value to be rendered. */",
       "valueFormatted": "/** Formatted value to be rendered. */",

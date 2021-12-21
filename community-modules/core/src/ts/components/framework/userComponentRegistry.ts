@@ -26,6 +26,7 @@ import { NoRowsOverlayComponent } from "../../rendering/overlays/noRowsOverlayCo
 import { TooltipComponent } from "../../rendering/tooltipComponent";
 import { doOnce } from "../../utils/function";
 import { iterateObject } from '../../utils/object';
+import { AgComponentUtils } from "./agComponentUtils";
 
 /**
  * B the business interface (ie IHeader)
@@ -44,8 +45,8 @@ export interface DeprecatedComponentName {
 @Bean('userComponentRegistry')
 export class UserComponentRegistry extends BeanStub {
 
-    @Autowired('gridOptions')
-    private gridOptions: GridOptions;
+    @Autowired('gridOptions') private gridOptions: GridOptions;
+    @Autowired('agComponentUtils') private readonly agComponentUtils: AgComponentUtils;
 
     private agGridDefaults: { [key: string]: any } = {
         //date
@@ -140,25 +141,29 @@ export class UserComponentRegistry extends BeanStub {
             newComponentName: 'agRichSelectCellEditor',
             propertyHolder: 'cellEditor'
         },
-
         headerComponent: {
             newComponentName: 'agColumnHeader',
             propertyHolder: 'headerComponent'
         }
-
     };
-    private jsComponents: { [key: string]: any } = {};
-    private frameworkComponents: { [key: string]: any } = {};
+
+    private jsComps: { [key: string]: any } = {};
+    private fwComps: { [key: string]: any } = {};
+    private jsAndFwComps: { [key: string]: any } = {};
 
     @PostConstruct
     private init(): void {
         if (this.gridOptions.components != null) {
-            iterateObject(this.gridOptions.components, (key, component) => this.registerComponent(key, component));
+            iterateObject(this.gridOptions.components, (key, component) => this.registerJsComponent(key, component));
         }
 
         if (this.gridOptions.frameworkComponents != null) {
             iterateObject(this.gridOptions.frameworkComponents,
                 (key, component) => this.registerFwComponent(key, component as any));
+        }
+
+        if (this.gridOptions.comps != null) {
+            iterateObject(this.gridOptions.comps, (key, component) => this.registerJsOrFwComponent(key, component));
         }
     }
 
@@ -173,36 +178,44 @@ export class UserComponentRegistry extends BeanStub {
         this.agGridDefaults[name] = component;
     }
 
-    public registerComponent(rawName: string, component: any) {
+    private registerJsComponent(rawName: string, component: any) {
         const name = this.translateIfDeprecated(rawName);
 
-        if (this.frameworkComponents[name]) {
+        if (this.fwComps[name]) {
             console.error(`Trying to register a component that you have already registered for frameworks: ${name}`);
             return;
         }
 
-        this.jsComponents[name] = component;
+        this.jsComps[name] = component;
+    }
+
+    private registerJsOrFwComponent(rawName: string, component: any) {
+        const name = this.translateIfDeprecated(rawName);
+        this.jsAndFwComps[name] = component;
     }
 
     /**
      * B the business interface (ie IHeader)
      * A the agGridComponent interface (ie IHeaderComp). The final object acceptable by ag-grid
      */
-    public registerFwComponent<A extends IComponent<any> & B, B>(rawName: string, component: { new(): IComponent<B>; }) {
+    private registerFwComponent<A extends IComponent<any> & B, B>(rawName: string, component: { new(): IComponent<B>; }) {
         const name = this.translateIfDeprecated(rawName);
-
-        if (this.jsComponents[name]) {
-            console.error(`Trying to register a component that you have already registered for plain javascript: ${name}`);
-            return;
-        }
-
-        this.frameworkComponents[name] = component;
+        this.fwComps[name] = component;
     }
 
     public retrieve(rawName: string): {componentFromFramework: boolean, component: any} | null {
         const name = this.translateIfDeprecated(rawName);
-        const frameworkComponent = this.frameworkComponents[name] || this.getFrameworkOverrides().frameworkComponent(name);
 
+        const jsOrFwComp = this.jsAndFwComps[name];
+        if (jsOrFwComp) {
+            const fromFramework = !this.agComponentUtils.doesImplementIComponent(jsOrFwComp);
+            return {
+                componentFromFramework: fromFramework,
+                component: jsOrFwComp
+            };
+        }
+
+        const frameworkComponent = this.fwComps[name] || this.getFrameworkOverrides().frameworkComponent(name);
         if (frameworkComponent) {
             return {
                 componentFromFramework: true,
@@ -210,8 +223,7 @@ export class UserComponentRegistry extends BeanStub {
             };
         }
 
-        const jsComponent = this.jsComponents[name];
-
+        const jsComponent = this.jsComps[name];
         if (jsComponent) {
             return {
                 componentFromFramework: false,
@@ -220,7 +232,6 @@ export class UserComponentRegistry extends BeanStub {
         }
 
         const defaultComponent = this.agGridDefaults[name];
-
         if (defaultComponent) {
             return {
                 componentFromFramework: false,

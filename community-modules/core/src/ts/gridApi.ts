@@ -164,7 +164,7 @@ export interface CreateRangeChartParams extends CreateChartParams {
     /** The aggregation function that should be applied to all series data. */
     aggFunc?: string | IAggFunc;
     /** The series chart type configurations used in combination charts */
-    seriesChartTypes?: SeriesChartType;
+    seriesChartTypes?: SeriesChartType[];
 }
 export interface CreateCrossFilterChartParams extends CreateChartParams {
     /** The range of cells to be charted. If no rows / rowIndexes are specified all rows will be included. */

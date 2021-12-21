@@ -23,9 +23,9 @@ export interface ISimpleFilter extends IProvidedFilter, IFloatingFilterParent {
 
 export interface ISimpleFilterParams extends IProvidedFilterParams {
     /**
-     * Array of filter options to present to the user. See [Filter Options](/filter-provided-simple/#simple-filter-options) for all options available to each filter type.
+     * Array of filter options to present to the user.
      */
-    filterOptions?: (IFilterOptionDef | string)[];
+    filterOptions?: (IFilterOptionDef | ISimpleFilterModelType)[];
     /** The default filter option to be selected. */
     defaultOption?: string;
     /**

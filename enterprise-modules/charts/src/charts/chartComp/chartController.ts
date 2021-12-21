@@ -234,6 +234,14 @@ export class ChartController extends BeanStub {
         return this.model.seriesChartTypes;
     }
 
+    public updateSeriesChartType(colId: string, chartType: ChartType): void {
+        const seriesChartType = this.model.seriesChartTypes.find(s => s.colId === colId);
+        if (seriesChartType) {
+            seriesChartType.chartType = chartType;
+            this.updateForDataChange();
+        }
+    }
+
     private getCellRanges(): CellRange[] {
         return [this.model.dimensionCellRange!, this.model.valueCellRange!].filter(r => r);
     }

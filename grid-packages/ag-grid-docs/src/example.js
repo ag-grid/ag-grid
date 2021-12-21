@@ -261,7 +261,7 @@ function toggleOptionsCollapsed() {
 }
 
 var defaultExportParams = {
-    skipColumnGroupHeaders: true,
+    // skipColumnGroupHeaders: true,
     headerRowHeight: 40,
     rowHeight: 30,
     fontSize: 14,

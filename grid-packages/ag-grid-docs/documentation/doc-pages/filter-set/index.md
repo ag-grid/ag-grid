@@ -45,11 +45,11 @@ The following example demonstrates how the Set Filter can be enabled. Note the f
 
 Parameters that are common to all [Provided Filters](/filter-provided/):
 
-<interface-documentation interfaceName='IProvidedFilterParams' names='["buttons","closeOnApply","debounceMs","readOnly","valueGetter"]' config='{"description":""}'></interface-documentation>
+<interface-documentation interfaceName='IProvidedFilterParams' names='["buttons","closeOnApply","debounceMs","readOnly","valueGetter"]' config='{"description":""}' overrideSrc="filter-provided/resources/provided-filters.json"></interface-documentation>
 
 Parameters that are specific to the Set Filter:
 
-<interface-documentation interfaceName='ISetFilterParams' overrideSrc='filter-set/resources/set-filter-params.json'  names='["values","refreshValuesOnOpen","cellHeight","suppressSorting","cellRenderer","suppressMiniFilter","applyMiniFilterWhileTyping","suppressSelectAll","defaultToNothingSelected","comparator","textFormatter","valueFormatter","showTooltips","excelMode","caseSensitive"]' config='{"description":""}' ></interface-documentation>
+<interface-documentation interfaceName='ISetFilterParams' overrideSrc='filter-set/resources/set-filter-params.json'  names='["values","refreshValuesOnOpen","cellHeight","suppressSorting","cellRenderer","suppressMiniFilter","applyMiniFilterWhileTyping","suppressSelectAll","defaultToNothingSelected","comparator","textFormatter","valueFormatter","showTooltips","excelMode","caseSensitive"]' config='{"description":""}'></interface-documentation>
 
 ## Next Up
 

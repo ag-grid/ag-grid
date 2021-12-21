@@ -22,22 +22,30 @@ export class ColDefUtil {
         'filter',
         'initialAggFunc',
         'aggFunc',
-        'cellRenderer',
-        'cellEditor',
         'pinned',
         'initialPinned',
         'chartDataType',
-        'cellEditorPopupPosition'
+        'cellEditorPopupPosition',
+        'cellEditorCompPopupPosition'
     ];
 
     public static OBJECT_PROPERTIES = [
         'headerGroupComponent',
         'headerGroupComponentFramework',
         'headerGroupComponentParams',
+        'headerGroupComp',
+        'headerGroupCompParams',
         'cellStyle',
+        'cellRenderer',
         'cellRendererParams',
+        'cellRendererFramework',
+        'cellRendererComp',
+        'cellRendererCompParams',
+        'cellEditor',
         'cellEditorFramework',
         'cellEditorParams',
+        'cellEditorComp',
+        'cellEditorCompParams',
         'pinnedRowCellRendererFramework',
         'pinnedRowCellRendererParams',
         'filterFramework',
@@ -46,12 +54,16 @@ export class ColDefUtil {
         'headerComponent',
         'headerComponentFramework',
         'headerComponentParams',
+        'headerComp',
+        'headerCompParams',
         'floatingFilterComponent',
         'floatingFilterComponentParams',
         'floatingFilterComponentFramework',
         'tooltipComponent',
         'tooltipComponentParams',
         'tooltipComponentFramework',
+        'tooltipComp',
+        'tooltipCompParams',
         'refData',
         'columnsMenuParams'
     ];
@@ -119,6 +131,7 @@ export class ColDefUtil {
         'singleClickEdit',
         'floatingFilter',
         'cellEditorPopup',
+        'cellEditorCompPopup',
         'suppressFillHandle'
     ];
 
@@ -128,8 +141,6 @@ export class ColDefUtil {
         'valueSetter',
         'filterValueGetter',
         'keyCreator',
-        'cellRenderer',
-        'cellRendererFramework',
         'pinnedRowCellRenderer',
         'valueFormatter',
         'pinnedRowValueFormatter',
@@ -152,7 +163,10 @@ export class ColDefUtil {
         'tooltipComponent',
         'tooltipComponentFramework',
         'cellRendererSelector',
-        'cellEditorSelector'];
+        'cellEditorSelector',
+        // 'cellCompSelector',
+        // 'cellEditorCompSelector',
+    ];
 
     public static ALL_PROPERTIES = [
         ...ColDefUtil.ARRAY_PROPERTIES,

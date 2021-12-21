@@ -25,6 +25,16 @@ export interface IFilterDef {
     filterParams?: any;
 
     /**
+     * Filter component to use for this column.
+     * - Set to `true` to use the default filter.
+     * - Provide name (string) to use registered filter.
+     * - Provide User Component to provide custom filter.
+     */
+    filterComp?: any;
+    /** Params to be passed to the filter component. */
+    filterCompParams?: any;
+
+    /**
      * The custom component to be used for rendering the floating filter.
      * If none is specified the default AG Grid is used.
      */
@@ -33,6 +43,15 @@ export interface IFilterDef {
     floatingFilterComponentFramework?: any;
     /** Params to be passed to `floatingFilterComponent` or `floatingFilterComponentFramework`. */
     floatingFilterComponentParams?: any;
+
+    
+    /**
+     * The custom component to be used for rendering the floating filter.
+     * If none is specified the default AG Grid is used.
+     */
+    floatingFilterComp?: any;
+    /** Params to be passed to Floating Filter Component. */
+    floatingFilterCompParams?: any;
 }
 
 export interface IFilter {

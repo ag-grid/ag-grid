@@ -63,7 +63,7 @@ export function getRowContainerTypeForName(name: RowContainerName): RowContainer
         case RowContainerName.BOTTOM_FULL_WIDTH:
             return RowContainerType.FULL_WIDTH;
         default :
-            throw 'Invalid Row Container Type';
+            throw Error('Invalid Row Container Type');
     }
 }
 

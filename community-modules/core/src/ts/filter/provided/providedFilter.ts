@@ -20,16 +20,11 @@ export interface IProvidedFilterParams extends IFilterParams {
     /**
      * Specifies the buttons to be shown in the filter, in the order they should be displayed in.
      * The options are:
-     * <ul>
-     * <li>`'apply'`: If the Apply button is present, the filter is only applied after the user
-     *     hits the Apply button.</li>
-     * <li>`'clear'`: The Clear button will clear the (form) details of the filter without removing
-     *      any active filters on the column.</li>
-     * <li>`'reset'`: The Reset button will clear the details of the filter and any active filters
-     *     on that column.</li>
-     * <li>`'cancel'`: The Cancel button will discard any changes that have been made to the filter
-     *     in the UI, restoring the applied model.</li>
-     * </ul>
+     * 
+     *  - `'apply'`: If the Apply button is present, the filter is only applied after the user hits the Apply button.
+     *  - `'clear'`: The Clear button will clear the (form) details of the filter without removing any active filters on the column.
+     *  - `'reset'`: The Reset button will clear the details of the filter and any active filters on that column.
+     *  - `'cancel'`: The Cancel button will discard any changes that have been made to the filter in the UI, restoring the applied model.
      */
     buttons?: FilterButtonType[];
     /**
@@ -40,11 +35,9 @@ export interface IProvidedFilterParams extends IFilterParams {
      */
     closeOnApply?: boolean;
     /**
-     * By default the [Text](/filter-text/) and [Number](/filter-number/) filters will debounce by
-     * 500ms. This is because these filters have text field inputs, so time is given to the user to
-     * type items in before the input is formatted and the filtering applied. The
-     * [Set](/filter-set/) and [Date](/filter-date/) will execute immediately (no debounce). To
-     * override these defaults, set `debounceMs` to the number of milliseconds to debounce by.
+     * Overrides the default debounce time in milliseconds for the filter. Defaults are:
+     * - `TextFilter` and `NumberFilter`: 500ms. (These filters have text field inputs, so a short delay before the input is formatted and the filtering applied is usually appropriate).
+     * - `DateFilter` and `SetFilter`: 0ms
      */
     debounceMs?: number;
     /**
@@ -128,7 +121,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     }
 
     // override
-    protected handleKeyDown(e: KeyboardEvent): void {}
+    protected handleKeyDown(e: KeyboardEvent): void { }
 
     public abstract getModelFromUi(): M | null;
 
@@ -397,7 +390,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
     }
 
     protected getCellValue(rowNode: RowNode): V {
-        const {api, colDef, column, columnApi, context} = this.providedFilterParams;
+        const { api, colDef, column, columnApi, context } = this.providedFilterParams;
         return this.providedFilterParams.valueGetter({
             api,
             colDef,

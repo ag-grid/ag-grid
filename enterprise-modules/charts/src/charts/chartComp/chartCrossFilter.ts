@@ -106,6 +106,11 @@ export class ChartCrossFilter extends BeanStub {
 
     private getColumnFilterType(colId: any) {
         let gridColumn = this.columnModel.getGridColumn(colId);
-        return gridColumn ? gridColumn.getColDef().filter : undefined;
+        if (!gridColumn) { return; }
+
+        const colDef = gridColumn.getColDef();
+
+        return colDef.filter!=null ? colDef.filter :
+                colDef.filterFramework!=null ? colDef.filterFramework : colDef.filterComp;
     }
 }

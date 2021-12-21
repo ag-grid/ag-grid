@@ -56,11 +56,25 @@ const applyTypes = () => {
         .pipe(dest('./'))
 };
 
+const containsChartOptions = function (file) {
+    const fileContent = fs.readFileSync(file.path, "utf8");
+    return fileContent.includes('options =')
+}
+
+const applyChartTypes = () => {
+    return src([`./doc-pages/**/${folder}/**/main.ts`, '!./doc-pages/**/{_gen,provided}/**/*.ts'], { base: './' })
+        .pipe(gulpIgnore.exclude(fileFixed))
+        .pipe(replace(new RegExp('(var|const) options =', 'g'), 'const options: AgChartOptions ='))
+        .pipe(gulpIf(containsChartOptions, replace(new RegExp('^', 'g'), 'import * as agCharts from "ag-charts-community";\n')))
+        .pipe(gulpIf(containsChartOptions, replace(new RegExp('^', 'g'), 'import { AgChartOptions } from "@ag-grid-community/core";\n\n')))
+        .pipe(dest('./'))
+};
+
 const prettify = () => {
     return src([`./doc-pages/**/${folder}/**/main.ts`, '!./doc-pages/**/{_gen,provided}/**/*.ts'], { base: './' })
         .pipe(prettier({ singleQuote: true }))
         .pipe(dest('./'))
 };
 
-
-exports.default = series(renameFiles, applyTypes, prettify)
+// applyTypes
+exports.default = series(renameFiles, applyChartTypes, prettify)

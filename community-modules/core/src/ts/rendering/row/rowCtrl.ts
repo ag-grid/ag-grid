@@ -32,19 +32,6 @@ export enum RowType {
     FullWidthDetail = 'FullWidthDetail'
 }
 
-export const FullWidthRenderers: Map<RowType, string> = convertToMap([
-    [RowType.FullWidthLoading, 'agLoadingCellRenderer'],
-    [RowType.FullWidthGroup, 'agGroupRowRenderer'],
-    [RowType.FullWidthDetail, 'agDetailCellRenderer']
-]);
-
-export const FullWidthKeys: Map<RowType, string> = convertToMap([
-    [RowType.FullWidth, 'fullWidthCellRenderer'],
-    [RowType.FullWidthLoading, 'loadingCellRenderer'],
-    [RowType.FullWidthGroup, 'groupRowRenderer'],
-    [RowType.FullWidthDetail, 'detailCellRenderer']
-]);
-
 let instanceIdSequence = 0;
 
 export interface IRowComp {
@@ -313,32 +300,34 @@ export class RowCtrl extends BeanStub {
         this.createManagedBean(rowDragComp, this.beans.context);
     }
 
-    public getFullWidthCellRendererType(): string {
-        return FullWidthKeys.get(this.rowType)!;
-    }
-
-    private getFullWidthCellRendererName(): string {
-        return FullWidthRenderers.get(this.rowType)!;
-    }
-
     private setupFullWidth(gui: RowGui): void {
 
         const pinned = this.getPinnedForContainer(gui.containerType);
         const params = this.createFullWidthParams(gui.element, pinned);
-        const cellRendererType = this.getFullWidthCellRendererType();
-        const cellRendererName = this.getFullWidthCellRendererName();
-        const compDetails = this.beans.userComponentFactory.getFullWidthCellRendererDetails(params, cellRendererType, cellRendererName);
 
-        if (compDetails) {
-            gui.rowComp.showFullWidth(compDetails);
-        } else {
-            const masterDetailModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.MasterDetailModule);
-            if (cellRendererName === 'agDetailCellRenderer' && !masterDetailModuleLoaded) {
-                console.warn(`AG Grid: cell renderer agDetailCellRenderer (for master detail) not found. Did you forget to include the master detail module?`);
-            } else {
-                console.error(`AG Grid: fullWidthCellRenderer ${cellRendererName} not found`);
-            }
+        const masterDetailModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.MasterDetailModule);
+        if (this.rowType==RowType.FullWidthDetail && !masterDetailModuleLoaded) {
+            console.warn(`AG Grid: cell renderer agDetailCellRenderer (for master detail) not found. Did you forget to include the master detail module?`);
+            return;
         }
+
+        let compDetails: UserCompDetails;
+        switch(this.rowType) {
+            case RowType.FullWidthDetail:
+                compDetails = this.beans.userComponentFactory.getFullWidthDetailCellRendererDetails(params);
+                break;
+            case RowType.FullWidthGroup:
+                compDetails = this.beans.userComponentFactory.getFullWidthGroupCellRendererDetails(params);
+                break;
+            case RowType.FullWidthLoading:
+                compDetails = this.beans.userComponentFactory.getFullWidthLoadingCellRendererDetails(params);
+                break;                
+            default:
+                compDetails = this.beans.userComponentFactory.getFullWidthCellRendererDetails(params);
+                break;
+        }
+
+        gui.rowComp.showFullWidth(compDetails);
     }
 
     public getScope(): any {

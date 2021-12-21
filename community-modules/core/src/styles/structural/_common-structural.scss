@@ -644,6 +644,7 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 .ag-cell-wrapper {
     display: flex;
     align-items: center;
+    overflow: hidden;
     // adding width: 100% here breaks text-overflow: ellipsis
     // width: 100%;
     &.ag-row-group {
@@ -662,6 +663,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 
 .ag-cell-inline-editing {
     z-index: 1;
+
+    .ag-cell-wrapper,
     .ag-cell-edit-wrapper,
     .ag-cell-editor,
     .ag-cell-editor .ag-wrapper,

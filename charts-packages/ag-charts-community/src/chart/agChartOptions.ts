@@ -371,7 +371,7 @@ export interface AgScatterSeriesTooltipRendererParams extends AgCartesianSeriesT
 
 export interface AgSeriesMarker {
     enabled?: boolean;
-    shape?: string;
+    shape?: string | (new () => any);
     size?: number;
     maxSize?: number;
     fill?: string;
@@ -381,7 +381,16 @@ export interface AgSeriesMarker {
     strokeOpacity?: number;
 }
 
-export interface AgCartesianSeriesMarkerFormatterParams {
+export interface AgSeriesMarkerFormatterParams {
+    datum: any;
+    fill?: string;
+    stroke?: string;
+    strokeWidth: number;
+    size: number;
+    highlighted: boolean;
+}
+
+export interface AgCartesianSeriesMarkerFormatterParams extends AgSeriesMarkerFormatterParams {
     xKey: string;
     yKey: string;
 }
@@ -393,7 +402,7 @@ export interface AgCartesianSeriesMarkerFormat {
     size?: number;
 }
 
-export type AgCartesianSeriesMarkerFormatter = (params: AgCartesianSeriesMarkerFormatterParams) => AgCartesianSeriesMarkerFormat;
+export type AgCartesianSeriesMarkerFormatter = (params: AgCartesianSeriesMarkerFormatterParams) => (AgCartesianSeriesMarkerFormat | undefined);
 
 export interface AgCartesianSeriesMarker extends AgSeriesMarker {
     formatter?: AgCartesianSeriesMarkerFormatter;
@@ -511,6 +520,7 @@ export interface AgAreaSeriesLabelOptions extends AgChartLabelOptions {
 export interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
     type?: 'area';
     marker?: AgCartesianSeriesMarker;
+    normalizedTo?: number;
     xKey?: string;
     yKeys?: string[];
     xName?: string;

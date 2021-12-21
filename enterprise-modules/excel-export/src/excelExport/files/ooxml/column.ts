@@ -5,7 +5,7 @@ const getExcelCellWidth = (width: number): number => Math.ceil((width - 12) / 7 
 
 const columnFactory: ExcelOOXMLTemplate = {
     getTemplate(config: ExcelColumn) {
-        const {min, max, s, width, hidden, bestFit} = config;
+        const { min, max, outlineLevel, s, width, hidden, bestFit } = config;
         let excelWidth = 1;
         let customWidth = '0';
 
@@ -20,6 +20,7 @@ const columnFactory: ExcelOOXMLTemplate = {
                 rawMap: {
                     min: min,
                     max: max,
+                    outlineLevel: outlineLevel != null ? outlineLevel : undefined,
                     width: excelWidth,
                     style: s,
                     hidden: hidden ? '1' : '0',

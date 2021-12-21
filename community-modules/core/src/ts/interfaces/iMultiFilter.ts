@@ -10,9 +10,7 @@ export interface IMultiFilter extends IProvidedFilter {
 
 export interface IMultiFilterDef extends IFilterDef {
     /**
-     * Configures how the filter is shown in the Multi Filter. See
-     * [Display Style](https://build.ag-grid.com/javascript-data-grid/filter-multi/#display-style).
-     * 
+     * Configures how the filter is shown in the Multi Filter.
      * Default: `inline`
      */
     display?: 'inline' | 'accordion' | 'subMenu';
@@ -39,9 +37,7 @@ export interface IMultiFilterParams extends IFilterParams {
     /**
      * If true, all UI inputs managed by this filter are for display only, and the filter can only
      * be affected by API calls. Does NOT affect child filters, they need to be individually
-     * configured with `readOnly` where applicable. See
-     * [Read-only Filter UI](/filter-api/#read-only-filter-ui).
-     * 
+     * configured with `readOnly` where applicable.
      * Default: `false`
      */
     readOnly?: boolean;

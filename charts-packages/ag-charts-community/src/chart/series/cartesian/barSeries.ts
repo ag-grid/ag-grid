@@ -447,6 +447,10 @@ export class BarSeries extends CartesianSeries {
             yMax = yLargestMinMax.max;
         }
 
+        if (yMin === yMax && yMin === 0) {
+            yMax = 1;
+        }
+
         this.yDomain = this.fixNumericExtent([yMin, yMax], 'y');
 
         this.fireEvent({ type: 'dataProcessed' });

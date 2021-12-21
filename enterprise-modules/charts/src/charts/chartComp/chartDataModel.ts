@@ -3,7 +3,6 @@ import {
     Autowired,
     BeanStub,
     CellRange,
-    CellRangeParams,
     CellRangeType,
     ChartType,
     Column,
@@ -38,6 +37,7 @@ export interface ChartModelParams {
     suppressChartRanges: boolean;
     unlinkChart?: boolean;
     crossFiltering?: boolean;
+    seriesChartTypes?: SeriesChartType[];
 }
 
 export class ChartDataModel extends BeanStub {
@@ -60,7 +60,7 @@ export class ChartDataModel extends BeanStub {
     public chartThemeName: string;
     public unlinked = false;
     public chartData: any[] = [];
-    public seriesChartTypes: SeriesChartType[] = [];
+    public seriesChartTypes: SeriesChartType[];
     public valueColState: ColState[] = [];
     public dimensionColState: ColState[] = [];
     public columnNames: { [p: string]: string[]; } = {};
@@ -89,6 +89,7 @@ export class ChartDataModel extends BeanStub {
         this.suppressChartRanges = params.suppressChartRanges;
         this.unlinked = !!params.unlinkChart;
         this.crossFiltering = !!params.crossFiltering;
+        this.seriesChartTypes = params.seriesChartTypes || [];
     }
 
     @PostConstruct
@@ -390,7 +391,7 @@ export class ChartDataModel extends BeanStub {
         const orderedColIds: string[] = [];
 
         // calculate new order
-        allColumns.forEach((col, i) => {
+        allColumns.forEach((col: ColState, i: number) => {
             if (i === updatedCol.order) {
                 orderedColIds.push(updatedCol.colId);
             }
@@ -403,7 +404,6 @@ export class ChartDataModel extends BeanStub {
         // update col state with new order
         allColumns.forEach(col => {
             const order = orderedColIds.indexOf(col.colId);
-
             col.order = order >= 0 ? orderedColIds.indexOf(col.colId) : allColumns.length - 1;
         });
 
@@ -412,26 +412,29 @@ export class ChartDataModel extends BeanStub {
     }
 
     private reorderColState(): void {
-        const { dimensionColState, valueColState } = this;
-
-        dimensionColState.sort((a, b) => a.order - b.order);
-        valueColState.sort((a, b) => a.order - b.order);
+        const ascColStateOrder = (a: ColState, b: ColState) => a.order - b.order;
+        this.dimensionColState.sort(ascColStateOrder);
+        this.valueColState.sort(ascColStateOrder);
     }
 
     private updateSeriesChartTypes() {
         const { valueColState } = this;
 
-        this.seriesChartTypes = valueColState.map(valueCol => {
-            return { colId: valueCol.colId, chartType: 'groupedColumn', secondaryAxis: false };
-        })
+        if (this.seriesChartTypes.length === 0) { //TODO
+
+
+
+
+            this.seriesChartTypes = valueColState.map(valueCol => {
+                return { colId: valueCol.colId, chartType: 'groupedColumn', secondaryAxis: false };
+            });
+        }
     }
 
     private setDimensionCellRange(dimensionCols: Set<Column>, colsInRange: Set<Column>, updatedColState?: ColState): void {
         this.dimensionCellRange = undefined;
 
-        const { dimensionColState } = this;
-
-        if (!updatedColState && !dimensionColState.length) {
+        if (!updatedColState && !this.dimensionColState.length) {
             // use first dimension column in range by default
             dimensionCols.forEach(col => {
                 if (this.dimensionCellRange || !colsInRange.has(col)) { return; }
@@ -441,7 +444,6 @@ export class ChartDataModel extends BeanStub {
         }
 
         let selectedDimensionColState = updatedColState;
-
         if (this.crossFiltering && this.aggFunc) {
             const aggFuncDimension = this.suppliedCellRange.columns[0]; //TODO
             selectedDimensionColState = this.dimensionColState.filter(cs => cs.colId === aggFuncDimension.getColId())[0];

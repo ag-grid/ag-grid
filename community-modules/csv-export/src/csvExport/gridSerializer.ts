@@ -287,7 +287,28 @@ export class GridSerializer extends BeanStub {
                 name = this.columnModel.getDisplayNameForColumnGroup(columnGroup, 'header')!;
             }
 
-            gridRowIterator.onColumn(name || '', columnIndex++, columnGroup.getLeafColumns().length - 1);
+            const collapsibleGroupRanges = columnGroup.getLeafColumns().reduce((collapsibleGroups: number[][], currentColumn, currentIdx, arr) => {
+                let lastGroup = _.last(collapsibleGroups);
+                const groupShow = currentColumn.getColumnGroupShow() === 'open';
+
+                if (!groupShow) {
+                    if (lastGroup && lastGroup[1] == null) {
+                        lastGroup[1] = currentIdx - 1;
+                    }
+                } else if (!lastGroup || lastGroup[1] != null) {
+                    lastGroup = [currentIdx];
+                    collapsibleGroups.push(lastGroup);
+                }
+
+
+                if (currentIdx === arr.length - 1 && lastGroup && lastGroup[1] == null) {
+                    lastGroup[1] = currentIdx;
+                }
+
+                return collapsibleGroups;
+            }, []);
+
+            gridRowIterator.onColumn(name || '', columnIndex++, columnGroup.getLeafColumns().length - 1, collapsibleGroupRanges);
         });
     }
 }

@@ -497,13 +497,13 @@ export class ColumnModel extends BeanStub {
     }
 
     public autoSizeColumns(params: {
-        columns: (string | Column)[],
-        skipHeader?: boolean,
-        skipHeaderGroups?: boolean,
-        onlyGrow?: Column[],
+        columns: (string | Column)[];
+        skipHeader?: boolean;
+        skipHeaderGroups?: boolean;
+        stopAtGroup?: ColumnGroup;
         source?: ColumnEventType;
     }): void {
-        const { columns, skipHeader, skipHeaderGroups, onlyGrow = [], source = 'api' } = params;
+        const { columns, skipHeader, skipHeaderGroups, stopAtGroup, source = 'api' } = params;
         // because of column virtualisation, we can only do this function on columns that are
         // actually rendered, as non-rendered columns (outside the viewport and not rendered
         // due to column virtualisation) are not present. this can result in all rendered columns
@@ -523,10 +523,7 @@ export class ColumnModel extends BeanStub {
         let changesThisTimeAround = -1;
 
         const shouldSkipHeader = skipHeader != null ? skipHeader : this.gridOptionsWrapper.isSkipHeaderOnAutoSize();
-
-        if (!shouldSkipHeader && !skipHeaderGroups) {
-            onlyGrow.push(...this.autoSizeColumnGroupsByColumns(columns));
-        }
+        const shouldSkipHeaderGroups = skipHeaderGroups != null ? skipHeaderGroups : shouldSkipHeader;
 
         while (changesThisTimeAround !== 0) {
             changesThisTimeAround = 0;
@@ -540,17 +537,16 @@ export class ColumnModel extends BeanStub {
                 // preferredWidth = -1 if this col is not on the screen
                 if (preferredWidth > 0) {
                     const newWidth = this.normaliseColumnWidth(column, preferredWidth);
-                    const currentColumnWidth = column.getActualWidth();
-                    const isOnlyGrow = onlyGrow.length && onlyGrow.indexOf(column) !== -1;
-
-                    if (!isOnlyGrow || currentColumnWidth < newWidth) {
-                        column.setActualWidth(newWidth, source);
-                        columnsAutosized.push(column);
-                        changesThisTimeAround++;
-                    }
+                    column.setActualWidth(newWidth, source);
+                    columnsAutosized.push(column);
+                    changesThisTimeAround++;
                 }
                 return true;
             }, source);
+        }
+
+        if (!shouldSkipHeaderGroups) {
+            this.autoSizeColumnGroupsByColumns(columns, stopAtGroup);
         }
 
         this.fireColumnResizedEvent(columnsAutosized, true, 'autosizeColumns');
@@ -578,15 +574,15 @@ export class ColumnModel extends BeanStub {
         }
     }
 
-    private autoSizeColumnGroupsByColumns(keys: (string | Column)[]): Column[] {
-        const columnGroups: ColumnGroup[] = [];
+    private autoSizeColumnGroupsByColumns(keys: (string | Column)[], stopAtGroup?: ColumnGroup): Column[] {
+        const columnGroups: Set<ColumnGroup> = new Set();
         const columns = this.getGridColumns(keys);
 
         columns.forEach(col => {
             let parent: ColumnGroup = col.getParent();
-            while (parent) {
-                if (!parent.isPadding() && columnGroups.indexOf(parent) === -1) {
-                    columnGroups.push(parent);
+            while (parent && parent != stopAtGroup) {
+                if (!parent.isPadding()) {
+                    columnGroups.add(parent);
                 }
                 parent = parent.getParent();
             }
@@ -602,7 +598,7 @@ export class ColumnModel extends BeanStub {
                 if (headerGroupCtrl) { break; }
             }
             if (headerGroupCtrl) {
-                resizedColumns.push(...headerGroupCtrl.resizeLeafColumnsToFit(resizedColumns));
+                headerGroupCtrl.resizeLeafColumnsToFit();
             }
         }
 
@@ -1130,10 +1126,9 @@ export class ColumnModel extends BeanStub {
     public resizeColumnSets(params: {
         resizeSets: ColumnResizeSet[],
         finished: boolean,
-        onlyGrow?: Column[],
         source: ColumnEventType
-    }): Column[] {
-        const { resizeSets, finished, onlyGrow = [], source } = params;
+    }): void {
+        const { resizeSets, finished, source } = params;
         const passMinMaxCheck = !resizeSets || resizeSets.every(columnResizeSet => this.checkMinAndMaxWidthsForSet(columnResizeSet));
 
         if (!passMinMaxCheck) {
@@ -1143,7 +1138,7 @@ export class ColumnModel extends BeanStub {
                 this.fireColumnResizedEvent(columns, finished, source);
             }
 
-            return []; // don't resize!
+            return; // don't resize!
         }
 
         const changedCols: Column[] = [];
@@ -1233,10 +1228,9 @@ export class ColumnModel extends BeanStub {
 
             columns.forEach(col => {
                 const newWidth = newWidths[col.getId()];
-                const isOnlyGrow = onlyGrow.length && onlyGrow.indexOf(col) !== -1;
                 const actualWidth = col.getActualWidth();
 
-                if (actualWidth !== newWidth && (!isOnlyGrow || actualWidth < newWidth)) {
+                if (actualWidth !== newWidth) {
                     col.setActualWidth(newWidth, source);
                     changedCols.push(col);
                 }
@@ -1264,8 +1258,6 @@ export class ColumnModel extends BeanStub {
         if (atLeastOneColChanged || finished) {
             this.fireColumnResizedEvent(colsForEvent, finished, source, flexedCols);
         }
-
-        return colsForEvent;
     }
 
     public setColumnAggFunc(key: string | Column | null | undefined, aggFunc: string, source: ColumnEventType = "api"): void {
@@ -3076,7 +3068,7 @@ export class ColumnModel extends BeanStub {
         if (!columnCallback && !groupCallback) { return undefined; }
 
         const searchForColDefs = (colDefs2: (ColDef | ColGroupDef)[]): void => {
-            colDefs2.forEach(function (abstractColDef: AbstractColDef) {
+            colDefs2.forEach((abstractColDef: AbstractColDef) => {
                 const isGroup = exists((abstractColDef as any).children);
                 if (isGroup) {
                     const colGroupDef = abstractColDef as ColGroupDef;

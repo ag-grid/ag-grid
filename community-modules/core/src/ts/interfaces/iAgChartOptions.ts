@@ -146,7 +146,7 @@ export interface AgNavigatorOptions {
     maxHandle?: AgNavigatorHandleOptions;
 }
 
-type AgChartLegendPosition = 'top' | 'right' | 'bottom' | 'left';
+export type AgChartLegendPosition = 'top' | 'right' | 'bottom' | 'left';
 
 export interface AgChartLegendMarkerOptions {
     size?: number;
@@ -208,7 +208,7 @@ export interface AgBaseAxisOptions {
     keys?: string[];
 }
 
-type AgCartesianAxisPosition = 'top' | 'right' | 'bottom' | 'left';
+export type AgCartesianAxisPosition = 'top' | 'right' | 'bottom' | 'left';
 
 export interface AgAxisLineOptions {
     width?: number;
@@ -296,7 +296,7 @@ export type AgCartesianAxisOptions =
     AgGroupedCategoryAxisOptions |
     AgTimeAxisOptions;
 
-type AgPolarAxisOptions = any;
+export type AgPolarAxisOptions = any;
 
 export interface AgBaseSeriesOptions {
     data?: any[];
@@ -371,7 +371,7 @@ export interface AgScatterSeriesTooltipRendererParams extends AgCartesianSeriesT
 
 export interface AgSeriesMarker {
     enabled?: boolean;
-    shape?: string;
+    shape?: string | (new () => any);
     size?: number;
     maxSize?: number;
     fill?: string;
@@ -381,7 +381,16 @@ export interface AgSeriesMarker {
     strokeOpacity?: number;
 }
 
-export interface AgCartesianSeriesMarkerFormatterParams {
+export interface AgSeriesMarkerFormatterParams {
+    datum: any;
+    fill?: string;
+    stroke?: string;
+    strokeWidth: number;
+    size: number;
+    highlighted: boolean;
+}
+
+export interface AgCartesianSeriesMarkerFormatterParams extends AgSeriesMarkerFormatterParams {
     xKey: string;
     yKey: string;
 }
@@ -393,7 +402,7 @@ export interface AgCartesianSeriesMarkerFormat {
     size?: number;
 }
 
-export type AgCartesianSeriesMarkerFormatter = (params: AgCartesianSeriesMarkerFormatterParams) => AgCartesianSeriesMarkerFormat;
+export type AgCartesianSeriesMarkerFormatter = (params: AgCartesianSeriesMarkerFormatterParams) => (AgCartesianSeriesMarkerFormat | undefined);
 
 export interface AgCartesianSeriesMarker extends AgSeriesMarker {
     formatter?: AgCartesianSeriesMarkerFormatter;
@@ -511,6 +520,7 @@ export interface AgAreaSeriesLabelOptions extends AgChartLabelOptions {
 export interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
     type?: 'area';
     marker?: AgCartesianSeriesMarker;
+    normalizedTo?: number;
     xKey?: string;
     yKeys?: string[];
     xName?: string;
@@ -711,7 +721,7 @@ export interface AgTreemapSeriesOptions extends AgBaseSeriesOptions {
     gradient?: boolean;
 }
 
-type AgCartesianSeriesOptions =
+export type AgCartesianSeriesOptions =
     AgLineSeriesOptions |
     AgScatterSeriesOptions |
     AgAreaSeriesOptions |
@@ -719,9 +729,9 @@ type AgCartesianSeriesOptions =
     AgHistogramSeriesOptions |
     AgOHLCSeriesOptions;
 
-type AgPolarSeriesOptions = AgPieSeriesOptions;
+export type AgPolarSeriesOptions = AgPieSeriesOptions;
 
-type AgHierarchySeriesOptions = AgTreemapSeriesOptions;
+export type AgHierarchySeriesOptions = AgTreemapSeriesOptions;
 
 export interface AgCartesianChartOptions<TAxisOptions = AgCartesianAxisOptions[], TSeriesOptions = AgCartesianSeriesOptions[]> extends AgBaseChartOptions {
     type?: 'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'ohlc';

@@ -163,7 +163,7 @@ function navigateToNextCell(params: NavigateToNextCellParams) {
     case KEY_RIGHT:
       return suggestedNextCell
     default:
-      throw 'this will never happen, navigation is always one of the 4 keys above'
+      throw Error('this will never happen, navigation is always one of the 4 keys above')
   }
 }
 

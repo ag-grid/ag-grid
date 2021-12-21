@@ -44,6 +44,10 @@ export class RangeService extends BeanStub implements IRangeService {
     private lastMouseEvent: MouseEvent | null;
     private bodyScrollListener = this.onBodyScroll.bind(this);
 
+    private cellHoverListener: (() => void) | undefined;
+    private lastCellHovered: CellPosition | undefined;
+    private cellHasChanged: boolean;
+
     // when a range is created, we mark the 'start cell' for further processing as follows:
     // 1) if dragging, then the new range is extended from the start position
     // 2) if user hits 'shift' click on a cell, the previous range is extended from the start position
@@ -554,9 +558,7 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     public onDragStart(mouseEvent: MouseEvent): void {
-        if (!this.gridOptionsWrapper.isEnableRangeSelection()) {
-            return;
-        }
+        if (!this.gridOptionsWrapper.isEnableRangeSelection()) { return; }
 
         const { ctrlKey, metaKey, shiftKey } = mouseEvent;
 
@@ -564,25 +566,33 @@ export class RangeService extends BeanStub implements IRangeService {
         const multiKeyPressed = ctrlKey || metaKey;
         const allowMulti = !this.gridOptionsWrapper.isSuppressMultiRangeSelection();
         const multiSelectKeyPressed = allowMulti ? multiKeyPressed : false;
-        const mouseCell = this.mouseEventService.getCellPositionForEvent(mouseEvent);
         const extendRange = shiftKey && _.existsAndNotEmpty(this.cellRanges);
-
-        if (_.missing(mouseCell)) {
-            // if drag wasn't on cell, then do nothing, including do not set dragging=true,
-            // (which them means onDragging and onDragStop do nothing)
-            return;
-        }
 
         if (!multiSelectKeyPressed && (!extendRange || _.exists(_.last(this.cellRanges)!.type))) {
             this.removeAllCellRanges(true);
         }
 
+        // The DragService used by the this service (RangeService), automatically adds a `mousemove`
+        // listener the document of the page that will then call `onDragging`. If you are in a shadow DOM
+        // DOM elements outside your component's wrapper will be inaccessible to you, so here, we add a 
+        // temporary `mousemove` listener to the gridPanel to be able to update the last hovered cell.
+        this.cellHoverListener = this.addManagedListener(
+            this.ctrlsService.getGridCtrl().getGui(),
+            'mousemove',
+            this.updateValuesOnMove.bind(this)
+        );
+        // This is the mouse start event, so we need to call `updateValuesOnMove` 
+        // manually once to get the necessary variables initiated.
+        this.updateValuesOnMove(mouseEvent);
+
+        if (!this.lastCellHovered) { return; }
+
         this.dragging = true;
-        this.draggingCell = mouseCell;
+        this.draggingCell = this.lastCellHovered;
         this.lastMouseEvent = mouseEvent;
 
         if (!extendRange) {
-            this.newestRangeStartCell = mouseCell;
+            this.newestRangeStartCell = this.lastCellHovered;
         }
 
         // if we didn't clear the ranges, then dragging means the user clicked, and when the
@@ -593,14 +603,14 @@ export class RangeService extends BeanStub implements IRangeService {
             this.draggingRange = _.last(this.cellRanges);
         } else {
             const mouseRowPosition: RowPosition = {
-                rowIndex: mouseCell.rowIndex,
-                rowPinned: mouseCell.rowPinned
+                rowIndex: this.lastCellHovered.rowIndex,
+                rowPinned: this.lastCellHovered.rowPinned
             };
 
             this.draggingRange = {
                 startRow: mouseRowPosition,
                 endRow: mouseRowPosition,
-                columns: [mouseCell.column],
+                columns: [this.lastCellHovered.column],
                 startColumn: this.newestRangeStartCell!.column
             };
 
@@ -612,14 +622,26 @@ export class RangeService extends BeanStub implements IRangeService {
         this.dispatchChangedEvent(true, false, this.draggingRange.id);
     }
 
+    private updateValuesOnMove(mouseEvent: MouseEvent) {
+        const cell = this.mouseEventService.getCellPositionForEvent(mouseEvent);
+
+        this.cellHasChanged = false;
+
+        if (!cell || (this.lastCellHovered && this.cellPositionUtils.equals(cell, this.lastCellHovered))) { return; }
+
+        if (this.lastCellHovered) {
+            this.cellHasChanged = true;
+        }
+        this.lastCellHovered = cell;
+    }
+
     public onDragging(mouseEvent: MouseEvent | null): void {
         if (!this.dragging || !mouseEvent) {
             return;
         }
 
-        this.lastMouseEvent = mouseEvent;
+        const cellPosition = this.lastCellHovered!;
 
-        const cellPosition = this.mouseEventService.getCellPositionForEvent(mouseEvent);
         const isMouseAndStartInPinned = (position: string) =>
             cellPosition && cellPosition.rowPinned === position && this.newestRangeStartCell!.rowPinned === position;
 
@@ -627,19 +649,11 @@ export class RangeService extends BeanStub implements IRangeService {
 
         this.autoScrollService.check(mouseEvent, skipVerticalScroll!);
 
-        if (
-            !cellPosition ||
-            !this.draggingCell ||
-            this.cellPositionUtils.equals(this.draggingCell, cellPosition)
-        ) {
-            return;
-        }
+        if (!this.cellHasChanged) { return; }
 
         const columns = this.calculateColumnsBetween(this.newestRangeStartCell!.column, cellPosition.column);
 
-        if (!columns) {
-            return;
-        }
+        if (!columns) { return; }
 
         this.draggingCell = cellPosition;
 
@@ -654,9 +668,12 @@ export class RangeService extends BeanStub implements IRangeService {
     }
 
     public onDragStop(): void {
-        if (!this.dragging) {
-            return;
+        if (this.cellHoverListener) {
+            this.cellHoverListener();
+            this.cellHoverListener = undefined;
         }
+
+        if (!this.dragging) { return; }
 
         const { id } = this.draggingRange!;
 
@@ -667,6 +684,7 @@ export class RangeService extends BeanStub implements IRangeService {
         this.dragging = false;
         this.draggingRange = undefined;
         this.draggingCell = undefined;
+        this.lastCellHovered = undefined;
 
         this.dispatchChangedEvent(false, true, id);
     }

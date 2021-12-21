@@ -109,7 +109,7 @@ export class CellComp extends Component implements TooltipParentComp {
             setIncludeSelection: include => this.includeSelection = include,
             setIncludeRowDrag: include => this.includeRowDrag = include,
             setIncludeDndSource: include => this.includeDndSource = include,
- 
+
             setRenderDetails: (compDetails, valueToDisplay, force) =>
                 this.setRenderDetails(compDetails, valueToDisplay, force),
             setEditDetails: (compDetails, popup, position) =>
@@ -187,12 +187,12 @@ export class CellComp extends Component implements TooltipParentComp {
         const providingControls = this.includeRowDrag || this.includeDndSource || this.includeSelection;
         const usingWrapper = providingControls || this.forceWrapper;
 
-        const putWrapperIn = usingWrapper && this.eCellWrapper==null;
+        const putWrapperIn = usingWrapper && this.eCellWrapper == null;
         if (putWrapperIn) {
             this.eCellWrapper = loadTemplate(`<div class="ag-cell-wrapper" role="presentation"></div>`);
             this.getGui().appendChild(this.eCellWrapper);
         }
-        const takeWrapperOut = !usingWrapper && this.eCellWrapper!=null;
+        const takeWrapperOut = !usingWrapper && this.eCellWrapper != null;
         if (takeWrapperOut) {
             removeFromParent(this.eCellWrapper!);
             this.eCellWrapper = undefined;
@@ -201,12 +201,12 @@ export class CellComp extends Component implements TooltipParentComp {
         this.addOrRemoveCssClass('ag-cell-value', !usingWrapper);
 
         const usingCellValue = !editing && usingWrapper;
-        const putCellValueIn = usingCellValue && this.eCellValue==null;
+        const putCellValueIn = usingCellValue && this.eCellValue == null;
         if (putCellValueIn) {
             this.eCellValue = loadTemplate(`<span class="ag-cell-value" role="presentation"></span>`);
             this.eCellWrapper!.appendChild(this.eCellValue);
         }
-        const takeCellValueOut = !usingCellValue && this.eCellValue!=null;
+        const takeCellValueOut = !usingCellValue && this.eCellValue != null;
         if (takeCellValueOut) {
             removeFromParent(this.eCellValue!);
             this.eCellValue = undefined;
@@ -230,22 +230,28 @@ export class CellComp extends Component implements TooltipParentComp {
         const describedByIds: string[] = [];
 
         if (this.includeRowDrag) {
-            this.rowDraggingComp = this.cellCtrl.createRowDragComp();
-            if (this.rowDraggingComp) {
-                // put the checkbox in before the value
-                this.eCellWrapper!.insertBefore(this.rowDraggingComp.getGui(), this.eCellValue!);
+            if (this.rowDraggingComp == null) {
+                this.rowDraggingComp = this.cellCtrl.createRowDragComp();
+                if (this.rowDraggingComp) {
+                    // put the checkbox in before the value
+                    this.eCellWrapper!.insertBefore(this.rowDraggingComp.getGui(), this.eCellValue!);
+                }
             }
         }
 
         if (this.includeDndSource) {
-            this.dndSourceComp = this.cellCtrl.createDndSource();
-            // put the checkbox in before the value
-            this.eCellWrapper!.insertBefore(this.dndSourceComp.getGui(), this.eCellValue!);
+            if (this.dndSourceComp == null) {
+                this.dndSourceComp = this.cellCtrl.createDndSource();
+                // put the checkbox in before the value
+                this.eCellWrapper!.insertBefore(this.dndSourceComp.getGui(), this.eCellValue!);
+            }
         }
 
         if (this.includeSelection) {
-            this.checkboxSelectionComp = this.cellCtrl.createSelectionCheckbox();
-            this.eCellWrapper!.insertBefore(this.checkboxSelectionComp.getGui(), this.eCellValue!);
+            if (this.checkboxSelectionComp == null) {
+                this.checkboxSelectionComp = this.cellCtrl.createSelectionCheckbox();
+                this.eCellWrapper!.insertBefore(this.checkboxSelectionComp.getGui(), this.eCellValue!);
+            }
             describedByIds.push(this.checkboxSelectionComp.getCheckboxId());
         }
 

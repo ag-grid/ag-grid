@@ -1,74 +1,109 @@
 export interface ComponentType {
     propertyName: string;
-    isCellRenderer(): boolean;
+    cellRenderer: boolean;
+    newPropName: string;
 }
 
 export const DateComponent: ComponentType = {
     propertyName: 'dateComponent',
-    isCellRenderer: () => false
+    cellRenderer: false,
+    newPropName: 'dateComp'
 };
 
 export const HeaderComponent: ComponentType = {
     propertyName: 'headerComponent',
-    isCellRenderer: () => false,
+    cellRenderer: false,
+    newPropName: 'headerComp'
 };
 
 export const HeaderGroupComponent: ComponentType = {
     propertyName: 'headerGroupComponent',
-    isCellRenderer: () => false,
+    cellRenderer: false,
+    newPropName: 'headerGroupComp'
 };
 
 export const CellRendererComponent: ComponentType = {
     propertyName: 'cellRenderer',
-    isCellRenderer: () => true,
-};
-
-export const PinnedRowCellRendererComponent: ComponentType = {
-    propertyName: 'pinnedRowCellRenderer',
-    isCellRenderer: () => true,
+    cellRenderer: true,
+    newPropName: 'cellRendererComp'
 };
 
 export const CellEditorComponent: ComponentType = {
     propertyName: 'cellEditor',
-    isCellRenderer: () => false,
+    cellRenderer: false,
+    newPropName: 'cellEditorComp'
 };
 
 export const InnerRendererComponent: ComponentType = {
     propertyName: 'innerRenderer',
-    isCellRenderer: () => true,
+    cellRenderer: true,
+    newPropName: 'innerCellComp'
 };
 
 export const LoadingOverlayComponent: ComponentType = {
     propertyName: 'loadingOverlayComponent',
-    isCellRenderer: () => false,
+    cellRenderer: false,
+    newPropName: 'loadingOverlayComp'
 };
 
 export const NoRowsOverlayComponent: ComponentType = {
     propertyName: 'noRowsOverlayComponent',
-    isCellRenderer: () => false,
+    cellRenderer: false,
+    newPropName: 'noRowsOverlayComp'
 };
 
 export const TooltipComponent: ComponentType = {
     propertyName: 'tooltipComponent',
-    isCellRenderer: () => false,
+    cellRenderer: false,
+    newPropName: 'tooltipComp'
 };
 
 export const FilterComponent: ComponentType = {
     propertyName: 'filter',
-    isCellRenderer: () => false,
+    cellRenderer: false,
+    newPropName: 'filterComp'
 };
 
 export const FloatingFilterComponent: ComponentType = {
     propertyName: 'floatingFilterComponent',
-    isCellRenderer: () => false,
+    cellRenderer: false,
+    newPropName: 'floatingFilterComp'
 };
 
 export const ToolPanelComponent: ComponentType = {
     propertyName: 'toolPanel',
-    isCellRenderer: () => false,
+    cellRenderer: false,
+    newPropName: 'toolPanelComp'
 };
 
 export const StatusPanelComponent: ComponentType = {
     propertyName: 'statusPanel',
-    isCellRenderer: () => false,
+    cellRenderer: false,
+    newPropName: 'statusPanelComp'
 };
+
+export const FullWidth: ComponentType = {
+    propertyName: 'fullWidthCellRenderer',
+    cellRenderer: true,
+    newPropName: 'fullWidthCellComp'
+};
+
+export const FullWidthLoading: ComponentType = {
+    propertyName: 'loadingCellRenderer',
+    cellRenderer: true,
+    newPropName: 'loadingRowCellComp'
+};
+
+export const FullWidthGroup: ComponentType = {
+    propertyName: 'groupRowRenderer',
+    cellRenderer: true,
+    newPropName: 'groupRowCellComp'
+};
+
+export const FullWidthDetail: ComponentType = {
+    propertyName: 'detailCellRenderer',
+    cellRenderer: true,
+    newPropName: 'detailRowCellComp'
+};
+
+

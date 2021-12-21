@@ -536,7 +536,7 @@ export function getSeriesOrder(
 
         if (isColumn || isBar || isStackedArea) {
             if (indexMap.get(seriesType)! < 0) {
-                indexMap.set(seriesType, i);
+                indexMap.set(seriesType, result.length);
                 result.push([]);
             }
             result[indexMap.get(seriesType)!].push(s);

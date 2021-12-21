@@ -83,7 +83,9 @@ export const getMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams)
 
     ExcelXlsxFactory.resetFactory();
 
-    return ZipContainer.getContent('application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    const mimeType = params.mimeType || 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+
+    return ZipContainer.getContent(mimeType);
 };
 
 export const exportMultipleSheetsAsExcel = (params: ExcelExportMultipleSheetParams) => {
@@ -146,11 +148,14 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
         const mergedParams = this.getMergedParams(userParams);
         const data = this.getData(mergedParams);
 
-        const packageFile = this.packageFile({
+        const exportParams: ExcelExportMultipleSheetParams = {
             data: [data],
             fontSize: mergedParams.fontSize,
-            author: mergedParams.author
-        });
+            author: mergedParams.author,
+            mimeType: mergedParams.mimeType
+        };
+
+        const packageFile = this.packageFile(exportParams);
 
         if (packageFile) {
             Downloader.download(this.getFileName(mergedParams.fileName), packageFile);
@@ -169,11 +174,14 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
 
         if (params && params.exportMode === 'xml') { return data; }
 
-        return this.packageFile({
+        const exportParams: ExcelExportMultipleSheetParams = {
             data: [data],
             fontSize: mergedParams.fontSize,
-            author: mergedParams.author
-        });
+            author: mergedParams.author,
+            mimeType: mergedParams.mimeType
+        };
+
+        return this.packageFile(exportParams);
     }
 
     public setFactoryMode(factoryMode: ExcelFactoryMode, exportMode: 'xml' | 'xlsx' = 'xlsx'): void {
@@ -199,10 +207,6 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
 
     public exportMultipleSheetsAsExcel(params: ExcelExportMultipleSheetParams) {
         return exportMultipleSheetsAsExcel(params);
-    }
-
-    public getMimeType(): string {
-        return this.getExportMode() === 'xml' ? 'application/vnd.ms-excel' : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
     }
 
     public getDefaultFileName(): string {
@@ -289,10 +293,8 @@ export class ExcelCreator extends BaseCreator<ExcelCell[][], SerializingSession,
 
     private packageFile(params: ExcelExportMultipleSheetParams): Blob | undefined {
         if (this.getExportMode() === 'xml') {
-            return new Blob(["\ufeff", params.data[0]], {
-                // @ts-ignore
-                type: window.navigator.msSaveOrOpenBlob ? this.getMimeType() : 'octet/stream'
-            });
+            const mimeType = params.mimeType || 'application/vnd.ms-excel';
+            return new Blob(["\ufeff", params.data[0]], { type: mimeType });
         }
 
         return getMultipleSheetsAsExcel(params);

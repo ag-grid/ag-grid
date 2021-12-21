@@ -18,7 +18,8 @@ import {
     IChartService,
     IRangeService,
     Optional,
-    PreDestroy
+    PreDestroy,
+    SeriesChartType
 } from "@ag-grid-community/core";
 import { GridChartComp, GridChartParams } from "./chartComp/gridChartComp";
 
@@ -169,7 +170,10 @@ export class ChartService extends BeanStub implements IChartService {
             params.chartContainer,
             params.aggFunc,
             params.chartThemeOverrides,
-            params.unlinkChart);
+            params.unlinkChart,
+            undefined,
+            undefined,
+            params.seriesChartTypes);
     }
 
     public createPivotChart(params: CreatePivotChartParams): ChartRef | undefined {
@@ -245,7 +249,8 @@ export class ChartService extends BeanStub implements IChartService {
         chartThemeOverrides?: AgChartThemeOverrides,
         unlinkChart = false,
         crossFiltering  = false,
-        chartOptionsToRestore?: AgChartThemeOverrides): ChartRef | undefined {
+        chartOptionsToRestore?: AgChartThemeOverrides,
+        seriesChartTypes?: SeriesChartType[]): ChartRef | undefined {
 
         const createChartContainerFunc = this.gridOptionsWrapper.getCreateChartContainerFunc();
 
@@ -262,7 +267,8 @@ export class ChartService extends BeanStub implements IChartService {
             unlinkChart,
             crossFiltering,
             crossFilteringContext: this.crossFilteringContext,
-            chartOptionsToRestore
+            chartOptionsToRestore,
+            seriesChartTypes
         };
 
         const chartComp = new GridChartComp(params);

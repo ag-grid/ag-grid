@@ -8,8 +8,8 @@ import {
     ExcelSheetPageSetup,
     ExcelHeaderFooterContent,
     ExcelHeaderFooterConfig,
-    _,
-    ExcelFont
+    ExcelFont,
+    _
 } from '@ag-grid-community/core';
 
 import columnFactory from './column';
@@ -18,22 +18,9 @@ import mergeCellFactory from './mergeCell';
 import { ExcelXlsxFactory } from '../../excelXlsxFactory';
 import { getExcelColumnName } from '../../assets/excelUtils';
 
-const updateColMinMax = (col: ExcelColumn, min: number, range: number, prevCol?: ExcelColumn): void => {
-    if (!col.min) {
-        col.min = min;
-        col.max = min + range;
-        return;
-    }
-    let currentMin = min;
-    if (prevCol) {
-        currentMin = Math.max(currentMin, prevCol.min!);
-    }
-    col.min = Math.max(col.min, currentMin);
-    col.max = Math.max(col.max!, currentMin + range);
-};
-
-const getMergedCells = (rows: ExcelRow[], cols: ExcelColumn[]): string[] => {
+const getMergedCellsAndAddColumnGroups = (rows: ExcelRow[], cols: ExcelColumn[]): string[] => {
     const mergedCells: string[] = [];
+    const cellsWithCollapsibleGroups: number[][] = [];
 
     rows.forEach((currentRow, rowIdx) => {
         const cells = currentRow.cells;
@@ -56,11 +43,49 @@ const getMergedCells = (rows: ExcelRow[], cols: ExcelColumn[]): string[] => {
             if (!cols[min - 1]) {
                 cols[min - 1] = {} as ExcelColumn;
             }
+            
+            const { collapsibleRanges } = currentCell;
 
-            updateColMinMax(cols[min - 1], min, merges, lastCol);
+            if (collapsibleRanges) {
+                collapsibleRanges.forEach(range => {
+                    cellsWithCollapsibleGroups.push([min + range[0], min + range[1]]);
+                });
+            }
+
             lastCol = cols[min - 1];
+            lastCol.min = min;
+            lastCol.max = min;
             currentCell.ref = `${start}${outputRow}`;
         });
+    });
+
+    cellsWithCollapsibleGroups.sort((a, b) => {
+        if (a[0] !== b[0]) { return a[0] - b[0]}
+        return b[1] - a[1];
+    });
+
+    const rangeMap = new Map<string, boolean>();
+    const outlineLevel = new Map<number, number>();
+
+    cellsWithCollapsibleGroups.filter(currentRange => {
+        const rangeString = currentRange.toString();
+        const inMap = rangeMap.get(rangeString);
+
+        if (inMap) { return false; }
+        rangeMap.set(rangeString, true);
+
+        return  true;
+    }).forEach(range => {
+        const refCol = cols.find(col => col.min == range[0] && col.max == range[1]);
+        const currentOutlineLevel = outlineLevel.get(range[0]);
+        cols.push({
+            min: range[0],
+            max: range[1],
+            outlineLevel: currentOutlineLevel || 1,
+            width: (refCol || { width: 100 }).width
+        });
+
+        outlineLevel.set(range[0], (currentOutlineLevel || 0) + 1);
     });
 
     return mergedCells;
@@ -295,7 +320,7 @@ const worksheetFactory: ExcelOOXMLTemplate = {
         const { worksheet, currentSheet, margins = {}, pageSetup, headerFooterConfig } = params;
         const { table } = worksheet;
         const { rows, columns } = table;
-        const mergedCells = (columns && columns.length) ? getMergedCells(rows, columns) : [];
+        const mergedCells = (columns && columns.length) ? getMergedCellsAndAddColumnGroups(rows, columns) : [];
 
         const createWorksheetChildren = _.compose(
             addColumns(columns),
