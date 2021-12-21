@@ -52,5 +52,5 @@ function getData() {
             year: '2020',
             visitors: 56000,
         },
-    ],
+    ];
 }
