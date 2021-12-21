@@ -1,4 +1,4 @@
-import { CellClassFunc, CellClassRules, CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditorSelectorFunc, CellRendererSelectorFunc, CellStyle, CellStyleFunc, CheckboxSelectionCallback, ColDef, ColGroupDef, ColSpanParams, ColumnsMenuParams, DndSourceCallback, DndSourceOnRowDragParams, EditableCallback, GetQuickFilterTextParams, HeaderCheckboxSelectionCallback, HeaderClass, HeaderValueGetterFunc, IAggFunc, ICellEditorComp, ICellRendererComp, ICellRendererFunc, IHeaderGroupComp, IRowDragItem, ITooltipComp, ITooltipParams, KeyCreatorParams, NewValueParams, RowDragCallback, RowNode, RowSpanParams, SuppressHeaderKeyboardEventParams, SuppressKeyboardEventParams, SuppressNavigableCallback, SuppressPasteCallback, ToolPanelClass, ValueFormatterFunc, ValueGetterFunc, ValueParserFunc, ValueSetterFunc } from "@ag-grid-community/core";
+import { CellRendererCompSelectorFunc, CellEditorCompSelectorFunc, CellClassFunc, CellClassRules, CellClickedEvent, CellContextMenuEvent, CellDoubleClickedEvent, CellEditorSelectorFunc, CellRendererSelectorFunc, CellStyle, CellStyleFunc, CheckboxSelectionCallback, ColDef, ColGroupDef, ColSpanParams, ColumnsMenuParams, DndSourceCallback, DndSourceOnRowDragParams, EditableCallback, GetQuickFilterTextParams, HeaderCheckboxSelectionCallback, HeaderClass, HeaderValueGetterFunc, IAggFunc, ICellEditorComp, ICellRendererComp, ICellRendererFunc, IHeaderGroupComp, IRowDragItem, ITooltipComp, ITooltipParams, KeyCreatorParams, NewValueParams, RowDragCallback, RowNode, RowSpanParams, SuppressHeaderKeyboardEventParams, SuppressKeyboardEventParams, SuppressNavigableCallback, SuppressPasteCallback, ToolPanelClass, ValueFormatterFunc, ValueGetterFunc, ValueParserFunc, ValueSetterFunc } from "@ag-grid-community/core";
 import { Component, ContentChildren, Input, QueryList } from "@angular/core";
 
 @Component({
@@ -38,7 +38,7 @@ export class AgGridColumn {
         let { childColumns, ...colDef } = from;
         return colDef;
     }
-
+ı
     // inputs - pretty much most of ColDef, with the exception of template, templateUrl and internal only properties
     // @START@
     @Input() public filterFramework: any;
@@ -47,6 +47,7 @@ export class AgGridColumn {
     @Input() public floatingFilterComponentParams: any;
     @Input() public floatingFilterComponentFramework: any;
     @Input() public filter: any;
+    @Input() public cellCompSelector: any;
     /** The name to render in the column header. If not specified and field is specified, the field name will be used as the header name.     */
     @Input() public headerName: string | undefined;
     /** Function or expression. Gets the value for display in the header.     */
@@ -158,6 +159,8 @@ export class AgGridColumn {
     @Input() public cellEditorComp: any;
     /** Params to be passed to the Editor Component     */
     @Input() public cellEditorCompParams: any;
+    /** Callback to select which Cell Editor and Params to use for this column.     */
+    @Input() public cellEditorCompSelector: CellEditorCompSelectorFunc | undefined;
     /** Set to `true` to have cells under this column enter edit mode after single click. Default: `false`     */
     @Input() public singleClickEdit: boolean | undefined;
     /** @deprecated use `valueSetter` instead

@@ -2389,6 +2389,13 @@
       "description": "/** Params for Loading Cell Comp. */",
       "type": { "returnType": "any", "optional": true }
     },
+    "loadingRowCellCompSelector": {
+      "description": "/** Selector for the loading component. */",
+      "type": {
+        "returnType": "LoadingRowCellCompSelectorFunc",
+        "optional": true
+      }
+    },
     "localeText": {
       "description": "/** A map of key->value pairs for localising text within the grid. */",
       "type": { "returnType": "{ [key: string]: string }", "optional": true }
@@ -5126,6 +5133,7 @@
       "type": { "returnType": "any", "optional": true }
     }
   },
+  "LoadingRowCellCompSelectorFunc": {},
   "IHeaderColumn": {
     "getUniqueId": {
       "type": { "arguments": {}, "returnType": "string", "optional": false }
