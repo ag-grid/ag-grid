@@ -47,7 +47,6 @@ export class AgGridColumn {
     @Input() public floatingFilterComponentParams: any;
     @Input() public floatingFilterComponentFramework: any;
     @Input() public filter: any;
-    @Input() public cellCompSelector: any;
     /** The name to render in the column header. If not specified and field is specified, the field name will be used as the header name.     */
     @Input() public headerName: string | undefined;
     /** Function or expression. Gets the value for display in the header.     */
@@ -264,6 +263,8 @@ export class AgGridColumn {
     @Input() public cellRendererComp: any;
     /** Params to be passed to the Cell Component.     */
     @Input() public cellRendererCompParams: any;
+    /** Callback to select which Cell Component and Params to use for this column.     */
+    @Input() public cellRendererCompSelector: CellRendererCompSelectorFunc | undefined;
     /** Set to `true` to have the grid calculate the height of a row based on contents of this column. Default: `false`     */
     @Input() public autoHeight: boolean | undefined;
     /** Set to `true` to have the text wrap inside the cell - typically used with `autoHeight`. Default: `false`     */
