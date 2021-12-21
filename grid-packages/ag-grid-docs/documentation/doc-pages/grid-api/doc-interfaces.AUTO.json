@@ -10892,7 +10892,10 @@
       "type": { "returnType": "AgTreemapNodeDatum[]", "optional": true }
     },
     "depth": { "type": { "returnType": "number", "optional": false } },
-    "colorValue": { "type": { "returnType": "number", "optional": false } }
+    "colorValue": { "type": { "returnType": "number", "optional": false } },
+    "fill": { "type": { "returnType": "string", "optional": false } },
+    "label": { "type": { "returnType": "string", "optional": false } },
+    "hasTitle": { "type": { "returnType": "boolean", "optional": false } }
   },
   "AgTreemapSeriesTooltipRendererParams": {
     "datum": {

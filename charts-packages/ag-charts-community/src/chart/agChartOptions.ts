@@ -691,6 +691,9 @@ export interface AgTreemapNodeDatum {
     children?: AgTreemapNodeDatum[];
     depth: number;
     colorValue: number;
+    fill: string;
+    label: string;
+    hasTitle: boolean;
 }
 
 export interface AgTreemapSeriesTooltipRendererParams {
