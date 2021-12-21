@@ -1,4 +1,4 @@
-import {convertFunctionToConstProperty, ImportType, isInstanceMethod, modulesProcessor, getFunctionName} from './parser-utils';
+import {convertFunctionToConstProperty, getFunctionName, ImportType, isInstanceMethod, modulesProcessor} from './parser-utils';
 import {convertFunctionalTemplate, convertFunctionToConstCallback, getImport, getValueType} from './react-utils';
 import {templatePlaceholder} from "./grid-vanilla-src-parser";
 
@@ -103,9 +103,9 @@ function getTemplate(bindings: any, componentAttributes: string[]): string {
     return convertFunctionalTemplate(template);
 }
 
-function extractComponentInformation(properties, componentFilenames: string[]) : { [key: string]: string } {
+function extractComponentInformation(properties, componentFilenames: string[]): { [key: string]: string } {
     const components: { [key: string]: string } = {};
-    if(componentFilenames.length <= 0) {
+    if (componentFilenames.length <= 0) {
         return components;
     }
 
@@ -210,7 +210,17 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
         const componentNameExists = (componentName: string) => Object.keys(components).includes(stripQuotes(componentName));
 
         properties.filter(property => property.name !== 'onGridReady').forEach(property => {
-            if (property.value === 'true' || property.value === 'false') {
+            if (componentFilenames.length > 0 && property.name === 'components') {
+                property.name = 'frameworkComponents';
+            }
+
+            if (property.name === 'rowData' && needsRowDataState) {
+                if (property.value !== "null" && property.value !== null) {
+                    const rowDataIndex = stateProperties.indexOf('const [rowData, setRowData] = useState();');
+                    console.log(rowDataIndex, property.name, property.value);
+                    stateProperties[rowDataIndex] = `const [rowData, setRowData] = useState(${property.value});`
+                }
+            } else if (property.value === 'true' || property.value === 'false') {
                 componentProps.push(`${property.name}={${property.value}}`);
             } else if (property.value === null) {
                 componentProps.push(`${property.name}={${property.name}}`);
@@ -228,10 +238,10 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
                         // for values like booleans or strings just inline the prop - no need for a separate variable for it
                         const valueType = getValueType(property.value);
                         if (valueType === 'string') {
-                            if(componentNameExists(property.value)) {
+                            if (componentNameExists(property.value)) {
                                 componentProps.push(`${property.name}={${components[stripQuotes(property.value)]}}`);
                             } else {
-                                if(containsQuotes(property.value)) {
+                                if (containsQuotes(property.value)) {
                                     componentProps.push(`${property.name}={${property.value}}`);
                                 } else {
                                     componentProps.push(`${property.name}=${property.value}`);
@@ -240,8 +250,8 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
                         } else if (valueType === 'boolean') {
                             componentProps.push(`${property.name}={${property.value}}`);
                         } else {
-                            if(callbackNames.includes(property.name)) {
-                                stateProperties.push(`const ${property.name} = useCallback(() => { return ${property.value} }, [${callbackDependencies[property.name]}]);`);
+                            if (callbackNames.includes(property.name)) {
+                                stateProperties.push(`const ${property.name} = useCallback(${property.value}, [${callbackDependencies[property.name] || ''}]);`);
                             } else {
                                 stateProperties.push(`const ${property.name} = useMemo(() => { return ${property.value} }, []);`);
                             }
@@ -291,7 +301,7 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
 
 ${imports.join('\n')}
 
-${bindings.utils.map(gridInstanceConverter).map(convertFunctionToConstProperty).join('\n\n')}
+${bindings.utils.map(convertFunctionToConstProperty).join('\n\n')}
 
 const GridExample = () => {
     const gridRef = useRef();
@@ -321,7 +331,7 @@ render(<GridExample></GridExample>, document.querySelector('#root'))
         }
 
         // SPL Revisit this
-        if((generatedOutput.match(/gridRef\.current/g) || []).length === 0) {
+        if ((generatedOutput.match(/gridRef\.current/g) || []).length === 0) {
             generatedOutput = generatedOutput.replace("const gridRef = useRef();", "")
             generatedOutput = generatedOutput.replace("ref={gridRef}", "")
         }
