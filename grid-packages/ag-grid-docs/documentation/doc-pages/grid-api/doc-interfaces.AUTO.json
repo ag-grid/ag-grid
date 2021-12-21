@@ -10891,7 +10891,8 @@
     "children": {
       "type": { "returnType": "AgTreemapNodeDatum[]", "optional": true }
     },
-    "depth": { "type": { "returnType": "number", "optional": false } }
+    "depth": { "type": { "returnType": "number", "optional": false } },
+    "colorValue": { "type": { "returnType": "number", "optional": false } }
   },
   "AgTreemapSeriesTooltipRendererParams": {
     "datum": {

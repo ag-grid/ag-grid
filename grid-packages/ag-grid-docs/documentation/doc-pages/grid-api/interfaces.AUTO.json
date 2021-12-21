@@ -6425,7 +6425,8 @@
       "datum": "any",
       "parent?": "AgTreemapNodeDatum",
       "children?": "AgTreemapNodeDatum[]",
-      "depth": "number"
+      "depth": "number",
+      "colorValue": "number"
     }
   },
   "AgTreemapSeriesTooltipRendererParams": {
