@@ -16,16 +16,22 @@ export const TEXT_COMPARISON_OPERATION_METADATA = {
     'ends-with': { operands: 1 },
 };
 
+export const SET_OPERATION_METADATA = {
+    'in': { operands: Infinity },
+};
+
 export type ScalarComparisonOperation = keyof typeof SCALAR_COMPARISON_OPERATION_METADATA;
 export type TextComparisonOperation = keyof typeof TEXT_COMPARISON_OPERATION_METADATA;
+export type SetOperation = keyof typeof SET_OPERATION_METADATA;
 
-export type Cardinality = 0 | 1 | 2 | typeof Infinity;
+export type Cardinality = 0 | 1 | 2 | typeof Infinity | null;
 interface OperationExpression<T, N = string, O = TextComparisonOperation, C extends Cardinality = 1> {
     type: T;
     operation: O;
     operands: C extends 0 ? [] :
         C extends 1 ? [ N ] :
         C extends 2 ? [ N, N ] :
+        C extends null ? null :
         N[];
 }
 
@@ -47,13 +53,13 @@ export type DateComparisonOperationExpression = ScalarComparisonOperationExpress
 
 export type ScalarOperationExpression = NumberComparisonOperationExpression | DateComparisonOperationExpression;
 export type TextOperationExpression = TextComparisonOperationExpression<'text-op'>;
-export type SetExpression = OperationExpression<'set-op', string | number, 'in', typeof Infinity>;
+export type SetOperationExpression = OperationExpression<'set-op', string | number | null, SetOperation, typeof Infinity | null>;
 
 export type LogicalOperationExpression<M> =
     OperationExpression<'logic', M, Exclude<LogicOperation, 'not'>, typeof Infinity> |
     OperationExpression<'logic', M, 'not', 1>;
 
-export type InbuiltExpression = TextOperationExpression | ScalarOperationExpression | SetExpression;
+export type InbuiltExpression = TextOperationExpression | ScalarOperationExpression | SetOperationExpression;
 
 export type ConcreteExpression = InbuiltExpression | CustomExpression<unknown>;
 
@@ -67,6 +73,10 @@ export function isScalarComparisonOperation(x: string): x is ScalarComparisonOpe
 
 export function isTextComparisonOperation(x: string): x is TextComparisonOperation {
     return Object.keys(TEXT_COMPARISON_OPERATION_METADATA).indexOf(x) >= 0;
+}
+
+export function isSetOperation(x: string): x is SetOperation {
+    return Object.keys(SET_OPERATION_METADATA).indexOf(x) >= 0;
 }
 
 export function isTextComparisonOperationExpression(x: Partial<FilterExpression>): x is Partial<TextComparisonOperationExpression<any>> {
@@ -134,6 +144,18 @@ const EXAMPLE_EXPRESSION_5: FilterExpression = {
     operands: ['abc', 'ABC', '123', 'xzy', '123', 123],
 };
 
+const EXAMPLE_EXPRESSION_6: FilterExpression = {
+    type: 'set-op',
+    operation: 'in',
+    operands: [],
+};
+
+const EXAMPLE_EXPRESSION_7: FilterExpression = {
+    type: 'set-op',
+    operation: 'in',
+    operands: null,
+};
+
 /** EVALUATION MODEL **/
 export interface FilterEvaluationModel<T> {
     evaluate(input: T): boolean;
@@ -159,16 +181,16 @@ export type PartialStateType<S> =
     { [K in keyof S]?: PartialTuple<S[K]> };
 
 export interface StateManager<T extends StateType> {
-    addUpdateListener(cb: (newState: T | null) => void): void;
-    addTransientUpdateListener(cb: (newTransientState: PartialStateType<T> | T | null) => void): void;
+    addUpdateListener(source: any, cb: (newState: T | null) => void): void;
+    addTransientUpdateListener(source: any, cb: (newTransientState: PartialStateType<T> | T | null) => void): void;
 
     getTransientExpression(): PartialStateType<T> | null;
-    mutateTransientExpression(change: PartialStateType<T> | null): void;
+    mutateTransientExpression(source: any, change: PartialStateType<T> | null): void;
     isTransientExpressionValid(): boolean;
     isTransientExpressionNull(): boolean;
 
-    applyExpression(): void;
-    revertToAppliedExpression(): void;
+    applyExpression(source: any): void;
+    revertToAppliedExpression(source: any): void;
 }
 
 export interface ExpressionComponentParams<F extends FilterExpression | string | number | Date = FilterExpression> {

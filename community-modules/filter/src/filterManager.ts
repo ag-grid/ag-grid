@@ -29,7 +29,7 @@ export class FilterManager extends BeanStub {
         const colId = column.getColId();
         if (this.filterUIs[colId] != null) { AgPromise.resolve(this.filterUIs[colId]); }
 
-        const filterExprComp = createComponent(column.getColDef(), this.gridOptions);
+        const filterExprComp = createComponent(column, this.gridOptions);
         if (filterExprComp) {
             this.filterUIs[colId] = {
                 type: 'ExpressionComponent',
@@ -87,8 +87,8 @@ export class FilterManager extends BeanStub {
         return comp;
     }
 
-    public addListenerForColumn(column: Column, cb: FilterChangeListener) {
-        this.filterState.addListenerForColumn(column, cb);
+    public addListenerForColumn(source: any, column: Column, cb: FilterChangeListener) {
+        this.filterState.addListenerForColumn(source, column, cb);
     }
 
     private getCellValue(opts: { colId: string, rowNode: RowNode }): unknown {

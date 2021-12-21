@@ -1,4 +1,4 @@
-import { ColDef, Component, FilterExpression, GridOptions, _ } from "@ag-grid-community/core";
+import { ColDef, Column, Component, FilterExpression, GridOptions, _ } from "@ag-grid-community/core";
 import { DateFilter } from "./components/filters/dateFilter";
 import { NumberFilter } from "./components/filters/numberFilter";
 import { TextFilter } from "./components/filters/textFilter";
@@ -7,7 +7,7 @@ import { CustomFilter } from "./components/filters/customFilter";
 import { SetFilter } from "./components/filters/setFilter";
 
 type CompType = ExpressionComponent & Component;
-type Mapping<T extends FilterExpression['type']> = { type: T, newComp(): CompType };
+type Mapping<T extends FilterExpression['type']> = { type: T, newComp(colId: string): CompType };
 
 const DEFAULT_MAPPING = { type: 'text-op', newComp: () => new TextFilter() };
 const CUSTOM_MAPPING = { type: 'custom', newComp: () => new CustomFilter() };
@@ -16,7 +16,7 @@ export const FILTER_TO_EXPRESSION_TYPE_MAPPING: {[key: string]: Mapping<any>} = 
     agTextColumnFilterV2: DEFAULT_MAPPING,
     agNumberColumnFilterV2: { type: 'number-op', newComp: () => new NumberFilter() },
     agDateColumnFilterV2: { type: 'date-op', newComp: () => new DateFilter() },
-    agSetColumnFilterV2: { type: 'set-op', newComp: () => new SetFilter() },
+    agSetColumnFilterV2: { type: 'set-op', newComp: (colId) => new SetFilter({ colId }) },
     agCustomColumnFilterV2: CUSTOM_MAPPING,
 };
 
@@ -44,6 +44,8 @@ export function expressionType(colDef: ColDef, gridOptions: GridOptions): Filter
     return resolveMapping(colDef, gridOptions)?.type || 'custom';
 }
 
-export function createComponent(colDef: ColDef, gridOptions: GridOptions): CompType | null {
-    return resolveMapping(colDef, gridOptions)?.newComp() || null;
+export function createComponent(column: Column, gridOptions: GridOptions): CompType | null {
+    const colDef = column.getColDef();
+    const colId = column.getColId();
+    return resolveMapping(colDef, gridOptions)?.newComp(colId) || null;
 }

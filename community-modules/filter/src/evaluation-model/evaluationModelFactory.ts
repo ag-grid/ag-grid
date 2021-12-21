@@ -8,6 +8,7 @@ import { DATE_SERIALISER, NO_OP_SERIALISER } from "./serialisers";
 import { DATE_COMPARATOR } from "./comparator/dateComparator";
 import { CustomWrapperModel } from "./customWrapperModel";
 import { Comparator } from "./interfaces";
+import { SetOperationModel } from "./setOperationModel";
 
 @Bean('expressionModelFactory')
 export class EvaluationModelFactory {
@@ -40,6 +41,11 @@ export class EvaluationModelFactory {
                 return new TextComparisonOperationModel({
                     ...expr,
                 });
+            case "set-op":
+                return new SetOperationModel({
+                    ...expr,
+                    comparator: DEFAULT_COMPARATOR as Comparator<string>,
+                })
             case "custom":
                 const customEval = this.lookupCustomModel(expr.operation as string);
                 if (customEval) {

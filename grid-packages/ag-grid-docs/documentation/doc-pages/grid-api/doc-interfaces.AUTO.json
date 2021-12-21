@@ -9587,13 +9587,14 @@
   },
   "ScalarComparisonOperation": {},
   "TextComparisonOperation": {},
+  "SetOperation": {},
   "Cardinality": {},
   "OperationExpression": {
     "type": { "type": { "returnType": "T", "optional": false } },
     "operation": { "type": { "returnType": "O", "optional": false } },
     "operands": {
       "type": {
-        "returnType": "C extends 0 ? [] :\n        C extends 1 ? [ N ] :\n        C extends 2 ? [ N, N ] :\n        N[]",
+        "returnType": "C extends 0 ? [] :\n        C extends 1 ? [ N ] :\n        C extends 2 ? [ N, N ] :\n        C extends null ? null :\n        N[]",
         "optional": false
       }
     },
@@ -9610,6 +9611,7 @@
   "DateComparisonOperationExpression": {},
   "ScalarOperationExpression": {},
   "TextOperationExpression": {},
+  "SetOperationExpression": {},
   "LogicalOperationExpression": { "meta": { "typeParams": ["M"] } },
   "InbuiltExpression": {},
   "ConcreteExpression": {},
@@ -9644,7 +9646,7 @@
   "StateManager": {
     "addUpdateListener": {
       "type": {
-        "arguments": { "cb": "(newState: T | null) => void" },
+        "arguments": { "source": "any", "cb": "(newState: T | null) => void" },
         "returnType": "void",
         "optional": false
       }
@@ -9652,6 +9654,7 @@
     "addTransientUpdateListener": {
       "type": {
         "arguments": {
+          "source": "any",
           "cb": "(newTransientState: PartialStateType<T> | T | null) => void"
         },
         "returnType": "void",
@@ -9667,7 +9670,10 @@
     },
     "mutateTransientExpression": {
       "type": {
-        "arguments": { "change": "PartialStateType<T> | null" },
+        "arguments": {
+          "source": "any",
+          "change": "PartialStateType<T> | null"
+        },
         "returnType": "void",
         "optional": false
       }
@@ -9679,10 +9685,18 @@
       "type": { "arguments": {}, "returnType": "boolean", "optional": false }
     },
     "applyExpression": {
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
+      "type": {
+        "arguments": { "source": "any" },
+        "returnType": "void",
+        "optional": false
+      }
     },
     "revertToAppliedExpression": {
-      "type": { "arguments": {}, "returnType": "void", "optional": false }
+      "type": {
+        "arguments": { "source": "any" },
+        "returnType": "void",
+        "optional": false
+      }
     },
     "meta": { "typeParams": ["T extends StateType"] }
   },
@@ -17854,6 +17868,7 @@
       }
     }
   },
+  "FilterParams": {},
   "ISetFilterLocaleText": {
     "loadingOoo": { "type": { "returnType": "string", "optional": false } },
     "blanks": { "type": { "returnType": "string", "optional": false } },

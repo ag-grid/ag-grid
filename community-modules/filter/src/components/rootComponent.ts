@@ -53,11 +53,11 @@ export abstract class RootComponent<F extends FilterExpression> extends Componen
             this.addDestroyFunc(() => this.destroyBean(comp));
         });
 
-        this.stateManager.addUpdateListener((u) => {
+        this.stateManager.addUpdateListener(this, (u) => {
             this.checkCompatibleUpdate(u);
             this.updateButtonState()
         });
-        this.stateManager.addTransientUpdateListener((u) => {
+        this.stateManager.addTransientUpdateListener(this, (u) => {
             this.checkCompatibleUpdate(u);
             this.updateButtonState()
         });
@@ -72,7 +72,7 @@ export abstract class RootComponent<F extends FilterExpression> extends Componen
     }
 
     @PostConstruct
-    private postConstruct() {
+    private rootPostConstruct() {
         initialiseAndAttachChildren(
             { createBean: (b) => this.createBean(b), destroyBean: (b) => this.destroyBean(b), addDestroyFunc: (f) => this.addDestroyFunc(f) },
             this.refChildren,
@@ -80,14 +80,14 @@ export abstract class RootComponent<F extends FilterExpression> extends Componen
         );
 
         this.refApplyButton.addEventListener('click', () => {
-            this.stateManager.applyExpression();
+            this.stateManager.applyExpression(this);
         });
         this.refResetButton.addEventListener('click', () => {
-            this.stateManager.revertToAppliedExpression();
+            this.stateManager.revertToAppliedExpression(this);
         });
         this.refClearButton.addEventListener('click', () => {
-            this.stateManager.mutateTransientExpression(null);
-            this.stateManager.applyExpression();
+            this.stateManager.mutateTransientExpression(this, null);
+            this.stateManager.applyExpression(this);
         });
 
         this.refRoot.addEventListener('keypress', (e) => {
@@ -96,7 +96,7 @@ export abstract class RootComponent<F extends FilterExpression> extends Componen
             const isValid = this.stateManager.isTransientExpressionValid();
             const isNull = this.stateManager.isTransientExpressionNull();
             if (isValid || isNull) {
-                this.stateManager.applyExpression();
+                this.stateManager.applyExpression(this);
             }
         });
     }

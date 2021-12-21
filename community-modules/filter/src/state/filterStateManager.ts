@@ -24,7 +24,7 @@ const DEFAULT_EXPRESSIONS: {[k in FilterExpression['type']]: PartialFilterExpres
     'set-op': {
         type: 'set-op',
         operation: 'in',
-        operands: [],
+        operands: null,
     },
     'logic': {
         type: 'logic',
@@ -152,37 +152,38 @@ export class FilterStateManager {
             const column = this.columnModel.getGridColumn(colId);
             if (column == null) { return; }
 
-            this.notifyListenersForColumn(column, 'destroy');
+            this.notifyListenersForColumn(this, column, 'destroy');
 
             if (this.transientState[colId] != null) {
-                this.notifyTransientListenersForColumn(column, 'destroy');
+                this.notifyTransientListenersForColumn(this, column, 'destroy');
             }
         });
 
         this.currentState = newActiveExpressions;
         this.transientState = newTransientExpressions;
 
-        notifications.forEach(({column, type}) => this.notifyListenersForColumn(column, type));
-        notifications.forEach(({column, type}) => this.notifyTransientListenersForColumn(column, type));
+        notifications.forEach(({column, type}) => this.notifyListenersForColumn(this, column, type));
+        notifications.forEach(({column, type}) => this.notifyTransientListenersForColumn(this, column, type));
     }
 
-    public addListenerForColumn(column: Column, listener: FilterChangeListener): void {
-        this.getStateFor(column).listeners.addListener(listener);
+    public addListenerForColumn(source: any, column: Column, listener: FilterChangeListener): void {
+        this.getStateFor(column).listeners.addListener(source, listener);
     }
 
-    public addTransientListenerForColumn(column: Column, listener: FilterChangeListener): void {
-        this.getTransientStateFor(column).listeners.addListener(listener);
+    public addTransientListenerForColumn(source: any, column: Column, listener: FilterChangeListener): void {
+        this.getTransientStateFor(column).listeners.addListener(source, listener);
     }
 
     public getStateManager(column: Column): StateManager<FilterExpression> {
         const transientState = this.getTransientStateFor(column);
+        const that = {};
 
         return {
-            addTransientUpdateListener: (cb) => this.addTransientListenerForColumn(column, ({ expr }) => cb(expr)),
-            addUpdateListener: (cb) => this.addListenerForColumn(column, ({ expr }) => cb(expr)),
-            applyExpression: () => this.applyTransientExpression(column),
-            mutateTransientExpression: (m) => this.mutateTransientExpression(column, m),
-            revertToAppliedExpression: () => this.revertTransientExpression(column),
+            addTransientUpdateListener: (s, cb) => this.addTransientListenerForColumn(s, column, ({ expr }) => cb(expr)),
+            addUpdateListener: (s, cb) => this.addListenerForColumn(s, column, ({ expr }) => cb(expr)),
+            applyExpression: (s) => this.applyTransientExpression(s, column),
+            mutateTransientExpression: (s, m) => this.mutateTransientExpression(s, column, m),
+            revertToAppliedExpression: (s) => this.revertTransientExpression(s, column),
             isTransientExpressionValid: () => this.isTransientExpressionValid(column),
             isTransientExpressionNull: () => this.isTransientExpressionNull(column),
             getTransientExpression: () => transientState.expr,
@@ -218,7 +219,7 @@ export class FilterStateManager {
         return this.transientState[colId];
     }
 
-    private notifyListenersForColumn(column: Column, type: FilterChangeType): void {
+    private notifyListenersForColumn(source: any, column: Column, type: FilterChangeType): void {
         const colId = column.getColId();
         const { listeners, model } = this.getStateFor(column) || {};
 
@@ -226,19 +227,19 @@ export class FilterStateManager {
 
         const expression = model.toFilterExpression();
 
-        listeners.notify({ colId, type, expr: expression });
+        listeners.notify(source, { colId, type, expr: expression });
     }
 
-    private notifyTransientListenersForColumn(column: Column, type: FilterChangeType): void {
+    private notifyTransientListenersForColumn(source: any, column: Column, type: FilterChangeType): void {
         const colId = column.getColId();
         const { listeners, expr } = this.getTransientStateFor(column) || {};
 
         if (listeners == null) { return; }
 
-        listeners.notify({ colId, type, expr: expr || defaultExpression(column, this.gridOptions) });
+        listeners.notify(source, { colId, type, expr: expr || defaultExpression(column, this.gridOptions) });
     }
 
-    private mutateTransientExpression<T>(column: Column, change: PartialFilterExpression | null): void {
+    private mutateTransientExpression(source: any, column: Column, change: PartialFilterExpression | null): void {
         const colId = column.getColId();
 
         if (change == null) {
@@ -250,7 +251,7 @@ export class FilterStateManager {
             ...change,
         } as FilterExpression;
 
-        this.notifyTransientListenersForColumn(column, 'update');
+        this.notifyTransientListenersForColumn(source, column, 'update');
     }
 
     private isTransientExpressionValid(column: Column): boolean {
@@ -273,7 +274,7 @@ export class FilterStateManager {
         return model.isNull();
     }
 
-    private applyTransientExpression(column: Column): void {
+    private applyTransientExpression(source: any, column: Column): void {
         const colId = column.getColId();
         const { listeners } = this.currentState[colId] || {};
         const { expr } = this.transientState[colId] || {};
@@ -282,15 +283,15 @@ export class FilterStateManager {
         if (!model.isNull() && !model.isValid()) { return; }
         
         this.currentState[colId].model = model;
-        listeners.notify({ type: 'apply', colId, expr: model.toFilterExpression() });
+        listeners.notify(source, { type: 'apply', colId, expr: model.toFilterExpression() });
     }
 
-    private revertTransientExpression(column: Column): void {
+    private revertTransientExpression(source: any, column: Column): void {
         const colId = column.getColId();
         const { model, listeners } = this.currentState[colId] || {};
         const expr = model ? model.toFilterExpression() : null;
         this.transientState[colId].expr = expr || defaultExpression(column, this.gridOptions);
 
-        listeners.notify({ type: 'revert', colId, expr });
+        listeners.notify(source, { type: 'revert', colId, expr });
     }
 }

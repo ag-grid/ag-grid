@@ -66,8 +66,8 @@ export class ComparisonOperationComponent<E extends TextOperationExpression | Sc
             });
         });
 
-        this.stateManager.addUpdateListener((u) => this.expressionUpdated(u));
-        this.stateManager.addTransientUpdateListener((u) => this.updateElementVisibility(u?.operation || null));
+        this.stateManager.addUpdateListener(this, (u) => this.expressionUpdated(u));
+        this.stateManager.addTransientUpdateListener(this, (u) => this.updateElementVisibility(u?.operation || null));
 
         this.expressionUpdated(this.stateManager.getTransientExpression());
     }
@@ -77,7 +77,7 @@ export class ComparisonOperationComponent<E extends TextOperationExpression | Sc
             comparisonOperationOperandCardinality(op) :
             0;
         this.refChildren.forEach((childElement, index) => {
-            _.setDisplayed(childElement, index < childLimit);
+            _.setDisplayed(childElement, index < (childLimit || 0));
         });
     }
 
@@ -95,7 +95,7 @@ export class ComparisonOperationComponent<E extends TextOperationExpression | Sc
         if (mutation == null) { return; }
         if (this.operationMetadata[mutation] == null) { return; }
 
-        this.stateManager.mutateTransientExpression({ operation: mutation } as PartialStateType<E>);
+        this.stateManager.mutateTransientExpression(this, { operation: mutation } as PartialStateType<E>);
         this.updateElementVisibility(mutation);
     }
 }

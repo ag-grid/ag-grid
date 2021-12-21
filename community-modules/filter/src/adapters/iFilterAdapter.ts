@@ -42,7 +42,7 @@ export class IFilterAdapter extends Component implements IFilterComp {
 
         const { column, filterChangedCallback } = params;
 
-        this.filterManager.addListenerForColumn(column, ({ type }) => {
+        this.filterManager.addListenerForColumn(this, column, ({ type }) => {
             if (type === 'revert') { return; }
 
             filterChangedCallback();

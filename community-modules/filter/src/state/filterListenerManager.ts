@@ -1,15 +1,18 @@
 export class FilterListenerManager<F extends (...args: any[]) => any> {
-    private readonly listeners: F[] = [];
+    private readonly listeners: [any, F][] = [];
 
-    public addListener(cb: F): void {
-        this.listeners.push(cb);
+    public addListener(source: any, cb: F): void {
+        this.listeners.push([source, cb]);
     }
 
     public removeListener(cb: F): void {
-        this.listeners.splice(this.listeners.indexOf(cb), 1);
+        this.listeners.splice(this.listeners.findIndex(([_, c]) => c === cb), 1);
     }
 
-    public notify(...args: Parameters<F>): void {
-        this.listeners.forEach(l => l(...args));
+    public notify(source: any, ...args: Parameters<F>): void {
+        this.listeners.forEach(([s, l]) => {
+            if (s === source) { return; }
+            l(...args);
+        });
     }
 }

@@ -36,7 +36,7 @@ export class TextOperandComponent<O extends string | number | Date> extends Comp
     public setParameters(params: ExpressionComponentParams<O>) {
         this.stateManager = params.stateManager;
 
-        this.stateManager.addUpdateListener((u) => this.operandUpdated(u));
+        this.stateManager.addUpdateListener(this, (u) => this.operandUpdated(u));
 
         this.operandUpdated(this.stateManager.getTransientExpression() as O | null);
     }
@@ -49,6 +49,6 @@ export class TextOperandComponent<O extends string | number | Date> extends Comp
         const normalisedMutation = mutation == null ? null : mutation;
         const operand = this.serialiser.toExpression(normalisedMutation);
 
-        this.stateManager.mutateTransientExpression(operand as PartialStateType<O> | null);
+        this.stateManager.mutateTransientExpression(this, operand as PartialStateType<O> | null);
     }
 }

@@ -5449,16 +5449,20 @@
     "meta": { "isTypeAlias": true },
     "type": "keyof typeof TEXT_COMPARISON_OPERATION_METADATA"
   },
+  "SetOperation": {
+    "meta": { "isTypeAlias": true },
+    "type": "keyof typeof SET_OPERATION_METADATA"
+  },
   "Cardinality": {
     "meta": { "isTypeAlias": true },
-    "type": "0 | 1 | 2 | typeof Infinity"
+    "type": "0 | 1 | 2 | typeof Infinity | null"
   },
   "OperationExpression": {
     "meta": { "typeParams": ["T", "N", "O", "C extends Cardinality = 1"] },
     "type": {
       "type": "T",
       "operation": "O",
-      "operands": "C extends 0 ? [] : C extends 1 ? [N] : C extends 2 ? [N, N] : N[]"
+      "operands": "C extends 0 ? [] : C extends 1 ? [N] : C extends 2 ? [N, N] : C extends null ? null : N[]"
     }
   },
   "OperandArray": {
@@ -5497,13 +5501,17 @@
     "meta": { "isTypeAlias": true },
     "type": "TextComparisonOperationExpression<'text-op'>"
   },
+  "SetOperationExpression": {
+    "meta": { "isTypeAlias": true },
+    "type": "OperationExpression<'set-op', string | number | null, SetOperation, typeof Infinity | null>"
+  },
   "LogicalOperationExpression": {
     "meta": { "isTypeAlias": true, "typeParams": ["M"] },
     "type": "OperationExpression<'logic', M, Exclude<LogicOperation, 'not'>, typeof Infinity> | OperationExpression<'logic', M, 'not', 1>"
   },
   "InbuiltExpression": {
     "meta": { "isTypeAlias": true },
-    "type": "TextOperationExpression | ScalarOperationExpression"
+    "type": "TextOperationExpression | ScalarOperationExpression | SetOperationExpression"
   },
   "ConcreteExpression": {
     "meta": { "isTypeAlias": true },
@@ -5543,14 +5551,14 @@
   "StateManager": {
     "meta": { "typeParams": ["T extends StateType"] },
     "type": {
-      "addUpdateListener(cb: (newState: T | null) => void)": "void",
-      "addTransientUpdateListener(cb: (newTransientState: PartialStateType<T> | T | null) => void)": "void",
+      "addUpdateListener(source: any, cb: (newState: T | null) => void)": "void",
+      "addTransientUpdateListener(source: any, cb: (newTransientState: PartialStateType<T> | T | null) => void)": "void",
       "getTransientExpression()": "PartialStateType<T> | null",
-      "mutateTransientExpression(change: PartialStateType<T> | null)": "void",
+      "mutateTransientExpression(source: any, change: PartialStateType<T> | null)": "void",
       "isTransientExpressionValid()": "boolean",
       "isTransientExpressionNull()": "boolean",
-      "applyExpression()": "void",
-      "revertToAppliedExpression()": "void"
+      "applyExpression(source: any)": "void",
+      "revertToAppliedExpression(source: any)": "void"
     }
   },
   "ExpressionComponentParams": {
@@ -10290,6 +10298,10 @@
       "getRow(index: number)": "any",
       "isRowSelected?(index: number)": "boolean | undefined"
     }
+  },
+  "FilterParams": {
+    "meta": { "isTypeAlias": true },
+    "type": "Pick<ISetFilterParams, 'api' | 'colDef' | 'column' | 'columnApi' | 'context' | 'valueGetter' | 'textFormatter' | 'doesRowPassOtherFilter' | 'suppressSorting' | 'comparator' | 'rowModel' | 'values' | 'excelMode' | 'valueFormatter' | 'defaultToNothingSelected'>"
   },
   "ISetFilterLocaleText": {
     "meta": {},
