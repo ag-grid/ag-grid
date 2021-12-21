@@ -1470,6 +1470,7 @@
       "loadingCellRendererSelector?": "LoadingCellRendererSelectorFunc",
       "loadingRowCellComp?": "any",
       "loadingRowCellCompParams?": "any",
+      "loadingRowCellCompSelector?": "LoadingRowCellCompSelectorFunc",
       "localeText?": "{ [key: string]: string; }",
       "masterDetail?": "boolean",
       "keepDetailRows?": "boolean",
@@ -1842,6 +1843,7 @@
       "loadingCellRendererSelector?": "/** Callback to select which loading cell renderer to be used when data is loading via a DataSource. */",
       "loadingRowCellComp?": "/** Cell Comp to use when data is loading via a DataSource. */",
       "loadingRowCellCompParams?": "/** Params for Loading Cell Comp. */",
+      "loadingRowCellCompSelector?": "/** Selector for the loading component. */",
       "localeText?": "/** A map of key->value pairs for localising text within the grid. */",
       "masterDetail?": "/** Set to `true` to enable Master Detail. Default: `false` */",
       "keepDetailRows?": "/** Set to `true` to keep detail rows for when they are displayed again. Default: `false` */",
@@ -2533,6 +2535,13 @@
       "component?": "/** Equivalent of setting `loadingCellRenderer` */",
       "frameworkComponent?": "/** Equivalent of setting `loadingCellRendererFramework` */",
       "params?": "/** Equivalent of setting `loadingCellRendererParams` */"
+    }
+  },
+  "LoadingRowCellCompSelectorFunc": {
+    "meta": { "isCallSignature": true },
+    "type": {
+      "arguments": { "params": "ILoadingCellRendererParams" },
+      "returnType": "CompSelectorResult | undefined"
     }
   },
   "IHeaderColumn": {

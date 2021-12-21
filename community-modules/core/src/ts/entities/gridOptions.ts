@@ -100,6 +100,7 @@ import { ServerSideTransaction } from "../interfaces/serverSideTransaction";
 import { HeaderPosition } from "../headerRendering/common/headerPosition";
 import { ExcelExportParams, ExcelStyle } from "../interfaces/iExcelCreator";
 import { ILoadingCellRendererParams } from "../rendering/cellRenderers/loadingCellRenderer";
+import { CompSelectorResult } from "../main";
 
 export interface GridOptions {
 
@@ -322,6 +323,8 @@ export interface GridOptions {
     loadingRowCellComp?: any;
     /** Params for Loading Cell Comp. */
     loadingRowCellCompParams?: any;
+    /** Selector for the loading component. */
+    loadingRowCellCompSelector?: LoadingRowCellCompSelectorFunc;
 
     // *** Localisation *** //
     // just set once
@@ -1424,4 +1427,8 @@ export interface LoadingCellRendererSelectorResult {
     frameworkComponent?: any;
     /** Equivalent of setting `loadingCellRendererParams` */
     params?: any;
+}
+
+export interface LoadingRowCellCompSelectorFunc {
+    (params: ILoadingCellRendererParams): CompSelectorResult | undefined;
 }
