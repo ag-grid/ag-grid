@@ -27,16 +27,16 @@ yKey: 'weight',
 sizeKey: 'age'
 ```
 
-Another config we should provide is the `size` of the marker. When the `sizeKey` is specified, the value of `marker.size` config takes on a different meaning &mdash; instead of determining the actual marker size, the `size` config now determines the maximum marker size. The marker also has the `minSize` config, which only applies when the `sizeKey` is set.
+Another config we should provide is the `size` of the marker. When the `sizeKey` is specified, the value of `marker.size` config takes on a different meaning &mdash; instead of determining the actual marker size, the `size` config now determines the minimum marker size. The marker also has the `maxSize` config, which only applies when the `sizeKey` is set.
 
 ```js
 marker: {
-    size: 6,       // defaults to 6
+    size: 8,       // defaults to 8
     maxSize: 30    // defaults to 30
 }
 ```
 
-So for example, if the `sizeKey` data ranges from `-100` to `200`, the above config means that `-100` will correspond to marker of size `8` (the `minSize`), `200` to a marker of size `30` (the `size`), and any value between `-100` and `200` will be interpolated to a value between `8` and `30`.
+So for example, if the `sizeKey` data ranges from `-100` to `200`, the above config means that `-100` will correspond to marker of size `8` (the `size`), `200` to a marker of size `30` (the `maxSize`), and any value between `-100` and `200` will be interpolated to a value between `8` and `30`.
 
 Finally, the bubble chart is so called because the circle is the most common marker type used for this kind of scatter plot, but with AG Charts any other marker shape can be used as well.
 

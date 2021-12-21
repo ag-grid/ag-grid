@@ -1121,14 +1121,7 @@
           },
           "size": {
             "default": 8,
-            "description": "The size in pixels of the markers.",
-            "min": 1,
-            "max": 20,
-            "unit": "px"
-          },
-          "minSize": {
-            "default": 12,
-            "description": "For series where the size of the marker is determined by the data, this determines the smallest size a marker can be in pixels.",
+            "description": "The size in pixels of the markers. For series where the size of the marker is determined by the data, this determines the smallest size a marker can be in pixels.",
             "min": 1,
             "max": 20,
             "unit": "px"
@@ -1381,14 +1374,7 @@
           },
           "size": {
             "default": 8,
-            "description": "The size in pixels of the markers.",
-            "min": 1,
-            "max": 20,
-            "unit": "px"
-          },
-          "minSize": {
-            "default": 12,
-            "description": "For series where the size of the marker is determined by the data, this determines the smallest size a marker can be in pixels.",
+            "description": "The size in pixels of the markers. For series where the size of the marker is determined by the data, this determines the smallest size a marker can be in pixels.",
             "min": 1,
             "max": 20,
             "unit": "px"
@@ -1637,14 +1623,7 @@
           },
           "size": {
             "default": 8,
-            "description": "The size in pixels of the markers.",
-            "min": 1,
-            "max": 20,
-            "unit": "px"
-          },
-          "minSize": {
-            "default": 12,
-            "description": "For series where the size of the marker is determined by the data, this determines the smallest size a marker can be in pixels.",
+            "description": "The size in pixels of the markers. For series where the size of the marker is determined by the data, this determines the smallest size a marker can be in pixels.",
             "min": 1,
             "max": 20,
             "unit": "px"
