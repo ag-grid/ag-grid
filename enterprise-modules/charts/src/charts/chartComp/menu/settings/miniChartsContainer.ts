@@ -8,7 +8,8 @@ import {
     MiniColumn,
     MiniDoughnut,
     MiniGroupedColumnLine,
-    MiniStackedColumnLine,
+    MiniSecondaryAxisCombo,
+    MiniCustomCombo,
     MiniHistogram,
     MiniLine,
     MiniNormalizedArea,
@@ -88,7 +89,8 @@ export class MiniChartsContainer extends Component {
             ],
             combinationGroup: [
                 MiniGroupedColumnLine,
-                MiniStackedColumnLine
+                MiniSecondaryAxisCombo,
+                MiniCustomCombo
             ]
         };
 
