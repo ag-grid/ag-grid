@@ -12,6 +12,8 @@ const AG_GRID_LOCALE_EN = {
     filterOoo: 'Filter...',
     equals: 'Equals',
     notEqual: 'Not equal',
+    blank: 'Blank',
+    notBlank: 'Not blank',
     empty: 'Choose One',
 
     // Number Filter
