@@ -13146,7 +13146,7 @@
       }
     },
     "setModel": {
-      "description": "/** Sets the state of the child filters using the supplied models.\n * Providing `null` will de-activate all child filters.\n *   - **Note:** if you are providing values asynchronously to a child Set Filter,\n * you need to wait for these changes to be applied before performing any further actions by waiting on the returned grid promise,\n *   e.g. `filter.setModel([null, { values: ['a', 'b'] }]).then(function() { gridApi.onFilterChanged(); });` */",
+      "description": "/** Sets the state of the child filters using the supplied models. Providing `null` will\n * de-activate all child filters.\n * \n * **Note:** if you are providing values asynchronously to a child Set Filter,\n * you need to wait for these changes to be applied before performing any further actions by\n * waiting on the returned grid promise, e.g.\n * `filter.setModel([null, { values: ['a', 'b'] }]).then(function() { gridApi.onFilterChanged(); });` */",
       "type": {
         "arguments": { "model": "IMultiFilterModel | null" },
         "returnType": "void | AgPromise<void>",

@@ -60,11 +60,13 @@ export interface IMultiFilterComp {
     getModel(): ProvidedFilterModel | null;
 
     /**
-     * Sets the state of the child filters using the supplied models.
-     * Providing `null` will de-activate all child filters.
-     *  - **Note:** if you are providing values asynchronously to a child Set Filter,
-     * you need to wait for these changes to be applied before performing any further actions by waiting on the returned grid promise,
-     *  e.g. `filter.setModel([null, { values: ['a', 'b'] }]).then(function() { gridApi.onFilterChanged(); });`
+     * Sets the state of the child filters using the supplied models. Providing `null` will
+     * de-activate all child filters.
+     * 
+     * **Note:** if you are providing values asynchronously to a child Set Filter,
+     * you need to wait for these changes to be applied before performing any further actions by
+     * waiting on the returned grid promise, e.g.
+     * `filter.setModel([null, { values: ['a', 'b'] }]).then(function() { gridApi.onFilterChanged(); });`
      */
     setModel(model: IMultiFilterModel | null): void | AgPromise<void>;
 
