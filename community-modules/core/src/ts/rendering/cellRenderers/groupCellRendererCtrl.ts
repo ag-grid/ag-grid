@@ -4,7 +4,7 @@ import { Constants } from "../../constants/constants";
 import { KeyCode } from "../../constants/keyCode";
 import { BeanStub } from "../../context/beanStub";
 import { Autowired } from "../../context/context";
-import { CellCompSelectorFunc, CellRendererSelectorFunc } from "../../entities/colDef";
+import { CellRendererCompSelectorFunc, CellRendererSelectorFunc } from "../../entities/colDef";
 import { Column } from "../../entities/column";
 import { GridOptions } from "../../entities/gridOptions";
 import { RowNode } from "../../entities/rowNode";
@@ -70,7 +70,7 @@ export interface GroupCellRendererParams extends ICellRendererParams {
     /** Params for Cell Component */
     innerCellCompParams?: any;
     /** Callback to select Cell Component for inside the Group Cell*/
-    innerCellCompSelector?: CellCompSelectorFunc;
+    innerCellCompSelector?: CellRendererCompSelectorFunc;
 
     scope: any;
 

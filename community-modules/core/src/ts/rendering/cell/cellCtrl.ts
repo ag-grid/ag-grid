@@ -370,8 +370,8 @@ export class CellCtrl extends BeanStub {
         const editorParams = this.createCellEditorParams(key, charPress, cellStartedEdit);
         const colDef = this.column.getColDef();
         const compDetails = this.beans.userComponentFactory.getCellEditorDetails(colDef, editorParams);
-        const popup = !!colDef.cellEditorPopup;
-        const position = colDef.cellEditorPopupPosition;
+        const popup = !!colDef.cellEditorPopup || !!colDef.cellEditorCompPopup;
+        const position = colDef.cellEditorPopupPosition!=null ? colDef.cellEditorPopupPosition : colDef.cellEditorCompPopupPosition;
 
         this.setEditing(true, popup);
         this.cellComp.setEditDetails(compDetails!, popup, position);
