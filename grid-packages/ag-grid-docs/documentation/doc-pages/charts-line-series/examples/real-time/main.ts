@@ -69,7 +69,7 @@ function startUpdates() {
   setInterval(this.update, 500)
 }
 
-// inScope[update]
+/** inScope */
 function update() {
   options.data = getData()
   agCharts.AgChart.update(chart, options)

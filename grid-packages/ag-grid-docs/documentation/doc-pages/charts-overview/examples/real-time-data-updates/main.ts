@@ -84,7 +84,7 @@ const options: AgCartesianChartOptions = {
 
 var chart = agCharts.AgChart.create(options)
 
-// inScope[updateData]
+/** inScope */
 function updateData() {
   var now = Date.now()
   options.data = getData()

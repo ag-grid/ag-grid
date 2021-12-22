@@ -278,8 +278,6 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
         const instanceMethods = bindings.instanceMethods.map(instance => convertFunctionToConstCallback(instance, callbackDependencies)).map(thisReferenceConverter).map(gridInstanceConverter);
         const containerStyle = gridSettings.noStyle ? '' : `style={containerStyle}`;
 
-        debugger
-
         const gridReady = additionalInReady.length > 0 ? `
             const onGridReady = useCallback((params) => {
                 ${additionalInReady.join('\n')}

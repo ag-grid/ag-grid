@@ -3,6 +3,31 @@ export type ImportType = 'packages' | 'modules';
 
 const moduleMapping = require('../../documentation/doc-pages/modules/modules.json');
 
+
+export function parseFile(src) {
+    return ts.createSourceFile('tempFile.ts', src, ts.ScriptTarget.Latest, true);
+}
+
+// export interface PrinterOptions {
+//     removeComments?: boolean;
+//     newLine?: NewLineKind;
+//     omitTrailingSemicolon?: boolean;
+//     noEmitHelpers?: boolean;
+// }
+const printer = ts.createPrinter({ removeComments: false, omitTrailingSemicolon: false });
+
+export function tsGenerate(node, srcFile) {
+    try {
+        if (!node) {
+            return ''
+        }
+        return printer.printNode(ts.EmitHint.Unspecified, node, srcFile);
+    } catch (error) {
+        console.error(error);
+    }
+    return "ERROR - Printing";
+}
+
 export function modulesProcessor(modules: string[]) {
     const moduleImports = [];
     const suppliedModules = [];
@@ -118,6 +143,14 @@ export function tsNodeIsPropertyWithName(node: ts.Node, name: string) {
     }
 }
 
+export function tsNodeIsTopLevelVariable(node: ts.Node, registered: string[] = []) {
+    if (ts.isVariableDeclarationList(node)) {
+        // Not registered already and are a top level variable declaration so that we do not match
+        // variables within function scopes
+        return registered.indexOf(node.declarations[0].name.getText()) < 0 && ts.isSourceFile(node.parent.parent);
+    }
+}
+
 export function nodeIsFunctionWithName(node: any, name: string): boolean {
     // eg: function someFunction() { }
     return node.type === NodeType.Function && node.id.name === name;
@@ -131,22 +164,12 @@ export function tsNodeIsFunctionWithName(node: ts.Node, name: string): boolean {
     return false;
 }
 
-export function nodeIsInScope(node: any, unboundInstanceMethods: string[]): boolean {
-    return unboundInstanceMethods &&
-        node.type === NodeType.Function &&
-        unboundInstanceMethods.indexOf(node.id.name) >= 0;
-}
 export function tsNodeIsInScope(node: any, unboundInstanceMethods: string[]): boolean {
     return unboundInstanceMethods &&
-        ts.isFunctionDeclaration(node) &&
+        ts.isFunctionDeclaration(node) && node.name &&
         unboundInstanceMethods.indexOf(node.name.getText()) >= 0;
 }
 
-export function nodeIsUnusedFunction(node: any, used: string[], unboundInstanceMethods: string[]): boolean {
-    return !nodeIsInScope(node, unboundInstanceMethods) &&
-        node.type === NodeType.Function &&
-        used.indexOf(node.id.name) < 0;
-}
 export function tsNodeIsUnusedFunction(node: any, used: string[], unboundInstanceMethods: string[]): boolean {
     if (!tsNodeIsInScope(node, unboundInstanceMethods)) {
         if (ts.isFunctionLike(node) && used.indexOf(node.name.getText()) < 0) {
@@ -162,6 +185,16 @@ export function nodeIsFunctionCall(node: any): boolean {
 }
 export function tsNodeIsFunctionCall(node: any): boolean {
     return ts.isExpressionStatement(node) && ts.isCallExpression(node.expression);
+}
+
+export function tsNodeIsGlobalFunctionCall(node: ts.Node) {
+    // Get top level function calls like 
+    // setInterval(callback, 500)
+    // but don't match things like
+    // agCharts.AgChart.create(options)
+    if (ts.isExpressionStatement(node)) {
+        return ts.isSourceFile(node.parent) && ts.isCallExpression(node.expression) && ts.isIdentifier(node.expression.expression);
+    }
 }
 
 export function nodeIsGlobalFunctionCall(node: any): boolean {
@@ -196,19 +229,29 @@ export function extractEventHandlers(tree: any, eventNames: string[]) {
     return flatMap(eventNames, (event: string) => getHandlerAttributes(event).map(extractEventHandlerBody));
 }
 
+export function removeInScopeJsDoc(method: string): string {
+    return method.replace(/\/\*\*\s*inScope.*\*\/\n/g, '');
+}
+
 // functions marked with an "inScope" comment will be handled as "instance" methods, as opposed to (global/unused)
 // "util" ones
-export function extractUnboundInstanceMethods(tree) {
-    const inScopeRegex = /inScope\[([\w-].*)]/;
+export function extractUnboundInstanceMethods(srcFile: ts.SourceFile) {
+    let inScopeMethods = [];
+    srcFile.statements.forEach(node => {
+        if (ts.isFunctionDeclaration(node)) {
+            const docs = (node as any).jsDoc;
+            if (docs && docs.length > 0) {
+                docs.forEach(doc => {
+                    const trimmed = doc.comment.trim() || '';
+                    if (trimmed.includes('inScope')) {
+                        inScopeMethods = [...inScopeMethods, node.name?.getText()]
+                    }
+                });
+            }
 
-    return tree.comments
-        .map(comment => comment.value ? comment.value.trim() : '')
-        .filter(commentValue => commentValue.indexOf('inScope') === 0)
-        .map(commentValue => {
-            const result = commentValue.match(inScopeRegex);
-
-            return result && result.length > 0 ? result[1] : '';
-        });
+        }
+    })
+    return inScopeMethods;
 }
 
 export function tsNodeIsTopLevelFunction(node: any): boolean {

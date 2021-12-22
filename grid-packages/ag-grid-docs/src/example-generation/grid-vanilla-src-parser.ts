@@ -3,10 +3,12 @@ import * as ts from 'typescript';
 import { Events } from '../../../../community-modules/core/src/ts/eventKeys';
 import { PropertyKeys } from '../../../../community-modules/core/src/ts/propertyKeys';
 import {
-    extractEventHandlers, findAllAccessedProperties, findAllVariables, recognizedDomEvents,
+    extractEventHandlers, extractUnboundInstanceMethods, findAllAccessedProperties, findAllVariables, parseFile, recognizedDomEvents,
+    removeInScopeJsDoc,
     tsCollect,
+    tsGenerate,
     tsNodeIsFunctionCall,
-    tsNodeIsFunctionWithName, tsNodeIsGlobalVarWithName, tsNodeIsPropertyWithName, tsNodeIsTopLevelFunction, tsNodeIsUnusedFunction
+    tsNodeIsFunctionWithName, tsNodeIsGlobalVarWithName, tsNodeIsInScope, tsNodeIsPropertyWithName, tsNodeIsTopLevelFunction, tsNodeIsTopLevelVariable, tsNodeIsUnusedFunction
 } from './parser-utils';
 
 export const templatePlaceholder = 'GRID_TEMPLATE_PLACEHOLDER';
@@ -44,26 +46,6 @@ function tsNodeIsSimpleFetchRequest(node) {
         return isFetch;
 
     }
-}
-
-// export interface PrinterOptions {
-//     removeComments?: boolean;
-//     newLine?: NewLineKind;
-//     omitTrailingSemicolon?: boolean;
-//     noEmitHelpers?: boolean;
-// }
-const printer = ts.createPrinter({ removeComments: false, omitTrailingSemicolon: false });
-
-function tsGenerate(node, srcFile) {
-    try {
-        if (!node) {
-            return ''
-        }
-        return printer.printNode(ts.EmitHint.Unspecified, node, srcFile);
-    } catch (error) {
-        console.error(error);
-    }
-    return "ERROR - Printing";
 }
 
 function tsGenerateWithReplacedGridOptions(node, srcFile) {
@@ -110,10 +92,6 @@ function processGlobalComponentsForVue(propertyName: string, exampleType, provid
     return false;
 }
 
-function parseFile(src) {
-    return ts.createSourceFile('tempFile.ts', src, ts.ScriptTarget.Latest, true);
-}
-
 export function parser(js, html, exampleSettings, exampleType, providedExamples) {
     const domTree = $(`<div>${html}</div>`);
 
@@ -148,9 +126,17 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
         });
     });
 
-    // anything not handled above in the eventHandlers is considered an unused/util method
+    // functions marked as "inScope" will be added to "instance" methods, as opposed to (global/unused) "util" ones
+    const unboundInstanceMethods = extractUnboundInstanceMethods(tsTree);
     tsCollectors.push({
-        matches: node => tsNodeIsUnusedFunction(node, registered, []),
+        matches: node => tsNodeIsInScope(node, unboundInstanceMethods),
+        apply: (bindings, node) => bindings.instanceMethods.push(removeInScopeJsDoc(tsGenerateWithReplacedGridOptions(node, tsTree)))
+    });
+
+
+    // anything not marked as "inScope" and not handled above in the eventHandlers is considered an unused/util method
+    tsCollectors.push({
+        matches: node => tsNodeIsUnusedFunction(node, registered, unboundInstanceMethods),
         apply: (bindings, node) => {
             const util = tsGenerate(node, tsTree).replace(/gridOptions/g, 'gridInstance');
             bindings.utils.push(util)
@@ -158,7 +144,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
     });
 
     // For React we need to identify the external dependencies for callbacks to prevent stale closures
-    const GLOBAL_DEPS = new Set(['console', 'document'])
+    const GLOBAL_DEPS = new Set(['console', 'document', 'Error'])
     tsCollectors.push({
         matches: node => tsNodeIsTopLevelFunction(node),
         apply: (bindings, node: ts.SignatureDeclaration) => {
@@ -179,20 +165,13 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
             });
             if (allDeps.length > 0) {
                 bindings.callbackDependencies[node.name.getText()] = [...new Set(allDeps)];
-                //console.log(bindings.callbackDependencies)
             }
         }
     });
 
     // anything vars not handled above in the eventHandlers is considered an unused/util method    
     tsCollectors.push({
-        matches: node => {
-            if (ts.isVariableDeclarationList(node)) {
-                // Not registered already and are a top level variable declaration so that we do not match
-                // variables within function scopes
-                return registered.indexOf(node.declarations[0].name.getText()) < 0 && ts.isSourceFile(node.parent.parent);
-            }
-        },
+        matches: node => tsNodeIsTopLevelVariable(node, registered),
         apply: (bindings, node) => bindings.utils.push(tsGenerate(node.parent, tsTree))
     });
 
