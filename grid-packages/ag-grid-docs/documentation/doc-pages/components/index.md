@@ -28,21 +28,37 @@ md-include:register-angular.md
 md-include:register-react.md 
 md-include:register-vue.md
 
-[[only-angular]]
-md-include:advantages-common.md
-[[only-react]]
-md-include:advantages-common.md
 md-include:advantages-vue.md
 
-md-include:component-usage-javascript.md
-md-include:component-usage-angular.md
-md-include:component-usage-react.md
-md-include:component-usage-vue.md
- 
+### Component Usage
+
+The below table gives a summary of the components, where they are configured and using what attribute.
+
+| Component                     | Where                     | Attribute | 
+| ----------------------------- | ------------------------- | ------------------------ | 
+| Cell Renderer                 | Column Definition         | cellRendererComp         | 
+| Cell Editor                   | Column Definition         | cellEditorComp           | 
+| Filter                        | Column Definition         | filterComp               | 
+| Floating Filter               | Column Definition         | floatingFilterComp       | 
+| Header Component              | Column Definition         | headerComp               | 
+| Header Group Component        | Column Definition         | headerGroupComp          | 
+| Tooltip Component             | Column Definition         | tooltipComp              | 
+| Group Row Cell Renderer       | Grid Option               | groupRowCellComp         | 
+| Group Row Inner Cell Renderer | Grid Option               | innerCellComp            | 
+| Detail Cell Renderer          | Grid Option               | detailRowCellComp        | 
+| Full Width Cell Renderer      | Grid Option               | fullWidthCellComp        | 
+| Loading Cell Renderer         | Grid Option               | loadingRowCellComp       |
+| Loading Overlay               | Grid Option               | loadingOverlayComp       | 
+| No Rows Overlay               | Grid Option               | noRowsOverlayComp        |
+| Date Component                | Grid Option               | dateComp                 | 
+| Status Bar Component          | Grid Option -> Status Bar | statusPanelComp          | 
+| Tool Panel                    | Grid Option -> Side Bar   | toolPanelComp            | 
+
 md-include:js-fw-angular.md
 md-include:js-fw-react.md
 md-include:js-fw-vue.md
- 
+md-include:js-fw-common-end.md
+
 ## Grid Provided Components
 
 The grid comes with pre-registered components that can be used. Each component provided by the grid starts with the namespaces 'ag' to minimise naming conflicts with user provided components. The full list of grid provided components are in the table below.
@@ -193,4 +209,3 @@ It is also possible to override components. Where the grid uses a default value,
 ||actual component. All other registration types specify their usage in column definitions or on the `AgGridVue` component itself.
 ||
 ||For an example of this please refer to the [Date Component](../component-date/#registering-date-components) documentation.
- 

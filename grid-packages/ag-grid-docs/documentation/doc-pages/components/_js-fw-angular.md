@@ -1,11 +1,11 @@
 [[only-angular]]
 |## Mixing JavaScript and Angular
-|When providing Custom Components have a choice of the following:
+|When providing Custom Components you have a choice of the following:
 |
-|1. Provide an AG Grid component in JavaScript.
 |1. Provide an AG Grid component as an Angular Component.
+|1. Provide an AG Grid component in JavaScript.
 |
-|For example if you want to build a cell renderer you have the choice to build the cell renderer using either Angular or using plain JavaScript.
+|For example if you want to build a Cell Renderer you have the choice to build it using either Angular or using plain JavaScript.
 |
 |The following code snippet shows how both JavaScript and Angular Components can be used at the same time:
 |
@@ -18,35 +18,42 @@
 |@Component({
 |selector: 'app-root',
 |template: `
-|   <ag-grid-angular [components]="components" 
-|                    [frameworkComponents]="frameworkComponents" 
+|   <ag-grid-angular [comps]="comps" 
 |                    ...other properties>
 |   </ag-grid-angular>
 |`
 |})
 |export class AppComponent {
-|   // JavaScript components are registered here
-|   components: [
+|   // All components registered together
+|   comps: [
 |       'javascriptComponent': JavascriptComponent
-|   ];          
-|   // Angular components are registered here
-|   frameworkComponents: [
 |       'angularComponent': AngularComponent
-|   ];          
+|   ];
 |   columnDefs: [
 |       {
 |           headerName: "JS Cell",
 |           field: "value",
-|           cellRenderer: 'javascriptComponent',        // reference/use the javascript component
+|           cellRendererComp: 'javascriptComponent', // use JS comp by Name
+|       },
+|       {
+|           headerName: "JS Cell",
+|           field: "value",
+|           cellRendererComp: JavascriptComponent, // use JS comp by Direct Reference
 |       },
 |       {
 |           headerName: "Angular Cell",
 |           field: "value",
-|           cellRenderer: 'angularComponent',           // reference/use the Angular component
+|           cellRendererComp: 'angularComponent', // use Angular comp by Name
+|       },
+|       {
+|           headerName: "Angular Cell",
+|           field: "value",
+|           cellRendererComp: AngularComponent, // use Angular comp by Direct Reference
 |       }
-|   ]
+|   ];
 |
 |   //...other properties & methods
 |}
 |```
-|Change the documentation view to <a href='../../javascript-data-grid/components/'>JavaScript</a> to see how to create a plain JavaScript component.
+|
+
