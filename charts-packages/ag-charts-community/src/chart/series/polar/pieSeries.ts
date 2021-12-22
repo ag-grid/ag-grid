@@ -387,8 +387,14 @@ export class PieSeries extends PolarSeries {
         this.group.translationY = this.centerY;
 
         if (title) {
-            title.node.translationY = -radius - outerRadiusOffset - 2;
-            title.node.visible = title.enabled;
+            const outerRadius = Math.max(0, this.radiusScale.range[1]);
+
+            if (outerRadius === 0) {
+                title.node.visible = false;
+            } else {
+                title.node.translationY = -radius - outerRadiusOffset - 2;
+                title.node.visible = title.enabled;
+            }
         }
 
         this.updateSelections();
@@ -501,15 +507,16 @@ export class PieSeries extends PolarSeries {
         const { colors: calloutColors, length: calloutLength, strokeWidth: calloutStrokeWidth } = callout;
 
         this.groupSelection.selectByTag<Line>(PieNodeTag.Callout).each((line, datum, index) => {
-            if (datum.label) {
-                const radius = radiusScale.convert(datum.radius);
+            const radius = radiusScale.convert(datum.radius);
+            const outerRadius = Math.max(0, radius);
 
+            if (datum.label && outerRadius !== 0) {
                 line.strokeWidth = calloutStrokeWidth;
                 line.stroke = calloutColors[index % calloutColors.length];
-                line.x1 = datum.midCos * radius;
-                line.y1 = datum.midSin * radius;
-                line.x2 = datum.midCos * (radius + calloutLength);
-                line.y2 = datum.midSin * (radius + calloutLength);
+                line.x1 = datum.midCos * outerRadius;
+                line.y1 = datum.midSin * outerRadius;
+                line.x2 = datum.midCos * (outerRadius + calloutLength);
+                line.y2 = datum.midSin * (outerRadius + calloutLength);
             } else {
                 line.stroke = undefined;
             }
@@ -520,10 +527,11 @@ export class PieSeries extends PolarSeries {
 
             this.groupSelection.selectByTag<Text>(PieNodeTag.Label).each((text, datum, index) => {
                 const label = datum.label;
+                const radius = radiusScale.convert(datum.radius);
+                const outerRadius = Math.max(0, radius);
 
-                if (label) {
-                    const radius = radiusScale.convert(datum.radius);
-                    const labelRadius = centerOffsets[index] + radius + calloutLength + offset;
+                if (label && outerRadius !== 0) {
+                    const labelRadius = centerOffsets[index] + outerRadius + calloutLength + offset;
 
                     text.fontStyle = fontStyle;
                     text.fontWeight = fontWeight;
