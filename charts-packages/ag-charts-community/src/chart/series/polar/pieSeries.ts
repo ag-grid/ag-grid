@@ -478,8 +478,8 @@ export class PieSeries extends PolarSeries {
                 parent.appendChild(sector.parent!);
             }
 
-            sector.innerRadius = innerRadius;
-            sector.outerRadius = radius;
+            sector.innerRadius = Math.max(0, innerRadius);
+            sector.outerRadius = Math.max(0, radius);
 
             sector.startAngle = datum.startAngle;
             sector.endAngle = datum.endAngle;
