@@ -1,6 +1,6 @@
 [[only-vue]]
 |## Mixing JavaScript and Vue
-|When providing Custom Components have a choice of the following:
+|When providing Custom Components you have a choice of the following:
 |
 |1. Provide an AG Grid component in JavaScript.
 |1. Provide an AG Grid component as an Vue Component.
@@ -11,8 +11,7 @@
 |
 |```js
 |<template>
-|   <ag-grid-vue :components="components" 
-|                :frameworkComponents="frameworkComponents" 
+|   <ag-grid-vue :comps="comps" 
 |                ...other properties>
 |   </ag-grid-vue>
 |</template>
@@ -32,7 +31,7 @@
 |   data() {
 |       return {
 |           // JavaScript components are registered here
-|           components: [
+|           comps: [
 |               // declare the javascript component
 |               'javascriptComponent': JavascriptComponent
 |           ],          
@@ -40,12 +39,17 @@
 |                {
 |                   headerName: "JS Cell",
 |                   field: "value",
-|                   cellRenderer: 'javascriptComponent',    // reference/use the javascript component
+|                   cellRendererComp: 'javascriptComponent',    // reference/use the javascript component by name
+|               },
+|                {
+|                   headerName: "JS Cell",
+|                   field: "value",
+|                   cellRendererComp: JavascriptComponent,    // reference/use the javascript component directly
 |               },
 |               {
 |                   headerName: "Vue Cell",
 |                   field: "value",
-|                   cellRendererFramework: 'vueComponent',  // reference/use the Vue component
+|                   cellRendererComp: 'vueComponent',  // reference/use the Vue component
 |               }
 |           ]
 |       }
@@ -54,4 +58,4 @@
 |}
 |</script>
 |```
-|Change the documentation view to <a href='../../javascript-data-grid/components/'>JavaScript</a> to see how to create a plain JavaScript component.
+|

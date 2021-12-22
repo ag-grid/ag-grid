@@ -1,6 +1,6 @@
 [[only-react]]
 |## Mixing JavaScript and React
-|When providing Custom Components have a choice of the following:
+|When providing Custom Components you have a choice of the following:
 |
 |1. Provide an AG Grid component in JavaScript.
 |1. Provide an AG Grid component as an React Component.
@@ -17,27 +17,44 @@
 |const GridExample = () => {
 |   // other properties & methods
 |   
-|   // JavaScript components are registered here
-|   components = {
-|       'javascriptComponent': JavascriptComponent    
-|   };
-|   // React components are registered here
-|   frameworkComponents = {
+|   // All components registered together
+|   const [comps] = useState({
+|       'javascriptComponent': JavascriptComponent,
 |       'reactComponent': ReactComponent    
-|   };
+|   });
+|
+|   const [columnDefs] = useState([
+|       {
+|           headerName: "JS Cell",
+|           field: "value",
+|           cellRendererComp: 'javascriptComponent', // use JS comp by Name
+|       },
+|       {
+|           headerName: "JS Cell",
+|           field: "value",
+|           cellRendererComp: JavascriptComponent, // use JS comp by Direct Reference
+|       },
+|       {
+|           headerName: "React Cell",
+|           field: "value",
+|           cellRendererComp: 'reactComponent', // use React comp by Name
+|       },
+|       {
+|           headerName: "React Cell",
+|           field: "value",
+|           cellRendererComp: ReactComponent, // use React comp by Direct Reference
+|       }
+|   ]);
 |
 |    return (
 |        <div className="ag-theme-alpine">
 |            <AgGridReact
-|               components={components}
-|               frameworkComponents={frameworkComponents}
+|               comps={comps}
+|               columnDefs={columnDefs}
 |               ...other properties
-|            >
-|                <AgGridColumn headerName="JS Cell" field="value" cellRenderer="javascriptComponent" />
-|                <AgGridColumn headerName="React Cell" field="value" cellRenderer="reactComponent" />
-|            </AgGridReact>
+|            />
 |        </div>
 |    );
 |};
 |```
-|Change the documentation view to <a href='../../javascript-data-grid/components/'>JavaScript</a> to see how to create a plain JavaScript component.
+|

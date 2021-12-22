@@ -49,6 +49,16 @@
                     "IFilterComp"
                 ],
                 "include": []
+            },
+            "more": {
+                "url": "/filter-multi/#accessing-child-filters",
+                "name": "Accessing Child Filters"
+            }
+        },
+        "setModel": {
+            "more": {
+                "url": "/filter-set-filter-list/#asynchronous-values",
+                "name": "Set Filter Asynchronous Values"
             }
         }
     }

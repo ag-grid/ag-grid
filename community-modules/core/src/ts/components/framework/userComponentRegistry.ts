@@ -206,37 +206,35 @@ export class UserComponentRegistry extends BeanStub {
     public retrieve(rawName: string): {componentFromFramework: boolean, component: any} | null {
         const name = this.translateIfDeprecated(rawName);
 
+        const createResult = (component: any, componentFromFramework: boolean) => ({componentFromFramework, component});
+
+        // FrameworkOverrides.frameworkComponent() is used in two locations:
+        // 1) for Vue, user provided components get registered via a framework specific way.
+        // 2) for React, it's how the React UI provides alternative default components (eg GroupCellRenderer and DetailCellRenderer)
+        const registeredViaFrameworkComp = this.getFrameworkOverrides().frameworkComponent(name);
+        if (registeredViaFrameworkComp!=null) {
+            return createResult(registeredViaFrameworkComp, true);
+        }
+
         const jsOrFwComp = this.jsAndFwComps[name];
         if (jsOrFwComp) {
             const fromFramework = !this.agComponentUtils.doesImplementIComponent(jsOrFwComp);
-            return {
-                componentFromFramework: fromFramework,
-                component: jsOrFwComp
-            };
+            return createResult(jsOrFwComp, fromFramework);
         }
 
-        const frameworkComponent = this.fwComps[name] || this.getFrameworkOverrides().frameworkComponent(name);
+        const frameworkComponent = this.fwComps[name];
         if (frameworkComponent) {
-            return {
-                componentFromFramework: true,
-                component: frameworkComponent
-            };
+            return createResult(frameworkComponent, true);
         }
 
         const jsComponent = this.jsComps[name];
         if (jsComponent) {
-            return {
-                componentFromFramework: false,
-                component: jsComponent
-            };
+            return createResult(jsComponent, false);
         }
 
         const defaultComponent = this.agGridDefaults[name];
         if (defaultComponent) {
-            return {
-                componentFromFramework: false,
-                component: defaultComponent
-            };
+            return createResult(defaultComponent, false);
         }
 
         if (Object.keys(this.agGridDefaults).indexOf(name) < 0) {

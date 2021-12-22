@@ -38,7 +38,7 @@ export class AgGridColumn {
         let { childColumns, ...colDef } = from;
         return colDef;
     }
-ı
+
     // inputs - pretty much most of ColDef, with the exception of template, templateUrl and internal only properties
     // @START@
     @Input() public filterFramework: any;
