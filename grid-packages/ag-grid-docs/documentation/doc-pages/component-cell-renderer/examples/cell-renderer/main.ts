@@ -20,20 +20,20 @@ const columnDefs: ColDef[] = [
     headerName: 'Max Temp (˚C)',
     field: 'Max temp (C)',
     width: 120,
-    cellRenderer: 'deltaIndicator', // Function cell renderer
+    cellRendererComp: 'deltaIndicator', // Function cell renderer
   },
   {
     headerName: 'Min Temp (˚C)',
     field: 'Min temp (C)',
     width: 120,
-    cellRenderer: 'deltaIndicator', // Function cell renderer
+    cellRendererComp: 'deltaIndicator', // Function cell renderer
   },
   {
     headerName: 'Days of Air Frost',
     field: 'Days of air frost (days)',
     width: 233,
-    cellRenderer: 'daysFrostRenderer', // Component Cell Renderer
-    cellRendererParams: {
+    cellRendererComp: 'daysFrostRenderer', // Component Cell Renderer
+    cellRendererCompParams: {
       rendererImage: 'frost.png', // Complementing the Cell Renderer parameters
     },
   },
@@ -41,8 +41,8 @@ const columnDefs: ColDef[] = [
     headerName: 'Days Sunshine',
     field: 'Sunshine (hours)',
     width: 190,
-    cellRenderer: 'daysSunshineRenderer',
-    cellRendererParams: {
+    cellRendererComp: 'daysSunshineRenderer',
+    cellRendererCompParams: {
       rendererImage: 'sun.png', // Complementing the Cell Renderer parameters
     },
   },
@@ -50,8 +50,8 @@ const columnDefs: ColDef[] = [
     headerName: 'Rainfall (10mm)',
     field: 'Rainfall (mm)',
     width: 180,
-    cellRenderer: 'rainPerTenMmRenderer',
-    cellRendererParams: {
+    cellRendererComp: 'rainPerTenMmRenderer',
+    cellRendererCompParams: {
       rendererImage: 'rain.png', // Complementing the Cell Renderer parameters
     },
   },

@@ -20,7 +20,6 @@
 |        <ag-grid-angular
 |                class="ag-theme-alpine"
 |                [columnDefs]="columnDefs"
-|                [frameworkComponents]="frameworkComponents"
 |                ...other properties>        
 |        </ag-grid-angular>`
 |})
@@ -29,22 +28,20 @@
 |        {
 |            headerName: "Colour 1",
 |            field: "value",
-|            cellRendererParams: {
+|            cellRendererComp: ColourCellRenderer,
+|            cellRendererCompParams: {
 |               color: 'guinnessBlack'
 |            }
 |        },
 |        {
 |            headerName: "Colour 2",
 |            field: "value",
-|            cellRendererParams: {
+|            cellRendererComp: ColourCellRenderer,
+|            cellRendererCompParams: {
 |               color: 'irishGreen'
 |            }
 |        }
 |    ];
-|
-|   private frameworkComponents = {
-|       'colourCellRenderer': ColourCellRenderer
-|   };
 |
 |   ..other methods
 |}

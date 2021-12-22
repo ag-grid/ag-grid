@@ -13,7 +13,6 @@
 |    selector: 'my-app',
 |    template: `
 |        <ag-grid-angular
-|                class="ag-theme-alpine"
 |                [columnDefs]="columnDefs"
 |                ...other properties>
 |        </ag-grid-angular>`
