@@ -1,7 +1,7 @@
 import { ImportType } from './parser-utils';
 const fs = require('fs-extra');
 
-export function vanillaToTypescript(bindings: any, componentFileNames: string[], mainFilePath: string): (importType: ImportType) => string {
+export function vanillaToTypescript(bindings: any, mainFilePath: string): (importType: ImportType) => string {
     const { externalEventHandlers } = bindings;
 
     // attach external handlers to window

@@ -2,7 +2,7 @@ import { ImportType } from './parser-utils';
 const fs = require('fs-extra');
 
 
-export function vanillaToTypescript(bindings: any, componentFileNames: string[], mainFilePath: string): (importType: ImportType) => string {
+export function vanillaToTypescript(bindings: any, mainFilePath: string): (importType: ImportType) => string {
     const { externalEventHandlers } = bindings;
 
     // attach external handlers to window
@@ -20,8 +20,10 @@ export function vanillaToTypescript(bindings: any, componentFileNames: string[],
 
     return importType => {
         const tsFile = fs.readFileSync(mainFilePath, 'utf8')
-        // unwrap the setup code from the DOM loaded event as the DOM is loaded before the typescript file is transpiled.
-            .replace(/(.*DOMContentLoaded.*)\n((.|\n)*)(}\))/g, "$2");
+            // unwrap the setup code from the DOM loaded event as the DOM is loaded before the typescript file is transpiled.
+            .replace(/(.*DOMContentLoaded.*)\n((.|\n)*)(}\))/g, "$2")
+            .replace(/_typescript/g, "");
+
 
         return `${tsFile} ${toAttach || ''}`;
     };

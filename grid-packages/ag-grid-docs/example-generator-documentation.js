@@ -134,11 +134,12 @@ function deepCloneObject(object) {
 
 function readAsJsFile(tsFilePath) {
     const tsFile = fs.readFileSync(tsFilePath, 'utf8')
+        // Remove imports that are not required in javascript
+        .replace(/import.*from.*\n/g, '')
+        // Remove export statement
+        .replace(/export /g, "")
+
     let jsFile = sucrase.transform(tsFile, { transforms: ["typescript"] }).code;
-    // Remove empty lines left by sucrase removing the imports 
-    jsFile = jsFile.replace(/^\s*[\r\n]/, '');
-    // Temporary hack to remove import that does not get removed by sucrase
-    jsFile = jsFile.replace("import * as agCharts from 'ag-charts-community'", '');
 
     return jsFile;
 }
@@ -189,7 +190,7 @@ function createExampleGenerator(prefix, importTypes) {
             }
 
             // get the rest of the scripts
-            rawScripts = getMatchingPaths('*.{js,ts}', { ignore: ['**/main.{js,ts}', '**/*_{angular,react,vanilla,vue}.{js,ts}'] });
+            rawScripts = getMatchingPaths('*.{js,ts}', { ignore: ['**/main.{js,ts}', '**/*_{angular,react,vanilla,vue,typescript}.{js,ts}'] });
         } else {
             // only one script, which is the main one
             rawScripts = [];
@@ -369,7 +370,7 @@ function createExampleGenerator(prefix, importTypes) {
                 const tsScripts = getMatchingPaths('*.ts', { ignore: ['**/*_{angular,react,vue,vue3}.ts'] });
                 tsScripts.forEach(tsFile => {
                     jsFile = readAsJsFile(tsFile);
-                    const jsFileName = path.parse(tsFile).base.replace('.ts', '.js');
+                    const jsFileName = path.parse(tsFile).base.replace('.ts', '.js').replace('_typescript.js', '.js');
                     jsFiles[jsFileName] = jsFile;
                 });
 
@@ -382,13 +383,11 @@ function createExampleGenerator(prefix, importTypes) {
             }
         }
 
-        // We have not converted component files to typescript yet so they are still under vanilla
         const vanillaScripts = getMatchingPaths('*.{html,js}', { ignore: ['**/*_{angular,react,vue,vue3}.js'] });
+        const tsScripts = getMatchingPaths('*.{html,ts}', { ignore: ['**/*_{angular,react,vue,vue3}.ts', '**/main.ts'] });
         const tsConfigs = new Map();
         try {
-            const vanillaComponentFileNames = extractComponentFileNames(vanillaScripts, '_vanilla');
-            const getSource = vanillaToTypescript(deepCloneObject(bindings), vanillaComponentFileNames, mainScript);
-
+            const getSource = vanillaToTypescript(deepCloneObject(bindings), mainScript);
             importTypes.forEach(importType => {
                 tsConfigs.set(importType, {
                     'main.ts': getSource(importType),
@@ -399,7 +398,12 @@ function createExampleGenerator(prefix, importTypes) {
             throw e;
         }
 
-        importTypes.forEach(importType => writeExampleFiles(importType, 'typescript', 'vanilla', vanillaScripts, tsConfigs.get(importType)));
+        if (tsScripts.length > 1) {
+            importTypes.forEach(importType => writeExampleFiles(importType, 'typescript', 'typescript', tsScripts, tsConfigs.get(importType)));
+
+        } else {
+            importTypes.forEach(importType => writeExampleFiles(importType, 'typescript', 'vanilla', vanillaScripts, tsConfigs.get(importType)));
+        }
     };
 }
 
