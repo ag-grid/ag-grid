@@ -33,7 +33,7 @@ const CodeViewer = ({ isActive, exampleInfo }) => {
         </div>
         <div className={styles['code-viewer__code']}>
             {!files && <FileView path={'loading.js'} code={'// Loading...'} />}
-            {files && activeFile && <FileView key={activeFile} path={activeFile} code={files[activeFile].source} />}
+            {files && activeFile && files[activeFile] && <FileView key={activeFile} path={activeFile} code={files[activeFile].source} />}
         </div>
     </div>;
 };
@@ -41,12 +41,12 @@ const CodeViewer = ({ isActive, exampleInfo }) => {
 const updateFiles = (exampleInfo, setFiles, setActiveFile) => {
     if (isServerSideRendering()) { return; }
 
-    const { framework } = exampleInfo;
+    const { framework, internalFramework } = exampleInfo;
 
     getExampleFiles(exampleInfo).then(files => {
         setFiles(files);
 
-        const entryFile = getEntryFile(framework);
+        const entryFile = getEntryFile(framework, internalFramework);
 
         if (files[entryFile]) {
             setActiveFile(entryFile);

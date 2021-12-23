@@ -22,13 +22,14 @@ import styles from './ExampleRunner.module.scss';
  */
 export const ExampleRunner = props => {
     return <GlobalContextConsumer>
-        {({exampleImportType, useFunctionalReact, enableVue3, useVue3, set}) => {
+        {({exampleImportType, useFunctionalReact, enableVue3, useVue3, useTypescript, set}) => {
             const innerProps = {
                 ...props,
                 exampleImportType,
                 useFunctionalReact,
                 enableVue3,
                 useVue3: enableVue3 ? useVue3 : false,
+                useTypescript,
                 set,
             };
 
@@ -37,7 +38,7 @@ export const ExampleRunner = props => {
     </GlobalContextConsumer>;
 };
 
-const saveGridIndexHtmlPermutations = (nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, useVue3, exampleImportType) => {
+const saveGridIndexHtmlPermutations = (nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, useVue3, useTypescript, exampleImportType) => {
     if (isGeneratedExample(type)) {
         // Need to generate the different permutations of index.html file:
         // 1. Default version (already saved)
@@ -45,19 +46,19 @@ const saveGridIndexHtmlPermutations = (nodes, library, pageName, name, title, ty
         // 2. Alternative imports version
         const alternativeImport = exampleImportType === 'packages' ? 'modules' : 'packages';
         const alternativeImportExampleInfo =
-            getExampleInfo(nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, useVue3, alternativeImport);
+            getExampleInfo(nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, useVue3, useTypescript, alternativeImport);
 
         writeIndexHtmlFile(alternativeImportExampleInfo);
 
         // 3. For React, the different styles
         if (framework === 'react') {
             const alternativeStyleModulesExampleInfo =
-                getExampleInfo(nodes, library, pageName, name, title, type, options, framework, !useFunctionalReact, useVue3, 'modules');
+                getExampleInfo(nodes, library, pageName, name, title, type, options, framework, !useFunctionalReact, useVue3, useTypescript, 'modules');
 
             writeIndexHtmlFile(alternativeStyleModulesExampleInfo);
 
             const alternativeStylePackagesExampleInfo =
-                getExampleInfo(nodes, library, pageName, name, title, type, options, framework, !useFunctionalReact, useVue3, 'packages');
+                getExampleInfo(nodes, library, pageName, name, title, type, options, framework, !useFunctionalReact, useVue3, useTypescript, 'packages');
 
             writeIndexHtmlFile(alternativeStylePackagesExampleInfo);
         }
@@ -65,29 +66,29 @@ const saveGridIndexHtmlPermutations = (nodes, library, pageName, name, title, ty
         // 4. For Vue, also copy html file for Vue 3
         if (framework === 'vue') {
             const vue3ModulesExampleInfo =
-                getExampleInfo(nodes, library, pageName, name, title, type, options, framework, !useFunctionalReact, true, 'modules');
+                getExampleInfo(nodes, library, pageName, name, title, type, options, framework, !useFunctionalReact, true, useTypescript, 'modules');
 
             writeIndexHtmlFile(vue3ModulesExampleInfo);
 
             const vue3PackagesExampleInfo =
-                getExampleInfo(nodes, library, pageName, name, title, type, options, framework, !useFunctionalReact, true, 'packages');
+                getExampleInfo(nodes, library, pageName, name, title, type, options, framework, !useFunctionalReact, true, useTypescript, 'packages');
 
             writeIndexHtmlFile(vue3PackagesExampleInfo);
         }
     } else if (type === 'multi' && framework === 'react') {
         // Also generate the alternative React style
-        const functionalExampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, !useFunctionalReact, useVue3);
+        const functionalExampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, !useFunctionalReact, useVue3, useTypescript);
 
         writeIndexHtmlFile(functionalExampleInfo);
     } else if (type === 'multi' && framework === 'vue') {
         // Also generate the alternative React style
-        const functionalExampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, !useVue3);
+        const functionalExampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, !useVue3, useTypescript);
 
         writeIndexHtmlFile(functionalExampleInfo);
     }
 };
 
-const saveChartIndexHtmlPermutations = (nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, useVue3, exampleImportType) => {
+const saveChartIndexHtmlPermutations = (nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, useVue3, useTypescript, exampleImportType) => {
     if (isGeneratedExample(type)) {
         // Need to generate the different permutations of index.html file:
         // 1. Default version (already saved)
@@ -95,23 +96,23 @@ const saveChartIndexHtmlPermutations = (nodes, library, pageName, name, title, t
         // 2. For Vue, also copy html file for Vue 3
         if (framework === 'vue') {
             const vue3PackagesExampleInfo =
-                getExampleInfo(nodes, library, pageName, name, title, type, options, framework, !useFunctionalReact, true, 'packages');
+                getExampleInfo(nodes, library, pageName, name, title, type, options, framework, !useFunctionalReact, true, useTypescript, 'packages');
 
             writeIndexHtmlFile(vue3PackagesExampleInfo);
         }
     } else if (type === 'multi' && framework === 'vue') {
-        const vue3ExampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, false, true);
+        const vue3ExampleInfo = getExampleInfo(nodes, library, pageName, name, title, type, options, framework, false, true, useTypescript);
 
         writeIndexHtmlFile(vue3ExampleInfo);
     }
 };
 
-const ExampleRunnerInner = ({pageName, framework, name, title, type, options, library, exampleImportType, useFunctionalReact, enableVue3, useVue3, set}) => {
+const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, library, exampleImportType, useFunctionalReact, enableVue3, useVue3, useTypescript, set }) => {
     const nodes = useExampleFileNodes();
     const [showCode, setShowCode] = useState(!!(options && options.showCode));
     const exampleInfo = useMemo(
-        () => getExampleInfo(nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, useVue3, exampleImportType),
-        [nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, useVue3, exampleImportType]
+        () => getExampleInfo(nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, useVue3, useTypescript, exampleImportType),
+        [nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, useVue3, useTypescript, exampleImportType]
     );
 
     /*
@@ -124,9 +125,9 @@ const ExampleRunnerInner = ({pageName, framework, name, title, type, options, li
 
         if (library === 'grid') {
             // grid examples can have multiple permutations
-            saveGridIndexHtmlPermutations(nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, useVue3, exampleImportType);
+            saveGridIndexHtmlPermutations(nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, useVue3, useTypescript, exampleImportType);
         } else {
-            saveChartIndexHtmlPermutations(nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, useVue3, exampleImportType);
+            saveChartIndexHtmlPermutations(nodes, library, pageName, name, title, type, options, framework, useFunctionalReact, useVue3, useTypescript, exampleImportType);
         }
     }
 
@@ -158,6 +159,11 @@ const ExampleRunnerInner = ({pageName, framework, name, title, type, options, li
             <ImportTypeSelector
                 importType={exampleImportType}
                 onChange={event => set({exampleImportType: event.target.value})}/>
+            }
+            {exampleInfo.framework === 'javascript' && isGenerated &&
+                <TypscriptStyleSelector
+                    useTypescript={useTypescript}
+                    onChange={event => set({ useTypescript: JSON.parse(event.target.value) })} />
             }
         </div>
         <div className={styles['example-runner__body']} style={exampleStyle}>
@@ -236,6 +242,17 @@ const VueStyleSelector = ({useVue3, onChange}) => {
             <option value="false">Vue 2</option>
             <option value="true">Vue 3</option>
         </select>}
+    </div>;
+};
+
+const TypscriptStyleSelector = ({ useTypescript, onChange }) => {
+    return <div className={styles['example-runner__react-style']}>
+        {!isServerSideRendering() &&
+            <select className={styles['example-runner__react-style__select']} style={{ width: 120 }} value={JSON.stringify(useTypescript)} onChange={onChange}
+                onBlur={onChange}>
+                <option value="false">Javascript</option>
+                <option value="true">Typescript</option>
+            </select>}
     </div>;
 };
 

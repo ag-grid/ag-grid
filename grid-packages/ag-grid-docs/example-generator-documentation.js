@@ -125,31 +125,26 @@ function format(source, parser) {
         return formatted;
     }
     return prettier.format(formatted, { parser, singleQuote: true, trailingComma: 'es5' });
-    /* try {
 
-        return prettier.format(formatted, { parser, singleQuote: true, trailingComma: 'es5' });
-    } catch (error) {
-        console.error(error)
-        return formatted;
-    } */
 }
 
 function deepCloneObject(object) {
     return JSON.parse(JSON.stringify(object));
 }
 
-function readAsJsFile(tsFile) {
-    let jsFile = sucrase.transform(fs.readFileSync(tsFile, 'utf8'), { transforms: ["typescript"] }).code;
+function readAsJsFile(tsFilePath) {
+    const tsFile = fs.readFileSync(tsFilePath, 'utf8')
+    let jsFile = sucrase.transform(tsFile, { transforms: ["typescript"] }).code;
     // Remove empty lines left by sucrase removing the imports 
     jsFile = jsFile.replace(/^\s*[\r\n]/, '');
-    // Temporary hack to remove import that does not get removed by
+    // Temporary hack to remove import that does not get removed by sucrase
     jsFile = jsFile.replace("import * as agCharts from 'ag-charts-community'", '');
 
     return jsFile;
 }
 
 function createExampleGenerator(prefix, importTypes) {
-    const [parser, vanillaToVue, vanillaToVue3, vanillaToReact, vanillaToReactFunctional, vanillaToAngular] = getGeneratorCode(prefix);
+    const [parser, vanillaToVue, vanillaToVue3, vanillaToReact, vanillaToReactFunctional, vanillaToAngular, vanillaToTypescript] = getGeneratorCode(prefix);
     const appModuleAngular = new Map();
 
     importTypes.forEach(importType => {
@@ -387,10 +382,24 @@ function createExampleGenerator(prefix, importTypes) {
             }
         }
 
-        // Uncomment when ready to setup Typescript examples
-        // inlineStyles = undefined; // unset these as they don't need to be copied for typescript
-        // const typescriptScripts = getMatchingPaths('*.{html,ts}', { ignore: ['**/* _{ angular, react, vue, vue3 }.js'] });
-        // importTypes.forEach(importType => writeExampleFiles(importType, 'typescript', 'typescript', typescriptScripts, {}));
+        // We have not converted component files to typescript yet so they are still under vanilla
+        const vanillaScripts = getMatchingPaths('*.{html,js}', { ignore: ['**/*_{angular,react,vue,vue3}.js'] });
+        const tsConfigs = new Map();
+        try {
+            const vanillaComponentFileNames = extractComponentFileNames(vanillaScripts, '_vanilla');
+            const getSource = vanillaToTypescript(deepCloneObject(bindings), vanillaComponentFileNames, mainScript);
+
+            importTypes.forEach(importType => {
+                tsConfigs.set(importType, {
+                    'main.ts': getSource(importType),
+                });
+            });
+        } catch (e) {
+            console.error(`Failed to process Typescript example in ${examplePath}`, e);
+            throw e;
+        }
+
+        importTypes.forEach(importType => writeExampleFiles(importType, 'typescript', 'vanilla', vanillaScripts, tsConfigs.get(importType)));
     };
 }
 
@@ -406,6 +415,7 @@ function getGeneratorCode(prefix) {
 
     const { parser } = require(`${prefix}vanilla-src-parser.ts`);
     const { vanillaToVue } = require(`${prefix}vanilla-to-vue.ts`);
+    const { vanillaToTypescript } = require(`${prefix}vanilla-to-typescript.ts`);
     const { vanillaToReact } = require(`${prefix}vanilla-to-react${gridExamples && generateReactFire ? '-fire' : ''}.ts`);
     const { vanillaToVue3 } = require(`${prefix}vanilla-to-vue3.ts`);
 
@@ -417,7 +427,7 @@ function getGeneratorCode(prefix) {
 
     const { vanillaToAngular } = require(`${prefix}vanilla-to-angular.ts`);
 
-    return [parser, vanillaToVue, vanillaToVue3, vanillaToReact, vanillaToReactFunctional, vanillaToAngular];
+    return [parser, vanillaToVue, vanillaToVue3, vanillaToReact, vanillaToReactFunctional, vanillaToAngular, vanillaToTypescript];
 }
 
 function generateExamples(type, importTypes, scope, trigger, done) {

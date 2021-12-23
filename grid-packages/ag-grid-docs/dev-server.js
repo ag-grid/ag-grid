@@ -556,6 +556,7 @@ function updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gr
     console.log("Updating framework SystemJS boilerplate config with modules...");
 
     const systemJsFiles = [
+        './documentation/static/example-runner/grid-typescript-boilerplate/systemjs.config.dev.js',
         './documentation/static/example-runner/grid-angular-boilerplate/systemjs.config.dev.js',
         './documentation/static/example-runner/grid-react-boilerplate/systemjs.config.dev.js',
         './documentation/static/example-runner/grid-vue-boilerplate/systemjs.config.dev.js',

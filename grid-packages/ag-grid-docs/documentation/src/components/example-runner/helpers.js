@@ -17,9 +17,9 @@ import isDevelopment from 'utils/is-development';
  * - 'vue' (Vue)
  * - 'vue3' (Vue 3)
  */
-const getInternalFramework = (framework, useFunctionalReact, useVue3) => {
+const getInternalFramework = (framework, useFunctionalReact, useVue3, useTypescript) => {
     if (framework === 'javascript') {
-        return 'vanilla';
+        return useTypescript ? 'typescript' : 'vanilla';
     } else if (framework === 'react' && useFunctionalReact) {
         return 'reactFunctional';
     } else if (framework === 'vue' && useVue3) {
@@ -40,6 +40,7 @@ export const getExampleInfo = (
     framework = 'javascript',
     useFunctionalReact = false,
     useVue3 = false,
+    useTypescript = false,
     importType = 'modules') => {
     if (library === 'charts') {
         // no support for modules or React Hooks or Vue 3 in charts yet
@@ -47,8 +48,13 @@ export const getExampleInfo = (
         useFunctionalReact = false;
     }
 
-    const internalFramework = getInternalFramework(framework, useFunctionalReact, useVue3);
-    const boilerPlateFramework = framework === 'vue' ? useVue3 ? 'vue3' : 'vue' : framework;
+    const internalFramework = getInternalFramework(framework, useFunctionalReact, useVue3, useTypescript);
+    const boilerPlateFramework =
+        framework === 'vue' ?
+            useVue3 ? 'vue3' : 'vue' :
+            framework === 'javascript' ?
+                useTypescript ? 'typescript' : 'javascript' :
+                framework;
     const boilerplatePath = `/example-runner/${library}-${boilerPlateFramework}-boilerplate/`;
 
     let sourcePath = `${pageName}/examples/${name}/`;
@@ -101,8 +107,8 @@ export const getExampleInfo = (
     };
 };
 
-const getFrameworkFiles = framework => {
-    if (framework === 'javascript') { return []; }
+const getFrameworkFiles = (framework, internalFramework) => {
+    if (framework === 'javascript' && internalFramework !== 'typescript') { return []; }
 
     let files = ['systemjs.config.js'];
 
@@ -118,7 +124,7 @@ const getFrameworkFiles = framework => {
 };
 
 export const getExampleFiles = exampleInfo => {
-    const { sourcePath, framework, boilerplatePath } = exampleInfo;
+    const { sourcePath, framework, internalFramework, boilerplatePath } = exampleInfo;
 
     const filesForExample = exampleInfo
         .getFiles()
@@ -128,7 +134,7 @@ export const getExampleFiles = exampleInfo => {
             isFramework: false
         }));
 
-    getFrameworkFiles(framework).forEach(file => filesForExample.push({
+    getFrameworkFiles(framework, internalFramework).forEach(file => filesForExample.push({
         path: file,
         publicURL: withPrefix(boilerplatePath + file),
         isFramework: true,
@@ -208,10 +214,11 @@ export const getCssFilePaths = theme => {
     return cssFiles.map(getCssFilePath);
 };
 
-export const getEntryFile = framework => {
+export const getEntryFile = (framework, internalFramework) => {
     const entryFile = {
         'react': 'index.jsx',
-        'angular': 'app/app.component.ts'
+        'angular': 'app/app.component.ts',
+        'javascript': internalFramework === 'typescript' ? 'main.ts' : 'main.js'
     };
 
     return entryFile[framework] || 'main.js';
