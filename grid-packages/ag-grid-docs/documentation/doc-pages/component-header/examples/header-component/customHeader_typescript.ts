@@ -1,5 +1,23 @@
-class CustomHeader {
-    init(agParams) {
+import { IHeaderParams } from '@ag-grid-community/core'
+
+export interface ICustomHeaderParams {
+    menuIcon: string;
+}
+
+export class CustomHeader {
+    private agParams!: ICustomHeaderParams & IHeaderParams;
+    private eGui!: HTMLDivElement;
+    eMenuButton: any;
+    eSortDownButton: any;
+    eSortUpButton: any;
+    eSortRemoveButton: any;
+    onMenuClickListener!: () => void;
+    onSortAscRequestedListener!: (event: any) => void;
+    onSortDescRequestedListener!: (event: any) => void;
+    onRemoveSortListener!: (event: any) => void;
+    onSortChangedListener!: () => void;
+
+    init(agParams: ICustomHeaderParams & IHeaderParams) {
         this.agParams = agParams;
         this.eGui = document.createElement('div');
         this.eGui.innerHTML = `
@@ -35,7 +53,7 @@ class CustomHeader {
             this.eSortDownButton.addEventListener('click', this.onSortAscRequestedListener);
             this.onSortDescRequestedListener = this.onSortRequested.bind(this, 'desc');
             this.eSortUpButton.addEventListener('click', this.onSortDescRequestedListener);
-            this.onRemoveSortListener = this.onSortRequested.bind(this, '');
+            this.onRemoveSortListener = this.onSortRequested.bind(this, null);
             this.eSortRemoveButton.addEventListener('click', this.onRemoveSortListener);
 
 
@@ -50,13 +68,13 @@ class CustomHeader {
     }
 
     onSortChanged() {
-        const deactivate = toDeactivateItems => {
+        const deactivate = (toDeactivateItems: any[]) => {
             toDeactivateItems.forEach(toDeactivate => {
                 toDeactivate.className = toDeactivate.className.split(' ')[0]
             });
         }
 
-        const activate = toActivate => {
+        const activate = (toActivate: any) => {
             toActivate.className = toActivate.className + " active";
         }
 
@@ -80,7 +98,7 @@ class CustomHeader {
         this.agParams.showColumnMenu(this.eMenuButton);
     }
 
-    onSortRequested(order, event) {
+    onSortRequested(order: 'asc' | 'desc' | null, event: any) {
         this.agParams.setSort(order, event.shiftKey);
     }
 
@@ -88,9 +106,9 @@ class CustomHeader {
         if (this.onMenuClickListener) {
             this.eMenuButton.removeEventListener('click', this.onMenuClickListener)
         }
-        this.eSortDownButton.removeEventListener('click', this.onSortRequestedListener);
-        this.eSortUpButton.removeEventListener('click', this.onSortRequestedListener);
-        this.eSortRemoveButton.removeEventListener('click', this.onSortRequestedListener);
+        this.eSortDownButton.removeEventListener('click', this.onSortAscRequestedListener);
+        this.eSortUpButton.removeEventListener('click', this.onSortDescRequestedListener);
+        this.eSortRemoveButton.removeEventListener('click', this.onRemoveSortListener);
         this.agParams.column.removeEventListener('sortChanged', this.onSortChangedListener);
     }
 }
