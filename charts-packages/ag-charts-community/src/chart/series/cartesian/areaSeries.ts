@@ -274,19 +274,19 @@ export class AreaSeries extends CartesianSeries {
         const yMinMax = yData.map(values => findMinMax(values)); // used for normalization
         const yLargestMinMax = this.findLargestMinMax(yMinMax);
 
+        // Calculate the sum of the absolute values of all items in each stack. Used for normalization of stacked areas.
+        const yAbsTotal = this.yData.map(values => values.reduce((acc, stack) => {
+            acc += Math.abs(stack);
+            return acc;
+        }, 0));
+
         let yMin: number;
         let yMax: number;
 
         if (normalizedTo && isFinite(normalizedTo)) {
             yMin = yLargestMinMax.min < 0 ? -normalizedTo : 0;
             yMax = normalizedTo;
-            yData.forEach((stack, i) => stack.forEach((y, j) => {
-                if (y < 0) {
-                    stack[j] = -y / yMinMax[i].min * normalizedTo;
-                } else {
-                    stack[j] = y / yMinMax[i].max * normalizedTo;
-                }
-            }));
+            yData.forEach((stack, i) => stack.forEach((y, j) => stack[j] = y / yAbsTotal[i] * normalizedTo));
         } else {
             yMin = yLargestMinMax.min;
             yMax = yLargestMinMax.max;
