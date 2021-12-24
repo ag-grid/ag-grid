@@ -67,7 +67,7 @@ export class PolarChart extends Chart {
 
         const centerX = shrinkRect.x + shrinkRect.width / 2;
         const centerY = shrinkRect.y + shrinkRect.height / 2;
-        const radius = Math.min(shrinkRect.width, shrinkRect.height) / 2;
+        const radius = Math.max(0, Math.min(shrinkRect.width, shrinkRect.height) / 2); // radius shouldn't be negative
 
         this.series.forEach(series => {
             if (series instanceof PolarSeries) {
