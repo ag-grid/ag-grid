@@ -7,7 +7,6 @@ import {
     removeInScopeJsDoc,
     tsCollect,
     tsGenerate,
-    tsIsDomContentLoaded,
     tsNodeIsFunctionCall,
     tsNodeIsFunctionWithName, tsNodeIsGlobalVarWithName, tsNodeIsInScope, tsNodeIsPropertyWithName, tsNodeIsTopLevelFunction, tsNodeIsTopLevelVariable, tsNodeIsUnusedFunction
 } from './parser-utils';
@@ -174,15 +173,6 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
     tsCollectors.push({
         matches: node => tsNodeIsTopLevelVariable(node, registered),
         apply: (bindings, node) => bindings.utils.push(tsGenerate(node.parent, tsTree))
-    });
-
-    tsCollectors.push({
-        matches: node => tsIsDomContentLoaded(node),
-        apply: (bindings, node) => {
-            const original = node.getText();
-            const body = (node.expression.arguments[1] as ts.FunctionExpression).body.getText();
-            bindings.onDomContentLoaded = { original, body }
-        }
     });
 
     // extract the xmlhttpreq call

@@ -18,15 +18,22 @@ export function vanillaToTypescript(bindings: any, mainFilePath: string): (impor
     }
 
     const tsFile = fs.readFileSync(mainFilePath, 'utf8')
-    const { original, body } = bindings.onDomContentLoaded;
 
-    // unwrap the setup code from the DOM loaded event as the DOM is loaded before the typescript file is transpiled.
     let unWrapped = tsFile
-        .replace(original, body)
+    // unwrap the setup code from the DOM loaded event as the DOM is loaded before the typescript file is transpiled.
+    // Regex
+    // (.*DOMContentLoaded.*)\n Match the line with DOMContentLoaded
+    // (.|\n)*? Match the shortest number of lines until the next part matches (body of the event handler)
+    // (\n}\)) Match a }) on a new line with no indentation
+        .replace(/(.*DOMContentLoaded.*)\n((.|\n)*?)(\n}\))/g,'$2')
         // update the import paths to remove the _typescript as the file name will be changed as part of the
         // example generation
         .replace(/_typescript/g, "");
 
+    if(unWrapped.includes('DOMContentLoaded')){
+        console.error('DomContentLoaded replace failed for', mainFilePath);
+        throw Error('DomContentLoaded replace failed for ' + mainFilePath)
+    }
     return importType => {
         return `${unWrapped} ${toAttach || ''}`;
     };
