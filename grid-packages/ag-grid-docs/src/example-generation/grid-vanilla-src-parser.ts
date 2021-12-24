@@ -7,6 +7,7 @@ import {
     removeInScopeJsDoc,
     tsCollect,
     tsGenerate,
+    tsIsDomContentLoaded,
     tsNodeIsFunctionCall,
     tsNodeIsFunctionWithName, tsNodeIsGlobalVarWithName, tsNodeIsInScope, tsNodeIsPropertyWithName, tsNodeIsTopLevelFunction, tsNodeIsTopLevelVariable, tsNodeIsUnusedFunction
 } from './parser-utils';
@@ -173,6 +174,15 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
     tsCollectors.push({
         matches: node => tsNodeIsTopLevelVariable(node, registered),
         apply: (bindings, node) => bindings.utils.push(tsGenerate(node.parent, tsTree))
+    });
+
+    tsCollectors.push({
+        matches: node => tsIsDomContentLoaded(node),
+        apply: (bindings, node) => {
+            const original = node.getText();
+            const body = (node.expression.arguments[1] as ts.FunctionExpression).body.getText();
+            bindings.onDomContentLoaded = { original, body }
+        }
     });
 
     // extract the xmlhttpreq call
@@ -423,6 +433,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
      * data -> url: dataUrl, callback: callback, http calls etc
      * resizeToFit -> true if sizeColumnsToFit is used
      * callbackDependencies -> lookup of function name to function external deps for react useCallback
+     * onDomContentLoaded -> used by Typescript example to unwrap the OnDomContentLoaded function
      */
     const tsBindings = tsCollect(
         tsTree,
@@ -436,7 +447,8 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
             instanceMethods: [],
             externalEventHandlers: [],
             utils: [],
-            callbackDependencies: {}
+            callbackDependencies: {},
+            onDomContentLoaded: {}
         },
         tsCollectors
     );

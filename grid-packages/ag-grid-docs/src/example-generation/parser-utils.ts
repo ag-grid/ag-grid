@@ -151,6 +151,17 @@ export function tsNodeIsTopLevelVariable(node: ts.Node, registered: string[] = [
     }
 }
 
+export function tsIsDomContentLoaded(node: ts.Node) {
+    if (ts.isExpressionStatement(node) && ts.isSourceFile(node.parent)) {
+        if (ts.isCallExpression(node.expression)) {
+            if (node.expression.arguments && node.expression.arguments.length > 0) {
+                const firstArg = node.expression.arguments[0];
+                return ts.isStringLiteral(firstArg) && firstArg.getText() === "'DOMContentLoaded'";
+            }
+        }
+    }
+}
+
 export function nodeIsFunctionWithName(node: any, name: string): boolean {
     // eg: function someFunction() { }
     return node.type === NodeType.Function && node.id.name === name;
