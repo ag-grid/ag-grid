@@ -14,11 +14,8 @@ const gridOptions: GridOptions = {
     { field: 'total' },
   ],
   rowData: null,
-  components: {
-    CustomHeader: CustomHeader,
-  },
   defaultColDef: {
-    headerComponent: 'CustomHeader',
+    headerComponent: CustomHeader,
   },
 }
 

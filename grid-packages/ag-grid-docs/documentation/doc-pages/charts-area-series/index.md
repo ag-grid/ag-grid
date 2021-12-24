@@ -117,8 +117,16 @@ This produces the following chart:
 Going back to our [stacked area series](#example-stacked-area-series) example, if we wanted to normalize the totals so that for any given year stack levels always added up to a certain value, for example 100%, we could add the following to our series config:
 
 ```js
-normalizedTo: 100
+normalizedTo: 1
 ```
+
+Note that in the example below:
+
+- `normalizedTo` is set to `1`.
+- A [Number Label Format String](/axes/#number-label-format-string) is used to format the label values presented on the Y axis.
+- The `%` type directive will multiply the axis label value by 100, and then display the number as decimal notation with a percent sign.
+- The `.0` is the precision directive and will ensure the value has 0 digits following the decimal point.
+- So `1` will be displayed as `100%` and `0` as `0%` on the Y number axis.
 
 [[note]]
 | It's possible to use any non-zero value to normalize to.

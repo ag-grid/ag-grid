@@ -217,7 +217,6 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
             if (property.name === 'rowData' && needsRowDataState) {
                 if (property.value !== "null" && property.value !== null) {
                     const rowDataIndex = stateProperties.indexOf('const [rowData, setRowData] = useState();');
-                    console.log(rowDataIndex, property.name, property.value);
                     stateProperties[rowDataIndex] = `const [rowData, setRowData] = useState(${property.value});`
                 }
             } else if (property.value === 'true' || property.value === 'false') {

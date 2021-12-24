@@ -2,7 +2,7 @@
 title: "Cell Renderer"
 ---
 
-The job of the grid is to lay out the cells. By default the grid will create the cell values using simple text. If you want more complex HTML inside the cells you can achieve this using cell renderers.
+By default the grid will create the cell values using simple text. If you want more complex HTML inside the cells you can achieve this using cell renderers.
 
 ## Simple Cell Renderer
 
@@ -57,7 +57,7 @@ md-include:component-lifecycle-vue.md
 
 The diagram below (which is taken from the section [Value Getters & Formatters](/value-getters/)) summarises the steps the grid takes while working out what to render and how to render.
 
-In short, a value is prepared. The value comes using either the `colDef.field` or the `colDef.valueGetter`. The value is also optionally passed through a `colDef.valueFormatter` if it exists. Then the value is finally placed into the DOM, either directly, or by using the chosen `colDef.cellRenderer`.
+In short, a value is prepared. The value comes using either the `colDef.field` or the `colDef.valueGetter`. The value is also optionally passed through a `colDef.valueFormatter` if it exists. Then the value is finally placed into the DOM, either directly, or by using the chosen `colDef.cellRendererComp`.
 
 [[only-javascript]]
 |<image-caption src='value-getters/resources/valueGetterFlow.svg' width="55rem" centered="true" alt='Value Getter Flow' constrained='true'></image-caption>
@@ -74,7 +74,7 @@ On top of the parameters provided by the grid, you can also provide your own par
 'configure' your cell renderer. For example, you might have a cell renderer for formatting currency but you need to
 provide what currency for your cell renderer to use.
 
-Provide params to a cell renderer using the colDef option `cellRendererParams`.
+Provide params to a cell renderer using the colDef option `cellRendererCompParams`.
 
 md-include:complementing-component-javascript.md
 md-include:complementing-component-angular.md
@@ -93,10 +93,14 @@ md-include:data-in-renderer-angular.md
 md-include:data-in-renderer-react.md
 md-include:data-in-renderer-vue.md
 
+<!-- 
+// taking these out, as they are regarding using JavaScript Function inside Framework Grid,
+// which isn't supported with the new xxxComp attributes.
 md-include:renderer-function-javascript.md
 md-include:renderer-function-angular.md
 md-include:renderer-function-react.md
-md-include:renderer-function-vue.md
+md-include:renderer-function-vue.md 
+-->
 
 [[only-javascript]]
 |[[note]]

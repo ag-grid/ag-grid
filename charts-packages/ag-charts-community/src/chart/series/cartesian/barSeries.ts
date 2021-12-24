@@ -418,11 +418,17 @@ export class BarSeries extends CartesianSeries {
             });
         }));
 
-        // Used for normalization of stacked bars. Contains min/max values for each stack in each group,
+        // Contains min/max values for each stack in each group,
         // where min is zero and max is a positive total of all values in the stack
         // or min is a negative total of all values in the stack and max is zero.
         const yMinMax = this.yData.map(group => group.map(stack => findMinMax(stack)));
         const { yData, normalizedTo } = this;
+
+        // Calculate the sum of the absolute values of all items in each stack in each group. Used for normalization of stacked bars.
+        const yAbsTotal = this.yData.map(group => group.map(stack => stack.reduce((acc, stack) => {
+            acc += Math.abs(stack);
+            return acc;
+        }, 0)));
 
         const yLargestMinMax = this.findLargestMinMax(yMinMax);
 
@@ -434,11 +440,7 @@ export class BarSeries extends CartesianSeries {
             yData.forEach((group, i) => {
                 group.forEach((stack, j) => {
                     stack.forEach((y, k) => {
-                        if (y < 0) {
-                            stack[k] = -y / yMinMax[i][j].min * normalizedTo;
-                        } else {
-                            stack[k] = y / yMinMax[i][j].max * normalizedTo;
-                        }
+                        stack[k] = y / yAbsTotal[i][j] * normalizedTo;
                     });
                 });
             });
