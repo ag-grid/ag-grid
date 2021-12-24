@@ -124,7 +124,12 @@ function format(source, parser) {
     if (process.env.AG_EXAMPLE_DISABLE_FORMATTING === 'true') {
         return formatted;
     }
-    return prettier.format(formatted, { parser, singleQuote: true, trailingComma: 'es5' });
+    try {
+        return prettier.format(formatted, { parser, singleQuote: true, trailingComma: 'es5' });
+    } catch (error) {
+        console.log(error)
+        return formatted;
+    }
 
 }
 
@@ -383,26 +388,31 @@ function createExampleGenerator(prefix, importTypes) {
             }
         }
 
-        const vanillaScripts = getMatchingPaths('*.{html,js}', { ignore: ['**/*_{angular,react,vue,vue3}.js'] });
-        const tsScripts = getMatchingPaths('*.{html,ts}', { ignore: ['**/*_{angular,react,vue,vue3}.ts', '**/main.ts'] });
-        const tsConfigs = new Map();
-        try {
-            const getSource = vanillaToTypescript(deepCloneObject(bindings), mainScript);
-            importTypes.forEach(importType => {
-                tsConfigs.set(importType, {
-                    'main.ts': getSource(importType),
-                });
-            });
-        } catch (e) {
-            console.error(`Failed to process Typescript example in ${examplePath}`, e);
-            throw e;
-        }
-
-        if (tsScripts.length > 1) {
-            importTypes.forEach(importType => writeExampleFiles(importType, 'typescript', 'typescript', tsScripts, tsConfigs.get(importType)));
-
+        if (type === 'mixed' && providedExamples['typescript']) {
+            importTypes.forEach(importType => copyProvidedExample(importType, 'typescript', providedExamples['typescript']));
         } else {
-            importTypes.forEach(importType => writeExampleFiles(importType, 'typescript', 'vanilla', vanillaScripts, tsConfigs.get(importType)));
+
+            const vanillaScripts = getMatchingPaths('*.{html,js}', { ignore: ['**/*_{angular,react,vue,vue3}.js'] });
+            const tsScripts = getMatchingPaths('*.{html,ts}', { ignore: ['**/*_{angular,react,vue,vue3}.ts', '**/main.ts'] });
+            const tsConfigs = new Map();
+            try {
+                const getSource = vanillaToTypescript(deepCloneObject(bindings), mainScript);
+                importTypes.forEach(importType => {
+                    tsConfigs.set(importType, {
+                        'main.ts': getSource(importType),
+                    });
+                });
+            } catch (e) {
+                console.error(`Failed to process Typescript example in ${examplePath}`, e);
+                throw e;
+            }
+
+            if (tsScripts.length > 1) {
+                importTypes.forEach(importType => writeExampleFiles(importType, 'typescript', 'typescript', tsScripts, tsConfigs.get(importType)));
+
+            } else {
+                importTypes.forEach(importType => writeExampleFiles(importType, 'typescript', 'vanilla', vanillaScripts, tsConfigs.get(importType)));
+            }
         }
     };
 }
