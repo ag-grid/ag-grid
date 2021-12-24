@@ -21,7 +21,13 @@ export function vanillaToTypescript(bindings: any, mainFilePath: string): (impor
     return importType => {
         const tsFile = fs.readFileSync(mainFilePath, 'utf8')
             // unwrap the setup code from the DOM loaded event as the DOM is loaded before the typescript file is transpiled.
-            .replace(/(.*DOMContentLoaded.*)\n((.|\n)*)(}\))/g, "$2")
+            // The Regex
+            //  - (.*DOMContentLoaded.*)\n match the full line containing the event name
+            //  - ((.|\n)*?) Match all the text over multiple lines. ? makes it take as few lines as possible before the next match
+            //  - (}\)) Match the closing brackets of the event listener
+            .replace(/(.*DOMContentLoaded.*)\n((.|\n)*?)(}\))/g, "$2")
+            // update the import paths to remove the _typescript as the file name will be changed as part of the
+            // example generation
             .replace(/_typescript/g, "");
 
 
