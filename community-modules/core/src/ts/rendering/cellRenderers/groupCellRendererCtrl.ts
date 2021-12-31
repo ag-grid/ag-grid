@@ -42,7 +42,7 @@ export interface GroupCellRendererParams extends ICellRendererParams {
     /** 'true' if comp is showing full width. */
     fullWidth: boolean;
 
-    /** Set to `true` to not include any padding (indentation) in teh child rows. */
+    /** Set to `true` to not include any padding (indentation) in the child rows. */
     suppressPadding: boolean;
     /** Set to `true` to suppress expand on double click. */
     suppressDoubleClickExpand: boolean;
