@@ -8,10 +8,10 @@ import {
     RefSelector
 } from "@ag-grid-community/core";
 import { PaddingPanel } from "./paddingPanel";
-import { ChartTranslator } from "../../../chartTranslator";
+import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { BackgroundPanel } from "./backgroundPanel";
 import TitlePanel from "./titlePanel";
-import { ChartOptionsService } from "../../../chartOptionsService";
+import { ChartOptionsService } from "../../../services/chartOptionsService";
 
 export class ChartPanel extends Component {
 
@@ -22,7 +22,7 @@ export class ChartPanel extends Component {
 
     @RefSelector('chartGroup') private chartGroup: AgGroupComponent;
 
-    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
+    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
     private activePanels: Component[] = [];
 
@@ -46,7 +46,7 @@ export class ChartPanel extends Component {
 
     private initGroup(): void {
         this.chartGroup
-            .setTitle(this.chartTranslator.translate('chart'))
+            .setTitle(this.chartTranslationService.translate('chart'))
             .toggleGroupExpand(true)
             .hideEnabledCheckbox(true);
     }

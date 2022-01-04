@@ -49,12 +49,12 @@ export class ChartDatasource extends BeanStub {
     public getData(params: ChartDatasourceParams): IData {
         if (params.crossFiltering) {
             if (params.grouping) {
-                console.warn("ag-grid: crossing filtering with row grouping is not supported.");
+                console.warn("AG Grid: crossing filtering with row grouping is not supported.");
                 return {chartData: [], columnNames: {}};
             }
 
             if (!this.gridOptionsWrapper.isRowModelDefault()) {
-                console.warn("ag-grid: crossing filtering is only supported in the client side row model.");
+                console.warn("AG Grid: crossing filtering is only supported in the client side row model.");
                 return {chartData: [], columnNames: {}};
             }
         }

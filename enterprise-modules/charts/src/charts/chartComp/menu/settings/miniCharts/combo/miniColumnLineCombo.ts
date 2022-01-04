@@ -3,9 +3,9 @@ import { Path, Rect } from "ag-charts-community";
 import { ChartType } from "@ag-grid-community/core";
 import { createColumnRects, CreateColumnRectsParams, createLinePaths } from "../miniChartHelpers";
 
-export class MiniGroupedColumnLine extends MiniChartWithAxes {
+export class MiniColumnLineCombo extends MiniChartWithAxes {
 
-    static chartType: ChartType = 'groupedColumnLine';
+    static chartType: ChartType = 'columnLineCombo';
 
     private columns: Rect[];
     private lines: Path[];
@@ -17,7 +17,7 @@ export class MiniGroupedColumnLine extends MiniChartWithAxes {
     ];
 
     constructor(container: HTMLElement, fills: string[], strokes: string[]) {
-        super(container, "groupedColumnLineTooltip");
+        super(container, "columnLineComboTooltip");
 
         const { root, columnData, lineData, size, padding } = this;
 

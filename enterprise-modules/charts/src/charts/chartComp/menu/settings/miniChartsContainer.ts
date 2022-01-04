@@ -1,15 +1,15 @@
 import { AgGroupComponent, Autowired, Component, PostConstruct } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
-import { ChartTranslator } from "../../chartTranslator";
+import { ChartTranslationService } from "../../services/chartTranslationService";
 import {
     MiniArea,
+    MiniAreaColumnCombo,
     MiniBar,
     MiniBubble,
     MiniColumn,
-    MiniDoughnut,
-    MiniGroupedColumnLine,
-    MiniSecondaryAxisCombo,
+    MiniColumnLineCombo,
     MiniCustomCombo,
+    MiniDoughnut,
     MiniHistogram,
     MiniLine,
     MiniNormalizedArea,
@@ -19,7 +19,7 @@ import {
     MiniScatter,
     MiniStackedArea,
     MiniStackedBar,
-    MiniStackedColumn
+    MiniStackedColumn,
 } from "./miniCharts";
 
 type ChartGroupsType =
@@ -45,7 +45,44 @@ export class MiniChartsContainer extends Component {
     private wrappers: { [key: string]: HTMLElement } = {};
     private chartController: ChartController;
 
-    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
+    private chartGroups: ChartGroups = {
+        columnGroup: [
+            MiniColumn,
+            MiniStackedColumn,
+            MiniNormalizedColumn
+        ],
+        barGroup: [
+            MiniBar,
+            MiniStackedBar,
+            MiniNormalizedBar
+        ],
+        pieGroup: [
+            MiniPie,
+            MiniDoughnut
+        ],
+        lineGroup: [
+            MiniLine
+        ],
+        scatterGroup: [
+            MiniScatter,
+            MiniBubble
+        ],
+        areaGroup: [
+            MiniArea,
+            MiniStackedArea,
+            MiniNormalizedArea
+        ],
+        histogramGroup: [
+            MiniHistogram
+        ],
+        combinationGroup:  [
+            MiniColumnLineCombo,
+            MiniAreaColumnCombo,
+            MiniCustomCombo
+        ]
+    };
+
+    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
     constructor(chartController: ChartController, fills: string[], strokes: string[]) {
         super(MiniChartsContainer.TEMPLATE);
@@ -57,49 +94,17 @@ export class MiniChartsContainer extends Component {
 
     @PostConstruct
     private init() {
-        const chartGroups: ChartGroups = {
-            columnGroup: [
-                MiniColumn,
-                MiniStackedColumn,
-                MiniNormalizedColumn
-            ],
-            barGroup: [
-                MiniBar,
-                MiniStackedBar,
-                MiniNormalizedBar
-            ],
-            pieGroup: [
-                MiniPie,
-                MiniDoughnut
-            ],
-            lineGroup: [
-                MiniLine
-            ],
-            scatterGroup: [
-                MiniScatter,
-                MiniBubble
-            ],
-            areaGroup: [
-                MiniArea,
-                MiniStackedArea,
-                MiniNormalizedArea
-            ],
-            histogramGroup: [
-                MiniHistogram
-            ],
-            combinationGroup: [
-                MiniGroupedColumnLine,
-                MiniSecondaryAxisCombo,
-                MiniCustomCombo
-            ]
-        };
+        // hide MiniCustomCombo if no custom combo exists
+        if (!this.chartController.customComboExists()) {
+            this.chartGroups.combinationGroup = this.chartGroups.combinationGroup.filter(miniChart => miniChart !== MiniCustomCombo);
+        }
 
         const eGui = this.getGui();
 
-        Object.keys(chartGroups).forEach(group => {
-            const chartGroup = chartGroups[group as ChartGroupsType];
+        Object.keys(this.chartGroups).forEach(group => {
+            const chartGroup = this.chartGroups[group as ChartGroupsType];
             const groupComponent = this.createBean(new AgGroupComponent({
-                title: this.chartTranslator.translate(group),
+                title: this.chartTranslationService.translate(group),
                 suppressEnabledCheckbox: true,
                 enabled: true,
                 suppressOpenCloseIcons: true,
@@ -113,7 +118,7 @@ export class MiniChartsContainer extends Component {
 
                 this.addManagedListener(miniWrapper, 'click', () => {
                     this.chartController.setChartType(MiniClass.chartType);
-                    this.refreshSelected();
+                    this.updateSelectedMiniChart();
                 });
 
                 this.wrappers[MiniClass.chartType] = miniWrapper;
@@ -125,14 +130,20 @@ export class MiniChartsContainer extends Component {
             eGui.appendChild(groupComponent.getGui());
         });
 
-        this.refreshSelected();
+        this.updateSelectedMiniChart();
     }
 
-    public refreshSelected() {
-        const type = this.chartController.getChartType();
+    public updateSelectedMiniChart(): HTMLElement | undefined {
+        const selectedChartType = this.chartController.getChartType();
+        for (const miniChartType in this.wrappers) {
+            const [isSelected, miniChartWrapper] = [miniChartType === selectedChartType, this.wrappers[miniChartType]];
 
-        for (const wrapper in this.wrappers) {
-            this.wrappers[wrapper].classList.toggle('ag-selected', wrapper === type);
+            miniChartWrapper.classList.toggle('ag-selected', isSelected);
+
+            if (isSelected) {
+                // used in the chart settings panel to scroll mini chart into view
+                return miniChartWrapper;
+            }
         }
     }
 }

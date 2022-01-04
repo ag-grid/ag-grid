@@ -20,6 +20,6 @@ export * from "./area/miniNormalizedArea";
 
 export * from "./histogram/miniHistogram";
 
-export * from "./combo/miniGroupedColumnLine";
-export * from "./combo/miniSecondaryAxisCombo";
+export * from "./combo/miniColumnLineCombo";
+export * from "./combo/miniAreaColumnCombo";
 export * from "./combo/miniCustomCombo";

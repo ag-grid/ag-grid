@@ -1,8 +1,8 @@
 import { Autowired, Component, PostConstruct } from "@ag-grid-community/core";
-import { ChartMenu } from "./menu/chartMenu";
-import { ChartTranslator } from "./chartTranslator";
-import { ChartController } from "./chartController";
-import { ChartOptionsService } from "./chartOptionsService";
+import { ChartMenu } from "../menu/chartMenu";
+import { ChartTranslationService } from "../services/chartTranslationService";
+import { ChartController } from "../chartController";
+import { ChartOptionsService } from "../services/chartOptionsService";
 
 interface BBox { x: number; y: number; width: number; height: number }
 
@@ -13,7 +13,7 @@ export class TitleEdit extends Component {
             style="padding:0; border:none; border-radius: 0; min-height: 0; text-align: center;" />
         `;
 
-    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
+    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
     private destroyableChartListeners: (() => void)[];
     private chartController: ChartController;
@@ -101,7 +101,7 @@ export class TitleEdit extends Component {
 
         // populate the input with the title, unless the title is the placeholder:
         const oldTitle = this.chartOptionsService.getChartOption('title.text');
-        const inputValue = oldTitle === this.chartTranslator.translate('titlePlaceholder') ? '' : oldTitle;
+        const inputValue = oldTitle === this.chartTranslationService.translate('titlePlaceholder') ? '' : oldTitle;
         inputElement.value = inputValue;
 
         const inputRect = inputElement.getBoundingClientRect();

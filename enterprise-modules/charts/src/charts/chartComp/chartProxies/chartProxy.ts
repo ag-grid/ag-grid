@@ -1,8 +1,8 @@
 import { _, AgChartThemeOverrides, ChartType, SeriesChartType } from "@ag-grid-community/core";
 import { AgChartTheme, CategoryAxis, Chart, ChartTheme, getChartTheme, themes, } from "ag-charts-community";
-import { deepMerge } from "../object";
+import { deepMerge } from "../utils/object";
 import { CrossFilteringContext } from "../../chartService";
-import { ChartThemeOverrideObjectName, getChartThemeOverridesObjectName } from "../chartThemeOverridesMapper";
+import { ChartThemeOverrideObjectName, getChartThemeOverridesObjectName } from "../utils/chartThemeOverridesMapper";
 
 export interface ChartProxyParams {
     chartType: ChartType;

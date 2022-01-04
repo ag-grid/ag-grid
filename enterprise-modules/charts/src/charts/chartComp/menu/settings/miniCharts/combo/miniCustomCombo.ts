@@ -4,8 +4,7 @@ import { createColumnRects, CreateColumnRectsParams, createLinePaths } from "../
 import { MiniChart } from "../miniChart";
 
 export class MiniCustomCombo extends MiniChart {
-    // TODO: update chart type
-    static chartType: ChartType = 'groupedColumnLine';
+    static chartType: ChartType = 'customCombo';
 
     private columns: Rect[];
     private lines: Path[];

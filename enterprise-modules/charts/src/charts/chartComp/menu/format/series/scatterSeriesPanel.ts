@@ -9,10 +9,10 @@ import {
     RefSelector
 } from "@ag-grid-community/core";
 import { MarkersPanel } from "./markersPanel";
-import { ChartTranslator } from "../../../chartTranslator";
+import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { initFontPanelParams } from "../widgetInitialiser";
 import { FontPanel, FontPanelParams } from "../fontPanel";
-import { ChartOptionsService } from "../../../chartOptionsService";
+import { ChartOptionsService } from "../../../services/chartOptionsService";
 
 export class ScatterSeriesPanel extends Component {
 
@@ -26,7 +26,7 @@ export class ScatterSeriesPanel extends Component {
     @RefSelector('seriesGroup') private seriesGroup: AgGroupComponent;
     @RefSelector('seriesTooltipsToggle') private seriesTooltipsToggle: AgToggleButton;
 
-    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
+    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
     private activePanels: Component[] = [];
 
@@ -50,14 +50,14 @@ export class ScatterSeriesPanel extends Component {
 
     private initSeriesGroup() {
         this.seriesGroup
-            .setTitle(this.chartTranslator.translate("series"))
+            .setTitle(this.chartTranslationService.translate("series"))
             .toggleGroupExpand(false)
             .hideEnabledCheckbox(true);
     }
 
     private initSeriesTooltips() {
         this.seriesTooltipsToggle
-            .setLabel(this.chartTranslator.translate("tooltips"))
+            .setLabel(this.chartTranslationService.translate("tooltips"))
             .setLabelAlignment("left")
             .setLabelWidth("flex")
             .setInputWidth(45)
@@ -72,7 +72,7 @@ export class ScatterSeriesPanel extends Component {
     }
 
     private initLabelPanel() {
-        const params: FontPanelParams = initFontPanelParams(this.chartTranslator, this.chartOptionsService);
+        const params: FontPanelParams = initFontPanelParams(this.chartTranslationService, this.chartOptionsService);
         const labelPanelComp = this.createBean(new FontPanel(params));
         this.activePanels.push(labelPanelComp);
         this.seriesGroup.addItem(labelPanelComp);

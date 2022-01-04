@@ -9,9 +9,9 @@ import {
     Events,
     GridApi
 } from "@ag-grid-community/core";
-import { ChartController } from "./chartController";
+import { ChartController } from "../chartController";
 import { CategoryAxis, Chart, ChartAxis, GroupedCategoryAxis, NumberAxis, TimeAxis } from "ag-charts-community";
-import { getChartThemeOverridesObjectName } from "./chartThemeOverridesMapper";
+import { getChartThemeOverridesObjectName } from "../utils/chartThemeOverridesMapper";
 
 export class ChartOptionsService extends BeanStub {
 

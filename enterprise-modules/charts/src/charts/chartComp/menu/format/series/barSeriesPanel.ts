@@ -11,9 +11,9 @@ import {
 } from "@ag-grid-community/core";
 import { ShadowPanel } from "./shadowPanel";
 import { FontPanel, FontPanelParams } from "../fontPanel";
-import { ChartTranslator } from "../../../chartTranslator";
+import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { initFillOpacitySlider, initFontPanelParams, initLineOpacitySlider } from "../widgetInitialiser";
-import { ChartOptionsService } from "../../../chartOptionsService";
+import { ChartOptionsService } from "../../../services/chartOptionsService";
 import { getMaxValue } from "../formatPanel";
 
 export class BarSeriesPanel extends Component {
@@ -36,7 +36,7 @@ export class BarSeriesPanel extends Component {
     @RefSelector('seriesLineOpacitySlider') private seriesLineOpacitySlider: AgSlider;
     @RefSelector('seriesFillOpacitySlider') private seriesFillOpacitySlider: AgSlider;
 
-    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
+    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
     private activePanels: Component[] = [];
 
@@ -67,7 +67,7 @@ export class BarSeriesPanel extends Component {
 
     private initSeriesTooltips() {
         this.seriesTooltipsToggle
-            .setLabel(this.chartTranslator.translate("tooltips"))
+            .setLabel(this.chartTranslationService.translate("tooltips"))
             .setLabelAlignment("left")
             .setLabelWidth("flex")
             .setInputWidth(45)
@@ -78,7 +78,7 @@ export class BarSeriesPanel extends Component {
     private initSeriesStrokeWidth() {
         const currentValue = this.chartOptionsService.getSeriesOption<number>("strokeWidth");
         this.seriesStrokeWidthSlider
-            .setLabel(this.chartTranslator.translate("strokeWidth"))
+            .setLabel(this.chartTranslationService.translate("strokeWidth"))
             .setMaxValue(getMaxValue(currentValue, 10))
             .setTextFieldWidth(45)
             .setValue(`${currentValue}`)
@@ -88,7 +88,7 @@ export class BarSeriesPanel extends Component {
     private initSeriesLineDash() {
         const currentValue = this.chartOptionsService.getSeriesOption<number[]>("lineDash")[0];
         this.seriesLineDashSlider
-            .setLabel(this.chartTranslator.translate('lineDash'))
+            .setLabel(this.chartTranslationService.translate('lineDash'))
             .setMaxValue(getMaxValue(currentValue, 30))
             .setTextFieldWidth(45)
             .setValue(`${currentValue}`)
@@ -96,12 +96,12 @@ export class BarSeriesPanel extends Component {
     }
 
     private initOpacity() {
-        initLineOpacitySlider(this.seriesLineOpacitySlider, this.chartTranslator, this.chartOptionsService);
-        initFillOpacitySlider(this.seriesFillOpacitySlider, this.chartTranslator, this.chartOptionsService);
+        initLineOpacitySlider(this.seriesLineOpacitySlider, this.chartTranslationService, this.chartOptionsService);
+        initFillOpacitySlider(this.seriesFillOpacitySlider, this.chartTranslationService, this.chartOptionsService);
     }
 
     private initLabelPanel() {
-        const params: FontPanelParams = initFontPanelParams(this.chartTranslator, this.chartOptionsService);
+        const params: FontPanelParams = initFontPanelParams(this.chartTranslationService, this.chartOptionsService);
         const labelPanelComp = this.createBean(new FontPanel(params));
         this.activePanels.push(labelPanelComp);
         this.seriesGroup.addItem(labelPanelComp);
@@ -114,9 +114,9 @@ export class BarSeriesPanel extends Component {
     }
 
     private getTitle() {
-        let seriesTitle = this.chartTranslator.translate("series");
+        let seriesTitle = this.chartTranslationService.translate("series");
         if (['groupedColumnLine', 'stackedColumnLine'].includes(this.chartOptionsService.getChartType())) {
-            const columnTitle = this.chartTranslator.translate("columnGroup");
+            const columnTitle = this.chartTranslationService.translate("columnGroup");
             return  `${seriesTitle} (${columnTitle})`;
         }
         return seriesTitle;

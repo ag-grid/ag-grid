@@ -7,8 +7,8 @@ import {
     PostConstruct,
     RefSelector
 } from "@ag-grid-community/core";
-import { ChartTranslator } from "../../../chartTranslator";
-import { ChartOptionsService } from "../../../chartOptionsService";
+import { ChartTranslationService } from "../../../services/chartTranslationService";
+import { ChartOptionsService } from "../../../services/chartOptionsService";
 
 export class BackgroundPanel extends Component {
     public static TEMPLATE = /* html */
@@ -21,7 +21,7 @@ export class BackgroundPanel extends Component {
     @RefSelector('chartBackgroundGroup') private group: AgGroupComponent;
     @RefSelector('colorPicker') private colorPicker: AgColorPicker;
 
-    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
+    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
     constructor(private readonly chartOptionsService: ChartOptionsService) {
         super();
@@ -42,7 +42,7 @@ export class BackgroundPanel extends Component {
 
     private initGroup(): void {
         this.group
-            .setTitle(this.chartTranslator.translate('background'))
+            .setTitle(this.chartTranslationService.translate('background'))
             .setEnabled(this.chartOptionsService.getChartOption('background.visible'))
             .hideOpenCloseIcons(true)
             .hideEnabledCheckbox(false)
@@ -51,7 +51,7 @@ export class BackgroundPanel extends Component {
 
     private initColorPicker(): void {
         this.colorPicker
-            .setLabel(this.chartTranslator.translate('color'))
+            .setLabel(this.chartTranslationService.translate('color'))
             .setLabelWidth('flex')
             .setInputWidth(45)
             .setValue(this.chartOptionsService.getChartOption('background.fill'))

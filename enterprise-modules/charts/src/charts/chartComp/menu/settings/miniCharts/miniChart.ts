@@ -1,10 +1,10 @@
 import { Autowired, Component, PostConstruct } from "@ag-grid-community/core";
-import { ChartTranslator } from "../../../chartTranslator";
+import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { Group, Scene } from "ag-charts-community";
 
 export abstract class MiniChart extends Component {
 
-    @Autowired('chartTranslator') protected chartTranslator: ChartTranslator;
+    @Autowired('chartTranslationService') protected chartTranslationService: ChartTranslationService;
 
     protected tooltipName: string;
     protected readonly size = 58;
@@ -27,7 +27,7 @@ export abstract class MiniChart extends Component {
 
     @PostConstruct
     protected init() {
-        this.scene.canvas.element.title = this.chartTranslator.translate(this.tooltipName);
+        this.scene.canvas.element.title = this.chartTranslationService.translate(this.tooltipName);
     }
 
     abstract updateColors(fills: string[], strokes: string[]): void;

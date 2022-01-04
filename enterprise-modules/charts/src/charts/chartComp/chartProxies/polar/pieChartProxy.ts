@@ -1,7 +1,7 @@
 import { AgChart, LegendClickEvent, PieSeries, PolarChart } from "ag-charts-community";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { PolarChartProxy } from "./polarChartProxy";
-import { changeOpacity } from "../../color";
+import { changeOpacity } from "../../utils/color";
 
 export class PieChartProxy extends PolarChartProxy {
 

@@ -21,7 +21,7 @@ import {
     SeriesChartType
 } from "@ag-grid-community/core";
 import { ChartMenu } from "./menu/chartMenu";
-import { TitleEdit } from "./titleEdit";
+import { TitleEdit } from "./chartTitle/titleEdit";
 import { ChartController } from "./chartController";
 import { ChartDataModel, ChartModelParams } from "./chartDataModel";
 import { BarChartProxy } from "./chartProxies/cartesian/barChartProxy";
@@ -32,10 +32,10 @@ import { PieChartProxy } from "./chartProxies/polar/pieChartProxy";
 import { DoughnutChartProxy } from "./chartProxies/polar/doughnutChartProxy";
 import { ScatterChartProxy } from "./chartProxies/cartesian/scatterChartProxy";
 import { HistogramChartProxy } from "./chartProxies/cartesian/histogramChartProxy";
-import { ChartTranslator } from "./chartTranslator";
-import { ChartCrossFilter } from "./chartCrossFilter";
+import { ChartTranslationService } from "./services/chartTranslationService";
+import { ChartCrossFilterService } from "./services/chartCrossFilterService";
 import { CrossFilteringContext } from "../chartService";
-import { ChartOptionsService } from "./chartOptionsService";
+import { ChartOptionsService } from "./services/chartOptionsService";
 import { ComboChartProxy } from "./chartProxies/combo/comboChartProxy";
 
 export interface GridChartParams {
@@ -73,9 +73,9 @@ export class GridChartComp extends Component {
     @RefSelector('eTitleEditContainer') private readonly eTitleEditContainer: HTMLDivElement;
 
     @Autowired('environment') private readonly environment: Environment;
-    @Autowired('chartTranslator') private readonly chartTranslator: ChartTranslator;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('chartCrossFilter') private readonly crossFilter: ChartCrossFilter;
+    @Autowired('chartCrossFilterService') private readonly crossFilterService: ChartCrossFilterService;
+    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
     @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('columnApi') private readonly columnApi: ColumnApi;
@@ -180,7 +180,7 @@ export class GridChartComp extends Component {
         const crossFilterCallback = (event: any, reset: boolean) => {
             const ctx = this.params.crossFilteringContext;
             ctx.lastSelectedChartId = reset ? '' : this.chartController.getChartId();
-            this.crossFilter.filter(event, reset);
+            this.crossFilterService.filter(event, reset);
         }
 
         const chartType = this.chartController.getChartType();
@@ -218,7 +218,6 @@ export class GridChartComp extends Component {
 
         this.chartController.setChartProxy(this.chartProxy);
         this.chartOptionsService = this.createBean(new ChartOptionsService(this.chartController));
-
         this.titleEdit && this.titleEdit.refreshTitle(this.chartController, this.chartOptionsService);
     }
 
@@ -260,14 +259,17 @@ export class GridChartComp extends Component {
                 return new ScatterChartProxy(chartProxyParams);
             case 'histogram':
                 return new HistogramChartProxy(chartProxyParams);
-            case 'groupedColumnLine':
-            case 'stackedColumnLine':
+            case 'columnLineCombo':
+            case 'areaColumnCombo':
+            case 'customCombo':
                 return new ComboChartProxy(chartProxyParams);
+            default:
+                throw `AG Grid: Unable to create chart as an invalid chartType = '${chartProxyParams.chartType}' was supplied.`;
         }
     }
 
     private addDialog(): void {
-        const title = this.chartTranslator.translate(this.params.pivotChart ? 'pivotChartTitle' : 'rangeChartTitle');
+        const title = this.chartTranslationService.translate(this.params.pivotChart ? 'pivotChartTitle' : 'rangeChartTitle');
 
         const { width, height } = this.getBestDialogSize();
 
@@ -395,7 +397,6 @@ export class GridChartComp extends Component {
         if (this.chartController.isActiveXYChart()) {
             minFieldsRequired = this.chartController.getChartType() === 'bubble' ? 3 : 2;
         }
-
         const isEmptyChart = fields.length < minFieldsRequired || data.length === 0;
 
         if (container) {
@@ -405,12 +406,12 @@ export class GridChartComp extends Component {
         }
 
         if (pivotModeDisabled) {
-            this.eEmpty.innerText = this.chartTranslator.translate('pivotChartRequiresPivotMode');
+            this.eEmpty.innerText = this.chartTranslationService.translate('pivotChartRequiresPivotMode');
             return true;
         }
 
         if (isEmptyChart) {
-            this.eEmpty.innerText = this.chartTranslator.translate('noDataToChart');
+            this.eEmpty.innerText = this.chartTranslationService.translate('noDataToChart');
             return true;
         }
 

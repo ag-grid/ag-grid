@@ -1,13 +1,13 @@
 import { _, Autowired, Component, PostConstruct } from "@ag-grid-community/core";
 import { Font, FontPanel, FontPanelParams } from "../fontPanel";
-import { ChartTranslator } from "../../../chartTranslator";
-import { ChartOptionsService } from "../../../chartOptionsService";
+import { ChartTranslationService } from "../../../services/chartTranslationService";
+import { ChartOptionsService } from "../../../services/chartOptionsService";
 
 export default class TitlePanel extends Component {
 
     public static TEMPLATE = /* html */ `<div></div>`;
 
-    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
+    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
     private activePanels: Component[] = [];
     private titlePlaceholder: string;
@@ -19,7 +19,7 @@ export default class TitlePanel extends Component {
     @PostConstruct
     private init() {
         this.initFontPanel();
-        this.titlePlaceholder = this.chartTranslator.translate('titlePlaceholder');
+        this.titlePlaceholder = this.chartTranslationService.translate('titlePlaceholder');
     }
 
     private hasTitle(): boolean {
@@ -51,7 +51,7 @@ export default class TitlePanel extends Component {
         }
 
         const fontPanelParams: FontPanelParams = {
-            name: this.chartTranslator.translate('title'),
+            name: this.chartTranslationService.translate('title'),
             enabled: this.hasTitle(),
             suppressEnabledCheckbox: false,
             initialFont,

@@ -9,7 +9,7 @@ import {
     PostConstruct,
     RefSelector
 } from "@ag-grid-community/core";
-import { ChartTranslator } from "../../chartTranslator";
+import { ChartTranslationService } from "../../services/chartTranslationService";
 
 export interface Font {
     family?: string;
@@ -48,7 +48,7 @@ export class FontPanel extends Component {
     @RefSelector('sizeSelect') private sizeSelect: AgSelect;
     @RefSelector('colorPicker') private colorPicker: AgColorPicker;
 
-    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
+    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
     private params: FontPanelParams;
     private activeComps: Component[] = [];
@@ -85,7 +85,7 @@ export class FontPanel extends Component {
 
     private initGroup() {
         this.fontGroup
-            .setTitle(this.params.name || this.chartTranslator.translate('font'))
+            .setTitle(this.params.name || this.chartTranslationService.translate('font'))
             .setEnabled(this.params.enabled)
             .hideEnabledCheckbox(!!this.params.suppressEnabledCheckbox)
             .hideOpenCloseIcons(true)
@@ -163,7 +163,7 @@ export class FontPanel extends Component {
             .setValue(`${size}`)
             .onValueChange(newValue => this.params.setFont({ size: parseInt(newValue!, 10) }));
 
-        this.sizeSelect.setLabel(this.chartTranslator.translate('size'));
+        this.sizeSelect.setLabel(this.chartTranslationService.translate('size'));
     }
 
     private initFontWeightStyleSelect() {
@@ -185,7 +185,7 @@ export class FontPanel extends Component {
 
         const options = weightStyles.map(ws => ({
             value: ws.name,
-            text: this.chartTranslator.translate(ws.name),
+            text: this.chartTranslationService.translate(ws.name),
         }));
 
         this.weightStyleSelect.addOptions(options)
@@ -200,7 +200,7 @@ export class FontPanel extends Component {
 
     private initFontColorPicker() {
         this.colorPicker
-            .setLabel(this.chartTranslator.translate('color'))
+            .setLabel(this.chartTranslationService.translate('color'))
             .setInputWidth(45)
             .setValue(`${this.params.initialFont.color}`)
             .onValueChange(newColor => this.params.setFont({ color: newColor! }));

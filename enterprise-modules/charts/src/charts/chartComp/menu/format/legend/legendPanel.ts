@@ -10,8 +10,8 @@ import {
     RefSelector,
 } from "@ag-grid-community/core";
 import { Font, FontPanel, FontPanelParams } from "../fontPanel";
-import { ChartTranslator } from "../../../chartTranslator";
-import { ChartOptionsService } from "../../../chartOptionsService";
+import { ChartTranslationService } from "../../../services/chartTranslationService";
+import { ChartOptionsService } from "../../../services/chartOptionsService";
 import { LegendPosition } from "ag-charts-community";
 import { getMaxValue } from "../formatPanel";
 
@@ -39,7 +39,7 @@ export class LegendPanel extends Component {
     @RefSelector('itemPaddingXSlider') private itemPaddingXSlider: AgSlider;
     @RefSelector('itemPaddingYSlider') private itemPaddingYSlider: AgSlider;
 
-    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
+    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
     private activePanels: Component[] = [];
 
@@ -64,7 +64,7 @@ export class LegendPanel extends Component {
 
     private initLegendGroup() {
         this.legendGroup
-            .setTitle(this.chartTranslator.translate("legend"))
+            .setTitle(this.chartTranslationService.translate("legend"))
             .hideEnabledCheckbox(false)
             .setEnabled(this.chartOptionsService.getChartOption<boolean>("legend.enabled") || false)
             .toggleGroupExpand(false)
@@ -78,12 +78,12 @@ export class LegendPanel extends Component {
         const positions = [LegendPosition.Top, LegendPosition.Right, LegendPosition.Bottom, LegendPosition.Left];
 
         this.legendPositionSelect
-            .setLabel(this.chartTranslator.translate("position"))
+            .setLabel(this.chartTranslationService.translate("position"))
             .setLabelWidth("flex")
             .setInputWidth(80)
             .addOptions(positions.map(position => ({
                 value: position,
-                text: this.chartTranslator.translate(position)
+                text: this.chartTranslationService.translate(position)
             })))
             .setValue(this.chartOptionsService.getChartOption("legend.position"))
             .onValueChange(newValue => this.chartOptionsService.setChartOption("legend.position", newValue));
@@ -92,7 +92,7 @@ export class LegendPanel extends Component {
     private initLegendPadding() {
         const currentValue = this.chartOptionsService.getChartOption<number>("legend.spacing");
         this.legendPaddingSlider
-            .setLabel(this.chartTranslator.translate("spacing"))
+            .setLabel(this.chartTranslationService.translate("spacing"))
             .setMaxValue(getMaxValue(currentValue, 200))
             .setValue(`${currentValue}`)
             .setTextFieldWidth(45)
@@ -102,7 +102,7 @@ export class LegendPanel extends Component {
     private initLegendItems() {
         const initSlider = (expression: string, labelKey: string, input: AgSlider, defaultMaxValue: number) => {
             const currentValue = this.chartOptionsService.getChartOption<number>(`legend.${expression}`);
-            input.setLabel(this.chartTranslator.translate(labelKey))
+            input.setLabel(this.chartTranslationService.translate(labelKey))
                 .setMaxValue(getMaxValue(currentValue, defaultMaxValue))
                 .setValue(`${currentValue}`)
                 .setTextFieldWidth(45)

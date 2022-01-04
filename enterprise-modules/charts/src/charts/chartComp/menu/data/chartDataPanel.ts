@@ -20,14 +20,14 @@ import {
 } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
 import { ColState } from "../../chartDataModel";
-import { ChartTranslator } from "../../chartTranslator";
-import { ChartOptionsService } from "../../chartOptionsService";
+import { ChartTranslationService } from "../../services/chartTranslationService";
+import { ChartOptionsService } from "../../services/chartOptionsService";
 
 export class ChartDataPanel extends Component {
     public static TEMPLATE = /* html */ `<div class="ag-chart-data-wrapper"></div>`;
 
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
+    @Autowired('chartTranslationService') private chartTranslator: ChartTranslationService;
 
     private categoriesGroupComp?: AgGroupComponent;
     private seriesGroupComp?: AgGroupComponent;
@@ -73,6 +73,13 @@ export class ChartDataPanel extends Component {
                     this.columnComps.get(col.colId)!.setLabel(getSeriesLabel(col));
                 });
             }
+
+            // TODO: improve - changing categories or series will expand group
+            // recreate series chart type group if it exists as series may be added or removed via series group panel
+            _.removeFromParent(this.getGui().querySelector('#seriesChartTypeGroup'));
+            this.seriesChartTypeGroupComp = this.destroyBean(this.seriesChartTypeGroupComp);
+            this.createSeriesChartTypeGroup(valueCols);
+
         } else {
             // otherwise we re-create everything
             this.clearComponents();
@@ -83,8 +90,9 @@ export class ChartDataPanel extends Component {
         }
     }
 
-    private addComponent(parent: HTMLElement, component: AgGroupComponent): void {
+    private addComponent(parent: HTMLElement, component: AgGroupComponent, id: string): void {
         const eDiv = document.createElement('div');
+        eDiv.id = id;
         eDiv.className = 'ag-chart-data-section';
         eDiv.appendChild(component.getGui());
         parent.appendChild(eDiv);
@@ -120,7 +128,7 @@ export class ChartDataPanel extends Component {
             this.columnComps.set(col.colId, comp);
         });
 
-        this.addComponent(this.getGui(), this.categoriesGroupComp);
+        this.addComponent(this.getGui(), this.categoriesGroupComp, 'categoriesGroup');
     }
 
     private createSeriesGroup(columns: ColState[]): void {
@@ -166,7 +174,7 @@ export class ChartDataPanel extends Component {
             this.addDragHandle(comp, col);
         });
 
-        this.addComponent(this.getGui(), this.seriesGroupComp);
+        this.addComponent(this.getGui(), this.seriesGroupComp, 'seriesGroup');
 
         const dropTarget: DropTarget = {
             getContainer: this.getGui.bind(this),
@@ -178,9 +186,7 @@ export class ChartDataPanel extends Component {
     }
 
     private createSeriesChartTypeGroup(columns: ColState[]): void {
-        // only display series chart types for combo charts
-        const comboChart = ['groupedColumnLine', 'stackedColumnLine'].includes(this.chartController.getChartType());
-        if (!comboChart) { return; }
+        if (!this.chartController.isComboChart()) { return; }
 
         this.seriesChartTypeGroupComp = this.createManagedBean(new AgGroupComponent({
             title: 'Series Chart Type', //TODO
@@ -194,6 +200,7 @@ export class ChartDataPanel extends Component {
 
         columns.forEach(col => {
             const seriesChartType: SeriesChartType = seriesChartTypes.filter(s => s.colId === col.colId)[0];
+            if (!seriesChartType) { return; }
 
             const seriesItemGroup = this.seriesChartTypeGroupComp!.createManagedBean(new AgGroupComponent({
                 title: col.displayName!,
@@ -203,7 +210,7 @@ export class ChartDataPanel extends Component {
                 cssIdentifier: 'charts-format-sub-level'
             }));
 
-            const secondaryAxisComp = this.seriesGroupComp!
+            const secondaryAxisComp = this.seriesChartTypeGroupComp!
                 .createManagedBean(new AgCheckbox())
                 .setLabel('Secondary Axis') //TODO
                 .setLabelWidth("flex")
@@ -215,9 +222,9 @@ export class ChartDataPanel extends Component {
                 {value: 'groupedColumn', text: 'Grouped Column'},
                 {value: 'stackedColumn', text: 'Stacked Column'},
                 {value: 'normalizedColumn', text: 'Normalized Column'},
-                {value: 'groupedBar', text: 'Grouped Bar'},
-                {value: 'stackedBar', text: 'Stacked Bar'},
-                {value: 'normalizedBar', text: 'Normalized Bar'},
+                // {value: 'groupedBar', text: 'Grouped Bar'},
+                // {value: 'stackedBar', text: 'Stacked Bar'},
+                // {value: 'normalizedBar', text: 'Normalized Bar'},
                 {value: 'line', text: 'Line'},
                 {value: 'area', text: 'Area'},
                 {value: 'stackedArea', text: 'Stacked Area'},
@@ -237,7 +244,7 @@ export class ChartDataPanel extends Component {
             this.seriesChartTypeGroupComp!.addItem(seriesItemGroup);
         });
 
-        this.addComponent(this.getGui(), this.seriesChartTypeGroupComp);
+        this.addComponent(this.getGui(), this.seriesChartTypeGroupComp, 'seriesChartTypeGroup');
     }
 
     private addDragHandle(comp: AgCheckbox, col: ColState): void {

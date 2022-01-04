@@ -8,8 +8,8 @@ import {
     PostConstruct,
     RefSelector,
 } from "@ag-grid-community/core";
-import { ChartTranslator } from "../../../chartTranslator";
-import { ChartOptionsService } from "../../../chartOptionsService";
+import { ChartTranslationService } from "../../../services/chartTranslationService";
+import { ChartOptionsService } from "../../../services/chartOptionsService";
 import { getMaxValue } from "../formatPanel";
 
 export class ShadowPanel extends Component {
@@ -30,7 +30,7 @@ export class ShadowPanel extends Component {
     @RefSelector('shadowXOffsetSlider') private shadowXOffsetSlider: AgSlider;
     @RefSelector('shadowYOffsetSlider') private shadowYOffsetSlider: AgSlider;
 
-    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
+    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
     constructor(private readonly chartOptionsService: ChartOptionsService) {
         super();
@@ -54,14 +54,14 @@ export class ShadowPanel extends Component {
 
     private initSeriesShadow() {
         this.shadowGroup
-            .setTitle(this.chartTranslator.translate("shadow"))
+            .setTitle(this.chartTranslationService.translate("shadow"))
             .setEnabled(this.chartOptionsService.getSeriesOption("shadow.enabled"))
             .hideOpenCloseIcons(true)
             .hideEnabledCheckbox(false)
             .onEnableChange(newValue => this.chartOptionsService.setSeriesOption("shadow.enabled", newValue));
 
         this.shadowColorPicker
-            .setLabel(this.chartTranslator.translate("color"))
+            .setLabel(this.chartTranslationService.translate("color"))
             .setLabelWidth("flex")
             .setInputWidth(45)
             .setValue(this.chartOptionsService.getSeriesOption("shadow.color"))
@@ -69,7 +69,7 @@ export class ShadowPanel extends Component {
 
         const initInput = (input: AgSlider, property: string, minValue: number, defaultMaxValue: number) => {
             const currentValue = this.chartOptionsService.getSeriesOption<number>(`shadow.${property}`);
-            input.setLabel(this.chartTranslator.translate(property))
+            input.setLabel(this.chartTranslationService.translate(property))
                 .setMinValue(minValue)
                 .setMaxValue(getMaxValue(currentValue, defaultMaxValue))
                 .setValue(`${currentValue}`)
