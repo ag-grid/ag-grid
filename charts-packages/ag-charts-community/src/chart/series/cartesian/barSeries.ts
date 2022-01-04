@@ -254,13 +254,17 @@ export class BarSeries extends CartesianSeries {
             }
         }
 
-        const { seriesItemEnabled, hideInChart } = this;
-        seriesItemEnabled.clear();
-        yKeys.forEach(stack => {
-            stack.forEach(yKey => hideInChart.indexOf(yKey) < 0 ? seriesItemEnabled.set(yKey, true) : seriesItemEnabled.set(yKey, false));
-        });
-
         if (!equal(this._yKeys, yKeys)) {
+
+            const { seriesItemEnabled, hideInChart } = this;
+            yKeys.forEach(stack => {
+                stack.forEach(yKey => {
+                    if (seriesItemEnabled.get(yKey) == undefined) {
+                        hideInChart.indexOf(yKey) < 0 ? seriesItemEnabled.set(yKey, true) : seriesItemEnabled.set(yKey, false);
+                    }
+                })
+            });
+
             if (flatYKeys) {
                 this.flatYKeys = flatYKeys;
             } else {
@@ -271,18 +275,13 @@ export class BarSeries extends CartesianSeries {
 
             let prevYKeyCount = 0;
             this.cumYKeyCount = [];
-            const visibleStacks: string[] = [];
-            yKeys.forEach((stack, index) => {
-                if (stack.length > 0) {
-                    visibleStacks.push(String(index));
-                }
+            yKeys.forEach(stack => {
                 this.cumYKeyCount.push(prevYKeyCount);
                 prevYKeyCount += stack.length;
             });
             this.yData = [];
 
             const { groupScale } = this;
-            groupScale.domain = visibleStacks;
             groupScale.padding = 0.1;
             groupScale.round = true;
 
@@ -672,6 +671,7 @@ export class BarSeries extends CartesianSeries {
         }
         this.nodeDataPending = false;
 
+        this.updateGroupScaleDomain();
         this.createNodeData();
         this.updateRectSelection();
         this.updateLabelSelection();
@@ -810,6 +810,30 @@ export class BarSeries extends CartesianSeries {
         });
     }
 
+    private updateGroupScaleDomain() {
+        const yKeys = this.yKeys.map(stack => stack.slice()); // deep clone
+
+        this.seriesItemEnabled.forEach((enabled, yKey) => {
+            if (!enabled) {
+                yKeys.forEach(stack => {
+                    const index = stack.indexOf(yKey);
+                    if (index >= 0) {
+                        stack.splice(index, 1);
+                    }
+                });
+            }
+        });
+
+        const visibleStacks: string[] = [];
+        yKeys.forEach((stack, index) => {
+            if (stack.length > 0) {
+                visibleStacks.push(String(index));
+            }
+        });
+
+        this.groupScale.domain = visibleStacks;
+    }
+
     getTooltipHtml(nodeDatum: BarNodeDatum): string {
         const { xKey, yKeys, yData } = this;
         const xAxis = this.getCategoryAxis();
@@ -920,31 +944,7 @@ export class BarSeries extends CartesianSeries {
     }
 
     toggleSeriesItem(itemId: string, enabled: boolean): void {
-        const { seriesItemEnabled } = this;
-        seriesItemEnabled.set(itemId, enabled);
-
-        const yKeys = this.yKeys.map(stack => stack.slice()); // deep clone
-
-
-        seriesItemEnabled.forEach((enabled, yKey) => {
-            if (!enabled) {
-                yKeys.forEach(stack => {
-                    const index = stack.indexOf(yKey);
-                    if (index >= 0) {
-                        stack.splice(index, 1);
-                    }
-                });
-            }
-        });
-
-        const visibleStacks: string[] = [];
-        yKeys.forEach((stack, index) => {
-            if (stack.length > 0) {
-                visibleStacks.push(String(index));
-            }
-        });
-        this.groupScale.domain = visibleStacks;
-
+        this.seriesItemEnabled.set(itemId, enabled);
         this.scheduleData();
     }
 }
