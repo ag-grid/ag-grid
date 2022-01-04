@@ -9346,7 +9346,7 @@
     "docs": {
       "pinned": "/** Only when in fullWidth, this gives whether the comp is pinned or not.\n * If not doing fullWidth, then this is not provided, as pinned can be got from the column. */",
       "fullWidth": "/** 'true' if comp is showing full width. */",
-      "suppressPadding": "/** Set to `true` to not include any padding (indentation) in the child rows. */",
+      "suppressPadding": "/** Set to `true` to not include any padding (indentation) in teh child rows. */",
       "suppressDoubleClickExpand": "/** Set to `true` to suppress expand on double click. */",
       "suppressEnterExpand": "/** Set to `true` to suppress expand on <kbd>Enter</kbd> */",
       "footerValueGetter": "/** The value getter for the footer text. Can be a function or expression. */",
