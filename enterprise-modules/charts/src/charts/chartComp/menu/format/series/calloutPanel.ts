@@ -7,8 +7,8 @@ import {
     PostConstruct,
     RefSelector
 } from "@ag-grid-community/core";
-import { ChartTranslator } from "../../../chartTranslator";
-import { ChartOptionsService } from "../../../chartOptionsService";
+import { ChartTranslationService } from "../../../services/chartTranslationService";
+import { ChartOptionsService } from "../../../services/chartOptionsService";
 import { getMaxValue } from "../formatPanel";
 
 export class CalloutPanel extends Component {
@@ -27,7 +27,7 @@ export class CalloutPanel extends Component {
     @RefSelector('calloutStrokeWidthSlider') private calloutStrokeWidthSlider: AgSlider;
     @RefSelector('labelOffsetSlider') private labelOffsetSlider: AgSlider;
 
-    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
+    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
     constructor(private readonly chartOptionsService: ChartOptionsService) {
         super();
@@ -45,14 +45,14 @@ export class CalloutPanel extends Component {
 
     private initCalloutOptions() {
         this.calloutGroup
-            .setTitle(this.chartTranslator.translate("callout"))
+            .setTitle(this.chartTranslationService.translate("callout"))
             .setEnabled(true)
             .hideOpenCloseIcons(true)
             .hideEnabledCheckbox(true);
 
         const initInput = (expression: string, input: AgSlider, labelKey: string, defaultMaxValue: number) => {
             const currentValue = this.chartOptionsService.getSeriesOption<number>(expression);
-            input.setLabel(this.chartTranslator.translate(labelKey))
+            input.setLabel(this.chartTranslationService.translate(labelKey))
                 .setMaxValue(getMaxValue(currentValue, defaultMaxValue))
                 .setValue(`${currentValue}`)
                 .setTextFieldWidth(45)

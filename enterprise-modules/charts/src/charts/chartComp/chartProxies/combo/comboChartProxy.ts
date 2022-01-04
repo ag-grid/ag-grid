@@ -2,8 +2,8 @@ import { AgChart, CartesianChart, ChartAxisPosition } from "ag-charts-community"
 import { ChartType, SeriesChartType } from "@ag-grid-community/core";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "../cartesian/cartesianChartProxy";
-import { deepMerge } from "../../object";
-import { getChartThemeOverridesObjectName } from "../../chartThemeOverridesMapper";
+import { deepMerge } from "../../utils/object";
+import { getChartThemeOverridesObjectName } from "../../utils/chartThemeOverridesMapper";
 
 export class ComboChartProxy extends CartesianChartProxy {
 

@@ -8,8 +8,8 @@ import {
     PostConstruct,
     RefSelector
 } from "@ag-grid-community/core";
-import { ChartTranslator } from "../../../chartTranslator";
-import { ChartOptionsService } from "../../../chartOptionsService";
+import { ChartTranslationService } from "../../../services/chartTranslationService";
+import { ChartOptionsService } from "../../../services/chartOptionsService";
 import { getMaxValue } from "../formatPanel";
 
 export class PaddingPanel extends Component {
@@ -30,7 +30,7 @@ export class PaddingPanel extends Component {
     @RefSelector('paddingBottomSlider') private paddingBottomSlider: AgSlider;
     @RefSelector('paddingLeftSlider') private paddingLeftSlider: AgSlider;
 
-    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
+    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
     constructor(private readonly chartOptionsService: ChartOptionsService) {
         super();
@@ -51,7 +51,7 @@ export class PaddingPanel extends Component {
 
     private initGroup(): void {
         this.chartPaddingGroup
-            .setTitle(this.chartTranslator.translate("padding"))
+            .setTitle(this.chartTranslationService.translate("padding"))
             .hideOpenCloseIcons(true)
             .hideEnabledCheckbox(true);
     }
@@ -60,7 +60,7 @@ export class PaddingPanel extends Component {
 
         const initInput = (property: keyof AgChartPaddingOptions, input: AgSlider) => {
             const currentValue = this.chartOptionsService.getChartOption<number>('padding.' + property);
-            input.setLabel(this.chartTranslator.translate(property))
+            input.setLabel(this.chartTranslationService.translate(property))
                 .setMaxValue(getMaxValue(currentValue, 200))
                 .setValue(`${currentValue}`)
                 .setTextFieldWidth(45)

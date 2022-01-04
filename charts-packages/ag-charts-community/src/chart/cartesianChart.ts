@@ -183,10 +183,10 @@ export class CartesianChart extends Chart {
         this._onTouchEnd = this.onTouchEnd.bind(this);
         this._onTouchCancel = this.onTouchCancel.bind(this);
 
-        chartElement.addEventListener('touchstart', this._onTouchStart);
-        chartElement.addEventListener('touchmove', this._onTouchMove);
-        chartElement.addEventListener('touchend', this._onTouchEnd);
-        chartElement.addEventListener('touchcancel', this._onTouchCancel);
+        chartElement.addEventListener('touchstart', this._onTouchStart, { passive: true });
+        chartElement.addEventListener('touchmove', this._onTouchMove, { passive: true });
+        chartElement.addEventListener('touchend', this._onTouchEnd, { passive: true });
+        chartElement.addEventListener('touchcancel', this._onTouchCancel, { passive: true });
     }
 
     protected cleanupDomListeners(chartElement: HTMLCanvasElement) {

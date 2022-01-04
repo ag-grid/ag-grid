@@ -17,7 +17,7 @@ import {
     ValueService
 } from "@ag-grid-community/core";
 import { ChartDatasource, ChartDatasourceParams } from "./chartDatasource";
-import { ChartTranslator } from './chartTranslator';
+import { ChartTranslationService } from './services/chartTranslationService';
 
 export interface ColState {
     column?: Column;
@@ -48,7 +48,8 @@ export class ChartDataModel extends BeanStub {
     @Autowired('valueService') private readonly valueService: ValueService;
     @Autowired('rangeService') private readonly rangeService: IRangeService;
     @Autowired('rowRenderer') private readonly rowRenderer: RowRenderer;
-    @Autowired('chartTranslator') private readonly chartTranslator: ChartTranslator;
+
+    @Autowired('chartTranslationService') private readonly chartTranslationService: ChartTranslationService;
 
     // this is used to associate chart ranges with charts
     public readonly chartId: string;
@@ -60,10 +61,11 @@ export class ChartDataModel extends BeanStub {
     public chartThemeName: string;
     public unlinked = false;
     public chartData: any[] = [];
-    public seriesChartTypes: SeriesChartType[];
     public valueColState: ColState[] = [];
     public dimensionColState: ColState[] = [];
     public columnNames: { [p: string]: string[]; } = {};
+    public seriesChartTypes: SeriesChartType[];
+    public savedCustomSeriesChartTypes: SeriesChartType[];
 
     public valueCellRange?: CellRange;
     public dimensionCellRange?: CellRange;
@@ -76,12 +78,15 @@ export class ChartDataModel extends BeanStub {
     private grouping = false;
     private crossFiltering = false;
 
+    // this control flag is used to only log warning for the initial user config
+    private suppressComboChartWarnings = false;
+
     public constructor(params: ChartModelParams) {
         super();
 
         this.chartId = params.chartId;
-        this.pivotChart = params.pivotChart;
         this.chartType = params.chartType;
+        this.pivotChart = params.pivotChart;
         this.chartThemeName = params.chartThemeName;
         this.aggFunc = params.aggFunc;
         this.referenceCellRange = params.cellRange;
@@ -90,13 +95,26 @@ export class ChartDataModel extends BeanStub {
         this.unlinked = !!params.unlinkChart;
         this.crossFiltering = !!params.crossFiltering;
         this.seriesChartTypes = params.seriesChartTypes || [];
+
+        this.initComboCharts(params);
+    }
+
+    private initComboCharts(params: ChartModelParams) {
+        const seriesChartTypesExist = this.seriesChartTypes && this.seriesChartTypes.length > 0;
+        const customCombo = params.chartType === 'customCombo' || seriesChartTypesExist;
+        if (customCombo) {
+            // it is not necessary to supply a chart type for combo charts when `seriesChartTypes` is supplied
+            this.chartType = 'customCombo';
+
+            // cache supplied `seriesChartTypes` to allow switching between different chart types in the settings panel
+            this.savedCustomSeriesChartTypes = this.seriesChartTypes || [];
+        }
     }
 
     @PostConstruct
     private init(): void {
         this.datasource = this.createManagedBean(new ChartDatasource());
         this.updateCellRanges();
-        this.updateSeriesChartTypes();
     }
 
     public updateCellRanges(updatedColState?: ColState): void {
@@ -120,7 +138,67 @@ export class ChartDataModel extends BeanStub {
             this.syncDimensionCellRange();
         }
 
+        this.updateSeriesChartTypes()
         this.updateData();
+    }
+
+    public updateSeriesChartTypes(): void {
+        if (this.chartType === 'customCombo') {
+            this.updateSeriesChartTypesForCustomCombo();
+            return;
+        }
+
+        this.updateChartSeriesTypesForBuiltInCombos();
+    }
+
+    public updateSeriesChartTypesForCustomCombo() {
+        const seriesChartTypesSupplied = this.seriesChartTypes && this.seriesChartTypes.length > 0;
+        if (!seriesChartTypesSupplied && !this.suppressComboChartWarnings) {
+            console.warn(`AG Grid: 'seriesChartTypes' are required when the 'customCombo' chart type is specified.`);
+        }
+
+        const getChartTypeForSeries = (valueCol: ColState) => {
+            if (!this.savedCustomSeriesChartTypes || this.savedCustomSeriesChartTypes.length === 0) {
+                this.savedCustomSeriesChartTypes = this.seriesChartTypes;
+            }
+
+            const providedChartType = this.savedCustomSeriesChartTypes.find(s => s.colId === valueCol.colId);
+            if (!providedChartType) {
+                if (!this.suppressComboChartWarnings) {
+                    console.warn(`AG Grid: no 'seriesChartType' found for colId = '${valueCol.colId}', defaulting to 'line'.`);
+                }
+                return 'line';
+            }
+            return providedChartType.chartType;
+        }
+
+        const selectedCols = this.valueColState.filter(cs => cs.selected);
+        const updatedSeriesChartTypes = selectedCols.map((valueCol: ColState) => ({
+                colId: valueCol.colId,
+                chartType: getChartTypeForSeries(valueCol),
+                secondaryAxis: false
+            })
+        );
+
+        this.seriesChartTypes = updatedSeriesChartTypes;
+
+        // also cache custom `seriesChartTypes` to allow for switching between different chart types
+        this.savedCustomSeriesChartTypes = updatedSeriesChartTypes;
+
+        // turn off warnings as first combo chart attempt has completed
+        this.suppressComboChartWarnings = true;
+    }
+
+    public updateChartSeriesTypesForBuiltInCombos() {
+        let primaryChartType: ChartType = this.chartType === 'columnLineCombo' ? 'groupedColumn' : 'area';
+        let secondaryChartType: ChartType = this.chartType === 'columnLineCombo' ? 'line' : 'column';
+
+        const selectedCols = this.valueColState.filter(cs => cs.selected);
+        const lineIndex = Math.ceil(selectedCols.length / 2);
+        this.seriesChartTypes = selectedCols.map((valueCol: ColState, i: number) => {
+            const seriesType = (i >= lineIndex) ? secondaryChartType : primaryChartType;
+            return {colId: valueCol.colId, chartType: seriesType, secondaryAxis: false};
+        });
     }
 
     public updateData(): void {
@@ -350,7 +428,7 @@ export class ChartDataModel extends BeanStub {
 
         const defaultCategory = {
             colId: ChartDataModel.DEFAULT_CATEGORY,
-            displayName: this.chartTranslator.translate('defaultCategory'),
+            displayName: this.chartTranslationService.translate('defaultCategory'),
             selected: !hasSelectedDimension, // if no dimensions in range select the default
             order: 0
         };
@@ -408,27 +486,12 @@ export class ChartDataModel extends BeanStub {
         });
 
         this.reorderColState();
-        this.updateSeriesChartTypes();
     }
 
     private reorderColState(): void {
         const ascColStateOrder = (a: ColState, b: ColState) => a.order - b.order;
         this.dimensionColState.sort(ascColStateOrder);
         this.valueColState.sort(ascColStateOrder);
-    }
-
-    private updateSeriesChartTypes() {
-        const { valueColState } = this;
-
-        if (this.seriesChartTypes.length === 0) { //TODO
-
-
-
-
-            this.seriesChartTypes = valueColState.map(valueCol => {
-                return { colId: valueCol.colId, chartType: 'groupedColumn', secondaryAxis: false };
-            });
-        }
     }
 
     private setDimensionCellRange(dimensionCols: Set<Column>, colsInRange: Set<Column>, updatedColState?: ColState): void {

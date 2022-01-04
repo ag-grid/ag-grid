@@ -3,9 +3,8 @@ import { Line, Path, Rect } from "ag-charts-community";
 import { ChartType } from "@ag-grid-community/core";
 import { createColumnRects, CreateColumnRectsParams, createLinePaths } from "../miniChartHelpers";
 
-export class MiniSecondaryAxisCombo extends MiniChartWithAxes {
-    // TODO: update chart type
-    static chartType: ChartType = 'stackedColumnLine';
+export class MiniAreaColumnCombo extends MiniChartWithAxes {
+    static chartType: ChartType = 'areaColumnCombo';
 
     private stackedColumns: Rect[][];
     private lines: Path[];
@@ -20,7 +19,7 @@ export class MiniSecondaryAxisCombo extends MiniChartWithAxes {
     ];
 
     constructor(container: HTMLElement, fills: string[], strokes: string[]) {
-        super(container, "secondaryAxisComboTooltip");
+        super(container, "areaColumnComboTooltip");
 
         const { root, columnData, lineData, size, padding } = this;
 

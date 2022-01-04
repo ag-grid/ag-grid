@@ -28,6 +28,7 @@ export interface ChartModelUpdatedEvent extends AgEvent {
 export class ChartController extends BeanStub {
 
     public static EVENT_CHART_UPDATED = 'chartUpdated';
+    public static EVENT_CHART_TYPE_CHANGED = 'chartTypeChanged';
 
     @Autowired('rangeService') private readonly rangeService: IRangeService;
     @Autowired('gridApi') private readonly gridApi: GridApi;
@@ -119,6 +120,11 @@ export class ChartController extends BeanStub {
 
     public setChartType(chartType: ChartType): void {
         this.model.chartType = chartType;
+
+        if (this.isComboChart()) {
+            this.model.updateSeriesChartTypes();
+        }
+
         this.raiseChartUpdatedEvent();
         this.raiseChartOptionsChangedEvent();
     }
@@ -230,15 +236,44 @@ export class ChartController extends BeanStub {
         return !this.model.unlinked;
     }
 
+    public customComboExists(): boolean {
+        return this.model.savedCustomSeriesChartTypes && this.model.savedCustomSeriesChartTypes.length > 0;
+    }
+
     public getSeriesChartTypes(): SeriesChartType[] {
         return this.model.seriesChartTypes;
+    }
+
+    public isComboChart(): boolean {
+        return ['columnLineCombo', 'areaColumnCombo', 'customCombo'].includes(this.model.chartType);
     }
 
     public updateSeriesChartType(colId: string, chartType: ChartType): void {
         const seriesChartType = this.model.seriesChartTypes.find(s => s.colId === colId);
         if (seriesChartType) {
+
+            // once a combo chart has been modified it is now a 'customCombo' chart
+            const updateChartType = this.model.chartType !== 'customCombo';
+            if (updateChartType) {
+                this.model.chartType = 'customCombo';
+            }
+
+            // change series chart type
             seriesChartType.chartType = chartType;
+
+            // TODO: also update secondaryAxis
+
+            // replace existing custom series types with this latest version
+            this.model.savedCustomSeriesChartTypes = this.model.seriesChartTypes;
+
             this.updateForDataChange();
+
+            if (updateChartType) {
+                // update the settings panel by raising an EVENT_CHART_TYPE_CHANGED event
+                this.dispatchEvent(Object.freeze({
+                    type: ChartController.EVENT_CHART_TYPE_CHANGED
+                }));
+            }
         }
     }
 

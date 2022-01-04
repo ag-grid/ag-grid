@@ -12,8 +12,8 @@ import {
 import { ShadowPanel } from "./shadowPanel";
 import { Font, FontPanel, FontPanelParams } from "../fontPanel";
 import { CalloutPanel } from "./calloutPanel";
-import { ChartTranslator } from "../../../chartTranslator";
-import { ChartOptionsService } from "../../../chartOptionsService";
+import { ChartTranslationService } from "../../../services/chartTranslationService";
+import { ChartOptionsService } from "../../../services/chartOptionsService";
 import { getMaxValue } from "../formatPanel";
 
 export class PieSeriesPanel extends Component {
@@ -34,7 +34,7 @@ export class PieSeriesPanel extends Component {
     @RefSelector('seriesLineOpacitySlider') private seriesLineOpacitySlider: AgSlider;
     @RefSelector('seriesFillOpacitySlider') private seriesFillOpacitySlider: AgSlider;
 
-    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
+    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
     private activePanels: Component[] = [];
 
@@ -60,14 +60,14 @@ export class PieSeriesPanel extends Component {
 
     private initGroup() {
         this.seriesGroup
-            .setTitle(this.chartTranslator.translate("series"))
+            .setTitle(this.chartTranslationService.translate("series"))
             .toggleGroupExpand(false)
             .hideEnabledCheckbox(true);
     }
 
     private initSeriesTooltips() {
         this.seriesTooltipsToggle
-            .setLabel(this.chartTranslator.translate("tooltips"))
+            .setLabel(this.chartTranslationService.translate("tooltips"))
             .setLabelAlignment("left")
             .setLabelWidth("flex")
             .setInputWidth(45)
@@ -78,7 +78,7 @@ export class PieSeriesPanel extends Component {
     private initSeriesStrokeWidth() {
         const currentValue = this.chartOptionsService.getSeriesOption<number>("strokeWidth");
         this.seriesStrokeWidthSlider
-            .setLabel(this.chartTranslator.translate("strokeWidth"))
+            .setLabel(this.chartTranslationService.translate("strokeWidth"))
             .setMaxValue(getMaxValue(currentValue, 10))
             .setTextFieldWidth(45)
             .setValue(`${currentValue}`)
@@ -88,7 +88,7 @@ export class PieSeriesPanel extends Component {
     private initOpacity() {
         const currentLineOpacityValue = this.chartOptionsService.getSeriesOption<number>("strokeOpacity") || 1;
         this.seriesLineOpacitySlider
-            .setLabel(this.chartTranslator.translate("strokeOpacity"))
+            .setLabel(this.chartTranslationService.translate("strokeOpacity"))
             .setStep(0.05)
             .setMaxValue(getMaxValue(currentLineOpacityValue, 1))
             .setTextFieldWidth(45)
@@ -97,7 +97,7 @@ export class PieSeriesPanel extends Component {
 
         const currentFillOpacityValue = this.chartOptionsService.getSeriesOption<number>("fillOpacity") || 1;
         this.seriesFillOpacitySlider
-            .setLabel(this.chartTranslator.translate("fillOpacity"))
+            .setLabel(this.chartTranslationService.translate("fillOpacity"))
             .setStep(0.05)
             .setMaxValue(getMaxValue(currentFillOpacityValue, 1))
             .setTextFieldWidth(45)
@@ -133,7 +133,7 @@ export class PieSeriesPanel extends Component {
         };
 
         const params: FontPanelParams = {
-            name: this.chartTranslator.translate('labels'),
+            name: this.chartTranslationService.translate('labels'),
             enabled: this.chartOptionsService.getSeriesOption("label.enabled") || false,
             setEnabled: (enabled: boolean) => this.chartOptionsService.setSeriesOption("label.enabled", enabled),
             suppressEnabledCheckbox: false,

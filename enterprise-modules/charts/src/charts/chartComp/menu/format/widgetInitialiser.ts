@@ -1,13 +1,13 @@
-import { ChartTranslator } from "../../chartTranslator";
+import { ChartTranslationService } from "../../services/chartTranslationService";
 import { AgSlider } from "@ag-grid-community/core";
 import { Font, FontPanelParams } from "./fontPanel";
-import { ChartOptionsService } from "../../chartOptionsService";
+import { ChartOptionsService } from "../../services/chartOptionsService";
 import { getMaxValue } from "./formatPanel";
 
-export function initLineOpacitySlider(seriesLineOpacitySlider: AgSlider, chartTranslator: ChartTranslator, chartOptionsService: ChartOptionsService) {
+export function initLineOpacitySlider(seriesLineOpacitySlider: AgSlider, chartTranslationService: ChartTranslationService, chartOptionsService: ChartOptionsService) {
     const currentValue = chartOptionsService.getSeriesOption<number>("strokeOpacity");
     seriesLineOpacitySlider
-        .setLabel(chartTranslator.translate("strokeOpacity"))
+        .setLabel(chartTranslationService.translate("strokeOpacity"))
         .setStep(0.05)
         .setMaxValue(getMaxValue(currentValue, 1))
         .setTextFieldWidth(45)
@@ -15,10 +15,10 @@ export function initLineOpacitySlider(seriesLineOpacitySlider: AgSlider, chartTr
         .onValueChange(newValue => chartOptionsService.setSeriesOption("strokeOpacity", newValue));
 }
 
-export function initFillOpacitySlider(seriesFillOpacitySlider: AgSlider, chartTranslator: ChartTranslator, chartOptionsService: ChartOptionsService) {
+export function initFillOpacitySlider(seriesFillOpacitySlider: AgSlider, chartTranslationService: ChartTranslationService, chartOptionsService: ChartOptionsService) {
     const currentValue = chartOptionsService.getSeriesOption<number>("fillOpacity");
     seriesFillOpacitySlider
-        .setLabel(chartTranslator.translate("fillOpacity"))
+        .setLabel(chartTranslationService.translate("fillOpacity"))
         .setStep(0.05)
         .setMaxValue(getMaxValue(currentValue, 1))
         .setTextFieldWidth(45)
@@ -26,7 +26,7 @@ export function initFillOpacitySlider(seriesFillOpacitySlider: AgSlider, chartTr
         .onValueChange(newValue => chartOptionsService.setSeriesOption("fillOpacity", newValue));
 }
 
-export function initFontPanelParams(chartTranslator: ChartTranslator, chartOptionsService: ChartOptionsService) {
+export function initFontPanelParams(chartTranslationService: ChartTranslationService, chartOptionsService: ChartOptionsService) {
     const initialFont = {
         family: chartOptionsService.getSeriesOption("label.fontFamily"),
         style: chartOptionsService.getSeriesOption("label.fontStyle"),
@@ -54,7 +54,7 @@ export function initFontPanelParams(chartTranslator: ChartTranslator, chartOptio
     };
 
     const params: FontPanelParams = {
-        name: chartTranslator.translate('labels'),
+        name: chartTranslationService.translate('labels'),
         enabled: chartOptionsService.getSeriesOption("label.enabled") || false,
         setEnabled: (enabled: boolean) => chartOptionsService.setSeriesOption("label.enabled", enabled),
         suppressEnabledCheckbox: false,

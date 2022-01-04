@@ -2,8 +2,8 @@ import { AgChart, CartesianChart, ChartAxisPosition, LegendClickEvent, ScatterSe
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { ChartDataModel } from "../../chartDataModel";
 import { CartesianChartProxy } from "./cartesianChartProxy";
-import { deepMerge } from "../../object";
-import { hexToRGBA } from "../../color";
+import { deepMerge } from "../../utils/object";
+import { hexToRGBA } from "../../utils/color";
 
 interface SeriesDefinition {
     xField: FieldDefinition;

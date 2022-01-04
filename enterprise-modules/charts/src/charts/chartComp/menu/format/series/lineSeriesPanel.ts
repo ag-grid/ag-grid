@@ -10,8 +10,8 @@ import {
     RefSelector
 } from "@ag-grid-community/core";
 import { MarkersPanel } from "./markersPanel";
-import { ChartTranslator } from "../../../chartTranslator";
-import { ChartOptionsService } from "../../../chartOptionsService";
+import { ChartTranslationService } from "../../../services/chartTranslationService";
+import { ChartOptionsService } from "../../../services/chartOptionsService";
 import { initFontPanelParams } from "../widgetInitialiser";
 import { FontPanel, FontPanelParams } from "../fontPanel";
 import { getMaxValue } from "../formatPanel";
@@ -32,7 +32,7 @@ export class LineSeriesPanel extends Component {
     @RefSelector('seriesLineWidthSlider') private seriesLineWidthSlider: AgSlider;
     @RefSelector('seriesLineDashSlider') private seriesLineDashSlider: AgSlider;
 
-    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
+    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
     private activePanels: Component[] = [];
 
@@ -65,7 +65,7 @@ export class LineSeriesPanel extends Component {
 
     private initSeriesTooltips() {
         this.seriesTooltipsToggle
-            .setLabel(this.chartTranslator.translate("tooltips"))
+            .setLabel(this.chartTranslationService.translate("tooltips"))
             .setLabelAlignment("left")
             .setLabelWidth("flex")
             .setInputWidth(45)
@@ -76,7 +76,7 @@ export class LineSeriesPanel extends Component {
     private initSeriesLineWidth() {
         const currentValue = this.chartOptionsService.getSeriesOption<number>("strokeWidth");
         this.seriesLineWidthSlider
-            .setLabel(this.chartTranslator.translate('lineWidth'))
+            .setLabel(this.chartTranslationService.translate('lineWidth'))
             .setMaxValue(getMaxValue(currentValue, 10))
             .setTextFieldWidth(45)
             .setValue(`${currentValue}`)
@@ -86,7 +86,7 @@ export class LineSeriesPanel extends Component {
     private initSeriesLineDash() {
         const currentValue = this.chartOptionsService.getSeriesOption<number>("lineDash");
         this.seriesLineDashSlider
-            .setLabel(this.chartTranslator.translate('lineDash'))
+            .setLabel(this.chartTranslationService.translate('lineDash'))
             .setMaxValue(getMaxValue(currentValue, 30))
             .setTextFieldWidth(45)
             .setValue(`${currentValue}`)
@@ -100,16 +100,16 @@ export class LineSeriesPanel extends Component {
     }
 
     private initLabelPanel() {
-        const params: FontPanelParams = initFontPanelParams(this.chartTranslator, this.chartOptionsService);
+        const params: FontPanelParams = initFontPanelParams(this.chartTranslationService, this.chartOptionsService);
         const labelPanelComp = this.createBean(new FontPanel(params));
         this.activePanels.push(labelPanelComp);
         this.seriesGroup.addItem(labelPanelComp);
     }
 
     private getTitle() {
-        let seriesTitle = this.chartTranslator.translate("series");
+        let seriesTitle = this.chartTranslationService.translate("series");
         if (['groupedColumnLine', 'stackedColumnLine'].includes(this.chartOptionsService.getChartType())) {
-            const lineTitle = this.chartTranslator.translate("lineGroup");
+            const lineTitle = this.chartTranslationService.translate("lineGroup");
             return  `${seriesTitle} (${lineTitle})`;
         }
         return seriesTitle;

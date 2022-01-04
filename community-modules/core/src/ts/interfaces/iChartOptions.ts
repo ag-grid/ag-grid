@@ -16,8 +16,9 @@ export type ChartType =
     | 'stackedArea'
     | 'normalizedArea'
     | 'histogram'
-    | 'groupedColumnLine'
-    | 'stackedColumnLine'
+    | 'columnLineCombo'
+    | 'areaColumnCombo'
+    | 'customCombo'
 
 export type ChartMenuOptions =
       'chartSettings'

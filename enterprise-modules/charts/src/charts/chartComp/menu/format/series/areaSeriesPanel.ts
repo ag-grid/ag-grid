@@ -10,11 +10,11 @@ import {
     RefSelector
 } from "@ag-grid-community/core";
 import { MarkersPanel } from "./markersPanel";
-import { ChartTranslator } from "../../../chartTranslator";
+import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ShadowPanel } from "./shadowPanel";
 import { initFillOpacitySlider, initFontPanelParams, initLineOpacitySlider } from "../widgetInitialiser";
 import { FontPanel, FontPanelParams } from "../fontPanel";
-import { ChartOptionsService } from "../../../chartOptionsService";
+import { ChartOptionsService } from "../../../services/chartOptionsService";
 import { getMaxValue } from "../formatPanel";
 
 export class AreaSeriesPanel extends Component {
@@ -37,7 +37,7 @@ export class AreaSeriesPanel extends Component {
     @RefSelector('seriesLineOpacitySlider') private seriesLineOpacitySlider: AgSlider;
     @RefSelector('seriesFillOpacitySlider') private seriesFillOpacitySlider: AgSlider;
 
-    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
+    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
     private activePanels: Component[] = [];
 
@@ -65,14 +65,14 @@ export class AreaSeriesPanel extends Component {
 
     private initSeriesGroup() {
         this.seriesGroup
-            .setTitle(this.chartTranslator.translate("series"))
+            .setTitle(this.chartTranslationService.translate("series"))
             .toggleGroupExpand(false)
             .hideEnabledCheckbox(true);
     }
 
     private initSeriesTooltips() {
         this.seriesTooltipsToggle
-            .setLabel(this.chartTranslator.translate("tooltips"))
+            .setLabel(this.chartTranslationService.translate("tooltips"))
             .setLabelAlignment("left")
             .setLabelWidth("flex")
             .setInputWidth(45)
@@ -83,7 +83,7 @@ export class AreaSeriesPanel extends Component {
     private initSeriesLineWidth() {
         const currentValue = this.chartOptionsService.getSeriesOption<number>("strokeWidth");
         this.seriesLineWidthSlider
-            .setLabel(this.chartTranslator.translate("lineWidth"))
+            .setLabel(this.chartTranslationService.translate("lineWidth"))
             .setMaxValue(getMaxValue(currentValue, 10))
             .setTextFieldWidth(45)
             .setValue(`${currentValue}`)
@@ -93,7 +93,7 @@ export class AreaSeriesPanel extends Component {
     private initSeriesLineDash() {
         const currentValue = this.chartOptionsService.getSeriesOption<number>("lineDash");
         this.seriesLineDashSlider
-            .setLabel(this.chartTranslator.translate('lineDash'))
+            .setLabel(this.chartTranslationService.translate('lineDash'))
             .setMaxValue(getMaxValue(currentValue, 30))
             .setTextFieldWidth(45)
             .setValue(`${currentValue}`)
@@ -101,12 +101,12 @@ export class AreaSeriesPanel extends Component {
     }
 
     private initOpacity() {
-        initLineOpacitySlider(this.seriesLineOpacitySlider, this.chartTranslator, this.chartOptionsService);
-        initFillOpacitySlider(this.seriesFillOpacitySlider, this.chartTranslator, this.chartOptionsService);
+        initLineOpacitySlider(this.seriesLineOpacitySlider, this.chartTranslationService, this.chartOptionsService);
+        initFillOpacitySlider(this.seriesFillOpacitySlider, this.chartTranslationService, this.chartOptionsService);
     }
 
     private initLabelPanel() {
-        const params: FontPanelParams = initFontPanelParams(this.chartTranslator, this.chartOptionsService);
+        const params: FontPanelParams = initFontPanelParams(this.chartTranslationService, this.chartOptionsService);
         const labelPanelComp = this.createBean(new FontPanel(params));
         this.activePanels.push(labelPanelComp);
         this.seriesGroup.addItem(labelPanelComp);

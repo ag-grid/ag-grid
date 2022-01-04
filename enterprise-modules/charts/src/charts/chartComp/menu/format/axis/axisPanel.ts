@@ -14,8 +14,8 @@ import {
 import { ChartController } from "../../../chartController";
 import { AxisTicksPanel } from "./axisTicksPanel";
 import { Font, FontPanel, FontPanelParams } from "../fontPanel";
-import { ChartTranslator } from "../../../chartTranslator";
-import { ChartOptionsService } from "../../../chartOptionsService";
+import { ChartTranslationService } from "../../../services/chartTranslationService";
+import { ChartOptionsService } from "../../../services/chartOptionsService";
 import { getMaxValue } from "../formatPanel";
 
 export class AxisPanel extends Component {
@@ -34,7 +34,7 @@ export class AxisPanel extends Component {
     @RefSelector('axisLineWidthSlider') private axisLineWidthSlider: AgSlider;
     @RefSelector('xAxisTypeSelect') private xAxisTypeSelect: AgSelect;
 
-    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
+    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
     private activePanels: Component[] = [];
     private axisLabelUpdateFuncs: Function[] = [];
@@ -62,15 +62,15 @@ export class AxisPanel extends Component {
     }
 
     private initAxis() {
-        const { chartTranslator } = this;
+        const { chartTranslationService } = this;
 
         this.axisGroup
-            .setTitle(chartTranslator.translate("axis"))
+            .setTitle(chartTranslationService.translate("axis"))
             .toggleGroupExpand(false)
             .hideEnabledCheckbox(true);
 
         this.axisColorInput
-            .setLabel(chartTranslator.translate("color"))
+            .setLabel(chartTranslationService.translate("color"))
             .setLabelWidth("flex")
             .setInputWidth(45)
             .setValue(this.chartOptionsService.getAxisProperty("line.color"))
@@ -79,22 +79,22 @@ export class AxisPanel extends Component {
         const currentValue = this.chartOptionsService.getAxisProperty<number>("line.width");
         this.axisLineWidthSlider
             .setMaxValue(getMaxValue(currentValue, 10))
-            .setLabel(chartTranslator.translate("thickness"))
+            .setLabel(chartTranslationService.translate("thickness"))
             .setTextFieldWidth(45)
             .setValue(`${currentValue}`)
             .onValueChange(newValue => this.chartOptionsService.setAxisProperty("line.width", newValue));
 
         if (_.includes(['line', 'scatter', 'bubble'], this.chartController.getChartType()) && !this.chartController.isGrouping()) {
             const options: { value: any | '', text: string }[] = [
-                { value: '', text: chartTranslator.translate('automatic') }
+                { value: '', text: chartTranslationService.translate('automatic') }
             ];
 
             ['category', 'time', 'number'].forEach((type: any) => {
-                options.push({ value: type, text: chartTranslator.translate(type) });
+                options.push({ value: type, text: chartTranslationService.translate(type) });
             });
 
             this.xAxisTypeSelect
-                .setLabel(chartTranslator.translate('xType'))
+                .setLabel(chartTranslationService.translate('xType'))
                 .setLabelWidth('flex')
                 .addOptions(options)
                 .setValue(this.chartOptionsService.getChartOption('xAxis.type') || '')
@@ -166,8 +166,8 @@ export class AxisPanel extends Component {
         };
 
         const degreesSymbol = String.fromCharCode(176);
-        const xRotationLabel = `${this.chartTranslator.translate("xRotation")} ${degreesSymbol}`;
-        const yRotationLabel = `${this.chartTranslator.translate("yRotation")} ${degreesSymbol}`;
+        const xRotationLabel = `${this.chartTranslationService.translate("xRotation")} ${degreesSymbol}`;
+        const yRotationLabel = `${this.chartTranslationService.translate("yRotation")} ${degreesSymbol}`;
 
         createAngleComp(xRotationLabel, "xAxis");
         createAngleComp(yRotationLabel, "yAxis");
@@ -175,7 +175,7 @@ export class AxisPanel extends Component {
         const labelPaddingSlider = this.createBean(new AgSlider());
 
         const currentValue = this.chartOptionsService.getAxisProperty<number>("label.padding");
-        labelPaddingSlider.setLabel(this.chartTranslator.translate("padding"))
+        labelPaddingSlider.setLabel(this.chartTranslationService.translate("padding"))
             .setMaxValue(getMaxValue(currentValue, 30))
             .setValue(`${currentValue}`)
             .setTextFieldWidth(45)

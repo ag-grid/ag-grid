@@ -37,6 +37,7 @@ export class ChartSettingsPanel extends Component {
     private themes: string[] = [];
 
     private isAnimating: boolean;
+    private selectedMiniChart: HTMLElement | undefined;
 
     constructor(chartController: ChartController) {
         super(ChartSettingsPanel.TEMPLATE);
@@ -54,12 +55,23 @@ export class ChartSettingsPanel extends Component {
         this.addManagedListener(this.ePrevBtn, 'click', () => this.setActivePalette(this.getPrev(), 'left'));
         this.addManagedListener(this.eNextBtn, 'click', () => this.setActivePalette(this.getNext(), 'right'));
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.resetPalettes.bind(this));
+
+        // change the selected chart when a combo chart is modified via the data panel, i.e. the custom combo should be selected
+        this.addManagedListener(this.chartController, ChartController.EVENT_CHART_TYPE_CHANGED, () => this.resetPalettes(true));
     }
 
-    private resetPalettes(): void {
+    public onPanelSelected() {
+        if (this.selectedMiniChart) {
+            // scroll selected mini chart into view
+            const miniChartGroupElement = this.selectedMiniChart.parentElement!.parentElement;
+            miniChartGroupElement!.scrollIntoView({behavior: "auto", block: "start", inline: "start"});
+        }
+    }
+
+    private resetPalettes(forceReset?: boolean): void {
         const palettes = this.chartController.getPalettes();
 
-        if (_.shallowCompare(palettes, this.palettes)) {
+        if (_.shallowCompare(palettes, this.palettes) && !forceReset) {
             return;
         }
 
@@ -82,7 +94,7 @@ export class ChartSettingsPanel extends Component {
             this.addCardLink(index);
 
             if (isActivePalette) {
-                miniChartsContainer.refreshSelected();
+                this.selectedMiniChart = miniChartsContainer.updateSelectedMiniChart();
             } else {
                 miniChartsContainer.addCssClass('ag-hidden');
             }
@@ -97,9 +109,7 @@ export class ChartSettingsPanel extends Component {
         link.classList.add('ag-chart-settings-card-item');
 
         this.addManagedListener(link, 'click', () => {
-            const { activePaletteIndex } = this;
-
-            this.setActivePalette(index, index < activePaletteIndex ? 'left' : 'right');
+            this.setActivePalette(index, index < this.activePaletteIndex ? 'left' : 'right');
         });
 
         this.eCardSelector.appendChild(link);
@@ -136,8 +146,8 @@ export class ChartSettingsPanel extends Component {
         const futurePalette = this.miniCharts[index];
         const nextGui = futurePalette.getGui();
 
-        currentPalette.refreshSelected();
-        futurePalette.refreshSelected();
+        currentPalette.updateSelectedMiniChart();
+        futurePalette.updateSelectedMiniChart();
 
         const multiplier = animationDirection === 'left' ? -1 : 1;
         const final = nextGui.style.left = `${(_.getAbsoluteWidth(this.getGui()) * multiplier)}px`;

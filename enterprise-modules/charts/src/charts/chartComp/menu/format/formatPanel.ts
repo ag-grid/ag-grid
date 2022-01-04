@@ -10,7 +10,7 @@ import { ChartPanel } from "./chart/chartPanel";
 import { AreaSeriesPanel } from "./series/areaSeriesPanel";
 import { ScatterSeriesPanel } from "./series/scatterSeriesPanel";
 import { HistogramSeriesPanel } from "./series/histogramSeriesPanel";
-import { ChartOptionsService } from "../../chartOptionsService";
+import { ChartOptionsService } from "../../services/chartOptionsService";
 
 export function getMaxValue(currentValue: number, defaultMaxValue: number) {
     return Math.max(currentValue, defaultMaxValue);
@@ -87,8 +87,9 @@ export class FormatPanel extends Component {
                 this.addComponent(new HistogramSeriesPanel(this.chartOptionsService));
                 this.addComponent(new NavigatorPanel(this.chartOptionsService));
                 break;
-            case 'groupedColumnLine':
-            case 'stackedColumnLine':
+            case 'columnLineCombo':
+            case 'areaColumnCombo':
+            case 'customCombo':
                 this.addComponent(new AxisPanel(this.chartController, this.chartOptionsService));
                 this.addComponent(new BarSeriesPanel(this.chartOptionsService));
                 this.addComponent(new LineSeriesPanel(this.chartOptionsService));

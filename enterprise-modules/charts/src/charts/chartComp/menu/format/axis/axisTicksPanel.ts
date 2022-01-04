@@ -8,8 +8,8 @@ import {
     PostConstruct,
     RefSelector
 } from "@ag-grid-community/core";
-import { ChartTranslator } from "../../../chartTranslator";
-import { ChartOptionsService } from "../../../chartOptionsService";
+import { ChartTranslationService } from "../../../services/chartTranslationService";
+import { ChartOptionsService } from "../../../services/chartOptionsService";
 import { getMaxValue } from "../formatPanel";
 
 export class AxisTicksPanel extends Component {
@@ -28,7 +28,7 @@ export class AxisTicksPanel extends Component {
     @RefSelector('axisTicksWidthSlider') private axisTicksWidthSlider: AgSlider;
     @RefSelector('axisTicksSizeSlider') private axisTicksSizeSlider: AgSlider;
 
-    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
+    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
     constructor(private readonly chartOptionsService: ChartOptionsService) {
         super();
@@ -47,12 +47,12 @@ export class AxisTicksPanel extends Component {
 
     private initAxisTicks() {
         this.axisTicksGroup
-            .setTitle(this.chartTranslator.translate("ticks"))
+            .setTitle(this.chartTranslationService.translate("ticks"))
             .hideOpenCloseIcons(true)
             .hideEnabledCheckbox(true);
 
         this.axisTicksColorPicker
-            .setLabel(this.chartTranslator.translate("color"))
+            .setLabel(this.chartTranslationService.translate("color"))
             .setLabelWidth("flex")
             .setInputWidth(45)
             .setValue(this.chartOptionsService.getAxisProperty("tick.color"))
@@ -67,7 +67,7 @@ export class AxisTicksPanel extends Component {
                 .onValueChange(newValue => this.chartOptionsService.setAxisProperty(expression, newValue));
         };
 
-        initInput("tick.width", this.axisTicksWidthSlider, this.chartTranslator.translate("width"), 10);
-        initInput("tick.size", this.axisTicksSizeSlider, this.chartTranslator.translate("length"), 30);
+        initInput("tick.width", this.axisTicksWidthSlider, this.chartTranslationService.translate("width"), 10);
+        initInput("tick.size", this.axisTicksSizeSlider, this.chartTranslationService.translate("length"), 30);
     }
 }

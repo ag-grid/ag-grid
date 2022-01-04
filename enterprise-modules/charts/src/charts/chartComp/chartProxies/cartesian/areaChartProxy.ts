@@ -1,7 +1,7 @@
 import { AgChart, AreaSeries, CartesianChart, ChartAxisPosition } from "ag-charts-community";
 import { ChartProxyParams, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "./cartesianChartProxy";
-import { deepMerge } from "../../object";
+import { deepMerge } from "../../utils/object";
 
 export class AreaChartProxy extends CartesianChartProxy {
 

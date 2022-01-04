@@ -12,8 +12,8 @@ import { ChartController } from "../chartController";
 import { ChartDataPanel } from "./data/chartDataPanel";
 import { FormatPanel } from "./format/formatPanel";
 import { ChartSettingsPanel } from "./settings/chartSettingsPanel";
-import { ChartTranslator } from "../chartTranslator";
-import { ChartOptionsService } from "../chartOptionsService";
+import { ChartTranslationService } from "../services/chartTranslationService";
+import { ChartOptionsService } from "../services/chartOptionsService";
 
 export class TabbedChartMenu extends Component {
     public static TAB_DATA = 'data';
@@ -27,7 +27,7 @@ export class TabbedChartMenu extends Component {
     private readonly chartController: ChartController;
     private readonly chartOptionsService: ChartOptionsService;
 
-    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
+    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
     constructor(params: {
         controller: ChartController,
@@ -65,18 +65,18 @@ export class TabbedChartMenu extends Component {
     private createTab(
         name: ChartMenuOptions,
         title: string,
-        ChildClass: new (controller: ChartController, chartOptionsService: ChartOptionsService) => Component
+        TabPanelClass: new (controller: ChartController, chartOptionsService: ChartOptionsService) => Component
     ): { comp: Component, tab: TabbedItem; } {
         const eWrapperDiv = document.createElement('div');
         eWrapperDiv.classList.add('ag-chart-tab', `ag-chart-${title}`);
 
-        const comp = new ChildClass(this.chartController, this.chartOptionsService);
+        const comp = new TabPanelClass(this.chartController, this.chartOptionsService);
         this.getContext().createBean(comp);
 
         eWrapperDiv.appendChild(comp.getGui());
 
         const titleEl = document.createElement('div');
-        const translatedTitle = this.chartTranslator.translate(title);
+        const translatedTitle = this.chartTranslationService.translate(title);
         titleEl.innerText = translatedTitle;
 
         return {
@@ -85,7 +85,13 @@ export class TabbedChartMenu extends Component {
                 title: titleEl,
                 titleLabel: translatedTitle,
                 bodyPromise: AgPromise.resolve(eWrapperDiv),
-                name
+                name,
+                afterAttachedCallback: () => {
+                    // notify ChartSettingsPanel when selected so that it can scroll the selected mini chart into view
+                    if (comp instanceof ChartSettingsPanel) {
+                        comp.onPanelSelected();
+                    }
+                }
             }
         };
     }

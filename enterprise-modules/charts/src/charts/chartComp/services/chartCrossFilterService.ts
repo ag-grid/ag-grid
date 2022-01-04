@@ -1,7 +1,7 @@
 import { _, Autowired, Bean, BeanStub, ColumnModel, GridApi, RowNode } from "@ag-grid-community/core";
 
-@Bean("chartCrossFilter")
-export class ChartCrossFilter extends BeanStub {
+@Bean("chartCrossFilterService")
+export class ChartCrossFilterService extends BeanStub {
 
     @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
@@ -15,7 +15,7 @@ export class ChartCrossFilter extends BeanStub {
             return;
         }
 
-        let colId = ChartCrossFilter.extractFilterColId(event);
+        let colId = ChartCrossFilterService.extractFilterColId(event);
         if (this.isValidColumnFilter(colId)) {
             // update filters based on current chart selections
             this.updateFilters(filterModel, event);
@@ -35,7 +35,7 @@ export class ChartCrossFilter extends BeanStub {
     }
 
     private updateFilters(filterModel: any, event: any) {
-        let dataKey = ChartCrossFilter.extractFilterColId(event);
+        let dataKey = ChartCrossFilterService.extractFilterColId(event);
         let rawValue = event.datum[dataKey];
         if (rawValue === undefined) {
             return;

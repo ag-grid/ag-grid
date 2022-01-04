@@ -7,8 +7,8 @@ import {
     PostConstruct,
     RefSelector
 } from "@ag-grid-community/core";
-import { ChartTranslator } from "../../../chartTranslator";
-import { ChartOptionsService } from "../../../chartOptionsService";
+import { ChartTranslationService } from "../../../services/chartTranslationService";
+import { ChartOptionsService } from "../../../services/chartOptionsService";
 import { getMaxValue } from "../formatPanel";
 
 export class NavigatorPanel extends Component {
@@ -23,7 +23,7 @@ export class NavigatorPanel extends Component {
     @RefSelector('navigatorGroup') private navigatorGroup: AgGroupComponent;
     @RefSelector('navigatorHeightSlider') private navigatorHeightSlider: AgSlider;
 
-    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
+    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
     constructor(private readonly chartOptionsService: ChartOptionsService) {
         super();
@@ -41,10 +41,10 @@ export class NavigatorPanel extends Component {
     }
 
     private initNavigator() {
-        const { chartTranslator } = this;
+        const { chartTranslationService } = this;
 
         this.navigatorGroup
-            .setTitle(chartTranslator.translate("navigator"))
+            .setTitle(chartTranslationService.translate("navigator"))
             .toggleGroupExpand(false)
             .hideEnabledCheckbox(false)
             .setEnabled(this.chartOptionsService.getChartOption<boolean>("navigator.enabled") || false)
@@ -55,7 +55,7 @@ export class NavigatorPanel extends Component {
 
         const currentValue = this.chartOptionsService.getChartOption<number>("navigator.height");
         this.navigatorHeightSlider
-            .setLabel(chartTranslator.translate("height"))
+            .setLabel(chartTranslationService.translate("height"))
             .setMinValue(10)
             .setMaxValue(getMaxValue(currentValue,60))
             .setTextFieldWidth(45)

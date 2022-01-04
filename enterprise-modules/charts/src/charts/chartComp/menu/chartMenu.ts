@@ -12,15 +12,15 @@ import {
 
 import { TabbedChartMenu } from "./tabbedChartMenu";
 import { ChartController } from "../chartController";
-import { ChartTranslator } from "../chartTranslator";
-import { ChartOptionsService } from "../chartOptionsService";
+import { ChartTranslationService } from "../services/chartTranslationService";
+import { ChartOptionsService } from "../services/chartOptionsService";
 
 type ChartToolbarButtons = {
     [key in ChartMenuOptions]: [string, (e: MouseEvent) => any | void]
 };
 
 export class ChartMenu extends Component {
-    @Autowired('chartTranslator') private chartTranslator: ChartTranslator;
+    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
     public static EVENT_DOWNLOAD_CHART = "downloadChart";
 
@@ -109,7 +109,7 @@ export class ChartMenu extends Component {
         target.classList.toggle('ag-icon-unlinked', active);
 
         const tooltipKey = active ? 'chartUnlinkToolbarTooltip' : 'chartLinkToolbarTooltip';
-        const tooltipTitle = this.chartTranslator.translate(tooltipKey);
+        const tooltipTitle = this.chartTranslationService.translate(tooltipKey);
         if (tooltipTitle) {
             target.title = tooltipTitle;
         }
@@ -132,7 +132,7 @@ export class ChartMenu extends Component {
             )!;
             buttonEl.classList.add('ag-chart-menu-icon');
 
-            const tooltipTitle = this.chartTranslator.translate(button + 'ToolbarTooltip');
+            const tooltipTitle = this.chartTranslationService.translate(button + 'ToolbarTooltip');
             if (tooltipTitle) {
                 buttonEl.title = tooltipTitle;
             }

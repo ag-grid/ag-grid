@@ -1,7 +1,7 @@
 import { Bean, BeanStub } from "@ag-grid-community/core";
 
-@Bean("chartTranslator")
-export class ChartTranslator extends BeanStub {
+@Bean("chartTranslationService")
+export class ChartTranslationService extends BeanStub {
 
     private static DEFAULT_TRANSLATIONS: { [name: string]: string; } = {
         pivotChartTitle: 'Pivot Chart',
@@ -98,8 +98,8 @@ export class ChartTranslator extends BeanStub {
         scatterTooltip: 'Scatter',
         bubbleTooltip: 'Bubble',
         histogramTooltip: 'Histogram',
-        groupedColumnLineTooltip: 'Grouped Column & Line',
-        secondaryAxisComboTooltip: 'Secondary Axis',
+        columnLineComboTooltip: 'Column & Line',
+        areaColumnComboTooltip: 'Area & Column',
         customComboTooltip: 'Custom Combination',
         noDataToChart: 'No data available to be charted.',
         pivotChartRequiresPivotMode: 'Pivot Chart requires Pivot Mode enabled.',
@@ -111,7 +111,7 @@ export class ChartTranslator extends BeanStub {
 
     public translate(toTranslate: string): string {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        const defaultTranslation = ChartTranslator.DEFAULT_TRANSLATIONS[toTranslate];
+        const defaultTranslation = ChartTranslationService.DEFAULT_TRANSLATIONS[toTranslate];
         return translate(toTranslate, defaultTranslation);
     }
 }
