@@ -1,8 +1,21 @@
 import ts = require("typescript");
+const sucrase = require("sucrase");
+
 export type ImportType = 'packages' | 'modules';
 
 const moduleMapping = require('../../documentation/doc-pages/modules/modules.json');
 
+export function readAsJsFile(srcFile) {
+    const tsFile = srcFile
+        // Remove imports that are not required in javascript
+        .replace(/import.*from.*\n/g, '')
+        // Remove export statement
+        .replace(/export /g, "")
+
+    let jsFile = sucrase.transform(tsFile, { transforms: ["typescript"] }).code;
+
+    return jsFile;
+}
 
 export function parseFile(src) {
     return ts.createSourceFile('tempFile.ts', src, ts.ScriptTarget.Latest, true);
@@ -252,6 +265,31 @@ export function extractUnboundInstanceMethods(srcFile: ts.SourceFile) {
         }
     })
     return inScopeMethods;
+}
+
+// functions marked with an "inScope" comment will be handled as "instance" methods, as opposed to (global/unused)
+// "util" ones
+export function extractImportStatements(srcFile: ts.SourceFile) {
+    let allImports = [];
+    srcFile.statements.forEach(node => {
+        if (ts.isImportDeclaration(node)) {
+            const module = node.moduleSpecifier.getText();
+            const moduleImports = node.importClause;
+            const imports = [];
+            if (moduleImports.namedBindings) {
+                moduleImports.namedBindings.forEachChild(o => {
+                    console.log(o.getText())
+
+                })
+            }
+            allImports.push({
+                module,
+                isNamespaced: false,
+                imports
+            })
+        }
+    })
+    return allImports;
 }
 
 export function tsNodeIsTopLevelFunction(node: any): boolean {

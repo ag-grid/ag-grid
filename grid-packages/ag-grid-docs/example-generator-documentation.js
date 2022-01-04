@@ -204,24 +204,26 @@ function createExampleGenerator(prefix, importTypes) {
         // any associated css
         const stylesheets = getMatchingPaths('*.css');
 
-        // read the main script (ts / js) and the associated index.html
-        let jsFile = mainScript.endsWith('.ts') ? readAsJsFile(mainScript) : getFileContents(mainScript);
+        // read the main script and the associated index.html
+        let jsFile = getFileContents(mainScript);
         const indexHtml = getFileContents(document);
 
         // ********************* TEST CODE DONT COMMIT TO LATEST **********************************????????????????????????/
-        /*         if (process.env.LOGNAME === 'stephencooper') {
-                    const dumpPath = "/Users/stephencooper/Workspace/test-output-ag-grid/snapshots/";
-                    fs.writeFileSync(dumpPath + "/" + mainScript.replace(/\//g, '_').replace('.js', '.json').replace('.ts', '.json'), "")
-                } */
+        /* if (process.env.LOGNAME === 'stephencooper') {
+            const dumpPath = "/Users/stephencooper/Workspace/test-output-ag-grid/snapshots/";
+            fs.writeFileSync(dumpPath + "/" + mainScript.replace(/\//g, '_').replace('.js', '.json').replace('.ts', '.json'), "")
+        } */
         // ********************* TEST CODE DONT COMMIT TO LATESTS **********************************????????????????????????/
 
-        const bindings = parser(jsFile, indexHtml, options, type, providedExamples);
+        const { bindings, typedBindings } = parser(jsFile, indexHtml, options, type, providedExamples);
 
         // ********************* TEST CODE DONT COMMIT TO LATEST **********************************????????????????????????/        
-        /*         if (process.env.LOGNAME === 'stephencooper') {
-                    const dumpPath = "/Users/stephencooper/Workspace/test-output-ag-grid/snapshots/";
-                    fs.writeFileSync(dumpPath + "/" + mainScript.replace(/\//g, '_').replace('.js', '.json').replace('.ts', '.json'), JSON.stringify(bindings))
-                } */
+        /*  if (process.env.LOGNAME === 'stephencooper') {
+             const dumpPath = "/Users/stephencooper/Workspace/test-output-ag-grid/snapshots/";
+             fs.writeFileSync(dumpPath + "/" + mainScript.replace(/\//g, '_').replace('.js', '.json').replace('.ts', '.json'), JSON.stringify(bindings))
+             const dumpPathTyped = "/Users/stephencooper/Workspace/test-output-ag-grid/snapshotsTyped/";
+             fs.writeFileSync(dumpPathTyped + "/" + mainScript.replace(/\//g, '_').replace('.js', '.json').replace('.ts', '.json'), JSON.stringify(typedBindings))
+         } */
         // ********************* TEST CODE DONT COMMIT TO LATESTS **********************************????????????????????????/
 
 

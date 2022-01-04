@@ -3,13 +3,14 @@ import * as ts from 'typescript';
 import { Events } from '../../../../community-modules/core/src/ts/eventKeys';
 import { PropertyKeys } from '../../../../community-modules/core/src/ts/propertyKeys';
 import {
-    extractEventHandlers, extractUnboundInstanceMethods, findAllAccessedProperties, findAllVariables, parseFile, recognizedDomEvents,
+    extractEventHandlers, extractUnboundInstanceMethods, findAllAccessedProperties, findAllVariables, parseFile, readAsJsFile, recognizedDomEvents,
     removeInScopeJsDoc,
     tsCollect,
     tsGenerate,
     tsNodeIsFunctionCall,
     tsNodeIsFunctionWithName, tsNodeIsGlobalVarWithName, tsNodeIsInScope, tsNodeIsPropertyWithName, tsNodeIsTopLevelFunction, tsNodeIsTopLevelVariable, tsNodeIsUnusedFunction
 } from './parser-utils';
+
 
 export const templatePlaceholder = 'GRID_TEMPLATE_PLACEHOLDER';
 
@@ -92,17 +93,25 @@ function processGlobalComponentsForVue(propertyName: string, exampleType, provid
     return false;
 }
 
-export function parser(js, html, exampleSettings, exampleType, providedExamples) {
+export function parser(srcFile, html, exampleSettings, exampleType, providedExamples) {
+    const bindings = internalParser(readAsJsFile(srcFile), html, exampleSettings, exampleType, providedExamples);
+    const typedBindings = internalParser(srcFile, html, exampleSettings, exampleType, providedExamples);
+    return { bindings, typedBindings };
+}
+
+function internalParser(inputFile, html, exampleSettings, exampleType, providedExamples) {
     const domTree = $(`<div>${html}</div>`);
 
     domTree.find('style').remove();
 
     const domEventHandlers = extractEventHandlers(domTree, recognizedDomEvents);
-    const tsTree = parseFile(js);
+    const tsTree = parseFile(inputFile);
     const tsCollectors = [];
     const tsGridOptionsCollectors = [];
     const tsOnReadyCollectors = [];
     const registered = ['gridOptions'];
+
+    //const importStatements = extractImportStatements(tsTree);
 
     // handler is the function name, params are any function parameters
     domEventHandlers.forEach(([_, handler, params]) => {
@@ -149,13 +158,43 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
         matches: node => tsNodeIsTopLevelFunction(node),
         apply: (bindings, node: ts.SignatureDeclaration) => {
 
-            let allVariables = new Set(findAllVariables((node as any).body));
+            const body = (node as any).body
+
+            let allVariables = new Set(body ? findAllVariables(body) : []);
             if (node.parameters && node.parameters.length > 0) {
                 node.parameters.forEach(p => {
                     allVariables.add(p.name.getText())
                 })
             }
-            const deps = findAllAccessedProperties((node as any).body);
+
+            const deps = body ? findAllAccessedProperties(body) : [];
+            const allDeps = deps.filter((id: string) => {
+                // Ignore locally defined variables
+                const isVariable = allVariables.has(id);
+                // Let's assume that all caps are constants so should be ignored, i.e KEY_UP
+                const isCapsConst = id === id.toUpperCase();
+                return !isVariable && !isCapsConst && !GLOBAL_DEPS.has(id);
+            });
+            if (allDeps.length > 0) {
+                bindings.callbackDependencies[node.name.getText()] = [...new Set(allDeps)];
+            }
+        }
+    });
+
+    tsCollectors.push({
+        matches: node => tsNodeIsImportStatement(node),
+        apply: (bindings, node: ts.SignatureDeclaration) => {
+
+            const body = (node as any).body
+
+            let allVariables = new Set(body ? findAllVariables(body) : []);
+            if (node.parameters && node.parameters.length > 0) {
+                node.parameters.forEach(p => {
+                    allVariables.add(p.name.getText())
+                })
+            }
+
+            const deps = body ? findAllAccessedProperties(body) : [];
             const allDeps = deps.filter((id: string) => {
                 // Ignore locally defined variables
                 const isVariable = allVariables.has(id);
@@ -423,7 +462,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
      * data -> url: dataUrl, callback: callback, http calls etc
      * resizeToFit -> true if sizeColumnsToFit is used
      * callbackDependencies -> lookup of function name to function external deps for react useCallback
-     * onDomContentLoaded -> used by Typescript example to unwrap the OnDomContentLoaded function
+     * imports -> imports used by Typescript code
      */
     const tsBindings = tsCollect(
         tsTree,
@@ -438,7 +477,7 @@ export function parser(js, html, exampleSettings, exampleType, providedExamples)
             externalEventHandlers: [],
             utils: [],
             callbackDependencies: {},
-            onDomContentLoaded: {}
+            imports: []
         },
         tsCollectors
     );

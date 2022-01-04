@@ -1,6 +1,6 @@
 import * as $ from 'jquery';
 import {
-    extractEventHandlers, extractUnboundInstanceMethods, parseFile, recognizedDomEvents, removeInScopeJsDoc, tsCollect, tsGenerate, tsNodeIsFunctionWithName, tsNodeIsGlobalFunctionCall, tsNodeIsGlobalVarWithName, tsNodeIsInScope, tsNodeIsPropertyWithName, tsNodeIsTopLevelVariable, tsNodeIsUnusedFunction
+    extractEventHandlers, extractUnboundInstanceMethods, parseFile, readAsJsFile, recognizedDomEvents, removeInScopeJsDoc, tsCollect, tsGenerate, tsNodeIsFunctionWithName, tsNodeIsGlobalFunctionCall, tsNodeIsGlobalVarWithName, tsNodeIsInScope, tsNodeIsPropertyWithName, tsNodeIsTopLevelVariable, tsNodeIsUnusedFunction
 } from './parser-utils';
 
 export const templatePlaceholder = '$$CHART$$';
@@ -14,7 +14,13 @@ function tsGenerateWithOptionReferences(node, srcFile) {
         .replace(new RegExp(`agCharts\\.AgChart\\.update\\(chart, options\\);?`, 'g'), '');
 }
 
-export function parser(js, html) {
+export function parser(srcFile, html) {
+    const bindings = internalParser(readAsJsFile(srcFile), html);
+    const typedBindings = internalParser(srcFile, html);
+    return { bindings, typedBindings };
+}
+
+export function internalParser(js, html) {
     const domTree = $(`<div>${html}</div>`);
 
     domTree.find('style').remove();
