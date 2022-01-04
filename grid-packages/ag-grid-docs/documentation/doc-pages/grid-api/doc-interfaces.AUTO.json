@@ -16359,7 +16359,7 @@
       "type": { "returnType": "boolean", "optional": false }
     },
     "suppressPadding": {
-      "description": "/** Set to `true` to not include any padding (indentation) in teh child rows. */",
+      "description": "/** Set to `true` to not include any padding (indentation) in the child rows. */",
       "type": { "returnType": "boolean", "optional": false }
     },
     "suppressDoubleClickExpand": {
