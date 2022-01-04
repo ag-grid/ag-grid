@@ -190,7 +190,7 @@ export class ColumnApi {
     private cleanDownReferencesToAvoidMemoryLeakInCaseApplicationIsKeepingReferenceToDestroyedGrid(): void {
         // some users were raising support issues with regards memory leaks. the problem was the customers applications
         // were keeping references to the API. trying to educate them all would be difficult, easier to just remove
-        // all references in teh API so at least the core grid can be garbage collected.
+        // all references in the API so at least the core grid can be garbage collected.
         //
         // wait about 100ms before clearing down the references, in case user has some cleanup to do,
         // and needs to deference the API first
