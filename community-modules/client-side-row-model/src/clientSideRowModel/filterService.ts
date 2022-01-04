@@ -2,7 +2,7 @@ import {
     Autowired,
     Bean,
     ChangedPath,
-    FilterManager,
+    IFilterManager,
     PostConstruct,
     RowNode,
     BeanStub
@@ -11,7 +11,7 @@ import {
 @Bean("filterService")
 export class FilterService extends BeanStub {
 
-    @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('filterManager') private filterManager: IFilterManager;
 
     private doingTreeData: boolean;
 

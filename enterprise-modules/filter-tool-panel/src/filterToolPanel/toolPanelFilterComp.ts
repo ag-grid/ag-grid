@@ -5,7 +5,7 @@ import {
     ColumnModel,
     Component,
     Events,
-    FilterManager,
+    IFilterManager,
     FilterOpenedEvent,
     IFilterComp,
     KeyCode,
@@ -30,7 +30,7 @@ export class ToolPanelFilterComp extends Component {
     @RefSelector('eFilterIcon') private eFilterIcon: HTMLElement;
     @RefSelector('eExpand') private eExpand: HTMLElement;
 
-    @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('filterManager') private filterManager: IFilterManager;
     @Autowired('columnModel') private columnModel: ColumnModel;
 
     private eExpandChecked: HTMLElement;

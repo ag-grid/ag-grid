@@ -22,7 +22,7 @@ import { AnimationFrameService } from "../misc/animationFrameService";
 import { UserComponentFactory } from "../components/framework/userComponentFactory";
 import { DragAndDropService } from "../dragAndDrop/dragAndDropService";
 import { SortController } from "../sortController";
-import { FilterManager } from "../filter/filterManager";
+import { IFilterManager } from "../filter/filterManager";
 import { RowContainerHeightService } from "./rowContainerHeightService";
 import { IFrameworkOverrides } from "../interfaces/iFrameworkOverrides";
 import { CellPositionUtils } from "../entities/cellPosition";
@@ -77,7 +77,7 @@ export class Beans {
     @Autowired('animationFrameService') public animationFrameService: AnimationFrameService;
     @Autowired('dragAndDropService') public dragAndDropService: DragAndDropService;
     @Autowired('sortController') public sortController: SortController;
-    @Autowired('filterManager') public filterManager: FilterManager;
+    @Autowired('filterManager') public filterManager: IFilterManager;
     @Autowired('rowContainerHeightService') public rowContainerHeightService: RowContainerHeightService;
     @Autowired('frameworkOverrides') public frameworkOverrides: IFrameworkOverrides;
     @Autowired('cellPositionUtils') public cellPositionUtils: CellPositionUtils;

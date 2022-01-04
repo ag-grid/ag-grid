@@ -4,7 +4,7 @@ import {
     Column,
     ColumnModel,
     Events,
-    FilterManager,
+    IFilterManager,
     IServerSideStore,
     LoadSuccessParams,
     NumberSequence,
@@ -18,7 +18,6 @@ import {
     SelectionChangedEvent,
     ServerSideStoreParams,
     ServerSideStoreState,
-    ServerSideStoreType,
     ServerSideTransaction,
     ServerSideTransactionResult,
     ServerSideTransactionResultStatus,
@@ -41,7 +40,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
     @Autowired('rowNodeSorter') private rowNodeSorter: RowNodeSorter;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('ssrmNodeManager') private nodeManager: NodeManager;
-    @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('filterManager') private filterManager: IFilterManager;
     @Autowired('ssrmTransactionManager') private transactionManager: TransactionManager;
 
     private readonly level: number;

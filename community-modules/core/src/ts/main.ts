@@ -101,7 +101,7 @@ export { SideBarDef, ToolPanelDef } from "./entities/sideBar";
 // filter
 export { IFilterDef, IFilterParams, IFilterOptionDef, IDoesFilterPassParams, ProvidedFilterModel, IFilter, IFilterComp, IFilterType, IFloatingFilterType } from "./interfaces/iFilter";
 export { ISetFilter, SetFilterModel, ISetFilterParams, SetFilterValues, SetFilterModelValue, SetFilterValuesFunc, SetFilterValuesFuncParams } from "./interfaces/iSetFilter";
-export { FilterManager, FilterWrapper, FilterRequestSource } from "./filter/filterManager";
+export { IFilterManager, FilterWrapper, FilterRequestSource } from "./filter/filterManager";
 export { IMultiFilter, IMultiFilterModel, IMultiFilterComp, IMultiFilterParams, IMultiFilterDef } from './interfaces/iMultiFilter';
 export {
     FilterExpression,

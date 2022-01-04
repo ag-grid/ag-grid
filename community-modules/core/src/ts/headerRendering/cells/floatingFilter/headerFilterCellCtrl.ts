@@ -6,7 +6,7 @@ import { KeyCode } from '../../../constants/keyCode';
 import { Autowired } from '../../../context/context';
 import { Column } from '../../../entities/column';
 import { Events, FilterChangedEvent } from '../../../events';
-import { FilterManager } from '../../../filter/filterManager';
+import { IFilterManager } from '../../../filter/filterManager';
 import { IFloatingFilter, IFloatingFilterParams, IFloatingFilterParentCallback } from '../../../filter/floating/floatingFilter';
 import { FloatingFilterMapper } from '../../../filter/floating/floatingFilterMapper';
 import { GridApi, unwrapUserComp } from '../../../gridApi';
@@ -38,7 +38,7 @@ export interface IHeaderFilterCellComp extends IAbstractHeaderCellComp {
 export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
 
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
+    @Autowired('filterManager') private readonly filterManager: IFilterManager;
     @Autowired('columnHoverService') private readonly columnHoverService: ColumnHoverService;
     @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('menuFactory') private readonly menuFactory: IMenuFactory;

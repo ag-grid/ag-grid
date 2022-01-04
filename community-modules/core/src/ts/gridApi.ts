@@ -1,6 +1,6 @@
 import { RowRenderer } from "./rendering/rowRenderer";
-import { FilterManager } from "./filter/filterManager";
-import { ColumnModel, ColumnState } from "./columns/columnModel";
+import { IFilterManager } from "./filter/filterManager";
+import { ColumnModel } from "./columns/columnModel";
 import { ColumnApi } from "./columns/columnApi";
 import { SelectionService } from "./selectionService";
 import { GridOptionsWrapper } from "./gridOptionsWrapper";
@@ -203,7 +203,7 @@ export class GridApi {
     @Optional('excelCreator') private excelCreator: IExcelCreator;
     @Autowired('rowRenderer') private rowRenderer: RowRenderer;
     @Autowired('navigationService') private navigationService: NavigationService;
-    @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('filterManager') private filterManager: IFilterManager;
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('selectionService') private selectionService: SelectionService;
     @Autowired('gridOptionsWrapper') private gridOptionsWrapper: GridOptionsWrapper;

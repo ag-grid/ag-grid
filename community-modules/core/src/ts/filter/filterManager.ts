@@ -11,8 +11,6 @@ import { IFilterComp, IFilter, IFilterParams } from '../interfaces/iFilter';
 import { ColDef, GetQuickFilterTextParams } from '../entities/colDef';
 import { GridApi } from '../gridApi';
 import { UserComponentFactory } from '../components/framework/userComponentFactory';
-import { ModuleNames } from '../modules/moduleNames';
-import { ModuleRegistry } from '../modules/moduleRegistry';
 import { BeanStub } from '../context/beanStub';
 import { convertToSet } from '../utils/set';
 import { exists } from '../utils/generic';
@@ -22,8 +20,29 @@ import { GridOptions } from '../entities/gridOptions';
 
 export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
 
+export interface IFilterManager {
+    isAdvancedFilterPresent(): boolean;
+    isAnyFilterPresent(): boolean;
+    isFilterActive(column: Column): boolean;
+    isSuppressFlashingCellsBecauseFiltering(): boolean;
+    doesRowPassFilter(params: { rowNode: RowNode, filterInstanceToSkip?: IFilterComp }): boolean;
+    
+    isQuickFilterPresent(): boolean;
+    setQuickFilter(newFilter: any): void;
+    
+    getFilterModel(): { [key: string]: any; };
+    setFilterModel(model: { [key: string]: any; }): void;
+    
+    createFilterParams(column: Column, colDef: ColDef, $scope?: any): IFilterParams;
+    getOrCreateFilterWrapper(column: Column, source: FilterRequestSource): FilterWrapper;
+    getFilterComponent(column: Column, source: FilterRequestSource, createIfDoesNotExist?: boolean): AgPromise<IFilterComp> | null;
+    destroyFilter(column: Column, source: ColumnEventType): void    
+
+    onFilterChanged(): void;
+}
+
 @Bean('filterManager')
-export class FilterManager extends BeanStub {
+export class FilterManager extends BeanStub implements IFilterManager {
 
     @Autowired('$compile') private $compile: any;
     @Autowired('$scope') private $scope: any;

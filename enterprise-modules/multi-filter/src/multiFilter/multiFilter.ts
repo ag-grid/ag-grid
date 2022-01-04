@@ -10,7 +10,7 @@ import {
     IMultiFilterModel,
     Autowired,
     UserComponentFactory,
-    FilterManager,
+    IFilterManager,
     Column,
     IFilterDef,
     IFilterParams,
@@ -25,7 +25,7 @@ import {
 import { MenuItemComponent, MenuItemActivatedEvent } from '@ag-grid-enterprise/menu';
 
 export class MultiFilter extends TabGuardComp implements IFilterComp, IMultiFilter {
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
+    @Autowired('filterManager') private readonly filterManager: IFilterManager;
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
 
     private params: IMultiFilterParams;

@@ -3,7 +3,7 @@ import {
     Bean,
     BeanStub,
     Events,
-    FilterManager,
+    IFilterManager,
     PostConstruct,
     StoreRefreshAfterParams
 } from "@ag-grid-community/core";
@@ -14,7 +14,7 @@ import { ListenerUtils } from "./listenerUtils";
 export class FilterListener extends BeanStub {
 
     @Autowired('rowModel') private serverSideRowModel: ServerSideRowModel;
-    @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('filterManager') private filterManager: IFilterManager;
     @Autowired('ssrmListenerUtils') private listenerUtils: ListenerUtils;
 
     @PostConstruct

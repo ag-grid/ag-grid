@@ -9,7 +9,7 @@ import {
     ColumnVO,
     Constants,
     Events,
-    FilterManager,
+    IFilterManager,
     GridApi,
     IServerSideDatasource,
     IServerSideRowModel,
@@ -50,7 +50,7 @@ export interface SSRMParams {
 export class ServerSideRowModel extends BeanStub implements IServerSideRowModel {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('filterManager') private filterManager: IFilterManager;
     @Autowired('sortController') private sortController: SortController;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;

@@ -8,7 +8,7 @@ import {
     ColumnApi,
     ColumnModel,
     Constants,
-    FilterManager,
+    IFilterManager,
     FilterWrapper,
     GridApi,
     IMenuFactory,
@@ -197,7 +197,7 @@ export class EnterpriseMenu extends BeanStub {
     public static MENU_ITEM_SEPARATOR = 'separator';
 
     @Autowired('columnModel') private columnModel: ColumnModel;
-    @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('filterManager') private filterManager: IFilterManager;
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('columnApi') private columnApi: ColumnApi;
     @Autowired('menuItemMapper') private menuItemMapper: MenuItemMapper;

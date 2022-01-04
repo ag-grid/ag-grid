@@ -6,7 +6,7 @@ import {
     ColumnApi,
     Constants,
     Events,
-    FilterManager,
+    IFilterManager,
     GridApi,
     IDatasource,
     ModelUpdatedEvent,
@@ -26,7 +26,7 @@ import { InfiniteCache, InfiniteCacheParams } from "./infiniteCache";
 @Bean('rowModel')
 export class InfiniteRowModel extends BeanStub implements IInfiniteRowModel {
 
-    @Autowired('filterManager') private readonly filterManager: FilterManager;
+    @Autowired('filterManager') private readonly filterManager: IFilterManager;
     @Autowired('sortController') private readonly sortController: SortController;
     @Autowired('selectionService') private readonly selectionService: SelectionService;
     @Autowired('gridApi') private readonly gridApi: GridApi;

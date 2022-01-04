@@ -1,7 +1,7 @@
 import { Autowired } from "../../context/context";
 import { ICellRenderer } from "./iCellRenderer";
 import { Component } from "../../widgets/component";
-import { FilterManager } from "../../filter/filterManager";
+import { IFilterManager } from "../../filter/filterManager";
 import { exists } from "../../utils/generic";
 import { clearElement } from "../../utils/dom";
 
@@ -24,7 +24,7 @@ export class AnimateShowChangeCellRenderer extends Component implements ICellRen
 
     private refreshCount = 0;
 
-    @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('filterManager') private filterManager: IFilterManager;
 
     constructor() {
         super(AnimateShowChangeCellRenderer.TEMPLATE);

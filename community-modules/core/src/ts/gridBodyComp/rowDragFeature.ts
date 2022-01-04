@@ -18,7 +18,7 @@ import { SelectionService } from "../selectionService";
 import { MouseEventService } from "./mouseEventService";
 import { last } from '../utils/array';
 import { SortController } from "../sortController";
-import { FilterManager } from "../filter/filterManager";
+import { IFilterManager } from "../filter/filterManager";
 import { BeanStub } from "../context/beanStub";
 import { missingOrEmpty } from "../utils/generic";
 import { doOnce } from "../utils/function";
@@ -54,7 +54,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
     @Autowired('columnModel') private columnModel: ColumnModel;
     @Autowired('focusService') private focusService: FocusService;
     @Autowired('sortController') private sortController: SortController;
-    @Autowired('filterManager') private filterManager: FilterManager;
+    @Autowired('filterManager') private filterManager: IFilterManager;
     @Autowired('selectionService') private selectionService: SelectionService;
     @Autowired('mouseEventService') private mouseEventService: MouseEventService;
     @Autowired('ctrlsService') private ctrlsService: CtrlsService;
