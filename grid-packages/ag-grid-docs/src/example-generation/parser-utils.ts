@@ -3,6 +3,12 @@ const sucrase = require("sucrase");
 
 export type ImportType = 'packages' | 'modules';
 
+export interface BindingImport {
+    isNamespaced: boolean;
+    module: string;
+    imports: string[];
+}
+
 const moduleMapping = require('../../documentation/doc-pages/modules/modules.json');
 
 export function readAsJsFile(srcFile) {
@@ -267,24 +273,26 @@ export function extractUnboundInstanceMethods(srcFile: ts.SourceFile) {
     return inScopeMethods;
 }
 
-// functions marked with an "inScope" comment will be handled as "instance" methods, as opposed to (global/unused)
-// "util" ones
-export function extractImportStatements(srcFile: ts.SourceFile) {
+export function extractImportStatements(srcFile: ts.SourceFile): BindingImport[] {
     let allImports = [];
     srcFile.statements.forEach(node => {
         if (ts.isImportDeclaration(node)) {
             const module = node.moduleSpecifier.getText();
             const moduleImports = node.importClause;
             const imports = [];
+            let isNamespaced = false;
             if (moduleImports.namedBindings) {
-                moduleImports.namedBindings.forEachChild(o => {
-                    console.log(o.getText())
 
+                if (ts.isNamespaceImport(moduleImports.namedBindings)) {
+                    isNamespaced = true;
+                }
+                moduleImports.namedBindings.forEachChild(o => {
+                    imports.push(o.getText());
                 })
             }
             allImports.push({
                 module,
-                isNamespaced: false,
+                isNamespaced,
                 imports
             })
         }

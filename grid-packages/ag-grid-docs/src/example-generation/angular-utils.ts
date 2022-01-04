@@ -3,7 +3,7 @@ import { recognizedDomEvents } from "./parser-utils";
 export const toInput = (property: any) => `[${property.name}]="${property.name}"`;
 export const toConst = (property: any) => `[${property.name}]="${property.value}"`;
 export const toOutput = (event: any) => `(${event.name})="${event.handlerName}($event)"`;
-export const toMember = (property: any) => `private ${property.name};`;
+export const toMember = (property: any) => `public ${property.name};`;
 export const toAssignment = (property: any) => `this.${property.name} = ${property.value}`;
 
 export function convertTemplate(template: string) {

@@ -309,7 +309,7 @@ function createExampleGenerator(prefix, importTypes) {
                 const angularConfigs = new Map();
                 try {
                     const angularComponentFileNames = extractComponentFileNames(angularScripts, '_angular');
-                    const getSource = vanillaToAngular(deepCloneObject(bindings), angularComponentFileNames);
+                    const getSource = vanillaToAngular(deepCloneObject(typedBindings), angularComponentFileNames);
 
                     importTypes.forEach(importType => {
                         angularConfigs.set(importType, {
@@ -398,7 +398,7 @@ function createExampleGenerator(prefix, importTypes) {
             const tsScripts = getMatchingPaths('*.{html,ts}', { ignore: ['**/*_{angular,react,vue,vue3}.ts', '**/main.ts'] });
             const tsConfigs = new Map();
             try {
-                const getSource = vanillaToTypescript(deepCloneObject(bindings), mainScript);
+                const getSource = vanillaToTypescript(deepCloneObject(typedBindings), mainScript);
                 importTypes.forEach(importType => {
                     tsConfigs.set(importType, {
                         'main.ts': getSource(importType),

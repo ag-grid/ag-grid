@@ -1,4 +1,4 @@
-import { ImportType, isInstanceMethod, removeFunctionKeyword, modulesProcessor } from './parser-utils';
+import { ImportType, isInstanceMethod, removeFunctionKeyword, modulesProcessor, BindingImport } from './parser-utils';
 import { convertTemplate, getImport, toAssignment, toConst, toInput, toMember, toOutput } from './angular-utils';
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
 
@@ -33,7 +33,7 @@ function getOnGridReadyCode(readyCode: string, resizeToFit: boolean, data: { url
 
 
 function getModuleImports(bindings: any, componentFileNames: string[]): string[] {
-    const { gridSettings } = bindings;
+    const { gridSettings, imports: bindingImports } = bindings;
     const { modules } = gridSettings;
 
     const imports = ["import { Component } from '@angular/core';"];
@@ -73,6 +73,10 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
         imports.push(`import "@ag-grid-community/all-modules/dist/styles/${theme}.css";`);
     }
 
+    if (bindingImports?.length > 0) {
+        addBindingImports(bindingImports, imports);
+    }
+
     if (componentFileNames) {
         imports.push(...componentFileNames.map(getImport));
     }
@@ -81,7 +85,7 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
 }
 
 function getPackageImports(bindings: any, componentFileNames: string[]): string[] {
-    const { gridSettings } = bindings;
+    const { gridSettings, imports: bindingImports } = bindings;
     const imports = ["import { Component } from '@angular/core';"];
 
     if (bindings.data) {
@@ -98,11 +102,29 @@ function getPackageImports(bindings: any, componentFileNames: string[]): string[
     const theme = gridSettings.theme || 'ag-theme-alpine';
     imports.push(`import "ag-grid-community/dist/styles/${theme}.css";`);
 
+    if (bindingImports?.length > 0) {
+        addBindingImports(bindingImports, imports);
+    }
+
     if (componentFileNames) {
         imports.push(...componentFileNames.map(getImport));
     }
 
     return imports;
+}
+
+function addBindingImports(bindingImports: any, imports: string[]) {
+    bindingImports.forEach((i: BindingImport) => {
+        if (i.isNamespaced) {
+            imports.push(`import * as ${i.imports[0]} from ${i.module};`);
+        } else {
+            // Angular does not use GridOptions, instead it applies the properties to the component so we do not need to import it.
+            const noGridOptions = i.imports.filter(x => x !== 'GridOptions');
+            if (noGridOptions.length > 0) {
+                imports.push(`import { ${noGridOptions.join(', ')} }  from ${i.module};`);
+            }
+        }
+    });
 }
 
 function getImports(bindings: any, componentFileNames: string[], importType: ImportType): string[] {
@@ -157,6 +179,9 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): (
         if (importType === 'modules') {
             propertyAttributes.push('[modules]="modules"');
             propertyVars.push(`public modules: Module[] = ${bindings.gridSuppliedModules};`);
+            imports.push(`import { ColumnApi, GridApi, Module } from '@ag-grid-community/core';`)
+        } else {
+            imports.push(`import { ColumnApi, GridApi } from 'ag-grid-community';`)
         }
 
         properties.filter(property => property.name !== 'onGridReady').forEach(property => {
@@ -186,7 +211,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): (
         }
 
         if (propertyVars.filter(item => item.indexOf('rowData') >= 0).length === 0) {
-            propertyVars.push('private rowData: []');
+            propertyVars.push('public rowData: []');
         }
 
         const template = getTemplate(bindings, propertyAttributes.concat(eventAttributes));
@@ -200,8 +225,8 @@ ${imports.join('\n')}
 })
 
 export class AppComponent {
-    private gridApi;
-    private gridColumnApi;
+    private gridApi: GridApi;
+    private gridColumnApi: ColumnApi;
 
     ${propertyVars.join('\n')}
 

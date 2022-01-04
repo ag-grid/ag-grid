@@ -3,7 +3,7 @@ import * as ts from 'typescript';
 import { Events } from '../../../../community-modules/core/src/ts/eventKeys';
 import { PropertyKeys } from '../../../../community-modules/core/src/ts/propertyKeys';
 import {
-    extractEventHandlers, extractUnboundInstanceMethods, findAllAccessedProperties, findAllVariables, parseFile, readAsJsFile, recognizedDomEvents,
+    extractEventHandlers, extractImportStatements, extractUnboundInstanceMethods, findAllAccessedProperties, findAllVariables, parseFile, readAsJsFile, recognizedDomEvents,
     removeInScopeJsDoc,
     tsCollect,
     tsGenerate,
@@ -111,7 +111,6 @@ function internalParser(inputFile, html, exampleSettings, exampleType, providedE
     const tsOnReadyCollectors = [];
     const registered = ['gridOptions'];
 
-    //const importStatements = extractImportStatements(tsTree);
 
     // handler is the function name, params are any function parameters
     domEventHandlers.forEach(([_, handler, params]) => {
@@ -156,33 +155,6 @@ function internalParser(inputFile, html, exampleSettings, exampleType, providedE
     const GLOBAL_DEPS = new Set(['console', 'document', 'Error'])
     tsCollectors.push({
         matches: node => tsNodeIsTopLevelFunction(node),
-        apply: (bindings, node: ts.SignatureDeclaration) => {
-
-            const body = (node as any).body
-
-            let allVariables = new Set(body ? findAllVariables(body) : []);
-            if (node.parameters && node.parameters.length > 0) {
-                node.parameters.forEach(p => {
-                    allVariables.add(p.name.getText())
-                })
-            }
-
-            const deps = body ? findAllAccessedProperties(body) : [];
-            const allDeps = deps.filter((id: string) => {
-                // Ignore locally defined variables
-                const isVariable = allVariables.has(id);
-                // Let's assume that all caps are constants so should be ignored, i.e KEY_UP
-                const isCapsConst = id === id.toUpperCase();
-                return !isVariable && !isCapsConst && !GLOBAL_DEPS.has(id);
-            });
-            if (allDeps.length > 0) {
-                bindings.callbackDependencies[node.name.getText()] = [...new Set(allDeps)];
-            }
-        }
-    });
-
-    tsCollectors.push({
-        matches: node => tsNodeIsImportStatement(node),
         apply: (bindings, node: ts.SignatureDeclaration) => {
 
             const body = (node as any).body
@@ -477,7 +449,6 @@ function internalParser(inputFile, html, exampleSettings, exampleType, providedE
             externalEventHandlers: [],
             utils: [],
             callbackDependencies: {},
-            imports: []
         },
         tsCollectors
     );
@@ -501,6 +472,7 @@ function internalParser(inputFile, html, exampleSettings, exampleType, providedE
     }
 
     tsBindings.template = domTree.html().replace(/<br>/g, '<br />');
+    tsBindings.imports = extractImportStatements(tsTree);
 
     tsBindings.gridSettings = {
         width: '100%',
