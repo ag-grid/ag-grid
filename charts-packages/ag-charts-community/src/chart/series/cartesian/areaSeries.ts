@@ -286,7 +286,7 @@ export class AreaSeries extends CartesianSeries {
 
         if (normalizedTo && isFinite(normalizedTo)) {
             yMin = yLargestMinMax.min < 0 ? -normalizedTo : 0;
-            yMax = normalizedTo;
+            yMax = yLargestMinMax.max > 0 ? normalizedTo : 0;
             yData.forEach((stack, i) => stack.forEach((y, j) => stack[j] = y / yAbsTotal[i] * normalizedTo));
         } else {
             yMin = yLargestMinMax.min;

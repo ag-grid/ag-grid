@@ -413,7 +413,7 @@ export class BarSeries extends CartesianSeries {
         let yMax: number;
         if (normalizedTo && isFinite(normalizedTo)) {
             yMin = yLargestMinMax.min < 0 ? -normalizedTo : 0;
-            yMax = normalizedTo;
+            yMax = yLargestMinMax.max > 0 ? normalizedTo : 0;
             yData.forEach((group, i) => {
                 group.forEach((stack, j) => {
                     stack.forEach((y, k) => {
