@@ -564,7 +564,6 @@ export class BarSeries extends CartesianSeries {
             for (let stackIndex = 0; stackIndex < groupYs.length; stackIndex++) {
                 const stackYs = groupYs[stackIndex]; // y-data for a stack withing a group
 
-                const zero = Math.max(0, (yAxis as NumberAxis).min, yScale.domain[0]);
                 let prevMinY = 0;
                 let prevMaxY = 0;
 
