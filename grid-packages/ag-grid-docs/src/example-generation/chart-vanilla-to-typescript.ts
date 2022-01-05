@@ -1,8 +1,8 @@
-import { ImportType } from './parser-utils';
+import { ImportType, addBindingImports } from './parser-utils';
 const fs = require('fs-extra');
 
 export function vanillaToTypescript(bindings: any, mainFilePath: string): (importType: ImportType) => string {
-    const { externalEventHandlers } = bindings;
+    const { externalEventHandlers, imports } = bindings;
 
     // attach external handlers to window
     let toAttach = '';
@@ -18,10 +18,21 @@ export function vanillaToTypescript(bindings: any, mainFilePath: string): (impor
     }
 
     return () => {
-        const tsFile = fs.readFileSync(mainFilePath, 'utf8')
+        let tsFile = fs.readFileSync(mainFilePath, 'utf8')
             .replace(/(.*DOMContentLoaded.*)\n((.|\n)*)(}\))/g, "$2");
 
-        return `${tsFile} ${toAttach || ''}`;
+        // Need to replace module imports with their matching package import
+        let formattedImports = '';
+        if (imports.length > 0) {
+            let importStrings = [];
+            addBindingImports(imports, importStrings, true);
+            formattedImports = `${importStrings.join('\n')}\n`
+
+            // Remove the original import statements
+            tsFile = tsFile.replace(/import.*from.*\n/g, '');
+        }
+
+        return `${formattedImports}${tsFile} ${toAttach || ''}`;
     };
 }
 

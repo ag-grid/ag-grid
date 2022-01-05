@@ -164,9 +164,13 @@ export function tsNodeIsPropertyWithName(node: ts.Node, name: string) {
 
 export function tsNodeIsTopLevelVariable(node: ts.Node, registered: string[] = []) {
     if (ts.isVariableDeclarationList(node)) {
-        // Not registered already and are a top level variable declaration so that we do not match
-        // variables within function scopes
-        return registered.indexOf(node.declarations[0].name.getText()) < 0 && ts.isSourceFile(node.parent.parent);
+        // Not registered already
+        // are a top level variable declaration so that we do not match variables within function scopes
+        // Is not just a type declaration i.e declare function getData: () => any[];
+        if (node.declarations.length > 0) {
+            const declaration = node.declarations[0];
+            return !isDeclareStatement(node.parent) && registered.indexOf(declaration.name.getText()) < 0 && ts.isSourceFile(node.parent.parent);
+        }
     }
 }
 
@@ -193,8 +197,19 @@ export function tsNodeIsUnusedFunction(node: any, used: string[], unboundInstanc
     if (!tsNodeIsInScope(node, unboundInstanceMethods)) {
         if (ts.isFunctionLike(node) && used.indexOf(node.name.getText()) < 0) {
             const isTopLevel = ts.isSourceFile(node.parent);
-            return isTopLevel
+            return isTopLevel && !isDeclareStatement(node);
         }
+    }
+    return false;
+}
+
+function isDeclareStatement(node) {
+    return node && node.modifiers && node.modifiers.some(m => m.getText() === 'declare');
+}
+
+export function tsNodeIsTypeDeclaration(node: any): boolean {
+    if ((ts.isFunctionDeclaration(node) || ts.isVariableStatement(node))) {
+        return isDeclareStatement(node);
     }
     return false;
 }
@@ -386,4 +401,34 @@ export function findAllAccessedProperties(node) {
     }
 
     return properties;
+}
+
+/** Convert import paths to their package equivalent when the docs are in Packages mode
+ * i.e import { GridOptions } from '@ag-grid-community/core';
+ * to 
+ * import { GridOptions } from '@ag-grid-community';
+ */
+export function convertImportPath(modulePackage: string, convertToPackage: boolean) {
+    if (convertToPackage) {
+        if (modulePackage.includes("@ag-grid-community")) {
+            return `'ag-grid-community'`
+        } else if (modulePackage.includes("@ag-grid-enterprise")) {
+            return `'ag-grid-enterprise'`
+        }
+    }
+    return modulePackage;
+}
+
+export function addBindingImports(bindingImports: any, imports: string[], convertToPackage: boolean) {
+    // We rely on the prettier-plugin-organize-imports plugin to organise and de-duplicate our imports
+    bindingImports.forEach((i: BindingImport) => {
+        if (i.imports.length > 0) {
+            const path = convertImportPath(i.module, convertToPackage)
+            if (i.isNamespaced) {
+                imports.push(`import * as ${i.imports[0]} from ${path};`);
+            } else {
+                imports.push(`import { ${i.imports.join(', ')} }  from ${path};`);
+            }
+        }
+    });
 }

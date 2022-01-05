@@ -209,7 +209,7 @@ function createExampleGenerator(prefix, importTypes) {
         const indexHtml = getFileContents(document);
 
         // ********************* TEST CODE DONT COMMIT TO LATEST **********************************????????????????????????/
-        /* if (process.env.LOGNAME === 'stephencooper') {
+        /*if (process.env.LOGNAME === 'stephencooper') {
             const dumpPath = "/Users/stephencooper/Workspace/test-output-ag-grid/snapshots/";
             fs.writeFileSync(dumpPath + "/" + mainScript.replace(/\//g, '_').replace('.js', '.json').replace('.ts', '.json'), "")
         } */
@@ -219,11 +219,11 @@ function createExampleGenerator(prefix, importTypes) {
 
         // ********************* TEST CODE DONT COMMIT TO LATEST **********************************????????????????????????/        
         /*  if (process.env.LOGNAME === 'stephencooper') {
-             const dumpPath = "/Users/stephencooper/Workspace/test-output-ag-grid/snapshots/";
-             fs.writeFileSync(dumpPath + "/" + mainScript.replace(/\//g, '_').replace('.js', '.json').replace('.ts', '.json'), JSON.stringify(bindings))
-             const dumpPathTyped = "/Users/stephencooper/Workspace/test-output-ag-grid/snapshotsTyped/";
-             fs.writeFileSync(dumpPathTyped + "/" + mainScript.replace(/\//g, '_').replace('.js', '.json').replace('.ts', '.json'), JSON.stringify(typedBindings))
-         } */
+            const dumpPath = "/Users/stephencooper/Workspace/test-output-ag-grid/snapshots/";
+            fs.writeFileSync(dumpPath + "/" + mainScript.replace(/\//g, '_').replace('.js', '.json').replace('.ts', '.json'), JSON.stringify(bindings))
+            const dumpPathTyped = "/Users/stephencooper/Workspace/test-output-ag-grid/snapshotsTyped/";
+            fs.writeFileSync(dumpPathTyped + "/" + mainScript.replace(/\//g, '_').replace('.js', '.json').replace('.ts', '.json'), JSON.stringify(typedBindings))
+        } */
         // ********************* TEST CODE DONT COMMIT TO LATESTS **********************************????????????????????????/
 
 
@@ -411,7 +411,6 @@ function createExampleGenerator(prefix, importTypes) {
 
             if (tsScripts.length > 1) {
                 importTypes.forEach(importType => writeExampleFiles(importType, 'typescript', 'typescript', tsScripts, tsConfigs.get(importType)));
-
             } else {
                 importTypes.forEach(importType => writeExampleFiles(importType, 'typescript', 'vanilla', vanillaScripts, tsConfigs.get(importType)));
             }

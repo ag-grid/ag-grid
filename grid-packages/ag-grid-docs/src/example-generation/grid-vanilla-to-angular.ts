@@ -1,6 +1,6 @@
-import { ImportType, isInstanceMethod, removeFunctionKeyword, modulesProcessor, BindingImport } from './parser-utils';
 import { convertTemplate, getImport, toAssignment, toConst, toInput, toMember, toOutput } from './angular-utils';
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
+import { addBindingImports, ImportType, isInstanceMethod, modulesProcessor, removeFunctionKeyword } from './parser-utils';
 
 function getOnGridReadyCode(readyCode: string, resizeToFit: boolean, data: { url: string, callback: string; }): string {
     const additionalLines = [];
@@ -74,7 +74,7 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
     }
 
     if (bindingImports?.length > 0) {
-        addBindingImports(bindingImports, imports);
+        addBindingImports(bindingImports, imports, false);
     }
 
     if (componentFileNames) {
@@ -103,7 +103,7 @@ function getPackageImports(bindings: any, componentFileNames: string[]): string[
     imports.push(`import "ag-grid-community/dist/styles/${theme}.css";`);
 
     if (bindingImports?.length > 0) {
-        addBindingImports(bindingImports, imports);
+        addBindingImports(bindingImports, imports, true);
     }
 
     if (componentFileNames) {
@@ -111,20 +111,6 @@ function getPackageImports(bindings: any, componentFileNames: string[]): string[
     }
 
     return imports;
-}
-
-function addBindingImports(bindingImports: any, imports: string[]) {
-    bindingImports.forEach((i: BindingImport) => {
-        if (i.isNamespaced) {
-            imports.push(`import * as ${i.imports[0]} from ${i.module};`);
-        } else {
-            // Angular does not use GridOptions, instead it applies the properties to the component so we do not need to import it.
-            const noGridOptions = i.imports.filter(x => x !== 'GridOptions');
-            if (noGridOptions.length > 0) {
-                imports.push(`import { ${noGridOptions.join(', ')} }  from ${i.module};`);
-            }
-        }
-    });
 }
 
 function getImports(bindings: any, componentFileNames: string[], importType: ImportType): string[] {
@@ -153,7 +139,7 @@ function getTemplate(bindings: any, attributes: string[]): string {
 }
 
 export function vanillaToAngular(bindings: any, componentFileNames: string[]): (importType: ImportType) => string {
-    const { data, properties } = bindings;
+    const { data, properties, declarations } = bindings;
     const diParams = [];
     const additional = [getOnGridReadyCode(bindings.onGridReady, bindings.resizeToFit, data)];
 
@@ -217,7 +203,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): (
         const template = getTemplate(bindings, propertyAttributes.concat(eventAttributes));
 
         return `
-${imports.join('\n')}
+${imports.join('\n')}${declarations.length > 0 ? '\n' + declarations.join('\n') : ''}
 
 @Component({
     selector: 'my-app',

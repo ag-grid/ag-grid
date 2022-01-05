@@ -1,5 +1,5 @@
 import { templatePlaceholder } from './chart-vanilla-src-parser';
-import { convertFunctionToProperty, isInstanceMethod } from './parser-utils';
+import { addBindingImports, convertFunctionToProperty, isInstanceMethod } from './parser-utils';
 import { toInput, toConst, toMember, toAssignment, convertTemplate, getImport } from './angular-utils';
 import { wrapOptionsUpdateCode } from './chart-utils';
 
@@ -12,6 +12,7 @@ function getImports(componentFileNames: string[]): string[] {
         "import { cloneDeep } from 'lodash';",
         "import { Component } from '@angular/core';",
         "import * as agCharts from 'ag-charts-community';",
+        "import { AgChartOptions } from 'ag-charts-community';"
     ];
 
     if (componentFileNames) {
@@ -34,8 +35,11 @@ function getTemplate(bindings: any, attributes: string[]): string {
 
 export function vanillaToAngular(bindings: any, componentFileNames: string[]): () => string {
     return () => {
-        const { properties } = bindings;
+        const { properties, imports: bindingImports, declarations } = bindings;
         const imports = getImports(componentFileNames);
+        if (bindingImports?.length > 0) {
+            addBindingImports(bindingImports, imports, true);
+        }
         const propertyAttributes = [];
         const propertyVars = [];
         const propertyAssignments = [];
@@ -66,7 +70,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): (
         const template = getTemplate(bindings, propertyAttributes);
         const externalEventHandlers = bindings.externalEventHandlers.map(handler => processFunction(handler.body));
 
-        return `${imports.join('\n')}
+        return `${imports.join('\n')}${declarations.length > 0 ? '\n' + declarations.join('\n') : ''}
 
 @Component({
     selector: 'my-app',
@@ -74,7 +78,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): (
 })
 
 export class AppComponent {
-    private options: any;
+    private options: AgChartOptions;
     ${propertyVars.filter(p => p.name === 'options').join('\n')}
 
     constructor() {

@@ -8,7 +8,7 @@ import {
     tsCollect,
     tsGenerate,
     tsNodeIsFunctionCall,
-    tsNodeIsFunctionWithName, tsNodeIsGlobalVarWithName, tsNodeIsInScope, tsNodeIsPropertyWithName, tsNodeIsTopLevelFunction, tsNodeIsTopLevelVariable, tsNodeIsUnusedFunction
+    tsNodeIsFunctionWithName, tsNodeIsGlobalVarWithName, tsNodeIsInScope, tsNodeIsPropertyWithName, tsNodeIsTopLevelFunction, tsNodeIsTopLevelVariable, tsNodeIsTypeDeclaration, tsNodeIsUnusedFunction
 } from './parser-utils';
 
 
@@ -148,6 +148,14 @@ function internalParser(inputFile, html, exampleSettings, exampleType, providedE
         apply: (bindings, node) => {
             const util = tsGenerate(node, tsTree).replace(/gridOptions/g, 'gridInstance');
             bindings.utils.push(util)
+        }
+    });
+
+    tsCollectors.push({
+        matches: node => tsNodeIsTypeDeclaration(node),
+        apply: (bindings, node) => {
+            const declaration = tsGenerate(node, tsTree);
+            bindings.declarations.push(declaration)
         }
     });
 
@@ -434,6 +442,7 @@ function internalParser(inputFile, html, exampleSettings, exampleType, providedE
      * data -> url: dataUrl, callback: callback, http calls etc
      * resizeToFit -> true if sizeColumnsToFit is used
      * callbackDependencies -> lookup of function name to function external deps for react useCallback
+     * declarations -> Typescript examples add declarations when working with globally defined javascript functions / variables
      * imports -> imports used by Typescript code
      */
     const tsBindings = tsCollect(
@@ -448,6 +457,7 @@ function internalParser(inputFile, html, exampleSettings, exampleType, providedE
             instanceMethods: [],
             externalEventHandlers: [],
             utils: [],
+            declarations: [],
             callbackDependencies: {},
         },
         tsCollectors

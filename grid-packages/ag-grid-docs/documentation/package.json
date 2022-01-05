@@ -26,6 +26,7 @@
     "@ag-grid-enterprise/column-tool-panel": "~26.2.0",
     "@ag-grid-enterprise/master-detail": "~26.2.0",
     "@ag-grid-enterprise/multi-filter": "~26.2.0",
+    "@ag-grid-enterprise/menu": "~26.2.0",
     "@ag-grid-enterprise/set-filter": "~26.2.0",
     "@ag-grid-enterprise/status-bar": "~26.2.0",
     "@fortawesome/fontawesome-svg-core": "1.2.34",

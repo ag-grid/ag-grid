@@ -1,6 +1,6 @@
 import * as $ from 'jquery';
 import {
-    extractEventHandlers, extractUnboundInstanceMethods, parseFile, readAsJsFile, recognizedDomEvents, removeInScopeJsDoc, tsCollect, tsGenerate, tsNodeIsFunctionWithName, tsNodeIsGlobalFunctionCall, tsNodeIsGlobalVarWithName, tsNodeIsInScope, tsNodeIsPropertyWithName, tsNodeIsTopLevelVariable, tsNodeIsUnusedFunction
+    extractEventHandlers, extractImportStatements, extractUnboundInstanceMethods, parseFile, readAsJsFile, recognizedDomEvents, removeInScopeJsDoc, tsCollect, tsGenerate, tsNodeIsFunctionWithName, tsNodeIsGlobalFunctionCall, tsNodeIsGlobalVarWithName, tsNodeIsInScope, tsNodeIsPropertyWithName, tsNodeIsTopLevelVariable, tsNodeIsTypeDeclaration, tsNodeIsUnusedFunction
 } from './parser-utils';
 
 export const templatePlaceholder = '$$CHART$$';
@@ -119,6 +119,14 @@ export function internalParser(js, html) {
         apply: (bindings, node) => bindings.init.push(tsGenerate(node, tsTree))
     });
 
+    tsCollectors.push({
+        matches: node => tsNodeIsTypeDeclaration(node),
+        apply: (bindings, node) => {
+            const declaration = tsGenerate(node, tsTree);
+            bindings.declarations.push(declaration)
+        }
+    });
+
     /*
      * properties -> chart related properties
      * globals -> none chart related methods/variables (i.e. non-instance)
@@ -131,12 +139,14 @@ export function internalParser(js, html) {
             instanceMethods: [],
             globals: [],
             init: [],
+            declarations: [],
         },
         tsCollectors
     );
 
     domTree.find('#myChart').replaceWith(templatePlaceholder);
     tsBindings.template = domTree.html();
+    tsBindings.imports = extractImportStatements(tsTree);
 
     return tsBindings;
 }
