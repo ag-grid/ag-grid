@@ -33,15 +33,15 @@ function getModuleImports(bindings: any, componentFilenames: string[]): string[]
             imports.push("import { AllModules } from '@ag-grid-enterprise/all-modules';");
             bindings.gridSuppliedModules = 'AllModules';
         } else {
-            imports.push("import { AllCommunityModules } from '@ag-grid-community/all-modules';");
-            bindings.gridSuppliedModules = 'AllCommunityModules';
+            imports.push("import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';");
+            bindings.gridSuppliedModules = 'ClientSideRowModelModule';
         }
 
-        imports.push("import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';");
+        imports.push("import '@ag-grid-community/core/dist/styles/ag-grid.css';");
 
         // to account for the (rare) example that has more than one class...just default to alpine if it does
         const theme = bindings.gridSettings.theme || 'ag-theme-alpine';
-        imports.push(`import '@ag-grid-community/all-modules/dist/styles/${theme}.css';`);
+        imports.push(`import '@ag-grid-community/core/dist/styles/${theme}.css';`);
     }
 
     if (componentFilenames) {
