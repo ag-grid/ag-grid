@@ -14,13 +14,12 @@ import { LegendDatum } from "../../legend";
 import { CartesianSeries } from "./cartesianSeries";
 import { ChartAxis, ChartAxisDirection, flipChartAxisDirection } from "../../chartAxis";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
-import { extent, findMinMax } from "../../../util/array";
+import { findMinMax } from "../../../util/array";
 import { equal } from "../../../util/equal";
 import { reactive, TypedEvent } from "../../../util/observable";
 import { Scale } from "../../../scale/scale";
 import { sanitizeHtml } from "../../../util/sanitize";
-import { isContinuous, isDiscrete, isNumber } from "../../../util/value";
-import { NumberAxis } from "../../axis/numberAxis";
+import { isDiscrete, isNumber } from "../../../util/value";
 import { clamper, ContinuousScale } from "../../../scale/continuousScale";
 
 export interface BarSeriesNodeClickEvent extends TypedEvent {
@@ -534,7 +533,7 @@ export class BarSeries extends CartesianSeries {
 
             const groupYs = yData[groupIndex]; // y-data for groups of stacks
             for (let stackIndex = 0; stackIndex < groupYs.length; stackIndex++) {
-                const stackYs = groupYs[stackIndex]; // y-data for a stack withing a group
+                const stackYs = groupYs[stackIndex]; // y-data for a stack within a group
 
                 let prevMinY = 0;
                 let prevMaxY = 0;
