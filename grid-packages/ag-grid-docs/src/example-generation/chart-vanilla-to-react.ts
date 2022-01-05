@@ -12,6 +12,7 @@ export function processFunction(code: string): string {
 
 function getImports(componentFilenames: string[]): string[] {
     const imports = [
+        "// organize-imports-ignore",
         "import React, { Component } from 'react';",
         "import { cloneDeep } from 'lodash';",
         "import { render } from 'react-dom';",

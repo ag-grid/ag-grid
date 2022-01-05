@@ -1,12 +1,13 @@
-import {convertFunctionToConstProperty, getFunctionName, ImportType, isInstanceMethod, modulesProcessor} from './parser-utils';
-import {convertFunctionalTemplate, convertFunctionToConstCallback, getImport, getValueType} from './react-utils';
-import {templatePlaceholder} from "./grid-vanilla-src-parser";
+import { convertFunctionToConstProperty, getFunctionName, ImportType, isInstanceMethod, modulesProcessor } from './parser-utils';
+import { convertFunctionalTemplate, convertFunctionToConstCallback, getImport, getValueType } from './react-utils';
+import { templatePlaceholder } from "./grid-vanilla-src-parser";
 
 function getModuleImports(bindings: any, componentFilenames: string[], stateProperties: string[]): string[] {
-    const {gridSettings} = bindings;
-    const {modules} = gridSettings;
+    const { gridSettings } = bindings;
+    const { modules } = gridSettings;
 
     const imports = [
+        "// organize-imports-ignore",
         "import React, { useCallback, useMemo, useRef, useState } from 'react';",
         "import { render } from 'react-dom';",
         "import { AgGridReact } from '@ag-grid-community/react';"
@@ -19,7 +20,7 @@ function getModuleImports(bindings: any, componentFilenames: string[], stateProp
             exampleModules = ['clientside'];
         }
 
-        const {moduleImports, suppliedModules} = modulesProcessor(exampleModules);
+        const { moduleImports, suppliedModules } = modulesProcessor(exampleModules);
 
         imports.push(...moduleImports);
         bindings.gridSuppliedModules = `modules`;
@@ -54,9 +55,10 @@ function getModuleImports(bindings: any, componentFilenames: string[], stateProp
 }
 
 function getPackageImports(bindings: any, componentFilenames: string[]): string[] {
-    const {gridSettings} = bindings;
+    const { gridSettings } = bindings;
 
     const imports = [
+        "// organize-imports-ignore",
         "import React, { useCallback, useMemo, useRef, useState } from 'react';",
         "import { render } from 'react-dom';",
         "import { AgGridReact } from 'ag-grid-react';"
@@ -88,7 +90,7 @@ function getImports(bindings: any, componentFileNames: string[], importType: Imp
 }
 
 function getTemplate(bindings: any, componentAttributes: string[]): string {
-    const {gridSettings} = bindings;
+    const { gridSettings } = bindings;
     const agGridTag = `
         <div style={gridStyle} className="${gridSettings.theme}">
             <AgGridReact
@@ -132,7 +134,7 @@ function getCallbackNames() {
 }
 
 export function vanillaToReactFunctional(bindings: any, componentFilenames: string[]): (importType: ImportType) => string {
-    const {properties, data, gridSettings, onGridReady, resizeToFit} = bindings;
+    const { properties, data, gridSettings, onGridReady, resizeToFit } = bindings;
 
     const callbackNames = getCallbackNames();
 

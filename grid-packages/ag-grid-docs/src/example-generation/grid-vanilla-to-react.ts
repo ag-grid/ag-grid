@@ -7,6 +7,7 @@ function getModuleImports(bindings: any, componentFilenames: string[]): string[]
     const { modules } = gridSettings;
 
     const imports = [
+        "// organize-imports-ignore",
         "import React, { Component } from 'react';",
         "import { render } from 'react-dom';",
         "import { AgGridReact } from '@ag-grid-community/react';"
@@ -54,6 +55,7 @@ function getPackageImports(bindings: any, componentFilenames: string[]): string[
     const { gridSettings } = bindings;
 
     const imports = [
+        "// organize-imports-ignore",
         "import React, { Component } from 'react';",
         "import { render } from 'react-dom';",
         "import { AgGridReact } from 'ag-grid-react';"
