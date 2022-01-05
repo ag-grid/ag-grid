@@ -567,8 +567,6 @@ export function processBarColumnSeriesOptions(series: any) {
                 options[property] = [...(options[property] || []), ...s[property]];
             } else if (stringValueProperty) {
                 options[`${property}s`] = [...(options[`${property}s`] || []), s[property]];
-            } else if (property === 'visible') {
-                    options.hideInChart = [...(options.hideInChart || []), { yKey: s.yKey, visible: !!s[property] }];
             } else if (property === 'showInLegend') {
                 if (s[property] === false) {
                     options.hideInLegend = [...(options.hideInLegend || []), s.yKey];

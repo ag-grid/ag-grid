@@ -92,11 +92,6 @@ export interface BarSeriesFormat {
     strokeWidth?: number;
 }
 
-interface HideInChart {
-    yKey: string;
-    visible: boolean;
-}
-
 export class BarSeriesTooltip extends SeriesTooltip {
     @reactive('change') renderer?: (params: BarTooltipRendererParams) => string | TooltipRendererResult;
 }
@@ -255,16 +250,7 @@ export class BarSeries extends CartesianSeries {
             yKeys = this.grouped ? flatYKeys.map(k => [k]) : [flatYKeys];
         }
 
-        this.hideInChart
-            .filter(x => this.prevHideInChart.indexOf(x) === -1) // return hideInChart modifications
-            .forEach(changedHideInChart => {
-                // only update modified `seriesItemEnabled`
-                this.seriesItemEnabled.set(changedHideInChart.yKey, changedHideInChart.visible)
-            });
-        this.prevHideInChart = this.hideInChart;
-
-        const yKeysChanged = !equal(this._yKeys, yKeys);
-        if (yKeysChanged) {
+        if (!equal(this._yKeys, yKeys)) {
             this.flatYKeys = flatYKeys ? flatYKeys : undefined;
             this._yKeys = yKeys;
 
@@ -296,20 +282,6 @@ export class BarSeries extends CartesianSeries {
     }
     get yKeys(): string[][] {
         return this._yKeys;
-    }
-
-    protected prevHideInChart: HideInChart[] = [];
-    protected _hideInChart: HideInChart[] = [];
-    set hideInChart(value: HideInChart[]) {
-        if (!equal(this._hideInChart, value)) {
-            this._hideInChart = value;
-            if (this.flatYKeys) {
-                this.yKeys = this.flatYKeys as any;
-            }
-        }
-    }
-    get hideInChart(): HideInChart[] {
-        return this._hideInChart;
     }
 
     protected _grouped: boolean = false;
