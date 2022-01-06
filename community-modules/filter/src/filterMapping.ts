@@ -6,7 +6,7 @@ import { ExpressionComponent } from "./components/interfaces";
 import { CustomFilter } from "./components/filters/customFilter";
 import { SetFilter } from "./components/filters/setFilter";
 
-type CompType = ExpressionComponent & Component;
+export type CompType = ExpressionComponent & Component;
 type Mapping<T extends FilterExpression['type']> = { type: T, newComp(colId: string): CompType };
 
 const DEFAULT_MAPPING = { type: 'text-op', newComp: () => new TextFilter() };

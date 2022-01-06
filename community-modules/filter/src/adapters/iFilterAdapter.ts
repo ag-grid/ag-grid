@@ -1,17 +1,14 @@
-import { Autowired, AgPromise, Component, IFilterComp, RefSelector, IFilterParams, IDoesFilterPassParams, Column, GridOptions, FilterExpression } from "@ag-grid-community/core";
-import { FilterManager, FilterUI } from "../filterManager";
+import { Autowired, AgPromise, Component, IFilterComp, RefSelector, IFilterParams, IDoesFilterPassParams, FilterExpression } from "@ag-grid-community/core";
 
 /**
  * Provides a temporary bridge between the V1 and V2 filter implementation, adapting the V2
  * implementation to meet the API contract for a V1 filter (IFilter).
  */
 export class IFilterAdapter extends Component implements IFilterComp {
-    @Autowired('filterManagerV2') private readonly filterManager: FilterManager;
-    @Autowired('gridOptions') private readonly gridOptions: GridOptions;
-
+    @Autowired('filterManagerV2') private readonly filterManager: any; // TODO: Fix me!
     @RefSelector('eFilterRoot') private readonly filterRoot: HTMLElement;
 
-    private wrappedUI: FilterUI;
+    private wrappedUI: any; // TODO: Fix.
     private params: IFilterParams;
 
     public constructor() {
@@ -23,15 +20,16 @@ export class IFilterAdapter extends Component implements IFilterComp {
 
     public init(params: IFilterParams) {
         this.params = params;
+        
+        // TODO: Fix me!
+        // this.filterComponentManager.createFilterComp(params.column, params)
+        //     .then((result) => {
+        //         if (result == null) { return; }
 
-        this.filterManager.createFilterComp(params.column, params)
-            .then((result) => {
-                if (result == null) { return; }
+        //         this.wrappedUI = result;
 
-                this.wrappedUI = result;
-
-                this.postInit(params);
-            });
+        //         this.postInit(params);
+        //     });
     }
 
     private postInit(params: IFilterParams) {
@@ -42,8 +40,8 @@ export class IFilterAdapter extends Component implements IFilterComp {
 
         const { column, filterChangedCallback } = params;
 
-        this.filterManager.addListenerForColumn(this, column, ({ type }) => {
-            if (type === 'revert') { return; }
+        this.filterManager.addListenerForColumn(this, column, (params: any) => { // TODO: Fix me!
+            if (params.type === 'revert') { return; }
 
             filterChangedCallback();
         });
