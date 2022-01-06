@@ -365,7 +365,6 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
         cssFiles,
         [],
         cssFile => [
-            `        "@ag-grid-community/all-modules/dist/styles/${cssFile}": \`\${localPrefix}/@ag-grid-community/all-modules/dist/styles/${cssFile}\`,`,
             `        "@ag-grid-community/core/dist/styles/${cssFile}": \`\${localPrefix}/@ag-grid-community/core/dist/styles/${cssFile}\`,`
         ].join(EOL),
         () => {
@@ -394,7 +393,6 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
         cssFiles,
         [],
         cssFile => [
-            `        "@ag-grid-community/all-modules/dist/styles/${cssFile}": \`https://unpkg.com/@ag-grid-community/all-modules@\${agGridVersion}/dist/styles/${cssFile}\`,`,
             `        "@ag-grid-community/core/dist/styles/${cssFile}": \`https://unpkg.com/@ag-grid-community/core@\${agGridVersion}/dist/styles/${cssFile}\`,`
         ].join(EOL),
         () => {

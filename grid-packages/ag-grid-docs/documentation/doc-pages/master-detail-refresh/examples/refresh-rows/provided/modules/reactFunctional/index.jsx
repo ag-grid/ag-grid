@@ -4,8 +4,8 @@ import { render } from 'react-dom';
 import { AllModules } from "@ag-grid-enterprise/all-modules";
 import { AgGridColumn, AgGridReact } from '@ag-grid-community/react';
 
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
+import '@ag-grid-community/core/dist/styles/ag-grid.css';
+import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
 
 const GridExample = () => {
     const [allRowData, setAllRowData] = useState([]);
@@ -29,20 +29,20 @@ const GridExample = () => {
         };
     };
 
-    useEffect( ()=> {
-        if (!allRowData || allRowData.length==0) { return; }
+    useEffect(() => {
+        if (!allRowData || allRowData.length == 0) { return; }
 
-        setTimeout(function() {
+        setTimeout(function () {
             gridApiRef.current.getDisplayedRowAtIndex(0).setExpanded(true);
         }, 1000);
 
-        setInterval(function() {
+        setInterval(function () {
             if (!allRowData) {
                 return;
             }
             const data = allRowData[0];
             const newCallRecords = [];
-            data.callRecords.forEach(function(record, index) {
+            data.callRecords.forEach(function (record, index) {
                 newCallRecords.push({
                     name: record.name,
                     callId: record.callId,
@@ -80,7 +80,7 @@ const GridExample = () => {
                             rowSelection: "multiple",
                             enableCellChangeFlash: true,
                             immutableData: true,
-                            getRowNodeId: function(data) {
+                            getRowNodeId: function (data) {
                                 return data.callId;
                             },
                             columnDefs: [
@@ -107,7 +107,7 @@ const GridExample = () => {
                                 sortable: true
                             }
                         },
-                        getDetailRowData: function(params) {
+                        getDetailRowData: function (params) {
                             params.successCallback(params.data.callRecords);
                         }
                     }}

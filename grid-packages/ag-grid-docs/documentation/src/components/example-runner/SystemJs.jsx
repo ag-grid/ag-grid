@@ -13,31 +13,21 @@ import {
     localPrefix
 } from 'utils/consts';
 
-import {isUsingPublishedPackages} from './helpers';
+import { isUsingPublishedPackages } from './helpers';
 import isDevelopment from 'utils/is-development';
 
 const localConfiguration = {
     gridMap: {
         /* START OF GRID CSS DEV - DO NOT DELETE */
-        "@ag-grid-community/all-modules/dist/styles/ag-grid.css": `${localPrefix}/@ag-grid-community/all-modules/dist/styles/ag-grid.css`,
         "@ag-grid-community/core/dist/styles/ag-grid.css": `${localPrefix}/@ag-grid-community/core/dist/styles/ag-grid.css`,
-        "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine-dark.css": `${localPrefix}/@ag-grid-community/all-modules/dist/styles/ag-theme-alpine-dark.css`,
         "@ag-grid-community/core/dist/styles/ag-theme-alpine-dark.css": `${localPrefix}/@ag-grid-community/core/dist/styles/ag-theme-alpine-dark.css`,
-        "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css": `${localPrefix}/@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css`,
         "@ag-grid-community/core/dist/styles/ag-theme-alpine.css": `${localPrefix}/@ag-grid-community/core/dist/styles/ag-theme-alpine.css`,
-        "@ag-grid-community/all-modules/dist/styles/ag-theme-balham-dark.css": `${localPrefix}/@ag-grid-community/all-modules/dist/styles/ag-theme-balham-dark.css`,
         "@ag-grid-community/core/dist/styles/ag-theme-balham-dark.css": `${localPrefix}/@ag-grid-community/core/dist/styles/ag-theme-balham-dark.css`,
-        "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css": `${localPrefix}/@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css`,
         "@ag-grid-community/core/dist/styles/ag-theme-balham.css": `${localPrefix}/@ag-grid-community/core/dist/styles/ag-theme-balham.css`,
-        "@ag-grid-community/all-modules/dist/styles/ag-theme-blue.css": `${localPrefix}/@ag-grid-community/all-modules/dist/styles/ag-theme-blue.css`,
         "@ag-grid-community/core/dist/styles/ag-theme-blue.css": `${localPrefix}/@ag-grid-community/core/dist/styles/ag-theme-blue.css`,
-        "@ag-grid-community/all-modules/dist/styles/ag-theme-bootstrap.css": `${localPrefix}/@ag-grid-community/all-modules/dist/styles/ag-theme-bootstrap.css`,
         "@ag-grid-community/core/dist/styles/ag-theme-bootstrap.css": `${localPrefix}/@ag-grid-community/core/dist/styles/ag-theme-bootstrap.css`,
-        "@ag-grid-community/all-modules/dist/styles/ag-theme-dark.css": `${localPrefix}/@ag-grid-community/all-modules/dist/styles/ag-theme-dark.css`,
         "@ag-grid-community/core/dist/styles/ag-theme-dark.css": `${localPrefix}/@ag-grid-community/core/dist/styles/ag-theme-dark.css`,
-        "@ag-grid-community/all-modules/dist/styles/ag-theme-fresh.css": `${localPrefix}/@ag-grid-community/all-modules/dist/styles/ag-theme-fresh.css`,
         "@ag-grid-community/core/dist/styles/ag-theme-fresh.css": `${localPrefix}/@ag-grid-community/core/dist/styles/ag-theme-fresh.css`,
-        "@ag-grid-community/all-modules/dist/styles/ag-theme-material.css": `${localPrefix}/@ag-grid-community/all-modules/dist/styles/ag-theme-material.css`,
         "@ag-grid-community/core/dist/styles/ag-theme-material.css": `${localPrefix}/@ag-grid-community/core/dist/styles/ag-theme-material.css`,
         /* END OF GRID CSS DEV - DO NOT DELETE */
         "@ag-grid-community/react": `${localPrefix}/@ag-grid-community/react`,
@@ -108,25 +98,15 @@ const localConfiguration = {
 const publishedConfiguration = {
     gridMap: {
         /* START OF GRID CSS PROD - DO NOT DELETE */
-        "@ag-grid-community/all-modules/dist/styles/ag-grid.css": `https://unpkg.com/@ag-grid-community/all-modules@${agGridVersion}/dist/styles/ag-grid.css`,
         "@ag-grid-community/core/dist/styles/ag-grid.css": `https://unpkg.com/@ag-grid-community/core@${agGridVersion}/dist/styles/ag-grid.css`,
-        "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine-dark.css": `https://unpkg.com/@ag-grid-community/all-modules@${agGridVersion}/dist/styles/ag-theme-alpine-dark.css`,
         "@ag-grid-community/core/dist/styles/ag-theme-alpine-dark.css": `https://unpkg.com/@ag-grid-community/core@${agGridVersion}/dist/styles/ag-theme-alpine-dark.css`,
-        "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css": `https://unpkg.com/@ag-grid-community/all-modules@${agGridVersion}/dist/styles/ag-theme-alpine.css`,
         "@ag-grid-community/core/dist/styles/ag-theme-alpine.css": `https://unpkg.com/@ag-grid-community/core@${agGridVersion}/dist/styles/ag-theme-alpine.css`,
-        "@ag-grid-community/all-modules/dist/styles/ag-theme-balham-dark.css": `https://unpkg.com/@ag-grid-community/all-modules@${agGridVersion}/dist/styles/ag-theme-balham-dark.css`,
         "@ag-grid-community/core/dist/styles/ag-theme-balham-dark.css": `https://unpkg.com/@ag-grid-community/core@${agGridVersion}/dist/styles/ag-theme-balham-dark.css`,
-        "@ag-grid-community/all-modules/dist/styles/ag-theme-balham.css": `https://unpkg.com/@ag-grid-community/all-modules@${agGridVersion}/dist/styles/ag-theme-balham.css`,
         "@ag-grid-community/core/dist/styles/ag-theme-balham.css": `https://unpkg.com/@ag-grid-community/core@${agGridVersion}/dist/styles/ag-theme-balham.css`,
-        "@ag-grid-community/all-modules/dist/styles/ag-theme-blue.css": `https://unpkg.com/@ag-grid-community/all-modules@${agGridVersion}/dist/styles/ag-theme-blue.css`,
         "@ag-grid-community/core/dist/styles/ag-theme-blue.css": `https://unpkg.com/@ag-grid-community/core@${agGridVersion}/dist/styles/ag-theme-blue.css`,
-        "@ag-grid-community/all-modules/dist/styles/ag-theme-bootstrap.css": `https://unpkg.com/@ag-grid-community/all-modules@${agGridVersion}/dist/styles/ag-theme-bootstrap.css`,
         "@ag-grid-community/core/dist/styles/ag-theme-bootstrap.css": `https://unpkg.com/@ag-grid-community/core@${agGridVersion}/dist/styles/ag-theme-bootstrap.css`,
-        "@ag-grid-community/all-modules/dist/styles/ag-theme-dark.css": `https://unpkg.com/@ag-grid-community/all-modules@${agGridVersion}/dist/styles/ag-theme-dark.css`,
         "@ag-grid-community/core/dist/styles/ag-theme-dark.css": `https://unpkg.com/@ag-grid-community/core@${agGridVersion}/dist/styles/ag-theme-dark.css`,
-        "@ag-grid-community/all-modules/dist/styles/ag-theme-fresh.css": `https://unpkg.com/@ag-grid-community/all-modules@${agGridVersion}/dist/styles/ag-theme-fresh.css`,
         "@ag-grid-community/core/dist/styles/ag-theme-fresh.css": `https://unpkg.com/@ag-grid-community/core@${agGridVersion}/dist/styles/ag-theme-fresh.css`,
-        "@ag-grid-community/all-modules/dist/styles/ag-theme-material.css": `https://unpkg.com/@ag-grid-community/all-modules@${agGridVersion}/dist/styles/ag-theme-material.css`,
         "@ag-grid-community/core/dist/styles/ag-theme-material.css": `https://unpkg.com/@ag-grid-community/core@${agGridVersion}/dist/styles/ag-theme-material.css`,
         /* END OF GRID CSS PROD - DO NOT DELETE */
         "@ag-grid-community/react": `https://unpkg.com/@ag-grid-community/react@${agGridReactVersion}/`,

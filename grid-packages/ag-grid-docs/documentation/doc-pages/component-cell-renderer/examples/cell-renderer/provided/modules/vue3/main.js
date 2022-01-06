@@ -1,8 +1,8 @@
-import {createApp} from 'vue';
-import {AgGridVue} from '@ag-grid-community/vue3';
-import {AllCommunityModules} from '@ag-grid-community/all-modules';
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
+import { createApp } from 'vue';
+import { AgGridVue } from '@ag-grid-community/vue3';
+import { AllCommunityModules } from '@ag-grid-community/all-modules';
+import '@ag-grid-community/core/dist/styles/ag-grid.css';
+import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
 import DaysFrostRenderer from './daysFrostRendererVue.js';
 
 /*
@@ -42,10 +42,10 @@ class DeltaIndicator {
 class DaysSunshineRenderer {
     init(params) {
         const daysSunshine = params.value / 24;
-        this.eGui = createImageSpan(daysSunshine, params.rendererImage);    
+        this.eGui = createImageSpan(daysSunshine, params.rendererImage);
     }
     getGui() {
-        return this.eGui;        
+        return this.eGui;
     }
 }
 
@@ -56,7 +56,7 @@ class RainPerTenMmRenderer {
         this.eGui = createImageSpan(rainPerTenMm, params.rendererImage);
     }
     getGui() {
-        return this.eGui;        
+        return this.eGui;
     }
 }
 
@@ -97,7 +97,7 @@ const VueExample = {
                     headerName: "Month",
                     field: "Month",
                     width: 75,
-                    cellStyle: {color: "darkred"}
+                    cellStyle: { color: "darkred" }
                 },
                 {
                     headerName: "Max Temp (\u02DAC)",
@@ -116,21 +116,21 @@ const VueExample = {
                     field: "Days of air frost (days)",
                     width: 233,
                     cellRendererComp: "daysFrostRenderer",
-                    cellRendererCompParams: {rendererImage: "frost.png"}    // Complementing the Cell Renderer parameters
+                    cellRendererCompParams: { rendererImage: "frost.png" }    // Complementing the Cell Renderer parameters
                 },
                 {
                     headerName: "Days Sunshine",
                     field: "Sunshine (hours)",
                     width: 190,
                     cellRendererComp: "daysSunshineRenderer",
-                    cellRendererCompParams: {rendererImage: "sun.png"}      // Complementing the Cell Renderer parameters
+                    cellRendererCompParams: { rendererImage: "sun.png" }      // Complementing the Cell Renderer parameters
                 },
                 {
                     headerName: "Rainfall (10mm)",
                     field: "Rainfall (mm)",
                     width: 180,
                     cellRendererComp: "rainPerTenMmRenderer",
-                    cellRendererCompParams: {rendererImage: "rain.png"}     // Complementing the Cell Renderer parameters
+                    cellRendererCompParams: { rendererImage: "rain.png" }     // Complementing the Cell Renderer parameters
                 }
             ],
             defaultColDef: {
@@ -146,7 +146,7 @@ const VueExample = {
             rowData: null
         }
     },
-    
+
     methods: {
         onGridReady(params) {
             this.gridApi = params.api;

@@ -3,15 +3,15 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { AgGridReact } from '@ag-grid-community/react';
 import { AllCommunityModules } from '@ag-grid-community/all-modules';
 
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
+import '@ag-grid-community/core/dist/styles/ag-grid.css';
+import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
 
 const leftColumns = [
     {
         rowDrag: true,
         maxWidth: 50,
         suppressMenu: true,
-        rowDragText: function(params, dragItemCount) {
+        rowDragText: function (params, dragItemCount) {
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes';
             }
@@ -34,7 +34,7 @@ const rightColumns = [
         rowDrag: true,
         maxWidth: 50,
         suppressMenu: true,
-        rowDragText: function(params, dragItemCount) {
+        rowDragText: function (params, dragItemCount) {
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes';
             }
@@ -49,7 +49,7 @@ const rightColumns = [
         cellRenderer: (params) => {
             var button = document.createElement('i');
 
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function () {
                 params.api.applyTransaction({ remove: [params.node.data] });
             });
 
@@ -82,18 +82,18 @@ const TwoGridsWithMultipleRecordsExample = () => {
     useEffect(() => {
         if (!rawData.length) {
             fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .then(resp => resp.json())
-            .then(data => {
-                const athletes = [];
-                let i = 0;
-    
-                while (athletes.length < 20 && i < data.length) {
-                    var pos = i++;
-                    if (athletes.some(rec => rec.athlete === data[pos].athlete)) { continue; }
-                    athletes.push(data[pos]);
-                }
-                setRawData(athletes);
-            });
+                .then(resp => resp.json())
+                .then(data => {
+                    const athletes = [];
+                    let i = 0;
+
+                    while (athletes.length < 20 && i < data.length) {
+                        var pos = i++;
+                        if (athletes.some(rec => rec.athlete === data[pos].athlete)) { continue; }
+                        athletes.push(data[pos]);
+                    }
+                    setRawData(athletes);
+                });
         }
     }, [rawData]);
 
@@ -138,10 +138,10 @@ const TwoGridsWithMultipleRecordsExample = () => {
 
         if (radioChecked === 0) {
             leftApi.applyTransaction({
-                remove: nodes.map(function(node) { return node.data; })
+                remove: nodes.map(function (node) { return node.data; })
             });
         } else if (radioChecked === 1) {
-            nodes.forEach(function(node) {
+            nodes.forEach(function (node) {
                 node.setSelected(false);
             });
         }
@@ -169,7 +169,7 @@ const TwoGridsWithMultipleRecordsExample = () => {
     const getTopToolBar = () => (
         <div className="example-toolbar panel panel-default">
             <div className="panel-body">
-                <div style={{ display: 'inline-flex'}} onChange={onRadioChange} >
+                <div style={{ display: 'inline-flex' }} onChange={onRadioChange} >
                     <input type="radio" name="radio" value="0" checked={radioChecked === 0} />
                     <label for="move">Remove Source Rows</label>
                     <input type="radio" name="radio" value="1" checked={radioChecked === 1} />
@@ -180,7 +180,7 @@ const TwoGridsWithMultipleRecordsExample = () => {
                 <input type="checkbox" checked={checkBoxSelected} onChange={onCheckboxChange} />
                 <label for="toggleCheck">Checkbox Select</label>
                 <span className="input-group-button">
-                    <button type="button" className="btn btn-default reset" style={{ marginLeft: '5px;'}} onClick={reset}>
+                    <button type="button" className="btn btn-default reset" style={{ marginLeft: '5px;' }} onClick={reset}>
                         <i className="fas fa-redo" style={{ marginRight: '5px;' }}></i>Reset
                     </button>
                 </span>
@@ -189,7 +189,7 @@ const TwoGridsWithMultipleRecordsExample = () => {
     );
 
     const getGridWrapper = (id) => (
-        <div className="panel panel-primary" style={{ marginRight: '10px'}}>
+        <div className="panel panel-primary" style={{ marginRight: '10px' }}>
             <div className="panel-heading">{id === 0 ? 'Athletes' : 'Selected Athletes'}</div>
             <div className="panel-body">
                 <AgGridReact
@@ -203,7 +203,7 @@ const TwoGridsWithMultipleRecordsExample = () => {
                     rowDragMultiRow={id === 0}
                     suppressRowClickSelection={id === 0}
                     suppressMoveWhenRowDragging={id === 0}
-                    
+
                     rowData={id === 0 ? leftRowData : rightRowData}
                     columnDefs={id === 0 ? leftColumns : rightColumns}
                     onGridReady={(params) => onGridReady(params, id)}
@@ -215,7 +215,7 @@ const TwoGridsWithMultipleRecordsExample = () => {
 
     return (
         <div className="top-container">
-            { getTopToolBar() }
+            {getTopToolBar()}
             <div class="grid-wrapper ag-theme-alpine">
                 {getGridWrapper(0)}
                 {getGridWrapper(1)}

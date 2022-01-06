@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/all-modules';
 
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
+import '@ag-grid-community/core/dist/styles/ag-grid.css';
+import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
 
 const baseDefaultColDef = {
     width: 80,
@@ -111,7 +111,7 @@ const SimpleGridComponent = () => {
     const dragStart = (color, event) => {
         const newItem = createDataItem(color);
         const jsonData = JSON.stringify(newItem);
-        
+
         event.dataTransfer.setData('application/json', jsonData);
     };
 
@@ -162,20 +162,20 @@ const SimpleGridComponent = () => {
                     className="factory factory-bin">
                     <i className="far fa-trash-alt"><span className="filename"> Trash - </span></i>
                     Drop target to destroy row
-            </span>
+                </span>
                 <span draggable="true" onDragStart={(e) => dragStart('Red', e)} className="factory factory-red">
                     <i className="far fa-plus-square"><span className="filename"> Create - </span></i>
                     Drag source for new red item
-            </span>
+                </span>
                 <span draggable="true" onDragStart={(e) => dragStart('Green', e)}
                     className="factory factory-green">
                     <i className="far fa-plus-square"><span className="filename"> Create - </span></i>
                     Drag source for new green item
-            </span>
+                </span>
                 <span draggable="true" onDragStart={(e) => dragStart('Blue', e)} className="factory factory-blue">
                     <i className="far fa-plus-square"><span className="filename"> Create - </span></i>
                     Drag source for new blue item
-            </span>
+                </span>
             </div>
 
             <div style={{ height: "100%" }} className="inner-col ag-theme-alpine" onDragOver={gridDragOver}

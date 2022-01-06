@@ -1,37 +1,37 @@
 'use strict';
 
-import React, {useState} from 'react';
-import {render} from 'react-dom';
-import {AgGridColumn, AgGridReact} from '@ag-grid-community/react';
+import React, { useState } from 'react';
+import { render } from 'react-dom';
+import { AgGridColumn, AgGridReact } from '@ag-grid-community/react';
 
-import {AllCommunityModules} from "@ag-grid-community/all-modules";
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
+import { AllCommunityModules } from "@ag-grid-community/all-modules";
+import '@ag-grid-community/core/dist/styles/ag-grid.css';
+import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
 
 const colsA = [
-    {field: 'athlete'},
-    {field: 'age'},
-    {field: 'country'},
-    {field: 'sport'},
-    {field: 'year'},
-    {field: 'date'},
-    {field: 'gold'},
-    {field: 'silver'},
-    {field: 'bronze'},
-    {field: 'total'}
+    { field: 'athlete' },
+    { field: 'age' },
+    { field: 'country' },
+    { field: 'sport' },
+    { field: 'year' },
+    { field: 'date' },
+    { field: 'gold' },
+    { field: 'silver' },
+    { field: 'bronze' },
+    { field: 'total' }
 ];
 
 const colsB = [
-    {field: 'athlete', headerName: 'ATHLETE'},
-    {field: 'age', headerName: 'AGE'},
-    {field: 'country', headerName: 'COUNTRY'},
-    {field: 'sport', headerName: 'SPORT'},
-    {field: 'year', headerName: 'YEAR'},
-    {field: 'date', headerName: 'DATE'},
-    {field: 'gold', headerName: 'GOLD'},
-    {field: 'silver', headerName: 'SILVER'},
-    {field: 'bronze', headerName: 'BRONZE'},
-    {field: 'total', headerName: 'TOTAL'}
+    { field: 'athlete', headerName: 'ATHLETE' },
+    { field: 'age', headerName: 'AGE' },
+    { field: 'country', headerName: 'COUNTRY' },
+    { field: 'sport', headerName: 'SPORT' },
+    { field: 'year', headerName: 'YEAR' },
+    { field: 'date', headerName: 'DATE' },
+    { field: 'gold', headerName: 'GOLD' },
+    { field: 'silver', headerName: 'SILVER' },
+    { field: 'bronze', headerName: 'BRONZE' },
+    { field: 'total', headerName: 'TOTAL' }
 ];
 
 const GridExample = () => {
@@ -62,7 +62,7 @@ const GridExample = () => {
     };
 
     return (
-        <div style={{width: '100%', height: '100%'}}>
+        <div style={{ width: '100%', height: '100%' }}>
             <div className="test-container">
                 <div className="test-header">
                     <button onClick={onBtNormal}>Normal</button>
@@ -84,7 +84,7 @@ const GridExample = () => {
                                 resizable: true
                             }}
                             maintainColumnOrder={true}>
-                            {columns.map(column => (<AgGridColumn {...column} key={column.field}/>))}
+                            {columns.map(column => (<AgGridColumn {...column} key={column.field} />))}
                         </AgGridReact>
                     </div>
                 </div>
@@ -94,6 +94,6 @@ const GridExample = () => {
 };
 
 render(
-    <GridExample/>,
+    <GridExample />,
     document.querySelector('#root')
 );

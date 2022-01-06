@@ -2,15 +2,15 @@ import React, { Component } from 'react';
 import { AgGridReact } from '@ag-grid-community/react';
 import { AllCommunityModules } from '@ag-grid-community/all-modules';
 
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
+import '@ag-grid-community/core/dist/styles/ag-grid.css';
+import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
 
 const leftColumns = [
     {
         rowDrag: true,
         maxWidth: 50,
         suppressMenu: true,
-        rowDragText: function(params, dragItemCount) {
+        rowDragText: function (params, dragItemCount) {
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes';
             }
@@ -33,7 +33,7 @@ const rightColumns = [
         rowDrag: true,
         maxWidth: 50,
         suppressMenu: true,
-        rowDragText: function(params, dragItemCount) {
+        rowDragText: function (params, dragItemCount) {
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes';
             }
@@ -48,7 +48,7 @@ const rightColumns = [
         cellRenderer: (params) => {
             var button = document.createElement('i');
 
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function () {
                 params.api.applyTransaction({ remove: [params.node.data] });
             });
 
@@ -91,7 +91,7 @@ export default class extends Component {
             .then(data => {
                 const athletes = [];
                 let i = 0;
-    
+
                 while (athletes.length < 20 && i < data.length) {
                     var pos = i++;
                     if (athletes.some(rec => rec.athlete === data[pos].athlete)) { continue; }
@@ -113,7 +113,7 @@ export default class extends Component {
     }
 
     loadGrids = () => {
-        this.setState({ 
+        this.setState({
             leftRowData: [...this.state.rawData],
             rightRowData: []
         });
@@ -123,7 +123,7 @@ export default class extends Component {
     reset = () => {
         this.setState({
             radioChecked: 0,
-            checkBoxSelected: true 
+            checkBoxSelected: true
         });
 
         this.loadGrids();
@@ -147,32 +147,32 @@ export default class extends Component {
         const dropZoneParams = this.state.rightApi.getRowDropZoneParams({
             onDragStop: params => {
                 var nodes = params.nodes;
-    
+
                 if (this.state.radioChecked === 0) {
                     this.state.leftApi.applyTransaction({
-                        remove: nodes.map(function(node) { return node.data; })
+                        remove: nodes.map(function (node) { return node.data; })
                     });
                 } else if (this.state.radioChecked === 1) {
-                    nodes.forEach(function(node) {
+                    nodes.forEach(function (node) {
                         node.setSelected(false);
                     });
                 }
             }
         });
-    
+
         this.state.leftApi.addRowDropZone(dropZoneParams);
     }
 
     onGridReady(params, side) {
         if (side === 0) {
-            this.setState({ 
+            this.setState({
                 leftApi: params.api,
                 leftColumnApi: params.columnApi
             });
         }
 
         if (side === 1) {
-            this.setState({ 
+            this.setState({
                 rightApi: params.api,
             });
             this.addGridDropZone();
@@ -182,7 +182,7 @@ export default class extends Component {
     getTopToolBar = () => (
         <div className="example-toolbar panel panel-default">
             <div className="panel-body">
-                <div style={{ display: 'inline-flex'}} onChange={this.onRadioChange} >
+                <div style={{ display: 'inline-flex' }} onChange={this.onRadioChange} >
                     <input type="radio" name="radio" value="0" checked={this.state.radioChecked === 0} />
                     <label for="move">Remove Source Rows</label>
                     <input type="radio" name="radio" value="1" checked={this.state.radioChecked === 1} />
@@ -193,7 +193,7 @@ export default class extends Component {
                 <input type="checkbox" checked={this.state.checkBoxSelected} onChange={this.onCheckboxChange} />
                 <label for="toggleCheck">Checkbox Select</label>
                 <span className="input-group-button">
-                    <button type="button" className="btn btn-default reset" style={{ marginLeft: '5px;'}} onClick={this.reset}>
+                    <button type="button" className="btn btn-default reset" style={{ marginLeft: '5px;' }} onClick={this.reset}>
                         <i className="fas fa-redo" style={{ marginRight: '5px;' }}></i>Reset
                     </button>
                 </span>
@@ -202,7 +202,7 @@ export default class extends Component {
     );
 
     getGridWrapper = (id) => (
-        <div className="panel panel-primary" style={{ marginRight: '10px'}}>
+        <div className="panel panel-primary" style={{ marginRight: '10px' }}>
             <div className="panel-heading">{id === 0 ? 'Athletes' : 'Selected Athletes'}</div>
             <div className="panel-body">
                 <AgGridReact
@@ -216,7 +216,7 @@ export default class extends Component {
                     rowDragMultiRow={id === 0}
                     suppressRowClickSelection={id === 0}
                     suppressMoveWhenRowDragging={id === 0}
-                    
+
                     rowData={id === 0 ? this.state.leftRowData : this.state.rightRowData}
                     columnDefs={id === 0 ? leftColumns : rightColumns}
                     onGridReady={(params) => this.onGridReady(params, id)}
@@ -228,7 +228,7 @@ export default class extends Component {
 
     render = () => (
         <div className="top-container">
-            { this.getTopToolBar() }
+            {this.getTopToolBar()}
             <div class="grid-wrapper ag-theme-alpine">
                 {this.getGridWrapper(0)}
                 {this.getGridWrapper(1)}

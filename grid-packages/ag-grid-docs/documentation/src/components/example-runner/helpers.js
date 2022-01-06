@@ -208,8 +208,8 @@ export const getCssFilePaths = theme => {
     ];
 
     const getCssFilePath = file => isUsingPublishedPackages() ?
-        `https://unpkg.com/@ag-grid-community/all-modules@${agGridVersion}/dist/styles/${file}` :
-        `${localPrefix}/@ag-grid-community/all-modules/dist/styles/${file}`;
+        `https://unpkg.com/@ag-grid-community/core@${agGridVersion}/dist/styles/${file}` :
+        `${localPrefix}/@ag-grid-community/core/dist/styles/${file}`;
 
     return cssFiles.map(getCssFilePath);
 };

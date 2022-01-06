@@ -2,8 +2,8 @@ import { Component, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AllCommunityModules } from '@ag-grid-community/all-modules';
 
-import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
-import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
+import "@ag-grid-community/core/dist/styles/ag-grid.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
 @Component({
     selector: 'my-app',
@@ -71,7 +71,7 @@ import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
         </div>`
 })
 export class AppComponent {
-    
+
     modules = AllCommunityModules;
 
     rawData = [];
@@ -94,7 +94,7 @@ export class AppComponent {
             rowDrag: true,
             maxWidth: 50,
             suppressMenu: true,
-            rowDragText: function(params, dragItemCount) {
+            rowDragText: function (params, dragItemCount) {
                 if (dragItemCount > 1) {
                     return dragItemCount + ' athletes';
                 }
@@ -117,7 +117,7 @@ export class AppComponent {
             rowDrag: true,
             maxWidth: 50,
             suppressMenu: true,
-            rowDragText: function(params, dragItemCount) {
+            rowDragText: function (params, dragItemCount) {
                 if (dragItemCount > 1) {
                     return dragItemCount + ' athletes';
                 }
@@ -131,14 +131,14 @@ export class AppComponent {
             maxWidth: 50,
             cellRenderer: (params) => {
                 var button = document.createElement('i');
-    
-                button.addEventListener('click', function() {
+
+                button.addEventListener('click', function () {
                     params.api.applyTransaction({ remove: [params.node.data] });
                 });
-    
+
                 button.classList.add('far', 'fa-trash-alt');
                 button.style.cursor = 'pointer';
-    
+
                 return button;
             }
         }
@@ -206,19 +206,19 @@ export class AppComponent {
                 var deselectCheck = this.eDeselectRadio.nativeElement.checked;
                 var moveCheck = this.eMoveRadio.nativeElement.checked;
                 var nodes = params.nodes;
-    
+
                 if (moveCheck) {
                     this.leftApi.applyTransaction({
-                        remove: nodes.map(function(node) { return node.data; })
+                        remove: nodes.map(function (node) { return node.data; })
                     });
                 } else if (deselectCheck) {
-                    nodes.forEach(function(node) {
+                    nodes.forEach(function (node) {
                         node.setSelected(false);
                     });
                 }
             }
         });
-    
+
         this.leftApi.addRowDropZone(dropZoneParams);
     }
 

@@ -1,8 +1,8 @@
-import {createApp} from 'vue';
-import {AgGridVue} from '@ag-grid-community/vue3';
+import { createApp } from 'vue';
+import { AgGridVue } from '@ag-grid-community/vue3';
 import { AllCommunityModules } from '@ag-grid-community/all-modules';
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
+import '@ag-grid-community/core/dist/styles/ag-grid.css';
+import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
 
 const VueExample = {
     template: `

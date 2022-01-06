@@ -1,8 +1,8 @@
 import Vue from 'vue';
-import {AgGridVue} from '@ag-grid-community/vue';
-import {AllCommunityModules} from '@ag-grid-community/all-modules';
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine-dark.css';
+import { AgGridVue } from '@ag-grid-community/vue';
+import { AllCommunityModules } from '@ag-grid-community/all-modules';
+import '@ag-grid-community/core/dist/styles/ag-grid.css';
+import '@ag-grid-community/core/dist/styles/ag-theme-alpine-dark.css';
 
 const VueExample = {
     template: `
@@ -64,9 +64,9 @@ const VueExample = {
                             return false;
                         }`
                 },
-                {headerName: "A", field: 'a', maxWidth: 120},
-                {headerName: "B", field: 'b', maxWidth: 120},
-                {headerName: "A + B", valueGetter: 'data.a + data.b', maxWidth: 120}
+                { headerName: "A", field: 'a', maxWidth: 120 },
+                { headerName: "B", field: 'b', maxWidth: 120 },
+                { headerName: "A + B", valueGetter: 'data.a + data.b', maxWidth: 120 }
             ],
             defaultColDef: {
                 flex: 1,
