@@ -42,6 +42,8 @@ export class MiniAreaColumnCombo extends MiniChartWithAxes {
         const xScale = new BandScale<number>();
         xScale.range = [padding, size - padding];
         xScale.domain = [0, 1, 2, 3, 4];
+        xScale.paddingInner = 1;
+        xScale.paddingOuter = 0;
 
         const yScale = new LinearScale();
         yScale.range = [size - padding, padding];
