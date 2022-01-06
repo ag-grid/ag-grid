@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { AllCommunityModules } from '@ag-grid-community/all-modules';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
@@ -63,7 +63,7 @@ export class AppComponent {
             minWidth: 100
         }
     };
-    modules = AllCommunityModules;
+    modules = [ClientSideRowModelModule];
 
     @ViewChild('topGrid') topGrid;
     @ViewChild('bottomGrid') bottomGrid;

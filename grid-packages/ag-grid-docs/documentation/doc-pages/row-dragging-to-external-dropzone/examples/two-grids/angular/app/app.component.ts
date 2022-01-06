@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { AllCommunityModules } from '@ag-grid-community/all-modules';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
@@ -78,7 +78,7 @@ import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 })
 export class AppComponent {
 
-    modules = AllCommunityModules;
+    modules = [ClientSideRowModelModule];
 
     leftRowData = [];
     rightRowData = []

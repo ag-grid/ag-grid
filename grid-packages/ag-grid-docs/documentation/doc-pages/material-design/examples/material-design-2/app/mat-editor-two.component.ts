@@ -1,6 +1,5 @@
 import { AfterViewInit, Component } from "@angular/core";
 
-import { AllCommunityModules, GridOptions } from "@ag-grid-community/all-modules";
 
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-material.css";
@@ -9,6 +8,8 @@ import { MatSliderComponent } from "./mat-slider.component";
 import { MatButtonToggleHeaderComponent } from "./mat-button-toggle.component";
 import { ColumnAlignmentService } from "./columnAlignmentService";
 import { MatProgressSpinnerComponent } from "./mat-progress-spinner.component";
+import { GridOptions } from "@ag-grid-community/core";
+import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 
 @Component({
     moduleId: __moduleName, // for SystemJS, IE11 and relative paths
@@ -19,7 +20,7 @@ export class MatEditorComponentTwo implements AfterViewInit {
     public gridOptions: GridOptions;
     public onOffColumnAlignment: string = "left";
 
-    modules = AllCommunityModules;
+    modules = [ClientSideRowModelModule];
 
     constructor(private columnAlignmentService: ColumnAlignmentService) {
         this.gridOptions = <GridOptions>{

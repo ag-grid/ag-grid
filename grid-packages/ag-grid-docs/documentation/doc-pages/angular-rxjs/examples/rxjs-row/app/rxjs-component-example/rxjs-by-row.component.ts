@@ -1,11 +1,12 @@
 import { Component } from "@angular/core";
 
-import { GridOptions, AllCommunityModules } from "@ag-grid-community/all-modules";
 
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
 import { MockServerService } from "./mockServer.service";
+import { GridOptions } from "@ag-grid-community/core";
+import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 
 @Component({
     selector: 'my-app',
@@ -16,7 +17,7 @@ export class RxJsComponentByRow {
     gridOptions: GridOptions;
     initialRowDataLoad$;
     rowDataUpdates$;
-    modules = AllCommunityModules;
+    modules = [ClientSideRowModelModule];
 
     constructor(mockServerService: MockServerService) {
         this.initialRowDataLoad$ = mockServerService.initialLoad();
