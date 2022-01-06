@@ -48,6 +48,7 @@ export class ColDefUtil {
         'cellEditorCompParams',
         'pinnedRowCellRendererFramework',
         'pinnedRowCellRendererParams',
+        'filterComp',
         'filterFramework',
         'filterParams',
         'pivotValueColumn',

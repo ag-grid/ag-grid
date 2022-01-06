@@ -23,6 +23,7 @@ import { Label } from "../../label";
 import { sanitizeHtml } from "../../../util/sanitize";
 import { FontStyle, FontWeight } from "../../../scene/shape/text";
 import { isNumber } from "../../../util/value";
+import { clamper, ContinuousScale } from "../../../scale/continuousScale";
 
 interface AreaSelectionDatum {
     readonly itemId: string;
@@ -285,7 +286,7 @@ export class AreaSeries extends CartesianSeries {
 
         if (normalizedTo && isFinite(normalizedTo)) {
             yMin = yLargestMinMax.min < 0 ? -normalizedTo : 0;
-            yMax = normalizedTo;
+            yMax = yLargestMinMax.max > 0 ? normalizedTo : 0;
             yData.forEach((stack, i) => stack.forEach((y, j) => stack[j] = y / yAbsTotal[i] * normalizedTo));
         } else {
             yMin = yLargestMinMax.min;
@@ -388,7 +389,11 @@ export class AreaSeries extends CartesianSeries {
 
             yDatum.forEach((curr, j) => {
                 const prev = curr < 0 ? prevMin : prevMax;
-                const y = yScale.convert(prev + curr) + yOffset;
+
+                const continuousY = yScale instanceof ContinuousScale;
+                // @ts-ignore
+                const y = yScale.convert(prev + curr, continuousY ? clamper : undefined);
+
                 const yKey = yKeys[j];
                 const yValue: number = seriesDatum[yKey];
 

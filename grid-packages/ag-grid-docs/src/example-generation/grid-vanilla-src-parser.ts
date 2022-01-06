@@ -340,7 +340,6 @@ function internalParser(inputFile, html, exampleSettings, exampleType, providedE
 
     const tsConvertFunctionsIntoStringsStr = (property: any): string => {
         if (ts.isIdentifier(property.initializer)) {
-
             return `${property.name.text}: 'AG_LITERAL_${property.initializer.escapedText}'`;
         } else if (ts.isFunctionExpression(property.initializer)) {
             const func = tsGenerate(property.initializer, tsTree);

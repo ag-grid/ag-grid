@@ -553,7 +553,7 @@ export function getSeriesOrder(
 export function processBarColumnSeriesOptions(series: any) {
     let options: any = {};
 
-    const arrayValueProperties = ['yKeys', 'fills', 'strokes', 'yNames', 'hideInChart', 'hideInLegend'];
+    const arrayValueProperties = ['yKeys', 'fills', 'strokes', 'yNames', 'hideInLegend'];
     const stringValueProperties = ['yKey', 'fill', 'stroke', 'yName'];
 
     for (let i = 0; i < series.length; i++) {
@@ -567,10 +567,6 @@ export function processBarColumnSeriesOptions(series: any) {
                 options[property] = [...(options[property] || []), ...s[property]];
             } else if (stringValueProperty) {
                 options[`${property}s`] = [...(options[`${property}s`] || []), s[property]];
-            } else if (property === 'visible') {
-                if (s[property] === false) {
-                    options.hideInChart = [...(options.hideInChart || []), s.yKey];
-                }
             } else if (property === 'showInLegend') {
                 if (s[property] === false) {
                     options.hideInLegend = [...(options.hideInLegend || []), s.yKey];

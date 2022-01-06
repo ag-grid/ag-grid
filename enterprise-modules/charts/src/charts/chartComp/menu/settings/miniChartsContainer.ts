@@ -133,17 +133,11 @@ export class MiniChartsContainer extends Component {
         this.updateSelectedMiniChart();
     }
 
-    public updateSelectedMiniChart(): HTMLElement | undefined {
+    public updateSelectedMiniChart(): void {
         const selectedChartType = this.chartController.getChartType();
         for (const miniChartType in this.wrappers) {
-            const [isSelected, miniChartWrapper] = [miniChartType === selectedChartType, this.wrappers[miniChartType]];
-
-            miniChartWrapper.classList.toggle('ag-selected', isSelected);
-
-            if (isSelected) {
-                // used in the chart settings panel to scroll mini chart into view
-                return miniChartWrapper;
-            }
+            const selected = miniChartType === selectedChartType;
+            this.wrappers[miniChartType].classList.toggle('ag-selected', selected);
         }
     }
 }
