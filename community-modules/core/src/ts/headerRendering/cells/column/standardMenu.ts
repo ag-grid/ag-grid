@@ -52,7 +52,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
     }
 
     public showPopup(column: Column, positionCallback: (eMenu: HTMLElement) => void, eventSource: HTMLElement): void {
-        const filterWrapper = this.filterManager.getOrCreateFilterWrapper(column, 'COLUMN_MENU');
+        const filterUiPromise = this.filterManager.getFilterUIInfo(column, 'COLUMN_MENU');
         const eMenu = document.createElement('div');
 
         setAriaRole(eMenu, 'presentation');
@@ -60,7 +60,7 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
         this.tabListener = this.addManagedListener(eMenu, 'keydown', (e) => this.trapFocusWithin(e, eMenu))!;
 
-        filterWrapper.guiPromise.then(gui => eMenu.appendChild(gui!));
+        filterUiPromise.then((info) => eMenu.appendChild(info?.gui!));
 
         let hidePopup: (() => void);
 
@@ -96,14 +96,12 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
             this.hidePopup = hidePopup = addPopupRes.hideFunc;
         }
 
-        filterWrapper.filterPromise!.then(filter => {
+        filterUiPromise.then((info) => {
             // need to make sure the filter is present before positioning, as only
             // after filter it is visible can we find out what the width of it is
             positionCallback(eMenu);
 
-            if (filter!.afterGuiAttached) {
-                filter!.afterGuiAttached({ container: 'columnMenu', hidePopup });
-            }
+            info?.afterGuiAttached?.({ container: 'columnMenu', hidePopup });
         });
 
         column.setMenuVisible(true, 'contextMenu');

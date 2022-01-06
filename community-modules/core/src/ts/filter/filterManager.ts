@@ -17,15 +17,21 @@ import { exists } from '../utils/generic';
 import { mergeDeep, cloneObject } from '../utils/object';
 import { loadTemplate } from '../utils/dom';
 import { GridOptions } from '../entities/gridOptions';
+import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
 
 export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
+
+export interface FilterUIInfo {
+    gui: HTMLElement | null;
+    afterGuiAttached?: (params?: IAfterGuiAttachedParams) => void;
+}
 
 export interface IFilterManager {
     isAdvancedFilterPresent(): boolean;
     isAnyFilterPresent(): boolean;
     isFilterActive(column: Column): boolean;
     isSuppressFlashingCellsBecauseFiltering(): boolean;
-    doesRowPassFilter(params: { rowNode: RowNode, filterInstanceToSkip?: IFilterComp }): boolean;
+    doesRowPassFilter(params: { rowNode: RowNode }): boolean;
     
     isQuickFilterPresent(): boolean;
     setQuickFilter(newFilter: any): void;
@@ -34,7 +40,7 @@ export interface IFilterManager {
     setFilterModel(model: { [key: string]: any; }): void;
     
     createFilterParams(column: Column, colDef: ColDef, $scope?: any): IFilterParams;
-    getOrCreateFilterWrapper(column: Column, source: FilterRequestSource): FilterWrapper;
+    getFilterUIInfo(column: Column, source: FilterRequestSource): AgPromise<FilterUIInfo>;
     getFilterComponent(column: Column, source: FilterRequestSource, createIfDoesNotExist?: boolean): AgPromise<IFilterComp> | null;
     destroyFilter(column: Column, source: ColumnEventType): void    
 
@@ -434,14 +440,28 @@ export class FilterManager extends BeanStub implements IFilterManager {
         return !!filterWrapper && filterWrapper.filterPromise!.resolveNow(false, filter => filter!.isFilterActive());
     }
 
-    public getOrCreateFilterWrapper(column: Column, source: FilterRequestSource): FilterWrapper {
+    public getFilterUIInfo(column: Column, source: FilterRequestSource): AgPromise<FilterUIInfo> {
+        const filterWrapper = this.getOrCreateFilterWrapper(column, source);
+
+        return AgPromise.all<any>([filterWrapper.filterPromise!, filterWrapper.guiPromise])
+            .then(([filter, gui]: [IFilterComp, HTMLElement]) => {
+                const callback = (params?: IAfterGuiAttachedParams) => filter?.afterGuiAttached?.(params);
+                const afterGuiAttachedCallbackPresent = (typeof filter?.afterGuiAttached === 'function');
+                const afterGuiAttached = afterGuiAttachedCallbackPresent ? callback : undefined;
+                
+                return {
+                    gui,
+                    afterGuiAttached,
+                };
+            });
+    }
+
+    private getOrCreateFilterWrapper(column: Column, source: FilterRequestSource): FilterWrapper {
         let filterWrapper = this.cachedFilter(column);
 
         if (!filterWrapper) {
             filterWrapper = this.createFilterWrapper(column, source);
             this.allAdvancedFilters.set(column.getColId(), filterWrapper);
-        } else if (source !== 'NO_UI') {
-            this.putIntoGui(filterWrapper, source);
         }
 
         return filterWrapper;

@@ -459,26 +459,18 @@ export class EnterpriseMenu extends BeanStub {
     }
 
     private createFilterPanel(): TabbedItem {
-        const filterWrapper: FilterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column, 'COLUMN_MENU');
+        const filterUiPromise = this.filterManager.getFilterUIInfo(this.column, 'COLUMN_MENU');
 
         const afterFilterAttachedCallback = (params: IAfterGuiAttachedParams) => {
-            if (!filterWrapper.filterPromise) { return; }
-
-            // slightly odd block this - this promise will always have been resolved by the time it gets here, so won't be
-            // async (_unless_ in react or similar, but if so why not encountered before now?).
-            // I'd suggest a future improvement would be to remove/replace this promise as this block just wont work if it is
-            // async and is confusing if you don't have this context
-            filterWrapper.filterPromise.then(filter => {
-                if (filter && filter.afterGuiAttached) {
-                    filter.afterGuiAttached(params);
-                }
+            filterUiPromise?.then(info => {
+                info?.afterGuiAttached?.(params);
             });
         };
 
         this.tabItemFilter = {
             title: _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column)!,
             titleLabel: EnterpriseMenu.TAB_FILTER.replace('MenuTab', ''),
-            bodyPromise: filterWrapper.guiPromise as AgPromise<HTMLElement>,
+            bodyPromise: filterUiPromise.then((info) => info?.gui!),
             afterAttachedCallback: afterFilterAttachedCallback,
             name: EnterpriseMenu.TAB_FILTER
         };

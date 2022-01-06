@@ -10,7 +10,7 @@ import { IFilterManager } from '../../../filter/filterManager';
 import { IFloatingFilter, IFloatingFilterParams, IFloatingFilterParentCallback } from '../../../filter/floating/floatingFilter';
 import { FloatingFilterMapper } from '../../../filter/floating/floatingFilterMapper';
 import { GridApi, unwrapUserComp } from '../../../gridApi';
-import { IFilter, IFilterComp, IFilterDef } from '../../../interfaces/iFilter';
+import { IFilter, IFilterDef } from '../../../interfaces/iFilter';
 import { IMenuFactory } from '../../../interfaces/iMenuFactory';
 import { ModuleNames } from '../../../modules/moduleNames';
 import { ModuleRegistry } from '../../../modules/moduleRegistry';
@@ -278,17 +278,12 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     private currentParentModel(): any {
-        const filterComponent = this.getFilterComponent(false);
-
-        return filterComponent ? filterComponent.resolveNow(null, filter => filter && filter.getModel()) : null;
-    }
-
-    private getFilterComponent(createIfDoesNotExist = true): AgPromise<IFilterComp> | null {
-        return this.filterManager.getFilterComponent(this.column, 'NO_UI', createIfDoesNotExist);
+        const models = (this.filterManager.getFilterModel() || {});
+        return models[this.column.getColId()];
     }
 
     private parentFilterInstance(callback: IFloatingFilterParentCallback<IFilter>): void {
-        const filterComponent = this.getFilterComponent();
+        const filterComponent = this.filterManager.getFilterComponent(this.column, 'NO_UI', true);
 
         if (filterComponent == null) { return; }
 

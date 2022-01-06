@@ -38,7 +38,6 @@ export class ToolPanelFilterComp extends Component {
     private hideHeader: boolean;
     private column: Column;
     private expanded: boolean = false;
-    private underlyingFilter: IFilterComp | null;
 
     constructor(hideHeader = false) {
         super(ToolPanelFilterComp.TEMPLATE);
@@ -118,22 +117,15 @@ export class ToolPanelFilterComp extends Component {
         _.setAriaExpanded(this.eFilterToolPanelHeader, true);
 
         const container = _.loadTemplate(/* html */`<div class="ag-filter-toolpanel-instance-filter"></div>`);
-        const filterPromise = this.filterManager.getOrCreateFilterWrapper(this.column, 'TOOLBAR').filterPromise;
+        const filterUIPromise = this.filterManager.getFilterUIInfo(this.column, 'TOOLBAR');
 
-        if (filterPromise) {
-            filterPromise.then(filter => {
-                this.underlyingFilter = filter;
+        filterUIPromise?.then(info => {
+            if (!info || !info.gui) { return; }
+            container.appendChild(info.gui);
 
-                if (!filter) { return; }
-                container.appendChild(filter.getGui());
-
-                this.agFilterToolPanelBody.appendChild(container);
-
-                if (filter.afterGuiAttached) {
-                    filter.afterGuiAttached({ container: 'toolPanel' });
-                }
-            });
-        }
+            this.agFilterToolPanelBody.appendChild(container);
+            info.afterGuiAttached?.({ container: 'toolPanel' });
+        });
 
         _.setDisplayed(this.eExpandChecked, true);
         _.setDisplayed(this.eExpandUnchecked, false);
@@ -148,21 +140,6 @@ export class ToolPanelFilterComp extends Component {
 
         _.setDisplayed(this.eExpandChecked, false);
         _.setDisplayed(this.eExpandUnchecked, true);
-    }
-
-    public refreshFilter(): void {
-        if (!this.expanded) { return; }
-
-        const filter = this.underlyingFilter as any;
-
-        if (!filter) { return; }
-
-        // set filters should be updated when the filter has been changed elsewhere, i.e. via api. Note that we can't
-        // use 'afterGuiAttached' to refresh the virtual list as it also focuses on the mini filter which changes the
-        // scroll position in the filter list panel
-        if (typeof filter.refreshVirtualList === 'function') {
-            filter.refreshVirtualList();
-        }
     }
 
     private onFilterOpened(event: FilterOpenedEvent): void {

@@ -100,16 +100,6 @@ export class ToolPanelFilterGroupComp extends Component {
         this.filterGroupComp.addCssClassToTitleBar(cssClass);
     }
 
-    public refreshFilters() {
-        this.childFilterComps.forEach(filterComp => {
-            if (filterComp instanceof ToolPanelFilterGroupComp) {
-                filterComp.refreshFilters();
-            } else {
-                filterComp.refreshFilter();
-            }
-        });
-    }
-
     public isColumnGroup(): boolean {
         return this.columnGroup instanceof ProvidedColumnGroup;
     }
