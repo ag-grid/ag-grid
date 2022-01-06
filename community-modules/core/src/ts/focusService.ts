@@ -488,11 +488,10 @@ export class FocusService extends BeanStub {
     }
 
     public focusGridView(column?: Column, backwards?: boolean): boolean {
-        // if suppressCellSelection is off, it means the user does not want to
-        // navigate between the cells using tab. instead if suppressCellSelection,
-        // we put focus on either the header or after the grid, depending on whether
-        // tab or shift-tab was pressed.
-        if (this.gridOptionsWrapper.isSuppressCellSelection()) {
+        // if suppressCellFocus is `true`, it means the user does not want to
+        // navigate between the cells using tab. Instead, we put focus on either
+        // the header or after the grid, depending on whether tab or shift-tab was pressed.
+        if (this.gridOptionsWrapper.isSuppressCellFocus()) {
 
             if (backwards) {
                 return this.focusLastHeader();

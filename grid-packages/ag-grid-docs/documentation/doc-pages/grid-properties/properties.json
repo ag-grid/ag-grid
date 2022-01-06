@@ -1054,7 +1054,7 @@
             "description": "If `true`, rows will not be deselected if you hold down <kbd>Ctrl</kbd> and click the row or press <kbd>Space</kbd>. Default: `false`"
         },
         "suppressRowClickSelection": {},
-        "suppressCellSelection": {},
+        "suppressCellFocus": {},
         "suppressMultiRangeSelection": {
             "more": {
                 "name": "Suppress Multi Range Selection",

@@ -556,8 +556,8 @@ export class GridOptionsWrapper {
         return isTrue(this.gridOptions.suppressRowClickSelection);
     }
 
-    public isSuppressCellSelection() {
-        return isTrue(this.gridOptions.suppressCellSelection);
+    public isSuppressCellFocus() {
+        return isTrue(this.gridOptions.suppressCellFocus);
     }
 
     public isSuppressMultiSort() {
@@ -1710,6 +1710,10 @@ export class GridOptionsWrapper {
         }
         if (options.suppressReactUi) {
             console.warn('AG Grid: The legacy React rendering engine is deprecated and will be removed in the next major version of the grid.');
+        }
+        if (options.suppressCellSelection) {
+            console.warn('AG Grid: since v27.0, `suppressCellSelection` has been replaced by `suppressCellFocus`.');
+            options.suppressCellFocus = options.suppressCellSelection;
         }
     }
 
