@@ -25,7 +25,7 @@ const gridOptions: GridOptions = {
       headerName: 'Set filter column',
       field: 'value',
       flex: 1,
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
       floatingFilter: true,
       filterParams: filterParams,
     },

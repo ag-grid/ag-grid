@@ -18,11 +18,6 @@ const gridOptions: GridOptions = {
   },
   rowData: getData(),
 
-  components: {
-    numericCellEditor: NumericCellEditor,
-    moodEditor: MoodEditor,
-  },
-
   onRowEditingStarted: onRowEditingStarted,
   onRowEditingStopped: onRowEditingStopped,
   onCellEditingStarted: onCellEditingStarted,
@@ -48,7 +43,7 @@ function onCellEditingStopped(event: CellEditingStoppedEvent) {
 function cellEditorSelector(params: ICellEditorParams) {
   if (params.data.type === 'age') {
     return {
-      component: 'numericCellEditor',
+      cellEditorComp: NumericCellEditor,
     }
   }
 
@@ -63,7 +58,7 @@ function cellEditorSelector(params: ICellEditorParams) {
 
   if (params.data.type === 'mood') {
     return {
-      component: 'moodEditor',
+      cellEditorComp: MoodEditor,
     }
   }
 

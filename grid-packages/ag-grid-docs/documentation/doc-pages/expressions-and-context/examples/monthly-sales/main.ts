@@ -30,7 +30,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
     children: [
       {
         field: 'jan',
-        cellRenderer: accountingCellRenderer,
+        cellRendererComp: accountingCellRenderer,
         cellClass: 'cell-figure',
         valueGetter: monthValueGetter,
         cellClassRules: monthCellClassRules,
@@ -39,7 +39,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
 
       {
         field: 'feb',
-        cellRenderer: accountingCellRenderer,
+        cellRendererComp: accountingCellRenderer,
         cellClass: 'cell-figure',
         valueGetter: monthValueGetter,
         cellClassRules: monthCellClassRules,
@@ -48,7 +48,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
 
       {
         field: 'mar',
-        cellRenderer: accountingCellRenderer,
+        cellRendererComp: accountingCellRenderer,
         cellClass: 'cell-figure',
         valueGetter: monthValueGetter,
         cellClassRules: monthCellClassRules,
@@ -57,7 +57,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
 
       {
         field: 'apr',
-        cellRenderer: accountingCellRenderer,
+        cellRendererComp: accountingCellRenderer,
         cellClass: 'cell-figure',
         valueGetter: monthValueGetter,
         cellClassRules: monthCellClassRules,
@@ -66,7 +66,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
 
       {
         field: 'may',
-        cellRenderer: accountingCellRenderer,
+        cellRendererComp: accountingCellRenderer,
         cellClass: 'cell-figure',
         valueGetter: monthValueGetter,
         cellClassRules: monthCellClassRules,
@@ -75,7 +75,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
 
       {
         field: 'jun',
-        cellRenderer: accountingCellRenderer,
+        cellRendererComp: accountingCellRenderer,
         cellClass: 'cell-figure',
         valueGetter: monthValueGetter,
         cellClassRules: monthCellClassRules,
@@ -85,7 +85,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
       {
         headerName: 'YTD',
         cellClass: 'cell-figure',
-        cellRenderer: accountingCellRenderer,
+        cellRendererComp: accountingCellRenderer,
         valueGetter: yearToDateValueGetter,
         cellStyle: { 'font-weight': 'bold' },
         aggFunc: 'sum',
@@ -106,7 +106,7 @@ const gridOptions: GridOptions = {
     headerName: 'Location',
     field: 'city',
     minWidth: 260,
-    cellRenderer: 'agGroupCellRenderer',
+    cellRendererComp: 'agGroupCellRenderer',
     cellRendererParams: {
       checkbox: true,
     },

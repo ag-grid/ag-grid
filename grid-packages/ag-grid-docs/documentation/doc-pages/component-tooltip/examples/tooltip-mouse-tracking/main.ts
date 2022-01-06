@@ -26,7 +26,7 @@ const gridOptions: GridOptions = {
     minWidth: 100,
     filter: true,
     resizable: true,
-    tooltipComponent: 'customTooltip',
+    tooltipComp: CustomTooltip,
   },
 
   tooltipShowDelay: 1000,
@@ -36,9 +36,6 @@ const gridOptions: GridOptions = {
   rowData: null,
   columnDefs: columnDefs,
 
-  components: {
-    customTooltip: CustomTooltip,
-  },
 }
 
 // setup the grid after the page has finished loading

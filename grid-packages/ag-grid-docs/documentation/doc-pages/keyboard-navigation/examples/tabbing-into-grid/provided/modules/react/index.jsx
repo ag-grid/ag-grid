@@ -5,8 +5,8 @@ import React, { Component } from 'react';
 import { render } from 'react-dom';
 import { AgGridReact } from '@ag-grid-community/react';
 import { AllCommunityModules } from '@ag-grid-community/all-modules';
-import '@ag-grid-community/core/dist/styles/ag-grid.css';
-import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
+import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
+import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
 
 class GridExample extends Component {
     constructor(props) {
@@ -53,7 +53,7 @@ class GridExample extends Component {
         const updateData = (data) => {
             this.setState({ rowData: data });
         };
-
+        
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .then(resp => resp.json())
             .then(data => updateData(data));
@@ -80,24 +80,24 @@ class GridExample extends Component {
                     <div>
                         <div className="form-container">
                             <label>Tab into Grid (Focus the First Cell)</label>
-                            <input ref={this.myInput} />
+                            <input ref={ this.myInput } />
                         </div>
                         <div className="form-container">
                             <label>Tab into the Grid (Default Behavior)</label>
-                            <input />
+                            <input/>
                         </div>
                     </div>
-                    <div id="myGrid" style={{ height: '100%', width: '100%' }} className="ag-theme-alpine">
+                    <div id="myGrid" style={{ height: '100%', width: '100%'}} className="ag-theme-alpine">
                         <AgGridReact
                             modules={this.state.modules}
                             columnDefs={this.state.columnDefs}
                             rowData={this.state.rowData}
                             defaultColDef={this.state.defaultColDef}
-                            onGridReady={this.onGridReady} />
+                            onGridReady={this.onGridReady}/>
                     </div>
                     <div className="form-container">
                         <label>Tab into the grid with Shift-Tab (Default Behavior)</label>
-                        <input />
+                        <input/>
                     </div>
                 </div>
             </div>

@@ -18,9 +18,6 @@ const gridOptions: GridOptions = {
     resizable: true,
   },
   rowData: getData(),
-  components: {
-    fileCellRenderer: getFileCellRenderer(),
-  },
   treeData: true,
   animateRows: true,
   groupDefaultExpanded: -1,
@@ -36,7 +33,7 @@ const gridOptions: GridOptions = {
     minWidth: 300,
     cellRendererParams: {
       suppressCount: true,
-      innerRenderer: 'fileCellRenderer',
+      innerCellComp: getFileCellRenderer(),
     },
   },
   onRowDragEnd: onRowDragEnd,

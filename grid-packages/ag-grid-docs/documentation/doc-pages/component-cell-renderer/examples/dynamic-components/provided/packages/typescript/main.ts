@@ -15,7 +15,7 @@ const columnDefs: ColDef[] = [
     {
         headerName: "Square",
         field: "value",
-        cellRenderer: 'squareRenderer',
+        cellRendererComp: SquareRenderer,
         editable: true,
         colId: "square",
         width: 150
@@ -23,28 +23,28 @@ const columnDefs: ColDef[] = [
     {
         headerName: "Cube",
         field: "value",
-        cellRenderer: 'cubeRenderer',
+        cellRendererComp: CubeRenderer,
         colId: "cube",
         width: 150
     },
     {
         headerName: "Row Params",
         field: "row",
-        cellRenderer: 'paramsRenderer',
+        cellRendererComp: ParamsRenderer,
         colId: "params",
         width: 150
     },
     {
         headerName: "Currency (Pipe)",
         field: "currency",
-        cellRenderer: 'currencyRenderer',
+        cellRendererComp: CurrencyRenderer,
         colId: "currency",
         width: 120
     },
     {
         headerName: "Child/Parent",
         field: "value",
-        cellRenderer: 'childMessageRenderer',
+        cellRendererComp: ChildMessageRenderer,
         colId: "params",
         editable: false,
         minWidth: 150
@@ -86,13 +86,6 @@ const gridOptions: GridOptions = {
     rowData: createRowData(),
     context: {
         componentParent: this
-    },
-    components: {
-        squareRenderer: SquareRenderer,
-        cubeRenderer: CubeRenderer,
-        paramsRenderer: ParamsRenderer,
-        currencyRenderer: CurrencyRenderer,
-        childMessageRenderer: ChildMessageRenderer
     },
     defaultColDef: {
         editable: true,

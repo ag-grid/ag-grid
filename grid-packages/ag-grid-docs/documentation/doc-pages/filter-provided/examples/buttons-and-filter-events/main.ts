@@ -3,7 +3,7 @@ import { ColDef, FilterChangedEvent, FilterModifiedEvent, FilterOpenedEvent, Gri
 const columnDefs: ColDef[] = [
   {
     field: 'athlete',
-    filter: 'agTextColumnFilter',
+    filterComp: 'agTextColumnFilter',
     filterParams: {
       buttons: ['reset', 'apply'],
     },
@@ -11,7 +11,7 @@ const columnDefs: ColDef[] = [
   {
     field: 'age',
     maxWidth: 100,
-    filter: 'agNumberColumnFilter',
+    filterComp: 'agNumberColumnFilter',
     filterParams: {
       buttons: ['apply', 'reset'],
       closeOnApply: true,
@@ -19,14 +19,14 @@ const columnDefs: ColDef[] = [
   },
   {
     field: 'country',
-    filter: 'agSetColumnFilter',
+    filterComp: 'agSetColumnFilter',
     filterParams: {
       buttons: ['clear', 'apply'],
     },
   },
   {
     field: 'year',
-    filter: 'agSetColumnFilter',
+    filterComp: 'agSetColumnFilter',
     filterParams: {
       buttons: ['apply', 'cancel'],
       closeOnApply: true,
@@ -34,10 +34,10 @@ const columnDefs: ColDef[] = [
     maxWidth: 100,
   },
   { field: 'sport' },
-  { field: 'gold', filter: 'agNumberColumnFilter' },
-  { field: 'silver', filter: 'agNumberColumnFilter' },
-  { field: 'bronze', filter: 'agNumberColumnFilter' },
-  { field: 'total', filter: 'agNumberColumnFilter' },
+  { field: 'gold', filterComp: 'agNumberColumnFilter' },
+  { field: 'silver', filterComp: 'agNumberColumnFilter' },
+  { field: 'bronze', filterComp: 'agNumberColumnFilter' },
+  { field: 'total', filterComp: 'agNumberColumnFilter' },
 ]
 
 const gridOptions: GridOptions = {

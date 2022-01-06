@@ -1,14 +1,15 @@
-function getPersonFilter() {
-    function PersonFilter() { }
+class PersonFilter {
+    constructor() {
+    }
 
-    PersonFilter.prototype.init = function (params) {
+    init(params) {
         this.params = params;
         this.filterText = null
         this.setupGui(params)
     }
 
     // not called by AG Grid, just for us to help setup
-    PersonFilter.prototype.setupGui = function (params) {
+    setupGui(params) {
         this.gui = document.createElement('div')
         this.gui.innerHTML =
             '<div style="padding: 4px;">' +
@@ -32,13 +33,13 @@ function getPersonFilter() {
         }
     }
 
-    PersonFilter.prototype.getGui = function () {
+    getGui() {
         return this.gui
     }
 
-    PersonFilter.prototype.doesFilterPass = function (params) {
-        const { api, colDef, column, columnApi, context } = this.params;
-        const { node } = params;
+    doesFilterPass(params) {
+        const {api, colDef, column, columnApi, context} = this.params;
+        const {node} = params;
 
         const value = this.params.valueGetter({
             api,
@@ -60,7 +61,7 @@ function getPersonFilter() {
             });
     }
 
-    PersonFilter.prototype.isFilterActive = function () {
+    isFilterActive() {
         var isActive =
             this.filterText !== null &&
             this.filterText !== undefined &&
@@ -68,11 +69,11 @@ function getPersonFilter() {
         return isActive
     }
 
-    PersonFilter.prototype.getApi = function () {
+    getApi() {
         var that = this
         return {
             getModel: function () {
-                return { value: that.filterText.value }
+                return {value: that.filterText.value}
             },
             setModel: function (model) {
                 that.eFilterText.value = model.value
@@ -81,9 +82,10 @@ function getPersonFilter() {
     }
 
     // lazy, the example doesn't use getModel() and setModel()
-    PersonFilter.prototype.getModel = function () { }
+    getModel() {
+    }
 
-    PersonFilter.prototype.setModel = function () { }
-
-    return PersonFilter;
+    setModel() {
+    }
 }
+

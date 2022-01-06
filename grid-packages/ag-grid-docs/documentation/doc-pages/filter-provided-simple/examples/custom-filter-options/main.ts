@@ -174,21 +174,21 @@ const columnDefs: ColDef[] = [
   {
     field: 'age',
     minWidth: 120,
-    filter: 'agNumberColumnFilter',
+    filterComp: 'agNumberColumnFilter',
     filterParams: filterParams,
   },
   {
     field: 'date',
-    filter: 'agDateColumnFilter',
+    filterComp: 'agDateColumnFilter',
     filterParams: equalsFilterParams,
   },
   {
     field: 'country',
     filterParams: notEqualsFilterParams,
   },
-  { field: 'gold', filter: 'agNumberColumnFilter' },
-  { field: 'silver', filter: 'agNumberColumnFilter' },
-  { field: 'bronze', filter: 'agNumberColumnFilter' },
+  { field: 'gold', filterComp: 'agNumberColumnFilter' },
+  { field: 'silver', filterComp: 'agNumberColumnFilter' },
+  { field: 'bronze', filterComp: 'agNumberColumnFilter' },
   { field: 'total', filter: false },
 ]
 

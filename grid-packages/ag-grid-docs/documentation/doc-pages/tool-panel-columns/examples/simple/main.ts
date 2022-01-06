@@ -4,7 +4,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
   {
     headerName: 'Athlete',
     children: [
-      { field: 'athlete', filter: 'agTextColumnFilter', minWidth: 200 },
+      { field: 'athlete', filterComp: 'agTextColumnFilter', minWidth: 200 },
       { field: 'age' },
       { field: 'country', minWidth: 200 },
     ],

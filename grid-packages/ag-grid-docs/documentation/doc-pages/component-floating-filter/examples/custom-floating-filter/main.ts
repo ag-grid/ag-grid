@@ -5,9 +5,9 @@ const columnDefs: ColDef[] = [
   { field: 'athlete', filter: false },
   {
     field: 'gold',
-    filter: 'agNumberColumnFilter',
+    filterComp: 'agNumberColumnFilter',
     suppressMenu: true,
-    floatingFilterComponent: 'customNumberFloatingFilter',
+    floatingFilterComp: NumberFloatingFilterComponent,
     floatingFilterComponentParams: {
       suppressFilterButton: true,
       color: 'red',
@@ -15,9 +15,9 @@ const columnDefs: ColDef[] = [
   },
   {
     field: 'silver',
-    filter: 'agNumberColumnFilter',
+    filterComp: 'agNumberColumnFilter',
     suppressMenu: true,
-    floatingFilterComponent: 'customNumberFloatingFilter',
+    floatingFilterComp: NumberFloatingFilterComponent,
     floatingFilterComponentParams: {
       suppressFilterButton: true,
       color: 'blue',
@@ -25,9 +25,9 @@ const columnDefs: ColDef[] = [
   },
   {
     field: 'bronze',
-    filter: 'agNumberColumnFilter',
+    filterComp: 'agNumberColumnFilter',
     suppressMenu: true,
-    floatingFilterComponent: 'customNumberFloatingFilter',
+    floatingFilterComp: NumberFloatingFilterComponent,
     floatingFilterComponentParams: {
       suppressFilterButton: true,
       color: 'green',
@@ -35,9 +35,9 @@ const columnDefs: ColDef[] = [
   },
   {
     field: 'total',
-    filter: 'agNumberColumnFilter',
+    filterComp: 'agNumberColumnFilter',
     suppressMenu: true,
-    floatingFilterComponent: 'customNumberFloatingFilter',
+    floatingFilterComp: NumberFloatingFilterComponent,
     floatingFilterComponentParams: {
       suppressFilterButton: true,
       color: 'orange',
@@ -54,9 +54,6 @@ const gridOptions: GridOptions = {
     filter: true,
     floatingFilter: true,
     resizable: true,
-  },
-  components: {
-    customNumberFloatingFilter: NumberFloatingFilterComponent,
   },
   columnDefs: columnDefs,
   rowData: null,

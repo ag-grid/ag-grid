@@ -30,7 +30,7 @@ const gridOptions: GridOptions = {
     headerName: 'Athlete',
     field: 'athlete',
     minWidth: 250,
-    cellRenderer: 'agGroupCellRenderer',
+    cellRendererComp: 'agGroupCellRenderer',
     cellRendererParams: {
       footerValueGetter: '"Total (" + x + ")"',
     },

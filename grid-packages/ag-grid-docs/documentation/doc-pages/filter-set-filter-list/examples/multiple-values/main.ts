@@ -28,17 +28,17 @@ const gridOptions: GridOptions = {
     {
       headerName: 'Animals (array)',
       field: 'animalsArray',
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
     },
     {
       headerName: 'Animals (string)',
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
       valueGetter: valueGetter,
     },
     {
       headerName: 'Animals (objects)',
       field: 'animalsObjects',
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
       valueFormatter: valueFormatter,
       keyCreator: keyCreator,
     },

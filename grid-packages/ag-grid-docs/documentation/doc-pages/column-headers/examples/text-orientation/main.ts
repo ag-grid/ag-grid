@@ -35,7 +35,7 @@ const columnDefs: ColGroupDef[] = [
         width: 60,
         enableValue: true,
         suppressMenu: true,
-        filter: 'agNumberColumnFilter',
+        filterComp: 'agNumberColumnFilter',
         aggFunc: 'sum',
       },
       {
@@ -43,7 +43,7 @@ const columnDefs: ColGroupDef[] = [
         width: 60,
         enableValue: true,
         suppressMenu: true,
-        filter: 'agNumberColumnFilter',
+        filterComp: 'agNumberColumnFilter',
         aggFunc: 'sum',
       },
       {
@@ -51,7 +51,7 @@ const columnDefs: ColGroupDef[] = [
         width: 60,
         enableValue: true,
         suppressMenu: true,
-        filter: 'agNumberColumnFilter',
+        filterComp: 'agNumberColumnFilter',
         aggFunc: 'sum',
       },
       {
@@ -59,7 +59,7 @@ const columnDefs: ColGroupDef[] = [
         width: 60,
         enableValue: true,
         suppressMenu: true,
-        filter: 'agNumberColumnFilter',
+        filterComp: 'agNumberColumnFilter',
         aggFunc: 'sum',
       },
     ],

@@ -1,57 +1,57 @@
 import { CellValueChangedEvent, GridOptions, ICellRendererParams, ValueFormatterParams, ValueSetterParams } from '@ag-grid-community/core'
 
-var carMappings = {
+const carMappings = {
   tyt: 'Toyota',
   frd: 'Ford',
   prs: 'Porsche',
   nss: 'Nissan',
-}
+};
 
-var colourMappings = {
+const colourMappings = {
   cb: 'Cadet Blue',
   bw: 'Burlywood',
   fg: 'Forest Green',
-}
+};
 
-var carBrands = extractValues(carMappings)
-var colours = extractValues(colourMappings)
+const carBrands = extractValues(carMappings);
+const colours = extractValues(colourMappings);
 
 const gridOptions: GridOptions = {
   columnDefs: [
     {
       field: 'make',
-      cellEditor: 'select',
+      cellEditorComp: 'select',
       cellEditorParams: {
         values: carBrands,
       },
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
       refData: carMappings,
     },
     {
       field: 'exteriorColour',
       minWidth: 150,
-      cellEditor: 'agRichSelectCellEditor',
+      cellEditorComp: 'agRichSelectCellEditor',
       cellEditorPopup: true,
       cellEditorParams: {
         values: colours,
-        cellRenderer: colourCellRenderer,
+        cellRendererComp: colourCellRenderer,
       },
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
       filterParams: {
-        cellRenderer: colourCellRenderer,
+        cellRendererComp: colourCellRenderer,
       },
       refData: colourMappings,
-      cellRenderer: colourCellRenderer,
+      cellRendererComp: colourCellRenderer,
     },
     {
       field: 'interiorColour',
       minWidth: 150,
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
       filterParams: {
-        cellRenderer: colourCellRenderer,
+        cellRendererComp: colourCellRenderer,
       },
       refData: colourMappings,
-      cellRenderer: colourCellRenderer,
+      cellRendererComp: colourCellRenderer,
     },
     {
       headerName: 'Retail Price',
@@ -108,7 +108,7 @@ function colourCellRenderer(params: ICellRendererParams) {
 }
 
 function currencyFormatter(params: ValueFormatterParams) {
-  var value = Math.floor(params.value)
+  const value = Math.floor(params.value);
 
   if (isNaN(value)) {
     return ''
@@ -135,7 +135,7 @@ function removeSpaces(str: string) {
 // AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function () {
   // lookup the container we want the Grid to use
-  var eGridDiv = document.querySelector('#myGrid')
+  const eGridDiv = document.querySelector('#myGrid');
 
   // create the grid passing in the div to use together with the columns & data we want to use
   new agGrid.Grid(eGridDiv, gridOptions)

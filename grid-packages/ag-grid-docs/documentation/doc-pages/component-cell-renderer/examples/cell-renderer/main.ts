@@ -9,54 +9,6 @@ interface ImageCellRendererParams extends ICellRendererParams {
   rendererImage: string
 }
 
-const columnDefs: ColDef[] = [
-  {
-    headerName: 'Month',
-    field: 'Month',
-    width: 75,
-    cellStyle: { color: 'darkred' },
-  },
-  {
-    headerName: 'Max Temp (˚C)',
-    field: 'Max temp (C)',
-    width: 120,
-    cellRendererComp: 'deltaIndicator', // Function cell renderer
-  },
-  {
-    headerName: 'Min Temp (˚C)',
-    field: 'Min temp (C)',
-    width: 120,
-    cellRendererComp: 'deltaIndicator', // Function cell renderer
-  },
-  {
-    headerName: 'Days of Air Frost',
-    field: 'Days of air frost (days)',
-    width: 233,
-    cellRendererComp: 'daysFrostRenderer', // Component Cell Renderer
-    cellRendererCompParams: {
-      rendererImage: 'frost.png', // Complementing the Cell Renderer parameters
-    },
-  },
-  {
-    headerName: 'Days Sunshine',
-    field: 'Sunshine (hours)',
-    width: 190,
-    cellRendererComp: 'daysSunshineRenderer',
-    cellRendererCompParams: {
-      rendererImage: 'sun.png', // Complementing the Cell Renderer parameters
-    },
-  },
-  {
-    headerName: 'Rainfall (10mm)',
-    field: 'Rainfall (mm)',
-    width: 180,
-    cellRendererComp: 'rainPerTenMmRenderer',
-    cellRendererCompParams: {
-      rendererImage: 'rain.png', // Complementing the Cell Renderer parameters
-    },
-  },
-]
-
 /**
  * Demonstrating function cell renderer
  * Visually indicates if this months value is higher or lower than last months value
@@ -69,10 +21,10 @@ const deltaIndicator = (params: ICellRendererParams) => {
   // visually indicate if this months value is higher or lower than last months value
   if (params.value > 15) {
     imageElement.src =
-      'https://www.ag-grid.com/example-assets/weather/fire-plus.png'
+        'https://www.ag-grid.com/example-assets/weather/fire-plus.png'
   } else {
     imageElement.src =
-      'https://www.ag-grid.com/example-assets/weather/fire-minus.png'
+        'https://www.ag-grid.com/example-assets/weather/fire-minus.png'
   }
   element.appendChild(imageElement)
   element.appendChild(document.createTextNode(params.value))
@@ -95,15 +47,57 @@ const rainPerTenMmRenderer = (params: ImageCellRendererParams) => {
   return createImageSpan(rainPerTenMm, params.rendererImage)
 }
 
+const columnDefs: ColDef[] = [
+  {
+    headerName: 'Month',
+    field: 'Month',
+    width: 75,
+    cellStyle: { color: 'darkred' },
+  },
+  {
+    headerName: 'Max Temp (˚C)',
+    field: 'Max temp (C)',
+    width: 120,
+    cellRendererComp: deltaIndicator, // Function cell renderer
+  },
+  {
+    headerName: 'Min Temp (˚C)',
+    field: 'Min temp (C)',
+    width: 120,
+    cellRendererComp: deltaIndicator, // Function cell renderer
+  },
+  {
+    headerName: 'Days of Air Frost',
+    field: 'Days of air frost (days)',
+    width: 233,
+    cellRendererComp: DaysFrostRenderer, // Component Cell Renderer
+    cellRendererCompParams: {
+      rendererImage: 'frost.png', // Complementing the Cell Renderer parameters
+    },
+  },
+  {
+    headerName: 'Days Sunshine',
+    field: 'Sunshine (hours)',
+    width: 190,
+    cellRendererComp: daysSunshineRenderer,
+    cellRendererCompParams: {
+      rendererImage: 'sun.png', // Complementing the Cell Renderer parameters
+    },
+  },
+  {
+    headerName: 'Rainfall (10mm)',
+    field: 'Rainfall (mm)',
+    width: 180,
+    cellRendererComp: rainPerTenMmRenderer,
+    cellRendererCompParams: {
+      rendererImage: 'rain.png', // Complementing the Cell Renderer parameters
+    },
+  },
+]
+
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   rowData: null,
-  components: {
-    deltaIndicator: deltaIndicator,
-    daysFrostRenderer: DaysFrostRenderer,
-    daysSunshineRenderer: daysSunshineRenderer,
-    rainPerTenMmRenderer: rainPerTenMmRenderer,
-  },
   defaultColDef: {
     editable: true,
     sortable: true,

@@ -24,26 +24,26 @@ const columnDefs: ColDef[] = [
     field: 'd',
     minWidth: 140,
     valueParser: numberValueParser,
-    cellRenderer: 'agAnimateShowChangeCellRenderer',
+    cellRendererComp: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: 'API E',
     field: 'e',
     minWidth: 140,
     valueParser: numberValueParser,
-    cellRenderer: 'agAnimateShowChangeCellRenderer',
+    cellRendererComp: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: 'Total',
     minWidth: 140,
     valueGetter: 'data.a + data.b + data.c + data.d + data.e',
-    cellRenderer: 'agAnimateShowChangeCellRenderer',
+    cellRendererComp: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: 'Average',
     minWidth: 140,
     valueGetter: '(data.a + data.b + data.c + data.d + data.e) / 5',
-    cellRenderer: 'agAnimateSlideCellRenderer',
+    cellRendererComp: 'agAnimateSlideCellRenderer',
   },
 ]
 

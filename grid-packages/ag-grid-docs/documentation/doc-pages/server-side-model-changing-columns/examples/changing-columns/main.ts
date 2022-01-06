@@ -6,7 +6,7 @@ var colDefCountry: ColDef = { field: 'country', rowGroup: true }
 var colDefYear: ColDef = { field: 'year', rowGroup: true }
 var colDefAthlete: ColDef = {
   field: 'athlete',
-  filter: 'agSetColumnFilter',
+  filterComp: 'agSetColumnFilter',
   filterParams: {
     values: getAthletesAsync,
   },

@@ -12,7 +12,13 @@ const columnDefs: ColDef[] = [
     headerName: 'Item ID',
     field: 'id',
     valueGetter: 'node.id',
-    cellRenderer: 'loadingRenderer',
+    cellRendererComp: function (params: ICellRendererParams) {
+      if (params.value !== undefined) {
+        return params.value
+      } else {
+        return '<img src="https://www.ag-grid.com/example-assets/loading.gif">'
+      }
+    },
   },
   { field: 'make' },
   { field: 'model' },
@@ -50,15 +56,6 @@ var datasource: IDatasource = {
 }
 
 const gridOptions: GridOptions = {
-  components: {
-    loadingRenderer: function (params: ICellRendererParams) {
-      if (params.value !== undefined) {
-        return params.value
-      } else {
-        return '<img src="https://www.ag-grid.com/example-assets/loading.gif">'
-      }
-    },
-  },
   defaultColDef: {
     resizable: true,
   },

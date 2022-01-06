@@ -7,7 +7,7 @@ const gridOptions: GridOptions = {
       field: 'sparkline',
       headerName: 'Line Sparkline',
       minWidth: 100,
-      cellRenderer: 'agSparklineCellRenderer',
+      cellRendererComp: 'agSparklineCellRenderer',
       cellRendererParams: {
         sparklineOptions: {
           line: {
@@ -29,7 +29,7 @@ const gridOptions: GridOptions = {
       field: 'sparkline',
       headerName: 'Column Sparkline',
       minWidth: 100,
-      cellRenderer: 'agSparklineCellRenderer',
+      cellRendererComp: 'agSparklineCellRenderer',
       cellRendererParams: {
         sparklineOptions: {
           type: 'column',
@@ -45,7 +45,7 @@ const gridOptions: GridOptions = {
       field: 'sparkline',
       headerName: 'Area Sparkline',
       minWidth: 100,
-      cellRenderer: 'agSparklineCellRenderer',
+      cellRendererComp: 'agSparklineCellRenderer',
       cellRendererParams: {
         sparklineOptions: {
           type: 'area',

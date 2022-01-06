@@ -29,7 +29,7 @@ const gridOptions: GridOptions = {
     minWidth: 250,
     field: 'model',
     rowGroupIndex: 1,
-    cellRenderer: 'agGroupCellRenderer',
+    cellRendererComp: 'agGroupCellRenderer',
     cellRendererParams: {
       checkbox: true,
     },

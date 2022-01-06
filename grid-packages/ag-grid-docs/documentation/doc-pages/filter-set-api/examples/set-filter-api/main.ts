@@ -9,34 +9,31 @@ const gridOptions: GridOptions = {
   columnDefs: [
     {
       field: 'athlete',
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
       filterParams: {
         cellHeight: 20,
       },
     },
-    { field: 'age', maxWidth: 120, filter: 'agNumberColumnFilter' },
+    { field: 'age', maxWidth: 120, filterComp: 'agNumberColumnFilter' },
     {
       field: 'country',
-      cellRenderer: 'countryCellRenderer',
+      cellRendererComp: countryCellRenderer,
       keyCreator: countryKeyCreator,
     },
     { field: 'year', maxWidth: 120 },
     { field: 'date' },
     { field: 'sport' },
-    { field: 'gold', filter: 'agNumberColumnFilter' },
-    { field: 'silver', filter: 'agNumberColumnFilter' },
-    { field: 'bronze', filter: 'agNumberColumnFilter' },
-    { field: 'total', filter: 'agNumberColumnFilter' },
+    { field: 'gold', filterComp: 'agNumberColumnFilter' },
+    { field: 'silver', filterComp: 'agNumberColumnFilter' },
+    { field: 'bronze', filterComp: 'agNumberColumnFilter' },
+    { field: 'total', filterComp: 'agNumberColumnFilter' },
   ],
   defaultColDef: {
     flex: 1,
     minWidth: 160,
     filter: true,
     resizable: true,
-  },
-  components: {
-    countryCellRenderer: countryCellRenderer,
-  },
+  }
 }
 
 function countryCellRenderer(params: ICellRendererParams) {

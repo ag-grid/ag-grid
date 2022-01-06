@@ -19,10 +19,10 @@ const columnDefs: ColDef[] = [
     field: 'gender',
     width: 100,
     editable: true,
-    cellRenderer: 'genderCellRenderer',
-    cellEditor: 'agRichSelectCellEditor',
+    cellRendererComp: GenderRenderer,
+    cellEditorComp: 'agRichSelectCellEditor',
     cellEditorParams: {
-      cellRenderer: 'genderCellRenderer',
+      cellRendererComp: GenderRenderer,
       values: ['Male', 'Female'],
     },
   },
@@ -30,25 +30,25 @@ const columnDefs: ColDef[] = [
     field: 'age',
     width: 80,
     editable: true,
-    cellEditor: 'numericCellEditor',
+    cellEditorComp: NumericEditor,
   },
   {
     field: 'mood',
     width: 100,
-    cellRenderer: 'moodCellRenderer',
-    cellEditor: 'moodEditor',
+    cellRendererComp: MoodRenderer,
+    cellEditorComp: MoodEditor,
     editable: true,
   },
   {
     field: 'country',
     width: 110,
-    cellEditor: 'agRichSelectCellEditor',
-    cellRenderer: countryCellRenderer,
+    cellEditorComp: 'agRichSelectCellEditor',
+    cellRendererComp: countryCellRenderer,
     keyCreator: function (params: KeyCreatorParams) {
       return params.value.name
     },
     cellEditorParams: {
-      cellRenderer: countryCellRenderer,
+      cellRendererComp: countryCellRenderer,
       values: [
         { name: 'Ireland', code: 'IE' },
         { name: 'UK', code: 'UK' },
@@ -60,7 +60,7 @@ const columnDefs: ColDef[] = [
   {
     field: 'address',
     editable: true,
-    cellEditor: 'agLargeTextCellEditor',
+    cellEditorComp: 'agLargeTextCellEditor',
     cellEditorParams: {
       maxLength: '300', // override the editor defaults
       cols: '50',
@@ -91,13 +91,7 @@ const gridOptions: GridOptions = {
   },
   onCellEditingStopped: event => {
     console.log('cellEditingStopped')
-  },
-  components: {
-    genderCellRenderer: GenderRenderer,
-    numericCellEditor: NumericEditor,
-    moodCellRenderer: MoodRenderer,
-    moodEditor: MoodEditor,
-  },
+  }
 }
 
 // setup the grid after the page has finished loading

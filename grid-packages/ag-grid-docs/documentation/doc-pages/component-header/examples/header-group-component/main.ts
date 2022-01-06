@@ -4,7 +4,7 @@ declare var CustomHeaderGroup: any
 const columnDefs: ColGroupDef[] = [
   {
     headerName: 'Athlete Details',
-    headerGroupComponent: 'customHeaderGroupComponent',
+    headerGroupComp: CustomHeaderGroup,
     children: [
       { field: 'athlete', width: 150 },
       { field: 'age', width: 90, columnGroupShow: 'open' },
@@ -17,7 +17,7 @@ const columnDefs: ColGroupDef[] = [
   },
   {
     headerName: 'Medal details',
-    headerGroupComponent: 'customHeaderGroupComponent',
+    headerGroupComp: CustomHeaderGroup,
     children: [
       { field: 'year', width: 90 },
       { field: 'date', width: 110 },
@@ -51,9 +51,6 @@ const columnDefs: ColGroupDef[] = [
 ]
 
 const gridOptions: GridOptions = {
-  components: {
-    customHeaderGroupComponent: CustomHeaderGroup,
-  },
   columnDefs: columnDefs,
   rowData: null,
   defaultColDef: {

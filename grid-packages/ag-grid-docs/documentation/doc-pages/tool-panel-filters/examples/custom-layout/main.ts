@@ -8,7 +8,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
         headerName: 'Name',
         field: 'athlete',
         minWidth: 200,
-        filter: 'agTextColumnFilter',
+        filterComp: 'agTextColumnFilter',
       },
       { field: 'age' },
       { field: 'country', minWidth: 200 },

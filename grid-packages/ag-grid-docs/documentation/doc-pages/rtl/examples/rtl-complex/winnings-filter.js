@@ -1,7 +1,8 @@
-function getWinningsFilter() {
-    function WinningsFilter() { }
+class WinningsFilter {
+    constructor() {
+    }
 
-    WinningsFilter.prototype.init = function (params) {
+    init(params) {
         var uniqueId = Math.random()
         this.filterChangedCallback = params.filterChangedCallback
         this.eGui = document.createElement('div')
@@ -38,13 +39,13 @@ function getWinningsFilter() {
         this.params = params
     }
 
-    WinningsFilter.prototype.getGui = function () {
+    getGui() {
         return this.eGui
     }
 
-    WinningsFilter.prototype.doesFilterPass = function (params) {
-        var { api, colDef, column, columnApi, context } = this.params;
-        var { node } = params;
+    doesFilterPass(params) {
+        var {api, colDef, column, columnApi, context} = this.params;
+        var {node} = params;
 
         var value = this.params.valueGetter({
             api,
@@ -72,13 +73,14 @@ function getWinningsFilter() {
         }
     }
 
-    WinningsFilter.prototype.isFilterActive = function () {
+    isFilterActive() {
         return !this.cbNoFilter.checked
     }
 
     // lazy, the example doesn't use getModel() and setModel()
-    WinningsFilter.prototype.getModel = function () { }
+    getModel() {
+    }
 
-    WinningsFilter.prototype.setModel = function () { }
-    return WinningsFilter
+    setModel() {
+    }
 }

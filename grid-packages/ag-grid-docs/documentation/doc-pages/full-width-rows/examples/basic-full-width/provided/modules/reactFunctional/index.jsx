@@ -1,11 +1,11 @@
 'use strict';
 
-import React, { useState } from 'react';
-import { render } from 'react-dom';
-import { AgGridColumn, AgGridReact } from '@ag-grid-community/react';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import '@ag-grid-community/core/dist/styles/ag-grid.css';
-import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
+import React, {useState} from 'react';
+import {render} from 'react-dom';
+import {AgGridColumn, AgGridReact} from '@ag-grid-community/react';
+import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
+import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
+import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
 
 const alphabet = () => {
     return 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
@@ -69,7 +69,7 @@ const GridExample = () => {
     const [columns, setColumns] = useState(getColumnDefs());
 
     return (
-        <div style={{ width: '100%', height: '100%' }}>
+        <div style={{width: '100%', height: '100%'}}>
             <div
                 id="myGrid"
                 style={{
@@ -99,7 +99,7 @@ const GridExample = () => {
 };
 
 render(
-    <GridExample />,
+    <GridExample/>,
     document.querySelector('#root')
 )
 

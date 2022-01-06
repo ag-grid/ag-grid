@@ -1,11 +1,11 @@
 'use strict'
 
-import React, { Component } from 'react';
-import { render } from 'react-dom';
-import { AgGridReact } from '@ag-grid-community/react';
-import { AllCommunityModules } from '@ag-grid-community/all-modules';
-import '@ag-grid-community/core/dist/styles/ag-grid.css';
-import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
+import React, {Component} from 'react';
+import {render} from 'react-dom';
+import {AgGridReact} from '@ag-grid-community/react';
+import {AllCommunityModules} from '@ag-grid-community/all-modules';
+import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
+import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
 import ChildMessageRenderer from './childMessageRenderer.jsx';
 import CubeRenderer from './cubeRenderer.jsx';
 import CurrencyRenderer from './currencyRenderer.jsx';
@@ -63,7 +63,7 @@ class GridExample extends Component {
                 }
             ],
             rowData: this.createRowData(),
-            context: { componentParent: this },
+            context: {componentParent: this},
             frameworkComponents: {
                 squareRenderer: SquareRenderer,
                 cubeRenderer: CubeRenderer,
@@ -94,7 +94,7 @@ class GridExample extends Component {
                 rowNode.setDataValue('currency', rowNode.data.value + Number(Math.random().toFixed(2)));
             }
         });
-        this.gridApi.refreshCells({ columns: ['currency'] });
+        this.gridApi.refreshCells({columns: ['currency']});
     }
 
     methodFromParent = (cell) => {
@@ -115,10 +115,10 @@ class GridExample extends Component {
 
     render() {
         return (
-            <div style={{ width: '100%', height: '100%' }}>
+            <div style={{width: '100%', height: '100%'}}>
                 <div className="example-wrapper">
-                    <button onClick={() => this.refreshEvenRowsCurrencyData()} style={{ "marginBottom": "10px" }}
-                        className="btn btn-primary">
+                    <button onClick={() => this.refreshEvenRowsCurrencyData()} style={{"marginBottom": "10px"}}
+                            className="btn btn-primary">
                         Refresh Even Row Currency Data
                     </button>
                     <div

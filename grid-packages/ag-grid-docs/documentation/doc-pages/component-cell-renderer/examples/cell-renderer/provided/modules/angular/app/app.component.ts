@@ -1,9 +1,9 @@
-import { Component } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { AllCommunityModules, GridApi, Module, RowNode } from '@ag-grid-community/all-modules';
-import '@ag-grid-community/core/dist/styles/ag-grid.css';
-import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
-import { DaysFrostRenderer } from './days-frost-renderer.component';
+import {Component} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {AllCommunityModules, GridApi, Module, RowNode} from '@ag-grid-community/all-modules';
+import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
+import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
+import {DaysFrostRenderer} from './days-frost-renderer.component';
 import { threadId } from 'worker_threads';
 
 /*
@@ -45,10 +45,10 @@ class DaysSunshineRenderer {
     private eGui;
     init(params) {
         const daysSunshine = params.value / 24;
-        this.eGui = createImageSpan(daysSunshine, params.rendererImage);
+        this.eGui = createImageSpan(daysSunshine, params.rendererImage);    
     }
     getGui() {
-        return this.eGui;
+        return this.eGui;        
     }
 }
 
@@ -60,7 +60,7 @@ class RainPerTenMmRenderer {
         this.eGui = createImageSpan(rainPerTenMm, params.rendererImage);
     }
     getGui() {
-        return this.eGui;
+        return this.eGui;        
     }
 }
 
@@ -95,7 +95,7 @@ export class AppComponent {
             headerName: "Month",
             field: "Month",
             width: 75,
-            cellStyle: { color: "darkred" }
+            cellStyle: {color: "darkred"}
         },
         {
             headerName: "Max Temp (\u02DAC)",
@@ -114,21 +114,21 @@ export class AppComponent {
             field: "Days of air frost (days)",
             width: 233,
             cellRendererComp: DaysFrostRenderer,
-            cellRendererCompParams: { rendererImage: "frost.png" }
+            cellRendererCompParams: {rendererImage: "frost.png"}
         },
         {
             headerName: "Days Sunshine",
             field: "Sunshine (hours)",
             width: 190,
             cellRendererComp: DaysSunshineRenderer,
-            cellRendererCompParams: { rendererImage: "sun.png" }
+            cellRendererCompParams: {rendererImage: "sun.png"}
         },
         {
             headerName: "Rainfall (10mm)",
             field: "Rainfall (mm)",
             width: 180,
             cellRendererComp: DaysSunshineRenderer,
-            cellRendererCompParams: { rendererImage: "rain.png" }
+            cellRendererCompParams: {rendererImage: "rain.png"}
         }
     ];
 

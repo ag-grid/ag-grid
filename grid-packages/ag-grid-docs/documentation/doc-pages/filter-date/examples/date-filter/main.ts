@@ -32,7 +32,7 @@ const columnDefs: ColDef[] = [
   { field: 'athlete' },
   {
     field: 'date',
-    filter: 'agDateColumnFilter',
+    filterComp: 'agDateColumnFilter',
     filterParams: filterParams,
   },
   { field: 'total', filter: false },

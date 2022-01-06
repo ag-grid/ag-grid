@@ -31,34 +31,34 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
       {
         field: 'total',
         columnGroupShow: 'closed',
-        filter: 'agNumberColumnFilter',
+        filterComp: 'agNumberColumnFilter',
         width: 120,
         flex: 0,
       },
       {
         field: 'gold',
         columnGroupShow: 'open',
-        filter: 'agNumberColumnFilter',
+        filterComp: 'agNumberColumnFilter',
         width: 100,
         flex: 0,
       },
       {
         field: 'silver',
         columnGroupShow: 'open',
-        filter: 'agNumberColumnFilter',
+        filterComp: 'agNumberColumnFilter',
         width: 100,
         flex: 0,
       },
       {
         field: 'bronze',
         columnGroupShow: 'open',
-        filter: 'agNumberColumnFilter',
+        filterComp: 'agNumberColumnFilter',
         width: 100,
         flex: 0,
       },
     ],
   },
-  { field: 'year', filter: 'agNumberColumnFilter' },
+  { field: 'year', filterComp: 'agNumberColumnFilter' },
 ]
 
 const gridOptions: GridOptions = {

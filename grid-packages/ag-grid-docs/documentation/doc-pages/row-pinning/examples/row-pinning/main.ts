@@ -8,7 +8,7 @@ const columnDefs: ColDef[] = [
     cellRendererSelector: function (params) {
       if (params.node.rowPinned) {
         return {
-          component: 'customPinnedRowRenderer',
+          component: CustomPinnedRowRenderer,
           params: {
             style: { color: 'blue' },
           },
@@ -24,7 +24,7 @@ const columnDefs: ColDef[] = [
     cellRendererSelector: function (params) {
       if (params.node.rowPinned) {
         return {
-          component: 'customPinnedRowRenderer',
+          component: CustomPinnedRowRenderer,
           params: {
             style: { 'font-style': 'italic' },
           },
@@ -58,9 +58,6 @@ const gridOptions: GridOptions = {
   // no rows to pin to start with
   pinnedTopRowData: createData(1, 'Top'),
   pinnedBottomRowData: createData(1, 'Bottom'),
-  components: {
-    customPinnedRowRenderer: CustomPinnedRowRenderer,
-  },
 }
 
 function onPinnedRowTopCount() {

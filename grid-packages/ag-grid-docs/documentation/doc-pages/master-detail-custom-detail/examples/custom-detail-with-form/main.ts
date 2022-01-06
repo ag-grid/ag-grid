@@ -4,7 +4,7 @@ declare var DetailCellRenderer: any;
 const gridOptions: GridOptions = {
   columnDefs: [
     // group cell renderer needed for expand / collapse icons
-    { field: 'name', cellRenderer: 'agGroupCellRenderer' },
+    { field: 'name', cellRendererComp: 'agGroupCellRenderer' },
     { field: 'account' },
     { field: 'calls' },
     { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" },
@@ -13,12 +13,9 @@ const gridOptions: GridOptions = {
     flex: 1,
   },
   masterDetail: true,
-  detailCellRenderer: 'myDetailCellRenderer',
+  detailRowCellComp: DetailCellRenderer,
   detailRowHeight: 70,
   groupDefaultExpanded: 1,
-  components: {
-    myDetailCellRenderer: DetailCellRenderer,
-  },
   onFirstDataRendered: onFirstDataRendered,
 }
 

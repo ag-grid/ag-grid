@@ -5,18 +5,14 @@ declare var TotalValueRenderer: any
 const columnDefs: ColDef[] = [
   { field: 'athlete' },
   { field: 'year' },
-  { field: 'gold', cellRenderer: 'medalCellRenderer' },
-  { field: 'silver', cellRenderer: 'medalCellRenderer' },
-  { field: 'bronze', cellRenderer: 'medalCellRenderer' },
-  { field: 'total', minWidth: 175, cellRenderer: 'totalValueRenderer' },
+  { field: 'gold', cellRendererComp: MedalCellRenderer },
+  { field: 'silver', cellRendererComp: MedalCellRenderer },
+  { field: 'bronze', cellRendererComp: MedalCellRenderer },
+  { field: 'total', minWidth: 175, cellRendererComp: TotalValueRenderer },
 ]
 
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
-  components: {
-    medalCellRenderer: MedalCellRenderer,
-    totalValueRenderer: TotalValueRenderer,
-  },
   defaultColDef: {
     editable: true,
     sortable: true,

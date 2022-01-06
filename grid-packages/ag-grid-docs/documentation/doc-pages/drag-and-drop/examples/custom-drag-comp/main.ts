@@ -18,15 +18,12 @@ const gridOptions: GridOptions = {
   rowData: getData(),
   rowDragManaged: true,
   columnDefs: [
-    { cellRenderer: 'dragSourceCellRenderer', minWidth: 100 },
+    { cellRendererComp: DragSourceRenderer, minWidth: 100 },
     { field: 'id' },
     { field: 'color' },
     { field: 'value1' },
     { field: 'value2' },
   ],
-  components: {
-    dragSourceCellRenderer: DragSourceRenderer,
-  },
   animateRows: true,
 }
 

@@ -29,11 +29,8 @@ const gridOptions: GridOptions = {
     },
   },
   groupDisplayType: 'groupRows',
-  components: {
-    groupRowInnerRenderer: GroupRowInnerRenderer,
-  },
   groupRowRendererParams: {
-    innerRenderer: 'groupRowInnerRenderer',
+    innerCellComp: GroupRowInnerRenderer,
     suppressCount: true,
     flagCodes: {
       Andorra: 'ad',

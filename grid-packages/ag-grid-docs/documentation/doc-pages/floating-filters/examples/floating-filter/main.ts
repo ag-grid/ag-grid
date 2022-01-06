@@ -32,25 +32,25 @@ var athleteFilter = getPersonFilter()
 
 const columnDefs: ColDef[] = [
   { field: 'athlete', filter: athleteFilter, suppressMenu: true },
-  { field: 'age', filter: 'agNumberColumnFilter', suppressMenu: true },
-  { field: 'country', filter: 'agSetColumnFilter', suppressMenu: true },
+  { field: 'age', filterComp: 'agNumberColumnFilter', suppressMenu: true },
+  { field: 'country', filterComp: 'agSetColumnFilter', suppressMenu: true },
   {
     field: 'year',
     maxWidth: 120,
-    filter: 'agNumberColumnFilter',
+    filterComp: 'agNumberColumnFilter',
     floatingFilter: false,
   },
   {
     field: 'date',
     minWidth: 215,
-    filter: 'agDateColumnFilter',
+    filterComp: 'agDateColumnFilter',
     filterParams: dateFilterParams,
     suppressMenu: true,
   },
-  { field: 'sport', suppressMenu: true, filter: 'agTextColumnFilter' },
+  { field: 'sport', suppressMenu: true, filterComp: 'agTextColumnFilter' },
   {
     field: 'gold',
-    filter: 'agNumberColumnFilter',
+    filterComp: 'agNumberColumnFilter',
     filterParams: {
       buttons: ['apply'],
     },
@@ -58,14 +58,14 @@ const columnDefs: ColDef[] = [
   },
   {
     field: 'silver',
-    filter: 'agNumberColumnFilter',
+    filterComp: 'agNumberColumnFilter',
     floatingFilterComponentParams: {
       suppressFilterButton: true,
     },
   },
   {
     field: 'bronze',
-    filter: 'agNumberColumnFilter',
+    filterComp: 'agNumberColumnFilter',
     floatingFilterComponentParams: {
       suppressFilterButton: true,
     },

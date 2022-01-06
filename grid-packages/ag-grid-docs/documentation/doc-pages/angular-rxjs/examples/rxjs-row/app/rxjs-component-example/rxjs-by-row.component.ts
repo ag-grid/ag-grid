@@ -1,11 +1,11 @@
-import { Component } from "@angular/core";
+import {Component} from "@angular/core";
 
-import { GridOptions, AllCommunityModules } from "@ag-grid-community/all-modules";
+import {GridOptions, AllCommunityModules} from "@ag-grid-community/all-modules";
 
-import "@ag-grid-community/core/dist/styles/ag-grid.css";
-import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
 
-import { MockServerService } from "./mockServer.service";
+import {MockServerService} from "./mockServer.service";
 
 @Component({
     selector: 'my-app',
@@ -22,7 +22,7 @@ export class RxJsComponentByRow {
         this.initialRowDataLoad$ = mockServerService.initialLoad();
         this.rowDataUpdates$ = mockServerService.byRowupdates();
 
-        this.gridOptions = <GridOptions>{
+        this.gridOptions = <GridOptions> {
             enableRangeSelection: true,
             columnDefs: this.createColumnDefs(),
             getRowNodeId: function (data) {
@@ -43,7 +43,7 @@ export class RxJsComponentByRow {
                         // rows will get re-rendered, improving performance
                         this.rowDataUpdates$.subscribe((updates) => {
                             if (this.gridOptions.api) { // can be null when tabbing between the examples
-                                this.gridOptions.api.applyTransaction({ update: updates })
+                                this.gridOptions.api.applyTransaction({update: updates})
                             }
                         });
                     }
@@ -58,8 +58,8 @@ export class RxJsComponentByRow {
 
     private createColumnDefs() {
         return [
-            { headerName: "Code", field: "code", width: 70, resizable: true },
-            { headerName: "Name", field: "name", width: 280, resizable: true },
+            {headerName: "Code", field: "code", width: 70, resizable: true},
+            {headerName: "Name", field: "name", width: 280, resizable: true},
             {
                 headerName: "Bid", field: "bid", width: 100, resizable: true,
                 cellClass: 'cell-number',

@@ -8,7 +8,7 @@ const gridOptions: GridOptions = {
     {
       field: 'rateOfChange',
       headerName: 'Rate of Change',
-      cellRenderer: 'agSparklineCellRenderer',
+      cellRendererComp: 'agSparklineCellRenderer',
       cellRendererParams: {
         sparklineOptions: {
           type: 'area',

@@ -3,7 +3,7 @@ declare var FullWidthCellRenderer: any;
 
 const gridOptions: GridOptions = {
   columnDefs: [
-    { field: 'name', cellRenderer: countryCellRenderer },
+    { field: 'name', cellRendererComp: countryCellRenderer },
     { field: 'continent' },
     { field: 'language' },
   ],
@@ -12,9 +12,6 @@ const gridOptions: GridOptions = {
     sortable: true,
     resizable: true,
     filter: true,
-  },
-  components: {
-    fullWidthCellRenderer: FullWidthCellRenderer,
   },
   rowData: getData(),
   getRowHeight: function (params) {
@@ -27,7 +24,7 @@ const gridOptions: GridOptions = {
     return isFullWidth(rowNode.data)
   },
   // see AG Grid docs cellRenderer for details on how to build cellRenderers
-  fullWidthCellRenderer: 'fullWidthCellRenderer',
+  fullWidthCellComp: FullWidthCellRenderer,
 }
 
 function countryCellRenderer(params: ICellRendererParams) {

@@ -20,11 +20,11 @@ const gridOptions: GridOptions = {
       field: 'value',
       cellRendererSelector: function (params: ICellRendererParams) {
         const moodDetails = {
-          component: 'moodCellRenderer',
+          component: MoodRenderer,
         }
 
         const genderDetails = {
-          component: 'genderCellRenderer',
+          component: GenderRenderer,
           params: { values: ['Male', 'Female'] },
         }
 
@@ -50,11 +50,7 @@ const gridOptions: GridOptions = {
   },
   onCellEditingStopped: function (event) {
     console.log('cellEditingStopped')
-  },
-  components: {
-    genderCellRenderer: GenderRenderer,
-    moodCellRenderer: MoodRenderer,
-  },
+  }
 }
 
 // setup the grid after the page has finished loading

@@ -13,7 +13,7 @@ const columnDefs: ColGroupDef[] = [
         headerName: 'Name',
         field: 'athlete',
         minWidth: 200,
-        filter: 'agTextColumnFilter',
+        filterComp: 'agTextColumnFilter',
       },
       {
         groupId: 'competitionGroupId',

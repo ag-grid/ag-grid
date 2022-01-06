@@ -15,7 +15,7 @@ const gridOptions: GridOptions = {
       headerName: 'No Value Formatter',
       field: 'country',
       valueFormatter: countryValueFormatter,
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
       filterParams: {
         // no value formatter!
       },
@@ -24,7 +24,7 @@ const gridOptions: GridOptions = {
       headerName: 'With Value Formatter',
       field: 'country',
       valueFormatter: countryValueFormatter,
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
       filterParams: countryFilterParams,
     },
   ],

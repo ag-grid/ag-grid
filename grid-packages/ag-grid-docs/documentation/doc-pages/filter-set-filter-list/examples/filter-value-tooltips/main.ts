@@ -7,12 +7,12 @@ const gridOptions: GridOptions = {
     {
       field: 'colA',
       tooltipField: 'colA',
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
     },
     {
       field: 'colB',
       tooltipField: 'colB',
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
       filterParams: {
         showTooltips: true,
       },
@@ -20,8 +20,8 @@ const gridOptions: GridOptions = {
     {
       field: 'colC',
       tooltipField: 'colC',
-      tooltipComponent: 'customTooltip',
-      filter: 'agSetColumnFilter',
+      tooltipComp: CustomTooltip,
+      filterComp: 'agSetColumnFilter',
       filterParams: {
         showTooltips: true,
       },
@@ -30,9 +30,6 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     resizable: true,
-  },
-  components: {
-    customTooltip: CustomTooltip,
   },
   tooltipShowDelay: 100,
   rowData: getData(),

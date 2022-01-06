@@ -312,6 +312,32 @@ function internalParser(inputFile, html, exampleSettings, exampleType, providedE
         return `[${copyOfColDefs.join(',\n    ')}]`;
     };
 
+    const tsArrayStr = (node: any): string => {
+        let copyOfArray = [];
+
+        // for each item in the array
+        for (let index = 0; index < node.elements.length; index++) {
+            const item = node.elements[index];
+
+            if (!ts.isObjectLiteralExpression(item)) {
+                copyOfArray.push(tsGenerate(item, tsTree));
+            } else {
+
+                // for each property
+                let props = [];
+                for (let colDefPropertyIndex = 0; colDefPropertyIndex < item.properties.length; colDefPropertyIndex++) {
+                    const columnDefProperty: any = item.properties[colDefPropertyIndex];
+                    props.push(`${tsConvertFunctionsIntoStringsStr(columnDefProperty)}`);
+                }
+                if (props.length > 0) {
+                    let propStr = props.length === 1 ? `{ ${props.join()} }` : `{\n        ${props.join(',\n    ')} }`;
+                    copyOfArray.push(propStr);
+                }
+            }
+        }
+        return `[${copyOfArray.join(',\n    ')}]`;
+    };
+
     const tsConvertFunctionsIntoStringsStr = (property: any): string => {
         if (ts.isIdentifier(property.initializer)) {
 
@@ -334,6 +360,9 @@ function internalParser(inputFile, html, exampleSettings, exampleType, providedE
 
             const props = objProps.length === 1 ? `{ ${objProps.join(',\n    ')} }` : `{\n    ${objProps.join(',\n    ')}\n }`;
             return `${property.name.text} : ${props}`;
+        } else if (ts.isArrayLiteralExpression(property.initializer)) {
+            const result = tsArrayStr(property.initializer)
+            return `${property.name.text} : ${result}`;
         }
         return tsGenerate(property, tsTree);
     };

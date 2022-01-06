@@ -11,26 +11,26 @@ const gridOptions: GridOptions = {
     {
       headerName: 'Case Insensitive (default)',
       field: 'colour',
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
       filterParams: {
         caseSensitive: false,
-        cellRenderer: colourCellRenderer,
+        cellRendererComp: colourCellRenderer,
       },
     },
     {
       headerName: 'Case Sensitive',
       field: 'colour',
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
       filterParams: {
         caseSensitive: true,
-        cellRenderer: colourCellRenderer,
+        cellRendererComp: colourCellRenderer,
       },
     },
   ],
   defaultColDef: {
     flex: 1,
     minWidth: 225,
-    cellRenderer: colourCellRenderer,
+    cellRendererComp: colourCellRenderer,
     resizable: true,
     floatingFilter: true,
   },

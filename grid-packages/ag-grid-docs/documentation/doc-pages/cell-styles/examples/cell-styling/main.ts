@@ -24,7 +24,7 @@ const columnDefs: ColDef[] = [
     maxWidth: 90,
     valueParser: numberParser,
     cellClassRules: ragCellClassRules,
-    cellRenderer: ragRenderer,
+    cellRendererComp: ragRenderer,
   },
   { field: 'date', cellClass: 'rag-amber' },
   {

@@ -8,7 +8,9 @@ const columnDefs: ColDef[] = [
   // this row just shows the row index, doesn't use any data from the row
   {
     headerName: '#',
-    cellRenderer: 'rowNodeIdRenderer',
+    cellRendererComp: function (params: ICellRendererParams) {
+      return params.node!.id! + 1
+    },
     checkboxSelection: true,
     headerCheckboxSelection: true,
   },
@@ -19,19 +21,19 @@ const columnDefs: ColDef[] = [
     enablePivot: true,
   },
   { field: 'country', enableRowGroup: true },
-  { field: 'year', filter: 'agNumberColumnFilter' },
+  { field: 'year', filterComp: 'agNumberColumnFilter' },
   { field: 'date' },
   {
     field: 'sport',
-    filter: 'agMultiColumnFilter',
+    filterComp: 'agMultiColumnFilter',
     filterParams: {
       filters: [
         {
-          filter: 'agTextColumnFilter',
+          filterComp: 'agTextColumnFilter',
           display: 'accordion',
         },
         {
-          filter: 'agSetColumnFilter',
+          filterComp: 'agSetColumnFilter',
           display: 'accordion',
         },
       ],
@@ -54,11 +56,6 @@ const gridOptions: GridOptions = {
     minWidth: 100,
     filter: true,
     resizable: true,
-  },
-  components: {
-    rowNodeIdRenderer: function (params: ICellRendererParams) {
-      return params.node!.id! + 1
-    },
   },
   sideBar: true,
   statusBar: {

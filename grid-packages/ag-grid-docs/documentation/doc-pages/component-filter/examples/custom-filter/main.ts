@@ -4,14 +4,14 @@ declare var PersonFilter: any
 declare var YearFilter: any
 
 const columnDefs: ColDef[] = [
-  { field: 'athlete', minWidth: 150, filter: 'personFilter' },
-  { field: 'age', filter: 'agNumberColumnFilter' },
+  { field: 'athlete', minWidth: 150, filterComp: PersonFilter },
+  { field: 'age', filterComp: 'agNumberColumnFilter' },
   { field: 'country', minWidth: 150 },
-  { field: 'year', filter: 'yearFilter' },
+  { field: 'year', filterComp: YearFilter },
   {
     field: 'date',
     minWidth: 130,
-    filter: 'agDateColumnFilter',
+    filterComp: 'agDateColumnFilter',
     filterParams: {
       comparator: function (
         filterLocalDateAtMidnight: Date,
@@ -40,10 +40,10 @@ const columnDefs: ColDef[] = [
     },
   },
   { field: 'sport' },
-  { field: 'gold', filter: 'agNumberColumnFilter' },
-  { field: 'silver', filter: 'agNumberColumnFilter' },
-  { field: 'bronze', filter: 'agNumberColumnFilter' },
-  { field: 'total', filter: 'agNumberColumnFilter' },
+  { field: 'gold', filterComp: 'agNumberColumnFilter' },
+  { field: 'silver', filterComp: 'agNumberColumnFilter' },
+  { field: 'bronze', filterComp: 'agNumberColumnFilter' },
+  { field: 'total', filterComp: 'agNumberColumnFilter' },
 ]
 
 const gridOptions: GridOptions = {
@@ -54,10 +54,6 @@ const gridOptions: GridOptions = {
     minWidth: 100,
     filter: true,
     resizable: true,
-  },
-  components: {
-    personFilter: PersonFilter,
-    yearFilter: YearFilter,
   },
   columnDefs: columnDefs,
   rowData: null,

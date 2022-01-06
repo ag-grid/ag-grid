@@ -8,18 +8,18 @@ const columnDefs: ColDef[] = [
   { field: 'name', filter: false },
   {
     field: 'gold',
-    floatingFilterComponent: 'sliderFloatingFilter',
+    floatingFilterComp: SliderFloatingFilter,
     floatingFilterComponentParams: {
       maxValue: 7,
       suppressFilterButton: true,
     },
-    filter: 'agNumberColumnFilter',
+    filterComp: 'agNumberColumnFilter',
     suppressMenu: false,
   },
   {
     field: 'silver',
-    filter: 'agNumberColumnFilter',
-    floatingFilterComponent: 'sliderFloatingFilter',
+    filterComp: 'agNumberColumnFilter',
+    floatingFilterComp: SliderFloatingFilter,
     floatingFilterComponentParams: {
       maxValue: 5,
       suppressFilterButton: true,
@@ -28,8 +28,8 @@ const columnDefs: ColDef[] = [
   },
   {
     field: 'bronze',
-    filter: 'agNumberColumnFilter',
-    floatingFilterComponent: 'sliderFloatingFilter',
+    filterComp: 'agNumberColumnFilter',
+    floatingFilterComp: SliderFloatingFilter,
     floatingFilterComponentParams: {
       maxValue: 10,
       suppressFilterButton: true,
@@ -49,10 +49,7 @@ const gridOptions: GridOptions = {
     resizable: true,
   },
   columnDefs: columnDefs,
-  rowData: getData(),
-  components: {
-    sliderFloatingFilter: SliderFloatingFilter,
-  },
+  rowData: getData()
 }
 
 // setup the grid after the page has finished loading

@@ -3,19 +3,19 @@ import { GridOptions } from '@ag-grid-community/core'
 const gridOptions: GridOptions = {
   columnDefs: [
     // set filters
-    { field: 'athlete', filter: 'agSetColumnFilter' },
+    { field: 'athlete', filterComp: 'agSetColumnFilter' },
     {
       field: 'country',
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
       filterParams: {
         suppressMiniFilter: true,
       },
     },
 
     // number filters
-    { field: 'gold', filter: 'agNumberColumnFilter' },
-    { field: 'silver', filter: 'agNumberColumnFilter' },
-    { field: 'bronze', filter: 'agNumberColumnFilter' },
+    { field: 'gold', filterComp: 'agNumberColumnFilter' },
+    { field: 'silver', filterComp: 'agNumberColumnFilter' },
+    { field: 'bronze', filterComp: 'agNumberColumnFilter' },
   ],
   defaultColDef: {
     flex: 1,
