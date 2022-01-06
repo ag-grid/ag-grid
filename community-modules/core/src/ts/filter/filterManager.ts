@@ -11,6 +11,8 @@ import { IFilterComp, IFilter, IFilterParams } from '../interfaces/iFilter';
 import { ColDef, GetQuickFilterTextParams } from '../entities/colDef';
 import { GridApi } from '../gridApi';
 import { UserComponentFactory } from '../components/framework/userComponentFactory';
+import { ModuleNames } from '../modules/moduleNames';
+import { ModuleRegistry } from '../modules/moduleRegistry';
 import { BeanStub } from '../context/beanStub';
 import { convertToSet } from '../utils/set';
 import { exists } from '../utils/generic';
@@ -472,10 +474,15 @@ export class FilterManager extends BeanStub implements IFilterManager {
     }
 
     private createFilterInstance(column: Column, $scope: any): AgPromise<IFilterComp> | null {
+        const defaultFilter =
+            ModuleRegistry.isRegistered(ModuleNames.SetFilterModule) ? 'agSetColumnFilter' : 'agTextColumnFilter';
+
+        const colDef = column.getColDef();
+
         let filterInstance: IFilterComp;
 
         const params: IFilterParams = {
-            ...this.createFilterParams(column, column.getColDef(), $scope),
+            ...this.createFilterParams(column, colDef, $scope),
             filterModifiedCallback: () => {
                 const event: FilterModifiedEvent = {
                     type: Events.EVENT_FILTER_MODIFIED,
@@ -492,11 +499,7 @@ export class FilterManager extends BeanStub implements IFilterManager {
             doesRowPassOtherFilter: node => this.doesRowPassOtherFilters(filterInstance, node),
         };
 
-        const defaultFilter = 'agCustomColumnFilterV2';
-        const colDef = cloneObject(column.getColDef());
-        colDef.filter = defaultFilter;
         const compDetails = this.userComponentFactory.getFilterDetails(colDef, params, defaultFilter);
-
         if (!compDetails) { return null; }
         const componentPromise = compDetails.newAgStackInstance();
 

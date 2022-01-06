@@ -271,12 +271,6 @@
     "description": "/** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
-  "customFilterEvaluationModel": {
-    "description": "/** Definition of custom filter expression evaluators. */",
-    "type": {
-      "returnType": "{ [operation: string]: CustomFilterEvaluationModelBuilder }"
-    }
-  },
   "enableCharts": {
     "description": "/** Set to `true` to Enable Charts. Default: `false` */",
     "type": { "returnType": "boolean" }

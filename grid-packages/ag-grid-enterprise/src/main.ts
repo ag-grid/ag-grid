@@ -69,7 +69,7 @@ export { RowNode, RowHighlightPosition } from "ag-grid-community";
 export { SideBarDef, ToolPanelDef } from "ag-grid-community";
 export { IFilterDef, IFilterParams, IFilterOptionDef, IDoesFilterPassParams, ProvidedFilterModel, IFilter, IFilterComp, IFilterType, IFloatingFilterType } from "ag-grid-community";
 export { ISetFilter, SetFilterModel, ISetFilterParams, SetFilterValues, SetFilterModelValue, SetFilterValuesFunc, SetFilterValuesFuncParams } from "ag-grid-community";
-export { FilterManager, FilterWrapper, FilterRequestSource } from "ag-grid-community";
+export { FilterUIInfo, IFilterManager, FilterWrapper, FilterRequestSource } from "ag-grid-community";
 export { IMultiFilter, IMultiFilterModel, IMultiFilterComp, IMultiFilterParams, IMultiFilterDef } from "ag-grid-community";
 export { FilterExpression, ConcreteExpression, TextOperationExpression, NumberComparisonOperationExpression, DateComparisonOperationExpression, SetOperationExpression, ScalarOperationExpression, LogicalOperationExpression, CustomExpression, TextComparisonOperation, ScalarComparisonOperation, SetOperation, LogicOperation, ScalarComparisonOperationExpression, TextComparisonOperationExpression, OperandArray, FilterEvaluationModel, InbuiltExpression, CustomFilterEvaluationModelBuilder, StateManager, ExpressionComponentParams, StateType, PartialTuple, PartialStateType, isScalarComparisonOperation, isTextComparisonOperation, isTextComparisonOperationExpression, isSetOperation, isComparisonOperationExpression, comparisonOperationOperandCardinality, SCALAR_COMPARISON_OPERATION_METADATA, TEXT_COMPARISON_OPERATION_METADATA, } from "ag-grid-community";
 export { ProvidedFilter, IProvidedFilter, IProvidedFilterParams } from "ag-grid-community";

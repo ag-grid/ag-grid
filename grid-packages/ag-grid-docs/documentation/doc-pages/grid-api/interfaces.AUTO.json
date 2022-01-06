@@ -1460,7 +1460,6 @@
       "quickFilterText?": "string",
       "cacheQuickFilter?": "boolean",
       "excludeChildrenWhenTreeDataFiltering?": "boolean",
-      "customFilterEvaluationModel?": "{ [operation: string]: CustomFilterEvaluationModelBuilder; }",
       "enableCharts?": "boolean",
       "chartThemes?": "string[]",
       "customChartThemes?": "{ [name: string]: AgChartTheme; }",
@@ -1834,7 +1833,6 @@
       "quickFilterText?": "/** Rows are filtered using this text as a quick filter. */",
       "cacheQuickFilter?": "/** Set to `true` to turn on the quick filter cache, used to improve performance when using the quick filter. Default: `false` */",
       "excludeChildrenWhenTreeDataFiltering?": "/** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. Default: `false` */",
-      "customFilterEvaluationModel?": "/** Definition of custom filter expression evaluators. */",
       "enableCharts?": "/** Set to `true` to Enable Charts. Default: `false` */",
       "chartThemes?": "/** The list of chart themes to be used. */",
       "customChartThemes?": "/** A map containing custom chart themes. */",
@@ -4158,6 +4156,32 @@
   "FilterRequestSource": {
     "meta": { "isTypeAlias": true },
     "type": "'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI'"
+  },
+  "FilterUIInfo": {
+    "meta": {},
+    "type": {
+      "gui": "HTMLElement | null",
+      "afterGuiAttached?": "(params?: IAfterGuiAttachedParams) => void"
+    }
+  },
+  "IFilterManager": {
+    "meta": {},
+    "type": {
+      "isAdvancedFilterPresent()": "boolean",
+      "isAnyFilterPresent()": "boolean",
+      "isFilterActive(column: Column)": "boolean",
+      "isSuppressFlashingCellsBecauseFiltering()": "boolean",
+      "doesRowPassFilter(params: { rowNode: RowNode; })": "boolean",
+      "isQuickFilterPresent()": "boolean",
+      "setQuickFilter(newFilter: any)": "void",
+      "getFilterModel()": "{ [key: string]: any; }",
+      "setFilterModel(model: { [key: string]: any; })": "void",
+      "createFilterParams(column: Column, colDef: ColDef, $scope?: any)": "IFilterParams",
+      "getFilterUIInfo(column: Column, source: FilterRequestSource)": "AgPromise<FilterUIInfo>",
+      "getFilterComponent(column: Column, source: FilterRequestSource, createIfDoesNotExist?: boolean)": "AgPromise<IFilterComp> | null",
+      "destroyFilter(column: Column, source: ColumnEventType)": "void",
+      "onFilterChanged()": "void"
+    }
   },
   "FilterWrapper": {
     "meta": {},

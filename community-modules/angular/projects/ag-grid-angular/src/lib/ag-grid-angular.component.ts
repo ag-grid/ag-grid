@@ -148,8 +148,7 @@ import {
     TreeDataDisplayType,
     FullWidthCellKeyDownEvent,
     FullWidthCellKeyPressEvent,
-    LoadingCellRendererSelectorFunc,
-    CustomFilterEvaluationModelBuilder,
+    LoadingCellRendererSelectorFunc
 } from "@ag-grid-community/core";
 
 import { AngularFrameworkOverrides } from "./angularFrameworkOverrides";
@@ -449,8 +448,6 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public cacheQuickFilter: boolean | undefined = undefined;
     /** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. Default: `false`     */
     @Input() public excludeChildrenWhenTreeDataFiltering: boolean | undefined = undefined;
-    /** Definition of custom filter expression evaluators.     */
-    @Input() public customFilterEvaluationModel: { [operation: string]: CustomFilterEvaluationModelBuilder } | undefined = undefined;
     /** Set to `true` to Enable Charts. Default: `false`     */
     @Input() public enableCharts: boolean | undefined = undefined;
     /** The list of chart themes to be used.     */

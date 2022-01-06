@@ -121,10 +121,6 @@ export class UserComponentFactory extends BeanStub {
         return this.getCompDetails(def, FilterComponent, defaultFilter, params, true);
     }
 
-    public getFilterV2Details(def: { filter: string }, params: ExpressionComponentParams): UserCompDetails | undefined {
-        return this.getCompDetails(def, FilterComponent, null, params, true);
-    }
-
     public getDateCompDetails(params: IDateParams): UserCompDetails {
         return this.getCompDetails(this.gridOptions, DateComponent, 'agDateInput', params, true)!;
     }

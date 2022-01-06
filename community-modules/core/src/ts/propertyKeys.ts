@@ -18,7 +18,7 @@ export class PropertyKeys {
         'noRowsOverlayComponentParams', 'popupParent', 'colResizeDefault', 'statusBar', 'sideBar', 'chartThemeOverrides',
         'customChartThemes', 'comps', 'loadingOverlayComp', 'loadingOverlayCompParams', 'noRowsOverlayComp', 
         'noRowsOverlayCompParams', 'fullWidthCellComp', 'fullWidthCellCompParams', 'loadingRowCellComp', 'loadingRowCellCompParams',
-        'groupRowCellComp', 'groupRowCellCompParams', 'detailRowCellComp', 'detailRowCellCompParams', 'customFilterEvaluationModel'
+        'groupRowCellComp', 'groupRowCellCompParams', 'detailRowCellComp', 'detailRowCellCompParams'
     ];
 
     public static ARRAY_PROPERTIES = [

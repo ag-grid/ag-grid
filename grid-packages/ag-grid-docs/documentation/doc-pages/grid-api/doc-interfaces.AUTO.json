@@ -2340,13 +2340,6 @@
       "description": "/** Set to `true` to override the default tree data filtering behaviour to instead exclude child nodes from filter results. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "customFilterEvaluationModel": {
-      "description": "/** Definition of custom filter expression evaluators. */",
-      "type": {
-        "returnType": "{ [operation: string]: CustomFilterEvaluationModelBuilder }",
-        "optional": true
-      }
-    },
     "enableCharts": {
       "description": "/** Set to `true` to Enable Charts. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
@@ -7233,6 +7226,111 @@
     "setFilter": { "type": { "returnType": "string", "optional": false } }
   },
   "FilterRequestSource": {},
+  "FilterUIInfo": {
+    "gui": {
+      "type": { "returnType": "HTMLElement | null", "optional": false }
+    },
+    "afterGuiAttached": {
+      "type": {
+        "arguments": { "params?": "IAfterGuiAttachedParams" },
+        "returnType": "void",
+        "optional": true
+      }
+    }
+  },
+  "IFilterManager": {
+    "isAdvancedFilterPresent": {
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
+    "isAnyFilterPresent": {
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
+    "isFilterActive": {
+      "type": {
+        "arguments": { "column": "Column" },
+        "returnType": "boolean",
+        "optional": false
+      }
+    },
+    "isSuppressFlashingCellsBecauseFiltering": {
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
+    "doesRowPassFilter": {
+      "type": {
+        "arguments": { "params": "{ rowNode: RowNode; }" },
+        "returnType": "boolean",
+        "optional": false
+      }
+    },
+    "isQuickFilterPresent": {
+      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
+    },
+    "setQuickFilter": {
+      "type": {
+        "arguments": { "newFilter": "any" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "getFilterModel": {
+      "type": {
+        "arguments": {},
+        "returnType": "{ [key: string]: any; }",
+        "optional": false
+      }
+    },
+    "setFilterModel": {
+      "type": {
+        "arguments": { "model": "{ [key: string]: any; }" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "createFilterParams": {
+      "type": {
+        "arguments": {
+          "column": "Column",
+          "colDef": "ColDef",
+          "$scope?": "any"
+        },
+        "returnType": "IFilterParams",
+        "optional": false
+      }
+    },
+    "getFilterUIInfo": {
+      "type": {
+        "arguments": { "column": "Column", "source": "FilterRequestSource" },
+        "returnType": "AgPromise<FilterUIInfo>",
+        "optional": false
+      }
+    },
+    "getFilterComponent": {
+      "type": {
+        "arguments": {
+          "column": "Column",
+          "source": "FilterRequestSource",
+          "createIfDoesNotExist?": "boolean"
+        },
+        "returnType": "AgPromise<IFilterComp> | null",
+        "optional": false
+      }
+    },
+    "destroyFilter": {
+      "type": {
+        "arguments": { "column": "Column", "source": "ColumnEventType" },
+        "returnType": "void",
+        "optional": false
+      }
+    },
+    "onFilterChanged": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false },
+      "meta": { "isEvent": true, "name": "onFilterChanged" }
+    },
+    "filterChanged": {
+      "type": { "arguments": {}, "returnType": "void", "optional": false },
+      "meta": { "isEvent": true, "name": "onFilterChanged" }
+    }
+  },
   "FilterWrapper": {
     "compiledElement": { "type": { "returnType": "any", "optional": false } },
     "column": { "type": { "returnType": "Column", "optional": false } },
