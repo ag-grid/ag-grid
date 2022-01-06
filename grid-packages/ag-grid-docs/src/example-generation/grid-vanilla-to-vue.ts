@@ -147,7 +147,7 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
             bindings.gridSuppliedModules = 'AllModules';
         } else {
             imports.push("import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';");
-            bindings.gridSuppliedModules = 'ClientSideRowModelModule';
+            bindings.gridSuppliedModules = '[ClientSideRowModelModule]';
         }
 
         imports.push("import '@ag-grid-community/core/dist/styles/ag-grid.css';");
@@ -480,11 +480,11 @@ const VueExample = {
     },
     methods: {
         ${eventHandlers
-            .concat(externalEventHandlers)
-            .concat(onGridReady)
-            .concat(instanceMethods)
-            .map(snippet => `${snippet.trim()},`)
-            .join('\n')}
+                .concat(externalEventHandlers)
+                .concat(onGridReady)
+                .concat(instanceMethods)
+                .map(snippet => `${snippet.trim()},`)
+                .join('\n')}
     }
 }
 

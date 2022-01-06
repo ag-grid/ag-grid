@@ -62,7 +62,7 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
             bindings.gridSuppliedModules = 'AllModules';
             imports.push("import { AllModules } from '@ag-grid-enterprise/all-modules';");
         } else {
-            bindings.gridSuppliedModules = 'ClientSideRowModelModule';
+            bindings.gridSuppliedModules = '[ ClientSideRowModelModule ]';
             imports.push("import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';");
         }
 

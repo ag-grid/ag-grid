@@ -34,7 +34,7 @@ function getModuleImports(bindings: any, componentFilenames: string[]): string[]
             bindings.gridSuppliedModules = 'AllModules';
         } else {
             imports.push("import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';");
-            bindings.gridSuppliedModules = 'ClientSideRowModelModule';
+            bindings.gridSuppliedModules = '[ClientSideRowModelModule]';
         }
 
         imports.push("import '@ag-grid-community/core/dist/styles/ag-grid.css';");
