@@ -44,8 +44,6 @@ export type ScalarComparisonOperationExpression<T, N = string> =
 export type TextComparisonOperationExpression<T, N = string> =
     OperationExpression<T, N, TextComparisonOperation, 1>;
 
-export type CustomExpression<T> = OperationExpression<'custom', string, T, typeof Infinity>;
-
 export type LogicOperation = 'and' | 'or' | 'not';
 
 export type NumberComparisonOperationExpression = ScalarComparisonOperationExpression<'number-op', number>;
@@ -61,7 +59,7 @@ export type LogicalOperationExpression<M> =
 
 export type InbuiltExpression = TextOperationExpression | ScalarOperationExpression | SetOperationExpression;
 
-export type ConcreteExpression = InbuiltExpression | CustomExpression<unknown>;
+export type ConcreteExpression = InbuiltExpression;
 
 export type FilterExpression = ConcreteExpression | LogicalOperationExpression<ConcreteExpression>;
 
@@ -85,10 +83,6 @@ export function isTextComparisonOperationExpression(x: Partial<FilterExpression>
 
 export function isComparisonOperationExpression(x: Partial<FilterExpression>): x is Partial<ScalarComparisonOperationExpression<any>> {
     return x.type === 'number-op' || x.type === 'date-op';
-}
-
-export function isCustomExpression(x: Partial<FilterExpression>): x is Partial<CustomExpression<any>> {
-    return x.type === 'custom';
 }
 
 /** UTILITIES */
@@ -133,24 +127,18 @@ const EXAMPLE_EXPRESSION_3: FilterExpression = {
 };
 
 const EXAMPLE_EXPRESSION_4: FilterExpression = {
-    type: 'custom',
-    operation: 'my-custom-operation',
-    operands: [],
-};
-
-const EXAMPLE_EXPRESSION_5: FilterExpression = {
     type: 'set-op',
     operation: 'in',
     operands: ['abc', 'ABC', '123', 'xzy', '123', 123],
 };
 
-const EXAMPLE_EXPRESSION_6: FilterExpression = {
+const EXAMPLE_EXPRESSION_5: FilterExpression = {
     type: 'set-op',
     operation: 'in',
     operands: [],
 };
 
-const EXAMPLE_EXPRESSION_7: FilterExpression = {
+const EXAMPLE_EXPRESSION_6: FilterExpression = {
     type: 'set-op',
     operation: 'in',
     operands: null,
@@ -162,10 +150,6 @@ export interface FilterEvaluationModel<T> {
     isValid(): boolean;
     isNull(): boolean;
     toFilterExpression(): FilterExpression | null;
-}
-
-export interface CustomFilterEvaluationModelBuilder {
-    new (expr: CustomExpression<any> | PartialStateType<CustomExpression<any>>): FilterEvaluationModel<unknown>;
 }
 
 /** UI COMPONENTS **/

@@ -31,21 +31,15 @@ const DEFAULT_EXPRESSIONS: {[k in FilterExpression['type']]: PartialFilterExpres
         operation: 'and',
         operands: [],
     },
-    'custom': {
-        type: 'custom',
-        operation: 'custom-op',
-        operands: [],
-    },
 };
 
 function defaultExpression(column: Column, gridOptions: GridOptions): PartialStateType<FilterExpression> {
-    const defaultExpr = DEFAULT_EXPRESSIONS[expressionType(column.getColDef(), gridOptions)];
-
-    if (defaultExpr.type === 'custom') {
-        return { ...defaultExpr, operation: column.getColDef().filter };
+    const exprType = expressionType(column.getColDef(), gridOptions);
+    if (exprType === 'unknown') {
+        throw new Error('AG-Grid - no default expression for column: ' + column.getColId());
     }
 
-    return defaultExpr;
+    return DEFAULT_EXPRESSIONS[exprType];
 }
 
 type FilterChangeType = 'update' | 'apply' | 'revert' | 'destroy';

@@ -9703,7 +9703,6 @@
     "meta": { "typeParams": ["T", "N"] }
   },
   "TextComparisonOperationExpression": { "meta": { "typeParams": ["T", "N"] } },
-  "CustomExpression": { "meta": { "typeParams": ["T"] } },
   "LogicOperation": {},
   "NumberComparisonOperationExpression": {},
   "DateComparisonOperationExpression": {},
@@ -9737,7 +9736,6 @@
     },
     "meta": { "typeParams": ["T"] }
   },
-  "CustomFilterEvaluationModelBuilder": {},
   "StateType": {},
   "PartialTuple": { "meta": { "typeParams": ["T"] } },
   "PartialStateType": { "meta": { "typeParams": ["S"] } },

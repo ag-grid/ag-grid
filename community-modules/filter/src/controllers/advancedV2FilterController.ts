@@ -32,7 +32,7 @@ export class AdvancedV2FilterController extends BeanStub implements AdvancedFilt
     }
     
     public isResponsibleFor(column: Column): boolean {
-        return expressionType(column.getColDef(), this.gridOptions) !== 'custom';
+        return expressionType(column.getColDef(), this.gridOptions) !== 'unknown';
     }
 
     public evaluate(params: { rowNode: RowNode, colId?: string }): boolean {

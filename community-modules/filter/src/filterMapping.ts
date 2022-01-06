@@ -3,21 +3,18 @@ import { DateFilter } from "./components/filters/dateFilter";
 import { NumberFilter } from "./components/filters/numberFilter";
 import { TextFilter } from "./components/filters/textFilter";
 import { ExpressionComponent } from "./components/interfaces";
-import { CustomFilter } from "./components/filters/customFilter";
 import { SetFilter } from "./components/filters/setFilter";
 
 export type CompType = ExpressionComponent & Component;
 type Mapping<T extends FilterExpression['type']> = { type: T, newComp(colId: string): CompType };
 
 const DEFAULT_MAPPING = { type: 'text-op', newComp: () => new TextFilter() };
-const CUSTOM_MAPPING = { type: 'custom', newComp: () => new CustomFilter() };
 
 export const FILTER_TO_EXPRESSION_TYPE_MAPPING: {[key: string]: Mapping<any>} = {
     agTextColumnFilterV2: DEFAULT_MAPPING,
     agNumberColumnFilterV2: { type: 'number-op', newComp: () => new NumberFilter() },
     agDateColumnFilterV2: { type: 'date-op', newComp: () => new DateFilter() },
     agSetColumnFilterV2: { type: 'set-op', newComp: (colId) => new SetFilter({ colId }) },
-    agCustomColumnFilterV2: CUSTOM_MAPPING,
 };
 
 function resolveMapping(colDef: ColDef, gridOptions: GridOptions): Mapping<any> | null {
@@ -40,8 +37,8 @@ function resolveMapping(colDef: ColDef, gridOptions: GridOptions): Mapping<any> 
     return DEFAULT_MAPPING;
 }
 
-export function expressionType(colDef: ColDef, gridOptions: GridOptions): FilterExpression['type'] {
-    return resolveMapping(colDef, gridOptions)?.type || 'custom';
+export function expressionType(colDef: ColDef, gridOptions: GridOptions): FilterExpression['type'] | 'unknown' {
+    return resolveMapping(colDef, gridOptions)?.type || 'unknown';
 }
 
 export function createComponent(column: Column, gridOptions: GridOptions): CompType | null {

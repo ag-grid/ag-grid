@@ -5501,10 +5501,6 @@
     "meta": { "isTypeAlias": true, "typeParams": ["T", "N"] },
     "type": "OperationExpression<T, N, TextComparisonOperation, 1>"
   },
-  "CustomExpression": {
-    "meta": { "isTypeAlias": true, "typeParams": ["T"] },
-    "type": "OperationExpression<'custom', string, T, typeof Infinity>"
-  },
   "LogicOperation": {
     "meta": { "isTypeAlias": true },
     "type": "'and' | 'or' | 'not'"
@@ -5539,7 +5535,7 @@
   },
   "ConcreteExpression": {
     "meta": { "isTypeAlias": true },
-    "type": "InbuiltExpression | CustomExpression<unknown>"
+    "type": "InbuiltExpression"
   },
   "FilterExpression": {
     "meta": { "isTypeAlias": true },
@@ -5552,12 +5548,6 @@
       "isValid()": "boolean",
       "isNull()": "boolean",
       "toFilterExpression()": "FilterExpression | null"
-    }
-  },
-  "CustomFilterEvaluationModelBuilder": {
-    "meta": {},
-    "type": {
-      "new (expr: CustomExpression<any> | PartialStateType<CustomExpression<any>>): FilterEvaluationModel<unknown>": "FilterEvaluationModel<unknown>"
     }
   },
   "StateType": {
