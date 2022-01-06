@@ -40,7 +40,7 @@ const gridOptions: GridOptions = {
       cellEditorPopup: true,
       cellEditorParams: {
         values: colours,
-        cellRenderer: colourCellRenderer,
+        cellRendererComp: colourCellRenderer,
       },
       filter: 'agSetColumnFilter',
       filterParams: {
@@ -48,6 +48,7 @@ const gridOptions: GridOptions = {
         valueFormatter: function (params) {
           return lookupValue(colourMappings, params.value)
         },
+        // spl todo
         cellRenderer: colourCellRenderer,
       } as ISetFilterParams,
       valueFormatter: function (params) {
@@ -56,7 +57,7 @@ const gridOptions: GridOptions = {
       valueParser: function (params) {
         return lookupKey(colourMappings, params.newValue)
       },
-      cellRenderer: colourCellRenderer,
+      cellRendererComp: colourCellRenderer,
     },
     {
       field: 'interiorColour',

@@ -3,17 +3,17 @@ import { GridOptions, ICellRendererParams, ValueParserParams } from '@ag-grid-co
 
 const gridOptions: GridOptions = {
   columnDefs: [
-    { field: 'city', type: 'dimension', cellRenderer: 'cityCellRenderer' },
+    { field: 'city', type: 'dimension', cellRendererComp: cityCellRenderer },
     {
       field: 'country',
       type: 'dimension',
-      cellRenderer: 'countryCellRenderer',
+      cellRendererComp: countryCellRenderer,
       minWidth: 200,
     },
     {
       field: 'state',
       type: 'dimension',
-      cellRenderer: 'stateCellRenderer',
+      cellRendererComp: stateCellRenderer,
       rowGroup: true,
     },
     { field: 'val1', type: 'numberValue' },
@@ -39,11 +39,6 @@ const gridOptions: GridOptions = {
       enableRowGroup: true,
       enablePivot: true,
     },
-  },
-  components: {
-    cityCellRenderer: cityCellRenderer,
-    countryCellRenderer: countryCellRenderer,
-    stateCellRenderer: stateCellRenderer,
   },
   rowData: getData(),
   groupDefaultExpanded: -1,

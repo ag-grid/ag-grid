@@ -8,7 +8,7 @@ const columnDefs: ColDef[] = [
   {
     headerName: '#',
     width: 50,
-    cellRenderer: cellRenderer,
+    cellRendererComp: cellRenderer,
   },
   { headerName: 'Athlete', field: 'athlete', width: 150 },
   { headerName: 'Age', field: 'age', width: 90 },

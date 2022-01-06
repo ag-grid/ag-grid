@@ -33,13 +33,13 @@ const gridOptions: GridOptions = {
     {
       headerName: 'Days (Values Not Provided)',
       field: 'days',
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
       filterParams: daysValuesNotProvidedFilterParams,
     },
     {
       headerName: 'Days (Values Provided)',
       field: 'days',
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
       filterParams: daysValuesProvidedFilterParams,
     },
   ],

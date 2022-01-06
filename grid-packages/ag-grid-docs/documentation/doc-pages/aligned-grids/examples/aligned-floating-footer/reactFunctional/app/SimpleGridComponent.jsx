@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { AgGridReact } from '@ag-grid-community/react';
 import { AllCommunityModules } from '@ag-grid-community/all-modules';
 
-import '@ag-grid-community/core/dist/styles/ag-grid.css';
-import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
+import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
+import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
 
 const topOptions = {
     alignedGrids: [],
@@ -49,9 +49,9 @@ const columnDefs = [
         valueGetter: 'data.gold + data.silver + data.bronze',
         width: 200
     },
-    { field: 'gold', width: 100 },
-    { field: 'silver', width: 100 },
-    { field: 'bronze', width: 100 }
+    {field: 'gold', width: 100},
+    {field: 'silver', width: 100},
+    {field: 'bronze', width: 100}
 ];
 
 const bottomData = [

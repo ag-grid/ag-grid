@@ -39,20 +39,16 @@ const gridOptions: GridOptions = {
   ],
   enableRangeSelection: true,
   rowSelection: 'multiple',
-  components: {
-    clickableStatusBarComponent: ClickableStatusBarComponent,
-    countStatusBarComponent: CountStatusBarComponent,
-  },
   statusBar: {
     statusPanels: [
       {
-        statusPanel: 'countStatusBarComponent',
+        statusPanelComp: CountStatusBarComponent,
       },
       {
-        statusPanel: 'clickableStatusBarComponent',
+        statusPanelComp: ClickableStatusBarComponent,
       },
       {
-        statusPanel: 'agAggregationComponent',
+        statusPanelComp: 'agAggregationComponent',
         statusPanelParams: {
           aggFuncs: ['count', 'sum'],
         },

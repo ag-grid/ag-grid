@@ -15,7 +15,7 @@ const gridOptions: GridOptions = {
     {
       field: 'quarter',
       maxWidth: 160,
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
       chartDataType: 'category',
     },
   ],
@@ -23,7 +23,7 @@ const gridOptions: GridOptions = {
     flex: 1,
     editable: true,
     sortable: true,
-    filter: 'agMultiColumnFilter',
+    filterComp: 'agMultiColumnFilter',
     floatingFilter: true,
     resizable: true,
   },

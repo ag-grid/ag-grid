@@ -31,7 +31,6 @@ The example below shows the Multi Filter in action. Note the following:
     - The Date Filter in the Date column has a custom comparator to compare dates correctly
     - The Set Filter in the Date column has a custom comparator, so the values are displayed in ascending order
 
-<grid-example title='Multi Filter' name='multi-filter' type='generated' options='{ "enterprise": true, "exampleHeight": 602, "modules": ["clientside", "multifilter", "setfilter", "menu", "clipboard", "filterpanel"] }'></grid-example>
 
 ## Floating Filters
 
@@ -39,7 +38,6 @@ When [Floating Filters](/floating-filters/) are used, the Floating Filter shown 
 
 The example below shows Floating Filters enabled for all columns. Note how the Floating Filters change when you apply different child filters from the Multi Filter.
 
-<grid-example title='Floating Filters' name='floating-filters' type='generated' options='{ "enterprise": true, "exampleHeight": 635, "modules": ["clientside", "multifilter", "setfilter", "menu", "clipboard"] }'></grid-example>
 
 ## Display Style
 
@@ -81,7 +79,6 @@ The following example demonstrates the different display styles.
 - A custom title is used for the first filter in the **Country** column.
 - The **Sport** column shows the default behaviour, where all filters are inline.
 
-<grid-example title='Display Style' name='display-style' type='generated' options='{ "enterprise": true, "exampleHeight": 629, "modules": ["clientside", "multifilter", "setfilter", "menu", "clipboard", "filterpanel"] }'></grid-example>
 
 ## Custom Filters
 
@@ -118,7 +115,6 @@ const gridOptions = {
 
 The example below allows you to see the Multi Filter Model in use. You can print the current filter state to the console and save/restore it using the buttons at the top of the grid
 
-<grid-example title='Multi Filter Model' name='multi-filter-model' type='generated' options='{ "enterprise": true, "exampleHeight": 639, "modules": ["clientside", "multifilter", "setfilter", "menu", "clipboard"] }'></grid-example>
 
 ## Accessing Child Filters
 
@@ -129,7 +125,6 @@ The example below shows how you can access child filter instances and call metho
 - Clicking the **Print Text Filter model** button will access the Text Filter inside the Multi Filter and print the current model to the console.
 - Clicking the **Print Set Filter search text** button will access the Set Filter inside the Multi Filter and print the current search text to the console.
 
-<grid-example title='Accessing Child Filters' name='accessing-child-filters' type='generated' options='{ "enterprise": true, "exampleHeight": 624, "modules": ["clientside", "multifilter", "setfilter", "menu", "clipboard"] }'></grid-example>
 
 ## Multi Filter Parameters
 

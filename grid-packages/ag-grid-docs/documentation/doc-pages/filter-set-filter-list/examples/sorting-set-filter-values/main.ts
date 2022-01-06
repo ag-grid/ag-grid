@@ -14,12 +14,12 @@ const gridOptions: GridOptions = {
     {
       headerName: 'Age (No Comparator)',
       field: 'age',
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
     },
     {
       headerName: 'Age (With Comparator)',
       field: 'age',
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
       filterParams: filterParams,
     },
   ],

@@ -9,7 +9,13 @@ const gridOptions: GridOptions = {
       // it is important to have node.id here, so that when the id changes (which happens
       // when the row is loaded) then the cell is refreshed.
       valueGetter: 'node.id',
-      cellRenderer: 'loadingRenderer',
+      cellRendererComp: function (params: ICellRendererParams) {
+        if (params.value !== undefined) {
+          return params.value
+        } else {
+          return '<img src="https://www.ag-grid.com/example-assets/loading.gif">'
+        }
+      },
     },
     { field: 'athlete', minWidth: 200 },
     { field: 'age' },
@@ -26,15 +32,6 @@ const gridOptions: GridOptions = {
     flex: 1,
     minWidth: 100,
     resizable: true,
-  },
-  components: {
-    loadingRenderer: function (params: ICellRendererParams) {
-      if (params.value !== undefined) {
-        return params.value
-      } else {
-        return '<img src="https://www.ag-grid.com/example-assets/loading.gif">'
-      }
-    },
   },
   rowBuffer: 0,
   // debug: true,

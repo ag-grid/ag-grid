@@ -1,7 +1,7 @@
 import { Component, OnDestroy } from '@angular/core';
 import { AllModules, GridReadyEvent, Module } from '@ag-grid-enterprise/all-modules';
-import '@ag-grid-community/core/dist/styles/ag-grid.css';
-import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
+import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
 import { MySimpleEditor } from './mySimple-editor.component';
 
 @Component({

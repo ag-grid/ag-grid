@@ -13,7 +13,7 @@ const gridOptions: GridOptions = {
       field: 'country',
       keyCreator: countryKeyCreator,
       valueFormatter: countryValueFormatter,
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
     },
   ],
   defaultColDef: {

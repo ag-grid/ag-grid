@@ -6,7 +6,7 @@ import {
 } from '@ag-grid-community/core'
 
 var countryFilterParams = {
-  cellRenderer: countryCellRenderer,
+  cellRendererComp: countryCellRenderer,
 }
 
 const gridOptions: GridOptions = {
@@ -14,8 +14,8 @@ const gridOptions: GridOptions = {
     {
       headerName: 'No Cell Renderer',
       field: 'country',
-      cellRenderer: countryCellRenderer,
-      filter: 'agSetColumnFilter',
+      cellRendererComp: countryCellRenderer,
+      filterComp: 'agSetColumnFilter',
       filterParams: {
         // no cell renderer!
       },
@@ -23,8 +23,8 @@ const gridOptions: GridOptions = {
     {
       headerName: 'With Cell Renderers',
       field: 'country',
-      cellRenderer: countryCellRenderer,
-      filter: 'agSetColumnFilter',
+      cellRendererComp: countryCellRenderer,
+      filterComp: 'agSetColumnFilter',
       filterParams: countryFilterParams,
     },
   ],

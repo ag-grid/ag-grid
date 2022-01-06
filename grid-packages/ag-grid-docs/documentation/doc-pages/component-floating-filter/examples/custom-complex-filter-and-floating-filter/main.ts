@@ -7,14 +7,14 @@ const columnDefs: ColDef[] = [
   {
     field: 'athlete',
     minWidth: 150,
-    filter: 'agTextColumnFilter',
+    filterComp: 'agTextColumnFilter',
     filterParams: {
       debounceMs: 2000,
     },
   },
   {
     field: 'age',
-    filter: 'agNumberColumnFilter',
+    filterComp: 'agNumberColumnFilter',
     filterParams: {
       debounceMs: 0,
     },
@@ -58,39 +58,39 @@ const columnDefs: ColDef[] = [
   { field: 'sport' },
   {
     field: 'gold',
-    floatingFilterComponent: 'numberFloatingFilter',
+    floatingFilterComp: NumberFloatingFilter,
     floatingFilterComponentParams: {
       maxValue: 7,
       suppressFilterButton: true,
     },
-    filter: 'numberFilter',
+    filterComp: NumberFilter,
   },
   {
     field: 'silver',
-    floatingFilterComponent: 'numberFloatingFilter',
+    floatingFilterComp: NumberFloatingFilter,
     floatingFilterComponentParams: {
       maxValue: 3,
       suppressFilterButton: true,
     },
-    filter: 'numberFilter',
+    filterComp: NumberFilter,
   },
   {
     field: 'bronze',
-    floatingFilterComponent: 'numberFloatingFilter',
+    floatingFilterComp: NumberFloatingFilter,
     floatingFilterComponentParams: {
       maxValue: 2,
       suppressFilterButton: true,
     },
-    filter: 'numberFilter',
+    filterComp: NumberFilter,
   },
   {
     field: 'total',
-    floatingFilterComponent: 'numberFloatingFilter',
+    floatingFilterComp: NumberFloatingFilter,
     floatingFilterComponentParams: {
       maxValue: 5,
       suppressFilterButton: true,
     },
-    filter: 'numberFilter',
+    filterComp: NumberFilter,
   },
 ]
 
@@ -103,10 +103,6 @@ const gridOptions: GridOptions = {
     filter: true,
     floatingFilter: true,
     resizable: true,
-  },
-  components: {
-    numberFloatingFilter: NumberFloatingFilter,
-    numberFilter: NumberFilter,
   },
   columnDefs: columnDefs,
   rowData: null,

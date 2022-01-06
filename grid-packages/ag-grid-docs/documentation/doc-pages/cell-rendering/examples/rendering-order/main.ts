@@ -26,7 +26,7 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     minWidth: 80,
-    cellRenderer: showOrderCellRenderer,
+    cellRendererComp: showOrderCellRenderer,
   },
   rowData: getRowData(),
   rowSelection: 'single',

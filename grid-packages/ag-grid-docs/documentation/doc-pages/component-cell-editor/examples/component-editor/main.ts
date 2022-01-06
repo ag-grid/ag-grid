@@ -9,21 +9,21 @@ const gridOptions: GridOptions = {
     {
       headerName: 'Doubling',
       field: 'number',
-      cellEditor: 'doublingEditor',
+      cellEditorComp: DoublingEditor,
       editable: true,
       width: 300,
     },
     {
       field: 'mood',
-      cellRenderer: 'moodRenderer',
-      cellEditor: 'moodEditor',
+      cellRendererComp: MoodRenderer,
+      cellEditorComp: MoodEditor,
       editable: true,
       width: 300,
     },
     {
       headerName: 'Numeric',
       field: 'number',
-      cellEditor: 'numericEditor',
+      cellEditorComp: NumericEditor,
       editable: true,
       width: 280,
     },
@@ -43,12 +43,6 @@ const gridOptions: GridOptions = {
     { name: 'Jenny', mood: 'Happy', number: 34 },
     { name: 'Larry', mood: 'Happy', number: 13 },
   ],
-  components: {
-    doublingEditor: DoublingEditor,
-    moodRenderer: MoodRenderer,
-    moodEditor: MoodEditor,
-    numericEditor: NumericEditor,
-  },
   defaultColDef: {
     editable: true,
     sortable: true,

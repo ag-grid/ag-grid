@@ -59,12 +59,12 @@ const columnDefs: ColDef[] = [
   },
   {
     field: 'country',
-    filter: 'agTextColumnFilter',
+    filterComp: 'agTextColumnFilter',
     filterParams: countryFilterParams,
   },
   {
     field: 'sport',
-    filter: 'agTextColumnFilter',
+    filterComp: 'agTextColumnFilter',
     filterParams: {
       caseSensitive: true,
       defaultOption: 'startsWith',

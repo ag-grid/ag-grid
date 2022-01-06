@@ -4,19 +4,20 @@ declare var YearFloatingFilter: any
 
 const gridOptions: GridOptions = {
   columnDefs: [
-    { field: 'athlete', filter: 'agMultiColumnFilter' },
-    { field: 'sport', filter: 'agMultiColumnFilter' },
+    { field: 'athlete', filterComp: 'agMultiColumnFilter' },
+    { field: 'sport', filterComp: 'agMultiColumnFilter' },
     {
       field: 'year',
-      filter: 'agMultiColumnFilter',
+      filterComp: 'agMultiColumnFilter',
       filterParams: {
         filters: [
           {
-            filter: 'yearFilter',
-            floatingFilterComponent: 'yearFloatingFilter',
+            filterComp: YearFilter,
+            // spl todo doesn't work
+            floatingFilterComp: YearFloatingFilter,
           },
           {
-            filter: 'agNumberColumnFilter',
+            filterComp: 'agNumberColumnFilter',
           },
         ],
       },
@@ -28,11 +29,7 @@ const gridOptions: GridOptions = {
     resizable: true,
     floatingFilter: true,
     menuTabs: ['filterMenuTab'],
-  },
-  components: {
-    yearFilter: YearFilter,
-    yearFloatingFilter: YearFloatingFilter,
-  },
+  }
 }
 
 // setup the grid after the page has finished loading
@@ -41,6 +38,6 @@ document.addEventListener('DOMContentLoaded', function () {
   new agGrid.Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    .then(response => response.json())
-    .then(data => gridOptions.api!.setRowData(data))
+      .then(response => response.json())
+      .then(data => gridOptions.api!.setRowData(data))
 })

@@ -13,7 +13,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
   {
     headerName: 'Athletes',
     headerTooltip: 'Athletes',
-    tooltipComponent: 'customTooltip',
+    tooltipComp: CustomTooltip,
     children: [
       {
         headerName: 'Athlete Col 1',
@@ -27,7 +27,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
         field: 'athlete',
         width: 150,
         headerTooltip: 'Athlete 2',
-        tooltipComponent: 'customTooltip',
+        tooltipComp: CustomTooltip,
         tooltipValueGetter: tooltipValueGetter,
       },
     ],
@@ -52,10 +52,6 @@ const gridOptions: GridOptions = {
   // set rowData to null or undefined to show loading panel by default
   rowData: null,
   columnDefs: columnDefs,
-
-  components: {
-    customTooltip: CustomTooltip,
-  },
 
   onFirstDataRendered: onFirstDataRendered,
 }

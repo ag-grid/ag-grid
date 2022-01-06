@@ -4,38 +4,38 @@ declare var NumberFilterComponent: any
 declare var NumberFloatingFilterComponent: any
 
 const columnDefs: ColDef[] = [
-  { field: 'athlete', filter: 'agTextColumnFilter' },
+  { field: 'athlete', filterComp: 'agTextColumnFilter' },
   {
     field: 'gold',
-    floatingFilterComponent: 'customNumberFloatingFilter',
+    floatingFilterComponent: NumberFloatingFilterComponent,
     floatingFilterComponentParams: {
       suppressFilterButton: true,
     },
-    filter: 'customNumberFilter',
+    filterComp: NumberFilterComponent
   },
   {
     field: 'silver',
-    floatingFilterComponent: 'customNumberFloatingFilter',
+    floatingFilterComponent: NumberFloatingFilterComponent,
     floatingFilterComponentParams: {
       suppressFilterButton: true,
     },
-    filter: 'customNumberFilter',
+    filterComp: NumberFilterComponent
   },
   {
     field: 'bronze',
-    floatingFilterComponent: 'customNumberFloatingFilter',
+    floatingFilterComponent: NumberFloatingFilterComponent,
     floatingFilterComponentParams: {
       suppressFilterButton: true,
     },
-    filter: 'customNumberFilter',
+    filterComp: NumberFilterComponent
   },
   {
     field: 'total',
-    floatingFilterComponent: 'customNumberFloatingFilter',
+    floatingFilterComponent: NumberFloatingFilterComponent,
     floatingFilterComponentParams: {
       suppressFilterButton: true,
     },
-    filter: 'customNumberFilter',
+    filterComp: NumberFilterComponent
   },
 ]
 
@@ -48,10 +48,6 @@ const gridOptions: GridOptions = {
     filter: true,
     floatingFilter: true,
     resizable: true,
-  },
-  components: {
-    customNumberFloatingFilter: NumberFloatingFilterComponent,
-    customNumberFilter: NumberFilterComponent,
   },
   columnDefs: columnDefs,
   rowData: null,

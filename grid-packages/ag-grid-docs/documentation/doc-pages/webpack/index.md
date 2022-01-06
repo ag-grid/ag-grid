@@ -166,8 +166,8 @@ import '@angular/common';
 import 'rxjs';
 
 // ag-grid
-import '@ag-grid-community/core/dist/styles/ag-grid.css';
-import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
+import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
+import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
 
 // or, if using Enterprise features
 // import '@ag-grid-enterprise/all-modules/dist/styles/ag-grid.css';

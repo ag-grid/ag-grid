@@ -17,7 +17,7 @@ const columnDefs: ColDef[] = [
 const gridOptions: GridOptions = {
   defaultColDef: {
     width: 240,
-    filter: 'agTextColumnFilter',
+    filterComp: 'agTextColumnFilter',
     flex: 1,
   },
   autoGroupColumnDef: {

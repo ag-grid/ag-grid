@@ -5,17 +5,14 @@ const columnDefs: ColDef[] = [
   { field: 'athlete', width: 150 },
   { field: 'country', width: 150 },
   { field: 'year', width: 100 },
-  { field: 'gold', width: 100, cellRenderer: 'medalCellRenderer' },
-  { field: 'silver', width: 100, cellRenderer: 'medalCellRenderer' },
-  { field: 'bronze', width: 100, cellRenderer: 'medalCellRenderer' },
+  { field: 'gold', width: 100, cellRendererComp: MedalCellRenderer },
+  { field: 'silver', width: 100, cellRendererComp: MedalCellRenderer },
+  { field: 'bronze', width: 100, cellRendererComp: MedalCellRenderer },
   { field: 'total', width: 100 },
 ]
 
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
-  components: {
-    medalCellRenderer: MedalCellRenderer,
-  },
   defaultColDef: {
     editable: true,
     sortable: true,

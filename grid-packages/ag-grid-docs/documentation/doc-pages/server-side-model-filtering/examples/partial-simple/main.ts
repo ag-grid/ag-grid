@@ -4,12 +4,12 @@ const gridOptions: GridOptions = {
   columnDefs: [
     {
       field: 'athlete',
-      filter: 'agTextColumnFilter',
+      filterComp: 'agTextColumnFilter',
       minWidth: 220,
     },
     {
       field: 'year',
-      filter: 'agNumberColumnFilter',
+      filterComp: 'agNumberColumnFilter',
       filterParams: {
         buttons: ['reset'],
         debounceMs: 1000,
@@ -28,7 +28,7 @@ const gridOptions: GridOptions = {
     menuTabs: ['filterMenuTab'],
   },
   columnTypes: {
-    number: { filter: 'agNumberColumnFilter' },
+    number: { filterComp: 'agNumberColumnFilter' },
   },
   // use the server-side row model
   rowModelType: 'serverSide',

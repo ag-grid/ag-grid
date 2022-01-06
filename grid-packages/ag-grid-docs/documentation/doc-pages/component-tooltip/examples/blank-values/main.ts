@@ -18,7 +18,7 @@ const columnDefs: ColDef[] = [
     headerName: 'Athlete Col 2',
     field: 'athlete',
     width: 150,
-    tooltipComponent: 'customTooltip',
+    tooltipComp: CustomTooltip,
     tooltipValueGetter: toolTipValueGetter,
   },
   { field: 'sport', width: 110 },
@@ -41,10 +41,6 @@ const gridOptions: GridOptions = {
   // set rowData to null or undefined to show loading panel by default
   rowData: null,
   columnDefs: columnDefs,
-
-  components: {
-    customTooltip: CustomTooltip,
-  },
 
   onFirstDataRendered: onFirstDataRendered,
 }

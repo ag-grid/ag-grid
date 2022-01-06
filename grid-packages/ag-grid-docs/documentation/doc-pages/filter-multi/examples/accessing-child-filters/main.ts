@@ -4,17 +4,17 @@ const gridOptions: GridOptions = {
   columnDefs: [
     {
       field: 'athlete',
-      filter: 'agMultiColumnFilter',
+      filterComp: 'agMultiColumnFilter',
       filterParams: {
         filters: [
           {
-            filter: 'agTextColumnFilter',
+            filterComp: 'agTextColumnFilter',
             filterParams: {
               buttons: ['apply', 'clear'],
             },
           },
           {
-            filter: 'agSetColumnFilter',
+            filterComp: 'agSetColumnFilter',
           },
         ],
       },

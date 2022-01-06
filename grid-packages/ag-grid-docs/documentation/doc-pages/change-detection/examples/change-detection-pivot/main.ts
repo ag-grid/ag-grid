@@ -26,7 +26,7 @@ const gridOptions: GridOptions = {
     minWidth: 150,
     sortable: true,
     resizable: true,
-    cellRenderer: 'agAnimateShowChangeCellRenderer',
+    cellRendererComp: 'agAnimateShowChangeCellRenderer',
   },
   rowData: getRowData(),
   pivotMode: true,

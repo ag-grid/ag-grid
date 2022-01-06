@@ -1,4 +1,4 @@
-import { ColDef, GridOptions, IViewportDatasource, ValueFormatterParams } from '@ag-grid-community/core'
+import { ColDef, GridOptions, IViewportDatasource, ValueFormatterParams, ICellRendererParams } from '@ag-grid-community/core'
 declare function createMockServer(): any;
 declare function createViewportDatasource(mockServer: any): IViewportDatasource;
 
@@ -7,7 +7,7 @@ const columnDefs: ColDef[] = [
   {
     headerName: '#',
     maxWidth: 80,
-    cellRenderer: function (params) {
+    cellRendererComp: function (params: ICellRendererParams) {
       return '' + params.rowIndex
     },
   },
@@ -17,24 +17,24 @@ const columnDefs: ColDef[] = [
     field: 'bid',
     cellClass: 'cell-number',
     valueFormatter: numberFormatter,
-    cellRenderer: 'agAnimateShowChangeCellRenderer',
+    cellRendererComp: 'agAnimateShowChangeCellRenderer',
   },
   {
     field: 'mid',
     cellClass: 'cell-number',
     valueFormatter: numberFormatter,
-    cellRenderer: 'agAnimateShowChangeCellRenderer',
+    cellRendererComp: 'agAnimateShowChangeCellRenderer',
   },
   {
     field: 'ask',
     cellClass: 'cell-number',
     valueFormatter: numberFormatter,
-    cellRenderer: 'agAnimateShowChangeCellRenderer',
+    cellRendererComp: 'agAnimateShowChangeCellRenderer',
   },
   {
     field: 'volume',
     cellClass: 'cell-number',
-    cellRenderer: 'agAnimateSlideCellRenderer',
+    cellRendererComp: 'agAnimateSlideCellRenderer',
   },
 ]
 

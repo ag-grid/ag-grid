@@ -14,7 +14,7 @@ const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'make' },
     { field: 'model' },
-    { field: 'price', filter: 'agNumberColumnFilter' },
+    { field: 'price', filterComp: 'agNumberColumnFilter' },
   ],
   defaultColDef: {
     flex: 1,

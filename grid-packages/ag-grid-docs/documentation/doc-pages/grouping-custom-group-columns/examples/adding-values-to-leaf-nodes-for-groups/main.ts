@@ -6,7 +6,7 @@ const columnDefs: ColDef[] = [
     colId: 'countryGroup',
     showRowGroup: 'country',
     minWidth: 200,
-    cellRenderer: 'agGroupCellRenderer',
+    cellRendererComp: 'agGroupCellRenderer',
     filterValueGetter: function (params: ValueGetterParams) {
       return params.data ? params.data.country : null
     },
@@ -17,7 +17,7 @@ const columnDefs: ColDef[] = [
     colId: 'yearAthleteGroup',
     minWidth: 220,
     showRowGroup: 'year',
-    cellRenderer: 'agGroupCellRenderer',
+    cellRendererComp: 'agGroupCellRenderer',
     valueGetter: 'data ? data.athlete : null',
   },
   { field: 'year', rowGroup: true, hide: true },

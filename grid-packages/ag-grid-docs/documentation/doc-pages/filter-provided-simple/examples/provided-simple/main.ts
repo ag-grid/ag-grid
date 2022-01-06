@@ -28,10 +28,10 @@ var filterParams = {
 
 const columnDefs: ColDef[] = [
   { field: 'athlete' },
-  { field: 'age', filter: 'agNumberColumnFilter', maxWidth: 100 },
+  { field: 'age', filterComp: 'agNumberColumnFilter', maxWidth: 100 },
   {
     field: 'date',
-    filter: 'agDateColumnFilter',
+    filterComp: 'agDateColumnFilter',
     filterParams: filterParams,
   },
   { field: 'total', filter: false },

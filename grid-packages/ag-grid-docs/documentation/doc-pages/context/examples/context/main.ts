@@ -7,13 +7,13 @@ const columnDefs: ColDef[] = [
     headerName: 'Price Local',
     field: 'price',
     cellStyle: { 'text-align': 'right' },
-    cellRenderer: 'currencyCellRenderer',
+    cellRendererComp: getCurrencyCellRenderer(),
   },
   {
     headerName: 'Report Price',
     field: 'price',
     cellStyle: { 'text-align': 'right' },
-    cellRenderer: 'currencyCellRenderer',
+    cellRendererComp: getCurrencyCellRenderer(),
     valueGetter: reportingCurrencyValueGetter,
     headerValueGetter: 'ctx.reportingCurrency',
   },
@@ -28,10 +28,7 @@ const gridOptions: GridOptions = {
   rowData: getData(),
   context: {
     reportingCurrency: 'EUR',
-  },
-  components: {
-    currencyCellRenderer: getCurrencyCellRenderer(),
-  },
+  }
 }
 
 

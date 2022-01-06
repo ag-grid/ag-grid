@@ -6,7 +6,7 @@ const columnDefs: ColDef[] = [
   { field: 'row' },
   {
     field: 'name',
-    filter: 'partialMatchFilter',
+    filterComp: PartialMatchFilter,
     menuTabs: ['filterMenuTab'],
   },
 ]
@@ -21,10 +21,7 @@ const gridOptions: GridOptions = {
     resizable: true,
   },
   columnDefs: columnDefs,
-  rowData: getData(),
-  components: {
-    partialMatchFilter: PartialMatchFilter,
-  },
+  rowData: getData()
 }
 
 function onClicked() {

@@ -7,7 +7,9 @@ const columnDefs: ColDef[] = [
   {
     headerName: '#',
     maxWidth: 80,
-    cellRenderer: 'rowIdRenderer',
+    cellRendererComp: function (params: ICellRendererParams) {
+      return '' + params.rowIndex
+    },
   },
   { field: 'code', maxWidth: 90 },
   { field: 'name', minWidth: 220 },
@@ -15,24 +17,24 @@ const columnDefs: ColDef[] = [
     field: 'bid',
     cellClass: 'cell-number',
     valueFormatter: numberFormatter,
-    cellRenderer: 'agAnimateShowChangeCellRenderer',
+    cellRendererComp: 'agAnimateShowChangeCellRenderer',
   },
   {
     field: 'mid',
     cellClass: 'cell-number',
     valueFormatter: numberFormatter,
-    cellRenderer: 'agAnimateShowChangeCellRenderer',
+    cellRendererComp: 'agAnimateShowChangeCellRenderer',
   },
   {
     field: 'ask',
     cellClass: 'cell-number',
     valueFormatter: numberFormatter,
-    cellRenderer: 'agAnimateShowChangeCellRenderer',
+    cellRendererComp: 'agAnimateShowChangeCellRenderer',
   },
   {
     field: 'volume',
     cellClass: 'cell-number',
-    cellRenderer: 'agAnimateSlideCellRenderer',
+    cellRendererComp: 'agAnimateSlideCellRenderer',
   },
 ]
 
@@ -49,11 +51,6 @@ const gridOptions: GridOptions = {
   getRowNodeId: function (data) {
     // the code is unique, so perfect for the id
     return data.code
-  },
-  components: {
-    rowIdRenderer: function (params: ICellRendererParams) {
-      return '' + params.rowIndex
-    },
   },
   // debug: true
 }

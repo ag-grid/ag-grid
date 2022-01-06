@@ -38,7 +38,7 @@ const gridOptions: GridOptions = {
       chartDataType: 'series',
       cellClass: 'number',
       valueFormatter: numberCellFormatter,
-      cellRenderer: 'agAnimateShowChangeCellRenderer',
+      cellRendererComp: 'agAnimateShowChangeCellRenderer',
     },
   },
   animateRows: true,

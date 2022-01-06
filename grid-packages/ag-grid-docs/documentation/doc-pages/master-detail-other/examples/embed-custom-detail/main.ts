@@ -3,15 +3,12 @@ declare var DetailCellRenderer: any;
 
 const gridOptions: GridOptions = {
   masterDetail: true,
-  detailCellRenderer: 'myDetailCellRenderer',
+  detailRowCellComp: DetailCellRenderer,
   detailRowHeight: 150,
   animateRows: true,
-  components: {
-    myDetailCellRenderer: DetailCellRenderer,
-  },
   columnDefs: [
     // group cell renderer needed for expand / collapse icons
-    { field: 'name', cellRenderer: 'agGroupCellRenderer', pinned: 'left' },
+    { field: 'name', cellRendererComp: 'agGroupCellRenderer', pinned: 'left' },
     { field: 'account' },
     { field: 'calls' },
     { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" },

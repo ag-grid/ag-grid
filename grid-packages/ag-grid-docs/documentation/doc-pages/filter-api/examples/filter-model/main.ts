@@ -27,20 +27,20 @@ var filterParams = {
 }
 
 const columnDefs: ColDef[] = [
-  { field: 'athlete', filter: 'agTextColumnFilter' },
-  { field: 'age', filter: 'agNumberColumnFilter', maxWidth: 100 },
+  { field: 'athlete', filterComp: 'agTextColumnFilter' },
+  { field: 'age', filterComp: 'agNumberColumnFilter', maxWidth: 100 },
   { field: 'country' },
   { field: 'year', maxWidth: 100 },
   {
     field: 'date',
-    filter: 'agDateColumnFilter',
+    filterComp: 'agDateColumnFilter',
     filterParams: filterParams,
   },
   { field: 'sport' },
-  { field: 'gold', filter: 'agNumberColumnFilter' },
-  { field: 'silver', filter: 'agNumberColumnFilter' },
-  { field: 'bronze', filter: 'agNumberColumnFilter' },
-  { field: 'total', filter: 'agNumberColumnFilter' },
+  { field: 'gold', filterComp: 'agNumberColumnFilter' },
+  { field: 'silver', filterComp: 'agNumberColumnFilter' },
+  { field: 'bronze', filterComp: 'agNumberColumnFilter' },
+  { field: 'total', filterComp: 'agNumberColumnFilter' },
 ]
 
 const gridOptions: GridOptions = {

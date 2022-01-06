@@ -12,7 +12,7 @@ const gridOptions: GridOptions = {
     flex: 1,
     editable: true,
     sortable: true,
-    filter: 'agMultiColumnFilter',
+    filterComp: 'agMultiColumnFilter',
     floatingFilter: true,
     resizable: true,
   },

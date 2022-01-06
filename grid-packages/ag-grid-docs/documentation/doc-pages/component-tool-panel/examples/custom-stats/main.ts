@@ -2,7 +2,7 @@ import { ColDef, GridOptions } from '@ag-grid-community/core'
 declare var CustomStatsToolPanel: any
 
 const columnDefs: ColDef[] = [
-  { field: 'athlete', width: 150, filter: 'agTextColumnFilter' },
+  { field: 'athlete', width: 150, filterComp: 'agTextColumnFilter' },
   { field: 'age', width: 90 },
   { field: 'country', width: 120 },
   { field: 'year', width: 90 },
@@ -47,14 +47,11 @@ const gridOptions: GridOptions = {
         labelDefault: 'Custom Stats',
         labelKey: 'customStats',
         iconKey: 'custom-stats',
-        toolPanel: 'customStatsToolPanel',
+        toolPanelComp: CustomStatsToolPanel,
       },
     ],
     defaultToolPanel: 'customStats',
-  },
-  components: {
-    customStatsToolPanel: CustomStatsToolPanel,
-  },
+  }
 }
 
 // setup the grid after the page has finished loading

@@ -27,9 +27,6 @@ const gridOptions: GridOptions = {
     flex: 1,
     resizable: true,
   },
-  components: {
-    fileCellRenderer: getFileCellRenderer(),
-  },
   rowData: getData(),
   treeData: true,
   animateRows: true,
@@ -46,7 +43,7 @@ const gridOptions: GridOptions = {
     minWidth: 300,
     cellRendererParams: {
       suppressCount: true,
-      innerRenderer: 'fileCellRenderer',
+      innerCellComp: getFileCellRenderer(),
     },
     cellClassRules: {
       'hover-over': function (params) {

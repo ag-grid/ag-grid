@@ -10,7 +10,7 @@ const gridOptions: GridOptions = {
     {
       headerName: 'Set Filter Column',
       field: 'col1',
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
       editable: true,
       flex: 1,
     },

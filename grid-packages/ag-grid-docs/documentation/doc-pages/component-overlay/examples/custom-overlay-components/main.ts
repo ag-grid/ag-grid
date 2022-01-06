@@ -30,16 +30,11 @@ const gridOptions: GridOptions = {
   rowData: null,
   columnDefs: columnDefs,
 
-  components: {
-    customLoadingOverlay: CustomLoadingOverlay,
-    customNoRowsOverlay: CustomNoRowsOverlay,
-  },
-
-  loadingOverlayComponent: 'customLoadingOverlay',
+  loadingOverlayComp: CustomLoadingOverlay,
   loadingOverlayComponentParams: {
     loadingMessage: 'One moment please...',
   },
-  noRowsOverlayComponent: 'customNoRowsOverlay',
+  noRowsOverlayComp: CustomNoRowsOverlay,
   noRowsOverlayComponentParams: {
     noRowsMessageFunc: () => 'Sorry - no rows! at: ' + new Date(),
   },

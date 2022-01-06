@@ -5,7 +5,7 @@ const gridOptions: GridOptions = {
     {
       headerName: 'Country',
       showRowGroup: 'country',
-      cellRenderer: 'agGroupCellRenderer',
+      cellRendererComp: 'agGroupCellRenderer',
       minWidth: 200,
     },
     {
@@ -16,7 +16,7 @@ const gridOptions: GridOptions = {
         }
       },
       showRowGroup: 'year',
-      cellRenderer: 'agGroupCellRenderer',
+      cellRendererComp: 'agGroupCellRenderer',
     },
     { field: 'athlete', minWidth: 200 },
     { field: 'gold', aggFunc: 'sum' },

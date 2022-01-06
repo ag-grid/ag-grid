@@ -19,13 +19,10 @@ const gridOptions: GridOptions = {
     editable: true,
     // we use a cell renderer to include a button, so when the button
     // gets clicked, the editing starts.
-    cellRenderer: 'singleClickEditRenderer',
+    cellRendererComp: getRenderer(),
   },
   // set the bottom grid to no click editing
-  suppressClickEdit: true,
-  components: {
-    singleClickEditRenderer: getRenderer(),
-  },
+  suppressClickEdit: true
 }
 
 function getRenderer() {

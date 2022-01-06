@@ -34,13 +34,10 @@ const gridOptions: GridOptions = {
     { row: 'Row 14', name: 'Tina Wills' },
   ],
   rowSelection: 'multiple',
-  components: {
-    clickableStatusBarComponent: ClickableStatusBarComponent,
-  },
   statusBar: {
     statusPanels: [
       {
-        statusPanel: 'clickableStatusBarComponent',
+        statusPanelComp: ClickableStatusBarComponent,
       },
     ],
   },

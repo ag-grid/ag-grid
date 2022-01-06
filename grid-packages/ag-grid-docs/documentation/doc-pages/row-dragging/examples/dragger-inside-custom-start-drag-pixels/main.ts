@@ -5,7 +5,7 @@ const columnDefs: ColDef[] = [
   {
     field: 'athlete',
     cellClass: 'custom-athlete-cell',
-    cellRenderer: 'myCustomCell',
+    cellRendererComp: CustomCellRenderer,
   },
   { field: 'country' },
   { field: 'year', width: 100 },
@@ -25,9 +25,6 @@ const gridOptions: GridOptions = {
   rowDragManaged: true,
   columnDefs: columnDefs,
   animateRows: true,
-  components: {
-    myCustomCell: CustomCellRenderer,
-  },
 }
 
 // setup the grid after the page has finished loading

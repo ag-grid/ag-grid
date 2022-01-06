@@ -23,11 +23,7 @@ const gridOptions: GridOptions = {
     filter: true,
     resizable: true,
   },
-  components: {
-    customLoadingCellRenderer: CustomLoadingCellRenderer,
-  },
-
-  loadingCellRenderer: 'customLoadingCellRenderer',
+  loadingRowCellComp: CustomLoadingCellRenderer,
   loadingCellRendererParams: {
     loadingMessage: 'One moment please...',
   },

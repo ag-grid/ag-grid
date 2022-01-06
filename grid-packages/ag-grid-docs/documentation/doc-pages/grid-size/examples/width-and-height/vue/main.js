@@ -2,8 +2,8 @@ import Vue from "vue";
 import { AgGridVue } from "@ag-grid-community/vue";
 
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
-import "@ag-grid-community/core/dist/styles/ag-grid.css";
-import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
+import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
 
 const VueExample = {
     template: `
@@ -25,7 +25,7 @@ const VueExample = {
     components: {
         "ag-grid-vue": AgGridVue
     },
-    data: function () {
+    data: function() {
         return {
             columnDefs: null,
             rowData: null,

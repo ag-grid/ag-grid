@@ -1,74 +1,74 @@
-import { ColDef, GridOptions } from '@ag-grid-community/core'
+import {ColDef, GridOptions, ICellRendererParams} from '@ag-grid-community/core'
 
 const columnDefs: ColDef[] = [
-  { field: 'address' },
-  {
-    headerName: 'Custom column',
-    autoHeight: true,
-    valueGetter: function (param) {
-      return param.data.col1 + '\n' + param.data.col2
+    {field: 'address'},
+    {
+        headerName: 'Custom column',
+        autoHeight: true,
+        valueGetter: function (param) {
+            return param.data.col1 + '\n' + param.data.col2
+        },
+        cellRendererComp: function (param: ICellRendererParams) {
+            return param.value.replace('\n', '<br/>')
+        },
     },
-    cellRenderer: function (param) {
-      return param.value.replace('\n', '<br/>')
-    },
-  },
 ]
 
 const gridOptions: GridOptions = {
-  defaultColDef: {
-    sortable: true,
-    cellClass: 'multiline',
-    filter: true,
-    resizable: true,
-    minWidth: 100,
-    flex: 1,
-  },
+    defaultColDef: {
+        sortable: true,
+        cellClass: 'multiline',
+        filter: true,
+        resizable: true,
+        minWidth: 100,
+        flex: 1,
+    },
 
-  columnDefs: columnDefs,
+    columnDefs: columnDefs,
 
-  rowData: [
-    {
-      address:
-        '1197 Thunder Wagon Common,\nCataract, RI, \n02987-1016, US, \n(401) 747-0763',
-      col1: 'abc',
-      col2: 'xyz',
-    },
-    {
-      address:
-        '3685 Rocky Glade, Showtucket, NU, \nX1E-9I0, CA, \n(867) 371-4215',
-      col1: 'abc',
-      col2: 'xyz',
-    },
-    {
-      address:
-        '3235 High Forest, Glen Campbell, MS, \n39035-6845, US, \n(601) 638-8186',
-      col1: 'abc',
-      col2: 'xyz',
-    },
-    {
-      address:
-        '2234 Sleepy Pony Mall , Drain, DC, \n20078-4243, US, \n(202) 948-3634',
-      col1: 'abc',
-      col2: 'xyz',
-    },
-  ],
+    rowData: [
+        {
+            address:
+                '1197 Thunder Wagon Common,\nCataract, RI, \n02987-1016, US, \n(401) 747-0763',
+            col1: 'abc',
+            col2: 'xyz',
+        },
+        {
+            address:
+                '3685 Rocky Glade, Showtucket, NU, \nX1E-9I0, CA, \n(867) 371-4215',
+            col1: 'abc',
+            col2: 'xyz',
+        },
+        {
+            address:
+                '3235 High Forest, Glen Campbell, MS, \n39035-6845, US, \n(601) 638-8186',
+            col1: 'abc',
+            col2: 'xyz',
+        },
+        {
+            address:
+                '2234 Sleepy Pony Mall , Drain, DC, \n20078-4243, US, \n(202) 948-3634',
+            col1: 'abc',
+            col2: 'xyz',
+        },
+    ],
 
-  excelStyles: [
-    {
-      id: 'multiline',
-      alignment: {
-        wrapText: true,
-      },
-    },
-  ],
+    excelStyles: [
+        {
+            id: 'multiline',
+            alignment: {
+                wrapText: true,
+            },
+        },
+    ],
 }
 
 function onBtExport() {
-  gridOptions.api!.exportDataAsExcel()
+    gridOptions.api!.exportDataAsExcel()
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+    const gridDiv = document.querySelector('#myGrid')
+    new agGrid.Grid(gridDiv, gridOptions)
 })
