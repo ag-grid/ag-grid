@@ -345,7 +345,7 @@ export class RowDragFeature extends BeanStub implements DropTarget {
         });
     }
 
-    public getRowDropZone(events: RowDropZoneEvents): RowDropZoneParams {
+    public getRowDropZone(events?: RowDropZoneEvents): RowDropZoneParams {
         const getContainer = this.getContainer.bind(this);
         const onDragEnter = this.onDragEnter.bind(this);
         const onDragLeave = this.onDragLeave.bind(this);
