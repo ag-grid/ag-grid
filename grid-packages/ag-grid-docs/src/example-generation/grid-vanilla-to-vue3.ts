@@ -124,8 +124,8 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
     const { modules } = gridSettings;
 
     const imports = [
-        "import Vue from 'vue';",
-        "import { AgGridVue } from '@ag-grid-community/vue';",
+        "import { createApp } from 'vue';",
+        "import { AgGridVue } from '@ag-grid-community/vue3';",
     ];
 
     if (modules) {
