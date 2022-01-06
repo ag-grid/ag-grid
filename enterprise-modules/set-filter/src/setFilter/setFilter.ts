@@ -229,6 +229,14 @@ export class SetFilter<V> extends ProvidedFilter<SetFilterModel, V> implements I
                     this.syncAfterDataChange();
                 }
             });
+
+        this.addManagedListener(this.eventService, Events.EVENT_TOOL_PANEL_VISIBLE_CHANGED, (event) => {
+            // when re-entering the filters tool panel we need to refresh the virtual lists in the set filters in case
+            // filters have been changed elsewhere, i.e. via an api call.
+            if (event.source === 'filters') {
+                this.refreshVirtualList();
+            }
+        });
     }
 
     private syncAfterDataChange(refreshValues = true): AgPromise<void> {
