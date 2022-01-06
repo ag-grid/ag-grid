@@ -1,29 +1,27 @@
 import { toTitleCase, getImport } from './angular-utils';
 
 export function appModuleAngular(componentFileNames: string[]) {
-    const components = [];
-    const imports = [
-        "import { NgModule } from '@angular/core';",
-        "import { BrowserModule } from '@angular/platform-browser';",
-        "import { FormsModule } from '@angular/forms';",
-        "import { HttpClientModule } from '@angular/common/http';",
-        "",
-        "// ag-grid",
-        "import { AgGridModule } from '@ag-grid-community/angular';",
-        "import { AppComponent } from './app.component';",
-        "",
-    ];
+  const components = [];
+  const imports = [
+    "import { NgModule } from '@angular/core';",
+    "import { BrowserModule } from '@angular/platform-browser';",
+    "import { FormsModule } from '@angular/forms';",
+    "import { HttpClientModule } from '@angular/common/http';",
+    "import { AgGridModule } from '@ag-grid-community/angular';",
+    "import { AppComponent } from './app.component';",
+    "",
+  ];
 
-    if (componentFileNames) {
-        componentFileNames.forEach(filename => {
-            const componentName = toTitleCase(filename.split('.')[0]);
+  if (componentFileNames) {
+    componentFileNames.forEach(filename => {
+      const componentName = toTitleCase(filename.split('.')[0]);
 
-            components.push(componentName);
-            imports.push(getImport(filename));
-        });
-    }
+      components.push(componentName);
+      imports.push(getImport(filename));
+    });
+  }
 
-    return `
+  return `
         ${imports.join('\n')}
 
         @NgModule({
@@ -43,5 +41,5 @@ export function appModuleAngular(componentFileNames: string[]) {
 }
 
 if (typeof window !== 'undefined') {
-    (<any>window).appModuleAngular = appModuleAngular;
+  (<any>window).appModuleAngular = appModuleAngular;
 }
