@@ -160,7 +160,7 @@ const ExampleRunnerInner = ({ pageName, framework, name, title, type, options, l
                 importType={exampleImportType}
                 onChange={event => set({exampleImportType: event.target.value})}/>
             }
-            {exampleInfo.framework === 'javascript' && isGenerated &&
+            {exampleInfo.framework === 'javascript' && (isGenerated || type === 'multi') &&
                 <TypscriptStyleSelector
                     useTypescript={useTypescript}
                     onChange={event => set({ useTypescript: JSON.parse(event.target.value) })} />
