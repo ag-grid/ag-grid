@@ -37,7 +37,6 @@ export class ChartSettingsPanel extends Component {
     private themes: string[] = [];
 
     private isAnimating: boolean;
-    private selectedMiniChart: HTMLElement | undefined;
 
     constructor(chartController: ChartController) {
         super(ChartSettingsPanel.TEMPLATE);
@@ -58,14 +57,6 @@ export class ChartSettingsPanel extends Component {
 
         // change the selected chart when a combo chart is modified via the data panel, i.e. the custom combo should be selected
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_TYPE_CHANGED, () => this.resetPalettes(true));
-    }
-
-    public onPanelSelected() {
-        if (this.selectedMiniChart) {
-            // scroll selected mini chart into view
-            const miniChartGroupElement = this.selectedMiniChart.parentElement!.parentElement;
-            miniChartGroupElement!.scrollIntoView({behavior: "auto", block: "start", inline: "start"});
-        }
     }
 
     private resetPalettes(forceReset?: boolean): void {
@@ -94,7 +85,7 @@ export class ChartSettingsPanel extends Component {
             this.addCardLink(index);
 
             if (isActivePalette) {
-                this.selectedMiniChart = miniChartsContainer.updateSelectedMiniChart();
+                miniChartsContainer.updateSelectedMiniChart();
             } else {
                 miniChartsContainer.addCssClass('ag-hidden');
             }

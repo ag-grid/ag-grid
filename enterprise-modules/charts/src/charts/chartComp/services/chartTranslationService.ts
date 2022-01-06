@@ -107,11 +107,13 @@ export class ChartTranslationService extends BeanStub {
         chartLinkToolbarTooltip: 'Linked to Grid',
         chartUnlinkToolbarTooltip: 'Unlinked from Grid',
         chartDownloadToolbarTooltip: 'Download Chart',
+        seriesChartType: 'Series Chart Type',
+        secondaryAxis: 'Secondary Axis',
     };
 
-    public translate(toTranslate: string): string {
+    public translate(toTranslate: string, defaultText?: string): string {
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
-        const defaultTranslation = ChartTranslationService.DEFAULT_TRANSLATIONS[toTranslate];
-        return translate(toTranslate, defaultTranslation);
+        const defaultTranslation = ChartTranslationService.DEFAULT_TRANSLATIONS[toTranslate] || defaultText;
+        return translate(toTranslate, defaultTranslation as string);
     }
 }

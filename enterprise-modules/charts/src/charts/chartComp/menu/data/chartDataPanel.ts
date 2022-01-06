@@ -27,7 +27,7 @@ export class ChartDataPanel extends Component {
     public static TEMPLATE = /* html */ `<div class="ag-chart-data-wrapper"></div>`;
 
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
-    @Autowired('chartTranslationService') private chartTranslator: ChartTranslationService;
+    @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
     private categoriesGroupComp?: AgGroupComponent;
     private seriesGroupComp?: AgGroupComponent;
@@ -143,7 +143,7 @@ export class ChartDataPanel extends Component {
         if (this.chartController.isActiveXYChart()) {
             const pairedModeToggle = this.seriesGroupComp.createManagedBean(new AgToggleButton());
             pairedModeToggle
-                .setLabel(this.chartTranslator.translate('paired'))
+                .setLabel(this.chartTranslationService.translate('paired'))
                 .setLabelAlignment('left')
                 .setLabelWidth('flex')
                 .setInputWidth(45)
@@ -189,7 +189,7 @@ export class ChartDataPanel extends Component {
         if (!this.chartController.isComboChart()) { return; }
 
         this.seriesChartTypeGroupComp = this.createManagedBean(new AgGroupComponent({
-            title: 'Series Chart Type', //TODO
+            title: this.chartTranslationService.translate('seriesChartType'),
             enabled: true,
             suppressEnabledCheckbox: true,
             suppressOpenCloseIcons: false,
@@ -212,23 +212,23 @@ export class ChartDataPanel extends Component {
 
             const secondaryAxisComp = this.seriesChartTypeGroupComp!
                 .createManagedBean(new AgCheckbox())
-                .setLabel('Secondary Axis') //TODO
+                .setLabel(this.chartTranslationService.translate('secondaryAxis'))
                 .setLabelWidth("flex")
                 .setValue(!!seriesChartType.secondaryAxis);
 
             seriesItemGroup.addItem(secondaryAxisComp);
 
+            const translate = (key: string, defaultText: string) => {
+                return this.chartTranslationService.translate(key, defaultText);
+            }
+
             const availableChartTypes = [
-                {value: 'groupedColumn', text: 'Grouped Column'},
-                {value: 'stackedColumn', text: 'Stacked Column'},
-                {value: 'normalizedColumn', text: 'Normalized Column'},
-                // {value: 'groupedBar', text: 'Grouped Bar'},
-                // {value: 'stackedBar', text: 'Stacked Bar'},
-                // {value: 'normalizedBar', text: 'Normalized Bar'},
-                {value: 'line', text: 'Line'},
-                {value: 'area', text: 'Area'},
-                {value: 'stackedArea', text: 'Stacked Area'},
-                {value: 'normalizedArea', text: 'Normalized Area'},
+                { value: 'line', text: translate('line', 'Line') },
+                { value: 'area', text: translate('area', 'Area') },
+                { value: 'stackedArea', text: translate('stackedArea', 'StackedArea') },
+                { value: 'groupedColumn', text: translate('groupedColumn', 'Grouped Column') },
+                { value: 'stackedColumn', text: translate('stackedColumn', 'Stacked Column') },
+                { value: 'scatter', text: translate('scatter', 'Scatter') },
             ];
 
             const chartTypeComp = seriesItemGroup.createManagedBean(new AgSelect());
@@ -307,11 +307,11 @@ export class ChartDataPanel extends Component {
     }
 
     private getCategoryGroupTitle() {
-        return this.chartTranslator.translate(this.chartController.isActiveXYChart() ? 'labels' : 'categories');
+        return this.chartTranslationService.translate(this.chartController.isActiveXYChart() ? 'labels' : 'categories');
     }
 
     private getSeriesGroupTitle() {
-        return this.chartTranslator.translate(this.chartController.isActiveXYChart() ? 'xyValues' : 'series');
+        return this.chartTranslationService.translate(this.chartController.isActiveXYChart() ? 'xyValues' : 'series');
     }
 
     private isInPairedMode() {

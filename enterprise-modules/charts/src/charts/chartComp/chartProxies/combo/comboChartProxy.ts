@@ -19,14 +19,11 @@ export class ComboChartProxy extends CartesianChartProxy {
     protected createChart(): CartesianChart {
         return AgChart.create({
             container: this.chartProxyParams.parentElement,
-            theme: this.chartTheme,
-            axes: this.getAxes()
+            theme: this.chartTheme
         });
     }
 
     public update(params: UpdateChartParams): void {
-        // this.updateAxes(params);
-
         const options = {
             container: this.chartProxyParams.parentElement,
             theme: this.chartTheme,
@@ -50,7 +47,8 @@ export class ComboChartProxy extends CartesianChartProxy {
                     xKey: params.category.id,
                     yKey: field.colId,
                     yName: field.displayName,
-                    grouped: chartType === 'groupedColumn' || 'groupedBar',
+                    grouped: ['groupedColumn' || 'groupedBar' || 'groupedArea'].includes(chartType),
+                    stacked: ['stackedArea' || 'stackedColumn'].includes(chartType),
                 }
             }
         });

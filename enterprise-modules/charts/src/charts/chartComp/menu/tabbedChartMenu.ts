@@ -85,13 +85,7 @@ export class TabbedChartMenu extends Component {
                 title: titleEl,
                 titleLabel: translatedTitle,
                 bodyPromise: AgPromise.resolve(eWrapperDiv),
-                name,
-                afterAttachedCallback: () => {
-                    // notify ChartSettingsPanel when selected so that it can scroll the selected mini chart into view
-                    if (comp instanceof ChartSettingsPanel) {
-                        comp.onPanelSelected();
-                    }
-                }
+                name
             }
         };
     }
