@@ -1,11 +1,10 @@
-import {Component} from "@angular/core";
-
-import {AllCommunityModules, GridOptions} from "@ag-grid-community/all-modules";
-
 import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
 import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
+import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
+import { GridOptions } from "@ag-grid-community/core";
+import { Component } from "@angular/core";
+import { MockServerService } from "./mockServer.service";
 
-import {MockServerService} from "./mockServer.service";
 
 @Component({
     selector: 'my-app',
@@ -17,13 +16,13 @@ export class RxJsComponentByFullSet {
     initialRowDataLoad$;
     rowDataUpdates$;
 
-    modules = AllCommunityModules;
+    modules = [ClientSideRowModelModule];
 
     constructor(mockServerService: MockServerService) {
         this.initialRowDataLoad$ = mockServerService.initialLoad();
         this.rowDataUpdates$ = mockServerService.allDataUpdates();
 
-        this.gridOptions = <GridOptions> {
+        this.gridOptions = <GridOptions>{
             enableRangeSelection: true,
             columnDefs: this.createColumnDefs(),
 
@@ -62,8 +61,8 @@ export class RxJsComponentByFullSet {
 
     private createColumnDefs() {
         return [
-            {headerName: "Code", field: "code", width: 70, resizable: true},
-            {headerName: "Name", field: "name", width: 280, resizable: true},
+            { headerName: "Code", field: "code", width: 70, resizable: true },
+            { headerName: "Name", field: "name", width: 280, resizable: true },
             {
                 headerName: "Bid", field: "bid", width: 100, resizable: true,
                 cellClass: 'cell-number',

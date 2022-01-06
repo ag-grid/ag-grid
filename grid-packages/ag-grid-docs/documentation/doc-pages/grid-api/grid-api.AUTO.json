@@ -564,7 +564,7 @@
   "getRowDropZoneParams": {
     "description": "/** Returns the `RowDropZoneParams` to be used by another grid's `addRowDropZone` method. */",
     "type": {
-      "arguments": { "events": "RowDropZoneEvents" },
+      "arguments": { "events?": "RowDropZoneEvents" },
       "returnType": "RowDropZoneParams"
     }
   },
