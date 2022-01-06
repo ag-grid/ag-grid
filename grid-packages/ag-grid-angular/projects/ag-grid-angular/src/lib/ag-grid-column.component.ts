@@ -41,6 +41,7 @@ export class AgGridColumn {
 
     // inputs - pretty much most of ColDef, with the exception of template, templateUrl and internal only properties
     // @START@
+    @Input() public filterComp: any;
     @Input() public filterFramework: any;
     @Input() public filterParams: any;
     @Input() public floatingFilterComponent: any;

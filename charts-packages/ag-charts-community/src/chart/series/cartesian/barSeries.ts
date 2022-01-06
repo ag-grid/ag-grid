@@ -14,13 +14,12 @@ import { LegendDatum } from "../../legend";
 import { CartesianSeries } from "./cartesianSeries";
 import { ChartAxis, ChartAxisDirection, flipChartAxisDirection } from "../../chartAxis";
 import { TooltipRendererResult, toTooltipHtml } from "../../chart";
-import { extent, findMinMax } from "../../../util/array";
+import { findMinMax } from "../../../util/array";
 import { equal } from "../../../util/equal";
 import { reactive, TypedEvent } from "../../../util/observable";
 import { Scale } from "../../../scale/scale";
 import { sanitizeHtml } from "../../../util/sanitize";
-import { isContinuous, isDiscrete, isNumber } from "../../../util/value";
-import { NumberAxis } from "../../axis/numberAxis";
+import { isDiscrete, isNumber } from "../../../util/value";
 import { clamper, ContinuousScale } from "../../../scale/continuousScale";
 
 export interface BarSeriesNodeClickEvent extends TypedEvent {
@@ -247,26 +246,11 @@ export class BarSeries extends CartesianSeries {
         // Convert from flat y-keys to grouped y-keys.
         if (yKeys.length && !Array.isArray(yKeys[0])) {
             flatYKeys = yKeys as any as string[];
-            if (this.grouped) {
-                yKeys = flatYKeys.map(k => [k]);
-            } else {
-                yKeys = [flatYKeys];
-            }
+            yKeys = this.grouped ? flatYKeys.map(k => [k]) : [flatYKeys];
         }
 
-        const { seriesItemEnabled, hideInChart } = this;
-        seriesItemEnabled.clear();
-        yKeys.forEach(stack => {
-            stack.forEach(yKey => hideInChart.indexOf(yKey) < 0 ? seriesItemEnabled.set(yKey, true) : seriesItemEnabled.set(yKey, false));
-        });
-
         if (!equal(this._yKeys, yKeys)) {
-            if (flatYKeys) {
-                this.flatYKeys = flatYKeys;
-            } else {
-                this.flatYKeys = undefined;
-            }
-
+            this.flatYKeys = flatYKeys ? flatYKeys : undefined;
             this._yKeys = yKeys;
 
             let prevYKeyCount = 0;
@@ -281,6 +265,12 @@ export class BarSeries extends CartesianSeries {
             });
             this.yData = [];
 
+            const { seriesItemEnabled } = this;
+            seriesItemEnabled.clear();
+            yKeys.forEach(stack => {
+                stack.forEach(yKey => seriesItemEnabled.set(yKey, true));
+            });
+
             const { groupScale } = this;
             groupScale.domain = visibleStacks;
             groupScale.padding = 0.1;
@@ -291,19 +281,6 @@ export class BarSeries extends CartesianSeries {
     }
     get yKeys(): string[][] {
         return this._yKeys;
-    }
-
-    protected _hideInChart: string[] = [];
-    set hideInChart(value: string[]) {
-        if (!equal(this._hideInChart, value)) {
-            this._hideInChart = value;
-            if (this.flatYKeys) {
-                this.yKeys = this.flatYKeys as any;
-            }
-        }
-    }
-    get hideInChart(): string[] {
-        return this._hideInChart;
     }
 
     protected _grouped: boolean = false;
@@ -436,7 +413,7 @@ export class BarSeries extends CartesianSeries {
         let yMax: number;
         if (normalizedTo && isFinite(normalizedTo)) {
             yMin = yLargestMinMax.min < 0 ? -normalizedTo : 0;
-            yMax = normalizedTo;
+            yMax = yLargestMinMax.max > 0 ? normalizedTo : 0;
             yData.forEach((group, i) => {
                 group.forEach((stack, j) => {
                     stack.forEach((y, k) => {
@@ -556,9 +533,8 @@ export class BarSeries extends CartesianSeries {
 
             const groupYs = yData[groupIndex]; // y-data for groups of stacks
             for (let stackIndex = 0; stackIndex < groupYs.length; stackIndex++) {
-                const stackYs = groupYs[stackIndex]; // y-data for a stack withing a group
+                const stackYs = groupYs[stackIndex]; // y-data for a stack within a group
 
-                const zero = Math.max(0, (yAxis as NumberAxis).min, yScale.domain[0]);
                 let prevMinY = 0;
                 let prevMaxY = 0;
 

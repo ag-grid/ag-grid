@@ -16,23 +16,10 @@ const options: AgChartOptions = {
       xKey: 'year',
       yKeys: ['ie', 'firefox', 'safari', 'chrome'],
       yNames: ['IE', 'Firefox', 'Safari', 'Chrome'],
-      normalizedTo: 1,
+      normalizedTo: 100,
       marker: {
         enabled: true,
       },
-    },
-  ],
-  axes: [
-    {
-      type: 'number',
-      position: 'left',
-      label: {
-        format: '.0%',
-      },
-    },
-    {
-      type: 'category',
-      position: 'bottom',
     },
   ],
 }
