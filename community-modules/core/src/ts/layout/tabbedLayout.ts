@@ -181,7 +181,10 @@ export class TabbedLayout extends Component {
                 });
                 const scrollPosition = this.tabbedItemScrollMap.get(tabbedItem.name);
                 if (scrollPosition !== undefined) {
-                    scrollableContainer.scrollTop = scrollPosition;
+                    // Safari needs a small timeout or it will fire a scroll event to position 0
+                    setTimeout(() => {
+                        scrollableContainer.scrollTop = scrollPosition;
+                    }, 0);
                 }
             }
         });
