@@ -35,7 +35,7 @@ export class MiniCustomCombo extends MiniChart {
 
         this.lines = createLinePaths(root, lineData, size, padding);
 
-        const axisStroke = 'gray';
+        const axisStroke = 'grey';
         const axisOvershoot = 3;
 
         const leftAxis = new Line();
