@@ -31,6 +31,7 @@ const GRID_WIDE_COMPONENTS = ['dateComponent',
     'loadingRowCellComp',
     'loadingOverlayComp',
     'noRowsOverlayComp',
+    'detailRowCellComp',
 ];
 
 const GRID_COMPONENTS = [
@@ -197,7 +198,7 @@ function getImports(bindings: any, componentFileNames: string[], importType: Imp
     }
 }
 
-function getPropertyBindings(bindings: any, componentFileNames: string[], importType: ImportType): [string[], string[], string[]] {
+function getPropertyBindings(bindings: any, componentFileNames: string[], importType: ImportType, vueComponents:any): [string[], string[], string[]] {
     const propertyAssignments = [];
     const propertyVars = [];
     const propertyAttributes = [];
@@ -224,9 +225,13 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
                 propertyAttributes.push(toConst(property));
             } else if (property.value === null || property.value === 'null') {
                 propertyAttributes.push(toInput(property));
-            } else if (GRID_WIDE_COMPONENTS.indexOf(property.name) !== -1) {
-                propertyAttributes.push(`:${property.name}Framework="${property.name}Framework"`);
-                propertyVars.push(`${property.name}Framework: ${property.value}`);
+            } else if (GRID_WIDE_COMPONENTS.indexOf(property.name) !== -1 && compToFramework[property.name]) {
+                if (!vueComponents.includes(property.value)) {
+                    vueComponents.push(property.value)
+                }
+
+                propertyAttributes.push(`:${compToFramework[property.name]}="${compToFramework[property.name]}"`);
+                propertyVars.push(`${compToFramework[property.name]}: '${property.value}'`);
             } else {
                 // for when binding a method
                 // see javascript-grid-keyboard-navigation for an example
@@ -238,7 +243,6 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
                         propertyVars.push(toMember(property));
                     }
                 }
-
 
                 if (property.name !== 'defaultColDef') {
                     propertyAssignments.push(toAssignment(property));
@@ -450,7 +454,7 @@ export function vanillaToVue(bindings: any, componentFileNames: string[]): (impo
 
     return importType => {
         const imports = getImports(bindings, componentFileNames, importType);
-        const [propertyAssignments, propertyVars, propertyAttributes] = getPropertyBindings(bindings, componentFileNames, importType);
+        const [propertyAssignments, propertyVars, propertyAttributes] = getPropertyBindings(bindings, componentFileNames, importType, vueComponents);
         const template = getTemplate(bindings, propertyAttributes.concat(eventAttributes));
 
         return `

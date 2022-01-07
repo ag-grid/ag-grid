@@ -1,6 +1,6 @@
-import { getFunctionName, ImportType, isInstanceMethod, modulesProcessor, removeFunctionKeyword } from './parser-utils';
-import { convertTemplate, getImport, toAssignment, toConst, toInput, toMember, toOutput } from './vue-utils';
-import { templatePlaceholder } from "./grid-vanilla-src-parser";
+import {getFunctionName, ImportType, isInstanceMethod, modulesProcessor, removeFunctionKeyword} from './parser-utils';
+import {convertTemplate, getImport, toAssignment, toConst, toInput, toMember, toOutput} from './vue-utils';
+import {templatePlaceholder} from "./grid-vanilla-src-parser";
 import * as JSON5 from "json5";
 
 const compToFramework = {
@@ -23,7 +23,8 @@ const compToFramework = {
     toolPanelComp: 'toolPanelFramework'
 }
 
-const GRID_WIDE_COMPONENTS = ['dateComponent',
+const GRID_WIDE_COMPONENTS = [
+    'dateComponent',
     'dateComp',
     'loadingCellRenderer',
     'loadingOverlayComponent',
@@ -31,6 +32,7 @@ const GRID_WIDE_COMPONENTS = ['dateComponent',
     'loadingRowCellComp',
     'loadingOverlayComp',
     'noRowsOverlayComp',
+    'detailRowCellComp',
 ];
 
 const GRID_COMPONENTS = [
@@ -85,7 +87,7 @@ const OVERRIDABLE_AG_COMPONENTS = ['agDateInput',
 ];
 
 function getOnGridReadyCode(bindings: any): string {
-    const { onGridReady, resizeToFit, data } = bindings;
+    const {onGridReady, resizeToFit, data} = bindings;
     const additionalLines = [];
 
     if (onGridReady) {
@@ -97,7 +99,7 @@ function getOnGridReadyCode(bindings: any): string {
     }
 
     if (data) {
-        const { url, callback } = data;
+        const {url, callback} = data;
 
         const setRowDataBlock = callback.indexOf('api.setRowData') >= 0 ?
             callback.replace("params.api.setRowData(data);", "this.rowData = data;") :
@@ -120,8 +122,8 @@ function getOnGridReadyCode(bindings: any): string {
 }
 
 function getModuleImports(bindings: any, componentFileNames: string[]): string[] {
-    const { gridSettings } = bindings;
-    const { modules } = gridSettings;
+    const {gridSettings} = bindings;
+    const {modules} = gridSettings;
 
     const imports = [
         "import { createApp } from 'vue';",
@@ -133,7 +135,7 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
         if (modules === true) {
             exampleModules = ['clientside'];
         }
-        const { moduleImports, suppliedModules } = modulesProcessor(exampleModules);
+        const {moduleImports, suppliedModules} = modulesProcessor(exampleModules);
 
         imports.push(...moduleImports);
         bindings.gridSuppliedModules = `[${suppliedModules.join(', ')}]`;
@@ -167,7 +169,7 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
 }
 
 function getPackageImports(bindings: any, componentFileNames: string[]): string[] {
-    const { gridSettings } = bindings;
+    const {gridSettings} = bindings;
 
     const imports = [
         "import { createApp } from 'vue';",
@@ -199,7 +201,7 @@ function getImports(bindings: any, componentFileNames: string[], importType: Imp
     }
 }
 
-function getPropertyBindings(bindings: any, componentFileNames: string[], importType: ImportType): [string[], string[], string[]] {
+function getPropertyBindings(bindings: any, componentFileNames: string[], importType: ImportType, vueComponents:any): [string[], string[], string[]] {
     const propertyAssignments = [];
     const propertyVars = [];
     const propertyAttributes = [];
@@ -226,9 +228,13 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
                 propertyAttributes.push(toConst(property));
             } else if (property.value === null || property.value === 'null') {
                 propertyAttributes.push(toInput(property));
-            } else if (GRID_WIDE_COMPONENTS.indexOf(property.name) !== -1) {
-                propertyAttributes.push(`:${property.name}Framework="${property.name}Framework"`);
-                propertyVars.push(`${property.name}Framework: ${property.value}`);
+            } else if (GRID_WIDE_COMPONENTS.indexOf(property.name) !== -1 && compToFramework[property.name]) {
+                if (!vueComponents.includes(property.value)) {
+                    vueComponents.push(property.value)
+                }
+
+                propertyAttributes.push(`:${compToFramework[property.name]}="${compToFramework[property.name]}"`);
+                propertyVars.push(`${compToFramework[property.name]}: '${property.value}'`);
             } else {
                 // for when binding a method
                 // see javascript-grid-keyboard-navigation for an example
@@ -240,7 +246,6 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
                         propertyVars.push(toMember(property));
                     }
                 }
-
 
                 if (property.name !== 'defaultColDef') {
                     propertyAssignments.push(toAssignment(property));
@@ -267,7 +272,7 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
 }
 
 function getTemplate(bindings: any, attributes: string[]): string {
-    const { gridSettings } = bindings;
+    const {gridSettings} = bindings;
     const style = gridSettings.noStyle ? '' : `style="width: ${gridSettings.width}; height: ${gridSettings.height};"`;
 
     const agGridTag = `<ag-grid-vue
@@ -452,7 +457,7 @@ export function vanillaToVue3(bindings: any, componentFileNames: string[]): (imp
 
     return importType => {
         const imports = getImports(bindings, componentFileNames, importType);
-        const [propertyAssignments, propertyVars, propertyAttributes] = getPropertyBindings(bindings, componentFileNames, importType);
+        const [propertyAssignments, propertyVars, propertyAttributes] = getPropertyBindings(bindings, componentFileNames, importType, vueComponents);
         const template = getTemplate(bindings, propertyAttributes.concat(eventAttributes));
 
         return `
@@ -484,11 +489,11 @@ const VueExample = {
     },
     methods: {
         ${eventHandlers
-                .concat(externalEventHandlers)
-                .concat(onGridReady)
-                .concat(instanceMethods)
-                .map(snippet => `${snippet.trim()},`)
-                .join('\n')}
+            .concat(externalEventHandlers)
+            .concat(onGridReady)
+            .concat(instanceMethods)
+            .map(snippet => `${snippet.trim()},`)
+            .join('\n')}
     }
 }
 
