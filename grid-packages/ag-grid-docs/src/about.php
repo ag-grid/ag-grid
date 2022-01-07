@@ -292,7 +292,7 @@
 
             <section>
                 <h2 id="contact">Contact Us</h2>
-                <article class="inline-container row">
+                <article class="row">
                     <div class="col-md-6">
                         <h3>Our Address</h3>
                         <address>
