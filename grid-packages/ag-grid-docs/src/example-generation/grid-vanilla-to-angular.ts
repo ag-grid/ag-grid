@@ -203,7 +203,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): (
         const template = getTemplate(bindings, propertyAttributes.concat(eventAttributes));
 
         return `
-${imports.join('\n')}${declarations.length > 0 ? '\n' + declarations.join('\n') : ''}
+${imports.join('\n')}
 
 @Component({
     selector: 'my-app',
