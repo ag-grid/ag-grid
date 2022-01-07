@@ -4,6 +4,7 @@ import {
     ChartMenuOptions,
     ChartType,
     Component,
+    PopupService,
     PostConstruct,
     TabbedItem,
     TabbedLayout
@@ -20,7 +21,6 @@ export class TabbedChartMenu extends Component {
     public static TAB_FORMAT = 'format';
 
     private tabbedLayout: TabbedLayout;
-    private currentChartType: ChartType;
 
     private panels: ChartMenuOptions[];
     private tabs: TabbedItem[] = [];
@@ -41,7 +41,6 @@ export class TabbedChartMenu extends Component {
 
         this.chartController = controller;
         this.chartOptionsService = chartOptionsService;
-        this.currentChartType = type;
         this.panels = panels;
     }
 
@@ -57,7 +56,8 @@ export class TabbedChartMenu extends Component {
 
         this.tabbedLayout = new TabbedLayout({
             items: this.tabs,
-            cssClass: 'ag-chart-tabbed-menu'
+            cssClass: 'ag-chart-tabbed-menu',
+            keepScrollPosition: true
         });
         this.getContext().createBean(this.tabbedLayout);
     }
@@ -85,6 +85,10 @@ export class TabbedChartMenu extends Component {
                 title: titleEl,
                 titleLabel: translatedTitle,
                 bodyPromise: AgPromise.resolve(eWrapperDiv),
+                getScrollableContainer: () => {
+                    const scrollableContainer = eWrapperDiv.querySelector('.ag-scrollable-container');
+                    return (scrollableContainer || eWrapperDiv) as HTMLElement;
+                },
                 name
             }
         };

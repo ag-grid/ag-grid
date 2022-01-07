@@ -1,4 +1,4 @@
-import { _, Component, PostConstruct, RefSelector } from "@ag-grid-community/core";
+import { _, Component, PostConstruct, RefSelector, Autowired, ResizeObserverService } from "@ag-grid-community/core";
 import { MiniChartsContainer } from "./miniChartsContainer";
 import { AgChartThemePalette } from "ag-charts-community";
 import { ChartController } from "../../chartController";
@@ -9,7 +9,7 @@ export class ChartSettingsPanel extends Component {
 
     public static TEMPLATE = /* html */
         `<div class="ag-chart-settings-wrapper">
-            <div ref="eMiniChartsContainer" class="ag-chart-settings-mini-charts-container"></div>
+            <div ref="eMiniChartsContainer" class="ag-chart-settings-mini-charts-container ag-scrollable-container"></div>
             <div ref="eNavBar" class="ag-chart-settings-nav-bar">
                 <div ref="ePrevBtn" class="ag-chart-settings-prev">
                     <button type="button" class="ag-chart-settings-prev-button"></button>
@@ -21,6 +21,7 @@ export class ChartSettingsPanel extends Component {
             </div>
         </div>`;
 
+    @Autowired('resizeObserverService') private readonly resizeObserverService: ResizeObserverService;
     @RefSelector('eMiniChartsContainer') private readonly eMiniChartsContainer: HTMLElement;
     @RefSelector('eNavBar') private readonly eNavBar: HTMLElement;
     @RefSelector('eCardSelector') private readonly eCardSelector: HTMLElement;
@@ -57,12 +58,30 @@ export class ChartSettingsPanel extends Component {
 
         // change the selected chart when a combo chart is modified via the data panel, i.e. the custom combo should be selected
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_TYPE_CHANGED, () => this.resetPalettes(true));
+        this.scrollSelectedIntoView();
+    }
+
+    private scrollSelectedIntoView(): void {
+        const eGui = this.getGui();
+        // the panel is not immediately visible due to the slide animation, so
+        // we add a resizeObserver to wait until the panel "has size" and is able to scroll
+        // once the process is done, the observer removes itself. 
+        const observer = this.resizeObserverService.observeResize(eGui, () => {
+            if (eGui.clientWidth < 10) { return; }
+            const currentPallet = this.miniCharts.find(pallet => !pallet.getGui().classList.contains('ag-hidden'));
+            const currentChart = currentPallet!.getGui().querySelector('.ag-selected');
+    
+            if (currentChart) {
+                currentChart.scrollIntoView({ block: 'nearest' });
+            }
+            observer();
+        });
     }
 
     private resetPalettes(forceReset?: boolean): void {
         const palettes = this.chartController.getPalettes();
 
-        if (_.shallowCompare(palettes, this.palettes) && !forceReset) {
+        if ((_.shallowCompare(palettes, this.palettes) && !forceReset) || this.isAnimating) {
             return;
         }
 
@@ -143,17 +162,17 @@ export class ChartSettingsPanel extends Component {
         const multiplier = animationDirection === 'left' ? -1 : 1;
         const final = nextGui.style.left = `${(_.getAbsoluteWidth(this.getGui()) * multiplier)}px`;
 
+        this.activePaletteIndex = index;
+
+        this.isAnimating = true;
+
         const animatingClass = 'ag-animating';
 
         futurePalette.removeCssClass('ag-hidden');
         currentPalette.addCssClass(animatingClass);
         futurePalette.addCssClass(animatingClass);
 
-        this.activePaletteIndex = index;
-
         this.chartController.setChartThemeName(this.themes[index]);
-
-        this.isAnimating = true;
 
         window.setTimeout(() => {
             currentGui.style.left = `${-parseFloat(final)}px`;
