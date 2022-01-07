@@ -430,15 +430,28 @@ export function convertImportPath(modulePackage: string, convertToPackage: boole
     return modulePackage;
 }
 
+export function getImport(filename: string) {
+    const componentFileName = filename.split('.')[0];
+    const componentName = componentFileName[0].toUpperCase() + componentFileName.slice(1);
+    return `import { ${componentName} } from './${componentFileName}';`;
+}
+
+/**
+ *  Add the imports from the parsed file
+ * We ignore any component files as those imports are generated for each framework.
+ */
 export function addBindingImports(bindingImports: any, imports: string[], convertToPackage: boolean) {
     // We rely on the prettier-plugin-organize-imports plugin to organise and de-duplicate our imports
+    // Except React where plugin breaks imports by removing import React
     bindingImports.forEach((i: BindingImport) => {
         if (i.imports.length > 0) {
             const path = convertImportPath(i.module, convertToPackage)
-            if (i.isNamespaced) {
-                imports.push(`import * as ${i.imports[0]} from ${path};`);
-            } else {
-                imports.push(`import { ${i.imports.join(', ')} }  from ${path};`);
+            if (!path.includes('_typescript')) {
+                if (i.isNamespaced) {
+                    imports.push(`import * as ${i.imports[0]} from ${path};`);
+                } else {
+                    imports.push(`import { ${i.imports.join(', ')} }  from ${path};`);
+                }
             }
         }
     });

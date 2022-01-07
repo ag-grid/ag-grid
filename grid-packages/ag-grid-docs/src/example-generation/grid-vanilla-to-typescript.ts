@@ -1,7 +1,7 @@
-import { addBindingImports, ImportType } from './parser-utils';
+import { addBindingImports, getImport, ImportType } from './parser-utils';
 const fs = require('fs-extra');
 
-export function vanillaToTypescript(bindings: any, mainFilePath: string): (importType: ImportType) => string {
+export function vanillaToTypescript(bindings: any, mainFilePath: string, componentFileNames: string[]): (importType: ImportType) => string {
     const { externalEventHandlers, imports } = bindings;
 
     // attach external handlers to window
@@ -28,31 +28,27 @@ export function vanillaToTypescript(bindings: any, mainFilePath: string): (impor
             // (.*DOMContentLoaded.*)\n Match the line with DOMContentLoaded
             // (.|\n)*? Match the shortest number of lines until the next part matches (body of the event handler)
             // (\n}\)) Match a }) on a new line with no indentation
-            .replace(/(.*DOMContentLoaded.*)\n((.|\n)*?)(\n}\))/g, '$2')
-            // update the import paths to remove the _typescript as the file name will be changed as part of the
-            // example generation
-            .replace(/_typescript/g, "");
+            .replace(/(.*DOMContentLoaded.*)\n((.|\n)*?)(\n}\))/g, '$2');
 
         if (unWrapped.includes('DOMContentLoaded')) {
             console.error('DomContentLoaded replace failed for', mainFilePath);
             throw Error('DomContentLoaded replace failed for ' + mainFilePath)
         }
 
-        if (importType === 'modules') {
-            return `${unWrapped} ${toAttach || ''}`;
-        } else {
-            // Need to replace module imports with their matching package import
-            let formattedImports = '';
-            if (imports.length > 0) {
-                let importStrings = [];
-                addBindingImports(imports, importStrings, true);
-                formattedImports = `${importStrings.join('\n')}\n`
-
-                // Remove the original import statements
-                unWrapped = unWrapped.replace(/import.*from.*\n/g, '');
+        // Need to replace module imports with their matching package import
+        let formattedImports = '';
+        if (imports.length > 0) {
+            let importStrings = [];
+            addBindingImports(imports, importStrings, importType === 'packages');
+            if (componentFileNames) {
+                importStrings.push(...componentFileNames.map(getImport));
             }
-            return `${formattedImports}${unWrapped} ${toAttach || ''}`;
+            formattedImports = `${importStrings.join('\n')}\n`;
+
+            // Remove the original import statements
+            unWrapped = unWrapped.replace(/import.*from.*\n/g, '');
         }
+        return `${formattedImports}${unWrapped} ${toAttach || ''}`;
     };
 }
 

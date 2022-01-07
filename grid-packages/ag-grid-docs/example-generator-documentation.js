@@ -54,6 +54,7 @@ function copyFiles(files, dest, tokenToReplace, replaceValue = '') {
     });
 }
 
+// childMessageRenderer_typescript.ts -> childMessageRenderer.ts
 // childMessageRenderer_react.jsx -> childMessageRenderer.jsx
 // childMessageRenderer_angular.ts -> childMessageRenderer.ts
 // childMessageRenderer_vue.js -> childMessageRendererVue.js
@@ -400,7 +401,7 @@ function createExampleGenerator(prefix, importTypes) {
             const tsScripts = getMatchingPaths('*.{html,ts}', { ignore: ['**/*_{angular,react,vue,vue3}.ts', '**/main.ts'] });
             const tsConfigs = new Map();
             try {
-                const getSource = vanillaToTypescript(deepCloneObject(typedBindings), mainScript);
+                const getSource = vanillaToTypescript(deepCloneObject(typedBindings), mainScript, extractComponentFileNames(tsScripts, '_typescript'));
                 importTypes.forEach(importType => {
                     tsConfigs.set(importType, {
                         'main.ts': getSource(importType),
