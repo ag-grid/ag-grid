@@ -98,7 +98,7 @@ export class CartesianChart extends Chart {
             radius: false
         }
 
-        axes.slice().reverse().forEach((axis, i) => {
+        axes.forEach(axis => {
             axis.group.visible = true;
             let axisThickness = Math.floor(axis.thickness || axis.computeBBox().width);
 
@@ -108,26 +108,26 @@ export class CartesianChart extends Chart {
 
             switch (axis.position) {
                 case ChartAxisPosition.Top:
-                    axisPositionVisited[ChartAxisPosition.Top] ||= true;
+                    axisPositionVisited[ChartAxisPosition.Top] = true;
                     shrinkRect.y += axisThickness;
                     shrinkRect.height -= axisThickness;
                     axis.translation.y = Math.floor(shrinkRect.y + 1);
                     axis.label.mirrored = true;
                     break;
                 case ChartAxisPosition.Right:
-                    axisPositionVisited[ChartAxisPosition.Right] ||= true;
+                    axisPositionVisited[ChartAxisPosition.Right] = true;
                     shrinkRect.width -= axisThickness;
                     axis.translation.x = Math.floor(shrinkRect.x + shrinkRect.width);
                     axis.label.mirrored = true;
                     break;
                 case ChartAxisPosition.Bottom:
-                    axisPositionVisited[ChartAxisPosition.Bottom] ||= true;
+                    axisPositionVisited[ChartAxisPosition.Bottom] = true;
                     shrinkRect.height -= axisThickness;
                     bottomAxesHeight += axisThickness;
                     axis.translation.y = Math.floor(shrinkRect.y + shrinkRect.height + 1);
                     break;
                 case ChartAxisPosition.Left:
-                    axisPositionVisited[ChartAxisPosition.Left] ||= true;
+                    axisPositionVisited[ChartAxisPosition.Left] = true;
                     shrinkRect.x += axisThickness;
                     shrinkRect.width -= axisThickness;
                     axis.translation.x = Math.floor(shrinkRect.x);
