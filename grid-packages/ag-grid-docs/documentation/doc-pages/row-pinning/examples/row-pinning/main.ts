@@ -1,6 +1,5 @@
 import { ColDef, GridOptions } from '@ag-grid-community/core'
-
-declare var CustomPinnedRowRenderer: any;
+import { CustomPinnedRowRenderer } from "./customPinnedRowRenderer_typescript";
 
 const columnDefs: ColDef[] = [
   {
