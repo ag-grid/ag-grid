@@ -139,7 +139,7 @@ function getTemplate(bindings: any, attributes: string[]): string {
 }
 
 export function vanillaToAngular(bindings: any, componentFileNames: string[]): (importType: ImportType) => string {
-    const { data, properties, declarations } = bindings;
+    const { data, properties } = bindings;
     const diParams = [];
     const additional = [getOnGridReadyCode(bindings.onGridReady, bindings.resizeToFit, data)];
 

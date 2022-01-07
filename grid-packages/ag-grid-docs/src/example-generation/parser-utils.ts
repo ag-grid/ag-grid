@@ -155,10 +155,18 @@ export function nodeIsPropertyWithName(node: any, name: string) {
     return node.key.name == name && node.value.type != 'Identifier';
 }
 export function tsNodeIsPropertyWithName(node: ts.Node, name: string) {
-    // we skip { property: variable } - SPL why??
-    // and get only inline property assignments
-    if (node.getText() === name) {
-        return true;
+    if (ts.isPropertyAssignment(node)) {
+        if (node.name.getText() === name) {
+
+            // If the name matches the initializer then the property will get added via
+            // the top level variable matching a gridProperty name
+            // This means that we include cellRenderer properties like
+            // detailRowCellComp: DetailCellRenderer,
+            if (node.name.getText() === node.initializer.getText()) {
+                return false;
+            }
+            return true;
+        }
     }
 }
 

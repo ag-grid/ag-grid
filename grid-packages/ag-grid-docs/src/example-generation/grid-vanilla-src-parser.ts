@@ -396,9 +396,9 @@ function internalParser(inputFile, html, exampleSettings, exampleType, providedE
 
         tsGridOptionsCollectors.push({
             matches: (node: ts.Node) => tsNodeIsPropertyWithName(node, propertyName),
-            apply: (bindings, node: ts.Node) => {
+            apply: (bindings, node: ts.PropertyAssignment) => {
                 if (processColDefsForFunctionalReactOrVue(propertyName, exampleType, exampleSettings, providedExamples)) {
-                    const parent = node.parent;
+                    const parent = node;
                     if (ts.isPropertyAssignment(parent) && parent.initializer) {
                         const initializer = parent.initializer
                         if (ts.isArrayLiteralExpression(initializer)) {
@@ -406,8 +406,8 @@ function internalParser(inputFile, html, exampleSettings, exampleType, providedE
                         }
                     }
                 }
-                if (processComponentsForVue(propertyName, exampleType, providedExamples) && node.parent) {
-                    const compsNode = (node.parent as any).initializer;
+                if (processComponentsForVue(propertyName, exampleType, providedExamples)) {
+                    const compsNode = node.initializer;
                     if (ts.isObjectLiteralExpression(compsNode)) {
                         for (const componentDefinition of compsNode.properties) {
                             const comp = componentDefinition as any;
@@ -422,18 +422,18 @@ function internalParser(inputFile, html, exampleSettings, exampleType, providedE
                 }
 
                 if (processDefaultColumnDefForVue(propertyName, exampleType, providedExamples)
-                    && node.parent && (node.parent as any).initializer
-                    && ts.isObjectLiteralExpression((node.parent as any).initializer)) {
-                    bindings.defaultColDef = tsGenerate((node.parent as any).initializer, tsTree);
+                    && node.initializer
+                    && ts.isObjectLiteralExpression(node.initializer)) {
+                    bindings.defaultColDef = tsGenerate(node.initializer, tsTree);
                 }
 
                 if (processGlobalComponentsForVue(propertyName, exampleType, providedExamples) && ts.isIdentifier(node)) {
-                    bindings.globalComponents.push(tsGenerate(node.parent, tsTree));
+                    bindings.globalComponents.push(tsGenerate(node, tsTree));
                 }
 
                 bindings.properties.push({
                     name: propertyName,
-                    value: tsGenerate((node.parent as any).initializer, tsTree)
+                    value: tsGenerate(node.initializer, tsTree)
                 });
             }
         });
@@ -441,8 +441,12 @@ function internalParser(inputFile, html, exampleSettings, exampleType, providedE
 
     tsGridOptionsCollectors.push({
         matches: node => tsNodeIsPropertyWithName(node, 'onGridReady'),
-        apply: (bindings, node) => {
-            bindings.onGridReady = tsGenerate((node.parent as any).initializer.body, tsTree).replace(/gridOptions/g, 'params');
+        apply: (bindings, node: ts.PropertyAssignment) => {
+            if (node.initializer) {
+                bindings.onGridReady = tsGenerate((node.initializer as any).body, tsTree).replace(/gridOptions/g, 'params');
+            } else {
+                console.error(node.getText())
+            }
         }
     });
 
@@ -451,10 +455,7 @@ function internalParser(inputFile, html, exampleSettings, exampleType, providedE
         matches: node => tsNodeIsGlobalVarWithName(node, 'gridOptions'),
         apply: (bindings, node) => {
 
-            node.initializer.properties.forEach(prop => {
-                bindings = tsCollect(prop, bindings, tsGridOptionsCollectors, false)
-            });
-
+            bindings = tsCollect(node.initializer, bindings, tsGridOptionsCollectors, false);
             return bindings;
         }
     });

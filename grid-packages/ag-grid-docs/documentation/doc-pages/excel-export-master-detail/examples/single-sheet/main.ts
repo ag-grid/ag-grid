@@ -29,7 +29,7 @@ var getCells = (params: ProcessRowGroupForExportParams) => {
 var defaultCsvExportParams: CsvExportParams = {
   getCustomContentBelowRow: (params) => getCells(params) as CsvCell[][],
 }
-var defaultExportParams: ExcelExportParams = {
+var defaultExcelExportParams: ExcelExportParams = {
   getCustomContentBelowRow: (params) => getCells(params),
   columnWidth: 120,
 }
@@ -64,7 +64,7 @@ const gridOptions: GridOptions = {
     },
   } as IDetailCellRendererParams,
   defaultCsvExportParams: defaultCsvExportParams,
-  defaultExcelExportParams: defaultExportParams,
+  defaultExcelExportParams: defaultExcelExportParams,
   excelStyles: [
     {
       id: 'header',

@@ -29,26 +29,26 @@ const colNames = [
 ];
 
 const countries = [
-    {country: 'Ireland', continent: 'Europe', language: 'English'},
-    {country: 'Spain', continent: 'Europe', language: 'Spanish'},
-    {country: 'United Kingdom', continent: 'Europe', language: 'English'},
-    {country: 'France', continent: 'Europe', language: 'French'},
-    {country: 'Germany', continent: 'Europe', language: 'German'},
-    {country: 'Luxembourg', continent: 'Europe', language: 'French'},
-    {country: 'Sweden', continent: 'Europe', language: 'Swedish'},
-    {country: 'Norway', continent: 'Europe', language: 'Norwegian'},
-    {country: 'Italy', continent: 'Europe', language: 'Italian'},
-    {country: 'Greece', continent: 'Europe', language: 'Greek'},
-    {country: 'Iceland', continent: 'Europe', language: 'Icelandic'},
-    {country: 'Portugal', continent: 'Europe', language: 'Portuguese'},
-    {country: 'Malta', continent: 'Europe', language: 'Maltese'},
-    {country: 'Brazil', continent: 'South America', language: 'Portuguese'},
-    {country: 'Argentina', continent: 'South America', language: 'Spanish'},
-    {country: 'Colombia', continent: 'South America', language: 'Spanish'},
-    {country: 'Peru', continent: 'South America', language: 'Spanish'},
-    {country: 'Venezuela', continent: 'South America', language: 'Spanish'},
-    {country: 'Uruguay', continent: 'South America', language: 'Spanish'},
-    {country: 'Belgium', continent: 'Europe', language: 'French'},
+    { country: 'Ireland', continent: 'Europe', language: 'English' },
+    { country: 'Spain', continent: 'Europe', language: 'Spanish' },
+    { country: 'United Kingdom', continent: 'Europe', language: 'English' },
+    { country: 'France', continent: 'Europe', language: 'French' },
+    { country: 'Germany', continent: 'Europe', language: 'German' },
+    { country: 'Luxembourg', continent: 'Europe', language: 'French' },
+    { country: 'Sweden', continent: 'Europe', language: 'Swedish' },
+    { country: 'Norway', continent: 'Europe', language: 'Norwegian' },
+    { country: 'Italy', continent: 'Europe', language: 'Italian' },
+    { country: 'Greece', continent: 'Europe', language: 'Greek' },
+    { country: 'Iceland', continent: 'Europe', language: 'Icelandic' },
+    { country: 'Portugal', continent: 'Europe', language: 'Portuguese' },
+    { country: 'Malta', continent: 'Europe', language: 'Maltese' },
+    { country: 'Brazil', continent: 'South America', language: 'Portuguese' },
+    { country: 'Argentina', continent: 'South America', language: 'Spanish' },
+    { country: 'Colombia', continent: 'South America', language: 'Spanish' },
+    { country: 'Peru', continent: 'South America', language: 'Spanish' },
+    { country: 'Venezuela', continent: 'South America', language: 'Spanish' },
+    { country: 'Uruguay', continent: 'South America', language: 'Spanish' },
+    { country: 'Belgium', continent: 'Europe', language: 'French' },
 ];
 
 const games = [
@@ -190,7 +190,7 @@ const months = [
 
 let dataSize = '.1x22';
 
-const groupColumn: ColDef = {
+const autoGroupColumnDef: ColDef = {
     headerName: 'Group',
     width: 200,
     field: 'name',
@@ -224,14 +224,14 @@ const gridOptions: GridOptions = {
     enableRtl: true,
     animateRows: true,
     statusBar: {
-        statusPanels: [{statusPanel: 'agAggregationComponent'}],
+        statusPanels: [{ statusPanel: 'agAggregationComponent' }],
     },
     enableRangeSelection: true,
     rowSelection: 'multiple', // one of ['single','multiple'], leave blank for no selection
     quickFilterText: undefined,
     groupSelectsChildren: true, // one of [true, false]
     suppressRowClickSelection: true, // if true, clicking rows doesn't select (useful for checkbox selection)
-    autoGroupColumnDef: groupColumn,
+    autoGroupColumnDef: autoGroupColumnDef,
     onRowSelected: rowSelected, //callback when row selected
     onSelectionChanged: selectionChanged, //callback when selection changed,
     getBusinessKeyForNode: function (node) {
@@ -398,9 +398,9 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
                 enablePivot: true,
                 enableValue: true,
                 cellRendererComp: booleanCellRenderer,
-                cellStyle: {'text-align': 'center'},
+                cellStyle: { 'text-align': 'center' },
                 comparator: booleanComparator,
-                filterParams: {cellRendererComp: booleanFilterCellRenderer},
+                filterParams: { cellRendererComp: booleanFilterCellRenderer },
             },
         ],
     },
@@ -415,7 +415,7 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
                 filter: WinningsFilter,
                 cellRendererComp: currencyRenderer,
                 cellStyle: currencyCssFunc,
-                filterParams: {cellRendererComp: currencyRenderer},
+                filterParams: { cellRendererComp: currencyRenderer },
                 enableValue: true,
                 // colId: 'sf',
                 // valueGetter: '55',
@@ -432,7 +432,7 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
                 editable: false,
                 sortable: false,
                 suppressMenu: true,
-                cellStyle: {'text-align': 'right'},
+                cellStyle: { 'text-align': 'right' },
                 cellRendererComp: function () {
                     return 'Abra...'
                 },
@@ -444,7 +444,7 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
                 editable: false,
                 sortable: false,
                 suppressMenu: true,
-                cellStyle: {'text-align': 'left'},
+                cellStyle: { 'text-align': 'left' },
                 cellRendererComp: function () {
                     return '...cadabra!'
                 },
@@ -459,7 +459,7 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
         enableRowGroup: true,
         enablePivot: true,
         enableValue: true,
-        filterParams: {cellRendererComp: ratingFilterRenderer},
+        filterParams: { cellRendererComp: ratingFilterRenderer },
     },
     {
         field: 'totalWinnings',
@@ -499,7 +499,7 @@ months.forEach(function (month) {
         },
         newValueHandler: numberNewValueHandler,
         cellRendererComp: currencyRenderer,
-        cellStyle: {'text-align': 'right'},
+        cellStyle: { 'text-align': 'right' },
     };
     monthGroup.children.push(child)
 })
@@ -706,9 +706,9 @@ function numberNewValueHandler(params: NewValueParams) {
 
 function currencyCssFunc(params: CellClassParams): CellStyle {
     if (params.value !== null && params.value !== undefined && params.value < 0) {
-        return {color: 'red', 'text-align': 'right', 'font-weight': 'bold'}
+        return { color: 'red', 'text-align': 'right', 'font-weight': 'bold' }
     } else {
-        return {'text-align': 'right'}
+        return { 'text-align': 'right' }
     }
 }
 

@@ -31,7 +31,7 @@ function writeFile(destination, contents) {
 
     const extension = path.extname(destination).slice(1);
     const parser = parsers[extension] || extension;
-    const formattedContent = format(contents, parser);
+    const formattedContent = format(contents, parser, destination);
 
     if (useAsyncFileOperations) {
         fs.writeFile(destination, formattedContent, encodingOptions, () => {
@@ -120,7 +120,7 @@ function forEachExample(done, name, regex, generateExample, scope = '*', trigger
     });
 }
 
-function format(source, parser) {
+function format(source, parser, destination) {
     const formatted = source;
     if (process.env.AG_EXAMPLE_DISABLE_FORMATTING === 'true') {
         return formatted;
@@ -130,7 +130,7 @@ function format(source, parser) {
             // remove the flag we use to turn off the organise imports plugin as it removes React incorrectly
             .replace("// organize-imports-ignore\n", "");
     } catch (error) {
-        console.log(error)
+        console.log(destination, error)
         return formatted;
     }
 
