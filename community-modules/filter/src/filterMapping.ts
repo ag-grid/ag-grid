@@ -17,28 +17,25 @@ export const FILTER_TO_EXPRESSION_TYPE_MAPPING: {[key: string]: Mapping<any>} = 
     agSetColumnFilterV2: { type: 'set-op', newComp: (colId) => new SetFilter({ colId }) },
 };
 
-function resolveMapping(colDef: ColDef, gridOptions: GridOptions): Mapping<any> | null {
+function resolveMapping(colDef: ColDef, gridOptions: GridOptions, suppressWarning = false): Mapping<any> | null {
     const filterType =  colDef.filter;
 
-    if (typeof filterType !== 'string') { return DEFAULT_MAPPING };
+    if (typeof filterType !== 'string') { return null; };
 
     const mapping = FILTER_TO_EXPRESSION_TYPE_MAPPING[filterType];
     if (mapping) { return mapping; }
 
-    const customComponents = gridOptions.components || {};
-    if (customComponents[filterType] != null) {
-        return null;
+    if (!suppressWarning) {
+        _.doOnce(
+            () => console.warn('AG Grid - Unknown filter component specified: ' + filterType),
+            'filterUtils.resolveMapping.' + filterType,
+        );
     }
-
-    _.doOnce(
-        () => console.warn('AG Grid - Unknown filter component specified: ' + filterType),
-        'filterUtils.resolveMapping.' + filterType,
-    );
-    return DEFAULT_MAPPING;
+    return null;
 }
 
 export function expressionType(colDef: ColDef, gridOptions: GridOptions): FilterExpression['type'] | 'unknown' {
-    return resolveMapping(colDef, gridOptions)?.type || 'unknown';
+    return resolveMapping(colDef, gridOptions, true)?.type || 'unknown';
 }
 
 export function createComponent(column: Column, gridOptions: GridOptions): CompType | null {

@@ -35,12 +35,13 @@ export class AdvancedV2FilterController extends BeanStub implements AdvancedFilt
         return expressionType(column.getColDef(), this.gridOptions) !== 'unknown';
     }
 
-    public evaluate(params: { rowNode: RowNode, colId?: string }): boolean {
+    public evaluate(params: { rowNode: RowNode, colId?: string, columnToSkip?: Column }): boolean {
         const currentFilterState = this.filterState.getCurrentModel();
         if (currentFilterState == null) { return true; }
 
-        const { rowNode, colId } = params;
-        const columns = colId ? [colId] : Object.keys(currentFilterState);
+        const { rowNode, colId, columnToSkip } = params;
+        const rawColumns = colId ? [colId] : Object.keys(currentFilterState);
+        const columns = rawColumns.filter(k => k !== columnToSkip?.getColId());
         for (const columnId of columns) {
             const input = this.getCellValue({ colId: columnId, rowNode });
             const model = currentFilterState[columnId];
@@ -74,7 +75,7 @@ export class AdvancedV2FilterController extends BeanStub implements AdvancedFilt
     }
 
     public getAllFilterUIs(): Record<string, ExpressionComponentUI> {
-        return Object.freeze(this.filterUIs);
+        return { ...this.filterUIs };
     }
 
     public createFilterComp(column: Column, source: FilterRequestSource, support: IFilterParamSupport): AgPromise<ExpressionComponentUI> {
@@ -96,10 +97,16 @@ export class AdvancedV2FilterController extends BeanStub implements AdvancedFilt
         this.filterUIs[colId] = {
             type: 'ExpressionComponent',
             comp,
-            filterUIInfo: { gui: adaptor.getGui() },
+            filterUIInfo: { gui: comp.getGui() },
             adaptor,
             column,
         };
+
+        this.addListenerForColumn(this, column, ({ type }) => {
+            if (type === 'revert') { return; }
+            
+            support.onFilterChanged({ additionalEventAttributes: {}, columns: [column] });
+        });
 
         return AgPromise.resolve(this.filterUIs[colId]);
     }

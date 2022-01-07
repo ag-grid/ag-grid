@@ -1,4 +1,4 @@
-import { _, Bean, RowNode, BeanStub, Autowired, Column, GridOptions, UserComponentFactory, IFilterComp, FilterRequestSource, AgPromise, FilterUIInfo, IFilterParams, Events, ColumnEventType, ColumnModel, FilterModifiedEvent, ColumnApi, GridApi } from "@ag-grid-community/core";
+import { _, Bean, RowNode, BeanStub, Autowired, Column, GridOptions, UserComponentFactory, IFilterComp, FilterRequestSource, AgPromise, FilterUIInfo, IFilterParams, Events, ColumnEventType, ColumnModel, FilterModifiedEvent, ColumnApi, GridApi, ModuleRegistry, ModuleNames, PostConstruct, FilterChangedEvent } from "@ag-grid-community/core";
 import { expressionType } from "../filterMapping";
 import { AdvancedFilterController, IFilterCompUI, IFilterParamSupport } from "./interfaces";
 
@@ -14,6 +14,22 @@ export class AdvancedV1FilterController extends BeanStub implements AdvancedFilt
 
     private readonly filterUIs: Record<string, IFilterCompUI> = {};
 
+    @PostConstruct
+    private postConstruct(): void {
+        this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, (e) => this.onFilterChanged(e));
+    }
+
+    private onFilterChanged(e: FilterChangedEvent): void {
+        const sourceColIds = e.columns.map(c => c.getColId());
+        const colIdsToNotify = Object.keys(this.filterUIs)
+            .filter(colId => !sourceColIds.includes(colId));
+
+        for (const colId of colIdsToNotify) {
+            const filterUI = this.filterUIs[colId];
+            filterUI.comp.onAnyFilterChanged?.();
+        }
+    }
+
     public isActive(): boolean {
         return _.values(this.filterUIs)
             .some(ui => ui.comp.isFilterActive());
@@ -27,11 +43,12 @@ export class AdvancedV1FilterController extends BeanStub implements AdvancedFilt
         return expressionType(column.getColDef(), this.gridOptions) === 'unknown';
     }
 
-    public evaluate(params: { rowNode: RowNode }): boolean {
-        const { rowNode, rowNode: { data } } = params;
+    public evaluate(params: { rowNode: RowNode, columnToSkip?: Column }): boolean {
+        const { rowNode, rowNode: { data }, columnToSkip } = params;
         const filterParams = { node: rowNode, data: data };
 
         return _.values(this.filterUIs)
+            .filter(ui => ui.column !== columnToSkip)
             .every(ui => ui.comp.doesFilterPass(filterParams));
     }
 
@@ -98,15 +115,17 @@ export class AdvancedV1FilterController extends BeanStub implements AdvancedFilt
     }
 
     public getAllFilterUIs(): Record<string, IFilterCompUI> {
-        return Object.freeze(this.filterUIs);
+        return { ...this.filterUIs };
     }
 
     public createFilterComp(column: Column, source: FilterRequestSource, support: IFilterParamSupport): AgPromise<IFilterCompUI> {
         const colId = column.getColId();
         if (this.filterUIs[colId] != null) { AgPromise.resolve(this.filterUIs[colId]); }
 
+        const defaultFilter = ModuleRegistry.isRegistered(ModuleNames.SetFilterModule) ? 'agSetColumnFilter' : 'agTextColumnFilter';
+
         const params = this.createFilterParams(column, source, support);
-        const compDetails = this.userComponentFactory.getFilterDetails(column.getColDef(), params, 'agTextColumnFilter');
+        const compDetails = this.userComponentFactory.getFilterDetails(column.getColDef(), params, defaultFilter);
         if (compDetails == null) { throw new Error('AG Grid - unable to create filter for: ' + colId); }
 
         return compDetails.newAgStackInstance()
@@ -186,7 +205,7 @@ export class AdvancedV1FilterController extends BeanStub implements AdvancedFilt
             },
             filterChangedCallback: (additionalEventAttributes?: any) =>
                 support.onFilterChanged({/* filterInstance, */ additionalEventAttributes, columns: [column]}),
-            doesRowPassOtherFilter: node => support.doesRowPassOtherFilters(column, node),
+            doesRowPassOtherFilter: (node) => support.doesRowPassOtherFilters(column, node),
         };
     }
 }

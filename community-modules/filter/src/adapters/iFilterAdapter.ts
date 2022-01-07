@@ -5,7 +5,7 @@ import { Autowired, AgPromise, Component, IFilterComp, RefSelector, IFilterParam
  * implementation to meet the API contract for a V1 filter (IFilter).
  */
 export class IFilterAdapter extends Component implements IFilterComp {
-    @Autowired('filterManagerV2') private readonly filterManager: any; // TODO: Fix me!
+    // @Autowired('filterManagerV2') private readonly filterManager: any; // TODO: Fix me!
     @RefSelector('eFilterRoot') private readonly filterRoot: HTMLElement;
 
     private wrappedUI: any; // TODO: Fix.
@@ -20,7 +20,7 @@ export class IFilterAdapter extends Component implements IFilterComp {
 
     public init(params: IFilterParams) {
         this.params = params;
-        
+
         // TODO: Fix me!
         // this.filterComponentManager.createFilterComp(params.column, params)
         //     .then((result) => {
@@ -33,64 +33,67 @@ export class IFilterAdapter extends Component implements IFilterComp {
     }
 
     private postInit(params: IFilterParams) {
-        const { comp, type } = this.wrappedUI;
-        this.filterRoot.appendChild(comp.getGui());
+        // const { comp, type } = this.wrappedUI;
+        // this.filterRoot.appendChild(comp.getGui());
 
-        if (type === 'IFilterComp') { return; }
+        // if (type === 'IFilterComp') { return; }
 
-        const { column, filterChangedCallback } = params;
+        // const { column, filterChangedCallback } = params;
 
-        this.filterManager.addListenerForColumn(this, column, (params: any) => { // TODO: Fix me!
-            if (params.type === 'revert') { return; }
+        // this.filterManager.addListenerForColumn(this, column, (params: any) => { // TODO: Fix me!
+        //     if (params.type === 'revert') { return; }
 
-            filterChangedCallback();
-        });
+        //     filterChangedCallback();
+        // });
     }
 
     public isFilterActive(): boolean {
-        if (this.wrappedUI.type === 'IFilterComp') {
-            return this.wrappedUI.comp.isFilterActive();
-        }
+        return false;
+        // if (this.wrappedUI.type === 'IFilterComp') {
+        //     return this.wrappedUI.comp.isFilterActive();
+        // }
 
-        const colId = this.getColId();
-        const exprs = this.filterManager.getFilterState() || {};
-        const expr = exprs[colId];
+        // const colId = this.getColId();
+        // const exprs = this.filterManager.getFilterState() || {};
+        // const expr = exprs[colId];
 
-        return expr != null;
+        // return expr != null;
     }
 
     public doesFilterPass(params: IDoesFilterPassParams): boolean {
-        if (this.wrappedUI.type === 'IFilterComp') {
-            return this.wrappedUI.comp.doesFilterPass(params);
-        }
+        return true;
+        // if (this.wrappedUI.type === 'IFilterComp') {
+        //     return this.wrappedUI.comp.doesFilterPass(params);
+        // }
 
-        const { node } = params;
-        const colId = this.getColId();
+        // const { node } = params;
+        // const colId = this.getColId();
 
-        return this.filterManager.evaluateFilters({ rowNode: node, colId });
+        // return this.filterManager.evaluateFilters({ rowNode: node, colId });
     }
 
     public getModel(): FilterExpression | null {
-        if (this.wrappedUI.type === 'IFilterComp') {
-            return this.wrappedUI.comp.getModel();
-        }
+        return null;
+        // if (this.wrappedUI.type === 'IFilterComp') {
+        //     return this.wrappedUI.comp.getModel();
+        // }
 
-        const colId = this.getColId();
-        const filterState = this.filterManager.getFilterState();
-        return filterState && filterState[colId] || null;
+        // const colId = this.getColId();
+        // const filterState = this.filterManager.getFilterState();
+        // return filterState && filterState[colId] || null;
     }
 
     public setModel(model: any): void | AgPromise<void> {
-        if (this.wrappedUI.type === 'IFilterComp') {
-            return this.wrappedUI.comp.setModel(model);
-        }
+        // if (this.wrappedUI.type === 'IFilterComp') {
+        //     return this.wrappedUI.comp.setModel(model);
+        // }
 
-        const otherState = this.filterManager.getFilterState();
-        const colId = this.getColId();
-        this.filterManager.setFilterState({
-            ...otherState,
-            [colId]: model,
-        });
+        // const otherState = this.filterManager.getFilterState();
+        // const colId = this.getColId();
+        // this.filterManager.setFilterState({
+        //     ...otherState,
+        //     [colId]: model,
+        // });
     }
 
     public destroy() {

@@ -146,10 +146,10 @@ export class FilterStateManager {
             const column = this.columnModel.getGridColumn(colId);
             if (column == null) { return; }
 
-            this.notifyListenersForColumn(this, column, 'destroy');
+            notifications.push({ column, type: 'destroy' });
 
             if (this.transientState[colId] != null) {
-                this.notifyTransientListenersForColumn(this, column, 'destroy');
+                transientNotifications.push({ column, type: 'destroy' });
             }
         });
 

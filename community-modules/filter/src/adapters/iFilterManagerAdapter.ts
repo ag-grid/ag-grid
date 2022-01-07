@@ -1,10 +1,12 @@
-import { AgPromise, Autowired, BeanStub, ColDef, Column, ColumnApi, ColumnEventType, ColumnModel, Events, FilterChangedEvent, FilterUIInfo, FilterRequestSource, GridApi, IFilterComp, IFilterManager, IFilterParams, IRowModel, PostConstruct, RowNode, _, ValueService } from "@ag-grid-community/core";
+import { AgPromise, Autowired, BeanStub, ColDef, Column, ColumnApi, ColumnEventType, ColumnModel, Events, FilterChangedEvent, FilterUIInfo, FilterRequestSource, GridApi, IFilterComp, IFilterManager, IFilterParams, IRowModel, PostConstruct, RowNode, _, ValueService, Bean } from "@ag-grid-community/core";
 import { ExternalFilterController } from "../controllers/externalFilterController";
 import { QuickFilterController } from "../controllers/quickFilterController";
 import { AdvancedV2FilterController } from "../controllers/advancedV2FilterController";
 import { FilterUI, IFilterParamSupport, InternalFilterController } from "../controllers/interfaces";
 import { calculateAffectedColumns, findControllerFor } from "./helpers";
+import { AdvancedV1FilterController } from "../controllers/advancedV1FilterController";
 
+@Bean('filterManager')
 export class IFilterManagerAdapter extends BeanStub implements IFilterManager {
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('rowModel') private readonly rowModel: IRowModel;
@@ -14,6 +16,7 @@ export class IFilterManagerAdapter extends BeanStub implements IFilterManager {
 
     @Autowired('quickFilterController') private readonly quickFilterController: QuickFilterController;
     @Autowired('externalFilterController') private readonly externalFilterController: ExternalFilterController;
+    @Autowired('advancedV1FilterController') private readonly advancedV1FilterController: AdvancedV1FilterController;
     @Autowired('advancedV2FilterController') private readonly advancedV2FilterController: AdvancedV2FilterController;
     private readonly allControllers: InternalFilterController[] = [];
     private readonly iFilterParamsSupport: IFilterParamSupport;
@@ -36,7 +39,12 @@ export class IFilterManagerAdapter extends BeanStub implements IFilterManager {
         this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, (source) => this.onNewRowsLoaded(source));
         this.addManagedListener(this.eventService, Events.EVENT_GRID_COLUMNS_CHANGED, () => this.onColumnsChanged());
 
-        this.allControllers.push(this.quickFilterController, this.externalFilterController, this.advancedV2FilterController);
+        this.allControllers.push(
+            this.quickFilterController,
+            this.externalFilterController,
+            this.advancedV1FilterController,
+            this.advancedV2FilterController,
+        );
     }
 
     public doesRowPassFilter(params: { rowNode: RowNode; columnToSkip?: Column }): boolean {
@@ -63,7 +71,7 @@ export class IFilterManagerAdapter extends BeanStub implements IFilterManager {
     }
 
     public isSuppressFlashingCellsBecauseFiltering(): boolean {
-        return this.suppressFlashingCellsBecauseFiltering;
+        return !this.gridOptionsWrapper.isAllowShowChangeAfterFilter() && this.suppressFlashingCellsBecauseFiltering;
     }
 
     public setQuickFilter(newFilter: any): void {
@@ -86,7 +94,7 @@ export class IFilterManagerAdapter extends BeanStub implements IFilterManager {
     public setFilterModel(model: { [key: string]: any; }): void {
         const previousFilterState = this.getFilterModel();
         const newFilterState = _.deepCloneObject(model);
-        const modelKeys = _.convertToSet(Object.keys(model));
+        const modelKeys = _.convertToSet(Object.keys(model || {}));
         const affectedColumns: Column[] = calculateAffectedColumns(previousFilterState, newFilterState, this.columnModel);
         const promises: AgPromise<unknown>[] = [];
 
@@ -107,7 +115,7 @@ export class IFilterManagerAdapter extends BeanStub implements IFilterManager {
         }
 
         if (modelKeys.size > 0) {
-            throw new Error('AG-Grid - unrecognised columns for model update: ' + modelKeys.values());
+            throw new Error('AG-Grid - unrecognised columns for model update: ' + modelKeys);
         }
 
         if (affectedColumns.length > 0) {
