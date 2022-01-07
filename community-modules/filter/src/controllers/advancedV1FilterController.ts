@@ -2,6 +2,10 @@ import { _, Bean, RowNode, BeanStub, Autowired, Column, GridOptions, UserCompone
 import { expressionType } from "../filterMapping";
 import { AdvancedFilterController, IFilterCompUI, IFilterParamSupport } from "./interfaces";
 
+type InternalUIRecord = IFilterCompUI & {
+    destroyFns: Function[];
+};
+
 @Bean('advancedV1FilterController')
 export class AdvancedV1FilterController extends BeanStub implements AdvancedFilterController<IFilterCompUI> {
     public readonly type = 'advanced';
@@ -12,7 +16,7 @@ export class AdvancedV1FilterController extends BeanStub implements AdvancedFilt
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
-    private readonly filterUIs: Record<string, IFilterCompUI> = {};
+    private readonly filterUIs: Record<string, InternalUIRecord> = {};
 
     @PostConstruct
     private postConstruct(): void {
@@ -36,7 +40,8 @@ export class AdvancedV1FilterController extends BeanStub implements AdvancedFilt
     }
 
     public isFilterActive(column: Column): boolean {
-        return this.filterUIs[column.getColId()] != null;
+        const filterUI = this.filterUIs[column.getColId()];
+        return filterUI?.comp.isFilterActive() || false;
     }
 
     public isResponsibleFor(column: Column): boolean {
@@ -49,6 +54,7 @@ export class AdvancedV1FilterController extends BeanStub implements AdvancedFilt
 
         return _.values(this.filterUIs)
             .filter(ui => ui.column !== columnToSkip)
+            .filter(ui => ui.comp.isFilterActive())
             .every(ui => ui.comp.doesFilterPass(filterParams));
     }
 
@@ -80,28 +86,43 @@ export class AdvancedV1FilterController extends BeanStub implements AdvancedFilt
                 continue;
             }
 
+            let maybePromise: AgPromise<void> | void;
             if (remainingModelKeys.has(colId)) {
-                filterUi.comp.setModel(filterState[colId]);
+                maybePromise = filterUi.comp.setModel(filterState[colId]);
                 remainingModelKeys.delete(colId);
             } else {
-                this.destroyFilter(column, 'filterDestroyed');
+                maybePromise = filterUi.comp.setModel(null);
+            }
+
+            if (maybePromise) {
+                promises.push(maybePromise);
             }
         }
 
         // Handle new cases.
-        for (const colId in remainingModelKeys.values()) {
+        for (const colId of remainingModelKeys.values()) {
             const column = this.columnModel.getPrimaryColumn(colId);
             if (!column) {
                 throw new Error('AG-Grid - model provided for unknown column: ' + colId);
             }
 
             const filterPromise = this.createFilterComp(column, 'NO_UI', support);
-            promises.push(filterPromise?.then((ui) => ui?.comp?.setModel(filterState[colId])));
+            promises.push(new AgPromise((resolve) => {
+                filterPromise.then((ui) => {
+                    const maybePromise = ui?.comp?.setModel(filterState[colId]);
+
+                    if (!maybePromise) {
+                        resolve(null);
+                    } else {
+                        maybePromise.then(resolve);
+                    }
+                });
+            }));
 
             remainingModelKeys.delete(colId);
         }
 
-        return AgPromise.all(promises).then(() => undefined);
+        return AgPromise.all(promises).then(() => null);
     }
 
     public getFilterUIInfo(column: Column, source: FilterRequestSource, support: IFilterParamSupport): AgPromise<FilterUIInfo> {
@@ -141,8 +162,13 @@ export class AdvancedV1FilterController extends BeanStub implements AdvancedFilt
                 let guiFromFilter = newComp.getGui();
                 gui.appendChild(guiFromFilter);
 
+                const destroyFns: (() => void)[] = [];
                 if (newComp.onNewRowsLoaded) {
-                    this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, () => newComp.onNewRowsLoaded?.());
+                    const destroyFn = this.addManagedListener(this.eventService, Events.EVENT_ROW_DATA_CHANGED, () => newComp.onNewRowsLoaded?.());
+
+                    if (destroyFn) {
+                        destroyFns.push(destroyFn);
+                    }
                 }
         
                 this.filterUIs[colId] = {
@@ -153,6 +179,7 @@ export class AdvancedV1FilterController extends BeanStub implements AdvancedFilt
                         afterGuiAttached: (params) => newComp.afterGuiAttached?.(params),
                     },
                     column,
+                    destroyFns,
                 };
                 return this.filterUIs[colId];
             });
@@ -166,6 +193,8 @@ export class AdvancedV1FilterController extends BeanStub implements AdvancedFilt
         
         const cleanup = () => {
             this.destroyBeans([ filterUI.comp ]);
+            
+            filterUI.destroyFns.forEach((destroyFn) => destroyFn());
 
             delete this.filterUIs[colId];
         };

@@ -108,6 +108,7 @@ export class IFilterManagerAdapter extends BeanStub implements IFilterManager {
 
                 if (controller.isResponsibleFor(column)) {
                     modelUpdate[modelKey] = newFilterState[modelKey];
+                    modelKeys.delete(modelKey);
                 }
             }
 
@@ -148,7 +149,7 @@ export class IFilterManagerAdapter extends BeanStub implements IFilterManager {
         return controller.getFilterUIInfo(column, source, this.iFilterParamsSupport);
     }
 
-    public getFilterComponent(column: Column, source: FilterRequestSource, createIfDoesNotExist: boolean | undefined): AgPromise<IFilterComp> | null {
+    public getFilterComponent(column: Column, source: FilterRequestSource, createIfDoesNotExist = true): AgPromise<IFilterComp> | null {
         const controller = findControllerFor(column, this.allControllers);
         if (!controller) { throw new Error('AG-Grid - couldn\'t find filter controller for column: ' + column.getColId()); }
 
