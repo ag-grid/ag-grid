@@ -80,6 +80,20 @@
         }
     }
 
+    // TODO(AG-6000): Remove IFilterManagerAdapter styling.
+    .ag-filter-v1 {
+        border: 1px green solid;
+
+        legend { background-color: green; color: white }
+    }
+
+    .ag-filter-v2 {
+        border: 1px blue solid;
+
+        legend { background-color: blue; color: white }
+    }
+    // TODO(AG-6000): Remove IFilterManagerAdapter styling.
+
     @include ag-keyboard-focus((ag-tab), 4px);
 
     .ag-tab-selected {

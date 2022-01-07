@@ -131,7 +131,12 @@ export class AdvancedV1FilterController extends BeanStub implements AdvancedFilt
         return compDetails.newAgStackInstance()
             .then((newComp: IFilterComp) => {
                 const gui = document.createElement('div');
-                gui.className = 'ag-filter';
+                gui.className = 'ag-filter ag-filter-v1';
+
+                // TODO(AG-6000): Remove IFilterManagerAdapter styling.
+                const v1Highlight = document.createElement('legend');
+                v1Highlight.append('IFilterComp');
+                gui.appendChild(v1Highlight);
 
                 let guiFromFilter = newComp.getGui();
                 gui.appendChild(guiFromFilter);

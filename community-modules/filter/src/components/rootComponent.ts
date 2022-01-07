@@ -16,30 +16,33 @@ export abstract class RootComponent<F extends FilterExpression> extends Componen
         private readonly exprType: F['type'],
     ) {
         super(/* html */`
-            <div class="ag-filter-wrapper" ref="eRoot" role="presentation">
-                <div class="ag-root-filter-body-wrapper"  ref="eChildren" role="presentation">
+            <div class="ag-filter ag-filter-v2">
+                <legend>ExpressionComponent</legend>
+                <div class="ag-filter-wrapper" ref="eRoot" role="presentation">
+                    <div class="ag-root-filter-body-wrapper"  ref="eChildren" role="presentation">
+                    </div>
+                    <button
+                        type="button"
+                        ref="eApplyButton"
+                        class="ag-standard-button ag-filter-apply-panel-button"
+                    >
+                    Apply
+                    </button>
+                    <button
+                        type="button"
+                        ref="eClearButton"
+                        class="ag-standard-button ag-filter-apply-panel-button"
+                    >
+                    Clear
+                    </button>
+                    <button
+                        type="button"
+                        ref="eResetButton"
+                        class="ag-standard-button ag-filter-apply-panel-button"
+                    >
+                    Reset
+                    </button>
                 </div>
-                <button
-                    type="button"
-                    ref="eApplyButton"
-                    class="ag-standard-button ag-filter-apply-panel-button"
-                >
-                Apply
-                </button>
-                <button
-                    type="button"
-                    ref="eClearButton"
-                    class="ag-standard-button ag-filter-apply-panel-button"
-                >
-                Clear
-                </button>
-                <button
-                    type="button"
-                    ref="eResetButton"
-                    class="ag-standard-button ag-filter-apply-panel-button"
-                >
-                Reset
-                </button>
             </div>
         `);
     }
