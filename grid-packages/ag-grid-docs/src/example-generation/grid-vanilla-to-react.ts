@@ -187,6 +187,8 @@ export function vanillaToReact(bindings: any, componentFilenames: string[]): (im
 
 ${imports.join('\n')}
 
+${bindings.classes.join('\n')}
+
 class GridExample extends Component {
     constructor(props) {
         super(props);

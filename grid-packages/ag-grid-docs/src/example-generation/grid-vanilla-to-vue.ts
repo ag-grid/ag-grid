@@ -456,6 +456,8 @@ export function vanillaToVue(bindings: any, componentFileNames: string[]): (impo
         return `
 ${imports.join('\n')}
 
+${bindings.classes.join('\n')}
+
 const VueExample = {
     template: \`
         <div style="height: 100%">

@@ -228,6 +228,8 @@ export class AppComponent {
                 .join('\n\n')}
 }
 
+${bindings.classes.join('\n')}
+
 ${bindings.utils.join('\n')}
 `;
     };

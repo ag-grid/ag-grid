@@ -3,6 +3,7 @@ import * as ts from 'typescript';
 import { Events } from '../../../../community-modules/core/src/ts/eventKeys';
 import { PropertyKeys } from '../../../../community-modules/core/src/ts/propertyKeys';
 import {
+    extractClassDeclarations,
     extractEventHandlers, extractImportStatements, extractUnboundInstanceMethods, findAllAccessedProperties, findAllVariables, parseFile, readAsJsFile, recognizedDomEvents,
     removeInScopeJsDoc,
     tsCollect,
@@ -511,6 +512,7 @@ function internalParser(inputFile, html, exampleSettings, exampleType, providedE
 
     tsBindings.template = domTree.html().replace(/<br>/g, '<br />');
     tsBindings.imports = extractImportStatements(tsTree);
+    tsBindings.classes = extractClassDeclarations(tsTree);
 
     tsBindings.gridSettings = {
         width: '100%',

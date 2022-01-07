@@ -302,6 +302,8 @@ ${imports.join('\n')}
 
 ${bindings.utils.map(convertFunctionToConstProperty).join('\n\n')}
 
+${bindings.classes.join('\n')}
+
 const GridExample = () => {
     const gridRef = useRef();
     ${stateProperties.join('\n    ')}

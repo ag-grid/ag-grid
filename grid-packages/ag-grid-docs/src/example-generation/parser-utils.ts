@@ -315,6 +315,17 @@ export function extractImportStatements(srcFile: ts.SourceFile): BindingImport[]
     return allImports;
 }
 
+export function extractClassDeclarations(srcFile: ts.SourceFile): BindingImport[] {
+    let allClasses = [];
+    srcFile.statements.forEach(node => {
+        if (ts.isClassDeclaration(node)) {
+            allClasses = [node.getText()]
+        }
+    })
+    return allClasses;
+}
+
+
 export function tsNodeIsTopLevelFunction(node: any): boolean {
     if (ts.isFunctionLike(node)) {
         const isTopLevel = ts.isSourceFile(node.parent);
