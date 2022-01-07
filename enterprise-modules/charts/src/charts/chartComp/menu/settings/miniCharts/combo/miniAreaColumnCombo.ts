@@ -76,7 +76,7 @@ export class MiniAreaColumnCombo extends MiniChartWithAxes {
         this.areas = pathData.map((points) => {
             const area = new Path();
             area.strokeWidth = 1;
-            area.fillOpacity = 0.7;
+            area.fillOpacity = 0.8;
 
             const path = area.path;
             points.forEach((point, i) => path[i > 0 ? 'lineTo' : 'moveTo'](point.x, point.y));
@@ -91,14 +91,14 @@ export class MiniAreaColumnCombo extends MiniChartWithAxes {
     }
 
     updateColors(fills: string[], strokes: string[]) {
-        this.columns.forEach((bar: Rect, i: number) => {
-            bar.fill = fills[i];
-            bar.stroke = strokes[i];
-        });
-
         this.areas.forEach((area, i) => {
             area.fill = fills[i];
             area.stroke = strokes[i];
-        })
+        });
+
+        this.columns.forEach((bar: Rect, i: number) => {
+            bar.fill = fills[i+1];
+            bar.stroke = strokes[i+1];
+        });
     }
 }
