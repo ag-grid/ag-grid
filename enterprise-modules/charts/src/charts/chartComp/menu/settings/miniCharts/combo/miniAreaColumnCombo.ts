@@ -10,13 +10,10 @@ export interface Coordinate {
 export class MiniAreaColumnCombo extends MiniChartWithAxes {
     static chartType: ChartType = 'areaColumnCombo';
 
-    private stackedColumns: Rect[][];
+    private columns: Rect[];
     private areas: Path[];
 
-    private columnData = [
-        [12, 16],
-        [6, 9],
-    ];
+    private columnData = [3, 4.5];
 
     private areaData = [
         [5, 4, 6, 5, 4],
@@ -27,14 +24,14 @@ export class MiniAreaColumnCombo extends MiniChartWithAxes {
 
         const { root, columnData, areaData, size, padding } = this;
 
-        this.stackedColumns = createColumnRects({
-            stacked: true,
+        this.columns = createColumnRects({
+            stacked: false,
             root,
             data: columnData,
             size,
             padding,
             xScaleDomain: [0, 1],
-            yScaleDomain: [0, 16],
+            yScaleDomain: [0, 6],
             xScalePadding: 0.5,
         } as CreateColumnRectsParams);
 
@@ -88,18 +85,17 @@ export class MiniAreaColumnCombo extends MiniChartWithAxes {
         });
 
         root.append(this.areas);
-        root.append(([] as Rect[]).concat.apply([], this.stackedColumns));
+        root.append(([] as Rect[]).concat.apply([], this.columns));
 
         this.updateColors(fills, strokes);
     }
 
     updateColors(fills: string[], strokes: string[]) {
-        this.stackedColumns.forEach((series, i) =>
-            series.forEach(bar => {
-                bar.fill = fills[i];
-                bar.stroke = strokes[i];
-            })
-        );
+        this.columns.forEach((bar: Rect, i: number) => {
+            bar.fill = fills[i];
+            bar.stroke = strokes[i];
+        });
+
         this.areas.forEach((area, i) => {
             area.fill = fills[i];
             area.stroke = strokes[i];
