@@ -15,7 +15,6 @@
 </head>
 
 <body>
-<?php include_once("./includes/analytics.php"); ?>
 <header id="nav" class="compact">
     <?php
             $version = 'latest';
@@ -112,30 +111,23 @@
                             <h3>Guilherme Lopes</h3>
                             <h4>Lead Developer, UI</h4>
                         </div>
-                        <div class="col-md-4">
-                            <div>
-                                <img src='images/team/vitaly.jpg' alt="Vitaly Kravchenko, Lead Developer"/>
-                            </div>
-                            <h3>Vitaly Kravchenko</h3>
-                            <h4>Lead Developer, Data Visualisation</h4>
-                        </div>
-                        <div class="col-md-4">
+                       <div class="col-md-4">
                             <div>
                                 <img src='images/team/stephen.jpeg' alt="Stephen Cooper, Developer"/>
                             </div>
                             <h3>Stephen Cooper</h3>
                             <h4>Developer, Grid Core</h4>
                         </div>
-                    </div>
-                    <div class="row">
-                         <div class="col-md-4">
+                        <div class="col-md-4">
                             <div>
                                 <img src='images/team/mana.jpeg' alt="Mana Peirov, Developer"/>
                             </div>
                             <h3>Mana Peirov</h3>
                             <h4>Developer, Data Visualisation</h4>
                         </div>
-                        <div class="col-md-4">
+                    </div>
+                    <div class="row">
+                         <div class="col-md-4">
                             <div>
                                 <img src='images/team/alberto.jpg' alt="Alberto Gutierrez, Head of Customer Services"/>
                             </div>
@@ -143,15 +135,6 @@
                             <h4>Head of Customer Services</h4>
                         </div>
                         <div class="col-md-4">
-                            <div>
-                                <img src='images/team/ahmed.jpeg' alt=" Ahmed Gadir, Developer"/>
-                            </div>
-                            <h3>Ahmed Gadir</h3>
-                            <h4>Developer</h4>
-                        </div>
-                    </div>
-                    <div class="row">
-                         <div class="col-md-4">
                             <div>
                                 <img src='images/team/shuheb.jpg' alt=" Shuheb Ahmed, Developer"/>
                             </div>
@@ -165,20 +148,20 @@
                             <h3>Bamdad Fard</h3>
                             <h4>Developer</h4>
                         </div>
-                        <div class="col-md-4">
-                            <div>
-                                <img src='images/team/marats.jpeg' alt="Marats Stelihs, Developer"/>
-                            </div>
-                            <h3>Marats Stelihs</h3>
-                            <h4>Developer</h4>
-                        </div>
                     </div>
                     <div class="row">
-                        <div class="col-md-4">
+                          <div class="col-md-4">
                             <div>
                                 <img src='images/team/louis.jpg' alt=" Louis Moore, Developer"/>
                             </div>
                             <h3>Louis Moore</h3>
+                            <h4>Developer</h4>
+                        </div>
+                         <div class="col-md-4">
+                            <div>
+                                <img src='images/team/marats.jpeg' alt="Marats Stelihs, Developer"/>
+                            </div>
+                            <h3>Marats Stelihs</h3>
                             <h4>Developer</h4>
                         </div>
                         <div class="col-md-4">
@@ -186,18 +169,18 @@
                                 <img src='images/team/kiril.png' alt="Kiril Matev, Developer"/>
                             </div>
                             <h3>Kiril Matev</h3>
-                            <h4>Developer</h4>
+                            <h4>Technical Product Manager</h4>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-4">
                             <div>
                                 <img src='images/team/viqas.jpg' alt="Viqas Hussain, Lead Developer"/>
                             </div>
                             <h3>Viqas Hussain</h3>
                             <h4>Lead Developer, E-commerce</h4>
-                       </div>
-                    </div>
-                    <div class="row">
-                       <div class="col-md-4">
+                        </div>
+                        <div class="col-md-4">
                             <div>
                                 <img src='images/team/alan.jpg' alt="Alan Richardson, Digital Marketing"/>
                             </div>
@@ -227,27 +210,13 @@
                         </div>
                         <div class="col-md-4">
                             <div>
-                                <img src='images/team/alex.jpg' alt="Alex Price, COO"/>
-                            </div>
-                            <h3>Alex Price</h3>
-                            <h4>Head of Customer Success</h4>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div>
-                                <img src='images/team/dimple.jpg' alt="Dimple Unalkat, Customer Experience Team"/>
-                            </div>
-                            <h3>Dimple Unalkat</h3>
-                            <h4>Customer Experience Manager</h4>
-                        </div>
-                        <div class="col-md-4">
-                            <div>
                                 <img src='images/team/nathan.jpeg' alt="Nathan Gauge-Klein, General Counsel"/>
                             </div>
                             <h3>Nathan Gauge-Klein</h3>
                             <h4>General Counsel</h4>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-4">
                             <div>
                                 <img src='images/team/victoria.jpeg'
@@ -255,6 +224,21 @@
                             </div>
                             <h3>Victoria Tennant</h3>
                             <h4>Business Development Manager</h4>
+                        </div>
+                        <div class="col-md-4">
+                            <div>
+                                <img src='images/team/alison.jpeg'
+                                     alt="Alison Bunworth, Business Development Manager"/>
+                            </div>
+                            <h3>Alison Bunworth</h3>
+                            <h4>Business Development Manager</h4>
+                        </div>
+                        <div class="col-md-4">
+                            <div>
+                                <img src='images/team/dimple.jpg' alt="Dimple Unalkat, Customer Experience Team"/>
+                            </div>
+                            <h3>Dimple Unalkat</h3>
+                            <h4>Customer Experience Manager</h4>
                         </div>
                     </div>
                     <div class="row">
@@ -274,30 +258,6 @@
                         </div>
                         <div class="col-md-4">
                             <div>
-                                <img src='images/team/alison.jpeg'
-                                     alt="Alison Bunworth, Business Development Manager"/>
-                            </div>
-                            <h3>Alison Bunworth</h3>
-                            <h4>Business Development Manager</h4>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div>
-                                <img src='images/team/kathryn.png' alt="Kathryn Knapman, Customer Experience Manager"/>
-                            </div>
-                            <h3>Kathryn Knapman</h3>
-                            <h4>Customer Experience Manager</h4>
-                        </div>
-                        <div class="col-md-4">
-                            <div>
-                                <img src='images/team/hannah.png' alt="Hannah Conway-Laws, Customer Experience Manager"/>
-                            </div>
-                            <h3>Hannah Conway-Laws</h3>
-                            <h4>Customer Experience Manager</h4>
-                        </div>
-                        <div class="col-md-4">
-                            <div>
                                 <img src='images/team/ryan.png' alt="Ryan Short, Customer Experience Manager"/>
                             </div>
                             <h3>Ryan Short</h3>
@@ -307,13 +267,26 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div>
+                                <img src='images/team/hannah.png' alt="Hannah Conway-Laws, Customer Experience Manager"/>
+                            </div>
+                            <h3>Hannah Conway-Laws</h3>
+                            <h4>Customer Experience Manager</h4>
+                        </div>
+                        <div class="col-md-4">
+                            <div>
                                 <img src='images/team/seweety.jpeg' alt="Seweety Kumar, Customer Experience Manager"/>
                             </div>
                             <h3>Seweety Kumar</h3>
                             <h4>Customer Experience Manager</h4>
                         </div>
+                        <div class="col-md-4">
+                            <div>
+                                <img src='images/team/kathryn.png' alt="Kathryn Knapman, Customer Experience Manager"/>
+                            </div>
+                            <h3>Kathryn Knapman</h3>
+                            <h4>Customer Experience Manager</h4>
+                        </div>
                     </div>
-
                 </article>
             </section>
 
@@ -345,6 +318,7 @@
     </div>
     <?php include_once("./includes/footer.php"); ?>
 </div>
+<?php include_once("./includes/analytics.php"); ?>
 </body>
 
 </html>
