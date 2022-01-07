@@ -158,7 +158,7 @@ export function tsNodeIsPropertyWithName(node: ts.Node, name: string) {
     // we skip { property: variable } - SPL why??
     // and get only inline property assignments
     if (node.getText() === name) {
-        return !ts.isIdentifier((node.parent as any).initializer);
+        return true;
     }
 }
 
