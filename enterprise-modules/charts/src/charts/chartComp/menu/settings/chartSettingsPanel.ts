@@ -62,20 +62,16 @@ export class ChartSettingsPanel extends Component {
     }
 
     private scrollSelectedIntoView(): void {
-        const eGui = this.getGui();
-        // the panel is not immediately visible due to the slide animation, so
-        // we add a resizeObserver to wait until the panel "has size" and is able to scroll
-        // once the process is done, the observer removes itself. 
-        const observer = this.resizeObserverService.observeResize(eGui, () => {
-            if (eGui.clientWidth < 10) { return; }
+        // the panel is not immediately visible due to the slide animation, so we add a
+        // setTimeout to wait until the panel animation is over and is able to scroll
+        setTimeout(() => {
             const currentPallet = this.miniCharts.find(pallet => !pallet.getGui().classList.contains('ag-hidden'));
             const currentChart = currentPallet!.getGui().querySelector('.ag-selected');
     
             if (currentChart) {
                 currentChart.scrollIntoView({ block: 'nearest' });
             }
-            observer();
-        });
+        }, 250);
     }
 
     private resetPalettes(forceReset?: boolean): void {
