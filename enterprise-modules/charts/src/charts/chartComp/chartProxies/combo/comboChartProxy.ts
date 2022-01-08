@@ -1,11 +1,13 @@
 import { AgChart, CartesianChart, ChartAxisPosition } from "ag-charts-community";
-import { ChartType, SeriesChartType } from "@ag-grid-community/core";
+import { _, ChartType, SeriesChartType } from "@ag-grid-community/core";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "../cartesian/cartesianChartProxy";
 import { deepMerge } from "../../utils/object";
 import { getChartThemeOverridesObjectName } from "../../utils/chartThemeOverridesMapper";
 
 export class ComboChartProxy extends CartesianChartProxy {
+
+    private prevSeriesChartTypes: SeriesChartType[] = [];
 
     public constructor(params: ChartProxyParams) {
         super(params);
@@ -19,32 +21,45 @@ export class ComboChartProxy extends CartesianChartProxy {
     protected createChart(): CartesianChart {
         return AgChart.create({
             container: this.chartProxyParams.parentElement,
-            theme: this.chartTheme
+            theme: this.chartTheme,
         });
     }
 
     public update(params: UpdateChartParams): void {
+        const { seriesChartTypes, category, fields, data } = params;
+
+        this.clearChartAxes(seriesChartTypes);
+
         const options = {
             container: this.chartProxyParams.parentElement,
             theme: this.chartTheme,
-            axes: this.getAxes(params),
-            data: this.transformData(params.data, params.category.id),
-            series: this.getSeriesOptions(params)
+            axes: this.getAxes(seriesChartTypes),
+            data: this.transformData(data, category.id),
+            series: this.getSeriesOptions(fields, category.id, seriesChartTypes)
         }
 
         AgChart.update(this.chart as CartesianChart, options);
 
-        this.updateLabelRotation(params.category.id);
+        this.updateLabelRotation(category.id);
     }
 
-    private getSeriesOptions(params: UpdateChartParams): any {
-        return params.fields.map(field => {
-            const seriesChartType = params.seriesChartTypes.find(s => s.colId === field.colId);
+    private clearChartAxes(seriesChartTypes: SeriesChartType[]): void {
+        // we need to clear the axes when the seriesChartTypes change, but not for data updates
+        if(_.areEqual(this.prevSeriesChartTypes, seriesChartTypes)) {
+            // chart factory will properly destroy axes
+            this.chart.axes = [];
+        }
+        this.prevSeriesChartTypes = seriesChartTypes;
+    }
+
+    private getSeriesOptions(fields: FieldDefinition[], categoryId: string, seriesChartTypes: SeriesChartType[]): any {
+        return fields.map(field => {
+            const seriesChartType = seriesChartTypes.find(s => s.colId === field.colId);
             if (seriesChartType) {
                 const chartType: ChartType = seriesChartType.chartType;
                 return {
                     type: getChartThemeOverridesObjectName(chartType),
-                    xKey: params.category.id,
+                    xKey: categoryId,
                     yKey: field.colId,
                     yName: field.displayName,
                     grouped: ['groupedColumn' || 'groupedBar' || 'groupedArea'].includes(chartType),
@@ -54,13 +69,13 @@ export class ComboChartProxy extends CartesianChartProxy {
         });
     }
 
-    private getAxes(params: UpdateChartParams) {
+    private getAxes(seriesChartTypes: SeriesChartType[]) {
         const primaryYKeys: string[] = []
         const secondaryYKeys: string[] = [];
-        params.seriesChartTypes.forEach(seriesChartType => {
+        seriesChartTypes.forEach(seriesChartType => {
             const { secondaryAxis, colId } = seriesChartType;
             secondaryAxis ? secondaryYKeys.push(colId) : primaryYKeys.push(colId);
-        })
+        });
 
         const axisOptions = this.getAxesOptions();
         const axes = [
