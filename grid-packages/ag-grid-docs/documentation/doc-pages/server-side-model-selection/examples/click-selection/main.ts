@@ -19,9 +19,9 @@ const gridOptions: GridOptions = {
     minWidth: 180,
   },
 
-  getRowNodeId: function(data: any) { 
+  getRowNodeId: function (data: any) {
     // use country for group level ids, or the id we assigned for leaf level
-    return data.id || data.country; 
+    return data.id || data.country;
   },
 
   // use the server-side row model
@@ -59,7 +59,7 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   new agGrid.Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
@@ -67,9 +67,9 @@ document.addEventListener('DOMContentLoaded', function () {
     .then(function (data) {
 
       // assign a unique ID to each data item
-      data.forEach( function(item: any, index: number) {
+      data.forEach(function (item: any, index: number) {
         item.id = index;
-      } );
+      });
 
       // setup the fake server with entire dataset
       var fakeServer = new FakeServer(data)

@@ -99,6 +99,6 @@ function printResult(res: RowNodeTransaction) {
 // wait for the document to be loaded, otherwise
 // AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function () {
-  const eGridDiv = document.querySelector('#myGrid')
+  const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
   new agGrid.Grid(eGridDiv, gridOptions)
 })

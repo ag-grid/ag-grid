@@ -1,4 +1,4 @@
-import {ColDef, GridOptions, ICellRendererParams} from '@ag-grid-community/core'
+import { ColDef, GridOptions, ICellRendererParams } from '@ag-grid-community/core'
 
 class SimpleCellRenderer {
     eGui: any;
@@ -33,7 +33,7 @@ const columnDefs: ColDef[] = [
     },
 
     // same as before, but we show all group values, again with no cell renderer
-    {headerName: 'All Groups - No Renderer', showRowGroup: true, minWidth: 240},
+    { headerName: 'All Groups - No Renderer', showRowGroup: true, minWidth: 240 },
 
     // add in a cell renderer
     {
@@ -68,9 +68,9 @@ const columnDefs: ColDef[] = [
         },
     },
 
-    {headerName: 'Type', field: 'type', rowGroup: true},
-    {headerName: 'Country', field: 'country', rowGroup: true},
-    {headerName: 'City', field: 'city'},
+    { headerName: 'Type', field: 'type', rowGroup: true },
+    { headerName: 'Country', field: 'country', rowGroup: true },
+    { headerName: 'City', field: 'city' },
 ]
 
 const gridOptions: GridOptions = {
@@ -92,6 +92,6 @@ const gridOptions: GridOptions = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    const gridDiv = document.querySelector('#myGrid');
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     new agGrid.Grid(gridDiv, gridOptions)
 })

@@ -68,7 +68,7 @@ const gridOptions: GridOptions = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector('#myGrid')
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   new agGrid.Grid(gridDiv, gridOptions)
 
   // do http request to get our sample data - not using any framework to keep the example self contained.

@@ -1,4 +1,4 @@
-import {ColDef, GridOptions, ICellRendererParams} from '@ag-grid-community/core'
+import { ColDef, GridOptions, ICellRendererParams } from '@ag-grid-community/core'
 
 const columnDefs: ColDef[] = [
     // this row just shows the row index, doesn't use any data from the row
@@ -8,15 +8,15 @@ const columnDefs: ColDef[] = [
             return params.node!.id! + 1
         }
     },
-    {field: 'athlete', filterParams: {buttons: ['clear', 'reset', 'apply']}},
+    { field: 'athlete', filterParams: { buttons: ['clear', 'reset', 'apply'] } },
     {
         field: 'age',
-        filterParams: {buttons: ['apply', 'cancel']},
+        filterParams: { buttons: ['apply', 'cancel'] },
         enablePivot: true,
     },
-    {field: 'country', enableRowGroup: true},
-    {field: 'year', filterComp: 'agNumberColumnFilter'},
-    {field: 'date'},
+    { field: 'country', enableRowGroup: true },
+    { field: 'year', filterComp: 'agNumberColumnFilter' },
+    { field: 'date' },
     {
         field: 'sport',
         filterComp: 'agMultiColumnFilter',
@@ -33,10 +33,10 @@ const columnDefs: ColDef[] = [
             ],
         },
     },
-    {field: 'gold', enableValue: true},
-    {field: 'silver', enableValue: true},
-    {field: 'bronze', enableValue: true},
-    {field: 'total', enableValue: true},
+    { field: 'gold', enableValue: true },
+    { field: 'silver', enableValue: true },
+    { field: 'bronze', enableValue: true },
+    { field: 'total', enableValue: true },
 ]
 
 const gridOptions: GridOptions = {
@@ -52,8 +52,8 @@ const gridOptions: GridOptions = {
     sideBar: true,
     statusBar: {
         statusPanels: [
-            {statusPanel: 'agTotalAndFilteredRowCountComponent', align: 'left'},
-            {statusPanel: 'agAggregationComponent'},
+            { statusPanel: 'agTotalAndFilteredRowCountComponent', align: 'left' },
+            { statusPanel: 'agAggregationComponent' },
         ],
     },
     rowGroupPanelShow: 'always',
@@ -75,7 +75,7 @@ const gridOptions: GridOptions = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var gridDiv = document.querySelector('#myGrid')
+    var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
     new agGrid.Grid(gridDiv, gridOptions)
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')

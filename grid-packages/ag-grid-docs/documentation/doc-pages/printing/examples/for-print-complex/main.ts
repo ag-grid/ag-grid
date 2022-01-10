@@ -41,13 +41,13 @@ function onBtPrint() {
 }
 
 function setPrinterFriendly(api: GridApi) {
-  const eGridDiv = document.querySelector('#myGrid') as any;
+  const eGridDiv = document.querySelector<HTMLElement>('#myGrid')! as any;
   eGridDiv.style.height = ''
   api.setDomLayout('print')
 }
 
 function setNormal(api: GridApi) {
-  const eGridDiv = document.querySelector('#myGrid') as any;
+  const eGridDiv = document.querySelector<HTMLElement>('#myGrid')! as any;
   eGridDiv.style.width = '700px'
   eGridDiv.style.height = '200px'
 
@@ -56,6 +56,6 @@ function setNormal(api: GridApi) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector('#myGrid')
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   new agGrid.Grid(gridDiv, gridOptions)
 })

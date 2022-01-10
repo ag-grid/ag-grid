@@ -94,7 +94,7 @@ function setAutoHeight() {
   gridOptions.api!.setDomLayout('autoHeight');
   // auto height will get the grid to fill the height of the contents,
   // so the grid div should have no height set, the height is dynamic.
-  (document.querySelector('#myGrid') as any).style.height = ''
+  (document.querySelector<HTMLElement>('#myGrid')! as any).style.height = ''
 }
 
 function setFixedHeight() {
@@ -102,11 +102,11 @@ function setFixedHeight() {
   gridOptions.api!.setDomLayout('normal');
   // when auto height is off, the grid ahs a fixed height, and then the grid
   // will provide scrollbars if the data does not fit into it.
-  (document.querySelector('#myGrid') as any)!.style.height = '400px'
+  (document.querySelector<HTMLElement>('#myGrid')! as any)!.style.height = '400px'
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   new agGrid.Grid(gridDiv, gridOptions)
 })

@@ -384,6 +384,6 @@ function updateImmutableObject(original: any, newValues: any) {
 
 // after page is loaded, create the grid.
 document.addEventListener('DOMContentLoaded', function () {
-  var eGridDiv = document.querySelector('#myGrid')
+  var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
   new agGrid.Grid(eGridDiv, gridOptions)
 })

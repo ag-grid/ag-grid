@@ -28,12 +28,12 @@ function fillExact() {
 }
 
 function setWidthAndHeight(size: string) {
-    var eGridDiv = document.querySelector('#myGrid') as any;
+    var eGridDiv = document.querySelector<HTMLElement>('#myGrid')! as any;
     eGridDiv.style.setProperty('width', size);
     eGridDiv.style.setProperty('height', size);
 }
 
-var gridDiv = document.querySelector('#myGrid');
+var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
 new agGrid.Grid(gridDiv, gridOptions);
 
 fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')

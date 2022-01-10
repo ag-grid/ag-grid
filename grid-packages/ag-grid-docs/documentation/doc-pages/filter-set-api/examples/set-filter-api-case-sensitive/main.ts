@@ -52,9 +52,8 @@ function colourCellRenderer(params: ICellRendererParams) {
     return params.value
   }
 
-  return `<div style="background-color: ${params.value.toLowerCase()}; ${FIXED_STYLES}"></div>${
-    params.value
-  }`
+  return `<div style="background-color: ${params.value.toLowerCase()}; ${FIXED_STYLES}"></div>${params.value
+    }`
 }
 
 function setModel(type: string) {
@@ -108,6 +107,6 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   new agGrid.Grid(gridDiv, gridOptions)
 })

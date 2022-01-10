@@ -13,7 +13,7 @@ class CustomAgeFilter implements IFilterComp {
   init(params: IFilterParams) {
     this.eGui = document.createElement('div')
     this.eGui.innerHTML =
-        `<div>  
+      `<div>  
           <label>    
               <input type="radio" name="ageFilterValue" ref="btAll" checked/> All  
           </label>  
@@ -31,14 +31,14 @@ class CustomAgeFilter implements IFilterComp {
     // var that = this;
 
     this.eGui
-        .querySelector('[ref="btAll"]')
-        .addEventListener('change', this.onSelection.bind(this, null))
+      .querySelector('[ref="btAll"]')
+      .addEventListener('change', this.onSelection.bind(this, null))
     this.eGui
-        .querySelector('[ref="bt20"]')
-        .addEventListener('change', this.onSelection.bind(this, 20))
+      .querySelector('[ref="bt20"]')
+      .addEventListener('change', this.onSelection.bind(this, 20))
     this.eGui
-        .querySelector('[ref="bt22"]')
-        .addEventListener('change', this.onSelection.bind(this, 22))
+      .querySelector('[ref="bt22"]')
+      .addEventListener('change', this.onSelection.bind(this, 22))
   }
 
   onSelection(value: number | null) {
@@ -170,7 +170,7 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  const gridDiv = document.querySelector('#myGrid');
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
   new agGrid.Grid(gridDiv, gridOptions)
 
   // do http request to get our sample data - not using any framework to keep the example self contained.

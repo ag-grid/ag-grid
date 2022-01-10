@@ -120,7 +120,7 @@ function addGridDropZone(params: GridReadyEvent) {
 }
 
 function loadGrid(options: GridOptions, side: string, data: any[]) {
-    var grid = document.querySelector('#e' + side + 'Grid');
+    var grid = document.querySelector<HTMLElement>('#e' + side + 'Grid')!;
 
     if (options && options.api) {
         options.api.destroy();

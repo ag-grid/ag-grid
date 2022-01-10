@@ -1,4 +1,4 @@
-import {ColDef, GridOptions, ICellRendererParams, RowSpanParams} from '@ag-grid-community/core'
+import { ColDef, GridOptions, ICellRendererParams, RowSpanParams } from '@ag-grid-community/core'
 
 function rowSpan(params: RowSpanParams) {
     if (params.data.show) {
@@ -34,7 +34,7 @@ class ShowCellRenderer {
 }
 
 const columnDefs: ColDef[] = [
-    {field: 'localTime'},
+    { field: 'localTime' },
     {
         field: 'show',
         cellRendererComp: ShowCellRenderer,
@@ -44,11 +44,11 @@ const columnDefs: ColDef[] = [
         },
         width: 200,
     },
-    {field: 'a'},
-    {field: 'b'},
-    {field: 'c'},
-    {field: 'd'},
-    {field: 'e'},
+    { field: 'a' },
+    { field: 'b' },
+    { field: 'c' },
+    { field: 'd' },
+    { field: 'e' },
 ]
 
 const gridOptions: GridOptions = {
@@ -63,6 +63,6 @@ const gridOptions: GridOptions = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    const gridDiv = document.querySelector('#myGrid');
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
     new agGrid.Grid(gridDiv, gridOptions)
 })

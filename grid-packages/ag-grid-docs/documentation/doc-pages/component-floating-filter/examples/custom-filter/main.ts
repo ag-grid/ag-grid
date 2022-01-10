@@ -56,8 +56,8 @@ class NumberFilter implements IFilterComp {
             return false;
         }
 
-        const {api, colDef, column, columnApi, context} = this.filterParams;
-        const {node} = params;
+        const { api, colDef, column, columnApi, context } = this.filterParams;
+        const { node } = params;
         const value = this.filterParams.valueGetter({
             api,
             colDef,
@@ -103,7 +103,7 @@ class NumberFilter implements IFilterComp {
 }
 
 const columnDefs: ColDef[] = [
-    {field: 'athlete', width: 150, filter: false},
+    { field: 'athlete', width: 150, filter: false },
     {
         field: 'gold',
         width: 100,
@@ -146,7 +146,7 @@ const gridOptions: GridOptions = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-    const gridDiv = document.querySelector('#myGrid')
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
     new agGrid.Grid(gridDiv, gridOptions)
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')

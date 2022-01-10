@@ -104,8 +104,8 @@ function cellValueChanged(params: NewValueParams) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDivLeft = document.querySelector('#myGridLeft')
+  var gridDivLeft = document.querySelector<HTMLElement>('#myGridLeft')!
   new agGrid.Grid(gridDivLeft, gridOptionsLeft)
-  var gridDivRight = document.querySelector('#myGridRight')
+  var gridDivRight = document.querySelector<HTMLElement>('#myGridRight')!
   new agGrid.Grid(gridDivRight, gridOptionsRight)
 })

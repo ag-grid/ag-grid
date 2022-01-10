@@ -76,10 +76,10 @@ function tabToNextHeader(params: TabToNextHeaderParams) {
 
 function moveHeaderFocusUpDown(previousHeader: HeaderPosition, headerRowCount: number, isUp: boolean) {
   const previousColumn = previousHeader.column,
-      lastRowIndex = previousHeader.headerRowIndex;
+    lastRowIndex = previousHeader.headerRowIndex;
   let nextRowIndex = isUp ? lastRowIndex - 1 : lastRowIndex + 1,
-      nextColumn,
-      parentColumn;
+    nextColumn,
+    parentColumn;
 
   if (nextRowIndex === -1) {
     return previousHeader
@@ -106,7 +106,7 @@ function moveHeaderFocusUpDown(previousHeader: HeaderPosition, headerRowCount: n
 
 function tabToNextCell(params: TabToNextCellParams) {
   const previousCell = params.previousCellPosition,
-      lastRowIndex = previousCell.rowIndex;
+    lastRowIndex = previousCell.rowIndex;
   let nextRowIndex = params.backwards ? lastRowIndex - 1 : lastRowIndex + 1;
   const renderedRowCount = gridOptions.api!.getModel().getRowCount();
   let result;
@@ -129,9 +129,9 @@ function tabToNextCell(params: TabToNextCellParams) {
 
 function navigateToNextCell(params: NavigateToNextCellParams) {
   const previousCell = params.previousCellPosition,
-      suggestedNextCell = params.nextCellPosition;
+    suggestedNextCell = params.nextCellPosition;
   let nextRowIndex,
-      renderedRowCount;
+    renderedRowCount;
 
   switch (params.key) {
     case KEY_DOWN:
@@ -169,7 +169,7 @@ function navigateToNextCell(params: NavigateToNextCellParams) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  const gridDiv = document.querySelector('#myGrid');
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
   new agGrid.Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')

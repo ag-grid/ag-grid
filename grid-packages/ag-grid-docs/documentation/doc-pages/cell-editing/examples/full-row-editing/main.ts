@@ -24,8 +24,8 @@ class NumericCellEditor implements ICellEditorComp {
     this.eInput.style.width = '100%'
     this.eInput.style.height = '100%'
     this.eInput.value = (params.charPress && isCharNumeric(params.charPress))
-        ? params.charPress
-        : params.value
+      ? params.charPress
+      : params.value
 
     var that = this
     this.eInput.addEventListener('keypress', function (event: any) {
@@ -179,6 +179,6 @@ function onBtStartEditing() {
 // wait for the document to be loaded, otherwise
 // AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function () {
-  var eGridDiv = document.querySelector('#myGrid')
+  var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
   new agGrid.Grid(eGridDiv, gridOptions)
 })

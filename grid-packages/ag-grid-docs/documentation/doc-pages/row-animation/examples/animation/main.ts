@@ -131,7 +131,7 @@ function getActions() {
 // from actual demo page (/animation/)
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv =
-    document.querySelector('#myGrid') ||
+    document.querySelector<HTMLElement>('#myGrid')! ||
     document.querySelector('#animationGrid')
 
   new agGrid.Grid(gridDiv, gridOptions)

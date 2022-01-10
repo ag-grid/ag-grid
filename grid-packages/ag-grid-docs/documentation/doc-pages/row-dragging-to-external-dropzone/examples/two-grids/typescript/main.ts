@@ -152,7 +152,7 @@ function addBinZone(params: GridReadyEvent) {
 }
 
 function addGridDropZone(params: GridReadyEvent, side: string) {
-    var grid = document.querySelector('#e' + side + 'Grid') as HTMLElement,
+    var grid = document.querySelector<HTMLElement>('#e' + side + 'Grid')!,
         dropZone: RowDropZoneParams = {
             getContainer: function () { return grid; },
             onDragStop: function (params) {
@@ -164,7 +164,7 @@ function addGridDropZone(params: GridReadyEvent, side: string) {
 }
 
 function loadGrid(side: string) {
-    var grid = document.querySelector('#e' + side + 'Grid');
+    var grid = document.querySelector<HTMLElement>('#e' + side + 'Grid')!;
     new agGrid.Grid(grid, side === 'Left' ? leftGridOptions : rightGridOptions);
 }
 

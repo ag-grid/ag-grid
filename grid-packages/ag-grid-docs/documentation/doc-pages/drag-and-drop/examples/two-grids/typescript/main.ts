@@ -144,10 +144,10 @@ function gridDrop(event: any, grid: string) {
 }
 
 
-var leftGridDiv = document.querySelector('#eLeftGrid');
+var leftGridDiv = document.querySelector<HTMLElement>('#eLeftGrid')!;
 new agGrid.Grid(leftGridDiv, leftGridOptions);
 
-var rightGridDiv = document.querySelector('#eRightGrid');
+var rightGridDiv = document.querySelector<HTMLElement>('#eRightGrid')!;
 new agGrid.Grid(rightGridDiv, rightGridOptions);
 
 if (typeof window !== 'undefined') {

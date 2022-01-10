@@ -52,7 +52,7 @@ const gridOptions: GridOptions = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   new agGrid.Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/small-tree-data.json')
@@ -110,9 +110,9 @@ function createServerSideDatasource(fakeServer: any) {
       var doingInfinite = request.startRow != null && request.endRow != null
       var result = doingInfinite
         ? {
-            rowData: allRows.slice(request.startRow, request.endRow),
-            rowCount: allRows.length,
-          }
+          rowData: allRows.slice(request.startRow, request.endRow),
+          rowCount: allRows.length,
+        }
         : { rowData: allRows }
       console.log('getRows: result = ', result)
       setTimeout(function () {

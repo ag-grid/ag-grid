@@ -88,7 +88,7 @@ function createGrid(valueCacheOn: boolean) {
   gridOptions.valueCache = valueCacheOn
 
   // then similar to all the other examples, create the grid
-  var gridDiv = document.querySelector('#myGrid')
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   new agGrid.Grid(gridDiv, gridOptions)
 }
 

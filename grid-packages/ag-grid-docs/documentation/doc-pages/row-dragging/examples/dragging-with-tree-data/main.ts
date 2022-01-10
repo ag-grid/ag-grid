@@ -130,7 +130,7 @@ function arePathsEqual(path1: string[], path2: string[]) {
 // AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function () {
   // lookup the container we want the Grid to use
-  var eGridDiv = document.querySelector('#myGrid')
+  var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
 
   // create the grid passing in the div to use together with the columns & data we want to use
   new agGrid.Grid(eGridDiv, gridOptions)

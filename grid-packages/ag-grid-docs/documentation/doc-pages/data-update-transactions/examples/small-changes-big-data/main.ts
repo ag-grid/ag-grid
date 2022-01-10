@@ -75,14 +75,14 @@ function getMyFilter(): IFilterType {
       const { api, colDef, column, columnApi, context } = this.filterParams;
       const { node } = params;
       const value = this.filterParams.valueGetter({
-          api,
-          colDef,
-          column,
-          columnApi,
-          context,
-          data: node.data,
-          getValue: (field) => node.data[field],
-          node,
+        api,
+        colDef,
+        column,
+        columnApi,
+        context,
+        data: node.data,
+        getValue: (field) => node.data[field],
+        node,
       });
 
       return value > (this.filterValue || 0)
@@ -284,6 +284,6 @@ function createDataItem(id: any, name: any, distro: any, laptop: any, city: any,
 // wait for the document to be loaded, otherwise
 // AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function () {
-  var eGridDiv = document.querySelector('#myGrid')
+  var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
   new agGrid.Grid(eGridDiv, gridOptions)
 })

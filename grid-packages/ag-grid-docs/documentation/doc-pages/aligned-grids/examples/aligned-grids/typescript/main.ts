@@ -80,10 +80,10 @@ function setData(rowData: any[]) {
     gridOptionsTop.api!.sizeColumnsToFit();
 }
 
-const gridDivTop = document.querySelector('#myGridTop');
+const gridDivTop = document.querySelector<HTMLElement>('#myGridTop')!;
 new agGrid.Grid(gridDivTop, gridOptionsTop);
 
-const gridDivBottom = document.querySelector('#myGridBottom');
+const gridDivBottom = document.querySelector<HTMLElement>('#myGridBottom')!;
 new agGrid.Grid(gridDivBottom, gridOptionsBottom);
 
 fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')

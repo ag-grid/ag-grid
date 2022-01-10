@@ -833,7 +833,7 @@ function languageCellRenderer(params: ICellRendererParams) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
-    const gridDiv = document.querySelector('#myGrid');
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
 
     new agGrid.Grid(gridDiv, gridOptions)
     createData()

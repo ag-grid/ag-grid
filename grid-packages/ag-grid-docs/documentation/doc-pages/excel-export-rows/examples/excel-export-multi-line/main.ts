@@ -1,7 +1,7 @@
-import {ColDef, GridOptions, ICellRendererParams} from '@ag-grid-community/core'
+import { ColDef, GridOptions, ICellRendererParams } from '@ag-grid-community/core'
 
 const columnDefs: ColDef[] = [
-    {field: 'address'},
+    { field: 'address' },
     {
         headerName: 'Custom column',
         autoHeight: true,
@@ -69,6 +69,6 @@ function onBtExport() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-    const gridDiv = document.querySelector('#myGrid')
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
     new agGrid.Grid(gridDiv, gridOptions)
 })

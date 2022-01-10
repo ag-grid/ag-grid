@@ -21,10 +21,10 @@ const deltaIndicator = (params: ICellRendererParams) => {
   // visually indicate if this months value is higher or lower than last months value
   if (params.value > 15) {
     imageElement.src =
-        'https://www.ag-grid.com/example-assets/weather/fire-plus.png'
+      'https://www.ag-grid.com/example-assets/weather/fire-plus.png'
   } else {
     imageElement.src =
-        'https://www.ag-grid.com/example-assets/weather/fire-minus.png'
+      'https://www.ag-grid.com/example-assets/weather/fire-minus.png'
   }
   element.appendChild(imageElement)
   element.appendChild(document.createTextNode(params.value))
@@ -134,7 +134,7 @@ const frostierYear = (extraDaysFrost: number) => {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector('#myGrid')
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
   new agGrid.Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/weather-se-england.json')

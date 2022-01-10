@@ -1,4 +1,4 @@
-import {ColDef, GridOptions, ICellEditorComp, ICellEditorParams} from '@ag-grid-community/core'
+import { ColDef, GridOptions, ICellEditorComp, ICellEditorParams } from '@ag-grid-community/core'
 
 class DatePicker implements ICellEditorComp {
     eInput!: HTMLInputElement
@@ -47,16 +47,16 @@ class DatePicker implements ICellEditorComp {
 }
 
 const columnDefs: ColDef[] = [
-    {field: 'athlete'},
-    {field: 'date', editable: true, cellEditorComp: DatePicker },
-    {field: 'age', maxWidth: 110},
-    {field: 'country'},
-    {field: 'year', maxWidth: 120},
-    {field: 'sport'},
-    {field: 'gold'},
-    {field: 'silver'},
-    {field: 'bronze'},
-    {field: 'total'},
+    { field: 'athlete' },
+    { field: 'date', editable: true, cellEditorComp: DatePicker },
+    { field: 'age', maxWidth: 110 },
+    { field: 'country' },
+    { field: 'year', maxWidth: 120 },
+    { field: 'sport' },
+    { field: 'gold' },
+    { field: 'silver' },
+    { field: 'bronze' },
+    { field: 'total' },
 ]
 
 const gridOptions: GridOptions = {
@@ -69,7 +69,7 @@ const gridOptions: GridOptions = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-    const gridDiv = document.querySelector('#myGrid')
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
     new agGrid.Grid(gridDiv, gridOptions)
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')

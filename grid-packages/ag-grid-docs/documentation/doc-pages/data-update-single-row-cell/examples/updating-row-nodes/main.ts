@@ -59,6 +59,6 @@ function setDataOnFord() {
 // wait for the document to be loaded, otherwise
 // AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function () {
-  var eGridDiv = document.querySelector('#myGrid')
+  var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
   new agGrid.Grid(eGridDiv, gridOptions)
 })
