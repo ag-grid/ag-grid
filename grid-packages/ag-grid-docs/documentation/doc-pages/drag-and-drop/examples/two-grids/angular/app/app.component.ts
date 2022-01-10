@@ -1,8 +1,9 @@
-import {Component} from '@angular/core';
-import {ClientSideRowModelModule, GridOptions} from "@ag-grid-community/all-modules";
+import { Component } from '@angular/core';
 
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
+import "@ag-grid-community/core/dist/styles/ag-grid.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { GridOptions } from '@ag-grid-community/core';
 
 @Component({
     selector: 'my-app',
@@ -57,10 +58,10 @@ export class AppComponent {
     rowIdSequence = 100;
 
     columnDefs = [
-        {field: "id", dndSource: true},
-        {field: "color"},
-        {field: "value1"},
-        {field: "value2"}
+        { field: "id", dndSource: true },
+        { field: "color" },
+        { field: "value1" },
+        { field: "value2" }
     ];
 
     modules = [ClientSideRowModelModule];

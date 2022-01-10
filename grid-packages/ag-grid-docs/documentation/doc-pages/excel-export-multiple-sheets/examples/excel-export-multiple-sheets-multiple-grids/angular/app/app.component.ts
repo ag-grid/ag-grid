@@ -1,10 +1,11 @@
 import { Component, ViewChild } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { AllCommunityModules } from '@ag-grid-community/all-modules';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { CsvExportModule } from '@ag-grid-community/csv-export';
 import { ExcelExportModule, exportMultipleSheetsAsExcel } from '@ag-grid-enterprise/excel-export';
 
-import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
-import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
+import "@ag-grid-community/core/dist/styles/ag-grid.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
 @Component({
     selector: 'my-app',
@@ -62,8 +63,8 @@ import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
         </div>`
 })
 export class AppComponent {
-    
-    modules = [...AllCommunityModules, ExcelExportModule];
+
+    modules = [ClientSideRowModelModule, CsvExportModule, ExcelExportModule];
 
     rawData = [];
     leftRowData;
@@ -85,7 +86,7 @@ export class AppComponent {
             rowDrag: true,
             maxWidth: 50,
             suppressMenu: true,
-            rowDragText: function(params, dragItemCount) {
+            rowDragText: function (params, dragItemCount) {
                 if (dragItemCount > 1) {
                     return dragItemCount + ' athletes';
                 }
@@ -101,7 +102,7 @@ export class AppComponent {
             rowDrag: true,
             maxWidth: 50,
             suppressMenu: true,
-            rowDragText: function(params, dragItemCount) {
+            rowDragText: function (params, dragItemCount) {
                 if (dragItemCount > 1) {
                     return dragItemCount + ' athletes';
                 }
@@ -115,14 +116,14 @@ export class AppComponent {
             maxWidth: 50,
             cellRenderer: (params) => {
                 var button = document.createElement('i');
-    
-                button.addEventListener('click', function() {
+
+                button.addEventListener('click', function () {
                     params.api.applyTransaction({ remove: [params.node.data] });
                 });
-    
+
                 button.classList.add('far', 'fa-trash-alt');
                 button.style.cursor = 'pointer';
-    
+
                 return button;
             }
         }
@@ -175,17 +176,17 @@ export class AppComponent {
                 var nodes = params.nodes;
 
                 this.leftApi.applyTransaction({
-                    remove: nodes.map(function(node) { return node.data; })
+                    remove: nodes.map(function (node) { return node.data; })
                 });
             }
         });
-    
+
         this.leftApi.addRowDropZone(dropZoneParams);
     }
 
     onExcelExport() {
         var spreadsheets = [];
-        
+
         spreadsheets.push(
             this.leftApi.getSheetDataForExcel({ sheetName: 'Athletes' }),
             this.rightApi.getSheetDataForExcel({ sheetName: 'Selected Athletes' })

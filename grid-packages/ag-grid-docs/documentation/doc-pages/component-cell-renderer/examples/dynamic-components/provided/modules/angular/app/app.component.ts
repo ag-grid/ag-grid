@@ -1,13 +1,14 @@
-import {Component} from '@angular/core';
-import {AllCommunityModules, Module, RowNode, GridReadyEvent} from '@ag-grid-community/all-modules';
-import {ChildMessageRenderer} from './child-message-renderer.component';
-import {CubeRenderer} from './cube-renderer.component';
-import {CurrencyRenderer} from './currency-renderer.component';
-import {ParamsRenderer} from './params-renderer.component';
-import {SquareRenderer} from './square-renderer.component';
+import { Component } from '@angular/core';
+import { ChildMessageRenderer } from './child-message-renderer.component';
+import { CubeRenderer } from './cube-renderer.component';
+import { CurrencyRenderer } from './currency-renderer.component';
+import { ParamsRenderer } from './params-renderer.component';
+import { SquareRenderer } from './square-renderer.component';
 
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
+import "@ag-grid-community/core/dist/styles/ag-grid.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { GridReadyEvent, Module, RowNode } from '@ag-grid-community/core';
 
 @Component({
     selector: 'my-app',
@@ -35,7 +36,7 @@ export class AppComponent {
     private gridApi;
     private gridColumnApi;
 
-    public modules: Module[] = AllCommunityModules;
+    public modules: Module[] = [ClientSideRowModelModule];
     private columnDefs = [
         {
             headerName: "Row",
@@ -103,16 +104,16 @@ export class AppComponent {
 
     constructor() {
         this.rowData = this.createRowData();
-        this.context = {componentParent: this};
+        this.context = { componentParent: this };
     }
 
     refreshEvenRowsCurrencyData() {
-        this.gridApi.forEachNode((rowNode:RowNode) => {
+        this.gridApi.forEachNode((rowNode: RowNode) => {
             if (rowNode.data.value % 2 === 0) {
                 rowNode.setDataValue('currency', rowNode.data.value + Number(Math.random().toFixed(2)));
             }
         });
-        this.gridApi.refreshCells({columns: ['currency']});
+        this.gridApi.refreshCells({ columns: ['currency'] });
     }
 
     onGridReady(params: GridReadyEvent) {

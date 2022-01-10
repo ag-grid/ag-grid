@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
 import { AgGridReact } from '@ag-grid-community/react';
-import { AllCommunityModules } from '@ag-grid-community/all-modules';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { CsvExportModule } from '@ag-grid-community/csv-export';
 import { ExcelExportModule, exportMultipleSheetsAsExcel } from '@ag-grid-enterprise/excel-export';
 
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
+import "@ag-grid-community/core/dist/styles/ag-grid.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
 const leftColumns = [
     {
         rowDrag: true,
         maxWidth: 50,
         suppressMenu: true,
-        rowDragText: function(params, dragItemCount) {
+        rowDragText: function (params, dragItemCount) {
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes';
             }
@@ -27,7 +28,7 @@ const rightColumns = [
         rowDrag: true,
         maxWidth: 50,
         suppressMenu: true,
-        rowDragText: function(params, dragItemCount) {
+        rowDragText: function (params, dragItemCount) {
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes';
             }
@@ -42,7 +43,7 @@ const rightColumns = [
         cellRenderer: (params) => {
             var button = document.createElement('i');
 
-            button.addEventListener('click', function() {
+            button.addEventListener('click', function () {
                 params.api.applyTransaction({ remove: [params.node.data] });
             });
 
@@ -83,7 +84,7 @@ export default class extends Component {
             .then(data => {
                 const athletes = [];
                 let i = 0;
-    
+
                 while (athletes.length < 20 && i < data.length) {
                     var pos = i++;
                     if (athletes.some(rec => rec.athlete === data[pos].athlete)) { continue; }
@@ -100,7 +101,7 @@ export default class extends Component {
     }
 
     loadGrids = () => {
-        this.setState({ 
+        this.setState({
             leftRowData: [...this.state.rawData.slice(0, this.state.rawData.length)],
             rightRowData: [...this.state.rawData.slice(this.state.rawData.length / 2)]
         });
@@ -120,24 +121,24 @@ export default class extends Component {
                 var nodes = params.nodes;
 
                 this.state.leftApi.applyTransaction({
-                    remove: nodes.map(function(node) { return node.data; })
+                    remove: nodes.map(function (node) { return node.data; })
                 });
             }
         });
-    
+
         this.state.leftApi.addRowDropZone(dropZoneParams);
     }
 
     onGridReady(params, side) {
         if (side === 0) {
-            this.setState({ 
+            this.setState({
                 leftApi: params.api,
                 leftColumnApi: params.columnApi
             });
         }
 
         if (side === 1) {
-            this.setState({ 
+            this.setState({
                 rightApi: params.api,
             });
             this.addGridDropZone();
@@ -156,7 +157,7 @@ export default class extends Component {
     );
 
     getGridWrapper = (id) => (
-        <div className="panel panel-primary" style={{ marginRight: '10px'}}>
+        <div className="panel panel-primary" style={{ marginRight: '10px' }}>
             <div className="panel-heading">{id === 0 ? 'Athletes' : 'Selected Athletes'}</div>
             <div className="panel-body">
                 <AgGridReact
@@ -169,11 +170,11 @@ export default class extends Component {
                     rowSelection={id === 0 ? "multiple" : undefined}
                     rowDragMultiRow={id === 0}
                     suppressMoveWhenRowDragging={id === 0}
-                    
+
                     rowData={id === 0 ? this.state.leftRowData : this.state.rightRowData}
                     columnDefs={id === 0 ? leftColumns : rightColumns}
                     onGridReady={(params) => this.onGridReady(params, id)}
-                    modules={[...AllCommunityModules, ExcelExportModule]}>
+                    modules={[ClientSideRowModelModule, CsvExportModule, ExcelExportModule]}>
                 </AgGridReact>
             </div>
         </div>
@@ -181,7 +182,7 @@ export default class extends Component {
 
     render = () => (
         <div className="top-container">
-            { this.getTopToolBar() }
+            {this.getTopToolBar()}
             <div class="grid-wrapper ag-theme-alpine">
                 {this.getGridWrapper(0)}
                 {this.getGridWrapper(1)}
@@ -191,12 +192,12 @@ export default class extends Component {
 
     onExcelExport = () => {
         var spreadsheets = [];
-        
+
         spreadsheets.push(
             this.state.leftApi.getSheetDataForExcel({ sheetName: 'Athletes' }),
             this.state.rightApi.getSheetDataForExcel({ sheetName: 'Selected Athletes' })
         );
-    
+
         exportMultipleSheetsAsExcel({
             data: spreadsheets,
             fileName: 'ag-grid.xlsx'

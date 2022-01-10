@@ -1,20 +1,20 @@
-import React, {Component} from 'react';
-import {connect} from "react-redux";
-import {bindActionCreators} from 'redux';
-import {AgGridReact} from "@ag-grid-community/react";
-import {actions} from './actions/fileActions.jsx'
+import React, { Component } from 'react';
+import { connect } from "react-redux";
+import { bindActionCreators } from 'redux';
+import { AgGridReact } from "@ag-grid-community/react";
+import { actions } from './actions/fileActions.jsx'
 
-import {AllModules} from "@ag-grid-enterprise/all-modules";
+import { AllModules } from "@ag-grid-enterprise/all-modules";
 
-import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
-import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
+import "@ag-grid-community/core/dist/styles/ag-grid.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
 class FileView extends Component {
   colDefs = [
-    {field: "file"},
-    {field: "folder", rowGroup: true, hide: true},
-    {field: "dateModified"},
-    {field: "size"}
+    { field: "file" },
+    { field: "folder", rowGroup: true, hide: true },
+    { field: "dateModified" },
+    { field: "size" }
   ];
 
   autoGroupColumnDef = {

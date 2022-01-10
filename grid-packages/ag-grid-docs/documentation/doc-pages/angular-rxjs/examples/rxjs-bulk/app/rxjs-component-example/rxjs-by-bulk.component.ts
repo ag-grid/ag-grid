@@ -1,5 +1,5 @@
-import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
-import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
+import "@ag-grid-community/core/dist/styles/ag-grid.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 import { GridOptions } from "@ag-grid-community/core";
 import { Component } from "@angular/core";

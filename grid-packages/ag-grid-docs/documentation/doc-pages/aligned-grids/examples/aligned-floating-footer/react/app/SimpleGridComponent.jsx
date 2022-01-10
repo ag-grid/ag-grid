@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { AgGridReact } from '@ag-grid-community/react';
-import { AllCommunityModules } from '@ag-grid-community/all-modules';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
+import "@ag-grid-community/core/dist/styles/ag-grid.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
 export default class extends Component {
     constructor(props) {
@@ -77,9 +77,9 @@ export default class extends Component {
                     valueGetter: 'data.gold + data.silver + data.bronze',
                     width: 200
                 },
-                {field: 'gold', width: 100},
-                {field: 'silver', width: 100},
-                {field: 'bronze', width: 100}
+                { field: 'gold', width: 100 },
+                { field: 'silver', width: 100 },
+                { field: 'bronze', width: 100 }
 
             ],
             bottomData: this.bottomData,
@@ -114,7 +114,7 @@ export default class extends Component {
                         columnDefs={this.state.columnDefs}
                         onGridReady={this.onGridReady.bind(this)}
                         onFirstDataRendered={this.onFirstDataRendered.bind(this)}
-                        modules={AllCommunityModules} />
+                        modules={[ClientSideRowModelModule]} />
                 </div>
 
                 <div style={{ flex: 'none', height: '60px' }}>
@@ -123,7 +123,7 @@ export default class extends Component {
                         gridOptions={this.state.bottomOptions}
                         columnDefs={this.state.columnDefs}
                         headerHeight="0"
-                        modules={AllCommunityModules}
+                        modules={[ClientSideRowModelModule]}
                         rowStyle={{ fontWeight: 'bold' }}
                     />
                 </div>

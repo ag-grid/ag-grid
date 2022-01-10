@@ -1,14 +1,14 @@
 import { Component } from "@angular/core";
 
-import {GridOptions, Module, AllCommunityModules} from "@ag-grid-community/all-modules";
-
-import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
-import "@ag-grid-community/all-modules/dist/styles/ag-theme-material.css";
+import "@ag-grid-community/core/dist/styles/ag-grid.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-material.css";
 
 import { MatCheckboxComponent } from "./mat-checkbox.component";
 import { MatInputComponent } from "./mat-input.component";
 import { MatRadioComponent } from "./mat-radio.component";
 import { MatSelectComponent } from "./mat-select.component";
+import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
+import { GridOptions, Module } from "@ag-grid-community/core";
 
 @Component({
     moduleId: __moduleName, // for SystemJS, IE11 and relative paths
@@ -17,7 +17,7 @@ import { MatSelectComponent } from "./mat-select.component";
 })
 export class MatEditorComponentOne {
     public gridOptions: GridOptions;
-    modules: Module[] = AllCommunityModules;
+    modules: Module[] = [ClientSideRowModelModule];
 
     constructor() {
         this.gridOptions = <GridOptions>{

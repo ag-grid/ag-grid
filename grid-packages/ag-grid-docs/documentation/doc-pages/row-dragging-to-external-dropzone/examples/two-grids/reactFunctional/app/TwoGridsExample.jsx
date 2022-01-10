@@ -1,10 +1,10 @@
-import React, {useCallback, useEffect, useRef, useState} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { AgGridReact } from '@ag-grid-community/react';
-import { AllCommunityModules } from '@ag-grid-community/all-modules';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
+import "@ag-grid-community/core/dist/styles/ag-grid.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
 const columns = [
     { field: "id", rowDrag: true },
@@ -62,21 +62,21 @@ const TwoGridsExample = () => {
     const addRecordToGrid = (side, data) => {
         // if data missing or data has no it, do nothing
         if (!data || data.id == null) { return; }
-    
+
         const api = side === 'left' ? leftApi : rightApi;
         // do nothing if row is already in the grid, otherwise we would have duplicates
         const rowAlreadyInGrid = !!api.getRowNode(data.id);
         let transaction;
-    
+
         if (rowAlreadyInGrid) {
             console.log('not adding row to avoid duplicates in the grid');
             return;
         }
-    
+
         transaction = {
             add: [data]
         };
-    
+
         api.applyTransaction(transaction);
     };
 
@@ -85,21 +85,21 @@ const TwoGridsExample = () => {
             buttonColor = button.getAttribute('data-color'),
             side = button.getAttribute('data-side'),
             data = createDataItem(buttonColor);
-    
+
         addRecordToGrid(side, data);
     };
 
     const binDrop = data => {
         // if data missing or data has no id, do nothing
         if (!data || data.id == null) { return; }
-    
+
         var transaction = {
             remove: [data]
         };
 
         [leftApi, rightApi].forEach((api) => {
             var rowsInGrid = !!api.getRowNode(data.id);
-    
+
             if (rowsInGrid) {
                 api.applyTransaction(transaction);
             }
@@ -133,7 +133,7 @@ const TwoGridsExample = () => {
             getContainer: () => dropSide === 'Right' ? eRightGrid.current : eLeftGrid.current,
             onDragStop: (dragParams) => addRecordToGrid(dropSide.toLowerCase(), dragParams.node.data)
         };
-    
+
         api.addRowDropZone(dropZone);
     };
 
@@ -161,7 +161,7 @@ const TwoGridsExample = () => {
             data-color={color}
             data-side={side.toLowerCase()}
             onClick={onFactoryButtonClick}
-            >
+        >
             <i className="far fa-plus-square"></i>{`Add ${color}`}
         </button>
     )
@@ -171,18 +171,18 @@ const TwoGridsExample = () => {
             <div className="toolbar">
                 {['Red', 'Green', 'Blue'].map(color => getAddRecordButton(side, color))}
             </div>
-            <div style={{height: '100%'}} className="inner-col" ref={side === 'Left' ? eLeftGrid : eRightGrid}>
+            <div style={{ height: '100%' }} className="inner-col" ref={side === 'Left' ? eLeftGrid : eRightGrid}>
                 <AgGridReact
-                    defaultColDef={{...defaultColDef}}
+                    defaultColDef={{ ...defaultColDef }}
                     getRowNodeId={getRowNodeId}
                     rowClassRules={rowClassRules}
                     rowDragManaged={true}
                     suppressMoveWhenRowDragging={true}
                     animateRows={true}
-                    rowData={side === 'Left' ? leftRowData: rightRowData}
+                    rowData={side === 'Left' ? leftRowData : rightRowData}
                     columnDefs={[...columns]}
                     onGridReady={params => onGridReady(side, params)}
-                    modules={AllCommunityModules}
+                    modules={[ClientSideRowModelModule]}
                 />
             </div>
         </div>
@@ -190,13 +190,13 @@ const TwoGridsExample = () => {
 
     return (
         <div className="example-wrapper ag-theme-alpine">
-            { getInnerGridCol('Left') }
+            {getInnerGridCol('Left')}
             <div className="inner-col vertical-toolbar">
                 <span className="bin" ref={eBin}>
                     <i className="far fa-trash-alt fa-3x" ref={eBinIcon}></i>
                 </span>
             </div>
-            { getInnerGridCol('Right') }
+            {getInnerGridCol('Right')}
         </div>
     );
 }

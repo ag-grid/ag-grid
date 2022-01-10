@@ -1,9 +1,9 @@
-import React, {Component} from 'react';
-import {AgGridReact} from '@ag-grid-community/react';
-import {AllCommunityModules} from '@ag-grid-community/all-modules';
+import React, { Component } from 'react';
+import { AgGridReact } from '@ag-grid-community/react';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
+import "@ag-grid-community/core/dist/styles/ag-grid.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
 export default class extends Component {
     constructor(props) {
@@ -39,12 +39,12 @@ export default class extends Component {
             topOptions,
             bottomOptions,
             columnDefs: [
-                {field: 'athlete'},
-                {field: 'age'},
-                {field: 'country'},
-                {field: 'year'},
-                {field: 'date'},
-                {field: 'sport'},
+                { field: 'athlete' },
+                { field: 'age' },
+                { field: 'country' },
+                { field: 'year' },
+                { field: 'date' },
+                { field: 'sport' },
                 {
                     headerName: 'Medals',
                     children: [
@@ -52,9 +52,9 @@ export default class extends Component {
                             columnGroupShow: 'closed', field: "total",
                             valueGetter: "data.gold + data.silver + data.bronze", width: 200
                         },
-                        {columnGroupShow: 'open', field: "gold", width: 100},
-                        {columnGroupShow: 'open', field: "silver", width: 100},
-                        {columnGroupShow: 'open', field: "bronze", width: 100}
+                        { columnGroupShow: 'open', field: "gold", width: 100 },
+                        { columnGroupShow: 'open', field: "silver", width: 100 },
+                        { columnGroupShow: 'open', field: "bronze", width: 100 }
                     ]
                 }
             ],
@@ -104,19 +104,19 @@ export default class extends Component {
                         <input
                             type="checkbox"
                             defaultChecked={true}
-                            onChange={this.onCbAthlete.bind(this)}/>Athlete
+                            onChange={this.onCbAthlete.bind(this)} />Athlete
                     </label>
                     <label>
                         <input
                             type="checkbox"
                             defaultChecked={true}
-                            onChange={this.onCbAge.bind(this)}/>Age
+                            onChange={this.onCbAge.bind(this)} />Age
                     </label>
                     <label>
                         <input
                             type="checkbox"
                             defaultChecked={true}
-                            onChange={this.onCbCountry.bind(this)}/>Country
+                            onChange={this.onCbCountry.bind(this)} />Country
                     </label>
                 </div>
 
@@ -127,7 +127,7 @@ export default class extends Component {
                         columnDefs={this.state.columnDefs}
                         onGridReady={this.onGridReady.bind(this)}
                         onFirstDataRendered={this.onFirstDataRendered.bind(this)}
-                        modules={AllCommunityModules}/>
+                        modules={[ClientSideRowModelModule]} />
                 </div>
 
                 <div className="grid ag-theme-alpine">
@@ -135,7 +135,7 @@ export default class extends Component {
                         rowData={this.state.rowData}
                         gridOptions={this.state.bottomOptions}
                         columnDefs={this.state.columnDefs}
-                        modules={AllCommunityModules}/>
+                        modules={[ClientSideRowModelModule]} />
                 </div>
             </div>
         );

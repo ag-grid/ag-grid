@@ -1,8 +1,8 @@
 import Vue from 'vue';
-import {AgGridVue} from '@ag-grid-community/vue';
-import {AllCommunityModules} from '@ag-grid-community/all-modules';
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
+import { AgGridVue } from '@ag-grid-community/vue';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import "@ag-grid-community/core/dist/styles/ag-grid.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import GenderRenderer from './genderRendererVue.js';
 import MoodRenderer from './moodRendererVue.js';
 
@@ -27,12 +27,12 @@ const VueExample = {
     data: function () {
         return {
             columnDefs: [
-                {field: "value"},
+                { field: "value" },
                 {
                     headerName: "Rendered Value",
                     field: "value",
                     cellRendererSelector: (params) => {
-                        const moodDetails = {frameworkComponent: 'moodCellRenderer'};
+                        const moodDetails = { frameworkComponent: 'moodCellRenderer' };
                         const genderDetails = {
                             frameworkComponent: 'genderCellRenderer',
                             params: {
@@ -50,9 +50,9 @@ const VueExample = {
                             return undefined;
                     }
                 },
-                {field: "type"}
+                { field: "type" }
             ],
-            defaultColDef: {flex: 1},
+            defaultColDef: { flex: 1 },
             rowData: [
                 {
                     value: 14,
@@ -80,7 +80,7 @@ const VueExample = {
                 }
             ]
             ,
-            modules: AllCommunityModules
+            modules: [ClientSideRowModelModule]
         }
     }
 }

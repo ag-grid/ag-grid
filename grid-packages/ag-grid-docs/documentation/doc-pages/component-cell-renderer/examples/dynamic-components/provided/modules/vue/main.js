@@ -1,8 +1,8 @@
 import Vue from 'vue';
-import {AgGridVue} from '@ag-grid-community/vue';
-import {AllCommunityModules} from '@ag-grid-community/all-modules';
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
+import { AgGridVue } from '@ag-grid-community/vue';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import "@ag-grid-community/core/dist/styles/ag-grid.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import ChildMessageRenderer from './childMessageRendererVue.js';
 import CubeRenderer from './cubeRendererVue.js';
 import CurrencyRenderer from './currencyRendererVue.js';
@@ -96,12 +96,12 @@ const VueExample = {
                 resizable: true
             }
             ,
-            modules: AllCommunityModules
+            modules: [ClientSideRowModelModule]
         }
     },
     beforeMount() {
         this.rowData = this.createRowData();
-        this.context = {componentParent: this};
+        this.context = { componentParent: this };
     },
     methods: {
         createRowData() {
@@ -121,7 +121,7 @@ const VueExample = {
                     rowNode.setDataValue('currency', rowNode.data.value + Number(Math.random().toFixed(2)));
                 }
             });
-            this.gridApi.refreshCells({columns: ['currency']});
+            this.gridApi.refreshCells({ columns: ['currency'] });
         },
         onGridReady(params) {
             this.gridApi = params.api;

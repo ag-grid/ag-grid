@@ -1,10 +1,10 @@
-import {createApp} from 'vue';
-import {AgGridVue} from "@ag-grid-community/vue3";
+import { createApp } from 'vue';
+import { AgGridVue } from "@ag-grid-community/vue3";
 
-import {AllCommunityModules} from '@ag-grid-community/all-modules';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
-import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
-import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
+import "@ag-grid-community/core/dist/styles/ag-grid.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
 const VueExample = {
     template: `
@@ -41,8 +41,8 @@ const VueExample = {
             athleteVisible: true,
             ageVisible: true,
             countryVisible: true,
-            rowStyle: {fontWeight: 'bold'},
-            modules: AllCommunityModules
+            rowStyle: { fontWeight: 'bold' },
+            modules: [ClientSideRowModelModule]
         };
     },
     beforeMount() {
@@ -85,12 +85,12 @@ const VueExample = {
         };
 
         this.columnDefs = [
-            {field: 'athlete', width: 200, hide: !this.athleteVisible},
-            {field: 'age', width: 150, hide: !this.ageVisible},
-            {field: 'country', width: 150, hide: !this.countryVisible},
-            {field: 'year', width: 120},
-            {field: 'date', width: 150},
-            {field: 'sport', width: 150},
+            { field: 'athlete', width: 200, hide: !this.athleteVisible },
+            { field: 'age', width: 150, hide: !this.ageVisible },
+            { field: 'country', width: 150, hide: !this.countryVisible },
+            { field: 'year', width: 120 },
+            { field: 'date', width: 150 },
+            { field: 'sport', width: 150 },
             // in the total col, we have a value getter, which usually means we don't need to provide a field
             // however the master/slave depends on the column id (which is derived from the field if provided) in
             // order ot match up the columns
@@ -100,9 +100,9 @@ const VueExample = {
                 valueGetter: 'data.gold + data.silver + data.bronze',
                 width: 200
             },
-            {field: 'gold', width: 100},
-            {field: 'silver', width: 100},
-            {field: 'bronze', width: 100}
+            { field: 'gold', width: 100 },
+            { field: 'silver', width: 100 },
+            { field: 'bronze', width: 100 }
         ];
     },
     mounted() {
