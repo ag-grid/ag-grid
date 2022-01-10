@@ -23,6 +23,7 @@ export function vanillaToTypescript(bindings: any, mainFilePath: string, compone
     return importType => {
 
         let unWrapped = tsFile
+            .replace(/new agGrid.Grid\(/g, 'new Grid(')
             // unwrap the setup code from the DOM loaded event as the DOM is loaded before the typescript file is transpiled.
             // Regex
             // (.*DOMContentLoaded.*)\n Match the line with DOMContentLoaded
@@ -39,14 +40,18 @@ export function vanillaToTypescript(bindings: any, mainFilePath: string, compone
         let formattedImports = '';
         if (imports.length > 0) {
             let importStrings = [];
-            addBindingImports(imports, importStrings, importType === 'packages');
+            addBindingImports([{
+                "module": "'@ag-grid-community/core'",
+                "isNamespaced": false,
+                "imports": ["Grid"]
+            }, ...imports], importStrings, importType === 'packages');
             if (componentFileNames) {
                 importStrings.push(...componentFileNames.map(getImport));
             }
             formattedImports = `${importStrings.join('\n')}\n`;
 
             // Remove the original import statements
-            unWrapped = unWrapped.replace(/import.*from.*\n/g, '');
+            unWrapped = unWrapped.replace(/import ((.|\n)*?)from.*\n/g, '');
         }
         return `${formattedImports}${unWrapped} ${toAttach || ''}`;
     };

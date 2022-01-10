@@ -143,7 +143,7 @@ function deepCloneObject(object) {
 function readAsJsFile(tsFilePath) {
     const tsFile = fs.readFileSync(tsFilePath, 'utf8')
         // Remove imports that are not required in javascript
-        .replace(/import.*from.*\n/g, '')
+        .replace(/import ((.|\n)*?)from.*\n/g, '')
         // Remove export statement
         .replace(/export /g, "")
 
