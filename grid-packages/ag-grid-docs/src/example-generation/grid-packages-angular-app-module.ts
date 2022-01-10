@@ -1,11 +1,13 @@
 import { toTitleCase, getImport } from './angular-utils';
 
-export function appModuleAngular(componentFileNames: string[]) {
+export function appModuleAngular(componentFileNames: string[], gridSettings) {
+  const { includeNgFormsModule } = gridSettings;
   const components = [];
   const imports = [
     "import { NgModule } from '@angular/core';",
     "import { BrowserModule } from '@angular/platform-browser';",
     "import { HttpClientModule } from '@angular/common/http';",
+    includeNgFormsModule ? "import { FormsModule } from '@angular/forms'" : "",
     "import { AgGridModule } from 'ag-grid-angular';",
     "import { AppComponent } from './app.component';",
   ];
@@ -26,7 +28,7 @@ ${imports.join('\n')}
 @NgModule({
   imports: [
     BrowserModule,
-    HttpClientModule,
+    HttpClientModule,${includeNgFormsModule ? "\nFormsModule," : ""}
     AgGridModule.withComponents([${components.join(', ')}])
   ],
   declarations: [
