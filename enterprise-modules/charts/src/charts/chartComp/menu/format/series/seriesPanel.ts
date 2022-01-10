@@ -39,6 +39,29 @@ export class SeriesPanel extends Component {
     private activePanels: Component[] = [];
     private seriesType: ChartSeriesType;
 
+    private widgetFuncs: {[name: string]: () => void}= {
+        'lineWidth': () => this.initLineWidth(),
+        'strokeWidth': () => this.initStrokeWidth(),
+        'lineDash': () => this.initLineDash(),
+        'lineOpacity': () => this.initLineOpacity(),
+        'fillOpacity': () => this.initFillOpacity(),
+        'markers': () => this.initMarkers(),
+        'labels': () => this.initLabels(),
+        'shadow': () => this.initShadow(),
+        'tooltips': () => this.initTooltips(),
+        'bins': () => this.initBins(),
+    };
+
+    private seriesWidgetMappings: {[name: string]: string[]} = {
+        'area': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'markers', 'labels', 'shadow'],
+        'bar': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
+        'column': ['tooltips', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
+        'line': ['tooltips', 'lineWidth', 'lineDash', 'lineOpacity', 'markers', 'labels'],
+        'histogram': ['tooltips', 'bins', 'strokeWidth', 'lineDash', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
+        'scatter': ['tooltips', 'markers', 'labels'],
+        'pie': ['tooltips', 'strokeWidth', 'lineOpacity', 'fillOpacity', 'labels', 'shadow'],
+    }
+
     constructor(private readonly chartController: ChartController, private readonly chartOptionsService: ChartOptionsService,
                 seriesType?: ChartSeriesType) {
 
@@ -87,51 +110,10 @@ export class SeriesPanel extends Component {
 
     private refreshWidgets(): void {
         this.destroyActivePanels();
-
-        this.initSeriesTooltips();
-
-        // TODO: refactor
-        if (this.seriesType === 'area') {
-            this.initSeriesLineWidth();
-            this.initSeriesLineDash();
-            this.initLineOpacitySlider();
-            this.initFillOpacitySlider();
-            this.initMarkersPanel();
-            this.initLabelPanel();
-            this.initShadowPanel();
-        } else if (this.seriesType === 'column' || this.seriesType === 'bar') {
-            this.initSeriesStrokeWidth();
-            this.initSeriesLineDash();
-            this.initLineOpacitySlider();
-            this.initFillOpacitySlider();
-            this.initLabelPanel();
-            this.initShadowPanel();
-        } else if (this.seriesType === 'line') {
-            this.initSeriesLineWidth();
-            this.initSeriesLineDash();
-            this.initMarkersPanel();
-            this.initLabelPanel();
-        } else if (this.seriesType === 'histogram') {
-            this.initBins();
-            this.initSeriesStrokeWidth();
-            this.initSeriesLineDash();
-            this.initLineOpacitySlider();
-            this.initFillOpacitySlider();
-            this.initLabelPanel();
-            this.initShadowPanel();
-        } else if (this.seriesType === 'scatter') {
-            this.initMarkersPanel();
-            this.initLabelPanel();
-        } else if (this.seriesType === 'pie') {
-            this.initSeriesStrokeWidth();
-            this.initLineOpacitySlider();
-            this.initFillOpacitySlider();
-            this.initLabelPanel(true);
-            this.initShadowPanel();
-        }
+        this.seriesWidgetMappings[this.seriesType].forEach(w => this.widgetFuncs[w]());
     }
 
-    private initSeriesTooltips(): void {
+    private initTooltips(): void {
         const seriesTooltipsToggle = this.createBean(new AgToggleButton());
         seriesTooltipsToggle
             .setLabel(this.translate("tooltips"))
@@ -144,7 +126,7 @@ export class SeriesPanel extends Component {
         this.addWidget(seriesTooltipsToggle);
     }
 
-    private initSeriesStrokeWidth(): void {
+    private initStrokeWidth(): void {
         const currentValue = this.chartOptionsService.getSeriesOption<number>("strokeWidth");
 
         const seriesStrokeWidthSlider = this.createBean(new AgSlider());
@@ -158,7 +140,7 @@ export class SeriesPanel extends Component {
         this.addWidget(seriesStrokeWidthSlider);
     }
 
-    private initSeriesLineWidth() {
+    private initLineWidth() {
         const currentValue = this.chartOptionsService.getSeriesOption<number>("strokeWidth");
 
         const seriesLineWidthSlider = this.createBean(new AgSlider());
@@ -172,7 +154,7 @@ export class SeriesPanel extends Component {
         this.addWidget(seriesLineWidthSlider);
     }
 
-    private initSeriesLineDash(): void {
+    private initLineDash(): void {
         const currentValue = this.chartOptionsService.getSeriesOption<number[]>("lineDash")[0];
 
         const seriesLineDashSlider = this.createBean(new AgSlider());
@@ -186,7 +168,7 @@ export class SeriesPanel extends Component {
         this.addWidget(seriesLineDashSlider);
     }
 
-    private initLineOpacitySlider(): void {
+    private initLineOpacity(): void {
         const currentValue = this.chartOptionsService.getSeriesOption<number>("strokeOpacity");
 
         const seriesLineOpacitySlider = this.createBean(new AgSlider());
@@ -201,7 +183,7 @@ export class SeriesPanel extends Component {
         this.addWidget(seriesLineOpacitySlider);
     }
 
-    private initFillOpacitySlider(): void {
+    private initFillOpacity(): void {
         const currentValue = this.chartOptionsService.getSeriesOption<number>("fillOpacity");
 
         const seriesFillOpacitySlider = this.createBean(new AgSlider());
@@ -216,7 +198,7 @@ export class SeriesPanel extends Component {
         this.addWidget(seriesFillOpacitySlider);
     }
 
-    private initLabelPanel(includeCallout?: boolean) {
+    private initLabels(includeCallout?: boolean) {
         const params = initFontPanelParams(this.chartTranslationService, this.chartOptionsService, () => this.seriesType);
         const labelPanelComp = this.createBean(new FontPanel(params));
 
@@ -229,12 +211,12 @@ export class SeriesPanel extends Component {
         this.addWidget(labelPanelComp);
     }
 
-    private initShadowPanel() {
+    private initShadow() {
         const shadowPanelComp = this.createBean(new ShadowPanel(this.chartOptionsService, () => this.seriesType));
         this.addWidget(shadowPanelComp);
     }
 
-    private initMarkersPanel() {
+    private initMarkers() {
         const markersPanelComp = this.createBean(new MarkersPanel(this.chartOptionsService, () => this.seriesType));
         this.addWidget(markersPanelComp);
     }
