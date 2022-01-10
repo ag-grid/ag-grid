@@ -23,6 +23,7 @@
     "@ag-grid-community/client-side-row-model": "~26.2.0",
     "@ag-grid-community/core": "~26.2.0",
     "@ag-grid-community/csv-export": "~26.2.0",
+    "@ag-grid-community/angular": "~26.2.0",
     "@ag-grid-community/react": "~26.2.0",
     "@ag-grid-enterprise/column-tool-panel": "~26.2.0",
     "@ag-grid-enterprise/master-detail": "~26.2.0",

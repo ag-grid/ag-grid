@@ -8,10 +8,10 @@ export function appModuleAngular(componentFileNames: string[]) {
     "import { HttpClientModule } from '@angular/common/http';",
     "import { AgGridModule } from '@ag-grid-community/angular';",
     "import { AppComponent } from './app.component';",
-    "",
   ];
 
   if (componentFileNames) {
+    imports.push("");
     componentFileNames.forEach(filename => {
       const componentName = toTitleCase(filename.split('.')[0]);
 
@@ -21,21 +21,21 @@ export function appModuleAngular(componentFileNames: string[]) {
   }
 
   return `
+// organize-imports-ignore
 ${imports.join('\n')}
-
-        @NgModule({
-          imports: [
-            BrowserModule,
-            HttpClientModule,
-            AgGridModule.withComponents([${components.join(',')}])
-          ],
-          declarations: [
-            ${['AppComponent'].concat(components).join(',')}
-          ],
-          bootstrap: [ AppComponent ]
-        })
-        export class AppModule { }
-    `;
+@NgModule({
+  imports: [
+    BrowserModule,
+    HttpClientModule,
+    AgGridModule.withComponents([${components.join(',')}])
+  ],
+  declarations: [
+    ${['AppComponent'].concat(components).join(',')}
+  ],
+  bootstrap: [ AppComponent ]
+})
+export class AppModule { }
+`;
 }
 
 if (typeof window !== 'undefined') {
