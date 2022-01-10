@@ -5,7 +5,6 @@ export function appModuleAngular(componentFileNames: string[]) {
   const imports = [
     "import { NgModule } from '@angular/core';",
     "import { BrowserModule } from '@angular/platform-browser';",
-    "import { FormsModule } from '@angular/forms';",
     "import { HttpClientModule } from '@angular/common/http';",
     "import { AgGridModule } from '@ag-grid-community/angular';",
     "import { AppComponent } from './app.component';",
@@ -22,12 +21,11 @@ export function appModuleAngular(componentFileNames: string[]) {
   }
 
   return `
-        ${imports.join('\n')}
+${imports.join('\n')}
 
         @NgModule({
           imports: [
             BrowserModule,
-            FormsModule,
             HttpClientModule,
             AgGridModule.withComponents([${components.join(',')}])
           ],
