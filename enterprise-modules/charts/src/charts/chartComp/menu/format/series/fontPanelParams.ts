@@ -9,11 +9,11 @@ export function initFontPanelParams(
     getSelectedSeries: () => ChartSeriesType) {
 
     const initialFont = {
-        family: chartOptionsService.getSeriesOption("label.fontFamily"),
-        style: chartOptionsService.getSeriesOption("label.fontStyle"),
-        weight: chartOptionsService.getSeriesOption("label.fontWeight"),
-        size: chartOptionsService.getSeriesOption<number>("label.fontSize"),
-        color: chartOptionsService.getSeriesOption("label.color")
+        family: chartOptionsService.getSeriesOption("label.fontFamily", getSelectedSeries()),
+        style: chartOptionsService.getSeriesOption("label.fontStyle", getSelectedSeries()),
+        weight: chartOptionsService.getSeriesOption("label.fontWeight", getSelectedSeries()),
+        size: chartOptionsService.getSeriesOption<number>("label.fontSize", getSelectedSeries()),
+        color: chartOptionsService.getSeriesOption("label.color", getSelectedSeries())
     };
 
     const setFont = (font: Font) => {
@@ -34,9 +34,11 @@ export function initFontPanelParams(
         }
     };
 
+
+
     const params: FontPanelParams = {
         name: chartTranslationService.translate('labels'),
-        enabled: chartOptionsService.getSeriesOption("label.enabled") || false,
+        enabled: chartOptionsService.getSeriesOption("label.enabled", getSelectedSeries()) || false,
         setEnabled: (enabled: boolean) => chartOptionsService.setSeriesOption("label.enabled", enabled, getSelectedSeries()),
         suppressEnabledCheckbox: false,
         initialFont: initialFont,

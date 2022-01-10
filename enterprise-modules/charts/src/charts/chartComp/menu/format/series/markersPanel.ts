@@ -83,7 +83,7 @@ export class MarkersPanel extends Component {
         this.seriesMarkerShapeSelect
             .addOptions(seriesMarkerShapeOptions)
             .setLabel(this.chartTranslationService.translate('shape'))
-            .setValue(this.chartOptionsService.getSeriesOption("marker.shape"))
+            .setValue(this.getSeriesOption("marker.shape"))
             .onValueChange(value => this.setSeriesOption("marker.shape", value));
 
         // scatter charts should always show markers
@@ -93,12 +93,12 @@ export class MarkersPanel extends Component {
         this.seriesMarkersGroup
             .setTitle(this.chartTranslationService.translate("markers"))
             .hideEnabledCheckbox(shouldHideEnabledCheckbox)
-            .setEnabled(this.chartOptionsService.getSeriesOption("marker.enabled") || false)
+            .setEnabled(this.getSeriesOption("marker.enabled") || false)
             .hideOpenCloseIcons(true)
             .onEnableChange(newValue => this.setSeriesOption("marker.enabled", newValue));
 
         const initInput = (expression: string, input: AgSlider, labelKey: string, defaultMaxValue: number) => {
-            const currentValue = this.chartOptionsService.getSeriesOption<number>(expression);
+            const currentValue = this.getSeriesOption<number>(expression);
             input.setLabel(this.chartTranslationService.translate(labelKey))
                 .setMaxValue(getMaxValue(currentValue, defaultMaxValue))
                 .setValue(`${currentValue}`)
@@ -115,6 +115,10 @@ export class MarkersPanel extends Component {
         }
 
         initInput("marker.strokeWidth", this.seriesMarkerStrokeWidthSlider, "strokeWidth", 10);
+    }
+
+    private getSeriesOption<T = string>(expression: string): T {
+        return this.chartOptionsService.getSeriesOption<T>(expression, this.getSelectedSeries());
     }
 
     private setSeriesOption<T = string>(expression: string, newValue: T): void {

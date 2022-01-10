@@ -53,7 +53,7 @@ export class CalloutPanel extends Component {
             .hideEnabledCheckbox(true);
 
         const initInput = (expression: string, input: AgSlider, labelKey: string, defaultMaxValue: number) => {
-            const currentValue = this.chartOptionsService.getSeriesOption<number>(expression);
+            const currentValue = this.chartOptionsService.getSeriesOption<number>(expression, this.getSelectedSeries());
             input.setLabel(this.chartTranslationService.translate(labelKey))
                 .setMaxValue(getMaxValue(currentValue, defaultMaxValue))
                 .setValue(`${currentValue}`)

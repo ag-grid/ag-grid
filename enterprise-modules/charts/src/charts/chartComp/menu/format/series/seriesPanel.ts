@@ -94,7 +94,7 @@ export class SeriesPanel extends Component {
 
         const seriesSelect = this.seriesGroup.createManagedBean(new AgSelect());
         seriesSelect
-            .setLabel('Series Type') //TODO
+            .setLabel(this.translate('seriesType'))
             .setLabelAlignment("left")
             .setLabelWidth('flex')
             .setInputWidth(100)
@@ -120,14 +120,14 @@ export class SeriesPanel extends Component {
             .setLabelAlignment("left")
             .setLabelWidth("flex")
             .setInputWidth(45)
-            .setValue(this.chartOptionsService.getSeriesOption("tooltip.enabled") || false)
+            .setValue(this.getSeriesOption("tooltip.enabled") || false)
             .onValueChange(newValue => this.setSeriesOption("tooltip.enabled", newValue));
 
         this.addWidget(seriesTooltipsToggle);
     }
 
     private initStrokeWidth(): void {
-        const currentValue = this.chartOptionsService.getSeriesOption<number>("strokeWidth");
+        const currentValue = this.getSeriesOption<number>("strokeWidth");
 
         const seriesStrokeWidthSlider = this.createBean(new AgSlider());
         seriesStrokeWidthSlider
@@ -141,7 +141,7 @@ export class SeriesPanel extends Component {
     }
 
     private initLineWidth() {
-        const currentValue = this.chartOptionsService.getSeriesOption<number>("strokeWidth");
+        const currentValue = this.getSeriesOption<number>("strokeWidth");
 
         const seriesLineWidthSlider = this.createBean(new AgSlider());
         seriesLineWidthSlider
@@ -155,7 +155,7 @@ export class SeriesPanel extends Component {
     }
 
     private initLineDash(): void {
-        const currentValue = this.chartOptionsService.getSeriesOption<number[]>("lineDash")[0];
+        const currentValue = this.getSeriesOption<number[]>("lineDash")[0];
 
         const seriesLineDashSlider = this.createBean(new AgSlider());
         seriesLineDashSlider
@@ -169,7 +169,7 @@ export class SeriesPanel extends Component {
     }
 
     private initLineOpacity(): void {
-        const currentValue = this.chartOptionsService.getSeriesOption<number>("strokeOpacity");
+        const currentValue = this.getSeriesOption<number>("strokeOpacity");
 
         const seriesLineOpacitySlider = this.createBean(new AgSlider());
         seriesLineOpacitySlider
@@ -184,7 +184,7 @@ export class SeriesPanel extends Component {
     }
 
     private initFillOpacity(): void {
-        const currentValue = this.chartOptionsService.getSeriesOption<number>("fillOpacity");
+        const currentValue = this.getSeriesOption<number>("fillOpacity");
 
         const seriesFillOpacitySlider = this.createBean(new AgSlider());
         seriesFillOpacitySlider
@@ -198,11 +198,11 @@ export class SeriesPanel extends Component {
         this.addWidget(seriesFillOpacitySlider);
     }
 
-    private initLabels(includeCallout?: boolean) {
+    private initLabels() {
         const params = initFontPanelParams(this.chartTranslationService, this.chartOptionsService, () => this.seriesType);
         const labelPanelComp = this.createBean(new FontPanel(params));
 
-        if (includeCallout) {
+        if (this.seriesType === 'pie') {
             const calloutPanelComp = this.createBean(new CalloutPanel(this.chartOptionsService, () => this.seriesType));
             labelPanelComp.addCompToPanel(calloutPanelComp);
             this.activePanels.push(calloutPanelComp);
@@ -222,7 +222,7 @@ export class SeriesPanel extends Component {
     }
 
     private initBins() {
-        const currentValue = this.chartOptionsService.getSeriesOption<number>("binCount");
+        const currentValue = this.getSeriesOption<number>("binCount");
 
         const seriesBinCountSlider = this.createBean(new AgSlider());
         seriesBinCountSlider
@@ -239,6 +239,10 @@ export class SeriesPanel extends Component {
     private addWidget(widget: Component): void {
         this.seriesGroup.addItem(widget);
         this.activePanels.push(widget);
+    }
+
+    private getSeriesOption<T = string>(expression: string): T {
+        return this.chartOptionsService.getSeriesOption<T>(expression, this.seriesType);
     }
 
     private setSeriesOption<T = string>(expression: string, newValue: T): void {

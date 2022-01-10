@@ -316,7 +316,7 @@ export class ChartDataPanel extends Component {
     }
 
     private isInPairedMode() {
-        return this.chartController.isActiveXYChart() && this.chartOptionsService.getSeriesOption('paired');
+        return this.chartController.isActiveXYChart() && this.chartOptionsService.getSeriesOption('paired', 'scatter');
     }
 
     private clearComponents() {

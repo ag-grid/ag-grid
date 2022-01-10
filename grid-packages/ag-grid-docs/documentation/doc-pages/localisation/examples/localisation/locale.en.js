@@ -256,6 +256,7 @@ const AG_GRID_LOCALE_EN = {
     chartUnlinkToolbarTooltip: 'Unlinked from Grid',
     chartDownloadToolbarTooltip: 'Download Chart',
     seriesChartType: 'Series Chart Type',
+    seriesType: 'Series Type',
     secondaryAxis: 'Secondary Axis',
 
     // ARIA

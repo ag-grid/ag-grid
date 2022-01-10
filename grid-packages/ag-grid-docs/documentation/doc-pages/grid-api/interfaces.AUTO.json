@@ -9040,6 +9040,7 @@
     "type": {
       "items": "TabbedItem[]",
       "cssClass?": "string",
+      "keepScrollPosition?": "boolean",
       "onItemClicked?": "Function",
       "onActiveItemClicked?": "Function"
     }
@@ -9051,6 +9052,7 @@
       "titleLabel": "string",
       "bodyPromise": "AgPromise<HTMLElement>",
       "name": "string",
+      "getScrollableContainer?": "() => HTMLElement",
       "afterAttachedCallback?": "(params: IAfterGuiAttachedParams) => void"
     }
   },

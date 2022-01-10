@@ -57,7 +57,7 @@ export class ShadowPanel extends Component {
     private initSeriesShadow() {
         this.shadowGroup
             .setTitle(this.chartTranslationService.translate("shadow"))
-            .setEnabled(this.chartOptionsService.getSeriesOption("shadow.enabled"))
+            .setEnabled(this.chartOptionsService.getSeriesOption("shadow.enabled", this.getSelectedSeries()))
             .hideOpenCloseIcons(true)
             .hideEnabledCheckbox(false)
             .onEnableChange(newValue => this.chartOptionsService.setSeriesOption("shadow.enabled", newValue, this.getSelectedSeries()));
@@ -66,11 +66,11 @@ export class ShadowPanel extends Component {
             .setLabel(this.chartTranslationService.translate("color"))
             .setLabelWidth("flex")
             .setInputWidth(45)
-            .setValue(this.chartOptionsService.getSeriesOption("shadow.color"))
+            .setValue(this.chartOptionsService.getSeriesOption("shadow.color", this.getSelectedSeries()))
             .onValueChange(newValue => this.chartOptionsService.setSeriesOption("shadow.color", newValue, this.getSelectedSeries()));
 
         const initInput = (input: AgSlider, property: string, minValue: number, defaultMaxValue: number) => {
-            const currentValue = this.chartOptionsService.getSeriesOption<number>(`shadow.${property}`);
+            const currentValue = this.chartOptionsService.getSeriesOption<number>(`shadow.${property}`, this.getSelectedSeries());
             input.setLabel(this.chartTranslationService.translate(property))
                 .setMinValue(minValue)
                 .setMaxValue(getMaxValue(currentValue, defaultMaxValue))
