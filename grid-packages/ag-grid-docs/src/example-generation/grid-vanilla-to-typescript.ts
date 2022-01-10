@@ -2,7 +2,7 @@ import { addBindingImports, getImport, ImportType } from './parser-utils';
 const fs = require('fs-extra');
 
 export function vanillaToTypescript(bindings: any, mainFilePath: string, componentFileNames: string[]): (importType: ImportType) => string {
-    const { externalEventHandlers, imports } = bindings;
+    const { gridSettings, externalEventHandlers, imports } = bindings;
 
     // attach external handlers to window
     let toAttach = '';
@@ -23,7 +23,6 @@ export function vanillaToTypescript(bindings: any, mainFilePath: string, compone
     return importType => {
 
         let unWrapped = tsFile
-            .replace(/new agGrid.Grid\(/g, 'new Grid(')
             // unwrap the setup code from the DOM loaded event as the DOM is loaded before the typescript file is transpiled.
             // Regex
             // (.*DOMContentLoaded.*)\n Match the line with DOMContentLoaded
@@ -38,13 +37,15 @@ export function vanillaToTypescript(bindings: any, mainFilePath: string, compone
 
         // Need to replace module imports with their matching package import
         let formattedImports = '';
+        let importStrings = [];
+
+
+        if (gridSettings.enterprise) {
+            importStrings.push("import 'ag-grid-enterprise';");
+        }
+
         if (imports.length > 0) {
-            let importStrings = [];
-            addBindingImports([{
-                "module": "'@ag-grid-community/core'",
-                "isNamespaced": false,
-                "imports": ["Grid"]
-            }, ...imports], importStrings, importType === 'packages');
+            addBindingImports(imports, importStrings, importType === 'packages');
             if (componentFileNames) {
                 importStrings.push(...componentFileNames.map(getImport));
             }

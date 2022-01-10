@@ -172,7 +172,6 @@ export { AgColorPicker } from "ag-grid-community";
 export { AgGroupComponent, AgGroupComponentParams } from "ag-grid-community";
 export { AgDialog } from "ag-grid-community";
 export { AgPanel } from "ag-grid-community";
-export { ListOption } from "ag-grid-community";
 export { Component, VisibleChangedEvent, CssClassManager } from "ag-grid-community";
 export { ManagedFocusFeature, ManagedFocusCallbacks } from "ag-grid-community";
 export { TabGuardComp } from "ag-grid-community";
