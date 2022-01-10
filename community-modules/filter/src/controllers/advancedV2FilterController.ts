@@ -3,6 +3,7 @@ import { createComponent, expressionType } from "../filterMapping";
 import { IFilterAdapter } from "../adapters/iFilterAdapter";
 import { AdvancedFilterController, ExpressionComponentUI, IFilterParamSupport } from "./interfaces";
 import { FilterChangeListener, FilterStateManager } from "../state/filterStateManager";
+import { omit } from "../utils";
 
 @Bean('advancedV2FilterController')
 export class AdvancedV2FilterController extends BeanStub implements AdvancedFilterController<ExpressionComponentUI> {
@@ -88,18 +89,7 @@ export class AdvancedV2FilterController extends BeanStub implements AdvancedFilt
             throw new Error('AG-Grid - unable to create filter UI component for: ' + column.getColId());
         }
         
-        const comp = this.initialiseFilterComponent(column, filterExprComp);
-
-        const adaptor = this.createBean(new IFilterAdapter());
-        this.addDestroyFunc(() => this.destroyBean(adaptor));
-
-        this.filterUIs[colId] = {
-            type: 'ExpressionComponent',
-            comp,
-            filterUIInfo: { gui: comp.getGui() },
-            adaptor,
-            column,
-        };
+        this.filterUIs[colId] = this.initialiseFilterComponent(column, filterExprComp, support);
 
         this.addListenerForColumn(this, column, ({ type }) => {
             if (type === 'revert') { return; }
@@ -143,14 +133,34 @@ export class AdvancedV2FilterController extends BeanStub implements AdvancedFilt
         this.filterState.addListenerForColumn(source, column, cb);
     }
 
-    private initialiseFilterComponent<T extends ExpressionComponent>(column: Column, comp: T): T {
+    private initialiseFilterComponent(
+        column: Column,
+        comp: ExpressionComponentUI['comp'],
+        support: IFilterParamSupport,
+    ): ExpressionComponentUI {
         this.createBean(comp);
         this.addDestroyFunc(() => this.destroyBean(comp));
 
+        const adaptor = this.createBean(new IFilterAdapter());
+        this.addDestroyFunc(() => this.destroyBean(adaptor));
+
+        const filterParams = omit(
+            support.createBaseFilterParams(column),
+            'filterChangedCallback',
+            'filterModifiedCallback',
+        );
+
         comp.setParameters({
             stateManager: this.filterState.getStateManager(column),
+            filterParams,
         });
-        return comp;
+        return {
+            type: 'ExpressionComponent',
+            comp,
+            filterUIInfo: { gui: comp.getGui() },
+            adaptor,
+            column,
+        };
     }
 
     private getCellValue(opts: { colId: string, rowNode: RowNode }): unknown {

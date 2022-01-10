@@ -1,3 +1,4 @@
+// TODO(AG-6000): Consider replacing with EventService?
 export class FilterListenerManager<F extends (...args: any[]) => any> {
     private readonly listeners: [any, F][] = [];
 
