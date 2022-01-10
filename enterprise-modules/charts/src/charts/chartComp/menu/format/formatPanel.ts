@@ -6,6 +6,7 @@ import { NavigatorPanel } from "./navigator/navigatorPanel";
 import { ChartPanel } from "./chart/chartPanel";
 import { ChartOptionsService } from "../../services/chartOptionsService";
 import { SeriesPanel } from "./series/seriesPanel";
+import { ChartSeriesType } from "../../utils/seriesTypeMapper";
 
 export function getMaxValue(currentValue: number, defaultMaxValue: number) {
     return Math.max(currentValue, defaultMaxValue);
@@ -86,6 +87,7 @@ export class FormatPanel extends Component {
             case 'areaColumnCombo':
             case 'customCombo':
                 this.addComponent(new AxisPanel(this.chartController, this.chartOptionsService));
+                // there is no single series type supplied for combo charts, it is inferred by the Series Panel
                 this.addComponent(new SeriesPanel(this.chartController, this.chartOptionsService));
                 this.addComponent(new NavigatorPanel(this.chartOptionsService));
                 break;

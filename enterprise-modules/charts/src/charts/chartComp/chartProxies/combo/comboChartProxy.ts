@@ -3,7 +3,7 @@ import { _, ChartType, SeriesChartType } from "@ag-grid-community/core";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "../cartesian/cartesianChartProxy";
 import { deepMerge } from "../../utils/object";
-import { getChartThemeOverridesObjectName } from "../../utils/chartThemeOverridesMapper";
+import { getSeriesType } from "../../utils/seriesTypeMapper";
 
 export class ComboChartProxy extends CartesianChartProxy {
 
@@ -58,7 +58,7 @@ export class ComboChartProxy extends CartesianChartProxy {
             if (seriesChartType) {
                 const chartType: ChartType = seriesChartType.chartType;
                 return {
-                    type: getChartThemeOverridesObjectName(chartType),
+                    type: getSeriesType(chartType),
                     xKey: categoryId,
                     yKey: field.colId,
                     yName: field.displayName,

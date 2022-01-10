@@ -12,6 +12,7 @@ import {
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartOptionsService } from "../../../services/chartOptionsService";
 import { getMaxValue } from "../formatPanel";
+import { ChartSeriesType } from "../../../utils/seriesTypeMapper";
 
 export class MarkersPanel extends Component {
 
@@ -33,7 +34,8 @@ export class MarkersPanel extends Component {
 
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
-    constructor(private readonly chartOptionsService: ChartOptionsService) {
+    constructor(private readonly chartOptionsService: ChartOptionsService,
+                private getSelectedSeries: () => ChartSeriesType) {
         super();
     }
 
@@ -82,7 +84,7 @@ export class MarkersPanel extends Component {
             .addOptions(seriesMarkerShapeOptions)
             .setLabel(this.chartTranslationService.translate('shape'))
             .setValue(this.chartOptionsService.getSeriesOption("marker.shape"))
-            .onValueChange(value => this.chartOptionsService.setSeriesOption("marker.shape", value));
+            .onValueChange(value => this.setSeriesOption("marker.shape", value));
 
         // scatter charts should always show markers
         const chartType = this.chartOptionsService.getChartType();
@@ -93,7 +95,7 @@ export class MarkersPanel extends Component {
             .hideEnabledCheckbox(shouldHideEnabledCheckbox)
             .setEnabled(this.chartOptionsService.getSeriesOption("marker.enabled") || false)
             .hideOpenCloseIcons(true)
-            .onEnableChange(newValue => this.chartOptionsService.setSeriesOption("marker.enabled", newValue));
+            .onEnableChange(newValue => this.setSeriesOption("marker.enabled", newValue));
 
         const initInput = (expression: string, input: AgSlider, labelKey: string, defaultMaxValue: number) => {
             const currentValue = this.chartOptionsService.getSeriesOption<number>(expression);
@@ -101,7 +103,7 @@ export class MarkersPanel extends Component {
                 .setMaxValue(getMaxValue(currentValue, defaultMaxValue))
                 .setValue(`${currentValue}`)
                 .setTextFieldWidth(45)
-                .onValueChange(newValue => this.chartOptionsService.setSeriesOption(expression, newValue));
+                .onValueChange(newValue => this.setSeriesOption(expression, newValue));
         };
 
         if (chartType === 'bubble') {
@@ -113,5 +115,9 @@ export class MarkersPanel extends Component {
         }
 
         initInput("marker.strokeWidth", this.seriesMarkerStrokeWidthSlider, "strokeWidth", 10);
+    }
+
+    private setSeriesOption<T = string>(expression: string, newValue: T): void {
+        this.chartOptionsService.setSeriesOption(expression, newValue, this.getSelectedSeries());
     }
 }

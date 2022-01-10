@@ -11,6 +11,7 @@ import {
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartOptionsService } from "../../../services/chartOptionsService";
 import { getMaxValue } from "../formatPanel";
+import { ChartSeriesType } from "../../../utils/seriesTypeMapper";
 
 export class ShadowPanel extends Component {
 
@@ -32,7 +33,8 @@ export class ShadowPanel extends Component {
 
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
-    constructor(private readonly chartOptionsService: ChartOptionsService) {
+    constructor(private readonly chartOptionsService: ChartOptionsService,
+                private getSelectedSeries: () => ChartSeriesType) {
         super();
     }
 
@@ -58,14 +60,14 @@ export class ShadowPanel extends Component {
             .setEnabled(this.chartOptionsService.getSeriesOption("shadow.enabled"))
             .hideOpenCloseIcons(true)
             .hideEnabledCheckbox(false)
-            .onEnableChange(newValue => this.chartOptionsService.setSeriesOption("shadow.enabled", newValue));
+            .onEnableChange(newValue => this.chartOptionsService.setSeriesOption("shadow.enabled", newValue, this.getSelectedSeries()));
 
         this.shadowColorPicker
             .setLabel(this.chartTranslationService.translate("color"))
             .setLabelWidth("flex")
             .setInputWidth(45)
             .setValue(this.chartOptionsService.getSeriesOption("shadow.color"))
-            .onValueChange(newValue => this.chartOptionsService.setSeriesOption("shadow.color", newValue));
+            .onValueChange(newValue => this.chartOptionsService.setSeriesOption("shadow.color", newValue, this.getSelectedSeries()));
 
         const initInput = (input: AgSlider, property: string, minValue: number, defaultMaxValue: number) => {
             const currentValue = this.chartOptionsService.getSeriesOption<number>(`shadow.${property}`);
@@ -73,7 +75,7 @@ export class ShadowPanel extends Component {
                 .setMinValue(minValue)
                 .setMaxValue(getMaxValue(currentValue, defaultMaxValue))
                 .setValue(`${currentValue}`)
-                .onValueChange(newValue => this.chartOptionsService.setSeriesOption(`shadow.${property}`, newValue));
+                .onValueChange(newValue => this.chartOptionsService.setSeriesOption(`shadow.${property}`, newValue, this.getSelectedSeries()));
         };
 
         initInput(this.shadowBlurSlider, "blur", 0, 20);

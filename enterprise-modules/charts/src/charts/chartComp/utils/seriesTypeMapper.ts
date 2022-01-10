@@ -1,7 +1,7 @@
 import { ChartType } from "@ag-grid-community/core";
 
 // these values correspond to top level object names in `AgChartThemeOverrides`
-export type ChartThemeOverrideObjectName =
+export type ChartSeriesType =
     'cartesian' |
     'column' |
     'bar' |
@@ -15,7 +15,7 @@ export type ChartThemeOverrideObjectName =
     'treemap' |
     'common';
 
-export function getChartThemeOverridesObjectName(chartType: ChartType): ChartThemeOverrideObjectName {
+export function getSeriesType(chartType: ChartType): ChartSeriesType {
     switch (chartType) {
         case 'bar':
         case 'groupedBar':

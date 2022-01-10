@@ -10,6 +10,7 @@ import {
 import { ChartTranslationService } from "../../../services/chartTranslationService";
 import { ChartOptionsService } from "../../../services/chartOptionsService";
 import { getMaxValue } from "../formatPanel";
+import { ChartSeriesType } from "../../../utils/seriesTypeMapper";
 
 export class CalloutPanel extends Component {
 
@@ -29,7 +30,8 @@ export class CalloutPanel extends Component {
 
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
-    constructor(private readonly chartOptionsService: ChartOptionsService) {
+    constructor(private readonly chartOptionsService: ChartOptionsService,
+                private getSelectedSeries: () => ChartSeriesType) {
         super();
     }
 
@@ -56,7 +58,7 @@ export class CalloutPanel extends Component {
                 .setMaxValue(getMaxValue(currentValue, defaultMaxValue))
                 .setValue(`${currentValue}`)
                 .setTextFieldWidth(45)
-                .onValueChange(newValue => this.chartOptionsService.setSeriesOption(expression, newValue));
+                .onValueChange(newValue => this.chartOptionsService.setSeriesOption(expression, newValue, this.getSelectedSeries()));
         };
 
         initInput("callout.length", this.calloutLengthSlider, "length", 40);
