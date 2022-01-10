@@ -8,15 +8,15 @@ export class OperandStateManagerAdapter<E extends TextOperationExpression | Scal
     ) {
     }
 
-    public addUpdateListener(source: any, cb: (newState: O | null) => void): void {
-        this.parent.addUpdateListener(source, (pState: E) => {
+    public addUpdateListener(source: any, cb: (newState: O | null) => void): () => void {
+        return this.parent.addUpdateListener(source, (pState: E) => {
             const update =  pState ? pState.operands[this.operandIndex] as O : null;
             cb(update);
         });
     }
 
-    public addTransientUpdateListener(source: any, cb: (newTransientState: PartialStateType<O> | O | null) => void): void {
-        this.parent.addTransientUpdateListener(source, (pState) => {
+    public addTransientUpdateListener(source: any, cb: (newTransientState: PartialStateType<O> | O | null) => void): () => void {
+        return this.parent.addTransientUpdateListener(source, (pState) => {
             const update =  pState?.operands?.[this.operandIndex] as O || null;
             cb(update);
         });

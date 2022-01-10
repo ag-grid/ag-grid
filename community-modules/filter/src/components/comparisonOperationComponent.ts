@@ -66,8 +66,10 @@ export class ComparisonOperationComponent<E extends TextOperationExpression | Sc
             });
         });
 
-        this.stateManager.addUpdateListener(this, (u) => this.expressionUpdated(u));
-        this.stateManager.addTransientUpdateListener(this, (u) => this.updateElementVisibility(u?.operation || null));
+        [
+            this.stateManager.addUpdateListener(this, (u) => this.expressionUpdated(u)),
+            this.stateManager.addTransientUpdateListener(this, (u) => this.updateElementVisibility(u?.operation || null)),
+        ].forEach(f => this.addDestroyFunc(f));
 
         this.expressionUpdated(this.stateManager.getTransientExpression());
     }

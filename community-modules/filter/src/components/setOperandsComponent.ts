@@ -52,14 +52,18 @@ export class SetOperandsComponent extends Component implements ExpressionCompone
             isRowSelected: (i) => this.isListItemSelected(i),
         });
 
-        this.gridValuesModel.addFilterValueListener(this, () => this.refresh());
+        this.addDestroyFunc(
+            this.gridValuesModel.addFilterValueListener(this, () => this.refresh())
+        );
     }
 
     public setParameters(params: ExpressionComponentParams<SetOperationExpression>): void {
         this.stateManager = params.stateManager;
 
-        this.stateManager.addTransientUpdateListener(this, () => this.refresh());
-        this.stateManager.addUpdateListener(this, () => this.refresh());
+        [
+            this.stateManager.addTransientUpdateListener(this, () => this.refresh()),
+            this.stateManager.addUpdateListener(this, () => this.refresh()),
+        ].forEach(f => this.addDestroyFunc(f));
 
         this.refresh();
     }
@@ -86,7 +90,7 @@ export class SetOperandsComponent extends Component implements ExpressionCompone
     }
 
     private isFilterValueSelected(input: string | null): boolean {
-        const selectedValues = this.operandAdaptor.operands;
+        const selectedValues = this.operandAdaptor.getOperands();
         if (selectedValues == null) { return true; }
         if (selectedValues.length === 0) { return false; }
 
@@ -128,7 +132,7 @@ export class SetOperandValuesAdaptor {
     ) {
     }
 
-    public get operands(): SetOperationExpression['operands'] {
+    public getOperands(): SetOperationExpression['operands'] {
         return this.readOperands();
     }
 

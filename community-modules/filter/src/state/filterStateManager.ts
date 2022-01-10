@@ -160,12 +160,12 @@ export class FilterStateManager {
         notifications.forEach(({column, type}) => this.notifyTransientListenersForColumn(this, column, type));
     }
 
-    public addListenerForColumn(source: any, column: Column, listener: FilterChangeListener): void {
-        this.getStateFor(column).listeners.addListener(source, listener);
+    public addListenerForColumn(source: any, column: Column, listener: FilterChangeListener): () => void {
+        return this.getStateFor(column).listeners.addListener(source, listener);
     }
 
-    public addTransientListenerForColumn(source: any, column: Column, listener: FilterChangeListener): void {
-        this.getTransientStateFor(column).listeners.addListener(source, listener);
+    public addTransientListenerForColumn(source: any, column: Column, listener: FilterChangeListener): () => void {
+        return this.getTransientStateFor(column).listeners.addListener(source, listener);
     }
 
     public getStateManager(column: Column): StateManager<FilterExpression> {

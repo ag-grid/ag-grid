@@ -33,8 +33,8 @@ export class GridColumnValuesModel {
         this.updateFilterValues();
     }
 
-    public addFilterValueListener(source: any, cb: () => void): void {
-        this.filterValuesListeners.addListener(source, cb);
+    public addFilterValueListener(source: any, cb: () => void): () => void {
+        return this.filterValuesListeners.addListener(source, cb);
     }
 
     public setVisibleRegexp(regexp: RegExp | null) {

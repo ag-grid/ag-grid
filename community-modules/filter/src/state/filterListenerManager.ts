@@ -2,8 +2,10 @@
 export class FilterListenerManager<F extends (...args: any[]) => any> {
     private readonly listeners: [any, F][] = [];
 
-    public addListener(source: any, cb: F): void {
+    public addListener(source: any, cb: F): () => void {
         this.listeners.push([source, cb]);
+
+        return () => this.removeListener(cb);
     }
 
     public removeListener(cb: F): void {

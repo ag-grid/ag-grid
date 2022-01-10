@@ -167,8 +167,8 @@ export type PartialStateType<S> =
     { [K in keyof S]?: PartialTuple<S[K]> };
 
 export interface StateManager<T extends StateType> {
-    addUpdateListener(source: any, cb: (newState: T | null) => void): void;
-    addTransientUpdateListener(source: any, cb: (newTransientState: PartialStateType<T> | T | null) => void): void;
+    addUpdateListener(source: any, cb: (newState: T | null) => void): () => void;
+    addTransientUpdateListener(source: any, cb: (newTransientState: PartialStateType<T> | T | null) => void): () => void;
 
     getTransientExpression(): PartialStateType<T> | null;
     mutateTransientExpression(source: any, change: PartialStateType<T> | null): void;

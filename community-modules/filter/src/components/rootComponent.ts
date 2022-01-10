@@ -57,14 +57,16 @@ export abstract class RootComponent<F extends FilterExpression> extends Componen
             this.addDestroyFunc(() => this.destroyBean(comp));
         });
 
-        this.stateManager.addUpdateListener(this, (u) => {
-            this.checkCompatibleUpdate(u);
-            this.updateButtonState()
-        });
-        this.stateManager.addTransientUpdateListener(this, (u) => {
-            this.checkCompatibleUpdate(u);
-            this.updateButtonState()
-        });
+        [
+            this.stateManager.addUpdateListener(this, (u) => {
+                this.checkCompatibleUpdate(u);
+                this.updateButtonState()
+            }),
+            this.stateManager.addTransientUpdateListener(this, (u) => {
+                this.checkCompatibleUpdate(u);
+                this.updateButtonState()
+            }),
+        ].forEach(f => this.addDestroyFunc(f));
 
         this.updateButtonState();
     }

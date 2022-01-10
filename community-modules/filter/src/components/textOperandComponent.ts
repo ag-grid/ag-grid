@@ -37,7 +37,9 @@ export class TextOperandComponent<O extends string | number | Date> extends Comp
     public setParameters(params: ExpressionComponentParams<O>) {
         this.stateManager = params.stateManager;
 
-        this.stateManager.addUpdateListener(this, (u) => this.operandUpdated(u));
+        this.addDestroyFunc(
+            this.stateManager.addUpdateListener(this, (u) => this.operandUpdated(u)),
+        );
 
         this.operandUpdated(this.stateManager.getTransientExpression() as O | null);
     }
