@@ -1,6 +1,6 @@
 TODO:
 - Skeleton versions of:
-  - `SetFilter`.
+  - ~~`SetFilter`~~.
   - Custom components.
   - Custom filter options.
 - [ ] Improving naming of entities to improve clarity / digestibility.
@@ -11,4 +11,5 @@ TODO:
     - [ ] Floating filters.
     - [ ] Excel mode (mostly SetFilter?).
     - [ ] ....List TBC....
+- [ ] Filter model backwards compatibility.
 - [ ] Move diagrams to Confluence / elsewhere.

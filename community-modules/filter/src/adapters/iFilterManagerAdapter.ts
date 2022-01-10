@@ -5,8 +5,11 @@ import { AdvancedV2FilterController } from "../controllers/advancedV2FilterContr
 import { FilterUI, IFilterParamSupport, InternalFilterController } from "../controllers/interfaces";
 import { calculateAffectedColumns, findControllerFor } from "./helpers";
 import { AdvancedV1FilterController } from "../controllers/advancedV1FilterController";
+import { MODULE_MODE } from "../compatibility";
 
-@Bean('filterManager')
+// TODO(AG-6000): Remove once v2 filters is released.
+const BEAN_NAME = MODULE_MODE === 'disabled' ? 'filterManagerAdapter' : 'filterManager';
+@Bean(BEAN_NAME)
 export class IFilterManagerAdapter extends BeanStub implements IFilterManager {
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('rowModel') private readonly rowModel: IRowModel;
