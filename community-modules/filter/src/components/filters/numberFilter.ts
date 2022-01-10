@@ -1,4 +1,4 @@
-import { NumberComparisonOperationExpression, SCALAR_COMPARISON_OPERATION_METADATA } from "@ag-grid-community/core";
+import { NumberComparisonOperationExpression, SCALAR_COMPARISON_OPERATION_METADATA } from "../../interfaces";
 import { ComparisonOperationComponent } from "../comparisonOperationComponent";
 import { RootComponent } from "../rootComponent";
 import { NUMBER_SERIALISER } from "../operandSerialisers";

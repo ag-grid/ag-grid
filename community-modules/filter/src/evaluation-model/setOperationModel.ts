@@ -1,5 +1,4 @@
-import { isSetOperation, _, FilterEvaluationModel, SetOperationExpression } from "@ag-grid-community/core";
-import { SetOperation } from "@ag-grid-community/core/dist/cjs/es5/interfaces/filtersV2";
+import { SetOperation, FilterEvaluationModel, SetOperationExpression, isSetOperation } from "../interfaces";
 import { Comparator } from "./interfaces";
 
 type SetOperationType = SetOperation;

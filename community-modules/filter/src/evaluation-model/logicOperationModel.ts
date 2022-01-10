@@ -1,5 +1,5 @@
-import { _, FilterEvaluationModel, PartialStateType } from "@ag-grid-community/core";
-import { LogicOperation, LogicalOperationExpression, ConcreteExpression } from "@ag-grid-community/core";
+import { _ } from "@ag-grid-community/core";
+import { FilterEvaluationModel, LogicOperation, LogicalOperationExpression, ConcreteExpression } from "../interfaces";
 
 export class LogicOperationModel<T> implements FilterEvaluationModel<T> {
     private readonly operation: LogicOperation;

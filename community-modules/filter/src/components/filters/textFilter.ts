@@ -1,4 +1,4 @@
-import { TextOperationExpression, TEXT_COMPARISON_OPERATION_METADATA } from '@ag-grid-community/core';
+import { TextOperationExpression, TEXT_COMPARISON_OPERATION_METADATA } from '../../interfaces';
 import { ComparisonOperationComponent } from '../comparisonOperationComponent';
 import { RootComponent } from '../rootComponent';
 import { NO_OP_SERIALISER } from '../operandSerialisers';

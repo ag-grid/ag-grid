@@ -1,8 +1,7 @@
-import { _, Bean, RowNode, BeanStub, Autowired, Column, IRowModel, ValueService, GridOptions, UserComponentFactory, AgPromise, FilterRequestSource, FilterUIInfo, IFilterParams, ColumnEventType, ColumnModel } from "@ag-grid-community/core";
+import { _, Bean, RowNode, BeanStub, Autowired, Column, IRowModel, ValueService, GridOptions, UserComponentFactory, AgPromise, FilterRequestSource, ColumnEventType, ColumnModel, FilterUIInfo } from "@ag-grid-community/core";
 import { createComponent, expressionType } from "../filterMapping";
 import { IFilterAdapter } from "../adapters/iFilterAdapter";
 import { AdvancedFilterController, ExpressionComponentUI, IFilterParamSupport } from "./interfaces";
-import { ExpressionComponent } from "../components/interfaces";
 import { FilterChangeListener, FilterStateManager } from "../state/filterStateManager";
 
 @Bean('advancedV2FilterController')

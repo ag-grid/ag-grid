@@ -6,7 +6,6 @@ import { ToolPanelDef } from "../../entities/sideBar";
 import { IFloatingFilterParams } from "../../filter/floating/floatingFilter";
 import { IHeaderParams } from "../../headerRendering/cells/column/headerComp";
 import { IHeaderGroupParams } from "../../headerRendering/cells/columnGroup/headerGroupComp";
-import { ExpressionComponentParams } from "../../interfaces/filtersV2";
 import { ICellEditorParams } from "../../interfaces/iCellEditor";
 import { IFilterDef, IFilterParams } from "../../interfaces/iFilter";
 import { IRichCellEditorParams } from "../../interfaces/iRichCellEditorParams";

@@ -1,4 +1,5 @@
-import { ColDef, Column, Component, FilterExpression, GridOptions, _ } from "@ag-grid-community/core";
+import { ColDef, Column, Component, GridOptions, _ } from "@ag-grid-community/core";
+import { FilterExpression } from "./interfaces";
 import { DateFilter } from "./components/filters/dateFilter";
 import { NumberFilter } from "./components/filters/numberFilter";
 import { TextFilter } from "./components/filters/textFilter";

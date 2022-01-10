@@ -1,4 +1,5 @@
-import { AgInputTextField, Component, ExpressionComponentParams, PartialStateType, PostConstruct, RefSelector, StateManager } from "@ag-grid-community/core";
+import { AgInputTextField, Component, PostConstruct, RefSelector } from "@ag-grid-community/core";
+import { ExpressionComponentParams, PartialStateType, StateManager } from "../interfaces";
 import { OperandComponent, OperandInputElementSerialiser } from "./interfaces";
 
 export class TextOperandComponent<O extends string | number | Date> extends Component implements OperandComponent<O> {

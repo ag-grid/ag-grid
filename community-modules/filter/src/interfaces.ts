@@ -1,3 +1,5 @@
+import { IFilterParams } from "@ag-grid-community/core";
+
 /** EXPRESSION TYPES **/
 export const SCALAR_COMPARISON_OPERATION_METADATA = {
     'equals': { operands: 1 },
@@ -179,4 +181,5 @@ export interface StateManager<T extends StateType> {
 
 export interface ExpressionComponentParams<F extends FilterExpression | string | number | Date = FilterExpression> {
     stateManager: StateManager<F>;
+    filterParams: Omit<IFilterParams, 'filterChangedCallback' | 'filterModifiedCallback'>;
 }

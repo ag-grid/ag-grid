@@ -1,4 +1,5 @@
-import { PostConstruct, SetOperationExpression } from "@ag-grid-community/core";
+import { PostConstruct } from "@ag-grid-community/core";
+import { SetOperationExpression } from "../../interfaces";
 import { MiniFilterComponent } from "../miniFilterComponent";
 import { RootComponent } from "../rootComponent";
 import { SetOperandsComponent } from "../setOperandsComponent";

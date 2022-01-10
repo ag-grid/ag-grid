@@ -1,4 +1,5 @@
-import { AgInputTextField, Component, ExpressionComponentParams, PostConstruct, RefSelector, SetOperationExpression } from "@ag-grid-community/core";
+import { AgInputTextField, Component, PostConstruct, RefSelector } from "@ag-grid-community/core";
+import { ExpressionComponentParams, SetOperationExpression } from "../interfaces";
 import { FilterListenerManager } from "../state/filterListenerManager";
 import { GridColumnValuesModel } from "../grid-model/gridColumnValuesModel";
 import { ExpressionComponent } from "./interfaces";

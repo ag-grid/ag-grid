@@ -1,4 +1,5 @@
-import { AgCheckbox, Component, ExpressionComponentParams, PostConstruct, RefSelector, SetOperationExpression, StateManager, VirtualList } from "@ag-grid-community/core";
+import { AgCheckbox, Component, PostConstruct, RefSelector, VirtualList } from "@ag-grid-community/core";
+import { ExpressionComponentParams, SetOperationExpression, StateManager } from "../interfaces";
 import { GridColumnValuesModel } from "../grid-model/gridColumnValuesModel";
 import { ExpressionComponent } from "./interfaces";
 

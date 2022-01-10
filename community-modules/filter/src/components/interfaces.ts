@@ -1,4 +1,4 @@
-import { FilterExpression, ExpressionComponentParams } from "@ag-grid-community/core";
+import { FilterExpression, ExpressionComponentParams } from "../interfaces";
 
 export interface ExpressionComponent<F extends FilterExpression = FilterExpression> {
     setParameters(params: ExpressionComponentParams<F>): void;

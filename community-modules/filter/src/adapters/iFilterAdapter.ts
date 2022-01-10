@@ -1,4 +1,5 @@
-import { Autowired, AgPromise, Component, IFilterComp, RefSelector, IFilterParams, IDoesFilterPassParams, FilterExpression } from "@ag-grid-community/core";
+import { Autowired, AgPromise, Component, IFilterComp, RefSelector, IFilterParams, IDoesFilterPassParams } from "@ag-grid-community/core";
+import { FilterExpression } from "../interfaces";
 
 /**
  * Provides a temporary bridge between the V1 and V2 filter implementation, adapting the V2

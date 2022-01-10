@@ -1,4 +1,4 @@
-import { PartialStateType, ScalarOperationExpression, StateManager, TextOperationExpression } from "@ag-grid-community/core";
+import { PartialStateType, ScalarOperationExpression, StateManager, TextOperationExpression } from "../interfaces";
 
 /** Adapts StateManager for the entire expression to be narrower-scoped for OperandComponents */
 export class OperandStateManagerAdapter<E extends TextOperationExpression | ScalarOperationExpression, O extends E['operands'][number]> implements StateManager<O> {

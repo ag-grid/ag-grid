@@ -1,5 +1,5 @@
-import { AgSelect, Component, PostConstruct, RefSelector, InbuiltExpression, _, StateManager, PartialStateType, ExpressionComponentParams, TextOperationExpression, ScalarOperationExpression } from "@ag-grid-community/core";
-import { comparisonOperationOperandCardinality, TextComparisonOperation, ScalarComparisonOperation } from "@ag-grid-community/core";
+import { AgSelect, Component, PostConstruct, RefSelector, _ } from "@ag-grid-community/core";
+import { comparisonOperationOperandCardinality, ExpressionComponentParams, InbuiltExpression, PartialStateType, ScalarComparisonOperation, ScalarOperationExpression, StateManager, TextComparisonOperation, TextOperationExpression } from "../interfaces";
 import { ExpressionComponent, OperandComponent } from "./interfaces";
 import { initialiseAndAttachChildren } from "./filterComponentUtils";
 import { OperandStateManagerAdapter } from "../state/operandStateManager";

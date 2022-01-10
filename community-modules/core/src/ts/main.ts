@@ -103,38 +103,6 @@ export { IFilterDef, IFilterParams, IFilterOptionDef, IDoesFilterPassParams, Pro
 export { ISetFilter, SetFilterModel, ISetFilterParams, SetFilterValues, SetFilterModelValue, SetFilterValuesFunc, SetFilterValuesFuncParams } from "./interfaces/iSetFilter";
 export { FilterUIInfo, IFilterManager, FilterWrapper, FilterRequestSource } from "./filter/filterManager";
 export { IMultiFilter, IMultiFilterModel, IMultiFilterComp, IMultiFilterParams, IMultiFilterDef } from './interfaces/iMultiFilter';
-export {
-    FilterExpression,
-    ConcreteExpression,
-    TextOperationExpression,
-    NumberComparisonOperationExpression,
-    DateComparisonOperationExpression,
-    SetOperationExpression,
-    ScalarOperationExpression,
-    LogicalOperationExpression,
-    TextComparisonOperation,
-    ScalarComparisonOperation,
-    SetOperation,
-    LogicOperation,
-    ScalarComparisonOperationExpression,
-    TextComparisonOperationExpression,
-    OperandArray,
-    FilterEvaluationModel,
-    InbuiltExpression,
-    StateManager,
-    ExpressionComponentParams,
-    StateType,
-    PartialTuple,
-    PartialStateType,
-    isScalarComparisonOperation,
-    isTextComparisonOperation,
-    isTextComparisonOperationExpression,
-    isSetOperation,
-    isComparisonOperationExpression,
-    comparisonOperationOperandCardinality,
-    SCALAR_COMPARISON_OPERATION_METADATA,
-    TEXT_COMPARISON_OPERATION_METADATA,
-} from './interfaces/filtersV2';
 
 export { ProvidedFilter, IProvidedFilter, IProvidedFilterParams } from "./filter/provided/providedFilter";
 export { ISimpleFilter, SimpleFilter, ISimpleFilterParams, ISimpleFilterModel, ICombinedSimpleModel, JoinOperator } from "./filter/provided/simpleFilter";

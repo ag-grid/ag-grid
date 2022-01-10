@@ -1,4 +1,4 @@
-import { FilterExpression, FilterEvaluationModel } from "@ag-grid-community/core";
+import { FilterExpression, FilterEvaluationModel } from "../interfaces";
 
 export class NullModel implements FilterEvaluationModel<void> {
     evaluate(_: void): boolean {

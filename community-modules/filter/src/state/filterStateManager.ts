@@ -1,6 +1,6 @@
-import { Autowired, Bean, Column, ColumnModel, FilterEvaluationModel, GridOptions, PartialStateType, StateManager } from "@ag-grid-community/core";
+import { Autowired, Bean, Column, ColumnModel, GridOptions } from "@ag-grid-community/core";
+import { FilterEvaluationModel, FilterExpression, PartialStateType, StateManager } from "../interfaces";
 import { EvaluationModelFactory } from "../evaluation-model/evaluationModelFactory";
-import { FilterExpression } from "@ag-grid-community/core";
 import { expressionType } from "../filterMapping";
 import { FilterListenerManager } from "./filterListenerManager";
 

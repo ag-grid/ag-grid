@@ -1,4 +1,5 @@
-import { Component, ExpressionComponentParams, FilterExpression, KeyCode, PartialStateType, PostConstruct, RefSelector, StateManager, _ } from "@ag-grid-community/core";
+import { Component, KeyCode, PostConstruct, RefSelector, _ } from "@ag-grid-community/core";
+import { FilterExpression, StateManager, ExpressionComponentParams, PartialStateType } from "../interfaces";
 import { ExpressionComponent } from "./interfaces";
 import { initialiseAndAttachChildren } from "./filterComponentUtils";
 

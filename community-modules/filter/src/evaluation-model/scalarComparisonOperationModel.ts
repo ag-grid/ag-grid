@@ -1,5 +1,5 @@
-import { _, PartialTuple } from "@ag-grid-community/core";
-import { comparisonOperationOperandCardinality, isScalarComparisonOperation, FilterEvaluationModel, OperandArray, ScalarComparisonOperation, ScalarOperationExpression } from "@ag-grid-community/core";
+import { _ } from "@ag-grid-community/core";
+import { comparisonOperationOperandCardinality, isScalarComparisonOperation, FilterEvaluationModel, OperandArray, ScalarComparisonOperation, ScalarOperationExpression, PartialTuple } from "../interfaces";
 import { Comparator, FilterExpressionSerialiser } from "./interfaces";
 
 type OperandExpressionType<T extends number | Date> = T extends number ? number : string;

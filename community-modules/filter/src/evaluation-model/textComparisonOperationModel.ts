@@ -1,5 +1,5 @@
 import { _ } from "@ag-grid-community/core";
-import { comparisonOperationOperandCardinality, isTextComparisonOperation, FilterEvaluationModel, TextComparisonOperation, TextComparisonOperationExpression } from "@ag-grid-community/core";
+import { comparisonOperationOperandCardinality, isTextComparisonOperation, FilterEvaluationModel, TextComparisonOperation, TextComparisonOperationExpression } from "../interfaces";
 
 export class TextComparisonOperationModel implements FilterEvaluationModel<string> {
     private readonly operation: TextComparisonOperation;

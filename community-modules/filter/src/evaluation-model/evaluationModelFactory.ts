@@ -1,4 +1,5 @@
-import { Bean, FilterExpression, FilterEvaluationModel, Autowired, GridOptions, _, PartialStateType } from "@ag-grid-community/core";
+import { Bean, Autowired, GridOptions, _ } from "@ag-grid-community/core";
+import { FilterExpression, FilterEvaluationModel, PartialStateType } from "../interfaces";
 import { ScalarComparisonOperationModel } from "./scalarComparisonOperationModel";
 import { DEFAULT_COMPARATOR } from "./comparator/defaultComparator";
 import { LogicOperationModel } from "./logicOperationModel";
