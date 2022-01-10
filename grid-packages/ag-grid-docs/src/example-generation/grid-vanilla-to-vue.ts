@@ -23,7 +23,9 @@ const compToFramework = {
     toolPanelComp: 'toolPanelFramework'
 }
 
-const GRID_WIDE_COMPONENTS = ['dateComponent',
+const GRID_WIDE_COMPONENTS = [
+    'fullWidthCellComp',
+    'dateComponent',
     'dateComp',
     'loadingCellRenderer',
     'loadingOverlayComponent',
@@ -333,6 +335,10 @@ function isParamsProperty(property) {
 
 }
 
+function isExternalVueFile(componentFileNames, component) {
+    return componentFileNames.length > 0 && componentFileNames.some(fileName => fileName.toUpperCase().includes(component.toUpperCase()));
+}
+
 function convertColumnDefs(rawColumnDefs, userComponentNames, bindings, componentFileNames, vueComponents): string[] {
     const columnDefs = [];
     const parseFunction = value => value.replace('AG_FUNCTION_', '').replace(/^function\s*\((.*?)\)/, '($1) => ');
@@ -376,12 +382,14 @@ function convertColumnDefs(rawColumnDefs, userComponentNames, bindings, componen
                 }
 
                 if (typeof value === "string") {
-                    if (!value.startsWith('ag') && compToFramework[columnProperty] && componentFileNames.length > 0) {
+                    if (!value.startsWith('ag') && compToFramework[columnProperty]) {
                         const parsedValue = value.replace('AG_LITERAL_', '');
-                        if (!bindings.components.includes(parsedValue)) {
-                            vueComponents.push(parsedValue)
+                        if(isExternalVueFile(componentFileNames, parsedValue)) {
+                            if (!bindings.components.includes(parsedValue)) {
+                                vueComponents.push(parsedValue)
+                            }
+                            columnProperties.push(`${compToFramework[columnProperty]}:'${parsedValue}'`);
                         }
-                        columnProperties.push(`${compToFramework[columnProperty]}:'${parsedValue}'`);
                     } else if (value.startsWith('AG_LITERAL_')) {
                         // values starting with AG_LITERAL_ are actually function references
                         // grid-vanilla-src-parser converts the original values to a string that we can convert back to the function reference here
