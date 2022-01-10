@@ -397,9 +397,9 @@ function createExampleGenerator(prefix, importTypes) {
             importTypes.forEach(importType => copyProvidedExample(importType, 'typescript', providedExamples['typescript']));
         } else {
 
-            const htmlScripts = getMatchingPaths('*.{html}');
-            const vanillaScripts = getMatchingPaths('*.{js}', { ignore: ['**/*_{angular,react,vue,vue3}.js'] });
-            const tsScripts = getMatchingPaths('*.{ts}', { ignore: ['**/*_{angular,react,vue,vue3}.ts', '**/main.ts'] });
+            const htmlScripts = getMatchingPaths('*.html');
+            const vanillaScripts = getMatchingPaths('*.js', { ignore: ['**/*_{angular,react,vue,vue3}.js'] });
+            const tsScripts = getMatchingPaths('*.ts', { ignore: ['**/*_{angular,react,vue,vue3}.ts', '**/main.ts'] });
             const tsConfigs = new Map();
             try {
                 const getSource = vanillaToTypescript(deepCloneObject(typedBindings), mainScript, extractComponentFileNames(tsScripts, '_typescript'));
@@ -413,7 +413,7 @@ function createExampleGenerator(prefix, importTypes) {
                 throw e;
             }
 
-            if (tsScripts.length > 1) {
+            if (tsScripts.length > 0) {
                 importTypes.forEach(importType => writeExampleFiles(importType, 'typescript', 'typescript', [...htmlScripts, ...tsScripts], tsConfigs.get(importType)));
             } else {
                 importTypes.forEach(importType => writeExampleFiles(importType, 'typescript', 'vanilla', [...htmlScripts, ...vanillaScripts], tsConfigs.get(importType)));
