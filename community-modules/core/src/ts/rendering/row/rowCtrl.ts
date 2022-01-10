@@ -239,7 +239,7 @@ export class RowCtrl extends BeanStub {
                 comp.setRowBusinessKey(businessKeySanitised);
             }
 
-            if (this.isFullWidth() && !this.beans.gridOptionsWrapper.isSuppressCellSelection()) {
+            if (this.isFullWidth() && !this.beans.gridOptionsWrapper.isSuppressCellFocus()) {
                 comp.setTabIndex(-1);
             }
 

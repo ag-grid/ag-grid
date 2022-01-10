@@ -234,7 +234,7 @@ export class CellCtrl extends BeanStub {
         this.setupAutoHeight();
         this.setAriaColIndex();
 
-        if (!this.gow.isSuppressCellSelection()) {
+        if (!this.gow.isSuppressCellFocus()) {
             this.cellComp.setTabIndex(-1);
         }
 
@@ -999,7 +999,7 @@ export class CellCtrl extends BeanStub {
     }
 
     public onCellFocused(event?: CellFocusedEvent): void {
-        if (!this.cellComp || this.gow.isSuppressCellSelection()) { return; }
+        if (!this.cellComp || this.gow.isSuppressCellFocus()) { return; }
 
         const cellFocused = this.beans.focusService.isCellFocused(this.cellPosition);
 

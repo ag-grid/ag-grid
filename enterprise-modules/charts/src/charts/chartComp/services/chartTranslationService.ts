@@ -108,6 +108,7 @@ export class ChartTranslationService extends BeanStub {
         chartUnlinkToolbarTooltip: 'Unlinked from Grid',
         chartDownloadToolbarTooltip: 'Download Chart',
         seriesChartType: 'Series Chart Type',
+        seriesType: 'Series Type',
         secondaryAxis: 'Secondary Axis',
     };
 

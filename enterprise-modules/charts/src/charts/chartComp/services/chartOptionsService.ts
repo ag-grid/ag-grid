@@ -10,8 +10,23 @@ import {
     GridApi
 } from "@ag-grid-community/core";
 import { ChartController } from "../chartController";
-import { CategoryAxis, Chart, ChartAxis, GroupedCategoryAxis, NumberAxis, TimeAxis } from "ag-charts-community";
-import { getChartThemeOverridesObjectName } from "../utils/chartThemeOverridesMapper";
+import {
+    AreaSeries,
+    BarSeries,
+    CategoryAxis,
+    Chart,
+    ChartAxis,
+    GroupedCategoryAxis,
+    HistogramSeries,
+    LineSeries,
+    NumberAxis,
+    PieSeries,
+    ScatterSeries,
+    TimeAxis
+} from "ag-charts-community";
+import { ChartSeriesType, getSeriesType } from "../utils/seriesTypeMapper";
+
+type SupportedSeries = AreaSeries | BarSeries | HistogramSeries | LineSeries | PieSeries | ScatterSeries;
 
 export class ChartOptionsService extends BeanStub {
 
@@ -35,7 +50,7 @@ export class ChartOptionsService extends BeanStub {
 
     public setChartOption<T = string>(expression: string, value: T): void {
         // update chart options
-        const optionsType = getChartThemeOverridesObjectName(this.getChartType());
+        const optionsType = getSeriesType(this.getChartType());
         const options = _.get(this.getChartOptions(), `${optionsType}`, undefined);
         _.set(options, expression, value);
 
@@ -88,28 +103,36 @@ export class ChartOptionsService extends BeanStub {
         }
     }
 
-    public getSeriesOption<T = string>(expression: string): T {
-        return _.get(this.getChart().series[0], expression, undefined) as T;
+    public getSeriesOption<T = string>(expression: string, seriesType: ChartSeriesType): T {
+        const series = this.getChart().series.find((s: any) => ChartOptionsService.isMatchingSeries(seriesType, s));
+        return _.get(series, expression, undefined) as T;
     }
 
-    public setSeriesOption<T = string>(expression: string, value: T): void {
+    public setSeriesOption<T = string>(expression: string, value: T, seriesType: ChartSeriesType): void {
         // update series options
-        const optionsType = getChartThemeOverridesObjectName(this.getChartType());
-        _.set(this.getChartOptions()[optionsType].series, expression, value);
+        const options = this.getChartOptions();
+        if (!options[seriesType]) {
+            options[seriesType] = {};
+        }
+        _.set(options[seriesType].series, expression, value);
 
-        // update chart
-        this.getChart().series.forEach((s: any) => _.set(s, expression, value));
+        // update chart series
+        this.getChart().series.forEach((s: any) => {
+            if (ChartOptionsService.isMatchingSeries(seriesType, s)) {
+                _.set(s, expression, value);
+            }
+        });
 
         this.raiseChartOptionsChangedEvent();
     }
 
     public getPairedMode(): boolean {
-        const optionsType = getChartThemeOverridesObjectName(this.getChartType());
+        const optionsType = getSeriesType(this.getChartType());
         return _.get(this.getChartOptions(), `${optionsType}.paired`, undefined);
     }
 
     public setPairedMode(paired: boolean): void {
-        const optionsType = getChartThemeOverridesObjectName(this.getChartType());
+        const optionsType = getSeriesType(this.getChartType());
         const options = _.get(this.getChartOptions(), `${optionsType}`, undefined);
         _.set(options, 'paired', paired);
     }
@@ -133,7 +156,7 @@ export class ChartOptionsService extends BeanStub {
     }
 
     private updateAxisOptions<T = string>(chartAxis: ChartAxis, expression: string, value: T) {
-        const optionsType = getChartThemeOverridesObjectName(this.getChartType());
+        const optionsType = getSeriesType(this.getChartType());
         const axisOptions = this.getChartOptions()[optionsType].axes;
         if (chartAxis instanceof NumberAxis) {
             _.set(axisOptions.number, expression, value);
@@ -160,6 +183,16 @@ export class ChartOptionsService extends BeanStub {
         });
 
         this.eventService.dispatchEvent(event);
+    }
+
+    private static isMatchingSeries(seriesType: ChartSeriesType, series: SupportedSeries): boolean {
+        return seriesType === 'area' && series instanceof AreaSeries ? true :
+               seriesType === 'bar' && series instanceof BarSeries ? true :
+               seriesType === 'column' && series instanceof BarSeries ? true :
+               seriesType === 'histogram' && series instanceof HistogramSeries ? true :
+               seriesType === 'line' && series instanceof LineSeries ? true :
+               seriesType === 'pie' && series instanceof PieSeries ? true :
+               seriesType === 'scatter' && series instanceof ScatterSeries;
     }
 
     protected destroy(): void {

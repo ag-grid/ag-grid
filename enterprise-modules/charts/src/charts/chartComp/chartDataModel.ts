@@ -157,28 +157,28 @@ export class ChartDataModel extends BeanStub {
             console.warn(`AG Grid: 'seriesChartTypes' are required when the 'customCombo' chart type is specified.`);
         }
 
-        const getChartTypeForSeries = (valueCol: ColState) => {
+        const getSeriesChartType = (valueCol: ColState): SeriesChartType => {
             if (!this.savedCustomSeriesChartTypes || this.savedCustomSeriesChartTypes.length === 0) {
                 this.savedCustomSeriesChartTypes = this.seriesChartTypes;
             }
 
-            const providedChartType = this.savedCustomSeriesChartTypes.find(s => s.colId === valueCol.colId);
-            if (!providedChartType) {
+            const providedSeriesChartType = this.savedCustomSeriesChartTypes.find(s => s.colId === valueCol.colId);
+            if (!providedSeriesChartType) {
                 if (!this.suppressComboChartWarnings) {
                     console.warn(`AG Grid: no 'seriesChartType' found for colId = '${valueCol.colId}', defaulting to 'line'.`);
                 }
-                return 'line';
+                return {
+                    colId: valueCol.colId,
+                    chartType: 'line',
+                    secondaryAxis: false
+                };
             }
-            return providedChartType.chartType;
+
+            return providedSeriesChartType;
         }
 
         const selectedCols = this.valueColState.filter(cs => cs.selected);
-        const updatedSeriesChartTypes = selectedCols.map((valueCol: ColState) => ({
-                colId: valueCol.colId,
-                chartType: getChartTypeForSeries(valueCol),
-                secondaryAxis: false
-            })
-        );
+        const updatedSeriesChartTypes = selectedCols.map(getSeriesChartType);
 
         this.seriesChartTypes = updatedSeriesChartTypes;
 
@@ -190,8 +190,8 @@ export class ChartDataModel extends BeanStub {
     }
 
     public updateChartSeriesTypesForBuiltInCombos() {
-        let primaryChartType: ChartType = this.chartType === 'columnLineCombo' ? 'groupedColumn' : 'area';
-        let secondaryChartType: ChartType = this.chartType === 'columnLineCombo' ? 'line' : 'column';
+        let primaryChartType: ChartType = this.chartType === 'columnLineCombo' ? 'groupedColumn' : 'stackedArea';
+        let secondaryChartType: ChartType = this.chartType === 'columnLineCombo' ? 'line' : 'groupedColumn';
 
         const selectedCols = this.valueColState.filter(cs => cs.selected);
         const lineIndex = Math.ceil(selectedCols.length / 2);

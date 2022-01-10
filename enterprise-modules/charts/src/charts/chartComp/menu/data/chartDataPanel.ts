@@ -214,7 +214,8 @@ export class ChartDataPanel extends Component {
                 .createManagedBean(new AgCheckbox())
                 .setLabel(this.chartTranslationService.translate('secondaryAxis'))
                 .setLabelWidth("flex")
-                .setValue(!!seriesChartType.secondaryAxis);
+                .setValue(!!seriesChartType.secondaryAxis)
+                .onValueChange((enabled: boolean) => this.chartController.updateSeriesChartType(col.colId, undefined, enabled));
 
             seriesItemGroup.addItem(secondaryAxisComp);
 
@@ -315,7 +316,7 @@ export class ChartDataPanel extends Component {
     }
 
     private isInPairedMode() {
-        return this.chartController.isActiveXYChart() && this.chartOptionsService.getSeriesOption('paired');
+        return this.chartController.isActiveXYChart() && this.chartOptionsService.getSeriesOption('paired', 'scatter');
     }
 
     private clearComponents() {

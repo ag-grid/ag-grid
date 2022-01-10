@@ -23,8 +23,7 @@ Grid events are asynchronous so that the state of the grid will be settled by th
 
 ## Default Boolean Properties
 
-Where the property is a boolean (`true` or `false`), then `false` (or left blank) is the default value. For this reason, on / off items are presented in a way that causes the most common behaviour
-to be used when the value is `false`. For example, `suppressCellSelection` is named as such because most people will want cell selection to be enabled.
+Where the property is a boolean (`true` or `false`), then `false` (or left blank) is the default value. For this reason, on / off items are presented in a way that causes the most common behaviour to be used when the value is `false`. For example, `suppressCellFocus` is named as such because most people will want cell focus to be enabled.
 
 ## Next Steps
 

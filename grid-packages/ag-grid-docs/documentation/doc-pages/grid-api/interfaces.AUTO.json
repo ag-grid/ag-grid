@@ -1616,7 +1616,7 @@
       "rowMultiSelectWithClick?": "boolean",
       "suppressRowDeselection?": "boolean",
       "suppressRowClickSelection?": "boolean",
-      "suppressCellSelection?": "boolean",
+      "suppressCellFocus?": "boolean",
       "suppressMultiRangeSelection?": "boolean",
       "enableCellTextSelection?": "boolean",
       "enableRangeSelection?": "boolean",
@@ -1989,7 +1989,7 @@
       "rowMultiSelectWithClick?": "/** Set to `true` to allow multiple rows to be selected using single click. Default: `false` */",
       "suppressRowDeselection?": "/** If `true`, rows will not be deselected if you hold down `Ctrl` and click the row or press `Space`. Default: `false` */",
       "suppressRowClickSelection?": "/** If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection. Default: `false` */",
-      "suppressCellSelection?": "/** If `true`, cells won't be selectable. This means cells will not get keyboard focus when you click on them. Default: `false` */",
+      "suppressCellFocus?": "/** If `true`, cells won't be focusable. This means keyboard navigation will be disabled for grid cells, but keep keyboard navigation in other elements of the grid such as column headers, floating filters, tool panels. Default: `false` */",
       "suppressMultiRangeSelection?": "/** If `true`, only a single range can be selected. Default: `false` */",
       "enableCellTextSelection?": "/** Set to `true` to be able to select the text within cells.\n * \n * **Note:** When this is set to `true`, the clipboard service is disabled.\n * Default: `false` */",
       "enableRangeSelection?": "/** Set to `true` to enable Range Selection. Default: `false` */",
@@ -9040,6 +9040,7 @@
     "type": {
       "items": "TabbedItem[]",
       "cssClass?": "string",
+      "keepScrollPosition?": "boolean",
       "onItemClicked?": "Function",
       "onActiveItemClicked?": "Function"
     }
@@ -9051,6 +9052,7 @@
       "titleLabel": "string",
       "bodyPromise": "AgPromise<HTMLElement>",
       "name": "string",
+      "getScrollableContainer?": "() => HTMLElement",
       "afterAttachedCallback?": "(params: IAfterGuiAttachedParams) => void"
     }
   },

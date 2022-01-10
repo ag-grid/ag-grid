@@ -2997,8 +2997,8 @@
       "description": "/** If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
-    "suppressCellSelection": {
-      "description": "/** If `true`, cells won't be selectable. This means cells will not get keyboard focus when you click on them. Default: `false` */",
+    "suppressCellFocus": {
+      "description": "/** If `true`, cells won't be focusable. This means keyboard navigation will be disabled for grid cells, but keep keyboard navigation in other elements of the grid such as column headers, floating filters, tool panels. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressMultiRangeSelection": {
@@ -15867,6 +15867,9 @@
   "TabbedLayoutParams": {
     "items": { "type": { "returnType": "TabbedItem[]", "optional": false } },
     "cssClass": { "type": { "returnType": "string", "optional": true } },
+    "keepScrollPosition": {
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "onItemClicked": { "type": { "returnType": "Function", "optional": true } },
     "onActiveItemClicked": {
       "type": { "returnType": "Function", "optional": true }
@@ -15879,6 +15882,9 @@
       "type": { "returnType": "AgPromise<HTMLElement>", "optional": false }
     },
     "name": { "type": { "returnType": "string", "optional": false } },
+    "getScrollableContainer": {
+      "type": { "arguments": {}, "returnType": "HTMLElement", "optional": true }
+    },
     "afterAttachedCallback": {
       "type": {
         "arguments": { "params": "IAfterGuiAttachedParams" },

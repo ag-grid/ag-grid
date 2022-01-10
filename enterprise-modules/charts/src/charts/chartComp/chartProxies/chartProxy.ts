@@ -2,7 +2,7 @@ import { _, AgChartThemeOverrides, ChartType, SeriesChartType } from "@ag-grid-c
 import { AgChartTheme, CategoryAxis, Chart, ChartTheme, getChartTheme, themes, } from "ag-charts-community";
 import { deepMerge } from "../utils/object";
 import { CrossFilteringContext } from "../../chartService";
-import { ChartThemeOverrideObjectName, getChartThemeOverridesObjectName } from "../utils/chartThemeOverridesMapper";
+import { ChartSeriesType, getSeriesType } from "../utils/seriesTypeMapper";
 
 export interface ChartProxyParams {
     chartType: ChartType;
@@ -39,7 +39,7 @@ export interface UpdateChartParams {
 
 export abstract class ChartProxy {
     protected readonly chartType: ChartType;
-    protected readonly standaloneChartType: ChartThemeOverrideObjectName;
+    protected readonly standaloneChartType: ChartSeriesType;
 
     protected chart: Chart;
     protected chartOptions: AgChartThemeOverrides;
@@ -51,7 +51,7 @@ export abstract class ChartProxy {
         this.chartType = chartProxyParams.chartType;
         this.crossFiltering = chartProxyParams.crossFiltering;
         this.crossFilterCallback = chartProxyParams.crossFilterCallback;
-        this.standaloneChartType = getChartThemeOverridesObjectName(this.chartType);
+        this.standaloneChartType = getSeriesType(this.chartType);
 
         if (this.chartProxyParams.chartOptionsToRestore) {
             this.chartOptions = this.chartProxyParams.chartOptionsToRestore;

@@ -21,6 +21,8 @@ export class TabbedLayout extends Component {
     private afterAttachedParams: IAfterGuiAttachedParams;
     private items: TabbedItemWrapper[] = [];
     private activeItem: TabbedItemWrapper;
+    private lastScrollListener: (() => null) | null | undefined;
+    private readonly tabbedItemScrollMap = new Map<string, number>();
 
     constructor(params: TabbedLayoutParams) {
         super(TabbedLayout.getTemplate(params.cssClass));
@@ -145,8 +147,10 @@ export class TabbedLayout extends Component {
     }
 
     private showItemWrapper(wrapper: TabbedItemWrapper): void {
+        const { tabbedItem, eHeaderButton } = wrapper;
+
         if (this.params.onItemClicked) {
-            this.params.onItemClicked({ item: wrapper.tabbedItem });
+            this.params.onItemClicked({ item: tabbedItem });
         }
 
         if (this.activeItem === wrapper) {
@@ -154,16 +158,34 @@ export class TabbedLayout extends Component {
             return;
         }
 
+        if (this.lastScrollListener) {
+            this.lastScrollListener = this.lastScrollListener();
+        }
+
         clearElement(this.eBody);
 
-        wrapper.tabbedItem.bodyPromise.then(body => {
-            this.eBody.appendChild(body!);
+        tabbedItem.bodyPromise.then((body: HTMLElement) => {
+            this.eBody.appendChild(body);
             const onlyUnmanaged = !this.focusService.isKeyboardMode();
 
             this.focusService.focusInto(this.eBody, false, onlyUnmanaged);
 
-            if (wrapper.tabbedItem.afterAttachedCallback) {
-                wrapper.tabbedItem.afterAttachedCallback(this.afterAttachedParams);
+            if (tabbedItem.afterAttachedCallback) {
+                tabbedItem.afterAttachedCallback(this.afterAttachedParams);
+            }
+
+            if (this.params.keepScrollPosition) {
+                const scrollableContainer = (tabbedItem.getScrollableContainer && tabbedItem.getScrollableContainer()) || body;
+                this.lastScrollListener = this.addManagedListener(scrollableContainer, 'scroll', () => {
+                    this.tabbedItemScrollMap.set(tabbedItem.name, scrollableContainer.scrollTop);
+                });
+                const scrollPosition = this.tabbedItemScrollMap.get(tabbedItem.name);
+                if (scrollPosition !== undefined) {
+                    // Safari needs a small timeout or it will fire a scroll event to position 0
+                    setTimeout(() => {
+                        scrollableContainer.scrollTop = scrollPosition;
+                    }, 0);
+                }
             }
         });
 
@@ -171,7 +193,7 @@ export class TabbedLayout extends Component {
             this.activeItem.eHeaderButton.classList.remove('ag-tab-selected');
         }
 
-        wrapper.eHeaderButton.classList.add('ag-tab-selected');
+        eHeaderButton.classList.add('ag-tab-selected');
 
         this.activeItem = wrapper;
     }
@@ -180,6 +202,7 @@ export class TabbedLayout extends Component {
 export interface TabbedLayoutParams {
     items: TabbedItem[];
     cssClass?: string;
+    keepScrollPosition?: boolean;
     onItemClicked?: Function;
     onActiveItemClicked?: Function;
 }
@@ -189,6 +212,7 @@ export interface TabbedItem {
     titleLabel: string;
     bodyPromise: AgPromise<HTMLElement>;
     name: string;
+    getScrollableContainer?: () => HTMLElement;
     afterAttachedCallback?: (params: IAfterGuiAttachedParams) => void;
 }
 

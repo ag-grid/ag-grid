@@ -406,7 +406,7 @@ var gridOptions = {
     // suppressActionCtrlV: true,
     // suppressActionCtrlD: true,
     // suppressActionCtrlA: true,
-    // suppressCellSelection: true,
+    // suppressCellFocus: true,
     // suppressMultiSort: true,
     // scrollbarWidth: 20,
     sideBar: {

@@ -1,16 +1,12 @@
 import { _, ChartType, Component, PostConstruct } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
 import { LegendPanel } from "./legend/legendPanel";
-import { BarSeriesPanel } from "./series/barSeriesPanel";
 import { AxisPanel } from "./axis/axisPanel";
 import { NavigatorPanel } from "./navigator/navigatorPanel";
-import { LineSeriesPanel } from "./series/lineSeriesPanel";
-import { PieSeriesPanel } from "./series/pieSeriesPanel";
 import { ChartPanel } from "./chart/chartPanel";
-import { AreaSeriesPanel } from "./series/areaSeriesPanel";
-import { ScatterSeriesPanel } from "./series/scatterSeriesPanel";
-import { HistogramSeriesPanel } from "./series/histogramSeriesPanel";
 import { ChartOptionsService } from "../../services/chartOptionsService";
+import { SeriesPanel } from "./series/seriesPanel";
+import { ChartSeriesType } from "../../utils/seriesTypeMapper";
 
 export function getMaxValue(currentValue: number, defaultMaxValue: number) {
     return Math.max(currentValue, defaultMaxValue);
@@ -26,7 +22,7 @@ export class FormatPanel extends Component {
     constructor(
         private readonly chartController: ChartController,
         private readonly chartOptionsService: ChartOptionsService) {
-            super(FormatPanel.TEMPLATE);
+        super(FormatPanel.TEMPLATE);
     }
 
     @PostConstruct
@@ -57,42 +53,42 @@ export class FormatPanel extends Component {
             case 'stackedBar':
             case 'normalizedBar':
                 this.addComponent(new AxisPanel(this.chartController, this.chartOptionsService));
-                this.addComponent(new BarSeriesPanel(this.chartOptionsService));
+                this.addComponent(new SeriesPanel(this.chartController, this.chartOptionsService, 'bar'));
                 this.addComponent(new NavigatorPanel(this.chartOptionsService));
                 break;
             case 'pie':
             case 'doughnut':
-                this.addComponent(new PieSeriesPanel(this.chartOptionsService));
+                this.addComponent(new SeriesPanel(this.chartController, this.chartOptionsService, 'pie'));
                 break;
             case 'line':
                 this.addComponent(new AxisPanel(this.chartController, this.chartOptionsService));
-                this.addComponent(new LineSeriesPanel(this.chartOptionsService));
+                this.addComponent(new SeriesPanel(this.chartController, this.chartOptionsService, 'line'));
                 this.addComponent(new NavigatorPanel(this.chartOptionsService));
                 break;
             case 'scatter':
             case 'bubble':
                 this.addComponent(new AxisPanel(this.chartController, this.chartOptionsService));
-                this.addComponent(new ScatterSeriesPanel(this.chartOptionsService));
+                this.addComponent(new SeriesPanel(this.chartController, this.chartOptionsService, 'scatter'));
                 this.addComponent(new NavigatorPanel(this.chartOptionsService));
                 break;
             case 'area':
             case 'stackedArea':
             case 'normalizedArea':
                 this.addComponent(new AxisPanel(this.chartController, this.chartOptionsService));
-                this.addComponent(new AreaSeriesPanel(this.chartOptionsService));
+                this.addComponent(new SeriesPanel(this.chartController, this.chartOptionsService, 'area'));
                 this.addComponent(new NavigatorPanel(this.chartOptionsService));
                 break;
             case 'histogram':
                 this.addComponent(new AxisPanel(this.chartController, this.chartOptionsService));
-                this.addComponent(new HistogramSeriesPanel(this.chartOptionsService));
+                this.addComponent(new SeriesPanel(this.chartController, this.chartOptionsService, 'histogram'));
                 this.addComponent(new NavigatorPanel(this.chartOptionsService));
                 break;
             case 'columnLineCombo':
             case 'areaColumnCombo':
             case 'customCombo':
                 this.addComponent(new AxisPanel(this.chartController, this.chartOptionsService));
-                this.addComponent(new BarSeriesPanel(this.chartOptionsService));
-                this.addComponent(new LineSeriesPanel(this.chartOptionsService));
+                // there is no single series type supplied for combo charts, it is inferred by the Series Panel
+                this.addComponent(new SeriesPanel(this.chartController, this.chartOptionsService));
                 this.addComponent(new NavigatorPanel(this.chartOptionsService));
                 break;
             default:

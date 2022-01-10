@@ -136,8 +136,9 @@ export class MiniChartsContainer extends Component {
     public updateSelectedMiniChart(): void {
         const selectedChartType = this.chartController.getChartType();
         for (const miniChartType in this.wrappers) {
+            const miniChart = this.wrappers[miniChartType];
             const selected = miniChartType === selectedChartType;
-            this.wrappers[miniChartType].classList.toggle('ag-selected', selected);
+            miniChart.classList.toggle('ag-selected', selected);
         }
     }
 }

@@ -248,7 +248,7 @@ export class ChartController extends BeanStub {
         return ['columnLineCombo', 'areaColumnCombo', 'customCombo'].includes(this.model.chartType);
     }
 
-    public updateSeriesChartType(colId: string, chartType: ChartType): void {
+    public updateSeriesChartType(colId: string, chartType?: ChartType, secondaryAxis?: boolean): void {
         const seriesChartType = this.model.seriesChartTypes.find(s => s.colId === colId);
         if (seriesChartType) {
 
@@ -258,10 +258,13 @@ export class ChartController extends BeanStub {
                 this.model.chartType = 'customCombo';
             }
 
-            // change series chart type
-            seriesChartType.chartType = chartType;
+            if (chartType != null) {
+                seriesChartType.chartType = chartType;
+            }
 
-            // TODO: also update secondaryAxis
+            if (secondaryAxis != null) {
+                seriesChartType.secondaryAxis = secondaryAxis;
+            }
 
             // replace existing custom series types with this latest version
             this.model.savedCustomSeriesChartTypes = this.model.seriesChartTypes;
@@ -276,6 +279,7 @@ export class ChartController extends BeanStub {
             }
         }
     }
+
 
     private getCellRanges(): CellRange[] {
         return [this.model.dimensionCellRange!, this.model.valueCellRange!].filter(r => r);
