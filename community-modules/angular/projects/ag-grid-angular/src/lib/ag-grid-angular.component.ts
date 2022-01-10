@@ -792,7 +792,10 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public suppressRowDeselection: boolean | undefined = undefined;
     /** If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection. Default: `false`     */
     @Input() public suppressRowClickSelection: boolean | undefined = undefined;
-    /** If `true`, cells won't be focusable. This means keyboard navigation will be disabled for grid cells, but keep keyboard navigation in other elements of the grid such as column headers, floating filters, tool panels. Default: `false`     */
+    /** @deprecated This property has been deprecated. Use `suppressCellFocus` instead.
+     */
+    @Input() public suppressCellSelection: boolean | undefined = undefined;
+    /** If `true`, cells won't be focusable. This means keyboard navigation will be disabled for grid cells, but remain enabled in other elements of the grid such as column headers, floating filters, tool panels.     */
     @Input() public suppressCellFocus: boolean | undefined = undefined;
     /** If `true`, only a single range can be selected. Default: `false`     */
     @Input() public suppressMultiRangeSelection: boolean | undefined = undefined;
@@ -1087,6 +1090,7 @@ hence this property is deprecated as will be removed in the next major release.
     // https://angular.io/guide/template-typecheck#input-setter-coercion 
     static ngAcceptInputType_suppressMakeColumnVisibleAfterUnGroup: boolean | null | '';
     static ngAcceptInputType_suppressRowClickSelection: boolean | null | '';
+    static ngAcceptInputType_suppressCellSelection: boolean | null | '';
     static ngAcceptInputType_suppressCellFocus: boolean | null | '';
     static ngAcceptInputType_suppressHorizontalScroll: boolean | null | '';
     static ngAcceptInputType_alwaysShowHorizontalScroll: boolean | null | '';

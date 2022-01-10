@@ -719,7 +719,11 @@ export interface GridOptions {
     suppressRowDeselection?: boolean;
     /** If `true`, row selection won't happen when rows are clicked. Use when you only want checkbox selection. Default: `false` */
     suppressRowClickSelection?: boolean;
-    /** If `true`, cells won't be focusable. This means keyboard navigation will be disabled for grid cells, but keep keyboard navigation in other elements of the grid such as column headers, floating filters, tool panels. Default: `false` */
+    /**
+     * @deprecated This property has been deprecated. Use `suppressCellFocus` instead.
+     */
+    suppressCellSelection?:boolean;
+    /** If `true`, cells won't be focusable. This means keyboard navigation will be disabled for grid cells, but remain enabled in other elements of the grid such as column headers, floating filters, tool panels. */
     suppressCellFocus?: boolean;
     /** If `true`, only a single range can be selected. Default: `false` */
     suppressMultiRangeSelection?: boolean;
