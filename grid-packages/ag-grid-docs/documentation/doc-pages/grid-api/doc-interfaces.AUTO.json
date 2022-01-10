@@ -9683,129 +9683,6 @@
       "type": { "returnType": "any", "optional": false }
     }
   },
-  "ScalarComparisonOperation": {},
-  "TextComparisonOperation": {},
-  "SetOperation": {},
-  "Cardinality": {},
-  "OperationExpression": {
-    "type": { "type": { "returnType": "T", "optional": false } },
-    "operation": { "type": { "returnType": "O", "optional": false } },
-    "operands": {
-      "type": {
-        "returnType": "C extends 0 ? [] :\n        C extends 1 ? [ N ] :\n        C extends 2 ? [ N, N ] :\n        C extends null ? null :\n        N[]",
-        "optional": false
-      }
-    },
-    "meta": { "typeParams": ["T", "N", "O", "C extends Cardinality = 1"] }
-  },
-  "OperandArray": { "meta": { "typeParams": ["T"] } },
-  "ScalarComparisonOperationExpression": {
-    "meta": { "typeParams": ["T", "N"] }
-  },
-  "TextComparisonOperationExpression": { "meta": { "typeParams": ["T", "N"] } },
-  "LogicOperation": {},
-  "NumberComparisonOperationExpression": {},
-  "DateComparisonOperationExpression": {},
-  "ScalarOperationExpression": {},
-  "TextOperationExpression": {},
-  "SetOperationExpression": {},
-  "LogicalOperationExpression": { "meta": { "typeParams": ["M"] } },
-  "InbuiltExpression": {},
-  "ConcreteExpression": {},
-  "FilterExpression": {},
-  "FilterEvaluationModel": {
-    "evaluate": {
-      "type": {
-        "arguments": { "input": "T" },
-        "returnType": "boolean",
-        "optional": false
-      }
-    },
-    "isValid": {
-      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
-    },
-    "isNull": {
-      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
-    },
-    "toFilterExpression": {
-      "type": {
-        "arguments": {},
-        "returnType": "FilterExpression | null",
-        "optional": false
-      }
-    },
-    "meta": { "typeParams": ["T"] }
-  },
-  "StateType": {},
-  "PartialTuple": { "meta": { "typeParams": ["T"] } },
-  "PartialStateType": { "meta": { "typeParams": ["S"] } },
-  "StateManager": {
-    "addUpdateListener": {
-      "type": {
-        "arguments": { "source": "any", "cb": "(newState: T | null) => void" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "addTransientUpdateListener": {
-      "type": {
-        "arguments": {
-          "source": "any",
-          "cb": "(newTransientState: PartialStateType<T> | T | null) => void"
-        },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "getTransientExpression": {
-      "type": {
-        "arguments": {},
-        "returnType": "PartialStateType<T> | null",
-        "optional": false
-      }
-    },
-    "mutateTransientExpression": {
-      "type": {
-        "arguments": {
-          "source": "any",
-          "change": "PartialStateType<T> | null"
-        },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "isTransientExpressionValid": {
-      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
-    },
-    "isTransientExpressionNull": {
-      "type": { "arguments": {}, "returnType": "boolean", "optional": false }
-    },
-    "applyExpression": {
-      "type": {
-        "arguments": { "source": "any" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "revertToAppliedExpression": {
-      "type": {
-        "arguments": { "source": "any" },
-        "returnType": "void",
-        "optional": false
-      }
-    },
-    "meta": { "typeParams": ["T extends StateType"] }
-  },
-  "ExpressionComponentParams": {
-    "stateManager": {
-      "type": { "returnType": "StateManager<F>", "optional": false }
-    },
-    "meta": {
-      "typeParams": [
-        "F extends FilterExpression | string | number | Date = FilterExpression"
-      ]
-    }
-  },
   "ContainerType": {},
   "IAfterGuiAttachedParams": {
     "container": {
@@ -16095,6 +15972,9 @@
   "TabbedLayoutParams": {
     "items": { "type": { "returnType": "TabbedItem[]", "optional": false } },
     "cssClass": { "type": { "returnType": "string", "optional": true } },
+    "keepScrollPosition": {
+      "type": { "returnType": "boolean", "optional": true }
+    },
     "onItemClicked": { "type": { "returnType": "Function", "optional": true } },
     "onActiveItemClicked": {
       "type": { "returnType": "Function", "optional": true }
@@ -16107,6 +15987,9 @@
       "type": { "returnType": "AgPromise<HTMLElement>", "optional": false }
     },
     "name": { "type": { "returnType": "string", "optional": false } },
+    "getScrollableContainer": {
+      "type": { "arguments": {}, "returnType": "HTMLElement", "optional": true }
+    },
     "afterAttachedCallback": {
       "type": {
         "arguments": { "params": "IAfterGuiAttachedParams" },

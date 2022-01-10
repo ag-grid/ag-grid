@@ -5465,124 +5465,6 @@
       "context": "/** The context as provided on `gridOptions.context` */"
     }
   },
-  "ScalarComparisonOperation": {
-    "meta": { "isTypeAlias": true },
-    "type": "keyof typeof SCALAR_COMPARISON_OPERATION_METADATA"
-  },
-  "TextComparisonOperation": {
-    "meta": { "isTypeAlias": true },
-    "type": "keyof typeof TEXT_COMPARISON_OPERATION_METADATA"
-  },
-  "SetOperation": {
-    "meta": { "isTypeAlias": true },
-    "type": "keyof typeof SET_OPERATION_METADATA"
-  },
-  "Cardinality": {
-    "meta": { "isTypeAlias": true },
-    "type": "0 | 1 | 2 | typeof Infinity | null"
-  },
-  "OperationExpression": {
-    "meta": { "typeParams": ["T", "N", "O", "C extends Cardinality = 1"] },
-    "type": {
-      "type": "T",
-      "operation": "O",
-      "operands": "C extends 0 ? [] : C extends 1 ? [N] : C extends 2 ? [N, N] : C extends null ? null : N[]"
-    }
-  },
-  "OperandArray": {
-    "meta": { "isTypeAlias": true, "typeParams": ["T"] },
-    "type": "[T] | [T, T]"
-  },
-  "ScalarComparisonOperationExpression": {
-    "meta": { "isTypeAlias": true, "typeParams": ["T", "N"] },
-    "type": "OperationExpression<T, N, Exclude<ScalarComparisonOperation, 'in-range'>, 1> | OperationExpression<T, N, 'in-range', 2>"
-  },
-  "TextComparisonOperationExpression": {
-    "meta": { "isTypeAlias": true, "typeParams": ["T", "N"] },
-    "type": "OperationExpression<T, N, TextComparisonOperation, 1>"
-  },
-  "LogicOperation": {
-    "meta": { "isTypeAlias": true },
-    "type": "'and' | 'or' | 'not'"
-  },
-  "NumberComparisonOperationExpression": {
-    "meta": { "isTypeAlias": true },
-    "type": "ScalarComparisonOperationExpression<'number-op', number>"
-  },
-  "DateComparisonOperationExpression": {
-    "meta": { "isTypeAlias": true },
-    "type": "ScalarComparisonOperationExpression<'date-op', string>"
-  },
-  "ScalarOperationExpression": {
-    "meta": { "isTypeAlias": true },
-    "type": "NumberComparisonOperationExpression | DateComparisonOperationExpression"
-  },
-  "TextOperationExpression": {
-    "meta": { "isTypeAlias": true },
-    "type": "TextComparisonOperationExpression<'text-op'>"
-  },
-  "SetOperationExpression": {
-    "meta": { "isTypeAlias": true },
-    "type": "OperationExpression<'set-op', string | number | null, SetOperation, typeof Infinity | null>"
-  },
-  "LogicalOperationExpression": {
-    "meta": { "isTypeAlias": true, "typeParams": ["M"] },
-    "type": "OperationExpression<'logic', M, Exclude<LogicOperation, 'not'>, typeof Infinity> | OperationExpression<'logic', M, 'not', 1>"
-  },
-  "InbuiltExpression": {
-    "meta": { "isTypeAlias": true },
-    "type": "TextOperationExpression | ScalarOperationExpression | SetOperationExpression"
-  },
-  "ConcreteExpression": {
-    "meta": { "isTypeAlias": true },
-    "type": "InbuiltExpression"
-  },
-  "FilterExpression": {
-    "meta": { "isTypeAlias": true },
-    "type": "ConcreteExpression | LogicalOperationExpression<ConcreteExpression>"
-  },
-  "FilterEvaluationModel": {
-    "meta": { "typeParams": ["T"], "doc": "/** EVALUATION MODEL * */" },
-    "type": {
-      "evaluate(input: T)": "boolean",
-      "isValid()": "boolean",
-      "isNull()": "boolean",
-      "toFilterExpression()": "FilterExpression | null"
-    }
-  },
-  "StateType": {
-    "meta": { "isTypeAlias": true },
-    "type": "FilterExpression | string | number | Date"
-  },
-  "PartialTuple": {
-    "meta": { "isTypeAlias": true, "typeParams": ["T"] },
-    "type": "T extends [] ? [] : T extends [any] ? [T[0] | null] : T extends [any, any] ? [T[0] | null, T[1] | null] : T extends any[] ? (T[number] | null)[] : T"
-  },
-  "PartialStateType": {
-    "meta": { "isTypeAlias": true, "typeParams": ["S"] },
-    "type": "S extends string | number | Date ? S : { [K in keyof S]?: PartialTuple<S[K]>; }"
-  },
-  "StateManager": {
-    "meta": { "typeParams": ["T extends StateType"] },
-    "type": {
-      "addUpdateListener(source: any, cb: (newState: T | null) => void)": "void",
-      "addTransientUpdateListener(source: any, cb: (newTransientState: PartialStateType<T> | T | null) => void)": "void",
-      "getTransientExpression()": "PartialStateType<T> | null",
-      "mutateTransientExpression(source: any, change: PartialStateType<T> | null)": "void",
-      "isTransientExpressionValid()": "boolean",
-      "isTransientExpressionNull()": "boolean",
-      "applyExpression(source: any)": "void",
-      "revertToAppliedExpression(source: any)": "void"
-    }
-  },
-  "ExpressionComponentParams": {
-    "meta": {
-      "typeParams": [
-        "F extends FilterExpression | string | number | Date = FilterExpression"
-      ]
-    },
-    "type": { "stateManager": "StateManager<F>" }
-  },
   "ContainerType": {
     "meta": { "isTypeAlias": true },
     "type": "'columnMenu' | 'contextMenu' | 'toolPanel' | 'floatingFilter'"
@@ -9184,6 +9066,7 @@
     "type": {
       "items": "TabbedItem[]",
       "cssClass?": "string",
+      "keepScrollPosition?": "boolean",
       "onItemClicked?": "Function",
       "onActiveItemClicked?": "Function"
     }
@@ -9195,6 +9078,7 @@
       "titleLabel": "string",
       "bodyPromise": "AgPromise<HTMLElement>",
       "name": "string",
+      "getScrollableContainer?": "() => HTMLElement",
       "afterAttachedCallback?": "(params: IAfterGuiAttachedParams) => void"
     }
   },
