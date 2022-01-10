@@ -9,7 +9,7 @@ const compToFramework = {
     filterComp: 'filterFramework',
     floatingFilterComp: 'floatingFilterFramework',
     headerComp: 'headerComponentFramework',
-    headerGroupComp: 'headerGroupdComponentFramework',
+    headerGroupComp: 'headerGroupComponentFramework',
     tooltipComp: 'tooltipComponentFramework',
     groupRowCellComp: 'groupRowRendererFramework',
     innerCellComp: 'groupRowInnerRendererFramework',
