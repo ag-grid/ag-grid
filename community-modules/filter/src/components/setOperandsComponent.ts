@@ -46,8 +46,8 @@ export class SetOperandsComponent extends Component implements ExpressionCompone
         this.virtualList.setModel({
             getRow: (i) => i < inbuiltOffset ?
                 INBUILT_LIST_ITEMS[i] :
-                this.gridValuesModel.filterValuesVisible[i - inbuiltOffset],
-            getRowCount: () => inbuiltOffset + this.gridValuesModel.filterValuesVisible.length,
+                this.gridValuesModel.getFilterValuesVisible()[i - inbuiltOffset],
+            getRowCount: () => inbuiltOffset + this.gridValuesModel.getFilterValuesVisible().length,
             isRowSelected: (i) => this.isListItemSelected(i),
         });
 
@@ -75,7 +75,7 @@ export class SetOperandsComponent extends Component implements ExpressionCompone
     }
 
     private isFilterValueListItemSelected(index: number): boolean {
-        const filterValue = this.gridValuesModel.filterValuesVisible[index];
+        const filterValue = this.gridValuesModel.getFilterValuesVisible()[index];
         return this.isFilterValueSelected(filterValue);
     }
 
@@ -146,7 +146,7 @@ export class SetOperandValuesAdaptor {
     }
 
     public toggleValue(value: string | null, selected: boolean): void {
-        const { filterValues } = this.valuesModel;
+        const filterValues = this.valuesModel.getFilterValues();
         const selectedValues = this.readOperands() || filterValues;
 
         const matchingIndex = selectedValues ? selectedValues.findIndex((v: any) => v === value) : -1;

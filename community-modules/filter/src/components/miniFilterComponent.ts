@@ -36,9 +36,9 @@ export class MiniFilterComponent extends Component implements ExpressionComponen
 
     private inputChanged(input: string | null | undefined): void {
         if (input == null || input.trim().length === 0) {
-            this.valuesModel.visibleRegexp = null;
+            this.valuesModel.setVisibleRegexp(null);
         } else {
-            this.valuesModel.visibleRegexp = new RegExp(input.trim());
+            this.valuesModel.setVisibleRegexp(new RegExp(input.trim()));
         }
     }
 }

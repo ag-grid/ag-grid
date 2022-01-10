@@ -37,18 +37,18 @@ export class GridColumnValuesModel {
         this.filterValuesListeners.addListener(source, cb);
     }
 
-    public set visibleRegexp(regexp: RegExp | null) {
+    public setVisibleRegexp(regexp: RegExp | null) {
         this.visibilityRegexp = regexp;
 
         this.updateFilterValuesVisible();
     }
 
-    public get filterValues(): readonly ValueType[] {
-        return Object.freeze(this.currentFilterValues);
+    public getFilterValues(): readonly ValueType[] {
+        return [...this.currentFilterValues];
     }
 
-    public get filterValuesVisible(): readonly ValueType[] {
-        return Object.freeze(this.visibleFilterValues);
+    public getFilterValuesVisible(): readonly ValueType[] {
+        return [...this.visibleFilterValues];
     }
 
     private updateFilterValues() {
