@@ -128,7 +128,7 @@ function format(source, parser, destination) {
     try {
         return prettier.format(formatted, { parser, singleQuote: true, trailingComma: 'es5' })
             // remove the flag we use to turn off the organise imports plugin as it removes React incorrectly
-            .replace("// organize-imports-ignore\n", "");
+            .replace(/\/\/\s*organize-imports-ignore\n/, "");
     } catch (error) {
         console.log(destination, error)
         return formatted;
