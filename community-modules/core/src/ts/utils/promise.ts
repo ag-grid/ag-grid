@@ -10,6 +10,10 @@ export class AgPromise<T> {
     private waiters: ((value: T | null) => void)[] = [];
 
     static all<T>(promises: AgPromise<T | null>[]): AgPromise<(T | null)[]> {
+        if (promises.length === 0) {
+            return AgPromise.resolve([]);
+        }
+        
         return new AgPromise(resolve => {
             let remainingToResolve = promises.length;
             const combinedValues = new Array<T | null>(remainingToResolve);
