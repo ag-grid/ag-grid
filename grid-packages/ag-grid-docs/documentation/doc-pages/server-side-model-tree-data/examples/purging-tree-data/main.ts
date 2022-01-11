@@ -1,5 +1,4 @@
 import { ColDef, GridOptions, IServerSideDatasource, IServerSideGetRowsParams, IServerSideGetRowsRequest } from '@ag-grid-community/core'
-declare var FakeServer: any;
 const columnDefs: ColDef[] = [
   { field: 'employeeId', hide: true },
   { field: 'employeeName', hide: true },
