@@ -5,7 +5,7 @@ import {
   GridOptions,
   ITooltipParams,
 } from '@ag-grid-community/core'
-declare var CustomTooltip: any
+import { CustomTooltip } from "./customTooltip_typescript";
 
 const tooltipValueGetter = (params: ITooltipParams) => ({ value: params.value })
 
