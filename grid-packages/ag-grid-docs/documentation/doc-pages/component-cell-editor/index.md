@@ -20,7 +20,7 @@ The example below shows a few simple cell editors in action.
 - The `Numeric` Cell Editor illustrates a slightly more complicated numeric editor to the `Doubling` editor above, with
 increased input validation and better initial carot behaviour
 
-<grid-example title='Simple Editor Components' name='component-editor' type='mixed' options='{ "exampleHeight": 370", includeNgFormsModule" : true }'></grid-example>
+<grid-example title='Simple Editor Components' name='component-editor' type='mixed' options='{ "exampleHeight": 370", "includeNgFormsModule" : true }'></grid-example>
 
 md-include:component-interface-javascript.md
 md-include:component-interface-angular.md
@@ -88,7 +88,7 @@ The example below illustrates:
 - 'Address' column uses a Component cell editor that allows input of multiline text via a 'largeText'. <kbd>Tab</kbd> and <kbd>Esc</kbd> (amongst others) will exit editing in this field, <kbd>Shift</kbd>+<kbd>Enter</kbd> will allow newlines.
 - 'Country' columns shows using 'richSelect' for a complex object - the cell renderer takes care of only rendering the country name.
 
-<grid-example title='Simple Editor Components' name='component-editor-2' type='mixed' options='{ "enterprise": true, "exampleHeight": 370, "extras": ["bootstrap"], includeNgFormsModule" : true }'></grid-example>
+<grid-example title='Simple Editor Components' name='component-editor-2' type='mixed' options='{ "enterprise": true, "exampleHeight": 370, "extras": ["bootstrap"], "includeNgFormsModule" : true }'></grid-example>
 
 ## Accessing Cell Editor Instances
 

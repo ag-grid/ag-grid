@@ -16,7 +16,7 @@ md-include:simple-filter-vue.md
 The example below shows two custom filters. The first is on the `Athlete` column and demonstrates a filter with "fuzzy" matching and the
 second is on the `Year` column and uses the `YearFilter` above.
 
-<grid-example title='Filter Component' name='custom-filter' type='generated' options='{ includeNgFormsModule" : true}'></grid-example>
+<grid-example title='Filter Component' name='custom-filter' type='generated' options='{ "includeNgFormsModule"" : true}'></grid-example>
 
 md-include:component-interface-javascript.md
 md-include:component-interface-angular.md
@@ -82,7 +82,7 @@ There are two ways you can get fix this problem:
 |
 | The example below illustrates how a custom filter component can be accessed and methods on it invoked:
 |
-| <grid-example title='Angular Filter Component' name='filter-component' type='generated' options='{ "enterprise": false, "exampleHeight": 445, "onlyShow": "angular", "extras": ["bootstrap"], includeNgFormsModule" : true }'></grid-example>
+| <grid-example title='Angular Filter Component' name='filter-component' type='generated' options='{ "enterprise": false, "exampleHeight": 445, "onlyShow": "angular", "extras": ["bootstrap"], "includeNgFormsModule" : true }'></grid-example>
 
 [[only-react]]
 | ## Accessing the React Component Instance
