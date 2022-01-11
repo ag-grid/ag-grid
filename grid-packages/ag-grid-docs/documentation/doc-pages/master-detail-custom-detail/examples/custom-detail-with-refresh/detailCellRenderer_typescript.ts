@@ -31,7 +31,7 @@ export class DetailCellRenderer implements ICellRendererComp {
         return this.eGui;
     };
 
-    refresh(params) {
+    refresh(params: ICellRendererParams) {
         // check and see if we need to get the grid to tear this
         // component down and update it again
         if (params.data.calls != this.callsCount) {

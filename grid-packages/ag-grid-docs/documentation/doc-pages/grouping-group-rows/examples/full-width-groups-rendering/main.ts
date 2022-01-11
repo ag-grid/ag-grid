@@ -1,5 +1,5 @@
 import { GridOptions, ValueParserParams } from '@ag-grid-community/core'
-declare var GroupRowInnerRenderer: any;
+import { GroupRowInnerRenderer } from './groupRowInnerRenderer_typescript'
 
 const gridOptions: GridOptions = {
   columnDefs: [

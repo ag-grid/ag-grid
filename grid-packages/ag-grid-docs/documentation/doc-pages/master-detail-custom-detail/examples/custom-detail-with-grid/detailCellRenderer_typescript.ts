@@ -1,11 +1,11 @@
-import { GridApi, GridOptions, ICellRendererComp, ICellRendererParams } from "@ag-grid-community/core";
+import { DetailGridInfo, GridApi, GridOptions, ICellRendererComp, ICellRendererParams } from "@ag-grid-community/core";
 
 export class DetailCellRenderer implements ICellRendererComp {
   eGui!: HTMLElement;
-  params: ICellRendererParams;
-  detailGridApi: GridApi;
+  params!: ICellRendererParams;
+  detailGridApi!: GridApi;
 
-  init(params) {
+  init(params: ICellRendererParams) {
     this.params = params;
 
     // trick to convert string of HTML into DOM object
@@ -35,15 +35,15 @@ export class DetailCellRenderer implements ICellRendererComp {
 
     new agGrid.Grid(eDetailGrid, detailGridOptions);
 
-    this.detailGridApi = detailGridOptions.api;
+    this.detailGridApi = detailGridOptions.api!;
 
     var masterGridApi = this.params.api;
-    var rowId = this.params.node.id;
+    var rowId = this.params.node.id!;
 
-    var gridInfo = {
+    var gridInfo: DetailGridInfo = {
       id: rowId,
-      api: detailGridOptions.api,
-      columnApi: detailGridOptions.columnApi
+      api: detailGridOptions.api!,
+      columnApi: detailGridOptions.columnApi!
     };
 
     console.log("adding detail grid info with id: ", rowId);
@@ -73,7 +73,7 @@ export class DetailCellRenderer implements ICellRendererComp {
   }
 
   destroy() {
-    var rowId = this.params.node.id;
+    var rowId = this.params.node.id!;
     console.log("removing Grid Info with id: " + rowId);
     var masterGridApi = this.params.api;
     masterGridApi.removeDetailGridInfo(rowId);
