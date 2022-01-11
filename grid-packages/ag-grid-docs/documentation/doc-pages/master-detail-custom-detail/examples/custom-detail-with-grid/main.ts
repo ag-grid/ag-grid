@@ -1,5 +1,6 @@
 import { FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core'
-declare var DetailCellRenderer: any;
+import { DetailCellRenderer } from './detailCellRenderer_typescript'
+
 declare var window: any;
 const gridOptions: GridOptions = {
   columnDefs: [

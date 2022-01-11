@@ -1,5 +1,6 @@
 import { FirstDataRenderedEvent, GridOptions, IDetailCellRendererParams } from '@ag-grid-community/core'
-declare var CallsCellRenderer: any;
+import { CallsCellRenderer } from './callsCellRenderer_typescript'
+
 const gridOptions: GridOptions = {
   masterDetail: true,
   isRowMaster: function (dataItem) {

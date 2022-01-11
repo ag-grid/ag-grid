@@ -1,5 +1,5 @@
 import { FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core'
-declare var DetailCellRenderer: any;
+import { DetailCellRenderer } from './detailCellRenderer_typescript'
 
 const gridOptions: GridOptions = {
   masterDetail: true,
