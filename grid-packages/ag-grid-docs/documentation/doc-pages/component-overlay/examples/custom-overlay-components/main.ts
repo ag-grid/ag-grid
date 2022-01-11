@@ -1,7 +1,6 @@
 import { ColDef, GridOptions } from '@ag-grid-community/core'
-
-declare var CustomLoadingOverlay: any;
-declare var CustomNoRowsOverlay: any;
+import { CustomLoadingOverlay } from './customLoadingOverlay_typescript';
+import { CustomNoRowsOverlay } from './customNoRowsOverlay_typescript';
 
 const columnDefs: ColDef[] = [
   { field: 'athlete', width: 150 },
