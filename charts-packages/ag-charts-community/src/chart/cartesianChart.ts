@@ -103,7 +103,7 @@ export class CartesianChart extends Chart {
             let axisThickness = Math.floor(axis.thickness || axis.computeBBox().width);
 
             if (axisPositionVisited[axis.position]) {
-                axisThickness += 30;
+                axisThickness += 15;
             }
 
             switch (axis.position) {
