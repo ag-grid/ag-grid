@@ -1,5 +1,5 @@
 import { ColDef, GridOptions } from '@ag-grid-community/core'
-declare var MedalCellRenderer: any
+import { MedalCellRenderer } from './medalCellRenderer_typescript'
 
 const columnDefs: ColDef[] = [
   { field: 'athlete', width: 150 },
