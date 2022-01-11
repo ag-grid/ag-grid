@@ -1,4 +1,4 @@
-import { AgChart, CartesianChart, ChartAxisPosition } from "ag-charts-community";
+import { AgChart, AgCartesianChartOptions, AgCartesianAxisOptions, CartesianChart, ChartAxisPosition } from "ag-charts-community";
 import { _, ChartType, SeriesChartType } from "@ag-grid-community/core";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "../cartesian/cartesianChartProxy";
@@ -7,7 +7,8 @@ import { getSeriesType } from "../../utils/seriesTypeMapper";
 
 export class ComboChartProxy extends CartesianChartProxy {
 
-    private prevSeriesChartTypes: SeriesChartType[] = [];
+    private prevSeriesChartTypes: SeriesChartType[];
+    private prevAxes: AgCartesianAxisOptions[];
 
     public constructor(params: ChartProxyParams) {
         super(params);
@@ -28,14 +29,21 @@ export class ComboChartProxy extends CartesianChartProxy {
     public update(params: UpdateChartParams): void {
         const { seriesChartTypes, category, fields, data } = params;
 
-        this.clearChartAxes(seriesChartTypes);
-
-        const options = {
+        let options: AgCartesianChartOptions = {
             container: this.chartProxyParams.parentElement,
             theme: this.chartTheme,
-            axes: this.getAxes(seriesChartTypes),
             data: this.transformData(data, category.id),
-            series: this.getSeriesOptions(fields, category.id, seriesChartTypes)
+            series: this.getSeriesOptions(fields, category.id, seriesChartTypes),
+        }
+
+        const axesCleared = this.clearAxes(seriesChartTypes);
+        if (axesCleared) {
+            options.axes = this.getAxes(seriesChartTypes)
+            this.prevAxes = options.axes;
+        } else {
+            // TODO: this should be removed once standalone is fixed
+            this.chart.axes = [];
+            options.axes = this.prevAxes;
         }
 
         AgChart.update(this.chart as CartesianChart, options);
@@ -43,13 +51,19 @@ export class ComboChartProxy extends CartesianChartProxy {
         this.updateLabelRotation(category.id);
     }
 
-    private clearChartAxes(seriesChartTypes: SeriesChartType[]): void {
-        // we need to clear the axes when the seriesChartTypes change, but not for data updates
-        if(_.areEqual(this.prevSeriesChartTypes, seriesChartTypes)) {
-            // chart factory will properly destroy axes
+    private clearAxes(seriesChartTypes: SeriesChartType[]): boolean {
+        const seriesChartTypesChanged = !_.areEqual(this.prevSeriesChartTypes, seriesChartTypes,
+            (s1, s2) => s1.colId === s2.colId && s1.chartType === s2.chartType && s1.secondaryAxis === s2.secondaryAxis);
+
+        // cache a cloned copy of `seriesChartTypes` for subsequent comparisons
+        this.prevSeriesChartTypes = seriesChartTypes.map(s => ({...s}));
+
+        if (seriesChartTypesChanged) {
             this.chart.axes = [];
+            return true;
         }
-        this.prevSeriesChartTypes = seriesChartTypes;
+
+        return false;
     }
 
     private getSeriesOptions(fields: FieldDefinition[], categoryId: string, seriesChartTypes: SeriesChartType[]): any {
@@ -69,7 +83,7 @@ export class ComboChartProxy extends CartesianChartProxy {
         });
     }
 
-    private getAxes(seriesChartTypes: SeriesChartType[]) {
+    private getAxes(seriesChartTypes: SeriesChartType[]): AgCartesianAxisOptions[] {
         const primaryYKeys: string[] = []
         const secondaryYKeys: string[] = [];
         seriesChartTypes.forEach(seriesChartType => {
@@ -103,7 +117,10 @@ export class ComboChartProxy extends CartesianChartProxy {
                     type: this.yAxisType,
                     keys: [secondaryYKey],
                     position: ChartAxisPosition.Right,
-                    title: {
+                    gridStyle: {
+                        width: 0,
+                    },
+                    title: { //TODO: improve
                         enabled: true,
                         text: secondaryYKey
                     },
