@@ -1,11 +1,14 @@
-export class TotalValueRenderer {
-    eGui: HTMLDivElement;
+import { ICellRendererComp, ICellRendererParams } from "@ag-grid-community/core";
+
+export class TotalValueRenderer implements ICellRendererComp {
+    eGui!: HTMLDivElement;
     eButton: any;
     eValue: any;
     cellValue: any;
-    eventListener: () => void;
+    eventListener!: () => void;
+
     // gets called once before the renderer is used
-    init(params) {
+    init(params: ICellRendererParams) {
         // create the cell
         this.eGui = document.createElement('div');
         this.eGui.innerHTML = `
@@ -33,7 +36,7 @@ export class TotalValueRenderer {
     }
 
     // gets called whenever the cell refreshes
-    refresh(params) {
+    refresh(params: ICellRendererParams) {
         // set value into cell again
         this.cellValue = this.getValueToDisplay(params);
         this.eValue.innerHTML = this.cellValue;
@@ -51,7 +54,7 @@ export class TotalValueRenderer {
         }
     }
 
-    getValueToDisplay(params) {
+    getValueToDisplay(params: ICellRendererParams) {
         return params.valueFormatted ? params.valueFormatted : params.value;
     }
 }

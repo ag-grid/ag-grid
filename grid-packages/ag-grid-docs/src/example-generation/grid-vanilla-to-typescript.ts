@@ -1,7 +1,7 @@
-import { addBindingImports, getImport, ImportType } from './parser-utils';
+import { addBindingImports, ImportType } from './parser-utils';
 const fs = require('fs-extra');
 
-export function vanillaToTypescript(bindings: any, mainFilePath: string, componentFileNames: string[]): (importType: ImportType) => string {
+export function vanillaToTypescript(bindings: any, mainFilePath: string): (importType: ImportType) => string {
     const { gridSettings, externalEventHandlers, imports } = bindings;
 
     // attach external handlers to window
@@ -39,16 +39,12 @@ export function vanillaToTypescript(bindings: any, mainFilePath: string, compone
         let formattedImports = '';
         let importStrings = [];
 
-
         if (gridSettings.enterprise) {
             importStrings.push("import 'ag-grid-enterprise';");
         }
 
         if (imports.length > 0) {
-            addBindingImports(imports, importStrings, importType === 'packages');
-            if (componentFileNames) {
-                importStrings.push(...componentFileNames.map(getImport));
-            }
+            addBindingImports(imports, importStrings, importType === 'packages', false);
             formattedImports = `${importStrings.join('\n')}\n`;
 
             // Remove the original import statements

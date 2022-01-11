@@ -435,7 +435,7 @@ export function convertImportPath(modulePackage: string, convertToPackage: boole
             return `'ag-grid-enterprise'`
         }
     }
-    return modulePackage;
+    return modulePackage.replace('_typescript', '');
 }
 
 export function getImport(filename: string) {
@@ -448,13 +448,13 @@ export function getImport(filename: string) {
  *  Add the imports from the parsed file
  * We ignore any component files as those imports are generated for each framework.
  */
-export function addBindingImports(bindingImports: any, imports: string[], convertToPackage: boolean) {
+export function addBindingImports(bindingImports: any, imports: string[], convertToPackage: boolean, ignoreTsImports: boolean) {
     // We rely on the prettier-plugin-organize-imports plugin to organise and de-duplicate our imports
     // Except React where plugin breaks imports by removing import React
     bindingImports.forEach((i: BindingImport) => {
         if (i.imports.length > 0) {
             const path = convertImportPath(i.module, convertToPackage)
-            if (!path.includes('_typescript')) {
+            if (!i.module.includes('_typescript') || !ignoreTsImports) {
                 if (i.isNamespaced) {
                     imports.push(`import * as ${i.imports[0]} from ${path};`);
                 } else {

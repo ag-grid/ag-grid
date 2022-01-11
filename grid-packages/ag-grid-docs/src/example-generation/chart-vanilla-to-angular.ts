@@ -38,7 +38,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): (
         const { properties, imports: bindingImports, declarations } = bindings;
         const imports = getImports(componentFileNames);
         if (bindingImports?.length > 0) {
-            addBindingImports(bindingImports, imports, true);
+            addBindingImports(bindingImports, imports, true, true);
         }
         const propertyAttributes = [];
         const propertyVars = [];

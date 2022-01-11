@@ -403,7 +403,7 @@ function createExampleGenerator(prefix, importTypes) {
             const tsScripts = getMatchingPaths('*.ts', { ignore: ['**/*_{angular,react,vue,vue3}.ts', '**/main.ts'] });
             const tsConfigs = new Map();
             try {
-                const getSource = vanillaToTypescript(deepCloneObject(typedBindings), mainScript, extractComponentFileNames(tsScripts, '_typescript'));
+                const getSource = vanillaToTypescript(deepCloneObject(typedBindings), mainScript);
                 importTypes.forEach(importType => {
                     tsConfigs.set(importType, {
                         'main.ts': getSource(importType),

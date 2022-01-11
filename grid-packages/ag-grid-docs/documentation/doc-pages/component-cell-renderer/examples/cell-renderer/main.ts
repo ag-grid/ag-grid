@@ -3,11 +3,7 @@ import {
   GridOptions,
   ICellRendererParams,
 } from '@ag-grid-community/core'
-declare var DaysFrostRenderer: any
-
-interface ImageCellRendererParams extends ICellRendererParams {
-  rendererImage: string
-}
+import { DaysFrostRenderer, ImageCellRendererParams } from './daysFrostRenderer_typescript';
 
 /**
  * Demonstrating function cell renderer
@@ -34,7 +30,7 @@ const deltaIndicator = (params: ICellRendererParams) => {
 /**
  *  Cell Renderer by Property (using the api)
  */
-const daysSunshineRenderer = (params: ImageCellRendererParams) => {
+function daysSunshineRenderer(params: ImageCellRendererParams) {
   const daysSunshine = params.value / 24
   return createImageSpan(daysSunshine, params.rendererImage)
 }
@@ -42,7 +38,7 @@ const daysSunshineRenderer = (params: ImageCellRendererParams) => {
 /**
  *  Cell Renderer by Property (using the grid options parameter)
  */
-const rainPerTenMmRenderer = (params: ImageCellRendererParams) => {
+function rainPerTenMmRenderer(params: ImageCellRendererParams) {
   const rainPerTenMm = params.value / 10
   return createImageSpan(rainPerTenMm, params.rendererImage)
 }
@@ -122,7 +118,7 @@ const createImageSpan = (imageMultiplier: number, image: string) => {
  * Updates the Days of Air Frost column - adjusts the value which in turn will demonstrate the Component refresh functionality
  * After a data update, cellRenderer Components.refresh method will be called to re-render the altered Cells
  */
-const frostierYear = (extraDaysFrost: number) => {
+function frostierYear(extraDaysFrost: number) {
   // iterate over the rows and make each "days of air frost"
   gridOptions.api!.forEachNode(rowNode => {
     rowNode.setDataValue(

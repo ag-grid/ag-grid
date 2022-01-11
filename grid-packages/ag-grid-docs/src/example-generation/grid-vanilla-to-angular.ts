@@ -74,7 +74,7 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
     }
 
     if (bindingImports?.length > 0) {
-        addBindingImports(bindingImports, imports, false);
+        addBindingImports(bindingImports, imports, false, true);
     }
 
     if (componentFileNames) {
@@ -103,7 +103,7 @@ function getPackageImports(bindings: any, componentFileNames: string[]): string[
     imports.push(`import "ag-grid-community/dist/styles/${theme}.css";`);
 
     if (bindingImports?.length > 0) {
-        addBindingImports(bindingImports, imports, true);
+        addBindingImports(bindingImports, imports, true, true);
     }
 
     if (componentFileNames) {

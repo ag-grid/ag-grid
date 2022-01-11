@@ -25,7 +25,7 @@ export function vanillaToTypescript(bindings: any, mainFilePath: string): (impor
         let formattedImports = '';
         if (imports.length > 0) {
             let importStrings = [];
-            addBindingImports(imports, importStrings, true);
+            addBindingImports(imports, importStrings, true, true);
             formattedImports = `${importStrings.join('\n')}\n`
 
             // Remove the original import statements

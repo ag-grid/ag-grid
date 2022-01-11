@@ -1,4 +1,11 @@
-class DaysFrostRenderer {
+import { ICellRendererComp, ICellRendererParams } from "@ag-grid-community/core";
+export interface ImageCellRendererParams extends ICellRendererParams {
+    rendererImage: string
+}
+export class DaysFrostRenderer implements ICellRendererComp {
+    eGui: HTMLSpanElement;
+    value: any;
+    rendererImage!: string;
     /**
      * Demonstrating Component Cell Renderer
      */
@@ -6,7 +13,7 @@ class DaysFrostRenderer {
         this.eGui = document.createElement("span");
     }
 
-    init(params) {
+    init(params: ImageCellRendererParams) {
         this.rendererImage = params.rendererImage;
         this.value = params.value;
         this.updateImages();
@@ -25,10 +32,12 @@ class DaysFrostRenderer {
         return this.eGui;
     }
 
-    refresh(params) {
+    refresh(params: ImageCellRendererParams) {
         this.value = params.value;
 
         this.eGui.innerHTML = '';
         this.updateImages();
+
+        return true;
     }
 }
