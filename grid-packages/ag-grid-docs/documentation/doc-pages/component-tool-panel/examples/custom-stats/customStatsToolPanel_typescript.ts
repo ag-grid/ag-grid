@@ -1,5 +1,9 @@
-class CustomStatsToolPanel {
-    init(params) {
+import { IToolPanelComp, IToolPanelParams } from "@ag-grid-community/core";
+
+export class CustomStatsToolPanel implements IToolPanelComp {
+
+    eGui!: HTMLDivElement;
+    init(params: IToolPanelParams) {
         this.eGui = document.createElement('div');
         this.eGui.style.textAlign = "center";
 
@@ -14,7 +18,10 @@ class CustomStatsToolPanel {
         return this.eGui;
     }
 
-    calculateStats(params) {
+    refresh(): void {
+    }
+
+    calculateStats(params: IToolPanelParams) {
         let numGold = 0, numSilver = 0, numBronze = 0;
         params.api.forEachNode(function (rowNode) {
             const data = rowNode.data;

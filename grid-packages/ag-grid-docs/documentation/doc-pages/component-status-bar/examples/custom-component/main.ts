@@ -1,6 +1,6 @@
 import { ColDef, GridOptions } from '@ag-grid-community/core'
-declare var ClickableStatusBarComponent: any
-declare var CountStatusBarComponent: any
+import { ClickableStatusBarComponent } from './clickableStatusBarComponent_typescript'
+import { CountStatusBarComponent } from './countStatusBarComponent_typescript'
 
 const columnDefs: ColDef[] = [
   {

@@ -1,5 +1,11 @@
-class ClickableStatusBarComponent {
-    init(params) {
+import { IStatusPanelComp, IStatusPanelParams } from "@ag-grid-community/core";
+
+export class ClickableStatusBarComponent implements IStatusPanelComp {
+    params!: IStatusPanelParams;
+    eGui!: HTMLButtonElement;
+    buttonListener: any;
+
+    init(params: IStatusPanelParams) {
         this.params = params;
 
         this.eGui = document.createElement('button');
@@ -16,7 +22,7 @@ class ClickableStatusBarComponent {
     }
 
     destroy() {
-        this.eButton.removeEventListener("click", this.buttonListener);
+        this.eGui.removeEventListener("click", this.buttonListener);
     }
 
     onButtonClicked() {

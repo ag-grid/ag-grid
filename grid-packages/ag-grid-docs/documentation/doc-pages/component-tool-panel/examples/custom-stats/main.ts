@@ -1,5 +1,5 @@
 import { ColDef, GridOptions } from '@ag-grid-community/core'
-declare var CustomStatsToolPanel: any
+import { CustomStatsToolPanel } from './customStatsToolPanel_typescript'
 
 const columnDefs: ColDef[] = [
   { field: 'athlete', width: 150, filterComp: 'agTextColumnFilter' },
