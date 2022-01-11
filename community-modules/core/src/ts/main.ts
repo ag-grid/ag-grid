@@ -23,7 +23,7 @@ export { AgStackComponentsRegistry } from "./components/agStackComponentsRegistr
 export { ColDefUtil } from "./components/colDefUtil";
 export { UserComponentRegistry } from "./components/framework/userComponentRegistry";
 export { UserComponentFactory, UserCompDetails } from "./components/framework/userComponentFactory";
-export { ComponentType } from "./components/framework/componentTypes";
+export { ComponentType, FilterComponent } from "./components/framework/componentTypes";
 export { initialiseAgGridWithAngular1 } from "./components/agGridNg1";
 
 // context
@@ -112,7 +112,7 @@ export { NumberFilter, INumberFilterParams, NumberFilterModel } from "./filter/p
 export { TextFilter, ITextFilterParams, TextFilterModel, TextFormatter } from "./filter/provided/text/textFilter";
 export { DateFilter, IDateFilterParams, DateFilterModel } from "./filter/provided/date/dateFilter";
 
-export { IFloatingFilter, IFloatingFilterParams, IFloatingFilterComp, BaseFloatingFilterChange } from "./filter/floating/floatingFilter";
+export { IFloatingFilter, IFloatingFilterParams, IFloatingFilterComp, BaseFloatingFilterChange, IFloatingFilterParentCallback } from "./filter/floating/floatingFilter";
 export { TextFloatingFilter } from './filter/provided/text/textFloatingFilter';
 export { HeaderFilterCellComp } from './headerRendering/cells/floatingFilter/headerFilterCellComp';
 export { FloatingFilterMapper } from './filter/floating/floatingFilterMapper';
@@ -277,7 +277,7 @@ export { AlignedGridsService } from "./alignedGridsService";
 export { Constants } from "./constants/constants";
 export { KeyCode } from "./constants/keyCode";
 export { Grid, GridParams, GridCoreCreator } from "./grid";
-export { GridApi, RedrawRowsParams, RefreshCellsParams, StartEditingCellParams, DetailGridInfo, CreateRangeChartParams, ChartParamsCellRange, CreatePivotChartParams, CreateCrossFilterChartParams } from "./gridApi";
+export { GridApi, RedrawRowsParams, RefreshCellsParams, StartEditingCellParams, DetailGridInfo, CreateRangeChartParams, ChartParamsCellRange, CreatePivotChartParams, CreateCrossFilterChartParams, unwrapUserComp } from "./gridApi";
 export { Events } from "./eventKeys";
 export { FocusService } from "./focusService";
 export { defaultGroupComparator } from "./functions";

@@ -1,4 +1,4 @@
-import { _, Bean, RowNode, BeanStub, Autowired, Column, GridOptions, UserComponentFactory, IFilterComp, FilterRequestSource, AgPromise, FilterUIInfo, IFilterParams, Events, ColumnEventType, ColumnModel, FilterModifiedEvent, ColumnApi, GridApi, ModuleRegistry, ModuleNames, PostConstruct, FilterChangedEvent, UserCompDetails } from "@ag-grid-community/core";
+import { _, Bean, RowNode, BeanStub, Autowired, Column, GridOptions, UserComponentFactory, IFilterComp, FilterRequestSource, AgPromise, FilterUIInfo, IFilterParams, Events, ColumnEventType, ColumnModel, FilterModifiedEvent, ColumnApi, GridApi, ModuleRegistry, ModuleNames, PostConstruct, FilterChangedEvent, UserCompDetails, FloatingFilterMapper, FilterComponent, IFloatingFilterParentCallback, unwrapUserComp, IFloatingFilterParams, IFloatingFilterComp, IFloatingFilter } from "@ag-grid-community/core";
 import { expressionType } from "../filterMapping";
 import { AdvancedFilterController, IFilterCompUI, IFilterParamSupport } from "./interfaces";
 
@@ -136,8 +136,75 @@ export class AdvancedV1FilterController extends BeanStub implements AdvancedFilt
     }
 
     public getFloatingFilterCompDetails(column: Column, source: FilterRequestSource, support: IFilterParamSupport): UserCompDetails {
-        throw new Error('Unimplemented');
+        const colDef = column.getColDef();
+
+        const filterParams = this.createFilterParams(column, source, support);
+        const finalFilterParams = this.userComponentFactory.mergeParamsWithApplicationProvidedParams(colDef, FilterComponent, filterParams);
+
+        const defaultFloatingFilterType = FloatingFilterMapper.getDefaultFloatingFilterType(colDef) || 'agReadOnlyFloatingFilter';
+
+        const parentFilterInstance = (callback: IFloatingFilterParentCallback<any>) => {
+            const filterCompUI = this.createFilterComp(column, source, support);
+            if (filterCompUI == null) { return; }
+    
+            filterCompUI.then(ui => {
+                if (ui?.comp) {
+                    callback(unwrapUserComp(ui.comp));
+                }
+            });
+        };
+
+        let menuOpenSource: HTMLElement;
+        const params: IFloatingFilterParams = {
+            api: this.gridApi,
+            column,
+            filterParams: finalFilterParams,
+            currentParentModel: () => this.currentModel(column),
+            parentFilterInstance,
+            showParentFilter: () => support.showMenuAfterButtonClick(column, menuOpenSource),
+            suppressFilterButton: false // This one might be overridden from the colDef
+        };
+
+        const compDetails = this.userComponentFactory.getFloatingFilterCompDetails(colDef, params, defaultFloatingFilterType) || null;
+        if (!compDetails) {
+            throw new Error('AG-Grid - unable to build UserCompDetails for floating filter: ' + column.getColId());
+        }
+
+        // Inject post-construction management.
+        const { newAgStackInstance } = compDetails;
+        compDetails.newAgStackInstance = () => {
+            return newAgStackInstance().then((r: IFloatingFilterComp) => {
+                this.setupSyncWithFilter(column, r);
+                const gui = r.getGui();
+
+                // TODO(AG-6000): Remove IFilterManagerAdapter styling.
+                menuOpenSource = r.getGui();
+                gui.classList.add('ag-filter-v1');
+
+                return r;
+            });
+        };
+
+        return compDetails;
     }
+
+    private setupSyncWithFilter(column: Column, comp: IFloatingFilter): void {
+        const syncWithFilter = (filterChangedEvent: FilterChangedEvent | null) => {
+            const parentModel = this.currentModel(column);
+            comp.onParentModelChanged(parentModel, filterChangedEvent);
+        };
+
+        this.addManagedListener(column, Column.EVENT_FILTER_CHANGED, syncWithFilter);
+
+        if (this.isFilterActive(column)) {
+            syncWithFilter(null);
+        }
+    }
+
+    private currentModel(column: Column): any {
+        const models = (this.getFilterModel() || {});
+        return models[column.getColId()];
+    };
 
     public getAllFilterUIs(): Record<string, IFilterCompUI> {
         return { ...this.filterUIs };
@@ -145,7 +212,7 @@ export class AdvancedV1FilterController extends BeanStub implements AdvancedFilt
 
     public createFilterComp(column: Column, source: FilterRequestSource, support: IFilterParamSupport): AgPromise<IFilterCompUI> {
         const colId = column.getColId();
-        if (this.filterUIs[colId] != null) { AgPromise.resolve(this.filterUIs[colId]); }
+        if (this.filterUIs[colId] != null) { return AgPromise.resolve(this.filterUIs[colId]); }
 
         const defaultFilter = ModuleRegistry.isRegistered(ModuleNames.SetFilterModule) ? 'agSetColumnFilter' : 'agTextColumnFilter';
 

@@ -1,4 +1,4 @@
-import { AgPromise, Autowired, BeanStub, ColDef, Column, ColumnApi, ColumnEventType, ColumnModel, Events, FilterChangedEvent, FilterUIInfo, FilterRequestSource, GridApi, IFilterComp, IFilterManager, IFilterParams, IRowModel, PostConstruct, RowNode, _, ValueService, Bean, UserCompDetails } from "@ag-grid-community/core";
+import { AgPromise, Autowired, BeanStub, ColDef, Column, ColumnApi, ColumnEventType, ColumnModel, Events, FilterChangedEvent, FilterUIInfo, FilterRequestSource, GridApi, IFilterComp, IFilterManager, IFilterParams, IRowModel, PostConstruct, RowNode, _, ValueService, Bean, UserCompDetails, IMenuFactory } from "@ag-grid-community/core";
 import { ExternalFilterController } from "../controllers/externalFilterController";
 import { QuickFilterController } from "../controllers/quickFilterController";
 import { AdvancedV2FilterController } from "../controllers/advancedV2FilterController";
@@ -16,6 +16,7 @@ export class IFilterManagerAdapter extends BeanStub implements IFilterManager {
     @Autowired('columnApi') private readonly columnApi: ColumnApi;
     @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('valueService') private readonly valueService: ValueService;
+    @Autowired('menuFactory') private readonly menuFactory: IMenuFactory;
 
     @Autowired('quickFilterController') private readonly quickFilterController: QuickFilterController;
     @Autowired('externalFilterController') private readonly externalFilterController: ExternalFilterController;
@@ -34,6 +35,13 @@ export class IFilterManagerAdapter extends BeanStub implements IFilterManager {
             createBaseFilterParams: (column) => adaptor.createFilterParams(column, column.getColDef()),
             doesRowPassOtherFilters: (column, rowNode) => adaptor.doesRowPassFilter({ rowNode, columnToSkip: column }),
             onFilterChanged: (params) => adaptor.onFilterChanged(params),
+            showMenuAfterButtonClick: (column, source) => adaptor.menuFactory.showMenuAfterButtonClick(
+                column,
+                source,
+                'floatingFilter',
+                'filterMenuTab',
+                ['filterMenuTab'],
+            ),
         };
     }
 

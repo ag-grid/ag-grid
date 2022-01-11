@@ -31,6 +31,7 @@ export interface IFilterParamSupport {
     doesRowPassOtherFilters(column: Column, node: RowNode): boolean;
     onFilterChanged(params: { additionalEventAttributes: any; columns: Column[]; }): void;
     createBaseFilterParams(column: Column): IFilterParams;
+    showMenuAfterButtonClick(column: Column, source: HTMLElement): void;
 }
 
 export interface StatelessFilterController extends BaseFilterController {

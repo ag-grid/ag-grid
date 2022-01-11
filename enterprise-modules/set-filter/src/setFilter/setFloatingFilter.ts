@@ -92,7 +92,7 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
             const valueModel = setFilter.getValueModel();
 
             if (values == null || valueModel == null) {
-                this.eFloatingFilterText.setValue('');
+                this.eFloatingFilterText.setValue('', true);
                 return;
             }
 
@@ -113,7 +113,7 @@ export class SetFloatingFilterComp extends Component implements IFloatingFilter 
             const arrayToDisplay = formattedValues.length > 10 ? formattedValues.slice(0, 10).concat('...') : formattedValues;
             const valuesString = `(${formattedValues.length}) ${arrayToDisplay.join(',')}`;
 
-            this.eFloatingFilterText.setValue(valuesString);
+            this.eFloatingFilterText.setValue(valuesString, true);
         });
     }
 }
