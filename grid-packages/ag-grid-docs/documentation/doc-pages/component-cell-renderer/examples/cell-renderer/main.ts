@@ -122,7 +122,7 @@ const createImageSpan = (imageMultiplier: number, image: string) => {
  * Updates the Days of Air Frost column - adjusts the value which in turn will demonstrate the Component refresh functionality
  * After a data update, cellRenderer Components.refresh method will be called to re-render the altered Cells
  */
-const frostierYear = (extraDaysFrost: number) => {
+function frostierYear(extraDaysFrost: number) {
   // iterate over the rows and make each "days of air frost"
   gridOptions.api!.forEachNode(rowNode => {
     rowNode.setDataValue(
