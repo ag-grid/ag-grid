@@ -1,4 +1,9 @@
-class TotalValueRenderer {
+export class TotalValueRenderer {
+    eGui: HTMLDivElement;
+    eButton: any;
+    eValue: any;
+    cellValue: any;
+    eventListener: () => void;
     // gets called once before the renderer is used
     init(params) {
         // create the cell

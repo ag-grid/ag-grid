@@ -1,5 +1,6 @@
 // cell renderer class
-class MedalCellRenderer {
+export class MedalCellRenderer {
+    eGui: HTMLSpanElement;
     constructor() {
     }
 
