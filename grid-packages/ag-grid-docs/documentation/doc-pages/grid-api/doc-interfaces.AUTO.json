@@ -7322,6 +7322,13 @@
         "optional": false
       }
     },
+    "getFloatingFilterCompDetails": {
+      "type": {
+        "arguments": { "column": "Column", "source": "FilterRequestSource" },
+        "returnType": "UserCompDetails",
+        "optional": false
+      }
+    },
     "onFilterChanged": {
       "type": { "arguments": {}, "returnType": "void", "optional": false },
       "meta": { "isEvent": true, "name": "onFilterChanged" }
@@ -9164,13 +9171,6 @@
       "type": {
         "arguments": { "compDetails": "UserCompDetails" },
         "returnType": "void",
-        "optional": false
-      }
-    },
-    "getFloatingFilterComp": {
-      "type": {
-        "arguments": {},
-        "returnType": "AgPromise<IFloatingFilter> | null",
         "optional": false
       }
     },

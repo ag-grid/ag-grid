@@ -1,4 +1,4 @@
-import { _, Bean, RowNode, BeanStub, Autowired, Column, IRowModel, ValueService, GridOptions, UserComponentFactory, AgPromise, FilterRequestSource, ColumnEventType, ColumnModel, FilterUIInfo } from "@ag-grid-community/core";
+import { _, Bean, RowNode, BeanStub, Autowired, Column, ValueService, GridOptions, AgPromise, FilterRequestSource, ColumnEventType, ColumnModel, FilterUIInfo, UserCompDetails } from "@ag-grid-community/core";
 import { createComponent, expressionType } from "../filterMapping";
 import { IFilterAdapter } from "../adapters/iFilterAdapter";
 import { AdvancedFilterController, ExpressionComponentUI, IFilterParamSupport } from "./interfaces";
@@ -9,11 +9,9 @@ import { omit } from "../utils";
 export class AdvancedV2FilterController extends BeanStub implements AdvancedFilterController<ExpressionComponentUI> {
     public readonly type = 'advanced';
 
-    @Autowired('rowModel') private readonly rowModel: IRowModel;
     @Autowired('valueService') private readonly valueService: ValueService;
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
-    @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
 
     @Autowired('filterStateManager') private readonly filterState: FilterStateManager;
 
@@ -72,6 +70,10 @@ export class AdvancedV2FilterController extends BeanStub implements AdvancedFilt
         }
         
         return AgPromise.resolve(this.filterUIs[colId]).then(ui => ui!.filterUIInfo);
+    }
+
+    public getFloatingFilterCompDetails(column: Column, source: FilterRequestSource, support: IFilterParamSupport): UserCompDetails {
+        throw new Error('Unimplemented');
     }
 
     public getAllFilterUIs(): Record<string, ExpressionComponentUI> {

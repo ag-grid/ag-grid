@@ -1,4 +1,4 @@
-import { AgPromise, Autowired, BeanStub, ColDef, Column, ColumnApi, ColumnEventType, ColumnModel, Events, FilterChangedEvent, FilterUIInfo, FilterRequestSource, GridApi, IFilterComp, IFilterManager, IFilterParams, IRowModel, PostConstruct, RowNode, _, ValueService, Bean } from "@ag-grid-community/core";
+import { AgPromise, Autowired, BeanStub, ColDef, Column, ColumnApi, ColumnEventType, ColumnModel, Events, FilterChangedEvent, FilterUIInfo, FilterRequestSource, GridApi, IFilterComp, IFilterManager, IFilterParams, IRowModel, PostConstruct, RowNode, _, ValueService, Bean, UserCompDetails } from "@ag-grid-community/core";
 import { ExternalFilterController } from "../controllers/externalFilterController";
 import { QuickFilterController } from "../controllers/quickFilterController";
 import { AdvancedV2FilterController } from "../controllers/advancedV2FilterController";
@@ -152,6 +152,13 @@ export class IFilterManagerAdapter extends BeanStub implements IFilterManager {
         return controller.getFilterUIInfo(column, source, this.iFilterParamsSupport);
     }
 
+    public getFloatingFilterCompDetails(column: Column, source: FilterRequestSource): UserCompDetails {
+        const controller = findControllerFor(column, this.allControllers);
+        if (!controller) { throw new Error('AG-Grid - couldn\'t find filter controller for column: ' + column.getColId()); }
+
+        return controller.getFloatingFilterCompDetails(column, source, this.iFilterParamsSupport);
+    }
+
     public getFilterComponent(column: Column, source: FilterRequestSource, createIfDoesNotExist = true): AgPromise<IFilterComp> | null {
         const controller = findControllerFor(column, this.allControllers);
         if (!controller) { throw new Error('AG-Grid - couldn\'t find filter controller for column: ' + column.getColId()); }
@@ -172,7 +179,6 @@ export class IFilterManagerAdapter extends BeanStub implements IFilterManager {
             .then((filterUI) => {
                 return filterUiToResult(filterUI!);
             });
-
     }
 
     public destroyFilter(column: Column, source: ColumnEventType): void {

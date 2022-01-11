@@ -30,7 +30,6 @@ const HeaderFilterCellComp = (props: {ctrl: HeaderFilterCellCtrl}) => {
             addOrRemoveButtonWrapperCssClass: (name, on) => setButtonWrapperCssClasses(prev => prev.setClass(name, on)),
             setWidth: width => setWidth(width),
             setCompDetails: compDetails => setUserCompDetails(compDetails),
-            getFloatingFilterComp: ()=> userCompRef.current ? AgPromise.resolve(userCompRef.current) : null,
             setMenuIcon: eIcon => eButtonShowMainFilter.current!.appendChild(eIcon)
         };
 

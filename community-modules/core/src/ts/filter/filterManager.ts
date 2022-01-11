@@ -9,8 +9,8 @@ import { IRowModel } from '../interfaces/iRowModel';
 import { ColumnEventType, Events, FilterChangedEvent, FilterModifiedEvent, FilterOpenedEvent } from '../events';
 import { IFilterComp, IFilter, IFilterParams } from '../interfaces/iFilter';
 import { ColDef, GetQuickFilterTextParams } from '../entities/colDef';
-import { GridApi } from '../gridApi';
-import { UserComponentFactory } from '../components/framework/userComponentFactory';
+import { GridApi, unwrapUserComp } from '../gridApi';
+import { UserCompDetails, UserComponentFactory } from '../components/framework/userComponentFactory';
 import { ModuleNames } from '../modules/moduleNames';
 import { ModuleRegistry } from '../modules/moduleRegistry';
 import { BeanStub } from '../context/beanStub';
@@ -20,6 +20,10 @@ import { mergeDeep, cloneObject } from '../utils/object';
 import { loadTemplate } from '../utils/dom';
 import { GridOptions } from '../entities/gridOptions';
 import { IAfterGuiAttachedParams } from '../interfaces/iAfterGuiAttachedParams';
+import { FilterComponent } from '../components/framework/componentTypes';
+import { IFloatingFilter, IFloatingFilterComp, IFloatingFilterParams, IFloatingFilterParentCallback } from './floating/floatingFilter';
+import { FloatingFilterMapper } from './floating/floatingFilterMapper';
+import { IMenuFactory } from '../interfaces/iMenuFactory';
 
 export type FilterRequestSource = 'COLUMN_MENU' | 'TOOLBAR' | 'NO_UI';
 
@@ -44,7 +48,9 @@ export interface IFilterManager {
     createFilterParams(column: Column, colDef: ColDef, $scope?: any): IFilterParams;
     getFilterUIInfo(column: Column, source: FilterRequestSource): AgPromise<FilterUIInfo>;
     getFilterComponent(column: Column, source: FilterRequestSource, createIfDoesNotExist?: boolean): AgPromise<IFilterComp> | null;
-    destroyFilter(column: Column, source: ColumnEventType): void    
+    destroyFilter(column: Column, source: ColumnEventType): void;
+
+    getFloatingFilterCompDetails(column: Column, source: FilterRequestSource): UserCompDetails;
 
     onFilterChanged(): void;
 }
@@ -61,6 +67,7 @@ export class FilterManager extends BeanStub implements IFilterManager {
     @Autowired('gridApi') private gridApi: GridApi;
     @Autowired('gridOptions') protected readonly gridOptions: GridOptions;
     @Autowired('userComponentFactory') private userComponentFactory: UserComponentFactory;
+    @Autowired('menuFactory') private readonly menuFactory: IMenuFactory;
 
     public static QUICK_FILTER_SEPARATOR = '\n';
 
@@ -509,6 +516,77 @@ export class FilterManager extends BeanStub implements IFilterManager {
 
         return componentPromise;
     }
+
+    public getFloatingFilterCompDetails(column: Column, source: FilterRequestSource): UserCompDetails {
+        const colDef = column.getColDef();
+        const filterParams = this.createFilterParams(column, colDef);
+        const finalFilterParams = this.userComponentFactory.mergeParamsWithApplicationProvidedParams(colDef, FilterComponent, filterParams);
+
+        let defaultFloatingFilterType = FloatingFilterMapper.getDefaultFloatingFilterType(colDef);
+        if (defaultFloatingFilterType == null) {
+            defaultFloatingFilterType = 'agReadOnlyFloatingFilter';
+        }
+
+        const parentFilterInstance = (callback: IFloatingFilterParentCallback<any>) => {
+            const filterComponent = this.getFilterComponent(column, 'NO_UI', true);
+    
+            if (filterComponent == null) { return; }
+    
+            filterComponent.then(instance => {
+                callback(unwrapUserComp(instance!));
+            });
+        };
+
+        let menuOpenSource: HTMLElement;
+        const showParentFilter = () => {
+            this.menuFactory.showMenuAfterButtonClick(column, menuOpenSource, 'floatingFilter', 'filterMenuTab', ['filterMenuTab']);
+        };
+
+        const params: IFloatingFilterParams = {
+            api: this.gridApi,
+            column,
+            filterParams: finalFilterParams,
+            currentParentModel: () => this.currentParentModel(column),
+            parentFilterInstance,
+            showParentFilter,
+            suppressFilterButton: false // This one might be overridden from the colDef
+        };
+
+        const compDetails = this.userComponentFactory.getFloatingFilterCompDetails(colDef, params, defaultFloatingFilterType) || null;
+        if (!compDetails) {
+            throw new Error('AG-Grid - unable to build UserCompDetails for floating filter: ' + column.getColId());
+        }
+
+        // Inject post-construction management.
+        const { newAgStackInstance } = compDetails;
+        compDetails.newAgStackInstance = () => {
+            return newAgStackInstance().then((r: IFloatingFilterComp) => {
+                this.setupSyncWithFilter(column, r);
+                menuOpenSource = r.getGui();
+                return r;
+            });
+        };
+
+        return compDetails;
+    }
+
+    private setupSyncWithFilter(column: Column, comp: IFloatingFilter): void {
+        const syncWithFilter = (filterChangedEvent: FilterChangedEvent | null) => {
+            const parentModel = this.currentParentModel(column);
+            comp.onParentModelChanged(parentModel, filterChangedEvent);
+        };
+
+        this.addManagedListener(column, Column.EVENT_FILTER_CHANGED, syncWithFilter);
+
+        if (this.isFilterActive(column)) {
+            syncWithFilter(null);
+        }
+    }
+
+    private currentParentModel(column: Column): any {
+        const models = (this.getFilterModel() || {});
+        return models[column.getColId()];
+    };
 
     public createFilterParams(column: Column, colDef: ColDef, $scope: any = null): IFilterParams {
         const params: IFilterParams = {

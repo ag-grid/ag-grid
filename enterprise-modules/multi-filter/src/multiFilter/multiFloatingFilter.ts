@@ -6,12 +6,12 @@ import {
     IFloatingFilterParams,
     UserComponentFactory,
     Autowired,
-    HeaderFilterCellCtrl,
     IFilterDef,
     AgPromise,
     IMultiFilterParams,
     IMultiFilterModel,
     IFilter,
+    FloatingFilterMapper,
 } from '@ag-grid-community/core';
 import { MultiFilter } from './multiFilter';
 
@@ -104,7 +104,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
 
     private createFloatingFilter(filterDef: IFilterDef, params: IFloatingFilterParams<IFilter>): AgPromise<IFloatingFilterComp> | null {
         const defaultComponentName =
-            HeaderFilterCellCtrl.getDefaultFloatingFilterType(filterDef) || 'agTextColumnFloatingFilter';
+            FloatingFilterMapper.getDefaultFloatingFilterType(filterDef) || 'agTextColumnFloatingFilter';
 
         const compDetails = this.userComponentFactory.getFloatingFilterCompDetails(filterDef, params, defaultComponentName);
         return compDetails ? compDetails.newAgStackInstance() : null;

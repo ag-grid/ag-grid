@@ -4180,6 +4180,7 @@
       "getFilterUIInfo(column: Column, source: FilterRequestSource)": "AgPromise<FilterUIInfo>",
       "getFilterComponent(column: Column, source: FilterRequestSource, createIfDoesNotExist?: boolean)": "AgPromise<IFilterComp> | null",
       "destroyFilter(column: Column, source: ColumnEventType)": "void",
+      "getFloatingFilterCompDetails(column: Column, source: FilterRequestSource)": "UserCompDetails",
       "onFilterChanged()": "void"
     }
   },
@@ -5214,7 +5215,6 @@
       "addOrRemoveBodyCssClass(cssClassName: string, on: boolean)": "void",
       "addOrRemoveButtonWrapperCssClass(cssClassName: string, on: boolean)": "void",
       "setCompDetails(compDetails: UserCompDetails)": "void",
-      "getFloatingFilterComp()": "AgPromise<IFloatingFilter> | null",
       "setWidth(width: string)": "void",
       "setMenuIcon(icon: HTMLElement)": "void"
     }

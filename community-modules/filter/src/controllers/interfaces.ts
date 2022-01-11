@@ -1,4 +1,4 @@
-import { AgPromise, Column, ColumnEventType, Component, FilterRequestSource, FilterUIInfo, IFilterComp, IFilterParams, RowNode } from "@ag-grid-community/core";
+import { AgPromise, Column, ColumnEventType, Component, FilterRequestSource, FilterUIInfo, IFilterComp, IFilterParams, RowNode, UserCompDetails } from "@ag-grid-community/core";
 import { ExpressionComponent } from "../components/interfaces";
 import { IFilterAdapter } from "../adapters/iFilterAdapter";
 
@@ -50,6 +50,8 @@ export interface AdvancedFilterController<T extends FilterUI> extends BaseFilter
     getAllFilterUIs(): Record<string, T>;
     createFilterComp(column: Column, source: FilterRequestSource, support: IFilterParamSupport): AgPromise<T>;
     destroyFilter(column: Column, source: ColumnEventType): AgPromise<void>;
+
+    getFloatingFilterCompDetails(column: Column, source: FilterRequestSource, support: IFilterParamSupport): UserCompDetails;
 }
 
 export type InternalFilterController = StatelessFilterController | AdvancedFilterController<FilterUI>;

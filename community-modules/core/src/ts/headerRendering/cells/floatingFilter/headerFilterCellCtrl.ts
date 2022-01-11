@@ -1,46 +1,34 @@
 
 import { HeaderRowCtrl } from "../../row/headerRowCtrl";
 import { AbstractHeaderCellCtrl, IAbstractHeaderCellComp } from "../abstractCell/abstractHeaderCellCtrl";
-import { UserComponentFactory } from '../../../components/framework/userComponentFactory';
 import { KeyCode } from '../../../constants/keyCode';
 import { Autowired } from '../../../context/context';
 import { Column } from '../../../entities/column';
-import { Events, FilterChangedEvent } from '../../../events';
+import { Events } from '../../../events';
 import { IFilterManager } from '../../../filter/filterManager';
-import { IFloatingFilter, IFloatingFilterParams, IFloatingFilterParentCallback } from '../../../filter/floating/floatingFilter';
-import { FloatingFilterMapper } from '../../../filter/floating/floatingFilterMapper';
-import { GridApi, unwrapUserComp } from '../../../gridApi';
-import { IFilter, IFilterDef } from '../../../interfaces/iFilter';
 import { IMenuFactory } from '../../../interfaces/iMenuFactory';
-import { ModuleNames } from '../../../modules/moduleNames';
-import { ModuleRegistry } from '../../../modules/moduleRegistry';
 import { Beans } from '../../../rendering/beans';
 import { ColumnHoverService } from '../../../rendering/columnHoverService';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
-import { AgPromise } from '../../../utils';
 import { isElementChildOfClass } from '../../../utils/dom';
 import { createIconNoSpan } from '../../../utils/icon';
 import { ManagedFocusFeature } from '../../../widgets/managedFocusFeature';
 import { HoverFeature } from '../hoverFeature';
 import { UserCompDetails } from "../../../components/framework/userComponentFactory";
-import { FilterComponent } from "../../../components/framework/componentTypes";
 
 export interface IHeaderFilterCellComp extends IAbstractHeaderCellComp {
     addOrRemoveCssClass(cssClassName: string, on: boolean): void;
     addOrRemoveBodyCssClass(cssClassName: string, on: boolean): void;
     addOrRemoveButtonWrapperCssClass(cssClassName: string, on: boolean): void;
     setCompDetails(compDetails: UserCompDetails): void;
-    getFloatingFilterComp(): AgPromise<IFloatingFilter> | null;
     setWidth(width: string): void;
     setMenuIcon(icon: HTMLElement): void;
 }
 
 export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
 
-    @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
     @Autowired('filterManager') private readonly filterManager: IFilterManager;
     @Autowired('columnHoverService') private readonly columnHoverService: ColumnHoverService;
-    @Autowired('gridApi') private readonly gridApi: GridApi;
     @Autowired('menuFactory') private readonly menuFactory: IMenuFactory;
     @Autowired('beans') protected readonly beans: Beans;
 
@@ -74,7 +62,6 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
         this.setupHover();
         this.setupFocus();
         this.setupUserComp();
-        this.setupSyncWithFilter();
         this.setupUi();
 
         this.addManagedListener(this.eButtonShowMainFilter, 'click', this.showParentFilter.bind(this));
@@ -227,91 +214,23 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
     }
 
     private setupUserComp(): void {
-
         if (!this.active) { return; }
 
         const colDef = this.column.getColDef();
-
-        const filterParams = this.filterManager.createFilterParams(this.column, colDef);
-        const finalFilterParams = this.userComponentFactory.mergeParamsWithApplicationProvidedParams(colDef, FilterComponent, filterParams);
-
-        let defaultFloatingFilterType = HeaderFilterCellCtrl.getDefaultFloatingFilterType(colDef);
-        if (defaultFloatingFilterType == null) {
-            defaultFloatingFilterType = 'agReadOnlyFloatingFilter';
-        }
-
-        const params: IFloatingFilterParams = {
-            api: this.gridApi,
-            column: this.column,
-            filterParams: finalFilterParams,
-            currentParentModel: () => this.currentParentModel(),
-            parentFilterInstance: (cb) => this.parentFilterInstance(cb),
-            showParentFilter: () => this.showParentFilter(),
-            suppressFilterButton: false // This one might be overridden from the colDef
-        };
 
         // this is unusual - we need a params value OUTSIDE the component the params are for.
         // the params are for the floating filter component, but this property is actually for the wrapper.
         this.suppressFilterButton = colDef.floatingFilterComponentParams ? !!colDef.floatingFilterComponentParams.suppressFilterButton : false;
 
-        const compDetails = this.userComponentFactory.getFloatingFilterCompDetails(colDef, params, defaultFloatingFilterType);
+        const compDetails = this.filterManager.getFloatingFilterCompDetails(this.column, 'COLUMN_MENU');
         if (compDetails) {
             this.comp.setCompDetails(compDetails);
         }
     }
 
-    public static getDefaultFloatingFilterType(def: IFilterDef): string | null {
-        if (def == null) { return null; }
-
-        let defaultFloatingFilterType: string | null = null;
-
-        const filter = def.filter!=null ? def.filter : def.filterComp;
-        if (typeof filter === 'string') {
-            // will be undefined if not in the map
-            defaultFloatingFilterType = FloatingFilterMapper.getFloatingFilterType(filter);
-        } else if (def.filter === true) {
-            const setFilterModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.SetFilterModule);
-            defaultFloatingFilterType = setFilterModuleLoaded ? 'agSetColumnFloatingFilter' : 'agTextColumnFloatingFilter';
-        }
-
-        return defaultFloatingFilterType;
-    }
-
-    private currentParentModel(): any {
-        const models = (this.filterManager.getFilterModel() || {});
-        return models[this.column.getColId()];
-    }
-
-    private parentFilterInstance(callback: IFloatingFilterParentCallback<IFilter>): void {
-        const filterComponent = this.filterManager.getFilterComponent(this.column, 'NO_UI', true);
-
-        if (filterComponent == null) { return; }
-
-        filterComponent.then(instance => {
-            callback(unwrapUserComp(instance!));
-        });
-    }
-
     private showParentFilter() {
         const eventSource = this.suppressFilterButton ? this.eFloatingFilterBody : this.eButtonShowMainFilter;
         this.menuFactory.showMenuAfterButtonClick(this.column, eventSource, 'floatingFilter', 'filterMenuTab', ['filterMenuTab']);
-    }
-
-    private setupSyncWithFilter(): void {
-        if (!this.active) { return; }
-
-        const syncWithFilter = (filterChangedEvent: FilterChangedEvent | null) => {
-            const compPromise = this.comp.getFloatingFilterComp();
-            if (!compPromise) { return; }
-            const parentModel = this.currentParentModel();
-            compPromise.then(comp => comp && comp.onParentModelChanged(parentModel, filterChangedEvent));
-        };
-
-        this.addManagedListener(this.column, Column.EVENT_FILTER_CHANGED, syncWithFilter);
-
-        if (this.filterManager.isFilterActive(this.column)) {
-            syncWithFilter(null);
-        }
     }
 
     private setupWidth(): void {

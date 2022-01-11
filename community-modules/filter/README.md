@@ -11,5 +11,7 @@ TODO:
     - [ ] Floating filters.
     - [ ] Excel mode (mostly SetFilter?).
     - [ ] ....List TBC....
+- [ ] Floating filters V2.
 - [ ] Filter model backwards compatibility.
+- [ ] Null filter model in Core for when filter module isn't loaded.
 - [ ] Move diagrams to Confluence / elsewhere.

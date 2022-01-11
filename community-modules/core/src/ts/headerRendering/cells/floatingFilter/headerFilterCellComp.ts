@@ -36,7 +36,6 @@ export class HeaderFilterCellComp extends AbstractHeaderCellComp<HeaderFilterCel
             addOrRemoveBodyCssClass: (cssClassName, on) => this.eFloatingFilterBody.classList.toggle(cssClassName, on),
             addOrRemoveButtonWrapperCssClass: (cssClassName, on) => this.eButtonWrapper.classList.toggle(cssClassName, on),
             setCompDetails: compDetails => this.setCompDetails(compDetails),
-            getFloatingFilterComp: () => this.compPromise,
             setWidth: width => eGui.style.width = width,
             setMenuIcon: eIcon => this.eButtonShowMainFilter.appendChild(eIcon)
         };
