@@ -20,7 +20,7 @@ The example below shows a few simple cell editors in action.
 - The `Numeric` Cell Editor illustrates a slightly more complicated numeric editor to the `Doubling` editor above, with
 increased input validation and better initial carot behaviour
 
-<grid-example title='Simple Editor Components' name='component-editor' type='mixed' options='{ "exampleHeight": 370", "includeNgFormsModule" : true }'></grid-example>
+<grid-example title='Simple Editor Components' name='component-editor' type='mixed' options='{ "exampleHeight": 370, "includeNgFormsModule" : true }'></grid-example>
 
 md-include:component-interface-javascript.md
 md-include:component-interface-angular.md
