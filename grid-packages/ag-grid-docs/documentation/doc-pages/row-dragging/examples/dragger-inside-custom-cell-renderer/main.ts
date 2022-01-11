@@ -1,5 +1,5 @@
 import { ColDef, GridOptions } from '@ag-grid-community/core'
-declare var CustomCellRenderer: any;
+import { CustomCellRenderer } from "./customCellRenderer_typescript";
 
 const columnDefs: ColDef[] = [
   {
