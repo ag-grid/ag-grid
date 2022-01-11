@@ -1,6 +1,5 @@
 import { ColDef, GridOptions, IServerSideDatasource, IServerSideGetRowsRequest } from '@ag-grid-community/core'
-
-declare var CustomLoadingCellRenderer: any;
+import { CustomLoadingCellRenderer } from './customLoadingCellRenderer_typescript'
 
 const columnDefs: ColDef[] = [
   { field: 'id' },

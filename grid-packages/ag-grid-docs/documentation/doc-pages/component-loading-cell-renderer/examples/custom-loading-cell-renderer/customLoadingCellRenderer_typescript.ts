@@ -1,5 +1,9 @@
-class CustomLoadingCellRenderer {
-    init(params) {
+import { ICellRendererComp, ICellRendererParams } from "@ag-grid-community/core";
+
+export class CustomLoadingCellRenderer implements ICellRendererComp {
+    eGui!: HTMLElement;
+
+    init(params: ICellRendererParams & { loadingMessage: string }) {
         this.eGui = document.createElement('div');
         this.eGui.innerHTML = `
             <div class="ag-custom-loading-cell" style="padding-left: 10px; line-height: 25px;">  
@@ -11,6 +15,10 @@ class CustomLoadingCellRenderer {
 
     getGui() {
         return this.eGui;
+    }
+
+    refresh(params: ICellRendererParams): boolean {
+        return false;
     }
 }
 
