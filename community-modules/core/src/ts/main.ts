@@ -112,7 +112,7 @@ export { NumberFilter, INumberFilterParams, NumberFilterModel } from "./filter/p
 export { TextFilter, ITextFilterParams, TextFilterModel, TextFormatter } from "./filter/provided/text/textFilter";
 export { DateFilter, IDateFilterParams, DateFilterModel } from "./filter/provided/date/dateFilter";
 
-export { IFloatingFilter, IFloatingFilterParams, IFloatingFilterComp, BaseFloatingFilterChange } from "./filter/floating/floatingFilter";
+export { IFloatingFilter, IFloatingFilterParams, IFloatingFilterComp, BaseFloatingFilterChange, IFloatingFilterParent, IFloatingFilterParentCallback } from "./filter/floating/floatingFilter";
 export { TextFloatingFilter } from './filter/provided/text/textFloatingFilter';
 export { HeaderFilterCellComp } from './headerRendering/cells/floatingFilter/headerFilterCellComp';
 export { FloatingFilterMapper } from './filter/floating/floatingFilterMapper';

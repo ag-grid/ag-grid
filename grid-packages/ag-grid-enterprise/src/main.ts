@@ -77,7 +77,7 @@ export { ScalarFilter, IScalarFilterParams } from "ag-grid-community";
 export { NumberFilter, INumberFilterParams, NumberFilterModel } from "ag-grid-community";
 export { TextFilter, ITextFilterParams, TextFilterModel, TextFormatter } from "ag-grid-community";
 export { DateFilter, IDateFilterParams, DateFilterModel } from "ag-grid-community";
-export { IFloatingFilter, IFloatingFilterParams, IFloatingFilterComp, BaseFloatingFilterChange } from "ag-grid-community";
+export { IFloatingFilter, IFloatingFilterParams, IFloatingFilterComp, BaseFloatingFilterChange, IFloatingFilterParent, IFloatingFilterParentCallback } from "ag-grid-community";
 export { TextFloatingFilter } from "ag-grid-community";
 export { HeaderFilterCellComp } from "ag-grid-community";
 export { FloatingFilterMapper } from "ag-grid-community";
