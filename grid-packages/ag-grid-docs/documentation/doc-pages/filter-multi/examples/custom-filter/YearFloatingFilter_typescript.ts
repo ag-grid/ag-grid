@@ -1,5 +1,4 @@
-import { IFloatingFilterComp, IFloatingFilterParams } from "@ag-grid-community/core";
-import { IFloatingFilterParentCallback } from "@ag-grid-community/core/dist/cjs/es5/filter/floating/floatingFilter";
+import { IFloatingFilterComp, IFloatingFilterParams, IFloatingFilterParentCallback } from "@ag-grid-community/core";
 import { YearFilter } from "./YearFilter_typescript";
 
 export class YearFloatingFilter implements IFloatingFilterComp {
