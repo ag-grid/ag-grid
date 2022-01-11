@@ -46,8 +46,6 @@ export class ComboChartProxy extends CartesianChartProxy {
             options.axes = this.prevAxes;
         }
 
-        console.log(options);
-
         AgChart.update(this.chart as CartesianChart, options);
 
         this.updateLabelRotation(category.id);
