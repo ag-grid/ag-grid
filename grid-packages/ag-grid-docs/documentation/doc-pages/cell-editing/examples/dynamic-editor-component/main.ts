@@ -2,17 +2,16 @@ import { CellEditingStartedEvent, CellEditingStoppedEvent, ColDef, GridOptions, 
 declare var NumericCellEditor: any;
 declare var MoodEditor: any;
 
-const columnDefs: ColDef[] = [
-  {
-    field: 'value',
-    editable: true,
-    cellEditorSelector: cellEditorSelector,
-  },
-  { field: 'type' },
-]
-
 const gridOptions: GridOptions = {
-  columnDefs: columnDefs,
+  columnDefs: [
+    {
+      field: 'value',
+      editable: true,
+      cellEditorSelector: cellEditorSelector,
+      cellEditorPopup: true
+    },
+    { field: 'type' },
+  ],
   defaultColDef: {
     flex: 1,
   },
