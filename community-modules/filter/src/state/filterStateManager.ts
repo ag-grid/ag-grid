@@ -3,6 +3,7 @@ import { FilterEvaluationModel, FilterExpression, PartialStateType, StateManager
 import { EvaluationModelFactory } from "../evaluation-model/evaluationModelFactory";
 import { expressionType } from "../filterMapping";
 import { FilterListenerManager } from "./filterListenerManager";
+import { NullModel } from "../evaluation-model/nullModel";
 
 type PartialFilterExpression = PartialStateType<FilterExpression>;
 const DEFAULT_EXPRESSIONS: {[k in FilterExpression['type']]: PartialFilterExpression } = {
@@ -132,7 +133,7 @@ export class FilterStateManager {
 
             if (this.transientState[colId] != null) {
                 newTransientExpressions[colId] = {
-                    ...newTransientExpressions[colId],
+                    ...this.transientState[colId],
                     expr: expression,
                 };
                 transientNotifications.push({ column, type: 'update' });
@@ -146,9 +147,19 @@ export class FilterStateManager {
             const column = this.columnModel.getGridColumn(colId);
             if (column == null) { return; }
 
+            newActiveExpressions[colId] = {
+                ...this.currentState[colId],
+                model: new NullModel(),
+            };
+
             notifications.push({ column, type: 'destroy' });
 
             if (this.transientState[colId] != null) {
+                newTransientExpressions[colId] = {
+                    ...this.transientState[colId],
+                    expr: defaultExpression(column, this.gridOptions),
+                };
+
                 transientNotifications.push({ column, type: 'destroy' });
             }
         });
