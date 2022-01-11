@@ -128,8 +128,8 @@ function format(source, parser, destination) {
     try {
         // Turn off the organise imports plugin as it removes React incorrectly
         return prettier.format(formatted, {
-            parser, singleQuote: true, trailingComma: 'es5', pluginSearchDirs: destination.endsWith('.jsx') ? ["./prettier-no-op"] : ["./"],
-            plugins: destination.endsWith('.jsx') ? [] : ["prettier-plugin-organize-imports"],
+            parser, singleQuote: true, trailingComma: 'es5', pluginSearchDirs: destination?.endsWith('.jsx') ? ["./prettier-no-op"] : ["./"],
+            plugins: destination?.endsWith('.jsx') ? [] : ["prettier-plugin-organize-imports"],
         })
     } catch (error) {
         console.log(destination, error)
