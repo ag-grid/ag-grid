@@ -126,14 +126,15 @@ function format(source, parser, destination) {
         return formatted;
     }
     try {
-        return prettier.format(formatted, { parser, singleQuote: true, trailingComma: 'es5' })
-            // remove the flag we use to turn off the organise imports plugin as it removes React incorrectly
-            .replace(/\/\/\s*organize-imports-ignore\n/, "");
+        // Turn off the organise imports plugin as it removes React incorrectly
+        return prettier.format(formatted, {
+            parser, singleQuote: true, trailingComma: 'es5', pluginSearchDirs: destination.endsWith('.jsx') ? ["./prettier-no-op"] : ["./"],
+            plugins: destination.endsWith('.jsx') ? [] : ["prettier-plugin-organize-imports"],
+        })
     } catch (error) {
         console.log(destination, error)
         return formatted;
     }
-
 }
 
 function deepCloneObject(object) {
@@ -188,17 +189,16 @@ function createExampleGenerator(prefix, importTypes) {
         let mainScript = rawScripts[0];
 
         if (rawScripts.length > 1) {
-            // multiple scripts - main.{js, ts} is the main one, the rest are supplemental
-            const mainJsScripts = getMatchingPaths('main.js');
+            // multiple scripts - main.ts is the main one, the rest are supplemental
             const mainTsScripts = getMatchingPaths('main.ts');
-            mainScript = mainJsScripts.length > 0 ? mainJsScripts[0] : mainTsScripts[0];
+            mainScript = mainTsScripts[0];
 
             if (!mainScript) {
-                throw new Error('for an example with multiple scripts matching *.js, one must be named main.[js,ts]');
+                throw new Error('for an example with multiple scripts matching *.ts, one must be named main.ts');
             }
 
             // get the rest of the scripts
-            rawScripts = getMatchingPaths('*.{js,ts}', { ignore: ['**/main.{js,ts}', '**/*_{angular,react,vanilla,vue,typescript}.{js,ts}'] });
+            rawScripts = getMatchingPaths('*.{js,ts}', { ignore: ['**/main.ts', '**/*_{angular,react,vanilla,vue,typescript}.{js,ts}'] });
         } else {
             // only one script, which is the main one
             rawScripts = [];
@@ -208,7 +208,7 @@ function createExampleGenerator(prefix, importTypes) {
         const stylesheets = getMatchingPaths('*.css');
 
         // read the main script and the associated index.html
-        let jsFile = getFileContents(mainScript);
+        let mainFile = getFileContents(mainScript);
         const indexHtml = getFileContents(document);
 
         // ********************* TEST CODE DONT COMMIT TO LATEST **********************************????????????????????????/
@@ -218,7 +218,7 @@ function createExampleGenerator(prefix, importTypes) {
         } */
         // ********************* TEST CODE DONT COMMIT TO LATESTS **********************************????????????????????????/
 
-        const { bindings, typedBindings } = parser(jsFile, indexHtml, options, type, providedExamples);
+        const { bindings, typedBindings } = parser(mainFile, indexHtml, options, type, providedExamples);
 
         // ********************* TEST CODE DONT COMMIT TO LATEST **********************************????????????????????????/        
         /*  if (process.env.LOGNAME === 'stephencooper') {
@@ -379,9 +379,9 @@ function createExampleGenerator(prefix, importTypes) {
                 let jsFiles = {}
                 const tsScripts = getMatchingPaths('*.ts', { ignore: ['**/*_{angular,react,vue,vue3}.ts'] });
                 tsScripts.forEach(tsFile => {
-                    jsFile = readAsJsFile(tsFile);
+                    mainFile = readAsJsFile(tsFile);
                     const jsFileName = path.parse(tsFile).base.replace('.ts', '.js').replace('_typescript.js', '.js');
-                    jsFiles[jsFileName] = jsFile;
+                    jsFiles[jsFileName] = mainFile;
                 });
 
                 const updatedScripts = getMatchingPaths('*.{html,js}', { ignore: ['**/*_{angular,react,vue,vue3}.js'] });

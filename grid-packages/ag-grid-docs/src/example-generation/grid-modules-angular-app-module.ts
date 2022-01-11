@@ -23,7 +23,6 @@ export function appModuleAngular(componentFileNames: string[], gridSettings) {
   }
 
   return `
-// organize-imports-ignore
 ${imports.join('\n')}
 @NgModule({
   imports: [

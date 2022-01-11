@@ -65,6 +65,7 @@
     "@angular/common": "10.2.3",
     "@angular/compiler": "10.2.3",
     "@angular/core": "10.2.3",
+    "@angular/forms": "10.2.3",
     "@angular/platform-browser": "10.2.3",
     "@angular/platform-browser-dynamic": "10.2.3",
     "@babel/core": "7.2.2",
