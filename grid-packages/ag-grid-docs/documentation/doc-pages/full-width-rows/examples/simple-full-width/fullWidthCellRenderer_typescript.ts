@@ -1,17 +1,18 @@
-class FullWidthCellRenderer {
-    constructor() {
-    }
+import { ICellRendererComp, ICellRendererParams } from "@ag-grid-community/core";
 
-    init(params) {
+export class FullWidthCellRenderer implements ICellRendererComp {
+    eGui!: HTMLElement;
+
+    init(params: ICellRendererParams) {
         // trick to convert string of html into dom object
         const eTemp = document.createElement('div');
         eTemp.innerHTML = this.getTemplate(params);
-        this.eGui = eTemp.firstElementChild;
+        this.eGui = eTemp.firstElementChild as HTMLElement;
 
         this.consumeMouseWheelOnCenterText();
     }
 
-    getTemplate(params) {
+    getTemplate(params: ICellRendererParams) {
         // the flower row shares the same data as the parent row
         const data = params.node.data;
 
@@ -44,9 +45,9 @@ class FullWidthCellRenderer {
     // grid and scroll the main grid and not this component. this ensures that
     // the wheel move is only picked up by the text field
     consumeMouseWheelOnCenterText() {
-        const eFullWidthCenter = this.eGui.querySelector('.full-width-center');
+        const eFullWidthCenter = this.eGui.querySelector('.full-width-center')!;
 
-        const mouseWheelListener = function (event) {
+        const mouseWheelListener = function (event: any) {
             event.stopPropagation();
         };
 
@@ -54,5 +55,9 @@ class FullWidthCellRenderer {
         eFullWidthCenter.addEventListener('mousewheel', mouseWheelListener);
         // event is 'DOMMouseScroll' Firefox
         eFullWidthCenter.addEventListener('DOMMouseScroll', mouseWheelListener);
+    }
+
+    refresh(params: ICellRendererParams): boolean {
+        return false;
     }
 }

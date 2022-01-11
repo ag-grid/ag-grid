@@ -1,31 +1,31 @@
-import {GridOptions, ICellRendererParams} from '@ag-grid-community/core'
+import { GridOptions, ICellRendererParams, ICellRendererComp } from '@ag-grid-community/core'
+import { FullWidthCellRenderer } from './fullWidthCellRenderer_typescript'
 
-declare var FullWidthCellRenderer: any;
-
-class CountryCellRenderer {
-    eGui?: Element | null;
-
-    constructor() {
-    }
+class CountryCellRenderer implements ICellRendererComp {
+    eGui!: HTMLElement;
 
     init(params: ICellRendererParams) {
         const flag = `<img border="0" width="15" height="10" src="https://www.ag-grid.com/example-assets/flags/${params.data.code}.png">`
 
         const eTemp = document.createElement('div');
         eTemp.innerHTML = `<span style="cursor: default;">${flag} ${params.value}</span>`;
-        this.eGui = eTemp.firstElementChild;
+        this.eGui = eTemp.firstElementChild as HTMLElement;
     }
 
     getGui() {
         return this.eGui;
     }
+
+    refresh(params: ICellRendererParams): boolean {
+        return false;
+    }
 }
 
 const gridOptions: GridOptions = {
     columnDefs: [
-        {field: 'name', cellRendererComp: CountryCellRenderer},
-        {field: 'continent'},
-        {field: 'language'},
+        { field: 'name', cellRendererComp: CountryCellRenderer },
+        { field: 'continent' },
+        { field: 'language' },
     ],
     defaultColDef: {
         flex: 1,
