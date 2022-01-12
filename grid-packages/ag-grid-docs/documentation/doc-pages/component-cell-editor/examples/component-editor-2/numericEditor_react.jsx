@@ -90,6 +90,11 @@ export default class NumericEditor extends Component {
         if (!this.finishedEditingPressed(event) && !this.isKeyPressedNumeric(event)) {
             if (event.preventDefault) event.preventDefault();
         }
+
+        if(this.finishedEditingPressed(event)) {
+            // spl todo - enter doesn't stop editing anymore?
+            this.props.stopEditing();
+        }
     }
 
     isLeftOrRight(event) {
