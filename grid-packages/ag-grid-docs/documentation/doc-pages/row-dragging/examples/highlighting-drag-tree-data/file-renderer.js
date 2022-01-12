@@ -1,11 +1,3 @@
-if (!String.prototype.endsWith) {
-    String.prototype.endsWith = function (search, this_len) {
-        if (this_len === undefined || this_len > this.length) {
-            this_len = this.length
-        }
-        return this.substring(this_len - search.length, this_len) === search
-    }
-}
 
 function getFileIcon(filename) {
     return filename.endsWith('.mp3') || filename.endsWith('.wav')
@@ -19,10 +11,10 @@ function getFileIcon(filename) {
                     : 'far fa-folder'
 }
 
-function getFileCellRenderer() {
-    function FileCellRenderer() { }
 
-    FileCellRenderer.prototype.init = function (params) {
+class FileCellRenderer {
+
+    init(params) {
         var tempDiv = document.createElement('div')
         var value = params.value
         var icon = getFileIcon(params.value)
@@ -36,9 +28,8 @@ function getFileCellRenderer() {
             : value
         this.eGui = tempDiv.firstChild
     }
-    FileCellRenderer.prototype.getGui = function () {
+    getGui() {
         return this.eGui
     }
 
-    return FileCellRenderer
 }

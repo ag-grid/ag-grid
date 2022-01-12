@@ -1,5 +1,5 @@
 import { GridOptions, RowDragEndEvent, RowNode, ValueFormatterParams } from '@ag-grid-community/core'
-declare function getFileCellRenderer(): any;
+declare var FileCellRenderer: any;
 
 var valueFormatter = function (params: ValueFormatterParams) {
   return params.value ? params.value + ' MB' : ''
@@ -33,7 +33,7 @@ const gridOptions: GridOptions = {
     minWidth: 300,
     cellRendererParams: {
       suppressCount: true,
-      innerCellComp: getFileCellRenderer(),
+      innerCellComp: FileCellRenderer,
     },
   },
   onRowDragEnd: onRowDragEnd,
