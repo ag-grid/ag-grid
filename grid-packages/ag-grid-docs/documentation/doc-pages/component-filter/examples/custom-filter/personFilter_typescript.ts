@@ -1,12 +1,19 @@
-class PersonFilter {
-    init(params) {
+import { IDoesFilterPassParams, IFilterComp, IFilterParams } from "@ag-grid-community/core";
+
+export class PersonFilter implements IFilterComp {
+    params!: IFilterParams;
+    filterText!: string | null;
+    gui!: HTMLDivElement;
+    eFilterText: any;
+
+    init(params: IFilterParams) {
         this.params = params;
         this.filterText = null;
         this.setupGui(params);
     }
 
     // not called by AG Grid, just for us to help setup
-    setupGui(params) {
+    setupGui(params: IFilterParams) {
         this.gui = document.createElement('div');
         this.gui.innerHTML =
             `<div style="padding: 4px; width: 200px;">
@@ -22,7 +29,7 @@ class PersonFilter {
             </div>
         `;
 
-        const listener = event => {
+        const listener = (event: any) => {
             this.filterText = event.target.value;
             params.filterChangedCallback();
         }
@@ -37,13 +44,13 @@ class PersonFilter {
         return this.gui;
     }
 
-    doesFilterPass(params) {
+    doesFilterPass(params: IDoesFilterPassParams) {
         const { api, colDef, column, columnApi, context } = this.params;
         const { node } = params;
 
         // make sure each word passes separately, ie search for firstname, lastname
         let passed = true;
-        this.filterText.toLowerCase().split(' ').forEach(filterWord => {
+        this.filterText?.toLowerCase().split(' ').forEach(filterWord => {
             const value = this.params.valueGetter({
                 api,
                 colDef,
@@ -54,7 +61,7 @@ class PersonFilter {
                 getValue: (field) => node.data[field],
                 node,
             });
-    
+
             if (value.toString().toLowerCase().indexOf(filterWord) < 0) {
                 passed = false;
             }
@@ -70,10 +77,10 @@ class PersonFilter {
     getModel() {
         if (!this.isFilterActive()) { return null; }
 
-        return {value: this.filterText.value};
+        return { value: this.filterText };
     }
 
-    setModel(model) {
+    setModel(model: any) {
         this.eFilterText.value = model == null ? null : model.value;
     }
 }

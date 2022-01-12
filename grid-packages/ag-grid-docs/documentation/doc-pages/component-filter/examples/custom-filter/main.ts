@@ -1,7 +1,6 @@
 import { ColDef, GridOptions } from '@ag-grid-community/core'
-
-declare var PersonFilter: any
-declare var YearFilter: any
+import { PersonFilter } from './personFilter_typescript'
+import { YearFilter } from './yearFilter_typescript'
 
 const columnDefs: ColDef[] = [
   { field: 'athlete', minWidth: 150, filterComp: PersonFilter },

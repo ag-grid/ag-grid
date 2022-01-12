@@ -1,5 +1,13 @@
-class YearFilter {
-    init(params) {
+import { IDoesFilterPassParams, IFilterComp, IFilterParams } from "@ag-grid-community/core";
+
+export class YearFilter implements IFilterComp {
+    eGui!: HTMLDivElement;
+    rbAllYears: any;
+    rbSince2010: any;
+    filterActive!: boolean;
+    filterChangedCallback!: (additionalEventAttributes?: any) => void;
+
+    init(params: IFilterParams) {
         this.eGui = document.createElement('div');
         this.eGui.innerHTML =
             `<div style="display: inline-block; width: 400px;">
@@ -28,7 +36,7 @@ class YearFilter {
         return this.eGui;
     }
 
-    doesFilterPass(params) {
+    doesFilterPass(params: IDoesFilterPassParams) {
         return params.data.year >= 2010;
     }
 
