@@ -10,6 +10,7 @@ export class ScalarComparisonOperationModel<T extends number | Date> implements 
     private readonly operands: PartialTuple<OperandArray<T>>;
     private readonly comparator: Comparator<T>;
     private readonly operandSerialiser: FilterExpressionSerialiser<T, OperandExpressionType<T>>;
+    private readonly typePredicate: (v: any) => boolean;
 
     public constructor(opts: {
         type?: ScalarOperationExpression['type'],
@@ -23,9 +24,16 @@ export class ScalarComparisonOperationModel<T extends number | Date> implements 
         this.operands = opts.operands?.map(o => opts.operandSerialiser.toEvaluationModel(o)) as OperandArray<T> || [];
         this.comparator = opts.comparator;
         this.operandSerialiser = opts.operandSerialiser;
+        this.typePredicate = this.type === 'number-op' ?
+            (v: any) => typeof v === 'number' : 
+            (v: any) => v instanceof Date;
     }
 
     public evaluate(input: T): boolean {
+        if (!this.typePredicate(input)) {
+            throw new Error('AG-Grid - Row value to evaluate isn\'t expected type: ' + input)
+        }
+
         const comparisons = this.operands.map((v) => this.comparator.compare(v, input));
 
         switch (this.operation) {
@@ -49,9 +57,7 @@ export class ScalarComparisonOperationModel<T extends number | Date> implements 
         if (comparisonOperationOperandCardinality(this.operation) !== this.operands.length) { return false; }
         if (this.operands.some(o => o == null)) { return false; }
 
-        const typePredicate = this.type === 'number-op' ? (v: any) => typeof v === 'number' : 
-            (v: any) => v instanceof Date;
-        if (this.operands.some(v => !typePredicate(v))) { return false; }
+        if (this.operands.some(v => !this.typePredicate(v))) { return false; }
 
         return true;
     }
