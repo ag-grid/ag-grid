@@ -1,6 +1,5 @@
 import { ColDef, GridOptions } from '@ag-grid-community/core'
-
-declare var CustomDateComponent: any
+import { CustomDateComponent } from './customDateComponent_typescript'
 
 const filterParams = {
   comparator: (filterLocalDateAtMidnight: Date, cellValue: string) => {
