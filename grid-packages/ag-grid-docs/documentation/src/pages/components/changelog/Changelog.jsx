@@ -163,6 +163,7 @@ const detailCellRendererParams = params => {
 const ALL_FIX_VERSIONS = "All Versions";
 
 const extractFixVersionParameter = location => location && location.search ? new URLSearchParams(location.search).get("fixVersion") : ALL_FIX_VERSIONS;
+const extractFilterTerm = location => location && location.search ? new URLSearchParams(location.search).get("itemKey") : '';
 
 const IS_SSR = typeof window === "undefined"
 
@@ -173,6 +174,7 @@ const Changelog = ({ location }) => {
     const [allReleaseNotes, setAllReleaseNotes] = useState(null)
     const [currentReleaseNotes, setCurrentReleaseNotes] = useState(null)
     const [fixVersion, setFixVersion] = useState(extractFixVersionParameter(location));
+    const URLFilterItemKey = useState(extractFilterTerm(location))[0];
 
 
     const applyFixVersionFilter = useCallback(() => {
@@ -220,6 +222,7 @@ const Changelog = ({ location }) => {
 
     const gridReady = params => {
         setGridApi(params.api);
+        params.api.setQuickFilter(URLFilterItemKey)
     }
 
     const onQuickFilterChange = event => {
@@ -330,6 +333,7 @@ const Changelog = ({ location }) => {
                                 type="text"
                                 className={styles["search-bar"]}
                                 placeholder={"Search changelog..."}
+                                value={URLFilterItemKey}
                                 onChange={onQuickFilterChange}
                             ></input>
                         </div>

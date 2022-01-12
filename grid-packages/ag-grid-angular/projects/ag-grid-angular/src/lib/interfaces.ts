@@ -35,7 +35,7 @@ export interface IHeaderGroupAngularComp extends IHeaderGroup, AgFrameworkCompon
 export interface IHeaderAngularComp extends IHeader, AgFrameworkComponent<IHeaderParams> {
 }
 
-export interface IFloatingFilterComp extends IFloatingFilter, AgFrameworkComponent<IFloatingFilterParams> {
+export interface IFloatingFilterComp<P = any> extends IFloatingFilter, AgFrameworkComponent<IFloatingFilterParams<P>> {
 }
 
 export interface IDateAngularComp extends IDate, AgFrameworkComponent<IDateParams> {

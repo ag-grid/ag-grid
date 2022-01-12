@@ -158,9 +158,12 @@ const detailCellRendererParams = params => {
     return res
 }
 
-const Pipeline = () => {
+const extractFilterTerm = location => location && location.search ? new URLSearchParams(location.search).get("itemKey") : '';
+
+const Pipeline = ({ location }) => {
     const [rowData, setRowData] = useState(null)
     const [gridApi, setGridApi] = useState(null)
+    const URLFilterItemKey = useState(extractFilterTerm(location))[0];
 
 
     useEffect(() => {
@@ -173,6 +176,7 @@ const Pipeline = () => {
 
     const gridReady = params => {
         setGridApi(params.api)
+        params.api.setQuickFilter(URLFilterItemKey)
     }
 
     const onQuickFilterChange = event => {
@@ -230,7 +234,7 @@ const Pipeline = () => {
         const {id, label, checked} = checkboxConfig;
         const key = `${id}-checkbox`
         return (
-            <div className={styles["single-checkbox-label-container"]}>
+            <div className={styles["single-checkbox-label-container"]} key={key}>
                 <label className={styles["label-for-checkboxes"]}>
                     <input
                         id={key}
@@ -269,6 +273,7 @@ const Pipeline = () => {
                         <div className={styles["search-bar-container"]}>
                             <input
                                 type="text"
+                                value={URLFilterItemKey}
                                 placeholder={"Search pipeline…"}
                                 className={styles["search-bar"]}
                                 onChange={onQuickFilterChange}

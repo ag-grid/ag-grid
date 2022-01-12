@@ -7304,6 +7304,7 @@
     }
   },
   "IFloatingFilterComp": {
+    "meta": { "typeParams": ["P"] },
     "onParentModelChanged": {
       "type": {
         "arguments": {
@@ -7337,7 +7338,7 @@
     "init": {
       "description": "/** The init(params) method is called on the component once. See below for details on the parameters. */",
       "type": {
-        "arguments": { "params": "IFloatingFilterParams" },
+        "arguments": { "params": "IFloatingFilterParams<P>" },
         "returnType": "AgPromise<void> | void",
         "optional": true
       }

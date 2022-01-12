@@ -16,7 +16,8 @@ import {
     DropTarget,
     PostConstruct,
     SeriesChartType,
-    VerticalDirection
+    AutoScrollService,
+    Column
 } from "@ag-grid-community/core";
 import { ChartController } from "../../chartController";
 import { ColState } from "../../chartDataModel";
@@ -24,17 +25,19 @@ import { ChartTranslationService } from "../../services/chartTranslationService"
 import { ChartOptionsService } from "../../services/chartOptionsService";
 
 export class ChartDataPanel extends Component {
-    public static TEMPLATE = /* html */ `<div class="ag-chart-data-wrapper"></div>`;
+    public static TEMPLATE = /* html */ `<div class="ag-chart-data-wrapper ag-scrollable-container"></div>`;
 
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
 
+    private autoScrollService: AutoScrollService;
     private categoriesGroupComp?: AgGroupComponent;
     private seriesGroupComp?: AgGroupComponent;
     private seriesChartTypeGroupComp?: AgGroupComponent;
     private columnComps: Map<string, AgRadioButton | AgCheckbox> = new Map<string, AgRadioButton | AgCheckbox>();
     private chartType?: ChartType;
-    private insertIndex?: number;
+    private lastHoveredItem?: { comp: AgCheckbox, position: 'top' | 'bottom' };
+    private lastDraggedColumn?: Column;
 
     constructor(
         private readonly chartController: ChartController,
@@ -46,6 +49,7 @@ export class ChartDataPanel extends Component {
     public init() {
         this.updatePanels();
         this.addManagedListener(this.chartController, ChartController.EVENT_CHART_UPDATED, this.updatePanels.bind(this));
+        this.createAutoScrollService();
     }
 
     protected destroy(): void {
@@ -88,6 +92,16 @@ export class ChartDataPanel extends Component {
             this.createSeriesGroup(valueCols);
             this.createSeriesChartTypeGroup(valueCols);
         }
+    }
+
+    private createAutoScrollService(): void {
+        const eGui = this.getGui();
+        this.autoScrollService = new AutoScrollService({
+            scrollContainer: eGui,
+            scrollAxis: 'y',
+            getVerticalPosition: () => eGui.scrollTop,
+            setVerticalPosition: (position) => eGui.scrollTop = position
+        });
     }
 
     private addComponent(parent: HTMLElement, component: AgGroupComponent, id: string): void {
@@ -177,8 +191,10 @@ export class ChartDataPanel extends Component {
         this.addComponent(this.getGui(), this.seriesGroupComp, 'seriesGroup');
 
         const dropTarget: DropTarget = {
-            getContainer: this.getGui.bind(this),
-            onDragging: this.onDragging.bind(this),
+            getIconName: () => DragAndDropService.ICON_MOVE,
+            getContainer: () => this.seriesGroupComp!.getGui(),
+            onDragging: (params) => this.onDragging(params),
+            onDragLeave: () => this.onDragLeave(),
             isInterestedIn: this.isInterestedIn.bind(this),
         };
 
@@ -259,9 +275,8 @@ export class ChartDataPanel extends Component {
             type: DragSourceType.ChartPanel,
             eElement: eDragHandle,
             dragItemName: col.displayName,
-            defaultIconName: DragAndDropService.ICON_MOVE,
             getDragItem: () => ({ columns: [col.column!] }),
-            onDragStopped: () => { this.insertIndex = undefined; }
+            onDragStopped: () => this.onDragStop()
         };
 
         this.dragAndDropService.addDragSource(dragSource, true);
@@ -328,40 +343,83 @@ export class ChartDataPanel extends Component {
     }
 
     private onDragging(draggingEvent: DraggingEvent): void {
-        if (this.checkInsertIndex(draggingEvent)) {
-            const column = draggingEvent.dragItem.columns![0];
-            const { dimensionCols, valueCols } = this.chartController.getColStateForMenu();
-            [...dimensionCols, ...valueCols]
-                .filter(state => state.column === column)
-                .forEach(state => {
-                    state.order = this.insertIndex!;
-                    this.chartController.updateForPanelChange(state);
-                });
-        }
+        const itemHovered = this.checkHoveredItem(draggingEvent);
+
+        if (!itemHovered) { return; }
+
+        this.lastDraggedColumn = draggingEvent.dragItem.columns![0];
+
+        const { comp, position } = itemHovered;
+        const { comp: lastHoveredComp, position: lastHoveredPosition } = this.lastHoveredItem || {};
+
+        if (comp === lastHoveredComp && position === lastHoveredPosition) { return; }
+
+        this.autoScrollService.check(draggingEvent.event);
+        this.clearHoveredItems();
+        
+
+        this.lastHoveredItem = { comp, position };
+
+        const eGui = comp.getGui();
+
+
+        eGui.classList.add('ag-list-item-hovered', `ag-item-highlight-${position}`);
     }
 
-    private checkInsertIndex(draggingEvent: DraggingEvent): boolean {
-        if (_.missing(draggingEvent.vDirection)) {
-            return false;
-        }
+    private checkHoveredItem(draggingEvent: DraggingEvent): { comp: AgCheckbox, position: 'top' | 'bottom' } | null {
+        if (_.missing(draggingEvent.vDirection)) { return null; }
 
-        let newIndex = 0;
         const mouseEvent = draggingEvent.event;
 
-        this.columnComps.forEach(comp => {
-            const rect = comp.getGui().getBoundingClientRect();
-            const verticalFit = mouseEvent.clientY >= (draggingEvent.vDirection === VerticalDirection.Down ? rect.top : rect.bottom);
+        for (const comp of this.columnComps.values()) {
+            const eGui = comp.getGui();
 
-            if (verticalFit) {
-                newIndex++;
+            if (!eGui.querySelector('.ag-chart-data-column-drag-handle')) { continue; }
+
+            const rect = eGui.getBoundingClientRect();
+            const isOverComp = mouseEvent.clientY >= rect.top && mouseEvent.clientY <= rect.bottom;
+
+            if (isOverComp) {
+                const height = eGui.clientHeight;
+                const position = mouseEvent.clientY > rect.top + (height / 2) ? 'bottom': 'top';
+                return { comp, position };
             }
+        }
+
+        return null;
+    }
+
+    private onDragLeave(): void {
+        this.clearHoveredItems();
+    }
+
+    private onDragStop(): void {
+        if (this.lastHoveredItem) {
+            const { dimensionCols, valueCols } = this.chartController.getColStateForMenu();
+            const draggedColumnState = [...dimensionCols, ...valueCols]
+                .find(state => state.column === this.lastDraggedColumn);
+            if (draggedColumnState) {
+                let targetIndex = Array.from(this.columnComps.values()).indexOf(this.lastHoveredItem.comp);
+                if (this.lastHoveredItem.position === 'bottom') { targetIndex++; }
+
+                draggedColumnState.order = targetIndex;
+                this.chartController.updateForPanelChange(draggedColumnState);
+            }
+        }
+        this.clearHoveredItems();
+        this.lastDraggedColumn = undefined;
+        this.autoScrollService.ensureCleared();
+    }
+
+    private clearHoveredItems(): void {
+        this.columnComps.forEach(columnComp => {
+            columnComp.getGui().classList.remove(
+                'ag-list-item-hovered',
+                'ag-item-highlight-top', 
+                'ag-item-highlight-bottom'
+            );
         });
-
-        const changed = this.insertIndex !== undefined && newIndex !== this.insertIndex;
-
-        this.insertIndex = newIndex;
-
-        return changed;
+        this.lastHoveredItem = undefined;
     }
 
     private isInterestedIn(type: DragSourceType): boolean {

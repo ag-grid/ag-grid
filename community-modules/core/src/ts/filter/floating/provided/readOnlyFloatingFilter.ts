@@ -1,14 +1,15 @@
-import { IFloatingFilterComp, IFloatingFilterParams } from '../floatingFilter';
+import { IFloatingFilterComp, IFloatingFilterParams, IFloatingFilterParent } from '../floatingFilter';
 import { Component } from '../../../widgets/component';
 import { RefSelector } from '../../../widgets/componentAnnotations';
 import { AgInputTextField } from '../../../widgets/agInputTextField';
 import { Autowired } from '../../../context/context';
 import { ColumnModel } from '../../../columns/columnModel';
+import { IFilter } from '../../../interfaces/iFilter';
 
 // optional floating filter for user provided filters - instead of providing a floating filter,
 // they can provide a getModelAsString() method on the filter instead. this class just displays
 // the string returned from getModelAsString()
-export class ReadOnlyFloatingFilter extends Component implements IFloatingFilterComp {
+export class ReadOnlyFloatingFilter extends Component implements IFloatingFilterComp<IFilter & IFloatingFilterParent> {
 
     @RefSelector('eFloatingFilterText') private eFloatingFilterText: AgInputTextField;
     @Autowired('columnModel') private columnModel: ColumnModel;

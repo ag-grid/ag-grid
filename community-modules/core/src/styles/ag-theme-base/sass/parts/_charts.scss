@@ -72,7 +72,13 @@
     }
 
     .ag-charts-data-group-container {
-        @include ag-vertical-widget-container();
+        padding: ag-param(widget-container-vertical-padding) * 0.5 ag-param(widget-container-horizontal-padding);
+
+        .ag-charts-data-group-item:not(.ag-charts-format-sub-level-group) {
+            height: ag-param(list-item-height);
+        }
+
+        @include ag-list-item-hovered();
     }
 
     .ag-charts-format-top-level-group-container {

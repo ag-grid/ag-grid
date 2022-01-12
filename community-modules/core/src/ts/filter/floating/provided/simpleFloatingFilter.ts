@@ -1,13 +1,13 @@
 import { Component } from '../../../widgets/component';
 import { IFloatingFilterComp, IFloatingFilterParams } from '../floatingFilter';
 import { IFilterOptionDef, ProvidedFilterModel } from '../../../interfaces/iFilter';
-import { ICombinedSimpleModel, ISimpleFilterModel, SimpleFilter } from '../../provided/simpleFilter';
+import { ICombinedSimpleModel, ISimpleFilter, ISimpleFilterModel, SimpleFilter } from '../../provided/simpleFilter';
 import { OptionsFactory } from '../../provided/optionsFactory';
 import { IScalarFilterParams } from '../../provided/scalarFilter';
 import { FilterChangedEvent } from '../../../events';
 import { IProvidedFilterParams } from '../../provided/providedFilter';
 
-export abstract class SimpleFloatingFilter extends Component implements IFloatingFilterComp {
+export abstract class SimpleFloatingFilter extends Component implements IFloatingFilterComp<ISimpleFilter> {
 
     // this method is on IFloatingFilterComp. because it's not implemented at this level, we have to
     // define it as an abstract method. it gets implemented in sub classes.
