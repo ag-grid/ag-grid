@@ -12,7 +12,7 @@ export class NumberFloatingFilter implements IFloatingFilterComp {
     eSlider: any;
     currentValue!: number | null;
 
-    init(params: IFloatingFilterParams<any> & CustomFloatingParams) {
+    init(params: IFloatingFilterParams<CustomNumberFilter> & CustomFloatingParams) {
         this.eGui = document.createElement('div')
         this.eGui.innerHTML =
             '<div style="width:75%; margin-left:10px" class="slider"></div>'
@@ -30,7 +30,7 @@ export class NumberFloatingFilter implements IFloatingFilterComp {
                     return
                 }
                 that.currentValue = ui.value
-                params.parentFilterInstance((instance: CustomNumberFilter) => {
+                params.parentFilterInstance((instance) => {
                     instance.myMethodForTakingValueFromFloatingFilter(that.buildModel())
                 })
             },

@@ -7,7 +7,7 @@ export class NumberFloatingFilterComponent implements IFloatingFilterComp {
     eFilterInput!: HTMLInputElement;
 
     // Generic param should be NumberFilterComponent but type needs to be passed through IFloatingFilterComp first
-    init(params: IFloatingFilterParams<any>) {
+    init(params: IFloatingFilterParams<NumberFilterComponent>) {
         this.eGui = document.createElement('div');
         this.eGui.innerHTML = '&gt; <input style="width: 30px" type="number" min="0" />';
         this.currentValue = null;
@@ -16,7 +16,7 @@ export class NumberFloatingFilterComponent implements IFloatingFilterComp {
         const onInputBoxChanged = () => {
             if (this.eFilterInput.value === '') {
                 // Remove the filter
-                params.parentFilterInstance((instance: NumberFilterComponent) => {
+                params.parentFilterInstance((instance) => {
                     instance.myMethodForTakingValueFromFloatingFilter(null);
                 });
                 return;
