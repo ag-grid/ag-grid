@@ -73,8 +73,11 @@ export const getExampleInfo = (
             break;
 
         case 'typescript':
-            sourcePath += `_gen/${importType}/${internalFramework}/`;
-            appLocation += `${importType}/${internalFramework}/`;
+            // We always want to see the vanilla or typescript version of the code despite sometimes being on a different framework page
+            const location = internalFramework === 'vanilla' || internalFramework === 'typescript' ? internalFramework : 'vanilla'
+
+            sourcePath += `_gen/${importType}/${location}/`;
+            appLocation += `${importType}/${location}/`;
             break;
         default:
             break;
