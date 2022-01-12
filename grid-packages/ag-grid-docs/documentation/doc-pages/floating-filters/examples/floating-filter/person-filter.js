@@ -1,14 +1,12 @@
-function getPersonFilter() {
-    function PersonFilter() { }
-
-    PersonFilter.prototype.init = function (params) {
+class PersonFilter {
+    init(params) {
         this.params = params
         this.filterText = null
         this.setupGui(params)
     }
 
     // not called by AG Grid, just for us to help setup
-    PersonFilter.prototype.setupGui = function (params) {
+    setupGui(params) {
         this.gui = document.createElement('div')
         this.gui.innerHTML =
             '<div style="padding: 4px;">' +
@@ -30,11 +28,11 @@ function getPersonFilter() {
         }
     }
 
-    PersonFilter.prototype.getGui = function () {
+    getGui() {
         return this.gui
     }
 
-    PersonFilter.prototype.doesFilterPass = function (params) {
+    doesFilterPass(params) {
         const { api, colDef, column, columnApi, context } = this.params;
         const { node } = params;
 
@@ -58,11 +56,11 @@ function getPersonFilter() {
             })
     }
 
-    PersonFilter.prototype.isFilterActive = function () {
+    isFilterActive() {
         return this.filterText != null && this.filterText !== ''
     }
 
-    PersonFilter.prototype.getApi = function () {
+    getApi() {
         var that = this
         return {
             getModel: function () {
@@ -74,15 +72,13 @@ function getPersonFilter() {
         }
     }
 
-    PersonFilter.prototype.getModelAsString = function (model) {
+    getModelAsString(model) {
         return model || ''
     }
 
-    PersonFilter.prototype.getModel = function () {
+    getModel() {
         return this.filterText
     }
     // lazy, the example doesn't use setModel()
-    PersonFilter.prototype.setModel = function () { }
-
-    return PersonFilter
+    setModel() { }
 }

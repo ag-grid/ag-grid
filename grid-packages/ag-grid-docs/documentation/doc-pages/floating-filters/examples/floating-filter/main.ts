@@ -1,6 +1,6 @@
 import { ColDef, GridOptions, ISetFilter } from '@ag-grid-community/core'
 
-declare function getPersonFilter(): any;
+declare var PersonFilter: any;
 
 var dateFilterParams = {
   comparator: function (filterLocalDateAtMidnight: Date, cellValue: string) {
@@ -28,10 +28,8 @@ var dateFilterParams = {
   browserDatePicker: true,
 }
 
-var athleteFilter = getPersonFilter()
-
 const columnDefs: ColDef[] = [
-  { field: 'athlete', filter: athleteFilter, suppressMenu: true },
+  { field: 'athlete', filter: PersonFilter, suppressMenu: true },
   { field: 'age', filterComp: 'agNumberColumnFilter', suppressMenu: true },
   { field: 'country', filterComp: 'agSetColumnFilter', suppressMenu: true },
   {
