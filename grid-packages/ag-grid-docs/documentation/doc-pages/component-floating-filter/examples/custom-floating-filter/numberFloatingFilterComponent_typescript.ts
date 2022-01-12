@@ -1,9 +1,20 @@
-class NumberFloatingFilterComponent {
-    init(params) {
+import { IFloatingFilterComp, IFloatingFilterParams } from "@ag-grid-community/core";
+
+export interface CustomParams {
+    suppressFilterButton: boolean;
+    color: string
+}
+
+export class NumberFloatingFilterComponent implements IFloatingFilterComp {
+    eGui!: HTMLDivElement;
+    currentValue: any;
+    eFilterInput!: HTMLInputElement;
+
+    init(params: IFloatingFilterParams & CustomParams) {
         this.eGui = document.createElement('div');
         this.eGui.innerHTML = '&gt; <input style="width: 30px" type="number" min="0" />';
         this.currentValue = null;
-        this.eFilterInput = this.eGui.querySelector('input');
+        this.eFilterInput = this.eGui.querySelector('input')!;
         this.eFilterInput.style.color = params.color;
 
         const onInputBoxChanged = () => {
@@ -24,7 +35,7 @@ class NumberFloatingFilterComponent {
         this.eFilterInput.addEventListener('input', onInputBoxChanged);
     }
 
-    onParentModelChanged(parentModel) {
+    onParentModelChanged(parentModel: any) {
         // When the filter is empty we will receive a null message her
         if (!parentModel) {
             this.eFilterInput.value = '';

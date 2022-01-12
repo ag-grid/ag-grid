@@ -1,8 +1,8 @@
 import { IHeaderGroupComp, IHeaderGroupParams } from "@ag-grid-community/core";
 
 export class CustomHeaderGroup implements IHeaderGroupComp {
-    params: IHeaderGroupParams;
-    eGui: HTMLDivElement;
+    params!: IHeaderGroupParams;
+    eGui!: HTMLDivElement;
     onExpandButtonClickedListener: any;
     eExpandButton: any;
     onExpandChangedListener: any;
@@ -35,11 +35,11 @@ export class CustomHeaderGroup implements IHeaderGroupComp {
     };
 
     syncExpandButtons() {
-        function collapsed(toDeactivate) {
+        function collapsed(toDeactivate: any) {
             toDeactivate.className = toDeactivate.className.split(' ')[0] + ' collapsed';
         }
 
-        function expanded(toActivate) {
+        function expanded(toActivate: any) {
             toActivate.className = toActivate.className.split(' ')[0] + ' expanded';
         }
 

@@ -1,5 +1,5 @@
 import { ColDef, GridOptions } from '@ag-grid-community/core'
-declare var NumberFloatingFilterComponent: any
+import { NumberFloatingFilterComponent, CustomParams } from "./numberFloatingFilterComponent_typescript";
 
 const columnDefs: ColDef[] = [
   { field: 'athlete', filter: false },
@@ -11,7 +11,7 @@ const columnDefs: ColDef[] = [
     floatingFilterComponentParams: {
       suppressFilterButton: true,
       color: 'red',
-    },
+    } as CustomParams,
   },
   {
     field: 'silver',
@@ -21,7 +21,7 @@ const columnDefs: ColDef[] = [
     floatingFilterComponentParams: {
       suppressFilterButton: true,
       color: 'blue',
-    },
+    } as CustomParams,
   },
   {
     field: 'bronze',
@@ -31,7 +31,7 @@ const columnDefs: ColDef[] = [
     floatingFilterComponentParams: {
       suppressFilterButton: true,
       color: 'green',
-    },
+    } as CustomParams,
   },
   {
     field: 'total',
@@ -41,7 +41,7 @@ const columnDefs: ColDef[] = [
     floatingFilterComponentParams: {
       suppressFilterButton: true,
       color: 'orange',
-    },
+    } as CustomParams,
   },
 ]
 

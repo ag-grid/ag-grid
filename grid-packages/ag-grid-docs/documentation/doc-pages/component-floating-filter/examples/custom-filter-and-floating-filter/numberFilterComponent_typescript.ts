@@ -1,5 +1,13 @@
-class NumberFilterComponent {
-    init(params) {
+import { IDoesFilterPassParams, IFilterComp, IFilterParams } from "@ag-grid-community/core";
+
+export class NumberFilterComponent implements IFilterComp {
+    filterText!: string | null;
+    params!: IFilterParams;
+    gui!: HTMLDivElement;
+    eFilterText: any;
+    onFilterChanged!: () => void;
+
+    init(params: IFilterParams) {
         this.filterText = null;
         this.params = params;
         this.setupGui();
@@ -26,9 +34,9 @@ class NumberFilterComponent {
         this.eFilterText.addEventListener('input', this.onFilterChanged);
     }
 
-    isNumeric = n => !isNaN(parseFloat(n)) && isFinite(n);
+    isNumeric = (n: any) => !isNaN(parseFloat(n)) && isFinite(n);
 
-    myMethodForTakingValueFromFloatingFilter(value) {
+    myMethodForTakingValueFromFloatingFilter(value: any) {
         this.eFilterText.value = value;
         this.onFilterChanged();
     }
@@ -41,12 +49,12 @@ class NumberFilterComponent {
         return this.gui;
     }
 
-    doesFilterPass(params) {
-        if (!this.isFilterActive()) { return; }
+    doesFilterPass(params: IDoesFilterPassParams) {
+        if (!this.isFilterActive()) { return false; }
 
         const { api, colDef, column, columnApi, context, valueGetter } = this.params;
         const { node } = params;
-    
+
         const value = valueGetter({
             api,
             colDef,
@@ -56,7 +64,7 @@ class NumberFilterComponent {
             data: node.data,
             getValue: (field) => node.data[field],
             node,
-        });        
+        });
 
         const filterValue = this.filterText;
 
@@ -75,7 +83,7 @@ class NumberFilterComponent {
         return this.isFilterActive() ? Number(this.eFilterText.value) : null;
     }
 
-    setModel(model) {
+    setModel(model: any) {
         this.eFilterText.value = model;
         this.extractFilterText();
     }
