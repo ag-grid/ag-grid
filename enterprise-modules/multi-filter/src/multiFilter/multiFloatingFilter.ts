@@ -15,17 +15,17 @@ import {
 } from '@ag-grid-community/core';
 import { MultiFilter } from './multiFilter';
 
-export class MultiFloatingFilterComp extends Component implements IFloatingFilterComp {
+export class MultiFloatingFilterComp extends Component implements IFloatingFilterComp<MultiFilter> {
     @Autowired('userComponentFactory') private readonly userComponentFactory: UserComponentFactory;
 
     private floatingFilters: IFloatingFilterComp[] = [];
-    private params: IFloatingFilterParams;
+    private params: IFloatingFilterParams<MultiFilter>;
 
     constructor() {
         super(/* html */`<div class="ag-multi-floating-filter ag-floating-filter-input"></div>`);
     }
 
-    public init(params: IFloatingFilterParams): AgPromise<void> {
+    public init(params: IFloatingFilterParams<MultiFilter>): AgPromise<void> {
         this.params = params;
 
         const filterParams = params.filterParams as IMultiFilterParams;

@@ -62,7 +62,7 @@ export interface IFloatingFilter {
     onParentModelChanged(parentModel: any, filterChangedEvent?: FilterChangedEvent | null): void;
 }
 
-export interface IFloatingFilterComp extends IFloatingFilter, IComponent<IFloatingFilterParams> {
+export interface IFloatingFilterComp<P = any> extends IFloatingFilter, IComponent<IFloatingFilterParams<P>> {
 }
 
 export interface BaseFloatingFilterChange {
