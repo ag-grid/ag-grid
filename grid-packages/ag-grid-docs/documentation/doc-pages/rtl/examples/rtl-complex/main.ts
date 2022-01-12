@@ -12,9 +12,9 @@ import {
     SelectionChangedEvent
 } from '@ag-grid-community/core'
 
-declare var PersonFilter: any;
-declare var WinningsFilter: any;
-declare var CountryCellRenderer: any;
+import { PersonFilter } from './person-filter_typescript'
+import { WinningsFilter } from './winnings-filter_typescript'
+import { CountryCellRenderer } from './country-renderer_typescript'
 
 const colNames = [
     'Station',
@@ -666,29 +666,6 @@ function rowSelected(event: RowSelectedEvent) {
         console.log('Callback rowSelected: ' + valueToPrint)
     }
 }
-
-const COUNTRY_CODES: Record<string, string> = {
-    Ireland: 'ie',
-    Luxembourg: 'lu',
-    Belgium: 'be',
-    Spain: 'es',
-    'United Kingdom': 'gb',
-    France: 'fr',
-    Germany: 'de',
-    Sweden: 'se',
-    Italy: 'it',
-    Greece: 'gr',
-    Iceland: 'is',
-    Portugal: 'pt',
-    Malta: 'mt',
-    Norway: 'no',
-    Brazil: 'br',
-    Argentina: 'ar',
-    Colombia: 'co',
-    Peru: 'pe',
-    Venezuela: 've',
-    Uruguay: 'uy',
-};
 
 function numberNewValueHandler(params: NewValueParams) {
     const newValue = params.newValue;

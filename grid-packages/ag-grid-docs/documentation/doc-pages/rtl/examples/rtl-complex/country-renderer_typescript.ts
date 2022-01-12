@@ -1,4 +1,6 @@
-var COUNTRY_CODES = {
+import { ICellRendererComp, ICellRendererParams } from "@ag-grid-community/core";
+
+const COUNTRY_CODES: Record<string, string> = {
     Ireland: 'ie',
     Luxembourg: 'lu',
     Belgium: 'be',
@@ -22,11 +24,10 @@ var COUNTRY_CODES = {
 }
 
 
-class CountryCellRenderer {
+export class CountryCellRenderer implements ICellRendererComp {
+    eGui!: HTMLSpanElement;
 
-    eGui;
-
-    init(params) {
+    init(params: ICellRendererParams) {
         this.eGui = document.createElement('span')
         this.eGui.style.cursor = 'default'
 
@@ -50,7 +51,7 @@ class CountryCellRenderer {
         return this.eGui
     }
 
-    refresh(params) {
-        return true;
+    refresh(params: ICellRendererParams) {
+        return false;
     }
 }

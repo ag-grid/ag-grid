@@ -1,8 +1,18 @@
-class WinningsFilter {
+import { IDoesFilterPassParams, IFilterComp, IFilterParams } from "@ag-grid-community/core";
+
+export class WinningsFilter implements IFilterComp {
+    filterChangedCallback!: (additionalEventAttributes?: any) => void;
+    params!: IFilterParams;
+    eGui!: HTMLDivElement;
+    cbNoFilter: any;
+    cbPositive: any;
+    cbNegative: any;
+    cbGreater50: any;
+    cbGreater90: any;
     constructor() {
     }
 
-    init(params) {
+    init(params: IFilterParams) {
         var uniqueId = Math.random()
         this.filterChangedCallback = params.filterChangedCallback
         this.eGui = document.createElement('div')
@@ -43,9 +53,9 @@ class WinningsFilter {
         return this.eGui
     }
 
-    doesFilterPass(params) {
-        var {api, colDef, column, columnApi, context} = this.params;
-        var {node} = params;
+    doesFilterPass(params: IDoesFilterPassParams) {
+        var { api, colDef, column, columnApi, context } = this.params;
+        var { node } = params;
 
         var value = this.params.valueGetter({
             api,
@@ -71,6 +81,7 @@ class WinningsFilter {
         } else {
             console.error('invalid checkbox selection')
         }
+        return true;
     }
 
     isFilterActive() {
