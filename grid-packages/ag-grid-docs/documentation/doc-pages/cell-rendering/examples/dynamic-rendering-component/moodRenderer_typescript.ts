@@ -1,7 +1,8 @@
 import { ICellRendererComp, ICellRendererParams } from "@ag-grid-community/core";
 
 export class MoodRenderer implements ICellRendererComp {
-    eGui: HTMLSpanElement;
+    eGui!: HTMLSpanElement;
+
     init(params: ICellRendererParams) {
         this.eGui = document.createElement('span');
         if (params.value !== "" || params.value !== undefined) {

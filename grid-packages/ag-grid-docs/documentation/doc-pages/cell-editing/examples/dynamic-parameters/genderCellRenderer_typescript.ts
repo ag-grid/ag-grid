@@ -1,6 +1,6 @@
 import { ICellRendererComp, ICellRendererParams } from "@ag-grid-community/core";
 
-export class GenderRenderer implements ICellRendererComp {
+export class GenderCellRenderer implements ICellRendererComp {
     eGui!: HTMLSpanElement;
 
     init(params: ICellRendererParams) {

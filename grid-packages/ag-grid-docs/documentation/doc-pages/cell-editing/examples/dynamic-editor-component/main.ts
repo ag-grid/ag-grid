@@ -1,6 +1,6 @@
-import { CellEditingStartedEvent, CellEditingStoppedEvent, ColDef, GridOptions, ICellEditorParams, RowEditingStartedEvent, RowEditingStoppedEvent } from '@ag-grid-community/core'
-declare var NumericCellEditor: any;
-declare var MoodEditor: any;
+import { CellEditingStartedEvent, CellEditingStoppedEvent, GridOptions, ICellEditorParams, RowEditingStartedEvent, RowEditingStoppedEvent } from '@ag-grid-community/core'
+import { NumericCellEditor } from './numericCellEditor_typescript'
+import { MoodEditor } from './moodEditor_typescript'
 
 const gridOptions: GridOptions = {
   columnDefs: [
