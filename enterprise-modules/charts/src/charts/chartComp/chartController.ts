@@ -91,7 +91,7 @@ export class ChartController extends BeanStub {
     }
 
     public getChartModel(): ChartModel {
-        const modelType: ChartModelType = this.model.chartId ? 'pivot' : 'range';
+        const modelType: ChartModelType = this.model.pivotChart ? 'pivot' : 'range';
 
         return {
             modelType,
