@@ -1,15 +1,29 @@
-import { ColDef, GridOptions, IViewportDatasource, ValueFormatterParams, ICellRendererParams } from '@ag-grid-community/core'
+import { ColDef, GridOptions, IViewportDatasource, ValueFormatterParams, ICellRendererParams, ICellRendererComp } from '@ag-grid-community/core'
 declare function createMockServer(): any;
 declare function createViewportDatasource(mockServer: any): IViewportDatasource;
+
+class RowIndexRenderer implements ICellRendererComp {
+  eGui!: HTMLDivElement;
+  init(params: ICellRendererParams) {
+    this.eGui = document.createElement('div');
+    this.eGui.innerHTML = '' + params.rowIndex;;
+
+  }
+  refresh(params: ICellRendererParams): boolean {
+    return false;
+  }
+  getGui(): HTMLElement {
+    return this.eGui;
+  }
+}
+
 
 const columnDefs: ColDef[] = [
   // this col shows the row index, doesn't use any data from the row
   {
     headerName: '#',
     maxWidth: 80,
-    cellRendererComp: function (params: ICellRendererParams) {
-      return '' + params.rowIndex
-    },
+    cellRendererComp: RowIndexRenderer
   },
   { field: 'code', maxWidth: 90 },
   { field: 'name', minWidth: 220 },
