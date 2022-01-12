@@ -20,7 +20,7 @@ import { PrimaryColsListPanel } from "./primaryColsListPanel";
 import { ToolPanelColumnComp } from "./toolPanelColumnComp";
 import { ToolPanelColumnGroupComp } from "./toolPanelColumnGroupComp";
 
-const PRIMARY_COLS_LIST_ITEM_HOVERED = 'ag-column-list-item-hovered';
+const PRIMARY_COLS_LIST_ITEM_HOVERED = 'ag-list-item-hovered';
 
 interface DragColumnItem {
     rowIndex: number;

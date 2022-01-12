@@ -4,7 +4,6 @@ import {
     ChartMenuOptions,
     ChartType,
     Component,
-    PopupService,
     PostConstruct,
     TabbedItem,
     TabbedLayout
@@ -37,7 +36,7 @@ export class TabbedChartMenu extends Component {
     }) {
         super();
 
-        const { controller, type, panels, chartOptionsService } = params;
+        const { controller, panels, chartOptionsService } = params;
 
         this.chartController = controller;
         this.chartOptionsService = chartOptionsService;

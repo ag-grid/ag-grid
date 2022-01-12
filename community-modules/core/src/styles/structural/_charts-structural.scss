@@ -196,14 +196,15 @@
     user-select: none;
 }
 
+.ag-chart-data-wrapper {
+    height: 100%;
+    overflow-y: auto;
+}
+
 .ag-chart-data-section,
 .ag-chart-format-section {
     display: flex;
     margin: 0;
-}
-
-.ag-charts-font-panel-controls {
-    justify-content: space-between;
 }
 
 .ag-chart-empty-text {
@@ -223,4 +224,14 @@
 .ag-chart-menu-hidden:hover .ag-chart-menu {
     opacity: 1;
     pointer-events: all;
+}
+
+.ag-charts-font-size-color {
+    display: flex;
+    align-self: stretch;
+    justify-content: space-between;
+}
+
+.ag-charts-data-group-item {
+    position: relative;
 }

@@ -34,19 +34,6 @@
     }
 
     .ag-column-select-list {
-        .ag-column-list-item-hovered::after {
-            content: '';
-            position: absolute;
-            left: 0;
-            right: 0;
-            height: 1px;
-            @include ag-color-property(background-color, range-selection-border-color);
-        }
-        .ag-item-highlight-top::after {
-            top: 0;
-        }
-        .ag-item-highlight-bottom::after {
-            bottom: 0;
-        }
+        @include ag-list-item-hovered()
     }
 }
