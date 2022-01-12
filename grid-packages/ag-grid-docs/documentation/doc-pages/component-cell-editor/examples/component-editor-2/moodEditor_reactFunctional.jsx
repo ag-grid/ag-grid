@@ -4,20 +4,27 @@ import ReactDOM from 'react-dom';
 export default forwardRef((props, ref) => {
     const isHappy = value => value === 'Happy';
 
-    const [happy, setHappy] = useState(isHappy(props.value));
-    const [editing, setEditing] = useState(true);
+    const [ready, setReady] = useState(false);
+    const [interimValue, setInterimValue] = useState(isHappy(props.value));
+    const [happy, setHappy] = useState(null);
     const refContainer = useRef(null);
 
-    useEffect(() => {
-        focus();
-    }, []);
-
     const checkAndToggleMoodIfLeftRight = (event) => {
-        if (['ArrowLeft', 'ArrowRight'].indexOf(event.key) > -1) { // left and right
-            setHappy(!happy);
-            event.stopPropagation();
+        if (ready) {
+            if (['ArrowLeft', 'ArrowRight'].indexOf(event.key) > -1) { // left and right
+                setInterimValue(!interimValue);
+                event.stopPropagation();
+            } else if (event.key === "Enter") {
+                setHappy(interimValue)
+                event.stopPropagation();
+            }
         }
     };
+
+    useEffect(() => {
+        ReactDOM.findDOMNode(refContainer.current).focus();
+        setReady(true);
+    }, [])
 
     useEffect(() => {
         window.addEventListener('keydown', checkAndToggleMoodIfLeftRight);
@@ -25,34 +32,21 @@ export default forwardRef((props, ref) => {
         return () => {
             window.removeEventListener('keydown', checkAndToggleMoodIfLeftRight);
         };
-    }, [checkAndToggleMoodIfLeftRight]);
+    }, [checkAndToggleMoodIfLeftRight, ready]);
+
+    useEffect(() => {
+        if (happy !== null) {
+            props.stopEditing();
+        }
+    }, [happy])
 
     useImperativeHandle(ref, () => {
         return {
             getValue() {
                 return happy ? 'Happy' : 'Sad';
-            },
-
-            isPopup() {
-                return true;
             }
         };
     });
-
-    useEffect(() => {
-        if (!editing) {
-            props.api.stopEditing();
-        }
-    }, [editing]);
-
-    const focus = () => {
-        window.setTimeout(() => {
-            let container = ReactDOM.findDOMNode(refContainer.current);
-            if (container) {
-                container.focus();
-            }
-        });
-    };
 
     const mood = {
         borderRadius: 15,
@@ -77,8 +71,8 @@ export default forwardRef((props, ref) => {
         padding: 4
     };
 
-    const happyStyle = happy ? selected : unselected;
-    const sadStyle = !happy ? selected : unselected;
+    const happyStyle = interimValue ? selected : unselected;
+    const sadStyle = !interimValue ? selected : unselected;
 
     return (
         <div ref={refContainer}
@@ -87,12 +81,10 @@ export default forwardRef((props, ref) => {
         >
             <img src="https://www.ag-grid.com/example-assets/smileys/happy.png" onClick={() => {
                 setHappy(true);
-                setEditing(false);
             }} style={happyStyle}/>
             <img src="https://www.ag-grid.com/example-assets/smileys/sad.png" onClick={() => {
                 setHappy(false);
-                setEditing(false);
             }} style={sadStyle}/>
         </div>
     );
-})
+});

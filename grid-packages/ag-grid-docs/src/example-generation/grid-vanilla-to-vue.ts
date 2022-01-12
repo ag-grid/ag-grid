@@ -361,9 +361,23 @@ function convertColumnDefs(rawColumnDefs, userComponentNames, bindings, componen
             } else {
                 let value = rawColumnDef[columnProperty];
 
-                if (isParamsProperty(columnProperty) && value.cellRendererComp) {
-                    Object.defineProperty(value, 'cellRendererFramework', Object.getOwnPropertyDescriptor(value, 'cellRendererComp'));
-                    delete value['cellRendererComp'];
+                if (isParamsProperty(columnProperty)) {
+                    if (value.cellRendererComp) {
+                        const descriptor = Object.getOwnPropertyDescriptor(value, 'cellRendererComp');
+                        descriptor.value = descriptor.value.replace('AG_LITERAL_', '')
+                        if(isExternalVueFile(componentFileNames, descriptor.value)) {
+                            Object.defineProperty(value, 'cellRendererFramework', descriptor);
+                            delete value['cellRendererComp'];
+                        }
+                    }
+                    if (value.cellEditorComp) {
+                        const descriptor = Object.getOwnPropertyDescriptor(value, 'cellEditorComp');
+                        descriptor.value = descriptor.value.replace('AG_LITERAL_', '')
+                        if(isExternalVueFile(componentFileNames, descriptor.value)) {
+                            Object.defineProperty(value, 'cellEditorFramework', descriptor);
+                            delete value['cellEditorComp'];
+                        }
+                    }
                 }
                 if (isParamsProperty(columnProperty) && value.filters) {
                     value.filters.forEach(filter => {
@@ -371,11 +385,13 @@ function convertColumnDefs(rawColumnDefs, userComponentNames, bindings, componen
                             if (compToFramework[filterProperty] && !filter[filterProperty].startsWith("ag")) {
                                 const descriptor = Object.getOwnPropertyDescriptor(filter, filterProperty);
                                 descriptor.value = descriptor.value.replace('AG_LITERAL_', '')
-                                if (!bindings.components.includes(descriptor.value)) {
-                                    vueComponents.push(descriptor.value)
+                                if(isExternalVueFile(componentFileNames, descriptor.value)) {
+                                    if (!bindings.components.includes(descriptor.value)) {
+                                        vueComponents.push(descriptor.value)
+                                    }
+                                    Object.defineProperty(filter, compToFramework[filterProperty], descriptor);
+                                    delete filter[filterProperty];
                                 }
-                                Object.defineProperty(filter, compToFramework[filterProperty], descriptor);
-                                delete filter[filterProperty];
                             }
                         })
                     })
@@ -389,6 +405,8 @@ function convertColumnDefs(rawColumnDefs, userComponentNames, bindings, componen
                                 vueComponents.push(parsedValue)
                             }
                             columnProperties.push(`${compToFramework[columnProperty]}:'${parsedValue}'`);
+                        } else {
+                            columnProperties.push(`${columnProperty}:${parsedValue}`);
                         }
                     } else if (value.startsWith('AG_LITERAL_')) {
                         // values starting with AG_LITERAL_ are actually function references
