@@ -73,8 +73,8 @@ export const getExampleInfo = (
             break;
 
         case 'typescript':
-            sourcePath += `_gen/${importType}/vanilla/`;
-            appLocation += `${importType}/vanilla/`;
+            sourcePath += `_gen/${importType}/${internalFramework}/`;
+            appLocation += `${importType}/${internalFramework}/`;
             break;
         default:
             break;
