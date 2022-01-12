@@ -1,7 +1,7 @@
 import { ColDef, GridOptions } from '@ag-grid-community/core'
 
-declare var NumberFilter: any
-declare var NumberFloatingFilter: any
+import { CustomNumberFilter } from "./custom-number-filter_typescript";
+import { NumberFloatingFilter, CustomFloatingParams } from "./number-floating-filter_typescript";
 
 const columnDefs: ColDef[] = [
   {
@@ -62,8 +62,8 @@ const columnDefs: ColDef[] = [
     floatingFilterComponentParams: {
       maxValue: 7,
       suppressFilterButton: true,
-    },
-    filterComp: NumberFilter,
+    } as CustomFloatingParams,
+    filterComp: CustomNumberFilter,
   },
   {
     field: 'silver',
@@ -71,8 +71,8 @@ const columnDefs: ColDef[] = [
     floatingFilterComponentParams: {
       maxValue: 3,
       suppressFilterButton: true,
-    },
-    filterComp: NumberFilter,
+    } as CustomFloatingParams,
+    filterComp: CustomNumberFilter,
   },
   {
     field: 'bronze',
@@ -80,8 +80,8 @@ const columnDefs: ColDef[] = [
     floatingFilterComponentParams: {
       maxValue: 2,
       suppressFilterButton: true,
-    },
-    filterComp: NumberFilter,
+    } as CustomFloatingParams,
+    filterComp: CustomNumberFilter,
   },
   {
     field: 'total',
@@ -89,8 +89,8 @@ const columnDefs: ColDef[] = [
     floatingFilterComponentParams: {
       maxValue: 5,
       suppressFilterButton: true,
-    },
-    filterComp: NumberFilter,
+    } as CustomFloatingParams,
+    filterComp: CustomNumberFilter,
   },
 ]
 
@@ -108,9 +108,7 @@ const gridOptions: GridOptions = {
   rowData: null,
 }
 
-function isNumeric(n: string) {
-  return !isNaN(parseFloat(n)) && isFinite(parseFloat(n))
-}
+
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
