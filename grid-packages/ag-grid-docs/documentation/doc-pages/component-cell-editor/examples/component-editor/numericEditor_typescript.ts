@@ -10,7 +10,7 @@ export class NumericEditor implements ICellEditorComp {
         this.eInput = document.createElement('input');
 
         if (this.isCharNumeric(params.charPress)) {
-            this.eInput.value = params.charPress;
+            this.eInput.value = params.charPress!;
         } else {
             if (params.value !== undefined && params.value !== null) {
                 this.eInput.value = params.value;
@@ -28,10 +28,10 @@ export class NumericEditor implements ICellEditorComp {
 
         // only start edit if key pressed is a number, not a letter
         const charPressIsNotANumber = params.charPress && ('1234567890'.indexOf(params.charPress) < 0);
-        this.cancelBeforeStart = charPressIsNotANumber;
+        this.cancelBeforeStart = !!charPressIsNotANumber;
     }
 
-    isKeyPressedNavigation(event) {
+    isKeyPressedNavigation(event: any) {
         return event.key === 'ArrowLeft'
             || event.key === 'ArrowRight';
     }
@@ -74,11 +74,11 @@ export class NumericEditor implements ICellEditorComp {
         return false;
     }
 
-    isCharNumeric(charStr) {
-        return !!/\d/.test(charStr);
+    isCharNumeric(charStr: string | null) {
+        return charStr && !!/\d/.test(charStr);
     }
 
-    isKeyPressedNumeric(event) {
+    isKeyPressedNumeric(event: any) {
         const charStr = event.key;
         return this.isCharNumeric(charStr);
     }

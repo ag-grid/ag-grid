@@ -3,7 +3,7 @@ import { ICellEditorComp, ICellEditorParams } from "@ag-grid-community/core";
 export class MoodEditor implements ICellEditorComp {
     defaultImgStyle: string;
     selectedImgStyle: string;
-    mood: string;
+    mood!: string;
     container: any;
     happyImg: any;
     sadImg: any;
@@ -13,7 +13,7 @@ export class MoodEditor implements ICellEditorComp {
         this.selectedImgStyle = 'padding-left:10px; padding-right:10px; border: 1px solid lightgreen; padding: 4px;';
     }
 
-    onKeyDown(event) {
+    onKeyDown(event: any) {
         const key = event.key;
         if (key === 'ArrowLeft' ||  // left
             key === 'ArrowRight') {  // right
@@ -42,22 +42,22 @@ export class MoodEditor implements ICellEditorComp {
         this.container.appendChild(this.happyImg);
         this.container.appendChild(this.sadImg);
 
-        this.happyImg.addEventListener('click', event => {
+        this.happyImg.addEventListener('click', () => {
             this.selectMood('Happy');
             params.stopEditing();
         });
-        this.sadImg.addEventListener('click', event => {
+        this.sadImg.addEventListener('click', () => {
             this.selectMood('Sad');
             params.stopEditing();
         });
-        this.container.addEventListener('keydown', event => {
+        this.container.addEventListener('keydown', (event: any) => {
             this.onKeyDown(event);
         });
 
         this.selectMood(params.value);
     }
 
-    selectMood(mood) {
+    selectMood(mood: string) {
         this.mood = mood;
         this.happyImg.style = (mood === 'Happy') ? this.selectedImgStyle : this.defaultImgStyle;
         this.sadImg.style = (mood === 'Sad') ? this.selectedImgStyle : this.defaultImgStyle;

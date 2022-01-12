@@ -2,7 +2,8 @@ import { ICellEditorComp, ICellEditorParams } from "@ag-grid-community/core";
 
 export class DoublingEditor implements ICellEditorComp {
     value: any;
-    input: HTMLInputElement;
+    input!: HTMLInputElement;
+
     init(params: ICellEditorParams) {
         this.value = params.value;
 

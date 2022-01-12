@@ -1,5 +1,6 @@
 import { ColDef, GridOptions } from '@ag-grid-community/core'
-declare var CustomHeader: any;
+import { CustomHeader } from './customHeader_typescript'
+
 const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'athlete' },
