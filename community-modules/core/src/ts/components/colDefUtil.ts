@@ -60,6 +60,8 @@ export class ColDefUtil {
         'floatingFilterComponent',
         'floatingFilterComponentParams',
         'floatingFilterComponentFramework',
+        'floatingFilterComp',
+        'floatingFilterCompParams',
         'tooltipComponent',
         'tooltipComponentParams',
         'tooltipComponentFramework',
