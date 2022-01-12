@@ -1,5 +1,5 @@
 import { _, Bean, RowNode, BeanStub, Autowired, Column, ValueService, GridOptions, AgPromise, FilterRequestSource, ColumnEventType, ColumnModel, FilterUIInfo, UserCompDetails } from "@ag-grid-community/core";
-import { createComponent, expressionType } from "../filterMapping";
+import { createComponent, expressionType, floatingFilterUserCompDetails } from "../filterMapping";
 import { IFilterAdapter } from "../adapters/iFilterAdapter";
 import { AdvancedFilterController, ExpressionComponentUI, IFilterParamSupport } from "./interfaces";
 import { FilterChangeListener, FilterStateManager } from "../state/filterStateManager";
@@ -73,7 +73,15 @@ export class AdvancedV2FilterController extends BeanStub implements AdvancedFilt
     }
 
     public getFloatingFilterCompDetails(column: Column, source: FilterRequestSource, support: IFilterParamSupport): UserCompDetails {
-        throw new Error('Unimplemented');
+        const result = floatingFilterUserCompDetails(column, this.gridOptions, (instance) => {
+            this.initialiseFilterComponent(column, instance, support);
+        });
+
+        if (result == null) {
+            throw new Error('AG-Grid - Unable to get floating filter for: ' + column.getColId());
+        }
+
+        return result;
     }
 
     public getAllFilterUIs(): Record<string, ExpressionComponentUI> {
@@ -113,7 +121,7 @@ export class AdvancedV2FilterController extends BeanStub implements AdvancedFilt
         
         // TODO: How should filter state be affected?
 
-        return AgPromise.resolve(undefined as void);
+        return AgPromise.resolve(null);
     }
 
     public onColumnsChanged(): Column[] {
