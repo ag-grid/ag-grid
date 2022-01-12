@@ -1,7 +1,7 @@
 import { GridOptions, ICellRendererParams } from '@ag-grid-community/core'
 
-declare var MoodRenderer: any;
-declare var GenderRenderer: any;
+import { MoodRenderer } from './moodRenderer_typescript'
+import { GenderRenderer } from './genderRenderer_typescript'
 
 const rowData = [
   { value: 14, type: 'age' },

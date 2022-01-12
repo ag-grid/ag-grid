@@ -1,4 +1,7 @@
-class GenderRenderer {
+import { ICellRendererComp, ICellRendererParams } from "@ag-grid-community/core";
+
+export class GenderRenderer implements ICellRendererComp {
+    eGui: HTMLSpanElement;
     init(params) {
         this.eGui = document.createElement('span');
         var img = params.value === 'Male' ? 'male.png' : 'female.png';
@@ -7,6 +10,10 @@ class GenderRenderer {
 
     getGui() {
         return this.eGui;
+    }
+
+    refresh(params: ICellRendererParams): boolean {
+        return false;
     }
 }
 
