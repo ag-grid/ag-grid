@@ -5,10 +5,10 @@ import {
   KeyCreatorParams,
 } from '@ag-grid-community/core'
 
-declare var GenderRenderer: any
-declare var NumericEditor: any
-declare var MoodRenderer: any
-declare var MoodEditor: any
+import { GenderRenderer } from './genderRenderer_typescript'
+import { NumericEditor } from './numericEditor_typescript'
+import { MoodRenderer } from './moodRenderer_typescript'
+import { MoodEditor } from './moodEditor_typescript'
 
 const countryCellRenderer = (params: ICellRendererParams) => params.value.name
 

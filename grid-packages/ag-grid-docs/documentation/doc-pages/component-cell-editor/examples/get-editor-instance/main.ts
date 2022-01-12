@@ -1,5 +1,5 @@
 import { ColDef, GridOptions } from '@ag-grid-community/core'
-declare var MySimpleEditor: any
+import { MySimpleEditor } from './mySimpleEditor_typescript'
 
 const columnDefs: ColDef[] = [
   { field: 'first_name', headerName: 'First Name', width: 120, editable: true },
@@ -46,8 +46,8 @@ const gridOptions: GridOptions = {
     setInterval(() => {
       const instances = gridOptions.api!.getCellEditorInstances()
       if (instances.length > 0) {
-        const instance = instances[0] as any
-        if (instance.myCustomFunction) {
+        const instance = instances[0] as any;
+        if ((instance as MySimpleEditor).myCustomFunction) {
           const result = instance.myCustomFunction()
           console.log(
             `found editing cell: row index = ${result.rowIndex}, column = ${result.colId}.`
@@ -60,7 +60,7 @@ const gridOptions: GridOptions = {
       } else {
         console.log('found not editing cell.')
       }
-    }, 1000)
+    }, 2000)
   },
 }
 

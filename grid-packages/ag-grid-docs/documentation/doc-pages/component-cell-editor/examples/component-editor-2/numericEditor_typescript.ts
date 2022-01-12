@@ -1,6 +1,11 @@
-class NumericEditor {
+import { ICellEditorComp, ICellEditorParams } from "@ag-grid-community/core";
+
+export class NumericEditor implements ICellEditorComp {
+    eInput!: HTMLInputElement;
+    cancelBeforeStart!: boolean;
+
     // gets called once before the renderer is used
-    init(params) {
+    init(params: ICellEditorParams) {
         // create the cell
         this.eInput = document.createElement('input');
 

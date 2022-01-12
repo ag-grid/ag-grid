@@ -1,5 +1,9 @@
-class DoublingEditor {
-    init(params) {
+import { ICellEditorComp, ICellEditorParams } from "@ag-grid-community/core";
+
+export class DoublingEditor implements ICellEditorComp {
+    value: any;
+    input: HTMLInputElement;
+    init(params: ICellEditorParams) {
         this.value = params.value;
 
         this.input = document.createElement('input');
@@ -7,7 +11,7 @@ class DoublingEditor {
         this.input.type = 'number';
         this.input.value = this.value;
 
-        this.input.addEventListener('input', (event) => {
+        this.input.addEventListener('input', (event: any) => {
             this.value = event.target.value;
         });
     }

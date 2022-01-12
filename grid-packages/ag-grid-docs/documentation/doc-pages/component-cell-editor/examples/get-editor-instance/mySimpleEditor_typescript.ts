@@ -1,9 +1,14 @@
+import { ICellEditorComp, ICellEditorParams } from "@ag-grid-community/core";
+
 const KEY_BACKSPACE = 'Backspace';
 const KEY_F2 = 'F2';
 const KEY_DELETE = 'Delete';
 
-class MySimpleEditor {
-    init(params) {
+export class MySimpleEditor implements ICellEditorComp {
+    gui!: HTMLInputElement;
+    params!: ICellEditorParams;
+
+    init(params: ICellEditorParams) {
         this.gui = document.createElement('input');
         this.gui.type = 'text';
         this.gui.classList.add('my-simple-editor');

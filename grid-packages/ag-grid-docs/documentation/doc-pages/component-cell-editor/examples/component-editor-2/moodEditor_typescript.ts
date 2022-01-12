@@ -1,4 +1,13 @@
-class MoodEditor {
+import { ICellEditorComp, ICellEditorParams } from "@ag-grid-community/core";
+
+export class MoodEditor implements ICellEditorComp {
+    defaultImgStyle: string;
+    selectedImgStyle: string;
+    mood!: string;
+    container!: any;
+    happyImg: any;
+    sadImg: any;
+
     constructor() {
         this.defaultImgStyle = 'padding-left:10px; padding-right:10px;  border: 1px solid transparent; padding: 4px;';
         this.selectedImgStyle = 'padding-left:10px; padding-right:10px; border: 1px solid lightgreen; padding: 4px;';
@@ -17,7 +26,7 @@ class MoodEditor {
         this.selectMood(this.mood === 'Happy' ? 'Sad' : 'Happy');
     }
 
-    init(params) {
+    init(params: ICellEditorParams) {
         this.container = document.createElement('div');
         this.container.style = "border-radius: 15px; border: 1px solid grey;background: #e6e6e6;padding: 15px; text-align:center;display:inline-block;outline:none";
         this.container.tabIndex = "0";                // to allow the div to capture keypresses
