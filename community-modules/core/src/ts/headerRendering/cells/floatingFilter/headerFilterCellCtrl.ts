@@ -265,11 +265,11 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
 
         let defaultFloatingFilterType: string | null = null;
 
-        const filter = def.filter!=null ? def.filter : def.filterComp;
+        const filter = def.filterComp || def.filter;
         if (typeof filter === 'string') {
             // will be undefined if not in the map
             defaultFloatingFilterType = FloatingFilterMapper.getFloatingFilterType(filter);
-        } else if (def.filter === true) {
+        } else if (filter === true) {
             const setFilterModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.SetFilterModule);
             defaultFloatingFilterType = setFilterModuleLoaded ? 'agSetColumnFloatingFilter' : 'agTextColumnFloatingFilter';
         }
