@@ -74,7 +74,7 @@
     .ag-charts-data-group-container {
         padding: ag-param(widget-container-vertical-padding) * 0.5 ag-param(widget-container-horizontal-padding);
 
-        .ag-charts-data-group-item {
+        .ag-charts-data-group-item:not(.ag-charts-format-sub-level-group) {
             height: ag-param(list-item-height);
         }
 
