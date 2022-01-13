@@ -172,6 +172,14 @@ export class Axis<S extends Scale<D, number>, D = any> {
         return this._scale;
     }
 
+    protected _ticks: any[];
+    set ticks(values: any[]) {
+        this._ticks = values;
+    }
+    get ticks(): any[] {
+        return this._ticks;
+    }
+
     readonly group = new Group();
 
     readonly line: {
@@ -405,7 +413,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
 
         const alignFlag = labelRotation >= 0 && labelRotation <= Math.PI ? -1 : 1;
 
-        const ticks = scale.ticks!(this.tick.count);
+        const ticks = this.ticks || scale.ticks!(this.tick.count);
         const update = this.groupSelection.setData(ticks);
         update.exit.remove();
 
