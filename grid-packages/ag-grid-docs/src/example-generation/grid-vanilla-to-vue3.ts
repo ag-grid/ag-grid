@@ -471,19 +471,27 @@ function convertColumnDefs(rawColumnDefs, userComponentNames, bindings, componen
     return columnDefs;
 }
 
-function convertDefaultColDef(defaultColDef): string {
-    return GRID_COMPONENTS.reduce((acc, componentName) => {
-        if (componentName === 'filter') {
-            if (defaultColDef.indexOf('filter: true') === -1 && defaultColDef.indexOf('filter: \'ag\'') === -1) {
-                return acc.replace('filter', `${componentName}Framework`);
-            }
-        }
-        else if (componentName === 'tooltipComp') {
-            return acc.replace('tooltipComp', `tooltipFramework`);
-        }
+function convertDefaultColDef(defaultColDef, vueComponents): string {
+    const result = [];
+    const perLine = defaultColDef.split('\n');
+    perLine.forEach(line => {
+        if (line.includes('filter:') && line.indexOf('filter: true') === -1 && line.indexOf('filter: \'ag\'') === -1) {
+            result.push(line.replace('filter', `${line}Framework`));
+        } else if (line.includes('tooltipComp')) {
+            const component = line.match(/.*:\s*(.*),/) ? line.match(/.*:\s*(.*),/)[1] : line.match(/.*:\s*(.*)$/)[1]
+            line = line.replace(component, `'${component}'`)
+            line = line.replace('tooltipComp', `tooltipComponentFramework`);
+            result.push(line);
 
-        return acc;
-    }, defaultColDef)
+            if(!vueComponents.includes(component)) {
+                vueComponents.push(component)
+            }
+        } else {
+            result.push(line);
+        }
+    })
+
+    return result.join('\n');
 }
 
 const getColumnDefs = (bindings: any, utilFunctions: any[], componentFileNames, vueComponents) => {
@@ -507,7 +515,7 @@ export function vanillaToVue3(bindings: any, componentFileNames: string[]): (imp
     const eventAttributes = bindings.eventHandlers.filter(event => event.name !== 'onGridReady').map(toOutput);
     const [eventHandlers, externalEventHandlers, instanceMethods, utilFunctions] = getAllMethods(bindings);
     const columnDefs = getColumnDefs(bindings, utilFunctions, componentFileNames, vueComponents);
-    const defaultColDef = bindings.defaultColDef ? convertDefaultColDef(bindings.defaultColDef) : null;
+    const defaultColDef = bindings.defaultColDef ? convertDefaultColDef(bindings.defaultColDef, vueComponents) : null;
 
     return importType => {
         const imports = getImports(bindings, componentFileNames, importType);
