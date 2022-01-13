@@ -13,7 +13,6 @@ import { MySimpleEditor } from './mySimple-editor.component';
           [columnDefs]="columnDefs"
           [defaultColDef]="defaultColDef"
           [rowData]="rowData"
-          [frameworkComponents]="frameworkComponents"
           (gridReady)="onGridReady($event)">
       </ag-grid-angular>
     `
@@ -35,27 +34,27 @@ export class AppComponent implements OnDestroy {
         {
             field: "gender",
             width: 100,
-            cellEditor: "mySimpleEditor"
+            cellEditorComp: MySimpleEditor
         },
         {
             field: "age",
             width: 80,
-            cellEditor: "mySimpleEditor"
+            cellEditorComp: MySimpleEditor
         },
         {
             field: "mood",
             width: 90,
-            cellEditor: "mySimpleEditor"
+            cellEditorComp: MySimpleEditor
         },
         {
             field: "country",
             width: 110,
-            cellEditor: "mySimpleEditor"
+            cellEditorComp: MySimpleEditor
         },
         {
             field: "address",
             width: 502,
-            cellEditor: "mySimpleEditor"
+            cellEditorComp: MySimpleEditor
         }
     ];
 
@@ -67,8 +66,6 @@ export class AppComponent implements OnDestroy {
         filter: true,
         resizable: true
     };
-
-    public frameworkComponents = { mySimpleEditor: MySimpleEditor };
 
     private interval!: number;
     public rowData: any[];
@@ -91,7 +88,7 @@ export class AppComponent implements OnDestroy {
             } else {
                 console.log('found not editing cell.');
             }
-        }, 1000);
+        }, 2000);
     }
 
     ngOnDestroy() {
