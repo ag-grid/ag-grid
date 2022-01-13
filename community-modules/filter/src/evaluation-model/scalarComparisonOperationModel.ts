@@ -1,4 +1,4 @@
-import { _ } from "@ag-grid-community/core";
+import { IDateFilterParams, IScalarFilterParams, _ } from "@ag-grid-community/core";
 import { comparisonOperationOperandCardinality, isScalarComparisonOperation, FilterEvaluationModel, OperandArray, ScalarComparisonOperation, ScalarOperationExpression, PartialTuple } from "../interfaces";
 import { Comparator, FilterExpressionSerialiser } from "./interfaces";
 
@@ -11,6 +11,7 @@ export class ScalarComparisonOperationModel<T extends number | Date> implements 
     private readonly comparator: Comparator<T>;
     private readonly operandSerialiser: FilterExpressionSerialiser<T, OperandExpressionType<T>>;
     private readonly typePredicate: (v: any) => boolean;
+    private readonly filterParams?: IScalarFilterParams;
 
     public constructor(opts: {
         type?: ScalarOperationExpression['type'],
@@ -18,15 +19,20 @@ export class ScalarComparisonOperationModel<T extends number | Date> implements 
         operands?: PartialTuple<OperandArray<OperandExpressionType<T>>>,
         comparator: Comparator<T>,
         operandSerialiser: FilterExpressionSerialiser<T, OperandExpressionType<T>>,
+        filterParams?: IScalarFilterParams,
     }) {
         this.type = opts.type || 'number-op';
         this.operation = opts.operation || 'equals';
         this.operands = opts.operands?.map(o => opts.operandSerialiser.toEvaluationModel(o)) as OperandArray<T> || [];
         this.comparator = opts.comparator;
         this.operandSerialiser = opts.operandSerialiser;
-        this.typePredicate = this.type === 'number-op' ?
-            (v: any) => typeof v === 'number' : 
-            (v: any) => v instanceof Date;
+        this.filterParams = opts.filterParams;
+
+        this.typePredicate = (v: any) => {
+            return this.type === 'number-op' ?
+                typeof v === 'number' : 
+                v instanceof Date;
+        };
     }
 
     public evaluate(input: T): boolean {

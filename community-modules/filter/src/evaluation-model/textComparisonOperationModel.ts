@@ -1,16 +1,19 @@
-import { _ } from "@ag-grid-community/core";
+import { IFilterParams, _ } from "@ag-grid-community/core";
 import { comparisonOperationOperandCardinality, isTextComparisonOperation, FilterEvaluationModel, TextComparisonOperation, TextComparisonOperationExpression } from "../interfaces";
 
 export class TextComparisonOperationModel implements FilterEvaluationModel<string> {
     private readonly operation: TextComparisonOperation;
     private readonly operands: (string | null)[];
+    private readonly filterParams?: IFilterParams;
 
     public constructor(opts: {
         operation?: TextComparisonOperation,
         operands?: (string | null)[],
+        filterParams?: IFilterParams,
     }) {
         this.operation = opts.operation || 'equals';
         this.operands = opts.operands || [];
+        this.filterParams = opts.filterParams;
     }
 
     public evaluate(input: string): boolean {

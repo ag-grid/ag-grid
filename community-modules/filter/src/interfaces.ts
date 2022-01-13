@@ -148,7 +148,7 @@ const EXAMPLE_EXPRESSION_6: FilterExpression = {
 
 /** EVALUATION MODEL **/
 export interface FilterEvaluationModel<T> {
-    evaluate(input: T): boolean;
+    evaluate(input: T | null): boolean;
     isValid(): boolean;
     isNull(): boolean;
     toFilterExpression(): FilterExpression | null;

@@ -120,10 +120,11 @@ export class FilterStateManager {
         Object.keys(exprs || {}).forEach((colId) => {
             const column = this.columnModel.getGridColumn(colId);
             if (column == null) { return; }
+            const { filterParams } = column.getColDef();
 
             const old = this.currentState[colId];
             const expression = exprs![colId];
-            const model = this.expressionModelFactory.buildEvaluationModel(expression);
+            const model = this.expressionModelFactory.buildEvaluationModel(expression, filterParams);
             const listeners = old ? old.listeners : new FilterListenerManager();
 
             if (!model.isValid()) {
@@ -202,11 +203,13 @@ export class FilterStateManager {
 
     private getStateFor(column: Column): ActiveState {
         const colId = column.getColId();
+        const { filterParams } = column.getColDef();
+
         if (!this.currentState[colId]) {
             const expr = defaultExpression(column, this.gridOptions);
             this.currentState[colId] = {
                 listeners: new FilterListenerManager(),
-                model: this.expressionModelFactory.buildEvaluationModel(expr),
+                model: this.expressionModelFactory.buildEvaluationModel(expr, filterParams),
             };
         }
 
@@ -271,7 +274,8 @@ export class FilterStateManager {
         const { expr } = this.transientState[colId];
         if (expr == null) { return true; }
 
-        const model = this.expressionModelFactory.buildEvaluationModel(expr);
+        const { filterParams } = column.getColDef();
+        const model = this.expressionModelFactory.buildEvaluationModel(expr, filterParams);
 
         return model.isValid();
     }
@@ -281,16 +285,19 @@ export class FilterStateManager {
         const { expr } = this.transientState[colId];
         if (expr == null) { return true; }
 
-        const model = this.expressionModelFactory.buildEvaluationModel(expr);
+        const { filterParams } = column.getColDef();
+        const model = this.expressionModelFactory.buildEvaluationModel(expr, filterParams);
 
         return model.isNull();
     }
 
     private applyTransientExpression(source: any, column: Column): void {
-        const colId = column.getColId();
+        const colId = column.getColId();        
         const { listeners } = this.currentState[colId] || {};
         const { expr } = this.transientState[colId] || {};
-        const model = this.expressionModelFactory.buildEvaluationModel(expr);
+
+        const { filterParams } = column.getColDef();
+        const model = this.expressionModelFactory.buildEvaluationModel(expr, filterParams);
 
         if (!model.isNull() && !model.isValid()) { return; }
         

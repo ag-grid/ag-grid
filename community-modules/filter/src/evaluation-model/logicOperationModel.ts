@@ -1,16 +1,19 @@
-import { _ } from "@ag-grid-community/core";
+import { IFilterParams, _ } from "@ag-grid-community/core";
 import { FilterEvaluationModel, LogicOperation, LogicalOperationExpression, ConcreteExpression } from "../interfaces";
 
 export class LogicOperationModel<T> implements FilterEvaluationModel<T> {
     private readonly operation: LogicOperation;
     private readonly operands: FilterEvaluationModel<T>[];
+    private readonly filterParams?: IFilterParams;
 
     public constructor(opts: {
         operation?: LogicOperation,
         operands?: FilterEvaluationModel<T>[],
+        filterParams?: IFilterParams,
     }) {
         this.operation = opts.operation || 'and';
         this.operands = opts.operands || [];
+        this.filterParams = opts.filterParams;
     }
 
     public evaluate(input: T): boolean {

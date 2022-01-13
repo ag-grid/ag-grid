@@ -1,3 +1,4 @@
+import { IFilterParams, ISetFilterParams } from "@ag-grid-community/core";
 import { SetOperation, FilterEvaluationModel, SetOperationExpression, isSetOperation } from "../interfaces";
 import { Comparator } from "./interfaces";
 
@@ -7,15 +8,18 @@ export class SetOperationModel implements FilterEvaluationModel<string | number 
     private readonly operation: SetOperationType;
     private readonly operands: SetOperationExpression['operands'];
     private readonly comparator: Comparator<string | number | null>;
+    private readonly filterParams?: ISetFilterParams;
 
     public constructor(opts: {
         operation?: SetOperationType,
         operands?: SetOperationExpression['operands'],
         comparator: Comparator<string | number | null>,
+        filterParams?: ISetFilterParams,
     }) {
         this.operation = opts.operation || 'in';
         this.operands = opts.operands || null;
         this.comparator = opts.comparator;
+        this.filterParams = opts.filterParams;
     }
 
     public evaluate(input: string): boolean {
