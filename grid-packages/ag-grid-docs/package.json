@@ -63,13 +63,14 @@
     "@ag-grid-community/react": "~26.2.0",
     "@ag-grid-community/vue": "~26.2.0",
     "@ag-grid-enterprise/excel-export": "~26.2.0",
+    "@angular/animations": "^10.2.3",
     "@angular/common": "10.2.3",
     "@angular/compiler": "10.2.3",
     "@angular/core": "10.2.3",
     "@angular/forms": "10.2.3",
+    "@angular/material": "10.2.3",
     "@angular/platform-browser": "10.2.3",
     "@angular/platform-browser-dynamic": "10.2.3",
-    "@angular/material": "10.2.3",
     "@babel/core": "7.2.2",
     "@babel/plugin-proposal-class-properties": "7.3.0",
     "@babel/preset-env": "7.3.1",
@@ -126,6 +127,7 @@
     "raw-loader": "1.0.0",
     "react": "16.7.0",
     "react-dom": "16.7.0",
+    "rxjs": "^6.5.3",
     "sass-loader": "~10.2.0",
     "source-map-loader": "^0.2.4",
     "style-loader": "0.23.0",
@@ -151,6 +153,6 @@
     "webpack-filter-warnings-plugin": "1.2.1",
     "webpack-hot-middleware": "2.23.1",
     "webpack-stream": "5.1.1",
-    "zone.js": "0.9.1"
+    "zone.js": "^0.10.3"
   }
 }

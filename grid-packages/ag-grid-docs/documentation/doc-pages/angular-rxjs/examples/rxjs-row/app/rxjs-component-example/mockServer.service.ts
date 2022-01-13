@@ -1,65 +1,58 @@
 import { Injectable } from "@angular/core";
-import { Http, Response } from "@angular/http";
-import { Observable } from "rxjs/Rx";
+import { map, catchError, tap } from "rxjs/operators";
+import { of, throwError, interval } from "rxjs";
 
 import { cloneDeep } from "lodash";
+import { HttpClient } from "@angular/common/http";
 
 @Injectable()
 export class MockServerService {
     stocksUrl: string = 'https://www.ag-grid.com/example-assets/stocks.json';
     rowData!: any[];
 
-    constructor(private http: Http) {
+    constructor(private http: HttpClient) {
     }
 
     // provides the initial (or current state) of the data
     initialLoad(): any {
-        return this.http.get(this.stocksUrl)
-            .map(this.extractData.bind(this))
-            .catch(this.handleError);
+        return this.http.get<any[]>(this.stocksUrl).pipe(
+            map(r => this.extractData.bind(this)(r)),
+            catchError(this.handleError)
+        )
     }
 
     // provides randomised data updates to some of the rows
     // only returns the changed data rows
     byRowupdates(): any {
-        return Observable.create((observer: any) => {
-            const interval = window.setInterval(() => {
-                let changes: any[] = [];
+        return interval(1000).pipe(map(() => {
+            let changes: any[] = [];
 
-                // make some mock changes to the data
-                this.makeSomePriceChanges(changes);
-                this.makeSomeVolumeChanges(changes);
-                observer.next(changes);
-            }, 1000);
-
-            return () => window.clearInterval(interval);
-        });
+            // make some mock changes to the data
+            this.makeSomePriceChanges(changes);
+            this.makeSomeVolumeChanges(changes);
+            return changes;
+        }));
     }
 
     // provides randomised data updates to some of the rows
     // only all the row data (with some rows changed)
     allDataUpdates(): any {
-        return Observable.create((observer: any) => {
-            const interval = window.setInterval(() => {
-                let changes: any[] = [];
 
-                // make some mock changes to the data
-                this.makeSomePriceChanges(changes);
-                this.makeSomeVolumeChanges(changes);
+        return interval(1000).pipe(map(() => {
+            let changes: any[] = [];
 
-                // this time we don't care about the delta changes only
-                // this time we return the full data set which has changed rows within it
-                observer.next(cloneDeep(this.rowData));
-            }, 1000);
+            // make some mock changes to the data
+            this.makeSomePriceChanges(changes);
+            this.makeSomeVolumeChanges(changes);
 
-            return () => window.clearInterval(interval);
-        });
+            // this time we don't care about the delta changes only
+            // this time we return the full data set which has changed rows within it
+            return cloneDeep(this.rowData);
+        }));
     }
 
-    extractData(res: Response): any {
-        let body = res.json();
-
-        let reducedDataSet = body.slice(0, 200);
+    extractData(res: any[]): any {
+        let reducedDataSet = res.slice(0, 200);
 
         // the sample data has just name and code, we need to add in dummy figures
         this.rowData = this.backfillData(reducedDataSet);
@@ -71,7 +64,7 @@ export class MockServerService {
         let errMsg = (error.message) ? error.message :
             error.status ? `${error.status} - ${error.statusText}` : 'Server error';
         console.error(errMsg); // log to console instead
-        return Observable.throw(errMsg);
+        return throwError(errMsg);
     }
 
     /*

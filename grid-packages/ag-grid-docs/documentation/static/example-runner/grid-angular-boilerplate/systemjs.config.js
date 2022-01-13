@@ -80,7 +80,6 @@
                 "@angular/platform-browser": "npm:@angular/platform-browser@" + ANGULAR_VERSION + "/bundles/platform-browser.umd.js",
                 "@angular/platform-browser/animations": "npm:@angular/platform-browser@" + ANGULAR_VERSION + "/bundles/platform-browser-animations.umd.js",
                 "@angular/platform-browser-dynamic": "npm:@angular/platform-browser-dynamic@" + ANGULAR_VERSION + "/bundles/platform-browser-dynamic.umd.js",
-                "@angular/http": "npm:@angular/http@7.2.16/bundles/http.umd.js",
                 "@angular/router": "npm:@angular/router@" + ANGULAR_VERSION + "/bundles/router.umd.js",
                 "@angular/router/upgrade": "npm:@angular/router@" + ANGULAR_VERSION + "/bundles/router-upgrade.umd.js",
                 "@angular/forms": "npm:@angular/forms@" + ANGULAR_VERSION + "/bundles/forms.umd.js",
@@ -132,7 +131,7 @@
                 // our app is within the app folder, appLocation comes from index.html
                 app: appLocation + "app",
 
-                rxjs: "npm:rxjs@6.3.3/bundles/rxjs.umd.min.js"
+                rxjs: "npm:rxjs@6.5.3/bundles/rxjs.umd.min.js"
             },
             systemJsMap
         ),
