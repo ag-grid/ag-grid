@@ -56,6 +56,8 @@ const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   rowData: null,
   // Here is where we specify the component to be used as the date picker widget
+  // spl todo - is it the plan that it's still frameworkComponents for FWs?
+  // if we do it uses the old style react implementation...can't use memo?
   components: {
     agDateInput: CustomDateComponent,
   },
