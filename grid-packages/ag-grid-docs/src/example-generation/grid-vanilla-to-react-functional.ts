@@ -210,9 +210,9 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
         const componentNameExists = (componentName: string) => Object.keys(components).includes(stripQuotes(componentName));
 
         properties.filter(property => property.name !== 'onGridReady').forEach(property => {
-            // if (componentFilenames.length > 0 && property.name === 'components') {
-            //     property.name = 'frameworkComponents';
-            // }
+            if (componentFilenames.length > 0 && property.name === 'components') {
+                property.name = 'frameworkComponents';
+            }
 
             if (property.name === 'rowData' && needsRowDataState) {
                 if (property.value !== "null" && property.value !== null) {

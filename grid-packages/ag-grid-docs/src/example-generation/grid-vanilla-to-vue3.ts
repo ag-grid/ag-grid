@@ -407,10 +407,11 @@ function convertColumnDefs(rawColumnDefs, userComponentNames, bindings, componen
                                 vueComponents.push(parsedValue)
                             }
                             columnProperties.push(`${compToFramework[columnProperty]}:'${parsedValue}'`);
-                        } else {
-                            columnProperties.push(`${columnProperty}:${parsedValue}`);
+                            return;
                         }
-                    } else if (value.startsWith('AG_LITERAL_')) {
+                    }
+
+                    if (value.startsWith('AG_LITERAL_')) {
                         // values starting with AG_LITERAL_ are actually function references
                         // grid-vanilla-src-parser converts the original values to a string that we can convert back to the function reference here
                         // ...all of this is necessary so that we can parse the json string
