@@ -46,10 +46,12 @@ function copyFiles(files, dest, tokenToReplace, replaceValue = '') {
         const filename = path.basename(sourceFile);
         const destinationFile = path.join(dest, tokenToReplace ? filename.replace(tokenToReplace, replaceValue) : filename);
 
+        const updateImports = (src) => tokenToReplace ? src.replace(tokenToReplace, '') : src;
+
         if (useAsyncFileOperations) {
-            fs.readFile(sourceFile, encodingOptions, (_, contents) => writeFile(destinationFile, contents));
+            fs.readFile(sourceFile, encodingOptions, (_, contents) => writeFile(destinationFile, updateImports(contents)));
         } else {
-            writeFile(destinationFile, getFileContents(sourceFile));
+            writeFile(destinationFile, updateImports(getFileContents(sourceFile)));
         }
     });
 }
