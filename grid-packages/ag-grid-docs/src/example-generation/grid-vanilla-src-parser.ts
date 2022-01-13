@@ -1,15 +1,29 @@
 import * as $ from 'jquery';
 import * as ts from 'typescript';
-import { Events } from '../../../../community-modules/core/src/ts/eventKeys';
-import { PropertyKeys } from '../../../../community-modules/core/src/ts/propertyKeys';
+import {Events} from '../../../../community-modules/core/src/ts/eventKeys';
+import {PropertyKeys} from '../../../../community-modules/core/src/ts/propertyKeys';
 import {
     extractClassDeclarations,
-    extractEventHandlers, extractImportStatements, extractUnboundInstanceMethods, findAllAccessedProperties, findAllVariables, parseFile, readAsJsFile, recognizedDomEvents,
+    extractEventHandlers,
+    extractImportStatements,
+    extractUnboundInstanceMethods,
+    findAllAccessedProperties,
+    findAllVariables,
+    parseFile,
+    readAsJsFile,
+    recognizedDomEvents,
     removeInScopeJsDoc,
     tsCollect,
     tsGenerate,
     tsNodeIsFunctionCall,
-    tsNodeIsFunctionWithName, tsNodeIsGlobalVarWithName, tsNodeIsInScope, tsNodeIsPropertyWithName, tsNodeIsTopLevelFunction, tsNodeIsTopLevelVariable, tsNodeIsTypeDeclaration, tsNodeIsUnusedFunction
+    tsNodeIsFunctionWithName,
+    tsNodeIsGlobalVarWithName,
+    tsNodeIsInScope,
+    tsNodeIsPropertyWithName,
+    tsNodeIsTopLevelFunction,
+    tsNodeIsTopLevelVariable,
+    tsNodeIsTypeDeclaration,
+    tsNodeIsUnusedFunction
 } from './parser-utils';
 
 
@@ -76,6 +90,14 @@ function processComponentsForVue(propertyName: string, exampleType, providedExam
     return false;
 }
 
+function processVueProperties(propertyName: string, exampleType, providedExamples) {
+    if (propertyName === 'statusBar' || propertyName === 'sideBar') {
+        return exampleType === 'generated' || (exampleType === 'mixed' && !(providedExamples['vue'] && providedExamples['vue3']));
+    }
+
+    return false;
+}
+
 function processDefaultColumnDefForVue(propertyName: string, exampleType, providedExamples) {
     if (propertyName === 'defaultColDef') {
         return exampleType === 'generated' || (exampleType === 'mixed' && !(providedExamples['vue'] && providedExamples['vue3']));
@@ -97,7 +119,7 @@ function processGlobalComponentsForVue(propertyName: string, exampleType, provid
 export function parser(srcFile, html, exampleSettings, exampleType, providedExamples) {
     const bindings = internalParser(readAsJsFile(srcFile), html, exampleSettings, exampleType, providedExamples);
     const typedBindings = internalParser(srcFile, html, exampleSettings, exampleType, providedExamples);
-    return { bindings, typedBindings };
+    return {bindings, typedBindings};
 }
 
 function internalParser(inputFile, html, exampleSettings, exampleType, providedExamples) {
@@ -202,7 +224,7 @@ function internalParser(inputFile, html, exampleSettings, exampleType, providedE
             const url = node.expression.arguments[1].raw;
             const callback = '{ params.api.setRowData(data); }';
 
-            bindings.data = { url, callback };
+            bindings.data = {url, callback};
         }
     });
 
@@ -213,7 +235,7 @@ function internalParser(inputFile, html, exampleSettings, exampleType, providedE
             const url = node.arguments[0].getText();
             const callback = tsGenerate(node.parent.parent.parent.parent.arguments[0].body, tsTree).replace(/gridOptions/g, 'params');
 
-            bindings.data = { url, callback };
+            bindings.data = {url, callback};
         }
     });
 
@@ -229,7 +251,8 @@ function internalParser(inputFile, html, exampleSettings, exampleType, providedE
                         return domContentLoaded.arguments[0].getText() === "'DOMContentLoaded'";
                     }
                 }
-            };
+            }
+            ;
         },
         apply: bindings => {
             bindings.resizeToFit = true;
@@ -274,7 +297,7 @@ function internalParser(inputFile, html, exampleSettings, exampleType, providedE
             apply: (bindings, node: ts.NamedDeclaration) => {
                 const methodText = tsGenerateWithReplacedGridOptions(node, tsTree);
                 bindings.instanceMethods.push(methodText);
-                bindings.properties.push({ name: functionName, value: null });
+                bindings.properties.push({name: functionName, value: null});
             }
         });
     });
@@ -386,7 +409,7 @@ function internalParser(inputFile, html, exampleSettings, exampleType, providedE
                         }
                     }
                     const code = tsGenerate(node.initializer, tsTree);
-                    bindings.properties.push({ name: propertyName, value: code });
+                    bindings.properties.push({name: propertyName, value: code});
                 } catch (e) {
                     console.error('We failed generating', node, node.declarations[0].id);
                     throw e;
@@ -420,7 +443,22 @@ function internalParser(inputFile, html, exampleSettings, exampleType, providedE
                         }
                     }
                 }
-
+                if (processVueProperties(propertyName, exampleType, providedExamples)) {
+                    if (ts.isObjectLiteralExpression(node.initializer)) {
+                        const props = [];
+                        for (const property of node.initializer.properties) {
+                            if (ts.isArrayLiteralExpression((property as any).initializer)) {
+                                props.push(`${property.name.getText()}:${tsArrayStr((property as any).initializer)}`);
+                            } else {
+                                props.push(`${property.name.getText()}:${(property as any).initializer.getText()}`);
+                            }
+                        }
+                        if (props.length > 0) {
+                            const propStr = props.length === 1 ? `{ ${props.join()} }` : `{\n        ${props.join(',\n    ')} }`;
+                            bindings.vuePropertyBindings[propertyName] = propStr;
+                        }
+                    }
+                }
                 if (processDefaultColumnDefForVue(propertyName, exampleType, providedExamples)
                     && node.initializer
                     && ts.isObjectLiteralExpression(node.initializer)) {
@@ -465,6 +503,7 @@ function internalParser(inputFile, html, exampleSettings, exampleType, providedE
      * eventHandlers -> grid related events
      * properties -> grid related properties
      * components -> name value pair of component name to actual component (ie name: myCustomCell, value: CustomCellRenderer)
+     * vuePropertyBindings => vue specific property bindings that can be safely parsed by the vue generators
      * parsedColDefs -> col defs with function values replaced with tokenised strings - for the functional react example generator
      * utils -> none grid related methods/variables (or methods that don't reference the gridApi/columnApi) (i.e. non-instance)
      * instanceMethods -> methods that are either marked as "inScope" or ones that reference the gridApi/columnApi
@@ -481,6 +520,7 @@ function internalParser(inputFile, html, exampleSettings, exampleType, providedE
             eventHandlers: [],
             properties: [],
             components: [],
+            vuePropertyBindings: {},
             defaultColDef: null,
             globalComponents: [],
             parsedColDefs: '',

@@ -202,7 +202,7 @@ function getImports(bindings: any, componentFileNames: string[], importType: Imp
     }
 }
 
-function getPropertyBindings(bindings: any, componentFileNames: string[], importType: ImportType, vueComponents:any): [string[], string[], string[]] {
+function getPropertyBindings(bindings: any, componentFileNames: string[], importType: ImportType, vueComponents: any): [string[], string[], string[]] {
     const propertyAssignments = [];
     const propertyVars = [];
     const propertyAttributes = [];
@@ -213,7 +213,32 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
             property.name !== 'columnDefs'
         )
         .forEach(property => {
-            if (componentFileNames.length > 0 && property.name === 'components') {
+            if (bindings.vuePropertyBindings[property.name]) {
+                const parsedObj = JSON5.parse(bindings.vuePropertyBindings[property.name]);
+                const panelArrayName = parsedObj['toolPanels'] ? 'toolPanels' : 'statusPanels';
+                if (parsedObj[panelArrayName]) {
+                    parsedObj[panelArrayName].forEach(panel => {
+                        Object.keys(panel).forEach(panelProperty => {
+                            if (!panelProperty.startsWith('ag') && compToFramework[panelProperty] && typeof panel[panelProperty] === 'string') {
+                                const parsedValue = panel[panelProperty].replace('AG_LITERAL_', '')
+                                if (isExternalVueFile(componentFileNames, parsedValue)) {
+                                    panel[compToFramework[panelProperty]] = parsedValue;
+                                    delete panel[panelProperty];
+
+                                    if (!vueComponents.includes(parsedValue)) {
+                                        vueComponents.push(parsedValue)
+                                    }
+                                }
+                            }
+                        })
+                    });
+                    property.value = JSON.stringify(parsedObj);
+                }
+
+                propertyAttributes.push(toInput(property));
+                propertyVars.push(toMember(property));
+                propertyAssignments.push(toAssignment(property));
+            } else if (componentFileNames.length > 0 && property.name === 'components') {
                 // we use bindings.components for vue examples (and not frameworkComponents), except for agDateInput, agColumnHeader, etc which we still need
                 // frameworkComponents for
                 if (bindings.components) {
@@ -450,8 +475,11 @@ function convertDefaultColDef(defaultColDef): string {
     return GRID_COMPONENTS.reduce((acc, componentName) => {
         if (componentName === 'filter') {
             if (defaultColDef.indexOf('filter: true') === -1 && defaultColDef.indexOf('filter: \'ag\'') === -1) {
-                return acc.replace(/componentName\b/g, `${componentName}Framework`);
+                return acc.replace('filter', `${componentName}Framework`);
             }
+        }
+        else if (componentName === 'tooltipComp') {
+            return acc.replace('tooltipComp', `tooltipFramework`);
         }
 
         return acc;
