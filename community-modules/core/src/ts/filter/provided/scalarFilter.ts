@@ -1,4 +1,3 @@
-import { _ } from "src/ts/utils";
 import { AgInputTextField } from "../../widgets/agInputTextField";
 import { SimpleFilter, ISimpleFilterParams, ISimpleFilterModel, ISimpleFilterModelType, Tuple } from "./simpleFilter";
 
