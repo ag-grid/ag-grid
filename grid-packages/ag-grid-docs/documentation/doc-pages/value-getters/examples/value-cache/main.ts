@@ -11,7 +11,7 @@ const columnDefs: ColDef[] = [
   {
     headerName: 'Total',
     colId: 'total',
-    cellClass: 'number-cell total-col',
+    cellClass: ['number-cell', 'total-col'],
     aggFunc: 'sum',
     valueFormatter: formatNumber,
     valueGetter: function (params: ValueGetterParams) {

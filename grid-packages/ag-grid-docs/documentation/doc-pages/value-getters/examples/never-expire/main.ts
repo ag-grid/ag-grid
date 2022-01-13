@@ -34,14 +34,14 @@ const columnDefs: ColDef[] = [
   {
     headerName: 'Total',
     colId: 'total',
-    cellClass: 'number-cell total-col',
+    cellClass: ['number-cell', 'total-col'],
     aggFunc: 'sum',
     valueFormatter: formatNumber,
     valueGetter: totalValueGetter,
   },
   {
     headerName: 'Total x 10',
-    cellClass: 'number-cell total-col',
+    cellClass: ['number-cell', 'total-col'],
     aggFunc: 'sum',
     minWidth: 120,
     valueFormatter: formatNumber,
