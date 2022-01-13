@@ -20,10 +20,14 @@
     },
     "include": [
         "./doc-pages/**/main.ts",
+        "./doc-pages/**/*_typescript.ts",
+        "./doc-pages/**/*_angular.ts",
+        "./doc-pages/**/*.ts",
         "./custom-types/**/*"
     ],
     "exclude": [
         "./node_modules",
-        "./doc-pages/**/_gen/**/main.ts"
+        "./doc-pages/**/_gen/**/main.ts",
+        "./doc-pages/**/_gen/**/angular/**/*",
     ]
 }

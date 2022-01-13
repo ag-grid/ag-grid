@@ -32,4 +32,8 @@ export class CustomCellRenderer implements ICellRendererAngularComp {
     ngAfterViewInit() {
         this.cellRendererParams.registerRowDragger(this.myRef.nativeElement);
     }
+
+    refresh(params: ICellRendererParams): boolean {
+        return false;
+    }
 }

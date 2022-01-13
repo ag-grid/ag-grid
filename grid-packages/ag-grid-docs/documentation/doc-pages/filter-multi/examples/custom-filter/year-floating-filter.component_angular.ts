@@ -14,7 +14,7 @@ import { YearFilter } from './year-filter.component_angular';
             </label>
         </div>`
 })
-export class YearFloatingFilter implements IFloatingFilterComp<YearFilter> {
+export class YearFloatingFilter implements IFloatingFilterComp {
     params!: IFloatingFilterParams<YearFilter>;
     isActive!: boolean;
 
@@ -32,4 +32,5 @@ export class YearFloatingFilter implements IFloatingFilterComp<YearFilter> {
     onParentModelChanged(model: any): void {
         this.isActive = !!model;
     }
+
 }

@@ -1,6 +1,6 @@
-import {AfterViewInit, Component, ViewChild, ViewContainerRef} from "@angular/core";
+import { AfterViewInit, Component, ViewChild, ViewContainerRef } from "@angular/core";
 
-import {AgEditorComponent} from "@ag-grid-community/angular";
+import { ICellEditorAngularComp } from "@ag-grid-community/angular";
 
 const KEY_BACKSPACE = 'Backspace';
 const KEY_DELETE = 'Delete';
@@ -12,13 +12,13 @@ const KEY_TAB = 'Tab';
     selector: 'numeric-cell',
     template: `<input #input (keydown)="onKeyDown($event)" [(ngModel)]="value" style="width: 100%">`
 })
-export class NumericEditor implements AgEditorComponent, AfterViewInit {
+export class NumericEditor implements ICellEditorAngularComp, AfterViewInit {
     private params: any;
-    public value: number;
+    public value!: number;
     public highlightAllOnFocus: boolean = true;
     private cancelBeforeStart: boolean = false;
 
-    @ViewChild('input', {read: ViewContainerRef}) public input: any;
+    @ViewChild('input', { read: ViewContainerRef }) public input!: ViewContainerRef;
 
 
     agInit(params: any): void {
@@ -113,7 +113,7 @@ export class NumericEditor implements AgEditorComponent, AfterViewInit {
         return [KEY_DELETE, KEY_BACKSPACE].indexOf(event.key) > -1;
     }
 
-    private isLeftOrRight(event:any) {
+    private isLeftOrRight(event: any) {
         return ['ArrowLeft', 'ArrowRight'].indexOf(event.key) > -1;
     }
 

@@ -75,4 +75,8 @@ export class CallsCellRenderer implements ICellRendererAngularComp {
 
         this.params.api.applyTransaction({ update: [newData] });
     }
+
+    refresh(params: ICellRendererParams): boolean {
+        return false;
+    }
 }

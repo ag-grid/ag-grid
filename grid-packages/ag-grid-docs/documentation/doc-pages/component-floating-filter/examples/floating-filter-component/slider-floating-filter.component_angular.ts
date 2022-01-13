@@ -17,10 +17,10 @@ export interface SliderFloatingFilterParams extends IFloatingFilterParams {
 })
 export class SliderFloatingFilter implements IFloatingFilter, AgFrameworkComponent<SliderFloatingFilterParams> {
 
-    private params: SliderFloatingFilterParams;
+    private params!: SliderFloatingFilterParams;
 
-    public maxValue: number;
-    public currentValue: number;
+    public maxValue!: number;
+    public currentValue!: number;
 
     agInit(params: SliderFloatingFilterParams): void {
         this.params = params;
@@ -30,7 +30,7 @@ export class SliderFloatingFilter implements IFloatingFilter, AgFrameworkCompone
 
     valueChanged() {
         let valueToUse = (this.currentValue === 0) ? null : this.currentValue;
-        this.params.parentFilterInstance(function(instance) {
+        this.params.parentFilterInstance(function (instance) {
             instance.onFloatingFilterChanged('greaterThan', valueToUse);
         });
     }
@@ -41,7 +41,7 @@ export class SliderFloatingFilter implements IFloatingFilter, AgFrameworkCompone
         } else {
             // note that the filter could be anything here, but our purposes we're assuming a greater than filter only,
             // so just read off the value and use that
-            this.currentValue = parentModel.filter;
+            this.currentValue = parentModel.filter!;
         }
     }
 

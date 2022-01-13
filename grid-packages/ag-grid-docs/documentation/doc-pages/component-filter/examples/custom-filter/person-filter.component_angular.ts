@@ -1,7 +1,7 @@
-import {Component, ViewChild} from "@angular/core";
+import { Component, ViewChild } from "@angular/core";
 
-import {AgFilterComponent} from "@ag-grid-community/angular";
-import {IDoesFilterPassParams, IFilterParams, RowNode, ValueGetterFunc} from "@ag-grid-community/core";
+import { AgFilterComponent } from "@ag-grid-community/angular";
+import { IDoesFilterPassParams, IFilterParams, RowNode, ValueGetterFunc } from "@ag-grid-community/core";
 
 @Component({
     selector: 'year-component',
@@ -21,7 +21,7 @@ import {IDoesFilterPassParams, IFilterParams, RowNode, ValueGetterFunc} from "@a
     `
 })
 export class PersonFilter implements AgFilterComponent {
-    params: IFilterParams;
+    params!: IFilterParams;
     filterText: string = '';
 
     agInit(params: IFilterParams): void {
@@ -45,7 +45,7 @@ export class PersonFilter implements AgFilterComponent {
                 getValue: (field) => node.data[field],
                 node,
             });
-      
+
             if (value.toString().toLowerCase().indexOf(filterWord) < 0) {
                 passed = false;
             }
@@ -61,7 +61,7 @@ export class PersonFilter implements AgFilterComponent {
     getModel() {
         if (!this.isFilterActive()) { return null; }
 
-        return {value: this.filterText};
+        return { value: this.filterText };
     }
 
     setModel(model: any) {

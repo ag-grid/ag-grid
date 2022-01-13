@@ -1,4 +1,6 @@
-import {Component, ElementRef, ViewChild} from '@angular/core';
+import { IHeaderAngularComp } from '@ag-grid-community/angular';
+import { IHeaderParams } from '@ag-grid-community/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 
 @Component({
     selector: 'app-loading-overlay',
@@ -10,18 +12,18 @@ import {Component, ElementRef, ViewChild} from '@angular/core';
         </div>
     `
 })
-export class CustomHeader {
+export class CustomHeader implements IHeaderAngularComp {
 
-    private params: any;
+    public params!: IHeaderParams;
 
-    @ViewChild('menuButton', {read: ElementRef}) public menuButton;
+    @ViewChild('menuButton', { read: ElementRef }) public menuButton!: ElementRef;
 
-    agInit(params): void {
+    agInit(params: IHeaderParams): void {
         this.params = params;
         console.log('CustomHeader.init() -> ' + this.params.column.getId());
     }
 
-    refresh(params): boolean {
+    refresh(params: IHeaderParams): boolean {
         this.params = params;
         console.log('CustomHeader.refresh() -> ' + this.params.column.getId() + ' returning ' + true);
         return true;

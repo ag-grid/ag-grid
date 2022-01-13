@@ -74,7 +74,11 @@ export class CustomHeader implements IHeaderAngularComp {
         }
     }
 
-    onSortRequested(order: string, event: any) {
+    onSortRequested(order: 'asc' | 'desc' | null, event: any) {
         this.params.setSort(order, event.shiftKey);
+    }
+
+    refresh(params: IHeaderParams) {
+        return false;
     }
 }

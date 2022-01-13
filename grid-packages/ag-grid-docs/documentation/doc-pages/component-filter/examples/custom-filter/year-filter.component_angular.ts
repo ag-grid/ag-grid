@@ -1,11 +1,11 @@
-import {Component} from "@angular/core";
+import { Component } from "@angular/core";
 
-import {AgFilterComponent} from "@ag-grid-community/angular";
-import {IDoesFilterPassParams, IFilterParams} from "@ag-grid-community/core";
+import { AgFilterComponent } from "@ag-grid-community/angular";
+import { IDoesFilterPassParams, IFilterParams } from "@ag-grid-community/core";
 
 @Component({
-    selector: 'year-component',
-    template: `
+  selector: 'year-component',
+  template: `
       <div style="display: inline-block; width: 400px;">
       <div style="padding: 10px; background-color: #d3d3d3; text-align: center;">This is a very wide filter</div>
       <label style="margin: 10px; padding: 50px; display: inline-block; background-color: #999999">
@@ -18,28 +18,28 @@ import {IDoesFilterPassParams, IFilterParams} from "@ag-grid-community/core";
     `
 })
 export class YearFilter implements AgFilterComponent {
-    params: IFilterParams;
-    year: string = 'All';
+  params!: IFilterParams;
+  year: string = 'All';
 
-    agInit(params: IFilterParams): void {
-        this.params = params;
-    }
+  agInit(params: IFilterParams): void {
+    this.params = params;
+  }
 
-    isFilterActive(): boolean {
-        return this.year === '2010'
-    }
+  isFilterActive(): boolean {
+    return this.year === '2010'
+  }
 
-    doesFilterPass(params: IDoesFilterPassParams): boolean {
-        return params.data.year >= 2010;
-    }
+  doesFilterPass(params: IDoesFilterPassParams): boolean {
+    return params.data.year >= 2010;
+  }
 
-    getModel() {
-    }
+  getModel() {
+  }
 
-    setModel(model: any) {
-    }
+  setModel(model: any) {
+  }
 
-    updateFilter() {
-        this.params.filterChangedCallback();
-    }
+  updateFilter() {
+    this.params.filterChangedCallback();
+  }
 }

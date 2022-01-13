@@ -9,11 +9,11 @@ import { IFloatingFilterParams, ISimpleFilter } from "@ag-grid-community/core";
                            (input)="onInputBoxChanged($event)"/>`
 })
 export class NumberFloatingFilterComponent implements AgFloatingFilterComponent {
-    params: IFloatingFilterParams;
+    params!: IFloatingFilterParams<ISimpleFilter>;
     currentValue: Number | null | string = null;
     style: any;
 
-    agInit(params: IFloatingFilterParams): void {
+    agInit(params: IFloatingFilterParams<ISimpleFilter> & { color: string }): void {
         this.params = params;
 
         this.style = {
@@ -33,7 +33,7 @@ export class NumberFloatingFilterComponent implements AgFloatingFilterComponent 
     onInputBoxChanged() {
         if (!!!this.currentValue) {
             // Remove the filter
-            this.params.parentFilterInstance((instance: ISimpleFilter) => {
+            this.params.parentFilterInstance((instance) => {
                 instance.onFloatingFilterChanged(null, null);
             });
             return;

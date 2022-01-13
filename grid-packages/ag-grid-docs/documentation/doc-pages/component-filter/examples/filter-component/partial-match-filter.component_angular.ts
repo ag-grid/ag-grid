@@ -25,10 +25,10 @@ import { IFilterAngularComp } from '@ag-grid-community/angular';
     ]
 })
 export class PartialMatchFilter implements IFilterAngularComp {
-    private params: IFilterParams;
+    private params!: IFilterParams;
     public text: string = '';
 
-    @ViewChild('input', { read: ViewContainerRef }) public input;
+    @ViewChild('input', { read: ViewContainerRef }) public input!: ViewContainerRef;
 
     agInit(params: IFilterParams): void {
         this.params = params;
@@ -76,7 +76,7 @@ export class PartialMatchFilter implements IFilterAngularComp {
         alert(`Alert from PartialMatchFilterComponent: ${message}`);
     }
 
-    onChange(newValue): void {
+    onChange(newValue: any): void {
         if (this.text !== newValue) {
             this.text = newValue;
             this.params.filterChangedCallback();
