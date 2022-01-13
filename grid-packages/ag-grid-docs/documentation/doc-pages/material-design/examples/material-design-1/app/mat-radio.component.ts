@@ -1,6 +1,7 @@
 import { Component, ViewChildren } from "@angular/core";
 import { ICellEditorAngularComp } from "@ag-grid-community/angular";
 import { MatRadioButton } from "@angular/material/radio";
+import { ICellEditorParams } from "@ag-grid-community/core";
 
 @Component({
     selector: "radio-cell",
@@ -38,15 +39,15 @@ import { MatRadioButton } from "@angular/material/radio";
     ]
 })
 export class MatRadioComponent implements ICellEditorAngularComp {
-    private params: any;
+    private params!: ICellEditorParams & { fruits: string[] };
 
-    private fruits: string[];
-    private favouriteFruit: string;
-    private selectedIndex: number;
+    public fruits!: string[];
+    public favouriteFruit!: string;
+    private selectedIndex!: number;
 
-    @ViewChildren(MatRadioButton) public fruitRadios;
+    @ViewChildren(MatRadioButton) public fruitRadios: any;
 
-    agInit(params: any): void {
+    agInit(params: ICellEditorParams & { fruits: string[] }): void {
         this.params = params;
 
         this.favouriteFruit = this.params.value;
@@ -66,7 +67,7 @@ export class MatRadioComponent implements ICellEditorAngularComp {
         this.favouriteFruit = this.fruits[this.selectedIndex];
 
         // focus on next tick
-        let fruitRadio = this.fruitRadios.find(radio => radio.value === this.favouriteFruit);
+        let fruitRadio = this.fruitRadios.find((radio: any) => radio.value === this.favouriteFruit);
         window.setTimeout(() => {
             fruitRadio._inputElement.nativeElement.focus();
         }, 0);
@@ -84,7 +85,7 @@ export class MatRadioComponent implements ICellEditorAngularComp {
      * A little over complicated for what it is, but the idea is to illustrate how you might navigate through the radio
      * buttons with up & down keys (instead of finishing editing)
      */
-    onKeyDown(event): void {
+    onKeyDown(event: any): void {
         const key = event.key;
         if (key === 'ArrowUp' || key === 'ArrowDown') {
             this.preventDefaultAndPropagation(event);
@@ -100,7 +101,7 @@ export class MatRadioComponent implements ICellEditorAngularComp {
         }
     }
 
-    private preventDefaultAndPropagation(event) {
+    private preventDefaultAndPropagation(event: any) {
         event.preventDefault();
         event.stopPropagation();
     }

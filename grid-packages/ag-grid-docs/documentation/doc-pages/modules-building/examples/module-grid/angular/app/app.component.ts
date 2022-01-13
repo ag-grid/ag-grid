@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { ModuleRegistry, GridApi } from '@ag-grid-community/core';
+import { ModuleRegistry, GridApi, ColDef, GridReadyEvent } from '@ag-grid-community/core';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import { MenuModule } from '@ag-grid-enterprise/menu';
 import { ExcelExportModule } from '@ag-grid-enterprise/excel-export';
@@ -23,7 +23,7 @@ import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
     `
 })
 export class AppComponent {
-    columnDefs = [
+    columnDefs: ColDef[] = [
         { field: 'make' },
         { field: 'model' },
         { field: 'price' }
@@ -35,7 +35,7 @@ export class AppComponent {
         { make: 'Porsche', model: 'Boxter', price: 72000 }
     ];
 
-    onGridReady(params: GridApi) {
-        params.api.sizeColumnsToFit();
+    onGridReady(params: GridReadyEvent) {
+        params.api!.sizeColumnsToFit();
     }
 }

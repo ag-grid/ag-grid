@@ -39,11 +39,11 @@ import { ICellEditorAngularComp } from "@ag-grid-community/angular";
 export class MatSliderComponent implements ICellEditorAngularComp {
     private params: any;
 
-    private max: number;
-    private min: number;
-    private step: number;
-    private thumbLabel: boolean;
-    private value: number;
+    public max!: number;
+    public min!: number;
+    public step!: number;
+    public thumbLabel!: boolean;
+    public value!: number;
 
     agInit(params: any): void {
         this.params = params;
@@ -56,7 +56,7 @@ export class MatSliderComponent implements ICellEditorAngularComp {
         this.value = this.params.value;
     }
 
-    constructor(private elRef: ElementRef) {}
+    constructor(private elRef: ElementRef) { }
 
     // don't use afterGuiAttached for post gui events - hook into ngAfterViewInit instead for this
     ngAfterViewInit() {
@@ -75,7 +75,7 @@ export class MatSliderComponent implements ICellEditorAngularComp {
         return true;
     }
 
-    onKeyDown(event): void {
+    onKeyDown(event: any): void {
         const key = event.key;
         if (key === 'ArrowLeft' || key === 'ArrowRight') {
             // left/right

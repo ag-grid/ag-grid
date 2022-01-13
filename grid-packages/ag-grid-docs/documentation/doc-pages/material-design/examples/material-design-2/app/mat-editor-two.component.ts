@@ -8,11 +8,10 @@ import { MatSliderComponent } from "./mat-slider.component";
 import { MatButtonToggleHeaderComponent } from "./mat-button-toggle.component";
 import { ColumnAlignmentService } from "./columnAlignmentService";
 import { MatProgressSpinnerComponent } from "./mat-progress-spinner.component";
-import { GridOptions } from "@ag-grid-community/core";
+import { ColDef, GridOptions } from "@ag-grid-community/core";
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 
 @Component({
-    moduleId: __moduleName, // for SystemJS, IE11 and relative paths
     selector: "my-app",
     templateUrl: "./mat-editor-two.component.html"
 })
@@ -23,11 +22,11 @@ export class MatEditorComponentTwo implements AfterViewInit {
     modules = [ClientSideRowModelModule];
 
     constructor(private columnAlignmentService: ColumnAlignmentService) {
-        this.gridOptions = <GridOptions>{
+        this.gridOptions = {
             rowData: this.createRowData(),
             columnDefs: this.createColumnDefs(),
             onGridReady: () => {
-                this.gridOptions.api.sizeColumnsToFit();
+                this.gridOptions.api!.sizeColumnsToFit();
             },
             rowHeight: 48, // recommended row height for material design data grids,
             headerHeight: 48,
@@ -40,12 +39,12 @@ export class MatEditorComponentTwo implements AfterViewInit {
 
         this.columnAlignmentService.alignmentChanged$.subscribe(alignment => {
             this.onOffColumnAlignment = alignment;
-            let nodesToUpdate = [];
-            this.gridOptions.api.forEachNode(node => {
+            let nodesToUpdate: any[] = [];
+            this.gridOptions.api!.forEachNode(node => {
                 nodesToUpdate.push(node);
             });
 
-            this.gridOptions.api.refreshCells({
+            this.gridOptions.api!.refreshCells({
                 rowNodes: nodesToUpdate,
                 columns: ["on_off"],
                 force: true
@@ -58,10 +57,10 @@ export class MatEditorComponentTwo implements AfterViewInit {
     }
 
     ngAfterViewInit() {
-        this.gridOptions.api.forEachNode(rowNode => {
+        this.gridOptions.api!.forEachNode(rowNode => {
             window.setTimeout(() => {
                 rowNode.setDataValue("random_col", this.randomNumberUpTo(100));
-                this.gridOptions.api.refreshCells({
+                this.gridOptions.api!.refreshCells({
                     rowNodes: [rowNode],
                     columns: ["random_col"]
                 });
@@ -69,7 +68,7 @@ export class MatEditorComponentTwo implements AfterViewInit {
         });
     }
 
-    private createColumnDefs() {
+    private createColumnDefs(): ColDef[] {
         return [
             {
                 headerName: "Percentage (popup slider editor)",

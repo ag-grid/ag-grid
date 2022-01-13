@@ -1,6 +1,7 @@
-import {Component} from "@angular/core";
-import {IHeaderAngularComp} from "@ag-grid-community/angular";
-import {ColumnAlignmentService} from "./columnAlignmentService";
+import { Component } from "@angular/core";
+import { IHeaderAngularComp } from "@ag-grid-community/angular";
+import { ColumnAlignmentService } from "./columnAlignmentService";
+import { IHeaderParams } from "@ag-grid-community/core";
 
 @Component({
     selector: 'header-component',
@@ -35,16 +36,20 @@ import {ColumnAlignmentService} from "./columnAlignmentService";
     `]
 })
 export class MatButtonToggleHeaderComponent implements IHeaderAngularComp {
-    params: any;
+    params!: IHeaderParams;
 
-    agInit(params: any): void {
+    agInit(params: IHeaderParams): void {
         this.params = params;
     }
 
     constructor(private columnAlignmentService: ColumnAlignmentService) {
     }
 
-    groupChanged($event) {
+    groupChanged($event: any) {
         this.columnAlignmentService.changeColumnAlignment($event.value);
+    }
+
+    refresh(params: IHeaderParams): boolean {
+        return false;
     }
 }

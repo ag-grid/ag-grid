@@ -4,6 +4,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+import { ColDef, ColumnApi, GridApi, GridReadyEvent } from '@ag-grid-community/core';
 
 @Component({
     selector: 'my-app',
@@ -74,14 +75,14 @@ export class AppComponent {
 
     modules = [ClientSideRowModelModule];
 
-    rawData = [];
-    leftRowData;
-    rightRowData = []
-    leftApi;
-    leftColumnApi;
-    rightApi;
+    rawData: any[] = [];
+    leftRowData: any[] = [];
+    rightRowData: any[] = []
+    leftApi!: GridApi;
+    leftColumnApi!: ColumnApi;
+    rightApi!: GridApi;
 
-    defaultColDef = {
+    defaultColDef: ColDef = {
         flex: 1,
         minWidth: 100,
         sortable: true,
@@ -89,7 +90,7 @@ export class AppComponent {
         resizable: true
     };
 
-    leftColumns = [
+    leftColumns: ColDef[] = [
         {
             rowDrag: true,
             maxWidth: 50,
@@ -98,7 +99,7 @@ export class AppComponent {
                 if (dragItemCount > 1) {
                     return dragItemCount + ' athletes';
                 }
-                return params.rowNode.data.athlete;
+                return params.rowNode!.data.athlete;
             },
         },
         {
@@ -112,7 +113,7 @@ export class AppComponent {
         { field: "sport" }
     ];
 
-    rightColumns = [
+    rightColumns: ColDef[] = [
         {
             rowDrag: true,
             maxWidth: 50,
@@ -121,7 +122,7 @@ export class AppComponent {
                 if (dragItemCount > 1) {
                     return dragItemCount + ' athletes';
                 }
-                return params.rowNode.data.athlete;
+                return params.rowNode!.data.athlete;
             },
         },
         { field: "athlete" },
@@ -144,21 +145,22 @@ export class AppComponent {
         }
     ]
 
-    @ViewChild('eLeftGrid') eLeftGrid;
-    @ViewChild('eRightGrid') eRightGrid;
-    @ViewChild('eMoveRadio') eMoveRadio;
-    @ViewChild('eDeselectRadio') eDeselectRadio;
-    @ViewChild('eSelectCheckbox') eSelectCheckbox;
+    @ViewChild('eLeftGrid') eLeftGrid: any;
+    @ViewChild('eRightGrid') eRightGrid: any;
+    @ViewChild('eMoveRadio') eMoveRadio: any;
+    @ViewChild('eDeselectRadio') eDeselectRadio: any;
+    @ViewChild('eSelectCheckbox') eSelectCheckbox: any;
 
     constructor(private http: HttpClient) {
         this.http.get('https://www.ag-grid.com/example-assets/olympic-winners.json').subscribe(data => {
-            const athletes = [];
+            const athletes: any[] = [];
             let i = 0;
+            const dataArray = data as any[];
 
-            while (athletes.length < 20 && i < (data as any).length) {
+            while (athletes.length < 20 && i < dataArray.length) {
                 var pos = i++;
-                if (athletes.some(rec => rec.athlete === data[pos].athlete)) { continue; }
-                athletes.push(data[pos]);
+                if (athletes.some(rec => rec.athlete === dataArray[pos].athlete)) { continue; }
+                athletes.push(dataArray[pos]);
             }
             this.rawData = athletes;
             this.loadGrids();
@@ -186,9 +188,9 @@ export class AppComponent {
         this.leftApi.setSuppressRowClickSelection(checked);
     }
 
-    getRowNodeId = data => data.athlete;
+    getRowNodeId = (data: any) => data.athlete;
 
-    onGridReady(params, side) {
+    onGridReady(params: GridReadyEvent, side: number) {
         if (side === 0) {
             this.leftApi = params.api
             this.leftColumnApi = params.columnApi;

@@ -7,7 +7,7 @@ import { cloneDeep } from "lodash";
 @Injectable()
 export class MockServerService {
     stocksUrl: string = 'https://www.ag-grid.com/example-assets/stocks.json';
-    rowData: any[];
+    rowData!: any[];
 
     constructor(private http: Http) {
     }
@@ -22,9 +22,9 @@ export class MockServerService {
     // provides randomised data updates to some of the rows
     // only returns the changed data rows
     byRowupdates(): any {
-        return Observable.create((observer) => {
+        return Observable.create((observer: any) => {
             const interval = window.setInterval(() => {
-                let changes = [];
+                let changes: any[] = [];
 
                 // make some mock changes to the data
                 this.makeSomePriceChanges(changes);
@@ -39,9 +39,9 @@ export class MockServerService {
     // provides randomised data updates to some of the rows
     // only all the row data (with some rows changed)
     allDataUpdates(): any {
-        return Observable.create((observer) => {
+        return Observable.create((observer: any) => {
             const interval = window.setInterval(() => {
-                let changes = [];
+                let changes: any[] = [];
 
                 // make some mock changes to the data
                 this.makeSomePriceChanges(changes);
@@ -78,7 +78,7 @@ export class MockServerService {
      * The rest of the code exists to create or modify mock data
      * it is not important to understand the rest of the example (i.e. the rxjs part of it)
      */
-    backfillData(rowData): any {
+    backfillData(rowData: any[]): any {
         // the sample data has just name and code, we need to add in dummy figures
         rowData.forEach((dataItem) => {
 
@@ -93,7 +93,7 @@ export class MockServerService {
         return rowData;
     }
 
-    makeSomeVolumeChanges(changes): any {
+    makeSomeVolumeChanges(changes: any[]): any {
         for (let i = 0; i < 10; i++) {
             // pick a data item at random
             const index = Math.floor(this.rowData.length * Math.random());
@@ -109,7 +109,7 @@ export class MockServerService {
         }
     }
 
-    makeSomePriceChanges(changes): any {
+    makeSomePriceChanges(changes: any[]): any {
         // randomly update data for some rows
         for (let i = 0; i < 10; i++) {
             const index = Math.floor(this.rowData.length * Math.random());
@@ -127,7 +127,7 @@ export class MockServerService {
         }
     }
 
-    setBidAndAsk(dataItem): any {
+    setBidAndAsk(dataItem: any): any {
         dataItem.bid = dataItem.mid * 0.98;
         dataItem.ask = dataItem.mid * 1.02;
     }

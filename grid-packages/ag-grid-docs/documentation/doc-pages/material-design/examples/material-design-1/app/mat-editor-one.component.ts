@@ -8,10 +8,9 @@ import { MatInputComponent } from "./mat-input.component";
 import { MatRadioComponent } from "./mat-radio.component";
 import { MatSelectComponent } from "./mat-select.component";
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
-import { GridOptions, Module } from "@ag-grid-community/core";
+import { ColDef, GridOptions, Module } from "@ag-grid-community/core";
 
 @Component({
-    moduleId: __moduleName, // for SystemJS, IE11 and relative paths
     selector: "my-app",
     templateUrl: "./mat-editor-one.component.html"
 })
@@ -20,11 +19,11 @@ export class MatEditorComponentOne {
     modules: Module[] = [ClientSideRowModelModule];
 
     constructor() {
-        this.gridOptions = <GridOptions>{
+        this.gridOptions = {
             rowData: this.createRowData(),
             columnDefs: this.createColumnDefs(),
             onGridReady: () => {
-                this.gridOptions.api.sizeColumnsToFit();
+                this.gridOptions.api!.sizeColumnsToFit();
             },
             rowHeight: 48, // recommended row height for material design data grids,
             frameworkComponents: {
@@ -36,7 +35,7 @@ export class MatEditorComponentOne {
         };
     }
 
-    private createColumnDefs() {
+    private createColumnDefs(): ColDef[] {
         return [
             {
                 headerName: "Checkbox (inline editing)",

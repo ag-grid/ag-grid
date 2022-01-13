@@ -4,6 +4,7 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+import { ColDef, ColGroupDef, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core';
 
 @Component({
     selector: 'my-app',
@@ -38,9 +39,9 @@ import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
     `
 })
 export class AppComponent {
-    columnDefs;
-    rowData;
-    topOptions = {
+    columnDefs!: (ColDef | ColGroupDef)[];
+    rowData!: any[];
+    topOptions: GridOptions = {
         alignedGrids: [],
         defaultColDef: {
             editable: true,
@@ -53,7 +54,7 @@ export class AppComponent {
         ,
         suppressHorizontalScroll: true
     };
-    bottomOptions = {
+    bottomOptions: GridOptions = {
         alignedGrids: [],
         defaultColDef: {
             editable: true,
@@ -66,8 +67,8 @@ export class AppComponent {
     };
     modules = [ClientSideRowModelModule];
 
-    @ViewChild('topGrid') topGrid;
-    @ViewChild('bottomGrid') bottomGrid;
+    @ViewChild('topGrid') topGrid: any;
+    @ViewChild('bottomGrid') bottomGrid: any;
 
     bottomData = [
         {
@@ -104,18 +105,18 @@ export class AppComponent {
             { field: 'bronze', width: 100 }
         ];
 
-        this.topOptions.alignedGrids.push(this.bottomOptions);
-        this.bottomOptions.alignedGrids.push(this.topOptions);
+        this.topOptions.alignedGrids!.push(this.bottomOptions);
+        this.bottomOptions.alignedGrids!.push(this.topOptions);
     }
 
     ngOnInit() {
         this.http.get('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .subscribe(data => {
-                this.rowData = data;
+                this.rowData = data as any[];
             });
     }
 
-    onFirstDataRendered(params) {
+    onFirstDataRendered(params: FirstDataRenderedEvent) {
         params.columnApi.autoSizeAllColumns();
     }
 }

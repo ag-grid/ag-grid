@@ -1,6 +1,6 @@
-import {AfterViewInit, Component, ViewChild, ViewContainerRef} from "@angular/core";
-import {ICellEditorParams} from "ag-grid-community";
-import {AgEditorComponent} from "ag-grid-angular";
+import { AfterViewInit, Component, ViewChild, ViewContainerRef } from "@angular/core";
+import { ICellEditorParams } from "ag-grid-community";
+import { AgEditorComponent } from "ag-grid-angular";
 
 const KEY_BACKSPACE = 'Backspace';
 const KEY_DELETE = 'Delete';
@@ -10,10 +10,10 @@ const KEY_DELETE = 'Delete';
     template: `<input class="my-simple-editor" [value]="value" #input /> `
 })
 export class MySimpleEditor implements AgEditorComponent, AfterViewInit {
-    private params: ICellEditorParams;
-    private value: any;
+    private params!: ICellEditorParams;
+    public value: any;
 
-    @ViewChild('input', {read: ViewContainerRef}) public input;
+    @ViewChild('input', { read: ViewContainerRef }) public input!: ViewContainerRef;
 
     agInit(params: ICellEditorParams): void {
         this.params = params;

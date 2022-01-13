@@ -6,6 +6,7 @@ import { ExcelExportModule, exportMultipleSheetsAsExcel } from '@ag-grid-enterpr
 
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+import { ColDef, ColumnApi, GridApi, GridReadyEvent } from '@ag-grid-community/core';
 
 @Component({
     selector: 'my-app',
@@ -66,14 +67,14 @@ export class AppComponent {
 
     modules = [ClientSideRowModelModule, CsvExportModule, ExcelExportModule];
 
-    rawData = [];
-    leftRowData;
-    rightRowData = []
-    leftApi;
-    leftColumnApi;
-    rightApi;
+    rawData: any[] = [];
+    leftRowData: any[] = [];
+    rightRowData: any[] = []
+    leftApi!: GridApi;
+    leftColumnApi!: ColumnApi;
+    rightApi!: GridApi;
 
-    defaultColDef = {
+    defaultColDef: ColDef = {
         flex: 1,
         minWidth: 100,
         sortable: true,
@@ -81,7 +82,7 @@ export class AppComponent {
         resizable: true
     };
 
-    leftColumns = [
+    leftColumns: ColDef[] = [
         {
             rowDrag: true,
             maxWidth: 50,
@@ -90,14 +91,14 @@ export class AppComponent {
                 if (dragItemCount > 1) {
                     return dragItemCount + ' athletes';
                 }
-                return params.rowNode.data.athlete;
+                return params.rowNode!.data.athlete;
             },
         },
         { field: "athlete" },
         { field: "sport" }
     ];
 
-    rightColumns = [
+    rightColumns: ColDef[] = [
         {
             rowDrag: true,
             maxWidth: 50,
@@ -106,7 +107,7 @@ export class AppComponent {
                 if (dragItemCount > 1) {
                     return dragItemCount + ' athletes';
                 }
-                return params.rowNode.data.athlete;
+                return params.rowNode!.data.athlete;
             },
         },
         { field: "athlete" },
@@ -129,18 +130,18 @@ export class AppComponent {
         }
     ]
 
-    @ViewChild('eLeftGrid') eLeftGrid;
-    @ViewChild('eRightGrid') eRightGrid;
+    @ViewChild('eLeftGrid') eLeftGrid: any;
+    @ViewChild('eRightGrid') eRightGrid: any;
 
     constructor(private http: HttpClient) {
         this.http.get('https://www.ag-grid.com/example-assets/olympic-winners.json').subscribe(data => {
-            const athletes = [];
+            const athletes: any[] = [];
             let i = 0;
-
-            while (athletes.length < 20 && i < (data as any).length) {
+            const dataArray = data as any[];
+            while (athletes.length < 20 && i < dataArray.length) {
                 var pos = i++;
-                if (athletes.some(rec => rec.athlete === data[pos].athlete)) { continue; }
-                athletes.push(data[pos]);
+                if (athletes.some(rec => rec.athlete === dataArray[pos].athlete)) { continue; }
+                athletes.push(dataArray[pos]);
             }
             this.rawData = athletes;
             this.loadGrids();
@@ -156,9 +157,9 @@ export class AppComponent {
         this.loadGrids();
     }
 
-    getRowNodeId = data => data.athlete;
+    getRowNodeId = (data: any) => data.athlete;
 
-    onGridReady(params, side) {
+    onGridReady(params: GridReadyEvent, side: number) {
         if (side === 0) {
             this.leftApi = params.api
             this.leftColumnApi = params.columnApi;
@@ -188,8 +189,8 @@ export class AppComponent {
         var spreadsheets = [];
 
         spreadsheets.push(
-            this.leftApi.getSheetDataForExcel({ sheetName: 'Athletes' }),
-            this.rightApi.getSheetDataForExcel({ sheetName: 'Selected Athletes' })
+            this.leftApi.getSheetDataForExcel({ sheetName: 'Athletes' })!,
+            this.rightApi.getSheetDataForExcel({ sheetName: 'Selected Athletes' })!
         );
 
         exportMultipleSheetsAsExcel({

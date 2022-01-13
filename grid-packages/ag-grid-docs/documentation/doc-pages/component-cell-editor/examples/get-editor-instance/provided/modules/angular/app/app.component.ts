@@ -3,6 +3,7 @@ import { AllModules, GridReadyEvent, Module } from '@ag-grid-enterprise/all-modu
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import { MySimpleEditor } from './mySimple-editor.component';
+import { ColDef } from '@ag-grid-community/core';
 
 @Component({
     selector: 'my-app',
@@ -21,7 +22,7 @@ import { MySimpleEditor } from './mySimple-editor.component';
 })
 export class AppComponent implements OnDestroy {
     public modules: Module[] = AllModules;
-    private columnDefs = [
+    public columnDefs: ColDef[] = [
         {
             field: "first_name",
             headerName: "First Name",
@@ -61,7 +62,7 @@ export class AppComponent implements OnDestroy {
         }
     ];
 
-    private defaultColDef = {
+    public defaultColDef: ColDef = {
         editable: true,
         sortable: true,
         flex: 1,
@@ -70,10 +71,10 @@ export class AppComponent implements OnDestroy {
         resizable: true
     };
 
-    private frameworkComponents = { mySimpleEditor: MySimpleEditor };
+    public frameworkComponents = { mySimpleEditor: MySimpleEditor };
 
-    private interval: number;
-    private rowData: any[];
+    private interval!: number;
+    public rowData: any[];
 
     constructor() {
         this.rowData = this.createRowData();

@@ -1,5 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
-import { GridReadyEvent } from 'ag-grid-enterprise';
+import { ColDef, GridReadyEvent } from 'ag-grid-community';
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import { MySimpleEditor } from './mySimple-editor.component';
@@ -19,7 +19,7 @@ import { MySimpleEditor } from './mySimple-editor.component';
     `
 })
 export class AppComponent implements OnDestroy {
-    private columnDefs = [
+    public columnDefs: ColDef[] = [
         {
             field: "first_name",
             headerName: "First Name",
@@ -59,7 +59,7 @@ export class AppComponent implements OnDestroy {
         }
     ];
 
-    private defaultColDef = {
+    public defaultColDef: ColDef = {
         editable: true,
         sortable: true,
         flex: 1,
@@ -68,10 +68,10 @@ export class AppComponent implements OnDestroy {
         resizable: true
     };
 
-    private frameworkComponents = { mySimpleEditor: MySimpleEditor };
+    public frameworkComponents = { mySimpleEditor: MySimpleEditor };
 
-    private interval: number;
-    private rowData: any[];
+    private interval!: number;
+    public rowData: any[];
 
     constructor() {
         this.rowData = this.createRowData();
@@ -81,7 +81,7 @@ export class AppComponent implements OnDestroy {
         this.interval = window.setInterval(() => {
             const instances = params.api.getCellEditorInstances();
             if (instances.length > 0) {
-                const instance = instances[0];
+                const instance = instances[0] as MySimpleEditor;
                 if (instance.myCustomFunction) {
                     const result = instance.myCustomFunction();
                     console.log(`found editing cell: row index = ${result.rowIndex}, column = ${result.colId}.`);

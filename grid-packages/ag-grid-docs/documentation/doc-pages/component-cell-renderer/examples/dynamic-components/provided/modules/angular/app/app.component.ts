@@ -8,7 +8,7 @@ import { SquareRenderer } from './square-renderer.component';
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GridReadyEvent, Module, RowNode } from '@ag-grid-community/core';
+import { ColDef, ColumnApi, GridApi, GridReadyEvent, Module, RowNode } from '@ag-grid-community/core';
 
 @Component({
     selector: 'my-app',
@@ -33,11 +33,11 @@ import { GridReadyEvent, Module, RowNode } from '@ag-grid-community/core';
         </div>`
 })
 export class AppComponent {
-    private gridApi;
-    private gridColumnApi;
+    private gridApi!: GridApi;
+    private gridColumnApi!: ColumnApi;
 
     public modules: Module[] = [ClientSideRowModelModule];
-    private columnDefs = [
+    public columnDefs: ColDef[] = [
         {
             headerName: "Row",
             field: "row",
@@ -82,7 +82,7 @@ export class AppComponent {
         }
     ];
 
-    private frameworkComponents = {
+    public frameworkComponents = {
         squareRenderer: SquareRenderer,
         cubeRenderer: CubeRenderer,
         paramsRenderer: ParamsRenderer,
@@ -90,7 +90,7 @@ export class AppComponent {
         childMessageRenderer: ChildMessageRenderer
     };
 
-    private defaultColDef = {
+    public defaultColDef: ColDef = {
         editable: true,
         sortable: true,
         flex: 1,
@@ -99,8 +99,8 @@ export class AppComponent {
         resizable: true
     };
 
-    private rowData: any[];
-    private context: any;
+    public rowData: any[];
+    public context: any;
 
     constructor() {
         this.rowData = this.createRowData();

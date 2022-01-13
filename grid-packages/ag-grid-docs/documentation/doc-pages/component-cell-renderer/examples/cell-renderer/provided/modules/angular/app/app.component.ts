@@ -3,9 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import { DaysFrostRenderer } from './days-frost-renderer.component';
-import { threadId } from 'worker_threads';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { GridApi, Module } from '@ag-grid-community/core';
+import { ColDef, GridApi, ICellRendererParams, Module, RowNode } from '@ag-grid-community/core';
 
 /*
 * It's unlikely you'll use functions that create and manipulate DOM elements like this in an Angular application, but it
@@ -23,8 +22,8 @@ const createImageSpan = (imageMultiplier: number, image: string) => {
 
 // This is a plain JS (not Angular) component
 class DeltaIndicator {
-    private eGui;
-    init(params) {
+    private eGui!: HTMLElement;
+    init(params: ICellRendererParams) {
         const element = document.createElement('span');
         const imageElement = document.createElement('img');
         if (params.value > 15) {
@@ -43,8 +42,8 @@ class DeltaIndicator {
 
 // This is a plain JS (not Angular) component
 class DaysSunshineRenderer {
-    private eGui;
-    init(params) {
+    private eGui!: HTMLElement;
+    init(params: ICellRendererParams & { rendererImage: string }) {
         const daysSunshine = params.value / 24;
         this.eGui = createImageSpan(daysSunshine, params.rendererImage);
     }
@@ -55,8 +54,8 @@ class DaysSunshineRenderer {
 
 // This is a plain JS (not Angular) component
 class RainPerTenMmRenderer {
-    private eGui;
-    init(params: any) {
+    private eGui!: HTMLElement;
+    init(params: ICellRendererParams & { rendererImage: string }) {
         const rainPerTenMm = params.value / 10;
         this.eGui = createImageSpan(rainPerTenMm, params.rendererImage);
     }
@@ -87,11 +86,11 @@ class RainPerTenMmRenderer {
 
 export class AppComponent {
 
-    private gridApi: GridApi;
+    private gridApi!: GridApi;
 
     public modules: Module[] = [ClientSideRowModelModule];
 
-    private columnDefs = [
+    public columnDefs: ColDef[] = [
         {
             headerName: "Month",
             field: "Month",
@@ -128,12 +127,12 @@ export class AppComponent {
             headerName: "Rainfall (10mm)",
             field: "Rainfall (mm)",
             width: 180,
-            cellRendererComp: DaysSunshineRenderer,
+            cellRendererComp: RainPerTenMmRenderer,
             cellRendererCompParams: { rendererImage: "rain.png" }
         }
     ];
 
-    private defaultColDef: {
+    public defaultColDef: ColDef = {
         editable: true,
         sortable: true,
         flex: 1,

@@ -6,7 +6,7 @@ import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import { RatioParentComponent } from "./ratio.parent.component";
 import { ClickableParentComponent } from "./clickable.parent.component";
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
-import { GridOptions, Module } from "@ag-grid-community/core";
+import { ColDef, GridOptions, GridReadyEvent, Module } from "@ag-grid-community/core";
 
 @Component({
     selector: 'my-app',
@@ -17,13 +17,13 @@ export class RichComponent {
     public modules: Module[] = [ClientSideRowModelModule];
 
     constructor() {
-        this.gridOptions = <GridOptions>{
+        this.gridOptions = {
             rowData: RichComponent.createRowData(),
             columnDefs: RichComponent.createColumnDefs()
         };
     }
 
-    private static createColumnDefs() {
+    private static createColumnDefs(): ColDef[] {
         return [
             { headerName: "Name", field: "name", width: 200 },
             {
@@ -59,7 +59,7 @@ export class RichComponent {
         ];
     }
 
-    onGridReady(params) {
+    onGridReady(params: GridReadyEvent) {
         params.api.sizeColumnsToFit();
     }
 }

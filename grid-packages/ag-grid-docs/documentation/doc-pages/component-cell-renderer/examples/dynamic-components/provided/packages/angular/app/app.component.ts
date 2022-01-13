@@ -1,13 +1,13 @@
-import {Component} from '@angular/core';
-// import {RowNode, GridApi, GridReadyEvent} from 'ag-grid-community';
-import {ChildMessageRenderer} from './child-message-renderer.component';
-import {CubeRenderer} from './cube-renderer.component';
-import {CurrencyRenderer} from './currency-renderer.component';
-import {ParamsRenderer} from './params-renderer.component';
-import {SquareRenderer} from './square-renderer.component';
+import { Component } from '@angular/core';
+import { ChildMessageRenderer } from './child-message-renderer.component';
+import { CubeRenderer } from './cube-renderer.component';
+import { CurrencyRenderer } from './currency-renderer.component';
+import { ParamsRenderer } from './params-renderer.component';
+import { SquareRenderer } from './square-renderer.component';
 
 import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
+import { ColDef, GridApi, GridReadyEvent } from '@ag-grid-community/core';
 
 @Component({
     selector: 'my-app',
@@ -29,10 +29,9 @@ import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
         </div>`
 })
 export class AppComponent {
-    private gridApi;
-    // private gridApi: GridApi;
+    private gridApi!: GridApi;
 
-    private columnDefs = [
+    public columnDefs: ColDef[] = [
         {
             headerName: "Row",
             field: "row",
@@ -77,7 +76,7 @@ export class AppComponent {
         }
     ];
 
-    private frameworkComponents = {
+    public frameworkComponents = {
         squareRenderer: SquareRenderer,
         cubeRenderer: CubeRenderer,
         paramsRenderer: ParamsRenderer,
@@ -85,7 +84,7 @@ export class AppComponent {
         childMessageRenderer: ChildMessageRenderer
     };
 
-    private defaultColDef = {
+    public defaultColDef: ColDef = {
         editable: true,
         sortable: true,
         flex: 1,
@@ -94,26 +93,25 @@ export class AppComponent {
         resizable: true
     };
 
-    private rowData: any[];
-    private context: any;
+    public rowData: any[];
+    public context: any;
 
     constructor() {
         this.rowData = this.createRowData();
-        this.context = {componentParent: this};
+        this.context = { componentParent: this };
     }
 
     refreshEvenRowsCurrencyData() {
         this.gridApi.forEachNode((rowNode) => {
-        // this.gridApi.forEachNode((rowNode:RowNode) => {
+            // this.gridApi.forEachNode((rowNode:RowNode) => {
             if (rowNode.data.value % 2 === 0) {
                 rowNode.setDataValue('currency', rowNode.data.value + Number(Math.random().toFixed(2)));
             }
         });
-        this.gridApi.refreshCells({columns: ['currency']});
+        this.gridApi.refreshCells({ columns: ['currency'] });
     }
 
-    onGridReady(params) {
-    // onGridReady(params: GridReadyEvent) {
+    onGridReady(params: GridReadyEvent) {
         this.gridApi = params.api;
     }
 
