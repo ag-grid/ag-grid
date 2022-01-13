@@ -2,6 +2,7 @@ import { Component, KeyCode, PostConstruct, RefSelector, _ } from "@ag-grid-comm
 import { FilterExpression, StateManager, ExpressionComponentParams, PartialStateType } from "../interfaces";
 import { ExpressionComponent } from "./interfaces";
 import { initialiseAndAttachChildren } from "./filterComponentUtils";
+import { RootComponent } from "./rootComponent";
 
 export abstract class RootFloatingComponent<F extends FilterExpression> extends Component implements ExpressionComponent {
     protected stateManager: StateManager<F>;
@@ -38,6 +39,8 @@ export abstract class RootFloatingComponent<F extends FilterExpression> extends 
                 this.checkCompatibleUpdate(u);
             }),
         ].forEach(f => this.addDestroyFunc(f));
+
+        RootComponent.setRootEventHandlers(this, this.refRoot, this.stateManager);
     }
 
     private checkCompatibleUpdate(u: F | PartialStateType<F> | null) {
@@ -53,15 +56,5 @@ export abstract class RootFloatingComponent<F extends FilterExpression> extends 
             this.refChildren,
             this.childComponents
         );
-
-        this.refRoot.addEventListener('keypress', (e) => {
-            if (e.key !== KeyCode.ENTER) { return };
-
-            const isValid = this.stateManager.isTransientExpressionValid();
-            const isNull = this.stateManager.isTransientExpressionNull();
-            if (isValid || isNull) {
-                this.stateManager.applyExpression(this);
-            }
-        });
     }
 }

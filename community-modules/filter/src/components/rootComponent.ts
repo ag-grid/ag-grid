@@ -12,6 +12,18 @@ export abstract class RootComponent<F extends FilterExpression> extends Componen
     @RefSelector('eClearButton') private readonly refClearButton: HTMLElement;
     @RefSelector('eResetButton') private readonly refResetButton: HTMLElement;
 
+    public static setRootEventHandlers(comp: Component, refRoot: HTMLElement, stateManager: StateManager<any>): void {
+        comp.addManagedListener(refRoot, 'keypress', (e) => {
+            if (e.key !== KeyCode.ENTER) { return };
+
+            const isValid = stateManager.isTransientExpressionValid();
+            const isNull = stateManager.isTransientExpressionNull();
+            if (isValid || isNull) {
+                stateManager.applyExpression(comp);
+            }
+        });
+    }
+
     protected constructor(
         private readonly childComponents: (ExpressionComponent<F> & Component)[],
         private readonly exprType: F['type'],
@@ -68,6 +80,7 @@ export abstract class RootComponent<F extends FilterExpression> extends Componen
             }),
         ].forEach(f => this.addDestroyFunc(f));
 
+        RootComponent.setRootEventHandlers(this, this.refRoot, this.stateManager);
         this.updateButtonState();
     }
 
@@ -94,16 +107,6 @@ export abstract class RootComponent<F extends FilterExpression> extends Componen
         this.refClearButton.addEventListener('click', () => {
             this.stateManager.mutateTransientExpression(this, null);
             this.stateManager.applyExpression(this);
-        });
-
-        this.refRoot.addEventListener('keypress', (e) => {
-            if (e.key !== KeyCode.ENTER) { return };
-
-            const isValid = this.stateManager.isTransientExpressionValid();
-            const isNull = this.stateManager.isTransientExpressionNull();
-            if (isValid || isNull) {
-                this.stateManager.applyExpression(this);
-            }
         });
     }
 
