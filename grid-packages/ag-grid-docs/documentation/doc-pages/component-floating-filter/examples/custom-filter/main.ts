@@ -1,10 +1,4 @@
-import {
-    ColDef,
-    GridOptions,
-    IDoesFilterPassParams,
-    IFilterComp,
-    IFilterParams,
-} from '@ag-grid-community/core'
+import {ColDef, GridOptions, IDoesFilterPassParams, IFilterComp, IFilterParams,} from '@ag-grid-community/core'
 
 const isNumeric = (n: string) =>
     !isNaN(parseFloat(n)) && isFinite(parseFloat(n))
@@ -56,8 +50,8 @@ class NumberFilter implements IFilterComp {
             return false;
         }
 
-        const { api, colDef, column, columnApi, context } = this.filterParams;
-        const { node } = params;
+        const {api, colDef, column, columnApi, context} = this.filterParams;
+        const {node} = params;
         const value = this.filterParams.valueGetter({
             api,
             colDef,
@@ -103,7 +97,7 @@ class NumberFilter implements IFilterComp {
 }
 
 const columnDefs: ColDef[] = [
-    { field: 'athlete', width: 150, filter: false },
+    {field: 'athlete', width: 150, filter: false},
     {
         field: 'gold',
         width: 100,

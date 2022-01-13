@@ -386,7 +386,7 @@ function convertColumnDefs(rawColumnDefs, userComponentNames, bindings, componen
                                 const descriptor = Object.getOwnPropertyDescriptor(filter, filterProperty);
                                 descriptor.value = descriptor.value.replace('AG_LITERAL_', '')
                                 if(isExternalVueFile(componentFileNames, descriptor.value)) {
-                                    if (!bindings.components.includes(descriptor.value)) {
+                                    if (!bindings.components.includes(descriptor.value) && !vueComponents.includes(descriptor.value)) {
                                         vueComponents.push(descriptor.value)
                                     }
                                     Object.defineProperty(filter, compToFramework[filterProperty], descriptor);
@@ -401,7 +401,7 @@ function convertColumnDefs(rawColumnDefs, userComponentNames, bindings, componen
                     if (!value.startsWith('ag') && compToFramework[columnProperty]) {
                         const parsedValue = value.replace('AG_LITERAL_', '');
                         if(isExternalVueFile(componentFileNames, parsedValue)) {
-                            if (!bindings.components.includes(parsedValue)) {
+                            if (!bindings.components.includes(parsedValue) && !vueComponents.includes(parsedValue)) {
                                 vueComponents.push(parsedValue)
                             }
                             columnProperties.push(`${compToFramework[columnProperty]}:'${parsedValue}'`);
