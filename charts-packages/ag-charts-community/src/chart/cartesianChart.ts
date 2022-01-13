@@ -298,15 +298,12 @@ export class CartesianChart extends Chart {
                 });
 
                 const isNumberAxis = axis instanceof NumberAxis;
-                let d = [];
 
                 if (axis instanceof NumberAxis) {
-                    d = axis.calculateDomain(new Array<any>().concat(...domains), primaryTickCount);
+                    axis.setDomain(new Array<any>().concat(...domains), primaryTickCount);
                 } else {
-                    d = new Array<any>().concat(...domains);
+                    axis.domain = new Array<any>().concat(...domains);
                 }
-
-                axis.domain = d;
 
                 const isNumberYAxis = axis instanceof NumberAxis && axis.direction === 'y';
 
