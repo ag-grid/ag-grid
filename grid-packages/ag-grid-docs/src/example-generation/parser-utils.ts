@@ -429,7 +429,9 @@ export function findAllAccessedProperties(node) {
  */
 export function convertImportPath(modulePackage: string, convertToPackage: boolean) {
     if (convertToPackage) {
-        if (modulePackage.includes("@ag-grid-community")) {
+        if (modulePackage.includes("@ag-grid-community/angular")) {
+            return `'ag-grid-angular'`
+        } else if (modulePackage.includes("@ag-grid-community")) {
             return `'ag-grid-community'`
         } else if (modulePackage.includes("@ag-grid-enterprise")) {
             return `'ag-grid-enterprise'`

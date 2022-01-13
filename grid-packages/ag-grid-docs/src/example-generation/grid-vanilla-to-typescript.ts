@@ -28,7 +28,8 @@ export function vanillaToTypescript(bindings: any, mainFilePath: string): (impor
             // (.*DOMContentLoaded.*)\n Match the line with DOMContentLoaded
             // (.|\n)*? Match the shortest number of lines until the next part matches (body of the event handler)
             // (\n}\)) Match a }) on a new line with no indentation
-            .replace(/(.*DOMContentLoaded.*)\n((.|\n)*?)(\n}\))/g, '$2');
+            .replace(/(.*DOMContentLoaded.*)\n((.|\n)*?)(\n}\))/g, '$2')
+            .replace(/new agGrid.Grid/g, 'new Grid');
 
         if (unWrapped.includes('DOMContentLoaded')) {
             console.error('DomContentLoaded replace failed for', mainFilePath);
@@ -42,6 +43,7 @@ export function vanillaToTypescript(bindings: any, mainFilePath: string): (impor
         if (gridSettings.enterprise) {
             importStrings.push("import 'ag-grid-enterprise';");
         }
+        importStrings.push(`import { Grid } from '${importType === 'packages' ? 'ag-grid-community' : '@ag-grid-community/core'}';`);
 
         if (imports.length > 0) {
             addBindingImports(imports, importStrings, importType === 'packages', false);

@@ -41,17 +41,40 @@ function writeFile(destination, contents) {
     }
 }
 
-function copyFiles(files, dest, tokenToReplace, replaceValue = '') {
+function copyFiles(files, dest, tokenToReplace, replaceValue = '', importType) {
     files.forEach(sourceFile => {
         const filename = path.basename(sourceFile);
         const destinationFile = path.join(dest, tokenToReplace ? filename.replace(tokenToReplace, replaceValue) : filename);
 
-        const updateImports = (src) => tokenToReplace ? src.replace(tokenToReplace, '') : src;
+        const updateImports = (src) => {
+            if (!destinationFile.endsWith('.ts')) {
+                return src;
+            }
+
+            const { parseFile, extractImportStatements, addBindingImports } = require(`./src/example-generation/parser-utils.ts`);
+            src = tokenToReplace ? src.replace(tokenToReplace, '') : src;
+            const parsed = parseFile(src)
+            const imports = extractImportStatements(parsed);
+
+            // Need to replace module imports with their matching package import
+            let formattedImports = '';
+            if (imports.length > 0) {
+                let importStrings = [];
+                addBindingImports(imports, importStrings, importType === 'packages', true);
+                formattedImports = `${importStrings.join('\n')}\n`
+
+                // Remove the original import statements
+                src = src.replace(/import.*from.*\n/g, '');
+                src = formattedImports + src
+            }
+
+            return src;
+        }
 
         if (useAsyncFileOperations) {
-            fs.readFile(sourceFile, encodingOptions, (_, contents) => writeFile(destinationFile, updateImports(contents)));
+            fs.readFile(sourceFile, encodingOptions, (_, contents) => writeFile(destinationFile, updateImports((contents))));
         } else {
-            writeFile(destinationFile, updateImports(getFileContents(sourceFile)));
+            writeFile(destinationFile, updateImports((getFileContents(sourceFile))));
         }
     });
 }
@@ -247,7 +270,7 @@ function createExampleGenerator(prefix, importTypes) {
 
             copyFiles(stylesheets, basePath);
             copyFiles(rawScripts, basePath);
-            copyFiles(frameworkScripts, scriptsPath, `_${tokenToReplace}`, componentPostfix);
+            copyFiles(frameworkScripts, scriptsPath, `_${tokenToReplace}`, componentPostfix, importType);
         };
 
         const copyProvidedExample = (importType, framework, providedRootPath) => {
