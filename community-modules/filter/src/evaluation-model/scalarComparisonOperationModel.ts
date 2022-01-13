@@ -1,6 +1,6 @@
 import { IDateFilterParams, IScalarFilterParams, _ } from "@ag-grid-community/core";
 import { comparisonOperationOperandCardinality, isScalarComparisonOperation, FilterEvaluationModel, OperandArray, ScalarComparisonOperation, ScalarOperationExpression, PartialTuple } from "../interfaces";
-import { Comparator, FilterExpressionSerialiser } from "./interfaces";
+import { Comparator, ComparatorResult, FilterExpressionSerialiser, toComparatorResult } from "./interfaces";
 
 type OperandExpressionType<T extends number | Date> = T extends number ? number : string;
 
@@ -35,12 +35,21 @@ export class ScalarComparisonOperationModel<T extends number | Date> implements 
         };
     }
 
-    public evaluate(input: T): boolean {
-        if (!this.typePredicate(input)) {
-            throw new Error('AG-Grid - Row value to evaluate isn\'t expected type: ' + input)
-        }
+    public evaluate(input: T | null): boolean {
+        // TODO(AG-6000): Add support for all IFilterParam options.
 
-        const comparisons = this.operands.map((v) => this.comparator.compare(v, input));
+        let comparisons: ComparatorResult[] = [];
+        const customComparator = (this.filterParams as IDateFilterParams)?.comparator;
+
+        if (this.type === 'date-op' && customComparator != null) {
+            const comparator = (v: T | null) => v instanceof Date ?
+                toComparatorResult(customComparator(v, input)) : 0;
+            comparisons = this.operands.map(comparator);
+        } else if (input != null && !this.typePredicate(input)) {
+            throw new Error('AG-Grid - Row value to evaluate isn\'t expected type: ' + input)
+        } else {
+            comparisons = this.operands.map((v) => this.comparator.compare(v, input));
+        }
 
         switch (this.operation) {
             case 'equals':

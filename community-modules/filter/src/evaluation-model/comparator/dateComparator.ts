@@ -1,4 +1,4 @@
-import { Comparator } from "../interfaces";
+import { Comparator, ComparatorResult } from "../interfaces";
 import { DEFAULT_COMPARATOR } from "./defaultComparator";
 
 function formatDate(date: Date | null): string {
@@ -11,7 +11,7 @@ function formatDate(date: Date | null): string {
 }
 
 export class DateComparator implements Comparator<Date> {
-    public compare(a: Date, b: Date): number {
+    public compare(a: Date, b: Date): ComparatorResult {
         if (a === b) { return 0; }
 
         return DEFAULT_COMPARATOR.compare(formatDate(a), formatDate(b));
