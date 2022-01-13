@@ -18,9 +18,15 @@ export class AdvancedV1FilterController extends BeanStub implements AdvancedFilt
 
     private readonly filterUIs: Record<string, InternalUIRecord> = {};
 
+    private support: IFilterParamSupport;
+
     @PostConstruct
     private postConstruct(): void {
         this.addManagedListener(this.eventService, Events.EVENT_FILTER_CHANGED, (e) => this.onFilterChanged(e));
+    }
+
+    public init({ support }: { support: IFilterParamSupport}) {
+        this.support = support;
     }
 
     private onFilterChanged(e: FilterChangedEvent): void {
@@ -72,7 +78,7 @@ export class AdvancedV1FilterController extends BeanStub implements AdvancedFilt
         return result;
     }
 
-    public setFilterModel(model: { [key: string]: any; }, support: IFilterParamSupport): AgPromise<void> {
+    public setFilterModel(model: { [key: string]: any; }): AgPromise<void> {
         const filterState = _.deepCloneObject(model);
         const remainingModelKeys = _.convertToSet(Object.keys(model));
         const promises: AgPromise<any>[] = [];
@@ -106,7 +112,7 @@ export class AdvancedV1FilterController extends BeanStub implements AdvancedFilt
                 throw new Error('AG-Grid - model provided for unknown column: ' + colId);
             }
 
-            const filterPromise = this.createFilterComp(column, 'NO_UI', support);
+            const filterPromise = this.createFilterComp(column, 'NO_UI');
             promises.push(new AgPromise((resolve) => {
                 filterPromise.then((ui) => {
                     const maybePromise = ui?.comp?.setModel(filterState[colId]);
@@ -125,26 +131,26 @@ export class AdvancedV1FilterController extends BeanStub implements AdvancedFilt
         return AgPromise.all(promises).then(() => null);
     }
 
-    public getFilterUIInfo(column: Column, source: FilterRequestSource, support: IFilterParamSupport): AgPromise<FilterUIInfo> {
+    public getFilterUIInfo(column: Column, source: FilterRequestSource): AgPromise<FilterUIInfo> {
         const colId = column.getColId();
 
         if (this.filterUIs[colId] == null) {
-            this.createFilterComp(column, source, support);
+            this.createFilterComp(column, source);
         }
         
         return AgPromise.resolve(this.filterUIs[colId]).then(ui => ui!.filterUIInfo);
     }
 
-    public getFloatingFilterCompDetails(column: Column, source: FilterRequestSource, support: IFilterParamSupport): UserCompDetails {
+    public getFloatingFilterCompDetails(column: Column, source: FilterRequestSource): UserCompDetails {
         const colDef = column.getColDef();
 
-        const filterParams = this.createFilterParams(column, source, support);
+        const filterParams = this.createFilterParams(column, source);
         const finalFilterParams = this.userComponentFactory.mergeParamsWithApplicationProvidedParams(colDef, FilterComponent, filterParams);
 
         const defaultFloatingFilterType = FloatingFilterMapper.getDefaultFloatingFilterType(colDef) || 'agReadOnlyFloatingFilter';
 
         const parentFilterInstance = (callback: IFloatingFilterParentCallback<any>) => {
-            const filterCompUI = this.createFilterComp(column, source, support);
+            const filterCompUI = this.createFilterComp(column, source);
             if (filterCompUI == null) { return; }
     
             filterCompUI.then(ui => {
@@ -161,7 +167,7 @@ export class AdvancedV1FilterController extends BeanStub implements AdvancedFilt
             filterParams: finalFilterParams,
             currentParentModel: () => this.currentModel(column),
             parentFilterInstance,
-            showParentFilter: () => support.showMenuAfterButtonClick(column, menuOpenSource),
+            showParentFilter: () => this.support.showMenuAfterButtonClick(column, menuOpenSource),
             suppressFilterButton: false // This one might be overridden from the colDef
         };
 
@@ -210,13 +216,13 @@ export class AdvancedV1FilterController extends BeanStub implements AdvancedFilt
         return { ...this.filterUIs };
     }
 
-    public createFilterComp(column: Column, source: FilterRequestSource, support: IFilterParamSupport): AgPromise<IFilterCompUI> {
+    public createFilterComp(column: Column, source: FilterRequestSource): AgPromise<IFilterCompUI> {
         const colId = column.getColId();
         if (this.filterUIs[colId] != null) { return AgPromise.resolve(this.filterUIs[colId]); }
 
         const defaultFilter = ModuleRegistry.isRegistered(ModuleNames.SetFilterModule) ? 'agSetColumnFilter' : 'agTextColumnFilter';
 
-        const params = this.createFilterParams(column, source, support);
+        const params = this.createFilterParams(column, source);
         const compDetails = this.userComponentFactory.getFilterDetails(column.getColDef(), params, defaultFilter);
         if (compDetails == null) { throw new Error('AG Grid - unable to create filter for: ' + colId); }
 
@@ -294,9 +300,9 @@ export class AdvancedV1FilterController extends BeanStub implements AdvancedFilt
         return result;
     }
 
-    private createFilterParams(column: Column, source: string, support: IFilterParamSupport): IFilterParams {
+    private createFilterParams(column: Column, source: string): IFilterParams {
         return {
-            ...support.createBaseFilterParams(column),
+            ...this.support.createBaseFilterParams(column),
             filterModifiedCallback: () => {
                 const event: FilterModifiedEvent = {
                     type: Events.EVENT_FILTER_MODIFIED,
@@ -309,8 +315,8 @@ export class AdvancedV1FilterController extends BeanStub implements AdvancedFilt
                 this.eventService.dispatchEvent(event);
             },
             filterChangedCallback: (additionalEventAttributes?: any) =>
-                support.onFilterChanged({/* filterInstance, */ additionalEventAttributes, columns: [column]}),
-            doesRowPassOtherFilter: (node) => support.doesRowPassOtherFilters(column, node),
+                this.support.onFilterChanged({/* filterInstance, */ additionalEventAttributes, columns: [column]}),
+            doesRowPassOtherFilter: (node) => this.support.doesRowPassOtherFilters(column, node),
         };
     }
 }

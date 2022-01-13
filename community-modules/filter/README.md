@@ -1,9 +1,11 @@
 TODO:
-- Skeleton versions of:
+- [ ] Skeleton versions of:
   - ~~`SetFilter`~~.
-  - Custom components.
+  - ~~Custom components.~~
   - Custom filter options.
+- [ ] Floating filters V2.
 - [ ] Improving naming of entities to improve clarity / digestibility.
+  - Rename `Transient` term to `Unapplied`?
 - [ ] Break FilterStateManager up.
 - [ ] Support all V1 behaviours.
     - [ ] AND/OR combinations.
@@ -11,7 +13,12 @@ TODO:
     - [ ] Floating filters.
     - [ ] Excel mode (mostly SetFilter?).
     - [ ] ....List TBC....
-- [ ] Floating filters V2.
 - [ ] Filter model backwards compatibility.
 - [ ] Null filter model in Core for when filter module isn't loaded.
 - [ ] Move diagrams to Confluence / elsewhere.
+
+Testing:
+- Filter module:
+  - [ ] QuickFilter implementation.
+  - [ ] ExternalFilter implementation.
+  - [ ] Floating-filter implementation.

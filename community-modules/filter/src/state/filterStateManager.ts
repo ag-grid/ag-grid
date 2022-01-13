@@ -74,6 +74,8 @@ export class FilterStateManager {
     @Autowired('expressionModelFactory') private readonly expressionModelFactory: EvaluationModelFactory;
     @Autowired('gridOptions') private readonly gridOptions: GridOptions;
 
+    private readonly listeners: FilterListenerManager<FilterChangeListener> = new FilterListenerManager();
+
     private currentState: { [key: string]: ActiveState } = {};
     private transientState: { [key: string]: TransientState } = {};
 
@@ -168,7 +170,11 @@ export class FilterStateManager {
         this.transientState = newTransientExpressions;
 
         notifications.forEach(({column, type}) => this.notifyListenersForColumn(this, column, type));
-        notifications.forEach(({column, type}) => this.notifyTransientListenersForColumn(this, column, type));
+        transientNotifications.forEach(({column, type}) => this.notifyTransientListenersForColumn(this, column, type));
+    }
+
+    public addListener(source: any, listener: FilterChangeListener): () => void {
+        return this.listeners.addListener(source, listener);
     }
 
     public addListenerForColumn(source: any, column: Column, listener: FilterChangeListener): () => void {
@@ -181,7 +187,6 @@ export class FilterStateManager {
 
     public getStateManager(column: Column): StateManager<FilterExpression> {
         const transientState = this.getTransientStateFor(column);
-        const that = {};
 
         return {
             addTransientUpdateListener: (s, cb) => this.addTransientListenerForColumn(s, column, ({ expr }) => cb(expr)),
@@ -228,11 +233,13 @@ export class FilterStateManager {
         const colId = column.getColId();
         const { listeners, model } = this.getStateFor(column) || {};
 
-        if (listeners == null) { return; }
-
         const expression = model.toFilterExpression();
+        const event = { colId, type, expr: expression };
 
-        listeners.notify(source, { colId, type, expr: expression });
+        this.listeners.notify(source, event);
+
+        if (listeners == null) { return; }
+        listeners.notify(source, event);
     }
 
     private notifyTransientListenersForColumn(source: any, column: Column, type: FilterChangeType): void {
@@ -288,7 +295,9 @@ export class FilterStateManager {
         if (!model.isNull() && !model.isValid()) { return; }
         
         this.currentState[colId].model = model;
-        listeners.notify(source, { type: 'apply', colId, expr: model.toFilterExpression() });
+        const event = { type: 'apply' as FilterChangeType, colId, expr: model.toFilterExpression() };
+        listeners.notify(source, event);
+        this.listeners.notify(source, event);
     }
 
     private revertTransientExpression(source: any, column: Column): void {
@@ -297,6 +306,8 @@ export class FilterStateManager {
         const expr = model ? model.toFilterExpression() : null;
         this.transientState[colId].expr = expr || defaultExpression(column, this.gridOptions);
 
-        listeners.notify(source, { type: 'revert', colId, expr });
+        const event = { type: 'revert' as FilterChangeType, colId, expr };
+        listeners.notify(source, event);
+        this.listeners.notify(source, event);
     }
 }

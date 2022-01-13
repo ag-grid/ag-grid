@@ -22,6 +22,7 @@ export interface ExpressionComponentUI extends FilterUICommon {
 export type FilterUI = (IFilterCompUI | ExpressionComponentUI);
 
 interface BaseFilterController {
+    init?(params: { support: IFilterParamSupport }): void;
     isActive(): boolean;
     isFilterActive(column: Column): boolean;
     evaluate(params: { rowNode: RowNode, columnToSkip?: Column }): boolean;
@@ -42,17 +43,17 @@ export interface AdvancedFilterController<T extends FilterUI> extends BaseFilter
     readonly type: 'advanced';
     
     getFilterModel(): { [key: string]: any; };
-    setFilterModel(exprs: {[key: string]: any} | null, support: IFilterParamSupport): AgPromise<void>;
+    setFilterModel(exprs: {[key: string]: any} | null): AgPromise<void>;
     
     onColumnsChanged(): Column[];
     
     isResponsibleFor(column: Column): boolean;
-    getFilterUIInfo(column: Column, source: FilterRequestSource, support: IFilterParamSupport): AgPromise<FilterUIInfo>;
+    getFilterUIInfo(column: Column, source: FilterRequestSource): AgPromise<FilterUIInfo>;
     getAllFilterUIs(): Record<string, T>;
-    createFilterComp(column: Column, source: FilterRequestSource, support: IFilterParamSupport): AgPromise<T>;
+    createFilterComp(column: Column, source: FilterRequestSource): AgPromise<T>;
     destroyFilter(column: Column, source: ColumnEventType): AgPromise<void>;
 
-    getFloatingFilterCompDetails(column: Column, source: FilterRequestSource, support: IFilterParamSupport): UserCompDetails;
+    getFloatingFilterCompDetails(column: Column, source: FilterRequestSource): UserCompDetails;
 }
 
 export type InternalFilterController = StatelessFilterController | AdvancedFilterController<FilterUI>;

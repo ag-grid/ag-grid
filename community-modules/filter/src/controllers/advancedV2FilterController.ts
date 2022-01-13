@@ -16,6 +16,20 @@ export class AdvancedV2FilterController extends BeanStub implements AdvancedFilt
     @Autowired('filterStateManager') private readonly filterState: FilterStateManager;
 
     private readonly filterUIs: Record<string, ExpressionComponentUI> = {};
+    private support: IFilterParamSupport;
+
+    public init({ support }: { support: IFilterParamSupport}) {
+        this.support = support;
+
+        this.addDestroyFunc(
+            this.filterState.addListener(this, ({ colId, type }) => {
+                if (type === 'revert') { return; }
+                
+                const column = this.columnModel.getPrimaryColumn(colId);
+                support.onFilterChanged({ additionalEventAttributes: {}, columns: column ? [column] : [] });
+            })
+        );
+    }
 
     public isActive(): boolean {
         return this.filterState.getCurrentState() != null;
@@ -62,19 +76,19 @@ export class AdvancedV2FilterController extends BeanStub implements AdvancedFilt
         return AgPromise.resolve();
     }
 
-    public getFilterUIInfo(column: Column, source: FilterRequestSource, support: IFilterParamSupport): AgPromise<FilterUIInfo> {
+    public getFilterUIInfo(column: Column, source: FilterRequestSource): AgPromise<FilterUIInfo> {
         const colId = column.getColId();
 
         if (this.filterUIs[colId] == null) {
-            this.createFilterComp(column, source, support);
+            this.createFilterComp(column, source);
         }
         
         return AgPromise.resolve(this.filterUIs[colId]).then(ui => ui!.filterUIInfo);
     }
 
-    public getFloatingFilterCompDetails(column: Column, source: FilterRequestSource, support: IFilterParamSupport): UserCompDetails {
+    public getFloatingFilterCompDetails(column: Column, source: FilterRequestSource): UserCompDetails {
         const result = floatingFilterUserCompDetails(column, this.gridOptions, (instance) => {
-            this.initialiseFilterComponent(column, instance, support);
+            this.initialiseFilterComponent(column, instance);
         });
 
         if (result == null) {
@@ -88,7 +102,7 @@ export class AdvancedV2FilterController extends BeanStub implements AdvancedFilt
         return { ...this.filterUIs };
     }
 
-    public createFilterComp(column: Column, source: FilterRequestSource, support: IFilterParamSupport): AgPromise<ExpressionComponentUI> {
+    public createFilterComp(column: Column, source: FilterRequestSource): AgPromise<ExpressionComponentUI> {
         const colId = column.getColId();
         if (this.filterUIs[colId] != null) { AgPromise.resolve(this.filterUIs[colId]); }
 
@@ -99,13 +113,7 @@ export class AdvancedV2FilterController extends BeanStub implements AdvancedFilt
             throw new Error('AG-Grid - unable to create filter UI component for: ' + column.getColId());
         }
         
-        this.filterUIs[colId] = this.initialiseFilterComponent(column, filterExprComp, support);
-
-        this.addListenerForColumn(this, column, ({ type }) => {
-            if (type === 'revert') { return; }
-            
-            support.onFilterChanged({ additionalEventAttributes: {}, columns: [column] });
-        });
+        this.filterUIs[colId] = this.initialiseFilterComponent(column, filterExprComp);
 
         return AgPromise.resolve(this.filterUIs[colId]);
     }
@@ -146,7 +154,6 @@ export class AdvancedV2FilterController extends BeanStub implements AdvancedFilt
     private initialiseFilterComponent(
         column: Column,
         comp: ExpressionComponentUI['comp'],
-        support: IFilterParamSupport,
     ): ExpressionComponentUI {
         this.createBean(comp);
         this.addDestroyFunc(() => this.destroyBean(comp));
@@ -155,7 +162,7 @@ export class AdvancedV2FilterController extends BeanStub implements AdvancedFilt
         this.addDestroyFunc(() => this.destroyBean(adaptor));
 
         const filterParams = omit(
-            support.createBaseFilterParams(column),
+            this.support.createBaseFilterParams(column),
             'filterChangedCallback',
             'filterModifiedCallback',
         );

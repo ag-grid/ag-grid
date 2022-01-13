@@ -56,6 +56,9 @@ export class IFilterManagerAdapter extends BeanStub implements IFilterManager {
             this.advancedV1FilterController,
             this.advancedV2FilterController,
         );
+        this.allControllers.forEach((controller) => {
+            controller.init?.({ support: this.iFilterParamsSupport });
+        });
     }
 
     public doesRowPassFilter(params: { rowNode: RowNode; columnToSkip?: Column }): boolean {
@@ -123,7 +126,7 @@ export class IFilterManagerAdapter extends BeanStub implements IFilterManager {
                 }
             }
 
-            promises.push(controller.setFilterModel(modelUpdate, this.iFilterParamsSupport));
+            promises.push(controller.setFilterModel(modelUpdate));
         }
 
         if (modelKeys.size > 0) {
@@ -157,14 +160,14 @@ export class IFilterManagerAdapter extends BeanStub implements IFilterManager {
         const controller = findControllerFor(column, this.allControllers);
         if (!controller) { throw new Error('AG-Grid - couldn\'t find filter controller for column: ' + column.getColId()); }
 
-        return controller.getFilterUIInfo(column, source, this.iFilterParamsSupport);
+        return controller.getFilterUIInfo(column, source);
     }
 
     public getFloatingFilterCompDetails(column: Column, source: FilterRequestSource): UserCompDetails {
         const controller = findControllerFor(column, this.allControllers);
         if (!controller) { throw new Error('AG-Grid - couldn\'t find filter controller for column: ' + column.getColId()); }
 
-        return controller.getFloatingFilterCompDetails(column, source, this.iFilterParamsSupport);
+        return controller.getFloatingFilterCompDetails(column, source);
     }
 
     public getFilterComponent(column: Column, source: FilterRequestSource, createIfDoesNotExist = true): AgPromise<IFilterComp> | null {
@@ -183,7 +186,7 @@ export class IFilterManagerAdapter extends BeanStub implements IFilterManager {
 
         if (!createIfDoesNotExist) { return null; }
 
-        return controller.createFilterComp(column, source, this.iFilterParamsSupport)
+        return controller.createFilterComp(column, source)
             .then((filterUI) => {
                 return filterUiToResult(filterUI!);
             });
