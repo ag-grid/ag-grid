@@ -6,6 +6,7 @@ import { Series } from "./series/series";
 import { BBox } from "../scene/bbox";
 import { ClipRect } from "../scene/clipRect";
 import { Navigator } from "./navigator/navigator";
+import { NumberAxis } from "./axis/numberAxis";
 
 export class CartesianChart extends Chart {
     static className = 'CartesianChart';
@@ -283,6 +284,7 @@ export class CartesianChart extends Chart {
     updateAxes() {
         const { navigator } = this;
         let clipSeries = false;
+        let primaryTickCount: number;
 
         this.axes.forEach(axis => {
             const { direction, boundSeries } = axis;
@@ -295,7 +297,22 @@ export class CartesianChart extends Chart {
                     domains.push(series.getDomain(direction));
                 });
 
-                axis.domain = new Array<any>().concat(...domains);
+                const isNumberAxis = axis instanceof NumberAxis;
+                let d = [];
+
+                if (axis instanceof NumberAxis) {
+                    d = axis.calculateDomain(new Array<any>().concat(...domains), primaryTickCount);
+                } else {
+                    d = new Array<any>().concat(...domains);
+                }
+
+                axis.domain = d;
+
+                const isNumberYAxis = axis instanceof NumberAxis && axis.direction === 'y';
+
+                if (isNumberYAxis) {
+                    primaryTickCount = primaryTickCount || axis.scale.ticks!(axis.tick.count).length;
+                }
             }
 
             if (axis.direction === ChartAxisDirection.X) {
