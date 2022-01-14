@@ -62,7 +62,7 @@
     "@ag-grid-community/core": "~26.2.0",
     "@ag-grid-community/react": "~26.2.0",
     "@ag-grid-community/vue": "~26.2.0",
-    "@ag-grid-enterprise/excel-export": "~26.2.0",
+    "@ag-grid-enterprise/all-modules": "~26.2.0",
     "@angular/animations": "^10.2.3",
     "@angular/common": "10.2.3",
     "@angular/compiler": "10.2.3",

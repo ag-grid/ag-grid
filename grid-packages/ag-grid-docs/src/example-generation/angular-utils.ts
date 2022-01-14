@@ -4,8 +4,17 @@ export const toInput = (property: any) => `[${property.name}]="${property.name}"
 export const toConst = (property: any) => `[${property.name}]="${property.value}"`;
 export const toOutput = (event: any) => `(${event.name})="${event.handlerName}($event)"`;
 export const toMember = (property: any) => `public ${property.name};`;
-export const toAssignment = (property: any) => `public ${property.name} = ${property.value}`;
-export const toAssignmentWithType = (property: any) => `public ${property.name}: ${property.typings.typeName} = ${property.value}`;
+export const toMemberWithValue = (property: any) => {
+    if (property.typings) {
+        const typing = property.typings.typeName;
+        if (!['number', 'string', 'boolean'].includes(typing)) {
+            // Don't include obvious types
+            return `public ${property.name}: ${property.typings.typeName} = ${property.value}`;
+        }
+    }
+    return `public ${property.name} = ${property.value}`;
+}
+export const toAssignment = (property: any) => `this.${property.name} = ${property.value}`;
 
 export function convertTemplate(template: string) {
     recognizedDomEvents.forEach(event => {

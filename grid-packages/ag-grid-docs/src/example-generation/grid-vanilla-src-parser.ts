@@ -6,6 +6,7 @@ import {
     extractClassDeclarations,
     extractEventHandlers,
     extractImportStatements,
+    extractTypeDeclarations,
     extractUnboundInstanceMethods,
     findAllAccessedProperties,
     findAllVariables,
@@ -139,27 +140,24 @@ function getTypeLookupFunc(includeTypes, fileName) {
 
                 const pop = gridOptionsInterface.members.find(m => (ts.isPropertySignature(m) || ts.isMethodSignature(m)) && m.name.getText() == propName) as ts.PropertySignature | ts.MethodSignature;
                 if (pop && pop.type) {
-                    const typeGOps = typeChecker.getTypeAtLocation(pop.type) as any
-                    let namedType = typeChecker.typeToString(typeGOps);
+                    //  const typeGOps = typeChecker.getTypeAtLocation(pop.type) as any
+                    // let namedType = typeChecker.typeToString(typeGOps); // This gets rid of null from lots of types so maybe not so good.
+                    let namedType = pop.type.getText();
                     const typesToInclude = []
-                    if (typeGOps.resolvedTypeArguments) {
-                        typeGOps.resolvedTypeArguments.forEach(t => {
-                            if (t.types) {
-                                t.types.forEach(tt => {
-                                    if (tt.symbol) {
-                                        typesToInclude.push(typeChecker.typeToString(tt))
-                                    } else {
-                                        // string literal types which we just ignore for now.
-                                    }
-                                });
+
+                    const getTypes = (node: ts.Node) => {
+                        if (ts.isIdentifier(node)) {
+                            const typeName = node.getText();
+                            if (!['HTMLElement', 'Function', 'Partial'].includes(typeName)) {
+                                typesToInclude.push(typeName);
                             }
-                        });
+                        }
+                        node.forEachChild(ct => {
+                            getTypes(ct)
+                        })
                     }
-                    if (propName === 'sortingOrder') {
-                        // Special case handling to ensure that null is included in the array type.
-                        namedType = `('asc' | 'desc' | null)[]`
-                    }
-                    return { typeName: namedType, typesToInclude };
+                    getTypes(pop.type);
+                    return { typeName: namedType, typesToInclude: typesToInclude };
                 } else {
                     console.warn(`Could not find GridOptions property ${propName} for example file ${fileName}`);
                 }
@@ -604,6 +602,7 @@ function internalParser({ fileName, srcFile, includeTypes }, html, exampleSettin
 
     tsBindings.template = domTree.html().replace(/<br>/g, '<br />');
     tsBindings.imports = extractImportStatements(tsTree);
+    tsBindings.typeDeclares = extractTypeDeclarations(tsTree);
     tsBindings.classes = extractClassDeclarations(tsTree);
 
     tsBindings.gridSettings = {
