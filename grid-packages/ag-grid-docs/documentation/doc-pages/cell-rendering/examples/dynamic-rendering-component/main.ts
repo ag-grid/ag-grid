@@ -18,13 +18,13 @@ const gridOptions: GridOptions = {
     {
       headerName: 'Rendered Value',
       field: 'value',
-      cellRendererSelector: function (params: ICellRendererParams) {
+      cellRendererCompSelector: function (params: ICellRendererParams) {
         const moodDetails = {
-          component: MoodRenderer,
+          comp: MoodRenderer
         }
 
         const genderDetails = {
-          component: GenderRenderer,
+          comp: GenderRenderer,
           params: { values: ['Male', 'Female'] },
         }
 

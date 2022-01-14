@@ -4,11 +4,11 @@ import { CustomPinnedRowRenderer } from "./customPinnedRowRenderer_typescript";
 const columnDefs: ColDef[] = [
   {
     field: 'athlete',
-    cellRendererSelector: function (params) {
+    cellRendererCompSelector: function (params) {
       if (params.node.rowPinned) {
         return {
           // spl todo - works for js, ts and angular - fails for react
-          component: CustomPinnedRowRenderer,
+          comp: CustomPinnedRowRenderer,
           params: {
             style: { color: 'blue' },
           },
@@ -21,10 +21,10 @@ const columnDefs: ColDef[] = [
   },
   {
     field: 'age',
-    cellRendererSelector: function (params) {
+    cellRendererCompSelector: function (params) {
       if (params.node.rowPinned) {
         return {
-          component: CustomPinnedRowRenderer,
+          comp: CustomPinnedRowRenderer,
           params: {
             style: { 'font-style': 'italic' },
           },

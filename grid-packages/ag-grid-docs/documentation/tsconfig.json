@@ -26,7 +26,6 @@
         "./custom-types/**/*"
     ],
     "exclude": [
-        "./node_modules",
-        "./doc-pages/**/_gen/**/angular/**/*",
+        "./node_modules"
     ]
 }

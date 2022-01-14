@@ -1387,7 +1387,7 @@
   },
   "CompSelectorResult": {
     "meta": {},
-    "type": { "comp": "any", "params": "any" }
+    "type": { "comp?": "any", "params?": "any" }
   },
   "GridOptions": {
     "meta": {},
