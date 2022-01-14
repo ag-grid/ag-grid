@@ -5,6 +5,7 @@ import { Autowired, PostConstruct } from "../context/context";
 import { PopupService } from "./popupService";
 import { setElementWidth, getAbsoluteWidth, getInnerHeight } from "../utils/dom";
 import { IAgLabel } from './agAbstractLabel';
+import { setAriaExpanded } from "../utils/aria";
 
 export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
     protected listComponent: AgList;
@@ -68,6 +69,7 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
                 destroyMouseWheelFunc!();
 
                 if (this.isAlive()) {
+                    setAriaExpanded(this.eWrapper, false);
                     this.getFocusableElement().focus();
                 }
             },
@@ -80,6 +82,7 @@ export class AgSelect extends AgPickerField<HTMLSelectElement, string> {
         this.isPickerDisplayed = true;
 
         setElementWidth(listGui, getAbsoluteWidth(this.eWrapper));
+        setAriaExpanded(this.eWrapper, true);
 
         listGui.style.maxHeight = getInnerHeight(this.popupService.getPopupParent()) + 'px';
         listGui.style.position = 'absolute';

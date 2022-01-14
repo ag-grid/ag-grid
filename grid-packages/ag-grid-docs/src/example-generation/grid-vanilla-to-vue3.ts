@@ -202,7 +202,7 @@ function getImports(bindings: any, componentFileNames: string[], importType: Imp
     }
 }
 
-function getPropertyBindings(bindings: any, componentFileNames: string[], importType: ImportType, vueComponents:any): [string[], string[], string[]] {
+function getPropertyBindings(bindings: any, componentFileNames: string[], importType: ImportType, vueComponents: any): [string[], string[], string[]] {
     const propertyAssignments = [];
     const propertyVars = [];
     const propertyAttributes = [];
@@ -213,7 +213,32 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
             property.name !== 'columnDefs'
         )
         .forEach(property => {
-            if (componentFileNames.length > 0 && property.name === 'components') {
+            if (bindings.vuePropertyBindings[property.name]) {
+                const parsedObj = JSON5.parse(bindings.vuePropertyBindings[property.name]);
+                const panelArrayName = parsedObj['toolPanels'] ? 'toolPanels' : 'statusPanels';
+                if (parsedObj[panelArrayName]) {
+                    parsedObj[panelArrayName].forEach(panel => {
+                        Object.keys(panel).forEach(panelProperty => {
+                            if (!panelProperty.startsWith('ag') && compToFramework[panelProperty] && typeof panel[panelProperty] === 'string') {
+                                const parsedValue = panel[panelProperty].replace('AG_LITERAL_', '')
+                                if (isExternalVueFile(componentFileNames, parsedValue)) {
+                                    panel[compToFramework[panelProperty]] = parsedValue;
+                                    delete panel[panelProperty];
+
+                                    if (!vueComponents.includes(parsedValue)) {
+                                        vueComponents.push(parsedValue)
+                                    }
+                                }
+                            }
+                        })
+                    });
+                    property.value = JSON.stringify(parsedObj);
+                }
+
+                propertyAttributes.push(toInput(property));
+                propertyVars.push(toMember(property));
+                propertyAssignments.push(toAssignment(property));
+            } else if (componentFileNames.length > 0 && property.name === 'components') {
                 // we use bindings.components for vue examples (and not frameworkComponents), except for agDateInput, agColumnHeader, etc which we still need
                 // frameworkComponents for
                 if (bindings.components) {
@@ -388,7 +413,7 @@ function convertColumnDefs(rawColumnDefs, userComponentNames, bindings, componen
                                 const descriptor = Object.getOwnPropertyDescriptor(filter, filterProperty);
                                 descriptor.value = descriptor.value.replace('AG_LITERAL_', '')
                                 if(isExternalVueFile(componentFileNames, descriptor.value)) {
-                                    if (!bindings.components.includes(descriptor.value)) {
+                                    if (!bindings.components.includes(descriptor.value) && !vueComponents.includes(descriptor.value)) {
                                         vueComponents.push(descriptor.value)
                                     }
                                     Object.defineProperty(filter, compToFramework[filterProperty], descriptor);
@@ -403,7 +428,7 @@ function convertColumnDefs(rawColumnDefs, userComponentNames, bindings, componen
                     if (!value.startsWith('ag') && compToFramework[columnProperty]) {
                         const parsedValue = value.replace('AG_LITERAL_', '');
                         if(isExternalVueFile(componentFileNames, parsedValue)) {
-                            if (!bindings.components.includes(parsedValue)) {
+                            if (!bindings.components.includes(parsedValue) && !vueComponents.includes(parsedValue)) {
                                 vueComponents.push(parsedValue)
                             }
                             columnProperties.push(`${compToFramework[columnProperty]}:'${parsedValue}'`);
@@ -446,16 +471,27 @@ function convertColumnDefs(rawColumnDefs, userComponentNames, bindings, componen
     return columnDefs;
 }
 
-function convertDefaultColDef(defaultColDef): string {
-    return GRID_COMPONENTS.reduce((acc, componentName) => {
-        if (componentName === 'filter') {
-            if (defaultColDef.indexOf('filter: true') === -1 && defaultColDef.indexOf('filter: \'ag\'') === -1) {
-                return acc.replace(/componentName\b/g, `${componentName}Framework`);
-            }
-        }
+function convertDefaultColDef(defaultColDef, vueComponents): string {
+    const result = [];
+    const perLine = defaultColDef.split('\n');
+    perLine.forEach(line => {
+        if (line.includes('filter:') && line.indexOf('filter: true') === -1 && line.indexOf('filter: \'ag\'') === -1) {
+            result.push(line.replace('filter', `${line}Framework`));
+        } else if (line.includes('tooltipComp')) {
+            const component = line.match(/.*:\s*(.*),/) ? line.match(/.*:\s*(.*),/)[1] : line.match(/.*:\s*(.*)$/)[1]
+            line = line.replace(component, `'${component}'`)
+            line = line.replace('tooltipComp', `tooltipComponentFramework`);
+            result.push(line);
 
-        return acc;
-    }, defaultColDef)
+            if(!vueComponents.includes(component)) {
+                vueComponents.push(component)
+            }
+        } else {
+            result.push(line);
+        }
+    })
+
+    return result.join('\n');
 }
 
 const getColumnDefs = (bindings: any, utilFunctions: any[], componentFileNames, vueComponents) => {
@@ -479,7 +515,7 @@ export function vanillaToVue3(bindings: any, componentFileNames: string[]): (imp
     const eventAttributes = bindings.eventHandlers.filter(event => event.name !== 'onGridReady').map(toOutput);
     const [eventHandlers, externalEventHandlers, instanceMethods, utilFunctions] = getAllMethods(bindings);
     const columnDefs = getColumnDefs(bindings, utilFunctions, componentFileNames, vueComponents);
-    const defaultColDef = bindings.defaultColDef ? convertDefaultColDef(bindings.defaultColDef) : null;
+    const defaultColDef = bindings.defaultColDef ? convertDefaultColDef(bindings.defaultColDef, vueComponents) : null;
 
     return importType => {
         const imports = getImports(bindings, componentFileNames, importType);

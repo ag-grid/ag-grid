@@ -1,12 +1,26 @@
 import { ColDef, GridOptions, ICellRendererParams } from '@ag-grid-community/core'
 
+class NodeIdRenderer {
+    eGui?: HTMLElement;
+
+    constructor() {
+    }
+
+    init(params: ICellRendererParams) {
+        this.eGui = document.createElement('div');
+        this.eGui.innerHTML = params.node!.id! + 1;
+    }
+
+    getGui() {
+        return this.eGui;
+    }
+}
+
 const columnDefs: ColDef[] = [
     // this row just shows the row index, doesn't use any data from the row
     {
         headerName: '#',
-        cellRendererComp: function (params: ICellRendererParams) {
-            return params.node!.id! + 1
-        }
+        cellRendererComp: NodeIdRenderer
     },
     { field: 'athlete', filterParams: { buttons: ['clear', 'reset', 'apply'] } },
     {
