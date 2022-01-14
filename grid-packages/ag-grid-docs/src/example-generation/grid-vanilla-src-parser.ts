@@ -11,6 +11,7 @@ import {
     extractUnboundInstanceMethods,
     findAllAccessedProperties,
     findAllVariables,
+    getTypes,
     parseFile,
     readAsJsFile,
     recognizedDomEvents,
@@ -130,7 +131,7 @@ function getTypeLookupFunc(includeTypes, fileName) {
     let lookupType = (propName: string) => undefined;
     if (includeTypes) {
         const program = cachedProgram || ts.createProgram([fileName], {});
-        const typeChecker = program.getTypeChecker()
+        program.getTypeChecker(); // does something important to make types work below
 
         const optionsFile = program.getSourceFiles().find(f => f.fileName.endsWith('gridOptions.d.ts'));
         if (optionsFile) {
@@ -141,24 +142,7 @@ function getTypeLookupFunc(includeTypes, fileName) {
 
                 const pop = gridOptionsInterface.members.find(m => (ts.isPropertySignature(m) || ts.isMethodSignature(m)) && m.name.getText() == propName) as ts.PropertySignature | ts.MethodSignature;
                 if (pop && pop.type) {
-                    //  const typeGOps = typeChecker.getTypeAtLocation(pop.type) as any
-                    // let namedType = typeChecker.typeToString(typeGOps); // This gets rid of null from lots of types so maybe not so good.
-                    let namedType = pop.type.getText();
-                    const typesToInclude = []
-
-                    const getTypes = (node: ts.Node) => {
-                        if (ts.isIdentifier(node)) {
-                            const typeName = node.getText();
-                            if (!['HTMLElement', 'Function', 'Partial'].includes(typeName)) {
-                                typesToInclude.push(typeName);
-                            }
-                        }
-                        node.forEachChild(ct => {
-                            getTypes(ct)
-                        })
-                    }
-                    getTypes(pop.type);
-                    return { typeName: namedType, typesToInclude: typesToInclude };
+                    return { typeName: pop.type.getText(), typesToInclude: getTypes(pop.type) };
                 } else {
                     console.warn(`Could not find GridOptions property ${propName} for example file ${fileName}`);
                 }

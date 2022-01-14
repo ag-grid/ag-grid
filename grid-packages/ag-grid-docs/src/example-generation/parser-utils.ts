@@ -296,6 +296,36 @@ export function extractUnboundInstanceMethods(srcFile: ts.SourceFile) {
     return inScopeMethods;
 }
 
+export function extractTypeInfoForVariable(srcFile: ts.SourceFile, varName: string) {
+    let typeStr = undefined;
+    let typeParts = [];
+    srcFile.statements.forEach(node => {
+        if (ts.isVariableStatement(node)) {
+            node.declarationList.declarations.forEach(dec => {
+                if (ts.isVariableDeclaration(dec) && dec.name.getText() == varName && dec.type) {
+                    typeStr = dec.type.getText();
+                    typeParts = getTypes(dec.type)
+                }
+            })
+        }
+    })
+    return { typeStr, typeParts };
+}
+
+export function getTypes(node: ts.Node) {
+    let typesToInclude = []
+    if (ts.isIdentifier(node)) {
+        const typeName = node.getText();
+        if (!['HTMLElement', 'Function', 'Partial'].includes(typeName)) {
+            typesToInclude.push(typeName);
+        }
+    }
+    node.forEachChild(ct => {
+        typesToInclude = [...typesToInclude, ...getTypes(ct)]
+    })
+    return typesToInclude;
+}
+
 export function extractImportStatements(srcFile: ts.SourceFile): BindingImport[] {
     let allImports = [];
     srcFile.statements.forEach(node => {
@@ -323,7 +353,7 @@ export function extractImportStatements(srcFile: ts.SourceFile): BindingImport[]
     return allImports;
 }
 
-export function extractTypeDeclarations(srcFile: ts.SourceFile): BindingImport[] {
+export function extractTypeDeclarations(srcFile: ts.SourceFile) {
     const allDeclareStatements = [];
     srcFile.statements.forEach(node => {
         if ((ts.isVariableStatement(node) || ts.isFunctionDeclaration(node)) && node.modifiers?.length > 0) {

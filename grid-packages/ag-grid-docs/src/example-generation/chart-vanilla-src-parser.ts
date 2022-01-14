@@ -1,6 +1,6 @@
 import * as $ from 'jquery';
 import {
-    extractEventHandlers, extractImportStatements, extractUnboundInstanceMethods, parseFile, readAsJsFile, recognizedDomEvents, removeInScopeJsDoc, tsCollect, tsGenerate, tsNodeIsFunctionWithName, tsNodeIsGlobalFunctionCall, tsNodeIsGlobalVarWithName, tsNodeIsInScope, tsNodeIsPropertyWithName, tsNodeIsTopLevelVariable, tsNodeIsTypeDeclaration, tsNodeIsUnusedFunction
+    extractEventHandlers, extractImportStatements, extractTypeInfoForVariable, extractUnboundInstanceMethods, parseFile, readAsJsFile, recognizedDomEvents, removeInScopeJsDoc, tsCollect, tsGenerate, tsNodeIsFunctionWithName, tsNodeIsGlobalFunctionCall, tsNodeIsGlobalVarWithName, tsNodeIsInScope, tsNodeIsPropertyWithName, tsNodeIsTopLevelVariable, tsNodeIsTypeDeclaration, tsNodeIsUnusedFunction
 } from './parser-utils';
 
 export const templatePlaceholder = '$$CHART$$';
@@ -147,6 +147,7 @@ export function internalParser(js, html) {
     domTree.find('#myChart').replaceWith(templatePlaceholder);
     tsBindings.template = domTree.html();
     tsBindings.imports = extractImportStatements(tsTree);
+    tsBindings.optionsTypeInfo = extractTypeInfoForVariable(tsTree, 'options');
 
     return tsBindings;
 }

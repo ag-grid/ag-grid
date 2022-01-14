@@ -7,12 +7,12 @@ export function processFunction(code: string): string {
     return wrapOptionsUpdateCode(convertFunctionToProperty(code));
 }
 
-function getImports(componentFileNames: string[]): string[] {
+function getImports(componentFileNames: string[], { typeParts }): string[] {
     const imports = [
         "import { cloneDeep } from 'lodash';",
         "import { Component } from '@angular/core';",
         "import * as agCharts from 'ag-charts-community';",
-        "import { AgChartOptions } from 'ag-charts-community';"
+        `import { ${typeParts.join(', ')} } from 'ag-charts-community';`
     ];
 
     if (componentFileNames) {
@@ -35,8 +35,9 @@ function getTemplate(bindings: any, attributes: string[]): string {
 
 export function vanillaToAngular(bindings: any, componentFileNames: string[]): () => string {
     return () => {
-        const { properties, imports: bindingImports, declarations } = bindings;
-        const imports = getImports(componentFileNames);
+        const { properties, imports: bindingImports, declarations, optionsTypeInfo } = bindings;
+        const opsTypeInfo = optionsTypeInfo || { typeParts: ['AgChartOptions'], typeStr: 'AgChartOptions' };
+        const imports = getImports(componentFileNames, opsTypeInfo);
         if (bindingImports?.length > 0) {
             addBindingImports(bindingImports, imports, true, true);
         }
@@ -78,7 +79,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): (
 })
 
 export class AppComponent {
-    private options: AgChartOptions;
+    private options: ${opsTypeInfo.typeStr};
     ${propertyVars.filter(p => p.name === 'options').join('\n')}
 
     constructor() {
