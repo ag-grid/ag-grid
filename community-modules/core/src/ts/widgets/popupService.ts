@@ -48,7 +48,7 @@ export interface AddPopupParams {
     // the child is removed again, giving a model look to popups.
     modal?: boolean;
     // the element to place in the popup
-    eChild: any;
+    eChild: HTMLElement;
     // if hitting ESC should close the popup
     closeOnEsc?: boolean;
     // a callback that gets called when the popup is closed
@@ -471,7 +471,11 @@ export class PopupService extends BeanStub {
             this.gridOptionsWrapper.isEnableRtl() ? 'ag-rtl' : 'ag-ltr',
             'ag-popup-child'
         );
-        setAriaRole(eChild, 'dialog');
+
+        if (!eChild.hasAttribute('role')) {
+            setAriaRole(eChild, 'dialog');
+        }
+
         setAriaLabel(eChild, ariaLabel);
 
         if (this.focusService.isKeyboardMode()) {

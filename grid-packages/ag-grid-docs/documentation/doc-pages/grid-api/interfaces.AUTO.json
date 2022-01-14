@@ -10110,7 +10110,7 @@
     "meta": {},
     "type": {
       "modal?": "boolean",
-      "eChild": "any",
+      "eChild": "HTMLElement",
       "closeOnEsc?": "boolean",
       "closedCallback?": "(e?: MouseEvent | TouchEvent | KeyboardEvent) => void",
       "click?": "MouseEvent | Touch | null",

@@ -17621,7 +17621,7 @@
   "DIRECTION": {},
   "AddPopupParams": {
     "modal": { "type": { "returnType": "boolean", "optional": true } },
-    "eChild": { "type": { "returnType": "any", "optional": false } },
+    "eChild": { "type": { "returnType": "HTMLElement", "optional": false } },
     "closeOnEsc": { "type": { "returnType": "boolean", "optional": true } },
     "closedCallback": {
       "type": {
