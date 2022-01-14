@@ -43,14 +43,6 @@ export class NumberAxis extends ChartAxis {
     public setDomain(domain: number[], primaryTickCount?: number) {
         const { scale, min, max } = this;
 
-        if (primaryTickCount) {
-            // when `primaryTickCount` is supplied the current axis is a secondary axis which needs to be aligned to
-            // the primary by constraining the tick count to the primary axis tick count
-            scale.domain = calculateSecondaryAxisDomain(domain, primaryTickCount);
-            this.ticks = getTicks(scale.domain[0], scale.domain[1], primaryTickCount);
-            return;
-        }
-
         if (domain.length > 2) {
             domain = extent(domain, isContinuous, Number) || [0, 1];
         }
@@ -62,11 +54,20 @@ export class NumberAxis extends ChartAxis {
 
         scale.domain = domain;
 
-        this.onLabelFormatChange(this.label.format);
+        if (primaryTickCount) {
+            // when `primaryTickCount` is supplied the current axis is a secondary axis which needs to be aligned to
+            // the primary by constraining the tick count to the primary axis tick count
+            scale.domain = calculateSecondaryAxisDomain(domain, primaryTickCount);
+            this.ticks = getTicks(scale.domain[0], scale.domain[1], primaryTickCount);
+            return;
+        } else {
 
-        (this.scale as ContinuousScale).clamp = true;
-        if (this.nice && this.scale.nice) {
-            this.scale.nice(this.tick.count);
+            this.onLabelFormatChange(this.label.format); // not sure why this is required?
+
+            (this.scale as ContinuousScale).clamp = true;
+            if (this.nice && this.scale.nice) {
+                this.scale.nice(this.tick.count);
+            }
         }
     }
 
