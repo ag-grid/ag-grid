@@ -1,5 +1,5 @@
 import { ColDef, GridOptions } from '@ag-grid-community/core'
-import { CustomHeader, ICustomHeaderParams } from './customHeader_typescript'
+import { CustomHeader } from './customHeader_typescript'
 
 const columnDefs: ColDef[] = [
   { field: 'athlete', suppressMenu: true, minWidth: 120 },
@@ -38,7 +38,7 @@ const gridOptions: GridOptions = {
     resizable: true,
     headerComponentParams: {
       menuIcon: 'fa-bars'
-    } as ICustomHeaderParams,
+    },
   },
 }
 

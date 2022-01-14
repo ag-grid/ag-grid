@@ -1,4 +1,4 @@
-import { DetailGridInfo, GridApi, GridOptions, ICellRendererComp, ICellRendererParams } from "@ag-grid-community/core";
+import { DetailGridInfo, Grid, GridApi, GridOptions, ICellRendererComp, ICellRendererParams } from "@ag-grid-community/core";
 
 export class DetailCellRenderer implements ICellRendererComp {
   eGui!: HTMLElement;
@@ -33,7 +33,7 @@ export class DetailCellRenderer implements ICellRendererComp {
       rowData: this.params.data.callRecords
     };
 
-    new agGrid.Grid(eDetailGrid, detailGridOptions);
+    new Grid(eDetailGrid, detailGridOptions);
 
     this.detailGridApi = detailGridOptions.api!;
 

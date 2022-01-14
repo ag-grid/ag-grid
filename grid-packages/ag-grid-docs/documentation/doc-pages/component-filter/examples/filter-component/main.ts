@@ -1,9 +1,8 @@
-import {ColDef, GridOptions} from '@ag-grid-community/core'
-
-declare var PartialMatchFilter: any
+import { ColDef, GridOptions } from '@ag-grid-community/core'
+import { PartialMatchFilter } from './partialMatchFilter_typescript'
 
 const columnDefs: ColDef[] = [
-    {field: 'row'},
+    { field: 'row' },
     {
         field: 'name',
         // spl todo - filterFramework not working for either vue 2 or vue 3

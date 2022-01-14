@@ -62,6 +62,7 @@ const options: AgChartOptions = {
 
 var chart = agCharts.AgChart.create(options)
 
+/** inScope */
 function applyTheme(theme: AgChartTheme) {
   options.theme = theme
   agCharts.AgChart.update(chart, options)

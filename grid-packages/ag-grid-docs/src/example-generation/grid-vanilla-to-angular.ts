@@ -1,8 +1,8 @@
-import { convertTemplate, getImport, toAssignmentWithType, toConst, toInput, toMember, toOutput } from './angular-utils';
+import { convertTemplate, getImport, toMemberWithValue, toConst, toInput, toOutput } from './angular-utils';
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
 import { addBindingImports, ImportType, isInstanceMethod, modulesProcessor, removeFunctionKeyword } from './parser-utils';
 
-function getOnGridReadyCode(readyCode: string, resizeToFit: boolean, data: { url: string, callback: string; }): string {
+function getOnGridReadyCode(readyCode: string, resizeToFit: boolean, data: { url: string, callback: string; }, hasApi: boolean, hasColApi: boolean): string {
     const additionalLines = [];
 
     if (readyCode) {
@@ -16,18 +16,17 @@ function getOnGridReadyCode(readyCode: string, resizeToFit: boolean, data: { url
     if (data) {
         const { url, callback } = data;
 
-        if (callback.indexOf('api.setRowData') !== -1) {
-            const setRowDataBlock = callback.replace('params.api.setRowData(data);', 'this.rowData = data');
-            additionalLines.push(`this.http.get(${url}).subscribe(data => ${setRowDataBlock});`);
+        if (callback.indexOf('api!.setRowData') !== -1) {
+            const setRowDataBlock = callback.replace('params.api!.setRowData(data)', 'this.rowData = data');
+            additionalLines.push(`this.http.get<any[]>(${url}).subscribe(data => ${setRowDataBlock});`);
         } else {
-            additionalLines.push(`this.http.get(${url}).subscribe(data => ${callback});`);
+            additionalLines.push(`this.http.get<any[]>(${url}).subscribe(data => ${callback});`);
         }
     }
 
     return `
-    onGridReady(params) {
-        this.gridApi = params.api;
-        this.gridColumnApi = params.columnApi;${additionalLines.length > 0 ? `\n\n        ${additionalLines.join('\n        ')}` : ''}
+    onGridReady(params: GridReadyEvent) {
+        ${hasApi ? 'this.gridApi = params.api;' : ''}${hasColApi ? 'this.gridColumnApi = params.columnApi;' : ''}${additionalLines.length > 0 ? `\n\n        ${additionalLines.join('\n        ')}` : ''}
     }`;
 }
 
@@ -87,7 +86,7 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
     bImports.push({
         module: `'@ag-grid-community/core'`,
         isNamespaced: false,
-        imports: propertyInterfaces
+        imports: [...propertyInterfaces, 'GridReadyEvent']
     })
 
     if (bImports.length > 0) {
@@ -124,7 +123,7 @@ function getPackageImports(bindings: any, componentFileNames: string[]): string[
     bImports.push({
         module: `'ag-grid-community'`,
         isNamespaced: false,
-        imports: propertyInterfaces
+        imports: [...propertyInterfaces, 'GridReadyEvent']
     })
 
     if (bImports.length > 0) {
@@ -164,9 +163,8 @@ function getTemplate(bindings: any, attributes: string[]): string {
 }
 
 export function vanillaToAngular(bindings: any, componentFileNames: string[]): (importType: ImportType) => string {
-    const { data, properties } = bindings;
+    const { data, properties, typeDeclares, interfaces } = bindings;
     const diParams = [];
-    const additional = [getOnGridReadyCode(bindings.onGridReady, bindings.resizeToFit, data)];
 
     if (data) {
         diParams.push('private http: HttpClient');
@@ -212,18 +210,39 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): (
                     propertyAttributes.push(toInput(property));
                 }
 
-                propertyAssignments.push(toAssignmentWithType(property));
+                propertyAssignments.push(toMemberWithValue(property));
             }
         });
 
-        if (propertyAttributes.filter(item => item.indexOf('[rowData]') >= 0).length === 0) {
+        if (!propertyAttributes.find(item => item.indexOf('[rowData]') >= 0)) {
             propertyAttributes.push('[rowData]="rowData"');
+        }
+
+        if (!propertyAssignments.find(item => item.indexOf('rowData') >= 0)) {
+            propertyAssignments.push('public rowData!: any[];');
         }
 
         const template = getTemplate(bindings, propertyAttributes.concat(eventAttributes));
 
+        const componentForCheckBody = eventHandlers
+            .concat(externalEventHandlers)
+            .concat(instanceMethods)
+            .map(snippet => snippet.trim())
+            .join('\n\n');
+
+        const hasGridApi = componentForCheckBody.includes('gridApi');
+        const hasGridColumnApi = componentForCheckBody.includes('gridColumnApi');
+
+        const additional = [getOnGridReadyCode(bindings.onGridReady, bindings.resizeToFit, data, hasGridApi, hasGridColumnApi)];
+        const componentBody = eventHandlers
+            .concat(externalEventHandlers)
+            .concat(additional)
+            .concat(instanceMethods)
+            .map(snippet => snippet.trim())
+            .join('\n\n');
+
         return `
-${imports.join('\n')}
+${imports.join('\n')}${typeDeclares?.length > 0 ? typeDeclares.join('\n') : ''}${interfaces?.length > 0 ? interfaces.join('\n') : ''}
 
 @Component({
     selector: 'my-app',
@@ -231,9 +250,7 @@ ${imports.join('\n')}
 })
 
 export class AppComponent {
-    private gridApi: GridApi;
-    private gridColumnApi: ColumnApi;
-
+${hasGridApi ? '    private gridApi!: GridApi;\n' : ''}${hasGridColumnApi ? '    private gridColumnApi!: ColumnApi;\n' : ''}
     ${propertyVars.join('\n')}
     ${propertyAssignments.join(';\n')}
 
@@ -242,12 +259,7 @@ ${diParams.length > 0 ?
 }
 
 `: ''}
-    ${eventHandlers
-                .concat(externalEventHandlers)
-                .concat(additional)
-                .concat(instanceMethods)
-                .map(snippet => snippet.trim())
-                .join('\n\n')}
+    ${componentBody}
 }
 
 ${bindings.classes.join('\n')}

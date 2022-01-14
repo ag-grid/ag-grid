@@ -323,16 +323,38 @@ export function extractImportStatements(srcFile: ts.SourceFile): BindingImport[]
     return allImports;
 }
 
+export function extractTypeDeclarations(srcFile: ts.SourceFile): BindingImport[] {
+    const allDeclareStatements = [];
+    srcFile.statements.forEach(node => {
+        if ((ts.isVariableStatement(node) || ts.isFunctionDeclaration(node)) && node.modifiers?.length > 0) {
+            if (node.modifiers.some(s => s.kind === ts.SyntaxKind.DeclareKeyword)) {
+                allDeclareStatements.push(node.getText())
+            }
+        }
+    })
+    return allDeclareStatements;
+}
+
+
 export function extractClassDeclarations(srcFile: ts.SourceFile): BindingImport[] {
-    let allClasses = [];
+    const allClasses = [];
     srcFile.statements.forEach(node => {
         if (ts.isClassDeclaration(node)) {
-            allClasses = [node.getText()]
+            allClasses.push(node.getText())
         }
     })
     return allClasses;
 }
 
+export function extractInterfaces(srcFile: ts.SourceFile): BindingImport[] {
+    const allInterfaces = [];
+    srcFile.statements.forEach(node => {
+        if (ts.isInterfaceDeclaration(node)) {
+            allInterfaces.push(node.getText())
+        }
+    })
+    return allInterfaces;
+}
 
 export function tsNodeIsTopLevelFunction(node: any): boolean {
     if (ts.isFunctionLike(node)) {

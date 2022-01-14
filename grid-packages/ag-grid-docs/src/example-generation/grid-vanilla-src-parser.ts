@@ -6,6 +6,7 @@ import {
     extractClassDeclarations,
     extractEventHandlers,
     extractImportStatements,
+    extractInterfaces,
     extractTypeDeclarations,
     extractUnboundInstanceMethods,
     findAllAccessedProperties,
@@ -604,6 +605,7 @@ function internalParser({ fileName, srcFile, includeTypes }, html, exampleSettin
     tsBindings.imports = extractImportStatements(tsTree);
     tsBindings.typeDeclares = extractTypeDeclarations(tsTree);
     tsBindings.classes = extractClassDeclarations(tsTree);
+    tsBindings.interfaces = extractInterfaces(tsTree);
 
     tsBindings.gridSettings = {
         width: '100%',

@@ -1,6 +1,6 @@
 import { ColDef, GridOptions } from '@ag-grid-community/core'
 
-const columnDefs: ColDef[] = [
+const columnDefsMedalsIncluded: ColDef[] = [
   { field: 'athlete' },
   { field: 'age' },
   { field: 'country' },
@@ -23,7 +23,7 @@ const colDefsMedalsExcluded: ColDef[] = [
 ]
 
 const gridOptions: GridOptions = {
-  columnDefs: columnDefs,
+  columnDefs: columnDefsMedalsIncluded,
   defaultColDef: {
     initialWidth: 100,
     sortable: true,
@@ -36,7 +36,7 @@ function onBtExcludeMedalColumns() {
 }
 
 function onBtIncludeMedalColumns() {
-  gridOptions.api!.setColumnDefs(columnDefs)
+  gridOptions.api!.setColumnDefs(columnDefsMedalsIncluded)
 }
 
 // setup the grid after the page has finished loading
