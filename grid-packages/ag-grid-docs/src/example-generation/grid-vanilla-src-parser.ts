@@ -122,40 +122,63 @@ export function parser(fileName, srcFile, html, exampleSettings, exampleType, pr
     return { bindings, typedBindings };
 }
 
+/** Creating a TS program takes about half a second which quickly gets very expensive. As we only need it to access the same GridOptions file we cache the first program that finds this. */
+let cachedProgram = undefined
+function getTypeLookupFunc(includeTypes, fileName) {
+    let lookupType = (propName: string) => undefined;
+    if (includeTypes) {
+        const program = cachedProgram || ts.createProgram([fileName], {});
+        const typeChecker = program.getTypeChecker()
+
+        const optionsFile = program.getSourceFiles().find(f => f.fileName.endsWith('gridOptions.d.ts'));
+        if (optionsFile) {
+            cachedProgram = program;
+            const gridOptionsInterface = optionsFile.statements.find((i: ts.Node) => ts.isInterfaceDeclaration(i) && i.name.getText() == 'GridOptions') as ts.InterfaceDeclaration;
+
+            lookupType = (propName: string) => {
+
+                const pop = gridOptionsInterface.members.find(m => (ts.isPropertySignature(m) || ts.isMethodSignature(m)) && m.name.getText() == propName) as ts.PropertySignature | ts.MethodSignature;
+                if (pop && pop.type) {
+                    const typeGOps = typeChecker.getTypeAtLocation(pop.type) as any
+                    let namedType = typeChecker.typeToString(typeGOps);
+                    const typesToInclude = []
+                    if (typeGOps.resolvedTypeArguments) {
+                        typeGOps.resolvedTypeArguments.forEach(t => {
+                            if (t.types) {
+                                t.types.forEach(tt => {
+                                    if (tt.symbol) {
+                                        typesToInclude.push(typeChecker.typeToString(tt))
+                                    } else {
+                                        // string literal types which we just ignore for now.
+                                    }
+                                });
+                            }
+                        });
+                    }
+                    if (propName === 'sortingOrder') {
+                        // Special case handling to ensure that null is included in the array type.
+                        namedType = `('asc' | 'desc' | null)[]`
+                    }
+                    return { typeName: namedType, typesToInclude };
+                } else {
+                    console.warn(`Could not find GridOptions property ${propName} for example file ${fileName}`);
+                }
+                return undefined;
+            }
+        } else {
+            console.warn('Could not find GridOptions file for ', fileName);
+        }
+    }
+    return lookupType;
+}
+
 function internalParser({ fileName, srcFile, includeTypes }, html, exampleSettings, exampleType, providedExamples) {
     const domTree = $(`<div>${html}</div>`);
     domTree.find('style').remove();
-
     const domEventHandlers = extractEventHandlers(domTree, recognizedDomEvents);
 
-    let lookupType = (propName: string) => undefined;
-    let tsTree;
-    if (includeTypes) {
-        const program = ts.createProgram([fileName], {});
-        const typeChecker = program.getTypeChecker()
-        tsTree = program.getSourceFile(fileName);
-        const optionsFile = program.getSourceFiles().find(f => f.fileName.endsWith('gridOptions.d.ts'));
-        const gridOptionsInterface = optionsFile.statements.find((i: ts.Node) => ts.isInterfaceDeclaration(i) && i.name.getText() == 'GridOptions') as ts.InterfaceDeclaration;
-
-        lookupType = (propName: string) => {
-            const pop = gridOptionsInterface.members.find(m => ts.isPropertySignature(m) && m.name.getText() == propName) as ts.PropertySignature;
-            const typeGOps = typeChecker.getTypeAtLocation(pop.type) as any
-            const namedType = typeChecker.typeToString(typeGOps);
-            const typesToInclude = []
-            if (typeGOps.resolvedTypeArguments) {
-                typeGOps.resolvedTypeArguments.forEach(t => {
-                    if (t.types) {
-                        t.types.forEach(tt => {
-                            typesToInclude.push(typeChecker.typeToString(tt))
-                        });
-                    }
-                });
-            }
-            return { typeName: namedType, typesToInclude };
-        }
-    } else {
-        tsTree = parseFile(readAsJsFile(srcFile));
-    }
+    const tsTree = includeTypes ? parseFile(srcFile) : parseFile(readAsJsFile(srcFile));
+    const gridOpsTypeLookup = getTypeLookupFunc(includeTypes, fileName);
 
     const tsCollectors = [];
     const tsGridOptionsCollectors = [];
@@ -324,7 +347,7 @@ function internalParser({ fileName, srcFile, includeTypes }, html, exampleSettin
             apply: (bindings, node: ts.NamedDeclaration) => {
                 const methodText = tsGenerateWithReplacedGridOptions(node, tsTree);
                 bindings.instanceMethods.push(methodText);
-                bindings.properties.push({ name: functionName, value: null, typings: lookupType(functionName) });
+                bindings.properties.push({ name: functionName, value: null, typings: gridOpsTypeLookup(functionName) });
             }
         });
     });
@@ -436,7 +459,7 @@ function internalParser({ fileName, srcFile, includeTypes }, html, exampleSettin
                         }
                     }
                     const code = tsGenerate(node.initializer, tsTree);
-                    bindings.properties.push({ name: propertyName, value: code, typings: lookupType(propertyName) });
+                    bindings.properties.push({ name: propertyName, value: code, typings: gridOpsTypeLookup(propertyName) });
                 } catch (e) {
                     console.error('We failed generating', node, node.declarations[0].id);
                     throw e;
@@ -499,7 +522,7 @@ function internalParser({ fileName, srcFile, includeTypes }, html, exampleSettin
                 bindings.properties.push({
                     name: propertyName,
                     value: tsGenerate(node.initializer, tsTree),
-                    typings: lookupType(propertyName)
+                    typings: gridOpsTypeLookup(propertyName)
                 });
             }
         });

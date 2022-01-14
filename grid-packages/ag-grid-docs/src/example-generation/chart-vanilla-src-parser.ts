@@ -14,7 +14,7 @@ function tsGenerateWithOptionReferences(node, srcFile) {
         .replace(new RegExp(`agCharts\\.AgChart\\.update\\(chart, options\\);?`, 'g'), '');
 }
 
-export function parser(srcFile, html) {
+export function parser(fileName, srcFile, html) {
     const bindings = internalParser(readAsJsFile(srcFile), html);
     const typedBindings = internalParser(srcFile, html);
     return { bindings, typedBindings };

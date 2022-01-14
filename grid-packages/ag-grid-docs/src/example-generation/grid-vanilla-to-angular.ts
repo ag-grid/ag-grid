@@ -1,4 +1,4 @@
-import { convertTemplate, getImport, toAssignment, toConst, toInput, toMember, toOutput } from './angular-utils';
+import { convertTemplate, getImport, toAssignmentWithType, toConst, toInput, toMember, toOutput } from './angular-utils';
 import { templatePlaceholder } from "./grid-vanilla-src-parser";
 import { addBindingImports, ImportType, isInstanceMethod, modulesProcessor, removeFunctionKeyword } from './parser-utils';
 
@@ -34,7 +34,7 @@ function getOnGridReadyCode(readyCode: string, resizeToFit: boolean, data: { url
 function getPropertyInterfaces(properties) {
     let propTypesUsed = [];
     properties.forEach(prop => {
-        if (prop.typings.typesToInclude?.length > 0) {
+        if (prop.typings?.typesToInclude?.length > 0) {
             propTypesUsed = [...propTypesUsed, prop.typings.typesToInclude]
         }
     });
@@ -212,7 +212,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): (
                     propertyAttributes.push(toInput(property));
                 }
 
-                propertyAssignments.push(toAssignment(property));
+                propertyAssignments.push(toAssignmentWithType(property));
             }
         });
 
