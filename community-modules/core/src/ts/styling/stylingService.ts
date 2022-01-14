@@ -37,15 +37,15 @@ export class StylingService extends BeanStub {
                 if (singleClass == null || singleClass.trim() == '') { return; }
                 resultOfRule ? classesToApply[singleClass] = true : classesToRemove[singleClass] = true;
             });
-
-            // we remove all classes first, then add all classes second,
-            // in case a class appears in more than one rule, this means it will be added
-            // if appears in at least one truthy rule
-            if (onNotApplicableClass) {
-                Object.keys(classesToRemove).forEach(onNotApplicableClass);
-            }
-            Object.keys(classesToApply).forEach(onApplicableClass);
         }
+
+        // we remove all classes first, then add all classes second,
+        // in case a class appears in more than one rule, this means it will be added
+        // if appears in at least one truthy rule
+        if (onNotApplicableClass) {
+            Object.keys(classesToRemove).forEach(onNotApplicableClass);
+        }
+        Object.keys(classesToApply).forEach(onApplicableClass);
     }
 
     public getStaticCellClasses(colDef: ColDef, params: CellClassParams): string[] {
