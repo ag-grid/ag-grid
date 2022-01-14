@@ -86,12 +86,35 @@ export class ChartDataPanel extends Component {
 
         } else {
             // otherwise we re-create everything
+            const groupExpandedState = this.getGroupExpandedState();
+
             this.clearComponents();
 
             this.createCategoriesGroup(dimensionCols);
             this.createSeriesGroup(valueCols);
             this.createSeriesChartTypeGroup(valueCols);
+
+            this.restoreGroupExpandedState(groupExpandedState);
         }
+    }
+
+    private getGroupExpandedState(): boolean[] {
+        return [
+            this.categoriesGroupComp,
+            this.seriesGroupComp,
+            this.seriesChartTypeGroupComp
+        ].map(group => !group ? true : group.isExpanded());
+    }
+
+    private restoreGroupExpandedState(groupExpandedState: boolean[]) {
+        [
+            this.categoriesGroupComp,
+            this.seriesGroupComp,
+            this.seriesChartTypeGroupComp
+        ].forEach((group, idx) => {
+            if (!group) { return; }
+            group.toggleGroupExpand(groupExpandedState[idx]);
+        });
     }
 
     private createAutoScrollService(): void {
