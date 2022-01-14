@@ -3,7 +3,7 @@ import { Component } from "./component";
 import { PostConstruct } from "../context/context";
 import { escapeString } from "../utils/string";
 import { KeyCode } from '../constants/keyCode';
-import { setAriaRole, setAriaSelected } from '../utils/aria';
+import { setAriaPosInSet, setAriaRole, setAriaSelected, setAriaSetSize } from '../utils/aria';
 
 export interface ListOption {
     value: string;
@@ -72,7 +72,17 @@ export class AgList extends Component {
         this.options.push({ value, text: sanitisedText! });
         this.renderOption(value, sanitisedText!);
 
+        this.updateIndices();
+
         return this;
+    }
+
+    private updateIndices(): void {
+        const options = this.getGui().querySelectorAll('.ag-list-item');
+        options.forEach((option: HTMLElement, idx) => {
+            setAriaPosInSet(option, idx + 1);
+            setAriaSetSize(option, options.length);
+        });
     }
 
     private renderOption(value: string, text: string): void {
