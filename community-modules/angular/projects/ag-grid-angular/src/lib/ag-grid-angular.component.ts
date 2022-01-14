@@ -795,7 +795,7 @@ hence this property is deprecated as will be removed in the next major release.
     /** @deprecated This property has been deprecated. Use `suppressCellFocus` instead.
      */
     @Input() public suppressCellSelection: boolean | undefined = undefined;
-    /** If `true`, cells won't be focusable. This means keyboard navigation will be disabled for grid cells, but remain enabled in other elements of the grid such as column headers, floating filters, tool panels.     */
+    /** If `true`, cells won't be focusable. This means keyboard navigation will be disabled for grid cells, but remain enabled in other elements of the grid such as column headers, floating filters, tool panels. Default: `false`     */
     @Input() public suppressCellFocus: boolean | undefined = undefined;
     /** If `true`, only a single range can be selected. Default: `false`     */
     @Input() public suppressMultiRangeSelection: boolean | undefined = undefined;

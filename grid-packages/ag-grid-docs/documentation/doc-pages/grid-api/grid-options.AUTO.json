@@ -908,7 +908,7 @@
     "type": { "returnType": "boolean" }
   },
   "suppressCellFocus": {
-    "description": "/** If `true`, cells won't be focusable. This means keyboard navigation will be disabled for grid cells, but remain enabled in other elements of the grid such as column headers, floating filters, tool panels. */",
+    "description": "/** If `true`, cells won't be focusable. This means keyboard navigation will be disabled for grid cells, but remain enabled in other elements of the grid such as column headers, floating filters, tool panels. Default: `false` */",
     "type": { "returnType": "boolean" }
   },
   "suppressMultiRangeSelection": {
