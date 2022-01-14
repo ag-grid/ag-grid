@@ -64,6 +64,8 @@ export class ChartDataPanel extends Component {
 
         this.chartType = this.chartController.getChartType();
 
+        const groupExpandedState = this.getGroupExpandedState();
+
         if (_.areEqual(_.keys(this.columnComps), colIds) && this.chartType === currentChartType) {
             // if possible, we just update existing components
             [...dimensionCols, ...valueCols].forEach(col => {
@@ -86,16 +88,15 @@ export class ChartDataPanel extends Component {
 
         } else {
             // otherwise we re-create everything
-            const groupExpandedState = this.getGroupExpandedState();
-
             this.clearComponents();
 
             this.createCategoriesGroup(dimensionCols);
             this.createSeriesGroup(valueCols);
             this.createSeriesChartTypeGroup(valueCols);
 
-            this.restoreGroupExpandedState(groupExpandedState);
         }
+
+        this.restoreGroupExpandedState(groupExpandedState);
     }
 
     private getGroupExpandedState(): boolean[] {
