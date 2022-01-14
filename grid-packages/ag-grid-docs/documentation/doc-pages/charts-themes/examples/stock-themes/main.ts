@@ -3,7 +3,7 @@ import * as agCharts from 'ag-charts-community'
 
 const options: AgChartOptions = {
   container: document.getElementById('myChart'),
-  theme: 'dark',
+  theme: 'ag-default-dark',
   autoSize: true,
   padding: {
     left: 70,
