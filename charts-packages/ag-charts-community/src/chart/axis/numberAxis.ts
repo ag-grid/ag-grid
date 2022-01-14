@@ -1,4 +1,4 @@
-import { calculateSecondaryAxisDomain, getTicks } from "../../util/secondaryAxisTicks";
+import { calculateNiceSecondaryAxis } from "../../util/secondaryAxisTicks";
 import { ContinuousScale } from "../../scale/continuousScale";
 import { LinearScale } from "../../scale/linearScale";
 import { extent } from "../../util/array";
@@ -52,15 +52,15 @@ export class NumberAxis extends ChartAxis {
             isNaN(max) ? domain[1] : max
         ];
 
-        scale.domain = domain;
-
         if (primaryTickCount) {
             // when `primaryTickCount` is supplied the current axis is a secondary axis which needs to be aligned to
             // the primary by constraining the tick count to the primary axis tick count
-            scale.domain = calculateSecondaryAxisDomain(domain, primaryTickCount);
-            this.ticks = getTicks(scale.domain[0], scale.domain[1], primaryTickCount);
+            const [d, ticks] = calculateNiceSecondaryAxis(domain, primaryTickCount);
+            scale.domain = d;
+            this.ticks = ticks;
             return;
         } else {
+            scale.domain = domain;
 
             this.onLabelFormatChange(this.label.format); // not sure why this is required?
 
