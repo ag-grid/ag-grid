@@ -31,9 +31,18 @@ function getOnGridReadyCode(readyCode: string, resizeToFit: boolean, data: { url
     }`;
 }
 
+function getPropertyInterfaces(properties) {
+    let propTypesUsed = [];
+    properties.forEach(prop => {
+        if (prop.typings.typesToInclude?.length > 0) {
+            propTypesUsed = [...propTypesUsed, prop.typings.typesToInclude]
+        }
+    });
+    return [... new Set(propTypesUsed)];
+}
 
 function getModuleImports(bindings: any, componentFileNames: string[]): string[] {
-    const { gridSettings, imports: bindingImports } = bindings;
+    const { gridSettings, imports: bindingImports, properties } = bindings;
     const { modules } = gridSettings;
 
     const imports = ["import { Component } from '@angular/core';"];
@@ -73,8 +82,16 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
         imports.push(`import "@ag-grid-community/core/dist/styles/${theme}.css";`);
     }
 
-    if (bindingImports?.length > 0) {
-        addBindingImports(bindingImports, imports, false, true);
+    let propertyInterfaces = getPropertyInterfaces(properties);
+    const bImports = [...(bindingImports || [])];
+    bImports.push({
+        module: `'@ag-grid-community/core'`,
+        isNamespaced: false,
+        imports: propertyInterfaces
+    })
+
+    if (bImports.length > 0) {
+        addBindingImports(bImports, imports, false, true);
     }
 
     if (componentFileNames) {
@@ -85,7 +102,7 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
 }
 
 function getPackageImports(bindings: any, componentFileNames: string[]): string[] {
-    const { gridSettings, imports: bindingImports } = bindings;
+    const { gridSettings, imports: bindingImports, properties } = bindings;
     const imports = ["import { Component } from '@angular/core';"];
 
     if (bindings.data) {
@@ -102,8 +119,16 @@ function getPackageImports(bindings: any, componentFileNames: string[]): string[
     const theme = gridSettings.theme || 'ag-theme-alpine';
     imports.push(`import "ag-grid-community/dist/styles/${theme}.css";`);
 
-    if (bindingImports?.length > 0) {
-        addBindingImports(bindingImports, imports, true, true);
+    let propertyInterfaces = getPropertyInterfaces(properties);
+    const bImports = [...(bindingImports || [])];
+    bImports.push({
+        module: `'ag-grid-community'`,
+        isNamespaced: false,
+        imports: propertyInterfaces
+    })
+
+    if (bImports.length > 0) {
+        addBindingImports(bImports, imports, true, true);
     }
 
     if (componentFileNames) {
@@ -185,7 +210,6 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): (
                 // tabToNextCell needs to be bound to the angular component
                 if (!isInstanceMethod(bindings.instanceMethods, property)) {
                     propertyAttributes.push(toInput(property));
-                    propertyVars.push(toMember(property));
                 }
 
                 propertyAssignments.push(toAssignment(property));
@@ -194,10 +218,6 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): (
 
         if (propertyAttributes.filter(item => item.indexOf('[rowData]') >= 0).length === 0) {
             propertyAttributes.push('[rowData]="rowData"');
-        }
-
-        if (propertyVars.filter(item => item.indexOf('rowData') >= 0).length === 0) {
-            propertyVars.push('public rowData: []');
         }
 
         const template = getTemplate(bindings, propertyAttributes.concat(eventAttributes));
@@ -215,11 +235,13 @@ export class AppComponent {
     private gridColumnApi: ColumnApi;
 
     ${propertyVars.join('\n')}
+    ${propertyAssignments.join(';\n')}
 
-    constructor(${diParams.join(', ')}) {
-        ${propertyAssignments.join(';\n')}
-    }
+${diParams.length > 0 ?
+                `    constructor(${diParams.join(', ')}) {
+}
 
+`: ''}
     ${eventHandlers
                 .concat(externalEventHandlers)
                 .concat(additional)

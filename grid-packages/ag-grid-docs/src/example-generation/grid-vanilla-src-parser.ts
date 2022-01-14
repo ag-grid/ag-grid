@@ -1,7 +1,7 @@
 import * as $ from 'jquery';
 import * as ts from 'typescript';
-import {Events} from '../../../../community-modules/core/src/ts/eventKeys';
-import {PropertyKeys} from '../../../../community-modules/core/src/ts/propertyKeys';
+import { Events } from '../../../../community-modules/core/src/ts/eventKeys';
+import { PropertyKeys } from '../../../../community-modules/core/src/ts/propertyKeys';
 import {
     extractClassDeclarations,
     extractEventHandlers,
@@ -116,24 +116,51 @@ function processGlobalComponentsForVue(propertyName: string, exampleType, provid
     return false;
 }
 
-export function parser(srcFile, html, exampleSettings, exampleType, providedExamples) {
-    const bindings = internalParser(readAsJsFile(srcFile), html, exampleSettings, exampleType, providedExamples);
-    const typedBindings = internalParser(srcFile, html, exampleSettings, exampleType, providedExamples);
-    return {bindings, typedBindings};
+export function parser(fileName, srcFile, html, exampleSettings, exampleType, providedExamples) {
+    const bindings = internalParser({ fileName, srcFile, includeTypes: false }, html, exampleSettings, exampleType, providedExamples);
+    const typedBindings = internalParser({ fileName, srcFile, includeTypes: true }, html, exampleSettings, exampleType, providedExamples);
+    return { bindings, typedBindings };
 }
 
-function internalParser(inputFile, html, exampleSettings, exampleType, providedExamples) {
+function internalParser({ fileName, srcFile, includeTypes }, html, exampleSettings, exampleType, providedExamples) {
     const domTree = $(`<div>${html}</div>`);
-
     domTree.find('style').remove();
 
     const domEventHandlers = extractEventHandlers(domTree, recognizedDomEvents);
-    const tsTree = parseFile(inputFile);
+
+    let lookupType = (propName: string) => undefined;
+    let tsTree;
+    if (includeTypes) {
+        const program = ts.createProgram([fileName], {});
+        const typeChecker = program.getTypeChecker()
+        tsTree = program.getSourceFile(fileName);
+        const optionsFile = program.getSourceFiles().find(f => f.fileName.endsWith('gridOptions.d.ts'));
+        const gridOptionsInterface = optionsFile.statements.find((i: ts.Node) => ts.isInterfaceDeclaration(i) && i.name.getText() == 'GridOptions') as ts.InterfaceDeclaration;
+
+        lookupType = (propName: string) => {
+            const pop = gridOptionsInterface.members.find(m => ts.isPropertySignature(m) && m.name.getText() == propName) as ts.PropertySignature;
+            const typeGOps = typeChecker.getTypeAtLocation(pop.type) as any
+            const namedType = typeChecker.typeToString(typeGOps);
+            const typesToInclude = []
+            if (typeGOps.resolvedTypeArguments) {
+                typeGOps.resolvedTypeArguments.forEach(t => {
+                    if (t.types) {
+                        t.types.forEach(tt => {
+                            typesToInclude.push(typeChecker.typeToString(tt))
+                        });
+                    }
+                });
+            }
+            return { typeName: namedType, typesToInclude };
+        }
+    } else {
+        tsTree = parseFile(readAsJsFile(srcFile));
+    }
+
     const tsCollectors = [];
     const tsGridOptionsCollectors = [];
     const tsOnReadyCollectors = [];
     const registered = ['gridOptions'];
-
 
     // handler is the function name, params are any function parameters
     domEventHandlers.forEach(([_, handler, params]) => {
@@ -224,7 +251,7 @@ function internalParser(inputFile, html, exampleSettings, exampleType, providedE
             const url = node.expression.arguments[1].raw;
             const callback = '{ params.api.setRowData(data); }';
 
-            bindings.data = {url, callback};
+            bindings.data = { url, callback };
         }
     });
 
@@ -235,7 +262,7 @@ function internalParser(inputFile, html, exampleSettings, exampleType, providedE
             const url = node.arguments[0].getText();
             const callback = tsGenerate(node.parent.parent.parent.parent.arguments[0].body, tsTree).replace(/gridOptions/g, 'params');
 
-            bindings.data = {url, callback};
+            bindings.data = { url, callback };
         }
     });
 
@@ -297,7 +324,7 @@ function internalParser(inputFile, html, exampleSettings, exampleType, providedE
             apply: (bindings, node: ts.NamedDeclaration) => {
                 const methodText = tsGenerateWithReplacedGridOptions(node, tsTree);
                 bindings.instanceMethods.push(methodText);
-                bindings.properties.push({name: functionName, value: null});
+                bindings.properties.push({ name: functionName, value: null, typings: lookupType(functionName) });
             }
         });
     });
@@ -409,7 +436,7 @@ function internalParser(inputFile, html, exampleSettings, exampleType, providedE
                         }
                     }
                     const code = tsGenerate(node.initializer, tsTree);
-                    bindings.properties.push({name: propertyName, value: code});
+                    bindings.properties.push({ name: propertyName, value: code, typings: lookupType(propertyName) });
                 } catch (e) {
                     console.error('We failed generating', node, node.declarations[0].id);
                     throw e;
@@ -471,7 +498,8 @@ function internalParser(inputFile, html, exampleSettings, exampleType, providedE
 
                 bindings.properties.push({
                     name: propertyName,
-                    value: tsGenerate(node.initializer, tsTree)
+                    value: tsGenerate(node.initializer, tsTree),
+                    typings: lookupType(propertyName)
                 });
             }
         });

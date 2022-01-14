@@ -244,7 +244,7 @@ function createExampleGenerator(prefix, importTypes) {
         } */
         // ********************* TEST CODE DONT COMMIT TO LATESTS **********************************????????????????????????/
 
-        const { bindings, typedBindings } = parser(mainFile, indexHtml, options, type, providedExamples);
+        const { bindings, typedBindings } = parser(mainScript, mainFile, indexHtml, options, type, providedExamples);
 
         // ********************* TEST CODE DONT COMMIT TO LATEST **********************************????????????????????????/        
         /*  if (process.env.LOGNAME === 'stephencooper') {
