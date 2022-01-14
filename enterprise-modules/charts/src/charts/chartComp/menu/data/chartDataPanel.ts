@@ -106,7 +106,7 @@ export class ChartDataPanel extends Component {
         ].map(group => !group ? true : group.isExpanded());
     }
 
-    private restoreGroupExpandedState(groupExpandedState: boolean[]) {
+    private restoreGroupExpandedState(groupExpandedState: boolean[]): void {
         [
             this.categoriesGroupComp,
             this.seriesGroupComp,
