@@ -28,9 +28,7 @@ export function getTicks(start: number, stop: number, count: number): number[] {
 
     // power of the step will be negative if the step is a fraction (between 0 and 1)
     const stepPower = Math.floor(Math.log10(step));
-    const fractionDigits = (step > 0 && step < 1)
-        ? Math.abs(stepPower)
-        : 0;
+    const fractionDigits = (step > 0 && step < 1) ? Math.abs(stepPower) : 0;
 
     const f = Math.pow(10, fractionDigits);
 
@@ -49,30 +47,35 @@ export function getTickStep(start: number, stop: number, count: number): number 
 }
 
 function calculateNextNiceStep(rawStep: number): number {
-    let step = rawStep;
-
     const order = Math.floor(Math.log10(rawStep));
     const magnitude = Math.pow(10, order);
 
     // Make order 1
-    step = (step / magnitude) * 10;
+    const step = (rawStep / magnitude) * 10;
 
     if (step > 0 && step <= 1) {
-        step = 1 * magnitude / 10;
-    } else if (step > 1 && step <= 2) {
-        step = 2 * magnitude / 10;
-    } else if (step > 1 && step <= 5) {
-        step = 5 * magnitude / 10;
-    } else if (step > 5 && step <= 10) {
-        step = 10 * magnitude / 10;
-    } else if (step > 10 && step <= 20) {
-        step = 20 * magnitude / 10;
-    } else if (step > 20 && step <= 40) {
-        step = 40 * magnitude / 10;
-    } else if (step > 40 && step <= 50) {
-        step = 50 * magnitude / 10;
-    } else if (step > 50 && step <= 100) {
-        step = 100 * magnitude / 10;
+        return magnitude / 10;
+    }
+    if (step > 1 && step <= 2) {
+        return 2 * magnitude / 10;
+    }
+    if (step > 1 && step <= 5) {
+        return 5 * magnitude / 10;
+    }
+    if (step > 5 && step <= 10) {
+        return 10 * magnitude / 10;
+    }
+    if (step > 10 && step <= 20) {
+        return 20 * magnitude / 10;
+    }
+    if (step > 20 && step <= 40) {
+        return 40 * magnitude / 10;
+    }
+    if (step > 40 && step <= 50) {
+        return 50 * magnitude / 10;
+    }
+    if (step > 50 && step <= 100) {
+        return 100 * magnitude / 10;
     }
 
     return step;

@@ -50,19 +50,6 @@ test('ticks', () => {
     compareTicks(ticks(0.002, 0.004, 6), ticks_f002_f004);
     compareTicks(ticks(11, 20, 9), ticks_11_20);
     compareTicks(ticks(0, 101, 10), ticks_0_101);
-
-    // const actualTicks: number[] = ticks(49.9, 216.4, 6);
-    // const actualTicks: number[] = ticks(0, 216.4, 6);
-    // const actualTicks: number[] = ticks(100491, 135198, 10);
-    // const actualTicks: number[] = ticks(1009.6, 1018.2, 6);
-    // const actualTicks: number[] = ticks(7, 26.5, 6);
-    // const actualTicks: number[] = ticks(-7, 26.5, 10); //
-    // const actualTicks: number[] = ticks(1000, 1002, 10); //
-    // const actualTicks: number[] = ticks(-26.5, -7, 6);
-    // const actualTicks: number[] = ticks(0.002, 0.004, 6); // X
-    // const actualTicks: number[] = ticks(11, 20, 9); // X
-    // const actualTicks: number[] = ticks(0, 101, 10);
-    // console.log(actualTicks);
 });
 
 

@@ -297,12 +297,12 @@ export class CartesianChart extends Chart {
                     domains.push(series.getDomain(direction));
                 });
 
-                const isNumberAxis = axis instanceof NumberAxis;
-
+                const domain = new Array<any>().concat(...domains);
                 if (axis instanceof NumberAxis) {
-                    axis.setDomain(new Array<any>().concat(...domains), primaryTickCount);
+                    // the `primaryTickCount` is used to align the secondary axis tick count with the primary
+                    axis.setDomain(domain, primaryTickCount);
                 } else {
-                    axis.domain = new Array<any>().concat(...domains);
+                    axis.domain = domain;
                 }
 
                 const isNumberYAxis = axis instanceof NumberAxis && axis.direction === 'y';
