@@ -60,9 +60,8 @@ const gridOptions: GridOptions = {
     }
   },
 }
-interface Product { id: number, productName: string, trades: any[] }
 const productsNames = ['Palm Oil', 'Rubber', 'Wool', 'Amber', 'Copper']
-let products: Product[] = []
+let products: any[] = []
 let idSequence = 0
 
 function createOneTrade() {
@@ -75,7 +74,7 @@ function createOneTrade() {
 
 function setupData() {
   productsNames.forEach(function (productName) {
-    const product: Product = { id: idSequence++, productName: productName, trades: [] }
+    const product: any = { id: idSequence++, productName: productName, trades: [] }
     products.push(product)
     for (let i = 0; i < 2; i++) {
       product.trades.push(createOneTrade())
