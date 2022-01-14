@@ -391,7 +391,6 @@ export class AreaSeries extends CartesianSeries {
                 const prev = curr < 0 ? prevMin : prevMax;
 
                 const continuousY = yScale instanceof ContinuousScale;
-                // @ts-ignore
                 const y = yScale.convert(prev + curr, continuousY ? clamper : undefined);
 
                 const yKey = yKeys[j];
