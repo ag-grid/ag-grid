@@ -6,6 +6,7 @@ import {
     Autowired,
     ChartMenuOptions,
     Component,
+    Events,
     GetChartToolbarItemsParams,
     PostConstruct
 } from "@ag-grid-community/core";
@@ -53,6 +54,15 @@ export class ChartMenu extends Component {
     private postConstruct(): void {
         this.createButtons();
         this.refreshMenuClasses();
+
+        this.addManagedListener(this.eventService, Events.EVENT_CHART_CREATED, () => {
+            // creating settings panel ahead of time to prevent an undesirable 'jitter' when the canvas resizes
+            // caused as a result of scrollIntoView() when the selected chart type is scrolled into view
+            window.setTimeout(() => {
+                // we want to allow plenty of time to ensure chart is fully created as panels work off underlying chart
+                this.createMenuPanel(0);
+            }, 500);
+        });
     }
 
     public isVisible(): boolean {
