@@ -16,6 +16,7 @@ export interface ChartProxyParams {
     crossFiltering: boolean;
     crossFilterCallback: (event: any, reset?: boolean) => void;
     chartOptionsToRestore?: AgChartThemeOverrides;
+    seriesChartTypes: SeriesChartType[];
 }
 
 export interface FieldDefinition {
@@ -167,15 +168,22 @@ export abstract class ChartProxy {
     }
 
     private convertConfigToOverrides(config: any) {
-        const chartOverrides = deepMerge({}, config[this.standaloneChartType]);
-        chartOverrides.series = chartOverrides.series[this.standaloneChartType];
+        const isComboChart = ['columnLineCombo', 'areaColumnCombo', 'customCombo'].includes(this.chartType);
+        const overrideObjs = isComboChart ? ['line', 'area', 'column', 'cartesian'] : [this.standaloneChartType];
 
-        // special handing to add the scatter paired mode to the chart options
-        if (this.standaloneChartType === 'scatter') {
-            chartOverrides.paired = true;
-        }
+        const overrides: {[overrideObj: string]: any} = {};
+        overrideObjs.forEach(overrideObj => {
+            const chartOverrides = deepMerge({}, config[overrideObj]);
+            chartOverrides.series = chartOverrides.series[overrideObj];
 
-        return {[this.standaloneChartType]: chartOverrides};
+            // special handing to add the scatter paired mode to the chart options
+            if (overrideObj === 'scatter') {
+                chartOverrides.paired = true;
+            }
+            overrides[overrideObj] = chartOverrides;
+        });
+
+        return overrides;
     }
 
     public destroy(): void {

@@ -196,6 +196,7 @@ export class GridChartComp extends Component {
             parentElement: this.eChart,
             grouping: this.chartController.isGrouping(),
             chartOptionsToRestore: this.params.chartOptionsToRestore,
+            seriesChartTypes: this.chartController.getSeriesChartTypes()
         };
 
         // ensure 'restoring' options are not reused when switching chart types

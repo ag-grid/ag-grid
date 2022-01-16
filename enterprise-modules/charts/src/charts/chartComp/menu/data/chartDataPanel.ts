@@ -93,7 +93,6 @@ export class ChartDataPanel extends Component {
             this.createCategoriesGroup(dimensionCols);
             this.createSeriesGroup(valueCols);
             this.createSeriesChartTypeGroup(valueCols);
-
         }
 
         this.restoreGroupExpandedState(groupExpandedState);
@@ -112,7 +111,7 @@ export class ChartDataPanel extends Component {
             this.categoriesGroupComp,
             this.seriesGroupComp,
             this.seriesChartTypeGroupComp
-        ].forEach((group, idx) => {
+        ].forEach((group: AgGroupComponent, idx: number) => {
             if (!group) { return; }
             group.toggleGroupExpand(groupExpandedState[idx]);
         });
@@ -269,7 +268,6 @@ export class ChartDataPanel extends Component {
                 { value: 'stackedArea', text: translate('stackedArea', 'StackedArea') },
                 { value: 'groupedColumn', text: translate('groupedColumn', 'Grouped Column') },
                 { value: 'stackedColumn', text: translate('stackedColumn', 'Stacked Column') },
-                { value: 'scatter', text: translate('scatter', 'Scatter') },
             ];
 
             const chartTypeComp = seriesItemGroup.createManagedBean(new AgSelect());
@@ -380,12 +378,9 @@ export class ChartDataPanel extends Component {
 
         this.autoScrollService.check(draggingEvent.event);
         this.clearHoveredItems();
-        
-
         this.lastHoveredItem = { comp, position };
 
         const eGui = comp.getGui();
-
 
         eGui.classList.add('ag-list-item-hovered', `ag-item-highlight-${position}`);
     }

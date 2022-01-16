@@ -155,7 +155,8 @@ export class SeriesPanel extends Component {
     }
 
     private initLineDash(): void {
-        const currentValue = this.getSeriesOption<number[]>("lineDash")[0];
+        const lineDash = this.getSeriesOption<number[]>("lineDash");
+        const currentValue = lineDash ? lineDash[0] : 0;
 
         const seriesLineDashSlider = this.createBean(new AgSlider());
         seriesLineDashSlider

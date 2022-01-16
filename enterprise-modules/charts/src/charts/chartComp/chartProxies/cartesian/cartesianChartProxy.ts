@@ -10,6 +10,7 @@ import {
     TimeAxis
 } from "ag-charts-community";
 import { ChartDataModel } from "../../chartDataModel";
+import { ChartSeriesType } from "../../utils/seriesTypeMapper";
 
 export abstract class CartesianChartProxy extends ChartProxy {
     protected xAxisType: AgCartesianAxisType;
@@ -55,8 +56,8 @@ export abstract class CartesianChartProxy extends ChartProxy {
         this.chart.layoutPending = true;
     }
 
-    protected getAxesOptions() {
-        return this.chartOptions[this.standaloneChartType].axes;
+    protected getAxesOptions(chartSeriesType: ChartSeriesType = this.standaloneChartType) {
+        return this.chartOptions[chartSeriesType].axes;
     }
 
     protected processDataForCrossFiltering(data: any[], colId: string, params: UpdateChartParams) {
