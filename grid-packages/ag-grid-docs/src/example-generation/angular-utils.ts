@@ -7,9 +7,14 @@ export const toMember = (property: any) => `public ${property.name};`;
 export const toMemberWithValue = (property: any) => {
     if (property.typings) {
         const typing = property.typings.typeName;
+        // Don't include obvious types
         if (!['number', 'string', 'boolean'].includes(typing)) {
-            // Don't include obvious types
-            return `public ${property.name}: ${property.typings.typeName} = ${property.value}`;
+            let typeName = property.typings.typeName;
+            if (property.name === 'columnDefs') {
+                // Special logic for columnDefs as its a popular property
+                typeName = (property.value.includes('children')) ? '(ColDef | ColGroupDef)[]' : 'ColDef[]';
+            }
+            return `public ${property.name}: ${typeName} = ${property.value}`;
         }
     }
     return `public ${property.name} = ${property.value}`;
