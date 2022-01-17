@@ -56,7 +56,7 @@ export class PivotStage extends BeanStub implements IRowNodeStage {
         const uniqueValuesChanged = this.setUniqueValues(uniqueValues);
 
         const aggregationColumns = this.columnModel.getValueColumns();
-        const aggregationColumnsHash = aggregationColumns.map((column) => column.getId()).join('#');
+        const aggregationColumnsHash = aggregationColumns.map((column) => `${column.getId()}-${column.getColDef().headerName}`).join('#');
         const aggregationFuncsHash = aggregationColumns.map((column) => column.getAggFunc()!.toString()).join('#');
 
         const aggregationColumnsChanged = this.aggregationColumnsHashLastTime !== aggregationColumnsHash;
