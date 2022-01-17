@@ -105,6 +105,10 @@ export class CtrlsService extends BeanStub {
         }
     }
 
+    public isReady(): boolean {
+        return this.ready;
+    }
+
     private createReadyParams(): ReadyParams {
         return {
             centerRowContainerCtrl: this.centerRowContainerCtrl,
