@@ -78,7 +78,7 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
 
         // to account for the (rare) example that has more than one class...just default to alpine if it does
         const theme = gridSettings.theme || 'ag-theme-alpine';
-        imports.push(`import "@ag-grid-community/core/dist/styles/${theme}.css";`);
+        imports.push(`import '@ag-grid-community/core/dist/styles/${theme}.css';`);
     }
 
     let propertyInterfaces = getPropertyInterfaces(properties);
@@ -86,7 +86,7 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
     bImports.push({
         module: `'@ag-grid-community/core'`,
         isNamespaced: false,
-        imports: [...propertyInterfaces, 'GridReadyEvent']
+        imports: [...propertyInterfaces, 'GridReadyEvent', 'ColumnApi', 'GridApi', 'Module']
     })
 
     if (bImports.length > 0) {
@@ -123,7 +123,7 @@ function getPackageImports(bindings: any, componentFileNames: string[]): string[
     bImports.push({
         module: `'ag-grid-community'`,
         isNamespaced: false,
-        imports: [...propertyInterfaces, 'GridReadyEvent']
+        imports: [...propertyInterfaces, 'GridReadyEvent', 'ColumnApi', 'GridApi']
     })
 
     if (bImports.length > 0) {
@@ -188,9 +188,6 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): (
         if (importType === 'modules') {
             propertyAttributes.push('[modules]="modules"');
             propertyVars.push(`public modules: Module[] = ${bindings.gridSuppliedModules};`);
-            imports.push(`import { ColumnApi, GridApi, Module } from '@ag-grid-community/core';`)
-        } else {
-            imports.push(`import { ColumnApi, GridApi } from 'ag-grid-community';`)
         }
 
         properties.filter(property => property.name !== 'onGridReady').forEach(property => {

@@ -7,13 +7,21 @@ export function processFunction(code: string): string {
     return wrapOptionsUpdateCode(convertFunctionToProperty(code));
 }
 
-function getImports(componentFileNames: string[], { typeParts }): string[] {
+function getImports(bindingImports, componentFileNames: string[], { typeParts }): string[] {
+    const bImports = [...(bindingImports || [])];
+
+    bImports.push({
+        module: `'@ag-grid-community/core'`,
+        isNamespaced: false,
+        imports: typeParts
+    })
+
     const imports = [
         "import { cloneDeep } from 'lodash';",
         "import { Component } from '@angular/core';",
-        "import * as agCharts from 'ag-charts-community';",
-        `import { ${typeParts.join(', ')} } from 'ag-charts-community';`
     ];
+
+    addBindingImports(bImports, imports, true, true);
 
     if (componentFileNames) {
         imports.push(...componentFileNames.map(getImport));
@@ -37,10 +45,8 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): (
     return () => {
         const { properties, imports: bindingImports, declarations, optionsTypeInfo } = bindings;
         const opsTypeInfo = optionsTypeInfo || { typeParts: ['AgChartOptions'], typeStr: 'AgChartOptions' };
-        const imports = getImports(componentFileNames, opsTypeInfo);
-        if (bindingImports?.length > 0) {
-            addBindingImports(bindingImports, imports, true, true);
-        }
+        const imports = getImports(bindingImports, componentFileNames, opsTypeInfo);
+
         const propertyAttributes = [];
         const propertyVars = [];
         const propertyAssignments = [];

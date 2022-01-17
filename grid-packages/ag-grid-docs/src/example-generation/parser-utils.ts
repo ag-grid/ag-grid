@@ -321,7 +321,12 @@ export function getTypes(node: ts.Node) {
         }
     }
     node.forEachChild(ct => {
-        typesToInclude = [...typesToInclude, ...getTypes(ct)]
+        // Only recurse down the type branches of the tree so we do not include argument names
+        if ((ct as any).type) {
+            typesToInclude = [...typesToInclude, ...getTypes((ct as any).type)]
+        } else {
+            typesToInclude = [...typesToInclude, ...getTypes(ct)]
+        }
     })
     return typesToInclude;
 }
@@ -489,7 +494,7 @@ export function convertImportPath(modulePackage: string, convertToPackage: boole
             return `'ag-grid-enterprise'`
         }
     }
-    return modulePackage.replace('_typescript', '');
+    return modulePackage.replace('_typescript', '').replace(/"/g, `'`);
 }
 
 export function getImport(filename: string) {
@@ -503,18 +508,26 @@ export function getImport(filename: string) {
  * We ignore any component files as those imports are generated for each framework.
  */
 export function addBindingImports(bindingImports: any, imports: string[], convertToPackage: boolean, ignoreTsImports: boolean) {
-    // We rely on the prettier-plugin-organize-imports plugin to organise and de-duplicate our imports
-    // Except React where plugin breaks imports by removing import React
+    let workingImports = {};
+    let namespacedImports = [];
+
     bindingImports.forEach((i: BindingImport) => {
         if (i.imports.length > 0) {
             const path = convertImportPath(i.module, convertToPackage)
             if (!i.module.includes('_typescript') || !ignoreTsImports) {
                 if (i.isNamespaced) {
-                    imports.push(`import * as ${i.imports[0]} from ${path};`);
+                    namespacedImports.push(`import * as ${i.imports[0]} from ${path};`);
                 } else {
-                    imports.push(`import { ${i.imports.join(', ')} }  from ${path};`);
+                    workingImports[path] = [...(workingImports[path] || []), ...i.imports];
                 }
             }
         }
     });
+
+    [...new Set(namespacedImports)].forEach(ni => imports.push(ni));
+
+    Object.entries(workingImports).forEach(([k, v]: ([string, string[]])) => {
+        const unique = [...new Set(v)].sort();
+        imports.push(`import { ${unique.join(', ')} }  from ${k};`);
+    })
 }
