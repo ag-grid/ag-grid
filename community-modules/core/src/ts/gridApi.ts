@@ -246,12 +246,6 @@ export class GridApi {
 
     private destroyCalled = false;
 
-    private checkReady(): void {
-        if (!this.ctrlsService.isReady()) {
-            console.warn(`AG Grid: The Grid's API was used before the grid was ready. You must be looking to do something as soon as the grid is initialised. The recommended way to do this is to listen to the Grid Ready event, and call the API from within the listener.`);
-        }
-    }
-
     public registerOverlayWrapperComp(overlayWrapperComp: OverlayWrapperComponent): void {
         this.overlayWrapperComp = overlayWrapperComp;
     }
@@ -595,7 +589,6 @@ export class GridApi {
 
     /** Remove row(s) from the DOM and recreate them again from scratch. */
     public redrawRows(params: RedrawRowsParams = {}): void {
-        this.checkReady();
         const rowNodes = params ? params.rowNodes : undefined;
         this.rowRenderer.redrawRows(rowNodes);
     }
