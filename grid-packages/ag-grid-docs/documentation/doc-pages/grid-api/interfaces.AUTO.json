@@ -1311,7 +1311,7 @@
     "meta": { "isCallSignature": true },
     "type": {
       "arguments": { "cellClassParams": "CellClassParams" },
-      "returnType": "string | string[]"
+      "returnType": "string | string[] | null | undefined"
     }
   },
   "CellStyleFunc": {
