@@ -34,7 +34,7 @@ function getPropertyInterfaces(properties) {
     let propTypesUsed = [];
     properties.forEach(prop => {
         if (prop.typings?.typesToInclude?.length > 0) {
-            propTypesUsed = [...propTypesUsed, prop.typings.typesToInclude]
+            propTypesUsed = [...propTypesUsed, ...prop.typings.typesToInclude]
         }
     });
     return [...new Set(propTypesUsed)];
