@@ -7,7 +7,6 @@ import { getSeriesType } from "../../utils/seriesTypeMapper";
 
 export class ComboChartProxy extends CartesianChartProxy {
 
-    private updateParams: UpdateChartParams;
     private prevSeriesChartTypes: SeriesChartType[];
 
     public constructor(params: ChartProxyParams) {
@@ -23,17 +22,30 @@ export class ComboChartProxy extends CartesianChartProxy {
         return AgChart.create({
             container: this.chartProxyParams.parentElement,
             theme: this.chartTheme,
-            axes: this.getAxes(),
         });
     }
 
     public update(params: UpdateChartParams): void {
-        this.resetAxes(params);
         this.updateSeries(params);
+        this.resetAxes(params);
         this.updateLabelRotation(params.category.id);
     }
 
-    private getAxes(): AgCartesianAxisOptions[] {
+    private resetAxes(params: UpdateChartParams): void {
+        const { seriesChartTypes } = params;
+        const seriesChartTypesChanged = !_.areEqual(this.prevSeriesChartTypes, seriesChartTypes,
+            (s1, s2) => s1.colId === s2.colId && s1.chartType === s2.chartType && s1.secondaryAxis === s2.secondaryAxis);
+
+        // cache a cloned copy of `seriesChartTypes` for subsequent comparisons
+        this.prevSeriesChartTypes = seriesChartTypes.map(s => ({...s}));
+
+        if (seriesChartTypesChanged) {
+            const axes = this.getAxes(params);
+            this.chart.axes = axes.map(axis => AgChart.createComponent(axis, 'cartesian.axes'));
+        }
+    }
+
+    private getAxes(updateParams: UpdateChartParams): AgCartesianAxisOptions[] {
         const axisOptions = this.getAxesOptions('cartesian');
         const bottomOptions = deepMerge(axisOptions[this.xAxisType], axisOptions[this.xAxisType].bottom);
         const leftOptions = deepMerge(axisOptions[this.yAxisType], axisOptions[this.yAxisType].left);
@@ -42,7 +54,7 @@ export class ComboChartProxy extends CartesianChartProxy {
         const primaryYKeys: string[] = [];
         const secondaryYKeys: string[] = [];
 
-        const fields = this.updateParams ? this.updateParams.fields : [];
+        const fields = updateParams ? updateParams.fields : [];
         const fieldsMap = new Map(fields.map(f => [f.colId, f]));
 
         const seriesChartTypes = this.chartProxyParams.seriesChartTypes;
@@ -117,22 +129,6 @@ export class ComboChartProxy extends CartesianChartProxy {
         }
 
         return axes;
-    }
-
-    private resetAxes(params: UpdateChartParams): void {
-        const { seriesChartTypes } = params;
-        const seriesChartTypesChanged = !_.areEqual(this.prevSeriesChartTypes, seriesChartTypes,
-            (s1, s2) => s1.colId === s2.colId && s1.chartType === s2.chartType && s1.secondaryAxis === s2.secondaryAxis);
-
-        // cache a cloned copy of `seriesChartTypes` for subsequent comparisons
-        this.prevSeriesChartTypes = seriesChartTypes.map(s => ({...s}));
-
-        if (seriesChartTypesChanged) {
-            // save updateParams so axes can obtain series display name and check for visible series
-            this.updateParams = params;
-            // recreate axes
-            this.recreateChart();
-        }
     }
 
     private updateSeries(params: UpdateChartParams) {
