@@ -723,7 +723,7 @@ export interface GridOptions {
      * @deprecated This property has been deprecated. Use `suppressCellFocus` instead.
      */
     suppressCellSelection?: boolean;
-    /** If `true`, cells won't be focusable. This means keyboard navigation will be disabled for grid cells, but remain enabled in other elements of the grid such as column headers, floating filters, tool panels. */
+    /** If `true`, cells won't be focusable. This means keyboard navigation will be disabled for grid cells, but remain enabled in other elements of the grid such as column headers, floating filters, tool panels. Default: `false` */
     suppressCellFocus?: boolean;
     /** If `true`, only a single range can be selected. Default: `false` */
     suppressMultiRangeSelection?: boolean;

@@ -138,11 +138,15 @@ export class ChartDataModel extends BeanStub {
             this.syncDimensionCellRange();
         }
 
-        this.updateSeriesChartTypes()
+        this.updateSeriesChartTypes();
         this.updateData();
     }
 
     public updateSeriesChartTypes(): void {
+        if(!this.isComboChart()) {
+            return;
+        }
+
         if (this.chartType === 'customCombo') {
             this.updateSeriesChartTypesForCustomCombo();
             return;
@@ -554,5 +558,9 @@ export class ChartDataModel extends BeanStub {
         if (selectedDimension && selectedDimension.column) {
             this.dimensionCellRange = this.createCellRange(CellRangeType.DIMENSION, selectedDimension.column);
         }
+    }
+
+    public isComboChart(): boolean {
+        return ['columnLineCombo', 'areaColumnCombo', 'customCombo'].includes(this.chartType);
     }
 }

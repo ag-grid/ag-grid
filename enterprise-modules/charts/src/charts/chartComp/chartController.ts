@@ -103,6 +103,7 @@ export class ChartController extends BeanStub {
             suppressChartRanges: this.model.suppressChartRanges,
             aggFunc: this.model.aggFunc,
             unlinkChart: this.model.unlinked,
+            seriesChartTypes: this.model.seriesChartTypes
         };
     }
 
@@ -245,7 +246,7 @@ export class ChartController extends BeanStub {
     }
 
     public isComboChart(): boolean {
-        return ['columnLineCombo', 'areaColumnCombo', 'customCombo'].includes(this.model.chartType);
+        return this.model.isComboChart();
     }
 
     public updateSeriesChartType(colId: string, chartType?: ChartType, secondaryAxis?: boolean): void {

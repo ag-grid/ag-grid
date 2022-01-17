@@ -1,9 +1,9 @@
 import { expect, test } from "@jest/globals";
-import { calculateSecondaryAxisDomain, getTicks } from "./secondaryAxisTicks";
+import { calculateNiceSecondaryAxis, getTicks } from "./secondaryAxisTicks";
 
 function ticks(a: number, b: number, count: number): number[] {
-    let domain = calculateSecondaryAxisDomain([a, b], count);
-    return getTicks(domain[0], domain[1], count);
+    let [domain, ticks] = calculateNiceSecondaryAxis([a, b], count);
+    return ticks;
 }
 
 test('ticks', () => {
@@ -23,10 +23,16 @@ test('ticks', () => {
         13, 17, 21, 25, 29
     ];
     const ticks_1000_1002 = [
-        1000, 1000.5, 1001,
-        1001.5, 1002, 1002.5,
-        1003, 1003.5, 1004,
-        1004.5
+        1000,
+        1000.4,
+        1000.8,
+        1001.2,
+        1001.6,
+        1002,
+        1002.4,
+        1002.8,
+        1003.2,
+        1003.6,
     ];
     const ticks_n26_n7 = [-27, -23, -19, -15, -11, -7];
     const ticks_f002_f004 = [0, 0.001, 0.002, 0.003, 0.004, 0.005];

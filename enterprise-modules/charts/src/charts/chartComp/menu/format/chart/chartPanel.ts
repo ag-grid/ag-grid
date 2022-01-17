@@ -47,7 +47,7 @@ export class ChartPanel extends Component {
     private initGroup(): void {
         this.chartGroup
             .setTitle(this.chartTranslationService.translate('chart'))
-            .toggleGroupExpand(true)
+            .toggleGroupExpand(false)
             .hideEnabledCheckbox(true);
     }
 

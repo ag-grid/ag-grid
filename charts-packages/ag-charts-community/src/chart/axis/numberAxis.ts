@@ -1,4 +1,4 @@
-import { calculateSecondaryAxisDomain, getTicks } from "../../util/secondaryAxisTicks";
+import { calculateNiceSecondaryAxis } from "../../util/secondaryAxisTicks";
 import { ContinuousScale } from "../../scale/continuousScale";
 import { LinearScale } from "../../scale/linearScale";
 import { extent } from "../../util/array";
@@ -43,14 +43,6 @@ export class NumberAxis extends ChartAxis {
     public setDomain(domain: number[], primaryTickCount?: number) {
         const { scale, min, max } = this;
 
-        if (primaryTickCount) {
-            // when `primaryTickCount` is supplied the current axis is a secondary axis which needs to be aligned to
-            // the primary by constraining the tick count to the primary axis tick count
-            scale.domain = calculateSecondaryAxisDomain(domain, primaryTickCount);
-            this.ticks = getTicks(scale.domain[0], scale.domain[1], primaryTickCount);
-            return;
-        }
-
         if (domain.length > 2) {
             domain = extent(domain, isContinuous, Number) || [0, 1];
         }
@@ -60,13 +52,22 @@ export class NumberAxis extends ChartAxis {
             isNaN(max) ? domain[1] : max
         ];
 
-        scale.domain = domain;
+        if (primaryTickCount) {
+            // when `primaryTickCount` is supplied the current axis is a secondary axis which needs to be aligned to
+            // the primary by constraining the tick count to the primary axis tick count
+            const [d, ticks] = calculateNiceSecondaryAxis(domain, primaryTickCount);
+            scale.domain = d;
+            this.ticks = ticks;
+            return;
+        } else {
+            scale.domain = domain;
 
-        this.onLabelFormatChange(this.label.format);
+            this.onLabelFormatChange(this.label.format); // not sure why this is required?
 
-        (this.scale as ContinuousScale).clamp = true;
-        if (this.nice && this.scale.nice) {
-            this.scale.nice(this.tick.count);
+            (this.scale as ContinuousScale).clamp = true;
+            if (this.nice && this.scale.nice) {
+                this.scale.nice(this.tick.count);
+            }
         }
     }
 

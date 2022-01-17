@@ -3002,7 +3002,7 @@
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressCellFocus": {
-      "description": "/** If `true`, cells won't be focusable. This means keyboard navigation will be disabled for grid cells, but remain enabled in other elements of the grid such as column headers, floating filters, tool panels. */",
+      "description": "/** If `true`, cells won't be focusable. This means keyboard navigation will be disabled for grid cells, but remain enabled in other elements of the grid such as column headers, floating filters, tool panels. Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }
     },
     "suppressMultiRangeSelection": {
@@ -11254,7 +11254,7 @@
       }
     },
     "stopEditing": {
-      "description": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property `enterMovesDownAfterEdit=true` */",
+      "description": "/** Callback to tell grid to stop editing the current cell. Call with input parameter\n * true to prevent focus from moving to the next cell after editing stops in case the\n * grid property `enterMovesDownAfterEdit=true` */",
       "type": {
         "arguments": { "suppressNavigateAfterEdit?": "boolean" },
         "returnType": "void",
@@ -11381,7 +11381,10 @@
     "aggFunc": {
       "type": { "returnType": "string | IAggFunc", "optional": true }
     },
-    "unlinkChart": { "type": { "returnType": "boolean", "optional": true } }
+    "unlinkChart": { "type": { "returnType": "boolean", "optional": true } },
+    "seriesChartTypes": {
+      "type": { "returnType": "SeriesChartType[]", "optional": true }
+    }
   },
   "IChartService": {
     "getChartModels": {
@@ -13528,7 +13531,7 @@
       }
     },
     "stopEditing": {
-      "description": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property `enterMovesDownAfterEdit=true` */",
+      "description": "/** Callback to tell grid to stop editing the current cell. Call with input parameter\n * true to prevent focus from moving to the next cell after editing stops in case the\n * grid property `enterMovesDownAfterEdit=true` */",
       "type": {
         "arguments": { "suppressNavigateAfterEdit?": "boolean" },
         "returnType": "void",
@@ -16114,7 +16117,7 @@
       }
     },
     "stopEditing": {
-      "description": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property `enterMovesDownAfterEdit=true` */",
+      "description": "/** Callback to tell grid to stop editing the current cell. Call with input parameter\n * true to prevent focus from moving to the next cell after editing stops in case the\n * grid property `enterMovesDownAfterEdit=true` */",
       "type": {
         "arguments": { "suppressNavigateAfterEdit?": "boolean" },
         "returnType": "void",
@@ -16199,7 +16202,7 @@
       }
     },
     "stopEditing": {
-      "description": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property `enterMovesDownAfterEdit=true` */",
+      "description": "/** Callback to tell grid to stop editing the current cell. Call with input parameter\n * true to prevent focus from moving to the next cell after editing stops in case the\n * grid property `enterMovesDownAfterEdit=true` */",
       "type": {
         "arguments": { "suppressNavigateAfterEdit?": "boolean" },
         "returnType": "void",
@@ -16284,7 +16287,7 @@
       }
     },
     "stopEditing": {
-      "description": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property `enterMovesDownAfterEdit=true` */",
+      "description": "/** Callback to tell grid to stop editing the current cell. Call with input parameter\n * true to prevent focus from moving to the next cell after editing stops in case the\n * grid property `enterMovesDownAfterEdit=true` */",
       "type": {
         "arguments": { "suppressNavigateAfterEdit?": "boolean" },
         "returnType": "void",

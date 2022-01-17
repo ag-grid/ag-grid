@@ -64,6 +64,8 @@ export class ChartDataPanel extends Component {
 
         this.chartType = this.chartController.getChartType();
 
+        const groupExpandedState = this.getGroupExpandedState();
+
         if (_.areEqual(_.keys(this.columnComps), colIds) && this.chartType === currentChartType) {
             // if possible, we just update existing components
             [...dimensionCols, ...valueCols].forEach(col => {
@@ -92,6 +94,27 @@ export class ChartDataPanel extends Component {
             this.createSeriesGroup(valueCols);
             this.createSeriesChartTypeGroup(valueCols);
         }
+
+        this.restoreGroupExpandedState(groupExpandedState);
+    }
+
+    private getGroupExpandedState(): boolean[] {
+        return [
+            this.categoriesGroupComp,
+            this.seriesGroupComp,
+            this.seriesChartTypeGroupComp
+        ].map(group => !group ? true : group.isExpanded());
+    }
+
+    private restoreGroupExpandedState(groupExpandedState: boolean[]): void {
+        [
+            this.categoriesGroupComp,
+            this.seriesGroupComp,
+            this.seriesChartTypeGroupComp
+        ].forEach((group: AgGroupComponent, idx: number) => {
+            if (!group) { return; }
+            group.toggleGroupExpand(groupExpandedState[idx]);
+        });
     }
 
     private createAutoScrollService(): void {
@@ -245,7 +268,6 @@ export class ChartDataPanel extends Component {
                 { value: 'stackedArea', text: translate('stackedArea', 'StackedArea') },
                 { value: 'groupedColumn', text: translate('groupedColumn', 'Grouped Column') },
                 { value: 'stackedColumn', text: translate('stackedColumn', 'Stacked Column') },
-                { value: 'scatter', text: translate('scatter', 'Scatter') },
             ];
 
             const chartTypeComp = seriesItemGroup.createManagedBean(new AgSelect());
@@ -356,12 +378,9 @@ export class ChartDataPanel extends Component {
 
         this.autoScrollService.check(draggingEvent.event);
         this.clearHoveredItems();
-        
-
         this.lastHoveredItem = { comp, position };
 
         const eGui = comp.getGui();
-
 
         eGui.classList.add('ag-list-item-hovered', `ag-item-highlight-${position}`);
     }
