@@ -24,7 +24,6 @@ import {
     AgCartesianSeriesOptions,
     AgPolarSeriesOptions,
     AgHierarchySeriesOptions,
-    AgLineSeriesOptions
 } from "./agChartOptions";
 import { CartesianChart } from "./cartesianChart";
 import { PolarChart } from "./polarChart";
@@ -38,6 +37,8 @@ import { HierarchyChart } from "./hierarchyChart";
 import { mappings } from './agChartMappings';
 
 type ThemeMap = { [key in AgChartThemeName | 'undefined' | 'null']?: ChartTheme };
+type SeriesOptions = AgCartesianSeriesOptions | AgPolarSeriesOptions | AgHierarchySeriesOptions;
+type SeriesOptionType = NonNullable<SeriesOptions['type']>;
 
 const lightTheme = new ChartTheme();
 const darkTheme = new DarkTheme();
@@ -68,15 +69,10 @@ export const themes: ThemeMap = {
 };
 
 export function getChartTheme(value?: string | ChartTheme | AgChartTheme): ChartTheme {
-    if (value instanceof ChartTheme) {
-        return value;
-    }
+    if (value instanceof ChartTheme) { return value; }
 
     const stockTheme = themes[value as AgChartThemeName];
-
-    if (stockTheme) {
-        return stockTheme;
-    }
+    if (stockTheme) { return stockTheme; }
 
     value = value as AgChartTheme;
 
@@ -100,33 +96,36 @@ let firstColorIndex = 0;
 export abstract class AgChart {
     static create<T extends AgChartOptions>(options: T, container?: HTMLElement, data?: any[]): AgChartType<T> {
         options = Object.create(options); // avoid mutating user provided options
-        if (container) {
-            options.container = container;
-        }
-        if (data) {
-            options.data = data;
-        }
-        if (options.series && options.series.length > 0) {
-            options.series = processSeriesOptions(options.series);
-        }
-        // special handling when both `autoSize` and `width` / `height` are present in the options
-        const autoSize = options && options.autoSize !== false;
-        const theme = getChartTheme(options.theme);
-        firstColorIndex = 0;
-        const chart = create(options, undefined, undefined, theme);
-        if (chart) {
-            if (autoSize) {  // `autoSize` takes precedence over `width` / `height`
-                chart.autoSize = true;
-            }
-        }
-        return chart;
+        return AgChart.createOrUpdate({
+            options,
+            container,
+            data,
+            operation: (options, theme) => create(options, undefined, undefined, theme),
+        });
     }
 
     static update<T extends AgChartOptions>(chart: AgChartType<T>, options: T, container?: HTMLElement, data?: any[]) {
         if (!(chart && options)) {
             return;
         }
-        options = Object.create(options);
+        return AgChart.createOrUpdate({
+            chart,
+            options,
+            container,
+            data,
+            operation: (options, theme) => update(chart, options, undefined, theme),
+        });
+    }
+
+    static createComponent = create;
+
+    private static createOrUpdate<R, T extends AgChartOptions>({chart, options, container, data, operation }: {
+        options: T,
+        container?: HTMLElement,
+        data?: any[],
+        chart?: Chart,
+        operation: (options: T, theme: ChartTheme) => R,
+    }): R {
         if (container) {
             options.container = container;
         }
@@ -134,21 +133,24 @@ export abstract class AgChart {
             options.data = data;
         }
         if (options.series && options.series.length > 0) {
-            options.series = processSeriesOptions(options.series);
+            options.series = processSeriesOptions(options.series) as any;
         }
+        // special handling when both `autoSize` and `width` / `height` are present in the options
         const autoSize = options && options.autoSize !== false;
         const theme = getChartTheme(options.theme);
         firstColorIndex = 0;
-        update(chart, options, undefined, theme);
-        if (autoSize) {
+        const result = operation(options, theme);
+        if (chart == null && result instanceof Chart) {
+            chart = result;
+        }
+        if (chart && autoSize) {  // `autoSize` takes precedence over `width` / `height`
             chart.autoSize = true;
         }
+        return result;
     }
-
-    static createComponent = create;
 }
 
-const pathToSeriesTypeMap: { [key in string]: string } = {
+const pathToSeriesTypeMap: Record<string, SeriesOptionType> = {
     'cartesian.series': 'line', // default series type for cartesian charts
     'line.series': 'line',
     'area.series': 'area',
@@ -160,14 +162,20 @@ const pathToSeriesTypeMap: { [key in string]: string } = {
     'pie.series': 'pie'
 };
 
-const actualSeriesTypeMap = (() => {
-    const map: { [key in string]: string } = {};
-    const actualSeries = ['area', 'bar', 'histogram', 'line', 'pie', 'scatter'];
-    actualSeries.forEach(series => map[series] = series);
-    // Aliases:
-    map['column'] = 'bar';
-    return map;
-})();
+const actualSeriesTypeMap: Record<SeriesOptionType, SeriesOptionType> = {
+    // Identity mappings.
+    'area': 'area',
+    'bar': 'bar',
+    'histogram': 'histogram',
+    'line': 'line',
+    'pie': 'pie',
+    'scatter': 'scatter',
+    'ohlc': 'ohlc', // TODO: Remove.
+    'treemap': 'treemap',
+
+    // Aliases.
+    'column': 'bar',
+};
 
 function create(options: any, path?: string, component?: any, theme?: ChartTheme) {
     // Deprecate `chart.legend.item.marker.type` in integrated chart options.
@@ -370,7 +378,7 @@ function updateSeries(chart: Chart, configs: any[], keyPath: string, theme?: Cha
         let series = allSeries[i];
         if (series) {
             config = provideDefaultType(config, keyPath);
-            const type = actualSeriesTypeMap[config.type];
+            const type = actualSeriesTypeMap[config.type as SeriesOptionType];
             if (series.type === type) {
                 if (theme) {
                     firstColorIndex = theme.setSeriesColors(series, config, firstColorIndex);
@@ -510,90 +518,54 @@ function provideDefaultOptions(path: string, options: any, mapping: any, theme?:
  * Groups the series options objects if they are of type `column` or `bar` and places them in an array at the index where the first instance of this series type was found.
  * Returns an array of arrays containing the ordered and grouped series options objects.
  */
-export function getSeriesOrder(
-    seriesOptions: AgCartesianSeriesOptions[] | AgPolarSeriesOptions[] | AgHierarchySeriesOptions[]
-) {
-    const indexMap: Map<string, number> = new Map([
-        ['column', -1],
-        ['bar', -1],
-        ['line', -1],
-        ['scatter', -1],
-        ['area', -1],
-        ['histogram', -1],
-        ['area', -1],
-        ['ohlc', -1],
-    ]);
+export function groupSeriesByType(seriesOptions: SeriesOptions[]) {
+    const indexMap: Record<SeriesOptionType, SeriesOptions[]> = {
+        column: [],
+        bar: [],
+        line: [],
+        scatter: [],
+        area: [],
+        histogram: [],
+        ohlc: [],
+        pie: [],
+        treemap: [],
+    };
 
     const result = [];
 
-    for (let i = 0; i < seriesOptions.length; i++) {
-        const s = seriesOptions[i];
-        const seriesType = s.type || 'line';
+    for (const s of seriesOptions) {
+        const isColumnOrBar = s.type === 'column' || s.type === 'bar';
+        const isStackedArea = s.type === 'area' && s.stacked === true;
 
-        const isColumn = seriesType === 'column';
-        const isBar = seriesType === 'bar';
-        const isStackedArea = seriesType === 'area' && (s as any).stacked === true;
-
-        if (isColumn || isBar || isStackedArea) {
-            if (indexMap.get(seriesType)! < 0) {
-                indexMap.set(seriesType, result.length);
-                result.push([]);
-            }
-            result[indexMap.get(seriesType)!].push(s);
-        } else {
+        if (!isColumnOrBar && !isStackedArea) {
+            // No need to use index for these cases.
             result.push([s]);
+            continue;
         }
+
+        const seriesType = s.type || 'line';
+        if (seriesType === 'pie' || seriesType === 'treemap') {
+            throw new Error(`AG Grid - Unexpected series type of: ${seriesType}`);
+        } else if (indexMap[seriesType].length === 0) {
+            // Add indexed array to result on first addition.
+            result.push(indexMap[seriesType]);
+        }
+        indexMap[seriesType].push(s);
     }
+
     return result;
 }
 
 /**
- * Takes an array of column series options objects and returns a single object with the combined column series options.
+ * Takes an array of bar or area series options objects and returns a single object with the combined area series options.
  */
-export function processBarColumnSeriesOptions(series: any) {
-    let options: any = {};
-
-    const arrayValueProperties = ['yKeys', 'fills', 'strokes', 'yNames', 'hideInLegend'];
-    const stringValueProperties = ['yKey', 'fill', 'stroke', 'yName'];
-
-    for (let i = 0; i < series.length; i++) {
-        const s = series[i];
-        for (const property in s) {
-
-            const arrayValueProperty = arrayValueProperties.indexOf(property) > -1;
-            const stringValueProperty = stringValueProperties.indexOf(property) > -1;
-
-            if (arrayValueProperty && s[property].length > 0) {
-                options[property] = [...(options[property] || []), ...s[property]];
-            } else if (stringValueProperty) {
-                options[`${property}s`] = [...(options[`${property}s`] || []), s[property]];
-            } else if (property === 'showInLegend') {
-                if (s[property] === false) {
-                    options.hideInLegend = [...(options.hideInLegend || []), s.yKey];
-                }
-            } else if (property === 'grouped') {
-                if (s[property] === true) {
-                    options[property] = s[property];
-                }
-            } else {
-                options[property] = s[property];
-            }
-        }
-    }
-    return options;
-}
-
-/**
- * Takes an array of area series options objects and returns a single object with the combined area series options.
- */
-export function processAreaSeriesOptions(series: any) {
+export function reduceSeries(series: any[]) {
     let options: any = {};
 
     const arrayValueProperties = ['yKeys', 'fills', 'strokes', 'yNames', 'hideInChart', 'hideInLegend'];
     const stringValueProperties = ['yKey', 'fill', 'stroke', 'yName'];
 
-    for (let i = 0; i < series.length; i++) {
-        const s = series[i];
+    for (const s of series) {
         for (const property in s) {
 
             const arrayValueProperty = arrayValueProperties.indexOf(property) > -1;
@@ -601,6 +573,14 @@ export function processAreaSeriesOptions(series: any) {
 
             if (arrayValueProperty && s[property].length > 0) {
                 options[property] = [...(options[property] || []), ...s[property]];
+            } else if (property === 'showInLegend') { // Special case.
+                if (s[property] === false) {
+                    options.hideInLegend = [...(options.hideInLegend || []), s.yKey];
+                }
+            } else if (property === 'grouped') { // Special case.
+                if (s[property] === true) {
+                    options[property] = s[property];
+                }
             } else if (stringValueProperty) {
                 options[`${property}s`] = [...(options[`${property}s`] || []), s[property]];
             } else {
@@ -608,34 +588,32 @@ export function processAreaSeriesOptions(series: any) {
             }
         }
     }
-    return options;
-}
 
-/**
- * Takes an array of line series options objects and returns a single object with the combined line series options.
- */
-export function processLineSeriesOptions(series: any) {
-    return { ...series[0] };
+    return options;
 }
 
 /**
  * Transforms provided series options array into an array containing series options which are compatible with standalone charts series options.
  */
-export function processSeriesOptions(
-    seriesOptions: AgCartesianSeriesOptions[] | AgPolarSeriesOptions[] | AgHierarchySeriesOptions[]
-) {
-    return (getSeriesOrder(seriesOptions) as any).flatMap(
-        (series: [AgCartesianSeriesOptions, AgPolarSeriesOptions]) => {
-            switch (series[0].type) {
-                case 'column':
-                case 'bar':
-                    return processBarColumnSeriesOptions(series);
-                case 'area':
-                    return processAreaSeriesOptions(series);
-                case 'line':
-                default:
-                    return processLineSeriesOptions(series);
-            }
+export function processSeriesOptions(seriesOptions: SeriesOptions[]) {
+    const result: SeriesOptions[] = [];
+
+    for (const series of groupSeriesByType(seriesOptions)) {
+        switch (series[0].type) {
+            case 'column':
+            case 'bar':
+            case 'area':
+                result.push(reduceSeries(series));
+                break;
+            case 'line':
+            default:
+                if (series.length > 1) {
+                    throw new Error('AG-Grid - unexpected grouping of series type: ' + series[0].type);
+                }
+                result.push(series[0]);
+                break;
         }
-    );
+    }
+
+    return result;
 }
