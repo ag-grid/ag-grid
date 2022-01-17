@@ -62,6 +62,7 @@
     "@ag-grid-community/core": "~26.2.0",
     "@ag-grid-community/react": "~26.2.0",
     "@ag-grid-community/vue": "~26.2.0",
+    "@ag-grid-community/infinite-row-model": "~26.2.0",
     "@ag-grid-enterprise/all-modules": "~26.2.0",
     "@ag-grid-enterprise/charts": "~26.2.0",
     "@ag-grid-enterprise/clipboard": "~26.2.0",
