@@ -589,8 +589,6 @@ export function reduceSeries(series: any[], enableBarSeriesSpecialCases: boolean
         }
     }
 
-    console.log({options});
-
     return options;
 }
 
