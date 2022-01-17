@@ -85,8 +85,6 @@ const plugins = [
           options: {
             blocks: {
               note: {
-
-
                 classes: 'note',
                 title: 'optional',
               },
@@ -108,6 +106,9 @@ const plugins = [
               },
               'only-angular-or-vue': {
                 classes: 'angular-or-vue-only-section',
+              },
+              'only-javascript-or-angular-or-vue': {
+                classes: 'angular-or-vue-or-javascript-only-section',
               },
               'only-frameworks': {
                 classes: 'frameworks-only-section',
