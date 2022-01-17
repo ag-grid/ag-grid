@@ -11254,7 +11254,7 @@
       }
     },
     "stopEditing": {
-      "description": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property `enterMovesDownAfterEdit=true` */",
+      "description": "/** Callback to tell grid to stop editing the current cell. Call with input parameter\n * true to prevent focus from moving to the next cell after editing stops in case the\n * grid property `enterMovesDownAfterEdit=true` */",
       "type": {
         "arguments": { "suppressNavigateAfterEdit?": "boolean" },
         "returnType": "void",
@@ -13531,7 +13531,7 @@
       }
     },
     "stopEditing": {
-      "description": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property `enterMovesDownAfterEdit=true` */",
+      "description": "/** Callback to tell grid to stop editing the current cell. Call with input parameter\n * true to prevent focus from moving to the next cell after editing stops in case the\n * grid property `enterMovesDownAfterEdit=true` */",
       "type": {
         "arguments": { "suppressNavigateAfterEdit?": "boolean" },
         "returnType": "void",
@@ -16117,7 +16117,7 @@
       }
     },
     "stopEditing": {
-      "description": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property `enterMovesDownAfterEdit=true` */",
+      "description": "/** Callback to tell grid to stop editing the current cell. Call with input parameter\n * true to prevent focus from moving to the next cell after editing stops in case the\n * grid property `enterMovesDownAfterEdit=true` */",
       "type": {
         "arguments": { "suppressNavigateAfterEdit?": "boolean" },
         "returnType": "void",
@@ -16202,7 +16202,7 @@
       }
     },
     "stopEditing": {
-      "description": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property `enterMovesDownAfterEdit=true` */",
+      "description": "/** Callback to tell grid to stop editing the current cell. Call with input parameter\n * true to prevent focus from moving to the next cell after editing stops in case the\n * grid property `enterMovesDownAfterEdit=true` */",
       "type": {
         "arguments": { "suppressNavigateAfterEdit?": "boolean" },
         "returnType": "void",
@@ -16287,7 +16287,7 @@
       }
     },
     "stopEditing": {
-      "description": "/** Callback to tell grid to stop editing the current cell. pass 'false' to prevent\n * navigation moving to the next cell if grid property `enterMovesDownAfterEdit=true` */",
+      "description": "/** Callback to tell grid to stop editing the current cell. Call with input parameter\n * true to prevent focus from moving to the next cell after editing stops in case the\n * grid property `enterMovesDownAfterEdit=true` */",
       "type": {
         "arguments": { "suppressNavigateAfterEdit?": "boolean" },
         "returnType": "void",

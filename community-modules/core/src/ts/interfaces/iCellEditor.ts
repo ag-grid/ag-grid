@@ -79,8 +79,9 @@ export interface ICellEditorParams {
     /** callback to tell grid a key was pressed - useful to pass control key events (tab,
      *  arrows etc) back to grid - however you do */
     onKeyDown: (event: KeyboardEvent) => void;
-    /** Callback to tell grid to stop editing the current cell. pass 'false' to prevent
-     *  navigation moving to the next cell if grid property `enterMovesDownAfterEdit=true` */
+    /** Callback to tell grid to stop editing the current cell. Call with input parameter
+     * true to prevent focus from moving to the next cell after editing stops in case the
+     * grid property `enterMovesDownAfterEdit=true` */
     stopEditing: (suppressNavigateAfterEdit?: boolean) => void;
     /** A reference to the DOM element representing the grid cell that your component
      *  will live inside. Useful if you want to add event listeners or classes at this level.
