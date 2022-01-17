@@ -80,7 +80,7 @@
     "@ag-grid-enterprise/sparklines": "~26.2.0",
     "@ag-grid-enterprise/status-bar": "~26.2.0",
     "@ag-grid-enterprise/viewport-row-model": "~26.2.0",
-    "@angular/animations": "^10.2.3",
+    "@angular/animations": "10.2.3",
     "@angular/common": "10.2.3",
     "@angular/compiler": "10.2.3",
     "@angular/core": "10.2.3",
