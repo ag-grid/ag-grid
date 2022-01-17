@@ -11381,7 +11381,10 @@
     "aggFunc": {
       "type": { "returnType": "string | IAggFunc", "optional": true }
     },
-    "unlinkChart": { "type": { "returnType": "boolean", "optional": true } }
+    "unlinkChart": { "type": { "returnType": "boolean", "optional": true } },
+    "seriesChartTypes": {
+      "type": { "returnType": "SeriesChartType[]", "optional": true }
+    }
   },
   "IChartService": {
     "getChartModels": {

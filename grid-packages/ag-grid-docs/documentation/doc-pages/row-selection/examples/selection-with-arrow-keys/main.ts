@@ -33,7 +33,7 @@ function navigateToNextCell(params: NavigateToNextCellParams) {
     return suggestedNextCell
   }
 
-  gridOptions.api!.forEachNode(function (node) {
+  params.api.forEachNode(function (node) {
     if (node.rowIndex === suggestedNextCell!.rowIndex) {
       node.setSelected(true)
     }

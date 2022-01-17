@@ -6711,7 +6711,8 @@
       "chartOptions": "AgChartThemeOverrides",
       "suppressChartRanges?": "boolean",
       "aggFunc?": "string | IAggFunc",
-      "unlinkChart?": "boolean"
+      "unlinkChart?": "boolean",
+      "seriesChartTypes?": "SeriesChartType[]"
     }
   },
   "IChartService": {
