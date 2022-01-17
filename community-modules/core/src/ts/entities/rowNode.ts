@@ -366,11 +366,11 @@ export class RowNode implements IEventEmitter {
                 this.id = getRowNodeId(this.data);
                 // make sure id provided doesn't start with 'row-group-' as this is reserved. also check that
                 // it has 'startsWith' in case the user provided a number.
-                if (this.id && typeof this.id === 'string' && this.id.startsWith(RowNode.ID_PREFIX_ROW_GROUP)) {
+                if (this.id !== null && typeof this.id === 'string' && this.id.startsWith(RowNode.ID_PREFIX_ROW_GROUP)) {
                     console.error(`AG Grid: Row ID's cannot start with ${RowNode.ID_PREFIX_ROW_GROUP}, this is a reserved prefix for AG Grid's row grouping feature.`);
                 }
                 // force id to be a string
-                if (this.id && typeof this.id !== 'string') {
+                if (this.id !== null && typeof this.id !== 'string') {
                     this.id = '' + this.id;
                 }
             } else {
