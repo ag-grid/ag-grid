@@ -41,7 +41,7 @@ function writeFile(destination, contents) {
     }
 }
 
-function copyFiles(files, dest, tokenToReplace, replaceValue = '', importType) {
+function copyFiles(files, dest, tokenToReplace, replaceValue = '', importType, framework) {
     files.forEach(sourceFile => {
         const filename = path.basename(sourceFile);
         const destinationFile = path.join(dest, tokenToReplace ? filename.replace(tokenToReplace, replaceValue) : filename);
@@ -56,11 +56,12 @@ function copyFiles(files, dest, tokenToReplace, replaceValue = '', importType) {
             const parsed = parseFile(src)
             const imports = extractImportStatements(parsed);
 
-            // Need to replace module imports with their matching package import
             let formattedImports = '';
             if (imports.length > 0) {
                 let importStrings = [];
-                addBindingImports(imports, importStrings, importType === 'packages', true);
+                // For now we dont support Modules in our Typescript examples so always convert to packages
+                const convertToPackage = framework == 'typescript' || importType === 'packages';
+                addBindingImports(imports, importStrings, convertToPackage, true);
                 formattedImports = `${importStrings.join('\n')}\n`
 
                 // Remove the original import statements
@@ -242,7 +243,7 @@ function createExampleGenerator(prefix, importTypes) {
 
             copyFiles(stylesheets, basePath);
             copyFiles(rawScripts, basePath);
-            copyFiles(frameworkScripts, scriptsPath, `_${tokenToReplace}`, componentPostfix, importType);
+            copyFiles(frameworkScripts, scriptsPath, `_${tokenToReplace}`, componentPostfix, importType, framework);
         };
 
         const copyProvidedExample = (importType, framework, providedRootPath) => {

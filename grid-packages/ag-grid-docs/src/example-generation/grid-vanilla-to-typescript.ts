@@ -18,40 +18,36 @@ export function vanillaToTypescript(bindings: any, mainFilePath: string): (impor
     }
 
     const tsFile = fs.readFileSync(mainFilePath, 'utf8')
+    let unWrapped = tsFile
+        // unwrap the setup code from the DOM loaded event as the DOM is loaded before the typescript file is transpiled.
+        // Regex
+        // (.*DOMContentLoaded.*)\n Match the line with DOMContentLoaded
+        // (.|\n)*? Match the shortest number of lines until the next part matches (body of the event handler)
+        // (\n}\)) Match a }) on a new line with no indentation
+        .replace(/(.*DOMContentLoaded.*)\n((.|\n)*?)(\n}\))/g, '$2');
 
+    if (unWrapped.includes('DOMContentLoaded')) {
+        console.error('DomContentLoaded replace failed for', mainFilePath);
+        throw Error('DomContentLoaded replace failed for ' + mainFilePath)
+    }
 
-    return importType => {
+    let formattedImports = '';
+    let importStrings = [];
 
-        let unWrapped = tsFile
-            // unwrap the setup code from the DOM loaded event as the DOM is loaded before the typescript file is transpiled.
-            // Regex
-            // (.*DOMContentLoaded.*)\n Match the line with DOMContentLoaded
-            // (.|\n)*? Match the shortest number of lines until the next part matches (body of the event handler)
-            // (\n}\)) Match a }) on a new line with no indentation
-            .replace(/(.*DOMContentLoaded.*)\n((.|\n)*?)(\n}\))/g, '$2');
+    if (gridSettings.enterprise) {
+        importStrings.push("import 'ag-grid-enterprise';");
+    }
 
-        if (unWrapped.includes('DOMContentLoaded')) {
-            console.error('DomContentLoaded replace failed for', mainFilePath);
-            throw Error('DomContentLoaded replace failed for ' + mainFilePath)
-        }
+    if (imports.length > 0) {
+        // For now we dont support Modules in our Typescript examples so always convert to packages
+        addBindingImports(imports, importStrings, true, false);
+        formattedImports = `${importStrings.join('\n')}\n`;
 
-        // Need to replace module imports with their matching package import
-        let formattedImports = '';
-        let importStrings = [];
+        // Remove the original import statements
+        unWrapped = unWrapped.replace(/import ((.|\n)*?)from.*\n/g, '');
+    }
 
-        if (gridSettings.enterprise) {
-            importStrings.push("import 'ag-grid-enterprise';");
-        }
-
-        if (imports.length > 0) {
-            addBindingImports(imports, importStrings, importType === 'packages', false);
-            formattedImports = `${importStrings.join('\n')}\n`;
-
-            // Remove the original import statements
-            unWrapped = unWrapped.replace(/import ((.|\n)*?)from.*\n/g, '');
-        }
-        return `${formattedImports}${unWrapped} ${toAttach || ''}`;
-    };
+    return importType => `${formattedImports}${unWrapped} ${toAttach || ''}`
 }
 
 if (typeof window !== 'undefined') {
