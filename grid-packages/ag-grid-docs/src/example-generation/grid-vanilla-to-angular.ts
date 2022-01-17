@@ -37,7 +37,7 @@ function getPropertyInterfaces(properties) {
             propTypesUsed = [...propTypesUsed, prop.typings.typesToInclude]
         }
     });
-    return [... new Set(propTypesUsed)];
+    return [...new Set(propTypesUsed)];
 }
 
 function getModuleImports(bindings: any, componentFileNames: string[]): string[] {
