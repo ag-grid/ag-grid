@@ -559,7 +559,7 @@ export function groupSeriesByType(seriesOptions: SeriesOptions[]) {
 /**
  * Takes an array of bar or area series options objects and returns a single object with the combined area series options.
  */
-export function reduceSeries(series: any[]) {
+export function reduceSeries(series: any[], enableBarSeriesSpecialCases: boolean) {
     let options: any = {};
 
     const arrayValueProperties = ['yKeys', 'fills', 'strokes', 'yNames', 'hideInChart', 'hideInLegend'];
@@ -573,21 +573,23 @@ export function reduceSeries(series: any[]) {
 
             if (arrayValueProperty && s[property].length > 0) {
                 options[property] = [...(options[property] || []), ...s[property]];
-            } else if (property === 'showInLegend') { // Special case.
+            } else if (stringValueProperty) {
+                options[`${property}s`] = [...(options[`${property}s`] || []), s[property]];
+            } else if (enableBarSeriesSpecialCases && property === 'showInLegend') {
                 if (s[property] === false) {
-                    options.hideInLegend = [...(options.hideInLegend || []), s.yKey];
+                    options.hideInLegend = [...(options.hideInLegend || []), ...(s.yKey ? [s.yKey] : s.yKeys)];
                 }
-            } else if (property === 'grouped') { // Special case.
+            } else if (enableBarSeriesSpecialCases && property === 'grouped') {
                 if (s[property] === true) {
                     options[property] = s[property];
                 }
-            } else if (stringValueProperty) {
-                options[`${property}s`] = [...(options[`${property}s`] || []), s[property]];
             } else {
                 options[property] = s[property];
             }
         }
     }
+
+    console.log({options});
 
     return options;
 }
@@ -602,8 +604,10 @@ export function processSeriesOptions(seriesOptions: SeriesOptions[]) {
         switch (series[0].type) {
             case 'column':
             case 'bar':
+                result.push(reduceSeries(series, true));
+                break;
             case 'area':
-                result.push(reduceSeries(series));
+                result.push(reduceSeries(series, false));
                 break;
             case 'line':
             default:
