@@ -1,4 +1,4 @@
-import { CellEditingStartedEvent, CellEditingStoppedEvent, GridOptions, ICellEditorParams, RowEditingStartedEvent, RowEditingStoppedEvent } from '@ag-grid-community/core'
+import { Grid, CellEditingStartedEvent, CellEditingStoppedEvent, GridOptions, ICellEditorParams, RowEditingStartedEvent, RowEditingStoppedEvent } from '@ag-grid-community/core'
 import { NumericCellEditor } from './numericCellEditor_typescript'
 import { MoodEditor } from './moodEditor_typescript'
 
@@ -67,5 +67,5 @@ function cellEditorSelector(params: ICellEditorParams) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new agGrid.Grid(gridDiv, gridOptions)
+  new Grid(gridDiv, gridOptions)
 })

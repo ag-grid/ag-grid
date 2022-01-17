@@ -1,4 +1,4 @@
-import { ColDef, GridOptions, ValueFormatterParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, ValueFormatterParams } from '@ag-grid-community/core'
 declare function createMockServer(): any;
 
 const columnDefs: ColDef[] = [
@@ -70,7 +70,7 @@ const gridOptions: GridOptions = {
 
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new agGrid.Grid(gridDiv, gridOptions)
+  new Grid(gridDiv, gridOptions)
 })
 
 

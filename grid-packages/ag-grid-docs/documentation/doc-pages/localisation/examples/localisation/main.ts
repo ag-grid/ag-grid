@@ -1,5 +1,5 @@
-import { ColDef, GridOptions, ICellRendererParams } from '@ag-grid-community/core'
-import {doc} from "prettier";
+import { Grid, ColDef, GridOptions, ICellRendererParams } from '@ag-grid-community/core'
+import { doc } from "prettier";
 
 declare var AG_GRID_LOCALE_ZZZ: {
   [key: string]: string;
@@ -90,7 +90,7 @@ const gridOptions: GridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new agGrid.Grid(gridDiv, gridOptions)
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

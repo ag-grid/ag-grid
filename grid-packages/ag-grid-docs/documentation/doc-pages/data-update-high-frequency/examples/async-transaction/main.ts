@@ -1,4 +1,4 @@
-import { ColDef, GridOptions, ValueFormatterParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, ValueFormatterParams } from '@ag-grid-community/core'
 
 // defined and updated in data.js
 declare var globalRowData: any[];
@@ -260,5 +260,5 @@ function copyObject(object: any) {
 // after page is loaded, create the grid.
 document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new agGrid.Grid(eGridDiv, gridOptions)
+  new Grid(eGridDiv, gridOptions)
 })

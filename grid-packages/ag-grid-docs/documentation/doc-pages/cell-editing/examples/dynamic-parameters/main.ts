@@ -1,4 +1,4 @@
-import { CellValueChangedEvent, GridOptions, ICellEditorParams } from '@ag-grid-community/core'
+import { Grid, CellValueChangedEvent, GridOptions, ICellEditorParams } from '@ag-grid-community/core'
 import { GenderCellRenderer } from "./genderCellRenderer_typescript";
 
 const cellCellEditorParams = (params: ICellEditorParams) => {
@@ -76,5 +76,5 @@ function onCellValueChanged(params: CellValueChangedEvent) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new agGrid.Grid(gridDiv, gridOptions)
+  new Grid(gridDiv, gridOptions)
 })

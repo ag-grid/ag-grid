@@ -1,4 +1,4 @@
-import { GridOptions } from '@ag-grid-community/core'
+import { Grid, GridOptions } from '@ag-grid-community/core'
 
 var rowData = [
   { id: 'aa', make: 'Toyota', model: 'Celica', price: 35000 },
@@ -60,5 +60,5 @@ function setDataOnFord() {
 // AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new agGrid.Grid(eGridDiv, gridOptions)
+  new Grid(eGridDiv, gridOptions)
 })

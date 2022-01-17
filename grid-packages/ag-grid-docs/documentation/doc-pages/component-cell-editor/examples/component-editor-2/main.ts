@@ -1,4 +1,4 @@
-import {ColDef, GridOptions, ICellRendererComp, ICellRendererParams, KeyCreatorParams,} from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, ICellRendererComp, ICellRendererParams, KeyCreatorParams, } from '@ag-grid-community/core'
 
 import { GenderRenderer } from './genderRenderer_typescript'
 import { NumericEditor } from './numericEditor_typescript'
@@ -24,8 +24,8 @@ class CountryCellRenderer implements ICellRendererComp {
 
 
 const columnDefs: ColDef[] = [
-    {field: 'first_name', headerName: 'First Name', width: 120, editable: true},
-    {field: 'last_name', headerName: 'Last Name', width: 120, editable: true},
+    { field: 'first_name', headerName: 'First Name', width: 120, editable: true },
+    { field: 'last_name', headerName: 'Last Name', width: 120, editable: true },
     {
         field: 'gender',
         width: 100,
@@ -67,9 +67,9 @@ const columnDefs: ColDef[] = [
         cellEditorParams: {
             cellRendererComp: CountryCellRenderer,
             values: [
-                {name: 'Ireland', code: 'IE'},
-                {name: 'UK', code: 'UK'},
-                {name: 'France', code: 'FR'},
+                { name: 'Ireland', code: 'IE' },
+                { name: 'UK', code: 'UK' },
+                { name: 'France', code: 'FR' },
             ],
         },
         editable: true,
@@ -114,5 +114,5 @@ const gridOptions: GridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-    new agGrid.Grid(gridDiv, gridOptions)
+    new Grid(gridDiv, gridOptions)
 })

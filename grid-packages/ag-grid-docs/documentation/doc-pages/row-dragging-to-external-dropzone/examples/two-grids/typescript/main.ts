@@ -1,4 +1,4 @@
-import { ColDef, GridOptions, GridReadyEvent, RowDropZoneParams } from "@ag-grid-community/core";
+import { ColDef, Grid, GridOptions, GridReadyEvent, RowDropZoneParams } from "@ag-grid-community/core";
 
 var rowIdSequence = 100;
 
@@ -165,7 +165,7 @@ function addGridDropZone(params: GridReadyEvent, side: string) {
 
 function loadGrid(side: string) {
     var grid = document.querySelector<HTMLElement>('#e' + side + 'Grid')!;
-    new agGrid.Grid(grid, side === 'Left' ? leftGridOptions : rightGridOptions);
+    new Grid(grid, side === 'Left' ? leftGridOptions : rightGridOptions);
 }
 
 var buttons = document.querySelectorAll('button.factory');

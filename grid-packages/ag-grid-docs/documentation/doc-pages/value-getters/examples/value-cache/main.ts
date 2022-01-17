@@ -1,4 +1,4 @@
-import { ColDef, GridOptions, ValueFormatterParams, ValueGetterParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, ValueFormatterParams, ValueGetterParams } from '@ag-grid-community/core'
 
 var callCount = 1
 
@@ -89,7 +89,7 @@ function createGrid(valueCacheOn: boolean) {
 
   // then similar to all the other examples, create the grid
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new agGrid.Grid(gridDiv, gridOptions)
+  new Grid(gridDiv, gridOptions)
 }
 
 // setup the grid after the page has finished loading

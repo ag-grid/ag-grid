@@ -1,4 +1,4 @@
-import { ColDef, GridOptions, IDatasource, IGetRowsParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, IDatasource, IGetRowsParams } from '@ag-grid-community/core'
 
 var ALPHABET = 'abcdefghijklmnopqrstuvwxyz'.split('')
 
@@ -63,5 +63,5 @@ function getDataSource(count: number) {
 
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new agGrid.Grid(gridDiv, gridOptions)
+  new Grid(gridDiv, gridOptions)
 })

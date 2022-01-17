@@ -1,4 +1,4 @@
-import { ColDef, GridOptions } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
 import { ClickableStatusBarComponent } from './clickableStatusBarComponent_typescript'
 import { CountStatusBarComponent } from './countStatusBarComponent_typescript'
 
@@ -60,6 +60,6 @@ const gridOptions: GridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new agGrid.Grid(gridDiv, gridOptions)
+  new Grid(gridDiv, gridOptions)
   gridOptions.api!.sizeColumnsToFit()
 })

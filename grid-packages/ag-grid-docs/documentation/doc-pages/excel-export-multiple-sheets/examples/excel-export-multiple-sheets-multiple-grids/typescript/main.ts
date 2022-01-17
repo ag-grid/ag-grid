@@ -1,4 +1,4 @@
-import { ColDef, GridOptions, GridReadyEvent } from "@ag-grid-community/core";
+import { ColDef, Grid, GridOptions, GridReadyEvent } from "@ag-grid-community/core";
 
 var leftColumnDefs: ColDef[] = [
     {
@@ -111,7 +111,7 @@ function loadGrid(options: GridOptions, side: string, data: any[]) {
     }
 
     options.rowData = data;
-    new agGrid.Grid(grid, options);
+    new Grid(grid, options);
 }
 
 function loadGrids() {

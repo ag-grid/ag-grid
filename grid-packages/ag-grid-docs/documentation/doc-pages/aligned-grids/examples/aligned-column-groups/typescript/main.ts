@@ -1,4 +1,4 @@
-import { ColGroupDef, GridOptions } from "@ag-grid-community/core";
+import { ColGroupDef, Grid, GridOptions } from "@ag-grid-community/core";
 
 const columnDefs: ColGroupDef[] = [
     {
@@ -79,10 +79,10 @@ function setData(rowData: any[]) {
 }
 
 const gridDivTop = document.querySelector<HTMLElement>('#myGridTop')!;
-new agGrid.Grid(gridDivTop, gridOptionsTop);
+new Grid(gridDivTop, gridOptionsTop);
 
 const gridDivBottom = document.querySelector<HTMLElement>('#myGridBottom')!;
-new agGrid.Grid(gridDivBottom, gridOptionsBottom);
+new Grid(gridDivBottom, gridOptionsBottom);
 
 fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

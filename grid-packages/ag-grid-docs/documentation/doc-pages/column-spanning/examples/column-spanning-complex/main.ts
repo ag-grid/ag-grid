@@ -1,4 +1,4 @@
-import { CellClassRules, ColDef, ColSpanParams, GridOptions, RowHeightParams } from '@ag-grid-community/core'
+import { Grid, CellClassRules, ColDef, ColSpanParams, GridOptions, RowHeightParams } from '@ag-grid-community/core'
 
 var cellClassRules: CellClassRules = {
   'header-cell': 'data.section === "big-title"',
@@ -68,5 +68,5 @@ function isQuarterRow(params: ColSpanParams) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new agGrid.Grid(gridDiv, gridOptions)
+  new Grid(gridDiv, gridOptions)
 })

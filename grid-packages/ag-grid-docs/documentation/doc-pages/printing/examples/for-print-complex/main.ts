@@ -1,4 +1,4 @@
-import { ColDef, FirstDataRenderedEvent, GridApi, GridOptions } from '@ag-grid-community/core'
+import { Grid, ColDef, FirstDataRenderedEvent, GridApi, GridOptions } from '@ag-grid-community/core'
 
 const columnDefs: ColDef[] = [
   { field: 'group', rowGroup: true, hide: true },
@@ -57,5 +57,5 @@ function setNormal(api: GridApi) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
   const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new agGrid.Grid(gridDiv, gridOptions)
+  new Grid(gridDiv, gridOptions)
 })

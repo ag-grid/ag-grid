@@ -1,4 +1,4 @@
-import { ColDef, GridOptions, GridReadyEvent, RowDropZoneParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, GridReadyEvent, RowDropZoneParams } from '@ag-grid-community/core'
 
 var rowIdSequence = 100
 
@@ -101,5 +101,5 @@ function addDropZones(params: GridReadyEvent) {
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
 
-  new agGrid.Grid(gridDiv, gridOptions)
+  new Grid(gridDiv, gridOptions)
 })

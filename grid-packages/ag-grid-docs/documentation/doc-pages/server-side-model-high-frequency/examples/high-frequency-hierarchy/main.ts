@@ -1,4 +1,4 @@
-import { AsyncTransactionsFlushed, ColDef, GridApi, GridOptions, IsApplyServerSideTransactionParams, IServerSideDatasource, ServerSideTransaction, ServerSideTransactionResult, ServerSideTransactionResultStatus, ValueFormatterParams } from '@ag-grid-community/core'
+import { Grid, AsyncTransactionsFlushed, ColDef, GridApi, GridOptions, IsApplyServerSideTransactionParams, IServerSideDatasource, ServerSideTransaction, ServerSideTransactionResult, ServerSideTransactionResultStatus, ValueFormatterParams } from '@ag-grid-community/core'
 declare var FakeServer: any;
 var fakeServer = new FakeServer()
 
@@ -219,5 +219,5 @@ function processUpdateFromFakeServer(gridApi: GridApi, transactions: ServerSideT
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new agGrid.Grid(gridDiv, gridOptions)
+  new Grid(gridDiv, gridOptions)
 })

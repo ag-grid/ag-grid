@@ -1,4 +1,4 @@
-import { GridOptions, ValueGetterParams } from '@ag-grid-community/core'
+import { Grid, GridOptions, ValueGetterParams } from '@ag-grid-community/core'
 
 var hashValueGetter = function (params: ValueGetterParams) {
   return params.node ? params.node.rowIndex : null;
@@ -84,5 +84,5 @@ function createRowData() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new agGrid.Grid(gridDiv, gridOptions)
+  new Grid(gridDiv, gridOptions)
 })

@@ -1,4 +1,4 @@
-import { ColDef, GridOptions, ICellRendererParams, IDatasource, IGetRowsParams, RowClassParams, ValueFormatterParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, ICellRendererParams, IDatasource, IGetRowsParams, RowClassParams, ValueFormatterParams } from '@ag-grid-community/core'
 
 var valueFormatter = function (params: ValueFormatterParams) {
   if (typeof params.value === 'number') {
@@ -205,5 +205,5 @@ function jumpTo500() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new agGrid.Grid(gridDiv, gridOptions)
+  new Grid(gridDiv, gridOptions)
 })

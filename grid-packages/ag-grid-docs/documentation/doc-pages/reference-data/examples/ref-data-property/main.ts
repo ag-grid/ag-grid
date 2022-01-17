@@ -1,4 +1,4 @@
-import { CellValueChangedEvent, GridOptions, ICellRendererParams, ValueFormatterParams, ValueSetterParams } from '@ag-grid-community/core'
+import { Grid, CellValueChangedEvent, GridOptions, ICellRendererParams, ValueFormatterParams, ValueSetterParams } from '@ag-grid-community/core'
 
 const carMappings = {
   tyt: 'Toyota',
@@ -138,5 +138,5 @@ document.addEventListener('DOMContentLoaded', function () {
   const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!;
 
   // create the grid passing in the div to use together with the columns & data we want to use
-  new agGrid.Grid(eGridDiv, gridOptions)
+  new Grid(eGridDiv, gridOptions)
 })

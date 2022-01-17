@@ -1,4 +1,4 @@
-import { ColDef, GridOptions, IDateFilterParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, IDateFilterParams } from '@ag-grid-community/core'
 
 var filterParams: IDateFilterParams = {
   comparator: function (filterLocalDateAtMidnight: Date, cellValue: string) {
@@ -96,7 +96,7 @@ function changeNull(toChange: string, value: boolean) {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new agGrid.Grid(gridDiv, gridOptions)
+  new Grid(gridDiv, gridOptions)
 
   gridOptions.api!.setRowData([
     {

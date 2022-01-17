@@ -1,4 +1,4 @@
-import { GridApi, GridOptions, RowNode, ValueParserParams } from '@ag-grid-community/core'
+import { Grid, GridApi, GridOptions, RowNode, ValueParserParams } from '@ag-grid-community/core'
 
 var rowIdCounter = 0
 var callCount = 0
@@ -224,5 +224,5 @@ function changeGroupUsingTransaction() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new agGrid.Grid(gridDiv, gridOptions)
+  new Grid(gridDiv, gridOptions)
 })

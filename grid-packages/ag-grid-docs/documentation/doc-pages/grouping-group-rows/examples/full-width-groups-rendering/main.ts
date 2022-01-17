@@ -1,4 +1,4 @@
-import { GridOptions, ValueParserParams } from '@ag-grid-community/core'
+import { Grid, GridOptions, ValueParserParams } from '@ag-grid-community/core'
 import { GroupRowInnerRenderer } from './groupRowInnerRenderer_typescript'
 
 const gridOptions: GridOptions = {
@@ -291,7 +291,7 @@ const gridOptions: GridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new agGrid.Grid(gridDiv, gridOptions)
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

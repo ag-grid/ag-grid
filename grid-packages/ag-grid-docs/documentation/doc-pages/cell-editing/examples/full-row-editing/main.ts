@@ -1,4 +1,4 @@
-import { CellValueChangedEvent, GridOptions, ICellEditorComp, ICellEditorParams, RowValueChangedEvent } from '@ag-grid-community/core'
+import { Grid, CellValueChangedEvent, GridOptions, ICellEditorComp, ICellEditorParams, RowValueChangedEvent } from '@ag-grid-community/core'
 
 function isCharNumeric(charStr: string) {
   return !!/\d/.test(charStr)
@@ -180,5 +180,5 @@ function onBtStartEditing() {
 // AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new agGrid.Grid(eGridDiv, gridOptions)
+  new Grid(eGridDiv, gridOptions)
 })

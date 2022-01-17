@@ -210,25 +210,14 @@ function createExampleGenerator(prefix, importTypes) {
             throw new Error('examples are required to have an index.html file');
         }
 
-
-        let rawScripts = getMatchingPaths('*.{js,ts}');
-        let mainScript = rawScripts[0];
-
-        if (rawScripts.length > 1) {
-            // multiple scripts - main.ts is the main one, the rest are supplemental
-            const mainTsScripts = getMatchingPaths('main.ts');
-            mainScript = mainTsScripts[0];
-
-            if (!mainScript) {
-                throw new Error('for an example with multiple scripts matching *.ts, one must be named main.ts');
-            }
-
-            // get the rest of the scripts
-            rawScripts = getMatchingPaths('*.{js,ts}', { ignore: ['**/main.ts', '**/*_{angular,react,vanilla,vue,typescript}.{js,ts}'] });
-        } else {
-            // only one script, which is the main one
-            rawScripts = [];
+        const mainTsScripts = getMatchingPaths('main.ts');
+        const mainScript = mainTsScripts[0];
+        if (!mainScript) {
+            throw new Error('for an example with multiple scripts matching *.ts, one must be named main.ts');
         }
+
+        // get the rest of the scripts
+        const rawScripts = getMatchingPaths('*.{js,ts}', { ignore: ['**/main.ts', '**/*_{angular,react,vanilla,vue,typescript}.{js,ts}'] });
 
         // any associated css
         const stylesheets = getMatchingPaths('*.css');
@@ -237,24 +226,7 @@ function createExampleGenerator(prefix, importTypes) {
         let mainFile = getFileContents(mainScript);
         const indexHtml = getFileContents(document);
 
-        // ********************* TEST CODE DONT COMMIT TO LATEST **********************************????????????????????????/
-        /*if (process.env.LOGNAME === 'stephencooper') {
-            const dumpPath = "/Users/stephencooper/Workspace/test-output-ag-grid/snapshots/";
-            fs.writeFileSync(dumpPath + "/" + mainScript.replace(/\//g, '_').replace('.js', '.json').replace('.ts', '.json'), "")
-        } */
-        // ********************* TEST CODE DONT COMMIT TO LATESTS **********************************????????????????????????/
-
         const { bindings, typedBindings } = parser(mainScript, mainFile, indexHtml, options, type, providedExamples);
-
-        // ********************* TEST CODE DONT COMMIT TO LATEST **********************************????????????????????????/        
-        /*  if (process.env.LOGNAME === 'stephencooper') {
-            const dumpPath = "/Users/stephencooper/Workspace/test-output-ag-grid/snapshots/";
-            fs.writeFileSync(dumpPath + "/" + mainScript.replace(/\//g, '_').replace('.js', '.json').replace('.ts', '.json'), JSON.stringify(bindings))
-            const dumpPathTyped = "/Users/stephencooper/Workspace/test-output-ag-grid/snapshotsTyped/";
-            fs.writeFileSync(dumpPathTyped + "/" + mainScript.replace(/\//g, '_').replace('.js', '.json').replace('.ts', '.json'), JSON.stringify(typedBindings))
-        } */
-        // ********************* TEST CODE DONT COMMIT TO LATESTS **********************************????????????????????????/
-
 
         const writeExampleFiles = (importType, framework, tokenToReplace, frameworkScripts, files, subdirectory, componentPostfix = '') => {
             const basePath = path.join(createExamplePath(`_gen/${importType}`), framework);
@@ -405,9 +377,14 @@ function createExampleGenerator(prefix, importTypes) {
                 let jsFiles = {}
                 const tsScripts = getMatchingPaths('*.ts', { ignore: ['**/*_{angular,react,vue,vue3}.ts'] });
                 tsScripts.forEach(tsFile => {
-                    mainFile = readAsJsFile(tsFile);
+                    let jsFile = readAsJsFile(tsFile);
+
+                    if (tsFile.endsWith('main.ts')) {
+                        jsFile = jsFile.replace(/new Grid\(/g, 'new agGrid.Grid(');
+                    }
+
                     const jsFileName = path.parse(tsFile).base.replace('.ts', '.js').replace('_typescript.js', '.js');
-                    jsFiles[jsFileName] = mainFile;
+                    jsFiles[jsFileName] = jsFile;
                 });
 
                 const updatedScripts = getMatchingPaths('*.{html,js}', { ignore: ['**/*_{angular,react,vue,vue3}.js'] });
@@ -424,7 +401,6 @@ function createExampleGenerator(prefix, importTypes) {
         } else {
 
             const htmlScripts = getMatchingPaths('*.html');
-            const vanillaScripts = getMatchingPaths('*.js', { ignore: ['**/*_{angular,react,vue,vue3}.js'] });
             const tsScripts = getMatchingPaths('*.ts', { ignore: ['**/*_{angular,react,vue,vue3}.ts', '**/main.ts'] });
             const tsConfigs = new Map();
             try {
@@ -439,11 +415,7 @@ function createExampleGenerator(prefix, importTypes) {
                 throw e;
             }
 
-            if (tsScripts.length > 0) {
-                importTypes.forEach(importType => writeExampleFiles(importType, 'typescript', 'typescript', [...htmlScripts, ...tsScripts], tsConfigs.get(importType)));
-            } else {
-                importTypes.forEach(importType => writeExampleFiles(importType, 'typescript', 'vanilla', [...htmlScripts, ...vanillaScripts], tsConfigs.get(importType)));
-            }
+            importTypes.forEach(importType => writeExampleFiles(importType, 'typescript', 'typescript', [...htmlScripts, ...tsScripts], tsConfigs.get(importType)));
         }
     };
 }

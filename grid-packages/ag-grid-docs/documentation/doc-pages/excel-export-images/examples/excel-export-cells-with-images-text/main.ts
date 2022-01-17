@@ -1,4 +1,4 @@
-import { ColDef, GridOptions, ICellRendererParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, ICellRendererParams } from '@ag-grid-community/core'
 declare function createBase64FlagsFromResponse(response: any, countryCodes: any, base64flags: any): any;
 var countryCodes: any = {}
 var base64flags: any = {}
@@ -80,5 +80,5 @@ function onBtExport() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new agGrid.Grid(gridDiv, gridOptions)
+  new Grid(gridDiv, gridOptions)
 })

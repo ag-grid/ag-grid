@@ -1,4 +1,4 @@
-import { ChartType, ColDef, CreateRangeChartParams, GridOptions, ValueFormatterParams, AgAxisLabelFormatterParams, AgCartesianSeriesTooltipRendererParams } from '@ag-grid-community/core'
+import { Grid, ChartType, ColDef, CreateRangeChartParams, GridOptions, ValueFormatterParams, AgAxisLabelFormatterParams, AgCartesianSeriesTooltipRendererParams } from '@ag-grid-community/core'
 declare var __basePath: string;
 
 const columnDefs: ColDef[] = [
@@ -162,7 +162,7 @@ function tooltipRenderer(params: AgCartesianSeriesTooltipRendererParams) {
 // after page is loaded, create the grid
 document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new agGrid.Grid(eGridDiv, gridOptions)
+  new Grid(eGridDiv, gridOptions)
 })
 
 var worker: any;

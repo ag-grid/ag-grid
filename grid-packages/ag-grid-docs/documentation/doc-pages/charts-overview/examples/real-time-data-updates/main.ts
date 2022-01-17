@@ -1,4 +1,4 @@
-import { AgCartesianChartOptions, AgChartOptions } from '@ag-grid-community/core'
+import { Grid, AgCartesianChartOptions, AgChartOptions } from '@ag-grid-community/core'
 import * as agCharts from 'ag-charts-community'
 
 var systemLoad = 0

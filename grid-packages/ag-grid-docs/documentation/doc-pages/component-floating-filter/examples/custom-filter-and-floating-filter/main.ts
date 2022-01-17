@@ -1,9 +1,9 @@
-import {ColDef, GridOptions} from '@ag-grid-community/core'
-import {NumberFloatingFilterComponent} from "./numberFloatingFilterComponent_typescript";
-import {NumberFilterComponent} from "./numberFilterComponent_typescript";
+import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { NumberFloatingFilterComponent } from "./numberFloatingFilterComponent_typescript";
+import { NumberFilterComponent } from "./numberFilterComponent_typescript";
 
 const columnDefs: ColDef[] = [
-    {field: 'athlete', filterComp: 'agTextColumnFilter'},
+    { field: 'athlete', filterComp: 'agTextColumnFilter' },
     {
         field: 'gold',
         // spl todo floatingFilterFramework doesn't work (vue, but possibly others too)
@@ -56,7 +56,7 @@ const gridOptions: GridOptions = {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-    new agGrid.Grid(gridDiv, gridOptions)
+    new Grid(gridDiv, gridOptions)
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then(response => response.json())

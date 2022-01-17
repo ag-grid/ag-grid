@@ -1,4 +1,4 @@
-import { CreateRangeChartParams, GridOptions } from '@ag-grid-community/core'
+import { Grid, CreateRangeChartParams, GridOptions } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -91,5 +91,5 @@ function onChart2() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new agGrid.Grid(gridDiv, gridOptions)
+  new Grid(gridDiv, gridOptions)
 })

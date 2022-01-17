@@ -1,4 +1,4 @@
-import { ColDef, GridOptions, IFilterOptionDef } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, IFilterOptionDef } from '@ag-grid-community/core'
 declare var window: any;
 
 var filterParams = {
@@ -231,7 +231,7 @@ function resetState() {
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new agGrid.Grid(gridDiv, gridOptions)
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
     .then(response => response.json())

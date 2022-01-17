@@ -1,4 +1,4 @@
-import { ColDef, GridOptions } from "@ag-grid-community/core";
+import { ColDef, Grid, GridOptions } from "@ag-grid-community/core";
 
 var rowIdSequence = 100;
 
@@ -145,10 +145,10 @@ function gridDrop(event: any, grid: string) {
 
 
 var leftGridDiv = document.querySelector<HTMLElement>('#eLeftGrid')!;
-new agGrid.Grid(leftGridDiv, leftGridOptions);
+new Grid(leftGridDiv, leftGridOptions);
 
 var rightGridDiv = document.querySelector<HTMLElement>('#eRightGrid')!;
-new agGrid.Grid(rightGridDiv, rightGridOptions);
+new Grid(rightGridDiv, rightGridOptions);
 
 if (typeof window !== 'undefined') {
     // Attach external event handlers to window so they can be called from index.html

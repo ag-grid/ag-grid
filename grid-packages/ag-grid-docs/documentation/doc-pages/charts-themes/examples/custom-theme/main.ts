@@ -1,4 +1,4 @@
-import { AgChartOptions, AgChartTheme } from '@ag-grid-community/core'
+import { Grid, AgChartOptions, AgChartTheme } from '@ag-grid-community/core'
 import * as agCharts from 'ag-charts-community'
 
 var myTheme: AgChartTheme = {

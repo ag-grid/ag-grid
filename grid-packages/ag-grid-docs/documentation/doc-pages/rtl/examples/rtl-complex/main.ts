@@ -4,6 +4,7 @@ import {
     ColDef,
     ColGroupDef,
     GetContextMenuItemsParams,
+    Grid,
     GridOptions,
     ICellRendererParams,
     MenuItemDef,
@@ -812,6 +813,6 @@ function languageCellRenderer(params: ICellRendererParams) {
 document.addEventListener('DOMContentLoaded', function () {
     const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
 
-    new agGrid.Grid(gridDiv, gridOptions)
+    new Grid(gridDiv, gridOptions)
     createData()
 })

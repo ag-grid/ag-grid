@@ -1,4 +1,4 @@
-import { ColumnApi, GridOptions } from '@ag-grid-community/core'
+import { Grid, ColumnApi, GridOptions } from '@ag-grid-community/core'
 
 function getInitialData() {
   var data = []
@@ -190,5 +190,5 @@ const gridOptions: GridOptions = {
 // after page is loaded, create the grid.
 document.addEventListener('DOMContentLoaded', function () {
   var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
-  new agGrid.Grid(eGridDiv, gridOptions)
+  new Grid(eGridDiv, gridOptions)
 })
