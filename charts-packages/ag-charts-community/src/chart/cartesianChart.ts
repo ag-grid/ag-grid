@@ -298,17 +298,15 @@ export class CartesianChart extends Chart {
                 });
 
                 const domain = new Array<any>().concat(...domains);
-                if (axis instanceof NumberAxis) {
-                    // the `primaryTickCount` is used to align the secondary axis tick count with the primary
-                    axis.setDomain(domain, primaryTickCount);
-                } else {
-                    axis.domain = domain;
-                }
 
                 const isNumberYAxis = axis instanceof NumberAxis && axis.direction === 'y';
 
                 if (isNumberYAxis) {
+                    // the `primaryTickCount` is used to align the secondary axis tick count with the primary
+                    axis.setDomain(domain, primaryTickCount);
                     primaryTickCount = primaryTickCount || axis.scale.ticks!(axis.tick.count).length;
+                } else {
+                    axis.domain = domain;
                 }
             }
 
