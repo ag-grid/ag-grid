@@ -7,6 +7,7 @@
   "EVENT_CELL_CHANGED": { "type": {} },
   "EVENT_ALL_CHILDREN_COUNT_CHANGED": { "type": {} },
   "EVENT_MASTER_CHANGED": { "type": {} },
+  "EVENT_GROUP_CHANGED": { "type": {} },
   "EVENT_MOUSE_ENTER": { "type": {} },
   "EVENT_MOUSE_LEAVE": { "type": {} },
   "EVENT_HEIGHT_CHANGED": { "type": {} },
@@ -261,6 +262,9 @@
   },
   "setMaster": {
     "type": { "arguments": { "master": "boolean" }, "returnType": "void" }
+  },
+  "setGroup": {
+    "type": { "arguments": { "group": "boolean" }, "returnType": "void" }
   },
   "setRowHeight": {
     "description": "/** Sets the row height.\n * Call if you want to change the height initially assigned to the row.\n * After calling, you must call `api.onRowHeightChanged()` so the grid knows it needs to work out the placement of the rows. */",
