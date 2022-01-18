@@ -221,13 +221,17 @@ export class PartialStoreBlock extends RowNodeBlock {
 
         this.destroyRowNodes();
 
-
         const storeRowCount = this.parentStore.getRowCount();
         const startRow = this.getId() * this.storeParams.cacheBlockSize!;
         const endRow = Math.min(startRow + this.storeParams.cacheBlockSize!, storeRowCount);
         const rowsToCreate = endRow - startRow;
 
-        const cachedBlockHeight = this.parentStore.getCachedBlockHeight(this.getId());
+        // when using autoHeight, we default the row heights to a height to fill the old height of the block.
+        // we only ever do this to autoHeight, as we could be setting invalid heights (especially if different
+        // number of rows in teh block due to a filter, less rows would mean bigger rows), and autoHeight is
+        // the only pattern that will automatically correct this.
+        const autoRowHeightActive = this.columnModel.isAutoRowHeightActive();
+        const cachedBlockHeight = autoRowHeightActive ? this.parentStore.getCachedBlockHeight(this.getId()) : undefined;
         const cachedRowHeight = cachedBlockHeight ? Math.round(cachedBlockHeight / rowsToCreate) : undefined;
 
         for (let i = 0; i < rowsToCreate; i++) {
