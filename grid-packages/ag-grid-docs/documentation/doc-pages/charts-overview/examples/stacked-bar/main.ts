@@ -1,4 +1,4 @@
-import { Grid, AgChartOptions } from '@ag-grid-community/core'
+import { AgChartOptions } from '@ag-grid-community/core'
 import * as agCharts from 'ag-charts-community'
 
 function getTotal(datum: any) {
