@@ -1,4 +1,4 @@
-import { ColDef, Grid, GridOptions } from "@ag-grid-community/core";
+import { ColDef, Grid, GridOptions } from "ag-grid-community";
 
 const columnDefs: ColDef[] = [
     { field: 'athlete', width: 200 },

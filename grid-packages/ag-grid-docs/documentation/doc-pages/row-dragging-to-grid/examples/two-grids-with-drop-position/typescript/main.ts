@@ -1,4 +1,4 @@
-import { ColDef, Grid, GridOptions, GridReadyEvent, RowDropZoneParams } from "@ag-grid-community/core";
+import { ColDef, Grid, GridOptions, GridReadyEvent, RowDropZoneParams } from "ag-grid-community";
 
 var rowIdSequence = 100;
 

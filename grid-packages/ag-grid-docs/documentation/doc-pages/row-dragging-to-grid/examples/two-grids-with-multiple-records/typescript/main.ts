@@ -1,4 +1,4 @@
-import { ColDef, Grid, GridOptions, GridReadyEvent } from "@ag-grid-community/core";
+import { ColDef, Grid, GridOptions, GridReadyEvent } from "ag-grid-community";
 
 var leftColumnDefs: ColDef[] = [
     {

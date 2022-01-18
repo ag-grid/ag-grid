@@ -1,4 +1,5 @@
-import { ColDef, Grid, GridOptions, GridReadyEvent } from "@ag-grid-community/core";
+import { ColDef, Grid, GridOptions, GridReadyEvent } from 'ag-grid-community';
+import 'ag-grid-enterprise';
 
 var leftColumnDefs: ColDef[] = [
     {
@@ -164,4 +165,5 @@ exportBtn.addEventListener('click', function () {
 });
 
 loadGrids();
+
 
