@@ -123,8 +123,6 @@ export class ChartOptionsService extends BeanStub {
             }
         });
 
-        console.log(options);
-
         this.raiseChartOptionsChangedEvent();
     }
 
