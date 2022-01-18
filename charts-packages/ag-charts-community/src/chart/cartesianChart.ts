@@ -299,9 +299,9 @@ export class CartesianChart extends Chart {
 
                 const domain = new Array<any>().concat(...domains);
 
-                const isNumberYAxis = axis instanceof NumberAxis && axis.direction === 'y';
+                const isYAxis = axis.direction === 'y';
 
-                if (isNumberYAxis) {
+                if (axis instanceof NumberAxis && isYAxis) {
                     // the `primaryTickCount` is used to align the secondary axis tick count with the primary
                     axis.setDomain(domain, primaryTickCount);
                     primaryTickCount = primaryTickCount || axis.scale.ticks!(axis.tick.count).length;
