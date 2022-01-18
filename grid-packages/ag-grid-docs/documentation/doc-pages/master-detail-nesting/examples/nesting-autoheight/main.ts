@@ -1,4 +1,4 @@
-import { GridOptions, IDetailCellRendererParams } from '@ag-grid-community/core'
+import { Grid, GridOptions, IDetailCellRendererParams } from '@ag-grid-community/core'
 
 var rowData = [
   {
@@ -43,7 +43,7 @@ var rowData = [
 const gridOptions: GridOptions = {
   rowData: rowData,
   columnDefs: [
-    { field: 'a1', cellRenderer: 'agGroupCellRenderer' },
+    { field: 'a1', cellRendererComp: 'agGroupCellRenderer' },
     { field: 'b1' },
   ],
   defaultColDef: {
@@ -56,7 +56,7 @@ const gridOptions: GridOptions = {
     // level 2 grid options
     detailGridOptions: {
       columnDefs: [
-        { field: 'a2', cellRenderer: 'agGroupCellRenderer' },
+        { field: 'a2', cellRendererComp: 'agGroupCellRenderer' },
         { field: 'b2' },
       ],
       defaultColDef: {
@@ -70,7 +70,7 @@ const gridOptions: GridOptions = {
         // level 3 grid options
         detailGridOptions: {
           columnDefs: [
-            { field: 'a3', cellRenderer: 'agGroupCellRenderer' },
+            { field: 'a3', cellRendererComp: 'agGroupCellRenderer' },
             { field: 'b3' },
           ],
           defaultColDef: {
@@ -90,6 +90,6 @@ const gridOptions: GridOptions = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 })

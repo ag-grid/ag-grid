@@ -1,4 +1,4 @@
-import { GridOptions } from '@ag-grid-community/core'
+import { Grid, GridOptions } from '@ag-grid-community/core'
 
 function formatNumber(number: number) {
   // this puts commas into the number eg 1000 goes to 1,000,
@@ -62,8 +62,8 @@ function onFlashTwoRows() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 })
 
 function createRowData() {

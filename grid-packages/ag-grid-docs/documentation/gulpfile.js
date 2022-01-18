@@ -16,7 +16,7 @@ let folder = argv.dir;
 console.log('Running on ', folder)
 
 const renameFiles = () => {
-    return src([`./doc-pages/**/${folder}/**/main.js`, '!./doc-pages/**/{_gen,provided}/**/*.js'], { base: './' })
+    return src([`./doc-pages/**/${folder}/**/data.js`, '!./doc-pages/**/{_gen,provided}/**/*.js'], { base: './' })
         .pipe(tap(function (file) {
             fs.moveSync(file.path, file.path.replace('.js', '.ts'));
             return file
@@ -55,6 +55,20 @@ const applyTypes = () => {
         .pipe(gulpIf(containsColDef, replace(new RegExp('^', 'g'), 'import { ColDef } from "@ag-grid-community/core";\n\n')))
         .pipe(dest('./'))
 };
+const containsData = function (file) {
+    const fileContent = fs.readFileSync(file.path, "utf8");
+    return fileContent.includes('rowData: getData()')
+}
+const convertData = () => {
+    return src([`./doc-pages/**/${folder}/**/main.ts`, '!./doc-pages/**/{_gen,provided}/**/*.ts'], { base: './' })
+        .pipe(gulpIf(containsData, replace(new RegExp('^', 'g'), 'import { getData } from "./data";\n\n')))
+        .pipe(dest('./'))
+};
+const convertDataFile = () => {
+    return src([`./doc-pages/**/${folder}/**/data.ts`, '!./doc-pages/**/{_gen,provided}/**/*.ts'], { base: './' })
+        .pipe(replace('function getData() {', 'export function getData(): any[] {'))
+        .pipe(dest('./'))
+};
 
 const containsChartOptions = function (file) {
     const fileContent = fs.readFileSync(file.path, "utf8");
@@ -77,4 +91,4 @@ const prettify = () => {
 };
 
 // applyTypes
-exports.default = series(renameFiles, applyChartTypes, prettify)
+exports.default = series(renameFiles, convertDataFile, convertData, prettify)

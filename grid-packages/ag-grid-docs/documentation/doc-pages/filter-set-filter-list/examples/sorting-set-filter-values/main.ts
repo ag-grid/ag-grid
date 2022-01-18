@@ -1,4 +1,4 @@
-import { GridOptions, IFiltersToolPanel } from '@ag-grid-community/core'
+import { Grid, GridOptions, IFiltersToolPanel } from '@ag-grid-community/core'
 
 var filterParams = {
   comparator: function (a: string, b: string) {
@@ -14,12 +14,12 @@ const gridOptions: GridOptions = {
     {
       headerName: 'Age (No Comparator)',
       field: 'age',
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
     },
     {
       headerName: 'Age (With Comparator)',
       field: 'age',
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
       filterParams: filterParams,
     },
   ],
@@ -31,7 +31,7 @@ const gridOptions: GridOptions = {
   rowData: getRowData(),
   sideBar: 'filters',
   onGridReady: function (params) {
-    ;((params.api.getToolPanelInstance(
+    ; ((params.api.getToolPanelInstance(
       'filters'
     ) as any) as IFiltersToolPanel).expandFilters()
   },
@@ -47,6 +47,6 @@ function getRowData() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 })

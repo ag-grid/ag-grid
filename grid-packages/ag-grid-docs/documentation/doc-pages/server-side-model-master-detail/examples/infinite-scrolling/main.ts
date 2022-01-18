@@ -1,9 +1,9 @@
-import { GridOptions, IDetailCellRendererParams, IServerSideDatasource, IServerSideGetRowsRequest } from '@ag-grid-community/core'
+import { Grid, GridOptions, IDetailCellRendererParams, IServerSideDatasource, IServerSideGetRowsRequest } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
     // group cell renderer needed for expand / collapse icons
-    { field: 'accountId', cellRenderer: 'agGroupCellRenderer' },
+    { field: 'accountId', cellRendererComp: 'agGroupCellRenderer' },
     { field: 'name' },
     { field: 'country' },
     { field: 'calls' },
@@ -94,8 +94,8 @@ function getFakeServer(allData: any) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/call-data.json')
     .then(response => response.json())

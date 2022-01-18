@@ -1,6 +1,6 @@
 import { IStatusPanelParams } from "@ag-grid-community/core";
 import { Component } from "@angular/core";
-
+import { IStatusPanelAngularComp } from "@ag-grid-community/angular";
 
 @Component({
     selector: 'status-component',
@@ -12,7 +12,7 @@ import { Component } from "@angular/core";
         </div>
     `
 })
-export class ClickableStatusBarComponent {
+export class ClickableStatusBarComponent implements IStatusPanelAngularComp {
     private params!: IStatusPanelParams;
     private visible = true;
 

@@ -1,14 +1,14 @@
-import { ColDef, GridOptions } from '@ag-grid-community/core'
-
-declare var CustomPinnedRowRenderer: any;
+import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { CustomPinnedRowRenderer } from "./customPinnedRowRenderer_typescript";
 
 const columnDefs: ColDef[] = [
   {
     field: 'athlete',
-    cellRendererSelector: function (params) {
+    cellRendererCompSelector: function (params) {
       if (params.node.rowPinned) {
         return {
-          component: 'customPinnedRowRenderer',
+          // spl todo - works for js, ts and angular - fails for react
+          comp: CustomPinnedRowRenderer,
           params: {
             style: { color: 'blue' },
           },
@@ -21,10 +21,10 @@ const columnDefs: ColDef[] = [
   },
   {
     field: 'age',
-    cellRendererSelector: function (params) {
+    cellRendererCompSelector: function (params) {
       if (params.node.rowPinned) {
         return {
-          component: 'customPinnedRowRenderer',
+          comp: CustomPinnedRowRenderer,
           params: {
             style: { 'font-style': 'italic' },
           },
@@ -58,9 +58,6 @@ const gridOptions: GridOptions = {
   // no rows to pin to start with
   pinnedTopRowData: createData(1, 'Top'),
   pinnedBottomRowData: createData(1, 'Bottom'),
-  components: {
-    customPinnedRowRenderer: CustomPinnedRowRenderer,
-  },
 }
 
 function onPinnedRowTopCount() {
@@ -94,8 +91,8 @@ function createData(count: number, prefix: string) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

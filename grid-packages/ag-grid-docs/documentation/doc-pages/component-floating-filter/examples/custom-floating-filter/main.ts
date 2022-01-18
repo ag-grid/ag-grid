@@ -1,13 +1,13 @@
-import { ColDef, GridOptions } from '@ag-grid-community/core'
-declare var NumberFloatingFilterComponent: any
+import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { NumberFloatingFilterComponent } from "./numberFloatingFilterComponent_typescript";
 
 const columnDefs: ColDef[] = [
   { field: 'athlete', filter: false },
   {
     field: 'gold',
-    filter: 'agNumberColumnFilter',
+    filterComp: 'agNumberColumnFilter',
     suppressMenu: true,
-    floatingFilterComponent: 'customNumberFloatingFilter',
+    floatingFilterComp: NumberFloatingFilterComponent,
     floatingFilterComponentParams: {
       suppressFilterButton: true,
       color: 'red',
@@ -15,9 +15,9 @@ const columnDefs: ColDef[] = [
   },
   {
     field: 'silver',
-    filter: 'agNumberColumnFilter',
+    filterComp: 'agNumberColumnFilter',
     suppressMenu: true,
-    floatingFilterComponent: 'customNumberFloatingFilter',
+    floatingFilterComp: NumberFloatingFilterComponent,
     floatingFilterComponentParams: {
       suppressFilterButton: true,
       color: 'blue',
@@ -25,9 +25,9 @@ const columnDefs: ColDef[] = [
   },
   {
     field: 'bronze',
-    filter: 'agNumberColumnFilter',
+    filterComp: 'agNumberColumnFilter',
     suppressMenu: true,
-    floatingFilterComponent: 'customNumberFloatingFilter',
+    floatingFilterComp: NumberFloatingFilterComponent,
     floatingFilterComponentParams: {
       suppressFilterButton: true,
       color: 'green',
@@ -35,9 +35,9 @@ const columnDefs: ColDef[] = [
   },
   {
     field: 'total',
-    filter: 'agNumberColumnFilter',
+    filterComp: 'agNumberColumnFilter',
     suppressMenu: true,
-    floatingFilterComponent: 'customNumberFloatingFilter',
+    floatingFilterComp: NumberFloatingFilterComponent,
     floatingFilterComponentParams: {
       suppressFilterButton: true,
       color: 'orange',
@@ -55,17 +55,14 @@ const gridOptions: GridOptions = {
     floatingFilter: true,
     resizable: true,
   },
-  components: {
-    customNumberFloatingFilter: NumberFloatingFilterComponent,
-  },
   columnDefs: columnDefs,
   rowData: null,
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

@@ -1,11 +1,11 @@
-import { ColDef, GridOptions } from '@ag-grid-community/core'
-declare var CustomCellRenderer: any;
+import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { CustomCellRenderer } from "./customCellRenderer_typescript";
 
 const columnDefs: ColDef[] = [
   {
     field: 'athlete',
     cellClass: 'custom-athlete-cell',
-    cellRenderer: 'myCustomCell',
+    cellRendererComp: CustomCellRenderer,
   },
   { field: 'country' },
   { field: 'year', width: 100 },
@@ -25,15 +25,12 @@ const gridOptions: GridOptions = {
   rowDragManaged: true,
   columnDefs: columnDefs,
   animateRows: true,
-  components: {
-    myCustomCell: CustomCellRenderer,
-  },
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

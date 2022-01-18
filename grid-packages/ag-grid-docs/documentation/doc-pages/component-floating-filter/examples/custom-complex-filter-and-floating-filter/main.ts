@@ -1,20 +1,20 @@
-import { ColDef, GridOptions } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
 
-declare var NumberFilter: any
-declare var NumberFloatingFilter: any
+import { CustomNumberFilter } from "./custom-number-filter_typescript";
+import { NumberFloatingFilter, CustomFloatingParams } from "./number-floating-filter_typescript";
 
 const columnDefs: ColDef[] = [
   {
     field: 'athlete',
     minWidth: 150,
-    filter: 'agTextColumnFilter',
+    filterComp: 'agTextColumnFilter',
     filterParams: {
       debounceMs: 2000,
     },
   },
   {
     field: 'age',
-    filter: 'agNumberColumnFilter',
+    filterComp: 'agNumberColumnFilter',
     filterParams: {
       debounceMs: 0,
     },
@@ -58,39 +58,39 @@ const columnDefs: ColDef[] = [
   { field: 'sport' },
   {
     field: 'gold',
-    floatingFilterComponent: 'numberFloatingFilter',
+    floatingFilterComp: NumberFloatingFilter,
     floatingFilterComponentParams: {
       maxValue: 7,
       suppressFilterButton: true,
-    },
-    filter: 'numberFilter',
+    } as CustomFloatingParams,
+    filterComp: CustomNumberFilter,
   },
   {
     field: 'silver',
-    floatingFilterComponent: 'numberFloatingFilter',
+    floatingFilterComp: NumberFloatingFilter,
     floatingFilterComponentParams: {
       maxValue: 3,
       suppressFilterButton: true,
-    },
-    filter: 'numberFilter',
+    } as CustomFloatingParams,
+    filterComp: CustomNumberFilter,
   },
   {
     field: 'bronze',
-    floatingFilterComponent: 'numberFloatingFilter',
+    floatingFilterComp: NumberFloatingFilter,
     floatingFilterComponentParams: {
       maxValue: 2,
       suppressFilterButton: true,
-    },
-    filter: 'numberFilter',
+    } as CustomFloatingParams,
+    filterComp: CustomNumberFilter,
   },
   {
     field: 'total',
-    floatingFilterComponent: 'numberFloatingFilter',
+    floatingFilterComp: NumberFloatingFilter,
     floatingFilterComponentParams: {
       maxValue: 5,
       suppressFilterButton: true,
-    },
-    filter: 'numberFilter',
+    } as CustomFloatingParams,
+    filterComp: CustomNumberFilter,
   },
 ]
 
@@ -104,22 +104,16 @@ const gridOptions: GridOptions = {
     floatingFilter: true,
     resizable: true,
   },
-  components: {
-    numberFloatingFilter: NumberFloatingFilter,
-    numberFilter: NumberFilter,
-  },
   columnDefs: columnDefs,
   rowData: null,
 }
 
-function isNumeric(n: string) {
-  return !isNaN(parseFloat(n)) && isFinite(parseFloat(n))
-}
+
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

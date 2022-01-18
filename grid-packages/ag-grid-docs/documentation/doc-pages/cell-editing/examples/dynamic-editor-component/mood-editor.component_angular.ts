@@ -1,5 +1,5 @@
 import { AfterViewInit, Component, ViewChild, ViewContainerRef } from "@angular/core";
-import { AgEditorComponent } from "@ag-grid-community/angular";
+import { ICellEditorAngularComp } from "@ag-grid-community/angular";
 
 @Component({
     selector: 'editor-cell',
@@ -36,10 +36,10 @@ import { AgEditorComponent } from "@ag-grid-community/angular";
         }
     `]
 })
-export class MoodEditor implements AgEditorComponent, AfterViewInit {
+export class MoodEditor implements ICellEditorAngularComp, AfterViewInit {
     private params: any;
 
-    @ViewChild('container', { read: ViewContainerRef }) public container;
+    @ViewChild('container', { read: ViewContainerRef }) public container!: ViewContainerRef;
     public happy: boolean = false;
 
     // dont use afterGuiAttached for post gui events - hook into ngAfterViewInit instead for this

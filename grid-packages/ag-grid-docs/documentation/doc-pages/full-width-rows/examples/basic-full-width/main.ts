@@ -1,4 +1,4 @@
-import { ColDef, GridOptions, ICellRendererParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, ICellRendererParams } from '@ag-grid-community/core'
 
 const rowData = createData(100, 'body')
 const pinnedTopRowData = createData(3, 'pinned')
@@ -99,6 +99,6 @@ function createData(count: number, prefix: string) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 })

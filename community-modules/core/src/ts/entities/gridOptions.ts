@@ -722,7 +722,7 @@ export interface GridOptions {
     /**
      * @deprecated This property has been deprecated. Use `suppressCellFocus` instead.
      */
-    suppressCellSelection?:boolean;
+    suppressCellSelection?: boolean;
     /** If `true`, cells won't be focusable. This means keyboard navigation will be disabled for grid cells, but remain enabled in other elements of the grid such as column headers, floating filters, tool panels. Default: `false` */
     suppressCellFocus?: boolean;
     /** If `true`, only a single range can be selected. Default: `false` */
@@ -801,13 +801,13 @@ export interface GridOptions {
 
     // *** Clipboard *** //
     /** Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel. */
-    processCellForClipboard?(params: ProcessCellForExportParams): any;
+    processCellForClipboard?: (params: ProcessCellForExportParams) => any;
     /** Allows you to process header values for the clipboard.  */
-    processHeaderForClipboard?(params: ProcessHeaderForExportParams): any;
+    processHeaderForClipboard?: (params: ProcessHeaderForExportParams) => any;
     /** Allows you to process group header values for the clipboard.  */
-    processGroupHeaderForClipboard?(params: ProcessGroupHeaderForExportParams): any;
+    processGroupHeaderForClipboard?: (params: ProcessGroupHeaderForExportParams) => any;
     /** Allows you to process cells from the clipboard. Handy if for example you have number fields, and want to block non-numbers from getting into the grid. */
-    processCellFromClipboard?(params: ProcessCellForExportParams): any;
+    processCellFromClipboard?: (params: ProcessCellForExportParams) => any;
     /** Allows you to get the data that would otherwise go to the clipboard. To be used when you want to control the 'copy to clipboard' operation yourself. */
     sendToClipboard?: (params: SendToClipboardParams) => void;
     /** Allows complete control of the paste operation, including cancelling the operation (so nothing happens) or replacing the data with other data. */
@@ -815,9 +815,9 @@ export interface GridOptions {
 
     // *** Filtering *** //
     /** Grid calls this method to know if an external filter is present. */
-    isExternalFilterPresent?(): boolean;
+    isExternalFilterPresent?: () => boolean;
     /** Should return `true` if external filter passes, otherwise `false`. */
-    doesExternalFilterPass?(node: RowNode): boolean;
+    doesExternalFilterPass?: (node: RowNode) => boolean;
 
     // *** Integrated Charts *** //
     /** Callback to be used to customise the chart toolbar items. */
@@ -851,15 +851,15 @@ export interface GridOptions {
 
     // *** Row Grouping and Pivoting *** //
     /** Callback for grouping. */
-    groupRowAggNodes?(nodes: RowNode[]): any;
+    groupRowAggNodes?: (nodes: RowNode[]) => any;
     /** (Client-side Row Model only) Allows groups to be open by default. */
     isGroupOpenByDefault?: (params: IsGroupOpenByDefaultParams) => boolean;
     /** Allows default sorting of groups. */
     defaultGroupOrderComparator?: (nodeA: RowNode, nodeB: RowNode) => number;
     /** Callback to be used with pivoting, to allow changing the second column definition. */
-    processSecondaryColDef?(colDef: ColDef): void;
+    processSecondaryColDef?: (colDef: ColDef) => void;
     /** Callback to be used with pivoting, to allow changing the second column group definition. */
-    processSecondaryColGroupDef?(colGroupDef: ColGroupDef): void;
+    processSecondaryColGroupDef?: (colGroupDef: ColGroupDef) => void;
     /** Callback to be used when working with Tree Data when `treeData = true`. */
     getDataPath?: GetDataPath;
     /** @deprecated - Use defaultGroupOrderComparator instead */
@@ -867,7 +867,7 @@ export interface GridOptions {
 
     // *** Row Model: Server Side *** //
     /** Allows setting the child count for a group row. */
-    getChildCount?(dataItem: any): number;
+    getChildCount?: (dataItem: any) => number;
     /** Allows providing different params for different levels of grouping. */
     getServerSideStoreParams?: (params: GetServerSideStoreParamsParams) => ServerSideStoreParams;
     /** Allows groups to be open by default. */
@@ -884,11 +884,11 @@ export interface GridOptions {
      * Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.
      * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.
      */
-    getBusinessKeyForNode?(node: RowNode): string;
+    getBusinessKeyForNode?: (node: RowNode) => string;
     /** Allows you to set the ID for a particular row node based on the data. */
     getRowNodeId?: GetRowNodeIdFunc;
     /** Allows you to process rows after they are created, so you can do final adding of custom attributes etc. */
-    processRowPostCreate?(params: ProcessRowParams): void;
+    processRowPostCreate?: (params: ProcessRowParams) => void;
     /** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable. */
     isRowSelectable?: IsRowSelectable;
     /** Callback to be used with Master Detail to determine if a row should be a master row. If `false` is returned no detail row will exist for this row. */
@@ -898,7 +898,7 @@ export interface GridOptions {
 
     // *** Sorting *** //
     /** Callback to perform additional sorting after the grid has sorted the rows. */
-    postSort?(nodes: RowNode[]): void;
+    postSort?: (nodes: RowNode[]) => void;
 
     // *** Styling *** //
     /** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles. */
@@ -908,7 +908,7 @@ export interface GridOptions {
     /** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height. */
     getRowHeight?: (params: RowHeightParams) => number | undefined | null;
     /** Tells the grid if this row should be rendered as full width. */
-    isFullWidthCell?(rowNode: RowNode): boolean;
+    isFullWidthCell?: (rowNode: RowNode) => boolean;
 
     // **********************************************************************************************************
     // * If you change the events on this interface, you do *not* need to update PropertyKeys to be consistent, *

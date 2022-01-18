@@ -1,58 +1,51 @@
 import { Component } from "@angular/core";
 
-import {GridOptions, Module, AllCommunityModules} from "@ag-grid-community/all-modules";
-
-import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
-import "@ag-grid-community/all-modules/dist/styles/ag-theme-material.css";
+import "@ag-grid-community/core/dist/styles/ag-grid.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-material.css";
 
 import { MatCheckboxComponent } from "./mat-checkbox.component";
 import { MatInputComponent } from "./mat-input.component";
 import { MatRadioComponent } from "./mat-radio.component";
 import { MatSelectComponent } from "./mat-select.component";
+import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
+import { ColDef, GridOptions, Module } from "@ag-grid-community/core";
 
 @Component({
-    moduleId: __moduleName, // for SystemJS, IE11 and relative paths
     selector: "my-app",
     templateUrl: "./mat-editor-one.component.html"
 })
 export class MatEditorComponentOne {
     public gridOptions: GridOptions;
-    modules: Module[] = AllCommunityModules;
+    modules: Module[] = [ClientSideRowModelModule];
 
     constructor() {
-        this.gridOptions = <GridOptions>{
+        this.gridOptions = {
             rowData: this.createRowData(),
             columnDefs: this.createColumnDefs(),
             onGridReady: () => {
-                this.gridOptions.api.sizeColumnsToFit();
+                this.gridOptions.api!.sizeColumnsToFit();
             },
-            rowHeight: 48, // recommended row height for material design data grids,
-            frameworkComponents: {
-                checkboxRenderer: MatCheckboxComponent,
-                inputRenderer: MatInputComponent,
-                radioEditor: MatRadioComponent,
-                selectEditor: MatSelectComponent
-            }
+            rowHeight: 48 // recommended row height for material design data grids,
         };
     }
 
-    private createColumnDefs() {
+    private createColumnDefs(): ColDef[] {
         return [
             {
                 headerName: "Checkbox (inline editing)",
                 field: "on_off",
-                cellRenderer: "checkboxRenderer"
+                cellRendererComp: MatCheckboxComponent
             },
             {
                 headerName: "Full Name (popup input editor)",
                 field: "full_name",
-                cellEditor: "inputRenderer",
+                cellEditorComp: MatInputComponent,
                 editable: true
             },
             {
                 headerName: "Fruit (popup radio editor)",
                 field: "fruit",
-                cellEditor: "radioEditor",
+                cellEditorComp: MatRadioComponent,
                 cellEditorParams: {
                     fruits: ["Apple", "Orange", "Banana"]
                 },
@@ -61,7 +54,7 @@ export class MatEditorComponentOne {
             {
                 headerName: "Vegetables (popup select editor)",
                 field: "vegetable",
-                cellEditor: "selectEditor",
+                cellEditorComp: MatSelectComponent,
                 cellEditorParams: {
                     vegetables: ["Carrot", "Broccoli", "Potato"]
                 },

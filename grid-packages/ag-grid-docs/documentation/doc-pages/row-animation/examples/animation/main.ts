@@ -1,4 +1,4 @@
-import { ColDef, ColumnApi, GridApi, GridOptions } from '@ag-grid-community/core'
+import { Grid, ColDef, ColumnApi, GridApi, GridOptions } from '@ag-grid-community/core'
 
 var countDownDirection = true
 
@@ -23,7 +23,7 @@ const gridOptions: GridOptions = {
   suppressAggFuncInHeader: true, // so we don't see sum() in gold, silver and bronze headers
   autoGroupColumnDef: {
     // to get 'athlete' showing in the leaf level in this column
-    cellRenderer: 'agGroupCellRenderer',
+    cellRendererComp: 'agGroupCellRenderer',
     headerName: 'Athlete',
     minWidth: 200,
     field: 'athlete',
@@ -131,10 +131,10 @@ function getActions() {
 // from actual demo page (/animation/)
 document.addEventListener('DOMContentLoaded', function () {
   var gridDiv =
-    document.querySelector('#myGrid') ||
+    document.querySelector<HTMLElement>('#myGrid')! ||
     document.querySelector('#animationGrid')
 
-  new agGrid.Grid(gridDiv, gridOptions)
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

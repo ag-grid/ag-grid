@@ -1,19 +1,19 @@
-import {Component} from "@angular/core";
+import { Component } from "@angular/core";
 
-import {AgFloatingFilterComponent} from "@ag-grid-community/angular";
-import {IFloatingFilterParams} from "@ag-grid-community/core";
+import { AgFloatingFilterComponent } from "@ag-grid-community/angular";
+import { IFloatingFilterParams } from "@ag-grid-community/core";
 
 @Component({
     selector: 'number-component',
     template: `&gt; <input style="width: 30px" type="number" min="0" [(ngModel)]="currentValue" (input)="onInputBoxChanged()"/>`
 })
 export class NumberFloatingFilterComponent implements AgFloatingFilterComponent {
-    params: IFloatingFilterParams;
+    params!: IFloatingFilterParams;
     currentValue: Number | null | string = null;
 
     agInit(params: IFloatingFilterParams): void {
         this.params = params;
-   }
+    }
 
     onParentModelChanged(parentModel: any) {
         // When the filter is empty we will receive a null value here

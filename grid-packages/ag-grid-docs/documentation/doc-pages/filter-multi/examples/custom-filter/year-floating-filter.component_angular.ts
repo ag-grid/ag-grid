@@ -32,4 +32,5 @@ export class YearFloatingFilter implements IFloatingFilterAngularComp<YearFilter
     onParentModelChanged(model: any): void {
         this.isActive = !!model;
     }
+
 }

@@ -232,7 +232,7 @@ export { IDateParams, IDate, IDateComp } from "ag-grid-community";
 export { IAfterGuiAttachedParams, ContainerType } from "ag-grid-community";
 export { IComponent } from "ag-grid-community";
 export { IEventEmitter } from "ag-grid-community";
-export { IHeaderParams, IHeader } from "ag-grid-community";
+export { IHeaderParams, IHeaderComp, IHeader } from "ag-grid-community";
 export { IHeaderGroupParams, IHeaderGroup, IHeaderGroupComp } from "ag-grid-community";
 export { ColumnApi } from "ag-grid-community";
 export { IRichCellEditorParams } from "ag-grid-community";

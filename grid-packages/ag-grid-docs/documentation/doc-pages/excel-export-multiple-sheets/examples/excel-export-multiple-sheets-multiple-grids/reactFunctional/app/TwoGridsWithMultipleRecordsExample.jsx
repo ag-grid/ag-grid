@@ -1,18 +1,42 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { AgGridReact } from '@ag-grid-community/react';
-import { AllCommunityModules } from '@ag-grid-community/all-modules';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { CsvExportModule } from '@ag-grid-community/csv-export';
 import { ExcelExportModule, exportMultipleSheetsAsExcel } from '@ag-grid-enterprise/excel-export';
 
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
+import "@ag-grid-community/core/dist/styles/ag-grid.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+
+class SportRenderer {
+    eGui;
+
+    init(params) {
+        this.eGui = document.createElement('i');
+
+        this.eGui.addEventListener('click', function () {
+            params.api.applyTransaction({remove: [params.node.data]});
+        });
+
+        this.eGui.classList.add('far', 'fa-trash-alt');
+        this.eGui.style.cursor = 'pointer';
+    }
+
+    getGui() {
+        return this.eGui;
+    }
+
+    refresh(params) {
+        return false;
+    }
+}
 
 const leftColumns = [
     {
         rowDrag: true,
         maxWidth: 50,
         suppressMenu: true,
-        rowDragText: function(params, dragItemCount) {
+        rowDragText: function (params, dragItemCount) {
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes';
             }
@@ -28,7 +52,7 @@ const rightColumns = [
         rowDrag: true,
         maxWidth: 50,
         suppressMenu: true,
-        rowDragText: function(params, dragItemCount) {
+        rowDragText: function (params, dragItemCount) {
             if (dragItemCount > 1) {
                 return dragItemCount + ' athletes';
             }
@@ -40,18 +64,7 @@ const rightColumns = [
     {
         suppressMenu: true,
         maxWidth: 50,
-        cellRenderer: (params) => {
-            var button = document.createElement('i');
-
-            button.addEventListener('click', function() {
-                params.api.applyTransaction({ remove: [params.node.data] });
-            });
-
-            button.classList.add('far', 'fa-trash-alt');
-            button.style.cursor = 'pointer';
-
-            return button;
-        }
+        cellRenderer: SportRenderer
     }
 ]
 
@@ -74,18 +87,18 @@ const TwoGridsWithMultipleRecordsExample = () => {
     useEffect(() => {
         if (!rawData.length) {
             fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .then(resp => resp.json())
-            .then(data => {
-                const athletes = [];
-                let i = 0;
-    
-                while (athletes.length < 20 && i < data.length) {
-                    var pos = i++;
-                    if (athletes.some(rec => rec.athlete === data[pos].athlete)) { continue; }
-                    athletes.push(data[pos]);
-                }
-                setRawData(athletes);
-            });
+                .then(resp => resp.json())
+                .then(data => {
+                    const athletes = [];
+                    let i = 0;
+
+                    while (athletes.length < 20 && i < data.length) {
+                        var pos = i++;
+                        if (athletes.some(rec => rec.athlete === data[pos].athlete)) { continue; }
+                        athletes.push(data[pos]);
+                    }
+                    setRawData(athletes);
+                });
         }
     }, [rawData]);
 
@@ -107,12 +120,12 @@ const TwoGridsWithMultipleRecordsExample = () => {
 
     const onExcelExport = () => {
         var spreadsheets = [];
-        
+
         spreadsheets.push(
             leftApi.getSheetDataForExcel({ sheetName: 'Athletes' }),
             rightApi.getSheetDataForExcel({ sheetName: 'Selected Athletes' })
         );
-    
+
         exportMultipleSheetsAsExcel({
             data: spreadsheets,
             fileName: 'ag-grid.xlsx'
@@ -125,7 +138,7 @@ const TwoGridsWithMultipleRecordsExample = () => {
         var nodes = params.nodes;
 
         leftApi.applyTransaction({
-            remove: nodes.map(function(node) { return node.data; })
+            remove: nodes.map(function (node) { return node.data; })
         });
     }, [leftApi]);
 
@@ -160,7 +173,7 @@ const TwoGridsWithMultipleRecordsExample = () => {
     );
 
     const getGridWrapper = (id) => (
-        <div className="panel panel-primary" style={{ marginRight: '10px'}}>
+        <div className="panel panel-primary" style={{ marginRight: '10px' }}>
             <div className="panel-heading">{id === 0 ? 'Athletes' : 'Selected Athletes'}</div>
             <div className="panel-body">
                 <AgGridReact
@@ -173,11 +186,11 @@ const TwoGridsWithMultipleRecordsExample = () => {
                     rowSelection={id === 0 ? "multiple" : undefined}
                     rowDragMultiRow={id === 0}
                     suppressMoveWhenRowDragging={id === 0}
-                    
+
                     rowData={id === 0 ? leftRowData : rightRowData}
                     columnDefs={id === 0 ? leftColumns : rightColumns}
                     onGridReady={(params) => onGridReady(params, id)}
-                    modules={[...AllCommunityModules, ExcelExportModule ]}>
+                    modules={[ClientSideRowModelModule, CsvExportModule, ExcelExportModule]}>
                 </AgGridReact>
             </div>
         </div>
@@ -185,7 +198,7 @@ const TwoGridsWithMultipleRecordsExample = () => {
 
     return (
         <div className="top-container">
-            { getTopToolBar() }
+            {getTopToolBar()}
             <div class="grid-wrapper ag-theme-alpine">
                 {getGridWrapper(0)}
                 {getGridWrapper(1)}

@@ -3,8 +3,8 @@ import { AgGridReact } from '@ag-grid-community/react';
 
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 
-import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
-import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
+import "@ag-grid-community/core/dist/styles/ag-grid.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
 export default class extends Component {
     constructor(props) {
@@ -24,12 +24,12 @@ export default class extends Component {
     onGridReady(params) {
         this.gridApi = params.api;
 
-        var httpRequest = new XMLHttpRequest();
+        const httpRequest = new XMLHttpRequest();
         httpRequest.open('GET', 'https://www.ag-grid.com/example-assets/olympic-winners.json');
         httpRequest.send();
-        httpRequest.onreadystatechange = function() {
+        httpRequest.onreadystatechange = function () {
             if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-                var httpResult = JSON.parse(httpRequest.responseText);
+                const httpResult = JSON.parse(httpRequest.responseText);
                 this.setState({ rowData: httpResult });
             }
         }.bind(this);

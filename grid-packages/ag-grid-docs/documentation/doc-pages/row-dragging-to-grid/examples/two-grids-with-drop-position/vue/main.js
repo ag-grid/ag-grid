@@ -1,7 +1,7 @@
 import Vue from 'vue';
-import {AgGridVue} from '@ag-grid-community/vue';
+import { AgGridVue } from '@ag-grid-community/vue';
 
-import {AllCommunityModules} from '@ag-grid-community/all-modules';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
@@ -98,7 +98,7 @@ const VueExample = {
     },
     data: function () {
         return {
-            modules: AllCommunityModules,
+            modules: [ClientSideRowModelModule],
             leftRowData: [],
             rightRowData: [],
             leftApi: null,
@@ -131,7 +131,7 @@ const VueExample = {
         getRowNodeId(data) {
             return data.id;
         },
-    
+
         onGridReady(params, side) {
             const api = params.api;
             if (side === 'Left') {
@@ -147,54 +147,54 @@ const VueExample = {
                 this.addGridDropZone('Right', this.rightApi);
             }
         },
-    
+
         addRecordToGrid(side, data) {
             // if data missing or data has no it, do nothing
             if (!data || data.id == null) { return; }
-        
+
             const api = side === 'left' ? this.leftApi : this.rightApi;
             // do nothing if row is already in the grid, otherwise we would have duplicates
             const rowAlreadyInGrid = !!api.getRowNode(data.id);
             let transaction;
-        
+
             if (rowAlreadyInGrid) {
                 console.log('not adding row to avoid duplicates in the grid');
                 return;
             }
-        
+
             transaction = {
                 add: [data]
             };
-        
+
             api.applyTransaction(transaction);
         },
-    
+
         onFactoryButtonClick(e) {
             var button = e.currentTarget,
                 buttonColor = button.getAttribute('data-color'),
                 side = button.getAttribute('data-side'),
                 data = createDataItem(buttonColor);
-        
+
             this.addRecordToGrid(side, data);
         },
-    
+
         binDrop(data) {
             // if data missing or data has no id, do nothing
             if (!data || data.id == null) { return; }
-        
+
             var transaction = {
                 remove: [data]
             };
-        
+
             [this.leftApi, this.rightApi].forEach((api) => {
                 var rowsInGrid = !!api.getRowNode(data.id);
-        
+
                 if (rowsInGrid) {
                     api.applyTransaction(transaction);
                 }
             });
         },
-    
+
         addBinZone(api) {
             const dropZone = {
                 getContainer: () => this.$refs.eBinIcon,
@@ -212,14 +212,14 @@ const VueExample = {
                     this.$refs.eBinIcon.style.transform = 'scale(1)';
                 }
             };
-    
+
             api.addRowDropZone(dropZone);
         },
-    
+
         addGridDropZone(side, api) {
             const dropApi = side === 'Left' ? this.rightApi : this.leftApi;
             const dropZone = dropApi.getRowDropZoneParams();
-    
+
             api.addRowDropZone(dropZone);
         }
     }

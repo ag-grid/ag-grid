@@ -1,6 +1,6 @@
-import { ColDef, GridOptions, ISetFilter } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, ISetFilter } from '@ag-grid-community/core'
 
-declare function getPersonFilter(): any;
+declare var PersonFilter: any;
 
 var dateFilterParams = {
   comparator: function (filterLocalDateAtMidnight: Date, cellValue: string) {
@@ -28,29 +28,27 @@ var dateFilterParams = {
   browserDatePicker: true,
 }
 
-var athleteFilter = getPersonFilter()
-
 const columnDefs: ColDef[] = [
-  { field: 'athlete', filter: athleteFilter, suppressMenu: true },
-  { field: 'age', filter: 'agNumberColumnFilter', suppressMenu: true },
-  { field: 'country', filter: 'agSetColumnFilter', suppressMenu: true },
+  { field: 'athlete', filter: PersonFilter, suppressMenu: true },
+  { field: 'age', filterComp: 'agNumberColumnFilter', suppressMenu: true },
+  { field: 'country', filterComp: 'agSetColumnFilter', suppressMenu: true },
   {
     field: 'year',
     maxWidth: 120,
-    filter: 'agNumberColumnFilter',
+    filterComp: 'agNumberColumnFilter',
     floatingFilter: false,
   },
   {
     field: 'date',
     minWidth: 215,
-    filter: 'agDateColumnFilter',
+    filterComp: 'agDateColumnFilter',
     filterParams: dateFilterParams,
     suppressMenu: true,
   },
-  { field: 'sport', suppressMenu: true, filter: 'agTextColumnFilter' },
+  { field: 'sport', suppressMenu: true, filterComp: 'agTextColumnFilter' },
   {
     field: 'gold',
-    filter: 'agNumberColumnFilter',
+    filterComp: 'agNumberColumnFilter',
     filterParams: {
       buttons: ['apply'],
     },
@@ -58,14 +56,14 @@ const columnDefs: ColDef[] = [
   },
   {
     field: 'silver',
-    filter: 'agNumberColumnFilter',
+    filterComp: 'agNumberColumnFilter',
     floatingFilterComponentParams: {
       suppressFilterButton: true,
     },
   },
   {
     field: 'bronze',
-    filter: 'agNumberColumnFilter',
+    filterComp: 'agNumberColumnFilter',
     floatingFilterComponentParams: {
       suppressFilterButton: true,
     },
@@ -267,8 +265,8 @@ function clearDateFilter() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

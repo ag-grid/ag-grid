@@ -1,8 +1,8 @@
-import { ColDef, GridOptions } from '@ag-grid-community/core'
-declare var CustomStatsToolPanel: any
+import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { CustomStatsToolPanel } from './customStatsToolPanel_typescript'
 
 const columnDefs: ColDef[] = [
-  { field: 'athlete', width: 150, filter: 'agTextColumnFilter' },
+  { field: 'athlete', width: 150, filterComp: 'agTextColumnFilter' },
   { field: 'age', width: 90 },
   { field: 'country', width: 120 },
   { field: 'year', width: 90 },
@@ -47,20 +47,17 @@ const gridOptions: GridOptions = {
         labelDefault: 'Custom Stats',
         labelKey: 'customStats',
         iconKey: 'custom-stats',
-        toolPanel: 'customStatsToolPanel',
+        toolPanelComp: CustomStatsToolPanel,
       },
     ],
     defaultToolPanel: 'customStats',
-  },
-  components: {
-    customStatsToolPanel: CustomStatsToolPanel,
-  },
+  }
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

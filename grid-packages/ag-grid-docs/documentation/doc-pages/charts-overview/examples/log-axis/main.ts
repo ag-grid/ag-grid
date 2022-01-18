@@ -1,4 +1,4 @@
-import { AgCartesianChartOptions } from '@ag-grid-community/core'
+import { Grid, AgCartesianChartOptions } from '@ag-grid-community/core'
 import * as agCharts from 'ag-charts-community'
 
 const options: AgCartesianChartOptions = {

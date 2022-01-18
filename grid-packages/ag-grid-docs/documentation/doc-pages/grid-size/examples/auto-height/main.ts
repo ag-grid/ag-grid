@@ -1,4 +1,4 @@
-import { ColGroupDef, GridOptions } from '@ag-grid-community/core'
+import { Grid, ColGroupDef, GridOptions } from '@ag-grid-community/core'
 
 const columnDefs: ColGroupDef[] = [
   {
@@ -6,22 +6,22 @@ const columnDefs: ColGroupDef[] = [
     children: [
       { headerName: 'ID', field: 'id' },
       { field: 'make' },
-      { field: 'price', filter: 'agNumberColumnFilter' },
+      { field: 'price', filterComp: 'agNumberColumnFilter' },
     ],
   },
   {
     headerName: 'Extra',
     children: [
-      { field: 'val1', filter: 'agNumberColumnFilter' },
-      { field: 'val2', filter: 'agNumberColumnFilter' },
-      { field: 'val3', filter: 'agNumberColumnFilter' },
-      { field: 'val4', filter: 'agNumberColumnFilter' },
-      { field: 'val5', filter: 'agNumberColumnFilter' },
-      { field: 'val6', filter: 'agNumberColumnFilter' },
-      { field: 'val7', filter: 'agNumberColumnFilter' },
-      { field: 'val8', filter: 'agNumberColumnFilter' },
-      { field: 'val9', filter: 'agNumberColumnFilter' },
-      { field: 'val10', filter: 'agNumberColumnFilter' },
+      { field: 'val1', filterComp: 'agNumberColumnFilter' },
+      { field: 'val2', filterComp: 'agNumberColumnFilter' },
+      { field: 'val3', filterComp: 'agNumberColumnFilter' },
+      { field: 'val4', filterComp: 'agNumberColumnFilter' },
+      { field: 'val5', filterComp: 'agNumberColumnFilter' },
+      { field: 'val6', filterComp: 'agNumberColumnFilter' },
+      { field: 'val7', filterComp: 'agNumberColumnFilter' },
+      { field: 'val8', filterComp: 'agNumberColumnFilter' },
+      { field: 'val9', filterComp: 'agNumberColumnFilter' },
+      { field: 'val10', filterComp: 'agNumberColumnFilter' },
     ],
   },
 ]
@@ -94,7 +94,7 @@ function setAutoHeight() {
   gridOptions.api!.setDomLayout('autoHeight');
   // auto height will get the grid to fill the height of the contents,
   // so the grid div should have no height set, the height is dynamic.
-  (document.querySelector('#myGrid') as any).style.height = ''
+  (document.querySelector<HTMLElement>('#myGrid')! as any).style.height = ''
 }
 
 function setFixedHeight() {
@@ -102,11 +102,11 @@ function setFixedHeight() {
   gridOptions.api!.setDomLayout('normal');
   // when auto height is off, the grid ahs a fixed height, and then the grid
   // will provide scrollbars if the data does not fit into it.
-  (document.querySelector('#myGrid') as any)!.style.height = '400px'
+  (document.querySelector<HTMLElement>('#myGrid')! as any)!.style.height = '400px'
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 })

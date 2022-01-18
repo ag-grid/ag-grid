@@ -1,4 +1,4 @@
-import { FirstDataRenderedEvent, GridApi, GridOptions } from '@ag-grid-community/core'
+import { Grid, FirstDataRenderedEvent, GridApi, GridOptions } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -12,7 +12,7 @@ const gridOptions: GridOptions = {
     flex: 1,
     editable: true,
     sortable: true,
-    filter: 'agMultiColumnFilter',
+    filterComp: 'agMultiColumnFilter',
     floatingFilter: true,
     resizable: true,
   },
@@ -81,6 +81,6 @@ function createBubbleChart(gridApi: GridApi) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 })

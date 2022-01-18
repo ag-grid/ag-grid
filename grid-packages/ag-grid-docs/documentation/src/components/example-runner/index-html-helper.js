@@ -4,6 +4,7 @@ import { withPrefix } from 'gatsby';
 import VanillaTemplate from './VanillaTemplate';
 import AngularTemplate from './AngularTemplate';
 import ReactTemplate from './ReactTemplate';
+import TypescriptTemplate from './TypescriptTemplate';
 import VueTemplate from './VueTemplate';
 import Vue3Template from './Vue3Template';
 import { getEntryFile } from './helpers';
@@ -13,7 +14,7 @@ import { getEntryFile } from './helpers';
  */
 export const getIndexHtml = (exampleInfo, isExecuting = false) => {
     const { sourcePath, options, library } = exampleInfo;
-    let { boilerplatePath, appLocation, framework } = exampleInfo;
+    let { boilerplatePath, appLocation, framework, internalFramework } = exampleInfo;
 
     const getFileUrl = file =>
         isExecuting ? file.publicURL : file.relativePath.replace(sourcePath, '').replace(boilerplatePath, '');
@@ -32,7 +33,7 @@ export const getIndexHtml = (exampleInfo, isExecuting = false) => {
         boilerplatePath = '';
     }
 
-    const modifiedTimeFile = exampleInfo.getFile(getEntryFile(framework));
+    const modifiedTimeFile = exampleInfo.getFile(getEntryFile(framework, internalFramework));
     const modifiedTimeMs = modifiedTimeFile ? modifiedTimeFile.mtimeMs : new Date().getTime();
 
     let element;
@@ -54,10 +55,18 @@ export const getIndexHtml = (exampleInfo, isExecuting = false) => {
                 throw new Error(`Could not find index.html for "${exampleInfo.name}" example`);
             }
 
-            element = <VanillaTemplate
-                indexFragment={indexHtml.childHtmlRehype.html}
-                scriptFiles={[...scriptFiles, getFileUrl(exampleInfo.getFile('main.js'))]}
-                {...templateProps} />;
+            if (internalFramework === 'typescript') {
+                element = <TypescriptTemplate
+                    boilerplatePath={boilerplatePath}
+                    scriptFiles={scriptFiles}
+                    indexFragment={indexHtml.childHtmlRehype.html}
+                    {...templateProps} />;
+            } else {
+                element = <VanillaTemplate
+                    indexFragment={indexHtml.childHtmlRehype.html}
+                    scriptFiles={[...scriptFiles, getFileUrl(exampleInfo.getFile('main.js'))]}
+                    {...templateProps} />;
+            }
 
             break;
         }

@@ -1,8 +1,8 @@
 import Vue from 'vue';
-import {AgGridVue} from '@ag-grid-community/vue';
-import {AllCommunityModules} from '@ag-grid-community/all-modules';
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
+import { AgGridVue } from '@ag-grid-community/vue';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import "@ag-grid-community/core/dist/styles/ag-grid.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import MedalCellRenderer from './medalCellRendererVue.js';
 import TotalValueRenderer from './totalValueRendererVue.js';
 
@@ -27,7 +27,7 @@ const VueExample = {
     },
     data: function () {
         return {
-            columnDefs: [{field: "athlete"}, {field: "year"}, {
+            columnDefs: [{ field: "athlete" }, { field: "year" }, {
                 field: "gold",
                 cellRendererFramework: "medalCellRenderer"
             }, {
@@ -51,7 +51,7 @@ const VueExample = {
                 filter: true,
                 resizable: true
             },
-            modules: AllCommunityModules,
+            modules: [ClientSideRowModelModule],
             rowData: null
         }
     },

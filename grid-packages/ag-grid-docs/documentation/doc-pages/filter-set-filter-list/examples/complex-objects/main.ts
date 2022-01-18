@@ -1,5 +1,5 @@
 import {
-  FirstDataRenderedEvent,
+  FirstDataRenderedEvent, Grid,
   GridOptions,
   IFiltersToolPanel,
   KeyCreatorParams,
@@ -13,7 +13,7 @@ const gridOptions: GridOptions = {
       field: 'country',
       keyCreator: countryKeyCreator,
       valueFormatter: countryValueFormatter,
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
     },
   ],
   defaultColDef: {
@@ -39,15 +39,15 @@ function printFilterModel() {
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  ;((params.api.getToolPanelInstance(
+  ; ((params.api.getToolPanelInstance(
     'filters'
   ) as any) as IFiltersToolPanel).expandFilters()
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

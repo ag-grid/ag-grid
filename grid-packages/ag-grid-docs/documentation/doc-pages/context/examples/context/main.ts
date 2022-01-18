@@ -1,4 +1,4 @@
-import { ColDef, GridOptions, ICellRendererParams, ValueGetterParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, ICellRendererParams, ValueGetterParams } from '@ag-grid-community/core'
 
 const columnDefs: ColDef[] = [
   { headerName: 'Product', field: 'product' },
@@ -7,13 +7,13 @@ const columnDefs: ColDef[] = [
     headerName: 'Price Local',
     field: 'price',
     cellStyle: { 'text-align': 'right' },
-    cellRenderer: 'currencyCellRenderer',
+    cellRendererComp: getCurrencyCellRenderer(),
   },
   {
     headerName: 'Report Price',
     field: 'price',
     cellStyle: { 'text-align': 'right' },
-    cellRenderer: 'currencyCellRenderer',
+    cellRendererComp: getCurrencyCellRenderer(),
     valueGetter: reportingCurrencyValueGetter,
     headerValueGetter: 'ctx.reportingCurrency',
   },
@@ -28,10 +28,7 @@ const gridOptions: GridOptions = {
   rowData: getData(),
   context: {
     reportingCurrency: 'EUR',
-  },
-  components: {
-    currencyCellRenderer: getCurrencyCellRenderer(),
-  },
+  }
 }
 
 
@@ -124,6 +121,6 @@ function getData() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 })

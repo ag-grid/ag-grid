@@ -1094,7 +1094,7 @@ export class GridApi {
     }
 
     /** Returns the `RowDropZoneParams` to be used by another grid's `addRowDropZone` method. */
-    public getRowDropZoneParams(events: RowDropZoneEvents): RowDropZoneParams {
+    public getRowDropZoneParams(events?: RowDropZoneEvents): RowDropZoneParams {
         return this.gridBodyCon.getRowDragFeature().getRowDropZone(events);
     }
 

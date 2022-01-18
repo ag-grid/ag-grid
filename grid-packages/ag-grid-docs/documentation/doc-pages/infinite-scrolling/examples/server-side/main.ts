@@ -1,4 +1,4 @@
-import { ColDef, GridOptions, ICellRendererParams, IDatasource, IGetRowsParams, SortModelItem } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, ICellRendererParams, IDatasource, IGetRowsParams, SortModelItem } from '@ag-grid-community/core'
 declare function getCountries(): string[];
 
 
@@ -10,7 +10,13 @@ const columnDefs: ColDef[] = [
     headerName: 'ID',
     maxWidth: 100,
     valueGetter: 'node.id',
-    cellRenderer: 'loadingCellRenderer',
+    cellRendererComp: function (params: ICellRendererParams) {
+      if (params.value !== undefined) {
+        return params.value
+      } else {
+        return '<img src="https://www.ag-grid.com/example-assets/loading.gif">'
+      }
+    },
     // we don't want to sort by the row index, this doesn't make sense as the point
     // of the row index is to know the row index in what came back from the server
     sortable: false,
@@ -19,7 +25,7 @@ const columnDefs: ColDef[] = [
   { field: 'athlete', suppressMenu: true },
   {
     field: 'age',
-    filter: 'agNumberColumnFilter',
+    filterComp: 'agNumberColumnFilter',
     filterParams: {
       filterOptions: ['equals', 'lessThan', 'greaterThan'],
       suppressAndOrCondition: true,
@@ -27,12 +33,12 @@ const columnDefs: ColDef[] = [
   },
   {
     field: 'country',
-    filter: 'agSetColumnFilter',
+    filterComp: 'agSetColumnFilter',
     filterParams: filterParams,
   },
   {
     field: 'year',
-    filter: 'agSetColumnFilter',
+    filterComp: 'agSetColumnFilter',
     filterParams: { values: ['2000', '2004', '2008', '2012'] },
   },
   { field: 'date' },
@@ -62,15 +68,6 @@ const gridOptions: GridOptions = {
   // debug: true,
   getRowNodeId: function (item) {
     return item.id
-  },
-  components: {
-    loadingCellRenderer: function (params: ICellRendererParams) {
-      if (params.value !== undefined) {
-        return params.value
-      } else {
-        return '<img src="https://www.ag-grid.com/example-assets/loading.gif">'
-      }
-    },
   },
 }
 
@@ -159,8 +156,8 @@ function filterData(filterModel: any, data: any[]) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

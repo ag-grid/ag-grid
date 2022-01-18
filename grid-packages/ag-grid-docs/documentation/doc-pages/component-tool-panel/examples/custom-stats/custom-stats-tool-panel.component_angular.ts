@@ -56,4 +56,7 @@ export class CustomStatsToolPanel implements IToolPanel {
         this.numSilver = numSilver;
         this.numBronze = numBronze;
     }
+
+    refresh(): void {
+    }
 }

@@ -1,5 +1,6 @@
 import { Component, QueryList, ViewChildren, ViewContainerRef } from "@angular/core";
 import { ICellEditorAngularComp } from "@ag-grid-community/angular";
+import { ICellEditorParams } from "@ag-grid-community/core";
 
 @Component({
     selector: "input-cell",
@@ -26,16 +27,16 @@ import { ICellEditorAngularComp } from "@ag-grid-community/angular";
     ]
 })
 export class MatInputComponent implements ICellEditorAngularComp {
-    private params: any;
+    private params!: ICellEditorParams;
 
-    private firstName: string;
-    private lastName: string;
+    public firstName!: string;
+    public lastName!: string;
 
     @ViewChildren("input", { read: ViewContainerRef })
-    public inputs: QueryList<any>;
+    public inputs!: QueryList<any>;
     private focusedInput: number = 0;
 
-    agInit(params: any): void {
+    agInit(params: ICellEditorParams): void {
         this.params = params;
 
         // simple implementation - we assume a full name consists of a first and last name only
@@ -66,7 +67,7 @@ export class MatInputComponent implements ICellEditorAngularComp {
      * A little over complicated for what it is, but the idea is to illustrate how you might tab between multiple inputs
      * say for example in full row editing
      */
-    onKeyDown(event): void {
+    onKeyDown(event: any): void {
         const key = event.key;
         if (key == 'Tab') {
             // tab
@@ -94,7 +95,7 @@ export class MatInputComponent implements ICellEditorAngularComp {
         }
     }
 
-    private preventDefaultAndPropagation(event) {
+    private preventDefaultAndPropagation(event: any) {
         event.preventDefault();
         event.stopPropagation();
     }

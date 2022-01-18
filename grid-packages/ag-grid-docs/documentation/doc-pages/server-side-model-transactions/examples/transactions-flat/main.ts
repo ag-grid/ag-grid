@@ -1,4 +1,4 @@
-import {ColDef, GridOptions, IServerSideDatasource, IServerSideGetRowsParams} from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, IServerSideDatasource, IServerSideGetRowsParams } from '@ag-grid-community/core'
 
 const products = ['Palm Oil', 'Rubber', 'Wool', 'Amber', 'Copper'];
 const all_products = [
@@ -32,7 +32,7 @@ const all_products = [
     'Sugar No.14',
 ];
 
-const columnDefs: ColDef[] = [{field: 'product'}, {field: 'value'}]
+const columnDefs: ColDef[] = [{ field: 'product' }, { field: 'value' }]
 
 const gridOptions: GridOptions = {
     defaultColDef: {
@@ -148,8 +148,8 @@ function getNextValue() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    const gridDiv = document.querySelector('#myGrid');
-    new agGrid.Grid(gridDiv, gridOptions)
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    new Grid(gridDiv, gridOptions)
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then(response => response.json())
@@ -167,7 +167,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         })
 
                         // call the success callback
-                        params.success({rowData: rows, rowCount: rows.length})
+                        params.success({ rowData: rows, rowCount: rows.length })
                     }, 500)
                 },
             };

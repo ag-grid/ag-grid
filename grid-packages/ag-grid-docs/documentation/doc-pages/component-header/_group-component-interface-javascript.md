@@ -1,7 +1,6 @@
 [[only-javascript]]
 |
-|The header group component interface is almost identical to the above header component. The only difference is the `params` object passed the instantiated
-|Vue component.
+|The header group component interface is almost identical to the above header component. The only difference is the `params` object passed to the `init` method.
 |
 |```ts
 |interface IHeaderGroupComp {

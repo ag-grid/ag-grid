@@ -1,4 +1,4 @@
-import { ColGroupDef, GridOptions } from '@ag-grid-community/core'
+import { Grid, ColGroupDef, GridOptions } from '@ag-grid-community/core'
 
 const columnDefs: ColGroupDef[] = [
   {
@@ -33,28 +33,28 @@ const columnDefs: ColGroupDef[] = [
         field: 'gold',
         enableValue: true,
         suppressMenu: true,
-        filter: 'agNumberColumnFilter',
+        filterComp: 'agNumberColumnFilter',
         aggFunc: 'sum',
       },
       {
         field: 'silver',
         enableValue: true,
         suppressMenu: true,
-        filter: 'agNumberColumnFilter',
+        filterComp: 'agNumberColumnFilter',
         aggFunc: 'sum',
       },
       {
         field: 'bronze',
         enableValue: true,
         suppressMenu: true,
-        filter: 'agNumberColumnFilter',
+        filterComp: 'agNumberColumnFilter',
         aggFunc: 'sum',
       },
       {
         field: 'total',
         enableValue: true,
         suppressMenu: true,
-        filter: 'agNumberColumnFilter',
+        filterComp: 'agNumberColumnFilter',
         aggFunc: 'sum',
       },
     ],
@@ -117,8 +117,8 @@ function setPivotHeaderHeight(value?: number) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

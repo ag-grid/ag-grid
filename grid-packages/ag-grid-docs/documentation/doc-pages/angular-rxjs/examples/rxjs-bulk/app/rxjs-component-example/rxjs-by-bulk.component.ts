@@ -1,11 +1,10 @@
-import {Component} from "@angular/core";
-
-import {AllCommunityModules, GridOptions} from "@ag-grid-community/all-modules";
-
-import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
-import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
-
-import {MockServerService} from "./mockServer.service";
+import "@ag-grid-community/core/dist/styles/ag-grid.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
+import { ColDef, GridOptions, ValueFormatterParams } from "@ag-grid-community/core";
+import { Component } from "@angular/core";
+import { MockServerService } from "./mockServer.service";
+import { Observable } from "rxjs";
 
 @Component({
     selector: 'my-app',
@@ -14,28 +13,28 @@ import {MockServerService} from "./mockServer.service";
 })
 export class RxJsComponentByFullSet {
     gridOptions: GridOptions;
-    initialRowDataLoad$;
-    rowDataUpdates$;
+    initialRowDataLoad$: Observable<any[]>;
+    rowDataUpdates$: Observable<any[]>;
 
-    modules = AllCommunityModules;
+    modules = [ClientSideRowModelModule];
 
     constructor(mockServerService: MockServerService) {
         this.initialRowDataLoad$ = mockServerService.initialLoad();
         this.rowDataUpdates$ = mockServerService.allDataUpdates();
 
-        this.gridOptions = <GridOptions> {
+        this.gridOptions = {
             enableRangeSelection: true,
             columnDefs: this.createColumnDefs(),
 
             immutableData: true,
-            getRowNodeId: function (data) {
+            getRowNodeId: (data) => {
                 // the code is unique, so perfect for the id
                 return data.code;
             },
 
             onGridReady: () => {
                 this.initialRowDataLoad$.subscribe(
-                    rowData => {
+                    (rowData: any[]) => {
                         // the initial full set of data
                         // note that we don't need to un-subscribe here as it's a one off data load
                         if (this.gridOptions.api) { // can be null when tabbing between the examples
@@ -45,7 +44,7 @@ export class RxJsComponentByFullSet {
                         // now listen for updates
                         // we're using immutableData this time, so although we're setting the entire
                         // data set here, the grid will only re-render changed rows, improving performance
-                        this.rowDataUpdates$.subscribe((newRowData) => {
+                        this.rowDataUpdates$.subscribe((newRowData: any[]) => {
                             if (this.gridOptions.api) { // can be null when tabbing between the examples
                                 this.gridOptions.api.setRowData(newRowData)
                             }
@@ -60,10 +59,10 @@ export class RxJsComponentByFullSet {
         };
     }
 
-    private createColumnDefs() {
+    private createColumnDefs(): ColDef[] {
         return [
-            {headerName: "Code", field: "code", width: 70, resizable: true},
-            {headerName: "Name", field: "name", width: 280, resizable: true},
+            { headerName: "Code", field: "code", width: 70, resizable: true },
+            { headerName: "Name", field: "name", width: 280, resizable: true },
             {
                 headerName: "Bid", field: "bid", width: 100, resizable: true,
                 cellClass: 'cell-number',
@@ -90,7 +89,7 @@ export class RxJsComponentByFullSet {
         ]
     }
 
-    numberFormatter(params) {
+    numberFormatter(params: ValueFormatterParams) {
         if (typeof params.value === 'number') {
             return params.value.toFixed(2);
         } else {

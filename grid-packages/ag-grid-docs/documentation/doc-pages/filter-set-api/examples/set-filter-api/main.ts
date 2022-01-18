@@ -1,4 +1,5 @@
 import {
+  Grid,
   GridOptions,
   ICellRendererParams,
   KeyCreatorParams,
@@ -9,34 +10,31 @@ const gridOptions: GridOptions = {
   columnDefs: [
     {
       field: 'athlete',
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
       filterParams: {
         cellHeight: 20,
       },
     },
-    { field: 'age', maxWidth: 120, filter: 'agNumberColumnFilter' },
+    { field: 'age', maxWidth: 120, filterComp: 'agNumberColumnFilter' },
     {
       field: 'country',
-      cellRenderer: 'countryCellRenderer',
+      cellRendererComp: countryCellRenderer,
       keyCreator: countryKeyCreator,
     },
     { field: 'year', maxWidth: 120 },
     { field: 'date' },
     { field: 'sport' },
-    { field: 'gold', filter: 'agNumberColumnFilter' },
-    { field: 'silver', filter: 'agNumberColumnFilter' },
-    { field: 'bronze', filter: 'agNumberColumnFilter' },
-    { field: 'total', filter: 'agNumberColumnFilter' },
+    { field: 'gold', filterComp: 'agNumberColumnFilter' },
+    { field: 'silver', filterComp: 'agNumberColumnFilter' },
+    { field: 'bronze', filterComp: 'agNumberColumnFilter' },
+    { field: 'total', filterComp: 'agNumberColumnFilter' },
   ],
   defaultColDef: {
     flex: 1,
     minWidth: 160,
     filter: true,
     resizable: true,
-  },
-  components: {
-    countryCellRenderer: countryCellRenderer,
-  },
+  }
 }
 
 function countryCellRenderer(params: ICellRendererParams) {
@@ -93,8 +91,8 @@ function setCountriesToAll() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  const gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

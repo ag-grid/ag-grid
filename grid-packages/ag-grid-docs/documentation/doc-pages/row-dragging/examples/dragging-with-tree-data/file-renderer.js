@@ -1,7 +1,6 @@
-function getFileCellRenderer() {
-    function FileCellRenderer() { }
+class FileCellRenderer {
 
-    FileCellRenderer.prototype.init = function (params) {
+    init(params) {
         var tempDiv = document.createElement('div')
         var value = params.value
         var icon = getFileIcon(params.value)
@@ -15,19 +14,8 @@ function getFileCellRenderer() {
             : value
         this.eGui = tempDiv.firstChild
     }
-    FileCellRenderer.prototype.getGui = function () {
+    getGui() {
         return this.eGui
-    }
-
-    return FileCellRenderer
-}
-
-if (!String.prototype.endsWith) {
-    String.prototype.endsWith = function (search, this_len) {
-        if (this_len === undefined || this_len > this.length) {
-            this_len = this.length
-        }
-        return this.substring(this_len - search.length, this_len) === search
     }
 }
 

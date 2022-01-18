@@ -1,4 +1,4 @@
-import { AgCartesianChartOptions, AgChartOptions } from '@ag-grid-community/core'
+import { Grid, AgCartesianChartOptions, AgChartOptions } from '@ag-grid-community/core'
 import * as agCharts from 'ag-charts-community'
 
 var systemLoad = 0
@@ -84,7 +84,7 @@ const options: AgCartesianChartOptions = {
 
 var chart = agCharts.AgChart.create(options)
 
-// inScope[updateData]
+/** inScope */
 function updateData() {
   var now = Date.now()
   options.data = getData()

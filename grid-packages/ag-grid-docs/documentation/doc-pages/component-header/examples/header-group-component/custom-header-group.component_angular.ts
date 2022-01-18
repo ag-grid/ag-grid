@@ -1,5 +1,6 @@
-import {Component} from '@angular/core';
-
+import { Component } from '@angular/core';
+import { IHeaderGroupAngularComp } from "@ag-grid-community/angular";
+import { IHeaderGroupParams } from '@ag-grid-community/core';
 @Component({
     selector: 'app-custom-header-group',
     template: `
@@ -10,7 +11,7 @@ import {Component} from '@angular/core';
         </div>
     `,
     styles: [
-            `
+        `
             .customExpandButton {
                 float: right;
                 margin-top: 2px;
@@ -88,11 +89,11 @@ import {Component} from '@angular/core';
         `
     ]
 })
-export class CustomHeaderGroup {
-    private params: any;
-    private expandState: string;
+export class CustomHeaderGroup implements IHeaderGroupAngularComp {
+    public params!: IHeaderGroupParams;
+    public expandState!: string;
 
-    agInit(params): void {
+    agInit(params: IHeaderGroupParams): void {
         this.params = params;
 
         this.params.columnGroup.getProvidedColumnGroup().addEventListener('expandedChanged', this.syncExpandButtons.bind(this));

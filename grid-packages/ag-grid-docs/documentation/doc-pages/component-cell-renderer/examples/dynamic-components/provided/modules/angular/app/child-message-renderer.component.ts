@@ -1,6 +1,6 @@
-import {Component} from "@angular/core";
-import {ICellRendererParams} from "@ag-grid-community/core";
-import {AgRendererComponent} from "@ag-grid-community/angular";
+import { Component } from "@angular/core";
+import { ICellRendererParams } from "@ag-grid-community/core";
+import { ICellRendererAngularComp } from "@ag-grid-community/angular";
 
 @Component({
     selector: 'child-cell',
@@ -11,15 +11,15 @@ import {AgRendererComponent} from "@ag-grid-community/angular";
         }`
     ]
 })
-export class ChildMessageRenderer implements AgRendererComponent {
-    public params: ICellRendererParams;
+export class ChildMessageRenderer implements ICellRendererAngularComp {
+    public params!: ICellRendererParams;
 
     agInit(params: ICellRendererParams): void {
         this.params = params;
     }
 
     public invokeParentMethod() {
-        this.params.context.componentParent.methodFromParent(`Row: ${this.params.node.rowIndex}, Col: ${this.params.colDef.headerName}`)
+        this.params.context.componentParent.methodFromParent(`Row: ${this.params.node.rowIndex}, Col: ${this.params.colDef?.headerName}`)
     }
 
     refresh(): boolean {

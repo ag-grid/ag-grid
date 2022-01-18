@@ -1,5 +1,5 @@
 import { templatePlaceholder } from './chart-vanilla-src-parser';
-import { convertFunctionToProperty, isInstanceMethod } from './parser-utils';
+import { addBindingImports, convertFunctionToProperty, isInstanceMethod } from './parser-utils';
 import { toInput, toConst, toMember, toAssignment, convertTemplate, getImport } from './angular-utils';
 import { wrapOptionsUpdateCode } from './chart-utils';
 
@@ -7,12 +7,21 @@ export function processFunction(code: string): string {
     return wrapOptionsUpdateCode(convertFunctionToProperty(code));
 }
 
-function getImports(componentFileNames: string[]): string[] {
+function getImports(bindingImports, componentFileNames: string[], { typeParts }): string[] {
+    const bImports = [...(bindingImports || [])];
+
+    bImports.push({
+        module: `'@ag-grid-community/core'`,
+        isNamespaced: false,
+        imports: typeParts
+    })
+
     const imports = [
         "import { cloneDeep } from 'lodash';",
         "import { Component } from '@angular/core';",
-        "import * as agCharts from 'ag-charts-community';",
     ];
+
+    addBindingImports(bImports, imports, true, true);
 
     if (componentFileNames) {
         imports.push(...componentFileNames.map(getImport));
@@ -34,8 +43,10 @@ function getTemplate(bindings: any, attributes: string[]): string {
 
 export function vanillaToAngular(bindings: any, componentFileNames: string[]): () => string {
     return () => {
-        const { properties } = bindings;
-        const imports = getImports(componentFileNames);
+        const { properties, imports: bindingImports, declarations, optionsTypeInfo } = bindings;
+        const opsTypeInfo = optionsTypeInfo || { typeParts: ['AgChartOptions'], typeStr: 'AgChartOptions' };
+        const imports = getImports(bindingImports, componentFileNames, opsTypeInfo);
+
         const propertyAttributes = [];
         const propertyVars = [];
         const propertyAssignments = [];
@@ -66,7 +77,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): (
         const template = getTemplate(bindings, propertyAttributes);
         const externalEventHandlers = bindings.externalEventHandlers.map(handler => processFunction(handler.body));
 
-        return `${imports.join('\n')}
+        return `${imports.join('\n')}${declarations.length > 0 ? '\n' + declarations.join('\n') : ''}
 
 @Component({
     selector: 'my-app',
@@ -74,7 +85,7 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): (
 })
 
 export class AppComponent {
-    private options: any;
+    private options: ${opsTypeInfo.typeStr};
     ${propertyVars.filter(p => p.name === 'options').join('\n')}
 
     constructor() {

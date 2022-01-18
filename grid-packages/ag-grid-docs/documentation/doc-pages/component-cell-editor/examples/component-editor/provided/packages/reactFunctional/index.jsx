@@ -1,8 +1,8 @@
 'use strict';
 
-import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} from 'react';
+import React, {forwardRef, useEffect, useImperativeHandle, useRef, memo, useMemo, useState} from 'react';
 import ReactDOM, {render} from 'react-dom';
-import {AgGridColumn, AgGridReact} from 'ag-grid-react';
+import {AgGridReact} from 'ag-grid-react';
 
 import 'ag-grid-enterprise';
 import 'ag-grid-community/dist/styles/ag-grid.css';
@@ -14,7 +14,7 @@ const KEY_F2 = 'F2';
 const KEY_ENTER = 'Enter';
 const KEY_TAB = 'Tab';
 
-const DoublingEditor = forwardRef((props, ref) => {
+const DoublingEditor = memo(forwardRef((props, ref) => {
     const [value, setValue] = useState(parseInt(props.value));
     const refInput = useRef(null);
 
@@ -55,43 +55,42 @@ const DoublingEditor = forwardRef((props, ref) => {
                style={{width: "100%"}}
         />
     );
-});
+}));
 
-const MoodRenderer = forwardRef((props, ref) => {
+const MoodRenderer = memo(props => {
     const imageForMood = mood => 'https://www.ag-grid.com/example-assets/smileys/' + (mood === 'Happy' ? 'happy.png' : 'sad.png');
 
     const [mood, setMood] = useState(imageForMood(props.value));
-
-    useImperativeHandle(ref, () => {
-        return {
-            refresh(params) {
-                setMood(imageForMood(params.value));
-            }
-        };
-    });
 
     return (
         <img width="20px" src={mood}/>
     );
 });
 
-const MoodEditor = forwardRef((props, ref) => {
+const MoodEditor = memo(forwardRef((props, ref) => {
     const isHappy = value => value === 'Happy';
 
-    const [happy, setHappy] = useState(isHappy(props.value));
-    const [editing, setEditing] = useState(true);
+    const [ready, setReady] = useState(false);
+    const [interimValue, setInterimValue] = useState(isHappy(props.value));
+    const [happy, setHappy] = useState(null);
     const refContainer = useRef(null);
 
-    useEffect(() => {
-        focus();
-    }, []);
-
     const checkAndToggleMoodIfLeftRight = (event) => {
-        if (['ArrowLeft', 'ArrowRight'].indexOf(event.key) > -1) { // left and right
-            setHappy(!happy);
-            event.stopPropagation();
+        if (ready) {
+            if (['ArrowLeft', 'ArrowRight'].indexOf(event.key) > -1) { // left and right
+                setInterimValue(!interimValue);
+                event.stopPropagation();
+            } else if (event.key === KEY_ENTER) {
+                setHappy(interimValue)
+                event.stopPropagation();
+            }
         }
     };
+
+    useEffect(() => {
+        ReactDOM.findDOMNode(refContainer.current).focus();
+        setReady(true);
+    }, [])
 
     useEffect(() => {
         window.addEventListener('keydown', checkAndToggleMoodIfLeftRight);
@@ -99,34 +98,21 @@ const MoodEditor = forwardRef((props, ref) => {
         return () => {
             window.removeEventListener('keydown', checkAndToggleMoodIfLeftRight);
         };
-    }, [checkAndToggleMoodIfLeftRight]);
+    }, [checkAndToggleMoodIfLeftRight, ready]);
+
+    useEffect(() => {
+        if (happy !== null) {
+            props.stopEditing();
+        }
+    }, [happy])
 
     useImperativeHandle(ref, () => {
         return {
             getValue() {
                 return happy ? 'Happy' : 'Sad';
-            },
-
-            isPopup() {
-                return true;
             }
         };
     });
-
-    useEffect(() => {
-        if (!editing) {
-            props.api.stopEditing();
-        }
-    }, [editing]);
-
-    const focus = () => {
-        window.setTimeout(() => {
-            let container = ReactDOM.findDOMNode(refContainer.current);
-            if (container) {
-                container.focus();
-            }
-        });
-    };
 
     const mood = {
         borderRadius: 15,
@@ -151,8 +137,8 @@ const MoodEditor = forwardRef((props, ref) => {
         padding: 4
     };
 
-    const happyStyle = happy ? selected : unselected;
-    const sadStyle = !happy ? selected : unselected;
+    const happyStyle = interimValue ? selected : unselected;
+    const sadStyle = !interimValue ? selected : unselected;
 
     return (
         <div ref={refContainer}
@@ -161,17 +147,15 @@ const MoodEditor = forwardRef((props, ref) => {
         >
             <img src="https://www.ag-grid.com/example-assets/smileys/happy.png" onClick={() => {
                 setHappy(true);
-                setEditing(false);
             }} style={happyStyle}/>
             <img src="https://www.ag-grid.com/example-assets/smileys/sad.png" onClick={() => {
                 setHappy(false);
-                setEditing(false);
             }} style={sadStyle}/>
         </div>
     );
-});
+}));
 
-const NumericEditor = forwardRef((props, ref) => {
+const NumericEditor = memo(forwardRef((props, ref) => {
     const createInitialState = () => {
         let startValue;
         let highlightAllOnFocus = true;
@@ -198,15 +182,36 @@ const NumericEditor = forwardRef((props, ref) => {
     };
 
     const initialState = createInitialState();
-
     const [value, setValue] = useState(initialState.value);
     const [highlightAllOnFocus, setHighlightAllOnFocus] = useState(initialState.highlightAllOnFocus);
     const refInput = useRef(null);
 
+    // focus on the input
+    useEffect(() => {
+        // get ref from React component
+        const eInput = refInput.current;
+        eInput.focus();
+        if (highlightAllOnFocus) {
+            eInput.select();
+
+            setHighlightAllOnFocus(false);
+        } else {
+            // when we started editing, we want the caret at the end, not the start.
+            // this comes into play in two scenarios: 
+            //   a) when user hits F2 
+            //   b) when user hits a printable character
+            const length = eInput.value ? eInput.value.length : 0;
+            if (length > 0) {
+                eInput.setSelectionRange(length, length);
+            }
+        }
+    }, []);
+
+    /* Utility Methods */
     const cancelBeforeStart = props.charPress && ('1234567890'.indexOf(props.charPress) < 0);
 
     const isLeftOrRight = event => {
-        return ['ArrowLeft', 'ArrowRight'].indexOf(event.key) > -1;
+        return ['ArrowLeft', 'ArrowLeft'].indexOf(event.key) > -1;
     };
 
     const isCharNumeric = charStr => {
@@ -226,6 +231,7 @@ const NumericEditor = forwardRef((props, ref) => {
         const key = event.key;
         return key === KEY_ENTER || key === KEY_TAB;
     };
+
     const onKeyDown = event => {
         if (isLeftOrRight(event) || deleteOrBackspace(event)) {
             event.stopPropagation();
@@ -235,49 +241,31 @@ const NumericEditor = forwardRef((props, ref) => {
         if (!finishedEditingPressed(event) && !isKeyPressedNumeric(event)) {
             if (event.preventDefault) event.preventDefault();
         }
+
+        if(finishedEditingPressed(event)) {
+            props.stopEditing();
+        }
     };
 
-    useEffect(() => {
-        window.addEventListener('keydown', onKeyDown);
-
-        return () => {
-            window.removeEventListener('keydown', onKeyDown);
-        };
-    }, [onKeyDown]);
-
+    /* Component Editor Lifecycle methods */
     useImperativeHandle(ref, () => {
         return {
-            afterGuiAttached() {
-                // get ref from React component
-                const eInput = refInput.current;
-                eInput.focus();
-                if (highlightAllOnFocus) {
-                    eInput.select();
-
-                    setHighlightAllOnFocus(false);
-                } else {
-                    // when we started editing, we want the caret at the end, not the start.
-                    // this comes into play in two scenarios: 
-                    //   a) when user hits F2 
-                    //   b) when user hits a printable character
-                    const length = eInput.value ? eInput.value.length : 0;
-                    if (length > 0) {
-                        eInput.setSelectionRange(length, length);
-                    }
-                }
-            },
-
+            // the final value to send to the grid, on completion of editing
             getValue() {
                 return value;
             },
 
+            // Gets called once before editing starts, to give editor a chance to
+            // cancel the editing before it even starts.
             isCancelBeforeStart() {
                 return cancelBeforeStart;
             },
 
-            // will reject the number if it greater than 1,000,000
-            // not very practical, but demonstrates the method.
+            // Gets called once when editing is finished (eg if Enter is pressed).
+            // If you return true, then the result of the edit will be ignored.
             isCancelAfterEnd() {
+                // will reject the number if it greater than 1,000,000
+                // not very practical, but demonstrates the method.
                 return value > 1000000;
             }
         };
@@ -287,13 +275,14 @@ const NumericEditor = forwardRef((props, ref) => {
         <input ref={refInput}
                value={value}
                onChange={event => setValue(event.target.value)}
+               onKeyDown={event => onKeyDown(event)}
                style={{width: "100%"}}
         />
     );
-});
+}));
 
 const GridExample = () => {
-    const rowData = [
+    const [rowData] = useState([
         {name: "Bob", mood: "Happy", number: 10},
         {name: "Harry", mood: "Sad", number: 3},
         {name: "Sally", mood: "Happy", number: 20},
@@ -307,7 +296,36 @@ const GridExample = () => {
         {name: "Fred", mood: "Sad", number: 532},
         {name: "Jenny", mood: "Happy", number: 34},
         {name: "Larry", mood: "Happy", number: 13},
-    ];
+    ]);
+
+    const columnDefs = useMemo(() => [
+        {
+            headerName: 'Doubling',
+            field: 'number',
+            cellEditorComp: DoublingEditor,
+            editable: true,
+            width: 300,
+        },
+        {
+            field: 'mood',
+            // spl todo - editor changes aren't reflected in grid
+            // renderer is updated but not re-rendered in grid
+            cellRendererComp: MoodRenderer,
+            cellEditorComp: MoodEditor,
+            cellEditorPopup: true,
+            editable: true,
+            width: 300,
+        },
+        {
+            headerName: 'Numeric',
+            field: 'number',
+            cellEditorComp: NumericEditor,
+            // spl todo - only for hooks? if not is isPopup required at all?
+            cellEditorPopup: true,
+            editable: true,
+            width: 280,
+        },
+    ], [])
 
     return (
         <div style={{width: '100%', height: '100%'}}>
@@ -318,13 +336,8 @@ const GridExample = () => {
                 }}
                 className="ag-theme-alpine test-grid">
                 <AgGridReact
+                    columnDefs={columnDefs}
                     rowData={rowData}
-                    frameworkComponents={{
-                        doublingEditor: DoublingEditor,
-                        moodRenderer: MoodRenderer,
-                        moodEditor: MoodEditor,
-                        numericEditor: NumericEditor
-                    }}
                     defaultColDef={{
                         editable: true,
                         sortable: true,
@@ -333,20 +346,6 @@ const GridExample = () => {
                         filter: true,
                         resizable: true
                     }}>
-                    <AgGridColumn headerName="Doubling"
-                                  field="number"
-                                  cellEditor="doublingEditor"
-                                  editable={true}/>
-                    <AgGridColumn field="mood"
-                                  cellRenderer="moodRenderer"
-                                  cellEditor="moodEditor"
-                                  editable={true}
-                                  width={300}/>
-                    <AgGridColumn headerName="Numeric"
-                                  field="number"
-                                  cellEditor="numericEditor"
-                                  editable={true}
-                                  width={280}/>
                 </AgGridReact>
             </div>
         </div>

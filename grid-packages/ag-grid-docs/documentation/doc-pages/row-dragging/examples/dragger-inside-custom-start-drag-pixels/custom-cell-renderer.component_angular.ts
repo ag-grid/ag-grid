@@ -1,6 +1,6 @@
 import { ICellRendererParams } from "@ag-grid-community/core";
 import { Component, ElementRef, HostBinding, ViewChild } from "@angular/core";
-
+import { ICellRendererAngularComp } from "@ag-grid-community/angular";
 
 @Component({
     selector: 'custom-cell',
@@ -12,7 +12,7 @@ import { Component, ElementRef, HostBinding, ViewChild } from "@angular/core";
         <span>{{year}}</span>
         <i class="fas fa-arrows-alt-v" #myref></i>`,
 })
-export class CustomCellRenderer {
+export class CustomCellRenderer implements ICellRendererAngularComp {
     public athlete!: string;
     public country!: string;
     public year!: string;
@@ -30,5 +30,9 @@ export class CustomCellRenderer {
 
     ngAfterViewInit() {
         this.cellRendererParams.registerRowDragger(this.myRef.nativeElement, 0);
+    }
+
+    refresh(params: ICellRendererParams): boolean {
+        return false;
     }
 }

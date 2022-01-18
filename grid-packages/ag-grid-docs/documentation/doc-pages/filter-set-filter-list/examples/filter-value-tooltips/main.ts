@@ -1,4 +1,4 @@
-import { GridOptions } from '@ag-grid-community/core'
+import { Grid, GridOptions } from '@ag-grid-community/core'
 
 declare var CustomTooltip: any
 
@@ -7,12 +7,12 @@ const gridOptions: GridOptions = {
     {
       field: 'colA',
       tooltipField: 'colA',
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
     },
     {
       field: 'colB',
       tooltipField: 'colB',
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
       filterParams: {
         showTooltips: true,
       },
@@ -20,8 +20,8 @@ const gridOptions: GridOptions = {
     {
       field: 'colC',
       tooltipField: 'colC',
-      tooltipComponent: 'customTooltip',
-      filter: 'agSetColumnFilter',
+      tooltipComp: CustomTooltip,
+      filterComp: 'agSetColumnFilter',
       filterParams: {
         showTooltips: true,
       },
@@ -31,15 +31,12 @@ const gridOptions: GridOptions = {
     flex: 1,
     resizable: true,
   },
-  components: {
-    customTooltip: CustomTooltip,
-  },
   tooltipShowDelay: 100,
   rowData: getData(),
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 })

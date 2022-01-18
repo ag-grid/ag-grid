@@ -1,70 +1,66 @@
-import { ColDef, GridOptions } from '@ag-grid-community/core'
-
-declare var NumberFilterComponent: any
-declare var NumberFloatingFilterComponent: any
+import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { NumberFloatingFilterComponent } from "./numberFloatingFilterComponent_typescript";
+import { NumberFilterComponent } from "./numberFilterComponent_typescript";
 
 const columnDefs: ColDef[] = [
-  { field: 'athlete', filter: 'agTextColumnFilter' },
-  {
-    field: 'gold',
-    floatingFilterComponent: 'customNumberFloatingFilter',
-    floatingFilterComponentParams: {
-      suppressFilterButton: true,
+    { field: 'athlete', filterComp: 'agTextColumnFilter' },
+    {
+        field: 'gold',
+        // spl todo floatingFilterFramework doesn't work (vue, but possibly others too)
+        floatingFilterComp: NumberFloatingFilterComponent,
+        floatingFilterComponentParams: {
+            suppressFilterButton: true,
+        },
+        filterComp: NumberFilterComponent
     },
-    filter: 'customNumberFilter',
-  },
-  {
-    field: 'silver',
-    floatingFilterComponent: 'customNumberFloatingFilter',
-    floatingFilterComponentParams: {
-      suppressFilterButton: true,
+    {
+        field: 'silver',
+        floatingFilterComp: NumberFloatingFilterComponent,
+        floatingFilterComponentParams: {
+            suppressFilterButton: true,
+        },
+        filterComp: NumberFilterComponent
     },
-    filter: 'customNumberFilter',
-  },
-  {
-    field: 'bronze',
-    floatingFilterComponent: 'customNumberFloatingFilter',
-    floatingFilterComponentParams: {
-      suppressFilterButton: true,
+    {
+        field: 'bronze',
+        floatingFilterComp: NumberFloatingFilterComponent,
+        floatingFilterComponentParams: {
+            suppressFilterButton: true,
+        },
+        filterComp: NumberFilterComponent
     },
-    filter: 'customNumberFilter',
-  },
-  {
-    field: 'total',
-    floatingFilterComponent: 'customNumberFloatingFilter',
-    floatingFilterComponentParams: {
-      suppressFilterButton: true,
+    {
+        field: 'total',
+        floatingFilterComp: NumberFloatingFilterComponent,
+        floatingFilterComponentParams: {
+            suppressFilterButton: true,
+        },
+        filterComp: NumberFilterComponent
     },
-    filter: 'customNumberFilter',
-  },
 ]
 
 const gridOptions: GridOptions = {
-  defaultColDef: {
-    editable: true,
-    sortable: true,
-    flex: 1,
-    minWidth: 100,
-    filter: true,
-    floatingFilter: true,
-    resizable: true,
-  },
-  components: {
-    customNumberFloatingFilter: NumberFloatingFilterComponent,
-    customNumberFilter: NumberFilterComponent,
-  },
-  columnDefs: columnDefs,
-  rowData: null,
+    defaultColDef: {
+        editable: true,
+        sortable: true,
+        flex: 1,
+        minWidth: 100,
+        filter: true,
+        floatingFilter: true,
+        resizable: true,
+    },
+    columnDefs: columnDefs,
+    rowData: null,
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+    new Grid(gridDiv, gridOptions)
 
-  fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-    .then(response => response.json())
-    .then(data => {
-      gridOptions.api!.setRowData(data)
-    })
+    fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+        .then(response => response.json())
+        .then(data => {
+            gridOptions.api!.setRowData(data)
+        })
 })

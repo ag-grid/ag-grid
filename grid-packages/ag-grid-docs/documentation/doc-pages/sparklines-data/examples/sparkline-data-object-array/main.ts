@@ -1,4 +1,4 @@
-import { ColumnSparklineOptions, GridOptions } from '@ag-grid-community/core'
+import { Grid, ColumnSparklineOptions, GridOptions } from '@ag-grid-community/core'
 declare function getStockData(): any[];
 
 const gridOptions: GridOptions = {
@@ -7,7 +7,7 @@ const gridOptions: GridOptions = {
     { field: 'name', minWidth: 250 },
     {
       field: 'rateOfChange',
-      cellRenderer: 'agSparklineCellRenderer',
+      cellRendererComp: 'agSparklineCellRenderer',
       cellRendererParams: {
         sparklineOptions: {
           type: 'column',
@@ -32,6 +32,6 @@ const gridOptions: GridOptions = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 })

@@ -1,5 +1,5 @@
 import {
-  FirstDataRenderedEvent,
+  FirstDataRenderedEvent, Grid,
   GridOptions,
   ICellRendererParams,
   IFiltersToolPanel,
@@ -11,26 +11,26 @@ const gridOptions: GridOptions = {
     {
       headerName: 'Case Insensitive (default)',
       field: 'colour',
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
       filterParams: {
         caseSensitive: false,
-        cellRenderer: colourCellRenderer,
+        cellRendererComp: colourCellRenderer,
       },
     },
     {
       headerName: 'Case Sensitive',
       field: 'colour',
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
       filterParams: {
         caseSensitive: true,
-        cellRenderer: colourCellRenderer,
+        cellRendererComp: colourCellRenderer,
       },
     },
   ],
   defaultColDef: {
     flex: 1,
     minWidth: 225,
-    cellRenderer: colourCellRenderer,
+    cellRendererComp: colourCellRenderer,
     resizable: true,
     floatingFilter: true,
   },
@@ -52,9 +52,8 @@ function colourCellRenderer(params: ICellRendererParams) {
     return params.value
   }
 
-  return `<div style="background-color: ${params.value.toLowerCase()}; ${FIXED_STYLES}"></div>${
-    params.value
-  }`
+  return `<div style="background-color: ${params.value.toLowerCase()}; ${FIXED_STYLES}"></div>${params.value
+    }`
 }
 
 function setModel(type: string) {
@@ -108,6 +107,6 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 })

@@ -1,5 +1,5 @@
-const {JSDOM} = require('jsdom');
-const {window, document} = new JSDOM('<!DOCTYPE html><html lang="en"></html>');
+const { JSDOM } = require('jsdom');
+const { window, document } = new JSDOM('<!DOCTYPE html><html lang="en"></html>');
 const sucrase = require("sucrase");
 
 window.Date = Date;
@@ -19,7 +19,7 @@ const parsers = {
 };
 
 const useAsyncFileOperations = false;
-const encodingOptions = {encoding: 'utf8'};
+const encodingOptions = { encoding: 'utf8' };
 
 function writeFile(destination, contents) {
     // allow developers to override the example theme with an environment variable
@@ -31,7 +31,7 @@ function writeFile(destination, contents) {
 
     const extension = path.extname(destination).slice(1);
     const parser = parsers[extension] || extension;
-    const formattedContent = format(contents, parser);
+    const formattedContent = format(contents, parser, destination);
 
     if (useAsyncFileOperations) {
         fs.writeFile(destination, formattedContent, encodingOptions, () => {
@@ -41,19 +41,46 @@ function writeFile(destination, contents) {
     }
 }
 
-function copyFiles(files, dest, tokenToReplace, replaceValue = '') {
+function copyFiles(files, dest, tokenToReplace, replaceValue = '', importType, framework) {
     files.forEach(sourceFile => {
         const filename = path.basename(sourceFile);
         const destinationFile = path.join(dest, tokenToReplace ? filename.replace(tokenToReplace, replaceValue) : filename);
 
+        const updateImports = (src) => {
+            if (!destinationFile.endsWith('.ts')) {
+                return src;
+            }
+
+            const { parseFile, extractImportStatements, addBindingImports } = require(`./src/example-generation/parser-utils.ts`);
+            src = tokenToReplace ? src.replace(tokenToReplace, '') : src;
+            const parsed = parseFile(src)
+            const imports = extractImportStatements(parsed);
+
+            let formattedImports = '';
+            if (imports.length > 0) {
+                let importStrings = [];
+                // For now we dont support Modules in our Typescript examples so always convert to packages
+                const convertToPackage = framework == 'typescript' || importType === 'packages';
+                addBindingImports(imports, importStrings, convertToPackage, true);
+                formattedImports = `${importStrings.join('\n')}\n`
+
+                // Remove the original import statements
+                src = src.replace(/import.*from.*\n/g, '');
+                src = formattedImports + src
+            }
+
+            return src;
+        }
+
         if (useAsyncFileOperations) {
-            fs.readFile(sourceFile, encodingOptions, (_, contents) => writeFile(destinationFile, contents));
+            fs.readFile(sourceFile, encodingOptions, (_, contents) => writeFile(destinationFile, updateImports((contents))));
         } else {
-            writeFile(destinationFile, getFileContents(sourceFile));
+            writeFile(destinationFile, updateImports((getFileContents(sourceFile))));
         }
     });
 }
 
+// childMessageRenderer_typescript.ts -> childMessageRenderer.ts
 // childMessageRenderer_react.jsx -> childMessageRenderer.jsx
 // childMessageRenderer_angular.ts -> childMessageRenderer.ts
 // childMessageRenderer_vue.js -> childMessageRendererVue.js
@@ -83,7 +110,7 @@ function forEachExample(done, name, regex, generateExample, scope = '*', trigger
                 const [example, type, optionsCapture, options] = matches.slice(1);
 
                 if ((type === 'generated' || type === 'mixed' || type === 'typescript') && (!specificExample || example === specificExample)) {
-                    examplesToProcess.push({file, section, example, options, type});
+                    examplesToProcess.push({ file, section, example, options, type });
                 }
             }
         });
@@ -92,7 +119,7 @@ function forEachExample(done, name, regex, generateExample, scope = '*', trigger
 
         let errorInGeneration = false;
 
-        examplesToProcess.forEach(({file, section, example, options, type}) => {
+        examplesToProcess.forEach(({ file, section, example, options, type }) => {
             try {
                 const examplePath = path.join('./documentation/doc-pages', section, 'examples', example);
 
@@ -119,32 +146,42 @@ function forEachExample(done, name, regex, generateExample, scope = '*', trigger
     });
 }
 
-function format(source, parser) {
-    const formatted = source.replace(/\/\/\s*inScope\[.*\n/g, ''); // strip out inScope comments
-
+function format(source, parser, destination) {
+    const formatted = source;
     if (process.env.AG_EXAMPLE_DISABLE_FORMATTING === 'true') {
         return formatted;
     }
-
-    return prettier.format(formatted, {parser, singleQuote: true, trailingComma: 'es5'});
+    try {
+        // Turn off the organise imports plugin as it removes React incorrectly
+        const turnOffOrganise = destination?.endsWith('.jsx');
+        return prettier.format(formatted, {
+            parser, singleQuote: true, trailingComma: 'es5', pluginSearchDirs: turnOffOrganise ? ["./prettier-no-op"] : ["./"],
+            plugins: turnOffOrganise ? [] : ["prettier-plugin-organize-imports"],
+        })
+    } catch (error) {
+        console.log(destination, error)
+        return formatted;
+    }
 }
 
 function deepCloneObject(object) {
     return JSON.parse(JSON.stringify(object));
 }
 
-function readAsJsFile(tsFile) {
-    let jsFile = sucrase.transform(fs.readFileSync(tsFile, 'utf8'), {transforms: ["typescript"]}).code;
-    // Remove empty lines left by sucrase removing the imports 
-    jsFile = jsFile.replace(/^\s*[\r\n]/, '');
-    // Temporary hack to remove import that does not get removed by
-    jsFile = jsFile.replace("import * as agCharts from 'ag-charts-community'", '');
+function readAsJsFile(tsFilePath) {
+    const tsFile = fs.readFileSync(tsFilePath, 'utf8')
+        // Remove imports that are not required in javascript
+        .replace(/import ((.|\n)*?)from.*\n/g, '')
+        // Remove export statement
+        .replace(/export /g, "")
+
+    let jsFile = sucrase.transform(tsFile, { transforms: ["typescript"] }).code;
 
     return jsFile;
 }
 
 function createExampleGenerator(prefix, importTypes) {
-    const [parser, vanillaToVue, vanillaToVue3, vanillaToReact, vanillaToReactFunctional, vanillaToAngular] = getGeneratorCode(prefix);
+    const [parser, vanillaToVue, vanillaToVue3, vanillaToReact, vanillaToReactFunctional, vanillaToAngular, vanillaToTypescript] = getGeneratorCode(prefix);
     const appModuleAngular = new Map();
 
     importTypes.forEach(importType => {
@@ -174,40 +211,29 @@ function createExampleGenerator(prefix, importTypes) {
             throw new Error('examples are required to have an index.html file');
         }
 
-
-        let rawScripts = getMatchingPaths('*.{js,ts}');
-        let mainScript = rawScripts[0];
-
-        if (rawScripts.length > 1) {
-            // multiple scripts - main.{js, ts} is the main one, the rest are supplemental
-            const mainJsScripts = getMatchingPaths('main.js');
-            const mainTsScripts = getMatchingPaths('main.ts');
-            mainScript = mainJsScripts.length > 0 ? mainJsScripts[0] : mainTsScripts[0];
-
-            if (!mainScript) {
-                throw new Error('for an example with multiple scripts matching *.js, one must be named main.[js,ts]');
-            }
-
-            // get the rest of the scripts
-            rawScripts = getMatchingPaths('*.{js,ts}', {ignore: ['**/main.{js,ts}', '**/*_{angular,react,vanilla,vue}.{js,ts}']});
-        } else {
-            // only one script, which is the main one
-            rawScripts = [];
+        const mainTsScripts = getMatchingPaths('main.ts');
+        const mainScript = mainTsScripts[0];
+        if (!mainScript) {
+            throw new Error('for an example with multiple scripts matching *.ts, one must be named main.ts');
         }
+
+        // get the rest of the scripts
+        const rawScripts = getMatchingPaths('*.{js,ts}', { ignore: ['**/main.ts', '**/*_{angular,react,vanilla,vue,typescript}.{js,ts}'] });
 
         // any associated css
         const stylesheets = getMatchingPaths('*.css');
 
-        // read the main script (ts / js) and the associated index.html
-        let jsFile = mainScript.endsWith('.ts') ? readAsJsFile(mainScript) : getFileContents(mainScript);
+        // read the main script and the associated index.html
+        let mainFile = getFileContents(mainScript);
         const indexHtml = getFileContents(document);
-        const bindings = parser(jsFile, indexHtml, options, type, providedExamples);
+
+        const { bindings, typedBindings } = parser(mainScript, mainFile, indexHtml, options, type, providedExamples);
 
         const writeExampleFiles = (importType, framework, tokenToReplace, frameworkScripts, files, subdirectory, componentPostfix = '') => {
             const basePath = path.join(createExamplePath(`_gen/${importType}`), framework);
             const scriptsPath = subdirectory ? path.join(basePath, subdirectory) : basePath;
 
-            fs.mkdirSync(scriptsPath, {recursive: true});
+            fs.mkdirSync(scriptsPath, { recursive: true });
 
             Object.keys(files).forEach(name => writeFile(path.join(scriptsPath, name), files[name]));
 
@@ -217,7 +243,7 @@ function createExampleGenerator(prefix, importTypes) {
 
             copyFiles(stylesheets, basePath);
             copyFiles(rawScripts, basePath);
-            copyFiles(frameworkScripts, scriptsPath, `_${tokenToReplace}`, componentPostfix);
+            copyFiles(frameworkScripts, scriptsPath, `_${tokenToReplace}`, componentPostfix, importType, framework);
         };
 
         const copyProvidedExample = (importType, framework, providedRootPath) => {
@@ -245,7 +271,7 @@ function createExampleGenerator(prefix, importTypes) {
 
                 try {
                     const getSource = vanillaToReact(deepCloneObject(bindings), extractComponentFileNames(reactScripts, '_react'));
-                    importTypes.forEach(importType => reactConfigs.set(importType, {'index.jsx': getSource(importType)}));
+                    importTypes.forEach(importType => reactConfigs.set(importType, { 'index.jsx': getSource(importType) }));
                 } catch (e) {
                     console.error(`Failed to process React example in ${examplePath}`, e);
                     throw e;
@@ -268,7 +294,7 @@ function createExampleGenerator(prefix, importTypes) {
 
                     try {
                         const getSource = vanillaToReactFunctional(deepCloneObject(bindings), extractComponentFileNames(reactDeclarativeScripts, `_${reactScriptPostfix}`));
-                        importTypes.forEach(importType => reactDeclarativeConfigs.set(importType, {'index.jsx': getSource(importType)}));
+                        importTypes.forEach(importType => reactDeclarativeConfigs.set(importType, { 'index.jsx': getSource(importType) }));
                     } catch (e) {
                         console.error(`Failed to process React example in ${examplePath}`, e);
                         throw e;
@@ -285,12 +311,12 @@ function createExampleGenerator(prefix, importTypes) {
                 const angularConfigs = new Map();
                 try {
                     const angularComponentFileNames = extractComponentFileNames(angularScripts, '_angular');
-                    const getSource = vanillaToAngular(deepCloneObject(bindings), angularComponentFileNames);
+                    const getSource = vanillaToAngular(deepCloneObject(typedBindings), angularComponentFileNames);
 
                     importTypes.forEach(importType => {
                         angularConfigs.set(importType, {
                             'app.component.ts': getSource(importType),
-                            'app.module.ts': appModuleAngular.get(importType)(angularComponentFileNames),
+                            'app.module.ts': appModuleAngular.get(importType)(angularComponentFileNames, typedBindings.gridSettings),
                         });
                     });
                 } catch (e) {
@@ -309,7 +335,7 @@ function createExampleGenerator(prefix, importTypes) {
                 try {
                     const getSource = vanillaToVue(deepCloneObject(bindings), extractComponentFileNames(vueScripts, '_vue', 'Vue'));
 
-                    importTypes.forEach(importType => vueConfigs.set(importType, {'main.js': getSource(importType)}));
+                    importTypes.forEach(importType => vueConfigs.set(importType, { 'main.js': getSource(importType) }));
                 } catch (e) {
                     console.error(`Failed to process Vue example in ${examplePath}`, e);
                     throw e;
@@ -329,7 +355,7 @@ function createExampleGenerator(prefix, importTypes) {
                     try {
                         const getSource = vanillaToVue3(bindings, extractComponentFileNames(vueScripts, '_vue', 'Vue'));
 
-                        importTypes.forEach(importType => vueConfigs.set(importType, {'main.js': getSource(importType)}));
+                        importTypes.forEach(importType => vueConfigs.set(importType, { 'main.js': getSource(importType) }));
                     } catch (e) {
                         console.error(`Failed to process Vue 3 example in ${examplePath}`, e);
                         throw e;
@@ -350,14 +376,19 @@ function createExampleGenerator(prefix, importTypes) {
 
             try {
                 let jsFiles = {}
-                const tsScripts = getMatchingPaths('*.ts', {ignore: ['**/*_{angular,react,vue,vue3}.ts']});
+                const tsScripts = getMatchingPaths('*.ts', { ignore: ['**/*_{angular,react,vue,vue3}.ts'] });
                 tsScripts.forEach(tsFile => {
-                    jsFile = readAsJsFile(tsFile);
-                    const jsFileName = path.parse(tsFile).base.replace('.ts', '.js');
+                    let jsFile = readAsJsFile(tsFile);
+
+                    if (tsFile.endsWith('main.ts')) {
+                        jsFile = jsFile.replace(/new Grid\(/g, 'new agGrid.Grid(');
+                    }
+
+                    const jsFileName = path.parse(tsFile).base.replace('.ts', '.js').replace('_typescript.js', '.js');
                     jsFiles[jsFileName] = jsFile;
                 });
 
-                const updatedScripts = getMatchingPaths('*.{html,js}', {ignore: ['**/*_{angular,react,vue,vue3}.js']});
+                const updatedScripts = getMatchingPaths('*.{html,js}', { ignore: ['**/*_{angular,react,vue,vue3}.js'] });
                 importTypes.forEach(importType => writeExampleFiles(importType, 'vanilla', 'vanilla', updatedScripts, jsFiles));
 
             } catch (e) {
@@ -366,10 +397,27 @@ function createExampleGenerator(prefix, importTypes) {
             }
         }
 
-        // Uncomment when ready to setup Typescript examples
-        // inlineStyles = undefined; // unset these as they don't need to be copied for typescript
-        // const typescriptScripts = getMatchingPaths('*.{html,ts}', { ignore: ['**/* _{ angular, react, vue, vue3 }.js'] });
-        // importTypes.forEach(importType => writeExampleFiles(importType, 'typescript', 'typescript', typescriptScripts, {}));
+        if (type === 'mixed' && providedExamples['typescript']) {
+            importTypes.forEach(importType => copyProvidedExample(importType, 'typescript', providedExamples['typescript']));
+        } else {
+
+            const htmlScripts = getMatchingPaths('*.html');
+            const tsScripts = getMatchingPaths('*.ts', { ignore: ['**/*_{angular,react,vue,vue3}.ts', '**/main.ts'] });
+            const tsConfigs = new Map();
+            try {
+                const getSource = vanillaToTypescript(deepCloneObject(typedBindings), mainScript);
+                importTypes.forEach(importType => {
+                    tsConfigs.set(importType, {
+                        'main.ts': getSource(importType),
+                    });
+                });
+            } catch (e) {
+                console.error(`Failed to process Typescript example in ${examplePath}`, e);
+                throw e;
+            }
+
+            importTypes.forEach(importType => writeExampleFiles(importType, 'typescript', 'typescript', [...htmlScripts, ...tsScripts], tsConfigs.get(importType)));
+        }
     };
 }
 
@@ -383,10 +431,11 @@ function getGeneratorCode(prefix) {
         console.warn("********************************************");
     }
 
-    const {parser} = require(`${prefix}vanilla-src-parser.ts`);
-    const {vanillaToVue} = require(`${prefix}vanilla-to-vue.ts`);
-    const {vanillaToReact} = require(`${prefix}vanilla-to-react${gridExamples && generateReactFire ? '-fire' : ''}.ts`);
-    const {vanillaToVue3} = require(`${prefix}vanilla-to-vue3.ts`);
+    const { parser } = require(`${prefix}vanilla-src-parser.ts`);
+    const { vanillaToVue } = require(`${prefix}vanilla-to-vue.ts`);
+    const { vanillaToTypescript } = require(`${prefix}vanilla-to-typescript.ts`);
+    const { vanillaToReact } = require(`${prefix}vanilla-to-react${gridExamples && generateReactFire ? '-fire' : ''}.ts`);
+    const { vanillaToVue3 } = require(`${prefix}vanilla-to-vue3.ts`);
 
     // spl todo - add charts & vue 3 support in time
     let vanillaToReactFunctional = null;
@@ -394,9 +443,9 @@ function getGeneratorCode(prefix) {
         vanillaToReactFunctional = require(`${prefix}vanilla-to-react${generateReactFire ? '-fire' : ''}-functional.ts`).vanillaToReactFunctional;
     }
 
-    const {vanillaToAngular} = require(`${prefix}vanilla-to-angular.ts`);
+    const { vanillaToAngular } = require(`${prefix}vanilla-to-angular.ts`);
 
-    return [parser, vanillaToVue, vanillaToVue3, vanillaToReact, vanillaToReactFunctional, vanillaToAngular];
+    return [parser, vanillaToVue, vanillaToVue3, vanillaToReact, vanillaToReactFunctional, vanillaToAngular, vanillaToTypescript];
 }
 
 function generateExamples(type, importTypes, scope, trigger, done) {

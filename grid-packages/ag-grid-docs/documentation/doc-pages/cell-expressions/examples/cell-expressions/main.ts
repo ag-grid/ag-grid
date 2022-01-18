@@ -1,4 +1,4 @@
-import { ColDef, GridOptions, NewValueParams, ValueSetterParams } from "@ag-grid-community/core"
+import { ColDef, Grid, GridOptions, NewValueParams, ValueSetterParams } from "@ag-grid-community/core"
 
 ///// left table
 var columnDefsLeft: ColDef[] = [
@@ -104,8 +104,8 @@ function cellValueChanged(params: NewValueParams) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDivLeft = document.querySelector('#myGridLeft')
-  new agGrid.Grid(gridDivLeft, gridOptionsLeft)
-  var gridDivRight = document.querySelector('#myGridRight')
-  new agGrid.Grid(gridDivRight, gridOptionsRight)
+  var gridDivLeft = document.querySelector<HTMLElement>('#myGridLeft')!
+  new Grid(gridDivLeft, gridOptionsLeft)
+  var gridDivRight = document.querySelector<HTMLElement>('#myGridRight')!
+  new Grid(gridDivRight, gridOptionsRight)
 })

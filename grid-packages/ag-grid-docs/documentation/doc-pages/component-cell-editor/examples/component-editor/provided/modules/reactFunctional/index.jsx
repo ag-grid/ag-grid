@@ -1,12 +1,12 @@
 'use strict';
 
-import React, {forwardRef, useEffect, useImperativeHandle, useRef, useState} from 'react';
+import React, {forwardRef, useEffect, useImperativeHandle, useMemo, memo, useRef, useState} from 'react';
 import ReactDOM, {render} from 'react-dom';
-import {AgGridColumn, AgGridReact} from '@ag-grid-community/react';
+import {AgGridReact} from '@ag-grid-community/react';
 
-import {AllCommunityModules} from '@ag-grid-community/all-modules';
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
+import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
+import "@ag-grid-community/core/dist/styles/ag-grid.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
 const KEY_BACKSPACE = 'Backspace';
 const KEY_DELETE = 'Delete';
@@ -14,7 +14,7 @@ const KEY_F2 = 'F2';
 const KEY_ENTER = 'Enter';
 const KEY_TAB = 'Tab';
 
-const DoublingEditor = forwardRef((props, ref) => {
+const DoublingEditor = memo(forwardRef((props, ref) => {
     const [value, setValue] = useState(parseInt(props.value));
     const refInput = useRef(null);
 
@@ -55,43 +55,42 @@ const DoublingEditor = forwardRef((props, ref) => {
                style={{width: "100%"}}
         />
     );
-});
+}));
 
-const MoodRenderer = forwardRef((props, ref) => {
+const MoodRenderer = memo(props => {
     const imageForMood = mood => 'https://www.ag-grid.com/example-assets/smileys/' + (mood === 'Happy' ? 'happy.png' : 'sad.png');
 
     const [mood, setMood] = useState(imageForMood(props.value));
-
-    useImperativeHandle(ref, () => {
-        return {
-            refresh(params) {
-                setMood(imageForMood(params.value));
-            }
-        };
-    });
 
     return (
         <img width="20px" src={mood}/>
     );
 });
 
-const MoodEditor = forwardRef((props, ref) => {
+const MoodEditor = memo(forwardRef((props, ref) => {
     const isHappy = value => value === 'Happy';
 
-    const [happy, setHappy] = useState(isHappy(props.value));
-    const [editing, setEditing] = useState(true);
+    const [ready, setReady] = useState(false);
+    const [interimValue, setInterimValue] = useState(isHappy(props.value));
+    const [happy, setHappy] = useState(null);
     const refContainer = useRef(null);
 
-    useEffect(() => {
-        focus();
-    }, []);
-
     const checkAndToggleMoodIfLeftRight = (event) => {
-        if (['ArrowLeft', 'ArrowRight'].indexOf(event.key) > -1) { // left and right
-            setHappy(!happy);
-            event.stopPropagation();
+        if (ready) {
+            if (['ArrowLeft', 'ArrowRight'].indexOf(event.key) > -1) { // left and right
+                setInterimValue(!interimValue);
+                event.stopPropagation();
+            } else if (event.key === KEY_ENTER) {
+                setHappy(interimValue)
+                event.stopPropagation();
+            }
         }
     };
+
+    useEffect(() => {
+        ReactDOM.findDOMNode(refContainer.current).focus();
+        setReady(true);
+    }, [])
 
     useEffect(() => {
         window.addEventListener('keydown', checkAndToggleMoodIfLeftRight);
@@ -99,34 +98,21 @@ const MoodEditor = forwardRef((props, ref) => {
         return () => {
             window.removeEventListener('keydown', checkAndToggleMoodIfLeftRight);
         };
-    }, [checkAndToggleMoodIfLeftRight]);
+    }, [checkAndToggleMoodIfLeftRight, ready]);
+
+    useEffect(() => {
+        if (happy !== null) {
+            props.stopEditing();
+        }
+    }, [happy])
 
     useImperativeHandle(ref, () => {
         return {
             getValue() {
                 return happy ? 'Happy' : 'Sad';
-            },
-
-            isPopup() {
-                return true;
             }
         };
     });
-
-    useEffect(() => {
-        if (!editing) {
-            props.api.stopEditing();
-        }
-    }, [editing]);
-
-    const focus = () => {
-        window.setTimeout(() => {
-            let container = ReactDOM.findDOMNode(refContainer.current);
-            if (container) {
-                container.focus();
-            }
-        });
-    };
 
     const mood = {
         borderRadius: 15,
@@ -151,8 +137,8 @@ const MoodEditor = forwardRef((props, ref) => {
         padding: 4
     };
 
-    const happyStyle = happy ? selected : unselected;
-    const sadStyle = !happy ? selected : unselected;
+    const happyStyle = interimValue ? selected : unselected;
+    const sadStyle = !interimValue ? selected : unselected;
 
     return (
         <div ref={refContainer}
@@ -161,17 +147,15 @@ const MoodEditor = forwardRef((props, ref) => {
         >
             <img src="https://www.ag-grid.com/example-assets/smileys/happy.png" onClick={() => {
                 setHappy(true);
-                setEditing(false);
             }} style={happyStyle}/>
             <img src="https://www.ag-grid.com/example-assets/smileys/sad.png" onClick={() => {
                 setHappy(false);
-                setEditing(false);
             }} style={sadStyle}/>
         </div>
     );
-});
+}));
 
-const NumericEditor = forwardRef((props, ref) => {
+const NumericEditor = memo(forwardRef((props, ref) => {
     const createInitialState = () => {
         let startValue;
         let highlightAllOnFocus = true;
@@ -257,6 +241,10 @@ const NumericEditor = forwardRef((props, ref) => {
         if (!finishedEditingPressed(event) && !isKeyPressedNumeric(event)) {
             if (event.preventDefault) event.preventDefault();
         }
+
+        if(finishedEditingPressed(event)) {
+            props.stopEditing();
+        }
     };
 
     /* Component Editor Lifecycle methods */
@@ -291,10 +279,10 @@ const NumericEditor = forwardRef((props, ref) => {
                style={{width: "100%"}}
         />
     );
-});
+}));
 
 const GridExample = () => {
-    const rowData = [
+    const [rowData] = useState([
         {name: "Bob", mood: "Happy", number: 10},
         {name: "Harry", mood: "Sad", number: 3},
         {name: "Sally", mood: "Happy", number: 20},
@@ -308,7 +296,36 @@ const GridExample = () => {
         {name: "Fred", mood: "Sad", number: 532},
         {name: "Jenny", mood: "Happy", number: 34},
         {name: "Larry", mood: "Happy", number: 13},
-    ];
+    ]);
+
+    const columnDefs = useMemo(() => [
+        {
+            headerName: 'Doubling',
+            field: 'number',
+            cellEditorComp: DoublingEditor,
+            editable: true,
+            width: 300,
+        },
+        {
+            field: 'mood',
+            // spl todo - editor changes aren't reflected in grid
+            // renderer is updated but not re-rendered in grid
+            cellRendererComp: MoodRenderer,
+            cellEditorComp: MoodEditor,
+            cellEditorPopup: true,
+            editable: true,
+            width: 300,
+        },
+        {
+            headerName: 'Numeric',
+            field: 'number',
+            cellEditorComp: NumericEditor,
+            // spl todo - only for hooks? if not is isPopup required at all?
+            cellEditorPopup: true,
+            editable: true,
+            width: 280,
+        },
+    ], [])
 
     return (
         <div style={{width: '100%', height: '100%'}}>
@@ -319,14 +336,9 @@ const GridExample = () => {
                 }}
                 className="ag-theme-alpine test-grid">
                 <AgGridReact
-                    modules={AllCommunityModules}
+                    modules={[ClientSideRowModelModule]}
+                    columnDefs={columnDefs}
                     rowData={rowData}
-                    frameworkComponents={{
-                        doublingEditor: DoublingEditor,
-                        moodRenderer: MoodRenderer,
-                        moodEditor: MoodEditor,
-                        numericEditor: NumericEditor
-                    }}
                     defaultColDef={{
                         editable: true,
                         sortable: true,
@@ -335,18 +347,6 @@ const GridExample = () => {
                         filter: true,
                         resizable: true
                     }}>
-                    <AgGridColumn headerName="Doubling"
-                                  field="number"
-                                  cellEditor="doublingEditor"
-                                  editable={true}/>
-                    <AgGridColumn field="mood"
-                                  cellRenderer="moodRenderer"
-                                  cellEditor="moodEditor"
-                                  editable={true}/>
-                    <AgGridColumn headerName="Numeric"
-                                  field="number"
-                                  cellEditor="numericEditor"
-                                  editable={true}/>
                 </AgGridReact>
             </div>
         </div>

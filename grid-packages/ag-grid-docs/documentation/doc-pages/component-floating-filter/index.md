@@ -37,7 +37,7 @@ Note that in this example:
 
 1. `floatingFilterComponentParams` for all the medal columns have an additional param that is used to customise the font colour of the floating filter input text box.
 
-<grid-example title='Custom Floating Filter' name='custom-floating-filter' type='generated'></grid-example>
+<grid-example title='Custom Floating Filter' name='custom-floating-filter' type='generated' options='{ "includeNgFormsModule" : true}'></grid-example>
 
 md-include:component-interface-javascript.md
 md-include:component-interface-angular.md
@@ -81,7 +81,7 @@ In this example it is important to note that:
 1. `NumberFloatingFilter` calls `params.onFloatingFilterChanged(modelToAccept)` every time the user changes the slider value. This will cause an automatic call into `NumberFilter.setModel(modelToAccept)`
 1. Since `NumberFilter.onFloatingFilterChanged(change)` is **not** implemented, every time the user changes the input value the filter gets updated automatically. If this method was implemented it would get called every time the floating filter would change, and would be responsible for performing the filtering.
 
-<grid-example title='Custom Filter and Floating Filter' name='custom-filter-and-floating-filter' type='generated'></grid-example>
+<grid-example title='Custom Filter and Floating Filter' name='custom-filter-and-floating-filter' type='generated' options='{"includeNgFormsModule" : true}'></grid-example>
 
 ### Example: Custom Filter And Read-Only Floating Filter
 
@@ -97,7 +97,7 @@ This example uses the previous custom filter but implementing the `getModelAsStr
 |
 | The below example shows how to create a custom floating filter re-using the out-of-the-box Number filter with Angular.
 |
-| <grid-example title='Angular Floating Filter Component' name='floating-filter-component' type='generated' options='{ "exampleHeight": 370, "extras": ["bootstrap"] }'></grid-example>
+| <grid-example title='Angular Floating Filter Component' name='floating-filter-component' type='generated' options='{ "exampleHeight": 370, "extras": ["bootstrap"], "includeNgFormsModule" : true }'></grid-example>
 
 [[only-react]]
 | ## Sliding Floating Filters

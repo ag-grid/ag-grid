@@ -1,13 +1,14 @@
-import {Component} from '@angular/core';
-import {AllCommunityModules, Module, RowNode, GridReadyEvent} from '@ag-grid-community/all-modules';
-import {ChildMessageRenderer} from './child-message-renderer.component';
-import {CubeRenderer} from './cube-renderer.component';
-import {CurrencyRenderer} from './currency-renderer.component';
-import {ParamsRenderer} from './params-renderer.component';
-import {SquareRenderer} from './square-renderer.component';
+import { Component } from '@angular/core';
+import { ChildMessageRenderer } from './child-message-renderer.component';
+import { CubeRenderer } from './cube-renderer.component';
+import { CurrencyRenderer } from './currency-renderer.component';
+import { ParamsRenderer } from './params-renderer.component';
+import { SquareRenderer } from './square-renderer.component';
 
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
+import "@ag-grid-community/core/dist/styles/ag-grid.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColDef, ColumnApi, GridApi, GridReadyEvent, Module, RowNode } from '@ag-grid-community/core';
 
 @Component({
     selector: 'my-app',
@@ -25,18 +26,17 @@ import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
                 [columnDefs]="columnDefs"
                 [rowData]="rowData"
                 [context]="context"
-                [frameworkComponents]="frameworkComponents"
                 [defaultColDef]="defaultColDef"
                 (gridReady)="onGridReady($event)"
         ></ag-grid-angular>
         </div>`
 })
 export class AppComponent {
-    private gridApi;
-    private gridColumnApi;
+    private gridApi!: GridApi;
+    private gridColumnApi!: ColumnApi;
 
-    public modules: Module[] = AllCommunityModules;
-    private columnDefs = [
+    public modules: Module[] = [ClientSideRowModelModule];
+    public columnDefs: ColDef[] = [
         {
             headerName: "Row",
             field: "row",
@@ -45,7 +45,7 @@ export class AppComponent {
         {
             headerName: "Square",
             field: "value",
-            cellRenderer: "squareRenderer",
+            cellRendererComp: SquareRenderer,
             editable: true,
             colId: "square",
             width: 150
@@ -53,43 +53,35 @@ export class AppComponent {
         {
             headerName: "Cube",
             field: "value",
-            cellRenderer: "cubeRenderer",
+            cellRendererComp: CubeRenderer,
             colId: "cube",
             width: 150
         },
         {
             headerName: "Row Params",
             field: "row",
-            cellRenderer: "paramsRenderer",
+            cellRendererComp: ParamsRenderer,
             colId: "params",
             width: 150
         },
         {
             headerName: "Currency (Pipe)",
             field: "currency",
-            cellRenderer: "currencyRenderer",
+            cellRendererComp: CurrencyRenderer,
             colId: "currency",
             width: 120
         },
         {
             headerName: "Child/Parent",
             field: "value",
-            cellRenderer: "childMessageRenderer",
+            cellRendererComp: ChildMessageRenderer,
             colId: "params",
             editable: false,
             minWidth: 150
         }
     ];
 
-    private frameworkComponents = {
-        squareRenderer: SquareRenderer,
-        cubeRenderer: CubeRenderer,
-        paramsRenderer: ParamsRenderer,
-        currencyRenderer: CurrencyRenderer,
-        childMessageRenderer: ChildMessageRenderer
-    };
-
-    private defaultColDef = {
+    public defaultColDef: ColDef = {
         editable: true,
         sortable: true,
         flex: 1,
@@ -98,21 +90,21 @@ export class AppComponent {
         resizable: true
     };
 
-    private rowData: any[];
-    private context: any;
+    public rowData: any[];
+    public context: any;
 
     constructor() {
         this.rowData = this.createRowData();
-        this.context = {componentParent: this};
+        this.context = { componentParent: this };
     }
 
     refreshEvenRowsCurrencyData() {
-        this.gridApi.forEachNode((rowNode:RowNode) => {
+        this.gridApi.forEachNode((rowNode: RowNode) => {
             if (rowNode.data.value % 2 === 0) {
                 rowNode.setDataValue('currency', rowNode.data.value + Number(Math.random().toFixed(2)));
             }
         });
-        this.gridApi.refreshCells({columns: ['currency']});
+        this.gridApi.refreshCells({ columns: ['currency'] });
     }
 
     onGridReady(params: GridReadyEvent) {

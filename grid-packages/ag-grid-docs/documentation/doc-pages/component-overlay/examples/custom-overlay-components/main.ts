@@ -1,7 +1,6 @@
-import { ColDef, GridOptions } from '@ag-grid-community/core'
-
-declare var CustomLoadingOverlay: any;
-declare var CustomNoRowsOverlay: any;
+import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { CustomLoadingOverlay } from './customLoadingOverlay_typescript';
+import { CustomNoRowsOverlay } from './customNoRowsOverlay_typescript';
 
 const columnDefs: ColDef[] = [
   { field: 'athlete', width: 150 },
@@ -30,16 +29,11 @@ const gridOptions: GridOptions = {
   rowData: null,
   columnDefs: columnDefs,
 
-  components: {
-    customLoadingOverlay: CustomLoadingOverlay,
-    customNoRowsOverlay: CustomNoRowsOverlay,
-  },
-
-  loadingOverlayComponent: 'customLoadingOverlay',
+  loadingOverlayComp: CustomLoadingOverlay,
   loadingOverlayComponentParams: {
     loadingMessage: 'One moment please...',
   },
-  noRowsOverlayComponent: 'customNoRowsOverlay',
+  noRowsOverlayComp: CustomNoRowsOverlay,
   noRowsOverlayComponentParams: {
     noRowsMessageFunc: () => 'Sorry - no rows! at: ' + new Date(),
   },
@@ -59,8 +53,8 @@ function onBtHide() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

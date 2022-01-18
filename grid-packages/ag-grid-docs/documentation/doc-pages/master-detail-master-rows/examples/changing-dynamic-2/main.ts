@@ -1,5 +1,6 @@
-import { FirstDataRenderedEvent, GridOptions, IDetailCellRendererParams } from '@ag-grid-community/core'
-declare var CallsCellRenderer: any;
+import { Grid, FirstDataRenderedEvent, GridOptions, IDetailCellRendererParams } from '@ag-grid-community/core'
+import { CallsCellRenderer } from './callsCellRenderer_typescript'
+
 const gridOptions: GridOptions = {
   masterDetail: true,
   isRowMaster: function (dataItem) {
@@ -7,9 +8,9 @@ const gridOptions: GridOptions = {
   },
   columnDefs: [
     // group cell renderer needed for expand / collapse icons
-    { field: 'name', cellRenderer: 'agGroupCellRenderer' },
+    { field: 'name', cellRendererComp: 'agGroupCellRenderer' },
     { field: 'account' },
-    { field: 'calls', cellRenderer: 'CallsCellRenderer' },
+    { field: 'calls', cellRendererComp: CallsCellRenderer },
     { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" },
   ],
   defaultColDef: {
@@ -18,9 +19,6 @@ const gridOptions: GridOptions = {
   animateRows: true,
   getRowNodeId: function (data) {
     return data.account
-  },
-  components: {
-    CallsCellRenderer: CallsCellRenderer,
   },
   detailCellRendererParams: {
     detailGridOptions: {
@@ -51,8 +49,8 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch(
     'https://www.ag-grid.com/example-assets/master-detail-dynamic-data.json'

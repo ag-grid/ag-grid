@@ -1,5 +1,5 @@
-import { GridOptions, ValueParserParams } from '@ag-grid-community/core'
-declare var GroupRowInnerRenderer: any;
+import { Grid, GridOptions, ValueParserParams } from '@ag-grid-community/core'
+import { GroupRowInnerRenderer } from './groupRowInnerRenderer_typescript'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -29,11 +29,8 @@ const gridOptions: GridOptions = {
     },
   },
   groupDisplayType: 'groupRows',
-  components: {
-    groupRowInnerRenderer: GroupRowInnerRenderer,
-  },
   groupRowRendererParams: {
-    innerRenderer: 'groupRowInnerRenderer',
+    innerCellComp: GroupRowInnerRenderer,
     suppressCount: true,
     flagCodes: {
       Andorra: 'ad',
@@ -293,8 +290,8 @@ const gridOptions: GridOptions = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

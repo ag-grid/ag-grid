@@ -1,4 +1,4 @@
-import { ColDef, GridOptions } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
 
 var filterParams = {
   suppressAndOrCondition: true,
@@ -38,7 +38,7 @@ const columnDefs: ColDef[] = [
   },
   {
     field: 'age',
-    filter: 'agNumberColumnFilter',
+    filterComp: 'agNumberColumnFilter',
     filterParams: {
       alwaysShowBothConditions: true,
       defaultJoinOperator: 'OR',
@@ -47,7 +47,7 @@ const columnDefs: ColDef[] = [
   },
   {
     field: 'date',
-    filter: 'agDateColumnFilter',
+    filterComp: 'agDateColumnFilter',
     filterParams: filterParams,
   },
 ]
@@ -63,8 +63,8 @@ const gridOptions: GridOptions = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

@@ -1,4 +1,4 @@
-import { GridOptions } from '@ag-grid-community/core'
+import { Grid, GridOptions } from '@ag-grid-community/core'
 
 var rowData = [
   { id: 'aa', make: 'Toyota', model: 'Celica', price: 35000 },
@@ -14,7 +14,7 @@ const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'make' },
     { field: 'model' },
-    { field: 'price', filter: 'agNumberColumnFilter' },
+    { field: 'price', filterComp: 'agNumberColumnFilter' },
   ],
   defaultColDef: {
     flex: 1,
@@ -59,6 +59,6 @@ function setDataOnFord() {
 // wait for the document to be loaded, otherwise
 // AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function () {
-  var eGridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(eGridDiv, gridOptions)
+  var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(eGridDiv, gridOptions)
 })

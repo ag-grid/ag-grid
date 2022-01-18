@@ -1,22 +1,23 @@
 import { AfterViewInit, Component, ViewChild, ViewContainerRef } from "@angular/core";
-import { AgEditorComponent } from "@ag-grid-community/angular";
+import { ICellEditorAngularComp } from "@ag-grid-community/angular";
+import { ICellEditorParams } from "@ag-grid-community/core";
 
 @Component({
     selector: 'editor-cell',
     template: `<input type="number" [(ngModel)]="value" #input style="width: 100%" />`
 })
-export class DoublingEditor implements AgEditorComponent, AfterViewInit {
-    private params: any;
-    private value: number;
+export class DoublingEditor implements ICellEditorAngularComp, AfterViewInit {
+    private params!: ICellEditorParams;
+    public value!: number;
 
-    @ViewChild('input', { read: ViewContainerRef }) public input: ViewContainerRef;
+    @ViewChild('input', { read: ViewContainerRef }) public input!: ViewContainerRef;
 
     ngAfterViewInit() {
         // focus on the input
         setTimeout(() => this.input.element.nativeElement.focus());
     }
 
-    agInit(params: any): void {
+    agInit(params: ICellEditorParams): void {
         this.params = params;
 
         this.value = parseInt(this.params.value);

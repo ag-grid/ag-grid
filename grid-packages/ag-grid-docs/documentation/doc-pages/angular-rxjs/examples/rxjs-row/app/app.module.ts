@@ -1,19 +1,13 @@
-import {NgModule} from "@angular/core";
-import {BrowserModule} from "@angular/platform-browser";
-import {FormsModule} from "@angular/forms";
-import {HttpModule} from '@angular/http';
-
-// ag-grid
-import {AgGridModule} from "@ag-grid-community/angular";
-
-// rxjs
-import {RxJsComponentByRow} from "./rxjs-component-example/rxjs-by-row.component";
+import { AgGridModule } from "@ag-grid-community/angular";
+import { HttpClientModule } from "@angular/common/http";
+import { NgModule } from "@angular/core";
+import { BrowserModule } from "@angular/platform-browser";
+import { RxJsComponentByRow } from "./rxjs-component-example/rxjs-by-row.component";
 
 @NgModule({
     imports: [
         BrowserModule,
-        FormsModule,
-        HttpModule,
+        HttpClientModule,
         AgGridModule.withComponents([])
     ],
     declarations: [

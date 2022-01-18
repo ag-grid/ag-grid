@@ -1,4 +1,8 @@
-import { GridOptions, ICellRendererParams } from '@ag-grid-community/core'
+import { Grid, GridOptions, ICellRendererParams } from '@ag-grid-community/core'
+
+const BoldRenderer = function (params: ICellRendererParams) {
+  return '<b>' + params.value.name + '</b>'
+};
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -12,7 +16,7 @@ const gridOptions: GridOptions = {
     {
       headerName: 'D',
       field: 'd',
-      cellRenderer: 'boldRenderer',
+      cellRendererComp: BoldRenderer,
       // this is needed to avoid toString=[object,object] result with objects
       getQuickFilterText: function (params) {
         return params.value.name
@@ -23,19 +27,14 @@ const gridOptions: GridOptions = {
     {
       headerName: 'E',
       field: 'e',
-      cellRenderer: 'boldRenderer',
+      cellRendererComp: BoldRenderer,
     },
   ],
   defaultColDef: {
     flex: 1,
     editable: true,
   },
-  rowData: getData(),
-  components: {
-    boldRenderer: function (params: ICellRendererParams) {
-      return '<b>' + params.value.name + '</b>'
-    },
-  },
+  rowData: getData()
 }
 
 
@@ -68,6 +67,6 @@ function onQuickFilterTypeChanged() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 })

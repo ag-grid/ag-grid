@@ -1,6 +1,5 @@
-import { ColDef, GridOptions } from '@ag-grid-community/core'
-
-declare var CustomHeader: any
+import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { CustomHeader } from './customHeader_typescript'
 
 const columnDefs: ColDef[] = [
   { field: 'athlete', suppressMenu: true, minWidth: 120 },
@@ -38,15 +37,15 @@ const gridOptions: GridOptions = {
     filter: true,
     resizable: true,
     headerComponentParams: {
-      menuIcon: 'fa-bars',
+      menuIcon: 'fa-bars'
     },
   },
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

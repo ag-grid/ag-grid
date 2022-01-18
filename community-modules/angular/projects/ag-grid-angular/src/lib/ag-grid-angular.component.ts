@@ -855,21 +855,21 @@ hence this property is deprecated as will be removed in the next major release.
     /** Allows user to process popups after they are created. Applications can use this if they want to, for example, reposition the popup.     */
     @Input() public postProcessPopup: ((params: PostProcessPopupParams) => void) | undefined = undefined;
     /** Allows you to process cells for the clipboard. Handy if for example you have `Date` objects that need to have a particular format if importing into Excel.     */
-    @Input() public processCellForClipboard: ((params: ProcessCellForExportParams) =>  any) | undefined = undefined;
+    @Input() public processCellForClipboard: ((params: ProcessCellForExportParams) => any) | undefined = undefined;
     /** Allows you to process header values for the clipboard.     */
-    @Input() public processHeaderForClipboard: ((params: ProcessHeaderForExportParams) =>  any) | undefined = undefined;
+    @Input() public processHeaderForClipboard: ((params: ProcessHeaderForExportParams) => any) | undefined = undefined;
     /** Allows you to process group header values for the clipboard.     */
-    @Input() public processGroupHeaderForClipboard: ((params: ProcessGroupHeaderForExportParams) =>  any) | undefined = undefined;
+    @Input() public processGroupHeaderForClipboard: ((params: ProcessGroupHeaderForExportParams) => any) | undefined = undefined;
     /** Allows you to process cells from the clipboard. Handy if for example you have number fields, and want to block non-numbers from getting into the grid.     */
-    @Input() public processCellFromClipboard: ((params: ProcessCellForExportParams) =>  any) | undefined = undefined;
+    @Input() public processCellFromClipboard: ((params: ProcessCellForExportParams) => any) | undefined = undefined;
     /** Allows you to get the data that would otherwise go to the clipboard. To be used when you want to control the 'copy to clipboard' operation yourself.     */
     @Input() public sendToClipboard: ((params: SendToClipboardParams) => void) | undefined = undefined;
     /** Allows complete control of the paste operation, including cancelling the operation (so nothing happens) or replacing the data with other data.     */
     @Input() public processDataFromClipboard: ((params: ProcessDataFromClipboardParams) => string[][] | null) | undefined = undefined;
     /** Grid calls this method to know if an external filter is present.     */
-    @Input() public isExternalFilterPresent: (() =>  boolean) | undefined = undefined;
+    @Input() public isExternalFilterPresent: (() => boolean) | undefined = undefined;
     /** Should return `true` if external filter passes, otherwise `false`.     */
-    @Input() public doesExternalFilterPass: ((node: RowNode) =>  boolean) | undefined = undefined;
+    @Input() public doesExternalFilterPass: ((node: RowNode) => boolean) | undefined = undefined;
     /** Callback to be used to customise the chart toolbar items.     */
     @Input() public getChartToolbarItems: GetChartToolbarItems | undefined = undefined;
     /** Callback to enable displaying the chart in an alternative chart container.     */
@@ -891,22 +891,22 @@ hence this property is deprecated as will be removed in the next major release.
     /** Allows user to format the numbers in the pagination panel, i.e. 'row count' and 'page number' labels. This is for pagination panel only, to format numbers inside the grid's cells (i.e. your data), then use `valueFormatter` in the column definitions.     */
     @Input() public paginationNumberFormatter: ((params: PaginationNumberFormatterParams) => string) | undefined = undefined;
     /** Callback for grouping.     */
-    @Input() public groupRowAggNodes: ((nodes: RowNode[]) =>  any) | undefined = undefined;
+    @Input() public groupRowAggNodes: ((nodes: RowNode[]) => any) | undefined = undefined;
     /** (Client-side Row Model only) Allows groups to be open by default.     */
     @Input() public isGroupOpenByDefault: ((params: IsGroupOpenByDefaultParams) => boolean) | undefined = undefined;
     /** Allows default sorting of groups.     */
     @Input() public defaultGroupOrderComparator: ((nodeA: RowNode, nodeB: RowNode) => number) | undefined = undefined;
     /** Callback to be used with pivoting, to allow changing the second column definition.     */
-    @Input() public processSecondaryColDef: ((colDef: ColDef) =>  void) | undefined = undefined;
+    @Input() public processSecondaryColDef: ((colDef: ColDef) => void) | undefined = undefined;
     /** Callback to be used with pivoting, to allow changing the second column group definition.     */
-    @Input() public processSecondaryColGroupDef: ((colGroupDef: ColGroupDef) =>  void) | undefined = undefined;
+    @Input() public processSecondaryColGroupDef: ((colGroupDef: ColGroupDef) => void) | undefined = undefined;
     /** Callback to be used when working with Tree Data when `treeData = true`.     */
     @Input() public getDataPath: GetDataPath | undefined = undefined;
     /** @deprecated - Use defaultGroupOrderComparator instead
      */
     @Input() public defaultGroupSortComparator: ((nodeA: RowNode, nodeB: RowNode) => number) | undefined = undefined;
     /** Allows setting the child count for a group row.     */
-    @Input() public getChildCount: ((dataItem: any) =>  number) | undefined = undefined;
+    @Input() public getChildCount: ((dataItem: any) => number) | undefined = undefined;
     /** Allows providing different params for different levels of grouping.     */
     @Input() public getServerSideStoreParams: ((params: GetServerSideStoreParamsParams) => ServerSideStoreParams) | undefined = undefined;
     /** Allows groups to be open by default.     */
@@ -919,11 +919,11 @@ hence this property is deprecated as will be removed in the next major release.
     @Input() public getServerSideGroupKey: GetServerSideGroupKey | undefined = undefined;
     /** Return a business key for the node. If implemented, each row in the DOM will have an attribute `row-id='abc'` where `abc` is what you return as the business key.
      * This is useful for automated testing, as it provides a way for your tool to identify rows based on unique business keys.     */
-    @Input() public getBusinessKeyForNode: ((node: RowNode) =>  string) | undefined = undefined;
+    @Input() public getBusinessKeyForNode: ((node: RowNode) => string) | undefined = undefined;
     /** Allows you to set the ID for a particular row node based on the data.     */
     @Input() public getRowNodeId: GetRowNodeIdFunc | undefined = undefined;
     /** Allows you to process rows after they are created, so you can do final adding of custom attributes etc.     */
-    @Input() public processRowPostCreate: ((params: ProcessRowParams) =>  void) | undefined = undefined;
+    @Input() public processRowPostCreate: ((params: ProcessRowParams) => void) | undefined = undefined;
     /** Callback to be used to determine which rows are selectable. By default rows are selectable, so return `false` to make a row un-selectable.     */
     @Input() public isRowSelectable: IsRowSelectable | undefined = undefined;
     /** Callback to be used with Master Detail to determine if a row should be a master row. If `false` is returned no detail row will exist for this row.     */
@@ -931,7 +931,7 @@ hence this property is deprecated as will be removed in the next major release.
     /** Callback to fill values instead of simply copying values or increasing number values using linear progression.     */
     @Input() public fillOperation: ((params: FillOperationParams) => any) | undefined = undefined;
     /** Callback to perform additional sorting after the grid has sorted the rows.     */
-    @Input() public postSort: ((nodes: RowNode[]) =>  void) | undefined = undefined;
+    @Input() public postSort: ((nodes: RowNode[]) => void) | undefined = undefined;
     /** Callback version of property `rowStyle` to set style for each row individually. Function should return an object of CSS values or undefined for no styles.     */
     @Input() public getRowStyle: ((params: RowClassParams) => RowStyle | undefined) | undefined = undefined;
     /** Callback version of property `rowClass` to set class(es) for each row individually. Function should return either a string (class name), array of strings (array of class names) or undefined for no class.     */
@@ -939,7 +939,7 @@ hence this property is deprecated as will be removed in the next major release.
     /** Callback version of property `rowHeight` to set height for each row individually. Function should return a positive number of pixels, or return `null`/`undefined` to use the default row height.     */
     @Input() public getRowHeight: ((params: RowHeightParams) => number | undefined | null) | undefined = undefined;
     /** Tells the grid if this row should be rendered as full width.     */
-    @Input() public isFullWidthCell: ((rowNode: RowNode) =>  boolean) | undefined = undefined;
+    @Input() public isFullWidthCell: ((rowNode: RowNode) => boolean) | undefined = undefined;
 
     /** The tool panel was hidden or shown. Use `api.isToolPanelShowing()` to get status.     */
     @Output() public toolPanelVisibleChanged: EventEmitter<ToolPanelVisibleChangedEvent> = new EventEmitter<ToolPanelVisibleChangedEvent>();

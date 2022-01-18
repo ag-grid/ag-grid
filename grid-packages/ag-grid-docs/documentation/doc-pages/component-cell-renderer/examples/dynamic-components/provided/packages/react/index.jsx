@@ -25,7 +25,7 @@ class GridExample extends Component {
                 {
                     headerName: "Square",
                     field: "value",
-                    cellRenderer: "squareRenderer",
+                    cellRendererComp: SquareRenderer,
                     editable: true,
                     colId: "square",
                     width: 150
@@ -33,28 +33,28 @@ class GridExample extends Component {
                 {
                     headerName: "Cube",
                     field: "value",
-                    cellRenderer: "cubeRenderer",
+                    cellRendererComp: CubeRenderer,
                     colId: "cube",
                     width: 150
                 },
                 {
                     headerName: "Row Params",
                     field: "row",
-                    cellRenderer: "paramsRenderer",
+                    cellRendererComp: ParamsRenderer,
                     colId: "params",
                     width: 150
                 },
                 {
                     headerName: "Currency (Pipe)",
                     field: "currency",
-                    cellRenderer: "currencyRenderer",
+                    cellRendererComp: CurrencyRenderer,
                     colId: "currency",
                     width: 120
                 },
                 {
                     headerName: "Child/Parent",
                     field: "value",
-                    cellRenderer: "childMessageRenderer",
+                    cellRendererComp: ChildMessageRenderer,
                     colId: "params",
                     editable: false,
                     minWidth: 150
@@ -62,13 +62,6 @@ class GridExample extends Component {
             ],
             rowData: this.createRowData(),
             context: {componentParent: this},
-            frameworkComponents: {
-                squareRenderer: SquareRenderer,
-                cubeRenderer: CubeRenderer,
-                paramsRenderer: ParamsRenderer,
-                currencyRenderer: CurrencyRenderer,
-                childMessageRenderer: ChildMessageRenderer
-            },
             defaultColDef: {
                 editable: true,
                 sortable: true,
@@ -129,7 +122,6 @@ class GridExample extends Component {
                             columnDefs={this.state.columnDefs}
                             rowData={this.state.rowData}
                             context={this.state.context}
-                            frameworkComponents={this.state.frameworkComponents}
                             defaultColDef={this.state.defaultColDef}
                             onGridReady={this.onGridReady}
                         />

@@ -1,9 +1,9 @@
-import { GridOptions } from '@ag-grid-community/core'
+import { Grid, GridOptions } from '@ag-grid-community/core'
 
 var dateFilterParams = {
   filters: [
     {
-      filter: 'agDateColumnFilter',
+      filterComp: 'agDateColumnFilter',
       filterParams: {
         comparator: function (filterDate: Date, cellValue: string) {
           if (cellValue == null) return -1
@@ -13,7 +13,7 @@ var dateFilterParams = {
       },
     },
     {
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
       filterParams: {
         comparator: function (a: string, b: string) {
           return getDate(a).getTime() - getDate(b).getTime()
@@ -25,41 +25,41 @@ var dateFilterParams = {
 
 const gridOptions: GridOptions = {
   columnDefs: [
-    { field: 'athlete', filter: 'agMultiColumnFilter' },
+    { field: 'athlete', filterComp: 'agMultiColumnFilter' },
     {
       field: 'country',
-      filter: 'agMultiColumnFilter',
+      filterComp: 'agMultiColumnFilter',
       filterParams: {
         filters: [
           {
-            filter: 'agTextColumnFilter',
+            filterComp: 'agTextColumnFilter',
             filterParams: {
               defaultOption: 'startsWith',
             },
           },
           {
-            filter: 'agSetColumnFilter',
+            filterComp: 'agSetColumnFilter',
           },
         ],
       },
     },
     {
       field: 'gold',
-      filter: 'agMultiColumnFilter',
+      filterComp: 'agMultiColumnFilter',
       filterParams: {
         filters: [
           {
-            filter: 'agNumberColumnFilter',
+            filterComp: 'agNumberColumnFilter',
           },
           {
-            filter: 'agSetColumnFilter',
+            filterComp: 'agSetColumnFilter',
           },
         ],
       },
     },
     {
       field: 'date',
-      filter: 'agMultiColumnFilter',
+      filterComp: 'agMultiColumnFilter',
       filterParams: dateFilterParams,
     },
   ],
@@ -104,8 +104,8 @@ function resetState() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

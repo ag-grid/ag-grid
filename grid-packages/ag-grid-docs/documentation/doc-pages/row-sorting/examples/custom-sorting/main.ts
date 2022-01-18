@@ -1,16 +1,16 @@
-import {ColDef, GridOptions} from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
 
 const columnDefs: ColDef[] = [
-    {field: 'athlete', sort: 'desc'},
-    {field: 'age', width: 90},
-    {field: 'country'},
-    {field: 'year', width: 90, unSortIcon: true},
-    {field: 'date', comparator: dateComparator},
-    {field: 'sport'},
-    {field: 'gold'},
-    {field: 'silver'},
-    {field: 'bronze'},
-    {field: 'total'},
+    { field: 'athlete', sort: 'desc' },
+    { field: 'age', width: 90 },
+    { field: 'country' },
+    { field: 'year', width: 90, unSortIcon: true },
+    { field: 'date', comparator: dateComparator },
+    { field: 'sport' },
+    { field: 'gold' },
+    { field: 'silver' },
+    { field: 'bronze' },
+    { field: 'total' },
 ]
 
 function dateComparator(date1: string, date2: string) {
@@ -53,8 +53,8 @@ const gridOptions: GridOptions = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    const gridDiv = document.querySelector('#myGrid');
-    new agGrid.Grid(gridDiv, gridOptions)
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    new Grid(gridDiv, gridOptions)
 
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then(response => response.json())

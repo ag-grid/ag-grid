@@ -1,5 +1,5 @@
 import { Component, ViewChild, ViewContainerRef } from '@angular/core';
-import { IAfterGuiAttachedParams, IDoesFilterPassParams, IFilterParams } from '@ag-grid-community/all-modules';
+import { IAfterGuiAttachedParams, IDoesFilterPassParams, IFilterParams } from '@ag-grid-community/core';
 import { IFilterAngularComp } from '@ag-grid-community/angular';
 
 @Component({
@@ -9,7 +9,7 @@ import { IFilterAngularComp } from '@ag-grid-community/angular';
             Partial Match Filter: <input #input (ngModelChange)="onChange($event)" [ngModel]="text" class="form-control">
         </div>
     `, styles: [
-       `
+        `
            .container {
                 border: 2px solid #22ff22;
                 border-radius: 5px;
@@ -25,10 +25,10 @@ import { IFilterAngularComp } from '@ag-grid-community/angular';
     ]
 })
 export class PartialMatchFilter implements IFilterAngularComp {
-    private params: IFilterParams;
+    private params!: IFilterParams;
     public text: string = '';
 
-    @ViewChild('input', { read: ViewContainerRef }) public input;
+    @ViewChild('input', { read: ViewContainerRef }) public input!: ViewContainerRef;
 
     agInit(params: IFilterParams): void {
         this.params = params;
@@ -76,7 +76,7 @@ export class PartialMatchFilter implements IFilterAngularComp {
         alert(`Alert from PartialMatchFilterComponent: ${message}`);
     }
 
-    onChange(newValue): void {
+    onChange(newValue: any): void {
         if (this.text !== newValue) {
             this.text = newValue;
             this.params.filterChangedCallback();

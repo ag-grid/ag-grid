@@ -1,4 +1,4 @@
-import { GridApi, GridOptions, GridReadyEvent, RowNode, ValueGetterParams } from '@ag-grid-community/core'
+import { Grid, GridApi, GridOptions, GridReadyEvent, RowNode, ValueGetterParams } from '@ag-grid-community/core'
 
 interface Student {
   student: number;
@@ -26,7 +26,7 @@ const gridOptions: GridOptions = {
     minWidth: 150,
     sortable: true,
     resizable: true,
-    cellRenderer: 'agAnimateShowChangeCellRenderer',
+    cellRendererComp: 'agAnimateShowChangeCellRenderer',
   },
   rowData: getRowData(),
   pivotMode: true,
@@ -209,6 +209,6 @@ function moveCourse() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 })

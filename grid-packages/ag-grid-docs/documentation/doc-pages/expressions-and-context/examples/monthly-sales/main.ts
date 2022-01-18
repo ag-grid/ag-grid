@@ -1,4 +1,4 @@
-import { ColDef, ColGroupDef, GridOptions, ICellRendererParams } from '@ag-grid-community/core'
+import { Grid, ColDef, ColGroupDef, GridOptions, ICellRendererParams } from '@ag-grid-community/core'
 
 var monthValueGetter =
   '(ctx.month < ctx.months.indexOf(colDef.field)) ? data[colDef.field + "_bud"] : data[colDef.field + "_act"]'
@@ -30,7 +30,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
     children: [
       {
         field: 'jan',
-        cellRenderer: accountingCellRenderer,
+        cellRendererComp: accountingCellRenderer,
         cellClass: 'cell-figure',
         valueGetter: monthValueGetter,
         cellClassRules: monthCellClassRules,
@@ -39,7 +39,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
 
       {
         field: 'feb',
-        cellRenderer: accountingCellRenderer,
+        cellRendererComp: accountingCellRenderer,
         cellClass: 'cell-figure',
         valueGetter: monthValueGetter,
         cellClassRules: monthCellClassRules,
@@ -48,7 +48,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
 
       {
         field: 'mar',
-        cellRenderer: accountingCellRenderer,
+        cellRendererComp: accountingCellRenderer,
         cellClass: 'cell-figure',
         valueGetter: monthValueGetter,
         cellClassRules: monthCellClassRules,
@@ -57,7 +57,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
 
       {
         field: 'apr',
-        cellRenderer: accountingCellRenderer,
+        cellRendererComp: accountingCellRenderer,
         cellClass: 'cell-figure',
         valueGetter: monthValueGetter,
         cellClassRules: monthCellClassRules,
@@ -66,7 +66,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
 
       {
         field: 'may',
-        cellRenderer: accountingCellRenderer,
+        cellRendererComp: accountingCellRenderer,
         cellClass: 'cell-figure',
         valueGetter: monthValueGetter,
         cellClassRules: monthCellClassRules,
@@ -75,7 +75,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
 
       {
         field: 'jun',
-        cellRenderer: accountingCellRenderer,
+        cellRendererComp: accountingCellRenderer,
         cellClass: 'cell-figure',
         valueGetter: monthValueGetter,
         cellClassRules: monthCellClassRules,
@@ -85,7 +85,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
       {
         headerName: 'YTD',
         cellClass: 'cell-figure',
-        cellRenderer: accountingCellRenderer,
+        cellRendererComp: accountingCellRenderer,
         valueGetter: yearToDateValueGetter,
         cellStyle: { 'font-weight': 'bold' },
         aggFunc: 'sum',
@@ -106,7 +106,7 @@ const gridOptions: GridOptions = {
     headerName: 'Location',
     field: 'city',
     minWidth: 260,
-    cellRenderer: 'agGroupCellRenderer',
+    cellRendererComp: 'agGroupCellRenderer',
     cellRendererParams: {
       checkbox: true,
     },
@@ -173,8 +173,8 @@ function onQuickFilterChanged(value: any) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/monthly-sales.json')
     .then(response => response.json())

@@ -2,10 +2,11 @@ import {
   ColDef,
   ColGroupDef,
   FirstDataRenderedEvent,
+  Grid,
   GridOptions,
   ITooltipParams,
 } from '@ag-grid-community/core'
-declare var CustomTooltip: any
+import { CustomTooltip } from "./customTooltip_typescript";
 
 const tooltipValueGetter = (params: ITooltipParams) => ({ value: params.value })
 
@@ -13,7 +14,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
   {
     headerName: 'Athletes',
     headerTooltip: 'Athletes',
-    tooltipComponent: 'customTooltip',
+    tooltipComp: CustomTooltip,
     children: [
       {
         headerName: 'Athlete Col 1',
@@ -27,7 +28,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
         field: 'athlete',
         width: 150,
         headerTooltip: 'Athlete 2',
-        tooltipComponent: 'customTooltip',
+        tooltipComp: CustomTooltip,
         tooltipValueGetter: tooltipValueGetter,
       },
     ],
@@ -53,10 +54,6 @@ const gridOptions: GridOptions = {
   rowData: null,
   columnDefs: columnDefs,
 
-  components: {
-    customTooltip: CustomTooltip,
-  },
-
   onFirstDataRendered: onFirstDataRendered,
 }
 
@@ -70,8 +67,8 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

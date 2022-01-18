@@ -1,4 +1,4 @@
-import { ColDef, GridOptions } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
 
 const columnDefs: ColDef[] = [
   { headerName: 'ID', valueGetter: 'node.rowIndex + 1', width: 70 },
@@ -18,7 +18,7 @@ const gridOptions: GridOptions = {
 }
 
 function onBtPrinterFriendly() {
-  var eGridDiv = document.querySelector('#myGrid') as any;
+  var eGridDiv = document.querySelector<HTMLElement>('#myGrid')! as any;
   eGridDiv.style.width = ''
   eGridDiv.style.height = ''
 
@@ -26,7 +26,7 @@ function onBtPrinterFriendly() {
 }
 
 function onBtNormal() {
-  var eGridDiv = document.querySelector('#myGrid') as any;
+  var eGridDiv = document.querySelector<HTMLElement>('#myGrid')! as any;
   eGridDiv.style.width = '400px'
   eGridDiv.style.height = '200px'
 
@@ -36,6 +36,6 @@ function onBtNormal() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 })

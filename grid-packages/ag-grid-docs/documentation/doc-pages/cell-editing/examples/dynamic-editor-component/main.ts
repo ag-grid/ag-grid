@@ -1,27 +1,21 @@
-import { CellEditingStartedEvent, CellEditingStoppedEvent, ColDef, GridOptions, ICellEditorParams, RowEditingStartedEvent, RowEditingStoppedEvent } from '@ag-grid-community/core'
-declare var NumericCellEditor: any;
-declare var MoodEditor: any;
-
-const columnDefs: ColDef[] = [
-  {
-    field: 'value',
-    editable: true,
-    cellEditorSelector: cellEditorSelector,
-  },
-  { field: 'type' },
-]
+import { Grid, CellEditingStartedEvent, CellEditingStoppedEvent, GridOptions, ICellEditorParams, RowEditingStartedEvent, RowEditingStoppedEvent } from '@ag-grid-community/core'
+import { NumericCellEditor } from './numericCellEditor_typescript'
+import { MoodEditor } from './moodEditor_typescript'
 
 const gridOptions: GridOptions = {
-  columnDefs: columnDefs,
+  columnDefs: [
+    {
+      field: 'value',
+      editable: true,
+      cellEditorSelector: cellEditorSelector,
+      cellEditorPopup: true
+    },
+    { field: 'type' },
+  ],
   defaultColDef: {
     flex: 1,
   },
   rowData: getData(),
-
-  components: {
-    numericCellEditor: NumericCellEditor,
-    moodEditor: MoodEditor,
-  },
 
   onRowEditingStarted: onRowEditingStarted,
   onRowEditingStopped: onRowEditingStopped,
@@ -48,7 +42,7 @@ function onCellEditingStopped(event: CellEditingStoppedEvent) {
 function cellEditorSelector(params: ICellEditorParams) {
   if (params.data.type === 'age') {
     return {
-      component: 'numericCellEditor',
+      cellEditorComp: NumericCellEditor,
     }
   }
 
@@ -63,7 +57,7 @@ function cellEditorSelector(params: ICellEditorParams) {
 
   if (params.data.type === 'mood') {
     return {
-      component: 'moodEditor',
+      cellEditorComp: MoodEditor,
     }
   }
 
@@ -72,6 +66,6 @@ function cellEditorSelector(params: ICellEditorParams) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 })

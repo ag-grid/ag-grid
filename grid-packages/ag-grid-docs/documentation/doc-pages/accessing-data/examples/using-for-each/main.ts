@@ -1,4 +1,4 @@
-import { GridOptions, RowNode } from '@ag-grid-community/core'
+import { Grid, GridOptions, RowNode } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -45,7 +45,6 @@ function onBtForEachLeafNode() {
   gridOptions.api!.forEachLeafNode(printNode)
 }
 
-// inScope[printNode]
 const printNode = (node: RowNode, index?: number) => {
   if (node.group) {
     console.log(index + ' -> group: ' + node.key)
@@ -58,8 +57,8 @@ const printNode = (node: RowNode, index?: number) => {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

@@ -1,8 +1,9 @@
 import { Component, OnDestroy } from '@angular/core';
-import { AllModules, GridReadyEvent, Module } from '@ag-grid-enterprise/all-modules';
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
+import "@ag-grid-community/core/dist/styles/ag-grid.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import { MySimpleEditor } from './mySimple-editor.component';
+import { ColDef, GridReadyEvent, Module } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
 @Component({
     selector: 'my-app',
@@ -14,14 +15,13 @@ import { MySimpleEditor } from './mySimple-editor.component';
           [columnDefs]="columnDefs"
           [defaultColDef]="defaultColDef"
           [rowData]="rowData"
-          [frameworkComponents]="frameworkComponents"
           (gridReady)="onGridReady($event)">
       </ag-grid-angular>
     `
 })
 export class AppComponent implements OnDestroy {
-    public modules: Module[] = AllModules;
-    private columnDefs = [
+    public modules: Module[] = [ClientSideRowModelModule]
+    public columnDefs: ColDef[] = [
         {
             field: "first_name",
             headerName: "First Name",
@@ -37,31 +37,31 @@ export class AppComponent implements OnDestroy {
         {
             field: "gender",
             width: 100,
-            cellEditor: "mySimpleEditor"
+            cellEditorComp: MySimpleEditor
         },
         {
             field: "age",
             width: 80,
-            cellEditor: "mySimpleEditor"
+            cellEditorComp: MySimpleEditor
         },
         {
             field: "mood",
             width: 90,
-            cellEditor: "mySimpleEditor"
+            cellEditorComp: MySimpleEditor
         },
         {
             field: "country",
             width: 110,
-            cellEditor: "mySimpleEditor"
+            cellEditorComp: MySimpleEditor
         },
         {
             field: "address",
             width: 502,
-            cellEditor: "mySimpleEditor"
+            cellEditorComp: MySimpleEditor
         }
     ];
 
-    private defaultColDef = {
+    public defaultColDef: ColDef = {
         editable: true,
         sortable: true,
         flex: 1,
@@ -70,10 +70,8 @@ export class AppComponent implements OnDestroy {
         resizable: true
     };
 
-    private frameworkComponents = { mySimpleEditor: MySimpleEditor };
-
-    private interval: number;
-    private rowData: any[];
+    private interval!: number;
+    public rowData: any[];
 
     constructor() {
         this.rowData = this.createRowData();
@@ -83,7 +81,7 @@ export class AppComponent implements OnDestroy {
         this.interval = window.setInterval(() => {
             const instances = params.api.getCellEditorInstances();
             if (instances.length > 0) {
-                const instance = instances[0];
+                const instance = instances[0] as MySimpleEditor;
                 if (instance.myCustomFunction) {
                     const result = instance.myCustomFunction();
                     console.log(`found editing cell: row index = ${result.rowIndex}, column = ${result.colId}.`);
@@ -93,7 +91,7 @@ export class AppComponent implements OnDestroy {
             } else {
                 console.log('found not editing cell.');
             }
-        }, 1000);
+        }, 2000);
     }
 
     ngOnDestroy() {

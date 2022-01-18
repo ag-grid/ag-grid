@@ -1,4 +1,4 @@
-import { GridOptions } from '@ag-grid-community/core'
+import { Grid, GridOptions } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -28,11 +28,11 @@ const gridOptions: GridOptions = {
       aggFunc: 'sum',
       valueParser: 'Number(newValue)',
       cellClass: 'number-cell',
-      cellRenderer: 'agAnimateShowChangeCellRenderer',
-      filter: 'agNumberColumnFilter',
+      cellRendererComp: 'agAnimateShowChangeCellRenderer',
+      filterComp: 'agNumberColumnFilter',
     },
     totalColumn: {
-      cellRenderer: 'agAnimateShowChangeCellRenderer',
+      cellRendererComp: 'agAnimateShowChangeCellRenderer',
       cellClass: 'number-cell',
     },
   },
@@ -58,6 +58,6 @@ function getRowData() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 })

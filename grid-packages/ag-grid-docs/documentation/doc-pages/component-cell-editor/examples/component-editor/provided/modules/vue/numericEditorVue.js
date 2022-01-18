@@ -74,7 +74,7 @@ export default {
         },
 
         finishedEditingPressed(event) {
-            const charCode = this.getCharCodeFromEvent(event);
+            const charCode = event.key;
             return charCode === KEY_ENTER || charCode === KEY_TAB;
         },
 

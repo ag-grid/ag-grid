@@ -1,61 +1,9 @@
 import {
-  ColDef,
+  ColDef, Grid,
   GridOptions,
   ICellRendererParams,
 } from '@ag-grid-community/core'
-declare var DaysFrostRenderer: any
-
-interface ImageCellRendererParams extends ICellRendererParams {
-  rendererImage: string
-}
-
-const columnDefs: ColDef[] = [
-  {
-    headerName: 'Month',
-    field: 'Month',
-    width: 75,
-    cellStyle: { color: 'darkred' },
-  },
-  {
-    headerName: 'Max Temp (˚C)',
-    field: 'Max temp (C)',
-    width: 120,
-    cellRendererComp: 'deltaIndicator', // Function cell renderer
-  },
-  {
-    headerName: 'Min Temp (˚C)',
-    field: 'Min temp (C)',
-    width: 120,
-    cellRendererComp: 'deltaIndicator', // Function cell renderer
-  },
-  {
-    headerName: 'Days of Air Frost',
-    field: 'Days of air frost (days)',
-    width: 233,
-    cellRendererComp: 'daysFrostRenderer', // Component Cell Renderer
-    cellRendererCompParams: {
-      rendererImage: 'frost.png', // Complementing the Cell Renderer parameters
-    },
-  },
-  {
-    headerName: 'Days Sunshine',
-    field: 'Sunshine (hours)',
-    width: 190,
-    cellRendererComp: 'daysSunshineRenderer',
-    cellRendererCompParams: {
-      rendererImage: 'sun.png', // Complementing the Cell Renderer parameters
-    },
-  },
-  {
-    headerName: 'Rainfall (10mm)',
-    field: 'Rainfall (mm)',
-    width: 180,
-    cellRendererComp: 'rainPerTenMmRenderer',
-    cellRendererCompParams: {
-      rendererImage: 'rain.png', // Complementing the Cell Renderer parameters
-    },
-  },
-]
+import { DaysFrostRenderer, ImageCellRendererParams } from './daysFrostRenderer_typescript';
 
 /**
  * Demonstrating function cell renderer
@@ -82,7 +30,7 @@ const deltaIndicator = (params: ICellRendererParams) => {
 /**
  *  Cell Renderer by Property (using the api)
  */
-const daysSunshineRenderer = (params: ImageCellRendererParams) => {
+function daysSunshineRenderer(params: ImageCellRendererParams) {
   const daysSunshine = params.value / 24
   return createImageSpan(daysSunshine, params.rendererImage)
 }
@@ -90,20 +38,62 @@ const daysSunshineRenderer = (params: ImageCellRendererParams) => {
 /**
  *  Cell Renderer by Property (using the grid options parameter)
  */
-const rainPerTenMmRenderer = (params: ImageCellRendererParams) => {
+function rainPerTenMmRenderer(params: ImageCellRendererParams) {
   const rainPerTenMm = params.value / 10
   return createImageSpan(rainPerTenMm, params.rendererImage)
 }
 
+const columnDefs: ColDef[] = [
+  {
+    headerName: 'Month',
+    field: 'Month',
+    width: 75,
+    cellStyle: { color: 'darkred' },
+  },
+  {
+    headerName: 'Max Temp (˚C)',
+    field: 'Max temp (C)',
+    width: 120,
+    cellRendererComp: deltaIndicator, // Function cell renderer
+  },
+  {
+    headerName: 'Min Temp (˚C)',
+    field: 'Min temp (C)',
+    width: 120,
+    cellRendererComp: deltaIndicator, // Function cell renderer
+  },
+  {
+    headerName: 'Days of Air Frost',
+    field: 'Days of air frost (days)',
+    width: 233,
+    cellRendererComp: DaysFrostRenderer, // Component Cell Renderer
+    cellRendererCompParams: {
+      rendererImage: 'frost.png', // Complementing the Cell Renderer parameters
+    },
+  },
+  {
+    headerName: 'Days Sunshine',
+    field: 'Sunshine (hours)',
+    width: 190,
+    cellRendererComp: daysSunshineRenderer,
+    cellRendererCompParams: {
+      rendererImage: 'sun.png', // Complementing the Cell Renderer parameters
+    },
+  },
+  {
+    headerName: 'Rainfall (10mm)',
+    field: 'Rainfall (mm)',
+    width: 180,
+    cellRendererComp: rainPerTenMmRenderer,
+    cellRendererCompParams: {
+      rendererImage: 'rain.png', // Complementing the Cell Renderer parameters
+    },
+  },
+]
+
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   rowData: null,
-  components: {
-    deltaIndicator: deltaIndicator,
-    daysFrostRenderer: DaysFrostRenderer,
-    daysSunshineRenderer: daysSunshineRenderer,
-    rainPerTenMmRenderer: rainPerTenMmRenderer,
-  },
   defaultColDef: {
     editable: true,
     sortable: true,
@@ -128,7 +118,7 @@ const createImageSpan = (imageMultiplier: number, image: string) => {
  * Updates the Days of Air Frost column - adjusts the value which in turn will demonstrate the Component refresh functionality
  * After a data update, cellRenderer Components.refresh method will be called to re-render the altered Cells
  */
-const frostierYear = (extraDaysFrost: number) => {
+function frostierYear(extraDaysFrost: number) {
   // iterate over the rows and make each "days of air frost"
   gridOptions.api!.forEachNode(rowNode => {
     rowNode.setDataValue(
@@ -140,8 +130,8 @@ const frostierYear = (extraDaysFrost: number) => {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/weather-se-england.json')
     .then(response => response.json())

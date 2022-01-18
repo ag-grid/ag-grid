@@ -1,4 +1,4 @@
-import { ColDef, GridOptions, GridReadyEvent, IServerSideDatasource, IServerSideGetRowsParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, GridReadyEvent, IServerSideDatasource, IServerSideGetRowsParams } from '@ag-grid-community/core'
 
 const columnDefs: ColDef[] = [
   { field: 'productName', rowGroup: true, hide: true },
@@ -60,9 +60,8 @@ const gridOptions: GridOptions = {
     }
   },
 }
-interface Product { id: number, productName: string, trades: any[] }
 const productsNames = ['Palm Oil', 'Rubber', 'Wool', 'Amber', 'Copper']
-let products: Product[] = []
+let products: any[] = []
 let idSequence = 0
 
 function createOneTrade() {
@@ -75,7 +74,7 @@ function createOneTrade() {
 
 function setupData() {
   productsNames.forEach(function (productName) {
-    const product: Product = { id: idSequence++, productName: productName, trades: [] }
+    const product: any = { id: idSequence++, productName: productName, trades: [] }
     products.push(product)
     for (let i = 0; i < 2; i++) {
       product.trades.push(createOneTrade())
@@ -142,6 +141,6 @@ function onBtStoreState() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  const gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 })

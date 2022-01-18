@@ -1,13 +1,28 @@
-import { ColDef, GridOptions, ICellRendererParams, IViewportDatasource, ValueFormatterParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, ICellRendererComp, ICellRendererParams, IViewportDatasource, ValueFormatterParams } from '@ag-grid-community/core'
 declare function createMockServer(): any;
 declare function createViewportDatasource(mockServer: any): IViewportDatasource;
+
+class RowIndexRenderer implements ICellRendererComp {
+  eGui!: HTMLDivElement;
+  init(params: ICellRendererParams) {
+    this.eGui = document.createElement('div');
+    this.eGui.innerHTML = '' + params.rowIndex;;
+
+  }
+  refresh(params: ICellRendererParams): boolean {
+    return false;
+  }
+  getGui(): HTMLElement {
+    return this.eGui;
+  }
+}
 
 const columnDefs: ColDef[] = [
   // this col shows the row index, doesn't use any data from the row
   {
     headerName: '#',
     maxWidth: 80,
-    cellRenderer: 'rowIdRenderer',
+    cellRendererComp: RowIndexRenderer,
   },
   { field: 'code', maxWidth: 90 },
   { field: 'name', minWidth: 220 },
@@ -15,24 +30,24 @@ const columnDefs: ColDef[] = [
     field: 'bid',
     cellClass: 'cell-number',
     valueFormatter: numberFormatter,
-    cellRenderer: 'agAnimateShowChangeCellRenderer',
+    cellRendererComp: 'agAnimateShowChangeCellRenderer',
   },
   {
     field: 'mid',
     cellClass: 'cell-number',
     valueFormatter: numberFormatter,
-    cellRenderer: 'agAnimateShowChangeCellRenderer',
+    cellRendererComp: 'agAnimateShowChangeCellRenderer',
   },
   {
     field: 'ask',
     cellClass: 'cell-number',
     valueFormatter: numberFormatter,
-    cellRenderer: 'agAnimateShowChangeCellRenderer',
+    cellRendererComp: 'agAnimateShowChangeCellRenderer',
   },
   {
     field: 'volume',
     cellClass: 'cell-number',
-    cellRenderer: 'agAnimateSlideCellRenderer',
+    cellRendererComp: 'agAnimateSlideCellRenderer',
   },
 ]
 
@@ -50,11 +65,6 @@ const gridOptions: GridOptions = {
     // the code is unique, so perfect for the id
     return data.code
   },
-  components: {
-    rowIdRenderer: function (params: ICellRendererParams) {
-      return '' + params.rowIndex
-    },
-  },
   // debug: true
 }
 
@@ -68,8 +78,8 @@ function numberFormatter(params: ValueFormatterParams) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   // do http request to get our sample data - not using any framework to keep the example self contained.
   // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.

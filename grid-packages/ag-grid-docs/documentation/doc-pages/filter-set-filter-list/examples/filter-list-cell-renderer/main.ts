@@ -1,12 +1,12 @@
 import {
-  FirstDataRenderedEvent,
+  FirstDataRenderedEvent, Grid,
   GridOptions,
   ICellRendererParams,
   IFiltersToolPanel,
 } from '@ag-grid-community/core'
 
 var countryFilterParams = {
-  cellRenderer: countryCellRenderer,
+  cellRendererComp: countryCellRenderer,
 }
 
 const gridOptions: GridOptions = {
@@ -14,8 +14,8 @@ const gridOptions: GridOptions = {
     {
       headerName: 'No Cell Renderer',
       field: 'country',
-      cellRenderer: countryCellRenderer,
-      filter: 'agSetColumnFilter',
+      cellRendererComp: countryCellRenderer,
+      filterComp: 'agSetColumnFilter',
       filterParams: {
         // no cell renderer!
       },
@@ -23,8 +23,8 @@ const gridOptions: GridOptions = {
     {
       headerName: 'With Cell Renderers',
       field: 'country',
-      cellRenderer: countryCellRenderer,
-      filter: 'agSetColumnFilter',
+      cellRendererComp: countryCellRenderer,
+      filterComp: 'agSetColumnFilter',
       filterParams: countryFilterParams,
     },
   ],
@@ -59,15 +59,15 @@ function printFilterModel() {
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  ;((params.api.getToolPanelInstance(
+  ; ((params.api.getToolPanelInstance(
     'filters'
   ) as any) as IFiltersToolPanel).expandFilters()
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

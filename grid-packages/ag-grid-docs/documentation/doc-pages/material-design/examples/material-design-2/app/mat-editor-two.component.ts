@@ -1,17 +1,17 @@
-import {AfterViewInit, Component} from "@angular/core";
+import { AfterViewInit, Component } from "@angular/core";
 
-import {AllCommunityModules, GridOptions} from "@ag-grid-community/all-modules";
 
-import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
-import "@ag-grid-community/all-modules/dist/styles/ag-theme-material.css";
+import "@ag-grid-community/core/dist/styles/ag-grid.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-material.css";
 
-import {MatSliderComponent} from "./mat-slider.component";
-import {MatButtonToggleHeaderComponent} from "./mat-button-toggle.component";
-import {ColumnAlignmentService} from "./columnAlignmentService";
-import {MatProgressSpinnerComponent} from "./mat-progress-spinner.component";
+import { MatSliderComponent } from "./mat-slider.component";
+import { MatButtonToggleHeaderComponent } from "./mat-button-toggle.component";
+import { ColumnAlignmentService } from "./columnAlignmentService";
+import { MatProgressSpinnerComponent } from "./mat-progress-spinner.component";
+import { ColDef, GridOptions } from "@ag-grid-community/core";
+import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 
 @Component({
-    moduleId: __moduleName, // for SystemJS, IE11 and relative paths
     selector: "my-app",
     templateUrl: "./mat-editor-two.component.html"
 })
@@ -19,32 +19,27 @@ export class MatEditorComponentTwo implements AfterViewInit {
     public gridOptions: GridOptions;
     public onOffColumnAlignment: string = "left";
 
-    modules = AllCommunityModules;
+    modules = [ClientSideRowModelModule];
 
     constructor(private columnAlignmentService: ColumnAlignmentService) {
-        this.gridOptions = <GridOptions>{
+        this.gridOptions = {
             rowData: this.createRowData(),
             columnDefs: this.createColumnDefs(),
             onGridReady: () => {
-                this.gridOptions.api.sizeColumnsToFit();
+                this.gridOptions.api!.sizeColumnsToFit();
             },
             rowHeight: 48, // recommended row height for material design data grids,
-            headerHeight: 48,
-            frameworkComponents: {
-                sliderEditor: MatSliderComponent,
-                toggleHeaderRenderer: MatButtonToggleHeaderComponent,
-                progressRenderer: MatProgressSpinnerComponent
-            }
+            headerHeight: 48
         };
 
         this.columnAlignmentService.alignmentChanged$.subscribe(alignment => {
             this.onOffColumnAlignment = alignment;
-            let nodesToUpdate = [];
-            this.gridOptions.api.forEachNode(node => {
+            let nodesToUpdate: any[] = [];
+            this.gridOptions.api!.forEachNode(node => {
                 nodesToUpdate.push(node);
             });
 
-            this.gridOptions.api.refreshCells({
+            this.gridOptions.api!.refreshCells({
                 rowNodes: nodesToUpdate,
                 columns: ["on_off"],
                 force: true
@@ -57,23 +52,23 @@ export class MatEditorComponentTwo implements AfterViewInit {
     }
 
     ngAfterViewInit() {
-        this.gridOptions.api.forEachNode(rowNode => {
+        this.gridOptions.api!.forEachNode(rowNode => {
             window.setTimeout(() => {
                 rowNode.setDataValue("random_col", this.randomNumberUpTo(100));
-                this.gridOptions.api.refreshCells({
+                this.gridOptions.api!.refreshCells({
                     rowNodes: [rowNode],
                     columns: ["random_col"]
                 });
-            }, this.randomNumberUpTo(60) * 1000);
+            }, this.randomNumberUpTo(30) * 1000);
         });
     }
 
-    private createColumnDefs() {
+    private createColumnDefs(): ColDef[] {
         return [
             {
                 headerName: "Percentage (popup slider editor)",
                 field: "percentage",
-                cellEditor: "sliderEditor",
+                cellEditorComp: MatSliderComponent,
                 cellEditorParams: {
                     thumbLabel: true
                 },
@@ -82,17 +77,17 @@ export class MatEditorComponentTwo implements AfterViewInit {
             {
                 headerName: "On/Off (button toggle header)",
                 field: "on_off",
-                headerComponent: "toggleHeaderRenderer",
+                headerComp: MatButtonToggleHeaderComponent,
                 cellStyle: params => {
-                    return {"text-align": this.onOffColumnAlignment};
+                    return { "text-align": this.onOffColumnAlignment };
                 }
             },
             {
                 headerName: "Random (progress spinner)",
                 field: "random_col",
-                cellRenderer: "progressRenderer",
+                cellRendererComp: MatProgressSpinnerComponent,
                 cellStyle: () => {
-                    return {padding: "0px"};
+                    return { padding: "0px" };
                 }
             }
         ];

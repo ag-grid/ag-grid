@@ -719,6 +719,6 @@ export interface CellEditorCompSelectorFunc {
 }
 
 export interface CompSelectorResult {
-    comp: any;
-    params: any;
+    comp?: any;
+    params?: any; //Should these both be optional??
 }

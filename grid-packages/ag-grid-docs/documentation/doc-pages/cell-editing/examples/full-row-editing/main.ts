@@ -1,17 +1,98 @@
-import { CellValueChangedEvent, GridOptions, ICellEditorComp, ICellEditorParams, RowValueChangedEvent } from '@ag-grid-community/core'
+import { Grid, CellValueChangedEvent, GridOptions, ICellEditorComp, ICellEditorParams, RowValueChangedEvent } from '@ag-grid-community/core'
+
+function isCharNumeric(charStr: string) {
+  return !!/\d/.test(charStr)
+}
+
+function isKeyPressedNumeric(event: any) {
+  var charStr = event.key;
+  return isCharNumeric(charStr)
+}
+
+class NumericCellEditor implements ICellEditorComp {
+  focusAfterAttached!: boolean
+  eInput!: HTMLInputElement
+  cancelBeforeStart: any
+  // gets called once before the renderer is used
+  init(params: ICellEditorParams) {
+    // we only want to highlight this cell if it started the edit, it is possible
+    // another cell in this row started the edit
+    this.focusAfterAttached = params.cellStartedEdit
+
+    // create the cell
+    this.eInput = document.createElement('input')
+    this.eInput.style.width = '100%'
+    this.eInput.style.height = '100%'
+    this.eInput.value = (params.charPress && isCharNumeric(params.charPress))
+      ? params.charPress
+      : params.value
+
+    var that = this
+    this.eInput.addEventListener('keypress', function (event: any) {
+      if (!isKeyPressedNumeric(event)) {
+        that.eInput.focus()
+        if (event.preventDefault) event.preventDefault()
+      }
+    })
+  }
+
+  // gets called once when grid ready to insert the element
+  getGui() {
+    return this.eInput
+  }
+
+  // focus and select can be done after the gui is attached
+  afterGuiAttached() {
+    // only focus after attached if this cell started the edit
+    if (this.focusAfterAttached) {
+      this.eInput.focus()
+      this.eInput.select()
+    }
+  }
+
+  // returns the new value after editing
+  isCancelBeforeStart() {
+    return this.cancelBeforeStart
+  }
+
+  // example - will reject the number if it contains the value 007
+  // - not very practical, but demonstrates the method.
+  isCancelAfterEnd() {
+    return false;
+  }
+
+  // returns the new value after editing
+  getValue() {
+    return this.eInput.value
+  }
+
+  // when we tab onto this editor, we want to focus the contents
+  focusIn() {
+    var eInput = this.getGui()
+    eInput.focus()
+    eInput.select()
+    console.log('NumericCellEditor.focusIn()')
+  }
+
+  // when we tab out of the editor, this gets called
+  focusOut() {
+    // but we don't care, we just want to print it for demo purposes
+    console.log('NumericCellEditor.focusOut()')
+  }
+}
 
 const gridOptions: GridOptions = {
   columnDefs: [
     {
       field: 'make',
-      cellEditor: 'agSelectCellEditor',
+      cellEditorComp: 'agSelectCellEditor',
       cellEditorParams: {
         values: ['Porsche', 'Toyota', 'Ford', 'AAA', 'BBB', 'CCC'],
       },
     },
     { field: 'model' },
     { field: 'field4', headerName: 'Read Only', editable: false },
-    { field: 'price', cellEditor: 'numericCellEditor' },
+    { field: 'price', cellEditorComp: NumericCellEditor },
     {
       headerName: 'Suppress Navigable',
       field: 'field5',
@@ -23,9 +104,6 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
     editable: true,
-  },
-  components: {
-    numericCellEditor: getNumericCellEditor(),
   },
   editType: 'fullRow',
   rowData: getRowData(),
@@ -98,93 +176,9 @@ function onBtStartEditing() {
   })
 }
 
-function getNumericCellEditor() {
-  function isCharNumeric(charStr: string) {
-    return !!/\d/.test(charStr)
-  }
-
-  function isKeyPressedNumeric(event: any) {
-    var charStr = event.key;
-    return isCharNumeric(charStr)
-  }
-
-  class NumericCellEditor implements ICellEditorComp {
-    focusAfterAttached!: boolean
-    eInput!: HTMLInputElement
-    cancelBeforeStart: any
-    // gets called once before the renderer is used
-    init(params: ICellEditorParams) {
-      // we only want to highlight this cell if it started the edit, it is possible
-      // another cell in this row started the edit
-      this.focusAfterAttached = params.cellStartedEdit
-
-      // create the cell
-      this.eInput = document.createElement('input')
-      this.eInput.style.width = '100%'
-      this.eInput.style.height = '100%'
-      this.eInput.value = (params.charPress && isCharNumeric(params.charPress))
-        ? params.charPress
-        : params.value
-
-      var that = this
-      this.eInput.addEventListener('keypress', function (event: any) {
-        if (!isKeyPressedNumeric(event)) {
-          that.eInput.focus()
-          if (event.preventDefault) event.preventDefault()
-        }
-      })
-    }
-
-    // gets called once when grid ready to insert the element
-    getGui() {
-      return this.eInput
-    }
-
-    // focus and select can be done after the gui is attached
-    afterGuiAttached() {
-      // only focus after attached if this cell started the edit
-      if (this.focusAfterAttached) {
-        this.eInput.focus()
-        this.eInput.select()
-      }
-    }
-
-    // returns the new value after editing
-    isCancelBeforeStart() {
-      return this.cancelBeforeStart
-    }
-
-    // example - will reject the number if it contains the value 007
-    // - not very practical, but demonstrates the method.
-    isCancelAfterEnd() {
-      return false;
-    }
-
-    // returns the new value after editing
-    getValue() {
-      return this.eInput.value
-    }
-
-    // when we tab onto this editor, we want to focus the contents
-    focusIn() {
-      var eInput = this.getGui()
-      eInput.focus()
-      eInput.select()
-      console.log('NumericCellEditor.focusIn()')
-    }
-
-    // when we tab out of the editor, this gets called
-    focusOut() {
-      // but we don't care, we just want to print it for demo purposes
-      console.log('NumericCellEditor.focusOut()')
-    }
-  }
-
-  return NumericCellEditor
-}
 // wait for the document to be loaded, otherwise
 // AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function () {
-  var eGridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(eGridDiv, gridOptions)
+  var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(eGridDiv, gridOptions)
 })

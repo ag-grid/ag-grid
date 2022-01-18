@@ -2,7 +2,7 @@ export default {
     template: `
       <div class="custom-tooltip" v-if="isHeader">
           <p>Group Name: {{ params.value }}</p>
-          <hr v-if="isGroupedHeader"></hr>
+          <hr v-if="isGroupedHeader"/>
           <div v-if="isGroupedHeader">
             <p v-for="(header, idx) in params.colDef.children">
               Child {{ (idx + 1) }} - {{ header.headerName }}

@@ -1,29 +1,31 @@
-import { GridOptions } from '@ag-grid-community/core'
-declare var DoublingEditor: any
-declare var MoodRenderer: any
-declare var MoodEditor: any
-declare var NumericEditor: any
+import { Grid, GridOptions } from '@ag-grid-community/core'
+import { DoublingEditor } from './doublingEditor_typescript'
+import { MoodRenderer } from './moodRenderer_typescript'
+import { MoodEditor } from './moodEditor_typescript'
+import { NumericEditor } from './numericEditor_typescript'
 
 const gridOptions: GridOptions = {
   columnDefs: [
     {
       headerName: 'Doubling',
       field: 'number',
-      cellEditor: 'doublingEditor',
+      cellEditorComp: DoublingEditor,
       editable: true,
       width: 300,
     },
     {
       field: 'mood',
-      cellRenderer: 'moodRenderer',
-      cellEditor: 'moodEditor',
+      cellRendererComp: MoodRenderer,
+      cellEditorComp: MoodEditor,
+      cellEditorPopup: true,
       editable: true,
       width: 300,
     },
     {
       headerName: 'Numeric',
       field: 'number',
-      cellEditor: 'numericEditor',
+      cellEditorComp: NumericEditor,
+      cellEditorPopup: true,
       editable: true,
       width: 280,
     },
@@ -43,12 +45,6 @@ const gridOptions: GridOptions = {
     { name: 'Jenny', mood: 'Happy', number: 34 },
     { name: 'Larry', mood: 'Happy', number: 13 },
   ],
-  components: {
-    doublingEditor: DoublingEditor,
-    moodRenderer: MoodRenderer,
-    moodEditor: MoodEditor,
-    numericEditor: NumericEditor,
-  },
   defaultColDef: {
     editable: true,
     sortable: true,
@@ -61,6 +57,6 @@ const gridOptions: GridOptions = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  const gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 })

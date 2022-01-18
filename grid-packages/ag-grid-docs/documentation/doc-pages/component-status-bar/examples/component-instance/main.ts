@@ -1,5 +1,5 @@
-import { ColDef, GridOptions } from '@ag-grid-community/core'
-declare var ClickableStatusBarComponent: any
+import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { ClickableStatusBarComponent } from './clickableStatusBarComponent_typescript'
 
 const columnDefs: ColDef[] = [
   {
@@ -43,17 +43,14 @@ const gridOptions: GridOptions = {
   ],
   enableRangeSelection: true,
   rowSelection: 'multiple',
-  components: {
-    statusBarComponent: ClickableStatusBarComponent,
-  },
   statusBar: {
     statusPanels: [
       {
-        statusPanel: 'statusBarComponent',
+        statusPanelComp: ClickableStatusBarComponent,
         key: 'statusBarCompKey',
       },
       {
-        statusPanel: 'agAggregationComponent',
+        statusPanelComp: 'agAggregationComponent',
         statusPanelParams: {
           aggFuncs: ['count', 'sum'],
         },
@@ -64,7 +61,7 @@ const gridOptions: GridOptions = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
   gridOptions.api!.sizeColumnsToFit()
 })

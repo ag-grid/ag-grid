@@ -1,4 +1,4 @@
-import { GridOptions, ICellRendererParams, IDatasource, IGetRowsParams } from '@ag-grid-community/core'
+import { Grid, GridOptions, ICellRendererParams, IDatasource, IGetRowsParams } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -9,7 +9,13 @@ const gridOptions: GridOptions = {
       // it is important to have node.id here, so that when the id changes (which happens
       // when the row is loaded) then the cell is refreshed.
       valueGetter: 'node.id',
-      cellRenderer: 'loadingRenderer',
+      cellRendererComp: function (params: ICellRendererParams) {
+        if (params.value !== undefined) {
+          return params.value
+        } else {
+          return '<img src="https://www.ag-grid.com/example-assets/loading.gif">'
+        }
+      },
     },
     { field: 'athlete', minWidth: 150 },
     { field: 'age' },
@@ -26,15 +32,6 @@ const gridOptions: GridOptions = {
     flex: 1,
     resizable: true,
     minWidth: 100,
-  },
-  components: {
-    loadingRenderer: function (params: ICellRendererParams) {
-      if (params.value !== undefined) {
-        return params.value
-      } else {
-        return '<img src="https://www.ag-grid.com/example-assets/loading.gif">'
-      }
-    },
   },
   rowBuffer: 0,
   rowSelection: 'multiple',
@@ -62,8 +59,8 @@ const gridOptions: GridOptions = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

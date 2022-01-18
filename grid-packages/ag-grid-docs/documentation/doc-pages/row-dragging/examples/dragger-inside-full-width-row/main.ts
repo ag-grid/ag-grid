@@ -1,9 +1,9 @@
-import { GridOptions, ICellRendererParams } from '@ag-grid-community/core'
-declare var FullWidthCellRenderer: any;
+import { Grid, GridOptions, ICellRendererParams } from '@ag-grid-community/core'
+import { FullWidthCellRenderer } from './fullWidthCellRenderer_typescript'
 
 const gridOptions: GridOptions = {
   columnDefs: [
-    { field: 'name', cellRenderer: countryCellRenderer },
+    { field: 'name', cellRendererComp: countryCellRenderer },
     { field: 'continent' },
     { field: 'language' },
   ],
@@ -12,9 +12,6 @@ const gridOptions: GridOptions = {
     sortable: true,
     resizable: true,
     filter: true,
-  },
-  components: {
-    fullWidthCellRenderer: FullWidthCellRenderer,
   },
   rowData: getData(),
   rowDragManaged: true,
@@ -28,7 +25,7 @@ const gridOptions: GridOptions = {
     return isFullWidth(rowNode.data)
   },
   // see AG Grid docs cellRenderer for details on how to build cellRenderers
-  fullWidthCellRenderer: 'fullWidthCellRenderer',
+  fullWidthCellComp: FullWidthCellRenderer,
   animateRows: true,
 }
 
@@ -49,6 +46,6 @@ function isFullWidth(data: any) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 })

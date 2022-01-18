@@ -1,4 +1,5 @@
 import {
+  Grid,
   GridOptions,
   KeyCreatorParams,
   ValueFormatterParams,
@@ -28,17 +29,17 @@ const gridOptions: GridOptions = {
     {
       headerName: 'Animals (array)',
       field: 'animalsArray',
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
     },
     {
       headerName: 'Animals (string)',
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
       valueGetter: valueGetter,
     },
     {
       headerName: 'Animals (objects)',
       field: 'animalsObjects',
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
       valueFormatter: valueFormatter,
       keyCreator: keyCreator,
     },
@@ -51,6 +52,6 @@ const gridOptions: GridOptions = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 })

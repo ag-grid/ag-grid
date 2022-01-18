@@ -1,6 +1,7 @@
 import { Component } from "@angular/core";
 
 import { IStatusPanelParams } from "@ag-grid-community/core";
+import { IStatusPanelAngularComp } from "@ag-grid-community/angular";
 
 @Component({
     selector: 'status-component',
@@ -11,7 +12,7 @@ import { IStatusPanelParams } from "@ag-grid-community/core";
         </div>
     `
 })
-export class CountStatusBarComponent {
+export class CountStatusBarComponent implements IStatusPanelAngularComp {
     private params!: IStatusPanelParams;
     public count: number | null = null;
 

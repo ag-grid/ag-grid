@@ -1,4 +1,4 @@
-import { GridOptions } from '@ag-grid-community/core'
+import { Grid, GridOptions } from '@ag-grid-community/core'
 
 var filterParams = {
   textFormatter: replaceAccents,
@@ -9,13 +9,13 @@ const gridOptions: GridOptions = {
     // set filter
     {
       field: 'athlete',
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
       filterParams: filterParams,
     },
     // number filters
-    { field: 'gold', filter: 'agNumberColumnFilter' },
-    { field: 'silver', filter: 'agNumberColumnFilter' },
-    { field: 'bronze', filter: 'agNumberColumnFilter' },
+    { field: 'gold', filterComp: 'agNumberColumnFilter' },
+    { field: 'silver', filterComp: 'agNumberColumnFilter' },
+    { field: 'bronze', filterComp: 'agNumberColumnFilter' },
   ],
   defaultColDef: {
     flex: 1,
@@ -42,8 +42,8 @@ function replaceAccents(value: string) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

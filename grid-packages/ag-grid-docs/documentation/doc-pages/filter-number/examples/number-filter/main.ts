@@ -1,4 +1,4 @@
-import { ColDef, GridOptions, INumberFilterParams, ValueFormatterParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, INumberFilterParams, ValueFormatterParams } from '@ag-grid-community/core'
 
 var numberValueFormatter = function (params: ValueFormatterParams) {
   return params.value.toFixed(2)
@@ -27,13 +27,13 @@ const columnDefs: ColDef[] = [
   {
     field: 'sale',
     headerName: 'Sale ($)',
-    filter: 'agNumberColumnFilter',
+    filterComp: 'agNumberColumnFilter',
     valueFormatter: numberValueFormatter,
   },
   {
     field: 'sale',
     headerName: 'Sale',
-    filter: 'agNumberColumnFilter',
+    filterComp: 'agNumberColumnFilter',
     filterParams: saleFilterParams,
     valueFormatter: saleValueFormatter,
   },
@@ -50,6 +50,6 @@ const gridOptions: GridOptions = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 })

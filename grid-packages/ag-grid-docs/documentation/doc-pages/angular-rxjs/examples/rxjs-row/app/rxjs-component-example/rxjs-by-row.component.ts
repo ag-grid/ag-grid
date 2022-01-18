@@ -1,11 +1,10 @@
-import {Component} from "@angular/core";
-
-import {GridOptions, AllCommunityModules} from "@ag-grid-community/all-modules";
-
-import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
-import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
-
-import {MockServerService} from "./mockServer.service";
+import "@ag-grid-community/core/dist/styles/ag-grid.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
+import { GridOptions, ValueFormatterParams } from "@ag-grid-community/core";
+import { Component } from "@angular/core";
+import { MockServerService } from "./mockServer.service";
+import { Observable } from "rxjs";
 
 @Component({
     selector: 'my-app',
@@ -14,15 +13,15 @@ import {MockServerService} from "./mockServer.service";
 })
 export class RxJsComponentByRow {
     gridOptions: GridOptions;
-    initialRowDataLoad$;
-    rowDataUpdates$;
-    modules = AllCommunityModules;
+    initialRowDataLoad$: Observable<any[]>;
+    rowDataUpdates$: Observable<any[]>;
+    modules = [ClientSideRowModelModule];
 
     constructor(mockServerService: MockServerService) {
         this.initialRowDataLoad$ = mockServerService.initialLoad();
         this.rowDataUpdates$ = mockServerService.byRowupdates();
 
-        this.gridOptions = <GridOptions> {
+        this.gridOptions = {
             enableRangeSelection: true,
             columnDefs: this.createColumnDefs(),
             getRowNodeId: function (data) {
@@ -31,7 +30,7 @@ export class RxJsComponentByRow {
             },
             onGridReady: () => {
                 this.initialRowDataLoad$.subscribe(
-                    rowData => {
+                    (rowData: any[]) => {
                         // the initial full set of data
                         // note that we don't need to un-subscribe here as it's a one off data load
                         if (this.gridOptions.api) { // can be null when tabbing between the examples
@@ -41,9 +40,9 @@ export class RxJsComponentByRow {
                         // now listen for updates
                         // we process the updates with a transaction - this ensures that only the changes
                         // rows will get re-rendered, improving performance
-                        this.rowDataUpdates$.subscribe((updates) => {
+                        this.rowDataUpdates$.subscribe((updates: any) => {
                             if (this.gridOptions.api) { // can be null when tabbing between the examples
-                                this.gridOptions.api.applyTransaction({update: updates})
+                                this.gridOptions.api.applyTransaction({ update: updates })
                             }
                         });
                     }
@@ -58,8 +57,8 @@ export class RxJsComponentByRow {
 
     private createColumnDefs() {
         return [
-            {headerName: "Code", field: "code", width: 70, resizable: true},
-            {headerName: "Name", field: "name", width: 280, resizable: true},
+            { headerName: "Code", field: "code", width: 70, resizable: true },
+            { headerName: "Name", field: "name", width: 280, resizable: true },
             {
                 headerName: "Bid", field: "bid", width: 100, resizable: true,
                 cellClass: 'cell-number',
@@ -86,7 +85,7 @@ export class RxJsComponentByRow {
         ]
     }
 
-    numberFormatter(params) {
+    numberFormatter(params: ValueFormatterParams) {
         if (typeof params.value === 'number') {
             return params.value.toFixed(2);
         } else {

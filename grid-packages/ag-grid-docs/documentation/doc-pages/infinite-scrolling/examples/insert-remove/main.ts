@@ -1,4 +1,4 @@
-import { ColDef, GridOptions, ICellRendererParams, IDatasource, IGetRowsParams, RowClassParams, ValueFormatterParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, ICellRendererParams, IDatasource, IGetRowsParams, RowClassParams, ValueFormatterParams } from '@ag-grid-community/core'
 
 var valueFormatter = function (params: ValueFormatterParams) {
   if (typeof params.value === 'number') {
@@ -12,7 +12,13 @@ const columnDefs: ColDef[] = [
     headerName: 'Item ID',
     field: 'id',
     valueGetter: 'node.id',
-    cellRenderer: 'loadingRenderer',
+    cellRendererComp: function (params: ICellRendererParams) {
+      if (params.value !== undefined) {
+        return params.value
+      } else {
+        return '<img src="https://www.ag-grid.com/example-assets/loading.gif">'
+      }
+    },
   },
   { field: 'make' },
   { field: 'model' },
@@ -50,15 +56,6 @@ var datasource: IDatasource = {
 }
 
 const gridOptions: GridOptions = {
-  components: {
-    loadingRenderer: function (params: ICellRendererParams) {
-      if (params.value !== undefined) {
-        return params.value
-      } else {
-        return '<img src="https://www.ag-grid.com/example-assets/loading.gif">'
-      }
-    },
-  },
   defaultColDef: {
     resizable: true,
   },
@@ -207,6 +204,6 @@ function jumpTo500() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 })

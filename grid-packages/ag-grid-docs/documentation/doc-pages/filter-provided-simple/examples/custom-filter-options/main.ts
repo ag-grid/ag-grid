@@ -1,4 +1,4 @@
-import { ColDef, GridOptions, IFilterOptionDef } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, IFilterOptionDef } from '@ag-grid-community/core'
 declare var window: any;
 
 var filterParams = {
@@ -174,21 +174,21 @@ const columnDefs: ColDef[] = [
   {
     field: 'age',
     minWidth: 120,
-    filter: 'agNumberColumnFilter',
+    filterComp: 'agNumberColumnFilter',
     filterParams: filterParams,
   },
   {
     field: 'date',
-    filter: 'agDateColumnFilter',
+    filterComp: 'agDateColumnFilter',
     filterParams: equalsFilterParams,
   },
   {
     field: 'country',
     filterParams: notEqualsFilterParams,
   },
-  { field: 'gold', filter: 'agNumberColumnFilter' },
-  { field: 'silver', filter: 'agNumberColumnFilter' },
-  { field: 'bronze', filter: 'agNumberColumnFilter' },
+  { field: 'gold', filterComp: 'agNumberColumnFilter' },
+  { field: 'silver', filterComp: 'agNumberColumnFilter' },
+  { field: 'bronze', filterComp: 'agNumberColumnFilter' },
   { field: 'total', filter: false },
 ]
 
@@ -230,8 +230,8 @@ function resetState() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
     .then(response => response.json())

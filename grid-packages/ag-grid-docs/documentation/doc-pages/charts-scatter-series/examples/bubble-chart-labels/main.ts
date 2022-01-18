@@ -1,4 +1,4 @@
-import { AgCartesianAxisOptions, AgCartesianChartOptions, AgScatterSeriesOptions } from '@ag-grid-community/core';
+import { Grid, AgCartesianAxisOptions, AgCartesianChartOptions, AgScatterSeriesOptions } from '@ag-grid-community/core';
 import * as agCharts from 'ag-charts-community';
 declare var maleHeightWeight: any[];
 declare var femaleHeightWeight: any[];

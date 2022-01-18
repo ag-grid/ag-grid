@@ -1,4 +1,4 @@
-import { ColDef, ColGroupDef, ColumnGroup, GridOptions, HeaderPosition, NavigateToNextCellParams, NavigateToNextHeaderParams, TabToNextCellParams, TabToNextHeaderParams } from '@ag-grid-community/core'
+import { Grid, ColDef, ColGroupDef, ColumnGroup, GridOptions, HeaderPosition, NavigateToNextCellParams, NavigateToNextHeaderParams, TabToNextCellParams, TabToNextHeaderParams } from '@ag-grid-community/core'
 
 const columnDefs: (ColDef | ColGroupDef)[] = [
   {
@@ -24,13 +24,12 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
 ]
 
 // define some handy keycode constants
-var KEY_LEFT = 'ArrowLeft'
-var KEY_UP = 'ArrowUp'
-var KEY_RIGHT = 'ArrowRight'
-var KEY_DOWN = 'ArrowDown'
+const KEY_LEFT = 'ArrowLeft';
+const KEY_UP = 'ArrowUp';
+const KEY_RIGHT = 'ArrowRight';
+const KEY_DOWN = 'ArrowDown';
 
 const gridOptions: GridOptions = {
-  rowData: null,
   // make all cols editable
   defaultColDef: {
     editable: true,
@@ -51,8 +50,8 @@ const gridOptions: GridOptions = {
 }
 
 function navigateToNextHeader(params: NavigateToNextHeaderParams) {
-  var nextHeader = params.nextHeaderPosition
-  var processedNextHeader
+  const nextHeader = params.nextHeaderPosition;
+  let processedNextHeader;
 
   if (params.key !== 'ArrowDown' && params.key !== 'ArrowUp') {
     return nextHeader
@@ -76,11 +75,11 @@ function tabToNextHeader(params: TabToNextHeaderParams) {
 }
 
 function moveHeaderFocusUpDown(previousHeader: HeaderPosition, headerRowCount: number, isUp: boolean) {
-  var previousColumn = previousHeader.column,
-    lastRowIndex = previousHeader.headerRowIndex,
-    nextRowIndex = isUp ? lastRowIndex - 1 : lastRowIndex + 1,
+  const previousColumn = previousHeader.column,
+    lastRowIndex = previousHeader.headerRowIndex;
+  let nextRowIndex = isUp ? lastRowIndex - 1 : lastRowIndex + 1,
     nextColumn,
-    parentColumn
+    parentColumn;
 
   if (nextRowIndex === -1) {
     return previousHeader
@@ -106,11 +105,11 @@ function moveHeaderFocusUpDown(previousHeader: HeaderPosition, headerRowCount: n
 }
 
 function tabToNextCell(params: TabToNextCellParams) {
-  var previousCell = params.previousCellPosition,
-    lastRowIndex = previousCell.rowIndex,
-    nextRowIndex = params.backwards ? lastRowIndex - 1 : lastRowIndex + 1,
-    renderedRowCount = gridOptions.api!.getModel().getRowCount(),
-    result
+  const previousCell = params.previousCellPosition,
+    lastRowIndex = previousCell.rowIndex;
+  let nextRowIndex = params.backwards ? lastRowIndex - 1 : lastRowIndex + 1;
+  const renderedRowCount = gridOptions.api!.getModel().getRowCount();
+  let result;
 
   if (nextRowIndex < 0) {
     nextRowIndex = -1
@@ -129,10 +128,10 @@ function tabToNextCell(params: TabToNextCellParams) {
 }
 
 function navigateToNextCell(params: NavigateToNextCellParams) {
-  var previousCell = params.previousCellPosition,
-    suggestedNextCell = params.nextCellPosition,
-    nextRowIndex,
-    renderedRowCount
+  const previousCell = params.previousCellPosition,
+    suggestedNextCell = params.nextCellPosition;
+  let nextRowIndex,
+    renderedRowCount;
 
   switch (params.key) {
     case KEY_DOWN:
@@ -170,8 +169,8 @@ function navigateToNextCell(params: NavigateToNextCellParams) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

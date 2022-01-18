@@ -1,6 +1,5 @@
-import { ColDef, GridOptions } from '@ag-grid-community/core'
-
-declare var CustomDateComponent: any
+import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { CustomDateComponent } from './customDateComponent_typescript'
 
 const filterParams = {
   comparator: (filterLocalDateAtMidnight: Date, cellValue: string) => {
@@ -28,19 +27,19 @@ const filterParams = {
 
 const columnDefs: ColDef[] = [
   { field: 'athlete' },
-  { field: 'age', filter: 'agNumberColumnFilter' },
+  { field: 'age', filterComp: 'agNumberColumnFilter' },
   { field: 'country' },
   { field: 'year' },
   {
     field: 'date',
     minWidth: 190,
-    filter: 'agDateColumnFilter',
+    filterComp: 'agDateColumnFilter',
     filterParams: filterParams,
   },
   { field: 'sport' },
-  { field: 'gold', filter: 'agNumberColumnFilter' },
-  { field: 'silver', filter: 'agNumberColumnFilter' },
-  { field: 'bronze', filter: 'agNumberColumnFilter' },
+  { field: 'gold', filterComp: 'agNumberColumnFilter' },
+  { field: 'silver', filterComp: 'agNumberColumnFilter' },
+  { field: 'bronze', filterComp: 'agNumberColumnFilter' },
   { field: 'total', filter: false },
 ]
 
@@ -57,6 +56,8 @@ const gridOptions: GridOptions = {
   columnDefs: columnDefs,
   rowData: null,
   // Here is where we specify the component to be used as the date picker widget
+  // spl todo - is it the plan that it's still frameworkComponents for FWs?
+  // if we do it uses the old style react implementation...can't use memo?
   components: {
     agDateInput: CustomDateComponent,
   },
@@ -64,8 +65,8 @@ const gridOptions: GridOptions = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

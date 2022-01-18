@@ -1,4 +1,4 @@
-import { GridOptions, ICellRendererComp, ICellRendererParams, RowNode } from '@ag-grid-community/core'
+import { Grid, GridOptions, ICellRendererComp, ICellRendererParams, RowNode } from '@ag-grid-community/core'
 declare var window: any
 
 const gridOptions: GridOptions = {
@@ -32,11 +32,8 @@ const gridOptions: GridOptions = {
     cellRendererParams: {
       checkbox: true,
       suppressCount: true,
-      innerRenderer: 'fileCellRenderer',
+      innerCellComp: getFileCellRenderer(),
     },
-  },
-  components: {
-    fileCellRenderer: getFileCellRenderer(),
   },
   rowData: getData(),
   treeData: true,
@@ -199,8 +196,8 @@ function endsWith(str: string | null, match: string | null) {
 // AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function () {
   // lookup the container we want the Grid to use
-  var eGridDiv = document.querySelector('#myGrid')
+  var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
 
   // create the grid passing in the div to use together with the columns & data we want to use
-  new agGrid.Grid(eGridDiv, gridOptions)
+  new Grid(eGridDiv, gridOptions)
 })

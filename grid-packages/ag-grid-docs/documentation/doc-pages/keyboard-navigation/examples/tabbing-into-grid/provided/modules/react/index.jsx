@@ -1,36 +1,37 @@
-
 'use strict'
 
-import React, { Component } from 'react';
-import { render } from 'react-dom';
-import { AgGridReact } from '@ag-grid-community/react';
-import { AllCommunityModules } from '@ag-grid-community/all-modules';
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
+import React, {Component} from 'react';
+import {render} from 'react-dom';
+import {AgGridReact} from '@ag-grid-community/react';
+import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
+import "@ag-grid-community/core/dist/styles/ag-grid.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
 class GridExample extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            modules: AllCommunityModules,
-            columnDefs: [{
-                headerName: "#",
-                colId: "rowNum",
-                valueGetter: "node.id"
-            }, {
-                field: "athlete",
-                minWidth: 170
-            },
-            { field: "age" },
-            { field: "country" },
-            { field: "year" },
-            { field: "date" },
-            { field: "sport" },
-            { field: "gold" },
-            { field: "silver" },
-            { field: "bronze" },
-            { field: "total" }
+            modules: [ClientSideRowModelModule],
+            columnDefs: [
+                {
+                    headerName: "#",
+                    colId: "rowNum",
+                    valueGetter: "node.id"
+                },
+                {
+                    field: "athlete",
+                    minWidth: 170
+                },
+                {field: "age"},
+                {field: "country"},
+                {field: "year"},
+                {field: "date"},
+                {field: "sport"},
+                {field: "gold"},
+                {field: "silver"},
+                {field: "bronze"},
+                {field: "total"}
             ],
             rowData: null,
             defaultColDef: {
@@ -51,9 +52,9 @@ class GridExample extends Component {
         this.gridColumnApi = params.columnApi;
 
         const updateData = (data) => {
-            this.setState({ rowData: data });
+            this.setState({rowData: data});
         };
-        
+
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .then(resp => resp.json())
             .then(data => updateData(data));
@@ -61,7 +62,9 @@ class GridExample extends Component {
 
     componentDidMount() {
         this.myInput.current.addEventListener('keydown', event => {
-            if (event.key !== 'Tab') { return; }
+            if (event.key !== 'Tab') {
+                return;
+            }
 
             event.preventDefault();
             this.gridApi.ensureIndexVisible(0);
@@ -75,19 +78,19 @@ class GridExample extends Component {
 
     render() {
         return (
-            <div style={{ width: '100%', height: '100%' }}>
+            <div style={{width: '100%', height: '100%'}}>
                 <div className="test-container">
                     <div>
                         <div className="form-container">
                             <label>Tab into Grid (Focus the First Cell)</label>
-                            <input ref={ this.myInput } />
+                            <input ref={this.myInput}/>
                         </div>
                         <div className="form-container">
                             <label>Tab into the Grid (Default Behavior)</label>
                             <input/>
                         </div>
                     </div>
-                    <div id="myGrid" style={{ height: '100%', width: '100%'}} className="ag-theme-alpine">
+                    <div id="myGrid" style={{height: '100%', width: '100%'}} className="ag-theme-alpine">
                         <AgGridReact
                             modules={this.state.modules}
                             columnDefs={this.state.columnDefs}

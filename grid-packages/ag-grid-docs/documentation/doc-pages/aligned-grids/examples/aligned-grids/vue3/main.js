@@ -1,7 +1,7 @@
-import {createApp} from 'vue';
-import {AgGridVue} from '@ag-grid-community/vue3';
+import { createApp } from 'vue';
+import { AgGridVue } from '@ag-grid-community/vue3';
 
-import {AllCommunityModules} from '@ag-grid-community/all-modules';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
@@ -43,12 +43,12 @@ const VueExample = {
     data: function () {
         return {
             columnDefs: [
-                {field: 'athlete'},
-                {field: 'age'},
-                {field: 'country'},
-                {field: 'year'},
-                {field: 'date'},
-                {field: 'sport'},
+                { field: 'athlete' },
+                { field: 'age' },
+                { field: 'country' },
+                { field: 'year' },
+                { field: 'date' },
+                { field: 'sport' },
                 {
                     headerName: 'Medals',
                     children: [
@@ -56,14 +56,14 @@ const VueExample = {
                             columnGroupShow: 'closed', field: "total",
                             valueGetter: "data.gold + data.silver + data.bronze", width: 200
                         },
-                        {columnGroupShow: 'open', field: "gold", width: 100},
-                        {columnGroupShow: 'open', field: "silver", width: 100},
-                        {columnGroupShow: 'open', field: "bronze", width: 100}
+                        { columnGroupShow: 'open', field: "gold", width: 100 },
+                        { columnGroupShow: 'open', field: "silver", width: 100 },
+                        { columnGroupShow: 'open', field: "bronze", width: 100 }
                     ]
                 }
             ],
             rowData: [],
-            modules: AllCommunityModules,
+            modules: [ClientSideRowModelModule],
             topOptions: {
                 alignedGrids: [],
                 defaultColDef: {

@@ -1,22 +1,23 @@
-import { GridOptions } from '@ag-grid-community/core'
-declare var YearFilter: any
-declare var YearFloatingFilter: any
+import { Grid, GridOptions } from '@ag-grid-community/core'
+import { YearFilter } from "./YearFilter_typescript";
+import { YearFloatingFilter } from "./YearFloatingFilter_typescript";
 
 const gridOptions: GridOptions = {
   columnDefs: [
-    { field: 'athlete', filter: 'agMultiColumnFilter' },
-    { field: 'sport', filter: 'agMultiColumnFilter' },
+    { field: 'athlete', filterComp: 'agMultiColumnFilter' },
+    { field: 'sport', filterComp: 'agMultiColumnFilter' },
     {
       field: 'year',
-      filter: 'agMultiColumnFilter',
+      filterComp: 'agMultiColumnFilter',
       filterParams: {
         filters: [
           {
-            filter: 'yearFilter',
-            floatingFilterComponent: 'yearFloatingFilter',
+            filterComp: YearFilter,
+            // spl todo doesn't work
+            floatingFilterComp: YearFloatingFilter,
           },
           {
-            filter: 'agNumberColumnFilter',
+            filterComp: 'agNumberColumnFilter',
           },
         ],
       },
@@ -28,17 +29,13 @@ const gridOptions: GridOptions = {
     resizable: true,
     floatingFilter: true,
     menuTabs: ['filterMenuTab'],
-  },
-  components: {
-    yearFilter: YearFilter,
-    yearFloatingFilter: YearFloatingFilter,
-  },
+  }
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

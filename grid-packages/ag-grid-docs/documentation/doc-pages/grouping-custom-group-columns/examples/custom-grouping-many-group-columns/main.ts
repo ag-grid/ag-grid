@@ -1,4 +1,4 @@
-import { ColDef, GridOptions } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
 
 const columnDefs: ColDef[] = [
   {
@@ -7,13 +7,13 @@ const columnDefs: ColDef[] = [
     // this tells the grid what values to put into the cell
     showRowGroup: 'country',
     // this tells the grid what to use to render the cell
-    cellRenderer: 'agGroupCellRenderer',
+    cellRendererComp: 'agGroupCellRenderer',
   },
   {
     headerName: 'Year',
     minWidth: 200,
     showRowGroup: 'year',
-    cellRenderer: 'agGroupCellRenderer',
+    cellRendererComp: 'agGroupCellRenderer',
   },
   // these are the two columns we use to group by. we also hide them, so there
   // is no duplication with the values above
@@ -41,8 +41,8 @@ const gridOptions: GridOptions = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

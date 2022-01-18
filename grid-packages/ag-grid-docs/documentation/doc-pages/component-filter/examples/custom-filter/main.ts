@@ -1,17 +1,16 @@
-import { ColDef, GridOptions } from '@ag-grid-community/core'
-
-declare var PersonFilter: any
-declare var YearFilter: any
+import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { PersonFilter } from './personFilter_typescript'
+import { YearFilter } from './yearFilter_typescript'
 
 const columnDefs: ColDef[] = [
-  { field: 'athlete', minWidth: 150, filter: 'personFilter' },
-  { field: 'age', filter: 'agNumberColumnFilter' },
+  { field: 'athlete', minWidth: 150, filterComp: PersonFilter },
+  { field: 'age', filterComp: 'agNumberColumnFilter' },
   { field: 'country', minWidth: 150 },
-  { field: 'year', filter: 'yearFilter' },
+  { field: 'year', filterComp: YearFilter },
   {
     field: 'date',
     minWidth: 130,
-    filter: 'agDateColumnFilter',
+    filterComp: 'agDateColumnFilter',
     filterParams: {
       comparator: function (
         filterLocalDateAtMidnight: Date,
@@ -40,10 +39,10 @@ const columnDefs: ColDef[] = [
     },
   },
   { field: 'sport' },
-  { field: 'gold', filter: 'agNumberColumnFilter' },
-  { field: 'silver', filter: 'agNumberColumnFilter' },
-  { field: 'bronze', filter: 'agNumberColumnFilter' },
-  { field: 'total', filter: 'agNumberColumnFilter' },
+  { field: 'gold', filterComp: 'agNumberColumnFilter' },
+  { field: 'silver', filterComp: 'agNumberColumnFilter' },
+  { field: 'bronze', filterComp: 'agNumberColumnFilter' },
+  { field: 'total', filterComp: 'agNumberColumnFilter' },
 ]
 
 const gridOptions: GridOptions = {
@@ -55,18 +54,14 @@ const gridOptions: GridOptions = {
     filter: true,
     resizable: true,
   },
-  components: {
-    personFilter: PersonFilter,
-    yearFilter: YearFilter,
-  },
   columnDefs: columnDefs,
   rowData: null,
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

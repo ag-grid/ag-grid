@@ -1,4 +1,4 @@
-import { GridApi, GridOptions, RowNode, ValueParserParams } from '@ag-grid-community/core'
+import { Grid, GridApi, GridOptions, RowNode, ValueParserParams } from '@ag-grid-community/core'
 
 var rowIdCounter = 0
 var callCount = 0
@@ -34,12 +34,12 @@ const gridOptions: GridOptions = {
       editable: true,
       aggFunc: 'sum',
       cellClass: 'number-cell',
-      cellRenderer: 'agAnimateShowChangeCellRenderer',
-      filter: 'agNumberColumnFilter',
+      cellRendererComp: 'agAnimateShowChangeCellRenderer',
+      filterComp: 'agNumberColumnFilter',
       valueParser: numberValueParser,
     },
     totalColumn: {
-      cellRenderer: 'agAnimateShowChangeCellRenderer',
+      cellRendererComp: 'agAnimateShowChangeCellRenderer',
       cellClass: 'number-cell',
     },
   },
@@ -223,6 +223,6 @@ function changeGroupUsingTransaction() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 })

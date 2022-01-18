@@ -1,4 +1,4 @@
-import { GridOptions, RowDragCallbackParams, RowDragEndEvent } from '@ag-grid-community/core'
+import { Grid, GridOptions, RowDragCallbackParams, RowDragEndEvent } from '@ag-grid-community/core'
 
 var rowDrag = function (params: RowDragCallbackParams) {
   // only rows that are NOT groups should be draggable
@@ -58,6 +58,6 @@ function onRowDragMove(event: RowDragEndEvent) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 })

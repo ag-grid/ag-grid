@@ -1,4 +1,4 @@
-import { GridOptions, ValueFormatterParams } from '@ag-grid-community/core'
+import { Grid, GridOptions, ValueFormatterParams } from '@ag-grid-community/core'
 
 declare function createNewRowData(category: string): any;
 
@@ -29,7 +29,7 @@ const gridOptions: GridOptions = {
     minWidth: 250,
     field: 'model',
     rowGroupIndex: 1,
-    cellRenderer: 'agGroupCellRenderer',
+    cellRendererComp: 'agGroupCellRenderer',
     cellRendererParams: {
       checkbox: true,
     },
@@ -93,6 +93,6 @@ function onRemoveSelected() {
 // wait for the document to be loaded, otherwise
 // AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function () {
-  var eGridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(eGridDiv, gridOptions)
+  var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(eGridDiv, gridOptions)
 })

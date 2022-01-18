@@ -1,4 +1,4 @@
-import { ColDef, GridOptions, GridReadyEvent } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, GridReadyEvent } from '@ag-grid-community/core'
 
 const columnDefs: ColDef[] = [
   { checkboxSelection: true, field: 'athlete', minWidth: 200 },
@@ -35,8 +35,8 @@ function onBtExport() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
   fetch('https://www.ag-grid.com/example-assets/small-olympic-winners.json')
     .then(response => response.json())
     .then(data =>

@@ -1,5 +1,5 @@
 import {
-  FirstDataRenderedEvent,
+  FirstDataRenderedEvent, Grid,
   GridOptions,
   IFiltersToolPanel,
   ISetFilterParams,
@@ -34,14 +34,14 @@ const gridOptions: GridOptions = {
       colId: 'array',
       headerName: 'Values Array',
       field: 'animal',
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
       filterParams: arrayFilterParams,
     },
     {
       colId: 'callback',
       headerName: 'Values Callback',
       field: 'animal',
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
       filterParams: callbackFilterParams,
     },
   ],
@@ -56,7 +56,7 @@ const gridOptions: GridOptions = {
 }
 
 function onFirstDataRendered(params: FirstDataRenderedEvent) {
-  ;((params.api.getToolPanelInstance(
+  ; ((params.api.getToolPanelInstance(
     'filters'
   ) as any) as IFiltersToolPanel).expandFilters()
 }
@@ -89,6 +89,6 @@ function useList2() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 })

@@ -41,11 +41,15 @@ export class AgGridColumn {
 
     // inputs - pretty much most of ColDef, with the exception of template, templateUrl and internal only properties
     // @START@
+    @Input() public filterComp: any;
     @Input() public filterFramework: any;
     @Input() public filterParams: any;
     @Input() public floatingFilterComponent: any;
     @Input() public floatingFilterComponentParams: any;
     @Input() public floatingFilterComponentFramework: any;
+    @Input() public floatingFilterComp: any;
+    @Input() public floatingFilterCompParams: any;
+    @Input() public floatingFilterFramework: any;
     @Input() public filter: any;
     /** The name to render in the column header. If not specified and field is specified, the field name will be used as the header name.     */
     @Input() public headerName: string | undefined;

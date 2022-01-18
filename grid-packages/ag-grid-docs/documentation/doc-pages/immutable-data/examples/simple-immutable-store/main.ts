@@ -1,4 +1,4 @@
-import { ColumnApi, GridOptions } from '@ag-grid-community/core'
+import { Grid, ColumnApi, GridOptions } from '@ag-grid-community/core'
 
 function getInitialData() {
   var data = []
@@ -168,7 +168,7 @@ const gridOptions: GridOptions = {
   rowSelection: 'multiple',
   autoGroupColumnDef: {
     headerName: 'Symbol',
-    cellRenderer: 'agGroupCellRenderer',
+    cellRendererComp: 'agGroupCellRenderer',
     field: 'symbol',
   },
   statusBar: {
@@ -189,6 +189,6 @@ const gridOptions: GridOptions = {
 
 // after page is loaded, create the grid.
 document.addEventListener('DOMContentLoaded', function () {
-  var eGridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(eGridDiv, gridOptions)
+  var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(eGridDiv, gridOptions)
 })

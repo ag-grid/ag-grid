@@ -3,7 +3,38 @@ import {convertTemplate, getImport, toAssignment, toConst, toInput, toMember, to
 import {templatePlaceholder} from "./grid-vanilla-src-parser";
 import * as JSON5 from "json5";
 
-const GRID_WIDE_COMPONENTS = ['dateComponent', 'loadingCellRenderer', 'loadingOverlayComponent', 'noRowsOverlayComponent'];
+const compToFramework = {
+    cellRendererComp: 'cellRendererFramework',
+    cellEditorComp: 'cellEditorFramework',
+    filterComp: 'filterFramework',
+    floatingFilterComp: 'floatingFilterFramework',
+    headerComp: 'headerComponentFramework',
+    headerGroupComp: 'headerGroupComponentFramework',
+    tooltipComp: 'tooltipComponentFramework',
+    groupRowCellComp: 'groupRowRendererFramework',
+    innerCellComp: 'groupRowInnerRendererFramework',
+    detailRowCellComp: 'detailCellRendererFramework',
+    fullWidthCellComp: 'fullWidthCellRendererFramework',
+    loadingRowCellComp: 'loadingCellRendererFramework',
+    loadingOverlayComp: 'loadingOverlayComponentFramework',
+    noRowsOverlayComp: 'noRowsOverlayComponentFramework',
+    dateComp: 'agDateInput',
+    statusPanelComp: 'statusPanelFramework',
+    toolPanelComp: 'toolPanelFramework'
+}
+
+const GRID_WIDE_COMPONENTS = [
+    'fullWidthCellComp',
+    'dateComponent',
+    'dateComp',
+    'loadingCellRenderer',
+    'loadingOverlayComponent',
+    'noRowsOverlayComponent',
+    'loadingRowCellComp',
+    'loadingOverlayComp',
+    'noRowsOverlayComp',
+    'detailRowCellComp',
+];
 
 const GRID_COMPONENTS = [
     'detailCellRendererFramework',
@@ -22,7 +53,24 @@ const GRID_COMPONENTS = [
     'floatingFilterComponent',
     'headerComponent',
     'headerGroupComponent',
-    'tooltipComponent'
+    'tooltipComponent',
+    'cellRendererComp',
+    'cellEditorComp',
+    'filterComp',
+    'floatingFilterComp',
+    'headerComp',
+    'headerGroupComp',
+    'tooltipComp',
+    'groupRowCellComp',
+    'innerCellComp',
+    'detailRowCellComp',
+    'fullWidthCellComp',
+    'loadingRowCellComp',
+    'loadingOverlayComp',
+    'noRowsOverlayComp',
+    'dateComp',
+    'statusPanelComp',
+    'toolPanelComp'
 ];
 
 const PARAMS_PROPERTIES = [
@@ -103,15 +151,15 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
             imports.push("import { AllModules } from '@ag-grid-enterprise/all-modules';");
             bindings.gridSuppliedModules = 'AllModules';
         } else {
-            imports.push("import { AllCommunityModules } from '@ag-grid-community/all-modules';");
-            bindings.gridSuppliedModules = 'AllCommunityModules';
+            imports.push("import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';");
+            bindings.gridSuppliedModules = '[ClientSideRowModelModule]';
         }
 
-        imports.push("import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';");
+        imports.push("import '@ag-grid-community/core/dist/styles/ag-grid.css';");
 
         // to account for the (rare) example that has more than one class...just default to alpine if it does
         const theme = gridSettings.theme || 'ag-theme-alpine';
-        imports.push(`import '@ag-grid-community/all-modules/dist/styles/${theme}.css';`);
+        imports.push(`import '@ag-grid-community/core/dist/styles/${theme}.css';`);
     }
 
     if (componentFileNames) {
@@ -154,84 +202,82 @@ function getImports(bindings: any, componentFileNames: string[], importType: Imp
     }
 }
 
-function getPropertyBindings(bindings: any, componentFileNames: string[], importType: ImportType): [string[], string[], string[], string[]] {
+function getPropertyBindings(bindings: any, componentFileNames: string[], importType: ImportType, vueComponents: any): [string[], string[], string[]] {
     const propertyAssignments = [];
     const propertyVars = [];
     const propertyAttributes = [];
 
     bindings.properties
-        .filter(
-            property => property.name !== 'onGridReady' &&
-                property.name !== 'columnDefs'
+        .filter(property =>
+            property.name !== 'onGridReady' &&
+            property.name !== 'columnDefs'
         )
         .forEach(property => {
-                if (property.name === 'sideBar') {
-                    const jsonSidBar = JSON5.parse(property.value);
-                    if (jsonSidBar.toolPanels) {
-                        jsonSidBar.toolPanels.forEach(panel => {
-                            if (typeof panel.toolPanel === 'string' && bindings.components.some(component => component.name === panel.toolPanel)) {
-                                panel['toolPanelFramework'] = panel.toolPanel;
-                                delete panel['toolPanel']
+            if (bindings.vuePropertyBindings[property.name]) {
+                const parsedObj = JSON5.parse(bindings.vuePropertyBindings[property.name]);
+                const panelArrayName = parsedObj['toolPanels'] ? 'toolPanels' : 'statusPanels';
+                if (parsedObj[panelArrayName]) {
+                    parsedObj[panelArrayName].forEach(panel => {
+                        Object.keys(panel).forEach(panelProperty => {
+                            if (!panelProperty.startsWith('ag') && compToFramework[panelProperty] && typeof panel[panelProperty] === 'string') {
+                                const parsedValue = panel[panelProperty].replace('AG_LITERAL_', '')
+                                if (isExternalVueFile(componentFileNames, parsedValue)) {
+                                    panel[compToFramework[panelProperty]] = parsedValue;
+                                    delete panel[panelProperty];
+
+                                    if (!vueComponents.includes(parsedValue)) {
+                                        vueComponents.push(parsedValue)
+                                    }
+                                }
                             }
-                        });
-                        property.value = JSON.stringify(jsonSidBar);
-                    }
+                        })
+                    });
+                    property.value = JSON.stringify(parsedObj);
+                }
 
-                    propertyAttributes.push(toInput(property));
-                    propertyVars.push(toMember(property));
-                    propertyAssignments.push(toAssignment(property));
-                } else if (property.name === 'statusBar') {
-                    const jsonStatusBar = JSON5.parse(property.value);
-                    if (jsonStatusBar.statusPanels) {
-                        jsonStatusBar.statusPanels.forEach(panel => {
-                            if (typeof panel.statusPanel === 'string' && bindings.components.some(component => component.name === panel.statusPanel)) {
-                                panel['statusPanelFramework'] = panel.statusPanel;
-                                delete panel['statusPanel']
-                            }
-                        });
-                        property.value = JSON.stringify(jsonStatusBar);
-                    }
+                propertyAttributes.push(toInput(property));
+                propertyVars.push(toMember(property));
+                propertyAssignments.push(toAssignment(property));
+            } else if (componentFileNames.length > 0 && property.name === 'components') {
+                // we use bindings.components for vue examples (and not frameworkComponents), except for agDateInput, agColumnHeader, etc which we still need
+                // frameworkComponents for
+                if (bindings.components) {
+                    const userAgComponents = OVERRIDABLE_AG_COMPONENTS.filter(agComponentName => bindings.components.some(component => component.name === agComponentName))
+                        .map(agComponentName => `${agComponentName}: '${agComponentName}'`);
 
-                    propertyAttributes.push(toInput(property));
-                    propertyVars.push(toMember(property));
-                    propertyAssignments.push(toAssignment(property));
-                } else if (componentFileNames.length > 0 && property.name === 'components') {
-                    // we use bindings.components for vue examples (and not frameworkComponents), except for agDateInput, agColumnHeader etc, which we still need
-                    // frameworkComponents for
-                    if (bindings.components) {
-                        const userAgComponents = OVERRIDABLE_AG_COMPONENTS.filter(agComponentName => bindings.components.some(component => component.name === agComponentName))
-                            .map(agComponentName => `${agComponentName}: '${agComponentName}'`);
-
-                        if (userAgComponents.length > 0) {
-                            propertyAttributes.push(':frameworkComponents="frameworkComponents"');
-                            propertyAssignments.push(`this.frameworkComponents = { ${userAgComponents.join('\n,')} } `)
-                        }
-                    }
-                } else if (property.value === 'true' || property.value === 'false') {
-                    propertyAttributes.push(toConst(property));
-                } else if (property.value === null || property.value === 'null') {
-                    propertyAttributes.push(toInput(property));
-                } else if (GRID_WIDE_COMPONENTS.indexOf(property.name) !== -1) {
-                    propertyAttributes.push(`:${property.name}Framework="${property.name}Framework"`);
-                    propertyVars.push(`${property.name}Framework: ${property.value}`);
-                } else {
-                    // for when binding a method
-                    // see javascript-grid-keyboard-navigation for an example
-                    // tabToNextCell needs to be bound to the react component
-                    if (!isInstanceMethod(bindings.instanceMethods, property)) {
-                        propertyAttributes.push(toInput(property));
-
-                        if (property.name !== 'defaultColDef') {
-                            propertyVars.push(toMember(property));
-                        }
-                    }
-
-                    if (property.name !== 'defaultColDef') {
-                        propertyAssignments.push(toAssignment(property));
+                    if (userAgComponents.length > 0) {
+                        propertyAttributes.push(':frameworkComponents="frameworkComponents"');
+                        propertyAssignments.push(`this.frameworkComponents = { ${userAgComponents.join('\n,')} } `)
                     }
                 }
+            } else if (property.value === 'true' || property.value === 'false') {
+                propertyAttributes.push(toConst(property));
+            } else if (property.value === null || property.value === 'null') {
+                propertyAttributes.push(toInput(property));
+            } else if (GRID_WIDE_COMPONENTS.indexOf(property.name) !== -1 && compToFramework[property.name]) {
+                if (!vueComponents.includes(property.value)) {
+                    vueComponents.push(property.value)
+                }
+
+                propertyAttributes.push(`:${compToFramework[property.name]}="${compToFramework[property.name]}"`);
+                propertyVars.push(`${compToFramework[property.name]}: '${property.value}'`);
+            } else {
+                // for when binding a method
+                // see javascript-grid-keyboard-navigation for an example
+                // tabToNextCell needs to be bound to the react component
+                if (!isInstanceMethod(bindings.instanceMethods, property)) {
+                    propertyAttributes.push(toInput(property));
+
+                    if (property.name !== 'defaultColDef') {
+                        propertyVars.push(toMember(property));
+                    }
+                }
+
+                if (property.name !== 'defaultColDef') {
+                    propertyAssignments.push(toAssignment(property));
+                }
             }
-        );
+        });
 
     if (importType === 'modules') {
         propertyAttributes.push(':modules="modules"');
@@ -248,9 +294,7 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
         }
     }
 
-    const vueComponents = bindings.components.map(component => `${component.name}:${component.value}`);
-
-    return [propertyAssignments, propertyVars, propertyAttributes, vueComponents];
+    return [propertyAssignments, propertyVars, propertyAttributes];
 }
 
 function getTemplate(bindings: any, attributes: string[]): string {
@@ -318,7 +362,11 @@ function isParamsProperty(property) {
 
 }
 
-function convertColumnDefs(rawColumnDefs, userComponentNames): string[] {
+function isExternalVueFile(componentFileNames, component) {
+    return componentFileNames.length > 0 && componentFileNames.some(fileName => fileName.toUpperCase().includes(component.toUpperCase()));
+}
+
+function convertColumnDefs(rawColumnDefs, userComponentNames, bindings, componentFileNames, vueComponents): string[] {
     const columnDefs = [];
     const parseFunction = value => value.replace('AG_FUNCTION_', '').replace(/^function\s*\((.*?)\)/, '($1) => ');
 
@@ -336,16 +384,58 @@ function convertColumnDefs(rawColumnDefs, userComponentNames): string[] {
 
         Object.keys(rawColumnDef).forEach(columnProperty => {
             if (columnProperty === 'children') {
-                children = convertColumnDefs(rawColumnDef[columnProperty], userComponentNames);
+                children = convertColumnDefs(rawColumnDef[columnProperty], userComponentNames, bindings, componentFileNames, vueComponents);
             } else {
                 let value = rawColumnDef[columnProperty];
 
-                if (isParamsProperty(columnProperty) && value.cellRenderer && !value.cellRenderer.includes("AG_LITERAL_")) {
-                    Object.defineProperty(value, 'cellRendererFramework', Object.getOwnPropertyDescriptor(value, 'cellRenderer'));
-                    delete value['cellRenderer'];
+                if (isParamsProperty(columnProperty)) {
+                    if (value.cellRendererComp) {
+                        const descriptor = Object.getOwnPropertyDescriptor(value, 'cellRendererComp');
+                        descriptor.value = descriptor.value.replace('AG_LITERAL_', '')
+                        if(isExternalVueFile(componentFileNames, descriptor.value)) {
+                            Object.defineProperty(value, 'cellRendererFramework', descriptor);
+                            delete value['cellRendererComp'];
+                        }
+                    }
+                    if (value.cellEditorComp) {
+                        const descriptor = Object.getOwnPropertyDescriptor(value, 'cellEditorComp');
+                        descriptor.value = descriptor.value.replace('AG_LITERAL_', '')
+                        if(isExternalVueFile(componentFileNames, descriptor.value)) {
+                            Object.defineProperty(value, 'cellEditorFramework', descriptor);
+                            delete value['cellEditorComp'];
+                        }
+                    }
+                }
+                if (isParamsProperty(columnProperty) && value.filters) {
+                    value.filters.forEach(filter => {
+                        Object.keys(filter).forEach(filterProperty => {
+                            if (compToFramework[filterProperty] && !filter[filterProperty].startsWith("ag")) {
+                                const descriptor = Object.getOwnPropertyDescriptor(filter, filterProperty);
+                                descriptor.value = descriptor.value.replace('AG_LITERAL_', '')
+                                if(isExternalVueFile(componentFileNames, descriptor.value)) {
+                                    if (!bindings.components.includes(descriptor.value) && !vueComponents.includes(descriptor.value)) {
+                                        vueComponents.push(descriptor.value)
+                                    }
+                                    Object.defineProperty(filter, compToFramework[filterProperty], descriptor);
+                                    delete filter[filterProperty];
+                                }
+                            }
+                        })
+                    })
                 }
 
                 if (typeof value === "string") {
+                    if (!value.startsWith('ag') && compToFramework[columnProperty]) {
+                        const parsedValue = value.replace('AG_LITERAL_', '');
+                        if(isExternalVueFile(componentFileNames, parsedValue)) {
+                            if (!bindings.components.includes(parsedValue) && !vueComponents.includes(parsedValue)) {
+                                vueComponents.push(parsedValue)
+                            }
+                            columnProperties.push(`${compToFramework[columnProperty]}:'${parsedValue}'`);
+                            return;
+                        }
+                    }
+
                     if (value.startsWith('AG_LITERAL_')) {
                         // values starting with AG_LITERAL_ are actually function references
                         // grid-vanilla-src-parser converts the original values to a string that we can convert back to the function reference here
@@ -381,26 +471,35 @@ function convertColumnDefs(rawColumnDefs, userComponentNames): string[] {
     return columnDefs;
 }
 
-function convertDefaultColDef(defaultColDef): string {
-    return GRID_COMPONENTS.reduce((acc, componentName) => {
-        if (componentName === 'filter') {
-            if (defaultColDef.indexOf('filter: true') === -1 && defaultColDef.indexOf('filter: \'ag\'') === -1) {
-                return acc.replace(/componentName\b/g, `${componentName}Framework`);
-            }
-        }
+function convertDefaultColDef(defaultColDef, vueComponents): string {
+    const result = [];
+    const perLine = defaultColDef.split('\n');
+    perLine.forEach(line => {
+        if (line.includes('filter:') && line.indexOf('filter: true') === -1 && line.indexOf('filter: \'ag\'') === -1) {
+            result.push(line.replace('filter', `${line}Framework`));
+        } else if (line.includes('tooltipComp')) {
+            const component = line.match(/.*:\s*(.*),/) ? line.match(/.*:\s*(.*),/)[1] : line.match(/.*:\s*(.*)$/)[1]
+            line = line.replace(component, `'${component}'`)
+            line = line.replace('tooltipComp', `tooltipComponentFramework`);
+            result.push(line);
 
-        return acc;
-    }, defaultColDef)
+            if(!vueComponents.includes(component)) {
+                vueComponents.push(component)
+            }
+        } else {
+            result.push(line);
+        }
+    })
+
+    return result.join('\n');
 }
 
-const getColumnDefs = (bindings: any, utilFunctions: any[]) => {
-    const columnDefs = bindings.parsedColDefs ? convertColumnDefs(JSON5.parse(bindings.parsedColDefs), bindings.components.map(component => component.name)) : null;
+const getColumnDefs = (bindings: any, utilFunctions: any[], componentFileNames, vueComponents) => {
+    const columnDefs = bindings.parsedColDefs ? convertColumnDefs(JSON5.parse(bindings.parsedColDefs), bindings.components.map(component => component.name), bindings, componentFileNames, vueComponents) : null;
     if (!columnDefs) {
         const columnDefProperty = bindings.properties.filter(property => property.name === 'columnDefs');
-        if (columnDefProperty && columnDefProperty.length === 1) {
-            if (columnDefProperty && columnDefProperty.length === 1 && columnDefProperty[0].value) {
-                return columnDefProperty[0].value;
-            }
+        if (columnDefProperty && columnDefProperty.length === 1 && columnDefProperty[0].value) {
+            return columnDefProperty[0].value;
         }
 
         return [];
@@ -410,19 +509,23 @@ const getColumnDefs = (bindings: any, utilFunctions: any[]) => {
 }
 
 export function vanillaToVue3(bindings: any, componentFileNames: string[]): (importType: ImportType) => string {
+    const vueComponents = bindings.components.map(component => `${component.name}:${component.value}`);
+
     const onGridReady = getOnGridReadyCode(bindings);
     const eventAttributes = bindings.eventHandlers.filter(event => event.name !== 'onGridReady').map(toOutput);
     const [eventHandlers, externalEventHandlers, instanceMethods, utilFunctions] = getAllMethods(bindings);
-    const columnDefs = getColumnDefs(bindings, utilFunctions);
-    const defaultColDef = bindings.defaultColDef ? convertDefaultColDef(bindings.defaultColDef) : null;
+    const columnDefs = getColumnDefs(bindings, utilFunctions, componentFileNames, vueComponents);
+    const defaultColDef = bindings.defaultColDef ? convertDefaultColDef(bindings.defaultColDef, vueComponents) : null;
 
     return importType => {
         const imports = getImports(bindings, componentFileNames, importType);
-        const [propertyAssignments, propertyVars, propertyAttributes, vueComponents] = getPropertyBindings(bindings, componentFileNames, importType);
+        const [propertyAssignments, propertyVars, propertyAttributes] = getPropertyBindings(bindings, componentFileNames, importType, vueComponents);
         const template = getTemplate(bindings, propertyAttributes.concat(eventAttributes));
 
         return `
 ${imports.join('\n')}
+
+${bindings.classes.join('\n')}
 
 const VueExample = {
     template: \`

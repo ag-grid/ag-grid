@@ -5,7 +5,7 @@ import 'ag-grid-community/dist/styles/ag-grid.css';
 import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 
 const countryCellRenderer = function countryCellRenderer(params) {
-    return params.value.name + ' (' + params.value.code + ')';
+    return `${params.value.name} (${params.value.code})`;
 }
 
 const countryKeyCreator = function countryKeyCreator(params) {

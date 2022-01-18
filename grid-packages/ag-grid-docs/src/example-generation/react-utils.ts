@@ -1,4 +1,4 @@
-import {recognizedDomEvents} from './parser-utils';
+import {getFunctionName, recognizedDomEvents} from './parser-utils';
 import * as JSON5 from "json5";
 
 const toTitleCase = (value: string) => value[0].toUpperCase() + value.slice(1);
@@ -83,33 +83,6 @@ export function convertFunctionalTemplate(template: string) {
     return convertStyles(template);
 }
 
-export function extractDomEventCallbacks(template: string) {
-    let callbacks = new Set();
-
-    // React events are case sensitive, so need to ensure casing is correct
-    const caseSensitiveEvents =
-        {
-            dragover: 'onDragOver',
-            dragstart: 'onDragStart',
-        };
-
-    recognizedDomEvents.forEach(event => {
-        const jsEvent = caseSensitiveEvents[event] || `on${toTitleCase(event)}`;
-        const matcher = new RegExp(`on${event}="(\\w+)\\((.*?)\\)"`);
-
-        let meta;
-        do {
-            meta = matcher.exec(template);
-            if (meta) {
-                // 0 original call, 1 function name, 2 arguments
-                callbacks.add(meta[1])
-            }
-        } while (meta)
-    });
-
-    return callbacks;
-}
-
 export const getImport = (filename: string) => `import ${toTitleCase(filename.split('.')[0])} from './${filename}';`;
 
 export const getValueType = (value: string) => {
@@ -122,4 +95,7 @@ export const getValueType = (value: string) => {
     return type;
 };
 
-export const convertFunctionToConstCallback = (code: string) => `${code.replace(/^function\s+([^\(\s]+)\s*\(([^\)]*)\)/, 'const $1 = useCallback(($2) =>')}, [])`;
+export const convertFunctionToConstCallback = (code: string, callbackDependencies: {}) => {
+    const functionName = getFunctionName(code);
+    return `${code.replace(/function\s+([^\(\s]+)\s*\(([^\)]*)\)/, 'const $1 = useCallback(($2) =>')}, [${callbackDependencies[functionName]}])`;
+}

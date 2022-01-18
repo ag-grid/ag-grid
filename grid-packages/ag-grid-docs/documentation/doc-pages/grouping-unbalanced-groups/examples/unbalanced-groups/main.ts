@@ -1,19 +1,19 @@
-import { GridOptions, ICellRendererParams, ValueParserParams } from '@ag-grid-community/core'
+import { Grid, GridOptions, ICellRendererParams, ValueParserParams } from '@ag-grid-community/core'
 
 
 const gridOptions: GridOptions = {
   columnDefs: [
-    { field: 'city', type: 'dimension', cellRenderer: 'cityCellRenderer' },
+    { field: 'city', type: 'dimension', cellRendererComp: cityCellRenderer },
     {
       field: 'country',
       type: 'dimension',
-      cellRenderer: 'countryCellRenderer',
+      cellRendererComp: countryCellRenderer,
       minWidth: 200,
     },
     {
       field: 'state',
       type: 'dimension',
-      cellRenderer: 'stateCellRenderer',
+      cellRendererComp: stateCellRenderer,
       rowGroup: true,
     },
     { field: 'val1', type: 'numberValue' },
@@ -39,11 +39,6 @@ const gridOptions: GridOptions = {
       enableRowGroup: true,
       enablePivot: true,
     },
-  },
-  components: {
-    cityCellRenderer: cityCellRenderer,
-    countryCellRenderer: countryCellRenderer,
-    stateCellRenderer: stateCellRenderer,
   },
   rowData: getData(),
   groupDefaultExpanded: -1,
@@ -95,6 +90,6 @@ function cityCellRenderer(params: ICellRendererParams) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  const gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 })

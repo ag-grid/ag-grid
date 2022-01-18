@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { AgGridReact } from '@ag-grid-community/react';
-import { AllCommunityModules } from '@ag-grid-community/all-modules';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
+import "@ag-grid-community/core/dist/styles/ag-grid.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
 const columns = [
     { field: "id", rowDrag: true },
@@ -47,7 +47,7 @@ export default class extends Component {
     }
 
     componentDidMount() {
-        this.setState({ 
+        this.setState({
             leftRowData: this.createRowBlock(2),
             rightRowData: this.createRowBlock(2)
         });
@@ -73,21 +73,21 @@ export default class extends Component {
     addRecordToGrid(side, data) {
         // if data missing or data has no it, do nothing
         if (!data || data.id == null) { return; }
-    
+
         const api = side === 'left' ? this.state.leftApi : this.state.rightApi;
         // do nothing if row is already in the grid, otherwise we would have duplicates
         const rowAlreadyInGrid = !!api.getRowNode(data.id);
         let transaction;
-    
+
         if (rowAlreadyInGrid) {
             console.log('not adding row to avoid duplicates in the grid');
             return;
         }
-    
+
         transaction = {
             add: [data]
         };
-    
+
         api.applyTransaction(transaction);
     }
 
@@ -96,21 +96,21 @@ export default class extends Component {
             buttonColor = button.getAttribute('data-color'),
             side = button.getAttribute('data-side'),
             data = this.createDataItem(buttonColor);
-    
+
         this.addRecordToGrid(side, data);
     }
 
     binDrop(data) {
         // if data missing or data has no id, do nothing
         if (!data || data.id == null) { return; }
-    
+
         var transaction = {
             remove: [data]
         };
-    
+
         [this.state.leftApi, this.state.rightApi].forEach((api) => {
             var rowsInGrid = !!api.getRowNode(data.id);
-    
+
             if (rowsInGrid) {
                 api.applyTransaction(transaction);
             }
@@ -147,7 +147,7 @@ export default class extends Component {
     addGridDropZone = (side, api) => {
         const dropApi = (side === 'Left') ? this.state.rightApi : this.state.leftApi;
         const dropZone = dropApi.getRowDropZoneParams();
-    
+
         api.addRowDropZone(dropZone);
     }
 
@@ -165,7 +165,7 @@ export default class extends Component {
         if (side === 'Left') {
             this.setState({ leftApi: api });
         } else {
-            this.setState({ rightApi: api});
+            this.setState({ rightApi: api });
         }
     }
 
@@ -176,7 +176,7 @@ export default class extends Component {
             data-color={color}
             data-side={side.toLowerCase()}
             onClick={this.onFactoryButtonClick.bind(this)}
-            >
+        >
             <i className="far fa-plus-square"></i>{`Add ${color}`}
         </button>
     )
@@ -186,18 +186,18 @@ export default class extends Component {
             <div className="toolbar">
                 {['Red', 'Green', 'Blue'].map(color => this.getAddRecordButton(side, color))}
             </div>
-            <div style={{height: '100%'}} className="inner-col" ref={this[`e${side}Grid`]}>
+            <div style={{ height: '100%' }} className="inner-col" ref={this[`e${side}Grid`]}>
                 <AgGridReact
-                    defaultColDef={{...defaultColDef}}
+                    defaultColDef={{ ...defaultColDef }}
                     getRowNodeId={this.getRowNodeId}
                     rowClassRules={rowClassRules}
                     rowDragManaged={true}
                     suppressMoveWhenRowDragging={true}
                     animateRows={true}
-                    rowData={this.state[side === 'Left' ? 'leftRowData': 'rightRowData']}
+                    rowData={this.state[side === 'Left' ? 'leftRowData' : 'rightRowData']}
                     columnDefs={[...columns]}
                     onGridReady={this.onGridReady.bind(this, side)}
-                    modules={AllCommunityModules}
+                    modules={[ClientSideRowModelModule]}
                 />
             </div>
         </div>
@@ -205,7 +205,7 @@ export default class extends Component {
 
     render = () => (
         <div className="example-wrapper ag-theme-alpine">
-            { this.getInnerGridCol('Left') }
+            {this.getInnerGridCol('Left')}
             <div className="inner-col vertical-toolbar">
                 <span className="bin" ref={this.eBin}>
                     <i className="far fa-trash-alt fa-3x" ref={this.eBinIcon}></i>

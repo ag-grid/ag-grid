@@ -1,4 +1,4 @@
-import { ColDef, GridOptions, ValueFormatterParams, ValueGetterParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, ValueFormatterParams, ValueGetterParams } from '@ag-grid-community/core'
 
 var callCount = 1
 
@@ -11,7 +11,7 @@ const columnDefs: ColDef[] = [
   {
     headerName: 'Total',
     colId: 'total',
-    cellClass: 'number-cell total-col',
+    cellClass: ['number-cell', 'total-col'],
     aggFunc: 'sum',
     valueFormatter: formatNumber,
     valueGetter: function (params: ValueGetterParams) {
@@ -88,8 +88,8 @@ function createGrid(valueCacheOn: boolean) {
   gridOptions.valueCache = valueCacheOn
 
   // then similar to all the other examples, create the grid
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 }
 
 // setup the grid after the page has finished loading

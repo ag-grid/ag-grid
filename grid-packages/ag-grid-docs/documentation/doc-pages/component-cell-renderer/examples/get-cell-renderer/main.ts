@@ -1,21 +1,18 @@
-import { ColDef, GridOptions } from '@ag-grid-community/core'
-declare var MedalCellRenderer: any
+import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { MedalCellRenderer } from './medalCellRenderer_typescript'
 
 const columnDefs: ColDef[] = [
   { field: 'athlete', width: 150 },
   { field: 'country', width: 150 },
   { field: 'year', width: 100 },
-  { field: 'gold', width: 100, cellRenderer: 'medalCellRenderer' },
-  { field: 'silver', width: 100, cellRenderer: 'medalCellRenderer' },
-  { field: 'bronze', width: 100, cellRenderer: 'medalCellRenderer' },
+  { field: 'gold', width: 100, cellRendererComp: MedalCellRenderer },
+  { field: 'silver', width: 100, cellRendererComp: MedalCellRenderer },
+  { field: 'bronze', width: 100, cellRendererComp: MedalCellRenderer },
   { field: 'total', width: 100 },
 ]
 
 const gridOptions: GridOptions = {
   columnDefs: columnDefs,
-  components: {
-    medalCellRenderer: MedalCellRenderer,
-  },
   defaultColDef: {
     editable: true,
     sortable: true,
@@ -59,8 +56,8 @@ function onCallAllCells() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

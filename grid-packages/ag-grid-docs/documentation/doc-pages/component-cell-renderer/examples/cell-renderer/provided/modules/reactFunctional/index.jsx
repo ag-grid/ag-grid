@@ -1,11 +1,11 @@
 'use strict'
 
-import React, {useState, useRef} from 'react';
-import {render} from 'react-dom';
-import {AgGridReact} from '@ag-grid-community/react';
-import {AllCommunityModules} from '@ag-grid-community/all-modules';
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
+import React, { useState, useRef } from 'react';
+import { render } from 'react-dom';
+import { AgGridReact } from '@ag-grid-community/react';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import "@ag-grid-community/core/dist/styles/ag-grid.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import DaysFrostRenderer from './daysFrostRenderer.jsx';
 
 /*
@@ -45,10 +45,10 @@ class DeltaIndicator {
 class DaysSunshineRenderer {
     init(params) {
         const daysSunshine = params.value / 24;
-        this.eGui = createImageSpan(daysSunshine, params.rendererImage);    
+        this.eGui = createImageSpan(daysSunshine, params.rendererImage);
     }
     getGui() {
-        return this.eGui;        
+        return this.eGui;
     }
 }
 
@@ -59,7 +59,7 @@ class RainPerTenMmRenderer {
         this.eGui = createImageSpan(rainPerTenMm, params.rendererImage);
     }
     getGui() {
-        return this.eGui;        
+        return this.eGui;
     }
 }
 
@@ -71,7 +71,7 @@ const GridExample = () => {
             headerName: "Month",
             field: "Month",
             width: 75,
-            cellStyle: {color: "darkred"}
+            cellStyle: { color: "darkred" }
         },
         {
             headerName: "Max Temp (\u02DAC)",
@@ -90,21 +90,21 @@ const GridExample = () => {
             field: "Days of air frost (days)",
             width: 233,
             cellRendererComp: DaysFrostRenderer,
-            cellRendererCompParams: {rendererImage: "frost.png"}
+            cellRendererCompParams: { rendererImage: "frost.png" }
         },
         {
             headerName: "Days Sunshine",
             field: "Sunshine (hours)",
             width: 190,
             cellRendererComp: DaysSunshineRenderer,
-            cellRendererCompParams: {rendererImage: "sun.png"}
+            cellRendererCompParams: { rendererImage: "sun.png" }
         },
         {
             headerName: "Rainfall (10mm)",
             field: "Rainfall (mm)",
             width: 180,
             cellRendererComp: RainPerTenMmRenderer,
-            cellRendererCompParams: {rendererImage: "rain.png"}
+            cellRendererCompParams: { rendererImage: "rain.png" }
         }
     ]);
 
@@ -130,11 +130,11 @@ const GridExample = () => {
     }
 
     return (
-        <div style={{width: '100%', height: '100%'}}>
+        <div style={{ width: '100%', height: '100%' }}>
             <div className="example-wrapper">
-                <div style={{"marginBottom": "5px"}}>
+                <div style={{ "marginBottom": "5px" }}>
                     <input type="button" value="Frostier Year"
-                           onClick={() => frostierYear(Math.floor(Math.random() * 2) + 1)}/>
+                        onClick={() => frostierYear(Math.floor(Math.random() * 2) + 1)} />
                 </div>
 
                 <div
@@ -146,7 +146,7 @@ const GridExample = () => {
                     className="ag-theme-alpine">
                     <AgGridReact
                         ref={gridRef}
-                        modules={AllCommunityModules}
+                        modules={[ClientSideRowModelModule]}
                         rowData={rowData}
                         columnDefs={columnDefs}
                         defaultColDef={{

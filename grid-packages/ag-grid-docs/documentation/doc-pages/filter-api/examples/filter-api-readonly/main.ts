@@ -1,4 +1,4 @@
-import { ColDef, GridOptions, ISetFilter } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, ISetFilter } from '@ag-grid-community/core'
 
 declare var dateComparator: any;
 var defaultFilterParams = { readOnly: true }
@@ -7,24 +7,24 @@ const columnDefs: ColDef[] = [
   { field: 'athlete', filter: true, filterParams: defaultFilterParams },
   {
     field: 'age',
-    filter: 'agNumberColumnFilter',
+    filterComp: 'agNumberColumnFilter',
     filterParams: defaultFilterParams,
   },
   {
     field: 'country',
-    filter: 'agSetColumnFilter',
+    filterComp: 'agSetColumnFilter',
     filterParams: defaultFilterParams,
   },
   {
     field: 'year',
     maxWidth: 120,
-    filter: 'agNumberColumnFilter',
+    filterComp: 'agNumberColumnFilter',
     filterParams: defaultFilterParams,
   },
   {
     field: 'date',
     minWidth: 215,
-    filter: 'agDateColumnFilter',
+    filterComp: 'agDateColumnFilter',
     filterParams: {
       readOnly: true,
       comparator: dateComparator,
@@ -34,11 +34,11 @@ const columnDefs: ColDef[] = [
   {
     field: 'sport',
     suppressMenu: true,
-    filter: 'agMultiColumnFilter',
+    filterComp: 'agMultiColumnFilter',
     filterParams: {
       filters: [
-        { filter: 'agTextColumnFilter', filterParams: { readOnly: true } },
-        { filter: 'agSetColumnFilter', filterParams: { readOnly: true } },
+        { filterComp: 'agTextColumnFilter', filterParams: { readOnly: true } },
+        { filterComp: 'agSetColumnFilter', filterParams: { readOnly: true } },
       ],
       readOnly: true,
     },
@@ -261,8 +261,8 @@ function clearSportFilter() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

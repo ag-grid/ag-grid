@@ -1,5 +1,5 @@
-import { CellClassParams, GridApi, GridOptions, RefreshCellsParams, RowDragEndEvent, RowDragLeaveEvent, RowDragMoveEvent, RowNode, ValueFormatterParams } from '@ag-grid-community/core'
-declare function getFileCellRenderer(): any;
+import { Grid, CellClassParams, GridApi, GridOptions, RefreshCellsParams, RowDragEndEvent, RowDragLeaveEvent, RowDragMoveEvent, RowNode, ValueFormatterParams } from '@ag-grid-community/core'
+declare var FileCellRenderer: any;
 
 var valueFormatter = function (params: ValueFormatterParams) {
   return params.value ? params.value + ' MB' : ''
@@ -27,9 +27,6 @@ const gridOptions: GridOptions = {
     flex: 1,
     resizable: true,
   },
-  components: {
-    fileCellRenderer: getFileCellRenderer(),
-  },
   rowData: getData(),
   treeData: true,
   animateRows: true,
@@ -46,7 +43,7 @@ const gridOptions: GridOptions = {
     minWidth: 300,
     cellRendererParams: {
       suppressCount: true,
-      innerRenderer: 'fileCellRenderer',
+      innerCellComp: FileCellRenderer,
     },
     cellClassRules: {
       'hover-over': function (params) {
@@ -195,8 +192,8 @@ function refreshRows(api: GridApi, rowsToRefresh: RowNode[]) {
 // AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function () {
   // lookup the container we want the Grid to use
-  var eGridDiv = document.querySelector('#myGrid')
+  var eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
 
   // create the grid passing in the div to use together with the columns & data we want to use
-  new agGrid.Grid(eGridDiv, gridOptions)
+  new Grid(eGridDiv, gridOptions)
 })

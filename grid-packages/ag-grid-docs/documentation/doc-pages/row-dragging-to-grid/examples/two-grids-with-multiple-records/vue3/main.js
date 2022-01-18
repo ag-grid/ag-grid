@@ -1,7 +1,7 @@
-import {createApp} from 'vue';
-import {AgGridVue} from '@ag-grid-community/vue3';
+import { createApp } from 'vue';
+import { AgGridVue } from '@ag-grid-community/vue3';
 
-import {AllCommunityModules} from '@ag-grid-community/all-modules';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
@@ -73,7 +73,7 @@ const VueExample = {
     },
     data: function () {
         return {
-            modules: AllCommunityModules,
+            modules: [ClientSideRowModelModule],
             leftRowData: null,
             rightRowData: [],
             leftApi: null,
@@ -92,7 +92,7 @@ const VueExample = {
                     rowDrag: true,
                     maxWidth: 50,
                     suppressMenu: true,
-                    rowDragText: function(params, dragItemCount) {
+                    rowDragText: function (params, dragItemCount) {
                         if (dragItemCount > 1) {
                             return dragItemCount + ' athletes';
                         }
@@ -114,7 +114,7 @@ const VueExample = {
                     rowDrag: true,
                     maxWidth: 50,
                     suppressMenu: true,
-                    rowDragText: function(params, dragItemCount) {
+                    rowDragText: function (params, dragItemCount) {
                         if (dragItemCount > 1) {
                             return dragItemCount + ' athletes';
                         }
@@ -129,7 +129,7 @@ const VueExample = {
                     cellRenderer: (params) => {
                         var button = document.createElement('i');
 
-                        button.addEventListener('click', function() {
+                        button.addEventListener('click', function () {
                             params.api.applyTransaction({ remove: [params.node.data] });
                         });
 
@@ -205,10 +205,10 @@ const VueExample = {
 
                     if (moveCheck) {
                         this.leftApi.applyTransaction({
-                            remove: nodes.map(function(node) { return node.data; })
+                            remove: nodes.map(function (node) { return node.data; })
                         });
                     } else if (deselectCheck) {
-                        nodes.forEach(function(node) {
+                        nodes.forEach(function (node) {
                             node.setSelected(false);
                         });
                     }

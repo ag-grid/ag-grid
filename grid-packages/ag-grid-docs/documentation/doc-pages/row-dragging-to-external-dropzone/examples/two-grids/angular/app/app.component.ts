@@ -1,8 +1,8 @@
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColDef, GridApi, GridReadyEvent, RowDropZoneParams } from '@ag-grid-community/core';
+import "@ag-grid-community/core/dist/styles/ag-grid.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import { Component, ViewChild } from '@angular/core';
-import { AllCommunityModules } from '@ag-grid-community/all-modules';
-
-import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
-import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
 
 @Component({
     selector: 'my-app',
@@ -77,13 +77,13 @@ import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
     `
 })
 export class AppComponent {
-    
-    modules = AllCommunityModules;
 
-    leftRowData = [];
-    rightRowData = []
-    leftApi;
-    rightApi;
+    modules = [ClientSideRowModelModule];
+
+    leftRowData: any[] = [];
+    rightRowData: any[] = []
+    leftApi!: GridApi;
+    rightApi!: GridApi;
 
     rowClassRules = {
         "red-row": 'data.color == "Red"',
@@ -91,7 +91,7 @@ export class AppComponent {
         "blue-row": 'data.color == "Blue"'
     }
 
-    defaultColDef = {
+    defaultColDef: ColDef = {
         flex: 1,
         minWidth: 100,
         sortable: true,
@@ -99,29 +99,29 @@ export class AppComponent {
         resizable: true
     };
 
-    columns = [
+    columns: ColDef[] = [
         { field: "id", rowDrag: true },
         { field: "color" },
         { field: "value1" },
         { field: "value2" }
     ];
 
-    
 
-    @ViewChild('eLeftGrid') eLeftGrid;
-    @ViewChild('eRightGrid') eRightGrid;
-    @ViewChild('eBin') eBin;
-    @ViewChild('eBinIcon') eBinIcon;
+
+    @ViewChild('eLeftGrid') eLeftGrid: any;
+    @ViewChild('eRightGrid') eRightGrid: any;
+    @ViewChild('eBin') eBin: any;
+    @ViewChild('eBinIcon') eBinIcon: any;
 
     constructor() {
         this.leftRowData = createLeftRowData();
     }
 
-    getRowNodeId(data) {
+    getRowNodeId(data: any) {
         return data.id;
     }
 
-    onGridReady(params, side) {
+    onGridReady(params: GridReadyEvent, side: string) {
         const api = params.api;
         if (side === 'Left') {
             this.leftApi = api;
@@ -133,55 +133,55 @@ export class AppComponent {
         this.addGridDropZone(side, api);
     }
 
-    addRecordToGrid(side, data) {
+    addRecordToGrid(side: string, data: any) {
         // if data missing or data has no it, do nothing
         if (!data || data.id == null) { return; }
-    
+
         const api = side === 'left' ? this.leftApi : this.rightApi;
         // do nothing if row is already in the grid, otherwise we would have duplicates
         const rowAlreadyInGrid = !!api.getRowNode(data.id);
         let transaction;
-    
+
         if (rowAlreadyInGrid) {
             console.log('not adding row to avoid duplicates in the grid');
             return;
         }
-    
+
         transaction = {
             add: [data]
         };
-    
+
         api.applyTransaction(transaction);
     }
 
-    onFactoryButtonClick(e) {
+    onFactoryButtonClick(e: any) {
         var button = e.currentTarget,
             buttonColor = button.getAttribute('data-color'),
             side = button.getAttribute('data-side'),
             data = createDataItem(buttonColor);
-    
+
         this.addRecordToGrid(side, data);
     }
 
-    binDrop(data) {
+    binDrop(data: any) {
         // if data missing or data has no id, do nothing
         if (!data || data.id == null) { return; }
-    
+
         var transaction = {
             remove: [data]
         };
-    
+
         [this.leftApi, this.rightApi].forEach((api) => {
             var rowsInGrid = !!api.getRowNode(data.id);
-    
+
             if (rowsInGrid) {
                 api.applyTransaction(transaction);
             }
         });
     }
 
-    addBinZone(api) {
-        const dropZone = {
+    addBinZone(api: GridApi) {
+        const dropZone: RowDropZoneParams = {
             getContainer: () => this.eBinIcon.nativeElement,
             onDragEnter: () => {
                 this.eBin.nativeElement.style.color = 'blue';
@@ -201,9 +201,9 @@ export class AppComponent {
         api.addRowDropZone(dropZone);
     }
 
-    addGridDropZone(side, api) {
+    addGridDropZone(side: string, api: GridApi) {
         const dropSide = side === 'Left' ? 'Right' : 'Left';
-        const dropZone = {
+        const dropZone: RowDropZoneParams = {
             getContainer: () => dropSide === 'Left' ? this.eLeftGrid.nativeElement : this.eRightGrid.nativeElement,
             onDragStop: (dragParams) => this.addRecordToGrid(dropSide.toLowerCase(), dragParams.node.data)
         };
@@ -215,7 +215,7 @@ export class AppComponent {
 
 let rowIdSequence = 100;
 
-function createDataItem(color) {
+function createDataItem(color: string) {
     const obj = {
         id: rowIdSequence++,
         color: color,

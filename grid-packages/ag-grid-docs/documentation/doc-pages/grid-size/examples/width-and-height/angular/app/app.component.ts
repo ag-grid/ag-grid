@@ -3,8 +3,9 @@ import { HttpClient } from '@angular/common/http';
 
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 
-import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
-import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
+import "@ag-grid-community/core/dist/styles/ag-grid.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+import { ColDef } from '@ag-grid-community/core';
 
 @Component({
     selector: 'my-app',
@@ -30,16 +31,16 @@ import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
     `
 })
 export class AppComponent {
-    columnDefs;
-    rowData;
-    style = {
+    columnDefs: ColDef[];
+    rowData!: any[];
+    style: any = {
         width: '100%',
         height: '100%',
         flex: '1 1 auto'
     };
     modules = [ClientSideRowModelModule];
 
-    @ViewChild('agGrid') agGrid;
+    @ViewChild('agGrid') agGrid: any;
 
     constructor(private http: HttpClient) {
         this.columnDefs = [
@@ -59,7 +60,7 @@ export class AppComponent {
     ngOnInit() {
         this.http.get('https://www.ag-grid.com/example-assets/olympic-winners.json')
             .subscribe(data => {
-                this.rowData = data;
+                this.rowData = data as any[];
             });
     }
 
@@ -75,7 +76,7 @@ export class AppComponent {
         this.setWidthAndHeight('400px', '400px');
     }
 
-    setWidthAndHeight(width, height) {
+    setWidthAndHeight(width: string, height: string) {
         this.style = {
             width: width,
             height: height

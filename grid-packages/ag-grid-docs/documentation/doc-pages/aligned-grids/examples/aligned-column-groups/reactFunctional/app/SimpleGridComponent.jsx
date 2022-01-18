@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { AgGridReact } from '@ag-grid-community/react';
 
-import { AllCommunityModules } from '@ag-grid-community/all-modules';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
+import "@ag-grid-community/core/dist/styles/ag-grid.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
 export default class extends Component {
     constructor(props) {
@@ -116,7 +116,7 @@ export default class extends Component {
                         columnDefs={this.state.columnDefs}
                         defaultColDef={{ resizable: true }}
                         onGridReady={this.onGridReady.bind(this)}
-                        modules={AllCommunityModules}
+                        modules={[ClientSideRowModelModule]}
                         onFirstDataRendered={this.onFirstDataRendered.bind(this)} />
                 </div>
 
@@ -127,7 +127,7 @@ export default class extends Component {
                         rowData={this.state.rowData}
                         gridOptions={this.state.bottomOptions}
                         columnDefs={this.state.columnDefs}
-                        modules={AllCommunityModules} />
+                        modules={[ClientSideRowModelModule]} />
                 </div>
             </div>
         );

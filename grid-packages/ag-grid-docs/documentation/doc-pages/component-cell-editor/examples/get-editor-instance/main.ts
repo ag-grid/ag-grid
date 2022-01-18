@@ -1,5 +1,5 @@
-import { ColDef, GridOptions } from '@ag-grid-community/core'
-declare var MySimpleEditor: any
+import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { MySimpleEditor } from './mySimpleEditor_typescript'
 
 const columnDefs: ColDef[] = [
   { field: 'first_name', headerName: 'First Name', width: 120, editable: true },
@@ -7,27 +7,27 @@ const columnDefs: ColDef[] = [
   {
     field: 'gender',
     width: 100,
-    cellEditor: 'mySimpleEditor',
+    cellEditorComp: MySimpleEditor,
   },
   {
     field: 'age',
     width: 80,
-    cellEditor: 'mySimpleEditor',
+    cellEditorComp: MySimpleEditor,
   },
   {
     field: 'mood',
     width: 90,
-    cellEditor: 'mySimpleEditor',
+    cellEditorComp: MySimpleEditor,
   },
   {
     field: 'country',
     width: 110,
-    cellEditor: 'mySimpleEditor',
+    cellEditorComp: MySimpleEditor,
   },
   {
     field: 'address',
     width: 502,
-    cellEditor: 'mySimpleEditor',
+    cellEditorComp: MySimpleEditor,
   },
 ]
 
@@ -42,15 +42,12 @@ const gridOptions: GridOptions = {
     resizable: true,
   },
   rowData: getData(),
-  components: {
-    mySimpleEditor: MySimpleEditor,
-  },
   onGridReady: function () {
     setInterval(() => {
       const instances = gridOptions.api!.getCellEditorInstances()
       if (instances.length > 0) {
-        const instance = instances[0] as any
-        if (instance.myCustomFunction) {
+        const instance = instances[0] as any;
+        if ((instance as MySimpleEditor).myCustomFunction) {
           const result = instance.myCustomFunction()
           console.log(
             `found editing cell: row index = ${result.rowIndex}, column = ${result.colId}.`
@@ -63,12 +60,12 @@ const gridOptions: GridOptions = {
       } else {
         console.log('found not editing cell.')
       }
-    }, 1000)
+    }, 2000)
   },
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 })

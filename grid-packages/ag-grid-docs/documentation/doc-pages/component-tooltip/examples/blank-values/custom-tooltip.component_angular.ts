@@ -1,6 +1,6 @@
-import {Component} from '@angular/core';
-import {ITooltipParams} from "@ag-grid-community/core";
-import {ITooltipAngularComp} from "@ag-grid-community/angular";
+import { Component } from '@angular/core';
+import { ITooltipParams } from "@ag-grid-community/core";
+import { ITooltipAngularComp } from "@ag-grid-community/angular";
 
 @Component({
     selector: 'tooltip-component',
@@ -38,8 +38,8 @@ import {ITooltipAngularComp} from "@ag-grid-community/angular";
 })
 export class CustomTooltip implements ITooltipAngularComp {
 
-    private params: ITooltipParams;
-    private valueToDisplay: string;
+    private params!: ITooltipParams;
+    public valueToDisplay!: string;
 
     agInit(params: ITooltipParams): void {
         this.params = params;

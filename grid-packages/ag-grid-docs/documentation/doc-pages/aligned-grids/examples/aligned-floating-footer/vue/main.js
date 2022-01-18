@@ -1,10 +1,10 @@
 import Vue from "vue";
 import { AgGridVue } from "@ag-grid-community/vue";
 
-import { AllCommunityModules } from '@ag-grid-community/all-modules';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
-import "@ag-grid-community/all-modules/dist/styles/ag-grid.css";
-import "@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css";
+import "@ag-grid-community/core/dist/styles/ag-grid.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
 const VueExample = {
     template: `
@@ -30,7 +30,7 @@ const VueExample = {
     components: {
         "ag-grid-vue": AgGridVue
     },
-    data: function() {
+    data: function () {
         return {
             topGridOptions: null,
             bottomGridOptions: null,
@@ -43,7 +43,7 @@ const VueExample = {
             ageVisible: true,
             countryVisible: true,
             rowStyle: { fontWeight: 'bold' },
-            modules: AllCommunityModules
+            modules: [ClientSideRowModelModule]
         };
     },
     beforeMount() {
@@ -103,9 +103,9 @@ const VueExample = {
                 valueGetter: 'data.gold + data.silver + data.bronze',
                 width: 200
             },
-            {field: 'gold', width: 100},
-            {field: 'silver', width: 100},
-            {field: 'bronze', width: 100}
+            { field: 'gold', width: 100 },
+            { field: 'silver', width: 100 },
+            { field: 'bronze', width: 100 }
         ];
     },
     mounted() {
@@ -131,7 +131,7 @@ const VueExample = {
             };
         },
 
-        onFirstDataRendered: function() {
+        onFirstDataRendered: function () {
             this.gridColumnApi.autoSizeAllColumns();
         }
     },

@@ -1,8 +1,9 @@
-import {Component} from '@angular/core';
-import {ClientSideRowModelModule, GridOptions} from "@ag-grid-community/all-modules";
+import { Component } from '@angular/core';
 
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
+import "@ag-grid-community/core/dist/styles/ag-grid.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColDef, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core';
 
 @Component({
     selector: 'my-app',
@@ -56,11 +57,11 @@ import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
 export class AppComponent {
     rowIdSequence = 100;
 
-    columnDefs = [
-        {field: "id", dndSource: true},
-        {field: "color"},
-        {field: "value1"},
-        {field: "value2"}
+    columnDefs: ColDef[] = [
+        { field: "id", dndSource: true },
+        { field: "color" },
+        { field: "value1" },
+        { field: "value2" }
     ];
 
     modules = [ClientSideRowModelModule];
@@ -106,14 +107,14 @@ export class AppComponent {
     };
 
     createLeftRowData() {
-        let data = [];
+        let data: any[] = [];
         ['Red', 'Green', 'Blue'].forEach((color) => {
             data.push(this.createDataItem(color));
         });
         return data;
     }
 
-    createDataItem(color) {
+    createDataItem(color: string) {
         return {
             id: this.rowIdSequence++,
             color: color,
@@ -122,7 +123,7 @@ export class AppComponent {
         };
     }
 
-    binDragOver(event) {
+    binDragOver(event: any) {
         var dragSupported = event.dataTransfer.types.indexOf('application/json') >= 0;
         if (dragSupported) {
             event.dataTransfer.dropEffect = "move";
@@ -130,7 +131,7 @@ export class AppComponent {
         }
     }
 
-    binDrop(event) {
+    binDrop(event: any) {
         event.preventDefault();
         var jsonData = event.dataTransfer.getData("application/json");
         var data = JSON.parse(jsonData);
@@ -144,24 +145,24 @@ export class AppComponent {
             remove: [data]
         };
 
-        var rowIsInLeftGrid = !!this.leftGridOptions.api.getRowNode(data.id);
+        var rowIsInLeftGrid = !!this.leftGridOptions.api!.getRowNode(data.id);
         if (rowIsInLeftGrid) {
-            this.leftGridOptions.api.applyTransaction(transaction);
+            this.leftGridOptions.api!.applyTransaction(transaction);
         }
 
-        var rowIsInRightGrid = !!this.rightGridOptions.api.getRowNode(data.id);
+        var rowIsInRightGrid = !!this.rightGridOptions.api!.getRowNode(data.id);
         if (rowIsInRightGrid) {
-            this.rightGridOptions.api.applyTransaction(transaction);
+            this.rightGridOptions.api!.applyTransaction(transaction);
         }
     }
 
-    dragStart(event, color) {
+    dragStart(event: any, color: string) {
         var newItem = this.createDataItem(color);
         var jsonData = JSON.stringify(newItem);
         event.dataTransfer.setData('application/json', jsonData);
     }
 
-    gridDragOver(event) {
+    gridDragOver(event: any) {
         var dragSupported = event.dataTransfer.types.length;
 
         if (dragSupported) {
@@ -170,7 +171,7 @@ export class AppComponent {
         }
     }
 
-    gridDrop(event, grid) {
+    gridDrop(event: any, grid: string) {
         event.preventDefault();
 
         var jsonData = event.dataTransfer.getData('application/json');
@@ -184,7 +185,7 @@ export class AppComponent {
         var gridApi = grid == 'left' ? this.leftGridOptions.api : this.rightGridOptions.api;
 
         // do nothing if row is already in the grid, otherwise we would have duplicates
-        var rowAlreadyInGrid = !!gridApi.getRowNode(data.id);
+        var rowAlreadyInGrid = !!gridApi!.getRowNode(data.id);
         if (rowAlreadyInGrid) {
             console.log('not adding row to avoid duplicates in the grid');
             return;
@@ -193,10 +194,10 @@ export class AppComponent {
         var transaction = {
             add: [data]
         };
-        gridApi.applyTransaction(transaction);
+        gridApi!.applyTransaction(transaction);
     }
 
-    onFirstDataRendered(params) {
+    onFirstDataRendered(params: FirstDataRenderedEvent) {
         params.api.sizeColumnsToFit();
     };
 

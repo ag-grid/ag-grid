@@ -1,7 +1,8 @@
-import {createApp} from 'vue';
-import {AgGridVue} from '@ag-grid-community/vue';
+import { createApp } from 'vue';
+import { AgGridVue } from '@ag-grid-community/vue';
 
-import { AllCommunityModules } from '@ag-grid-community/all-modules';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { CsvExportModule } from '@ag-grid-community/csv-export';
 import { ExcelExportModule, exportMultipleSheetsAsExcel } from '@ag-grid-enterprise/excel-export';
 
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
@@ -64,7 +65,7 @@ const VueExample = {
     },
     data: function () {
         return {
-            modules: [...AllCommunityModules, ExcelExportModule],
+            modules: [ClientSideRowModelModule, CsvExportModule, ExcelExportModule],
             leftRowData: null,
             rightRowData: null,
             leftApi: null,
@@ -83,7 +84,7 @@ const VueExample = {
                     rowDrag: true,
                     maxWidth: 50,
                     suppressMenu: true,
-                    rowDragText: function(params, dragItemCount) {
+                    rowDragText: function (params, dragItemCount) {
                         if (dragItemCount > 1) {
                             return dragItemCount + ' athletes';
                         }
@@ -98,7 +99,7 @@ const VueExample = {
                     rowDrag: true,
                     maxWidth: 50,
                     suppressMenu: true,
-                    rowDragText: function(params, dragItemCount) {
+                    rowDragText: function (params, dragItemCount) {
                         if (dragItemCount > 1) {
                             return dragItemCount + ' athletes';
                         }
@@ -112,14 +113,14 @@ const VueExample = {
                     maxWidth: 50,
                     cellRenderer: (params) => {
                         var button = document.createElement('i');
-            
-                        button.addEventListener('click', function() {
+
+                        button.addEventListener('click', function () {
                             params.api.applyTransaction({ remove: [params.node.data] });
                         });
-            
+
                         button.classList.add('far', 'fa-trash-alt');
                         button.style.cursor = 'pointer';
-            
+
                         return button;
                     }
                 }
@@ -132,7 +133,7 @@ const VueExample = {
             .then(data => {
                 const athletes = [];
                 let i = 0;
-    
+
                 while (athletes.length < 20 && i < data.length) {
                     var pos = i++;
                     if (athletes.some(rec => rec.athlete === data[pos].athlete)) { continue; }
@@ -161,7 +162,7 @@ const VueExample = {
                 this.leftApi = params.api
                 this.leftColumnApi = params.columnApi;
             }
-    
+
             if (side === 1) {
                 this.rightApi = params.api;
                 this.addGridDropZone();
@@ -174,17 +175,17 @@ const VueExample = {
                     var nodes = params.nodes;
 
                     this.leftApi.applyTransaction({
-                        remove: nodes.map(function(node) { return node.data; })
+                        remove: nodes.map(function (node) { return node.data; })
                     });
                 }
             });
-        
+
             this.leftApi.addRowDropZone(dropZoneParams);
         },
 
         onExcelExport() {
             var spreadsheets = [];
-            
+
             spreadsheets.push(
                 this.leftApi.getSheetDataForExcel({ sheetName: 'Athletes' }),
                 this.rightApi.getSheetDataForExcel({ sheetName: 'Selected Athletes' })

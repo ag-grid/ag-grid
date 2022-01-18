@@ -1,10 +1,10 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 
-import {AgGridReact} from '@ag-grid-community/react';
-import {AllCommunityModules} from '@ag-grid-community/all-modules';
+import { AgGridReact } from '@ag-grid-community/react';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
+import "@ag-grid-community/core/dist/styles/ag-grid.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
 const topOptions = {
     alignedGrids: [],
@@ -36,12 +36,12 @@ export default () => {
     const [topGrid, setTopGrid] = useState(null);
 
     const [columnDefs, setColumnDefs] = useState([
-        {field: 'athlete'},
-        {field: 'age'},
-        {field: 'country'},
-        {field: 'year'},
-        {field: 'date'},
-        {field: 'sport'},
+        { field: 'athlete' },
+        { field: 'age' },
+        { field: 'country' },
+        { field: 'year' },
+        { field: 'date' },
+        { field: 'sport' },
         {
             headerName: 'Medals',
             children: [
@@ -49,9 +49,9 @@ export default () => {
                     columnGroupShow: 'closed', field: "total",
                     valueGetter: "data.gold + data.silver + data.bronze", width: 200
                 },
-                {columnGroupShow: 'open', field: "gold", width: 100},
-                {columnGroupShow: 'open', field: "silver", width: 100},
-                {columnGroupShow: 'open', field: "bronze", width: 100}
+                { columnGroupShow: 'open', field: "gold", width: 100 },
+                { columnGroupShow: 'open', field: "silver", width: 100 },
+                { columnGroupShow: 'open', field: "bronze", width: 100 }
             ]
         }
     ]);
@@ -97,19 +97,19 @@ export default () => {
                     <input
                         type="checkbox"
                         defaultChecked={true}
-                        onChange={(event) => onCbAthlete(event)}/>Athlete
+                        onChange={(event) => onCbAthlete(event)} />Athlete
                 </label>
                 <label>
                     <input
                         type="checkbox"
                         defaultChecked={true}
-                        onChange={event => onCbAge(event)}/>Age
+                        onChange={event => onCbAge(event)} />Age
                 </label>
                 <label>
                     <input
                         type="checkbox"
                         defaultChecked={true}
-                        onChange={event => onCbCountry(event)}/>Country
+                        onChange={event => onCbCountry(event)} />Country
                 </label>
             </div>
 
@@ -120,7 +120,7 @@ export default () => {
                     columnDefs={columnDefs}
                     onGridReady={params => onGridReady(params)}
                     onFirstDataRendered={params => onFirstDataRendered(params)}
-                    modules={AllCommunityModules}/>
+                    modules={[ClientSideRowModelModule]} />
             </div>
 
             <div className="grid ag-theme-alpine">
@@ -128,7 +128,7 @@ export default () => {
                     rowData={rowData}
                     gridOptions={bottomOptions}
                     columnDefs={columnDefs}
-                    modules={AllCommunityModules}/>
+                    modules={[ClientSideRowModelModule]} />
             </div>
         </div>
     );

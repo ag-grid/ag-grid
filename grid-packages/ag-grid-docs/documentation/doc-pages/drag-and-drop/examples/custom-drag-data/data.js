@@ -1,6 +1,6 @@
 var rowIdSequence = 100
 
-function createRowData() {
+function getData() {
     var data = []
         ;[
             'Red',

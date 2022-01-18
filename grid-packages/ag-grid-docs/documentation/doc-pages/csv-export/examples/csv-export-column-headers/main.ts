@@ -1,4 +1,4 @@
-import { GridOptions, GridReadyEvent } from '@ag-grid-community/core'
+import { Grid, GridOptions, GridReadyEvent } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   defaultColDef: {
@@ -55,6 +55,6 @@ function onBtnUpdate() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 })

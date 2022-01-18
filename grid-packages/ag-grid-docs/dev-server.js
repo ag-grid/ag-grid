@@ -365,7 +365,6 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
         cssFiles,
         [],
         cssFile => [
-            `        "@ag-grid-community/all-modules/dist/styles/${cssFile}": \`\${localPrefix}/@ag-grid-community/all-modules/dist/styles/${cssFile}\`,`,
             `        "@ag-grid-community/core/dist/styles/${cssFile}": \`\${localPrefix}/@ag-grid-community/core/dist/styles/${cssFile}\`,`
         ].join(EOL),
         () => {
@@ -394,7 +393,6 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
         cssFiles,
         [],
         cssFile => [
-            `        "@ag-grid-community/all-modules/dist/styles/${cssFile}": \`https://unpkg.com/@ag-grid-community/all-modules@\${agGridVersion}/dist/styles/${cssFile}\`,`,
             `        "@ag-grid-community/core/dist/styles/${cssFile}": \`https://unpkg.com/@ag-grid-community/core@\${agGridVersion}/dist/styles/${cssFile}\`,`
         ].join(EOL),
         () => {
@@ -556,6 +554,7 @@ function updateSystemJsBoilerplateMappingsForFrameworks(gridCommunityModules, gr
     console.log("Updating framework SystemJS boilerplate config with modules...");
 
     const systemJsFiles = [
+        './documentation/static/example-runner/grid-typescript-boilerplate/systemjs.config.dev.js',
         './documentation/static/example-runner/grid-angular-boilerplate/systemjs.config.dev.js',
         './documentation/static/example-runner/grid-react-boilerplate/systemjs.config.dev.js',
         './documentation/static/example-runner/grid-vue-boilerplate/systemjs.config.dev.js',

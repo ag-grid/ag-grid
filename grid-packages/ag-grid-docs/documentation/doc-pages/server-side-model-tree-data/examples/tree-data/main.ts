@@ -1,5 +1,5 @@
 import {
-  ColDef,
+  ColDef, Grid,
   GridOptions,
   ICellRendererParams,
   IServerSideDatasource,
@@ -17,7 +17,7 @@ const columnDefs: ColDef[] = [
 const gridOptions: GridOptions = {
   defaultColDef: {
     width: 240,
-    filter: 'agTextColumnFilter',
+    filterComp: 'agTextColumnFilter',
     flex: 1,
   },
   autoGroupColumnDef: {
@@ -52,8 +52,8 @@ const gridOptions: GridOptions = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/small-tree-data.json')
     .then(response => response.json())
@@ -110,9 +110,9 @@ function createServerSideDatasource(fakeServer: any) {
       var doingInfinite = request.startRow != null && request.endRow != null
       var result = doingInfinite
         ? {
-            rowData: allRows.slice(request.startRow, request.endRow),
-            rowCount: allRows.length,
-          }
+          rowData: allRows.slice(request.startRow, request.endRow),
+          rowCount: allRows.length,
+        }
         : { rowData: allRows }
       console.log('getRows: result = ', result)
       setTimeout(function () {

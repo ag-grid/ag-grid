@@ -1,4 +1,4 @@
-import { ColDef, GridOptions, ValueFormatterParams, ValueGetterParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, ValueFormatterParams, ValueGetterParams } from '@ag-grid-community/core'
 
 var callCount = 1
 
@@ -26,14 +26,14 @@ const columnDefs: ColDef[] = [
   {
     headerName: 'Total',
     colId: 'total',
-    cellClass: 'number-cell total-col',
+    cellClass: ['number-cell', 'total-col'],
     aggFunc: 'sum',
     valueFormatter: formatNumber,
     valueGetter: totalValueGetter,
   },
   {
     headerName: 'Total x 10',
-    cellClass: 'number-cell total-col',
+    cellClass: ['number-cell', 'total-col'],
     aggFunc: 'sum',
     minWidth: 120,
     valueFormatter: formatNumber,
@@ -110,6 +110,6 @@ function onUpdateOneValue() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 })

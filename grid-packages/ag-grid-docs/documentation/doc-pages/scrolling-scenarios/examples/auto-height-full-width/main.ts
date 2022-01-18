@@ -1,4 +1,4 @@
-import { ColGroupDef, GridApi, GridOptions, ICellRendererParams, RowNode } from '@ag-grid-community/core'
+import { Grid, ColGroupDef, GridApi, GridOptions, ICellRendererParams, RowNode } from '@ag-grid-community/core'
 
 const columnDefs: ColGroupDef[] = [
   {
@@ -119,6 +119,6 @@ function setRowData(api: GridApi, rowCount: number) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 })

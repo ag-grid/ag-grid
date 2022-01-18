@@ -1,4 +1,4 @@
-import { ColDef, GridOptions, ICellRendererParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, ICellRendererParams } from '@ag-grid-community/core'
 
 var cellRenderer = function (params: ICellRendererParams) {
   return (parseInt(params.node.id!) + 1) + ''
@@ -8,7 +8,7 @@ const columnDefs: ColDef[] = [
   {
     headerName: '#',
     width: 50,
-    cellRenderer: cellRenderer,
+    cellRendererComp: cellRenderer,
   },
   { headerName: 'Athlete', field: 'athlete', width: 150 },
   { headerName: 'Age', field: 'age', width: 90 },
@@ -88,8 +88,8 @@ function onBtPageFifty() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

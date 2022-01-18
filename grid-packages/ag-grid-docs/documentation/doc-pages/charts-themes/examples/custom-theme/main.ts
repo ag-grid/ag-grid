@@ -1,4 +1,4 @@
-import { AgChartOptions, AgChartTheme } from '@ag-grid-community/core'
+import { Grid, AgChartOptions, AgChartTheme } from '@ag-grid-community/core'
 import * as agCharts from 'ag-charts-community'
 
 var myTheme: AgChartTheme = {
@@ -62,6 +62,7 @@ const options: AgChartOptions = {
 
 var chart = agCharts.AgChart.create(options)
 
+/** inScope */
 function applyTheme(theme: AgChartTheme) {
   options.theme = theme
   agCharts.AgChart.update(chart, options)

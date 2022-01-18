@@ -1,4 +1,4 @@
-import { CsvCell, CsvExportParams, ExcelCell, ExcelExportParams, GetDetailRowDataParams, GridOptions, IDetailCellRendererParams, ProcessRowGroupForExportParams } from '@ag-grid-community/core'
+import { Grid, CsvCell, CsvExportParams, ExcelCell, ExcelExportParams, GetDetailRowDataParams, GridOptions, IDetailCellRendererParams, ProcessRowGroupForExportParams } from '@ag-grid-community/core'
 
 var getCells = (params: ProcessRowGroupForExportParams) => {
   const cells: ExcelCell[][] = [
@@ -29,7 +29,7 @@ var getCells = (params: ProcessRowGroupForExportParams) => {
 var defaultCsvExportParams: CsvExportParams = {
   getCustomContentBelowRow: (params) => getCells(params) as CsvCell[][],
 }
-var defaultExportParams: ExcelExportParams = {
+var defaultExcelExportParams: ExcelExportParams = {
   getCustomContentBelowRow: (params) => getCells(params),
   columnWidth: 120,
 }
@@ -37,7 +37,7 @@ var defaultExportParams: ExcelExportParams = {
 const gridOptions: GridOptions = {
   columnDefs: [
     // group cell renderer needed for expand / collapse icons
-    { field: 'name', cellRenderer: 'agGroupCellRenderer' },
+    { field: 'name', cellRendererComp: 'agGroupCellRenderer' },
     { field: 'account' },
     { field: 'calls' },
     { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" },
@@ -64,7 +64,7 @@ const gridOptions: GridOptions = {
     },
   } as IDetailCellRendererParams,
   defaultCsvExportParams: defaultCsvExportParams,
-  defaultExcelExportParams: defaultExportParams,
+  defaultExcelExportParams: defaultExcelExportParams,
   excelStyles: [
     {
       id: 'header',
@@ -99,8 +99,8 @@ function onBtExport() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/master-detail-data.json')
     .then(response => response.json())

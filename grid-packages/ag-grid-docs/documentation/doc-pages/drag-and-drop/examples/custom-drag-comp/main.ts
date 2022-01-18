@@ -1,5 +1,5 @@
-import { GridOptions } from '@ag-grid-community/core'
-declare var DragSourceRenderer: any
+import { Grid, GridOptions } from '@ag-grid-community/core'
+import { DragSourceRenderer } from './dragSourceRenderer_typescript'
 
 var rowClassRules = {
   'red-row': 'data.color == "Red"',
@@ -18,15 +18,12 @@ const gridOptions: GridOptions = {
   rowData: getData(),
   rowDragManaged: true,
   columnDefs: [
-    { cellRenderer: 'dragSourceCellRenderer', minWidth: 100 },
+    { cellRendererComp: DragSourceRenderer, minWidth: 100 },
     { field: 'id' },
     { field: 'color' },
     { field: 'value1' },
     { field: 'value2' },
   ],
-  components: {
-    dragSourceCellRenderer: DragSourceRenderer,
-  },
   animateRows: true,
 }
 
@@ -56,6 +53,6 @@ function onDrop(event: any) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 })

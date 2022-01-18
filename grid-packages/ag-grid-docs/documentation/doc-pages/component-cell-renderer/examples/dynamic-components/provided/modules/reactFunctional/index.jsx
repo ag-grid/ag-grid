@@ -1,12 +1,12 @@
 'use strict';
 
-import React, {forwardRef, useImperativeHandle, useState} from 'react';
+import React, {forwardRef, useImperativeHandle, useMemo, useState} from 'react';
 import {render} from 'react-dom';
-import {AgGridColumn, AgGridReact} from '@ag-grid-community/react';
+import {AgGridReact} from '@ag-grid-community/react';
 
-import {AllCommunityModules} from "@ag-grid-community/all-modules";
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
+import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
+import "@ag-grid-community/core/dist/styles/ag-grid.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
 const SquareRenderer = props => {
     const valueSquared = (value) => {
@@ -71,6 +71,52 @@ const createRowData = () => {
 
 const GridExample = () => {
     const [rowData, setRowData] = useState(createRowData());
+    const columnDefs = useMemo(() => [
+        {
+            headerName: "Row",
+            field: "row",
+            width: 150
+        },
+        {
+            headerName: "Square",
+            field: "value",
+            cellRendererComp: SquareRenderer,
+            editable: true,
+            colId: "square",
+            width: 150
+        },
+        {
+            headerName: "Cube",
+            field: "value",
+            cellRendererComp: CubeRenderer,
+            colId: "cube",
+            width: 150
+        },
+        {
+            headerName: "Row Params",
+            field: "row",
+            cellRendererComp: ParamsRenderer,
+            colId: "params",
+            width: 150
+        },
+        {
+            headerName: "Currency (Pipe)",
+            field: "currency",
+            // spl todo - renderers don't update (hooks or classes)
+            // works with angular (new way) and vue (old way)
+            cellRendererComp: CurrencyRenderer,
+            colId: "currency",
+            width: 120
+        },
+        {
+            headerName: "Child/Parent",
+            field: "value",
+            cellRendererComp: ChildMessageRenderer,
+            colId: "params",
+            editable: false,
+            minWidth: 150
+        }
+    ]);
 
     const refreshEvenRowsCurrencyData = () => {
         const newRowData = [];
@@ -103,21 +149,15 @@ const GridExample = () => {
                     }}
                     className="ag-theme-alpine">
                     <AgGridReact
-                        modules={AllCommunityModules}
+                        modules={[ClientSideRowModelModule]}
                         rowData={rowData}
+                        columnDefs={columnDefs}
                         // we use immutableData here to ensure that we only re-render what has changed in the grid
                         // see https://www.ag-grid.com/javascript/immutable-data/ for more information
                         immutableData={true}
                         getRowNodeId={data => data.row}
                         context={{
                             methodFromParent
-                        }}
-                        frameworkComponents={{
-                            squareRenderer: SquareRenderer,
-                            cubeRenderer: CubeRenderer,
-                            paramsRenderer: ParamsRenderer,
-                            currencyRenderer: CurrencyRenderer,
-                            childMessageRenderer: ChildMessageRenderer
                         }}
                         defaultColDef={{
                             editable: true,
@@ -127,12 +167,6 @@ const GridExample = () => {
                             filter: true,
                             resizable: true
                         }}>
-                        <AgGridColumn field="row" width={150}/>
-                        <AgGridColumn field="value" cellRenderer='squareRenderer' editable={true} colId="square"/>
-                        <AgGridColumn field="value" cellRenderer='cubeRenderer' colId="cube"/>
-                        <AgGridColumn field="row" cellRenderer='paramsRenderer' colId="params"/>
-                        <AgGridColumn field="currency" cellRenderer='currencyRenderer' colId="currency"/>
-                        <AgGridColumn field="value" cellRenderer='childMessageRenderer' colId="params"/>
                     </AgGridReact>
                 </div>
             </div>

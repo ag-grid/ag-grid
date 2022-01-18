@@ -1,4 +1,4 @@
-import { AsyncTransactionsFlushed, ColDef, GridApi, GridOptions, IsApplyServerSideTransactionParams, IServerSideDatasource, ServerSideTransaction, ServerSideTransactionResult, ServerSideTransactionResultStatus, ValueFormatterParams } from '@ag-grid-community/core'
+import { Grid, AsyncTransactionsFlushed, ColDef, GridApi, GridOptions, IsApplyServerSideTransactionParams, IServerSideDatasource, ServerSideTransaction, ServerSideTransactionResult, ServerSideTransactionResultStatus, ValueFormatterParams } from '@ag-grid-community/core'
 declare var FakeServer: any;
 var fakeServer = new FakeServer()
 
@@ -19,7 +19,7 @@ const columnDefs: ColDef[] = [
     width: 200,
     type: 'numericColumn',
     valueFormatter: numberCellFormatter,
-    cellRenderer: 'agAnimateShowChangeCellRenderer',
+    cellRendererComp: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: 'Previous',
@@ -27,12 +27,12 @@ const columnDefs: ColDef[] = [
     width: 200,
     type: 'numericColumn',
     valueFormatter: numberCellFormatter,
-    cellRenderer: 'agAnimateShowChangeCellRenderer',
+    cellRendererComp: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: 'Deal Type',
     field: 'dealType',
-    filter: 'agSetColumnFilter',
+    filterComp: 'agSetColumnFilter',
     filterParams: {
       values: ['Financial', 'Physical'],
     },
@@ -41,7 +41,7 @@ const columnDefs: ColDef[] = [
     headerName: 'Bid',
     field: 'bidFlag',
     width: 100,
-    filter: 'agSetColumnFilter',
+    filterComp: 'agSetColumnFilter',
     filterParams: {
       values: ['Buy', 'Sell'],
     },
@@ -52,7 +52,7 @@ const columnDefs: ColDef[] = [
     width: 200,
     type: 'numericColumn',
     valueFormatter: numberCellFormatter,
-    cellRenderer: 'agAnimateShowChangeCellRenderer',
+    cellRendererComp: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: 'PL 2',
@@ -60,7 +60,7 @@ const columnDefs: ColDef[] = [
     width: 200,
     type: 'numericColumn',
     valueFormatter: numberCellFormatter,
-    cellRenderer: 'agAnimateShowChangeCellRenderer',
+    cellRendererComp: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: 'Gain-DX',
@@ -68,7 +68,7 @@ const columnDefs: ColDef[] = [
     width: 200,
     type: 'numericColumn',
     valueFormatter: numberCellFormatter,
-    cellRenderer: 'agAnimateShowChangeCellRenderer',
+    cellRendererComp: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: 'SX / PX',
@@ -76,7 +76,7 @@ const columnDefs: ColDef[] = [
     width: 200,
     type: 'numericColumn',
     valueFormatter: numberCellFormatter,
-    cellRenderer: 'agAnimateShowChangeCellRenderer',
+    cellRendererComp: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: '99 Out',
@@ -84,7 +84,7 @@ const columnDefs: ColDef[] = [
     width: 200,
     type: 'numericColumn',
     valueFormatter: numberCellFormatter,
-    cellRenderer: 'agAnimateShowChangeCellRenderer',
+    cellRendererComp: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: 'Submitter ID',
@@ -92,7 +92,7 @@ const columnDefs: ColDef[] = [
     width: 200,
     type: 'numericColumn',
     valueFormatter: numberCellFormatter,
-    cellRenderer: 'agAnimateShowChangeCellRenderer',
+    cellRendererComp: 'agAnimateShowChangeCellRenderer',
   },
   {
     headerName: 'Submitted Deal ID',
@@ -100,7 +100,7 @@ const columnDefs: ColDef[] = [
     width: 200,
     type: 'numericColumn',
     valueFormatter: numberCellFormatter,
-    cellRenderer: 'agAnimateShowChangeCellRenderer',
+    cellRendererComp: 'agAnimateShowChangeCellRenderer',
   },
 ]
 
@@ -218,6 +218,6 @@ function processUpdateFromFakeServer(gridApi: GridApi, transactions: ServerSideT
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 })

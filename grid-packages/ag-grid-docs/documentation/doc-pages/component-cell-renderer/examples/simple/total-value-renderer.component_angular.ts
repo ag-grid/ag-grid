@@ -1,7 +1,7 @@
-import {Component} from "@angular/core";
+import { Component } from "@angular/core";
 
-import {AgRendererComponent} from "@ag-grid-community/angular";
-import {ICellRendererParams} from "@ag-grid-community/core";
+import { ICellRendererAngularComp } from "@ag-grid-community/angular";
+import { ICellRendererParams } from "@ag-grid-community/core";
 
 @Component({
     selector: 'total-value-component',
@@ -12,8 +12,8 @@ import {ICellRendererParams} from "@ag-grid-community/core";
           </span>
     `
 })
-export class TotalValueRenderer implements AgRendererComponent {
-    private cellValue: string;
+export class TotalValueRenderer implements ICellRendererAngularComp {
+    public cellValue!: string;
 
     // gets called once before the renderer is used
     agInit(params: ICellRendererParams): void {
@@ -24,6 +24,7 @@ export class TotalValueRenderer implements AgRendererComponent {
     refresh(params: ICellRendererParams) {
         // set value into cell again
         this.cellValue = this.getValueToDisplay(params);
+        return true;
     }
 
     buttonClicked() {

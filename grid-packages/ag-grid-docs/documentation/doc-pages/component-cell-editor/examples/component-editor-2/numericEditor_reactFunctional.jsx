@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
+import React, {forwardRef, memo, useEffect, useImperativeHandle, useMemo, useRef, useState} from "react";
 
 const KEY_BACKSPACE = 'Backspace';
 const KEY_DELETE = 'Delete';
@@ -6,7 +6,7 @@ const KEY_F2 = 'F2';
 const KEY_ENTER = 'Enter';
 const KEY_TAB = 'Tab';
 
-export default forwardRef((props, ref) => {
+export default memo(forwardRef((props, ref) => {
     const createInitialState = () => {
         let startValue;
         let highlightAllOnFocus = true;
@@ -48,8 +48,8 @@ export default forwardRef((props, ref) => {
             setHighlightAllOnFocus(false);
         } else {
             // when we started editing, we want the caret at the end, not the start.
-            // this comes into play in two scenarios: 
-            //   a) when user hits F2 
+            // this comes into play in two scenarios:
+            //   a) when user hits F2
             //   b) when user hits a printable character
             const length = eInput.value ? eInput.value.length : 0;
             if (length > 0) {
@@ -62,7 +62,7 @@ export default forwardRef((props, ref) => {
     const cancelBeforeStart = props.charPress && ('1234567890'.indexOf(props.charPress) < 0);
 
     const isLeftOrRight = event => {
-        return ['ArrowLeft', 'ArrowRight'].indexOf(event.key) > -1;
+        return ['ArrowLeft', 'ArrowLeft'].indexOf(event.key) > -1;
     };
 
     const isCharNumeric = charStr => {
@@ -92,6 +92,10 @@ export default forwardRef((props, ref) => {
         if (!finishedEditingPressed(event) && !isKeyPressedNumeric(event)) {
             if (event.preventDefault) event.preventDefault();
         }
+
+        if(finishedEditingPressed(event)) {
+            props.stopEditing();
+        }
     };
 
     /* Component Editor Lifecycle methods */
@@ -120,10 +124,10 @@ export default forwardRef((props, ref) => {
 
     return (
         <input ref={refInput}
-            value={value}
-            onChange={event => setValue(event.target.value)}
-            onKeyDown={event => onKeyDown(event)}
-            style={{ width: "100%" }}
+               value={value}
+               onChange={event => setValue(event.target.value)}
+               onKeyDown={event => onKeyDown(event)}
+               style={{width: "100%"}}
         />
     );
-});
+}));

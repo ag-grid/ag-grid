@@ -1,4 +1,4 @@
-import { GridOptions, IServerSideDatasource } from '@ag-grid-community/core'
+import { Grid, GridOptions, IServerSideDatasource } from '@ag-grid-community/core'
 declare var FakeServer: any;
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -15,9 +15,9 @@ const gridOptions: GridOptions = {
     resizable: true,
     sortable: true,
   },
-  getRowNodeId: function(data: any) { 
+  getRowNodeId: function (data: any) {
     // use year for group level ids, or the id we assigned for leaf level
-    return data.id || data.year; 
+    return data.id || data.year;
   },
   autoGroupColumnDef: {
     field: 'athlete',
@@ -74,16 +74,16 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())
     .then(function (data) {
       // assign a unique ID to each data item
-      data.forEach( function(item: any, index: number) {
+      data.forEach(function (item: any, index: number) {
         item.id = index;
-      } );
+      });
 
       // setup the fake server with entire dataset
       var fakeServer = new FakeServer(data)

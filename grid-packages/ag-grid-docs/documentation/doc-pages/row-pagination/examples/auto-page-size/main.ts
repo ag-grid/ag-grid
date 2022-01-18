@@ -1,4 +1,4 @@
-import { CheckboxSelectionCallbackParams, ColDef, GridOptions, HeaderCheckboxSelectionCallbackParams, ValueGetterParams } from '@ag-grid-community/core'
+import { Grid, CheckboxSelectionCallbackParams, ColDef, GridOptions, HeaderCheckboxSelectionCallbackParams, ValueGetterParams } from '@ag-grid-community/core'
 
 var checkboxSelection = function (params: CheckboxSelectionCallbackParams) {
   // we put checkbox on the name if we are not doing grouping
@@ -39,7 +39,7 @@ var autoGroupColumnDef: ColDef = {
   },
   headerCheckboxSelection: true,
   // headerCheckboxSelectionFilteredOnly: true,
-  cellRenderer: 'agGroupCellRenderer',
+  cellRendererComp: 'agGroupCellRenderer',
   cellRendererParams: {
     checkbox: true,
   },
@@ -72,8 +72,8 @@ const gridOptions: GridOptions = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

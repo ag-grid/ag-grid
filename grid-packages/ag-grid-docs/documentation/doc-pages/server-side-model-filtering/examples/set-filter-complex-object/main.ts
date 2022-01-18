@@ -1,4 +1,4 @@
-import { ColDef, GridOptions, IServerSideDatasource, IServerSideGetRowsRequest, SetFilterValuesFuncParams, SortModelItem, ValueFormatterParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, IServerSideDatasource, IServerSideGetRowsRequest, SetFilterValuesFuncParams, SortModelItem, ValueFormatterParams } from '@ag-grid-community/core'
 
 declare function getCountryMap(): Record<string, string>;
 declare function getCountryCodeMap(): Record<string, string>;
@@ -7,7 +7,7 @@ const columnDefs: ColDef[] = [
   {
     field: 'country',
     valueFormatter: countryValueFormatter,
-    filter: 'agSetColumnFilter',
+    filterComp: 'agSetColumnFilter',
     filterParams: {
       values: getCountryValuesAsync,
       valueFormatter: countryFilterValueFormatter,
@@ -49,8 +49,8 @@ function countryFilterValueFormatter(params: ValueFormatterParams) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   // do http request to get our sample data - not using any framework to keep the example self contained.
   // you will probably use a framework like JQuery, Angular or something else to do your HTTP calls.

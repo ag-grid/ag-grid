@@ -1,6 +1,5 @@
-import { ColDef, GridOptions, IServerSideDatasource, IServerSideGetRowsRequest } from '@ag-grid-community/core'
-
-declare var CustomLoadingCellRenderer: any;
+import { Grid, ColDef, GridOptions, IServerSideDatasource, IServerSideGetRowsRequest } from '@ag-grid-community/core'
+import { CustomLoadingCellRenderer } from './customLoadingCellRenderer_typescript'
 
 const columnDefs: ColDef[] = [
   { field: 'id' },
@@ -23,11 +22,7 @@ const gridOptions: GridOptions = {
     filter: true,
     resizable: true,
   },
-  components: {
-    customLoadingCellRenderer: CustomLoadingCellRenderer,
-  },
-
-  loadingCellRenderer: 'customLoadingCellRenderer',
+  loadingRowCellComp: CustomLoadingCellRenderer,
   loadingCellRendererParams: {
     loadingMessage: 'One moment please...',
   },
@@ -51,8 +46,8 @@ const gridOptions: GridOptions = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

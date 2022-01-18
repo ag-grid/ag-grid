@@ -1,4 +1,4 @@
-import { ColDef, ColGroupDef, GridOptions, HeaderClassParams } from '@ag-grid-community/core'
+import { Grid, ColDef, ColGroupDef, GridOptions, HeaderClassParams } from '@ag-grid-community/core'
 
 const columnDefs: (ColDef | ColGroupDef)[] = [
   {
@@ -9,7 +9,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
         headerName: 'Athlete 1',
         field: 'athlete',
         width: 150,
-        filter: 'agTextColumnFilter',
+        filterComp: 'agTextColumnFilter',
       },
       {
         headerName: 'Group B',
@@ -29,7 +29,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
                     headerName: 'Total 1',
                     field: 'total',
                     width: 100,
-                    filter: 'agNumberColumnFilter',
+                    filterComp: 'agNumberColumnFilter',
                   },
                   {
                     headerName: 'Group E',
@@ -40,7 +40,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
                         headerName: 'Gold 1',
                         field: 'gold',
                         width: 100,
-                        filter: 'agNumberColumnFilter',
+                        filterComp: 'agNumberColumnFilter',
                       },
                       {
                         headerName: 'Group F',
@@ -51,7 +51,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
                             headerName: 'Silver 1',
                             field: 'silver',
                             width: 100,
-                            filter: 'agNumberColumnFilter',
+                            filterComp: 'agNumberColumnFilter',
                           },
                           {
                             headerName: 'Group G',
@@ -61,7 +61,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
                                 headerName: 'Bronze',
                                 field: 'bronze',
                                 width: 100,
-                                filter: 'agNumberColumnFilter',
+                                filterComp: 'agNumberColumnFilter',
                               },
                             ],
                           },
@@ -70,7 +70,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
                             columnGroupShow: 'open',
                             field: 'silver',
                             width: 100,
-                            filter: 'agNumberColumnFilter',
+                            filterComp: 'agNumberColumnFilter',
                           },
                         ],
                       },
@@ -79,7 +79,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
                         columnGroupShow: 'open',
                         field: 'gold',
                         width: 100,
-                        filter: 'agNumberColumnFilter',
+                        filterComp: 'agNumberColumnFilter',
                       },
                     ],
                   },
@@ -88,7 +88,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
                     columnGroupShow: 'open',
                     field: 'total',
                     width: 100,
-                    filter: 'agNumberColumnFilter',
+                    filterComp: 'agNumberColumnFilter',
                   },
                 ],
               },
@@ -113,7 +113,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
         columnGroupShow: 'open',
         field: 'age',
         width: 90,
-        filter: 'agNumberColumnFilter',
+        filterComp: 'agNumberColumnFilter',
       },
     ],
   },
@@ -122,7 +122,7 @@ const columnDefs: (ColDef | ColGroupDef)[] = [
     columnGroupShow: 'open',
     field: 'athlete',
     width: 150,
-    filter: 'agTextColumnFilter',
+    filterComp: 'agTextColumnFilter',
   },
 ]
 
@@ -189,8 +189,8 @@ function expandAll(expand: boolean) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

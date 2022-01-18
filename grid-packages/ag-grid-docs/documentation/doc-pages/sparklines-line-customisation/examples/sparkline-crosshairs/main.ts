@@ -1,17 +1,18 @@
 import {
+  Grid,
   GridOptions,
   LineSparklineOptions,
   TooltipRendererParams,
 } from '@ag-grid-community/core'
 
 
-const gridOptions: GridOptions= {
+const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'symbol', maxWidth: 120 },
     { field: 'name', minWidth: 250 },
     {
       field: 'change',
-      cellRenderer: 'agSparklineCellRenderer',
+      cellRendererComp: 'agSparklineCellRenderer',
       cellRendererParams: {
         sparklineOptions: {
           line: {
@@ -42,7 +43,7 @@ const gridOptions: GridOptions= {
     },
     {
       field: 'rateOfChange',
-      cellRenderer: 'agSparklineCellRenderer',
+      cellRendererComp: 'agSparklineCellRenderer',
       cellRendererParams: {
         sparklineOptions: {
           line: {
@@ -62,7 +63,7 @@ const gridOptions: GridOptions= {
             },
           },
         } as LineSparklineOptions,
-      } ,
+      },
     },
     {
       field: 'volume',
@@ -88,6 +89,6 @@ function renderer(params: TooltipRendererParams) {
 }
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid');
-  new agGrid.Grid(gridDiv, gridOptions);
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+  new Grid(gridDiv, gridOptions);
 })

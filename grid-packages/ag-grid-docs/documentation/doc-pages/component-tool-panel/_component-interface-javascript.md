@@ -4,7 +4,7 @@
 |Implement this interface to create a tool panel component.
 |
 |```ts
-|interface IToolPanel {
+|interface IToolPanelComp {
 |    // The init(params) method is called on the tool panel once upon component initialisation.
 |    init(params: IToolPanelParams): void;
 |

@@ -1,8 +1,8 @@
-import {createApp} from 'vue';
-import {AgGridVue} from '@ag-grid-community/vue3';
-import {AllCommunityModules} from '@ag-grid-community/all-modules';
-import '@ag-grid-community/all-modules/dist/styles/ag-grid.css';
-import '@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css';
+import { createApp } from 'vue';
+import { AgGridVue } from '@ag-grid-community/vue3';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import "@ag-grid-community/core/dist/styles/ag-grid.css";
+import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import DoublingEditor from './doublingEditorVue.js';
 import MoodEditor from './moodEditorVue.js';
 import MoodRenderer from './moodRendererVue.js';
@@ -40,7 +40,7 @@ const VueExample = {
             resizable: true
         };
 
-        const modules = AllCommunityModules;
+        const modules = [ClientSideRowModelModule];
 
         const columnDefs = [{
             headerName: "Doubling",

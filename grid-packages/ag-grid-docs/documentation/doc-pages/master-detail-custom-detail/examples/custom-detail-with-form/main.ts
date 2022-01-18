@@ -1,10 +1,10 @@
-import { FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core'
-declare var DetailCellRenderer: any;
+import { Grid, FirstDataRenderedEvent, GridOptions } from '@ag-grid-community/core'
+import { DetailCellRenderer } from './detailCellRenderer_typescript'
 
 const gridOptions: GridOptions = {
   columnDefs: [
     // group cell renderer needed for expand / collapse icons
-    { field: 'name', cellRenderer: 'agGroupCellRenderer' },
+    { field: 'name', cellRendererComp: 'agGroupCellRenderer' },
     { field: 'account' },
     { field: 'calls' },
     { field: 'minutes', valueFormatter: "x.toLocaleString() + 'm'" },
@@ -13,12 +13,9 @@ const gridOptions: GridOptions = {
     flex: 1,
   },
   masterDetail: true,
-  detailCellRenderer: 'myDetailCellRenderer',
+  detailRowCellComp: DetailCellRenderer,
   detailRowHeight: 70,
   groupDefaultExpanded: 1,
-  components: {
-    myDetailCellRenderer: DetailCellRenderer,
-  },
   onFirstDataRendered: onFirstDataRendered,
 }
 
@@ -30,8 +27,8 @@ function onFirstDataRendered(params: FirstDataRenderedEvent) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/master-detail-data.json')
     .then(response => response.json())

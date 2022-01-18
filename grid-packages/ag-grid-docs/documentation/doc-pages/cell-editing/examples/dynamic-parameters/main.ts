@@ -1,5 +1,5 @@
-import { CellValueChangedEvent, GridOptions, ICellEditorParams } from '@ag-grid-community/core'
-declare var GenderCellRenderer: any;
+import { Grid, CellValueChangedEvent, GridOptions, ICellEditorParams } from '@ag-grid-community/core'
+import { GenderCellRenderer } from "./genderCellRenderer_typescript";
 
 const cellCellEditorParams = (params: ICellEditorParams) => {
   const selectedCountry = params.data.country
@@ -16,16 +16,16 @@ const gridOptions: GridOptions = {
     { field: 'name' },
     {
       field: 'gender',
-      cellRenderer: 'genderCellRenderer',
-      cellEditor: 'agRichSelectCellEditor',
+      cellRendererComp: GenderCellRenderer,
+      cellEditorComp: 'agRichSelectCellEditor',
       cellEditorParams: {
         values: ['Male', 'Female'],
-        cellRenderer: 'genderCellRenderer',
+        cellRendererComp: GenderCellRenderer,
       },
     },
     {
       field: 'country',
-      cellEditor: 'agRichSelectCellEditor',
+      cellEditorComp: 'agRichSelectCellEditor',
       cellEditorParams: {
         cellHeight: 50,
         values: ['Ireland', 'USA'],
@@ -33,19 +33,16 @@ const gridOptions: GridOptions = {
     },
     {
       field: 'city',
-      cellEditor: 'agRichSelectCellEditor',
+      cellEditorComp: 'agRichSelectCellEditor',
       cellEditorParams: cellCellEditorParams,
     },
-    { field: 'address', cellEditor: 'agLargeTextCellEditor', minWidth: 550 },
+    { field: 'address', cellEditorComp: 'agLargeTextCellEditor', minWidth: 550 },
   ],
   defaultColDef: {
     flex: 1,
     minWidth: 130,
     editable: true,
     resizable: true,
-  },
-  components: {
-    genderCellRenderer: GenderCellRenderer,
   },
   rowData: getData(),
   onCellValueChanged: onCellValueChanged,
@@ -78,6 +75,6 @@ function onCellValueChanged(params: CellValueChangedEvent) {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', () => {
-  const gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 })

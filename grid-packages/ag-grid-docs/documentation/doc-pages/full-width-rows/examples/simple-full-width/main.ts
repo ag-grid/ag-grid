@@ -1,52 +1,59 @@
-import { GridOptions, ICellRendererParams } from '@ag-grid-community/core'
-declare var FullWidthCellRenderer: any;
+import { Grid, GridOptions, ICellRendererParams, ICellRendererComp } from '@ag-grid-community/core'
+import { FullWidthCellRenderer } from './fullWidthCellRenderer_typescript'
 
-const gridOptions: GridOptions = {
-  columnDefs: [
-    { field: 'name', cellRenderer: countryCellRenderer },
-    { field: 'continent' },
-    { field: 'language' },
-  ],
-  defaultColDef: {
-    flex: 1,
-    sortable: true,
-    resizable: true,
-    filter: true,
-  },
-  components: {
-    fullWidthCellRenderer: FullWidthCellRenderer,
-  },
-  rowData: getData(),
-  getRowHeight: function (params) {
-    // return 100px height for full width rows
-    if (isFullWidth(params.data)) {
-      return 100
+class CountryCellRenderer implements ICellRendererComp {
+    eGui!: HTMLElement;
+
+    init(params: ICellRendererParams) {
+        const flag = `<img border="0" width="15" height="10" src="https://www.ag-grid.com/example-assets/flags/${params.data.code}.png">`
+
+        const eTemp = document.createElement('div');
+        eTemp.innerHTML = `<span style="cursor: default;">${flag} ${params.value}</span>`;
+        this.eGui = eTemp.firstElementChild as HTMLElement;
     }
-  },
-  isFullWidthCell: function (rowNode) {
-    return isFullWidth(rowNode.data)
-  },
-  // see AG Grid docs cellRenderer for details on how to build cellRenderers
-  fullWidthCellRenderer: 'fullWidthCellRenderer',
+
+    getGui() {
+        return this.eGui;
+    }
+
+    refresh(params: ICellRendererParams): boolean {
+        return false;
+    }
 }
 
-function countryCellRenderer(params: ICellRendererParams) {
-  var flag =
-    '<img border="0" width="15" height="10" src="https://www.ag-grid.com/example-assets/flags/' +
-    params.data.code +
-    '.png">'
-  return (
-    '<span style="cursor: default;">' + flag + ' ' + params.value + '</span>'
-  )
+const gridOptions: GridOptions = {
+    columnDefs: [
+        { field: 'name', cellRendererComp: CountryCellRenderer },
+        { field: 'continent' },
+        { field: 'language' },
+    ],
+    defaultColDef: {
+        flex: 1,
+        sortable: true,
+        resizable: true,
+        filter: true,
+    },
+    rowData: getData(),
+    getRowHeight: function (params) {
+        // return 100px height for full width rows
+        if (isFullWidth(params.data)) {
+            return 100
+        }
+    },
+    isFullWidthCell: function (rowNode) {
+        return isFullWidth(rowNode.data)
+    },
+    // see AG Grid docs cellRenderer for details on how to build cellRenderers
+    fullWidthCellComp: FullWidthCellRenderer,
 }
 
 function isFullWidth(data: any) {
-  // return true when country is Peru, France or Italy
-  return ['Peru', 'France', 'Italy'].indexOf(data.name) >= 0
+    // return true when country is Peru, France or Italy
+    return ['Peru', 'France', 'Italy'].indexOf(data.name) >= 0
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+    const gridDiv = document.querySelector<HTMLElement>('#myGrid')!;
+    new Grid(gridDiv, gridOptions)
 })

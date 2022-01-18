@@ -1,7 +1,7 @@
-import { GridOptions, ICellRendererParams } from '@ag-grid-community/core'
+import { Grid, GridOptions, ICellRendererParams } from '@ag-grid-community/core'
 
-declare var MoodRenderer: any;
-declare var GenderRenderer: any;
+import { MoodRenderer } from './moodRenderer_typescript'
+import { GenderRenderer } from './genderRenderer_typescript'
 
 const rowData = [
   { value: 14, type: 'age' },
@@ -18,13 +18,13 @@ const gridOptions: GridOptions = {
     {
       headerName: 'Rendered Value',
       field: 'value',
-      cellRendererSelector: function (params: ICellRendererParams) {
+      cellRendererCompSelector: function (params: ICellRendererParams) {
         const moodDetails = {
-          component: 'moodCellRenderer',
+          comp: MoodRenderer
         }
 
         const genderDetails = {
-          component: 'genderCellRenderer',
+          comp: GenderRenderer,
           params: { values: ['Male', 'Female'] },
         }
 
@@ -50,15 +50,11 @@ const gridOptions: GridOptions = {
   },
   onCellEditingStopped: function (event) {
     console.log('cellEditingStopped')
-  },
-  components: {
-    genderCellRenderer: GenderRenderer,
-    moodCellRenderer: MoodRenderer,
-  },
+  }
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  const gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  const gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 })

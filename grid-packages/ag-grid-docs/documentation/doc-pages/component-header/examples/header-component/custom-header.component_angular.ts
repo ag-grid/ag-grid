@@ -2,6 +2,10 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { IHeaderAngularComp } from '@ag-grid-community/angular'
 import { IHeaderParams } from '@ag-grid-community/core'
 
+export interface ICustomHeaderParams {
+    menuIcon: string;
+}
+
 @Component({
     selector: 'app-custom-header',
     template: `
@@ -43,7 +47,7 @@ import { IHeaderParams } from '@ag-grid-community/core'
     ]
 })
 export class CustomHeader implements IHeaderAngularComp {
-    public params!: IHeaderParams;
+    public params!: IHeaderParams & ICustomHeaderParams;
 
     public ascSort: string = 'inactive';
     public descSort: string = 'inactive';
@@ -51,7 +55,7 @@ export class CustomHeader implements IHeaderAngularComp {
 
     @ViewChild('menuButton', { read: ElementRef }) public menuButton!: ElementRef;
 
-    agInit(params: IHeaderParams): void {
+    agInit(params: IHeaderParams & ICustomHeaderParams): void {
         this.params = params;
 
         params.column.addEventListener('sortChanged', this.onSortChanged.bind(this));
@@ -74,7 +78,11 @@ export class CustomHeader implements IHeaderAngularComp {
         }
     }
 
-    onSortRequested(order: string, event: any) {
+    onSortRequested(order: 'asc' | 'desc' | null, event: any) {
         this.params.setSort(order, event.shiftKey);
+    }
+
+    refresh(params: IHeaderParams) {
+        return false;
     }
 }

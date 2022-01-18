@@ -1,4 +1,4 @@
-import { GridOptions, RowNodeTransaction } from '@ag-grid-community/core'
+import { Grid, GridOptions, RowNodeTransaction } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -99,6 +99,6 @@ function printResult(res: RowNodeTransaction) {
 // wait for the document to be loaded, otherwise
 // AG Grid will not find the div in the document.
 document.addEventListener('DOMContentLoaded', function () {
-  const eGridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(eGridDiv, gridOptions)
+  const eGridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(eGridDiv, gridOptions)
 })

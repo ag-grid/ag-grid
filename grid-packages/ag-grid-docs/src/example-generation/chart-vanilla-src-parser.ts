@@ -1,18 +1,6 @@
-import { generate } from 'escodegen';
-import * as esprima from 'esprima';
 import * as $ from 'jquery';
 import {
-    NodeType,
-    recognizedDomEvents,
-    collect,
-    nodeIsVarWithName,
-    nodeIsPropertyWithName,
-    nodeIsFunctionWithName,
-    nodeIsInScope,
-    nodeIsUnusedFunction,
-    extractEventHandlers,
-    extractUnboundInstanceMethods,
-    nodeIsGlobalFunctionCall,
+    extractEventHandlers, extractImportStatements, extractTypeInfoForVariable, extractUnboundInstanceMethods, parseFile, readAsJsFile, recognizedDomEvents, removeInScopeJsDoc, tsCollect, tsGenerate, tsNodeIsFunctionWithName, tsNodeIsGlobalFunctionCall, tsNodeIsGlobalVarWithName, tsNodeIsInScope, tsNodeIsPropertyWithName, tsNodeIsTopLevelVariable, tsNodeIsTypeDeclaration, tsNodeIsUnusedFunction
 } from './parser-utils';
 
 export const templatePlaceholder = '$$CHART$$';
@@ -21,21 +9,26 @@ const chartVariableName = 'chart';
 const optionsVariableName = 'options';
 const PROPERTIES = [optionsVariableName];
 
-function generateWithOptionReferences(node, options?) {
-    return generate(node, options)
+function tsGenerateWithOptionReferences(node, srcFile) {
+    return tsGenerate(node, srcFile)
         .replace(new RegExp(`agCharts\\.AgChart\\.update\\(chart, options\\);?`, 'g'), '');
 }
 
-export function parser(js, html) {
+export function parser(fileName, srcFile, html) {
+    const bindings = internalParser(readAsJsFile(srcFile), html);
+    const typedBindings = internalParser(srcFile, html);
+    return { bindings, typedBindings };
+}
+
+export function internalParser(js, html) {
     const domTree = $(`<div>${html}</div>`);
 
     domTree.find('style').remove();
 
     const domEventHandlers = extractEventHandlers(domTree, recognizedDomEvents);
-    const tree = esprima.parseScript(js, { comment: true });
-    const collectors = [];
-    const optionsCollectors = [];
-    const indentOne = { format: { indent: { base: 1 } } };
+    const tsTree = parseFile(js);
+    const tsCollectors = [];
+    const tsOptionsCollectors = [];
     const registered = [chartVariableName, optionsVariableName];
 
     // handler is the function name, params are any function parameters
@@ -47,46 +40,46 @@ export function parser(js, html) {
         registered.push(handler);
 
         // one of the event handlers extracted earlier (onclick, onchange etc)
-        collectors.push({
-            matches: node => nodeIsFunctionWithName(node, handler),
+        tsCollectors.push({
+            matches: node => tsNodeIsFunctionWithName(node, handler),
             apply: (bindings, node) => {
                 bindings.externalEventHandlers.push({
                     name: handler,
                     params: params,
-                    body: generateWithOptionReferences(node, null)
+                    body: tsGenerateWithOptionReferences(node, tsTree)
                 });
             }
         });
     });
 
+    const unboundInstanceMethods = extractUnboundInstanceMethods(tsTree);
     // functions marked as "inScope" will be added to "instance" methods, as opposed to "global" ones
-    const unboundInstanceMethods = extractUnboundInstanceMethods(tree);
-    collectors.push({
-        matches: node => nodeIsInScope(node, unboundInstanceMethods),
-        apply: (bindings, node) => bindings.instanceMethods.push(generateWithOptionReferences(node, indentOne))
+    tsCollectors.push({
+        matches: node => tsNodeIsInScope(node, unboundInstanceMethods),
+        apply: (bindings, node) => bindings.instanceMethods.push(removeInScopeJsDoc(tsGenerateWithOptionReferences(node, tsTree)))
     });
 
     // anything not marked as "inScope" is considered a "global" method
-    collectors.push({
-        matches: node => nodeIsUnusedFunction(node, registered, unboundInstanceMethods),
-        apply: (bindings, node) => bindings.globals.push(generate(node))
+    tsCollectors.push({
+        matches: node => tsNodeIsUnusedFunction(node, registered, unboundInstanceMethods),
+        apply: (bindings, node) => bindings.globals.push(tsGenerate(node, tsTree))
     });
 
-    // anything vars is considered an "global" var
-    collectors.push({
-        matches: node => node.type === NodeType.Variable && registered.indexOf(node.declarations[0].id.name) < 0,
-        apply: (bindings, node) => bindings.globals.push(generate(node))
+    // anything vars is considered an "global" var    
+    tsCollectors.push({
+        matches: node => tsNodeIsTopLevelVariable(node, registered),
+        apply: (bindings, node) => bindings.globals.push(tsGenerate(node, tsTree))
     });
 
     PROPERTIES.forEach(propertyName => {
         registered.push(propertyName);
 
-        // grab global variables named as chart properties
-        collectors.push({
-            matches: node => nodeIsVarWithName(node, propertyName),
+        // grab global variables named as chart properties        
+        tsCollectors.push({
+            matches: node => tsNodeIsGlobalVarWithName(node, propertyName),
             apply: (bindings, node) => {
                 try {
-                    let code = generate(node.declarations[0].init, indentOne);
+                    let code = tsGenerate(node.initializer, tsTree);
 
                     if (propertyName === optionsVariableName) {
                         code = code.replace(/container:.*/, '');
@@ -99,47 +92,64 @@ export function parser(js, html) {
             }
         });
 
-        optionsCollectors.push({
-            matches: node => nodeIsPropertyWithName(node, propertyName),
+        tsOptionsCollectors.push({
+            matches: node => tsNodeIsPropertyWithName(node, propertyName),
             apply: (bindings, node) => bindings.properties.push({
                 name: propertyName,
-                value: generate(node.value, indentOne)
+                value: tsGenerate(node.value, tsTree)
             })
         });
     });
 
-    // optionsCollectors captures all events, properties etc that are related to options
-    collectors.push({
-        matches: node => nodeIsVarWithName(node, optionsVariableName),
-        apply: (bindings, node) => collect(node.declarations[0].init.properties, bindings, optionsCollectors)
+    // optionsCollectors captures all events, properties etc that are related to options  
+    tsCollectors.push({
+        matches: node => tsNodeIsGlobalVarWithName(node, optionsVariableName),
+        apply: (bindings, node) => {
+
+            node.initializer.properties.forEach(prop => {
+                bindings = tsCollect(prop, bindings, tsOptionsCollectors, false)
+            });
+
+            return bindings;
+        }
     });
 
-    collectors.push({
-        matches: node => nodeIsGlobalFunctionCall(node),
-        apply: (bindings, node) => bindings.init.push(generate(node))
+    tsCollectors.push({
+        matches: node => tsNodeIsGlobalFunctionCall(node),
+        apply: (bindings, node) => bindings.init.push(tsGenerate(node, tsTree))
+    });
+
+    tsCollectors.push({
+        matches: node => tsNodeIsTypeDeclaration(node),
+        apply: (bindings, node) => {
+            const declaration = tsGenerate(node, tsTree);
+            bindings.declarations.push(declaration)
+        }
     });
 
     /*
      * properties -> chart related properties
      * globals -> none chart related methods/variables (i.e. non-instance)
-     * instanceMethods -> methods that are marked as "inScope"
      */
-    const bindings = collect(
-        tree.body,
+    const tsBindings = tsCollect(
+        tsTree,
         {
             properties: [],
             externalEventHandlers: [],
             instanceMethods: [],
             globals: [],
             init: [],
+            declarations: [],
         },
-        collectors
+        tsCollectors
     );
 
     domTree.find('#myChart').replaceWith(templatePlaceholder);
-    bindings.template = domTree.html();
+    tsBindings.template = domTree.html();
+    tsBindings.imports = extractImportStatements(tsTree);
+    tsBindings.optionsTypeInfo = extractTypeInfoForVariable(tsTree, 'options');
 
-    return bindings;
+    return tsBindings;
 }
 
 export default parser;

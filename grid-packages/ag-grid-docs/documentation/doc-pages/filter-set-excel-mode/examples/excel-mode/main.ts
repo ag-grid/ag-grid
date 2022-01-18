@@ -1,16 +1,16 @@
-import { GridOptions } from '@ag-grid-community/core'
+import { Grid, GridOptions } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
     {
       headerName: 'Default',
       field: 'animal',
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
     },
     {
       headerName: 'Excel (Windows)',
       field: 'animal',
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
       filterParams: {
         excelMode: 'windows',
       },
@@ -18,7 +18,7 @@ const gridOptions: GridOptions = {
     {
       headerName: 'Excel (Mac)',
       field: 'animal',
-      filter: 'agSetColumnFilter',
+      filterComp: 'agSetColumnFilter',
       filterParams: {
         excelMode: 'mac',
       },
@@ -40,6 +40,6 @@ const gridOptions: GridOptions = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 })

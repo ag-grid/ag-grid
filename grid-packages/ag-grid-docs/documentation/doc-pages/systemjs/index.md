@@ -186,7 +186,6 @@ For Just in Time (JIT) compilation our SystemJS Configuration file looks like th
                 '@angular/compiler': 'node_modules/@angular/compiler/bundles/compiler.umd.js',
                 '@angular/platform-browser': 'node_modules/@angular/platform-browser/bundles/platform-browser.umd.js',
                 '@angular/platform-browser-dynamic': 'node_modules/@angular/platform-browser-dynamic/bundles/platform-browser-dynamic.umd.js',
-                '@angular/http': 'node_modules/@angular/http/bundles/http.umd.js',
                 '@angular/router': 'node_modules/@angular/router/bundles/router.umd.js',
                 '@angular/forms': 'node_modules/@angular/forms/bundles/forms.umd.js',
                 // other libraries
@@ -321,7 +320,6 @@ Our SystemJS config file is different for AOT:
                 '@angular/platform-browser': 'node_modules/@angular/platform-browser',
                 '@angular/forms': 'node_modules/@angular/forms',
                 '@angular/router': 'node_modules/@angular/router',
-                '@angular/http': 'node_modules/@angular/http',
                 // other libraries
                 'rxjs': 'node_modules/rxjs',
                 // 'angular-in-memory-web-api': 'npm:angular-in-memory-web-api/bundles/in-memory-web-api.umd.js',
@@ -344,9 +342,6 @@ Our SystemJS config file is different for AOT:
                     main: 'index.js'
                 },
                 '@angular/router': {
-                    main: 'index.js'
-                },
-                '@angular/http': {
                     main: 'index.js'
                 }
             }

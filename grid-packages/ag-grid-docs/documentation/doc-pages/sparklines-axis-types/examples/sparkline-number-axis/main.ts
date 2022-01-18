@@ -1,4 +1,4 @@
-import { AreaSparklineOptions, GridOptions } from '@ag-grid-community/core'
+import { Grid, AreaSparklineOptions, GridOptions } from '@ag-grid-community/core'
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -6,7 +6,7 @@ const gridOptions: GridOptions = {
     { field: 'name', minWidth: 250 },
     {
       field: 'change',
-      cellRenderer: 'agSparklineCellRenderer',
+      cellRendererComp: 'agSparklineCellRenderer',
       cellRendererParams: {
         sparklineOptions: {
           type: 'area',
@@ -32,6 +32,6 @@ const gridOptions: GridOptions = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 })

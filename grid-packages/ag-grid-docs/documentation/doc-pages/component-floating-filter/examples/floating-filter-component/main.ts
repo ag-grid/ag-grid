@@ -1,6 +1,5 @@
-import { ColDef, GridOptions } from '@ag-grid-community/core'
-
-declare var SliderFloatingFilter: any
+import { Grid, ColDef, GridOptions } from '@ag-grid-community/core'
+import { SliderFloatingFilter } from './sliderFloatingFilter_typescript'
 
 const columnDefs: ColDef[] = [
   { field: 'country', filter: false },
@@ -8,18 +7,18 @@ const columnDefs: ColDef[] = [
   { field: 'name', filter: false },
   {
     field: 'gold',
-    floatingFilterComponent: 'sliderFloatingFilter',
+    floatingFilterComp: SliderFloatingFilter,
     floatingFilterComponentParams: {
       maxValue: 7,
       suppressFilterButton: true,
     },
-    filter: 'agNumberColumnFilter',
+    filterComp: 'agNumberColumnFilter',
     suppressMenu: false,
   },
   {
     field: 'silver',
-    filter: 'agNumberColumnFilter',
-    floatingFilterComponent: 'sliderFloatingFilter',
+    filterComp: 'agNumberColumnFilter',
+    floatingFilterComp: SliderFloatingFilter,
     floatingFilterComponentParams: {
       maxValue: 5,
       suppressFilterButton: true,
@@ -28,8 +27,8 @@ const columnDefs: ColDef[] = [
   },
   {
     field: 'bronze',
-    filter: 'agNumberColumnFilter',
-    floatingFilterComponent: 'sliderFloatingFilter',
+    filterComp: 'agNumberColumnFilter',
+    floatingFilterComp: SliderFloatingFilter,
     floatingFilterComponentParams: {
       maxValue: 10,
       suppressFilterButton: true,
@@ -49,15 +48,12 @@ const gridOptions: GridOptions = {
     resizable: true,
   },
   columnDefs: columnDefs,
-  rowData: getData(),
-  components: {
-    sliderFloatingFilter: SliderFloatingFilter,
-  },
+  rowData: getData()
 }
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
   gridOptions.api!.sizeColumnsToFit()
 })

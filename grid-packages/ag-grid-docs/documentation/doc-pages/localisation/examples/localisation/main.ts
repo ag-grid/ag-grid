@@ -1,14 +1,31 @@
-import { ColDef, GridOptions, ICellRendererParams } from '@ag-grid-community/core'
+import { Grid, ColDef, GridOptions, ICellRendererParams } from '@ag-grid-community/core'
+import { doc } from "prettier";
 
 declare var AG_GRID_LOCALE_ZZZ: {
   [key: string]: string;
 };
 
+class NodeIdRenderer {
+  eGui?: HTMLElement;
+
+  constructor() {
+  }
+
+  init(params: ICellRendererParams) {
+    this.eGui = document.createElement('div');
+    this.eGui.innerHTML = params.node!.id! + 1;
+  }
+
+  getGui() {
+    return this.eGui;
+  }
+}
+
 const columnDefs: ColDef[] = [
   // this row just shows the row index, doesn't use any data from the row
   {
     headerName: '#',
-    cellRenderer: 'rowNodeIdRenderer',
+    cellRendererComp: NodeIdRenderer,
     checkboxSelection: true,
     headerCheckboxSelection: true,
   },
@@ -19,19 +36,19 @@ const columnDefs: ColDef[] = [
     enablePivot: true,
   },
   { field: 'country', enableRowGroup: true },
-  { field: 'year', filter: 'agNumberColumnFilter' },
+  { field: 'year', filterComp: 'agNumberColumnFilter' },
   { field: 'date' },
   {
     field: 'sport',
-    filter: 'agMultiColumnFilter',
+    filterComp: 'agMultiColumnFilter',
     filterParams: {
       filters: [
         {
-          filter: 'agTextColumnFilter',
+          filterComp: 'agTextColumnFilter',
           display: 'accordion',
         },
         {
-          filter: 'agSetColumnFilter',
+          filterComp: 'agSetColumnFilter',
           display: 'accordion',
         },
       ],
@@ -55,11 +72,6 @@ const gridOptions: GridOptions = {
     filter: true,
     resizable: true,
   },
-  components: {
-    rowNodeIdRenderer: function (params: ICellRendererParams) {
-      return params.node!.id! + 1
-    },
-  },
   sideBar: true,
   statusBar: {
     statusPanels: [
@@ -77,8 +89,8 @@ const gridOptions: GridOptions = {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-  var gridDiv = document.querySelector('#myGrid')
-  new agGrid.Grid(gridDiv, gridOptions)
+  var gridDiv = document.querySelector<HTMLElement>('#myGrid')!
+  new Grid(gridDiv, gridOptions)
 
   fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
     .then(response => response.json())

@@ -1,10 +1,10 @@
-import {Component, ElementRef, ViewChild} from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 
-import {IDateParams} from '@ag-grid-community/core';
-import {IDateAngularComp} from '@ag-grid-community/angular';
+import { IDateParams } from '@ag-grid-community/core';
+import { IDateAngularComp } from '@ag-grid-community/angular';
 
 // we'll be using the globally provided flatpickr for our example
-declare var flatpickr : any;
+declare var flatpickr: any;
 
 @Component({
     selector: 'app-loading-overlay',
@@ -16,7 +16,7 @@ declare var flatpickr : any;
       </a>
       </div>
     `,
-    styles: [        `
+    styles: [`
             .custom-date-filter a {
                 position: absolute;
                 right: 20px;
@@ -38,10 +38,10 @@ declare var flatpickr : any;
     ]
 })
 export class CustomDateComponent implements IDateAngularComp {
-    @ViewChild("flatpickrEl", {read: ElementRef}) flatpickrEl: ElementRef;
-    @ViewChild("eInput", {read: ElementRef}) eInput: ElementRef;
-    private date: Date;
-    private params: IDateParams;
+    @ViewChild("flatpickrEl", { read: ElementRef }) flatpickrEl!: ElementRef;
+    @ViewChild("eInput", { read: ElementRef }) eInput!: ElementRef;
+    private date!: Date;
+    private params!: IDateParams;
     private picker: any;
 
     agInit(params: IDateParams): void {

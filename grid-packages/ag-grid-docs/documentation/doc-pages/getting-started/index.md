@@ -137,27 +137,31 @@ title: "Get Started with AG Grid"
 
 [[only-react]]
 | ```jsx
-| import React from 'react';
+| import React, { useState } from 'react';
 | import { render } from 'react-dom';
-| import {AgGridColumn, AgGridReact} from 'ag-grid-react';
+| import { AgGridReact } from 'ag-grid-react';
 | 
 | import 'ag-grid-community/dist/styles/ag-grid.css';
 | import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 | 
 | const App = () => {
-|    const rowData = [
+|    const [rowData] = useState([
 |        {make: "Toyota", model: "Celica", price: 35000},
 |        {make: "Ford", model: "Mondeo", price: 32000},
 |        {make: "Porsche", model: "Boxter", price: 72000}
-|    ];
-| 
+|    ]);
+|    
+|    const [columnDefs] = useState([
+|        { field: 'make' },
+|        { field: 'model' },
+|        { field: 'price' }
+|    ])
+|
 |    return (
 |        <div className="ag-theme-alpine" style={{height: 400, width: 600}}>
 |            <AgGridReact
-|                rowData={rowData}>
-|                <AgGridColumn field="make"></AgGridColumn>
-|                <AgGridColumn field="model"></AgGridColumn>
-|                <AgGridColumn field="price"></AgGridColumn>
+|                rowData={rowData}
+|                columnDefs={columnDefs}>
 |            </AgGridReact>
 |        </div>
 |    );
@@ -1325,26 +1329,30 @@ title: "Get Started with AG Grid"
 | favorite text editor and change its contents to the following:
 |
 |```jsx
-|import React from 'react';
-|import {AgGridColumn, AgGridReact} from 'ag-grid-react';
+|import React, { useState } from 'react';
+|import { AgGridReact } from 'ag-grid-react';
 |
 |import 'ag-grid-community/dist/styles/ag-grid.css';
 |import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 |
 |const App = () => {
-|    const rowData = [
+|    const [rowData] = useState([
 |        {make: "Toyota", model: "Celica", price: 35000},
 |        {make: "Ford", model: "Mondeo", price: 32000},
 |        {make: "Porsche", model: "Boxter", price: 72000}
-|    ];
+|    ]);
+|
+|    const [columnDefs] = useState([
+|        { field: "make" },
+|        { field: "model" },
+|        { field: "price" },
+|    ]);     
 |
 |    return (
 |        <div className="ag-theme-alpine" style={{height: 400, width: 600}}>
 |            <AgGridReact
-|                rowData={rowData}>
-|                <AgGridColumn field="make"></AgGridColumn>
-|                <AgGridColumn field="model"></AgGridColumn>
-|                <AgGridColumn field="price"></AgGridColumn>
+|                rowData={rowData}
+|                columnDefs={columnDefs}>
 |            </AgGridReact>
 |        </div>
 |    );
@@ -1359,50 +1367,54 @@ title: "Get Started with AG Grid"
 | Let's go over the `App.jsx` changes we made:
 |
 | ```jsx
-| import { AgGridColumn, AgGridReact } from 'ag-grid-react';
+| import { AgGridReact } from 'ag-grid-react';
 |
 | import 'ag-grid-community/dist/styles/ag-grid.css';
 | import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 | ```
 |
-| The three lines above import the `AgGridReact` and `AgGridColumn` components, the grid
+| The three lines above import the `AgGridReact` component, the grid
 | "structure" stylesheet (`ag-grid.css`), and one of the available grid themes: (`ag-theme-alpine.css`).
 |
 | The grid ships [several different themes](/themes/); pick one that matches your project
 | design. You can customise it further with Sass variables, a technique which we will cover further down the road.
 |
 | ```jsx
-| const rowData = [
-|     {make: "Toyota", model: "Celica", price: 35000},
-|     {make: "Ford", model: "Mondeo", price: 32000},
-|     {make: "Porsche", model: "Boxter", price: 72000}
-| ];
+|    const [rowData] = useState([
+|        {make: "Toyota", model: "Celica", price: 35000},
+|        {make: "Ford", model: "Mondeo", price: 32000},
+|        {make: "Porsche", model: "Boxter", price: 72000}
+|    ]);
 |
-| //...
+|    const [columnDefs] = useState([
+|        { field: "make" },
+|        { field: "model" },
+|        { field: "price" },
+|    ]);     
 |
-| <AgGridReact
-|     rowData={rowData}>
-|     <AgGridColumn field="make"></AgGridColumn>
-|     <AgGridColumn field="model"></AgGridColumn>
-|     <AgGridColumn field="price"></AgGridColumn>
-| </AgGridReact>
+|    return (
+|        <div className="ag-theme-alpine" style={{height: 400, width: 600}}>
+|            <AgGridReact
+|                rowData={rowData}
+|                columnDefs={columnDefs}>
+|            </AgGridReact>
+|        </div>
+|    );
 | ```
 |
 | The code above presents two essential configuration properties of the grid -
-| [the column definitions](/column-definitions/)
-| (`AgGridColumn`) and the data (`rowData`). In our case, the column definitions contain three columns;
+| the data (`rowData`) and the [the column definitions](/column-definitions/) (`columnDefs`). 
+| In our case, the column definitions contain three columns;
 | each column entry specifies the header label and the data field to be displayed in the body of the table.
 |
 | The actual data is defined in the `rowData` as an array of objects. Notice that the fields of the
-| objects match the `field` values in the `AgGridColumn` configuration objects.
+| objects match the `field` values in the `columnDefs` configuration objects.
 |
 | ```jsx
 | <div className="ag-theme-alpine" style={{ height: 400, width: 600 }}>
 |     <AgGridReact
-|         rowData={rowData}>
-|         <AgGridColumn field="make"></AgGridColumn>
-|         <AgGridColumn field="model"></AgGridColumn>
-|         <AgGridColumn field="price"></AgGridColumn>
+|         rowData={rowData}
+|         columnDefs={columnDefs}>
 |     </AgGridReact>
 | </div>
 | ```
@@ -1418,9 +1430,11 @@ title: "Get Started with AG Grid"
 | do is set the `sort` property on the column definitions.
 |
 | ```jsx
-| <AgGridColumn field="make" sortable={ true }></AgGridColumn>
-| <AgGridColumn field="model" sortable={ true }></AgGridColumn>
-| <AgGridColumn field="price" sortable={ true }></AgGridColumn>
+| const [columnDefs] = useState([
+|     { field: "make", sortable: true },
+|     { field: "model", sortable: true },
+|     { field: "price", sortable: true },
+| ]);     
 | ```
 |
 | After adding the property, you should be able to sort the grid by clicking on the column headers.
@@ -1433,9 +1447,11 @@ title: "Get Started with AG Grid"
 | As with sorting, enabling filtering is as easy as setting the `filter` property:
 |
 | ```jsx
-| <AgGridColumn field="make" sortable={ true } filter={ true }></AgGridColumn>
-| <AgGridColumn field="model" sortable={ true } filter={ true }></AgGridColumn>
-| <AgGridColumn field="price" sortable={ true } filter={ true }></AgGridColumn>
+| const [columnDefs] = useState([
+|     { field: "make", sortable: true, filter: true },
+|     { field: "model", sortable: true, filter: true },
+|     { field: "price", sortable: true, filter: true },
+| ]);     
 | ```
 |
 | With this property set, the grid will display a small column menu icon when you hover the header.
@@ -1454,13 +1470,13 @@ title: "Get Started with AG Grid"
 | ```diff
 | +  import React, { useState, useEffect } from 'react';
 |
-| -  const rowData = [
+| -  const [rowData] = useState([
 | -      {make: "Toyota", model: "Celica", price: 35000},
 | -      {make: "Ford", model: "Mondeo", price: 32000},
 | -      {make: "Porsche", model: "Boxter", price: 72000}
-| -  ];
+| -  ]);
 |
-| + const [rowData, setRowData] = useState([]);
+| -  const [rowData, setRowData] = useState([]);
 |
 | + useEffect(() => {
 | +     fetch('https://www.ag-grid.com/example-assets/row-data.json')
@@ -1470,7 +1486,7 @@ title: "Get Started with AG Grid"
 | +
 | ```
 |
-| Here, we replaced the `rowData` assignment in the constructor with a data fetch from a remote service.
+| Here, we replaced the `rowData` hard-coded assignment with a data fetch from a remote service.
 | The remote data is the same as the one we initially had, so you should not notice any actual changes to the grid.
 |
 | ## Enable Selection
@@ -1491,6 +1507,13 @@ title: "Get Started with AG Grid"
 |    const [rowData, setRowData] = useState([]);
 |+  const gridRef = useRef(null);
 |
+|    const [columnDefs] = useState([
+|-      { field: "make", sortable: true, filter: true },
+|+      { field: "make", sortable: true, filter: true, checkboxSelection: true },
+|        { field: "model", sortable: true, filter: true },
+|        { field: "price", sortable: true, filter: true },
+|    ]);     
+|
 |    useEffect(() => {
 |        fetch('https://www.ag-grid.com/example-assets/row-data.json')
 |            .then(result => result.json())
@@ -1510,11 +1533,8 @@ title: "Get Started with AG Grid"
 |            <AgGridReact
 |+              ref={gridRef}
 |                rowData={rowData}
+|                columnDefs={columnDefs}
 |+              rowSelection="multiple">
-|-              <AgGridColumn field="make" sortable={true} filter={true}></AgGridColumn>
-|+              <AgGridColumn field="make" sortable={true} filter={true} checkboxSelection={true}></AgGridColumn>
-|                <AgGridColumn field="model" sortable={true} filter={true}></AgGridColumn>
-|                <AgGridColumn field="price" sortable={true} filter={true}></AgGridColumn>
 |            </AgGridReact>
 |        </div>
 |   );
@@ -1561,11 +1581,11 @@ title: "Get Started with AG Grid"
 | Then, add the import to your file:
 |
 | ```diff
-| import { AgGridColumn, AgGridReact } from 'ag-grid-react';
+|   import { AgGridReact } from 'ag-grid-react';
 |
 | + import 'ag-grid-enterprise';
-| import 'ag-grid-community/dist/styles/ag-grid.css';
-| import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
+|   import 'ag-grid-community/dist/styles/ag-grid.css';
+|   import 'ag-grid-community/dist/styles/ag-theme-alpine.css';
 | ```
 |
 | If everything is ok, you should see a message in the console that tells you there is no
@@ -1578,22 +1598,32 @@ title: "Get Started with AG Grid"
 | Now let's enable grouping! Update the `AgGridReact` configuration to this:
 |
 | ```diff
+|+ import { useEffect, useMemo, useState, useRef } from 'react';
+|
+| const [columnDefs] = useState([
+|-      { field: "make", sortable: true, filter: true, checkboxSelection: true },
+|+      { field: "make", sortable: true, filter: true, checkboxSelection: true, rowGroup: true },
+|        { field: "model", sortable: true, filter: true },
+|        { field: "price", sortable: true, filter: true },
+|    ]);
+|     
+|+ const autoGroupColumnDef = useMemo({
+|+     headerName: "Model",
+|+     field: "model",
+|+     cellRendererComp:'agGroupCellRenderer',
+|+     cellRendererParams: {
+|+         checkbox: true
+|+     }
+|+ }, [])
+|
 |  <div className="ag-theme-alpine" style={{ height: 400, width: 600 }}>
 |      <button onClick={onButtonClick}>Get selected rows</button>
 |      <AgGridReact
 |          rowData={rowData}
+|          columnDefs={columnDefs}
 |          rowSelection="multiple"
 | +        groupSelectsChildren={true}
-| +        autoGroupColumnDef={{
-| +            headerName: "Model",
-| +            field: "model",
-| +            cellRenderer:'agGroupCellRenderer',
-| +            cellRendererParams: {
-| +                checkbox: true
-| +            }
-| +        }}
-| -        <AgGridColumn field="make" sortable={ true } filter={ true } checkboxSelection={ true }></AgGridColumn>
-| +        <AgGridColumn field="make" sortable={ true } filter={ true } checkboxSelection={ true } rowGroup={ true }></AgGridColumn>
+| +        autoGroupColumnDef={autoGroupColumnDef}>
 | ```
 |
 | Here we've updated the component definition and set the `autoGroupColumnDef` and
