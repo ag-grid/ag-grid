@@ -5,7 +5,7 @@ import { ChartAxis } from "../chartAxis";
 
 export class TimeAxis extends ChartAxis<TimeScale> {
     static className = 'TimeAxis';
-    static type = 'time';
+    static type = 'time' as const;
 
     private datumFormat = '%m/%d/%y, %H:%M:%S';
     private datumFormatter: (date: Date) => string;

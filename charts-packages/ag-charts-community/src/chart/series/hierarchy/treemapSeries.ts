@@ -66,7 +66,7 @@ enum TextNodeTag {
 export class TreemapSeries extends HierarchySeries {
 
     static className = 'TreemapSeries';
-    static type = 'treemap';
+    static type = 'treemap' as const;
 
     private groupSelection: Selection<Group, Group, TreemapNodeDatum, any> = Selection.select(this.pickGroup).selectAll<Group>();
 

@@ -52,7 +52,7 @@ export class ScatterSeriesTooltip extends SeriesTooltip {
 export class ScatterSeries extends CartesianSeries {
 
     static className = 'ScatterSeries';
-    static type = 'scatter';
+    static type = 'scatter' as const;
 
     private xDomain: number[] = [];
     private yDomain: number[] = [];

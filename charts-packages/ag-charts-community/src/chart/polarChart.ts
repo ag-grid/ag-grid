@@ -7,7 +7,7 @@ import { BBox } from "../scene/bbox";
 
 export class PolarChart extends Chart {
     static className = 'PolarChart';
-    static type = 'polar';
+    static type = 'polar' as const;
 
     padding = new Padding(40);
 

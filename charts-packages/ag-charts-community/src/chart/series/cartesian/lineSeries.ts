@@ -62,7 +62,7 @@ export class LineSeriesTooltip extends SeriesTooltip {
 export class LineSeries extends CartesianSeries {
 
     static className = 'LineSeries';
-    static type = 'line';
+    static type = 'line' as const;
 
     private xDomain: any[] = [];
     private yDomain: any[] = [];

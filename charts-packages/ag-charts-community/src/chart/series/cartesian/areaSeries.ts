@@ -84,7 +84,7 @@ export class AreaSeriesTooltip extends SeriesTooltip {
 export class AreaSeries extends CartesianSeries {
 
     static className = 'AreaSeries';
-    static type = 'area';
+    static type = 'area' as const;
 
     tooltip: AreaSeriesTooltip = new AreaSeriesTooltip();
 

@@ -70,7 +70,7 @@ export enum BarLabelPlacement {
     Outside = 'outside'
 }
 
-class BarSeriesLabel extends Label {
+export class BarSeriesLabel extends Label {
     @reactive('change') formatter?: (params: { value: number }) => string;
     @reactive('change') placement = BarLabelPlacement.Inside;
 }
@@ -109,7 +109,7 @@ function flat(arr: any[], target: any[] = []): any[] {
 export class BarSeries extends CartesianSeries {
 
     static className = 'BarSeries';
-    static type = 'bar';
+    static type = 'bar' as const;
 
     // Need to put bar and label nodes into separate groups, because even though label nodes are
     // created after the bar nodes, this only guarantees that labels will always be on top of bars

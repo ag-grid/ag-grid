@@ -4,7 +4,7 @@ import { NumberAxis, clamper } from "./numberAxis";
 
 export class LogAxis extends NumberAxis {
     static className = 'LogAxis';
-    static type = 'log';
+    static type = 'log' as const;
 
     set base(value: number) {
         (this.scale as LogScale).base = value;

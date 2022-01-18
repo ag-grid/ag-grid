@@ -116,7 +116,7 @@ export class HistogramSeriesTooltip extends SeriesTooltip {
 export class HistogramSeries extends CartesianSeries {
 
     static className = 'HistogramSeries';
-    static type = 'histogram';
+    static type = 'histogram' as const;
 
     // Need to put column and label nodes into separate groups, because even though label nodes are
     // created after the column nodes, this only guarantees that labels will always be on top of columns

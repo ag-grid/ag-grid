@@ -2,7 +2,7 @@ import { BandScale } from "../../scale/bandScale";
 import { ChartAxis } from "../chartAxis";
 export class CategoryAxis extends ChartAxis<BandScale<string>> {
     static className = 'CategoryAxis';
-    static type = 'category';
+    static type = 'category' as const;
 
     constructor() {
         super(new BandScale<string>());

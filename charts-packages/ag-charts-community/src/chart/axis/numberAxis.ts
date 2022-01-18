@@ -20,7 +20,7 @@ export function clamper(domain: number[]): (x: number) => number {
 
 export class NumberAxis extends ChartAxis {
     static className = 'NumberAxis';
-    static type = 'number';
+    static type = 'number' as 'number' | 'log';
 
     constructor() {
         super(new LinearScale());

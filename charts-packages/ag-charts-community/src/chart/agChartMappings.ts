@@ -4,13 +4,13 @@ import { GroupedCategoryChart } from "./groupedCategoryChart";
 import { NumberAxis } from "./axis/numberAxis";
 import { CategoryAxis } from "./axis/categoryAxis";
 import { GroupedCategoryAxis } from "./axis/groupedCategoryAxis";
-import { LineSeries } from "./series/cartesian/lineSeries";
-import { BarSeries } from "./series/cartesian/barSeries";
-import { HistogramSeries } from "./series/cartesian/histogramSeries";
-import { ScatterSeries } from "./series/cartesian/scatterSeries";
-import { AreaSeries } from "./series/cartesian/areaSeries";
+import { LineSeries, LineSeriesTooltip } from "./series/cartesian/lineSeries";
+import { BarSeries, BarLabelPlacement, BarSeriesTooltip } from "./series/cartesian/barSeries";
+import { HistogramSeries, HistogramSeriesTooltip } from "./series/cartesian/histogramSeries";
+import { ScatterSeries, ScatterSeriesTooltip } from "./series/cartesian/scatterSeries";
+import { AreaSeries, AreaSeriesTooltip } from "./series/cartesian/areaSeries";
 import { PolarChart } from "./polarChart";
-import { PieSeries, PieTitle } from "./series/polar/pieSeries";
+import { PieSeries, PieTitle, PieSeriesTooltip } from "./series/polar/pieSeries";
 import { AxisLabel, AxisTick } from "../axis";
 import { TimeAxis } from "./axis/timeAxis";
 import { Caption } from "../caption";
@@ -22,17 +22,104 @@ import { NavigatorHandle } from "./navigator/navigatorHandle";
 import { CartesianSeriesMarker } from "./series/cartesian/cartesianSeries";
 import { Chart } from "./chart";
 import { HierarchyChart } from "./hierarchyChart";
-import { TreemapSeries } from "./series/hierarchy/treemapSeries";
+import { TreemapSeries, TreemapSeriesTooltip } from "./series/hierarchy/treemapSeries";
 import { LogAxis } from "./axis/logAxis";
 import { Label } from "./label";
+import { ChartAxisPosition, ChartAxis } from "./chartAxis";
+import { HighlightStyle } from "./series/series";
+import { FontWeight } from "../scene/shape/text";
 
 /*
     This file defines the specs for creating different kinds of charts, but
     contains no code that uses the specs to actually create charts
 */
 
+type Primitive = number | string | boolean;
+type ChartTypeAlias = 'line' | 'area' | 'bar' | 'column' | 'scatter' | 'histogram' | 'pie' | 'treemap';
+type ChartType = ChartTypeAlias | typeof CartesianChart.type | typeof PolarChart.type | typeof HierarchyChart.type;
+
+type SeriesTypeMapping = {
+    [TreemapSeries.type]: TreemapSeries,
+    [BarSeries.type]: BarSeries,
+    [LineSeries.type]: LineSeries,
+    [ScatterSeries.type]: ScatterSeries,
+    [AreaSeries.type]: AreaSeries,
+    [HistogramSeries.type]: HistogramSeries,
+    [PieSeries.type]: PieSeries,
+    column: BarSeries,
+};
+
+type CartesianSeriesTypeMapping = Omit<SeriesTypeMapping, typeof TreemapSeries.type | typeof PieSeries.type>;
+type PolarTypeMapping = Pick<SeriesTypeMapping, typeof PieSeries.type>;
+type HeirarchySeriesTypeMapping = Pick<SeriesTypeMapping, typeof TreemapSeries.type>;
+
+type AxesTypeMapping = {
+    number: NumberAxis,
+    [LogAxis.type]: LogAxis,
+    [CategoryAxis.type]: CategoryAxis,
+    [GroupedCategoryAxis.type]: GroupedCategoryAxis,
+    [TimeAxis.type]: TimeAxis,
+};
+
+interface MetaDefinition<C, D> {
+    // Charts components' constructors normally don't take any parameters (which makes things consistent -- everything
+    // is configured the same way, via the properties, and makes the factory pattern work well) but the charts
+    // themselves are the exceptions.
+    // If a chart config has the (optional) `document` property, it will be passed to the constructor.
+    // There is no actual `document` property on the chart, it can only be supplied during instantiation.
+    constructor?: (new (...params: any[]) => C) | Function,
+    /** Config object properties to be used as constructor parameters, in that order. */
+    constructorParams?: ('document' | keyof C)[],
+    /** Properties that should be set on the component as is (without pre-processing). */
+    setAsIs?: (keyof C)[],
+    nonSerializable?: (keyof C)[],
+    defaults?: D,
+}
+
+interface BaseDefinition<T> {
+    meta?: MetaDefinition<T, {[K in keyof T]?: T[K] | BasicMapping<T[K]> }>;
+    listeners?: {[K in keyof T]?: Function} | undefined;
+}
+
+type PropertyType<P, C> = P extends Primitive | Primitive[] ? P : C;
+
+// Due to lack of support in Typescript 3.x for recursive types, this is the best we can do to
+// represent the mapping model with a restricted nesting level until we upgrade to TS 4.x.
+type BasicMapping<T> = BaseDefinition<T> & {
+    [P in keyof T]?: T[P] extends Array<infer E> ? PropertyType<T[P], BaseDefinition<E>> : PropertyType<T[P], BaseDefinition<T[P]> & {
+        [P2 in keyof T[P]]?: T[P][P2] extends Array<infer E> ? PropertyType<T[P][P2], BaseDefinition<E>> : PropertyType<T[P][P2], BaseDefinition<T[P][P2]> & {
+            [P3 in keyof T[P][P2]]?: T[P][P2][P3] extends Array<infer E> ? PropertyType<T[P][P2][P3], BaseDefinition<E>> : PropertyType<T[P][P2][P3], BaseDefinition<T[P][P2][P3]> & {
+                [P4 in keyof T[P][P2][P3]]?: T[P][P2][P3][P4] extends Array<infer E> ? PropertyType<T[P][P2][P3][P4], BaseDefinition<E>> : PropertyType<T[P][P2][P3][P4], BaseDefinition<T[P][P2][P3][P4]> & {
+                    [P5 in keyof T[P][P2][P3][P4]]?: T[P][P2][P3][P4][P5] extends Array<infer E> ? PropertyType<T[P][P2][P3][P4][P5], BaseDefinition<E>> : PropertyType<T[P][P2][P3][P4][P5], BaseDefinition<T[P][P2][P3][P4][P5]>>
+                }>
+            }>
+        }>     
+    }>
+};
+
+type SwitchableMapping<T, M extends {[key in keyof T]?: { [key: string]: any }}> = BaseDefinition<T> & {
+    [K in Exclude<keyof T, keyof M>]?: PropertyType<T[K], BasicMapping<T[K]>>;
+} & {
+    [K in Extract<keyof T, keyof M>]: {[C in keyof M[K]]: BasicMapping<M[K][C]>};
+};
+
+// type RecursiveMapping<T> = 
+//     T extends Primitive | Array<Primitive> ? T :
+//     T extends Array<infer E> ? Mapping<E> :
+//     (
+//         T extends { type: string } ?
+//             {[key: string]: Mapping<T>} | { [P in keyof T]?: T[P] | Mapping<T[P]> | {}; } :
+//         { [P in keyof T]?: T[P] | Mapping<T[P]> | {}; }
+//     ) & BaseDefinition<T>;
+
+// type PropertyMapping<T> = 
+//     T extends Primitive | Array<Primitive> ? T :
+//     T extends Array<infer E> ? Mapping<E> :
+
+// type Mapping<T> = {};
+
 const chartPadding = 20;
-const commonChartMappings: any = {
+const commonChartMappings = {
     background: {
         meta: {
             defaults: {
@@ -48,7 +135,7 @@ const commonChartMappings: any = {
                 top: chartPadding,
                 right: chartPadding,
                 bottom: chartPadding,
-                left: chartPadding
+                left: chartPadding,
             }
         }
     },
@@ -80,7 +167,7 @@ const commonChartMappings: any = {
                 },
                 text: 'Title',
                 fontStyle: undefined,
-                fontWeight: 'bold',
+                fontWeight: 'bold' as FontWeight,
                 fontSize: 14,
                 fontFamily: 'Verdana, sans-serif',
                 color: 'rgb(70, 70, 70)'
@@ -157,7 +244,7 @@ const commonChartMappings: any = {
     }
 };
 
-const chartDefaults: any = {
+const chartDefaults = {
     container: undefined,
     autoSize: true,
     width: 600,
@@ -187,53 +274,52 @@ const chartMeta = {
     // themselves are the exceptions.
     // If a chart config has the (optional) `document` property, it will be passed to the constructor.
     // There is no actual `document` property on the chart, it can only be supplied during instantiation.
-    constructorParams: ['document'], // Config object properties to be used as constructor parameters, in that order.
-    setAsIs: ['container', 'data', 'tooltipOffset'], // Properties that should be set on the component as is (without pre-processing).
-    nonSerializable: ['container', 'data']
+    
+    // Config object properties to be used as constructor parameters, in that order.
+    constructorParams: ['document'] as ['document'],
+    // Properties that should be set on the component as is (without pre-processing).
+    setAsIs: ['container', 'data'] as ['container', 'data'],
+    nonSerializable: ['container', 'data'] as ['container', 'data'],
 };
 
-const axisDefaults: any = {
-    defaults: {
-        visibleRange: [0, 1],
-        thickness: 0,
-        label: {},
-        tick: {},
-        title: {},
-        line: {},
-        gridStyle: [{
-            stroke: 'rgb(219, 219, 219)',
-            lineDash: [4, 2]
-        }]
-    }
+const axisDefaults = {
+    visibleRange: [0, 1],
+    thickness: 0,
+    label: {},
+    tick: {},
+    title: {},
+    line: {},
+    gridStyle: [{
+        stroke: 'rgb(219, 219, 219)',
+        lineDash: [4, 2]
+    }],
 };
 
-const seriesDefaults: any = {
+const seriesDefaults = {
     visible: true,
     showInLegend: true,
     cursor: 'default',
     listeners: undefined
 };
 
-const highlightStyleMapping = {
-    highlightStyle: {
-        item: {
-            meta: {
-                defaults: {
-                    fill: 'yellow'
-                }
+const highlightStyleMapping: BasicMapping<HighlightStyle> = {
+    item: {
+        meta: {
+            defaults: {
+                fill: 'yellow'
             }
-        },
-        series: {
-            meta: {
-                defaults: {
-                    dimOpacity: 1
-                }
+        }
+    },
+    series: {
+        meta: {
+            defaults: {
+                dimOpacity: 1
             }
         }
     }
 };
 
-const columnSeriesDefaults: any = {
+const columnSeriesDefaults = {
     fillOpacity: 1,
     strokeOpacity: 1,
     xKey: '',
@@ -248,22 +334,20 @@ const columnSeriesDefaults: any = {
     shadow: undefined
 };
 
-const shadowMapping: any = {
-    shadow: {
-        meta: {
-            constructor: DropShadow,
-            defaults: {
-                enabled: true,
-                color: 'rgba(0, 0, 0, 0.5)',
-                xOffset: 0,
-                yOffset: 0,
-                blur: 5
-            }
+const shadowMapping = {
+    meta: {
+        constructor: DropShadow,
+        defaults: {
+            enabled: true,
+            color: 'rgba(0, 0, 0, 0.5)',
+            xOffset: 0,
+            yOffset: 0,
+            blur: 5
         }
     }
 };
 
-const labelDefaults: any = {
+const labelDefaults = {
     enabled: true,
     fontStyle: undefined,
     fontWeight: undefined,
@@ -272,31 +356,27 @@ const labelDefaults: any = {
     color: 'rgb(70, 70, 70)'
 };
 
-const barLabelMapping: any = {
-    label: {
-        meta: {
-            defaults: {
-                ...labelDefaults,
-                formatter: undefined,
-                placement: 'inside'
-            }
+const barLabelMapping = {
+    meta: {
+        defaults: {
+            ...labelDefaults,
+            formatter: undefined,
+            placement: BarLabelPlacement.Inside,
         }
     }
 };
 
-const tooltipMapping: any = {
-    tooltip: {
-        meta: {
-            defaults: {
-                enabled: true,
-                renderer: undefined,
-                format: undefined
-            }
+const tooltipMapping: BasicMapping<AreaSeriesTooltip | BarSeriesTooltip | HistogramSeriesTooltip | LineSeriesTooltip | ScatterSeriesTooltip | TreemapSeriesTooltip | PieSeriesTooltip> = {
+    meta: {
+        defaults: {
+            enabled: true,
+            renderer: undefined,
+            format: undefined,
         }
     }
 };
 
-const axisMappings: any = {
+const axisMappings = {
     line: {
         meta: {
             defaults: {
@@ -322,7 +402,7 @@ const axisMappings: any = {
                 },
                 text: 'Axis Title',
                 fontStyle: undefined,
-                fontWeight: 'bold',
+                fontWeight: 'bold' as 'bold',
                 fontSize: 12,
                 fontFamily: 'Verdana, sans-serif',
                 color: 'rgb(70, 70, 70)'
@@ -347,7 +427,7 @@ const axisMappings: any = {
     tick: {
         meta: {
             constructor: AxisTick,
-            setAsIs: ['count'],
+            setAsIs: ['count'] as (keyof AxisTick)[],
             defaults: {
                 width: 1,
                 size: 6,
@@ -358,524 +438,525 @@ const axisMappings: any = {
     }
 };
 
-export const mappings: any = {
-    [CartesianChart.type]: {
-        meta: { // unlike other entries, 'meta' is not a component type or a config name
-            constructor: CartesianChart, // Constructor function for the `cartesian` type.
-            ...chartMeta,
-            defaults: { // These values will be used if properties in question are not in the config object.
-                ...chartDefaults,
-                axes: [{
-                    type: NumberAxis.type,
-                    position: 'left'
-                }, {
-                    type: CategoryAxis.type,
-                    position: 'bottom'
-                }]
-            },
+const CARTESIAN_MAPPING: SwitchableMapping<CartesianChart, { axes: AxesTypeMapping, series: CartesianSeriesTypeMapping }> = {
+    meta: { // unlike other entries, 'meta' is not a component type or a config name
+        constructor: CartesianChart, // Constructor function for the `cartesian` type.
+        ...chartMeta,
+        defaults: { // These values will be used if properties in question are not in the config object.
+            ...chartDefaults,
+            axes: [{
+                type: NumberAxis.type,
+                position: ChartAxisPosition.Left,
+            }, {
+                type: CategoryAxis.type,
+                position: ChartAxisPosition.Bottom,
+            }]
         },
-        ...commonChartMappings,
-        axes: {
-            [NumberAxis.type]: {
-                meta: {
-                    constructor: NumberAxis,
-                    setAsIs: ['gridStyle', 'visibleRange'],
-                    ...axisDefaults
-                },
-                ...axisMappings
+    },
+    ...commonChartMappings,
+    axes: {
+        ['number']: {
+            meta: {
+                constructor: NumberAxis,
+                setAsIs: ['gridStyle', 'visibleRange'],
+                defaults: axisDefaults,
             },
-            [LogAxis.type]: {
-                meta: {
-                    constructor: LogAxis,
-                    setAsIs: ['gridStyle', 'visibleRange'],
+            ...axisMappings
+        },
+        [LogAxis.type]: {
+            meta: {
+                constructor: LogAxis,
+                setAsIs: ['gridStyle', 'visibleRange'],
+                defaults: {
                     ...axisDefaults,
                     base: 10
                 },
-                ...axisMappings
             },
-            [CategoryAxis.type]: {
-                meta: {
-                    constructor: CategoryAxis,
-                    setAsIs: ['gridStyle', 'visibleRange'],
-                    ...axisDefaults
-                },
-                ...axisMappings
-            },
-            [GroupedCategoryAxis.type]: {
-                meta: {
-                    constructor: GroupedCategoryAxis,
-                    setAsIs: ['gridStyle', 'visibleRange'],
-                    ...axisDefaults
-                },
-                ...axisMappings
-            },
-            [TimeAxis.type]: {
-                meta: {
-                    constructor: TimeAxis,
-                    setAsIs: ['gridStyle', 'visibleRange'],
-                    ...axisDefaults
-                },
-                ...axisMappings
-            }
+            ...axisMappings
         },
-        series: {
-            column: {
-                meta: {
-                    constructor: BarSeries,
-                    setAsIs: ['lineDash', 'yNames'],
-                    defaults: {
-                        flipXY: false, // vertical bars
-                        ...seriesDefaults,
-                        ...columnSeriesDefaults
-                    }
-                },
-                ...highlightStyleMapping,
-                ...tooltipMapping,
-                ...barLabelMapping,
-                ...shadowMapping
-            },
-            [BarSeries.type]: {
-                meta: {
-                    constructor: BarSeries,
-                    setAsIs: ['lineDash', 'yNames'],
-                    defaults: {
-                        flipXY: true, // horizontal bars
-                        ...seriesDefaults,
-                        ...columnSeriesDefaults
-                    }
-                },
-                ...highlightStyleMapping,
-                ...tooltipMapping,
-                ...barLabelMapping,
-                ...shadowMapping
-            },
-            [LineSeries.type]: {
-                meta: {
-                    constructor: LineSeries,
-                    setAsIs: ['lineDash'],
-                    defaults: {
-                        ...seriesDefaults,
-                        title: undefined,
-                        xKey: '',
-                        xName: '',
-                        yKey: '',
-                        yName: '',
-                        strokeWidth: 2,
-                        strokeOpacity: 1,
-                        lineDash: undefined,
-                        lineDashOffset: 0
-                    }
-                },
-                ...tooltipMapping,
-                ...highlightStyleMapping,
-                label: {
-                    meta: {
-                        defaults: {
-                            ...labelDefaults,
-                            formatter: undefined
-                        }
-                    }
-                },
-                marker: {
-                    meta: {
-                        constructor: CartesianSeriesMarker,
-                        defaults: {
-                            enabled: true,
-                            shape: 'circle',
-                            size: 6,
-                            maxSize: 30,
-                            strokeWidth: 1,
-                            formatter: undefined
-                        }
-                    }
-                }
-            },
-            [ScatterSeries.type]: {
-                meta: {
-                    constructor: ScatterSeries,
-                    defaults: {
-                        ...seriesDefaults,
-                        title: undefined,
-                        xKey: '',
-                        yKey: '',
-                        sizeKey: undefined,
-                        labelKey: undefined,
-                        xName: '',
-                        yName: '',
-                        sizeName: 'Size',
-                        labelName: 'Label',
-                        strokeWidth: 2,
-                        fillOpacity: 1,
-                        strokeOpacity: 1
-                    }
-                },
-                ...tooltipMapping,
-                ...highlightStyleMapping,
-                marker: {
-                    meta: {
-                        constructor: CartesianSeriesMarker,
-                        defaults: {
-                            enabled: true,
-                            shape: 'circle',
-                            size: 6,
-                            maxSize: 30,
-                            strokeWidth: 1,
-                            formatter: undefined
-                        }
-                    }
-                },
-                label: {
-                    meta: {
-                        defaults: {
-                            ...labelDefaults
-                        }
-                    }
-                }
-            },
-            [AreaSeries.type]: {
-                meta: {
-                    constructor: AreaSeries,
-                    setAsIs: ['lineDash'],
-                    defaults: {
-                        ...seriesDefaults,
-                        xKey: '',
-                        xName: '',
-                        yKeys: [],
-                        yNames: [],
-                        normalizedTo: undefined,
-                        fillOpacity: 1,
-                        strokeOpacity: 1,
-                        strokeWidth: 2,
-                        lineDash: undefined,
-                        lineDashOffset: 0,
-                        shadow: undefined
-                    }
-                },
-                ...tooltipMapping,
-                ...highlightStyleMapping,
-                label: {
-                    meta: {
-                        defaults: {
-                            ...labelDefaults,
-                            formatter: undefined
-                        }
-                    }
-                },
-                marker: {
-                    meta: {
-                        constructor: CartesianSeriesMarker,
-                        defaults: {
-                            enabled: true,
-                            shape: 'circle',
-                            size: 6,
-                            maxSize: 30,
-                            strokeWidth: 1,
-                            formatter: undefined
-                        }
-                    }
-                },
-                ...shadowMapping
-            },
-            [HistogramSeries.type]: {
-                meta: {
-                    constructor: HistogramSeries,
-                    setAsIs: ['lineDash'],
-                    defaults: {
-                        ...seriesDefaults,
-                        title: undefined,
-                        xKey: '',
-                        yKey: '',
-                        xName: '',
-                        yName: '',
-                        strokeWidth: 1,
-                        fillOpacity: 1,
-                        strokeOpacity: 1,
-                        lineDash: undefined,
-                        lineDashOffset: 0,
-                        areaPlot: false,
-                        binCount: undefined,
-                        bins: undefined,
-                        aggregation: 'sum'
-                    }
-                },
-                ...tooltipMapping,
-                ...highlightStyleMapping,
-                label: {
-                    meta: {
-                        defaults: {
-                            ...labelDefaults,
-                            formatter: undefined
-                        }
-                    }
-                },
-                ...shadowMapping
-            }
-        },
-        navigator: {
+        [CategoryAxis.type]: {
             meta: {
-                constructor: Navigator,
+                constructor: CategoryAxis,
+                setAsIs: ['gridStyle', 'visibleRange'],
+                defaults: axisDefaults,
+            },
+            ...axisMappings
+        },
+        [GroupedCategoryAxis.type]: {
+            meta: {
+                constructor: GroupedCategoryAxis,
+                setAsIs: ['gridStyle', 'visibleRange'],
+                defaults: axisDefaults,
+            },
+            ...axisMappings
+        },
+        [TimeAxis.type]: {
+            meta: {
+                constructor: TimeAxis,
+                setAsIs: ['gridStyle', 'visibleRange'],
+                defaults: axisDefaults,
+            },
+            ...axisMappings
+        },
+    },
+    series: {
+        column: {
+            meta: {
+                constructor: BarSeries,
+                setAsIs: ['lineDash', 'yNames'],
                 defaults: {
-                    enabled: false,
-                    height: 30,
+                    flipXY: false, // vertical bars
+                    ...seriesDefaults,
+                    ...columnSeriesDefaults
                 }
             },
-            mask: {
+            highlightStyle: highlightStyleMapping,
+            tooltip: tooltipMapping,
+            label: barLabelMapping,
+            shadow: shadowMapping,
+        },
+        [BarSeries.type]: {
+            meta: {
+                constructor: BarSeries,
+                setAsIs: ['lineDash', 'yNames'],
+                defaults: {
+                    flipXY: true, // horizontal bars
+                    ...seriesDefaults,
+                    ...columnSeriesDefaults
+                }
+            },
+            highlightStyle: highlightStyleMapping,
+            tooltip: tooltipMapping,
+            label: barLabelMapping,
+            shadow: shadowMapping,
+        },
+        [LineSeries.type]: {
+            meta: {
+                constructor: LineSeries,
+                setAsIs: ['lineDash'],
+                defaults: {
+                    ...seriesDefaults,
+                    title: undefined,
+                    xKey: '',
+                    xName: '',
+                    yKey: '',
+                    yName: '',
+                    strokeWidth: 2,
+                    strokeOpacity: 1,
+                    lineDash: undefined,
+                    lineDashOffset: 0
+                }
+            },
+            tooltip: tooltipMapping,
+            highlightStyle: highlightStyleMapping,
+            label: {
                 meta: {
-                    constructor: NavigatorMask,
                     defaults: {
-                        fill: '#999999',
-                        stroke: '#999999',
-                        strokeWidth: 1,
-                        fillOpacity: 0.2
+                        ...labelDefaults,
+                        formatter: undefined
                     }
                 }
             },
-            minHandle: {
+            marker: {
                 meta: {
-                    constructor: NavigatorHandle,
+                    constructor: CartesianSeriesMarker,
                     defaults: {
-                        fill: '#f2f2f2',
-                        stroke: '#999999',
+                        enabled: true,
+                        shape: 'circle',
+                        size: 6,
+                        maxSize: 30,
                         strokeWidth: 1,
-                        width: 8,
-                        height: 16,
-                        gripLineGap: 2,
-                        gripLineLength: 8
+                        formatter: undefined
+                    }
+                }
+            }
+        },
+        [ScatterSeries.type]: {
+            meta: {
+                constructor: ScatterSeries,
+                defaults: {
+                    ...seriesDefaults,
+                    title: undefined,
+                    xKey: '',
+                    yKey: '',
+                    sizeKey: undefined,
+                    labelKey: undefined,
+                    xName: '',
+                    yName: '',
+                    sizeName: 'Size',
+                    labelName: 'Label',
+                    strokeWidth: 2,
+                    fillOpacity: 1,
+                    strokeOpacity: 1
+                }
+            },
+            tooltip: tooltipMapping,
+            highlightStyle: highlightStyleMapping,
+            marker: {
+                meta: {
+                    constructor: CartesianSeriesMarker,
+                    defaults: {
+                        enabled: true,
+                        shape: 'circle',
+                        size: 6,
+                        maxSize: 30,
+                        strokeWidth: 1,
+                        formatter: undefined
                     }
                 }
             },
-            maxHandle: {
+            label: {
                 meta: {
-                    constructor: NavigatorHandle,
                     defaults: {
-                        fill: '#f2f2f2',
-                        stroke: '#999999',
+                        ...labelDefaults
+                    }
+                }
+            }
+        },
+        [AreaSeries.type]: {
+            meta: {
+                constructor: AreaSeries,
+                setAsIs: ['lineDash'],
+                defaults: {
+                    ...seriesDefaults,
+                    xKey: '',
+                    xName: '',
+                    yKeys: [],
+                    yNames: [],
+                    normalizedTo: undefined,
+                    fillOpacity: 1,
+                    strokeOpacity: 1,
+                    strokeWidth: 2,
+                    lineDash: undefined,
+                    lineDashOffset: 0,
+                    shadow: undefined
+                }
+            },
+            tooltip: tooltipMapping,
+            highlightStyle: highlightStyleMapping,
+            label: {
+                meta: {
+                    defaults: {
+                        ...labelDefaults,
+                        formatter: undefined
+                    }
+                }
+            },
+            marker: {
+                meta: {
+                    constructor: CartesianSeriesMarker,
+                    defaults: {
+                        enabled: true,
+                        shape: 'circle',
+                        size: 6,
+                        maxSize: 30,
                         strokeWidth: 1,
-                        width: 8,
-                        height: 16,
-                        gripLineGap: 2,
-                        gripLineLength: 8
+                        formatter: undefined
+                    }
+                }
+            },
+            shadow: shadowMapping,
+        },
+        [HistogramSeries.type]: {
+            meta: {
+                constructor: HistogramSeries,
+                setAsIs: ['lineDash'],
+                defaults: {
+                    ...seriesDefaults,
+                    xKey: '',
+                    yKey: '',
+                    xName: '',
+                    yName: '',
+                    strokeWidth: 1,
+                    fillOpacity: 1,
+                    strokeOpacity: 1,
+                    lineDash: undefined,
+                    lineDashOffset: 0,
+                    areaPlot: false,
+                    binCount: undefined,
+                    bins: undefined,
+                    aggregation: 'sum'
+                }
+            },
+            tooltip: tooltipMapping,
+            highlightStyle: highlightStyleMapping,
+            label: {
+                meta: {
+                    defaults: {
+                        ...labelDefaults,
+                        formatter: undefined
+                    }
+                }
+            },
+            shadow: shadowMapping,
+        }
+    },
+    navigator: {
+        meta: {
+            constructor: Navigator,
+            defaults: {
+                enabled: false,
+                height: 30,
+            }
+        },
+        mask: {
+            meta: {
+                constructor: NavigatorMask,
+                defaults: {
+                    fill: '#999999',
+                    stroke: '#999999',
+                    strokeWidth: 1,
+                    fillOpacity: 0.2
+                }
+            }
+        },
+        minHandle: {
+            meta: {
+                constructor: NavigatorHandle,
+                defaults: {
+                    fill: '#f2f2f2',
+                    stroke: '#999999',
+                    strokeWidth: 1,
+                    width: 8,
+                    height: 16,
+                    gripLineGap: 2,
+                    gripLineLength: 8
+                }
+            }
+        },
+        maxHandle: {
+            meta: {
+                constructor: NavigatorHandle,
+                defaults: {
+                    fill: '#f2f2f2',
+                    stroke: '#999999',
+                    strokeWidth: 1,
+                    width: 8,
+                    height: 16,
+                    gripLineGap: 2,
+                    gripLineLength: 8
+                }
+            }
+        }
+    },
+};
+
+const POLAR_MAPPING: SwitchableMapping<PolarChart, { series: PolarTypeMapping }> = {
+    meta: {
+        constructor: PolarChart,
+        ...chartMeta,
+        defaults: {
+            ...chartDefaults,
+            padding: {
+                meta: {
+                    constructor: Padding,
+                    defaults: {
+                        top: 40,
+                        right: 40,
+                        bottom: 40,
+                        left: 40
                     }
                 }
             }
         }
     },
-    [PolarChart.type]: {
-        meta: {
-            constructor: PolarChart,
-            ...chartMeta,
-            defaults: {
-                ...chartDefaults,
-                padding: {
-                    meta: {
-                        constructor: Padding,
-                        defaults: {
-                            top: 40,
-                            right: 40,
-                            bottom: 40,
-                            left: 40
-                        }
+    ...commonChartMappings,
+    series: {
+        [PieSeries.type]: {
+            meta: {
+                constructor: PieSeries,
+                setAsIs: ['lineDash'],
+                defaults: {
+                    ...seriesDefaults,
+                    title: undefined,
+                    angleKey: '',
+                    angleName: '',
+                    radiusKey: undefined,
+                    radiusName: undefined,
+                    labelKey: undefined,
+                    labelName: undefined,
+                    callout: {},
+                    fillOpacity: 1,
+                    strokeOpacity: 1,
+                    rotation: 0,
+                    outerRadiusOffset: 0,
+                    innerRadiusOffset: 0,
+                    strokeWidth: 1,
+                    lineDash: undefined,
+                    lineDashOffset: 0,
+                    shadow: undefined
+                }
+            },
+            tooltip: tooltipMapping,
+            highlightStyle: highlightStyleMapping,
+            title: {
+                meta: {
+                    constructor: PieTitle,
+                    defaults: {
+                        enabled: true,
+                        showInLegend: false,
+                        padding: {
+                            meta: {
+                                constructor: Padding,
+                                defaults: {
+                                    top: 10,
+                                    right: 10,
+                                    bottom: 10,
+                                    left: 10
+                                }
+                            }
+                        },
+                        text: 'Series Title',
+                        fontStyle: undefined,
+                        fontWeight: 'bold',
+                        fontSize: 14,
+                        fontFamily: 'Verdana, sans-serif',
+                        color: 'black'
                     }
                 }
-            }
-        },
-        ...commonChartMappings,
-        series: {
-            [PieSeries.type]: {
+            },
+            label: {
                 meta: {
-                    constructor: PieSeries,
-                    setAsIs: ['lineDash'],
                     defaults: {
-                        ...seriesDefaults,
-                        title: undefined,
-                        angleKey: '',
-                        angleName: '',
-                        radiusKey: undefined,
-                        radiusName: undefined,
-                        labelKey: undefined,
-                        labelName: undefined,
-                        callout: {},
-                        fillOpacity: 1,
-                        strokeOpacity: 1,
-                        rotation: 0,
-                        outerRadiusOffset: 0,
-                        innerRadiusOffset: 0,
-                        strokeWidth: 1,
-                        lineDash: undefined,
-                        lineDashOffset: 0,
-                        shadow: undefined
+                        ...labelDefaults,
+                        offset: 3,
+                        minAngle: 20
+                    }
+                }
+            },
+            callout: {
+                meta: {
+                    defaults: {
+                        length: 10,
+                        strokeWidth: 1
+                    }
+                }
+            },
+            shadow: shadowMapping,
+        }
+    },
+};
+
+const HIERARCHY_MAPPING: SwitchableMapping<HierarchyChart, { series: HeirarchySeriesTypeMapping }> = {
+    meta: {
+        constructor: HierarchyChart,
+        ...chartMeta,
+        defaults: {
+            ...chartDefaults
+        }
+    },
+    ...commonChartMappings,
+    series: {
+        [TreemapSeries.type]: {
+            meta: {
+                constructor: TreemapSeries,
+                defaults: {
+                    ...seriesDefaults,
+                    showInLegend: false,
+                    labelKey: 'label',
+                    sizeKey: 'size',
+                    colorKey: 'color',
+                    colorDomain: [-5, 5],
+                    colorRange: ['#cb4b3f', '#6acb64'],
+                    colorParents: false,
+                    gradient: true,
+                    nodePadding: 2,
+                    title: {},
+                    subtitle: {},
+                    labels: {
+                        large: {},
+                        medium: {},
+                        small: {},
+                        color: {}
+                    }
+                }
+            },
+            tooltip: tooltipMapping,
+            highlightStyle: highlightStyleMapping,
+            title: {
+                meta: {
+                    defaults: {
+                        enabled: true,
+                        color: 'white',
+                        fontStyle: undefined,
+                        fontWeight: 'bold',
+                        fontSize: 12,
+                        fontFamily: 'Verdana, sans-serif',
+                        padding: 15
+                    }
+                }
+            },
+            subtitle: {
+                meta: {
+                    defaults: {
+                        enabled: true,
+                        color: 'white',
+                        fontStyle: undefined,
+                        fontWeight: undefined,
+                        fontSize: 9,
+                        fontFamily: 'Verdana, sans-serif',
+                        padding: 13
+                    }
+                }
+            },
+            labels: {
+                meta: {
+                    defaults: {
+                        large: {},
+                        medium: {},
+                        small: {},
+                        color: {}
                     }
                 },
-                ...tooltipMapping,
-                ...highlightStyleMapping,
-                title: {
+                large: {
                     meta: {
-                        constructor: PieTitle,
+                        constructor: Label,
                         defaults: {
                             enabled: true,
-                            showInLegend: false,
-                            padding: {
-                                meta: {
-                                    constructor: Padding,
-                                    defaults: {
-                                        top: 10,
-                                        right: 10,
-                                        bottom: 10,
-                                        left: 10
-                                    }
-                                }
-                            },
-                            text: 'Series Title',
+                            fontStyle: undefined,
+                            fontWeight: 'bold',
+                            fontSize: 18,
+                            fontFamily: 'Verdana, sans-serif',
+                            color: 'white'
+                        }
+                    }
+                },
+                medium: {
+                    meta: {
+                        constructor: Label,
+                        defaults: {
+                            enabled: true,
                             fontStyle: undefined,
                             fontWeight: 'bold',
                             fontSize: 14,
                             fontFamily: 'Verdana, sans-serif',
-                            color: 'black'
+                            color: 'white'
                         }
                     }
                 },
-                label: {
+                small: {
                     meta: {
-                        defaults: {
-                            ...labelDefaults,
-                            offset: 3,
-                            minAngle: 20
-                        }
-                    }
-                },
-                callout: {
-                    meta: {
-                        defaults: {
-                            length: 10,
-                            strokeWidth: 1
-                        }
-                    }
-                },
-                ...shadowMapping
-            }
-        }
-    },
-    [HierarchyChart.type]: {
-        meta: {
-            constructor: HierarchyChart,
-            ...chartMeta,
-            defaults: {
-                ...chartDefaults
-            }
-        },
-        ...commonChartMappings,
-        series: {
-            [TreemapSeries.type]: {
-                meta: {
-                    constructor: TreemapSeries,
-                    defaults: {
-                        ...seriesDefaults,
-                        showInLegend: false,
-                        labelKey: 'label',
-                        sizeKey: 'size',
-                        colorKey: 'color',
-                        colorDomain: [-5, 5],
-                        colorRange: ['#cb4b3f', '#6acb64'],
-                        colorParents: false,
-                        gradient: true,
-                        nodePadding: 2,
-                        title: {},
-                        subtitle: {},
-                        labels: {
-                            large: {},
-                            medium: {},
-                            small: {},
-                            color: {}
-                        }
-                    }
-                },
-                ...tooltipMapping,
-                ...highlightStyleMapping,
-                title: {
-                    meta: {
+                        constructor: Label,
                         defaults: {
                             enabled: true,
-                            color: 'white',
                             fontStyle: undefined,
                             fontWeight: 'bold',
-                            fontSize: 12,
+                            fontSize: 10,
                             fontFamily: 'Verdana, sans-serif',
-                            padding: 15
+                            color: 'white'
                         }
                     }
                 },
-                subtitle: {
+                color: {
                     meta: {
+                        constructor: Label,
                         defaults: {
                             enabled: true,
-                            color: 'white',
                             fontStyle: undefined,
                             fontWeight: undefined,
-                            fontSize: 9,
+                            fontSize: 12,
                             fontFamily: 'Verdana, sans-serif',
-                            padding: 13
-                        }
-                    }
-                },
-                labels: {
-                    meta: {
-                        defaults: {
-                            large: {},
-                            medium: {},
-                            small: {},
-                            color: {}
-                        }
-                    },
-                    large: {
-                        meta: {
-                            constructor: Label,
-                            defaults: {
-                                enabled: true,
-                                fontStyle: undefined,
-                                fontWeight: 'bold',
-                                fontSize: 18,
-                                fontFamily: 'Verdana, sans-serif',
-                                color: 'white'
-                            }
-                        }
-                    },
-                    medium: {
-                        meta: {
-                            constructor: Label,
-                            defaults: {
-                                enabled: true,
-                                fontStyle: undefined,
-                                fontWeight: 'bold',
-                                fontSize: 14,
-                                fontFamily: 'Verdana, sans-serif',
-                                color: 'white'
-                            }
-                        }
-                    },
-                    small: {
-                        meta: {
-                            constructor: Label,
-                            defaults: {
-                                enabled: true,
-                                fontStyle: undefined,
-                                fontWeight: 'bold',
-                                fontSize: 10,
-                                fontFamily: 'Verdana, sans-serif',
-                                color: 'white'
-                            }
-                        }
-                    },
-                    color: {
-                        meta: {
-                            constructor: Label,
-                            defaults: {
-                                enabled: true,
-                                fontStyle: undefined,
-                                fontWeight: undefined,
-                                fontSize: 12,
-                                fontFamily: 'Verdana, sans-serif',
-                                color: 'white'
-                            }
+                            color: 'white'
                         }
                     }
                 }
@@ -884,62 +965,64 @@ export const mappings: any = {
     }
 };
 
-// Amend the `mappings` object with aliases for different chart types.
-{
-    const typeToAliases: { [key in string]: string[] } = {
-        cartesian: ['line', 'area', 'bar', 'column'],
-        polar: ['pie'],
-        hierarchy: ['treemap']
+function tweakAxes<M extends { meta?: { defaults?: {} } }>(
+    input: M,
+    newAxes: BasicMapping<ChartAxis>[],
+): M & { meta: { defaults: { axes: typeof newAxes } } } {
+    return {
+        ...input,
+        meta: {
+            ...input.meta,
+            defaults: { 
+                ...input.meta?.defaults,
+                axes: newAxes,
+            }
+        }
     };
-    for (const type in typeToAliases) {
-        typeToAliases[type].forEach(alias => {
-            mappings[alias] = mappings[type];
-        });
-    }
 }
 
-// Special handling for scatter and histogram charts, for which both axes should default to type `number`.
-mappings['scatter'] =
-mappings['histogram'] = {
-    ...mappings.cartesian,
-    meta: {
-        ...mappings.cartesian.meta,
-        defaults: { // These values will be used if properties in question are not in the config object.
-            ...chartDefaults,
-            axes: [{
-                type: 'number',
-                position: 'bottom'
-            }, {
-                type: 'number',
-                position: 'left'
-            }]
+function tweakConstructor<M extends { meta?: any }, T>(
+    input: M,
+    constructor: { new (): T },
+): M & { meta: { constructor: typeof constructor } } {
+    return {
+        ...input,
+        meta: {
+            ...input.meta,
+            constructor,
         }
-    }
+    };
+}
+
+const SCATTER_HISTOGRAM_AXES: BasicMapping<ChartAxis>[] = [{
+    type: 'number',
+    position: ChartAxisPosition.Bottom,
+}, {
+    type: 'number',
+    position: ChartAxisPosition.Left,
+}];
+
+const BAR_AXES: BasicMapping<ChartAxis>[] = [{
+    type: 'number',
+    position: ChartAxisPosition.Bottom,
+}, {
+    type: 'category',
+    position: ChartAxisPosition.Left,
+}];
+
+export const mappings: Record<ChartType, BasicMapping<any>> = {
+    [CartesianChart.type as 'cartesian']: CARTESIAN_MAPPING,
+    [GroupedCategoryChart.type]: tweakConstructor(CARTESIAN_MAPPING, GroupedCategoryChart),
+    'line': CARTESIAN_MAPPING,
+    'area': CARTESIAN_MAPPING, 
+    'bar': tweakAxes(CARTESIAN_MAPPING, BAR_AXES), 
+    'column': CARTESIAN_MAPPING,
+    'scatter': tweakAxes(CARTESIAN_MAPPING, SCATTER_HISTOGRAM_AXES),
+    'histogram': tweakAxes(CARTESIAN_MAPPING, SCATTER_HISTOGRAM_AXES),
+
+    [PolarChart.type]: POLAR_MAPPING,
+    'pie': POLAR_MAPPING,
+
+    [HierarchyChart.type]: HIERARCHY_MAPPING,
+    'treemap': HIERARCHY_MAPPING,
 };
-
-// Special handling for bar charts, for which `bottom` axis should default to type `number` and `left` axis should default to type `category`.
-mappings['bar'] = {
-    ...mappings.cartesian,
-    meta: {
-        ...mappings.cartesian.meta,
-        defaults: { // These values will be used if properties in question are not in the config object.
-            ...chartDefaults,
-            axes: [
-                {
-                    type: 'number',
-                    position: 'bottom'
-                },
-                {
-                    type: 'category',
-                    position: 'left'
-                }
-            ]
-        }
-    }
-}
-
-const groupedCategoryChartMapping = Object.create(mappings[CartesianChart.type]);
-const groupedCategoryChartMeta = Object.create(groupedCategoryChartMapping.meta);
-groupedCategoryChartMeta.constructor = GroupedCategoryChart;
-groupedCategoryChartMapping.meta = groupedCategoryChartMeta;
-mappings[GroupedCategoryChart.type] = groupedCategoryChartMapping;

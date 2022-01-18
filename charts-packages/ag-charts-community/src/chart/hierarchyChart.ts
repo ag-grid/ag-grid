@@ -4,7 +4,7 @@ import { Chart } from "./chart";
 
 export class HierarchyChart extends Chart {
     static className = 'HierarchyChart';
-    static type = 'hierarchy';
+    static type = 'hierarchy' as const;
 
     constructor(document = window.document) {
         super(document);

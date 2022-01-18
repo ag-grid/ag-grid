@@ -27,7 +27,7 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
     // })();
 
     static className = 'GroupedCategoryAxis';
-    static type = 'groupedCategory';
+    static type = 'groupedCategory' as const;
 
     // Label scale (labels are positionsed between ticks, tick count = label count + 1).
     // We don't call is `labelScale` for consistency with other axes.

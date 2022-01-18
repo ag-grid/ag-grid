@@ -10,7 +10,7 @@ import { NumberAxis } from "./axis/numberAxis";
 
 export class CartesianChart extends Chart {
     static className = 'CartesianChart';
-    static type = 'cartesian';
+    static type: 'cartesian' | 'groupedCategory' = 'cartesian';
 
     constructor(document = window.document) {
         super(document);

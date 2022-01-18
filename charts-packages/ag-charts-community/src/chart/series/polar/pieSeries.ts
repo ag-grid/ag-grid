@@ -104,7 +104,7 @@ export class PieTitle extends Caption {
 export class PieSeries extends PolarSeries {
 
     static className = 'PieSeries';
-    static type = 'pie';
+    static type = 'pie' as const;
 
     private radiusScale: LinearScale = new LinearScale();
     private groupSelection: Selection<Group, Group, PieNodeDatum, any> = Selection.select(this.pickGroup).selectAll<Group>();
