@@ -569,7 +569,7 @@ export class Axis<S extends Scale<D, number>, D = any> {
             const titleRotationFlag = sideFlag === -1 && parallelFlipRotation > Math.PI && parallelFlipRotation < Math.PI * 2 ? -1 : 1;
 
             titleNode.rotation = titleRotationFlag * sideFlag * Math.PI / 2;
-            titleNode.x = titleRotationFlag * sideFlag * (lineNode.y1 + lineNode.y2) / 2;
+            // titleNode.x = titleRotationFlag * sideFlag * (lineNode.y1 + lineNode.y2) / 2; // TODO: remove?
             titleNode.x = titleRotationFlag * sideFlag * (requestedRange[0] + requestedRange[1]) / 2;
 
             if (sideFlag === -1) {
