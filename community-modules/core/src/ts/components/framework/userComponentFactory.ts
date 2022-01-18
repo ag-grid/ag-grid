@@ -203,11 +203,13 @@ export class UserComponentFactory extends BeanStub {
 
                 const assignComp = (providedJsComp: any, providedFwComp: any) => {
                     // comp===true for filters, which means use the default comp
-                    if ( (providedJsComp==null && providedFwComp==null) || providedJsComp===true) { return; }
+                    if ( ((providedJsComp===true || providedJsComp==null) && providedFwComp==null)) { return; }
                     if (typeof providedJsComp === 'string') {
                         compName = providedJsComp as string;
-                    } else if (providedJsComp!=null) {
+                    } else if (providedJsComp!==true && providedJsComp!=null) {
                         jsComp = providedJsComp;
+                    } else if (typeof providedFwComp === 'string') {
+                        compName = providedFwComp;
                     } else {
                         fwComp = providedFwComp;
                     }
