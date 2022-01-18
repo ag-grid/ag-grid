@@ -56,6 +56,7 @@ export class RowNode implements IEventEmitter {
     public static EVENT_CELL_CHANGED = 'cellChanged';
     public static EVENT_ALL_CHILDREN_COUNT_CHANGED = 'allChildrenCountChanged';
     public static EVENT_MASTER_CHANGED = 'masterChanged';
+    public static EVENT_GROUP_CHANGED = 'groupChanged';
     public static EVENT_MOUSE_ENTER = 'mouseEnter';
     public static EVENT_MOUSE_LEAVE = 'mouseLeave';
     public static EVENT_HEIGHT_CHANGED = 'heightChanged';
@@ -492,6 +493,22 @@ export class RowNode implements IEventEmitter {
 
         if (this.eventService) {
             this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_MASTER_CHANGED));
+        }
+    }
+
+    public setGroup(group: boolean): void {
+        if (this.group === group) { return; }
+
+        // if we used to be a group, and no longer, then close the node
+        if (this.group && !group) {
+            this.expanded = false;
+        }
+
+        this.group = group;
+        this.updateHasChildren();
+
+        if (this.eventService) {
+            this.eventService.dispatchEvent(this.createLocalRowEvent(RowNode.EVENT_GROUP_CHANGED));
         }
     }
 

@@ -240,7 +240,7 @@ export class FullStore extends RowNodeBlock implements IServerSideStore {
 
         const recycleNode = (rowNode: RowNode, dataItem: any) => {
             this.allNodesMap[rowNode.id!] = rowNode;
-            rowNode.updateData(dataItem);
+            this.blockUtils.updateDataIntoRowNode(rowNode, dataItem);
             this.allRowNodes.push(rowNode);
         };
 

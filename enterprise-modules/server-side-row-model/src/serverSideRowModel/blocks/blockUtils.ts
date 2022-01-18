@@ -80,6 +80,61 @@ export class BlockUtils extends BeanStub {
         }
     }
 
+    private setTreeGroupInfo(rowNode: RowNode): void {
+        const isGroupFunc = this.gridOptionsWrapper.getIsServerSideGroupFunc();
+        const getKeyFunc = this.gridOptionsWrapper.getServerSideGroupKeyFunc();
+
+        if (isGroupFunc != null) {
+            rowNode.setGroup(isGroupFunc(rowNode.data));
+            if (rowNode.group && getKeyFunc != null) {
+                rowNode.key = getKeyFunc(rowNode.data);
+            }
+        }
+
+        if (!rowNode.group && rowNode.childStore!=null) {
+            this.destroyBean(rowNode.childStore);
+            rowNode.childStore = null;
+        }
+    }
+
+    private setRowGroupInfo(rowNode: RowNode): void {
+        rowNode.key = this.valueService.getValue(rowNode.rowGroupColumn!, rowNode);
+        if (rowNode.key === null || rowNode.key === undefined) {
+            _.doOnce(() => {
+                console.warn(`null and undefined values are not allowed for server side row model keys`);
+                if (rowNode.rowGroupColumn) {
+                    console.warn(`column = ${rowNode.rowGroupColumn.getId()}`);
+                }
+                console.warn(`data is `, rowNode.data);
+            }, 'ServerSideBlock-CannotHaveNullOrUndefinedForKey');
+        }
+    }
+
+    private setMasterDetailInfo(rowNode: RowNode): void {
+        const isMasterFunc = this.gridOptionsWrapper.getIsRowMasterFunc();
+        if (isMasterFunc != null) {
+            rowNode.master = isMasterFunc(rowNode.data);
+        } else {
+            rowNode.master = true;
+        }
+    }
+
+    public updateDataIntoRowNode(rowNode: RowNode, data: any): void {
+        rowNode.updateData(data);
+
+        if (this.usingTreeData) {
+            this.setTreeGroupInfo(rowNode);
+        } else if (rowNode.group) {
+            // it's not possible for a node to change whether it's a group or not
+            // when doing row grouping (as only rows at certain levels are groups),
+            // so nothing to do here
+        } else if (this.usingMasterDetail) {
+            // this should be implemented, however it's not the use case i'm currently
+            // programming, so leaving for another day. to test this, create an example
+            // where whether a master row is expandable or not is dynamic
+        }
+    }
+
     public setDataIntoRowNode(rowNode: RowNode, data: any,  defaultId: string, cachedRowHeight: number | undefined): void {
         rowNode.stub = false;
 
@@ -87,34 +142,11 @@ export class BlockUtils extends BeanStub {
             rowNode.setDataAndId(data, defaultId);
 
             if (this.usingTreeData) {
-                const isGroupFunc = this.gridOptionsWrapper.getIsServerSideGroupFunc();
-                const getKeyFunc = this.gridOptionsWrapper.getServerSideGroupKeyFunc();
-
-                if (isGroupFunc != null) {
-                    rowNode.group = isGroupFunc(rowNode.data);
-                    if (rowNode.group && getKeyFunc != null) {
-                        rowNode.key = getKeyFunc(rowNode.data);
-                    }
-                }
-
+                this.setTreeGroupInfo(rowNode);
             } else if (rowNode.group) {
-                rowNode.key = this.valueService.getValue(rowNode.rowGroupColumn!, rowNode);
-                if (rowNode.key === null || rowNode.key === undefined) {
-                    _.doOnce(() => {
-                        console.warn(`null and undefined values are not allowed for server side row model keys`);
-                        if (rowNode.rowGroupColumn) {
-                            console.warn(`column = ${rowNode.rowGroupColumn.getId()}`);
-                        }
-                        console.warn(`data is `, rowNode.data);
-                    }, 'ServerSideBlock-CannotHaveNullOrUndefinedForKey');
-                }
+                this.setRowGroupInfo(rowNode);
             } else if (this.usingMasterDetail) {
-                const isMasterFunc = this.gridOptionsWrapper.getIsRowMasterFunc();
-                if (isMasterFunc != null) {
-                    rowNode.master = isMasterFunc(rowNode.data);
-                } else {
-                    rowNode.master = true;
-                }
+                this.setMasterDetailInfo(rowNode);
             }
 
         } else {
