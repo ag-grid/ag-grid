@@ -116,6 +116,9 @@ export class DetailCellRendererCtrl extends BeanStub implements IDetailCellRende
         rowNode.detailGridInfo = gridInfo;
 
         this.addDestroyFunc(() => {
+            // the gridInfo can be stale if a refresh happens and
+            // a new row is created before the old one is destroyed.
+            if (rowNode.detailGridInfo !== gridInfo) { return; }
             masterGridApi.removeDetailGridInfo(rowId); // unregister from api
             rowNode.detailGridInfo = null; // unregister from node
         });
