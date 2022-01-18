@@ -51,7 +51,7 @@ type SeriesTypeMapping = {
 
 type CartesianSeriesTypeMapping = Omit<SeriesTypeMapping, typeof TreemapSeries.type | typeof PieSeries.type>;
 type PolarTypeMapping = Pick<SeriesTypeMapping, typeof PieSeries.type>;
-type HeirarchySeriesTypeMapping = Pick<SeriesTypeMapping, typeof TreemapSeries.type>;
+type HierarchySeriesTypeMapping = Pick<SeriesTypeMapping, typeof TreemapSeries.type>;
 
 type AxesTypeMapping = {
     number: NumberAxis,
@@ -837,7 +837,7 @@ const POLAR_MAPPING: SwitchableMapping<PolarChart, { series: PolarTypeMapping }>
     },
 };
 
-const HIERARCHY_MAPPING: SwitchableMapping<HierarchyChart, { series: HeirarchySeriesTypeMapping }> = {
+const HIERARCHY_MAPPING: SwitchableMapping<HierarchyChart, { series: HierarchySeriesTypeMapping }> = {
     meta: {
         constructor: HierarchyChart,
         ...chartMeta,
