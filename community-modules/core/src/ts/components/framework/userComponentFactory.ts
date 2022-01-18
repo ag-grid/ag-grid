@@ -202,15 +202,15 @@ export class UserComponentFactory extends BeanStub {
                 const selectorRes = selectorFunc ? selectorFunc(params) : null;
 
                 const assignComp = (providedJsComp: any, providedFwComp: any) => {
-                    // comp===true for filters, which means use the default comp
-                    if ( ((providedJsComp===true || providedJsComp==null) && providedFwComp==null)) { return; }
+
                     if (typeof providedJsComp === 'string') {
                         compName = providedJsComp as string;
-                    } else if (providedJsComp!==true && providedJsComp!=null) {
+                    } else if (typeof providedJsComp === 'string') {
+                        compName = providedFwComp as string;
+                    // comp===true for filters, which means use the default comp
+                    } else if (providedJsComp!=null && providedJsComp!==true) {
                         jsComp = providedJsComp;
-                    } else if (typeof providedFwComp === 'string') {
-                        compName = providedFwComp;
-                    } else {
+                    } else if (providedFwComp!=null) {
                         fwComp = providedFwComp;
                     }
                 };
