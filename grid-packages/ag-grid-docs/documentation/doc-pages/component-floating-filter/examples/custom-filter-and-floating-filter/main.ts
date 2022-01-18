@@ -6,7 +6,6 @@ const columnDefs: ColDef[] = [
     { field: 'athlete', filterComp: 'agTextColumnFilter' },
     {
         field: 'gold',
-        // spl todo floatingFilterFramework doesn't work (vue, but possibly others too)
         floatingFilterComp: NumberFloatingFilterComponent,
         floatingFilterComponentParams: {
             suppressFilterButton: true,
