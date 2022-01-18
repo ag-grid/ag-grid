@@ -236,7 +236,10 @@ export function vanillaToAngular(bindings: any, componentFileNames: string[]): (
             .concat(additional)
             .concat(instanceMethods)
             .map(snippet => snippet.trim())
-            .join('\n\n');
+            .join('\n\n')
+            // We do not need the non-null assertion in component code as already applied to the declaration for the apis.
+            .replace(/gridApi!\./g, 'gridApi.')
+            .replace(/gridColumnApi!\./g, 'gridColumnApi.');
 
         return `
 ${imports.join('\n')}${typeDeclares?.length > 0 ? typeDeclares.join('\n') : ''}${interfaces?.length > 0 ? interfaces.join('\n') : ''}
