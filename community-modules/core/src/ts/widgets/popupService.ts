@@ -702,6 +702,15 @@ export class PopupService extends BeanStub {
 
         const pos = popupList.indexOf(eWrapper);
 
+        const innerEls = eWrapper.querySelectorAll('div');
+        const innerElsScrollMap: [HTMLElement, number][] = [];
+
+        innerEls.forEach(el => {
+            if (el.scrollTop !== 0) {
+                innerElsScrollMap.push([el, el.scrollTop]);
+            }
+        });
+
         if (onTopLength) {
             const isPopupAlwaysOnTop = eWrapper.classList.contains('ag-always-on-top');
 
@@ -714,6 +723,11 @@ export class PopupService extends BeanStub {
             }
         } else if (pos !== popupLen - 1) {
             last(popupList).insertAdjacentElement('afterend', eWrapper);
+        }
+
+        while (innerElsScrollMap.length) {
+            const currentEl = innerElsScrollMap.pop();
+            currentEl![0].scrollTop = currentEl![1];
         }
 
         const params = {
