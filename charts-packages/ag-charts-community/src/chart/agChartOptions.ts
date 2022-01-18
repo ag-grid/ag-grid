@@ -539,6 +539,7 @@ export interface AgAreaSeriesOptions extends AgBaseSeriesOptions {
     shadow?: AgDropShadowOptions;
     label?: AgAreaSeriesLabelOptions;
     tooltip?: AgAreaSeriesTooltip;
+    stacked?: boolean;
 }
 
 export interface AgBarSeriesLabelOptions extends AgChartLabelOptions {

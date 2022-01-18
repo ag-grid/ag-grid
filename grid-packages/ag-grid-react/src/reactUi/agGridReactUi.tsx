@@ -1,4 +1,4 @@
-import { BaseComponentWrapper, ColumnApi, ComponentType, ComponentUtil, Context, FrameworkComponentWrapper, GridApi, GridCoreCreator, GridOptions, GridParams, WrappableInterface, _ } from 'ag-grid-community';
+import { BaseComponentWrapper, CtrlsService, ColumnApi, ComponentType, ComponentUtil, Context, FrameworkComponentWrapper, GridApi, GridCoreCreator, GridOptions, GridParams, WrappableInterface, _ } from 'ag-grid-community';
 import React, { Component } from 'react';
 import { AgGridColumn } from '../shared/agGridColumn';
 import { ChangeDetectionService, ChangeDetectionStrategyType } from '../shared/changeDetectionService';
@@ -67,16 +67,17 @@ export class AgGridReactUi extends Component<AgReactUiProps, { context: Context 
         const gridCoreCreator = new GridCoreCreator();
         gridCoreCreator.create(this.eGui.current!, this.gridOptions, context => {
             this.setState({context: context});
+
+            // because React is Async, we need to wait for the UI to be initialised before exposing the API's
+            const ctrlsService = context.getBean(CtrlsService.NAME) as CtrlsService;
+            ctrlsService.whenReady( ()=> {
+                this.api = this.gridOptions.api!;
+                this.columnApi = this.gridOptions.columnApi!;
+                this.props.setGridApi(this.api, this.columnApi);    
+                this.destroyFuncs.push(() => this.api.destroy());    
+            });
+
         }, gridParams);
-
-        // if no modules loaded, then the API is not set
-        if (this.gridOptions.api) {
-            this.api = this.gridOptions.api!;
-            this.columnApi = this.gridOptions.columnApi!;
-            this.props.setGridApi(this.api, this.columnApi);    
-
-            this.destroyFuncs.push(() => this.api.destroy());
-        }
     }
 
     public componentWillUnmount() {

@@ -8,6 +8,29 @@ import { ExcelExportModule, exportMultipleSheetsAsExcel } from '@ag-grid-enterpr
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
+class SportRenderer {
+    eGui;
+
+    init(params) {
+        this.eGui = document.createElement('i');
+
+        this.eGui.addEventListener('click', function () {
+            params.api.applyTransaction({remove: [params.node.data]});
+        });
+
+        this.eGui.classList.add('far', 'fa-trash-alt');
+        this.eGui.style.cursor = 'pointer';
+    }
+
+    getGui() {
+        return this.eGui;
+    }
+
+    refresh(params) {
+        return false;
+    }
+}
+
 const leftColumns = [
     {
         rowDrag: true,
@@ -41,18 +64,7 @@ const rightColumns = [
     {
         suppressMenu: true,
         maxWidth: 50,
-        cellRenderer: (params) => {
-            var button = document.createElement('i');
-
-            button.addEventListener('click', function () {
-                params.api.applyTransaction({ remove: [params.node.data] });
-            });
-
-            button.classList.add('far', 'fa-trash-alt');
-            button.style.cursor = 'pointer';
-
-            return button;
-        }
+        cellRenderer: SportRenderer
     }
 ]
 

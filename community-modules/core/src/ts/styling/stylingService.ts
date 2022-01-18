@@ -2,7 +2,6 @@ import { CellClassParams, ColDef } from "../entities/colDef";
 import { Autowired, Bean } from "../context/context";
 import { ExpressionService } from "../valueService/expressionService";
 import { BeanStub } from "../context/beanStub";
-import { getAllKeysInObjects, isNonNullObject } from "../utils/object";
 import { RowClassParams } from "../entities/gridOptions";
 
 @Bean('stylingService')
@@ -10,12 +9,22 @@ export class StylingService extends BeanStub {
 
     @Autowired('expressionService') private expressionService: ExpressionService;
 
-    public processAllCellClasses(colDef: ColDef, params: CellClassParams, onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void) {
+    public processAllCellClasses(
+        colDef: ColDef,
+        params: CellClassParams,
+        onApplicableClass: (className: string) => void,
+        onNotApplicableClass?: (className: string) => void
+    ) {
         this.processClassRules(colDef.cellClassRules, params, onApplicableClass, onNotApplicableClass);
         this.processStaticCellClasses(colDef, params, onApplicableClass);
     }
 
-    public processClassRules(classRules: { [cssClassName: string]: (Function | string) } | undefined, params: RowClassParams | CellClassParams, onApplicableClass: (className: string) => void, onNotApplicableClass?: (className: string) => void) {
+    public processClassRules(
+        classRules: { [cssClassName: string]: (Function | string) } | undefined,
+        params: RowClassParams | CellClassParams,
+        onApplicableClass: (className: string) => void,
+        onNotApplicableClass?: (className: string) => void
+    ) {
         if (classRules == null)  { return; }
 
         const classNames = Object.keys(classRules!);
@@ -25,7 +34,9 @@ export class StylingService extends BeanStub {
         for (let i = 0; i < classNames.length; i++) {
             const className = classNames[i];
             const rule = classRules![className];
+
             let resultOfRule: any;
+
             if (typeof rule === 'string') {
                 resultOfRule = this.expressionService.evaluate(rule, params);
             } else if (typeof rule === 'function') {
@@ -49,14 +60,14 @@ export class StylingService extends BeanStub {
     }
 
     public getStaticCellClasses(colDef: ColDef, params: CellClassParams): string[] {
-        const cellClass = colDef.cellClass;
+        const { cellClass } = colDef;
 
         if (!cellClass) { return []; }
 
-        let classOrClasses: string | string[];
+        let classOrClasses: string | string[] | null | undefined;
 
         if (typeof cellClass === 'function') {
-            const cellClassFunc = colDef.cellClass as (cellClassParams: CellClassParams) => string | string[];
+            const cellClassFunc = cellClass;
             classOrClasses = cellClassFunc(params);
         } else {
             classOrClasses = cellClass;
@@ -66,10 +77,14 @@ export class StylingService extends BeanStub {
             classOrClasses = [classOrClasses];
         }
 
-        return classOrClasses;
+        return classOrClasses || [];
     }
 
-    private processStaticCellClasses(colDef: ColDef, params: CellClassParams, onApplicableClass: (className: string) => void) {
+    private processStaticCellClasses(
+        colDef: ColDef,
+        params: CellClassParams,
+        onApplicableClass: (className: string) => void
+    ) {
         const classOrClasses = this.getStaticCellClasses(colDef, params);
 
         classOrClasses.forEach((cssClassItem: string) => {

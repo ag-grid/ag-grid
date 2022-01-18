@@ -26,7 +26,6 @@ import { ColDef, ColumnApi, GridApi, GridReadyEvent, Module, RowNode } from '@ag
                 [columnDefs]="columnDefs"
                 [rowData]="rowData"
                 [context]="context"
-                [frameworkComponents]="frameworkComponents"
                 [defaultColDef]="defaultColDef"
                 (gridReady)="onGridReady($event)"
         ></ag-grid-angular>
@@ -46,7 +45,7 @@ export class AppComponent {
         {
             headerName: "Square",
             field: "value",
-            cellRenderer: "squareRenderer",
+            cellRendererComp: SquareRenderer,
             editable: true,
             colId: "square",
             width: 150
@@ -54,41 +53,33 @@ export class AppComponent {
         {
             headerName: "Cube",
             field: "value",
-            cellRenderer: "cubeRenderer",
+            cellRendererComp: CubeRenderer,
             colId: "cube",
             width: 150
         },
         {
             headerName: "Row Params",
             field: "row",
-            cellRenderer: "paramsRenderer",
+            cellRendererComp: ParamsRenderer,
             colId: "params",
             width: 150
         },
         {
             headerName: "Currency (Pipe)",
             field: "currency",
-            cellRenderer: "currencyRenderer",
+            cellRendererComp: CurrencyRenderer,
             colId: "currency",
             width: 120
         },
         {
             headerName: "Child/Parent",
             field: "value",
-            cellRenderer: "childMessageRenderer",
+            cellRendererComp: ChildMessageRenderer,
             colId: "params",
             editable: false,
             minWidth: 150
         }
     ];
-
-    public frameworkComponents = {
-        squareRenderer: SquareRenderer,
-        cubeRenderer: CubeRenderer,
-        paramsRenderer: ParamsRenderer,
-        currencyRenderer: CurrencyRenderer,
-        childMessageRenderer: ChildMessageRenderer
-    };
 
     public defaultColDef: ColDef = {
         editable: true,

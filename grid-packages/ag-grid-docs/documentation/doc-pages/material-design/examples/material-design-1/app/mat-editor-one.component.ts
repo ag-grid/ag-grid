@@ -25,13 +25,7 @@ export class MatEditorComponentOne {
             onGridReady: () => {
                 this.gridOptions.api!.sizeColumnsToFit();
             },
-            rowHeight: 48, // recommended row height for material design data grids,
-            frameworkComponents: {
-                checkboxRenderer: MatCheckboxComponent,
-                inputRenderer: MatInputComponent,
-                radioEditor: MatRadioComponent,
-                selectEditor: MatSelectComponent
-            }
+            rowHeight: 48 // recommended row height for material design data grids,
         };
     }
 
@@ -40,18 +34,18 @@ export class MatEditorComponentOne {
             {
                 headerName: "Checkbox (inline editing)",
                 field: "on_off",
-                cellRenderer: "checkboxRenderer"
+                cellRendererComp: MatCheckboxComponent
             },
             {
                 headerName: "Full Name (popup input editor)",
                 field: "full_name",
-                cellEditor: "inputRenderer",
+                cellEditorComp: MatInputComponent,
                 editable: true
             },
             {
                 headerName: "Fruit (popup radio editor)",
                 field: "fruit",
-                cellEditor: "radioEditor",
+                cellEditorComp: MatRadioComponent,
                 cellEditorParams: {
                     fruits: ["Apple", "Orange", "Banana"]
                 },
@@ -60,7 +54,7 @@ export class MatEditorComponentOne {
             {
                 headerName: "Vegetables (popup select editor)",
                 field: "vegetable",
-                cellEditor: "selectEditor",
+                cellEditorComp: MatSelectComponent,
                 cellEditorParams: {
                     vegetables: ["Carrot", "Broccoli", "Potato"]
                 },

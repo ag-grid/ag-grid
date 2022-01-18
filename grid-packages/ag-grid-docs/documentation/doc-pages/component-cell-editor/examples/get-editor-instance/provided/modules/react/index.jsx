@@ -30,27 +30,27 @@ class GridExample extends Component {
                 {
                     field: "gender",
                     width: 100,
-                    cellEditor: "mySimpleEditor"
+                    cellEditorComp: MySimpleEditor
                 },
                 {
                     field: "age",
                     width: 80,
-                    cellEditor: "mySimpleEditor"
+                    cellEditorComp: MySimpleEditor
                 },
                 {
                     field: "mood",
                     width: 90,
-                    cellEditor: "mySimpleEditor"
+                    cellEditorComp: MySimpleEditor
                 },
                 {
                     field: "country",
                     width: 110,
-                    cellEditor: "mySimpleEditor"
+                    cellEditorComp: MySimpleEditor
                 },
                 {
                     field: "address",
                     width: 502,
-                    cellEditor: "mySimpleEditor"
+                    cellEditorComp: MySimpleEditor
                 }
             ],
             defaultColDef: {
@@ -61,8 +61,7 @@ class GridExample extends Component {
                 filter: true,
                 resizable: true
             },
-            rowData: this.createRowData(),
-            frameworkComponents: { mySimpleEditor: MySimpleEditor }
+            rowData: this.createRowData()
         };
     }
 
@@ -154,7 +153,6 @@ class GridExample extends Component {
                         columnDefs={this.state.columnDefs}
                         defaultColDef={this.state.defaultColDef}
                         rowData={this.state.rowData}
-                        frameworkComponents={this.state.frameworkComponents}
                         onGridReady={this.onGridReady}
                     />
                 </div>

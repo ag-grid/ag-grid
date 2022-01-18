@@ -339,12 +339,6 @@ const GridExample = () => {
                     modules={[ClientSideRowModelModule]}
                     columnDefs={columnDefs}
                     rowData={rowData}
-                    frameworkComponents={{
-                        doublingEditor: DoublingEditor,
-                        moodRenderer: MoodRenderer,
-                        moodEditor: MoodEditor,
-                        numericEditor: NumericEditor
-                    }}
                     defaultColDef={{
                         editable: true,
                         sortable: true,

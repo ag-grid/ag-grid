@@ -1,6 +1,29 @@
-import { ColDef, Grid, GridOptions, GridReadyEvent } from "ag-grid-community";
+import { ColDef, Grid, GridOptions, GridReadyEvent, ICellRendererComp, ICellRendererParams } from "ag-grid-community";
 
-var leftColumnDefs: ColDef[] = [
+class SportRenderer implements ICellRendererComp {
+    eGui!: HTMLElement;
+
+    init(params: ICellRendererParams) {
+        this.eGui = document.createElement('i');
+
+        this.eGui.addEventListener('click', function () {
+            params.api.applyTransaction({remove: [params.node.data]});
+        });
+
+        this.eGui.classList.add('far', 'fa-trash-alt');
+        this.eGui.style.cursor = 'pointer';
+    }
+
+    getGui() {
+        return this.eGui;
+    }
+
+    refresh(params: ICellRendererParams): boolean {
+        return false;
+    }
+}
+
+const leftColumnDefs: ColDef[] = [
     {
         rowDrag: true,
         maxWidth: 50,
@@ -19,11 +42,11 @@ var leftColumnDefs: ColDef[] = [
         suppressMenu: true,
         headerCheckboxSelection: true
     },
-    { field: "athlete" },
-    { field: "sport" }
+    {field: "athlete"},
+    {field: "sport"}
 ];
 
-var rightColumnDefs: ColDef[] = [
+const rightColumnDefs: ColDef[] = [
     {
         rowDrag: true,
         maxWidth: 50,
@@ -35,28 +58,16 @@ var rightColumnDefs: ColDef[] = [
             return params.rowNode!.data.athlete;
         },
     },
-    { field: "athlete" },
-    { field: "sport" },
+    {field: "athlete"},
+    {field: "sport"},
     {
         suppressMenu: true,
         maxWidth: 50,
-        cellRenderer: function (params) {
-            var button = document.createElement('i');
-
-            button.addEventListener('click', function () {
-                params.api.applyTransaction({ remove: [params.node.data] });
-            });
-
-            button.classList.add('far');
-            button.classList.add('fa-trash-alt');
-            button.style.cursor = 'pointer';
-
-            return button;
-        }
+        cellRenderer: SportRenderer
     }
 ];
 
-var leftGridOptions: GridOptions = {
+const leftGridOptions: GridOptions = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
@@ -79,7 +90,7 @@ var leftGridOptions: GridOptions = {
     }
 };
 
-var rightGridOptions: GridOptions = {
+const rightGridOptions: GridOptions = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
@@ -96,11 +107,11 @@ var rightGridOptions: GridOptions = {
 };
 
 function addGridDropZone(params: GridReadyEvent) {
-    var dropZoneParams = rightGridOptions.api!.getRowDropZoneParams({
+    const dropZoneParams = rightGridOptions.api!.getRowDropZoneParams({
         onDragStop: function (params) {
-            var deselectCheck = (document.querySelector('input#deselect') as HTMLInputElement).checked;
-            var moveCheck = (document.querySelector('input#move') as HTMLInputElement).checked;
-            var nodes = params.nodes;
+            const deselectCheck = (document.querySelector('input#deselect') as HTMLInputElement).checked;
+            const moveCheck = (document.querySelector('input#move') as HTMLInputElement).checked;
+            const nodes = params.nodes;
 
             if (moveCheck) {
                 leftGridOptions.api!.applyTransaction({
@@ -120,7 +131,7 @@ function addGridDropZone(params: GridReadyEvent) {
 }
 
 function loadGrid(options: GridOptions, side: string, data: any[]) {
-    var grid = document.querySelector<HTMLElement>('#e' + side + 'Grid')!;
+    const grid = document.querySelector<HTMLElement>('#e' + side + 'Grid')!;
 
     if (options && options.api) {
         options.api.destroy();
@@ -131,8 +142,8 @@ function loadGrid(options: GridOptions, side: string, data: any[]) {
 }
 
 function resetInputs() {
-    var inputs = document.querySelectorAll('.example-toolbar input') as NodeListOf<HTMLInputElement>;
-    var checkbox = inputs[inputs.length - 1];
+    const inputs = document.querySelectorAll('.example-toolbar input') as NodeListOf<HTMLInputElement>;
+    const checkbox = inputs[inputs.length - 1];
 
     if (!checkbox.checked) {
         checkbox.click();
@@ -145,11 +156,11 @@ function loadGrids() {
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then(response => response.json())
         .then(function (data) {
-            var athletes: any[] = [];
-            var i = 0;
+            const athletes: any[] = [];
+            let i = 0;
 
             while (athletes.length < 20 && i < data.length) {
-                var pos = i++;
+                const pos = i++;
                 if (athletes.some(function (rec) {
                     return rec.athlete === data[pos].athlete;
                 })) {
@@ -163,8 +174,8 @@ function loadGrids() {
         });
 }
 
-var resetBtn = document.querySelector('button.reset')!;
-var checkboxToggle = document.querySelector('#toggleCheck') as HTMLInputElement;
+const resetBtn = document.querySelector('button.reset')!;
+const checkboxToggle = document.querySelector('#toggleCheck') as HTMLInputElement;
 
 resetBtn.addEventListener('click', function () {
     resetInputs();

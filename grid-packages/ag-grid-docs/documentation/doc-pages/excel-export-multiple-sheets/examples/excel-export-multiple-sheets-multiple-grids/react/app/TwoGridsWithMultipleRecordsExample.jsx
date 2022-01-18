@@ -1,11 +1,34 @@
-import React, { Component } from 'react';
-import { AgGridReact } from '@ag-grid-community/react';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { CsvExportModule } from '@ag-grid-community/csv-export';
-import { ExcelExportModule, exportMultipleSheetsAsExcel } from '@ag-grid-enterprise/excel-export';
+import React, {Component} from 'react';
+import {AgGridReact} from '@ag-grid-community/react';
+import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
+import {CsvExportModule} from '@ag-grid-community/csv-export';
+import {ExcelExportModule, exportMultipleSheetsAsExcel} from '@ag-grid-enterprise/excel-export';
 
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
+
+class SportRenderer {
+    eGui;
+
+    init(params) {
+        this.eGui = document.createElement('i');
+
+        this.eGui.addEventListener('click', function () {
+            params.api.applyTransaction({remove: [params.node.data]});
+        });
+
+        this.eGui.classList.add('far', 'fa-trash-alt');
+        this.eGui.style.cursor = 'pointer';
+    }
+
+    getGui() {
+        return this.eGui;
+    }
+
+    refresh(params) {
+        return false;
+    }
+}
 
 const leftColumns = [
     {
@@ -19,8 +42,8 @@ const leftColumns = [
             return params.rowNode.data.athlete;
         },
     },
-    { field: "athlete" },
-    { field: "sport" }
+    {field: "athlete"},
+    {field: "sport"}
 ];
 
 const rightColumns = [
@@ -35,23 +58,12 @@ const rightColumns = [
             return params.rowNode.data.athlete;
         },
     },
-    { field: "athlete" },
-    { field: "sport" },
+    {field: "athlete"},
+    {field: "sport"},
     {
         suppressMenu: true,
         maxWidth: 50,
-        cellRenderer: (params) => {
-            var button = document.createElement('i');
-
-            button.addEventListener('click', function () {
-                params.api.applyTransaction({ remove: [params.node.data] });
-            });
-
-            button.classList.add('far', 'fa-trash-alt');
-            button.style.cursor = 'pointer';
-
-            return button;
-        }
+        cellRendererComp: SportRenderer
     }
 ]
 
@@ -87,10 +99,12 @@ export default class extends Component {
 
                 while (athletes.length < 20 && i < data.length) {
                     var pos = i++;
-                    if (athletes.some(rec => rec.athlete === data[pos].athlete)) { continue; }
+                    if (athletes.some(rec => rec.athlete === data[pos].athlete)) {
+                        continue;
+                    }
                     athletes.push(data[pos]);
                 }
-                this.setState({ rawData: athletes });
+                this.setState({rawData: athletes});
             });
     }
 
@@ -121,7 +135,9 @@ export default class extends Component {
                 var nodes = params.nodes;
 
                 this.state.leftApi.applyTransaction({
-                    remove: nodes.map(function (node) { return node.data; })
+                    remove: nodes.map(function (node) {
+                        return node.data;
+                    })
                 });
             }
         });
@@ -147,21 +163,21 @@ export default class extends Component {
 
     getTopToolBar = () => (
         <div>
-            <button type="button" className="btn btn-default reset" style={{ marginRight: 5 }} onClick={this.onExcelExport}>
-                <i className="far fa-file-excel" style={{ marginRight: 5, color: 'green' }}></i>Export to Excel
+            <button type="button" className="btn btn-default reset" style={{marginRight: 5}} onClick={this.onExcelExport}>
+                <i className="far fa-file-excel" style={{marginRight: 5, color: 'green'}}></i>Export to Excel
             </button>
             <button type="button" className="btn btn-default reset" onClick={this.reset}>
-                <i className="fas fa-redo" style={{ marginRight: 5 }}></i>Reset
+                <i className="fas fa-redo" style={{marginRight: 5}}></i>Reset
             </button>
         </div>
     );
 
     getGridWrapper = (id) => (
-        <div className="panel panel-primary" style={{ marginRight: '10px' }}>
+        <div className="panel panel-primary" style={{marginRight: '10px'}}>
             <div className="panel-heading">{id === 0 ? 'Athletes' : 'Selected Athletes'}</div>
             <div className="panel-body">
                 <AgGridReact
-                    style={{ height: '100%;' }}
+                    style={{height: '100%;'}}
                     defaultColDef={defaultColDef}
                     getRowNodeId={this.getRowNodeId}
                     rowDragManaged={true}
@@ -194,8 +210,8 @@ export default class extends Component {
         var spreadsheets = [];
 
         spreadsheets.push(
-            this.state.leftApi.getSheetDataForExcel({ sheetName: 'Athletes' }),
-            this.state.rightApi.getSheetDataForExcel({ sheetName: 'Selected Athletes' })
+            this.state.leftApi.getSheetDataForExcel({sheetName: 'Athletes'}),
+            this.state.rightApi.getSheetDataForExcel({sheetName: 'Selected Athletes'})
         );
 
         exportMultipleSheetsAsExcel({

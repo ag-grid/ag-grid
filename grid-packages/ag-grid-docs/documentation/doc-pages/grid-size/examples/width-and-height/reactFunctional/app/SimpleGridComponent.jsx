@@ -1,7 +1,7 @@
 'use strict';
 
-import React, { useEffect, useState } from 'react';
-import { AgGridColumn, AgGridReact } from '@ag-grid-community/react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { AgGridReact } from '@ag-grid-community/react';
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
@@ -9,6 +9,18 @@ import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 export default () => {
     const [gridApi, setGridApi] = useState(null);
     const [rowData, setRowData] = useState(null);
+    const columnDefs = useMemo(() => [
+        { field: "athlete", width: 150 },
+        { field: "age", width: 90 },
+        { field: "country", width: 150 },
+        { field: "year", width: 90 },
+        { field: "date", width: 150 },
+        { field: "sport", width: 150 },
+        { field: "gold", width: 100 },
+        { field: "silver", width: 100 },
+        { field: "bronze", width: 100 },
+        { field: "total", width: 100 },
+    ]);
     const [style, setStyle] = useState({
         height: '100%',
         width: '100%'
@@ -23,12 +35,12 @@ export default () => {
     const onGridReady = (params) => {
         setGridApi(params.api);
 
-        var httpRequest = new XMLHttpRequest();
+        const httpRequest = new XMLHttpRequest();
         httpRequest.open('GET', 'https://www.ag-grid.com/example-assets/olympic-winners.json');
         httpRequest.send();
         httpRequest.onreadystatechange = function() {
             if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-                var httpResult = JSON.parse(httpRequest.responseText);
+                const httpResult = JSON.parse(httpRequest.responseText);
                 setRowData(httpResult);
             }
         };
@@ -65,17 +77,8 @@ export default () => {
                     <AgGridReact
                         modules={[ClientSideRowModelModule]}
                         rowData={rowData}
+                        columnDefs={columnDefs}
                         onGridReady={onGridReady}>
-                        <AgGridColumn field="athlete" width={150} />
-                        <AgGridColumn field="age" width={90} />
-                        <AgGridColumn field="country" width={150} />
-                        <AgGridColumn field="year" width={90} />
-                        <AgGridColumn field="date" width={150} />
-                        <AgGridColumn field="sport" width={150} />
-                        <AgGridColumn field="gold" width={100} />
-                        <AgGridColumn field="silver" width={100} />
-                        <AgGridColumn field="bronze" width={100} />
-                        <AgGridColumn field="total" width={100} />
                     </AgGridReact>
                 </div>
             </div>

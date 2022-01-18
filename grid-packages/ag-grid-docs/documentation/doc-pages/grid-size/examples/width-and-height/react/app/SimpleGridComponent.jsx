@@ -24,12 +24,12 @@ export default class extends Component {
     onGridReady(params) {
         this.gridApi = params.api;
 
-        var httpRequest = new XMLHttpRequest();
+        const httpRequest = new XMLHttpRequest();
         httpRequest.open('GET', 'https://www.ag-grid.com/example-assets/olympic-winners.json');
         httpRequest.send();
         httpRequest.onreadystatechange = function () {
             if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-                var httpResult = JSON.parse(httpRequest.responseText);
+                const httpResult = JSON.parse(httpRequest.responseText);
                 this.setState({ rowData: httpResult });
             }
         }.bind(this);

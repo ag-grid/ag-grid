@@ -1,9 +1,9 @@
 'use strict'
 
-import React, { Component } from 'react';
-import { render } from 'react-dom';
-import { AgGridReact } from '@ag-grid-community/react';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import React, {Component} from 'react';
+import {render} from 'react-dom';
+import {AgGridReact} from '@ag-grid-community/react';
+import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import ChildMessageRenderer from './childMessageRenderer.jsx';
@@ -27,7 +27,7 @@ class GridExample extends Component {
                 {
                     headerName: "Square",
                     field: "value",
-                    cellRenderer: "squareRenderer",
+                    cellRendererComp: SquareRenderer,
                     editable: true,
                     colId: "square",
                     width: 150
@@ -35,42 +35,35 @@ class GridExample extends Component {
                 {
                     headerName: "Cube",
                     field: "value",
-                    cellRenderer: "cubeRenderer",
+                    cellRendererComp: CubeRenderer,
                     colId: "cube",
                     width: 150
                 },
                 {
                     headerName: "Row Params",
                     field: "row",
-                    cellRenderer: "paramsRenderer",
+                    cellRendererComp: ParamsRenderer,
                     colId: "params",
                     width: 150
                 },
                 {
                     headerName: "Currency (Pipe)",
                     field: "currency",
-                    cellRenderer: "currencyRenderer",
+                    cellRendererComp: CurrencyRenderer,
                     colId: "currency",
                     width: 120
                 },
                 {
                     headerName: "Child/Parent",
                     field: "value",
-                    cellRenderer: "childMessageRenderer",
+                    cellRendererComp: ChildMessageRenderer,
                     colId: "params",
                     editable: false,
                     minWidth: 150
                 }
             ],
             rowData: this.createRowData(),
-            context: { componentParent: this },
-            frameworkComponents: {
-                squareRenderer: SquareRenderer,
-                cubeRenderer: CubeRenderer,
-                paramsRenderer: ParamsRenderer,
-                currencyRenderer: CurrencyRenderer,
-                childMessageRenderer: ChildMessageRenderer
-            },
+            context: {componentParent: this},
             defaultColDef: {
                 editable: true,
                 sortable: true,
@@ -94,7 +87,7 @@ class GridExample extends Component {
                 rowNode.setDataValue('currency', rowNode.data.value + Number(Math.random().toFixed(2)));
             }
         });
-        this.gridApi.refreshCells({ columns: ['currency'] });
+        this.gridApi.refreshCells({columns: ['currency']});
     }
 
     methodFromParent = (cell) => {
@@ -115,10 +108,10 @@ class GridExample extends Component {
 
     render() {
         return (
-            <div style={{ width: '100%', height: '100%' }}>
+            <div style={{width: '100%', height: '100%'}}>
                 <div className="example-wrapper">
-                    <button onClick={() => this.refreshEvenRowsCurrencyData()} style={{ "marginBottom": "10px" }}
-                        className="btn btn-primary">
+                    <button onClick={() => this.refreshEvenRowsCurrencyData()} style={{"marginBottom": "10px"}}
+                            className="btn btn-primary">
                         Refresh Even Row Currency Data
                     </button>
                     <div
@@ -133,7 +126,6 @@ class GridExample extends Component {
                             columnDefs={this.state.columnDefs}
                             rowData={this.state.rowData}
                             context={this.state.context}
-                            frameworkComponents={this.state.frameworkComponents}
                             defaultColDef={this.state.defaultColDef}
                             onGridReady={this.onGridReady}
                         />

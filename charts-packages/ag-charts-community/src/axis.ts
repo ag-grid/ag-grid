@@ -311,6 +311,9 @@ export class Axis<S extends Scale<D, number>, D = any> {
             }
 
             this._title = value;
+
+            // position title so that it doesn't briefly get rendered in the top left hand corner of the canvas before update is called.
+            this.positionTitle();
         }
     }
     get title(): Caption | undefined {
@@ -533,11 +536,33 @@ export class Axis<S extends Scale<D, number>, D = any> {
         lineNode.stroke = this.line.color;
         lineNode.visible = ticks.length > 0;
 
-        const title = this.title;
+        this.positionTitle();
+
+        // debug (bbox)
+        // const bbox = this.computeBBox();
+        // const bboxRect = this.bboxRect;
+        // bboxRect.x = bbox.x;
+        // bboxRect.y = bbox.y;
+        // bboxRect.width = bbox.width;
+        // bboxRect.height = bbox.height;
+    }
+
+    private positionTitle() : void {
+        const { title, lineNode } = this;
+
+        if (!title) {
+            return;
+        }
 
         let titleVisible = false;
-        if (title && title.enabled && lineNode.visible) {
+
+        if (title.enabled && lineNode.visible) {
             titleVisible = true;
+
+            const { label, rotation, requestedRange } = this;
+
+            const sideFlag = label.mirrored ? 1 : -1;
+            const parallelFlipRotation = normalizeAngle360(rotation);
             const padding = title.padding.bottom;
             const titleNode = title.node;
             const bbox = this.computeBBox({ excludeTitle: true });
@@ -554,17 +579,8 @@ export class Axis<S extends Scale<D, number>, D = any> {
             }
             titleNode.textBaseline = titleRotationFlag === 1 ? 'bottom' : 'top';
         }
-        if (title) {
-            title.node.visible = titleVisible;
-        }
 
-        // debug (bbox)
-        // const bbox = this.computeBBox();
-        // const bboxRect = this.bboxRect;
-        // bboxRect.x = bbox.x;
-        // bboxRect.y = bbox.y;
-        // bboxRect.width = bbox.width;
-        // bboxRect.height = bbox.height;
+        title.node.visible = titleVisible;
     }
 
     // For formatting (nice rounded) tick values.

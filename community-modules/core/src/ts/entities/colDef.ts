@@ -674,7 +674,7 @@ export interface CellClassParams extends RowClassParams {
     value: any;
 }
 export interface CellClassFunc {
-    (cellClassParams: CellClassParams): string | string[];
+    (cellClassParams: CellClassParams): string | string[] | null | undefined;
 }
 export interface CellStyleFunc {
     (cellClassParams: CellClassParams): CellStyle | null | undefined;

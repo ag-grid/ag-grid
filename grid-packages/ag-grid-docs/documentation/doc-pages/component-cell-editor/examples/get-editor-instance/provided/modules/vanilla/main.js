@@ -41,27 +41,27 @@ const columnDefs = [
     {
         field: "gender",
         width: 100,
-        cellEditor: 'mySimpleEditor'
+        cellEditorComp: MySimpleEditor
     },
     {
         field: "age",
         width: 80,
-        cellEditor: 'mySimpleEditor'
+        cellEditorComp: MySimpleEditor
     },
     {
         field: "mood",
         width: 90,
-        cellEditor: 'mySimpleEditor'
+        cellEditorComp: MySimpleEditor
     },
     {
         field: "country",
         width: 110,
-        cellEditor: 'mySimpleEditor'
+        cellEditorComp: MySimpleEditor
     },
     {
         field: "address",
         width: 502,
-        cellEditor: 'mySimpleEditor'
+        cellEditorComp: MySimpleEditor
     }
 ];
 
@@ -76,9 +76,6 @@ const gridOptions = {
         resizable: true
     },
     rowData: createRowData(),
-    components: {
-        mySimpleEditor: MySimpleEditor
-    },
     onGridReady: function () {
         setInterval(() => {
             const instances = gridOptions.api.getCellEditorInstances();

@@ -29,12 +29,7 @@ export class MatEditorComponentTwo implements AfterViewInit {
                 this.gridOptions.api!.sizeColumnsToFit();
             },
             rowHeight: 48, // recommended row height for material design data grids,
-            headerHeight: 48,
-            frameworkComponents: {
-                sliderEditor: MatSliderComponent,
-                toggleHeaderRenderer: MatButtonToggleHeaderComponent,
-                progressRenderer: MatProgressSpinnerComponent
-            }
+            headerHeight: 48
         };
 
         this.columnAlignmentService.alignmentChanged$.subscribe(alignment => {
@@ -64,7 +59,7 @@ export class MatEditorComponentTwo implements AfterViewInit {
                     rowNodes: [rowNode],
                     columns: ["random_col"]
                 });
-            }, this.randomNumberUpTo(60) * 1000);
+            }, this.randomNumberUpTo(30) * 1000);
         });
     }
 
@@ -73,7 +68,7 @@ export class MatEditorComponentTwo implements AfterViewInit {
             {
                 headerName: "Percentage (popup slider editor)",
                 field: "percentage",
-                cellEditor: "sliderEditor",
+                cellEditorComp: MatSliderComponent,
                 cellEditorParams: {
                     thumbLabel: true
                 },
@@ -82,7 +77,7 @@ export class MatEditorComponentTwo implements AfterViewInit {
             {
                 headerName: "On/Off (button toggle header)",
                 field: "on_off",
-                headerComponent: "toggleHeaderRenderer",
+                headerComp: MatButtonToggleHeaderComponent,
                 cellStyle: params => {
                     return { "text-align": this.onOffColumnAlignment };
                 }
@@ -90,7 +85,7 @@ export class MatEditorComponentTwo implements AfterViewInit {
             {
                 headerName: "Random (progress spinner)",
                 field: "random_col",
-                cellRenderer: "progressRenderer",
+                cellRendererComp: MatProgressSpinnerComponent,
                 cellStyle: () => {
                     return { padding: "0px" };
                 }

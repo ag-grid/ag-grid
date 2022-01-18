@@ -23,15 +23,11 @@ class FileBrowser extends Component {
     width: 250,
     cellRendererParams: {
       suppressCount: true,
-      innerRenderer: "fileCellRenderer"
+      innerCellComp: FileCellRenderer
     }
   };
 
   modules = AllModules;
-
-  frameworkComponents = {
-    fileCellRenderer: FileCellRenderer
-  };
 
   render() {
     return (
@@ -49,7 +45,6 @@ class FileBrowser extends Component {
           modules={this.modules}
           getRowNodeId={data => data.id}
           onRowDragEnd={this.onRowDragEnd}
-          frameworkComponents={this.frameworkComponents}
         >
         </AgGridReact>
       </div>
