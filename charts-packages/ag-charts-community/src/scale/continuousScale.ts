@@ -159,7 +159,7 @@ export abstract class ContinuousScale implements Scale<any, any> {
         };
     }
 
-    convert(x: number, clamper?: (values: number[]) => (x: number) => number): any {
+    convert(x: any, clamper?: (values: number[]) => (x: number) => number): any {
         x = +x;
         if (isNaN(x)) {
             return this.unknown;
