@@ -159,7 +159,7 @@ export abstract class ContinuousScale implements Scale<any, any> {
         };
     }
 
-    convert(x: any): any {
+    convert(x: number, clamper?: (values: number[]) => (x: number) => number): any {
         x = +x;
         if (isNaN(x)) {
             return this.unknown;
@@ -167,7 +167,6 @@ export abstract class ContinuousScale implements Scale<any, any> {
         if (!this.output) {
             this.output = this.piecewise!(this.domain.map(this.transform), this.range, this.interpolate);
         }
-        const clamper: (domain: number[]) => (x: number) => number = arguments[1];
         const clamp = clamper ? clamper(this.domain) : this._clamp;
         return this.output(this.transform(clamp(x)));
     }

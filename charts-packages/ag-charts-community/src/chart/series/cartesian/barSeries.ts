@@ -551,9 +551,7 @@ export class BarSeries extends CartesianSeries {
 
                     const prevY = currY < 0 ? prevMinY : prevMaxY;
                     const continuousY = yScale instanceof ContinuousScale;
-                    // @ts-ignore
                     const y = yScale.convert(prevY + currY, continuousY ? clamper : undefined);
-                    // @ts-ignore
                     const bottomY = yScale.convert(prevY, continuousY ? clamper : undefined);
                     const yValue = seriesDatum[yKey]; // unprocessed y-value
 
