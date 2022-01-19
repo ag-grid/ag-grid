@@ -1,14 +1,13 @@
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
+import isDevelopment from 'utils/is-development';
 import ExampleStyle from './ExampleStyle';
 import Extras from './Extras';
-import { localPrefix, agGridVersion, agGridEnterpriseVersion, agChartsVersion } from 'utils/consts';
-import { getCssFilePaths, isUsingPublishedPackages } from './helpers';
-import isDevelopment from 'utils/is-development';
+import { getCssFilePaths } from './helpers';
+import MetaData from './MetaData';
 import Scripts from './Scripts';
 import Styles from './Styles';
 import SystemJs from './SystemJs';
-import MetaData from './MetaData';
 
 const getCacheBustingUrl = (url, timestamp) => `${url}?t=${timestamp}`;
 
@@ -37,28 +36,10 @@ const TypescriptTemplate = ({ isExecuting, modifiedTimeMs, library, boilerplateP
 }
 
 const TypescriptBody = ({ library, boilerplatePath, appLocation, options, scriptFiles, indexFragment }) => {
-    let scriptPath;
-
-    if (library === 'charts') {
-        scriptPath = isUsingPublishedPackages() ?
-            `https://unpkg.com/ag-charts-community@${agChartsVersion}/dist/ag-charts-community.min.js` :
-            `${localPrefix}/ag-charts-community/dist/ag-charts-community.js`;
-    } else {
-        if (options.enterprise) {
-            scriptPath = isUsingPublishedPackages() ?
-                `https://unpkg.com/@ag-grid-enterprise/all-modules@${agGridEnterpriseVersion}/dist/ag-grid-enterprise.min.js` :
-                `${localPrefix}/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js`;
-        } else {
-            scriptPath = isUsingPublishedPackages() ?
-                `https://unpkg.com/@ag-grid-community/all-modules@${agGridVersion}/dist/ag-grid-community.min.js` :
-                `${localPrefix}/@ag-grid-community/all-modules/dist/ag-grid-community.js`;
-        }
-    }
 
     const bodySuffix = ReactDOMServer.renderToStaticMarkup(
         <>
             <script dangerouslySetInnerHTML={{ __html: `var __basePath = '${appLocation}';` }}></script>
-            <script src={scriptPath}></script>
             <Scripts files={scriptFiles} />
             <SystemJs
                 library={library}
