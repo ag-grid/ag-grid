@@ -55,11 +55,6 @@ const TypescriptBody = ({ library, boilerplatePath, appLocation, options, script
         }
     }
 
-    const onLoadBody =
-        `// Re-fire the loaded event now that the typescript file has loaded
-            document.dispatchEvent(new Event('DOMContentLoaded'));
-    `
-
     const bodySuffix = ReactDOMServer.renderToStaticMarkup(
         <>
             <script dangerouslySetInnerHTML={{ __html: `var __basePath = '${appLocation}';` }}></script>
@@ -70,7 +65,6 @@ const TypescriptBody = ({ library, boilerplatePath, appLocation, options, script
                 boilerplatePath={boilerplatePath}
                 appLocation={appLocation}
                 startFile={appLocation + 'main.ts'}
-                onLoad={onLoadBody}
                 options={options} />
         </>
     );

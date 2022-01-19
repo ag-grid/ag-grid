@@ -63,11 +63,7 @@
             app: {
                 main: "./main.ts",
                 defaultExtension: "ts"
-            },
-            'ag-charts-community': {
-                main: './dist/cjs/es5/main.js',
-                defaultExtension: 'js'
-            },
+            }
         }
     });
 })(this);
