@@ -280,12 +280,21 @@ export class ColumnModel extends BeanStub {
 
         this.ready = true;
 
-        this.updateGridColumns();
-        if (colsPreviouslyExisted && this.gridColsArePrimary && !this.gridOptionsWrapper.isMaintainColumnOrder()) {
-            this.orderGridColumnsLikePrimary();
+        // if we are showing secondary columns, then no need to update grid columns
+        // at this point, as it's the pivot service responsibility to change these
+        // if we are no longer pivoting (ie and need to revert back to primary, otherwise
+        // we shouldn't be touching the primary).
+        const gridColsNotProcessed = this.gridColsArePrimary===undefined;
+        const processGridCols = this.gridColsArePrimary || gridColsNotProcessed;
+
+        if (processGridCols) {
+            this.updateGridColumns();
+            if (colsPreviouslyExisted && !this.gridOptionsWrapper.isMaintainColumnOrder()) {
+                this.orderGridColumnsLikePrimary();
+            }
+            this.updateDisplayedColumns(source);
+            this.checkViewportColumns();    
         }
-        this.updateDisplayedColumns(source);
-        this.checkViewportColumns();
 
         // this event is not used by AG Grid, but left here for backwards compatibility,
         // in case applications use it
