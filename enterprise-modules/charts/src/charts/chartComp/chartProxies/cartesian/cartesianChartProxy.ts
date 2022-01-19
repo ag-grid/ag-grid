@@ -30,7 +30,7 @@ export abstract class CartesianChartProxy extends ChartProxy {
     protected updateAxes(params: UpdateChartParams): void {
         // when grouping recreate chart if the axis is not a 'groupedCategory', otherwise return
         if (params.grouping) {
-            if (!(this.axisTypeToClassMap[this.xAxisType] instanceof GroupedCategoryAxis)) {
+            if (!(this.axisTypeToClassMap[this.xAxisType] === GroupedCategoryAxis)) {
                 this.xAxisType = 'groupedCategory';
                 this.recreateChart();
             }

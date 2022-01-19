@@ -22,7 +22,7 @@ const PopupEditorComp = (props: {
 
         const useModelPopup = gridOptionsWrapper.isStopEditingWhenCellsLoseFocus();
         
-        const wrapper = new PopupEditorWrapper(compDetails.params);
+        const wrapper = context.createBean(new PopupEditorWrapper(compDetails.params));
         const ePopupGui = wrapper.getGui();
 
         if (props.jsChildComp) {

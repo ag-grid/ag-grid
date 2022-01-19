@@ -116,9 +116,13 @@ The example below demonstrates keeping Detail Rows. Note the following:
 
 ## Detail Parameters
 
-The full list of Detail Cell Renderer Params are as follows:
+<!-- Below we don't show 'template' for React, hence listing the properties twice -->
 
-<interface-documentation interfaceName='IDetailCellRendererParams' names='["detailGridOptions", "getDetailRowData", "template", "refreshStrategy"]' ></interface-documentation>
+[[only-javascript-or-angular-or-vue]]
+|<interface-documentation interfaceName='IDetailCellRendererParams' names='["detailGridOptions", "getDetailRowData", "template", "refreshStrategy"]' ></interface-documentation>
+
+[[only-react]]
+|<interface-documentation interfaceName='IDetailCellRendererParams' names='["detailGridOptions", "getDetailRowData", "refreshStrategy"]' ></interface-documentation>
 
 The pattern of setting components such as Cell Renderers and providing parameters to those components is consistent across the grid and explained in [Grid Components](/components/).
 
