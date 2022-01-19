@@ -195,6 +195,31 @@ const CellComp = (props: {
 
     useJsCellRenderer(renderDetails, showTools, eCellValue.current, cellValueVersion, jsCellRendererRef, eGui);
 
+    // if RenderDetails changed, need to call refresh. This is not our preferred way (the preferred
+    // way for React is just allow the new props to propagate down to the React Cell Renderer)
+    // however we do this for backwards compatibility, as having refresh used to be supported.
+    const lastRenderDetails = useRef<RenderDetails>();
+    useEffect( ()=> {
+        const oldDetails = lastRenderDetails.current;
+        const newDetails = renderDetails;
+        lastRenderDetails.current = renderDetails;
+
+        // if not updating renderDetails, do nothing
+        if (oldDetails==null || oldDetails.compDetails==null 
+            || newDetails==null || newDetails.compDetails==null) { return; }
+
+        const oldCompDetails = oldDetails.compDetails;
+        const newCompDetails = newDetails.compDetails;
+        // if different Cell Renderer, then do nothing, as renderer will be recreated
+        if (oldCompDetails.componentClass!=newCompDetails.componentClass) { return; }
+
+        // if no refresh method, do nothing
+        if (cellRendererRef.current==null || cellRendererRef.current.refresh==null) { return; }
+
+        cellRendererRef.current.refresh(newCompDetails.params);
+
+    }, [renderDetails]);
+
     useEffect(() => {
         const doingJsEditor = editDetails && !editDetails.compDetails.componentFromFramework;
         if (!doingJsEditor) { return; }
