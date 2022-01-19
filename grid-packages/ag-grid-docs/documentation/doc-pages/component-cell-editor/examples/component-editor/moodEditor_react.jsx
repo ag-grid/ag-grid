@@ -31,10 +31,6 @@ export default class MoodEditor extends Component {
             this.toggleMood();
             event.stopPropagation();
         }
-        if('Enter' === event.key) {
-            // spl todo - enter doesn't stop editing anymore?
-            this.props.stopEditing();
-        }
     };
 
     componentDidUpdate() {
