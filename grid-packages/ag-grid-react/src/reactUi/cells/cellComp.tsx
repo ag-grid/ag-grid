@@ -4,7 +4,7 @@ import { CssClasses, isComponentStateless } from '../utils';
 import PopupEditorComp from './popupEditorComp';
 import useJsCellRenderer from './showJsRenderer';
 import { BeansContext } from '../beansContext';
-import { createJsComp } from '../jsComp';
+import { createSyncJsComp } from '../jsComp';
 
 export enum CellCompState { ShowValue, EditValue }
 
@@ -227,7 +227,7 @@ const CellComp = (props: {
         const compDetails = editDetails!.compDetails;
         const isPopup = editDetails!.popup===true;
     
-        const cellEditor = createJsComp(compDetails) as ICellEditorComp;
+        const cellEditor = createSyncJsComp(compDetails) as ICellEditorComp;
         if (!cellEditor) { return; }
 
         const compGui = cellEditor.getGui();

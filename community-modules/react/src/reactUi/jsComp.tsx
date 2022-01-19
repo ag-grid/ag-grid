@@ -1,4 +1,4 @@
-import { Context, UserCompDetails, ICellRendererComp } from '@ag-grid-community/core';
+import { Context, AgPromise, UserCompDetails, ICellRendererComp } from '@ag-grid-community/core';
 import { MutableRefObject } from 'react';
 
 export const showJsComp = (
@@ -10,18 +10,32 @@ export const showJsComp = (
     const doNothing = !compDetails || compDetails.componentFromFramework;
     if (doNothing) { return; }
 
-    const comp = createJsComp(compDetails) as ICellRendererComp;
+    const promise = compDetails.newAgStackInstance();
+    if (!promise) { return; }
+    
+    // almost all JS Comps are NOT async, however the Floating Multi Filter is Async as it could
+    // be wrapping a React filter, so we need to cater for async comps here.
 
-    if (!comp) { return; }
+    let comp: any;
+    let compGui: HTMLElement;
+    let destroyed = false;
 
-    const compGui = comp.getGui();
+    promise.then( c => {
 
-    eParent.appendChild(compGui);
+        if (destroyed) {
+            context.destroyBean(c);
+            return;
+        }
 
-    setRef(ref, comp);
+        comp = c;
+        compGui = comp.getGui();
+        eParent.appendChild(compGui);
+        setRef(ref, comp);    
+    });
 
     return () => {
-        const compGui = comp.getGui();
+        destroyed = true;
+        if (!comp) { return; } // in case we were destroyed before async comp was returned
 
         if (compGui && compGui.parentElement) {
             compGui.parentElement.removeChild(compGui);
@@ -47,7 +61,7 @@ const setRef = (ref: MutableRefObject<any> | ((ref: any)=>void) | undefined, val
     }
 };
 
-export const createJsComp = (compDetails: UserCompDetails): any => {
+export const createSyncJsComp = (compDetails: UserCompDetails): any => {
     const promise = compDetails.newAgStackInstance();
     if (!promise) { return; }
     return promise.resolveNow(null, x => x); // js comps are never async
