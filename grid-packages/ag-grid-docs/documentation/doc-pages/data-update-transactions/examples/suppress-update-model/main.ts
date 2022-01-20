@@ -258,7 +258,7 @@ function timeOperation(name: string, operation: any) {
 
 
 function letter(i: number) {
-  return 'abcdefghijklmnopqrstuvwxyz'.substr(i, 1)
+  return 'abcdefghijklmnopqrstuvwxyz'.substring(i, i + 1)
 }
 
 function randomLetter() {

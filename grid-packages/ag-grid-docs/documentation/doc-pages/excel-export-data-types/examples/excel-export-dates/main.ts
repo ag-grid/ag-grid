@@ -16,7 +16,7 @@ const gridOptions: GridOptions = {
         var date = new Date(params.value)
         var day = date.getDate().toString().padStart(2, '0')
         var month = (date.getMonth() + 1).toString().padStart(2, '0')
-        var year = date.getFullYear().toString().substr(-2)
+        var year = date.getFullYear().toString().substring(2)
         return day + '/' + month + '/' + year
       },
     },
@@ -28,7 +28,7 @@ const gridOptions: GridOptions = {
         var date = new Date(params.value)
         var day = date.getDate().toString().padStart(2, '0')
         var month = (date.getMonth() + 1).toString().padStart(2, '0')
-        var year = date.getFullYear().toString().substr(-2)
+        var year = date.getFullYear().toString().substring(2)
         return month + '/' + day + '/' + year
       },
     },

@@ -73,10 +73,10 @@ function getServerSideDatasource(server: any): IServerSideDatasource {
 
         if (response.success) {
           // call the success callback
-          params.successCallback(response.rows, response.lastRow)
+          params.success({ rowData: response.rows, rowCount: response.lastRow })
         } else {
           // inform the grid request failed
-          params.failCallback()
+          params.fail()
         }
       }, 2000)
     },
