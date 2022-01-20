@@ -3,12 +3,13 @@
 |
 |Configuring components was made simpler in v27.
 |
-|Before it was necessary to tell the grid that a Component was a Framework Component by using `xxxFramework` properties. Having separate properties for JavaScript and |Framework components is no longer necessary. Now the grid works out if a Component is JavaScript or a Framework Component.
+|Before it was necessary to tell the grid that a Component was a Framework Component by using `xxxFramework` properties. Having separate properties for JavaScript and Framework components is no longer necessary. Now the grid works out if a Component is JavaScript or a Framework Component.
 |
 |For example, consider how a Cell Renderer used to be configured before and after v27.
+|
 |Prior to v27, the following was used:
 |
-|<snippet spaceBetweenProperties="true" suppressFrameworkContext="true">
+|<snippet spaceBetweenProperties="true">
 |const gridOptions = {
 |    columnDefs: [
 |        { 
@@ -33,16 +34,18 @@
 |
 |From v27 onwards, the following is used:
 |
-|<snippet spaceBetweenProperties="true" suppressFrameworkContext="true">
+|<snippet spaceBetweenProperties="true">
 |const gridOptions = {
 |    columnDefs: [
 |        { 
 |            field: 'name',
 |            cellRendererComp: NameJsCellRenderer, // Grid decides JS or Framework Component
+|            cellRendererCompParams: {a: 'something'}
 |        },
 |        { 
 |            field: 'age',
 |            cellRendererComp: AgeFrameworkCellRenderer, // Grid decides JS or Framework Component, no xxxFramework
+|            cellRendererCompParams: {a: 'something'}
 |        }
 |    ],
 |}
@@ -79,7 +82,7 @@
 |
 |Prior to v27, registering Components was done as follows:
 |
-|<snippet spaceBetweenProperties="true" suppressFrameworkContext="true">
+|<snippet spaceBetweenProperties="true">
 |const gridOptions = {
 |    components: {
 |        nameJs: NameJsCellRenderer // JS Component
@@ -107,7 +110,7 @@
 |
 |For v27 onwards, registering Components is as follows:
 |
-|<snippet spaceBetweenProperties="true" suppressFrameworkContext="true">
+|<snippet spaceBetweenProperties="true">
 |const gridOptions = {
 |    comps: {
 |        nameJs: NameJsCellRenderer, // JS Component
@@ -138,7 +141,7 @@
 |
 |Before v27, the following was used:
 |
-|<snippet spaceBetweenProperties="true" suppressFrameworkContext="true">
+|<snippet spaceBetweenProperties="true">
 |const gridOptions = {
 |    columnDefs: [
 |        { 
@@ -157,7 +160,7 @@
 |
 |From v27 onwards, the following is used:
 |
-|<snippet spaceBetweenProperties="true" suppressFrameworkContext="true">
+|<snippet spaceBetweenProperties="true">
 |const gridOptions = {
 |    columnDefs: [
 |        { 
@@ -179,7 +182,7 @@
 |
 |If you are using JavaScript Functional Components inside a React / Angular / Vue grid, then refer to the Functional Component the old way. For example to specify a Functional Cell Renderer, use `cellRenderer` instead of `cellRendererComp`.
 |
-|<snippet spaceBetweenProperties="true" suppressFrameworkContext="true">
+|<snippet spaceBetweenProperties="true">
 |const gridOptions = {
 |    columnDefs: [
 |        { 
