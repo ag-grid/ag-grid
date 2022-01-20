@@ -8,7 +8,7 @@
 |For example, consider how a Cell Renderer used to be configured before and after v27.
 |Prior to v27, the following was used:
 |
-|<snippet spaceBetweenProperties="true">
+|<snippet spaceBetweenProperties="true" suppressFrameworkContext="true">
 |const gridOptions = {
 |    columnDefs: [
 |        { 
@@ -33,7 +33,7 @@
 |
 |From v27 onwards, the following is used:
 |
-|<snippet spaceBetweenProperties="true">
+|<snippet spaceBetweenProperties="true" suppressFrameworkContext="true">
 |const gridOptions = {
 |    columnDefs: [
 |        { 
@@ -79,7 +79,7 @@
 |
 |Prior to v27, registering Components was done as follows:
 |
-|<snippet spaceBetweenProperties="true">
+|<snippet spaceBetweenProperties="true" suppressFrameworkContext="true">
 |const gridOptions = {
 |    components: {
 |        nameJs: NameJsCellRenderer // JS Component
@@ -107,7 +107,7 @@
 |
 |For v27 onwards, registering Components is as follows:
 |
-|<snippet spaceBetweenProperties="true">
+|<snippet spaceBetweenProperties="true" suppressFrameworkContext="true">
 |const gridOptions = {
 |    comps: {
 |        nameJs: NameJsCellRenderer, // JS Component
@@ -138,7 +138,7 @@
 |
 |Before v27, the following was used:
 |
-|<snippet spaceBetweenProperties="true">
+|<snippet spaceBetweenProperties="true" suppressFrameworkContext="true">
 |const gridOptions = {
 |    columnDefs: [
 |        { 
@@ -157,7 +157,7 @@
 |
 |From v27 onwards, the following is used:
 |
-|<snippet spaceBetweenProperties="true">
+|<snippet spaceBetweenProperties="true" suppressFrameworkContext="true">
 |const gridOptions = {
 |    columnDefs: [
 |        { 
@@ -179,7 +179,7 @@
 |
 |If you are using JavaScript Functional Components inside a React / Angular / Vue grid, then refer to the Functional Component the old way. For example to specify a Functional Cell Renderer, use `cellRenderer` instead of `cellRendererComp`.
 |
-|<snippet spaceBetweenProperties="true">
+|<snippet spaceBetweenProperties="true" suppressFrameworkContext="true">
 |const gridOptions = {
 |    columnDefs: [
 |        { 
