@@ -247,7 +247,7 @@ As of version 23, checkboxes and radio buttons are native browser inputs styled 
 
 The example below shows a mixture of different methods for providing icons. The grouping is done with images, and the header icons use a mix of Font Awesome and strings.
 
-<grid-example title='Icons' name='icons' type='generated' options='{ "enterprise": true, "exampleHeight": 660, "extras": ["fontawesome"], "modules": ["clientside", "rowgrouping", "sidebar", "columnpanel", "filterpanel"] }'></grid-example>
+<grid-example title='Icons' name='icons' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "sidebar", "columnpanel", "filterpanel"], "exampleHeight": 660, "extras": ["fontawesome"] }'></grid-example>
 
 ## SVG Icons
 

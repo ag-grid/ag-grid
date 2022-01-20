@@ -10,7 +10,7 @@ When you call `applyTransactionAsync()` the grid will execute the update, along 
 
 <api-documentation source='grid-api/api.json' section='data' names='["applyTransactionAsync"]' ></api-documentation>
 
-<grid-example title='Async Transaction' name='async-transaction' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+<grid-example title='Async Transaction' name='async-transaction' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"], "exampleHeight": 590 }'></grid-example>
 
 
 To help understand the interface for `applyTransaction()` and `applyTransactionAsync()`, here are both method signatures side by side. The first executes immediately. The second executes sometime later using a callback for providing a result.

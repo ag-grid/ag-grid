@@ -75,7 +75,7 @@ This will lead to a bad user experience which is demonstrated in the following e
 - Open the context menu or the column menu in the grid
 - Notice the menu will not be fully visible (i.e. clipped)
 
-<grid-example title='Small Grid Problem' name='popup-parent-problem' type='generated' options='{ "enterprise": true, "exampleHeight": 400, "modules": ["clientside", "menu", "excel", "clipboard"] }'></grid-example>
+<grid-example title='Small Grid Problem' name='popup-parent-problem' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "excel", "clipboard"], "exampleHeight": 400 }'></grid-example>
 
 The solution is to set the `popupParent` element which can be set in the following ways:
 
@@ -91,4 +91,4 @@ Most of the time, you will simply set the popup parent to the document body.
 
 The example below is identical to the previous example except it sets the popup parent to the document body.
 
-<grid-example title='Small Grid Solution' name='popup-parent-solution' type='generated' options='{ "enterprise": true, "exampleHeight": 400, "modules": ["clientside", "menu", "excel", "clipboard"] }'></grid-example>
+<grid-example title='Small Grid Solution' name='popup-parent-solution' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "excel", "clipboard"], "exampleHeight": 400 }'></grid-example>

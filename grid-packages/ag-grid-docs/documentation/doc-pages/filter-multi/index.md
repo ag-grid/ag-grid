@@ -89,7 +89,7 @@ You can use your own [Custom Filters](/filter-custom/) with the Multi Filter.
 
 The example below shows a Custom Filter in use on the **Year** column, used alongside the grid-provided [Number Filter](/filter-number/).
 
-<grid-example title='Custom Filters' name='custom-filter' type='generated' options='{ "enterprise": true, "exampleHeight": 635 }'></grid-example>
+<grid-example title='Custom Filters' name='custom-filter' type='generated' options='{ "enterprise": true, "modules": ["clientside", "multifilter", "setfilter", "menu", "clipboard", "filterpanel"], "exampleHeight": 635 }'></grid-example>
 
 ## Multi Filter Model
 

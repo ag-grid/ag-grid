@@ -2,7 +2,7 @@
 title: "CSV Export"
 ---
 
-The grid data can be exported to CSV with an API call, or using the right-click context menu on the Grid.
+The grid data can be exported to CSV with an API call, or using the right-click context menu (Enterprise only) on the Grid.
 
 ## What Gets Exported
 
@@ -32,8 +32,9 @@ Note the following:
 - You can use the `Show CSV export content text` button, to preview the output.
 - You can use the `Download CSV export file` button to download a csv file.
 - The file will be exported using the default name: `export.csv`.
+- Community version supports api CSV Export but not Context Menu.
 
-<grid-example title='CSV Export' name='csv-export' type='generated' options='{ "enterprise": true, "exampleHeight": 400 }'></grid-example>
+<grid-example title='CSV Export' name='csv-export' type='generated' options='{  "modules":["clientside", "csv"], "exampleHeight": 400 }'></grid-example>
 
 
 ## Changing the column separator
@@ -44,8 +45,9 @@ Note the following:
 
 - You can use the select field at the top to switch the value of the `columnSeparator` param.
 - You can use the `Show CSV export content text` button, to preview the output.
+- Enterprise version enables CSV Export using right click via the Context Menu.
 
-<grid-example title='CSV Export - Column Separator' name='csv-export-column-separator' type='generated' options='{ "enterprise": true, "exampleHeight": 400 }'></grid-example>
+<grid-example title='CSV Export - Column Separator' name='csv-export-column-separator' type='generated' options='{ "enterprise": true, "modules":["clientside", "csv", "menu"], "exampleHeight": 400 }'></grid-example>
 
 ## Suppress Quotes
 
@@ -58,7 +60,7 @@ Note the following:
 - You can use the `Show CSV export content text` button, to preview the output.
 - You can use the `Download CSV export file` button to download a csv file.
 
-<grid-example title='CSV Export - Suppress Quotes' name='csv-export-suppress-quotes' type='generated' options='{ "enterprise": true, "exampleHeight": 400 }'></grid-example>
+<grid-example title='CSV Export - Suppress Quotes' name='csv-export-suppress-quotes' type='generated' options='{ "enterprise": true, "modules":["clientside", "csv", "menu"], "exampleHeight": 400 }'></grid-example>
 
 ## Prepending and Appending Content
 
@@ -76,7 +78,7 @@ Note the following:
 - You can use the `Show CSV export content text` button, to preview the output.
 - You can use the `Download CSV export file` button to download a csv file.
 
-<grid-example title='CSV Export - Custom Header and Footer' name='csv-export-header-footer' type='generated' options='{ "enterprise": true, "exampleHeight": 400 }'></grid-example>
+<grid-example title='CSV Export - Custom Header and Footer' name='csv-export-header-footer' type='generated' options='{ "enterprise": true, "modules":["clientside", "csv", "menu"], "exampleHeight": 400 }'></grid-example>
 
 ## Column Headers
 
@@ -88,7 +90,7 @@ Note the following:
 - Group Headers will be skipped if `Skip Column Group Headers` is checked.
 - Normal headers will be skipped if `Skip Column Headers` is checked.
 
-<grid-example title='CSV Export - Column Headers' name='csv-export-column-headers' type='generated' options='{ "enterprise": true, "exampleHeight": 400 }'></grid-example>
+<grid-example title='CSV Export - Column Headers' name='csv-export-column-headers' type='generated' options='{ "enterprise": true, "modules":["clientside", "csv", "menu"], "exampleHeight": 400 }'></grid-example>
 
 ## Pinned Rows
 
@@ -100,7 +102,7 @@ Note the following:
 - If `Skip Pinned Top Rows` is checked, the rows pinned at the top will be skipped.
 - If `Skip Pinned Bottom Rows` is checked, the rows pinned at the bottom will be skipped.
 
-<grid-example title='CSV Export - Pinned Rows' name='csv-export-pinned-rows' type='generated' options='{ "enterprise": true, "exampleHeight": 400 }'></grid-example>
+<grid-example title='CSV Export - Pinned Rows' name='csv-export-pinned-rows' type='generated' options='{ "enterprise": true, "modules":["clientside", "csv", "menu"], "exampleHeight": 400 }'></grid-example>
 
 ## Hidden Columns
 
@@ -111,7 +113,7 @@ Note the following:
 - By default, only visible columns will be exported. The bronze, silver, and gold columns will not.
 - If `Export All Columns` is checked, the bronze, silver, and gold columns will be included in the export.
 
-<grid-example title='CSV Export - Hidden Columns' name='csv-export-hidden-columns' type='generated' options='{ "enterprise": true, "exampleHeight": 400 }'></grid-example>
+<grid-example title='CSV Export - Hidden Columns' name='csv-export-hidden-columns' type='generated' options='{ "enterprise": true, "modules":["clientside", "csv", "menu"], "exampleHeight": 400 }'></grid-example>
 
 ## API
 ### Grid Properties
