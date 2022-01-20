@@ -115,7 +115,7 @@ Notice the following in the example below:
 
 - Only visible cells are rendered. The grid contains 1000 rows and 20,000 cells. If you take about 10 seconds to scroll from the top to the bottom, only a few hundred cells will actually be rendered. Any cells that are scrolled into view and then back out of view again before they have a chance to be rendered will be skipped.
 
-<grid-example title='Rendering Order' name='rendering-order' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Rendering Order' name='rendering-order' type='generated' ></grid-example>
 
 ## Provided Cell Renderers
 
