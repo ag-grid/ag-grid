@@ -189,7 +189,7 @@ const months = [
     'Dec',
 ];
 
-const dataSize = '.1x22';
+const dataSize: string = '.1x22';
 
 const autoGroupColumnDef: ColDef = {
     headerName: 'Group',
@@ -483,7 +483,7 @@ const monthGroup: ColGroupDef = {
     headerName: 'Monthly Breakdown',
     children: [],
 };
-defaultCols.push(monthGroup)
+defaultCols.push(monthGroup);
 months.forEach(function (month) {
     const child: ColDef = {
         headerName: month,
@@ -503,7 +503,7 @@ months.forEach(function (month) {
         cellStyle: { 'text-align': 'right' },
     };
     monthGroup.children.push(child)
-})
+});
 
 function getColCount() {
     switch (dataSize) {

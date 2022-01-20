@@ -29,18 +29,18 @@ class YearCellEditor implements ICellEditorComp {
       '<div>' +
       '<input type="text" style="width: 100%;" placeholder="clicking on this text field does not close"/>' +
       '</div>' +
-      '</div>'
+      '</div>';
 
-      [2006, 2008, 2010, 2012].forEach(year => {
-        tempElement
-          .querySelector('#bt' + year)!
-          .addEventListener('click', () => {
-            this.value = year
-            params.stopEditing()
-          })
-      })
+    [2006, 2008, 2010, 2012].forEach(year => {
+      tempElement
+        .querySelector('#bt' + year)!
+        .addEventListener('click', () => {
+          this.value = year
+          params.stopEditing()
+        })
+    })
 
-    this.eGui = tempElement.firstChild
+    this.eGui = tempElement.firstChild;
   }
 }
 
