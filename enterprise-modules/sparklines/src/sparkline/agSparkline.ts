@@ -259,11 +259,11 @@ const validators: Validators = {
 }
 
 function setValueIfPropertyExists(target: any, property: string, value: any, options: any): void {
-    const validator = validators[property];
-    const isValid = validator ? validator(property, value, target[property]) : true;
-
     if (property in options) {
         if (property in target) {
+            const validator = validators[property];
+            const isValid = validator ? validator(property, value, target[property]) : true;
+
             if (isValid && target[property] !== value) {
                 // only set property if the value is different to new value
                 target[property] = value;
