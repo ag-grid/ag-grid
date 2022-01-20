@@ -7,6 +7,7 @@ import { getSeriesType } from "../../utils/seriesTypeMapper";
 
 export class ComboChartProxy extends CartesianChartProxy {
 
+    private prevFields: string;
     private prevSeriesChartTypes: SeriesChartType[];
     private prevAxes: AgCartesianAxisOptions[];
 
@@ -59,7 +60,11 @@ export class ComboChartProxy extends CartesianChartProxy {
         // cache a cloned copy of `seriesChartTypes` for subsequent comparisons
         this.prevSeriesChartTypes = seriesChartTypes.map(s => ({...s}));
 
-        if (seriesChartTypesChanged) {
+        const fields = params.fields.map(f => f.colId).join();
+        const fieldsChanged = this.prevFields !== fields;
+        this.prevFields = fields;
+
+        if (seriesChartTypesChanged || fieldsChanged) {
             this.chart.axes = [];
             return true;
         }
@@ -79,13 +84,13 @@ export class ComboChartProxy extends CartesianChartProxy {
         const fields = updateParams ? updateParams.fields : [];
         const fieldsMap = new Map(fields.map(f => [f.colId, f]));
 
-        const seriesChartTypes = this.chartProxyParams.seriesChartTypes;
-        if (seriesChartTypes) {
-            seriesChartTypes.forEach(seriesChartType => {
-                const { secondaryAxis, colId } = seriesChartType;
-                secondaryAxis ? secondaryYKeys.push(colId) : primaryYKeys.push(colId);
-            });
-        }
+        fields.forEach(field => {
+            const colId = field.colId;
+            const seriesChartType = this.chartProxyParams.seriesChartTypes.find(s => s.colId === colId);
+            if (seriesChartType) {
+                seriesChartType.secondaryAxis ? secondaryYKeys.push(colId) : primaryYKeys.push(colId);
+            }
+        });
 
         const axes = [
             {
