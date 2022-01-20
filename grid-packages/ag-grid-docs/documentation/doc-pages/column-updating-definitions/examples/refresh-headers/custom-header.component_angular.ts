@@ -31,5 +31,5 @@ export class CustomHeader implements IHeaderAngularComp {
 
     onMenuClicked() {
         this.params.showColumnMenu(this.menuButton.nativeElement);
-    };
+    }
 }

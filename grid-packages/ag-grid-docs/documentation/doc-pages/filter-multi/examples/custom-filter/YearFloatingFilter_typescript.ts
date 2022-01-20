@@ -25,13 +25,13 @@ export class YearFloatingFilter implements IFloatingFilterComp {
 
         this.rbAllYears.addEventListener('change', this.onSelectionChanged.bind(this));
         this.rbAfter2004.addEventListener('change', this.onSelectionChanged.bind(this));
-    };
+    }
 
     onSelectionChanged() {
         this.parentFilterInstance((instance) => {
             instance.onFloatingFilterChanged(this.rbAfter2004.checked);
         });
-    };
+    }
 
     onParentModelChanged(parentModel: any) {
         if (parentModel) {
@@ -41,9 +41,9 @@ export class YearFloatingFilter implements IFloatingFilterComp {
             this.rbAllYears.checked = true;
             this.rbAfter2004.checked = false;
         }
-    };
+    }
 
     getGui() {
         return this.eGui;
-    };
+    }
 }

@@ -102,7 +102,7 @@ export class CustomHeaderGroup implements IHeaderGroupAngularComp {
     }
 
     expandOrCollapse() {
-        let currentState = this.params.columnGroup.getProvidedColumnGroup().isExpanded();
+        const currentState = this.params.columnGroup.getProvidedColumnGroup().isExpanded();
         this.params.setExpanded(!currentState);
     }
 

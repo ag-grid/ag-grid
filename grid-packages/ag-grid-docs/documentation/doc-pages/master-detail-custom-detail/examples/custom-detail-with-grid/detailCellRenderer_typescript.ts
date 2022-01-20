@@ -14,7 +14,7 @@ export class DetailCellRenderer implements ICellRendererComp {
     this.eGui = eTemp.firstElementChild as HTMLElement;
 
     this.setupDetailGrid();
-  };
+  }
 
   setupDetailGrid() {
     var eDetailGrid = this.eGui.querySelector<HTMLElement>('.full-width-grid')!;
@@ -48,7 +48,7 @@ export class DetailCellRenderer implements ICellRendererComp {
 
     console.log("adding detail grid info with id: ", rowId);
     masterGridApi.addDetailGridInfo(rowId, gridInfo);
-  };
+  }
 
   getTemplate() {
     var data = this.params.data;
@@ -62,11 +62,11 @@ export class DetailCellRenderer implements ICellRendererComp {
       '</div>';
 
     return template;
-  };
+  }
 
   getGui() {
     return this.eGui;
-  };
+  }
 
   refresh(params: ICellRendererParams): boolean {
     return false;
@@ -80,6 +80,6 @@ export class DetailCellRenderer implements ICellRendererComp {
 
     console.log("destroying detail grid");
     this.detailGridApi.destroy();
-  };
+  }
 
 }

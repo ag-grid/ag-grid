@@ -57,7 +57,7 @@ function processHeaderForClipboard(params: ProcessHeaderForExportParams) {
 
 function processGroupHeaderForClipboard(params: ProcessGroupHeaderForExportParams) {
   const colGroupDef = params.columnGroup.getColGroupDef() || {} as any;
-  let headerName = colGroupDef.headerName || '';
+  const headerName = colGroupDef.headerName || '';
 
   if (headerName === '') {
     return '';

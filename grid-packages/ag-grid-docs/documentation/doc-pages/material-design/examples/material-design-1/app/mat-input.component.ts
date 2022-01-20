@@ -34,7 +34,7 @@ export class MatInputComponent implements ICellEditorAngularComp {
 
     @ViewChildren("input", { read: ViewContainerRef })
     public inputs!: QueryList<any>;
-    private focusedInput: number = 0;
+    private focusedInput = 0;
 
     agInit(params: ICellEditorParams): void {
         this.params = params;
@@ -76,8 +76,8 @@ export class MatInputComponent implements ICellEditorAngularComp {
             // either move one input along, or cycle back to 0
             this.focusedInput = this.focusedInput === this.inputs.length - 1 ? 0 : this.focusedInput + 1;
 
-            let focusedInput = this.focusedInput;
-            let inputToFocusOn = this.inputs.find((item: any, index: number) => {
+            const focusedInput = this.focusedInput;
+            const inputToFocusOn = this.inputs.find((item: any, index: number) => {
                 return index === focusedInput;
             });
 

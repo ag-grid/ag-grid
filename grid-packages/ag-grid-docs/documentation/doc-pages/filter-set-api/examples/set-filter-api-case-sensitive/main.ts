@@ -57,7 +57,7 @@ function colourCellRenderer(params: ICellRendererParams) {
 }
 
 function setModel(type: string) {
-  const instance = gridOptions.api!.getFilterInstance(FILTER_TYPES[type])!!
+  const instance = gridOptions.api!.getFilterInstance(FILTER_TYPES[type])!
 
   instance.setModel({ values: MANGLED_COLOURS })
   gridOptions.api!.onFilterChanged()

@@ -1,6 +1,6 @@
 import { Grid, FirstDataRenderedEvent, GridApi, GridOptions, GridReadyEvent, GridSizeChangedEvent } from '@ag-grid-community/core'
 
-var minRowHeight: number = 25
+var minRowHeight = 25
 var currentRowHeight: number;
 
 const gridOptions: GridOptions = {

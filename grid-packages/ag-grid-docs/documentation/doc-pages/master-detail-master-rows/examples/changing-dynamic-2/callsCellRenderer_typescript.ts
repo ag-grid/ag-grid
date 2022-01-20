@@ -22,7 +22,7 @@ export class CallsCellRenderer implements ICellRendererComp {
         btRemove.addEventListener('click', this.onBtRemove.bind(this, params));
 
         this.refresh(params);
-    };
+    }
 
     onBtRemove(params: ICellRendererParams) {
 
@@ -47,7 +47,7 @@ export class CallsCellRenderer implements ICellRendererComp {
         };
 
         params.api.applyTransaction({ update: [newData] });
-    };
+    }
 
     onBtAdd(params: ICellRendererParams) {
         var oldData = params.node.data;
@@ -78,15 +78,15 @@ export class CallsCellRenderer implements ICellRendererComp {
         params.api.applyTransaction({ update: [newData] });
 
         params.node.setExpanded(true);
-    };
+    }
 
     refresh(params: ICellRendererParams) {
         this.eValue.innerHTML = params.value;
         return true;
-    };
+    }
 
     getGui() {
         return this.eGui;
-    };
+    }
 
 }

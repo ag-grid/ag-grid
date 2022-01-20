@@ -16,7 +16,7 @@ import { IDoesFilterPassParams, IFilterParams, RowNode } from "@ag-grid-communit
 })
 export class NumberFilterComponent implements AgFilterComponent {
     params!: IFilterParams;
-    filterText: Number | null | string = null;
+    filterText: number | null | string = null;
 
     agInit(params: IFilterParams): void {
         this.params = params;

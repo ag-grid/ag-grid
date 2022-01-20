@@ -26,7 +26,7 @@ import { IFilterAngularComp } from '@ag-grid-community/angular';
 })
 export class PartialMatchFilter implements IFilterAngularComp {
     private params!: IFilterParams;
-    public text: string = '';
+    public text = '';
 
     @ViewChild('input', { read: ViewContainerRef }) public input!: ViewContainerRef;
 

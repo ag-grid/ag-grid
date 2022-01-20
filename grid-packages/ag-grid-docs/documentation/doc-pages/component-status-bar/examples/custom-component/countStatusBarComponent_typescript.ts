@@ -21,19 +21,19 @@ export class CountStatusBarComponent implements IStatusPanelComp {
         this.eGui.appendChild(this.eCount);
 
         params.api.addEventListener('gridReady', this.onGridReady.bind(this));
-    };
+    }
 
     getGui() {
         return this.eGui;
-    };
+    }
 
     destroy() {
         this.params.api.removeEventListener("gridReady", this.onGridReady);
-    };
+    }
 
     onGridReady() {
         this.eCount.innerText = this.params.api.getModel().getRowCount() + ''
-    };
+    }
 }
 
 

@@ -49,9 +49,9 @@ export interface ICustomHeaderParams {
 export class CustomHeader implements IHeaderAngularComp {
     public params!: IHeaderParams & ICustomHeaderParams;
 
-    public ascSort: string = 'inactive';
-    public descSort: string = 'inactive';
-    public noSort: string = 'inactive';
+    public ascSort = 'inactive';
+    public descSort = 'inactive';
+    public noSort = 'inactive';
 
     @ViewChild('menuButton', { read: ElementRef }) public menuButton!: ElementRef;
 
@@ -65,7 +65,7 @@ export class CustomHeader implements IHeaderAngularComp {
 
     onMenuClicked() {
         this.params.showColumnMenu(this.menuButton.nativeElement);
-    };
+    }
 
     onSortChanged() {
         this.ascSort = this.descSort = this.noSort = 'inactive';

@@ -17,7 +17,7 @@ import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-mod
 })
 export class MatEditorComponentTwo implements AfterViewInit {
     public gridOptions: GridOptions;
-    public onOffColumnAlignment: string = "left";
+    public onOffColumnAlignment = "left";
 
     modules = [ClientSideRowModelModule];
 
@@ -34,7 +34,7 @@ export class MatEditorComponentTwo implements AfterViewInit {
 
         this.columnAlignmentService.alignmentChanged$.subscribe(alignment => {
             this.onOffColumnAlignment = alignment;
-            let nodesToUpdate: any[] = [];
+            const nodesToUpdate: any[] = [];
             this.gridOptions.api!.forEachNode(node => {
                 nodesToUpdate.push(node);
             });

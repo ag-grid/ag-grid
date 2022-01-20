@@ -19,7 +19,7 @@ import { IDoesFilterPassParams, IFilterParams } from "@ag-grid-community/core";
 })
 export class YearFilter implements AgFilterComponent {
   params!: IFilterParams;
-  year: string = 'All';
+  year = 'All';
 
   agInit(params: IFilterParams): void {
     this.params = params;

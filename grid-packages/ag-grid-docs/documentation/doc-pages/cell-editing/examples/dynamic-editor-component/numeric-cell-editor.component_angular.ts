@@ -14,7 +14,7 @@ const KEY_TAB = 'Tab';
 export class NumericCellEditor implements ICellEditorAngularComp, AfterViewInit {
     private params: any;
     public value!: number;
-    private cancelBeforeStart: boolean = false;
+    private cancelBeforeStart = false;
 
     @ViewChild('input', { read: ViewContainerRef }) public input!: ViewContainerRef;
 
@@ -56,7 +56,7 @@ export class NumericCellEditor implements ICellEditorAngularComp, AfterViewInit 
     // not very practical, but demonstrates the method.
     isCancelAfterEnd(): boolean {
         return this.value > 1000000;
-    };
+    }
 
     onKeyDown(event: any): void {
         if (event.key === 'Escape') { return; }

@@ -34,7 +34,7 @@ function start() {
   function updateData() {
     const itemsToUpdate: any[] = []
     gridApi.forEachNodeAfterFilterAndSort(function (rowNode) {
-      let data = rowNode.data
+      const data = rowNode.data
       const n = data.change.length
       const v =
         Math.random() > 0.5 ? Number(Math.random()) : -Number(Math.random())

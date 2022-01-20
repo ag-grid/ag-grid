@@ -25,6 +25,6 @@ import {Component, Input} from "@angular/core";
     `]
 })
 export class RatioComponent {
-    @Input() topRatio: number = 0.67;
-    @Input() bottomRatio: number = 0.50;
+    @Input() topRatio = 0.67;
+    @Input() bottomRatio = 0.50;
 }

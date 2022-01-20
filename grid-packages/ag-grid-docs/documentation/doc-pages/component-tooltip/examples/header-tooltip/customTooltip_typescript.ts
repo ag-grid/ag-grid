@@ -3,9 +3,9 @@ import { ColGroupDef, ITooltipComp, ITooltipParams } from '@ag-grid-community/co
 export class CustomTooltip implements ITooltipComp {
     eGui!: HTMLElement;
     init(params: ITooltipParams) {
-        let eGui = this.eGui = document.createElement('div');
-        let isHeader = params.rowIndex === undefined;
-        let isGroupedHeader = isHeader && !!(params.colDef as ColGroupDef).children;
+        const eGui = this.eGui = document.createElement('div');
+        const isHeader = params.rowIndex === undefined;
+        const isGroupedHeader = isHeader && !!(params.colDef as ColGroupDef).children;
         let str: string;
         let valueToDisplay: string;
 
@@ -27,11 +27,11 @@ export class CustomTooltip implements ITooltipComp {
                 '<p>Athlete\'s name:</p>' +
                 '<p><span class"name">' + valueToDisplay + '</span></p>';
         }
-    };
+    }
 
     getGui() {
         return this.eGui;
-    };
-};
+    }
+}
 
 

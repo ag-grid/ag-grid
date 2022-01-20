@@ -12,11 +12,11 @@ export class CustomPinnedRowRenderer implements ICellRendererComp {
         this.eGui = document.createElement('div');
         setStyle(this.eGui, params.style);
         this.eGui.innerHTML = params.value;
-    };
+    }
 
     getGui() {
         return this.eGui;
-    };
+    }
 
     refresh() {
         return false;

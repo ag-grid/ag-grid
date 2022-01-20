@@ -22,7 +22,7 @@ import { IDoesFilterPassParams, IFilterParams, RowNode, ValueGetterFunc } from "
 })
 export class PersonFilter implements AgFilterComponent {
     params!: IFilterParams;
-    filterText: string = '';
+    filterText = '';
 
     agInit(params: IFilterParams): void {
         this.params = params;

@@ -40,7 +40,7 @@ export class MoodEditor implements ICellEditorAngularComp, AfterViewInit {
     private params: any;
 
     @ViewChild('container', { read: ViewContainerRef }) public container!: ViewContainerRef;
-    public happy: boolean = false;
+    public happy = false;
 
     // dont use afterGuiAttached for post gui events - hook into ngAfterViewInit instead for this
     ngAfterViewInit() {
@@ -76,7 +76,7 @@ export class MoodEditor implements ICellEditorAngularComp, AfterViewInit {
     }
 
     onKeyDown(event: KeyboardEvent): void {
-        let key = event.key;
+        const key = event.key;
         if (key === 'ArrowLeft' ||  // left
             key == 'ArrowRight') {  // right
             this.toggleMood();

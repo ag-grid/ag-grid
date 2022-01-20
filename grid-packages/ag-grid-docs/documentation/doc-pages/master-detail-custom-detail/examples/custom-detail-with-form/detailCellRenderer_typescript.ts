@@ -31,7 +31,7 @@ export class DetailCellRenderer implements ICellRendererComp {
             '  </p>' +
             '</form>' +
             '</div>';
-    };
+    }
 
     getGui() {
         return this.eGui;

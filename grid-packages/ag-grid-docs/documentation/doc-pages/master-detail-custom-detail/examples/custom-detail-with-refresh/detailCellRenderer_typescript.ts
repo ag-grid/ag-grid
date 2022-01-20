@@ -25,11 +25,11 @@ export class DetailCellRenderer implements ICellRendererComp {
             '  </p>' +
             '</form>' +
             '</div>';
-    };
+    }
 
     getGui() {
         return this.eGui;
-    };
+    }
 
     refresh(params: ICellRendererParams) {
         // check and see if we need to get the grid to tear this
@@ -39,5 +39,5 @@ export class DetailCellRenderer implements ICellRendererComp {
         } else {
             return true;
         }
-    };
+    }
 }

@@ -25,28 +25,28 @@ export class YearFilter implements IFilterComp {
         this.rbAfter2004 = this.eGui.querySelector('#rbYearAfter2004');
         this.rbAfter2004.addEventListener('change', this.filterChangedCallback);
         this.filterActive = false;
-    };
+    }
 
     getGui() {
         return this.eGui;
-    };
+    }
 
     doesFilterPass(params: IDoesFilterPassParams) {
         return params.data.year > 2004;
-    };
+    }
 
     isFilterActive() {
         return this.rbAfter2004.checked;
-    };
+    }
 
     getModel() {
         return this.isFilterActive() || null;
-    };
+    }
 
     onFloatingFilterChanged(value: any) {
         this.setModel(value);
         this.filterChangedCallback();
-    };
+    }
 
     setModel(model: any) {
         if (model) {
@@ -56,5 +56,5 @@ export class YearFilter implements IFilterComp {
             this.rbAllYears.checked = true;
             this.rbAfter2004.checked = false;
         }
-    };
+    }
 }

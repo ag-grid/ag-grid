@@ -22,7 +22,7 @@ const gridOptions: GridOptions = {
 }
 
 function setTitle(title: string) {
-  ; (document.querySelector('#title') as any).innerText = title
+   (document.querySelector('#title') as any).innerText = title
 }
 
 function clearFilter() {

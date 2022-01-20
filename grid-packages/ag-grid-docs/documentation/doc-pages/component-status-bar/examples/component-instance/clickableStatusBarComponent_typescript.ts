@@ -25,26 +25,26 @@ export class ClickableStatusBarComponent implements IStatusPanelComp {
         this.eButton.innerHTML = 'Click Me';
 
         this.eGui.appendChild(this.eButton);
-    };
+    }
 
     getGui() {
         return this.eGui;
-    };
+    }
 
     destroy() {
         this.eButton.removeEventListener("click", this.buttonListener);
-    };
+    }
 
     onButtonClicked() {
         alert('Selected Row Count: ' + this.params.api.getSelectedRows().length)
-    };
+    }
 
     setVisible(visible: boolean) {
         this.visible = visible;
         this.eGui.style.display = this.visible ? 'block' : 'none';
-    };
+    }
 
     isVisible() {
         return this.visible;
-    };
+    }
 }

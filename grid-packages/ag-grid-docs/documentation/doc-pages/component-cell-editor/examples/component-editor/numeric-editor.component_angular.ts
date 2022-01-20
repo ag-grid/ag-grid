@@ -16,8 +16,8 @@ const KEY_TAB = 'Tab';
 export class NumericEditor implements ICellEditorAngularComp, AfterViewInit {
     private params: any;
     public value!: number;
-    public highlightAllOnFocus: boolean = true;
-    private cancelBeforeStart: boolean = false;
+    public highlightAllOnFocus = true;
+    private cancelBeforeStart = false;
 
     @ViewChild('input', { read: ViewContainerRef }) public input!: ViewContainerRef;
 
@@ -65,7 +65,7 @@ export class NumericEditor implements ICellEditorAngularComp, AfterViewInit {
     // not very practical, but demonstrates the method.
     isCancelAfterEnd(): boolean {
         return this.value > 1000000;
-    };
+    }
 
     onKeyDown(event: any): void {
         if (this.isLeftOrRight(event) || this.deleteOrBackspace(event)) {

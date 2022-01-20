@@ -14,7 +14,7 @@ export interface CustomParams {
 })
 export class NumberFloatingFilterComponent implements AgFloatingFilterComponent {
     params!: IFloatingFilterParams<ISimpleFilter> & CustomParams;
-    currentValue: Number | null | string = null;
+    currentValue: number | null | string = null;
     style: any;
 
     agInit(params: IFloatingFilterParams<ISimpleFilter> & CustomParams): void {

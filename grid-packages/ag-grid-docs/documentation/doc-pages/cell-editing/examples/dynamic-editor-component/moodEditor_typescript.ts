@@ -13,11 +13,11 @@ export class MoodEditor implements ICellEditorComp {
             this.toggleMood();
             event.stopPropagation();
         }
-    };
+    }
 
     toggleMood() {
         this.selectMood(this.mood === 'Happy' ? 'Sad' : 'Happy');
-    };
+    }
 
     init(params: ICellEditorParams) {
         this.container = document.createElement('div');
@@ -47,32 +47,32 @@ export class MoodEditor implements ICellEditorComp {
         });
 
         this.selectMood(params.value);
-    };
+    }
 
     selectMood(mood: string) {
         this.mood = mood;
         this.happyImg.className = (mood === 'Happy') ? 'selected' : 'default';
         this.sadImg.className = (mood === 'Sad') ? 'selected' : 'default';
-    };
+    }
 
     // gets called once when grid ready to insert the element
     getGui() {
         return this.container;
-    };
+    }
 
     afterGuiAttached() {
         this.container.focus();
-    };
+    }
 
     getValue() {
         return this.mood;
-    };
+    }
 
     // any cleanup we need to be done here
     destroy() {
-    };
+    }
 
     isPopup() {
         return true;
-    };
+    }
 }

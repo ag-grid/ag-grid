@@ -32,7 +32,7 @@ function heartFactory() {
     }
 
     updatePath() {
-      let { x, path, size, rad } = this;
+      const { x, path, size, rad } = this;
       const r = size / 4;
       const y = this.y + r / 2;
 

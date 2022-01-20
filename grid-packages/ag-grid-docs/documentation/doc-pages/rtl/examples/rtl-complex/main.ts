@@ -189,7 +189,7 @@ const months = [
     'Dec',
 ];
 
-let dataSize = '.1x22';
+const dataSize = '.1x22';
 
 const autoGroupColumnDef: ColDef = {
     headerName: 'Group',

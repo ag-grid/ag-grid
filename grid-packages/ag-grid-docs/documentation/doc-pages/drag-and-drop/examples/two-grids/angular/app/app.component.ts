@@ -107,7 +107,7 @@ export class AppComponent {
     };
 
     createLeftRowData() {
-        let data: any[] = [];
+        const data: any[] = [];
         ['Red', 'Green', 'Blue'].forEach((color) => {
             data.push(this.createDataItem(color));
         });
@@ -199,6 +199,6 @@ export class AppComponent {
 
     onFirstDataRendered(params: FirstDataRenderedEvent) {
         params.api.sizeColumnsToFit();
-    };
+    }
 
 }

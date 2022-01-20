@@ -29,7 +29,7 @@ export class SliderFloatingFilter implements IFloatingFilter, AgFrameworkCompone
     }
 
     valueChanged() {
-        let valueToUse = (this.currentValue === 0) ? null : this.currentValue;
+        const valueToUse = (this.currentValue === 0) ? null : this.currentValue;
         this.params.parentFilterInstance(function (instance) {
             instance.onFloatingFilterChanged('greaterThan', valueToUse);
         });

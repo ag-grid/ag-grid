@@ -9,7 +9,7 @@ import { IFloatingFilterParams } from "@ag-grid-community/core";
 })
 export class NumberFloatingFilterComponent implements AgFloatingFilterComponent {
     params!: IFloatingFilterParams;
-    currentValue: Number | null | string = null;
+    currentValue: number | null | string = null;
 
     agInit(params: IFloatingFilterParams): void {
         this.params = params;

@@ -119,6 +119,6 @@ export class AppComponent {
 
     onFirstDataRendered(params: FirstDataRenderedEvent) {
         this.topGrid.api.sizeColumnsToFit();
-    };
+    }
 
 }

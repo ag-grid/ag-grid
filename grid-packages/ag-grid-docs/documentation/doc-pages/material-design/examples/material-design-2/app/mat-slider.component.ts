@@ -60,7 +60,7 @@ export class MatSliderComponent implements ICellEditorAngularComp {
 
     // don't use afterGuiAttached for post gui events - hook into ngAfterViewInit instead for this
     ngAfterViewInit() {
-        let sliderThumb = this.elRef.nativeElement.querySelector(".mat-slider-thumb");
+        const sliderThumb = this.elRef.nativeElement.querySelector(".mat-slider-thumb");
         sliderThumb.tabIndex = 0;
         window.setTimeout(() => {
             sliderThumb.focus();

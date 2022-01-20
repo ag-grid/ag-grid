@@ -129,7 +129,7 @@ function scramble() {
 }
 
 function scrambleItem(item: any) {
-  ;['a', 'b', 'c', 'd', 'e', 'f'].forEach(function (colId) {
+  ['a', 'b', 'c', 'd', 'e', 'f'].forEach(function (colId) {
     // skip 50% of the cells so updates are random
     if (Math.random() > 0.5) {
       return

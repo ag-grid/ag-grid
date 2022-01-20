@@ -10,7 +10,7 @@ export class FullWidthCellRenderer implements ICellRendererComp {
         this.eGui = eTemp.firstElementChild as HTMLElement;
         params.registerRowDragger(this.eGui, undefined, params.data.name, true);
         this.consumeMouseWheelOnCenterText();
-    };
+    }
 
     getTemplate(params: ICellRendererParams) {
         // the flower row shares the same data as the parent row
@@ -40,11 +40,11 @@ export class FullWidthCellRenderer implements ICellRendererComp {
             '</div>';
 
         return template;
-    };
+    }
 
     getGui() {
         return this.eGui;
-    };
+    }
 
     // if we don't do this, then the mouse wheel will be picked up by the main
     // grid and scroll the main grid and not this component. this ensures that
@@ -60,7 +60,7 @@ export class FullWidthCellRenderer implements ICellRendererComp {
         eFullWidthCenter.addEventListener('mousewheel', mouseWheelListener);
         // event is 'DOMMouseScroll' Firefox
         eFullWidthCenter.addEventListener('DOMMouseScroll', mouseWheelListener);
-    };
+    }
 
     refresh(params: ICellRendererParams): boolean {
         return false;

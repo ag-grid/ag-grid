@@ -23,16 +23,16 @@ export class CustomHeaderGroup implements IHeaderGroupComp {
         this.params.columnGroup.getProvidedColumnGroup().addEventListener('expandedChanged', this.onExpandChangedListener);
 
         this.syncExpandButtons();
-    };
+    }
 
     getGui() {
         return this.eGui;
-    };
+    }
 
     expandOrCollapse() {
         var currentState = this.params.columnGroup.getProvidedColumnGroup().isExpanded();
         this.params.setExpanded(!currentState);
-    };
+    }
 
     syncExpandButtons() {
         function collapsed(toDeactivate: any) {
@@ -48,9 +48,9 @@ export class CustomHeaderGroup implements IHeaderGroupComp {
         } else {
             collapsed(this.eExpandButton);
         }
-    };
+    }
 
     destroy() {
         this.eExpandButton.removeEventListener('click', this.onExpandButtonClickedListener);
-    };
+    }
 }

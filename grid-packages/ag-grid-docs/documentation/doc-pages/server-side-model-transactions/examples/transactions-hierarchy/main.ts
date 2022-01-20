@@ -61,7 +61,7 @@ const gridOptions: GridOptions = {
   },
 }
 const productsNames = ['Palm Oil', 'Rubber', 'Wool', 'Amber', 'Copper']
-let products: any[] = []
+const products: any[] = []
 let idSequence = 0
 
 function createOneTrade() {

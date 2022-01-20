@@ -44,7 +44,7 @@ function makeRequest(method: string, url: string, success: any, error: any) {
 function convertDataToWorkbook(dataRows: any[]) {
   /* convert data to binary string */
   var data = new Uint8Array(dataRows)
-  var arr = new Array()
+  var arr = []
 
   for (var i = 0; i !== data.length; ++i) {
     arr[i] = String.fromCharCode(data[i])

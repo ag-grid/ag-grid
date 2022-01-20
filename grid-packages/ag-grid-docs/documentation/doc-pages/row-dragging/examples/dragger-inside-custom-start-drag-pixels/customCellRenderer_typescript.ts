@@ -20,11 +20,11 @@ export class CustomCellRenderer implements ICellRendererComp {
 
         // registers as a row dragger
         params.registerRowDragger(rowDragger, 0);
-    };
+    }
 
     getGui() {
         return this.eGui;
-    };
+    }
 
     refresh(params: ICellRendererParams): boolean {
         return false;

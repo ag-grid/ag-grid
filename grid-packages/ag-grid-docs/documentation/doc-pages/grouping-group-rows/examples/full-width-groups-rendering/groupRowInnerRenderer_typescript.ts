@@ -22,7 +22,7 @@ export class GroupRowInnerRenderer implements ICellRendererComp {
 
         params.api.addEventListener('cellValueChanged', this.dataChangedListener);
         params.api.addEventListener('filterChanged', this.dataChangedListener);
-    };
+    }
 
     refreshGui() {
 
@@ -48,16 +48,16 @@ export class GroupRowInnerRenderer implements ICellRendererComp {
             .replace(/BRONZE_COUNT/g, aggData.bronze);
 
         this.eGui.innerHTML = html;
-    };
+    }
 
     destroy() {
         this.params.api.removeEventListener('cellValueChanged', this.dataChangedListener);
         this.params.api.removeEventListener('filterChanged', this.dataChangedListener);
-    };
+    }
 
     getGui() {
         return this.eGui;
-    };
+    }
 
     refresh(params: ICellRendererParams): boolean {
         return false;

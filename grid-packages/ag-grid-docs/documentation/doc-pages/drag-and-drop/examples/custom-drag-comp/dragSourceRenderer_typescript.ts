@@ -15,16 +15,16 @@ export class DragSourceRenderer implements ICellRendererComp {
 
         this.onDragStartListener = this.onDragStart.bind(this);
         this.eGui.addEventListener('dragstart', this.onDragStartListener)
-    };
+    }
 
     onDragStart(dragEvent: any) {
         var userAgent = window.navigator.userAgent;
         dragEvent.dataTransfer.setData('text/plain', 'Dragged item with ID: ' + this.rowNode.data.id);
-    };
+    }
 
     getGui() {
         return this.eGui;
-    };
+    }
 
     refresh(params: ICellRendererParams): boolean {
         return false;
@@ -32,5 +32,5 @@ export class DragSourceRenderer implements ICellRendererComp {
 
     destroy() {
         this.eGui.removeEventListener('dragstart', this.onDragStartListener)
-    };
+    }
 }

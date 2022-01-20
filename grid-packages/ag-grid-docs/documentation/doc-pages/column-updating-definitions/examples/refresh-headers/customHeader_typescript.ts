@@ -33,11 +33,11 @@ export class CustomHeader implements IHeaderComp {
         }
 
         this.updateHeaderNameText();
-    };
+    }
 
     getGui() {
         return this.eGui;
-    };
+    }
 
     refresh(params: IHeaderParams) {
         this.params = params;
@@ -49,20 +49,20 @@ export class CustomHeader implements IHeaderComp {
         this.updateHeaderNameText();
 
         return res;
-    };
+    }
 
     updateHeaderNameText() {
         this.eText.innerHTML = this.params.displayName;
-    };
+    }
 
     onMenuClick() {
         this.params.showColumnMenu(this.eMenu);
-    };
+    }
 
     destroy() {
         console.log('CustomHeader.destroy() -> ' + this.params.column.getId());
         if (this.onMenuClickListener) {
             this.eMenu.removeEventListener('click', this.onMenuClickListener);
         }
-    };
+    }
 }
