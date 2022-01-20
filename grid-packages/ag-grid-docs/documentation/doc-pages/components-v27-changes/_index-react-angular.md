@@ -149,8 +149,7 @@
 |            cellRendererSelector: params => {
 |                let comp = params.value>10 ? LowRatingFrameworkCellRenderer : HighRatingFrameworkCellRenderer;
 |                return {
-|                    component: comp,
-|                    frameworkComponent: true // Tell's grid it's Framework Component
+|                    frameworkComponent: comp // Use frameworkComponent instead of component to inform of a Framework Component
 |                };
 |            }
 |        }
@@ -168,7 +167,7 @@
 |            cellRendererCompSelector: params => {
 |                let comp = params.value>10 ? LowRatingFrameworkCellRenderer : HighRatingFrameworkCellRenderer;
 |                return {
-|                    comp: comp // Grid decides JS or Framework Component
+|                    comp: comp // Grid decides JS or Framework Component, use comp for both
 |                };
 |            }
 |        }
