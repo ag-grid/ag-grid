@@ -152,7 +152,7 @@ The example below presents a simple grid layout with the following properties en
 - `suppressColumnVirtualisation` - ensures all columns are rendered, i.e. appears in the DOM.
 - `rowBuffer` - sets the number of rows rendered outside of the scrollable viewable area.
 
-<grid-example title='Grid Customised for Accessibility' name='accessibility' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Grid Customised for Accessibility' name='accessibility' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "setfilter"] }'></grid-example>
 
 ## Customising ARIA Labels
 

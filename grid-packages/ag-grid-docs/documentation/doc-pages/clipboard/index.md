@@ -89,7 +89,7 @@ When row click selection and range selection are enabled the shortcut would copy
 selected range, if you wish to let the range take precedence, then you can add this to your gridOptions
 `suppressCopyRowsToClipboard:true`
 
-<grid-example title='Clipboard example' name='simple' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Clipboard example' name='simple' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] }'></grid-example>
 
 ## Controlling Clipboard Copy
 
@@ -97,7 +97,7 @@ If you want to do the copy to clipboard yourself (ie not use the grids clipboard
 
 The example below shows using `sendToClipboard(params)`, but rather than using the clipboard, demonstrates the callback by just printing the data to the console.
 
-<grid-example title='Controlling Clipboard Copy' name='custom' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Controlling Clipboard Copy' name='custom' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] }'></grid-example>
 
 ## Processing Clipboard Data
 
@@ -116,7 +116,7 @@ These three callbacks above are demonstrated in the example below. Note the foll
 - When headers are copied to the clipboard, values are prefixed with 'H-'. Headers can be copied by using the context menu.
 - When group headers are copied to the clipboard, values are prefixed with 'GH-'. Headers can be copied by using the context menu.
 
-<grid-example title='Example Process' name='process' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Example Process' name='process' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] }'></grid-example>
 
 ### Processing Whole Paste Operation
 
@@ -135,7 +135,7 @@ The example below demonstrates `processDataFromClipboard`. Note the following:
 
 - Pasting any data where a cell starts with 'Yellow' will result in the paste operation getting cancelled. To see this, copy and paste some 'Yellow' cells from column G. This is achieved by `processDataFromClipboard` returning null.
 
-<grid-example title='Example Process All' name='process-all' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Example Process All' name='process-all' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] }'></grid-example>
 
 ## Changing the Deliminator
 
@@ -157,5 +157,5 @@ The example below demonstrates:
 - Uses CSV by setting `clipboardDeliminator=','`. To test, copy to clipboard, then paste into a text editor.
 - Does not allow paste into the 'silver' column by setting `colDef.suppressPaste=true`.
 
-<grid-example title='Complex Example' name='complex' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Complex Example' name='complex' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "range", "clipboard"] }'></grid-example>
 

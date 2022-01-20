@@ -79,5 +79,5 @@ The example below shows the different For-Each API methods as follows:
 
 In the example, try applying some sorts and filters, and see how this impacts the different operations.
 
-<grid-example title='Using For-Each' name='using-for-each' type='generated' options='{ "enterprise": true, "exampleHeight": 590, "modules": ["clientside",  "rowgrouping"]}'></grid-example>
+<grid-example title='Using For-Each' name='using-for-each' type='generated' options='{ "enterprise": true, "modules": ["clientside",  "rowgrouping"], "exampleHeight": 590 }'></grid-example>
 

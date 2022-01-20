@@ -173,7 +173,7 @@ The following example illustrates how to use different editors and parameters in
     ```
 - Edit a cell by double clicking to observe the different editors used.
 
-<grid-example title='Dynamic Editor Component' name='dynamic-editor-component' type='generated' options='{ "enterprise": true, "exampleHeight": 450, "includeNgFormsModule" : true }'></grid-example>
+<grid-example title='Dynamic Editor Component' name='dynamic-editor-component' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel"], "exampleHeight": 450, "includeNgFormsModule" : true }'></grid-example>
 
 ## Dynamic Parameters
 
@@ -204,7 +204,7 @@ Below shows an example with dynamic editor parameters. The following can be note
 - Column **City** uses dynamic parameters to display values for the selected country, and uses `formatValue` to add the selected city's country as a suffix.
 - Column **Address** uses the large text area editor.
 
-<grid-example title='Dynamic Parameters' name='dynamic-parameters' type='generated' options='{ "enterprise": true, "exampleHeight": 520, "modules": ["clientside", "richselect", "menu", "columnpanel"] }'></grid-example>
+<grid-example title='Dynamic Parameters' name='dynamic-parameters' type='generated' options='{ "enterprise": true, "modules": ["clientside", "richselect", "menu", "columnpanel"], "exampleHeight": 520 }'></grid-example>
 
 ## Enter Key Navigation
 
@@ -225,7 +225,7 @@ The example below illustrates:
 
 - 'Date' column uses a Component cell editor that allows you to pick a date using jQuery UI Datepicker.
 
-<grid-example title='Datepicker Cell Editing' name='datepicker-cell-editing' type='generated' options='{ "enterprise": true, "extras": ["jquery", "jqueryui", "bootstrap"], "modules": ["clientside", "menu", "columnpanel"] }'></grid-example>
+<grid-example title='Datepicker Cell Editing' name='datepicker-cell-editing' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel"], "extras": ["jquery", "jqueryui", "bootstrap"] }'></grid-example>
 
 ## Full Row Editing
 
@@ -260,7 +260,7 @@ The example below shows full row editing. In addition to standard full row editi
 - The button will start editing line two. It uses the API to start editing a cell, however the result is that the whole row will become editable starting with the specified cell.
 - `cellValueChanged` and `rowValueChanged` events are logged to console.
 
-<grid-example title='Full Row Editing' name='full-row-editing' type='generated' options='{ "enterprise": true, "exampleHeight": 527, "modules": ["clientside", "menu", "columnpanel"] }'></grid-example>
+<grid-example title='Full Row Editing' name='full-row-editing' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel"], "exampleHeight": 527 }'></grid-example>
 
 ## Single Click, Double Click, No Click Editing
 

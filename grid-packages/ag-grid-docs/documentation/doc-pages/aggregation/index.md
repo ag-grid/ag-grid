@@ -307,7 +307,7 @@ Then the result of the aggregation will be stored in `data.aaa` and not in 'abby
 
 Below shows an  example using `groupRowAggNodes`. The example doesn't represent a real world scenario, it's contrived for demonstration. It takes the number of medals as inputs and creates two outputs, one as a normal sum and another by multiplying the result by `Math.PI`.
 
-<grid-example title='Custom Full Row Aggregation' name='custom-full-row-aggregation' type='generated' options='{ "enterprise": true, "exampleHeight": 620, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel", "setfilter"] }'></grid-example>
+<grid-example title='Custom Full Row Aggregation' name='custom-full-row-aggregation' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "columnpanel", "filterpanel", "setfilter"], "exampleHeight": 620 }'></grid-example>
 
 ## Empty Aggregation Calls
 
