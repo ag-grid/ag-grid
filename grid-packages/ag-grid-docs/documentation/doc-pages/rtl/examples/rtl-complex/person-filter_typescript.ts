@@ -5,8 +5,6 @@ export class PersonFilter implements IFilterComp {
     filterText!: string | null;
     gui!: HTMLDivElement;
     eFilterText: any;
-    constructor() {
-    }
 
     init(params: IFilterParams) {
         this.params = params;

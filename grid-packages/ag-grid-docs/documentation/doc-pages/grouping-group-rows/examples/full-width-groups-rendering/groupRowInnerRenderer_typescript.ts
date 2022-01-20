@@ -15,9 +15,8 @@ export class GroupRowInnerRenderer implements ICellRendererComp {
         this.params = params;
         this.refreshGui();
 
-        var that = this;
-        this.dataChangedListener = function () {
-            that.refreshGui();
+        this.dataChangedListener = () => {
+            this.refreshGui();
         };
 
         params.api.addEventListener('cellValueChanged', this.dataChangedListener);

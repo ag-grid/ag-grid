@@ -6,11 +6,10 @@ export class NumericCellEditor implements ICellEditorComp {
 
     // gets called once before the renderer is used
     init(params: ICellEditorParams) {
-        var that = this;
         // create the cell
         this.eInput = document.createElement('input');
 
-        if (that.isCharNumeric(params.charPress)) {
+        if (this.isCharNumeric(params.charPress)) {
             this.eInput.value = params.charPress!;
         } else {
             if (params.value !== undefined && params.value !== null) {
@@ -19,11 +18,11 @@ export class NumericCellEditor implements ICellEditorComp {
         }
 
 
-        this.eInput.addEventListener('keypress', function (event) {
-            if (!that.isKeyPressedNumeric(event)) {
-                that.eInput.focus();
+        this.eInput.addEventListener('keypress', (event) => {
+            if (!this.isKeyPressedNumeric(event)) {
+                this.eInput.focus();
                 if (event.preventDefault) event.preventDefault();
-            } else if (that.isKeyPressedNavigation(event)) {
+            } else if (this.isKeyPressedNavigation(event)) {
                 event.stopPropagation();
             }
         });

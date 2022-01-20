@@ -33,17 +33,16 @@ export class MoodEditor implements ICellEditorComp {
         this.container.appendChild(this.happyImg);
         this.container.appendChild(this.sadImg);
 
-        var that = this;
         this.happyImg.addEventListener('click', () => {
-            that.selectMood('Happy');
+            this.selectMood('Happy');
             params.stopEditing();
         });
         this.sadImg.addEventListener('click', () => {
-            that.selectMood('Sad');
+            this.selectMood('Sad');
             params.stopEditing();
         });
         this.container.addEventListener('keydown', (event: any) => {
-            that.onKeyDown(event);
+            this.onKeyDown(event);
         });
 
         this.selectMood(params.value);

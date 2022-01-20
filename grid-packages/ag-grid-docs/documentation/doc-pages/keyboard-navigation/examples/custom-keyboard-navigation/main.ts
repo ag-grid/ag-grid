@@ -51,13 +51,12 @@ const gridOptions: GridOptions = {
 
 function navigateToNextHeader(params: NavigateToNextHeaderParams) {
   const nextHeader = params.nextHeaderPosition;
-  let processedNextHeader;
 
   if (params.key !== 'ArrowDown' && params.key !== 'ArrowUp') {
     return nextHeader
   }
 
-  processedNextHeader = moveHeaderFocusUpDown(
+  const processedNextHeader = moveHeaderFocusUpDown(
     params.previousHeaderPosition!,
     params.headerRowCount,
     params.key === 'ArrowDown'
@@ -75,11 +74,10 @@ function tabToNextHeader(params: TabToNextHeaderParams) {
 }
 
 function moveHeaderFocusUpDown(previousHeader: HeaderPosition, headerRowCount: number, isUp: boolean) {
-  const previousColumn = previousHeader.column,
-    lastRowIndex = previousHeader.headerRowIndex;
-  let nextRowIndex = isUp ? lastRowIndex - 1 : lastRowIndex + 1,
-    nextColumn,
-    parentColumn;
+  const previousColumn = previousHeader.column;
+  const lastRowIndex = previousHeader.headerRowIndex;
+  let nextRowIndex = isUp ? lastRowIndex - 1 : lastRowIndex + 1;
+  let nextColumn;
 
   if (nextRowIndex === -1) {
     return previousHeader
@@ -88,7 +86,7 @@ function moveHeaderFocusUpDown(previousHeader: HeaderPosition, headerRowCount: n
     nextRowIndex = -1
   }
 
-  parentColumn = previousColumn.getParent()
+  const parentColumn = previousColumn.getParent()
 
   if (isUp) {
     nextColumn = parentColumn || previousColumn
@@ -105,11 +103,10 @@ function moveHeaderFocusUpDown(previousHeader: HeaderPosition, headerRowCount: n
 }
 
 function tabToNextCell(params: TabToNextCellParams) {
-  const previousCell = params.previousCellPosition,
-    lastRowIndex = previousCell.rowIndex;
+  const previousCell = params.previousCellPosition;
+  const lastRowIndex = previousCell.rowIndex;
   let nextRowIndex = params.backwards ? lastRowIndex - 1 : lastRowIndex + 1;
   const renderedRowCount = gridOptions.api!.getModel().getRowCount();
-  let result;
 
   if (nextRowIndex < 0) {
     nextRowIndex = -1
@@ -118,7 +115,7 @@ function tabToNextCell(params: TabToNextCellParams) {
     nextRowIndex = renderedRowCount - 1
   }
 
-  result = {
+  const result = {
     rowIndex: nextRowIndex,
     column: previousCell.column,
     rowPinned: previousCell.rowPinned,

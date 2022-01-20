@@ -144,14 +144,13 @@ export class AppComponent {
         const api = side === 'left' ? this.leftApi : this.rightApi;
         // do nothing if row is already in the grid, otherwise we would have duplicates
         const rowAlreadyInGrid = !!api.getRowNode(data.id);
-        let transaction;
 
         if (rowAlreadyInGrid) {
             console.log('not adding row to avoid duplicates in the grid');
             return;
         }
 
-        transaction = {
+        const transaction = {
             add: [data]
         };
 

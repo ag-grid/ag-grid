@@ -8,9 +8,6 @@ declare var AG_GRID_LOCALE_ZZZ: {
 class NodeIdRenderer {
   eGui?: HTMLElement;
 
-  constructor() {
-  }
-
   init(params: ICellRendererParams) {
     this.eGui = document.createElement('div');
     this.eGui.innerHTML = params.node!.id! + 1;

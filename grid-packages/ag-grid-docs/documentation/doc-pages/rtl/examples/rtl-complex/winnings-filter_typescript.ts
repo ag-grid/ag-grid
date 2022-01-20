@@ -9,8 +9,6 @@ export class WinningsFilter implements IFilterComp {
     cbNegative: any;
     cbGreater50: any;
     cbGreater90: any;
-    constructor() {
-    }
 
     init(params: IFilterParams) {
         var uniqueId = Math.random()

@@ -3,9 +3,6 @@ import { Grid, ColDef, GridOptions, ICellRendererParams } from '@ag-grid-communi
 class NodeIdRenderer {
     eGui?: HTMLElement;
 
-    constructor() {
-    }
-
     init(params: ICellRendererParams) {
         this.eGui = document.createElement('div');
         this.eGui.innerHTML = params.node!.id! + 1;

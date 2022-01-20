@@ -1,5 +1,5 @@
 import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { ColDef, GridApi, GridReadyEvent, RowDropZoneParams } from '@ag-grid-community/core';
+import { ColDef, GridApi, GridReadyEvent, RowDropZoneParams, RowNodeTransaction } from '@ag-grid-community/core';
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import { Component, ViewChild } from '@angular/core';
@@ -140,14 +140,13 @@ export class AppComponent {
         const api = side === 'left' ? this.leftApi : this.rightApi;
         // do nothing if row is already in the grid, otherwise we would have duplicates
         const rowAlreadyInGrid = !!api.getRowNode(data.id);
-        let transaction;
 
         if (rowAlreadyInGrid) {
             console.log('not adding row to avoid duplicates in the grid');
             return;
         }
 
-        transaction = {
+        const transaction = {
             add: [data]
         };
 

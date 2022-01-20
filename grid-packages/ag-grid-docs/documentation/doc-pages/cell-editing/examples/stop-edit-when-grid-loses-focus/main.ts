@@ -3,7 +3,6 @@ import { Grid, GridOptions, ICellEditorComp, ICellEditorParams } from '@ag-grid-
 class YearCellEditor implements ICellEditorComp {
   eGui: any
   value: any
-  constructor() { }
 
   getGui() {
     return this.eGui
@@ -32,15 +31,14 @@ class YearCellEditor implements ICellEditorComp {
       '</div>' +
       '</div>'
 
-    const that = this;
-    [2006, 2008, 2010, 2012].forEach(year => {
-      tempElement
-        .querySelector('#bt' + year)!
-        .addEventListener('click', () => {
-          that.value = year
-          params.stopEditing()
-        })
-    })
+      [2006, 2008, 2010, 2012].forEach(year => {
+        tempElement
+          .querySelector('#bt' + year)!
+          .addEventListener('click', () => {
+            this.value = year
+            params.stopEditing()
+          })
+      })
 
     this.eGui = tempElement.firstChild
   }

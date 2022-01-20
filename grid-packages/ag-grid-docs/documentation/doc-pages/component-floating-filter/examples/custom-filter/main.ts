@@ -27,10 +27,9 @@ class NumberFilter implements IFilterComp {
             '<div><input style="margin: 4px 0px 4px 0px;" type="number" id="filterText" placeholder="Number of medals..."/></div>' +
             '</div>'
 
-        const that = this
-        this.onFilterChanged = function () {
-            that.extractFilterText()
-            that.params.filterChangedCallback()
+        this.onFilterChanged = () => {
+            this.extractFilterText()
+            this.params.filterChangedCallback()
         }
 
         this.eFilterText = this.gui.querySelector('#filterText')

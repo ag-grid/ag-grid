@@ -2,8 +2,6 @@ import { ICellRendererComp, ICellRendererParams } from "@ag-grid-community/core"
 
 export class MedalCellRenderer implements ICellRendererComp {
     eGui!: HTMLSpanElement;
-    constructor() {
-    }
 
     // init method gets the details of the cell to be renderer
     init(params: ICellRendererParams) {

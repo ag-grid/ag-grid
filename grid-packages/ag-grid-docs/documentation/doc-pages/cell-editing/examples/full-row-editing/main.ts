@@ -27,10 +27,9 @@ class NumericCellEditor implements ICellEditorComp {
       ? params.charPress
       : params.value
 
-    var that = this
-    this.eInput.addEventListener('keypress', function (event: any) {
+    this.eInput.addEventListener('keypress', (event: any) => {
       if (!isKeyPressedNumeric(event)) {
-        that.eInput.focus()
+        this.eInput.focus()
         if (event.preventDefault) event.preventDefault()
       }
     })

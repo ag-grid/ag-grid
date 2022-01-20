@@ -18,20 +18,19 @@ export class NumberFloatingFilter implements IFloatingFilterComp {
             '<div style="width:75%; margin-left:10px" class="slider"></div>'
         this.eSlider = $(this.eGui.querySelector('div'))
         this.currentValue = 0
-        var that = this
         this.eSlider.slider({
             min: 0,
             max: params.maxValue,
-            change: function (e: any, ui: any) {
+            change: (e: any, ui: any) => {
                 //Every time the value of the slider changes
                 if (!e.originalEvent) {
                     //If this event its triggered from outside. ie setModel() on the parent Filter we
                     //would be in this area of the code and we need to prevent an infinite loop.
                     return
                 }
-                that.currentValue = ui.value
+                this.currentValue = ui.value
                 params.parentFilterInstance((instance) => {
-                    instance.myMethodForTakingValueFromFloatingFilter(that.buildModel())
+                    instance.myMethodForTakingValueFromFloatingFilter(this.buildModel())
                 })
             },
         })

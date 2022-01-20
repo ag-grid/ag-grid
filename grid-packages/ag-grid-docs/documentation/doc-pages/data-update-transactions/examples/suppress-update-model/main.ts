@@ -38,9 +38,8 @@ function getMyFilter(): IFilterType {
       this.eGui = document.createElement('div')
       this.eGui.innerHTML = '<div>Greater Than: <input type="text"/></div>'
       this.eInput = this.eGui.querySelector('input')
-      var that = this
-      this.eInput.addEventListener('input', function () {
-        that.getValueFromInput()
+      this.eInput.addEventListener('input', () => {
+        this.getValueFromInput()
         params.filterChangedCallback()
       })
     }
