@@ -3,6 +3,7 @@
   "version": "26.2.0",
   "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
   "main": "./dist/ag-grid-community.cjs.js",
+  "module": "./dist/ag-grid-community.esm.js",
   "scripts": {
     "build": "npx gulp && npm run rollup && npm run hash",
     "rollup": "node build.js",
