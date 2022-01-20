@@ -61,7 +61,10 @@ export class GroupedCategoryAxis extends ChartAxis<BandScale<string | number>> {
         // this.group.append(this.bboxRect); // debug (bbox)
     }
 
-    set domain(values: any[]) {
+    set domain(domainValues: any[]) {
+        // Prevent duplicate categories.
+        const values = domainValues.filter((s, i, arr) => arr.indexOf(s) === i);
+
         this.scale.domain = values;
         const tickTree = ticksToTree(values);
         this.tickTreeLayout = treeLayout(tickTree);
