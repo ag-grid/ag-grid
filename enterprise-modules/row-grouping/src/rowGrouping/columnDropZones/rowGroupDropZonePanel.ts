@@ -17,7 +17,6 @@ import { BaseDropZonePanel } from "./baseDropZonePanel";
 export class RowGroupDropZonePanel extends BaseDropZonePanel {
 
     @Autowired('columnModel') private columnModel: ColumnModel;
-
     @Autowired('loggerFactory') private loggerFactory: LoggerFactory;
     @Autowired('dragAndDropService') private dragAndDropService: DragAndDropService;
     @Autowired('columnApi') private columnApi: ColumnApi;
@@ -45,7 +44,7 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
             dragAndDropIcon: DragAndDropService.ICON_GROUP,
             icon: _.createIconNoSpan('rowGroupPanel', this.gridOptionsWrapper, null)!,
             emptyMessage: emptyMessage,
-            title: title
+            title
         });
 
         this.addManagedListener(this.eventService, Events.EVENT_COLUMN_ROW_GROUP_CHANGED, this.refreshGui.bind(this));
@@ -54,6 +53,7 @@ export class RowGroupDropZonePanel extends BaseDropZonePanel {
     public getTooltipParams(): ITooltipParams {
         const res = super.getTooltipParams();
         res.location = 'rowGroupColumnsList';
+
         return res;
     }
 

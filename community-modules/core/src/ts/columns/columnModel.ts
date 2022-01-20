@@ -245,7 +245,6 @@ export class ColumnModel extends BeanStub {
     }
 
     public setColumnDefs(columnDefs: (ColDef | ColGroupDef)[], source: ColumnEventType = 'api') {
-
         const colsPreviouslyExisted = !!this.columnDefs;
 
         this.colDefVersion++;
@@ -293,7 +292,7 @@ export class ColumnModel extends BeanStub {
                 this.orderGridColumnsLikePrimary();
             }
             this.updateDisplayedColumns(source);
-            this.checkViewportColumns();    
+            this.checkViewportColumns();
         }
 
         // this event is not used by AG Grid, but left here for backwards compatibility,
@@ -708,7 +707,6 @@ export class ColumnModel extends BeanStub {
         filterCallback?: (column: Column) => boolean,
         emptySpaceBeforeColumn?: (column: Column) => boolean
     ): Column[] {
-
         const result: Column[] = [];
         let lastConsideredCol: Column | null = null;
 
@@ -899,7 +897,8 @@ export class ColumnModel extends BeanStub {
         this.updatePrimaryColumnList(keys, this.rowGroupColumns, true,
             this.setRowGroupActive.bind(this, true),
             Events.EVENT_COLUMN_ROW_GROUP_CHANGED,
-            source);
+            source
+        );
     }
 
     public removeRowGroupColumns(keys: (string | Column)[] | null, source: ColumnEventType = "api"): void {

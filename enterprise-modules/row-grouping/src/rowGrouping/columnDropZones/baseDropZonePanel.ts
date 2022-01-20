@@ -322,6 +322,7 @@ export abstract class BaseDropZonePanel extends Component {
         // this is relevant for vertical display only (as horizontal has no scroll)
         const scrollTop = this.eColumnDropList.scrollTop;
         const resizeEnabled = this.resizeEnabled;
+        const focusedIndex = this.getFocusedItem();
         this.toggleResizable(false);
         this.destroyGui();
 
@@ -337,6 +338,32 @@ export abstract class BaseDropZonePanel extends Component {
             this.toggleResizable(resizeEnabled);
         }
 
+        this.restoreFocus(focusedIndex);
+    }
+
+    private getFocusedItem(): number {
+        const eGui = this.getGui();
+        const activeElement = this.gridOptionsWrapper.getDocument().activeElement;
+
+        if (!eGui.contains(activeElement)) { return - 1; }
+
+        const items = Array.from(eGui.querySelectorAll('.ag-column-drop-cell'));
+
+        return items.indexOf(activeElement as HTMLElement);
+    }
+
+    private restoreFocus(index: number): void {
+        const eGui = this.getGui();
+        const items = Array.from(eGui.querySelectorAll('.ag-column-drop-cell'));
+
+        if (!items.length || index === -1) {
+            // TODO: Add logic to handle when focus shouldn't go in the current container
+        }
+
+        const indexToFocus = Math.min(items.length - 1, index);
+        const el = items[indexToFocus] as HTMLElement;
+
+        if (el) { el.focus(); }
     }
 
     private getNonGhostColumns(): Column[] {
