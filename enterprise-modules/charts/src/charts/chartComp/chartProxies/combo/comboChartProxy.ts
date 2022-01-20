@@ -8,6 +8,7 @@ import { getSeriesType } from "../../utils/seriesTypeMapper";
 export class ComboChartProxy extends CartesianChartProxy {
 
     private prevSeriesChartTypes: SeriesChartType[];
+    private prevAxes: AgCartesianAxisOptions[];
 
     public constructor(params: ChartProxyParams) {
         super(params);
@@ -26,12 +27,31 @@ export class ComboChartProxy extends CartesianChartProxy {
     }
 
     public update(params: UpdateChartParams): void {
-        this.updateSeries(params);
-        this.resetAxes(params);
-        this.updateLabelRotation(params.category.id);
+        const { category, data } = params;
+
+        let options: AgCartesianChartOptions = {
+            container: this.chartProxyParams.parentElement,
+            theme: this.chartTheme,
+            data: this.transformData(data, category.id),
+            series: this.getSeriesOptions(params),
+        }
+
+        const axesCleared = this.clearAxes(params);
+        if (axesCleared) {
+            options.axes = this.getAxes(params);
+            this.prevAxes = options.axes;
+        } else {
+            // TODO: this should be removed once standalone is fixed
+            this.chart.axes = [];
+            options.axes = this.prevAxes;
+        }
+
+        AgChart.update(this.chart as CartesianChart, options);
+
+        this.updateLabelRotation(category.id);
     }
 
-    private resetAxes(params: UpdateChartParams): void {
+    private clearAxes(params: UpdateChartParams): boolean {
         const { seriesChartTypes } = params;
         const seriesChartTypesChanged = !_.areEqual(this.prevSeriesChartTypes, seriesChartTypes,
             (s1, s2) => s1.colId === s2.colId && s1.chartType === s2.chartType && s1.secondaryAxis === s2.secondaryAxis);
@@ -40,9 +60,11 @@ export class ComboChartProxy extends CartesianChartProxy {
         this.prevSeriesChartTypes = seriesChartTypes.map(s => ({...s}));
 
         if (seriesChartTypesChanged) {
-            const axes = this.getAxes(params);
-            this.chart.axes = axes.map(axis => AgChart.createComponent(axis, 'cartesian.axes'));
+            this.chart.axes = [];
+            return true;
         }
+
+        return false;
     }
 
     private getAxes(updateParams: UpdateChartParams): AgCartesianAxisOptions[] {
@@ -131,86 +153,22 @@ export class ComboChartProxy extends CartesianChartProxy {
         return axes;
     }
 
-    private updateSeries(params: UpdateChartParams) {
-        const { fields, category } = params;
-        const { fills, strokes } = this.chartTheme.palette;
+    private getSeriesOptions(params: UpdateChartParams): any {
+        const { fields, category, seriesChartTypes } = params;
 
-        if (fields.length === 0) {
-            this.chart.removeAllSeries();
-            return;
-        }
-
-        const data = this.transformData(params.data, category.id);
-        const seriesMap = this.updateSeriesAndExtractSeriesMap(fields);
-
-        let previousSeries: any;
-        fields.forEach((f: FieldDefinition, index) => {
-            const seriesChartType = params.seriesChartTypes.find(s => s.colId === f.colId);
-            if (!seriesChartType) { return; }
-
-            let series = seriesMap.get(f.colId);
-
-            const fill = fills[index % fills.length];
-            const stroke = strokes[index % strokes.length];
-
-            if (series) {
-                series.title = f.displayName!;
-                series.data = data;
-                series.xKey = category.id;
-                series.xName = category.name;
-                series.yKey = f.colId;
-                series.yName = f.displayName!;
-                series.marker.fill = fill;
-                series.marker.stroke = stroke;
-                series.stroke = fill; // this is deliberate, so that the line colours match the fills of other series
-            } else {
-                const chartType = seriesChartType.chartType;
-                const seriesType = getSeriesType(chartType);
-                const seriesOverrides = this.chartOptions[seriesType].series;
-                const seriesOptions = {
-                    ...seriesOverrides,
-                    data,
-                    type: seriesType,
+        return fields.map(field => {
+            const seriesChartType = seriesChartTypes.find(s => s.colId === field.colId);
+            if (seriesChartType) {
+                const chartType: ChartType = seriesChartType.chartType;
+                return {
+                    type: getSeriesType(chartType),
                     xKey: category.id,
+                    yKey: field.colId,
+                    yName: field.displayName,
                     grouped: ['groupedColumn' || 'groupedBar' || 'groupedArea'].includes(chartType),
-                    stacked: ['stackedArea'].includes(chartType),
-                    fill,
-                    stroke: fill, // this is deliberate, so that the line colours match the fills of other series
-                    marker: {
-                        ...seriesOverrides!.marker,
-                        fill,
-                        stroke
-                    }
+                    stacked: ['stackedArea' ].includes(chartType),
                 }
-
-                if (seriesType === 'line') {
-                    seriesOptions.yKey = f.colId;
-                    seriesOptions.yName =f.displayName;
-                } else {
-                    seriesOptions.yKeys = [f.colId];
-                    seriesOptions.yNames = [f.displayName];
-                }
-
-                series = AgChart.createComponent(seriesOptions, seriesType + '.series');
-                this.chart.addSeriesAfter(series!, previousSeries);
             }
-
-            previousSeries = series;
         });
-    }
-
-    private updateSeriesAndExtractSeriesMap(fields: FieldDefinition[]) {
-        const fieldIds = fields.map(f => f.colId);
-        const series = this.chart.series as any[];
-
-        return series.reduceRight((map, series, i: number) => {
-            const seriesExistsInSamePosition = fieldIds.indexOf(series.yKey) === i;
-            if (seriesExistsInSamePosition) {
-                map.set(series.yKey, series);
-            } else {
-                this.chart.removeSeries(series);
-            }
-            return map;
-        }, new Map<string, any>());
     }
 }
