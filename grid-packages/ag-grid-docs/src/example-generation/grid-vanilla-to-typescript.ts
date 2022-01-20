@@ -38,6 +38,12 @@ export function vanillaToTypescript(bindings: any, mainFilePath: string): (impor
         importStrings.push("import 'ag-grid-enterprise';");
     }
 
+    importStrings.push("import 'ag-grid-community/dist/styles/ag-grid.css';");
+
+    // to account for the (rare) example that has more than one class...just default to alpine if it does
+    const theme = gridSettings.theme || 'ag-theme-alpine';
+    importStrings.push(`import "ag-grid-community/dist/styles/${theme}.css";`);
+
     if (imports.length > 0) {
         // For now we dont support Modules in our Typescript examples so always convert to packages
         addBindingImports(imports, importStrings, true, false);
