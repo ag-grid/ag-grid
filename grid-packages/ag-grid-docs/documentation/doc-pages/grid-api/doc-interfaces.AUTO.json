@@ -9664,13 +9664,13 @@
     },
     "polar": {
       "type": {
-        "returnType": "AgPolarChartOptions<AgPolarAxesTheme, AgPolarSeriesTheme>",
+        "returnType": "AgPolarChartOptions<AgPolarSeriesTheme>",
         "optional": true
       }
     },
     "pie": {
       "type": {
-        "returnType": "AgPolarChartOptions<AgPolarAxesTheme, AgPieSeriesOptions>",
+        "returnType": "AgPolarChartOptions<AgPieSeriesOptions>",
         "optional": true
       }
     },
@@ -9881,7 +9881,6 @@
       "type": { "returnType": "AgHistogramSeriesOptions", "optional": true }
     }
   },
-  "AgPolarAxesTheme": {},
   "AgPolarSeriesTheme": {
     "pie": { "type": { "returnType": "AgPieSeriesOptions", "optional": true } }
   },
@@ -10030,7 +10029,7 @@
     },
     "listeners": {
       "type": {
-        "returnType": "{ [key in string]: Function }",
+        "returnType": "{ [key in keyof this]: Function }",
         "optional": true
       }
     },
@@ -10206,7 +10205,6 @@
     "keys": { "type": { "returnType": "string[]", "optional": true } }
   },
   "AgCartesianAxisOptions": {},
-  "AgPolarAxisOptions": {},
   "AgBaseSeriesOptions": {
     "data": { "type": { "returnType": "any[]", "optional": true } },
     "visible": { "type": { "returnType": "boolean", "optional": true } },
@@ -10354,6 +10352,7 @@
         "optional": true
       }
     },
+    "format": { "type": { "returnType": "string", "optional": true } },
     "enabled": { "type": { "returnType": "boolean", "optional": true } }
   },
   "AgLineSeriesOptions": {
@@ -10574,6 +10573,7 @@
     "tooltip": {
       "type": { "returnType": "AgAreaSeriesTooltip", "optional": true }
     },
+    "stacked": { "type": { "returnType": "boolean", "optional": true } },
     "data": { "type": { "returnType": "any[]", "optional": true } },
     "visible": { "type": { "returnType": "boolean", "optional": true } },
     "showInLegend": { "type": { "returnType": "boolean", "optional": true } },
@@ -10648,6 +10648,7 @@
         "optional": true
       }
     },
+    "flipXY": { "type": { "returnType": "boolean", "optional": true } },
     "fills": { "type": { "returnType": "string[]", "optional": true } },
     "strokes": { "type": { "returnType": "string[]", "optional": true } },
     "strokeWidth": { "type": { "returnType": "number", "optional": true } },
@@ -10977,7 +10978,7 @@
   "AgCartesianChartOptions": {
     "type": {
       "type": {
-        "returnType": "'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'ohlc'",
+        "returnType": "'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'ohlc' | 'histogram'",
         "optional": true
       }
     },
@@ -11017,7 +11018,7 @@
     },
     "listeners": {
       "type": {
-        "returnType": "{ [key in string]: Function }",
+        "returnType": "{ [key in keyof this]: Function }",
         "optional": true
       }
     },
@@ -11027,9 +11028,8 @@
   },
   "AgPolarChartOptions": {
     "type": { "type": { "returnType": "'polar' | 'pie'", "optional": true } },
-    "axes": { "type": { "returnType": "TAxisOptions", "optional": true } },
     "series": { "type": { "returnType": "TSeriesOptions", "optional": true } },
-    "meta": { "typeParams": ["TAxisOptions", "TSeriesOptions"] },
+    "meta": { "typeParams": ["TSeriesOptions"] },
     "container": {
       "type": { "returnType": "HTMLElement | null", "optional": true }
     },
@@ -11063,7 +11063,7 @@
     },
     "listeners": {
       "type": {
-        "returnType": "{ [key in string]: Function }",
+        "returnType": "{ [key in keyof this]: Function }",
         "optional": true
       }
     },
@@ -11110,7 +11110,7 @@
     },
     "listeners": {
       "type": {
-        "returnType": "{ [key in string]: Function }",
+        "returnType": "{ [key in keyof this]: Function }",
         "optional": true
       }
     },

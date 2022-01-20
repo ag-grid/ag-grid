@@ -16,7 +16,8 @@
         "autowired",
         "csrm",
         "tran",
-        "trans"
+        "trans",
+        "treemap"
     ],
     "git.detectSubmodulesLimit": 20,
     "files.exclude": {
