@@ -3,7 +3,6 @@
   "version": "26.2.0",
   "description": "AG Grid Enterprise Features",
   "main": "./dist/ag-grid-enterprise.cjs.js",
-  "module": "./dist/ag-grid-enterprise.esm.js",
   "types": "main.d.ts",
   "scripts": {
     "build": "npx gulp && npm run rollup && npm run hash",
