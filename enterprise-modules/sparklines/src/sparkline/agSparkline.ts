@@ -15,6 +15,7 @@ import {
 } from '@ag-grid-community/core';
 import { SparklineTooltip } from './tooltip/sparklineTooltip';
 import { BarColumnLabel } from './bar-column/barColumnSparkline';
+import { isNumber } from '../util/value';
 
 export type SparklineFactoryOptions = SparklineOptions & {
     data: any[];
@@ -25,6 +26,13 @@ export type SparklineFactoryOptions = SparklineOptions & {
 };
 
 export type SparklineType = LineSparkline | AreaSparkline | ColumnSparkline | BarSparkline;
+
+type Validators = {
+    [property: string] : ValidatorFunc;
+}
+
+type ValidatorFunc = (property: string, value: any, defaultValue?: any) => boolean;
+
 export abstract class AgSparkline {
     static create(options: SparklineFactoryOptions, tooltip: SparklineTooltip) {
         // avoid mutating user provided options
@@ -148,19 +156,6 @@ function initBarColumnSparkline(sparkline: ColumnSparkline | BarSparkline, optio
     }
 }
 
-function setValueIfPropertyExists(target: any, property: string, value: any, options: any): void {
-    if (property in options) {
-        if (property in target) {
-            if (target[property] !== value) {
-                // only set property if the value is different to new value
-                target[property] = value;
-            }
-        } else {
-            console.warn(`Property ${property} does not exist on the target object.`);
-        }
-    }
-}
-
 function initPaddingOptions(target: PaddingOptions, options: any) {
     setValueIfPropertyExists(target, 'top', options.top, options);
     setValueIfPropertyExists(target, 'right', options.right, options);
@@ -233,4 +228,48 @@ function initCrosshairLineOptions(target: CrosshairLineOptions, options: any) {
     setValueIfPropertyExists(target, 'strokeWidth', options.strokeWidth, options);
     setValueIfPropertyExists(target, 'lineDash', options.lineDash, options);
     setValueIfPropertyExists(target, 'lineCap', options.lineCap, options);
+}
+
+const doOnceFlags: { [key: string]: boolean; } = {};
+/**
+ * If the key was passed before, then doesn't execute the func
+ * @param {Function} func
+ * @param {string} key
+ */
+ export function doOnce(func: () => void, key: string) {
+    if (doOnceFlags[key]) { return; }
+
+    func();
+    doOnceFlags[key] = true;
+}
+
+const offsetValidator = (property: string, value: number, defaultOffset?: number) : boolean => {
+    if (isNumber(value)) {
+        return true;
+    }
+
+    const message = `AG Charts: ${property} must be a number, the value you provided is not a valid number. Using the default of ${defaultOffset}px.`;
+    doOnce(() => console.warn(message), `${property} not a number`);
+    return false;
+}
+
+const validators: Validators = {
+    xOffset: offsetValidator,
+    yOffset: offsetValidator
+}
+
+function setValueIfPropertyExists(target: any, property: string, value: any, options: any): void {
+    const validator = validators[property];
+    const isValid = validator ? validator(property, value, target[property]) : true;
+
+    if (property in options) {
+        if (property in target) {
+            if (isValid && target[property] !== value) {
+                // only set property if the value is different to new value
+                target[property] = value;
+            }
+        } else {
+            console.warn(`Property ${property} does not exist on the target object.`);
+        }
+    }
 }
