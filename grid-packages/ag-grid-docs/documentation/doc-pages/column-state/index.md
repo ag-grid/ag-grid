@@ -48,7 +48,7 @@ The example below demonstrates saving and restoring column state. Try the follow
 1. Click 'Restore State' and the columns state is set back to where it was when you clicked 'Save State'.
 1. Click 'Reset State' and the state will go back to what was defined in the Column Definitions.
 
-<grid-example title='Save and Apply State' name='save-apply-state' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Save and Apply State' name='save-apply-state' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 ## Column State Interface
 
@@ -131,7 +131,7 @@ gridOptions.columnApi.applyColumnState({
 
 The example below shows some fine grained access to Column State.
 
-<grid-example title='Fine Grained State' name='fine-grained-state' type='mixed' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Fine Grained State' name='fine-grained-state' type='mixed' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 ### Saving Partial State
 
@@ -145,7 +145,7 @@ are not impacted.
 Likewise when saving and restoring visibility and order, only visibility and order will be impacted when
 re-applying the state.
 
-<grid-example title='Selective State' name='selective-state' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Selective State' name='selective-state' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 ## Considerations
 
@@ -195,7 +195,7 @@ The example below demonstrates events getting raised based on Column State chang
 The example logs event information to the console, so best open the example in
 a new tab and observe the dev console.
 
-<grid-example title='Column Events' name='column-events' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Column Events' name='column-events' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 ## Column Group State
 
@@ -214,4 +214,4 @@ The example below demonstrates getting and setting Column Group State. Note the 
 - Clicking 'Reset State' will reset the column state to match the Column Definitions,
 i.e. all Column Groups will be closed.
 
-<grid-example title='Column Group State' name='column-group-state' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Column Group State' name='column-group-state' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"] }'></grid-example>

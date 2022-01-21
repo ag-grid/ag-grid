@@ -184,7 +184,7 @@ Column Events will get raised when setting new Column Definitions that update th
 The example below demonstrates events getting raised based on Column Definition changes. The example logs event
 information to the console, so best open the example in a new tab and observe the dev console.
 
-<grid-example title='Column Events' name='column-events' type='mixed' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Column Events' name='column-events' type='mixed' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 ## Refreshing Headers
 

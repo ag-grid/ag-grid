@@ -88,7 +88,7 @@ The example below illustrates:
 - 'Address' column uses a Component cell editor that allows input of multiline text via a 'largeText'. <kbd>Tab</kbd> and <kbd>Esc</kbd> (amongst others) will exit editing in this field, <kbd>Shift</kbd>+<kbd>Enter</kbd> will allow newlines.
 - 'Country' columns shows using 'richSelect' for a complex object - the cell renderer takes care of only rendering the country name.
 
-<grid-example title='Simple Editor Components' name='component-editor-2' type='mixed' options='{ "enterprise": true, "exampleHeight": 370, "extras": ["bootstrap"], "includeNgFormsModule" : true }'></grid-example>
+<grid-example title='Simple Editor Components' name='component-editor-2' type='mixed' options='{ "enterprise": true, "modules": ["clientside", "richselect"], "exampleHeight": 370, "extras": ["bootstrap"], "includeNgFormsModule" : true }'></grid-example>
 
 ## Accessing Cell Editor Instances
 
@@ -114,4 +114,4 @@ The example below shows using `getCellEditorInstances`. The following can be not
 - All other columns use the provided `MySimpleCellEditor` editor.
 - The example sets an interval to print information from the active cell editor. There are three results: 1) No editing 2) Editing with default cell renderer and 3) editing with the custom cell editor. All results are printed to the developer console.
 
-<grid-example title='Get Editor Instance' name='get-editor-instance' type='mixed' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Get Editor Instance' name='get-editor-instance' type='mixed' options='{ }'></grid-example>
