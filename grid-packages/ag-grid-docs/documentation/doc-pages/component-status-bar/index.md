@@ -5,6 +5,10 @@ enterprise: true
 
 Status Bar Panels allow you to add your own components to the grid's Status Bar. Use this when the provided status bar components do not meet your requirements.
 
+[[note]]
+| How you register components changed in v27 (Jan 2022). See [Components v27 Changes](/components-v27-changes/) to learn about these changes.
+| If you are new to AG Grid, ignore this message.
+
 ## Simple Status Bar Component
 
 md-include:simple-status-bar-javascript.md

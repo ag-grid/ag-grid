@@ -4,6 +4,10 @@ title: "Loading Cell Renderer"
 
 Loading cell renderers allow you to add your own loading renderers to AG Grid. Use these when the provided loading renderers do not meet your requirements.
 
+[[note]]
+| How you register components changed in v27 (Jan 2022). See [Components v27 Changes](/components-v27-changes/) to learn about these changes.
+| If you are new to AG Grid, ignore this message.
+
 ## Simple Loading Cell Renderer Component
 
 md-include:simple-renderer-javascript.md

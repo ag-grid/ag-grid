@@ -9,6 +9,10 @@ There are two types of header components:
 - **Header Component**: For rendering the normal column headers. Configured for columns.
 - **Header Group Component**: For rendering column groups. Configured for column groups.
 
+[[note]]
+| How you register components changed in v27 (Jan 2022). See [Components v27 Changes](/components-v27-changes/) to learn about these changes.
+| If you are new to AG Grid, ignore this message.
+
 ## Simple Header Component
 
 md-include:simple-header-javascript.md

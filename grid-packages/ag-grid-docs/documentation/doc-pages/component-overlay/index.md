@@ -4,6 +4,10 @@ title: "Overlay Component"
 
 Overlay components allow you to add your own overlays to AG Grid. Use these when the provided overlays do not meet your requirements.
 
+[[note]]
+| How you register components changed in v27 (Jan 2022). See [Components v27 Changes](/components-v27-changes/) to learn about these changes.
+| If you are new to AG Grid, ignore this message.
+
 ## Simple Loading Overlay Component
 
 md-include:simple-loading-overlay-javascript.md

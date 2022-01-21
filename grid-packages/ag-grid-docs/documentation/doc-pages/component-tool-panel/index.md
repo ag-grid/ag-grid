@@ -5,6 +5,10 @@ enterprise: true
 
 Custom Tool Panel Components can be included into the grid's Side Bar. Implement these when you require more Tool Panels to meet your application requirements.
 
+[[note]]
+| How you register components changed in v27 (Jan 2022). See [Components v27 Changes](/components-v27-changes/) to learn about these changes.
+| If you are new to AG Grid, ignore this message.
+
 ## Simple Tool Panel Component
 
 md-include:simple-tool-panel-javascript.md

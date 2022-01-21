@@ -4,6 +4,10 @@ title: "Tooltip Component"
  
 Tooltip components allow you to add your own tooltips to the grid's column headers and cells. Use these when the provided tooltip component or the default browser tooltip do not meet your requirements.
 
+[[note]]
+| How you register components changed in v27 (Jan 2022). See [Components v27 Changes](/components-v27-changes/) to learn about these changes.
+| If you are new to AG Grid, ignore this message.
+
 ## Simple Tooltip Component
 
 md-include:simple-tooltip-javascript.md
