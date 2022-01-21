@@ -123,8 +123,8 @@ function globalAgGridScript($enterprise = false)
             echo "    <link rel=\"stylesheet\" href=\"$cssLink\">\n";
         }
     } else {
-        $communityPath = "https://unpkg.com/@ag-grid-community/all-modules@" . AG_GRID_VERSION . "/dist/ag-grid-community.min.js";
-        $enterprisePath = "https://unpkg.com/@ag-grid-enterprise/all-modules@" . AG_GRID_VERSION . "/dist/ag-grid-enterprise.min.js";
+        $communityPath = "https://unpkg.com/ag-grid-community@" . AG_GRID_VERSION . "/dist/ag-grid-community.min.js";
+        $enterprisePath = "https://unpkg.com/ag-grid-enterprise@" . AG_GRID_VERSION . "/dist/ag-grid-enterprise.min.js";
     }
 
     $path = $enterprise ? $enterprisePath : $communityPath;

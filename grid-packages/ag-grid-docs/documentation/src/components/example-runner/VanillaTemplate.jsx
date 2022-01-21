@@ -40,11 +40,11 @@ const VanillaBody = ({ library, appLocation, options, scriptFiles, indexFragment
     } else {
         if (options.enterprise) {
             scriptPath = isUsingPublishedPackages() ?
-                `https://unpkg.com/@ag-grid-enterprise/all-modules@${agGridEnterpriseVersion}/dist/ag-grid-enterprise.min.js` :
+                `https://unpkg.com/ag-grid-enterprise@${agGridEnterpriseVersion}/dist/ag-grid-enterprise.min.js` :
                 `${localPrefix}/@ag-grid-enterprise/all-modules/dist/ag-grid-enterprise.js`;
         } else {
             scriptPath = isUsingPublishedPackages() ?
-                `https://unpkg.com/@ag-grid-community/all-modules@${agGridVersion}/dist/ag-grid-community.min.js` :
+                `https://unpkg.com/ag-grid-community@${agGridVersion}/dist/ag-grid-community.min.js` :
                 `${localPrefix}/@ag-grid-community/all-modules/dist/ag-grid-community.js`;
         }
     }
