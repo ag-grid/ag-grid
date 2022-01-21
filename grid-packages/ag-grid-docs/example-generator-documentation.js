@@ -227,7 +227,7 @@ function createExampleGenerator(prefix, importTypes) {
         let mainFile = getFileContents(mainScript);
         const indexHtml = getFileContents(document);
 
-        const { bindings, typedBindings } = parser(mainScript, mainFile, indexHtml, options, type, providedExamples);
+        const { bindings, typedBindings } = parser(examplePath, mainScript, mainFile, indexHtml, options, type, providedExamples);
 
         const writeExampleFiles = (importType, framework, tokenToReplace, frameworkScripts, files, subdirectory, componentPostfix = '') => {
             const basePath = path.join(createExamplePath(`_gen/${importType}`), framework);

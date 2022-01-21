@@ -119,9 +119,9 @@ function processGlobalComponentsForVue(propertyName: string, exampleType, provid
     return false;
 }
 
-export function parser(fileName, srcFile, html, exampleSettings, exampleType, providedExamples) {
-    const bindings = internalParser({ fileName, srcFile, includeTypes: false }, html, exampleSettings, exampleType, providedExamples);
-    const typedBindings = internalParser({ fileName, srcFile, includeTypes: true }, html, exampleSettings, exampleType, providedExamples);
+export function parser(examplePath, fileName, srcFile, html, exampleSettings, exampleType, providedExamples) {
+    const bindings = internalParser(examplePath, { fileName, srcFile, includeTypes: false }, html, exampleSettings, exampleType, providedExamples);
+    const typedBindings = internalParser(examplePath, { fileName, srcFile, includeTypes: true }, html, exampleSettings, exampleType, providedExamples);
     return { bindings, typedBindings };
 }
 
@@ -155,7 +155,7 @@ function getTypeLookupFunc(includeTypes, fileName) {
     return lookupType;
 }
 
-function internalParser({ fileName, srcFile, includeTypes }, html, exampleSettings, exampleType, providedExamples) {
+function internalParser(examplePath, { fileName, srcFile, includeTypes }, html, exampleSettings, exampleType, providedExamples) {
     const domTree = $(`<div>${html}</div>`);
     domTree.find('style').remove();
     const domEventHandlers = extractEventHandlers(domTree, recognizedDomEvents);
@@ -590,7 +590,7 @@ function internalParser({ fileName, srcFile, includeTypes }, html, exampleSettin
     tsBindings.typeDeclares = extractTypeDeclarations(tsTree);
     tsBindings.classes = extractClassDeclarations(tsTree);
     tsBindings.interfaces = extractInterfaces(tsTree);
-
+    tsBindings.exampleName = examplePath;
     tsBindings.gridSettings = {
         width: '100%',
         height: '100%',

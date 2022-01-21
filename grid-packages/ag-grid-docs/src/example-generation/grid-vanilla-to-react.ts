@@ -28,13 +28,11 @@ function getModuleImports(bindings: any, componentFilenames: string[]): string[]
         const theme = gridSettings.theme || 'ag-theme-alpine';
         imports.push(`import "@ag-grid-community/core/dist/styles/${theme}.css";`);
     } else {
-        if (bindings.gridSettings.enterprise) {
-            imports.push("import { AllModules } from '@ag-grid-enterprise/all-modules';");
-            bindings.gridSuppliedModules = 'AllModules';
-        } else {
-            imports.push("import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';");
-            bindings.gridSuppliedModules = '[ClientSideRowModelModule]';
+        if (gridSettings.enterprise) {
+            console.error(`The React example ${bindings.exampleName} has "enterprise" : true but no modules have been provided "modules":[...]. Either remove the enterprise flag or provide the required modules.`)
         }
+        imports.push("import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';");
+        bindings.gridSuppliedModules = '[ClientSideRowModelModule]';
 
         imports.push("import '@ag-grid-community/core/dist/styles/ag-grid.css';");
 
