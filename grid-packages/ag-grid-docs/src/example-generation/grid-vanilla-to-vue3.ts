@@ -24,6 +24,7 @@ const GRID_COMPONENTS = [
     'loadingCellRenderer',
     'loadingOverlayComponent',
     'noRowsOverlayComponent',
+    'noRowsOverlayComp',
     'dateComponent',
     'statusPanel',
     'cellRenderer',
@@ -42,7 +43,6 @@ const GRID_COMPONENTS = [
     'headerGroupComp',
     'tooltipComp',
     'loadingRowCellComp',
-    'loadingOverlayComp',
     'loadingOverlayComp',
     'groupRowCellComp',
     'innerCellComp',
@@ -67,6 +67,7 @@ const OVERRIDABLE_AG_COMPONENTS = [
     'agTextCellEditor',
     'agDetailCellRenderer',
 ];
+
 function getOnGridReadyCode(bindings: any): string {
     const {onGridReady, resizeToFit, data} = bindings;
     const additionalLines = [];
@@ -442,12 +443,9 @@ function convertDefaultColDef(defaultColDef, vueComponents): string {
     const result = [];
     const perLine = defaultColDef.split('\n');
     perLine.forEach(line => {
-        if (line.includes('filter:') && line.indexOf('filter: true') === -1 && line.indexOf('filter: \'ag\'') === -1) {
-            // result.push(line.replace('filter', `${line}Framework`));
-        } else if (line.includes('tooltipComp')) {
+        if (line.includes('tooltipComp')) {
             const component = line.match(/.*:\s*(.*),/) ? line.match(/.*:\s*(.*),/)[1] : line.match(/.*:\s*(.*)$/)[1]
-            // line = line.replace(component, `'${component}'`)
-            // line = line.replace('tooltipComp', `tooltipComponentFramework`);
+            line = line.replace(component, `'${component}'`)
             result.push(line);
 
             if (!vueComponents.includes(component)) {

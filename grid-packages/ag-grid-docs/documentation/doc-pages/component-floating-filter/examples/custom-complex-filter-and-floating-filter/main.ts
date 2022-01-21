@@ -24,7 +24,7 @@ const columnDefs: ColDef[] = [
   {
     field: 'date',
     minWidth: 180,
-    filter: 'date',
+    filter: 'agDateColumnFilter',
     filterParams: {
       comparator: function (
         filterLocalDateAtMidnight: Date,
