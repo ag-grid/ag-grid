@@ -195,7 +195,7 @@ export interface AgBaseChartOptions {
     tooltip?: AgChartTooltipOptions;
     navigator?: AgNavigatorOptions;
     legend?: AgChartLegendOptions;
-    listeners?: { [key in keyof this]: Function };
+    listeners?: { [key: string]: Function };
     theme?: string | AgChartTheme; // | ChartTheme
 }
 

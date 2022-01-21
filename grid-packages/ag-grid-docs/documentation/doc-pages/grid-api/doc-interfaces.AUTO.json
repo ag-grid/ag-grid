@@ -10028,10 +10028,7 @@
       "type": { "returnType": "AgChartLegendOptions", "optional": true }
     },
     "listeners": {
-      "type": {
-        "returnType": "{ [key in keyof this]: Function }",
-        "optional": true
-      }
+      "type": { "returnType": "{ [key: string]: Function }", "optional": true }
     },
     "theme": {
       "type": { "returnType": "string | AgChartTheme", "optional": true }
@@ -11017,10 +11014,7 @@
       "type": { "returnType": "AgChartLegendOptions", "optional": true }
     },
     "listeners": {
-      "type": {
-        "returnType": "{ [key in keyof this]: Function }",
-        "optional": true
-      }
+      "type": { "returnType": "{ [key: string]: Function }", "optional": true }
     },
     "theme": {
       "type": { "returnType": "string | AgChartTheme", "optional": true }
@@ -11062,10 +11056,7 @@
       "type": { "returnType": "AgChartLegendOptions", "optional": true }
     },
     "listeners": {
-      "type": {
-        "returnType": "{ [key in keyof this]: Function }",
-        "optional": true
-      }
+      "type": { "returnType": "{ [key: string]: Function }", "optional": true }
     },
     "theme": {
       "type": { "returnType": "string | AgChartTheme", "optional": true }
@@ -11109,10 +11100,7 @@
       "type": { "returnType": "AgChartLegendOptions", "optional": true }
     },
     "listeners": {
-      "type": {
-        "returnType": "{ [key in keyof this]: Function }",
-        "optional": true
-      }
+      "type": { "returnType": "{ [key: string]: Function }", "optional": true }
     },
     "theme": {
       "type": { "returnType": "string | AgChartTheme", "optional": true }
