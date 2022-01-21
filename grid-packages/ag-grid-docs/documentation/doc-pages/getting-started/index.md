@@ -1550,11 +1550,6 @@ title: "Get Started with AG Grid"
 | us this shortcut for the sake of keeping the article short and simple. Of course, you can substitute
 | that bit with a real-world application logic after you are done with the tutorial.
 |
-| [[note]]
-| | Using a `ref` to access the Grid APIs is one option - the other is to use the `gridReady` Grid callback and save the APIs:<br/>
-| | `onGridReady={ params => setGridApi(params.api) }`<br/>
-| | Both are valid - you can choose the mechanism that you prefer - see [Grid Callbacks](../grid-callbacks/) for more information.
-|
 | ##Grouping (enterprise)
 |
 | [[note]]
@@ -1602,17 +1597,15 @@ title: "Get Started with AG Grid"
 |
 | const [columnDefs] = useState([
 |-      { field: "make", sortable: true, filter: true, checkboxSelection: true },
-|+      { field: "make", sortable: true, filter: true, checkboxSelection: true, rowGroup: true },
-|        { field: "model", sortable: true, filter: true },
-|        { field: "price", sortable: true, filter: true },
+|+      { field: "make", sortable: true, filter: true, rowGroup: true },
+|       { field: "model", sortable: true, filter: true },
+|       { field: "price", sortable: true, filter: true },
 |    ]);
-|     
+|
 |+ const autoGroupColumnDef = useMemo({
-|+     headerName: "Model",
-|+     field: "model",
-|+     cellRendererComp:'agGroupCellRenderer',
+|+     field: "model", // show model in group column at leaf levels
 |+     cellRendererParams: {
-|+         checkbox: true
+|+         checkbox: true // put in checkbox selection in group column
 |+     }
 |+ }, [])
 |

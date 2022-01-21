@@ -4,6 +4,10 @@ title: "Cell Editors"
 
 Create your own cell editor by providing a cell editor component.
 
+[[note]]
+| How you register components changed in v27 (Jan 2022). See [Components v27 Changes](/components-v27-changes/) to learn about these changes.
+| If you are new to AG Grid, ignore this message.
+
 ## Simple Cell Editor
 
 md-include:simple-editor-javascript.md
