@@ -12,7 +12,7 @@ md-include:simple-status-bar-angular.md
 md-include:simple-status-bar-react.md
 md-include:simple-status-bar-vue.md
 
-<grid-example title='Status Bar Panel' name='simple-component' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Status Bar Panel' name='simple-component' type='generated' options='{ "enterprise": true, "modules": ["clientside", "statusbar", "range"] }'></grid-example>
 
 md-include:component-interface-javascript.md
 md-include:component-interface-angular.md
@@ -38,7 +38,7 @@ In the configuration above we've specified a custom component (`statusBarCompone
 
 Order is important here - the order of the components provided will determine the order in which they're rendered, from left to right.
 
-<grid-example title='Status Bar Panel' name='custom-component' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Status Bar Panel' name='custom-component' type='generated' options='{ "enterprise": true, "modules": ["clientside", "statusbar", "range"] }'></grid-example>
 
 ## Initialisation of Status Bar Components
 
@@ -52,4 +52,4 @@ After the grid has created an instance of a status bar component it is possible 
 
 The example below shows using `getStatusPanel`:
 
-<grid-example title='Get Status Bar Panel Instance' name='component-instance' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Get Status Bar Panel Instance' name='component-instance' type='generated' options='{ "enterprise": true, "modules": ["clientside", "statusbar", "range"] }'></grid-example>

@@ -60,7 +60,7 @@ The example below shows a simply configured status bar. Note the following:
 - The selected row count is displayed by the `agSelectedRowCountComponent` component.
 - When a range is selected (by dragging the mouse over a range of cells) the `agAggregationComponent` displays the summary information Average, Count, Min, Max and Sum. Only Count is displayed if the range contains no numeric data.
 
-<grid-example title='Status Bar Simple' name='status-bar-simple' type='generated' options='{ "enterprise": true, "exampleHeight": 640 }'></grid-example>
+<grid-example title='Status Bar Simple' name='status-bar-simple' type='generated' options='{ "enterprise": true, "modules": ["clientside", "statusbar", "range"], "exampleHeight": 640 }'></grid-example>
 
 ### Configuring The Aggregation Panel
 
@@ -70,7 +70,7 @@ If the cell does not contain a simple number value, then it will not be included
 
 In the grid below, select a range by dragging the mouse over cells and notice the status bar showing the aggregation values as you drag.
 
-<grid-example title='Status Bar' name='status-bar' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Status Bar' name='status-bar' type='generated' options='{ "enterprise": true, "modules": ["clientside", "statusbar", "range"] }'></grid-example>
 
 By default all of the aggregations available will be displayed but you can configure the aggregation component to only show a subset of the aggregations.
 
@@ -127,7 +127,7 @@ The example below demonstrates providing parameters to the status bar components
 - The component `agAggregationComponent` is provided with parameters `aggFuncs: ['avg', 'sum']`.
 - When a range of numbers is selected, only `avg` and `sum` functions are displayed.
 
-<grid-example title='Status Bar Params' name='status-bar-params' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Status Bar Params' name='status-bar-params' type='generated' options='{ "enterprise": true, "modules": ["clientside", "statusbar", "range"] }'></grid-example>
 
 ## Initialisation of Status Bar Components
 
