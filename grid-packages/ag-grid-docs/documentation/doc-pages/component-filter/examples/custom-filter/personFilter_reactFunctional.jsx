@@ -1,7 +1,5 @@
 import React, {forwardRef, useEffect, useImperativeHandle, useState, useRef} from 'react';
 
-// spl todo - can't use memo here as it's still using the old way of doing components? is this right? (ie goes throw frameworkComponentWrapper)
-// editors dont...
 export default forwardRef((props, ref) => {
     const [filterText, setFilterText] = useState(null);
 

@@ -79,7 +79,6 @@ const GridExample = () => {
         {
             field: "gender",
             width: 100,
-            // spl todo - enter no longer stops editing with hooks
             cellEditorComp: MySimpleEditor,
             cellEditorPopup: true
         },

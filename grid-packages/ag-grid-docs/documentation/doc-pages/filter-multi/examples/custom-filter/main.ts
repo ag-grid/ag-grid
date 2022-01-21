@@ -13,7 +13,6 @@ const gridOptions: GridOptions = {
         filters: [
           {
             filterComp: YearFilter,
-            // spl todo doesn't work
             floatingFilterComp: YearFloatingFilter,
           },
           {

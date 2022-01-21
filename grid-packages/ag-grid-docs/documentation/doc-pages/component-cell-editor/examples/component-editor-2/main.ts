@@ -32,7 +32,6 @@ const columnDefs: ColDef[] = [
         editable: true,
         cellRendererComp: GenderRenderer,
         cellEditorComp: 'agRichSelectCellEditor',
-        // spl todo - have to set cellEditorPopup even though not a react editor? (react renderer though)
         cellEditorPopup: true,
         cellEditorParams: {
             cellRendererComp: GenderRenderer,
@@ -59,7 +58,6 @@ const columnDefs: ColDef[] = [
         width: 110,
         cellEditorComp: 'agRichSelectCellEditor',
         cellEditorPopup: true,
-        // spl todo - have to set cellEditorPopup even though not a react editor? (react renderer though)
         cellRendererComp: CountryCellRenderer,
         keyCreator: function (params: KeyCreatorParams) {
             return params.value.name

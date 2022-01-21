@@ -102,8 +102,6 @@ const GridExample = () => {
         {
             headerName: "Currency (Pipe)",
             field: "currency",
-            // spl todo - renderers don't update (hooks or classes)
-            // works with angular (new way) and vue (old way)
             cellRendererComp: CurrencyRenderer,
             colId: "currency",
             width: 120

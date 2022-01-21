@@ -31,10 +31,6 @@ export default class MoodEditor extends Component {
             this.toggleMood();
             event.stopPropagation();
         }
-        if('Enter' === event.key) {
-            // spl todo - enter doesn't stop editing anymore?
-            this.props.stopEditing();
-        }
     };
 
     componentDidUpdate() {
@@ -51,7 +47,6 @@ export default class MoodEditor extends Component {
     }
 
     getValue() {
-        // spl todo - editor changes aren't reflected in grid
         // renderer is updated but not re-rendered in grid
         return this.state.happy ? 'Happy' : 'Sad';
     }

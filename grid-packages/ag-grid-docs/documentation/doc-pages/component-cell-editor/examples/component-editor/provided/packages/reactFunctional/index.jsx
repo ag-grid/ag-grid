@@ -308,8 +308,6 @@ const GridExample = () => {
         },
         {
             field: 'mood',
-            // spl todo - editor changes aren't reflected in grid
-            // renderer is updated but not re-rendered in grid
             cellRendererComp: MoodRenderer,
             cellEditorComp: MoodEditor,
             cellEditorPopup: true,
@@ -320,7 +318,6 @@ const GridExample = () => {
             headerName: 'Numeric',
             field: 'number',
             cellEditorComp: NumericEditor,
-            // spl todo - only for hooks? if not is isPopup required at all?
             cellEditorPopup: true,
             editable: true,
             width: 280,
