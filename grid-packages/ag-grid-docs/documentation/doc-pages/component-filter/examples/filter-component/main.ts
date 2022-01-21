@@ -5,7 +5,6 @@ const columnDefs: ColDef[] = [
     { field: 'row' },
     {
         field: 'name',
-        // spl todo - filterFramework not working for either vue 2 or vue 3
         filterComp: PartialMatchFilter,
         menuTabs: ['filterMenuTab'],
     },

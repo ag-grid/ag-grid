@@ -72,7 +72,6 @@ function GridExample() {
 
     const onCallFilter = useCallback(() => {
         // because Filter could be created Async, we use the callback mechanism in the method
-        // spl todo - throws an error
         gridRef.current.api.getFilterInstance('year', filterRef => filterRef.sampleToggleMethod());
     });
 
