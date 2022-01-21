@@ -31,8 +31,8 @@ export interface AgChartThemeOverrides {
     scatter?: AgCartesianChartOptions<AgCartesianAxesTheme, AgScatterSeriesOptions>;
     histogram?: AgCartesianChartOptions<AgCartesianAxesTheme, AgHistogramSeriesOptions>;
 
-    polar?: AgPolarChartOptions<AgPolarAxesTheme, AgPolarSeriesTheme>;
-    pie?: AgPolarChartOptions<AgPolarAxesTheme, AgPieSeriesOptions>;
+    polar?: AgPolarChartOptions<AgPolarSeriesTheme>;
+    pie?: AgPolarChartOptions<AgPieSeriesOptions>;
 
     hierarchy?: AgHierarchyChartOptions<AgHierarchySeriesTheme>;
     treemap?: AgHierarchyChartOptions<AgHierarchySeriesOptions>;
@@ -68,11 +68,6 @@ export interface AgCartesianSeriesTheme {
     bar?: AgBarSeriesOptions;
     column?: AgBarSeriesOptions;
     histogram?: AgHistogramSeriesOptions;
-}
-
-export interface AgPolarAxesTheme {
-    // polar charts don't support axes at the moment
-    // (used by radar charts, for example)
 }
 
 export interface AgPolarSeriesTheme {
@@ -200,7 +195,7 @@ export interface AgBaseChartOptions {
     tooltip?: AgChartTooltipOptions;
     navigator?: AgNavigatorOptions;
     legend?: AgChartLegendOptions;
-    listeners?: { [key in string]: Function };
+    listeners?: { [key in keyof this]: Function };
     theme?: string | AgChartTheme; // | ChartTheme
 }
 
@@ -295,8 +290,6 @@ export type AgCartesianAxisOptions =
     AgCategoryAxisOptions |
     AgGroupedCategoryAxisOptions |
     AgTimeAxisOptions;
-
-export type AgPolarAxisOptions = any;
 
 export interface AgBaseSeriesOptions {
     data?: any[];
@@ -418,6 +411,7 @@ export interface AgLineSeriesLabelOptions extends AgChartLabelOptions {
 
 export interface AgLineSeriesTooltip extends AgSeriesTooltip {
     renderer?: (params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult;
+    format?: string;
 }
 
 export interface AgLineSeriesOptions extends AgBaseSeriesOptions {
@@ -575,6 +569,7 @@ export interface AgBarSeriesOptions extends AgBaseSeriesOptions {
     yKeys?: string[] | string[][];
     xName?: string;
     yNames?: string[] | { [key in string]: string };
+    flipXY?: boolean;
     fills?: string[];
     strokes?: string[];
     strokeWidth?: number;
@@ -743,14 +738,13 @@ export type AgPolarSeriesOptions = AgPieSeriesOptions;
 export type AgHierarchySeriesOptions = AgTreemapSeriesOptions;
 
 export interface AgCartesianChartOptions<TAxisOptions = AgCartesianAxisOptions[], TSeriesOptions = AgCartesianSeriesOptions[]> extends AgBaseChartOptions {
-    type?: 'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'ohlc';
+    type?: 'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'ohlc' | 'histogram';
     axes?: TAxisOptions;
     series?: TSeriesOptions;
 }
 
-export interface AgPolarChartOptions<TAxisOptions = AgPolarAxisOptions[], TSeriesOptions = AgPolarSeriesOptions[]> extends AgBaseChartOptions {
+export interface AgPolarChartOptions<TSeriesOptions = AgPolarSeriesOptions[]> extends AgBaseChartOptions {
     type?: 'polar' | 'pie';
-    axes?: TAxisOptions; // will be supported in the future and used by radar series
     series?: TSeriesOptions;
 }
 

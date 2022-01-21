@@ -181,8 +181,7 @@ export class ChartDataModel extends BeanStub {
             return providedSeriesChartType;
         }
 
-        const selectedCols = this.valueColState.filter(cs => cs.selected);
-        const updatedSeriesChartTypes = selectedCols.map(getSeriesChartType);
+        const updatedSeriesChartTypes = this.valueColState.map(getSeriesChartType);
 
         this.seriesChartTypes = updatedSeriesChartTypes;
 

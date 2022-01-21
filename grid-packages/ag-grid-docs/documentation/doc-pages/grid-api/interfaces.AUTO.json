@@ -5494,8 +5494,8 @@
       "area?": "AgCartesianChartOptions<AgCartesianAxesTheme, AgAreaSeriesOptions>",
       "scatter?": "AgCartesianChartOptions<AgCartesianAxesTheme, AgScatterSeriesOptions>",
       "histogram?": "AgCartesianChartOptions<AgCartesianAxesTheme, AgHistogramSeriesOptions>",
-      "polar?": "AgPolarChartOptions<AgPolarAxesTheme, AgPolarSeriesTheme>",
-      "pie?": "AgPolarChartOptions<AgPolarAxesTheme, AgPieSeriesOptions>",
+      "polar?": "AgPolarChartOptions<AgPolarSeriesTheme>",
+      "pie?": "AgPolarChartOptions<AgPieSeriesOptions>",
       "hierarchy?": "AgHierarchyChartOptions<AgHierarchySeriesTheme>",
       "treemap?": "AgHierarchyChartOptions<AgHierarchySeriesOptions>",
       "common?": "any"
@@ -5586,7 +5586,6 @@
       "histogram?": "AgHistogramSeriesOptions"
     }
   },
-  "AgPolarAxesTheme": { "meta": {}, "type": {} },
   "AgPolarSeriesTheme": {
     "meta": {},
     "type": { "pie?": "AgPieSeriesOptions" }
@@ -5737,7 +5736,7 @@
       "tooltip?": "AgChartTooltipOptions",
       "navigator?": "AgNavigatorOptions",
       "legend?": "AgChartLegendOptions",
-      "listeners?": "{[key in string]: Function}",
+      "listeners?": "{[key in keyof this]: Function}",
       "theme?": "string | AgChartTheme"
     }
   },
@@ -5881,7 +5880,6 @@
     "meta": { "isTypeAlias": true },
     "type": "AgNumberAxisOptions | AgLogAxisOptions | AgCategoryAxisOptions | AgGroupedCategoryAxisOptions | AgTimeAxisOptions"
   },
-  "AgPolarAxisOptions": { "meta": { "isTypeAlias": true }, "type": "any" },
   "AgBaseSeriesOptions": {
     "meta": {},
     "type": {
@@ -6030,6 +6028,7 @@
     "meta": {},
     "type": {
       "renderer?": "(params: AgCartesianSeriesTooltipRendererParams) => string | AgTooltipRendererResult",
+      "format?": "string",
       "enabled?": "boolean"
     }
   },
@@ -6196,6 +6195,7 @@
       "shadow?": "AgDropShadowOptions",
       "label?": "AgAreaSeriesLabelOptions",
       "tooltip?": "AgAreaSeriesTooltip",
+      "stacked?": "boolean",
       "data?": "any[]",
       "visible?": "boolean",
       "showInLegend?": "boolean",
@@ -6250,6 +6250,7 @@
       "yKeys?": "string[] | string[][]",
       "xName?": "string",
       "yNames?": "string[] | { [key in string]: string; }",
+      "flipXY?": "boolean",
       "fills?": "string[]",
       "strokes?": "string[]",
       "strokeWidth?": "number",
@@ -6499,7 +6500,7 @@
   "AgCartesianChartOptions": {
     "meta": { "typeParams": ["TAxisOptions", "TSeriesOptions"] },
     "type": {
-      "type?": "'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'ohlc'",
+      "type?": "'cartesian' | 'groupedCategory' | 'line' | 'bar' | 'column' | 'area' | 'scatter' | 'ohlc' | 'histogram'",
       "axes?": "TAxisOptions",
       "series?": "TSeriesOptions",
       "container?": "HTMLElement | null",
@@ -6514,15 +6515,14 @@
       "tooltip?": "AgChartTooltipOptions",
       "navigator?": "AgNavigatorOptions",
       "legend?": "AgChartLegendOptions",
-      "listeners?": "{[key in string]: Function}",
+      "listeners?": "{[key in keyof this]: Function}",
       "theme?": "string | AgChartTheme"
     }
   },
   "AgPolarChartOptions": {
-    "meta": { "typeParams": ["TAxisOptions", "TSeriesOptions"] },
+    "meta": { "typeParams": ["TSeriesOptions"] },
     "type": {
       "type?": "'polar' | 'pie'",
-      "axes?": "TAxisOptions",
       "series?": "TSeriesOptions",
       "container?": "HTMLElement | null",
       "data?": "any[]",
@@ -6536,7 +6536,7 @@
       "tooltip?": "AgChartTooltipOptions",
       "navigator?": "AgNavigatorOptions",
       "legend?": "AgChartLegendOptions",
-      "listeners?": "{[key in string]: Function}",
+      "listeners?": "{[key in keyof this]: Function}",
       "theme?": "string | AgChartTheme"
     }
   },
@@ -6557,7 +6557,7 @@
       "tooltip?": "AgChartTooltipOptions",
       "navigator?": "AgNavigatorOptions",
       "legend?": "AgChartLegendOptions",
-      "listeners?": "{[key in string]: Function}",
+      "listeners?": "{[key in keyof this]: Function}",
       "theme?": "string | AgChartTheme"
     }
   },

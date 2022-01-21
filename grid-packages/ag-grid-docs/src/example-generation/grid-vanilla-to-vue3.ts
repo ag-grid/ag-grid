@@ -3,26 +3,6 @@ import {convertTemplate, getImport, toAssignment, toConst, toInput, toMember, to
 import {templatePlaceholder} from "./grid-vanilla-src-parser";
 import * as JSON5 from "json5";
 
-const compToFramework = {
-    cellRendererComp: 'cellRendererFramework',
-    cellEditorComp: 'cellEditorFramework',
-    filterComp: 'filterFramework',
-    floatingFilterComp: 'floatingFilterFramework',
-    headerComp: 'headerComponentFramework',
-    headerGroupComp: 'headerGroupComponentFramework',
-    tooltipComp: 'tooltipComponentFramework',
-    groupRowCellComp: 'groupRowRendererFramework',
-    innerCellComp: 'groupRowInnerRendererFramework',
-    detailRowCellComp: 'detailCellRendererFramework',
-    fullWidthCellComp: 'fullWidthCellRendererFramework',
-    loadingRowCellComp: 'loadingCellRendererFramework',
-    loadingOverlayComp: 'loadingOverlayComponentFramework',
-    noRowsOverlayComp: 'noRowsOverlayComponentFramework',
-    dateComp: 'agDateInput',
-    statusPanelComp: 'statusPanelFramework',
-    toolPanelComp: 'toolPanelFramework'
-}
-
 const GRID_WIDE_COMPONENTS = [
     'fullWidthCellComp',
     'dateComponent',
@@ -50,7 +30,7 @@ const GRID_COMPONENTS = [
     'pinnedRowCellRenderer',
     'cellEditor',
     'filter',
-    'floatingFilterComponent',
+    'floatingFilterComponentFramework',
     'headerComponent',
     'headerGroupComponent',
     'tooltipComponent',
@@ -61,13 +41,13 @@ const GRID_COMPONENTS = [
     'headerComp',
     'headerGroupComp',
     'tooltipComp',
+    'loadingRowCellComp',
+    'loadingOverlayComp',
+    'loadingOverlayComp',
     'groupRowCellComp',
     'innerCellComp',
     'detailRowCellComp',
     'fullWidthCellComp',
-    'loadingRowCellComp',
-    'loadingOverlayComp',
-    'noRowsOverlayComp',
     'dateComp',
     'statusPanelComp',
     'toolPanelComp'
@@ -77,7 +57,8 @@ const PARAMS_PROPERTIES = [
     'cellEditorParams', 'filterParams'
 ]
 
-const OVERRIDABLE_AG_COMPONENTS = ['agDateInput',
+const OVERRIDABLE_AG_COMPONENTS = [
+    'agDateInput',
     'agColumnHeader',
     'agColumnGroupHeader',
     'agLoadingCellRenderer',
@@ -86,7 +67,6 @@ const OVERRIDABLE_AG_COMPONENTS = ['agDateInput',
     'agTextCellEditor',
     'agDetailCellRenderer',
 ];
-
 function getOnGridReadyCode(bindings: any): string {
     const {onGridReady, resizeToFit, data} = bindings;
     const additionalLines = [];
@@ -219,12 +199,10 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
                 if (parsedObj[panelArrayName]) {
                     parsedObj[panelArrayName].forEach(panel => {
                         Object.keys(panel).forEach(panelProperty => {
-                            if (!panelProperty.startsWith('ag') && compToFramework[panelProperty] && typeof panel[panelProperty] === 'string') {
+                            if (!panelProperty.startsWith('ag') && isComponent(panelProperty) && typeof panel[panelProperty] === 'string') {
                                 const parsedValue = panel[panelProperty].replace('AG_LITERAL_', '')
                                 if (isExternalVueFile(componentFileNames, parsedValue)) {
-                                    panel[compToFramework[panelProperty]] = parsedValue;
-                                    delete panel[panelProperty];
-
+                                    panel[panelProperty] = parsedValue;
                                     if (!vueComponents.includes(parsedValue)) {
                                         vueComponents.push(parsedValue)
                                     }
@@ -246,21 +224,21 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
                         .map(agComponentName => `${agComponentName}: '${agComponentName}'`);
 
                     if (userAgComponents.length > 0) {
-                        propertyAttributes.push(':frameworkComponents="frameworkComponents"');
-                        propertyAssignments.push(`this.frameworkComponents = { ${userAgComponents.join('\n,')} } `)
+                        propertyAttributes.push(':comps="comps"');
+                        propertyAssignments.push(`this.comps = { ${userAgComponents.join('\n,')} } `)
                     }
                 }
             } else if (property.value === 'true' || property.value === 'false') {
                 propertyAttributes.push(toConst(property));
             } else if (property.value === null || property.value === 'null') {
                 propertyAttributes.push(toInput(property));
-            } else if (GRID_WIDE_COMPONENTS.indexOf(property.name) !== -1 && compToFramework[property.name]) {
+            } else if (GRID_WIDE_COMPONENTS.indexOf(property.name) !== -1 && isComponent(property.name)) {
                 if (!vueComponents.includes(property.value)) {
                     vueComponents.push(property.value)
                 }
 
-                propertyAttributes.push(`:${compToFramework[property.name]}="${compToFramework[property.name]}"`);
-                propertyVars.push(`${compToFramework[property.name]}: '${property.value}'`);
+                propertyAttributes.push(`:${property.name}="${property.name}"`);
+                propertyVars.push(`${property.name}: '${property.value}'`);
             } else {
                 // for when binding a method
                 // see javascript-grid-keyboard-navigation for an example
@@ -389,35 +367,24 @@ function convertColumnDefs(rawColumnDefs, userComponentNames, bindings, componen
                 let value = rawColumnDef[columnProperty];
 
                 if (isParamsProperty(columnProperty)) {
-                    if (value.cellRendererComp) {
-                        const descriptor = Object.getOwnPropertyDescriptor(value, 'cellRendererComp');
-                        descriptor.value = descriptor.value.replace('AG_LITERAL_', '')
-                        if(isExternalVueFile(componentFileNames, descriptor.value)) {
-                            Object.defineProperty(value, 'cellRendererFramework', descriptor);
-                            delete value['cellRendererComp'];
-                        }
-                    }
-                    if (value.cellEditorComp) {
-                        const descriptor = Object.getOwnPropertyDescriptor(value, 'cellEditorComp');
-                        descriptor.value = descriptor.value.replace('AG_LITERAL_', '')
-                        if(isExternalVueFile(componentFileNames, descriptor.value)) {
-                            Object.defineProperty(value, 'cellEditorFramework', descriptor);
-                            delete value['cellEditorComp'];
+                    const componentProperty = value.cellRendererComp ? 'cellRendererComp' : value.cellEditorComp ? 'cellEditorComp' : null;
+                    if (componentProperty) {
+                        const parsedValue = value[componentProperty].replace('AG_LITERAL_', '');
+                        if (isExternalVueFile(componentFileNames, parsedValue)) {
+                            value[componentProperty] = parsedValue;
                         }
                     }
                 }
                 if (isParamsProperty(columnProperty) && value.filters) {
                     value.filters.forEach(filter => {
                         Object.keys(filter).forEach(filterProperty => {
-                            if (compToFramework[filterProperty] && !filter[filterProperty].startsWith("ag")) {
+                            if (isComponent(filterProperty) && !filter[filterProperty].startsWith("ag")) {
                                 const descriptor = Object.getOwnPropertyDescriptor(filter, filterProperty);
                                 descriptor.value = descriptor.value.replace('AG_LITERAL_', '')
-                                if(isExternalVueFile(componentFileNames, descriptor.value)) {
+                                if (isExternalVueFile(componentFileNames, descriptor.value)) {
                                     if (!bindings.components.includes(descriptor.value) && !vueComponents.includes(descriptor.value)) {
                                         vueComponents.push(descriptor.value)
                                     }
-                                    Object.defineProperty(filter, compToFramework[filterProperty], descriptor);
-                                    delete filter[filterProperty];
                                 }
                             }
                         })
@@ -425,13 +392,13 @@ function convertColumnDefs(rawColumnDefs, userComponentNames, bindings, componen
                 }
 
                 if (typeof value === "string") {
-                    if (!value.startsWith('ag') && compToFramework[columnProperty]) {
+                    if (!value.startsWith('ag') && isComponent(columnProperty)) {
                         const parsedValue = value.replace('AG_LITERAL_', '');
-                        if(isExternalVueFile(componentFileNames, parsedValue)) {
+                        if (isExternalVueFile(componentFileNames, parsedValue)) {
                             if (!bindings.components.includes(parsedValue) && !vueComponents.includes(parsedValue)) {
                                 vueComponents.push(parsedValue)
                             }
-                            columnProperties.push(`${compToFramework[columnProperty]}:'${parsedValue}'`);
+                            columnProperties.push(`${columnProperty}:'${parsedValue}'`);
                             return;
                         }
                     }
@@ -448,9 +415,9 @@ function convertColumnDefs(rawColumnDefs, userComponentNames, bindings, componen
                     } else {
                         let propertyName = columnProperty;
                         // if a framework component then add a "Framework" postfix - ie cellRenderer => cellRendererFramework
-                        if (isComponent(columnProperty) && userComponentNames.indexOf(value) !== -1) {
-                            propertyName = `${columnProperty}Framework`;
-                        }
+                        // if (isComponent(columnProperty) && userComponentNames.indexOf(value) !== -1) {
+                        //     propertyName = `${columnProperty}Framework`;
+                        // }
                         // ensure any double quotes inside the string are replaced with single quotes
                         columnProperties.push(`${propertyName}:"${value.replace(/(?<!\\)"/g, '\'')}"`);
                     }
@@ -476,14 +443,14 @@ function convertDefaultColDef(defaultColDef, vueComponents): string {
     const perLine = defaultColDef.split('\n');
     perLine.forEach(line => {
         if (line.includes('filter:') && line.indexOf('filter: true') === -1 && line.indexOf('filter: \'ag\'') === -1) {
-            result.push(line.replace('filter', `${line}Framework`));
+            // result.push(line.replace('filter', `${line}Framework`));
         } else if (line.includes('tooltipComp')) {
             const component = line.match(/.*:\s*(.*),/) ? line.match(/.*:\s*(.*),/)[1] : line.match(/.*:\s*(.*)$/)[1]
-            line = line.replace(component, `'${component}'`)
-            line = line.replace('tooltipComp', `tooltipComponentFramework`);
+            // line = line.replace(component, `'${component}'`)
+            // line = line.replace('tooltipComp', `tooltipComponentFramework`);
             result.push(line);
 
-            if(!vueComponents.includes(component)) {
+            if (!vueComponents.includes(component)) {
                 vueComponents.push(component)
             }
         } else {

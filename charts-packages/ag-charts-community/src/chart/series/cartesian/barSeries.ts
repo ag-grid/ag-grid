@@ -106,6 +106,10 @@ function flat(arr: any[], target: any[] = []): any[] {
     return target;
 }
 
+function is2dArray<E>(array: E[] | E[][]): array is E[][] {
+    return array.length > 0 && Array.isArray(array[0]);
+}
+
 export class BarSeries extends CartesianSeries {
 
     static className = 'BarSeries';
@@ -244,7 +248,7 @@ export class BarSeries extends CartesianSeries {
     set yKeys(yKeys: string[][]) {
         let flatYKeys: string[] | undefined = undefined;
         // Convert from flat y-keys to grouped y-keys.
-        if (yKeys.length && !Array.isArray(yKeys[0])) {
+        if (!is2dArray(yKeys)) {
             flatYKeys = yKeys as any as string[];
             yKeys = this.grouped ? flatYKeys.map(k => [k]) : [flatYKeys];
         }

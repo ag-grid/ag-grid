@@ -65,4 +65,5 @@ export const time = {
 
 export * from "./chart/agChartOptions";
 export * from "./chart/agChart";
+export * from "./chart/agChartV2";
 export * from "./chart/themes/chartTheme";
