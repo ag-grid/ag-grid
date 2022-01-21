@@ -181,15 +181,8 @@ class ReactTransformer extends SnippetTransformer {
 
     parseProperty(property, depth) {
         const propertyName = getName(property);
-        if (propertyName !== 'columnDefs') {
-            // keep track of visited properties for framework context
-            this.propertiesVisited.push(getName(property));
-        }
-
-        if (propertyName === 'columnDefs') {
-            const columnDefsComment = (property.comment ? `\n${tab(depth)}{/*${property.comment} */}` : '');
-            return columnDefsComment + this.createReactColDefSnippet(property.value.elements, depth);
-        }
+        // keep track of visited properties for framework context
+        this.propertiesVisited.push(getName(property));
 
         // only add extra line between grid properties option enabled and not first property
         const extraLine = this.options.spaceBetweenProperties && this.propertiesVisited.length > 1 ? '\n' : '';
@@ -249,29 +242,6 @@ class ReactTransformer extends SnippetTransformer {
 
     addComment() {
         return ''; // react comments are added inplace
-    }
-
-    createReactColDefSnippet(property, depth) {
-        if (Array.isArray(property)) {
-            return property.map(node => this.createReactColDefSnippet(node, depth)).join('');
-        }
-        const padding = `\n${tab(depth)}`;
-        let comment = property.comment ? `\n${tab(depth)}{/*${property.comment} */}` : '';
-
-        const groupCol = property.properties.find(n => getName(n) === 'children');
-        if (groupCol) {
-            const colProps = this.extractColumnProperties(property.properties);
-            const childColDefs = this.createReactColDefSnippet(getChildren(groupCol), depth + 1);
-            return comment + `${padding}<AgGridColumn ${colProps.join(' ')}>${childColDefs}${padding}</AgGridColumn>`;
-        }
-
-        const colProps = this.extractColumnProperties(property.properties);
-        // split col def props over multiple lines if > 3 props
-        if (colProps.length > 3) {
-            return comment + `${padding}<AgGridColumn \n${tab(2)}${colProps.join(`\n${tab(2)}`)} />`;
-        }
-        // return single line col def
-        return comment + `${padding}<AgGridColumn ${colProps.join(' ')} />`;
     }
 
     extractColumnProperties(properties) {
@@ -361,7 +331,6 @@ const isLiteralProperty = node => isProperty(node) && node.value.type === 'Liter
 const isObjectProperty = node => isProperty(node) && node.value.type === 'ObjectExpression';
 const isObjectExpr = node => node.type === 'ObjectExpression';
 const isArrayExpr = node => node.value && node.value.type === 'ArrayExpression';
-const getChildren = node => isArrayExpr(node) ? node.value.elements : node.properties;
 const isVarDeclaration = node => node.type === 'VariableDeclaration' && Array.isArray(node.declarations);
 const isVarDeclarator = node => node.type === 'VariableDeclarator';
 const isExprStatement = node => node.type === 'ExpressionStatement';

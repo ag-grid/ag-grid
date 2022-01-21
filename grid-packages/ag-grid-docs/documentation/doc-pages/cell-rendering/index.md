@@ -31,7 +31,7 @@ const gridOptions = {
         // 3 - Class - Provide your own cell renderer component directly without registering.
         {
             field: 'sport',
-            cellRenderer: MyCustomCellRendererClass,
+            cellRendererComp: MyCustomCellRendererClass,
         },
         // 4 - Function - A function that returns an HTML string or DOM element for display
         {
