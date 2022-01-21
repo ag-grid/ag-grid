@@ -179,7 +179,7 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
                     componentProps.push('rowData={rowData}');
                 }
 
-                setRowDataBlock = data.callback.replace('params.api.setRowData(data);', 'setRowData(data);');
+                setRowDataBlock = data.callback.replace('params.api.setRowData(data)', 'setRowData(data)');
             }
 
             additionalInReady.push(`
@@ -197,7 +197,7 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
         }
 
         if (resizeToFit) {
-            additionalInReady.push('params.api.sizeColumnsToFit();');
+            additionalInReady.push('gridRef.current.api.sizeColumnsToFit();');
         }
 
         const components: { [componentName: string]: string } = extractComponentInformation(properties, componentFilenames);
@@ -273,10 +273,13 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
         const thisReferenceConverter = content => content.replace(/this\./g, "");
 
         const gridInstanceConverter = content => content
+            .replace(/params\.api\.setRowData(data)/g, 'setRowData(data)')
+            .replace(/params\.api\./g, 'gridRef.current.api.')
+            .replace(/params\.columnApi\./g, "gridRef.current.columnApi.")
             .replace(/gridInstance\.api\./g, "gridRef.current.api.")
             .replace(/gridInstance\.columnApi\./g, "gridRef.current.columnApi.")
             .replace(/gridApi\./g, "gridRef.current.api.")
-            .replace(/columnApi\./g, "gridRef.current.columnApi.")
+            .replace(/(\s+)columnApi\./g, "$1gridRef.current.columnApi.")
             .replace(/gridApi;/g, "gridRef.current.api;")
             .replace(/columnApi;/g, "gridRef.current.columnApi;")
             .replace(/gridColumnApi\./g, "gridRef.current.columnApi.")
