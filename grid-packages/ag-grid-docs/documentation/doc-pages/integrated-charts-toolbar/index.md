@@ -92,7 +92,7 @@ The example below shows how the toolbar can be customised. Notice the following:
 - **Chart Format Panel** - has been removed from the tabbed menu.
 - **Unlink Toolbar Item** - has been removed from the toolbar.
 
-<grid-example title='Custom Toolbar' name='custom-toolbar' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Custom Toolbar' name='custom-toolbar' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
 ## Next Up
 

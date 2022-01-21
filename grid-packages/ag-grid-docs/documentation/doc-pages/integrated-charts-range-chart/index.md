@@ -103,7 +103,7 @@ The example below demonstrates the different ways columns can be defined for cha
 - **Silver**: defined as 'series' as `chartType='series'`.
 - **Bronze**: considered a 'series' as data is a `number`.
 
-<grid-example title='Defining categories and series' name='defining-categories-and-series' type='generated' options='{ "exampleHeight": 710, "enterprise": true }'></grid-example>
+<grid-example title='Defining categories and series' name='defining-categories-and-series' type='generated' options='{ "exampleHeight": 710, "enterprise": true, "modules": ["clientside", "menu", "charts", "rowgrouping"] }'></grid-example>
 
 ## Next Up
 

@@ -17,7 +17,7 @@ When you create a chart, you can scroll through the different available themes i
 
 You can change which themes are available by setting the `chartThemes` property in `gridOptions`. The example below shows a different selection of themes configured in this way.
 
-<grid-example title='Configure Available Themes' name='available-themes' type='generated' options='{ "exampleHeight": 690, "enterprise": true }'></grid-example>
+<grid-example title='Configure Available Themes' name='available-themes' type='generated' options='{ "exampleHeight": 690, "enterprise": true,  "modules": ["clientside", "menu", "charts", "rowgrouping"] }'></grid-example>
 
 ## Custom Chart Themes
 
@@ -47,7 +47,7 @@ You can create your own chart theme and provide it to the grid in the `customCha
 
 The example below shows a custom chart theme being used with the grid. Note that other provided themes can be used alongside a custom theme, and are unaffected by the settings in the custom theme.
 
-<grid-example title='Custom Chart Theme' name='custom-chart-theme' type='generated' options='{ "exampleHeight": 660,"enterprise": true }'></grid-example>
+<grid-example title='Custom Chart Theme' name='custom-chart-theme' type='generated' options='{ "exampleHeight": 660,"enterprise": true,  "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
 ## Overriding Existing Themes
 
@@ -72,37 +72,37 @@ The following examples show different types of chart being customised using them
 
 These overrides can be used with any chart type.
 
-<grid-example title='Common Chart Overrides' name='common-overrides' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Common Chart Overrides' name='common-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
 ### Example: Cartesian Chart Overrides
 
 These overrides can be used with any cartesian chart.
 
-<grid-example title='Cartesian Chart Overrides' name='cartesian-overrides' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Cartesian Chart Overrides' name='cartesian-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
 ### Example: Line Chart Overrides
 
-<grid-example title='Line Chart Overrides' name='line-overrides' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Line Chart Overrides' name='line-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
 ### Example: Bar/Column Chart Overrides
 
-<grid-example title='Bar/Column Chart Overrides' name='bar-overrides' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Bar/Column Chart Overrides' name='bar-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
 ### Example: Area Chart Overrides
 
-<grid-example title='Area Chart Overrides' name='area-overrides' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Area Chart Overrides' name='area-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
 ### Example: Scatter/Bubble Chart Overrides
 
-<grid-example title='Scatter/Bubble Chart Overrides' name='scatter-overrides' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Scatter/Bubble Chart Overrides' name='scatter-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
 ### Example: Pie/Doughnut Chart Overrides
 
-<grid-example title='Pie/Doughnut Chart Overrides' name='pie-overrides' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Pie/Doughnut Chart Overrides' name='pie-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
 ### Example: Histogram Chart Overrides
 
-<grid-example title='Histogram Chart Overrides' name='histogram-overrides' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Histogram Chart Overrides' name='histogram-overrides' type='generated' options='{ "exampleHeight": 660, "enterprise": true,  "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
 ## Next Up
 

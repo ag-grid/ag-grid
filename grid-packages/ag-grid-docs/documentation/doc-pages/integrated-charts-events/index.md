@@ -45,7 +45,7 @@ The following example demonstrates when the described events occur by writing to
 
 - Close the chart dialog to see the "Destroyed chart with ID id-xxxxxxxxxxx" message logged.
 
-<grid-example title='Events' name='events' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Events' name='events' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
 ## Accessing Chart Instance
 
@@ -70,7 +70,7 @@ Note in the snippet above, the `chartId` is obtained from the [`ChartCreated`](#
 The example below shows how the chart instance can be used, creating a subtitle and updating
 it dynamically as you change the range selection.
 
-<grid-example title='Accessing Chart Instance' name='accessing-chart-instance' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Accessing Chart Instance' name='accessing-chart-instance' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
 ## Other Resources
 
