@@ -67,7 +67,7 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
         imports.push(`import "@ag-grid-community/core/dist/styles/${theme}.css";`);
     } else {
         if (gridSettings.enterprise) {
-            console.error(`The Angular example ${bindings.exampleName} has "enterprise" : true but no modules have been provided "modules":[...]. Either remove the enterprise flag or provide the required modules.`)
+            throw new Error(`The Angular example ${bindings.exampleName} has "enterprise" : true but no modules have been provided "modules":[...]. Either remove the enterprise flag or provide the required modules.`)
         }
         bindings.gridSuppliedModules = '[ ClientSideRowModelModule ]';
         imports.push("import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';");
