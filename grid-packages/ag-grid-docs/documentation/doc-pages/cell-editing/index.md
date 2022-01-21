@@ -171,9 +171,9 @@ The following example illustrates how to use different editors and parameters in
         return undefined;
     }
     ```
-- Edit a cell by double clicking to observe the different editors used.
+- Edit a cell by double clicking to observe the different editors used. 
 
-<grid-example title='Dynamic Editor Component' name='dynamic-editor-component' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel"], "exampleHeight": 450, "includeNgFormsModule" : true }'></grid-example>
+<grid-example title='Dynamic Editor Component' name='dynamic-editor-component' type='mixed' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel", "richselect"], "exampleHeight": 450, "includeNgFormsModule" : true }'></grid-example>
 
 ## Dynamic Parameters
 
