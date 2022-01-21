@@ -26,7 +26,7 @@ This example shows how charts can be created in the grid's provided popup window
 
 - Note the **'Bronze Medals by Country'** chart is unlinked from the grid as `chartUnlinked=true`. Notice that sorting in the grid does not affect the chart and there is no chart range in the grid.
 
-<grid-example title='Charts in Grid Popup Window' name='chart-api' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Charts in Grid Popup Window' name='chart-api' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
 ### Example: Charts in Dashboard
 
@@ -41,7 +41,7 @@ This example passes a `chartContainer` to the API to place the chart in a locati
 - The two pie charts have legends beneath. This is configured in the `chartThemeOverrides`.
 
 
-<grid-example title='Charts in Dashboard' name='dashboard' type='generated' options='{ "enterprise": true, "exampleHeight": 700 }'></grid-example>
+<grid-example title='Charts in Dashboard' name='dashboard' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "charts"], "exampleHeight": 700 }'></grid-example>
 
 ## Pivot Charts
 
@@ -53,7 +53,7 @@ The pivot chart params share the same behaviour as the [Range Chart Params](/int
 
 This is an example showing the pivot chart API in action, using a specified chart container.
 
-<grid-example title='Pivot Chart' name='pivot-chart-api' type='generated' options='{ "enterprise": true, "exampleHeight": 900 }'></grid-example>
+<grid-example title='Pivot Chart' name='pivot-chart-api' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "rowgrouping", "charts"], "exampleHeight": 900 }'></grid-example>
 
 ## Saving and Restoring Charts
 
@@ -75,7 +75,7 @@ The example below demonstrates how you can save and then later restore a chart. 
 - Click "Clear chart" to destroy the existing chart.
 - Click "Restore chart" to restore the previously saved chart.
 
-<grid-example title='Saving and Restoring Charts' name='saving-and-restoring-charts' type='generated' options='{ " exampleHeight": 800, "enterprise": true }'></grid-example>
+<grid-example title='Saving and Restoring Charts' name='saving-and-restoring-charts' type='generated' options='{ " exampleHeight": 800, "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
 ## Downloading Chart Image
 
@@ -90,7 +90,7 @@ The example below demonstrates how you can retrieve images rendered from the cha
 - Click "Open PNG" to open a PNG format image of the chart in a new window.
 - Click "Open JPEG" to open a JPEG format image of the chart in a new window.
 
-<grid-example title='Downloading Chart Image' name='downloading-chart-image' type='generated' options='{ " exampleHeight": 800, "enterprise": true }'></grid-example>
+<grid-example title='Downloading Chart Image' name='downloading-chart-image' type='generated' options='{ " exampleHeight": 800, "enterprise": true, "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
 ## Next Up
 

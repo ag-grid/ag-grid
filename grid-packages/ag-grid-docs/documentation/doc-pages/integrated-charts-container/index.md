@@ -30,7 +30,7 @@ From the example below, the following can be noted:
 - The chart appears below the grid rather than in a popup window. This is because the `createChartContainer(chartRef)` is implemented.
 - Each chart is displayed alongside a 'Destroy' button. The logic behind the destroy button calls `destroyChart()` to destroy the chart instance.
 
-<grid-example title='Provided Container' name='provided-container' type='generated' options='{ "exampleHeight": 750, "enterprise": true }'></grid-example>
+<grid-example title='Provided Container' name='provided-container' type='generated' options='{ "exampleHeight": 750, "enterprise": true,  "modules": ["clientside", "menu", "charts"] }'></grid-example>
 
 ## Next Up
 

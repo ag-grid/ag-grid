@@ -9,6 +9,7 @@ const gridOptions: GridOptions = {
       field: 'sale',
       maxWidth: 160,
       aggFunc: 'sum',
+      filterComp: 'agNumberColumnFilter',
       chartDataType: 'series',
     },
     { field: 'saleDate', chartDataType: 'category' },

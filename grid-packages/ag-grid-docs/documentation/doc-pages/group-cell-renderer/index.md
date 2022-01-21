@@ -62,4 +62,4 @@ The example is built up as follows:
     - `checkbox=true`: Adds a selection checkbox.
     - `innerRenderer=SimpleCellRenderer`: Puts custom rendering for displaying the value. The group cellRenderer will take care of all the expand / collapse, selection etc, but then allow you to customise the display of the value. In this example we add a border when the value is a group, and we add the Ireland <img src="https://flags.fmcdn.net/data/flags/mini/ie.png" style="width: 20px; position: relative; top: -2px;" alt="Ireland" /> flag (because Niall Crosby is from Ireland) to the leaf levels.
 
-<grid-example title='Group Renderers' name='group-renderer' type='generated' options='{"enterprise": true}'></grid-example>
+<grid-example title='Group Renderers' name='group-renderer' type='generated' options='{"enterprise": true, "modules": ["clientside", "rowgrouping"]}'></grid-example>

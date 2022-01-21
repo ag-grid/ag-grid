@@ -18,7 +18,7 @@ The example below demonstrates cell flashing. The following can be noted:
 - Clicking **Flash Two Rows** provides the API `flashCells()` with two row nodes only to flash the two rows.
 - Clicking **Flash Two Columns** provides the API `flashCells()` with two columns only to flash the two columns.
 
-<grid-example title='Flashing Data Changes' name='flashing-data-changes' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Flashing Data Changes' name='flashing-data-changes' type='generated' options='{  }'></grid-example>
 
 ## How Flashing Works
 
@@ -37,7 +37,7 @@ The example below demonstrates flashing delay changes. The following can be note
 - Clicking **Update Some Data** will update some data to demonstrate the changes mentioned above.
 - Clicking **Flash Two Rows** will pass a custom `flashDelay` of 3000ms and a custom `fadeDelay` delay of 2000ms to demonstrate default values can be overridden.
 
-<grid-example title='Changing Flashing Delay' name='flashing-delay-changes' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Changing Flashing Delay' name='flashing-delay-changes' type='generated' options='{  }'></grid-example>
 
 ## Filtering & Aggregations
 

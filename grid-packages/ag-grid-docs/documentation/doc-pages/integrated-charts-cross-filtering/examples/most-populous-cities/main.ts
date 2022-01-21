@@ -4,9 +4,9 @@ const gridOptions: GridOptions = {
   columnDefs: [
     { field: 'city', chartDataType: 'category' },
     { field: 'country', chartDataType: 'category' },
-    { field: 'longitude', chartDataType: 'series' },
-    { field: 'latitude', chartDataType: 'series' },
-    { field: 'population', chartDataType: 'series' },
+    { field: 'longitude', chartDataType: 'series', filterComp: 'agNumberColumnFilter', },
+    { field: 'latitude', chartDataType: 'series', filterComp: 'agNumberColumnFilter', },
+    { field: 'population', chartDataType: 'series', filterComp: 'agNumberColumnFilter', },
   ],
   defaultColDef: {
     flex: 1,
