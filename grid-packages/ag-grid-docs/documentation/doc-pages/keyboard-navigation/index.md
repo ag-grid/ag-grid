@@ -57,7 +57,7 @@ While navigation the floating filters header with the keyboard pressing left/rig
 
 The example below has grouped headers, headers and floating filters to demonstrate the features mentioned above:
 
-<grid-example title='Keyboard Navigation' name='grid-keyboard-navigation' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Keyboard Navigation' name='grid-keyboard-navigation' type='generated' options='{ "enterprise": true,  "modules": ["clientside", "menu", "columnpanel", "filterpanel", "setfilter"] }'></grid-example>
 
 ## Custom Navigation
 
@@ -184,7 +184,7 @@ The example below shows processing grid cell keyboard events. The following can 
 - Each time a `cellKeyPress` or `cellKeyDown` is fired, the details of the event are logged to the console.
 - When the user hits <kbd>S</kbd> on a row, the row selection is toggled. This is achieved through the `cellKeyPress` listener.
 
-<grid-example title='Keyboard Events' name='keyboard-events' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Keyboard Events' name='keyboard-events' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel", "filterpanel", "setfilter"] }'></grid-example>
 
 ## Suppress Keyboard Events
 
@@ -230,4 +230,4 @@ The example below demonstrates suppressing the following keyboard events:
 - On all headers (excluding country):
     - Navigation is blocked up and down, but navigation left / right is allowed using arrows and <kbd>Tab</kbd>.
 
-<grid-example title='Suppress Keys' name='suppress-keys' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Suppress Keys' name='suppress-keys' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel", "filterpanel", "setfilter"] }'></grid-example>

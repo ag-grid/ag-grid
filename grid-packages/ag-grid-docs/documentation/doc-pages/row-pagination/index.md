@@ -6,7 +6,7 @@ Pagination allows the grid to paginate rows, removing the need for a vertical sc
 
 To enable pagination set the grid property `pagination=true`.
 
-<grid-example title='Client Paging' name='client-paging' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Client Paging' name='client-paging' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping" ] }'></grid-example>
 
 ## Supported Row Models
 
@@ -28,7 +28,7 @@ The numbers within the Paging Toolbar can be formatted by replacing the thousand
 If you set `paginationAutoPageSize=true` the grid will automatically show as many rows in each page as it can fit. This is demonstrated below. Note if you resize the display area of the grid, the page size automatically changes. To view this, open the example up in a new tab and resize your browser.
 
 
-<grid-example title='Auto Page Size' name='auto-page-size' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Auto Page Size' name='auto-page-size' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping" ] }'></grid-example>
 
 [[note]]
 | Each pagination page must have the same number of rows. If you use `paginationAutoPageSize` with
@@ -45,7 +45,7 @@ In this example the default pagination settings are changed. Note the following:
 - A dropdown to change the page size dynamically is available. This makes a call to `paginationSetPageSize(newPageSize)`
 - The numbers in the pagination panel are formatted differently using the grid callback `paginationNumberFormatter` and putting the numbers into square brackets i.e. [x].
 
-<grid-example title='Custom Paging' name='custom-paging' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Custom Paging' name='custom-paging' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping" ] }'></grid-example>
 
 ## Example: Custom Pagination Controls
 
@@ -57,7 +57,7 @@ A summary of the API methods and events can be found at the top of this document
 
 The example also sets property `suppressScrollOnNewData=true`, which tells the grid to NOT scroll to the top when the page changes.
 
-<grid-example title='Custom Controls' name='custom-controls' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Custom Controls' name='custom-controls' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping" ] }'></grid-example>
 
 ## Pagination & Child Rows
 
@@ -75,7 +75,7 @@ In the example below, note the following:
 - Each page will always contain exactly 10 groups.
 - Expanding a group will not push rows to the next page.
 
-<grid-example title='Grouping Normal' name='grouping-normal' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Grouping Normal' name='grouping-normal' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping" ] }'></grid-example>
 
 ### Mode 2: Paginate All Rows, Including Children
 
@@ -90,7 +90,7 @@ In the example below, note the following:
 - Each page will always contain exactly 10 rows (not groups).
 - Expanding a group will push rows to the next page to limit the total number of rows to 10.
 
-<grid-example title='Grouping Paginate Child Rows' name='grouping-paginate-child-rows' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Grouping Paginate Child Rows' name='grouping-paginate-child-rows' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping" ] }'></grid-example>
 
 ### Fallback to Mode 2
 

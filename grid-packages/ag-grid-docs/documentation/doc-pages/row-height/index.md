@@ -128,7 +128,7 @@ height of the largest column is used.
 The example below shows auto height. Column A has Auto Height enabled by setting both `wrapText=true` and `autoHeight=true`. Column B only has `wrapText=true` set so it's contents are clipped if content doesn't fit.
 
 <!-- this example uses a timeout to set data - the runner doesn't currently support this sort of thing -->
-<grid-example title='Auto Row Height' name='auto-row-height' type='generated' options=' { "enterprise": true }'></grid-example>
+<grid-example title='Auto Row Height' name='auto-row-height' type='generated' options=' { "enterprise": true, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
 ### Lazy Height Calculation
 

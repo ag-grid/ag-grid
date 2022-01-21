@@ -82,12 +82,6 @@ var customToolPanelColumnDefs = [
 
 const gridOptions: GridOptions = {
   defaultColDef: {
-    // allow every column to be aggregated
-    enableValue: true,
-    // allow every column to be grouped
-    enableRowGroup: true,
-    // allow every column to be pivoted
-    enablePivot: true,
     sortable: true,
     filter: true,
   },

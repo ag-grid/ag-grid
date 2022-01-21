@@ -29,7 +29,7 @@ In the following example note the following:
 - The side bar is displayed with tool panels Columns and Filters.
 - The Columns panel is displayed by default.
 
-<grid-example title='Boolean Configuration' name='boolean-configuration' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Boolean Configuration' name='boolean-configuration' type='generated' options='{ "enterprise": true, "modules": ["clientside", "columnpanel", "filterpanel", "setfilter"] }'></grid-example>
 
 ### String Configuration
 
@@ -40,7 +40,7 @@ The example below demonstrates using the string configuration. Note the followin
 - The grid property `sideBar` is set to `'filters'`.
 - The side bar is displayed showing only the Filters panel.
 
-<grid-example title='Side Bar - Only Filters' name='only-filters' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Side Bar - Only Filters' name='only-filters' type='generated' options='{ "enterprise": true, "modules": ["clientside", "columnpanel", "filterpanel", "setfilter"]  }'></grid-example>
 
 ### SideBarDef Configuration
 
@@ -87,7 +87,7 @@ const gridOptions = {
 
 The snippet above is demonstrated in the following example:
 
-<grid-example title='SideBarDef' name='sideBarDef' type='generated' options='{ "enterprise": true, "exampleHeight": 600 }'></grid-example>
+<grid-example title='SideBarDef' name='sideBarDef' type='generated' options='{ "enterprise": true, "modules": ["clientside", "columnpanel", "filterpanel", "setfilter"], "exampleHeight": 600 }'></grid-example>
 
 ## Configuration Shortcuts
 
@@ -193,7 +193,7 @@ const gridOptions = {
 
 If you are using the long form (providing a `SideBarDef` object) then it is possible to customise. The example below shows changing the label and icon for the columns and filters tab.
 
-<grid-example title='Side Bar Fine Tuning' name='fine-tuning' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Side Bar Fine Tuning' name='fine-tuning' type='generated' options='{ "enterprise": true, "modules": ["clientside", "columnpanel", "filterpanel", "setfilter"]  }'></grid-example>
 
 ## Providing Parameters to Tool Panels
 
@@ -236,7 +236,7 @@ The example below demonstrates different usages of the tool panel API methods. T
 - **Position Buttons:** These change the position of the side bar relative to the grid.
 
 
-<grid-example title='Side Bar API' name='api' type='generated' options='{ "enterprise": true, "exampleHeight": 630 }'></grid-example>
+<grid-example title='Side Bar API' name='api' type='generated' options='{ "enterprise": true, "modules": ["clientside", "columnpanel", "filterpanel", "setfilter"], "exampleHeight": 630 }'></grid-example>
 
 ## Next Up
 

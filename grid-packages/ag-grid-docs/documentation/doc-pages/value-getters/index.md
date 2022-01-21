@@ -95,7 +95,7 @@ that has a `console.log()` statement. This will allow us to see exactly when the
 - As you **open and close groups**, the value getters are executed, as the DOM needs values for rendering.
 - Now turn the value cache **on** by selecting the radio button at the top. The grid gets reset and then works with the value cache on. Notice in the console that the value getter gets executed exactly 100 times, once for each row. Even through the value getter result is used in two places (aggregation and rendering the row), the value getter is only called once. Even scrolling and opening / closing the groups does not result in the value getter getting executed again.
 
-<grid-example title='Value Cache' name='value-cache' type='typescript' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Value Cache' name='value-cache' type='typescript' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"]  }'></grid-example>
 
 [[note]]
 | Note that the example still works fast when the value cache is turned off. This emphasises you don't need to turn the value cache on if your application is not getting slowed down by your value getters.
@@ -140,7 +140,7 @@ As before, we focus on the value getter of the **'Total'** column and can see ho
 - Hitting **'Invalidate Cache'** and then **'Refresh Cells'** will result in the value getters getting re-executed, as the cell refresh operation requires the values and the cache was invalidated. You will notice invalidating and then refreshing doesn't do anything noticeable to the grid, the data is the same, the only hint that anything happened is the value getter's console messages.
 - Changing any value in the grid, either editing via the UI directly or hitting the **'Change One Value'** button, will result in the value cache getting cleared and all cells getting refreshed (where [change detection](/change-detection/) then updates any changes cells and only changed cells).
 
-<grid-example title='Expiring Cache through Editing' name='expiring-through-editing' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Expiring Cache through Editing' name='expiring-through-editing' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"]  }'></grid-example>
 
 [[note]]
 | It is not possible to partially invalidate the cache, eg it is not possible to invalidate only a

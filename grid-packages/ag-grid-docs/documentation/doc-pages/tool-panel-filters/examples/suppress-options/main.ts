@@ -42,7 +42,6 @@ const gridOptions: GridOptions = {
     minWidth: 100,
     filter: true,
     sortable: true,
-    enablePivot: true,
     resizable: true,
   },
   sideBar: {

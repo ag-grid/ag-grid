@@ -95,7 +95,7 @@ var gridOptions = {
 };
 </snippet>
 
-<grid-example title='Custom Sorting Groups' name='custom-sorting-groups' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Custom Sorting Groups' name='custom-sorting-groups' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping" ] }'></grid-example>
 
 ## Multi Column Sorting
 

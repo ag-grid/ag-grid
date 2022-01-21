@@ -276,7 +276,7 @@ The example below shows two custom layouts for the Columns Tool Panel. Note the 
 - Moving columns in the grid won't affect the custom layouts as `suppressSyncLayoutWithGrid` is enabled.
 - Moving columns from within the Columns Tool Panel has been disabled as `suppressColumnMove` is enabled.
 
-<grid-example title='Custom Column Layout' name='custom-layout' type='generated' options='{ "enterprise": true, "exampleHeight": 640 }'></grid-example>
+<grid-example title='Custom Column Layout' name='custom-layout' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "setfilter", "columnpanel"],"exampleHeight": 640 }'></grid-example>
 
 ## Next Up
 

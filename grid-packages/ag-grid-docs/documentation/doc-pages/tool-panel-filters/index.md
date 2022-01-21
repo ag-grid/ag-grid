@@ -12,7 +12,7 @@ The example below shows the filters tool panel. The following can be noted:
 - Clicking on a column in the filter tool panel will show the filter below the column name. Clicking a second time will hide the filter again.
 - Columns with filters active will have the filter icon appear beside the filter name in the tool panel.
 
-<grid-example title='Filter Tool Panel' name='simple' type='mixed' options='{ "enterprise": true }'></grid-example> 
+<grid-example title='Filter Tool Panel' name='simple' type='mixed' options='{ "enterprise": true, "modules": ["clientside", "menu", "setfilter", "filterpanel"]}'></grid-example> 
 
 ## Suppress Options
 
@@ -29,7 +29,7 @@ The example below demonstrates the suppress options described above. Note the fo
 - **Expand / Collapse All** and **Filter Search** are hidden as `suppressExpandAll` and `suppressFilterSearch` are both set to `true`.
 - The date column / filter is hidden from the tool panel using: `colDef.suppressFiltersToolPanel=true`.
 
-<grid-example title='Suppress Options' name='suppress-options' type='generated' options='{ "enterprise": true, "exampleHeight": 610 }'></grid-example>
+<grid-example title='Suppress Options' name='suppress-options' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "setfilter", "filterpanel"], "exampleHeight": 610 }'></grid-example>
 
 ## Filter Instances
 
@@ -81,7 +81,7 @@ The example below demonstrates these methods in action. Note the following:
 - Clicking **Expand All** expands all filter groups using: `expandFilterGroups()`. Note that 'Sport' is not expanded as it is not a filter group.
 - Clicking **Collapse All** collapses all filter groups using: `collapseFilterGroups()`.
 
-<grid-example title='Expand / Collapse Groups' name='expand-collapse-groups' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Expand / Collapse Groups' name='expand-collapse-groups' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "setfilter", "filterpanel"] }'></grid-example>
 
 ## Expand / Collapse Filters
 
@@ -125,7 +125,7 @@ The example below demonstrates these methods in action. Note the following:
 - Clicking **Expand All** expands all filters using: `expandFilters()`.
 - Clicking **Collapse All** collapses all filters using: `collapseFilters()`.
 
-<grid-example title='Expand / Collapse Filters' name='expand-collapse-filters' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Expand / Collapse Filters' name='expand-collapse-filters' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "setfilter", "filterpanel"] }'></grid-example>
 
 ## Custom Filters Layout
 
@@ -183,7 +183,7 @@ The example below shows two custom layouts for the Filters Tool Panel. Note the 
 - Clicking **Custom Group Layout** invokes `setFilterLayout(colDefs)` with a list of column definitions containing groups that don't appear in the grid.
 - Moving columns in the grid won't affect the custom layouts as `suppressSyncLayoutWithGrid` is enabled.
 
-<grid-example title='Custom Filters Layout' name='custom-layout' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Custom Filters Layout' name='custom-layout' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "setfilter", "filterpanel"] }'></grid-example>
 
 ## Next Up
 

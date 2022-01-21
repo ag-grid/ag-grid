@@ -32,7 +32,7 @@ This to try in the example are as follows:
 1. Change the locale to English by changing `localeText = AG_GRID_LOCALE_ZZZ` to `localeText = AG_GRID_LOCALE_EN`.
 1. Edit values in `locale.en.js` and observe the changes in the grid.
 
-<grid-example title='Localisation' name='localisation' type='generated' options='{ "enterprise": true, "exampleHeight": 650 }'></grid-example>
+<grid-example title='Localisation' name='localisation' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel", "filterpanel", "setfilter", "csv", "excel", "charts", "clipboard", "range", "rowgrouping", "multifilter", "sidebar", "statusbar"], "exampleHeight": 650 }'></grid-example>
 
 ## Changing Locale
 
@@ -44,7 +44,7 @@ Providing a locale for the grid does not fit in with localisation libraries or l
 
 The example below shows providing a callback for the grid's localisation. The example for simplicity just returns the default value in upper case. In a real world application, the callback would use the applications localisation.
 
-<grid-example title='Callback' name='callback' type='generated' options='{ "enterprise": true, "exampleHeight": 650 }'></grid-example>
+<grid-example title='Callback' name='callback' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel", "filterpanel", "setfilter", "csv", "excel", "charts", "clipboard", "range", "rowgrouping", "multifilter", "sidebar", "statusbar"], "exampleHeight": 650 }'></grid-example>
 
 In a real world application, the callback would look something like this:
 

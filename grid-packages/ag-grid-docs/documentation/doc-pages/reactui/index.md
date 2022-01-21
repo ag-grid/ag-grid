@@ -24,7 +24,7 @@ The grid renders cells using React, and all parent components of the cells are a
 
 The example below demonstrates AG Grid rendered 100% in React. Note the example has the Age column customised using a React Component.
 
-<grid-example title='React UI' name='react-ui' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>
+<grid-example title='React UI' name='react-ui' type='react' options=' { "showImportsDropdown": false }'></grid-example>
 
 See [Cell Renderers](/component-cell-renderer/) for full details on creating Cell Renderers.
 
@@ -53,7 +53,7 @@ Below is an example showing different types of React Cell Editors. Note the foll
 * **Gold Column** is using a **React Inline Cell Renderer**. The editing happens inside the cells.
 * **Silver Column** is using a **React Popup Cell Renderer** (`cellEditorPopup=true`). The editing happens in a popup.
 
-<grid-example title='React UI Editors' name='editors' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>
+<grid-example title='React UI Editors' name='editors' type='react' options=' { "showImportsDropdown": false }'></grid-example>
 
 See [Cell Editors](/component-cell-editor/) for full details on creating Cell Editors.
 
@@ -82,7 +82,7 @@ Clicking 'Increase Medals' will re-render the Cell Renderer's as the displayed v
 
 Note that we memoise the Cell Renderer using `const RenderCounterCellRenderer = memo( (params) => {`.
 
-<grid-example title='React UI Render Cycles' name='no-wasted-render' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>
+<grid-example title='React UI Render Cycles' name='no-wasted-render' type='react' options=' { "showImportsDropdown": false }'></grid-example>
 
 The example below demonstrates how the Cell Renderer gets re-rendered when we do not memoise the Cell Renderer.
 
@@ -90,7 +90,7 @@ Both examples are identical with the exception of above uses memo, below does no
 
 Note below how moving columns and range selection does get the cell to needlessly re-render.
 
-<grid-example title='React UI Render Cycles' name='wasted-render' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>
+<grid-example title='React UI Render Cycles' name='wasted-render' type='react' options=' { "showImportsDropdown": false }'></grid-example>
 
 ## Advanced Grid Features
 
@@ -98,11 +98,11 @@ The rendering of AG Grid is 100% React regardless of what grid features are used
 
 Below is an example with Range Selection, Checkbox Click Selection and Row Grouping.
 
-<grid-example title='React UI Advanced Features' name='advanced-features' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>
+<grid-example title='React UI Advanced Features' name='advanced-features' type='react' options=' { "showImportsDropdown": false }'></grid-example>
 
 Below is an example using Master Detail. When the master grid is AG Grid React, then the detail grids also use AG Grid React. In the example both Master and Detail grids are using React Cell Renderers.
 
-<grid-example title='React UI Master Detail' name='master-detail' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>
+<grid-example title='React UI Master Detail' name='master-detail' type='react' options=' { "showImportsDropdown": false }'></grid-example>
 
 ## All Customisations Supported
 
@@ -116,4 +116,4 @@ The example below shows the following customisations:
 1. Overlays.
 1. Tooltip.
 
-<grid-example title='React UI All Customisations' name='all-customisations' type='react' options=' { "enterprise": true, "showImportsDropdown": false }'></grid-example>
+<grid-example title='React UI All Customisations' name='all-customisations' type='react' options=' { "showImportsDropdown": false }'></grid-example>

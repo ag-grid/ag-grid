@@ -64,7 +64,7 @@ In this section we describe how you can cherry pick modules to provide the featu
 |
 | And that's all that's required. Below are examples using using the above configuration across various frameworks.
 |
-| <grid-example title='Using Modules' name='module-grid' type='multi' options='{ "enterprise": true, "showCode": true }'></grid-example>
+| <grid-example title='Using Modules' name='module-grid' type='multi' options='{ "enterprise": true, "modules": ["clientside", "menu", "excel"], "showCode": true }'></grid-example>
 |
 | [[note]]
 | | Full working examples of this can be found on [GitHub](https://github.com/seanlandsman/ag-grid-module-bundling).

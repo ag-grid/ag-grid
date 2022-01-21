@@ -116,7 +116,7 @@ Two built-in cell renderers are used: `animateShowChange` (bid, mid and ask colu
 
 The example uses a `mockServer`. This is because all of the examples in this documentation work without any dependencies on any server. In your application, instead of using a mock server, you should connect to your real server. However the code in the `mockServer` example can be used to observe what your server code should be doing - it demonstrates keeping a connection open that is aware of the viewport position and pushes data to the client based on the viewport position.
 
-<grid-example title='Viewport Example' name='viewport' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Viewport Example' name='viewport' type='generated' options='{ "enterprise": true, "modules":["viewport"] }'></grid-example>
 
 ## Example Viewport with Pagination
 
@@ -127,5 +127,5 @@ The example below is almost identical to the above example with the following di
 - `viewportRowModelPageSize = 1`: Because we are showing exact pages, the user will not be scrolling, so there is no need to set a minimum page size. Setting page size to `1` means the grid will always ask from the top row through to the bottom row.
 - `viewportRowModelBufferSize = 0`: Likewise because there is no scrolling, there is no sense in bringing back extra rows to act as a buffer.
 
-<grid-example title='Pagination Viewport Example' name='pagination-viewport' type='generated' options='{ "enterprise": true, "exampleHeight": 570 }'></grid-example>
+<grid-example title='Pagination Viewport Example' name='pagination-viewport' type='generated' options='{ "enterprise": true, "modules":["viewport"], "exampleHeight": 570 }'></grid-example>
 

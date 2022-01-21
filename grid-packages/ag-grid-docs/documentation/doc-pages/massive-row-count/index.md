@@ -42,7 +42,7 @@ can be verified by looking at the grid debug output). This means in theory only 
 can get displayed. The grid below is configured with 1,000,000 rows with each row 100px high to
 show this in practice.
 
-<grid-example title='Massive Dataset Example' name='viewport-big-data' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Massive Dataset Example' name='viewport-big-data' type='generated' options='{ "enterprise": true, "modules": ["viewport"] }'></grid-example>
 
 The grid achieves this by altering the vertical position of each row dependent on the scroll position.
 How much each row position is altered by we call the Row Offset.
