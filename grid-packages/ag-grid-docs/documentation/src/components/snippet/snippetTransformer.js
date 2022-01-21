@@ -212,7 +212,7 @@ class ReactTransformer extends SnippetTransformer {
     }
 
     addFrameworkContext(result) {
-        const colDefs = result.length === 0 ? `\n${tab(1)}{/* column definitions ... */}` : result;
+        const colDefs = result.length === 0 ? '' : result;
         const externalProperties = this.externalisedProperties.length > 0;
         const externalSnippet = externalProperties ? this.externalisedProperties.join('\n').trim() + '\n\n' : '';
 

@@ -305,7 +305,13 @@ postSort: rowNodes => {
 `;
 
 exports[`Snippet Component given a mix of grid options it should create 'react' snippets 1`] = `
-"// object property
+"// columnDefs property (special)
+const columnDefs = [
+    { headerName: 'A', field: 'a' },
+    { headerName: 'B', field: 'b' },
+    { headerName: 'C', field: 'c' },
+];
+// object property
 const defaultColDef = {
     // set every column width
     width: 100,
@@ -330,21 +336,25 @@ const postSort = rowNodes => {
 };
 
 <AgGridReact
+    columnDefs={columnDefs}
     defaultColDef={defaultColDef}
     rowHeight={rowHeight}
     rowDragManaged={rowDragManaged}
     rowSelection={rowSelection}
     postSort={postSort}
 >
-    {/* columnDefs property (special) */}
-    <AgGridColumn headerName=\\"A\\" field=\\"a\\" />
-    <AgGridColumn headerName=\\"B\\" field=\\"b\\" />
-    <AgGridColumn headerName=\\"C\\" field=\\"c\\" />
 </AgGridReact>"
 `;
 
 exports[`Snippet Component given a mix of grid options it should create 'react' snippets with space between properties 1`] = `
-"// object property
+"// columnDefs property (special)
+const columnDefs = [
+    { headerName: 'A', field: 'a' },
+    { headerName: 'B', field: 'b' },
+    { headerName: 'C', field: 'c' },
+];
+
+// object property
 const defaultColDef = {
     // set every column width
     width: 100,
@@ -373,21 +383,24 @@ const postSort = rowNodes => {
 };
 
 <AgGridReact
+    columnDefs={columnDefs}
     defaultColDef={defaultColDef}
     rowHeight={rowHeight}
     rowDragManaged={rowDragManaged}
     rowSelection={rowSelection}
     postSort={postSort}
 >
-    {/* columnDefs property (special) */}
-    <AgGridColumn headerName=\\"A\\" field=\\"a\\" />
-    <AgGridColumn headerName=\\"B\\" field=\\"b\\" />
-    <AgGridColumn headerName=\\"C\\" field=\\"c\\" />
 </AgGridReact>"
 `;
 
 exports[`Snippet Component given a mix of grid options it should create 'react' snippets without framework context 1`] = `
-"// object property
+"// columnDefs property (special)
+const columnDefs = [
+    { headerName: 'A', field: 'a' },
+    { headerName: 'B', field: 'b' },
+    { headerName: 'C', field: 'c' },
+];
+// object property
 const defaultColDef = {
     // set every column width
     width: 100,
@@ -412,21 +425,25 @@ const postSort = rowNodes => {
 };
 
 <AgGridReact
+    columnDefs={columnDefs}
     defaultColDef={defaultColDef}
     rowHeight={rowHeight}
     rowDragManaged={rowDragManaged}
     rowSelection={rowSelection}
     postSort={postSort}
 >
-    {/* columnDefs property (special) */}
-    <AgGridColumn headerName=\\"A\\" field=\\"a\\" />
-    <AgGridColumn headerName=\\"B\\" field=\\"b\\" />
-    <AgGridColumn headerName=\\"C\\" field=\\"c\\" />
 </AgGridReact>"
 `;
 
 exports[`Snippet Component given a mix of grid options it should create 'react' snippets without framework context and space between properties 1`] = `
-"// object property
+"// columnDefs property (special)
+const columnDefs = [
+    { headerName: 'A', field: 'a' },
+    { headerName: 'B', field: 'b' },
+    { headerName: 'C', field: 'c' },
+];
+
+// object property
 const defaultColDef = {
     // set every column width
     width: 100,
@@ -455,16 +472,13 @@ const postSort = rowNodes => {
 };
 
 <AgGridReact
+    columnDefs={columnDefs}
     defaultColDef={defaultColDef}
     rowHeight={rowHeight}
     rowDragManaged={rowDragManaged}
     rowSelection={rowSelection}
     postSort={postSort}
 >
-    {/* columnDefs property (special) */}
-    <AgGridColumn headerName=\\"A\\" field=\\"a\\" />
-    <AgGridColumn headerName=\\"B\\" field=\\"b\\" />
-    <AgGridColumn headerName=\\"C\\" field=\\"c\\" />
 </AgGridReact>"
 `;
 
@@ -901,26 +915,56 @@ exports[`Snippet Component given col defs with arrow function properties it shou
 `;
 
 exports[`Snippet Component given col defs with arrow function properties it should create 'react' snippets 1`] = `
-"// col span is 2 for rows with Russia, but 1 for everything else
-const countryColSpan = params => params.data.country === 'Russia' ? 2 : 1;
+"const columnDefs = [
+    {
+        field: 'country',
+        // col span is 2 for rows with Russia, but 1 for everything else
+        colSpan: params => params.data.country === 'Russia' ? 2 : 1,
+    },        
+];
 
-<AgGridReact>
-    <AgGridColumn field=\\"country\\" colSpan={countryColSpan} />
+<AgGridReact columnDefs={columnDefs}>
 </AgGridReact>"
 `;
 
 exports[`Snippet Component given col defs with arrow function properties it should create 'react' snippets with space between properties 1`] = `
-"// col span is 2 for rows with Russia, but 1 for everything else
-const countryColSpan = params => params.data.country === 'Russia' ? 2 : 1;
+"const columnDefs = [
+    {
+        field: 'country',
+        // col span is 2 for rows with Russia, but 1 for everything else
+        colSpan: params => params.data.country === 'Russia' ? 2 : 1,
+    },        
+];
 
-<AgGridReact>
-    <AgGridColumn field=\\"country\\" colSpan={countryColSpan} />
+<AgGridReact columnDefs={columnDefs}>
 </AgGridReact>"
 `;
 
-exports[`Snippet Component given col defs with arrow function properties it should create 'react' snippets without framework context 1`] = `"<AgGridColumn field=\\"country\\" colSpan={countryColSpan} />"`;
+exports[`Snippet Component given col defs with arrow function properties it should create 'react' snippets without framework context 1`] = `
+"const columnDefs = [
+    {
+        field: 'country',
+        // col span is 2 for rows with Russia, but 1 for everything else
+        colSpan: params => params.data.country === 'Russia' ? 2 : 1,
+    },        
+];
 
-exports[`Snippet Component given col defs with arrow function properties it should create 'react' snippets without framework context and space between properties 1`] = `"<AgGridColumn field=\\"country\\" colSpan={countryColSpan} />"`;
+<AgGridReact columnDefs={columnDefs}>
+</AgGridReact>"
+`;
+
+exports[`Snippet Component given col defs with arrow function properties it should create 'react' snippets without framework context and space between properties 1`] = `
+"const columnDefs = [
+    {
+        field: 'country',
+        // col span is 2 for rows with Russia, but 1 for everything else
+        colSpan: params => params.data.country === 'Russia' ? 2 : 1,
+    },        
+];
+
+<AgGridReact columnDefs={columnDefs}>
+</AgGridReact>"
+`;
 
 exports[`Snippet Component given col defs with arrow function properties it should create 'vue' snippets 1`] = `
 "<ag-grid-vue
@@ -1135,44 +1179,87 @@ exports[`Snippet Component given column definitions with functions it should cre
 `;
 
 exports[`Snippet Component given column definitions with functions it should create 'react' snippets 1`] = `
-"// simple number comparator
-const ageComparator = (valueA, valueB, nodeA, nodeB, isInverted) => valueA - valueB;
-// simple string comparator
-const nameComparator = (valueA, valueB, nodeA, nodeB, isInverted) => {
-    if (valueA == valueB) return 0;
-    return (valueA > valueB) ? 1 : -1;
-};
+"const columnDefs = [
+    {
+        field: 'age',
+        // simple number comparator
+        comparator: (valueA, valueB, nodeA, nodeB, isInverted) => valueA - valueB
+    },
+    {
+        field: 'name',
+        // simple string comparator
+        comparator: (valueA, valueB, nodeA, nodeB, isInverted) => {
+            if (valueA == valueB) return 0;
+            return (valueA > valueB) ? 1 : -1;
+        }
+    }
+];
 
-<AgGridReact>
-    <AgGridColumn field=\\"age\\" comparator={ageComparator} />
-    <AgGridColumn field=\\"name\\" comparator={nameComparator} />
+<AgGridReact columnDefs={columnDefs}>
 </AgGridReact>"
 `;
 
 exports[`Snippet Component given column definitions with functions it should create 'react' snippets with space between properties 1`] = `
-"// simple number comparator
-const ageComparator = (valueA, valueB, nodeA, nodeB, isInverted) => valueA - valueB;
+"const columnDefs = [
+    {
+        field: 'age',
+        // simple number comparator
+        comparator: (valueA, valueB, nodeA, nodeB, isInverted) => valueA - valueB
+    },
+    {
+        field: 'name',
+        // simple string comparator
+        comparator: (valueA, valueB, nodeA, nodeB, isInverted) => {
+            if (valueA == valueB) return 0;
+            return (valueA > valueB) ? 1 : -1;
+        }
+    }
+];
 
-// simple string comparator
-const nameComparator = (valueA, valueB, nodeA, nodeB, isInverted) => {
-    if (valueA == valueB) return 0;
-    return (valueA > valueB) ? 1 : -1;
-};
-
-<AgGridReact>
-    <AgGridColumn field=\\"age\\" comparator={ageComparator} />
-    <AgGridColumn field=\\"name\\" comparator={nameComparator} />
+<AgGridReact columnDefs={columnDefs}>
 </AgGridReact>"
 `;
 
 exports[`Snippet Component given column definitions with functions it should create 'react' snippets without framework context 1`] = `
-"<AgGridColumn field=\\"age\\" comparator={ageComparator} />
-<AgGridColumn field=\\"name\\" comparator={nameComparator} />"
+"const columnDefs = [
+    {
+        field: 'age',
+        // simple number comparator
+        comparator: (valueA, valueB, nodeA, nodeB, isInverted) => valueA - valueB
+    },
+    {
+        field: 'name',
+        // simple string comparator
+        comparator: (valueA, valueB, nodeA, nodeB, isInverted) => {
+            if (valueA == valueB) return 0;
+            return (valueA > valueB) ? 1 : -1;
+        }
+    }
+];
+
+<AgGridReact columnDefs={columnDefs}>
+</AgGridReact>"
 `;
 
 exports[`Snippet Component given column definitions with functions it should create 'react' snippets without framework context and space between properties 1`] = `
-"<AgGridColumn field=\\"age\\" comparator={ageComparator} />
-<AgGridColumn field=\\"name\\" comparator={nameComparator} />"
+"const columnDefs = [
+    {
+        field: 'age',
+        // simple number comparator
+        comparator: (valueA, valueB, nodeA, nodeB, isInverted) => valueA - valueB
+    },
+    {
+        field: 'name',
+        // simple string comparator
+        comparator: (valueA, valueB, nodeA, nodeB, isInverted) => {
+            if (valueA == valueB) return 0;
+            return (valueA > valueB) ? 1 : -1;
+        }
+    }
+];
+
+<AgGridReact columnDefs={columnDefs}>
+</AgGridReact>"
 `;
 
 exports[`Snippet Component given column definitions with functions it should create 'vue' snippets 1`] = `
@@ -1436,55 +1523,95 @@ columnDefs: [
 `;
 
 exports[`Snippet Component given column definitions with group columns it should create 'react' snippets 1`] = `
-"<AgGridReact>
-    {/* 2 levels of grouping */}
-    <AgGridColumn headerName=\\"G1\\">
-        <AgGridColumn headerName=\\"C1\\" field=\\"c1\\" />
-        <AgGridColumn headerName=\\"G2\\">
-            <AgGridColumn headerName=\\"C2\\" field=\\"c2\\" />
-            <AgGridColumn headerName=\\"C3\\" field=\\"c3\\" />
-        </AgGridColumn>
-        <AgGridColumn headerName=\\"C4\\" field=\\"c4\\" />
-    </AgGridColumn>
+"// 2 levels of grouping
+const columnDefs = [
+    {
+        headerName: 'G1',
+        children: [
+            { headerName: 'C1', field: 'c1' },
+            {
+                headerName: 'G2',
+                children: [
+                    { headerName: 'C2', field: 'c2' },
+                    { headerName: 'C3', field: 'c3' },
+                ],
+            },
+            { headerName: 'C4', field: 'c4' },
+        ],
+    },
+];
+
+<AgGridReact columnDefs={columnDefs}>
 </AgGridReact>"
 `;
 
 exports[`Snippet Component given column definitions with group columns it should create 'react' snippets with space between properties 1`] = `
-"<AgGridReact>
-    {/* 2 levels of grouping */}
-    <AgGridColumn headerName=\\"G1\\">
-        <AgGridColumn headerName=\\"C1\\" field=\\"c1\\" />
-        <AgGridColumn headerName=\\"G2\\">
-            <AgGridColumn headerName=\\"C2\\" field=\\"c2\\" />
-            <AgGridColumn headerName=\\"C3\\" field=\\"c3\\" />
-        </AgGridColumn>
-        <AgGridColumn headerName=\\"C4\\" field=\\"c4\\" />
-    </AgGridColumn>
+"// 2 levels of grouping
+const columnDefs = [
+    {
+        headerName: 'G1',
+        children: [
+            { headerName: 'C1', field: 'c1' },
+            {
+                headerName: 'G2',
+                children: [
+                    { headerName: 'C2', field: 'c2' },
+                    { headerName: 'C3', field: 'c3' },
+                ],
+            },
+            { headerName: 'C4', field: 'c4' },
+        ],
+    },
+];
+
+<AgGridReact columnDefs={columnDefs}>
 </AgGridReact>"
 `;
 
 exports[`Snippet Component given column definitions with group columns it should create 'react' snippets without framework context 1`] = `
-"{/* 2 levels of grouping */}
-<AgGridColumn headerName=\\"G1\\">
-    <AgGridColumn headerName=\\"C1\\" field=\\"c1\\" />
-    <AgGridColumn headerName=\\"G2\\">
-        <AgGridColumn headerName=\\"C2\\" field=\\"c2\\" />
-        <AgGridColumn headerName=\\"C3\\" field=\\"c3\\" />
-    </AgGridColumn>
-    <AgGridColumn headerName=\\"C4\\" field=\\"c4\\" />
-</AgGridColumn>"
+"// 2 levels of grouping
+const columnDefs = [
+    {
+        headerName: 'G1',
+        children: [
+            { headerName: 'C1', field: 'c1' },
+            {
+                headerName: 'G2',
+                children: [
+                    { headerName: 'C2', field: 'c2' },
+                    { headerName: 'C3', field: 'c3' },
+                ],
+            },
+            { headerName: 'C4', field: 'c4' },
+        ],
+    },
+];
+
+<AgGridReact columnDefs={columnDefs}>
+</AgGridReact>"
 `;
 
 exports[`Snippet Component given column definitions with group columns it should create 'react' snippets without framework context and space between properties 1`] = `
-"{/* 2 levels of grouping */}
-<AgGridColumn headerName=\\"G1\\">
-    <AgGridColumn headerName=\\"C1\\" field=\\"c1\\" />
-    <AgGridColumn headerName=\\"G2\\">
-        <AgGridColumn headerName=\\"C2\\" field=\\"c2\\" />
-        <AgGridColumn headerName=\\"C3\\" field=\\"c3\\" />
-    </AgGridColumn>
-    <AgGridColumn headerName=\\"C4\\" field=\\"c4\\" />
-</AgGridColumn>"
+"// 2 levels of grouping
+const columnDefs = [
+    {
+        headerName: 'G1',
+        children: [
+            { headerName: 'C1', field: 'c1' },
+            {
+                headerName: 'G2',
+                children: [
+                    { headerName: 'C2', field: 'c2' },
+                    { headerName: 'C3', field: 'c3' },
+                ],
+            },
+            { headerName: 'C4', field: 'c4' },
+        ],
+    },
+];
+
+<AgGridReact columnDefs={columnDefs}>
+</AgGridReact>"
 `;
 
 exports[`Snippet Component given column definitions with group columns it should create 'vue' snippets 1`] = `
@@ -1692,30 +1819,64 @@ exports[`Snippet Component given complex column definition with array property i
 `;
 
 exports[`Snippet Component given complex column definition with array property it should create 'react' snippets 1`] = `
-"const filterModels = [
-    null,
-    { filterType: 'set', values: ['A', 'B', 'C'] }
+"const columnDefs = [
+    {
+        filterType: 'multi',
+        filterModels: [
+            null,
+            { filterType: 'set', values: ['A', 'B', 'C'] }
+        ]
+    }
 ];
 
-<AgGridReact>
-    <AgGridColumn filterType=\\"multi\\" filterModels={filterModels} />
+<AgGridReact columnDefs={columnDefs}>
 </AgGridReact>"
 `;
 
 exports[`Snippet Component given complex column definition with array property it should create 'react' snippets with space between properties 1`] = `
-"const filterModels = [
-    null,
-    { filterType: 'set', values: ['A', 'B', 'C'] }
+"const columnDefs = [
+    {
+        filterType: 'multi',
+        filterModels: [
+            null,
+            { filterType: 'set', values: ['A', 'B', 'C'] }
+        ]
+    }
 ];
 
-<AgGridReact>
-    <AgGridColumn filterType=\\"multi\\" filterModels={filterModels} />
+<AgGridReact columnDefs={columnDefs}>
 </AgGridReact>"
 `;
 
-exports[`Snippet Component given complex column definition with array property it should create 'react' snippets without framework context 1`] = `"<AgGridColumn filterType=\\"multi\\" filterModels={filterModels} />"`;
+exports[`Snippet Component given complex column definition with array property it should create 'react' snippets without framework context 1`] = `
+"const columnDefs = [
+    {
+        filterType: 'multi',
+        filterModels: [
+            null,
+            { filterType: 'set', values: ['A', 'B', 'C'] }
+        ]
+    }
+];
 
-exports[`Snippet Component given complex column definition with array property it should create 'react' snippets without framework context and space between properties 1`] = `"<AgGridColumn filterType=\\"multi\\" filterModels={filterModels} />"`;
+<AgGridReact columnDefs={columnDefs}>
+</AgGridReact>"
+`;
+
+exports[`Snippet Component given complex column definition with array property it should create 'react' snippets without framework context and space between properties 1`] = `
+"const columnDefs = [
+    {
+        filterType: 'multi',
+        filterModels: [
+            null,
+            { filterType: 'set', values: ['A', 'B', 'C'] }
+        ]
+    }
+];
+
+<AgGridReact columnDefs={columnDefs}>
+</AgGridReact>"
+`;
 
 exports[`Snippet Component given complex column definition with array property it should create 'vue' snippets 1`] = `
 "<ag-grid-vue
@@ -1978,35 +2139,51 @@ columnDefs: [
 `;
 
 exports[`Snippet Component given simple column definitions it should create 'react' snippets 1`] = `
-"<AgGridReact>
-    {/* define 3 columns */}
-    <AgGridColumn headerName=\\"A\\" field=\\"a\\" />
-    <AgGridColumn headerName=\\"B\\" field=\\"b\\" />
-    <AgGridColumn headerName=\\"C\\" field=\\"c\\" />
+"// define 3 columns
+const columnDefs = [
+    { headerName: 'A', field: 'a' },
+    { headerName: 'B', field: 'b' },
+    { headerName: 'C', field: 'c' },
+];
+
+<AgGridReact columnDefs={columnDefs}>
 </AgGridReact>"
 `;
 
 exports[`Snippet Component given simple column definitions it should create 'react' snippets with space between properties 1`] = `
-"<AgGridReact>
-    {/* define 3 columns */}
-    <AgGridColumn headerName=\\"A\\" field=\\"a\\" />
-    <AgGridColumn headerName=\\"B\\" field=\\"b\\" />
-    <AgGridColumn headerName=\\"C\\" field=\\"c\\" />
+"// define 3 columns
+const columnDefs = [
+    { headerName: 'A', field: 'a' },
+    { headerName: 'B', field: 'b' },
+    { headerName: 'C', field: 'c' },
+];
+
+<AgGridReact columnDefs={columnDefs}>
 </AgGridReact>"
 `;
 
 exports[`Snippet Component given simple column definitions it should create 'react' snippets without framework context 1`] = `
-"{/* define 3 columns */}
-<AgGridColumn headerName=\\"A\\" field=\\"a\\" />
-<AgGridColumn headerName=\\"B\\" field=\\"b\\" />
-<AgGridColumn headerName=\\"C\\" field=\\"c\\" />"
+"// define 3 columns
+const columnDefs = [
+    { headerName: 'A', field: 'a' },
+    { headerName: 'B', field: 'b' },
+    { headerName: 'C', field: 'c' },
+];
+
+<AgGridReact columnDefs={columnDefs}>
+</AgGridReact>"
 `;
 
 exports[`Snippet Component given simple column definitions it should create 'react' snippets without framework context and space between properties 1`] = `
-"{/* define 3 columns */}
-<AgGridColumn headerName=\\"A\\" field=\\"a\\" />
-<AgGridColumn headerName=\\"B\\" field=\\"b\\" />
-<AgGridColumn headerName=\\"C\\" field=\\"c\\" />"
+"// define 3 columns
+const columnDefs = [
+    { headerName: 'A', field: 'a' },
+    { headerName: 'B', field: 'b' },
+    { headerName: 'C', field: 'c' },
+];
+
+<AgGridReact columnDefs={columnDefs}>
+</AgGridReact>"
 `;
 
 exports[`Snippet Component given simple column definitions it should create 'vue' snippets 1`] = `
