@@ -52,7 +52,7 @@ Note the following:
 - The `processCellCallback` create a formula that has a similar function of the `valueGetter`.
 - The exported Excel Sheet will have the `Full Name` column computed using a formula that uses the `First Name` and `Last Name` columns as inputs.
 
-<grid-example title='Excel Export - Formula DataType' name='excel-export-formula-data-type' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Excel Export - Formula DataType' name='excel-export-formula-data-type' type='generated' options='{ "enterprise": true, "modules": ["clientside", "excel", "menu"] }'></grid-example>
 
 ## Auto Convert Formulas
 
@@ -87,7 +87,7 @@ Note the following:
 - The `processCellCallback` code will be executed for all cells exported to Excel. This code will create an Excel formula for any cell with a `valueGetter`. In our sample there's only one such column (Full Name), and we output the corresponding formula (CONCATENATE) into the Excel exported file. This way the exported Excel file will have cells in the `Full Name` column be computed based on the values of `First Name` and `Last Name`.
 - As `autoConvertFormulas=true` there is no need to declare `dataType='Formula'`
 
-<grid-example title='Excel Export - Auto Convert Formulas' name='excel-export-auto-convert-formulas' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Excel Export - Auto Convert Formulas' name='excel-export-auto-convert-formulas' type='generated' options='{ "enterprise": true, "modules": ["clientside", "excel", "menu"] }'></grid-example>
 
 ## Next Up
 

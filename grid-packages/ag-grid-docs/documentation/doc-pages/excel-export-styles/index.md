@@ -111,7 +111,7 @@ Note the following:
 
 - The silver column has a style with `dataType=string`. This forces this column to be rendered as text in Excel even though all of their cells are numeric.
 
-<grid-example title='Excel Export - Styles' name='excel-export-with-styles' type='generated' options='{ "enterprise": true, "exampleHeight": 815 }'></grid-example>
+<grid-example title='Excel Export - Styles' name='excel-export-with-styles' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "excel"], "exampleHeight": 815 }'></grid-example>
 
 ## Example: Styling Row Groups
 
@@ -157,7 +157,7 @@ getIndentClass(params: CellClassParams): string[] | string {
 }
 ```
 
-<grid-example title='Excel Export - Styling Row Groups' name='excel-export-styling-row-groups' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Excel Export - Styling Row Groups' name='excel-export-styling-row-groups' type='generated' options='{  "enterprise": true, "modules": ["clientside", "menu", "excel", "rowgrouping"]}'></grid-example>
 
 ## Handling Excel Style Errors
 

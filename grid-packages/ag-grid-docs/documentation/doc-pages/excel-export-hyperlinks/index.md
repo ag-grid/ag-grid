@@ -44,7 +44,7 @@ Note the following:
 - The URL column of the grid below has URL values.
 - In the exported Excel file, the URL column has active links for these URL values.
 
-<grid-example title='Excel Export - Hyperlinks' name='excel-export-hyperlinks' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Excel Export - Hyperlinks' name='excel-export-hyperlinks' type='generated' options='{ "enterprise": true, "modules": ["clientside", "excel", "menu"] }'></grid-example>
 
 ## Next Up
 

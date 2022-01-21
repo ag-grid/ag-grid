@@ -39,7 +39,7 @@ Note the following:
 
 - Each Detail grid gets exported into a separate sheet in the Excel file
 
-<grid-example title='Excel Export - Multiple Sheets with Master Detail' name='multiple-sheets' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Excel Export - Multiple Sheets with Master Detail' name='multiple-sheets' type='generated' options='{ "enterprise": true, "modules": ["clientside", "masterdetail", "menu", "columnpanel", "clipboard", "excel"] }'></grid-example>
 
 ## Next Up
 

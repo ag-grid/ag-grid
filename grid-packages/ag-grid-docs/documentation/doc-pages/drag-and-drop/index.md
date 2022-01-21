@@ -86,4 +86,4 @@ The example below shows a custom drag and drop cell renderer. Note the following
 - The dragging works similar to before, rows are dragged from the left grid to the right drop zone.
 - The grid does not provide the dragging. Instead, the example's cell renderer implements the drag logic.
 
-<grid-example title='Custom Drag Component' name='custom-drag-comp' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Custom Drag Component' name='custom-drag-comp' type='generated' options='{  }'></grid-example>

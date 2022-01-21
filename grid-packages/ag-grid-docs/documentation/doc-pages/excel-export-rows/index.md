@@ -11,13 +11,13 @@ By default, all the rows in the grid are included in the Excel export. However, 
 
 By default, all visible rows are exported, but by using the `onlySelected` param, only the selected rows will be exported.
 
-<grid-example title='Excel Export - Selected Rows' name='excel-export-selected-rows' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Excel Export - Selected Rows' name='excel-export-selected-rows' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "excel", "csv"] }'></grid-example>
 
 ## Export Multi Line Cells
 
 By default Excel renders every exported value in a cell using a single line. If you need to display a cell value on multiple lines, please set the [Excel Alignment](../excel-export-api/#excelalignment) `wrapText` option as shown in sample below.
 
-<grid-example title='Excel Export - Multi Line' name='excel-export-multi-line' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Excel Export - Multi Line' name='excel-export-multi-line' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "excel", "csv"] }'></grid-example>
 
 ## Pinned Rows
 
@@ -29,7 +29,7 @@ Note the following:
 - If `Skip Pinned Top Rows` is checked, the rows pinned at the top will be skipped.
 - If `Skip Pinned Bottom Rows` is checked, the rows pinned at the bottom will be skipped.
 
-<grid-example title='Excel Export - Pinned Rows' name='excel-export-pinned-rows' type='generated' options='{ "enterprise": true, "exampleHeight": 815 }'></grid-example>
+<grid-example title='Excel Export - Pinned Rows' name='excel-export-pinned-rows' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "excel", "csv"], "exampleHeight": 815 }'></grid-example>
 
 ## Next Up
 

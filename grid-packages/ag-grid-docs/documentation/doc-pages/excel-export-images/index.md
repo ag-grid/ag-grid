@@ -47,7 +47,7 @@ The example below includes a [Custom Cell Renderer](../component-cell-renderer/)
 Note the following:
 - The image gets a margin within the cell because of the `offsetX` and `offsetY` properties in the `ExcelImage`.
 
-<grid-example title='Excel Export - Cells with Images' name='excel-export-cells-with-images' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Excel Export - Cells with Images' name='excel-export-cells-with-images' type='generated' options='{ "enterprise": true, "modules": ["clientside", "excel", "menu"] }'></grid-example>
 
 ## Cells with Images and Text
 
@@ -58,7 +58,7 @@ Note the following:
 - This example returns the image and a value. The value is rendered within the same cell as the image.
 - [Excel Styles](../excel-export-styles/) are used to indent the text and vertically align it with the image.
 
-<grid-example title='Excel Export - Cells with Images and Text' name='excel-export-cells-with-images-text' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Excel Export - Cells with Images and Text' name='excel-export-cells-with-images-text' type='generated' options='{ "enterprise": true, "modules": ["clientside", "excel", "menu"] }'></grid-example>
 
 ## Prepend Images
 
@@ -71,4 +71,4 @@ Note the following:
 [[note]]
 | Even if an ExcelCell object that merges multiple cells across is created, the `ExcelImage` still needs be informed of how many columns it will be spanning. This is done by passing `position: { colSpan: number }` to the `ExcelImage`.
 
-<grid-example title='Excel Export - Prepend Images' name='excel-export-prepend-images' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Excel Export - Prepend Images' name='excel-export-prepend-images' type='generated' options='{ "enterprise": true, "modules": ["clientside", "csv", "excel", "menu"] }'></grid-example>

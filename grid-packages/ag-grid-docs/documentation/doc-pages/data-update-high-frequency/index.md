@@ -56,5 +56,5 @@ The example below demonstrates setting the wait time and also flushing. Note the
 - Transactions getting added and executed is logged to the console.
 - The example listens on event `asyncTransactionsFlushed` and logs how many transactions got applied.
 
-<grid-example title='Flush Transactions' name='flush-transactions' type='generated' options='{ "enterprise": true, "exampleHeight": 590 }'></grid-example>
+<grid-example title='Flush Transactions' name='flush-transactions' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"], "exampleHeight": 590 }'></grid-example>
 

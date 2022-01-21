@@ -15,7 +15,7 @@ Note the following:
 
 - With `prependContent=ExcelCell[][]` or `appendContent=ExcelCell[][]`, custom content will be inserted containing commas and quotes. These commas and quotes will be visible when opened in Excel because they have been escaped properly.
   
-<grid-example title='Excel Export - Custom Header and Footer' name='excel-export-prepend-append' type='generated' options='{ "enterprise": true, "exampleHeight": 815 }'></grid-example>
+<grid-example title='Excel Export - Custom Header and Footer' name='excel-export-prepend-append' type='generated' options='{ "enterprise": true, "modules": ["clientside", "excel", "menu"], "exampleHeight": 815 }'></grid-example>
 
 ## Adding Header and Footer Content
 
@@ -33,7 +33,7 @@ The header and footer object accepts the following placeholders:
 - `&[Path]`: Prints the file path.
 - `&[File]`: Prints the file name.
 
-<grid-example title='Excel Export - Custom Header and Footer' name='excel-export-header-footer' type='generated' options='{ "enterprise": true, "exampleHeight": 815 }'></grid-example>
+<grid-example title='Excel Export - Custom Header and Footer' name='excel-export-header-footer' type='generated' options='{ "enterprise": true,"modules": ["clientside", "excel", "menu"], "exampleHeight": 815 }'></grid-example>
 
 ### ExcelHeaderFooterConfig
 
@@ -51,7 +51,7 @@ The header and footer object accepts the following placeholders:
 
 In addition to exporting the Grid in the Excel file, you can also provide additional content on a separate sheet of the Excel file. This can be useful when you'd like to add a cover page to provide your users additional details on the data in this file.
 
-<grid-example title='Excel Export - Cover Page' name='excel-export-cover-page' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Excel Export - Cover Page' name='excel-export-cover-page' type='generated' options='{ "enterprise": true, "modules": ["clientside", "csv", "excel", "menu"]}'></grid-example>
 
 ## Next Up
 

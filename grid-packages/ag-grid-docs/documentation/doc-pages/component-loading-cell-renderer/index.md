@@ -18,7 +18,7 @@ The example below demonstrates how to provide custom loading cell renderer compo
 - **Custom Loading Cell Renderer** is supplied by name via `gridOptions.loadingCellRenderer`.
 - **Custom Loading Cell Renderer Parameters** are supplied using `gridOptions.loadingCellRendererParams`.
 
-<grid-example title='Custom Loading Cell Renderer' name='custom-loading-cell-renderer' type='generated' options='{ "enterprise": true, "extras": ["fontawesome"] }'></grid-example>
+<grid-example title='Custom Loading Cell Renderer' name='custom-loading-cell-renderer' type='generated' options='{ "enterprise": true, "modules": ["serverside"], "extras": ["fontawesome"] }'></grid-example>
 
 md-include:component-interface-javascript.md
 md-include:component-interface-angular.md

@@ -79,7 +79,7 @@ Note that:
 - If you try to export a value that is not compatible with the underlying data type Excel will display an error when opening the file.
 - When using `dataType: 'DateTime'` Excel doesn't format the resultant value, in this example it shows `39923`. You need to add the formatting inside Excel. You can see a better example of how to handle Date Formatting in the [Excel Styles](/excel-export-styles/) section.
 
-<grid-example title='Excel Data Types' name='excel-export-data-types' type='generated' options='{ "enterprise": true, "exampleHeight": 200 }'></grid-example>
+<grid-example title='Excel Data Types' name='excel-export-data-types' type='generated' options='{ "enterprise": true,"modules": ["clientside", "csv", "excel", "menu"], "exampleHeight": 200 }'></grid-example>
 
 ## Dates
 
@@ -121,7 +121,7 @@ Note the following:
 - All columns apart from the `ISO Format` column use `Value Formatter` to change the date format.
 - The `excelStyles` has a `numberFormat` for each date style (including the ISO Format), otherwise only a number would be displayed.
 
-<grid-example title='Excel Export - Styling Dates' name='excel-export-dates' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Excel Export - Styling Dates' name='excel-export-dates' type='generated' options='{ "enterprise": true, "modules": ["clientside", "csv", "excel", "menu"] }'></grid-example>
 
 ## Next Up
 

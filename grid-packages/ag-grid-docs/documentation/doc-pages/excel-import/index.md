@@ -12,4 +12,4 @@ The spreadsheet can be downloaded [here](https://www.ag-grid.com/example-assets/
 
 ## Example Import
 
-<grid-example title='Import Excel into AG Grid' name='excel-import' type='typescript' options='{ "enterprise": true, "exampleHeight": 500, "extras": ["xlsx-style"] }'></grid-example>
+<grid-example title='Import Excel into AG Grid' name='excel-import' type='typescript' options='{ "enterprise": true,"modules": ["clientside", "menu", "excel"], "exampleHeight": 500, "extras": ["xlsx-style"] }'></grid-example>

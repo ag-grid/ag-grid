@@ -8,7 +8,7 @@ const columnDefs: ColDef[] = [
         valueGetter: function (param) {
             return param.data.col1 + '\n' + param.data.col2
         },
-        cellRendererComp: function (param: ICellRendererParams) {
+        cellRenderer: function (param: ICellRendererParams) {
             return param.value.replace('\n', '<br/>')
         },
     },

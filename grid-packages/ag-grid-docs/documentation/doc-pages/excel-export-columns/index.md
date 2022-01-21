@@ -17,7 +17,7 @@ Note the following:
 - Group Headers will be skipped if Skip Column Group Headers is checked.
 - Normal headers will be skipped if Skip Column Headers is checked.
 
-<grid-example title='Excel Export - Column Headers' name='excel-export-column-headers' type='generated' options='{ "enterprise": true, "exampleHeight": 815 }'></grid-example>
+<grid-example title='Excel Export - Column Headers' name='excel-export-column-headers' type='generated' options='{ "enterprise": true, "modules": ["clientside", "csv", "excel", "menu"], "exampleHeight": 815 }'></grid-example>
 
 ## Hidden Columns
 
@@ -28,7 +28,7 @@ Note the following:
 - By default, **only visible columns will be exported**. The bronze, silver and gold columns will not.
 - If `All Columns` is checked, the bronze, silver and gold columns will be included in the exported file.
 
-<grid-example title='Excel Export - Hidden Columns' name='excel-export-hidden-columns' type='generated' options='{ "enterprise": true, "exampleHeight": 815 }'></grid-example>
+<grid-example title='Excel Export - Hidden Columns' name='excel-export-hidden-columns' type='generated' options='{ "enterprise": true, "modules": ["clientside", "csv", "excel", "menu"], "exampleHeight": 815 }'></grid-example>
 
 ## Next Up
 

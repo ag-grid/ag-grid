@@ -27,7 +27,7 @@ Note the following:
 - The header is exported on each page, so each page will contain 101 records (including the header).
 - Because each export did not have a specified `sheetName`, they will be named `ag-grid`, `ag-grid_1`, `ag-grid_2` and so on.
 
-<grid-example title='Excel Export - Multiple Sheets with Data Selection' name='excel-export-multiple-sheets-selected' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Excel Export - Multiple Sheets with Data Selection' name='excel-export-multiple-sheets-selected' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "excel"]}'></grid-example>
 
 ## Using Data Filtering
 
@@ -38,7 +38,7 @@ Note the following:
 - The exported Excel file will contain one sheet for each sport result.
 - Each sheet was exported using the sport name as the name of the sheet.
 
-<grid-example title='Excel Export - Multiple Sheets with Filtered Data' name='excel-export-multiple-sheets-by-filter' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Excel Export - Multiple Sheets with Filtered Data' name='excel-export-multiple-sheets-by-filter' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "excel"] }'></grid-example>
 
 ## Multiple Grids to Multiple Sheets
 
@@ -50,7 +50,7 @@ Note the following:
 - The contents of the `Selected Athletes` grid will be exported to the `Selected Athletes` sheet.
 - Only the `onExcelExport` method is relevant to **Excel Export**
 
-<grid-example title='Excel Export - Multiple Sheets with Multiple Grids' name='excel-export-multiple-sheets-multiple-grids' type='multi' options='{ "enterprise": true, "extras": ["fontawesome", "bootstrap"] }'></grid-example>
+<grid-example title='Excel Export - Multiple Sheets with Multiple Grids' name='excel-export-multiple-sheets-multiple-grids' type='multi' options='{ "enterprise": true, "modules": ["clientside", "menu", "excel"], "extras": ["fontawesome", "bootstrap"] }'></grid-example>
 
 ## API
 

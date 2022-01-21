@@ -37,7 +37,7 @@ Note the following:
 - Page size and orientation are stored in the `pageSetup` object.
 - Margin values are stored in the `margins` object.
 
-<grid-example title='Excel Export - Page Setup' name='excel-export-page-setup' type='generated' options='{ "enterprise": true, "exampleHeight": 815 }'></grid-example>
+<grid-example title='Excel Export - Page Setup' name='excel-export-page-setup' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "excel"], "exampleHeight": 815 }'></grid-example>
 
 ## Interfaces
 

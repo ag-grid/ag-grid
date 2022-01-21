@@ -15,7 +15,7 @@ const columnDefs: ColDef[] = [
     minWidth: 70,
     width: 70,
     maxWidth: 70,
-    cellRendererComp: countryCellRenderer,
+    cellRenderer: countryCellRenderer,
   },
   { field: 'athlete' },
   { field: 'age' },
