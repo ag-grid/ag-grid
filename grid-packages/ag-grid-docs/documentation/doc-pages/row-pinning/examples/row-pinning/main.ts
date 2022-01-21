@@ -7,7 +7,6 @@ const columnDefs: ColDef[] = [
     cellRendererCompSelector: function (params) {
       if (params.node.rowPinned) {
         return {
-          // spl todo - fails for vue
           comp: CustomPinnedRowRenderer,
           params: {
             style: { color: 'blue' },

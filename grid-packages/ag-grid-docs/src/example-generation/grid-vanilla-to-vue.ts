@@ -1,6 +1,6 @@
-import { getFunctionName, ImportType, isInstanceMethod, modulesProcessor, removeFunctionKeyword } from './parser-utils';
-import { convertTemplate, getImport, toAssignment, toConst, toInput, toMember, toOutput } from './vue-utils';
-import { templatePlaceholder } from "./grid-vanilla-src-parser";
+import {getFunctionName, ImportType, isInstanceMethod, modulesProcessor, removeFunctionKeyword} from './parser-utils';
+import {convertTemplate, getImport, toAssignment, toConst, toInput, toMember, toOutput} from './vue-utils';
+import {templatePlaceholder} from "./grid-vanilla-src-parser";
 import * as JSON5 from "json5";
 
 const GRID_WIDE_COMPONENTS = [
@@ -69,7 +69,7 @@ const OVERRIDABLE_AG_COMPONENTS = [
 ];
 
 function getOnGridReadyCode(bindings: any): string {
-    const { onGridReady, resizeToFit, data } = bindings;
+    const {onGridReady, resizeToFit, data} = bindings;
     const additionalLines = [];
 
     if (onGridReady) {
@@ -81,7 +81,7 @@ function getOnGridReadyCode(bindings: any): string {
     }
 
     if (data) {
-        const { url, callback } = data;
+        const {url, callback} = data;
 
         const setRowDataBlock = callback.indexOf('api.setRowData') >= 0 ?
             callback.replace("params.api.setRowData(data);", "this.rowData = data;") :
@@ -104,8 +104,8 @@ function getOnGridReadyCode(bindings: any): string {
 }
 
 function getModuleImports(bindings: any, componentFileNames: string[]): string[] {
-    const { gridSettings } = bindings;
-    const { modules } = gridSettings;
+    const {gridSettings} = bindings;
+    const {modules} = gridSettings;
 
     const imports = [
         "import Vue from 'vue';",
@@ -117,7 +117,7 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
         if (modules === true) {
             exampleModules = ['clientside'];
         }
-        const { moduleImports, suppliedModules } = modulesProcessor(exampleModules);
+        const {moduleImports, suppliedModules} = modulesProcessor(exampleModules);
 
         imports.push(...moduleImports);
         bindings.gridSuppliedModules = `[${suppliedModules.join(', ')}]`;
@@ -150,7 +150,7 @@ function getModuleImports(bindings: any, componentFileNames: string[]): string[]
 }
 
 function getPackageImports(bindings: any, componentFileNames: string[]): string[] {
-    const { gridSettings } = bindings;
+    const {gridSettings} = bindings;
 
     const imports = [
         "import Vue from 'vue';",
@@ -276,7 +276,7 @@ function getPropertyBindings(bindings: any, componentFileNames: string[], import
 }
 
 function getTemplate(bindings: any, attributes: string[]): string {
-    const { gridSettings } = bindings;
+    const {gridSettings} = bindings;
     const style = gridSettings.noStyle ? '' : `style="width: ${gridSettings.width}; height: ${gridSettings.height};"`;
 
     const agGridTag = `<ag-grid-vue
@@ -367,28 +367,29 @@ function convertColumnDefs(rawColumnDefs, userComponentNames, bindings, componen
                 let value = rawColumnDef[columnProperty];
 
                 if (isParamsProperty(columnProperty)) {
-                    const componentProperty = value.cellRendererComp ? 'cellRendererComp' : value.cellEditorComp ? 'cellEditorComp' : null;
-                    if (componentProperty) {
-                        const parsedValue = value[componentProperty].replace('AG_LITERAL_', '');
-                        if (isExternalVueFile(componentFileNames, parsedValue)) {
-                            value[componentProperty] = parsedValue;
-                        }
-                    }
-                }
-                if (isParamsProperty(columnProperty) && value.filters) {
-                    value.filters.forEach(filter => {
-                        Object.keys(filter).forEach(filterProperty => {
-                            if (isComponent(filterProperty) && !filter[filterProperty].startsWith("ag")) {
-                                const descriptor = Object.getOwnPropertyDescriptor(filter, filterProperty);
-                                descriptor.value = descriptor.value.replace('AG_LITERAL_', '')
-                                if (isExternalVueFile(componentFileNames, descriptor.value)) {
-                                    if (!bindings.components.includes(descriptor.value) && !vueComponents.includes(descriptor.value)) {
-                                        vueComponents.push(descriptor.value)
+                    if (value.filters) {
+                        value.filters.forEach(filter => {
+                            Object.keys(filter).forEach(filterProperty => {
+                                if (isComponent(filterProperty) && !filter[filterProperty].startsWith("ag")) {
+                                    const descriptor = Object.getOwnPropertyDescriptor(filter, filterProperty);
+                                    descriptor.value = descriptor.value.replace('AG_LITERAL_', '')
+                                    if (isExternalVueFile(componentFileNames, descriptor.value)) {
+                                        if (!bindings.components.includes(descriptor.value) && !vueComponents.includes(descriptor.value)) {
+                                            vueComponents.push(descriptor.value)
+                                        }
                                     }
                                 }
-                            }
+                            })
                         })
-                    })
+                    } else {
+                        const componentProperty = value.cellRendererComp ? 'cellRendererComp' : value.cellEditorComp ? 'cellEditorComp' : null;
+                        if (componentProperty) {
+                            const parsedValue = value[componentProperty].replace('AG_LITERAL_', '');
+                            if (isExternalVueFile(componentFileNames, parsedValue)) {
+                                value[componentProperty] = parsedValue;
+                            }
+                        }
+                    }
                 }
 
                 if (typeof value === "string") {
@@ -409,17 +410,24 @@ function convertColumnDefs(rawColumnDefs, userComponentNames, bindings, componen
                         // ...all of this is necessary so that we can parse the json string
                         columnProperties.push(`${columnProperty}:${value.replace('AG_LITERAL_', '')}`);
                     } else if (value.startsWith('AG_FUNCTION_')) {
+
+                        if(columnProperty === 'cellRendererCompSelector' ||
+                            columnProperty === 'cellEditorCompSelector') {
+                            const component = value.match(/.*comp:\s*(.*),/) ? value.match(/.*comp:\s*(.*),/)[1] : value.match(/.*comp:\s*(.*)$/)[1];
+
+                            value = value.replace(component, `'${component}'`)
+
+                            if (!vueComponents.includes(component)) {
+                                vueComponents.push(component)
+                            }
+                        }
+
                         // values starting with AG_FUNCTION_ are actually function definitions, which we extract and
                         // turn into lambda functions here
                         columnProperties.push(`${columnProperty}:${parseFunction(value)}`);
                     } else {
-                        let propertyName = columnProperty;
-                        // if a framework component then add a "Framework" postfix - ie cellRenderer => cellRendererFramework
-                        // if (isComponent(columnProperty) && userComponentNames.indexOf(value) !== -1) {
-                        //     propertyName = `${columnProperty}Framework`;
-                        // }
                         // ensure any double quotes inside the string are replaced with single quotes
-                        columnProperties.push(`${propertyName}:"${value.replace(/(?<!\\)"/g, '\'')}"`);
+                        columnProperties.push(`${columnProperty}:"${value.replace(/(?<!\\)"/g, '\'')}"`);
                     }
                 } else if (typeof value === 'object') {
                     columnProperties.push(`${columnProperty}:${processObject(value)}`);
@@ -515,11 +523,11 @@ const VueExample = {
     },
     methods: {
         ${eventHandlers
-                .concat(externalEventHandlers)
-                .concat(onGridReady)
-                .concat(instanceMethods)
-                .map(snippet => `${snippet.trim()},`)
-                .join('\n')}
+            .concat(externalEventHandlers)
+            .concat(onGridReady)
+            .concat(instanceMethods)
+            .map(snippet => `${snippet.trim()},`)
+            .join('\n')}
     }
 }
 
