@@ -112,13 +112,13 @@ The following example shows how you can provide a unique look and feel to the he
 }
 ```
 
-<grid-example title='Header Height and Text Orientation' name='text-orientation' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Header Height and Text Orientation' name='text-orientation' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"]}'></grid-example>
 
 ## Dynamic Header Heights
 
 As you can see in the example below, if you change any of the header heights, this change will be reflected automatically. Note how if the value is cleared (set to `undefined`), it might reuse other values. To see all the interactions check the properties descriptions at the top of the page.
 
-<grid-example title='Dynamic Header Height' name='dynamic-height' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Dynamic Header Height' name='dynamic-height' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 ## Header Tooltips
 

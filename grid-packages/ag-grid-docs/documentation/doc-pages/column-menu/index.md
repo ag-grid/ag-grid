@@ -91,7 +91,7 @@ The example below shows the `getMainMenuItems()` in action. To demonstrate diffe
 - All other columns return the default list.
 - `postProcessPopup` is used on the Gold column to reposition the menu 25px lower.
 
-<grid-example title='Column Menu' name='column-menu' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Column Menu' name='column-menu' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel"] }'></grid-example>
 
 ## Customising the Columns Menu Tab
 
@@ -107,7 +107,7 @@ The following example demonstrates all of the above columns menu tab properties.
 - The **Name** column doesn't show the top filter section as `suppressColumnFilter`, `suppressColumnSelectAll` and `suppressColumnExpandAll` are all set to `true`.
 - The **Age** column shows the group columns in a collapsed state as `contractColumnSelection` is set to `true`.
 
-<grid-example title='Customising Columns Menu Tab' name='customising-columns-menu-tab' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Customising Columns Menu Tab' name='customising-columns-menu-tab' type='generated' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel" ] }'></grid-example>
 
 ## Popup Parent
 

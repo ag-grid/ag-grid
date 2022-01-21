@@ -35,7 +35,7 @@ const gridOptions = {
 
 Below shows an example of column group configuration.
 
-<grid-example title='Basic Grouping' name='basic-grouping' type='generated' options='{ "enterprise": true, "exampleHeight": 550 }'></grid-example>
+<grid-example title='Basic Grouping' name='basic-grouping' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
 
 ## Column Definitions vs Column Group Definitions
 
