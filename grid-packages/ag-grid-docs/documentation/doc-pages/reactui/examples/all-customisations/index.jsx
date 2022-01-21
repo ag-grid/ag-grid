@@ -10,7 +10,11 @@ import MyStatusPanel from './myStatusPanel.jsx';
 import MyLoadingOverlay from './myLoadingOverlay.jsx';
 import MyNoRowsOverlay from './myNoRowsOverlay.jsx';
 import MyTooltip from './myTooltip.jsx';
-import { AllModules } from '@ag-grid-enterprise/all-modules';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { ColumnsToolPanelModule } from '@ag-grid-enterprise/column-tool-panel';
+import { FiltersToolPanelModule } from '@ag-grid-enterprise/filter-tool-panel';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { StatusBarModule } from '@ag-grid-enterprise/status-bar';
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
 
@@ -19,7 +23,7 @@ function GridExample() {
     const gridRef = useRef();
 
     // never changes, so we can use useMemo
-    const columnDefs = useMemo( ()=> [
+    const columnDefs = useMemo(() => [
         { field: 'athlete', tooltipField: 'athlete' },
         { field: 'age', tooltipField: 'athlete' },
         { field: 'country', tooltipField: 'athlete' },
@@ -27,7 +31,7 @@ function GridExample() {
     ], []);
 
     // never changes, so we can use useMemo
-    const defaultColDef = useMemo( ()=> ({
+    const defaultColDef = useMemo(() => ({
         resizable: true,
         sortable: true,
         filter: true,
@@ -39,13 +43,13 @@ function GridExample() {
     const [rowData, setRowData] = useState();
 
     // gets called once, no dependencies, loads the grid data
-    useEffect( ()=> {
+    useEffect(() => {
         fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
-            .then( resp => resp.json())
-            .then( data => setRowData(data));
+            .then(resp => resp.json())
+            .then(data => setRowData(data));
     }, []);
 
-    const sideBar = useMemo( ()=> ({
+    const sideBar = useMemo(() => ({
         toolPanels: [
             'columns',
             'filters',
@@ -60,34 +64,34 @@ function GridExample() {
         defaultToolPanel: "myToolPanel"
     }), []);
 
-    const statusBar = useMemo( ()=> ({ 
+    const statusBar = useMemo(() => ({
         statusPanels: [
-            {  key: 'myStatusPanel', statusPanelFramework: MyStatusPanel }
-        ] 
+            { key: 'myStatusPanel', statusPanelFramework: MyStatusPanel }
+        ]
     }), []);
 
-    const onCallFilter = useCallback( ()=> {
+    const onCallFilter = useCallback(() => {
         // because Filter could be created Async, we use the callback mechanism in the method
         // spl todo - throws an error
-        gridRef.current.api.getFilterInstance('year', filterRef => filterRef.sampleToggleMethod() );
+        gridRef.current.api.getFilterInstance('year', filterRef => filterRef.sampleToggleMethod());
     });
 
-    const onCallToolPanel = useCallback( ()=> {
+    const onCallToolPanel = useCallback(() => {
         // tool panels are created up front, so no need for async
         const toolPanelRef = gridRef.current.api.getToolPanelInstance('myToolPanel');
         toolPanelRef.sampleToolPanelMethod();
     });
 
-    const onCallStatusPanel = useCallback( ()=> {
+    const onCallStatusPanel = useCallback(() => {
         // status panels are created up front, so no need for async
         const statusPanelRef = gridRef.current.api.getStatusPanel('myStatusPanel');
         statusPanelRef.sampleStatusPanelMethod();
     });
 
-    const onBtShowLoading = useCallback( () => gridRef.current.api.showLoadingOverlay() );
-    const onBtShowNoRows = useCallback( () => gridRef.current.api.showNoRowsOverlay() );
-    const onBtHide = useCallback( () => gridRef.current.api.hideOverlay() );
-    
+    const onBtShowLoading = useCallback(() => gridRef.current.api.showLoadingOverlay());
+    const onBtShowNoRows = useCallback(() => gridRef.current.api.showNoRowsOverlay());
+    const onBtHide = useCallback(() => gridRef.current.api.hideOverlay());
+
     return (
         <div className='top-level'>
             <div className='buttons-bar'>
@@ -102,7 +106,7 @@ function GridExample() {
                     <button onClick={onBtHide}>Hide Overlay</button>
                 </div>
             </div>
-            <AgGridReact 
+            <AgGridReact
                 ref={gridRef}
                 sideBar={sideBar}
                 statusBar={statusBar}
@@ -110,11 +114,11 @@ function GridExample() {
                 animateRows="true"
                 loadingOverlayComponentFramework={MyLoadingOverlay}
                 noRowsOverlayComponentFramework={MyNoRowsOverlay}
-                modules={AllModules}
+                modules={[ClientSideRowModelModule, ColumnsToolPanelModule, FiltersToolPanelModule, StatusBarModule, MenuModule]}
                 columnDefs={columnDefs}
                 defaultColDef={defaultColDef}
                 rowData={rowData}
-                />
+            />
         </div>
     );
 }

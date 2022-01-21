@@ -1,9 +1,9 @@
 'use strict'
 
-import React, {useEffect, useMemo, useRef, useState} from 'react';
-import {render} from 'react-dom';
-import {AgGridReact} from '@ag-grid-community/react';
-import {AllModules} from '@ag-grid-enterprise/all-modules';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { render } from 'react-dom';
+import { AgGridReact } from '@ag-grid-community/react';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import MySimpleEditor from './mySimpleEditor.jsx';
@@ -131,7 +131,7 @@ const GridExample = () => {
     }, [gridRef.current])
 
     return (
-        <div style={{width: '100%', height: '100%'}}>
+        <div style={{ width: '100%', height: '100%' }}>
             <div
                 style={{
                     height: '100%',
@@ -139,7 +139,7 @@ const GridExample = () => {
                 }}
                 className="ag-theme-alpine">
                 <AgGridReact
-                    modules={AllModules}
+                    modules={[ClientSideRowModelModule]}
                     ref={gridRef}
                     defaultColDef={{
                         editable: true,

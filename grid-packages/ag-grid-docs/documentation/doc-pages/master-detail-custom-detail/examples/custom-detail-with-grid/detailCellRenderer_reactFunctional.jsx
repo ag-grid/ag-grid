@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { AgGridReact } from "@ag-grid-community/react";
-import { AllModules } from "@ag-grid-enterprise/all-modules";
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 
 const DetailCellRenderer = ({ data, node, api }) => {
   const rowId = node.id;
@@ -50,7 +50,7 @@ const DetailCellRenderer = ({ data, node, api }) => {
       columnDefs={colDefs}
       defaultColDef={defaultColDef}
       rowData={data.callRecords}
-      modules={AllModules}
+      modules={[ClientSideRowModelModule]}
       onGridReady={onGridReady}
     />
   </div>;

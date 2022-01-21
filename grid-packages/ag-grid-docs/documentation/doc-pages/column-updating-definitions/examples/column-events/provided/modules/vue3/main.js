@@ -1,6 +1,7 @@
 import { createApp } from 'vue';
 import { AgGridVue } from '@ag-grid-community/vue3';
-import { AllModules } from '@ag-grid-enterprise/all-modules';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
@@ -83,7 +84,7 @@ const VueExample = {
             enablePivot: true,
             enableValue: true
         },
-        modules: AllModules,
+        modules: [ClientSideRowModelModule, RowGroupingModule],
         rowData: null
     }),
     beforeMount() {

@@ -5,7 +5,9 @@ import { bindActionCreators } from 'redux';
 import { AgGridReact } from "@ag-grid-community/react";
 import { actions } from './actions/fileActions.jsx'
 
-import { AllModules } from "@ag-grid-enterprise/all-modules";
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import { MenuModule } from '@ag-grid-enterprise/menu';
+import { RowGroupingModule } from '@ag-grid-enterprise/row-grouping';
 
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
@@ -27,7 +29,7 @@ class FileBrowser extends Component {
     }
   };
 
-  modules = AllModules;
+  modules = [ClientSideRowModelModule, RowGroupingModule, MenuModule];
 
   render() {
     return (

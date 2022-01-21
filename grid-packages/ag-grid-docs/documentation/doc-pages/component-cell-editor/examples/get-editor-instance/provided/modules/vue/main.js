@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import { AgGridVue } from '@ag-grid-community/vue';
-import { AllModules } from '@ag-grid-enterprise/all-modules';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import MySimpleEditor from './mySimpleEditorVue.js';
@@ -72,7 +72,7 @@ const VueExample = {
                 filter: true,
                 resizable: true
             },
-            modules: AllModules,
+            modules: [ClientSideRowModelModule],
             rowData: this.createRowData(),
             interval: null
         }

@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 import { render } from 'react-dom';
 import { AgGridReact } from '@ag-grid-community/react';
-import { AllModules } from '@ag-grid-enterprise/all-modules';
+import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 import MySimpleEditor from './mySimpleEditor.jsx';
@@ -13,7 +13,7 @@ class GridExample extends Component {
         super(props);
 
         this.state = {
-            modules: AllModules,
+            modules: [ClientSideRowModelModule],
             columnDefs: [
                 {
                     field: "first_name",

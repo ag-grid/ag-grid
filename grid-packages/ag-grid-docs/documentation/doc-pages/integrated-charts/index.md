@@ -19,12 +19,7 @@ This section introduces the two ways charts can be created from the data contain
 To minimise bundle sizes for applications that do not require charting, charts are contained in a separate [module](/modules/), which can be imported as follows:
 
 ```ts
-// import all Enterprise modules
-import { ModuleRegistry, AllModules } from '@ag-grid-enterprise/all-modules';
-
-ModuleRegistry.registerModules(AllModules);
-
-// or only import minimal modules required for charts
+// Import minimal modules required for charts
 import { ModuleRegistry } from "@ag-grid-community/core";
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 import { GridChartsModule } from "@ag-grid-enterprise/charts";
