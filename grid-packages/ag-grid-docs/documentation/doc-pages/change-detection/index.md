@@ -25,7 +25,7 @@ a refresh. Notice the following:
 
 - The 'Total' column gets automatically refreshed and flashes.
 
-<grid-example title='Change Detection and Value Getters' name='change-detection-value-getters' type='generated' options='{ "enterprise": true, "exampleHeight": 550 }'></grid-example>
+<grid-example title='Change Detection and Value Getters' name='change-detection-value-getters' type='generated' options='{ "exampleHeight": 550 }'></grid-example>
 
 ## 1. Value Change Detection
 
@@ -105,7 +105,7 @@ The example below shows change detection impacting the result of groups. The gri
 
 - All cells are configured to use one of the grids [animation cell renderer](/change-cell-renderers/) instead of flashing cells.
 
-<grid-example title='Change Detection with Groups' name='change-detection-groups' type='generated' options='{ "enterprise": true, "exampleHeight": 590 }'></grid-example>
+<grid-example title='Change Detection with Groups' name='change-detection-groups' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"], "exampleHeight": 590 }'></grid-example>
 
 Notice above that the group column is also editable (eg you can change one of the rows from group 'A' to group 'G'), however the row does **not** move into the correct group after this change is made. This is discussed below in the section [Change Detection and Sorting, Filtering, Grouping](#sorting-filtering-grouping).
 
@@ -149,7 +149,7 @@ The following example is the same as the example above [Change Detection and Gro
 
 - If you set a filter (eg filter 'A' to be 'less than 50') and then change the data so that a row no longer passes the filter, the grid will fix itself so that the filtering is maintained. In other words, the updated row will be removed if it no longer passes the filter.
 
-<grid-example title='Change Detection with Filter / Sort / Group' name='change-detection-filter-sort-group' type='generated' options='{ "enterprise": true }'></grid-example>
+<grid-example title='Change Detection with Filter / Sort / Group' name='change-detection-filter-sort-group' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "setfilter"] }'></grid-example>
 
 ## Aggregation Path Selection
 
@@ -186,7 +186,7 @@ So with the example below, open up the console and notice the following:
 
 - When some values change via a transactions using any of the other buttons, then all columns are recomputed but only on the changed path.
 
-<grid-example title='Change Detection with Delta Aggregation' name='change-detection-delta-aggregation' type='generated' options='{ "enterprise": true, "exampleHeight": 590 }'></grid-example>
+<grid-example title='Change Detection with Delta Aggregation' name='change-detection-delta-aggregation' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping", "setfilter"], "exampleHeight": 590 }'></grid-example>
 
 ## Change Detection and Pivot
 
@@ -211,4 +211,4 @@ From the example, you can observe:
 
 - Button '**Move Course**' updates a row's course using `api.applyTransaction(transaction)`. This results in the aggregations changing in two locations, once where the course was removed, and another where the course was added.
 
-<grid-example title='Change Detection Pivot' name='change-detection-pivot' type='generated' options='{ "enterprise": true, "exampleHeight": 590}'></grid-example>
+<grid-example title='Change Detection Pivot' name='change-detection-pivot' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping" ], "exampleHeight": 590}'></grid-example>
