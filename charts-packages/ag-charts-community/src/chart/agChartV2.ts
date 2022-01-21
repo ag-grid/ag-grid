@@ -43,7 +43,9 @@ import { Chart } from './chart';
 import { LegendPosition, Legend } from './legend';
 import { SourceEventListener } from '../util/observable';
 import { DropShadow } from '../scene/dropShadow';
-import { ChartTheme } from './themes/chartTheme';
+
+// TODO: Move these out of the old implementation?
+import { processSeriesOptions, getChartTheme } from './agChart';
 
 // Needs to be recursive when we move to TS 4.x+; only supports a maximum level of nesting right now.
 type DeepPartial<T> = {
@@ -132,8 +134,6 @@ function countArrayElements<T extends any[]|any[][]>(input: T): number {
     return count;
 }
 
-const THEME = new ChartTheme();
-
 interface PreparationContext {
     colourIndex: number;
     palette: AgChartThemePalette;
@@ -144,38 +144,58 @@ export abstract class AgChartV2 {
         const mergedOptions = AgChartV2.prepareOptions(options);
 
         if (isAgCartesianChartOptions(mergedOptions)) {
-            return createCartesianChart(mergedOptions);
+            return applyCartesianChartOptions(new CartesianChart(document), mergedOptions);
         }
 
         if (isAgHierarchyChartOptions(mergedOptions)) {
-            return createHierarchyChart(mergedOptions);
+            return applyHierarchyChartOptions(new HierarchyChart(document), mergedOptions);
         }
 
-        if (isAgPolarChartOptions(options)) {
-            return createPolarChart(mergedOptions);
+        if (isAgPolarChartOptions(mergedOptions)) {
+            return applyPolarChartOptions(new PolarChart(document), mergedOptions);
         }
 
         throw new Error('AG Charts - couldn\'t parse configuration, check type of chart: ' + options['type']);
     }
 
-    static prepareOptions<T extends AgChartOptions>(options: T): T {
+    static update(chart: Chart, options: AgChartOptions): Chart {
+        const mergedOptions = AgChartV2.prepareOptions(options);
+
+        if (isAgCartesianChartOptions(mergedOptions) && chart instanceof CartesianChart) {
+            return applyCartesianChartOptions(chart, mergedOptions);
+        }
+
+        if (isAgHierarchyChartOptions(mergedOptions) && chart instanceof HierarchyChart) {
+            return applyHierarchyChartOptions(chart, mergedOptions);
+        }
+
+        if (isAgPolarChartOptions(mergedOptions) && chart instanceof PolarChart) {
+            return applyPolarChartOptions(chart, mergedOptions);
+        }
+
+        throw new Error(`AG Charts - couldn\'t apply configuration, check type of options and chart: ${options['type']}`);
+    }
+
+    private static prepareOptions<T extends AgChartOptions>(options: T): T {
         const defaultOptions = isAgCartesianChartOptions(options) ? DEFAULT_CARTESIAN_CHART_OPTIONS :
             isAgHierarchyChartOptions(options) ? {} :
             isAgPolarChartOptions(options) ? {} :
             {};
 
-        const themeConfig = { ...THEME.getConfig(options.type || 'cartesian') };
+        // TODO: Theme resolution.
+        const theme = getChartTheme(options.theme);
+        const themeConfig = theme.getConfig(options.type || 'cartesian');
         const axesThemes = themeConfig['axes'] || {};
         const seriesThemes = themeConfig['series'] || {};
         delete themeConfig['axes'];
         delete themeConfig['series'];
 
-        const context: PreparationContext = { colourIndex: 0, palette: THEME.palette };
+        const context: PreparationContext = { colourIndex: 0, palette: theme.palette };
         
         const mergedOptions = mergeOptions(defaultOptions as T, themeConfig, options);
 
         // Special cases where we have arrays of elements which need their own defaults.
-        (mergedOptions.series || []).forEach((s: SeriesOptionsTypes, i: number) => {
+        processSeriesOptions(mergedOptions.series || []).forEach((s: SeriesOptionsTypes, i: number) => {
             const type = s.type || 'line';
             mergedOptions.series![i] = AgChartV2.prepareSeries(context, s, DEFAULT_SERIES_OPTIONS[type], seriesThemes[type] || {});
         });
@@ -188,13 +208,21 @@ export abstract class AgChartV2 {
 
         // Preserve non-cloneable properties.
         mergedOptions.container = options.container;
+        mergedOptions.data = options.data;
 
         console.log(mergedOptions);
         return mergedOptions;
     }
 
-    static prepareSeries<T extends SeriesOptionsTypes>(context: PreparationContext, input: T, ...defaults: T[]): T {
-        let paletteOptions: { stroke?: string; fill?: string, fills?: string[], strokes?: string[] } = {};
+    private static prepareSeries<T extends SeriesOptionsTypes>(context: PreparationContext, input: T, ...defaults: T[]): T {
+        let paletteOptions: {
+            stroke?: string;
+            fill?: string;
+            fills?: string[];
+            strokes?: string[];
+            marker?: { fill?: string; stroke?: string; };
+            callout?: { colors?: string[]; };
+        } = {};
 
         const { palette: { fills, strokes } } = context;
         const repeatedFills = [...fills, ...fills];
@@ -208,15 +236,19 @@ export abstract class AgChartV2 {
             case 'column':
                 paletteOptions.fills = repeatedFills.slice(context.colourIndex, colourCount);
                 paletteOptions.strokes = repeatedStrokes.slice(context.colourIndex, colourCount);
-                context.colourIndex += colourCount;
                 break;
             case 'histogram':
-                paletteOptions.fill = fills[context.colourIndex++ % fills.length];
-                paletteOptions.stroke = strokes[context.colourIndex++ % strokes.length];
+                paletteOptions.fill = fills[context.colourIndex % fills.length];
+                paletteOptions.stroke = strokes[context.colourIndex % strokes.length];
                 break;
-            case 'line':
             case 'scatter':
-                paletteOptions.stroke = strokes[context.colourIndex++ % strokes.length];
+                paletteOptions.fill = fills[context.colourIndex % fills.length];
+            case 'line':
+                paletteOptions.stroke = strokes[context.colourIndex % strokes.length];
+                paletteOptions.marker = {
+                    stroke: strokes[context.colourIndex % strokes.length],
+                    fill: fills[context.colourIndex % fills.length],
+                };
                 break;
             case 'treemap':
                 break;
@@ -224,12 +256,13 @@ export abstract class AgChartV2 {
             default:
                 throw new Error('AG Charts - unknown series type: ' + input.type);
         }
+        context.colourIndex += colourCount;
 
         return mergeOptions(...defaults, paletteOptions as T, input);
     }
 
-    static prepareAxis<T extends AxesOptionsTypes>(input: T, ...defaults: T[]): T {
-        return mergeOptions(input, ...defaults);
+    private static prepareAxis<T extends AxesOptionsTypes>(input: T, ...defaults: T[]): T {
+        return mergeOptions(...defaults, input);
     }
 }
 
@@ -406,7 +439,7 @@ const DEFAULT_BAR_SERIES_OPTIONS: AgBarSeriesOptions & { type: 'bar' } = {
     xKey: '',
     xName: '',
     yKeys: [],
-    yNames: {},
+    yNames: [],
     grouped: false,
     normalizedTo: undefined,
     strokeWidth: 1,
@@ -581,9 +614,7 @@ const BAR_SERIES_TRANSFORMS: Transforms<
     label: (p) => labelMapping(p),
 };
 
-function createCartesianChart(options: AgCartesianChartOptions): CartesianChart {
-    const chart = new CartesianChart(document);
-
+function applyCartesianChartOptions(chart: CartesianChart, options: AgCartesianChartOptions) {
     chart.container = options.container || chart.container;
     chart.height = options.height || chart.height;
     chart.width = options.width || chart.width;
@@ -604,19 +635,18 @@ function createCartesianChart(options: AgCartesianChartOptions): CartesianChart 
     chart.autoSize = options.autoSize || chart.autoSize;
 
     registerListeners(chart, options.listeners);
+
+    chart.layoutPending = true;
+
     return chart;
 }
 
-function createHierarchyChart(options: AgHierarchyChartOptions): HierarchyChart {
-    const chart = new HierarchyChart(document);
-
+function applyHierarchyChartOptions(chart: HierarchyChart, options: AgHierarchyChartOptions) {
     registerListeners(chart, options.listeners);
     return chart;
 }
 
-function createPolarChart(options: AgPolarChartOptions): PolarChart {
-    const chart = new HierarchyChart(document);
-
+function applyPolarChartOptions(chart: PolarChart, options: AgPolarChartOptions): PolarChart {
     registerListeners(chart, options.listeners);
     return chart;
 }
@@ -699,6 +729,10 @@ function registerListeners<T extends { addEventListener(key: string, cb: SourceE
 }
 
 function mergeOptions<T>(...options: T[]): T {
+    if (options.some(v => v instanceof Array)) {
+        throw new Error(`AG Charts - merge of arrays not supported: ${JSON.stringify(options)}`);
+    }
+
     const result = deepClone(options[0]);
 
     for (const nextOptions of options.slice(1)) {
