@@ -1,4 +1,4 @@
-import { AgChart, AgCartesianChartOptions, AgCartesianAxisOptions, CartesianChart, ChartAxisPosition } from "ag-charts-community";
+import { AgChart, AgCartesianChartOptions, AgCartesianAxisOptions, CartesianChart, ChartAxisPosition, AgChartV2 } from "ag-charts-community";
 import { _, ChartType, SeriesChartType } from "@ag-grid-community/core";
 import { ChartProxyParams, FieldDefinition, UpdateChartParams } from "../chartProxy";
 import { CartesianChartProxy } from "../cartesian/cartesianChartProxy";
@@ -21,33 +21,65 @@ export class ComboChartProxy extends CartesianChartProxy {
     }
 
     protected createChart(): CartesianChart {
-        return AgChart.create({
-            container: this.chartProxyParams.parentElement,
-            theme: this.chartTheme,
-        });
+        let chart: CartesianChart;
+
+        if ((window as any).test === true) {
+            chart = AgChartV2.create({
+                type: 'cartesian',
+                container: this.chartProxyParams.parentElement,
+                theme: this.chartTheme,
+            }) as CartesianChart;
+
+        } else {
+            chart = AgChart.create({
+                container: this.chartProxyParams.parentElement,
+                theme: this.chartTheme,
+            }) as CartesianChart;
+        }
+
+        // console.log(chart);
+
+        return chart;
     }
 
     public update(params: UpdateChartParams): void {
         const { category, data } = params;
 
-        let options: AgCartesianChartOptions = {
-            container: this.chartProxyParams.parentElement,
-            theme: this.chartTheme,
-            data: this.transformData(data, category.id),
-            series: this.getSeriesOptions(params),
-        }
+        let options: AgCartesianChartOptions;
 
-        const axesCleared = this.clearAxes(params);
-        if (axesCleared) {
-            options.axes = this.getAxes(params);
-            this.prevAxes = options.axes;
+        if ((window as any).test === true) {
+            options = {
+                type: 'cartesian',
+                container: this.chartProxyParams.parentElement,
+                theme: this.chartTheme,
+                data: this.transformData(data, category.id),
+                series: this.getSeriesOptions(params),
+                axes: this.getAxes(params),
+            }
+
+            AgChartV2.update(this.chart as CartesianChart, options);
         } else {
-            // TODO: this should be removed once standalone is fixed
-            this.chart.axes = [];
-            options.axes = this.prevAxes;
+            options = {
+                container: this.chartProxyParams.parentElement,
+                theme: this.chartTheme,
+                data: this.transformData(data, category.id),
+                series: this.getSeriesOptions(params),
+            }
+
+            const axesCleared = this.clearAxes(params);
+            if (axesCleared) {
+                options.axes = this.getAxes(params);
+                this.prevAxes = options.axes;
+            } else {
+                this.chart.axes = [];
+                options.axes = this.prevAxes;
+            }
+
+            AgChart.update(this.chart as CartesianChart, options);
         }
 
-        AgChart.update(this.chart as CartesianChart, options);
+        // console.log(options);
+        // console.log(this.chart);
 
         this.updateLabelRotation(category.id);
     }
