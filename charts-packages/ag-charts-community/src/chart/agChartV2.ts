@@ -197,12 +197,11 @@ export abstract class AgChartV2 {
         const themeConfig = theme.getConfig(options.type || 'cartesian');
         const axesThemes = themeConfig['axes'] || {};
         const seriesThemes = themeConfig['series'] || {};
-        delete themeConfig['axes'];
-        delete themeConfig['series'];
+        const cleanedTheme = mergeOptions(themeConfig, { axes: DELETE, series: DELETE });
 
         const context: PreparationContext = { colourIndex: 0, palette: theme.palette };
         
-        const mergedOptions = mergeOptions(defaultOptions as T, themeConfig, options);
+        const mergedOptions = mergeOptions(defaultOptions as T, cleanedTheme, options);
 
         // Special cases where we have arrays of elements which need their own defaults.
         processSeriesOptions(mergedOptions.series || []).forEach((s: SeriesOptionsTypes, i: number) => {
@@ -213,7 +212,9 @@ export abstract class AgChartV2 {
         if (isAgCartesianChartOptions(mergedOptions)) {
             (mergedOptions.axes || []).forEach((a, i) => {
                 const type = a.type || 'number';
-                mergedOptions.axes![i] = AgChartV2.prepareAxis(a, DEFAULT_AXES_OPTIONS[type], axesThemes[type] || {});
+                // TODO: Handle removal of spurious properties more gracefully.
+                const axesTheme = mergeOptions(axesThemes[type], axesThemes[type][a.position || 'unknown'] || {});
+                mergedOptions.axes![i] = AgChartV2.prepareAxis(a, DEFAULT_AXES_OPTIONS[type], axesTheme);
             });
         }
 
@@ -269,11 +270,15 @@ export abstract class AgChartV2 {
         }
         context.colourIndex += colourCount;
 
-        return mergeOptions(...defaults, paletteOptions as T, input);
+        // Part of the options interface, but not directly consumed by the series implementations.
+        const removeOptions = { stacked: DELETE } as T;
+        return mergeOptions(...defaults, paletteOptions as T, input, removeOptions);
     }
 
     private static prepareAxis<T extends AxesOptionsTypes>(input: T, ...defaults: T[]): T {
-        return mergeOptions(...defaults, input);
+        // Remove redundant theme overload keys.
+        const removeOptions = { top: DELETE, bottom: DELETE, left: DELETE, right: DELETE } as any;
+        return mergeOptions(...defaults, input, removeOptions);
     }
 }
 
@@ -385,7 +390,6 @@ const DEFAULT_CARTESIAN_CHART_OPTIONS: AgCartesianChartOptions = {
     title: DEFAULT_TITLE,
     tooltip: DEFAULT_TOOLTIP,
     type: 'cartesian',
-
     series: [],
     axes: [{
         type: NumberAxis.type,
@@ -414,7 +418,7 @@ const DEFAULT_LINE_SERIES_OPTIONS: AgLineSeriesOptions = {
         enabled: true,
         renderer: undefined,
         format: undefined,
-},
+    },
     highlightStyle: {
         item: { fill: 'yellow' },
         series: { dimOpacity: 1 },
@@ -740,6 +744,7 @@ function registerListeners<T extends { addEventListener(key: string, cb: SourceE
     }
 }
 
+const DELETE = Symbol('<delete-property>') as any;
 function mergeOptions<T>(...options: T[]): T {
     if (options.some(v => v instanceof Array)) {
         throw new Error(`AG Charts - merge of arrays not supported: ${JSON.stringify(options)}`);
@@ -749,7 +754,9 @@ function mergeOptions<T>(...options: T[]): T {
 
     for (const nextOptions of options.slice(1)) {
         for (const nextProp in nextOptions) {
-            if (result[nextProp] instanceof Array) {
+            if (nextOptions[nextProp] === DELETE) { 
+                delete result[nextProp];
+            } else if (result[nextProp] instanceof Array) {
                 // Overwrite array properties that already exist.
                 result[nextProp] = deepClone(nextOptions[nextProp]);
             } else if (typeof result[nextProp] === 'object') {
@@ -806,9 +813,13 @@ function applyOptionValues<
         const currentValue = targetAny[property];
         const ctr = constructors[property];
         try {
+            const targetClass = targetAny.constructor?.name;
             const currentValueType = classify(currentValue);
             const newValueType = classify(newValue);
 
+            if (targetClass != null && targetClass !== 'Object' && !(property in target || targetAny.hasOwnProperty(property))) {
+                throw new Error(`Property doesn't exist in target type: ${targetClass}`);
+            }
             if (currentValueType != null && newValueType != null && currentValueType !== newValueType) {
                 throw new Error(`Property types don't match, can't apply: currentValueType=${currentValueType}, newValueType=${newValueType}`);
             }

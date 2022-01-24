@@ -61,9 +61,9 @@ export interface AxisLabelFormatterParams {
 
 export class AxisLabel {
 
-    fontStyle?: FontStyle;
+    fontStyle?: FontStyle = undefined;
 
-    fontWeight?: FontWeight;
+    fontWeight?: FontWeight = undefined;
 
     fontSize: number = 12;
 
@@ -117,9 +117,9 @@ export class AxisLabel {
      * digits used by the tick step. For example, if the tick step is `0.0005`,
      * the `fractionDigits` is 4.
      */
-    formatter?: (params: AxisLabelFormatterParams) => string;
+    formatter?: (params: AxisLabelFormatterParams) => string = undefined;
 
-    onFormatChange?: (format?: string) => void;
+    onFormatChange?: (format?: string) => void = undefined;
 
     private _format: string | undefined;
     set format(value: string | undefined) {
