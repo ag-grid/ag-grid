@@ -206,6 +206,8 @@ export class Legend extends Observable {
         const bboxes: BBox[] = [];
         const itemMarker = this.item.marker;
         const itemLabel = this.item.label;
+        const maxCharCount = 25;
+        const ellipsis = `...`;
         itemSelection.each((markerLabel, datum) => {
             // TODO: measure only when one of these properties or data change (in a separate routine)
             markerLabel.markerSize = itemMarker.size;
@@ -214,7 +216,12 @@ export class Legend extends Observable {
             markerLabel.fontWeight = itemLabel.fontWeight;
             markerLabel.fontSize = itemLabel.fontSize;
             markerLabel.fontFamily = itemLabel.fontFamily;
-            markerLabel.text = datum.label.text;
+
+            let text = datum.label.text;
+            if (text.length > maxCharCount) {
+                text = `${text.substring(0, maxCharCount - ellipsis.length)}${ellipsis}`;
+            }
+            markerLabel.text = text;
 
             bboxes.push(markerLabel.computeBBox());
         });
