@@ -3283,26 +3283,12 @@ export class ColumnModel extends BeanStub {
 
     private updateGroupsAndDisplayedColumns(source: ColumnEventType) {
 
-        const hashDisplayedCols = () => {
-            const toHash = (cols: Column[]) => cols.map(c => c.getInstanceId()).join('|');
-            const lists = [this.displayedColumnsLeft, this.displayedColumnsRight, this.displayedColumnsCenter];
-            const res = lists.map(toHash).join('$');
-            return res;
-        };
-
-        const hashBefore = hashDisplayedCols();
-
         this.updateOpenClosedVisibilityInColumnGroups();
         this.deriveDisplayedColumns(source);
         this.refreshFlexedColumns();
         this.extractViewport();
         this.updateBodyWidths();
         // this event is picked up by the gui, headerRenderer and rowRenderer, to recalculate what columns to display
-
-        const hashAfter = hashDisplayedCols();
-
-        const nothingChanged = hashAfter == hashBefore;
-        if (nothingChanged) { return; }
 
         const event: DisplayedColumnsChangedEvent = {
             type: Events.EVENT_DISPLAYED_COLUMNS_CHANGED,
