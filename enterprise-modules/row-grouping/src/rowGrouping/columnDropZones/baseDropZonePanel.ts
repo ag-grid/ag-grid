@@ -1,4 +1,5 @@
 import {
+    Autowired,
     Column,
     Component,
     Context,
@@ -8,6 +9,7 @@ import {
     DropTarget,
     Events,
     EventService,
+    FocusService,
     GridOptionsWrapper,
     HorizontalDirection,
     LoggerFactory,
@@ -67,6 +69,8 @@ export abstract class BaseDropZonePanel extends Component {
     protected abstract updateColumns(columns: Column[]): void;
     protected abstract getExistingColumns(): Column[];
     protected abstract getIconName(): string;
+
+    @Autowired('focusService') private readonly focusService: FocusService;
 
     constructor(private horizontal: boolean, private valueColumn: boolean) {
         super(`<div class="ag-unselectable"></div>`);
@@ -323,6 +327,13 @@ export abstract class BaseDropZonePanel extends Component {
         const scrollTop = this.eColumnDropList.scrollTop;
         const resizeEnabled = this.resizeEnabled;
         const focusedIndex = this.getFocusedItem();
+
+        let alternateElement = this.focusService.findNextFocusableElement();
+
+        if (!alternateElement) {
+            alternateElement = this.focusService.findNextFocusableElement(undefined, false, true)
+        }
+
         this.toggleResizable(false);
         this.destroyGui();
 
@@ -338,7 +349,7 @@ export abstract class BaseDropZonePanel extends Component {
             this.toggleResizable(resizeEnabled);
         }
 
-        this.restoreFocus(focusedIndex);
+        this.restoreFocus(focusedIndex, alternateElement!);
     }
 
     private getFocusedItem(): number {
@@ -352,12 +363,14 @@ export abstract class BaseDropZonePanel extends Component {
         return items.indexOf(activeElement as HTMLElement);
     }
 
-    private restoreFocus(index: number): void {
+    private restoreFocus(index: number, alternateElement: HTMLElement): void {
         const eGui = this.getGui();
         const items = Array.from(eGui.querySelectorAll('.ag-column-drop-cell'));
 
-        if (!items.length || index === -1) {
-            // TODO: Add logic to handle when focus shouldn't go in the current container
+        if (index === -1) { return; }
+
+        if (items.length === 0) {
+            alternateElement.focus();
         }
 
         const indexToFocus = Math.min(items.length - 1, index);

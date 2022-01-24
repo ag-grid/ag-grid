@@ -29,6 +29,7 @@ import { last } from "./utils/array";
 @Bean('focusService')
 export class FocusService extends BeanStub {
 
+    @Autowired('eGridDiv') private eGridDiv: HTMLElement;
     @Autowired('columnModel') private readonly columnModel: ColumnModel;
     @Autowired('headerNavigationService') private readonly headerNavigationService: HeaderNavigationService;
     @Autowired('columnApi') private readonly columnApi: ColumnApi;
@@ -410,7 +411,7 @@ export class FocusService extends BeanStub {
         return false;
     }
 
-    public findNextFocusableElement(rootNode: HTMLElement, onlyManaged?: boolean | null, backwards?: boolean): HTMLElement | null {
+    public findNextFocusableElement(rootNode: HTMLElement = this.eGridDiv, onlyManaged?: boolean | null, backwards?: boolean): HTMLElement | null {
         const focusable = this.findFocusableElements(rootNode, onlyManaged ? ':not([tabindex="-1"])' : null);
         const eDocument = this.gridOptionsWrapper.getDocument();
         const activeEl = eDocument.activeElement as HTMLElement;
