@@ -351,7 +351,7 @@ is shown below. In this example you can:
 - **File 'Right Click':** reveals option to delete the selected file.
 - **'Reload Component' button:** unmounts and then re-mounts the File View component. Notice that state is preserved via our Redux file store!
 
-<grid-example title='Redux File View' name='redux-file-view' type='react' options=' { "showImportsDropdown": false, "extras": ["fontawesome"] }'></grid-example>
+<grid-example title='Redux File View' name='redux-file-view' type='react' options=' { "enterprise": true, "showImportsDropdown": false, "extras": ["fontawesome"] }'></grid-example>
 
 ## Conclusion
 
