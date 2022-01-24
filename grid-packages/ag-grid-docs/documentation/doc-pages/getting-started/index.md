@@ -560,7 +560,7 @@ title: "Get Started with AG Grid"
 | - Afterwards, we extracted the row nodes' underlying data items and converted them to a string suitable to be
 | presented to the user in an alert box.
 |
-| ## Grouping
+| ## Grouping (enterprise)
 |
 | [[note]]
 | | Grouping is a feature exclusive to AG Grid Enterprise. You are free to trial AG Grid Enterprise to see what
@@ -1098,7 +1098,7 @@ title: "Get Started with AG Grid"
 | simple. Of course, you can substitute that bit with a real-world application logic after you
 | are done with the tutorial.
 |
-| ## Grouping
+| ## Grouping (enterprise)
 |
 | [[note]]
 | | Grouping is a feature exclusive to AG Grid Enterprise. You are free to trial AG Grid Enterprise
@@ -1550,7 +1550,7 @@ title: "Get Started with AG Grid"
 | us this shortcut for the sake of keeping the article short and simple. Of course, you can substitute
 | that bit with a real-world application logic after you are done with the tutorial.
 |
-| ##Grouping (enterprise)
+| ## Grouping (enterprise)
 |
 | [[note]]
 | | Grouping is a feature exclusive to AG Grid Enterprise. You are free to trial AG Grid Enterprise
@@ -2117,7 +2117,7 @@ title: "Get Started with AG Grid"
 | Of course, you can substitute that bit with a real-world application logic after you are
 | done with the tutorial.
 |
-| ## Grouping
+| ## Grouping (enterprise)
 |
 | [[note]]
 | | Grouping is a feature exclusive to AG Grid Enterprise. You are free to trial AG Grid Enterprise
