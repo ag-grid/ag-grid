@@ -16,10 +16,10 @@ npm init --yes
 ## Install Dependencies
 
 ```bash
-npm i --save @ag-grid-community/all-modules
+npm i --save @ag-grid-community/client-side-row-model
 
-# or, if using Enterprise features
-# npm i --save @ag-grid-enterprise/all-modules
+# If using Enterprise features i.e row grouping add those too
+# npm i --save @ag-grid-enterprise/row-grouping
 
 npm i --save-dev typescript ts-loader webpack webpack-dev-server webpack-cli
 npm i --save-dev sass-loader node-sass style-loader css-loader html-webpack-plugin
@@ -30,12 +30,13 @@ npm i --save-dev sass-loader node-sass style-loader css-loader html-webpack-plug
 Our application will be a very simple one, consisting of a single class that will render a simple grid:
 
 ```js
-import { Grid, GridOptions, ModuleRegistry } from "@ag-grid-community/all-modules";
+import { Grid, GridOptions, ModuleRegistry } from "@ag-grid-community/core";
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 
 // or, if using Enterprise features
-// import {Grid, GridOptions, ModuleRegistry} from "@ag-grid-enterprise/all-modules";
-// import {ClientSideRowModelModule} from "@ag-grid-enterprise/all-modules";
+// import {Grid, GridOptions, ModuleRegistry} from "@ag-grid-enterprise/core";
+// import {RowGroupingModule} from '@ag-grid-enterprise/row-grouping';
+// import {ClientSideRowModelModule} from "@ag-grid-community/client-side-row-model";
 
 ModuleRegistry.register(ClientSideRowModelModule);
 
@@ -154,7 +155,7 @@ With all this in place, we can now add the following npm scripts to our package.
 
 ```js
 "scripts": {
-    "start": "webpack-dev-server --inline --progress --port 8080",
+    "start": "webpack-dev-server --progress --port 8080 --mode development",
     "build": "webpack --progress --profile --bail"
 },
 ```
