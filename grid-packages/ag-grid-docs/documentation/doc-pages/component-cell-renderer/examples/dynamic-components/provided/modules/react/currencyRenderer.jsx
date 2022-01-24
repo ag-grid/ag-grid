@@ -13,14 +13,12 @@ export default class CurrencyRenderer extends Component {
         return `${currency}${value.toFixed(2)}`
     }
 
-    // noinspection JSUnusedGlobalSymbols
-    refresh(params) {
-        if (params.value !== this.state.value) {
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if (this.props.value !== this.state.value) {
             this.setState({
-                value: params.value
+                value: this.props.value
             })
         }
-        return true;
     }
 
     render() {

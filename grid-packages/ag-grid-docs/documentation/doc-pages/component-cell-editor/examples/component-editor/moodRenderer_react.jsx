@@ -9,8 +9,10 @@ export default class MoodRenderer extends Component {
         this.setMood(this.props.value);
     }
 
-    refresh(params) {
-        this.setMood(params.value);
+    componentDidUpdate(prevProps, prevState, snapshot) {
+        if(this.props.value !== prevProps.value) {
+            this.setMood(this.props.value);
+        }
     }
 
     setMood(mood) {

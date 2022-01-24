@@ -1,9 +1,8 @@
 'use strict';
 
-import React, {forwardRef, useImperativeHandle, useMemo, useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {render} from 'react-dom';
 import {AgGridReact} from '@ag-grid-community/react';
-
 import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
@@ -28,26 +27,15 @@ const ParamsRenderer = props => {
     return <span>Field: {props.colDef.field}, Value: {props.value}</span>;
 };
 
-const CurrencyRenderer = forwardRef((props, ref) => {
-    const [value, setValue] = useState(props.value);
+const CurrencyRenderer = props => {
+    const value = useMemo(() => props.value, [props.value]);
 
     const formatValueToCurrency = (currency, value) => {
         return `${currency}${value.toFixed(2)}`;
     };
 
-    useImperativeHandle(ref, () => {
-        return {
-            refresh: (params) => {
-                if (params.value !== value) {
-                    setValue(params.value);
-                }
-                return true;
-            }
-        };
-    });
-
     return <span>{formatValueToCurrency('EUR', value)}</span>;
-});
+};
 
 const ChildMessageRenderer = props => {
     const invokeParentMethod = () => {

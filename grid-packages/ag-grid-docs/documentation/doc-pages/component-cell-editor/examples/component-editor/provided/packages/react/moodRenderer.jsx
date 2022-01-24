@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, {Component} from 'react';
 
 export default class MoodRenderer extends Component {
     constructor(props) {
@@ -23,7 +23,7 @@ export default class MoodRenderer extends Component {
 
     render() {
         return (
-            <img width="20px" src={this.state.imgForMood} />
+            <img width="20px" src={this.state.imgForMood}/>
         );
     }
 }

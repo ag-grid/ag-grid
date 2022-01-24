@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {forwardRef, useImperativeHandle, useMemo, useState} from 'react';
+import React, {useMemo, useState} from 'react';
 import {render} from 'react-dom';
 import {AgGridReact} from 'ag-grid-react';
 import 'ag-grid-community/dist/styles/ag-grid.css';
@@ -26,26 +26,15 @@ const ParamsRenderer = props => {
     return <span>Field: {props.colDef.field}, Value: {props.value}</span>;
 };
 
-const CurrencyRenderer = forwardRef((props, ref) => {
-    const [value, setValue] = useState(props.value);
+const CurrencyRenderer = props => {
+    const value = useMemo(() => props.value, [props.value]);
 
     const formatValueToCurrency = (currency, value) => {
         return `${currency}${value.toFixed(2)}`;
     };
 
-    useImperativeHandle(ref, () => {
-        return {
-            refresh: (params) => {
-                if (params.value !== value) {
-                    setValue(params.value);
-                }
-                return true;
-            }
-        };
-    });
-
     return <span>{formatValueToCurrency('EUR', value)}</span>;
-});
+};
 
 const ChildMessageRenderer = props => {
     const invokeParentMethod = () => {
@@ -147,6 +136,10 @@ const GridExample = () => {
                     <AgGridReact
                         rowData={rowData}
                         columnDefs={columnDefs}
+                        // we use immutableData here to ensure that we only re-render what has changed in the grid
+                        // see https://www.ag-grid.com/javascript/immutable-data/ for more information
+                        immutableData={true}
+                        getRowNodeId={data => data.row}
                         context={{
                             methodFromParent
                         }}
