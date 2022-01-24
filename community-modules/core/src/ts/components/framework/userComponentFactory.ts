@@ -44,6 +44,9 @@ import {
 } from "./componentTypes";
 import { FrameworkComponentWrapper } from "./frameworkComponentWrapper";
 import { UserComponentRegistry } from "./userComponentRegistry";
+import { FloatingFilterMapper } from '../../filter/floating/floatingFilterMapper';
+import { ModuleNames } from '../../modules/moduleNames';
+import { ModuleRegistry } from '../../modules/moduleRegistry';
 
 export type DefinitionObject =
     GridOptions
@@ -154,7 +157,63 @@ export class UserComponentFactory extends BeanStub {
 
     private getCompDetails(defObject: DefinitionObject, type: ComponentType, defaultName: string | null | undefined, params: any, mandatory = false): UserCompDetails | undefined {
 
-        const {propertyName, newPropName, cellRenderer} = type;
+        const {propertyName, cellRenderer} = type;
+
+        let {compName, jsComp, fwComp, paramsFromSelector} = this.getCompKeys(defObject, type, params);
+
+        const lookupFromRegistry = (key: string) => {
+            const item = this.userComponentRegistry.retrieve(key);
+            if (item) {
+                jsComp = !item.componentFromFramework ? item.component : undefined;
+                fwComp = item.componentFromFramework ? item.component : undefined;
+            }
+        };
+
+        // if compOption is a string, means we need to look the item up
+        if (compName != null) {
+            lookupFromRegistry(compName);
+        }
+
+        // if lookup brought nothing back, and we have a default, lookup the default
+        if (jsComp == null && fwComp == null && defaultName != null) {
+            lookupFromRegistry(defaultName);
+        }
+
+        // if we have a comp option, and it's a function, replace it with an object equivalent adaptor
+        if (jsComp && cellRenderer && !this.agComponentUtils.doesImplementIComponent(jsComp)) {
+            jsComp = this.agComponentUtils.adaptFunction(propertyName, jsComp);
+        }
+
+        if (!jsComp && !fwComp) {
+            if (mandatory) {
+                console.error(`Could not find component ${compName}, did you forget to configure this component?`);
+            }
+            return;
+        }
+
+        const paramsMerged = this.mergeParamsWithApplicationProvidedParams(defObject, type, params, paramsFromSelector);
+
+        const componentFromFramework = jsComp == null;
+        const componentClass = jsComp ? jsComp : fwComp;
+
+        return {
+            componentFromFramework,
+            componentClass,
+            params: paramsMerged,
+            type: type,
+            newAgStackInstance: () => this.newAgStackInstance(componentClass, componentFromFramework, paramsMerged, type)
+        };
+    }
+
+    private getCompKeys(defObject: DefinitionObject, type: ComponentType, params?: any): 
+                                                {
+                                                    compName: string | undefined, 
+                                                    jsComp: any, 
+                                                    fwComp: any, 
+                                                    paramsFromSelector: any
+                                                } {
+
+        const {propertyName, newPropName} = type;
 
         let compName: string | undefined;
         let jsComp: any;
@@ -231,48 +290,7 @@ export class UserComponentFactory extends BeanStub {
             }
         }
 
-        const lookupFromRegistry = (key: string) => {
-            const item = this.userComponentRegistry.retrieve(key);
-            if (item) {
-                jsComp = !item.componentFromFramework ? item.component : undefined;
-                fwComp = item.componentFromFramework ? item.component : undefined;
-            }
-        };
-
-        // if compOption is a string, means we need to look the item up
-        if (compName != null) {
-            lookupFromRegistry(compName);
-        }
-
-        // if lookup brought nothing back, and we have a default, lookup the default
-        if (jsComp == null && fwComp == null && defaultName != null) {
-            lookupFromRegistry(defaultName);
-        }
-
-        // if we have a comp option, and it's a function, replace it with an object equivalent adaptor
-        if (jsComp && cellRenderer && !this.agComponentUtils.doesImplementIComponent(jsComp)) {
-            jsComp = this.agComponentUtils.adaptFunction(propertyName, jsComp);
-        }
-
-        if (!jsComp && !fwComp) {
-            if (mandatory) {
-                console.error(`Could not find component ${compName}, did you forget to configure this component?`);
-            }
-            return;
-        }
-
-        const paramsMerged = this.mergeParamsWithApplicationProvidedParams(defObject, type, params, paramsFromSelector);
-
-        const componentFromFramework = jsComp == null;
-        const componentClass = jsComp ? jsComp : fwComp;
-
-        return {
-            componentFromFramework,
-            componentClass,
-            params: paramsMerged,
-            type: type,
-            newAgStackInstance: () => this.newAgStackInstance(componentClass, componentFromFramework, paramsMerged, type)
-        };
+        return {compName, jsComp, fwComp, paramsFromSelector};
     }
 
     private newAgStackInstance(
@@ -348,5 +366,26 @@ export class UserComponentFactory extends BeanStub {
         this.context.createBean(component);
         if (component.init == null) { return; }
         return component.init(params);
+    }
+
+    public getDefaultFloatingFilterType(def: IFilterDef): string | null {
+        if (def == null) { return null; }
+
+        let defaultFloatingFilterType: string | null = null;
+
+        let {compName, jsComp, fwComp} = this.getCompKeys(def, FilterComponent);
+
+        if (compName) {
+            // will be undefined if not in the map
+            defaultFloatingFilterType = FloatingFilterMapper.getFloatingFilterType(compName);
+        } else {
+            const usingDefaultFilter = (jsComp==null && fwComp==null) && (def.filter===true || def.filterComp===true);
+            if (usingDefaultFilter) {
+                const setFilterModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.SetFilterModule);
+                defaultFloatingFilterType = setFilterModuleLoaded ? 'agSetColumnFloatingFilter' : 'agTextColumnFloatingFilter';
+            }
+        }
+
+        return defaultFloatingFilterType;
     }
 }
