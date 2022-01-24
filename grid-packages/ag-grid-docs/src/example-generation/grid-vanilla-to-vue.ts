@@ -280,9 +280,9 @@ function getTemplate(bindings: any, attributes: string[]): string {
     const style = gridSettings.noStyle ? '' : `style="width: ${gridSettings.width}; height: ${gridSettings.height};"`;
 
     const agGridTag = `<ag-grid-vue
+    ${bindings.gridSettings.myGridReference ? 'id="myGrid"' : ''}
     ${style}
     class="${gridSettings.theme}"
-    id="myGrid"
     :columnDefs="columnDefs"
     @grid-ready="onGridReady"
     ${attributes.join('\n    ')}></ag-grid-vue>`;
