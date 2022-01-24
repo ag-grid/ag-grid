@@ -13,7 +13,7 @@ you can download the AG Grid's source files and keep them in your project struct
 
 ## Download AG Grid bundle
 
-You can download AG Grid from the `dist` folder of the AG Grid [GitHub Repository](https://github.com/ag-grid/ag-grid/tree/v@AG_GRID_VERSION@/community-modules/all-modules/dist).
+You can download AG Grid from the `dist` folder of the AG Grid [GitHub Repository](https://github.com/ag-grid/ag-grid/tree/v@AG_GRID_VERSION@/grid-packages/ag-grid-community/dist).
 
 There are four bundle files in the distribution:
 
@@ -26,7 +26,7 @@ Should you decide to use the `noStyle` versions of the bundle, the stylesheet fi
 
 ## Download AG Grid Enterprise bundle
 
-You can download AG Grid Enterprise from the `dist` folder of the AG Grid Enterprise [Github Repository](https://github.com/ag-grid/ag-grid/tree/v@AG_GRID_VERSION@/enterprise-modules/all-modules/dist).
+You can download AG Grid Enterprise from the `dist` folder of the AG Grid Enterprise [Github Repository](https://github.com/ag-grid/ag-grid/tree/v@AG_GRID_VERSION@/grid-packages/ag-grid-enterprise/dist).
 
 Again there are four bundle files in the distribution:
 
