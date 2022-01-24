@@ -55,6 +55,7 @@ function getPropertyBindings(bindings: any, componentFileNames: string[]): [stri
 
 function getTemplate(bindings: any, attributes: string[]): string {
     const agChartTag = `<ag-charts-vue
+    ${bindings.gridSettings.myGridReference ? 'id="myGrid"' : ''}
     ${attributes.join('\n    ')}></ag-charts-vue>`;
 
     const template = bindings.template ? bindings.template.replace(templatePlaceholder, agChartTag) : agChartTag;

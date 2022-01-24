@@ -81,7 +81,7 @@ function getImports(bindings: any, componentFileNames: string[], importType: Imp
 function getTemplate(bindings: any, componentAttributes: string[]): string {
     const { gridSettings } = bindings;
     const agGridTag = `<div
-                id="myGrid"
+                ${gridSettings.myGridReference ? 'id="myGrid"' : ''}
                 style={{
                     height: '${gridSettings.height}',
                     width: '${gridSettings.width}'}}

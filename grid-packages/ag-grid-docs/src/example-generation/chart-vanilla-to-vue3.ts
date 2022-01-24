@@ -1,7 +1,7 @@
-import { getFunctionName, isInstanceMethod, removeFunctionKeyword } from './parser-utils';
-import { templatePlaceholder } from './chart-vanilla-src-parser';
-import { toInput, toConst, toMember, toAssignment, convertTemplate, getImport } from './vue-utils';
-import { wrapOptionsUpdateCode } from './chart-utils';
+import {getFunctionName, isInstanceMethod, removeFunctionKeyword} from './parser-utils';
+import {templatePlaceholder} from './chart-vanilla-src-parser';
+import {convertTemplate, getImport, toAssignment, toConst, toInput, toMember} from './vue-utils';
+import {wrapOptionsUpdateCode} from './chart-utils';
 
 function processFunction(code: string): string {
     return wrapOptionsUpdateCode(removeFunctionKeyword(code));
@@ -55,6 +55,7 @@ function getPropertyBindings(bindings: any, componentFileNames: string[]): [stri
 
 function getTemplate(bindings: any, attributes: string[]): string {
     const agChartTag = `<ag-charts-vue
+    ${bindings.gridSettings.myGridReference ? 'id="myGrid"' : ''}
     ${attributes.join('\n    ')}></ag-charts-vue>`;
 
     const template = bindings.template ? bindings.template.replace(templatePlaceholder, agChartTag) : agChartTag;

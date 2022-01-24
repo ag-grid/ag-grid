@@ -13,7 +13,7 @@ The example below shows print layout. The following can be noted:
 - Pressing the button 'Printer Friendly Layout' turns the grid into print layout and removes all scrolls.
 - Pressing the button 'Normal Layout' returns the grid back to normal.
 
-<grid-example title='For Print Simple' name='for-print-simple' type='generated'></grid-example>
+<grid-example title='For Print Simple' name='for-print-simple' type='generated' options='{ "myGridReference": 1 }'></grid-example>
 
 ## Toggling Print Layout
 
@@ -51,7 +51,7 @@ Below shows a more detailed example and also automatically shows the print dialo
 
 - The data is grouped and the group row spans the width of the grid. This group row is included in print layout as normal.
 
-<grid-example title='For Print Complex' name='for-print-complex' type='generated' options='{ "enterprise": true, "modules": ["clientside", "rowgrouping"] }'></grid-example>
+<grid-example title='For Print Complex' name='for-print-complex' type='generated' options='{ "enterprise": true, "myGridReference": 1, "modules": ["clientside", "rowgrouping"] }'></grid-example>
 
 ## Animations & Redraw
 

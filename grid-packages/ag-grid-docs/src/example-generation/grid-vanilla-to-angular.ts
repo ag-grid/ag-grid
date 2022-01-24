@@ -149,9 +149,8 @@ function getTemplate(bindings: any, attributes: string[]): string {
     const style = gridSettings.noStyle ? '' : `style="width: ${gridSettings.width}; height: ${gridSettings.height};"`;
 
     const agGridTag = `<ag-grid-angular
-    #agGrid
     ${style}
-    id="myGrid"
+    ${gridSettings.myGridReference ? 'id="myGrid"' : ''}
     class="${gridSettings.theme}"
     ${attributes.join('\n    ')}
     ></ag-grid-angular>`;

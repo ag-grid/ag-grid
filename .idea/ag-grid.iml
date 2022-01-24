@@ -112,6 +112,7 @@
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/_dev" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/dist" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/documentation/.cache" />
+      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/documentation/doc-pages_orig" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/documentation/public" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/node_modules" />
       <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/node_modules.nosync" />
@@ -143,8 +144,6 @@
       <excludeFolder url="file://$MODULE_DIR$/ignore" />
       <excludeFolder url="file://$MODULE_DIR$/node_modules.nosync" />
       <excludeFolder url="file://$MODULE_DIR$/packages" />
-      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/documentation/public" />
-      <excludeFolder url="file://$MODULE_DIR$/grid-packages/ag-grid-docs/documentation/.cache" />
       <excludeFolder url="file://$MODULE_DIR$/t" />
     </content>
     <content url="file://$MODULE_DIR$/community-modules/react/dev" />

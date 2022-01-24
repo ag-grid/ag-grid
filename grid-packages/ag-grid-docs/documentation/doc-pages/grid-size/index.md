@@ -103,7 +103,7 @@ The example below demonstrates the autoHeight feature. Notice the following:
 | The following test is best viewed if you open it in a new tab, so it is obvious that there are no scroll bars.
 | Note that if you use the example inlined the scroll bars shown are for the containing `iframe`, not the grid.
 
-<grid-example title='Auto Height' name='auto-height' type='generated' options='{ "enterprise": true, "exampleHeight": 660, "noStyle": 1, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
+<grid-example title='Auto Height' name='auto-height' type='generated' options='{ "enterprise": true, "exampleHeight": 660, "noStyle": 1, "myGridReference": 1, "modules": ["clientside", "rowgrouping", "menu", "columnpanel"] }'></grid-example>
 
 When using Auto Height, there is a minimum of 150px set to the grid rows section. This is to avoid an empty grid which would look weird. To remove this minimum height, add the following CSS:
 
