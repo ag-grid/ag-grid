@@ -37,7 +37,7 @@ export class ComboChartProxy extends CartesianChartProxy {
             }) as CartesianChart;
         }
 
-        // console.log(chart);
+        console.log(chart);
 
         return chart;
     }
@@ -129,9 +129,9 @@ export class ComboChartProxy extends CartesianChartProxy {
                 ...bottomOptions,
                 type: this.xAxisType,
                 position: ChartAxisPosition.Bottom,
-                gridStyle: {
-                    width: 0,
-                },
+                gridStyle: [
+                    { strokeWidth: 0 },
+                ],
             },
         ];
 
@@ -180,7 +180,9 @@ export class ComboChartProxy extends CartesianChartProxy {
                 if (!primaryYAxis && lastSecondaryAxis) {
                     // don't remove grid lines from the secondary axis closest to the chart, i.e. last supplied
                 } else {
-                    secondaryAxisOptions.gridStyle = { width: 0 };
+                    secondaryAxisOptions.gridStyle = [
+                        { strokeWidth: 0 },
+                    ];
                 }
 
                 axes.push(secondaryAxisOptions);

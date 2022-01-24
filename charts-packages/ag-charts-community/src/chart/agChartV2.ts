@@ -47,6 +47,12 @@ import { DropShadow } from '../scene/dropShadow';
 // TODO: Move these out of the old implementation?
 import { processSeriesOptions, getChartTheme } from './agChart';
 
+// TODO: Break this file up into several distinct modules:
+// - Main entry point.
+// - Default definitions.
+// - Transforms.
+// - Processing/application.
+
 // Needs to be recursive when we move to TS 4.x+; only supports a maximum level of nesting right now.
 type DeepPartial<T> = {
     [P1 in keyof T]?: T[P1] extends Array<infer E1>
@@ -176,13 +182,17 @@ export abstract class AgChartV2 {
         throw new Error(`AG Charts - couldn\'t apply configuration, check type of options and chart: ${options['type']}`);
     }
 
+    static updateDelta(chart: Chart, update: DeepPartial<AgChartOptions>): Chart {
+        // TODO: Implement.
+        return chart;
+    }
+
     private static prepareOptions<T extends AgChartOptions>(options: T): T {
         const defaultOptions = isAgCartesianChartOptions(options) ? DEFAULT_CARTESIAN_CHART_OPTIONS :
             isAgHierarchyChartOptions(options) ? {} :
             isAgPolarChartOptions(options) ? {} :
             {};
 
-        // TODO: Theme resolution.
         const theme = getChartTheme(options.theme);
         const themeConfig = theme.getConfig(options.type || 'cartesian');
         const axesThemes = themeConfig['axes'] || {};
@@ -196,6 +206,7 @@ export abstract class AgChartV2 {
 
         // Special cases where we have arrays of elements which need their own defaults.
         processSeriesOptions(mergedOptions.series || []).forEach((s: SeriesOptionsTypes, i: number) => {
+            // TODO: Handle graph/series hierarchy properly?
             const type = s.type || 'line';
             mergedOptions.series![i] = AgChartV2.prepareSeries(context, s, DEFAULT_SERIES_OPTIONS[type], seriesThemes[type] || {});
         });
@@ -663,6 +674,7 @@ function createSeries(options: AgChartOptions['series']): Series[] {
                 break;
             case 'bar':
             case 'column':
+                // TODO: Move series transforms into prepareOptions() phase.
                 series.push(applyOptionValues(new BarSeries(), transform(seriesOptions, BAR_SERIES_TRANSFORMS), path));
                 break;
             case 'histogram':
@@ -756,6 +768,18 @@ function mergeOptions<T>(...options: T[]): T {
     return result;
 }
 
+function classify(value: any): 'array' | 'object' | 'primitive' | null {
+    if (value instanceof Array) {
+        return 'array';
+    } else if (typeof value === 'object') {
+        return 'object';
+    } else if (value != null) {
+        return 'primitive';
+    }
+
+    return null;
+}
+
 function applyOptionValues<
     Target,
     Source extends DeepPartial<Target>,
@@ -776,24 +800,31 @@ function applyOptionValues<
     for (const property in options) {
         if (skippableProperties.indexOf(property) >= 0) { continue; }
 
-        const valueToApply = options[property];
+        const newValue = options[property];
         const propertyPath = `${path ? path + '.' : ''}${property}`;
         const targetAny = (target as any);
         const currentValue = targetAny[property];
         const ctr = constructors[property];
         try {
-            if (valueToApply instanceof Array) {
-                targetAny[property] = valueToApply;
-            } else if (typeof valueToApply === 'object') {
+            const currentValueType = classify(currentValue);
+            const newValueType = classify(newValue);
+
+            if (currentValueType != null && newValueType != null && currentValueType !== newValueType) {
+                throw new Error(`Property types don't match, can't apply: currentValueType=${currentValueType}, newValueType=${newValueType}`);
+            }
+
+            if (newValueType === 'array') {
+                targetAny[property] = newValue;
+            } else if (newValueType === 'object') {
                 if (currentValue != null) {
-                    applyOptionValues(currentValue, valueToApply as any, propertyPath);
+                    applyOptionValues(currentValue, newValue as any, propertyPath);
                 } else if (ctr != null) {
-                    targetAny[property] = applyOptionValues(new ctr(), valueToApply as any, propertyPath);
+                    targetAny[property] = applyOptionValues(new ctr(), newValue as any, propertyPath);
                 } else {
-                    targetAny[property] = valueToApply;
+                    targetAny[property] = newValue;
                 }
             } else {
-                targetAny[property] = valueToApply;
+                targetAny[property] = newValue;
             }
         } catch (error) {
             throw new Error(`AG Charts - unable to set: ${propertyPath}; nested error is: ${error.message}`);
