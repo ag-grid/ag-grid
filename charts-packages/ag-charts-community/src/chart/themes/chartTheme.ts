@@ -103,8 +103,7 @@ export class ChartTheme {
         return {
             tooltip: {
                 enabled: true,
-                renderer: undefined,
-                format: undefined
+                renderer: undefined
             },
             visible: true,
             showInLegend: true,
@@ -135,7 +134,6 @@ export class ChartTheme {
             strokeWidth: 1,
             lineDash: [0],
             lineDashOffset: 0,
-            tooltipRenderer: undefined,
             label: {
                 enabled: false,
                 fontStyle: undefined,
@@ -284,8 +282,7 @@ export class ChartTheme {
                 strokeOpacity: 1,
                 lineDash: [0],
                 lineDashOffset: 0,
-                tooltipRenderer: undefined,
-                marker: {
+                    marker: {
                     ...ChartTheme.getCartesianSeriesMarkerDefaults()
                 },
                 label: {
@@ -312,8 +309,7 @@ export class ChartTheme {
                 strokeWidth: 2,
                 fillOpacity: 1,
                 strokeOpacity: 1,
-                tooltipRenderer: undefined,
-                marker: {
+                    marker: {
                     ...ChartTheme.getCartesianSeriesMarkerDefaults()
                 },
                 label: {
@@ -345,8 +341,7 @@ export class ChartTheme {
                     yOffset: 3,
                     blur: 5
                 },
-                tooltipRenderer: undefined,
-                marker: {
+                    marker: {
                     ...ChartTheme.getCartesianSeriesMarkerDefaults(),
                     enabled: false
                 },
@@ -376,8 +371,7 @@ export class ChartTheme {
                 binCount: 10,
                 bins: undefined,
                 aggregation: 'sum',
-                tooltipRenderer: undefined,
-                label: {
+                    label: {
                     enabled: false,
                     fontStyle: undefined,
                     fontWeight: undefined,

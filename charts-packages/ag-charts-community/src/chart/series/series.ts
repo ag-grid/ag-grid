@@ -55,28 +55,28 @@ export interface PolarTooltipRendererParams extends TooltipRendererParams {
 
 export class SeriesItemHighlightStyle {
     fill?: string = 'yellow';
-    stroke?: string;
-    strokeWidth?: number;
+    stroke?: string = undefined;
+    strokeWidth?: number = undefined;
 }
 
 export class SeriesHighlightStyle {
-    strokeWidth?: number;
-    dimOpacity?: number;
+    strokeWidth?: number = undefined;
+    dimOpacity?: number = undefined;
 }
 
 export class HighlightStyle {
     /**
      * @deprecated Use item.fill instead.
      */
-    fill?: string;
+    fill?: string = undefined;
     /**
      * @deprecated Use item.stroke instead.
      */
-    stroke?: string;
+    stroke?: string = undefined;
     /**
     * @deprecated Use item.strokeWidth instead.
     */
-    strokeWidth?: number;
+    strokeWidth?: number = undefined;
     readonly item = new SeriesItemHighlightStyle();
     readonly series = new SeriesHighlightStyle();
 }
@@ -118,6 +118,12 @@ export abstract class Series extends Observable {
     @reactive('layoutChange') showInLegend = true;
 
     cursor = 'default';
+
+    set grouped(g: boolean) {
+        if (g === true) {
+            throw new Error(`AG Charts - grouped: true is unsupported for series of type: ${this.type}`);
+        }
+    }
 
     setColors(fills: string[], strokes: string[]) { }
 

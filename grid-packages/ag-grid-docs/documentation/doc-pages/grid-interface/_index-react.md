@@ -11,7 +11,7 @@
 |
 | ```jsx
 | <AgGridReact
-|    ref="agGrid" // useful for accessing the component directly via ref - optional
+|    ref={gridRef} // useful for accessing the grid's API
 |
 |    rowSelection="multiple" // simple attributes, not bound to any state or prop
 |
@@ -33,51 +33,54 @@
 |
 | ## Access the Grid & Column API
 |
-| When the grid is initialised, it will fire the `gridReady` event. If you want to use the APIs of
-| the grid, you should put an `onGridReady(params)` callback onto the grid and grab the api(s)
-| from the params. You can then call these apis at a later stage to interact with the
-| grid (on top of the interaction that can be done by setting and changing the props).
+| The API of the grid can be referenced through the component's React Reference.
 |
 | ```jsx
-| // provide gridReady callback to the grid
+| // React reference
+| const gridRef = useRef();
+|
+| const myListener = ()=> {
+|     // access the Grid API
+|     gridRef.api.deselectAll();
+|
+|     // access the Grid Column API
+|     gridRef.columnApi.resetColumnState();
+| }
+|
+| <button click={myListener}>Do Something</button>
 | <AgGridReact
-|     onGridReady={onGridReady}
+|     ref={gridRef}
 |     //...
 | />
-|
-| // in onGridReady, store the api for later use
-| onGridReady = (params) => {
-|     // using hooks - setGridApi/setColumnApi are returned by useState
-|     setGridApi(params.api);
-|     setColumnApi(params.columnApi);
-|
-|     // or setState if using components
-|     this.setState({
-|         gridApi: params.api,
-|         columnApi: params.columnApi
-|     });
-| }
-|
-| // use the api some point later!
-| somePointLater() {
-|     // hooks
-|     gridApi.selectAll();
-|     columnApi.setColumnVisible('country', visible);
-|
-|     // components
-|     this.state.gridApi.selectAll();
-|     this.state.columnApi.setColumnVisible('country', visible);
-| }
 | ```
 |
-| The `api` and `columnApi` are also stored inside the `AgGridReact` component, so you can also
-| look up the backing object via React and access the `api` and `columnApi` that way if you'd prefer.
-|
-|  The APIs are also accessible through the component itself. For example, above the `ref` is given as `'myGrid'` which then allows the API to be accessed like this:
+| The Grid API and Column API are also provided as part of all the grid events as well as a parameters
+| to all grid callbacks.
 |
 | ```jsx
-| <button onClick={() => this.refs.agGrid.api.deselectAll()}>Clear Selection</button>
+| // access API from event object
+| onGridReady = e => {
+|     e.api.sizeColumnsToFit();
+|     e.columnApi.resetColumnState();
+| }
+|
+| // access API from callback params object
+| sendToClipboard = params => {
+|     e.api.sizeColumnsToFit();
+|     e.columnApi.resetColumnState();
+| }
+|
+| <AgGridReact
+|     onGridReady={onGridReady} // register event listener
+|     sendToClipboard={sendToClipboard} // register callback
+|     //...
+| />
 | ```
+|
+|[[note]]
+|| Given React is asychronous, the grid may not be initialised when you access the API from the
+|| React reference. If you want to access the API as soon as it's available (ie do initialisation
+|| work), consider listening to the `gridReady` event and doing such initialisation there.
 |
 | ## Grid Options
 |

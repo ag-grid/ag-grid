@@ -47,6 +47,12 @@ import { DropShadow } from '../scene/dropShadow';
 // TODO: Move these out of the old implementation?
 import { processSeriesOptions, getChartTheme } from './agChart';
 
+// TODO: Break this file up into several distinct modules:
+// - Main entry point.
+// - Default definitions.
+// - Transforms.
+// - Processing/application.
+
 // Needs to be recursive when we move to TS 4.x+; only supports a maximum level of nesting right now.
 type DeepPartial<T> = {
     [P1 in keyof T]?: T[P1] extends Array<infer E1>
@@ -176,33 +182,39 @@ export abstract class AgChartV2 {
         throw new Error(`AG Charts - couldn\'t apply configuration, check type of options and chart: ${options['type']}`);
     }
 
+    static updateDelta(chart: Chart, update: DeepPartial<AgChartOptions>): Chart {
+        // TODO: Implement.
+        return chart;
+    }
+
     private static prepareOptions<T extends AgChartOptions>(options: T): T {
         const defaultOptions = isAgCartesianChartOptions(options) ? DEFAULT_CARTESIAN_CHART_OPTIONS :
             isAgHierarchyChartOptions(options) ? {} :
             isAgPolarChartOptions(options) ? {} :
             {};
 
-        // TODO: Theme resolution.
         const theme = getChartTheme(options.theme);
         const themeConfig = theme.getConfig(options.type || 'cartesian');
         const axesThemes = themeConfig['axes'] || {};
         const seriesThemes = themeConfig['series'] || {};
-        delete themeConfig['axes'];
-        delete themeConfig['series'];
+        const cleanedTheme = mergeOptions(themeConfig, { axes: DELETE, series: DELETE });
 
         const context: PreparationContext = { colourIndex: 0, palette: theme.palette };
         
-        const mergedOptions = mergeOptions(defaultOptions as T, themeConfig, options);
+        const mergedOptions = mergeOptions(defaultOptions as T, cleanedTheme, options);
 
         // Special cases where we have arrays of elements which need their own defaults.
         processSeriesOptions(mergedOptions.series || []).forEach((s: SeriesOptionsTypes, i: number) => {
+            // TODO: Handle graph/series hierarchy properly?
             const type = s.type || 'line';
             mergedOptions.series![i] = AgChartV2.prepareSeries(context, s, DEFAULT_SERIES_OPTIONS[type], seriesThemes[type] || {});
         });
         if (isAgCartesianChartOptions(mergedOptions)) {
             (mergedOptions.axes || []).forEach((a, i) => {
                 const type = a.type || 'number';
-                mergedOptions.axes![i] = AgChartV2.prepareAxis(a, DEFAULT_AXES_OPTIONS[type], axesThemes[type] || {});
+                // TODO: Handle removal of spurious properties more gracefully.
+                const axesTheme = mergeOptions(axesThemes[type], axesThemes[type][a.position || 'unknown'] || {});
+                mergedOptions.axes![i] = AgChartV2.prepareAxis(a, DEFAULT_AXES_OPTIONS[type], axesTheme);
             });
         }
 
@@ -258,11 +270,15 @@ export abstract class AgChartV2 {
         }
         context.colourIndex += colourCount;
 
-        return mergeOptions(...defaults, paletteOptions as T, input);
+        // Part of the options interface, but not directly consumed by the series implementations.
+        const removeOptions = { stacked: DELETE } as T;
+        return mergeOptions(...defaults, paletteOptions as T, input, removeOptions);
     }
 
     private static prepareAxis<T extends AxesOptionsTypes>(input: T, ...defaults: T[]): T {
-        return mergeOptions(...defaults, input);
+        // Remove redundant theme overload keys.
+        const removeOptions = { top: DELETE, bottom: DELETE, left: DELETE, right: DELETE } as any;
+        return mergeOptions(...defaults, input, removeOptions);
     }
 }
 
@@ -374,7 +390,6 @@ const DEFAULT_CARTESIAN_CHART_OPTIONS: AgCartesianChartOptions = {
     title: DEFAULT_TITLE,
     tooltip: DEFAULT_TOOLTIP,
     type: 'cartesian',
-
     series: [],
     axes: [{
         type: NumberAxis.type,
@@ -403,7 +418,7 @@ const DEFAULT_LINE_SERIES_OPTIONS: AgLineSeriesOptions = {
         enabled: true,
         renderer: undefined,
         format: undefined,
-},
+    },
     highlightStyle: {
         item: { fill: 'yellow' },
         series: { dimOpacity: 1 },
@@ -663,6 +678,7 @@ function createSeries(options: AgChartOptions['series']): Series[] {
                 break;
             case 'bar':
             case 'column':
+                // TODO: Move series transforms into prepareOptions() phase.
                 series.push(applyOptionValues(new BarSeries(), transform(seriesOptions, BAR_SERIES_TRANSFORMS), path));
                 break;
             case 'histogram':
@@ -728,6 +744,7 @@ function registerListeners<T extends { addEventListener(key: string, cb: SourceE
     }
 }
 
+const DELETE = Symbol('<delete-property>') as any;
 function mergeOptions<T>(...options: T[]): T {
     if (options.some(v => v instanceof Array)) {
         throw new Error(`AG Charts - merge of arrays not supported: ${JSON.stringify(options)}`);
@@ -737,7 +754,9 @@ function mergeOptions<T>(...options: T[]): T {
 
     for (const nextOptions of options.slice(1)) {
         for (const nextProp in nextOptions) {
-            if (result[nextProp] instanceof Array) {
+            if (nextOptions[nextProp] === DELETE) { 
+                delete result[nextProp];
+            } else if (result[nextProp] instanceof Array) {
                 // Overwrite array properties that already exist.
                 result[nextProp] = deepClone(nextOptions[nextProp]);
             } else if (typeof result[nextProp] === 'object') {
@@ -754,6 +773,18 @@ function mergeOptions<T>(...options: T[]): T {
     }
 
     return result;
+}
+
+function classify(value: any): 'array' | 'object' | 'primitive' | null {
+    if (value instanceof Array) {
+        return 'array';
+    } else if (typeof value === 'object') {
+        return 'object';
+    } else if (value != null) {
+        return 'primitive';
+    }
+
+    return null;
 }
 
 function applyOptionValues<
@@ -776,24 +807,35 @@ function applyOptionValues<
     for (const property in options) {
         if (skippableProperties.indexOf(property) >= 0) { continue; }
 
-        const valueToApply = options[property];
+        const newValue = options[property];
         const propertyPath = `${path ? path + '.' : ''}${property}`;
         const targetAny = (target as any);
         const currentValue = targetAny[property];
         const ctr = constructors[property];
         try {
-            if (valueToApply instanceof Array) {
-                targetAny[property] = valueToApply;
-            } else if (typeof valueToApply === 'object') {
+            const targetClass = targetAny.constructor?.name;
+            const currentValueType = classify(currentValue);
+            const newValueType = classify(newValue);
+
+            if (targetClass != null && targetClass !== 'Object' && !(property in target || targetAny.hasOwnProperty(property))) {
+                throw new Error(`Property doesn't exist in target type: ${targetClass}`);
+            }
+            if (currentValueType != null && newValueType != null && currentValueType !== newValueType) {
+                throw new Error(`Property types don't match, can't apply: currentValueType=${currentValueType}, newValueType=${newValueType}`);
+            }
+
+            if (newValueType === 'array') {
+                targetAny[property] = newValue;
+            } else if (newValueType === 'object') {
                 if (currentValue != null) {
-                    applyOptionValues(currentValue, valueToApply as any, propertyPath);
+                    applyOptionValues(currentValue, newValue as any, propertyPath);
                 } else if (ctr != null) {
-                    targetAny[property] = applyOptionValues(new ctr(), valueToApply as any, propertyPath);
+                    targetAny[property] = applyOptionValues(new ctr(), newValue as any, propertyPath);
                 } else {
-                    targetAny[property] = valueToApply;
+                    targetAny[property] = newValue;
                 }
             } else {
-                targetAny[property] = valueToApply;
+                targetAny[property] = newValue;
             }
         } catch (error) {
             throw new Error(`AG Charts - unable to set: ${propertyPath}; nested error is: ${error.message}`);
