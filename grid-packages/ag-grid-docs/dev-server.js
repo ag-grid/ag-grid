@@ -373,7 +373,7 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
     updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
         '        /* START OF GRID COMMUNITY MODULES PATHS PROD - DO NOT DELETE */',
         '        /* END OF GRID COMMUNITY MODULES PATHS PROD - DO NOT DELETE */',
-        gridCommunityModules,
+        gridCommunityModules.filter(module => module.moduleDirName !== 'all-modules'),
         [],
         module => `        "${module.publishedName}": \`https://unpkg.com/${module.cjsFilename}\`,`,
         () => {
@@ -382,8 +382,8 @@ function updateUtilsSystemJsMappingsForFrameworks(gridCommunityModules, gridEnte
     updatedUtilFileContents = updateBetweenStrings(updatedUtilFileContents,
         '        /* START OF GRID ENTERPRISE MODULES PATHS PROD - DO NOT DELETE */',
         '        /* END OF GRID ENTERPRISE MODULES PATHS PROD - DO NOT DELETE */',
-        gridCommunityModules,
-        gridEnterpriseModules,
+        gridCommunityModules.filter(module => module.moduleDirName !== 'all-modules'),
+        gridEnterpriseModules.filter(module => module.moduleDirName !== 'all-modules'),
         module => `        "${module.publishedName}": \`https://unpkg.com/${module.cjsFilename}\`,`,
         module => `        "${module.publishedName}": \`https://unpkg.com/${module.cjsFilename}\`,`);
 
