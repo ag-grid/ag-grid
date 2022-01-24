@@ -661,7 +661,7 @@ export abstract class Chart extends Observable {
                 return axis;
             } else if (directionKeys) {
                 for (let j = 0; j < directionKeys.length; j++) {
-                    if (axisKeys.indexOf(directionKeys[j]) >= 0 ) {
+                    if (axisKeys.indexOf(directionKeys[j]) >= 0) {
                         return axis;
                     }
                 }
@@ -886,49 +886,75 @@ export abstract class Chart extends Observable {
             case 'bottom':
                 legend.performLayout(width - legendSpacing * 2, 0);
                 legendBBox = legendGroup.computeBBox();
+                legendGroup.visible = legendBBox.height < Math.floor((height * 0.5)); // Remove legend if it takes up more than 50% of the chart height.
 
-                translationX = (width - legendBBox.width) / 2 - legendBBox.x;
-                translationY = captionAutoPadding + height - legendBBox.height - legendBBox.y - legendSpacing;
+                if (legendGroup.visible) {
+                    translationX = (width - legendBBox.width) / 2 - legendBBox.x;
+                    translationY = captionAutoPadding + height - legendBBox.height - legendBBox.y - legendSpacing;
 
-                legendAutoPadding.bottom = legendBBox.height;
+                    legendAutoPadding.bottom = legendBBox.height;
+                } else {
+                    legendAutoPadding.bottom = 0;
+                }
+
                 break;
 
             case 'top':
                 legend.performLayout(width - legendSpacing * 2, 0);
                 legendBBox = legendGroup.computeBBox();
+                legendGroup.visible = legendBBox.height < Math.floor((height * 0.5));
 
-                translationX = (width - legendBBox.width) / 2 - legendBBox.x;
-                translationY = captionAutoPadding + legendSpacing - legendBBox.y;
+                if (legendGroup.visible) {
+                    translationX = (width - legendBBox.width) / 2 - legendBBox.x;
+                    translationY = captionAutoPadding + legendSpacing - legendBBox.y;
 
-                legendAutoPadding.top = legendBBox.height;
+                    legendAutoPadding.top = legendBBox.height;
+                } else {
+                    legendAutoPadding.top = 0;
+                }
+
                 break;
 
             case 'left':
                 legend.performLayout(0, height - legendSpacing * 2);
                 legendBBox = legendGroup.computeBBox();
+                legendGroup.visible = legendBBox.width < Math.floor((width * 0.5)); // Remove legend if it takes up more than 50% of the chart width.
 
-                translationX = legendSpacing - legendBBox.x;
-                translationY = captionAutoPadding + (height - legendBBox.height) / 2 - legendBBox.y;
+                if (legendGroup.visible) {
+                    translationX = legendSpacing - legendBBox.x;
+                    translationY = captionAutoPadding + (height - legendBBox.height) / 2 - legendBBox.y;
 
-                legendAutoPadding.left = legendBBox.width;
+                    legendAutoPadding.left = legendBBox.width;
+                } else {
+                    legendAutoPadding.left = 0;
+                }
+
                 break;
 
             default: // case 'right':
                 legend.performLayout(0, height - legendSpacing * 2);
                 legendBBox = legendGroup.computeBBox();
+                legendGroup.visible = legendBBox.width < Math.floor((width * 0.5));
 
-                translationX = width - legendBBox.width - legendBBox.x - legendSpacing;
-                translationY = captionAutoPadding + (height - legendBBox.height) / 2 - legendBBox.y;
+                if (legendGroup.visible) {
+                    translationX = width - legendBBox.width - legendBBox.x - legendSpacing;
+                    translationY = captionAutoPadding + (height - legendBBox.height) / 2 - legendBBox.y;
 
-                legendAutoPadding.right = legendBBox.width;
+                    legendAutoPadding.right = legendBBox.width;
+                } else {
+                    legendAutoPadding.right = 0;
+                }
+
                 break;
         }
 
-        // Round off for pixel grid alignment to work properly.
-        legendGroup.translationX = Math.floor(translationX + legendGroup.translationX);
-        legendGroup.translationY = Math.floor(translationY + legendGroup.translationY);
+        if (legendGroup.visible) {
+            // Round off for pixel grid alignment to work properly.
+            legendGroup.translationX = Math.floor(translationX + legendGroup.translationX);
+            legendGroup.translationY = Math.floor(translationY + legendGroup.translationY);
 
-        this.legendBBox = legendGroup.computeBBox();
+            this.legendBBox = legendGroup.computeBBox();
+        }
     }
 
     private _onMouseDown = this.onMouseDown.bind(this);
@@ -988,7 +1014,7 @@ export abstract class Chart extends Observable {
     lastPick?: {
         datum: SeriesNodeDatum;
         node?: Shape; // We may not always have an associated node, for example
-                      // when line series are rendered without markers.
+        // when line series are rendered without markers.
         event?: MouseEvent;
     };
 
@@ -1000,10 +1026,10 @@ export abstract class Chart extends Observable {
 
         const allSeries = this.series;
 
-        type Point = { x: number, y: number};
+        type Point = { x: number, y: number };
 
         function getDistance(p1: Point, p2: Point): number {
-            return Math.sqrt((p1.x - p2.x)**2 + (p1.y - p2.y)**2);
+            return Math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2);
         }
 
         let minDistance = Infinity;
@@ -1099,8 +1125,8 @@ export abstract class Chart extends Observable {
         }
     }
 
-    protected onMouseDown(event: MouseEvent) {}
-    protected onMouseUp(event: MouseEvent) {}
+    protected onMouseDown(event: MouseEvent) { }
+    protected onMouseUp(event: MouseEvent) { }
 
     protected onMouseOut(event: MouseEvent) {
         this.tooltip.toggle(false);
@@ -1206,7 +1232,7 @@ export abstract class Chart extends Observable {
         if ((this.highlightedDatum && !oldHighlightedDatum) ||
             (this.highlightedDatum && oldHighlightedDatum &&
                 (this.highlightedDatum.series !== oldHighlightedDatum.series ||
-                 this.highlightedDatum.itemId !== oldHighlightedDatum.itemId))) {
+                    this.highlightedDatum.itemId !== oldHighlightedDatum.itemId))) {
             this.series.forEach(s => s.updatePending = true);
         }
     }

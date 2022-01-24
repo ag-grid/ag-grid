@@ -8,12 +8,9 @@ import { Column } from '../../../entities/column';
 import { Events, FilterChangedEvent } from '../../../events';
 import { FilterManager } from '../../../filter/filterManager';
 import { IFloatingFilter, IFloatingFilterParams, IFloatingFilterParentCallback } from '../../../filter/floating/floatingFilter';
-import { FloatingFilterMapper } from '../../../filter/floating/floatingFilterMapper';
 import { GridApi, unwrapUserComp } from '../../../gridApi';
 import { IFilter, IFilterComp, IFilterDef } from '../../../interfaces/iFilter';
 import { IMenuFactory } from '../../../interfaces/iMenuFactory';
-import { ModuleNames } from '../../../modules/moduleNames';
-import { ModuleRegistry } from '../../../modules/moduleRegistry';
 import { Beans } from '../../../rendering/beans';
 import { ColumnHoverService } from '../../../rendering/columnHoverService';
 import { SetLeftFeature } from '../../../rendering/features/setLeftFeature';
@@ -236,7 +233,7 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
         const filterParams = this.filterManager.createFilterParams(this.column, colDef);
         const finalFilterParams = this.userComponentFactory.mergeParamsWithApplicationProvidedParams(colDef, FilterComponent, filterParams);
 
-        let defaultFloatingFilterType = HeaderFilterCellCtrl.getDefaultFloatingFilterType(colDef);
+        let defaultFloatingFilterType = this.userComponentFactory.getDefaultFloatingFilterType(colDef);
         if (defaultFloatingFilterType == null) {
             defaultFloatingFilterType = 'agReadOnlyFloatingFilter';
         }
@@ -259,23 +256,6 @@ export class HeaderFilterCellCtrl extends AbstractHeaderCellCtrl {
         if (compDetails) {
             this.comp.setCompDetails(compDetails);
         }
-    }
-
-    public static getDefaultFloatingFilterType(def: IFilterDef): string | null {
-        if (def == null) { return null; }
-
-        let defaultFloatingFilterType: string | null = null;
-
-        const filter = def.filter!=null ? def.filter : def.filterComp;
-        if (typeof filter === 'string') {
-            // will be undefined if not in the map
-            defaultFloatingFilterType = FloatingFilterMapper.getFloatingFilterType(filter);
-        } else if (def.filter === true) {
-            const setFilterModuleLoaded = ModuleRegistry.isRegistered(ModuleNames.SetFilterModule);
-            defaultFloatingFilterType = setFilterModuleLoaded ? 'agSetColumnFloatingFilter' : 'agTextColumnFloatingFilter';
-        }
-
-        return defaultFloatingFilterType;
     }
 
     private currentParentModel(): any {

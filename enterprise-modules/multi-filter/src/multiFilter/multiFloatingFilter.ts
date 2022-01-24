@@ -103,8 +103,7 @@ export class MultiFloatingFilterComp extends Component implements IFloatingFilte
     }
 
     private createFloatingFilter(filterDef: IFilterDef, params: IFloatingFilterParams<IFilter>): AgPromise<IFloatingFilterComp> | null {
-        const defaultComponentName =
-            HeaderFilterCellCtrl.getDefaultFloatingFilterType(filterDef) || 'agTextColumnFloatingFilter';
+        let defaultComponentName = this.userComponentFactory.getDefaultFloatingFilterType(filterDef) || 'agTextColumnFloatingFilter';
 
         const compDetails = this.userComponentFactory.getFloatingFilterCompDetails(filterDef, params, defaultComponentName);
         return compDetails ? compDetails.newAgStackInstance() : null;
