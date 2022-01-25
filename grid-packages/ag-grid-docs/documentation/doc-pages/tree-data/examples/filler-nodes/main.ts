@@ -23,7 +23,7 @@ const gridOptions: GridOptions = {
   },
   autoGroupColumnDef: {
     headerName: 'Organisation Hierarchy',
-    cellRendererParams: {
+    cellRendererCompParams: {
       suppressCount: true,
     },
   },

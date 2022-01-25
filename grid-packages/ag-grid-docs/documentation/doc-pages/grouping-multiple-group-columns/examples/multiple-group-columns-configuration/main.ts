@@ -17,7 +17,7 @@ const gridOptions: GridOptions = {
   autoGroupColumnDef: {
     headerValueGetter: params => `${params.colDef.headerName} Group Column`,
     minWidth: 220,
-    cellRendererParams: {
+    cellRendererCompParams: {
       suppressCount: true,
       checkbox: true,
     },

@@ -16,7 +16,7 @@ const gridOptions: GridOptions = {
   },
   autoGroupColumnDef: {
     minWidth: 300,
-    cellRendererParams: {
+    cellRendererCompParams: {
       footerValueGetter: (params: any) => {
         const isRootLevel = params.node.level === -1
         if (isRootLevel) {

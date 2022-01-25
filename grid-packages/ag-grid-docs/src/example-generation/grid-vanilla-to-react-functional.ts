@@ -1,10 +1,10 @@
-import { convertFunctionToConstProperty, getFunctionName, ImportType, isInstanceMethod, modulesProcessor } from './parser-utils';
-import { convertFunctionalTemplate, convertFunctionToConstCallback, getImport, getValueType } from './react-utils';
-import { templatePlaceholder } from "./grid-vanilla-src-parser";
+import {convertFunctionToConstProperty, getFunctionName, ImportType, isInstanceMethod, modulesProcessor} from './parser-utils';
+import {convertFunctionalTemplate, convertFunctionToConstCallback, getImport, getValueType} from './react-utils';
+import {templatePlaceholder} from "./grid-vanilla-src-parser";
 
 function getModuleImports(bindings: any, componentFilenames: string[], stateProperties: string[]): string[] {
-    const { gridSettings } = bindings;
-    const { modules } = gridSettings;
+    const {gridSettings} = bindings;
+    const {modules} = gridSettings;
 
     const imports = [
         "import React, { useCallback, useMemo, useRef, useState } from 'react';",
@@ -19,7 +19,7 @@ function getModuleImports(bindings: any, componentFilenames: string[], stateProp
             exampleModules = ['clientside'];
         }
 
-        const { moduleImports, suppliedModules } = modulesProcessor(exampleModules);
+        const {moduleImports, suppliedModules} = modulesProcessor(exampleModules);
 
         imports.push(...moduleImports);
         bindings.gridSuppliedModules = `modules`;
@@ -53,7 +53,7 @@ function getModuleImports(bindings: any, componentFilenames: string[], stateProp
 }
 
 function getPackageImports(bindings: any, componentFilenames: string[]): string[] {
-    const { gridSettings } = bindings;
+    const {gridSettings} = bindings;
 
     const imports = [
         "import React, { useCallback, useMemo, useRef, useState } from 'react';",
@@ -87,7 +87,7 @@ function getImports(bindings: any, componentFileNames: string[], importType: Imp
 }
 
 function getTemplate(bindings: any, componentAttributes: string[]): string {
-    const { gridSettings } = bindings;
+    const {gridSettings} = bindings;
     const agGridTag = `
         <div ${gridSettings.myGridReference ? 'id="myGrid"' : ''} style={gridStyle} className="${gridSettings.theme}">             
             <AgGridReact
@@ -131,7 +131,7 @@ function getCallbackNames() {
 }
 
 export function vanillaToReactFunctional(bindings: any, componentFilenames: string[]): (importType: ImportType) => string {
-    const { properties, data, gridSettings, onGridReady, resizeToFit } = bindings;
+    const {properties, data, gridSettings, onGridReady, resizeToFit} = bindings;
 
     const callbackNames = getCallbackNames();
 
@@ -140,6 +140,16 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
         acc[callbackName] = bindings.callbackDependencies[callbackName].filter(dependency => !utilMethodNames.includes(dependency)).map(dependency => dependency === 'gridOptions' ? 'gridRef.current' : dependency);
         return acc;
     }, {})
+
+    const addRowDataProperties = (stateProperties: string[], componentProps: any[]) => {
+        if (stateProperties.filter(item => item.indexOf('rowData') >= 0).length === 0) {
+            stateProperties.push('const [rowData, setRowData] = useState();');
+        }
+
+        if (componentProps.filter(item => item.indexOf('rowData') >= 0).length === 0) {
+            componentProps.push('rowData={rowData}');
+        }
+    };
 
     return importType => {
         // instance values
@@ -164,34 +174,30 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
         }
 
         // is the row data loaded asynchronously?
-        const needsRowDataState = data && data.callback.indexOf('api.setRowData') >= 0;
+        const needsRowDataState = (data && data.callback.indexOf('api.setRowData') >= 0) ||
+            (onGridReady && onGridReady.includes("params.api.setRowData"));
         const additionalInReady = [];
         if (data) {
             let setRowDataBlock = data.callback;
 
             if (needsRowDataState) {
-                if (stateProperties.filter(item => item.indexOf('rowData') >= 0).length === 0) {
-                    stateProperties.push('const [rowData, setRowData] = useState();');
-                }
+                addRowDataProperties(stateProperties, componentProps);
 
-                if (componentProps.filter(item => item.indexOf('rowData') >= 0).length === 0) {
-                    componentProps.push('rowData={rowData}');
-                }
-
-                setRowDataBlock = data.callback.replace('params.api.setRowData(data)', 'setRowData(data)');
+                setRowDataBlock = data.callback.replace('params.api.setRowData', 'setRowData');
             }
 
             additionalInReady.push(`
-                const updateData = (data) => ${setRowDataBlock};
-                
                 fetch(${data.url})
                 .then(resp => resp.json())
-                .then(data => updateData(data));`
+                .then(data => ${setRowDataBlock});`
             );
+        } else if(onGridReady && needsRowDataState) {
+            addRowDataProperties(stateProperties, componentProps);
         }
 
         if (onGridReady) {
-            const hackedHandler = onGridReady.replace(/^{|}$/g, '');
+            const hackedHandler = onGridReady.replace(/^{|}$/g, '')
+                .replace('params.api.setRowData', 'setRowData');
             additionalInReady.push(hackedHandler);
         }
 

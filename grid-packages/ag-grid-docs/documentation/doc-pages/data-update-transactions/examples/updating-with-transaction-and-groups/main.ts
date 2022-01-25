@@ -30,7 +30,7 @@ const gridOptions: GridOptions = {
     field: 'model',
     rowGroupIndex: 1,
     cellRendererComp: 'agGroupCellRenderer',
-    cellRendererParams: {
+    cellRendererCompParams: {
       checkbox: true,
     },
   },

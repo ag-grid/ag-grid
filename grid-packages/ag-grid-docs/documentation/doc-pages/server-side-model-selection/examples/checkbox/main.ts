@@ -24,7 +24,7 @@ const gridOptions: GridOptions = {
     flex: 1,
     minWidth: 240,
     // headerCheckboxSelection: true, // not supported for Enterprise Model
-    cellRendererParams: {
+    cellRendererCompParams: {
       checkbox: true,
     },
   },

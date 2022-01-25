@@ -41,7 +41,7 @@ const gridOptions: GridOptions = {
     rowDrag: true,
     headerName: 'Files',
     minWidth: 300,
-    cellRendererParams: {
+    cellRendererCompParams: {
       suppressCount: true,
       innerCellComp: FileCellRenderer,
     },

@@ -14,7 +14,7 @@ const gridOptions: GridOptions = {
     {
       field: 'change',
       cellRendererComp: 'agSparklineCellRenderer',
-      cellRendererParams: {
+      cellRendererCompParams: {
         sparklineOptions: {
           line: {
             stroke: 'rgb(94,94,224)',

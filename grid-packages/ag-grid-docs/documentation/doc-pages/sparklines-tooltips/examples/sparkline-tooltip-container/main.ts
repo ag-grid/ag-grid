@@ -14,7 +14,7 @@ const gridOptions: GridOptions = {
     {
       field: 'change',
       cellRendererComp: 'agSparklineCellRenderer',
-      cellRendererParams: {
+      cellRendererCompParams: {
         sparklineOptions: {
           tooltip: {
             container: body, // confines the tooltip to the document body node instead of the sparkline cell

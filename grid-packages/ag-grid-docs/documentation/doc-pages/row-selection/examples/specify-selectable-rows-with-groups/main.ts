@@ -21,7 +21,7 @@ const gridOptions: GridOptions = {
     field: 'athlete',
     minWidth: 250,
     cellRendererComp: 'agGroupCellRenderer',
-    cellRendererParams: {
+    cellRendererCompParams: {
       checkbox: true,
     },
   },

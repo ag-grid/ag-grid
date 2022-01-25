@@ -216,7 +216,7 @@ const gridOptions: GridOptions = {
   suppressRowClickSelection: true,
   autoGroupColumnDef: {
     field: 'name',
-    cellRendererParams: { checkbox: true },
+    cellRendererCompParams: { checkbox: true },
   },
   onGridReady: function (params) {
 

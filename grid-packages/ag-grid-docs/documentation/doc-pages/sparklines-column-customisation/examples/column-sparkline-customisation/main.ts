@@ -7,7 +7,7 @@ const gridOptions: GridOptions = {
     {
       field: 'change',
       cellRendererComp: 'agSparklineCellRenderer',
-      cellRendererParams: {
+      cellRendererCompParams: {
         sparklineOptions: {
           type: 'column',
           fill: '#91cc75',

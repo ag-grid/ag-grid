@@ -205,7 +205,7 @@ const autoGroupColumnDef: ColDef = {
     cellRendererComp: 'agGroupCellRenderer',
     headerCheckboxSelection: true,
     headerCheckboxSelectionFilteredOnly: true,
-    cellRendererParams: {
+    cellRendererCompParams: {
         checkbox: true,
     },
 };
@@ -302,7 +302,7 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
                 enablePivot: true,
                 // rowGroupIndex: 0,
                 // pivotIndex: 0,
-                cellEditorParams: {
+                cellEditorCompParams: {
                     values: [
                         'English',
                         'Spanish',
@@ -331,7 +331,7 @@ const defaultCols: (ColDef | ColGroupDef)[] = [
                 enableRowGroup: true,
                 enablePivot: true,
                 cellEditorComp: 'agRichSelectCellEditor',
-                cellEditorParams: {
+                cellEditorCompParams: {
                     cellRendererComp: CountryCellRenderer,
                     values: [
                         'Argentina',

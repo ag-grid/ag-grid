@@ -22,7 +22,7 @@ const gridOptions: GridOptions = {
   },
   autoGroupColumnDef: {
     field: 'employeeName',
-    cellRendererParams: {
+    cellRendererCompParams: {
       innerRenderer: function (params: ICellRendererParams) {
         // display employeeName rather than group key (employeeId)
         return params.data.employeeName

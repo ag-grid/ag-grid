@@ -33,7 +33,7 @@ const gridOptions: GridOptions = {
         {
             field: 'make',
             cellEditor: 'agSelectCellEditor',
-            cellEditorParams: {
+            cellEditorCompParams: {
                 values: carBrands,
             },
             filterParams: {
@@ -50,11 +50,11 @@ const gridOptions: GridOptions = {
             minWidth: 150,
             cellEditor: 'agRichSelectCellEditor',
             cellEditorPopup: true,
-            cellEditorParams: {
+            cellEditorCompParams: {
                 values: colours,
                 cellRenderer: colourCellRenderer,
             },
-            filter: 'agSetColumnFilter',
+            filterComp: 'agSetColumnFilter',
             filterParams: {
                 values: colours,
                 valueFormatter: function (params) {
@@ -74,10 +74,10 @@ const gridOptions: GridOptions = {
             field: 'interiorColour',
             minWidth: 150,
             cellEditor: 'agTextCellEditor',
-            cellEditorParams: {
+            cellEditorCompParams: {
                 useFormatter: true,
             },
-            filter: 'agSetColumnFilter',
+            filterComp: 'agSetColumnFilter',
             filterParams: {
                 values: colours,
                 valueFormatter: function (params: ValueFormatterParams) {

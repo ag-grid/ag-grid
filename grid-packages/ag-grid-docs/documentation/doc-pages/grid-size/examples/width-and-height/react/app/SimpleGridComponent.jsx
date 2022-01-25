@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
-import { AgGridReact } from '@ag-grid-community/react';
+import React, {Component} from 'react';
+import {AgGridReact} from '@ag-grid-community/react';
 
-import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
+import {ClientSideRowModelModule} from "@ag-grid-community/client-side-row-model";
 
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
@@ -24,29 +24,25 @@ export default class extends Component {
     onGridReady(params) {
         this.gridApi = params.api;
 
-        const httpRequest = new XMLHttpRequest();
-        httpRequest.open('GET', 'https://www.ag-grid.com/example-assets/olympic-winners.json');
-        httpRequest.send();
-        httpRequest.onreadystatechange = function () {
-            if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-                const httpResult = JSON.parse(httpRequest.responseText);
-                this.setState({ rowData: httpResult });
-            }
-        }.bind(this);
+        fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+            .then(resp => resp.json())
+            .then(data => {
+                this.setState({rowData: data});
+            });
     }
 
     createColumnDefs() {
         return [
-            { field: "athlete", width: 150 },
-            { field: "age", width: 90 },
-            { field: "country", width: 150 },
-            { field: "year", width: 90 },
-            { field: "date", width: 150 },
-            { field: "sport", width: 150 },
-            { field: "gold", width: 100 },
-            { field: "silver", width: 100 },
-            { field: "bronze", width: 100 },
-            { field: "total", width: 100 },
+            {field: "athlete", width: 150},
+            {field: "age", width: 90},
+            {field: "country", width: 150},
+            {field: "year", width: 90},
+            {field: "date", width: 150},
+            {field: "sport", width: 150},
+            {field: "gold", width: 100},
+            {field: "silver", width: 100},
+            {field: "bronze", width: 100},
+            {field: "total", width: 100},
         ];
     }
 
@@ -76,13 +72,13 @@ export default class extends Component {
 
     render() {
         return (
-            <div style={{ height: '100%' }}>
-                <div style={{ marginBottom: '5px' }}>
+            <div style={{height: '100%'}}>
+                <div style={{marginBottom: '5px'}}>
                     <button onClick={this.fillLarge.bind(this)}>Fill 100%</button>
                     <button onClick={this.fillMedium.bind(this)}>Fill 60%</button>
                     <button onClick={this.fillExact.bind(this)}>Exactly 400 x 400 pixels</button>
                 </div>
-                <div style={{ height: 'calc(100% - 25px)' }} className="ag-theme-alpine">
+                <div style={{height: 'calc(100% - 25px)'}} className="ag-theme-alpine">
                     <div style={this.state.style}>
                         <AgGridReact
                             columnDefs={this.state.columnDefs}

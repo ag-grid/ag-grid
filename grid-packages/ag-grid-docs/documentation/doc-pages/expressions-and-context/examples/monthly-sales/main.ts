@@ -107,7 +107,7 @@ const gridOptions: GridOptions = {
     field: 'city',
     minWidth: 260,
     cellRendererComp: 'agGroupCellRenderer',
-    cellRendererParams: {
+    cellRendererCompParams: {
       checkbox: true,
     },
   },

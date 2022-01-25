@@ -33,7 +33,7 @@ const columnDefs: ColDef[] = [
         cellRendererComp: GenderRenderer,
         cellEditorComp: 'agRichSelectCellEditor',
         cellEditorPopup: true,
-        cellEditorParams: {
+        cellEditorCompParams: {
             cellRendererComp: GenderRenderer,
             values: ['Male', 'Female'],
         },
@@ -62,7 +62,7 @@ const columnDefs: ColDef[] = [
         keyCreator: function (params: KeyCreatorParams) {
             return params.value.name
         },
-        cellEditorParams: {
+        cellEditorCompParams: {
             cellRendererComp: CountryCellRenderer,
             values: [
                 { name: 'Ireland', code: 'IE' },
@@ -76,7 +76,7 @@ const columnDefs: ColDef[] = [
         field: 'address',
         editable: true,
         cellEditorComp: 'agLargeTextCellEditor',
-        cellEditorParams: {
+        cellEditorCompParams: {
             maxLength: '300', // override the editor defaults
             cols: '50',
             rows: '6',

@@ -64,17 +64,13 @@ export default class extends Component {
 
     onGridReady(params) {
         this.topGrid = params;
-        var httpRequest = new XMLHttpRequest();
-        httpRequest.open('GET', 'https://www.ag-grid.com/example-assets/olympic-winners.json');
-        httpRequest.send();
-        httpRequest.onreadystatechange = function () {
-            if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-                var httpResult = JSON.parse(httpRequest.responseText);
+        fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+            .then(resp => resp.json())
+            .then(data => {
                 this.setState({
-                    rowData: httpResult
+                    rowData: data
                 })
-            }
-        }.bind(this);
+            });
     }
 
     onFirstDataRendered(params) {

@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
-import { AgGridReact } from '@ag-grid-community/react';
+import React, {Component} from 'react';
+import {AgGridReact} from '@ag-grid-community/react';
 
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
 
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
@@ -86,20 +86,17 @@ export default class extends Component {
 
     onGridReady = (params) => {
         this.topGrid = params;
-        var httpRequest = new XMLHttpRequest();
-        httpRequest.open('GET', 'https://www.ag-grid.com/example-assets/olympic-winners.json');
-        httpRequest.send();
-        httpRequest.onreadystatechange = () => {
-            if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-                this.rowData = JSON.parse(httpRequest.responseText);
+        fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+            .then(resp => resp.json())
+            .then(data => {
+                this.rowData = data;
                 this.setState(this.createState());
                 window.setTimeout(() => {
                     // mix up some columns
                     this.topGrid.columnApi.moveColumnByIndex(11, 4);
                     this.topGrid.columnApi.moveColumnByIndex(11, 4);
                 }, 100);
-            }
-        };
+            });
     };
 
     onFirstDataRendered = (params) => {

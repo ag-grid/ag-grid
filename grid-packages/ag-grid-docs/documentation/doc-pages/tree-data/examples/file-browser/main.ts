@@ -29,7 +29,7 @@ const gridOptions: GridOptions = {
   autoGroupColumnDef: {
     headerName: 'Files',
     minWidth: 330,
-    cellRendererParams: {
+    cellRendererCompParams: {
       checkbox: true,
       suppressCount: true,
       innerCellComp: getFileCellRenderer(),

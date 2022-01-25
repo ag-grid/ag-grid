@@ -284,7 +284,7 @@ const gridOptions: GridOptions = {
   },
   autoGroupColumnDef: {
     width: 250,
-    cellRendererParams: {
+    cellRendererCompParams: {
       checkbox: true,
     },
   },

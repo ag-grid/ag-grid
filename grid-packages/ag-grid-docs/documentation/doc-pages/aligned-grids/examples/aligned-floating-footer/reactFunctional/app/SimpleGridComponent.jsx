@@ -74,15 +74,9 @@ const SimpleGridComponent = () => {
 
     const onGridReady = (params) => {
         setTopGrid(params);
-        var httpRequest = new XMLHttpRequest();
-        httpRequest.open('GET', 'https://www.ag-grid.com/example-assets/olympic-winners.json');
-        httpRequest.send();
-        httpRequest.onreadystatechange = () => {
-            if (httpRequest.readyState === 4 && httpRequest.status === 200) {
-                var httpResult = JSON.parse(httpRequest.responseText);
-                setRowData(httpResult);
-            }
-        }
+        fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
+            .then(resp => resp.json())
+            .then(data => setRowData(data));
     }
 
     const onFirstDataRendered = () => {

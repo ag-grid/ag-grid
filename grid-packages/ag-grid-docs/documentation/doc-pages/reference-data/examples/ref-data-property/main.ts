@@ -21,7 +21,7 @@ const gridOptions: GridOptions = {
     {
       field: 'make',
       cellEditorComp: 'select',
-      cellEditorParams: {
+      cellEditorCompParams: {
         values: carBrands,
       },
       filterComp: 'agSetColumnFilter',
@@ -32,7 +32,7 @@ const gridOptions: GridOptions = {
       minWidth: 150,
       cellEditorComp: 'agRichSelectCellEditor',
       cellEditorPopup: true,
-      cellEditorParams: {
+      cellEditorCompParams: {
         values: colours,
         cellRendererComp: colourCellRenderer,
       },

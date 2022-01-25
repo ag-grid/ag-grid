@@ -8,7 +8,7 @@ function isKeyPressedNumeric(event: any) {
   var charStr = event.key;
   return isCharNumeric(charStr)
 }
-
+ 
 class NumericCellEditor implements ICellEditorComp {
   focusAfterAttached!: boolean
   eInput!: HTMLInputElement
@@ -85,7 +85,7 @@ const gridOptions: GridOptions = {
     {
       field: 'make',
       cellEditorComp: 'agSelectCellEditor',
-      cellEditorParams: {
+      cellEditorCompParams: {
         values: ['Porsche', 'Toyota', 'Ford', 'AAA', 'BBB', 'CCC'],
       },
     },
