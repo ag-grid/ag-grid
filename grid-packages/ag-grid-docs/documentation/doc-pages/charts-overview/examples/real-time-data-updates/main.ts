@@ -71,6 +71,7 @@ const options: AgCartesianChartOptions = {
       type: 'number',
       position: 'left',
       title: {
+        enabled: true,
         text: 'Load (%)',
       },
       min: 0,

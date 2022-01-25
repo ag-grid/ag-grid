@@ -106,6 +106,7 @@ const options: AgChartOptions = {
           params.index % 2 === 1 ? params.value / 1000 + 'k' : '',
       },
       title: {
+        enabled: true,
         text: 'Total number',
         color: '#162c53',
         fontStyle: 'italic',

@@ -30,6 +30,7 @@ const options: AgChartOptions = {
       position: 'bottom',
       type: 'number',
       title: {
+        enabled: true,
         text: 'Weight (pounds)',
       },
     },
@@ -37,6 +38,7 @@ const options: AgChartOptions = {
       position: 'left',
       type: 'number',
       title: {
+        enabled: true,
         text: 'Height (inches)',
       },
     },
