@@ -1,4 +1,6 @@
-import { Grid, GridOptions, BarSparklineOptions } from '@ag-grid-community/core'
+import { Grid, GridOptions, BarSparklineOptions, BarFormat, BarFormatterParams, LabelFormatterParams } from '@ag-grid-community/core'
+
+
 
 const gridOptions: GridOptions = {
   columnDefs: [
@@ -10,14 +12,27 @@ const gridOptions: GridOptions = {
       cellRendererCompParams: {
         sparklineOptions: {
           type: 'bar',
-          fill: '#fac858',
-          highlightStyle: {
-            stroke: '#fac858',
-          },
           label: {
             enabled: true,
+            color: 'white',
+            fontSize: 10,
+            fontWeight: 'bold',
+            formatter: (params: LabelFormatterParams) => `${params.value}%`
           },
-        } as BarSparklineOptions,
+          paddingOuter: 0,
+          padding: {
+            top: 0,
+            bottom: 0
+          },
+          valueAxisDomain: [0, 100],
+          axis: {
+            strokeWidth: 0
+          },
+          tooltip: {
+            enabled: false
+          },
+          formatter
+        },
       },
     },
     {
@@ -33,6 +48,13 @@ const gridOptions: GridOptions = {
   },
   rowData: getData(),
   rowHeight: 50,
+}
+
+function formatter(params: BarFormatterParams): BarFormat {
+  const { yValue } = params;
+  return {
+    fill: yValue <= 20 ? '#4fa2d9' : yValue < 60 ? '#277cb5' : '#195176',
+  }
 }
 
 // setup the grid after the page has finished loading
