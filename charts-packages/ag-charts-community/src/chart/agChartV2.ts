@@ -53,11 +53,31 @@ import { processSeriesOptions, getChartTheme } from './agChart';
 // - Transforms.
 // - Processing/application.
 
+type LiteralProperties = 'shape' | 'data';
+type SkippableProperties = 'axes' | 'series' | 'container' | 'customChartThemes';
+type IsLiteralProperty<T, K extends keyof T> = K extends LiteralProperties ? true :
+    T[K] extends Array<infer E> ? true :
+    false;
+type IsSkippableProperty<T, K extends keyof T> = K extends SkippableProperties ? true : false;
+
 // Needs to be recursive when we move to TS 4.x+; only supports a maximum level of nesting right now.
 type DeepPartial<T> = {
-    [P1 in keyof T]?: T[P1] extends Array<infer E1>
-        ? T[P1]
-        : { [P2 in keyof T[P1]]?: T[P1][P2] extends Array<infer E1> ? T[P1][P2] : Partial<T[P1][P2]> };
+    [P1 in keyof T]?:
+        IsSkippableProperty<T, P1> extends true ? any :
+        IsLiteralProperty<T, P1> extends true ? T[P1] :
+        { [P2 in keyof T[P1]]?:
+            IsSkippableProperty<T[P1], P2> extends true ? any :
+            IsLiteralProperty<T[P1], P2> extends true ? T[P1][P2] :
+            { [P3 in keyof T[P1][P2]]?:
+                IsSkippableProperty<T[P1][P2], P3> extends true ? any :
+                IsLiteralProperty<T[P1][P2], P3> extends true ? T[P1][P2][P3] :
+                { [P4 in keyof T[P1][P2][P3]]?:
+                    IsSkippableProperty<T[P1][P2][P3], P4> extends true ? any :
+                    IsLiteralProperty<T[P1][P2][P3], P4> extends true ? T[P1][P2][P3][P4] :
+                    Partial<T[P1][P2][P3][P4]>
+                }
+            }
+        }
 };
 
 type Transforms<Source, Result extends {[R in keyof Source]?: any}, Keys extends keyof Source & keyof Result = keyof Source & keyof Result> = {
@@ -166,17 +186,18 @@ export abstract class AgChartV2 {
 
     static update(chart: Chart, options: AgChartOptions): Chart {
         const mergedOptions = AgChartV2.prepareOptions(options);
+        const deltaOptions = jsonDiff(chart.options, mergedOptions);
 
-        if (isAgCartesianChartOptions(mergedOptions) && chart instanceof CartesianChart) {
-            return applyCartesianChartOptions(chart, mergedOptions);
+        if (chart instanceof CartesianChart) {
+            return applyCartesianChartOptions(chart, deltaOptions as AgCartesianChartOptions);
         }
 
-        if (isAgHierarchyChartOptions(mergedOptions) && chart instanceof HierarchyChart) {
-            return applyHierarchyChartOptions(chart, mergedOptions);
+        if (chart instanceof HierarchyChart) {
+            return applyHierarchyChartOptions(chart, deltaOptions as AgHierarchyChartOptions);
         }
 
-        if (isAgPolarChartOptions(mergedOptions) && chart instanceof PolarChart) {
-            return applyPolarChartOptions(chart, mergedOptions);
+        if (chart instanceof PolarChart) {
+            return applyPolarChartOptions(chart, deltaOptions as AgPolarChartOptions);
         }
 
         throw new Error(`AG Charts - couldn\'t apply configuration, check type of options and chart: ${options['type']}`);
@@ -629,29 +650,29 @@ const BAR_SERIES_TRANSFORMS: Transforms<
     label: (p) => labelMapping(p),
 };
 
-function applyCartesianChartOptions(chart: CartesianChart, options: AgCartesianChartOptions) {
-    chart.container = options.container || chart.container;
-    chart.height = options.height || chart.height;
-    chart.width = options.width || chart.width;
-    chart.title = applyOptionValues(new Caption(), options.title, 'title');
-    chart.subtitle = applyOptionValues(new Caption(), options.subtitle, 'subtitle');
+function applyCartesianChartOptions(chart: CartesianChart, options: Partial<AgCartesianChartOptions>) {
+    applyOptionValues(chart, options, { skip: ['type', 'data', 'series', 'axes', 'autoSize', 'listeners', 'theme'] });
 
-    applyOptionValues(chart.background, options.background, 'background');
-    applyOptionValues(chart.legend, options.legend, 'legend');
-    applyOptionValues(chart.navigator, options.navigator, 'navigator');
-    applyOptionValues(chart.padding, options.padding, 'padding');
-    applyOptionValues(chart.tooltip, options.tooltip, 'tooltip');
-
-    chart.series = createSeries(options.series || []);
-    chart.axes = createAxis(options.axes || []);
-    chart.data = options.data;
+    if (options.series) {
+        chart.series = createSeries(options.series);
+    }
+    if (options.axes) {
+        chart.axes = createAxis(options.axes);
+    }
+    if (options.data) {
+        chart.data = options.data;
+    }
 
     // Needs to be done last to avoid overrides by width/height properties.
-    chart.autoSize = options.autoSize || chart.autoSize;
-
-    registerListeners(chart, options.listeners);
+    if (options.autoSize != null) {
+        chart.autoSize = options.autoSize;
+    }
+    if (options.listeners) {
+        registerListeners(chart, options.listeners);
+    }
 
     chart.layoutPending = true;
+    chart.options = mergeOptions(chart.options || {}, options);
 
     return chart;
 }
@@ -674,27 +695,27 @@ function createSeries(options: AgChartOptions['series']): Series[] {
         const path = `series[${index++}]`;
         switch (seriesOptions.type) {
             case 'area':
-                series.push(applyOptionValues(new AreaSeries(), seriesOptions, path));
+                series.push(applyOptionValues(new AreaSeries(), seriesOptions, {path}));
                 break;
             case 'bar':
             case 'column':
                 // TODO: Move series transforms into prepareOptions() phase.
-                series.push(applyOptionValues(new BarSeries(), transform(seriesOptions, BAR_SERIES_TRANSFORMS), path));
+                series.push(applyOptionValues(new BarSeries(), transform(seriesOptions, BAR_SERIES_TRANSFORMS), {path}));
                 break;
             case 'histogram':
-                series.push(applyOptionValues(new HistogramSeries(), seriesOptions, path));
+                series.push(applyOptionValues(new HistogramSeries(), seriesOptions, {path}));
                 break;
             case 'line':
-                series.push(applyOptionValues(new LineSeries(), seriesOptions, path));
+                series.push(applyOptionValues(new LineSeries(), seriesOptions, {path}));
                 break;
             case 'scatter':
-                series.push(applyOptionValues(new ScatterSeries(), seriesOptions, path));
+                series.push(applyOptionValues(new ScatterSeries(), seriesOptions, {path}));
                 break;
             case 'pie':
-                series.push(applyOptionValues(new PieSeries(), seriesOptions, path));
+                series.push(applyOptionValues(new PieSeries(), seriesOptions, {path}));
                 break;
             case 'treemap':
-                series.push(applyOptionValues(new TreemapSeries(), seriesOptions, path));
+                series.push(applyOptionValues(new TreemapSeries(), seriesOptions, {path}));
                 break;
             case 'ohlc':
             default:
@@ -713,19 +734,19 @@ function createAxis(options: AgCartesianAxisOptions[]): ChartAxis[] {
         const path = `axis[${index++}]`;
         switch (axisOptions.type) {
             case 'number':
-                axes.push(applyOptionValues(new NumberAxis(), axisOptions, path));
+                axes.push(applyOptionValues(new NumberAxis(), axisOptions, {path}));
                 break;
             case LogAxis.type:
-                axes.push(applyOptionValues(new LogAxis(), axisOptions, path));
+                axes.push(applyOptionValues(new LogAxis(), axisOptions, {path}));
                 break;
             case CategoryAxis.type:
-                axes.push(applyOptionValues(new CategoryAxis(), axisOptions, path));
+                axes.push(applyOptionValues(new CategoryAxis(), axisOptions, {path}));
                 break;
             case GroupedCategoryAxis.type:
-                axes.push(applyOptionValues(new GroupedCategoryAxis(), axisOptions, path));
+                axes.push(applyOptionValues(new GroupedCategoryAxis(), axisOptions, {path}));
                 break;
             case TimeAxis.type:
-                axes.push(applyOptionValues(new TimeAxis(), axisOptions, path));
+                axes.push(applyOptionValues(new TimeAxis(), axisOptions, {path}));
                 break;
             default:
                 throw new Error('AG Charts - unknown axis type: ' + axisOptions['type']);
@@ -793,19 +814,28 @@ function applyOptionValues<
 >(
     target: Target,
     options?: Source,
-    path?: string,
-    skippableProperties = <(keyof Source)[]>['type'],
-    constructors = <Record<string, new () => any>>{
-        'title': Caption,
-        'subtitle': Caption,
-        'shadow': DropShadow,
-    },
+    params: {
+        path?: string,
+        skip?: (keyof Source)[],
+        constructors?: Record<string, new () => any>,
+    } = {},
 ): Target {
+    const {
+        path = undefined,
+        skip = ['type'],
+        constructors = {
+            'title': Caption,
+            'subtitle': Caption,
+            'shadow': DropShadow,
+        },
+    } = params;
+
     if (target == null) { throw new Error(`AG Charts - target is uninitialised: ${path || '<root>'}`); }
     if (options == null) { return target; }
-    
+        
+    const appliedProps = [];
     for (const property in options) {
-        if (skippableProperties.indexOf(property) >= 0) { continue; }
+        if (skip.indexOf(property) >= 0) { continue; }
 
         const newValue = options[property];
         const propertyPath = `${path ? path + '.' : ''}${property}`;
@@ -824,13 +854,13 @@ function applyOptionValues<
                 throw new Error(`Property types don't match, can't apply: currentValueType=${currentValueType}, newValueType=${newValueType}`);
             }
 
-            if (newValueType === 'array') {
+            if (newValueType === 'array' || currentValue instanceof HTMLElement) {
                 targetAny[property] = newValue;
             } else if (newValueType === 'object') {
                 if (currentValue != null) {
-                    applyOptionValues(currentValue, newValue as any, propertyPath);
+                    applyOptionValues(currentValue, newValue as any, {path: propertyPath});
                 } else if (ctr != null) {
-                    targetAny[property] = applyOptionValues(new ctr(), newValue as any, propertyPath);
+                    targetAny[property] = applyOptionValues(new ctr(), newValue as any, {path: propertyPath});
                 } else {
                     targetAny[property] = newValue;
                 }
@@ -843,4 +873,63 @@ function applyOptionValues<
     }
 
     return target;
+}
+
+function jsonDiff<T extends any>(source: T, target: T): DeepPartial<T> | null {
+    const lhs = source || {} as any;
+    const rhs = target || {} as any;
+
+    const allProps = new Set([
+        ...Object.keys(lhs),
+        ...Object.keys(rhs),
+    ]);
+
+    let propsChangedCount = 0;
+    const result: any = {};
+    for (const prop of allProps) {
+        // Cheap-and-easy equality check.
+        if (lhs[prop] === rhs[prop]) { continue; }
+
+        const take = (v: any) => {
+            result[prop] = v;
+            propsChangedCount++;
+        };
+
+        const lhsType = classify(lhs[prop]);
+        const rhsType = classify(rhs[prop]);
+        if (lhsType !== rhsType) {
+            // Types changed, just take RHS.
+            take(rhs[prop]);
+            continue;
+        }
+
+        if (rhsType === 'primitive' || rhsType === null) {
+            take(rhs[prop]);
+            continue;
+        }
+
+        if (rhsType === 'array' && lhs[prop].length !== rhs[prop].length) {
+            // Arrays are different sizes, so just take target array.
+            take(rhs[prop]);
+            continue
+        }
+
+        if (JSON.stringify(lhs) === JSON.stringify(rhs)) {
+            // Deep-and-expensive object check.
+            continue;
+        }
+
+        if (rhsType === 'array') {
+            // Don't try to do anything tricky with array diffs!
+            take(rhs[prop]);
+            continue
+        }
+
+        const diff = jsonDiff(lhs[prop], rhs[prop]);
+        if (diff !== null) {
+            take(diff);
+        }
+    }
+
+    return propsChangedCount === 0 ? null : result;
 }

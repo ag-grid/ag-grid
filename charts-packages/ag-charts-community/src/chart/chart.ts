@@ -14,6 +14,7 @@ import { Observable, reactive, PropertyChangeEvent, SourceEvent } from "../util/
 import { ChartAxis, ChartAxisDirection } from "./chartAxis";
 import { createId } from "../util/id";
 import { PlacedLabel, placeLabels, PointLabelDatum } from "../util/labelPlacement";
+import { AgChartOptions } from "./agChartOptions";
 
 const defaultTooltipCss = `
 .ag-chart-tooltip {
@@ -290,6 +291,7 @@ export class ChartTooltip extends Observable {
 export abstract class Chart extends Observable {
     readonly id = createId(this);
 
+    options: AgChartOptions;
     readonly scene: Scene;
     readonly background: Rect = new Rect();
     readonly legend = new Legend();
