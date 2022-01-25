@@ -55,7 +55,7 @@ export class ComboChartProxy extends CartesianChartProxy {
                 axes: this.getAxes(params),
             }
 
-            AgChartV2.update(this.chart as CartesianChart, options);
+            AgChartV2.update<CartesianChart>(this.chart, options);
         } else {
             options = {
                 container: this.chartProxyParams.parentElement,

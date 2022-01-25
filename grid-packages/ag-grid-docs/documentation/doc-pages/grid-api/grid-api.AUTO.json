@@ -526,12 +526,12 @@
     "type": { "arguments": {}, "returnType": "void" }
   },
   "setFocusedCell": {
-    "description": "/** Sets the focus to the specified cell. */",
+    "description": "/** Sets the focus to the specified cell. `rowPinned` can be either 'top', 'bottom' or null (for not pinned). */",
     "type": {
       "arguments": {
         "rowIndex": "number",
         "colKey": "string | Column",
-        "floating?": "string"
+        "rowPinned?": "string"
       }
     }
   },
