@@ -334,11 +334,13 @@ const BAR_SERIES_TRANSFORMS: Transforms<
 function applyCartesianChartOptions<T extends CartesianChart>(chart: T, options: ChartOptionType<T>): T {
     applyOptionValues(chart, options as any, { skip: ['type', 'data', 'series', 'axes', 'autoSize', 'listeners', 'theme'] as (keyof T)[] });
 
+    let performProcessData = false;
     if (options.series) {
         chart.series = createSeries(options.series);
     }
     if (options.axes) {
         chart.axes = createAxis(options.axes);
+        performProcessData = true;
     }
     if (options.data) {
         chart.data = options.data;
@@ -353,7 +355,10 @@ function applyCartesianChartOptions<T extends CartesianChart>(chart: T, options:
     }
 
     chart.layoutPending = true;
-    chart.options = mergeOptions(chart.options || {}, options);
+    if (performProcessData) {
+        chart.processData();
+    }
+
     chart.options = jsonMerge(chart.options || {}, options);
 
     return chart;
