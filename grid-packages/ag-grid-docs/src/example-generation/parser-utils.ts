@@ -407,6 +407,13 @@ export function findAllVariables(node) {
     if (ts.isVariableDeclaration(node) || ts.isClassDeclaration(node)) {
         allVariables.push(node.name.getText());
     }
+    if (ts.isParameter(node)) {
+        // catch locally defined arrow functions with their params
+        //  const colToNameFunc = (col: Column, index: number) => index + ' = ' + col.getId()
+        //  const colNames = cols.map(colToNameFunc).join(', ')
+
+        allVariables.push(node.name.getText());
+    }
     ts.forEachChild(node, n => {
         const variables = findAllVariables(n);
         if (variables.length > 0) {
@@ -432,7 +439,7 @@ function getLowestExpression(exp: any) {
  */
 export function findAllAccessedProperties(node) {
     let properties = [];
-    if (ts.isIdentifier(node)) {
+     if (ts.isIdentifier(node)) {
         const property = node.getText();
         if (property !== 'undefined' && property !== 'null') {
             properties.push(node.getText());
@@ -443,6 +450,18 @@ export function findAllAccessedProperties(node) {
         // i.e gridOptions.api!.getModel().getRowCount() we need to recurse down the tree to extract gridOptions
         const exp = getLowestExpression(node.expression);
         properties.push(exp.getText())
+    }
+    else if (ts.isBinaryExpression(node)) {
+        // In this function we set swimmingHeight but are not dependent on it,
+        // so for binary expressions we only check the right hand branch
+        // function setSwimmingHeight(height: number) {
+        //      swimmingHeight = height
+        //      gridOptions.api!.resetRowHeights()
+        // }
+        const rightProps = findAllAccessedProperties(node.right);
+        if (rightProps.length > 0) {
+            properties = [...properties, ...rightProps];
+        }
     }
     else if (ts.isVariableDeclaration(node)) {
         // get lowest identifier as this is the first in the statement
@@ -465,6 +484,9 @@ export function findAllAccessedProperties(node) {
     }
     else if (ts.isClassDeclaration(node)) {
         // Do nothing for Class declarations as this is likely a cell renderer setup
+    }    
+    else if (ts.isTypeReferenceNode(node)) {
+        // Do nothing for Type references
     }
     else {
         // Recurse down the tree looking for more accessed properties
