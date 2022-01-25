@@ -73,7 +73,7 @@ export abstract class BaseDropZonePanel extends Component {
     @Autowired('focusService') private readonly focusService: FocusService;
 
     constructor(private horizontal: boolean, private valueColumn: boolean) {
-        super(`<div class="ag-unselectable"></div>`);
+        super(/* html */ `<div class="ag-unselectable"></div>`);
         this.addElementClasses(this.getGui());
         this.eColumnDropList = document.createElement('div');
         this.addElementClasses(this.eColumnDropList, 'list');
@@ -251,7 +251,7 @@ export abstract class BaseDropZonePanel extends Component {
 
     private onDragLeave(draggingEvent: DraggingEvent): void {
         // if the dragging started from us, we remove the group, however if it started
-        // someplace else, then we don't, as it was only 'asking'
+        // some place else, then we don't, as it was only 'asking'
 
         if (this.state === BaseDropZonePanel.STATE_REARRANGE_COLUMNS) {
             const columns = draggingEvent.dragSource.getDragItem().columns || [];

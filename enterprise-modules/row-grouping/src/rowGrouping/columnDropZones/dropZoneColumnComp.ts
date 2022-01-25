@@ -130,7 +130,13 @@ export class DropZoneColumnComp extends Component {
 
         this.addGuiEventListener('keydown', (e: KeyboardEvent) => {
             if (e.key === KeyCode.ENTER) {
-                this.dispatchEvent(agEvent);
+                const isMenu = e.ctrlKey || e.metaKey;
+
+                if (isMenu && this.valueColumn && !this.gridOptionsWrapper.isFunctionsReadOnly()) {
+                    this.onShowAggFuncSelection();
+                } else {
+                    this.dispatchEvent(agEvent);
+                }
             }
         });
 
@@ -172,8 +178,9 @@ export class DropZoneColumnComp extends Component {
         this.popupShowing = true;
 
         const virtualList = new VirtualList('select-agg-func');
-
         const rows = this.aggFuncService.getFuncNames(this.column);
+        const eGui = this.getGui();
+        const virtualListGui = virtualList.getGui();
 
         virtualList.setModel({
             getRow: function(index: number) { return rows[index]; },
@@ -182,16 +189,17 @@ export class DropZoneColumnComp extends Component {
 
         this.getContext().createBean(virtualList);
 
-        const ePopup = _.loadTemplate('<div class="ag-select-agg-func-popup"></div>');
+        const ePopup = _.loadTemplate(/* html*/ `<div class="ag-select-agg-func-popup"></div>`);
         ePopup.style.top = '0px';
         ePopup.style.left = '0px';
-        ePopup.appendChild(virtualList.getGui());
+        ePopup.appendChild(virtualListGui);
         // ePopup.style.height = this.gridOptionsWrapper.getAggFuncPopupHeight() + 'px';
-        ePopup.style.width = this.getGui().clientWidth + 'px';
+        ePopup.style.width = `${eGui.clientWidth}px`;
 
         const popupHiddenFunc = () => {
             this.destroyBean(virtualList);
             this.popupShowing = false;
+            eGui.focus();
         };
 
         const translate = this.gridOptionsWrapper.getLocaleTextFunc();
@@ -205,18 +213,39 @@ export class DropZoneColumnComp extends Component {
         });
 
         if (addPopupRes) {
-            virtualList.setComponentCreator(this.createAggSelect.bind(this, addPopupRes.hideFunc));
+            virtualList.setComponentCreator(
+                this.createAggSelect.bind(this, addPopupRes.hideFunc)
+            );
         }
+
+        virtualList.addGuiEventListener('keydown', (e: KeyboardEvent) => {
+            if (e.key === KeyCode.ENTER || e.key === KeyCode.SPACE) {
+                const row = virtualList.getLastFocusedRow();
+
+                if (row == null) { return; }
+
+                const comp = virtualList.getComponentAt(row) as AggItemComp;
+
+                if (comp) {
+                    comp.selectItem();
+                }
+            }
+        });
 
         this.popupService.positionPopupUnderComponent({
             type: 'aggFuncSelect',
-            eventSource: this.getGui(),
+            eventSource: eGui,
             ePopup: ePopup,
             keepWithinBounds: true,
             column: this.column
         });
 
         virtualList.refresh();
+
+        let rowToFocus = rows.findIndex(r => r === this.column.getAggFunc());
+        if (rowToFocus === -1) { rowToFocus = 0; }
+
+        virtualList.focusRow(rowToFocus);
     }
 
     private createAggSelect(hidePopup: () => void, value: any): Component {
@@ -253,13 +282,13 @@ export class DropZoneColumnComp extends Component {
 
 class AggItemComp extends Component {
 
-    private value: string;
+    public selectItem: () => void;
 
     constructor(itemSelected: () => void, value: string) {
-        super('<div class="ag-select-agg-func-item"/>');
+        super(/* html */ `<div class="ag-select-agg-func-item"/>`);
+        this.selectItem = itemSelected;
         this.getGui().innerText = value;
-        this.value = value;
-        this.addGuiEventListener('click', itemSelected);
+        this.addGuiEventListener('click', this.selectItem);
     }
 
 }

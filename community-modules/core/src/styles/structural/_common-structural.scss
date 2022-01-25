@@ -1162,7 +1162,8 @@ ag-grid, ag-grid-angular, ag-grid-ng2, ag-grid-polymer, ag-grid-aurelia  {
 }
 
 .ag-column-select-column,
-.ag-column-select-column-group {
+.ag-column-select-column-group,
+.ag-select-agg-func-item {
     position: relative;
     align-items: center;
     display: flex;

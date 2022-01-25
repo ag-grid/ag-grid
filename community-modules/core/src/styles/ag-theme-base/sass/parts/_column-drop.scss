@@ -108,11 +108,14 @@
 
     .ag-select-agg-func-virtual-list-item {
         cursor: default;
-        line-height: ag-param(grid-size) * 5;
         padding-left: ag-param(grid-size) * 2;
 
         &:hover {
             @include ag-color-property(background-color, selected-row-background-color);
         }
     }
+
+    @include ag-keyboard-focus((
+        ag-select-agg-func-virtual-list-item
+    ), 1px);
 }
