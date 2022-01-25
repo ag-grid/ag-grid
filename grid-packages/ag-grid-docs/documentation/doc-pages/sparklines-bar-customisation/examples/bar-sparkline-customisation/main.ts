@@ -16,6 +16,14 @@ const gridOptions: GridOptions = {
             fill: '#fac858',
           },
           valueAxisDomain: [0, 1],
+          paddingOuter: 0,
+          padding: {
+            top: 0,
+            bottom: 0
+          },
+          axis: {
+            strokeWidth: 0
+          },
         } as BarSparklineOptions,
       },
     },
