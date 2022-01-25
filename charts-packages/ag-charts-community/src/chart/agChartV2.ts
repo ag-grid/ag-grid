@@ -187,25 +187,27 @@ export abstract class AgChartV2 {
     static update(chart: Chart, options: AgChartOptions): Chart {
         const mergedOptions = AgChartV2.prepareOptions(options);
         const deltaOptions = jsonDiff(chart.options, mergedOptions);
-
-        if (chart instanceof CartesianChart) {
-            return applyCartesianChartOptions(chart, deltaOptions as AgCartesianChartOptions);
+        if (deltaOptions == null) {
+            return chart;
         }
 
-        if (chart instanceof HierarchyChart) {
-            return applyHierarchyChartOptions(chart, deltaOptions as AgHierarchyChartOptions);
-        }
-
-        if (chart instanceof PolarChart) {
-            return applyPolarChartOptions(chart, deltaOptions as AgPolarChartOptions);
-        }
-
-        throw new Error(`AG Charts - couldn\'t apply configuration, check type of options and chart: ${options['type']}`);
+        return AgChartV2.updateDelta(chart, deltaOptions);
     }
 
     static updateDelta(chart: Chart, update: DeepPartial<AgChartOptions>): Chart {
-        // TODO: Implement.
-        return chart;
+        if (chart instanceof CartesianChart) {
+            return applyCartesianChartOptions(chart, update as AgCartesianChartOptions);
+        }
+
+        if (chart instanceof HierarchyChart) {
+            return applyHierarchyChartOptions(chart, update as AgHierarchyChartOptions);
+        }
+
+        if (chart instanceof PolarChart) {
+            return applyPolarChartOptions(chart, update as AgPolarChartOptions);
+        }
+
+        throw new Error(`AG Charts - couldn\'t apply configuration, check type of options and chart: ${update['type']}`);
     }
 
     private static prepareOptions<T extends AgChartOptions>(options: T): T {
@@ -243,7 +245,6 @@ export abstract class AgChartV2 {
         mergedOptions.container = options.container;
         mergedOptions.data = options.data;
 
-        console.log(mergedOptions);
         return mergedOptions;
     }
 
@@ -914,7 +915,7 @@ function jsonDiff<T extends any>(source: T, target: T): DeepPartial<T> | null {
             continue
         }
 
-        if (JSON.stringify(lhs) === JSON.stringify(rhs)) {
+        if (JSON.stringify(lhs[prop]) === JSON.stringify(rhs[prop])) {
             // Deep-and-expensive object check.
             continue;
         }

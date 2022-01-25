@@ -37,8 +37,6 @@ export class ComboChartProxy extends CartesianChartProxy {
             }) as CartesianChart;
         }
 
-        console.log(chart);
-
         return chart;
     }
 
