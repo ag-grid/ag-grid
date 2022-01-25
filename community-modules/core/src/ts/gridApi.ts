@@ -1059,9 +1059,9 @@ export class GridApi {
         return this.focusService.clearFocusedCell();
     }
 
-    /** Sets the focus to the specified cell. */
-    public setFocusedCell(rowIndex: number, colKey: string | Column, floating?: string) {
-        this.focusService.setFocusedCell(rowIndex, colKey, floating, true);
+    /** Sets the focus to the specified cell. `rowPinned` can be either 'top', 'bottom' or null (for not pinned). */
+    public setFocusedCell(rowIndex: number, colKey: string | Column, rowPinned?: string) {
+        this.focusService.setFocusedCell(rowIndex, colKey, rowPinned, true);
     }
 
     /** Sets the `suppressRowDrag` property. */

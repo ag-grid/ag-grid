@@ -54,6 +54,10 @@ const options: AgChartOptions = {
       label: {
         format: '#{.0f}%',
       },
+      title: {
+        enabled: true,
+        text: 'Normalized Percentage Energy'
+      }
     },
   ],
   legend: {

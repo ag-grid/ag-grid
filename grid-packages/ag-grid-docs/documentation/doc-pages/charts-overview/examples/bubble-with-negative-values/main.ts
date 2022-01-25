@@ -36,6 +36,7 @@ const options: AgChartOptions = {
       position: 'bottom',
       type: 'number',
       title: {
+        enabled: true,
         text: 'Longitude',
       },
       min: -180,
@@ -46,6 +47,7 @@ const options: AgChartOptions = {
       position: 'left',
       type: 'number',
       title: {
+        enabled: true,
         text: 'Latitude',
       },
       min: -90,

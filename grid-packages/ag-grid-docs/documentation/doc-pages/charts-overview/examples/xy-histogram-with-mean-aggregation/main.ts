@@ -40,6 +40,7 @@ const options: AgChartOptions = {
       position: 'bottom',
       type: 'number',
       title: {
+        enabled: true,
         text: 'Engine Size (Cubic inches)',
       },
     },
@@ -47,6 +48,7 @@ const options: AgChartOptions = {
       position: 'left',
       type: 'number',
       title: {
+        enabled: true,
         text: 'Highway MPG',
       },
     },

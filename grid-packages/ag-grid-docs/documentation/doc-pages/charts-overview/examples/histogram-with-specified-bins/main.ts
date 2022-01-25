@@ -55,6 +55,7 @@ const options: AgChartOptions = {
       position: 'bottom',
       type: 'number',
       title: {
+        enabled: true,
         text: 'Curb weight (pounds)',
       },
     },

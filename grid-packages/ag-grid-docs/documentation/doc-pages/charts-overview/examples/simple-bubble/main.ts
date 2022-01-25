@@ -37,6 +37,7 @@ const options: AgChartOptions = {
       position: 'bottom',
       type: 'number',
       title: {
+        enabled: true,
         text: 'Depth (m)',
       },
     },
@@ -44,6 +45,7 @@ const options: AgChartOptions = {
       position: 'left',
       type: 'number',
       title: {
+        enabled: true,
         text: 'Magnitude',
       },
     },
