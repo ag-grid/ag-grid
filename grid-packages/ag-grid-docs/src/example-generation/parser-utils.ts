@@ -449,7 +449,13 @@ export function findAllAccessedProperties(node) {
         // and will be the true accessed variable.
         // i.e gridOptions.api!.getModel().getRowCount() we need to recurse down the tree to extract gridOptions
         const exp = getLowestExpression(node.expression);
-        properties.push(exp.getText())
+
+        if(ts.isArrayLiteralExpression(exp)){
+            // Check if the array has any properties in it that are dependencies
+            properties = [...properties, ...findAllAccessedProperties(exp)];
+        }else{
+            properties.push(exp.getText())
+        }
     }
     else if (ts.isBinaryExpression(node)) {
         // In this function we set swimmingHeight but are not dependent on it,
