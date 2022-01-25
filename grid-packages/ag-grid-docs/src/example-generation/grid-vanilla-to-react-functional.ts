@@ -12,6 +12,7 @@ function getModuleImports(bindings: any, componentFilenames: string[], stateProp
         "import { AgGridReact } from '@ag-grid-community/react';"
     ];
 
+    bindings.gridSuppliedModules = `modules`;
     if (modules) {
         let exampleModules = modules;
 
@@ -22,7 +23,6 @@ function getModuleImports(bindings: any, componentFilenames: string[], stateProp
         const {moduleImports, suppliedModules} = modulesProcessor(exampleModules);
 
         imports.push(...moduleImports);
-        bindings.gridSuppliedModules = `modules`;
         stateProperties.push(`const modules = useMemo(() => [${suppliedModules.join(', ')}], []);`)
 
         imports.push("import '@ag-grid-community/core/dist/styles/ag-grid.css';");
@@ -35,8 +35,7 @@ function getModuleImports(bindings: any, componentFilenames: string[], stateProp
             throw new Error(`The React Functional example ${bindings.exampleName} has "enterprise" : true but no modules have been provided "modules":[...]. Either remove the enterprise flag or provide the required modules.`)
         }
         imports.push("import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';");
-        bindings.gridSuppliedModules = '[ ClientSideRowModelModule ] ';
-
+        stateProperties.push(`const modules = useMemo(() => [ ClientSideRowModelModule ], []);`)
 
         imports.push("import '@ag-grid-community/core/dist/styles/ag-grid.css';");
 
@@ -124,38 +123,33 @@ function extractComponentInformation(properties, componentFilenames: string[]): 
     return components;
 }
 
-function getCallbackNames() {
+function getEventAndCallbackNames() {
     const callbackJson = require('../../documentation/doc-pages/grid-callbacks/callbacks.json');
     const callbacks = Object.keys(callbackJson).map(topLevel => Object.keys(callbackJson[topLevel]));
-    return [].concat.apply([], callbacks).filter(callback => callback !== 'meta')
+    const eventsJson = require('../../documentation/doc-pages/grid-events/events.json');
+    const events = Object.keys(eventsJson).map(topLevel => Object.keys(eventsJson[topLevel]));
+    return [].concat.apply([], callbacks.concat(events)).filter(method => method !== 'meta')
 }
 
 export function vanillaToReactFunctional(bindings: any, componentFilenames: string[]): (importType: ImportType) => string {
     const {properties, data, gridSettings, onGridReady, resizeToFit} = bindings;
 
-    const callbackNames = getCallbackNames();
+    const eventAndCallbackNames = getEventAndCallbackNames();
 
     const utilMethodNames = bindings.utils.map(getFunctionName);
     const callbackDependencies = Object.keys(bindings.callbackDependencies).reduce((acc, callbackName) => {
-        acc[callbackName] = bindings.callbackDependencies[callbackName].filter(dependency => !utilMethodNames.includes(dependency)).map(dependency => dependency === 'gridOptions' ? 'gridRef.current' : dependency);
+        acc[callbackName] = bindings.callbackDependencies[callbackName].filter(dependency => !utilMethodNames.includes(dependency))
+            .filter(dependency => dependency !== 'gridOptions')
+            .filter(dependency => !global[dependency]) // exclude things like Number, isNaN etc
         return acc;
     }, {})
-
-    const addRowDataProperties = (stateProperties: string[], componentProps: any[]) => {
-        if (stateProperties.filter(item => item.indexOf('rowData') >= 0).length === 0) {
-            stateProperties.push('const [rowData, setRowData] = useState();');
-        }
-
-        if (componentProps.filter(item => item.indexOf('rowData') >= 0).length === 0) {
-            componentProps.push('rowData={rowData}');
-        }
-    };
 
     return importType => {
         // instance values
         const stateProperties = [
             `const containerStyle = useMemo(() => ({ width: '100%', height: '100%' }), []);`,
-            `const gridStyle = useMemo(() => ({height: '${gridSettings.height}', width: '${gridSettings.width}'}), []);`
+            `const gridStyle = useMemo(() => ({height: '${gridSettings.height}', width: '${gridSettings.width}'}), []);`,
+            `const [rowData, setRowData] = useState();`
         ];
 
         const imports = getImports(bindings, componentFilenames, importType, stateProperties);
@@ -167,32 +161,21 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
         const instanceBindings = [];
 
         // ie 'modules={modules}',
-        const componentProps = [];
+        const componentProps = ['rowData={rowData}'];
 
         if (importType === 'modules') {
             componentProps.push(`modules={${bindings.gridSuppliedModules}}`);
         }
 
-        // is the row data loaded asynchronously?
-        const needsRowDataState = (data && data.callback.indexOf('api.setRowData') >= 0) ||
-            (onGridReady && onGridReady.includes("params.api.setRowData"));
         const additionalInReady = [];
         if (data) {
-            let setRowDataBlock = data.callback;
-
-            if (needsRowDataState) {
-                addRowDataProperties(stateProperties, componentProps);
-
-                setRowDataBlock = data.callback.replace('params.api.setRowData', 'setRowData');
-            }
+            const setRowDataBlock = data.callback.replace('params.api.setRowData', 'setRowData');
 
             additionalInReady.push(`
                 fetch(${data.url})
                 .then(resp => resp.json())
                 .then(data => ${setRowDataBlock});`
             );
-        } else if(onGridReady && needsRowDataState) {
-            addRowDataProperties(stateProperties, componentProps);
         }
 
         if (onGridReady) {
@@ -215,11 +198,12 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
         const componentNameExists = (componentName: string) => Object.keys(components).includes(stripQuotes(componentName));
 
         properties.filter(property => property.name !== 'onGridReady').forEach(property => {
+            debugger
             if (componentFilenames.length > 0 && property.name === 'components') {
                 property.name = 'frameworkComponents';
             }
 
-            if (property.name === 'rowData' && needsRowDataState) {
+            if (property.name === 'rowData') {
                 if (property.value !== "null" && property.value !== null) {
                     const rowDataIndex = stateProperties.indexOf('const [rowData, setRowData] = useState();');
                     stateProperties[rowDataIndex] = `const [rowData, setRowData] = useState(${property.value});`
@@ -251,10 +235,10 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
                                     componentProps.push(`${property.name}=${property.value}`);
                                 }
                             }
-                        } else if (valueType === 'boolean') {
+                        } else if (valueType === 'boolean' || valueType === 'number') {
                             componentProps.push(`${property.name}={${property.value}}`);
                         } else {
-                            if (callbackNames.includes(property.name)) {
+                            if (eventAndCallbackNames.includes(property.name)) {
                                 stateProperties.push(`const ${property.name} = useCallback(${property.value}, [${callbackDependencies[property.name] || ''}]);`);
                             } else {
                                 stateProperties.push(`const ${property.name} = useMemo(() => { return ${property.value} }, []);`);
@@ -288,9 +272,10 @@ export function vanillaToReactFunctional(bindings: any, componentFilenames: stri
             .replace(/gridApi;/g, "gridRef.current.api;")
             .replace(/columnApi;/g, "gridRef.current.columnApi;")
             .replace(/gridColumnApi\./g, "gridRef.current.columnApi.")
+            .replace("gridRef.current.api.setRowData", "setRowData");
 
         const template = getTemplate(bindings, componentProps.map(thisReferenceConverter));
-        const eventHandlers = bindings.eventHandlers.map(event => convertFunctionToConstProperty(event.handler)).map(thisReferenceConverter).map(gridInstanceConverter);
+        const eventHandlers = bindings.eventHandlers.map(event => convertFunctionToConstCallback(event.handler, callbackDependencies)).map(thisReferenceConverter).map(gridInstanceConverter);
         const externalEventHandlers = bindings.externalEventHandlers.map(handler => convertFunctionToConstCallback(handler.body, callbackDependencies)).map(thisReferenceConverter).map(gridInstanceConverter);
         const instanceMethods = bindings.instanceMethods.map(instance => convertFunctionToConstCallback(instance, callbackDependencies)).map(thisReferenceConverter).map(gridInstanceConverter);
         const containerStyle = gridSettings.noStyle ? '' : `style={containerStyle}`;
@@ -337,10 +322,13 @@ render(<GridExample></GridExample>, document.querySelector('#root'))
             generatedOutput = generatedOutput.replace(regex, component);
         }
 
-        // SPL Revisit this
         if ((generatedOutput.match(/gridRef\.current/g) || []).length === 0) {
             generatedOutput = generatedOutput.replace("const gridRef = useRef();", "")
             generatedOutput = generatedOutput.replace("ref={gridRef}", "")
+        }
+        if(generatedOutput.includes("const [rowData, setRowData] = useState();") && (generatedOutput.match(/setRowData/g) || []).length === 1) {
+            generatedOutput = generatedOutput.replace("const [rowData, setRowData] = useState();", "")
+            generatedOutput = generatedOutput.replace("rowData={rowData}", "")
         }
 
         return generatedOutput;
