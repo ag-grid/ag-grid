@@ -88,7 +88,6 @@ meta_and_links("AG Grid: Demo of high performance datagrid", "react angular angu
     <section id="grid-wrapper" style="padding: 1rem; padding-top: 0;">
         <div id="myGrid" style="flex: 1 1 auto; overflow: hidden;" class="ag-theme-alpine"></div>
     </section>
-    Name: <input type="text">
 </main> <!-- example wrapper -->
 
 <?= globalAgGridScript(true) ?>
