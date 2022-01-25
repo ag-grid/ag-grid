@@ -1466,7 +1466,7 @@ function getData() {
         },
         {
             symbol: 'DKS',
-            name: 'Dick's Sporting Goods Inc Common Stock',
+            name: 'Dick\'s Sporting Goods Inc Common Stock',
             change: [0.2, 0.6],
             volume: '$2,587,211',
         },
@@ -1514,7 +1514,7 @@ function getData() {
         },
         {
             symbol: 'DPZ',
-            name: 'Domino's Pizza Inc Common Stock',
+            name: 'Domino\'s Pizza Inc Common Stock',
             change: [0.7, 0.9],
             volume: '$373,007',
         },
@@ -2840,7 +2840,7 @@ function getData() {
         },
         {
             symbol: 'LOW',
-            name: 'Lowe's Companies Inc. Common Stock',
+            name: 'Lowe\'s Companies Inc. Common Stock',
             change: [0.3, 0.4],
             volume: '$2,260,871',
         },
@@ -2978,7 +2978,7 @@ function getData() {
         },
         {
             symbol: 'MCD',
-            name: 'McDonald's Corporation Common Stock',
+            name: 'McDonald\'s Corporation Common Stock',
             change: [0.4, 0.3],
             volume: '$1,339,267',
         },
