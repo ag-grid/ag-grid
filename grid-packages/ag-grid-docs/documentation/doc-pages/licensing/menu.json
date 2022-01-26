@@ -275,38 +275,6 @@
             ]
           },
           {
-            "title": "SystemJS",
-            "url": "/systemjs/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "angular"
-            ]
-          },
-          {
-            "title": "Webpack 1",
-            "url": "/webpack/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "angular"
-            ]
-          },
-          {
-            "title": "Webpack 2",
-            "url": "/webpack-2/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "angular"
-            ]
-          },
-          {
-            "title": "Webpack 3",
-            "url": "/webpack-3/",
-            "showInCollapsed": true,
-            "frameworks": [
-              "angular"
-            ]
-          },
-          {
             "title": "Community & Enterprise",
             "url": "/licensing/",
             "enterprise": true,

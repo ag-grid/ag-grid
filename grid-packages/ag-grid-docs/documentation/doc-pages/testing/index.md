@@ -213,7 +213,7 @@ title: "Testing AG Grid"
 |
 | ### verifyCellContentAttributesContains
 |
-| Userful when there is an array of data within a cell, each of which is witing an attribute (for example an image).
+| Useful when there is an array of data within a cell, each of which is writing an attribute (for example an image).
 |
 | ```js
 | ag_grid_utils.verifyCellContentAttributesContains(1, "3", "src", ['android', 'mac', 'css'], "img");
@@ -349,10 +349,10 @@ title: "Testing AG Grid"
 | For example, given the following code:
 |
 | ```tsx
-| @Component(<span ng-non-bindable>{</span>
+| @Component({
 |     selector: 'editor-cell',
 |     template: `<input #input [(ngModel)]="value" style="width: 100%">`
-|     <span ng-non-bindable>}</span>
+|     }
 | )
 | export class EditorComponent implements ICellEditorAngularComp {
 |     private params: any;
@@ -552,7 +552,7 @@ title: "Testing AG Grid"
 |             <input type="text"
 |                    value={this.state.value}
 |                    onChange={this.handleChange}
-|                    style=<span ng-non-bindable>{</span>{width: "100%"}} />
+|                    style={{width: "100%"}} />
 |         )
 |     }
 |
