@@ -54,7 +54,7 @@ const GRID_COMPONENTS = [
 ];
 
 const PARAMS_PROPERTIES = [
-    'cellEditorParams', 'filterParams'
+    'cellEditorCompParams', 'cellEditorParams', 'filterCompParams', 'filterParams'
 ]
 
 const OVERRIDABLE_AG_COMPONENTS = [
