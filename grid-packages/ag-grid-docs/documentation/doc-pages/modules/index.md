@@ -5,11 +5,11 @@ title: "AG Grid Modules"
 AG Grid modules allow you to cherry pick grid features resulting in a smaller application bundle size overall.
 
 [[warning]]
-| We no longer recommend the use of `@ag-grid-community/all-modules` or `@ag-grid-enterprise/all-modules`. They have no bundle size advantage over using grid [Packages](/packages/) and required additional registration code in your application. To continue having all grid features, without the need for module registration code, switch to grid [Packages](/packages/). Alternatively, specify the feature modules your application requires, as outline below, and see your bundle size reduce.
+| We no longer recommend the use of `@ag-grid-community/all-modules` or `@ag-grid-enterprise/all-modules` as they have no bundle size advantage over using grid [Packages](/packages/) and require additional registration code in your application. Instead, use [Packages](/packages/) when you want all grid features without the need for module registration code.
 
 ## Modules
 
-The table below summarizes the modules provided in AG Grid Community and AG Grid Enterprise. See [below](/modules/#modules-required-for-a-feature) for how to know which module you require for a given feature.
+The table below summarises the modules provided in AG Grid Community and AG Grid Enterprise. See [Module Examples](/modules/#module-examples) to learn how the Example Runner can be used to determine the module required for a given feature.
 
 <matrix-table src='modules/modules.json' columns='{ "title": "", "module": "Community Module", "exported": "Exported" }' stringonly="true" showcondition="notIn(enterprise, framework)"></matrix-table>
 [[only-angular]]
@@ -26,7 +26,9 @@ The table below summarizes the modules provided in AG Grid Community and AG Grid
 [[warning]]
 | Do **not** mix `packages` and `modules`! This will result in a large bundle size!
 
-It is vitally important that you do not mix packages and modules in the same application as you will end up including AG Grid twice and doubling your bundle size! All modules are scoped by either `@ag-grid-community/*` or `@ag-grid-enterprise/*` and should not be mixed with the standalone packages of `ag-grid-community` and `ag-grid-enterprise`.
+It is important that you do not mix packages and modules in the same application as this will result in AG Grid being included twice 
+and doubling your bundle size! All modules are scoped by either `@ag-grid-community/*` or `@ag-grid-enterprise/*` and should not 
+be mixed with the standalone packages of `ag-grid-community` and `ag-grid-enterprise`.
 
 | Modules                     | Packages             |
 | --------------------------- | -------------------- |
@@ -45,6 +47,7 @@ It is vitally important that you do not mix packages and modules in the same app
 ## Installing AG Grid Modules
 
 The grid requires at least one of the following [Row Model](/row-models/) modules:
+
  - `ClientSideRowModelModule`
  - `InfiniteRowModelModule`
  - `ServerSideRowModelModule` <enterprise-icon></enterprise-icon> 
@@ -54,7 +57,10 @@ After that all other modules are optional depending on your requirements.
 
 ### Dependent Modules
 
-As a developer you do not need to worry about module dependencies. For example, the `FilterToolPanelModule` depends on the `SideBarModule` but as we have setup the dependencies as part of the module definition npm will install the dependent packages for you. Also when registering modules, (see below) you only need to register the feature you require and AG Grid will take care of registering any dependant modules.
+As a developer you do not need to worry about module dependencies. For example, the `FilterToolPanelModule` depends on the
+`SideBarModule` but as we have set up the dependencies as part of the module definition npm will install the dependent packages
+for you. Also, when [Registering Modules](/modules/#registering-ag-grid-modules) you only need to register the feature you require
+and AG Grid will take care of registering any dependant modules.
 
 ## Registering AG Grid Modules
 
@@ -70,11 +76,11 @@ You can import and register modules to the Grid globally, but you need to ensure
 
 A real-world example might be that we wish to use the `Client Side Row Model` (the default row model) together with the `CSV`, `Excel` and `Master/Detail` features. 
 [[only-angular]]
-| Additionally we're writing a Angular application so we need to specify the `@ag-grid-community/angular` dependency:
+| Additionally we're writing an Angular application, so we need to specify the `@ag-grid-community/angular` dependency:
 [[only-react]]
-| Additionally we're writing a React application so we need to specify the `@ag-grid-community/react` dependency:
+| Additionally we're writing a React application, so we need to specify the `@ag-grid-community/react` dependency:
 [[only-vue]]
-| Additionally we're writing a Vue application so we need to specify the `@ag-grid-community/vue` dependency:
+| Additionally we're writing a Vue application, so we need to specify the `@ag-grid-community/vue` dependency:
 
 [[only-javascript]]
 |```js
@@ -249,7 +255,7 @@ Using the same real-world example from above the `package.json` dependencies wil
 
 [[note]]
 | It's important to note that when a module is added via the `modules` property, this module will be available to all other instances of the Grid created afterwards. This will produce the same behaviour as registering modules globally by calling `ModuleRegistry.registerModules()`.
-| This means that you can't limit the functionality of specific grid instances based on whether or not you've registered a particular module for that specific grid. If a module was already registered by any one AG Grid instance, it is available to all AG Grid instances created subsequently.
+| This means that you can't limit the functionality of specific grid instances based on whether you've registered a particular module for that specific grid. If a module was already registered by any one AG Grid instance, it is available to all AG Grid instances created subsequently.
 | To control features per grid use the relevant [Grid Property](/grid-properties/).
 
 ## Core Modules
@@ -293,10 +299,11 @@ import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 @import "@ag-grid-community/core/dist/styles/ag-theme-alpine/sass/ag-theme-alpine.scss";
 ```
 
-## Modules required for a feature?
+## Module Examples
 
-Our Example Runner enables you to view the `modules` version of an example via the dropdown in the top right hand corner. 
-With 'Modules' selected the source code includes the modules required for the given feature to work.
-Secondly, any import paths will be from `modules` enabling you to copy and paste code from our examples with no tweaks.
+Our Example Runner enables you to view the `modules` version of an example via the dropdown in the top right-hand corner. 
 
-![Example Runner using Modules](resources/module-example-runner.png)
+When 'Modules' is selected, the source code includes the required modules along with the module import paths. This means
+you can copy and paste code from our examples without further tweaks.
+
+![Module Examples](resources/module-example-runner.png)
