@@ -90,11 +90,11 @@ export class AutoGroupColService extends BeanStub {
 
         const userHasProvidedGroupCellRenderer =
             userDef &&
-            (userDef.cellRenderer || userDef.cellRendererFramework || userDef.cellRendererSelector);
+            (userDef.cellRenderer || userDef.cellRendererFramework || userDef.cellRendererSelector || userDef.cellRendererComp || userDef.cellRendererCompSelector );
 
         // only add the default group cell renderer if user hasn't provided one
         if (!userHasProvidedGroupCellRenderer) {
-            res.cellRenderer = 'agGroupCellRenderer';
+            res.cellRendererComp = 'agGroupCellRenderer';
         }
 
         // we never allow moving the group column
@@ -108,15 +108,18 @@ export class AutoGroupColService extends BeanStub {
                 headerValueGetter: colDef.headerValueGetter
             });
 
-            if (colDef.cellRenderer) {
+            if (colDef.cellRenderer || colDef.cellRendererFramework || colDef.cellRendererComp) {
                 Object.assign(res, {
                     cellRendererParams: {
                         innerRenderer: colDef.cellRenderer,
-                        innerRendererParams: colDef.cellRendererParams
+                        innerRendererFramework: colDef.cellRendererFramework,
+                        innerRendererParams: colDef.cellRendererParams,
+                        innerRendererComp: colDef.cellRendererComp,
+                        innerRendererCompParams: colDef.cellRendererCompParams,
                     }
                 });
             }
-
+            
             res.showRowGroup = rowGroupCol.getColId();
         } else {
             res.showRowGroup = true;

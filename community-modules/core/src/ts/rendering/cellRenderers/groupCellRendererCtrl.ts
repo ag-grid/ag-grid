@@ -66,11 +66,11 @@ export interface GroupCellRendererParams extends ICellRendererParams {
     innerRendererSelector?: CellRendererSelectorFunc;
 
     /** Cell Component to use for inside the Group Cell */
-    innerCellComp?: any;
+    innerRendererComp?: any;
     /** Params for Cell Component */
-    innerCellCompParams?: any;
+    innerRendererCompParams?: any;
     /** Callback to select Cell Component for inside the Group Cell*/
-    innerCellCompSelector?: CellRendererCompSelectorFunc;
+    innerRendererCompSelector?: CellRendererCompSelectorFunc;
 
     scope: any;
 

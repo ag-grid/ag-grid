@@ -37,7 +37,7 @@ export const CellEditorComponent: ComponentType = {
 export const InnerRendererComponent: ComponentType = {
     propertyName: 'innerRenderer',
     cellRenderer: true,
-    newPropName: 'innerCellComp'
+    newPropName: 'innerRendererComp'
 };
 
 export const LoadingOverlayComponent: ComponentType = {
