@@ -781,7 +781,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
             const result = eDocument.execCommand('copy');
 
             if (!result) {
-                console.warn('ag-grid: Browser did not allow document.execCommand(\'copy\'). Ensure ' +
+                console.warn('AG Grid: Browser did not allow document.execCommand(\'copy\'). Ensure ' +
                     'api.copySelectedRowsToClipboard() is invoked via a user event, i.e. button click, otherwise ' +
                     'the browser will prevent it for security reasons.');
             }
@@ -817,7 +817,7 @@ export class ClipboardService extends BeanStub implements IClipboardService {
         try {
             callbackNow(eTempInput);
         } catch (err) {
-            console.warn('ag-grid: Browser does not support document.execCommand(\'copy\') for clipboard operations');
+            console.warn('AG Grid: Browser does not support document.execCommand(\'copy\') for clipboard operations');
         }
 
         //It needs 100 otherwise OS X seemed to not always be able to paste... Go figure...

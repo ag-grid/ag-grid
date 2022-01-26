@@ -183,7 +183,7 @@ export class SideBarComp extends Component implements ISideBar {
     private setupToolPanels(defs: ToolPanelDef[]): void {
         defs.forEach(def => {
             if (def.id == null) {
-                console.warn(`ag-grid: please review all your toolPanel components, it seems like at least one of them doesn't have an id`);
+                console.warn(`AG Grid: please review all your toolPanel components, it seems like at least one of them doesn't have an id`);
                 return;
             }
 
@@ -235,7 +235,7 @@ export class SideBarComp extends Component implements ISideBar {
         const toolPanelWrapper = this.toolPanelWrappers.filter(toolPanel => toolPanel.getToolPanelId() === key)[0];
 
         if (!toolPanelWrapper) {
-            console.warn(`ag-grid: unable to lookup Tool Panel as invalid key supplied: ${key}`);
+            console.warn(`AG Grid: unable to lookup Tool Panel as invalid key supplied: ${key}`);
             return;
         }
 

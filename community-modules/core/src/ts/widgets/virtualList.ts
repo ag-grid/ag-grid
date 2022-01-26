@@ -158,7 +158,7 @@ export class VirtualList extends TabGuardComp {
         const lastRow = this.model.getRowCount();
 
         if (typeof index !== 'number' || index < 0 || index >= lastRow) {
-            console.warn('invalid row index for ensureIndexVisible: ' + index);
+            console.warn('AG Grid: invalid row index for ensureIndexVisible: ' + index);
             return;
         }
 

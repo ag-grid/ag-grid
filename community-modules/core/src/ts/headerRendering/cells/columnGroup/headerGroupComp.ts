@@ -75,7 +75,7 @@ export class HeaderGroupComp extends Component implements IHeaderGroupComp {
         const paramsAny = this.params as any;
 
         if (paramsAny.template) {
-            const message = `A template was provided for Header Group Comp - templates are only supported for Header Comps (not groups)`;
+            const message = `AG Grid: A template was provided for Header Group Comp - templates are only supported for Header Comps (not groups)`;
             doOnce(() => console.warn(message), 'HeaderGroupComp.templateNotSupported');
         }
     }

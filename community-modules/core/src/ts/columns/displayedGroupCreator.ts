@@ -171,7 +171,7 @@ export class DisplayedGroupCreator extends BeanStub {
         // we create a fake original path.
         if (found) { return result; }
 
-        console.warn('could not get path');
+        console.warn('AG Grid: could not get path');
 
         return null;
     }

@@ -116,7 +116,7 @@ export class SortController extends BeanStub {
         }
 
         if (!Array.isArray(sortingOrder) || sortingOrder.length <= 0) {
-            console.warn(`ag-grid: sortingOrder must be an array with at least one element, currently it\'s ${sortingOrder}`);
+            console.warn(`AG Grid: sortingOrder must be an array with at least one element, currently it\'s ${sortingOrder}`);
             return null;
         }
 
@@ -133,7 +133,7 @@ export class SortController extends BeanStub {
 
         // verify the sort type exists, as the user could provide the sortingOrder, need to make sure it's valid
         if (SortController.DEFAULT_SORTING_ORDER.indexOf(result) < 0) {
-            console.warn('ag-grid: invalid sort type ' + result);
+            console.warn('AG Grid: invalid sort type ' + result);
             return null;
         }
 

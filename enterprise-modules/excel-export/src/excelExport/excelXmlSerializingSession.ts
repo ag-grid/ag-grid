@@ -35,7 +35,7 @@ export class ExcelXmlSerializingSession extends BaseExcelSerializingSession<Exce
                 case 'boolean':
                     return 'Boolean';
                 default:
-                    console.warn(`ag-grid: Unrecognized data type for excel export [${style.id}.dataType=${style.dataType}]`);
+                    console.warn(`AG Grid: Unrecognized data type for excel export [${style.id}.dataType=${style.dataType}]`);
             }
         }
 

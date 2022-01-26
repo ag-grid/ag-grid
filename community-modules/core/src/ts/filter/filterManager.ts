@@ -83,12 +83,12 @@ export class FilterManager extends BeanStub {
                 const column = this.columnModel.getPrimaryColumn(colId);
 
                 if (!column) {
-                    console.warn('AG-Grid: setFilterModel() - no column found for colId: ' + colId);
+                    console.warn('AG Grid: setFilterModel() - no column found for colId: ' + colId);
                     return;
                 }
 
                 if (!column.isFilterAllowed()) {
-                    console.warn('AG-Grid: setFilterModel() - unable to fully apply model, filtering disabled for colId: ' + colId);
+                    console.warn('AG Grid: setFilterModel() - unable to fully apply model, filtering disabled for colId: ' + colId);
                     return;
                 }
 
@@ -128,7 +128,7 @@ export class FilterManager extends BeanStub {
         return new AgPromise<void>(resolve => {
             filterPromise.then(filter => {
                 if (typeof filter!.setModel !== 'function') {
-                    console.warn('Warning ag-grid - filter missing setModel method, which is needed for setFilterModel');
+                    console.warn('AG Grid: filter missing setModel method, which is needed for setFilterModel');
                     resolve();
                 }
 
@@ -148,7 +148,7 @@ export class FilterManager extends BeanStub {
             if (filter == null) { return null; }
 
             if (typeof filter.getModel !== 'function') {
-                console.warn('Warning ag-grid - filter API missing getModel method, which is needed for getFilterModel');
+                console.warn('AG Grid: filter API missing getModel method, which is needed for getFilterModel');
                 return;
             }
 
@@ -531,7 +531,7 @@ export class FilterManager extends BeanStub {
                 let guiFromFilter = filter!.getGui();
 
                 if (!exists(guiFromFilter)) {
-                    console.warn(`getGui method from filter returned ${guiFromFilter}, it should be a DOM element or an HTML template string.`);
+                    console.warn(`AG Grid: getGui method from filter returned ${guiFromFilter}, it should be a DOM element or an HTML template string.`);
                 }
 
                 // for backwards compatibility with Angular 1 - we

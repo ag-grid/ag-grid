@@ -49,7 +49,7 @@ export class ExcelXlsxSerializingSession extends BaseExcelSerializingSession<Exc
                 case 'boolean':
                     return 'b';
                 default:
-                    console.warn(`ag-grid: Unrecognized data type for excel export [${style.id}.dataType=${style.dataType}]`);
+                    console.warn(`AG Grid: Unrecognized data type for excel export [${style.id}.dataType=${style.dataType}]`);
             }
         }
 

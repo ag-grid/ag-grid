@@ -113,7 +113,7 @@ export class CsvSerializingSession extends BaseGridSerializingSession<CsvCustomC
         } else if (typeof value.toString === 'function') {
             stringValue = value.toString();
         } else {
-            console.warn('unknown value type during csv conversion');
+            console.warn('AG Grid: unknown value type during csv conversion');
             stringValue = '';
         }
 

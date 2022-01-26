@@ -375,7 +375,7 @@ export class GridApi {
 
     /** @deprecated */
     public setEnterpriseDatasource(datasource: IServerSideDatasource) {
-        console.warn(`ag-grid: since version 18.x, api.setEnterpriseDatasource() should be replaced with api.setServerSideDatasource()`);
+        console.warn(`AG Grid: since version 18.x, api.setEnterpriseDatasource() should be replaced with api.setServerSideDatasource()`);
         this.setServerSideDatasource(datasource);
     }
 
@@ -450,7 +450,7 @@ export class GridApi {
                 this.clientSideRowModel.setRowData(rowData);
             }
         } else {
-            console.warn('cannot call setRowData unless using normal row model');
+            console.warn('AG Grid: cannot call setRowData unless using normal row model');
         }
     }
 
