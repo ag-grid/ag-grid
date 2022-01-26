@@ -336,26 +336,20 @@ export class UserComponentFactory extends BeanStub {
 
         mergeDeep(params, paramsFromGrid);
 
-        // pull user params from either the old prop name or new prop name, whichever present
-        // (but not both, providing both doesn't make sense so we ignore the second one)
-        // eg either cellRendererParams or cellCompParams
+        // pull user params from either the old prop name and new prop name
+        // eg either cellRendererParams and cellCompParams
         const defObjectAny = defObject as any;
-        let userParams: any;
-        const keys = [type.newPropName + 'Params', type.propertyName + 'Params'];
-        keys.forEach( key => {
-            if (defObject && defObjectAny[key]) {
-                userParams = defObjectAny[key];
-            }
-        });
+        const oldUserParams = defObjectAny && defObjectAny[type.propertyName + 'Params'];
+        const newUserParams = defObjectAny && defObjectAny[type.newPropName + 'Params'];
 
-        if (userParams != null) {
+        [oldUserParams, newUserParams].forEach( userParams => {
             if (typeof userParams === 'function') {
                 const userParamsFromFunc = userParams(paramsFromGrid);
                 mergeDeep(params, userParamsFromFunc);
             } else if (typeof userParams === 'object') {
                 mergeDeep(params, userParams);
             }
-        }
+        });
 
         mergeDeep(params, paramsFromSelector);
 
