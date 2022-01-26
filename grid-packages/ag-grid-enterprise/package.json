@@ -29,9 +29,10 @@
     "angular-component",
     "react",
     "react-component",
-    "angularjs",
     "reactjs",
-    "enterprise"
+    "enterprise",
+    "vue",
+    "vuejs"
   ],
   "author": "Niall Crosby <niall.crosby@ag-grid.com>",
   "license": "Commercial",

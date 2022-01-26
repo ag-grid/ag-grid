@@ -188,6 +188,7 @@ AddType text/javascript ts jsx
     Redirect 301 /best-angularjs-2-grid/ /angular-data-grid/getting-started/
     Redirect 301 /best-angularjs-data-grid/ /angular-data-grid/angularjs/
     Redirect 301 /best-angularjs-grid/ /angular-data-grid/angularjs/
+    Redirect 301 /angular-data-grid/angularjs/ /angular-data-grid/getting-started/
     Redirect 301 /best-javascript-data-grid/ /javascript-data-grid/getting-started/
     Redirect 301 /best-javascript-grid/ /javascript-data-grid/getting-started/
     Redirect 301 /best-react-data-grid/ /react-data-grid/getting-started/

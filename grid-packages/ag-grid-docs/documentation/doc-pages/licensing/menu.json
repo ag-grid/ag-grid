@@ -62,15 +62,6 @@
             "pane": "left"
           },
           {
-            "title": "AngularJS",
-            "icon": "angularjs",
-            "url": "/angularjs/",
-            "frameworks": [
-              "angular"
-            ],
-            "pane": "right"
-          },
-          {
             "title": "Vue 3 Tutorial",
             "icon": "vue",
             "url": "/vue3/",

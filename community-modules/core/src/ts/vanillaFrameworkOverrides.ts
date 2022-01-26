@@ -5,7 +5,7 @@ import { AgPromise } from "./utils";
 const OUTSIDE_ANGULAR_EVENTS = ['mouseover', 'mouseout', 'mouseenter', 'mouseleave'];
 const PASSIVE_EVENTS = ['touchstart', 'touchend', 'touchmove', 'touchcancel'];
 
-/** The base frameworks, eg React & Angular 2, override this bean with implementations specific to their requirement. */
+/** The base frameworks, eg React & Angular, override this bean with implementations specific to their requirement. */
 export class VanillaFrameworkOverrides implements IFrameworkOverrides {
 
     // for Vanilla JS, we use simple timeout

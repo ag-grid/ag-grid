@@ -173,7 +173,7 @@ document.addEventListener('DOMContentLoaded', function () {
         getRows: function (params: IGetRowsParams) {
           console.log('asking for ' + params.startRow + ' to ' + params.endRow)
 
-          // At this point in your code, you would call the server, using $http if in AngularJS 1.x.
+          // At this point in your code, you would call the server.
           // To make the demo look real, wait for 500ms before returning
           setTimeout(function () {
             // take a slice of the total rows

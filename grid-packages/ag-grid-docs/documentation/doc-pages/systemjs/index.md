@@ -358,7 +358,7 @@ will result is quicker startup and runtime behaviour, as well as less network tr
 <html>
 
 <head>
-    <title>AG Grid Angular 2 AOT Example</title>
+    <title>AG Grid Angular AOT Example</title>
     <base href="/">
 
     <script src="shim.min.js"></script>

@@ -12,7 +12,7 @@ import MetaData from './MetaData';
 const AngularTemplate = ({ isExecuting, modifiedTimeMs, library, boilerplatePath, appLocation, options, scriptFiles, styleFiles }) =>
     <html lang="en">
         <head>
-            <MetaData title="Angular 2 example" modifiedTimeMs={modifiedTimeMs} isExecuting={isExecuting} />
+            <MetaData title="Angular example" modifiedTimeMs={modifiedTimeMs} isExecuting={isExecuting} />
             <ExampleStyle rootId="app" />
             <Styles files={styleFiles} />
             <Extras options={options} />

@@ -1,7 +1,7 @@
 {
   "name": "ag-grid-community",
   "version": "26.2.0",
-  "description": "Advanced Data Grid / Data Table supporting Javascript / React / AngularJS / Web Components",
+  "description": "Advanced Data Grid / Data Table supporting Javascript / Typescript / React / Angular / Vue",
   "main": "./dist/ag-grid-community.cjs.js",
   "scripts": {
     "build": "npx gulp && npm run rollup && npm run hash",
@@ -28,8 +28,9 @@
     "angular-component",
     "react",
     "react-component",
-    "angularjs",
-    "reactjs"
+    "reactjs",
+    "vue",
+    "vuejs"
   ],
   "jspm": {
     "main": "jspm-main"

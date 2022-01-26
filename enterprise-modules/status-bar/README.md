@@ -9,7 +9,7 @@ Frameworks Supported
 ====================
 Framework specific Getting Started guides:
 
-[Angular 1](https://www.ag-grid.com/angular-grid/angularjs/) | [Angular 2](https://www.ag-grid.com/angular-grid/getting-started/) | [Javascript](https://www.ag-grid.com/javascript-grid/getting-started/) | [Polymer](https://www.ag-grid.com/javascript-grid/polymer-getting-started/) | [React](https://www.ag-grid.com/react-grid/getting-started/) | [TypeScript](https://www.ag-grid.com/javascript-grid/building-typescript/) | [VueJS](https://www.ag-grid.com/vue-grid/getting-started/)
+[Angular](https://www.ag-grid.com/angular-grid/getting-started/) | [Javascript](https://www.ag-grid.com/javascript-grid/getting-started/) | [React](https://www.ag-grid.com/react-grid/getting-started/) | [TypeScript](https://www.ag-grid.com/javascript-grid/building-typescript/) | [VueJS](https://www.ag-grid.com/vue-grid/getting-started/)
 
 This is not free software, this software is covered by copyright and to use you need a commercial license.
 

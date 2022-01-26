@@ -1,7 +1,7 @@
 {
   "name": "ag-charts-community",
   "version": "4.2.0",
-  "description": "Advanced Charting / Charts supporting Javascript / React / Angular",
+  "description": "Advanced Charting / Charts supporting Javascript / Typescript / React / Angular / Vue",
   "main": "./dist/cjs/es5/main.js",
   "module": "./dist/esm/es5/main.js",
   "types": "./dist/cjs/es5/main.d.ts",
@@ -26,8 +26,9 @@
     "angular-component",
     "react",
     "react-component",
-    "angularjs",
-    "reactjs"
+    "reactjs",
+    "vue",
+    "vuejs"
   ],
   "author": "Sean Landsman <sean@thelandsmans.com>",
   "license": "MIT",
