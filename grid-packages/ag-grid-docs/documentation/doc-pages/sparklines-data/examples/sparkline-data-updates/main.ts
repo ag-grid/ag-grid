@@ -30,10 +30,9 @@ function start() {
     return
   }
 
-  var gridApi = gridOptions.api!
-  function updateData() {
+  const updateData = () => {
     const itemsToUpdate: any[] = []
-    gridApi.forEachNodeAfterFilterAndSort(function (rowNode) {
+    gridOptions.api!.forEachNodeAfterFilterAndSort(function (rowNode) {
       const data = rowNode.data
       const n = data.change.length
       const v =
@@ -41,8 +40,8 @@ function start() {
       data.change = [...data.change.slice(1, n), v]
       itemsToUpdate.push(data)
     })
-    gridApi.applyTransaction({ update: itemsToUpdate })
-  }
+    gridOptions.api!.applyTransaction({ update: itemsToUpdate })
+  };
 
   intervalId = setInterval(updateData, 300)
 }

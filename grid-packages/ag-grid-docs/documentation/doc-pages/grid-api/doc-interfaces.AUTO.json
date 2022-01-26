@@ -14357,6 +14357,10 @@
         "optional": true
       }
     },
+    "cellRendererComp": {
+      "description": "/** Similar to the Cell Renderer Comp for the grid. Setting it separately here allows for the value to\n * be rendered differently in the filter. */",
+      "type": { "returnType": "any", "optional": true }
+    },
     "suppressMiniFilter": {
       "description": "/** Set to `true` to hide the Mini Filter.\n * \n * Default: `false` */",
       "type": { "returnType": "boolean", "optional": true }

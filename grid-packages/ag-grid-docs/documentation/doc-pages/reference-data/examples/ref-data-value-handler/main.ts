@@ -7,6 +7,7 @@ import {
     ValueFormatterParams,
     ValueSetterParams
 } from '@ag-grid-community/core'
+import {ColourCellRenderer} from './colourCellRenderer_typescript'
 
 const carMappings = {
     tyt: 'Toyota',
@@ -52,7 +53,7 @@ const gridOptions: GridOptions = {
             cellEditorPopup: true,
             cellEditorCompParams: {
                 values: colours,
-                cellRenderer: colourCellRenderer,
+                cellRendererComp: ColourCellRenderer,
             },
             filterComp: 'agSetColumnFilter',
             filterParams: {
@@ -60,7 +61,7 @@ const gridOptions: GridOptions = {
                 valueFormatter: function (params) {
                     return lookupValue(colourMappings, params.value)
                 },
-                cellRenderer: colourCellRenderer,
+                cellRendererComp: ColourCellRenderer,
             } as ISetFilterParams,
             valueFormatter: function (params) {
                 return lookupValue(colourMappings, params.value)
@@ -68,7 +69,7 @@ const gridOptions: GridOptions = {
             valueParser: function (params) {
                 return lookupKey(colourMappings, params.newValue)
             },
-            cellRenderer: colourCellRenderer,
+            cellRendererComp: ColourCellRenderer,
         },
         {
             field: 'interiorColour',
@@ -83,7 +84,7 @@ const gridOptions: GridOptions = {
                 valueFormatter: function (params: ValueFormatterParams) {
                     return lookupValue(colourMappings, params.value)
                 },
-                cellRenderer: colourCellRenderer,
+                cellRendererComp: ColourCellRenderer,
             },
             valueFormatter: function (params) {
                 return lookupValue(colourMappings, params.value)
@@ -91,7 +92,7 @@ const gridOptions: GridOptions = {
             valueParser: function (params) {
                 return lookupKey(colourMappings, params.newValue)
             },
-            cellRenderer: colourCellRenderer,
+            cellRendererComp: ColourCellRenderer,
         },
         {
             headerName: 'Retail Price',
@@ -145,16 +146,6 @@ function lookupKey(mappings: Record<string, string>, name: string) {
     }
 }
 
-function colourCellRenderer(params: ICellRendererParams) {
-    if (params.value === '(Select All)') {
-        return params.value
-    }
-
-    return (
-        `<span style="color: ${removeSpaces(params.valueFormatted)}">${params.valueFormatted}</span>`
-    )
-}
-
 function currencyFormatter(params: ValueFormatterParams) {
     const value = Math.floor(params.value);
 
@@ -173,10 +164,6 @@ function numberValueSetter(params: ValueSetterParams) {
     params.data.price = params.newValue
 
     return true
-}
-
-function removeSpaces(str: string) {
-    return str ? str.replace(/\s/g, '') : str
 }
 
 // wait for the document to be loaded, otherwise

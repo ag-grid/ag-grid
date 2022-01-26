@@ -63,7 +63,7 @@ const rightColumnDefs: ColDef[] = [
     {
         suppressMenu: true,
         maxWidth: 50,
-        cellRenderer: SportRenderer
+        cellRendererComp: SportRenderer
     }
 ];
 

@@ -160,8 +160,8 @@ function addBinZone(params: GridReadyEvent) {
 }
 
 function addGridDropZone(params: GridReadyEvent, side: string) {
-    var gridApi = (side === 'Left' ? leftGridOptions : rightGridOptions).api;
-    var dropZone = gridApi!.getRowDropZoneParams();
+    var api = (side === 'Left' ? leftGridOptions : rightGridOptions).api!;
+    var dropZone = api.getRowDropZoneParams();
 
     params.api.addRowDropZone(dropZone);
 }
