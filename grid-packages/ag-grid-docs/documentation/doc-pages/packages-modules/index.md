@@ -2,13 +2,23 @@
 title: "AG Grid Packages & Modules"
 ---
 
-Version 22.0.0 changes the way AG Grid is made available by providing functionality in modules, allowing you to pick and choose which features you require, resulting in a smaller application size overall.
+There are two main ways to add AG Grid to your application depending on your requirements and priorities with respect to bundle size / developer effort.
 
 ## Introduction
 
-There are two main ways to install AG Grid - either by using `packages` , or by using `modules`. [packages](/packages/) are the easiest way to use AG Grid, but by default include all code specific to each package, whereas [modules](/modules/) allow you to cherry pick what functionality you want, which will allow for a reduced overall bundle size.
+You can install AG Grid by either using our feature complete `packages`, or by cherry picking the feature `modules` specific to your application's grid requirements. 
 
-If you're unsure whether to use `packages` or `modules` then we'd recommend starting with `packages` and migrate to `modules` if you wish to reduce overall bundle size.
+## Which to use?
+
+[Packages](/packages/) are the easiest way to use AG Grid as every feature is implicitly available. However, this will mean that your application bundle includes every grid feature, some of which are not required by your application and so bloat your bundle size.
+
+[Modules](/modules) are suitable if bundle size is critical to your application. They enable you to only include the functionality you need resulting in a minimal bundle size at the cost of additional config required to register modules in your application.
+
+If you're unsure whether to use `packages` or `modules` then we'd recommend starting with `packages` as every grid feature is available and you do not have to worry about registering modules.
+
+### Minimize Bundle Size
+
+If you want to minimize your bundle size then you should definitely use `modules` to only include features that your application requires. 
 
 
 <div class="d-flex justify-content-around" style="height: 20rem;">

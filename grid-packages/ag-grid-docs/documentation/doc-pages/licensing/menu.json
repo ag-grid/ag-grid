@@ -281,7 +281,7 @@
             "showInCollapsed": true
           },
           {
-            "title": "Packages & Modules",
+            "title": "Packages vs Modules",
             "url": "/packages-modules/",
             "showInCollapsed": true,
             "items": [
@@ -290,16 +290,24 @@
                 "url": "/packages/"
               },
               {
-                "title": "Modules - Overview",
+                "title": "Modules",
                 "url": "/modules/"
               },
               {
-                "title": "Modules - More Details",
-                "url": "/modules-more-details/"
+                "title": "Custom UMD Bundle",
+                "url": "/modules-building/",
+                "frameworks": [
+                  "javascript"
+                ]
               },
               {
-                "title": "Building",
-                "url": "/modules-building/"
+                "title": "Modules - Example",
+                "url": "/modules-building/",
+                "frameworks": [
+                  "angular",
+                  "react",
+                  "vue"
+                ]
               }
             ]
           },

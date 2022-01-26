@@ -1,10 +1,5 @@
 [
   {
-    "title": "All Community Modules <sup>(!)</sup>",
-    "module": "@ag-grid-community/all-modules",
-    "exported": "All Community Modules"
-  },
-  {
     "title": "Grid Core",
     "module": "@ag-grid-community/core",
     "exported": "Core Grid Components: GridOptions, ColDef etc"
@@ -49,23 +44,10 @@
     "vue": true
   },
   {
-    "title": "All Community & Enterprise Modules <sup>(!)</sup><enterprise-icon></enterprise-icon>",
-    "module": "@ag-grid-enterprise/all-modules",
-    "enterprise": true,
-    "exported": "All Community & Enterprise Modules"
-  },
-  {
     "title": "Enterprise Core<enterprise-icon></enterprise-icon>",
     "module": "@ag-grid-enterprise/core",
     "enterprise": true,
     "exported": "LicenseManager"
-  },
-  {
-    "title": "Sparklines<enterprise-icon></enterprise-icon>",
-    "shortname": "sparklines",
-    "module": "@ag-grid-enterprise/sparklines",
-    "enterprise": true,
-    "exported": "SparklinesModule"
   },
   {
     "title": "Charts<enterprise-icon></enterprise-icon>",
@@ -73,6 +55,13 @@
     "module": "@ag-grid-enterprise/charts",
     "enterprise": true,
     "exported": "GridChartsModule"
+  },
+  {
+    "title": "Sparklines<enterprise-icon></enterprise-icon>",
+    "shortname": "sparklines",
+    "module": "@ag-grid-enterprise/sparklines",
+    "enterprise": true,
+    "exported": "SparklinesModule"
   },
   {
     "title": "Clipboard<enterprise-icon></enterprise-icon>",
@@ -124,7 +113,7 @@
     "exported": "RangeSelectionModule"
   },
   {
-    "title": "Rich Select",
+    "title": "Rich Select<enterprise-icon></enterprise-icon>",
     "shortname": "richselect",
     "module": "@ag-grid-enterprise/rich-select",
     "enterprise": true,
