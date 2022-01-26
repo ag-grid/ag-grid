@@ -53,6 +53,10 @@ export class StandardMenuFactory extends BeanStub implements IMenuFactory {
 
     public showPopup(column: Column, positionCallback: (eMenu: HTMLElement) => void, eventSource: HTMLElement): void {
         const filterWrapper = this.filterManager.getOrCreateFilterWrapper(column, 'COLUMN_MENU');
+        if (!filterWrapper) {
+            throw new Error('AG Grid - unable to show popup filter, filter instantiation failed');
+        }
+
         const eMenu = document.createElement('div');
 
         setAriaRole(eMenu, 'presentation');

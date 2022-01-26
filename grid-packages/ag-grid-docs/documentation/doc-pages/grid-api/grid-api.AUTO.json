@@ -336,7 +336,7 @@
   },
   "setQuickFilter": {
     "description": "/** Pass a quick filter text into the grid for filtering. */",
-    "type": { "arguments": { "newFilter": "any" }, "returnType": "void" }
+    "type": { "arguments": { "newFilter": "string" }, "returnType": "void" }
   },
   "selectIndex": {
     "type": {
@@ -477,7 +477,7 @@
     "type": {
       "arguments": {
         "key": "string | Column",
-        "callback?": "(filter: IFilter) => void"
+        "callback?": "(filter: IFilter | null) => void"
       },
       "returnType": "IFilter | null | undefined"
     }
