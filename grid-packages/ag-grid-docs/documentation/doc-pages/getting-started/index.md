@@ -1602,12 +1602,12 @@ title: "Get Started with AG Grid"
 |       { field: "price", sortable: true, filter: true },
 |    ]);
 |
-|+ const autoGroupColumnDef = useMemo({
+|+ const autoGroupColumnDef = useMemo(()=> ({
 |+     field: "model", // show model in group column at leaf levels
 |+     cellRendererParams: {
 |+         checkbox: true // put in checkbox selection in group column
 |+     }
-|+ }, [])
+|+ }), [])
 |
 |  <div className="ag-theme-alpine" style={{ height: 400, width: 600 }}>
 |      <button onClick={onButtonClick}>Get selected rows</button>

@@ -101,7 +101,8 @@ const buildBuildTree = (startingPackage, dependencyTree, dependenciesOrdered) =>
 };
 
 const exclude = [
-    'ag-grid-dev'
+    'ag-grid-dev',
+    'ag-grid-documentation'
 ];
 
 const excludePackage = (packageName, includeExamples) => {
@@ -227,11 +228,11 @@ const getFlattenedBuildChainInfo = async (includeExamples) => {
 
     const flattenedBuildChainInfo = {};
     const packageNames = Object.keys(buildChainInfo.buildChains);
-    packageNames.filter(packageName => includeExamples || (!includeExamples && packageName !== "ag-grid-docs" && packageName !== "ag-grid-documentation"))
+    packageNames.filter(packageName => includeExamples || (!includeExamples && packageName !== "ag-grid-docs"))
         .forEach(packageName => {
             flattenedBuildChainInfo[packageName] = flattenArray(
                 Object.values(buildChainInfo.buildChains[packageName])
-            ).filter(entry => includeExamples || (!includeExamples && entry !== "ag-grid-docs" && entry !== "ag-grid-documentation"));
+            ).filter(entry => includeExamples || (!includeExamples && entry !== "ag-grid-docs"));
         });
     return flattenedBuildChainInfo;
 };
