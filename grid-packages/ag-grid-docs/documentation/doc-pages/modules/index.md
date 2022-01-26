@@ -1,8 +1,11 @@
 ---
-title: "AG Grid Modules - Overview"
+title: "AG Grid Modules"
 ---
 
 AG Grid modules allow you to cherry pick grid features resulting in a smaller application bundle size overall.
+
+[[warning]]
+| We no longer recommend the use of `@ag-grid-community/all-modules` or `@ag-grid-enterprise/all-modules`. They have no bundle size advantage over using grid [Packages](/packages/) required additional registration code in your application. To continue having all grid features without the need for module registration switch to grid [Packages](/packages/). Alternatively, specify the feature modules your application requires and see your bundle size reduce.
 
 ## Modules
 
