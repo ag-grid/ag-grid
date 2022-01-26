@@ -3,17 +3,11 @@ title: "Building AG Grid with Rollup.js"
 frameworks: ["javascript"]
 ---
 
-We walk through the main steps required when using AG Grid with Rollup.js.
+We walk through the main steps required when using AG Grid with Rollup.js. We use AG Grid modules to only include the code that we require with the aim of keeping bundle size to a minimum.
 
 [[note]]
 | A full working example of using Rollup.js with AG Grid can be found on
 | [Github](https://github.com/seanlandsman/ag-grid-rollup).
-
-[[note]]
-| This walkthrough uses the `@ag-grid-community/all-modules` package which will include all
-| features of AG Grid. If you're using Rollup to reduce your bundle size you probably want to be selective
-| in which packages you include - please see the [Modules](/modules/) documentation for more
-| information.
 
 ## Initialise Project
 
@@ -26,12 +20,12 @@ npm init --yes
 ## Install Dependencies
 
 ```bash
-npm i --save @ag-grid-community/all-modules
+npm i --save @ag-grid-community/client-side-row-model
 
 // or, if using Enterprise features
-npm i --save @ag-grid-enterprise/all-modules
+npm i --save @ag-grid-enterprise/range-selection
 
-npm i --save-dev rollup rollup-plugin-node-resolve
+npm i --save-dev rollup @rollup/plugin-node-resolve rollup-plugin-postcss
 ```
 
 ## Create Application
@@ -40,10 +34,16 @@ Our application will be a very simple one, consisting of a single file that will
 
 ```js
 // main-ag-grid.js
-import {Grid} from '@ag-grid-community/all-modules'
+import { Grid, ModuleRegistry } from '@ag-grid-community/core';
+import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
+// import { RangeSelectionModule } from "@ag-grid-enterprise/range-selection";
+import '@ag-grid-community/core/dist/styles/ag-grid.css';
+import '@ag-grid-community/core/dist/styles/ag-theme-balham.css';
 
-// or, if using enterprise features
-// import {Grid} from '@ag-grid-enterprise/all-modules'
+ModuleRegistry.registerModules([ClientSideRowModelModule])
+
+// If using enterprise feature register that module too.
+// ModuleRegistry.registerModules([ClientSideRowModelModule, RangeSelectionModule])
 
 // specify the columns
 var columnDefs = [
@@ -76,12 +76,6 @@ new Grid(eGridDiv, gridOptions);
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="./node_modules/@ag-grid-community/all-modules/dist/styles/ag-grid.css">
-    <link rel="stylesheet" href="./node_modules/@ag-grid-community/all-modules/dist/styles/ag-theme-alpine.css">
-
-    <!-- or, if using Enterprise features -->
-    <!-- <link rel="stylesheet" href="./node_modules/@ag-grid-enterprise/all-modules/dist/styles/ag-grid.css"> -->
-    <!-- <link rel="stylesheet" href="./node_modules/@ag-grid-enterprise/all-modules/dist/styles/ag-theme-alpine.css"> -->
 </head>
 <body>
 <div id="myGrid" style="height: 200px;width:500px;" class="ag-theme-alpine"></div>
@@ -96,20 +90,25 @@ new Grid(eGridDiv, gridOptions);
 Our `rollup.ag-grid.json` is very simple in this example:
 
 ```jsx
-const node = require('rollup-plugin-node-resolve');
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+import postcss from 'rollup-plugin-postcss'
 
-export default <span ng-non-bindable>&#123;</span>
+export default {
     input: './main-ag-grid.js',
-    output: <span ng-non-bindable>&#123;</span>
+    output: {
         file: './dist/ag-bundle.js',
         format: 'umd',
     },
     plugins: [
-        node()
+        nodeResolve(),
+        postcss({
+            extract: true,
+            extensions: [".css"]
+        })
     ],
-    onwarn: (msg, warn) => <span ng-non-bindable>&#123;</span>
+    onwarn: (msg, warn) => {
         if (msg.code === 'THIS_IS_UNDEFINED') return;
-        if (!/Circular/.test(msg)) <span ng-non-bindable>&#123;</span>
+        if (!/Circular/.test(msg)) {
             warn(msg)
         }
     }
