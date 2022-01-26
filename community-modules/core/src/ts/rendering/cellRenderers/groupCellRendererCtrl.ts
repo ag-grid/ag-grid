@@ -65,11 +65,11 @@ export interface GroupCellRendererParams extends ICellRendererParams {
     /** Callback to enable different innerRenderers to be used based of value of params. */
     innerRendererSelector?: CellRendererSelectorFunc;
 
-    /** Cell Component to use for inside the Group Cell */
+    /** Cell Renderer Component to use for inside the Group Cell */
     innerRendererComp?: any;
-    /** Params for Cell Component */
+    /** Params for Inner Cell Component */
     innerRendererCompParams?: any;
-    /** Callback to select Cell Component for inside the Group Cell*/
+    /** Callback to select Cell Component for inside the Group Cell, should there be a different one for different rows */
     innerRendererCompSelector?: CellRendererCompSelectorFunc;
 
     scope: any;

@@ -16405,15 +16405,15 @@
       "description": "/** Callback to enable different innerRenderers to be used based of value of params. */",
       "type": { "returnType": "CellRendererSelectorFunc", "optional": true }
     },
-    "innerCellComp": {
+    "innerRendererComp": {
       "description": "/** Cell Component to use for inside the Group Cell */",
       "type": { "returnType": "any", "optional": true }
     },
-    "innerCellCompParams": {
+    "innerRendererCompParams": {
       "description": "/** Params for Cell Component */",
       "type": { "returnType": "any", "optional": true }
     },
-    "innerCellCompSelector": {
+    "innerRendererCompSelector": {
       "description": "/** Callback to select Cell Component for inside the Group Cell */",
       "type": { "returnType": "CellRendererCompSelectorFunc", "optional": true }
     },
