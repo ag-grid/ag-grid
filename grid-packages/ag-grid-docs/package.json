@@ -1,7 +1,7 @@
 {
   "name": "ag-grid-docs",
   "version": "26.2.0",
-  "description": "Documentation for AG Grid",
+  "description": "Documentation for AG Grid ",
   "scripts": {
     "build": "npm run hash",
     "start": "npx gulp serve --max_old_space_size=6144",
