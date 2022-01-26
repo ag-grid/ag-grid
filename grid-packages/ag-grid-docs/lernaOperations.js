@@ -17,7 +17,7 @@ const buildDependencies = async (dependencies, command = 'build-css', arguments 
 
     const scopedDependencies = dependencies.map(dependency => `--scope ${dependency}`).join(' ');
     const lernaArgs = `run ${command} ${scopedDependencies} ${arguments}`.trim().split(" ");
-    return await execa("./node_modules/.bin/lerna", lernaArgs, { stdio: "inherit", cwd: '../../' });
+    return await execa("./node_modules/.bin/lerna", lernaArgs, {stdio: "inherit", cwd: '../../'});
 };
 
 const buildDependencyChain = async (packageName, buildChains, command = "build-css") => {
@@ -29,7 +29,7 @@ const buildDependencyChain = async (packageName, buildChains, command = "build-c
     }
 };
 
-const spawnCssWatcher = ({ paths, buildChains }) => {
+const spawnCssWatcher = ({paths, buildChains}) => {
     if (process.env.AG_NO_CSS) {
         console.log("Disabling CSS watching - manually launch sass-native-watch.sh instead");
         return;
@@ -101,14 +101,17 @@ const buildBuildTree = (startingPackage, dependencyTree, dependenciesOrdered) =>
 };
 
 const exclude = [
-    'ag-grid-dev',
-    'ag-grid-docs',
-    'ag-grid-documentation',
+    'ag-grid-dev'
 ];
 
- const excludePackage = (packageName, includeExamples) => !exclude.includes(packageName) &&
-     (!packageName.includes("-example") ||(packageName.includes("-example") && includeExamples)) &&
-    !packageName.includes("seans");
+const excludePackage = (packageName, includeExamples) => {
+    if (packageName === 'ag-grid-docs' && includeExamples) {
+        return false;
+    }
+    return !exclude.includes(packageName) &&
+        (!packageName.includes("-example") || (packageName.includes("-example") && includeExamples)) &&
+        !packageName.includes("seans");
+}
 
 const filterExcludedRoots = (dependencyTree, includeExamples) => {
     const prunedDependencyTree = {};
@@ -123,7 +126,7 @@ const filterExcludedRoots = (dependencyTree, includeExamples) => {
 
 const getOrderedDependencies = async (packageName, includeExamples = false) => {
     const lernaArgs = `ls --all --sort --toposort --json --scope ${packageName} --include-dependents`.split(" ");
-    const { stdout } = await execa("./node_modules/.bin/lerna", lernaArgs, { cwd: '../../' });
+    const {stdout} = await execa("./node_modules/.bin/lerna", lernaArgs, {cwd: '../../'});
     let dependenciesOrdered = JSON.parse(stdout);
     dependenciesOrdered = dependenciesOrdered.filter(dependency => excludePackage(dependency.name, includeExamples));
 
@@ -138,7 +141,7 @@ const getOrderedDependencies = async (packageName, includeExamples = false) => {
 
 const generateBuildChain = async (packageName, allPackagesOrdered, includeExamples = false) => {
     let lernaArgs = `ls --all --toposort --graph --scope ${packageName} --include-dependents`.split(" ");
-    let { stdout } = await execa("./node_modules/.bin/lerna", lernaArgs, { cwd: '../../' });
+    let {stdout} = await execa("./node_modules/.bin/lerna", lernaArgs, {cwd: '../../'});
     let dependencyTree = JSON.parse(stdout);
 
     dependencyTree = filterAgGridOnly(dependencyTree);
@@ -176,7 +179,7 @@ const watchCss = () => {
     console.log("Watching css...");
     const cacheFilePath = getCacheFilePath();
     if (!fs.existsSync(cacheFilePath)) {
-        const { paths, orderedPackageNames } = getOrderedDependencies("@ag-grid-community/core");
+        const {paths, orderedPackageNames} = getOrderedDependencies("@ag-grid-community/core");
 
         const buildChains = {};
         for (let packageName of orderedPackageNames) {
@@ -199,8 +202,8 @@ const watchCss = () => {
 const getBuildChainInfo = async (includeExamples) => {
     const cacheFilePath = getCacheFilePath();
     if (!fs.existsSync(cacheFilePath)) {
-        const { paths: gridPaths, orderedPackageNames: orderedGridPackageNames } = await getOrderedDependencies("@ag-grid-community/core", includeExamples);
-        const { paths: chartPaths, orderedPackageNames: orderedChartPackageNames } = await getOrderedDependencies("ag-charts-community", false);
+        const {paths: gridPaths, orderedPackageNames: orderedGridPackageNames} = await getOrderedDependencies("@ag-grid-community/core", includeExamples);
+        const {paths: chartPaths, orderedPackageNames: orderedChartPackageNames} = await getOrderedDependencies("ag-charts-community", false);
 
         const buildChains = {};
         for (let packageName of orderedGridPackageNames.concat(orderedChartPackageNames)) {
@@ -224,9 +227,12 @@ const getFlattenedBuildChainInfo = async (includeExamples) => {
 
     const flattenedBuildChainInfo = {};
     const packageNames = Object.keys(buildChainInfo.buildChains);
-    packageNames.forEach(packageName => {
-        flattenedBuildChainInfo[packageName] = flattenArray(Object.values(buildChainInfo.buildChains[packageName]));
-    });
+    packageNames.filter(packageName => includeExamples || (!includeExamples && packageName !== "ag-grid-docs" && packageName !== "ag-grid-documentation"))
+        .forEach(packageName => {
+            flattenedBuildChainInfo[packageName] = flattenArray(
+                Object.values(buildChainInfo.buildChains[packageName])
+            ).filter(entry => includeExamples || (!includeExamples && entry !== "ag-grid-docs" && entry !== "ag-grid-documentation"));
+        });
     return flattenedBuildChainInfo;
 };
 
@@ -286,15 +292,15 @@ const readModulesState = () => {
             .map(d => WINDOWS ? `..\\..\\${moduleRootName}\\${d.name}` : `../../${moduleRootName}/${d.name}`)
             .map(d => {
                 const packageName = require(WINDOWS ? `${d}\\package.json` : `${d}/package.json`).name;
-                modulesState[packageName] = { moduleChanged: moduleChanged(d) };
+                modulesState[packageName] = {moduleChanged: moduleChanged(d)};
             });
     });
 
     return modulesState;
 };
 
-let getLastBuild = function() {
-    const lastBuild = fsExtra.readJsonSync('./.last.build.json', { throws: false });
+let getLastBuild = function () {
+    const lastBuild = fsExtra.readJsonSync('./.last.build.json', {throws: false});
     if (lastBuild) {
         return JSON.parse(lastBuild);
     }
