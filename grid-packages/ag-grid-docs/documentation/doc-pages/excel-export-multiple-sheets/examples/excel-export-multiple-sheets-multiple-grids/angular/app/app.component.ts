@@ -3,31 +3,33 @@ import {HttpClient} from '@angular/common/http';
 import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
 import {CsvExportModule} from '@ag-grid-community/csv-export';
 import {ExcelExportModule, exportMultipleSheetsAsExcel} from '@ag-grid-enterprise/excel-export';
+import {ColDef, ColumnApi, GridApi, GridReadyEvent, ICellRendererComp, ICellRendererParams} from '@ag-grid-community/core';
+import { ICellRendererAngularComp } from '@ag-grid-community/angular';
 
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
-import {ColDef, ColumnApi, GridApi, GridReadyEvent, ICellRendererComp, ICellRendererParams} from '@ag-grid-community/core';
 
-class SportRenderer implements ICellRendererComp {
-    eGui!: HTMLElement;
+@Component({
+    selector: 'simple-component',
+    template: `
+        <i class="far fa-trash-alt" style="cursor: pointer" (click)="applyTransaction()"></i>
+    `
+})
+export class SportRenderer implements ICellRendererAngularComp {
+    private params!: ICellRendererParams;
+    private value!: string;
 
-    init(params: ICellRendererParams) {
-        this.eGui = document.createElement('i');
-
-        this.eGui.addEventListener('click', function () {
-            params.api.applyTransaction({remove: [params.node.data]});
-        });
-
-        this.eGui.classList.add('far', 'fa-trash-alt');
-        this.eGui.style.cursor = 'pointer';
+    agInit(params: ICellRendererParams): void {
+        this.params = params;
     }
 
-    getGui() {
-        return this.eGui;
+    applyTransaction() {
+        console.log("here!!");
+        this.params.api.applyTransaction({remove: [this.params.node.data]});
     }
 
-    refresh(params: ICellRendererParams): boolean {
-        return false;
+    refresh() {
+        return false
     }
 }
 

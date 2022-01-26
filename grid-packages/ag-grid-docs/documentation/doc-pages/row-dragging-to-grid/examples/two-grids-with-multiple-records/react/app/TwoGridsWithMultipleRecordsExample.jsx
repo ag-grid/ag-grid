@@ -5,6 +5,15 @@ import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-mod
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
+const SportRenderer = props => {
+    return (
+        <i className="far fa-trash-alt"
+           style={{cursor: 'pointer'}}
+           onClick={() => props.api.applyTransaction({remove: [props.node.data]})}>
+        </i>
+    )
+}
+
 const leftColumns = [
     {
         rowDrag: true,
@@ -45,18 +54,7 @@ const rightColumns = [
     {
         suppressMenu: true,
         maxWidth: 50,
-        cellRenderer: (params) => {
-            var button = document.createElement('i');
-
-            button.addEventListener('click', function () {
-                params.api.applyTransaction({ remove: [params.node.data] });
-            });
-
-            button.classList.add('far', 'fa-trash-alt');
-            button.style.cursor = 'pointer';
-
-            return button;
-        }
+        cellRendererComp: SportRenderer
     }
 ]
 

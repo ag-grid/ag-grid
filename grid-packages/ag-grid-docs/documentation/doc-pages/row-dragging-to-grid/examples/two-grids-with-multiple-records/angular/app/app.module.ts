@@ -4,17 +4,17 @@ import { HttpClientModule } from '@angular/common/http';
 
 // ag-grid
 import { AgGridModule } from "@ag-grid-community/angular";
-
-import { AppComponent } from './app.component';
+import { SportRenderer, AppComponent } from './app.component';
 
 @NgModule({
   imports: [
     BrowserModule,
     HttpClientModule,
-    AgGridModule.withComponents([])
+    AgGridModule.withComponents([SportRenderer])
   ],
   declarations: [
-    AppComponent
+    AppComponent,
+    SportRenderer
   ],
   bootstrap: [AppComponent]
 })

@@ -1,10 +1,33 @@
-import { Component, ViewChild } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
+import {Component, ViewChild} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
 
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
-import { ColDef, ColumnApi, GridApi, GridReadyEvent } from '@ag-grid-community/core';
+import {ColDef, ColumnApi, GridApi, GridReadyEvent, ICellRendererParams} from '@ag-grid-community/core';
+import {ICellRendererAngularComp} from '@ag-grid-community/angular';
+
+@Component({
+    selector: 'simple-component',
+    template: `
+        <i class="far fa-trash-alt" style="cursor: pointer" (click)="applyTransaction()"></i>`
+})
+export class SportRenderer implements ICellRendererAngularComp {
+    private params!: ICellRendererParams;
+    private value!: string;
+
+    agInit(params: ICellRendererParams): void {
+        this.params = params;
+    }
+
+    applyTransaction() {
+        this.params.api.applyTransaction({remove: [this.params.node.data]});
+    }
+
+    refresh() {
+        return false
+    }
+}
 
 @Component({
     selector: 'my-app',
@@ -33,19 +56,19 @@ import { ColDef, ColumnApi, GridApi, GridReadyEvent } from '@ag-grid-community/c
                     <div class="panel-body">
                         <div id="eLeftGrid">
                             <ag-grid-angular
-                                style="height: 100%;"
-                                [defaultColDef]="defaultColDef"
-                                rowSelection="multiple"
-                                [rowDragMultiRow]="true"
-                                [suppressRowClickSelection]="true"
-                                [getRowNodeId]="getRowNodeId"
-                                [rowDragManaged]="true"
-                                [suppressMoveWhenRowDragging]="true"
-                                [animateRows]="true"
-                                [rowData]="leftRowData"
-                                [columnDefs]="leftColumns"
-                                (gridReady)="onGridReady($event, 0)"
-                                [modules]="modules">
+                                    style="height: 100%;"
+                                    [defaultColDef]="defaultColDef"
+                                    rowSelection="multiple"
+                                    [rowDragMultiRow]="true"
+                                    [suppressRowClickSelection]="true"
+                                    [getRowNodeId]="getRowNodeId"
+                                    [rowDragManaged]="true"
+                                    [suppressMoveWhenRowDragging]="true"
+                                    [animateRows]="true"
+                                    [rowData]="leftRowData"
+                                    [columnDefs]="leftColumns"
+                                    (gridReady)="onGridReady($event, 0)"
+                                    [modules]="modules">
                             </ag-grid-angular>
                         </div>
                     </div>
@@ -55,15 +78,15 @@ import { ColDef, ColumnApi, GridApi, GridReadyEvent } from '@ag-grid-community/c
                     <div class="panel-body">
                         <div id="eRightGrid">
                             <ag-grid-angular
-                                style="height: 100%;"
-                                [defaultColDef]="defaultColDef"
-                                [getRowNodeId]="getRowNodeId"
-                                [rowDragManaged]="true"
-                                [animateRows]="true"
-                                [rowData]="rightRowData"
-                                [columnDefs]="rightColumns"
-                                (gridReady)="onGridReady($event, 1)"
-                                [modules]="modules">
+                                    style="height: 100%;"
+                                    [defaultColDef]="defaultColDef"
+                                    [getRowNodeId]="getRowNodeId"
+                                    [rowDragManaged]="true"
+                                    [animateRows]="true"
+                                    [rowData]="rightRowData"
+                                    [columnDefs]="rightColumns"
+                                    (gridReady)="onGridReady($event, 1)"
+                                    [modules]="modules">
                             </ag-grid-angular>
                         </div>
                     </div>
@@ -109,8 +132,8 @@ export class AppComponent {
             suppressMenu: true,
             headerCheckboxSelection: true
         },
-        { field: "athlete" },
-        { field: "sport" }
+        {field: "athlete"},
+        {field: "sport"}
     ];
 
     rightColumns: ColDef[] = [
@@ -125,23 +148,12 @@ export class AppComponent {
                 return params.rowNode!.data.athlete;
             },
         },
-        { field: "athlete" },
-        { field: "sport" },
+        {field: "athlete"},
+        {field: "sport"},
         {
             suppressMenu: true,
             maxWidth: 50,
-            cellRenderer: (params) => {
-                var button = document.createElement('i');
-
-                button.addEventListener('click', function () {
-                    params.api.applyTransaction({ remove: [params.node.data] });
-                });
-
-                button.classList.add('far', 'fa-trash-alt');
-                button.style.cursor = 'pointer';
-
-                return button;
-            }
+            cellRendererComp: SportRenderer
         }
     ]
 
@@ -159,7 +171,9 @@ export class AppComponent {
 
             while (athletes.length < 20 && i < dataArray.length) {
                 var pos = i++;
-                if (athletes.some(rec => rec.athlete === dataArray[pos].athlete)) { continue; }
+                if (athletes.some(rec => rec.athlete === dataArray[pos].athlete)) {
+                    continue;
+                }
                 athletes.push(dataArray[pos]);
             }
             this.rawData = athletes;
@@ -211,7 +225,9 @@ export class AppComponent {
 
                 if (moveCheck) {
                     this.leftApi.applyTransaction({
-                        remove: nodes.map(function (node) { return node.data; })
+                        remove: nodes.map(function (node) {
+                            return node.data;
+                        })
                     });
                 } else if (deselectCheck) {
                     nodes.forEach(function (node) {

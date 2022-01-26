@@ -1,15 +1,23 @@
-import { createApp } from 'vue';
-import { AgGridVue } from '@ag-grid-community/vue';
+import {createApp} from 'vue';
+import {AgGridVue} from '@ag-grid-community/vue3';
 
-import { ClientSideRowModelModule } from '@ag-grid-community/client-side-row-model';
-import { CsvExportModule } from '@ag-grid-community/csv-export';
-import { ExcelExportModule, exportMultipleSheetsAsExcel } from '@ag-grid-enterprise/excel-export';
+import {ClientSideRowModelModule} from '@ag-grid-community/client-side-row-model';
+import {CsvExportModule} from '@ag-grid-community/csv-export';
+import {ExcelExportModule, exportMultipleSheetsAsExcel} from '@ag-grid-enterprise/excel-export';
 
 import '@ag-grid-community/core/dist/styles/ag-grid.css';
 import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
 
 import 'styles.css';
 
+const SportRenderer = {
+    template: `<i class="far fa-trash-alt" style="cursor: pointer" @click="applyTransaction()"></i>`,
+    methods: {
+        applyTransaction() {
+            this.params.api.applyTransaction({remove: [this.params.node.data]});
+        }
+    }
+};
 
 const VueExample = {
     template: /* html */ `
@@ -27,18 +35,18 @@ const VueExample = {
                     <div class="panel-heading">Athletes</div>
                     <div class="panel-body">
                         <ag-grid-vue
-                            style="height: 100%;"
-                            :defaultColDef="defaultColDef"
-                            rowSelection="multiple"
-                            :rowDragMultiRow="true"
-                            :getRowNodeId="getRowNodeId"
-                            :rowDragManaged="true"
-                            :suppressMoveWhenRowDragging="true"
-                            :animateRows="true"
-                            :rowData="leftRowData"
-                            :columnDefs="leftColumns"
-                            @grid-ready="onGridReady($event, 0)"
-                            :modules="modules">
+                                style="height: 100%;"
+                                :defaultColDef="defaultColDef"
+                                rowSelection="multiple"
+                                :rowDragMultiRow="true"
+                                :getRowNodeId="getRowNodeId"
+                                :rowDragManaged="true"
+                                :suppressMoveWhenRowDragging="true"
+                                :animateRows="true"
+                                :rowData="leftRowData"
+                                :columnDefs="leftColumns"
+                                @grid-ready="onGridReady($event, 0)"
+                                :modules="modules">
                         </ag-grid-vue>
                     </div>
                 </div>
@@ -46,22 +54,23 @@ const VueExample = {
                     <div class="panel-heading">Selected Athletes</div>
                     <div class="panel-body">
                         <ag-grid-vue
-                            style="height: 100%;"
-                            :defaultColDef="defaultColDef"
-                            :getRowNodeId="getRowNodeId"
-                            :rowDragManaged="true"
-                            :animateRows="true"
-                            :rowData="rightRowData"
-                            :columnDefs="rightColumns"
-                            @grid-ready="onGridReady($event, 1)"
-                            :modules="modules">
+                                style="height: 100%;"
+                                :defaultColDef="defaultColDef"
+                                :getRowNodeId="getRowNodeId"
+                                :rowDragManaged="true"
+                                :animateRows="true"
+                                :rowData="rightRowData"
+                                :columnDefs="rightColumns"
+                                @grid-ready="onGridReady($event, 1)"
+                                :modules="modules">
                         </ag-grid-vue>
                     </div>
                 </div>
             </div>
         </div>`,
     components: {
-        'ag-grid-vue': AgGridVue
+        'ag-grid-vue': AgGridVue,
+        SportRenderer
     },
     data: function () {
         return {
@@ -91,8 +100,8 @@ const VueExample = {
                         return params.rowNode.data.athlete;
                     },
                 },
-                { field: "athlete" },
-                { field: "sport" }
+                {field: "athlete"},
+                {field: "sport"}
             ],
             rightColumns: [
                 {
@@ -106,23 +115,12 @@ const VueExample = {
                         return params.rowNode.data.athlete;
                     },
                 },
-                { field: "athlete" },
-                { field: "sport" },
+                {field: "athlete"},
+                {field: "sport"},
                 {
                     suppressMenu: true,
                     maxWidth: 50,
-                    cellRenderer: (params) => {
-                        var button = document.createElement('i');
-
-                        button.addEventListener('click', function () {
-                            params.api.applyTransaction({ remove: [params.node.data] });
-                        });
-
-                        button.classList.add('far', 'fa-trash-alt');
-                        button.style.cursor = 'pointer';
-
-                        return button;
-                    }
+                    cellRendererComp: 'SportRenderer'
                 }
             ]
         };
@@ -135,8 +133,10 @@ const VueExample = {
                 let i = 0;
 
                 while (athletes.length < 20 && i < data.length) {
-                    var pos = i++;
-                    if (athletes.some(rec => rec.athlete === data[pos].athlete)) { continue; }
+                    const pos = i++;
+                    if (athletes.some(rec => rec.athlete === data[pos].athlete)) {
+                        continue;
+                    }
                     athletes.push(data[pos]);
                 }
                 this.rawData = athletes;
@@ -172,10 +172,12 @@ const VueExample = {
         addGridDropZone() {
             const dropZoneParams = this.rightApi.getRowDropZoneParams({
                 onDragStop: params => {
-                    var nodes = params.nodes;
+                    const nodes = params.nodes;
 
                     this.leftApi.applyTransaction({
-                        remove: nodes.map(function (node) { return node.data; })
+                        remove: nodes.map(function (node) {
+                            return node.data;
+                        })
                     });
                 }
             });
@@ -184,11 +186,11 @@ const VueExample = {
         },
 
         onExcelExport() {
-            var spreadsheets = [];
+            const spreadsheets = [];
 
             spreadsheets.push(
-                this.leftApi.getSheetDataForExcel({ sheetName: 'Athletes' }),
-                this.rightApi.getSheetDataForExcel({ sheetName: 'Selected Athletes' })
+                this.leftApi.getSheetDataForExcel({sheetName: 'Athletes'}),
+                this.rightApi.getSheetDataForExcel({sheetName: 'Selected Athletes'})
             );
 
             exportMultipleSheetsAsExcel({

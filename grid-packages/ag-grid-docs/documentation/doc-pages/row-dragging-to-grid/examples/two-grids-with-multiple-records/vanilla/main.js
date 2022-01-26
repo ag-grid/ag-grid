@@ -1,4 +1,27 @@
-var leftColumnDefs = [
+class SportRenderer {
+    eGui;
+
+    init(params) {
+        this.eGui = document.createElement('i');
+
+        this.eGui.addEventListener('click', function () {
+            params.api.applyTransaction({remove: [params.node.data]});
+        });
+
+        this.eGui.classList.add('far', 'fa-trash-alt');
+        this.eGui.style.cursor = 'pointer';
+    }
+
+    getGui() {
+        return this.eGui;
+    }
+
+    refresh(params) {
+        return false;
+    }
+}
+
+const leftColumnDefs = [
     {
         rowDrag: true,
         maxWidth: 50,
@@ -21,7 +44,7 @@ var leftColumnDefs = [
     {field: "sport"}
 ];
 
-var rightColumnDefs = [
+const rightColumnDefs = [
     {
         rowDrag: true,
         maxWidth: 50,
@@ -38,23 +61,11 @@ var rightColumnDefs = [
     {
         suppressMenu: true,
         maxWidth: 50,
-        cellRenderer: function (params) {
-            var button = document.createElement('i');
-
-            button.addEventListener('click', function () {
-                params.api.applyTransaction({remove: [params.node.data]});
-            });
-
-            button.classList.add('far');
-            button.classList.add('fa-trash-alt');
-            button.style.cursor = 'pointer';
-
-            return button;
-        }
+        cellRendererComp: SportRenderer
     }
 ];
 
-var leftGridOptions = {
+const leftGridOptions = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
@@ -77,7 +88,7 @@ var leftGridOptions = {
     }
 };
 
-var rightGridOptions = {
+const rightGridOptions = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
@@ -94,11 +105,11 @@ var rightGridOptions = {
 };
 
 function addGridDropZone(params) {
-    var dropZoneParams = rightGridOptions.api.getRowDropZoneParams({
+    const dropZoneParams = rightGridOptions.api.getRowDropZoneParams({
         onDragStop: function (params) {
-            var deselectCheck = document.querySelector('input#deselect').checked;
-            var moveCheck = document.querySelector('input#move').checked;
-            var nodes = params.nodes;
+            const deselectCheck = document.querySelector('input#deselect').checked;
+            const moveCheck = document.querySelector('input#move').checked;
+            const nodes = params.nodes;
 
             if (moveCheck) {
                 leftGridOptions.api.applyTransaction({
@@ -118,7 +129,7 @@ function addGridDropZone(params) {
 }
 
 function loadGrid(options, side, data) {
-    var grid = document.querySelector('#e' + side + 'Grid');
+    const grid = document.querySelector('#e' + side + 'Grid');
 
     if (options && options.api) {
         options.api.destroy();
@@ -129,8 +140,8 @@ function loadGrid(options, side, data) {
 }
 
 function resetInputs() {
-    var inputs = document.querySelectorAll('.example-toolbar input');
-    var checkbox = inputs[inputs.length - 1];
+    const inputs = document.querySelectorAll('.example-toolbar input');
+    const checkbox = inputs[inputs.length - 1];
 
     if (!checkbox.checked) {
         checkbox.click();
@@ -143,11 +154,11 @@ function loadGrids() {
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then(response => response.json())
         .then(function (data) {
-            var athletes = [];
-            var i = 0;
+            const athletes = [];
+            let i = 0;
 
             while (athletes.length < 20 && i < data.length) {
-                var pos = i++;
+                let pos = i++;
                 if (athletes.some(function (rec) {
                     return rec.athlete === data[pos].athlete;
                 })) {
@@ -163,8 +174,8 @@ function loadGrids() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var resetBtn = document.querySelector('button.reset');
-    var checkboxToggle = document.querySelector('#toggleCheck');
+    const resetBtn = document.querySelector('button.reset');
+    const checkboxToggle = document.querySelector('#toggleCheck');
 
     resetBtn.addEventListener('click', function () {
         resetInputs();

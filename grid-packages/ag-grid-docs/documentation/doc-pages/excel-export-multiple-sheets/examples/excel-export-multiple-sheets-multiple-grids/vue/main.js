@@ -10,6 +10,14 @@ import '@ag-grid-community/core/dist/styles/ag-theme-alpine.css';
 
 import 'styles.css';
 
+const SportRenderer =  {
+    template: `<i class="far fa-trash-alt" style="cursor: pointer" @click="applyTransaction()"></i>`,
+    methods: {
+        applyTransaction() {
+            this.params.api.applyTransaction({remove: [this.params.node.data]});
+        }
+    }
+};
 
 const VueExample = {
     template: /* html */ `
@@ -61,7 +69,8 @@ const VueExample = {
             </div>
         </div>`,
     components: {
-        'ag-grid-vue': AgGridVue
+        'ag-grid-vue': AgGridVue,
+        SportRenderer
     },
     data: function () {
         return {
@@ -111,18 +120,7 @@ const VueExample = {
                 {
                     suppressMenu: true,
                     maxWidth: 50,
-                    cellRenderer: (params) => {
-                        var button = document.createElement('i');
-
-                        button.addEventListener('click', function () {
-                            params.api.applyTransaction({ remove: [params.node.data] });
-                        });
-
-                        button.classList.add('far', 'fa-trash-alt');
-                        button.style.cursor = 'pointer';
-
-                        return button;
-                    }
+                    cellRendererComp: 'SportRenderer'
                 }
             ]
         };

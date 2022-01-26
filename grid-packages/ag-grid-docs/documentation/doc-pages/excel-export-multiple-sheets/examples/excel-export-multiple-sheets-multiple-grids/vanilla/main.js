@@ -1,3 +1,26 @@
+class SportRenderer {
+    eGui;
+
+    init(params) {
+        this.eGui = document.createElement('i');
+
+        this.eGui.addEventListener('click', function () {
+            params.api.applyTransaction({remove: [params.node.data]});
+        });
+
+        this.eGui.classList.add('far', 'fa-trash-alt');
+        this.eGui.style.cursor = 'pointer';
+    }
+
+    getGui() {
+        return this.eGui;
+    }
+
+    refresh(params) {
+        return false;
+    }
+}
+
 const leftColumnDefs = [
     {
         rowDrag: true,
@@ -31,19 +54,7 @@ const rightColumnDefs = [
     {
         suppressMenu: true,
         maxWidth: 50,
-        cellRenderer: function (params) {
-            const button = document.createElement('i');
-
-            button.addEventListener('click', function () {
-                params.api.applyTransaction({remove: [params.node.data]});
-            });
-
-            button.classList.add('far');
-            button.classList.add('fa-trash-alt');
-            button.style.cursor = 'pointer';
-
-            return button;
-        }
+        cellRendererComp: SportRenderer
     }
 ];
 
@@ -117,10 +128,10 @@ function loadGrids() {
         .then(response => response.json())
         .then(function (data) {
             const athletes = [];
-            const i = 0;
+            let i = 0;
 
             while (athletes.length < 20 && i < data.length) {
-                const pos = i++;
+                let pos = i++;
                 if (athletes.some(function (rec) {
                     return rec.athlete === data[pos].athlete;
                 })) {
