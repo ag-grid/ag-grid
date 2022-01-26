@@ -17,8 +17,7 @@ import {
     IAggFunc,
     PopupService,
     PostConstruct,
-    RefSelector,
-    SeriesChartType
+    RefSelector
 } from "@ag-grid-community/core";
 import { ChartMenu } from "./menu/chartMenu";
 import { TitleEdit } from "./chartTitle/titleEdit";
@@ -36,7 +35,6 @@ import { ChartTranslationService } from "./services/chartTranslationService";
 import { ChartCrossFilterService } from "./services/chartCrossFilterService";
 import { CrossFilteringContext } from "../chartService";
 import { ChartOptionsService } from "./services/chartOptionsService";
-import { ComboChartProxy } from "./chartProxies/combo/comboChartProxy";
 
 export interface GridChartParams {
     chartId: string;
@@ -52,7 +50,6 @@ export interface GridChartParams {
     crossFiltering: boolean;
     crossFilteringContext: CrossFilteringContext;
     chartOptionsToRestore?: AgChartThemeOverrides;
-    seriesChartTypes?: SeriesChartType[];
 }
 
 export class GridChartComp extends Component {
@@ -122,8 +119,7 @@ export class GridChartComp extends Component {
             cellRange: this.params.cellRange,
             suppressChartRanges: this.params.suppressChartRanges,
             unlinkChart: this.params.unlinkChart,
-            crossFiltering: this.params.crossFiltering,
-            seriesChartTypes: this.params.seriesChartTypes,
+            crossFiltering: this.params.crossFiltering
         };
 
         const isRtl = this.gridOptionsWrapper.isEnableRtl();
@@ -195,8 +191,7 @@ export class GridChartComp extends Component {
             crossFilterCallback,
             parentElement: this.eChart,
             grouping: this.chartController.isGrouping(),
-            chartOptionsToRestore: this.params.chartOptionsToRestore,
-            seriesChartTypes: this.chartController.getSeriesChartTypes()
+            chartOptionsToRestore: this.params.chartOptionsToRestore
         };
 
         // ensure 'restoring' options are not reused when switching chart types
@@ -260,10 +255,6 @@ export class GridChartComp extends Component {
                 return new ScatterChartProxy(chartProxyParams);
             case 'histogram':
                 return new HistogramChartProxy(chartProxyParams);
-            case 'columnLineCombo':
-            case 'areaColumnCombo':
-            case 'customCombo':
-                return new ComboChartProxy(chartProxyParams);
             default:
                 throw `AG Grid: Unable to create chart as an invalid chartType = '${chartProxyParams.chartType}' was supplied.`;
         }
@@ -377,8 +368,7 @@ export class GridChartComp extends Component {
             },
             fields,
             chartId: this.chartController.getChartId(),
-            getCrossFilteringContext: () => this.params.crossFilteringContext,
-            seriesChartTypes: this.chartController.getSeriesChartTypes()
+            getCrossFilteringContext: () => this.params.crossFilteringContext
         };
 
         chartProxy.update(chartUpdateParams);

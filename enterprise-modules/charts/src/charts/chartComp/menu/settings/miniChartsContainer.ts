@@ -3,12 +3,9 @@ import { ChartController } from "../../chartController";
 import { ChartTranslationService } from "../../services/chartTranslationService";
 import {
     MiniArea,
-    MiniAreaColumnCombo,
     MiniBar,
     MiniBubble,
     MiniColumn,
-    MiniColumnLineCombo,
-    MiniCustomCombo,
     MiniDoughnut,
     MiniHistogram,
     MiniLine,
@@ -29,8 +26,7 @@ type ChartGroupsType =
     | 'lineGroup'
     | 'scatterGroup'
     | 'areaGroup'
-    | 'histogramGroup'
-    | 'combinationGroup';
+    | 'histogramGroup';
 
 type ChartGroups = {
     [key in ChartGroupsType]: any[];
@@ -75,11 +71,6 @@ export class MiniChartsContainer extends Component {
         histogramGroup: [
             MiniHistogram
         ],
-        combinationGroup:  [
-            MiniColumnLineCombo,
-            MiniAreaColumnCombo,
-            MiniCustomCombo
-        ]
     };
 
     @Autowired('chartTranslationService') private chartTranslationService: ChartTranslationService;
@@ -94,11 +85,6 @@ export class MiniChartsContainer extends Component {
 
     @PostConstruct
     private init() {
-        // hide MiniCustomCombo if no custom combo exists
-        if (!this.chartController.customComboExists()) {
-            this.chartGroups.combinationGroup = this.chartGroups.combinationGroup.filter(miniChart => miniChart !== MiniCustomCombo);
-        }
-
         const eGui = this.getGui();
 
         Object.keys(this.chartGroups).forEach(group => {

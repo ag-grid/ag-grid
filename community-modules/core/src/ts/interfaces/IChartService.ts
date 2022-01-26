@@ -1,4 +1,4 @@
-import { ChartType, SeriesChartType } from "./iChartOptions";
+import { ChartType } from "./iChartOptions";
 import { ChartRef } from "../entities/gridOptions";
 import { CreateCrossFilterChartParams, CreatePivotChartParams, CreateRangeChartParams } from "../gridApi";
 import { CellRangeParams } from "./IRangeService";
@@ -28,7 +28,6 @@ export interface ChartModel {
     suppressChartRanges?: boolean;
     aggFunc?: string | IAggFunc;
     unlinkChart?: boolean;
-    seriesChartTypes?: SeriesChartType[];
 }
 
 export interface IChartService {

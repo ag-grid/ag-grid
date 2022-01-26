@@ -15,7 +15,6 @@ import {
     DragSourceType,
     DropTarget,
     PostConstruct,
-    SeriesChartType,
     AutoScrollService,
     Column
 } from "@ag-grid-community/core";
@@ -80,19 +79,12 @@ export class ChartDataPanel extends Component {
                 });
             }
 
-            // TODO: improve - changing categories or series will expand group
-            // recreate series chart type group if it exists as series may be added or removed via series group panel
-            _.removeFromParent(this.getGui().querySelector('#seriesChartTypeGroup'));
-            this.seriesChartTypeGroupComp = this.destroyBean(this.seriesChartTypeGroupComp);
-            this.createSeriesChartTypeGroup(valueCols);
-
         } else {
             // otherwise we re-create everything
             this.clearComponents();
 
             this.createCategoriesGroup(dimensionCols);
             this.createSeriesGroup(valueCols);
-            this.createSeriesChartTypeGroup(valueCols);
         }
 
         this.restoreGroupExpandedState(groupExpandedState);
@@ -222,68 +214,6 @@ export class ChartDataPanel extends Component {
         };
 
         this.dragAndDropService.addDropTarget(dropTarget);
-    }
-
-    private createSeriesChartTypeGroup(columns: ColState[]): void {
-        if (!this.chartController.isComboChart()) { return; }
-
-        this.seriesChartTypeGroupComp = this.createManagedBean(new AgGroupComponent({
-            title: this.chartTranslationService.translate('seriesChartType'),
-            enabled: true,
-            suppressEnabledCheckbox: true,
-            suppressOpenCloseIcons: false,
-            cssIdentifier: 'charts-data'
-        }));
-
-        const seriesChartTypes = this.chartController.getSeriesChartTypes();
-
-        columns.forEach(col => {
-            const seriesChartType: SeriesChartType = seriesChartTypes.filter(s => s.colId === col.colId)[0];
-            if (!seriesChartType) { return; }
-
-            const seriesItemGroup = this.seriesChartTypeGroupComp!.createManagedBean(new AgGroupComponent({
-                title: col.displayName!,
-                enabled: true,
-                suppressEnabledCheckbox: true,
-                suppressOpenCloseIcons: true,
-                cssIdentifier: 'charts-format-sub-level'
-            }));
-
-            const secondaryAxisComp = this.seriesChartTypeGroupComp!
-                .createManagedBean(new AgCheckbox())
-                .setLabel(this.chartTranslationService.translate('secondaryAxis'))
-                .setLabelWidth("flex")
-                .setValue(!!seriesChartType.secondaryAxis)
-                .onValueChange((enabled: boolean) => this.chartController.updateSeriesChartType(col.colId, undefined, enabled));
-
-            seriesItemGroup.addItem(secondaryAxisComp);
-
-            const translate = (key: string, defaultText: string) => {
-                return this.chartTranslationService.translate(key, defaultText);
-            }
-
-            const availableChartTypes = [
-                { value: 'line', text: translate('line', 'Line') },
-                { value: 'area', text: translate('area', 'Area') },
-                { value: 'stackedArea', text: translate('stackedArea', 'StackedArea') },
-                { value: 'groupedColumn', text: translate('groupedColumn', 'Grouped Column') },
-                { value: 'stackedColumn', text: translate('stackedColumn', 'Stacked Column') },
-            ];
-
-            const chartTypeComp = seriesItemGroup.createManagedBean(new AgSelect());
-            chartTypeComp
-                .setLabelAlignment('left')
-                .setLabelWidth("flex")
-                .addOptions(availableChartTypes)
-                .setValue(seriesChartType.chartType)
-                .onValueChange((chartType: ChartType) => this.chartController.updateSeriesChartType(col.colId, chartType));
-
-            seriesItemGroup.addItem(chartTypeComp);
-
-            this.seriesChartTypeGroupComp!.addItem(seriesItemGroup);
-        });
-
-        this.addComponent(this.getGui(), this.seriesChartTypeGroupComp, 'seriesChartTypeGroup');
     }
 
     private addDragHandle(comp: AgCheckbox, col: ColState): void {

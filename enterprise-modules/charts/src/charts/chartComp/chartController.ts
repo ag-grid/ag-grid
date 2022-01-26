@@ -15,8 +15,7 @@ import {
     Events,
     GridApi,
     IRangeService,
-    PostConstruct,
-    SeriesChartType
+    PostConstruct
 } from "@ag-grid-community/core";
 import { ChartDataModel, ColState } from "./chartDataModel";
 import { ChartProxy } from "./chartProxies/chartProxy";
@@ -103,7 +102,6 @@ export class ChartController extends BeanStub {
             suppressChartRanges: this.model.suppressChartRanges,
             aggFunc: this.model.aggFunc,
             unlinkChart: this.model.unlinked,
-            seriesChartTypes: this.model.seriesChartTypes
         };
     }
 
@@ -121,10 +119,6 @@ export class ChartController extends BeanStub {
 
     public setChartType(chartType: ChartType): void {
         this.model.chartType = chartType;
-
-        if (this.isComboChart()) {
-            this.model.updateSeriesChartTypes();
-        }
 
         this.raiseChartUpdatedEvent();
         this.raiseChartOptionsChangedEvent();
@@ -236,51 +230,6 @@ export class ChartController extends BeanStub {
     public isChartLinked(): boolean {
         return !this.model.unlinked;
     }
-
-    public customComboExists(): boolean {
-        return this.model.savedCustomSeriesChartTypes && this.model.savedCustomSeriesChartTypes.length > 0;
-    }
-
-    public getSeriesChartTypes(): SeriesChartType[] {
-        return this.model.seriesChartTypes;
-    }
-
-    public isComboChart(): boolean {
-        return this.model.isComboChart();
-    }
-
-    public updateSeriesChartType(colId: string, chartType?: ChartType, secondaryAxis?: boolean): void {
-        const seriesChartType = this.model.seriesChartTypes.find(s => s.colId === colId);
-        if (seriesChartType) {
-
-            // once a combo chart has been modified it is now a 'customCombo' chart
-            const updateChartType = this.model.chartType !== 'customCombo';
-            if (updateChartType) {
-                this.model.chartType = 'customCombo';
-            }
-
-            if (chartType != null) {
-                seriesChartType.chartType = chartType;
-            }
-
-            if (secondaryAxis != null) {
-                seriesChartType.secondaryAxis = secondaryAxis;
-            }
-
-            // replace existing custom series types with this latest version
-            this.model.savedCustomSeriesChartTypes = this.model.seriesChartTypes;
-
-            this.updateForDataChange();
-
-            if (updateChartType) {
-                // update the settings panel by raising an EVENT_CHART_TYPE_CHANGED event
-                this.dispatchEvent(Object.freeze({
-                    type: ChartController.EVENT_CHART_TYPE_CHANGED
-                }));
-            }
-        }
-    }
-
 
     private getCellRanges(): CellRange[] {
         return [this.model.dimensionCellRange!, this.model.valueCellRange!].filter(r => r);

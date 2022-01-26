@@ -18,8 +18,7 @@ import {
     IChartService,
     IRangeService,
     Optional,
-    PreDestroy,
-    SeriesChartType
+    PreDestroy
 } from "@ag-grid-community/core";
 import { GridChartComp, GridChartParams } from "./chartComp/gridChartComp";
 
@@ -92,8 +91,7 @@ export class ChartService extends BeanStub implements IChartService {
             chartContainer: chartContainer,
             suppressChartRanges: model.suppressChartRanges,
             aggFunc: model.aggFunc,
-            unlinkChart: model.unlinkChart,
-            seriesChartTypes: model.seriesChartTypes
+            unlinkChart: model.unlinkChart
         };
 
         const getCellRange = (cellRangeParams: CellRangeParams) => {
@@ -149,8 +147,7 @@ export class ChartService extends BeanStub implements IChartService {
             undefined,
             params.unlinkChart,
             false,
-            model.chartOptions,
-            params.seriesChartTypes);
+            model.chartOptions);
     }
 
     public createRangeChart(params: CreateRangeChartParams): ChartRef | undefined {
@@ -174,8 +171,7 @@ export class ChartService extends BeanStub implements IChartService {
             params.chartThemeOverrides,
             params.unlinkChart,
             undefined,
-            undefined,
-            params.seriesChartTypes);
+            undefined);
     }
 
     public createPivotChart(params: CreatePivotChartParams): ChartRef | undefined {
@@ -251,8 +247,7 @@ export class ChartService extends BeanStub implements IChartService {
         chartThemeOverrides?: AgChartThemeOverrides,
         unlinkChart = false,
         crossFiltering  = false,
-        chartOptionsToRestore?: AgChartThemeOverrides,
-        seriesChartTypes?: SeriesChartType[]): ChartRef | undefined {
+        chartOptionsToRestore?: AgChartThemeOverrides): ChartRef | undefined {
 
         const createChartContainerFunc = this.gridOptionsWrapper.getCreateChartContainerFunc();
 
@@ -269,8 +264,7 @@ export class ChartService extends BeanStub implements IChartService {
             unlinkChart,
             crossFiltering,
             crossFilteringContext: this.crossFilteringContext,
-            chartOptionsToRestore,
-            seriesChartTypes
+            chartOptionsToRestore
         };
 
         const chartComp = new GridChartComp(params);
