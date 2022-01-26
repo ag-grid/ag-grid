@@ -219,10 +219,50 @@ export function jsonApply<
     return target;
 }
 
+/**
+ * Walk the given JSON object graphs, invoking the visit() callback for every object encountered.
+ * Arrays are descended into without a callback, however their elements will have the visit()
+ * callback invoked if they are objects.
+ * 
+ * @param json to traverse
+ * @param visit callback for each non-primitive and non-array object found
+ * @param jsons to traverse in parallel
+ */
+export function walk(
+    json: any,
+    visit: (classification: Classification, node: any, ...otherNodes: any[]) => void,
+    ...jsons: any[]
+) {
+    const jsonType = classify(json);
+
+    if (jsonType === 'array') {
+        json.forEach((element: any, index: number) => {
+            walk(element, visit, ...jsons?.map(o => o?.[index]));
+        });
+        return;
+    } else if (jsonType !== 'object') {
+        return;
+    }
+
+    visit(jsonType, json);
+    for (const property in json) {
+        const value = json[property];
+        const otherValues = jsons?.map(o => o?.[property]);
+        const valueType = classify(value);
+
+        if (valueType === 'array') {
+            walk(value, visit, ...otherValues);
+        } else if (valueType === 'object') {
+            visit(valueType, value, ...otherValues);
+        }
+    }
+}
+
 function deepClone<T>(input: T): T {
     return JSON.parse(JSON.stringify(input));
 }
 
+type Classification = 'array' | 'object' | 'primitive';
 /**
  * Classify the type of a value to assist with handling for merge purposes.
  */

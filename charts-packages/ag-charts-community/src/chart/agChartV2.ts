@@ -39,7 +39,7 @@ import { TimeAxis } from './axis/timeAxis';
 import { Chart } from './chart';
 import { SourceEventListener } from '../util/observable';
 import { DropShadow } from '../scene/dropShadow';
-import { jsonDiff, DELETE, jsonMerge, jsonApply } from '../util/json';
+import { jsonDiff, DELETE, jsonMerge, jsonApply, walk } from '../util/json';
 import { AxesOptionsTypes, SeriesOptionsTypes, DEFAULT_AXES_OPTIONS, DEFAULT_SERIES_OPTIONS, DEFAULT_CARTESIAN_CHART_OPTIONS, DEFAULT_HIERARCHY_CHART_OPTIONS, DEFAULT_POLAR_CHART_OPTIONS, DEFAULT_BAR_CHART_OVERRIDES, DEFAULT_SCATTER_HISTOGRAM_CHART_OVERRIDES } from './agChartV2Defaults';
 import { applySeriesTransform } from './agChartV2Transforms';
 import { Axis } from '../axis';
@@ -206,6 +206,14 @@ export abstract class AgChartV2 {
                 mergedOptions.axes![i] = AgChartV2.prepareAxis(a, DEFAULT_AXES_OPTIONS[type], axesTheme);
             });
         }
+
+        // Set `enabled: true` for all option objects where the user has provided values.
+        walk(options, (_, userOpts, mergedOpts) => {
+            if (!mergedOpts) { return; }
+            if ('enabled' in mergedOpts && userOpts.enabled == null) {
+                mergedOpts.enabled = true;
+            }
+        }, mergedOptions);
 
         // Preserve non-cloneable properties.
         mergedOptions.container = options.container;
