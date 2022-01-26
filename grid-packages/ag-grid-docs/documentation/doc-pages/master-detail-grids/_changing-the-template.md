@@ -26,7 +26,7 @@
 |
 |    ```js
 |    // example override using string template
-|    detailCellRendererParams: {
+|    detailRowCellCompParams: {
 |        template:
 |        '<div style="background-color: #edf6ff;">' +
 |            '  <div style="height: 10%;">Call Details</div>' +
@@ -39,7 +39,7 @@
 |
 |    ```js
 |    // override using template callback
-|    detailCellRendererParams: {
+|    detailRowCellCompParams: {
 |        template: params => {
 |            const personName = params.data.name;
 |            return '<div style="height: 100%; background-color: #EDF6FF;">' +

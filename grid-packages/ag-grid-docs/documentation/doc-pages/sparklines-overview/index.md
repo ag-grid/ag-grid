@@ -47,8 +47,8 @@ as shown below:
 const gridOptions = {
     columnDefs: [
         {
-            cellRenderer: 'agSparklineCellRenderer',
-            cellRendererParams: {
+            cellRendererComp: 'agSparklineCellRenderer',
+            cellRendererCompParams: {
                 sparklineOptions: {
                     // Sparkline customisation goes here.
                 }

@@ -20,7 +20,7 @@
 |        <ag-grid-angular
 |                class="ag-theme-alpine"
 |                [columnDefs]="columnDefs"
-|                [frameworkComponents]="frameworkComponents"
+|                [comps]="comps"
 |                ...other properties>        
 |        </ag-grid-angular>`
 |})
@@ -29,16 +29,13 @@
 |        {
 |            headerName: "Value Column",
 |            field: "value",
-|            cellEditorParams: {
+|            cellEditorComp: MyCellEditor,
+|            cellEditorCompParams: {
 |               // make "country" value available to cell editor
 |               color: 'Ireland'
 |            }
 |        }
 |    ];
-|
-|   private frameworkComponents = {
-|       'myCellEditor': MyCellEditor
-|   };
 |
 |   ..other methods
 |}

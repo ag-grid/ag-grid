@@ -362,7 +362,7 @@ autoGroupColumnDef = {
     rowDrag: true,
     sort: 'asc',
     width: 250,
-    cellRendererParams: {
+    cellRendererCompParams: {
         suppressCount: true,
         innerRenderer: "fileCellRenderer"
     }

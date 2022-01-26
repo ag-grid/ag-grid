@@ -41,12 +41,19 @@ See the section [registering custom components](/components/#registering-custom-
 
 ## Complementing Cell Editor Params
 
-As with cell renderers, cell editors can also be provided with additional parameters. Do this using `cellEditorParams` as in the following example which will pass 'Ireland' as the 'country' parameter:
+As with cell renderers, cell editors can also be provided with additional parameters. Do this using `cellEditorCompParams` as in the following example which will pass 'Ireland' as the 'country' parameter:
 
-md-include:complementing-component-javascript.md
-md-include:complementing-component-angular.md
-md-include:complementing-component-react.md
-md-include:complementing-component-vue.md
+[[only-javascript]]
+|
+|```js
+| colDef = {
+|    cellEditorComp: MyCellEditor,    
+|    cellEditorCompParams: {
+|        // make "country" value available to cell editor
+|        country: 'Ireland'
+|    }
+|}
+|```
 
 ## Keyboard Navigation While Editing
 

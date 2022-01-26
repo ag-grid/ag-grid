@@ -35,11 +35,11 @@ const App = () => {
                 suppressReactUi={true}
                 onGridReady={onGridReady}
                 rowData={rowData}
-                frameworkComponents={{
+                comps={{
                     cellRenderer: CellRenderer
                 }}
                 modules={[ClientSideRowModelModule]}>
-                <AgGridColumn field="value" cellRenderer="cellRenderer"></AgGridColumn>
+                <AgGridColumn field="value" cellRendererComp="cellRenderer"></AgGridColumn>
             </AgGridReact>
         </div>
     );

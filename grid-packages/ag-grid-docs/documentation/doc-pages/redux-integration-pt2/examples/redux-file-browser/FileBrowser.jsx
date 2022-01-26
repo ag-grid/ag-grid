@@ -23,7 +23,7 @@ class FileBrowser extends Component {
     rowDrag: true,
     sort: 'asc',
     width: 250,
-    cellRendererParams: {
+    cellRendererCompParams: {
       suppressCount: true,
       innerCellComp: FileCellRenderer
     }

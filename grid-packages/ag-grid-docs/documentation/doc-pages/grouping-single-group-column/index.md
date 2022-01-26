@@ -48,7 +48,7 @@ const gridOptions = {
     autoGroupColumnDef: {
         headerName: 'My Group',
         minWidth: 220,
-        cellRendererParams: {
+        cellRendererCompParams: {
             suppressCount: true,
             checkbox: true,
         }

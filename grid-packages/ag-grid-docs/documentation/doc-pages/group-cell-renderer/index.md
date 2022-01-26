@@ -14,9 +14,9 @@ const gridOptions = {
         // column definition configured to show group values with the cell renderer set to 'group'
         {
             showRowGroup: true,
-            cellRenderer:'agGroupCellRenderer',
+            cellRendererComp:'agGroupCellRenderer',
             // provide extra params to the cellRenderer
-            cellRendererParams: {
+            cellRendererCompParams: {
                 // turn off the row count
                 suppressCount: true,
                 // turn off double click for expand

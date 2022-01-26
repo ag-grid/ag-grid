@@ -46,7 +46,7 @@ const gridOptions = {
         { 
             field: 'price',
             cellRendererComp: PriceCellRenderer,
-            cellRendererParams: {
+            cellRendererCompParams: {
                 currency: 'EUR'
             }
         },

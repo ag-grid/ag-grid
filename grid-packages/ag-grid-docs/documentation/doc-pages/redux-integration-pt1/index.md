@@ -279,7 +279,7 @@ colDefs = [
 autoGroupColumnDef = {
     headerName: "Files",
     sort: 'asc',
-    cellRendererParams: {
+    cellRendererCompParams: {
         suppressCount: true
     }
 };

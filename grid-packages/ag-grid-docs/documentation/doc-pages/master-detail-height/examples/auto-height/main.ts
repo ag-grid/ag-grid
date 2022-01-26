@@ -14,7 +14,7 @@ const gridOptions: GridOptions = {
   animateRows: true,
   masterDetail: true,
   detailRowAutoHeight: true,
-  detailCellRendererParams: {
+  detailRowCellCompParams: {
     detailGridOptions: {
       columnDefs: [
         { field: 'callId' },

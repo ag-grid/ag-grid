@@ -37,7 +37,7 @@ By default, the footer will display the word 'Total' followed by the group key. 
 <snippet>
 const gridOptions = {
     autoGroupColumnDef: { 
-        cellRendererParams: {
+        cellRendererCompParams: {
             footerValueGetter: params =>  {
                 const isRootLevel = params.node.level === -1;
                 if (isRootLevel) {
@@ -64,7 +64,7 @@ also possible to customise the footer cell using the `innerCellRenderer` supplie
 <snippet>
 const gridOptions = {
     autoGroupColumnDef: { 
-        cellRendererParams: {
+        cellRendererCompParams: {
             innerRenderer: params => {
                 if (params.node.footer) {
                     const isRootLevel = params.node.level === -1;

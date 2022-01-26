@@ -16,7 +16,7 @@ const gridOptions: GridOptions = {
   },
   masterDetail: true,
   enableCellChangeFlash: true,
-  detailCellRendererParams: {
+  detailRowCellCompParams: {
     refreshStrategy: 'everything',
 
     template: function (params) {

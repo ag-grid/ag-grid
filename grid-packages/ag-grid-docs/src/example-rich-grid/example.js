@@ -81,7 +81,7 @@
     var columnDefsMobile = [
         {
             headerName: 'Contact Info',
-            cellRenderer: ContactInfoRenderer,
+            cellRendererComp: ContactInfoRenderer,
             field: 'name',
             sort: 'asc',
             autoHeight: true,
@@ -91,15 +91,15 @@
             headerName: "Skills",
             width: 100,
             sortable: false,
-            cellRenderer: skillsCellRenderer,
+            cellRendererComp: skillsCellRenderer,
             suppressSizeToFit: true
         },
         {
             headerName: "Proficiency",
             field: "proficiency",
-            filter: "number",
+            filterComp: "number",
             width: 150,
-            cellRendererParams: {
+            cellRendererCompParams: {
                 sparklineOptions: {
                     type: 'bar',
                     valueAxisDomain: [0, 100],
@@ -128,7 +128,7 @@
             headerName: "Country",
             field: "country",
             width: 150,
-            cellRenderer: countryCellRenderer,
+            cellRendererComp: countryCellRenderer,
             cellStyle: {
                 display: 'flex',
                 alignItems: 'center'
@@ -156,8 +156,8 @@
                     headerName: "Country",
                     field: "country",
                     width: 150,
-                    cellRenderer: countryCellRenderer,
-                    filterParams: { cellRenderer: countryCellRenderer, cellHeight: 20 }
+                    cellRendererComp: countryCellRenderer,
+                    filterCompParams: { cellRenderer: countryCellRenderer, cellHeight: 20 }
                 }
             ]
         },
@@ -168,16 +168,16 @@
                     headerName: "Skills",
                     width: 130,
                     sortable: false,
-                    cellRenderer: skillsCellRenderer,
-                    filter: SkillFilter
+                    cellRendererComp: skillsCellRenderer,
+                    filterComp: SkillFilter
                 },
                 {
                     headerName: "Proficiency",
                     field: "proficiency",
                     filter: "number",
                     width: 150,
-                    cellRenderer: 'agSparklineCellRenderer',
-                    cellRendererParams: {
+                    cellRendererComp: 'agSparklineCellRenderer',
+                    cellRendererCompParams: {
                         sparklineOptions: {
                             type: 'bar',
                             valueAxisDomain: [0, 100],
@@ -208,9 +208,9 @@
         {
             headerName: "Contact",
             children: [
-                { headerName: "Mobile", field: "mobile", width: 180, filter: "agTextColumnFilter" },
-                { headerName: "Land-line", field: "landline", width: 180, filter: "agTextColumnFilter" },
-                { headerName: "Address", field: "address", width: 500, filter: "agTextColumnFilter" }
+                { headerName: "Mobile", field: "mobile", width: 180, filterComp: "agTextColumnFilter" },
+                { headerName: "Land-line", field: "landline", width: 180, filterComp: "agTextColumnFilter" },
+                { headerName: "Address", field: "address", width: 500, filterComp: "agTextColumnFilter" }
             ]
         }
     ];

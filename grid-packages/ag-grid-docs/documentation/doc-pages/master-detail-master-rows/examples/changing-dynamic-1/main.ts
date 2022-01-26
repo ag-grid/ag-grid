@@ -18,7 +18,7 @@ const gridOptions: GridOptions = {
   getRowNodeId: function (data) {
     return data.account
   },
-  detailCellRendererParams: {
+  detailRowCellCompParams: {
     detailGridOptions: {
       columnDefs: [
         { field: 'callId' },

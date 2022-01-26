@@ -23,7 +23,7 @@ const gridOptions: GridOptions = {
   // enable master detail
   masterDetail: true,
 
-  detailCellRendererParams: {
+  detailRowCellCompParams: {
     detailGridOptions: {
       columnDefs: [
         { field: 'callId' },
