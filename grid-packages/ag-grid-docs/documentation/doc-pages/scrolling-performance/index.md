@@ -2,7 +2,7 @@
 title: "Scrolling Performance"
 ---
 
-The is fast. However the grid can also be configured and extended in many ways. This page explains how you can make the grid go faster.
+The grid is fast. However the grid can also be configured and extended in many ways. This page explains how you can make the grid go faster.
 
 ## Setting Expectations
 
