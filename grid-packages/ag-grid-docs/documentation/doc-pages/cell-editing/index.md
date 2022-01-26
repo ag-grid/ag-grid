@@ -142,35 +142,57 @@ Finally, the example also demonstrates querying which cell is editing:
 
 ## Many Editors One Column
 
-It is also possible to use different editors for different rows in the same column. Typically an application might check the rows contents and choose an editor accordingly. To configure this set `colDef.cellEditorSelector` to a function that returns the name of the component to be used as an editor and optionally the custom params to be passed into it.
+[[note]]
+| How selectors work changed in v27 (Jan 2022). See [Components v27 Changes](/components-v27-changes/) to learn about these changes.
+| If you are new to AG Grid, ignore this message.
 
-The params that are passed to this function is the same as the params passed to [cell editors](/component-cell-editor/).
+It is also possible to use different editors for different rows in the same column. To configure this set `colDef.cellEditorCompSelector` to a function that returns alternative values for `cellEditorComp` and `cellEditorCompParams`.
 
-The following example illustrates how to use different editors and parameters in the same column. Note that:
+The `params` passed to `cellEditorCompSelector` are the same as those passed to the (Cell Editor Component)[../component-cell-editor/]. Typically the selector will use this to check the rows contents and choose an editor accordingly.
+
+The result is an object with `comp` and `params` to use instead of `cellEditorComp` and `cellEditorCompParams`.
+
+This following shows the Selector always returning back an AG Rich Select Cell Editor:
+
+```js
+cellEditorCompSelector: params => {
+    return {
+        comp: 'agRichSelect',
+        params: { values: ['Male', 'Female'] }
+    };
+}
+```
+
+However a selector only makes sense when a selection is made. The following demonstrates selecting between Cell Editors:
+
+```js
+cellEditorCompSelector: params => {
+
+    const type = params.data.type;
+
+    if (params.data.type === 'age') {
+        return { comp: NumericCellEditor };
+    }
+
+    if (params.data.type === 'gender') {
+        return {
+            comp: 'agRichSelect',
+            params: { values: ['Male', 'Female'] }
+        };
+    }
+
+    if (params.data.type === 'mood') {
+        return { comp: MoodEditor };
+    }
+
+    return undefined;
+}
+```
+
+Here is a full example:
 
 - The column 'Value' holds data of different types as shown in the column 'Type' (numbers/genders/moods).
-- `colDef.cellEditorSelector` is a function that returns the name of the component to use to edit based on the type of data for that row
-
-    ```js
-    cellEditorSelector: params => {
-        if (params.data.type === 'age') {
-            return { component: 'numericCellEditor' };
-        }
-
-        if (params.data.type === 'gender') {
-            return {
-                component: 'agRichSelect',
-                params: { values: ['Male', 'Female'] }
-            };
-        }
-
-        if (params.data.type === 'mood') {
-            return { component: 'agRichSelect' };
-        }
-
-        return undefined;
-    }
-    ```
+- `colDef.cellEditorCompSelector` is a function that returns the name of the component to use to edit based on the type of data for that row
 - Edit a cell by double clicking to observe the different editors used. 
 
 <grid-example title='Dynamic Editor Component' name='dynamic-editor-component' type='mixed' options='{ "enterprise": true, "modules": ["clientside", "menu", "columnpanel", "richselect"], "exampleHeight": 450, "includeNgFormsModule" : true }'></grid-example>
