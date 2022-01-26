@@ -22,7 +22,7 @@ npm i --save @ag-grid-community/client-side-row-model
 # npm i --save @ag-grid-enterprise/row-grouping
 
 npm i --save-dev typescript ts-loader webpack webpack-dev-server webpack-cli
-npm i --save-dev sass-loader node-sass style-loader css-loader html-webpack-plugin
+npm i --save-dev sass-loader sass style-loader css-loader html-webpack-plugin
 ```
 
 ## Create Application
@@ -156,7 +156,7 @@ With all this in place, we can now add the following npm scripts to our package.
 ```js
 "scripts": {
     "start": "webpack-dev-server --progress --port 8080 --mode development",
-    "build": "webpack --progress --profile --bail"
+    "build": "webpack --mode production"
 },
 ```
 

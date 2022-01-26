@@ -105,9 +105,13 @@ AddType text/javascript ts jsx
     Redirect 301 /ag-grid-angular-aot-dynamic-components/ https://medium.com/ag-grid/understanding-aot-and-dynamic-components-in-angular-2-9b7548ce5845
     Redirect 301 /ag-grid-angular-connect-2016/ https://medium.com/ag-grid/were-gonna-need-a-bigger-boat-from-speaker-to-sponsor-with-ag-grid-cf5e01a2d9ba
     Redirect 301 /ag-grid-angular-systemjs/ /angular-data-grid/systemjs/
+    Redirect 301 /angular-data-grid/systemjs/ /angular-data-grid/
     Redirect 301 /ag-grid-angular-webpack-2/ /angular-data-grid/webpack-2/
+    Redirect 301 /angular-data-grid/webpack-2/ /angular-data-grid/
     Redirect 301 /ag-grid-angular-webpack-3/ /angular-data-grid/webpack-3/
+    Redirect 301 /angular-data-grid/webpack-3/ /angular-data-grid/
     Redirect 301 /ag-grid-angular-webpack/ /angular-data-grid/webpack/
+    Redirect 301 /angular-data-grid/webpack/ /angular-data-grid/
     Redirect 301 /ag-grid-angular2-support-v6/ https://medium.com/ag-grid/announcing-ag-grid-v6-and-angular-2-datagrid-support-34ceef54872b
     Redirect 301 /ag-grid-angular2-support-v7/ https://medium.com/ag-grid/ag-grid-v7-aot-angular-2-components-7130fdb8f480
     Redirect 301 /ag-grid-big-data-small-browser/ https://medium.com/ag-grid/delivering-big-data-in-the-small-browser-41704f1058f0
