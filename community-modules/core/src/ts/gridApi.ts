@@ -770,7 +770,7 @@ export class GridApi {
     }
 
     /** Pass a quick filter text into the grid for filtering. */
-    public setQuickFilter(newFilter: any): void {
+    public setQuickFilter(newFilter: string): void {
         this.filterManager.setQuickFilter(newFilter);
     }
 
