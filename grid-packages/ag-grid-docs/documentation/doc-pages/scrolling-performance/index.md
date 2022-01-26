@@ -66,7 +66,7 @@ Setting a low row buffer will make initial draws of the grid faster (eg when dat
 
 The grid works fastest on Google Chrome. If you can, tell your users.
 
-This includes (and I can't believe I'm saying this) Microsoft Edge, which is now powered by Chrome.
+This includes Microsoft Edge, which is now powered by Chrome.
 
 ## Understand Data Updates
 
