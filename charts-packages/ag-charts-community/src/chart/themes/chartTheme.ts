@@ -323,7 +323,6 @@ export class ChartTheme {
             },
             area: {
                 ...ChartTheme.getSeriesDefaults(),
-                title: undefined,
                 xKey: '',
                 xName: '',
                 yKeys: [],

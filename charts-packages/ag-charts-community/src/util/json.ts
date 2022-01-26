@@ -165,7 +165,7 @@ export function jsonApply<
     source?: Source,
     params: {
         path?: string,
-        skip?: (keyof Source)[],
+        skip?: (keyof Source | keyof Target)[],
         constructors?: Record<string, new () => any>,
     } = {},
 ): Target {
