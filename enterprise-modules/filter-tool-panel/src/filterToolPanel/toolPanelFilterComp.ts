@@ -118,7 +118,7 @@ export class ToolPanelFilterComp extends Component {
         _.setAriaExpanded(this.eFilterToolPanelHeader, true);
 
         const container = _.loadTemplate(/* html */`<div class="ag-filter-toolpanel-instance-filter"></div>`);
-        const filterPromise = this.filterManager.getOrCreateFilterWrapper(this.column, 'TOOLBAR').filterPromise;
+        const filterPromise = this.filterManager.getOrCreateFilterWrapper(this.column, 'TOOLBAR')?.filterPromise;
 
         if (filterPromise) {
             filterPromise.then(filter => {

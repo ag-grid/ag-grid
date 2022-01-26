@@ -5,20 +5,7 @@ import {
     AgHierarchyChartOptions,
     AgCartesianAxisOptions,
     AgBarSeriesOptions,
-    FontWeight,
-    AgChartLegendOptions,
-    AgChartPaddingOptions,
-    AgBaseChartOptions,
-    AgNavigatorOptions,
-    AgChartTooltipOptions,
-    AgChartCaptionOptions,
-    AgLineSeriesOptions,
-    AgNumberAxisOptions,
     AgBarSeriesLabelOptions,
-    AgCategoryAxisOptions,
-    AgLogAxisOptions,
-    AgGroupedCategoryAxisOptions,
-    AgTimeAxisOptions,
     AgChartThemePalette,
 } from './agChartOptions';
 import { CartesianChart } from './cartesianChart';
@@ -33,52 +20,26 @@ import { LineSeries } from './series/cartesian/lineSeries';
 import { ScatterSeries } from './series/cartesian/scatterSeries';
 import { PieSeries } from './series/polar/pieSeries';
 import { TreemapSeries } from './series/hierarchy/treemapSeries';
-import { ChartAxis, ChartAxisPosition } from './chartAxis';
+import { ChartAxis } from './chartAxis';
 import { LogAxis } from './axis/logAxis';
 import { NumberAxis } from './axis/numberAxis';
 import { CategoryAxis } from './axis/categoryAxis';
 import { GroupedCategoryAxis } from './axis/groupedCategoryAxis';
 import { TimeAxis } from './axis/timeAxis';
 import { Chart } from './chart';
-import { LegendPosition, Legend } from './legend';
 import { SourceEventListener } from '../util/observable';
 import { DropShadow } from '../scene/dropShadow';
+import { jsonDiff, DELETE, jsonMerge, jsonApply, DeepPartial } from '../util/json';
 
 // TODO: Move these out of the old implementation?
 import { processSeriesOptions, getChartTheme } from './agChart';
+import { AxesOptionsTypes, SeriesOptionsTypes, DEFAULT_AXES_OPTIONS, DEFAULT_SERIES_OPTIONS, DEFAULT_CARTESIAN_CHART_OPTIONS } from './agChartV2Defaults';
 
 // TODO: Break this file up into several distinct modules:
 // - Main entry point.
 // - Default definitions.
 // - Transforms.
 // - Processing/application.
-
-type LiteralProperties = 'shape' | 'data';
-type SkippableProperties = 'axes' | 'series' | 'container' | 'customChartThemes';
-type IsLiteralProperty<T, K extends keyof T> = K extends LiteralProperties ? true :
-    T[K] extends Array<infer E> ? true :
-    false;
-type IsSkippableProperty<T, K extends keyof T> = K extends SkippableProperties ? true : false;
-
-// Needs to be recursive when we move to TS 4.x+; only supports a maximum level of nesting right now.
-type DeepPartial<T> = {
-    [P1 in keyof T]?:
-        IsSkippableProperty<T, P1> extends true ? any :
-        IsLiteralProperty<T, P1> extends true ? T[P1] :
-        { [P2 in keyof T[P1]]?:
-            IsSkippableProperty<T[P1], P2> extends true ? any :
-            IsLiteralProperty<T[P1], P2> extends true ? T[P1][P2] :
-            { [P3 in keyof T[P1][P2]]?:
-                IsSkippableProperty<T[P1][P2], P3> extends true ? any :
-                IsLiteralProperty<T[P1][P2], P3> extends true ? T[P1][P2][P3] :
-                { [P4 in keyof T[P1][P2][P3]]?:
-                    IsSkippableProperty<T[P1][P2][P3], P4> extends true ? any :
-                    IsLiteralProperty<T[P1][P2][P3], P4> extends true ? T[P1][P2][P3][P4] :
-                    Partial<T[P1][P2][P3][P4]>
-                }
-            }
-        }
-};
 
 type Transforms<Source, Result extends {[R in keyof Source]?: any}, Keys extends keyof Source & keyof Result = keyof Source & keyof Result> = {
     [Property in Keys]: (p: Source[Property], src: Source) => Result[Property];
@@ -100,15 +61,18 @@ function transform<
     return result as O;
 }
 
-function deepClone<T>(input: T): T {
-    return JSON.parse(JSON.stringify(input));
-}
-
 function is2dArray<E>(input: E[]|E[][]): input is E[][] {
     return input != null && input instanceof Array && input[0] instanceof Array;
 }
 
+type ChartOptionType<T extends Chart> = T extends CartesianChart ? AgCartesianChartOptions :
+    T extends PolarChart ? AgPolarChartOptions :
+    T extends HierarchyChart ? AgHierarchyChartOptions :
+    never;
+
 function isAgCartesianChartOptions(input: AgChartOptions): input is AgCartesianChartOptions {
+    if (input.type == null) { return true; }
+
     switch (input.type) {
         case 'cartesian':
         case 'area':
@@ -126,6 +90,8 @@ function isAgCartesianChartOptions(input: AgChartOptions): input is AgCartesianC
 }
 
 function isAgHierarchyChartOptions(input: AgChartOptions): input is AgHierarchyChartOptions {
+    if (input.type == null) { return true; }
+
     switch (input.type) {
         case 'hierarchy':
         case 'treemap':
@@ -137,6 +103,8 @@ function isAgHierarchyChartOptions(input: AgChartOptions): input is AgHierarchyC
 }
 
 function isAgPolarChartOptions(input: AgChartOptions): input is AgPolarChartOptions {
+    if (input.type == null) { return true; }
+
     switch (input.type) {
         case 'polar':
         case 'pie':
@@ -166,45 +134,48 @@ interface PreparationContext {
 }
 
 export abstract class AgChartV2 {
-    static create(options: AgChartOptions): Chart {
+    static create<T extends Chart>(options: ChartOptionType<T>): T {
         const mergedOptions = AgChartV2.prepareOptions(options);
 
-        if (isAgCartesianChartOptions(mergedOptions)) {
-            return applyCartesianChartOptions(new CartesianChart(document), mergedOptions);
+        const chart = isAgCartesianChartOptions(mergedOptions) ? new CartesianChart(document) :
+            isAgHierarchyChartOptions(mergedOptions) ? new HierarchyChart(document) :
+            isAgPolarChartOptions(mergedOptions) ? new PolarChart(document) :
+            undefined;
+
+        if (!chart) {
+            throw new Error(`AG Charts - couldn\'t apply configuration, check type of options: ${mergedOptions['type']}`);
         }
 
-        if (isAgHierarchyChartOptions(mergedOptions)) {
-            return applyHierarchyChartOptions(new HierarchyChart(document), mergedOptions);
-        }
-
-        if (isAgPolarChartOptions(mergedOptions)) {
-            return applyPolarChartOptions(new PolarChart(document), mergedOptions);
-        }
-
-        throw new Error('AG Charts - couldn\'t parse configuration, check type of chart: ' + options['type']);
+        return AgChartV2.updateDelta<T>(chart as T, mergedOptions);
     }
 
-    static update(chart: Chart, options: AgChartOptions): Chart {
+    static update<T extends Chart>(chart: Chart, options: ChartOptionType<T>): T {
         const mergedOptions = AgChartV2.prepareOptions(options);
-        const deltaOptions = jsonDiff(chart.options, mergedOptions);
+
+        if (options.type && options.type !== chart.options.type) {
+            chart.destroy();
+            return AgChartV2.create(options);
+        }
+
+        const deltaOptions = jsonDiff<ChartOptionType<T>>(chart.options as ChartOptionType<T>, mergedOptions);
         if (deltaOptions == null) {
-            return chart;
+            return chart as T;
         }
 
-        return AgChartV2.updateDelta(chart, deltaOptions);
+        return AgChartV2.updateDelta<T>(chart as T, deltaOptions);
     }
 
-    static updateDelta(chart: Chart, update: DeepPartial<AgChartOptions>): Chart {
+    static updateDelta<T extends Chart>(chart: T, update: Partial<ChartOptionType<T>>): T {
         if (chart instanceof CartesianChart) {
-            return applyCartesianChartOptions(chart, update as AgCartesianChartOptions);
+            return applyCartesianChartOptions<typeof chart>(chart, update as ChartOptionType<typeof chart>);
         }
 
         if (chart instanceof HierarchyChart) {
-            return applyHierarchyChartOptions(chart, update as AgHierarchyChartOptions);
+            return applyHierarchyChartOptions<typeof chart>(chart, update as ChartOptionType<typeof chart>);
         }
 
         if (chart instanceof PolarChart) {
-            return applyPolarChartOptions(chart, update as AgPolarChartOptions);
+            return applyPolarChartOptions<typeof chart>(chart, update as ChartOptionType<typeof chart>);
         }
 
         throw new Error(`AG Charts - couldn\'t apply configuration, check type of options and chart: ${update['type']}`);
@@ -220,11 +191,11 @@ export abstract class AgChartV2 {
         const themeConfig = theme.getConfig(options.type || 'cartesian');
         const axesThemes = themeConfig['axes'] || {};
         const seriesThemes = themeConfig['series'] || {};
-        const cleanedTheme = mergeOptions(themeConfig, { axes: DELETE, series: DELETE });
+        const cleanedTheme = jsonMerge(themeConfig, { axes: DELETE, series: DELETE });
 
         const context: PreparationContext = { colourIndex: 0, palette: theme.palette };
         
-        const mergedOptions = mergeOptions(defaultOptions as T, cleanedTheme, options);
+        const mergedOptions = jsonMerge(defaultOptions as T, cleanedTheme, options);
 
         // Special cases where we have arrays of elements which need their own defaults.
         processSeriesOptions(mergedOptions.series || []).forEach((s: SeriesOptionsTypes, i: number) => {
@@ -236,7 +207,7 @@ export abstract class AgChartV2 {
             (mergedOptions.axes || []).forEach((a, i) => {
                 const type = a.type || 'number';
                 // TODO: Handle removal of spurious properties more gracefully.
-                const axesTheme = mergeOptions(axesThemes[type], axesThemes[type][a.position || 'unknown'] || {});
+                const axesTheme = jsonMerge(axesThemes[type], axesThemes[type][a.position || 'unknown'] || {});
                 mergedOptions.axes![i] = AgChartV2.prepareAxis(a, DEFAULT_AXES_OPTIONS[type], axesTheme);
             });
         }
@@ -249,6 +220,14 @@ export abstract class AgChartV2 {
     }
 
     private static prepareSeries<T extends SeriesOptionsTypes>(context: PreparationContext, input: T, ...defaults: T[]): T {
+        const paletteOptions = AgChartV2.calculateSeriesPalette(context, input);
+
+        // Part of the options interface, but not directly consumed by the series implementations.
+        const removeOptions = { stacked: DELETE } as T;
+        return jsonMerge(...defaults, paletteOptions, input, removeOptions);
+    }
+
+    private static calculateSeriesPalette<T extends SeriesOptionsTypes>(context: PreparationContext, input: T): T {
         let paletteOptions: {
             stroke?: string;
             fill?: string;
@@ -292,314 +271,15 @@ export abstract class AgChartV2 {
         }
         context.colourIndex += colourCount;
 
-        // Part of the options interface, but not directly consumed by the series implementations.
-        const removeOptions = { stacked: DELETE } as T;
-        return mergeOptions(...defaults, paletteOptions as T, input, removeOptions);
+        return paletteOptions as T;
     }
 
     private static prepareAxis<T extends AxesOptionsTypes>(input: T, ...defaults: T[]): T {
         // Remove redundant theme overload keys.
         const removeOptions = { top: DELETE, bottom: DELETE, left: DELETE, right: DELETE } as any;
-        return mergeOptions(...defaults, input, removeOptions);
+        return jsonMerge(...defaults, input, removeOptions);
     }
 }
-
-const DEFAULT_BACKGROUND: AgBaseChartOptions['background'] = { visible: true, fill: 'white' };
-const DEFAULT_PADDING: AgChartPaddingOptions = {
-    top: 20,
-    right: 20,
-    bottom: 20,
-    left: 20,
-};
-const DEFAULT_LEGEND: AgChartLegendOptions = {
-    enabled: true,
-    position: LegendPosition.Right,
-    spacing: 20,
-    item: {
-        paddingX: 16,
-        paddingY: 8,
-        marker: {
-            shape: undefined,
-            size: 15,
-            strokeWidth: 1,
-            padding: 8,
-        },
-        label: {
-            color: 'black',
-            fontStyle: undefined,
-            fontWeight: undefined,
-            fontSize: 12,
-            fontFamily: 'Verdana, sans-serif',
-            // formatter: undefined,
-        },
-    },
-};
-
-const DEFAULT_NAVIGATOR: AgNavigatorOptions = {
-    enabled: false,
-    height: 30,
-    mask: {
-        fill: '#999999',
-        stroke: '#999999',
-        strokeWidth: 1,
-        fillOpacity: 0.2,
-    },
-    minHandle: {
-        fill: '#f2f2f2',
-        stroke: '#999999',
-        strokeWidth: 1,
-        width: 8,
-        height: 16,
-        gripLineGap: 2,
-        gripLineLength: 8,
-    },
-    maxHandle: {
-        fill: '#f2f2f2',
-        stroke: '#999999',
-        strokeWidth: 1,
-        width: 8,
-        height: 16,
-        gripLineGap: 2,
-        gripLineLength: 8,
-    },
-};
-const DEFAULT_TOOLTIP: AgChartTooltipOptions = {
-    enabled: true,
-    tracking: true,
-    delay: 0,
-    class: Chart.defaultTooltipClass,
-};
-const DEFAULT_TITLE: AgChartCaptionOptions = {
-    enabled: false,
-    text: 'Title',
-    fontStyle: undefined,
-    fontWeight: 'bold' as FontWeight,
-    fontSize: 14,
-    fontFamily: 'Verdana, sans-serif',
-    color: 'rgb(70, 70, 70)',
-    padding: {
-        top: 10,
-        right: 10,
-        bottom: 10,
-        left: 10,
-    },
-};
-const DEFAULT_SUBTITLE: AgChartCaptionOptions = {
-    enabled: false,
-    padding: {
-        top: 10,
-        right: 10,
-        bottom: 10,
-        left: 10,
-    },
-    text: 'Subtitle',
-    fontStyle: undefined,
-    fontWeight: undefined,
-    fontSize: 12,
-    fontFamily: 'Verdana, sans-serif',
-    color: 'rgb(140, 140, 140)',
-};
-
-const DEFAULT_CARTESIAN_CHART_OPTIONS: AgCartesianChartOptions = {
-    autoSize: true,
-    background: DEFAULT_BACKGROUND,
-    height: 300,
-    width: 600,
-    legend: DEFAULT_LEGEND,
-    navigator: DEFAULT_NAVIGATOR,
-    padding: DEFAULT_PADDING,
-    subtitle: DEFAULT_SUBTITLE,
-    title: DEFAULT_TITLE,
-    tooltip: DEFAULT_TOOLTIP,
-    type: 'cartesian',
-    series: [],
-    axes: [{
-        type: NumberAxis.type,
-        position: ChartAxisPosition.Left,
-    }, {
-        type: CategoryAxis.type,
-        position: ChartAxisPosition.Bottom,
-    }],
-};
-
-const DEFAULT_LINE_SERIES_OPTIONS: AgLineSeriesOptions = {
-    type: 'line',
-    visible: true,
-    showInLegend: true,
-    cursor: 'default',
-    title: undefined,
-    xKey: '',
-    xName: '',
-    yKey: '',
-    yName: '',
-    strokeWidth: 2,
-    strokeOpacity: 1,
-    lineDash: undefined,
-    lineDashOffset: 0,
-    tooltip: {
-        enabled: true,
-        renderer: undefined,
-        format: undefined,
-    },
-    highlightStyle: {
-        item: { fill: 'yellow' },
-        series: { dimOpacity: 1 },
-    },
-    label: {
-        enabled: true,
-        fontStyle: undefined,
-        fontWeight: undefined,
-        fontSize: 12,
-        fontFamily: 'Verdana, sans-serif',
-        color: 'rgb(70, 70, 70)',
-        formatter: undefined,
-    },
-    marker: {
-        enabled: true,
-        shape: 'circle',
-        size: 6,
-        maxSize: 30,
-        strokeWidth: 1,
-        formatter: undefined,
-    },
-};
-
-const DEFAULT_BAR_SERIES_OPTIONS: AgBarSeriesOptions & { type: 'bar' } = {
-    type: 'bar',
-    flipXY: true,
-    visible: true,
-    showInLegend: true,
-    cursor: 'default',
-    // title: undefined,
-    fillOpacity: 1,
-    strokeOpacity: 1,
-    xKey: '',
-    xName: '',
-    yKeys: [],
-    yNames: [],
-    grouped: false,
-    normalizedTo: undefined,
-    strokeWidth: 1,
-    lineDash: undefined,
-    lineDashOffset: 0,
-    tooltip: {
-        enabled: true,
-    },
-    highlightStyle: {
-        item: { fill: 'yellow' },
-        series: { dimOpacity: 1 },
-    },
-    label: {
-        enabled: true,
-        fontStyle: undefined,
-        fontWeight: undefined,
-        fontSize: 12,
-        fontFamily: 'Verdana, sans-serif',
-        color: 'rgb(70, 70, 70)',
-        formatter: undefined,
-        placement: BarLabelPlacement.Inside,
-    },
-    shadow: {
-        enabled: true,
-        color: 'rgba(0, 0, 0, 0.5)',
-        xOffset: 0,
-        yOffset: 0,
-        blur: 5
-    },
-};
-
-const DEFAULT_COLUMN_SERIES_OPTIONS: AgBarSeriesOptions & { type: 'column' } = {
-    ...DEFAULT_BAR_SERIES_OPTIONS,
-    type: 'column',
-    flipXY: false,
-}
-
-const DEFAULT_NUMBER_AXIS_OPTIONS: AgNumberAxisOptions = {
-    type: 'number',
-    // visibleRange: [0, 1],
-    // thickness: 0,
-    gridStyle: [{
-        stroke: 'rgb(219, 219, 219)',
-        lineDash: [4, 2]
-    }],
-    line: {
-        width: 1,
-        color: 'rgb(195, 195, 195)'
-    },
-    title: {
-        padding: {
-            top: 10,
-            right: 10,
-            bottom: 10,
-            left: 10
-        },
-        text: 'Axis Title',
-        fontStyle: undefined,
-        fontWeight: 'bold' as 'bold',
-        fontSize: 12,
-        fontFamily: 'Verdana, sans-serif',
-        color: 'rgb(70, 70, 70)'
-    },
-    label: {
-        fontStyle: undefined,
-        fontWeight: undefined,
-        fontSize: 12,
-        fontFamily: 'Verdana, sans-serif',
-        padding: 5,
-        rotation: 0,
-        color: 'rgb(87, 87, 87)',
-        formatter: undefined
-    },
-    tick: {
-        width: 1,
-        size: 6,
-        color: 'rgb(195, 195, 195)',
-        count: 10
-    }
-};
-
-const DEFAULT_CATEGORY_AXIS_OPTIONS: AgCategoryAxisOptions = {
-    ...DEFAULT_NUMBER_AXIS_OPTIONS,
-    type: 'category',
-};
-
-const DEFAULT_LOG_AXIS_OPTIONS: AgLogAxisOptions = {
-    ...DEFAULT_NUMBER_AXIS_OPTIONS,
-    base: 10,
-    type: 'log',
-};
-
-const DEFAULT_GROUPED_CATEGORY_AXIS_OPTIONS: AgGroupedCategoryAxisOptions = {
-    ...DEFAULT_NUMBER_AXIS_OPTIONS,
-    type: 'groupedCategory',
-};
-
-const DEFAULT_TIME_AXIS_OPTIONS: AgTimeAxisOptions = {
-    ...DEFAULT_NUMBER_AXIS_OPTIONS,
-    type: 'time',
-};
-
-type SeriesOptionsTypes = NonNullable<AgChartOptions['series']>[number];
-const DEFAULT_SERIES_OPTIONS: {[K in NonNullable<SeriesOptionsTypes['type']>]: SeriesOptionsTypes & { type?: K }} = {
-    line: DEFAULT_LINE_SERIES_OPTIONS,
-    bar: DEFAULT_BAR_SERIES_OPTIONS,
-    area: {},
-    column: DEFAULT_COLUMN_SERIES_OPTIONS,
-    histogram: {},
-    ohlc: {},
-    pie: {},
-    scatter: {},
-    treemap: {},
-};
-
-type AxesOptionsTypes = NonNullable<AgCartesianChartOptions['axes']>[number];
-const DEFAULT_AXES_OPTIONS: {[K in NonNullable<AxesOptionsTypes['type']>]: AxesOptionsTypes & { type?: K }} = {
-    number: DEFAULT_NUMBER_AXIS_OPTIONS,
-    category: DEFAULT_CATEGORY_AXIS_OPTIONS,
-    groupedCategory: DEFAULT_GROUPED_CATEGORY_AXIS_OPTIONS,
-    log: DEFAULT_LOG_AXIS_OPTIONS,
-    time: DEFAULT_TIME_AXIS_OPTIONS,
-};
 
 function yNamesMapping(p: string[] | Record<string, string> | undefined, src: AgBarSeriesOptions): Record<string, string> {
     if (p == null) { return {}; }
@@ -651,14 +331,16 @@ const BAR_SERIES_TRANSFORMS: Transforms<
     label: (p) => labelMapping(p),
 };
 
-function applyCartesianChartOptions(chart: CartesianChart, options: Partial<AgCartesianChartOptions>) {
-    applyOptionValues(chart, options, { skip: ['type', 'data', 'series', 'axes', 'autoSize', 'listeners', 'theme'] });
+function applyCartesianChartOptions<T extends CartesianChart>(chart: T, options: ChartOptionType<T>): T {
+    applyOptionValues(chart, options as any, { skip: ['type', 'data', 'series', 'axes', 'autoSize', 'listeners', 'theme'] as (keyof T)[] });
 
+    let performProcessData = false;
     if (options.series) {
         chart.series = createSeries(options.series);
     }
     if (options.axes) {
         chart.axes = createAxis(options.axes);
+        performProcessData = true;
     }
     if (options.data) {
         chart.data = options.data;
@@ -673,17 +355,21 @@ function applyCartesianChartOptions(chart: CartesianChart, options: Partial<AgCa
     }
 
     chart.layoutPending = true;
-    chart.options = mergeOptions(chart.options || {}, options);
+    if (performProcessData) {
+        chart.processData();
+    }
+
+    chart.options = jsonMerge(chart.options || {}, options);
 
     return chart;
 }
 
-function applyHierarchyChartOptions(chart: HierarchyChart, options: AgHierarchyChartOptions) {
+function applyHierarchyChartOptions<T extends HierarchyChart>(chart: T, options: ChartOptionType<T>): T {
     registerListeners(chart, options.listeners);
     return chart;
 }
 
-function applyPolarChartOptions(chart: PolarChart, options: AgPolarChartOptions): PolarChart {
+function applyPolarChartOptions<T extends PolarChart>(chart: T, options: ChartOptionType<T>): T {
     registerListeners(chart, options.listeners);
     return chart;
 }
@@ -759,178 +445,26 @@ function createAxis(options: AgCartesianAxisOptions[]): ChartAxis[] {
 
 function registerListeners<T extends { addEventListener(key: string, cb: SourceEventListener<any>): void }>(
     source: T,
-    listeners?: { [K in keyof T]?: Function }
+    listeners?: { [K: string]: Function }
 ) {
     for (const property in listeners) {
         source.addEventListener(property, listeners[property] as SourceEventListener<any>);
     }
 }
 
-const DELETE = Symbol('<delete-property>') as any;
-function mergeOptions<T>(...options: T[]): T {
-    if (options.some(v => v instanceof Array)) {
-        throw new Error(`AG Charts - merge of arrays not supported: ${JSON.stringify(options)}`);
-    }
-
-    const result = deepClone(options[0]);
-
-    for (const nextOptions of options.slice(1)) {
-        for (const nextProp in nextOptions) {
-            if (nextOptions[nextProp] === DELETE) { 
-                delete result[nextProp];
-            } else if (result[nextProp] instanceof Array) {
-                // Overwrite array properties that already exist.
-                result[nextProp] = deepClone(nextOptions[nextProp]);
-            } else if (typeof result[nextProp] === 'object') {
-                // Recursively merge complex objects.
-                result[nextProp] = mergeOptions(result[nextProp], nextOptions[nextProp]);
-            } else if (typeof nextOptions[nextProp] === 'object') {
-                // Deep clone of nested objects.
-                result[nextProp] = deepClone(nextOptions[nextProp]);
-            } else {
-                // Just directly assign/overwrite.
-                result[nextProp] = nextOptions[nextProp];
-            }
-        }
-    }
-
-    return result;
-}
-
-function classify(value: any): 'array' | 'object' | 'primitive' | null {
-    if (value instanceof Array) {
-        return 'array';
-    } else if (typeof value === 'object') {
-        return 'object';
-    } else if (value != null) {
-        return 'primitive';
-    }
-
-    return null;
-}
-
-function applyOptionValues<
-    Target,
-    Source extends DeepPartial<Target>,
->(
-    target: Target,
-    options?: Source,
-    params: {
-        path?: string,
-        skip?: (keyof Source)[],
-        constructors?: Record<string, new () => any>,
-    } = {},
-): Target {
-    const {
-        path = undefined,
-        skip = ['type'],
-        constructors = {
+function applyOptionValues<T, S extends DeepPartial<T>>(
+    target: T,
+    options?: S,
+    { skip, path }: { skip?: (keyof T)[], path?: string } = {},
+): T {
+    const applyOpts = {
+        skip: ['type' as keyof T, ...(skip || [])], 
+        constructors: {
             'title': Caption,
             'subtitle': Caption,
             'shadow': DropShadow,
         },
-    } = params;
-
-    if (target == null) { throw new Error(`AG Charts - target is uninitialised: ${path || '<root>'}`); }
-    if (options == null) { return target; }
-        
-    const appliedProps = [];
-    for (const property in options) {
-        if (skip.indexOf(property) >= 0) { continue; }
-
-        const newValue = options[property];
-        const propertyPath = `${path ? path + '.' : ''}${property}`;
-        const targetAny = (target as any);
-        const currentValue = targetAny[property];
-        const ctr = constructors[property];
-        try {
-            const targetClass = targetAny.constructor?.name;
-            const currentValueType = classify(currentValue);
-            const newValueType = classify(newValue);
-
-            if (targetClass != null && targetClass !== 'Object' && !(property in target || targetAny.hasOwnProperty(property))) {
-                throw new Error(`Property doesn't exist in target type: ${targetClass}`);
-            }
-            if (currentValueType != null && newValueType != null && currentValueType !== newValueType) {
-                throw new Error(`Property types don't match, can't apply: currentValueType=${currentValueType}, newValueType=${newValueType}`);
-            }
-
-            if (newValueType === 'array' || currentValue instanceof HTMLElement) {
-                targetAny[property] = newValue;
-            } else if (newValueType === 'object') {
-                if (currentValue != null) {
-                    applyOptionValues(currentValue, newValue as any, {path: propertyPath});
-                } else if (ctr != null) {
-                    targetAny[property] = applyOptionValues(new ctr(), newValue as any, {path: propertyPath});
-                } else {
-                    targetAny[property] = newValue;
-                }
-            } else {
-                targetAny[property] = newValue;
-            }
-        } catch (error) {
-            throw new Error(`AG Charts - unable to set: ${propertyPath}; nested error is: ${error.message}`);
-        }
-    }
-
-    return target;
-}
-
-function jsonDiff<T extends any>(source: T, target: T): DeepPartial<T> | null {
-    const lhs = source || {} as any;
-    const rhs = target || {} as any;
-
-    const allProps = new Set([
-        ...Object.keys(lhs),
-        ...Object.keys(rhs),
-    ]);
-
-    let propsChangedCount = 0;
-    const result: any = {};
-    for (const prop of allProps) {
-        // Cheap-and-easy equality check.
-        if (lhs[prop] === rhs[prop]) { continue; }
-
-        const take = (v: any) => {
-            result[prop] = v;
-            propsChangedCount++;
-        };
-
-        const lhsType = classify(lhs[prop]);
-        const rhsType = classify(rhs[prop]);
-        if (lhsType !== rhsType) {
-            // Types changed, just take RHS.
-            take(rhs[prop]);
-            continue;
-        }
-
-        if (rhsType === 'primitive' || rhsType === null) {
-            take(rhs[prop]);
-            continue;
-        }
-
-        if (rhsType === 'array' && lhs[prop].length !== rhs[prop].length) {
-            // Arrays are different sizes, so just take target array.
-            take(rhs[prop]);
-            continue
-        }
-
-        if (JSON.stringify(lhs[prop]) === JSON.stringify(rhs[prop])) {
-            // Deep-and-expensive object check.
-            continue;
-        }
-
-        if (rhsType === 'array') {
-            // Don't try to do anything tricky with array diffs!
-            take(rhs[prop]);
-            continue
-        }
-
-        const diff = jsonDiff(lhs[prop], rhs[prop]);
-        if (diff !== null) {
-            take(diff);
-        }
-    }
-
-    return propsChangedCount === 0 ? null : result;
+        ...(path ? { path } : {}),
+    };
+    return jsonApply<T, S>(target, options, applyOpts);
 }

@@ -93,6 +93,10 @@ export class FilterManager extends BeanStub {
                 }
 
                 const filterWrapper = this.getOrCreateFilterWrapper(column, 'NO_UI');
+                if (!filterWrapper) {
+                    console.warn('AG-Grid: setFilterModel() - unable to fully apply model, unable to create filter for colId: ' + colId);
+                    return;
+                }
                 allPromises.push(this.setModelOnFilterWrapper(filterWrapper.filterPromise!, model[colId]));
             });
         } else {
@@ -225,14 +229,19 @@ export class FilterManager extends BeanStub {
         }
 
         if (!this.gridOptionsWrapper.isRowModelDefault()) {
-            console.warn('ag-grid: quick filtering only works with the Client-Side Row Model');
+            console.warn('AG Grid - Quick filtering only works with the Client-Side Row Model');
             return null;
         }
 
         return newFilter.toUpperCase();
     }
 
-    public setQuickFilter(newFilter: any): void {
+    public setQuickFilter(newFilter: string): void {
+        if (newFilter != null && typeof newFilter !== 'string') {
+            console.warn(`AG Grid - setQuickFilter() only supports string inputs, received: ${typeof newFilter}`);
+            return;
+        }
+
         const parsedFilter = this.parseQuickFilter(newFilter);
 
         if (this.quickFilter !== parsedFilter) {
@@ -399,7 +408,7 @@ export class FilterManager extends BeanStub {
 
     public getFilterComponent(column: Column, source: FilterRequestSource, createIfDoesNotExist = true): AgPromise<IFilterComp> | null {
         if (createIfDoesNotExist) {
-            return this.getOrCreateFilterWrapper(column, source).filterPromise;
+            return this.getOrCreateFilterWrapper(column, source)?.filterPromise || null;
         }
 
         const filterWrapper = this.cachedFilter(column);
@@ -413,7 +422,11 @@ export class FilterManager extends BeanStub {
         return !!filterWrapper && filterWrapper.filterPromise!.resolveNow(false, filter => filter!.isFilterActive());
     }
 
-    public getOrCreateFilterWrapper(column: Column, source: FilterRequestSource): FilterWrapper {
+    public getOrCreateFilterWrapper(column: Column, source: FilterRequestSource): FilterWrapper | null {
+        if (!column.isFilterAllowed()) {
+            return null;
+        }
+
         let filterWrapper = this.cachedFilter(column);
 
         if (!filterWrapper) {

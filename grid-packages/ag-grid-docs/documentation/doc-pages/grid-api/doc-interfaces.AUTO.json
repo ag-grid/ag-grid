@@ -14870,11 +14870,11 @@
     },
     "fontSize": {
       "description": "/** Set size of the font. */",
-      "type": { "returnType": "string", "optional": false }
+      "type": { "returnType": "string", "optional": true }
     },
     "fontFamily": {
       "description": "/** Specify the font for the label text. */",
-      "type": { "returnType": "string", "optional": false }
+      "type": { "returnType": "string", "optional": true }
     },
     "fontStyle": {
       "description": "/** Specify the font style for the label text. */",
@@ -14892,19 +14892,25 @@
     },
     "color": {
       "description": "/** Set the color of the label text. The color can be specified by a color name, a HEX or an RGB value. */",
-      "type": { "returnType": "string", "optional": false }
+      "type": { "returnType": "string", "optional": true }
     },
     "formatter": {
       "description": "/** A callback function to return the text to be displayed as the label, based on the value represented by the column or bar. By default the values are simply stringified. */",
       "type": {
-        "arguments": { "params": "{ value: number | undefined; }" },
+        "arguments": { "params": "LabelFormatterParams" },
         "returnType": "string",
         "optional": true
       }
     },
     "placement": {
       "description": "/** Where to render labels relative to the segments.\n * Default: `insideEnd` */",
-      "type": { "returnType": "BarColumnLabelPlacement", "optional": false }
+      "type": { "returnType": "BarColumnLabelPlacement", "optional": true }
+    }
+  },
+  "LabelFormatterParams": {
+    "value": {
+      "description": "/** The Y value of the data point. */",
+      "type": { "returnType": "number | undefined", "optional": false }
     }
   },
   "BarColumnLabelPlacement": {},

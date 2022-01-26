@@ -8356,24 +8356,29 @@
     "meta": {},
     "type": {
       "enabled?": "boolean",
-      "fontSize": "string",
-      "fontFamily": "string",
+      "fontSize?": "string",
+      "fontFamily?": "string",
       "fontStyle?": "'normal' | 'italic' | 'oblique'",
       "fontWeight?": "'normal' | 'bold' | 'bolder' | 'lighter' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900'",
-      "color": "string",
-      "formatter?": "(params: { value: number | undefined; }) => string",
-      "placement": "BarColumnLabelPlacement"
+      "color?": "string",
+      "formatter?": "(params: LabelFormatterParams) => string",
+      "placement?": "BarColumnLabelPlacement"
     },
     "docs": {
       "enabled?": "/** Set to true to enable labels. */",
-      "fontSize": "/** Set size of the font. */",
-      "fontFamily": "/** Specify the font for the label text. */",
+      "fontSize?": "/** Set size of the font. */",
+      "fontFamily?": "/** Specify the font for the label text. */",
       "fontStyle?": "/** Specify the font style for the label text. */",
       "fontWeight?": "/** Set how thick or thin characters in label text should be displayed. */",
-      "color": "/** Set the color of the label text. The color can be specified by a color name, a HEX or an RGB value. */",
+      "color?": "/** Set the color of the label text. The color can be specified by a color name, a HEX or an RGB value. */",
       "formatter?": "/** A callback function to return the text to be displayed as the label, based on the value represented by the column or bar. By default the values are simply stringified. */",
-      "placement": "/** Where to render labels relative to the segments.\n * Default: `insideEnd` */"
+      "placement?": "/** Where to render labels relative to the segments.\n * Default: `insideEnd` */"
     }
+  },
+  "LabelFormatterParams": {
+    "meta": {},
+    "type": { "value": "number | undefined" },
+    "docs": { "value": "/** The Y value of the data point. */" }
   },
   "BarColumnLabelPlacement": {
     "meta": { "isEnum": true },

@@ -175,8 +175,6 @@ sparklineOptions: {
     <image-caption src="resources/default-label.png" alt="Bar labels enabled" width="250px" constrained="true">Label enabled</image-caption>
 </div>
 
-<grid-example title='Bar Sparkline labels' name='bar-sparkline-labels' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
-
 It is possible to change the text value displayed as the label of individual bars by adding a `formatter` callback function to `label` options as follows:
 
 ```js
@@ -293,6 +291,21 @@ sparklineOptions: {
     <image-caption src="resources/default-padding.png" alt="Padding customisation" width="250px" constrained="true">Default padding</image-caption>
     <image-caption src="resources/custom-padding.png" alt="Padding customisation" width="250px" constrained="true">Custom padding</image-caption>
 </div>
+
+## Building Progress Bars
+
+A progress bar can be used to visualise and compare values across multiple sparklines in the grid. It can illustrate values which have a fixed domain such as percentages and scores.
+
+The following example shows how to build progress bars using bar sparklines.
+
+- Note that `valueAxisDomain` has been set to `[0, 100]`, indicating that the supplied data across all sparklines will contain values from `0` to `100`.
+- This allows easy comparisons of percentages across the different sparklines in the grid column as all sparklines will have the same domain.
+- A `formatter` callback function is supplied to return format styles of type `BarFormat`, based on the data represented by individual bars.
+- The `formatter` uses the `yValue` provided in the params object to dynamically set the fill color of each progress bar.
+- Percentage Y values are displayed on the inside end of each bar by configuring `label` options.
+- The axis line and padding are removed to allow more space in each cell for the progress bar.
+
+<grid-example title='Bar Sparkline – Progress Bars' name='bar-sparkline-progress-bars' type='generated' options='{ "enterprise": true, "exampleHeight": 585, "modules": ["clientside", "sparklines"] }'></grid-example>
 
 ## Additional Customisations
 

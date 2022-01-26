@@ -459,10 +459,13 @@ export class EnterpriseMenu extends BeanStub {
     }
 
     private createFilterPanel(): TabbedItem {
-        const filterWrapper: FilterWrapper = this.filterManager.getOrCreateFilterWrapper(this.column, 'COLUMN_MENU');
+        const filterWrapper: FilterWrapper | null = this.filterManager.getOrCreateFilterWrapper(this.column, 'COLUMN_MENU');
+        if (!filterWrapper) {
+            throw new Error('AG Grid - Unable to instantiate filter');
+        }
 
         const afterFilterAttachedCallback = (params: IAfterGuiAttachedParams) => {
-            if (!filterWrapper.filterPromise) { return; }
+            if (!filterWrapper?.filterPromise) { return; }
 
             // slightly odd block this - this promise will always have been resolved by the time it gets here, so won't be
             // async (_unless_ in react or similar, but if so why not encountered before now?).
@@ -478,7 +481,7 @@ export class EnterpriseMenu extends BeanStub {
         this.tabItemFilter = {
             title: _.createIconNoSpan('filter', this.gridOptionsWrapper, this.column)!,
             titleLabel: EnterpriseMenu.TAB_FILTER.replace('MenuTab', ''),
-            bodyPromise: filterWrapper.guiPromise as AgPromise<HTMLElement>,
+            bodyPromise: filterWrapper?.guiPromise as AgPromise<HTMLElement>,
             afterAttachedCallback: afterFilterAttachedCallback,
             name: EnterpriseMenu.TAB_FILTER
         };

@@ -121,21 +121,26 @@ export interface SparklineLabelOptions {
     /** Set to true to enable labels. */
     enabled?: boolean;
     /** Set size of the font. */
-    fontSize: string;
+    fontSize?: string;
     /** Specify the font for the label text. */
-    fontFamily: string;
+    fontFamily?: string;
     /** Specify the font style for the label text. */
     fontStyle?: 'normal' | 'italic' | 'oblique';
     /** Set how thick or thin characters in label text should be displayed. */
     fontWeight?: 'normal' | 'bold' | 'bolder' | 'lighter' | '100' | '200' | '300' | '400' | '500' | '600' | '700' | '800' | '900';
     /** Set the color of the label text. The color can be specified by a color name, a HEX or an RGB value. */
-    color: string;
+    color?: string;
     /** A callback function to return the text to be displayed as the label, based on the value represented by the column or bar. By default the values are simply stringified. */
-    formatter?: (params: { value: number | undefined }) => string;
+    formatter?: (params: LabelFormatterParams) => string;
     /** Where to render labels relative to the segments.
     * Default: `insideEnd`
     * */
-    placement: BarColumnLabelPlacement;
+    placement?: BarColumnLabelPlacement;
+}
+
+export interface LabelFormatterParams {
+    /** The Y value of the data point. */
+    value: number | undefined;
 }
 
 export enum BarColumnLabelPlacement {
