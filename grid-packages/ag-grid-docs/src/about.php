@@ -121,13 +121,20 @@
                         </div>
                         <div class="col-md-4">
                             <div>
+                                <img src='images/team/alanT.jpg' alt="Alan Treadway, Developer"/>
+                            </div>
+                            <h3>Alan Treadway</h3>
+                            <h4>Developer, Grid Core</h4>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div>
                                 <img src='images/team/mana.jpeg' alt="Mana Peirov, Developer"/>
                             </div>
                             <h3>Mana Peirov</h3>
                             <h4>Developer, Data Visualisation</h4>
                         </div>
-                    </div>
-                    <div class="row">
                          <div class="col-md-4">
                             <div>
                                 <img src='images/team/alberto.jpg' alt="Alberto Gutierrez, Head of Customer Services"/>
@@ -142,16 +149,16 @@
                             <h3>Shuheb Ahmed</h3>
                             <h4>Developer</h4>
                         </div>
-                        <div class="col-md-4">
+                    </div>
+                    <div class="row">
+                         <div class="col-md-4">
                             <div>
                                 <img src='images/team/bam.jpg' alt=" Bamdad Fard, Developer"/>
                             </div>
                             <h3>Bamdad Fard</h3>
                             <h4>Developer</h4>
                         </div>
-                    </div>
-                    <div class="row">
-                          <div class="col-md-4">
+                        <div class="col-md-4">
                             <div>
                                 <img src='images/team/louis.jpg' alt=" Louis Moore, Developer"/>
                             </div>
@@ -165,6 +172,8 @@
                             <h3>Marats Stelihs</h3>
                             <h4>Developer</h4>
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-4">
                             <div>
                                 <img src='images/team/kiril.png' alt="Kiril Matev, Developer"/>
@@ -172,8 +181,6 @@
                             <h3>Kiril Matev</h3>
                             <h4>Technical Product Manager</h4>
                         </div>
-                    </div>
-                    <div class="row">
                         <div class="col-md-4">
                             <div>
                                 <img src='images/team/viqas.jpg' alt="Viqas Hussain, Lead Developer"/>
