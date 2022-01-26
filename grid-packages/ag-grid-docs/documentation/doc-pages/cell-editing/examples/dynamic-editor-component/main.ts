@@ -4,13 +4,13 @@ import { MoodEditor } from './moodEditor_typescript'
 
 const gridOptions: GridOptions = {
   columnDefs: [
+    { field: 'type' },
     {
       field: 'value',
       editable: true,
       cellEditorCompSelector: cellEditorCompSelector,
       cellEditorPopup: true
-    },
-    { field: 'type' },
+    }
   ],
   defaultColDef: {
     flex: 1,

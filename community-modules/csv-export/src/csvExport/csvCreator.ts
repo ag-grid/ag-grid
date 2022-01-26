@@ -37,7 +37,7 @@ export class CsvCreator extends BaseCreator<CsvCustomContent, CsvSerializingSess
 
     public export(userParams?: CsvExportParams): string {
         if (this.isExportSuppressed()) {
-            console.warn(`ag-grid: Export cancelled. Export is not allowed as per your configuration.`);
+            console.warn(`AG Grid: Export cancelled. Export is not allowed as per your configuration.`);
             return '';
         }
 

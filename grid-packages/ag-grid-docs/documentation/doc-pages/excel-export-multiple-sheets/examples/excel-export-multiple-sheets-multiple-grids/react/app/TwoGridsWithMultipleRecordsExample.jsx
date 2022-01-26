@@ -7,27 +7,13 @@ import {ExcelExportModule, exportMultipleSheetsAsExcel} from '@ag-grid-enterpris
 import "@ag-grid-community/core/dist/styles/ag-grid.css";
 import "@ag-grid-community/core/dist/styles/ag-theme-alpine.css";
 
-class SportRenderer {
-    eGui;
-
-    init(params) {
-        this.eGui = document.createElement('i');
-
-        this.eGui.addEventListener('click', function () {
-            params.api.applyTransaction({remove: [params.node.data]});
-        });
-
-        this.eGui.classList.add('far', 'fa-trash-alt');
-        this.eGui.style.cursor = 'pointer';
-    }
-
-    getGui() {
-        return this.eGui;
-    }
-
-    refresh(params) {
-        return false;
-    }
+const SportRenderer = props => {
+    return (
+        <i className="far fa-trash-alt"
+           style={{cursor: 'pointer'}}
+           onClick={() => props.api.applyTransaction({remove: [props.node.data]})}>
+        </i>
+    )
 }
 
 const leftColumns = [

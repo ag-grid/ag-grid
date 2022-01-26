@@ -101,7 +101,7 @@ export class BlockUtils extends BeanStub {
         rowNode.key = this.valueService.getValue(rowNode.rowGroupColumn!, rowNode);
         if (rowNode.key === null || rowNode.key === undefined) {
             _.doOnce(() => {
-                console.warn(`null and undefined values are not allowed for server side row model keys`);
+                console.warn(`AG Grid: null and undefined values are not allowed for server side row model keys`);
                 if (rowNode.rowGroupColumn) {
                     console.warn(`column = ${rowNode.rowGroupColumn.getId()}`);
                 }
@@ -244,7 +244,7 @@ export class BlockUtils extends BeanStub {
         let topPointer = rowNodes.length - 1;
 
         if (_.missing(topPointer) || _.missing(bottomPointer)) {
-            console.warn(`ag-grid: error: topPointer = ${topPointer}, bottomPointer = ${bottomPointer}`);
+            console.warn(`AG Grid: error: topPointer = ${topPointer}, bottomPointer = ${bottomPointer}`);
             return undefined;
         }
 

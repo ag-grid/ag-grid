@@ -199,7 +199,7 @@ export abstract class ProvidedFilter<M, V> extends Component implements IProvide
                     clickListener = (e) => { this.onBtCancel(e!); };
                     break;
                 default:
-                    console.warn('Unknown button type specified');
+                    console.warn('AG Grid: Unknown button type specified');
                     return;
             }
 

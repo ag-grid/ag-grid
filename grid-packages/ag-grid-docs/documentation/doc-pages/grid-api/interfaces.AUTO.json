@@ -4833,7 +4833,6 @@
       "cellRange": "ChartParamsCellRange",
       "suppressChartRanges?": "boolean",
       "aggFunc?": "string | IAggFunc",
-      "seriesChartTypes?": "SeriesChartType[]",
       "chartType": "ChartType",
       "chartThemeName?": "string",
       "chartContainer?": "HTMLElement",
@@ -4844,7 +4843,6 @@
       "cellRange": "/** The range of cells to be charted. If no rows / rowIndexes are specified all rows will be included. */",
       "suppressChartRanges?": "/** Suppress highlighting the selected range in the grid. */",
       "aggFunc?": "/** The aggregation function that should be applied to all series data. */",
-      "seriesChartTypes?": "/** The series chart type configurations used in combination charts */",
       "chartType": "/** The type of chart to create. */",
       "chartThemeName?": "/** The default theme to use, either a default option or your own custom theme. */",
       "chartContainer?": "/** Provide to display the chart outside of the grid in your own container. */",
@@ -6674,19 +6672,11 @@
   },
   "ChartType": {
     "meta": { "isTypeAlias": true },
-    "type": "'column' | 'groupedColumn' | 'stackedColumn' | 'normalizedColumn' | 'bar' | 'groupedBar' | 'stackedBar' | 'normalizedBar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'area' | 'stackedArea' | 'normalizedArea' | 'histogram' | 'columnLineCombo' | 'areaColumnCombo' | 'customCombo'"
+    "type": "'column' | 'groupedColumn' | 'stackedColumn' | 'normalizedColumn' | 'bar' | 'groupedBar' | 'stackedBar' | 'normalizedBar' | 'line' | 'scatter' | 'bubble' | 'pie' | 'doughnut' | 'area' | 'stackedArea' | 'normalizedArea' | 'histogram'"
   },
   "ChartMenuOptions": {
     "meta": { "isTypeAlias": true },
     "type": "'chartSettings' | 'chartData' | 'chartFormat' | 'chartLink' | 'chartUnlink' | 'chartDownload'"
-  },
-  "SeriesChartType": {
-    "meta": {},
-    "type": {
-      "colId": "string",
-      "chartType": "ChartType",
-      "secondaryAxis?": "boolean"
-    }
   },
   "GetChartImageDataUrlParams": {
     "meta": {},
@@ -6711,8 +6701,7 @@
       "chartOptions": "AgChartThemeOverrides",
       "suppressChartRanges?": "boolean",
       "aggFunc?": "string | IAggFunc",
-      "unlinkChart?": "boolean",
-      "seriesChartTypes?": "SeriesChartType[]"
+      "unlinkChart?": "boolean"
     }
   },
   "IChartService": {
@@ -7394,7 +7383,7 @@
       "frameworkComponent(name: string)": "any"
     },
     "docs": {
-      "setTimeout(action: any, timeout?: any)": "/** Because Angular 2+ uses Zones, you should not use setTimeout or setInterval (as it'll keep angular constantly doing dirty checks etc\n * So to get around this, we allow the framework to specify how to execute setTimeout. The default is to just call the browser setTimeout(). */",
+      "setTimeout(action: any, timeout?: any)": "/** Because Angular uses Zones, you should not use setTimeout or setInterval (as it'll keep angular constantly doing dirty checks etc\n * So to get around this, we allow the framework to specify how to execute setTimeout. The default is to just call the browser setTimeout(). */",
       "addEventListener(element: HTMLElement, type: string, listener: EventListenerOrEventListenerObject, options?: boolean | AddEventListenerOptions)": "/** Again because Angular uses Zones, we allow adding some events outside of Zone JS so that we do not kick off\n * the Angular change detection. We do this for some events ONLY, and not all events, just events that get fired\n * a lot (eg mouse move), but we need to make sure in AG Grid that we do NOT call any grid callbacks while processing\n * these events, as we will be outside of ZoneJS and hence Angular2 Change Detection won't work. However it's fine\n * for our code to result in AG Grid events (and Angular application action on these) as these go through\n * Event Emitter's.\n * \n * This was done by Niall and Sean. The problematic events are mouseover, mouseout, mouseenter and mouseleave. */"
     }
   },
@@ -8085,6 +8074,7 @@
       "cellHeight?": "number",
       "suppressSorting?": "boolean",
       "cellRenderer?": "{ new (): ICellRendererComp; } | ICellRendererFunc | string",
+      "cellRendererComp?": "any",
       "suppressMiniFilter?": "boolean",
       "applyMiniFilterWhileTyping?": "boolean",
       "suppressSelectAll?": "boolean",
@@ -8116,6 +8106,7 @@
       "cellHeight?": "/** The height of values in the Filter List in pixels. */",
       "suppressSorting?": "/** If `true`, the Set Filter values will not be sorted. Use this if you are providing your own\n * values and don't want them sorted as you are providing in the order you want.\n * \n * Default: `false` */",
       "cellRenderer?": "/** Similar to the Cell Renderer for the grid. Setting it separately here allows for the value to\n * be rendered differently in the filter. */",
+      "cellRendererComp?": "/** Similar to the Cell Renderer Comp for the grid. Setting it separately here allows for the value to\n * be rendered differently in the filter. */",
       "suppressMiniFilter?": "/** Set to `true` to hide the Mini Filter.\n * \n * Default: `false` */",
       "applyMiniFilterWhileTyping?": "/** Set to `true` to apply the Set Filter immediately when the user is typing in the Mini Filter.\n * \n * Default: `false` */",
       "suppressSelectAll?": "/** Set to `true` to remove the Select All checkbox.\n * Default: `false` */",

@@ -82,7 +82,6 @@ export class ChartTranslationService extends BeanStub {
         scatterGroup: 'X Y (Scatter)',
         areaGroup: 'Area',
         histogramGroup: 'Histogram',
-        combinationGroup: 'Combination',
         groupedColumnTooltip: 'Grouped',
         stackedColumnTooltip: 'Stacked',
         normalizedColumnTooltip: '100% Stacked',
@@ -98,18 +97,12 @@ export class ChartTranslationService extends BeanStub {
         scatterTooltip: 'Scatter',
         bubbleTooltip: 'Bubble',
         histogramTooltip: 'Histogram',
-        columnLineComboTooltip: 'Column & Line',
-        areaColumnComboTooltip: 'Area & Column',
-        customComboTooltip: 'Custom Combination',
         noDataToChart: 'No data available to be charted.',
         pivotChartRequiresPivotMode: 'Pivot Chart requires Pivot Mode enabled.',
         chartSettingsToolbarTooltip: 'Menu',
         chartLinkToolbarTooltip: 'Linked to Grid',
         chartUnlinkToolbarTooltip: 'Unlinked from Grid',
-        chartDownloadToolbarTooltip: 'Download Chart',
-        seriesChartType: 'Series Chart Type',
-        seriesType: 'Series Type',
-        secondaryAxis: 'Secondary Axis',
+        chartDownloadToolbarTooltip: 'Download Chart'
     };
 
     public translate(toTranslate: string, defaultText?: string): string {

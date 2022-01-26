@@ -23,7 +23,7 @@ const gridOptions: GridOptions = {
     resizable: true,
   },
   loadingRowCellComp: CustomLoadingCellRenderer,
-  loadingCellRendererParams: {
+  loadingRowCellCompParams: {
     loadingMessage: 'One moment please...',
   },
 

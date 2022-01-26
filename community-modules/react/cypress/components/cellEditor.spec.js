@@ -62,12 +62,12 @@ const GridComponent = () => {
                 ref={(element) => {
                     window.gridComponentInstance = element
                 }}
-                frameworkComponents={{
+                comps={{
                     cellEditor: CellEditor
                 }}
                 rowData={rowData}
                 modules={[ClientSideRowModelModule]}>
-                <AgGridColumn field="value" editable={true} cellEditor="cellEditor"></AgGridColumn>
+                <AgGridColumn field="value" editable={true} cellEditorComp="cellEditor"></AgGridColumn>
             </AgGridReact>
         </div>
     )

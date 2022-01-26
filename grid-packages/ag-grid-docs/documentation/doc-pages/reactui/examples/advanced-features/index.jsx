@@ -50,7 +50,7 @@ function GridExample() {
 
     // never changes, so we can use useMemo
     const autoGroupColumnDef = useMemo( ()=> ({
-        cellRendererParams: {
+        cellRendererCompParams: {
             suppressCount: true,
             checkbox: true
         },

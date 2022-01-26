@@ -206,7 +206,7 @@ export class SelectionService extends BeanStub {
     // where groups don't actually appear in the selection normally.
     public getBestCostNodeSelection(): RowNode[] | undefined {
         if (this.rowModel.getType() !== Constants.ROW_MODEL_TYPE_CLIENT_SIDE) {
-            console.warn('getBestCostNodeSelection is only available when using normal row model');
+            console.warn('AG Grid: `getBestCostNodeSelection` is only available when using normal row model');
             return;
         }
 
@@ -215,7 +215,7 @@ export class SelectionService extends BeanStub {
         const topLevelNodes = clientSideRowModel.getTopLevelNodes();
 
         if (topLevelNodes === null) {
-            console.warn('selectAll not available doing rowModel=virtual');
+            console.warn('AG Grid: `selectAll` not available doing `rowModel=virtual`');
             return;
         }
 

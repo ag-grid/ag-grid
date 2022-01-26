@@ -24,8 +24,8 @@
 |              {
 |                  headerName: "Value Column",
 |                  field: "value",
-|                  cellRendererFramework: 'MyCellEditor',
-|                  cellEditorParams: {
+|                  cellRendererComp: 'MyCellEditor',
+|                  cellEditorCompParams: {
 |                       // make "country" value available to cell editor
 |                       country: 'Ireland'
 |                  }

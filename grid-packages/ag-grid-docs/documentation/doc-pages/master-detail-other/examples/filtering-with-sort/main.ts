@@ -18,7 +18,7 @@ const gridOptions: GridOptions = {
     filter: true,
   },
   masterDetail: true,
-  detailCellRendererParams: {
+  detailRowCellCompParams: {
     detailGridOptions: {
       columnDefs: [
         { field: 'callId' },

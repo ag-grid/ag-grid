@@ -17,7 +17,7 @@ const gridOptions: GridOptions = {
   groupDefaultExpanded: 1,
   rowBuffer: 100,
   masterDetail: true,
-  detailCellRendererParams: {
+  detailRowCellCompParams: {
     detailGridOptions: {
       columnDefs: [
         { field: 'callId' },

@@ -55,7 +55,7 @@ export class ToolPanelWrapper extends Component {
         const componentPromise = compDetails.newAgStackInstance();
 
         if (componentPromise == null) {
-            console.warn(`ag-grid: error processing tool panel component ${id}. You need to specify either 'toolPanel' or 'toolPanelFramework'`);
+            console.warn(`AG Grid: error processing tool panel component ${id}. You need to specify either 'toolPanel' or 'toolPanelFramework'`);
             return;
         }
         componentPromise.then(this.setToolPanelComponent.bind(this));

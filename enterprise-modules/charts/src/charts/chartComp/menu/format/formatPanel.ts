@@ -83,14 +83,6 @@ export class FormatPanel extends Component {
                 this.addComponent(new SeriesPanel(this.chartController, this.chartOptionsService, 'histogram'));
                 this.addComponent(new NavigatorPanel(this.chartOptionsService));
                 break;
-            case 'columnLineCombo':
-            case 'areaColumnCombo':
-            case 'customCombo':
-                this.addComponent(new AxisPanel(this.chartController, this.chartOptionsService));
-                // there is no single series type supplied for combo charts, it is inferred by the Series Panel
-                this.addComponent(new SeriesPanel(this.chartController, this.chartOptionsService));
-                this.addComponent(new NavigatorPanel(this.chartOptionsService));
-                break;
             default:
                 // warn vanilla javascript users when they supply invalid chart type
                 console.warn(`AG Grid: ChartFormattingPanel - unexpected chart type index: ${chartType} supplied`);

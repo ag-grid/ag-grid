@@ -128,7 +128,7 @@ export class AgGridVue extends Vue {
         const thisAsAny = (this as any);
         if ((thisAsAny.rowData || this.gridOptions.rowData) &&
             thisAsAny.rowDataModel) {
-            console.warn('ag-grid: Using both rowData and rowDataModel. rowData will be ignored.');
+            console.warn('AG Grid: Using both rowData and rowDataModel. rowData will be ignored.');
         }
     }
 

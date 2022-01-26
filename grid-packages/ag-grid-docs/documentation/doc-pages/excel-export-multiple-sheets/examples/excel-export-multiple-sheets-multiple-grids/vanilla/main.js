@@ -1,4 +1,4 @@
-var leftColumnDefs = [
+const leftColumnDefs = [
     {
         rowDrag: true,
         maxWidth: 50,
@@ -14,7 +14,7 @@ var leftColumnDefs = [
     {field: "sport"}
 ];
 
-var rightColumnDefs = [
+const rightColumnDefs = [
     {
         rowDrag: true,
         maxWidth: 50,
@@ -32,7 +32,7 @@ var rightColumnDefs = [
         suppressMenu: true,
         maxWidth: 50,
         cellRenderer: function (params) {
-            var button = document.createElement('i');
+            const button = document.createElement('i');
 
             button.addEventListener('click', function () {
                 params.api.applyTransaction({remove: [params.node.data]});
@@ -47,7 +47,7 @@ var rightColumnDefs = [
     }
 ];
 
-var leftGridOptions = {
+const leftGridOptions = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
@@ -69,7 +69,7 @@ var leftGridOptions = {
     }
 };
 
-var rightGridOptions = {
+const rightGridOptions = {
     defaultColDef: {
         flex: 1,
         minWidth: 100,
@@ -86,9 +86,9 @@ var rightGridOptions = {
 };
 
 function addGridDropZone(params) {
-    var dropZoneParams = rightGridOptions.api.getRowDropZoneParams({
+    const dropZoneParams = rightGridOptions.api.getRowDropZoneParams({
         onDragStop: function (params) {
-            var nodes = params.nodes;
+            const nodes = params.nodes;
 
             leftGridOptions.api.applyTransaction({
                 remove: nodes.map(function (node) {
@@ -102,7 +102,7 @@ function addGridDropZone(params) {
 }
 
 function loadGrid(options, side, data) {
-    var grid = document.querySelector('#e' + side + 'Grid');
+    const grid = document.querySelector('#e' + side + 'Grid');
 
     if (options && options.api) {
         options.api.destroy();
@@ -116,11 +116,11 @@ function loadGrids() {
     fetch('https://www.ag-grid.com/example-assets/olympic-winners.json')
         .then(response => response.json())
         .then(function (data) {
-            var athletes = [];
-            var i = 0;
+            const athletes = [];
+            const i = 0;
 
             while (athletes.length < 20 && i < data.length) {
-                var pos = i++;
+                const pos = i++;
                 if (athletes.some(function (rec) {
                     return rec.athlete === data[pos].athlete;
                 })) {
@@ -135,7 +135,7 @@ function loadGrids() {
 }
 
 function onExcelExport() {
-    var spreadsheets = [];
+    const spreadsheets = [];
 
     spreadsheets.push(
         leftGridOptions.api.getSheetDataForExcel({sheetName: 'Athletes'}),
@@ -151,8 +151,8 @@ function onExcelExport() {
 
 // setup the grid after the page has finished loading
 document.addEventListener('DOMContentLoaded', function () {
-    var resetBtn = document.querySelector('button.reset');
-    var exportBtn = document.querySelector('button.excel');
+    const resetBtn = document.querySelector('button.reset');
+    const exportBtn = document.querySelector('button.excel');
 
     resetBtn.addEventListener('click', function () {
         loadGrids();

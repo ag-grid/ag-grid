@@ -19,12 +19,12 @@ Master / Detail can be enabled using the `masterDetail` grid option with detail 
 |
 |    // the first Column is configured to use agGroupCellRenderer
 |    columnDefs: [
-|        { field: 'name', cellRenderer: 'agGroupCellRenderer' },
+|        { field: 'name', cellRendererComp: 'agGroupCellRenderer' },
 |        { field: 'account' }
 |    ],
 |
 |    // provide Detail Cell Renderer Params
-|    detailCellRendererParams: {
+|    detailRowCellCompParams: {
 |        // provide the Grid Options to use on the Detail Grid
 |        detailGridOptions: {
 |            columnDefs: [

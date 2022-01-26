@@ -12,7 +12,7 @@ const gridOptions: GridOptions = {
     flex: 1,
   },
   masterDetail: true,
-  detailCellRendererParams: {
+  detailRowCellCompParams: {
     detailGridOptions: {
       rowSelection: 'multiple',
       suppressRowClickSelection: true,

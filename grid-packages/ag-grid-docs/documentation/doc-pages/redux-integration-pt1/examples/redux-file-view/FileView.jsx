@@ -22,7 +22,7 @@ class FileView extends Component {
   autoGroupColumnDef = {
     headerName: "Folder",
     sort: 'asc',
-    cellRendererParams: {
+    cellRendererCompParams: {
       suppressCount: true
     }
   };

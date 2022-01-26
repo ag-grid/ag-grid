@@ -15,7 +15,7 @@ const gridOptions: GridOptions = {
   defaultColDef: {
     flex: 1,
   },
-  detailCellRendererParams: {
+  detailRowCellCompParams: {
     detailGridOptions: {
       columnDefs: [
         { field: 'callId' },

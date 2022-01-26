@@ -441,14 +441,14 @@ export class ColumnFactory extends BeanStub {
         if (type instanceof Array) {
             const invalidArray = type.some(a => typeof a !== 'string');
             if (invalidArray) {
-                console.warn("ag-grid: if colDef.type is supplied an array it should be of type 'string[]'");
+                console.warn("AG Grid: if colDef.type is supplied an array it should be of type 'string[]'");
             } else {
                 typeKeys = type;
             }
         } else if (typeof type === 'string') {
             typeKeys = type.split(',');
         } else {
-            console.warn("ag-grid: colDef.type should be of type 'string' | 'string[]'");
+            console.warn("AG Grid: colDef.type should be of type 'string' | 'string[]'");
             return;
         }
 
@@ -469,7 +469,7 @@ export class ColumnFactory extends BeanStub {
             if (typeColDef) {
                 mergeDeep(colDefMerged, typeColDef, false, true);
             } else {
-                console.warn("ag-grid: colDef.type '" + t + "' does not correspond to defined gridOptions.columnTypes");
+                console.warn("AG Grid: colDef.type '" + t + "' does not correspond to defined gridOptions.columnTypes");
             }
         });
     }
@@ -478,28 +478,28 @@ export class ColumnFactory extends BeanStub {
         if (colDef) {
             const colDefNoType = colDef as any; // take out the type, so we can access attributes not defined in the type
             if (colDefNoType.group !== undefined) {
-                console.warn('ag-grid: colDef.group is invalid, please check documentation on how to do grouping as it changed in version 3');
+                console.warn('AG Grid: colDef.group is invalid, please check documentation on how to do grouping as it changed in version 3');
             }
             if (colDefNoType.headerGroup !== undefined) {
-                console.warn('ag-grid: colDef.headerGroup is invalid, please check documentation on how to do grouping as it changed in version 3');
+                console.warn('AG Grid: colDef.headerGroup is invalid, please check documentation on how to do grouping as it changed in version 3');
             }
             if (colDefNoType.headerGroupShow !== undefined) {
-                console.warn('ag-grid: colDef.headerGroupShow is invalid, should be columnGroupShow, please check documentation on how to do grouping as it changed in version 3');
+                console.warn('AG Grid: colDef.headerGroupShow is invalid, should be columnGroupShow, please check documentation on how to do grouping as it changed in version 3');
             }
 
             if (colDefNoType.suppressRowGroup !== undefined) {
-                console.warn('ag-grid: colDef.suppressRowGroup is deprecated, please use colDef.type instead');
+                console.warn('AG Grid: colDef.suppressRowGroup is deprecated, please use colDef.type instead');
             }
             if (colDefNoType.suppressAggregation !== undefined) {
-                console.warn('ag-grid: colDef.suppressAggregation is deprecated, please use colDef.type instead');
+                console.warn('AG Grid: colDef.suppressAggregation is deprecated, please use colDef.type instead');
             }
 
             if (colDefNoType.suppressRowGroup || colDefNoType.suppressAggregation) {
-                console.warn('ag-grid: colDef.suppressAggregation and colDef.suppressRowGroup are deprecated, use allowRowGroup, allowPivot and allowValue instead');
+                console.warn('AG Grid: colDef.suppressAggregation and colDef.suppressRowGroup are deprecated, use allowRowGroup, allowPivot and allowValue instead');
             }
 
             if (colDefNoType.displayName) {
-                console.warn("ag-grid: Found displayName " + colDefNoType.displayName + ", please use headerName instead, displayName is deprecated.");
+                console.warn("AG Grid: Found displayName " + colDefNoType.displayName + ", please use headerName instead, displayName is deprecated.");
                 colDefNoType.headerName = colDefNoType.displayName;
             }
         }

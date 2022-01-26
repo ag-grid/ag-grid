@@ -202,15 +202,15 @@ export class SelectAllFeature extends BeanStub {
 
         if (result) {
             if (this.gridOptionsWrapper.isRowModelServerSide()) {
-                console.warn('headerCheckboxSelection is not supported for Server Side Row Model');
+                console.warn('AG Grid: headerCheckboxSelection is not supported for Server Side Row Model');
                 return false;
             }
             if (this.gridOptionsWrapper.isRowModelInfinite()) {
-                console.warn('headerCheckboxSelection is not supported for Infinite Row Model');
+                console.warn('AG Grid: headerCheckboxSelection is not supported for Infinite Row Model');
                 return false;
             }
             if (this.gridOptionsWrapper.isRowModelViewport()) {
-                console.warn('headerCheckboxSelection is not supported for Viewport Row Model');
+                console.warn('AG Grid: headerCheckboxSelection is not supported for Viewport Row Model');
                 return false;
             }
             // otherwise the row model is compatible, so return true

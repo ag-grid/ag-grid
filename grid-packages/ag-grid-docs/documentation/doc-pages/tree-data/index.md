@@ -75,7 +75,7 @@ const gridOptions = {
     autoGroupColumnDef: {
         headerName: "My Group",
         width: 300,
-        cellRendererParams: {
+        cellRendererCompParams: {
             suppressCount: true
         }
     }
@@ -203,7 +203,7 @@ Click selection is supported with tree data. However when you are displaying tre
 |
 |    // have checkbox on the group column
 |    autoGroupColumnDef: {
-|        cellRendererParams: {
+|        cellRendererCompParams: {
 |            checkbox: true,
 |        }
 |    }

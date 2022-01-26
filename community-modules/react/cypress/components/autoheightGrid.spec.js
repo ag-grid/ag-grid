@@ -36,12 +36,12 @@ const App = () => {
                 onGridReady={onGridReady}
                 rowData={rowData}
                 modules={[ClientSideRowModelModule]}
-                frameworkComponents={{
+                comps={{
                     crf: CRF
                 }}>
                 <AgGridColumn
                     field="value"
-                    cellRenderer='crf'
+                    cellRendererComp='crf'
                     cellStyle={{"white-space": "normal"}}
                     autoHeight
                 ></AgGridColumn>

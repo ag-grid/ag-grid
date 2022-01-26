@@ -409,18 +409,6 @@ export class MenuItemMapper extends BeanStub {
             case 'rangeHistogramChart':
                 return rangeChartMenuItem('histogramChart', 'Histogram&lrm;', 'histogram');
 
-            case 'rangeColumnLineCombo':
-                return rangeChartMenuItem('columnLineCombo', 'Column & Line&lrm;', 'columnLineCombo');
-
-            case 'rangeAreaColumnCombo':
-                return rangeChartMenuItem('AreaColumnCombo', 'Area & Column&lrm;', 'areaColumnCombo');
-
-            case 'rangeCombinationChart':
-                return {
-                    name: localeTextFunc('combinationChart', 'Combination'),
-                    subMenu: ['rangeColumnLineCombo', 'rangeAreaColumnCombo']
-                };
-
             default:
                 return null;
         }

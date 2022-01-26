@@ -39,7 +39,7 @@ class GridComponent extends Component {
             columnDefs: [{
                 headerName: "Price",
                 field: "price",
-                cellRenderer: "cellRenderer"
+                cellRendererComp: "cellRenderer"
             }],
             rowData: [{
                 price: NaN
@@ -62,7 +62,7 @@ class GridComponent extends Component {
                     columnDefs={this.state.columnDefs}
                     onGridReady={this.onGridReady.bind(this)}
                     rowData={this.state.rowData}
-                    frameworkComponents={{
+                    comps={{
                         cellRenderer: CellRenderer
                     }}
                     modules={[ClientSideRowModelModule]} />

@@ -13,7 +13,7 @@ const gridOptions: GridOptions = {
   },
   masterDetail: true,
   embedFullWidthRows: true,
-  detailCellRendererParams: {
+  detailRowCellCompParams: {
     detailGridOptions: {
       columnDefs: [
         { field: 'callId' },

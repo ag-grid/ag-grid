@@ -266,6 +266,6 @@ export class ToolPanelColumnComp extends Component {
     }
 
     public setExpanded(value: boolean): void {
-        console.warn('ag-grid: can not expand a column item that does not represent a column group header');
+        console.warn('AG Grid: can not expand a column item that does not represent a column group header');
     }
 }

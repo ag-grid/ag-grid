@@ -51,7 +51,7 @@ const gridOptions: GridOptions = {
   },
   groupDefaultExpanded: 1,
   masterDetail: true,
-  detailCellRendererParams: {
+  detailRowCellCompParams: {
     // level 2 grid options
     detailGridOptions: {
       columnDefs: [
@@ -64,7 +64,7 @@ const gridOptions: GridOptions = {
       groupDefaultExpanded: 1,
       masterDetail: true,
       detailRowHeight: 240,
-      detailCellRendererParams: {
+      detailRowCellCompParams: {
         // level 3 grid options
         detailGridOptions: {
           columnDefs: [
