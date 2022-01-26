@@ -17,7 +17,7 @@ const gridOptions: GridOptions = {
             color: 'white',
             fontSize: 10,
             fontWeight: 'bold',
-            formatter: function (params: LabelFormatterParams) { return `${params.value}%` }
+            formatter: (params: LabelFormatterParams) => `${params.value}%`
           },
           paddingOuter: 0,
           padding: {
@@ -31,7 +31,7 @@ const gridOptions: GridOptions = {
           tooltip: {
             enabled: false
           },
-          formatter: formatter
+          formatter
         },
       },
     },
